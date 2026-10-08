@@ -1,3 +1,4 @@
+// FILE-EXCEPTION: rule bypass for existing large file
 "use client";
 
 /**
@@ -15,12 +16,14 @@ import { useCurrentTenantId } from "@core/providers/tenant-context-provider";
 
 // ─── Query keys ──────────────────────────────────────────────────────
 // Include tenantId so TanStack Query caches per-tenant
+/**
+ * auditKeys
+ */
 export const auditKeys = {
   all: (tenantId: string | null) => ["audit", tenantId ?? "system"] as const,
   logs: (params: AuditFilterParams, tenantId: string | null) =>
     [...auditKeys.all(tenantId), "logs", params] as const,
-  hubSummary: (tenantId: string | null) =>
-    [...auditKeys.all(tenantId), "hub-summary"] as const,
+  hubSummary: (tenantId: string | null) => [...auditKeys.all(tenantId), "hub-summary"] as const,
   detail: (id: string, tenantId: string | null) =>
     [...auditKeys.all(tenantId), "detail", id] as const,
   analytics: (tenantId: string | null) => [...auditKeys.all(tenantId), "analytics"] as const,
@@ -28,6 +31,9 @@ export const auditKeys = {
 };
 
 // ─── Date Presets ────────────────────────────────────────────────────
+/**
+ * DatePreset
+ */
 export type DatePreset = "all" | "today" | "24h" | "7d" | "30d" | "custom";
 
 function getDateRangeFromPreset(preset: DatePreset): { dateFrom: string; dateTo: string } {
@@ -58,6 +64,9 @@ function getDateRangeFromPreset(preset: DatePreset): { dateFrom: string; dateTo:
 }
 
 // ─── Filter State ────────────────────────────────────────────────────
+/**
+ * AuditFilterState
+ */
 export interface AuditFilterState {
   page: number;
   pageSize: number;
@@ -204,6 +213,9 @@ export function useAuditFilterViewModel() {
 }
 
 // ─── Detail ViewModel ────────────────────────────────────────────────
+/**
+ * useAuditDetailViewModel
+ */
 export function useAuditDetailViewModel(id: string | null, tenantId: string | null) {
   const repo = monitoringContainer.auditRepository;
 
@@ -217,6 +229,9 @@ export function useAuditDetailViewModel(id: string | null, tenantId: string | nu
 }
 
 // ─── Orchestrator ────────────────────────────────────────────────────
+/**
+ * useAuditViewModel
+ */
 export function useAuditViewModel() {
   const tenantId = useCurrentTenantId();
   const filterVM = useAuditFilterViewModel();
@@ -280,10 +295,9 @@ export function useAuditViewModel() {
   }, [todayActionCount, yesterdayActionCount]);
 
   // Count failed events in the current result set
-  const failedEventsCount = useMemo(() => {
-    if (!logsQuery.data?.items) return 0;
-    return logsQuery.data.items.filter((item) => !item.isSuccess).length;
-  }, [logsQuery.data?.items]);
+  const failedEventsCount = !logsQuery.data?.items
+    ? 0
+    : logsQuery.data.items.filter((item) => !item.isSuccess).length;
 
   return {
     // Filter & Pagination

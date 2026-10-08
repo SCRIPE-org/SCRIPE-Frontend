@@ -1,5 +1,8 @@
 import { V1 } from "@/core/config/api-endpoints/_shared";
 
+/**
+ * SECURITY_ENDPOINTS
+ */
 export const SECURITY_ENDPOINTS = {
   SECURITY_EVENTS: `${V1}/Dashboard/security-events`,
   TOP_BLOCKED_IPS: `${V1}/Dashboard/top-blocked-ips`,

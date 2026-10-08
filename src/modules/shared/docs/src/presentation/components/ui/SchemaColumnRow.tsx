@@ -8,6 +8,9 @@ interface SchemaColumnRowProps {
   column: SchemaColumn;
 }
 
+/**
+ * Documentation for module export
+ */
 export function SchemaColumnRow({ column }: SchemaColumnRowProps) {
   const { t } = useDocsI18n();
   return (

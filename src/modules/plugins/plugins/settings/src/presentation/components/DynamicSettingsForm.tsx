@@ -16,12 +16,10 @@ import {
 } from "./dynamicSettingsTypes";
 
 // Re-export public schema types for external module consumers
-export type {
-  JsonSchemaField,
-  PluginSettingsSchema,
-  SettingsValues,
-  DynamicSettingsFormProps,
-};
+/**
+ * Documentation for module export
+ */
+export type { JsonSchemaField, PluginSettingsSchema, SettingsValues, DynamicSettingsFormProps };
 
 /**
  * DynamicSettingsForm renders a fully interactive plugin configuration form

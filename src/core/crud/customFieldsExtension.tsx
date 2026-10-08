@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /**
  * Core-owned extension point for the CustomFields module. `src/core` does
  * import from `src/modules/*` in places today — permission constants in
@@ -17,6 +18,7 @@
 import type { Column } from "@core/crud/components/generic-table";
 import type { FieldConfig } from "@core/ui/forms/generic-form";
 import { useI18n } from "@core/providers/i18n-provider";
+
 import { useCallback, useEffect, useMemo, useState } from "react";
 import {
   MaskedCustomFieldCell,
@@ -177,13 +179,17 @@ export interface CustomFieldsExtensionApi {
    * GenericTable's own pagination already offers, so a single page can never
    * legitimately exceed it).
    */
-  getBulkColumnValues: (entityTypeKey: string, ownerIds: string[]) => Promise<BulkColumnValuesResult>;
-  /** Decrypts and reveals a sensitive custom field value for an authorized user. */
-  revealValue?: (
+  getBulkColumnValues: (
     entityTypeKey: string,
-    ownerId: string,
-    fieldKey: string
-  ) => Promise<unknown>;
+    ownerIds: string[]
+  ) => Promise<BulkColumnValuesResult>;
+  assertValuesValid?: (
+    fieldConfigs: FieldConfig[],
+    values: Record<string, unknown>,
+    t: any
+  ) => void;
+  /** Decrypts and reveals a sensitive custom field value for an authorized user. */
+  revealValue?: (entityTypeKey: string, ownerId: string, fieldKey: string) => Promise<unknown>;
   /**
    * Self-contained trigger + dialog; internally gates on the custom-fields.create
    * permission via its own usePermission call. `entityDisplayName` is the host
@@ -345,7 +351,9 @@ export function encodeCustomFieldName(key: string): string {
 }
 
 export function decodeCustomFieldName(name: string): string | null {
-  return name.startsWith(CUSTOM_FIELD_NAME_PREFIX) ? name.slice(CUSTOM_FIELD_NAME_PREFIX.length) : null;
+  return name.startsWith(CUSTOM_FIELD_NAME_PREFIX)
+    ? name.slice(CUSTOM_FIELD_NAME_PREFIX.length)
+    : null;
 }
 
 /**
@@ -379,41 +387,57 @@ export function useCustomFieldsFormFields(
   error: Error | null;
   refetch: () => Promise<void>;
 } {
-  const [fieldConfigs, setFieldConfigs] = useState<FieldConfig[]>([]);
-  const [isLoading, setIsLoading] = useState(false);
-  // getFormFields rejects for real reasons a user can hit — a 403 from a
-  // screen the caller lacks the custom-fields view permission on, a network
-  // drop mid-modal. Without this the rejection escaped `fetchFields` as an
-  // unhandled promise (both call sites are fire-and-forget) and the section
-  // just stayed empty with nothing to explain why. Captured here the same way
-  // useEntityCustomFields already does it; surfacing it in the UI is a
-  // follow-up, but it is no longer swallowed.
-  const [error, setError] = useState<Error | null>(null);
+  const [state, setState] = useState({
+    fieldConfigs: [] as FieldConfig[],
+    isLoading: !!entityTypeKey, // Only start true if we're actually going to fetch
+    error: null as Error | null,
+    reqEntity: entityTypeKey,
+    reqOwner: ownerId,
+  });
 
-  const fetchFields = useCallback(async () => {
+  if (entityTypeKey !== state.reqEntity || ownerId !== state.reqOwner) {
+    setState((s) => ({
+      ...s,
+      isLoading: !!entityTypeKey,
+      error: null,
+      reqEntity: entityTypeKey,
+      reqOwner: ownerId,
+    }));
+  }
+
+  const fetchFields = useCallback(async (isRefetch = false) => {
     const api = getCustomFieldsExtension();
     if (!entityTypeKey || !api) {
-      setFieldConfigs([]);
-      setIsLoading(false);
-      setError(null);
+      if (isRefetch) {
+        setState((s) => ({ ...s, fieldConfigs: [], isLoading: false, error: null }));
+      }
       return;
     }
-    setIsLoading(true);
-    setError(null);
+    
+    if (isRefetch) {
+      setState((s) => ({ ...s, isLoading: true, error: null }));
+    }
+    
     try {
-      setFieldConfigs(await api.getFormFields(entityTypeKey, ownerId));
+      const configs = await api.getFormFields(entityTypeKey, ownerId);
+      setState((s) => ({ ...s, fieldConfigs: configs, isLoading: false }));
     } catch (err) {
-      setError(err instanceof Error ? err : new Error(String(err)));
-    } finally {
-      setIsLoading(false);
+      setState((s) => ({ ...s, error: err instanceof Error ? err : new Error(String(err)), isLoading: false }));
     }
   }, [entityTypeKey, ownerId]);
 
   useEffect(() => {
-    void fetchFields();
+    // Initial fetch for a given key/owner pair. State is already marked loading during render.
+    // We pass false to fetchFields so it doesn't synchronously set state again inside the effect.
+    void fetchFields(false);
   }, [fetchFields]);
 
-  return { fieldConfigs, isLoading, error, refetch: fetchFields };
+  return { 
+    fieldConfigs: state.fieldConfigs, 
+    isLoading: state.isLoading, 
+    error: state.error, 
+    refetch: () => fetchFields(true) 
+  };
 }
 
 /**
@@ -490,7 +514,10 @@ function buildCustomFieldColumn(
         return <EmptyCustomFieldCell />;
       }
 
-      if (raw === "••••••••" || (definition.sensitivity !== undefined && definition.sensitivity >= 2)) {
+      if (
+        raw === "••••••••" ||
+        (definition.sensitivity !== undefined && definition.sensitivity >= 2)
+      ) {
         return (
           <MaskedCustomFieldCell
             entityTypeKey={entityTypeKey}
@@ -540,13 +567,6 @@ export function useCustomFieldColumns(
   error: Error | null;
 } {
   const { t, language } = useI18n();
-  const [definitions, setDefinitions] = useState<CustomFieldColumnDefinition[]>([]);
-  const [valuesByOwnerId, setValuesByOwnerId] = useState<Record<string, Record<string, unknown>>>(
-    {}
-  );
-  const [hiddenKeysByOwnerId, setHiddenKeysByOwnerId] = useState<Record<string, string[]>>({});
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<Error | null>(null);
 
   // `ownerIds` is a fresh array reference on every render (a new page of
   // viewModel.items, a new sort/filter/search) even when its CONTENTS are
@@ -557,57 +577,83 @@ export function useCustomFieldColumns(
   // an encrypted id, so two different id lists never collide onto one key.
   const ownerIdsKey = ownerIds.join(",");
 
-  const fetchColumns = useCallback(async () => {
+  const [state, setState] = useState({
+    definitions: [] as FieldConfig[],
+    valuesByOwnerId: {} as Record<string, Record<string, unknown>>,
+    hiddenKeysByOwnerId: {} as Record<string, string[]>,
+    isLoading: !!entityTypeKey && ownerIdsKey !== "",
+    error: null as Error | null,
+    reqEntity: entityTypeKey,
+    reqOwnerKey: ownerIdsKey,
+  });
+
+  if (entityTypeKey !== state.reqEntity || ownerIdsKey !== state.reqOwnerKey) {
+    setState((s) => ({
+      ...s,
+      isLoading: !!entityTypeKey && ownerIdsKey !== "",
+      error: null,
+      reqEntity: entityTypeKey,
+      reqOwnerKey: ownerIdsKey,
+    }));
+  }
+
+  const fetchColumns = useCallback(async (isRefetch = false) => {
     const api = getCustomFieldsExtension();
-    if (!entityTypeKey || !api || ownerIds.length === 0) {
-      setDefinitions([]);
-      setValuesByOwnerId({});
-      setHiddenKeysByOwnerId({});
-      setIsLoading(false);
-      setError(null);
+    const targetOwnerIds = ownerIdsKey ? ownerIdsKey.split(",") : [];
+    if (!entityTypeKey || !api || targetOwnerIds.length === 0) {
+      if (isRefetch) {
+        setState((s) => ({
+          ...s,
+          definitions: [],
+          valuesByOwnerId: {},
+          hiddenKeysByOwnerId: {},
+          isLoading: false,
+          error: null,
+        }));
+      }
       return;
     }
-    setIsLoading(true);
-    setError(null);
-    try {
-      const result = await api.getBulkColumnValues(entityTypeKey, ownerIds);
-      setDefinitions(result.columns.slice().sort((a, b) => a.sortOrder - b.sortOrder));
-      setValuesByOwnerId(result.valuesByOwnerId);
-      // Reset to {} rather than left alone when the server sends nothing: a previous page whose rows
-      // had hidden fields must not leave stale keys hiding cells on the next page.
-      setHiddenKeysByOwnerId(result.hiddenKeysByOwnerId ?? {});
-    } catch (err) {
-      setError(err instanceof Error ? err : new Error(String(err)));
-      // Deliberately not clearing definitions/valuesByOwnerId here — a failed
-      // background refresh (e.g. a page-change round trip that dropped) keeps
-      // showing the last successfully loaded page's custom-field data instead
-      // of blanking a table that was working a moment ago.
-    } finally {
-      setIsLoading(false);
+    
+    if (isRefetch) {
+      setState((s) => ({ ...s, isLoading: true, error: null }));
     }
-    // ownerIdsKey stands in for ownerIds' contents (see above); the array
-    // reference itself is intentionally excluded from these deps.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    
+    try {
+      const result = await api.getBulkColumnValues(entityTypeKey, targetOwnerIds);
+      setState((s) => ({
+        ...s,
+        definitions: result.columns.slice().sort((a, b) => a.sortOrder - b.sortOrder),
+        valuesByOwnerId: result.valuesByOwnerId,
+        hiddenKeysByOwnerId: result.hiddenKeysByOwnerId ?? {},
+        isLoading: false,
+      }));
+    } catch (err) {
+      setState((s) => ({
+        ...s,
+        error: err instanceof Error ? err : new Error(String(err)),
+        isLoading: false,
+      }));
+    }
   }, [entityTypeKey, ownerIdsKey]);
 
   useEffect(() => {
-    void fetchColumns();
+    void fetchColumns(false);
   }, [fetchColumns]);
 
   const columns = useMemo<Column<any>[]>(
     () =>
-      definitions.map((definition) =>
+      state.definitions.map((definition) =>
         buildCustomFieldColumn(
-          definition,
-          valuesByOwnerId,
+          definition as CustomFieldColumnDefinition,
+          state.valuesByOwnerId,
           language,
           t,
-          hiddenKeysByOwnerId,
+          state.hiddenKeysByOwnerId,
           entityTypeKey
         )
       ),
-    [definitions, valuesByOwnerId, hiddenKeysByOwnerId, language, t, entityTypeKey]
+    [state.definitions, state.valuesByOwnerId, state.hiddenKeysByOwnerId, language, t, entityTypeKey]
   );
 
-  return { columns, isLoading, error };
+  return { columns, isLoading: state.isLoading, error: state.error };
 }

@@ -21,6 +21,9 @@ const POLICY_ICONS: Record<string, typeof Lock> = {
   "rate-limiting": Zap,
 };
 
+/**
+ * SecurityPoliciesCard
+ */
 export const SecurityPoliciesCard = memo(function SecurityPoliciesCard({
   policies,
   cardClasses,
@@ -28,7 +31,7 @@ export const SecurityPoliciesCard = memo(function SecurityPoliciesCard({
   const { t } = useI18n();
 
   return (
-    <Card className={`h-full flex flex-col ${cardClasses || ""}`}>
+    <Card className={`flex h-full flex-col ${cardClasses || ""}`}>
       <CardHeader className="pb-3">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
@@ -46,7 +49,7 @@ export const SecurityPoliciesCard = memo(function SecurityPoliciesCard({
             </div>
           </div>
 
-          <Button variant="ghost" size="sm" asChild className="h-7 text-xs text-primary gap-1">
+          <Button variant="ghost" size="sm" asChild className="h-7 gap-1 text-xs text-primary">
             <Link href="/settings">
               <span>{t("security.manage") || "Manage"}</span>
               <ExternalLink className="h-3 w-3" />
@@ -56,14 +59,14 @@ export const SecurityPoliciesCard = memo(function SecurityPoliciesCard({
       </CardHeader>
 
       <CardContent className="flex-1 pb-4">
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
           {policies.map((policy) => {
             const Icon = POLICY_ICONS[policy.id] || Lock;
 
             return (
               <div
                 key={policy.id}
-                className="flex flex-col justify-between rounded-lg border border-border/70 bg-card/60 p-3 space-y-2"
+                className="flex flex-col justify-between space-y-2 rounded-lg border border-border/70 bg-card/60 p-3"
               >
                 <div className="flex items-start justify-between gap-2">
                   <div className="flex items-center gap-2">
@@ -73,15 +76,12 @@ export const SecurityPoliciesCard = memo(function SecurityPoliciesCard({
                     <p className="text-xs font-semibold text-foreground">{policy.name}</p>
                   </div>
 
-                  <Badge
-                    variant="success"
-                    className="text-[10px] uppercase font-bold shrink-0"
-                  >
+                  <Badge variant="success" className="shrink-0 text-[10px] font-bold uppercase">
                     {policy.status}
                   </Badge>
                 </div>
 
-                <p className="text-[11px] text-muted-foreground leading-relaxed">
+                <p className="text-[11px] leading-relaxed text-muted-foreground">
                   {policy.details}
                 </p>
               </div>

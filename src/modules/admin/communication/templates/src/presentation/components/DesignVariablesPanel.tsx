@@ -23,6 +23,9 @@ import {
 } from "./designVariablesTypes";
 import { DesignVariablesPreviewSwatch } from "./DesignVariablesPreviewSwatch";
 
+/**
+ * Documentation for module export
+ */
 export type { DesignVariables, DesignVariablesPanelProps };
 export { DEFAULT_DESIGN, FONT_OPTIONS };
 
@@ -98,9 +101,7 @@ export function DesignVariablesPanel({ value, onChange }: DesignVariablesPanelPr
             {t("messaging.templates.design.typography")}
           </h4>
           <div className="space-y-2">
-            <Label className="text-xs">
-              {t("messaging.templates.design.fontFamily")}
-            </Label>
+            <Label className="text-xs">{t("messaging.templates.design.fontFamily")}</Label>
             <Select value={value.fontFamily} onValueChange={(v) => update("fontFamily", v)}>
               <SelectTrigger className="text-sm">
                 <SelectValue />
@@ -116,9 +117,7 @@ export function DesignVariablesPanel({ value, onChange }: DesignVariablesPanelPr
           </div>
           <div className="grid grid-cols-2 gap-2">
             <div className="space-y-1">
-              <Label className="text-xs">
-                {t("messaging.templates.design.headerSize")}
-              </Label>
+              <Label className="text-xs">{t("messaging.templates.design.headerSize")}</Label>
               <Input
                 type="number"
                 min={16}
@@ -129,9 +128,7 @@ export function DesignVariablesPanel({ value, onChange }: DesignVariablesPanelPr
               />
             </div>
             <div className="space-y-1">
-              <Label className="text-xs">
-                {t("messaging.templates.design.bodySize")}
-              </Label>
+              <Label className="text-xs">{t("messaging.templates.design.bodySize")}</Label>
               <Input
                 type="number"
                 min={10}
@@ -152,9 +149,7 @@ export function DesignVariablesPanel({ value, onChange }: DesignVariablesPanelPr
             {t("messaging.templates.design.layout")}
           </h4>
           <div className="space-y-2">
-            <Label className="text-xs">
-              {t("messaging.templates.design.borderRadius")}
-            </Label>
+            <Label className="text-xs">{t("messaging.templates.design.borderRadius")}</Label>
             <Input
               type="number"
               min={0}
@@ -174,9 +169,7 @@ export function DesignVariablesPanel({ value, onChange }: DesignVariablesPanelPr
             {t("messaging.templates.design.branding")}
           </h4>
           <div className="space-y-2">
-            <Label className="text-xs">
-              {t("messaging.templates.design.logoUrl")}
-            </Label>
+            <Label className="text-xs">{t("messaging.templates.design.logoUrl")}</Label>
             <Input
               value={value.logoUrl}
               onChange={(e) => update("logoUrl", e.target.value)}
@@ -185,9 +178,7 @@ export function DesignVariablesPanel({ value, onChange }: DesignVariablesPanelPr
             />
           </div>
           <div className="space-y-2">
-            <Label className="text-xs">
-              {t("messaging.templates.design.footerText")}
-            </Label>
+            <Label className="text-xs">{t("messaging.templates.design.footerText")}</Label>
             <Input
               value={value.footerText}
               onChange={(e) => update("footerText", e.target.value)}
@@ -206,4 +197,3 @@ export function DesignVariablesPanel({ value, onChange }: DesignVariablesPanelPr
 }
 
 export default DesignVariablesPanel;
-

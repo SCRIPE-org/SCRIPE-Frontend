@@ -5,6 +5,9 @@ import { useI18n } from "@core/providers/i18n-provider";
 import { ConfirmationDialog } from "@core/ui/confirmation-dialog";
 import type { OptionSetVersion } from "../../domain/entities/OptionSetVersion";
 
+/**
+ * Documentation for module export
+ */
 export interface OptionSetPublishDialogProps {
   pendingPublish: OptionSetVersion | null;
   currentPublishedVersionNumber: number | null | undefined;
@@ -13,6 +16,9 @@ export interface OptionSetPublishDialogProps {
   onOpenChange: (open: boolean) => void;
 }
 
+/**
+ * Documentation for OptionSetPublishDialog
+ */
 export function OptionSetPublishDialog({
   pendingPublish,
   currentPublishedVersionNumber,

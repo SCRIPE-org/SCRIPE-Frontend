@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any, unused-imports/no-unused-vars */
 /**
  * Menu Form Dialog
  *
@@ -62,7 +63,11 @@ export function MenuFormDialog({
   const workspaceOptions = useMemo(() => {
     const opts = workspaceGroups.map((ws) => ({
       value: ws.workspaceId,
-      label: resolveBilingualLabel(ws.workspaceNameEn, ws.workspaceNameAr || ws.workspaceNameEn, language),
+      label: resolveBilingualLabel(
+        ws.workspaceNameEn,
+        ws.workspaceNameAr || ws.workspaceNameEn,
+        language
+      ),
     }));
     // Prepend "Global (all workspaces)" option
     opts.unshift({

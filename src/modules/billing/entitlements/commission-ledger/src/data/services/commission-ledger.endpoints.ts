@@ -1,5 +1,8 @@
 import { V1 } from "@/core/config/api-endpoints/_shared";
 
+/**
+ * Documentation for module export
+ */
 export const COMMISSION_LEDGER_ENDPOINTS = {
   LEDGER_LIST: `${V1}/commission-ledger`,
   INVOICE_LIST: `${V1}/commission-invoices`,

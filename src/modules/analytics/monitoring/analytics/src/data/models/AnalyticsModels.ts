@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /**
  * Analytics Raw DTO Models
  *
@@ -20,17 +21,26 @@ export interface AnalyticsSummaryDto {
   trialSubscriptions: number;
 }
 
+/**
+ * DistributionDataDto
+ */
 export interface DistributionDataDto {
   eventType: string;
   count: number;
 }
 
+/**
+ * ComparisonDataPointDto
+ */
 export interface ComparisonDataPointDto {
   date: string;
   successCount: number;
   failedCount: number;
 }
 
+/**
+ * TenantListItemDto
+ */
 export interface TenantListItemDto {
   id: string;
   name: string;
@@ -50,6 +60,9 @@ export interface TenantListItemDto {
   isSuspended: boolean;
 }
 
+/**
+ * TenantListResponseDto
+ */
 export interface TenantListResponseDto {
   items: TenantListItemDto[];
   totalCount: number;
@@ -57,17 +70,26 @@ export interface TenantListResponseDto {
   pageSize?: number;
 }
 
+/**
+ * RevenueByEditionDto
+ */
 export interface RevenueByEditionDto {
   editionName: string;
   amountUsd: number;
   subscriptionCount: number;
 }
 
+/**
+ * SubscriptionStatusCountDto
+ */
 export interface SubscriptionStatusCountDto {
   status: string;
   count: number;
 }
 
+/**
+ * SubscriptionDashboardDto
+ */
 export interface SubscriptionDashboardDto {
   totalMrrUsd: number;
   totalArrUsd: number;
@@ -82,6 +104,9 @@ export interface SubscriptionDashboardDto {
   churnRate30d?: number;
 }
 
+/**
+ * FeatureItemDto
+ */
 export interface FeatureItemDto {
   id: string;
   name: string;
@@ -98,11 +123,17 @@ export interface FeatureItemDto {
   createdAt: string;
 }
 
+/**
+ * FeatureCategoryDto
+ */
 export interface FeatureCategoryDto {
   category: string;
   features: FeatureItemDto[];
 }
 
+/**
+ * FeatureModuleDto
+ */
 export interface FeatureModuleDto {
   module: string;
   categories: FeatureCategoryDto[];

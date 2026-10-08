@@ -145,4 +145,3 @@ describe("PlatformHealthMapper", () => {
     expect(entity.incidents[0].id).toBe("inc-1");
   });
 });
-

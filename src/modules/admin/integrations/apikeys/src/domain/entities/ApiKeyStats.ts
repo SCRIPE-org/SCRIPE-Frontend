@@ -1,3 +1,6 @@
+/**
+ * Documentation for module export
+ */
 export interface ApiKeyStatsData {
   totalHits: number;
   totalSuccessHits: number;
@@ -15,6 +18,9 @@ export interface ApiKeyStatsData {
   rateLimitUsedPercent: number;
 }
 
+/**
+ * Documentation for module export
+ */
 export class ApiKeyStats {
   constructor(private readonly data: ApiKeyStatsData) {}
 

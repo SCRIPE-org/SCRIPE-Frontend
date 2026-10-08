@@ -21,6 +21,9 @@ import {
   UNKNOWN_ENTITY_TYPE_ERROR_CODE,
 } from "../../data/models/DefinitionExportModel";
 
+/**
+ * Documentation for module export
+ */
 export class DefinitionExportError extends Error {
   /** HTTP status from the `ErrorResponse` body; 0 when the failure carried no body. */
   readonly statusCode: number;

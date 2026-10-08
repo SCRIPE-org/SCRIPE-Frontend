@@ -3,7 +3,10 @@
 import { useMemo } from "react";
 import { COUNTRIES_DATA } from "../data/worldMapData";
 import { RegionNodeInfo, EnrichedCountryData } from "./types";
-import type { DashboardSummary, RecentChange } from "@modules/monitoring/dashboard/src/domain/entities/DashboardEntities";
+import type {
+  DashboardSummary,
+  RecentChange,
+} from "@modules/monitoring/dashboard/src/domain/entities/DashboardEntities";
 
 export function useMapData(
   regionNodes: RegionNodeInfo[] = [],
@@ -35,7 +38,8 @@ export function useMapData(
       }
 
       const ratio = totalTenants > 0 ? node.tenantCount / totalTenants : 1;
-      const requests = Math.round(totalLogins * ratio) || (node.isHost ? Math.max(1, totalLogins) : 0);
+      const requests =
+        Math.round(totalLogins * ratio) || (node.isHost ? Math.max(1, totalLogins) : 0);
       const signins = Math.round(totalLogins * ratio);
       const events = Math.round(totalEvents * ratio);
       const errors = Math.round(totalErrors * ratio);
@@ -58,7 +62,7 @@ export function useMapData(
   const activeCountries = useMemo(() => {
     return enrichedCountries
       .filter((c) => c.isHost || c.isTenantRegion)
-      .sort((a, b) => (b.tenantCount - a.tenantCount) || a.name.localeCompare(b.name));
+      .sort((a, b) => b.tenantCount - a.tenantCount || a.name.localeCompare(b.name));
   }, [enrichedCountries]);
 
   // Sorted countries for focus dropdown
@@ -68,7 +72,16 @@ export function useMapData(
 
   // Compute country styling mapped to Host, Tenant, and Inactive regions
   const countryStyles = useMemo(() => {
-    const map = new Map<string, { fill: string; stroke: string; strokeWidth: number; isHost: boolean; isTenantRegion: boolean }>();
+    const map = new Map<
+      string,
+      {
+        fill: string;
+        stroke: string;
+        strokeWidth: number;
+        isHost: boolean;
+        isTenantRegion: boolean;
+      }
+    >();
     enrichedCountries.forEach((p) => {
       if (p.isHost) {
         map.set(p.name, {

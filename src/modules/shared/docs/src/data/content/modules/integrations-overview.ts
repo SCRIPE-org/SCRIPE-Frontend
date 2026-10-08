@@ -105,10 +105,18 @@ const sections: DocSection[] = [
     direction: "vertical",
     nodes: [
       { id: "A", label: "External Client sends request with 'X-API-Key' header", type: "default" },
-      { id: "B", label: "Extract Key Prefix & look up active record in memory cache", type: "info" },
+      {
+        id: "B",
+        label: "Extract Key Prefix & look up active record in memory cache",
+        type: "info",
+      },
       { id: "C", label: "Validate SHA-256 secret hash in constant time", type: "primary" },
       { id: "D", label: "Enforce IP whitelist filter (CIDR blocks)", type: "warning" },
-      { id: "E", label: "Verify token bucket rate limiter (Redis distributed counter)", type: "warning" },
+      {
+        id: "E",
+        label: "Verify token bucket rate limiter (Redis distributed counter)",
+        type: "warning",
+      },
       { id: "F", label: "Assert required scope permissions for targeted route", type: "info" },
       { id: "G", label: "Asynchronously record telemetry into ApiKeyUsageLog", type: "success" },
     ],
@@ -179,10 +187,6 @@ registerPage({
   category: "modules",
   order: 2.39,
   sections,
-  relatedSlugs: [
-    "infrastructure/integrations",
-    "modules/webhooks",
-    "security/api-security",
-  ],
+  relatedSlugs: ["infrastructure/integrations", "modules/webhooks", "security/api-security"],
   lastUpdated: "2026-10-03",
 });

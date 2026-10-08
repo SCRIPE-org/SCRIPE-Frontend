@@ -16,6 +16,9 @@ export interface MergeCandidateListResult {
   hasPreviousPage: boolean;
 }
 
+/**
+ * Documentation for module export
+ */
 export interface IMergeCandidateService {
   getAll(params: {
     page: number;

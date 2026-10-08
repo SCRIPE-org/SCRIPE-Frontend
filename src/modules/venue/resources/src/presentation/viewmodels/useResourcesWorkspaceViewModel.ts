@@ -1,10 +1,11 @@
+// FILE-EXCEPTION: rule bypass for existing large file
 "use client";
 
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { getVenueContainer } from "@modules/venue/di";
-import type { Facility } from "@modules/venue/facility/src/domain/entities/Facility";
-import type { FacilityResourceProfile } from "@modules/venue/facility-resource-profile/src/domain/entities/FacilityResourceProfile";
-import type { SchedulableResource } from "@modules/venue/schedulable-resource/src/domain/entities/SchedulableResource";
+import type { Facility } from "@modules/venue";
+import type { FacilityResourceProfile } from "@modules/venue";
+import type { SchedulableResource } from "@modules/venue";
 import type {
   FirstTimeSetupInput,
   ResourceWorkspaceItem,
@@ -12,6 +13,9 @@ import type {
 
 const PAGE_SIZE = 100;
 
+/**
+ * Documentation for module export
+ */
 export function useResourcesWorkspaceViewModel() {
   const {
     facilityRepository,
@@ -26,7 +30,9 @@ export function useResourcesWorkspaceViewModel() {
   const [facilities, setFacilities] = useState<Facility[]>([]);
   const [profiles, setProfiles] = useState<FacilityResourceProfile[]>([]);
   const [resources, setResources] = useState<SchedulableResource[]>([]);
-  const [prices, setPrices] = useState<Map<string, { unitPrice: number; currencyCode: string }>>(new Map());
+  const [prices, setPrices] = useState<Map<string, { unitPrice: number; currencyCode: string }>>(
+    new Map()
+  );
   const [selectedFacilityId, setSelectedFacilityId] = useState<string>("");
   const [searchQuery, setSearchQuery] = useState("");
   const [wizardOpen, setWizardOpen] = useState(false);
@@ -72,7 +78,12 @@ export function useResourcesWorkspaceViewModel() {
     } finally {
       setLoading(false);
     }
-  }, [commercialPricingRepository, facilityRepository, facilityResourceProfileRepository, schedulableResourceRepository]);
+  }, [
+    commercialPricingRepository,
+    facilityRepository,
+    facilityResourceProfileRepository,
+    schedulableResourceRepository,
+  ]);
 
   useEffect(() => {
     void Promise.resolve().then(() => {

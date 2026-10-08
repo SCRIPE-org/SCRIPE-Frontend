@@ -17,6 +17,9 @@ import type { IStaffCompetencyService } from "../../domain/interfaces/IStaffComp
 import type { StaffCompetency } from "../../domain/entities/StaffCompetency";
 import { StaffCompetencyMapper } from "../mappers/StaffCompetencyMapper";
 
+/**
+ * Documentation for module export
+ */
 export class StaffCompetencyRepository implements IStaffCompetencyRepository {
   constructor(private readonly service: IStaffCompetencyService) {}
 

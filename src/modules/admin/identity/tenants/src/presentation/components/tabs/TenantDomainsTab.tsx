@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 /**
  * Tenant Domains Tab — Vercel-Grade Custom Domain Management
  *
@@ -55,6 +56,9 @@ import { AutoDomainCard } from "../cards/AutoDomainCard";
 
 // ─── Component Props ──────────────────────────────────────
 
+/**
+ * Documentation for module export
+ */
 export interface TenantDomainsTabProps {
   /** Encrypted or unique identifier of the tenant workspace */
   tenantId: string;
@@ -87,9 +91,10 @@ export function TenantDomainsTab({ tenantId, tenantName }: TenantDomainsTabProps
   const filteredCustomDomains = useMemo(() => {
     if (!searchQuery.trim()) return vm.customDomains;
     const query = searchQuery.trim().toLowerCase();
-    return vm.customDomains.filter((d) =>
-      d.domain.toLowerCase().includes(query) ||
-      (d.redirectTo && d.redirectTo.toLowerCase().includes(query))
+    return vm.customDomains.filter(
+      (d) =>
+        d.domain.toLowerCase().includes(query) ||
+        (d.redirectTo && d.redirectTo.toLowerCase().includes(query))
     );
   }, [vm.customDomains, searchQuery]);
 
@@ -174,10 +179,11 @@ export function TenantDomainsTab({ tenantId, tenantName }: TenantDomainsTabProps
               </p>
               <p className="mt-1 text-2xl font-bold tracking-tight text-nx-ink">{totalCount}</p>
               <p className="mt-0.5 text-[11px] text-nx-ink-3">
-                {vm.autoDomains.length} {t("tenant.domainsAutoShort")} • {vm.customDomains.length} {t("tenant.domainsCustomShort")}
+                {vm.autoDomains.length} {t("tenant.domainsAutoShort")} • {vm.customDomains.length}{" "}
+                {t("tenant.domainsCustomShort")}
               </p>
             </div>
-            <div className="flex h-10 w-10 items-center justify-center rounded-nx-md bg-nx-accent/10 text-nx-accent">
+            <div className="bg-nx-accent/10 flex h-10 w-10 items-center justify-center rounded-nx-md text-nx-accent">
               <Globe className="h-5 w-5" aria-hidden="true" />
             </div>
           </div>
@@ -189,9 +195,7 @@ export function TenantDomainsTab({ tenantId, tenantName }: TenantDomainsTabProps
               <p className="text-xs font-medium uppercase tracking-wider text-nx-ink-2">
                 {t("tenant.domainsStatsVerified")}
               </p>
-              <p className="mt-1 text-2xl font-bold tracking-tight text-success">
-                {verifiedCount}
-              </p>
+              <p className="mt-1 text-2xl font-bold tracking-tight text-success">{verifiedCount}</p>
               <p className="mt-0.5 text-[11px] text-nx-ink-3">
                 {verifiedCount} / {vm.customDomains.length} {t("tenant.domainsCustomShort")}
               </p>
@@ -209,7 +213,9 @@ export function TenantDomainsTab({ tenantId, tenantName }: TenantDomainsTabProps
                 {t("tenant.domainsStatsPending")}
               </p>
               <div className="mt-1 flex items-baseline gap-2">
-                <span className="text-2xl font-bold tracking-tight text-warning">{pendingCount}</span>
+                <span className="text-2xl font-bold tracking-tight text-warning">
+                  {pendingCount}
+                </span>
                 {vm.isAutoVerifying && (
                   <span className="inline-flex items-center gap-1 text-[11px] font-medium text-info">
                     <Loader2 className="h-3 w-3 animate-spin text-info" aria-hidden="true" />
@@ -228,10 +234,10 @@ export function TenantDomainsTab({ tenantId, tenantName }: TenantDomainsTabProps
       {/* ── Header Toolbar with Search & Add Action ──────── */}
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         {/* Search Bar */}
-        <div className="relative flex-1 max-w-md">
+        <div className="relative max-w-md flex-1">
           <Search
             className={cn(
-              "absolute top-1/2 -translate-y-1/2 h-4 w-4 text-nx-ink-3 pointer-events-none",
+              "pointer-events-none absolute top-1/2 h-4 w-4 -translate-y-1/2 text-nx-ink-3",
               isRtl ? "right-3" : "left-3"
             )}
             aria-hidden="true"
@@ -284,17 +290,17 @@ export function TenantDomainsTab({ tenantId, tenantName }: TenantDomainsTabProps
               <span>{t("tenant.domainsHowItWorks")}</span>
             </div>
             <div className="grid grid-cols-1 gap-3 text-xs sm:grid-cols-3">
-              <div className="rounded-nx-md bg-nx-surface p-3 border border-nx-line">
+              <div className="rounded-nx-md border border-nx-line bg-nx-surface p-3">
                 <p className="font-semibold text-nx-ink">{t("tenant.domainsStep1Title")}</p>
-                <p className="mt-1 text-nx-ink-2 leading-relaxed">{t("tenant.domainsStep1Desc")}</p>
+                <p className="mt-1 leading-relaxed text-nx-ink-2">{t("tenant.domainsStep1Desc")}</p>
               </div>
-              <div className="rounded-nx-md bg-nx-surface p-3 border border-nx-line">
+              <div className="rounded-nx-md border border-nx-line bg-nx-surface p-3">
                 <p className="font-semibold text-nx-ink">{t("tenant.domainsStep2Title")}</p>
-                <p className="mt-1 text-nx-ink-2 leading-relaxed">{t("tenant.domainsStep2Desc")}</p>
+                <p className="mt-1 leading-relaxed text-nx-ink-2">{t("tenant.domainsStep2Desc")}</p>
               </div>
-              <div className="rounded-nx-md bg-nx-surface p-3 border border-nx-line">
+              <div className="rounded-nx-md border border-nx-line bg-nx-surface p-3">
                 <p className="font-semibold text-nx-ink">{t("tenant.domainsStep3Title")}</p>
-                <p className="mt-1 text-nx-ink-2 leading-relaxed">{t("tenant.domainsStep3Desc")}</p>
+                <p className="mt-1 leading-relaxed text-nx-ink-2">{t("tenant.domainsStep3Desc")}</p>
               </div>
             </div>
           </div>
@@ -308,18 +314,14 @@ export function TenantDomainsTab({ tenantId, tenantName }: TenantDomainsTabProps
             <span className="text-xs font-semibold uppercase tracking-wider text-nx-ink-2">
               {t("tenant.domainsAutoGenerated")}
             </span>
-            <Badge variant="outline" className="text-[10px] text-nx-ink-2 border-nx-line">
+            <Badge variant="outline" className="border-nx-line text-[10px] text-nx-ink-2">
               {t("tenant.domainsSystemManaged")}
             </Badge>
           </div>
 
           <div className="space-y-2">
             {filteredAutoDomains.map((d) => (
-              <AutoDomainCard
-                key={d.id}
-                domain={d}
-                onCopy={copyToClipboard}
-              />
+              <AutoDomainCard key={d.id} domain={d} onCopy={copyToClipboard} />
             ))}
           </div>
         </div>

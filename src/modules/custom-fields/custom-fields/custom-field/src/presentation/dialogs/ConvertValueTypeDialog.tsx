@@ -19,13 +19,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@core/ui/dialog";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@core/ui/select";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@core/ui/select";
 import { useI18n } from "@core/providers/i18n-provider";
 import { toast } from "@core/hooks/use-enhanced-toast";
 import type {
@@ -37,6 +31,9 @@ import { classifyValueTypeConversion } from "../../domain/valueTypeConversion";
 import { ConvertValueTypePreview } from "./ConvertValueTypePreview";
 import { ConvertValueTypeResultView } from "./ConvertValueTypeResultView";
 
+/**
+ * Documentation for module export
+ */
 export interface ConvertValueTypeDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
@@ -61,6 +58,9 @@ export interface ConvertValueTypeDialogProps {
   lastRollbackResult: RollbackFieldTypeChangeResult | null;
 }
 
+/**
+ * Documentation for ConvertValueTypeDialog
+ */
 export const ConvertValueTypeDialog = React.memo(function ConvertValueTypeDialog({
   open,
   onOpenChange,
@@ -97,20 +97,20 @@ export const ConvertValueTypeDialog = React.memo(function ConvertValueTypeDialog
             <RefreshCcw className="h-5 w-5 text-primary" />
             {t("customField.convertValueType.title", { field: fieldLabel })}
           </DialogTitle>
-          <DialogDescription>
-            {t("customField.convertValueType.description")}
-          </DialogDescription>
+          <DialogDescription>{t("customField.convertValueType.description")}</DialogDescription>
         </DialogHeader>
 
         <div className="space-y-4 py-2">
           {/* Field Metadata & Current Type */}
           <div className="flex items-center justify-between rounded-md border border-nx-line bg-card p-3">
             <div className="space-y-0.5">
-              <span className="text-xs font-semibold text-nx-ink-4">{fieldKey}</span>
+              <span className="text-nx-ink-4 text-xs font-semibold">{fieldKey}</span>
               <h4 className="text-sm font-medium text-nx-ink">{fieldLabel}</h4>
             </div>
             <div className="flex items-center gap-1.5">
-              <span className="text-xs text-nx-ink-3">{t("customField.convertValueType.currentType")}:</span>
+              <span className="text-xs text-nx-ink-3">
+                {t("customField.convertValueType.currentType")}:
+              </span>
               <Badge variant="outline" className="font-mono text-xs">
                 {currentType}
               </Badge>
@@ -119,7 +119,10 @@ export const ConvertValueTypeDialog = React.memo(function ConvertValueTypeDialog
 
           {/* Target Type Selector */}
           <div className="space-y-1.5">
-            <Label htmlFor="convert-target-type-select" className="text-xs font-medium text-nx-ink-2">
+            <Label
+              htmlFor="convert-target-type-select"
+              className="text-xs font-medium text-nx-ink-2"
+            >
               {t("customField.convertValueType.selectTargetType")}
             </Label>
             <Select
@@ -127,7 +130,11 @@ export const ConvertValueTypeDialog = React.memo(function ConvertValueTypeDialog
               onValueChange={onSelectTargetType}
               disabled={isConverting || isRollingBack || Boolean(lastResult?.applied)}
             >
-              <SelectTrigger id="convert-target-type-select" aria-label={t("customField.convertValueType.selectTargetType")} className="h-9">
+              <SelectTrigger
+                id="convert-target-type-select"
+                aria-label={t("customField.convertValueType.selectTargetType")}
+                className="h-9"
+              >
                 <SelectValue placeholder={t("customField.convertValueType.selectPlaceholder")} />
               </SelectTrigger>
               <SelectContent>
@@ -135,9 +142,9 @@ export const ConvertValueTypeDialog = React.memo(function ConvertValueTypeDialog
                   const kind = classifyValueTypeConversion(currentType, type);
                   return (
                     <SelectItem key={type} value={type}>
-                      <div className="flex items-center justify-between gap-4 w-full">
+                      <div className="flex w-full items-center justify-between gap-4">
                         <span>{type}</span>
-                        <span className="text-xs text-nx-ink-4">
+                        <span className="text-nx-ink-4 text-xs">
                           ({t(`customField.convertValueType.kind.${kind.toLowerCase()}`)})
                         </span>
                       </div>

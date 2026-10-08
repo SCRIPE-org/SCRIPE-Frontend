@@ -1,7 +1,14 @@
 "use client";
 
 import React from "react";
-import { Building2, Users2, UserPlus, AlertTriangle, ArrowUpRight, ArrowDownRight } from "lucide-react";
+import {
+  Building2,
+  Users2,
+  UserPlus,
+  AlertTriangle,
+  ArrowUpRight,
+  ArrowDownRight,
+} from "lucide-react";
 import { Card, CardContent } from "@core/ui/card";
 import { useI18n } from "@core/providers/i18n-provider";
 
@@ -24,11 +31,10 @@ interface TenantAnalyticsKpisProps {
   timeRangeLabel: string;
 }
 
-export function TenantAnalyticsKpis({
-  kpis,
-  isLoading,
-  timeRangeLabel,
-}: TenantAnalyticsKpisProps) {
+/**
+ * TenantAnalyticsKpis
+ */
+export function TenantAnalyticsKpis({ kpis, isLoading, timeRangeLabel }: TenantAnalyticsKpisProps) {
   const { t } = useI18n();
 
   if (isLoading) {
@@ -37,7 +43,7 @@ export function TenantAnalyticsKpis({
         {[...Array(4)].map((_, i) => (
           <div
             key={i}
-            className="h-28 rounded-xl border border-border/70 bg-card/60 p-4 animate-pulse"
+            className="h-28 animate-pulse rounded-xl border border-border/70 bg-card/60 p-4"
           />
         ))}
       </div>
@@ -47,7 +53,7 @@ export function TenantAnalyticsKpis({
   return (
     <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
       {/* 1. Total Tenants */}
-      <Card className="border-border/80 bg-card/80 backdrop-blur-xs shadow-xs hover:border-border transition-colors">
+      <Card className="backdrop-blur-xs shadow-xs border-border/80 bg-card/80 transition-colors hover:border-border">
         <CardContent className="p-4 sm:p-5">
           <div className="flex items-start justify-between">
             <div className="flex h-10 w-10 items-center justify-center rounded-lg border border-border/80 bg-background/80 text-primary">
@@ -55,17 +61,16 @@ export function TenantAnalyticsKpis({
             </div>
             {kpis.newTenants > 0 && (
               <span className="inline-flex items-center gap-1 rounded-md bg-primary/10 px-2 py-0.5 text-[11px] font-bold text-primary">
-                <ArrowUpRight className="h-3 w-3" />
-                +{kpis.newTenants}
+                <ArrowUpRight className="h-3 w-3" />+{kpis.newTenants}
               </span>
             )}
           </div>
           <div className="mt-3">
-            <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
+            <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
               {t("tenantAnalytics.kpis.totalTenants") || "Total Tenants"}
             </p>
             <div className="mt-1 flex items-baseline justify-between">
-              <span className="text-2xl sm:text-3xl font-black tracking-tight text-foreground">
+              <span className="text-2xl font-black tracking-tight text-foreground sm:text-3xl">
                 {kpis.totalTenants}
               </span>
               <span className="text-[11px] text-muted-foreground">
@@ -77,7 +82,7 @@ export function TenantAnalyticsKpis({
       </Card>
 
       {/* 2. Active Tenants */}
-      <Card className="border-border/80 bg-card/80 backdrop-blur-xs shadow-xs hover:border-border transition-colors">
+      <Card className="backdrop-blur-xs shadow-xs border-border/80 bg-card/80 transition-colors hover:border-border">
         <CardContent className="p-4 sm:p-5">
           <div className="flex items-start justify-between">
             <div className="flex h-10 w-10 items-center justify-center rounded-lg border border-emerald-500/20 bg-emerald-500/10 text-emerald-500">
@@ -88,11 +93,11 @@ export function TenantAnalyticsKpis({
             </span>
           </div>
           <div className="mt-3">
-            <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
+            <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
               {t("tenantAnalytics.kpis.activeTenants") || "Active Tenants"}
             </p>
             <div className="mt-1 flex items-baseline justify-between">
-              <span className="text-2xl sm:text-3xl font-black tracking-tight text-foreground">
+              <span className="text-2xl font-black tracking-tight text-foreground sm:text-3xl">
                 {kpis.activeTenants}
               </span>
               <span className="text-[11px] text-muted-foreground">
@@ -104,7 +109,7 @@ export function TenantAnalyticsKpis({
       </Card>
 
       {/* 3. New Tenants */}
-      <Card className="border-border/80 bg-card/80 backdrop-blur-xs shadow-xs hover:border-border transition-colors">
+      <Card className="backdrop-blur-xs shadow-xs border-border/80 bg-card/80 transition-colors hover:border-border">
         <CardContent className="p-4 sm:p-5">
           <div className="flex items-start justify-between">
             <div className="flex h-10 w-10 items-center justify-center rounded-lg border border-info/20 bg-info/10 text-info">
@@ -123,16 +128,18 @@ export function TenantAnalyticsKpis({
                 ) : (
                   <ArrowDownRight className="h-3 w-3" />
                 )}
-                {kpis.newGrowthPercent >= 0 ? `+${kpis.newGrowthPercent}%` : `${kpis.newGrowthPercent}%`}
+                {kpis.newGrowthPercent >= 0
+                  ? `+${kpis.newGrowthPercent}%`
+                  : `${kpis.newGrowthPercent}%`}
               </span>
             )}
           </div>
           <div className="mt-3">
-            <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
+            <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
               {t("tenantAnalytics.kpis.newTenants") || "New Tenants"}
             </p>
             <div className="mt-1 flex items-baseline justify-between">
-              <span className="text-2xl sm:text-3xl font-black tracking-tight text-foreground">
+              <span className="text-2xl font-black tracking-tight text-foreground sm:text-3xl">
                 {kpis.newTenants}
               </span>
               <span className="text-[11px] text-muted-foreground">
@@ -144,7 +151,7 @@ export function TenantAnalyticsKpis({
       </Card>
 
       {/* 4. Suspended / Churned */}
-      <Card className="border-border/80 bg-card/80 backdrop-blur-xs shadow-xs hover:border-border transition-colors">
+      <Card className="backdrop-blur-xs shadow-xs border-border/80 bg-card/80 transition-colors hover:border-border">
         <CardContent className="p-4 sm:p-5">
           <div className="flex items-start justify-between">
             <div className="flex h-10 w-10 items-center justify-center rounded-lg border border-amber-500/20 bg-amber-500/10 text-amber-500">
@@ -155,11 +162,11 @@ export function TenantAnalyticsKpis({
             </span>
           </div>
           <div className="mt-3">
-            <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
+            <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
               {t("tenantAnalytics.kpis.suspendedChurned") || "Suspended / Churned"}
             </p>
             <div className="mt-1 flex items-baseline justify-between">
-              <span className="text-2xl sm:text-3xl font-black tracking-tight text-foreground">
+              <span className="text-2xl font-black tracking-tight text-foreground sm:text-3xl">
                 {kpis.suspendedTenants}
               </span>
               <span className="text-[11px] text-muted-foreground">

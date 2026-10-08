@@ -7,7 +7,15 @@ export const metadata: Metadata = {
   description: "Operational reservation detail.",
 };
 
-export default async function BookingDetailPage({ params }: { params: Promise<{ reservationId: string }> }) {
+export default async function BookingDetailPage({
+  params,
+}: {
+  params: Promise<{ reservationId: string }>;
+}) {
   const { reservationId } = await params;
-  return <ModuleErrorBoundary moduleName="booking360.eyebrow"><Booking360View reservationId={reservationId} /></ModuleErrorBoundary>;
+  return (
+    <ModuleErrorBoundary moduleName="booking360.eyebrow">
+      <Booking360View reservationId={reservationId} />
+    </ModuleErrorBoundary>
+  );
 }

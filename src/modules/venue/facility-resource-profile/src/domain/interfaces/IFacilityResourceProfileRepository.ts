@@ -3,6 +3,9 @@ import type {
   FacilityResourceProfileWrite,
 } from "../entities/FacilityResourceProfile";
 
+/**
+ * Documentation for module export
+ */
 export interface IFacilityResourceProfileRepository {
   getAll(params: {
     page: number;

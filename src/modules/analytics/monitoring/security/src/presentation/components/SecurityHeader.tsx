@@ -2,13 +2,7 @@
 
 import React from "react";
 import Link from "next/link";
-import {
-  Calendar,
-  FileDown,
-  RotateCw,
-  ScrollText,
-  Settings2,
-} from "lucide-react";
+import { Calendar, FileDown, RotateCw, ScrollText, Settings2 } from "lucide-react";
 import { useI18n } from "@core/providers/i18n-provider";
 import { Button } from "@core/ui/button";
 import {
@@ -30,6 +24,9 @@ interface SecurityHeaderProps {
   onOpenStudio?: () => void;
 }
 
+/**
+ * SecurityHeader
+ */
 export function SecurityHeader({
   timeRange,
   setTimeRange,
@@ -57,8 +54,7 @@ export function SecurityHeader({
     },
   ];
 
-  const currentRangeLabel =
-    ranges.find((r) => r.key === timeRange)?.label ?? ranges[1].label;
+  const currentRangeLabel = ranges.find((r) => r.key === timeRange)?.label ?? ranges[1].label;
 
   const isHealthy = status === "healthy";
   const isWarning = status === "warning";
@@ -71,10 +67,10 @@ export function SecurityHeader({
             {t("security.eyebrow") || "MONITORING"}
           </p>
         </div>
-        <h1 className="mt-1 text-2xl sm:text-3xl font-extrabold tracking-tight text-foreground leading-tight">
+        <h1 className="mt-1 text-2xl font-extrabold leading-tight tracking-tight text-foreground sm:text-3xl">
           {t("security.title") || "Security"}
         </h1>
-        <p className="mt-1 max-w-2xl text-xs sm:text-sm text-muted-foreground">
+        <p className="mt-1 max-w-2xl text-xs text-muted-foreground sm:text-sm">
           {t("security.subtitle") ||
             "Monitor authentication posture, active access, and security activity across the SCRIPE platform."}
         </p>
@@ -83,14 +79,14 @@ export function SecurityHeader({
       {/* Header Right Actions */}
       <div className="flex flex-wrap items-center gap-2">
         {/* Operational State Pill */}
-        <span className="inline-flex items-center gap-2 rounded-lg border border-border bg-card px-3 py-1.5 text-xs font-medium shadow-xs">
+        <span className="shadow-xs inline-flex items-center gap-2 rounded-lg border border-border bg-card px-3 py-1.5 text-xs font-medium">
           <span
             className={`h-2 w-2 rounded-full ${
               isHealthy
                 ? "bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.7)]"
                 : isWarning
-                ? "bg-amber-500 shadow-[0_0_8px_rgba(245,158,11,0.7)]"
-                : "bg-rose-500 shadow-[0_0_8px_rgba(244,63,94,0.7)]"
+                  ? "bg-amber-500 shadow-[0_0_8px_rgba(245,158,11,0.7)]"
+                  : "bg-rose-500 shadow-[0_0_8px_rgba(244,63,94,0.7)]"
             }`}
             aria-hidden="true"
           />
@@ -103,7 +99,7 @@ export function SecurityHeader({
             <Button
               variant="outline"
               size="sm"
-              className="h-8.5 px-3 text-xs font-semibold gap-2 border-border bg-card hover:bg-accent text-foreground shadow-xs cursor-pointer"
+              className="h-8.5 shadow-xs cursor-pointer gap-2 border-border bg-card px-3 text-xs font-semibold text-foreground hover:bg-accent"
             >
               <Calendar className="h-3.5 w-3.5 text-muted-foreground" />
               <span>{currentRangeLabel}</span>
@@ -114,7 +110,7 @@ export function SecurityHeader({
               <DropdownMenuItem
                 key={range.key}
                 onClick={() => setTimeRange(range.key)}
-                className={`text-xs cursor-pointer ${
+                className={`cursor-pointer text-xs ${
                   timeRange === range.key ? "font-semibold text-primary" : ""
                 }`}
               >
@@ -131,7 +127,7 @@ export function SecurityHeader({
           size="sm"
           onClick={onRefresh}
           disabled={isRefetching}
-          className="h-8.5 px-3 text-xs font-semibold gap-1.5 border-border bg-card hover:bg-accent text-foreground shadow-xs cursor-pointer"
+          className="h-8.5 shadow-xs cursor-pointer gap-1.5 border-border bg-card px-3 text-xs font-semibold text-foreground hover:bg-accent"
         >
           <RotateCw className={`h-3.5 w-3.5 ${isRefetching ? "animate-spin text-primary" : ""}`} />
           <span className="hidden sm:inline">
@@ -147,7 +143,7 @@ export function SecurityHeader({
           variant="outline"
           size="sm"
           asChild
-          className="h-8.5 px-3 text-xs font-semibold gap-1.5 border-border bg-card hover:bg-accent text-foreground shadow-xs"
+          className="h-8.5 shadow-xs gap-1.5 border-border bg-card px-3 text-xs font-semibold text-foreground hover:bg-accent"
         >
           <Link href="/audit" title="Open authoritative Audit Log console">
             <ScrollText className="h-3.5 w-3.5 text-muted-foreground" />
@@ -161,7 +157,7 @@ export function SecurityHeader({
           variant="outline"
           size="sm"
           onClick={onOpenExport}
-          className="h-8.5 px-3 text-xs font-semibold gap-1.5 border-border bg-card hover:bg-accent text-foreground shadow-xs cursor-pointer"
+          className="h-8.5 shadow-xs cursor-pointer gap-1.5 border-border bg-card px-3 text-xs font-semibold text-foreground hover:bg-accent"
         >
           <FileDown className="h-3.5 w-3.5 text-muted-foreground" />
           <span className="hidden sm:inline">{t("security.export") || "Export"}</span>
@@ -174,7 +170,7 @@ export function SecurityHeader({
             variant="outline"
             size="sm"
             onClick={onOpenStudio}
-            className="h-8.5 px-2.5 text-xs border-border bg-card hover:bg-accent text-muted-foreground hover:text-foreground shadow-xs cursor-pointer"
+            className="h-8.5 shadow-xs cursor-pointer border-border bg-card px-2.5 text-xs text-muted-foreground hover:bg-accent hover:text-foreground"
             title="Dashboard Studio"
           >
             <Settings2 className="h-3.5 w-3.5" />

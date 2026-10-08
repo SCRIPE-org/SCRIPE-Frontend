@@ -68,7 +68,7 @@ export function ScopesGrantsSection({
                   variant="ghost"
                   aria-pressed={selected}
                   onClick={() => toggleScope(scope)}
-                  className="h-auto p-0 cursor-pointer rounded-full hover:bg-transparent focus-visible:shadow-nx-focus focus-visible:outline-none"
+                  className="h-auto cursor-pointer rounded-full p-0 hover:bg-transparent focus-visible:shadow-nx-focus focus-visible:outline-none"
                 >
                   <Badge variant={selected ? "info" : "outline"}>{scope}</Badge>
                 </Button>
@@ -97,7 +97,7 @@ export function ScopesGrantsSection({
                   variant="ghost"
                   aria-pressed={selected}
                   onClick={() => toggleGrant(grant)}
-                  className="h-auto p-0 cursor-pointer rounded-full hover:bg-transparent focus-visible:shadow-nx-focus focus-visible:outline-none"
+                  className="h-auto cursor-pointer rounded-full p-0 hover:bg-transparent focus-visible:shadow-nx-focus focus-visible:outline-none"
                 >
                   <Badge variant={selected ? "success" : "outline"}>{grant}</Badge>
                 </Button>

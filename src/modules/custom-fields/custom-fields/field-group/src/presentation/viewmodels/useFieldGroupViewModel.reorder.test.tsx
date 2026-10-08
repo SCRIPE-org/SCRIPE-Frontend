@@ -81,9 +81,7 @@ function setup(groups: FieldGroupJson[]) {
     put,
     delete: vi.fn(),
   };
-  const repository = new FieldGroupRepository(
-    new FieldGroupService(api as unknown as IApiService)
-  );
+  const repository = new FieldGroupRepository(new FieldGroupService(api as unknown as IApiService));
   vi.mocked(getCustomFieldsContainer).mockReturnValue({
     fieldGroupRepository: repository,
     // The hook also fetches entity types through the custom-field repository.

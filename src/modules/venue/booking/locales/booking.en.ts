@@ -37,7 +37,8 @@ export const en = {
     },
     request: {
       title: "Request details",
-      description: "Capture the caller's preferred local date, time, capacity, and resource filters.",
+      description:
+        "Capture the caller's preferred local date, time, capacity, and resource filters.",
       facility: "Facility",
       selectFacility: "Select a facility",
       resource: "Preferred resource",
@@ -50,15 +51,18 @@ export const en = {
       usageType: "Usage type",
       anyResourceKind: "Any resource kind",
       anyUsageType: "Any usage type",
-      timezoneNote: "Times are entered as local wall-clock values. Each resource calendar timezone is authoritative on the server.",
+      timezoneNote:
+        "Times are entered as local wall-clock values. Each resource calendar timezone is authoritative on the server.",
     },
     availability: {
       title: "Find availability",
-      description: "Search published resources matching the request. Search is advisory; Hold performs the final integrity check.",
+      description:
+        "Search published resources matching the request. Search is advisory; Hold performs the final integrity check.",
       action: "Find availability",
       searching: "Checking resources…",
       noAvailability: "No matching resource is currently available.",
-      noAvailabilityDescription: "Adjust the date, time, duration, quantity, or filters and search again.",
+      noAvailabilityDescription:
+        "Adjust the date, time, duration, quantity, or filters and search again.",
       available: "Available",
       unavailable: "Unavailable",
       unavailableGroup: "Unavailable resources",
@@ -66,7 +70,8 @@ export const en = {
       capacity: "Capacity {{remaining}} of {{maximum}} remaining",
       select: "Select resource",
       selected: "Selected",
-      partialFailure: "Some resources could not be checked. The results shown are still current for the resources that responded.",
+      partialFailure:
+        "Some resources could not be checked. The results shown are still current for the resources that responded.",
       networkFailure: "Availability could not be checked. Retry when the connection is available.",
     },
     summary: {
@@ -81,13 +86,16 @@ export const en = {
     },
     quote: {
       calculating: "Calculating the server quote…",
-      calculatingDescription: "The authoritative price is being prepared before a hold can be created.",
+      calculatingDescription:
+        "The authoritative price is being prepared before a hold can be created.",
       unavailable: "A current server quote is required",
-      unavailableDescription: "This booking cannot be held or confirmed until the authoritative quote is available.",
+      unavailableDescription:
+        "This booking cannot be held or confirmed until the authoritative quote is available.",
       total: "Quoted total",
       expires: "Quote expires",
       overrideTitle: "Manual quote adjustment",
-      overrideDescription: "A privileged adjustment is recorded with its reason; the original calculation remains intact.",
+      overrideDescription:
+        "A privileged adjustment is recorded with its reason; the original calculation remains intact.",
       overrideAmount: "Adjustment amount",
       overrideReason: "Override reason",
       overrideAction: "Apply adjustment",
@@ -97,14 +105,17 @@ export const en = {
       action: "Hold this slot",
       holding: "Securing hold…",
       title: "Slot held temporarily",
-      description: "Capacity is reserved until the server expiry time below. Confirm before it expires.",
+      description:
+        "Capacity is reserved until the server expiry time below. Confirm before it expires.",
       expires: "Hold expires {{time}}",
       countdown: "{{minutes}}m {{seconds}}s remaining",
       conflictTitle: "Availability changed",
-      conflictDescription: "The selected slot was just taken or changed. Search availability again.",
+      conflictDescription:
+        "The selected slot was just taken or changed. Search availability again.",
       searchAgain: "Search again",
       expiredTitle: "Hold expired",
-      expiredDescription: "This temporary hold can no longer be confirmed. Search again for current availability.",
+      expiredDescription:
+        "This temporary hold can no longer be confirmed. Search again for current availability.",
     },
     confirm: {
       action: "Confirm booking",
@@ -112,7 +123,8 @@ export const en = {
       title: "Booking confirmed",
       description: "The reservation is confirmed and the temporary hold has been converted.",
       noPermissionTitle: "Confirmation requires another operator",
-      noPermissionDescription: "You can create the hold, but your permissions do not allow confirmation.",
+      noPermissionDescription:
+        "You can create the hold, but your permissions do not allow confirmation.",
       viewBooking: "View booking",
       createAnother: "Create another booking",
     },
@@ -124,7 +136,8 @@ export const en = {
     permission: {
       title: "Booking workspace access required",
       description: "Your effective permissions do not allow the complete search-and-hold workflow.",
-      confirmOnly: "You may hold this booking, but confirmation is delegated to an operator with confirmation permission.",
+      confirmOnly:
+        "You may hold this booking, but confirmation is delegated to an operator with confirmation permission.",
     },
     feature: {
       title: "Venue booking is unavailable",

@@ -111,18 +111,18 @@ export function PlatformServiceHealth({ healthVm }: PlatformServiceHealthProps) 
   }, [healthVm?.health]);
 
   return (
-    <div className="rounded-xl border border-border bg-card shadow-sm overflow-hidden flex flex-col h-[400px]">
+    <div className="flex h-[400px] flex-col overflow-hidden rounded-xl border border-border bg-card shadow-sm">
       {/* Header */}
-      <div className="h-[60px] px-4 py-3 flex items-center justify-between border-b border-border bg-muted/40 shrink-0">
-        <div className="flex items-center gap-2.5 min-w-0">
-          <div className="w-8 h-8 rounded-lg bg-[#84cc16]/10 border border-[#84cc16]/20 text-[#84cc16] flex items-center justify-center shadow-xs shrink-0">
+      <div className="flex h-[60px] shrink-0 items-center justify-between border-b border-border bg-muted/40 px-4 py-3">
+        <div className="flex min-w-0 items-center gap-2.5">
+          <div className="shadow-xs flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border border-[#84cc16]/20 bg-[#84cc16]/10 text-[#84cc16]">
             <Database className="h-4 w-4" />
           </div>
           <div className="min-w-0">
-            <h2 className="text-sm sm:text-base font-bold text-foreground tracking-tight truncate">
+            <h2 className="truncate text-sm font-bold tracking-tight text-foreground sm:text-base">
               {t("platformCommandCenter.serviceHealth.title") || "Platform Services Health"}
             </h2>
-            <p className="text-[11px] text-muted-foreground truncate">
+            <p className="truncate text-[11px] text-muted-foreground">
               {t("platformCommandCenter.serviceHealth.subtitle") ||
                 "Status of core platform services and dependencies."}
             </p>
@@ -131,15 +131,15 @@ export function PlatformServiceHealth({ healthVm }: PlatformServiceHealthProps) 
 
         <Link
           href="/platform-health"
-          className="text-xs font-semibold text-muted-foreground hover:text-primary flex items-center gap-1 transition-colors group shrink-0"
+          className="group flex shrink-0 items-center gap-1 text-xs font-semibold text-muted-foreground transition-colors hover:text-primary"
         >
           <span>{t("platformCommandCenter.serviceHealth.viewAll") || "View All"}</span>
-          <ChevronRight className="h-3.5 w-3.5 group-hover:translate-x-0.5 transition-transform" />
+          <ChevronRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5" />
         </Link>
       </div>
 
       {/* Services List */}
-      <div className="flex-1 p-3 divide-y divide-border/60 overflow-y-auto">
+      <div className="flex-1 divide-y divide-border/60 overflow-y-auto p-3">
         {services.map((svc) => {
           const isHealthy = svc.status === "Healthy";
           const isDegraded = svc.status === "Degraded";
@@ -147,32 +147,37 @@ export function PlatformServiceHealth({ healthVm }: PlatformServiceHealthProps) 
           const dotColor = isHealthy
             ? "bg-emerald-500 shadow-[0_0_6px_rgba(16,185,129,0.7)]"
             : isDegraded
-            ? "bg-amber-500 shadow-[0_0_6px_rgba(245,158,11,0.7)]"
-            : "bg-rose-500 shadow-[0_0_6px_rgba(244,63,94,0.7)]";
+              ? "bg-amber-500 shadow-[0_0_6px_rgba(245,158,11,0.7)]"
+              : "bg-rose-500 shadow-[0_0_6px_rgba(244,63,94,0.7)]";
 
           const statusTextColor = isHealthy
             ? "text-emerald-500"
             : isDegraded
-            ? "text-amber-500"
-            : "text-rose-500";
+              ? "text-amber-500"
+              : "text-rose-500";
 
           const statusLabel = isHealthy
             ? t("platformCommandCenter.serviceHealth.statuses.healthy") || "Healthy"
             : isDegraded
-            ? t("platformCommandCenter.serviceHealth.statuses.degraded") || "Degraded"
-            : t("platformCommandCenter.serviceHealth.statuses.outage") || "Outage";
+              ? t("platformCommandCenter.serviceHealth.statuses.degraded") || "Degraded"
+              : t("platformCommandCenter.serviceHealth.statuses.outage") || "Outage";
 
           return (
-            <div key={svc.id} className="py-2.5 px-2 flex items-center justify-between gap-3 hover:bg-muted/20 rounded-lg transition-colors">
+            <div
+              key={svc.id}
+              className="flex items-center justify-between gap-3 rounded-lg px-2 py-2.5 transition-colors hover:bg-muted/20"
+            >
               {/* Service Name */}
-              <div className="w-[140px] shrink-0 font-medium text-xs text-foreground truncate">
+              <div className="w-[140px] shrink-0 truncate text-xs font-medium text-foreground">
                 {svc.name}
               </div>
 
               {/* Status Badge */}
-              <div className="flex items-center gap-1.5 w-[90px] shrink-0 text-xs">
-                <span className={`w-1.5 h-1.5 rounded-full ${dotColor}`} />
-                <span className={`font-semibold text-[11px] ${statusTextColor}`}>{statusLabel}</span>
+              <div className="flex w-[90px] shrink-0 items-center gap-1.5 text-xs">
+                <span className={`h-1.5 w-1.5 rounded-full ${dotColor}`} />
+                <span className={`text-[11px] font-semibold ${statusTextColor}`}>
+                  {statusLabel}
+                </span>
               </div>
 
               {/* Uptime % */}
@@ -181,11 +186,11 @@ export function PlatformServiceHealth({ healthVm }: PlatformServiceHealthProps) 
               </div>
 
               {/* Mini Sparkline Bar Chart */}
-              <div className="hidden sm:flex items-center gap-0.5 h-4 flex-1 max-w-[90px] justify-center px-1">
+              <div className="hidden h-4 max-w-[90px] flex-1 items-center justify-center gap-0.5 px-1 sm:flex">
                 {svc.historyBars.map((val, idx) => (
                   <span
                     key={`bar-${idx}`}
-                    className={`w-1 rounded-xs transition-all ${
+                    className={`rounded-xs w-1 transition-all ${
                       isDegraded ? "bg-amber-500/80" : "bg-[#84cc16]/75"
                     }`}
                     style={{ height: `${Math.max(2, val * 1.5)}px` }}
@@ -194,7 +199,7 @@ export function PlatformServiceHealth({ healthVm }: PlatformServiceHealthProps) 
               </div>
 
               {/* Latency ms */}
-              <div className="w-[50px] shrink-0 text-end font-mono text-xs text-foreground font-semibold">
+              <div className="w-[50px] shrink-0 text-end font-mono text-xs font-semibold text-foreground">
                 {svc.latencyMs} ms
               </div>
             </div>

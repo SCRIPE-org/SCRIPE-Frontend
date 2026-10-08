@@ -57,7 +57,8 @@ export function useDashboardLayout({
       const rawSettings = localStorage.getItem(STORAGE_KEYS.DASHBOARD_SETTINGS);
       if (rawSettings) {
         const parsed = JSON.parse(rawSettings);
-        const savedLayout = parsed?.dashboardLayouts?.[layoutKey] as DashboardLayoutState | undefined;
+        const savedLayout = parsed?.dashboardLayouts?.[layoutKey] as
+          DashboardLayoutState | undefined;
         if (savedLayout && savedLayout.version === version && Array.isArray(savedLayout.widgets)) {
           // Merge with defaultWidgets in case new widgets were introduced
           const existingIds = new Set(savedLayout.widgets.map((w) => w.id));
@@ -82,8 +83,13 @@ export function useDashboardLayout({
         const rawSettings = localStorage.getItem(STORAGE_KEYS.DASHBOARD_SETTINGS);
         if (rawSettings) {
           const parsed = JSON.parse(rawSettings);
-          const savedLayout = parsed?.dashboardLayouts?.[layoutKey] as DashboardLayoutState | undefined;
-          if (savedLayout && savedLayout.version === version && Array.isArray(savedLayout.widgets)) {
+          const savedLayout = parsed?.dashboardLayouts?.[layoutKey] as
+            DashboardLayoutState | undefined;
+          if (
+            savedLayout &&
+            savedLayout.version === version &&
+            Array.isArray(savedLayout.widgets)
+          ) {
             setLayoutState(savedLayout);
           }
         }
@@ -135,9 +141,7 @@ export function useDashboardLayout({
 
   const toggleWidgetVisibility = useCallback(
     (id: string) => {
-      const updated = widgets.map((w) =>
-        w.id === id ? { ...w, isVisible: !w.isVisible } : w
-      );
+      const updated = widgets.map((w) => (w.id === id ? { ...w, isVisible: !w.isVisible } : w));
       persistLayout(updated);
     },
     [widgets, persistLayout]
@@ -179,9 +183,7 @@ export function useDashboardLayout({
   }, [defaultWidgets, persistLayout]);
 
   const visibleWidgets = useMemo(() => {
-    return [...widgets]
-      .filter((w) => w.isVisible)
-      .sort((a, b) => a.order - b.order);
+    return [...widgets].filter((w) => w.isVisible).sort((a, b) => a.order - b.order);
   }, [widgets]);
 
   const isWidgetVisible = useCallback(

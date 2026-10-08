@@ -70,7 +70,9 @@ export function MockRecentUsersTable({ className }: MockRecentUsersTableProps) {
   };
 
   return (
-    <div className={cn("rounded-nx-md border border-nx-line bg-nx-surface shadow-nx-sm", className)}>
+    <div
+      className={cn("rounded-nx-md border border-nx-line bg-nx-surface shadow-nx-sm", className)}
+    >
       <div className="flex items-center justify-between border-b border-nx-line p-4">
         <div>
           <h3 className="font-semibold text-nx-ink">{t("studio.dashboardPreview.recentUsers")}</h3>
@@ -79,7 +81,8 @@ export function MockRecentUsersTable({ className }: MockRecentUsersTableProps) {
           </p>
         </div>
         <button className="flex items-center gap-1 text-xs text-nx-accent">
-          {t("studio.dashboardPreview.viewAll")} <ArrowUpRight className="h-3 w-3" aria-hidden="true" />
+          {t("studio.dashboardPreview.viewAll")}{" "}
+          <ArrowUpRight className="h-3 w-3" aria-hidden="true" />
         </button>
       </div>
       <div className="overflow-x-auto">

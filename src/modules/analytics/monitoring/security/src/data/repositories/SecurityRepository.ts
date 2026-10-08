@@ -59,7 +59,9 @@ export class SecurityRepository implements ISecurityRepository {
     return this.service.revokeSession(tokenId);
   }
 
-  async getAdmins(pageSize?: number): Promise<{ items: Array<{ id: string; isTwoFactorEnabled?: boolean }>; totalCount: number }> {
+  async getAdmins(
+    pageSize?: number
+  ): Promise<{ items: Array<{ id: string; isTwoFactorEnabled?: boolean }>; totalCount: number }> {
     return this.service.getAdmins(pageSize);
   }
 }

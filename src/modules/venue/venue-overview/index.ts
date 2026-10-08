@@ -15,4 +15,3 @@ export * from "./src/presentation/components/VenueOverviewResourcePulse";
 export * from "./src/presentation/components/VenueOverviewStatusDonut";
 export * from "./src/presentation/components/VenueOverviewUpNext";
 export * from "./src/domain/entities/VenueOverview";
-

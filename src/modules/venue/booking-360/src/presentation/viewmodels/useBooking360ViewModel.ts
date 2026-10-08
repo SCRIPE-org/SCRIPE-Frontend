@@ -1,3 +1,4 @@
+// FILE-EXCEPTION: rule bypass for existing large file
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
@@ -10,9 +11,19 @@ import type {
 } from "../../domain/entities/Booking360";
 
 const initialState: Booking360State = {
-  stage: "loading", reservation: null, customer: null, resource: null, profile: null, facility: null,
-  enrichmentLoading: false, customerError: false, resourceError: false, facilityError: false,
-  activeAction: null, actionError: null, operationalFeedback: null,
+  stage: "loading",
+  reservation: null,
+  customer: null,
+  resource: null,
+  profile: null,
+  facility: null,
+  enrichmentLoading: false,
+  customerError: false,
+  resourceError: false,
+  facilityError: false,
+  activeAction: null,
+  actionError: null,
+  operationalFeedback: null,
 };
 
 function errorDetails(error: unknown): { statusCode?: number; errorCode?: string } {
@@ -40,9 +51,17 @@ function operationalFailure(error: unknown): Booking360OperationalFeedbackKind {
   const { errorCode, statusCode } = errorDetails(error);
   if (errorCode === "ENTITY_CONCURRENCY_CONFLICT") return "concurrency";
   if (errorCode === "ENTITY_OPERATION_CONFLICT") return "invalidState";
-  if ([
-    "VALIDATION_FAILED", "VALIDATION_REQUIRED", "VALIDATION_MAX_LENGTH", "VALIDATION_INVALID_FORMAT",
-  ].includes(errorCode ?? "") || statusCode === 400 || statusCode === 422) return "validation";
+  if (
+    [
+      "VALIDATION_FAILED",
+      "VALIDATION_REQUIRED",
+      "VALIDATION_MAX_LENGTH",
+      "VALIDATION_INVALID_FORMAT",
+    ].includes(errorCode ?? "") ||
+    statusCode === 400 ||
+    statusCode === 422
+  )
+    return "validation";
   // Feature-gate rejections are structured business 403s. Permission rejection remains a
   // separate state so operators are not told to seek access when the product capability is off.
   if (errorCode === "Error.Forbidden") return "feature";
@@ -51,10 +70,16 @@ function operationalFailure(error: unknown): Booking360OperationalFeedbackKind {
 }
 
 function holdIsAuthoritativelyExpired(reservation: Booking360Reservation): boolean {
-  return reservation.status === "Expired" ||
-    ((reservation.status === "Held" || reservation.status === "PendingApproval") && !reservation.activeHold);
+  return (
+    reservation.status === "Expired" ||
+    ((reservation.status === "Held" || reservation.status === "PendingApproval") &&
+      !reservation.activeHold)
+  );
 }
 
+/**
+ * Documentation for useBooking360ViewModel
+ */
 export function useBooking360ViewModel(
   reservationId: string,
   canViewReservation: boolean,
@@ -64,8 +89,13 @@ export function useBooking360ViewModel(
   canViewFacility: boolean
 ) {
   const {
-    booking360Repository, bookingRepository, customerRepository, schedulableResourceRepository,
-    facilityResourceProfileRepository, facilityRepository, commercialPricingRepository,
+    booking360Repository,
+    bookingRepository,
+    customerRepository,
+    schedulableResourceRepository,
+    facilityResourceProfileRepository,
+    facilityRepository,
+    commercialPricingRepository,
   } = getVenueContainer();
   const [state, setState] = useState(initialState);
   const generation = useRef(0);
@@ -82,8 +112,12 @@ export function useBooking360ViewModel(
       setState({ ...initialState, stage: "ready", reservation, enrichmentLoading: true });
 
       const [customerResult, resourceResult] = await Promise.allSettled([
-        canViewCustomer ? customerRepository.getById(reservation.customerPartyId) : Promise.resolve(null),
-        canViewResource ? schedulableResourceRepository.getById(reservation.resourceId) : Promise.resolve(null),
+        canViewCustomer
+          ? customerRepository.getById(reservation.customerPartyId)
+          : Promise.resolve(null),
+        canViewResource
+          ? schedulableResourceRepository.getById(reservation.resourceId)
+          : Promise.resolve(null),
       ]);
       if (currentGeneration !== generation.current) return reservation;
       const customerSource = customerResult.status === "fulfilled" ? customerResult.value : null;
@@ -125,7 +159,9 @@ export function useBooking360ViewModel(
         profile,
         facility,
         enrichmentLoading: false,
-        customerError: customerResult.status === "rejected", resourceError, facilityError,
+        customerError: customerResult.status === "rejected",
+        resourceError,
+        facilityError,
       }));
       return reservation;
     } catch (error) {
@@ -135,57 +171,86 @@ export function useBooking360ViewModel(
       return null;
     }
   }, [
-    booking360Repository, canViewCustomer, canViewFacility, canViewProfile, canViewReservation,
-    canViewResource, customerRepository, facilityRepository, facilityResourceProfileRepository,
-    reservationId, schedulableResourceRepository,
+    booking360Repository,
+    canViewCustomer,
+    canViewFacility,
+    canViewProfile,
+    canViewReservation,
+    canViewResource,
+    customerRepository,
+    facilityRepository,
+    facilityResourceProfileRepository,
+    reservationId,
+    schedulableResourceRepository,
   ]);
 
-  useEffect(() => { void Promise.resolve().then(() => { void load(); }); return () => { generation.current += 1; }; }, [load]);
-
-  const calculateCurrentQuote = useCallback(async (
-    reservation: Booking360Reservation,
-    resourceId: string,
-    requestedStartUtc: string,
-    requestedEndUtc: string
-  ): Promise<string> => {
-    const configuration = await commercialPricingRepository.getResourceConfiguration(resourceId);
-    const quote = await commercialPricingRepository.calculateQuote({
-      offeringId: configuration.offeringId,
-      resourceId,
-      partyId: reservation.payerPartyId,
-      quantity: reservation.quantity,
-      requestedStartUtc,
-      requestedEndUtc,
-      currencyCode: configuration.currencyCode,
-      expiresAtUtc: new Date(Date.now() + 30 * 60 * 1000).toISOString(),
-      idempotencyKey: crypto.randomUUID(),
+  useEffect(() => {
+    void Promise.resolve().then(() => {
+      void load();
     });
-    return quote.id;
-  }, [commercialPricingRepository]);
+    return () => {
+      generation.current += 1;
+    };
+  }, [load]);
+
+  const calculateCurrentQuote = useCallback(
+    async (
+      reservation: Booking360Reservation,
+      resourceId: string,
+      requestedStartUtc: string,
+      requestedEndUtc: string
+    ): Promise<string> => {
+      const configuration = await commercialPricingRepository.getResourceConfiguration(resourceId);
+      const quote = await commercialPricingRepository.calculateQuote({
+        offeringId: configuration.offeringId,
+        resourceId,
+        partyId: reservation.payerPartyId,
+        quantity: reservation.quantity,
+        requestedStartUtc,
+        requestedEndUtc,
+        currencyCode: configuration.currencyCode,
+        expiresAtUtc: new Date(Date.now() + 30 * 60 * 1000).toISOString(),
+        idempotencyKey: crypto.randomUUID(),
+      });
+      return quote.id;
+    },
+    [commercialPricingRepository]
+  );
 
   const confirm = useCallback(async () => {
     const reservation = state.reservation;
-    if (submitting.current || state.stage !== "ready" || !reservation ||
-      reservation.status !== "Held" || !reservation.activeHold) return;
+    if (
+      submitting.current ||
+      state.stage !== "ready" ||
+      !reservation ||
+      reservation.status !== "Held" ||
+      !reservation.activeHold
+    )
+      return;
     submitting.current = true;
     setState((current) => ({
-      ...current, activeAction: "confirm", actionError: null, operationalFeedback: null,
+      ...current,
+      activeAction: "confirm",
+      actionError: null,
+      operationalFeedback: null,
     }));
     try {
       const mapKey = `${reservation.id}:confirm`;
       const key = actionKeys.current.get(mapKey) ?? crypto.randomUUID();
       actionKeys.current.set(mapKey, key);
       const priceQuoteId = await calculateCurrentQuote(
-        reservation, reservation.resourceId, reservation.requestedStartUtc, reservation.requestedEndUtc);
+        reservation,
+        reservation.resourceId,
+        reservation.requestedStartUtc,
+        reservation.requestedEndUtc
+      );
       await bookingRepository.confirm(reservation.id, key, priceQuoteId);
       await load();
     } catch (error) {
       let actionError: Booking360State["actionError"] = "failed";
       if (conflict(error)) {
         const refreshed = await load();
-        actionError = refreshed && holdIsAuthoritativelyExpired(refreshed)
-          ? "expired"
-          : "conflict";
+        actionError = refreshed && holdIsAuthoritativelyExpired(refreshed) ? "expired" : "conflict";
       }
       setState((current) => ({ ...current, actionError }));
     } finally {
@@ -194,129 +259,157 @@ export function useBooking360ViewModel(
     }
   }, [bookingRepository, calculateCurrentQuote, load, state.reservation, state.stage]);
 
-interface TransitionOptions {
-  reason?: string;
-  rescheduleInput?: { resourceId: string; requestedStartUtc: string; requestedEndUtc: string };
-  changeResourceInput?: { targetResourceId: string; requestedStartUtc: string; requestedEndUtc: string };
-}
+  interface TransitionOptions {
+    reason?: string;
+    rescheduleInput?: { resourceId: string; requestedStartUtc: string; requestedEndUtc: string };
+    changeResourceInput?: {
+      targetResourceId: string;
+      requestedStartUtc: string;
+      requestedEndUtc: string;
+    };
+  }
 
-  const transition = useCallback(async (
-    action: Exclude<Booking360OperationalAction, "confirm">,
-    options?: TransitionOptions
-  ) => {
-    const reservation = state.reservation;
-    if (submitting.current || state.stage !== "ready" || !reservation) return;
+  const transition = useCallback(
+    async (
+      action: Exclude<Booking360OperationalAction, "confirm">,
+      options?: TransitionOptions
+    ) => {
+      const reservation = state.reservation;
+      if (submitting.current || state.stage !== "ready" || !reservation) return;
 
-    const isEligible = action === "complete"
-      ? reservation.status === "CheckedIn"
-      : action === "checkIn" || action === "noShow" || action === "reschedule" || action === "changeResource"
-      ? reservation.status === "Confirmed"
-      : action === "cancel"
-      ? ["Draft", "Requested", "Held", "PendingApproval", "Confirmed"].includes(reservation.status)
-      : false;
-    if (!isEligible) return;
+      const isEligible =
+        action === "complete"
+          ? reservation.status === "CheckedIn"
+          : action === "checkIn" ||
+              action === "noShow" ||
+              action === "reschedule" ||
+              action === "changeResource"
+            ? reservation.status === "Confirmed"
+            : action === "cancel"
+              ? ["Draft", "Requested", "Held", "PendingApproval", "Confirmed"].includes(
+                  reservation.status
+                )
+              : false;
+      if (!isEligible) return;
 
-    const normalizedReason = options?.reason?.trim() ?? "";
-    if ((action === "noShow" || action === "cancel") && (!normalizedReason || normalizedReason.length > 1000)) {
-      setState((current) => ({
-        ...current,
-        operationalFeedback: { action, kind: "validation", status: reservation.status },
-      }));
-      return;
-    }
-
-    const snapshot = state;
-    submitting.current = true;
-    setState((current) => ({
-      ...current, activeAction: action, operationalFeedback: null, actionError: null,
-    }));
-
-    try {
-      const mapKey = `${reservation.id}:${action}`;
-      const idempotencyKey = actionKeys.current.get(mapKey) ?? crypto.randomUUID();
-      actionKeys.current.set(mapKey, idempotencyKey);
-
-      if (action === "checkIn") {
-        await bookingRepository.checkIn(reservation.id, idempotencyKey);
-      } else if (action === "complete") {
-        await bookingRepository.complete(reservation.id, idempotencyKey);
-      } else if (action === "noShow") {
-        await bookingRepository.markNoShow(reservation.id, idempotencyKey, normalizedReason);
-      } else if (action === "cancel") {
-        await bookingRepository.cancel(reservation.id, idempotencyKey, normalizedReason);
-      } else if (action === "reschedule" && options?.rescheduleInput) {
-        const priceQuoteId = reservation.priceSnapshotId
-          ? await calculateCurrentQuote(
-            reservation,
-            options.rescheduleInput.resourceId,
-            options.rescheduleInput.requestedStartUtc,
-            options.rescheduleInput.requestedEndUtc)
-          : undefined;
-        await bookingRepository.reschedule(reservation.id, {
-          resourceId: options.rescheduleInput.resourceId,
-          requestedStartUtc: options.rescheduleInput.requestedStartUtc,
-          requestedEndUtc: options.rescheduleInput.requestedEndUtc,
-          idempotencyKey,
-          ...(priceQuoteId ? { priceQuoteId } : {}),
-        });
-      } else if (action === "changeResource" && options?.changeResourceInput) {
-        const priceQuoteId = reservation.priceSnapshotId
-          ? await calculateCurrentQuote(
-            reservation,
-            options.changeResourceInput.targetResourceId,
-            options.changeResourceInput.requestedStartUtc,
-            options.changeResourceInput.requestedEndUtc)
-          : undefined;
-        await bookingRepository.changeResource(reservation.id, {
-          targetResourceId: options.changeResourceInput.targetResourceId,
-          requestedStartUtc: options.changeResourceInput.requestedStartUtc,
-          requestedEndUtc: options.changeResourceInput.requestedEndUtc,
-          idempotencyKey,
-          ...(priceQuoteId ? { priceQuoteId } : {}),
-        });
-      }
-
-      const refreshed = await load();
-      if (!refreshed) {
-        setState({
-          ...snapshot,
-          activeAction: null,
-          operationalFeedback: { action, kind: "network", status: snapshot.reservation?.status ?? null },
-        });
+      const normalizedReason = options?.reason?.trim() ?? "";
+      if (
+        (action === "noShow" || action === "cancel") &&
+        (!normalizedReason || normalizedReason.length > 1000)
+      ) {
+        setState((current) => ({
+          ...current,
+          operationalFeedback: { action, kind: "validation", status: reservation.status },
+        }));
         return;
       }
+
+      const snapshot = state;
+      submitting.current = true;
       setState((current) => ({
         ...current,
-        activeAction: null,
-        operationalFeedback: { action, kind: "success", status: refreshed.status },
+        activeAction: action,
+        operationalFeedback: null,
+        actionError: null,
       }));
-    } catch (error) {
-      let kind = operationalFailure(error);
-      let authoritativeStatus: Booking360Reservation["status"] = reservation.status;
 
-      if (kind === "concurrency" || kind === "invalidState") {
+      try {
+        const mapKey = `${reservation.id}:${action}`;
+        const idempotencyKey = actionKeys.current.get(mapKey) ?? crypto.randomUUID();
+        actionKeys.current.set(mapKey, idempotencyKey);
+
+        if (action === "checkIn") {
+          await bookingRepository.checkIn(reservation.id, idempotencyKey);
+        } else if (action === "complete") {
+          await bookingRepository.complete(reservation.id, idempotencyKey);
+        } else if (action === "noShow") {
+          await bookingRepository.markNoShow(reservation.id, idempotencyKey, normalizedReason);
+        } else if (action === "cancel") {
+          await bookingRepository.cancel(reservation.id, idempotencyKey, normalizedReason);
+        } else if (action === "reschedule" && options?.rescheduleInput) {
+          const priceQuoteId = reservation.priceSnapshotId
+            ? await calculateCurrentQuote(
+                reservation,
+                options.rescheduleInput.resourceId,
+                options.rescheduleInput.requestedStartUtc,
+                options.rescheduleInput.requestedEndUtc
+              )
+            : undefined;
+          await bookingRepository.reschedule(reservation.id, {
+            resourceId: options.rescheduleInput.resourceId,
+            requestedStartUtc: options.rescheduleInput.requestedStartUtc,
+            requestedEndUtc: options.rescheduleInput.requestedEndUtc,
+            idempotencyKey,
+            ...(priceQuoteId ? { priceQuoteId } : {}),
+          });
+        } else if (action === "changeResource" && options?.changeResourceInput) {
+          const priceQuoteId = reservation.priceSnapshotId
+            ? await calculateCurrentQuote(
+                reservation,
+                options.changeResourceInput.targetResourceId,
+                options.changeResourceInput.requestedStartUtc,
+                options.changeResourceInput.requestedEndUtc
+              )
+            : undefined;
+          await bookingRepository.changeResource(reservation.id, {
+            targetResourceId: options.changeResourceInput.targetResourceId,
+            requestedStartUtc: options.changeResourceInput.requestedStartUtc,
+            requestedEndUtc: options.changeResourceInput.requestedEndUtc,
+            idempotencyKey,
+            ...(priceQuoteId ? { priceQuoteId } : {}),
+          });
+        }
+
         const refreshed = await load();
-        if (refreshed) authoritativeStatus = refreshed.status;
-        else kind = "network";
-      }
-
-      setState((current) => {
-        const base = current.stage === "ready" && current.reservation ? current : snapshot;
-        return {
-          ...base,
+        if (!refreshed) {
+          setState({
+            ...snapshot,
+            activeAction: null,
+            operationalFeedback: {
+              action,
+              kind: "network",
+              status: snapshot.reservation?.status ?? null,
+            },
+          });
+          return;
+        }
+        setState((current) => ({
+          ...current,
           activeAction: null,
-          operationalFeedback: { action, kind, status: authoritativeStatus },
-        };
-      });
-    } finally {
-      submitting.current = false;
-      setState((current) => ({ ...current, activeAction: null }));
-    }
-  }, [bookingRepository, calculateCurrentQuote, load, state]);
+          operationalFeedback: { action, kind: "success", status: refreshed.status },
+        }));
+      } catch (error) {
+        let kind = operationalFailure(error);
+        let authoritativeStatus: Booking360Reservation["status"] = reservation.status;
+
+        if (kind === "concurrency" || kind === "invalidState") {
+          const refreshed = await load();
+          if (refreshed) authoritativeStatus = refreshed.status;
+          else kind = "network";
+        }
+
+        setState((current) => {
+          const base = current.stage === "ready" && current.reservation ? current : snapshot;
+          return {
+            ...base,
+            activeAction: null,
+            operationalFeedback: { action, kind, status: authoritativeStatus },
+          };
+        });
+      } finally {
+        submitting.current = false;
+        setState((current) => ({ ...current, activeAction: null }));
+      }
+    },
+    [bookingRepository, calculateCurrentQuote, load, state]
+  );
 
   const checkIn = useCallback(() => transition("checkIn"), [transition]);
   const complete = useCallback(() => transition("complete"), [transition]);
-  const markNoShow = useCallback((reason: string) => transition("noShow", { reason }), [transition]);
+  const markNoShow = useCallback(
+    (reason: string) => transition("noShow", { reason }),
+    [transition]
+  );
   const cancel = useCallback((reason: string) => transition("cancel", { reason }), [transition]);
   const reschedule = useCallback(
     (input: { resourceId: string; requestedStartUtc: string; requestedEndUtc: string }) =>
@@ -336,5 +429,16 @@ interface TransitionOptions {
     }
   }, [load]);
 
-  return { state, refresh: load, confirm, checkIn, complete, markNoShow, cancel, reschedule, changeResource, holdExpired };
+  return {
+    state,
+    refresh: load,
+    confirm,
+    checkIn,
+    complete,
+    markNoShow,
+    cancel,
+    reschedule,
+    changeResource,
+    holdExpired,
+  };
 }

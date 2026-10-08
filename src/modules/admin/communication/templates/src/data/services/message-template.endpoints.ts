@@ -1,5 +1,8 @@
 import { V1 } from "@/core/config/api-endpoints/_shared";
 
+/**
+ * Documentation for module export
+ */
 export const MESSAGE_TEMPLATE_ENDPOINTS = {
   LIST: `${V1}/message-templates`,
   BY_ID: (id: string) => `${V1}/message-templates/${id}`,

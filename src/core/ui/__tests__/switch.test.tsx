@@ -21,7 +21,7 @@ describe("Switch", () => {
   // physically left, ON is always physically right, in English and Arabic
   // alike. The pin lives on the Root's own dir="ltr" attribute rather than on
   // a wrapper, so it must survive being rendered inside an ambient RTL tree.
-  it("pins dir=\"ltr\" on the Root even inside an RTL ancestor", () => {
+  it('pins dir="ltr" on the Root even inside an RTL ancestor', () => {
     render(
       <div dir="rtl">
         <Switch aria-label="notifications" />
@@ -32,7 +32,7 @@ describe("Switch", () => {
     expect(root).toHaveAttribute("dir", "ltr");
   });
 
-  it("pins dir=\"ltr\" on the Root when unchecked, also inside an RTL ancestor", () => {
+  it('pins dir="ltr" on the Root when unchecked, also inside an RTL ancestor', () => {
     render(
       <div dir="rtl">
         <Switch aria-label="notifications" checked={false} onCheckedChange={() => {}} />
@@ -64,7 +64,7 @@ describe("Switch", () => {
     expect(thumbEl?.className).not.toMatch(/rtl:/);
   });
 
-  it("also pins dir=\"ltr\" on the label row when showLabels is used inside RTL", () => {
+  it('also pins dir="ltr" on the label row when showLabels is used inside RTL', () => {
     render(
       <div dir="rtl">
         <Switch aria-label="notifications" showLabels onLabel="On" offLabel="Off" />

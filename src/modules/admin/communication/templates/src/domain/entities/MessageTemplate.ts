@@ -8,13 +8,7 @@
  */
 
 export type TemplateCategory =
-  | "transactional"
-  | "marketing"
-  | "notification"
-  | "onboarding"
-  | "security"
-  | "billing"
-  | "custom";
+  "transactional" | "marketing" | "notification" | "onboarding" | "security" | "billing" | "custom";
 
 /**
  * Domain model representing a Placeholder Type structure.

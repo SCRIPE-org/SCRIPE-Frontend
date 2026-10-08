@@ -9,9 +9,21 @@ import { Badge } from "@core/ui/badge";
 import { Globe2 } from "lucide-react";
 import type { OptionSet } from "../../domain/entities/OptionSet";
 
+/**
+ * Documentation for 100
+ */
 export const OPTION_SET_STABLE_KEY_MAX_LENGTH = 100;
+/**
+ * Documentation for 200
+ */
 export const OPTION_SET_LABEL_MAX_LENGTH = 200;
+/**
+ * Documentation for 1000
+ */
 export const OPTION_SET_DESCRIPTION_MAX_LENGTH = 1000;
+/**
+ * Documentation for "[a-z][a-z0-9_\\-]*"
+ */
 export const STABLE_KEY_PATTERN = "[a-z][a-z0-9_\\-]*";
 
 export interface OptionSetFormFieldsProps {
@@ -32,6 +44,9 @@ export interface OptionSetFormFieldsProps {
   isSaving: boolean;
 }
 
+/**
+ * Documentation for OptionSetFormFields
+ */
 export function OptionSetFormFields({
   fieldId,
   optionSet,
@@ -115,53 +130,52 @@ export function OptionSetFormFields({
           />
         </div>
 
-        {optionSet !== null ? (
-          optionSet.isPlatformOwned && (
-            <div className="flex flex-col gap-1.5">
-              <span className="text-sm font-medium text-nx-ink-2">
-                {t("optionSet.fields.isGlobal")}
-              </span>
-              <div>
-                <Badge variant="info" className="gap-1">
-                  <Globe2 className="h-3 w-3" aria-hidden="true" />
-                  {t("optionSet.badge.platformOwned")}
-                </Badge>
+        {optionSet !== null
+          ? optionSet.isPlatformOwned && (
+              <div className="flex flex-col gap-1.5">
+                <span className="text-sm font-medium text-nx-ink-2">
+                  {t("optionSet.fields.isGlobal")}
+                </span>
+                <div>
+                  <Badge variant="info" className="gap-1">
+                    <Globe2 className="h-3 w-3" aria-hidden="true" />
+                    {t("optionSet.badge.platformOwned")}
+                  </Badge>
+                </div>
+                <p className="text-xs text-nx-ink-3">{t("optionSet.immutable.isGlobal")}</p>
               </div>
-              <p className="text-xs text-nx-ink-3">{t("optionSet.immutable.isGlobal")}</p>
-            </div>
-          )
-        ) : canChooseScope && (
-          isPlatformContext ? (
-            <div className="flex flex-col gap-1.5">
-              <span className="text-sm font-medium text-nx-ink-2">
-                {t("optionSet.fields.isGlobal")}
-              </span>
-              <div>
-                <Badge variant="info" className="gap-1">
-                  <Globe2 className="h-3 w-3" aria-hidden="true" />
-                  {t("optionSet.badge.platformOwned")}
-                </Badge>
+            )
+          : canChooseScope &&
+            (isPlatformContext ? (
+              <div className="flex flex-col gap-1.5">
+                <span className="text-sm font-medium text-nx-ink-2">
+                  {t("optionSet.fields.isGlobal")}
+                </span>
+                <div>
+                  <Badge variant="info" className="gap-1">
+                    <Globe2 className="h-3 w-3" aria-hidden="true" />
+                    {t("optionSet.badge.platformOwned")}
+                  </Badge>
+                </div>
+                <p className="text-xs text-nx-ink-3">
+                  {t("optionSet.isGlobalDescription.platformContext")}
+                </p>
               </div>
-              <p className="text-xs text-nx-ink-3">
-                {t("optionSet.isGlobalDescription.platformContext")}
-              </p>
-            </div>
-          ) : (
-            <div className="flex flex-col gap-1.5">
-              <Label htmlFor={`${fieldId}-isGlobal`}>{t("optionSet.fields.isGlobal")}</Label>
-              <Switch
-                id={`${fieldId}-isGlobal`}
-                checked={isGlobal}
-                onCheckedChange={setIsGlobal}
-                disabled={isSaving}
-                aria-describedby={`${fieldId}-isGlobal-hint`}
-              />
-              <p id={`${fieldId}-isGlobal-hint`} className="text-xs text-nx-ink-3">
-                {t("optionSet.isGlobalDescription.tenantContext")}
-              </p>
-            </div>
-          )
-        )}
+            ) : (
+              <div className="flex flex-col gap-1.5">
+                <Label htmlFor={`${fieldId}-isGlobal`}>{t("optionSet.fields.isGlobal")}</Label>
+                <Switch
+                  id={`${fieldId}-isGlobal`}
+                  checked={isGlobal}
+                  onCheckedChange={setIsGlobal}
+                  disabled={isSaving}
+                  aria-describedby={`${fieldId}-isGlobal-hint`}
+                />
+                <p id={`${fieldId}-isGlobal-hint`} className="text-xs text-nx-ink-3">
+                  {t("optionSet.isGlobalDescription.tenantContext")}
+                </p>
+              </div>
+            ))}
       </div>
 
       <div className="flex flex-col gap-1.5">

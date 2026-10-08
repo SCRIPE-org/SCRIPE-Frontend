@@ -100,6 +100,9 @@ async function toFailure(error: unknown): Promise<DefinitionExportFailure> {
   return new DefinitionExportFailure(DefinitionExportFailureModel.fromUnknown(message));
 }
 
+/**
+ * Documentation for module export
+ */
 export class DefinitionExportService implements IDefinitionExportService {
   constructor(private readonly api: IApiService) {}
 

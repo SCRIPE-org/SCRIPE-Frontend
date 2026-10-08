@@ -167,9 +167,7 @@ export function isConflict(error: unknown): boolean {
     response?: { status?: unknown };
   };
   return (
-    candidate.status === 409 ||
-    candidate.statusCode === 409 ||
-    candidate.response?.status === 409
+    candidate.status === 409 || candidate.statusCode === 409 || candidate.response?.status === 409
   );
 }
 

@@ -17,6 +17,9 @@ import type { IPartyOrganizationService } from "../../domain/interfaces/IPartyOr
 import type { PartyOrganization } from "../../domain/entities/PartyOrganization";
 import { PartyOrganizationMapper } from "../mappers/PartyOrganizationMapper";
 
+/**
+ * Documentation for module export
+ */
 export class PartyOrganizationRepository implements IPartyOrganizationRepository {
   constructor(private readonly service: IPartyOrganizationService) {}
 

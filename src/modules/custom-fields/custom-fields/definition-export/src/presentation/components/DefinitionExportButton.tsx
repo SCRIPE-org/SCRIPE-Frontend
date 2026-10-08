@@ -35,6 +35,9 @@ import { usePermission } from "@core/hooks/use-permission";
 import { CUSTOM_FIELDS_EXPORT_PERMISSION } from "../../../../permission-constants";
 import { DefinitionExportDialog } from "./DefinitionExportDialog";
 
+/**
+ * Documentation for module export
+ */
 export function DefinitionExportButton() {
   useModuleLocales(() => import("../../../locales"), "customFieldDefinitionExport");
   const { t } = useI18n();

@@ -10,4 +10,3 @@ export * from "./src/presentation/components/ResourceGeneralTab";
 export * from "./src/presentation/components/ResourcePricingTab";
 export * from "./src/presentation/components/ResourceWorkingHoursTab";
 export * from "./src/domain/entities/ResourceWorkspaceItem";
-

@@ -125,7 +125,12 @@ export class EditionRepository implements IEditionRepository {
     changedLabels?: Record<string, { en?: string; ar?: string }>,
     highlightOverrides?: Record<string, { isHighlight: boolean; highlightOrder: number }>
   ): Promise<void> {
-    await this.service.directApplyFeatures(editionId, featureValues, changedLabels, highlightOverrides);
+    await this.service.directApplyFeatures(
+      editionId,
+      featureValues,
+      changedLabels,
+      highlightOverrides
+    );
   }
 
   // ── Pricing ──

@@ -1,21 +1,15 @@
-"use client";
+﻿"use client";
 
 import { useEffect, useState } from "react";
 import { Ban, Wrench } from "lucide-react";
-import {
-  Dialog,
-  DialogContent,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "@core/ui/dialog";
+import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@core/ui/dialog";
 import { Button } from "@core/ui/button";
 import { Input } from "@core/ui/input";
 import { Label } from "@core/ui/label";
 import { Alert, AlertDescription } from "@core/ui/alert";
 import { useI18n } from "@core/providers/i18n-provider";
-import { getVenueContainer } from "@modules/venue/di";
-import type { ResourceBlockKind } from "@modules/venue/availability/src/domain/entities/Availability";
+import { useVenueServiceLocator } from "@modules/venue";
+import type { ResourceBlockKind } from "@modules/venue";
 import type { CalendarResource } from "../../domain/entities/OperationsCalendar";
 
 interface Props {
@@ -28,6 +22,9 @@ interface Props {
   onSuccess: () => void;
 }
 
+/**
+ * Documentation for BlockTimeModal
+ */
 export function BlockTimeModal({
   open,
   onOpenChange,
@@ -38,7 +35,7 @@ export function BlockTimeModal({
   onSuccess,
 }: Props) {
   const { t } = useI18n();
-  const { availabilityRepository } = getVenueContainer();
+  const { availabilityRepository } = useVenueServiceLocator();
 
   const [selectedResourceId, setSelectedResourceId] = useState<string>("");
   const [reasonType, setReasonType] = useState<"Maintenance" | "Unavailable">("Maintenance");
@@ -102,7 +99,9 @@ export function BlockTimeModal({
         startLocal,
         endLocal,
         hardBlock: true,
-        reason: reason.trim() || (reasonType === "Maintenance" ? "Scheduled Maintenance" : "Court Closed"),
+        reason:
+          reason.trim() ||
+          (reasonType === "Maintenance" ? "Scheduled Maintenance" : "Court Closed"),
       });
 
       onOpenChange(false);
@@ -143,7 +142,7 @@ export function BlockTimeModal({
             <select
               value={selectedResourceId}
               onChange={(e) => setSelectedResourceId(e.target.value)}
-              className="w-full h-8.5 rounded-nx-md border border-nx-line bg-nx-surface px-3 text-xs font-semibold text-nx-ink"
+              className="h-8.5 w-full rounded-nx-md border border-nx-line bg-nx-surface px-3 text-xs font-semibold text-nx-ink"
               required
             >
               {resources.map((r) => (
@@ -163,10 +162,10 @@ export function BlockTimeModal({
               <button
                 type="button"
                 onClick={() => setReasonType("Maintenance")}
-                className={`p-2.5 rounded-nx-md border text-left text-xs font-semibold transition-all ${
+                className={`rounded-nx-md border p-2.5 text-left text-xs font-semibold transition-all ${
                   reasonType === "Maintenance"
-                    ? "border-amber-500 bg-amber-500/10 text-amber-900 dark:text-amber-200 ring-1 ring-amber-500"
-                    : "border-nx-line hover:bg-nx-surfaceSubtle text-nx-ink-2"
+                    ? "border-amber-500 bg-amber-500/10 text-amber-900 ring-1 ring-amber-500 dark:text-amber-200"
+                    : "hover:bg-nx-surfaceSubtle border-nx-line text-nx-ink-2"
                 }`}
               >
                 <div className="flex items-center gap-1.5">
@@ -178,10 +177,10 @@ export function BlockTimeModal({
               <button
                 type="button"
                 onClick={() => setReasonType("Unavailable")}
-                className={`p-2.5 rounded-nx-md border text-left text-xs font-semibold transition-all ${
+                className={`rounded-nx-md border p-2.5 text-left text-xs font-semibold transition-all ${
                   reasonType === "Unavailable"
-                    ? "border-slate-500 bg-slate-500/10 text-slate-900 dark:text-slate-200 ring-1 ring-slate-500"
-                    : "border-nx-line hover:bg-nx-surfaceSubtle text-nx-ink-2"
+                    ? "border-slate-500 bg-slate-500/10 text-slate-900 ring-1 ring-slate-500 dark:text-slate-200"
+                    : "hover:bg-nx-surfaceSubtle border-nx-line text-nx-ink-2"
                 }`}
               >
                 <div className="flex items-center gap-1.5">
@@ -254,11 +253,17 @@ export function BlockTimeModal({
             />
           </div>
 
-          <DialogFooter className="pt-2 border-t border-nx-line">
+          <DialogFooter className="border-t border-nx-line pt-2">
             <Button type="button" variant="outline" size="sm" onClick={() => onOpenChange(false)}>
               Cancel
             </Button>
-            <Button type="submit" size="sm" disabled={submitting} loading={submitting} className="font-bold">
+            <Button
+              type="submit"
+              size="sm"
+              disabled={submitting}
+              loading={submitting}
+              className="font-bold"
+            >
               {t("resources.blockTimeModal.submit", { defaultValue: "Block Time" })}
             </Button>
           </DialogFooter>

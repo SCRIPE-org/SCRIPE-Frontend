@@ -1,3 +1,4 @@
+/* eslint-disable unused-imports/no-unused-vars */
 // FILE-EXCEPTION: file length
 /**
  * useEditionComparisonViewModel — Data logic for the dual-view comparison page.

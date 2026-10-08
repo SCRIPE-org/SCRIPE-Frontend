@@ -26,6 +26,9 @@ const ReportExportDialog = dynamic(
   { ssr: false }
 );
 
+/**
+ * TenantAnalyticsView
+ */
 export function TenantAnalyticsView() {
   useModuleLocales(() => import("../../../locales"), "analytics");
 
@@ -68,16 +71,13 @@ export function TenantAnalyticsView() {
       />
 
       {/* 3. Middle Section: Growth, Region, Activity */}
-      <div className="grid grid-cols-1 gap-4 lg:grid-cols-3 items-stretch">
+      <div className="grid grid-cols-1 items-stretch gap-4 lg:grid-cols-3">
         <TenantGrowthChart
           data={vm.tenantGrowthData}
           isLoading={vm.isLoading}
           timeRangeLabel={currentTimeRangeLabel}
         />
-        <TenantRegionDistribution
-          data={vm.regionDistribution}
-          isLoading={vm.isLoading}
-        />
+        <TenantRegionDistribution data={vm.regionDistribution} isLoading={vm.isLoading} />
         <TenantActivityDistribution
           data={vm.activityDistribution}
           isLoading={vm.isLoading}
@@ -86,15 +86,9 @@ export function TenantAnalyticsView() {
       </div>
 
       {/* 4. Lower Analytics Row: Editions, Features, Status */}
-      <div className="grid grid-cols-1 gap-4 lg:grid-cols-3 items-stretch">
-        <TenantEditionDistribution
-          data={vm.editionDistribution}
-          isLoading={vm.isLoading}
-        />
-        <TenantFeatureAdoption
-          data={vm.featureAdoption}
-          isLoading={vm.isLoading}
-        />
+      <div className="grid grid-cols-1 items-stretch gap-4 lg:grid-cols-3">
+        <TenantEditionDistribution data={vm.editionDistribution} isLoading={vm.isLoading} />
+        <TenantFeatureAdoption data={vm.featureAdoption} isLoading={vm.isLoading} />
         <TenantStatusDistribution
           data={vm.statusDistribution}
           isLoading={vm.isLoading}

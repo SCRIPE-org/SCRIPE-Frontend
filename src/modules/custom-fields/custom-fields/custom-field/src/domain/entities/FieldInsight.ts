@@ -20,21 +20,10 @@
  * showing an unfamiliar label.
  */
 export type FieldHistoryChangeKind =
-  | "Created"
-  | "Updated"
-  | "Deactivated"
-  | "Reactivated"
-  | "Deleted"
-  | "Restored"
-  | "Purged";
+  "Created" | "Updated" | "Deactivated" | "Reactivated" | "Deleted" | "Restored" | "Purged";
 
 /** Which part of a definition a history entry refers to. */
-export type FieldHistoryPart =
-  | "Field"
-  | "Definition"
-  | "Version"
-  | "Option"
-  | "VisibilityRule";
+export type FieldHistoryPart = "Field" | "Definition" | "Version" | "Option" | "VisibilityRule";
 
 /** One change to a definition or one of its parts. */
 export interface FieldHistoryEntry {
@@ -283,6 +272,3 @@ export interface DiscardFieldVersionDraftResult {
   optionsRetained: number;
   rulesRetained: number;
 }
-
-
-

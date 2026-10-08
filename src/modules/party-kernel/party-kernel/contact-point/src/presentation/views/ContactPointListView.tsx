@@ -35,6 +35,9 @@ function shortId(id: string | undefined): string {
 }
 
 // P5.4: React.memo prevents unnecessary re-renders
+/**
+ * Documentation for module export
+ */
 export const ContactPointListView = React.memo(function ContactPointListView() {
   useModuleLocales(() => import("../../../locales"), "party-kernel.contactPoint");
   const { vm } = useContactPointViewModel();

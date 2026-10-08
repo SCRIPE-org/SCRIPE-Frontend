@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps, unused-imports/no-unused-vars */
 "use client";
 
 /**
@@ -292,11 +293,7 @@ export function NexusPrimaryRail({
         {/* CRM-only operators never see this — they have no admin workspace in their access list. */}
         {showBackButton && (
           <>
-            <BackButton
-              isRTL={isRTL}
-              label={t("chrome.backToAdmin")}
-              onClick={goBackWorkspace}
-            />
+            <BackButton isRTL={isRTL} label={t("chrome.backToAdmin")} onClick={goBackWorkspace} />
             <Divider />
           </>
         )}

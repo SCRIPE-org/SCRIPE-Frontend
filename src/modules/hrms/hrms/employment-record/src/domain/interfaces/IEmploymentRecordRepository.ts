@@ -14,10 +14,11 @@ export interface EmploymentRecordListParams {
   sortDirection?: "asc" | "desc";
 }
 
+/**
+ * Documentation for module export
+ */
 export interface IEmploymentRecordRepository {
-  getAll(
-    params: EmploymentRecordListParams
-  ): Promise<{
+  getAll(params: EmploymentRecordListParams): Promise<{
     items: EmploymentRecord[];
     totalCount: number;
     page: number;

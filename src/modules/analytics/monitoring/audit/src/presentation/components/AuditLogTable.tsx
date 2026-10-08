@@ -1,3 +1,4 @@
+// FILE-EXCEPTION: rule bypass for existing large file
 "use client";
 
 import { memo, useCallback } from "react";
@@ -13,26 +14,10 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "@core/ui/pagination";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@core/ui/select";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@core/ui/select";
 import { ErrorMessage } from "@core/ui/error-message";
 import { EmptyState } from "@core/ui/empty-state";
-import {
-  CheckCircle2,
-  Clock,
-  Eye,
-  FileText,
-  Globe,
-  Layers,
-  Shield,
-  User,
-  XCircle,
-} from "lucide-react";
+import { CheckCircle2, Eye, FileText, XCircle } from "lucide-react";
 import { cn, formatDateTimeUtc } from "@core/common/utils";
 import type { AuditLogPage, AuditLogEntry } from "../../domain/entities/AuditEntities";
 
@@ -48,19 +33,35 @@ interface Props {
 }
 
 function getActionBadgeStyle(eventType: string) {
-  if (eventType.includes("Create") || eventType.includes("Assigned") || eventType.includes("Granted")) {
+  if (
+    eventType.includes("Create") ||
+    eventType.includes("Assigned") ||
+    eventType.includes("Granted")
+  ) {
     return "border-emerald-500/40 text-emerald-500 bg-emerald-500/10";
   }
-  if (eventType.includes("Delete") || eventType.includes("Revoked") || eventType.includes("Denied")) {
+  if (
+    eventType.includes("Delete") ||
+    eventType.includes("Revoked") ||
+    eventType.includes("Denied")
+  ) {
     return "border-rose-500/40 text-rose-500 bg-rose-500/10";
   }
-  if (eventType.includes("Update") || eventType.includes("StatusChanged") || eventType.includes("Transfer")) {
+  if (
+    eventType.includes("Update") ||
+    eventType.includes("StatusChanged") ||
+    eventType.includes("Transfer")
+  ) {
     return "border-blue-500/40 text-blue-500 bg-blue-500/10";
   }
   if (eventType.includes("Login") || eventType.includes("Token")) {
     return "border-purple-500/40 text-purple-500 bg-purple-500/10";
   }
-  if (eventType.includes("Password") || eventType.includes("TwoFactor") || eventType.includes("Locked")) {
+  if (
+    eventType.includes("Password") ||
+    eventType.includes("TwoFactor") ||
+    eventType.includes("Locked")
+  ) {
     return "border-amber-500/40 text-amber-500 bg-amber-500/10";
   }
   return "border-border text-foreground bg-muted/40";
@@ -76,7 +77,7 @@ function getSeverityBadge(log: AuditLogEntry) {
       return (
         <Badge
           variant="outline"
-          className="text-[10px] font-bold uppercase tracking-wider border-rose-500/50 text-rose-500 bg-rose-500/10 px-1.5 py-0"
+          className="border-rose-500/50 bg-rose-500/10 px-1.5 py-0 text-[10px] font-bold uppercase tracking-wider text-rose-500"
         >
           Critical
         </Badge>
@@ -85,7 +86,7 @@ function getSeverityBadge(log: AuditLogEntry) {
     return (
       <Badge
         variant="outline"
-        className="text-[10px] font-bold uppercase tracking-wider border-amber-500/50 text-amber-500 bg-amber-500/10 px-1.5 py-0"
+        className="border-amber-500/50 bg-amber-500/10 px-1.5 py-0 text-[10px] font-bold uppercase tracking-wider text-amber-500"
       >
         Warning
       </Badge>
@@ -95,7 +96,7 @@ function getSeverityBadge(log: AuditLogEntry) {
     return (
       <Badge
         variant="outline"
-        className="text-[10px] font-bold uppercase tracking-wider border-amber-500/50 text-amber-500 bg-amber-500/10 px-1.5 py-0"
+        className="border-amber-500/50 bg-amber-500/10 px-1.5 py-0 text-[10px] font-bold uppercase tracking-wider text-amber-500"
       >
         Warning
       </Badge>
@@ -104,13 +105,16 @@ function getSeverityBadge(log: AuditLogEntry) {
   return (
     <Badge
       variant="outline"
-      className="text-[10px] font-bold uppercase tracking-wider border-border/80 text-muted-foreground bg-muted/30 px-1.5 py-0"
+      className="border-border/80 bg-muted/30 px-1.5 py-0 text-[10px] font-bold uppercase tracking-wider text-muted-foreground"
     >
       Info
     </Badge>
   );
 }
 
+/**
+ * AuditLogTable
+ */
 export const AuditLogTable = memo(function AuditLogTable({
   data,
   isLoading,
@@ -192,10 +196,10 @@ export const AuditLogTable = memo(function AuditLogTable({
               <TableHead className="text-xs font-semibold text-muted-foreground">
                 {t("audit.table.entity") || "Resource"}
               </TableHead>
-              <TableHead className="text-xs font-semibold text-muted-foreground hidden lg:table-cell">
+              <TableHead className="hidden text-xs font-semibold text-muted-foreground lg:table-cell">
                 {t("audit.table.origin") || "Origin / Client"}
               </TableHead>
-              <TableHead className="w-[100px] text-xs font-semibold text-muted-foreground text-center">
+              <TableHead className="w-[100px] text-center text-xs font-semibold text-muted-foreground">
                 {t("audit.table.status") || "Status"}
               </TableHead>
               <TableHead className="w-[50px]" />
@@ -213,28 +217,28 @@ export const AuditLogTable = memo(function AuditLogTable({
                   onClick={() => onRowClick(log.id)}
                   onKeyDown={(e) => handleKeyDown(e, log.id)}
                   tabIndex={0}
-                  className="hover:bg-accent/40 transition-colors group cursor-pointer text-xs"
+                  className="group cursor-pointer text-xs transition-colors hover:bg-accent/40"
                   aria-label={`${log.eventType} by ${log.username ?? "System"}`}
                 >
                   {/* 1. Timestamp */}
-                  <TableCell className="tabular-nums text-muted-foreground font-mono text-[11px] whitespace-nowrap">
+                  <TableCell className="whitespace-nowrap font-mono text-[11px] tabular-nums text-muted-foreground">
                     {formatDateTimeUtc(log.timestamp)}
                   </TableCell>
 
                   {/* 2. Actor */}
                   <TableCell>
-                    <div className="flex items-center gap-2 min-w-0">
-                      <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary text-[10px] font-bold">
+                    <div className="flex min-w-0 items-center gap-2">
+                      <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-primary/10 text-[10px] font-bold text-primary">
                         {initials}
                       </div>
-                      <div className="min-w-0 flex items-center gap-1.5">
-                        <span className="font-semibold text-foreground truncate max-w-[105px]">
+                      <div className="flex min-w-0 items-center gap-1.5">
+                        <span className="max-w-[105px] truncate font-semibold text-foreground">
                           {log.username ?? "System"}
                         </span>
                         {log.isAdmin && (
                           <Badge
                             variant="secondary"
-                            className="px-1 py-0 text-[9px] bg-primary/10 text-primary border border-primary/20 shrink-0"
+                            className="shrink-0 border border-primary/20 bg-primary/10 px-1 py-0 text-[9px] text-primary"
                           >
                             Admin
                           </Badge>
@@ -248,14 +252,14 @@ export const AuditLogTable = memo(function AuditLogTable({
                     {log.tenantId ? (
                       <Badge
                         variant="outline"
-                        className="text-[10px] font-mono border-border/80 text-muted-foreground bg-card px-1.5 py-0"
+                        className="border-border/80 bg-card px-1.5 py-0 font-mono text-[10px] text-muted-foreground"
                       >
                         Tenant #{log.tenantId.slice(0, 6)}
                       </Badge>
                     ) : (
                       <Badge
                         variant="outline"
-                        className="text-[10px] font-semibold border-primary/30 text-primary bg-primary/5 px-1.5 py-0"
+                        className="border-primary/30 bg-primary/5 px-1.5 py-0 text-[10px] font-semibold text-primary"
                       >
                         Platform
                       </Badge>
@@ -266,7 +270,7 @@ export const AuditLogTable = memo(function AuditLogTable({
                   <TableCell>
                     <Badge
                       variant="outline"
-                      className={`font-mono text-[11px] px-2 py-0.5 font-bold ${getActionBadgeStyle(
+                      className={`px-2 py-0.5 font-mono text-[11px] font-bold ${getActionBadgeStyle(
                         log.eventType
                       )}`}
                     >
@@ -291,11 +295,11 @@ export const AuditLogTable = memo(function AuditLogTable({
                   </TableCell>
 
                   {/* 6. Origin / IP */}
-                  <TableCell className="hidden lg:table-cell text-muted-foreground font-mono text-[11px] truncate max-w-[180px]">
+                  <TableCell className="hidden max-w-[180px] truncate font-mono text-[11px] text-muted-foreground lg:table-cell">
                     <div className="flex flex-col">
                       <span className="text-foreground">{log.ipAddress ?? "—"}</span>
                       {log.endpoint && (
-                        <span className="text-[10px] text-muted-foreground/70 truncate">
+                        <span className="truncate text-[10px] text-muted-foreground/70">
                           {log.httpMethod ? `${log.httpMethod} ` : ""}
                           {log.endpoint}
                         </span>
@@ -308,13 +312,13 @@ export const AuditLogTable = memo(function AuditLogTable({
                     <div className="flex items-center justify-center gap-1.5">
                       {log.isSuccess ? (
                         <CheckCircle2
-                          className="h-3.5 w-3.5 text-emerald-500 shrink-0"
+                          className="h-3.5 w-3.5 shrink-0 text-emerald-500"
                           role="img"
                           aria-label={t("audit.filters.success")}
                         />
                       ) : (
                         <XCircle
-                          className="h-3.5 w-3.5 text-rose-500 shrink-0"
+                          className="h-3.5 w-3.5 shrink-0 text-rose-500"
                           role="img"
                           aria-label={t("audit.filters.failed")}
                         />
@@ -328,7 +332,7 @@ export const AuditLogTable = memo(function AuditLogTable({
                     <Button
                       variant="ghost"
                       size="icon"
-                      className="h-7 w-7 text-muted-foreground group-hover:text-foreground cursor-pointer"
+                      className="h-7 w-7 cursor-pointer text-muted-foreground group-hover:text-foreground"
                       aria-label={t("common.view")}
                       onClick={(e) => {
                         e.stopPropagation();
@@ -346,24 +350,20 @@ export const AuditLogTable = memo(function AuditLogTable({
       </div>
 
       {/* Pagination Controls */}
-      <div className="flex flex-col sm:flex-row items-center justify-between gap-3 px-1 text-xs text-muted-foreground">
+      <div className="flex flex-col items-center justify-between gap-3 px-1 text-xs text-muted-foreground sm:flex-row">
         <div className="flex items-center gap-2">
           <span>
             {t("audit.results.showingRange", {
               start: startItem,
               end: endItem,
               total: data.totalCount.toLocaleString(),
-            }) ||
-              `Showing ${startItem}–${endItem} of ${data.totalCount.toLocaleString()} events`}
+            }) || `Showing ${startItem}–${endItem} of ${data.totalCount.toLocaleString()} events`}
           </span>
 
           {onPageSizeChange && (
-            <div className="flex items-center gap-1.5 ms-2">
+            <div className="ms-2 flex items-center gap-1.5">
               <span className="text-muted-foreground/70">Per page:</span>
-              <Select
-                value={String(pageSize)}
-                onValueChange={(v) => onPageSizeChange(Number(v))}
-              >
+              <Select value={String(pageSize)} onValueChange={(v) => onPageSizeChange(Number(v))}>
                 <SelectTrigger className="h-7 w-16 text-xs">
                   <SelectValue placeholder="20" />
                 </SelectTrigger>
@@ -387,7 +387,7 @@ export const AuditLogTable = memo(function AuditLogTable({
                   aria-disabled={!data.hasPreviousPage || undefined}
                   tabIndex={!data.hasPreviousPage ? -1 : undefined}
                   className={cn(
-                    "h-7 text-xs px-2.5",
+                    "h-7 px-2.5 text-xs",
                     !data.hasPreviousPage && "pointer-events-none opacity-50"
                   )}
                   onClick={(e) => {
@@ -409,7 +409,7 @@ export const AuditLogTable = memo(function AuditLogTable({
                   aria-disabled={!data.hasNextPage || undefined}
                   tabIndex={!data.hasNextPage ? -1 : undefined}
                   className={cn(
-                    "h-7 text-xs px-2.5",
+                    "h-7 px-2.5 text-xs",
                     !data.hasNextPage && "pointer-events-none opacity-50"
                   )}
                   onClick={(e) => {

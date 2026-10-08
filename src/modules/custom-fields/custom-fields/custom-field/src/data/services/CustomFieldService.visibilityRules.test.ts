@@ -8,7 +8,8 @@ describe("CustomFieldService visibility rules API calls", () => {
     const mockRules: FieldVisibilityRuleAdmin[] = [
       {
         id: "rule-1",
-        expressionJson: '{"version":1,"visibleWhen":{"fieldKey":"status","operator":"equals","value":"active"}}',
+        expressionJson:
+          '{"version":1,"visibleWhen":{"fieldKey":"status","operator":"equals","value":"active"}}',
         operandFieldKey: "status",
         operator: "equals",
         priority: 0,
@@ -26,7 +27,9 @@ describe("CustomFieldService visibility rules API calls", () => {
     const service = new CustomFieldService(api);
     const result = await service.getVisibilityRules("field-123");
 
-    expect(api.get).toHaveBeenCalledWith("/v1/custom-fields/visibility-rules?customFieldId=field-123");
+    expect(api.get).toHaveBeenCalledWith(
+      "/v1/custom-fields/visibility-rules?customFieldId=field-123"
+    );
     expect(result).toEqual(mockRules);
   });
 
@@ -41,7 +44,8 @@ describe("CustomFieldService visibility rules API calls", () => {
     const service = new CustomFieldService(api);
     const payload = {
       customFieldId: "field-123",
-      expressionJson: '{"version":1,"visibleWhen":{"fieldKey":"status","operator":"equals","value":"active"}}',
+      expressionJson:
+        '{"version":1,"visibleWhen":{"fieldKey":"status","operator":"equals","value":"active"}}',
       priority: 1,
     };
 
@@ -61,7 +65,8 @@ describe("CustomFieldService visibility rules API calls", () => {
 
     const service = new CustomFieldService(api);
     const payload = {
-      expressionJson: '{"version":1,"visibleWhen":{"fieldKey":"status","operator":"equals","value":"terminated"}}',
+      expressionJson:
+        '{"version":1,"visibleWhen":{"fieldKey":"status","operator":"equals","value":"terminated"}}',
       priority: 2,
     };
 

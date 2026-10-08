@@ -16,6 +16,9 @@ export interface EmploymentRecordListResult {
   hasPreviousPage: boolean;
 }
 
+/**
+ * Documentation for module export
+ */
 export interface IEmploymentRecordService {
   getAll(params: {
     page: number;

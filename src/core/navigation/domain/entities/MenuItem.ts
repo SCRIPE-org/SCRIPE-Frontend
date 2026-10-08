@@ -49,9 +49,12 @@ export class MenuItem {
   constructor(data: MenuItemData) {
     this.id = data.id;
     this.slug = data.slug;
-    
+
     // IA alignment: dashboard-group is officially MONITORING / المراقبة
-    if (data.slug === "dashboard-group" || (data.slug && data.slug.includes("dashboard") && !data.href)) {
+    if (
+      data.slug === "dashboard-group" ||
+      (data.slug && data.slug.includes("dashboard") && !data.href)
+    ) {
       this.nameEn = "Monitoring";
       this.nameAr = "المراقبة";
       this.name = "Monitoring";
@@ -68,10 +71,10 @@ export class MenuItem {
     this.actions = data.actions;
 
     // Filter out obsolete legacy /dashboard child if /overview exists in children
-    const hasOverview = data.children?.some(c => c.slug === "overview" || c.href === "/overview");
+    const hasOverview = data.children?.some((c) => c.slug === "overview" || c.href === "/overview");
     const rawChildren = data.children ?? [];
     const filteredChildren = hasOverview
-      ? rawChildren.filter(c => c.slug !== "dashboard" && c.href !== "/dashboard")
+      ? rawChildren.filter((c) => c.slug !== "dashboard" && c.href !== "/dashboard")
       : rawChildren;
 
     this.children = filteredChildren.map((child) => new MenuItem(child));

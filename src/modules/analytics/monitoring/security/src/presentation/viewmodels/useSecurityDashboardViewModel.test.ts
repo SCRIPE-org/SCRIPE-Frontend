@@ -1,7 +1,7 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { renderHook, act } from "@testing-library/react";
 import { describe, expect, it, vi, beforeEach } from "vitest";
 import { useSecurityDashboardViewModel } from "./useSecurityDashboardViewModel";
-import { monitoringContainer } from "@modules/monitoring/di";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 
 vi.mock("@modules/monitoring/di", () => ({
@@ -83,7 +83,12 @@ describe("useSecurityDashboardViewModel", () => {
       if (key.includes("blocked-ips")) {
         return {
           data: [
-            { ipAddress: "192.168.1.100", failedCount: 5, latestAttempt: "2026-10-05T08:00:00Z", lastUsername: "admin" },
+            {
+              ipAddress: "192.168.1.100",
+              failedCount: 5,
+              latestAttempt: "2026-10-05T08:00:00Z",
+              lastUsername: "admin",
+            },
           ],
           isLoading: false,
           isRefetching: false,
@@ -204,8 +209,12 @@ describe("useSecurityDashboardViewModel", () => {
     const { result } = renderHook(() => useSecurityDashboardViewModel());
 
     expect(result.current.authMethods.length).toBe(4);
-    expect(result.current.authMethods.some((m) => m.id === "pwd" && m.status === "enforced")).toBe(true);
-    expect(result.current.authMethods.some((m) => m.id === "mfa" && m.adoptionPercentage === 50)).toBe(true);
+    expect(result.current.authMethods.some((m) => m.id === "pwd" && m.status === "enforced")).toBe(
+      true
+    );
+    expect(
+      result.current.authMethods.some((m) => m.id === "mfa" && m.adoptionPercentage === 50)
+    ).toBe(true);
 
     expect(result.current.securityPolicies.length).toBe(4);
     expect(result.current.securityPolicies.every((p) => p.status === "enforced")).toBe(true);

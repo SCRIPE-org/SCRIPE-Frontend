@@ -15,11 +15,11 @@ export function TenantQuickActions({ actions }: TenantQuickActionsProps) {
   const { t } = useI18n();
 
   return (
-    <Card className="p-4 border-border bg-card shadow-xs">
+    <Card className="shadow-xs border-border bg-card p-4">
       {/* Header */}
-      <div className="flex items-start justify-between gap-3 mb-3">
+      <div className="mb-3 flex items-start justify-between gap-3">
         <div className="flex items-center gap-2.5">
-          <div className="w-8 h-8 rounded-lg bg-amber-500/10 border border-amber-500/20 text-amber-500 flex items-center justify-center">
+          <div className="flex h-8 w-8 items-center justify-center rounded-lg border border-amber-500/20 bg-amber-500/10 text-amber-500">
             <Zap className="h-4 w-4" />
           </div>
           <div>
@@ -32,10 +32,7 @@ export function TenantQuickActions({ actions }: TenantQuickActionsProps) {
           </div>
         </div>
 
-        <Link
-          href="/settings"
-          className="text-xs font-semibold text-primary hover:underline"
-        >
+        <Link href="/settings" className="text-xs font-semibold text-primary hover:underline">
           {t("tenantCommandCenter.quickActions.customize") || "Customize"}
         </Link>
       </div>
@@ -47,10 +44,10 @@ export function TenantQuickActions({ actions }: TenantQuickActionsProps) {
             <Link
               key={action.id}
               href={action.href}
-              className="p-3 rounded-xl border border-border bg-card/60 hover:bg-muted/40 hover:border-primary/40 transition-all group flex flex-col justify-between min-h-[92px] shadow-xs"
+              className="shadow-xs group flex min-h-[92px] flex-col justify-between rounded-xl border border-border bg-card/60 p-3 transition-all hover:border-primary/40 hover:bg-muted/40"
             >
               <div
-                className="w-8 h-8 rounded-lg flex items-center justify-center mb-2"
+                className="mb-2 flex h-8 w-8 items-center justify-center rounded-lg"
                 style={{
                   backgroundColor: `${action.color}18`,
                   color: action.color,
@@ -63,19 +60,29 @@ export function TenantQuickActions({ actions }: TenantQuickActionsProps) {
               </div>
 
               <div>
-                <b className="text-xs font-bold text-foreground block group-hover:text-primary transition-colors">
-                  {action.id === "qa-1" ? t("tenantCommandCenter.quickActions.inviteAdmin") || action.title :
-                   action.id === "qa-2" ? t("tenantCommandCenter.quickActions.createBranch") || action.title :
-                   action.id === "qa-3" ? t("tenantCommandCenter.quickActions.manageRoles") || action.title :
-                   action.id === "qa-4" ? t("tenantCommandCenter.quickActions.workspaceSettings") || action.title :
-                   action.title}
+                <b className="block text-xs font-bold text-foreground transition-colors group-hover:text-primary">
+                  {action.id === "qa-1"
+                    ? t("tenantCommandCenter.quickActions.inviteAdmin") || action.title
+                    : action.id === "qa-2"
+                      ? t("tenantCommandCenter.quickActions.createBranch") || action.title
+                      : action.id === "qa-3"
+                        ? t("tenantCommandCenter.quickActions.manageRoles") || action.title
+                        : action.id === "qa-4"
+                          ? t("tenantCommandCenter.quickActions.workspaceSettings") || action.title
+                          : action.title}
                 </b>
-                <span className="text-[10px] text-muted-foreground block">
-                  {action.id === "qa-1" ? t("tenantCommandCenter.quickActions.inviteAdminDesc") || action.description :
-                   action.id === "qa-2" ? t("tenantCommandCenter.quickActions.createBranchDesc") || action.description :
-                   action.id === "qa-3" ? t("tenantCommandCenter.quickActions.manageRolesDesc") || action.description :
-                   action.id === "qa-4" ? t("tenantCommandCenter.quickActions.workspaceSettingsDesc") || action.description :
-                   action.description}
+                <span className="block text-[10px] text-muted-foreground">
+                  {action.id === "qa-1"
+                    ? t("tenantCommandCenter.quickActions.inviteAdminDesc") || action.description
+                    : action.id === "qa-2"
+                      ? t("tenantCommandCenter.quickActions.createBranchDesc") || action.description
+                      : action.id === "qa-3"
+                        ? t("tenantCommandCenter.quickActions.manageRolesDesc") ||
+                          action.description
+                        : action.id === "qa-4"
+                          ? t("tenantCommandCenter.quickActions.workspaceSettingsDesc") ||
+                            action.description
+                          : action.description}
                 </span>
               </div>
             </Link>

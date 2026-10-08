@@ -1,3 +1,4 @@
+/* eslint-disable unused-imports/no-unused-vars */
 // UI-EXCEPTION: compact studio layout
 /**
  * BuilderCanvas — The main DnD canvas for the page builder

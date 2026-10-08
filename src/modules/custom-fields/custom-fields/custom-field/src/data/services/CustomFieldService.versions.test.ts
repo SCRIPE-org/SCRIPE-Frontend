@@ -118,10 +118,7 @@ describe("CustomFieldService versioning API calls", () => {
     const service = new CustomFieldService(api);
     const result = await service.discardFieldVersionDraft("field-123");
 
-    expect(api.post).toHaveBeenCalledWith(
-      "/v1/custom-fields/versions/field-123/discard-draft",
-      {}
-    );
+    expect(api.post).toHaveBeenCalledWith("/v1/custom-fields/versions/field-123/discard-draft", {});
     expect(result).toEqual(mockDiscardResult);
   });
 });

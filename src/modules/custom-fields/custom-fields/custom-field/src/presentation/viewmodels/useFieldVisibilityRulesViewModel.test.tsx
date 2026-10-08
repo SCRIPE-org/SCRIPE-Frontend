@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { renderHook, act, waitFor } from "@testing-library/react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
@@ -91,7 +92,8 @@ describe("Expression Serialization & Parsing Helpers", () => {
   });
 
   it("parseFieldVisibilityExpressionJson parses valid JSON correctly", () => {
-    const json = '{"version":1,"visibleWhen":{"fieldKey":"department","operator":"notEquals","value":"HR"}}';
+    const json =
+      '{"version":1,"visibleWhen":{"fieldKey":"department","operator":"notEquals","value":"HR"}}';
     const parsed = parseFieldVisibilityExpressionJson(json);
     expect(parsed).toEqual({
       version: 1,
@@ -130,7 +132,8 @@ describe("useFieldVisibilityRulesViewModel", () => {
       getVisibilityRules: vi.fn().mockResolvedValue([
         {
           id: "rule-1",
-          expressionJson: '{"version":1,"visibleWhen":{"fieldKey":"status","operator":"equals","value":"active"}}',
+          expressionJson:
+            '{"version":1,"visibleWhen":{"fieldKey":"status","operator":"equals","value":"active"}}',
           operandFieldKey: "status",
           operator: "equals",
           priority: 0,
@@ -174,7 +177,11 @@ describe("useFieldVisibilityRulesViewModel", () => {
     });
 
     expect(mockRepo.getVisibilityRules).toHaveBeenCalledWith("field-1");
-    expect(mockRepo.getAll).toHaveBeenCalledWith({ entityTypeKey: "Admins", page: 1, pageSize: 100 });
+    expect(mockRepo.getAll).toHaveBeenCalledWith({
+      entityTypeKey: "Admins",
+      page: 1,
+      pageSize: 100,
+    });
     // Sibling fields filters out the targeted field itself
     expect(result.current.siblingFields).toEqual([
       { id: "field-2", key: "status", labelEn: "Status", isRequired: false },
@@ -210,7 +217,8 @@ describe("useFieldVisibilityRulesViewModel", () => {
 
     expect(mockRepo.createVisibilityRule).toHaveBeenCalledWith({
       customFieldId: "field-1",
-      expressionJson: '{"version":1,"visibleWhen":{"fieldKey":"category","operator":"equals","value":"vip"}}',
+      expressionJson:
+        '{"version":1,"visibleWhen":{"fieldKey":"category","operator":"equals","value":"vip"}}',
       priority: 1,
     });
   });
@@ -243,7 +251,8 @@ describe("useFieldVisibilityRulesViewModel", () => {
     });
 
     expect(mockRepo.updateVisibilityRule).toHaveBeenCalledWith("rule-1", {
-      expressionJson: '{"version":1,"visibleWhen":{"fieldKey":"status","operator":"equals","value":"inactive"}}',
+      expressionJson:
+        '{"version":1,"visibleWhen":{"fieldKey":"status","operator":"equals","value":"inactive"}}',
       priority: 5,
     });
   });

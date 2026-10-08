@@ -11,6 +11,9 @@ import { PasswordStrengthMeter } from "../PasswordStrengthMeter";
 import { PasswordCheck } from "../PasswordCheck";
 import type { useAccountSetupViewModel } from "../../viewmodels/useAccountSetupViewModel";
 
+/**
+ * Documentation for module export
+ */
 export interface SetupStep1SecurityProps {
   vm: ReturnType<typeof useAccountSetupViewModel>;
 }
@@ -22,21 +25,21 @@ export function SetupStep1Security({ vm }: SetupStep1SecurityProps) {
   const { t } = useI18n();
 
   return (
-    <div className="space-y-5 min-w-0">
+    <div className="min-w-0 space-y-5">
       {/* Account Meta Box */}
-      <div className="space-y-2 rounded-xl border border-border/50 bg-muted/25 p-3.5 min-w-0">
+      <div className="min-w-0 space-y-2 rounded-xl border border-border/50 bg-muted/25 p-3.5">
         <InfoRow
-          icon={<Building2 className="h-4 w-4 text-primary shrink-0" />}
+          icon={<Building2 className="h-4 w-4 shrink-0 text-primary" />}
           label={t("auth.accountSetup.organization")}
           value={vm.tokenData?.tenantName}
         />
         <InfoRow
-          icon={<User className="h-4 w-4 text-muted-foreground shrink-0" />}
+          icon={<User className="h-4 w-4 shrink-0 text-muted-foreground" />}
           label={t("auth.accountSetup.username")}
           value={vm.tokenData?.adminUsername}
         />
         <InfoRow
-          icon={<Mail className="h-4 w-4 text-muted-foreground shrink-0" />}
+          icon={<Mail className="h-4 w-4 shrink-0 text-muted-foreground" />}
           label={t("auth.accountSetup.emailAddress")}
           value={vm.tokenData?.adminEmail}
         />
@@ -58,10 +61,7 @@ export function SetupStep1Security({ vm }: SetupStep1SecurityProps) {
 
       {/* Live Strength Meter */}
       {vm.password.length > 0 && (
-        <PasswordStrengthMeter
-          score={vm.passwordScore}
-          entropyBits={vm.passwordEntropy}
-        />
+        <PasswordStrengthMeter score={vm.passwordScore} entropyBits={vm.passwordEntropy} />
       )}
 
       {/* Password Requirements Checklist */}

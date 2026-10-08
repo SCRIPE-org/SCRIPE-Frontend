@@ -45,6 +45,9 @@ function getModuleIcon(name: string) {
   return Layers;
 }
 
+/**
+ * CoreServicesGrid
+ */
 export function CoreServicesGrid({
   modules = [],
   checks = [],
@@ -53,30 +56,30 @@ export function CoreServicesGrid({
   const { t } = useI18n();
 
   const total = modules.length || 12;
-  const healthyCount = modules.filter((m) => m.isActive && m.status.toLowerCase() !== "degraded").length || total;
+  const healthyCount =
+    modules.filter((m) => m.isActive && m.status.toLowerCase() !== "degraded").length || total;
 
   return (
-    <div className="rounded-xl border border-border bg-card p-4 sm:p-5 shadow-xs flex flex-col gap-4">
+    <div className="shadow-xs flex flex-col gap-4 rounded-xl border border-border bg-card p-4 sm:p-5">
       {/* Section Header */}
       <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border/60 pb-3">
         <div className="flex items-center gap-2.5">
           <span className="relative flex h-2.5 w-2.5">
-            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
-            <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500" />
+            <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75" />
+            <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-emerald-500" />
           </span>
           <div>
-            <h2 className="text-base font-bold tracking-tight text-foreground flex items-center gap-2">
+            <h2 className="flex items-center gap-2 text-base font-bold tracking-tight text-foreground">
               {t("platformHealth.services.title") || "Core Services Health"}
             </h2>
             <p className="text-xs text-muted-foreground">
-              {t("platformHealth.services.subtitle") ||
-                "Real-time status of all platform services"}
+              {t("platformHealth.services.subtitle") || "Real-time status of all platform services"}
             </p>
           </div>
         </div>
 
         {/* Count Badge */}
-        <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+        <span className="inline-flex items-center gap-1.5 rounded-full border border-emerald-500/20 bg-emerald-500/10 px-2.5 py-1 text-xs font-semibold text-emerald-400">
           <CircleDot className="h-3 w-3 text-emerald-400" />
           {t("platformHealth.services.healthyCount", {
             healthy: healthyCount,
@@ -86,12 +89,12 @@ export function CoreServicesGrid({
       </div>
 
       {/* Services Grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
         {isLoading ? (
           Array.from({ length: 9 }).map((_, i) => (
             <div
               key={i}
-              className="h-[74px] rounded-lg border border-border/60 bg-muted/20 animate-pulse"
+              className="h-[74px] animate-pulse rounded-lg border border-border/60 bg-muted/20"
             />
           ))
         ) : modules.length > 0 ? (
@@ -111,18 +114,16 @@ export function CoreServicesGrid({
             return (
               <div
                 key={mod.name}
-                className="group relative rounded-lg border border-border/70 bg-card/60 p-3 hover:bg-accent/40 hover:border-border transition-all flex items-center justify-between gap-3 shadow-2xs"
+                className="shadow-2xs group relative flex items-center justify-between gap-3 rounded-lg border border-border/70 bg-card/60 p-3 transition-all hover:border-border hover:bg-accent/40"
               >
-                <div className="flex items-center gap-3 min-w-0">
-                  <div className="w-9 h-9 rounded-md bg-muted/60 border border-border/80 text-muted-foreground group-hover:text-primary group-hover:border-primary/30 flex items-center justify-center shrink-0 transition-colors">
+                <div className="flex min-w-0 items-center gap-3">
+                  <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-md border border-border/80 bg-muted/60 text-muted-foreground transition-colors group-hover:border-primary/30 group-hover:text-primary">
                     <Icon className="h-4.5 w-4.5" />
                   </div>
                   <div className="min-w-0">
-                    <div className="text-sm font-semibold text-foreground truncate">
-                      {mod.name}
-                    </div>
-                    <div className="flex items-center gap-2 mt-0.5">
-                      <span className="text-[11px] text-muted-foreground font-mono truncate">
+                    <div className="truncate text-sm font-semibold text-foreground">{mod.name}</div>
+                    <div className="mt-0.5 flex items-center gap-2">
+                      <span className="truncate font-mono text-[11px] text-muted-foreground">
                         {mod.routePrefix || "In-Process"}
                       </span>
                     </div>
@@ -130,14 +131,14 @@ export function CoreServicesGrid({
                 </div>
 
                 {/* Status & Latency */}
-                <div className="flex flex-col items-end shrink-0 gap-1">
+                <div className="flex shrink-0 flex-col items-end gap-1">
                   <span
                     className={`inline-flex items-center gap-1.5 text-xs font-medium ${
                       isHealthy
                         ? "text-emerald-400"
                         : isDegraded
-                        ? "text-amber-400"
-                        : "text-rose-400"
+                          ? "text-amber-400"
+                          : "text-rose-400"
                     }`}
                   >
                     <span
@@ -145,17 +146,15 @@ export function CoreServicesGrid({
                         isHealthy
                           ? "bg-emerald-500 shadow-[0_0_6px_rgba(16,185,129,0.8)]"
                           : isDegraded
-                          ? "bg-amber-500 shadow-[0_0_6px_rgba(245,158,11,0.8)]"
-                          : "bg-rose-500 shadow-[0_0_6px_rgba(244,63,94,0.8)]"
+                            ? "bg-amber-500 shadow-[0_0_6px_rgba(245,158,11,0.8)]"
+                            : "bg-rose-500 shadow-[0_0_6px_rgba(244,63,94,0.8)]"
                       }`}
                     />
                     {isHealthy
                       ? t("platformHealth.services.statusHealthy") || "Healthy"
                       : t("platformHealth.services.statusDegraded") || "Degraded"}
                   </span>
-                  <span className="text-[11px] font-mono text-muted-foreground">
-                    {latency}
-                  </span>
+                  <span className="font-mono text-[11px] text-muted-foreground">{latency}</span>
                 </div>
               </div>
             );

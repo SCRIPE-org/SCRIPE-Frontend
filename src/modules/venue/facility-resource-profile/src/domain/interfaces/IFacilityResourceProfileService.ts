@@ -3,11 +3,17 @@ import type {
   FacilityResourceProfileWrite,
 } from "../entities/FacilityResourceProfile";
 
+/**
+ * Documentation for module export
+ */
 export interface FacilityResourceProfilePage {
   items: FacilityResourceProfile[];
   totalCount: number;
 }
 
+/**
+ * Documentation for module export
+ */
 export interface IFacilityResourceProfileService {
   getAll(params: {
     page: number;

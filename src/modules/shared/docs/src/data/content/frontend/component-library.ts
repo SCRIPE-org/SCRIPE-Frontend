@@ -141,6 +141,9 @@ export function cn(...inputs: ClassValue[]) {
   }
 };
 
+/**
+ * Documentation for module export
+ */
 export const DARK_THEME = {
   surface: "#050506",
   surfaceRaised: "rgba(21,23,25,0.86)",
@@ -150,6 +153,9 @@ export const DARK_THEME = {
   shadowCard: "0 25px 50px -12px rgba(13,13,14,.5)"
 };
 
+/**
+ * Documentation for module export
+ */
 export const LIGHT_THEME = {
   surface: "#F7F8F5",
   surfaceRaised: "#FFFFFF",

@@ -14,6 +14,9 @@ import type { IPartyService } from "../../domain/interfaces/IPartyService";
 import type { Party } from "../../domain/entities/Party";
 import { PartyMapper } from "../mappers/PartyMapper";
 
+/**
+ * Documentation for module export
+ */
 export class PartyRepository implements IPartyRepository {
   constructor(private readonly service: IPartyService) {}
 

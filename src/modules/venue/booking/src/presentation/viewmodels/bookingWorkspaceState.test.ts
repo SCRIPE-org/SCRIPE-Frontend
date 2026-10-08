@@ -1,8 +1,5 @@
 import { describe, expect, it } from "vitest";
-import {
-  initialBookingWorkspaceState,
-  reduceBookingWorkspace,
-} from "./bookingWorkspaceState";
+import { initialBookingWorkspaceState, reduceBookingWorkspace } from "./useBookingWorkspaceState";
 
 const candidate = {
   resourceId: "resource-1",
@@ -92,7 +89,9 @@ describe("bookingWorkspaceState", () => {
   });
 
   it("represents server feature denial separately from a generic network error", () => {
-    const result = reduceBookingWorkspace(initialBookingWorkspaceState, { type: "featureUnavailable" });
+    const result = reduceBookingWorkspace(initialBookingWorkspaceState, {
+      type: "featureUnavailable",
+    });
     expect(result.stage).toBe("featureUnavailable");
     expect(result.errorMessage).toBeNull();
   });

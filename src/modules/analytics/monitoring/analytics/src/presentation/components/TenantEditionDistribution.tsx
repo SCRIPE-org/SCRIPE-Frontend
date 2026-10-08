@@ -11,17 +11,17 @@ interface TenantEditionDistributionProps {
   isLoading: boolean;
 }
 
-export function TenantEditionDistribution({
-  data,
-  isLoading,
-}: TenantEditionDistributionProps) {
+/**
+ * TenantEditionDistribution
+ */
+export function TenantEditionDistribution({ data, isLoading }: TenantEditionDistributionProps) {
   const { t } = useI18n();
 
   const totalAssigned = data.reduce((acc, curr) => acc + curr.count, 0);
 
   return (
-    <Card className="h-full flex flex-col border-border/80 bg-card/80 backdrop-blur-xs shadow-xs">
-      <CardHeader className="p-4 sm:p-5 pb-2">
+    <Card className="backdrop-blur-xs shadow-xs flex h-full flex-col border-border/80 bg-card/80">
+      <CardHeader className="p-4 pb-2 sm:p-5">
         <div className="flex items-center gap-2">
           <Layers className="h-4 w-4 text-primary" />
           <CardTitle className="text-sm font-bold text-foreground">
@@ -34,11 +34,11 @@ export function TenantEditionDistribution({
         </CardDescription>
       </CardHeader>
 
-      <CardContent className="p-4 sm:p-5 pt-3 flex-1 flex flex-col justify-between min-h-[240px]">
+      <CardContent className="flex min-h-[240px] flex-1 flex-col justify-between p-4 pt-3 sm:p-5">
         {isLoading ? (
           <div className="space-y-3">
             {[...Array(3)].map((_, i) => (
-              <div key={i} className="h-8 rounded-lg bg-muted/20 animate-pulse" />
+              <div key={i} className="h-8 animate-pulse rounded-lg bg-muted/20" />
             ))}
           </div>
         ) : data.length === 0 ? (
@@ -46,7 +46,7 @@ export function TenantEditionDistribution({
             {t("tenantAnalytics.editions.noData") || "No edition distribution data available"}
           </div>
         ) : (
-          <div className="flex-1 flex flex-col justify-around gap-3">
+          <div className="flex flex-1 flex-col justify-around gap-3">
             <div className="space-y-3.5">
               {data.map((item, idx) => {
                 // Accent color variation based on position
@@ -62,7 +62,7 @@ export function TenantEditionDistribution({
                 return (
                   <div key={item.edition} className="space-y-1.5">
                     <div className="flex items-center justify-between text-xs">
-                      <span className="font-semibold text-foreground truncate">{item.edition}</span>
+                      <span className="truncate font-semibold text-foreground">{item.edition}</span>
                       <div className="flex items-center gap-2 text-muted-foreground">
                         <span className="font-bold text-foreground">{item.count}</span>
                         <span className="text-[11px]">({item.percentage}%)</span>
@@ -82,7 +82,7 @@ export function TenantEditionDistribution({
             </div>
 
             {/* Bottom summary info banner */}
-            <div className="mt-auto pt-3 border-t border-border/50 flex items-center justify-between text-[11px] text-muted-foreground">
+            <div className="mt-auto flex items-center justify-between border-t border-border/50 pt-3 text-[11px] text-muted-foreground">
               <span className="flex items-center gap-1.5">
                 <Layers className="h-3 w-3 text-primary" />
                 <span>

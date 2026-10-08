@@ -61,7 +61,7 @@ describe("minorUnitDigits", () => {
     "treats %s as a two-decimal currency",
     (code) => {
       expect(minorUnitDigits(code)).toBe(2);
-    },
+    }
   );
 
   it("matches a lowercase code, since callers pass through user and API data", () => {

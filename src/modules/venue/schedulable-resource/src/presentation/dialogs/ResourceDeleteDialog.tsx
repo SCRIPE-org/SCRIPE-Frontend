@@ -1,4 +1,4 @@
-import React from "react";
+﻿import React from "react";
 import { Button } from "@core/ui/button";
 import {
   AlertDialog,
@@ -11,6 +11,9 @@ import {
 } from "@core/ui/alert-dialog";
 import type { SchedulableResourceTreeNode } from "../utils/resourceTree";
 
+/**
+ * Documentation for module export
+ */
 export interface ResourceDeleteDialogProps {
   target: SchedulableResourceTreeNode | null;
   deleting: boolean;
@@ -19,6 +22,9 @@ export interface ResourceDeleteDialogProps {
   onConfirm: () => void;
 }
 
+/**
+ * Documentation for ResourceDeleteDialog
+ */
 export function ResourceDeleteDialog({
   target,
   deleting,

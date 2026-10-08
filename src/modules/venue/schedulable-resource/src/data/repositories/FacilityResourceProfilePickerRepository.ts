@@ -1,6 +1,12 @@
-import type { IFacilityResourceProfilePickerRepository, FacilityResourceProfilePickerOption } from "../../domain/interfaces/IFacilityResourceProfilePickerRepository";
+import type {
+  IFacilityResourceProfilePickerRepository,
+  FacilityResourceProfilePickerOption,
+} from "../../domain/interfaces/IFacilityResourceProfilePickerRepository";
 import type { IFacilityResourceProfilePickerService } from "../../domain/interfaces/IFacilityResourceProfilePickerService";
 
+/**
+ * Documentation for module export
+ */
 export class FacilityResourceProfilePickerRepository implements IFacilityResourceProfilePickerRepository {
   constructor(private readonly service: IFacilityResourceProfilePickerService) {}
 

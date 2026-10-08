@@ -104,6 +104,9 @@ queryClient.invalidateQueries({ queryKey: adminKeys.all });`,
     filename: "query-client.ts — Global Query Cache Configuration",
     code: `import { QueryClient } from "@tanstack/react-query";
 
+/**
+ * Documentation for QueryClient
+ */
 export const queryClient = new QueryClient({
   defaultOptions: {
     queries: {

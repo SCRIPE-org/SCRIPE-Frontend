@@ -25,6 +25,9 @@ import type { FieldVersionsResponse } from "../../domain/entities/FieldInsight";
 import { FieldVersionDraftCard } from "./FieldVersionDraftCard";
 import { FieldVersionTimeline } from "./FieldVersionTimeline";
 
+/**
+ * Documentation for module export
+ */
 export interface FieldVersionHistoryDrawerProps {
   isOpen: boolean;
   onClose: () => void;
@@ -41,6 +44,9 @@ export interface FieldVersionHistoryDrawerProps {
   onDiscard: () => Promise<void>;
 }
 
+/**
+ * Documentation for FieldVersionHistoryDrawer
+ */
 export function FieldVersionHistoryDrawer({
   isOpen,
   onClose,
@@ -67,9 +73,7 @@ export function FieldVersionHistoryDrawer({
   }, [versionsData]);
 
   const activeDraft = useMemo(() => {
-    return versionsData?.versions.find(
-      (v) => v.status.toLowerCase() === "draft"
-    ) ?? null;
+    return versionsData?.versions.find((v) => v.status.toLowerCase() === "draft") ?? null;
   }, [versionsData]);
 
   const formatDate = (dateStr?: string | null) => {
@@ -86,11 +90,11 @@ export function FieldVersionHistoryDrawer({
 
   return (
     <Sheet open={isOpen} onOpenChange={(open) => !open && onClose()}>
-      <SheetContent side="end" className="w-full sm:max-w-xl flex flex-col h-full p-0">
+      <SheetContent side="end" className="flex h-full w-full flex-col p-0 sm:max-w-xl">
         {/* Header */}
-        <SheetHeader className="p-6 border-b">
+        <SheetHeader className="border-b p-6">
           <div className="flex items-center gap-2">
-            <div className="p-2 rounded-lg bg-primary/10 text-primary">
+            <div className="rounded-lg bg-primary/10 p-2 text-primary">
               <GitBranch className="h-5 w-5" />
             </div>
             <div>
@@ -99,7 +103,7 @@ export function FieldVersionHistoryDrawer({
                   defaultValue: "Version History & Drafts",
                 })}
               </SheetTitle>
-              <SheetDescription className="text-xs font-mono mt-0.5">
+              <SheetDescription className="mt-0.5 font-mono text-xs">
                 {target?.fieldLabel} ({target?.fieldKey})
               </SheetDescription>
             </div>
@@ -110,16 +114,18 @@ export function FieldVersionHistoryDrawer({
         <ScrollArea className="flex-1 p-6">
           <div className="space-y-6">
             {/* Field Meta Summary */}
-            <div className="grid grid-cols-2 gap-3 p-3 rounded-lg bg-muted/50 border text-xs">
+            <div className="grid grid-cols-2 gap-3 rounded-lg border bg-muted/50 p-3 text-xs">
               <div>
-                <span className="text-muted-foreground block">
+                <span className="block text-muted-foreground">
                   {t("customField.columns.entityType", { defaultValue: "Entity Type" })}
                 </span>
                 <span className="font-medium text-foreground">{target?.entityTypeKey}</span>
               </div>
               <div>
-                <span className="text-muted-foreground block">
-                  {t("customField.versions.publishedVersion", { defaultValue: "Published Version" })}
+                <span className="block text-muted-foreground">
+                  {t("customField.versions.publishedVersion", {
+                    defaultValue: "Published Version",
+                  })}
                 </span>
                 <span className="font-semibold text-emerald-600 dark:text-emerald-400">
                   {versionsData?.publishedVersionNumber
@@ -155,7 +161,7 @@ export function FieldVersionHistoryDrawer({
         </ScrollArea>
 
         {/* Footer */}
-        <SheetFooter className="p-4 border-t bg-muted/20">
+        <SheetFooter className="border-t bg-muted/20 p-4">
           <Button variant="outline" onClick={onClose} className="w-full sm:w-auto">
             {t("common.close", { defaultValue: "Close" })}
           </Button>

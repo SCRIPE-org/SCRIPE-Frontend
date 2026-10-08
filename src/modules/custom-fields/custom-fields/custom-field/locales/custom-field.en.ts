@@ -165,7 +165,7 @@ export const en = {
     // not a second source of truth for which kinds exist.
     validatorKindNone: "No validator",
     validatorKindDescription:
-      "Optional format check applied when this field is saved. Leave as \"No validator\" for a free-form Text field.",
+      'Optional format check applied when this field is saved. Leave as "No validator" for a free-form Text field.',
     validatorKinds: {
       iban: "IBAN",
       egyptianNationalId: "Egyptian National ID",
@@ -295,7 +295,8 @@ export const en = {
       // customField.entityReference.invalid is ("Choose a record again"): a media
       // field has no picker yet, so that advice would send the operator looking
       // for an affordance that does not exist.
-      mediaReferenceIncomplete: "The file stored in {field} is only half-recorded and can't be read.",
+      mediaReferenceIncomplete:
+        "The file stored in {field} is only half-recorded and can't be read.",
       // ── The three server-only media verdicts ─────────────────────────────
       //
       // MIRRORS WITH NO CLIENT CALLER, and that is deliberate rather than
@@ -321,7 +322,8 @@ export const en = {
       // reasoning: reporting which record owns the file would answer a question
       // the caller has no permission to ask, which is the cross-tenant
       // disclosure the check was added to prevent.
-      mediaReferenceOwnerMismatch: "That file belongs to a different record, so it can't be attached to this one in {field}.",
+      mediaReferenceOwnerMismatch:
+        "That file belongs to a different record, so it can't be attached to this one in {field}.",
       // Image's content-type refusal, raised after the owner-pair check has
       // already passed -- so it never reveals what kind of file an arbitrary id
       // points at.
@@ -627,7 +629,7 @@ export const en = {
     // belongs with the form that renders it.
     fieldGroupNone: "No group",
     fieldGroupDescription:
-      "Optional. Groups this field with the others in the same group when the entity's form is rendered. Leave as \"No group\" to keep it ungrouped.",
+      'Optional. Groups this field with the others in the same group when the entity\'s form is rendered. Leave as "No group" to keep it ungrouped.',
     fieldGroupLoadFailed:
       "Couldn't load the field groups for this entity type. Saving now keeps this field's current group unchanged.",
     fieldGroupsLink: "Manage field groups",
@@ -802,7 +804,7 @@ export const en = {
       permissionNote:
         "You can view option sets, but attaching, switching or detaching one needs the option-set bind permission.",
       pickASetHint: "Choose a set above first.",
-      currentlyBound: "Currently bound to \"{set}\".",
+      currentlyBound: 'Currently bound to "{set}".',
       currentlyUnbound: "Not bound to any option set.",
       currentStatusLabel: "Current Options Status",
       boundBadge: "Bound to Shared Set",
@@ -815,7 +817,7 @@ export const en = {
       attachAtCreateHint:
         "Optional. Attaches a shared, versioned list of options once the field is created. Any manual options you set above are kept, unless one of their keys collides with the set.",
       attachAtCreateFailed:
-        "The field was created, but attaching the option set failed. Open the field's \"Option set\" action to attach it.",
+        'The field was created, but attaching the option set failed. Open the field\'s "Option set" action to attach it.',
       attach: {
         title: "Attach",
         description:
@@ -906,13 +908,17 @@ export const en = {
       actionLabel: "Visibility Rules",
       title: "Visibility Rules — {field}",
       description: "Configure conditions that control when this field is visible on forms.",
-      rulesCount: "{count, plural, =0 {No visibility rules} =1 {1 visibility rule} other {# visibility rules}}",
-      andLogicNote: "Monotone logic: A field is visible only when ALL configured rules are satisfied simultaneously.",
+      rulesCount:
+        "{count, plural, =0 {No visibility rules} =1 {1 visibility rule} other {# visibility rules}}",
+      andLogicNote:
+        "Monotone logic: A field is visible only when ALL configured rules are satisfied simultaneously.",
       noRulesTitle: "Unconditionally Visible",
-      noRulesDescription: "This field has no visibility rules and appears unconditionally on all forms.",
+      noRulesDescription:
+        "This field has no visibility rules and appears unconditionally on all forms.",
       loadFailed: "Couldn't load visibility rules for this field.",
       requiredFieldTitle: "Required Field",
-      requiredFieldDescription: "Required fields cannot have visibility rules configured because required fields must always be present and filled on records.",
+      requiredFieldDescription:
+        "Required fields cannot have visibility rules configured because required fields must always be present and filled on records.",
       visibleWhen: "Visible when",
       priority: "Priority",
       priorityLabel: "Evaluation Priority",
@@ -921,7 +927,8 @@ export const en = {
       editRuleTitle: "Edit Visibility Rule",
       saveRule: "Save Rule",
       unreadableBadge: "Unreadable",
-      unreadableDescription: "This rule expression failed to parse and is hiding this field on forms.",
+      unreadableDescription:
+        "This rule expression failed to parse and is hiding this field on forms.",
       operandFieldLabel: "Operand Field (Sibling)",
       selectOperandPlaceholder: "Select a sibling field...",
       noSiblingFields: "No sibling custom fields available for this entity type.",
@@ -964,11 +971,13 @@ export const en = {
     convertValueType: {
       actionLabel: "Convert Value Type",
       title: "Convert Value Type — {field}",
-      description: "Safely convert the data type of this custom field and migrate existing record values.",
+      description:
+        "Safely convert the data type of this custom field and migrate existing record values.",
       currentType: "Current Type",
       selectTargetType: "Target Value Type",
       selectPlaceholder: "Select a new value type...",
-      confirmDataLossCheckbox: "I understand that some existing values may be lost or unconvertible, and I want to proceed.",
+      confirmDataLossCheckbox:
+        "I understand that some existing values may be lost or unconvertible, and I want to proceed.",
       executeButton: "Convert Value Type",
       converting: "Converting...",
       rollbackButton: "Rollback Conversion",
@@ -981,16 +990,21 @@ export const en = {
         noChange: "No Change",
       },
       notes: {
-        lossless: "Lossless conversion: All existing values can be converted exactly with zero data loss.",
-        lossy: "Lossy conversion: Some stored values may exceed target width limits or fail parsing. A full dry-run check will be performed first.",
-        impossible: "Impossible conversion: No valid conversion mapping exists between these data types.",
+        lossless:
+          "Lossless conversion: All existing values can be converted exactly with zero data loss.",
+        lossy:
+          "Lossy conversion: Some stored values may exceed target width limits or fail parsing. A full dry-run check will be performed first.",
+        impossible:
+          "Impossible conversion: No valid conversion mapping exists between these data types.",
         noChange: "The target type is identical to the field's current type.",
       },
       result: {
         appliedTitle: "Type Conversion Succeeded",
-        appliedDescription: "Successfully converted {converted} values (examined {examined} records).",
+        appliedDescription:
+          "Successfully converted {converted} values (examined {examined} records).",
         refusedTitle: "Type Conversion Refused (Dry Run)",
-        refusedDescription: "The type change was refused because {count, plural, =1 {1 record} other {# records}} could not be converted safely. No records were modified.",
+        refusedDescription:
+          "The type change was refused because {count, plural, =1 {1 record} other {# records}} could not be converted safely. No records were modified.",
         rolledBackTitle: "Conversion Rolled Back",
         rolledBackDescription: "Restored all {restored} records to their previous values.",
         rolledBackPartialTitle: "Rollback Incomplete",
@@ -1016,11 +1030,13 @@ export const en = {
       pendingPublish: "Pending Publish",
       optionsCount: "options configured",
       rulesCount: "rules configured",
-      draftNotice: "This draft is a snapshot from when it was created. It will not pick up any edits made to the live version while it stays open. Publishing replaces the live version with this draft, discarding any live edits made in the meantime.",
+      draftNotice:
+        "This draft is a snapshot from when it was created. It will not pick up any edits made to the live version while it stays open. Publishing replaces the live version with this draft, discarding any live edits made in the meantime.",
       publishDraftButton: "Publish to Live",
       discardDraftButton: "Discard Draft",
       noActiveDraft: "No Active Draft",
-      createDraftExplanation: "Mint a draft copy from the live definition to edit options and visibility rules safely. Publish it quickly: it won't pick up live edits made while it's open, and publishing overwrites the live version with the draft as it stood at creation.",
+      createDraftExplanation:
+        "Mint a draft copy from the live definition to edit options and visibility rules safely. Publish it quickly: it won't pick up live edits made while it's open, and publishing overwrites the live version with the draft as it stood at creation.",
       createDraftButton: "Create Draft",
       timelineTitle: "Version Timeline",
       empty: "No versions recorded for this field definition.",
@@ -1049,5 +1065,3 @@ export const en = {
     },
   },
 };
-
-

@@ -8,7 +8,10 @@ interface MapSvgCanvasProps {
   mapStageRef: React.RefObject<HTMLDivElement | null>;
   vb: ViewBox;
   enrichedCountries: EnrichedCountryData[];
-  countryStyles: Map<string, { fill: string; stroke: string; strokeWidth: number; isHost: boolean; isTenantRegion: boolean }>;
+  countryStyles: Map<
+    string,
+    { fill: string; stroke: string; strokeWidth: number; isHost: boolean; isTenantRegion: boolean }
+  >;
   selectedCountry: EnrichedCountryData | null;
   isDraggingRef: React.MutableRefObject<boolean>;
   hasDraggedRef: React.MutableRefObject<boolean>;
@@ -47,7 +50,7 @@ export function MapSvgCanvas({
       ref={svgRef}
       id="worldSvg"
       viewBox={`${vb.x} ${vb.y} ${vb.w} ${vb.h}`}
-      className="absolute inset-0 w-full h-full cursor-grab active:cursor-grabbing touch-none"
+      className="absolute inset-0 h-full w-full cursor-grab touch-none active:cursor-grabbing"
       onPointerDown={onPointerDown}
       onPointerMove={onPointerMove}
       onPointerUp={onPointerUp}
@@ -59,21 +62,36 @@ export function MapSvgCanvas({
     >
       <defs>
         <pattern id="gridPatternV4" width="34" height="34" patternUnits="userSpaceOnUse">
-          <path d="M34 0H0V34" fill="none" stroke="currentColor" strokeOpacity=".08" strokeWidth=".65" />
+          <path
+            d="M34 0H0V34"
+            fill="none"
+            stroke="currentColor"
+            strokeOpacity=".08"
+            strokeWidth=".65"
+          />
         </pattern>
       </defs>
 
       {/* Background Grid Pattern */}
-      <rect x="0" y="0" width="1000" height="460" fill="url(#gridPatternV4)" className="text-muted-foreground opacity-40 pointer-events-none" />
+      <rect
+        x="0"
+        y="0"
+        width="1000"
+        height="460"
+        fill="url(#gridPatternV4)"
+        className="pointer-events-none text-muted-foreground opacity-40"
+      />
 
       {/* 172 Country Vector Paths */}
       <g id="countryLayer">
         {enrichedCountries.map((p) => {
           const isSelected = selectedCountry?.name === p.name;
           const style = countryStyles.get(p.name);
-          const fill = isSelected ? "var(--primary)" : style?.fill ?? "#112330";
-          const stroke = isSelected ? "var(--primary)" : style?.stroke ?? "rgba(100,140,165,0.35)";
-          const strokeWidth = isSelected ? 1.4 : style?.strokeWidth ?? 0.62;
+          const fill = isSelected ? "var(--primary)" : (style?.fill ?? "#112330");
+          const stroke = isSelected
+            ? "var(--primary)"
+            : (style?.stroke ?? "rgba(100,140,165,0.35)");
+          const strokeWidth = isSelected ? 1.4 : (style?.strokeWidth ?? 0.62);
 
           return (
             <path
@@ -83,7 +101,7 @@ export function MapSvgCanvas({
               stroke={stroke}
               strokeWidth={strokeWidth}
               vectorEffect="non-scaling-stroke"
-              className="transition-colors duration-150 cursor-pointer hover:opacity-90"
+              className="cursor-pointer transition-colors duration-150 hover:opacity-90"
               onPointerEnter={(e) => {
                 if (!isDraggingRef.current) {
                   const rect = mapStageRef.current?.getBoundingClientRect();
@@ -144,7 +162,7 @@ export function MapSvgCanvas({
                   stroke={isHost ? "var(--primary)" : "#0ea5e9"}
                   strokeWidth="1.2"
                   opacity="0.8"
-                  className="animate-ping origin-center"
+                  className="origin-center animate-ping"
                   style={{ transformOrigin: `${cx}px ${cy}px` }}
                 />
                 <circle
@@ -167,11 +185,22 @@ export function MapSvgCanvas({
       </g>
 
       {/* Region Labels */}
-      <g id="regionLabels" className="pointer-events-none select-none text-[8px] font-semibold tracking-[0.22em] fill-muted-foreground opacity-45">
-        <text x="495" y="88">EUROPE</text>
-        <text x="575" y="168">MIDDLE EAST</text>
-        <text x="535" y="245">AFRICA</text>
-        <text x="760" y="184">ASIA PACIFIC</text>
+      <g
+        id="regionLabels"
+        className="pointer-events-none select-none fill-muted-foreground text-[8px] font-semibold tracking-[0.22em] opacity-45"
+      >
+        <text x="495" y="88">
+          EUROPE
+        </text>
+        <text x="575" y="168">
+          MIDDLE EAST
+        </text>
+        <text x="535" y="245">
+          AFRICA
+        </text>
+        <text x="760" y="184">
+          ASIA PACIFIC
+        </text>
       </g>
     </svg>
   );

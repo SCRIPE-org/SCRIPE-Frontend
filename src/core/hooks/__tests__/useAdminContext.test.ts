@@ -77,4 +77,3 @@ describe("useAdminContext", () => {
     expect(result.current.activeTenantName).toBe("Al Ahly SC");
   });
 });
-

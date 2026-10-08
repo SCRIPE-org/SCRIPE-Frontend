@@ -5,10 +5,19 @@ import { ArrowRight, AlertCircle, CheckCircle2, Layers } from "lucide-react";
 import { Alert, AlertDescription } from "@core/ui/alert";
 import { Badge } from "@core/ui/badge";
 import { Button } from "@core/ui/button";
-import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@core/ui/dialog";
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@core/ui/dialog";
 import { LoadingSpinner } from "@core/ui/loading-spinner";
-import { getVenueContainer } from "@modules/venue/di";
-import type { AvailabilitySearchResult } from "@modules/venue/availability/src/domain/entities/Availability";
+import { useVenueServiceLocator } from "@modules/venue";
+import type { AvailabilitySearchResult } from "@modules/venue";
 
 interface Props {
   open: boolean;
@@ -24,24 +33,30 @@ interface Props {
   direction: "ltr" | "rtl";
   disabled: boolean;
   t: (key: string, values?: Record<string, string | number>) => string;
-  onConfirmChangeResource: (input: { targetResourceId: string; requestedStartUtc: string; requestedEndUtc: string }) => void;
+  onConfirmChangeResource: (input: {
+    targetResourceId: string;
+    requestedStartUtc: string;
+    requestedEndUtc: string;
+  }) => void;
 }
 
+/**
+ * Documentation for module export
+ */
 export function BookingChangeResourceDialog(props: Props) {
-  const {
-    currentEndUtc,
-    currentResourceId,
-    currentStartUtc,
-    facilityId,
-    quantity,
-    t,
-    timeZoneId,
-  } = props;
+  const { currentEndUtc, currentResourceId, currentStartUtc, facilityId, quantity, t, timeZoneId } =
+    props;
   const [searching, setSearching] = useState(false);
   const [candidates, setCandidates] = useState<AvailabilitySearchResult[]>([]);
   const [selectedCandidate, setSelectedCandidate] = useState<AvailabilitySearchResult | null>(null);
   const [step, setStep] = useState<"search" | "review">("search");
   const [error, setError] = useState<string | null>(null);
+
+  const {
+    schedulableResourceRepository,
+    availabilityRepository,
+    facilityResourceProfileRepository,
+  } = useVenueServiceLocator();
 
   const resetState = () => {
     setSearching(false);
@@ -62,7 +77,6 @@ export function BookingChangeResourceDialog(props: Props) {
     setError(null);
     setSelectedCandidate(null);
     try {
-      const { schedulableResourceRepository, availabilityRepository, facilityResourceProfileRepository } = getVenueContainer();
       const [resourcePage, profilePage] = await Promise.all([
         schedulableResourceRepository.getAll({ page: 1, pageSize: 100 }),
         facilityResourceProfileRepository.getAll({ page: 1, pageSize: 100 }),
@@ -83,17 +97,21 @@ export function BookingChangeResourceDialog(props: Props) {
       const endLocal = localStringForUtc(currentEndUtc, timeZoneId);
 
       const searchPromises = facilityResourceIds.map((resId) =>
-        availabilityRepository.search({
-          resourceId: resId,
-          timeZoneId,
-          startLocal,
-          endLocal,
-          quantity,
-        }).catch(() => null)
+        availabilityRepository
+          .search({
+            resourceId: resId,
+            timeZoneId,
+            startLocal,
+            endLocal,
+            quantity,
+          })
+          .catch(() => null)
       );
 
       const searchResults = await Promise.all(searchPromises);
-      const available = searchResults.filter((c): c is AvailabilitySearchResult => c !== null && c.isAvailable);
+      const available = searchResults.filter(
+        (c): c is AvailabilitySearchResult => c !== null && c.isAvailable
+      );
       setCandidates(available);
     } catch {
       setError(t("booking360.changeResource.conflict"));
@@ -108,6 +126,9 @@ export function BookingChangeResourceDialog(props: Props) {
     quantity,
     t,
     timeZoneId,
+    availabilityRepository,
+    facilityResourceProfileRepository,
+    schedulableResourceRepository,
   ]);
 
   useEffect(() => {
@@ -156,14 +177,23 @@ export function BookingChangeResourceDialog(props: Props) {
 
         <div className="space-y-4 py-2">
           {/* Current resource context box */}
-          <div className="rounded-nx-sm border border-nx-line bg-nx-raised p-3 text-xs space-y-1" data-testid="change-resource-current-context">
+          <div
+            className="space-y-1 rounded-nx-sm border border-nx-line bg-nx-raised p-3 text-xs"
+            data-testid="change-resource-current-context"
+          >
             <div className="flex justify-between">
-              <span className="text-nx-ink-2">{props.t("booking360.changeResource.currentResource")}:</span>
-              <span className="font-semibold text-nx-ink">{props.currentResourceName} ({props.currentFacilityName})</span>
+              <span className="text-nx-ink-2">
+                {props.t("booking360.changeResource.currentResource")}:
+              </span>
+              <span className="font-semibold text-nx-ink">
+                {props.currentResourceName} ({props.currentFacilityName})
+              </span>
             </div>
             <div className="flex justify-between">
               <span className="text-nx-ink-2">{props.t("booking360.schedule.time")}:</span>
-              <span className="font-medium text-nx-ink tabular-nums">{formatUtc(props.currentStartUtc)} – {formatUtc(props.currentEndUtc)}</span>
+              <span className="font-medium tabular-nums text-nx-ink">
+                {formatUtc(props.currentStartUtc)} â€“ {formatUtc(props.currentEndUtc)}
+              </span>
             </div>
           </div>
 
@@ -177,29 +207,39 @@ export function BookingChangeResourceDialog(props: Props) {
           {step === "search" && (
             <div className="space-y-4">
               {searching ? (
-                <div className="py-6 text-center space-y-2">
+                <div className="space-y-2 py-6 text-center">
                   <LoadingSpinner showText={false} />
-                  <p className="text-xs text-nx-ink-2">{props.t("booking360.changeResource.searching")}</p>
+                  <p className="text-xs text-nx-ink-2">
+                    {props.t("booking360.changeResource.searching")}
+                  </p>
                 </div>
               ) : candidates.length === 0 ? (
-                <p className="text-sm text-nx-ink-2 py-4">{props.t("booking360.changeResource.noCandidates")}</p>
+                <p className="py-4 text-sm text-nx-ink-2">
+                  {props.t("booking360.changeResource.noCandidates")}
+                </p>
               ) : (
                 <div className="space-y-2" data-testid="change-resource-candidates">
-                  <p className="text-xs font-semibold text-nx-ink-2">{props.t("booking360.changeResource.search")}</p>
-                  <div className="max-h-56 overflow-y-auto space-y-2">
+                  <p className="text-xs font-semibold text-nx-ink-2">
+                    {props.t("booking360.changeResource.search")}
+                  </p>
+                  <div className="max-h-56 space-y-2 overflow-y-auto">
                     {candidates.map((c) => (
                       <Button
                         type="button"
                         variant="outline"
                         key={c.resourceId}
-                        className="w-full text-start h-auto rounded-nx-sm border border-nx-line p-3 hover:bg-nx-hover flex items-center justify-between text-xs transition-colors font-normal"
+                        className="flex h-auto w-full items-center justify-between rounded-nx-sm border border-nx-line p-3 text-start text-xs font-normal transition-colors hover:bg-nx-hover"
                         onClick={() => handleSelectCandidate(c)}
                       >
                         <div className="text-start">
                           <p className="font-semibold text-nx-ink">{c.resourceName}</p>
-                          <p className="text-nx-ink-2 tabular-nums">{formatUtc(c.startUtc)} – {formatUtc(c.endUtc)}</p>
+                          <p className="tabular-nums text-nx-ink-2">
+                            {formatUtc(c.startUtc)} â€“ {formatUtc(c.endUtc)}
+                          </p>
                         </div>
-                        <Badge variant="outline">{props.t("booking360.actions.changeResource")}</Badge>
+                        <Badge variant="outline">
+                          {props.t("booking360.actions.changeResource")}
+                        </Badge>
                       </Button>
                     ))}
                   </div>
@@ -209,16 +249,25 @@ export function BookingChangeResourceDialog(props: Props) {
           )}
 
           {step === "review" && selectedCandidate && (
-            <div className="space-y-4 border-t border-nx-line pt-3" data-testid="change-resource-review-step">
-              <h4 className="text-xs font-semibold text-nx-ink">{props.t("booking360.changeResource.reviewTitle")}</h4>
+            <div
+              className="space-y-4 border-t border-nx-line pt-3"
+              data-testid="change-resource-review-step"
+            >
+              <h4 className="text-xs font-semibold text-nx-ink">
+                {props.t("booking360.changeResource.reviewTitle")}
+              </h4>
               <div className="grid grid-cols-[1fr_auto_1fr] items-center gap-3 rounded-nx-sm border border-nx-line p-3 text-xs">
                 <div className="space-y-1">
-                  <span className="text-nx-ink-3 block text-[11px]">{props.t("booking360.changeResource.currentLabel")}</span>
+                  <span className="block text-[11px] text-nx-ink-3">
+                    {props.t("booking360.changeResource.currentLabel")}
+                  </span>
                   <p className="font-medium text-nx-ink">{props.currentResourceName}</p>
                 </div>
                 <ArrowRight className="size-4 text-nx-ink-3 rtl:rotate-180" aria-hidden="true" />
                 <div className="space-y-1">
-                  <span className="text-nx-accent block font-medium text-[11px]">{props.t("booking360.changeResource.targetLabel")}</span>
+                  <span className="block text-[11px] font-medium text-nx-accent">
+                    {props.t("booking360.changeResource.targetLabel")}
+                  </span>
                   <p className="font-medium text-nx-ink">{selectedCandidate.resourceName}</p>
                 </div>
               </div>
@@ -260,6 +309,7 @@ function localStringForUtc(utcStr: string, timeZoneId: string): string {
     hourCycle: "h23",
     timeZone: timeZoneId,
   }).formatToParts(new Date(utcStr));
-  const val = (type: Intl.DateTimeFormatPartTypes) => parts.find((p) => p.type === type)?.value ?? "";
+  const val = (type: Intl.DateTimeFormatPartTypes) =>
+    parts.find((p) => p.type === type)?.value ?? "";
   return `${val("year")}-${val("month")}-${val("day")}T${val("hour")}:${val("minute")}`;
 }

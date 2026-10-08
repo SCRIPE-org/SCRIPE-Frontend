@@ -28,7 +28,11 @@ export function useTokenLogin() {
   const queryClient = useQueryClient();
 
   const completeTokenLogin = useCallback(
-    async (result: { accessToken: string; refreshToken?: string; mustChangePassword?: boolean }) => {
+    async (result: {
+      accessToken: string;
+      refreshToken?: string;
+      mustChangePassword?: boolean;
+    }) => {
       try {
         // 1. Persist the access token
         secureTokenService.setAccessToken(result.accessToken);

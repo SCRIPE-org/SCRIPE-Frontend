@@ -1,5 +1,8 @@
 import { V1 } from "@/core/config/api-endpoints/_shared";
 
+/**
+ * ANALYTICS_ENDPOINTS
+ */
 export const ANALYTICS_ENDPOINTS = {
   SUMMARY: `${V1}/Dashboard/summary`,
   EVENT_DISTRIBUTION: `${V1}/Dashboard/event-distribution`,

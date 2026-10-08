@@ -1,3 +1,6 @@
+/**
+ * Documentation for module export
+ */
 export interface FacilityJson {
   id: string;
   venueProfileId: string;
@@ -9,6 +12,9 @@ export interface FacilityJson {
   venueProfileName?: string;
 }
 
+/**
+ * Documentation for module export
+ */
 export interface FacilityListResponseJson {
   items: FacilityJson[];
   totalCount: number;
@@ -19,6 +25,9 @@ export interface FacilityListResponseJson {
   hasPreviousPage: boolean;
 }
 
+/**
+ * Documentation for module export
+ */
 export class FacilityModel {
   constructor(
     public readonly id: string,

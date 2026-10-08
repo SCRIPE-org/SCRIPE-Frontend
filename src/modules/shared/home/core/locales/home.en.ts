@@ -85,7 +85,8 @@ export const en = {
     monitoringOverview: {
       eyebrow: "Monitoring",
       title: "Platform Overview",
-      subtitle: "Real-time visibility into platform operations, tenant activity, and system signals across SCRIPE.",
+      subtitle:
+        "Real-time visibility into platform operations, tenant activity, and system signals across SCRIPE.",
       operational: "All systems operational",
       degraded: "Platform needs attention",
       unknown: "Status unavailable",
@@ -134,7 +135,8 @@ export const en = {
       hoursAgo: "{{count}} h ago",
       daysAgo: "{{count}} d ago",
     },
-    subtitle: "Global operations, tenant telemetry, and cross-region activity across the SCRIPE ecosystem.",
+    subtitle:
+      "Global operations, tenant telemetry, and cross-region activity across the SCRIPE ecosystem.",
     timeRanges: {
       today: "Today",
       last24Hours: "Last 24 hours",
@@ -307,7 +309,8 @@ export const en = {
     customizeDrawer: {
       title: "Customize dashboard",
       personalize: "Personalize",
-      description: "Curate your command center layout by toggling components on or off. Settings are saved locally.",
+      description:
+        "Curate your command center layout by toggling components on or off. Settings are saved locally.",
       reset: "Reset to canonical layout",
       sections: {
         activity: "Global activity & health",
@@ -482,7 +485,8 @@ export const en = {
     },
     partner: {
       title: "Your Success Partner",
-      subtitle: "Need help getting the most out of SCRIPE? Our team can help with setup, onboarding and best practices.",
+      subtitle:
+        "Need help getting the most out of SCRIPE? Our team can help with setup, onboarding and best practices.",
       contactSupport: "Contact Support",
     },
   },

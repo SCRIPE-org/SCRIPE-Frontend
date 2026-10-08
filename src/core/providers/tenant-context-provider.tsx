@@ -115,7 +115,9 @@ export function TenantContextProvider({ children }: TenantContextProviderProps) 
     // Auto-discover default tenant context if none is active
     if (canEnterTenantWorld) {
       apiService
-        .get<{ items: Array<{ id: string; name: string; code: string }> }>("/api/v1/tenants?page=1&pageSize=1")
+        .get<{ items: Array<{ id: string; name: string; code: string }> }>(
+          "/api/v1/tenants?page=1&pageSize=1"
+        )
         .then((res) => {
           const first = res?.items?.[0];
           if (first?.id) {

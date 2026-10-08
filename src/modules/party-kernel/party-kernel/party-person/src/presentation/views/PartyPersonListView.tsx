@@ -25,6 +25,9 @@ function shortId(id: string | undefined): string {
 }
 
 // P5.4: React.memo prevents unnecessary re-renders
+/**
+ * Documentation for module export
+ */
 export const PartyPersonListView = React.memo(function PartyPersonListView() {
   useModuleLocales(() => import("../../../locales"), "party-kernel.partyPerson");
   const { vm } = usePartyPersonViewModel();

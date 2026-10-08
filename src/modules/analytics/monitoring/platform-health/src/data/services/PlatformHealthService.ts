@@ -4,12 +4,22 @@ import type { PlatformHealthResponseDto } from "../models/platform-health.dto";
 
 import type { IPlatformHealthService } from "../../domain/interfaces/IPlatformHealthService";
 
+/**
+ * Member
+ */
 export type { IPlatformHealthService };
 
+/**
+ * PlatformHealthService
+ */
 export class PlatformHealthService implements IPlatformHealthService {
   constructor(private readonly api: IApiService) {}
 
   async getHealth(signal?: AbortSignal): Promise<PlatformHealthResponseDto> {
-    return this.api.get<PlatformHealthResponseDto>(PLATFORM_HEALTH_ENDPOINTS.HEALTH, undefined, signal);
+    return this.api.get<PlatformHealthResponseDto>(
+      PLATFORM_HEALTH_ENDPOINTS.HEALTH,
+      undefined,
+      signal
+    );
   }
 }

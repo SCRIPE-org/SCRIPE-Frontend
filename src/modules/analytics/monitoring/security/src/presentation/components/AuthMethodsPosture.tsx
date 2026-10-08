@@ -22,6 +22,9 @@ const METHOD_ICONS: Record<string, typeof Lock> = {
   passkey: Sparkles,
 };
 
+/**
+ * AuthMethodsPosture
+ */
 export const AuthMethodsPosture = memo(function AuthMethodsPosture({
   methods,
   cardClasses,
@@ -29,7 +32,7 @@ export const AuthMethodsPosture = memo(function AuthMethodsPosture({
   const { t } = useI18n();
 
   return (
-    <Card className={`h-full flex flex-col ${cardClasses || ""}`}>
+    <Card className={`flex h-full flex-col ${cardClasses || ""}`}>
       <CardHeader className="pb-3">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
@@ -47,7 +50,7 @@ export const AuthMethodsPosture = memo(function AuthMethodsPosture({
             </div>
           </div>
 
-          <Button variant="ghost" size="sm" asChild className="h-7 text-xs text-primary gap-1">
+          <Button variant="ghost" size="sm" asChild className="h-7 gap-1 text-xs text-primary">
             <Link href="/admins">
               <span>{t("security.manage") || "Manage"}</span>
               <ExternalLink className="h-3 w-3" />
@@ -57,14 +60,14 @@ export const AuthMethodsPosture = memo(function AuthMethodsPosture({
       </CardHeader>
 
       <CardContent className="flex-1 pb-4">
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
           {methods.map((method) => {
             const Icon = METHOD_ICONS[method.id] || Lock;
 
             return (
               <div
                 key={method.id}
-                className="flex flex-col justify-between rounded-lg border border-border/70 bg-card/60 p-3.5 space-y-3"
+                className="flex flex-col justify-between space-y-3 rounded-lg border border-border/70 bg-card/60 p-3.5"
               >
                 <div className="flex items-start justify-between gap-2">
                   <div className="flex items-center gap-2.5">
@@ -73,7 +76,7 @@ export const AuthMethodsPosture = memo(function AuthMethodsPosture({
                     </div>
                     <div>
                       <p className="text-xs font-semibold text-foreground">{method.name}</p>
-                      <p className="text-lg font-bold text-foreground tracking-tight mt-0.5">
+                      <p className="mt-0.5 text-lg font-bold tracking-tight text-foreground">
                         {method.coverage}
                       </p>
                     </div>
@@ -84,10 +87,10 @@ export const AuthMethodsPosture = memo(function AuthMethodsPosture({
                       method.status === "enforced"
                         ? "success"
                         : method.status === "active"
-                        ? "default"
-                        : "outline"
+                          ? "default"
+                          : "outline"
                     }
-                    className="text-[10px] uppercase font-bold shrink-0"
+                    className="shrink-0 text-[10px] font-bold uppercase"
                   >
                     {method.status}
                   </Badge>
@@ -100,7 +103,7 @@ export const AuthMethodsPosture = memo(function AuthMethodsPosture({
                   </div>
                 )}
 
-                <p className="text-[11px] text-muted-foreground leading-relaxed">
+                <p className="text-[11px] leading-relaxed text-muted-foreground">
                   {method.details}
                 </p>
               </div>

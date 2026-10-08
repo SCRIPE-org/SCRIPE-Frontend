@@ -4,6 +4,9 @@ import type {
   ResourceAllocationMode,
 } from "../../domain/entities/SchedulableResource";
 
+/**
+ * Documentation for module export
+ */
 export interface SchedulableResourceJson {
   id: string;
   facilityResourceProfileId: string;
@@ -32,6 +35,9 @@ export interface SchedulableResourceJson {
   modifiedAt?: string;
 }
 
+/**
+ * Documentation for module export
+ */
 export interface SchedulableResourceListResponseJson {
   items: SchedulableResourceJson[];
   totalCount: number;
@@ -42,6 +48,9 @@ export interface SchedulableResourceListResponseJson {
   hasPreviousPage: boolean;
 }
 
+/**
+ * Documentation for module export
+ */
 export class SchedulableResourceModel {
   constructor(
     public readonly id: string,

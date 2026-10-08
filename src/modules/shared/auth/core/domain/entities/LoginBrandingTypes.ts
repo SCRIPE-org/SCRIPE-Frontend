@@ -141,13 +141,7 @@ export const TOKEN_TO_CSS_VAR: Record<string, string> = {
 
 // ─── Common Block Props (shared by all blocks) ────────
 export type BlockAnimation =
-  | "none"
-  | "fade-in"
-  | "slide-up"
-  | "slide-left"
-  | "slide-right"
-  | "scale-in"
-  | "bounce";
+  "none" | "fade-in" | "slide-up" | "slide-left" | "slide-right" | "scale-in" | "bounce";
 export type BlockPadding = "none" | "sm" | "md" | "lg";
 export type BlockMargin = "none" | "sm" | "md" | "lg";
 

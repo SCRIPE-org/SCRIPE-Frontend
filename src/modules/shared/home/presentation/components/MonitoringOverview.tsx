@@ -60,21 +60,20 @@ export function MonitoringOverview({ vm }: { vm: CommandCenter }) {
     },
   ];
 
-  const currentRangeLabel =
-    ranges.find((r) => r.key === vm.timeRangeKey)?.label ?? ranges[0].label;
+  const currentRangeLabel = ranges.find((r) => r.key === vm.timeRangeKey)?.label ?? ranges[0].label;
 
   return (
-    <div className="w-full space-y-4 pb-8 select-none">
+    <div className="w-full select-none space-y-4 pb-8">
       {/* ── 1. Page Header matching Command Center ────────────────────────── */}
       <header className="flex flex-col gap-4 border-b border-border/80 pb-4 lg:flex-row lg:items-end lg:justify-between">
         <div className="min-w-0">
           <p className="text-[11px] font-bold uppercase tracking-[0.16em] text-primary">
             {t("platformCommandCenter.monitoringOverview.eyebrow") || "MONITORING"}
           </p>
-          <h1 className="mt-1 text-2xl sm:text-3xl font-extrabold tracking-tight text-foreground leading-tight">
+          <h1 className="mt-1 text-2xl font-extrabold leading-tight tracking-tight text-foreground sm:text-3xl">
             {t("platformCommandCenter.monitoringOverview.title") || "Platform Overview"}
           </h1>
-          <p className="mt-1 max-w-2xl text-xs sm:text-sm text-muted-foreground">
+          <p className="mt-1 max-w-2xl text-xs text-muted-foreground sm:text-sm">
             {t("platformCommandCenter.monitoringOverview.subtitle") ||
               "Real-time visibility into platform operations, tenant activity, and system signals across SCRIPE."}
           </p>
@@ -83,14 +82,14 @@ export function MonitoringOverview({ vm }: { vm: CommandCenter }) {
         {/* Header Right Actions */}
         <div className="flex flex-wrap items-center gap-2.5">
           {/* Operational State Pill */}
-          <span className="inline-flex items-center gap-2 rounded-lg border border-border bg-card px-3 py-1.5 text-xs font-medium shadow-xs">
+          <span className="shadow-xs inline-flex items-center gap-2 rounded-lg border border-border bg-card px-3 py-1.5 text-xs font-medium">
             <span
               className={`h-2 w-2 rounded-full ${
                 degraded
                   ? "bg-amber-500 shadow-[0_0_8px_rgba(245,158,11,0.7)]"
                   : health
-                  ? "bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.7)]"
-                  : "bg-muted-foreground"
+                    ? "bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.7)]"
+                    : "bg-muted-foreground"
               }`}
               aria-hidden="true"
             />
@@ -104,7 +103,7 @@ export function MonitoringOverview({ vm }: { vm: CommandCenter }) {
             size="sm"
             onClick={vm.toggleLive}
             title={vm.isLive ? "Telemetry live stream active" : "Telemetry stream paused"}
-            className="h-8.5 px-3 text-xs font-semibold gap-1.5 border-border bg-card text-muted-foreground hover:text-foreground shadow-xs cursor-pointer"
+            className="h-8.5 shadow-xs cursor-pointer gap-1.5 border-border bg-card px-3 text-xs font-semibold text-muted-foreground hover:text-foreground"
           >
             <Sparkles className="h-3.5 w-3.5 text-primary" />
             <span>{t("platformCommandCenter.liveData") || "Live Data"}</span>
@@ -116,20 +115,20 @@ export function MonitoringOverview({ vm }: { vm: CommandCenter }) {
               <Button
                 variant="outline"
                 size="sm"
-                className="h-8.5 px-3 text-xs font-semibold gap-2 border-border bg-card hover:bg-accent text-foreground shadow-xs cursor-pointer"
+                className="h-8.5 shadow-xs cursor-pointer gap-2 border-border bg-card px-3 text-xs font-semibold text-foreground hover:bg-accent"
               >
                 <Calendar className="h-3.5 w-3.5 text-muted-foreground" />
                 <span>{currentRangeLabel}</span>
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-44 bg-popover border-border shadow-xl">
+            <DropdownMenuContent align="end" className="w-44 border-border bg-popover shadow-xl">
               {ranges.map((r) => (
                 <DropdownMenuItem
                   key={r.key}
                   onClick={() => vm.setTimeRangeKey(r.key)}
-                  className={`text-xs cursor-pointer ${
+                  className={`cursor-pointer text-xs ${
                     vm.timeRangeKey === r.key
-                      ? "font-semibold text-primary bg-primary/10"
+                      ? "bg-primary/10 font-semibold text-primary"
                       : "text-popover-foreground"
                   }`}
                 >
@@ -145,16 +144,16 @@ export function MonitoringOverview({ vm }: { vm: CommandCenter }) {
             variant="outline"
             size="sm"
             onClick={vm.toggleLive}
-            className={`h-8.5 px-3 text-xs font-semibold gap-2 border shadow-xs cursor-pointer transition-colors ${
+            className={`h-8.5 shadow-xs cursor-pointer gap-2 border px-3 text-xs font-semibold transition-colors ${
               vm.isLive
-                ? "bg-emerald-500/10 border-emerald-500/25 text-emerald-500 hover:bg-emerald-500/20"
-                : "bg-muted/50 border-border text-muted-foreground hover:bg-muted"
+                ? "border-emerald-500/25 bg-emerald-500/10 text-emerald-500 hover:bg-emerald-500/20"
+                : "border-border bg-muted/50 text-muted-foreground hover:bg-muted"
             }`}
           >
             {vm.isLive ? (
               <span className="relative flex h-2 w-2">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-500 opacity-75" />
-                <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.75)]" />
+                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-500 opacity-75" />
+                <span className="relative inline-flex h-2 w-2 rounded-full bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.75)]" />
               </span>
             ) : (
               <span className="h-2 w-2 rounded-full bg-muted-foreground" />
@@ -173,9 +172,11 @@ export function MonitoringOverview({ vm }: { vm: CommandCenter }) {
             size="sm"
             onClick={() => vm.refetchAll()}
             disabled={vm.isRefreshing}
-            className="h-8.5 px-3 text-xs font-semibold gap-1.5 border-border bg-card hover:bg-accent text-foreground shadow-xs cursor-pointer"
+            className="h-8.5 shadow-xs cursor-pointer gap-1.5 border-border bg-card px-3 text-xs font-semibold text-foreground hover:bg-accent"
           >
-            <RotateCw className={`h-3.5 w-3.5 text-muted-foreground ${vm.isRefreshing ? "animate-spin text-primary" : ""}`} />
+            <RotateCw
+              className={`h-3.5 w-3.5 text-muted-foreground ${vm.isRefreshing ? "animate-spin text-primary" : ""}`}
+            />
             <span>{t("platformCommandCenter.monitoringOverview.refresh") || "Refresh"}</span>
           </Button>
         </div>
@@ -192,7 +193,7 @@ export function MonitoringOverview({ vm }: { vm: CommandCenter }) {
       </section>
 
       {/* ── 3. Middle Section: Global Tenant Activity + Needs Attention ─────── */}
-      <section className="grid grid-cols-1 lg:grid-cols-12 gap-3.5 items-start">
+      <section className="grid grid-cols-1 items-start gap-3.5 lg:grid-cols-12">
         {/* Global Tenant Activity (World Map + Regional Metrics) */}
         <div className="lg:col-span-7 xl:col-span-8">
           <PlatformActivityMap
@@ -217,12 +218,9 @@ export function MonitoringOverview({ vm }: { vm: CommandCenter }) {
       </section>
 
       {/* ── 4. Lower Section: Recent Platform Activity + Platform Services Health ─ */}
-      <section className="grid grid-cols-1 lg:grid-cols-2 gap-3.5 items-start">
+      <section className="grid grid-cols-1 items-start gap-3.5 lg:grid-cols-2">
         {/* Recent Platform Activity Table */}
-        <PlatformRecentActivity
-          activityData={vm.recentChanges}
-          isLoading={vm.isLoading}
-        />
+        <PlatformRecentActivity activityData={vm.recentChanges} isLoading={vm.isLoading} />
 
         {/* Platform Services Health List */}
         <PlatformServiceHealth healthVm={vm.healthVm} />
@@ -231,7 +229,7 @@ export function MonitoringOverview({ vm }: { vm: CommandCenter }) {
       {/* ── 5. Bottom Section: Explore Monitoring Specialized Surfaces ────── */}
       <section className="pt-2">
         <div className="mb-3 flex items-center justify-between">
-          <h2 className="text-sm font-bold text-foreground tracking-tight">
+          <h2 className="text-sm font-bold tracking-tight text-foreground">
             {t("platformCommandCenter.monitoringOverview.exploreTitle") || "Explore Monitoring"}
           </h2>
           <span className="text-[11px] text-muted-foreground">
@@ -242,25 +240,39 @@ export function MonitoringOverview({ vm }: { vm: CommandCenter }) {
           <ExploreDestination
             href="/platform-health"
             title={t("platformCommandCenter.monitoringOverview.healthTitle") || "Health"}
-            body={t("platformCommandCenter.monitoringOverview.healthBody") || "System health, dependencies and operational checks"}
+            body={
+              t("platformCommandCenter.monitoringOverview.healthBody") ||
+              "System health, dependencies and operational checks"
+            }
             icon={Activity}
           />
           <ExploreDestination
             href="/analytics"
-            title={t("platformCommandCenter.monitoringOverview.analyticsTitle") || "Tenant Analytics"}
-            body={t("platformCommandCenter.monitoringOverview.analyticsBody") || "Tenant-level usage and activity analysis"}
+            title={
+              t("platformCommandCenter.monitoringOverview.analyticsTitle") || "Tenant Analytics"
+            }
+            body={
+              t("platformCommandCenter.monitoringOverview.analyticsBody") ||
+              "Tenant-level usage and activity analysis"
+            }
             icon={Building2}
           />
           <ExploreDestination
             href="/audit"
             title={t("platformCommandCenter.monitoringOverview.auditTitle") || "Audit Log"}
-            body={t("platformCommandCenter.monitoringOverview.auditBody") || "Searchable operational and administrative activity history"}
+            body={
+              t("platformCommandCenter.monitoringOverview.auditBody") ||
+              "Searchable operational and administrative activity history"
+            }
             icon={ScrollText}
           />
           <ExploreDestination
             href="/security"
             title={t("platformCommandCenter.monitoringOverview.securityTitle") || "Security"}
-            body={t("platformCommandCenter.monitoringOverview.securityBody") || "Security events, access activity and security signals"}
+            body={
+              t("platformCommandCenter.monitoringOverview.securityBody") ||
+              "Security events, access activity and security signals"
+            }
             icon={ShieldCheck}
           />
         </div>
@@ -283,24 +295,22 @@ function ExploreDestination({
   return (
     <Link
       href={href}
-      className="group rounded-xl border border-border bg-card p-4 hover:border-primary/40 hover:bg-muted/30 transition-all flex flex-col justify-between shadow-xs"
+      className="shadow-xs group flex flex-col justify-between rounded-xl border border-border bg-card p-4 transition-all hover:border-primary/40 hover:bg-muted/30"
     >
       <div className="flex items-center justify-between">
-        <div className="w-8 h-8 rounded-lg bg-primary/10 border border-primary/20 text-primary flex items-center justify-center group-hover:scale-105 transition-transform">
+        <div className="flex h-8 w-8 items-center justify-center rounded-lg border border-primary/20 bg-primary/10 text-primary transition-transform group-hover:scale-105">
           <Icon className="h-4 w-4" />
         </div>
-        <span className="text-[10px] text-muted-foreground group-hover:text-primary transition-colors flex items-center gap-0.5">
+        <span className="flex items-center gap-0.5 text-[10px] text-muted-foreground transition-colors group-hover:text-primary">
           <span>Open</span>
-          <ChevronRight className="h-3 w-3 group-hover:translate-x-0.5 transition-transform" />
+          <ChevronRight className="h-3 w-3 transition-transform group-hover:translate-x-0.5" />
         </span>
       </div>
       <div className="mt-3">
-        <p className="text-sm font-semibold text-foreground group-hover:text-primary transition-colors">
+        <p className="text-sm font-semibold text-foreground transition-colors group-hover:text-primary">
           {title}
         </p>
-        <p className="mt-1 text-xs text-muted-foreground line-clamp-2">
-          {body}
-        </p>
+        <p className="mt-1 line-clamp-2 text-xs text-muted-foreground">{body}</p>
       </div>
     </Link>
   );

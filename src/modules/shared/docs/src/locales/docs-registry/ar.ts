@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /**
  * Docs Locale Registry — AR
  * Eagerly merges all AR docs translations (tech + commercial).

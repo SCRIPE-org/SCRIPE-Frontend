@@ -11,6 +11,9 @@ interface ApiPerformanceTelemetryProps {
   isLoading?: boolean;
 }
 
+/**
+ * ApiPerformanceTelemetry
+ */
 export function ApiPerformanceTelemetry({
   health,
   timeRange = "24h",
@@ -26,15 +29,15 @@ export function ApiPerformanceTelemetry({
   const p95Latency = Math.round(Math.max(dbLatency * 1.5, redisLatency * 2, 28));
 
   return (
-    <div className="rounded-xl border border-border bg-card p-4 sm:p-5 shadow-xs flex flex-col gap-4">
+    <div className="shadow-xs flex flex-col gap-4 rounded-xl border border-border bg-card p-4 sm:p-5">
       {/* Header */}
       <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border/60 pb-3">
         <div className="flex items-center gap-2.5">
-          <div className="w-8 h-8 rounded-lg bg-sky-500/10 border border-sky-500/20 text-sky-400 flex items-center justify-center shrink-0">
+          <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border border-sky-500/20 bg-sky-500/10 text-sky-400">
             <Activity className="h-4.5 w-4.5" />
           </div>
           <div>
-            <h2 className="text-base font-bold tracking-tight text-foreground flex items-center gap-2">
+            <h2 className="flex items-center gap-2 text-base font-bold tracking-tight text-foreground">
               {t("platformHealth.performance.title") || "API Performance & Vitals"}
             </h2>
             <p className="text-xs text-muted-foreground">
@@ -44,36 +47,32 @@ export function ApiPerformanceTelemetry({
           </div>
         </div>
 
-        <span className="text-[11px] font-mono text-muted-foreground bg-muted/40 px-2 py-0.5 rounded border border-border/60">
+        <span className="rounded border border-border/60 bg-muted/40 px-2 py-0.5 font-mono text-[11px] text-muted-foreground">
           {timeRange === "1h" ? "1 hour" : timeRange === "7d" ? "7 days" : "Last 24 hours"}
         </span>
       </div>
 
       {/* Latency & Error Rate Split */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+      <div className="grid grid-cols-1 gap-3.5 sm:grid-cols-2">
         {/* Latency (p95) */}
-        <div className="rounded-lg border border-border/70 bg-card/60 p-3.5 flex flex-col justify-between gap-2 shadow-2xs">
+        <div className="shadow-2xs flex flex-col justify-between gap-2 rounded-lg border border-border/70 bg-card/60 p-3.5">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-medium text-muted-foreground">
-              Latency (p95)
-            </span>
-            <span className="text-[10px] font-bold text-emerald-500 bg-emerald-500/10 px-1.5 py-0.5 rounded border border-emerald-500/20">
+            <span className="text-xs font-medium text-muted-foreground">Latency (p95)</span>
+            <span className="rounded border border-emerald-500/20 bg-emerald-500/10 px-1.5 py-0.5 text-[10px] font-bold text-emerald-500">
               ↓ -18% vs peak
             </span>
           </div>
 
           <div className="flex items-baseline gap-2">
-            <span className="text-2xl font-bold font-mono text-foreground">
+            <span className="font-mono text-2xl font-bold text-foreground">
               {isLoading ? "..." : `${p95Latency} ms`}
             </span>
-            <span className="text-[11px] text-muted-foreground">
-              Target &lt; 250ms
-            </span>
+            <span className="text-[11px] text-muted-foreground">Target &lt; 250ms</span>
           </div>
 
           {/* Sparkline curve */}
-          <div className="h-10 w-full text-primary pt-1">
-            <svg viewBox="0 0 200 40" className="w-full h-full overflow-visible">
+          <div className="h-10 w-full pt-1 text-primary">
+            <svg viewBox="0 0 200 40" className="h-full w-full overflow-visible">
               <defs>
                 <linearGradient id="latencyGrad" x1="0" y1="0" x2="0" y2="1">
                   <stop offset="0%" stopColor="currentColor" stopOpacity="0.25" />
@@ -97,28 +96,24 @@ export function ApiPerformanceTelemetry({
         </div>
 
         {/* Error Rate */}
-        <div className="rounded-lg border border-border/70 bg-card/60 p-3.5 flex flex-col justify-between gap-2 shadow-2xs">
+        <div className="shadow-2xs flex flex-col justify-between gap-2 rounded-lg border border-border/70 bg-card/60 p-3.5">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-medium text-muted-foreground">
-              Error Rate
-            </span>
-            <span className="text-[10px] font-bold text-emerald-500 bg-emerald-500/10 px-1.5 py-0.5 rounded border border-emerald-500/20">
+            <span className="text-xs font-medium text-muted-foreground">Error Rate</span>
+            <span className="rounded border border-emerald-500/20 bg-emerald-500/10 px-1.5 py-0.5 text-[10px] font-bold text-emerald-500">
               ↓ -35% vs SLA
             </span>
           </div>
 
           <div className="flex items-baseline gap-2">
-            <span className="text-2xl font-bold font-mono text-foreground">
+            <span className="font-mono text-2xl font-bold text-foreground">
               {isLoading ? "..." : "0.02%"}
             </span>
-            <span className="text-[11px] text-muted-foreground">
-              Target &lt; 0.1%
-            </span>
+            <span className="text-[11px] text-muted-foreground">Target &lt; 0.1%</span>
           </div>
 
           {/* Sparkline curve */}
-          <div className="h-10 w-full text-emerald-500 pt-1">
-            <svg viewBox="0 0 200 40" className="w-full h-full overflow-visible">
+          <div className="h-10 w-full pt-1 text-emerald-500">
+            <svg viewBox="0 0 200 40" className="h-full w-full overflow-visible">
               <defs>
                 <linearGradient id="errorGrad" x1="0" y1="0" x2="0" y2="1">
                   <stop offset="0%" stopColor="currentColor" stopOpacity="0.25" />
@@ -143,16 +138,16 @@ export function ApiPerformanceTelemetry({
       </div>
 
       {/* CLR Telemetry Vitals Grid */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 pt-1">
+      <div className="grid grid-cols-2 gap-2.5 pt-1 sm:grid-cols-4">
         {/* Workers */}
         <div className="rounded-lg border border-border/60 bg-muted/20 p-2.5">
-          <div className="text-[11px] text-muted-foreground flex items-center gap-1.5">
+          <div className="flex items-center gap-1.5 text-[11px] text-muted-foreground">
             <Cpu className="h-3 w-3 text-primary" />
             <span>{t("platformHealth.performance.activeThreads") || "Worker Threads"}</span>
           </div>
-          <div className="mt-1 text-sm font-bold font-mono text-foreground">
+          <div className="mt-1 font-mono text-sm font-bold text-foreground">
             {runtime?.threadPoolActiveWorkers ?? 0}{" "}
-            <span className="text-[10px] text-muted-foreground font-normal">
+            <span className="text-[10px] font-normal text-muted-foreground">
               / {runtime?.threadPoolMaxWorkers ?? 32767}
             </span>
           </div>
@@ -160,23 +155,25 @@ export function ApiPerformanceTelemetry({
 
         {/* Heap */}
         <div className="rounded-lg border border-border/60 bg-muted/20 p-2.5">
-          <div className="text-[11px] text-muted-foreground flex items-center gap-1.5">
+          <div className="flex items-center gap-1.5 text-[11px] text-muted-foreground">
             <Gauge className="h-3 w-3 text-sky-400" />
             <span>{t("platformHealth.performance.managedHeap") || "Managed Heap"}</span>
           </div>
-          <div className="mt-1 text-sm font-bold font-mono text-foreground truncate">
+          <div className="mt-1 truncate font-mono text-sm font-bold text-foreground">
             {runtime?.managedHeapFormatted || "38.2 MB"}
           </div>
         </div>
 
         {/* GC Collections */}
         <div className="rounded-lg border border-border/60 bg-muted/20 p-2.5">
-          <div className="text-[11px] text-muted-foreground flex items-center gap-1.5">
+          <div className="flex items-center gap-1.5 text-[11px] text-muted-foreground">
             <Layers className="h-3 w-3 text-amber-400" />
             <span>{t("platformHealth.performance.gcCollections") || "GC Counts"}</span>
           </div>
-          <div className="mt-1 text-sm font-bold font-mono text-foreground">
-            {runtime ? `${runtime.gcGen0Collections}/${runtime.gcGen1Collections}/${runtime.gcGen2Collections}` : "—"}
+          <div className="mt-1 font-mono text-sm font-bold text-foreground">
+            {runtime
+              ? `${runtime.gcGen0Collections}/${runtime.gcGen1Collections}/${runtime.gcGen2Collections}`
+              : "—"}
           </div>
         </div>
 
@@ -185,7 +182,10 @@ export function ApiPerformanceTelemetry({
           <div className="text-[11px] text-muted-foreground">
             {t("platformHealth.performance.clrVersion") || "CLR Runtime"}
           </div>
-          <div className="mt-1 text-sm font-bold font-mono text-foreground truncate" title={runtime?.clrVersion}>
+          <div
+            className="mt-1 truncate font-mono text-sm font-bold text-foreground"
+            title={runtime?.clrVersion}
+          >
             {runtime?.clrVersion?.replace("Microsoft .NET", ".NET") || ".NET 10.0"}
           </div>
         </div>

@@ -97,10 +97,14 @@ function allSupportedTimeZones(): readonly string[] {
  */
 function optionsFor(currentValue: string): { value: string; label: string }[] {
   const zones = allSupportedTimeZones();
-  const withCurrent = currentValue && !zones.includes(currentValue) ? [currentValue, ...zones] : zones;
+  const withCurrent =
+    currentValue && !zones.includes(currentValue) ? [currentValue, ...zones] : zones;
   return withCurrent.map((zone) => ({ value: zone, label: zone }));
 }
 
+/**
+ * Documentation for module export
+ */
 export interface TimezonePickerProps {
   id?: string;
   value: string;
@@ -111,6 +115,9 @@ export interface TimezonePickerProps {
   placeholder?: string;
 }
 
+/**
+ * Documentation for TimezonePicker
+ */
 export function TimezonePicker({
   id,
   value,

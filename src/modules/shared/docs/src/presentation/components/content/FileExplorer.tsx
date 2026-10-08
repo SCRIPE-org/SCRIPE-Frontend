@@ -10,6 +10,9 @@ interface FileExplorerProps {
   files: ExplorerFile[];
 }
 
+/**
+ * Documentation for module export
+ */
 export function FileExplorer({ moduleName, files }: FileExplorerProps) {
   const { t } = useDocsI18n();
   const [activeIdx, setActiveIdx] = useState<number | null>(null);

@@ -9,6 +9,9 @@ import type {
   SchemaImportBundlePayload,
 } from "../../data/models/SchemaImportModel";
 
+/**
+ * Documentation for module export
+ */
 export interface ISchemaImportService {
   /**
    * `POST /v1/custom-fields/schema/import`

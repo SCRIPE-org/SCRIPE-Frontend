@@ -1,5 +1,8 @@
 import { V1 } from "@/core/config/api-endpoints/_shared";
 
+/**
+ * Documentation for module export
+ */
 export const OVERRIDES_ENDPOINTS = {
   OVERRIDES: (tenantId: string) => `${V1}/tenants/${tenantId}/features/overrides`,
   RESOLVED: (tenantId: string) => `${V1}/tenants/${tenantId}/features/resolved`,

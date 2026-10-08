@@ -280,7 +280,9 @@ describe("custom-fields docs page completeness", () => {
     // spreadsheet genuinely has eighteen columns, an unrelated fact that must
     // not be mistaken for a stale count. Only the value carrying BOTH numbers
     // together is the one this check is about.
-    const contrast = flat.filter((value) => /\beighteen\b/i.test(value) && /twenty-two/i.test(value));
+    const contrast = flat.filter(
+      (value) => /\beighteen\b/i.test(value) && /twenty-two/i.test(value)
+    );
     expect(contrast).toHaveLength(1);
   });
 });

@@ -50,10 +50,10 @@ import type {
   SearchRequest,
 } from "./useEntityLookupSearch.types";
 
-export type {
-  UseEntityLookupSearchArgs,
-  UseEntityLookupSearchResult,
-};
+/**
+ * Documentation for module export
+ */
+export type { UseEntityLookupSearchArgs, UseEntityLookupSearchResult };
 
 function initialRequest(entityTypeKey: string | null | undefined): SearchRequest {
   return { entityTypeKey, query: "", requestQuery: "", page: 1, nonce: 0 };
@@ -210,15 +210,7 @@ export function useEntityLookupSearch({
       cancelled = true;
       controller.abort();
     };
-  }, [
-    canFetch,
-    entityTypeKey,
-    pageSize,
-    requestPage,
-    requestQuery,
-    requestKey,
-    scopeKey,
-  ]);
+  }, [canFetch, entityTypeKey, pageSize, requestPage, requestQuery, requestKey, scopeKey]);
 
   const setQuery = useCallback(
     (next: string) => {

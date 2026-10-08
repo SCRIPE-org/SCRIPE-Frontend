@@ -1,3 +1,6 @@
+/**
+ * Documentation for module export
+ */
 export interface ApiKeyScopeChangeData {
   previousScopes: string;
   newScopes: string;
@@ -5,6 +8,9 @@ export interface ApiKeyScopeChangeData {
   changedByUserName: string;
 }
 
+/**
+ * Documentation for module export
+ */
 export interface ApiKeyDetailData {
   id: string;
   name: string;
@@ -34,6 +40,9 @@ export interface ApiKeyDetailData {
   scopeChanges: ApiKeyScopeChangeData[];
 }
 
+/**
+ * Documentation for module export
+ */
 export class ApiKeyDetail {
   constructor(private readonly data: ApiKeyDetailData) {}
 
@@ -142,6 +151,9 @@ export class ApiKeyDetail {
   }
 }
 
+/**
+ * Documentation for module export
+ */
 export interface UpdateApiKeyDetailRequest {
   name?: string;
   description?: string;

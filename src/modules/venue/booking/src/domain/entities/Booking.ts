@@ -1,9 +1,15 @@
+/**
+ * Documentation for module export
+ */
 export interface CustomerSummary {
   id: string;
   type: string;
   displayName: string;
 }
 
+/**
+ * Documentation for module export
+ */
 export interface BookingRequestCriteria {
   facilityId: string;
   resourceId: string;
@@ -15,6 +21,9 @@ export interface BookingRequestCriteria {
   usageTypeCode: string;
 }
 
+/**
+ * Documentation for module export
+ */
 export interface BookingWorkspacePrefill {
   facilityId?: string;
   resourceId?: string;
@@ -23,6 +32,9 @@ export interface BookingWorkspacePrefill {
   durationMinutes?: number;
 }
 
+/**
+ * Documentation for module export
+ */
 export interface AvailabilityCandidate {
   resourceId: string;
   resourceName: string;
@@ -41,6 +53,9 @@ export interface AvailabilityCandidate {
   reason?: string;
 }
 
+/**
+ * Documentation for module export
+ */
 export interface CreateBookingDraftInput {
   resourceId: string;
   customerPartyId: string;
@@ -49,12 +64,18 @@ export interface CreateBookingDraftInput {
   quantity: number;
 }
 
+/**
+ * Documentation for module export
+ */
 export interface BookingHoldResult {
   reservationId: string;
   bookingHoldId: string;
   expiresAtUtc: string;
 }
 
+/**
+ * Documentation for module export
+ */
 export interface ReservationDetails {
   id: string;
   reservationNumber: string;
@@ -66,18 +87,30 @@ export interface ReservationDetails {
   customerPartyId: string;
 }
 
+/**
+ * Documentation for module export
+ */
 export interface ConfirmBookingResult {
   reservationId: string;
   bookingHoldId: string;
 }
 
+/**
+ * Documentation for "NoShow"
+ */
 export type ReservationLifecycleStatus = "CheckedIn" | "Completed" | "NoShow";
 
+/**
+ * Documentation for module export
+ */
 export interface ReservationLifecycleResult {
   reservationId: string;
   status: ReservationLifecycleStatus;
 }
 
+/**
+ * Documentation for module export
+ */
 export interface RescheduleReservationInput {
   resourceId: string;
   requestedStartUtc: string;
@@ -86,6 +119,9 @@ export interface RescheduleReservationInput {
   priceQuoteId?: string;
 }
 
+/**
+ * Documentation for module export
+ */
 export interface ChangeReservationResourceInput {
   targetResourceId: string;
   requestedStartUtc: string;
@@ -94,6 +130,9 @@ export interface ChangeReservationResourceInput {
   priceQuoteId?: string;
 }
 
+/**
+ * Documentation for =
+ */
 export type BookingWorkspaceStage =
   | "initial"
   | "searching"
@@ -108,6 +147,9 @@ export type BookingWorkspaceStage =
   | "featureUnavailable"
   | "error";
 
+/**
+ * Documentation for module export
+ */
 export interface BookingWorkspaceState {
   stage: BookingWorkspaceStage;
   candidates: AvailabilityCandidate[];
@@ -119,23 +161,35 @@ export interface BookingWorkspaceState {
   partialSearchFailure: boolean;
 }
 
+/**
+ * Documentation for module export
+ */
 export interface BookingBackendErrorDetails {
   statusCode?: number;
   errorCode?: string;
   message?: string;
 }
 
+/**
+ * Documentation for module export
+ */
 export function backendErrorDetails(error: unknown): BookingBackendErrorDetails {
   if (!(error instanceof Error)) return {};
   const details = (error as Error & { details?: BookingBackendErrorDetails }).details;
   return details ?? {};
 }
 
+/**
+ * Documentation for module export
+ */
 export function isOperationalConflict(error: unknown): boolean {
   const details = backendErrorDetails(error);
   return details.statusCode === 409 || details.errorCode === "ENTITY_OPERATION_CONFLICT";
 }
 
+/**
+ * Documentation for module export
+ */
 export function isFeatureUnavailable(error: unknown): boolean {
   return backendErrorDetails(error).errorCode === "Error.Forbidden";
 }

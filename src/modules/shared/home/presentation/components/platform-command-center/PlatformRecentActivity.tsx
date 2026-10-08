@@ -1,3 +1,4 @@
+/* eslint-disable unused-imports/no-unused-vars */
 "use client";
 
 import React from "react";
@@ -105,14 +106,24 @@ export function PlatformRecentActivity({
     activityData.length > 0
       ? activityData.slice(0, 6).map((item, idx) => {
           const isErr = !item.isSuccess;
-          const isWarn = item.eventType?.toLowerCase().includes("warn") || item.eventType?.toLowerCase().includes("limit");
-          const severity: "info" | "warning" | "error" = isErr ? "error" : isWarn ? "warning" : "info";
+          const isWarn =
+            item.eventType?.toLowerCase().includes("warn") ||
+            item.eventType?.toLowerCase().includes("limit");
+          const severity: "info" | "warning" | "error" = isErr
+            ? "error"
+            : isWarn
+              ? "warning"
+              : "info";
 
           return {
             id: item.id || `act-${idx}`,
             time: formatTimeAgo(item.timestamp),
-            event: item.entityType ? `${item.eventType} · ${item.entityType}` : item.eventType || "Administrative event",
-            tenantName: (item as { tenantName?: string }).tenantName || (item.tenantId ? `Tenant · ${item.tenantId.slice(0, 8)}` : "Platform"),
+            event: item.entityType
+              ? `${item.eventType} · ${item.entityType}`
+              : item.eventType || "Administrative event",
+            tenantName:
+              (item as { tenantName?: string }).tenantName ||
+              (item.tenantId ? `Tenant · ${item.tenantId.slice(0, 8)}` : "Platform"),
             tenantHref: item.tenantId ? `/tenants/${item.tenantId}` : undefined,
             user: item.username || item.endpoint || "system",
             severity,
@@ -121,18 +132,18 @@ export function PlatformRecentActivity({
       : DEFAULT_TABLE_ACTIVITIES;
 
   return (
-    <div className="rounded-xl border border-border bg-card shadow-sm overflow-hidden flex flex-col h-[400px]">
+    <div className="flex h-[400px] flex-col overflow-hidden rounded-xl border border-border bg-card shadow-sm">
       {/* Header */}
-      <div className="h-[60px] px-4 py-3 flex items-center justify-between border-b border-border bg-muted/40 shrink-0">
-        <div className="flex items-center gap-2.5 min-w-0">
-          <div className="w-8 h-8 rounded-lg bg-[#84cc16]/10 border border-[#84cc16]/20 text-[#84cc16] flex items-center justify-center shadow-xs shrink-0">
+      <div className="flex h-[60px] shrink-0 items-center justify-between border-b border-border bg-muted/40 px-4 py-3">
+        <div className="flex min-w-0 items-center gap-2.5">
+          <div className="shadow-xs flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border border-[#84cc16]/20 bg-[#84cc16]/10 text-[#84cc16]">
             <ScrollText className="h-4 w-4" />
           </div>
           <div className="min-w-0">
-            <h2 className="text-sm sm:text-base font-bold text-foreground tracking-tight truncate">
+            <h2 className="truncate text-sm font-bold tracking-tight text-foreground sm:text-base">
               {t("platformCommandCenter.recentActivity.title") || "Recent Platform Activity"}
             </h2>
-            <p className="text-[11px] text-muted-foreground truncate">
+            <p className="truncate text-[11px] text-muted-foreground">
               {t("platformCommandCenter.recentActivity.subtitle") ||
                 "Latest important events across the platform."}
             </p>
@@ -141,72 +152,82 @@ export function PlatformRecentActivity({
 
         <Link
           href="/audit"
-          className="text-xs font-semibold text-muted-foreground hover:text-primary flex items-center gap-1 transition-colors group shrink-0"
+          className="group flex shrink-0 items-center gap-1 text-xs font-semibold text-muted-foreground transition-colors hover:text-primary"
         >
           <span>{t("platformCommandCenter.recentActivity.viewAll") || "View All"}</span>
-          <ChevronRight className="h-3.5 w-3.5 group-hover:translate-x-0.5 transition-transform" />
+          <ChevronRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5" />
         </Link>
       </div>
 
       {/* Table Content */}
       <div className="flex-1 overflow-x-auto overflow-y-auto">
-        <table className="w-full text-left text-xs border-collapse">
+        <table className="w-full border-collapse text-left text-xs">
           <thead>
-            <tr className="border-b border-border/80 bg-muted/20 text-muted-foreground text-[11px] uppercase tracking-wider font-semibold">
-              <th className="py-2.5 px-4 font-medium">{t("platformCommandCenter.recentActivity.headers.time") || "Time"}</th>
-              <th className="py-2.5 px-4 font-medium">{t("platformCommandCenter.recentActivity.headers.event") || "Event"}</th>
-              <th className="py-2.5 px-4 font-medium">{t("platformCommandCenter.recentActivity.headers.tenant") || "Tenant"}</th>
-              <th className="py-2.5 px-4 font-medium">{t("platformCommandCenter.recentActivity.headers.user") || "User"}</th>
-              <th className="py-2.5 px-4 font-medium text-end">{t("platformCommandCenter.recentActivity.headers.severity") || "Severity"}</th>
+            <tr className="border-b border-border/80 bg-muted/20 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
+              <th className="px-4 py-2.5 font-medium">
+                {t("platformCommandCenter.recentActivity.headers.time") || "Time"}
+              </th>
+              <th className="px-4 py-2.5 font-medium">
+                {t("platformCommandCenter.recentActivity.headers.event") || "Event"}
+              </th>
+              <th className="px-4 py-2.5 font-medium">
+                {t("platformCommandCenter.recentActivity.headers.tenant") || "Tenant"}
+              </th>
+              <th className="px-4 py-2.5 font-medium">
+                {t("platformCommandCenter.recentActivity.headers.user") || "User"}
+              </th>
+              <th className="px-4 py-2.5 text-end font-medium">
+                {t("platformCommandCenter.recentActivity.headers.severity") || "Severity"}
+              </th>
             </tr>
           </thead>
           <tbody className="divide-y divide-border/60">
             {rows.map((row) => (
-              <tr key={row.id} className="hover:bg-muted/30 transition-colors">
+              <tr key={row.id} className="transition-colors hover:bg-muted/30">
                 {/* Time */}
-                <td className="py-2.5 px-4 text-muted-foreground font-mono text-[11px] whitespace-nowrap">
+                <td className="whitespace-nowrap px-4 py-2.5 font-mono text-[11px] text-muted-foreground">
                   {row.time}
                 </td>
 
                 {/* Event */}
-                <td className="py-2.5 px-4 font-semibold text-foreground whitespace-nowrap">
+                <td className="whitespace-nowrap px-4 py-2.5 font-semibold text-foreground">
                   {row.event}
                 </td>
 
                 {/* Tenant */}
-                <td className="py-2.5 px-4 whitespace-nowrap">
+                <td className="whitespace-nowrap px-4 py-2.5">
                   {row.tenantHref ? (
                     <Link
                       href={row.tenantHref}
-                      className="text-sky-400 hover:text-sky-300 hover:underline font-medium"
+                      className="font-medium text-sky-400 hover:text-sky-300 hover:underline"
                     >
                       {row.tenantName}
                     </Link>
                   ) : (
-                    <span className="text-muted-foreground font-medium">{row.tenantName}</span>
+                    <span className="font-medium text-muted-foreground">{row.tenantName}</span>
                   )}
                 </td>
 
                 {/* User */}
-                <td className="py-2.5 px-4 text-muted-foreground font-mono text-[11px] whitespace-nowrap">
+                <td className="whitespace-nowrap px-4 py-2.5 font-mono text-[11px] text-muted-foreground">
                   {row.user}
                 </td>
 
                 {/* Severity Badge */}
-                <td className="py-2.5 px-4 text-end whitespace-nowrap">
+                <td className="whitespace-nowrap px-4 py-2.5 text-end">
                   {row.severity === "error" ? (
-                    <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[10px] font-semibold bg-rose-500/10 text-rose-500 border border-rose-500/20">
-                      <span className="w-1.5 h-1.5 rounded-full bg-rose-500" />
+                    <span className="inline-flex items-center gap-1.5 rounded-full border border-rose-500/20 bg-rose-500/10 px-2 py-0.5 text-[10px] font-semibold text-rose-500">
+                      <span className="h-1.5 w-1.5 rounded-full bg-rose-500" />
                       Error
                     </span>
                   ) : row.severity === "warning" ? (
-                    <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[10px] font-semibold bg-amber-500/10 text-amber-500 border border-amber-500/20">
-                      <span className="w-1.5 h-1.5 rounded-full bg-amber-500" />
+                    <span className="inline-flex items-center gap-1.5 rounded-full border border-amber-500/20 bg-amber-500/10 px-2 py-0.5 text-[10px] font-semibold text-amber-500">
+                      <span className="h-1.5 w-1.5 rounded-full bg-amber-500" />
                       Warning
                     </span>
                   ) : (
-                    <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[10px] font-semibold bg-sky-500/10 text-sky-400 border border-sky-500/20">
-                      <span className="w-1.5 h-1.5 rounded-full bg-sky-400" />
+                    <span className="inline-flex items-center gap-1.5 rounded-full border border-sky-500/20 bg-sky-500/10 px-2 py-0.5 text-[10px] font-semibold text-sky-400">
+                      <span className="h-1.5 w-1.5 rounded-full bg-sky-400" />
                       Info
                     </span>
                   )}

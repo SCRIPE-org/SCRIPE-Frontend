@@ -86,6 +86,9 @@ import {
 
 // ─── Icons ──────────────────────────────────────────────────────
 // One lucide-backed map for every docs sidebar surface.
+/**
+ * Documentation for module export
+ */
 export const docsIcons: Record<string, (props: LucideProps) => React.ReactNode> = {
   rocket: (props) => <Rocket aria-hidden="true" {...props} />,
   "book-open": (props) => <BookOpen aria-hidden="true" {...props} />,
@@ -264,7 +267,12 @@ export function DocsSidebar({ categories, activeSlug }: DocsSidebarProps) {
                     className="docs-sidebar-item docs-sidebar-item--nested"
                     data-active={isActive}
                   >
-                    {child.icon ? (docsIcons[child.icon]?.({ size: 14, className: "docs-sidebar-item-icon" }) ?? null) : null}
+                    {child.icon
+                      ? (docsIcons[child.icon]?.({
+                          size: 14,
+                          className: "docs-sidebar-item-icon",
+                        }) ?? null)
+                      : null}
                     <span>{t(child.titleKey)}</span>
                   </Link>
                 );
@@ -287,7 +295,9 @@ export function DocsSidebar({ categories, activeSlug }: DocsSidebarProps) {
         className="docs-sidebar-item"
         data-active={isActive}
       >
-        {item.icon ? (docsIcons[item.icon]?.({ size: 15, className: "docs-sidebar-item-icon" }) ?? null) : null}
+        {item.icon
+          ? (docsIcons[item.icon]?.({ size: 15, className: "docs-sidebar-item-icon" }) ?? null)
+          : null}
         <span>{t(item.titleKey)}</span>
       </Link>
     );

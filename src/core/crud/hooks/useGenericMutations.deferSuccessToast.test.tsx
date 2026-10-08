@@ -33,10 +33,9 @@ describe("useGenericMutations — deferSuccessToast", () => {
   it("fires the create/update toast immediately on success by default (every existing screen's behavior, unchanged)", async () => {
     const create = vi.fn().mockResolvedValue({ id: "1" });
     const update = vi.fn().mockResolvedValue({ id: "1" });
-    const { result } = renderHook(
-      () => useGenericMutations(["thing"], { create, update }),
-      { wrapper }
-    );
+    const { result } = renderHook(() => useGenericMutations(["thing"], { create, update }), {
+      wrapper,
+    });
 
     await act(async () => {
       await result.current.create({});
@@ -85,11 +84,7 @@ describe("useGenericMutations — deferSuccessToast", () => {
     const onCreateSuccess = vi.fn();
     const { result } = renderHook(
       () =>
-        useGenericMutations(
-          ["thing"],
-          { create },
-          { deferSuccessToast: true, onCreateSuccess }
-        ),
+        useGenericMutations(["thing"], { create }, { deferSuccessToast: true, onCreateSuccess }),
       { wrapper }
     );
 

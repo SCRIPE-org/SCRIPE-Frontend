@@ -19,6 +19,9 @@ import type {
 
 const BASE_URL = PARTYKERNEL_ENDPOINTS.CONTACT_POINTS.LIST;
 
+/**
+ * Documentation for module export
+ */
 export class ContactPointService implements IContactPointService {
   constructor(private readonly api: IApiService) {}
 

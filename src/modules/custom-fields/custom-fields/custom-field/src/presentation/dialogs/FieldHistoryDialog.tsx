@@ -60,6 +60,9 @@ function labelFor(
   return known.has(value) ? t(`${prefix}.${value}`) : value;
 }
 
+/**
+ * Documentation for module export
+ */
 export interface FieldHistoryDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
@@ -73,6 +76,9 @@ export interface FieldHistoryDialogProps {
   onPageChange: (page: number) => void;
 }
 
+/**
+ * Documentation for FieldHistoryDialog
+ */
 export function FieldHistoryDialog({
   open,
   onOpenChange,
@@ -138,12 +144,7 @@ export function FieldHistoryDialog({
                       <div className="flex flex-wrap items-center gap-2">
                         <Badge variant={CHANGE_KIND_VARIANT[entry.changeKind] ?? "outline"}>
                           {/* Unrecognised kinds render as themselves -- see labelFor. */}
-                          {labelFor(
-                            KNOWN_KINDS,
-                            "customField.history.kind",
-                            entry.changeKind,
-                            t
-                          )}
+                          {labelFor(KNOWN_KINDS, "customField.history.kind", entry.changeKind, t)}
                         </Badge>
                         <Badge variant="outline">
                           {labelFor(KNOWN_PARTS, "customField.history.part", entry.part, t)}

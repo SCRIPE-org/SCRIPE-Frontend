@@ -53,13 +53,7 @@ async function flushTimers() {
   });
 }
 
-function TriggeredDialog({
-  modal,
-  children,
-}: {
-  modal?: boolean;
-  children?: React.ReactNode;
-}) {
+function TriggeredDialog({ modal, children }: { modal?: boolean; children?: React.ReactNode }) {
   return (
     <Dialog modal={modal}>
       <DialogTrigger>open me</DialogTrigger>
@@ -195,9 +189,7 @@ describe("body-portalled inputs inside a dialog", () => {
     // a real test of the allow-list rather than of a race.
     await flushTimers();
 
-    const timeInput = baseElement.querySelector(
-      "[data-date-picker] input"
-    ) as HTMLInputElement;
+    const timeInput = baseElement.querySelector("[data-date-picker] input") as HTMLInputElement;
     expect(timeInput).not.toBeNull();
     await act(async () => {
       timeInput.focus();
@@ -233,9 +225,7 @@ describe("body-portalled inputs inside a dialog", () => {
 
     await flushTimers();
 
-    const timeInput = baseElement.querySelector(
-      "[data-date-picker] input"
-    ) as HTMLInputElement;
+    const timeInput = baseElement.querySelector("[data-date-picker] input") as HTMLInputElement;
     await act(async () => {
       timeInput.focus();
       fireEvent.focusIn(timeInput);

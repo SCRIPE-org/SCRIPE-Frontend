@@ -3,13 +3,7 @@
 import * as React from "react";
 import { Input } from "@core/ui/input";
 import { Skeleton } from "@core/ui/skeleton";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@core/ui/select";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@core/ui/select";
 import { useI18n } from "@core/providers/i18n-provider";
 import type { CustomField } from "../../domain/entities/CustomField";
 import {
@@ -17,6 +11,9 @@ import {
   type FieldVisibilityOperator,
 } from "../../../../custom-field-value/src/domain/fieldVisibility";
 
+/**
+ * Documentation for module export
+ */
 export interface FieldVisibilityRuleFormFieldsProps {
   isAdvancedJson: boolean;
   rawJsonInput: string;
@@ -83,17 +80,15 @@ export function FieldVisibilityRuleFormFields({
         {isSiblingFieldsLoading ? (
           <Skeleton className="h-9 w-full" />
         ) : siblingFields.length === 0 ? (
-          <p className="text-xs text-nx-ink-4">
+          <p className="text-nx-ink-4 text-xs">
             {t("customField.visibilityRules.noSiblingFields")}
           </p>
         ) : (
-          <Select
-            value={selectedOperandKey}
-            onValueChange={onOperandChange}
-            disabled={isBusy}
-          >
+          <Select value={selectedOperandKey} onValueChange={onOperandChange} disabled={isBusy}>
             <SelectTrigger className="h-9">
-              <SelectValue placeholder={t("customField.visibilityRules.selectOperandPlaceholder")} />
+              <SelectValue
+                placeholder={t("customField.visibilityRules.selectOperandPlaceholder")}
+              />
             </SelectTrigger>
             <SelectContent>
               {siblingFields.map((field) => (
@@ -112,11 +107,7 @@ export function FieldVisibilityRuleFormFields({
         <label className="text-xs font-medium text-nx-ink-2">
           {t("customField.visibilityRules.operatorLabel")}
         </label>
-        <Select
-          value={selectedOperator}
-          onValueChange={onOperatorChange}
-          disabled={isBusy}
-        >
+        <Select value={selectedOperator} onValueChange={onOperatorChange} disabled={isBusy}>
           <SelectTrigger className="h-9">
             <SelectValue />
           </SelectTrigger>
@@ -148,7 +139,7 @@ export function FieldVisibilityRuleFormFields({
             disabled={isBusy}
           />
           {(selectedOperator === "in" || selectedOperator === "notIn") && (
-            <p className="text-[11px] text-nx-ink-4">
+            <p className="text-nx-ink-4 text-[11px]">
               {t("customField.visibilityRules.listValueHelp")}
             </p>
           )}

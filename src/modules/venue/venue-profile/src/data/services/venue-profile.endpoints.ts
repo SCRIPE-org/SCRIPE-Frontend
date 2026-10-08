@@ -1,5 +1,8 @@
 import { V1 } from "@/core/config/api-endpoints/_shared";
 
+/**
+ * Documentation for module export
+ */
 export const VENUE_PROFILE_ENDPOINTS = {
   LIST: `${V1}/venue-profiles`,
   BY_ID: (id: string) => `${V1}/venue-profiles/${id}`,

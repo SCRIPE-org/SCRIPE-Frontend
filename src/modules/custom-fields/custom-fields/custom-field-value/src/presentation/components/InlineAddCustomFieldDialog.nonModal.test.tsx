@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 // InlineAddCustomFieldDialog -- non-modal container (Wave 5 row 5.6)
 //
 // Design spec §5.4 / pre-plan analysis R2, R3: this dialog used to be a bare
@@ -31,7 +32,12 @@ vi.mock("../../../../field-group/src/presentation/viewmodels/useFieldGroupOption
   useFieldGroupOptions: vi.fn(() => ({ options: [], isLoading: false, isError: false })),
 }));
 vi.mock("../../../../entity-lookup/src/presentation/hooks/useEntityLookupAvailableTypes", () => ({
-  useEntityLookupAvailableTypes: vi.fn(() => ({ types: [], isLoading: false, isError: false, isEmpty: true })),
+  useEntityLookupAvailableTypes: vi.fn(() => ({
+    types: [],
+    isLoading: false,
+    isError: false,
+    isEmpty: true,
+  })),
 }));
 // Real useOptionSetViewModel calls useQueryClient() unconditionally, which throws outside a
 // QueryClientProvider -- mocked like its two sibling read hooks above rather than wrapping every
@@ -99,7 +105,13 @@ describe("InlineAddCustomFieldDialog — non-modal container", () => {
   });
 
   it("renders the panel with an accessible dialog role and name reachable via getByRole, not a raw getByLabelText probe", () => {
-    render(<InlineAddCustomFieldDialog entityTypeKey="party.person" entityDisplayName="Administrators" onCreated={vi.fn()} />);
+    render(
+      <InlineAddCustomFieldDialog
+        entityTypeKey="party.person"
+        entityDisplayName="Administrators"
+        onCreated={vi.fn()}
+      />
+    );
 
     fireEvent.click(screen.getByText("customField.inlineAdd.trigger"));
 

@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useState } from "react";
 import { Button } from "@core/ui/button";
@@ -12,16 +12,15 @@ interface Props {
   vm: ReturnType<typeof useResourceDetailViewModel>;
 }
 
+/**
+ * Documentation for module export
+ */
 export function ResourcePricingTab({ vm }: Props) {
   const { t } = useI18n();
 
   const [unitPrice, setUnitPrice] = useState<number>(vm.priceConfig?.unitPrice ?? 800);
-  const [currencyCode, setCurrencyCode] = useState<string>(
-    vm.priceConfig?.currencyCode ?? "EGP"
-  );
-  const [taxCategoryId, setTaxCategoryId] = useState<string>(
-    vm.priceConfig?.taxCategoryId ?? ""
-  );
+  const [currencyCode, setCurrencyCode] = useState<string>(vm.priceConfig?.currencyCode ?? "EGP");
+  const [taxCategoryId, setTaxCategoryId] = useState<string>(vm.priceConfig?.taxCategoryId ?? "");
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -35,7 +34,9 @@ export function ResourcePricingTab({ vm }: Props) {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>{t("resources.pricing.title", { defaultValue: "Court Rental Pricing" })}</CardTitle>
+        <CardTitle>
+          {t("resources.pricing.title", { defaultValue: "Court Rental Pricing" })}
+        </CardTitle>
         <CardDescription>
           {t("resources.pricing.description", {
             defaultValue: "Standard authoritative price per booking slot from Catalog Pricing.",
@@ -43,7 +44,7 @@ export function ResourcePricingTab({ vm }: Props) {
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <form onSubmit={handleSubmit} className="space-y-4 max-w-lg">
+        <form onSubmit={handleSubmit} className="max-w-lg space-y-4">
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label htmlFor="res-price">
@@ -70,9 +71,10 @@ export function ResourcePricingTab({ vm }: Props) {
               <Label htmlFor="res-curr">
                 {t("resources.pricing.currency", { defaultValue: "Currency" })}
               </Label>
+              {/* UI-EXCEPTION: native element required for compact layout */}
               <select
                 id="res-curr"
-                className="w-full h-9 rounded-nx-md border border-nx-line bg-nx-surface px-3 py-1.5 text-xs font-semibold text-nx-ink"
+                className="h-9 w-full rounded-nx-md border border-nx-line bg-nx-surface px-3 py-1.5 text-xs font-semibold text-nx-ink"
                 value={currencyCode}
                 onChange={(e) => setCurrencyCode(e.target.value)}
               >
@@ -89,6 +91,7 @@ export function ResourcePricingTab({ vm }: Props) {
             <Label htmlFor="res-tax">
               {t("resources.pricing.taxCategory", { defaultValue: "Tax Category" })}
             </Label>
+            {/* UI-EXCEPTION: native element required for compact layout */}
             <select
               id="res-tax"
               className="w-full rounded-nx-md border border-nx-line bg-nx-surface px-3 py-2 text-xs font-medium text-nx-ink"

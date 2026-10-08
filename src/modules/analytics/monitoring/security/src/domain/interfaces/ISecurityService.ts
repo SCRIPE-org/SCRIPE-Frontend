@@ -23,5 +23,7 @@ export interface ISecurityService {
   getDashboardSummary(): Promise<DashboardSummaryDto>;
   getSessions(): Promise<ActiveSessionDto[]>;
   revokeSession(tokenId: string): Promise<void>;
-  getAdmins(pageSize?: number): Promise<{ items: Array<{ id: string; isTwoFactorEnabled?: boolean }>; totalCount: number }>;
+  getAdmins(
+    pageSize?: number
+  ): Promise<{ items: Array<{ id: string; isTwoFactorEnabled?: boolean }>; totalCount: number }>;
 }

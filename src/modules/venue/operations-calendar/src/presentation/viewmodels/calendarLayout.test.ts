@@ -1,12 +1,15 @@
 import { describe, expect, it } from "vitest";
-import type { OperationsCalendarBlock, OperationsCalendarDay } from "../../domain/entities/OperationsCalendar";
+import type {
+  OperationsCalendarBlock,
+  OperationsCalendarDay,
+} from "../../domain/entities/OperationsCalendar";
 import {
   blockPosition,
   buildTimeSlots,
   localPrefillForInstant,
   occupyingBlocks,
   placeBlocksOnTracks,
-} from "./calendarLayout";
+} from "./useCalendarLayout";
 
 const day: OperationsCalendarDay = {
   dateLocal: "2026-09-09",
@@ -35,23 +38,43 @@ function block(patch: Partial<OperationsCalendarBlock>): OperationsCalendarBlock
 
 describe("calendarLayout", () => {
   it("uses the server UTC day bounds so DST days produce 23 or 25 chronological slots", () => {
-    expect(buildTimeSlots({ ...day, fromUtc: "2026-03-08T05:00:00Z", toUtc: "2026-03-09T04:00:00Z" }, "en")).toHaveLength(23);
-    expect(buildTimeSlots({ ...day, fromUtc: "2026-11-01T04:00:00Z", toUtc: "2026-11-02T05:00:00Z" }, "en")).toHaveLength(25);
+    expect(
+      buildTimeSlots(
+        { ...day, fromUtc: "2026-03-08T05:00:00Z", toUtc: "2026-03-09T04:00:00Z" },
+        "en"
+      )
+    ).toHaveLength(23);
+    expect(
+      buildTimeSlots(
+        { ...day, fromUtc: "2026-11-01T04:00:00Z", toUtc: "2026-11-02T05:00:00Z" },
+        "en"
+      )
+    ).toHaveLength(25);
   });
 
   it("positions touching half-open bookings edge-to-edge without overlap", () => {
     const first = block({ startUtc: "2026-09-09T06:00:00Z", endUtc: "2026-09-09T07:00:00Z" });
-    const second = block({ reservationId: "reservation-2", startUtc: first.endUtc, endUtc: "2026-09-09T08:00:00Z" });
+    const second = block({
+      reservationId: "reservation-2",
+      startUtc: first.endUtc,
+      endUtc: "2026-09-09T08:00:00Z",
+    });
     const firstPosition = blockPosition(first, day);
     const secondPosition = blockPosition(second, day);
 
-    expect(firstPosition.leftPercent + firstPosition.widthPercent).toBeCloseTo(secondPosition.leftPercent);
+    expect(firstPosition.leftPercent + firstPosition.widthPercent).toBeCloseTo(
+      secondPosition.leftPercent
+    );
     expect(placeBlocksOnTracks([first, second]).map((item) => item.track)).toEqual([0, 0]);
   });
 
   it("places genuinely overlapping occupancy on separate tracks", () => {
     const first = block({ startUtc: "2026-09-09T06:00:00Z", endUtc: "2026-09-09T08:00:00Z" });
-    const second = block({ reservationId: "reservation-2", startUtc: "2026-09-09T07:00:00Z", endUtc: "2026-09-09T09:00:00Z" });
+    const second = block({
+      reservationId: "reservation-2",
+      startUtc: "2026-09-09T07:00:00Z",
+      endUtc: "2026-09-09T09:00:00Z",
+    });
 
     expect(placeBlocksOnTracks([first, second]).map((item) => item.track)).toEqual([0, 1]);
   });
@@ -65,7 +88,11 @@ describe("calendarLayout", () => {
       block({ reservationId: "completed", status: "Completed" }),
     ];
 
-    expect(occupyingBlocks(blocks).map((item) => item.status)).toEqual(["Held", "Confirmed", "CheckedIn"]);
+    expect(occupyingBlocks(blocks).map((item) => item.status)).toEqual([
+      "Held",
+      "Confirmed",
+      "CheckedIn",
+    ]);
   });
 
   it("formats an empty-slot instant into the approved resource timezone for Booking Workspace prefill", () => {

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /**
  * useCustomFieldViewModel — validatorKind/validatorParam "" -> null
  * normalization at the create/update write seam (Wave 2 Step 2.5 Task 10,

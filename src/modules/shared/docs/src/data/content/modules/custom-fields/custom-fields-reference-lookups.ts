@@ -134,14 +134,7 @@ const sections: DocSection[] = [
   {
     type: "list",
     variant: "ordered",
-    items: [
-      `${K}.save1`,
-      `${K}.save2`,
-      `${K}.save3`,
-      `${K}.save4`,
-      `${K}.save5`,
-      `${K}.save6`,
-    ],
+    items: [`${K}.save1`, `${K}.save2`, `${K}.save3`, `${K}.save4`, `${K}.save5`, `${K}.save6`],
   },
   { type: "paragraph", contentKey: `${K}.saveGate` },
   {

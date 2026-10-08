@@ -7,6 +7,9 @@
 import { FieldGroup, type FieldGroupData } from "../../domain/entities/FieldGroup";
 import { FieldGroupModel, type FieldGroupJson } from "../models/FieldGroupModel";
 
+/**
+ * Documentation for module export
+ */
 export class FieldGroupMapper {
   /** Convert a FieldGroupModel to a FieldGroup entity. */
   static toEntity(model: FieldGroupModel): FieldGroup {

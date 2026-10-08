@@ -2,8 +2,11 @@
 
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { getVenueContainer } from "@modules/venue/di";
-import type { SchedulableResource } from "@modules/venue/schedulable-resource/src/domain/entities/SchedulableResource";
-import type { ResourceRentalPriceConfiguration, TaxCategory } from "../../domain/entities/CommercialPricing";
+import type { SchedulableResource } from "@modules/venue";
+import type {
+  ResourceRentalPriceConfiguration,
+  TaxCategory,
+} from "../../domain/entities/CommercialPricing";
 
 function asUtc(value: string): string | null {
   if (!value) return null;
@@ -22,12 +25,22 @@ function isNotFound(error: unknown): boolean {
   return (error as Error & { details?: { statusCode?: number } }).details?.statusCode === 404;
 }
 
+/**
+ * Documentation for module export
+ */
 export interface ResourcePricingViewModelMessages {
   fallbackError: string;
   validation: string;
 }
 
-export function useResourcePricingViewModel({ messages }: { messages: ResourcePricingViewModelMessages }) {
+/**
+ * Documentation for module export
+ */
+export function useResourcePricingViewModel({
+  messages,
+}: {
+  messages: ResourcePricingViewModelMessages;
+}) {
   const { schedulableResourceRepository, commercialPricingRepository } = getVenueContainer();
   const [resources, setResources] = useState<SchedulableResource[]>([]);
   const [taxCategories, setTaxCategories] = useState<TaxCategory[]>([]);
@@ -40,7 +53,9 @@ export function useResourcePricingViewModel({ messages }: { messages: ResourcePr
   const [displayName, setDisplayName] = useState("");
   const [currencyCode, setCurrencyCode] = useState("");
   const [unitPrice, setUnitPrice] = useState("");
-  const [effectiveFromUtc, setEffectiveFromUtc] = useState(() => new Date().toISOString().slice(0, 16));
+  const [effectiveFromUtc, setEffectiveFromUtc] = useState(() =>
+    new Date().toISOString().slice(0, 16)
+  );
   const [minDuration, setMinDuration] = useState("");
   const [maxDuration, setMaxDuration] = useState("");
   const [increment, setIncrement] = useState("");
@@ -60,7 +75,9 @@ export function useResourcePricingViewModel({ messages }: { messages: ResourcePr
         schedulableResourceRepository.getAll({ page: 1, pageSize: 100 }),
         commercialPricingRepository.getTaxCategories(),
       ]);
-      const eligible = page.items.filter((resource) => resource.isPublished && !resource.isComposite);
+      const eligible = page.items.filter(
+        (resource) => resource.isPublished && !resource.isComposite
+      );
       setResources(eligible);
       setTaxCategories(taxes);
       setSelectedResourceId((current) => current || eligible[0]?.id || "");
@@ -71,32 +88,44 @@ export function useResourcePricingViewModel({ messages }: { messages: ResourcePr
     }
   }, [commercialPricingRepository, messages.fallbackError, schedulableResourceRepository]);
 
-  const loadConfiguration = useCallback(async (resourceId: string) => {
-    if (!resourceId) return;
-    setConfigurationLoading(true);
-    setConfiguration(null);
-    setError(null);
-    setSuccess(false);
-    try {
-      const value = await commercialPricingRepository.getResourceConfiguration(resourceId);
-      setConfiguration(value);
-      setDisplayName(value.displayName);
-      setCurrencyCode(value.currencyCode);
-      setUnitPrice(String(value.unitPrice));
-      setEffectiveFromUtc(value.effectiveFromUtc.slice(0, 16));
-      setMinDuration(value.minDurationMinutes?.toString() ?? "");
-      setMaxDuration(value.maxDurationMinutes?.toString() ?? "");
-      setIncrement(value.incrementMinutes?.toString() ?? "");
-      setTaxCategoryId(value.taxCategoryId ?? "");
-    } catch (caught) {
-      if (!isNotFound(caught)) setError(caught instanceof Error ? caught.message : messages.fallbackError);
-    } finally {
-      setConfigurationLoading(false);
-    }
-  }, [commercialPricingRepository, messages.fallbackError]);
+  const loadConfiguration = useCallback(
+    async (resourceId: string) => {
+      if (!resourceId) return;
+      setConfigurationLoading(true);
+      setConfiguration(null);
+      setError(null);
+      setSuccess(false);
+      try {
+        const value = await commercialPricingRepository.getResourceConfiguration(resourceId);
+        setConfiguration(value);
+        setDisplayName(value.displayName);
+        setCurrencyCode(value.currencyCode);
+        setUnitPrice(String(value.unitPrice));
+        setEffectiveFromUtc(value.effectiveFromUtc.slice(0, 16));
+        setMinDuration(value.minDurationMinutes?.toString() ?? "");
+        setMaxDuration(value.maxDurationMinutes?.toString() ?? "");
+        setIncrement(value.incrementMinutes?.toString() ?? "");
+        setTaxCategoryId(value.taxCategoryId ?? "");
+      } catch (caught) {
+        if (!isNotFound(caught))
+          setError(caught instanceof Error ? caught.message : messages.fallbackError);
+      } finally {
+        setConfigurationLoading(false);
+      }
+    },
+    [commercialPricingRepository, messages.fallbackError]
+  );
 
-  useEffect(() => { void Promise.resolve().then(() => { void loadResources(); }); }, [loadResources]);
-  useEffect(() => { void Promise.resolve().then(() => { void loadConfiguration(selectedResourceId); }); }, [loadConfiguration, selectedResourceId]);
+  useEffect(() => {
+    void Promise.resolve().then(() => {
+      void loadResources();
+    });
+  }, [loadResources]);
+  useEffect(() => {
+    void Promise.resolve().then(() => {
+      void loadConfiguration(selectedResourceId);
+    });
+  }, [loadConfiguration, selectedResourceId]);
 
   const selectedResource = resources.find((resource) => resource.id === selectedResourceId);
   const resourceOptions = useMemo(
@@ -104,10 +133,13 @@ export function useResourcePricingViewModel({ messages }: { messages: ResourcePr
     [resources]
   );
   const taxCategoryOptions = useMemo(
-    () => [{ value: "", label: "—" }, ...taxCategories.map((tax) => ({
-      value: tax.id,
-      label: `${tax.name} (${tax.ratePercentage * 100}%)`,
-    }))],
+    () => [
+      { value: "", label: "—" },
+      ...taxCategories.map((tax) => ({
+        value: tax.id,
+        label: `${tax.name} (${tax.ratePercentage * 100}%)`,
+      })),
+    ],
     [taxCategories]
   );
 
@@ -117,9 +149,18 @@ export function useResourcePricingViewModel({ messages }: { messages: ResourcePr
     const min = asOptionalPositiveInteger(minDuration);
     const max = asOptionalPositiveInteger(maxDuration);
     const step = asOptionalPositiveInteger(increment);
-    if (!selectedResourceId || !displayName.trim() || !/^[A-Z]{3}$/.test(currencyCode)
-      || !Number.isFinite(price) || price < 0 || !effective || min === "invalid" || max === "invalid" || step === "invalid"
-      || (typeof min === "number" && typeof max === "number" && min > max)) {
+    if (
+      !selectedResourceId ||
+      !displayName.trim() ||
+      !/^[A-Z]{3}$/.test(currencyCode) ||
+      !Number.isFinite(price) ||
+      price < 0 ||
+      !effective ||
+      min === "invalid" ||
+      max === "invalid" ||
+      step === "invalid" ||
+      (typeof min === "number" && typeof max === "number" && min > max)
+    ) {
       setError(messages.validation);
       return;
     }
@@ -146,12 +187,31 @@ export function useResourcePricingViewModel({ messages }: { messages: ResourcePr
     } finally {
       setSaving(false);
     }
-  }, [commercialPricingRepository, currencyCode, displayName, effectiveFromUtc, increment, maxDuration, messages, minDuration, selectedResourceId, taxCategoryId, unitPrice]);
+  }, [
+    commercialPricingRepository,
+    currencyCode,
+    displayName,
+    effectiveFromUtc,
+    increment,
+    maxDuration,
+    messages,
+    minDuration,
+    selectedResourceId,
+    taxCategoryId,
+    unitPrice,
+  ]);
 
   const createTax = useCallback(async () => {
     const rate = Number(newTaxRate);
     const code = newTaxCode.trim().toUpperCase();
-    if (!newTaxName.trim() || !code || code.length > 50 || !Number.isFinite(rate) || rate < 0 || rate > 100) {
+    if (
+      !newTaxName.trim() ||
+      !code ||
+      code.length > 50 ||
+      !Number.isFinite(rate) ||
+      rate < 0 ||
+      rate > 100
+    ) {
       setError(messages.validation);
       return false;
     }
@@ -159,11 +219,19 @@ export function useResourcePricingViewModel({ messages }: { messages: ResourcePr
     setError(null);
     try {
       const created = await commercialPricingRepository.createTaxCategory({
-        name: newTaxName.trim(), code, ratePercentage: rate / 100, isInclusive: newTaxInclusive,
+        name: newTaxName.trim(),
+        code,
+        ratePercentage: rate / 100,
+        isInclusive: newTaxInclusive,
       });
-      setTaxCategories((current) => [...current, created].sort((left, right) => left.name.localeCompare(right.name)));
+      setTaxCategories((current) =>
+        [...current, created].sort((left, right) => left.name.localeCompare(right.name))
+      );
       setTaxCategoryId(created.id);
-      setNewTaxName(""); setNewTaxCode(""); setNewTaxRate(""); setNewTaxInclusive(false);
+      setNewTaxName("");
+      setNewTaxCode("");
+      setNewTaxRate("");
+      setNewTaxInclusive(false);
       return true;
     } catch (caught) {
       setError(caught instanceof Error ? caught.message : messages.fallbackError);
@@ -174,12 +242,46 @@ export function useResourcePricingViewModel({ messages }: { messages: ResourcePr
   }, [commercialPricingRepository, messages, newTaxCode, newTaxInclusive, newTaxName, newTaxRate]);
 
   return {
-    resources, resourceOptions, taxCategories, taxCategoryOptions, selectedResource, selectedResourceId, setSelectedResourceId,
-    configuration, loading, configurationLoading, error, success,
-    displayName, setDisplayName, currencyCode, setCurrencyCode, unitPrice, setUnitPrice,
-    effectiveFromUtc, setEffectiveFromUtc, minDuration, setMinDuration, maxDuration, setMaxDuration,
-    increment, setIncrement, saving, loadResources, save,
-    taxCategoryId, setTaxCategoryId, newTaxName, setNewTaxName, newTaxCode, setNewTaxCode,
-    newTaxRate, setNewTaxRate, newTaxInclusive, setNewTaxInclusive, creatingTax, createTax,
+    resources,
+    resourceOptions,
+    taxCategories,
+    taxCategoryOptions,
+    selectedResource,
+    selectedResourceId,
+    setSelectedResourceId,
+    configuration,
+    loading,
+    configurationLoading,
+    error,
+    success,
+    displayName,
+    setDisplayName,
+    currencyCode,
+    setCurrencyCode,
+    unitPrice,
+    setUnitPrice,
+    effectiveFromUtc,
+    setEffectiveFromUtc,
+    minDuration,
+    setMinDuration,
+    maxDuration,
+    setMaxDuration,
+    increment,
+    setIncrement,
+    saving,
+    loadResources,
+    save,
+    taxCategoryId,
+    setTaxCategoryId,
+    newTaxName,
+    setNewTaxName,
+    newTaxCode,
+    setNewTaxCode,
+    newTaxRate,
+    setNewTaxRate,
+    newTaxInclusive,
+    setNewTaxInclusive,
+    creatingTax,
+    createTax,
   };
 }

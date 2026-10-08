@@ -10,6 +10,9 @@ interface InteractiveTerminalProps {
   titleKey: string;
 }
 
+/**
+ * Documentation for module export
+ */
 export function InteractiveTerminal({ tabs, titleKey }: InteractiveTerminalProps) {
   const { t } = useDocsI18n();
   const [activeIdx, setActiveIdx] = useState(0);

@@ -19,11 +19,11 @@ import type {
   ChangeFieldTypeResult,
   RollbackFieldTypeChangeResult,
 } from "../../domain/entities/FieldInsight";
-import {
-  classifyValueTypeConversion,
-  isConversionLossy,
-} from "../../domain/valueTypeConversion";
+import { classifyValueTypeConversion, isConversionLossy } from "../../domain/valueTypeConversion";
 
+/**
+ * Documentation for module export
+ */
 export interface ConvertValueTypeTarget {
   fieldId: string;
   fieldKey: string;
@@ -31,6 +31,9 @@ export interface ConvertValueTypeTarget {
   currentType: string;
 }
 
+/**
+ * Documentation for [
+ */
 export const ALL_CUSTOM_FIELD_VALUE_TYPES = [
   "Text",
   "Number",
@@ -53,6 +56,9 @@ export const ALL_CUSTOM_FIELD_VALUE_TYPES = [
   "File",
 ] as const;
 
+/**
+ * Documentation for module export
+ */
 export function useConvertValueTypeViewModel() {
   const { customFieldRepository } = getCustomFieldsContainer();
   const { t } = useI18n();
@@ -95,9 +101,7 @@ export function useConvertValueTypeViewModel() {
       : null;
 
   const isLossy =
-    currentType && selectedTargetType
-      ? isConversionLossy(currentType, selectedTargetType)
-      : false;
+    currentType && selectedTargetType ? isConversionLossy(currentType, selectedTargetType) : false;
 
   const canExecute = useMemo(() => {
     if (!canUpdate || !target || !selectedTargetType) return false;

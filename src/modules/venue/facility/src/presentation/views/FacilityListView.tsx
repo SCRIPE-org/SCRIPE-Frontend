@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import React from "react";
 import { GenericCrudView } from "@core/crud/components/generic-crud-view";
@@ -10,9 +10,12 @@ import { useI18n } from "@core/providers/i18n-provider";
 import { resolveIntlLocale } from "@core/common/utils";
 import { Pencil, Trash2, Plus } from "lucide-react";
 import { VENUE_PERMISSIONS } from "@modules/venue/permission-constants";
-import { VenueResourceNav } from "@modules/venue/shared/src/presentation/components/VenueResourceNav";
-import { VenueProfileQuickCreateDialog } from "@modules/venue/venue-profile/src/presentation/components/VenueProfileQuickCreateDialog";
+import { VenueResourceNav } from "@modules/venue";
+import { VenueProfileQuickCreateDialog } from "@modules/venue";
 
+/**
+ * Documentation for module export
+ */
 export const FacilityListView = React.memo(function FacilityListView() {
   useModuleLocales(() => import("../../../locales"), "venue.facility");
   const { vm, searchVenueProfiles, venueProfileNameById } = useFacilityViewModel();
@@ -37,7 +40,7 @@ export const FacilityListView = React.memo(function FacilityListView() {
         key: "venueProfileId",
         label: t("facility.fields.venueProfileId"),
         render: (_value: string, row: Facility) =>
-          row.venueProfileName || venueProfileNameById[row.venueProfileId] || "—",
+          row.venueProfileName || venueProfileNameById[row.venueProfileId] || "â€”",
       },
       {
         key: "createdAt",

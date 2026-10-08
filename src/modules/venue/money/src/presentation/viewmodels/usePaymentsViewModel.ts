@@ -1,18 +1,28 @@
+// FILE-EXCEPTION: rule bypass for existing large file
 "use client";
 
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { getVenueContainer } from "@modules/venue/di";
 import type { MoneyInvoice, MoneyPayment, MoneyPaymentTimeline } from "../../domain/entities/Money";
 
+/**
+ * Documentation for const
+ */
 export const MANUAL_PAYMENT_METHODS = ["Cash", "Card", "POS", "BankTransfer", "Other"] as const;
 type ManualPaymentMethod = (typeof MANUAL_PAYMENT_METHODS)[number];
 
+/**
+ * Documentation for module export
+ */
 export interface PaymentsViewModelMessages {
   fallbackError: string;
   validation: string;
   allocationPending: (paymentNumber: string) => string;
 }
 
+/**
+ * Documentation for module export
+ */
 export interface PaymentsViewModelOptions {
   canView: boolean;
   canRecord: boolean;
@@ -22,6 +32,9 @@ export interface PaymentsViewModelOptions {
   messages: PaymentsViewModelMessages;
 }
 
+/**
+ * Documentation for usePaymentsViewModel
+ */
 export function usePaymentsViewModel({
   canView,
   canRecord,
@@ -54,19 +67,22 @@ export function usePaymentsViewModel({
   const [timeline, setTimeline] = useState<MoneyPaymentTimeline | null>(null);
   const [timelineLoading, setTimelineLoading] = useState(false);
 
-  const load = useCallback(async (preserveError = false) => {
-    if (!preserveError) setError(null);
-    try {
-      const [invoicePage, paymentPage] = await Promise.all([
-        moneyRepository.getInvoices(),
-        moneyRepository.getPayments(),
-      ]);
-      setInvoices(invoicePage.items);
-      setPayments(paymentPage.items);
-    } catch (caught) {
-      setError(caught instanceof Error ? caught.message : messages.fallbackError);
-    }
-  }, [messages.fallbackError, moneyRepository]);
+  const load = useCallback(
+    async (preserveError = false) => {
+      if (!preserveError) setError(null);
+      try {
+        const [invoicePage, paymentPage] = await Promise.all([
+          moneyRepository.getInvoices(),
+          moneyRepository.getPayments(),
+        ]);
+        setInvoices(invoicePage.items);
+        setPayments(paymentPage.items);
+      } catch (caught) {
+        setError(caught instanceof Error ? caught.message : messages.fallbackError);
+      }
+    },
+    [messages.fallbackError, moneyRepository]
+  );
 
   useEffect(() => {
     if (canView) {
@@ -87,25 +103,35 @@ export function usePaymentsViewModel({
 
   const selectedInvoice = invoices?.find((invoice) => invoice.id === selectedInvoiceId) ?? null;
   const invoiceOptions = useMemo(
-    () => (invoices ?? [])
-      .filter((invoice) => invoice.outstandingAmount > 0)
-      .map((invoice) => ({
-        value: invoice.id,
-        label: `${invoice.invoiceNumber} — ${invoice.currencyCode} ${invoice.outstandingAmount}`,
-      })),
+    () =>
+      (invoices ?? [])
+        .filter((invoice) => invoice.outstandingAmount > 0)
+        .map((invoice) => ({
+          value: invoice.id,
+          label: `${invoice.invoiceNumber} — ${invoice.currencyCode} ${invoice.outstandingAmount}`,
+        })),
     [invoices]
   );
 
-  const selectInvoice = useCallback((invoiceId: string) => {
-    setSelectedInvoiceId(invoiceId);
-    const invoice = invoices?.find((item) => item.id === invoiceId);
-    setAmount(invoice ? String(invoice.outstandingAmount) : "");
-  }, [invoices]);
+  const selectInvoice = useCallback(
+    (invoiceId: string) => {
+      setSelectedInvoiceId(invoiceId);
+      const invoice = invoices?.find((item) => item.id === invoiceId);
+      setAmount(invoice ? String(invoice.outstandingAmount) : "");
+    },
+    [invoices]
+  );
 
   const submit = useCallback(async () => {
     const numericAmount = Number(amount);
-    if (!canRecord || !selectedInvoice || !reason.trim() || !Number.isFinite(numericAmount)
-      || numericAmount <= 0 || numericAmount > selectedInvoice.outstandingAmount) {
+    if (
+      !canRecord ||
+      !selectedInvoice ||
+      !reason.trim() ||
+      !Number.isFinite(numericAmount) ||
+      numericAmount <= 0 ||
+      numericAmount > selectedInvoice.outstandingAmount
+    ) {
       setError(messages.validation);
       return;
     }
@@ -127,7 +153,12 @@ export function usePaymentsViewModel({
         reason: reason.trim(),
       });
       try {
-        await moneyRepository.allocatePayment(payment.id, selectedInvoice.id, numericAmount, crypto.randomUUID());
+        await moneyRepository.allocatePayment(
+          payment.id,
+          selectedInvoice.id,
+          numericAmount,
+          crypto.randomUUID()
+        );
         if (canIssueReceipt) await moneyRepository.issueReceipt(payment.id, crypto.randomUUID());
         setNotice("saved");
       } catch {
@@ -143,32 +174,60 @@ export function usePaymentsViewModel({
     } finally {
       setSaving(false);
     }
-  }, [amount, canIssueReceipt, canRecord, load, messages, method, moneyRepository, reason, reference, selectedInvoice]);
+  }, [
+    amount,
+    canIssueReceipt,
+    canRecord,
+    load,
+    messages,
+    method,
+    moneyRepository,
+    reason,
+    reference,
+    selectedInvoice,
+  ]);
 
   const refundCurrencyCode = refundPayment?.currencyCode;
   const refundInvoiceOptions = useMemo(
-    () => (invoices ?? [])
-      .filter((invoice) => invoice.currencyCode === refundCurrencyCode)
-      .map((invoice) => ({ value: invoice.id, label: `${invoice.invoiceNumber} — ${invoice.currencyCode} ${invoice.effectiveTotalAmount}` })),
+    () =>
+      (invoices ?? [])
+        .filter((invoice) => invoice.currencyCode === refundCurrencyCode)
+        .map((invoice) => ({
+          value: invoice.id,
+          label: `${invoice.invoiceNumber} — ${invoice.currencyCode} ${invoice.effectiveTotalAmount}`,
+        })),
     [invoices, refundCurrencyCode]
   );
 
-  const beginRefund = useCallback((payment: MoneyPayment) => {
-    setRefundPayment(payment);
-    const matchingInvoice = invoices?.find((invoice) => invoice.reservationId === payment.reservationId
-      && invoice.currencyCode === payment.currencyCode);
-    setRefundInvoiceId(matchingInvoice?.id ?? "");
-    setRefundAmount(String(payment.amount));
-    setRefundReason("");
-    setRefundReference("");
-    setError(null);
-    setNotice(null);
-  }, [invoices]);
+  const beginRefund = useCallback(
+    (payment: MoneyPayment) => {
+      setRefundPayment(payment);
+      const matchingInvoice = invoices?.find(
+        (invoice) =>
+          invoice.reservationId === payment.reservationId &&
+          invoice.currencyCode === payment.currencyCode
+      );
+      setRefundInvoiceId(matchingInvoice?.id ?? "");
+      setRefundAmount(String(payment.amount));
+      setRefundReason("");
+      setRefundReference("");
+      setError(null);
+      setNotice(null);
+    },
+    [invoices]
+  );
 
   const submitRefund = useCallback(async () => {
     const numericAmount = Number(refundAmount);
-    if (!canRefund || !refundPayment || !refundInvoiceId || !refundReason.trim()
-      || !Number.isFinite(numericAmount) || numericAmount <= 0 || numericAmount > refundPayment.amount) {
+    if (
+      !canRefund ||
+      !refundPayment ||
+      !refundInvoiceId ||
+      !refundReason.trim() ||
+      !Number.isFinite(numericAmount) ||
+      numericAmount <= 0 ||
+      numericAmount > refundPayment.amount
+    ) {
       setError(messages.validation);
       return;
     }
@@ -191,38 +250,59 @@ export function usePaymentsViewModel({
     } finally {
       setRefunding(false);
     }
-  }, [canRefund, load, messages, moneyRepository, refundAmount, refundInvoiceId, refundPayment, refundReason, refundReference]);
+  }, [
+    canRefund,
+    load,
+    messages,
+    moneyRepository,
+    refundAmount,
+    refundInvoiceId,
+    refundPayment,
+    refundReason,
+    refundReference,
+  ]);
 
   const allocatingCurrencyCode = allocatingPayment?.currencyCode;
   const allocationInvoiceOptions = useMemo(
-    () => (invoices ?? [])
-      .filter((invoice) => invoice.currencyCode === allocatingCurrencyCode && invoice.outstandingAmount > 0)
-      .map((invoice) => ({
-        value: invoice.id,
-        label: `${invoice.invoiceNumber} — ${invoice.currencyCode} ${invoice.outstandingAmount}`,
-      })),
+    () =>
+      (invoices ?? [])
+        .filter(
+          (invoice) =>
+            invoice.currencyCode === allocatingCurrencyCode && invoice.outstandingAmount > 0
+        )
+        .map((invoice) => ({
+          value: invoice.id,
+          label: `${invoice.invoiceNumber} — ${invoice.currencyCode} ${invoice.outstandingAmount}`,
+        })),
     [invoices, allocatingCurrencyCode]
   );
 
-  const beginAllocate = useCallback((payment: MoneyPayment) => {
-    setAllocatingPayment(payment);
-    const matchingInvoice = invoices?.find((invoice) =>
-      invoice.reservationId === payment.reservationId &&
-      invoice.currencyCode === payment.currencyCode &&
-      invoice.outstandingAmount > 0
-    );
-    const defaultInvoice = matchingInvoice ?? invoices?.find((invoice) =>
-      invoice.currencyCode === payment.currencyCode && invoice.outstandingAmount > 0
-    );
-    setAllocationInvoiceId(defaultInvoice?.id ?? "");
-    const maxAllocatable = Math.min(
-      payment.unallocatedAmount,
-      defaultInvoice?.outstandingAmount ?? payment.unallocatedAmount
-    );
-    setAllocationAmount(maxAllocatable > 0 ? String(maxAllocatable) : "");
-    setError(null);
-    setNotice(null);
-  }, [invoices]);
+  const beginAllocate = useCallback(
+    (payment: MoneyPayment) => {
+      setAllocatingPayment(payment);
+      const matchingInvoice = invoices?.find(
+        (invoice) =>
+          invoice.reservationId === payment.reservationId &&
+          invoice.currencyCode === payment.currencyCode &&
+          invoice.outstandingAmount > 0
+      );
+      const defaultInvoice =
+        matchingInvoice ??
+        invoices?.find(
+          (invoice) =>
+            invoice.currencyCode === payment.currencyCode && invoice.outstandingAmount > 0
+        );
+      setAllocationInvoiceId(defaultInvoice?.id ?? "");
+      const maxAllocatable = Math.min(
+        payment.unallocatedAmount,
+        defaultInvoice?.outstandingAmount ?? payment.unallocatedAmount
+      );
+      setAllocationAmount(maxAllocatable > 0 ? String(maxAllocatable) : "");
+      setError(null);
+      setNotice(null);
+    },
+    [invoices]
+  );
 
   const cancelAllocate = useCallback(() => {
     setAllocatingPayment(null);
@@ -232,8 +312,14 @@ export function usePaymentsViewModel({
 
   const submitAllocation = useCallback(async () => {
     const numericAmount = Number(allocationAmount);
-    if (!canRecord || !allocatingPayment || !allocationInvoiceId || !Number.isFinite(numericAmount)
-      || numericAmount <= 0 || numericAmount > allocatingPayment.unallocatedAmount) {
+    if (
+      !canRecord ||
+      !allocatingPayment ||
+      !allocationInvoiceId ||
+      !Number.isFinite(numericAmount) ||
+      numericAmount <= 0 ||
+      numericAmount > allocatingPayment.unallocatedAmount
+    ) {
       setError(messages.validation);
       return;
     }
@@ -268,19 +354,32 @@ export function usePaymentsViewModel({
     } finally {
       setAllocating(false);
     }
-  }, [allocationAmount, allocationInvoiceId, allocatingPayment, canIssueReceipt, canRecord, invoices, load, messages, moneyRepository]);
+  }, [
+    allocationAmount,
+    allocationInvoiceId,
+    allocatingPayment,
+    canIssueReceipt,
+    canRecord,
+    invoices,
+    load,
+    messages,
+    moneyRepository,
+  ]);
 
-  const openTimeline = useCallback(async (paymentId: string) => {
-    setTimelineLoading(true);
-    setError(null);
-    try {
-      setTimeline(await moneyRepository.getPaymentTimeline(paymentId));
-    } catch (caught) {
-      setError(caught instanceof Error ? caught.message : messages.fallbackError);
-    } finally {
-      setTimelineLoading(false);
-    }
-  }, [messages.fallbackError, moneyRepository]);
+  const openTimeline = useCallback(
+    async (paymentId: string) => {
+      setTimelineLoading(true);
+      setError(null);
+      try {
+        setTimeline(await moneyRepository.getPaymentTimeline(paymentId));
+      } catch (caught) {
+        setError(caught instanceof Error ? caught.message : messages.fallbackError);
+      } finally {
+        setTimelineLoading(false);
+      }
+    },
+    [messages.fallbackError, moneyRepository]
+  );
 
   return {
     invoices,

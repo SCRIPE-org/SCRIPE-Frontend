@@ -8,7 +8,7 @@ import { Button } from "@core/ui/button";
 import { SectionState } from "@core/ui/section-state";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@core/ui/table";
 import { ConfirmationDialog } from "@core/ui/confirmation-dialog";
-import { Laptop, Monitor, Smartphone, Globe, Shield, LogOut } from "lucide-react";
+import { Laptop, Monitor, Smartphone, Globe, LogOut } from "lucide-react";
 import { formatDateTimeUtc } from "@core/common/utils";
 import type { ActiveSession } from "../../domain/entities/SecurityEntities";
 
@@ -59,6 +59,9 @@ function parseDeviceInfo(ua: string): { name: string; icon: typeof Laptop } {
   return { name: `${browser} · ${os}`, icon: Icon };
 }
 
+/**
+ * ActiveSessionsTable
+ */
 export const ActiveSessionsTable = memo(function ActiveSessionsTable({
   sessions,
   isLoading,
@@ -78,7 +81,7 @@ export const ActiveSessionsTable = memo(function ActiveSessionsTable({
   };
 
   return (
-    <Card className={`h-full flex flex-col ${cardClasses || ""}`}>
+    <Card className={`flex h-full flex-col ${cardClasses || ""}`}>
       <CardHeader className="pb-3">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
@@ -108,28 +111,30 @@ export const ActiveSessionsTable = memo(function ActiveSessionsTable({
           isLoading={isLoading}
           onRetry={onRetry}
           isEmpty={sessions.length === 0}
-          emptyMessage={t("security.sessions.noSessions") || "No active authenticated sessions found."}
+          emptyMessage={
+            t("security.sessions.noSessions") || "No active authenticated sessions found."
+          }
           skeletonType="rows"
           skeletonRows={3}
           height={200}
         >
-          <div className="overflow-x-auto max-h-[340px] overflow-y-auto pe-1">
+          <div className="max-h-[340px] overflow-x-auto overflow-y-auto pe-1">
             <Table>
-              <TableHeader className="sticky top-0 bg-card z-10 shadow-xs">
+              <TableHeader className="shadow-xs sticky top-0 z-10 bg-card">
                 <TableRow className="border-b border-border">
-                  <TableHead className="text-xs font-semibold bg-card">
+                  <TableHead className="bg-card text-xs font-semibold">
                     {t("security.sessions.device") || "Device / Client"}
                   </TableHead>
-                  <TableHead className="text-xs font-semibold bg-card">
+                  <TableHead className="bg-card text-xs font-semibold">
                     {t("security.sessions.ipAddress") || "IP Address"}
                   </TableHead>
-                  <TableHead className="text-xs font-semibold bg-card">
+                  <TableHead className="bg-card text-xs font-semibold">
                     {t("security.sessions.created") || "Logged In"}
                   </TableHead>
-                  <TableHead className="text-xs font-semibold text-center bg-card">
+                  <TableHead className="bg-card text-center text-xs font-semibold">
                     {t("common.status") || "Status"}
                   </TableHead>
-                  <TableHead className="text-xs font-semibold text-end bg-card">
+                  <TableHead className="bg-card text-end text-xs font-semibold">
                     {t("common.actions") || "Actions"}
                   </TableHead>
                 </TableRow>
@@ -150,27 +155,28 @@ export const ActiveSessionsTable = memo(function ActiveSessionsTable({
                           <div className="rounded-md bg-muted/60 p-1 text-muted-foreground">
                             <Icon className="h-3.5 w-3.5" />
                           </div>
-                          <span className="text-xs font-medium text-foreground">
-                            {parsed.name}
-                          </span>
+                          <span className="text-xs font-medium text-foreground">{parsed.name}</span>
                         </div>
                       </TableCell>
 
-                      <TableCell className="py-2.5 font-mono text-xs text-muted-foreground" dir="ltr">
+                      <TableCell
+                        className="py-2.5 font-mono text-xs text-muted-foreground"
+                        dir="ltr"
+                      >
                         {sess.ipAddress}
                       </TableCell>
 
-                      <TableCell className="py-2.5 text-xs text-muted-foreground tabular-nums">
+                      <TableCell className="py-2.5 text-xs tabular-nums text-muted-foreground">
                         {formatDateTimeUtc(sess.createdAt)}
                       </TableCell>
 
                       <TableCell className="py-2.5 text-center">
                         {sess.isCurrent ? (
-                          <Badge variant="success" className="text-[10px] uppercase font-bold">
+                          <Badge variant="success" className="text-[10px] font-bold uppercase">
                             {t("security.sessions.current") || "Current"}
                           </Badge>
                         ) : (
-                          <Badge variant="outline" className="text-[10px] uppercase font-semibold">
+                          <Badge variant="outline" className="text-[10px] font-semibold uppercase">
                             {t("security.sessions.active") || "Active"}
                           </Badge>
                         )}
@@ -178,7 +184,7 @@ export const ActiveSessionsTable = memo(function ActiveSessionsTable({
 
                       <TableCell className="py-2.5 text-end">
                         {sess.isCurrent ? (
-                          <span className="text-[11px] text-muted-foreground italic">
+                          <span className="text-[11px] italic text-muted-foreground">
                             {t("security.sessions.thisDevice") || "This Device"}
                           </span>
                         ) : (
@@ -187,7 +193,7 @@ export const ActiveSessionsTable = memo(function ActiveSessionsTable({
                             size="sm"
                             onClick={() => setSelectedTokenId(sess.tokenId)}
                             disabled={isRevoking}
-                            className="h-7 text-xs text-destructive hover:bg-destructive/10 hover:text-destructive gap-1 px-2"
+                            className="h-7 gap-1 px-2 text-xs text-destructive hover:bg-destructive/10 hover:text-destructive"
                           >
                             <LogOut className="h-3 w-3" />
                             <span>{t("security.sessions.revoke") || "Revoke"}</span>

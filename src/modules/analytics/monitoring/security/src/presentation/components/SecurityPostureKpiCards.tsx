@@ -12,6 +12,9 @@ interface SecurityPostureKpiCardsProps {
   cardClasses?: string;
 }
 
+/**
+ * SecurityPostureKpiCards
+ */
 export const SecurityPostureKpiCards = memo(function SecurityPostureKpiCards({
   kpis,
   isLoading,
@@ -22,7 +25,7 @@ export const SecurityPostureKpiCards = memo(function SecurityPostureKpiCards({
   if (isLoading) {
     return (
       <div
-        className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4"
+        className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4"
         role="status"
         aria-label={t("common.loading") || "Loading KPIs..."}
       >
@@ -35,19 +38,11 @@ export const SecurityPostureKpiCards = memo(function SecurityPostureKpiCards({
 
   // 1. Auth Health Rate Tone
   const authTone: StatTone =
-    kpis.authHealthRate >= 95
-      ? "success"
-      : kpis.authHealthRate >= 85
-      ? "warning"
-      : "danger";
+    kpis.authHealthRate >= 95 ? "success" : kpis.authHealthRate >= 85 ? "warning" : "danger";
 
   // 2. MFA Coverage Tone
   const mfaTone: StatTone =
-    kpis.mfaAdoptionRate >= 70
-      ? "success"
-      : kpis.mfaAdoptionRate >= 40
-      ? "warning"
-      : "neutral";
+    kpis.mfaAdoptionRate >= 70 ? "success" : kpis.mfaAdoptionRate >= 40 ? "warning" : "neutral";
 
   // 3. Active Sessions Tone
   const sessionsTone: StatTone = "info";
@@ -56,7 +51,7 @@ export const SecurityPostureKpiCards = memo(function SecurityPostureKpiCards({
   const failedTone: StatTone = kpis.failedLoginsCount > 0 ? "danger" : "success";
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4" aria-live="polite">
+    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4" aria-live="polite">
       {/* 1. Authentication Health Rate */}
       <StatCard
         label={t("security.kpis.authHealthRate") || "Auth Health Rate"}
@@ -89,9 +84,7 @@ export const SecurityPostureKpiCards = memo(function SecurityPostureKpiCards({
       <StatCard
         label={t("security.kpis.activeSessions") || "Active Sessions"}
         value={kpis.activeSessionsCount.toString()}
-        subtitle={
-          t("security.kpis.activeSessionsDesc") || "Live authenticated admin sessions"
-        }
+        subtitle={t("security.kpis.activeSessionsDesc") || "Live authenticated admin sessions"}
         icon={Laptop}
         tone={sessionsTone}
         className={cardClasses}

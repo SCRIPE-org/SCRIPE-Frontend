@@ -13,14 +13,15 @@ const LARGE_PAGE_SIZE = 100;
 
 /**
  * Presentation ViewModel hook for building and organizing hierarchical Schedulable Resources.
- * 
+ *
  * Coordinates resource tree reconstruction, CRUD mutations, resource profile selection,
  * publication checklist generation, and lifecycle publishing states.
- * 
+ *
  * @returns State object exposing hierarchical resource `tree`, loading indicators, and mutation actions.
  */
 export function useResourceBuilderViewModel() {
-  const { schedulableResourceRepository, facilityResourceProfilePickerService } = getVenueContainer();
+  const { schedulableResourceRepository, facilityResourceProfilePickerService } =
+    getVenueContainer();
   const [tree, setTree] = useState<SchedulableResourceTreeNode[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -29,7 +30,10 @@ export function useResourceBuilderViewModel() {
     setLoading(true);
     setError(null);
     try {
-      const result = await schedulableResourceRepository.getAll({ page: 1, pageSize: LARGE_PAGE_SIZE });
+      const result = await schedulableResourceRepository.getAll({
+        page: 1,
+        pageSize: LARGE_PAGE_SIZE,
+      });
       setTree(buildResourceTree(result.items));
     } catch {
       setError("load-failed");
@@ -69,7 +73,8 @@ export function useResourceBuilderViewModel() {
   );
 
   const getPublicationChecklist = useCallback(
-    (id: string): Promise<PublicationChecklistReport> => schedulableResourceRepository.getPublicationChecklist(id),
+    (id: string): Promise<PublicationChecklistReport> =>
+      schedulableResourceRepository.getPublicationChecklist(id),
     [schedulableResourceRepository]
   );
 

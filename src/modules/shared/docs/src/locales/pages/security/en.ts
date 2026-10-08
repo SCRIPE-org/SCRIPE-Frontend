@@ -4,217 +4,317 @@
  * Auto-generated from monolithic doc locale. Do not edit the generation source.
  */
 export const en = {
-  "security": {
-    "overview": {
-      "title": "Security Overview",
-      "description": "5-layer defense strategy, security features, CORS configuration, rate limiting, and password policies.",
-      "intro": "SCRIPE implements a defense-in-depth security strategy with five layers: network protection, authentication, authorization, data isolation, and audit logging. Every request passes through multiple security checks before reaching business logic.",
-      "layersTitle": "Security Defense Layers",
-      "featuresTitle": "Security Features",
-      "featureJwt": "JWT Authentication",
-      "featureJwtDesc": "Short-lived access tokens (15 min) with automatic refresh. HMAC-SHA256 signing with configurable secret.",
-      "feature2fa": "Two-Factor Auth",
-      "feature2faDesc": "TOTP-based 2FA with QR code setup. Optional per-user, enforceable per-tenant or globally.",
-      "featureRbac": "RBAC Permissions",
-      "featureRbacDesc": "A complete PBAC enforcement engine executing Role-Based (RBAC), Group-Based (GBAC), and Attribute/Field-Based (ABAC) rules instantly via zero-latency server-side JWT caching.",
-      "featureRateLimit": "Rate Limiting",
-      "featureRateLimitDesc": "4-tier rate limiting: global DDoS, per-IP, per-endpoint, and authentication-specific.",
-      "featureAudit": "Audit Logging",
-      "featureAuditDesc": "Every action logged with who, what, when, where. Real-time SignalR broadcasting.",
-      "featureCors": "CORS Configuration",
-      "featureCorsDesc": "Strict origin validation in production. Open CORS for localhost in development.",
-      "corsTitle": "CORS Configuration",
-      "corsIntro": "CORS policies differ between development and production environments. In development, all localhost origins are allowed. In production, only explicitly configured origins are accepted.",
-      "rateLimitTitle": "Rate Limiting Policies",
-      "passwordTitle": "Password Policies",
-      "securityWarning": "Always review security settings before deploying to production. Change default secrets, configure CORS origins, and set appropriate rate limits. Enable 2FA for all admin accounts."
+  security: {
+    overview: {
+      title: "Security Overview",
+      description:
+        "5-layer defense strategy, security features, CORS configuration, rate limiting, and password policies.",
+      intro:
+        "SCRIPE implements a defense-in-depth security strategy with five layers: network protection, authentication, authorization, data isolation, and audit logging. Every request passes through multiple security checks before reaching business logic.",
+      layersTitle: "Security Defense Layers",
+      featuresTitle: "Security Features",
+      featureJwt: "JWT Authentication",
+      featureJwtDesc:
+        "Short-lived access tokens (15 min) with automatic refresh. HMAC-SHA256 signing with configurable secret.",
+      feature2fa: "Two-Factor Auth",
+      feature2faDesc:
+        "TOTP-based 2FA with QR code setup. Optional per-user, enforceable per-tenant or globally.",
+      featureRbac: "RBAC Permissions",
+      featureRbacDesc:
+        "A complete PBAC enforcement engine executing Role-Based (RBAC), Group-Based (GBAC), and Attribute/Field-Based (ABAC) rules instantly via zero-latency server-side JWT caching.",
+      featureRateLimit: "Rate Limiting",
+      featureRateLimitDesc:
+        "4-tier rate limiting: global DDoS, per-IP, per-endpoint, and authentication-specific.",
+      featureAudit: "Audit Logging",
+      featureAuditDesc:
+        "Every action logged with who, what, when, where. Real-time SignalR broadcasting.",
+      featureCors: "CORS Configuration",
+      featureCorsDesc:
+        "Strict origin validation in production. Open CORS for localhost in development.",
+      corsTitle: "CORS Configuration",
+      corsIntro:
+        "CORS policies differ between development and production environments. In development, all localhost origins are allowed. In production, only explicitly configured origins are accepted.",
+      rateLimitTitle: "Rate Limiting Policies",
+      passwordTitle: "Password Policies",
+      securityWarning:
+        "Always review security settings before deploying to production. Change default secrets, configure CORS origins, and set appropriate rate limits. Enable 2FA for all admin accounts.",
     },
-    "authDeep": {
-      "title": "Authentication Deep Dive",
-      "description": "Multi-workspace routing, JWT lifecycle, BCrypt hashing, password expiry enforcement, account lockout, 2FA TOTP, external OAuth, OTP system, impersonation, SSO suspension gate, and session management.",
-      "intro": "This page dives deep into every authentication mechanism in SCRIPE — from multi-workspace login routing and JWT token issuance, through BCrypt password hashing, password expiry enforcement, and account lockout, to TOTP-based two-factor authentication, external OAuth providers, OTP codes, admin impersonation, SSO tenant suspension gates, and session management.",
-      "workspaceRoutingTitle": "Multi-Workspace Login Routing",
-      "workspaceRoutingIntro": "When an admin logs in from the platform domain without a pre-resolved tenant, the login handler executes a 3-case routing algorithm: Case A (tenant-scoped login with a provided tenantId), Case A' (explicit platform admin selection via the isPlatformAdmin flag — bypasses workspace discovery entirely), and Case B (workspace discovery — searches all tenants by email, returns a workspace picker if multiple matches are found). The isPlatformAdmin flag was introduced to prevent an infinite loop where selecting 'Platform Administration' from the workspace picker would re-trigger discovery.",
-      "workspaceRoutingTip": "The isPlatformAdmin flag is set by the frontend when the user explicitly selects 'Platform Administration' from the workspace picker. This flag signals the backend to look up the admin with TenantId = null (platform-level) instead of running workspace discovery again.",
-      "jwtLifecycleTitle": "JWT Token Lifecycle",
-      "jwtLifecycleIntro": "Access tokens are short-lived (15 minutes) JWT tokens signed with HMAC-SHA256. When an access token expires, the client uses the refresh token to obtain a new token pair. Refresh tokens are single-use and rotated on every use.",
-      "tokenStructureTitle": "JWT Token Structure",
-      "bcryptTitle": "BCrypt Password Hashing",
-      "bcryptIntro": "Passwords are hashed using BCrypt with a configurable work factor (default: 12). BCrypt is intentionally slow to resist brute-force attacks — each hash takes ~250ms, making mass password cracking impractical.",
-      "lockoutTitle": "Account Lockout",
-      "lockoutIntro": "After 5 consecutive failed login attempts, the account is locked for 5 minutes. The counter resets on successful login. Admins can manually unlock accounts via the admin panel.",
-      "tfaTitle": "Two-Factor Authentication (TOTP)",
-      "tfaIntro": "SCRIPE supports TOTP-based 2FA compatible with Google Authenticator, Authy, and Microsoft Authenticator. When enabled, users must enter a 6-digit time-based code after password verification.",
-      "passwordExpiryTitle": "Password Expiry Enforcement",
-      "passwordExpiryIntro": "After credentials are validated and lockout checks pass, the login handler invokes ITenantPasswordValidator.IsPasswordExpiredAsync to check if the admin's password has exceeded the tenant's configured PasswordExpiryDays. If expired, the TokenResponse includes MustChangePassword = true, which forces the frontend to redirect the admin to the change-password page before granting dashboard access. This check uses the admin's PasswordLastChanged field against the tenant's security policy.",
-      "passwordExpiryNote": "Password expiry is a per-tenant setting configured via TenantSettings.PasswordExpiryDays. A value of 0 disables expiry entirely. When the feature is active, the ITenantPasswordValidator computes (PasswordLastChanged + ExpiryDays) and compares it to DateTime.UtcNow. The admin is never locked out — they receive a valid JWT but with the MustChangePassword flag set, which the frontend enforces as a redirect.",
-      "externalAuthTitle": "External Authentication (OAuth)",
-      "externalAuthIntro": "SCRIPE integrates with Google, Facebook, Apple, and Microsoft OAuth providers. External tokens are validated server-side before creating or linking local accounts.",
-      "otpTitle": "OTP System (One-Time Passwords)",
-      "otpIntro": "OTP codes are used for email verification, phone verification, and password reset flows. Codes are 6-digit, cryptographically random, stored as BCrypt hashes, and expire after 15 minutes with a maximum of 3 verification attempts.",
-      "impersonationTitle": "Admin Impersonation",
-      "impersonationIntro": "SuperAdmins can impersonate other admins to troubleshoot issues. An impersonation token carries the target admin's claims plus an impersonator_id claim. All actions during impersonation are audited with the original admin's identity.",
-      "impersonationWarning": "Impersonation is a privileged operation. The impersonator must be a SuperAdmin, cannot impersonate protected admins or admins with equal/higher roles, and all actions are logged with the impersonator's identity for accountability.",
-      "sessionTitle": "Session Management",
-      "sessionIntro": "SCRIPE uses a stateless JWT-based session model. Access tokens are held in client memory (never localStorage), refresh tokens are stored as HttpOnly secure cookies or in the database, and 2FA session tokens are temporary in-memory tokens valid for 5 minutes.",
-      "cookieAuthTip": "For maximum security, configure refresh tokens to be sent as HttpOnly, Secure, SameSite=Strict cookies. This prevents XSS attacks from accessing refresh tokens via JavaScript.",
-      "ssoSuspensionTitle": "SSO Tenant Suspension Gate",
-      "ssoSuspensionIntro": "The ExternalLoginCommandHandler now includes a tenant suspension security gate. Before issuing a JWT after SSO/OIDC authentication, the handler checks the admin's tenant status. If the tenant is Suspended or Cancelled, the login is rejected with a localized error — preventing deactivated users from bypassing the standard login checks via SSO. This gate runs after token validation and account linking but before JWT issuance.",
-      "ssoSuspensionWarning": "Without this gate, SSO users could authenticate via an external IdP (e.g., Google, Azure AD) and receive a valid SCRIPE JWT even if their tenant has been suspended or cancelled. This was a critical security gap that has been remediated."
+    authDeep: {
+      title: "Authentication Deep Dive",
+      description:
+        "Multi-workspace routing, JWT lifecycle, BCrypt hashing, password expiry enforcement, account lockout, 2FA TOTP, external OAuth, OTP system, impersonation, SSO suspension gate, and session management.",
+      intro:
+        "This page dives deep into every authentication mechanism in SCRIPE — from multi-workspace login routing and JWT token issuance, through BCrypt password hashing, password expiry enforcement, and account lockout, to TOTP-based two-factor authentication, external OAuth providers, OTP codes, admin impersonation, SSO tenant suspension gates, and session management.",
+      workspaceRoutingTitle: "Multi-Workspace Login Routing",
+      workspaceRoutingIntro:
+        "When an admin logs in from the platform domain without a pre-resolved tenant, the login handler executes a 3-case routing algorithm: Case A (tenant-scoped login with a provided tenantId), Case A' (explicit platform admin selection via the isPlatformAdmin flag — bypasses workspace discovery entirely), and Case B (workspace discovery — searches all tenants by email, returns a workspace picker if multiple matches are found). The isPlatformAdmin flag was introduced to prevent an infinite loop where selecting 'Platform Administration' from the workspace picker would re-trigger discovery.",
+      workspaceRoutingTip:
+        "The isPlatformAdmin flag is set by the frontend when the user explicitly selects 'Platform Administration' from the workspace picker. This flag signals the backend to look up the admin with TenantId = null (platform-level) instead of running workspace discovery again.",
+      jwtLifecycleTitle: "JWT Token Lifecycle",
+      jwtLifecycleIntro:
+        "Access tokens are short-lived (15 minutes) JWT tokens signed with HMAC-SHA256. When an access token expires, the client uses the refresh token to obtain a new token pair. Refresh tokens are single-use and rotated on every use.",
+      tokenStructureTitle: "JWT Token Structure",
+      bcryptTitle: "BCrypt Password Hashing",
+      bcryptIntro:
+        "Passwords are hashed using BCrypt with a configurable work factor (default: 12). BCrypt is intentionally slow to resist brute-force attacks — each hash takes ~250ms, making mass password cracking impractical.",
+      lockoutTitle: "Account Lockout",
+      lockoutIntro:
+        "After 5 consecutive failed login attempts, the account is locked for 5 minutes. The counter resets on successful login. Admins can manually unlock accounts via the admin panel.",
+      tfaTitle: "Two-Factor Authentication (TOTP)",
+      tfaIntro:
+        "SCRIPE supports TOTP-based 2FA compatible with Google Authenticator, Authy, and Microsoft Authenticator. When enabled, users must enter a 6-digit time-based code after password verification.",
+      passwordExpiryTitle: "Password Expiry Enforcement",
+      passwordExpiryIntro:
+        "After credentials are validated and lockout checks pass, the login handler invokes ITenantPasswordValidator.IsPasswordExpiredAsync to check if the admin's password has exceeded the tenant's configured PasswordExpiryDays. If expired, the TokenResponse includes MustChangePassword = true, which forces the frontend to redirect the admin to the change-password page before granting dashboard access. This check uses the admin's PasswordLastChanged field against the tenant's security policy.",
+      passwordExpiryNote:
+        "Password expiry is a per-tenant setting configured via TenantSettings.PasswordExpiryDays. A value of 0 disables expiry entirely. When the feature is active, the ITenantPasswordValidator computes (PasswordLastChanged + ExpiryDays) and compares it to DateTime.UtcNow. The admin is never locked out — they receive a valid JWT but with the MustChangePassword flag set, which the frontend enforces as a redirect.",
+      externalAuthTitle: "External Authentication (OAuth)",
+      externalAuthIntro:
+        "SCRIPE integrates with Google, Facebook, Apple, and Microsoft OAuth providers. External tokens are validated server-side before creating or linking local accounts.",
+      otpTitle: "OTP System (One-Time Passwords)",
+      otpIntro:
+        "OTP codes are used for email verification, phone verification, and password reset flows. Codes are 6-digit, cryptographically random, stored as BCrypt hashes, and expire after 15 minutes with a maximum of 3 verification attempts.",
+      impersonationTitle: "Admin Impersonation",
+      impersonationIntro:
+        "SuperAdmins can impersonate other admins to troubleshoot issues. An impersonation token carries the target admin's claims plus an impersonator_id claim. All actions during impersonation are audited with the original admin's identity.",
+      impersonationWarning:
+        "Impersonation is a privileged operation. The impersonator must be a SuperAdmin, cannot impersonate protected admins or admins with equal/higher roles, and all actions are logged with the impersonator's identity for accountability.",
+      sessionTitle: "Session Management",
+      sessionIntro:
+        "SCRIPE uses a stateless JWT-based session model. Access tokens are held in client memory (never localStorage), refresh tokens are stored as HttpOnly secure cookies or in the database, and 2FA session tokens are temporary in-memory tokens valid for 5 minutes.",
+      cookieAuthTip:
+        "For maximum security, configure refresh tokens to be sent as HttpOnly, Secure, SameSite=Strict cookies. This prevents XSS attacks from accessing refresh tokens via JavaScript.",
+      ssoSuspensionTitle: "SSO Tenant Suspension Gate",
+      ssoSuspensionIntro:
+        "The ExternalLoginCommandHandler now includes a tenant suspension security gate. Before issuing a JWT after SSO/OIDC authentication, the handler checks the admin's tenant status. If the tenant is Suspended or Cancelled, the login is rejected with a localized error — preventing deactivated users from bypassing the standard login checks via SSO. This gate runs after token validation and account linking but before JWT issuance.",
+      ssoSuspensionWarning:
+        "Without this gate, SSO users could authenticate via an external IdP (e.g., Google, Azure AD) and receive a valid SCRIPE JWT even if their tenant has been suspended or cancelled. This was a critical security gap that has been remediated.",
     },
-    "dataProtection": {
-      "title": "Data Protection",
-      "description": "Tenant isolation, data encryption at rest and in transit, restricted fields, ID encryption, and GDPR compliance.",
-      "intro": "SCRIPE protects data at every layer  from network encryption (TLS 1.2+) and database encryption (TDE), through row-level tenant isolation and field-level access control, to GDPR-compliant data portability and right-to-delete mechanisms.",
-      "tenantIsolationTitle": "Tenant Data Isolation",
-      "tenantIsolationIntro": "Every query is automatically scoped to the current tenant via EF Core global query filters. The ITenantAwareEntity interface marks entities that must be tenant-scoped, and the TenantContextMiddleware extracts the tenant ID from the JWT token.",
-      "tenantScopingTitle": "Query Filter Scoping",
-      "tenantServicesTitle": "Tenant-Aware Services",
-      "tenantServicesIntro": "Services that need to access tenant-specific data inject IDataScopeService to get the current tenant ID. This service reads the tenant_id claim from the JWT token and makes it available throughout the request pipeline.",
-      "dataAtRestTitle": "Data at Rest Encryption",
-      "dataAtRestIntro": "Database-level Transparent Data Encryption (TDE) encrypts data files. Application-level encryption using ASP.NET Core Data Protection API secures sensitive fields like HMAC secrets and backup codes.",
-      "dataInTransitTitle": "Data in Transit Encryption",
-      "dataInTransitIntro": "All communication uses TLS 1.2 or higher. HSTS headers enforce HTTPS in production. Internal service communication between YARP gateway and backend modules also uses TLS.",
-      "restrictedFieldsTitle": "Restricted Fields (Field-Level Security)",
-      "restrictedFieldsIntro": "Roles can restrict access to specific entity fields. When a role has restricted fields configured, the FieldProjectionMiddleware automatically removes those fields from API responses, preventing unauthorized data exposure.",
-      "idEncryptionTitle": "ID Encryption",
-      "idEncryptionIntro": "SCRIPE can encrypt Guid entity IDs in API responses using AES-256. This prevents enumeration attacks and hides internal database identifiers from external consumers.",
-      "gdprTitle": "GDPR Compliance",
-      "gdprIntro": "SCRIPE provides mechanisms for GDPR compliance including data portability (export user data as JSON), right to delete (anonymize or purge user data), consent tracking, and configurable data retention policies.",
-      "rightToDeleteTitle": "Right to Delete",
-      "dataPortabilityTitle": "Data Portability",
-      "consentTitle": "Consent Management",
-      "retentionTitle": "Data Retention Policies",
-      "auditTrailTitle": "Audit Trail for Compliance",
-      "rightToDeleteDesc": "Enforce permanent erasure of user records and PII across all tenant databases upon request.",
-      "dataPortabilityDesc": "Export comprehensive machine-readable archives of all user-associated data in JSON format.",
-      "consentDesc": "Immutable append-only tracking of consent timestamps, policy versions, and user agents.",
-      "auditTrailDesc": "Tamper-evident audit logging for every read, write, export, and deletion of sensitive personal data.",
-      "tenantScopingDesc": "Strict multi-tenant isolation ensuring personal data never leaks across tenant boundaries.",
-      "retentionDesc": "Automated background pruning and anonymization based on regulatory and corporate retention rules.",
-      "bypassWarning": "IgnoreQueryFilters() bypasses ALL global query filters including tenant isolation. Always add explicit tenant filtering when using this method to prevent cross-tenant data leaks."
+    dataProtection: {
+      title: "Data Protection",
+      description:
+        "Tenant isolation, data encryption at rest and in transit, restricted fields, ID encryption, and GDPR compliance.",
+      intro:
+        "SCRIPE protects data at every layer  from network encryption (TLS 1.2+) and database encryption (TDE), through row-level tenant isolation and field-level access control, to GDPR-compliant data portability and right-to-delete mechanisms.",
+      tenantIsolationTitle: "Tenant Data Isolation",
+      tenantIsolationIntro:
+        "Every query is automatically scoped to the current tenant via EF Core global query filters. The ITenantAwareEntity interface marks entities that must be tenant-scoped, and the TenantContextMiddleware extracts the tenant ID from the JWT token.",
+      tenantScopingTitle: "Query Filter Scoping",
+      tenantServicesTitle: "Tenant-Aware Services",
+      tenantServicesIntro:
+        "Services that need to access tenant-specific data inject IDataScopeService to get the current tenant ID. This service reads the tenant_id claim from the JWT token and makes it available throughout the request pipeline.",
+      dataAtRestTitle: "Data at Rest Encryption",
+      dataAtRestIntro:
+        "Database-level Transparent Data Encryption (TDE) encrypts data files. Application-level encryption using ASP.NET Core Data Protection API secures sensitive fields like HMAC secrets and backup codes.",
+      dataInTransitTitle: "Data in Transit Encryption",
+      dataInTransitIntro:
+        "All communication uses TLS 1.2 or higher. HSTS headers enforce HTTPS in production. Internal service communication between YARP gateway and backend modules also uses TLS.",
+      restrictedFieldsTitle: "Restricted Fields (Field-Level Security)",
+      restrictedFieldsIntro:
+        "Roles can restrict access to specific entity fields. When a role has restricted fields configured, the FieldProjectionMiddleware automatically removes those fields from API responses, preventing unauthorized data exposure.",
+      idEncryptionTitle: "ID Encryption",
+      idEncryptionIntro:
+        "SCRIPE can encrypt Guid entity IDs in API responses using AES-256. This prevents enumeration attacks and hides internal database identifiers from external consumers.",
+      gdprTitle: "GDPR Compliance",
+      gdprIntro:
+        "SCRIPE provides mechanisms for GDPR compliance including data portability (export user data as JSON), right to delete (anonymize or purge user data), consent tracking, and configurable data retention policies.",
+      rightToDeleteTitle: "Right to Delete",
+      dataPortabilityTitle: "Data Portability",
+      consentTitle: "Consent Management",
+      retentionTitle: "Data Retention Policies",
+      auditTrailTitle: "Audit Trail for Compliance",
+      rightToDeleteDesc:
+        "Enforce permanent erasure of user records and PII across all tenant databases upon request.",
+      dataPortabilityDesc:
+        "Export comprehensive machine-readable archives of all user-associated data in JSON format.",
+      consentDesc:
+        "Immutable append-only tracking of consent timestamps, policy versions, and user agents.",
+      auditTrailDesc:
+        "Tamper-evident audit logging for every read, write, export, and deletion of sensitive personal data.",
+      tenantScopingDesc:
+        "Strict multi-tenant isolation ensuring personal data never leaks across tenant boundaries.",
+      retentionDesc:
+        "Automated background pruning and anonymization based on regulatory and corporate retention rules.",
+      bypassWarning:
+        "IgnoreQueryFilters() bypasses ALL global query filters including tenant isolation. Always add explicit tenant filtering when using this method to prevent cross-tenant data leaks.",
     },
-    "apiSecurity": {
-      "title": "API Security",
-      "description": "Rate limiting, CORS configuration, input validation, CSRF protection, security headers, and replay attack prevention.",
-      "intro": "SCRIPE applies multiple layers of API security: rate limiting prevents abuse, CORS restricts cross-origin access, input validation rejects malformed data, security headers protect against common web attacks, and anti-replay mechanisms prevent request replay attacks.",
-      "rateLimitTitle": "Rate Limiting",
-      "rateLimitIntro": "SCRIPE implements 4-tier rate limiting using ASP.NET Core's built-in rate limiter: global DDoS protection, per-IP limits, per-endpoint limits, and authentication-specific limits for login and token refresh.",
-      "corsTitle": "CORS Configuration",
-      "corsIntro": "Cross-Origin Resource Sharing policies differ between environments. Development allows all localhost origins. Production requires explicitly configured allowed origins, methods, and headers.",
-      "inputValidationTitle": "Input Validation",
-      "inputValidationIntro": "All incoming requests are validated through FluentValidation at the SCRIPE mediator pipeline level. The ValidationBehavior runs before the command handler and returns structured validation errors with field-level messages.",
-      "csrfTitle": "CSRF Protection",
-      "csrfIntro": "SCRIPE uses the SameSite cookie attribute and anti-forgery tokens to prevent Cross-Site Request Forgery attacks. API endpoints rely on Bearer token authentication which is inherently CSRF-resistant.",
-      "headersTitle": "Security Headers",
-      "headersIntro": "Production responses include security headers: X-Content-Type-Options (nosniff), X-Frame-Options (DENY), X-XSS-Protection, Referrer-Policy, and Content-Security-Policy.",
-      "headersTip": "Test your security headers using securityheaders.com. SCRIPE's default configuration scores A+ when properly configured.",
-      "replayTitle": "Replay Attack Prevention",
-      "replayIntro": "Short-lived access tokens (15 minutes), single-use refresh tokens with rotation, and TOTP time-step validation prevent replay attacks across all authentication flows."
+    apiSecurity: {
+      title: "API Security",
+      description:
+        "Rate limiting, CORS configuration, input validation, CSRF protection, security headers, and replay attack prevention.",
+      intro:
+        "SCRIPE applies multiple layers of API security: rate limiting prevents abuse, CORS restricts cross-origin access, input validation rejects malformed data, security headers protect against common web attacks, and anti-replay mechanisms prevent request replay attacks.",
+      rateLimitTitle: "Rate Limiting",
+      rateLimitIntro:
+        "SCRIPE implements 4-tier rate limiting using ASP.NET Core's built-in rate limiter: global DDoS protection, per-IP limits, per-endpoint limits, and authentication-specific limits for login and token refresh.",
+      corsTitle: "CORS Configuration",
+      corsIntro:
+        "Cross-Origin Resource Sharing policies differ between environments. Development allows all localhost origins. Production requires explicitly configured allowed origins, methods, and headers.",
+      inputValidationTitle: "Input Validation",
+      inputValidationIntro:
+        "All incoming requests are validated through FluentValidation at the SCRIPE mediator pipeline level. The ValidationBehavior runs before the command handler and returns structured validation errors with field-level messages.",
+      csrfTitle: "CSRF Protection",
+      csrfIntro:
+        "SCRIPE uses the SameSite cookie attribute and anti-forgery tokens to prevent Cross-Site Request Forgery attacks. API endpoints rely on Bearer token authentication which is inherently CSRF-resistant.",
+      headersTitle: "Security Headers",
+      headersIntro:
+        "Production responses include security headers: X-Content-Type-Options (nosniff), X-Frame-Options (DENY), X-XSS-Protection, Referrer-Policy, and Content-Security-Policy.",
+      headersTip:
+        "Test your security headers using securityheaders.com. SCRIPE's default configuration scores A+ when properly configured.",
+      replayTitle: "Replay Attack Prevention",
+      replayIntro:
+        "Short-lived access tokens (15 minutes), single-use refresh tokens with rotation, and TOTP time-step validation prevent replay attacks across all authentication flows.",
     },
-    "middlewarePipeline": {
-      "title": "Middleware Pipeline",
-      "description": "11 middleware components in execution order  from exception handling through tenant context to field projection.",
-      "intro": "SCRIPE's HTTP request pipeline consists of 11 middleware components executed in a specific order. Each middleware has a single responsibility and can short-circuit the pipeline on failure. Understanding the order is critical for debugging and extending the system.",
-      "overviewTitle": "Pipeline Overview",
-      "overviewIntro": "Requests flow through the middleware pipeline from top to bottom. Each middleware can process the request, modify it, or short-circuit by returning a response directly. The order matters  tenant context must be established before any tenant-scoped operation.",
-      "globalExceptionTitle": "1. Global Exception Handler",
-      "globalExceptionIntro": "Catches all unhandled exceptions and returns structured JSON error responses. In development, includes stack traces. In production, returns generic error messages to prevent information leakage.",
-      "correlationIdTitle": "2. Correlation ID",
-      "correlationIdIntro": "Generates or reads an X-Correlation-ID header for distributed tracing. The same ID is attached to all log entries, audit records, and downstream API calls for the request.",
-      "requestLoggingTitle": "3. Request Logging",
-      "requestLoggingIntro": "Logs request metadata (method, path, status, duration) with Serilog structured logging. Sensitive paths (login, password) have their body masked to prevent credential leakage in logs.",
-      "cookieAuthTitle": "4. Cookie-to-Bearer Conversion",
-      "cookieAuthIntro": "Reads the access_token cookie and injects it as a Bearer token in the Authorization header. This allows the frontend to use HttpOnly cookies while maintaining JWT-based authentication.",
-      "tenantContextTitle": "5. Tenant Context",
-      "tenantContextIntro": "Extracts the tenant_id claim from the JWT token and sets the current tenant in IDataScopeService. All subsequent database queries are automatically scoped to this tenant via EF Core global query filters.",
-      "tenantContextNote": "The Tenant Context middleware must run AFTER authentication but BEFORE any database access. If a request has no tenant claim (e.g., SuperAdmin without tenant), the middleware allows tenant-less operations for global endpoints.",
-      "cacheHeadersTitle": "6. Cache Headers",
-      "cacheHeadersIntro": "Sets appropriate Cache-Control headers based on response type. API responses use no-cache, no-store. Static files use max-age with ETag validation. Uploaded files use tenant-specific cache keys.",
-      "fieldProjectionTitle": "7. Field Projection",
-      "fieldProjectionIntro": "Removes restricted fields from JSON responses based on the current user's role permissions. Uses the restrictedFields configuration to filter out sensitive properties before the response is sent to the client.",
-      "observabilityTitle": "Observability Middleware",
-      "observabilityIntro": "Collects request metrics (duration, status codes, error rates) and exposes them via a /metrics endpoint for Prometheus scraping. Includes distributed tracing with OpenTelemetry integration.",
-      "registrationTitle": "Middleware Registration Order",
-      "registrationIntro": "The middleware registration order in Program.cs determines execution order. Changing the order can break functionality  for example, registering TenantContext before Authentication would fail because the JWT hasn't been validated yet.",
-      "summaryTitle": "Middleware Summary",
-      "orderWarning": "Changing middleware registration order can cause cascading failures. Always test the full request pipeline after modifying middleware order."
+    middlewarePipeline: {
+      title: "Middleware Pipeline",
+      description:
+        "11 middleware components in execution order  from exception handling through tenant context to field projection.",
+      intro:
+        "SCRIPE's HTTP request pipeline consists of 11 middleware components executed in a specific order. Each middleware has a single responsibility and can short-circuit the pipeline on failure. Understanding the order is critical for debugging and extending the system.",
+      overviewTitle: "Pipeline Overview",
+      overviewIntro:
+        "Requests flow through the middleware pipeline from top to bottom. Each middleware can process the request, modify it, or short-circuit by returning a response directly. The order matters  tenant context must be established before any tenant-scoped operation.",
+      globalExceptionTitle: "1. Global Exception Handler",
+      globalExceptionIntro:
+        "Catches all unhandled exceptions and returns structured JSON error responses. In development, includes stack traces. In production, returns generic error messages to prevent information leakage.",
+      correlationIdTitle: "2. Correlation ID",
+      correlationIdIntro:
+        "Generates or reads an X-Correlation-ID header for distributed tracing. The same ID is attached to all log entries, audit records, and downstream API calls for the request.",
+      requestLoggingTitle: "3. Request Logging",
+      requestLoggingIntro:
+        "Logs request metadata (method, path, status, duration) with Serilog structured logging. Sensitive paths (login, password) have their body masked to prevent credential leakage in logs.",
+      cookieAuthTitle: "4. Cookie-to-Bearer Conversion",
+      cookieAuthIntro:
+        "Reads the access_token cookie and injects it as a Bearer token in the Authorization header. This allows the frontend to use HttpOnly cookies while maintaining JWT-based authentication.",
+      tenantContextTitle: "5. Tenant Context",
+      tenantContextIntro:
+        "Extracts the tenant_id claim from the JWT token and sets the current tenant in IDataScopeService. All subsequent database queries are automatically scoped to this tenant via EF Core global query filters.",
+      tenantContextNote:
+        "The Tenant Context middleware must run AFTER authentication but BEFORE any database access. If a request has no tenant claim (e.g., SuperAdmin without tenant), the middleware allows tenant-less operations for global endpoints.",
+      cacheHeadersTitle: "6. Cache Headers",
+      cacheHeadersIntro:
+        "Sets appropriate Cache-Control headers based on response type. API responses use no-cache, no-store. Static files use max-age with ETag validation. Uploaded files use tenant-specific cache keys.",
+      fieldProjectionTitle: "7. Field Projection",
+      fieldProjectionIntro:
+        "Removes restricted fields from JSON responses based on the current user's role permissions. Uses the restrictedFields configuration to filter out sensitive properties before the response is sent to the client.",
+      observabilityTitle: "Observability Middleware",
+      observabilityIntro:
+        "Collects request metrics (duration, status codes, error rates) and exposes them via a /metrics endpoint for Prometheus scraping. Includes distributed tracing with OpenTelemetry integration.",
+      registrationTitle: "Middleware Registration Order",
+      registrationIntro:
+        "The middleware registration order in Program.cs determines execution order. Changing the order can break functionality  for example, registering TenantContext before Authentication would fail because the JWT hasn't been validated yet.",
+      summaryTitle: "Middleware Summary",
+      orderWarning:
+        "Changing middleware registration order can cause cascading failures. Always test the full request pipeline after modifying middleware order.",
     },
-    "auditCompliance": {
-      "title": "Audit & Compliance",
-      "description": "Complete audit pipeline, entity tracking, SignalR streaming, CSV/Excel/PDF export, and compliance features.",
-      "intro": "SCRIPE provides a comprehensive audit system that tracks every data modification, API request, and security event. Audit logs are automatically generated by EF Core interceptors, streamed in real-time via SignalR, and exportable in CSV, Excel, and PDF formats.",
-      "architectureTitle": "Audit Architecture",
-      "architectureIntro": "The audit system consists of HTTP request logging and database entity mutation interception. Request metadata is logged asynchronously at the host level via the RequestLoggingMiddleware, while database-level mutations are captured by the AuditableEntityInterceptor before SaveChanges.",
-      "interceptorTitle": "Entity Change Interceptor",
-      "interceptorIntro": "The AuditableEntityInterceptor hooks into EF Core's SaveChangesAsync pipeline. For every Added, Modified, or Deleted entity (including soft-deletes), it captures the old and new values as JSON, the user who made the change, and the timestamp. It skips AuditLog entities to prevent infinite recursion.",
-      "auditLogEntityTitle": "AuditLog Entity Structure",
-      "signalrTitle": "Real-Time SignalR Streaming",
-      "signalrIntro": "Audit logs are broadcast in real-time via the AuditHub SignalR hub. Connected admin clients receive instant notifications when any data changes occur, enabling live monitoring dashboards.",
-      "exportTitle": "Export Capabilities",
-      "exportIntro": "Audit logs can be exported in three formats: CSV for data analysis, Excel for business reporting, and PDF for compliance documentation. Exports support date range filtering, user filtering, and entity type filtering.",
-      "exportDetail": "The AuditExportService provides multi-format exports. CSV export uses CsvHelper with quotes around all fields to prevent CSV injection (RFC 4180) and a UTF-8 BOM prefix for Excel. Excel export generates a ClosedXML workbook with three detailed sheets: Executive Summary (dashboard stats/KPIs), Audit Data (with auto-filters, frozen headers, and green/red conditional formatting), and Security Analysis. PDF export uses QuestPDF layout engine, which is marked as Obsolete for large datasets due to memory footprint. To protect resources, all exports are capped to a maximum of 10,000 rows and loaded in-memory before transmission.",
-      "queryApiTitle": "Query & Export API",
-      "queryApiIntro": "The audit API provides search, filter, and export capabilities for audit logs. All endpoints require admin authentication and the audit.view or audit.export permission.",
-      "querySearchDesc": "Search and filter audit logs with pagination",
-      "queryExportCsvDesc": "Export audit logs as CSV file",
-      "queryExportExcelDesc": "Export audit logs as Excel spreadsheet",
-      "queryExportPdfDesc": "Export audit logs as PDF document",
-      "scopingTitle": "Hierarchical Tenant Scoping & Security Isolation",
-      "scopingDetail": "Data isolation is enforced dynamically at query execution. The DataScopeService resolves the administrator's effective scope based on a strict priority chain: ContextTenant (drill-down via AES-encrypted context headers), Permission Overrides, SystemProtectedAdmin, Hierarchy (including children), or OwnTenant. Descendants are traversed in constant time via materialized paths, where starts-with matches translate to index-backed SQL LIKE queries. The repository applies AuditByTenantScopeSpec to ensure 'WHERE TenantId IN (...)' isolation, while direct Guid-based requests are verified by GetAuditLogDetailQueryHandler to prevent horizontal privilege escalation.",
-      "complianceTitle": "Compliance Features",
-      "immutableTitle": "Immutable Logs",
-      "immutableDesc": "Logs are locked and stored in a read-only fashion, preventing deletion or updates once committed.",
-      "fullTraceTitle": "Full Trace",
-      "fullTraceDesc": "Captures HTTP headers, request context, and entity mutations to ensure complete trace visibility.",
-      "searchableTitle": "Searchable",
-      "searchableDesc": "Optimized indexes on Timestamp, UserId, EventType, and CorrelationId enable instant lookup.",
-      "tenantScopedTitle": "Tenant Scoped",
-      "tenantScopedDesc": "Logs are automatically isolated by TenantId and descendant tree boundaries, preventing leaks.",
-      "realtimeTitle": "Real-Time",
-      "realtimeDesc": "Stream live security events and mutations directly to tenant-scoped SignalR dashboards.",
-      "retentionTitle": "Retention Policy",
-      "retentionDesc": "Configured retention periods automatically purge expired audit logs via background workers."
+    auditCompliance: {
+      title: "Audit & Compliance",
+      description:
+        "Complete audit pipeline, entity tracking, SignalR streaming, CSV/Excel/PDF export, and compliance features.",
+      intro:
+        "SCRIPE provides a comprehensive audit system that tracks every data modification, API request, and security event. Audit logs are automatically generated by EF Core interceptors, streamed in real-time via SignalR, and exportable in CSV, Excel, and PDF formats.",
+      architectureTitle: "Audit Architecture",
+      architectureIntro:
+        "The audit system consists of HTTP request logging and database entity mutation interception. Request metadata is logged asynchronously at the host level via the RequestLoggingMiddleware, while database-level mutations are captured by the AuditableEntityInterceptor before SaveChanges.",
+      interceptorTitle: "Entity Change Interceptor",
+      interceptorIntro:
+        "The AuditableEntityInterceptor hooks into EF Core's SaveChangesAsync pipeline. For every Added, Modified, or Deleted entity (including soft-deletes), it captures the old and new values as JSON, the user who made the change, and the timestamp. It skips AuditLog entities to prevent infinite recursion.",
+      auditLogEntityTitle: "AuditLog Entity Structure",
+      signalrTitle: "Real-Time SignalR Streaming",
+      signalrIntro:
+        "Audit logs are broadcast in real-time via the AuditHub SignalR hub. Connected admin clients receive instant notifications when any data changes occur, enabling live monitoring dashboards.",
+      exportTitle: "Export Capabilities",
+      exportIntro:
+        "Audit logs can be exported in three formats: CSV for data analysis, Excel for business reporting, and PDF for compliance documentation. Exports support date range filtering, user filtering, and entity type filtering.",
+      exportDetail:
+        "The AuditExportService provides multi-format exports. CSV export uses CsvHelper with quotes around all fields to prevent CSV injection (RFC 4180) and a UTF-8 BOM prefix for Excel. Excel export generates a ClosedXML workbook with three detailed sheets: Executive Summary (dashboard stats/KPIs), Audit Data (with auto-filters, frozen headers, and green/red conditional formatting), and Security Analysis. PDF export uses QuestPDF layout engine, which is marked as Obsolete for large datasets due to memory footprint. To protect resources, all exports are capped to a maximum of 10,000 rows and loaded in-memory before transmission.",
+      queryApiTitle: "Query & Export API",
+      queryApiIntro:
+        "The audit API provides search, filter, and export capabilities for audit logs. All endpoints require admin authentication and the audit.view or audit.export permission.",
+      querySearchDesc: "Search and filter audit logs with pagination",
+      queryExportCsvDesc: "Export audit logs as CSV file",
+      queryExportExcelDesc: "Export audit logs as Excel spreadsheet",
+      queryExportPdfDesc: "Export audit logs as PDF document",
+      scopingTitle: "Hierarchical Tenant Scoping & Security Isolation",
+      scopingDetail:
+        "Data isolation is enforced dynamically at query execution. The DataScopeService resolves the administrator's effective scope based on a strict priority chain: ContextTenant (drill-down via AES-encrypted context headers), Permission Overrides, SystemProtectedAdmin, Hierarchy (including children), or OwnTenant. Descendants are traversed in constant time via materialized paths, where starts-with matches translate to index-backed SQL LIKE queries. The repository applies AuditByTenantScopeSpec to ensure 'WHERE TenantId IN (...)' isolation, while direct Guid-based requests are verified by GetAuditLogDetailQueryHandler to prevent horizontal privilege escalation.",
+      complianceTitle: "Compliance Features",
+      immutableTitle: "Immutable Logs",
+      immutableDesc:
+        "Logs are locked and stored in a read-only fashion, preventing deletion or updates once committed.",
+      fullTraceTitle: "Full Trace",
+      fullTraceDesc:
+        "Captures HTTP headers, request context, and entity mutations to ensure complete trace visibility.",
+      searchableTitle: "Searchable",
+      searchableDesc:
+        "Optimized indexes on Timestamp, UserId, EventType, and CorrelationId enable instant lookup.",
+      tenantScopedTitle: "Tenant Scoped",
+      tenantScopedDesc:
+        "Logs are automatically isolated by TenantId and descendant tree boundaries, preventing leaks.",
+      realtimeTitle: "Real-Time",
+      realtimeDesc:
+        "Stream live security events and mutations directly to tenant-scoped SignalR dashboards.",
+      retentionTitle: "Retention Policy",
+      retentionDesc:
+        "Configured retention periods automatically purge expired audit logs via background workers.",
     },
-    "sso": {
-      "samlTitle": "SAML 2.0 & Cryptographic Assertion Security",
-      "samlContent": "In addition to OIDC, the platform integrates SAML 2.0 authentication using the ITfoxtec.Identity.Saml2 library. For inbound SSO, public X.509 certificates are loaded from base64 string configurations to validate SAML response signatures while ignoring certificate chain validations. Outbound client connections use platform-wide signing certificates to issue secure SAML assertions.",
-      "oidcCallbackTitle": "OIDC Callback & Workspace Caching Flow",
-      "oidcCallbackContent": "The callback handler validates incoming credentials and manages workspace selection for administrators with access to multiple tenants. A temporary token caches the login profile (SsoTempLoginData) in Redis for 15 minutes, allowing safe workspace selection in the frontend without transferring raw user variables.",
-      "oauthMirroringTitle": "OAuth Application Mirroring & Subscription Quotas",
-      "oauthMirroringContent": "Administrators can register custom client applications to use SCRIPE as their primary OIDC server. New application creations are gated by tenant-scoped quotas. Once validated, client details are registered in OpenIddict and mirrored locally in the platform's OAuthApplication database table for fast performance, masking confidential client secrets.",
-      "title": "SSO & Identity Providers",
-      "description": "OIDC/OAuth2 SSO architecture, PKCE flow, identity provider model, external login linking, OAuth applications, claim mapping, and full API reference.",
-      "intro": "SCRIPE supports Single Sign-On (SSO) via external OIDC identity providers. This page covers the complete SSO architecture: PKCE authorization code flow, the identity provider entity model, external login linking, OAuth application registration, claim mapping, tenant scoping, and all API endpoints.",
-      "howItWorksTitle": "How SSO Works",
-      "howItWorksContent": "SCRIPE uses the Authorization Code Flow with PKCE (Proof Key for Code Exchange) for SSO. This is the most secure OAuth2 flow, recommended by the OAuth 2.1 specification for all client types.",
-      "step1Title": "1. Provider Discovery",
-      "step1Content": "The login page fetches available SSO providers via GET /auth/oidc/providers/admin. Only enabled providers for the current login context (admin/user) are returned.",
-      "step2Title": "2. PKCE Challenge",
-      "step2Content": "When the user clicks an SSO button, the frontend calls POST /auth/oidc/challenge. The backend generates a code_verifier, computes the code_challenge (SHA-256), and returns the authorization URL.",
-      "step3Title": "3. IdP Redirect",
-      "step3Content": "The frontend stores PKCE state (code_verifier, state, providerId) in sessionStorage, then redirects the user to the external IdP's authorization endpoint.",
-      "step4Title": "4. User Authentication",
-      "step4Content": "The user authenticates at the external IdP (Azure AD, Google, Okta, etc.) and grants consent for the requested scopes.",
-      "step5Title": "5. Callback & Token Exchange",
-      "step5Content": "The IdP redirects to /sso/callback with an authorization code. The frontend retrieves PKCE state from sessionStorage, validates the state parameter, and calls POST /auth/oidc/callback. The backend exchanges the code for tokens using the code_verifier.",
-      "pkceTitle": "PKCE Security Model",
-      "pkceContent": "PKCE prevents authorization code interception attacks by ensuring that only the client that initiated the flow can exchange the code. The code_verifier is never sent over the network — only its SHA-256 hash (code_challenge) is sent during the challenge step.",
-      "entityModelTitle": "Identity Provider Entity",
-      "entityModelContent": "The IdentityProvider entity stores all OIDC configuration for an external IdP. Each provider is optionally scoped to a tenant (TenantId = null means system-wide).",
-      "linkingTitle": "External Login Linking",
-      "linkingContent": "Before SSO login works, a SCRIPE admin/user must link their account to the external identity. This creates an ExternalLogin record mapping the provider's subject ID to the SCRIPE account.",
-      "oauthAppsTitle": "OAuth Applications",
-      "oauthAppsContent": "OAuth Applications are third-party apps that authenticate against SCRIPE as an OIDC server. Each app gets a Client ID and Client Secret, with configurable redirect URIs, scopes, and PKCE enforcement.",
-      "claimMappingTitle": "Claim Mapping",
-      "claimMappingContent": "When an external IdP uses non-standard claim names, the ClaimMappingJson field maps them to SCRIPE's expected claims. If null, standard OIDC claim names (sub, email, name) are used.",
-      "tenantScopingTitle": "Tenant Scoping",
-      "tenantScopingContent": "Identity Providers are tenant-scoped via the TenantId column. Providers with null TenantId are system-wide (available to all tenants). The backend automatically filters providers by the current admin's tenant context.",
-      "tenantScopingNote": "Host admins can manage any tenant's SSO providers by using the 'Enter Tenant World' feature from the Tenants page. This scopes all API calls to the target tenant without needing to log in as that tenant's admin.",
-      "apiTitle": "API Endpoints"
+    sso: {
+      samlTitle: "SAML 2.0 & Cryptographic Assertion Security",
+      samlContent:
+        "In addition to OIDC, the platform integrates SAML 2.0 authentication using the ITfoxtec.Identity.Saml2 library. For inbound SSO, public X.509 certificates are loaded from base64 string configurations to validate SAML response signatures while ignoring certificate chain validations. Outbound client connections use platform-wide signing certificates to issue secure SAML assertions.",
+      oidcCallbackTitle: "OIDC Callback & Workspace Caching Flow",
+      oidcCallbackContent:
+        "The callback handler validates incoming credentials and manages workspace selection for administrators with access to multiple tenants. A temporary token caches the login profile (SsoTempLoginData) in Redis for 15 minutes, allowing safe workspace selection in the frontend without transferring raw user variables.",
+      oauthMirroringTitle: "OAuth Application Mirroring & Subscription Quotas",
+      oauthMirroringContent:
+        "Administrators can register custom client applications to use SCRIPE as their primary OIDC server. New application creations are gated by tenant-scoped quotas. Once validated, client details are registered in OpenIddict and mirrored locally in the platform's OAuthApplication database table for fast performance, masking confidential client secrets.",
+      title: "SSO & Identity Providers",
+      description:
+        "OIDC/OAuth2 SSO architecture, PKCE flow, identity provider model, external login linking, OAuth applications, claim mapping, and full API reference.",
+      intro:
+        "SCRIPE supports Single Sign-On (SSO) via external OIDC identity providers. This page covers the complete SSO architecture: PKCE authorization code flow, the identity provider entity model, external login linking, OAuth application registration, claim mapping, tenant scoping, and all API endpoints.",
+      howItWorksTitle: "How SSO Works",
+      howItWorksContent:
+        "SCRIPE uses the Authorization Code Flow with PKCE (Proof Key for Code Exchange) for SSO. This is the most secure OAuth2 flow, recommended by the OAuth 2.1 specification for all client types.",
+      step1Title: "1. Provider Discovery",
+      step1Content:
+        "The login page fetches available SSO providers via GET /auth/oidc/providers/admin. Only enabled providers for the current login context (admin/user) are returned.",
+      step2Title: "2. PKCE Challenge",
+      step2Content:
+        "When the user clicks an SSO button, the frontend calls POST /auth/oidc/challenge. The backend generates a code_verifier, computes the code_challenge (SHA-256), and returns the authorization URL.",
+      step3Title: "3. IdP Redirect",
+      step3Content:
+        "The frontend stores PKCE state (code_verifier, state, providerId) in sessionStorage, then redirects the user to the external IdP's authorization endpoint.",
+      step4Title: "4. User Authentication",
+      step4Content:
+        "The user authenticates at the external IdP (Azure AD, Google, Okta, etc.) and grants consent for the requested scopes.",
+      step5Title: "5. Callback & Token Exchange",
+      step5Content:
+        "The IdP redirects to /sso/callback with an authorization code. The frontend retrieves PKCE state from sessionStorage, validates the state parameter, and calls POST /auth/oidc/callback. The backend exchanges the code for tokens using the code_verifier.",
+      pkceTitle: "PKCE Security Model",
+      pkceContent:
+        "PKCE prevents authorization code interception attacks by ensuring that only the client that initiated the flow can exchange the code. The code_verifier is never sent over the network — only its SHA-256 hash (code_challenge) is sent during the challenge step.",
+      entityModelTitle: "Identity Provider Entity",
+      entityModelContent:
+        "The IdentityProvider entity stores all OIDC configuration for an external IdP. Each provider is optionally scoped to a tenant (TenantId = null means system-wide).",
+      linkingTitle: "External Login Linking",
+      linkingContent:
+        "Before SSO login works, a SCRIPE admin/user must link their account to the external identity. This creates an ExternalLogin record mapping the provider's subject ID to the SCRIPE account.",
+      oauthAppsTitle: "OAuth Applications",
+      oauthAppsContent:
+        "OAuth Applications are third-party apps that authenticate against SCRIPE as an OIDC server. Each app gets a Client ID and Client Secret, with configurable redirect URIs, scopes, and PKCE enforcement.",
+      claimMappingTitle: "Claim Mapping",
+      claimMappingContent:
+        "When an external IdP uses non-standard claim names, the ClaimMappingJson field maps them to SCRIPE's expected claims. If null, standard OIDC claim names (sub, email, name) are used.",
+      tenantScopingTitle: "Tenant Scoping",
+      tenantScopingContent:
+        "Identity Providers are tenant-scoped via the TenantId column. Providers with null TenantId are system-wide (available to all tenants). The backend automatically filters providers by the current admin's tenant context.",
+      tenantScopingNote:
+        "Host admins can manage any tenant's SSO providers by using the 'Enter Tenant World' feature from the Tenants page. This scopes all API calls to the target tenant without needing to log in as that tenant's admin.",
+      apiTitle: "API Endpoints",
     },
-    "login_failed": "Failed Login Attempt",
-    "account_locked": "Account Security Lockout",
-    "view": "Security View"
-  }
+    login_failed: "Failed Login Attempt",
+    account_locked: "Account Security Lockout",
+    view: "Security View",
+  },
 };

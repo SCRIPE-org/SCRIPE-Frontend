@@ -28,6 +28,9 @@ const AuditExportDialog = dynamic(
   { ssr: false }
 );
 
+/**
+ * AuditView
+ */
 export function AuditView() {
   useModuleLocales(() => import("../../../locales"), "audit");
 
@@ -59,7 +62,7 @@ export function AuditView() {
       />
 
       {/* 3. Enterprise Investigation Filter Toolbar */}
-      <Card className="border-border/80 bg-card/90 shadow-2xs">
+      <Card className="shadow-2xs border-border/80 bg-card/90">
         <CardContent className="p-4">
           <AuditFilterPanel
             filters={vm.filters}
@@ -73,11 +76,11 @@ export function AuditView() {
       </Card>
 
       {/* 4. Results Audit Trail Table */}
-      <Card className="border-border/80 bg-card/90 shadow-2xs">
-        <CardHeader className="pb-3 border-b border-border/60">
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+      <Card className="shadow-2xs border-border/80 bg-card/90">
+        <CardHeader className="border-b border-border/60 pb-3">
+          <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
             <div>
-              <CardTitle className="text-sm sm:text-base font-bold text-foreground">
+              <CardTitle className="text-sm font-bold text-foreground sm:text-base">
                 {t("audit.results.title") || "Audit Event Records"}
               </CardTitle>
               <CardDescription className="text-xs text-muted-foreground">
@@ -86,7 +89,7 @@ export function AuditView() {
               </CardDescription>
             </div>
             {vm.logs.data && (
-              <span className="text-xs font-semibold tabular-nums text-muted-foreground bg-muted/40 px-2 py-1 rounded-md border border-border/60">
+              <span className="rounded-md border border-border/60 bg-muted/40 px-2 py-1 text-xs font-semibold tabular-nums text-muted-foreground">
                 {t("audit.results.totalCount", { count: vm.logs.data.totalCount }) ||
                   `${vm.logs.data.totalCount.toLocaleString()} indexed records`}
               </span>

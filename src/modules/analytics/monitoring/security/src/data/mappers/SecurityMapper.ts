@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /**
  * Security Mapper
  *
@@ -67,8 +68,7 @@ export class SecurityMapper {
 
   static toActiveSession(dto: ActiveSessionDto, index: number = 0): ActiveSession {
     const rawId = (dto as any).id || (dto as any).Id || dto.tokenId || "";
-    const resolvedTokenId =
-      rawId.trim() !== "" ? rawId : `session-${index}-${Date.now()}`;
+    const resolvedTokenId = rawId.trim() !== "" ? rawId : `session-${index}-${Date.now()}`;
 
     return {
       tokenId: resolvedTokenId,

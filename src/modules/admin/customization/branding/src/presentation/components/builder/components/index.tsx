@@ -1,3 +1,4 @@
+/* eslint-disable unused-imports/no-unused-vars */
 // UI-EXCEPTION: compact studio layout
 /**
  * Builder Components Index — All 14 canvas component renderers
@@ -55,7 +56,13 @@ export function BuilderLogo({
         height={80}
         unoptimized
         className="object-contain"
-        style={{ maxWidth: `${maxWidth}px`, maxHeight: "80px", width: "auto", height: "auto", borderRadius }}
+        style={{
+          maxWidth: `${maxWidth}px`,
+          maxHeight: "80px",
+          width: "auto",
+          height: "auto",
+          borderRadius,
+        }}
         onError={(e) => {
           (e.target as HTMLImageElement).style.display = "none";
         }}

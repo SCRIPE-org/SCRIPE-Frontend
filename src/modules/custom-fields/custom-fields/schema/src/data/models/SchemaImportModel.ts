@@ -95,9 +95,7 @@ export type SchemaImportBundlePayload = Record<string, unknown>;
  * duplicate keys) is the server's `ValidateShape` to enforce, and it already does -- duplicating any
  * of it here would be a second copy of that logic that can drift from the one that actually decides.
  */
-export function looksLikeSchemaBundlePayload(
-  value: unknown
-): value is SchemaImportBundlePayload {
+export function looksLikeSchemaBundlePayload(value: unknown): value is SchemaImportBundlePayload {
   if (typeof value !== "object" || value === null || Array.isArray(value)) return false;
   const candidate = value as Record<string, unknown>;
   return (

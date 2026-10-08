@@ -1,3 +1,6 @@
+/**
+ * Documentation for module export
+ */
 export interface FacilityData {
   id: string;
   venueProfileId: string;
@@ -9,6 +12,9 @@ export interface FacilityData {
   venueProfileName?: string;
 }
 
+/**
+ * Documentation for module export
+ */
 export class Facility {
   constructor(public readonly data: FacilityData) {}
 

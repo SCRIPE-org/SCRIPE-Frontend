@@ -39,6 +39,9 @@ const INITIAL_STATE: VenueOverviewState = {
   error: false,
 };
 
+/**
+ * Documentation for module export
+ */
 export interface FacilityOption {
   id: string;
   name: string;
@@ -46,18 +49,15 @@ export interface FacilityOption {
 
 /**
  * Presentation ViewModel hook orchestrating real-time Venue Operational Overview telemetry.
- * 
+ *
  * Aggregates live operational KPIs, hourly load distributions, up-next arrivals, and timeline
  * allocations across facility resources with automatic polling and deferred activity updates.
- * 
+ *
  * @param initialFacilityId Optional initial facility identifier filter.
  * @param initialLocalDate Optional initial date string (YYYY-MM-DD) for operational window.
  * @returns State package including reactive `state`, facility list, selection callbacks, and reload triggers.
  */
-export function useVenueOverviewViewModel(
-  initialFacilityId?: string,
-  initialLocalDate?: string
-) {
+export function useVenueOverviewViewModel(initialFacilityId?: string, initialLocalDate?: string) {
   const [state, setState] = useState<VenueOverviewState>(INITIAL_STATE);
   const [selectedFacilityId, setSelectedFacilityId] = useState(initialFacilityId || "");
   const selectedFacilityIdRef = useRef(initialFacilityId || "");
@@ -95,24 +95,6 @@ export function useVenueOverviewViewModel(
         }
       }
     } catch {
-      if (process.env.NODE_ENV !== "production") {
-        try {
-          const { getRealisticVenueOperationalData } = await import(
-            "../../data/mock/realisticVenueOperationalData"
-          );
-          const mock = getRealisticVenueOperationalData(dateStr);
-          setState(mock);
-          setFacilities([
-            { id: "fac-cairo-downtown", name: "Al-Ahly Sports Hub & Padel Club" },
-            { id: "fac-west", name: "West Padel Club" },
-            { id: "fac-olympic", name: "Olympic Football Center" },
-          ]);
-          setSelectedFacilityId(mock.facilityId);
-          return;
-        } catch {
-          // fallback
-        }
-      }
       setState((curr) => ({
         ...curr,
         stage: "failed",
@@ -136,10 +118,13 @@ export function useVenueOverviewViewModel(
     }
   }, [load, selectedFacilityId]);
 
-  const changeFacility = useCallback(async (facId: string) => {
-    setSelectedFacilityId(facId);
-    await load(facId);
-  }, [load]);
+  const changeFacility = useCallback(
+    async (facId: string) => {
+      setSelectedFacilityId(facId);
+      await load(facId);
+    },
+    [load]
+  );
 
   return {
     state,

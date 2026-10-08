@@ -32,7 +32,10 @@ import { describe, it, expect } from "vitest";
 import { readFileSync } from "fs";
 import { fileURLToPath } from "url";
 import { dirname, resolve } from "path";
-import { VALUE_TYPE_CATALOG, type CustomFieldValueTypeName } from "../../registries/valueTypeRegistry";
+import {
+  VALUE_TYPE_CATALOG,
+  type CustomFieldValueTypeName,
+} from "../../registries/valueTypeRegistry";
 
 // Byte-identical to the real guards now used in both CustomFieldListView.tsx
 // and InlineAddCustomFieldDialog.tsx.

@@ -2,7 +2,8 @@ export const en = {
   security: {
     eyebrow: "MONITORING",
     title: "Security",
-    subtitle: "Monitor authentication posture, active access, and security activity across the SCRIPE platform.",
+    subtitle:
+      "Monitor authentication posture, active access, and security activity across the SCRIPE platform.",
     refresh: "Refresh",
     refreshing: "Refreshing...",
     viewInAudit: "Audit Log",
@@ -55,7 +56,8 @@ export const en = {
       revoke: "Revoke",
       noSessions: "No active authenticated sessions found.",
       revokeTitle: "Revoke Active Session?",
-      revokeConfirm: "This will immediately invalidate the session and force sign-out on the connected device. This action cannot be undone.",
+      revokeConfirm:
+        "This will immediately invalidate the session and force sign-out on the connected device. This action cannot be undone.",
       revokeAction: "Revoke Session",
     },
     policies: {

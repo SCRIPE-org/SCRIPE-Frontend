@@ -228,7 +228,11 @@ describe("useResolveEntityReference", () => {
     const { result, rerender } = renderHook(
       (props: { reference: { entityTypeKey: string; entityId: string } | null }) =>
         useResolveEntityReference(props.reference),
-      { initialProps: { reference: REFERENCE as { entityTypeKey: string; entityId: string } | null } }
+      {
+        initialProps: {
+          reference: REFERENCE as { entityTypeKey: string; entityId: string } | null,
+        },
+      }
     );
     await waitFor(() => expect(result.current.status).toBe("loading"));
 

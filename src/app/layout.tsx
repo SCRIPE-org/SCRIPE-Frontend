@@ -76,15 +76,8 @@ export default async function RootLayout({ children }: { children: React.ReactNo
     <html lang={language} dir={direction} suppressHydrationWarning>
       <head>
         {/* P1.11: Preconnect to shared API server */}
-        <link
-          rel="dns-prefetch"
-          href={process.env.NEXT_PUBLIC_API_URL}
-        />
-        <link
-          rel="preconnect"
-          href={process.env.NEXT_PUBLIC_API_URL}
-          crossOrigin="anonymous"
-        />
+        <link rel="dns-prefetch" href={process.env.NEXT_PUBLIC_API_URL} />
+        <link rel="preconnect" href={process.env.NEXT_PUBLIC_API_URL} crossOrigin="anonymous" />
       </head>
       <body className="font-sans antialiased" suppressHydrationWarning>
         <AppProvider>{children}</AppProvider>

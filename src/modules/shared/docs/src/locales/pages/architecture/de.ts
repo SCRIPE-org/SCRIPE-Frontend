@@ -556,27 +556,39 @@ export const de = {
     },
     crossModule: {
       title: "Modulübergreifende Zusammenarbeit im Detail",
-      description: "Wie Identity und Entitlements ohne direkte Abhängigkeiten zusammenarbeiten — über Core.Application-Abstraktionen, IRequireFeature und AstraFlow-Pipeline-Verhalten.",
-      intro: "Die Module Identity und Entitlements müssen eng zusammenarbeiten: Entitlements steuert Berechtigungen für Identity-Befehle, während Identity die Berechtigungen speichert, die Entitlements bei Abonnementänderungen synchronisiert. Da direkte Importe zirkuläre Abhängigkeiten erzeugen würden, fungiert die Schicht Core.Application als neutrale Brücke.",
+      description:
+        "Wie Identity und Entitlements ohne direkte Abhängigkeiten zusammenarbeiten — über Core.Application-Abstraktionen, IRequireFeature und AstraFlow-Pipeline-Verhalten.",
+      intro:
+        "Die Module Identity und Entitlements müssen eng zusammenarbeiten: Entitlements steuert Berechtigungen für Identity-Befehle, während Identity die Berechtigungen speichert, die Entitlements bei Abonnementänderungen synchronisiert. Da direkte Importe zirkuläre Abhängigkeiten erzeugen würden, fungiert die Schicht Core.Application als neutrale Brücke.",
       bridgeTitle: "Die Drei-Schichten-Brücke",
-      bridgeContent: "Der Namensraum Core.Application.Abstractions bildet das Herzstück der modulübergreifenden Kommunikation mit über 32 typisierten Schnittstellenverträgen.",
+      bridgeContent:
+        "Der Namensraum Core.Application.Abstractions bildet das Herzstück der modulübergreifenden Kommunikation mit über 32 typisierten Schnittstellenverträgen.",
       gridCoreTitle: "Core.Application-Abstraktionen",
-      gridCoreDesc: "Über 32 typisierte Verträge (IFeatureChecker, ITenantPermissionManager, ICurrentUser), von denen beide Module abhängen, die jedoch keines besitzt.",
+      gridCoreDesc:
+        "Über 32 typisierte Verträge (IFeatureChecker, ITenantPermissionManager, ICurrentUser), von denen beide Module abhängen, die jedoch keines besitzt.",
       gridEventsTitle: "Domänenereignisse",
-      gridEventsDesc: "Entitäten lösen Domänenereignisse aus, die von anderen Modulen über INotificationHandler ohne direkte Abhängigkeiten verarbeitet werden.",
+      gridEventsDesc:
+        "Entitäten lösen Domänenereignisse aus, die von anderen Modulen über INotificationHandler ohne direkte Abhängigkeiten verarbeitet werden.",
       gridPipelineTitle: "AstraFlow-Pipeline",
-      gridPipelineDesc: "FeatureCheckBehavior und AuthorizationBehavior erzwingen Richtlinien automatisch für jeden Befehl.",
+      gridPipelineDesc:
+        "FeatureCheckBehavior und AuthorizationBehavior erzwingen Richtlinien automatisch für jeden Befehl.",
       coreAbstractionsTitle: "Core.Application-Verträge",
-      coreAbstractionsContent: "IFeatureChecker, ITenantPermissionManager und ITenantContext liegen in Core.Application. Core.Infrastructure registriert NoOp-Implementierungen mit TryAddScoped, echte Modul-Implementierungen überschreiben diese mit AddScoped.",
+      coreAbstractionsContent:
+        "IFeatureChecker, ITenantPermissionManager und ITenantContext liegen in Core.Application. Core.Infrastructure registriert NoOp-Implementierungen mit TryAddScoped, echte Modul-Implementierungen überschreiben diese mit AddScoped.",
       requireFeatureTitle: "IRequireFeature: Feature-Gating in Befehlen",
-      requireFeatureContent: "Befehle implementieren IRequireFeature, um benötigte Mandantenfunktionen zu deklarieren. FeatureCheckBehavior fängt diese Befehle an Position 4 der Pipeline ab.",
+      requireFeatureContent:
+        "Befehle implementieren IRequireFeature, um benötigte Mandantenfunktionen zu deklarieren. FeatureCheckBehavior fängt diese Befehle an Position 4 der Pipeline ab.",
       pipelineTitle: "AstraFlow-Pipeline-Ausführungsreihenfolge",
-      pipelineContent: "Jeder Befehl durchläuft 7 Pipeline-Verhaltensweisen in strikter Reihenfolge: Validierung vor Autorisierung und Feature-Prüfung vor dem Handler.",
+      pipelineContent:
+        "Jeder Befehl durchläuft 7 Pipeline-Verhaltensweisen in strikter Reihenfolge: Validierung vor Autorisierung und Feature-Prüfung vor dem Handler.",
       eventFlowTitle: "Domänenereignis-Fluss",
-      eventFlowContent: "Ereignisse werden über EF Core OutboxInterceptor erfasst und vom OutboxProcessor asynchron an Handler anderer Module übermittelt.",
+      eventFlowContent:
+        "Ereignisse werden über EF Core OutboxInterceptor erfasst und vom OutboxProcessor asynchron an Handler anderer Module übermittelt.",
       realWorldTitle: "Praxisbeispiel: Identity ↔ Entitlements",
-      realWorldContent: "Klare Trennung der Zuständigkeiten: Kein Modul greift jemals direkt auf die Datenbank eines anderen Moduls zu.",
-      keyInsightTip: "Entscheidende Erkenntnis: Weder Identity importiert Entitlements noch umgekehrt. Beide hängen ausschließlich von Core.Application ab.",
+      realWorldContent:
+        "Klare Trennung der Zuständigkeiten: Kein Modul greift jemals direkt auf die Datenbank eines anderen Moduls zu.",
+      keyInsightTip:
+        "Entscheidende Erkenntnis: Weder Identity importiert Entitlements noch umgekehrt. Beide hängen ausschließlich von Core.Application ab.",
     },
   },
 };

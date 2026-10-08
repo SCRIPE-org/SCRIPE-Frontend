@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
@@ -9,13 +9,13 @@ import { Button } from "@core/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@core/ui/card";
 import { Input } from "@core/ui/input";
 import { Label } from "@core/ui/label";
-import type { PriceQuote } from "@modules/venue/commercial/src/domain/entities/CommercialPricing";
+import type { PriceQuote } from "@modules/venue";
 import type {
   AvailabilityCandidate,
   BookingWorkspaceState,
   CustomerSummary,
 } from "../../domain/entities/Booking";
-import { remainingHoldSeconds } from "../viewmodels/holdExpiry";
+import { remainingHoldSeconds } from "../viewmodels/useHoldExpiry";
 
 interface BookingSummaryActionsProps {
   t: (key: string, values?: Record<string, string | number>) => string;
@@ -46,9 +46,14 @@ function formatDateTime(value: string, locale: string, timeZone: string): string
 }
 
 function formatMoney(amount: number, currencyCode: string, locale: string): string {
-  return new Intl.NumberFormat(locale, { style: "currency", currency: currencyCode }).format(amount);
+  return new Intl.NumberFormat(locale, { style: "currency", currency: currencyCode }).format(
+    amount
+  );
 }
 
+/**
+ * Documentation for BookingSummaryActions
+ */
 export function BookingSummaryActions({
   t,
   locale,
@@ -69,7 +74,9 @@ export function BookingSummaryActions({
   onOverridePrice,
 }: BookingSummaryActionsProps) {
   const candidate = state.selectedCandidate;
-  const [remaining, setRemaining] = useState(() => state.hold ? remainingHoldSeconds(state.hold.expiresAtUtc) : 0);
+  const [remaining, setRemaining] = useState(() =>
+    state.hold ? remainingHoldSeconds(state.hold.expiresAtUtc) : 0
+  );
   const [overrideAmount, setOverrideAmount] = useState("");
   const [overrideReason, setOverrideReason] = useState("");
 
@@ -130,13 +137,35 @@ export function BookingSummaryActions({
           <p className="text-sm text-nx-ink-2">{t("booking.confirm.description")}</p>
         </CardHeader>
         <CardContent className="space-y-4">
-          <dl className="grid gap-4 rounded-xl bg-nx-surface-2 p-4 sm:grid-cols-2">
-            {customer && <div><dt className="text-xs text-nx-ink-3">{t("booking.summary.customer")}</dt><dd className="font-medium text-nx-ink">{customer.displayName}</dd></div>}
-            {candidate && <div><dt className="text-xs text-nx-ink-3">{t("booking.summary.resource")}</dt><dd className="font-medium text-nx-ink">{candidate.resourceName}</dd></div>}
-            {candidate && <div className="sm:col-span-2"><dt className="text-xs text-nx-ink-3">{t("booking.summary.dateTime")}</dt><dd className="font-medium text-nx-ink">{formatDateTime(candidate.startUtc, locale, candidate.timeZoneId)} – {formatDateTime(candidate.endUtc, locale, candidate.timeZoneId)}</dd></div>}
+          <dl className="bg-nx-surface-2 grid gap-4 rounded-xl p-4 sm:grid-cols-2">
+            {customer && (
+              <div>
+                <dt className="text-xs text-nx-ink-3">{t("booking.summary.customer")}</dt>
+                <dd className="font-medium text-nx-ink">{customer.displayName}</dd>
+              </div>
+            )}
+            {candidate && (
+              <div>
+                <dt className="text-xs text-nx-ink-3">{t("booking.summary.resource")}</dt>
+                <dd className="font-medium text-nx-ink">{candidate.resourceName}</dd>
+              </div>
+            )}
+            {candidate && (
+              <div className="sm:col-span-2">
+                <dt className="text-xs text-nx-ink-3">{t("booking.summary.dateTime")}</dt>
+                <dd className="font-medium text-nx-ink">
+                  {formatDateTime(candidate.startUtc, locale, candidate.timeZoneId)} â€“{" "}
+                  {formatDateTime(candidate.endUtc, locale, candidate.timeZoneId)}
+                </dd>
+              </div>
+            )}
             <div className="sm:col-span-2">
-              <dt className="text-xs uppercase tracking-wide text-nx-ink-3">{t("booking.summary.reference")}</dt>
-              <dd className="mt-1 text-lg font-semibold text-nx-ink">{state.reservation?.reservationNumber}</dd>
+              <dt className="text-xs uppercase tracking-wide text-nx-ink-3">
+                {t("booking.summary.reference")}
+              </dt>
+              <dd className="mt-1 text-lg font-semibold text-nx-ink">
+                {state.reservation?.reservationNumber}
+              </dd>
             </div>
           </dl>
           <div className="flex flex-wrap gap-3">
@@ -169,13 +198,38 @@ export function BookingSummaryActions({
         {held && <p className="text-sm text-nx-ink-2">{t("booking.hold.description")}</p>}
       </CardHeader>
       <CardContent className="space-y-5">
-        <dl className="grid gap-4 rounded-xl border border-nx-border p-4 sm:grid-cols-2">
-          <div><dt className="text-xs text-nx-ink-3">{t("booking.summary.customer")}</dt><dd className="font-medium text-nx-ink">{customer.displayName}</dd></div>
-          <div><dt className="text-xs text-nx-ink-3">{t("booking.summary.resource")}</dt><dd className="font-medium text-nx-ink">{candidate.resourceName}</dd></div>
-          <div><dt className="text-xs text-nx-ink-3">{t("booking.summary.facility")}</dt><dd className="font-medium text-nx-ink">{candidate.facilityName}</dd></div>
-          <div><dt className="text-xs text-nx-ink-3">{t("booking.summary.quantity")}</dt><dd className="font-medium text-nx-ink">{candidate.requestedQuantity}</dd></div>
-          <div className="sm:col-span-2"><dt className="text-xs text-nx-ink-3">{t("booking.summary.dateTime")}</dt><dd className="font-medium text-nx-ink">{formatDateTime(candidate.startUtc, locale, candidate.timeZoneId)} – {formatDateTime(candidate.endUtc, locale, candidate.timeZoneId)}</dd></div>
-          {state.reservation && <div className="sm:col-span-2"><dt className="text-xs text-nx-ink-3">{t("booking.summary.reference")}</dt><dd className="font-mono font-medium text-nx-ink">{state.reservation.reservationNumber}</dd></div>}
+        <dl className="border-nx-border grid gap-4 rounded-xl border p-4 sm:grid-cols-2">
+          <div>
+            <dt className="text-xs text-nx-ink-3">{t("booking.summary.customer")}</dt>
+            <dd className="font-medium text-nx-ink">{customer.displayName}</dd>
+          </div>
+          <div>
+            <dt className="text-xs text-nx-ink-3">{t("booking.summary.resource")}</dt>
+            <dd className="font-medium text-nx-ink">{candidate.resourceName}</dd>
+          </div>
+          <div>
+            <dt className="text-xs text-nx-ink-3">{t("booking.summary.facility")}</dt>
+            <dd className="font-medium text-nx-ink">{candidate.facilityName}</dd>
+          </div>
+          <div>
+            <dt className="text-xs text-nx-ink-3">{t("booking.summary.quantity")}</dt>
+            <dd className="font-medium text-nx-ink">{candidate.requestedQuantity}</dd>
+          </div>
+          <div className="sm:col-span-2">
+            <dt className="text-xs text-nx-ink-3">{t("booking.summary.dateTime")}</dt>
+            <dd className="font-medium text-nx-ink">
+              {formatDateTime(candidate.startUtc, locale, candidate.timeZoneId)} â€“{" "}
+              {formatDateTime(candidate.endUtc, locale, candidate.timeZoneId)}
+            </dd>
+          </div>
+          {state.reservation && (
+            <div className="sm:col-span-2">
+              <dt className="text-xs text-nx-ink-3">{t("booking.summary.reference")}</dt>
+              <dd className="font-mono font-medium text-nx-ink">
+                {state.reservation.reservationNumber}
+              </dd>
+            </div>
+          )}
         </dl>
 
         {priceQuoteLoading ? (
@@ -184,50 +238,102 @@ export function BookingSummaryActions({
             <AlertDescription>{t("booking.quote.calculatingDescription")}</AlertDescription>
           </Alert>
         ) : priceQuote ? (
-          <dl className="grid gap-3 rounded-xl bg-nx-surface-2 p-4 sm:grid-cols-2">
-            <div><dt className="text-xs text-nx-ink-3">{t("booking.quote.total")}</dt><dd className="font-semibold text-nx-ink">{formatMoney(priceQuote.grandTotal, priceQuote.currencyCode, locale)}</dd></div>
-            <div><dt className="text-xs text-nx-ink-3">{t("booking.quote.expires")}</dt><dd className="font-medium text-nx-ink">{formatDateTime(priceQuote.expiresAtUtc, locale, candidate.timeZoneId)}</dd></div>
+          <dl className="bg-nx-surface-2 grid gap-3 rounded-xl p-4 sm:grid-cols-2">
+            <div>
+              <dt className="text-xs text-nx-ink-3">{t("booking.quote.total")}</dt>
+              <dd className="font-semibold text-nx-ink">
+                {formatMoney(priceQuote.grandTotal, priceQuote.currencyCode, locale)}
+              </dd>
+            </div>
+            <div>
+              <dt className="text-xs text-nx-ink-3">{t("booking.quote.expires")}</dt>
+              <dd className="font-medium text-nx-ink">
+                {formatDateTime(priceQuote.expiresAtUtc, locale, candidate.timeZoneId)}
+              </dd>
+            </div>
           </dl>
         ) : (
           <Alert variant="warning">
             <AlertTitle>{t("booking.quote.unavailable")}</AlertTitle>
-            <AlertDescription>{priceQuoteError || t("booking.quote.unavailableDescription")}</AlertDescription>
+            <AlertDescription>
+              {priceQuoteError || t("booking.quote.unavailableDescription")}
+            </AlertDescription>
           </Alert>
         )}
 
         {canOverridePrice && priceQuote && (
-          <div className="space-y-3 rounded-xl border border-nx-border p-4">
+          <div className="border-nx-border space-y-3 rounded-xl border p-4">
             <p className="text-sm font-medium text-nx-ink">{t("booking.quote.overrideTitle")}</p>
             <p className="text-sm text-nx-ink-2">{t("booking.quote.overrideDescription")}</p>
             <div className="grid gap-3 sm:grid-cols-2">
               <div className="space-y-2">
                 <Label htmlFor="quote-override-amount">{t("booking.quote.overrideAmount")}</Label>
-                <Input id="quote-override-amount" type="number" step="0.01" value={overrideAmount} disabled={priceOverrideLoading} onChange={(event) => setOverrideAmount(event.target.value)} />
+                <Input
+                  id="quote-override-amount"
+                  type="number"
+                  step="0.01"
+                  value={overrideAmount}
+                  disabled={priceOverrideLoading}
+                  onChange={(event) => setOverrideAmount(event.target.value)}
+                />
               </div>
               <div className="space-y-2">
                 <Label htmlFor="quote-override-reason">{t("booking.quote.overrideReason")}</Label>
-                <Input id="quote-override-reason" maxLength={500} value={overrideReason} disabled={priceOverrideLoading} onChange={(event) => setOverrideReason(event.target.value)} />
+                <Input
+                  id="quote-override-reason"
+                  maxLength={500}
+                  value={overrideReason}
+                  disabled={priceOverrideLoading}
+                  onChange={(event) => setOverrideReason(event.target.value)}
+                />
               </div>
             </div>
-            <Button type="button" variant="outline" disabled={priceOverrideLoading || !Number.isFinite(Number(overrideAmount)) || Number(overrideAmount) === 0 || !overrideReason.trim()} onClick={() => void onOverridePrice(Number(overrideAmount), overrideReason)}>
-              {priceOverrideLoading ? t("booking.quote.overriding") : t("booking.quote.overrideAction")}
+            <Button
+              type="button"
+              variant="outline"
+              disabled={
+                priceOverrideLoading ||
+                !Number.isFinite(Number(overrideAmount)) ||
+                Number(overrideAmount) === 0 ||
+                !overrideReason.trim()
+              }
+              onClick={() => void onOverridePrice(Number(overrideAmount), overrideReason)}
+            >
+              {priceOverrideLoading
+                ? t("booking.quote.overriding")
+                : t("booking.quote.overrideAction")}
             </Button>
           </div>
         )}
 
         {held && state.hold ? (
           <>
-            <div className="flex flex-wrap items-center justify-between gap-3 rounded-xl bg-nx-warning/10 p-4">
+            <div className="bg-nx-warning/10 flex flex-wrap items-center justify-between gap-3 rounded-xl p-4">
               <div>
-                <p className="font-medium text-nx-ink">{t("booking.hold.expires", { time: formatDateTime(state.hold.expiresAtUtc, locale, candidate.timeZoneId) })}</p>
+                <p className="font-medium text-nx-ink">
+                  {t("booking.hold.expires", {
+                    time: formatDateTime(state.hold.expiresAtUtc, locale, candidate.timeZoneId),
+                  })}
+                </p>
                 <p className="text-sm text-nx-ink-2">{t("booking.hold.countdown", countdown)}</p>
               </div>
               <Badge variant="warning">{t("booking.hold.title")}</Badge>
             </div>
             {canConfirm ? (
-              <Button type="button" disabled={!priceQuote || priceQuoteLoading || state.stage === "confirming" || remaining === 0} onClick={() => void onConfirm()}>
+              <Button
+                type="button"
+                disabled={
+                  !priceQuote ||
+                  priceQuoteLoading ||
+                  state.stage === "confirming" ||
+                  remaining === 0
+                }
+                onClick={() => void onConfirm()}
+              >
                 <CheckCircle2 className="size-4" aria-hidden="true" />
-                {state.stage === "confirming" ? t("booking.confirm.confirming") : t("booking.confirm.action")}
+                {state.stage === "confirming"
+                  ? t("booking.confirm.confirming")
+                  : t("booking.confirm.action")}
               </Button>
             ) : (
               <Alert variant="info">
@@ -237,7 +343,11 @@ export function BookingSummaryActions({
             )}
           </>
         ) : (
-          <Button type="button" disabled={!canHold || !priceQuote || priceQuoteLoading || state.stage === "holding"} onClick={() => void onHold()}>
+          <Button
+            type="button"
+            disabled={!canHold || !priceQuote || priceQuoteLoading || state.stage === "holding"}
+            onClick={() => void onHold()}
+          >
             <LockKeyhole className="size-4" aria-hidden="true" />
             {state.stage === "holding" ? t("booking.hold.holding") : t("booking.hold.action")}
           </Button>

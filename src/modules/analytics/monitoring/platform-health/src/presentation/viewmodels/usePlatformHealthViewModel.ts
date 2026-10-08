@@ -8,6 +8,9 @@ import { usePermission } from "@core/hooks/use-permission";
 import { usePermissions } from "@core/providers/permission-provider";
 import { MONITORING_PERMISSIONS } from "../../../../permission-constants";
 
+/**
+ * usePlatformHealthViewModel
+ */
 export function usePlatformHealthViewModel() {
   const { isPlatform } = useAdminContext();
   const { isSuperAdmin, isPlatformSuperAdmin } = usePermissions();
@@ -29,9 +32,8 @@ export function usePlatformHealthViewModel() {
   const health = query.data;
 
   // Selected incident resolution
-  const selectedIncident = health?.incidents?.find(i => i.id === selectedIncidentId) 
-    ?? health?.incidents?.[0] 
-    ?? null;
+  const selectedIncident =
+    health?.incidents?.find((i) => i.id === selectedIncidentId) ?? health?.incidents?.[0] ?? null;
 
   return {
     health,

@@ -9,6 +9,9 @@ import type { ApiKeyStatsData } from "../../domain/entities/ApiKeyStats";
 import type { ApiKeyChartDataPoint } from "../../domain/entities/ApiKeyChartData";
 import type { ApiKeyActivityEntry } from "../../domain/entities/ApiKeyActivity";
 
+/**
+ * Documentation for module export
+ */
 export class ApiKeyDetailMapper {
   static toDetailEntity(dto: ApiKeyDetailDto): ApiKeyDetailData {
     return {

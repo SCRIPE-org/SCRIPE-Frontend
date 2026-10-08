@@ -17,14 +17,16 @@ describe("CustomerPickerService", () => {
 
     const result = await new CustomerPickerService(api).search("Mona");
 
-    expect(api.get).toHaveBeenCalledWith(
-      "/v1/Parties?page=1&pageSize=20&search=Mona"
-    );
+    expect(api.get).toHaveBeenCalledWith("/v1/Parties?page=1&pageSize=20&search=Mona");
     expect(result).toEqual([{ id: "party-1", type: "Person", displayName: "Mona Hassan" }]);
   });
 
   it("hydrates the selected customer from Party by id", async () => {
-    vi.mocked(api.get).mockResolvedValue({ id: "party-1", type: "Person", displayName: "Mona Hassan" });
+    vi.mocked(api.get).mockResolvedValue({
+      id: "party-1",
+      type: "Person",
+      displayName: "Mona Hassan",
+    });
 
     const result = await new CustomerPickerService(api).getById("party-1");
 

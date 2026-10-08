@@ -67,6 +67,9 @@ const SEVERITY_CONFIG: Record<
   },
 };
 
+/**
+ * SecurityAttentionPanel
+ */
 export const SecurityAttentionPanel = memo(function SecurityAttentionPanel({
   signals,
   isLoading,
@@ -77,7 +80,7 @@ export const SecurityAttentionPanel = memo(function SecurityAttentionPanel({
   const { t } = useI18n();
 
   return (
-    <Card className={`h-full flex flex-col ${cardClasses || ""}`}>
+    <Card className={`flex h-full flex-col ${cardClasses || ""}`}>
       <CardHeader className="pb-3">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
@@ -97,7 +100,7 @@ export const SecurityAttentionPanel = memo(function SecurityAttentionPanel({
 
           <Link
             href="/audit"
-            className="text-xs font-medium text-primary hover:underline inline-flex items-center gap-1"
+            className="inline-flex items-center gap-1 text-xs font-medium text-primary hover:underline"
           >
             <span>{t("security.attention.viewAll") || "View All in Audit"}</span>
             <ExternalLink className="h-3 w-3" />
@@ -119,7 +122,7 @@ export const SecurityAttentionPanel = memo(function SecurityAttentionPanel({
           skeletonRows={4}
           height={260}
         >
-          <div className="space-y-2.5 max-h-[280px] overflow-y-auto pe-1">
+          <div className="max-h-[280px] space-y-2.5 overflow-y-auto pe-1">
             {signals.map((sig, idx) => {
               const config = SEVERITY_CONFIG[sig.severity] ?? SEVERITY_CONFIG.medium;
               const Icon = config.icon;
@@ -131,7 +134,7 @@ export const SecurityAttentionPanel = memo(function SecurityAttentionPanel({
                   onClick={() => onSelectSignal?.(sig)}
                   className={`group flex items-start gap-3 rounded-lg border border-border/60 bg-card/60 p-2.5 transition-colors ${
                     onSelectSignal
-                      ? "hover:border-primary/40 hover:bg-accent/40 cursor-pointer"
+                      ? "cursor-pointer hover:border-primary/40 hover:bg-accent/40"
                       : ""
                   }`}
                 >
@@ -143,31 +146,27 @@ export const SecurityAttentionPanel = memo(function SecurityAttentionPanel({
 
                   <div className="min-w-0 flex-1">
                     <div className="flex items-center justify-between gap-2">
-                      <p className="text-xs font-semibold text-foreground truncate">
-                        {sig.title}
-                      </p>
+                      <p className="truncate text-xs font-semibold text-foreground">{sig.title}</p>
                       <Badge
                         variant={config.badgeVariant}
-                        className="text-[10px] uppercase font-bold shrink-0 px-1.5 py-0"
+                        className="shrink-0 px-1.5 py-0 text-[10px] font-bold uppercase"
                       >
                         {sig.severity}
                       </Badge>
                     </div>
 
-                    <p className="text-xs text-muted-foreground mt-0.5 line-clamp-2">
+                    <p className="mt-0.5 line-clamp-2 text-xs text-muted-foreground">
                       {sig.description}
                     </p>
 
-                    <div className="flex flex-wrap items-center gap-x-3 gap-y-1 mt-1.5 text-[11px] text-muted-foreground">
+                    <div className="mt-1.5 flex flex-wrap items-center gap-x-3 gap-y-1 text-[11px] text-muted-foreground">
                       {sig.ipAddress && (
                         <span className="font-mono" dir="ltr">
                           IP: {sig.ipAddress}
                         </span>
                       )}
                       {sig.actor && <span>Actor: {sig.actor}</span>}
-                      <span className="tabular-nums">
-                        {formatDateTimeUtc(sig.timestamp)}
-                      </span>
+                      <span className="tabular-nums">{formatDateTimeUtc(sig.timestamp)}</span>
                     </div>
                   </div>
                 </div>

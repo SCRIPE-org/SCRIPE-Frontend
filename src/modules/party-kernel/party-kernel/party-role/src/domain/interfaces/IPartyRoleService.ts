@@ -16,6 +16,9 @@ export interface PartyRoleListResult {
   hasPreviousPage: boolean;
 }
 
+/**
+ * Documentation for module export
+ */
 export interface IPartyRoleService {
   getAll(params: { page: number; pageSize: number; search?: string }): Promise<PartyRoleListResult>;
   getById(id: string): Promise<PartyRoleModel>;

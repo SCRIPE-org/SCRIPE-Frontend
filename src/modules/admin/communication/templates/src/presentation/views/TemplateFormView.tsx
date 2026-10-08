@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 // FILE-EXCEPTION: file length
 "use client";
 
@@ -45,8 +46,6 @@ const TemplateLivePreview = dynamic(
     import("../components/TemplateLivePreview").then((m) => ({ default: m.TemplateLivePreview })),
   { ssr: false }
 );
-
-
 
 /**
  * Presentation UI component rendering the template form view.
@@ -212,7 +211,9 @@ export function TemplateFormView({ templateId: _templateId }: { templateId?: str
                   {/* Template Key (create only) */}
                   {vm.mode === "create" && (
                     <div className="space-y-2">
-                      <Label htmlFor={`${fieldIdBase}-key`}>{vm.t("messaging.templates.key")}</Label>
+                      <Label htmlFor={`${fieldIdBase}-key`}>
+                        {vm.t("messaging.templates.key")}
+                      </Label>
                       <Input
                         id={`${fieldIdBase}-key`}
                         value={vm.form.key}

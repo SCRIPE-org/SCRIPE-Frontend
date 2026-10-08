@@ -147,7 +147,7 @@ export function MultiSelectCustomFieldControl({
       <Label htmlFor={fc.name} className="text-sm font-medium">
         {fc.label}
         {isRequired && (
-          <span className="text-destructive ms-1" aria-hidden="true">
+          <span className="ms-1 text-destructive" aria-hidden="true">
             *
           </span>
         )}
@@ -186,7 +186,10 @@ export function MultiSelectCustomFieldControl({
       <p
         id={counterId}
         aria-live="polite"
-        className={cn("text-xs tabular-nums", atCap ? "font-medium text-nx-warning" : "text-nx-ink-3")}
+        className={cn(
+          "text-xs tabular-nums",
+          atCap ? "font-medium text-nx-warning" : "text-nx-ink-3"
+        )}
       >
         {counterText}
       </p>

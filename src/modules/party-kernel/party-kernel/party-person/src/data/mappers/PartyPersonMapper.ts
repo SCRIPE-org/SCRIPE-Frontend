@@ -7,6 +7,9 @@
 import { PartyPerson, type PartyPersonData } from "../../domain/entities/PartyPerson";
 import { PartyPersonModel, type PartyPersonJson } from "../models/PartyPersonModel";
 
+/**
+ * Documentation for module export
+ */
 export class PartyPersonMapper {
   /**
    * Convert PartyPersonModel to PartyPerson Entity

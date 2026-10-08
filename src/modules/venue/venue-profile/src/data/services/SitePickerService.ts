@@ -1,6 +1,9 @@
 import type { IApiService } from "@core/interfaces/api.interface";
 import { buildUrl } from "@/core/config/api-endpoints/_shared";
-import type { ISitePickerService, SitePickerOption } from "../../domain/interfaces/ISitePickerService";
+import type {
+  ISitePickerService,
+  SitePickerOption,
+} from "../../domain/interfaces/ISitePickerService";
 import { SITE_PICKER_ENDPOINTS } from "./site-picker.endpoints";
 
 interface SiteListResponseJson {

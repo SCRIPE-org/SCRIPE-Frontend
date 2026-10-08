@@ -22,11 +22,10 @@ interface TenantGrowthChartProps {
   timeRangeLabel: string;
 }
 
-export function TenantGrowthChart({
-  data,
-  isLoading,
-  timeRangeLabel,
-}: TenantGrowthChartProps) {
+/**
+ * TenantGrowthChart
+ */
+export function TenantGrowthChart({ data, isLoading, timeRangeLabel }: TenantGrowthChartProps) {
   const { t } = useI18n();
 
   const formattedData = useMemo(() => {
@@ -44,9 +43,9 @@ export function TenantGrowthChart({
   }, [data]);
 
   return (
-    <Card className="h-full flex flex-col border-border/80 bg-card/80 backdrop-blur-xs shadow-xs">
-      <CardHeader className="p-4 sm:p-5 pb-2">
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+    <Card className="backdrop-blur-xs shadow-xs flex h-full flex-col border-border/80 bg-card/80">
+      <CardHeader className="p-4 pb-2 sm:p-5">
+        <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
           <div className="space-y-1">
             <div className="flex items-center gap-2">
               <TrendingUp className="h-4 w-4 text-primary" />
@@ -61,7 +60,7 @@ export function TenantGrowthChart({
           </div>
 
           {/* Legend indicator */}
-          <div className="flex flex-wrap items-center gap-3 sm:gap-4 text-[11px] font-medium text-muted-foreground">
+          <div className="flex flex-wrap items-center gap-3 text-[11px] font-medium text-muted-foreground sm:gap-4">
             <div className="flex items-center gap-1.5">
               <span className="h-2 w-2 rounded-full bg-primary" />
               <span>{t("tenantAnalytics.growth.totalTenants") || "Total Tenants"}</span>
@@ -74,11 +73,11 @@ export function TenantGrowthChart({
         </div>
       </CardHeader>
 
-      <CardContent className="p-4 sm:p-5 pt-2 flex-1 flex flex-col justify-between min-h-[220px]">
+      <CardContent className="flex min-h-[220px] flex-1 flex-col justify-between p-4 pt-2 sm:p-5">
         {isLoading ? (
-          <div className="h-[220px] w-full animate-pulse rounded-lg bg-muted/20 flex-1" />
+          <div className="h-[220px] w-full flex-1 animate-pulse rounded-lg bg-muted/20" />
         ) : formattedData.length === 0 ? (
-          <div className="flex h-[220px] items-center justify-center text-xs text-muted-foreground flex-1">
+          <div className="flex h-[220px] flex-1 items-center justify-center text-xs text-muted-foreground">
             {t("tenantAnalytics.growth.noData") || "No tenant growth data in this time range"}
           </div>
         ) : (
@@ -117,27 +116,21 @@ export function TenantGrowthChart({
                   content={({ active, payload, label }) => {
                     if (active && payload && payload.length) {
                       return (
-                        <div className="rounded-lg border border-border bg-popover/95 p-2.5 shadow-md backdrop-blur-xs">
-                          <p className="text-[11px] font-semibold text-foreground mb-1">
-                            {label}
-                          </p>
+                        <div className="backdrop-blur-xs rounded-lg border border-border bg-popover/95 p-2.5 shadow-md">
+                          <p className="mb-1 text-[11px] font-semibold text-foreground">{label}</p>
                           {payload.map((entry, idx) => (
                             <div
                               key={idx}
                               className="flex items-center justify-between gap-4 text-xs"
                             >
-                              <span
-                                className="flex items-center gap-1.5 text-muted-foreground"
-                              >
+                              <span className="flex items-center gap-1.5 text-muted-foreground">
                                 <span
                                   className="h-2 w-2 rounded-full"
                                   style={{ backgroundColor: entry.color }}
                                 />
                                 {entry.name}:
                               </span>
-                              <span className="font-bold text-foreground">
-                                {entry.value}
-                              </span>
+                              <span className="font-bold text-foreground">{entry.value}</span>
                             </div>
                           ))}
                         </div>

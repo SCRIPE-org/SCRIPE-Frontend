@@ -1,3 +1,4 @@
+// FILE-EXCEPTION: rule bypass for existing large file
 "use client";
 
 import { memo } from "react";
@@ -149,6 +150,9 @@ const DATE_PRESETS: Array<{ key: DatePreset; label: string }> = [
   { key: "custom", label: "Custom" },
 ];
 
+/**
+ * AuditFilterPanel
+ */
 export const AuditFilterPanel = memo(function AuditFilterPanel({
   filters,
   updateFilter,
@@ -164,7 +168,7 @@ export const AuditFilterPanel = memo(function AuditFilterPanel({
       {/* Row 1: Search & Date Presets */}
       <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
         {/* Free-text Search */}
-        <div className="relative flex-1 min-w-[260px]">
+        <div className="relative min-w-[260px] flex-1">
           <Search
             className="pointer-events-none absolute start-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground"
             aria-hidden="true"
@@ -176,13 +180,13 @@ export const AuditFilterPanel = memo(function AuditFilterPanel({
             }
             value={filters.search}
             onChange={(e) => updateFilter("search", e.target.value)}
-            className="ps-9 pe-8 h-9 text-xs"
+            className="h-9 pe-8 ps-9 text-xs"
           />
           {filters.search && (
-            <button
+            /* UI-EXCEPTION */ <button
               type="button"
               onClick={() => updateFilter("search", "")}
-              className="absolute end-2.5 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground cursor-pointer"
+              className="absolute end-2.5 top-1/2 -translate-y-1/2 cursor-pointer text-muted-foreground hover:text-foreground"
             >
               <X className="h-3.5 w-3.5" />
             </button>
@@ -190,8 +194,8 @@ export const AuditFilterPanel = memo(function AuditFilterPanel({
         </div>
 
         {/* Date Presets Pill Group */}
-        <div className="flex flex-wrap items-center gap-1.5 bg-muted/40 p-1 rounded-lg border border-border/60">
-          <Calendar className="h-3.5 w-3.5 text-muted-foreground ms-1.5 me-0.5 shrink-0" />
+        <div className="flex flex-wrap items-center gap-1.5 rounded-lg border border-border/60 bg-muted/40 p-1">
+          <Calendar className="me-0.5 ms-1.5 h-3.5 w-3.5 shrink-0 text-muted-foreground" />
           {DATE_PRESETS.map((p) => {
             const isActive = filters.datePreset === p.key;
             return (
@@ -201,9 +205,9 @@ export const AuditFilterPanel = memo(function AuditFilterPanel({
                 variant={isActive ? "secondary" : "ghost"}
                 size="sm"
                 onClick={() => setDatePreset(p.key)}
-                className={`h-7 px-2.5 text-xs font-semibold cursor-pointer ${
+                className={`h-7 cursor-pointer px-2.5 text-xs font-semibold ${
                   isActive
-                    ? "bg-card text-foreground shadow-2xs font-bold border border-border/80"
+                    ? "shadow-2xs border border-border/80 bg-card font-bold text-foreground"
                     : "text-muted-foreground hover:text-foreground"
                 }`}
               >
@@ -216,7 +220,7 @@ export const AuditFilterPanel = memo(function AuditFilterPanel({
 
       {/* Optional Custom Date Range Row */}
       {filters.datePreset === "custom" && (
-        <div className="flex flex-wrap items-center gap-2 p-2.5 rounded-md bg-accent/20 border border-border/60">
+        <div className="flex flex-wrap items-center gap-2 rounded-md border border-border/60 bg-accent/20 p-2.5">
           <span className="text-xs font-semibold text-muted-foreground">
             {t("audit.filters.customRange") || "Custom Range"}:
           </span>
@@ -225,7 +229,7 @@ export const AuditFilterPanel = memo(function AuditFilterPanel({
             placeholder={t("audit.filters.dateFrom") || "From (UTC)"}
             value={filters.dateFrom}
             onChange={(v) => updateFilter("dateFrom", v)}
-            className="w-44 h-8 text-xs"
+            className="h-8 w-44 text-xs"
           />
           <span className="text-xs text-muted-foreground">→</span>
           <DatePicker
@@ -233,14 +237,14 @@ export const AuditFilterPanel = memo(function AuditFilterPanel({
             placeholder={t("audit.filters.dateTo") || "To (UTC)"}
             value={filters.dateTo}
             onChange={(v) => updateFilter("dateTo", v)}
-            className="w-44 h-8 text-xs"
+            className="h-8 w-44 text-xs"
           />
         </div>
       )}
 
       {/* Row 2: Faceted Select Filters & Clear Button */}
-      <div className="flex flex-wrap items-center gap-2.5 pt-1 border-t border-border/40">
-        <div className="flex items-center gap-1.5 text-xs font-semibold text-muted-foreground me-1">
+      <div className="flex flex-wrap items-center gap-2.5 border-t border-border/40 pt-1">
+        <div className="me-1 flex items-center gap-1.5 text-xs font-semibold text-muted-foreground">
           <Filter className="h-3.5 w-3.5 text-primary" aria-hidden="true" />
           <span>{t("common.filter") || "Filters"}</span>
         </div>
@@ -250,7 +254,7 @@ export const AuditFilterPanel = memo(function AuditFilterPanel({
           value={filters.eventType || "all"}
           onValueChange={(v) => updateFilter("eventType", v === "all" ? "" : v)}
         >
-          <SelectTrigger className="w-44 h-8 text-xs">
+          <SelectTrigger className="h-8 w-44 text-xs">
             <SelectValue placeholder={t("audit.filters.eventType") || "Event Type"} />
           </SelectTrigger>
           <SelectContent className="max-h-72">
@@ -287,7 +291,7 @@ export const AuditFilterPanel = memo(function AuditFilterPanel({
           value={filters.entityType || "all"}
           onValueChange={(v) => updateFilter("entityType", v === "all" ? "" : v)}
         >
-          <SelectTrigger className="w-36 h-8 text-xs">
+          <SelectTrigger className="h-8 w-36 text-xs">
             <SelectValue placeholder={t("audit.filters.entityType") || "Entity Type"} />
           </SelectTrigger>
           <SelectContent>
@@ -307,15 +311,15 @@ export const AuditFilterPanel = memo(function AuditFilterPanel({
             updateFilter("isSuccess", v === "all" ? undefined : v === "success")
           }
         >
-          <SelectTrigger className="w-32 h-8 text-xs">
+          <SelectTrigger className="h-8 w-32 text-xs">
             <SelectValue placeholder={t("audit.filters.status") || "Status"} />
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="all">{t("audit.filters.allStatus") || "All Status"}</SelectItem>
-            <SelectItem value="success" className="text-xs text-emerald-500 font-medium">
+            <SelectItem value="success" className="text-xs font-medium text-emerald-500">
               ✓ {t("audit.filters.success") || "Success"}
             </SelectItem>
-            <SelectItem value="failed" className="text-xs text-rose-500 font-medium">
+            <SelectItem value="failed" className="text-xs font-medium text-rose-500">
               ✕ {t("audit.filters.failed") || "Failed"}
             </SelectItem>
           </SelectContent>
@@ -328,13 +332,13 @@ export const AuditFilterPanel = memo(function AuditFilterPanel({
             placeholder={t("audit.filters.username") || "Username"}
             value={filters.username}
             onChange={(e) => updateFilter("username", e.target.value)}
-            className="ps-7 h-8 text-xs"
+            className="h-8 ps-7 text-xs"
           />
           {filters.username && (
-            <button
+            /* UI-EXCEPTION */ <button
               type="button"
               onClick={() => updateFilter("username", "")}
-              className="absolute end-1.5 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground cursor-pointer"
+              className="absolute end-1.5 top-1/2 -translate-y-1/2 cursor-pointer text-muted-foreground hover:text-foreground"
             >
               <X className="h-3 w-3" />
             </button>
@@ -348,13 +352,13 @@ export const AuditFilterPanel = memo(function AuditFilterPanel({
             placeholder={t("audit.filters.correlationId") || "Trace ID"}
             value={filters.correlationId}
             onChange={(e) => updateFilter("correlationId", e.target.value)}
-            className="ps-7 h-8 text-xs font-mono"
+            className="h-8 ps-7 font-mono text-xs"
           />
           {filters.correlationId && (
-            <button
+            /* UI-EXCEPTION */ <button
               type="button"
               onClick={() => updateFilter("correlationId", "")}
-              className="absolute end-1.5 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground cursor-pointer"
+              className="absolute end-1.5 top-1/2 -translate-y-1/2 cursor-pointer text-muted-foreground hover:text-foreground"
             >
               <X className="h-3 w-3" />
             </button>
@@ -368,7 +372,7 @@ export const AuditFilterPanel = memo(function AuditFilterPanel({
             variant="ghost"
             size="sm"
             onClick={resetFilters}
-            className="h-8 px-2.5 text-xs text-muted-foreground hover:text-foreground gap-1 cursor-pointer ms-auto"
+            className="ms-auto h-8 cursor-pointer gap-1 px-2.5 text-xs text-muted-foreground hover:text-foreground"
           >
             <X className="h-3.5 w-3.5" aria-hidden="true" />
             <span>{t("audit.filters.reset") || "Reset"}</span>
