@@ -16,4 +16,7 @@ export const BOOKING_ENDPOINTS = {
   HOLDS: `${V1}/booking-holds`,
   PARTIES: `${V1}/Parties`,
   PARTY_BY_ID: (id: string) => `${V1}/Parties/${id}`,
+  ORGANIZATIONS: `${V1}/Parties/organizations`,
+  PEOPLE: `${V1}/Parties/people`,
+  CONTACT_POINTS: `${V1}/contact-points`,
 } as const;

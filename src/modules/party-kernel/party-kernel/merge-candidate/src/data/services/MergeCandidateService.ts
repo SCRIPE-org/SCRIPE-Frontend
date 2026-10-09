@@ -6,7 +6,7 @@
  */
 import type { IApiService } from "@core/interfaces/api.interface";
 import { buildUrl } from "@/core/config/api-endpoints/_shared";
-import { PARTYKERNEL_ENDPOINTS } from "@modules/party-kernel/party-kernel.endpoints";
+import { MERGE_CANDIDATE_ENDPOINTS } from "./merge-candidate.endpoints";
 import {
   MergeCandidateModel,
   type MergeCandidateJson,
@@ -17,10 +17,8 @@ import type {
   MergeCandidateListResult,
 } from "../../domain/interfaces/IMergeCandidateService";
 
-const BASE_URL = PARTYKERNEL_ENDPOINTS.MERGE_CANDIDATES.LIST;
-
 /**
- * Documentation for module export
+ * Service implementation for MergeCandidate operations
  */
 export class MergeCandidateService implements IMergeCandidateService {
   constructor(private readonly api: IApiService) {}
@@ -30,7 +28,7 @@ export class MergeCandidateService implements IMergeCandidateService {
     pageSize: number;
     search?: string;
   }): Promise<MergeCandidateListResult> {
-    const url = buildUrl(BASE_URL, {
+    const url = buildUrl(MERGE_CANDIDATE_ENDPOINTS.LIST, {
       page: params.page,
       pageSize: params.pageSize,
       search: params.search,
@@ -50,19 +48,19 @@ export class MergeCandidateService implements IMergeCandidateService {
   }
 
   async getById(id: string): Promise<MergeCandidateModel> {
-    const json = await this.api.get<MergeCandidateJson>(`${BASE_URL}/${id}`);
+    const json = await this.api.get<MergeCandidateJson>(MERGE_CANDIDATE_ENDPOINTS.BY_ID(id));
     return MergeCandidateModel.fromJson(json);
   }
 
   async create(data: Record<string, unknown>): Promise<{ id: string }> {
-    return this.api.post<{ id: string }>(BASE_URL, data);
+    return this.api.post<{ id: string }>(MERGE_CANDIDATE_ENDPOINTS.CREATE, data);
   }
 
   async update(id: string, data: Record<string, unknown>): Promise<void> {
-    await this.api.put(`${BASE_URL}/${id}`, data);
+    await this.api.put(MERGE_CANDIDATE_ENDPOINTS.UPDATE(id), data);
   }
 
   async delete(id: string): Promise<void> {
-    await this.api.delete(`${BASE_URL}/${id}`);
+    await this.api.delete(MERGE_CANDIDATE_ENDPOINTS.DELETE(id));
   }
 }

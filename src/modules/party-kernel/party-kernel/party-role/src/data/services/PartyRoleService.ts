@@ -6,7 +6,7 @@
  */
 import type { IApiService } from "@core/interfaces/api.interface";
 import { buildUrl } from "@/core/config/api-endpoints/_shared";
-import { PARTYKERNEL_ENDPOINTS } from "@modules/party-kernel/party-kernel.endpoints";
+import { PARTY_ROLE_ENDPOINTS } from "./party-role.endpoints";
 import {
   PartyRoleModel,
   type PartyRoleJson,
@@ -17,10 +17,8 @@ import type {
   PartyRoleListResult,
 } from "../../domain/interfaces/IPartyRoleService";
 
-const BASE_URL = PARTYKERNEL_ENDPOINTS.PARTY_ROLES.LIST;
-
 /**
- * Documentation for module export
+ * Service implementation for PartyRole operations
  */
 export class PartyRoleService implements IPartyRoleService {
   constructor(private readonly api: IApiService) {}
@@ -30,7 +28,7 @@ export class PartyRoleService implements IPartyRoleService {
     pageSize: number;
     search?: string;
   }): Promise<PartyRoleListResult> {
-    const url = buildUrl(BASE_URL, {
+    const url = buildUrl(PARTY_ROLE_ENDPOINTS.LIST, {
       page: params.page,
       pageSize: params.pageSize,
       search: params.search,
@@ -50,19 +48,19 @@ export class PartyRoleService implements IPartyRoleService {
   }
 
   async getById(id: string): Promise<PartyRoleModel> {
-    const json = await this.api.get<PartyRoleJson>(`${BASE_URL}/${id}`);
+    const json = await this.api.get<PartyRoleJson>(PARTY_ROLE_ENDPOINTS.BY_ID(id));
     return PartyRoleModel.fromJson(json);
   }
 
   async create(data: Record<string, unknown>): Promise<{ id: string }> {
-    return this.api.post<{ id: string }>(BASE_URL, data);
+    return this.api.post<{ id: string }>(PARTY_ROLE_ENDPOINTS.CREATE, data);
   }
 
   async update(id: string, data: Record<string, unknown>): Promise<void> {
-    await this.api.put(`${BASE_URL}/${id}`, data);
+    await this.api.put(PARTY_ROLE_ENDPOINTS.UPDATE(id), data);
   }
 
   async delete(id: string): Promise<void> {
-    await this.api.delete(`${BASE_URL}/${id}`);
+    await this.api.delete(PARTY_ROLE_ENDPOINTS.DELETE(id));
   }
 }

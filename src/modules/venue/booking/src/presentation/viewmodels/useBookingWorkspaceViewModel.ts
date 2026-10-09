@@ -193,10 +193,10 @@ export function useBookingWorkspaceViewModel(prefill: BookingWorkspacePrefill = 
   );
 
   const createCustomer = useCallback(
-    async (displayName: string, type?: "Person" | "Organization") => {
+    async (displayName: string, type?: "Person" | "Organization", phone?: string) => {
       setCustomerSearching(true);
       try {
-        const created = await customerRepository.create(displayName, type);
+        const created = await customerRepository.create(displayName, type, phone);
         setCustomerState(created);
         setCustomerResults([]);
         draftRef.current = null;

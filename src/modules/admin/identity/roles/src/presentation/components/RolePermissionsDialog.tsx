@@ -27,7 +27,7 @@ import { ScrollArea } from "@core/ui/scroll-area";
 import { EmptyState } from "@core/ui/empty-state";
 import { useI18n } from "@core/providers/i18n-provider";
 import { resolveBilingualLabel } from "@core/common/utils";
-import { Search, SearchX, Shield, ShieldCheck, KeyRound } from "lucide-react";
+import { Search, SearchX, Shield, ShieldCheck, KeyRound, Users } from "lucide-react";
 import type { Role } from "../../domain/entities/Role";
 import { useRolePermissionsDialog } from "../viewmodels/useRolePermissionsDialog";
 import type { Permission } from "@modules/identity/permissions";
@@ -46,7 +46,7 @@ export interface RolePermissionsDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   role: Role | null;
-  tenantId: string;
+  tenantId?: string;
 }
 
 /**
@@ -93,14 +93,20 @@ export function RolePermissionsDialog(props: RolePermissionsDialogProps) {
               {/* A div, not DialogDescription — a <p> cannot legally hold this row. */}
               <div
                 id="role-permissions-subject"
-                className="mt-1 flex min-w-0 items-center gap-2 text-sm text-nx-ink-2"
+                className="mt-1 flex flex-wrap items-center gap-2 text-sm text-nx-ink-2"
               >
-                <span className="truncate">
+                <span className="truncate font-medium">
                   {resolveBilingualLabel(role?.nameEn ?? "", role?.nameAr ?? "", language)}
                 </span>
                 <Badge variant="secondary" className="shrink-0 font-mono text-[11px]">
                   {role?.code}
                 </Badge>
+                {vm.adminCount > 0 && (
+                  <Badge variant="outline" className="flex shrink-0 items-center gap-1 border-amber-500/30 bg-amber-500/10 text-[11px] text-amber-600 dark:text-amber-400">
+                    <Users className="h-3 w-3" aria-hidden="true" />
+                    <span>{vm.adminCount} {t("roles.activeUsers") || "users"}</span>
+                  </Badge>
+                )}
               </div>
             </div>
             <span className="shrink-0 text-xs tabular-nums text-nx-ink-2">
@@ -222,9 +228,25 @@ export function RolePermissionsDialog(props: RolePermissionsDialogProps) {
         {/* ── Footer ── */}
         <DialogFooter className="shrink-0 border-t border-nx-line px-6 py-4">
           <div className="flex w-full items-center justify-between gap-3">
-            <p className="text-sm tabular-nums text-nx-ink-2">
-              {vm.selectedCount} {t("common.selected")}
-            </p>
+            <div className="flex items-center gap-3">
+              <p className="text-sm tabular-nums text-nx-ink-2">
+                {vm.selectedCount} {t("common.selected")}
+              </p>
+              {vm.isDirty && (
+                <div className="flex items-center gap-1.5 text-xs font-medium">
+                  {vm.changesCount.added > 0 && (
+                    <Badge variant="outline" className="border-emerald-500/30 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400">
+                      +{vm.changesCount.added} {t("common.add") || "added"}
+                    </Badge>
+                  )}
+                  {vm.changesCount.removed > 0 && (
+                    <Badge variant="outline" className="border-amber-500/30 bg-amber-500/10 text-amber-600 dark:text-amber-400">
+                      -{vm.changesCount.removed} {t("common.delete") || "removed"}
+                    </Badge>
+                  )}
+                </div>
+              )}
+            </div>
             <div className="flex items-center gap-2">
               <Button variant="outline" onClick={() => onOpenChange(false)}>
                 {t("common.cancel")}

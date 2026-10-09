@@ -22,7 +22,13 @@ export interface PartyListResult {
 export interface IPartyService {
   getAll(params: { page: number; pageSize: number; search?: string }): Promise<PartyListResult>;
   getById(id: string): Promise<PartyModel>;
+  getProfile?(id: string): Promise<import("../../data/models/PartyModel").PartyProfileResponseJson | null>;
   create(data: Record<string, unknown>): Promise<{ id: string }>;
+  createPerson?(
+    data: import("../../data/models/PartyModel").CreatePersonRequestJson,
+    idempotencyKey?: string
+  ): Promise<{ id: string }>;
+  createOrganization?(data: { legalName: string; displayName?: string }): Promise<{ id: string }>;
   update(id: string, data: Record<string, unknown>): Promise<void>;
   delete(id: string): Promise<void>;
 }

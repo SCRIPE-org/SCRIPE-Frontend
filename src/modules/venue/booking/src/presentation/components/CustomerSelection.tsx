@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { useState } from "react";
 import { Check, Search, UserPlus, UserRound, X } from "lucide-react";
@@ -28,7 +28,11 @@ interface CustomerSelectionProps {
   searching: boolean;
   onSearch: (query: string) => Promise<CustomerSummary[]>;
   onSelect: (id: string) => Promise<CustomerSummary>;
-  onCreateCustomer?: (name: string, type?: "Person" | "Organization") => Promise<CustomerSummary>;
+  onCreateCustomer?: (
+    name: string,
+    type?: "Person" | "Organization",
+    phone?: string
+  ) => Promise<CustomerSummary>;
   onClear: () => void;
 }
 
@@ -51,6 +55,7 @@ export function CustomerSelection({
   const [isCreateOpen, setIsCreateOpen] = useState(false);
   const [newName, setNewName] = useState("");
   const [newType, setNewType] = useState<"Person" | "Organization">("Person");
+  const [newPhone, setNewPhone] = useState("");
   const [creating, setCreating] = useState(false);
   const [createError, setCreateError] = useState<string | null>(null);
 
@@ -66,9 +71,10 @@ export function CustomerSelection({
     setCreating(true);
     setCreateError(null);
     try {
-      await onCreateCustomer(newName.trim(), newType);
+      await onCreateCustomer(newName.trim(), newType, newPhone.trim() || undefined);
       setIsCreateOpen(false);
       setNewName("");
+      setNewPhone("");
     } catch (err: unknown) {
       setCreateError(err instanceof Error ? err.message : "Failed to create customer");
     } finally {
@@ -134,12 +140,29 @@ export function CustomerSelection({
                     </SelectContent>
                   </Select>
                 </div>
+                <div className="space-y-2">
+                  <Label htmlFor="quick-customer-phone">
+                    {t("booking.customer.phoneLabel") || "Primary Telephone (Optional)"}
+                  </Label>
+                  <Input
+                    id="quick-customer-phone"
+                    type="tel"
+                    value={newPhone}
+                    onChange={(e) => setNewPhone(e.target.value)}
+                    placeholder="+966 5x xxx xxxx"
+                  />
+                </div>
                 <DialogFooter className="gap-2 sm:gap-0">
                   <Button type="button" variant="outline" onClick={() => setIsCreateOpen(false)}>
                     {t("booking.customer.cancel")}
                   </Button>
-                  <Button type="submit" disabled={!newName.trim() || creating}>
-                    {creating ? t("booking.customer.creating") : t("booking.customer.createAction")}
+                  <Button
+                    type="submit"
+                    disabled={!newName.trim() || creating}
+                  >
+                    {creating
+                      ? t("booking.customer.creating")
+                      : t("booking.customer.createAction")}
                   </Button>
                 </DialogFooter>
               </form>

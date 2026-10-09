@@ -202,7 +202,11 @@ export class ApiService implements IApiService {
         if (isMutating) {
           // Replay protection: unique timestamp + nonce per request
           config.headers["X-Request-Timestamp"] = Date.now().toString();
-          config.headers["X-Request-Nonce"] = generateUUID();
+          const nonce = generateUUID();
+          config.headers["X-Request-Nonce"] = nonce;
+          if (!config.headers["Idempotency-Key"]) {
+            config.headers["Idempotency-Key"] = nonce;
+          }
 
           // S0.15: CSRF protection — OWASP Signed Double-Submit Cookie pattern.
           // Token was captured from X-CSRF-Token response header on last response.
@@ -588,13 +592,20 @@ export class ApiService implements IApiService {
   /**
    * Build config with AbortSignal
    */
-  private buildConfig(signal?: AbortSignal, params?: Record<string, unknown>): AxiosRequestConfig {
+  private buildConfig(
+    signal?: AbortSignal,
+    params?: Record<string, unknown>,
+    headers?: Record<string, string>
+  ): AxiosRequestConfig {
     const config: AxiosRequestConfig = {};
     if (signal) {
       config.signal = signal;
     }
     if (params) {
       config.params = params;
+    }
+    if (headers) {
+      config.headers = headers;
     }
     return config;
   }
@@ -643,8 +654,17 @@ export class ApiService implements IApiService {
     }
   }
 
-  async post<T>(endpoint: string, data?: unknown, signal?: AbortSignal): Promise<T> {
-    const response = await this.axiosInstance.post(endpoint, data, this.buildConfig(signal));
+  async post<T>(
+    endpoint: string,
+    data?: unknown,
+    signal?: AbortSignal,
+    options?: { headers?: Record<string, string> }
+  ): Promise<T> {
+    const response = await this.axiosInstance.post(
+      endpoint,
+      data,
+      this.buildConfig(signal, undefined, options?.headers)
+    );
     return this.unwrap<T>(response.data);
   }
 

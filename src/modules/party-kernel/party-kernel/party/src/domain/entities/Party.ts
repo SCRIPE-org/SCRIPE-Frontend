@@ -13,6 +13,8 @@ export interface PartyData {
   displayName: string;
   createdAt: string;
   modifiedAt?: string;
+  linkedAdminId?: string;
+  linkedUserId?: string;
 }
 
 /**
@@ -39,6 +41,29 @@ export class Party {
 
   get modifiedAt(): string | undefined {
     return this.data.modifiedAt;
+  }
+
+  get linkedAdminId(): string | undefined {
+    return this.data.linkedAdminId;
+  }
+
+  get linkedUserId(): string | undefined {
+    return this.data.linkedUserId;
+  }
+
+  get isPerson(): boolean {
+    return this.data.type?.toLowerCase() === "person";
+  }
+
+  get isOrganization(): boolean {
+    return this.data.type?.toLowerCase() === "organization";
+  }
+
+  get initials(): string {
+    if (!this.displayName) return "P";
+    const parts = this.displayName.trim().split(/\s+/);
+    if (parts.length === 1) return parts[0].slice(0, 2).toUpperCase();
+    return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
   }
 
   /**

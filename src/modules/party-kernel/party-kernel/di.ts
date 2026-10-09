@@ -93,28 +93,44 @@ export function getPartyKernelContainer(): PartyKernelContainer {
     const partyRelationshipService = new PartyRelationshipService(apiService);
     const contactPointService = new ContactPointService(apiService);
     const mergeCandidateService = new MergeCandidateService(apiService);
+    const partyPersonRepository = new PartyPersonRepository(partyPersonService);
+    const partyOrganizationRepository = new PartyOrganizationRepository(partyOrganizationService);
+    const partyRoleRepository = new PartyRoleRepository(partyRoleService);
+    const partyRelationshipRepository = new PartyRelationshipRepository(partyRelationshipService);
+    const contactPointRepository = new ContactPointRepository(contactPointService);
+    const mergeCandidateRepository = new MergeCandidateRepository(mergeCandidateService);
+    const partyRepository = new PartyRepository(
+      partyService,
+      partyPersonRepository,
+      partyOrganizationRepository,
+      contactPointRepository,
+      partyRoleRepository,
+      partyRelationshipRepository,
+      mergeCandidateRepository
+    );
+
     _container = {
       // Party
       partyService,
-      partyRepository: new PartyRepository(partyService),
+      partyRepository,
       // PartyPerson
       partyPersonService,
-      partyPersonRepository: new PartyPersonRepository(partyPersonService),
+      partyPersonRepository,
       // PartyOrganization
       partyOrganizationService,
-      partyOrganizationRepository: new PartyOrganizationRepository(partyOrganizationService),
+      partyOrganizationRepository,
       // PartyRole
       partyRoleService,
-      partyRoleRepository: new PartyRoleRepository(partyRoleService),
+      partyRoleRepository,
       // PartyRelationship
       partyRelationshipService,
-      partyRelationshipRepository: new PartyRelationshipRepository(partyRelationshipService),
+      partyRelationshipRepository,
       // ContactPoint
       contactPointService,
-      contactPointRepository: new ContactPointRepository(contactPointService),
+      contactPointRepository,
       // MergeCandidate
       mergeCandidateService,
-      mergeCandidateRepository: new MergeCandidateRepository(mergeCandidateService),
+      mergeCandidateRepository,
     };
   }
 

@@ -18,6 +18,41 @@ export interface PartyJson {
 }
 
 /**
+ * Canonical Party Profile Response from API
+ */
+export interface PartyProfileResponseJson {
+  id: string;
+  type: string;
+  displayName: string;
+  fullName?: string | null;
+  legalName?: string | null;
+}
+
+/**
+ * Atomic Person creation request JSON shape
+ */
+export interface CreatePersonRequestJson {
+  fullName: string;
+  displayName?: string | null;
+  givenName?: string | null;
+  middleNames?: string | null;
+  familyName?: string | null;
+}
+
+/**
+ * Atomic Person creation response JSON shape
+ */
+export interface PersonResponseJson {
+  id: string;
+  type: string;
+  displayName: string;
+  fullName: string;
+  givenName?: string | null;
+  middleNames?: string | null;
+  familyName?: string | null;
+}
+
+/**
  * Paginated Party list response from API
  */
 export interface PartyListResponseJson {

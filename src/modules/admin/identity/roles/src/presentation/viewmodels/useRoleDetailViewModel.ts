@@ -53,6 +53,7 @@ export interface RoleInfoCardProps {
   isLoading: boolean;
   selectedCount: number;
   totalCount: number;
+  adminCount?: number;
 }
 
 /**
@@ -131,8 +132,21 @@ export function useRoleDetailViewModel(roleIdOverride?: string) {
   const { data: moduleGroups = [], isLoading: permissionsLoading } = useQuery<
     PermissionModuleGroup[]
   >({
-    queryKey: ["myTenantAvailablePermissionsGrouped", searchQuery],
-    queryFn: () => roleRepository.getMyTenantAvailablePermissionsGrouped(searchQuery || undefined),
+    queryKey: ["roleAvailablePermissionsGrouped", role?.tenantId ?? "platform", searchQuery],
+    queryFn: () => {
+      if (role?.tenantId) {
+        return roleRepository.getTenantAvailablePermissionsGrouped(role.tenantId);
+      }
+      return roleRepository.getMyTenantAvailablePermissionsGrouped(searchQuery || undefined);
+    },
+    enabled: !roleLoading,
+  });
+
+  // ── Blast Radius: Count of Admins holding this role ──
+  const { data: adminCount = 0 } = useQuery({
+    queryKey: ["role-admin-count", roleId],
+    queryFn: () => (roleId ? roleRepository.getAdminCount(roleId) : 0),
+    enabled: !!roleId,
   });
 
   // ── Auto-expand all modules when data first loads ──
@@ -371,6 +385,7 @@ export function useRoleDetailViewModel(roleIdOverride?: string) {
       isLoading: roleLoading,
       selectedCount: assignments.size,
       totalCount: totalPermCount,
+      adminCount,
     } as RoleInfoCardProps,
 
     permissions: {
