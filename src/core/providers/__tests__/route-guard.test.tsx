@@ -167,4 +167,20 @@ describe("RouteGuard - Locked Billing Wall Tests", () => {
     expect(screen.getByTestId("child-content")).toBeInTheDocument();
     expect(mockRouterReplace).not.toHaveBeenCalled();
   });
+
+  it("should allow unauthenticated access to /bookings/guest without redirecting", () => {
+    mockUseAppStore.getState().isAuthenticated = false;
+    mockHasToken.mockReturnValue(false);
+    currentPathname = "/bookings/guest";
+
+    render(
+      <RouteGuard>
+        <div data-testid="guest-portal-content">Guest Portal Content</div>
+      </RouteGuard>
+    );
+
+    expect(screen.getByTestId("guest-portal-content")).toBeInTheDocument();
+    expect(mockRouterReplace).not.toHaveBeenCalled();
+  });
 });
+

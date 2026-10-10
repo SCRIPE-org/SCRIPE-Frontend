@@ -7,6 +7,7 @@ import { Button } from "@core/ui/button";
 import { EmptyState } from "@core/ui/empty-state";
 import { Label } from "@core/ui/label";
 import { PageHeader } from "@core/ui/page-header";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@core/ui/tabs";
 import { GenericSelect } from "@core/crud/components/generic-select";
 import { useModuleLocales } from "@core/hooks/use-module-locales";
 import { usePermission } from "@core/hooks/use-permission";
@@ -113,31 +114,46 @@ export const AvailabilityView = React.memo(function AvailabilityView() {
             </Alert>
           )}
 
-          <div className="grid gap-6 xl:grid-cols-[minmax(0,2fr)_minmax(320px,1fr)]">
-            <WeeklyWindowsEditorCard
-              key={vm.calendar?.id ?? vm.selectedResourceId}
-              vm={vm}
-              canSave={canSave}
-              timeZoneId={timeZoneId}
-              onTimeZoneChange={setTimeZoneId}
-            />
+          <Tabs defaultValue="find-slots" className="w-full">
+            <TabsList className="mb-4">
+              <TabsTrigger value="find-slots">
+                {t("availability.tabs.findSlots", { defaultValue: "Find Available Slots" })}
+              </TabsTrigger>
+              <TabsTrigger value="operating-windows">
+                {t("availability.tabs.operatingWindows", { defaultValue: "Operating Windows & Rules" })}
+              </TabsTrigger>
+            </TabsList>
 
-            <AvailabilitySearchCard
-              vm={vm}
-              timeZoneId={timeZoneId}
-              canSearch={canSearch}
-            />
-          </div>
+            <TabsContent value="find-slots" className="space-y-4">
+              <div className="max-w-xl">
+                <AvailabilitySearchCard
+                  vm={vm}
+                  timeZoneId={timeZoneId}
+                  canSearch={canSearch}
+                />
+              </div>
+            </TabsContent>
 
-          <ResourceBlocksPanel
-            resourceId={vm.selectedResourceId}
-            timeZoneId={timeZoneId}
-            blackouts={vm.blackouts}
-            maintenanceBlocks={vm.maintenanceBlocks}
-            saving={vm.saving}
-            onSave={vm.saveBlock}
-            onDelete={vm.deleteBlock}
-          />
+            <TabsContent value="operating-windows" className="space-y-6">
+              <WeeklyWindowsEditorCard
+                key={vm.calendar?.id ?? vm.selectedResourceId}
+                vm={vm}
+                canSave={canSave}
+                timeZoneId={timeZoneId}
+                onTimeZoneChange={setTimeZoneId}
+              />
+
+              <ResourceBlocksPanel
+                resourceId={vm.selectedResourceId}
+                timeZoneId={timeZoneId}
+                blackouts={vm.blackouts}
+                maintenanceBlocks={vm.maintenanceBlocks}
+                saving={vm.saving}
+                onSave={vm.saveBlock}
+                onDelete={vm.deleteBlock}
+              />
+            </TabsContent>
+          </Tabs>
         </>
       )}
     </div>

@@ -163,4 +163,20 @@ describe("BookingOperationalActions", () => {
     expect(screen.getByRole("dialog")).toBeInTheDocument();
     expect(screen.getByText("booking360.changeResource.title")).toBeInTheDocument();
   });
+
+  it("triggers onCheckIn from dominant primary action button", () => {
+    const { props } = renderActions({ status: "Confirmed", canCheckIn: true });
+    const checkInBtn = screen.getByRole("button", { name: "booking360.actions.checkIn" });
+    expect(checkInBtn).toHaveClass("bg-nx-accent");
+    fireEvent.click(checkInBtn);
+    expect(props.onCheckIn).toHaveBeenCalledOnce();
+  });
+
+  it("triggers onComplete from dominant primary action button", () => {
+    const { props } = renderActions({ status: "CheckedIn", canComplete: true });
+    const completeBtn = screen.getByRole("button", { name: "booking360.actions.complete" });
+    expect(completeBtn).toHaveClass("bg-emerald-600");
+    fireEvent.click(completeBtn);
+    expect(props.onComplete).toHaveBeenCalledOnce();
+  });
 });

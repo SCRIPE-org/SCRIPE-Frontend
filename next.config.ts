@@ -5,6 +5,7 @@ const nextConfig: NextConfig = {
   turbopack: {
     root: __dirname,
   },
+  allowedDevOrigins: ["localhost:3000", "127.0.0.1:3000", "127.0.0.1", "localhost"],
   experimental: {
     // Tree-shake heavy libraries — only bundle what's actually imported
     optimizePackageImports: [

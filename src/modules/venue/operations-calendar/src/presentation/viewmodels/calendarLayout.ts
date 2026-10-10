@@ -4,7 +4,14 @@ import type {
   OperationsCalendarDay,
 } from "../../domain/entities/OperationsCalendar";
 
-const OCCUPYING = new Set<OccupyingReservationStatus>(["Held", "Confirmed", "CheckedIn"]);
+const OCCUPYING = new Set<string>([
+  "Held",
+  "Confirmed",
+  "CheckedIn",
+  "Maintenance",
+  "Blocked",
+  "Unavailable",
+]);
 const HOUR_MS = 60 * 60 * 1000;
 
 export interface CalendarTimeSlot {
@@ -18,7 +25,7 @@ export interface TrackedCalendarBlock {
 }
 
 export function occupyingBlocks(blocks: OperationsCalendarBlock[]): OperationsCalendarBlock[] {
-  return blocks.filter((block) => OCCUPYING.has(block.status as OccupyingReservationStatus));
+  return blocks.filter((block) => OCCUPYING.has(block.status));
 }
 
 export function placeBlocksOnTracks(blocks: OperationsCalendarBlock[]): TrackedCalendarBlock[] {

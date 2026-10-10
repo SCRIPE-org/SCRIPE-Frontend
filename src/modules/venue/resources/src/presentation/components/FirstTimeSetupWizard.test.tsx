@@ -33,10 +33,10 @@ describe("FirstTimeSetupWizard", () => {
     // Click Next
     fireEvent.click(screen.getByText("Next Step"));
 
-    // Step 2: Courts
-    expect(screen.getByText("2. Courts")).toBeInTheDocument();
+    // Step 2: Courts & Spaces
+    expect(screen.getByText("2. Courts & Spaces")).toBeInTheDocument();
     expect(screen.getByDisplayValue("Padel Court 1")).toBeInTheDocument();
-    fireEvent.click(screen.getByText("+ Add Another Court"));
+    fireEvent.click(screen.getByText("+ Add Another Court / Space"));
     expect(screen.getByDisplayValue("Padel Court 4")).toBeInTheDocument();
 
     // Click Next

@@ -37,7 +37,7 @@ export function usePermission(requiredPermission?: PermissionCode): boolean {
 
   // Platform superadmin bypass
   if (
-    user?.isSuperAdmin === true ||
+    (user as any)?.isSuperAdmin === true ||
     user?.isProtected === true ||
     user?.username === "superadmin" ||
     permissions.includes("*")
@@ -58,7 +58,7 @@ export function usePermissions() {
   const user = useAppStore((state) => state.user);
 
   const isSuperAdmin = Boolean(
-    user?.isSuperAdmin === true ||
+    (user as any)?.isSuperAdmin === true ||
     user?.isProtected === true ||
     user?.username === "superadmin" ||
     permissions.includes("*")

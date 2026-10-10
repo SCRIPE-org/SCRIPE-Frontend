@@ -51,6 +51,12 @@ export interface CalendarResource {
   facilityName: string;
   resourceKindCode: string;
   timeZoneId: string;
+  slotPolicy?: {
+    slotDurationMinutes: number;
+    startIncrementMinutes?: number;
+    timeZoneId?: string | null;
+    allowMultiSlot?: boolean;
+  } | null;
 }
 
 export type OperationsCalendarStage = "loading" | "ready" | "empty" | "featureUnavailable" | "error";

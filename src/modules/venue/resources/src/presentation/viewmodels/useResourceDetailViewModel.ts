@@ -144,7 +144,7 @@ export function useResourceDetailViewModel(resourceId: string) {
           ? WEEK_DAYS.map((dayOfWeek) => ({
               dayOfWeek,
               startLocal: "00:00",
-              endLocal: "23:59",
+              endLocal: "23:59:59",
               capacityOverride: null,
             }))
           : input.windows && input.windows.length > 0
@@ -178,7 +178,11 @@ export function useResourceDetailViewModel(resourceId: string) {
   );
 
   const updateBookingRules = useCallback(
-    async (input: { slotDurationMinutes: number; startIncrementMinutes: number }) => {
+    async (input: {
+      slotDurationMinutes: number;
+      startIncrementMinutes: number;
+      allowMultiSlot?: boolean;
+    }) => {
       if (!resource) return false;
       setSaving(true);
       setError(null);
@@ -191,7 +195,7 @@ export function useResourceDetailViewModel(resourceId: string) {
             slotDurationMinutes: input.slotDurationMinutes,
             startIncrementMinutes: input.startIncrementMinutes,
             timeZoneId,
-            allowMultiSlot: false,
+            allowMultiSlot: input.allowMultiSlot ?? false,
           },
         });
 
@@ -299,7 +303,12 @@ export function useResourceDetailViewModel(resourceId: string) {
     calendar?.windows &&
       calendar.windows.length >= 7 &&
       calendar.windows.every(
-        (w) => w.startLocal === "00:00" && (w.endLocal === "23:59" || w.endLocal === "00:00")
+        (w) =>
+          w.startLocal === "00:00" &&
+          (w.endLocal === "23:59:59" ||
+            w.endLocal === "24:00" ||
+            w.endLocal === "23:59" ||
+            w.endLocal === "00:00")
       )
   );
 

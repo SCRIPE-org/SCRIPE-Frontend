@@ -45,14 +45,7 @@ export function VenueNav({ attentionCount = 0, className = "" }: Props) {
     pathname.startsWith("/venue/calendar") ||
     pathname.startsWith("/venue/bookings");
   const isResources =
-    pathname.startsWith("/venue/resources") ||
-    pathname.startsWith("/venue/facilities") ||
-    pathname.startsWith("/venue/resource-builder") ||
-    pathname.startsWith("/venue/resource-profiles") ||
-    pathname.startsWith("/venue/sites") ||
-    pathname.startsWith("/venue/venue-setup") ||
-    pathname.startsWith("/venue/availability") ||
-    pathname.startsWith("/venue/pricing");
+    pathname === "/venue/resources" || pathname.startsWith("/venue/resources/");
   const isMoney = pathname.startsWith("/venue/money");
   const isAttention = pathname.startsWith("/venue/attention");
 
@@ -74,7 +67,7 @@ export function VenueNav({ attentionCount = 0, className = "" }: Props) {
     },
     {
       id: "setup",
-      label: t("venueNav.resources", { defaultValue: t("venueNav.setup", { defaultValue: "Resources" }) }),
+      label: t("venueNav.resources", { defaultValue: t("venueNav.setup", { defaultValue: "Courts & Spaces" }) }),
       href: "/venue/resources",
       icon: GitFork,
       active: isResources,
@@ -84,7 +77,12 @@ export function VenueNav({ attentionCount = 0, className = "" }: Props) {
           {
             id: "money",
             label: t("venueNav.money", { defaultValue: "Money" }),
-            href: canViewReceivables ? "/venue/money/receivables" : "/venue/money/payments",
+            href:
+              canViewReceivables && canViewPayments
+                ? "/venue/money"
+                : canViewReceivables
+                ? "/venue/money/receivables"
+                : "/venue/money/payments",
             icon: CircleDollarSign,
             active: isMoney,
           },
@@ -131,27 +129,21 @@ export function VenueNav({ attentionCount = 0, className = "" }: Props) {
     secondaryLinks = [
       {
         href: "/venue/resources",
-        label: t("venueNav.allResources", { defaultValue: "Courts & Fields" }),
+        label: t("venueNav.allResources", { defaultValue: "Courts & Spaces" }),
         icon: GitFork,
         active: pathname === "/venue/resources" || pathname.startsWith("/venue/resources/"),
       },
       {
         href: "/venue/resources?setup=new",
-        label: t("venueNav.addCourt", { defaultValue: "+ Add Court / Field" }),
+        label: t("venueNav.addCourt", { defaultValue: "+ Add Court / Space" }),
         icon: Plus,
         active: false,
       },
       {
-        href: "/venue/facilities",
-        label: t("venueNav.advancedSetup", { defaultValue: "Advanced Setup" }),
+        href: "/venue/settings",
+        label: t("venueNav.advancedSetup", { defaultValue: "Settings" }),
         icon: Sliders,
-        active:
-          pathname.startsWith("/venue/facilities") ||
-          pathname.startsWith("/venue/resource-builder") ||
-          pathname.startsWith("/venue/resource-profiles") ||
-          pathname.startsWith("/venue/sites") ||
-          pathname.startsWith("/venue/availability") ||
-          pathname.startsWith("/venue/pricing"),
+        active: pathname.startsWith("/venue/settings"),
       },
     ];
   } else if (isMoney) {

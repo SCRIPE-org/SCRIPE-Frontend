@@ -71,3 +71,73 @@ export interface MoneyPaymentTimeline {
   receipts: MoneyPaymentReceipt[];
   refunds: MoneyPaymentRefund[];
 }
+
+export interface MoneySummaryItem {
+  currencyCode: string;
+  commercialValue: number;
+  collected: number;
+  collectedToday: number;
+  outstanding: number;
+  refunds: number;
+  netCollected: number;
+  openReceivablesCount: number;
+  paymentsCount: number;
+  unallocatedPaymentsCount: number;
+  unallocatedPaymentsAmount: number;
+}
+
+export interface MoneySummaryResponse {
+  items: MoneySummaryItem[];
+  primary: MoneySummaryItem | null;
+}
+
+export interface MoneyTrendBucket {
+  bucketLabel: string;
+  timestampUtc: string;
+  commercialValue: number;
+  collected: number;
+  refunds: number;
+  netCollected: number;
+  currencyCode: string;
+}
+
+export interface MoneyTrendResponse {
+  buckets: MoneyTrendBucket[];
+}
+
+export interface MoneyResourcePerformance {
+  resourceId: string;
+  commercialValue: number;
+  collected: number;
+  outstanding: number;
+  invoiceCount: number;
+  paymentCount: number;
+  currencyCode: string;
+}
+
+export interface MoneyTimeOfDayBucket {
+  timeWindow: string;
+  startHour: number;
+  endHour: number;
+  commercialValue: number;
+  bookingCount: number;
+  currencyCode: string;
+}
+
+export interface MoneyPaymentMethodItem {
+  method: string;
+  amount: number;
+  count: number;
+  percentage: number;
+  currencyCode: string;
+}
+
+export interface MoneyAnalyticsFilter {
+  dateFromUtc?: string;
+  dateToUtc?: string;
+  interval?: "hour" | "day";
+  currencyCode?: string;
+  resourceId?: string;
+  facilityResourceProfileId?: string;
+}
+

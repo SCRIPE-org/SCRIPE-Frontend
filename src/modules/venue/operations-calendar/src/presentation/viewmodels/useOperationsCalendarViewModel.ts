@@ -10,6 +10,7 @@ import type {
   OperationsCalendarState,
 } from "../../domain/entities/OperationsCalendar";
 import { localPrefillForInstant } from "./calendarLayout";
+import { getSavedFacilityId, saveFacilityId } from "@modules/venue/shared/src/presentation/utils/venueFacilityPersistence";
 
 const PAGE_SIZE = 100;
 const LANE_LIMIT = 50;
@@ -92,15 +93,17 @@ export function useOperationsCalendarViewModel() {
               timeZoneId: zone,
             } satisfies CalendarResource];
           });
-        const firstFacility = facilityPage.items.find((facility) =>
-          composed.some((resource) => resource.facilityId === facility.id));
-        const firstZone = composed.find((resource) => resource.facilityId === firstFacility?.id)?.timeZoneId ?? "";
+        const validFacilityId = getSavedFacilityId(facilityPage.items);
+        const initialFacility =
+          (validFacilityId && facilityPage.items.find((f) => f.id === validFacilityId && composed.some((r) => r.facilityId === f.id)))
+          || facilityPage.items.find((facility) => composed.some((resource) => resource.facilityId === facility.id));
+        const initialZone = composed.find((resource) => resource.facilityId === initialFacility?.id)?.timeZoneId ?? "";
         setFacilities(facilityPage.items);
         setAllResources(composed);
         setSetupReady(true);
-        setFacilityIdState(firstFacility?.id ?? "");
-        setTimeZoneIdState(firstZone);
-        if (firstZone) setDateState(todayIn(firstZone));
+        setFacilityIdState(initialFacility?.id ?? "");
+        setTimeZoneIdState(initialZone);
+        if (initialZone) setDateState(todayIn(initialZone));
       } catch (error) {
         if (!active) return;
         setState((current) => ({
@@ -192,7 +195,27 @@ export function useOperationsCalendarViewModel() {
     setFacilityIdState(value);
     setTimeZoneIdState(zone);
     setResourceIdState("");
+    if (typeof window !== "undefined") {
+      try {
+        saveFacilityId(value);
+        window.dispatchEvent(new CustomEvent("venue-facility-changed", { detail: { facilityId: value } }));
+      } catch {}
+    }
   }, [allResources, invalidate]);
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const handleFacilityChanged = (e: Event) => {
+      const customEvent = e as CustomEvent<{ facilityId: string }>;
+      const newFacilityId = customEvent.detail?.facilityId;
+      if (newFacilityId && newFacilityId !== facilityId) {
+        setFacilityId(newFacilityId);
+      }
+    };
+    window.addEventListener("venue-facility-changed", handleFacilityChanged);
+    return () => window.removeEventListener("venue-facility-changed", handleFacilityChanged);
+  }, [facilityId, setFacilityId]);
+
   const setTimeZoneId = useCallback((value: string) => {
     invalidate();
     setTimeZoneIdState(value);

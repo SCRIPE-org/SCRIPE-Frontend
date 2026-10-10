@@ -15,6 +15,8 @@ export const ar = {
       name: "اسم المنشأة",
       description: "الوصف",
       isActive: "نشط",
+      enableGuestExperience: "تفعيل تجربة الضيوف",
+      exposeCancellationToGuests: "السماح بالإلغاء الذاتي للضيوف",
     },
     placeholders: {
       siteId: "ابحث عن موقع...",
@@ -24,6 +26,8 @@ export const ar = {
     },
     descriptions: {
       siteId: "الموقع في نظام OrganizationCore الذي تعمل عليه هذه المنشأة.",
+      enableGuestExperience: "السماح للعملاء بعرض الحجوزات عبر روابط الضيوف الآمنة بدون تطبيق.",
+      exposeCancellationToGuests: "السماح للعملاء بإلغاء حجزهم مباشرة من بوابة الضيوف.",
     },
     manageSites: "إدارة المواقع والمجمعات",
     quickCreateSite: "إنشاء سريع لموقع",

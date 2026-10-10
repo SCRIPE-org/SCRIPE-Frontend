@@ -4,7 +4,7 @@ import { ResourceDetailView } from "@modules/venue/resources/src/presentation/vi
 
 export const metadata: Metadata = {
   title: "Court Details | SCRIPE Venue",
-  description: "Operational resource detail, working hours, booking slot, and pricing.",
+  description: "Operational space detail, working hours, booking slot, and pricing.",
 };
 
 export default async function ResourceDetailPage({

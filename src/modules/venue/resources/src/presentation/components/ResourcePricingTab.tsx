@@ -35,7 +35,7 @@ export function ResourcePricingTab({ vm }: Props) {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>{t("resources.pricing.title", { defaultValue: "Court Rental Pricing" })}</CardTitle>
+        <CardTitle>{t("resources.pricing.title", { defaultValue: "Pricing" })}</CardTitle>
         <CardDescription>
           {t("resources.pricing.description", {
             defaultValue: "Standard authoritative price per booking slot from Catalog Pricing.",
@@ -57,10 +57,10 @@ export function ResourcePricingTab({ vm }: Props) {
                   step={10}
                   value={unitPrice}
                   onChange={(e) => setUnitPrice(Number(e.target.value) || 0)}
-                  className="pr-12 text-sm font-semibold"
+                  className="pr-12 rtl:pr-3 rtl:pl-12 text-sm font-semibold"
                   required
                 />
-                <span className="absolute right-3 top-2 text-xs font-bold text-nx-ink-3">
+                <span className="absolute right-3 rtl:right-auto rtl:left-3 top-2 text-xs font-bold text-nx-ink-3">
                   {currencyCode}
                 </span>
               </div>

@@ -11,6 +11,8 @@ export interface VenueProfileData {
   name: string;
   description?: string;
   isActive: boolean;
+  enableGuestExperience?: boolean;
+  exposeCancellationToGuests?: boolean;
   createdAt: string;
   modifiedAt?: string;
   siteName?: string;
@@ -45,6 +47,14 @@ export class VenueProfile {
 
   get isActive(): boolean {
     return this.data.isActive;
+  }
+
+  get enableGuestExperience(): boolean {
+    return this.data.enableGuestExperience ?? false;
+  }
+
+  get exposeCancellationToGuests(): boolean {
+    return this.data.exposeCancellationToGuests ?? false;
   }
 
   get createdAt(): string {

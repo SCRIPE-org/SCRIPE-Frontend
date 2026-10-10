@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState, useMemo } from "react";
 import Link from "next/link";
 import {
   CalendarDays,
@@ -13,7 +13,10 @@ import {
   Timer,
   User,
   UserPlus,
-  Wrench,
+  AlertCircle,
+  ArrowRight,
+  RotateCcw,
+  ShieldAlert,
 } from "lucide-react";
 import {
   Dialog,
@@ -21,14 +24,17 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
+  DialogDescription,
 } from "@core/ui/dialog";
 import { Button } from "@core/ui/button";
 import { Input } from "@core/ui/input";
 import { Label } from "@core/ui/label";
-import { Alert, AlertDescription } from "@core/ui/alert";
+import { Alert, AlertDescription, AlertTitle } from "@core/ui/alert";
 import { Badge } from "@core/ui/badge";
 import { LoadingSpinner } from "@core/ui/loading-spinner";
 import { useI18n } from "@core/providers/i18n-provider";
+import { usePermission } from "@core/hooks/use-permission";
+import { VENUE_PERMISSIONS } from "@modules/venue/permission-constants";
 import { getVenueContainer } from "@modules/venue/di";
 import type { PriceQuote } from "@modules/venue/commercial/src/domain/entities/CommercialPricing";
 import type { CustomerSummary } from "@modules/venue/booking/src/domain/entities/Booking";
@@ -41,91 +47,252 @@ interface Props {
   instantUtc: string | null;
   timeZoneId: string;
   durationMinutes?: number;
+  resources?: CalendarResource[];
+  initialCustomerId?: string | null;
   onSuccess: () => void;
   onBlockTime?: (resource: CalendarResource, instantUtc: string) => void;
+  onFindSlots?: () => void;
 }
 
 export function ClickToBookModal({
   open,
   onOpenChange,
-  resource,
-  instantUtc,
+  resource: initialResource,
+  instantUtc: initialInstantUtc,
   timeZoneId,
-  durationMinutes = 60,
+  durationMinutes: initialDurationMinutes = 60,
+  resources = [],
+  initialCustomerId,
   onSuccess,
   onBlockTime,
+  onFindSlots,
 }: Props) {
   const { t, language } = useI18n();
+  const isRtl = language === "ar";
+  const tRef = useRef(t);
+  useEffect(() => {
+    tRef.current = t;
+  }, [t]);
+
   const {
     bookingRepository,
     customerRepository,
     commercialPricingRepository,
     moneyRepository,
-  } = getVenueContainer();
+    schedulableResourceRepository,
+  } = useMemo(() => getVenueContainer(), []);
 
-  // Dialog stages: "form" | "held" | "confirmed"
-  const [stage, setStage] = useState<"form" | "held" | "confirmed">("form");
+  // Permissions
+  const canCreateBooking = usePermission(VENUE_PERMISSIONS.RESERVATION_CREATE);
+  const canCreateHold = usePermission(VENUE_PERMISSIONS.BOOKING_HOLD_CREATE);
+  const canRecordPayment =
+    usePermission(VENUE_PERMISSIONS.FINANCE_PAYMENTS_CREATE) ||
+    usePermission(VENUE_PERMISSIONS.FINANCE_PAYMENTS_VIEW);
+  const canOverridePrice = usePermission(
+    VENUE_PERMISSIONS.CATALOG_PRICING_OVERRIDE_PRICE
+  );
+
+  // Selected court & time context
+  const [selectedResource, setSelectedResource] = useState<CalendarResource | null>(
+    initialResource
+  );
+  const [selectedInstantUtc, setSelectedInstantUtc] = useState<string | null>(
+    initialInstantUtc
+  );
+  const [slotPolicy, setSlotPolicy] = useState<{
+    slotDurationMinutes: number;
+    startIncrementMinutes?: number;
+    allowMultiSlot?: boolean;
+  } | null>(initialResource?.slotPolicy ?? null);
+
+  const allowedDurations = useMemo(() => {
+    const base = slotPolicy?.slotDurationMinutes ?? 60;
+    const allowMulti = slotPolicy?.allowMultiSlot ?? false;
+    if (!allowMulti) {
+      return [base];
+    }
+    return [base, base * 2, base * 3];
+  }, [slotPolicy]);
+
+  const [duration, setDuration] = useState<number>(() => {
+    const base = initialResource?.slotPolicy?.slotDurationMinutes ?? initialDurationMinutes;
+    return base;
+  });
+
+  // Keep duration valid when allowedDurations changes
+  useEffect(() => {
+    if (allowedDurations.length > 0 && !allowedDurations.includes(duration)) {
+      setDuration(allowedDurations[0]);
+    }
+  }, [allowedDurations, duration]);
+
+  // Fetch slot policy for court if not already present
+  useEffect(() => {
+    if (!selectedResource) return;
+    if (selectedResource.slotPolicy) {
+      setSlotPolicy(selectedResource.slotPolicy);
+      return;
+    }
+    let active = true;
+    if (schedulableResourceRepository?.getById) {
+      try {
+        const p = schedulableResourceRepository.getById(selectedResource.id);
+        if (p && typeof (p as any).then === "function") {
+          void p
+            .then((res: any) => {
+              if (active && res?.slotPolicy) {
+                setSlotPolicy({
+                  slotDurationMinutes: res.slotPolicy.slotDurationMinutes,
+                  startIncrementMinutes: res.slotPolicy.startIncrementMinutes,
+                  allowMultiSlot: res.slotPolicy.allowMultiSlot ?? false,
+                });
+              }
+            })
+            .catch(() => {
+              if (active) setSlotPolicy({ slotDurationMinutes: 60, allowMultiSlot: false });
+            });
+        }
+      } catch {
+        if (active) setSlotPolicy({ slotDurationMinutes: 60, allowMultiSlot: false });
+      }
+    }
+    return () => {
+      active = false;
+    };
+  }, [selectedResource, schedulableResourceRepository]);
+
+  // Determine entry mode:
+  // Mode A (Contextual Calendar Booking): opened from an actual slot click
+  // Mode B (Global New Booking): opened from "+ New Booking" without initial resource/slot
+  const isContextual = Boolean(initialResource && initialInstantUtc);
+
+  // Stepper state:
+  // For Contextual: Step 1 is Customer, Step 2 is Confirm
+  // For Global: Step 0 is Court & Time, Step 1 is Customer, Step 2 is Confirm
+  const [step, setStep] = useState<number>(isContextual ? 1 : 0);
+
+  // Stages: "booking" | "conflict" | "confirmed"
+  const [stage, setStage] = useState<"booking" | "conflict" | "confirmed">("booking");
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   // Customer state
   const [customerSearch, setCustomerSearch] = useState("");
   const [customerSearching, setCustomerSearching] = useState(false);
+  const [customerSearchError, setCustomerSearchError] = useState(false);
   const [customerResults, setCustomerResults] = useState<CustomerSummary[]>([]);
   const [selectedCustomer, setSelectedCustomer] = useState<CustomerSummary | null>(null);
   const [quickAddOpen, setQuickAddOpen] = useState(false);
   const [quickName, setQuickName] = useState("");
   const [quickPhone, setQuickPhone] = useState("");
+  const [quickEmail, setQuickEmail] = useState("");
+  const [quickAddError, setQuickAddError] = useState<string | null>(null);
+  const [duplicateWarning, setDuplicateWarning] = useState<string | null>(null);
 
-  // Pricing quote
+  // Authoritative Pricing Quote state
   const [quote, setQuote] = useState<PriceQuote | null>(null);
   const [quoteLoading, setQuoteLoading] = useState(false);
+  const [quoteError, setQuoteError] = useState<string | null>(null);
+  const [quoteExpiredMessage, setQuoteExpiredMessage] = useState(false);
 
-  // Created reservation & hold details
+  // Price Override state
+  const [overrideOpen, setOverrideOpen] = useState(false);
+  const [overrideAmount, setOverrideAmount] = useState<string>("");
+  const [overrideReason, setOverrideReason] = useState<string>("");
+
+  // Hold & Countdown state
+  const [holdExpiresAtUtc, setHoldExpiresAtUtc] = useState<string | null>(null);
+  const [holdCountdown, setHoldCountdown] = useState<string | null>(null);
+  const [holdExpired, setHoldExpired] = useState(false);
+
+  // Payment state
+  const [paymentChoice, setPaymentChoice] = useState<"later" | "now">("later");
+  const [payNowAmount, setPayNowAmount] = useState<number>(0);
+  const [paymentMethod, setPaymentMethod] = useState<
+    "Cash" | "Card" | "POS" | "BankTransfer" | "Other"
+  >("Cash");
+  const [paymentReference, setPaymentReference] = useState("");
+  const [amountPaid, setAmountPaid] = useState<number>(0);
+  const [paymentPartialFailure, setPaymentPartialFailure] = useState(false);
+  const [recordingPaymentManual, setRecordingPaymentManual] = useState(false);
+
+  // Reservation reference
   const [reservationId, setReservationId] = useState<string | null>(null);
   const [reservationNumber, setReservationNumber] = useState<string>("");
-  const [holdExpiresAtUtc, setHoldExpiresAtUtc] = useState<string | null>(null);
 
-  // Payment recording state (after confirmation)
-  const [recordPaymentOpen, setRecordPaymentOpen] = useState(false);
-  const [paymentAmount, setPaymentAmount] = useState<number>(0);
-  const [paymentMethod, setPaymentMethod] = useState("Cash");
-  const [paymentRef, setPaymentRef] = useState("");
-  const [amountPaid, setAmountPaid] = useState<number>(0);
-  const [paymentSubmitting, setPaymentSubmitting] = useState(false);
-  const [paymentSuccess, setPaymentSuccess] = useState(false);
+  // Start & End calculations
+  const startUtc = useMemo(() => {
+    return selectedInstantUtc || "2026-10-09T09:00:00.000Z";
+  }, [selectedInstantUtc]);
 
-  const startUtc = instantUtc ?? new Date().toISOString();
-  const endUtc = new Date(Date.parse(startUtc) + durationMinutes * 60 * 1000).toISOString();
+  const endUtc = useMemo(() => {
+    return new Date(Date.parse(startUtc) + duration * 60 * 1000).toISOString();
+  }, [startUtc, duration]);
 
-  // Reset when dialog opens with a new slot
+  const prevOpenRef = useRef(false);
+
+  // Full state reset on open transition
   useEffect(() => {
-    if (open) {
-      setStage("form");
+    if (open && !prevOpenRef.current) {
+      setSelectedResource(initialResource ?? (resources[0] || null));
+      setSelectedInstantUtc(initialInstantUtc ?? new Date().toISOString());
+      setDuration(initialDurationMinutes);
+      setStep(initialResource && initialInstantUtc ? 1 : 0);
+      setStage("booking");
+      setSubmitting(false);
       setError(null);
+      setCustomerSearch("");
+      setCustomerSearching(false);
+      setCustomerSearchError(false);
+      setCustomerResults([]);
+      setSelectedCustomer(null);
+      if (initialCustomerId) {
+        customerRepository.getById(initialCustomerId).then((c) => {
+          setSelectedCustomer(c);
+        }).catch(() => {});
+      }
+      setQuickAddOpen(false);
+      setQuickName("");
+      setQuickPhone("");
+      setQuickEmail("");
+      setQuickAddError(null);
+      setDuplicateWarning(null);
+      setQuote(null);
+      setQuoteLoading(false);
+      setQuoteError(null);
+      setQuoteExpiredMessage(false);
+      setOverrideOpen(false);
+      setOverrideAmount("");
+      setOverrideReason("");
+      setHoldExpiresAtUtc(null);
+      setHoldCountdown(null);
+      setHoldExpired(false);
+      setPaymentChoice("later");
+      setPayNowAmount(0);
+      setAmountPaid(0);
+      setPaymentPartialFailure(false);
       setReservationId(null);
       setReservationNumber("");
-      setHoldExpiresAtUtc(null);
-      setRecordPaymentOpen(false);
-      setAmountPaid(0);
-      setPaymentSuccess(false);
     }
-  }, [instantUtc, open, resource]);
+    prevOpenRef.current = open;
+  }, [open, initialResource, initialInstantUtc, initialDurationMinutes, resources]);
 
-  // Customer search debounced
+  // Customer search with debounce
   useEffect(() => {
     if (!open || !customerSearch.trim() || customerSearch.trim().length < 2) {
       setCustomerResults([]);
+      setCustomerSearchError(false);
       return;
     }
     let active = true;
     const timer = setTimeout(async () => {
       setCustomerSearching(true);
+      setCustomerSearchError(false);
       try {
-        const results = await customerRepository.searchCustomers(customerSearch.trim());
+        const results = await customerRepository.search(customerSearch.trim());
         if (active) setCustomerResults(results);
       } catch {
-        // Fallback
+        if (active) setCustomerSearchError(true);
       } finally {
         if (active) setCustomerSearching(false);
       }
@@ -136,68 +303,276 @@ export function ClickToBookModal({
     };
   }, [customerRepository, customerSearch, open]);
 
-  // Calculate authoritative price quote when customer and resource are ready
-  useEffect(() => {
-    if (!open || !resource || !selectedCustomer) {
+  // Authoritative Price Quote calculation
+  const fetchAuthoritativeQuote = useCallback(async () => {
+    if (!selectedResource || !selectedCustomer) return;
+    setQuoteLoading(true);
+    setQuoteError(null);
+    setQuoteExpiredMessage(false);
+
+    try {
+      const config = await commercialPricingRepository.getResourceConfiguration(
+        selectedResource.id
+      );
+      const calcQuote = await commercialPricingRepository.calculateQuote({
+        offeringId: config.offeringId,
+        resourceId: selectedResource.id,
+        partyId: selectedCustomer.id,
+        quantity: 1,
+        requestedStartUtc: startUtc,
+        requestedEndUtc: endUtc,
+        currencyCode: config.currencyCode || "EGP",
+        expiresAtUtc: new Date(Date.now() + 15 * 60 * 1000).toISOString(),
+        idempotencyKey: crypto.randomUUID(),
+      });
+      setQuote(calcQuote);
+      setPayNowAmount(calcQuote.grandTotal);
+    } catch (err) {
       setQuote(null);
+      setQuoteError(
+        err instanceof Error
+          ? err.message
+          : tRef.current("operationsCalendar.clickToBook.pricing.failed")
+      );
+    } finally {
+      setQuoteLoading(false);
+    }
+  }, [
+    commercialPricingRepository,
+    endUtc,
+    selectedCustomer,
+    selectedResource,
+    startUtc,
+  ]);
+
+  useEffect(() => {
+    if (open && selectedResource && selectedCustomer && step === 2) {
+      void fetchAuthoritativeQuote();
+    }
+  }, [fetchAuthoritativeQuote, open, selectedCustomer, selectedResource, step]);
+
+  // Hold Countdown timer
+  useEffect(() => {
+    if (!holdExpiresAtUtc) {
+      setHoldCountdown(null);
       return;
     }
-    let active = true;
-    const fetchQuote = async () => {
-      setQuoteLoading(true);
-      setError(null);
-      try {
-        const config = await commercialPricingRepository.getResourceConfiguration(resource.id);
-        const calcQuote = await commercialPricingRepository.calculateQuote({
-          offeringId: config.offeringId,
-          resourceId: resource.id,
-          partyId: selectedCustomer.id,
-          quantity: 1,
-          requestedStartUtc: startUtc,
-          requestedEndUtc: endUtc,
-          currencyCode: config.currencyCode || "EGP",
-          expiresAtUtc: new Date(Date.now() + 30 * 60 * 1000).toISOString(),
-          idempotencyKey: crypto.randomUUID(),
-        });
-        if (active) {
-          setQuote(calcQuote);
-          setPaymentAmount(calcQuote.grandTotal);
-        }
-      } catch {
-        // Provide graceful estimate if quote endpoint unavailable
-        if (active) {
-          setQuote({
-            id: crypto.randomUUID(),
-            quoteNumber: "ESTIMATE",
-            offeringId: "",
-            schedulableResourceId: resource.id,
-            partyId: selectedCustomer.id,
-            quantity: 1,
-            requestedStartUtc: startUtc,
-            requestedEndUtc: endUtc,
-            currencyCode: "EGP",
-            subtotalAmount: 800,
-            discountAmount: 0,
-            taxAmount: 0,
-            roundingAdjustment: 0,
-            grandTotal: 800,
-            status: "Estimated",
-            expiresAtUtc: new Date(Date.now() + 30 * 60 * 1000).toISOString(),
-            wasIdempotentReplay: false,
-          });
-          setPaymentAmount(800);
-        }
-      } finally {
-        if (active) setQuoteLoading(false);
+    const updateCountdown = () => {
+      const diffMs = Date.parse(holdExpiresAtUtc) - Date.now();
+      if (diffMs <= 0) {
+        setHoldCountdown("00:00");
+        setHoldExpired(true);
+        return;
       }
+      const totalSec = Math.floor(diffMs / 1000);
+      const mins = String(Math.floor(totalSec / 60)).padStart(2, "0");
+      const secs = String(totalSec % 60).padStart(2, "0");
+      setHoldCountdown(`${mins}:${secs}`);
     };
-    void fetchQuote();
-    return () => {
-      active = false;
-    };
-  }, [commercialPricingRepository, endUtc, open, resource, selectedCustomer, startUtc]);
+    updateCountdown();
+    const interval = setInterval(updateCountdown, 1000);
+    return () => clearInterval(interval);
+  }, [holdExpiresAtUtc]);
 
-  // Format slot time range for display
+  // Quick Add Customer Handler with duplicate checks
+  const handleQuickAddCustomer = async () => {
+    const trimmedName = quickName.trim();
+    if (!trimmedName) {
+      setQuickAddError("Customer name is required.");
+      return;
+    }
+
+    // Check existing search results for potential duplicates
+    const duplicate = customerResults.find(
+      (c) =>
+        c.displayName.toLowerCase() === trimmedName.toLowerCase() ||
+        (quickPhone && c.type?.includes(quickPhone))
+    );
+    if (duplicate && !duplicateWarning) {
+      setDuplicateWarning(
+        `${t("operationsCalendar.clickToBook.customer.duplicateWarning")}: ${duplicate.displayName}`
+      );
+      return;
+    }
+
+    setQuickAddError(null);
+    setSubmitting(true);
+    try {
+      const created = await customerRepository.create(trimmedName, "Person");
+      setSelectedCustomer(created);
+      setQuickAddOpen(false);
+      setQuickName("");
+      setQuickPhone("");
+      setQuickEmail("");
+      setDuplicateWarning(null);
+      setStep(2); // Advance directly to Price & Confirm
+    } catch (err) {
+      setQuickAddError(
+        err instanceof Error ? err.message : "Failed to create customer. Please check input."
+      );
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  // Primary Action: Confirm Booking
+  const handleConfirm = useCallback(async () => {
+    if (!selectedResource || !selectedCustomer || !quote || submitting || holdExpired) return;
+
+    // Check quote expiration
+    if (quote.expiresAtUtc && Date.parse(quote.expiresAtUtc) < Date.now()) {
+      setQuoteExpiredMessage(true);
+      void fetchAuthoritativeQuote();
+      return;
+    }
+
+    setSubmitting(true);
+    setError(null);
+    try {
+      // 1. Create Draft
+      const draft = await bookingRepository.createDraft({
+        resourceId: selectedResource.id,
+        customerPartyId: selectedCustomer.id,
+        requestedStartUtc: startUtc,
+        requestedEndUtc: endUtc,
+        quantity: 1,
+      });
+
+      // 2. Create Hold
+      await bookingRepository.createHold(draft.id, crypto.randomUUID());
+
+      // 3. Confirm with Authoritative Price Quote
+      await bookingRepository.confirm(draft.id, crypto.randomUUID(), quote.id);
+
+      const reservation = await bookingRepository.getReservation(draft.id);
+      setReservationId(draft.id);
+      setReservationNumber(reservation.reservationNumber);
+
+      // 4. If operator requested "Record Payment Now" and has permission
+      if (paymentChoice === "now" && canRecordPayment && payNowAmount > 0) {
+        try {
+          await moneyRepository.recordPayment({
+            reservationId: draft.id,
+            payerPartyId: selectedCustomer.id,
+            schedulableResourceId: selectedResource.id,
+            facilityResourceProfileId: selectedResource.profileId ?? null,
+            amount: payNowAmount,
+            currencyCode: quote.currencyCode || "EGP",
+            method: paymentMethod,
+            externalReference: paymentReference.trim() || null,
+            reason: "Booking creation payment",
+            idempotencyKey: crypto.randomUUID(),
+          });
+          setAmountPaid(payNowAmount);
+          setPaymentPartialFailure(false);
+        } catch {
+          // Booking succeeded! Payment recording failed!
+          // NEVER imply the booking failed.
+          setAmountPaid(0);
+          setPaymentPartialFailure(true);
+        }
+      }
+
+      setStage("confirmed");
+      onSuccess();
+    } catch (err) {
+      const errMsg = err instanceof Error ? err.message : String(err);
+      if (errMsg.includes("409") || errMsg.includes("Conflict") || errMsg.includes("overlap") || errMsg.includes("already booked")) {
+        setStage("conflict");
+      } else {
+        setError(errMsg || "Failed to confirm booking.");
+      }
+    } finally {
+      setSubmitting(false);
+    }
+  }, [
+    bookingRepository,
+    canRecordPayment,
+    endUtc,
+    fetchAuthoritativeQuote,
+    holdExpired,
+    moneyRepository,
+    onSuccess,
+    payNowAmount,
+    paymentChoice,
+    paymentMethod,
+    paymentReference,
+    quote,
+    selectedCustomer,
+    selectedResource,
+    startUtc,
+    submitting,
+  ]);
+
+  // Secondary Action: Hold Temporarily
+  const handleHoldTemporarily = useCallback(async () => {
+    if (!selectedResource || !selectedCustomer || submitting) return;
+    setSubmitting(true);
+    setError(null);
+    try {
+      const draft = await bookingRepository.createDraft({
+        resourceId: selectedResource.id,
+        customerPartyId: selectedCustomer.id,
+        requestedStartUtc: startUtc,
+        requestedEndUtc: endUtc,
+        quantity: 1,
+      });
+      const hold = await bookingRepository.createHold(draft.id, crypto.randomUUID());
+      const reservation = await bookingRepository.getReservation(draft.id);
+
+      setReservationId(draft.id);
+      setReservationNumber(reservation.reservationNumber);
+      setHoldExpiresAtUtc(hold.expiresAtUtc);
+      onSuccess();
+    } catch (err) {
+      const errMsg = err instanceof Error ? err.message : String(err);
+      if (errMsg.includes("409") || errMsg.includes("Conflict") || errMsg.includes("overlap")) {
+        setStage("conflict");
+      } else {
+        setError(errMsg || "Failed to hold time slot.");
+      }
+    } finally {
+      setSubmitting(false);
+    }
+  }, [
+    bookingRepository,
+    endUtc,
+    onSuccess,
+    selectedCustomer,
+    selectedResource,
+    startUtc,
+    submitting,
+  ]);
+
+  // Post-booking manual payment recording (for partial failure or subsequent collection)
+  const handleManualRecordPayment = async () => {
+    if (!reservationId || !selectedCustomer || !quote) return;
+    setRecordingPaymentManual(true);
+    try {
+      const toPay = payNowAmount > 0 ? payNowAmount : quote.grandTotal;
+      await moneyRepository.recordPayment({
+        reservationId,
+        payerPartyId: selectedCustomer.id,
+        schedulableResourceId: selectedResource?.id ?? null,
+        facilityResourceProfileId: selectedResource?.profileId ?? null,
+        amount: toPay,
+        currencyCode: quote.currencyCode || "EGP",
+        method: paymentMethod,
+        externalReference: paymentReference.trim() || null,
+        reason: "Manual post-booking payment",
+        idempotencyKey: crypto.randomUUID(),
+      });
+      setAmountPaid((prev) => prev + toPay);
+      setPaymentPartialFailure(false);
+    } catch {
+      // Payment recording failed again
+      setPaymentPartialFailure(true);
+    } finally {
+      setRecordingPaymentManual(false);
+    }
+  };
+
+  // Formatted date and time string
   const formatTimeRange = () => {
     try {
       const s = new Intl.DateTimeFormat(language, {
@@ -218,245 +593,468 @@ export function ClickToBookModal({
     }
   };
 
-  const handleQuickAddCustomer = () => {
-    if (!quickName.trim()) return;
-    const customer: CustomerSummary = {
-      id: crypto.randomUUID(),
-      displayName: quickName.trim(),
-      primaryEmail: "",
-      primaryPhone: quickPhone.trim(),
-    };
-    setSelectedCustomer(customer);
-    setQuickAddOpen(false);
-    setQuickName("");
-    setQuickPhone("");
-  };
-
-  // Primary Action: Confirm Booking (orchestrates draft -> hold -> confirm)
-  const handleConfirm = useCallback(async () => {
-    if (!resource || !selectedCustomer || !quote || submitting) return;
-    setSubmitting(true);
-    setError(null);
+  const formatDateDisplay = () => {
     try {
-      // 1. Create Draft
-      const draft = await bookingRepository.createDraft({
-        resourceId: resource.id,
-        customerPartyId: selectedCustomer.id,
-        requestedStartUtc: startUtc,
-        requestedEndUtc: endUtc,
-        quantity: 1,
-      });
-
-      // 2. Create Hold
-      await bookingRepository.createHold(draft.id, crypto.randomUUID());
-
-      // 3. Confirm with authoritative quote ID
-      await bookingRepository.confirm(draft.id, crypto.randomUUID(), quote.id);
-
-      const reservation = await bookingRepository.getReservation(draft.id);
-
-      setReservationId(draft.id);
-      setReservationNumber(reservation.reservationNumber);
-      setStage("confirmed");
-      onSuccess();
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to confirm booking.");
-    } finally {
-      setSubmitting(false);
-    }
-  }, [
-    bookingRepository,
-    endUtc,
-    onSuccess,
-    quote,
-    resource,
-    selectedCustomer,
-    startUtc,
-    submitting,
-  ]);
-
-  // Secondary Action: Hold Temporarily
-  const handleHold = useCallback(async () => {
-    if (!resource || !selectedCustomer || submitting) return;
-    setSubmitting(true);
-    setError(null);
-    try {
-      const draft = await bookingRepository.createDraft({
-        resourceId: resource.id,
-        customerPartyId: selectedCustomer.id,
-        requestedStartUtc: startUtc,
-        requestedEndUtc: endUtc,
-        quantity: 1,
-      });
-
-      const hold = await bookingRepository.createHold(draft.id, crypto.randomUUID());
-      const reservation = await bookingRepository.getReservation(draft.id);
-
-      setReservationId(draft.id);
-      setReservationNumber(reservation.reservationNumber);
-      setHoldExpiresAtUtc(hold.expiresAtUtc);
-      setStage("held");
-      onSuccess();
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to hold slot.");
-    } finally {
-      setSubmitting(false);
-    }
-  }, [
-    bookingRepository,
-    endUtc,
-    onSuccess,
-    resource,
-    selectedCustomer,
-    startUtc,
-    submitting,
-  ]);
-
-  // Complete confirmation after a hold
-  const handleConfirmFromHold = useCallback(async () => {
-    if (!reservationId || !quote || submitting) return;
-    setSubmitting(true);
-    setError(null);
-    try {
-      await bookingRepository.confirm(reservationId, crypto.randomUUID(), quote.id);
-      setStage("confirmed");
-      onSuccess();
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to confirm held booking.");
-    } finally {
-      setSubmitting(false);
-    }
-  }, [bookingRepository, onSuccess, quote, reservationId, submitting]);
-
-  // Record Payment
-  const handleRecordPayment = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (paymentAmount <= 0) return;
-    setPaymentSubmitting(true);
-    try {
-      // Simulate/record payment against booking
-      setAmountPaid((prev) => prev + paymentAmount);
-      setPaymentSuccess(true);
-      setRecordPaymentOpen(false);
+      return new Intl.DateTimeFormat(language, {
+        weekday: "short",
+        month: "short",
+        day: "numeric",
+        timeZone: timeZoneId || "UTC",
+      }).format(new Date(startUtc));
     } catch {
-      // Handle error
-    } finally {
-      setPaymentSubmitting(false);
+      return "";
     }
   };
 
-  const remainingAmount = Math.max(0, (quote?.grandTotal ?? 800) - amountPaid);
+  const remainingBalance = Math.max(0, (quote?.grandTotal ?? 0) - amountPaid);
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-md p-6">
-        <DialogHeader className="border-b border-nx-line pb-3">
-          <div className="flex items-center justify-between gap-2">
-            <div>
-              <DialogTitle className="text-lg font-bold text-nx-ink">
-                {stage === "confirmed"
-                  ? t("booking.confirmed.title", { defaultValue: "Booking Confirmed" })
-                  : stage === "held"
-                  ? t("booking.held.title", { defaultValue: "Slot Reserved Temporarily" })
-                  : t("booking.new.title", { defaultValue: "New Booking" })}
-              </DialogTitle>
-              <div className="flex items-center gap-2 mt-1 text-xs text-nx-ink-2">
-                <span className="font-semibold text-nx-ink">{resource?.name}</span>
-                <span className="text-nx-line">·</span>
-                <span className="font-mono text-nx-accent">{formatTimeRange()}</span>
-              </div>
-            </div>
-          </div>
+      <DialogContent className="max-w-md p-6 bg-nx-surface border border-nx-border rounded-2xl shadow-xl">
+        <DialogHeader className="sr-only">
+          <DialogTitle>{t("operationsCalendar.clickToBook.title")}</DialogTitle>
+          <DialogDescription>
+            {selectedResource?.name ? `${selectedResource.name} booking` : "Create venue booking"}
+          </DialogDescription>
         </DialogHeader>
 
+        {/* Stepper Header (Only during normal booking flow) */}
+        {stage === "booking" && (
+          <div className="flex items-center justify-between pb-3 border-b border-nx-border">
+            {!isContextual && (
+              <>
+                <div className="flex items-center gap-1.5">
+                  <span
+                    className={`flex size-5 items-center justify-center rounded-full text-[10px] font-bold ${
+                      step >= 0 ? "bg-nx-primary text-white" : "bg-nx-raised text-nx-ink-3"
+                    }`}
+                  >
+                    1
+                  </span>
+                  <span className="text-xs font-semibold text-nx-ink">
+                    {t("operationsCalendar.clickToBook.stepper.courtAndTime")}
+                  </span>
+                </div>
+                <div className="h-px w-4 bg-nx-border" />
+              </>
+            )}
+
+            <div className="flex items-center gap-1.5">
+              <span
+                className={`flex size-5 items-center justify-center rounded-full text-[10px] font-bold ${
+                  step >= 1 ? "bg-nx-primary text-white" : "bg-nx-raised text-nx-ink-3"
+                }`}
+              >
+                {isContextual ? 1 : 2}
+              </span>
+              <span className="text-xs font-semibold text-nx-ink">
+                {t("operationsCalendar.clickToBook.stepper.customer")}
+              </span>
+            </div>
+            <div className="h-px w-4 bg-nx-border" />
+            <div className="flex items-center gap-1.5">
+              <span
+                className={`flex size-5 items-center justify-center rounded-full text-[10px] font-bold ${
+                  step >= 2 ? "bg-nx-primary text-white" : "bg-nx-raised text-nx-ink-3"
+                }`}
+              >
+                {isContextual ? 2 : 3}
+              </span>
+              <span className="text-xs font-semibold text-nx-ink">
+                {t("operationsCalendar.clickToBook.stepper.confirm")}
+              </span>
+            </div>
+          </div>
+        )}
+
+        {/* Global Error Banner */}
         {error && (
           <Alert variant="destructive" className="my-2 py-2">
             <AlertDescription className="text-xs">{error}</AlertDescription>
           </Alert>
         )}
 
-        {/* STAGE 1: Booking Form (Customer + Price) */}
-        {stage === "form" && (
-          <div className="space-y-4 py-2">
-            {/* Customer Section */}
-            <div className="space-y-2">
-              <div className="flex items-center justify-between">
-                <Label className="text-xs font-semibold text-nx-ink">
-                  {t("booking.customer.label", { defaultValue: "Customer" })}
-                </Label>
-                <button
+        {/* ======================================================== */}
+        {/* STAGE: CONFLICT RECOVERY (409 / Slot Taken During Flow)   */}
+        {/* ======================================================== */}
+        {stage === "conflict" && (
+          <div className="space-y-4 py-4 text-center">
+            <div className="size-14 rounded-full bg-amber-500/10 border-2 border-amber-500 flex items-center justify-center text-amber-500 mx-auto">
+              <AlertCircle className="size-8" />
+            </div>
+            <div>
+              <h3 className="text-base font-bold text-nx-ink">
+                {t("operationsCalendar.clickToBook.conflict.title")}
+              </h3>
+              <p className="text-xs text-nx-ink-2 mt-1">
+                {t("operationsCalendar.clickToBook.conflict.description")}
+              </p>
+            </div>
+            <div className="space-y-2 pt-2">
+              {onFindSlots && (
+                <Button
                   type="button"
-                  onClick={() => setQuickAddOpen(!quickAddOpen)}
-                  className="text-xs text-nx-accent hover:underline inline-flex items-center gap-1 font-medium"
+                  className="w-full h-9 text-xs font-bold bg-nx-primary hover:bg-nx-primary-hover text-white rounded-lg"
+                  onClick={() => {
+                    onOpenChange(false);
+                    onFindSlots();
+                  }}
                 >
-                  <UserPlus className="size-3" aria-hidden="true" />
-                  <span>{quickAddOpen ? "Search Existing" : "+ Quick Add"}</span>
-                </button>
-              </div>
+                  <Search className="h-3.5 w-3.5 me-2" />
+                  {t("operationsCalendar.clickToBook.conflict.findAnother")}
+                </Button>
+              )}
+              <Button
+                type="button"
+                variant="outline"
+                className="w-full h-9 text-xs font-semibold rounded-lg"
+                onClick={() => {
+                  onOpenChange(false);
+                  onSuccess();
+                }}
+              >
+                {t("operationsCalendar.clickToBook.conflict.returnToCalendar")}
+              </Button>
+            </div>
+          </div>
+        )}
 
-              {quickAddOpen ? (
-                <div className="p-3 rounded-nx-md border border-nx-line bg-nx-surfaceSubtle space-y-2.5">
-                  <Input
-                    placeholder="Customer Name (e.g. Ahmed Hassan)"
-                    value={quickName}
-                    onChange={(e) => setQuickName(e.target.value)}
-                    className="h-8 text-xs bg-nx-surface"
-                  />
-                  <Input
-                    placeholder="Phone Number (e.g. +20 100 123 4567)"
-                    value={quickPhone}
-                    onChange={(e) => setQuickPhone(e.target.value)}
-                    className="h-8 text-xs bg-nx-surface"
-                  />
-                  <Button
-                    type="button"
-                    size="sm"
-                    onClick={handleQuickAddCustomer}
-                    disabled={!quickName.trim()}
-                    className="h-7 text-xs w-full font-semibold"
-                  >
-                    Select Customer
-                  </Button>
+        {/* ======================================================== */}
+        {/* STAGE: CONFIRMED / SUCCESS STATE                         */}
+        {/* ======================================================== */}
+        {stage === "confirmed" && (
+          <div className="space-y-4 py-3 text-center">
+            <div className="size-14 rounded-full bg-emerald-500/10 border-2 border-emerald-500 flex items-center justify-center text-emerald-500 mx-auto">
+              <CheckCircle2 className="size-8" />
+            </div>
+
+            <div>
+              <h3 className="text-lg font-black text-nx-ink">
+                {t("operationsCalendar.clickToBook.success.title")}
+              </h3>
+              <p className="text-xs text-nx-ink-2 mt-0.5">
+                {selectedResource?.name} • {formatDateDisplay()} • {formatTimeRange()}
+              </p>
+              <p className="text-xs font-bold text-nx-ink mt-0.5">
+                {selectedCustomer?.displayName}
+              </p>
+            </div>
+
+            {/* Critical Partial Failure Alert */}
+            {paymentPartialFailure && (
+              <Alert variant="warning" className="text-left text-xs my-2">
+                <AlertCircle className="size-4" />
+                <AlertTitle className="text-xs font-bold">
+                  {t("operationsCalendar.clickToBook.partialFailure.title")}
+                </AlertTitle>
+                <AlertDescription className="text-[11px]">
+                  {t("operationsCalendar.clickToBook.partialFailure.description")}
+                </AlertDescription>
+              </Alert>
+            )}
+
+            {/* Receipt Summary Card */}
+            <div className="p-3 rounded-xl border border-nx-border bg-nx-raised/40 space-y-2 text-left">
+              <div className="flex items-center justify-between text-xs">
+                <span className="text-nx-ink-2">{t("operationsCalendar.clickToBook.success.total")}</span>
+                <span className="font-bold text-nx-ink">
+                  {quote?.grandTotal ?? 0} {quote?.currencyCode || "EGP"}
+                </span>
+              </div>
+              <div className="flex items-center justify-between text-xs">
+                <span className="text-nx-ink-2">{t("operationsCalendar.clickToBook.success.paid")}</span>
+                <span className="font-bold text-emerald-600">
+                  {amountPaid} {quote?.currencyCode || "EGP"}
+                </span>
+              </div>
+              <div className="border-t border-nx-border pt-1.5 flex items-center justify-between text-xs">
+                <span className="text-nx-ink-2">{t("operationsCalendar.clickToBook.success.remaining")}</span>
+                <span className="font-bold text-amber-600">
+                  {remainingBalance} {quote?.currencyCode || "EGP"}
+                </span>
+              </div>
+            </div>
+
+            {/* Actions */}
+            <div className="space-y-2 pt-2">
+              {canRecordPayment && remainingBalance > 0 && (
+                <Button
+                  type="button"
+                  className="w-full h-9 text-xs font-bold bg-nx-primary hover:bg-nx-primary-hover text-white rounded-lg"
+                  disabled={recordingPaymentManual}
+                  onClick={handleManualRecordPayment}
+                >
+                  <CreditCard className="size-3.5 me-2" />
+                  {amountPaid === 0
+                    ? t("operationsCalendar.clickToBook.success.recordPayment")
+                    : t("operationsCalendar.clickToBook.success.recordAnotherPayment")}
+                </Button>
+              )}
+
+              {reservationId && (
+                <Button
+                  asChild
+                  variant="outline"
+                  className="w-full h-9 text-xs font-semibold rounded-lg"
+                >
+                  <Link href={`/venue/bookings/${encodeURIComponent(reservationId)}`}>
+                    <ExternalLink className="size-3.5 me-2" />
+                    {t("operationsCalendar.clickToBook.success.openBooking")}
+                  </Link>
+                </Button>
+              )}
+
+              <Button
+                type="button"
+                variant="ghost"
+                onClick={() => onOpenChange(false)}
+                className="text-xs text-nx-ink-3 hover:text-nx-ink"
+              >
+                {t("operationsCalendar.clickToBook.success.close")}
+              </Button>
+            </div>
+          </div>
+        )}
+
+        {/* ======================================================== */}
+        {/* STAGE: ACTIVE BOOKING FLOW                               */}
+        {/* ======================================================== */}
+        {stage === "booking" && (
+          <div className="space-y-4 py-2">
+            {/* Context Summary Card (Shown in Steps 1 & 2) */}
+            {step >= 1 && selectedResource && (
+              <div className="flex items-center gap-3 p-3 rounded-xl border border-nx-border bg-nx-raised/40">
+                <div className="size-11 rounded-lg bg-nx-primary/10 border border-nx-primary/20 shrink-0 flex items-center justify-center text-nx-primary text-base">
+                  🎾
                 </div>
-              ) : selectedCustomer ? (
-                <div className="flex items-center justify-between p-2.5 rounded-nx-md border border-nx-line bg-nx-surfaceSubtle">
-                  <div className="flex items-center gap-2.5">
-                    <div className="flex size-7 items-center justify-center rounded-full bg-nx-accent/10 text-nx-accent font-bold text-xs">
-                      {selectedCustomer.displayName.charAt(0)}
-                    </div>
-                    <div>
-                      <p className="text-xs font-bold text-nx-ink">{selectedCustomer.displayName}</p>
-                      {selectedCustomer.primaryPhone && (
-                        <p className="text-[10px] text-nx-ink-3">{selectedCustomer.primaryPhone}</p>
-                      )}
-                    </div>
+                <div className="min-w-0 flex-1">
+                  <div className="flex items-center justify-between">
+                    <h4 className="text-xs font-bold text-nx-ink truncate">
+                      {selectedResource.name}
+                    </h4>
+                    {!isContextual && (
+                      <button
+                        type="button"
+                        onClick={() => setStep(0)}
+                        className="text-[11px] font-semibold text-nx-primary hover:underline"
+                      >
+                        {t("operationsCalendar.clickToBook.context.change")}
+                      </button>
+                    )}
                   </div>
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => setSelectedCustomer(null)}
-                    className="h-7 text-[11px] text-nx-ink-3 hover:text-nx-ink"
-                  >
-                    Change
-                  </Button>
+                  <p className="text-[11px] text-nx-ink-2 truncate">
+                    {selectedResource.facilityName}
+                  </p>
+                  <p className="text-[11px] font-medium text-nx-ink mt-0.5">
+                    {formatDateDisplay()} • {formatTimeRange()} ({duration} min)
+                  </p>
                 </div>
-              ) : (
-                <div className="space-y-1 relative">
-                  <div className="relative">
-                    <Search className="absolute left-2.5 top-2.5 size-3.5 text-nx-ink-3" aria-hidden="true" />
+              </div>
+            )}
+
+            {/* STEP 0: Court & Time (Only in Global Mode B) */}
+            {step === 0 && (
+              <div className="space-y-3 py-1">
+                <div className="space-y-1.5">
+                  <Label className="text-xs font-bold text-nx-ink">
+                    {t("operationsCalendar.clickToBook.context.court")}
+                  </Label>
+                  <select
+                    className="w-full h-9 rounded-md border border-nx-border bg-nx-surface px-3 text-xs focus:ring-1 focus:ring-nx-primary"
+                    value={selectedResource?.id || ""}
+                    onChange={(e) => {
+                      const res = resources.find((r) => r.id === e.target.value);
+                      if (res) setSelectedResource(res);
+                    }}
+                  >
+                    {resources.map((r) => (
+                      <option key={r.id} value={r.id}>
+                        {r.name} ({r.facilityName})
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                <div className="grid grid-cols-2 gap-3">
+                  <div className="space-y-1.5">
+                    <Label className="text-xs font-bold text-nx-ink">
+                      {isRtl ? "وقت البدء" : "Start Time"}
+                    </Label>
                     <Input
-                      placeholder="Search customer by name or phone..."
-                      value={customerSearch}
-                      onChange={(e) => setCustomerSearch(e.target.value)}
-                      className="pl-8 h-8 text-xs"
+                      type="time"
+                      value={new Date(startUtc).toLocaleTimeString("en-GB", {
+                        hour: "2-digit",
+                        minute: "2-digit",
+                        timeZone: timeZoneId || "UTC",
+                      })}
+                      onChange={(e) => {
+                        const [h, m] = e.target.value.split(":").map(Number);
+                        const d = new Date(startUtc);
+                        d.setHours(h, m, 0, 0);
+                        setSelectedInstantUtc(d.toISOString());
+                      }}
+                      className="h-8 text-xs"
                     />
                   </div>
-                  {customerSearching && (
-                    <div className="p-2 text-center text-xs text-nx-ink-3">Searching...</div>
-                  )}
-                  {customerResults.length > 0 && (
-                    <div className="absolute top-9 left-0 right-0 z-20 max-h-36 overflow-y-auto rounded-nx-md border border-nx-line bg-nx-surface shadow-nx-lg divide-y divide-nx-line/60">
+                  <div className="space-y-1.5">
+                    <Label className="text-xs font-bold text-nx-ink">
+                      {isRtl ? "المدة" : "Duration"}
+                    </Label>
+                    {allowedDurations.length <= 1 ? (
+                      <div className="w-full h-8 rounded-md border border-nx-border bg-nx-raised/40 px-3 flex items-center text-xs font-semibold text-nx-ink">
+                        {allowedDurations[0] ?? 60} min
+                      </div>
+                    ) : (
+                      <select
+                        className="w-full h-8 rounded-md border border-nx-border bg-nx-surface px-3 text-xs"
+                        value={duration}
+                        onChange={(e) => setDuration(Number(e.target.value))}
+                      >
+                        {allowedDurations.map((d) => (
+                          <option key={d} value={d}>
+                            {d} min {d >= 60 && d % 60 === 0 ? `(${d / 60} hr)` : ""}
+                          </option>
+                        ))}
+                      </select>
+                    )}
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* STEP 1: Customer Selection */}
+            {step === 1 && (
+              <div className="space-y-3">
+                <div className="flex items-center justify-between">
+                  <Label className="text-xs font-bold text-nx-ink">
+                    {t("operationsCalendar.clickToBook.customer.title")}
+                  </Label>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setQuickAddOpen(!quickAddOpen);
+                      setQuickAddError(null);
+                      setDuplicateWarning(null);
+                    }}
+                    className="text-xs text-nx-primary hover:underline inline-flex items-center gap-1 font-semibold"
+                  >
+                    <UserPlus className="size-3" />
+                    <span>
+                      {quickAddOpen
+                        ? t("operationsCalendar.clickToBook.customer.searchExisting")
+                        : t("operationsCalendar.clickToBook.customer.addNew")}
+                    </span>
+                  </button>
+                </div>
+
+                {/* Quick Add Form */}
+                {quickAddOpen ? (
+                  <div className="p-3 rounded-xl border border-nx-border bg-nx-raised/40 space-y-2.5">
+                    <h5 className="text-xs font-bold text-nx-ink">
+                      {t("operationsCalendar.clickToBook.customer.quickAddTitle")}
+                    </h5>
+
+                    {quickAddError && (
+                      <Alert variant="destructive" className="py-1.5 text-xs">
+                        <AlertDescription>{quickAddError}</AlertDescription>
+                      </Alert>
+                    )}
+
+                    {duplicateWarning && (
+                      <Alert variant="warning" className="py-1.5 text-xs">
+                        <AlertDescription>{duplicateWarning}</AlertDescription>
+                      </Alert>
+                    )}
+
+                    <Input
+                      placeholder={t("operationsCalendar.clickToBook.customer.namePlaceholder")}
+                      value={quickName}
+                      onChange={(e) => {
+                        setQuickName(e.target.value);
+                        setDuplicateWarning(null);
+                      }}
+                      className="h-8 text-xs bg-nx-surface"
+                    />
+                    <Input
+                      placeholder={t("operationsCalendar.clickToBook.customer.phonePlaceholder")}
+                      value={quickPhone}
+                      onChange={(e) => setQuickPhone(e.target.value)}
+                      className="h-8 text-xs bg-nx-surface"
+                    />
+                    <Input
+                      placeholder={t("operationsCalendar.clickToBook.customer.emailPlaceholder")}
+                      value={quickEmail}
+                      onChange={(e) => setQuickEmail(e.target.value)}
+                      className="h-8 text-xs bg-nx-surface"
+                    />
+                    <Button
+                      type="button"
+                      size="sm"
+                      onClick={handleQuickAddCustomer}
+                      disabled={!quickName.trim() || submitting}
+                      className="h-7 text-xs w-full font-bold bg-nx-primary hover:bg-nx-primary-hover text-white"
+                    >
+                      {submitting
+                        ? t("operationsCalendar.clickToBook.customer.creating")
+                        : t("operationsCalendar.clickToBook.customer.createAndSelect")}
+                    </Button>
+                  </div>
+                ) : selectedCustomer ? (
+                  /* Selected Customer Card */
+                  <div className="flex items-center justify-between p-3 rounded-xl border border-nx-primary/40 bg-nx-primary/5">
+                    <div className="flex items-center gap-2.5">
+                      <div className="flex size-8 items-center justify-center rounded-full bg-nx-primary text-white font-bold text-xs">
+                        {selectedCustomer.displayName.charAt(0)}
+                      </div>
+                      <div>
+                        <p className="text-xs font-bold text-nx-ink">
+                          {selectedCustomer.displayName}
+                        </p>
+                        <p className="text-[10px] text-nx-ink-2">
+                          {selectedCustomer.type || "Customer"}
+                        </p>
+                      </div>
+                    </div>
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => setSelectedCustomer(null)}
+                      className="h-7 text-xs text-nx-ink-2 hover:text-nx-ink"
+                    >
+                      {t("operationsCalendar.clickToBook.customer.change")}
+                    </Button>
+                  </div>
+                ) : (
+                  /* Search Customer Input & Results */
+                  <div className="space-y-2">
+                    <div className="relative">
+                      <Search className="absolute left-2.5 top-2.5 size-3.5 text-nx-ink-3 rtl:right-2.5 rtl:left-auto" />
+                      <Input
+                        placeholder={t("operationsCalendar.clickToBook.customer.searchPlaceholder")}
+                        value={customerSearch}
+                        onChange={(e) => setCustomerSearch(e.target.value)}
+                        className="ps-8 h-8 text-xs rounded-lg"
+                      />
+                    </div>
+
+                    {customerSearching && (
+                      <div className="p-2 text-center text-xs text-nx-ink-3 flex items-center justify-center gap-2">
+                        <LoadingSpinner size="sm" />
+                        <span>Searching...</span>
+                      </div>
+                    )}
+
+                    {customerSearchError && (
+                      <Alert variant="destructive" className="py-1 text-xs">
+                        <AlertDescription>
+                          {t("operationsCalendar.clickToBook.customer.searchError")}
+                        </AlertDescription>
+                      </Alert>
+                    )}
+
+                    {/* Results List */}
+                    <div className="space-y-1 max-h-40 overflow-y-auto">
                       {customerResults.map((cust) => (
                         <button
                           type="button"
@@ -465,264 +1063,354 @@ export function ClickToBookModal({
                             setSelectedCustomer(cust);
                             setCustomerSearch("");
                             setCustomerResults([]);
+                            setStep(2); // Automatically advance to confirmation
                           }}
-                          className="w-full p-2 text-left hover:bg-nx-hover flex items-center justify-between text-xs"
+                          className="w-full p-2 rounded-lg border border-nx-border hover:border-nx-primary hover:bg-nx-primary/5 text-start flex items-center justify-between text-xs transition-colors"
                         >
-                          <span className="font-semibold text-nx-ink">{cust.displayName}</span>
-                          <span className="text-[11px] text-nx-ink-3 font-mono">
-                            {cust.primaryPhone || cust.primaryEmail}
-                          </span>
+                          <div className="flex items-center gap-2">
+                            <div className="flex size-6 items-center justify-center rounded-full bg-nx-raised text-nx-ink font-bold text-xs">
+                              {cust.displayName.charAt(0)}
+                            </div>
+                            <div>
+                              <span className="font-semibold text-nx-ink block">
+                                {cust.displayName}
+                              </span>
+                              <span className="text-[10px] text-nx-ink-3 block">
+                                {cust.type}
+                              </span>
+                            </div>
+                          </div>
                         </button>
                       ))}
-                    </div>
-                  )}
-                </div>
-              )}
-            </div>
 
-            {/* Authoritative Price Display */}
-            <div className="p-3.5 rounded-nx-md border border-nx-line/80 bg-nx-surfaceSubtle flex items-center justify-between">
-              <div>
-                <p className="text-xs font-semibold text-nx-ink flex items-center gap-1.5">
-                  <CreditCard className="size-3.5 text-emerald-600 dark:text-emerald-400" aria-hidden="true" />
-                  <span>{t("booking.quote.totalPrice", { defaultValue: "Booking Total" })}</span>
-                </p>
-                <p className="text-[10px] text-nx-ink-3 mt-0.5">Authoritative Catalog Price</p>
-              </div>
-              <div className="text-right">
-                {quoteLoading ? (
-                  <LoadingSpinner showText={false} className="size-4" />
-                ) : quote ? (
-                  <p className="text-base font-bold text-nx-ink">
-                    {quote.grandTotal}{" "}
-                    <span className="text-xs font-semibold text-nx-ink-2">{quote.currencyCode}</span>
-                  </p>
-                ) : (
-                  <span className="text-xs text-nx-ink-3 italic">Select customer for quote</span>
+                      {!customerSearching &&
+                        customerSearch.trim().length >= 2 &&
+                        customerResults.length === 0 &&
+                        !customerSearchError && (
+                          <p className="text-center text-xs text-nx-ink-3 py-2">
+                            {t("operationsCalendar.clickToBook.customer.noResults")}
+                          </p>
+                        )}
+                    </div>
+                  </div>
                 )}
               </div>
-            </div>
-
-            {/* Block Time Switch Option */}
-            {onBlockTime && resource && instantUtc && (
-              <div className="text-center pt-1">
-                <button
-                  type="button"
-                  onClick={() => {
-                    onOpenChange(false);
-                    onBlockTime(resource, instantUtc);
-                  }}
-                  className="text-xs text-nx-ink-2 hover:text-nx-ink hover:underline inline-flex items-center gap-1"
-                >
-                  <Wrench className="size-3 text-nx-ink-3" aria-hidden="true" />
-                  <span>Need to close this court instead? <strong>Block Time</strong></span>
-                </button>
-              </div>
             )}
-          </div>
-        )}
 
-        {/* STAGE 2: Held Temporarily */}
-        {stage === "held" && (
-          <div className="space-y-4 py-4 text-center">
-            <div className="mx-auto flex size-12 items-center justify-center rounded-full bg-amber-500/10 text-amber-600 dark:text-amber-400">
-              <Timer className="size-6" aria-hidden="true" />
-            </div>
-            <div className="space-y-1">
-              <p className="text-sm font-bold text-nx-ink">
-                Reserved temporarily
-              </p>
-              {holdExpiresAtUtc && (
-                <p className="text-xs font-mono text-amber-600 dark:text-amber-400 font-semibold">
-                  Valid until{" "}
-                  {new Intl.DateTimeFormat(language, {
-                    hour: "2-digit",
-                    minute: "2-digit",
-                    hourCycle: "h23",
-                    timeZone: timeZoneId || "UTC",
-                  }).format(new Date(holdExpiresAtUtc))}
-                </p>
-              )}
-              <p className="text-xs text-nx-ink-3">
-                {selectedCustomer?.displayName} · {resource?.name}
-              </p>
-            </div>
-          </div>
-        )}
-
-        {/* STAGE 3: Confirmed State */}
-        {stage === "confirmed" && (
-          <div className="space-y-4 py-2">
-            <div className="p-4 rounded-nx-md bg-emerald-500/10 border border-emerald-500/20 text-center space-y-1">
-              <CheckCircle2 className="size-8 text-emerald-600 dark:text-emerald-400 mx-auto" aria-hidden="true" />
-              <h4 className="font-bold text-sm text-emerald-900 dark:text-emerald-200">
-                Booking Confirmed
-              </h4>
-              <p className="text-xs text-emerald-800 dark:text-emerald-300 font-mono">
-                {reservationNumber || "CONFIRMED"}
-              </p>
-            </div>
-
-            {/* Money Balance Card: Total, Paid, Remaining */}
-            <div className="p-3.5 rounded-nx-md border border-nx-line bg-nx-surface space-y-2">
-              <div className="grid grid-cols-3 gap-2 text-center divide-x divide-nx-line">
-                <div>
-                  <p className="text-[10px] text-nx-ink-3 font-semibold uppercase">Total</p>
-                  <p className="text-xs font-bold text-nx-ink mt-0.5">
-                    {quote?.grandTotal ?? 800} {quote?.currencyCode ?? "EGP"}
-                  </p>
-                </div>
-                <div>
-                  <p className="text-[10px] text-nx-ink-3 font-semibold uppercase">Paid</p>
-                  <p className="text-xs font-bold text-emerald-600 dark:text-emerald-400 mt-0.5">
-                    {amountPaid} {quote?.currencyCode ?? "EGP"}
-                  </p>
-                </div>
-                <div>
-                  <p className="text-[10px] text-nx-ink-3 font-semibold uppercase">Remaining</p>
-                  <p className={`text-xs font-bold mt-0.5 ${remainingAmount > 0 ? "text-amber-600" : "text-nx-ink-3"}`}>
-                    {remainingAmount} {quote?.currencyCode ?? "EGP"}
-                  </p>
-                </div>
-              </div>
-            </div>
-
-            {/* Record Payment Inline Form */}
-            {recordPaymentOpen && (
-              <form onSubmit={handleRecordPayment} className="p-3 rounded-nx-md border border-nx-line bg-nx-surfaceSubtle space-y-3">
-                <p className="text-xs font-bold text-nx-ink">Record Payment</p>
-                <div className="grid grid-cols-2 gap-2">
-                  <div className="space-y-1">
-                    <Label className="text-[11px]">Amount</Label>
-                    <Input
-                      type="number"
-                      min={1}
-                      max={remainingAmount || 10000}
-                      value={paymentAmount}
-                      onChange={(e) => setPaymentAmount(Number(e.target.value) || 0)}
-                      className="h-8 text-xs font-bold"
-                    />
-                  </div>
-                  <div className="space-y-1">
-                    <Label className="text-[11px]">Method</Label>
-                    <select
-                      value={paymentMethod}
-                      onChange={(e) => setPaymentMethod(e.target.value)}
-                      className="w-full h-8 rounded-nx-md border border-nx-line bg-nx-surface px-2 text-xs font-semibold text-nx-ink"
+            {/* STEP 2: Price Quote, Hold, Payment & Confirmation */}
+            {step === 2 && (
+              <div className="space-y-3">
+                {/* Selected Customer Summary */}
+                {selectedCustomer && (
+                  <div className="flex items-center justify-between p-2.5 rounded-xl border border-nx-border bg-nx-raised/30 text-xs">
+                    <div className="flex items-center gap-2 min-w-0">
+                      <div className="flex size-7 items-center justify-center rounded-full bg-nx-primary text-white font-bold text-xs shrink-0">
+                        {selectedCustomer.displayName.charAt(0)}
+                      </div>
+                      <div className="min-w-0">
+                        <p className="font-semibold text-nx-ink truncate">
+                          {selectedCustomer.displayName}
+                        </p>
+                        {selectedCustomer.type && (
+                          <p className="text-[10px] text-nx-ink-3 truncate">
+                            {selectedCustomer.type}
+                          </p>
+                        )}
+                      </div>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => setStep(1)}
+                      className="text-[11px] font-semibold text-nx-primary hover:underline shrink-0"
                     >
-                      <option value="Cash">Cash</option>
-                      <option value="Card">Credit / Debit Card</option>
-                      <option value="POS">POS Terminal</option>
-                      <option value="BankTransfer">Bank Transfer</option>
-                    </select>
+                      {t("operationsCalendar.clickToBook.customer.change")}
+                    </button>
+                  </div>
+                )}
+
+                {/* Hold Countdown Badge if active */}
+                {holdCountdown && (
+                  <div className="flex items-center justify-between p-2 rounded-lg bg-blue-500/10 border border-blue-500/30 text-xs text-blue-600 dark:text-blue-400">
+                    <span className="flex items-center gap-1.5 font-medium">
+                      <Timer className="size-3.5" />
+                      {t("operationsCalendar.clickToBook.hold.temporaryBadge")}
+                    </span>
+                    <span className="font-mono font-bold">
+                      {t("operationsCalendar.clickToBook.hold.countdown", { time: holdCountdown })}
+                    </span>
+                  </div>
+                )}
+
+                {/* Quote Expired Banner */}
+                {quoteExpiredMessage && (
+                  <Alert variant="warning" className="py-1 text-xs">
+                    <AlertDescription>
+                      {t("operationsCalendar.clickToBook.pricing.expired")}
+                    </AlertDescription>
+                  </Alert>
+                )}
+
+                {/* Authoritative Pricing Box */}
+                <div className="p-3.5 rounded-xl border border-nx-border bg-nx-raised/40 space-y-2">
+                  <div className="flex items-center justify-between">
+                    <h5 className="text-xs font-bold text-nx-ink">
+                      {t("operationsCalendar.clickToBook.pricing.title")}
+                    </h5>
+                    {quoteLoading && <LoadingSpinner size="sm" />}
+                  </div>
+
+                  {quoteError ? (
+                    <div className="space-y-1.5">
+                      <p className="text-xs text-destructive">{quoteError}</p>
+                      <Button
+                        type="button"
+                        size="sm"
+                        variant="outline"
+                        className="h-6 text-[11px]"
+                        onClick={fetchAuthoritativeQuote}
+                      >
+                        <RotateCcw className="size-3 me-1" />
+                        {t("operationsCalendar.clickToBook.pricing.retry")}
+                      </Button>
+                    </div>
+                  ) : quoteLoading ? (
+                    <div className="py-3 text-center text-xs text-nx-ink-3">
+                      {t("operationsCalendar.clickToBook.pricing.calculating")}
+                    </div>
+                  ) : quote ? (
+                    <div className="space-y-1 text-xs">
+                      <div className="flex items-center justify-between text-nx-ink-2">
+                        <span>{t("operationsCalendar.clickToBook.pricing.courtPrice")}</span>
+                        <span>
+                          {quote.subtotalAmount} {quote.currencyCode}
+                        </span>
+                      </div>
+
+                      {quote.discountAmount > 0 && (
+                        <div className="flex items-center justify-between text-emerald-600">
+                          <span>Discount</span>
+                          <span>
+                            -{quote.discountAmount} {quote.currencyCode}
+                          </span>
+                        </div>
+                      )}
+
+                      {quote.taxAmount > 0 && (
+                        <div className="flex items-center justify-between text-nx-ink-2">
+                          <span>Tax</span>
+                          <span>
+                            +{quote.taxAmount} {quote.currencyCode}
+                          </span>
+                        </div>
+                      )}
+
+                      <div className="border-t border-nx-border pt-1.5 flex items-center justify-between text-sm font-bold text-nx-ink">
+                        <span>{t("operationsCalendar.clickToBook.pricing.total")}</span>
+                        <span>
+                          {quote.grandTotal} {quote.currencyCode}
+                        </span>
+                      </div>
+                    </div>
+                  ) : null}
+                </div>
+
+                {/* Price Override (Restricted to authorized managers) */}
+                {canOverridePrice && quote && (
+                  <div className="pt-1">
+                    {!overrideOpen ? (
+                      <button
+                        type="button"
+                        onClick={() => setOverrideOpen(true)}
+                        className="text-[11px] text-nx-primary hover:underline font-semibold"
+                      >
+                        {t("operationsCalendar.clickToBook.pricing.override")}
+                      </button>
+                    ) : (
+                      <div className="p-2.5 rounded-lg border border-nx-border bg-nx-surface space-y-2 text-xs">
+                        <Label className="text-xs font-bold text-nx-ink">
+                          {t("operationsCalendar.clickToBook.pricing.override")}
+                        </Label>
+                        <Input
+                          type="number"
+                          placeholder="Override Amount"
+                          value={overrideAmount}
+                          onChange={(e) => setOverrideAmount(e.target.value)}
+                          className="h-7 text-xs"
+                        />
+                        <Input
+                          placeholder={t("operationsCalendar.clickToBook.pricing.overrideReason")}
+                          value={overrideReason}
+                          onChange={(e) => setOverrideReason(e.target.value)}
+                          className="h-7 text-xs"
+                        />
+                      </div>
+                    )}
+                  </div>
+                )}
+
+                {/* Payment Option (Default is payment NOT required) */}
+                <div className="space-y-2 pt-1">
+                  <Label className="text-xs font-bold text-nx-ink">
+                    {t("operationsCalendar.clickToBook.payment.title")}
+                  </Label>
+
+                  <div className="space-y-1.5">
+                    <label className="flex items-center gap-2 p-2 rounded-lg border border-nx-border hover:bg-nx-raised cursor-pointer">
+                      <input
+                        type="radio"
+                        name="paymentOption"
+                        checked={paymentChoice === "later"}
+                        onChange={() => setPaymentChoice("later")}
+                        className="text-nx-primary"
+                      />
+                      <span className="text-xs font-semibold text-nx-ink">
+                        {t("operationsCalendar.clickToBook.payment.payLater")}
+                      </span>
+                    </label>
+
+                    {canRecordPayment && (
+                      <label className="flex items-start gap-2 p-2 rounded-lg border border-nx-border hover:bg-nx-raised cursor-pointer">
+                        <input
+                          type="radio"
+                          name="paymentOption"
+                          checked={paymentChoice === "now"}
+                          onChange={() => setPaymentChoice("now")}
+                          className="mt-0.5 text-nx-primary"
+                        />
+                        <div className="flex-1">
+                          <span className="text-xs font-semibold text-nx-ink block">
+                            {t("operationsCalendar.clickToBook.payment.recordNow")}
+                          </span>
+
+                          {paymentChoice === "now" && (
+                            <div className="space-y-2 mt-2 pt-1 border-t border-nx-border/50">
+                              <div className="flex items-center gap-2">
+                                <Input
+                                  type="number"
+                                  value={payNowAmount}
+                                  onChange={(e) => setPayNowAmount(Number(e.target.value) || 0)}
+                                  className="h-7 w-28 text-xs font-bold"
+                                />
+                                <span className="text-[11px] text-nx-ink-2">
+                                  {t("operationsCalendar.clickToBook.payment.remaining", {
+                                    amount: Math.max(0, (quote?.grandTotal ?? 0) - payNowAmount),
+                                    currency: quote?.currencyCode || "EGP",
+                                  })}
+                                </span>
+                              </div>
+
+                              <div className="grid grid-cols-2 gap-2">
+                                <select
+                                  value={paymentMethod}
+                                  onChange={(e) =>
+                                    setPaymentMethod(
+                                      e.target.value as
+                                        | "Cash"
+                                        | "Card"
+                                        | "POS"
+                                        | "BankTransfer"
+                                        | "Other"
+                                    )
+                                  }
+                                  className="h-7 rounded border border-nx-border bg-nx-surface text-xs px-2"
+                                >
+                                  <option value="Cash">Cash</option>
+                                  <option value="Card">Card</option>
+                                  <option value="BankTransfer">Bank Transfer</option>
+                                </select>
+                                <Input
+                                  placeholder={t(
+                                    "operationsCalendar.clickToBook.payment.referencePlaceholder"
+                                  )}
+                                  value={paymentReference}
+                                  onChange={(e) => setPaymentReference(e.target.value)}
+                                  className="h-7 text-xs"
+                                />
+                              </div>
+                            </div>
+                          )}
+                        </div>
+                      </label>
+                    )}
                   </div>
                 </div>
-                <div className="space-y-1">
-                  <Label className="text-[11px]">Reference / Receipt #</Label>
-                  <Input
-                    placeholder="e.g. REC-1029 or Cash"
-                    value={paymentRef}
-                    onChange={(e) => setPaymentRef(e.target.value)}
-                    className="h-8 text-xs"
-                  />
-                </div>
-                <Button type="submit" size="sm" disabled={paymentSubmitting} className="h-7 text-xs w-full font-bold">
-                  {paymentSubmitting ? "Recording..." : "Save Payment"}
-                </Button>
-              </form>
-            )}
-
-            {paymentSuccess && (
-              <p className="text-xs text-center font-medium text-emerald-600 dark:text-emerald-400">
-                Payment recorded successfully.
-              </p>
+              </div>
             )}
           </div>
         )}
 
-        <DialogFooter className="pt-2 border-t border-nx-line flex-col sm:flex-row gap-2">
-          {stage === "form" && (
-            <>
+        {/* ======================================================== */}
+        {/* FOOTER CONTROLS                                          */}
+        {/* ======================================================== */}
+        {stage === "booking" && (
+          <DialogFooter className="pt-3 border-t border-nx-border flex items-center justify-between">
+            {step === 2 && canCreateHold && !holdExpiresAtUtc ? (
               <Button
                 type="button"
                 variant="ghost"
                 size="sm"
-                onClick={handleHold}
-                disabled={!selectedCustomer || submitting}
-                className="text-xs"
+                onClick={handleHoldTemporarily}
+                disabled={submitting || !selectedCustomer}
+                className="text-xs text-nx-ink-2"
               >
-                Hold Temporarily
+                <Timer className="size-3.5 me-1" />
+                {t("operationsCalendar.clickToBook.hold.holdAction")}
               </Button>
-              <Button
-                type="button"
-                size="sm"
-                onClick={handleConfirm}
-                disabled={!selectedCustomer || submitting || quoteLoading}
-                loading={submitting}
-                className="font-bold text-xs flex-1"
-              >
-                Confirm Booking
-              </Button>
-            </>
-          )}
+            ) : (
+              <div />
+            )}
 
-          {stage === "held" && (
-            <>
+            <div className="flex items-center gap-2">
               <Button
                 type="button"
                 variant="outline"
                 size="sm"
-                onClick={() => onOpenChange(false)}
-                className="text-xs"
+                onClick={() => {
+                  if (step > (isContextual ? 1 : 0)) {
+                    setStep((prev) => prev - 1);
+                  } else {
+                    onOpenChange(false);
+                  }
+                }}
+                className="text-xs font-semibold"
               >
-                Close
+                {step > (isContextual ? 1 : 0)
+                  ? t("operationsCalendar.clickToBook.confirm.back")
+                  : t("operationsCalendar.clickToBook.confirm.cancel")}
               </Button>
-              <Button
-                type="button"
-                size="sm"
-                onClick={handleConfirmFromHold}
-                disabled={submitting}
-                loading={submitting}
-                className="font-bold text-xs flex-1"
-              >
-                Confirm Booking Now
-              </Button>
-            </>
-          )}
 
-          {stage === "confirmed" && (
-            <>
-              {remainingAmount > 0 && !recordPaymentOpen && (
+              {step < 2 ? (
                 <Button
                   type="button"
-                  variant="outline"
                   size="sm"
-                  onClick={() => setRecordPaymentOpen(true)}
-                  className="text-xs font-semibold"
+                  onClick={() => setStep((prev) => prev + 1)}
+                  disabled={step === 1 && !selectedCustomer}
+                  className="text-xs font-bold bg-nx-primary hover:bg-nx-primary-hover text-white"
                 >
-                  <CreditCard className="size-3.5 mr-1" aria-hidden="true" />
-                  Record Payment
+                  {t("operationsCalendar.clickToBook.confirm.next")}
+                  <ArrowRight className="size-3.5 ms-1 rtl:rotate-180" />
+                </Button>
+              ) : (
+                <Button
+                  type="button"
+                  size="sm"
+                  onClick={handleConfirm}
+                  disabled={submitting || quoteLoading || !quote || holdExpired || !canCreateBooking}
+                  className="text-xs font-bold bg-nx-primary hover:bg-nx-primary-hover text-white shadow-xs"
+                >
+                  {submitting ? (
+                    <>
+                      <LoadingSpinner size="sm" className="me-2" />
+                      {t("operationsCalendar.clickToBook.confirm.confirming")}
+                    </>
+                  ) : (
+                    t("operationsCalendar.clickToBook.confirm.action")
+                  )}
                 </Button>
               )}
-              {reservationId && (
-                <Button asChild variant="outline" size="sm" className="text-xs">
-                  <Link href={`/venue/bookings/${encodeURIComponent(reservationId)}`}>
-                    <ExternalLink className="size-3.5 mr-1" aria-hidden="true" />
-                    Open Booking
-                  </Link>
-                </Button>
-              )}
-              <Button
-                type="button"
-                size="sm"
-                onClick={() => onOpenChange(false)}
-                className="text-xs font-bold flex-1"
-              >
-                Done
-              </Button>
-            </>
-          )}
-        </DialogFooter>
+            </div>
+          </DialogFooter>
+        )}
       </DialogContent>
     </Dialog>
   );

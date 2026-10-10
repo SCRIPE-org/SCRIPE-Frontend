@@ -22,6 +22,7 @@ import { VENUE_PERMISSIONS } from "@modules/venue/permission-constants";
 import { VenueProfileQuickCreateDialog } from "@modules/venue/venue-profile/src/presentation/components/VenueProfileQuickCreateDialog";
 import { Plus } from "lucide-react";
 import type { VenueProfile } from "@modules/venue/venue-profile/src/domain/entities/VenueProfile";
+import { mapVenueError } from "@modules/venue/shared/src/utils/venueErrorMapper";
 
 interface FacilityQuickCreateDialogProps {
   open: boolean;
@@ -56,7 +57,32 @@ export function FacilityQuickCreateDialog({
       setLoadingVenueProfiles(true);
       const res = await venueContainer.venueProfileRepository.getAll({ page: 1, pageSize: 100 });
       setVenueProfiles(res.items);
-      setVenueProfileId((current) => current || res.items[0]?.id || "");
+      if (res.items.length > 0) {
+        setVenueProfileId((current) => current || res.items[0].id);
+      } else {
+        // If no venue profiles exist yet for the tenant, auto-create one
+        try {
+          const sites = await venueContainer.siteRepository.getAll({ page: 1, pageSize: 10 });
+          let siteId = sites.items[0]?.id;
+          if (!siteId) {
+            siteId = await venueContainer.siteRepository.create({
+              name: "Main Complex",
+              timeZone: "UTC",
+            });
+          }
+          const vpId = await venueContainer.venueProfileRepository.create({
+            siteId,
+            code: `VP_${Date.now().toString().slice(-6)}`,
+            name: "Main Venue",
+            description: "Default venue profile",
+          });
+          const recheck = await venueContainer.venueProfileRepository.getAll({ page: 1, pageSize: 100 });
+          setVenueProfiles(recheck.items);
+          setVenueProfileId(vpId);
+        } catch {
+          // Fall back gracefully
+        }
+      }
     } catch {
       // Fail safely
     } finally {
@@ -77,9 +103,12 @@ export function FacilityQuickCreateDialog({
     e.preventDefault();
     const newErrors: { venueProfileId?: string; code?: string; name?: string } = {};
 
-    if (!venueProfileId.trim()) {
-      newErrors.venueProfileId = t("validation.required") || "Venue Profile is required";
+    let targetVenueProfileId = venueProfileId.trim();
+    if (!targetVenueProfileId && venueProfiles.length > 0) {
+      targetVenueProfileId = venueProfiles[0].id;
+      setVenueProfileId(targetVenueProfileId);
     }
+
     if (!code.trim()) {
       newErrors.code = t("validation.required") || "Code is required";
     }
@@ -94,8 +123,27 @@ export function FacilityQuickCreateDialog({
 
     setSaving(true);
     try {
+      // If still missing venueProfileId, resolve or create on demand
+      if (!targetVenueProfileId) {
+        const sites = await venueContainer.siteRepository.getAll({ page: 1, pageSize: 10 });
+        let siteId = sites.items[0]?.id;
+        if (!siteId) {
+          siteId = await venueContainer.siteRepository.create({
+            name: name.trim() || "Main Sports Site",
+            timeZone: "UTC",
+          });
+        }
+        targetVenueProfileId = await venueContainer.venueProfileRepository.create({
+          siteId,
+          code: `VP_${Date.now().toString().slice(-6)}`,
+          name: name.trim() || "Main Venue",
+          description: "Authoritative venue profile",
+        });
+        setVenueProfileId(targetVenueProfileId);
+      }
+
       const createdId = await venueContainer.facilityRepository.create({
-        venueProfileId: venueProfileId.trim(),
+        venueProfileId: targetVenueProfileId,
         code: code.trim(),
         name: name.trim(),
         description: description.trim() || undefined,
@@ -109,8 +157,8 @@ export function FacilityQuickCreateDialog({
       onOpenChange(false);
       onSuccess?.(createdId);
     } catch (err: unknown) {
-      const message = err instanceof Error ? err.message : t("common.error");
-      toastError(message);
+      const safeError = mapVenueError(err);
+      toastError(safeError.message);
     } finally {
       setSaving(false);
     }

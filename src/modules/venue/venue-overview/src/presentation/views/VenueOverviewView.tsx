@@ -15,6 +15,8 @@ import { VenueNav } from "@modules/venue/shared/src/presentation/components/Venu
 import { useVenueOverviewViewModel } from "../viewmodels/useVenueOverviewViewModel";
 import { VenueOverviewHeader } from "../components/VenueOverviewHeader";
 import { VenueOverviewKpiStrip } from "../components/VenueOverviewKpiStrip";
+import { VenueOverviewLiveCourts } from "../components/VenueOverviewLiveCourts";
+import { VenueOverviewTodaySchedule } from "../components/VenueOverviewTodaySchedule";
 import { VenueOverviewHeroTimeline } from "../components/VenueOverviewHeroTimeline";
 import { VenueOverviewLiveFeed } from "../components/VenueOverviewLiveFeed";
 import { VenueOverviewDemandChart } from "../components/VenueOverviewDemandChart";
@@ -181,6 +183,16 @@ export function VenueOverviewView({ facilityId, localDate }: Props) {
         attentionCount={canViewAttention ? attentionCount : undefined}
         t={t}
       />
+
+      {/* Approved Reference Composition: Live Courts (8 cols) + Today's Schedule (4 cols) */}
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-12 items-start">
+        <div className="lg:col-span-8">
+          <VenueOverviewLiveCourts items={state.resourceActivity} t={t} />
+        </div>
+        <div className="lg:col-span-4">
+          <VenueOverviewTodaySchedule items={state.upNext} t={t} />
+        </div>
+      </div>
 
       {/* Main Hero Row: Today's Venue Activity (8 cols) + Live Venue Feed (4 cols) */}
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-12 items-stretch">

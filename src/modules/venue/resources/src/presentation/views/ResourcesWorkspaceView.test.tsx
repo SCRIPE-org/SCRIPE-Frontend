@@ -10,7 +10,26 @@ vi.mock("next/navigation", () => ({
 
 vi.mock("@core/providers/i18n-provider", () => ({
   useI18n: () => ({
-    t: (key: string, opts?: { defaultValue?: string }) => opts?.defaultValue || key,
+    t: (key: string, opts?: { defaultValue?: string }) => {
+      const map: Record<string, string> = {
+        "resources.title": "Courts & Spaces",
+        "resources.subtitle": "Manage your courts, spaces, working hours, booking slots, and pricing.",
+        "resources.addCourt": "+ Add Court / Space",
+        "resources.advancedSetup": "Settings",
+        "resources.empty.title": "No courts or spaces yet",
+        "resources.empty.action": "Start Setup Journey",
+        "resources.card.viewEdit": "Edit",
+        "resources.card.calendar": "Calendar",
+        "resources.card.book": "Book",
+        "resources.card.slot": "min slots",
+        "resources.card.perSlot": "/ slot",
+        "resources.card.open247": "Open 24/7",
+        "resources.tabs.workingHours": "Working Hours",
+        "resources.tabs.bookingRules": "Booking Rules",
+        "resources.tabs.pricing": "Pricing",
+      };
+      return map[key] ?? opts?.defaultValue ?? key;
+    },
     language: "en",
     direction: "ltr",
   }),
@@ -51,7 +70,7 @@ describe("ResourcesWorkspaceView", () => {
       error: null,
       items: mockItems,
       allItems: mockItems,
-      facilities: [{ id: "fac-1", name: "Nasr City", code: "NASR", venueProfileId: "" }],
+      facilities: [{ id: "fac-1", name: "Nasr City", code: "NASR", venueProfileId: "" } as never],
       selectedFacilityId: "",
       setSelectedFacilityId: vi.fn(),
       searchQuery: "",
@@ -66,10 +85,10 @@ describe("ResourcesWorkspaceView", () => {
     render(<ResourcesWorkspaceView />);
 
     expect(screen.getByTestId("venue-resources-workspace")).toBeInTheDocument();
-    expect(screen.getByRole("heading", { name: "Courts & Fields" })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "Courts & Spaces" })).toBeInTheDocument();
     expect(screen.getByText("Padel Court 1")).toBeInTheDocument();
     expect(screen.getByText("800 EGP")).toBeInTheDocument();
-    expect(screen.getByText("Advanced Settings")).toBeInTheDocument();
+    expect(screen.getAllByText("Settings")[0]).toBeInTheDocument();
   });
 
   it("renders empty state when no items exist", () => {
@@ -92,11 +111,11 @@ describe("ResourcesWorkspaceView", () => {
 
     render(<ResourcesWorkspaceView />);
 
-    expect(screen.getByText("No courts or fields yet")).toBeInTheDocument();
+    expect(screen.getByText("No courts or spaces yet")).toBeInTheDocument();
     expect(screen.getByText("Start Setup Journey")).toBeInTheDocument();
   });
 
-  it("opens wizard when + Add Court / Field button is clicked", () => {
+  it("opens wizard when + Add Court / Space button is clicked", () => {
     vi.mocked(useResourcesWorkspaceViewModel).mockReturnValue({
       loading: false,
       error: null,

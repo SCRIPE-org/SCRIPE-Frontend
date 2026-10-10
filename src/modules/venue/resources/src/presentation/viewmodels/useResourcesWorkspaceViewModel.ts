@@ -9,6 +9,7 @@ import type {
   FirstTimeSetupInput,
   ResourceWorkspaceItem,
 } from "../../domain/entities/ResourceWorkspaceItem";
+import { mapVenueError } from "@modules/venue/shared/src/utils/venueErrorMapper";
 
 const PAGE_SIZE = 100;
 
@@ -19,6 +20,8 @@ export function useResourcesWorkspaceViewModel() {
     schedulableResourceRepository,
     availabilityRepository,
     commercialPricingRepository,
+    venueProfileRepository,
+    siteRepository,
   } = getVenueContainer();
 
   const [loading, setLoading] = useState(true);
@@ -133,11 +136,47 @@ export function useResourcesWorkspaceViewModel() {
         )?.id;
 
         if (!facilityId) {
+          // Authoritatively resolve VenueProfileId from existing facility or tenant context
+          let venueProfileId = facilities[0]?.venueProfileId || "";
+          try {
+            if (!venueProfileId) {
+              const profilesRes = await venueProfileRepository.getAll({ page: 1, pageSize: 10 });
+              if (profilesRes.items.length > 0) {
+                venueProfileId = profilesRes.items[0].id;
+              }
+            } else {
+              // Orchestrate first-time setup: ensure Site exists first
+              let siteId = "";
+              const sitesRes = await siteRepository.getAll({ page: 1, pageSize: 10 });
+              if (sitesRes.items.length > 0) {
+                siteId = sitesRes.items[0].id;
+              } else {
+                siteId = await siteRepository.create({
+                  name: input.branchName.trim() || "Main Sports Site",
+                  timeZone: input.timeZoneId || "UTC",
+                });
+              }
+              const vpCode = `VP_${Date.now().toString().slice(-6)}`;
+              venueProfileId = await venueProfileRepository.create({
+                siteId,
+                name: input.branchName.trim() || "Main Venue",
+                code: vpCode,
+                description: `${input.branchName.trim()} venue profile`,
+              });
+            }
+          } catch {
+            // Handled below
+          }
+
+          if (!venueProfileId) {
+            throw new Error("Unable to resolve or create venue profile context for this facility.");
+          }
+
           const code = input.branchName.trim().replace(/\s+/g, "_").toUpperCase().slice(0, 30);
           facilityId = await facilityRepository.create({
             name: input.branchName.trim(),
             code,
-            venueProfileId: "",
+            venueProfileId,
             description: `${input.branchName.trim()} sports branch`,
           });
         }
@@ -213,7 +252,7 @@ export function useResourcesWorkspaceViewModel() {
             ? weekDays.map((dayOfWeek) => ({
                 dayOfWeek,
                 startLocal: "00:00",
-                endLocal: "23:59",
+                endLocal: "23:59:59",
                 capacityOverride: null,
               }))
             : weekDays.map((dayOfWeek) => ({
@@ -259,7 +298,8 @@ export function useResourcesWorkspaceViewModel() {
         await loadData();
         return true;
       } catch (err) {
-        setError(err instanceof Error ? err.message : "Failed to execute setup journey");
+        const safe = mapVenueError(err);
+        setError(safe.message);
         return false;
       } finally {
         setWizardSubmitting(false);
@@ -274,6 +314,8 @@ export function useResourcesWorkspaceViewModel() {
       loadData,
       profiles,
       schedulableResourceRepository,
+      siteRepository,
+      venueProfileRepository,
     ]
   );
 

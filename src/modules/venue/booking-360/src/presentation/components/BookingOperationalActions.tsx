@@ -52,6 +52,8 @@ interface Props {
   scheduledTime?: string;
   currentStartUtc?: string;
   currentEndUtc?: string;
+  currentTotal?: number;
+  currencyCode?: string;
   t: (key: string, values?: Record<string, string | number>) => string;
   onCheckIn: () => void;
   onComplete: () => void;
@@ -143,6 +145,7 @@ export function BookingOperationalActions(props: Props) {
               {confirmed && props.canCheckIn && (
                 <Button
                   type="button"
+                  className="font-bold shadow-sm bg-nx-accent hover:opacity-95 text-white gap-2 px-5"
                   loading={props.activeAction === "checkIn"}
                   disabled={props.activeAction !== null}
                   onClick={props.onCheckIn}
@@ -157,6 +160,7 @@ export function BookingOperationalActions(props: Props) {
               {checkedIn && props.canComplete && (
                 <Button
                   type="button"
+                  className="font-bold shadow-sm bg-emerald-600 hover:bg-emerald-700 text-white gap-2 px-5"
                   loading={props.activeAction === "complete"}
                   disabled={props.activeAction !== null}
                   onClick={props.onComplete}
@@ -181,6 +185,8 @@ export function BookingOperationalActions(props: Props) {
                   quantity={props.quantity ?? 1}
                   direction={props.direction}
                   disabled={props.activeAction !== null}
+                  currentTotal={props.currentTotal}
+                  currencyCode={props.currencyCode}
                   t={props.t}
                   onConfirmReschedule={(input) => {
                     setRescheduleOpen(false);
@@ -203,6 +209,8 @@ export function BookingOperationalActions(props: Props) {
                   quantity={props.quantity ?? 1}
                   direction={props.direction}
                   disabled={props.activeAction !== null}
+                  currentTotal={props.currentTotal}
+                  currencyCode={props.currencyCode}
                   t={props.t}
                   onConfirmChangeResource={(input) => {
                     setChangeResourceOpen(false);

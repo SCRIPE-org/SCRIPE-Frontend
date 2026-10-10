@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
-import { ModuleErrorBoundary } from "@core/ui/module-error-boundary";
-import { BookingWorkspaceView } from "@modules/venue/booking/src/presentation/views/BookingWorkspaceView";
+import { redirect } from "next/navigation";
 
 export const metadata: Metadata = {
   title: "New Venue Booking",
@@ -17,17 +16,25 @@ function first(value: string | string[] | undefined): string | undefined {
 
 export default async function NewBookingPage({ searchParams }: BookingPageProps) {
   const values = await searchParams;
+  const params = new URLSearchParams();
+  params.set("newBooking", "true");
+
+  const facilityId = first(values.facilityId);
+  if (facilityId) params.set("facilityId", facilityId);
+
+  const resourceId = first(values.resourceId);
+  if (resourceId) params.set("resourceId", resourceId);
+
+  const date = first(values.date);
+  if (date) params.set("date", date);
+
+  const startTime = first(values.startTime);
+  if (startTime) params.set("startTime", startTime);
+
   const duration = Number(first(values.durationMinutes));
-  const prefill = {
-    facilityId: first(values.facilityId),
-    resourceId: first(values.resourceId),
-    date: first(values.date),
-    startTime: first(values.startTime),
-    durationMinutes: Number.isInteger(duration) && duration >= 15 && duration <= 1440 ? duration : undefined,
-  };
-  return (
-    <ModuleErrorBoundary moduleName="booking.title">
-      <BookingWorkspaceView prefill={prefill} />
-    </ModuleErrorBoundary>
-  );
+  if (Number.isInteger(duration) && duration >= 15 && duration <= 1440) {
+    params.set("durationMinutes", duration.toString());
+  }
+
+  redirect(`/venue/calendar?${params.toString()}`);
 }

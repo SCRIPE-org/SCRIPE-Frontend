@@ -32,7 +32,7 @@ export function useModuleLocales(
   moduleKey: string
 ): { isLoaded: boolean } {
   const { registerBothLanguages, markModuleLoaded, isModuleLoaded } = useI18n();
-  const isLoaded = isModuleLoaded(moduleKey);
+  const isLoaded = typeof isModuleLoaded === "function" ? isModuleLoaded(moduleKey) : false;
   // Stable ref to prevent re-creation of loader closure from triggering re-loads.
   const loaderRef = useRef(loader);
   useEffect(() => {
@@ -50,8 +50,12 @@ export function useModuleLocales(
       .then((mod) => {
         if (cancelled) return;
         // Register BOTH languages in a single O(1) call
-        registerBothLanguages(mod.en, mod.ar);
-        markModuleLoaded(moduleKey);
+        if (typeof registerBothLanguages === "function") {
+          registerBothLanguages(mod.en, mod.ar);
+        }
+        if (typeof markModuleLoaded === "function") {
+          markModuleLoaded(moduleKey);
+        }
       })
       .catch((err) => {
         if (!cancelled) {

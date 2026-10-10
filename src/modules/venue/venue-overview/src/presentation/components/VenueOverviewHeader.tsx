@@ -18,6 +18,8 @@ import {
   SelectValue,
 } from "@core/ui/select";
 
+import { useAppStore } from "@core/store/useAppStore";
+
 interface FacilityOption {
   id: string;
   name: string;
@@ -64,6 +66,8 @@ export function VenueOverviewHeader({
   onBlockTime,
   t,
 }: Props) {
+  const user = useAppStore((s) => s.user);
+  const userName = user?.firstName || user?.username || "Mohamed";
   const formattedDate = formatDisplayDate(localDate, timeZoneId);
 
   return (
@@ -71,19 +75,30 @@ export function VenueOverviewHeader({
       className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between border-b border-nx-line pb-4 mb-6"
       data-testid="venue-overview-header"
     >
-      {/* Left Context: Title, Venue/Branch context, Date */}
-      <div className="space-y-1.5">
+      {/* Left Context: Friendly Greeting & Facility Context */}
+      <div className="space-y-1">
         <div className="flex flex-wrap items-center gap-2.5">
-          <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-nx-ink">
-            {t("venueOverview.title", { defaultValue: "Venue Operations" })}
+          <h1
+            aria-label={t("venueOverview.title", { defaultValue: "Venue Operations" })}
+            className="text-xl sm:text-2xl font-black tracking-tight text-slate-900 dark:text-white flex items-center gap-2"
+          >
+            <span>👋</span>
+            <span>Good morning, {userName}</span>
           </h1>
           {facilityName && (
-            <Badge variant="outline" className="text-xs font-semibold px-2 py-0.5 border-nx-line/80 bg-nx-surfaceSubtle">
-              <Building2 className="size-3 me-1.5 text-nx-accent" aria-hidden="true" />
+            <Badge variant="outline" className="text-xs font-semibold px-2 py-0.5 border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/80">
+              <Building2 className="size-3 me-1.5 text-blue-600 dark:text-blue-400" aria-hidden="true" />
               <span>{facilityName}</span>
             </Badge>
           )}
         </div>
+
+        <p className="text-xs text-slate-500 dark:text-slate-400">
+          {t("venueOverview.greetingSubtext", {
+            facility: facilityName || "Nasr City Club",
+            defaultValue: `Here's what's happening at ${facilityName || "Nasr City Club"} today.`,
+          })}
+        </p>
 
         <div className="flex flex-wrap items-center gap-2 text-xs text-nx-ink-2">
           <span className="font-medium text-nx-ink">{formattedDate}</span>

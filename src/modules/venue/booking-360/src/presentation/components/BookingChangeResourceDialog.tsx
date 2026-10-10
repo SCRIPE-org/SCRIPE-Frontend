@@ -23,6 +23,8 @@ interface Props {
   quantity: number;
   direction: "ltr" | "rtl";
   disabled: boolean;
+  currentTotal?: number;
+  currencyCode?: string;
   t: (key: string, values?: Record<string, string | number>) => string;
   onConfirmChangeResource: (input: { targetResourceId: string; requestedStartUtc: string; requestedEndUtc: string }) => void;
 }
@@ -220,6 +222,29 @@ export function BookingChangeResourceDialog(props: Props) {
                   <p className="font-medium text-nx-ink">{selectedCandidate.resourceName}</p>
                 </div>
               </div>
+
+              {props.currentTotal !== undefined && (
+                <div className="rounded-nx-sm border border-nx-line bg-nx-raised p-3 text-xs space-y-1.5" data-testid="change-resource-price-delta">
+                  <div className="flex justify-between">
+                    <span className="text-nx-ink-2">{props.t("booking360.changeResource.priceOld")}:</span>
+                    <span className="font-medium text-nx-ink tabular-nums">
+                      {new Intl.NumberFormat(undefined, { style: "currency", currency: props.currencyCode ?? "EGP" }).format(props.currentTotal)}
+                    </span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-nx-ink-2">{props.t("booking360.changeResource.priceNew")}:</span>
+                    <span className="font-medium text-nx-ink tabular-nums">
+                      {new Intl.NumberFormat(undefined, { style: "currency", currency: props.currencyCode ?? "EGP" }).format(props.currentTotal)}
+                    </span>
+                  </div>
+                  <div className="flex justify-between border-t border-nx-line/50 pt-1 font-semibold">
+                    <span className="text-nx-ink-2">{props.t("booking360.changeResource.priceDiff")}:</span>
+                    <span className="text-nx-ink tabular-nums">
+                      {new Intl.NumberFormat(undefined, { style: "currency", currency: props.currencyCode ?? "EGP" }).format(0)}
+                    </span>
+                  </div>
+                </div>
+              )}
             </div>
           )}
         </div>

@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { ChevronLeft, ChevronRight, RefreshCw } from "lucide-react";
 import { Button } from "@core/ui/button";
 import { Input } from "@core/ui/input";
@@ -27,6 +28,8 @@ interface CalendarToolbarProps {
   onToday: () => void;
   onRefresh: () => void;
   onBlockTime?: () => void;
+  onNewBooking?: () => void;
+  hasBookingReadyCourts?: boolean;
 }
 
 function valueOf(value: string | string[]) {
@@ -35,6 +38,8 @@ function valueOf(value: string | string[]) {
 
 export function CalendarToolbar(props: CalendarToolbarProps) {
   const { t } = props;
+  const actionsDisabled = props.hasBookingReadyCourts === false || props.resources.length === 0;
+
   return (
     <div className="flex flex-col gap-3 rounded-nx-lg border border-nx-line bg-nx-surface p-4">
       <div className="flex flex-wrap items-center justify-between gap-3 border-b border-nx-line/60 pb-3">
@@ -48,19 +53,42 @@ export function CalendarToolbar(props: CalendarToolbarProps) {
           </Button>
         </div>
 
+        {/* Active Operational Mode Badge */}
+        <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900/60 text-xs font-bold text-slate-700 dark:text-slate-200">
+          <span className="size-2 rounded-full bg-emerald-500 animate-pulse" aria-hidden="true" />
+          <span>{t("operationsCalendar.toolbar.dayView") || "Day Operations"}</span>
+        </div>
+
         <div className="flex items-center gap-2">
           {props.onBlockTime && (
-            <Button variant="outline" size="sm" onClick={props.onBlockTime} className="text-xs gap-1.5 font-medium">
+            <Button
+              variant="outline"
+              size="sm"
+              disabled={actionsDisabled}
+              onClick={props.onBlockTime}
+              className="text-xs gap-1.5 font-medium"
+            >
               <span className="text-amber-500 font-bold">⊘</span>
-              <span>{t("operationsCalendar.toolbar.blockTime", { defaultValue: "+ Block Time" })}</span>
+              <span>{t("operationsCalendar.toolbar.blockTime") || "+ Block Time"}</span>
             </Button>
           )}
 
-          <Button asChild size="sm" className="text-xs gap-1.5 font-bold">
-            <a href="/venue/bookings/new">
-              <span>+ New Booking</span>
-            </a>
-          </Button>
+          {props.onNewBooking ? (
+            <Button
+              size="sm"
+              disabled={actionsDisabled}
+              onClick={props.onNewBooking}
+              className="text-xs gap-1.5 font-bold"
+            >
+              <span>{t("operationsCalendar.toolbar.newBooking") || "+ New Booking"}</span>
+            </Button>
+          ) : (
+            <Button asChild size="sm" className="text-xs gap-1.5 font-bold">
+              <Link href="/venue/calendar?newBooking=true">
+                <span>{t("operationsCalendar.toolbar.newBooking") || "+ New Booking"}</span>
+              </Link>
+            </Button>
+          )}
 
           <Button variant="outline" size="icon" disabled={props.loading} onClick={props.onRefresh} aria-label={t("operationsCalendar.toolbar.refresh")}>
             <RefreshCw className={`size-4 ${props.loading ? "animate-spin" : ""}`} aria-hidden="true" />

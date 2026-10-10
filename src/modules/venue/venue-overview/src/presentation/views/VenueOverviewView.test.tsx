@@ -1,6 +1,8 @@
 import { render, screen, waitFor } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { getVenueContainer } from "@modules/venue/di";
+import { useAppStore } from "@core/store/useAppStore";
+import { VENUE_PERMISSIONS } from "@modules/venue/permission-constants";
 import { VenueOverviewView } from "./VenueOverviewView";
 
 vi.mock("@modules/venue/di", () => ({ getVenueContainer: vi.fn() }));
@@ -89,6 +91,7 @@ describe("VenueOverviewView", () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
+    useAppStore.setState({ permissions: [], user: null });
     vi.mocked(getVenueContainer).mockReturnValue({
       venueOverviewService: mockVenueOverviewService,
       facilityRepository: mockFacilityRepository,
@@ -133,11 +136,107 @@ describe("VenueOverviewView", () => {
 
     // Resource Activity List
     expect(screen.getByText("venueOverview.resourceActivity.title")).toBeInTheDocument();
-    expect(screen.getByText("venueOverview.resourceActivity.status.noActiveBooking")).toBeInTheDocument();
+    expect(screen.getAllByText("venueOverview.resourceActivity.status.noActiveBooking").length).toBeGreaterThan(0);
 
     // Deferred Recent Activity Banner
     expect(screen.getByTestId("recent-activity-deferred")).toBeInTheDocument();
     expect(screen.getByText("venueOverview.deferred.recentActivity")).toBeInTheDocument();
+
+    // Strict Live Courts truth: verify "Free" is NOT rendered for court without active booking
+    expect(screen.queryByText("Free")).not.toBeInTheDocument();
+  });
+
+  it("renders error alert with retry button on API failure", async () => {
+    mockVenueOverviewService.getOverview.mockResolvedValueOnce({
+      ...mockOverviewState,
+      stage: "failed",
+      error: "Service unavailable",
+    });
+
+    render(<VenueOverviewView facilityId="facility-1" localDate="2026-09-12" />);
+
+    await waitFor(() => {
+      expect(screen.getAllByText("venueOverview.errors.loadFailed")[0]).toBeInTheDocument();
+    });
+    expect(screen.getByText("venueOverview.errors.retry")).toBeInTheDocument();
+  });
+
+  it("renders operational attention KPI and banner when attention permission is granted and signals exist", async () => {
+    useAppStore.setState({
+      permissions: [VENUE_PERMISSIONS.VENUE_ATTENTION_VIEW],
+      user: { id: "op-1", username: "operator" } as never,
+    });
+
+    vi.mocked(getVenueContainer).mockReturnValue({
+      venueOverviewService: mockVenueOverviewService,
+      facilityRepository: mockFacilityRepository,
+      venueAttentionRepository: {
+        get: vi.fn().mockResolvedValue({
+          items: [
+            {
+              id: "sig-1",
+              kind: "OverlappingReservations",
+              resourceId: "court-1",
+              resourceName: "Court 1",
+              occurredAtUtc: "2026-09-12T10:00:00Z",
+              severity: "Warning",
+            },
+            {
+              id: "sig-2",
+              kind: "OverdueCheckIn",
+              resourceId: "court-2",
+              resourceName: "Court 2",
+              occurredAtUtc: "2026-09-12T10:05:00Z",
+              severity: "Alert",
+            },
+          ],
+          totalCount: 2,
+          generatedAtUtc: "2026-09-12T10:00:00Z",
+        }),
+      },
+    } as never);
+
+    render(<VenueOverviewView facilityId="facility-1" localDate="2026-09-12" />);
+
+    await waitFor(() => {
+      expect(screen.getByTestId("venue-overview-view")).toBeInTheDocument();
+    });
+
+    // Attention KPI card and banner render once attention signals load
+    await waitFor(() => {
+      expect(screen.getByText("venueOverview.kpis.needsAttention")).toBeInTheDocument();
+      expect(screen.getByText("venueOverview.attention.activeTitle")).toBeInTheDocument();
+      expect(screen.getByText("venueOverview.attention.viewAll")).toBeInTheDocument();
+    });
+  });
+
+  it("renders Money card only when finance permissions are held", async () => {
+    // 1. Without finance permissions: Money card omitted
+    useAppStore.setState({
+      permissions: [],
+      user: { id: "op-1", username: "operator" } as never,
+    });
+
+    const { unmount } = render(<VenueOverviewView facilityId="facility-1" localDate="2026-09-12" />);
+
+    await waitFor(() => {
+      expect(screen.getByTestId("venue-overview-view")).toBeInTheDocument();
+    });
+    expect(screen.queryByTestId("venue-overview-money-card")).not.toBeInTheDocument();
+    unmount();
+
+    // 2. With receivables permission: Money card rendered
+    useAppStore.setState({
+      permissions: [VENUE_PERMISSIONS.FINANCE_RECEIVABLES_VIEW],
+      user: { id: "op-1", username: "operator" } as never,
+    });
+
+    render(<VenueOverviewView facilityId="facility-1" localDate="2026-09-12" />);
+
+    await waitFor(() => {
+      expect(screen.getByTestId("venue-overview-money-card")).toBeInTheDocument();
+    });
+    expect(screen.getByText("venueOverview.moneyCard.title")).toBeInTheDocument();
   });
 
   it("renders an explicit empty state instead of a fictional facility", async () => {

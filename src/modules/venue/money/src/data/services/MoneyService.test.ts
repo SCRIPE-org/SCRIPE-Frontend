@@ -43,4 +43,33 @@ describe("MoneyService", () => {
     await new MoneyService(api).getPaymentTimeline("payment-1");
     expect(api.get).toHaveBeenCalledWith("/v1/finance/recorded-payments/payment-1/timeline");
   });
+
+  it("calls authoritative analytics endpoints with query filters", async () => {
+    const api = {
+      get: vi.fn().mockImplementation((url: string) => {
+        if (url.includes("by-resource")) return Promise.resolve({ items: [] });
+        if (url.includes("by-time")) return Promise.resolve({ items: [] });
+        if (url.includes("payment-methods")) return Promise.resolve({ items: [] });
+        return Promise.resolve({});
+      }),
+      post: vi.fn(),
+    } as any;
+    const service = new MoneyService(api);
+
+    await service.getSummary({ currencyCode: "EGP" });
+    expect(api.get).toHaveBeenCalledWith("/v1/finance/analytics/summary?currencyCode=EGP");
+
+    await service.getTrend({ interval: "day" });
+    expect(api.get).toHaveBeenCalledWith("/v1/finance/analytics/trend?interval=day");
+
+    await service.getByResource({ currencyCode: "EGP" });
+    expect(api.get).toHaveBeenCalledWith("/v1/finance/analytics/by-resource?currencyCode=EGP");
+
+    await service.getByTimeOfDay({ currencyCode: "EGP" });
+    expect(api.get).toHaveBeenCalledWith("/v1/finance/analytics/by-time?currencyCode=EGP");
+
+    await service.getPaymentMethods({ currencyCode: "EGP" });
+    expect(api.get).toHaveBeenCalledWith("/v1/finance/analytics/payment-methods?currencyCode=EGP");
+  });
 });
+

@@ -9,6 +9,10 @@ import { en as calendarEn } from "./operations-calendar/locales/operations-calen
 import { ar as calendarAr } from "./operations-calendar/locales/operations-calendar.ar";
 import { en as resourcesEn } from "./resources/locales/resources.en";
 import { ar as resourcesAr } from "./resources/locales/resources.ar";
+import { en as venueProfileEn } from "./venue-profile/locales/venue-profile.en";
+import { ar as venueProfileAr } from "./venue-profile/locales/venue-profile.ar";
+import { en as guestPortalEn } from "./guest-portal/locales/guest-portal.en";
+import { ar as guestPortalAr } from "./guest-portal/locales/guest-portal.ar";
 
 function leafKeys(value: unknown, prefix = ""): string[] {
   if (typeof value !== "object" || value === null) return [prefix];
@@ -38,6 +42,14 @@ describe("Venue operator locales", () => {
     expect(leafKeys(resourcesAr).sort()).toEqual(leafKeys(resourcesEn).sort());
   });
 
+  it("keeps Venue Profile English and Arabic keys in parity", () => {
+    expect(leafKeys(venueProfileAr).sort()).toEqual(leafKeys(venueProfileEn).sort());
+  });
+
+  it("keeps Guest Portal English and Arabic keys in parity", () => {
+    expect(leafKeys(guestPortalAr).sort()).toEqual(leafKeys(guestPortalEn).sort());
+  });
+
   it("ships native Arabic operator copy", () => {
     expect(profileAr.resourceProfile.title).toMatch(/[\u0600-\u06ff]/);
     expect(availabilityAr.availability.title).toMatch(/[\u0600-\u06ff]/);
@@ -46,5 +58,7 @@ describe("Venue operator locales", () => {
     expect(calendarAr.operationsCalendar.title).toMatch(/[\u0600-\u06ff]/);
     expect(resourcesAr.resources.title).toMatch(/[\u0600-\u06ff]/);
     expect(resourcesAr.resources.wizard.title).toMatch(/[\u0600-\u06ff]/);
+    expect(venueProfileAr.venueProfile.title).toMatch(/[\u0600-\u06ff]/);
+    expect(guestPortalAr.guestPortal.title).toMatch(/[\u0600-\u06ff]/);
   });
 });

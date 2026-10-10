@@ -40,6 +40,7 @@ import { NexusFooter } from "./_parts/nexus-footer";
 import { useNavigationStore } from "@core/navigation/store/useNavigationStore";
 import { useWorkspace } from "@core/providers/workspace-provider";
 import { HubTopBar } from "@modules/home";
+import { VenueShell } from "@modules/venue/shared/src/presentation/components/VenueShell";
 
 // ── Workspace transition context ─────────────────────────────────────────────
 interface WorkspaceTransitionContextType {
@@ -84,6 +85,8 @@ export function NexusLayout({ children }: NexusLayoutProps) {
   const isHubPage =
     pathname === "/hub" ||
     (workspaceGroups.length === 0 && !activeWorkspaceKey && pathname === "/");
+
+  const isVenuePage = pathname === "/venue" || pathname?.startsWith("/venue/");
 
   const openMobile = useCallback(() => setMobileMenuOpen(true), []);
   const closeMobile = useCallback(() => setMobileMenuOpen(false), []);
@@ -194,6 +197,9 @@ export function NexusLayout({ children }: NexusLayoutProps) {
           <NexusSearchPalette open={searchOpen} onOpenChange={setSearchOpen} />
           <NexusAppLauncher open={appLauncherOpen} onOpenChange={setAppLauncherOpen} />
         </div>
+      ) : isVenuePage ? (
+        /* ── Approved SCRIPE Venue Shell: Dedicated Dark Sidebar & Topbar ── */
+        <VenueShell>{children}</VenueShell>
       ) : (
         /* ── Normal Nexus Layout: Dual-rail with sidebar ──────────────── */
         <div

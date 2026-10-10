@@ -92,4 +92,7 @@ export const VENUE_PERMISSIONS = {
   // Cross-module read consumed by the Venue composition layer. Party Kernel
   // remains the owner of the permission and customer data.
   CUSTOMER_PARTY_VIEW: "parties.view",
+
+  // Cross-module read consumed by the Venue composition layer for Team management
+  TEAM_VIEW: "admins.view",
 } as const;

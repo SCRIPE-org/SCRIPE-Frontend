@@ -8,7 +8,9 @@ export interface BookingFinanceSummary {
   invoiceNumber: string;
   currencyCode: string;
   effectiveTotalAmount: number;
+  paidAmount: number;
   outstandingAmount: number;
+  creditAmount: number;
   status: string;
 }
 
@@ -34,7 +36,9 @@ export function useBookingFinanceSummary(reservationId: string, canViewReceivabl
         invoiceNumber: invoice.invoiceNumber,
         currencyCode: invoice.currencyCode,
         effectiveTotalAmount: invoice.effectiveTotalAmount,
+        paidAmount: invoice.paidAmount ?? Math.max(0, invoice.effectiveTotalAmount - invoice.outstandingAmount),
         outstandingAmount: invoice.outstandingAmount,
+        creditAmount: invoice.creditAmount ?? 0,
         status: invoice.status,
       } : null);
     } catch {

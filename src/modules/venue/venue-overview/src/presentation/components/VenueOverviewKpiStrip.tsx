@@ -5,9 +5,10 @@ import {
   CalendarCheck2,
   Clock4,
   LogIn,
-  ShieldAlert,
   Layers,
   ArrowUpRight,
+  Sparkles,
+  ShieldAlert,
 } from "lucide-react";
 import { cn } from "@core/common/utils";
 import { Card, CardContent } from "@core/ui/card";
@@ -35,71 +36,71 @@ export function VenueOverviewKpiStrip({ kpis, attentionCount, t }: Props) {
     });
   }
 
-  const showAttentionCard = attentionCount !== undefined;
-
   return (
     <div
-      className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4 mb-6"
+      className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-5 mb-6 items-stretch"
       data-testid="venue-overview-kpi-strip"
     >
       {/* Metric 1 — Bookings Today */}
       <Link href="/venue/calendar" className="block group">
-        <Card className="border-nx-line bg-nx-surface hover:border-nx-accent/50 hover:shadow-nx-sm transition-all duration-nx-micro">
-          <CardContent className="p-4">
-            <div className="flex items-center gap-3.5">
-              <div className="flex size-11 items-center justify-center rounded-nx-md border border-nx-accent/30 bg-nx-accent/10 text-nx-accent shrink-0 group-hover:bg-nx-accent/20 transition-colors">
+        <Card className="h-full border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 hover:border-blue-500/50 hover:shadow-md transition-all rounded-xl">
+          <CardContent className="p-4 flex flex-col justify-between h-full">
+            <div className="flex items-center justify-between">
+              <div className="flex size-10 items-center justify-center rounded-xl bg-purple-50 text-purple-600 dark:bg-purple-950/50 dark:text-purple-400">
                 <CalendarCheck2 className="size-5" aria-hidden="true" />
               </div>
-              <div className="min-w-0 flex-1">
-                <div className="flex items-center justify-between">
-                  <p className="text-xs font-semibold text-nx-ink-2 truncate">
-                    {t("venueOverview.kpis.todayReservations", { defaultValue: "Bookings Today" })}
-                  </p>
-                  <ArrowUpRight className="size-3 text-nx-ink-3 opacity-0 group-hover:opacity-100 transition-opacity" />
-                </div>
-                <div className="text-2xl font-bold tabular-nums text-nx-ink mt-0.5">
-                  {kpis.todayReservationsCount}
-                </div>
-                <p className="text-[11px] text-nx-ink-3 truncate mt-0.5 tabular-nums">
-                  {t("venueOverview.kpis.todayReservationsSubtext", {
-                    confirmed: kpis.todayReservationsConfirmedCount,
-                    checkedIn: kpis.todayReservationsCheckedInCount,
-                    defaultValue: `${kpis.todayReservationsConfirmedCount} confirmed · ${kpis.todayReservationsCheckedInCount} checked in`,
-                  })}
-                </p>
+              <ArrowUpRight className="size-4 text-slate-400 group-hover:text-blue-600 transition-colors" />
+            </div>
+            <div className="mt-3">
+              <div className="text-2xl font-black tabular-nums text-slate-900 dark:text-white">
+                {kpis.todayReservationsCount}
               </div>
+              <p className="text-xs font-semibold text-slate-500 dark:text-slate-400 mt-0.5 truncate">
+                {t("venueOverview.kpis.todayReservations", { defaultValue: "Bookings Today" })}
+              </p>
+              <p className="text-[11px] text-slate-400 dark:text-slate-500 truncate mt-0.5 tabular-nums">
+                {t("venueOverview.kpis.todayReservationsSubtext", {
+                  confirmed: kpis.todayReservationsConfirmedCount,
+                  checkedIn: kpis.todayReservationsCheckedInCount,
+                  defaultValue: `${kpis.todayReservationsConfirmedCount} confirmed · ${kpis.todayReservationsCheckedInCount} checked in`,
+                })}
+              </p>
             </div>
           </CardContent>
         </Card>
       </Link>
 
-      {/* Metric 2 — Checked In Now */}
+      {/* Metric 2 — Courts In Use / Checked In Now */}
       <Link href="/venue/calendar" className="block group">
-        <Card className="border-nx-line bg-nx-surface hover:border-success/50 hover:shadow-nx-sm transition-all duration-nx-micro">
-          <CardContent className="p-4">
-            <div className="flex items-center gap-3.5">
-              <div className="flex size-11 items-center justify-center rounded-nx-md border border-success/30 bg-success/10 text-success shrink-0 group-hover:bg-success/20 transition-colors">
+        <Card className="h-full border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 hover:border-emerald-500/50 hover:shadow-md transition-all rounded-xl">
+          <CardContent className="p-4 flex flex-col justify-between h-full">
+            <div className="flex items-center justify-between">
+              <div className="flex size-10 items-center justify-center rounded-xl bg-emerald-50 text-emerald-600 dark:bg-emerald-950/50 dark:text-emerald-400">
                 <LogIn className="size-5" aria-hidden="true" />
               </div>
-              <div className="min-w-0 flex-1">
-                <div className="flex items-center justify-between">
-                  <p className="text-xs font-semibold text-nx-ink-2 truncate">
-                    {t("venueOverview.kpis.checkedInNow", { defaultValue: "Checked In Now" })}
-                  </p>
-                  <ArrowUpRight className="size-3 text-nx-ink-3 opacity-0 group-hover:opacity-100 transition-opacity" />
-                </div>
-                <div className="flex items-baseline gap-2 mt-0.5">
-                  <span className="text-2xl font-bold tabular-nums text-nx-ink">
-                    {kpis.checkedInNowCount}
+              {kpis.checkedInNowCount > 0 ? (
+                <span className="flex size-2 rounded-full bg-emerald-500 animate-pulse" aria-hidden="true" />
+              ) : (
+                <ArrowUpRight className="size-4 text-slate-400 group-hover:text-emerald-600 transition-colors" />
+              )}
+            </div>
+            <div className="mt-3">
+              <div className="flex items-baseline gap-2">
+                <span className="text-2xl font-black tabular-nums text-slate-900 dark:text-white">
+                  {kpis.checkedInNowCount}
+                </span>
+                {kpis.activeResourcesCount > 0 && (
+                  <span className="text-xs text-slate-400">
+                    of {kpis.activeResourcesCount} courts
                   </span>
-                  {kpis.checkedInNowCount > 0 && (
-                    <span className="flex size-2 rounded-full bg-emerald-500 animate-pulse" aria-hidden="true" />
-                  )}
-                </div>
-                <p className="text-[11px] text-nx-ink-3 truncate mt-0.5">
-                  {t("venueOverview.kpis.checkedInNowSubtext", { defaultValue: "Currently in session" })}
-                </p>
+                )}
               </div>
+              <p className="text-xs font-semibold text-slate-500 dark:text-slate-400 mt-0.5 truncate">
+                {t("venueOverview.kpis.checkedInNow", { defaultValue: "Checked In Now" })}
+              </p>
+              <p className="text-[11px] text-slate-400 dark:text-slate-500 truncate mt-0.5">
+                {t("venueOverview.kpis.checkedInNowSubtext", { defaultValue: "Currently on court / in play" })}
+              </p>
             </div>
           </CardContent>
         </Card>
@@ -107,111 +108,137 @@ export function VenueOverviewKpiStrip({ kpis, attentionCount, t }: Props) {
 
       {/* Metric 3 — Active Holds */}
       <Link href="/venue/calendar" className="block group">
-        <Card className="border-nx-line bg-nx-surface hover:border-amber-500/50 hover:shadow-nx-sm transition-all duration-nx-micro">
-          <CardContent className="p-4">
-            <div className="flex items-center gap-3.5">
-              <div className="flex size-11 items-center justify-center rounded-nx-md border border-amber-500/30 bg-amber-500/10 text-amber-600 dark:text-amber-400 shrink-0 group-hover:bg-amber-500/20 transition-colors">
+        <Card className="h-full border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 hover:border-teal-500/50 hover:shadow-md transition-all rounded-xl">
+          <CardContent className="p-4 flex flex-col justify-between h-full">
+            <div className="flex items-center justify-between">
+              <div className="flex size-10 items-center justify-center rounded-xl bg-teal-50 text-teal-600 dark:bg-teal-950/50 dark:text-teal-400">
                 <Clock4 className="size-5" aria-hidden="true" />
               </div>
-              <div className="min-w-0 flex-1">
-                <div className="flex items-center justify-between">
-                  <p className="text-xs font-semibold text-nx-ink-2 truncate">
-                    {t("venueOverview.kpis.activeHolds", { defaultValue: "Active Holds" })}
-                  </p>
-                  <ArrowUpRight className="size-3 text-nx-ink-3 opacity-0 group-hover:opacity-100 transition-opacity" />
-                </div>
-                <div className="text-2xl font-bold tabular-nums text-nx-ink mt-0.5">
-                  {kpis.activeHoldsCount}
-                </div>
-                <p className="text-[11px] text-nx-ink-3 truncate mt-0.5 tabular-nums">
-                  {holdsSubtext}
-                </p>
+              {kpis.activeHoldsCount > 0 ? (
+                <span className="text-[11px] font-bold text-teal-600 bg-teal-50 dark:bg-teal-950/50 px-2 py-0.5 rounded-md">
+                  Active
+                </span>
+              ) : (
+                <ArrowUpRight className="size-4 text-slate-400 group-hover:text-teal-600 transition-colors" />
+              )}
+            </div>
+            <div className="mt-3">
+              <div className="text-2xl font-black tabular-nums text-slate-900 dark:text-white">
+                {kpis.activeHoldsCount}
               </div>
+              <p className="text-xs font-semibold text-slate-500 dark:text-slate-400 mt-0.5 truncate">
+                {t("venueOverview.kpis.activeHolds", { defaultValue: "Active Holds" })}
+              </p>
+              <p className="text-[11px] text-slate-400 dark:text-slate-500 truncate mt-0.5 tabular-nums">
+                {holdsSubtext}
+              </p>
             </div>
           </CardContent>
         </Card>
       </Link>
 
-      {/* Metric 4 — Needs Attention (or Active Resources Fallback) */}
-      {showAttentionCard ? (
+      {/* Metric 4 — Needs Attention (Preferred Operational Direction) or Active Resources fallback */}
+      {attentionCount !== undefined ? (
         <Link href="/venue/attention" className="block group">
           <Card
             className={cn(
-              "border-nx-line bg-nx-surface hover:shadow-nx-sm transition-all duration-nx-micro",
+              "h-full border transition-all rounded-xl",
               attentionCount > 0
-                ? "border-amber-500/40 hover:border-amber-500 bg-amber-500/5"
-                : "hover:border-nx-accent/50"
+                ? "border-amber-300 dark:border-amber-700/60 bg-amber-50/30 dark:bg-amber-950/20 hover:border-amber-500 hover:shadow-md"
+                : "border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 hover:border-blue-500/50 hover:shadow-md"
             )}
           >
-            <CardContent className="p-4">
-              <div className="flex items-center gap-3.5">
+            <CardContent className="p-4 flex flex-col justify-between h-full">
+              <div className="flex items-center justify-between">
                 <div
                   className={cn(
-                    "flex size-11 items-center justify-center rounded-nx-md border shrink-0 transition-colors",
+                    "flex size-10 items-center justify-center rounded-xl",
                     attentionCount > 0
-                      ? "border-amber-500/40 bg-amber-500/15 text-amber-600 dark:text-amber-400 group-hover:bg-amber-500/25"
-                      : "border-nx-line bg-nx-surfaceSubtle text-nx-ink-2 group-hover:bg-nx-hover"
+                      ? "bg-amber-100 text-amber-700 dark:bg-amber-900/50 dark:text-amber-400"
+                      : "bg-emerald-50 text-emerald-600 dark:bg-emerald-950/50 dark:text-emerald-400"
                   )}
                 >
                   <ShieldAlert className="size-5" aria-hidden="true" />
                 </div>
-                <div className="min-w-0 flex-1">
-                  <div className="flex items-center justify-between">
-                    <p className="text-xs font-semibold text-nx-ink-2 truncate">
-                      {t("venueOverview.kpis.needsAttention", { defaultValue: "Needs Attention" })}
-                    </p>
-                    <ArrowUpRight className="size-3 text-nx-ink-3 opacity-0 group-hover:opacity-100 transition-opacity" />
-                  </div>
-                  <div className="flex items-baseline gap-2 mt-0.5">
-                    <span className="text-2xl font-bold tabular-nums text-nx-ink">
-                      {attentionCount}
-                    </span>
-                    {attentionCount > 0 && (
-                      <span className="text-[10px] font-bold uppercase tracking-wider text-amber-600 dark:text-amber-400 bg-amber-500/15 px-1.5 py-0.5 rounded-full">
-                        {t("venueOverview.kpis.actionRequired", { defaultValue: "Action" })}
-                      </span>
-                    )}
-                  </div>
-                  <p className="text-[11px] text-nx-ink-3 truncate mt-0.5">
-                    {attentionCount > 0
-                      ? t("venueOverview.kpis.signalsPending", {
-                          count: attentionCount,
-                          defaultValue: `${attentionCount} operational signal(s)`,
-                        })
-                      : t("venueOverview.kpis.allClear", { defaultValue: "All signals clear" })}
-                  </p>
+                {attentionCount > 0 ? (
+                  <span className="text-[11px] font-bold text-amber-700 dark:text-amber-400 bg-amber-100 dark:bg-amber-950/60 px-2 py-0.5 rounded-md">
+                    {t("venueOverview.kpis.actionRequired", { defaultValue: "Action" })}
+                  </span>
+                ) : (
+                  <span className="text-[11px] font-bold text-emerald-600 bg-emerald-50 dark:bg-emerald-950/50 px-2 py-0.5 rounded-md">
+                    {t("venueOverview.kpis.allClear", { defaultValue: "Clear" })}
+                  </span>
+                )}
+              </div>
+              <div className="mt-3">
+                <div className="text-2xl font-black tabular-nums text-slate-900 dark:text-white">
+                  {attentionCount}
                 </div>
+                <p className="text-xs font-semibold text-slate-500 dark:text-slate-400 mt-0.5 truncate">
+                  {t("venueOverview.kpis.needsAttention", { defaultValue: "Needs Attention" })}
+                </p>
+                <p className="text-[11px] text-slate-400 dark:text-slate-500 truncate mt-0.5">
+                  {attentionCount > 0
+                    ? t("venueOverview.kpis.signalsPending", {
+                        count: attentionCount,
+                        defaultValue: `${attentionCount} operational signal(s)`,
+                      })
+                    : t("venueOverview.kpis.allClear", { defaultValue: "All signals clear" })}
+                </p>
               </div>
             </CardContent>
           </Card>
         </Link>
       ) : (
-        <Link href="/venue/facilities" className="block group">
-          <Card className="border-nx-line bg-nx-surface hover:border-nx-accent/50 hover:shadow-nx-sm transition-all duration-nx-micro">
-            <CardContent className="p-4">
-              <div className="flex items-center gap-3.5">
-                <div className="flex size-11 items-center justify-center rounded-nx-md border border-nx-line bg-nx-surfaceSubtle text-nx-ink-2 shrink-0 group-hover:bg-nx-hover transition-colors">
+        <Link href="/venue/resources" className="block group">
+          <Card className="h-full border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 hover:border-blue-500/50 hover:shadow-md transition-all rounded-xl">
+            <CardContent className="p-4 flex flex-col justify-between h-full">
+              <div className="flex items-center justify-between">
+                <div className="flex size-10 items-center justify-center rounded-xl bg-blue-50 text-blue-600 dark:bg-blue-950/50 dark:text-blue-400">
                   <Layers className="size-5" aria-hidden="true" />
                 </div>
-                <div className="min-w-0 flex-1">
-                  <div className="flex items-center justify-between">
-                    <p className="text-xs font-semibold text-nx-ink-2 truncate">
-                      {t("venueOverview.kpis.activeResources", { defaultValue: "Active Resources" })}
-                    </p>
-                    <ArrowUpRight className="size-3 text-nx-ink-3 opacity-0 group-hover:opacity-100 transition-opacity" />
-                  </div>
-                  <div className="text-2xl font-bold tabular-nums text-nx-ink mt-0.5">
-                    {kpis.activeResourcesCount}
-                  </div>
-                  <p className="text-[11px] text-nx-ink-3 truncate mt-0.5">
-                    {t("venueOverview.kpis.activeResourcesSubtext", { defaultValue: "Featured in today’s schedule" })}
-                  </p>
+                <ArrowUpRight className="size-4 text-slate-400 group-hover:text-blue-600 transition-colors" />
+              </div>
+              <div className="mt-3">
+                <div className="text-2xl font-black tabular-nums text-slate-900 dark:text-white">
+                  {kpis.activeResourcesCount}
                 </div>
+                <p className="text-xs font-semibold text-slate-500 dark:text-slate-400 mt-0.5 truncate">
+                  {t("venueOverview.kpis.activeResources", { defaultValue: "Active Resources" })}
+                </p>
+                <p className="text-[11px] text-slate-400 dark:text-slate-500 truncate mt-0.5">
+                  {t("venueOverview.kpis.activeResourcesSubtext", {
+                    defaultValue: "Featured in today's schedule",
+                  })}
+                </p>
               </div>
             </CardContent>
           </Card>
         </Link>
       )}
+
+      {/* Metric 5 — Sports Hero Promo Card (Keep the games going) */}
+      <div className="relative rounded-xl overflow-hidden shadow-xs border border-slate-800 bg-gradient-to-br from-slate-950 via-slate-900 to-blue-950 p-4 text-white flex flex-col justify-between group">
+        {/* Subtle sports court mesh pattern */}
+        <div className="absolute inset-0 bg-[radial-gradient(#3b82f6_1px,transparent_1px)] [background-size:12px_12px] opacity-15 pointer-events-none" />
+        <div className="absolute -right-6 -bottom-6 size-24 rounded-full bg-blue-600/20 blur-xl pointer-events-none" />
+
+        <div className="relative z-10 flex items-center justify-between">
+          <span className="text-[10px] font-extrabold uppercase tracking-widest text-blue-400 bg-blue-900/40 border border-blue-700/50 px-2 py-0.5 rounded-full">
+            SCRIPE Venue
+          </span>
+          <Sparkles className="size-4 text-blue-400" />
+        </div>
+
+        <div className="relative z-10 mt-3 space-y-1">
+          <h3 className="font-extrabold text-sm sm:text-base leading-tight text-white tracking-tight">
+            {t("venueOverview.kpis.heroTitle", { defaultValue: "Keep the games going" })}
+          </h3>
+          <p className="text-[11px] text-slate-300 leading-snug">
+            {t("venueOverview.kpis.heroSubtitle", { defaultValue: "More bookings. Happier players. A better venue." })}
+          </p>
+        </div>
+      </div>
     </div>
   );
 }

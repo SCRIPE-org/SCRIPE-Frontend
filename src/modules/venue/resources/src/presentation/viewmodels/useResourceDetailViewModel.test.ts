@@ -163,7 +163,7 @@ describe("useResourceDetailViewModel", () => {
     );
   });
 
-  it("updates booking rules (slot duration and increment)", async () => {
+  it("updates booking rules (slot duration, increment, and allowMultiSlot)", async () => {
     const { result } = renderHook(() => useResourceDetailViewModel("res-1"));
 
     await waitFor(() => {
@@ -175,6 +175,7 @@ describe("useResourceDetailViewModel", () => {
       success = await result.current.updateBookingRules({
         slotDurationMinutes: 90,
         startIncrementMinutes: 90,
+        allowMultiSlot: true,
       });
     });
 
@@ -185,6 +186,7 @@ describe("useResourceDetailViewModel", () => {
         slotPolicy: expect.objectContaining({
           slotDurationMinutes: 90,
           startIncrementMinutes: 90,
+          allowMultiSlot: true,
         }),
       })
     );
@@ -253,13 +255,13 @@ describe("useResourceDetailViewModel", () => {
 
     let delSuccess = false;
     await act(async () => {
-      delSuccess = await result.current.deleteClosure("maintenance", blockToDelete);
+      delSuccess = await result.current.deleteClosure("maintenance", blockToDelete as never);
     });
 
     expect(delSuccess).toBe(true);
     expect(mockContainer.availabilityRepository.deleteBlock).toHaveBeenCalledWith(
       "maintenance",
-      blockToDelete
+      blockToDelete as never
     );
   });
 });

@@ -210,7 +210,7 @@ describe("useResourcesWorkspaceViewModel", () => {
         sportType: "Padel",
         courts: ["Court 3"],
         isOpen247: false,
-        customWorkingHours: { opensAt: "08:00", closesAt: "23:00" },
+        customWorkingHours: { opensAt: "08:00", closesAt: "23:00", days: [0, 1, 2, 3, 4, 5, 6] },
         slotDurationMinutes: 90,
         startIncrementMinutes: 90,
         pricePerSlot: 500,

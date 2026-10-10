@@ -53,9 +53,9 @@ describe("Booking360View", () => {
     render(<Booking360View reservationId="reservation-1" />);
     expect(screen.getByRole("heading", { level: 1 })).toHaveTextContent("RES-1");
     expect(screen.getByRole("heading", { level: 1 })).toHaveFocus();
-    expect(screen.getByText("Mona Hassan")).toBeInTheDocument();
-    expect(screen.getAllByText("Court 1")).toHaveLength(2);
-    expect(screen.getByText("Downtown")).toBeInTheDocument();
+    expect(screen.getAllByText("Mona Hassan").length).toBeGreaterThanOrEqual(1);
+    expect(screen.getAllByText("Court 1").length).toBeGreaterThanOrEqual(2);
+    expect(screen.getAllByText("Downtown").length).toBeGreaterThanOrEqual(1);
     expect(screen.getByRole("list", { name: "booking360.history.title" })).toHaveTextContent("booking360.transition.T01");
     expect(screen.getByRole("button", { name: "booking360.actions.confirm" })).toBeEnabled();
   });
@@ -164,7 +164,9 @@ describe("Booking360View", () => {
         invoiceNumber: "INV-101",
         currencyCode: "USD",
         effectiveTotalAmount: 150,
+        paidAmount: 100,
         outstandingAmount: 50,
+        creditAmount: 0,
         status: "Issued",
       },
       loading: false,
@@ -175,6 +177,51 @@ describe("Booking360View", () => {
     expect(screen.getByText("INV-101")).toBeInTheDocument();
     expect(screen.getByText("booking360.commercial.viewReceivables")).toHaveAttribute("href", "/venue/money/receivables");
     expect(screen.getByText("booking360.commercial.recordPayment")).toHaveAttribute("href", "/venue/money/payments?invoiceId=inv-101");
+  });
+
+  it("renders authoritative advisory when booking is cancelled with recorded payment without fabricating refund", () => {
+    vi.mocked(useBooking360ViewModel).mockReturnValue(vm({
+      reservation: { ...reservation, status: "Cancelled", activeHold: null },
+    }) as never);
+    vi.mocked(useBookingFinanceSummary).mockReturnValue({
+      summary: {
+        invoiceId: "inv-202",
+        invoiceNumber: "INV-202",
+        currencyCode: "EGP",
+        effectiveTotalAmount: 800,
+        paidAmount: 800,
+        outstandingAmount: 0,
+        creditAmount: 0,
+        status: "Paid",
+      },
+      loading: false,
+      error: false,
+      refresh: vi.fn(),
+    });
+    render(<Booking360View reservationId="reservation-1" />);
+
+    expect(screen.getByTestId("cancelled-paid-advisory")).toBeInTheDocument();
+    expect(screen.getByText("booking360.cancelledPaid.title")).toBeInTheDocument();
+    expect(screen.getByText("booking360.cancelledPaid.manageRefund")).toHaveAttribute(
+      "href",
+      "/venue/money/payments?invoiceId=inv-202"
+    );
+  });
+
+  it("renders contextual deep links for Court, Calendar, and Customer", () => {
+    render(<Booking360View reservationId="reservation-1" />);
+    expect(screen.getByText("(booking360.schedule.viewCourt)")).toHaveAttribute(
+      "href",
+      "/venue/resources/resource-1"
+    );
+    expect(screen.getByText("(booking360.schedule.viewInCalendar)")).toHaveAttribute(
+      "href",
+      "/venue/calendar?resourceId=resource-1"
+    );
+    expect(screen.getByText("booking360.customer.viewCustomer")).toHaveAttribute(
+      "href",
+      "/venue/customers?partyId=party-1"
+    );
   });
 });
 

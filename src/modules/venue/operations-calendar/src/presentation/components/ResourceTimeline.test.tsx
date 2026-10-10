@@ -53,4 +53,39 @@ describe("ResourceTimeline", () => {
     expect(onEmptySlot).toHaveBeenCalledWith(resource, "2026-09-08T21:00:00.000Z");
     expect(screen.getByTestId("resource-timeline").firstElementChild).toHaveAttribute("dir", "ltr");
   });
+
+  it("renders Maintenance closures distinctly and marks overlapping slots occupied", () => {
+    const dayWithMaintenance: OperationsCalendarDay = {
+      ...day,
+      blocks: [
+        {
+          reservationId: "maint-1",
+          reservationNumber: "MAINT-101",
+          resourceId: "resource-1",
+          status: "Maintenance" as any,
+          startUtc: "2026-09-09T06:00:00Z",
+          endUtc: "2026-09-09T08:00:00Z",
+          quantity: 1,
+          customerPartyId: "",
+          holdExpiresAtUtc: null,
+        },
+      ],
+    };
+
+    render(
+      <ResourceTimeline
+        day={dayWithMaintenance}
+        resources={[resource]}
+        locale="en"
+        direction="ltr"
+        canCreate
+        t={t}
+        onOpen={vi.fn()}
+        onEmptySlot={vi.fn()}
+      />
+    );
+
+    const lane = document.querySelector<HTMLElement>('[data-resource-id="resource-1"]')!;
+    expect(within(lane).getAllByText(/Maintenance/).length).toBeGreaterThan(0);
+  });
 });

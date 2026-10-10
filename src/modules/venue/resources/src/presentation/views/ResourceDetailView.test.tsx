@@ -9,7 +9,23 @@ vi.mock("next/navigation", () => ({
 
 vi.mock("@core/providers/i18n-provider", () => ({
   useI18n: () => ({
-    t: (key: string, opts?: { defaultValue?: string }) => opts?.defaultValue || key,
+    t: (key: string, opts?: { defaultValue?: string }) => {
+      const map: Record<string, string> = {
+        "resources.card.calendar": "Calendar",
+        "resources.card.book": "Book",
+        "resources.tabs.general": "General",
+        "resources.tabs.workingHours": "Working Hours",
+        "resources.tabs.bookingRules": "Booking Rules",
+        "resources.tabs.pricing": "Pricing",
+        "resources.tabs.closures": "Closures",
+        "resources.detail.back": "Back to Courts & Spaces",
+        "resources.workingHours.open247": "Open 24 Hours (24/7)",
+        "resources.bookingRules.slotDuration": "Slot Duration",
+        "resources.pricing.pricePerSlot": "Price per Slot",
+        "resources.closures.blockTimeBtn": "+ Block Time",
+      };
+      return map[key] ?? opts?.defaultValue ?? key;
+    },
     language: "en",
     direction: "ltr",
   }),
@@ -85,8 +101,8 @@ describe("ResourceDetailView", () => {
     expect(screen.getByRole("tab", { name: "Pricing" })).toBeInTheDocument();
     expect(screen.getByRole("tab", { name: "Closures" })).toBeInTheDocument();
 
-    // View on Calendar button
-    expect(screen.getByText("View on Calendar")).toBeInTheDocument();
+    // Calendar button
+    expect(screen.getAllByText("Calendar")[0]).toBeInTheDocument();
   });
 
   it("switches tabs and displays tab content", () => {
@@ -130,5 +146,36 @@ describe("ResourceDetailView", () => {
     // Switch to Closures
     fireEvent.mouseDown(screen.getByRole("tab", { name: "Closures" }));
     expect(screen.getByText("+ Block Time")).toBeInTheDocument();
+  });
+
+  it("shows Setup Required badge and warning alert when court has no pricing configured", () => {
+    vi.mocked(useResourceDetailViewModel).mockReturnValue({
+      loading: false,
+      saving: false,
+      error: null,
+      feedback: null,
+      resource: mockResource as never,
+      profile: mockProfile as never,
+      facility: mockFacility as never,
+      calendar: null,
+      priceConfig: null, // Unpriced!
+      taxCategories: [],
+      maintenanceBlocks: [],
+      blackoutBlocks: [],
+      isCalendar247: true,
+      updateGeneral: vi.fn(),
+      updateWorkingHours: vi.fn(),
+      updateBookingRules: vi.fn(),
+      updatePricing: vi.fn(),
+      addClosure: vi.fn(),
+      deleteClosure: vi.fn(),
+      refresh: vi.fn(),
+    });
+
+    render(<ResourceDetailView resourceId="res-1" />);
+
+    expect(screen.getByText("Setup Required")).toBeInTheDocument();
+    expect(screen.getByText(/Setup Required: Configure Pricing/i)).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Configure Pricing" })).toBeInTheDocument();
   });
 });

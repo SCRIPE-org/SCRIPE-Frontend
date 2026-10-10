@@ -88,7 +88,7 @@ export function ResourceWorkingHoursTab({ vm }: Props) {
           <CardTitle>{t("resources.workingHours.title", { defaultValue: "Working Hours" })}</CardTitle>
           <CardDescription>
             {t("resources.workingHours.description", {
-              defaultValue: "Configure when this court is open for customer bookings.",
+              defaultValue: "Configure when this space is open for bookings.",
             })}
           </CardDescription>
         </CardHeader>
@@ -117,7 +117,7 @@ export function ResourceWorkingHoursTab({ vm }: Props) {
                   </p>
                   <p className="text-xs text-nx-ink-2 mt-0.5">
                     {t("resources.workingHours.open247Description", {
-                      defaultValue: "Court is bookable all day and night every day of the week.",
+                      defaultValue: "Open all day and night every day of the week.",
                     })}
                   </p>
                 </div>
@@ -155,10 +155,10 @@ export function ResourceWorkingHoursTab({ vm }: Props) {
             {!isOpen247 && (
               <div className="border border-nx-line rounded-nx-md overflow-hidden bg-nx-surface">
                 <div className="p-3 border-b border-nx-line bg-nx-raised text-xs font-semibold text-nx-ink flex items-center justify-between">
-                  <span>Day</span>
-                  <div className="flex items-center gap-8 mr-4">
-                    <span>Opening Time</span>
-                    <span>Closing Time</span>
+                  <span>{t("resources.workingHours.day", { defaultValue: "Day" })}</span>
+                  <div className="flex items-center gap-8 mr-4 rtl:mr-0 rtl:ml-4">
+                    <span>{t("resources.workingHours.openingTime", { defaultValue: "Opening Time" })}</span>
+                    <span>{t("resources.workingHours.closingTime", { defaultValue: "Closing Time" })}</span>
                   </div>
                 </div>
 
@@ -205,7 +205,7 @@ export function ResourceWorkingHoursTab({ vm }: Props) {
                             />
                           </div>
                         ) : (
-                          <span className="text-nx-ink-3 italic text-xs mr-16">
+                          <span className="text-nx-ink-3 italic text-xs mr-16 rtl:mr-0 rtl:ml-16">
                             {t("resources.workingHours.closed", { defaultValue: "Closed" })}
                           </span>
                         )}

@@ -56,16 +56,17 @@ describe("calendarLayout", () => {
     expect(placeBlocksOnTracks([first, second]).map((item) => item.track)).toEqual([0, 1]);
   });
 
-  it("defensively excludes terminal states from operational occupancy", () => {
+  it("defensively excludes terminal states from operational occupancy while including maintenance blocks", () => {
     const blocks = [
       block({ status: "Held" }),
       block({ reservationId: "confirmed", status: "Confirmed" }),
       block({ reservationId: "checked-in", status: "CheckedIn" }),
       block({ reservationId: "cancelled", status: "Cancelled" }),
       block({ reservationId: "completed", status: "Completed" }),
+      block({ reservationId: "maintenance", status: "Maintenance" as any }),
     ];
 
-    expect(occupyingBlocks(blocks).map((item) => item.status)).toEqual(["Held", "Confirmed", "CheckedIn"]);
+    expect(occupyingBlocks(blocks).map((item) => item.status)).toEqual(["Held", "Confirmed", "CheckedIn", "Maintenance"]);
   });
 
   it("formats an empty-slot instant into the approved resource timezone for Booking Workspace prefill", () => {

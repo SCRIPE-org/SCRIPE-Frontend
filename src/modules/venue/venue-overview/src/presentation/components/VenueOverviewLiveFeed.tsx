@@ -33,9 +33,11 @@ interface Props {
   t: (key: string, values?: Record<string, string | number>) => string;
 }
 
-function formatRelativeOrLocalTime(isoString: string, timeZoneId: string) {
+function formatRelativeOrLocalTime(isoString?: string, timeZoneId?: string) {
+  if (!isoString) return "";
   try {
     const date = new Date(isoString);
+    if (isNaN(date.getTime())) return "";
     const now = new Date();
     const diffMinutes = Math.round((now.getTime() - date.getTime()) / 60000);
 
@@ -43,13 +45,13 @@ function formatRelativeOrLocalTime(isoString: string, timeZoneId: string) {
       return `${diffMinutes}m ago`;
     }
     return new Intl.DateTimeFormat("en-US", {
-      timeZone: timeZoneId,
+      timeZone: timeZoneId || "UTC",
       hour: "2-digit",
       minute: "2-digit",
       hourCycle: "h23",
     }).format(date);
   } catch {
-    return isoString.slice(11, 16);
+    return isoString ? isoString.slice(11, 16) : "";
   }
 }
 

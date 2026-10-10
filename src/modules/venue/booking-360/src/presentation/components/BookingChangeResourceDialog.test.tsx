@@ -1,4 +1,4 @@
-import { render, screen, waitFor } from "@testing-library/react";
+import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import type { ComponentProps } from "react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { getVenueContainer } from "@modules/venue/di";
@@ -113,5 +113,76 @@ describe("BookingChangeResourceDialog candidate authority", () => {
 
     // court-3 in different facility must NOT be queried or presented
     expect(screen.queryByText("court-3")).not.toBeInTheDocument();
+  });
+
+  it("shows price delta and review step when a candidate is selected", async () => {
+    const mockSchedulableResourceRepository = {
+      getAll: vi.fn().mockResolvedValue({
+        items: [{ id: "court-1", isPublished: true, isComposite: false, facilityResourceProfileId: "profile-1" }],
+        totalCount: 1,
+      }),
+    };
+    const mockFacilityResourceProfileRepository = {
+      getAll: vi.fn().mockResolvedValue({
+        items: [{ id: "profile-1", facilityId: "facility-1" }],
+        totalCount: 1,
+      }),
+    };
+    const mockAvailabilityRepository = {
+      search: vi.fn().mockResolvedValue({
+        resourceId: "court-1",
+        resourceName: "Court 1 (Available)",
+        timeZoneId: "UTC",
+        startUtc: "2026-09-10T10:00:00Z",
+        endUtc: "2026-09-10T11:00:00Z",
+        requestedQuantity: 1,
+        isAvailable: true,
+        decidingLayer: "BaseCalendar",
+        reasonCode: "AVAILABLE",
+        maximumCapacity: 1,
+        consumedCapacity: 0,
+        remainingCapacity: 1,
+        asOfUtc: "2026-09-10T09:00:00Z",
+      }),
+    };
+    vi.mocked(getVenueContainer).mockReturnValue({
+      schedulableResourceRepository: mockSchedulableResourceRepository,
+      facilityResourceProfileRepository: mockFacilityResourceProfileRepository,
+      availabilityRepository: mockAvailabilityRepository,
+    } as never);
+
+    const onConfirm = vi.fn();
+    render(
+      <BookingChangeResourceDialog
+        open={true}
+        onOpenChange={vi.fn()}
+        facilityId="facility-1"
+        currentResourceId="court-0"
+        currentResourceName="Court 0 (Original)"
+        currentFacilityName="Main Arena"
+        currentStartUtc="2026-09-10T10:00:00Z"
+        currentEndUtc="2026-09-10T11:00:00Z"
+        timeZoneId="UTC"
+        quantity={1}
+        direction="ltr"
+        disabled={false}
+        currentTotal={800}
+        currencyCode="EGP"
+        t={t}
+        onConfirmChangeResource={onConfirm}
+      />
+    );
+
+    await waitFor(() => {
+      expect(screen.getByText("Court 1 (Available)")).toBeInTheDocument();
+    });
+
+    const candidateBtn = screen.getByText("Court 1 (Available)").closest("button");
+    fireEvent.click(candidateBtn!);
+
+    expect(screen.getByTestId("change-resource-review-step")).toBeInTheDocument();
+    expect(screen.getByTestId("change-resource-price-delta")).toBeInTheDocument();
+    expect(screen.getByText("booking360.changeResource.priceOld:")).toBeInTheDocument();
+    expect(screen.getByText("booking360.changeResource.priceNew:")).toBeInTheDocument();
   });
 });

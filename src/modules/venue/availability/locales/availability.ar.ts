@@ -26,6 +26,10 @@ export const ar = {
     remaining: "السعة المتبقية",
     decision: "القرار",
     searchPermission: "ليست لديك صلاحية تنفيذ بحث الإتاحة.",
+    tabs: {
+      findSlots: "البحث عن الفترات المتاحة",
+      operatingWindows: "نوافذ وقواعد التشغيل",
+    },
     fields: {
       timezone: "المنطقة الزمنية",
       effectiveFrom: "ساري من",

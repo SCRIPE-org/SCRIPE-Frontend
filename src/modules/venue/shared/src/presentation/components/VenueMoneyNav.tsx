@@ -5,24 +5,51 @@ import { usePathname } from "next/navigation";
 import { ReceiptText, Banknote } from "lucide-react";
 import { cn } from "@core/common/utils";
 import { useI18n } from "@core/providers/i18n-provider";
+import { usePermission } from "@core/hooks/use-permission";
+import { VENUE_PERMISSIONS } from "@modules/venue/permission-constants";
 
 export function VenueMoneyNav() {
   const pathname = usePathname();
   const { t } = useI18n();
 
+  const canViewReceivables = usePermission(VENUE_PERMISSIONS.FINANCE_RECEIVABLES_VIEW);
+  const canViewPayments = usePermission(VENUE_PERMISSIONS.FINANCE_PAYMENTS_VIEW);
+
+  const showOverview = canViewReceivables && canViewPayments;
+  const showReceivables = canViewReceivables || (!canViewReceivables && !canViewPayments);
+  const showPayments = canViewPayments || (!canViewReceivables && !canViewPayments);
+
   const links = [
-    {
-      href: "/venue/money/receivables",
-      label: t("money.receivables.title") || "Receivables",
-      icon: ReceiptText,
-      active: pathname === "/venue/money/receivables",
-    },
-    {
-      href: "/venue/money/payments",
-      label: t("money.payments.title") || "Manual Payments",
-      icon: Banknote,
-      active: pathname === "/venue/money/payments",
-    },
+    ...(showOverview
+      ? [
+          {
+            href: "/venue/money",
+            label: t("money.nav.overview") || "Overview",
+            icon: ReceiptText,
+            active: pathname === "/venue/money",
+          },
+        ]
+      : []),
+    ...(showReceivables
+      ? [
+          {
+            href: "/venue/money/receivables",
+            label: t("money.receivables.title") || "Receivables",
+            icon: ReceiptText,
+            active: pathname === "/venue/money/receivables",
+          },
+        ]
+      : []),
+    ...(showPayments
+      ? [
+          {
+            href: "/venue/money/payments",
+            label: t("money.payments.title") || "Payments",
+            icon: Banknote,
+            active: pathname === "/venue/money/payments",
+          },
+        ]
+      : []),
   ];
 
   return (
