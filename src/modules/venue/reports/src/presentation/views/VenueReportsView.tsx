@@ -118,7 +118,7 @@ export function VenueReportsView() {
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align={isRtl ? "start" : "end"} className="text-xs w-48">
-              <DropdownMenuItem onClick={() => handleExport("xlsx")} className="gap-2 cursor-pointer">
+              <DropdownMenuItem onClick={() => handleExport("xls")} className="gap-2 cursor-pointer">
                 <FileSpreadsheet className="size-4 text-emerald-600" />
                 <span>{isRtl ? "ملف Excel Workbook (.xls)" : "Excel Workbook (.xls)"}</span>
               </DropdownMenuItem>

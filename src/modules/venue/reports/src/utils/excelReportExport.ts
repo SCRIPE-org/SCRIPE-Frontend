@@ -253,15 +253,15 @@ export function generateCsv<T>(options: ReportExportOptions<T>): string {
  */
 export function downloadReportSpreadsheet<T>(
   options: ReportExportOptions<T>,
-  format: "xlsx" | "csv" = "xlsx"
+  format: "xls" | "xlsx" | "csv" = "xls"
 ): void {
   const fileDate = new Date().toISOString().slice(0, 10);
   const cleanCategory = options.categoryName.toLowerCase().replace(/[^a-z0-9]+/g, "-");
 
-  if (format === "xlsx") {
+  if (format === "xls" || format === "xlsx") {
     const xml = generateExcelWorkbookXml(options);
     const blob = new Blob([xml], {
-      type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=utf-8",
+      type: "application/vnd.ms-excel;charset=utf-8",
     });
     const fileName = `scripe-venue-report-${cleanCategory}-${fileDate}.xls`;
     triggerFileDownload(blob, fileName);

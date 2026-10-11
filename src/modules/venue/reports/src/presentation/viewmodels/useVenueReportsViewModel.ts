@@ -139,7 +139,7 @@ export function useVenueReportsViewModel() {
         setSummary(sumRes || null);
       } else if (category === "bookings") {
         const res = await venueApi.get<{ items: any[] }>(
-          `/api/v1/Reservations?page=1&pageSize=100${filters.resourceId ? `&resourceId=${filters.resourceId}` : ""}`
+          `/v1/Reservations?page=1&pageSize=100${filters.resourceId ? `&resourceId=${filters.resourceId}` : ""}`
         );
         const resourceMap = new Map(resources.map((r) => [r.id, r.name]));
         const mapped = (res.items || []).map((b) => ({
@@ -211,7 +211,7 @@ export function useVenueReportsViewModel() {
 
   // Export to Excel / CSV with full authoritative data and currency isolation (A11)
   const handleExport = useCallback(
-    (format: "xlsx" | "csv" = "xlsx") => {
+    (format: "xls" | "xlsx" | "csv" = "xls") => {
       const tenantName = currentTenant?.name || "SCRIPE Venue Test Club";
       const filterSummary: Record<string, string> = {
         Category: category,
