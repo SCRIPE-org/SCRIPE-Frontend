@@ -42,6 +42,8 @@ export const OperationsCalendarView = React.memo(function OperationsCalendarView
   const [clickToBookOpen, setClickToBookOpen] = React.useState(false);
   const [selectedResource, setSelectedResource] = React.useState<CalendarResource | null>(null);
   const [selectedInstant, setSelectedInstant] = React.useState<string | null>(null);
+  const [selectedDuration, setSelectedDuration] = React.useState<number>(60);
+  const [courtNotReadyNotice, setCourtNotReadyNotice] = React.useState<string | null>(null);
 
   const [findSlotsOpen, setFindSlotsOpen] = React.useState(false);
 
@@ -51,41 +53,117 @@ export const OperationsCalendarView = React.memo(function OperationsCalendarView
 
   const searchParams = useSearchParams();
 
-  const handleEmptySlot = React.useCallback((resource: CalendarResource, instantUtc: string) => {
-    setSelectedResource(resource);
-    setSelectedInstant(instantUtc);
-    setClickToBookOpen(true);
-  }, []);
+  const handleEmptySlot = React.useCallback(
+    (resource: CalendarResource, instantUtc: string, durationMinutes?: number) => {
+      setSelectedResource(resource);
+      setSelectedInstant(instantUtc);
+      setSelectedDuration(durationMinutes ?? resource.slotPolicy?.slotDurationMinutes ?? 60);
+      setClickToBookOpen(true);
+    },
+    []
+  );
 
-  const handleOpenBlockTime = React.useCallback((resource?: CalendarResource | null, instantUtc?: string | null) => {
-    setBlockTimeResource(resource ?? null);
-    setBlockTimeInstant(instantUtc ?? null);
-    setBlockTimeOpen(true);
-  }, []);
+  const handleOpenBlockTime = React.useCallback(
+    (resource?: CalendarResource | null, instantUtc?: string | null) => {
+      setBlockTimeResource(resource ?? null);
+      setBlockTimeInstant(instantUtc ?? null);
+      setBlockTimeOpen(true);
+    },
+    []
+  );
 
-  const facilityResources = vm.allResources.filter((resource) => resource.facilityId === vm.facilityId && resource.timeZoneId === vm.timeZoneId);
+  const facilityResources = vm.allResources.filter(
+    (resource) => resource.facilityId === vm.facilityId
+  );
 
   const handleOpenNewBooking = React.useCallback(() => {
     if (facilityResources.length > 0) {
       setSelectedResource(facilityResources[0]);
       setSelectedInstant(null);
+      setSelectedDuration(facilityResources[0].slotPolicy?.slotDurationMinutes ?? 60);
       setClickToBookOpen(true);
     }
   }, [facilityResources]);
 
   React.useEffect(() => {
     if (!searchParams) return;
-    const shouldOpen = searchParams.get("newBooking") === "true" || searchParams.get("action") === "new-booking";
-    if (shouldOpen && facilityResources.length > 0) {
-      const resourceIdParam = searchParams.get("resourceId");
-      const matched = resourceIdParam
-        ? facilityResources.find((r) => r.id === resourceIdParam) ?? facilityResources[0]
-        : facilityResources[0];
-      setSelectedResource(matched);
-      setSelectedInstant(null);
-      setClickToBookOpen(true);
+    const shouldOpen =
+      searchParams.get("newBooking") === "true" || searchParams.get("action") === "new-booking";
+    if (!shouldOpen || vm.allResources.length === 0) return;
+
+    const facilityIdParam = searchParams.get("facilityId");
+    const resourceIdParam = searchParams.get("resourceId");
+    const dateParam = searchParams.get("date");
+    const startTimeParam = searchParams.get("startTime");
+    const durationParam = searchParams.get("durationMinutes");
+
+    let targetResource: CalendarResource | null = null;
+
+    if (resourceIdParam) {
+      const found = vm.allResources.find((r) => r.id === resourceIdParam);
+      if (!found) {
+        // Setup Required Court or invalid court: fail-closed, do NOT open booking (Requirement 11)
+        setCourtNotReadyNotice(
+          t("operationsCalendar.readiness.courtNotReady", {
+            defaultValue:
+              "Selected court is not ready for bookings. Please complete court setup first.",
+          })
+        );
+        if (typeof window !== "undefined") {
+          window.history.replaceState(null, "", window.location.pathname);
+        }
+        return;
+      }
+      targetResource = found;
+      // Reconcile branch context deliberately (Requirement 10)
+      if (found.facilityId !== vm.facilityId) {
+        vm.setFacilityId(found.facilityId);
+      }
+    } else if (facilityIdParam && facilityIdParam !== vm.facilityId) {
+      vm.setFacilityId(facilityIdParam);
+      const inBranch = vm.allResources.find((r) => r.facilityId === facilityIdParam);
+      targetResource = inBranch ?? vm.allResources[0] ?? null;
+    } else {
+      targetResource = facilityResources[0] ?? vm.allResources[0] ?? null;
     }
-  }, [searchParams, facilityResources]);
+
+    if (!targetResource) return;
+
+    setSelectedResource(targetResource);
+
+    if (dateParam) {
+      vm.setDate(dateParam);
+    }
+
+    if (dateParam && startTimeParam) {
+      try {
+        const instant = new Date(`${dateParam}T${startTimeParam}:00`).toISOString();
+        setSelectedInstant(instant);
+      } catch {
+        setSelectedInstant(null);
+      }
+    } else {
+      setSelectedInstant(null);
+    }
+
+    if (durationParam) {
+      const dur = Number(durationParam);
+      if (Number.isInteger(dur) && dur >= 15) {
+        setSelectedDuration(dur);
+      } else {
+        setSelectedDuration(targetResource.slotPolicy?.slotDurationMinutes ?? 60);
+      }
+    } else {
+      setSelectedDuration(targetResource.slotPolicy?.slotDurationMinutes ?? 60);
+    }
+
+    setClickToBookOpen(true);
+
+    // Clean URL query string immediately to avoid stale modal re-trigger on refresh (Requirement 36)
+    if (typeof window !== "undefined") {
+      window.history.replaceState(null, "", window.location.pathname);
+    }
+  }, [searchParams, vm.allResources, vm.facilityId, facilityResources, vm, t]);
 
   if (!canView) return <EmptyState icon={Lock} title={t("operationsCalendar.permission.title")} description={t("operationsCalendar.permission.description")} />;
   if (vm.setupLoading) return <LoadingSpinner showText={false} />;
@@ -94,6 +172,12 @@ export const OperationsCalendarView = React.memo(function OperationsCalendarView
   return (
     <div className="space-y-5" dir={direction} data-testid="operations-calendar-view">
       <PageHeader icon={CalendarDays} title={t("operationsCalendar.title")} description={t("operationsCalendar.description")} />
+      {courtNotReadyNotice && (
+        <Alert variant="warning">
+          <AlertCircle className="size-4" />
+          <AlertDescription>{courtNotReadyNotice}</AlertDescription>
+        </Alert>
+      )}
       <CalendarToolbar
         t={t}
         date={vm.date}
@@ -141,13 +225,7 @@ export const OperationsCalendarView = React.memo(function OperationsCalendarView
           <CalendarRightUtilityPanel
             currentDate={vm.date}
             onDateChange={vm.setDate}
-            onNewBooking={() => {
-              if (vm.visibleResources.length > 0) {
-                handleEmptySlot(vm.visibleResources[0], new Date().toISOString());
-              } else {
-                setClickToBookOpen(true);
-              }
-            }}
+            onNewBooking={handleOpenNewBooking}
             onBlockTime={() => handleOpenBlockTime(null, null)}
             onViewToday={vm.goToday}
             onFindSlots={() => setFindSlotsOpen(true)}
@@ -186,11 +264,20 @@ export const OperationsCalendarView = React.memo(function OperationsCalendarView
       {/* Click-To-Book Modal */}
       <ClickToBookModal
         open={clickToBookOpen}
-        onOpenChange={setClickToBookOpen}
+        onOpenChange={(open) => {
+          setClickToBookOpen(open);
+          if (!open) {
+            setSelectedInstant(null);
+            if (typeof window !== "undefined") {
+              window.history.replaceState(null, "", window.location.pathname);
+            }
+          }
+        }}
         resource={selectedResource}
         instantUtc={selectedInstant}
         timeZoneId={vm.timeZoneId}
-        resources={vm.visibleResources}
+        durationMinutes={selectedDuration}
+        resources={facilityResources}
         initialCustomerId={searchParams?.get("customerId")}
         onSuccess={() => void vm.refresh()}
         onBlockTime={(res, instant) => handleOpenBlockTime(res, instant)}
@@ -218,7 +305,7 @@ export const OperationsCalendarView = React.memo(function OperationsCalendarView
         resources={vm.visibleResources}
         currentDate={vm.date}
         timeZoneId={vm.timeZoneId}
-        onSelectSlot={(res, instant) => handleEmptySlot(res, instant)}
+        onSelectSlot={(res, instant, dur) => handleEmptySlot(res, instant, dur)}
       />
     </div>
   );

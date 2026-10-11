@@ -86,6 +86,9 @@ export const ar = {
       description: "تعذر استرداد أحدث بيانات الإشغال.",
       retry: "إعادة المحاولة",
     },
+    readiness: {
+      courtNotReady: "الملعب المحدد غير جاهز للحجز. يرجى إكمال إعداد الملعب أولاً.",
+    },
     clickToBook: {
       title: "حجز جديد",
       stepper: {
@@ -121,6 +124,8 @@ export const ar = {
         courtPrice: "إيجار الملعب",
         calculating: "جارٍ احتساب السعر المعتمد...",
         expired: "انتهت صلاحية عرض السعر وتم تحديثه.",
+        priceChanged: "تم تحديث السعر: القديم: {{oldPrice}} {{currency}}، الجديد: {{newPrice}} {{currency}}. يرجى التأكيد للمتابعة.",
+        acknowledge: "تأكيد السعر",
         failed: "تعذر احتساب عرض السعر.",
         retry: "إعادة المحاولة",
         total: "الإجمالي",
@@ -131,8 +136,12 @@ export const ar = {
       hold: {
         temporaryBadge: "محجوز مؤقتاً",
         countdown: "محجوز لمدة {{time}}",
-        expired: "انتهت فترة الحجز المؤقت. يرجى تحديث الموعد.",
+        expired: "هذا الوقت لم يعد محجوزاً. يرجى التحقق من التوفر مجدداً.",
+        refreshAvailability: "إعادة فحص التوفر",
         holdAction: "حجز مؤقت",
+      },
+      step0: {
+        slotUnavailable: "هذا الموعد غير متاح (محجوز أو خارج ساعات العمل أو تحت الصيانة). يرجى اختيار وقت آخر.",
       },
       payment: {
         title: "الدفع",

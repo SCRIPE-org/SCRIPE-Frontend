@@ -172,6 +172,18 @@ export function ResourceGeneralTab({ vm }: Props) {
             >
               Cancel
             </Button>
+            {!vm.resource?.isPublished && (
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                disabled={vm.saving}
+                onClick={() => void vm.publishCourt()}
+                className="text-xs font-bold border-emerald-500 text-emerald-700 hover:bg-emerald-50 dark:hover:bg-emerald-950/40 rounded-lg px-4"
+              >
+                {vm.saving ? "Publishing..." : "Publish Court"}
+              </Button>
+            )}
             <Button
               type="submit"
               size="sm"

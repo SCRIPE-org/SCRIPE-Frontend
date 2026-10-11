@@ -250,17 +250,17 @@ export function useResourcesWorkspaceViewModel() {
           // Save base availability calendar
           const windows = input.isOpen247
             ? weekDays.map((dayOfWeek) => ({
-                dayOfWeek,
-                startLocal: "00:00",
-                endLocal: "23:59:59",
-                capacityOverride: null,
-              }))
+              dayOfWeek,
+              startLocal: "00:00",
+              endLocal: "23:59:59",
+              capacityOverride: null,
+            }))
             : weekDays.map((dayOfWeek) => ({
-                dayOfWeek,
-                startLocal: input.customWorkingHours?.opensAt ?? "08:00",
-                endLocal: input.customWorkingHours?.closesAt ?? "00:00",
-                capacityOverride: null,
-              }));
+              dayOfWeek,
+              startLocal: input.customWorkingHours?.opensAt ?? "08:00",
+              endLocal: input.customWorkingHours?.closesAt ?? "00:00",
+              capacityOverride: null,
+            }));
 
           try {
             await availabilityRepository.saveCalendar(null, {

@@ -216,7 +216,7 @@ export function VenueOverviewHeader({
           size="sm"
           className="h-8.5 gap-1.5 text-xs font-bold shadow-nx-sm px-3.5"
         >
-          <Link href="/venue/bookings/new">
+          <Link href="/venue/calendar?newBooking=true">
             <Plus className="size-4" aria-hidden="true" />
             <span>{t("venueOverview.quickActions.newBooking", { defaultValue: "New Booking" })}</span>
           </Link>

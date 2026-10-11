@@ -37,6 +37,8 @@ vi.mock("@core/providers/i18n-provider", () => ({
         "operationsCalendar.clickToBook.confirm.cancel": "Cancel",
         "operationsCalendar.clickToBook.conflict.title": "This time is no longer available",
         "operationsCalendar.clickToBook.conflict.description": "Another booking was created for this court and time window.",
+        "operationsCalendar.clickToBook.conflict.findAnother": "Find Another Time",
+        "operationsCalendar.clickToBook.conflict.returnToCalendar": "Return to Calendar",
         "operationsCalendar.clickToBook.partialFailure.title": "Booking confirmed. Payment was not recorded.",
         "operationsCalendar.clickToBook.success.title": "Booking Confirmed!",
         "operationsCalendar.clickToBook.success.total": "Total",
@@ -51,8 +53,19 @@ vi.mock("@core/providers/i18n-provider", () => ({
         "operationsCalendar.clickToBook.payment.recordNow": "Record Payment Now",
         "operationsCalendar.clickToBook.hold.holdAction": "Hold Temporarily",
         "operationsCalendar.clickToBook.hold.temporaryBadge": "Temporarily Reserved",
+        "operationsCalendar.clickToBook.hold.expired": "This time is no longer reserved. Please check availability again.",
+        "operationsCalendar.clickToBook.hold.refreshAvailability": "Check Availability Again",
+        "operationsCalendar.clickToBook.pricing.priceChanged": "Price updated: Old: {{oldPrice}} {{currency}}, New: {{newPrice}} {{currency}}. Please acknowledge to proceed.",
+        "operationsCalendar.clickToBook.pricing.acknowledge": "Acknowledge",
+        "operationsCalendar.clickToBook.step0.slotUnavailable": "This time slot is not available (occupied, closed, or maintenance). Please select another time.",
       };
-      return dict[key] ?? opts?.defaultValue ?? key;
+      let text = dict[key] ?? (opts as any)?.defaultValue ?? key;
+      if (opts) {
+        for (const [k, v] of Object.entries(opts)) {
+          text = text.replace(new RegExp(`{{${k}}}`, "g"), String(v));
+        }
+      }
+      return text;
     },
     language: mockLang,
     direction: mockLang === "ar" ? "rtl" : "ltr",
@@ -98,6 +111,10 @@ const mockSchedulableResourceRepository = {
   getById: vi.fn(),
 };
 
+const mockAvailabilityRepository = {
+  search: vi.fn(),
+};
+
 vi.mock("@modules/venue/di", () => ({
   getVenueContainer: () => ({
     bookingRepository: mockBookingRepository,
@@ -105,6 +122,7 @@ vi.mock("@modules/venue/di", () => ({
     commercialPricingRepository: mockCommercialPricingRepository,
     moneyRepository: mockMoneyRepository,
     schedulableResourceRepository: mockSchedulableResourceRepository,
+    availabilityRepository: mockAvailabilityRepository,
   }),
 }));
 
@@ -152,6 +170,7 @@ describe("ClickToBookModal — Gate 4 Booking Closure", () => {
       currencyCode: "EGP",
     });
     mockCommercialPricingRepository.calculateQuote.mockResolvedValue(sampleQuote);
+    mockAvailabilityRepository.search.mockResolvedValue({ isAvailable: true });
     mockBookingRepository.createDraft.mockResolvedValue({ id: "resv-draft-1" });
     mockBookingRepository.createHold.mockResolvedValue({
       reservationId: "resv-draft-1",
@@ -191,7 +210,7 @@ describe("ClickToBookModal — Gate 4 Booking Closure", () => {
     ).toBeInTheDocument();
   });
 
-  it("2. Mode B (Global New Booking): prompts for Court & Time before advancing to Customer", () => {
+  it("2. Mode B (Global New Booking): prompts for Court & Time before advancing to Customer", async () => {
     render(
       <ClickToBookModal
         open={true}
@@ -210,9 +229,11 @@ describe("ClickToBookModal — Gate 4 Booking Closure", () => {
 
     // Click Next moves to Customer
     fireEvent.click(screen.getByText("Next"));
-    expect(
-      screen.getByPlaceholderText("Search customer by name, phone or email...")
-    ).toBeInTheDocument();
+    await waitFor(() => {
+      expect(
+        screen.getByPlaceholderText("Search customer by name, phone or email...")
+      ).toBeInTheDocument();
+    });
   });
 
   it("2b. Booking Duration Truth: 60 min with AllowMultiSlot = false allows ONLY 60 min", () => {
@@ -573,6 +594,179 @@ describe("ClickToBookModal — Gate 4 Booking Closure", () => {
       expect(screen.getByText("Booking Confirmed!")).toBeInTheDocument();
       expect(screen.getByRole("button", { name: "Record Payment" })).toBeInTheDocument();
       expect(screen.queryByText("Record Another Payment")).not.toBeInTheDocument();
+    });
+  });
+
+  it("11. Price quote change triggers acknowledgment banner and prevents confirmation until operator acknowledges (Requirement 22)", async () => {
+    mockCustomerRepository.create.mockResolvedValue({
+      id: "cust-1",
+      displayName: "Tarek",
+      type: "Person",
+    });
+
+    // First quote is 570 and expired
+    const expiredQuote = { ...sampleQuote, expiresAtUtc: new Date(Date.now() - 5000).toISOString() };
+    mockCommercialPricingRepository.calculateQuote.mockResolvedValueOnce(expiredQuote);
+
+    render(
+      <ClickToBookModal
+        open={true}
+        onOpenChange={vi.fn()}
+        resource={mockResource}
+        instantUtc="2026-10-09T10:00:00.000Z"
+        timeZoneId="Africa/Cairo"
+        onSuccess={vi.fn()}
+      />
+    );
+
+    fireEvent.click(screen.getByText("+ New Customer"));
+    fireEvent.change(screen.getByPlaceholderText("Customer Name"), {
+      target: { value: "Tarek" },
+    });
+    fireEvent.click(screen.getByText("Create & Select"));
+
+    await waitFor(() => expect(screen.getByText("Confirm Booking")).toBeEnabled());
+
+    // Next quote has price update (e.g. 700)
+    const updatedQuote = { ...sampleQuote, grandTotal: 700 };
+    mockCommercialPricingRepository.calculateQuote.mockResolvedValue(updatedQuote);
+
+    // Trigger quote recalculation (e.g. quote expired or retry)
+    fireEvent.click(screen.getByRole("button", { name: "Confirm Booking" }));
+
+    // Price change alert must appear
+    await waitFor(() => {
+      expect(
+        screen.getByText(/Price updated: Old: 570 EGP, New: 700 EGP/)
+      ).toBeInTheDocument();
+    });
+
+    // Confirm button must be disabled while unacknowledged
+    expect(screen.getByRole("button", { name: "Confirm Booking" })).toBeDisabled();
+
+    // Operator clicks Acknowledge
+    fireEvent.click(screen.getByRole("button", { name: "Acknowledge" }));
+
+    // Now Confirm button is enabled again
+    await waitFor(() => {
+      expect(screen.getByRole("button", { name: "Confirm Booking" })).toBeEnabled();
+    });
+  });
+
+  it("12. Hold expiry renders warning alert and re-check action (Requirement 16)", async () => {
+    mockCustomerRepository.create.mockResolvedValue({
+      id: "cust-1",
+      displayName: "Mona",
+      type: "Person",
+    });
+
+    render(
+      <ClickToBookModal
+        open={true}
+        onOpenChange={vi.fn()}
+        resource={mockResource}
+        instantUtc="2026-10-09T10:00:00.000Z"
+        timeZoneId="Africa/Cairo"
+        onSuccess={vi.fn()}
+      />
+    );
+
+    fireEvent.click(screen.getByText("+ New Customer"));
+    fireEvent.change(screen.getByPlaceholderText("Customer Name"), {
+      target: { value: "Mona" },
+    });
+    fireEvent.click(screen.getByText("Create & Select"));
+
+    await waitFor(() => expect(screen.getByText("Confirm Booking")).toBeEnabled());
+
+    // Create temporary hold with expired timestamp
+    mockBookingRepository.createHold.mockResolvedValue({
+      expiresAtUtc: new Date(Date.now() - 1000).toISOString(),
+    });
+
+    fireEvent.click(screen.getByRole("button", { name: "Hold Temporarily" }));
+
+    await waitFor(() => {
+      expect(
+        screen.getByText("This time is no longer reserved. Please check availability again.")
+      ).toBeInTheDocument();
+      expect(
+        screen.getByRole("button", { name: "Check Availability Again" })
+      ).toBeInTheDocument();
+    });
+  });
+
+  it("13. Step 0 (Global Mode B): availability validation fails closed when slot is unavailable (Requirements 13 & 14)", async () => {
+    mockAvailabilityRepository.search.mockResolvedValue({ isAvailable: false });
+
+    render(
+      <ClickToBookModal
+        open={true}
+        onOpenChange={vi.fn()}
+        resource={mockResource}
+        instantUtc={null} // Global Mode B
+        resources={[mockResource]}
+        timeZoneId="Africa/Cairo"
+        onSuccess={vi.fn()}
+      />
+    );
+
+    // We are on Step 0: Court & Time
+    expect(screen.getByText("Court & Time")).toBeInTheDocument();
+
+    // Click Next
+    fireEvent.click(screen.getByRole("button", { name: "Next" }));
+
+    // Must show slot unavailable error and stay on Step 0
+    await waitFor(() => {
+      expect(
+        screen.getByText(
+          "This time slot is not available (occupied, closed, or maintenance). Please select another time."
+        )
+      ).toBeInTheDocument();
+    });
+    expect(screen.getByText("Court & Time")).toBeInTheDocument();
+  });
+
+  it("14. Concurrency conflict (409) transitions to conflict recovery with Find Another Time (Requirement 28)", async () => {
+    mockCustomerRepository.create.mockResolvedValue({
+      id: "cust-1",
+      displayName: "Hassan",
+      type: "Person",
+    });
+
+    // Simulate concurrent reservation conflict
+    mockBookingRepository.confirm.mockRejectedValue(
+      new Error("HTTP 409 Conflict: Slot is already booked by another user")
+    );
+
+    const onFindSlots = vi.fn();
+    render(
+      <ClickToBookModal
+        open={true}
+        onOpenChange={vi.fn()}
+        resource={mockResource}
+        instantUtc="2026-10-09T10:00:00.000Z"
+        timeZoneId="Africa/Cairo"
+        onSuccess={vi.fn()}
+        onFindSlots={onFindSlots}
+      />
+    );
+
+    fireEvent.click(screen.getByText("+ New Customer"));
+    fireEvent.change(screen.getByPlaceholderText("Customer Name"), {
+      target: { value: "Hassan" },
+    });
+    fireEvent.click(screen.getByText("Create & Select"));
+
+    await waitFor(() => expect(screen.getByText("Confirm Booking")).toBeEnabled());
+
+    fireEvent.click(screen.getByRole("button", { name: "Confirm Booking" }));
+
+    await waitFor(() => {
+      expect(screen.getByText("This time is no longer available")).toBeInTheDocument();
+      expect(screen.getByRole("button", { name: "Find Another Time" })).toBeInTheDocument();
+      expect(screen.getByRole("button", { name: "Return to Calendar" })).toBeInTheDocument();
     });
   });
 });

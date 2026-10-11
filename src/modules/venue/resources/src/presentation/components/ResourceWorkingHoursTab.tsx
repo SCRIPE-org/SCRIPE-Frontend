@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { Clock, Sliders, ExternalLink } from "lucide-react";
+import { Clock, Sliders, ExternalLink, Copy } from "lucide-react";
 import { Button } from "@core/ui/button";
 import { Input } from "@core/ui/input";
 import { Label } from "@core/ui/label";
@@ -62,6 +62,19 @@ export function ResourceWorkingHoursTab({ vm }: Props) {
         [key]: value,
       },
     }));
+  };
+
+  const copyHoursToAll = (sourceDay: WeekDay) => {
+    const { start, end } = dailyWindows[sourceDay];
+    setDailyWindows((prev) => {
+      const next = { ...prev };
+      for (const d of DAYS) {
+        if (!next[d].closed) {
+          next[d] = { ...next[d], start, end };
+        }
+      }
+      return next;
+    });
   };
 
   const handleSave = async (e: React.FormEvent) => {
@@ -189,20 +202,30 @@ export function ResourceWorkingHoursTab({ vm }: Props) {
                         </div>
 
                         {!closed ? (
-                          <div className="flex items-center gap-3">
+                          <div className="flex items-center gap-2">
                             <Input
                               type="time"
                               value={start}
                               onChange={(e) => updateDay(day, "start", e.target.value)}
-                              className="h-8 w-28 text-xs font-mono"
+                              className="h-8 w-24 text-xs font-mono"
                             />
                             <span className="text-nx-ink-3">→</span>
                             <Input
                               type="time"
                               value={end}
                               onChange={(e) => updateDay(day, "end", e.target.value)}
-                              className="h-8 w-28 text-xs font-mono"
+                              className="h-8 w-24 text-xs font-mono"
                             />
+                            <Button
+                              type="button"
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => copyHoursToAll(day)}
+                              className="h-8 px-2 text-[11px] text-nx-ink-3 hover:text-nx-ink"
+                              title={t("resources.workingHours.copyToAll", { defaultValue: "Copy to all open days" })}
+                            >
+                              <Copy className="size-3.5" aria-hidden="true" />
+                            </Button>
                           </div>
                         ) : (
                           <span className="text-nx-ink-3 italic text-xs mr-16 rtl:mr-0 rtl:ml-16">

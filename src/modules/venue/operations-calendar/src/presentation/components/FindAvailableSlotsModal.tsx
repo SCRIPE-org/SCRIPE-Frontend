@@ -18,7 +18,7 @@ interface FindAvailableSlotsModalProps {
   resources: CalendarResource[];
   currentDate: string;
   timeZoneId: string;
-  onSelectSlot: (resource: CalendarResource, startIso: string) => void;
+  onSelectSlot: (resource: CalendarResource, startIso: string, durationMinutes?: number) => void;
 }
 
 export function FindAvailableSlotsModal({
@@ -105,7 +105,7 @@ export function FindAvailableSlotsModal({
     if (!resource) return;
     const startIso = new Date(`${selectedDate}T${startTime}:00`).toISOString();
     onOpenChange(false);
-    onSelectSlot(resource, startIso);
+    onSelectSlot(resource, startIso, durationMinutes);
   };
 
   return (

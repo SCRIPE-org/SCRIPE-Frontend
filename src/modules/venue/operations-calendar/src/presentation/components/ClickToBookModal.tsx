@@ -205,6 +205,18 @@ export function ClickToBookModal({
   const [holdCountdown, setHoldCountdown] = useState<string | null>(null);
   const [holdExpired, setHoldExpired] = useState(false);
 
+  // Price Change Acknowledgement state
+  const previousQuoteRef = useRef<PriceQuote | null>(null);
+  const [priceChangeNotice, setPriceChangeNotice] = useState<{
+    oldPrice: number;
+    newPrice: number;
+    currency: string;
+  } | null>(null);
+
+  // Step 0 validation state
+  const [step0Error, setStep0Error] = useState<string | null>(null);
+  const [step0Checking, setStep0Checking] = useState(false);
+
   // Payment state
   const [paymentChoice, setPaymentChoice] = useState<"later" | "now">("later");
   const [payNowAmount, setPayNowAmount] = useState<number>(0);
@@ -257,6 +269,10 @@ export function ClickToBookModal({
       setQuickEmail("");
       setQuickAddError(null);
       setDuplicateWarning(null);
+      previousQuoteRef.current = null;
+      setPriceChangeNotice(null);
+      setStep0Error(null);
+      setStep0Checking(false);
       setQuote(null);
       setQuoteLoading(false);
       setQuoteError(null);
@@ -325,6 +341,14 @@ export function ClickToBookModal({
         expiresAtUtc: new Date(Date.now() + 15 * 60 * 1000).toISOString(),
         idempotencyKey: crypto.randomUUID(),
       });
+      if (previousQuoteRef.current && calcQuote.grandTotal !== previousQuoteRef.current.grandTotal) {
+        setPriceChangeNotice({
+          oldPrice: previousQuoteRef.current.grandTotal,
+          newPrice: calcQuote.grandTotal,
+          currency: calcQuote.currencyCode || "EGP",
+        });
+      }
+      previousQuoteRef.current = calcQuote;
       setQuote(calcQuote);
       setPayNowAmount(calcQuote.grandTotal);
     } catch (err) {
@@ -344,6 +368,54 @@ export function ClickToBookModal({
     selectedResource,
     startUtc,
   ]);
+
+  const handleStep0Next = useCallback(async () => {
+    if (!selectedResource) return;
+    setStep0Checking(true);
+    setStep0Error(null);
+    try {
+      const container = getVenueContainer();
+      const localDate = new Date(startUtc).toISOString().slice(0, 10);
+      const startTimeStr = new Date(startUtc).toLocaleTimeString("en-GB", {
+        hour: "2-digit",
+        minute: "2-digit",
+        hourCycle: "h23",
+        timeZone: timeZoneId || "UTC",
+      });
+      const endTimeStr = new Date(endUtc).toLocaleTimeString("en-GB", {
+        hour: "2-digit",
+        minute: "2-digit",
+        hourCycle: "h23",
+        timeZone: timeZoneId || "UTC",
+      });
+      const startLocal = `${localDate}T${startTimeStr}:00`;
+      const endLocal = `${localDate}T${endTimeStr}:00`;
+
+      if (container.availabilityRepository?.search) {
+        const res = await container.availabilityRepository.search({
+          resourceId: selectedResource.id,
+          timeZoneId: timeZoneId || "UTC",
+          startLocal,
+          endLocal,
+          quantity: 1,
+        });
+
+        if (res && res.isAvailable === false) {
+          setStep0Error(
+            tRef.current("operationsCalendar.clickToBook.step0.slotUnavailable") ||
+              "This time slot is not available (occupied, closed, or maintenance). Please select another time."
+          );
+          return;
+        }
+      }
+      setStep(1);
+    } catch {
+      // In case of availability search error, advance and let backend fail-closed on confirm
+      setStep(1);
+    } finally {
+      setStep0Checking(false);
+    }
+  }, [endUtc, selectedResource, startUtc, timeZoneId]);
 
   useEffect(() => {
     if (open && selectedResource && selectedCustomer && step === 2) {
@@ -417,7 +489,7 @@ export function ClickToBookModal({
 
   // Primary Action: Confirm Booking
   const handleConfirm = useCallback(async () => {
-    if (!selectedResource || !selectedCustomer || !quote || submitting || holdExpired) return;
+    if (!selectedResource || !selectedCustomer || !quote || submitting || holdExpired || priceChangeNotice) return;
 
     // Check quote expiration
     if (quote.expiresAtUtc && Date.parse(quote.expiresAtUtc) < Date.now()) {
@@ -497,6 +569,7 @@ export function ClickToBookModal({
     paymentChoice,
     paymentMethod,
     paymentReference,
+    priceChangeNotice,
     quote,
     selectedCustomer,
     selectedResource,
@@ -855,6 +928,11 @@ export function ClickToBookModal({
             {/* STEP 0: Court & Time (Only in Global Mode B) */}
             {step === 0 && (
               <div className="space-y-3 py-1">
+                {step0Error && (
+                  <Alert variant="destructive" className="py-1.5 text-xs">
+                    <AlertDescription>{step0Error}</AlertDescription>
+                  </Alert>
+                )}
                 <div className="space-y-1.5">
                   <Label className="text-xs font-bold text-nx-ink">
                     {t("operationsCalendar.clickToBook.context.court")}
@@ -1141,6 +1219,56 @@ export function ClickToBookModal({
                   </div>
                 )}
 
+                {/* Hold Expired Alert */}
+                {holdExpired && (
+                  <Alert variant="destructive" className="py-2 text-xs">
+                    <AlertCircle className="size-4" />
+                    <AlertTitle className="text-xs font-bold">
+                      {t("operationsCalendar.clickToBook.hold.expired")}
+                    </AlertTitle>
+                    <div className="mt-2">
+                      <Button
+                        type="button"
+                        size="sm"
+                        variant="outline"
+                        className="h-6 text-[11px] font-bold"
+                        onClick={() => {
+                          setHoldExpired(false);
+                          setHoldExpiresAtUtc(null);
+                          void fetchAuthoritativeQuote();
+                        }}
+                      >
+                        <RotateCcw className="size-3 me-1" />
+                        {t("operationsCalendar.clickToBook.hold.refreshAvailability")}
+                      </Button>
+                    </div>
+                  </Alert>
+                )}
+
+                {/* Price Change Acknowledgment Alert */}
+                {priceChangeNotice && (
+                  <Alert variant="warning" className="py-2 text-xs">
+                    <AlertCircle className="size-4" />
+                    <AlertTitle className="text-xs font-bold">
+                      {t("operationsCalendar.clickToBook.pricing.priceChanged", {
+                        oldPrice: priceChangeNotice.oldPrice,
+                        newPrice: priceChangeNotice.newPrice,
+                        currency: priceChangeNotice.currency,
+                      })}
+                    </AlertTitle>
+                    <div className="mt-2">
+                      <Button
+                        type="button"
+                        size="sm"
+                        className="h-6 text-[11px] font-bold"
+                        onClick={() => setPriceChangeNotice(null)}
+                      >
+                        {t("operationsCalendar.clickToBook.pricing.acknowledge")}
+                      </Button>
+                    </div>
+                  </Alert>
+                )}
+
                 {/* Quote Expired Banner */}
                 {quoteExpiredMessage && (
                   <Alert variant="warning" className="py-1 text-xs">
@@ -1383,20 +1511,45 @@ export function ClickToBookModal({
                 <Button
                   type="button"
                   size="sm"
-                  onClick={() => setStep((prev) => prev + 1)}
-                  disabled={step === 1 && !selectedCustomer}
-                  className="text-xs font-bold bg-nx-primary hover:bg-nx-primary-hover text-white"
+                  onClick={() => {
+                    if (step === 0) {
+                      void handleStep0Next();
+                    } else {
+                      setStep((prev) => prev + 1);
+                    }
+                  }}
+                  disabled={
+                    (step === 0 && (step0Checking || !selectedResource)) ||
+                    (step === 1 && !selectedCustomer)
+                  }
+                  className="text-xs font-bold bg-nx-primary hover:bg-nx-primary-hover text-slate-900"
                 >
-                  {t("operationsCalendar.clickToBook.confirm.next")}
-                  <ArrowRight className="size-3.5 ms-1 rtl:rotate-180" />
+                  {step === 0 && step0Checking ? (
+                    <>
+                      <LoadingSpinner size="sm" className="me-1.5" />
+                      <span>{isRtl ? "جارٍ التحقق..." : "Checking..."}</span>
+                    </>
+                  ) : (
+                    <>
+                      {t("operationsCalendar.clickToBook.confirm.next")}
+                      <ArrowRight className="size-3.5 ms-1 rtl:rotate-180" />
+                    </>
+                  )}
                 </Button>
               ) : (
                 <Button
                   type="button"
                   size="sm"
                   onClick={handleConfirm}
-                  disabled={submitting || quoteLoading || !quote || holdExpired || !canCreateBooking}
-                  className="text-xs font-bold bg-nx-primary hover:bg-nx-primary-hover text-white shadow-xs"
+                  disabled={
+                    submitting ||
+                    quoteLoading ||
+                    !quote ||
+                    holdExpired ||
+                    Boolean(priceChangeNotice) ||
+                    !canCreateBooking
+                  }
+                  className="text-xs font-bold bg-nx-primary hover:bg-nx-primary-hover text-slate-900 shadow-xs"
                 >
                   {submitting ? (
                     <>

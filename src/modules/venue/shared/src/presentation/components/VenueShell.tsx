@@ -20,10 +20,20 @@ import {
   X,
   Building2,
   Check,
+  LogOut,
+  User as UserIcon,
+  Sun,
+  Moon,
+  Laptop,
 } from "lucide-react";
 import { cn } from "@core/common/utils";
 import { useI18n } from "@core/providers/i18n-provider";
 import { useAppStore } from "@core/store/useAppStore";
+import { useTheme } from "next-themes";
+import { useAuthLogout } from "@modules/auth/core/src/presentation/viewmodels/useAuthLogout";
+import { useTenantContext } from "@core/providers/tenant-context-provider";
+import { NotificationBell } from "@core/ui/notification/NotificationBell";
+import { NxThemeSwitcher } from "@core/ui/layout/common";
 import { usePermission } from "@core/hooks/use-permission";
 import { VENUE_PERMISSIONS } from "@modules/venue/permission-constants";
 import { Avatar, AvatarFallback, AvatarImage } from "@core/ui/avatar";
@@ -50,6 +60,9 @@ export function VenueShell({ children }: VenueShellProps) {
   const { language, setLanguage, direction, t } = useI18n();
   const isRtl = direction === "rtl";
   const user = useAppStore((s) => s.user);
+  const { currentTenant } = useTenantContext();
+  const { theme, setTheme } = useTheme();
+  const { logout } = useAuthLogout();
 
   // ── Permissions (Backend Authoritative) ─────────────────────────────────
   const canViewReceivables = usePermission(VENUE_PERMISSIONS.FINANCE_RECEIVABLES_VIEW);
@@ -480,25 +493,119 @@ export function VenueShell({ children }: VenueShellProps) {
               </button>
             </div>
 
-            {/* Notifications Bell */}
-            <button
-              type="button"
-              className="relative p-2 rounded-lg text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
-              aria-label="Notifications"
-            >
-              <Bell className="size-4" />
-              <span className="absolute top-1.5 right-1.5 size-2 rounded-full bg-red-500 ring-2 ring-white dark:ring-slate-900" />
-            </button>
+            {/* Theme Switcher */}
+            <NxThemeSwitcher buttonClassName="size-8 text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white" />
 
-            {/* User Avatar */}
-            <Avatar className="size-8 rounded-full border border-slate-200 dark:border-slate-700 bg-slate-900 text-white font-bold text-xs shadow-xs">
-              {user?.profileImageUrl ? (
-                <AvatarImage src={user.profileImageUrl} alt="User avatar" />
-              ) : null}
-              <AvatarFallback className="bg-slate-900 text-white text-xs font-bold">
-                {userInitial}
-              </AvatarFallback>
-            </Avatar>
+            {/* Notifications Bell */}
+            <NotificationBell />
+
+            {/* User Account Menu Dropdown */}
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <button
+                  type="button"
+                  className="rounded-full focus:outline-none focus:ring-2 focus:ring-nx-primary focus:ring-offset-2"
+                  aria-label="User account menu"
+                >
+                  <Avatar className="size-8 rounded-full border border-slate-200 dark:border-slate-700 bg-slate-900 text-white font-bold text-xs shadow-xs cursor-pointer hover:opacity-90 transition-opacity">
+                    {user?.profileImageUrl ? (
+                      <AvatarImage src={user.profileImageUrl} alt="User avatar" />
+                    ) : null}
+                    <AvatarFallback className="bg-slate-900 text-white text-xs font-bold">
+                      {userInitial}
+                    </AvatarFallback>
+                  </Avatar>
+                </button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-64 p-2 bg-nx-surface border border-nx-line shadow-nx-popover rounded-xl">
+                <DropdownMenuLabel className="p-2 font-normal">
+                  <div className="flex flex-col space-y-1">
+                    <p className="text-sm font-bold text-nx-ink truncate">
+                      {user ? `${user.firstName || ""} ${user.lastName || ""}`.trim() || user.username || user.email : "Venue Manager"}
+                    </p>
+                    <p className="text-xs text-nx-ink-2 truncate">
+                      {user?.email || "manager@scripe.com"}
+                    </p>
+                    <div className="flex items-center gap-1.5 mt-1 pt-1 border-t border-nx-line/50">
+                      <Building2 className="size-3 text-nx-ink-3 shrink-0" />
+                      <span className="text-[11px] font-semibold text-nx-accent truncate">
+                        {currentTenant?.name || "SCRIPE Venue Test Club"}
+                      </span>
+                    </div>
+                  </div>
+                </DropdownMenuLabel>
+                <DropdownMenuSeparator className="my-1" />
+                <DropdownMenuItem asChild className="cursor-pointer text-xs font-medium py-2">
+                  <Link href="/profile" className="flex items-center gap-2">
+                    <UserIcon className="size-3.5 text-nx-ink-2" />
+                    <span>{t("nav.profile", { defaultValue: "My Account" })}</span>
+                  </Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild className="cursor-pointer text-xs font-medium py-2">
+                  <Link href="/venue/settings" className="flex items-center gap-2">
+                    <Settings className="size-3.5 text-nx-ink-2" />
+                    <span>{t("venue.nav.settings", { defaultValue: "Preferences & Settings" })}</span>
+                  </Link>
+                </DropdownMenuItem>
+                <DropdownMenuSeparator className="my-1" />
+                <div className="px-2 py-1.5">
+                  <p className="text-[10px] font-semibold text-nx-ink-3 uppercase tracking-wider mb-1.5">
+                    {t("common.theme", { defaultValue: "Theme" })}
+                  </p>
+                  <div className="grid grid-cols-3 gap-1 bg-nx-raised/60 p-0.5 rounded-lg border border-nx-line/40 text-xs">
+                    <button
+                      type="button"
+                      onClick={() => setTheme("light")}
+                      className={cn(
+                        "flex items-center justify-center gap-1 py-1 rounded text-[11px] font-medium transition-colors",
+                        theme === "light"
+                          ? "bg-nx-surface text-nx-ink shadow-xs font-bold"
+                          : "text-nx-ink-3 hover:text-nx-ink"
+                      )}
+                    >
+                      <Sun className="size-3" />
+                      <span>Light</span>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setTheme("dark")}
+                      className={cn(
+                        "flex items-center justify-center gap-1 py-1 rounded text-[11px] font-medium transition-colors",
+                        theme === "dark"
+                          ? "bg-nx-surface text-nx-ink shadow-xs font-bold"
+                          : "text-nx-ink-3 hover:text-nx-ink"
+                      )}
+                    >
+                      <Moon className="size-3" />
+                      <span>Dark</span>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setTheme("system")}
+                      className={cn(
+                        "flex items-center justify-center gap-1 py-1 rounded text-[11px] font-medium transition-colors",
+                        theme === "system"
+                          ? "bg-nx-surface text-nx-ink shadow-xs font-bold"
+                          : "text-nx-ink-3 hover:text-nx-ink"
+                      )}
+                    >
+                      <Laptop className="size-3" />
+                      <span>Auto</span>
+                    </button>
+                  </div>
+                </div>
+                <DropdownMenuSeparator className="my-1" />
+                <DropdownMenuItem
+                  onClick={async () => {
+                    await logout();
+                  }}
+                  className="cursor-pointer text-xs font-semibold py-2 text-rose-600 dark:text-rose-400 focus:text-rose-600 focus:bg-rose-50 dark:focus:bg-rose-950/40"
+                >
+                  <LogOut className="size-3.5 me-2 rtl:rotate-180" />
+                  <span>{t("nav.logout", { defaultValue: "Sign Out" })}</span>
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
           </div>
         </header>
 

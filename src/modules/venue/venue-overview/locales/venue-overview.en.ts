@@ -24,6 +24,12 @@ export const en = {
   venueOverview: {
     title: "Venue Operations",
     subtitle: "Sports Operations Console · Live venue activity and pulse.",
+    greetingSubtext: "Here's what's happening at {{facility}} today.",
+    todaySchedule: {
+      title: "Today's Schedule",
+      viewAll: "View All",
+      empty: "No scheduled matches today",
+    },
     header: {
       today: "Today",
       timezone: "Timezone",

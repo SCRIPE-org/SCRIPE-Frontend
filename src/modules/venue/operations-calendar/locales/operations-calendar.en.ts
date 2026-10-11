@@ -86,6 +86,9 @@ export const en = {
       description: "The latest occupancy could not be retrieved.",
       retry: "Retry",
     },
+    readiness: {
+      courtNotReady: "Selected court is not ready for bookings. Please complete court setup first.",
+    },
     clickToBook: {
       title: "New Booking",
       stepper: {
@@ -121,6 +124,8 @@ export const en = {
         courtPrice: "Court Rental",
         calculating: "Calculating authoritative price...",
         expired: "The price quote has expired and was refreshed.",
+        priceChanged: "Price updated: Old: {{oldPrice}} {{currency}}, New: {{newPrice}} {{currency}}. Please acknowledge to proceed.",
+        acknowledge: "Acknowledge",
         failed: "Failed to calculate price quote.",
         retry: "Retry Quote",
         total: "Total",
@@ -131,8 +136,12 @@ export const en = {
       hold: {
         temporaryBadge: "Temporarily Reserved",
         countdown: "Reserved for {{time}}",
-        expired: "Reservation hold expired. Please refresh the slot.",
+        expired: "This time is no longer reserved. Please check availability again.",
+        refreshAvailability: "Check Availability Again",
         holdAction: "Hold Temporarily",
+      },
+      step0: {
+        slotUnavailable: "This time slot is not available (occupied, closed, or maintenance). Please select another time.",
       },
       payment: {
         title: "Payment",

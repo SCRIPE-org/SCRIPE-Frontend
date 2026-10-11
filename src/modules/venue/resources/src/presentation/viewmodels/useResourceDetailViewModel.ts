@@ -299,6 +299,24 @@ export function useResourceDetailViewModel(resourceId: string) {
     [availabilityRepository, loadData]
   );
 
+  const publishCourt = useCallback(async () => {
+    if (!resource) return false;
+    setSaving(true);
+    setError(null);
+    setFeedback(null);
+    try {
+      await schedulableResourceRepository.publish(resource.id);
+      setFeedback("courtPublished");
+      await loadData();
+      return true;
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to publish court");
+      return false;
+    } finally {
+      setSaving(false);
+    }
+  }, [loadData, resource, schedulableResourceRepository]);
+
   const isCalendar247 = Boolean(
     calendar?.windows &&
       calendar.windows.length >= 7 &&
@@ -330,6 +348,7 @@ export function useResourceDetailViewModel(resourceId: string) {
     updateWorkingHours,
     updateBookingRules,
     updatePricing,
+    publishCourt,
     addClosure,
     deleteClosure,
     refresh: loadData,

@@ -23,7 +23,7 @@ export function VenueOverviewQuickActions({ t }: Props) {
         size="sm"
         className="gap-2 shadow-nx-sm font-semibold"
       >
-        <Link href="/venue/bookings/new">
+        <Link href="/venue/calendar?newBooking=true">
           <Plus className="size-4" aria-hidden="true" />
           <span>{t("venueOverview.quickActions.newBooking")}</span>
         </Link>

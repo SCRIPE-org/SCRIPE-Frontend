@@ -28,7 +28,7 @@ export default async function NewBookingPage({ searchParams }: BookingPageProps)
   const date = first(values.date);
   if (date) params.set("date", date);
 
-  const startTime = first(values.startTime);
+  const startTime = first(values.startTime) ?? first(values.time);
   if (startTime) params.set("startTime", startTime);
 
   const duration = Number(first(values.durationMinutes));

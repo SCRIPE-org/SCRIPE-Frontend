@@ -91,6 +91,7 @@ export function useOperationsCalendarViewModel() {
               facilityName: facilityNames.get(profile.facilityId) ?? profile.name,
               resourceKindCode: profile.resourceKindCode,
               timeZoneId: zone,
+              slotPolicy: resource.slotPolicy,
             } satisfies CalendarResource];
           });
         const validFacilityId = getSavedFacilityId(facilityPage.items);

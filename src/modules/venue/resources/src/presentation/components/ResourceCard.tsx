@@ -152,7 +152,11 @@ export function ResourceCard({ item }: Props) {
               size="sm"
               className="h-8 text-xs font-bold bg-blue-600 hover:bg-blue-700 text-white rounded-lg flex-1"
             >
-              <Link href={`/venue/bookings/new?resourceId=${encodeURIComponent(item.id)}`}>
+              <Link
+                href={`/venue/calendar?newBooking=true&resourceId=${encodeURIComponent(
+                  item.id
+                )}&facilityId=${encodeURIComponent(item.facilityId)}`}
+              >
                 <Plus className="size-3.5 mr-1" />
                 <span>{t("resources.card.book", { defaultValue: "Book" })}</span>
               </Link>

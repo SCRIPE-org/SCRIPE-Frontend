@@ -46,6 +46,29 @@ vi.mock("@core/store/useAppStore", () => ({
     }),
 }));
 
+vi.mock("@core/providers/tenant-context-provider", () => ({
+  useTenantContext: () => ({
+    currentTenant: { id: "test-tenant", name: "SCRIPE Venue Test Club" },
+  }),
+}));
+
+vi.mock("next-themes", () => ({
+  useTheme: () => ({
+    theme: "light",
+    setTheme: vi.fn(),
+  }),
+}));
+
+vi.mock("@modules/auth/core/src/presentation/viewmodels/useAuthLogout", () => ({
+  useAuthLogout: () => ({
+    logout: vi.fn(),
+  }),
+}));
+
+vi.mock("@core/ui/notification/NotificationBell", () => ({
+  NotificationBell: () => <button aria-label="Notifications">Bell</button>,
+}));
+
 describe("VenueShell — Gate 1 Navigation & Shell", () => {
   const store = new Map<string, string>();
 

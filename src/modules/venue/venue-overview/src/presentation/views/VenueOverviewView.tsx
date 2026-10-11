@@ -82,7 +82,6 @@ export function VenueOverviewView({ facilityId, localDate }: Props) {
   if (state.stage === "empty") {
     return (
       <div className="p-6 max-w-[1600px] mx-auto space-y-6" dir={dir} data-testid="venue-overview-empty">
-        <VenueNav attentionCount={attentionCount} />
         <EmptyState
           icon={Building2}
           title={t("venueOverview.empty.noFacilityTitle")}
@@ -137,9 +136,6 @@ export function VenueOverviewView({ facilityId, localDate }: Props) {
       dir={dir}
       data-testid="venue-overview-view"
     >
-      {/* 4-Tier Product Mental Model Navigation */}
-      <VenueNav attentionCount={attentionCount} />
-
       {/* Metis-Inspired Page Header */}
       <VenueOverviewHeader
         facilityName={state.facilityName}

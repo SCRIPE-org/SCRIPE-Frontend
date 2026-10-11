@@ -72,8 +72,6 @@ export function ResourcesWorkspaceView() {
 
   return (
     <div className="space-y-6" dir={direction} data-testid="venue-resources-workspace">
-      <VenueNav />
-
       {/* Header with Title and Primary Actions */}
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between border-b border-nx-line pb-4">
         <div>
@@ -88,33 +86,13 @@ export function ResourcesWorkspaceView() {
         </div>
 
         <div className="flex items-center gap-2">
-          {/* Settings Dropdown */}
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="outline" size="sm" className="gap-1.5 text-xs font-medium">
-                <Sliders className="size-3.5 text-nx-ink-3" aria-hidden="true" />
-                <span>{t("resources.advancedSetup", { defaultValue: "Settings" })}</span>
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-56">
-              <DropdownMenuLabel className="text-xs">
-                {t("resources.advancedSetup", { defaultValue: "Settings" })}
-              </DropdownMenuLabel>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem asChild>
-                <Link href="/venue/facilities">Facilities / Branches</Link>
-              </DropdownMenuItem>
-              <DropdownMenuItem asChild>
-                <Link href="/venue/availability">Operating Hours & Calendars</Link>
-              </DropdownMenuItem>
-              <DropdownMenuItem asChild>
-                <Link href="/venue/pricing">Pricing Catalog</Link>
-              </DropdownMenuItem>
-              <DropdownMenuItem asChild>
-                <Link href="/venue/sites">Sites & Campuses</Link>
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
+          {/* Settings Link to Venue Settings */}
+          <Button asChild variant="outline" size="sm" className="gap-1.5 text-xs font-medium">
+            <Link href="/venue/settings">
+              <Sliders className="size-3.5 text-nx-ink-3" aria-hidden="true" />
+              <span>{t("resources.advancedSetup", { defaultValue: "Settings" })}</span>
+            </Link>
+          </Button>
 
           {/* Primary CTA: + Add Court / Space */}
           <Button

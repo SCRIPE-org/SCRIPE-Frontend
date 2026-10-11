@@ -24,6 +24,12 @@ export const ar = {
   venueOverview: {
     title: "عمليات الموقع الرياضي",
     subtitle: "لوحة التحكم الرياضية · النشاط المباشر والنبض التشغيلي للموقع.",
+    greetingSubtext: "إليك ما يحدث في {{facility}} اليوم.",
+    todaySchedule: {
+      title: "جدول اليوم",
+      viewAll: "عرض الكل",
+      empty: "لا توجد مباريات مجدولة اليوم",
+    },
     header: {
       today: "اليوم",
       timezone: "المنطقة الزمنية",

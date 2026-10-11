@@ -87,8 +87,6 @@ export function ResourceDetailView({ resourceId }: Props) {
 
   return (
     <div className="space-y-6" dir={direction} data-testid="resource-detail-view">
-      <VenueNav />
-
       {/* Back button */}
       <div>
         <Button variant="ghost" size="sm" asChild className="gap-1.5 text-xs text-nx-ink-2">
@@ -138,7 +136,11 @@ export function ResourceDetailView({ resourceId }: Props) {
           </Button>
           {isReady ? (
             <Button asChild size="sm" className="gap-1.5 text-xs font-bold">
-              <Link href={`/venue/bookings/new?resourceId=${encodeURIComponent(resourceId)}`}>
+              <Link
+                href={`/venue/calendar?newBooking=true&resourceId=${encodeURIComponent(
+                  resourceId
+                )}&facilityId=${encodeURIComponent(vm.facility?.id ?? vm.profile?.facilityId ?? "")}`}
+              >
                 <span>{t("resources.card.book", { defaultValue: "Book" })}</span>
               </Link>
             </Button>
@@ -174,10 +176,17 @@ export function ResourceDetailView({ resourceId }: Props) {
                 key={action.id}
                 size="sm"
                 variant="outline"
-                onClick={() => setActiveTab(action.tab)}
+                disabled={vm.saving}
+                onClick={() => {
+                  if (action.id === "publish-court") {
+                    void vm.publishCourt();
+                  } else {
+                    setActiveTab(action.tab);
+                  }
+                }}
                 className="h-7 text-xs border-amber-400 hover:bg-amber-100 dark:hover:bg-amber-900/40 text-amber-900 dark:text-amber-100"
               >
-                {action.label}
+                {action.id === "publish-court" && vm.saving ? "Publishing..." : action.label}
               </Button>
             ))}
           </div>

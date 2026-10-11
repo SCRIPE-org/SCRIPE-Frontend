@@ -41,6 +41,7 @@ export const en = {
       namePlaceholder: "e.g. Padel Court 1",
       sportType: "Type",
       capacity: "Capacity",
+      capacityHelp: "Max players on court (e.g. 4 for Padel doubles). Does not affect booking concurrency.",
       branch: "Branch",
       save: "Save Changes",
       saved: "Information updated successfully.",
