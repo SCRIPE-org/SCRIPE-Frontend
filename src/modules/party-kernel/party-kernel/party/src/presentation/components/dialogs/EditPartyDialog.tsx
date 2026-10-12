@@ -142,6 +142,9 @@ function EditPartyForm({
   );
 }
 
+/**
+ * Modal dialog for editing the display name of a party.
+ */
 export function EditPartyDialog({
   party,
   open,

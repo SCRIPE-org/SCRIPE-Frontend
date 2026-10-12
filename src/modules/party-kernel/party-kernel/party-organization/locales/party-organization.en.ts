@@ -15,8 +15,8 @@ export const en = {
       createdAt: "Created",
     },
     form: {
-      partyId: "Party ID",
-      partyIdPlaceholder: "Enter the linked party's ID",
+      partyId: "Party",
+      partyIdPlaceholder: "Select linked party...",
       legalName: "Legal Name",
       legalNamePlaceholder: "e.g. Acme Sports Club LLC",
       taxId: "Tax ID",

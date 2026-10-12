@@ -21,7 +21,7 @@ import type { IPartyRoleRepository } from "@modules/party-kernel/party-role/src/
 import type { IPartyRelationshipRepository } from "@modules/party-kernel/party-relationship/src/domain/interfaces/IPartyRelationshipRepository";
 import type { IMergeCandidateRepository } from "@modules/party-kernel/merge-candidate/src/domain/interfaces/IMergeCandidateRepository";
 
-import { Party } from "../../domain/entities/Party";
+import { Party, type PartyContactLookup } from "../../domain/entities/Party";
 import { PartyProfile } from "../../domain/entities/PartyProfile";
 import { PartyMapper } from "../mappers/PartyMapper";
 
@@ -66,7 +66,7 @@ export class PartyRepository implements IPartyRepository {
 
     // Concurrently fetch profile sub-resources with safe fallback
     const [
-      _canonicalProfileResult,
+      canonicalProfileResult,
       personResult,
       organizationResult,
       contactPointsResult,
@@ -125,6 +125,11 @@ export class PartyRepository implements IPartyRepository {
         ? mergeCandidatesResult.value.items.filter((m) => m.primaryPartyId === id || m.duplicatePartyId === id)
         : [];
 
+    const canonicalProfile =
+      canonicalProfileResult.status === "fulfilled" && canonicalProfileResult.value
+        ? canonicalProfileResult.value
+        : null;
+
     return new PartyProfile({
       party,
       person,
@@ -133,61 +138,63 @@ export class PartyRepository implements IPartyRepository {
       roles,
       relationships,
       mergeCandidates,
+      canonicalProfile,
     });
   }
 
   async create(data: Record<string, unknown>): Promise<string> {
-    // TASK 2: Route supported creation flows through the typed Person/Organization endpoints.
-    // Never infer Organization LegalName from DisplayName.
-    // Preserve compatibility and existing architecture.
-    // Do not remove the backend legacy endpoint.
+    // TASK 2 & CT-03: Eliminate new root-only creation from FE.
+    // All creation pathways must call typed POST routes with required fullName or legalName.
+    // Legacy server route remains on backend (do not delete), but FE rejects incomplete/untyped identities.
     const isPerson =
       data.type === "Person" ||
       (typeof data.fullName === "string" && data.fullName.trim().length > 0);
 
     if (isPerson) {
       const fullName = (
-        typeof data.fullName === "string"
-          ? data.fullName
-          : (data.displayName as string) || (data.name as string) || ""
+        typeof data.fullName === "string" ? data.fullName : ""
       ).trim();
 
-      if (fullName) {
-        return await this.createPerson({
-          fullName,
-          displayName: typeof data.displayName === "string" ? data.displayName : undefined,
-          givenName: typeof data.givenName === "string" ? data.givenName : undefined,
-          middleNames: typeof data.middleNames === "string" ? data.middleNames : undefined,
-          familyName: typeof data.familyName === "string" ? data.familyName : undefined,
-          dateOfBirth: typeof data.dateOfBirth === "string" ? data.dateOfBirth : undefined,
-          isMinor: typeof data.isMinor === "boolean" ? data.isMinor : undefined,
-          phone: typeof data.phone === "string" ? data.phone : undefined,
-          email: typeof data.email === "string" ? data.email : undefined,
-          idempotencyKey: typeof data.idempotencyKey === "string" ? data.idempotencyKey : undefined,
-        });
+      if (!fullName) {
+        throw new Error("Person creation requires fullName");
       }
+
+      return await this.createPerson({
+        fullName,
+        displayName: typeof data.displayName === "string" ? data.displayName : undefined,
+        givenName: typeof data.givenName === "string" ? data.givenName : undefined,
+        middleNames: typeof data.middleNames === "string" ? data.middleNames : undefined,
+        familyName: typeof data.familyName === "string" ? data.familyName : undefined,
+        dateOfBirth: typeof data.dateOfBirth === "string" ? data.dateOfBirth : undefined,
+        isMinor: typeof data.isMinor === "boolean" ? data.isMinor : undefined,
+        phone: typeof data.phone === "string" ? data.phone : undefined,
+        email: typeof data.email === "string" ? data.email : undefined,
+        idempotencyKey: typeof data.idempotencyKey === "string" ? data.idempotencyKey : undefined,
+      });
     }
 
-    // Organization routing: ONLY when explicit legalName is present.
-    // Never infer Organization LegalName from DisplayName.
-    const isExplicitOrg =
-      data.type === "Organization" &&
-      typeof data.legalName === "string" &&
-      data.legalName.trim().length > 0;
+    if (data.type === "Organization") {
+      const legalName = (
+        typeof data.legalName === "string" ? data.legalName : ""
+      ).trim();
 
-    if (isExplicitOrg) {
+      if (!legalName) {
+        throw new Error("Organization creation requires legalName");
+      }
+
       return await this.createOrganization({
-        legalName: (data.legalName as string).trim(),
+        legalName,
         displayName: typeof data.displayName === "string" ? data.displayName.trim() : undefined,
         taxId: typeof data.taxId === "string" ? data.taxId.trim() : undefined,
         phone: typeof data.phone === "string" ? data.phone.trim() : undefined,
         email: typeof data.email === "string" ? data.email.trim() : undefined,
+        idempotencyKey: typeof data.idempotencyKey === "string" ? data.idempotencyKey : undefined,
       });
     }
 
-    // Fall back to legacy generic party creation for backward compatibility
-    const response = await this.service.create(data);
-    return response.id;
+    throw new Error(
+      "Direct untyped party creation is deprecated. All Contacts must be created as either Person (with fullName) or Organization (with legalName)."
+    );
   }
 
   async createPerson(
@@ -233,8 +240,13 @@ export class PartyRepository implements IPartyRepository {
           value: params.phone.trim(),
           isPrimary: true,
         });
-      } catch {
-        // Non-blocking contact point creation
+      } catch (err) {
+        if (params.onContactPointFailure) {
+          params.onContactPointFailure(
+            err instanceof Error ? err : new Error(String(err)),
+            partyId
+          );
+        }
       }
     }
 
@@ -246,26 +258,49 @@ export class PartyRepository implements IPartyRepository {
           value: params.email.trim(),
           isPrimary: true,
         });
-      } catch {
-        // Non-blocking contact point creation
+      } catch (err) {
+        if (params.onContactPointFailure) {
+          params.onContactPointFailure(
+            err instanceof Error ? err : new Error(String(err)),
+            partyId
+          );
+        }
       }
     }
 
     return partyId;
   }
 
-  async createOrganization(params: CreateOrganizationParams): Promise<string> {
-    const displayName = (params.displayName || params.legalName).trim();
+  async createOrganization(
+    params: CreateOrganizationParams,
+    explicitIdempotencyKey?: string
+  ): Promise<string> {
+    const legalName = params.legalName.trim();
+    if (!legalName) {
+      throw new Error("Legal name is required");
+    }
+    const displayName = (params.displayName || legalName).trim();
 
     // 1. Atomic organization creation via backend endpoint
     if (!this.service.createOrganization) {
       throw new Error("Backend does not support atomic organization creation");
     }
 
-    const response = await this.service.createOrganization({
-      legalName: params.legalName.trim(),
-      displayName,
-    });
+    // Stable idempotency key per intent across retries
+    const idempotencyKey =
+      explicitIdempotencyKey ||
+      params.idempotencyKey ||
+      (typeof crypto !== "undefined" && crypto.randomUUID
+        ? crypto.randomUUID()
+        : undefined);
+
+    const response = await this.service.createOrganization(
+      {
+        legalName,
+        displayName,
+      },
+      idempotencyKey
+    );
     const partyId = response.id;
 
     // 2. Primary contact methods if provided
@@ -277,8 +312,13 @@ export class PartyRepository implements IPartyRepository {
           value: params.phone.trim(),
           isPrimary: true,
         });
-      } catch {
-        // Non-blocking contact point creation
+      } catch (err) {
+        if (params.onContactPointFailure) {
+          params.onContactPointFailure(
+            err instanceof Error ? err : new Error(String(err)),
+            partyId
+          );
+        }
       }
     }
 
@@ -290,12 +330,92 @@ export class PartyRepository implements IPartyRepository {
           value: params.email.trim(),
           isPrimary: true,
         });
-      } catch {
-        // Non-blocking contact point creation
+      } catch (err) {
+        if (params.onContactPointFailure) {
+          params.onContactPointFailure(
+            err instanceof Error ? err : new Error(String(err)),
+            partyId
+          );
+        }
       }
     }
 
     return partyId;
+  }
+
+  async lookupPeople(params: { page?: number; pageSize?: number; search?: string } = {}) {
+    if (!this.service.lookupPeople) {
+      throw new Error("Backend does not support people lookup");
+    }
+    const res = await this.service.lookupPeople({
+      page: params.page ?? 1,
+      pageSize: params.pageSize ?? 20,
+      search: params.search?.trim(),
+    });
+    return {
+      items: (res.items || []).map(PartyMapper.toContactLookup),
+      totalCount: res.totalCount,
+      page: res.pageNumber,
+      pageSize: res.pageSize,
+      totalPages: res.totalPages,
+    };
+  }
+
+  async lookupOrganizations(params: { page?: number; pageSize?: number; search?: string } = {}) {
+    if (!this.service.lookupOrganizations) {
+      throw new Error("Backend does not support organization lookup");
+    }
+    const res = await this.service.lookupOrganizations({
+      page: params.page ?? 1,
+      pageSize: params.pageSize ?? 20,
+      search: params.search?.trim(),
+    });
+    return {
+      items: (res.items || []).map(PartyMapper.toContactLookup),
+      totalCount: res.totalCount,
+      page: res.pageNumber,
+      pageSize: res.pageSize,
+      totalPages: res.totalPages,
+    };
+  }
+
+  async lookupContacts(params: {
+    page?: number;
+    pageSize?: number;
+    search?: string;
+    type?: "all" | "Person" | "Organization";
+  } = {}) {
+    const type = params.type ?? "all";
+    if (type === "Person") {
+      const res = await this.lookupPeople(params);
+      return { items: res.items, totalCount: res.totalCount };
+    }
+    if (type === "Organization") {
+      const res = await this.lookupOrganizations(params);
+      return { items: res.items, totalCount: res.totalCount };
+    }
+
+    // "all": fetch both in parallel, merge and sort alphabetically by displayName
+    const [peopleRes, orgRes] = await Promise.allSettled([
+      this.lookupPeople(params),
+      this.lookupOrganizations(params),
+    ]);
+
+    // If both queries failed, propagate the error so the UI can display permission/network error state
+    if (peopleRes.status === "rejected" && orgRes.status === "rejected") {
+      throw peopleRes.reason || orgRes.reason || new Error("Failed to lookup contacts");
+    }
+
+    const peopleItems = peopleRes.status === "fulfilled" ? peopleRes.value.items : [];
+    const orgItems = orgRes.status === "fulfilled" ? orgRes.value.items : [];
+    const combined = [...peopleItems, ...orgItems].sort((a, b) =>
+      a.displayName.localeCompare(b.displayName)
+    );
+    const totalCount =
+      (peopleRes.status === "fulfilled" ? peopleRes.value.totalCount : 0) +
+      (orgRes.status === "fulfilled" ? orgRes.value.totalCount : 0);
+
+    return { items: combined, totalCount };
   }
 
   async update(id: string, data: Record<string, unknown>): Promise<void> {

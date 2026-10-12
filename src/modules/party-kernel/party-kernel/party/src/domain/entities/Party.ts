@@ -5,6 +5,19 @@
  */
 
 /**
+ * Safe Contact Lookup domain entity for party selection (PartyPicker, CRM, etc.)
+ * Strictly contains canonical encrypted Party ID with safe name projections.
+ * Sensitive fields (phone, email, DOB, minor status, tax identifiers) are omitted.
+ */
+export interface PartyContactLookup {
+  id: string; // Canonical encrypted Party ID
+  type: "Person" | "Organization";
+  displayName: string;
+  fullName?: string | null;
+  legalName?: string | null;
+}
+
+/**
  * Party data from API
  */
 export interface PartyData {

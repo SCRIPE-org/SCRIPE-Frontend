@@ -150,8 +150,8 @@ describe("Party Invariants & Presentation Gates", () => {
     });
 
     it("verifies accurate domain translations for enterprise directory & profiles", () => {
-      expect(en.party.directory.title).toBe("People & Organizations");
-      expect(ar.party.directory.title).toBe("دليل الأفراد والمؤسسات");
+      expect(en.party.directory.title).toBe("Contacts Directory");
+      expect(ar.party.directory.title).toBe("دليل جهات الاتصال");
 
       expect(en.party.types.Person).toBe("Person");
       expect(ar.party.types.Person).toBe("فرد");

@@ -13,6 +13,9 @@ import type {
   AddPartyRoleParams,
 } from "../../domain/interfaces/IPartyRepository";
 
+/**
+ * Tabs available in the party profile workspace
+ */
 export type PartyProfileTab =
   | "overview"
   | "contacts"
@@ -21,6 +24,10 @@ export type PartyProfileTab =
   | "roles"
   | "history";
 
+/**
+ * Hook providing data, state, and actions for a single party profile workspace.
+ * @param partyId The canonical encrypted party ID
+ */
 export function usePartyProfileViewModel(partyId: string) {
   const { partyRepository } = getPartyKernelContainer();
   const queryClient = useQueryClient();

@@ -29,6 +29,9 @@ interface AddContactDialogProps {
   onSubmit: (data: Omit<AddContactPointParams, "partyId">) => Promise<string>;
 }
 
+/**
+ * Modal dialog for registering a new contact method on a party.
+ */
 export function AddContactDialog({
   open,
   onOpenChange,
@@ -64,8 +67,14 @@ export function AddContactDialog({
     try {
       setIsSubmitting(true);
       setError(null);
+      let mappedType = type;
+      if (type.toLowerCase() === "phone" || type.toLowerCase() === "mobile") mappedType = "Phone";
+      else if (type.toLowerCase() === "email") mappedType = "Email";
+      else if (type.toLowerCase() === "fax") mappedType = "Fax";
+      else mappedType = "Other";
+
       await onSubmit({
-        type,
+        type: mappedType,
         value: value.trim(),
         isPrimary,
       });
@@ -109,10 +118,8 @@ export function AddContactDialog({
                 <SelectContent>
                   <SelectItem value="Phone">Phone</SelectItem>
                   <SelectItem value="Email">Email</SelectItem>
-                  <SelectItem value="Mobile">Mobile</SelectItem>
-                  <SelectItem value="WhatsApp">WhatsApp</SelectItem>
-                  <SelectItem value="Address">Physical Address</SelectItem>
-                  <SelectItem value="Website">Website</SelectItem>
+                  <SelectItem value="Fax">Fax</SelectItem>
+                  <SelectItem value="Other">Other</SelectItem>
                 </SelectContent>
               </Select>
             </div>

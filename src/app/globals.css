@@ -2318,7 +2318,8 @@ html {
    MODERATE — Empty State Entrance
    Centered empty states scale in softly
    ======================================== */
-:root[data-animation="moderate"] .flex.flex-col.items-center.justify-center {
+:root[data-animation="moderate"] [data-empty-state-entrance],
+:root[data-animation="moderate"] .nx-empty-state-entrance {
   animation: nxScaleIn 0.35s ease-out both;
 }
 

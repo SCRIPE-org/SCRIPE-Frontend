@@ -86,6 +86,7 @@ const SYSTEM_PAGES = [
   "/plugins", // Dynamic plugin pages (no menu)
   "/marketplace", // Marketplace hub page (no menu)
   "/venue", // Venue operations workspace
+  "/party-kernel", // PartyKernel / Contacts workspace
 ];
 
 function isSystemPage(pathname: string): boolean {
@@ -192,8 +193,15 @@ export function RouteGuard({ children }: RouteGuardProps) {
         appLogger.debug("[RouteGuard] Authenticated user on auth page → dashboard");
         hasRedirected.current = true;
         const mcp = useAppStore.getState().mustChangePassword;
-        const defaultPath = useAppStore.getState().defaultRedirectPath;
-        const targetPath = !defaultPath || defaultPath === "/" ? "/overview" : defaultPath;
+        const redirectParam = typeof window !== "undefined" ? new URLSearchParams(window.location.search).get("redirect") : null;
+        const rawDefault = useAppStore.getState().defaultRedirectPath;
+        const safeRedirect = redirectParam && redirectParam.startsWith("/") && !redirectParam.startsWith("//") ? redirectParam : null;
+        let targetPath = safeRedirect || (!rawDefault || rawDefault === "/" ? "/overview" : rawDefault);
+        if (targetPath === "/overview" && !canAccessPage("/overview")) {
+          const workspaceRouteMap = useNavigationStore.getState().workspaceRouteMap;
+          const allRoutes = Object.values(workspaceRouteMap).flat();
+          targetPath = allRoutes.find((r) => canAccessPage(r)) || (canAccessPage("/party-kernel/parties") ? "/party-kernel/parties" : "/overview");
+        }
         router.replace(mcp ? "/change-password" : targetPath);
         return;
       }
@@ -233,6 +241,12 @@ export function RouteGuard({ children }: RouteGuardProps) {
           return;
         }
 
+        // ── system pages bypass permission system and nav store RBAC (always allowed when authenticated) ──
+        if (isSystemPage(pathname)) {
+          setIsChecking(false);
+          return;
+        }
+
         if (!canAccessPage(pathname)) {
           appLogger.debug(
             "[RouteGuard] Access denied by permission system — checking for alternative workspace pages"
@@ -259,6 +273,16 @@ export function RouteGuard({ children }: RouteGuardProps) {
               router.replace(accessibleRoute);
               return;
             }
+          }
+          const allRoutes = Object.values(workspaceRouteMap).flat();
+          const fallbackRoute = allRoutes.find((r) => canAccessPage(r)) || (canAccessPage("/party-kernel/parties") ? "/party-kernel/parties" : null);
+          if (fallbackRoute && fallbackRoute !== pathname) {
+            appLogger.debug(
+              `[RouteGuard] Redirecting to global accessible route: ${fallbackRoute}`
+            );
+            hasRedirected.current = true;
+            router.replace(fallbackRoute);
+            return;
           }
           appLogger.debug("[RouteGuard] Access denied by permission system");
           hasRedirected.current = true;
@@ -310,6 +334,16 @@ export function RouteGuard({ children }: RouteGuardProps) {
               router.replace(accessibleRoute);
               return;
             }
+          }
+          const allRoutes = Object.values(workspaceRouteMap).flat();
+          const fallbackRoute = allRoutes.find((r) => canAccessPage(r) && hasRouteAccess(r)) || (canAccessPage("/party-kernel/parties") && hasRouteAccess("/party-kernel/parties") ? "/party-kernel/parties" : null);
+          if (fallbackRoute && fallbackRoute !== pathname) {
+            appLogger.debug(
+              `[RouteGuard] Redirecting to global accessible navigation route: ${fallbackRoute}`
+            );
+            hasRedirected.current = true;
+            router.replace(fallbackRoute);
+            return;
           }
           appLogger.debug("[RouteGuard] Access denied by navigation store");
           hasRedirected.current = true;

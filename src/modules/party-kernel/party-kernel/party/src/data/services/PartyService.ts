@@ -12,6 +12,7 @@ import {
   type PartyJson,
   type PartyListResponseJson,
   type PartyProfileResponseJson,
+  type PartyContactLookupPagedResponseJson,
 } from "../models/PartyModel";
 import type { IPartyService, PartyListResult } from "../../domain/interfaces/IPartyService";
 
@@ -84,8 +85,46 @@ export class PartyService implements IPartyService {
     );
   }
 
-  async createOrganization(data: { legalName: string; displayName?: string }): Promise<{ id: string }> {
-    return this.api.post<{ id: string }>(PARTY_ENDPOINTS.ORGANIZATIONS, data);
+  async createOrganization(
+    data: { legalName: string; displayName?: string },
+    idempotencyKey?: string
+  ): Promise<{ id: string }> {
+    const headers: Record<string, string> = {};
+    if (idempotencyKey) {
+      headers["Idempotency-Key"] = idempotencyKey;
+    }
+    return this.api.post<{ id: string }>(
+      PARTY_ENDPOINTS.ORGANIZATIONS,
+      data,
+      undefined,
+      Object.keys(headers).length > 0 ? { headers } : undefined
+    );
+  }
+
+  async lookupPeople(params: {
+    page: number;
+    pageSize: number;
+    search?: string;
+  }): Promise<PartyContactLookupPagedResponseJson> {
+    const url = buildUrl(PARTY_ENDPOINTS.PEOPLE_LOOKUP, {
+      page: params.page,
+      pageSize: Math.min(params.pageSize, 100),
+      search: params.search?.slice(0, 300),
+    });
+    return this.api.get<PartyContactLookupPagedResponseJson>(url);
+  }
+
+  async lookupOrganizations(params: {
+    page: number;
+    pageSize: number;
+    search?: string;
+  }): Promise<PartyContactLookupPagedResponseJson> {
+    const url = buildUrl(PARTY_ENDPOINTS.ORGANIZATIONS_LOOKUP, {
+      page: params.page,
+      pageSize: Math.min(params.pageSize, 100),
+      search: params.search?.slice(0, 300),
+    });
+    return this.api.get<PartyContactLookupPagedResponseJson>(url);
   }
 
   async update(id: string, data: Record<string, unknown>): Promise<void> {
