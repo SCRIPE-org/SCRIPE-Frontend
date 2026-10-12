@@ -39,29 +39,11 @@ export interface LoginResponseData {
   lastWorkspaceKey?: string | null;
 }
 
-/**
- * Get device info string from browser environment
- */
-function getDeviceInfo(): string {
-  if (typeof window === "undefined") return "Server";
-
-  const { userAgent, platform, language } = navigator;
-  const screenInfo = `${window.screen.width}x${window.screen.height}`;
-
-  return JSON.stringify({
-    userAgent,
-    platform,
-    language,
-    screen: screenInfo,
-    timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
-  });
-}
-
 export class LoginRequest {
   public readonly identifier: string;
   public readonly password: string;
   public readonly tenantId?: string;
-  public readonly deviceInfo: string;
+  public readonly deviceInfo?: string;
   public readonly isPlatformAdmin: boolean;
   public readonly staySignedIn: boolean;
 
@@ -71,8 +53,7 @@ export class LoginRequest {
     this.tenantId = data.tenantId;
     this.isPlatformAdmin = data.isPlatformAdmin ?? false;
     this.staySignedIn = data.staySignedIn ?? false;
-    // Auto-populate device info if not provided
-    this.deviceInfo = data.deviceInfo || getDeviceInfo();
+    this.deviceInfo = data.deviceInfo;
   }
 
   /**
