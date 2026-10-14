@@ -129,7 +129,9 @@ export function useTenantOverviewViewModel() {
           Array.isArray(parsed.overviewLayout.widgets) &&
           parsed.overviewLayout.widgets.length > 0
         ) {
-          setLayout(parsed.overviewLayout);
+          queueMicrotask(() => {
+            setLayout(parsed.overviewLayout);
+          });
         }
       } catch {}
     }

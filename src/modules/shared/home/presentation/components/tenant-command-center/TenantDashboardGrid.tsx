@@ -161,14 +161,14 @@ export function TenantDashboardGrid({
           strategy={rectSortingStrategy}
         >
           {visibleWidgets.length === 0 ? (
-            <div className="flex min-h-[300px] flex-col items-center justify-center rounded-2xl border-2 border-dashed border-border bg-card/40 p-8 text-center">
-              <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-primary/10 text-primary mb-3">
+            <div className="flex min-h-[300px] flex-col items-center justify-center rounded-nx-lg border-2 border-dashed border-nx-line bg-nx-raised/30 p-8 text-center">
+              <div className="flex h-12 w-12 items-center justify-center rounded-nx-md bg-nx-accent/10 text-nx-accent mb-3">
                 <LayoutGrid className="h-6 w-6" />
               </div>
-              <h3 className="text-sm font-bold text-foreground">
+              <h3 className="text-sm font-semibold text-nx-ink">
                 {t("tenantCommandCenter.grid.emptyTitle") || "Your overview layout is empty"}
               </h3>
-              <p className="text-xs text-muted-foreground mt-1 max-w-sm mb-4">
+              <p className="text-xs text-nx-ink-3 mt-1 max-w-sm mb-4">
                 {t("tenantCommandCenter.grid.emptySubtitle") ||
                   "Add widgets from the widget library to customize your organization control center."}
               </p>
@@ -208,14 +208,14 @@ export function TenantDashboardGrid({
         {/* Drag Overlay Ghost */}
         <DragOverlay adjustScale={false}>
           {activeDragItem ? (
-            <div className="rounded-2xl border-2 border-primary bg-card/95 p-3 shadow-2xl backdrop-blur-md opacity-90 cursor-grabbing">
+            <div className="rounded-nx-lg border-2 border-nx-accent bg-nx-surface p-3 shadow-nx-modal opacity-95 cursor-grabbing">
               <div className="flex items-center gap-2">
-                <span className="text-xs font-bold text-foreground">
+                <span className="text-xs font-semibold text-nx-ink">
                   {activeDragItem.customTitle ||
                     getWidgetDefinition(activeDragItem.widgetId)?.titleKey ||
                     activeDragItem.widgetId}
                 </span>
-                <span className="rounded bg-primary/10 px-1.5 py-0.5 text-[10px] font-semibold text-primary">
+                <span className="rounded-nx-xs bg-nx-accent/10 px-1.5 py-0.5 text-[10px] font-semibold text-nx-accent">
                   Moving
                 </span>
               </div>

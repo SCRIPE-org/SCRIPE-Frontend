@@ -126,29 +126,32 @@ export function TenantWidgetCardWrapper({
     >
       <div
         ref={contentRef}
-        className="relative h-fit rounded-2xl border-2 border-dashed border-primary/40 bg-card/70 p-2 shadow-sm transition-all hover:border-primary/70 hover:bg-card"
+        className="relative h-fit rounded-nx-lg border-2 border-dashed border-nx-accent/40 bg-nx-surface/90 p-2.5 transition-all hover:border-nx-accent hover:bg-nx-surface"
       >
         {/* Responsive Customization Controls Toolbar */}
-        <div className="widget-toolbar-container mb-2 rounded-lg border border-border/60 bg-muted/40 px-2.5 py-1.5 backdrop-blur-xs">
+        <div className="widget-toolbar-container mb-2.5 rounded-nx-md border border-nx-line bg-nx-raised px-2.5 py-1.5">
           {/* Header Row: Drag Handle, Title & Category */}
           <div className="widget-toolbar-header-row flex items-center gap-1.5 min-w-0">
             <button
               type="button"
               {...attributes}
               {...listeners}
-              className="flex h-7 w-7 shrink-0 cursor-grab items-center justify-center rounded-md border border-border bg-card text-muted-foreground hover:bg-accent hover:text-foreground active:cursor-grabbing focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+              className="flex h-7 w-7 shrink-0 cursor-grab items-center justify-center rounded-nx-sm border border-nx-line bg-nx-surface text-nx-ink-3 hover:border-nx-line-hi hover:bg-nx-raised hover:text-nx-ink active:cursor-grabbing focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
               title={t("tenantCommandCenter.customization.dragToReorder") || "Drag to reorder"}
               aria-label={t("tenantCommandCenter.customization.dragToReorder") || "Drag to reorder"}
             >
               <GripVertical className="h-4 w-4" />
             </button>
 
-            <span className="truncate text-xs font-bold text-foreground" title={displayTitle}>
+            <span className="truncate text-xs font-semibold text-nx-ink" title={displayTitle}>
               {displayTitle}
             </span>
 
             {definition && (
-              <Badge variant="outline" className="hidden sm:inline-flex text-[9px] px-1.5 py-0 capitalize text-muted-foreground shrink-0">
+              <Badge
+                variant="outline"
+                className="hidden sm:inline-flex text-[9px] px-1.5 py-0 capitalize text-nx-ink-3 border-nx-line shrink-0"
+              >
                 {definition.category}
               </Badge>
             )}
@@ -157,7 +160,7 @@ export function TenantWidgetCardWrapper({
           {/* Actions Row: Quick Width Selector, Settings & Remove */}
           <div className="widget-toolbar-actions-row flex items-center gap-1 shrink-0">
             {/* Width Selector Pills */}
-            <div className="flex items-center rounded-md border border-border/60 bg-background/80 p-0.5">
+            <div className="flex items-center rounded-nx-sm border border-nx-line bg-nx-surface p-0.5">
               {WIDTH_PILLS.map(({ span, label }) => {
                 const isAllowed =
                   definition && span >= definition.minColSpan && span <= definition.maxColSpan;
@@ -174,10 +177,10 @@ export function TenantWidgetCardWrapper({
                         onResize(item.id, clampColSpan(item.widgetId, span));
                       }
                     }}
-                    className={`rounded px-1.5 py-0.5 text-[10px] font-semibold transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring ${
+                    className={`rounded-nx-xs px-1.5 py-0.5 text-[10px] font-semibold transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring ${
                       isCurrent
-                        ? "bg-primary text-primary-foreground shadow-xs"
-                        : "text-muted-foreground hover:bg-muted hover:text-foreground"
+                        ? "bg-nx-accent text-white shadow-xs"
+                        : "text-nx-ink-3 hover:bg-nx-raised hover:text-nx-ink"
                     }`}
                     title={`Set width to ${label}`}
                     aria-label={`Set width to ${label}`}
@@ -195,7 +198,7 @@ export function TenantWidgetCardWrapper({
                 variant="ghost"
                 size="sm"
                 onClick={() => onConfigure(item)}
-                className="h-7 w-7 p-0 text-muted-foreground hover:text-foreground"
+                className="h-7 w-7 p-0 text-nx-ink-3 hover:text-nx-ink hover:bg-nx-raised"
                 title={t("tenantCommandCenter.customization.widgetSettings") || "Widget settings"}
                 aria-label={t("tenantCommandCenter.customization.widgetSettings") || "Widget settings"}
               >

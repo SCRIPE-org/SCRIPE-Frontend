@@ -53,32 +53,32 @@ export function TenantCommandHeader({
   const { isPresentationMode, togglePresentationMode } = usePresentationMode();
 
   return (
-    <div className="flex flex-col gap-3 border-b border-border/60 pb-2 sm:flex-row sm:items-center sm:justify-between">
+    <div className="flex flex-col gap-3 border-b border-nx-line pb-3 sm:flex-row sm:items-center sm:justify-between">
       {/* Left: Breadcrumb, Tenant Badge, and Edit Mode Indicator */}
       <div className="flex flex-wrap items-center gap-2.5">
-        <div className="flex items-center gap-2 text-xs text-muted-foreground">
+        <div className="flex items-center gap-2 text-xs text-nx-ink-3">
           <span>{t("tenantCommandCenter.administration")}</span>
           <span className="rtl:rotate-180">›</span>
-          <b className="text-foreground">{t("tenantCommandCenter.overview")}</b>
+          <b className="text-nx-ink">{t("tenantCommandCenter.overview")}</b>
         </div>
-        <div className="hidden h-3.5 w-px bg-border sm:block" />
+        <div className="hidden h-3.5 w-px bg-nx-line sm:block" />
         <div className="flex items-center gap-2">
           <Badge
             variant="outline"
-            className="gap-1.5 bg-muted/40 px-2 py-0.5 text-xs font-semibold"
+            className="gap-1.5 border-nx-line bg-nx-raised px-2.5 py-0.5 text-xs font-semibold text-nx-ink"
           >
-            <Building2 className="h-3 w-3 text-primary" />
+            <Building2 className="h-3 w-3 text-nx-accent" />
             <span>{tenantName}</span>
           </Badge>
           {isImpersonating && (
-            <Badge variant="secondary" className="text-[10px]">
+            <Badge variant="secondary" className="border-nx-line text-[10px] text-nx-ink-3">
               {t("tenantCommandCenter.platformDrillDown")}
             </Badge>
           )}
           {isEditing && (
             <Badge
               variant="outline"
-              className="gap-1 border-primary/40 bg-primary/10 text-primary text-[10px] font-semibold animate-pulse"
+              className="gap-1 border-nx-accent/40 bg-nx-accent-wash text-nx-accent text-[10px] font-semibold animate-pulse"
             >
               <span>{t("tenantCommandCenter.customization.editingLayout") || "Customizing Layout"}</span>
             </Badge>
@@ -105,9 +105,9 @@ export function TenantCommandHeader({
                 variant="outline"
                 size="sm"
                 onClick={onOpenLibrary}
-                className="h-8 gap-1.5 border-border bg-card px-2.5 text-xs font-semibold shadow-xs hover:bg-accent"
+                className="h-8 gap-1.5 border-nx-line bg-nx-surface px-2.5 text-xs font-semibold hover:border-nx-line-hi hover:bg-nx-raised text-nx-ink"
               >
-                <Plus className="h-3.5 w-3.5 text-primary" />
+                <Plus className="h-3.5 w-3.5 text-nx-accent" />
                 <span>{t("tenantCommandCenter.library.addWidget") || "Add Widget"}</span>
               </Button>
             )}
@@ -118,7 +118,7 @@ export function TenantCommandHeader({
                 variant="ghost"
                 size="sm"
                 onClick={onRestoreDefault}
-                className="h-8 gap-1.5 px-2 text-xs text-muted-foreground hover:text-foreground"
+                className="h-8 gap-1.5 px-2 text-xs text-nx-ink-3 hover:text-nx-ink hover:bg-nx-raised"
                 title={t("tenantCommandCenter.customization.restoreDefaultTooltip") || "Reset to system default"}
               >
                 <RotateCcw className="h-3.5 w-3.5" />
@@ -135,7 +135,7 @@ export function TenantCommandHeader({
                 size="sm"
                 onClick={onCancelEditMode}
                 disabled={isSaving}
-                className="h-8 gap-1 px-2.5 text-xs text-muted-foreground hover:text-foreground"
+                className="h-8 gap-1 border-nx-line px-2.5 text-xs text-nx-ink-3 hover:text-nx-ink hover:bg-nx-raised"
               >
                 <X className="h-3.5 w-3.5" />
                 <span>{t("common.cancel") || "Cancel"}</span>
@@ -172,10 +172,10 @@ export function TenantCommandHeader({
                 variant="outline"
                 size="sm"
                 onClick={onEnterEditMode}
-                className="h-8 gap-1.5 border-border bg-card px-2.5 text-xs font-semibold shadow-xs text-muted-foreground hover:text-foreground hover:bg-accent"
+                className="h-8 gap-1.5 border-nx-line bg-nx-surface px-2.5 text-xs font-semibold text-nx-ink hover:border-nx-line-hi hover:bg-nx-raised"
                 title={t("tenantCommandCenter.customization.customizeTooltip") || "Customize overview widgets and grid"}
               >
-                <SlidersHorizontal className="h-3.5 w-3.5 text-primary" />
+                <SlidersHorizontal className="h-3.5 w-3.5 text-nx-accent" />
                 <span>
                   {t("tenantCommandCenter.customization.customizeButton") || "Customize Dashboard"}
                 </span>
@@ -193,14 +193,14 @@ export function TenantCommandHeader({
                   : t("tenantCommandCenter.switchToDemoTooltip") ||
                     "Switch to presentation showcase mode"
               }
-              className={`shadow-xs h-8 cursor-pointer gap-1.5 border px-2.5 text-xs font-semibold transition-colors ${
+              className={`h-8 cursor-pointer gap-1.5 border px-2.5 text-xs font-semibold transition-colors ${
                 isPresentationMode
                   ? "border-amber-500/30 bg-amber-500/10 text-amber-500 hover:bg-amber-500/20"
-                  : "border-border bg-card text-muted-foreground hover:text-foreground"
+                  : "border-nx-line bg-nx-surface text-nx-ink-3 hover:text-nx-ink hover:border-nx-line-hi hover:bg-nx-raised"
               }`}
             >
               <Sparkles
-                className={`h-3 w-3 ${isPresentationMode ? "fill-amber-500/30 text-amber-500" : "text-muted-foreground"}`}
+                className={`h-3 w-3 ${isPresentationMode ? "fill-amber-500/30 text-amber-500" : "text-nx-ink-3"}`}
               />
               <span>
                 {isPresentationMode
@@ -216,10 +216,10 @@ export function TenantCommandHeader({
                 size="sm"
                 onClick={onRefresh}
                 title={t("tenantCommandCenter.refreshTooltip") || "Refresh organization data"}
-                className="h-8 w-8 rounded-lg border-border bg-card p-0 text-muted-foreground hover:bg-accent hover:text-foreground"
+                className="h-8 w-8 rounded-nx-md border-nx-line bg-nx-surface p-0 text-nx-ink-3 hover:border-nx-line-hi hover:bg-nx-raised hover:text-nx-ink"
               >
                 <RotateCw
-                  className={`h-3.5 w-3.5 ${isRefreshing ? "animate-spin text-primary" : ""}`}
+                  className={`h-3.5 w-3.5 ${isRefreshing ? "animate-spin text-nx-accent" : ""}`}
                 />
               </Button>
             )}
