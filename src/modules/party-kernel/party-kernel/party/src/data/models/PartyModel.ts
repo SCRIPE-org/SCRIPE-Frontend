@@ -26,6 +26,7 @@ export interface PartyProfileResponseJson {
   displayName: string;
   fullName?: string | null;
   legalName?: string | null;
+  rowVersion?: string | null;
 }
 
 /**

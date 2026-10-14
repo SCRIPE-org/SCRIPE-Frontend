@@ -196,6 +196,31 @@ describe("useBooking360ViewModel", () => {
     expect(confirm).toHaveBeenCalledWith("reservation-1", expect.any(String), "quote-1");
   });
 
+  it("reuses the exact quote request after a lost calculation response", async () => {
+    const value = container();
+    value.commercialPricingRepository.calculateQuote
+      .mockRejectedValueOnce(new Error("quote response was lost after commit"))
+      .mockResolvedValueOnce({ id: "quote-1" });
+    vi.mocked(getVenueContainer).mockReturnValue(value as never);
+    const { result } = renderHook(() =>
+      useBooking360ViewModel("reservation-1", true, true, true, true, true)
+    );
+    await waitFor(() => {
+      expect(result.current.state.stage).toBe("ready");
+      expect(result.current.state.enrichmentLoading).toBe(false);
+    });
+
+    await act(async () => result.current.confirm());
+    expect(value.bookingRepository.confirm).not.toHaveBeenCalled();
+    await act(async () => result.current.confirm());
+
+    const quoteCalls = value.commercialPricingRepository.calculateQuote.mock.calls;
+    expect(quoteCalls).toHaveLength(2);
+    expect(quoteCalls[1][0].idempotencyKey).toBe(quoteCalls[0][0].idempotencyKey);
+    expect(quoteCalls[1][0].expiresAtUtc).toBe(quoteCalls[0][0].expiresAtUtc);
+    expect(value.bookingRepository.confirm).toHaveBeenCalledOnce();
+  });
+
   it("does not use the workstation clock as confirmation authority", async () => {
     const serverValid = {
       ...detail,

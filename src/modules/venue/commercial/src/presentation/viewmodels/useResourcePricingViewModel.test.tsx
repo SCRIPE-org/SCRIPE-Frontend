@@ -108,4 +108,27 @@ describe("useResourcePricingViewModel", () => {
       })
     );
   });
+
+  it("reuses the configuration key after an ambiguous pricing response", async () => {
+    const value = container();
+    value.commercialPricingRepository.configureResourcePrice
+      .mockRejectedValueOnce(new Error("pricing response was lost after commit"))
+      .mockResolvedValueOnce(configuration);
+    vi.mocked(getVenueContainer).mockReturnValue(value as never);
+    const { result } = renderHook(() =>
+      useResourcePricingViewModel({
+        messages: { fallbackError: "unavailable", validation: "invalid" },
+      })
+    );
+    await waitFor(() => expect(result.current.currencyCode).toBe("EGP"));
+
+    await act(async () => result.current.save());
+    expect(result.current.error).toBe("pricing response was lost after commit");
+    await act(async () => result.current.save());
+
+    const calls = value.commercialPricingRepository.configureResourcePrice.mock.calls;
+    expect(calls).toHaveLength(2);
+    expect(calls[1][0].idempotencyKey).toBe(calls[0][0].idempotencyKey);
+    expect(result.current.success).toBe(true);
+  });
 });

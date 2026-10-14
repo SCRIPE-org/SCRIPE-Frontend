@@ -1,8 +1,6 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { useQuery } from "@tanstack/react-query";
-import { getPartyKernelContainer } from "../../../../di";
 import { useI18n } from "@core/providers/i18n-provider";
 import { PARTY_KERNEL_PERMISSIONS } from "../../../../permission-constants";
 import { usePermission } from "@core/hooks/use-permission";
@@ -13,6 +11,7 @@ import { Label } from "@core/ui/label";
 import { Popover, PopoverContent, PopoverTrigger } from "@core/ui/popover";
 import { CreatePersonDialog } from "./dialogs/CreatePersonDialog";
 import { CreateOrganizationDialog } from "./dialogs/CreateOrganizationDialog";
+import { usePartyPickerViewModel } from "../viewmodels/usePartyPickerViewModel";
 import {
   User,
   Building,
@@ -77,7 +76,6 @@ export const PartyPicker = React.memo(function PartyPicker({
   required = false,
   excludeId,
 }: PartyPickerProps) {
-  const { partyRepository } = getPartyKernelContainer();
   const { t } = useI18n();
 
   // Dialog & popover states
@@ -110,18 +108,18 @@ export const PartyPicker = React.memo(function PartyPicker({
   const canAddPerson = allowCreate && canPartiesCreate && canPersonCreate && filterType !== "Organization";
   const canAddOrg = allowCreate && canPartiesCreate && canOrgCreate && filterType !== "Person";
 
-  // Query: Search existing contacts via typed lookup endpoints
-  const { data, isLoading, error: queryError, refetch } = useQuery({
-    queryKey: ["party-picker-lookup", debouncedSearch, typeFilter],
-    queryFn: () =>
-      partyRepository.lookupContacts({
-        search: debouncedSearch.trim() || undefined,
-        type: typeFilter,
-        page: 1,
-        pageSize: 20,
-      }),
-    enabled: isOpen,
-    staleTime: 10_000,
+  // ViewModel: Search existing contacts via typed lookup endpoints
+  const {
+    data,
+    isLoading,
+    queryError,
+    refetch,
+    createPerson,
+    createOrganization,
+  } = usePartyPickerViewModel({
+    debouncedSearch,
+    typeFilter,
+    isOpen,
   });
 
   const rawParties: PartyContactLookup[] = data?.items ?? [];
@@ -178,7 +176,7 @@ export const PartyPicker = React.memo(function PartyPicker({
 
   // Creation handlers
   const handleCreatePersonSubmit = async (params: CreatePersonParams): Promise<string> => {
-    const partyId = await partyRepository.createPerson(params);
+    const partyId = await createPerson(params);
     const newSelection: PartySelectionResult = {
       id: partyId,
       type: "Person",
@@ -191,7 +189,7 @@ export const PartyPicker = React.memo(function PartyPicker({
   };
 
   const handleCreateOrgSubmit = async (params: CreateOrganizationParams): Promise<string> => {
-    const partyId = await partyRepository.createOrganization(params);
+    const partyId = await createOrganization(params);
     const newSelection: PartySelectionResult = {
       id: partyId,
       type: "Organization",

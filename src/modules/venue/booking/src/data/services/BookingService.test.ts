@@ -19,6 +19,7 @@ describe("BookingService", () => {
       requestedStartUtc: "2026-09-10T07:00:00Z",
       requestedEndUtc: "2026-09-10T08:00:00Z",
       quantity: 2,
+      idempotencyKey: "draft-key",
     };
     const result = await new BookingService(api).createDraft(input);
 

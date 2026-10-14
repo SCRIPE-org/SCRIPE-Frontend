@@ -75,6 +75,7 @@ describe("usePaymentsViewModel", () => {
           fallbackError: "unavailable",
           validation: "invalid",
           allocationPending: (number) => `allocate ${number}`,
+          receiptPending: (number) => `receipt ${number}`,
         },
       })
     );
@@ -99,6 +100,7 @@ describe("usePaymentsViewModel", () => {
           fallbackError: "unavailable",
           validation: "invalid",
           allocationPending: (number) => `allocate ${number}`,
+          receiptPending: (number) => `receipt ${number}`,
         },
       })
     );
@@ -129,6 +131,122 @@ describe("usePaymentsViewModel", () => {
     );
   });
 
+  it("reuses the payment key when the first response is lost", async () => {
+    const value = container();
+    value.moneyRepository.recordPayment
+      .mockRejectedValueOnce(new Error("response lost after commit"))
+      .mockResolvedValueOnce({ id: "payment-1", paymentNumber: "PAY-1" });
+    vi.mocked(getVenueContainer).mockReturnValue(value as never);
+    const { result } = renderHook(() =>
+      usePaymentsViewModel({
+        canView: true,
+        canRecord: true,
+        canIssueReceipt: true,
+        canRefund: true,
+        initialInvoiceId: "invoice-1",
+        messages: {
+          fallbackError: "unavailable",
+          validation: "invalid",
+          allocationPending: (number) => `allocate ${number}`,
+          receiptPending: (number) => `receipt ${number}`,
+        },
+      })
+    );
+    await waitFor(() => expect(result.current.selectedInvoiceId).toBe("invoice-1"));
+    act(() => result.current.setReason("desk payment"));
+
+    await act(async () => result.current.submit());
+    await act(async () => result.current.submit());
+
+    const keys = value.moneyRepository.recordPayment.mock.calls.map(
+      ([request]) => request.idempotencyKey
+    );
+    expect(keys).toHaveLength(2);
+    expect(keys[0]).toBeTruthy();
+    expect(keys[1]).toBe(keys[0]);
+    expect(value.moneyRepository.allocatePayment).toHaveBeenCalledOnce();
+    expect(result.current.notice).toBe("saved");
+  });
+
+  it("reuses payment and allocation keys when allocation needs retry", async () => {
+    const value = container();
+    value.moneyRepository.allocatePayment
+      .mockRejectedValueOnce(new Error("response lost after allocation"))
+      .mockResolvedValueOnce(undefined);
+    vi.mocked(getVenueContainer).mockReturnValue(value as never);
+    const { result } = renderHook(() =>
+      usePaymentsViewModel({
+        canView: true,
+        canRecord: true,
+        canIssueReceipt: true,
+        canRefund: true,
+        initialInvoiceId: "invoice-1",
+        messages: {
+          fallbackError: "unavailable",
+          validation: "invalid",
+          allocationPending: (number) => `allocate ${number}`,
+          receiptPending: (number) => `receipt ${number}`,
+        },
+      })
+    );
+    await waitFor(() => expect(result.current.selectedInvoiceId).toBe("invoice-1"));
+    act(() => result.current.setReason("desk payment"));
+
+    await act(async () => result.current.submit());
+    expect(result.current.error).toBe("allocate PAY-1");
+    await act(async () => result.current.submit());
+
+    const paymentKeys = value.moneyRepository.recordPayment.mock.calls.map(
+      ([request]) => request.idempotencyKey
+    );
+    const allocationKeys = value.moneyRepository.allocatePayment.mock.calls.map(([, , , key]) => key);
+    expect(paymentKeys[1]).toBe(paymentKeys[0]);
+    expect(allocationKeys).toHaveLength(2);
+    expect(allocationKeys[1]).toBe(allocationKeys[0]);
+    expect(value.moneyRepository.issueReceipt).toHaveBeenCalledOnce();
+    expect(result.current.notice).toBe("saved");
+  });
+
+  it("keeps payment, allocation, and receipt keys stable while receipt issuance retries", async () => {
+    const value = container();
+    value.moneyRepository.issueReceipt
+      .mockRejectedValueOnce(new Error("receipt response lost"))
+      .mockResolvedValueOnce(undefined);
+    vi.mocked(getVenueContainer).mockReturnValue(value as never);
+    const { result } = renderHook(() =>
+      usePaymentsViewModel({
+        canView: true,
+        canRecord: true,
+        canIssueReceipt: true,
+        canRefund: true,
+        initialInvoiceId: "invoice-1",
+        messages: {
+          fallbackError: "unavailable",
+          validation: "invalid",
+          allocationPending: (number) => `allocate ${number}`,
+          receiptPending: (number) => `receipt ${number}`,
+        },
+      })
+    );
+    await waitFor(() => expect(result.current.selectedInvoiceId).toBe("invoice-1"));
+    act(() => result.current.setReason("desk payment"));
+
+    await act(async () => result.current.submit());
+    expect(result.current.error).toBe("receipt PAY-1");
+    await act(async () => result.current.submit());
+
+    const paymentKeys = value.moneyRepository.recordPayment.mock.calls.map(
+      ([request]) => request.idempotencyKey
+    );
+    const allocationKeys = value.moneyRepository.allocatePayment.mock.calls.map(([, , , key]) => key);
+    const receiptKeys = value.moneyRepository.issueReceipt.mock.calls.map(([, key]) => key);
+    expect(paymentKeys[1]).toBe(paymentKeys[0]);
+    expect(allocationKeys[1]).toBe(allocationKeys[0]);
+    expect(receiptKeys).toHaveLength(2);
+    expect(receiptKeys[1]).toBe(receiptKeys[0]);
+    expect(result.current.notice).toBe("saved");
+  });
+
   it("does not re-record a payment when allocation needs operational recovery", async () => {
     const value = container();
     value.moneyRepository.allocatePayment.mockRejectedValue(new Error("allocation conflict"));
@@ -144,6 +262,7 @@ describe("usePaymentsViewModel", () => {
           fallbackError: "unavailable",
           validation: "invalid",
           allocationPending: (number) => `allocate ${number}`,
+          receiptPending: (number) => `receipt ${number}`,
         },
       })
     );
@@ -172,6 +291,7 @@ describe("usePaymentsViewModel", () => {
           fallbackError: "unavailable",
           validation: "invalid",
           allocationPending: (number) => `allocate ${number}`,
+          receiptPending: (number) => `receipt ${number}`,
         },
       })
     );
@@ -196,6 +316,45 @@ describe("usePaymentsViewModel", () => {
     );
   });
 
+  it("reuses a refund key when its response is lost", async () => {
+    const value = container();
+    value.moneyRepository.refundPayment
+      .mockRejectedValueOnce(new Error("response lost after commit"))
+      .mockResolvedValueOnce(undefined);
+    vi.mocked(getVenueContainer).mockReturnValue(value as never);
+    const { result } = renderHook(() =>
+      usePaymentsViewModel({
+        canView: true,
+        canRecord: true,
+        canIssueReceipt: true,
+        canRefund: true,
+        initialInvoiceId: null,
+        messages: {
+          fallbackError: "unavailable",
+          validation: "invalid",
+          allocationPending: (number) => `allocate ${number}`,
+          receiptPending: (number) => `receipt ${number}`,
+        },
+      })
+    );
+    await waitFor(() => expect(result.current.payments?.length).toBe(1));
+    act(() => result.current.beginRefund(payment));
+    act(() => {
+      result.current.setRefundAmount("25");
+      result.current.setRefundReason("duplicate desk entry");
+    });
+
+    await act(async () => result.current.submitRefund());
+    await act(async () => result.current.submitRefund());
+
+    const keys = value.moneyRepository.refundPayment.mock.calls.map(
+      ([, request]) => request.idempotencyKey
+    );
+    expect(keys).toHaveLength(2);
+    expect(keys[1]).toBe(keys[0]);
+    expect(result.current.notice).toBe("refunded");
+  });
+
   it("loads append-only Finance payment history without deriving it in the operator view", async () => {
     const value = container();
     vi.mocked(getVenueContainer).mockReturnValue(value as never);
@@ -210,6 +369,7 @@ describe("usePaymentsViewModel", () => {
           fallbackError: "unavailable",
           validation: "invalid",
           allocationPending: (number) => `allocate ${number}`,
+          receiptPending: (number) => `receipt ${number}`,
         },
       })
     );
@@ -236,7 +396,10 @@ describe("usePaymentsViewModel", () => {
         getInvoices: vi.fn().mockResolvedValue({ items: [invoice], totalCount: 1 }),
         getPayments: vi.fn().mockResolvedValue({ items: [unallocatedPayment], totalCount: 1 }),
         recordPayment: vi.fn(),
-        allocatePayment: vi.fn().mockResolvedValue(undefined),
+        allocatePayment: vi
+          .fn()
+          .mockRejectedValueOnce(new Error("response lost after allocation"))
+          .mockResolvedValueOnce(undefined),
         issueReceipt: vi.fn().mockResolvedValue(undefined),
         refundPayment: vi.fn().mockResolvedValue(undefined),
         getPaymentTimeline: vi.fn().mockResolvedValue({
@@ -259,6 +422,7 @@ describe("usePaymentsViewModel", () => {
           fallbackError: "unavailable",
           validation: "invalid",
           allocationPending: (number) => `allocate ${number}`,
+          receiptPending: (number) => `receipt ${number}`,
         },
       })
     );
@@ -269,18 +433,21 @@ describe("usePaymentsViewModel", () => {
     expect(result.current.allocationInvoiceId).toBe("invoice-1");
     expect(result.current.allocationAmount).toBe("100");
 
-    await act(async () => {
-      await result.current.submitAllocation();
-    });
+    await act(async () => result.current.submitAllocation());
+    expect(result.current.error).toBe("response lost after allocation");
+    await act(async () => result.current.submitAllocation());
 
     // Verifies NO duplicate payment was created, and allocation was invoked directly
     expect(value.moneyRepository.recordPayment).not.toHaveBeenCalled();
-    expect(value.moneyRepository.allocatePayment).toHaveBeenCalledWith(
+    const allocationCalls = value.moneyRepository.allocatePayment.mock.calls;
+    expect(allocationCalls).toHaveLength(2);
+    expect(allocationCalls[0]).toEqual([
       "payment-unallocated",
       "invoice-1",
       100,
-      expect.any(String)
-    );
+      expect.any(String),
+    ]);
+    expect(allocationCalls[1][3]).toBe(allocationCalls[0][3]);
     expect(result.current.notice).toBe("allocated");
   });
 });

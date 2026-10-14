@@ -256,6 +256,27 @@ describe("useResourceDetailViewModel", () => {
     );
   });
 
+  it("reuses the same pricing configuration intent after a lost response", async () => {
+    mockContainer.commercialPricingRepository.configureResourcePrice
+      .mockRejectedValueOnce(new Error("pricing response was lost after commit"))
+      .mockResolvedValueOnce(mockPriceConfig);
+    const { result } = renderHook(() => useResourceDetailViewModel("res-1"));
+    await waitFor(() => expect(result.current.loading).toBe(false));
+
+    await act(async () => {
+      await result.current.updatePricing({ unitPrice: 850, currencyCode: "EGP", taxCategoryId: "tax-1" });
+    });
+    await act(async () => {
+      await result.current.updatePricing({ unitPrice: 850, currencyCode: "EGP", taxCategoryId: "tax-1" });
+    });
+
+    const calls = mockContainer.commercialPricingRepository.configureResourcePrice.mock.calls;
+    expect(calls).toHaveLength(2);
+    expect(calls[1][0].idempotencyKey).toBe(calls[0][0].idempotencyKey);
+    expect(calls[1][0].effectiveFromUtc).toBe(calls[0][0].effectiveFromUtc);
+    expect(result.current.feedback).toBe("pricing.saved");
+  });
+
   it("adds and deletes closures (maintenance and blackout)", async () => {
     const { result } = renderHook(() => useResourceDetailViewModel("res-1"));
 

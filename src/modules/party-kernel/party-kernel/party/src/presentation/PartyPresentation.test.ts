@@ -1,7 +1,7 @@
 import { describe, expect, it, vi } from "vitest";
 import { Party } from "../domain/entities/Party";
 import { PartyProfile } from "../domain/entities/PartyProfile";
-import { PartyPerson } from "@modules/party-kernel/party-person/src/domain/entities/PartyPerson";
+import { PartyPerson } from "../../../party-person/src/domain/entities/PartyPerson";
 import { en } from "../../locales/party.en";
 import { ar } from "../../locales/party.ar";
 

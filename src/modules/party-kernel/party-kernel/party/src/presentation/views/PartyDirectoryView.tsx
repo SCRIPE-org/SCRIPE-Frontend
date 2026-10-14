@@ -662,6 +662,7 @@ export const PartyDirectoryView = React.memo(function PartyDirectoryView() {
 
       <EditPartyDialog
         party={vm.editingParty}
+        initialFullName={vm.editingPartyFullName}
         open={!!vm.editingParty}
         onOpenChange={(open) => !open && vm.setEditingParty(null)}
         onSubmit={vm.handleUpdateName}

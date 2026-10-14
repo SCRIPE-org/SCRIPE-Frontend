@@ -101,6 +101,9 @@ export function useBooking360ViewModel(
   const generation = useRef(0);
   const submitting = useRef(false);
   const actionKeys = useRef(new Map<string, string>());
+  const quoteIntents = useRef(
+    new Map<string, { key: string; expiresAtUtc: string; quoteId?: string }>()
+  );
 
   const load = useCallback(async () => {
     if (!canViewReservation || !reservationId) return null;
@@ -200,7 +203,27 @@ export function useBooking360ViewModel(
       requestedStartUtc: string,
       requestedEndUtc: string
     ): Promise<string> => {
+      // Quote calculation persists a row; keep both the key and expiry stable through retries.
       const configuration = await commercialPricingRepository.getResourceConfiguration(resourceId);
+      const fingerprint = JSON.stringify([
+        reservation.id,
+        reservation.payerPartyId,
+        resourceId,
+        configuration.offeringId,
+        configuration.currencyCode,
+        reservation.quantity,
+        requestedStartUtc,
+        requestedEndUtc,
+      ]);
+      let intent = quoteIntents.current.get(fingerprint);
+      if (!intent || Date.parse(intent.expiresAtUtc) <= Date.now()) {
+        intent = {
+          key: crypto.randomUUID(),
+          expiresAtUtc: new Date(Date.now() + 30 * 60 * 1000).toISOString(),
+        };
+        quoteIntents.current.set(fingerprint, intent);
+      }
+      if (intent.quoteId) return intent.quoteId;
       const quote = await commercialPricingRepository.calculateQuote({
         offeringId: configuration.offeringId,
         resourceId,
@@ -209,9 +232,10 @@ export function useBooking360ViewModel(
         requestedStartUtc,
         requestedEndUtc,
         currencyCode: configuration.currencyCode,
-        expiresAtUtc: new Date(Date.now() + 30 * 60 * 1000).toISOString(),
-        idempotencyKey: crypto.randomUUID(),
+        expiresAtUtc: intent.expiresAtUtc,
+        idempotencyKey: intent.key,
       });
+      intent.quoteId = quote.id;
       return quote.id;
     },
     [commercialPricingRepository]
@@ -245,7 +269,8 @@ export function useBooking360ViewModel(
         reservation.requestedEndUtc
       );
       await bookingRepository.confirm(reservation.id, key, priceQuoteId);
-      await load();
+      const refreshed = await load();
+      if (refreshed?.status === "Confirmed") quoteIntents.current.clear();
     } catch (error) {
       let actionError: Booking360State["actionError"] = "failed";
       if (conflict(error)) {
@@ -361,6 +386,7 @@ export function useBooking360ViewModel(
         }
 
         const refreshed = await load();
+        quoteIntents.current.clear();
         if (!refreshed) {
           setState({
             ...snapshot,

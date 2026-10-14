@@ -22,6 +22,7 @@ export class BookingService implements IBookingService {
       ...input,
       bookerPartyId: null,
       payerPartyId: null,
+      idempotencyKey: input.idempotencyKey,
     });
   }
 

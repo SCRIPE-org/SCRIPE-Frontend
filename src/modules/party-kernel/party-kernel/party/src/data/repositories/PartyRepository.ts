@@ -14,12 +14,12 @@ import type {
   AddPartyRelationshipParams,
 } from "../../domain/interfaces/IPartyRepository";
 import type { IPartyService } from "../../domain/interfaces/IPartyService";
-import type { IPartyPersonRepository } from "@modules/party-kernel/party-person/src/domain/interfaces/IPartyPersonRepository";
-import type { IPartyOrganizationRepository } from "@modules/party-kernel/party-organization/src/domain/interfaces/IPartyOrganizationRepository";
-import type { IContactPointRepository } from "@modules/party-kernel/contact-point/src/domain/interfaces/IContactPointRepository";
-import type { IPartyRoleRepository } from "@modules/party-kernel/party-role/src/domain/interfaces/IPartyRoleRepository";
-import type { IPartyRelationshipRepository } from "@modules/party-kernel/party-relationship/src/domain/interfaces/IPartyRelationshipRepository";
-import type { IMergeCandidateRepository } from "@modules/party-kernel/merge-candidate/src/domain/interfaces/IMergeCandidateRepository";
+import type { IPartyPersonRepository } from "../../../../party-person/src/domain/interfaces/IPartyPersonRepository";
+import type { IPartyOrganizationRepository } from "../../../../party-organization/src/domain/interfaces/IPartyOrganizationRepository";
+import type { IContactPointRepository } from "../../../../contact-point/src/domain/interfaces/IContactPointRepository";
+import type { IPartyRoleRepository } from "../../../../party-role/src/domain/interfaces/IPartyRoleRepository";
+import type { IPartyRelationshipRepository } from "../../../../party-relationship/src/domain/interfaces/IPartyRelationshipRepository";
+import type { IMergeCandidateRepository } from "../../../../merge-candidate/src/domain/interfaces/IMergeCandidateRepository";
 
 import { Party, type PartyContactLookup } from "../../domain/entities/Party";
 import { PartyProfile } from "../../domain/entities/PartyProfile";
@@ -456,13 +456,19 @@ export class PartyRepository implements IPartyRepository {
   async updatePartyName(
     id: string,
     displayName: string,
-    options?: { type?: string; fullName?: string }
+    options?: { type?: string; fullName?: string; rowVersion?: string | null }
   ): Promise<void> {
     // If updating a Person with fullName or known type, use canonical updatePerson
     if (options?.type === "Person" && this.service.updatePerson) {
+      let rowVersion = options.rowVersion ?? undefined;
+      if (!rowVersion && typeof this.service.getProfile === "function") {
+        const profile = await this.service.getProfile(id);
+        rowVersion = profile?.rowVersion ?? undefined;
+      }
       await this.service.updatePerson(id, {
         fullName: options.fullName?.trim() || displayName.trim(),
         displayName: displayName.trim(),
+        ...(rowVersion !== undefined ? { rowVersion } : {}),
       });
       return;
     }
@@ -487,10 +493,16 @@ export class PartyRepository implements IPartyRepository {
       givenName?: string | null;
       middleNames?: string | null;
       familyName?: string | null;
+      rowVersion?: string | null;
     }
   ): Promise<void> {
     if (!this.service.updatePerson) {
       throw new Error("Backend does not support atomic person update");
+    }
+    let rowVersion = data.rowVersion ?? undefined;
+    if (!rowVersion && typeof this.service.getProfile === "function") {
+      const profile = await this.service.getProfile(id);
+      rowVersion = profile?.rowVersion ?? undefined;
     }
     await this.service.updatePerson(id, {
       fullName: data.fullName.trim(),
@@ -498,6 +510,7 @@ export class PartyRepository implements IPartyRepository {
       givenName: data.givenName ? data.givenName.trim() : null,
       middleNames: data.middleNames ? data.middleNames.trim() : null,
       familyName: data.familyName ? data.familyName.trim() : null,
+      ...(rowVersion !== undefined ? { rowVersion } : {}),
     });
   }
 

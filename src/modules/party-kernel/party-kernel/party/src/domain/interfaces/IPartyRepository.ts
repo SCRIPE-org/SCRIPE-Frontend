@@ -120,7 +120,11 @@ export interface IPartyRepository {
     totalCount: number;
   }>;
   update(id: string, data: Record<string, unknown>): Promise<void>;
-  updatePartyName(id: string, displayName: string, options?: { type?: string; fullName?: string }): Promise<void>;
+  updatePartyName(
+    id: string,
+    displayName: string,
+    options?: { type?: string; fullName?: string; rowVersion?: string | null }
+  ): Promise<void>;
   updatePerson(
     id: string,
     data: {
@@ -129,6 +133,7 @@ export interface IPartyRepository {
       givenName?: string | null;
       middleNames?: string | null;
       familyName?: string | null;
+      rowVersion?: string | null;
     }
   ): Promise<void>;
   delete(id: string): Promise<void>;

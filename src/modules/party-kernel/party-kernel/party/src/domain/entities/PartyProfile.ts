@@ -5,12 +5,12 @@
  * aggregating contact methods, business roles, relationships, and subtype specifics.
  */
 import { Party } from "./Party";
-import type { PartyPerson } from "@modules/party-kernel/party-person/src/domain/entities/PartyPerson";
-import type { PartyOrganization } from "@modules/party-kernel/party-organization/src/domain/entities/PartyOrganization";
-import type { ContactPoint } from "@modules/party-kernel/contact-point/src/domain/entities/ContactPoint";
-import type { PartyRole } from "@modules/party-kernel/party-role/src/domain/entities/PartyRole";
-import type { PartyRelationship } from "@modules/party-kernel/party-relationship/src/domain/entities/PartyRelationship";
-import type { MergeCandidate } from "@modules/party-kernel/merge-candidate/src/domain/entities/MergeCandidate";
+import type { PartyPerson } from "../../../../party-person/src/domain/entities/PartyPerson";
+import type { PartyOrganization } from "../../../../party-organization/src/domain/entities/PartyOrganization";
+import type { ContactPoint } from "../../../../contact-point/src/domain/entities/ContactPoint";
+import type { PartyRole } from "../../../../party-role/src/domain/entities/PartyRole";
+import type { PartyRelationship } from "../../../../party-relationship/src/domain/entities/PartyRelationship";
+import type { MergeCandidate } from "../../../../merge-candidate/src/domain/entities/MergeCandidate";
 
 /**
  * Underlying composite data for a PartyProfile
@@ -26,6 +26,7 @@ export interface PartyProfileData {
   canonicalProfile?: {
     fullName?: string | null;
     legalName?: string | null;
+    rowVersion?: string | null;
   } | null;
 }
 
@@ -37,6 +38,10 @@ export class PartyProfile {
 
   get party(): Party {
     return this.data.party;
+  }
+
+  get rowVersion(): string | null {
+    return this.data.canonicalProfile?.rowVersion ?? null;
   }
 
   get id(): string {

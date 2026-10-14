@@ -22,7 +22,11 @@ interface EditPartyDialogProps {
   initialFullName?: string | null;
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  onSubmit: (id: string, displayName: string, options?: { fullName?: string }) => Promise<void>;
+  onSubmit: (
+    id: string,
+    displayName: string,
+    options?: { type?: string; fullName?: string }
+  ) => Promise<void>;
 }
 
 function EditPartyForm({
@@ -34,13 +38,26 @@ function EditPartyForm({
   party: Party;
   initialFullName?: string | null;
   onClose: () => void;
-  onSubmit: (id: string, displayName: string, options?: { fullName?: string }) => Promise<void>;
+  onSubmit: (
+    id: string,
+    displayName: string,
+    options?: { type?: string; fullName?: string }
+  ) => Promise<void>;
 }) {
   const { t } = useI18n();
   const [fullName, setFullName] = useState(initialFullName || party.displayName);
   const [displayName, setDisplayName] = useState(party.displayName);
+  const [hasEditedFullName, setHasEditedFullName] = useState(false);
+  const [prevInitialFullName, setPrevInitialFullName] = useState(initialFullName);
   const [error, setError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  if (initialFullName !== prevInitialFullName) {
+    setPrevInitialFullName(initialFullName);
+    if (initialFullName && !hasEditedFullName && !error) {
+      setFullName(initialFullName);
+    }
+  }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -60,6 +77,7 @@ function EditPartyForm({
       setIsSubmitting(true);
       setError(null);
       await onSubmit(party.id, trimmedDisplayName || trimmedFullName, {
+        type: party.type,
         fullName: party.isPerson ? trimmedFullName : undefined,
       });
       onClose();
@@ -120,6 +138,7 @@ function EditPartyForm({
               id="edit-party-fullname"
               value={fullName}
               onChange={(e) => {
+                setHasEditedFullName(true);
                 setFullName(e.target.value);
                 if (error) setError(null);
               }}
@@ -190,7 +209,7 @@ export function EditPartyDialog({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[480px]">
         <EditPartyForm
-          key={party.id}
+          key={`${party.id}-${open ? "open" : "closed"}`}
           party={party}
           initialFullName={initialFullName}
           onClose={() => onOpenChange(false)}

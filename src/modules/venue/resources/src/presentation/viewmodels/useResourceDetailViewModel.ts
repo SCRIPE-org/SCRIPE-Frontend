@@ -1,7 +1,7 @@
 // FILE-EXCEPTION: rule bypass for existing large file
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { getVenueContainer } from "@modules/venue/di";
 import type { Facility } from "@modules/venue";
 import type { FacilityResourceProfile } from "@modules/venue";
@@ -53,6 +53,11 @@ export function useResourceDetailViewModel(resourceId: string) {
   const [taxCategories, setTaxCategories] = useState<TaxCategory[]>([]);
   const [maintenanceBlocks, setMaintenanceBlocks] = useState<ResourceBlock[]>([]);
   const [blackoutBlocks, setBlackoutBlocks] = useState<ResourceBlock[]>([]);
+  const pricingIntentRef = useRef<{
+    fingerprint: string;
+    key: string;
+    effectiveFromUtc: string;
+  } | null>(null);
 
   const loadData = useCallback(async () => {
     if (!resourceId) return;
@@ -223,20 +228,37 @@ export function useResourceDetailViewModel(resourceId: string) {
       try {
         const slotDuration = resource.slotPolicy?.slotDurationMinutes ?? 60;
         const startIncrement = resource.slotPolicy?.startIncrementMinutes ?? slotDuration;
+        const fingerprint = JSON.stringify([
+          resource.id,
+          input.currencyCode || "EGP",
+          input.unitPrice,
+          input.taxCategoryId ?? null,
+          slotDuration,
+          startIncrement,
+        ]);
+        if (pricingIntentRef.current?.fingerprint !== fingerprint) {
+          pricingIntentRef.current = {
+            fingerprint,
+            key: crypto.randomUUID(),
+            effectiveFromUtc: new Date().toISOString(),
+          };
+        }
+        const intent = pricingIntentRef.current;
 
         await commercialPricingRepository.configureResourcePrice({
           schedulableResourceId: resource.id,
           displayName: `${resource.name} Rate`,
           currencyCode: input.currencyCode || "EGP",
           unitPrice: input.unitPrice,
-          effectiveFromUtc: new Date().toISOString(),
+          effectiveFromUtc: intent.effectiveFromUtc,
           minDurationMinutes: slotDuration,
           maxDurationMinutes: null,
           incrementMinutes: startIncrement,
           taxCategoryId: input.taxCategoryId ?? null,
-          idempotencyKey: crypto.randomUUID(),
+          idempotencyKey: intent.key,
         });
 
+        if (pricingIntentRef.current?.key === intent.key) pricingIntentRef.current = null;
         setFeedback("pricing.saved");
         await loadData();
         return true;

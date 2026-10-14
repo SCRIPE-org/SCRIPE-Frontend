@@ -2,7 +2,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any, unused-imports/no-unused-vars */
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import {
   CheckCircle2,
@@ -36,6 +36,34 @@ interface Props {
   onBlockTime?: (resource: CalendarResource, instantUtc: string) => void;
 }
 
+function getIntentKey(
+  keyRef: { current: { fingerprint: string; key: string } | null },
+  fingerprint: string
+): string {
+  if (keyRef.current?.fingerprint !== fingerprint) {
+    keyRef.current = { fingerprint, key: crypto.randomUUID() };
+  }
+  return keyRef.current.key;
+}
+
+/** Reuses the quote request key and expiry so a lost response can be replayed exactly. */
+function getQuoteIntent(
+  keyRef: { current: { fingerprint: string; key: string; expiresAtUtc: string } | null },
+  fingerprint: string
+): { key: string; expiresAtUtc: string } {
+  if (
+    keyRef.current?.fingerprint !== fingerprint ||
+    Date.parse(keyRef.current.expiresAtUtc) <= Date.now()
+  ) {
+    keyRef.current = {
+      fingerprint,
+      key: crypto.randomUUID(),
+      expiresAtUtc: new Date(Date.now() + 30 * 60 * 1000).toISOString(),
+    };
+  }
+  return keyRef.current;
+}
+
 /**
  * Documentation for ClickToBookModal
  */
@@ -57,6 +85,15 @@ export function ClickToBookModal({
   const [stage, setStage] = useState<"form" | "held" | "confirmed">("form");
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const wasOpenRef = useRef(false);
+  const draftIntentKeyRef = useRef<{ fingerprint: string; key: string } | null>(null);
+  const holdIntentKeyRef = useRef<{ fingerprint: string; key: string } | null>(null);
+  const confirmIntentKeyRef = useRef<{ fingerprint: string; key: string } | null>(null);
+  const quoteIntentKeyRef = useRef<{
+    fingerprint: string;
+    key: string;
+    expiresAtUtc: string;
+  } | null>(null);
 
   // Customer state
   const [customerSearch, setCustomerSearch] = useState("");
@@ -91,6 +128,13 @@ export function ClickToBookModal({
   // Reset when dialog opens with a new slot
   useEffect(() => {
     if (open) {
+      if (!wasOpenRef.current) {
+        draftIntentKeyRef.current = null;
+        holdIntentKeyRef.current = null;
+        confirmIntentKeyRef.current = null;
+        quoteIntentKeyRef.current = null;
+      }
+      wasOpenRef.current = true;
       void Promise.resolve().then(() => {
         setStage("form");
         setError(null);
@@ -101,6 +145,8 @@ export function ClickToBookModal({
         setAmountPaid(0);
         setPaymentSuccess(false);
       });
+    } else {
+      wasOpenRef.current = false;
     }
   }, [instantUtc, open, resource]);
 
@@ -144,6 +190,18 @@ export function ClickToBookModal({
       setError(null);
       try {
         const config = await commercialPricingRepository.getResourceConfiguration(resource.id);
+        const quoteIntent = getQuoteIntent(
+          quoteIntentKeyRef,
+          JSON.stringify([
+            resource.id,
+            selectedCustomer.id,
+            config.offeringId,
+            config.currencyCode || "EGP",
+            startUtc,
+            endUtc,
+            1,
+          ])
+        );
         const calcQuote = await commercialPricingRepository.calculateQuote({
           offeringId: config.offeringId,
           resourceId: resource.id,
@@ -152,8 +210,8 @@ export function ClickToBookModal({
           requestedStartUtc: startUtc,
           requestedEndUtc: endUtc,
           currencyCode: config.currencyCode || "EGP",
-          expiresAtUtc: new Date(Date.now() + 30 * 60 * 1000).toISOString(),
-          idempotencyKey: crypto.randomUUID(),
+          expiresAtUtc: quoteIntent.expiresAtUtc,
+          idempotencyKey: quoteIntent.key,
         });
         if (active) {
           setQuote(calcQuote);
@@ -234,6 +292,9 @@ export function ClickToBookModal({
     setSubmitting(true);
     setError(null);
     try {
+      const bookingFingerprint = [resource.id, selectedCustomer.id, startUtc, endUtc, 1].join("|");
+      const draftIntentKey = getIntentKey(draftIntentKeyRef, bookingFingerprint);
+      const holdIntentKey = getIntentKey(holdIntentKeyRef, bookingFingerprint);
       // 1. Create Draft
       const draft = await bookingRepository.createDraft({
         resourceId: resource.id,
@@ -241,13 +302,15 @@ export function ClickToBookModal({
         requestedStartUtc: startUtc,
         requestedEndUtc: endUtc,
         quantity: 1,
+        idempotencyKey: draftIntentKey,
       });
 
       // 2. Create Hold
-      await bookingRepository.createHold(draft.id, crypto.randomUUID());
+      await bookingRepository.createHold(draft.id, holdIntentKey);
 
       // 3. Confirm with authoritative quote ID
-      await bookingRepository.confirm(draft.id, crypto.randomUUID(), quote.id);
+      const confirmIntentKey = getIntentKey(confirmIntentKeyRef, `${draft.id}|${quote.id}`);
+      await bookingRepository.confirm(draft.id, confirmIntentKey, quote.id);
 
       const reservation = await bookingRepository.getReservation(draft.id);
 
@@ -277,15 +340,19 @@ export function ClickToBookModal({
     setSubmitting(true);
     setError(null);
     try {
+      const bookingFingerprint = [resource.id, selectedCustomer.id, startUtc, endUtc, 1].join("|");
+      const draftIntentKey = getIntentKey(draftIntentKeyRef, bookingFingerprint);
+      const holdIntentKey = getIntentKey(holdIntentKeyRef, bookingFingerprint);
       const draft = await bookingRepository.createDraft({
         resourceId: resource.id,
         customerPartyId: selectedCustomer.id,
         requestedStartUtc: startUtc,
         requestedEndUtc: endUtc,
         quantity: 1,
+        idempotencyKey: draftIntentKey,
       });
 
-      const hold = await bookingRepository.createHold(draft.id, crypto.randomUUID());
+      const hold = await bookingRepository.createHold(draft.id, holdIntentKey);
       const reservation = await bookingRepository.getReservation(draft.id);
 
       setReservationId(draft.id);
@@ -306,7 +373,8 @@ export function ClickToBookModal({
     setSubmitting(true);
     setError(null);
     try {
-      await bookingRepository.confirm(reservationId, crypto.randomUUID(), quote.id);
+      const confirmIntentKey = getIntentKey(confirmIntentKeyRef, `${reservationId}|${quote.id}`);
+      await bookingRepository.confirm(reservationId, confirmIntentKey, quote.id);
       setStage("confirmed");
       onSuccess();
     } catch (err) {

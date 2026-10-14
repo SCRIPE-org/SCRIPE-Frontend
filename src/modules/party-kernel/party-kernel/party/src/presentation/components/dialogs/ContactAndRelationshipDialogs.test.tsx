@@ -5,7 +5,7 @@ import "@testing-library/jest-dom/vitest";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { EditContactDialog } from "./EditContactDialog";
 import { AddRelationshipDialog } from "./AddRelationshipDialog";
-import { ContactPoint } from "@modules/party-kernel/contact-point/src/domain/entities/ContactPoint";
+import { ContactPoint } from "../../../../../contact-point/src/domain/entities/ContactPoint";
 
 // Polyfill ResizeObserver for Radix Dialog in jsdom
 if (typeof global.ResizeObserver === "undefined") {

@@ -51,6 +51,7 @@ export interface IPartyService {
       givenName?: string | null;
       middleNames?: string | null;
       familyName?: string | null;
+      rowVersion?: string | null;
     }
   ): Promise<void>;
   delete(id: string): Promise<void>;

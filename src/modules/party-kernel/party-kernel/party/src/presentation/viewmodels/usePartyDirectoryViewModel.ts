@@ -64,6 +64,15 @@ export function usePartyDirectoryViewModel() {
   const [deletingParty, setDeletingParty] = useState<Party | null>(null);
   const [previewParty, setPreviewParty] = useState<Party | null>(null);
 
+  const editingPartyId = editingParty?.id ?? "";
+  const isEditingPerson = editingParty?.type === "Person";
+  const editingProfileQuery = useQuery({
+    queryKey: ["party-profile", editingPartyId],
+    queryFn: async () => partyRepository.getProfile(editingPartyId),
+    enabled: Boolean(editingPartyId && isEditingPerson),
+    staleTime: 15_000,
+  });
+
   // Data Query
   const query = useQuery({
     queryKey: ["parties-directory", selectedType, searchTerm, page, pageSize],
@@ -206,8 +215,27 @@ export function usePartyDirectoryViewModel() {
   });
 
   const updateNameMutation = useMutation({
-    mutationFn: ({ id, displayName }: { id: string; displayName: string }) =>
-      partyRepository.updatePartyName(id, displayName),
+    mutationFn: ({
+      id,
+      displayName,
+      options,
+    }: {
+      id: string;
+      displayName: string;
+      options?: { type?: string; fullName?: string; rowVersion?: string | null };
+    }) => {
+      const type = options?.type ?? editingParty?.type;
+      const fullName = options?.fullName ?? editingProfileQuery.data?.fullName ?? undefined;
+      const rowVersion =
+        options?.rowVersion !== undefined
+          ? options.rowVersion
+          : editingProfileQuery.data?.rowVersion;
+      return partyRepository.updatePartyName(id, displayName, {
+        ...(type !== undefined ? { type } : {}),
+        ...(fullName !== undefined ? { fullName } : {}),
+        ...(rowVersion !== undefined && rowVersion !== null ? { rowVersion } : {}),
+      });
+    },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["parties-directory"] });
       queryClient.invalidateQueries({ queryKey: ["party-profile"] });
@@ -217,8 +245,25 @@ export function usePartyDirectoryViewModel() {
       });
     },
     onError: (err: Error) => {
+      const typedErr = err as Error & {
+        status?: number;
+        details?: { statusCode?: number; errorCode?: string };
+      };
+      const isConflict =
+        typedErr.status === 409 ||
+        typedErr.details?.statusCode === 409 ||
+        typedErr.details?.errorCode === "ENTITY_CONCURRENCY_CONFLICT" ||
+        /changed after it was read|modified by another|concurrency|conflict/i.test(
+          err.message || ""
+        );
+      if (isConflict) {
+        queryClient.invalidateQueries({ queryKey: ["parties-directory"] });
+        queryClient.invalidateQueries({ queryKey: ["party-profile"] });
+      }
       showError({
-        title: t("common.error") || "Error",
+        title: isConflict
+          ? t("party.toast.concurrencyConflict") || "Concurrent modification detected"
+          : t("common.error") || "Error",
         description: err.message || t("party.toast.errorUpdating") || "Failed to update party",
       });
     },
@@ -296,6 +341,7 @@ export function usePartyDirectoryViewModel() {
     setIsCreateOrgOpen,
     editingParty,
     setEditingParty,
+    editingPartyFullName: editingProfileQuery.data?.fullName ?? null,
     deletingParty,
     setDeletingParty,
     previewParty,
@@ -314,8 +360,11 @@ export function usePartyDirectoryViewModel() {
     },
     isCreatingOrg: createOrgMutation.isPending,
 
-    handleUpdateName: (id: string, displayName: string) =>
-      updateNameMutation.mutateAsync({ id, displayName }),
+    handleUpdateName: (
+      id: string,
+      displayName: string,
+      options?: { type?: string; fullName?: string; rowVersion?: string | null }
+    ) => updateNameMutation.mutateAsync({ id, displayName, options }),
     isUpdatingName: updateNameMutation.isPending,
 
     handleDelete: (id: string) => deleteMutation.mutateAsync(id),

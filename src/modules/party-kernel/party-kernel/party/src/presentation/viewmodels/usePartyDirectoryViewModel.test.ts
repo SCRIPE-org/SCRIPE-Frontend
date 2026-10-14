@@ -28,15 +28,20 @@ vi.mock("@core/providers/i18n-provider", () => ({
   }),
 }));
 
+const { mockInvalidateQueries, mockShowError } = vi.hoisted(() => ({
+  mockInvalidateQueries: vi.fn(),
+  mockShowError: vi.fn(),
+}));
+
 vi.mock("@core/hooks/use-enhanced-toast", () => ({
   useEnhancedToast: () => ({
     success: vi.fn(),
-    error: vi.fn(),
+    error: mockShowError,
+    warning: vi.fn(),
   }),
 }));
 
 vi.mock("@tanstack/react-query", () => {
-  const mockInvalidateQueries = vi.fn();
   return {
     useQueryClient: () => ({
       invalidateQueries: mockInvalidateQueries,
@@ -45,6 +50,21 @@ vi.mock("@tanstack/react-query", () => {
       if (queryKey[0] === "parties-stats-summary") {
         return {
           data: { total: 2, people: 1, organizations: 1 },
+          isLoading: false,
+          isFetching: false,
+          isError: false,
+          error: null,
+          refetch: vi.fn(),
+        };
+      }
+      if (queryKey[0] === "party-profile") {
+        return {
+          data: queryKey[1]
+            ? {
+                fullName: "Dr. Fatima Zahra Legal",
+                rowVersion: "AAAAAAAAAAAAAAAAAAAAAA==",
+              }
+            : undefined,
           isLoading: false,
           isFetching: false,
           isError: false,
@@ -81,16 +101,22 @@ vi.mock("@tanstack/react-query", () => {
     useMutation: (config?: {
       mutationFn?: (args: unknown) => Promise<unknown>;
       onSuccess?: (res: unknown) => void;
+      onError?: (err: Error) => void;
     }) => ({
       mutateAsync: vi.fn(async (args: unknown) => {
-        let result: unknown;
-        if (config?.mutationFn) {
-          result = await config.mutationFn(args);
+        try {
+          let result: unknown;
+          if (config?.mutationFn) {
+            result = await config.mutationFn(args);
+          }
+          if (config?.onSuccess) {
+            config.onSuccess(result ?? "mock-id");
+          }
+          return result ?? "mock-id";
+        } catch (err) {
+          config?.onError?.(err as Error);
+          throw err;
         }
-        if (config?.onSuccess) {
-          config.onSuccess(result ?? "mock-id");
-        }
-        return result ?? "mock-id";
       }),
       isPending: false,
     }),
@@ -150,6 +176,7 @@ describe("usePartyDirectoryViewModel", () => {
       result.current.setEditingParty(testParty);
     });
     expect(result.current.editingParty).toBe(testParty);
+    expect(result.current.editingPartyFullName).toBe("Dr. Fatima Zahra Legal");
 
     act(() => {
       result.current.setDeletingParty(testParty);
@@ -188,5 +215,49 @@ describe("usePartyDirectoryViewModel", () => {
       })
     );
     expect(orgId).toBe("org-new-id");
+  });
+
+  it("threads profile rowVersion and fullName when editing a Person from the directory and invalidates queries on 409 conflict", async () => {
+    const testParty = new Party({
+      id: "p1",
+      type: "Person",
+      displayName: "Dr. Fatima Zahra",
+      createdAt: "2026-01-01T00:00:00Z",
+    });
+
+    const conflictErr = new Error(
+      "The person record has been modified by another user or process. Please refresh and try again."
+    ) as Error & { status?: number; details?: { statusCode?: number; errorCode?: string } };
+    conflictErr.status = 409;
+    conflictErr.details = { statusCode: 409, errorCode: "ENTITY_CONCURRENCY_CONFLICT" };
+    mockPartyRepo.updatePartyName.mockRejectedValueOnce(conflictErr);
+
+    const { result } = renderHook(() => usePartyDirectoryViewModel());
+
+    act(() => {
+      result.current.setEditingParty(testParty);
+    });
+
+    await expect(
+      act(async () => {
+        await result.current.handleUpdateName("p1", "Dr. Fatima Updated", {
+          type: "Person",
+          fullName: "Dr. Fatima Zahra Updated",
+        });
+      })
+    ).rejects.toThrow("The person record has been modified by another user or process");
+
+    expect(mockPartyRepo.updatePartyName).toHaveBeenCalledWith("p1", "Dr. Fatima Updated", {
+      type: "Person",
+      fullName: "Dr. Fatima Zahra Updated",
+      rowVersion: "AAAAAAAAAAAAAAAAAAAAAA==",
+    });
+    expect(mockInvalidateQueries).toHaveBeenCalledWith({ queryKey: ["parties-directory"] });
+    expect(mockInvalidateQueries).toHaveBeenCalledWith({ queryKey: ["party-profile"] });
+    expect(mockShowError).toHaveBeenCalledWith(
+      expect.objectContaining({
+        title: "party.toast.concurrencyConflict",
+      })
+    );
   });
 });

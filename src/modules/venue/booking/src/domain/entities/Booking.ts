@@ -62,6 +62,7 @@ export interface CreateBookingDraftInput {
   requestedStartUtc: string;
   requestedEndUtc: string;
   quantity: number;
+  idempotencyKey: string;
 }
 
 /**

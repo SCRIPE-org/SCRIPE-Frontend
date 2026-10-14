@@ -8,7 +8,7 @@ import { usePermission } from "@core/hooks/use-permission";
 import { useEnhancedToast } from "@core/hooks/use-enhanced-toast";
 import { useI18n } from "@core/providers/i18n-provider";
 import type { PartyProfile } from "../../domain/entities/PartyProfile";
-import type { ContactPoint } from "@modules/party-kernel/contact-point/src/domain/entities/ContactPoint";
+import type { ContactPoint } from "../../../../contact-point/src/domain/entities/ContactPoint";
 import type {
   AddContactPointParams,
   AddPartyRoleParams,
@@ -69,12 +69,21 @@ export function usePartyProfileViewModel(partyId: string) {
 
   // Mutations
   const updateNameMutation = useMutation({
-    mutationFn: (param: string | { displayName: string; fullName?: string }) => {
+    mutationFn: (
+      param: string | { displayName: string; fullName?: string; rowVersion?: string | null }
+    ) => {
       const displayName = typeof param === "string" ? param : param.displayName;
       const fullName = typeof param === "object" ? param.fullName : undefined;
+      const explicitRowVersion = typeof param === "object" ? param.rowVersion : undefined;
       const party = profileQuery.data?.party;
       const type = party?.type;
-      return partyRepository.updatePartyName(partyId, displayName, { type, fullName });
+      const rowVersion =
+        explicitRowVersion !== undefined ? explicitRowVersion : profileQuery.data?.rowVersion;
+      return partyRepository.updatePartyName(partyId, displayName, {
+        type,
+        fullName,
+        ...(rowVersion !== undefined && rowVersion !== null ? { rowVersion } : {}),
+      });
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["party-profile", partyId] });
@@ -85,8 +94,25 @@ export function usePartyProfileViewModel(partyId: string) {
       });
     },
     onError: (err: Error) => {
+      const typedErr = err as Error & {
+        status?: number;
+        details?: { statusCode?: number; errorCode?: string };
+      };
+      const isConflict =
+        typedErr.status === 409 ||
+        typedErr.details?.statusCode === 409 ||
+        typedErr.details?.errorCode === "ENTITY_CONCURRENCY_CONFLICT" ||
+        /changed after it was read|modified by another|concurrency|conflict/i.test(
+          err.message || ""
+        );
+      if (isConflict) {
+        queryClient.invalidateQueries({ queryKey: ["party-profile", partyId] });
+        queryClient.invalidateQueries({ queryKey: ["parties-directory"] });
+      }
       showError({
-        title: t("common.error") || "Error",
+        title: isConflict
+          ? t("party.toast.concurrencyConflict") || "Concurrent modification detected"
+          : t("common.error") || "Error",
         description: err.message || t("party.toast.errorUpdating") || "Failed to update name",
       });
     },
@@ -277,14 +303,15 @@ export function usePartyProfileViewModel(partyId: string) {
     setIsDeleteConfirmOpen,
 
     handleUpdateName: (
-      param: string | { displayName: string; fullName?: string },
+      param: string | { displayName: string; fullName?: string; rowVersion?: string | null },
       maybeDisplayName?: string,
-      options?: { fullName?: string }
+      options?: { fullName?: string; rowVersion?: string | null }
     ) => {
       if (typeof param === "string" && typeof maybeDisplayName === "string") {
         return updateNameMutation.mutateAsync({
           displayName: maybeDisplayName,
           fullName: options?.fullName,
+          ...(options?.rowVersion !== undefined ? { rowVersion: options.rowVersion } : {}),
         });
       }
       return updateNameMutation.mutateAsync(param);

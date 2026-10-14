@@ -139,6 +139,7 @@ export class PartyService implements IPartyService {
       givenName?: string | null;
       middleNames?: string | null;
       familyName?: string | null;
+      rowVersion?: string | null;
     }
   ): Promise<void> {
     await this.api.put(PARTY_ENDPOINTS.PERSON_UPDATE(id), data);

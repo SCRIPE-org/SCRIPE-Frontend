@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { getVenueContainer } from "@modules/venue/di";
 import type { SchedulableResource } from "@modules/venue";
 import type {
@@ -66,6 +66,7 @@ export function useResourcePricingViewModel({
   const [newTaxInclusive, setNewTaxInclusive] = useState(false);
   const [saving, setSaving] = useState(false);
   const [creatingTax, setCreatingTax] = useState(false);
+  const configurationIntentKeyRef = useRef<{ fingerprint: string; key: string } | null>(null);
 
   const loadResources = useCallback(async () => {
     setLoading(true);
@@ -168,6 +169,21 @@ export function useResourcePricingViewModel({
     setError(null);
     setSuccess(false);
     try {
+      const fingerprint = JSON.stringify([
+        selectedResourceId,
+        displayName.trim(),
+        currencyCode,
+        price,
+        effective,
+        min,
+        max,
+        step,
+        taxCategoryId || null,
+      ]);
+      if (configurationIntentKeyRef.current?.fingerprint !== fingerprint) {
+        configurationIntentKeyRef.current = { fingerprint, key: crypto.randomUUID() };
+      }
+      const intent = configurationIntentKeyRef.current;
       const value = await commercialPricingRepository.configureResourcePrice({
         schedulableResourceId: selectedResourceId,
         displayName: displayName.trim(),
@@ -178,10 +194,13 @@ export function useResourcePricingViewModel({
         maxDurationMinutes: max,
         incrementMinutes: step,
         taxCategoryId: taxCategoryId || null,
-        idempotencyKey: crypto.randomUUID(),
+        idempotencyKey: intent.key,
       });
       setConfiguration(value);
       setSuccess(true);
+      if (configurationIntentKeyRef.current?.key === intent.key) {
+        configurationIntentKeyRef.current = null;
+      }
     } catch (caught) {
       setError(caught instanceof Error ? caught.message : messages.fallbackError);
     } finally {

@@ -21,7 +21,7 @@ import {
 } from "@core/ui/select";
 import { useI18n } from "@core/providers/i18n-provider";
 import { Edit3, Loader2 } from "lucide-react";
-import type { ContactPoint } from "@modules/party-kernel/contact-point/src/domain/entities/ContactPoint";
+import type { ContactPoint } from "../../../../../contact-point/src/domain/entities/ContactPoint";
 
 interface EditContactDialogProps {
   contact: ContactPoint | null;

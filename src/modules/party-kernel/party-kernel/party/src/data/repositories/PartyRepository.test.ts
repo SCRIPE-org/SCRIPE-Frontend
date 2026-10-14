@@ -1,18 +1,18 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { PartyRepository } from "./PartyRepository";
 import { PartyModel } from "../models/PartyModel";
-import { PartyPerson } from "@modules/party-kernel/party-person/src/domain/entities/PartyPerson";
-import { ContactPoint } from "@modules/party-kernel/contact-point/src/domain/entities/ContactPoint";
-import { PartyRole } from "@modules/party-kernel/party-role/src/domain/entities/PartyRole";
-import { PartyRelationship } from "@modules/party-kernel/party-relationship/src/domain/entities/PartyRelationship";
-import { MergeCandidate } from "@modules/party-kernel/merge-candidate/src/domain/entities/MergeCandidate";
+import { PartyPerson } from "../../../../party-person/src/domain/entities/PartyPerson";
+import { ContactPoint } from "../../../../contact-point/src/domain/entities/ContactPoint";
+import { PartyRole } from "../../../../party-role/src/domain/entities/PartyRole";
+import { PartyRelationship } from "../../../../party-relationship/src/domain/entities/PartyRelationship";
+import { MergeCandidate } from "../../../../merge-candidate/src/domain/entities/MergeCandidate";
 import type { IPartyService } from "../../domain/interfaces/IPartyService";
-import type { IPartyPersonRepository } from "@modules/party-kernel/party-person/src/domain/interfaces/IPartyPersonRepository";
-import type { IPartyOrganizationRepository } from "@modules/party-kernel/party-organization/src/domain/interfaces/IPartyOrganizationRepository";
-import type { IContactPointRepository } from "@modules/party-kernel/contact-point/src/domain/interfaces/IContactPointRepository";
-import type { IPartyRoleRepository } from "@modules/party-kernel/party-role/src/domain/interfaces/IPartyRoleRepository";
-import type { IPartyRelationshipRepository } from "@modules/party-kernel/party-relationship/src/domain/interfaces/IPartyRelationshipRepository";
-import type { IMergeCandidateRepository } from "@modules/party-kernel/merge-candidate/src/domain/interfaces/IMergeCandidateRepository";
+import type { IPartyPersonRepository } from "../../../../party-person/src/domain/interfaces/IPartyPersonRepository";
+import type { IPartyOrganizationRepository } from "../../../../party-organization/src/domain/interfaces/IPartyOrganizationRepository";
+import type { IContactPointRepository } from "../../../../contact-point/src/domain/interfaces/IContactPointRepository";
+import type { IPartyRoleRepository } from "../../../../party-role/src/domain/interfaces/IPartyRoleRepository";
+import type { IPartyRelationshipRepository } from "../../../../party-relationship/src/domain/interfaces/IPartyRelationshipRepository";
+import type { IMergeCandidateRepository } from "../../../../merge-candidate/src/domain/interfaces/IMergeCandidateRepository";
 
 describe("PartyRepository", () => {
   const partyService = {
@@ -25,6 +25,7 @@ describe("PartyRepository", () => {
     lookupPeople: vi.fn(),
     lookupOrganizations: vi.fn(),
     update: vi.fn(),
+    updatePerson: vi.fn(),
     delete: vi.fn(),
   };
 
@@ -565,6 +566,49 @@ describe("PartyRepository", () => {
         },
         "retry-key-abc:email"
       );
+    });
+  });
+
+  describe("updatePartyName and updatePerson concurrency rowVersion", () => {
+    it("forwards explicit rowVersion to service.updatePerson without calling getProfile", async () => {
+      partyService.updatePerson.mockResolvedValue(undefined);
+
+      await repository.updatePartyName("p-person-1", "Dr. Fatima Al-Zahra", {
+        type: "Person",
+        fullName: "Dr. Fatima Bint Al-Zahra",
+        rowVersion: "AAAAAAAAAAAAAAAAAAAAAA==",
+      });
+
+      expect(partyService.updatePerson).toHaveBeenCalledWith("p-person-1", {
+        fullName: "Dr. Fatima Bint Al-Zahra",
+        displayName: "Dr. Fatima Al-Zahra",
+        rowVersion: "AAAAAAAAAAAAAAAAAAAAAA==",
+      });
+      expect(partyService.getProfile).not.toHaveBeenCalled();
+    });
+
+    it("fetches rowVersion from service.getProfile when updating a Person without explicit rowVersion", async () => {
+      partyService.getProfile.mockResolvedValue({
+        id: "p-person-2",
+        type: "Person",
+        displayName: "Tariq Aziz",
+        fullName: "Tariq Aziz",
+        legalName: null,
+        rowVersion: "AQEBAQEBAQEBAQEBAQEBAQ==",
+      });
+      partyService.updatePerson.mockResolvedValue(undefined);
+
+      await repository.updatePartyName("p-person-2", "Tariq Aziz Updated", {
+        type: "Person",
+        fullName: "Tariq Aziz Full",
+      });
+
+      expect(partyService.getProfile).toHaveBeenCalledWith("p-person-2");
+      expect(partyService.updatePerson).toHaveBeenCalledWith("p-person-2", {
+        fullName: "Tariq Aziz Full",
+        displayName: "Tariq Aziz Updated",
+        rowVersion: "AQEBAQEBAQEBAQEBAQEBAQ==",
+      });
     });
   });
 });
