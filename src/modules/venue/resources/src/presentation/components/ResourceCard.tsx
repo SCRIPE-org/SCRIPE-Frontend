@@ -150,7 +150,7 @@ export function ResourceCard({ item }: Props) {
             <Button
               asChild
               size="sm"
-              className="h-8 text-xs font-bold bg-blue-600 hover:bg-blue-700 text-white rounded-lg flex-1"
+              className="h-8 text-xs font-bold bg-nx-accent hover:bg-nx-accent/90 text-nx-accent-contrast rounded-nx-lg flex-1"
             >
               <Link
                 href={`/venue/calendar?newBooking=true&resourceId=${encodeURIComponent(

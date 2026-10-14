@@ -264,15 +264,15 @@ export function VenueShell({ children }: VenueShellProps) {
   const branchName = selectedFacility?.name || "Nasr City Club";
 
   const renderSidebar = () => (
-    <div className="flex h-full w-[240px] flex-col justify-between bg-[#0B1120] text-slate-200 select-none border-e border-[#1E293B]">
+    <div className="flex h-full w-[240px] flex-col justify-between bg-nx-surface text-nx-ink select-none border-e border-nx-line">
       {/* Top Brand & Branch Selector */}
       <div className="p-4 space-y-4">
         {/* SCRIPE Logo */}
         <Link href="/venue" className="flex items-center gap-3 px-1 py-1 group">
-          <div className="relative flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-tr from-blue-600 via-indigo-600 to-cyan-400 shadow-md shadow-blue-500/20">
-            <span className="font-black text-white text-base tracking-tighter">S</span>
+          <div className="relative flex h-8 w-8 items-center justify-center rounded-lg bg-nx-accent shadow-md shadow-nx-accent/20">
+            <span className="font-black text-nx-accent-contrast text-base tracking-tighter">S</span>
           </div>
-          <span className="font-extrabold tracking-wider text-white text-lg">SCRIPE</span>
+          <span className="font-extrabold tracking-wider text-nx-ink text-lg">SCRIPE</span>
         </Link>
 
         {/* Branch / Venue Selector Dropdown */}
@@ -327,11 +327,11 @@ export function VenueShell({ children }: VenueShellProps) {
                 className={cn(
                   "flex items-center gap-3 px-3 py-2.5 rounded-lg text-xs font-semibold transition-all",
                   item.active
-                    ? "bg-blue-600 text-white shadow-sm shadow-blue-600/30 font-bold"
-                    : "text-slate-400 hover:text-white hover:bg-slate-800/60"
+                    ? "bg-nx-accent text-nx-accent-contrast shadow-sm font-bold"
+                    : "text-nx-ink-2 hover:text-nx-ink hover:bg-nx-surfaceSubtle"
                 )}
               >
-                <Icon className={cn("size-4 shrink-0", item.active ? "text-white" : "text-slate-400")} />
+                <Icon className={cn("size-4 shrink-0", item.active ? "text-nx-accent-contrast" : "text-nx-ink-3")} />
                 <span>{item.label}</span>
               </Link>
             );
@@ -341,7 +341,7 @@ export function VenueShell({ children }: VenueShellProps) {
         {/* Secondary Lower Navigation (Customers, Team, Reports) */}
         {secondaryNavItems.length > 0 && (
           <>
-            <div className="border-t border-slate-800/80 my-3" />
+            <div className="border-t border-nx-line my-3" />
             <nav className="space-y-1" aria-label="Venue Secondary Navigation">
               {secondaryNavItems.map((item) => {
                 const Icon = item.icon;
@@ -353,11 +353,11 @@ export function VenueShell({ children }: VenueShellProps) {
                     className={cn(
                       "flex items-center gap-3 px-3 py-2 rounded-lg text-xs font-medium transition-all",
                       item.active
-                        ? "bg-blue-600 text-white font-bold"
-                        : "text-slate-400 hover:text-white hover:bg-slate-800/60"
+                        ? "bg-nx-accent text-nx-accent-contrast font-bold"
+                        : "text-nx-ink-2 hover:text-nx-ink hover:bg-nx-surfaceSubtle"
                     )}
                   >
-                    <Icon className="size-4 shrink-0 text-slate-400" />
+                    <Icon className="size-4 shrink-0 text-nx-ink-3" />
                     <span>{item.label}</span>
                   </Link>
                 );
@@ -369,18 +369,18 @@ export function VenueShell({ children }: VenueShellProps) {
 
       {/* Anchored Lower Settings Navigation */}
       {settingsItem && (
-        <div className="p-4 border-t border-slate-800/80">
+        <div className="p-4 border-t border-nx-line">
           <Link
             href={settingsItem.href}
             onClick={() => setMobileMenuOpen(false)}
             className={cn(
               "flex items-center gap-3 px-3 py-2 rounded-lg text-xs font-medium transition-all",
               settingsItem.active
-                ? "bg-blue-600 text-white font-bold"
-                : "text-slate-400 hover:text-white hover:bg-slate-800/60"
+                ? "bg-nx-accent text-nx-accent-contrast font-bold"
+                : "text-nx-ink-2 hover:text-nx-ink hover:bg-nx-surfaceSubtle"
             )}
           >
-            <settingsItem.icon className="size-4 shrink-0 text-slate-400" />
+            <settingsItem.icon className="size-4 shrink-0 text-nx-ink-3" />
             <span>{settingsItem.label}</span>
           </Link>
         </div>
@@ -447,10 +447,10 @@ export function VenueShell({ children }: VenueShellProps) {
           {/* Right Toolbar Controls */}
           <div className="flex items-center gap-2 sm:gap-3">
             {/* Date Navigation Pill */}
-            <div className="hidden md:flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/50 text-xs font-semibold text-slate-700 dark:text-slate-300">
+            <div className="hidden md:flex items-center gap-1.5 px-3 py-1.5 rounded-nx-lg border border-nx-line bg-nx-surfaceSubtle text-xs font-semibold text-nx-ink">
               <button
                 type="button"
-                className="p-0.5 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
+                className="p-0.5 hover:text-nx-accent transition-colors"
                 aria-label="Previous day"
               >
                 <ChevronLeft className="size-3.5 rtl:rotate-180" />
@@ -458,7 +458,7 @@ export function VenueShell({ children }: VenueShellProps) {
               <span>{formattedDate}</span>
               <button
                 type="button"
-                className="p-0.5 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
+                className="p-0.5 hover:text-nx-accent transition-colors"
                 aria-label="Next day"
               >
                 <ChevronRight className="size-3.5 rtl:rotate-180" />

@@ -106,7 +106,7 @@ export function ImportDataModal({
         <DialogHeader className="pb-4 border-b border-slate-200 dark:border-slate-800">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <div className="size-9 rounded-lg bg-blue-500/10 text-blue-600 dark:text-blue-400 flex items-center justify-center">
+              <div className="size-9 rounded-lg bg-nx-accent/10 text-nx-accent flex items-center justify-center">
                 <FileSpreadsheet className="size-5" />
               </div>
               <div>
@@ -125,23 +125,23 @@ export function ImportDataModal({
             <div className="hidden sm:flex items-center gap-1.5 text-xs font-semibold">
               <span
                 className={`px-2 py-0.5 rounded-full ${
-                  importStep >= 1 ? "bg-blue-600 text-white" : "bg-slate-100 text-slate-500"
+                  importStep >= 1 ? "bg-nx-accent text-nx-accent-contrast" : "bg-nx-surfaceSubtle text-nx-ink-3"
                 }`}
               >
                 1
               </span>
-              <span className="text-slate-300">→</span>
+              <span className="text-nx-line">→</span>
               <span
                 className={`px-2 py-0.5 rounded-full ${
-                  importStep >= 2 ? "bg-blue-600 text-white" : "bg-slate-100 text-slate-500"
+                  importStep >= 2 ? "bg-nx-accent text-nx-accent-contrast" : "bg-nx-surfaceSubtle text-nx-ink-3"
                 }`}
               >
                 2
               </span>
-              <span className="text-slate-300">→</span>
+              <span className="text-nx-line">→</span>
               <span
                 className={`px-2 py-0.5 rounded-full ${
-                  importStep >= 3 ? "bg-blue-600 text-white" : "bg-slate-100 text-slate-500"
+                  importStep >= 3 ? "bg-nx-accent text-nx-accent-contrast" : "bg-nx-surfaceSubtle text-nx-ink-3"
                 }`}
               >
                 3
@@ -172,21 +172,21 @@ export function ImportDataModal({
                   <button
                     type="button"
                     onClick={() => setImportType("customers")}
-                    className={`p-4 rounded-xl border text-start transition-all ${
+                    className={`p-4 rounded-nx-xl border text-start transition-all ${
                       importType === "customers"
-                        ? "border-blue-600 bg-blue-50/50 dark:bg-blue-950/20 ring-1 ring-blue-600"
-                        : "border-slate-200 dark:border-slate-800 hover:border-slate-300"
+                        ? "border-nx-accent bg-nx-accent/5 ring-1 ring-nx-accent"
+                        : "border-nx-line hover:border-nx-line/80 bg-nx-surface"
                     }`}
                   >
                     <div className="flex items-center gap-3">
-                      <div className="size-8 rounded-lg bg-blue-500/10 text-blue-600 flex items-center justify-center">
+                      <div className="size-8 rounded-lg bg-nx-accent/10 text-nx-accent flex items-center justify-center">
                         <Users className="size-4" />
                       </div>
                       <div>
-                        <div className="text-sm font-bold text-slate-900 dark:text-slate-100">
+                        <div className="text-sm font-bold text-nx-ink">
                           {isRtl ? "سجل العملاء" : "Customer Directory"}
                         </div>
-                        <div className="text-xs text-slate-500">
+                        <div className="text-xs text-nx-ink-2">
                           {isRtl ? "أفراد وشركات (Party Kernel)" : "Individuals & Organizations"}
                         </div>
                       </div>
@@ -196,14 +196,14 @@ export function ImportDataModal({
                   <button
                     type="button"
                     onClick={() => setImportType("courts")}
-                    className={`p-4 rounded-xl border text-start transition-all ${
+                    className={`p-4 rounded-nx-xl border text-start transition-all ${
                       importType === "courts"
-                        ? "border-blue-600 bg-blue-50/50 dark:bg-blue-950/20 ring-1 ring-blue-600"
-                        : "border-slate-200 dark:border-slate-800 hover:border-slate-300"
+                        ? "border-nx-accent bg-nx-accent/5 ring-1 ring-nx-accent"
+                        : "border-nx-line hover:border-nx-line/80 bg-nx-surface"
                     }`}
                   >
                     <div className="flex items-center gap-3">
-                      <div className="size-8 rounded-lg bg-indigo-500/10 text-indigo-600 flex items-center justify-center">
+                      <div className="size-8 rounded-lg bg-nx-accent/10 text-nx-accent flex items-center justify-center">
                         <Layers className="size-4" />
                       </div>
                       <div>
@@ -251,7 +251,7 @@ export function ImportDataModal({
                     type="button"
                     variant="ghost"
                     size="sm"
-                    className="text-xs text-blue-600 h-7"
+                    className="text-xs text-nx-accent h-7"
                     onClick={() => {
                       if (importType === "customers") {
                         setPasteContent(`Name,Type,Email,Phone\nZaid Al-Mansoor,Person,zaid@example.com,+966501234567\nRiyadh Padel Academy,Organization,contact@riyadhpadel.com,+966509876543`);
@@ -269,14 +269,14 @@ export function ImportDataModal({
                   onChange={(e) => setPasteContent(e.target.value)}
                   placeholder={`Header1,Header2,...\nValue1,Value2,...`}
                   rows={4}
-                  className="w-full text-xs font-mono p-3 rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 focus:ring-1 focus:ring-blue-500 focus:outline-none"
+                  className="w-full text-xs font-mono p-3 rounded-nx-lg border border-nx-line bg-nx-surface text-nx-ink focus:ring-1 focus:ring-nx-accent focus:outline-none"
                 />
                 {pasteContent.trim().length > 0 && (
                   <Button
                     type="button"
                     size="sm"
                     onClick={handlePasteSubmit}
-                    className="gap-1.5 text-xs bg-blue-600 text-white hover:bg-blue-700"
+                    className="gap-1.5 text-xs bg-nx-accent text-nx-accent-contrast hover:bg-nx-accent/90"
                   >
                     <span>{isRtl ? "تحليل البيانات الملصقة" : "Parse Pasted Table"}</span>
                     <ArrowRight className="size-3 rtl:rotate-180" />
@@ -451,7 +451,7 @@ export function ImportDataModal({
             <div className="py-8 text-center space-y-4">
               {isCommitting ? (
                 <div className="space-y-3">
-                  <Loader2 className="size-10 animate-spin text-blue-600 mx-auto" />
+                  <Loader2 className="size-10 animate-spin text-nx-accent mx-auto" />
                   <div className="text-base font-bold">
                     {isRtl ? "جارٍ تنفيذ الاستيراد عبر خدمات النطاق..." : "Committing import via domain services..."}
                   </div>
@@ -520,7 +520,7 @@ export function ImportDataModal({
                 type="button"
                 size="sm"
                 onClick={onExecuteValidation}
-                className="gap-1.5 text-xs bg-blue-600 text-white hover:bg-blue-700"
+                className="gap-1.5 text-xs bg-nx-accent text-nx-accent-contrast hover:bg-nx-accent/90"
               >
                 <span>{isRtl ? "فحص وتحقق من البيانات" : "Validate Rows"}</span>
                 <ArrowRight className="size-3 rtl:rotate-180" />

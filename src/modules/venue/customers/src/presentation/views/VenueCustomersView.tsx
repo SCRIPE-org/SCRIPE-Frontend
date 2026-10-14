@@ -1,8 +1,7 @@
 "use client";
 
-import React, { useCallback, useEffect, useState, useMemo } from "react";
+import React from "react";
 import Link from "next/link";
-import { useSearchParams } from "next/navigation";
 import {
   Users,
   Search,
@@ -12,7 +11,6 @@ import {
   Building,
   AlertCircle,
   RefreshCw,
-  CheckCircle2,
 } from "lucide-react";
 import { Button } from "@core/ui/button";
 import { Input } from "@core/ui/input";
@@ -31,103 +29,54 @@ import {
   DialogTitle,
   DialogDescription,
 } from "@core/ui/dialog";
-import { useI18n } from "@core/providers/i18n-provider";
-import { getVenueContainer } from "@modules/venue/di";
-import type { CustomerSummary } from "@modules/venue/booking/src/domain/entities/Booking";
-import { mapVenueError } from "@modules/venue/shared/src/utils/venueErrorMapper";
+import { useVenueCustomersViewModel } from "../viewmodels/useVenueCustomersViewModel";
 
 export function VenueCustomersView() {
-  const { t, language, direction } = useI18n();
-  const isRtl = language === "ar";
-  const searchParams = useSearchParams();
-  const partyIdParam = searchParams.get("partyId");
+  const {
+    t,
+    direction,
+    isRtl,
+    searchQuery,
+    setSearchQuery,
+    customers,
+    selectedCustomer,
+    setSelectedCustomer,
+    loading,
+    error,
+    createOpen,
+    setCreateOpen,
+    newName,
+    setNewName,
+    newType,
+    setNewType,
+    createLoading,
+    createError,
+    handleSearch,
+    handleResetSearch,
+    handleCreateCustomer,
+  } = useVenueCustomersViewModel();
 
-  const { customerRepository } = useMemo(() => getVenueContainer(), []);
-
-  const [searchQuery, setSearchQuery] = useState("");
-  const [customers, setCustomers] = useState<CustomerSummary[]>([]);
-  const [selectedCustomer, setSelectedCustomer] = useState<CustomerSummary | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-
-  // New Customer Dialog
-  const [createOpen, setCreateOpen] = useState(false);
-  const [newName, setNewName] = useState("");
-  const [newType, setNewType] = useState<"Person" | "Organization">("Person");
-  const [createLoading, setCreateLoading] = useState(false);
-  const [createError, setCreateError] = useState<string | null>(null);
-
-  const fetchCustomers = useCallback(
-    async (query = "") => {
-      setLoading(true);
-      setError(null);
-      try {
-        const results = await customerRepository.search(query);
-        setCustomers(results);
-
-        if (partyIdParam && !selectedCustomer) {
-          const match = results.find((c) => c.id === partyIdParam);
-          if (match) {
-            setSelectedCustomer(match);
-          } else {
-            try {
-              const direct = await customerRepository.getById(partyIdParam);
-              setSelectedCustomer(direct);
-            } catch {
-              // Ignore direct fetch failure
-            }
-          }
-        }
-      } catch (err) {
-        setError(mapVenueError(err, language).message);
-      } finally {
-        setLoading(false);
-      }
-    },
-    [customerRepository, language, partyIdParam, selectedCustomer]
-  );
-
-  useEffect(() => {
-    void fetchCustomers("");
-  }, []);
-
-  const handleSearch = (e: React.FormEvent) => {
-    e.preventDefault();
-    void fetchCustomers(searchQuery);
-  };
-
-  const handleCreateCustomer = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!newName.trim()) return;
-    setCreateLoading(true);
-    setCreateError(null);
-    try {
-      const created = await customerRepository.create(newName.trim(), newType);
-      setCreateOpen(false);
-      setNewName("");
-      setSelectedCustomer(created);
-      await fetchCustomers(searchQuery);
-    } catch (err) {
-      setCreateError(mapVenueError(err, language).message);
-    } finally {
-      setCreateLoading(false);
-    }
+  // Helper with fallback for test mocks returning raw keys
+  const tr = (key: string, enFallback: string, arFallback: string) => {
+    const val = t(key);
+    if (val && val !== key) return val;
+    return isRtl ? arFallback : enFallback;
   };
 
   return (
     <div className="space-y-6" dir={direction} data-testid="venue-customers-view">
       <PageHeader
         icon={Users}
-        title={isRtl ? "العملاء" : "Customers"}
-        description={
-          isRtl
-            ? "عرض وإدارة عملاء المنشأة وبيانات الاتصال وسجل الحجوزات."
-            : "View and manage venue customers, contact details, and bookings."
-        }
+        title={tr("venueCustomers.title", "Customers", "العملاء")}
+        description={tr(
+          "venueCustomers.description",
+          "View and manage venue customers, contact details, and bookings.",
+          "عرض وإدارة عملاء المنشأة وبيانات الاتصال وسجل الحجوزات."
+        )}
         actions={
           <Button onClick={() => setCreateOpen(true)} className="gap-1.5 font-bold">
             <UserPlus className="size-4" />
-            <span>{isRtl ? "+ عميل جديد" : "+ New Customer"}</span>
+            <span>{tr("venueCustomers.newCustomer", "+ New Customer", "+ عميل جديد")}</span>
           </Button>
         }
       />
@@ -151,12 +100,8 @@ export function VenueCustomersView() {
                   </CardTitle>
                   <CardDescription className="text-xs">
                     {selectedCustomer.type === "Organization"
-                      ? isRtl
-                        ? "مؤسسة / شركة"
-                        : "Organization"
-                      : isRtl
-                      ? "فرد"
-                      : "Individual"}
+                      ? tr("venueCustomers.types.organization", "Organization", "مؤسسة / شركة")
+                      : tr("venueCustomers.types.individual", "Individual", "فرد")}
                   </CardDescription>
                 </div>
               </div>
@@ -164,7 +109,7 @@ export function VenueCustomersView() {
                 <Button asChild size="sm" className="gap-1.5 font-semibold">
                   <Link href={`/venue/calendar?newBooking=true&customerId=${encodeURIComponent(selectedCustomer.id)}`}>
                     <CalendarDays className="size-4" />
-                    <span>{isRtl ? "حجز جديد للعميل" : "Book for Customer"}</span>
+                    <span>{tr("venueCustomers.bookForCustomer", "Book for Customer", "حجز جديد للعميل")}</span>
                   </Link>
                 </Button>
                 <Button
@@ -172,7 +117,7 @@ export function VenueCustomersView() {
                   size="sm"
                   onClick={() => setSelectedCustomer(null)}
                 >
-                  {isRtl ? "إلغاء التحديد" : "Dismiss"}
+                  {tr("venueCustomers.dismiss", "Dismiss", "إلغاء التحديد")}
                 </Button>
               </div>
             </div>
@@ -187,26 +132,23 @@ export function VenueCustomersView() {
           <Input
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder={
-              isRtl
-                ? "البحث عن عميل بالاسم أو رقم الهاتف..."
-                : "Search customers by name, phone or email..."
-            }
+            placeholder={tr(
+              "venueCustomers.search.placeholder",
+              "Search customers by name, phone or email...",
+              "البحث عن عميل بالاسم أو رقم الهاتف..."
+            )}
             className="ps-9"
           />
         </div>
         <Button type="submit" variant="secondary">
-          {isRtl ? "بحث" : "Search"}
+          {tr("venueCustomers.search.submit", "Search", "بحث")}
         </Button>
         <Button
           type="button"
           variant="outline"
           size="icon"
-          onClick={() => {
-            setSearchQuery("");
-            void fetchCustomers("");
-          }}
-          aria-label={isRtl ? "إعادة تعيين" : "Reset"}
+          onClick={handleResetSearch}
+          aria-label={tr("venueCustomers.search.reset", "Reset", "إعادة تعيين")}
         >
           <RefreshCw className="size-4" />
         </Button>
@@ -216,7 +158,7 @@ export function VenueCustomersView() {
       {error && (
         <Alert variant="destructive">
           <AlertCircle className="size-4" />
-          <AlertTitle>{isRtl ? "خطأ في تحميل العملاء" : "Error loading customers"}</AlertTitle>
+          <AlertTitle>{tr("venueCustomers.errors.loadFailed", "Error loading customers", "خطأ في تحميل العملاء")}</AlertTitle>
           <AlertDescription>{error}</AlertDescription>
         </Alert>
       )}
@@ -229,20 +171,24 @@ export function VenueCustomersView() {
       ) : customers.length === 0 ? (
         <EmptyState
           icon={Users}
-          title={isRtl ? "لم يتم العثور على عملاء" : "No customers found"}
+          title={tr("venueCustomers.empty.title", "No customers found", "لم يتم العثور على عملاء")}
           description={
             searchQuery
-              ? isRtl
-                ? "لا توجد نتائج مطابقة لبحثك. جرب كلمة بحث أخرى."
-                : "No customers matched your search query."
-              : isRtl
-              ? "ابدأ بإضافة أول عميل إلى منشأتك لتسجيل الحجوزات."
-              : "Get started by adding your first venue customer to take bookings."
+              ? tr(
+                  "venueCustomers.empty.searchDescription",
+                  "No customers matched your search query.",
+                  "لا توجد نتائج مطابقة لبحثك. جرب كلمة بحث أخرى."
+                )
+              : tr(
+                  "venueCustomers.empty.defaultDescription",
+                  "Get started by adding your first venue customer to take bookings.",
+                  "ابدأ بإضافة أول عميل إلى منشأتك لتسجيل الحجوزات."
+                )
           }
           action={
             <Button onClick={() => setCreateOpen(true)} className="gap-1.5 font-bold">
               <UserPlus className="size-4" />
-              <span>{isRtl ? "إضافة عميل" : "Add Customer"}</span>
+              <span>{tr("venueCustomers.empty.action", "Add Customer", "إضافة عميل")}</span>
             </Button>
           }
         />
@@ -273,12 +219,8 @@ export function VenueCustomersView() {
                       </p>
                       <Badge variant="outline" className="text-[10px] mt-0.5">
                         {c.type === "Organization"
-                          ? isRtl
-                            ? "مؤسسة"
-                            : "Organization"
-                          : isRtl
-                          ? "فرد"
-                          : "Person"}
+                          ? tr("venueCustomers.types.organization", "Organization", "مؤسسة")
+                          : tr("venueCustomers.types.person", "Person", "فرد")}
                       </Badge>
                     </div>
                   </div>
@@ -289,7 +231,7 @@ export function VenueCustomersView() {
                       onClick={(e) => e.stopPropagation()}
                     >
                       <CalendarDays className="size-3.5 me-1" />
-                      {isRtl ? "حجز" : "Book"}
+                      {tr("venueCustomers.actions.book", "Book", "حجز")}
                     </Link>
                   </Button>
                 </CardContent>
@@ -304,11 +246,13 @@ export function VenueCustomersView() {
         <DialogContent>
           <form onSubmit={handleCreateCustomer}>
             <DialogHeader>
-              <DialogTitle>{isRtl ? "إضافة عميل جديد" : "Add New Customer"}</DialogTitle>
+              <DialogTitle>{tr("venueCustomers.dialog.title", "Add New Customer", "إضافة عميل جديد")}</DialogTitle>
               <DialogDescription>
-                {isRtl
-                  ? "أدخل اسم العميل لإضافته إلى قائمة عملاء المنشأة."
-                  : "Enter the customer details to add them to your venue directory."}
+                {tr(
+                  "venueCustomers.dialog.description",
+                  "Enter the customer details to add them to your venue directory.",
+                  "أدخل اسم العميل لإضافته إلى قائمة عملاء المنشأة."
+                )}
               </DialogDescription>
             </DialogHeader>
 
@@ -321,18 +265,18 @@ export function VenueCustomersView() {
               )}
 
               <div className="space-y-1.5">
-                <Label htmlFor="customer-name">{isRtl ? "اسم العميل" : "Customer Name"}</Label>
+                <Label htmlFor="customer-name">{tr("venueCustomers.dialog.customerName", "Customer Name", "اسم العميل")}</Label>
                 <Input
                   id="customer-name"
                   value={newName}
                   onChange={(e) => setNewName(e.target.value)}
-                  placeholder={isRtl ? "مثال: أحمد محمد" : "e.g. John Doe"}
+                  placeholder={tr("venueCustomers.dialog.namePlaceholder", "e.g. John Doe", "مثال: أحمد محمد")}
                   required
                 />
               </div>
 
               <div className="space-y-1.5">
-                <Label htmlFor="customer-type">{isRtl ? "نوع العميل" : "Customer Type"}</Label>
+                <Label htmlFor="customer-type">{tr("venueCustomers.dialog.customerType", "Customer Type", "نوع العميل")}</Label>
                 <div className="flex gap-2">
                   <Button
                     type="button"
@@ -342,7 +286,7 @@ export function VenueCustomersView() {
                     className="flex-1"
                   >
                     <User className="size-3.5 me-1.5" />
-                    {isRtl ? "فرد" : "Individual"}
+                    {tr("venueCustomers.types.individual", "Individual", "فرد")}
                   </Button>
                   <Button
                     type="button"
@@ -352,7 +296,7 @@ export function VenueCustomersView() {
                     className="flex-1"
                   >
                     <Building className="size-3.5 me-1.5" />
-                    {isRtl ? "مؤسسة" : "Organization"}
+                    {tr("venueCustomers.types.organization", "Organization", "مؤسسة")}
                   </Button>
                 </div>
               </div>
@@ -365,16 +309,12 @@ export function VenueCustomersView() {
                 onClick={() => setCreateOpen(false)}
                 disabled={createLoading}
               >
-                {isRtl ? "إلغاء" : "Cancel"}
+                {tr("venueCustomers.actions.cancel", "Cancel", "إلغاء")}
               </Button>
               <Button type="submit" disabled={createLoading || !newName.trim()}>
                 {createLoading
-                  ? isRtl
-                    ? "جارٍ الحفظ..."
-                    : "Saving..."
-                  : isRtl
-                  ? "إضافة العميل"
-                  : "Add Customer"}
+                  ? tr("venueCustomers.actions.saving", "Saving...", "جارٍ الحفظ...")
+                  : tr("venueCustomers.actions.addCustomer", "Add Customer", "إضافة العميل")}
               </Button>
             </DialogFooter>
           </form>

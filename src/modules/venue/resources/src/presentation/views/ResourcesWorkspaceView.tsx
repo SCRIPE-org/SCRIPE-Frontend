@@ -123,8 +123,8 @@ export function ResourcesWorkspaceView() {
               onClick={() => setSelectedCategory(cat)}
               className={`px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all shrink-0 ${
                 selectedCategory === cat
-                  ? "bg-blue-600 text-white shadow-xs"
-                  : "bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800"
+                  ? "bg-nx-accent text-nx-accent-contrast shadow-xs"
+                  : "bg-nx-surface border border-nx-line text-nx-ink-2 hover:bg-nx-surfaceSubtle"
               }`}
             >
               {cat}
@@ -209,15 +209,15 @@ export function ResourcesWorkspaceView() {
           <button
             type="button"
             onClick={() => setSetupWizardOpen(true)}
-            className="flex flex-col items-center justify-center p-6 rounded-2xl border-2 border-dashed border-slate-300 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-900/50 hover:bg-blue-50/40 dark:hover:bg-blue-950/20 hover:border-blue-500 transition-all text-center min-h-[140px] group cursor-pointer"
+            className="flex flex-col items-center justify-center p-6 rounded-nx-2xl border-2 border-dashed border-nx-line bg-nx-surfaceSubtle/50 hover:bg-nx-accent/5 hover:border-nx-accent transition-all text-center min-h-[140px] group cursor-pointer"
           >
-            <div className="size-10 rounded-full bg-blue-100 dark:bg-blue-900/40 text-blue-600 dark:text-blue-400 flex items-center justify-center mb-2 group-hover:scale-110 transition-transform">
+            <div className="size-10 rounded-full bg-nx-accent/10 text-nx-accent flex items-center justify-center mb-2 group-hover:scale-110 transition-transform">
               <Plus className="size-5" />
             </div>
-            <span className="text-xs font-bold text-slate-900 dark:text-white group-hover:text-blue-600 transition-colors">
+            <span className="text-xs font-bold text-nx-ink group-hover:text-nx-accent transition-colors">
               + Add New Court / Space
             </span>
-            <span className="text-[11px] text-slate-400 dark:text-slate-500 mt-1 max-w-[200px]">
+            <span className="text-[11px] text-nx-ink-3 mt-1 max-w-[200px]">
               Padel Court, Football Field, Pool, Studio, or any other space
             </span>
           </button>

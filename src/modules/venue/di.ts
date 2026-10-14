@@ -195,13 +195,7 @@ export function getVenueContainer(): VenueContainer {
     commercialPricingRepository: new CommercialPricingRepository(commercialPricingService),
     moneyRepository: new MoneyRepository(moneyService),
     venueAttentionRepository: new VenueAttentionRepository(venueAttentionService),
-    venueOverviewService: new VenueOverviewService(
-      new OperationsCalendarRepository(operationsCalendarService),
-      new SchedulableResourceRepository(schedulableResourceService),
-      new FacilityResourceProfileRepository(facilityResourceProfileService),
-      new FacilityRepository(facilityService),
-      new CustomerRepository(customerPickerService)
-    ),
+    venueOverviewService: new VenueOverviewService(venueApi),
     siteRepository: new SiteRepository(siteService),
     sitePickerService: new SitePickerService(organizationCoreApi),
     facilityResourceProfilePickerService: new FacilityResourceProfilePickerService(venueApi),

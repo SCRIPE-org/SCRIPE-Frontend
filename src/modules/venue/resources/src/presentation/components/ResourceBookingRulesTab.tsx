@@ -126,7 +126,7 @@ export function ResourceBookingRulesTab({ vm }: Props) {
                 id="allow-multi-slot"
                 checked={allowMultiSlot}
                 onChange={(e) => setAllowMultiSlot(e.target.checked)}
-                className="mt-0.5 size-4 rounded border-nx-line text-blue-600 focus:ring-blue-500"
+                className="mt-0.5 size-4 rounded border-nx-line text-nx-accent focus:ring-nx-accent"
               />
               <div className="space-y-0.5">
                 <Label htmlFor="allow-multi-slot" className="text-xs font-bold text-nx-ink cursor-pointer">

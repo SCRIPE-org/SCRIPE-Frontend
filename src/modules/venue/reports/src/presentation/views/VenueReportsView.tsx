@@ -103,7 +103,7 @@ export function VenueReportsView() {
             variant="outline"
             size="sm"
             onClick={() => setIsImportOpen(true)}
-            className="text-xs h-9 gap-1.5 border-blue-500/30 text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-950/30"
+            className="text-xs h-9 gap-1.5 border-nx-line text-nx-ink hover:bg-nx-surfaceSubtle"
           >
             <Upload className="size-3.5" />
             <span>{isRtl ? "استيراد بيانات" : "Import Data"}</span>
@@ -112,18 +112,18 @@ export function VenueReportsView() {
           {/* Export to Excel Dropdown (A11) */}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button size="sm" className="text-xs h-9 gap-1.5 bg-blue-600 hover:bg-blue-700 text-white font-semibold">
+              <Button size="sm" className="text-xs h-9 gap-1.5 bg-nx-accent hover:bg-nx-accent/90 text-nx-accent-contrast font-semibold">
                 <Download className="size-3.5" />
                 <span>{isRtl ? "تصدير إلى Excel" : "Export Report"}</span>
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align={isRtl ? "start" : "end"} className="text-xs w-48">
+            <DropdownMenuContent align={isRtl ? "start" : "end"} className="text-xs w-48 bg-nx-surface border-nx-line">
               <DropdownMenuItem onClick={() => handleExport("xls")} className="gap-2 cursor-pointer">
                 <FileSpreadsheet className="size-4 text-emerald-600" />
                 <span>{isRtl ? "ملف Excel Workbook (.xls)" : "Excel Workbook (.xls)"}</span>
               </DropdownMenuItem>
               <DropdownMenuItem onClick={() => handleExport("csv")} className="gap-2 cursor-pointer">
-                <Download className="size-4 text-blue-600" />
+                <Download className="size-4 text-nx-accent" />
                 <span>{isRtl ? "ملف مرمز CSV (UTF-8 BOM)" : "CSV File (UTF-8 BOM)"}</span>
               </DropdownMenuItem>
             </DropdownMenuContent>
@@ -137,31 +137,31 @@ export function VenueReportsView() {
         onValueChange={(val) => setCategory(val as ReportCategory)}
         className="w-full"
       >
-        <TabsList className="grid grid-cols-2 md:grid-cols-4 w-full h-auto p-1 bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl">
+        <TabsList className="grid grid-cols-2 md:grid-cols-4 w-full h-auto p-1 bg-nx-surfaceSubtle border border-nx-line rounded-nx-xl">
           <TabsTrigger
             value="financial"
-            className="text-xs py-2.5 font-semibold gap-2 data-[state=active]:bg-white dark:data-[state=active]:bg-slate-800 data-[state=active]:shadow-xs"
+            className="text-xs py-2.5 font-semibold gap-2 data-[state=active]:bg-nx-surface data-[state=active]:shadow-xs"
           >
             <CircleDollarSign className="size-4 text-emerald-600" />
             <span>{isRtl ? "التقرير المالي العام" : "Financial Report"}</span>
           </TabsTrigger>
           <TabsTrigger
             value="bookings"
-            className="text-xs py-2.5 font-semibold gap-2 data-[state=active]:bg-white dark:data-[state=active]:bg-slate-800 data-[state=active]:shadow-xs"
+            className="text-xs py-2.5 font-semibold gap-2 data-[state=active]:bg-nx-surface data-[state=active]:shadow-xs"
           >
-            <CalendarDays className="size-4 text-blue-600" />
+            <CalendarDays className="size-4 text-nx-accent" />
             <span>{isRtl ? "تقرير الحجوزات والتشغيل" : "Booking Operations"}</span>
           </TabsTrigger>
           <TabsTrigger
             value="court-performance"
-            className="text-xs py-2.5 font-semibold gap-2 data-[state=active]:bg-white dark:data-[state=active]:bg-slate-800 data-[state=active]:shadow-xs"
+            className="text-xs py-2.5 font-semibold gap-2 data-[state=active]:bg-nx-surface data-[state=active]:shadow-xs"
           >
-            <Layers className="size-4 text-indigo-600" />
+            <Layers className="size-4 text-nx-accent" />
             <span>{isRtl ? "أداء الملاعب والمساحات" : "Court Performance"}</span>
           </TabsTrigger>
           <TabsTrigger
             value="collections"
-            className="text-xs py-2.5 font-semibold gap-2 data-[state=active]:bg-white dark:data-[state=active]:bg-slate-800 data-[state=active]:shadow-xs"
+            className="text-xs py-2.5 font-semibold gap-2 data-[state=active]:bg-nx-surface data-[state=active]:shadow-xs"
           >
             <Receipt className="size-4 text-amber-600" />
             <span>{isRtl ? "سجل التحصيلات والمدفوعات" : "Payments & Collections"}</span>
@@ -306,8 +306,8 @@ export function VenueReportsView() {
 
         <CardContent className="p-0">
           {isLoading ? (
-            <div className="py-16 text-center text-xs text-slate-500">
-              <RefreshCw className="size-6 animate-spin mx-auto mb-2 text-blue-600" />
+            <div className="py-16 text-center text-xs text-nx-ink-2">
+              <RefreshCw className="size-6 animate-spin mx-auto mb-2 text-nx-accent" />
               <span>{isRtl ? "جارٍ استرجاع البيانات المعتمدة..." : "Querying authoritative backend..."}</span>
             </div>
           ) : error ? (

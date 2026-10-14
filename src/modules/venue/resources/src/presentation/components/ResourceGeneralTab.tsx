@@ -63,13 +63,13 @@ export function ResourceGeneralTab({ vm }: Props) {
 
         {/* Thumbnail Row */}
         <div className="grid grid-cols-4 gap-2.5">
-          <div className="h-16 rounded-xl border-2 border-blue-600 bg-gradient-to-tr from-blue-800 to-indigo-600 overflow-hidden cursor-pointer" />
-          <div className="h-16 rounded-xl border border-slate-200 dark:border-slate-800 bg-gradient-to-tr from-emerald-800 to-teal-600 overflow-hidden cursor-pointer" />
-          <div className="h-16 rounded-xl border border-slate-200 dark:border-slate-800 bg-gradient-to-tr from-purple-800 to-indigo-900 overflow-hidden cursor-pointer" />
+          <div className="h-16 rounded-nx-xl border-2 border-nx-accent bg-nx-accent/20 overflow-hidden cursor-pointer" />
+          <div className="h-16 rounded-nx-xl border border-nx-line bg-emerald-500/20 overflow-hidden cursor-pointer" />
+          <div className="h-16 rounded-nx-xl border border-nx-line bg-purple-500/20 overflow-hidden cursor-pointer" />
           {/* + Add Photo button */}
           <button
             type="button"
-            className="h-16 rounded-xl border-2 border-dashed border-slate-300 dark:border-slate-700 hover:border-blue-500 hover:bg-blue-50/30 flex flex-col items-center justify-center text-slate-500 dark:text-slate-400 transition-colors"
+            className="h-16 rounded-nx-xl border-2 border-dashed border-nx-line hover:border-nx-accent hover:bg-nx-accent/5 flex flex-col items-center justify-center text-nx-ink-2 transition-colors"
           >
             <Plus className="size-4" />
             <span className="text-[10px] font-bold mt-0.5">Add Photo</span>
@@ -158,17 +158,17 @@ export function ResourceGeneralTab({ vm }: Props) {
               rows={3}
               value={description}
               onChange={(e) => setDescription(e.target.value)}
-              className="w-full rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-2.5 text-xs text-slate-900 dark:text-white placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-600"
+              className="w-full rounded-nx-lg border border-nx-line bg-nx-surface p-2.5 text-xs text-nx-ink placeholder:text-nx-ink-3 focus:outline-none focus:ring-2 focus:ring-nx-accent"
               placeholder="Indoor padel court with premium flooring..."
             />
           </div>
 
-          <div className="pt-3 border-t border-slate-100 dark:border-slate-800 flex items-center justify-end gap-2">
+          <div className="pt-3 border-t border-nx-line flex items-center justify-end gap-2">
             <Button
               type="button"
               variant="outline"
               size="sm"
-              className="text-xs font-semibold rounded-lg"
+              className="text-xs font-semibold rounded-nx-lg"
             >
               Cancel
             </Button>
@@ -179,7 +179,7 @@ export function ResourceGeneralTab({ vm }: Props) {
                 size="sm"
                 disabled={vm.saving}
                 onClick={() => void vm.publishCourt()}
-                className="text-xs font-bold border-emerald-500 text-emerald-700 hover:bg-emerald-50 dark:hover:bg-emerald-950/40 rounded-lg px-4"
+                className="text-xs font-bold border-emerald-500 text-emerald-700 hover:bg-emerald-50 dark:hover:bg-emerald-950/40 rounded-nx-lg px-4"
               >
                 {vm.saving ? "Publishing..." : "Publish Court"}
               </Button>
@@ -189,7 +189,7 @@ export function ResourceGeneralTab({ vm }: Props) {
               size="sm"
               disabled={vm.saving}
               loading={vm.saving}
-              className="text-xs font-bold bg-blue-600 hover:bg-blue-700 text-white rounded-lg px-4"
+              className="text-xs font-bold bg-nx-accent hover:bg-nx-accent/90 text-nx-accent-contrast rounded-nx-lg px-4"
             >
               {t("resources.general.save", { defaultValue: "Save Changes" })}
             </Button>

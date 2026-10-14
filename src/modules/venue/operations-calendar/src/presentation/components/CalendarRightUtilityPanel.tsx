@@ -151,8 +151,8 @@ export function CalendarRightUtilityPanel({
                 onClick={() => handleSelectDay(dayNum)}
                 className={`h-7 w-7 rounded-full text-xs font-semibold flex items-center justify-center transition-all ${
                   isSelected
-                    ? "bg-blue-600 text-white font-bold shadow-xs shadow-blue-500/40"
-                    : "text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
+                    ? "bg-nx-accent text-nx-accent-contrast font-bold shadow-xs shadow-nx-accent/40"
+                    : "text-nx-ink hover:bg-nx-surfaceSubtle"
                 }`}
               >
                 {dayNum}
@@ -163,8 +163,8 @@ export function CalendarRightUtilityPanel({
       </Card>
 
       {/* 2. Quick Actions */}
-      <Card className="border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 rounded-xl p-3.5 shadow-xs">
-        <h3 className="text-xs font-bold text-slate-900 dark:text-white mb-2.5">
+      <Card className="border border-nx-line bg-nx-surface rounded-nx-xl p-3.5 shadow-xs">
+        <h3 className="text-xs font-bold text-nx-ink mb-2.5">
           {t("operationsCalendar.quickActions.title", { defaultValue: "Quick Actions" })}
         </h3>
         <div className="space-y-1.5">
@@ -172,9 +172,9 @@ export function CalendarRightUtilityPanel({
             variant="ghost"
             size="sm"
             onClick={onNewBooking}
-            className="w-full justify-start text-xs font-semibold gap-2.5 h-8 text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800"
+            className="w-full justify-start text-xs font-semibold gap-2.5 h-8 text-nx-ink hover:bg-nx-surfaceSubtle"
           >
-            <Plus className="size-3.5 text-blue-600 dark:text-blue-400" />
+            <Plus className="size-3.5 text-nx-accent" />
             <span>{t("operationsCalendar.quickActions.newBooking", { defaultValue: "New Booking" })}</span>
           </Button>
 
@@ -182,7 +182,7 @@ export function CalendarRightUtilityPanel({
             variant="ghost"
             size="sm"
             onClick={onBlockTime}
-            className="w-full justify-start text-xs font-semibold gap-2.5 h-8 text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800"
+            className="w-full justify-start text-xs font-semibold gap-2.5 h-8 text-nx-ink hover:bg-nx-surfaceSubtle"
           >
             <Clock className="size-3.5 text-amber-500" />
             <span>{t("operationsCalendar.quickActions.blockTime", { defaultValue: "Block Time" })}</span>

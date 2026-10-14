@@ -377,7 +377,7 @@ export function MoneyLandingView() {
             <span className="text-[11px] font-semibold text-nx-ink-3 uppercase tracking-wider">
               {t("money.landing.kpis.commercialValue", { defaultValue: "Commercial Value" })}
             </span>
-            <div className="p-1.5 rounded-full bg-blue-500/10 text-blue-600 dark:text-blue-400">
+            <div className="p-1.5 rounded-full bg-nx-accent/10 text-nx-accent">
               <TrendingUp className="size-3.5" aria-hidden="true" />
             </div>
           </div>
@@ -569,14 +569,14 @@ export function MoneyLandingView() {
                       {/* Tooltip on hover */}
                       <div className="absolute bottom-full mb-2 hidden group-hover:flex flex-col z-20 bg-nx-surface p-2 rounded-nx-sm shadow-md border border-nx-line text-[10px] whitespace-nowrap">
                         <span className="font-bold text-nx-ink">{bucket.bucketLabel}</span>
-                        <span className="text-blue-600 font-mono">
+                        <span className="text-nx-accent font-mono">
                           Commercial: {formatMoney(bucket.commercialValue, bucket.currencyCode, language)}
                         </span>
                         <span className="text-emerald-600 font-mono">
                           Collected: {formatMoney(bucket.collected, bucket.currencyCode, language)}
                         </span>
                         {bucket.refunds > 0 && (
-                          <span className="text-slate-500 font-mono">
+                          <span className="text-nx-ink-3 font-mono">
                             Refunds: {formatMoney(bucket.refunds, bucket.currencyCode, language)}
                           </span>
                         )}
@@ -585,7 +585,7 @@ export function MoneyLandingView() {
                       {/* Dual Bars */}
                       <div className="w-full flex items-end justify-center gap-0.5 h-full">
                         <div
-                          className="w-1/2 max-w-[12px] bg-blue-500/80 hover:bg-blue-600 rounded-t-xs transition-all"
+                          className="w-1/2 max-w-[12px] bg-nx-accent/80 hover:bg-nx-accent rounded-t-xs transition-all"
                           style={{ height: `${commHeight}%` }}
                         />
                         <div
@@ -776,7 +776,7 @@ export function MoneyLandingView() {
             <CardHeader className="py-3 px-4 border-b border-nx-line/50 flex flex-row items-center justify-between">
               <div>
                 <CardTitle className="text-xs font-bold text-nx-ink flex items-center gap-1.5">
-                  <ReceiptText className="size-3.5 text-blue-600" aria-hidden="true" />
+                  <ReceiptText className="size-3.5 text-nx-accent" aria-hidden="true" />
                   <span>{t("money.landing.tables.outstandingTitle", { defaultValue: "Outstanding Receivables" })}</span>
                 </CardTitle>
                 <CardDescription className="text-[11px] text-nx-ink-3 mt-0.5">

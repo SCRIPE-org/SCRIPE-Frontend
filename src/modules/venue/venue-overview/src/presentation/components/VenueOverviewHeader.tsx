@@ -80,20 +80,20 @@ export function VenueOverviewHeader({
         <div className="flex flex-wrap items-center gap-2.5">
           <h1
             aria-label={t("venueOverview.title", { defaultValue: "Venue Operations" })}
-            className="text-xl sm:text-2xl font-black tracking-tight text-slate-900 dark:text-white flex items-center gap-2"
+            className="text-xl sm:text-2xl font-black tracking-tight text-nx-ink flex items-center gap-2"
           >
             <span>👋</span>
             <span>Good morning, {userName}</span>
           </h1>
           {facilityName && (
-            <Badge variant="outline" className="text-xs font-semibold px-2 py-0.5 border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/80">
-              <Building2 className="size-3 me-1.5 text-blue-600 dark:text-blue-400" aria-hidden="true" />
+            <Badge variant="outline" className="text-xs font-semibold px-2 py-0.5 border-nx-line bg-nx-surfaceSubtle text-nx-ink">
+              <Building2 className="size-3 me-1.5 text-nx-accent" aria-hidden="true" />
               <span>{facilityName}</span>
             </Badge>
           )}
         </div>
 
-        <p className="text-xs text-slate-500 dark:text-slate-400">
+        <p className="text-xs text-nx-ink-2">
           {t("venueOverview.greetingSubtext", {
             facility: facilityName || "Nasr City Club",
             defaultValue: `Here's what's happening at ${facilityName || "Nasr City Club"} today.`,
