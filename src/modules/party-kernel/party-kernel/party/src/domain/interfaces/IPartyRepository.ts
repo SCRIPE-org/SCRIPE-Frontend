@@ -6,6 +6,9 @@
 import type { Party, PartyContactLookup } from "../entities/Party";
 import type { PartyProfile } from "../entities/PartyProfile";
 
+/**
+ * Parameters for listing parties
+ */
 export interface PartyListParams {
   page: number;
   pageSize: number;
@@ -13,6 +16,9 @@ export interface PartyListParams {
   type?: string;
 }
 
+/**
+ * Parameters for creating a person party
+ */
 export interface CreatePersonParams {
   fullName: string;
   displayName?: string;
@@ -27,6 +33,9 @@ export interface CreatePersonParams {
   onContactPointFailure?: (error: Error, partyId: string) => void;
 }
 
+/**
+ * Parameters for creating an organization party
+ */
 export interface CreateOrganizationParams {
   displayName?: string;
   legalName: string;
@@ -37,13 +46,20 @@ export interface CreateOrganizationParams {
   onContactPointFailure?: (error: Error, partyId: string) => void;
 }
 
+/**
+ * Parameters for adding a contact point to a party
+ */
 export interface AddContactPointParams {
   partyId: string;
   type: string;
   value: string;
   isPrimary?: boolean;
+  idempotencyKey?: string;
 }
 
+/**
+ * Parameters for adding a role to a party
+ */
 export interface AddPartyRoleParams {
   partyId: string;
   roleType: string;
@@ -51,6 +67,9 @@ export interface AddPartyRoleParams {
   validTo?: string;
 }
 
+/**
+ * Parameters for adding a relationship between parties
+ */
 export interface AddPartyRelationshipParams {
   sourcePartyId: string;
   targetPartyId: string;
@@ -59,6 +78,9 @@ export interface AddPartyRelationshipParams {
   validTo?: string;
 }
 
+/**
+ * Contract for Party repository operations
+ */
 export interface IPartyRepository {
   getAll(params: PartyListParams): Promise<{
     items: Party[];
@@ -98,9 +120,28 @@ export interface IPartyRepository {
     totalCount: number;
   }>;
   update(id: string, data: Record<string, unknown>): Promise<void>;
-  updatePartyName(id: string, displayName: string): Promise<void>;
+  updatePartyName(id: string, displayName: string, options?: { type?: string; fullName?: string }): Promise<void>;
+  updatePerson(
+    id: string,
+    data: {
+      fullName: string;
+      displayName?: string | null;
+      givenName?: string | null;
+      middleNames?: string | null;
+      familyName?: string | null;
+    }
+  ): Promise<void>;
   delete(id: string): Promise<void>;
   addContactPoint(params: AddContactPointParams): Promise<string>;
+  updateContactPoint(
+    id: string,
+    params: {
+      partyId: string;
+      type: string;
+      value: string;
+      isPrimary?: boolean;
+    }
+  ): Promise<void>;
   removeContactPoint(id: string): Promise<void>;
   addRole(params: AddPartyRoleParams): Promise<string>;
   removeRole(id: string): Promise<void>;

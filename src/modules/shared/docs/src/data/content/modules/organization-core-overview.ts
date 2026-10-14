@@ -122,6 +122,21 @@ const sections: DocSection[] = [
     ],
   },
 
+  // ─── Tenant-scoped multilingual branch lookup ──────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "modules.organizationCore.overview.searchTitle",
+    id: "multilingual-branch-search",
+  },
+  { type: "paragraph", contentKey: "modules.organizationCore.overview.searchIntro" },
+  {
+    type: "info",
+    variant: "note",
+    titleKey: "modules.organizationCore.overview.searchSafetyTitle",
+    contentKey: "modules.organizationCore.overview.searchSafetyContent",
+  },
+
   // ─── API Reference ────────────────────────────────────────────────
   {
     type: "heading",
@@ -191,5 +206,5 @@ registerPage({
     "modules/party-kernel-overview",
     "modules/venue-overview",
   ],
-  lastUpdated: "2026-10-03",
+  lastUpdated: "2026-10-14",
 });

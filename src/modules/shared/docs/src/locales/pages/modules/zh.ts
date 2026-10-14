@@ -1235,6 +1235,12 @@ export const zh = {
           "为特定大型联赛锦标赛、梯队年龄段或特定季节性训练营临时组建的专业教练与运营专项工作组。",
         treeFlowTitle: "六层企业树形拓扑与权限继承解析",
         treeFlowIntro: "系统核心机制如何将组织数据与权限规则自顶向下逐层平滑穿透与动态下发：",
+        searchTitle: "多语言分支搜索",
+        searchIntro:
+          "分支搜索使用带版本的 Unicode 规则规范化阿拉伯语和拉丁语名称，从当前租户范围的索引中检索候选项，对有界候选集排序，并将每页结果限制为 100 条。",
+        searchSafetyTitle: "搜索范围与索引补全",
+        searchSafetyContent:
+          "租户和平台记录范围会在排序和计数前应用。相似度仅用于搜索，不用于识别或合并个人及组织。新建分支会维护索引；现有记录可通过明确启动的有界补全操作更新。",
         apiTitle: "企业组织核心架构 API 服务接口",
         apiIntro:
           "由 OrganizationCore 控制器暴露的权威接口，用于配置法人主体、分支机构树以及综合体物理坐标查询。",
@@ -1865,6 +1871,9 @@ export const zh = {
         pricingFlowTitle: "多层级动态价格解算流水线",
         pricingFlowIntro:
           "SCRIPE 如何在毫秒级时间内依次结合基准手册、大客协议、促销满减与税率推导出最终实付价格：",
+        snapshotCaptureTitle: "预订快照捕获与重试",
+        snapshotCaptureIntro:
+          "CatalogPricing 会将仍有效的报价及其明细行作为预订的待处理快照捕获。幂等键会去除首尾空白，并在租户内保持唯一。使用相同幂等键以及相同预订、报价、资源、付款方、数量和时间范围重试时，将返回现有快照；参数意图不同则返回冲突。快照及其所有明细行会一并保存。只有预订成功确认后，预订流程才会绑定快照并转换报价。",
         apiTitle: "核心业务 API 端点",
         apiIntro:
           "由 CatalogPricingControllers 暴露的接口，提供目录检索、价格表版本控制及报价测算。",

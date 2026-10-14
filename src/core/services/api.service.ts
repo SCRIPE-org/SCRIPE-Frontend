@@ -204,9 +204,6 @@ export class ApiService implements IApiService {
           config.headers["X-Request-Timestamp"] = Date.now().toString();
           const nonce = generateUUID();
           config.headers["X-Request-Nonce"] = nonce;
-          if (!config.headers["Idempotency-Key"]) {
-            config.headers["Idempotency-Key"] = nonce;
-          }
 
           // S0.15: CSRF protection — OWASP Signed Double-Submit Cookie pattern.
           // Token was captured from X-CSRF-Token response header on last response.
@@ -408,6 +405,7 @@ export class ApiService implements IApiService {
         const errObj = new Error(message) as any;
         errObj.details = error.response?.data;
         errObj.status = error.response?.status;
+        errObj.code = error.code;
         return Promise.reject(errObj);
       }
     );
@@ -503,11 +501,23 @@ export class ApiService implements IApiService {
   /**
    * Check if error is retryable
    */
-  private isRetryableError(error: AxiosError): boolean {
-    if (error.code === "ERR_NETWORK" || error.code === "ECONNABORTED") {
+  private isRetryableError(error: unknown): boolean {
+    if (!(error instanceof Error)) {
+      return false;
+    }
+
+    const requestError = error as Error & {
+      code?: string;
+      status?: number;
+      response?: { status?: number };
+    };
+
+    if (requestError.code === "ERR_NETWORK" || requestError.code === "ECONNABORTED") {
       return true; // Network errors are retryable
     }
-    if (error.response?.status && this.retryableStatusCodes.includes(error.response.status)) {
+
+    const status = requestError.response?.status ?? requestError.status;
+    if (status && this.retryableStatusCodes.includes(status)) {
       return true; // 5xx errors are retryable
     }
     return false;
@@ -536,7 +546,7 @@ export class ApiService implements IApiService {
       } catch (error) {
         lastError = error as Error;
 
-        if (error instanceof AxiosError && this.isRetryableError(error)) {
+        if (this.isRetryableError(error)) {
           if (attempt < retries) {
             const delay = this.getRetryDelay(attempt);
             appLogger.warn(
@@ -553,6 +563,12 @@ export class ApiService implements IApiService {
     }
 
     throw lastError || new Error("Request failed after retries");
+  }
+
+  private hasExplicitIdempotencyKey(headers?: Record<string, string>): boolean {
+    return Object.entries(headers ?? {}).some(
+      ([name, value]) => name.toLowerCase() === "idempotency-key" && value.trim().length > 0
+    );
   }
 
   /**
@@ -668,8 +684,17 @@ export class ApiService implements IApiService {
     return this.unwrap<T>(response.data);
   }
 
-  async put<T>(endpoint: string, data?: unknown, signal?: AbortSignal): Promise<T> {
-    const response = await this.axiosInstance.put(endpoint, data, this.buildConfig(signal));
+  async put<T>(
+    endpoint: string,
+    data?: unknown,
+    signal?: AbortSignal,
+    options?: { headers?: Record<string, string> }
+  ): Promise<T> {
+    const response = await this.axiosInstance.put(
+      endpoint,
+      data,
+      this.buildConfig(signal, undefined, options?.headers)
+    );
     return this.unwrap<T>(response.data);
   }
 
@@ -718,17 +743,29 @@ export class ApiService implements IApiService {
   }
 
   /**
-   * POST request with automatic retry on 5xx errors
+   * POST retries require an explicit stable business intent key; without one, send only once.
    */
-  async postWithRetry<T>(endpoint: string, data?: unknown, signal?: AbortSignal): Promise<T> {
-    return this.withRetry(() => this.post<T>(endpoint, data, signal));
+  async postWithRetry<T>(
+    endpoint: string,
+    data?: unknown,
+    signal?: AbortSignal,
+    options?: { headers?: Record<string, string> }
+  ): Promise<T> {
+    const retries = this.hasExplicitIdempotencyKey(options?.headers) ? this.maxRetries : 0;
+    return this.withRetry(() => this.post<T>(endpoint, data, signal, options), retries);
   }
 
   /**
-   * PUT request with automatic retry on 5xx errors
+   * PUT retries require an explicit stable business intent key; without one, send only once.
    */
-  async putWithRetry<T>(endpoint: string, data?: unknown, signal?: AbortSignal): Promise<T> {
-    return this.withRetry(() => this.put<T>(endpoint, data, signal));
+  async putWithRetry<T>(
+    endpoint: string,
+    data?: unknown,
+    signal?: AbortSignal,
+    options?: { headers?: Record<string, string> }
+  ): Promise<T> {
+    const retries = this.hasExplicitIdempotencyKey(options?.headers) ? this.maxRetries : 0;
+    return this.withRetry(() => this.put<T>(endpoint, data, signal, options), retries);
   }
 
   // ============================================

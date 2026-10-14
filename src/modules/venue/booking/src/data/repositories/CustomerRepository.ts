@@ -1,5 +1,5 @@
 import type { CustomerSummary } from "../../domain/entities/Booking";
-import type { ICustomerPickerService } from "../../domain/interfaces/ICustomerPickerService";
+import type { ICustomerPickerService, CustomerCreateOptions } from "../../domain/interfaces/ICustomerPickerService";
 import type { ICustomerRepository } from "../../domain/interfaces/ICustomerRepository";
 
 /**
@@ -16,8 +16,9 @@ export class CustomerRepository implements ICustomerRepository {
   create(
     displayName: string,
     type?: "Person" | "Organization",
-    phone?: string
+    phone?: string,
+    options?: CustomerCreateOptions
   ): Promise<CustomerSummary> {
-    return this.service.create(displayName, type, phone);
+    return this.service.create(displayName, type, phone, options);
   }
 }

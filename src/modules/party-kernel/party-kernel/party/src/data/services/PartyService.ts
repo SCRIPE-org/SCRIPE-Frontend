@@ -131,6 +131,19 @@ export class PartyService implements IPartyService {
     await this.api.put(PARTY_ENDPOINTS.UPDATE(id), data);
   }
 
+  async updatePerson(
+    id: string,
+    data: {
+      fullName: string;
+      displayName?: string | null;
+      givenName?: string | null;
+      middleNames?: string | null;
+      familyName?: string | null;
+    }
+  ): Promise<void> {
+    await this.api.put(PARTY_ENDPOINTS.PERSON_UPDATE(id), data);
+  }
+
   async delete(id: string): Promise<void> {
     await this.api.delete(PARTY_ENDPOINTS.DELETE(id));
   }

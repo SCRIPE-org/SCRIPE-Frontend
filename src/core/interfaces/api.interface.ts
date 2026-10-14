@@ -69,7 +69,12 @@ export interface IApiService {
    * @param data - Request body
    * @param signal - AbortSignal for cancellation
    */
-  put<T>(endpoint: string, data?: unknown, signal?: AbortSignal): Promise<T>;
+  put<T>(
+    endpoint: string,
+    data?: unknown,
+    signal?: AbortSignal,
+    options?: { headers?: Record<string, string> }
+  ): Promise<T>;
 
   /**
    * PATCH request (authenticated)

@@ -7,7 +7,9 @@ import { PartyProfile } from "../../domain/entities/PartyProfile";
 const mockPartyRepo = {
   getProfile: vi.fn(),
   updatePartyName: vi.fn(),
+  updatePerson: vi.fn(),
   addContactPoint: vi.fn(),
+  updateContactPoint: vi.fn(),
   removeContactPoint: vi.fn(),
   addRole: vi.fn(),
   removeRole: vi.fn(),
@@ -129,6 +131,7 @@ describe("usePartyProfileViewModel", () => {
   it("dispatches child entity mutations", async () => {
     mockPartyRepo.updatePartyName.mockResolvedValue(undefined);
     mockPartyRepo.addContactPoint.mockResolvedValue("contact-id");
+    mockPartyRepo.updateContactPoint.mockResolvedValue(undefined);
     mockPartyRepo.removeContactPoint.mockResolvedValue(undefined);
     mockPartyRepo.addRole.mockResolvedValue("role-id");
     mockPartyRepo.removeRole.mockResolvedValue(undefined);
@@ -143,7 +146,8 @@ describe("usePartyProfileViewModel", () => {
     });
     expect(mockPartyRepo.updatePartyName).toHaveBeenCalledWith(
       "test-p1",
-      "Nasser Al-Dawsari Updated"
+      "Nasser Al-Dawsari Updated",
+      { type: "Person", fullName: undefined }
     );
 
     await act(async () => {
@@ -158,6 +162,21 @@ describe("usePartyProfileViewModel", () => {
       type: "phone",
       value: "+966500000000",
       isPrimary: true,
+    });
+
+    await act(async () => {
+      await result.current.handleUpdateContact({
+        id: "contact-id",
+        type: "phone",
+        value: "+966500000001",
+        isPrimary: false,
+      });
+    });
+    expect(mockPartyRepo.updateContactPoint).toHaveBeenCalledWith("contact-id", {
+      partyId: "test-p1",
+      type: "phone",
+      value: "+966500000001",
+      isPrimary: false,
     });
 
     await act(async () => {

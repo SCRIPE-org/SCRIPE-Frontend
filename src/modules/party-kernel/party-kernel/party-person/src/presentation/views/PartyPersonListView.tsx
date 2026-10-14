@@ -158,7 +158,7 @@ export const PartyPersonListView = React.memo(function PartyPersonListView() {
       lastName: item.lastName,
       isMinor: item.isMinor,
     }),
-    getItemDisplayName: (item: PartyPerson) => item.displayName || item.partyId,
+    getItemDisplayName: (item: PartyPerson) => item.displayName || "—",
     deleteService: (id: string) => vm.deleteItem(id),
     getActions: (_vmInstance, tFn, handleDeleteFn): CrudAction<PartyPerson>[] => [
       {

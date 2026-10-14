@@ -51,6 +51,7 @@ export const ar = {
       noContactRegistered: "لا توجد وسيلة اتصال مسجلة",
       quickPreview: "معاينة سريعة",
       previewParty: "معاينة جهة الاتصال",
+      paginationInfo: "الصفحة {page} من {totalPages} ({total} عنصر)",
     },
     quickPreview: {
       title: "معاينة سريعة لجهة الاتصال",
@@ -135,6 +136,8 @@ export const ar = {
       fullName: "الاسم الكامل",
       fullNamePlaceholder: "مثال: د. فاطمة الزهراء السيد",
       fullNameHelp: "يتم حفظ الاسم كما أدخلته بالكامل دون فرض تجزئته.",
+      nameRequired: "الاسم الكامل مطلوب",
+      legalNameRequired: "الاسم القانوني للمنشأة مطلوب",
       additionalNames: "حقول الاسم الإضافية (اختياري)",
       givenName: "الاسم الأول",
       middleNames: "الأسماء الوسطى",
@@ -184,6 +187,11 @@ export const ar = {
       retryAttachContact: "إعادة محاولة ربط وسائل التواصل",
       continueToProfile: "المتابعة إلى الملف التعريفي",
       contactAttachedSuccess: "تم ربط وسائل التواصل بنجاح",
+      enterIdManually: "إدخال المعرف يدوياً",
+      usePicker: "البحث في الدليل",
+      enterEncryptedIdHint: "أدخل المعرف المرجعي المشفر للطرف الهدف (شخص أو مؤسسة).",
+      selectTargetPartyPlaceholder: "البحث بالاسم أو البريد أو الهاتف...",
+      targetPartyRequired: "يرجى اختيار جهة اتصال أو إدخال المعرف",
     },
     toast: {
       personCreated: "تم تسجيل الشخص بنجاح",

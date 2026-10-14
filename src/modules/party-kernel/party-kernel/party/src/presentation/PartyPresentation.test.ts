@@ -1,6 +1,7 @@
 import { describe, expect, it, vi } from "vitest";
 import { Party } from "../domain/entities/Party";
 import { PartyProfile } from "../domain/entities/PartyProfile";
+import { PartyPerson } from "@modules/party-kernel/party-person/src/domain/entities/PartyPerson";
 import { en } from "../../locales/party.en";
 import { ar } from "../../locales/party.ar";
 
@@ -45,6 +46,48 @@ describe("Party Invariants & Presentation Gates", () => {
         });
         expect(party.initials).toBe(expected);
       }
+    });
+  });
+
+  describe("Zero Raw Token Leakage Invariants", () => {
+    it("ensures PartyPerson never falls back to raw partyId when names are empty or null", () => {
+      const emptyPerson = new PartyPerson({
+        id: "person-id-1",
+        partyId: "encrypted-party-token-xyz9876543210",
+        firstName: "",
+        lastName: "",
+        fullName: "",
+        isMinor: false,
+        createdAt: "2026-03-01T00:00:00Z",
+      });
+
+      // Must NOT leak partyId token
+      expect(emptyPerson.displayName).toBe("—");
+      expect(emptyPerson.displayName).not.toContain("encrypted-party-token");
+      expect(emptyPerson.displayName).not.toBe(emptyPerson.partyId);
+    });
+
+    it("uses fullName if present, or joins firstName and lastName when fullName is absent", () => {
+      const personWithFullName = new PartyPerson({
+        id: "p1",
+        partyId: "token-1",
+        fullName: "Dr. Fatima Zahra",
+        firstName: "Fatima",
+        lastName: "Zahra",
+        isMinor: false,
+        createdAt: "2026-03-01T00:00:00Z",
+      });
+      expect(personWithFullName.displayName).toBe("Dr. Fatima Zahra");
+
+      const personPartsOnly = new PartyPerson({
+        id: "p2",
+        partyId: "token-2",
+        firstName: "Tariq",
+        lastName: "Aziz",
+        isMinor: false,
+        createdAt: "2026-03-01T00:00:00Z",
+      });
+      expect(personPartsOnly.displayName).toBe("Tariq Aziz");
     });
   });
 

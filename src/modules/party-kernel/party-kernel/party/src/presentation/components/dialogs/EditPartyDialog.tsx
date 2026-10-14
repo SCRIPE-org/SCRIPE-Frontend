@@ -19,29 +19,39 @@ import type { Party } from "../../../domain/entities/Party";
 
 interface EditPartyDialogProps {
   party: Party | null;
+  initialFullName?: string | null;
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  onSubmit: (id: string, displayName: string) => Promise<void>;
+  onSubmit: (id: string, displayName: string, options?: { fullName?: string }) => Promise<void>;
 }
 
 function EditPartyForm({
   party,
+  initialFullName,
   onClose,
   onSubmit,
 }: {
   party: Party;
+  initialFullName?: string | null;
   onClose: () => void;
-  onSubmit: (id: string, displayName: string) => Promise<void>;
+  onSubmit: (id: string, displayName: string, options?: { fullName?: string }) => Promise<void>;
 }) {
   const { t } = useI18n();
+  const [fullName, setFullName] = useState(initialFullName || party.displayName);
   const [displayName, setDisplayName] = useState(party.displayName);
   const [error, setError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const trimmed = displayName.trim();
-    if (!trimmed) {
+    const trimmedDisplayName = displayName.trim();
+    const trimmedFullName = fullName.trim();
+
+    if (party.isPerson && !trimmedFullName) {
+      setError("Full name is required");
+      return;
+    }
+    if (!trimmedDisplayName && !trimmedFullName) {
       setError(t("party.dialog.nameRequired") || "Display name is required");
       return;
     }
@@ -49,7 +59,9 @@ function EditPartyForm({
     try {
       setIsSubmitting(true);
       setError(null);
-      await onSubmit(party.id, trimmed);
+      await onSubmit(party.id, trimmedDisplayName || trimmedFullName, {
+        fullName: party.isPerson ? trimmedFullName : undefined,
+      });
       onClose();
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : "Failed to update party";
@@ -98,6 +110,26 @@ function EditPartyForm({
           </div>
         </div>
 
+        {party.isPerson && (
+          <div className="grid gap-2">
+            <Label htmlFor="edit-party-fullname" className="text-nx-ink font-medium">
+              {t("party.dialog.fullName") || "Full Name"}{" "}
+              <span className="text-destructive">*</span>
+            </Label>
+            <Input
+              id="edit-party-fullname"
+              value={fullName}
+              onChange={(e) => {
+                setFullName(e.target.value);
+                if (error) setError(null);
+              }}
+              disabled={isSubmitting}
+              autoFocus
+              required
+            />
+          </div>
+        )}
+
         {/* Display Name Input */}
         <div className="grid gap-2">
           <Label htmlFor="edit-party-name" className="text-nx-ink font-medium">
@@ -112,7 +144,7 @@ function EditPartyForm({
               if (error) setError(null);
             }}
             disabled={isSubmitting}
-            autoFocus
+            autoFocus={!party.isPerson}
             required
           />
         </div>
@@ -147,6 +179,7 @@ function EditPartyForm({
  */
 export function EditPartyDialog({
   party,
+  initialFullName,
   open,
   onOpenChange,
   onSubmit,
@@ -159,6 +192,7 @@ export function EditPartyDialog({
         <EditPartyForm
           key={party.id}
           party={party}
+          initialFullName={initialFullName}
           onClose={() => onOpenChange(false)}
           onSubmit={onSubmit}
         />

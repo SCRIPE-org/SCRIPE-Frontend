@@ -52,8 +52,17 @@ export class ContactPointService implements IContactPointService {
     return ContactPointModel.fromJson(json);
   }
 
-  async create(data: Record<string, unknown>): Promise<{ id: string }> {
-    return this.api.post<{ id: string }>(CONTACT_POINT_ENDPOINTS.CREATE, data);
+  async create(data: Record<string, unknown>, idempotencyKey?: string): Promise<{ id: string }> {
+    const headers: Record<string, string> = {};
+    if (idempotencyKey) {
+      headers["Idempotency-Key"] = idempotencyKey;
+    }
+    return this.api.post<{ id: string }>(
+      CONTACT_POINT_ENDPOINTS.CREATE,
+      data,
+      undefined,
+      Object.keys(headers).length > 0 ? { headers } : undefined
+    );
   }
 
   async update(id: string, data: Record<string, unknown>): Promise<void> {

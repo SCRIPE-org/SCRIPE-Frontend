@@ -145,13 +145,13 @@ describe("PartyRepository", () => {
       );
       expect(contactPointRepo.create).toHaveBeenCalledWith({
         partyId: "person-party-1",
-        type: "phone",
+        type: "Phone",
         value: "+966501234567",
         isPrimary: true,
       });
       expect(contactPointRepo.create).toHaveBeenCalledWith({
         partyId: "person-party-1",
-        type: "email",
+        type: "Email",
         value: "fatima.zahra@scripe.com",
         isPrimary: true,
       });
@@ -190,7 +190,7 @@ describe("PartyRepository", () => {
       );
       expect(contactPointRepo.create).toHaveBeenCalledWith({
         partyId: "org-party-200",
-        type: "phone",
+        type: "Phone",
         value: "+966114445555",
         isPrimary: true,
       });
@@ -385,6 +385,55 @@ describe("PartyRepository", () => {
         stableKey
       );
     });
+
+    it("passes derived idempotency keys to contact point sub-writes when caller supplies idempotencyKey", async () => {
+      partyService.createPerson.mockResolvedValue({ id: "idempotent-person-2" });
+      contactPointRepo.create.mockResolvedValue("cp-id-1");
+
+      const stableKey = "intent-uuid-456";
+      const partyId = await repository.createPerson({
+        fullName: "Yousef Al-Harbi",
+        phone: "+966551122334",
+        email: "yousef@harbi.sa",
+        idempotencyKey: stableKey,
+      });
+
+      expect(partyId).toBe("idempotent-person-2");
+      expect(contactPointRepo.create).toHaveBeenCalledWith(
+        expect.objectContaining({
+          partyId: "idempotent-person-2",
+          type: "Phone",
+          value: "+966551122334",
+        }),
+        "intent-uuid-456:phone"
+      );
+      expect(contactPointRepo.create).toHaveBeenCalledWith(
+        expect.objectContaining({
+          partyId: "idempotent-person-2",
+          type: "Email",
+          value: "yousef@harbi.sa",
+        }),
+        "intent-uuid-456:email"
+      );
+    });
+
+    it("survives contact point failure and triggers onContactPointFailure without blocking party creation", async () => {
+      partyService.createPerson.mockResolvedValue({ id: "resilient-person-1" });
+      contactPointRepo.create.mockRejectedValue(new Error("Contact point quota exceeded"));
+
+      const failureCallback = vi.fn();
+      const partyId = await repository.createPerson({
+        fullName: "Maryam Khalid",
+        phone: "+966500000000",
+        onContactPointFailure: failureCallback,
+      });
+
+      expect(partyId).toBe("resilient-person-1");
+      expect(failureCallback).toHaveBeenCalledWith(
+        expect.any(Error),
+        "resilient-person-1"
+      );
+    });
   });
 
   describe("lookupContacts and typed lookups", () => {
@@ -483,14 +532,39 @@ describe("PartyRepository", () => {
         isPrimary: true,
       });
 
-      expect(contactPointRepo.create).toHaveBeenCalledWith({
-        partyId: "existing-party-123",
-        type: "phone",
-        value: "+966509998877",
-        isPrimary: true,
-      });
+      expect(contactPointRepo.create).toHaveBeenCalledWith(
+        {
+          partyId: "existing-party-123",
+          type: "phone",
+          value: "+966509998877",
+          isPrimary: true,
+        },
+        undefined
+      );
       expect(partyService.createPerson).not.toHaveBeenCalled();
       expect(partyService.createOrganization).not.toHaveBeenCalled();
+    });
+
+    it("forwards caller idempotencyKey to contactPointRepo.create", async () => {
+      contactPointRepo.create.mockResolvedValue({ id: "cp-recovery-2" });
+
+      await repository.addContactPoint({
+        partyId: "existing-party-456",
+        type: "email",
+        value: "info@example.com",
+        isPrimary: true,
+        idempotencyKey: "retry-key-abc:email",
+      });
+
+      expect(contactPointRepo.create).toHaveBeenCalledWith(
+        {
+          partyId: "existing-party-456",
+          type: "email",
+          value: "info@example.com",
+          isPrimary: true,
+        },
+        "retry-key-abc:email"
+      );
     });
   });
 });

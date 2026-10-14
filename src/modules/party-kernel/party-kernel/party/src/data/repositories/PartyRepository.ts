@@ -25,6 +25,9 @@ import { Party, type PartyContactLookup } from "../../domain/entities/Party";
 import { PartyProfile } from "../../domain/entities/PartyProfile";
 import { PartyMapper } from "../mappers/PartyMapper";
 
+/**
+ * Repository implementation for managing Party identities, lookups, and composite profiles.
+ */
 export class PartyRepository implements IPartyRepository {
   constructor(
     private readonly service: IPartyService,
@@ -232,14 +235,23 @@ export class PartyRepository implements IPartyRepository {
     const partyId = response.id;
 
     // Attach contact point if provided (separate non-blocking writes per ADR-002)
+    const callerKey = explicitIdempotencyKey || params.idempotencyKey;
+    const phoneKey = callerKey ? `${callerKey}:phone` : undefined;
+    const emailKey = callerKey ? `${callerKey}:email` : undefined;
+
     if (params.phone && this.contactPointRepo) {
       try {
-        await this.contactPointRepo.create({
+        const payload = {
           partyId,
-          type: "phone",
+          type: "Phone",
           value: params.phone.trim(),
           isPrimary: true,
-        });
+        };
+        if (phoneKey) {
+          await this.contactPointRepo.create(payload, phoneKey);
+        } else {
+          await this.contactPointRepo.create(payload);
+        }
       } catch (err) {
         if (params.onContactPointFailure) {
           params.onContactPointFailure(
@@ -252,12 +264,17 @@ export class PartyRepository implements IPartyRepository {
 
     if (params.email && this.contactPointRepo) {
       try {
-        await this.contactPointRepo.create({
+        const payload = {
           partyId,
-          type: "email",
+          type: "Email",
           value: params.email.trim(),
           isPrimary: true,
-        });
+        };
+        if (emailKey) {
+          await this.contactPointRepo.create(payload, emailKey);
+        } else {
+          await this.contactPointRepo.create(payload);
+        }
       } catch (err) {
         if (params.onContactPointFailure) {
           params.onContactPointFailure(
@@ -304,14 +321,23 @@ export class PartyRepository implements IPartyRepository {
     const partyId = response.id;
 
     // 2. Primary contact methods if provided
+    const callerKey = explicitIdempotencyKey || params.idempotencyKey;
+    const phoneKey = callerKey ? `${callerKey}:phone` : undefined;
+    const emailKey = callerKey ? `${callerKey}:email` : undefined;
+
     if (params.phone && this.contactPointRepo) {
       try {
-        await this.contactPointRepo.create({
+        const payload = {
           partyId,
-          type: "phone",
+          type: "Phone",
           value: params.phone.trim(),
           isPrimary: true,
-        });
+        };
+        if (phoneKey) {
+          await this.contactPointRepo.create(payload, phoneKey);
+        } else {
+          await this.contactPointRepo.create(payload);
+        }
       } catch (err) {
         if (params.onContactPointFailure) {
           params.onContactPointFailure(
@@ -324,12 +350,17 @@ export class PartyRepository implements IPartyRepository {
 
     if (params.email && this.contactPointRepo) {
       try {
-        await this.contactPointRepo.create({
+        const payload = {
           partyId,
-          type: "email",
+          type: "Email",
           value: params.email.trim(),
           isPrimary: true,
-        });
+        };
+        if (emailKey) {
+          await this.contactPointRepo.create(payload, emailKey);
+        } else {
+          await this.contactPointRepo.create(payload);
+        }
       } catch (err) {
         if (params.onContactPointFailure) {
           params.onContactPointFailure(
@@ -422,9 +453,52 @@ export class PartyRepository implements IPartyRepository {
     await this.service.update(id, data);
   }
 
-  async updatePartyName(id: string, displayName: string): Promise<void> {
+  async updatePartyName(
+    id: string,
+    displayName: string,
+    options?: { type?: string; fullName?: string }
+  ): Promise<void> {
+    // If updating a Person with fullName or known type, use canonical updatePerson
+    if (options?.type === "Person" && this.service.updatePerson) {
+      await this.service.updatePerson(id, {
+        fullName: options.fullName?.trim() || displayName.trim(),
+        displayName: displayName.trim(),
+      });
+      return;
+    }
+
+    if (options?.type === "Organization") {
+      await this.service.update(id, {
+        type: "Organization",
+        displayName: displayName.trim(),
+      });
+      return;
+    }
+
     // Preserve Party.Type and PartyId immutability per ADR-002
     await this.service.update(id, { displayName: displayName.trim() });
+  }
+
+  async updatePerson(
+    id: string,
+    data: {
+      fullName: string;
+      displayName?: string | null;
+      givenName?: string | null;
+      middleNames?: string | null;
+      familyName?: string | null;
+    }
+  ): Promise<void> {
+    if (!this.service.updatePerson) {
+      throw new Error("Backend does not support atomic person update");
+    }
+    await this.service.updatePerson(id, {
+      fullName: data.fullName.trim(),
+      displayName: data.displayName ? data.displayName.trim() : null,
+      givenName: data.givenName ? data.givenName.trim() : null,
+      middleNames: data.middleNames ? data.middleNames.trim() : null,
+      familyName: data.familyName ? data.familyName.trim() : null,
+    });
   }
 
   async delete(id: string): Promise<void> {
@@ -435,7 +509,30 @@ export class PartyRepository implements IPartyRepository {
     if (!this.contactPointRepo) {
       throw new Error("ContactPoint repository is not wired");
     }
-    return this.contactPointRepo.create({
+    return this.contactPointRepo.create(
+      {
+        partyId: params.partyId,
+        type: params.type,
+        value: params.value.trim(),
+        isPrimary: params.isPrimary ?? false,
+      },
+      params.idempotencyKey
+    );
+  }
+
+  async updateContactPoint(
+    id: string,
+    params: {
+      partyId: string;
+      type: string;
+      value: string;
+      isPrimary?: boolean;
+    }
+  ): Promise<void> {
+    if (!this.contactPointRepo) {
+      throw new Error("ContactPoint repository is not wired");
+    }
+    await this.contactPointRepo.update(id, {
       partyId: params.partyId,
       type: params.type,
       value: params.value.trim(),
@@ -457,7 +554,7 @@ export class PartyRepository implements IPartyRepository {
     return this.roleRepo.create({
       partyId: params.partyId,
       roleType: params.roleType,
-      validFrom: params.validFrom,
+      validFrom: params.validFrom || new Date().toISOString(),
       validTo: params.validTo,
     });
   }
@@ -477,7 +574,7 @@ export class PartyRepository implements IPartyRepository {
       sourcePartyId: params.sourcePartyId,
       targetPartyId: params.targetPartyId,
       relationshipType: params.relationshipType,
-      validFrom: params.validFrom,
+      validFrom: params.validFrom || new Date().toISOString(),
       validTo: params.validTo,
     });
   }

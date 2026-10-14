@@ -43,5 +43,15 @@ export interface IPartyService {
     search?: string;
   }): Promise<import("../../data/models/PartyModel").PartyContactLookupPagedResponseJson>;
   update(id: string, data: Record<string, unknown>): Promise<void>;
+  updatePerson?(
+    id: string,
+    data: {
+      fullName: string;
+      displayName?: string | null;
+      givenName?: string | null;
+      middleNames?: string | null;
+      familyName?: string | null;
+    }
+  ): Promise<void>;
   delete(id: string): Promise<void>;
 }

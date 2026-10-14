@@ -58,6 +58,7 @@ export interface PartyPickerProps {
   label?: string;
   error?: string;
   required?: boolean;
+  excludeId?: string;
 }
 
 /**
@@ -74,6 +75,7 @@ export const PartyPicker = React.memo(function PartyPicker({
   label,
   error,
   required = false,
+  excludeId,
 }: PartyPickerProps) {
   const { partyRepository } = getPartyKernelContainer();
   const { t } = useI18n();
@@ -100,11 +102,6 @@ export const PartyPicker = React.memo(function PartyPicker({
     setTypeFilter(filterType);
   }, [filterType]);
 
-  // Reset highlighted index on search, filter, or open change
-  useEffect(() => {
-    setHighlightedIndex(-1);
-  }, [debouncedSearch, typeFilter, isOpen]);
-
   // Authorization checks
   const canPartiesCreate = usePermission(PARTY_KERNEL_PERMISSIONS.PARTY_CREATE);
   const canPersonCreate = usePermission(PARTY_KERNEL_PERMISSIONS.PARTY_PERSON_CREATE);
@@ -127,7 +124,13 @@ export const PartyPicker = React.memo(function PartyPicker({
     staleTime: 10_000,
   });
 
-  const parties: PartyContactLookup[] = data?.items ?? [];
+  const rawParties: PartyContactLookup[] = data?.items ?? [];
+  const parties = excludeId ? rawParties.filter((p) => p.id !== excludeId) : rawParties;
+
+  // Reset highlighted index on search, filter, open, or data change
+  useEffect(() => {
+    setHighlightedIndex(-1);
+  }, [debouncedSearch, typeFilter, isOpen, data]);
 
   const handleSelectParty = (party: PartyContactLookup) => {
     const result: PartySelectionResult = {
@@ -158,10 +161,10 @@ export const PartyPicker = React.memo(function PartyPicker({
 
     if (e.key === "ArrowDown") {
       e.preventDefault();
-      setHighlightedIndex((prev) => (prev + 1) % parties.length);
+      setHighlightedIndex((prev) => (prev < 0 || prev >= parties.length - 1 ? 0 : prev + 1));
     } else if (e.key === "ArrowUp") {
       e.preventDefault();
-      setHighlightedIndex((prev) => (prev - 1 + parties.length) % parties.length);
+      setHighlightedIndex((prev) => (prev <= 0 ? parties.length - 1 : prev - 1));
     } else if (e.key === "Enter") {
       if (highlightedIndex >= 0 && highlightedIndex < parties.length) {
         e.preventDefault();
@@ -218,6 +221,15 @@ export const PartyPicker = React.memo(function PartyPicker({
             data-testid="party-picker-trigger"
             aria-expanded={isOpen}
             aria-haspopup="listbox"
+            onKeyDown={(e) => {
+              if (disabled) return;
+              if (e.key === "ArrowDown" || e.key === "Enter" || e.key === " ") {
+                if (!isOpen) {
+                  e.preventDefault();
+                  setIsOpen(true);
+                }
+              }
+            }}
             className={`flex min-h-[42px] w-full items-center justify-between rounded-xl border bg-nx-surface px-3 py-2 text-xs transition-colors cursor-pointer select-none ${
               error
                 ? "border-destructive/60 focus:ring-1 focus:ring-destructive"
@@ -242,7 +254,7 @@ export const PartyPicker = React.memo(function PartyPicker({
                 <div className="flex flex-col min-w-0 flex-1 text-left rtl:text-right">
                   <div className="flex items-center gap-1.5 truncate">
                     <span className="font-semibold text-nx-ink truncate">
-                      {value.displayName}
+                      {value.displayName || value.fullName || value.legalName || "—"}
                     </span>
                     <Badge
                       variant="outline"
@@ -253,9 +265,13 @@ export const PartyPicker = React.memo(function PartyPicker({
                         : t("party.picker.typeFilterOrg") || "Organization"}
                     </Badge>
                   </div>
-                  <span className="text-[11px] text-nx-ink-3 truncate">
-                    {value.fullName || value.legalName || `#${value.id.slice(0, 8)}`}
-                  </span>
+                  {value.displayName &&
+                    ((value.fullName && value.fullName !== value.displayName) ||
+                      (value.legalName && value.legalName !== value.displayName)) && (
+                    <span className="text-[11px] text-nx-ink-3 truncate">
+                      {value.fullName || value.legalName}
+                    </span>
+                  )}
                 </div>
 
                 {!disabled && (
@@ -287,7 +303,7 @@ export const PartyPicker = React.memo(function PartyPicker({
         {/* ── Search & Selection Popover Content ──────────────────────── */}
         <PopoverContent
           align="start"
-          className="w-[340px] sm:w-[420px] p-0 rounded-2xl border border-nx-border bg-nx-surface shadow-2xl overflow-hidden"
+          className="w-[calc(100vw-2rem)] sm:w-[420px] max-w-[420px] p-0 rounded-2xl border border-nx-border bg-nx-surface shadow-2xl overflow-hidden"
         >
           {/* Header & Search Bar */}
           <div className="p-3 border-b border-nx-border space-y-2 bg-nx-surface-2/30">
@@ -309,7 +325,9 @@ export const PartyPicker = React.memo(function PartyPicker({
                 aria-haspopup="listbox"
                 aria-controls="party-picker-listbox"
                 aria-activedescendant={
-                  highlightedIndex >= 0 ? `party-option-${highlightedIndex}` : undefined
+                  highlightedIndex >= 0 && highlightedIndex < parties.length
+                    ? `party-option-${highlightedIndex}`
+                    : undefined
                 }
               />
               {searchTerm && (
@@ -458,9 +476,11 @@ export const PartyPicker = React.memo(function PartyPicker({
                                 ? t("party.picker.typeFilterPerson") || "Person"
                                 : t("party.picker.typeFilterOrg") || "Organization"}
                             </span>
-                            <span className="font-mono text-[9px] opacity-60">
-                              #{p.id.slice(0, 8)}
-                            </span>
+                            {(p.fullName || p.legalName) && (
+                              <span className="opacity-70 truncate max-w-[200px]">
+                                • {p.type === "Person" ? p.fullName : p.legalName}
+                              </span>
+                            )}
                           </div>
                         </div>
                       </div>

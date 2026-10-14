@@ -1437,6 +1437,12 @@ export const es = {
         treeFlowTitle: "Resolución del Árbol Jerárquico en 6 Niveles",
         treeFlowIntro:
           "Propagación descendente de directivas y privilegios a través de la estructura empresarial:",
+        searchTitle: "Búsqueda multilingüe de sucursales",
+        searchIntro:
+          "La búsqueda de sucursales normaliza nombres árabes y latinos con reglas Unicode versionadas. Obtiene candidatos de un índice limitado al tenant, ordena un conjunto acotado y limita cada página a 100 resultados.",
+        searchSafetyTitle: "Alcance de búsqueda y carga inicial del índice",
+        searchSafetyContent:
+          "El alcance del tenant y de las filas de plataforma se aplica antes de ordenar y contar resultados. La similitud solo sirve para buscar; no identifica ni fusiona personas u organizaciones. Las nuevas sucursales mantienen el índice y las existentes pueden completarse mediante una carga inicial limitada y ejecutada expresamente.",
         apiTitle: "API de Estructura Organizativa",
         apiIntro:
           "Endpoints para definir sociedades, dependencias entre delegaciones y recintos deportivos.",
@@ -2160,6 +2166,9 @@ export const es = {
         pricingFlowTitle: "Motor de Resolución de Precios Multitarifa",
         pricingFlowIntro:
           "Cómo calcula SCRIPE el precio definitivo a partir de tarifas base, acuerdos, rebajas y tributos:",
+        snapshotCaptureTitle: "Captura de instantánea de reserva y reintentos",
+        snapshotCaptureIntro:
+          "CatalogPricing captura una cotización aún válida y sus líneas como una instantánea pendiente para una reserva. La clave de idempotencia se recorta y es única dentro del tenant. Repetirla con la misma reserva, cotización, recurso, pagador, cantidad e intervalo devuelve la instantánea existente; reutilizarla con una intención distinta genera un conflicto. La instantánea y todas sus líneas se guardan juntas. El flujo de reserva la vincula y convierte la cotización solo después de confirmar correctamente la reserva.",
         apiTitle: "Puntos de Entrada API Principales",
         apiIntro:
           "Endpoints de CatalogPricingControllers para gestión del catálogo, libros de tarifas y cálculo de ofertas.",

@@ -1455,6 +1455,12 @@ export const fr = {
         treeFlowTitle: "Résolution de la Hiérarchie à 6 Niveaux",
         treeFlowIntro:
           "Propagation descendante des données et habilitations à travers l'arborescence de l'entreprise :",
+        searchTitle: "Recherche multilingue de succursales",
+        searchIntro:
+          "La recherche de succursales normalise les noms arabes et latins avec des règles Unicode versionnées. Elle récupère les candidats depuis un index limité au tenant, classe un ensemble borné et limite les pages à 100 résultats.",
+        searchSafetyTitle: "Périmètre de recherche et alimentation de l'index",
+        searchSafetyContent:
+          "Le périmètre du tenant et des lignes de plateforme est appliqué avant le classement et le comptage. La similarité sert uniquement à la recherche ; elle n'identifie ni ne fusionne des personnes ou des organisations. Les nouvelles succursales mettent l'index à jour et les anciennes peuvent être complétées par une opération d'alimentation bornée et explicitement lancée.",
         apiTitle: "API d'Organisation Générale",
         apiIntro:
           "Routes principales pour déclarer les structures morales, les filiales et administrer les complexes sportifs.",
@@ -2183,6 +2189,9 @@ export const fr = {
         pricingFlowTitle: "Moteur de Résolution Tarifaire Multi-Paliers",
         pricingFlowIntro:
           "Comment SCRIPE détermine le prix net à partir des barèmes de référence, accords, remises et taxes :",
+        snapshotCaptureTitle: "Capture du devis de réservation et nouvelles tentatives",
+        snapshotCaptureIntro:
+          "CatalogPricing capture un devis encore valide et ses lignes sous forme d'instantané en attente pour une réservation. La clé d'idempotence est nettoyée et unique au sein du tenant. Une nouvelle tentative avec la même clé, la même réservation, le même devis, la même ressource, le même payeur, la même quantité et le même intervalle renvoie l'instantané existant ; une intention différente entraîne un conflit. L'instantané et toutes ses lignes sont enregistrés ensemble. Le parcours de réservation lie l'instantané et convertit le devis uniquement après confirmation réussie de la réservation.",
         apiTitle: "Points d'Entrée API Essentiels",
         apiIntro:
           "Endpoints de CatalogPricingControllers pour le catalogue, les grilles de prix et le calcul des devis.",

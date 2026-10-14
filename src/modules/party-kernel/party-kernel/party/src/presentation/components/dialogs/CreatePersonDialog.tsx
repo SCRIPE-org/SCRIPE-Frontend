@@ -69,6 +69,7 @@ export function CreatePersonDialog({
     failedPhone?: string;
     failedEmail?: string;
     errorMessage: string;
+    idempotencyKey?: string;
   } | null>(null);
   const [isRetrying, setIsRetrying] = useState(false);
   const [retryError, setRetryError] = useState<string | null>(null);
@@ -137,9 +138,12 @@ export function CreatePersonDialog({
       ) {
         await partyRepository.addContactPoint({
           partyId: partialSaveState.partyId,
-          type: "phone",
+          type: "Phone",
           value: partialSaveState.failedPhone,
           isPrimary: true,
+          idempotencyKey: partialSaveState.idempotencyKey
+            ? `${partialSaveState.idempotencyKey}:phone`
+            : undefined,
         });
       }
       if (
@@ -148,9 +152,12 @@ export function CreatePersonDialog({
       ) {
         await partyRepository.addContactPoint({
           partyId: partialSaveState.partyId,
-          type: "email",
+          type: "Email",
           value: partialSaveState.failedEmail,
           isPrimary: true,
+          idempotencyKey: partialSaveState.idempotencyKey
+            ? `${partialSaveState.idempotencyKey}:email`
+            : undefined,
         });
       }
 
@@ -188,6 +195,8 @@ export function CreatePersonDialog({
         familyName: familyName.trim(),
         dateOfBirth,
         isMinor,
+        phone: phone.trim(),
+        email: email.trim(),
       });
 
       let currentKey = idempotencyKey;
@@ -223,6 +232,7 @@ export function CreatePersonDialog({
           fullName: trimmedName,
           failedPhone: phone.trim() || undefined,
           failedEmail: email.trim() || undefined,
+          idempotencyKey: currentKey || undefined,
           errorMessage:
             (failedAttachment as { error: Error }).error.message ||
             t("party.dialog.partialSaveDesc") ||

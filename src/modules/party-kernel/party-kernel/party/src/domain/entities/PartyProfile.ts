@@ -12,6 +12,9 @@ import type { PartyRole } from "@modules/party-kernel/party-role/src/domain/enti
 import type { PartyRelationship } from "@modules/party-kernel/party-relationship/src/domain/entities/PartyRelationship";
 import type { MergeCandidate } from "@modules/party-kernel/merge-candidate/src/domain/entities/MergeCandidate";
 
+/**
+ * Underlying composite data for a PartyProfile
+ */
 export interface PartyProfileData {
   party: Party;
   person?: PartyPerson | null;
@@ -26,6 +29,9 @@ export interface PartyProfileData {
   } | null;
 }
 
+/**
+ * Composite domain entity representing the complete 360-degree party profile
+ */
 export class PartyProfile {
   constructor(public readonly data: PartyProfileData) {}
 

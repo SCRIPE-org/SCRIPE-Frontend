@@ -101,12 +101,20 @@ export function usePartyDirectoryViewModel() {
   const statsQuery = useQuery({
     queryKey: ["parties-stats-summary"],
     queryFn: async () => {
-      const res = await partyRepository.getAll({ page: 1, pageSize: 100 });
-      const items = res.items || [];
+      const [totalRes, peopleRes, orgsRes] = await Promise.allSettled([
+        partyRepository.getAll({ page: 1, pageSize: 1 }),
+        partyRepository.lookupPeople({ page: 1, pageSize: 1 }),
+        partyRepository.lookupOrganizations({ page: 1, pageSize: 1 }),
+      ]);
+
+      const total = totalRes.status === "fulfilled" ? totalRes.value.totalCount : 0;
+      const people = peopleRes.status === "fulfilled" ? peopleRes.value.totalCount : 0;
+      const organizations = orgsRes.status === "fulfilled" ? orgsRes.value.totalCount : 0;
+
       return {
-        total: res.totalCount,
-        people: items.filter((p) => p.isPerson).length,
-        organizations: items.filter((p) => p.isOrganization).length,
+        total,
+        people,
+        organizations,
       };
     },
     staleTime: 60_000,

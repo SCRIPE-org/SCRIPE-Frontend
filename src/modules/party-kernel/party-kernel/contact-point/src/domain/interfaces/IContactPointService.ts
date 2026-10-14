@@ -26,7 +26,7 @@ export interface IContactPointService {
     search?: string;
   }): Promise<ContactPointListResult>;
   getById(id: string): Promise<ContactPointModel>;
-  create(data: Record<string, unknown>): Promise<{ id: string }>;
+  create(data: Record<string, unknown>, idempotencyKey?: string): Promise<{ id: string }>;
   update(id: string, data: Record<string, unknown>): Promise<void>;
   delete(id: string): Promise<void>;
 }

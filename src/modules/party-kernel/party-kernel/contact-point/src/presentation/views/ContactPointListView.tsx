@@ -177,7 +177,7 @@ export const ContactPointListView = React.memo(function ContactPointListView() {
       isPrimary: item.isPrimary,
     }),
     getItemDisplayName: (item: ContactPoint) =>
-      item.type && item.value ? `${item.type}: ${item.value}` : item.value || item.partyId,
+      item.type && item.value ? `${item.type}: ${item.value}` : item.value || "—",
     deleteService: (id: string) => vm.deleteItem(id),
     getActions: (_vmInstance, tFn, handleDeleteFn): CrudAction<ContactPoint>[] => [
       {

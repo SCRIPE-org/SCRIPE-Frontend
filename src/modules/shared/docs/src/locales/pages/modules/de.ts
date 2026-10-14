@@ -1403,6 +1403,12 @@ export const de = {
         treeFlowTitle: "6-stufige Hierarchieauflösung",
         treeFlowIntro:
           "Kaskadierung von Berechtigungen und Datenstrukturen durch die Unternehmensgliederung:",
+        searchTitle: "Mehrsprachige Branchensuche",
+        searchIntro:
+          "Die Branchensuche normalisiert arabische und lateinische Namen Unicode-bewusst und versionsgebunden. Sie lädt Kandidaten aus einem tenantbezogenen Suchindex, bewertet eine begrenzte Kandidatenmenge und begrenzt Seiten auf 100 Ergebnisse.",
+        searchSafetyTitle: "Suchbereich und Indexaufbau",
+        searchSafetyContent:
+          "Tenant- und Plattformbereich werden vor Bewertung und Trefferzählung angewendet. Ähnlichkeit dient nur der Suche und identifiziert oder vereinigt keine Personen oder Organisationen. Neue Brancheneinträge aktualisieren den Index; vorhandene Einträge können durch einen begrenzten, ausdrücklich gestarteten Backfill ergänzt werden.",
         apiTitle: "Organisations-API-Endpunkte",
         apiIntro:
           "Zentrale Schnittstellen zur Pflege von Unternehmensstrukturen, Standorten und Liegenschaften.",
@@ -2118,6 +2124,9 @@ export const de = {
         pricingFlowTitle: "Mehrstufige Preisfindungs-Pipeline",
         pricingFlowIntro:
           "Wie SCRIPE den Endpreis aus Preisbüchern, Verträgen, Rabatten und Steuern berechnet:",
+        snapshotCaptureTitle: "Reservierungssnapshot und Wiederholungen",
+        snapshotCaptureIntro:
+          "CatalogPricing übernimmt ein noch gültiges Angebot samt Positionen als ausstehenden Snapshot für eine Reservierung. Der Idempotenzschlüssel wird getrimmt und ist innerhalb des Mandanten eindeutig. Eine Wiederholung mit demselben Schlüssel sowie derselben Reservierung, demselben Angebot, derselben Ressource, zahlenden Person, Menge und Zeitspanne gibt den vorhandenen Snapshot zurück; bei abweichender Absicht entsteht ein Konflikt. Snapshot und Positionen werden gemeinsam gespeichert. Der Buchungsablauf bindet den Snapshot und wandelt das Angebot erst nach erfolgreicher Reservierungsbestätigung um.",
         apiTitle: "Wichtigste API-Endpunkte",
         apiIntro:
           "Endpunkte der CatalogPricingControllers für Katalogverwaltung, Preisbücher und Angebotskalkulation.",

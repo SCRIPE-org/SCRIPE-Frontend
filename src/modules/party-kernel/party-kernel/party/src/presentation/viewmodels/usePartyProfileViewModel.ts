@@ -8,6 +8,7 @@ import { usePermission } from "@core/hooks/use-permission";
 import { useEnhancedToast } from "@core/hooks/use-enhanced-toast";
 import { useI18n } from "@core/providers/i18n-provider";
 import type { PartyProfile } from "../../domain/entities/PartyProfile";
+import type { ContactPoint } from "@modules/party-kernel/contact-point/src/domain/entities/ContactPoint";
 import type {
   AddContactPointParams,
   AddPartyRoleParams,
@@ -40,6 +41,8 @@ export function usePartyProfileViewModel(partyId: string) {
   // Dialog States
   const [isEditNameOpen, setIsEditNameOpen] = useState(false);
   const [isAddContactOpen, setIsAddContactOpen] = useState(false);
+  const [isEditContactOpen, setIsEditContactOpen] = useState(false);
+  const [editingContact, setEditingContact] = useState<ContactPoint | null>(null);
   const [isAddRoleOpen, setIsAddRoleOpen] = useState(false);
   const [isAddRelationshipOpen, setIsAddRelationshipOpen] = useState(false);
   const [isDeleteConfirmOpen, setIsDeleteConfirmOpen] = useState(false);
@@ -66,8 +69,13 @@ export function usePartyProfileViewModel(partyId: string) {
 
   // Mutations
   const updateNameMutation = useMutation({
-    mutationFn: (displayName: string) =>
-      partyRepository.updatePartyName(partyId, displayName),
+    mutationFn: (param: string | { displayName: string; fullName?: string }) => {
+      const displayName = typeof param === "string" ? param : param.displayName;
+      const fullName = typeof param === "object" ? param.fullName : undefined;
+      const party = profileQuery.data?.party;
+      const type = party?.type;
+      return partyRepository.updatePartyName(partyId, displayName, { type, fullName });
+    },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["party-profile", partyId] });
       queryClient.invalidateQueries({ queryKey: ["parties-directory"] });
@@ -98,6 +106,30 @@ export function usePartyProfileViewModel(partyId: string) {
       showError({
         title: t("common.error") || "Error",
         description: err.message || t("party.toast.errorContact") || "Failed to add contact",
+      });
+    },
+  });
+
+  const updateContactMutation = useMutation({
+    mutationFn: (data: { id: string; type: string; value: string; isPrimary?: boolean }) =>
+      partyRepository.updateContactPoint(data.id, {
+        partyId,
+        type: data.type,
+        value: data.value,
+        isPrimary: data.isPrimary,
+      }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["party-profile", partyId] });
+      setIsEditContactOpen(false);
+      setEditingContact(null);
+      success({
+        title: t("party.toast.contactUpdated") || "Contact method updated",
+      });
+    },
+    onError: (err: Error) => {
+      showError({
+        title: t("common.error") || "Error",
+        description: err.message || t("party.toast.errorContact") || "Failed to update contact",
       });
     },
   });
@@ -233,6 +265,10 @@ export function usePartyProfileViewModel(partyId: string) {
     setIsEditNameOpen,
     isAddContactOpen,
     setIsAddContactOpen,
+    isEditContactOpen,
+    setIsEditContactOpen,
+    editingContact,
+    setEditingContact,
     isAddRoleOpen,
     setIsAddRoleOpen,
     isAddRelationshipOpen,
@@ -240,14 +276,28 @@ export function usePartyProfileViewModel(partyId: string) {
     isDeleteConfirmOpen,
     setIsDeleteConfirmOpen,
 
-    // Actions
-    handleUpdateName: (displayName: string) =>
-      updateNameMutation.mutateAsync(displayName),
+    handleUpdateName: (
+      param: string | { displayName: string; fullName?: string },
+      maybeDisplayName?: string,
+      options?: { fullName?: string }
+    ) => {
+      if (typeof param === "string" && typeof maybeDisplayName === "string") {
+        return updateNameMutation.mutateAsync({
+          displayName: maybeDisplayName,
+          fullName: options?.fullName,
+        });
+      }
+      return updateNameMutation.mutateAsync(param);
+    },
     isUpdatingName: updateNameMutation.isPending,
 
     handleAddContact: (data: Omit<AddContactPointParams, "partyId">) =>
       addContactMutation.mutateAsync(data),
     isAddingContact: addContactMutation.isPending,
+
+    handleUpdateContact: (data: { id: string; type: string; value: string; isPrimary?: boolean }) =>
+      updateContactMutation.mutateAsync(data),
+    isUpdatingContact: updateContactMutation.isPending,
 
     handleRemoveContact: (id: string) => removeContactMutation.mutateAsync(id),
     isRemovingContact: removeContactMutation.isPending,

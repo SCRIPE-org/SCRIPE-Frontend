@@ -49,7 +49,6 @@ export class PartyPerson {
     return (
       this.data.fullName ||
       [this.data.firstName, this.data.lastName].filter(Boolean).join(" ") ||
-      this.data.partyId ||
       "—"
     );
   }

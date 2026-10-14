@@ -126,7 +126,7 @@ export const PartyOrganizationListView = React.memo(function PartyOrganizationLi
       legalName: item.legalName,
       taxId: item.taxId,
     }),
-    getItemDisplayName: (item: PartyOrganization) => item.legalName || item.partyId,
+    getItemDisplayName: (item: PartyOrganization) => item.legalName || "—",
     deleteService: (id: string) => vm.deleteItem(id),
     getActions: (_vmInstance, tFn, handleDeleteFn): CrudAction<PartyOrganization>[] => [
       {

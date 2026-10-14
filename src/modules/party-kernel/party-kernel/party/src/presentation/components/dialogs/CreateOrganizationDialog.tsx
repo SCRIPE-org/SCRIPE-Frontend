@@ -30,6 +30,7 @@ interface OrgPartialSaveState {
   failedPhone?: string;
   failedEmail?: string;
   errorMessage?: string;
+  idempotencyKey?: string;
 }
 
 /**
@@ -102,9 +103,12 @@ export function CreateOrganizationDialog({
       ) {
         await partyRepository.addContactPoint({
           partyId: partialSaveState.partyId,
-          type: "phone",
+          type: "Phone",
           value: partialSaveState.failedPhone,
           isPrimary: true,
+          idempotencyKey: partialSaveState.idempotencyKey
+            ? `${partialSaveState.idempotencyKey}:phone`
+            : undefined,
         });
       }
       if (
@@ -113,9 +117,12 @@ export function CreateOrganizationDialog({
       ) {
         await partyRepository.addContactPoint({
           partyId: partialSaveState.partyId,
-          type: "email",
+          type: "Email",
           value: partialSaveState.failedEmail,
           isPrimary: true,
+          idempotencyKey: partialSaveState.idempotencyKey
+            ? `${partialSaveState.idempotencyKey}:email`
+            : undefined,
         });
       }
 
@@ -149,6 +156,8 @@ export function CreateOrganizationDialog({
         legalName: trimmedLegal,
         displayName: displayName.trim(),
         taxId: taxId.trim(),
+        phone: phone.trim(),
+        email: email.trim(),
       });
 
       let currentKey = idempotencyKey;
@@ -179,6 +188,7 @@ export function CreateOrganizationDialog({
           legalName: trimmedLegal,
           failedPhone: phone.trim() || undefined,
           failedEmail: email.trim() || undefined,
+          idempotencyKey: currentKey || undefined,
           errorMessage:
             (failedAttachment as { error: Error }).error.message ||
             t("party.dialog.partialSaveDesc") ||

@@ -27,6 +27,7 @@ import {
 import { EditPartyDialog } from "../components/dialogs/EditPartyDialog";
 import { DeletePartyDialog } from "../components/dialogs/DeletePartyDialog";
 import { AddContactDialog } from "../components/dialogs/AddContactDialog";
+import { EditContactDialog } from "../components/dialogs/EditContactDialog";
 import { AddRoleDialog } from "../components/dialogs/AddRoleDialog";
 import { AddRelationshipDialog } from "../components/dialogs/AddRelationshipDialog";
 
@@ -48,6 +49,7 @@ import {
   Plus,
   Trash2,
   Edit3,
+  Pencil,
   Copy,
   Check,
   Building,
@@ -606,14 +608,27 @@ export const PartyProfileView = React.memo(function PartyProfileView({
                   </div>
 
                   {vm.permissions.canManageContacts && (
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      className="h-8 w-8 text-nx-ink-3 hover:text-destructive"
-                      onClick={() => vm.handleRemoveContact(contact.id)}
-                    >
-                      <Trash2 className="h-4 w-4" />
-                    </Button>
+                    <div className="flex items-center gap-1">
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="h-8 w-8 text-nx-ink-3 hover:text-nx-ink"
+                        onClick={() => {
+                          vm.setEditingContact(contact);
+                          vm.setIsEditContactOpen(true);
+                        }}
+                      >
+                        <Pencil className="h-4 w-4" />
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="h-8 w-8 text-nx-ink-3 hover:text-destructive"
+                        onClick={() => vm.handleRemoveContact(contact.id)}
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
+                    </div>
                   )}
                 </Card>
               ))}
@@ -992,9 +1007,15 @@ export const PartyProfileView = React.memo(function PartyProfileView({
       {/* ── Dialogs ────────────────────────────────────────────────── */}
       <EditPartyDialog
         party={profile.party}
+        initialFullName={profile.fullName}
         open={vm.isEditNameOpen}
         onOpenChange={vm.setIsEditNameOpen}
-        onSubmit={vm.handleUpdateName}
+        onSubmit={async (_id, displayName, options) => {
+          await vm.handleUpdateName({
+            displayName,
+            fullName: options?.fullName,
+          });
+        }}
       />
 
       <DeletePartyDialog
@@ -1011,6 +1032,13 @@ export const PartyProfileView = React.memo(function PartyProfileView({
         onSubmit={vm.handleAddContact}
       />
 
+      <EditContactDialog
+        contact={vm.editingContact}
+        open={vm.isEditContactOpen}
+        onOpenChange={vm.setIsEditContactOpen}
+        onSubmit={vm.handleUpdateContact}
+      />
+
       <AddRoleDialog
         open={vm.isAddRoleOpen}
         onOpenChange={vm.setIsAddRoleOpen}
@@ -1021,12 +1049,14 @@ export const PartyProfileView = React.memo(function PartyProfileView({
         open={vm.isAddRelationshipOpen}
         onOpenChange={vm.setIsAddRelationshipOpen}
         onSubmit={vm.handleAddRelationship}
+        currentPartyId={partyId}
       />
 
       <AddRelationshipDialog
         open={isAddRepresentativeOpen}
         onOpenChange={setIsAddRepresentativeOpen}
         onSubmit={vm.handleAddRelationship}
+        currentPartyId={partyId}
         defaultRelationshipType="Representative"
         title={t("party.dialog.addRepresentativeTitle")}
       />

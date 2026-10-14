@@ -51,6 +51,7 @@ export const en = {
       noContactRegistered: "No contact registered",
       quickPreview: "Quick Preview",
       previewParty: "Preview Contact",
+      paginationInfo: "Page {page} of {totalPages} ({total} items)",
     },
     quickPreview: {
       title: "Contact Quick Preview",
@@ -135,6 +136,8 @@ export const en = {
       fullName: "Full Name",
       fullNamePlaceholder: "e.g. Dr. Fatima Zahra Al-Sayed",
       fullNameHelp: "Exact human-entered name without forced first/last splitting.",
+      nameRequired: "Full Name is required",
+      legalNameRequired: "Legal Business Name is required",
       additionalNames: "Additional Name Fields (Optional)",
       givenName: "Given / First Name",
       middleNames: "Middle Names",
@@ -184,6 +187,11 @@ export const en = {
       retryAttachContact: "Retry Attach Contact Details",
       continueToProfile: "Continue to Profile",
       contactAttachedSuccess: "Contact details attached successfully",
+      enterIdManually: "Enter ID Manually",
+      usePicker: "Search Directory",
+      enterEncryptedIdHint: "Enter canonical encrypted Party ID of the target person or organization.",
+      selectTargetPartyPlaceholder: "Search by name, email, or phone...",
+      targetPartyRequired: "Please select a target contact or enter an ID",
     },
     toast: {
       personCreated: "Person created successfully",

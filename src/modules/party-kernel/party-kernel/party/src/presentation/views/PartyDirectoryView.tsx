@@ -290,12 +290,12 @@ export const PartyDirectoryView = React.memo(function PartyDirectoryView() {
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between bg-nx-surface rounded-xl p-3 border border-nx-border">
         {/* Search Input */}
         <div className="relative flex-1">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-nx-ink-3" />
+          <Search className="absolute left-3 rtl:left-auto rtl:right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-nx-ink-3 pointer-events-none" />
           <Input
             value={vm.searchTerm}
             onChange={(e) => vm.setSearchTerm(e.target.value)}
             placeholder={t("party.directory.searchPlaceholder")}
-            className="pl-9 bg-nx-surface-2 border-nx-border"
+            className="pl-9 rtl:pl-3 rtl:pr-9 bg-nx-surface-2 border-nx-border"
           />
         </div>
 
@@ -617,7 +617,11 @@ export const PartyDirectoryView = React.memo(function PartyDirectoryView() {
       {vm.totalPages > 1 && (
         <div className="flex items-center justify-between pt-4 border-t border-nx-border">
           <div className="text-xs text-nx-ink-2">
-            Page {vm.page} of {vm.totalPages} ({vm.totalCount} items)
+            {t("party.directory.paginationInfo", {
+              page: vm.page,
+              totalPages: vm.totalPages,
+              total: vm.totalCount,
+            }) || `Page ${vm.page} of ${vm.totalPages} (${vm.totalCount} items)`}
           </div>
           <div className="flex items-center gap-2">
             <Button
@@ -626,7 +630,7 @@ export const PartyDirectoryView = React.memo(function PartyDirectoryView() {
               onClick={() => vm.setPage(Math.max(1, vm.page - 1))}
               disabled={vm.page <= 1}
             >
-              Previous
+              {t("common.previous") || "Previous"}
             </Button>
             <Button
               variant="outline"
@@ -634,7 +638,7 @@ export const PartyDirectoryView = React.memo(function PartyDirectoryView() {
               onClick={() => vm.setPage(Math.min(vm.totalPages, vm.page + 1))}
               disabled={vm.page >= vm.totalPages}
             >
-              Next
+              {t("common.next") || "Next"}
             </Button>
           </div>
         </div>

@@ -60,7 +60,7 @@ export function usePartyOrganizationViewModel() {
       });
       return (res.items || []).map((o) => ({
         value: o.id,
-        label: o.displayName ? `${o.displayName} (${o.id.length > 8 ? `${o.id.slice(0, 8)}…` : o.id})` : o.id,
+        label: o.displayName || o.legalName || "—",
       }));
     },
     [partyRepository]
