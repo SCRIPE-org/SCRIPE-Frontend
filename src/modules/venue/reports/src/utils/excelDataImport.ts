@@ -195,7 +195,14 @@ export function autoMapColumns(headers: string[], type: ImportType): Record<stri
       const cleanKey = targetKey.replace(/[^a-z0-9]/g, "");
       const cleanLabel = targetLabel.replace(/[^a-z0-9]/g, "");
 
-      return cleanH === cleanKey || cleanH === cleanLabel || cleanH.includes(cleanKey) || cleanKey.includes(cleanH);
+      return (
+        cleanH === cleanKey ||
+        cleanH === cleanLabel ||
+        cleanH.includes(cleanKey) ||
+        cleanKey.includes(cleanH) ||
+        cleanLabel.includes(cleanH) ||
+        cleanH.includes(cleanLabel)
+      );
     });
 
     if (matchedHeader) {
