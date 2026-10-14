@@ -22,7 +22,7 @@ export function useVenueAttentionViewModel(canView: boolean) {
       setData(response);
       setStage("ready");
     } catch {
-      if (process.env.NODE_ENV !== "production") {
+      if (process.env.NEXT_PUBLIC_ENABLE_MOCK_DATA === "true") {
         try {
           const { getRealisticVenueAttentionData } = await import(
             "@modules/venue/venue-overview/src/data/mock/realisticVenueOperationalData"

@@ -243,8 +243,11 @@ export function useResourcesWorkspaceViewModel() {
           // Publish
           try {
             await schedulableResourceRepository.publish(resourceId);
-          } catch {
-            // Non-blocking if validation requirements differ
+          } catch (pubErr) {
+            console.error(`Failed to publish schedulable resource ${resourceId}:`, pubErr);
+            throw new Error(
+              `Failed to publish court '${courtName.trim()}': ${pubErr instanceof Error ? pubErr.message : "Publication validation failed"}`
+            );
           }
 
           // Save base availability calendar

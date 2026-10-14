@@ -44,6 +44,23 @@ describe("excelDataImport", () => {
     expect(report.validCount).toBe(2); // Valid User and first Duplicate In File
     expect(report.canCommit).toBe(true);
   });
+
+  it("validates court import schema, duplicate courts, and capacity number parsing", () => {
+    const csv = `Court Name,Sport,Players\nPadel Court 1,Padel,4\n,Tennis,2\nPadel Court 1,Padel,4\nExisting Court,Football,10\nNew Pitch,General,12`;
+    const parsed = parseDelimitedText(csv);
+    const mapping = autoMapColumns(parsed.headers, "courts");
+    const existing = [{ id: "court-1", name: "Existing Court" }];
+
+    const report = validateImportRows("courts", parsed, mapping, existing);
+
+    expect(report.totalRows).toBe(5);
+    expect(report.invalidCount).toBe(1); // Missing court name
+    expect(report.duplicateCount).toBe(2); // In-file duplicate "Padel Court 1" and existing "Existing Court"
+    expect(report.validCount).toBe(2); // First "Padel Court 1" and "New Pitch"
+    expect(report.rows[0].data.capacity).toBe(4);
+    expect(report.rows[4].data.capacity).toBe(12);
+    expect(report.canCommit).toBe(true);
+  });
 });
 
 describe("excelReportExport", () => {

@@ -63,7 +63,7 @@ export const IMPORT_SCHEMAS: Record<ImportType, { title: string; description: st
   },
   courts: {
     title: "Courts & Spaces Import",
-    description: "Import sports courts and rentable spaces into the Facility registry.",
+    description: "Import sports courts and rentable spaces into the Schedulable Resources registry.",
     fields: [
       {
         key: "name",
