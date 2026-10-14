@@ -400,6 +400,24 @@ export function useVenueReportsViewModel() {
     try {
       const container = getVenueContainer();
 
+      let cachedProfiles: Array<{ id: string; name: string; resourceKindCode: string; timeZoneId?: string }> = [];
+      if (importType === "courts") {
+        const profPage = await container.facilityResourceProfileRepository.getAll({ page: 1, pageSize: 100 });
+        cachedProfiles = profPage.items.map((p) => ({
+          id: p.id,
+          name: p.name,
+          resourceKindCode: p.resourceKindCode,
+          timeZoneId: p.operatingPolicy?.timeZoneId,
+        }));
+        if (cachedProfiles.length === 0) {
+          throw new Error(
+            isRtl
+              ? "لا يوجد ملفات تعريف موارد منشأة (Facility Resource Profiles). يرجى تكوين المنشأة وملف تعريف المورد أولاً قبل استيراد الملاعب."
+              : "No facility resource profiles found. Please configure a facility and resource profile first before importing courts."
+          );
+        }
+      }
+
       for (const row of validRows) {
         try {
           if (importType === "customers") {
@@ -409,11 +427,31 @@ export function useVenueReportsViewModel() {
             successCount++;
           } else if (importType === "courts") {
             const name = String(row.data.name).trim();
-            const categoryVal = row.data.category || "Padel";
-            await container.facilityRepository.create({
+            if (!name) {
+              throw new Error(isRtl ? "اسم الملعب مطلوب" : "Court name is required");
+            }
+            const categoryVal = String(row.data.category || "Padel").trim();
+            const matchedProfile =
+              cachedProfiles.find(
+                (p) =>
+                  p.name.toLowerCase() === categoryVal.toLowerCase() ||
+                  p.resourceKindCode.toLowerCase() === categoryVal.toLowerCase()
+              ) || cachedProfiles[0];
+
+            await container.schedulableResourceRepository.create({
+              facilityResourceProfileId: matchedProfile.id,
               name,
-              facilityType: categoryVal,
-              capacity: row.data.capacity || 4,
+              description: `${categoryVal} Court imported from spreadsheet`,
+              isComposite: false,
+              unitCount: 1,
+              allocationMode: "SingleUnit",
+              maxConcurrentUsage: Number(row.data.capacity) || 1,
+              slotPolicy: {
+                slotDurationMinutes: 60,
+                startIncrementMinutes: 60,
+                timeZoneId: matchedProfile.timeZoneId || "UTC",
+                allowMultiSlot: false,
+              },
             });
             successCount++;
           }
