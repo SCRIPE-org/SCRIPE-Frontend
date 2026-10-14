@@ -137,7 +137,13 @@ export function TenantDashboardGrid({
       ...layout,
       widgets: [...layout.widgets, newWidget],
     });
-    setIsLibraryOpen(false);
+  };
+
+  const handleRemoveByWidgetId = (widgetId: Parameters<typeof getWidgetDefinition>[0]) => {
+    const target = layout.widgets.find((w) => w.widgetId === widgetId);
+    if (target) {
+      handleRemove(target.id);
+    }
   };
 
   const visibleWidgets = layout.widgets.filter((w) => w.visible);
@@ -232,6 +238,7 @@ export function TenantDashboardGrid({
         onClose={() => setIsLibraryOpen(false)}
         currentWidgets={layout.widgets}
         onAddWidget={handleAddWidget}
+        onRemoveWidget={handleRemoveByWidgetId}
       />
     </>
   );
