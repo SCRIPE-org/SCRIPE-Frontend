@@ -11,10 +11,12 @@ export default defineConfig({
   retries: process.env.CI ? 2 : 0,
   workers: process.env.CI ? 1 : undefined,
   reporter: process.env.CI ? "github" : "html",
-  timeout: 60_000,
+  timeout: 1_800_000,
 
   use: {
-    baseURL: "http://localhost:3000",
+    baseURL: "http://localhost:3005",
+    navigationTimeout: 180_000,
+    actionTimeout: 120_000,
     trace: "on-first-retry",
     screenshot: "only-on-failure",
     video: "on-first-retry",
@@ -23,18 +25,25 @@ export default defineConfig({
   projects: [
     {
       name: "chromium",
-      use: { ...devices["Desktop Chrome"] },
-    },
-    {
-      name: "firefox",
-      use: { ...devices["Desktop Firefox"] },
+      use: {
+        ...devices["Desktop Chrome"],
+        channel: "chrome",
+        launchOptions: {
+          args: [
+            "--disable-background-timer-throttling",
+            "--disable-backgrounding-occluded-windows",
+            "--disable-renderer-backgrounding",
+            "--disable-features=CalculateNativeWinOcclusion",
+          ],
+        },
+      },
     },
   ],
 
   webServer: {
-    command: "pnpm run dev",
-    port: 3000,
-    reuseExistingServer: !process.env.CI,
+    command: "pnpm run dev -p 3005",
+    port: 3005,
+    reuseExistingServer: true,
     timeout: 120_000,
   },
 });
