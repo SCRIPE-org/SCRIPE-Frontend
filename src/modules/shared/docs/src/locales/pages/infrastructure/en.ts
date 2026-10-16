@@ -503,7 +503,7 @@ export const en = {
       outboxMessageTitle: "OutboxMessage Entity",
       processorTitle: "OutboxProcessor — The Reliable Dispatcher",
       processorContent:
-        "OutboxProcessor runs every 30 seconds. It fetches a batch of unprocessed OutboxMessage records (ordered by CreatedAt), dispatches each via IMediator.Publish, and marks successful dispatches as ProcessedAt = DateTime.UtcNow. Failed dispatches increment the Retries counter. Messages that exceed 5 retries are marked as failed and logged to observability. The processor uses optimistic concurrency (CompareExchange in Redis) to prevent double-dispatch in multi-instance deployments.",
+        "OutboxProcessor dispatches pending domain events and records retry state after failures. Each domain-event delivery resolves its publisher from a fresh dependency-injection scope, so tracked changes from a failed delivery cannot be saved by a later delivery. Delivery is at least once: consumers that mutate durable state still need an Inbox receipt committed atomically with their business changes; this scope boundary does not provide multi-host exactly-once delivery.",
       idempotencyTitle: "Idempotency Requirements",
       idempotencyContent:
         "OutboxMessage.Id (a GUID generated at event time) is the idempotency key. Each INotificationHandler that processes outbox-dispatched events MUST be idempotent — check if the operation was already applied before re-applying. In practice, most handlers are naturally idempotent (e.g., writing a value that was already written has no additional effect). For non-idempotent operations (e.g., sending an email), store the OutboxMessageId in a processed-events table and skip if already present.",

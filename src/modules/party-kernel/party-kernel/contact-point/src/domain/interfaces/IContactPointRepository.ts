@@ -9,6 +9,7 @@ export interface ContactPointListParams {
   page: number;
   pageSize: number;
   search?: string;
+  partyId?: string;
 }
 
 /**

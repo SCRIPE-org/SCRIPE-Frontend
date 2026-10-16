@@ -184,7 +184,7 @@ const sections: DocSection[] = [
         path: "/api/v1/catalog-pricing/price-quotes/calculate",
         descriptionKey: "modules.catalogPricing.api.calculateQuote",
         auth: "Bearer JWT",
-        permission: "catalog-pricing.quotes.create",
+        permission: "catalog-pricing.calculate-quote.view",
       },
       {
         method: "POST",
@@ -209,5 +209,5 @@ registerPage({
     "modules/finance-overview",
     "modules/entitlements-overview",
   ],
-  lastUpdated: "2026-10-14",
+  lastUpdated: "2026-10-15",
 });

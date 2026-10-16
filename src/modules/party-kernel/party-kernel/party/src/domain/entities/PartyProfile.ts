@@ -27,6 +27,8 @@ export interface PartyProfileData {
     fullName?: string | null;
     legalName?: string | null;
     rowVersion?: string | null;
+    createdAt?: string | null;
+    modifiedAt?: string | null;
   } | null;
 }
 
@@ -69,11 +71,23 @@ export class PartyProfile {
   }
 
   get createdAt(): string {
-    return this.data.party.createdAt;
+    return (
+      this.data.party.createdAt ||
+      this.data.canonicalProfile?.createdAt ||
+      this.data.person?.createdAt ||
+      this.data.organization?.createdAt ||
+      ""
+    );
   }
 
   get modifiedAt(): string | undefined {
-    return this.data.party.modifiedAt;
+    return (
+      this.data.party.modifiedAt ||
+      this.data.canonicalProfile?.modifiedAt ||
+      this.data.person?.modifiedAt ||
+      this.data.organization?.modifiedAt ||
+      undefined
+    );
   }
 
   get person(): PartyPerson | null | undefined {

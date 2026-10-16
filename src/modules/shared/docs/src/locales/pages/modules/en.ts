@@ -2627,10 +2627,10 @@ export const en = {
           "How data and permissions cascade downward through the organizational topology:",
         searchTitle: "Multilingual Branch Lookup",
         searchIntro:
-          "Branch lookup uses versioned Unicode-aware normalization for Arabic and Latin names. It retrieves candidates from a tenant-scoped search-term index, then ranks a bounded candidate set by token similarity. Short tokens require an exact match; longer tokens tolerate one edit. Results are deterministic and page sizes are capped at 100.",
+          "Branch lookup uses versioned Unicode-aware normalization for Arabic and Latin names. It retrieves candidates from a tenant-scoped search-term index, using trigrams plus bigrams for four- and five-rune tokens so accepted short typos reach the fuzzy scorer. Tokens shorter than four runes require an exact match; longer tokens tolerate one edit. Results are deterministic and page sizes are capped at 100.",
         searchSafetyTitle: "Search Scope and Backfill",
         searchSafetyContent:
-          "Tenant and platform-row scope is applied before candidate ranking and result counts. Search similarity is for lookup only; it does not identify or merge people or organizations. New branch writes maintain the index. Existing rows can be brought fully onto the current profile by the bounded operator-invoked backfill; legacy and unindexed rows remain searchable during that transition.",
+          "Tenant and platform-row scope is applied before candidate ranking and result counts. Search similarity is for lookup only; it does not identify or merge people or organizations. New branch writes maintain the index. A platform superadmin can backfill existing rows in bounded batches with POST /api/v1/Branches/search-index/backfill?batchSize=200; repeat until the response reports updated=0. Legacy and unindexed rows remain searchable during that transition.",
         apiTitle: "Primary API Endpoints",
         apiIntro:
           "Key endpoints exposed by OrganizationCoreControllers for legal entity configuration, branch hierarchy, and site queries.",
@@ -3019,7 +3019,8 @@ export const en = {
         createItem: "Register a new service, rental asset, or retail product",
         listOfferings: "List bookable offerings with base rates and requirements",
         listPriceBooks: "Fetch active and scheduled price books with version details",
-        calculateQuote: "Simulate pricing quote calculation without persisting state",
+        calculateQuote:
+          "Calculate and persist a price quote. Reuse the same Idempotency-Key for retries to receive the original quote; reusing the key with changed input conflicts.",
         createQuote: "Generate and persist an official price quote with expiration TTL",
       },
       rateCards: {

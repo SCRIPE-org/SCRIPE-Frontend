@@ -3,6 +3,7 @@ import { describe, expect, it, vi } from "vitest";
 import { ClickToBookModal } from "./ClickToBookModal";
 
 const mocks = vi.hoisted(() => ({
+  translate: vi.fn((_key: string, options?: { defaultValue?: string }) => options?.defaultValue ?? _key),
   bookingRepository: {
     createDraft: vi.fn(),
     createHold: vi.fn(),
@@ -20,7 +21,7 @@ const mocks = vi.hoisted(() => ({
 vi.mock("@core/providers/i18n-provider", () => ({
   useI18n: () => ({
     language: "en",
-    t: (_key: string, options?: { defaultValue?: string }) => options?.defaultValue ?? _key,
+    t: mocks.translate,
   }),
 }));
 
@@ -77,8 +78,9 @@ describe("ClickToBookModal quote intent retry", () => {
       expect(mocks.commercialPricingRepository.calculateQuote).toHaveBeenCalledTimes(1)
     );
     await waitFor(() =>
-      expect(screen.getByRole("button", { name: "Confirm Booking" })).toBeEnabled()
+      expect(screen.getByRole("button", { name: "Confirm Booking" })).toBeDisabled()
     );
+    expect(screen.getByText("A verified price quote is required before confirmation. Please retry.")).toBeInTheDocument();
 
     view.rerender(<ClickToBookModal {...props} resource={{ ...resource }} />);
 
@@ -88,5 +90,47 @@ describe("ClickToBookModal quote intent retry", () => {
     const quoteCalls = mocks.commercialPricingRepository.calculateQuote.mock.calls;
     expect(quoteCalls[1][0].idempotencyKey).toBe(quoteCalls[0][0].idempotencyKey);
     expect(quoteCalls[1][0].expiresAtUtc).toBe(quoteCalls[0][0].expiresAtUtc);
+    expect(screen.getByRole("button", { name: "Confirm Booking" })).toBeEnabled();
+  });
+
+  it("does not fabricate a quote or allow confirmation while CatalogPricing is unavailable", async () => {
+    mocks.commercialPricingRepository.getResourceConfiguration.mockResolvedValue({
+      offeringId: "offering-1",
+      currencyCode: "EGP",
+    });
+    mocks.commercialPricingRepository.calculateQuote.mockRejectedValue(new Error("service unavailable"));
+    const resource = {
+      id: "resource-1",
+      name: "Court 1",
+      profileId: "profile-1",
+      profileName: "Court",
+      facilityId: "facility-1",
+      facilityName: "Main Facility",
+      resourceKindCode: "COURT",
+      timeZoneId: "UTC",
+    };
+    render(
+      <ClickToBookModal
+        open
+        onOpenChange={vi.fn()}
+        resource={resource}
+        instantUtc="2026-10-20T09:00:00.000Z"
+        timeZoneId="UTC"
+        onSuccess={vi.fn()}
+      />
+    );
+
+    fireEvent.click(screen.getByRole("button", { name: "+ Quick Add" }));
+    fireEvent.change(screen.getByPlaceholderText("Customer Name (e.g. Ahmed Hassan)"), {
+      target: { value: "Synthetic Customer" },
+    });
+    fireEvent.click(screen.getByRole("button", { name: "Select Customer" }));
+
+    await waitFor(() =>
+      expect(screen.getByText("A verified price quote is required before confirmation. Please retry.")).toBeInTheDocument()
+    );
+    expect(screen.getByRole("button", { name: "Confirm Booking" })).toBeDisabled();
+    expect(screen.queryByText("ESTIMATE")).not.toBeInTheDocument();
+    expect(mocks.bookingRepository.createDraft).not.toHaveBeenCalled();
   });
 });

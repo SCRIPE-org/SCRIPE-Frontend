@@ -966,6 +966,9 @@ export const de = {
             "Jede Zeile trägt einen Anzeigenamen, der nie leer ist, eine optionale zweite Zeile, um zwei ähnlich benannte Datensätze auseinanderzuhalten, und eine Markierung, ob der Datensatz ruhend ist. Gelöschte Datensätze werden überhaupt nicht zurückgegeben, sodass diese Markierung nie gelöscht bedeutet — eine ruhende Zeile ist vorhanden, auswählbar, und eine vollkommen gültige Antwort.",
           searchTyping:
             "Das Tippen wird verzögert (debounced), bevor daraus eine Anfrage wird. Ohne das würde ein achtzeichiger Name acht modulübergreifende Abfragen auslösen, von denen sieben Antworten verworfen würden — und die, die gerendert wird, wäre diejenige, die zuletzt zurückkam, statt derjenigen, die zu dem passt, was Sie getippt haben.",
+          fieldAccessTitle: "Feldzugriff begrenzt auch Suchergebnisse",
+          fieldAccessContent:
+            "Die Leseberechtigung für einen Datensatztyp gewährt keinen Zugriff auf jedes Feld, das dessen Auswahl verwendet. Wenn Ihre Rolle ein Feld für Suche, Sortierung oder Anzeigenamen einschränkt, kann das zuständige Modul keine Treffer zurückgeben oder diese Angabe auslassen. Beim Auflösen einer gespeicherten Referenz gelten dieselben Feldeinschränkungen. So verraten Trefferzahlen und gespeicherte Referenzen keine geschützten Werte.",
 
           resolveTitle: "Einen bereits gehaltenen Verweis auflösen",
           resolveWhat:

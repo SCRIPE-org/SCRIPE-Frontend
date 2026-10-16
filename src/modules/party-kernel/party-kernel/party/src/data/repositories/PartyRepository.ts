@@ -79,22 +79,22 @@ export class PartyRepository implements IPartyRepository {
     ] = await Promise.allSettled([
       this.service.getProfile ? this.service.getProfile(id) : Promise.resolve(null),
       party.isPerson && this.personRepo
-        ? this.personRepo.getAll({ page: 1, pageSize: 100 })
+        ? this.personRepo.getAll({ page: 1, pageSize: 100, partyId: id })
         : Promise.resolve({ items: [] }),
       party.isOrganization && this.organizationRepo
-        ? this.organizationRepo.getAll({ page: 1, pageSize: 100 })
+        ? this.organizationRepo.getAll({ page: 1, pageSize: 100, partyId: id })
         : Promise.resolve({ items: [] }),
       this.contactPointRepo
-        ? this.contactPointRepo.getAll({ page: 1, pageSize: 100 })
+        ? this.contactPointRepo.getAll({ page: 1, pageSize: 100, partyId: id })
         : Promise.resolve({ items: [] }),
       this.roleRepo
-        ? this.roleRepo.getAll({ page: 1, pageSize: 100 })
+        ? this.roleRepo.getAll({ page: 1, pageSize: 100, partyId: id })
         : Promise.resolve({ items: [] }),
       this.relationshipRepo
-        ? this.relationshipRepo.getAll({ page: 1, pageSize: 100 })
+        ? this.relationshipRepo.getAll({ page: 1, pageSize: 100, partyId: id })
         : Promise.resolve({ items: [] }),
       this.mergeCandidateRepo
-        ? this.mergeCandidateRepo.getAll({ page: 1, pageSize: 100 })
+        ? this.mergeCandidateRepo.getAll({ page: 1, pageSize: 100, partyId: id })
         : Promise.resolve({ items: [] }),
     ]);
 
@@ -229,6 +229,10 @@ export class PartyRepository implements IPartyRepository {
         givenName: params.givenName?.trim() || null,
         middleNames: params.middleNames?.trim() || null,
         familyName: params.familyName?.trim() || null,
+        ...(params.dateOfBirth !== undefined
+          ? { dateOfBirth: params.dateOfBirth ? params.dateOfBirth.trim() : null }
+          : {}),
+        ...(params.isMinor !== undefined ? { isMinor: Boolean(params.isMinor) } : {}),
       },
       idempotencyKey
     );
@@ -319,6 +323,25 @@ export class PartyRepository implements IPartyRepository {
       idempotencyKey
     );
     const partyId = response.id;
+
+    // Persist taxId on the newly created organization subtype when provided
+    if (params.taxId && params.taxId.trim().length > 0 && this.service.updateOrganization) {
+      try {
+        let rowVersion: string | undefined;
+        if (typeof this.service.getProfile === "function") {
+          const profile = await this.service.getProfile(partyId);
+          rowVersion = profile?.rowVersion ?? undefined;
+        }
+        await this.service.updateOrganization(partyId, {
+          legalName,
+          displayName,
+          taxId: params.taxId.trim(),
+          ...(rowVersion !== undefined ? { rowVersion } : {}),
+        });
+      } catch {
+        // Non-fatal fallback if user lacks update permission during create
+      }
+    }
 
     // 2. Primary contact methods if provided
     const callerKey = explicitIdempotencyKey || params.idempotencyKey;
@@ -456,7 +479,18 @@ export class PartyRepository implements IPartyRepository {
   async updatePartyName(
     id: string,
     displayName: string,
-    options?: { type?: string; fullName?: string; rowVersion?: string | null }
+    options?: {
+      type?: string;
+      fullName?: string;
+      givenName?: string | null;
+      middleNames?: string | null;
+      familyName?: string | null;
+      dateOfBirth?: string | null;
+      isMinor?: boolean | null;
+      legalName?: string | null;
+      taxId?: string | null;
+      rowVersion?: string | null;
+    }
   ): Promise<void> {
     // If updating a Person with fullName or known type, use canonical updatePerson
     if (options?.type === "Person" && this.service.updatePerson) {
@@ -468,12 +502,37 @@ export class PartyRepository implements IPartyRepository {
       await this.service.updatePerson(id, {
         fullName: options.fullName?.trim() || displayName.trim(),
         displayName: displayName.trim(),
+        ...(options.givenName !== undefined
+          ? { givenName: options.givenName ? options.givenName.trim() : null }
+          : {}),
+        ...(options.middleNames !== undefined
+          ? { middleNames: options.middleNames ? options.middleNames.trim() : null }
+          : {}),
+        ...(options.familyName !== undefined
+          ? { familyName: options.familyName ? options.familyName.trim() : null }
+          : {}),
+        ...(options.dateOfBirth !== undefined
+          ? { dateOfBirth: options.dateOfBirth === null ? "" : options.dateOfBirth.trim() }
+          : {}),
+        ...(options.isMinor !== undefined ? { isMinor: options.isMinor } : {}),
         ...(rowVersion !== undefined ? { rowVersion } : {}),
       });
       return;
     }
 
     if (options?.type === "Organization") {
+      if (
+        this.service.updateOrganization &&
+        (options.legalName !== undefined || options.taxId !== undefined)
+      ) {
+        await this.updateOrganization(id, {
+          legalName: options.legalName?.trim() || displayName.trim(),
+          displayName: displayName.trim(),
+          taxId: options.taxId,
+          rowVersion: options.rowVersion,
+        });
+        return;
+      }
       await this.service.update(id, {
         type: "Organization",
         displayName: displayName.trim(),
@@ -493,6 +552,8 @@ export class PartyRepository implements IPartyRepository {
       givenName?: string | null;
       middleNames?: string | null;
       familyName?: string | null;
+      dateOfBirth?: string | null;
+      isMinor?: boolean | null;
       rowVersion?: string | null;
     }
   ): Promise<void> {
@@ -510,7 +571,46 @@ export class PartyRepository implements IPartyRepository {
       givenName: data.givenName ? data.givenName.trim() : null,
       middleNames: data.middleNames ? data.middleNames.trim() : null,
       familyName: data.familyName ? data.familyName.trim() : null,
+      ...(data.dateOfBirth !== undefined
+        ? { dateOfBirth: data.dateOfBirth && data.dateOfBirth.trim() ? data.dateOfBirth.trim() : null }
+        : {}),
+      ...(data.isMinor !== undefined ? { isMinor: data.isMinor } : {}),
       ...(rowVersion !== undefined ? { rowVersion } : {}),
+    });
+  }
+
+  async updateOrganization(
+    id: string,
+    data: {
+      legalName: string;
+      displayName?: string | null;
+      taxId?: string | null;
+      rowVersion?: string | null;
+    }
+  ): Promise<void> {
+    const legalName = data.legalName.trim();
+    const displayName = data.displayName?.trim() || legalName;
+
+    if (this.service.updateOrganization) {
+      let rowVersion = data.rowVersion ?? undefined;
+      if (!rowVersion && typeof this.service.getProfile === "function") {
+        const profile = await this.service.getProfile(id);
+        rowVersion = profile?.rowVersion ?? undefined;
+      }
+      await this.service.updateOrganization(id, {
+        legalName,
+        displayName,
+        ...(data.taxId !== undefined
+          ? { taxId: data.taxId && data.taxId.trim() ? data.taxId.trim() : null }
+          : {}),
+        ...(rowVersion !== undefined ? { rowVersion } : {}),
+      });
+      return;
+    }
+
+    await this.service.update(id, {
+      type: "Organization",
+      displayName,
     });
   }
 

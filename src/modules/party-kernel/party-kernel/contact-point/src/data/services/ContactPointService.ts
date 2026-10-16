@@ -27,11 +27,13 @@ export class ContactPointService implements IContactPointService {
     page: number;
     pageSize: number;
     search?: string;
+    partyId?: string;
   }): Promise<ContactPointListResult> {
     const url = buildUrl(CONTACT_POINT_ENDPOINTS.LIST, {
       page: params.page,
       pageSize: params.pageSize,
       search: params.search,
+      partyId: params.partyId,
     });
 
     const response = await this.api.get<ContactPointListResponseJson>(url);

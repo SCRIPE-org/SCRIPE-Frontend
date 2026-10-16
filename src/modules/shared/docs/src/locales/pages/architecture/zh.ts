@@ -239,6 +239,9 @@ export const zh = {
         "发件箱模式解决了双写 (dual-write) 问题：如何原子性地更新数据库并同时发布事件。通过将事件与业务变更放在同一事务中，确保事件永不丢失。",
       outboxWarning:
         "发件箱模式提供“至少一次” (at-least-once) 投递，而不是“恰好一次” (exactly-once)。因此，事件处理程序必须是幂等的。",
+      committedAuditTitle: "已提交实体变更的审计",
+      committedAuditIntro:
+        "实体变更审计快照与业务修改一起写入所属模块的 OutboxMessages 表，因此回滚会同时撤销两者。Outbox 处理器至少一次将快照投递到 Identity 中央审计存储。事件 ID 与 AuditLog ID 相同；只有在该 ID 和对应租户都已存在时，重复投递才会被视为完成，即使后台处理器没有租户查询上下文也是如此。投递语义是至少一次而非恰好一次，失败仍可重试。",
       outboxMessageTitle: "OutboxMessage 实体",
       outboxInterceptorTitle: "OutboxInterceptor (发件箱拦截器)",
       outboxInterceptorIntro:

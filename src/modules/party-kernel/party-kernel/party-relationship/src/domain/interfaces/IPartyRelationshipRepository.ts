@@ -9,6 +9,7 @@ export interface PartyRelationshipListParams {
   page: number;
   pageSize: number;
   search?: string;
+  partyId?: string;
 }
 
 /**

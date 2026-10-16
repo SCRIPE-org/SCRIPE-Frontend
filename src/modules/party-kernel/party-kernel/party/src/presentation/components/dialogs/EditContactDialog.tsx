@@ -110,13 +110,18 @@ export function EditContactDialog({
               <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-nx-accent/10 text-nx-accent">
                 <Edit3 className="h-5 w-5" />
               </div>
-              <DialogTitle>Edit Contact Method</DialogTitle>
+              <DialogTitle>
+                {t("party.dialog.editContactTitle") || "Edit Contact Method"}
+              </DialogTitle>
             </div>
           </DialogHeader>
 
           <div className="grid gap-4 py-4">
             {error && (
-              <div className="rounded-md bg-destructive/10 p-3 text-sm text-destructive border border-destructive/20">
+              <div
+                role="alert"
+                className="rounded-md bg-destructive/10 p-3 text-sm text-destructive border border-destructive/20"
+              >
                 {error}
               </div>
             )}

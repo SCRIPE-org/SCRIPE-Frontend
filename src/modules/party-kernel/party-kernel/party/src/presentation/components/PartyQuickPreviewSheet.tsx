@@ -14,6 +14,7 @@ import { Badge } from "@core/ui/badge";
 import { useI18n } from "@core/providers/i18n-provider";
 import { resolveIntlLocale } from "@core/common/utils";
 import type { Party } from "../../domain/entities/Party";
+import type { PartyProfile } from "../../domain/entities/PartyProfile";
 import {
   User,
   Building,
@@ -24,10 +25,14 @@ import {
   Copy,
   Check,
   ShieldCheck,
+  Phone,
+  Mail,
+  Briefcase,
 } from "lucide-react";
 
 interface PartyQuickPreviewSheetProps {
   party: Party | null;
+  profile?: PartyProfile | null;
   open: boolean;
   onOpenChange: (open: boolean) => void;
   onNavigateToProfile: (partyId: string) => void;
@@ -39,6 +44,7 @@ interface PartyQuickPreviewSheetProps {
  */
 export function PartyQuickPreviewSheet({
   party,
+  profile,
   open,
   onOpenChange,
   onNavigateToProfile,
@@ -56,7 +62,7 @@ export function PartyQuickPreviewSheet({
     setTimeout(() => setCopiedId(false), 2000);
   };
 
-  const formatDate = (isoString?: string) => {
+  const formatDate = (isoString?: string | null) => {
     if (!isoString) return "—";
     try {
       return new Intl.DateTimeFormat(intlLocale, {
@@ -69,9 +75,19 @@ export function PartyQuickPreviewSheet({
     }
   };
 
+  const primaryPhone = profile?.primaryPhone || party.primaryPhone || null;
+  const primaryEmail = profile?.primaryEmail || party.primaryEmail || null;
+  const activeRoles =
+    profile?.roles && profile.roles.length > 0
+      ? profile.roles.map((r) => r.roleType)
+      : party.roles;
+  const secondarySubtitle = party.isPerson
+    ? profile?.fullName || party.fullName
+    : profile?.legalName || party.legalName;
+
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
-      <SheetContent side="end" className="w-full sm:max-w-md flex flex-col justify-between">
+      <SheetContent side="end" className="w-full sm:max-w-md flex flex-col justify-between overflow-y-auto">
         <div className="space-y-6">
           <SheetHeader className="pb-4 border-b border-nx-border">
             <div className="flex items-center gap-2">
@@ -93,9 +109,11 @@ export function PartyQuickPreviewSheet({
                   {party.displayName}
                 </SheetTitle>
                 <SheetDescription className="text-xs text-nx-ink-2 truncate">
-                  {party.isPerson
-                    ? t("party.profile.personDetails")
-                    : t("party.profile.orgDetails")}
+                  {secondarySubtitle && secondarySubtitle !== party.displayName
+                    ? secondarySubtitle
+                    : party.isPerson
+                      ? t("party.profile.personDetails")
+                      : t("party.profile.orgDetails")}
                 </SheetDescription>
               </div>
             </div>
@@ -145,8 +163,70 @@ export function PartyQuickPreviewSheet({
             </div>
           </div>
 
+          {/* Contact Channels */}
+          <div className="space-y-2">
+            <h4 className="text-xs font-semibold uppercase tracking-wider text-nx-ink-3">
+              {t("party.quickPreview.contacts")}
+            </h4>
+            <div className="space-y-2 rounded-xl bg-nx-surface p-3.5 border border-nx-border text-xs">
+              <div className="flex items-center justify-between gap-2">
+                <span className="flex items-center gap-1.5 text-nx-ink-2">
+                  <Phone className="h-3.5 w-3.5 text-nx-accent" />
+                  <span>{t("party.profile.primaryTelephone") || "Phone"}</span>
+                </span>
+                {primaryPhone ? (
+                  <a
+                    href={`tel:${primaryPhone}`}
+                    className="font-mono font-medium text-nx-ink hover:text-nx-accent truncate"
+                  >
+                    {primaryPhone}
+                  </a>
+                ) : (
+                  <span className="text-nx-ink-3">
+                    {t("party.directory.noContactRegistered")}
+                  </span>
+                )}
+              </div>
+              <div className="flex items-center justify-between gap-2 pt-1.5 border-t border-nx-border/60">
+                <span className="flex items-center gap-1.5 text-nx-ink-2">
+                  <Mail className="h-3.5 w-3.5 text-nx-accent" />
+                  <span>{t("party.profile.primaryEmail") || "Email"}</span>
+                </span>
+                {primaryEmail ? (
+                  <a
+                    href={`mailto:${primaryEmail}`}
+                    className="font-medium text-nx-ink hover:text-nx-accent truncate max-w-[200px]"
+                  >
+                    {primaryEmail}
+                  </a>
+                ) : (
+                  <span className="text-nx-ink-3">
+                    {t("party.directory.noContactRegistered")}
+                  </span>
+                )}
+              </div>
+            </div>
+          </div>
+
+          {/* Active Roles */}
+          {activeRoles.length > 0 && (
+            <div className="space-y-2">
+              <h4 className="text-xs font-semibold uppercase tracking-wider text-nx-ink-3 flex items-center gap-1.5">
+                <Briefcase className="h-3.5 w-3.5" />
+                <span>{t("party.profile.activeRoles")}</span>
+              </h4>
+              <div className="flex flex-wrap gap-1.5">
+                {activeRoles.map((role) => (
+                  <Badge key={role} variant="secondary" className="text-xs">
+                    {role}
+                  </Badge>
+                ))}
+              </div>
+            </div>
+          )}
+
           {/* Summary Details */}
-          <div className="space-y-3 pt-2">
+          <div className="space-y-3 pt-1">
             <h4 className="text-xs font-semibold uppercase tracking-wider text-nx-ink-3">
               {t("party.quickPreview.completeness")}
             </h4>
@@ -164,11 +244,29 @@ export function PartyQuickPreviewSheet({
                 </div>
               </div>
 
+              {party.isPerson && profile?.person?.dateOfBirth && (
+                <div className="flex items-center justify-between text-sm">
+                  <span className="text-nx-ink-2">{t("party.profile.dob")}</span>
+                  <span className="text-xs font-medium text-nx-ink">
+                    {formatDate(profile.person.dateOfBirth)}
+                  </span>
+                </div>
+              )}
+
+              {party.isOrganization && (profile?.taxId || profile?.organization?.taxId) && (
+                <div className="flex items-center justify-between text-sm">
+                  <span className="text-nx-ink-2">{t("party.profile.taxId")}</span>
+                  <span className="text-xs font-mono text-nx-ink">
+                    {profile.taxId || profile.organization?.taxId}
+                  </span>
+                </div>
+              )}
+
               <div className="flex items-center justify-between text-sm">
                 <span className="text-nx-ink-2">{t("party.quickPreview.created")}</span>
                 <div className="flex items-center gap-1.5 text-xs text-nx-ink-2 font-mono">
                   <Calendar className="h-3.5 w-3.5 text-nx-ink-3" />
-                  <span>{formatDate(party.createdAt)}</span>
+                  <span>{formatDate(party.createdAt || profile?.createdAt)}</span>
                 </div>
               </div>
 

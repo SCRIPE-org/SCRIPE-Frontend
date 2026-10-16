@@ -4,7 +4,7 @@ import { CommercialPricingService } from "./CommercialPricingService";
 
 describe("CommercialPricingService", () => {
   it("uses the authoritative CatalogPricing endpoints for configuration and quote calculation", async () => {
-    const api = { get: vi.fn(), post: vi.fn() } as any;
+    const api = { get: vi.fn(), post: vi.fn(), postWithRetry: vi.fn() } as any;
     const service = new CommercialPricingService(api);
 
     await service.getResourceConfiguration("resource-1");
@@ -21,14 +21,16 @@ describe("CommercialPricingService", () => {
     });
 
     expect(api.get).toHaveBeenCalledWith("/v1/catalog-pricing/resource-rental-prices/resource-1");
-    expect(api.post).toHaveBeenCalledWith(
+    expect(api.postWithRetry).toHaveBeenCalledWith(
       "/v1/catalog-pricing/price-quotes/calculate",
       expect.objectContaining({
         offeringId: "offering-1",
         schedulableResourceId: "resource-1",
         partyId: "party-1",
         idempotencyKey: "quote-key",
-      })
+      }),
+      undefined,
+      { headers: { "Idempotency-Key": "quote-key" } }
     );
   });
 

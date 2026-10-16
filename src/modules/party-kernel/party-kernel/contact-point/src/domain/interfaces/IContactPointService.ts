@@ -24,6 +24,7 @@ export interface IContactPointService {
     page: number;
     pageSize: number;
     search?: string;
+    partyId?: string;
   }): Promise<ContactPointListResult>;
   getById(id: string): Promise<ContactPointModel>;
   create(data: Record<string, unknown>, idempotencyKey?: string): Promise<{ id: string }>;

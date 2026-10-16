@@ -26,6 +26,7 @@ describe("PartyRepository", () => {
     lookupOrganizations: vi.fn(),
     update: vi.fn(),
     updatePerson: vi.fn(),
+    updateOrganization: vi.fn(),
     delete: vi.fn(),
   };
 
@@ -610,5 +611,130 @@ describe("PartyRepository", () => {
         rowVersion: "AQEBAQEBAQEBAQEBAQEBAQ==",
       });
     });
+
+    it("forwards dateOfBirth and isMinor when creating or updating a Person (C1.1)", async () => {
+      partyService.createPerson.mockResolvedValue({ id: "person-dob-1" });
+
+      const partyId = await repository.createPerson({
+        fullName: "Layla Al-Rashid",
+        dateOfBirth: "2014-05-15",
+        isMinor: true,
+      });
+
+      expect(partyId).toBe("person-dob-1");
+      expect(partyService.createPerson).toHaveBeenCalledWith(
+        expect.objectContaining({
+          fullName: "Layla Al-Rashid",
+          dateOfBirth: "2014-05-15",
+          isMinor: true,
+        }),
+        expect.any(String)
+      );
+
+      partyService.updatePerson.mockResolvedValue(undefined);
+      await repository.updatePartyName("person-dob-1", "Layla Al-Rashid", {
+        type: "Person",
+        fullName: "Layla Al-Rashid",
+        givenName: "Layla",
+        familyName: "Al-Rashid",
+        dateOfBirth: "2014-05-15",
+        isMinor: true,
+        rowVersion: "AAAAAAAAAAAAAAAAAAAAAA==",
+      });
+
+      expect(partyService.updatePerson).toHaveBeenCalledWith("person-dob-1", {
+        fullName: "Layla Al-Rashid",
+        displayName: "Layla Al-Rashid",
+        givenName: "Layla",
+        familyName: "Al-Rashid",
+        dateOfBirth: "2014-05-15",
+        isMinor: true,
+        rowVersion: "AAAAAAAAAAAAAAAAAAAAAA==",
+      });
+    });
+
+    it("forwards taxId when creating or updating an Organization (C1.1)", async () => {
+      partyService.createOrganization.mockResolvedValue({ id: "org-tax-1" });
+      partyService.getProfile.mockResolvedValue({
+        id: "org-tax-1",
+        type: "Organization",
+        displayName: "Al-Nassr Academy",
+        legalName: "Al-Nassr Academy LLC",
+        rowVersion: "AAAAAAAAAAAAAAAAAAAAAA==",
+      });
+      partyService.updateOrganization.mockResolvedValue(undefined);
+
+      const orgId = await repository.createOrganization({
+        legalName: "Al-Nassr Academy LLC",
+        displayName: "Al-Nassr Academy",
+        taxId: "300987654300003",
+      });
+
+      expect(orgId).toBe("org-tax-1");
+      expect(partyService.createOrganization).toHaveBeenCalledWith(
+        {
+          legalName: "Al-Nassr Academy LLC",
+          displayName: "Al-Nassr Academy",
+        },
+        expect.any(String)
+      );
+      expect(partyService.updateOrganization).toHaveBeenCalledWith("org-tax-1", {
+        legalName: "Al-Nassr Academy LLC",
+        displayName: "Al-Nassr Academy",
+        taxId: "300987654300003",
+        rowVersion: "AAAAAAAAAAAAAAAAAAAAAA==",
+      });
+
+      partyService.updateOrganization.mockClear();
+      await repository.updatePartyName("org-tax-1", "Al-Nassr Academy Pro", {
+        type: "Organization",
+        legalName: "Al-Nassr Academy Pro LLC",
+        taxId: "300987654300999",
+        rowVersion: "AQEBAQEBAQEBAQEBAQEBAQ==",
+      });
+
+      expect(partyService.updateOrganization).toHaveBeenCalledWith("org-tax-1", {
+        legalName: "Al-Nassr Academy Pro LLC",
+        displayName: "Al-Nassr Academy Pro",
+        taxId: "300987654300999",
+        rowVersion: "AQEBAQEBAQEBAQEBAQEBAQ==",
+      });
+    });
+
+    it("passes partyId filter to sub-repositories in getProfile for >100 contact scale (C1.1)", async () => {
+      partyService.getById.mockResolvedValue(
+        new PartyModel("p-scale-150", "Person", "Scale Person", "2026-03-01T00:00:00Z")
+      );
+      partyService.getProfile.mockResolvedValue({
+        id: "p-scale-150",
+        type: "Person",
+        displayName: "Scale Person",
+        fullName: "Scale Person",
+      });
+      personRepo.getAll.mockResolvedValue({ items: [] });
+      contactPointRepo.getAll.mockResolvedValue({ items: [] });
+      roleRepo.getAll.mockResolvedValue({ items: [] });
+      relationshipRepo.getAll.mockResolvedValue({ items: [] });
+      mergeCandidateRepo.getAll.mockResolvedValue({ items: [] });
+
+      await repository.getProfile("p-scale-150");
+
+      expect(personRepo.getAll).toHaveBeenCalledWith(
+        expect.objectContaining({ partyId: "p-scale-150" })
+      );
+      expect(contactPointRepo.getAll).toHaveBeenCalledWith(
+        expect.objectContaining({ partyId: "p-scale-150" })
+      );
+      expect(roleRepo.getAll).toHaveBeenCalledWith(
+        expect.objectContaining({ partyId: "p-scale-150" })
+      );
+      expect(relationshipRepo.getAll).toHaveBeenCalledWith(
+        expect.objectContaining({ partyId: "p-scale-150" })
+      );
+      expect(mergeCandidateRepo.getAll).toHaveBeenCalledWith(
+        expect.objectContaining({ partyId: "p-scale-150" })
+      );
+    });
   });
 });
+

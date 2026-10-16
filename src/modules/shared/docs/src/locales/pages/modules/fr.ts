@@ -1457,10 +1457,10 @@ export const fr = {
           "Propagation descendante des données et habilitations à travers l'arborescence de l'entreprise :",
         searchTitle: "Recherche multilingue de succursales",
         searchIntro:
-          "La recherche de succursales normalise les noms arabes et latins avec des règles Unicode versionnées. Elle récupère les candidats depuis un index limité au tenant, classe un ensemble borné et limite les pages à 100 résultats.",
+          "La recherche de succursales normalise les noms arabes et latins avec des règles Unicode versionnées. Elle récupère les candidats depuis un index limité au tenant ; les jetons de quatre ou cinq runes utilisent aussi des bigrammes afin que les fautes courtes acceptées atteignent le moteur flou. Les jetons de moins de quatre runes exigent une correspondance exacte ; les plus longs tolèrent une modification. Les pages sont limitées à 100 résultats.",
         searchSafetyTitle: "Périmètre de recherche et alimentation de l'index",
         searchSafetyContent:
-          "Le périmètre du tenant et des lignes de plateforme est appliqué avant le classement et le comptage. La similarité sert uniquement à la recherche ; elle n'identifie ni ne fusionne des personnes ou des organisations. Les nouvelles succursales mettent l'index à jour et les anciennes peuvent être complétées par une opération d'alimentation bornée et explicitement lancée.",
+          "Le périmètre du tenant et des lignes de plateforme est appliqué avant le classement et le comptage. La similarité sert uniquement à la recherche ; elle n'identifie ni ne fusionne des personnes ou des organisations. Les nouvelles succursales mettent l'index à jour. Un superadministrateur de plateforme peut compléter les anciennes lignes par lots limités via POST /api/v1/Branches/search-index/backfill?batchSize=200 ; répétez jusqu'à ce que la réponse indique updated=0. Les lignes en attente restent recherchables pendant cette opération.",
         apiTitle: "API d'Organisation Générale",
         apiIntro:
           "Routes principales pour déclarer les structures morales, les filiales et administrer les complexes sportifs.",
@@ -2201,7 +2201,8 @@ export const fr = {
         createItem: "Enregistrer un nouveau service, équipement en location ou produit",
         listOfferings: "Afficher les offres réservables avec tarif de base",
         listPriceBooks: "Lister les barèmes de prix actifs et planifiés",
-        calculateQuote: "Simuler le montant d'un devis sans enregistrer l'état",
+        calculateQuote:
+          "Calculer et enregistrer un devis. Réutilisez la même Idempotency-Key lors d'une nouvelle tentative pour récupérer le devis initial ; une même clé avec des données modifiées provoque un conflit.",
         createQuote: "Générer et figer un devis officiel avec date de validité",
       },
       rateCards: {

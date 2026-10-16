@@ -965,6 +965,9 @@ export const fr = {
             "Chaque ligne porte un nom d'affichage jamais vide, une seconde ligne facultative pour distinguer deux enregistrements au nom similaire, et un indicateur signalant si l'enregistrement est dormant. Les enregistrements supprimés ne sont jamais renvoyés du tout, donc cet indicateur ne signifie jamais supprimé — une ligne dormante est présente, sélectionnable, et une réponse parfaitement valide.",
           searchTyping:
             "La frappe est temporisée avant de devenir une requête. Sans cela, un nom de huit caractères déclencherait huit requêtes inter-modules, dont sept réponses seraient jetées — et celle qui s'affiche serait celle arrivée en dernier plutôt que celle correspondant à ce que vous avez tapé.",
+          fieldAccessTitle: "L’accès aux champs limite aussi les résultats",
+          fieldAccessContent:
+            "L’autorisation de consulter un type d’enregistrement ne donne pas accès à tous les champs utilisés par son sélecteur. Si votre rôle restreint un champ utilisé pour la recherche, le tri ou le libellé affiché, le module propriétaire peut ne renvoyer aucun résultat ou omettre cette information. La résolution d’une référence enregistrée applique les mêmes restrictions de champ. Les nombres de résultats et les références enregistrées ne révèlent ainsi aucune valeur protégée.",
 
           resolveTitle: "Résoudre un pointeur déjà détenu",
           resolveWhat:

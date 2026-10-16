@@ -15,6 +15,11 @@ export interface PartyJson {
   displayName: string;
   createdAt: string;
   modifiedAt?: string;
+  fullName?: string | null;
+  legalName?: string | null;
+  primaryPhone?: string | null;
+  primaryEmail?: string | null;
+  roles?: string[] | null;
 }
 
 /**
@@ -27,6 +32,8 @@ export interface PartyProfileResponseJson {
   fullName?: string | null;
   legalName?: string | null;
   rowVersion?: string | null;
+  createdAt?: string | null;
+  modifiedAt?: string | null;
 }
 
 /**
@@ -63,6 +70,8 @@ export interface CreatePersonRequestJson {
   givenName?: string | null;
   middleNames?: string | null;
   familyName?: string | null;
+  dateOfBirth?: string | null;
+  isMinor?: boolean;
 }
 
 /**
@@ -76,6 +85,8 @@ export interface PersonResponseJson {
   givenName?: string | null;
   middleNames?: string | null;
   familyName?: string | null;
+  dateOfBirth?: string | null;
+  isMinor?: boolean;
 }
 
 /**
@@ -102,14 +113,30 @@ export class PartyModel {
     public readonly type: string,
     public readonly displayName: string,
     public readonly createdAt: string,
-    public readonly modifiedAt?: string
+    public readonly modifiedAt?: string,
+    public readonly fullName?: string | null,
+    public readonly legalName?: string | null,
+    public readonly primaryPhone?: string | null,
+    public readonly primaryEmail?: string | null,
+    public readonly roles?: string[] | null
   ) {}
 
   /**
    * Create PartyModel from API JSON
    */
   static fromJson(json: PartyJson): PartyModel {
-    return new PartyModel(json.id, json.type, json.displayName, json.createdAt, json.modifiedAt);
+    return new PartyModel(
+      json.id,
+      json.type,
+      json.displayName,
+      json.createdAt,
+      json.modifiedAt,
+      json.fullName ?? null,
+      json.legalName ?? null,
+      json.primaryPhone ?? null,
+      json.primaryEmail ?? null,
+      json.roles ?? null
+    );
   }
 
   /**
@@ -122,6 +149,11 @@ export class PartyModel {
       displayName: this.displayName,
       createdAt: this.createdAt,
       modifiedAt: this.modifiedAt,
+      fullName: this.fullName,
+      legalName: this.legalName,
+      primaryPhone: this.primaryPhone,
+      primaryEmail: this.primaryEmail,
+      roles: this.roles,
     };
   }
 }

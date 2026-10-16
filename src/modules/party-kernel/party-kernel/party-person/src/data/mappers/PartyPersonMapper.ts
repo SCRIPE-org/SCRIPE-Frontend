@@ -21,6 +21,9 @@ export class PartyPersonMapper {
       firstName: model.firstName,
       lastName: model.lastName,
       fullName: model.fullName,
+      givenName: model.givenName,
+      middleNames: model.middleNames,
+      familyName: model.familyName,
       dateOfBirth: model.dateOfBirth,
       isMinor: model.isMinor,
       createdAt: model.createdAt,
@@ -42,7 +45,10 @@ export class PartyPersonMapper {
       entity.createdAt,
       entity.modifiedAt,
       entity.fullName,
-      entity.dateOfBirth
+      entity.dateOfBirth,
+      entity.givenName,
+      entity.middleNames,
+      entity.familyName
     );
   }
 

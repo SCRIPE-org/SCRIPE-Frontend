@@ -188,6 +188,7 @@ export function ClickToBookModal({
     const fetchQuote = async () => {
       setQuoteLoading(true);
       setError(null);
+      setQuote(null);
       try {
         const config = await commercialPricingRepository.getResourceConfiguration(resource.id);
         const quoteIntent = getQuoteIntent(
@@ -218,28 +219,14 @@ export function ClickToBookModal({
           setPaymentAmount(calcQuote.grandTotal);
         }
       } catch {
-        // Provide graceful estimate if quote endpoint unavailable
+        // A locally estimated price cannot authorize confirmation without a persisted quote.
         if (active) {
-          setQuote({
-            id: crypto.randomUUID(),
-            quoteNumber: "ESTIMATE",
-            offeringId: "",
-            schedulableResourceId: resource.id,
-            partyId: selectedCustomer.id,
-            quantity: 1,
-            requestedStartUtc: startUtc,
-            requestedEndUtc: endUtc,
-            currencyCode: "EGP",
-            subtotalAmount: 800,
-            discountAmount: 0,
-            taxAmount: 0,
-            roundingAdjustment: 0,
-            grandTotal: 800,
-            status: "Estimated",
-            expiresAtUtc: new Date(Date.now() + 30 * 60 * 1000).toISOString(),
-            wasIdempotentReplay: false,
-          });
-          setPaymentAmount(800);
+          setQuote(null);
+          setError(
+            t("operationsCalendar.quote.unavailable", {
+              defaultValue: "A verified price quote is required before confirmation. Please retry.",
+            })
+          );
         }
       } finally {
         if (active) setQuoteLoading(false);
@@ -249,7 +236,7 @@ export function ClickToBookModal({
     return () => {
       active = false;
     };
-  }, [commercialPricingRepository, endUtc, open, resource, selectedCustomer, startUtc]);
+  }, [commercialPricingRepository, endUtc, open, resource, selectedCustomer, startUtc, t]);
 
   // Format slot time range for display
   const formatTimeRange = () => {
@@ -738,7 +725,7 @@ export function ClickToBookModal({
                 type="button"
                 size="sm"
                 onClick={handleConfirm}
-                disabled={!selectedCustomer || submitting || quoteLoading}
+                disabled={!selectedCustomer || !quote || submitting || quoteLoading}
                 loading={submitting}
                 className="flex-1 text-xs font-bold"
               >

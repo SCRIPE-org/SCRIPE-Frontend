@@ -65,23 +65,31 @@ export function usePartyDirectoryViewModel() {
   const [previewParty, setPreviewParty] = useState<Party | null>(null);
 
   const editingPartyId = editingParty?.id ?? "";
-  const isEditingPerson = editingParty?.type === "Person";
   const editingProfileQuery = useQuery({
     queryKey: ["party-profile", editingPartyId],
     queryFn: async () => partyRepository.getProfile(editingPartyId),
-    enabled: Boolean(editingPartyId && isEditingPerson),
+    enabled: Boolean(editingPartyId),
+    staleTime: 15_000,
+  });
+
+  const previewPartyId = previewParty?.id ?? "";
+  const previewProfileQuery = useQuery({
+    queryKey: ["party-profile", previewPartyId],
+    queryFn: async () => partyRepository.getProfile(previewPartyId),
+    enabled: Boolean(previewPartyId),
     staleTime: 15_000,
   });
 
   // Data Query
   const query = useQuery({
-    queryKey: ["parties-directory", selectedType, searchTerm, page, pageSize],
+    queryKey: ["parties-directory", selectedType, searchTerm, page, pageSize, sortBy],
     queryFn: async () => {
       return partyRepository.getAll({
         page,
         pageSize,
         search: searchTerm.trim() || undefined,
         type: selectedType === "all" ? undefined : selectedType,
+        sortBy,
       });
     },
     staleTime: 30_000,
@@ -222,7 +230,18 @@ export function usePartyDirectoryViewModel() {
     }: {
       id: string;
       displayName: string;
-      options?: { type?: string; fullName?: string; rowVersion?: string | null };
+      options?: {
+        type?: string;
+        fullName?: string;
+        givenName?: string;
+        middleNames?: string;
+        familyName?: string;
+        dateOfBirth?: string | null;
+        isMinor?: boolean;
+        legalName?: string;
+        taxId?: string | null;
+        rowVersion?: string | null;
+      };
     }) => {
       const type = options?.type ?? editingParty?.type;
       const fullName = options?.fullName ?? editingProfileQuery.data?.fullName ?? undefined;
@@ -230,6 +249,47 @@ export function usePartyDirectoryViewModel() {
         options?.rowVersion !== undefined
           ? options.rowVersion
           : editingProfileQuery.data?.rowVersion;
+
+      const hasExtendedPersonFields =
+        options?.dateOfBirth !== undefined ||
+        options?.isMinor !== undefined ||
+        options?.givenName !== undefined ||
+        options?.middleNames !== undefined ||
+        options?.familyName !== undefined;
+
+      if (
+        type === "Person" &&
+        hasExtendedPersonFields &&
+        typeof partyRepository.updatePerson === "function"
+      ) {
+        return partyRepository.updatePerson(id, {
+          fullName: fullName || displayName,
+          displayName,
+          givenName: options?.givenName,
+          middleNames: options?.middleNames,
+          familyName: options?.familyName,
+          dateOfBirth: options?.dateOfBirth,
+          isMinor: options?.isMinor,
+          rowVersion: rowVersion ?? null,
+        });
+      }
+
+      const hasExtendedOrgFields =
+        options?.legalName !== undefined || options?.taxId !== undefined;
+
+      if (
+        type === "Organization" &&
+        hasExtendedOrgFields &&
+        typeof partyRepository.updateOrganization === "function"
+      ) {
+        return partyRepository.updateOrganization(id, {
+          legalName: options?.legalName || displayName,
+          displayName,
+          taxId: options?.taxId,
+          rowVersion: rowVersion ?? null,
+        });
+      }
+
       return partyRepository.updatePartyName(id, displayName, {
         ...(type !== undefined ? { type } : {}),
         ...(fullName !== undefined ? { fullName } : {}),
@@ -341,11 +401,13 @@ export function usePartyDirectoryViewModel() {
     setIsCreateOrgOpen,
     editingParty,
     setEditingParty,
+    editingPartyProfile: editingProfileQuery.data ?? null,
     editingPartyFullName: editingProfileQuery.data?.fullName ?? null,
     deletingParty,
     setDeletingParty,
     previewParty,
     setPreviewParty,
+    previewPartyProfile: previewProfileQuery.data ?? null,
 
     // Actions & Handlers
     handleCreatePerson: async (params: CreatePersonParams): Promise<string> => {
@@ -363,7 +425,18 @@ export function usePartyDirectoryViewModel() {
     handleUpdateName: (
       id: string,
       displayName: string,
-      options?: { type?: string; fullName?: string; rowVersion?: string | null }
+      options?: {
+        type?: string;
+        fullName?: string;
+        givenName?: string;
+        middleNames?: string;
+        familyName?: string;
+        dateOfBirth?: string | null;
+        isMinor?: boolean;
+        legalName?: string;
+        taxId?: string | null;
+        rowVersion?: string | null;
+      }
     ) => updateNameMutation.mutateAsync({ id, displayName, options }),
     isUpdatingName: updateNameMutation.isPending,
 

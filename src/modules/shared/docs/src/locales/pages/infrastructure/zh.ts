@@ -447,7 +447,7 @@ export const zh = {
       outboxMessageTitle: "OutboxMessage 实体定义",
       processorTitle: "OutboxProcessor — 可靠消息派发器",
       processorContent:
-        "OutboxProcessor 每 30 秒轮询一次，批量获取待派发消息并通过 IMediator.Publish 发布，自动进行指数重试与失败告警。",
+        "OutboxProcessor 处理待发送的领域事件，并在失败时记录重试状态。每次领域事件投递都会使用新的依赖注入作用域，因此失败投递中跟踪的更改不会由后续投递保存。投递语义是至少一次：修改持久状态的消费者仍须在同一事务中原子保存 Inbox 收据和业务更改；新的作用域不保证多主机间只处理一次。",
       idempotencyTitle: "幂等性设计准则",
       idempotencyContent:
         "OutboxMessage.Id 作为全局唯一幂等键。所有领域事件处理器均必须实现幂等，防止重试过程中的重复处理。",

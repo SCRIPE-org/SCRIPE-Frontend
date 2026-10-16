@@ -99,7 +99,7 @@ async function loginViaUi(page: Page, creds: DpapiTenantAdmin, redirectPath = "/
 }
 
 test.describe("Contacts & PartyKernel End-to-End Acceptance (Real UI Auth)", () => {
-  test.describe.configure({ mode: "serial" });
+  test.describe.configure({ mode: "serial", timeout: 180_000 });
 
   let createdPersonId = "";
   let createdOrgId = "";
@@ -588,5 +588,360 @@ test.describe("Contacts & PartyKernel End-to-End Acceptance (Real UI Auth)", () 
       );
     });
     expect(isRtl).toBeTruthy();
+  });
+
+  test("5. C1.1 Enterprise Product Polish: Contacts Overview (/party-kernel), Person DOB & Minor Roundtrip, Org TaxId Roundtrip, Directional Relationships, and 150+ Scale Pagination", async ({
+    page,
+  }) => {
+    await page.setViewportSize({ width: 1440, height: 900 });
+    await loginViaUi(page, TENANT_ADMINS.alpha);
+
+    const accessToken = await page.evaluate(() => sessionStorage.getItem("dev_access_token"));
+    expect(accessToken).toBeTruthy();
+
+    // ── Step 1: Contacts Overview (/party-kernel) renders without redirect ────
+    await page.goto("/party-kernel");
+    await page.waitForLoadState("networkidle");
+    expect(new URL(page.url()).pathname).toBe("/party-kernel");
+
+    await expect(page.getByTestId("kpi-total-contacts")).toBeVisible({ timeout: 10_000 });
+    await expect(page.getByTestId("kpi-people-count")).toBeVisible();
+    await expect(page.getByTestId("kpi-organizations-count")).toBeVisible();
+    await expect(page.getByTestId("kpi-duplicate-alerts")).toBeVisible();
+    await expect(page.getByTestId("recent-contacts-card")).toBeVisible();
+    await expect(page.getByTestId("attention-card")).toBeVisible();
+
+    // Clicking People KPI card navigates to filtered Directory
+    await page.getByTestId("kpi-people-count").click();
+    await page.waitForURL((url) => url.pathname.includes("/party-kernel/parties"), {
+      timeout: 15_000,
+    });
+    await page.waitForLoadState("networkidle");
+
+    // ── Step 2: Person DOB, isMinor & Name Parts Create + Edit Roundtrip ──────
+    const c11PersonFullName = `Layla Al-Rashid ${uniqueTimestamp}`;
+    const newPersonBtn = page.getByRole("button", { name: /new person|شخص جديد/i });
+    await expect(newPersonBtn).toBeVisible({ timeout: 5_000 });
+    await newPersonBtn.click();
+
+    await expect(page.locator("#person-full-name")).toBeVisible({ timeout: 5_000 });
+    await page.locator("#person-full-name").fill(c11PersonFullName);
+
+    const additionalNamesBtn = page.getByRole("button", {
+      name: /additional name|أسماء إضافية/i,
+    });
+    await expect(additionalNamesBtn).toBeVisible({ timeout: 5_000 });
+    await additionalNamesBtn.click();
+
+    await page.locator("#person-given-name").fill("Layla");
+    await page.locator("#person-middle-names").fill("Noor");
+    await page.locator("#person-family-name").fill("Al-Rashid");
+    await page.locator("#person-dob").fill("2012-05-14");
+    await page.locator("#person-is-minor").click();
+
+    const submitPersonBtn = page.locator("form").getByRole("button", { name: /create|حفظ|إضافة/i });
+    await submitPersonBtn.click();
+
+    await page.waitForURL(
+      (url) =>
+        /\/party-kernel\/parties\/[^/]+$/.test(url.pathname) &&
+        !url.pathname.endsWith("/parties"),
+      { timeout: 15_000 }
+    );
+    const c11PersonId = page.url().split("/").pop() || "";
+    expect(c11PersonId).toBeTruthy();
+    await page.waitForLoadState("networkidle");
+
+    // Authorized DOB must render formatted date, never privacy-restricted banner
+    await expect(
+      page.locator("text=Date of birth protected under privacy policy")
+    ).toHaveCount(0);
+    await expect(page.locator("text=/2012/").first()).toBeVisible({ timeout: 10_000 });
+    await expect(page.locator("text=Layla").first()).toBeVisible();
+    await expect(page.locator("text=Noor").first()).toBeVisible();
+    await expect(page.locator("text=Al-Rashid").first()).toBeVisible();
+
+    // Edit Person DOB roundtrip via EditPartyDialog
+    const editPersonBtn = page.getByRole("button", { name: /edit name|تعديل الاسم/i });
+    await expect(editPersonBtn).toBeVisible({ timeout: 5_000 });
+    await editPersonBtn.click();
+
+    const editDobInput = page.locator("#edit-person-dob");
+    await expect(editDobInput).toBeVisible({ timeout: 5_000 });
+    await expect(editDobInput).toHaveValue("2012-05-14");
+    await editDobInput.fill("2011-08-20");
+
+    const personPutPromise = page.waitForResponse(
+      (res) =>
+        res.url().includes(`/api/v1/Parties/people/${c11PersonId}`) &&
+        res.request().method() === "PUT"
+    );
+    await page.locator("form").getByRole("button", { name: /save|حفظ/i }).click();
+    const personPutRes = await personPutPromise;
+    expect([200, 204]).toContain(personPutRes.status());
+    await page.waitForLoadState("networkidle");
+
+    await expect(page.locator("text=/2011/").first()).toBeVisible({ timeout: 10_000 });
+
+    // ── Step 3: Organization TaxId & LegalName Create + Edit Roundtrip ────────
+    await page.goto("/party-kernel/parties");
+    await page.waitForLoadState("networkidle");
+
+    const c11OrgLegalName = `Emirates Falcon Academy LLC ${uniqueTimestamp}`;
+    const c11OrgDisplayName = `Falcon Academy ${uniqueTimestamp}`;
+    const c11OrgTaxId = `AE-TRN-${uniqueTimestamp}`;
+
+    const newOrgBtn = page.getByRole("button", { name: /new organization|منظمة جديدة/i });
+    await expect(newOrgBtn).toBeVisible({ timeout: 5_000 });
+    await newOrgBtn.click();
+
+    await expect(page.locator("#org-legal-name")).toBeVisible({ timeout: 5_000 });
+    await page.locator("#org-legal-name").fill(c11OrgLegalName);
+    await page.locator("#org-display-name").fill(c11OrgDisplayName);
+    await page.locator("#org-tax-id").fill(c11OrgTaxId);
+
+    await page.locator("form").getByRole("button", { name: /create|حفظ|إضافة/i }).click();
+    await page.waitForURL(
+      (url) =>
+        /\/party-kernel\/parties\/[^/]+$/.test(url.pathname) &&
+        !url.pathname.endsWith("/parties") &&
+        !url.pathname.endsWith(c11PersonId),
+      { timeout: 15_000 }
+    );
+    const c11OrgId = page.url().split("/").pop() || "";
+    expect(c11OrgId).toBeTruthy();
+    await page.waitForLoadState("networkidle");
+
+    await expect(page.locator(`text=${c11OrgTaxId}`).first()).toBeVisible({ timeout: 10_000 });
+    await expect(page.locator(`text=${c11OrgLegalName}`).first()).toBeVisible();
+
+    // Edit Organization LegalName and TaxId via EditPartyDialog
+    const editOrgBtn = page.getByRole("button", { name: /edit name|تعديل الاسم/i });
+    await editOrgBtn.click();
+
+    const editLegalInput = page.locator("#edit-org-legal-name");
+    const editTaxInput = page.locator("#edit-org-tax-id");
+    await expect(editLegalInput).toBeVisible({ timeout: 5_000 });
+    await expect(editLegalInput).toHaveValue(c11OrgLegalName);
+    await expect(editTaxInput).toHaveValue(c11OrgTaxId);
+
+    const updatedTaxId = `AE-TRN-UPD-${uniqueTimestamp}`;
+    const updatedLegalName = `Emirates Falcon Sports LLC ${uniqueTimestamp}`;
+    await editLegalInput.fill(updatedLegalName);
+    await editTaxInput.fill(updatedTaxId);
+
+    const orgPutPromise = page.waitForResponse(
+      (res) =>
+        res.url().includes(`/api/v1/Parties/organizations/${c11OrgId}`) &&
+        res.request().method() === "PUT"
+    );
+    await page.locator("form").getByRole("button", { name: /save|حفظ/i }).click();
+    const orgPutRes = await orgPutPromise;
+    expect([200, 204]).toContain(orgPutRes.status());
+    await page.waitForLoadState("networkidle");
+
+    await expect(page.locator(`text=${updatedTaxId}`).first()).toBeVisible({ timeout: 10_000 });
+    await expect(page.locator(`text=${updatedLegalName}`).first()).toBeVisible();
+
+    // ── Step 4: Guardian Org Guard + Direction-Aware Person-to-Person Navigation ──
+    const orgRelsTab = page
+      .locator("[role='tab'][value='relationships'], [role='tab'][data-value='relationships']")
+      .or(page.getByRole("tab", { name: /relationships|العلاقات/i }))
+      .first();
+    await orgRelsTab.click();
+    await page.waitForLoadState("networkidle");
+
+    const addOrgRelBtn = page
+      .getByRole("button", { name: /add relationship|إضافة علاقة/i })
+      .first();
+    await addOrgRelBtn.click();
+
+    const manualToggleBtn = page.getByRole("button", {
+      name: /enter id manually|إدخال المعرف يدوياً|enterIdManually/i,
+    });
+    await expect(manualToggleBtn).toBeVisible({ timeout: 5_000 });
+    await manualToggleBtn.click();
+
+    await page.locator("#rel-target").fill(c11PersonId);
+    await page.locator("form").getByRole("button", { name: /save|إضافة|حفظ/i }).click();
+
+    // Client-side party-type compatibility guard blocks Guardian on Organization
+    await expect(page.getByRole("alert")).toContainText(
+      /Guardian relationships can only be established between Person contacts/i
+    );
+    await page.getByRole("button", { name: /cancel|إلغاء/i }).click();
+
+    // Create or use second Person for valid Person-to-Person Guardian relationship
+    let secondPersonId = createdPersonId;
+    if (!secondPersonId) {
+      const createP2Res = await page.request.post(
+        "http://localhost:5179/api/v1/Parties/people",
+        {
+          headers: mutationHeaders(accessToken!),
+          data: {
+            fullName: `Tariq Al-Rashid ${uniqueTimestamp}`,
+            displayName: `Tariq ${uniqueTimestamp}`,
+          },
+        }
+      );
+      expect([200, 201]).toContain(createP2Res.status());
+      const p2Body = await createP2Res.json();
+      secondPersonId = typeof p2Body === "string" ? p2Body : p2Body.id;
+    }
+
+    await page.goto(`/party-kernel/parties/${c11PersonId}`);
+    await page.waitForLoadState("networkidle");
+
+    const personRelsTab = page
+      .locator("[role='tab'][value='relationships'], [role='tab'][data-value='relationships']")
+      .or(page.getByRole("tab", { name: /relationships|العلاقات/i }))
+      .first();
+    await personRelsTab.click();
+    await page.waitForLoadState("networkidle");
+
+    await page
+      .getByRole("button", { name: /add relationship|إضافة علاقة/i })
+      .first()
+      .click();
+    await page
+      .getByRole("button", { name: /enter id manually|إدخال المعرف يدوياً|enterIdManually/i })
+      .click();
+    await page.locator("#rel-target").fill(secondPersonId);
+    await page.locator("form").getByRole("button", { name: /save|إضافة|حفظ/i }).click();
+    await page.waitForLoadState("networkidle");
+
+    // Verify Outbound badge and View Related Contact navigation on source profile
+    await expect(page.getByTestId("relationship-direction-badge").first()).toContainText(
+      /outbound|صادر/i
+    );
+    const navBtn = page.getByTestId("relationship-navigate-btn").first();
+    await expect(navBtn).toBeVisible();
+    await navBtn.click();
+
+    await page.waitForURL((url) => url.pathname.endsWith(`/${secondPersonId}`), {
+      timeout: 15_000,
+    });
+    await page.waitForLoadState("networkidle");
+
+    // Verify Inbound badge on target profile
+    const targetRelsTab = page
+      .locator("[role='tab'][value='relationships'], [role='tab'][data-value='relationships']")
+      .or(page.getByRole("tab", { name: /relationships|العلاقات/i }))
+      .first();
+    await targetRelsTab.click();
+    await page.waitForLoadState("networkidle");
+
+    await expect(
+      page.getByTestId("relationship-direction-badge").filter({ hasText: /inbound|وارد/i }).first()
+    ).toBeVisible({ timeout: 10_000 });
+
+    // ── Step 5: 150+ Contacts Scale, Pagination, and Deep-Page Sub-Resource Hydration ──
+    const countRes = await page.request.get(
+      "http://localhost:5179/api/v1/Parties?pageNumber=1&pageSize=1",
+      {
+        headers: { Authorization: `Bearer ${accessToken}` },
+      }
+    );
+    expect(countRes.status()).toBe(200);
+    const countJson = await countRes.json();
+    const currentTotal = countJson.totalCount ?? 0;
+
+    if (currentTotal < 152) {
+      const needed = 152 - currentTotal;
+      for (let seq = 1; seq <= needed; seq++) {
+        const seedRes = await page.request.post("http://localhost:5179/api/v1/Parties/people", {
+          headers: mutationHeaders(accessToken!, {
+            "Idempotency-Key": `scale-seed-${uniqueTimestamp}-${seq}`,
+          }),
+          data: {
+            fullName: `Scale Athlete ${seq} ${uniqueTimestamp}`,
+            displayName: `Athlete ${seq}`,
+          },
+        });
+        expect([200, 201]).toContain(seedRes.status());
+      }
+    }
+
+    const postSeedCountRes = await page.request.get(
+      "http://localhost:5179/api/v1/Parties?pageNumber=1&pageSize=1",
+      {
+        headers: { Authorization: `Bearer ${accessToken}` },
+      }
+    );
+    expect(postSeedCountRes.status()).toBe(200);
+    const postSeedCountJson = await postSeedCountRes.json();
+    expect(postSeedCountJson.totalCount).toBeGreaterThanOrEqual(152);
+
+    // Create the >150th contact with ContactPoint and PartyRole
+    const deepCreateRes = await page.request.post(
+      "http://localhost:5179/api/v1/Parties/people",
+      {
+        headers: mutationHeaders(accessToken!, {
+          "Idempotency-Key": `deep-contact-${uniqueTimestamp}`,
+        }),
+        data: {
+          fullName: `Zayd Al-Nasser Deep150 ${uniqueTimestamp}`,
+          displayName: `Zayd Deep150 ${uniqueTimestamp}`,
+          dateOfBirth: "2008-11-03",
+          isMinor: true,
+        },
+      }
+    );
+    expect([200, 201]).toContain(deepCreateRes.status());
+    const deepBody = await deepCreateRes.json();
+    const deepPersonId = typeof deepBody === "string" ? deepBody : deepBody.id;
+    expect(deepPersonId).toBeTruthy();
+
+    const deepEmail = `zayd.deep150.${uniqueTimestamp}@example.com`;
+    const deepCpRes = await page.request.post("http://localhost:5179/api/v1/contact-points", {
+      headers: mutationHeaders(accessToken!),
+      data: {
+        partyId: deepPersonId,
+        type: "Email",
+        value: deepEmail,
+        isPrimary: true,
+      },
+    });
+    expect([200, 201]).toContain(deepCpRes.status());
+
+    const deepRoleRes = await page.request.post("http://localhost:5179/api/v1/party-roles", {
+      headers: mutationHeaders(accessToken!),
+      data: {
+        partyId: deepPersonId,
+        roleType: "Customer",
+      },
+    });
+    expect([200, 201]).toContain(deepRoleRes.status());
+
+    // Verify 150+ pagination in Directory
+    await page.goto("/party-kernel/parties");
+    await page.waitForLoadState("networkidle");
+
+    const nextBtn = page.getByRole("button", { name: /^next$|^التالي$/i });
+    await expect(nextBtn).toBeEnabled({ timeout: 10_000 });
+    await nextBtn.click();
+    await page.waitForLoadState("networkidle");
+
+    // Open the >150th contact profile and verify sub-resources hydrate via ?partyId= without 100-row truncation
+    await page.goto(`/party-kernel/parties/${deepPersonId}`);
+    await page.waitForLoadState("networkidle");
+
+    await expect(page.locator("text=/2008/").first()).toBeVisible({ timeout: 10_000 });
+
+    const deepContactsTab = page
+      .locator("[role='tab'][value='contacts'], [role='tab'][data-value='contacts']")
+      .or(page.getByRole("tab", { name: /contact methods|contacts|وسائل التواصل/i }))
+      .first();
+    await deepContactsTab.click();
+    await page.waitForLoadState("networkidle");
+    await expect(page.locator(`text=${deepEmail}`)).toBeVisible({ timeout: 10_000 });
+
+    const deepRolesTab = page
+      .locator("[role='tab'][value='roles'], [role='tab'][data-value='roles']")
+      .or(page.getByRole("tab", { name: /roles|الأدوار/i }))
+      .first();
+    await deepRolesTab.click();
+    await page.waitForLoadState("networkidle");
+    await expect(page.locator("text=Customer").first()).toBeVisible({ timeout: 10_000 });
   });
 });

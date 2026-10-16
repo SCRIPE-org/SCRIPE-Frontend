@@ -173,4 +173,27 @@ describe("CreateOrganizationDialog Component", () => {
     expect(callArgs.phone).toBe("+966114445566");
     expect(callArgs.idempotencyKey).toBeDefined();
   });
+
+  it("submits organization with taxId when provided (C1.1)", async () => {
+    const onSubmit = vi.fn().mockResolvedValue("org-party-tax-999");
+    render(<CreateOrganizationDialog open={true} onOpenChange={vi.fn()} onSubmit={onSubmit} />);
+
+    const legalInput = document.getElementById("org-legal-name") as HTMLInputElement;
+    fireEvent.change(legalInput, { target: { value: "Riyadh Falcons Academy LLC" } });
+
+    const taxInput = document.getElementById("org-tax-id") as HTMLInputElement;
+    fireEvent.change(taxInput, { target: { value: "300112233400003" } });
+
+    const submitBtn = document.querySelector('button[type="submit"]') as HTMLButtonElement;
+    fireEvent.click(submitBtn);
+
+    await waitFor(() => {
+      expect(onSubmit).toHaveBeenCalledTimes(1);
+    });
+
+    const callArgs = onSubmit.mock.calls[0][0];
+    expect(callArgs.legalName).toBe("Riyadh Falcons Academy LLC");
+    expect(callArgs.taxId).toBe("300112233400003");
+  });
 });
+

@@ -34,6 +34,7 @@ interface AddRelationshipDialogProps {
   defaultRelationshipType?: string;
   title?: string;
   currentPartyId?: string;
+  sourcePartyType?: string;
 }
 
 /**
@@ -46,6 +47,7 @@ export function AddRelationshipDialog({
   defaultRelationshipType = "",
   title,
   currentPartyId,
+  sourcePartyType,
 }: AddRelationshipDialogProps) {
   const { t } = useI18n();
   const tr = (key: string, fallback: string) => {
@@ -100,6 +102,18 @@ export function AddRelationshipDialog({
       setError("Relationship type is required");
       return;
     }
+    if (
+      relationshipType.trim().toLowerCase() === "guardian" &&
+      (sourcePartyType === "Organization" || selectedParty?.type === "Organization")
+    ) {
+      setError(
+        tr(
+          "party.dialog.guardianOrgError",
+          "Guardian relationships can only be established between Person contacts."
+        )
+      );
+      return;
+    }
 
     try {
       setIsSubmitting(true);
@@ -137,7 +151,10 @@ export function AddRelationshipDialog({
 
           <div className="grid gap-4 py-4">
             {error && (
-              <div className="rounded-md bg-destructive/10 p-3 text-sm text-destructive border border-destructive/20">
+              <div
+                role="alert"
+                className="rounded-md bg-destructive/10 p-3 text-sm text-destructive border border-destructive/20"
+              >
                 {error}
               </div>
             )}

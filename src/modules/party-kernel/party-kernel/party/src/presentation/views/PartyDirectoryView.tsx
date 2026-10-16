@@ -77,6 +77,8 @@ import {
   ArrowRight,
   RefreshCw,
   Eye,
+  Phone,
+  Mail,
 } from "lucide-react";
 
 /**
@@ -389,227 +391,322 @@ export const PartyDirectoryView = React.memo(function PartyDirectoryView() {
           <Table>
             <TableHeader className="bg-nx-surface-2">
               <TableRow>
-                <TableHead className="w-[45%]">
+                <TableHead className="w-[34%]">
                   {t("party.columns.displayName")}
                 </TableHead>
-                <TableHead className="w-[20%]">
+                <TableHead className="w-[16%]">
                   {t("party.columns.type")}
                 </TableHead>
-                <TableHead className="w-[20%]">
+                <TableHead className="w-[22%]">
+                  {t("party.directory.quickContact")}
+                </TableHead>
+                <TableHead className="w-[14%]">
                   {t("party.columns.createdAt")}
                 </TableHead>
-                <TableHead className="w-[15%] text-end">
+                <TableHead className="w-[14%] text-end">
                   {t("party.columns.actions")}
                 </TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
-              {vm.parties.map((party) => (
-                <TableRow
-                  key={party.id}
-                  className="hover:bg-nx-surface-2/60 transition-colors cursor-pointer group"
-                  onClick={() => handleNavigateToProfile(party.id)}
-                >
-                  <TableCell>
-                    <div className="flex items-center gap-3">
-                      <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-nx-accent/10 text-xs font-semibold text-nx-accent">
-                        {party.initials}
-                      </div>
-                      <div className="min-w-0">
-                        <div className="font-medium text-nx-ink group-hover:text-nx-accent transition-colors truncate">
-                          {party.displayName}
+              {vm.parties.map((party) => {
+                const subtitle = party.isPerson
+                  ? party.fullName && party.fullName !== party.displayName
+                    ? party.fullName
+                    : t("party.types.Person")
+                  : party.legalName && party.legalName !== party.displayName
+                    ? party.legalName
+                    : t("party.types.Organization");
+                return (
+                  <TableRow
+                    key={party.id}
+                    className="hover:bg-nx-surface-2/60 transition-colors cursor-pointer group"
+                    onClick={() => handleNavigateToProfile(party.id)}
+                  >
+                    <TableCell>
+                      <div className="flex items-center gap-3">
+                        <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-nx-accent/10 text-xs font-semibold text-nx-accent">
+                          {party.initials}
                         </div>
-                        <div className="text-xs text-nx-ink-3 truncate max-w-[220px]">
+                        <div className="min-w-0">
+                          <div className="font-medium text-nx-ink group-hover:text-nx-accent transition-colors truncate">
+                            {party.displayName}
+                          </div>
+                          <div className="text-xs text-nx-ink-3 truncate max-w-[240px]">
+                            {subtitle}
+                          </div>
+                        </div>
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      <div className="flex flex-wrap items-center gap-1">
+                        <Badge variant={party.isPerson ? "info" : "success"}>
                           {party.isPerson
                             ? t("party.types.Person")
                             : t("party.types.Organization")}
-                        </div>
+                        </Badge>
+                        {party.roles.slice(0, 2).map((role) => (
+                          <Badge key={role} variant="secondary" className="text-[10px]">
+                            {role}
+                          </Badge>
+                        ))}
                       </div>
-                    </div>
-                  </TableCell>
-                  <TableCell>
-                    <Badge variant={party.isPerson ? "info" : "success"}>
-                      {party.isPerson
-                        ? t("party.types.Person")
-                        : t("party.types.Organization")}
-                    </Badge>
-                  </TableCell>
-                  <TableCell className="text-xs text-nx-ink-2">
-                    {formatDate(party.createdAt)}
-                  </TableCell>
-                  <TableCell className="text-end" onClick={(e) => e.stopPropagation()}>
-                    <div className="flex items-center justify-end gap-1">
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => vm.setPreviewParty(party)}
-                        className="h-8 gap-1 text-xs text-nx-ink-2 hover:text-nx-accent"
-                        title={t("party.directory.quickPreview")}
-                      >
-                        <Eye className="h-3.5 w-3.5" />
-                        <span className="hidden md:inline">
-                          {t("party.directory.quickPreview")}
-                        </span>
-                      </Button>
-
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => handleNavigateToProfile(party.id)}
-                        className="h-8 gap-1 text-xs text-nx-ink-2 hover:text-nx-accent"
-                      >
-                        <ExternalLink className="h-3.5 w-3.5" />
-                        <span className="hidden sm:inline">
-                          {t("party.directory.viewProfile")}
-                        </span>
-                      </Button>
-
-                      <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                          <Button variant="ghost" size="icon" className="h-8 w-8">
-                            <MoreVertical className="h-4 w-4" />
-                          </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end">
-                          <DropdownMenuItem
-                            onClick={() => vm.setPreviewParty(party)}
-                          >
-                            <Eye className="mr-2 h-4 w-4" />
-                            {t("party.directory.quickPreview")}
-                          </DropdownMenuItem>
-
-                          <DropdownMenuItem
-                            onClick={() => handleNavigateToProfile(party.id)}
-                          >
-                            <ExternalLink className="mr-2 h-4 w-4" />
-                            {t("party.directory.viewProfile")}
-                          </DropdownMenuItem>
-
-                          {vm.permissions.canEdit && (
-                            <DropdownMenuItem
-                              onClick={() => vm.setEditingParty(party)}
+                    </TableCell>
+                    <TableCell
+                      className="text-xs text-nx-ink-2"
+                      onClick={(e) => e.stopPropagation()}
+                    >
+                      {party.primaryPhone || party.primaryEmail ? (
+                        <div className="flex flex-col gap-0.5 min-w-0">
+                          {party.primaryPhone && (
+                            <a
+                              href={`tel:${party.primaryPhone}`}
+                              className="inline-flex items-center gap-1 font-mono text-nx-ink hover:text-nx-accent truncate"
                             >
-                              <Edit3 className="mr-2 h-4 w-4" />
-                              {t("party.editTitle")}
-                            </DropdownMenuItem>
+                              <Phone className="h-3 w-3 text-nx-ink-3 shrink-0" />
+                              <span className="truncate">{party.primaryPhone}</span>
+                            </a>
                           )}
+                          {party.primaryEmail && (
+                            <a
+                              href={`mailto:${party.primaryEmail}`}
+                              className="inline-flex items-center gap-1 text-nx-ink-2 hover:text-nx-accent truncate max-w-[200px]"
+                            >
+                              <Mail className="h-3 w-3 text-nx-ink-3 shrink-0" />
+                              <span className="truncate">{party.primaryEmail}</span>
+                            </a>
+                          )}
+                        </div>
+                      ) : (
+                        <span className="text-nx-ink-3">
+                          {t("party.directory.noContactRegistered")}
+                        </span>
+                      )}
+                    </TableCell>
+                    <TableCell className="text-xs text-nx-ink-2">
+                      {formatDate(party.createdAt)}
+                    </TableCell>
+                    <TableCell className="text-end" onClick={(e) => e.stopPropagation()}>
+                      <div className="flex items-center justify-end gap-1">
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => vm.setPreviewParty(party)}
+                          className="h-8 gap-1 text-xs text-nx-ink-2 hover:text-nx-accent"
+                          title={t("party.directory.quickPreview")}
+                        >
+                          <Eye className="h-3.5 w-3.5" />
+                          <span className="hidden md:inline">
+                            {t("party.directory.quickPreview")}
+                          </span>
+                        </Button>
 
-                          {vm.permissions.canDelete && (
-                            <>
-                              <DropdownMenuSeparator />
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => handleNavigateToProfile(party.id)}
+                          className="h-8 gap-1 text-xs text-nx-ink-2 hover:text-nx-accent"
+                        >
+                          <ExternalLink className="h-3.5 w-3.5" />
+                          <span className="hidden sm:inline">
+                            {t("party.directory.viewProfile")}
+                          </span>
+                        </Button>
+
+                        <DropdownMenu>
+                          <DropdownMenuTrigger asChild>
+                            <Button variant="ghost" size="icon" className="h-8 w-8">
+                              <MoreVertical className="h-4 w-4" />
+                            </Button>
+                          </DropdownMenuTrigger>
+                          <DropdownMenuContent align="end">
+                            <DropdownMenuItem
+                              onClick={() => vm.setPreviewParty(party)}
+                            >
+                              <Eye className="mr-2 h-4 w-4" />
+                              {t("party.directory.quickPreview")}
+                            </DropdownMenuItem>
+
+                            <DropdownMenuItem
+                              onClick={() => handleNavigateToProfile(party.id)}
+                            >
+                              <ExternalLink className="mr-2 h-4 w-4" />
+                              {t("party.directory.viewProfile")}
+                            </DropdownMenuItem>
+
+                            {vm.permissions.canEdit && (
                               <DropdownMenuItem
-                                onClick={() => vm.setDeletingParty(party)}
-                                className="text-destructive focus:text-destructive"
+                                onClick={() => vm.setEditingParty(party)}
                               >
-                                <Trash2 className="mr-2 h-4 w-4" />
-                                {t("party.deleteTitle")}
+                                <Edit3 className="mr-2 h-4 w-4" />
+                                {t("party.editTitle")}
                               </DropdownMenuItem>
-                            </>
-                          )}
-                        </DropdownMenuContent>
-                      </DropdownMenu>
-                    </div>
-                  </TableCell>
-                </TableRow>
-              ))}
+                            )}
+
+                            {vm.permissions.canDelete && (
+                              <>
+                                <DropdownMenuSeparator />
+                                <DropdownMenuItem
+                                  onClick={() => vm.setDeletingParty(party)}
+                                  className="text-destructive focus:text-destructive"
+                                >
+                                  <Trash2 className="mr-2 h-4 w-4" />
+                                  {t("party.deleteTitle")}
+                                </DropdownMenuItem>
+                              </>
+                            )}
+                          </DropdownMenuContent>
+                        </DropdownMenu>
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                );
+              })}
             </TableBody>
           </Table>
         </div>
       ) : (
         /* Card Grid View */
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          {vm.parties.map((party) => (
-            <Card
-              key={party.id}
-              className="hover:border-nx-accent/40 transition-all hover:shadow-sm cursor-pointer flex flex-col justify-between"
-              onClick={() => handleNavigateToProfile(party.id)}
-            >
-              <CardHeader className="pb-3">
-                <div className="flex items-start justify-between gap-3">
-                  <div className="flex items-center gap-3">
-                    <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-nx-accent/10 text-sm font-semibold text-nx-accent">
-                      {party.initials}
-                    </div>
-                    <div className="min-w-0">
-                      <CardTitle className="text-base truncate">
-                        {party.displayName}
-                      </CardTitle>
-                      <div className="text-xs text-nx-ink-3 truncate max-w-[180px]">
-                        {party.isPerson
-                          ? t("party.types.Person")
-                          : t("party.types.Organization")}
+          {vm.parties.map((party) => {
+            const subtitle = party.isPerson
+              ? party.fullName && party.fullName !== party.displayName
+                ? party.fullName
+                : t("party.types.Person")
+              : party.legalName && party.legalName !== party.displayName
+                ? party.legalName
+                : t("party.types.Organization");
+            return (
+              <Card
+                key={party.id}
+                className="hover:border-nx-accent/40 transition-all hover:shadow-sm cursor-pointer flex flex-col justify-between"
+                onClick={() => handleNavigateToProfile(party.id)}
+              >
+                <CardHeader className="pb-3">
+                  <div className="flex items-start justify-between gap-3">
+                    <div className="flex items-center gap-3 min-w-0">
+                      <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-nx-accent/10 text-sm font-semibold text-nx-accent">
+                        {party.initials}
+                      </div>
+                      <div className="min-w-0">
+                        <CardTitle className="text-base truncate">
+                          {party.displayName}
+                        </CardTitle>
+                        <div className="text-xs text-nx-ink-3 truncate max-w-[180px]">
+                          {subtitle}
+                        </div>
                       </div>
                     </div>
+                    <Badge variant={party.isPerson ? "info" : "success"}>
+                      {party.isPerson
+                        ? t("party.types.Person")
+                        : t("party.types.Organization")}
+                    </Badge>
                   </div>
-                  <Badge variant={party.isPerson ? "info" : "success"}>
-                    {party.isPerson
-                      ? t("party.types.Person")
-                      : t("party.types.Organization")}
-                  </Badge>
-                </div>
-              </CardHeader>
+                </CardHeader>
 
-              <CardContent className="pt-0 pb-3 text-xs text-nx-ink-2 space-y-2">
-                <div className="flex items-center gap-1.5 text-nx-ink-3">
-                  <Calendar className="h-3.5 w-3.5" />
-                  <span>
-                    {t("party.columns.createdAt")}: {formatDate(party.createdAt)}
-                  </span>
-                </div>
-              </CardContent>
+                <CardContent className="pt-0 pb-3 text-xs text-nx-ink-2 space-y-2">
+                  {(party.primaryPhone || party.primaryEmail) && (
+                    <div
+                      className="space-y-1 pb-1"
+                      onClick={(e) => e.stopPropagation()}
+                    >
+                      {party.primaryPhone && (
+                        <div className="flex items-center gap-1.5 text-nx-ink">
+                          <Phone className="h-3.5 w-3.5 text-nx-ink-3 shrink-0" />
+                          <a
+                            href={`tel:${party.primaryPhone}`}
+                            className="font-mono hover:text-nx-accent truncate"
+                          >
+                            {party.primaryPhone}
+                          </a>
+                        </div>
+                      )}
+                      {party.primaryEmail && (
+                        <div className="flex items-center gap-1.5 text-nx-ink-2">
+                          <Mail className="h-3.5 w-3.5 text-nx-ink-3 shrink-0" />
+                          <a
+                            href={`mailto:${party.primaryEmail}`}
+                            className="hover:text-nx-accent truncate"
+                          >
+                            {party.primaryEmail}
+                          </a>
+                        </div>
+                      )}
+                    </div>
+                  )}
 
-              <div
-                className="px-6 py-3 border-t border-nx-border bg-nx-surface-2/40 flex items-center justify-between"
-                onClick={(e) => e.stopPropagation()}
-              >
-                <div className="flex items-center gap-1">
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => vm.setPreviewParty(party)}
-                    className="gap-1 text-xs text-nx-ink-2 hover:text-nx-accent"
-                    title={t("party.directory.quickPreview")}
-                  >
-                    <Eye className="h-3.5 w-3.5" />
-                    <span>{t("party.directory.quickPreview")}</span>
-                  </Button>
+                  {party.roles.length > 0 && (
+                    <div className="flex flex-wrap gap-1">
+                      {party.roles.map((role) => (
+                        <Badge key={role} variant="secondary" className="text-[10px]">
+                          {role}
+                        </Badge>
+                      ))}
+                    </div>
+                  )}
 
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => handleNavigateToProfile(party.id)}
-                    className="gap-1 text-xs text-nx-accent hover:text-nx-accent"
-                  >
-                    <span>{t("party.directory.viewProfile")}</span>
-                    <ArrowRight className="h-3.5 w-3.5" />
-                  </Button>
-                </div>
+                  <div className="flex items-center gap-1.5 text-nx-ink-3">
+                    <Calendar className="h-3.5 w-3.5" />
+                    <span>
+                      {t("party.columns.createdAt")}: {formatDate(party.createdAt)}
+                    </span>
+                  </div>
+                </CardContent>
 
-                <div className="flex items-center gap-1">
-                  {vm.permissions.canEdit && (
+                <div
+                  className="px-6 py-3 border-t border-nx-border bg-nx-surface-2/40 flex items-center justify-between"
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  <div className="flex items-center gap-1">
                     <Button
                       variant="ghost"
-                      size="icon"
-                      className="h-7 w-7 text-nx-ink-3 hover:text-nx-ink"
-                      onClick={() => vm.setEditingParty(party)}
+                      size="sm"
+                      onClick={() => vm.setPreviewParty(party)}
+                      className="gap-1 text-xs text-nx-ink-2 hover:text-nx-accent"
+                      title={t("party.directory.quickPreview")}
                     >
-                      <Edit3 className="h-3.5 w-3.5" />
+                      <Eye className="h-3.5 w-3.5" />
+                      <span>{t("party.directory.quickPreview")}</span>
                     </Button>
-                  )}
-                  {vm.permissions.canDelete && (
+
                     <Button
                       variant="ghost"
-                      size="icon"
-                      className="h-7 w-7 text-nx-ink-3 hover:text-destructive"
-                      onClick={() => vm.setDeletingParty(party)}
+                      size="sm"
+                      onClick={() => handleNavigateToProfile(party.id)}
+                      className="gap-1 text-xs text-nx-accent hover:text-nx-accent"
                     >
-                      <Trash2 className="h-3.5 w-3.5" />
+                      <span>{t("party.directory.viewProfile")}</span>
+                      <ArrowRight className="h-3.5 w-3.5" />
                     </Button>
-                  )}
+                  </div>
+
+                  <div className="flex items-center gap-1">
+                    {vm.permissions.canEdit && (
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="h-7 w-7 text-nx-ink-3 hover:text-nx-ink"
+                        onClick={() => vm.setEditingParty(party)}
+                      >
+                        <Edit3 className="h-3.5 w-3.5" />
+                      </Button>
+                    )}
+                    {vm.permissions.canDelete && (
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="h-7 w-7 text-nx-ink-3 hover:text-destructive"
+                        onClick={() => vm.setDeletingParty(party)}
+                      >
+                        <Trash2 className="h-3.5 w-3.5" />
+                      </Button>
+                    )}
+                  </div>
                 </div>
-              </div>
-            </Card>
-          ))}
+              </Card>
+            );
+          })}
         </div>
       )}
 
@@ -662,6 +759,7 @@ export const PartyDirectoryView = React.memo(function PartyDirectoryView() {
 
       <EditPartyDialog
         party={vm.editingParty}
+        profile={vm.editingPartyProfile}
         initialFullName={vm.editingPartyFullName}
         open={!!vm.editingParty}
         onOpenChange={(open) => !open && vm.setEditingParty(null)}
@@ -677,6 +775,7 @@ export const PartyDirectoryView = React.memo(function PartyDirectoryView() {
 
       <PartyQuickPreviewSheet
         party={vm.previewParty}
+        profile={vm.previewPartyProfile}
         open={!!vm.previewParty}
         onOpenChange={(open) => !open && vm.setPreviewParty(null)}
         onNavigateToProfile={handleNavigateToProfile}

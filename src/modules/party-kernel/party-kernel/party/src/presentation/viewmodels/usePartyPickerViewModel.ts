@@ -7,6 +7,9 @@ import type {
   CreateOrganizationParams,
 } from "../../domain/interfaces/IPartyRepository";
 
+/**
+ * Parameters for initializing the PartyPicker viewmodel hook.
+ */
 export interface UsePartyPickerViewModelParams {
   debouncedSearch: string;
   typeFilter: "all" | "Person" | "Organization";

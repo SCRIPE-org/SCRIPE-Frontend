@@ -102,7 +102,10 @@ export function AddContactDialog({
 
           <div className="grid gap-4 py-4">
             {error && (
-              <div className="rounded-md bg-destructive/10 p-3 text-sm text-destructive border border-destructive/20">
+              <div
+                role="alert"
+                className="rounded-md bg-destructive/10 p-3 text-sm text-destructive border border-destructive/20"
+              >
                 {error}
               </div>
             )}

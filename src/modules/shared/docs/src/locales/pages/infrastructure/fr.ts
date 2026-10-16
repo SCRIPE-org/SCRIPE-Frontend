@@ -504,7 +504,7 @@ export const fr = {
       outboxMessageTitle: "Entité OutboxMessage",
       processorTitle: "OutboxProcessor — Le Distributeur Fiable",
       processorContent:
-        "Exécuté toutes les 30 secondes, le processeur dépile les messages en attente et les publie via IMediator.Publish avec verrouillage optimiste.",
+        "OutboxProcessor traite les événements de domaine en attente et enregistre l’état de nouvelle tentative en cas d’échec. Chaque livraison reçoit un nouveau scope d’injection de dépendances : les changements suivis par une livraison échouée ne peuvent donc pas être enregistrés par une livraison ultérieure. La livraison est au moins une fois ; les consommateurs qui modifient un état persistant doivent enregistrer un reçu Inbox dans la même transaction que leurs changements métier. Ce scope ne garantit pas un traitement unique entre plusieurs hôtes.",
       idempotencyTitle: "Exigences d'Idempotence",
       idempotencyContent:
         "OutboxMessage.Id sert de clé d'idempotence. Tous les récepteurs d'événements doivent vérifier l'exécution antérieure avant traitement.",

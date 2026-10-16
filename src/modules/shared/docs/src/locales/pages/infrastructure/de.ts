@@ -473,7 +473,7 @@ export const de = {
       outboxMessageTitle: "OutboxMessage-Entität",
       processorTitle: "OutboxProcessor — Zuverlässiger Dispatcher",
       processorContent:
-        "Der OutboxProcessor läuft alle 30 Sekunden, liest unverarbeitete Nachrichten stapelweise aus und veröffentlicht sie über IMediator.Publish mit automatischer Wiederholungslogik.",
+        "Der OutboxProcessor verarbeitet ausstehende Domänenereignisse und speichert bei Fehlern den Wiederholungsstatus. Jede Zustellung eines Domänenereignisses erhält einen neuen Dependency-Injection-Scope, sodass nach einer fehlgeschlagenen Zustellung nachverfolgte Änderungen nicht durch eine spätere Zustellung gespeichert werden. Die Zustellung erfolgt mindestens einmal: Verbraucher, die dauerhaften Zustand ändern, müssen einen Inbox-Beleg atomar mit den Geschäftsdaten speichern; der Scope garantiert keine einmalige Verarbeitung über mehrere Hosts hinweg.",
       idempotencyTitle: "Idempotenz-Anforderungen",
       idempotencyContent:
         "Die OutboxMessage.Id dient als Idempotenz-Schlüssel. Ereignishandler müssen idempotent implementiert werden, um Doppelausführungen sicher abzufangen.",

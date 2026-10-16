@@ -248,6 +248,9 @@ export const en = {
         "The Outbox Pattern solves the dual-write problem: how to atomically update the database AND publish an event. By persisting events in the same transaction as entity changes, we guarantee that events are never lost — even if the application crashes immediately after SaveChanges.",
       outboxWarning:
         "The Outbox Pattern provides at-least-once delivery, not exactly-once. Event handlers must be idempotent — they should produce the same result whether invoked once or multiple times with the same event.",
+      committedAuditTitle: "Committed Entity-Change Auditing",
+      committedAuditIntro:
+        "Entity-change audit snapshots are written to the owning module's OutboxMessages table with the business mutation, so rollback removes both. The outbox processor delivers the snapshot to the central Identity audit store at least once. The event ID is the AuditLog ID; a redelivery is treated as complete only when that exact ID and tenant already exist, including when a worker has no tenant query scope. Delivery is at-least-once, not exactly-once; failures remain retryable.",
       outboxMessageTitle: "OutboxMessage Entity",
       outboxInterceptorTitle: "OutboxInterceptor",
       outboxInterceptorIntro:

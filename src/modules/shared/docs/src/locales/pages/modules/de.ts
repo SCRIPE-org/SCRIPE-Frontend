@@ -1405,10 +1405,10 @@ export const de = {
           "Kaskadierung von Berechtigungen und Datenstrukturen durch die Unternehmensgliederung:",
         searchTitle: "Mehrsprachige Branchensuche",
         searchIntro:
-          "Die Branchensuche normalisiert arabische und lateinische Namen Unicode-bewusst und versionsgebunden. Sie lädt Kandidaten aus einem tenantbezogenen Suchindex, bewertet eine begrenzte Kandidatenmenge und begrenzt Seiten auf 100 Ergebnisse.",
+          "Die Branchensuche normalisiert arabische und lateinische Namen mit versionierten Unicode-Regeln. Sie lädt Kandidaten aus einem tenantbezogenen Index; für Token mit vier oder fünf Runen werden neben Trigrammen auch Bigramme verwendet, damit akzeptierte kurze Tippfehler den Fuzzy-Scorer erreichen. Token unter vier Runen müssen exakt übereinstimmen; längere Token erlauben eine Änderung. Seiten sind auf 100 Ergebnisse begrenzt.",
         searchSafetyTitle: "Suchbereich und Indexaufbau",
         searchSafetyContent:
-          "Tenant- und Plattformbereich werden vor Bewertung und Trefferzählung angewendet. Ähnlichkeit dient nur der Suche und identifiziert oder vereinigt keine Personen oder Organisationen. Neue Brancheneinträge aktualisieren den Index; vorhandene Einträge können durch einen begrenzten, ausdrücklich gestarteten Backfill ergänzt werden.",
+          "Tenant- und Plattformbereich werden vor Bewertung und Trefferzählung angewendet. Ähnlichkeit dient nur der Suche und identifiziert oder vereinigt keine Personen oder Organisationen. Neue Brancheneinträge aktualisieren den Index. Ein Plattform-Superadmin kann vorhandene Einträge in begrenzten Stapeln mit POST /api/v1/Branches/search-index/backfill?batchSize=200 nachpflegen; wiederholen, bis die Antwort updated=0 meldet. Nicht indizierte Einträge bleiben währenddessen suchbar.",
         apiTitle: "Organisations-API-Endpunkte",
         apiIntro:
           "Zentrale Schnittstellen zur Pflege von Unternehmensstrukturen, Standorten und Liegenschaften.",
@@ -2136,7 +2136,8 @@ export const de = {
         createItem: "Eine neue Dienstleistung, Leihressource oder ein Produkt anlegen",
         listOfferings: "Buchbare Angebote mit Basispreisen abrufen",
         listPriceBooks: "Aktive und geplante Preisbücher einsehen",
-        calculateQuote: "Angebot simulieren ohne Zustand zu speichern",
+        calculateQuote:
+          "Ein Preisangebot berechnen und speichern. Bei Wiederholungen denselben Idempotency-Key verwenden, um das ursprüngliche Angebot zurückzuerhalten; geänderte Eingaben mit demselben Schlüssel führen zu einem Konflikt.",
         createQuote: "Verbindliches Angebot mit Gültigkeitsdauer erstellen",
       },
       rateCards: {

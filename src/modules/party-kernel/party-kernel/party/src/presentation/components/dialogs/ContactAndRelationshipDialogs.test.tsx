@@ -226,4 +226,35 @@ describe("AddRelationshipDialog Component", () => {
     expect(onSubmit).not.toHaveBeenCalled();
     expect(screen.getByText("A contact cannot have a relationship with itself.")).toBeInTheDocument();
   });
+
+  it("blocks Guardian relationship when sourcePartyType is Organization and renders role=alert (C1.1)", async () => {
+    const onSubmit = vi.fn();
+
+    renderWithClient(
+      <AddRelationshipDialog
+        open={true}
+        onOpenChange={vi.fn()}
+        onSubmit={onSubmit}
+        currentPartyId="org-source-123"
+        sourcePartyType="Organization"
+        defaultRelationshipType="Guardian"
+      />
+    );
+
+    const toggleBtn = screen.getByText("Enter ID Manually");
+    fireEvent.click(toggleBtn);
+
+    const input = document.getElementById("rel-target") as HTMLInputElement;
+    fireEvent.change(input, { target: { value: "person-target-456" } });
+
+    const form = document.querySelector("form") as HTMLFormElement;
+    fireEvent.submit(form);
+
+    expect(onSubmit).not.toHaveBeenCalled();
+    const alert = screen.getByRole("alert");
+    expect(alert).toHaveTextContent(
+      "Guardian relationships can only be established between Person contacts."
+    );
+  });
 });
+

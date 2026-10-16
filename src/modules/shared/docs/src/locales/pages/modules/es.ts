@@ -1439,10 +1439,10 @@ export const es = {
           "Propagación descendente de directivas y privilegios a través de la estructura empresarial:",
         searchTitle: "Búsqueda multilingüe de sucursales",
         searchIntro:
-          "La búsqueda de sucursales normaliza nombres árabes y latinos con reglas Unicode versionadas. Obtiene candidatos de un índice limitado al tenant, ordena un conjunto acotado y limita cada página a 100 resultados.",
+          "La búsqueda de sucursales normaliza nombres árabes y latinos con reglas Unicode versionadas. Obtiene candidatos de un índice limitado al tenant; para tokens de cuatro o cinco runas usa bigramas además de trigramas para que los errores cortos aceptados lleguen al evaluador difuso. Los tokens de menos de cuatro runas deben coincidir exactamente; los más largos toleran una edición. Cada página se limita a 100 resultados.",
         searchSafetyTitle: "Alcance de búsqueda y carga inicial del índice",
         searchSafetyContent:
-          "El alcance del tenant y de las filas de plataforma se aplica antes de ordenar y contar resultados. La similitud solo sirve para buscar; no identifica ni fusiona personas u organizaciones. Las nuevas sucursales mantienen el índice y las existentes pueden completarse mediante una carga inicial limitada y ejecutada expresamente.",
+          "El alcance del tenant y de las filas de plataforma se aplica antes de ordenar y contar resultados. La similitud solo sirve para buscar; no identifica ni fusiona personas u organizaciones. Las nuevas sucursales mantienen el índice. Un superadministrador de plataforma puede actualizar registros existentes en lotes limitados con POST /api/v1/Branches/search-index/backfill?batchSize=200; repite la solicitud hasta que la respuesta indique updated=0. Los registros pendientes siguen siendo buscables durante la actualización.",
         apiTitle: "API de Estructura Organizativa",
         apiIntro:
           "Endpoints para definir sociedades, dependencias entre delegaciones y recintos deportivos.",
@@ -2178,7 +2178,8 @@ export const es = {
         createItem: "Registrar un nuevo servicio, recurso de alquiler o producto",
         listOfferings: "Listar servicios reservables con precios base y condiciones",
         listPriceBooks: "Consultar libros de precios vigentes y programados",
-        calculateQuote: "Simular el cálculo de una cotización sin guardar estado",
+        calculateQuote:
+          "Calcular y guardar una cotización. Reutiliza la misma Idempotency-Key al reintentar para recuperar la cotización original; cambiar los datos con la misma clave genera un conflicto.",
         createQuote: "Generar y guardar una cotización formal con plazo de validez",
       },
       rateCards: {

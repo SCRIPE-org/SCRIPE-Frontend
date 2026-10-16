@@ -14,6 +14,7 @@ export interface PartyListParams {
   pageSize: number;
   search?: string;
   type?: string;
+  sortBy?: string;
 }
 
 /**
@@ -133,6 +134,17 @@ export interface IPartyRepository {
       givenName?: string | null;
       middleNames?: string | null;
       familyName?: string | null;
+      dateOfBirth?: string | null;
+      isMinor?: boolean | null;
+      rowVersion?: string | null;
+    }
+  ): Promise<void>;
+  updateOrganization(
+    id: string,
+    data: {
+      legalName: string;
+      displayName?: string | null;
+      taxId?: string | null;
       rowVersion?: string | null;
     }
   ): Promise<void>;

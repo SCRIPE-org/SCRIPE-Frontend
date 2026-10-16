@@ -956,6 +956,9 @@ export const es = {
             "Cada fila lleva un nombre para mostrar que nunca está en blanco, una segunda línea opcional para distinguir dos registros con nombres parecidos, y una marca que indica si el registro está inactivo. Los registros eliminados no se devuelven en absoluto, así que esa marca nunca significa eliminado: una fila inactiva está presente, se puede seleccionar, y es una respuesta perfectamente válida.",
           searchTyping:
             "La escritura se retrasa deliberadamente antes de convertirse en una solicitud. Sin eso, un nombre de ocho caracteres dispararía ocho consultas entre módulos, siete de cuyas respuestas se descartarían, y la que se mostraría sería la que llegara en último lugar y no la que coincidiera con lo que escribiste.",
+          fieldAccessTitle: "El acceso a los campos también limita los resultados",
+          fieldAccessContent:
+            "El permiso para ver un tipo de registro no da acceso a todos los campos que utiliza su selector. Si tu rol restringe un campo usado para buscar, ordenar o mostrar el nombre, el módulo propietario puede no devolver coincidencias u omitir ese dato. Al resolver una referencia guardada se aplican las mismas restricciones de campo. Así, los recuentos de búsqueda y las referencias guardadas no revelan valores protegidos.",
 
           resolveTitle: "Resolver un puntero que ya tienes",
           resolveWhat:

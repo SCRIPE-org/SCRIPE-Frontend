@@ -28,6 +28,11 @@ export interface PartyData {
   modifiedAt?: string;
   linkedAdminId?: string;
   linkedUserId?: string;
+  fullName?: string | null;
+  legalName?: string | null;
+  primaryPhone?: string | null;
+  primaryEmail?: string | null;
+  roles?: string[];
 }
 
 /**
@@ -62,6 +67,26 @@ export class Party {
 
   get linkedUserId(): string | undefined {
     return this.data.linkedUserId;
+  }
+
+  get fullName(): string | null {
+    return this.data.fullName ?? null;
+  }
+
+  get legalName(): string | null {
+    return this.data.legalName ?? null;
+  }
+
+  get primaryPhone(): string | null {
+    return this.data.primaryPhone ?? null;
+  }
+
+  get primaryEmail(): string | null {
+    return this.data.primaryEmail ?? null;
+  }
+
+  get roles(): string[] {
+    return this.data.roles ?? [];
   }
 
   get isPerson(): boolean {

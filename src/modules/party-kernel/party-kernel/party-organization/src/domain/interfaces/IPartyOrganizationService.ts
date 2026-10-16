@@ -24,6 +24,7 @@ export interface IPartyOrganizationService {
     page: number;
     pageSize: number;
     search?: string;
+    partyId?: string;
   }): Promise<PartyOrganizationListResult>;
   getById(id: string): Promise<PartyOrganizationModel>;
   create(data: Record<string, unknown>): Promise<{ id: string }>;

@@ -496,7 +496,7 @@ export const es = {
       outboxMessageTitle: "Entidad OutboxMessage",
       processorTitle: "OutboxProcessor — El Despachador Confiable",
       processorContent:
-        "OutboxProcessor se ejecuta cada 30 segundos, despachando mensajes no procesados a través de IMediator.Publish con reintentos exponenciales.",
+        "OutboxProcessor procesa eventos de dominio pendientes y registra el estado de reintento cuando falla una entrega. Cada entrega obtiene un ámbito nuevo de inyección de dependencias, por lo que los cambios rastreados por una entrega fallida no pueden guardarse durante una entrega posterior. La entrega es al menos una vez: los consumidores que modifican estado persistente deben guardar un recibo Inbox atómicamente con sus cambios de negocio; este ámbito no garantiza procesamiento único entre varios hosts.",
       idempotencyTitle: "Requisitos de Idempotencia",
       idempotencyContent:
         "OutboxMessage.Id actúa como clave de idempotencia. Todos los manejadores que procesen eventos despachados deben ser idempotentes.",

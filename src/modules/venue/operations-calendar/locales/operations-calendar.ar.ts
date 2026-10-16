@@ -28,6 +28,9 @@ export const ar = {
       Confirmed: "مؤكد",
       CheckedIn: "تم تسجيل الحضور",
     },
+    quote: {
+      unavailable: "يلزم عرض سعر معتمد قبل التأكيد. يُرجى إعادة المحاولة.",
+    },
     detail: {
       title: "تفاصيل الحجز",
       description: "معلومات الحجز التشغيلية الحالية.",

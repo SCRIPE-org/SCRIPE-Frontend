@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { getPartyKernelContainer } from "../../../../di";
 import { PARTY_KERNEL_PERMISSIONS } from "../../../../permission-constants";
@@ -26,6 +26,22 @@ export type PartyProfileTab =
   | "history";
 
 /**
+ * Payload for updating a Party's profile and subtype attributes.
+ */
+export interface UpdatePartyProfilePayload {
+  displayName: string;
+  fullName?: string;
+  givenName?: string;
+  middleNames?: string;
+  familyName?: string;
+  dateOfBirth?: string | null;
+  isMinor?: boolean;
+  legalName?: string;
+  taxId?: string | null;
+  rowVersion?: string | null;
+}
+
+/**
  * Hook providing data, state, and actions for a single party profile workspace.
  * @param partyId The canonical encrypted party ID
  */
@@ -46,6 +62,9 @@ export function usePartyProfileViewModel(partyId: string) {
   const [isAddRoleOpen, setIsAddRoleOpen] = useState(false);
   const [isAddRelationshipOpen, setIsAddRelationshipOpen] = useState(false);
   const [isDeleteConfirmOpen, setIsDeleteConfirmOpen] = useState(false);
+  const [relatedPartiesMap, setRelatedPartiesMap] = useState<
+    Record<string, { displayName: string; type: string }>
+  >({});
 
   // Permissions
   const canEditParty = usePermission(PARTY_KERNEL_PERMISSIONS.PARTY_UPDATE);
@@ -67,11 +86,55 @@ export function usePartyProfileViewModel(partyId: string) {
     staleTime: 15_000,
   });
 
+  // Resolve human-readable names for related parties in relationships and merge candidates
+  useEffect(() => {
+    const profile = profileQuery.data;
+    if (!profile || typeof partyRepository.getById !== "function") return;
+
+    const otherIds = new Set<string>();
+    for (const rel of profile.relationships ?? []) {
+      const otherId = rel.sourcePartyId === partyId ? rel.targetPartyId : rel.sourcePartyId;
+      if (otherId && otherId !== partyId) {
+        otherIds.add(otherId);
+      }
+    }
+    for (const mc of profile.mergeCandidates ?? []) {
+      const otherId = mc.primaryPartyId === partyId ? mc.duplicatePartyId : mc.primaryPartyId;
+      if (otherId && otherId !== partyId) {
+        otherIds.add(otherId);
+      }
+    }
+
+    if (otherIds.size === 0) return;
+
+    let cancelled = false;
+    Promise.allSettled(
+      Array.from(otherIds).map(async (id) => {
+        const party = await partyRepository.getById(id);
+        return { id, displayName: party.displayName, type: party.type };
+      })
+    ).then((results) => {
+      if (cancelled) return;
+      const nextMap: Record<string, { displayName: string; type: string }> = {};
+      for (const r of results) {
+        if (r.status === "fulfilled" && r.value.displayName) {
+          nextMap[r.value.id] = {
+            displayName: r.value.displayName,
+            type: r.value.type,
+          };
+        }
+      }
+      setRelatedPartiesMap((prev) => ({ ...prev, ...nextMap }));
+    });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [profileQuery.data, partyId, partyRepository]);
+
   // Mutations
   const updateNameMutation = useMutation({
-    mutationFn: (
-      param: string | { displayName: string; fullName?: string; rowVersion?: string | null }
-    ) => {
+    mutationFn: (param: string | UpdatePartyProfilePayload) => {
       const displayName = typeof param === "string" ? param : param.displayName;
       const fullName = typeof param === "object" ? param.fullName : undefined;
       const explicitRowVersion = typeof param === "object" ? param.rowVersion : undefined;
@@ -79,6 +142,49 @@ export function usePartyProfileViewModel(partyId: string) {
       const type = party?.type;
       const rowVersion =
         explicitRowVersion !== undefined ? explicitRowVersion : profileQuery.data?.rowVersion;
+
+      if (typeof param === "object") {
+        const hasExtendedPersonFields =
+          param.dateOfBirth !== undefined ||
+          param.isMinor !== undefined ||
+          param.givenName !== undefined ||
+          param.middleNames !== undefined ||
+          param.familyName !== undefined;
+
+        if (
+          type === "Person" &&
+          hasExtendedPersonFields &&
+          typeof partyRepository.updatePerson === "function"
+        ) {
+          return partyRepository.updatePerson(partyId, {
+            fullName: fullName || profileQuery.data?.fullName || displayName,
+            displayName,
+            givenName: param.givenName,
+            middleNames: param.middleNames,
+            familyName: param.familyName,
+            dateOfBirth: param.dateOfBirth,
+            isMinor: param.isMinor,
+            rowVersion: rowVersion ?? null,
+          });
+        }
+
+        const hasExtendedOrgFields =
+          param.legalName !== undefined || param.taxId !== undefined;
+
+        if (
+          type === "Organization" &&
+          hasExtendedOrgFields &&
+          typeof partyRepository.updateOrganization === "function"
+        ) {
+          return partyRepository.updateOrganization(partyId, {
+            legalName: param.legalName || profileQuery.data?.legalName || displayName,
+            displayName,
+            taxId: param.taxId,
+            rowVersion: rowVersion ?? null,
+          });
+        }
+      }
+
       return partyRepository.updatePartyName(partyId, displayName, {
         type,
         fullName,
@@ -276,6 +382,7 @@ export function usePartyProfileViewModel(partyId: string) {
 
   return {
     profile: profileQuery.data ?? null,
+    relatedPartiesMap,
     isLoading: profileQuery.isLoading,
     isFetching: profileQuery.isFetching,
     isError: profileQuery.isError,
@@ -303,15 +410,14 @@ export function usePartyProfileViewModel(partyId: string) {
     setIsDeleteConfirmOpen,
 
     handleUpdateName: (
-      param: string | { displayName: string; fullName?: string; rowVersion?: string | null },
+      param: string | UpdatePartyProfilePayload,
       maybeDisplayName?: string,
-      options?: { fullName?: string; rowVersion?: string | null }
+      options?: Omit<UpdatePartyProfilePayload, "displayName">
     ) => {
       if (typeof param === "string" && typeof maybeDisplayName === "string") {
         return updateNameMutation.mutateAsync({
           displayName: maybeDisplayName,
-          fullName: options?.fullName,
-          ...(options?.rowVersion !== undefined ? { rowVersion: options.rowVersion } : {}),
+          ...options,
         });
       }
       return updateNameMutation.mutateAsync(param);
