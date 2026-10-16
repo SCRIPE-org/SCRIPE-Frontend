@@ -1,5 +1,8 @@
 import { V1 } from "@/core/config/api-endpoints/_shared";
 
+/**
+ * Documentation for module export
+ */
 export const ANALYTICS_ENDPOINTS = {
   OVERVIEW: `${V1}/analytics/overview`,
   MRR_MOVEMENT: `${V1}/analytics/mrr-movement`,

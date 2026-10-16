@@ -28,17 +28,26 @@ export interface CreateFieldGroupInput {
   isGlobal: boolean;
 }
 
+/**
+ * Documentation for module export
+ */
 export interface UpdateFieldGroupInput {
   labelEn: string;
   labelAr?: string | null;
   sortOrder: number;
 }
 
+/**
+ * Documentation for module export
+ */
 export interface FieldGroupReorderItem {
   id: string;
   sortOrder: number;
 }
 
+/**
+ * Documentation for module export
+ */
 export interface IFieldGroupRepository {
   getByEntityType(entityTypeKey: string): Promise<FieldGroup[]>;
   create(data: CreateFieldGroupInput): Promise<string>;

@@ -1,3 +1,6 @@
+/**
+ * Documentation for module export
+ */
 export interface ApiKeyScopeChangeDto {
   previousScopes: string;
   newScopes: string;
@@ -5,6 +8,9 @@ export interface ApiKeyScopeChangeDto {
   changedByUserName: string;
 }
 
+/**
+ * Documentation for module export
+ */
 export interface ApiKeyDetailDto {
   id: string;
   name: string;
@@ -29,6 +35,9 @@ export interface ApiKeyDetailDto {
   scopeChanges: ApiKeyScopeChangeDto[];
 }
 
+/**
+ * Documentation for module export
+ */
 export interface ApiKeyStatsDto {
   totalHits: number;
   totalSuccessHits: number;
@@ -46,6 +55,9 @@ export interface ApiKeyStatsDto {
   rateLimitUsedPercent: number;
 }
 
+/**
+ * Documentation for module export
+ */
 export interface ApiKeyChartDataPointDto {
   period: string;
   totalHits: number;
@@ -54,6 +66,9 @@ export interface ApiKeyChartDataPointDto {
   avgResponseTimeMs: number;
 }
 
+/**
+ * Documentation for module export
+ */
 export interface ApiKeyActivityEntryDto {
   id: string;
   endpoint: string;

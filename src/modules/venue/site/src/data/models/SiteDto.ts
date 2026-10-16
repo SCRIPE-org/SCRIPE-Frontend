@@ -1,3 +1,6 @@
+/**
+ * Documentation for module export
+ */
 export interface SiteDto {
   id: string;
   name: string;
@@ -7,6 +10,9 @@ export interface SiteDto {
   createdAt?: string | null;
 }
 
+/**
+ * Documentation for module export
+ */
 export interface SiteListResponseDto {
   items: SiteDto[];
   totalCount: number;

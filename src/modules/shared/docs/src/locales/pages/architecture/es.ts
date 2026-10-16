@@ -562,27 +562,39 @@ export const es = {
     },
     crossModule: {
       title: "Colaboración Intermódulos en Detalle",
-      description: "Cómo colaboran Identity y Entitlements sin importarse mutuamente: mediante abstracciones de Core.Application, IRequireFeature y comportamientos del pipeline AstraFlow.",
-      intro: "Los módulos Identity y Entitlements deben colaborar estrechamente sin generar dependencias circulares. La capa neutral Core.Application define contratos fuertemente tipados que ambos módulos consumen.",
+      description:
+        "Cómo colaboran Identity y Entitlements sin importarse mutuamente: mediante abstracciones de Core.Application, IRequireFeature y comportamientos del pipeline AstraFlow.",
+      intro:
+        "Los módulos Identity y Entitlements deben colaborar estrechamente sin generar dependencias circulares. La capa neutral Core.Application define contratos fuertemente tipados que ambos módulos consumen.",
       bridgeTitle: "El Puente de Tres Capas",
-      bridgeContent: "El espacio de nombres Core.Application.Abstractions define más de 32 contratos de interfaz. Los comportamientos de AstraFlow consumen solo estas interfaces sin acoplamiento concreto.",
+      bridgeContent:
+        "El espacio de nombres Core.Application.Abstractions define más de 32 contratos de interfaz. Los comportamientos de AstraFlow consumen solo estas interfaces sin acoplamiento concreto.",
       gridCoreTitle: "Abstracciones de Core.Application",
-      gridCoreDesc: "Más de 32 contratos tipados (IFeatureChecker, ITenantPermissionManager, ICurrentUser) compartidos.",
+      gridCoreDesc:
+        "Más de 32 contratos tipados (IFeatureChecker, ITenantPermissionManager, ICurrentUser) compartidos.",
       gridEventsTitle: "Eventos de Dominio",
-      gridEventsDesc: "Las entidades emiten eventos de dominio gestionados mediante INotificationHandler sin acoplamiento directo.",
+      gridEventsDesc:
+        "Las entidades emiten eventos de dominio gestionados mediante INotificationHandler sin acoplamiento directo.",
       gridPipelineTitle: "Pipeline AstraFlow",
-      gridPipelineDesc: "FeatureCheckBehavior y AuthorizationBehavior aplican políticas intermodulares de forma automatizada.",
+      gridPipelineDesc:
+        "FeatureCheckBehavior y AuthorizationBehavior aplican políticas intermodulares de forma automatizada.",
       coreAbstractionsTitle: "Contratos de Core.Application",
-      coreAbstractionsContent: "IFeatureChecker y ITenantContext residen en Core.Application. Core.Infrastructure registra implementaciones NoOp con TryAddScoped, que los módulos reales reemplazan con AddScoped.",
+      coreAbstractionsContent:
+        "IFeatureChecker y ITenantContext residen en Core.Application. Core.Infrastructure registra implementaciones NoOp con TryAddScoped, que los módulos reales reemplazan con AddScoped.",
       requireFeatureTitle: "IRequireFeature: Control de Funciones en Comandos",
-      requireFeatureContent: "Los comandos implementan IRequireFeature para declarar requisitos de plan del inquilino, validados en el paso 4 del pipeline.",
+      requireFeatureContent:
+        "Los comandos implementan IRequireFeature para declarar requisitos de plan del inquilino, validados en el paso 4 del pipeline.",
       pipelineTitle: "Orden de Ejecución del Pipeline AstraFlow",
-      pipelineContent: "Cada comando fluye a través de 7 comportamientos en orden riguroso: Validación, Autorización, Comprobación de Funciones y finalmente el Handler.",
+      pipelineContent:
+        "Cada comando fluye a través de 7 comportamientos en orden riguroso: Validación, Autorización, Comprobación de Funciones y finalmente el Handler.",
       eventFlowTitle: "Flujo de Eventos de Dominio",
-      eventFlowContent: "Los eventos se capturan en la transacción de base de datos mediante OutboxInterceptor y se distribuyen asíncronamente.",
+      eventFlowContent:
+        "Los eventos se capturan en la transacción de base de datos mediante OutboxInterceptor y se distribuyen asíncronamente.",
       realWorldTitle: "Caso Real: Identity ↔ Entitlements",
-      realWorldContent: "Ningún módulo accede directamente al almacén de datos de otro módulo. Todo acceso se rige por interfaces neutrales.",
-      keyInsightTip: "Principio clave: Ni Identity importa Entitlements, ni Entitlements importa Identity. La independencia garantiza despliegues y pruebas aisladas.",
+      realWorldContent:
+        "Ningún módulo accede directamente al almacén de datos de otro módulo. Todo acceso se rige por interfaces neutrales.",
+      keyInsightTip:
+        "Principio clave: Ni Identity importa Entitlements, ni Entitlements importa Identity. La independencia garantiza despliegues y pruebas aisladas.",
     },
   },
 };

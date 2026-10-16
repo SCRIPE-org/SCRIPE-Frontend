@@ -11,6 +11,9 @@ import { Input } from "@core/ui/input";
 import { cn } from "@core/common/utils";
 import { useI18n } from "@core/providers/i18n-provider";
 
+/**
+ * Documentation for module export
+ */
 export interface SchemaImportDropZoneProps {
   selectedFile: { name: string; size: number } | null;
   disabled: boolean;
@@ -25,6 +28,9 @@ function formatFileSize(bytes: number): string {
   return `${(kib / 1024).toFixed(1)} MB`;
 }
 
+/**
+ * Documentation for SchemaImportDropZone
+ */
 export function SchemaImportDropZone({
   selectedFile,
   disabled,

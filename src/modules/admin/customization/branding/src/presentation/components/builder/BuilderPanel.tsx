@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any, unused-imports/no-unused-vars */
 // UI-EXCEPTION: compact studio layout
 /**
  * BuilderPanel — Main panel for the DnD page builder

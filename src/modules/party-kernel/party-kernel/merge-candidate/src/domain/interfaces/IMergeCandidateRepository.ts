@@ -11,10 +11,11 @@ export interface MergeCandidateListParams {
   search?: string;
 }
 
+/**
+ * Documentation for module export
+ */
 export interface IMergeCandidateRepository {
-  getAll(
-    params: MergeCandidateListParams
-  ): Promise<{
+  getAll(params: MergeCandidateListParams): Promise<{
     items: MergeCandidate[];
     totalCount: number;
     page: number;

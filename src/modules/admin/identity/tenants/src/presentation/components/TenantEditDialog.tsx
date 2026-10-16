@@ -89,11 +89,7 @@ export function TenantEditDialog({
           </div>
           <div className="flex items-center justify-between">
             <Label htmlFor="tenant-edit-active">{t("tenant.activeStatus")}</Label>
-            <Switch
-              id="tenant-edit-active"
-              checked={form.isActive}
-              onCheckedChange={onSetActive}
-            />
+            <Switch id="tenant-edit-active" checked={form.isActive} onCheckedChange={onSetActive} />
           </div>
         </div>
         <DialogFooter>

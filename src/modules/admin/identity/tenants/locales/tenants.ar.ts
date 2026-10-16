@@ -155,7 +155,8 @@ export const ar = {
     domainsAddedSuccess: "تم إضافة النطاق بنجاح",
     domainsAddFailed: "فشل في إضافة النطاق",
     domainsVerifiedSuccess: "تم التحقق من النطاق بنجاح",
-    domainsDnsRevertedInvalid: "لم يعد بالإمكان العثور على سجلات DNS. تم تحديث حالة النطاق إلى تهيئة غير صالحة.",
+    domainsDnsRevertedInvalid:
+      "لم يعد بالإمكان العثور على سجلات DNS. تم تحديث حالة النطاق إلى تهيئة غير صالحة.",
     domainsVerifyFailed: "فشل التحقق",
     domainsPrimaryUpdated: "تم تحديث النطاق الرئيسي",
     domainsPrimaryFailed: "فشل في تعيين النطاق الرئيسي",
@@ -168,9 +169,11 @@ export const ar = {
     domainsDnsStep2: "الخطوة 2: أضف سجل TXT للتحقق من الملكية",
     domainsCnameTarget: "admin.scripe.org",
     domainsApexNotice: "تم اكتشاف نطاق رئيسي (Apex / Root Domain)",
-    domainsApexTip: "بالنسبة للنطاقات الجذرية (مثل example.com)، قم بإنشاء سجل A يشير إلى IP الخادم أو سجل ALIAS/ANAME يشير إلى {target}. نوصي أيضاً بتهيئة www كنطاق مرافق.",
+    domainsApexTip:
+      "بالنسبة للنطاقات الجذرية (مثل example.com)، قم بإنشاء سجل A يشير إلى IP الخادم أو سجل ALIAS/ANAME يشير إلى {target}. نوصي أيضاً بتهيئة www كنطاق مرافق.",
     domainsSubdomainNotice: "تم اكتشاف نطاق فرعي (Subdomain)",
-    domainsSubdomainTip: "بالنسبة للنطاقات الفرعية (مثل www أو app)، قم بإنشاء سجل CNAME يشير إلى {target}.",
+    domainsSubdomainTip:
+      "بالنسبة للنطاقات الفرعية (مثل www أو app)، قم بإنشاء سجل CNAME يشير إلى {target}.",
     domainsDnsRecordsTitle: "سجلات تهيئة DNS",
     domainsRecordType: "النوع",
     domainsRecordName: "الاسم / المضيف",
@@ -182,44 +185,56 @@ export const ar = {
     domainsPurposeVerification: "التحقق من الملكية",
     domainsStatusConfigured: "تهيئة صالحة",
     domainsStatusPending: "بانتظار التحقق",
-    domainsDnsPropagationNote: "قد تستغرق تغييرات DNS من بضع دقائق وحتى 48 ساعة للانتشار حول العالم بناءً على إعدادات TTL لدى موفر النطاق.",
+    domainsDnsPropagationNote:
+      "قد تستغرق تغييرات DNS من بضع دقائق وحتى 48 ساعة للانتشار حول العالم بناءً على إعدادات TTL لدى موفر النطاق.",
     domainsDnsProviderTipsTitle: "إرشادات ضبط DNS حسب المزود",
-    domainsDnsCloudflareTip: "Cloudflare: تأكد من ضبط حالة البروكسي على DNS only (السحابة الرمادية). البروكسي النشط يعيق التحقق من الملكية.",
-    domainsDnsRegistrarTip: "GoDaddy و Namecheap وغيرهم: في حقل 'الاسم' أو 'المضيف'، أدخل '@' للنطاق الأساسي أو بادئة النطاق الفرعي فقط (مثل '_scr-verify')، وليس النطاق كاملاً.",
+    domainsDnsCloudflareTip:
+      "Cloudflare: تأكد من ضبط حالة البروكسي على DNS only (السحابة الرمادية). البروكسي النشط يعيق التحقق من الملكية.",
+    domainsDnsRegistrarTip:
+      "GoDaddy و Namecheap وغيرهم: في حقل 'الاسم' أو 'المضيف'، أدخل '@' للنطاق الأساسي أو بادئة النطاق الفرعي فقط (مثل '_scr-verify')، وليس النطاق كاملاً.",
     domainsRefreshStatus: "التحقق من DNS الآن",
     domainsCheckingDns: "جاري فحص DNS...",
     domainsSslActive: "شهادة SSL / HTTPS نشطة",
     domainsSslPending: "شهادة SSL بانتظار DNS",
     domainsCopyAll: "نسخ جميع السجلات",
     domainsAllCopied: "تم نسخ جميع سجلات DNS إلى الحافظة",
-    domainsDeleteConfirm: "هل أنت متأكد من رغبتك في إزالة هذا النطاق المخصص؟ سيتوقف توجيه جميع الزيارات عبر هذا النطاق فوراً.",
+    domainsDeleteConfirm:
+      "هل أنت متأكد من رغبتك في إزالة هذا النطاق المخصص؟ سيتوقف توجيه جميع الزيارات عبر هذا النطاق فوراً.",
     domainsDeleteTitle: "إزالة النطاق",
     domainsStatsTotal: "إجمالي النطاقات",
     domainsStatsVerified: "مفعل ومؤكد",
     domainsStatsPending: "بانتظار التحقق",
     domainsHowItWorks: "كيف تعمل النطاقات المخصصة",
     domainsStep1Title: "1. أضف نطاقك",
-    domainsStep1Desc: "أدخل النطاق الرئيسي أو الفرعي الذي ترغب في ربطه بمساحة عملك (مثل www.acme.com أو portal.acme.com).",
+    domainsStep1Desc:
+      "أدخل النطاق الرئيسي أو الفرعي الذي ترغب في ربطه بمساحة عملك (مثل www.acme.com أو portal.acme.com).",
     domainsStep2Title: "2. إعداد سجلات DNS",
-    domainsStep2Desc: "سجل الدخول إلى موفر DNS الخاص بك (Cloudflare, GoDaddy, Namecheap) وأضف سجلات التوجيه والتحقق الموضحة بالجدول.",
+    domainsStep2Desc:
+      "سجل الدخول إلى موفر DNS الخاص بك (Cloudflare, GoDaddy, Namecheap) وأضف سجلات التوجيه والتحقق الموضحة بالجدول.",
     domainsStep3Title: "3. تحقق فوري وشهادة SSL",
-    domainsStep3Desc: "انقر على 'التحقق من DNS الآن'. بمجرد انتشار السجلات، يتم إصدار شهادة تشفير SSL/TLS تلقائياً للاتصال الآمن عبر HTTPS.",
+    domainsStep3Desc:
+      "انقر على 'التحقق من DNS الآن'. بمجرد انتشار السجلات، يتم إصدار شهادة تشفير SSL/TLS تلقائياً للاتصال الآمن عبر HTTPS.",
     domainsSystemManaged: "نطاق مدار تلقائياً",
     domainsSystemManagedHint: "تم إنشاء هذا النطاق تلقائياً من المنصة ولا يمكن إزالته.",
     // Vercel-grade Custom Domains & Redirects
     domainsAddTitle: "إضافة نطاقات",
     domainsFieldDomain: "النطاق",
-    domainsFieldDomainHint: "أدخل نطاقاً واحداً أو أكثر مفصولة بفواصل أو أسطر جديدة. مثال: acme.com, www.acme.com",
+    domainsFieldDomainHint:
+      "أدخل نطاقاً واحداً أو أكثر مفصولة بفواصل أو أسطر جديدة. مثال: acme.com, www.acme.com",
     domainsRecommendAddWww: "إضافة {partner} وإعادة توجيهه إلى {target}",
     domainsRecommendAddApex: "إضافة {partner} وإعادة توجيهه إلى {target}",
-    domainsRecommendAutoRedirectDesc: "موصى به: توجيه الزوار بسلاسة بين النطاق الرئيسي والنطاق الفرعي www.",
+    domainsRecommendAutoRedirectDesc:
+      "موصى به: توجيه الزوار بسلاسة بين النطاق الرئيسي والنطاق الفرعي www.",
     domainsModeConnectEnv: "توجيه إلى مساحة عمل المستأجر",
     domainsModeConnectWorkspace: "توجيه إلى مساحة عمل المستأجر",
-    domainsModeConnectWorkspaceDesc: "خدمة مساحة عمل المستأجر، البوابة العامة، والموقع مباشرة عبر هذا النطاق.",
+    domainsModeConnectWorkspaceDesc:
+      "خدمة مساحة عمل المستأجر، البوابة العامة، والموقع مباشرة عبر هذا النطاق.",
     domainsWorkspaceTarget: "مساحة عمل المستأجر",
-    domainsDnsNotConfiguredYet: "لم يتم اكتشاف سجلات DNS بعد. قد تستغرق تغييرات DNS ما يصل إلى 48 ساعة للانتشار عالمياً.",
+    domainsDnsNotConfiguredYet:
+      "لم يتم اكتشاف سجلات DNS بعد. قد تستغرق تغييرات DNS ما يصل إلى 48 ساعة للانتشار عالمياً.",
     domainsModeRedirect: "إعادة توجيه إلى نطاق آخر",
-    domainsModeRedirectDesc: "إعادة توجيه الزيارات الواردة من هذا النطاق إلى وجهة أخرى مع رمز استجابة HTTP.",
+    domainsModeRedirectDesc:
+      "إعادة توجيه الزيارات الواردة من هذا النطاق إلى وجهة أخرى مع رمز استجابة HTTP.",
     domainsHttpStatusCode: "رمز استجابة الحالة (Status Code)",
     domainsSelectStatusCode: "اختر رمز إعادة التوجيه",
     domainsStatusTemporary: "مؤقت (Temporary)",
@@ -246,7 +261,8 @@ export const ar = {
     domainsStatusInvalid: "تهيئة غير صالحة",
     domainsCustomShort: "مخصص",
     domainsAutoShort: "منصة",
-    domainsDnsPropagationNotice: "قد تستغرق تغييرات DNS من بضع دقائق وحتى 48 ساعة للانتشار حول العالم بناءً على إعدادات TTL لدى موفر النطاق.",
+    domainsDnsPropagationNotice:
+      "قد تستغرق تغييرات DNS من بضع دقائق وحتى 48 ساعة للانتشار حول العالم بناءً على إعدادات TTL لدى موفر النطاق.",
     created: "تم إنشاء المستأجر",
     createdDescription: "تم إنشاء المستأجر والاشتراك بنجاح.",
     updated: "تم تحديث المستأجر",
@@ -559,8 +575,7 @@ export const ar = {
     adminFirstNameRequired: "الاسم الأول مطلوب",
     adminPhone: "رقم هاتف التواصل",
     adminCustomFields: "الحقول المخصصة للمسؤول",
-    adminCustomFieldsDesc:
-      "السمات والبيانات الإضافية المحددة لحسابات المسؤولين.",
+    adminCustomFieldsDesc: "السمات والبيانات الإضافية المحددة لحسابات المسؤولين.",
     noAdminCustomFields: "لا توجد حقول مخصصة معرّفة للمسؤولين.",
     administrator: "المسؤول",
     requiredCustomFieldsMissing: "يرجى ملء جميع الحقول المخصصة المطلوبة.",

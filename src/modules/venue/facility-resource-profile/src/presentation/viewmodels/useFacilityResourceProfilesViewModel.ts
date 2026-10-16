@@ -10,6 +10,9 @@ import type {
 
 const PAGE_SIZE = 100;
 
+/**
+ * Documentation for module export
+ */
 export function useFacilityResourceProfilesViewModel() {
   const { facilityRepository, facilityResourceProfileRepository } = getVenueContainer();
   const [facilities, setFacilities] = useState<Facility[]>([]);
@@ -51,18 +54,22 @@ export function useFacilityResourceProfilesViewModel() {
   }, [facilities.length, loadFacilities, loadProfiles]);
 
   useEffect(() => {
-    void loadFacilities().catch((caught) => {
-      setError(caught instanceof Error ? caught : new Error("facility-load-failed"));
-      setLoading(false);
+    void Promise.resolve().then(() => {
+      void loadFacilities().catch((caught) => {
+        setError(caught instanceof Error ? caught : new Error("facility-load-failed"));
+        setLoading(false);
+      });
     });
   }, [loadFacilities]);
 
   useEffect(() => {
-    void loadProfiles()
-      .catch((caught) =>
-        setError(caught instanceof Error ? caught : new Error("resource-profile-load-failed"))
-      )
-      .finally(() => setLoading(false));
+    void Promise.resolve().then(() => {
+      void loadProfiles()
+        .catch((caught) =>
+          setError(caught instanceof Error ? caught : new Error("resource-profile-load-failed"))
+        )
+        .finally(() => setLoading(false));
+    });
   }, [loadProfiles]);
 
   const save = useCallback(

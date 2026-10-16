@@ -1,16 +1,25 @@
-"use client";
+﻿"use client";
 
 import { useState } from "react";
 import { CalendarClock, CalendarSync, ArrowLeft, AlertCircle, CheckCircle2 } from "lucide-react";
 import { Alert, AlertDescription } from "@core/ui/alert";
 import { Badge } from "@core/ui/badge";
 import { Button } from "@core/ui/button";
-import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@core/ui/dialog";
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@core/ui/dialog";
 import { Input } from "@core/ui/input";
 import { Label } from "@core/ui/label";
 import { LoadingSpinner } from "@core/ui/loading-spinner";
-import { getVenueContainer } from "@modules/venue/di";
-import type { AvailabilitySearchResult } from "@modules/venue/availability/src/domain/entities/Availability";
+import { useVenueServiceLocator } from "@modules/venue";
+import type { AvailabilitySearchResult } from "@modules/venue";
 
 interface Props {
   open: boolean;
@@ -25,11 +34,20 @@ interface Props {
   direction: "ltr" | "rtl";
   disabled: boolean;
   t: (key: string, values?: Record<string, string | number>) => string;
-  onConfirmReschedule: (input: { resourceId: string; requestedStartUtc: string; requestedEndUtc: string }) => void;
+  onConfirmReschedule: (input: {
+    resourceId: string;
+    requestedStartUtc: string;
+    requestedEndUtc: string;
+  }) => void;
 }
 
+/**
+ * Documentation for module export
+ */
 export function BookingRescheduleDialog(props: Props) {
-  const [date, setDate] = useState(() => new Date(props.currentStartUtc).toISOString().slice(0, 10));
+  const [date, setDate] = useState(() =>
+    new Date(props.currentStartUtc).toISOString().slice(0, 10)
+  );
   const [startTime, setStartTime] = useState("09:00");
   const [durationMinutes, setDurationMinutes] = useState(60);
   const [searching, setSearching] = useState(false);
@@ -38,6 +56,8 @@ export function BookingRescheduleDialog(props: Props) {
   const [selectedCandidate, setSelectedCandidate] = useState<AvailabilitySearchResult | null>(null);
   const [step, setStep] = useState<"search" | "review">("search");
   const [searchError, setSearchError] = useState<string | null>(null);
+
+  const { availabilityRepository } = useVenueServiceLocator();
 
   const resetState = () => {
     setSearching(false);
@@ -59,7 +79,9 @@ export function BookingRescheduleDialog(props: Props) {
     const [hours, mins] = startTime.split(":").map(Number);
     const endMins = hours * 60 + mins + durationMinutes;
     if (endMins >= 24 * 60) return;
-    const endHours = Math.floor(endMins / 60).toString().padStart(2, "0");
+    const endHours = Math.floor(endMins / 60)
+      .toString()
+      .padStart(2, "0");
     const endMinsPart = (endMins % 60).toString().padStart(2, "0");
     const endLocal = `${date}T${endHours}:${endMinsPart}`;
 
@@ -68,7 +90,6 @@ export function BookingRescheduleDialog(props: Props) {
     setSearchAttempted(true);
     setSelectedCandidate(null);
     try {
-      const { availabilityRepository } = getVenueContainer();
       const result = await availabilityRepository.search({
         resourceId: props.resourceId,
         timeZoneId: props.timeZoneId,
@@ -127,14 +148,23 @@ export function BookingRescheduleDialog(props: Props) {
 
         <div className="space-y-4 py-2">
           {/* Current schedule context box */}
-          <div className="rounded-nx-sm border border-nx-line bg-nx-raised p-3 text-xs space-y-1" data-testid="reschedule-current-context">
+          <div
+            className="space-y-1 rounded-nx-sm border border-nx-line bg-nx-raised p-3 text-xs"
+            data-testid="reschedule-current-context"
+          >
             <div className="flex justify-between">
-              <span className="text-nx-ink-2">{props.t("booking360.reschedule.currentSchedule")}:</span>
-              <span className="font-semibold text-nx-ink">{props.resourceName} ({props.facilityName})</span>
+              <span className="text-nx-ink-2">
+                {props.t("booking360.reschedule.currentSchedule")}:
+              </span>
+              <span className="font-semibold text-nx-ink">
+                {props.resourceName} ({props.facilityName})
+              </span>
             </div>
             <div className="flex justify-between">
               <span className="text-nx-ink-2">{props.t("booking360.schedule.time")}:</span>
-              <span className="font-medium text-nx-ink tabular-nums">{formatUtc(props.currentStartUtc)} – {formatUtc(props.currentEndUtc)}</span>
+              <span className="font-medium tabular-nums text-nx-ink">
+                {formatUtc(props.currentStartUtc)} â€“ {formatUtc(props.currentEndUtc)}
+              </span>
             </div>
           </div>
 
@@ -158,7 +188,9 @@ export function BookingRescheduleDialog(props: Props) {
                   />
                 </div>
                 <div>
-                  <Label htmlFor="reschedule-time">{props.t("booking360.reschedule.startTime")}</Label>
+                  <Label htmlFor="reschedule-time">
+                    {props.t("booking360.reschedule.startTime")}
+                  </Label>
                   <Input
                     id="reschedule-time"
                     type="time"
@@ -167,7 +199,9 @@ export function BookingRescheduleDialog(props: Props) {
                   />
                 </div>
                 <div>
-                  <Label htmlFor="reschedule-duration">{props.t("booking360.reschedule.duration")}</Label>
+                  <Label htmlFor="reschedule-duration">
+                    {props.t("booking360.reschedule.duration")}
+                  </Label>
                   <Input
                     id="reschedule-duration"
                     type="number"
@@ -180,33 +214,50 @@ export function BookingRescheduleDialog(props: Props) {
               </div>
 
               <div className="flex justify-end">
-                <Button type="button" variant="outline" size="sm" loading={searching} onClick={() => void handleSearch()}>
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  loading={searching}
+                  onClick={() => void handleSearch()}
+                >
                   <CalendarClock className="size-4" aria-hidden="true" />
-                  {searching ? props.t("booking360.reschedule.searching") : props.t("booking360.reschedule.search")}
+                  {searching
+                    ? props.t("booking360.reschedule.searching")
+                    : props.t("booking360.reschedule.search")}
                 </Button>
               </div>
 
               {searching && <LoadingSpinner showText={false} />}
 
               {searchAttempted && !searching && candidates.length === 0 && (
-                <p className="text-sm text-nx-ink-2">{props.t("booking360.reschedule.noCandidates")}</p>
+                <p className="text-sm text-nx-ink-2">
+                  {props.t("booking360.reschedule.noCandidates")}
+                </p>
               )}
 
               {candidates.length > 0 && (
-                <div className="space-y-2 border-t border-nx-line pt-3" data-testid="reschedule-candidates">
-                  <p className="text-xs font-semibold text-nx-ink-2">{props.t("booking360.reschedule.search")}</p>
-                  <div className="max-h-48 overflow-y-auto space-y-2">
+                <div
+                  className="space-y-2 border-t border-nx-line pt-3"
+                  data-testid="reschedule-candidates"
+                >
+                  <p className="text-xs font-semibold text-nx-ink-2">
+                    {props.t("booking360.reschedule.search")}
+                  </p>
+                  <div className="max-h-48 space-y-2 overflow-y-auto">
                     {candidates.map((c) => (
                       <Button
                         type="button"
                         variant="outline"
                         key={`${c.startUtc}-${c.endUtc}`}
-                        className="w-full text-start h-auto rounded-nx-sm border border-nx-line p-3 hover:bg-nx-hover flex items-center justify-between text-xs transition-colors font-normal"
+                        className="flex h-auto w-full items-center justify-between rounded-nx-sm border border-nx-line p-3 text-start text-xs font-normal transition-colors hover:bg-nx-hover"
                         onClick={() => handleSelectCandidate(c)}
                       >
                         <div className="text-start">
                           <p className="font-semibold text-nx-ink">{c.resourceName}</p>
-                          <p className="text-nx-ink-2 tabular-nums">{formatUtc(c.startUtc)} – {formatUtc(c.endUtc)}</p>
+                          <p className="tabular-nums text-nx-ink-2">
+                            {formatUtc(c.startUtc)} â€“ {formatUtc(c.endUtc)}
+                          </p>
                         </div>
                         <Badge variant="outline">{props.t("booking360.actions.reschedule")}</Badge>
                       </Button>
@@ -218,17 +269,31 @@ export function BookingRescheduleDialog(props: Props) {
           )}
 
           {step === "review" && selectedCandidate && (
-            <div className="space-y-4 border-t border-nx-line pt-3" data-testid="reschedule-review-step">
-              <h4 className="text-xs font-semibold text-nx-ink">{props.t("booking360.reschedule.reviewTitle")}</h4>
+            <div
+              className="space-y-4 border-t border-nx-line pt-3"
+              data-testid="reschedule-review-step"
+            >
+              <h4 className="text-xs font-semibold text-nx-ink">
+                {props.t("booking360.reschedule.reviewTitle")}
+              </h4>
               <div className="grid grid-cols-[1fr_auto_1fr] items-center gap-3 rounded-nx-sm border border-nx-line p-3 text-xs">
                 <div className="space-y-1">
-                  <span className="text-nx-ink-3 block text-[11px]">{props.t("booking360.reschedule.currentLabel")}</span>
-                  <p className="font-medium text-nx-ink tabular-nums">{formatUtc(props.currentStartUtc)} – {formatUtc(props.currentEndUtc)}</p>
+                  <span className="block text-[11px] text-nx-ink-3">
+                    {props.t("booking360.reschedule.currentLabel")}
+                  </span>
+                  <p className="font-medium tabular-nums text-nx-ink">
+                    {formatUtc(props.currentStartUtc)} â€“ {formatUtc(props.currentEndUtc)}
+                  </p>
                 </div>
                 <ArrowLeft className="size-4 text-nx-ink-3 ltr:rotate-180" aria-hidden="true" />
                 <div className="space-y-1">
-                  <span className="text-nx-accent block font-medium text-[11px]">{props.t("booking360.reschedule.targetLabel")}</span>
-                  <p className="font-medium text-nx-ink tabular-nums">{formatUtc(selectedCandidate.startUtc)} – {formatUtc(selectedCandidate.endUtc)}</p>
+                  <span className="block text-[11px] font-medium text-nx-accent">
+                    {props.t("booking360.reschedule.targetLabel")}
+                  </span>
+                  <p className="font-medium tabular-nums text-nx-ink">
+                    {formatUtc(selectedCandidate.startUtc)} â€“{" "}
+                    {formatUtc(selectedCandidate.endUtc)}
+                  </p>
                 </div>
               </div>
             </div>

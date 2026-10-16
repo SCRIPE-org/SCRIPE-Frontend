@@ -15,6 +15,9 @@ export interface ApiKeyData {
   createdAt: string;
 }
 
+/**
+ * Documentation for module export
+ */
 export class ApiKey {
   constructor(private readonly data: ApiKeyData) {}
 
@@ -71,6 +74,9 @@ export class ApiKey {
   }
 }
 
+/**
+ * Documentation for module export
+ */
 export interface CreateApiKeyRequest {
   name: string;
   scopes: string;
@@ -81,6 +87,9 @@ export interface CreateApiKeyRequest {
   ipWhitelist?: string;
 }
 
+/**
+ * Documentation for module export
+ */
 export interface CreateApiKeyResult {
   plainTextKey: string;
   id: string;

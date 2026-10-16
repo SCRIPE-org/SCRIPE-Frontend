@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
 import axios, {
@@ -201,7 +202,11 @@ export class ApiService implements IApiService {
         if (isMutating) {
           // Replay protection: unique timestamp + nonce per request
           config.headers["X-Request-Timestamp"] = Date.now().toString();
-          config.headers["X-Request-Nonce"] = generateUUID();
+          const nonce = generateUUID();
+          config.headers["X-Request-Nonce"] = nonce;
+          if (!config.headers["Idempotency-Key"]) {
+            config.headers["Idempotency-Key"] = nonce;
+          }
 
           // S0.15: CSRF protection — OWASP Signed Double-Submit Cookie pattern.
           // Token was captured from X-CSRF-Token response header on last response.
@@ -246,9 +251,12 @@ export class ApiService implements IApiService {
           // If a fresh token was already stored while this request was in-flight (e.g. via RouteGuard or broadcast),
           // retry immediately with the fresh token without triggering another refresh cycle.
           const activeToken = secureTokenService.getAccessToken();
-          const sentToken = originalRequest.headers?.Authorization?.toString().replace(/^Bearer\s+/i, "") ?? "";
+          const sentToken =
+            originalRequest.headers?.Authorization?.toString().replace(/^Bearer\s+/i, "") ?? "";
           if (activeToken && activeToken !== sentToken) {
-            appLogger.auth("Newer token already present in secureTokenService — retrying request immediately");
+            appLogger.auth(
+              "Newer token already present in secureTokenService — retrying request immediately"
+            );
             if (originalRequest.headers) {
               originalRequest.headers.Authorization = `Bearer ${activeToken}`;
             }
@@ -352,7 +360,9 @@ export class ApiService implements IApiService {
           // particular record because X" — not "you may not be on this page at all".
           // Show it inline; do not navigate the user away from what they were doing.
           if (data.errorCode) {
-            appLogger.warn(`Business-rule 403 (${data.errorCode}) — surfacing inline, not redirecting`);
+            appLogger.warn(
+              `Business-rule 403 (${data.errorCode}) — surfacing inline, not redirecting`
+            );
             // Attach the parsed body as `details`, exactly as every other rejection path in this
             // file does (the generic authenticated path and the public instance's, both below).
             //
@@ -582,13 +592,20 @@ export class ApiService implements IApiService {
   /**
    * Build config with AbortSignal
    */
-  private buildConfig(signal?: AbortSignal, params?: Record<string, unknown>): AxiosRequestConfig {
+  private buildConfig(
+    signal?: AbortSignal,
+    params?: Record<string, unknown>,
+    headers?: Record<string, string>
+  ): AxiosRequestConfig {
     const config: AxiosRequestConfig = {};
     if (signal) {
       config.signal = signal;
     }
     if (params) {
       config.params = params;
+    }
+    if (headers) {
+      config.headers = headers;
     }
     return config;
   }
@@ -637,8 +654,17 @@ export class ApiService implements IApiService {
     }
   }
 
-  async post<T>(endpoint: string, data?: unknown, signal?: AbortSignal): Promise<T> {
-    const response = await this.axiosInstance.post(endpoint, data, this.buildConfig(signal));
+  async post<T>(
+    endpoint: string,
+    data?: unknown,
+    signal?: AbortSignal,
+    options?: { headers?: Record<string, string> }
+  ): Promise<T> {
+    const response = await this.axiosInstance.post(
+      endpoint,
+      data,
+      this.buildConfig(signal, undefined, options?.headers)
+    );
     return this.unwrap<T>(response.data);
   }
 

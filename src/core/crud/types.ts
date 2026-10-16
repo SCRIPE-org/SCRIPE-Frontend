@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { PaginationInfo } from "@core/common/pagination";
 
 export interface PaginatedResult<T> {

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
 import { useState } from "react";
@@ -22,6 +23,9 @@ interface ApiKeyScopesPanelProps {
   isLoading?: boolean;
 }
 
+/**
+ * Documentation for ApiKeyScopesPanel
+ */
 export function ApiKeyScopesPanel({
   detail,
   isUpdating,

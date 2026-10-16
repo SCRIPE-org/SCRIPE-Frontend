@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 // FILE-EXCEPTION: file length
 /**
  * Role Permissions Dialog ViewModel
@@ -36,7 +37,7 @@ export interface UseRolePermissionsDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   role: Role | null;
-  tenantId: string;
+  tenantId?: string;
 }
 
 /**
@@ -62,6 +63,9 @@ export interface UseRolePermissionsDialogResult {
   totalCount: number;
   selectedCount: number;
   isLoading: boolean;
+  adminCount: number;
+  changesCount: { added: number; removed: number };
+  isDirty: boolean;
 
   // Actions
   toggle: (code: string) => void;
@@ -102,6 +106,7 @@ export function useRolePermissionsDialog({
 
   const [search, setSearch] = useState("");
   const [assignments, setAssignments] = useState<Map<string, PermissionAssignmentJson>>(new Map());
+  const [initialKeys, setInitialKeys] = useState<Set<string>>(new Set());
   const [expandedModules, setExpandedModules] = useState<Set<string>>(new Set());
   const [expandedGroups, setExpandedGroups] = useState<Record<string, string[]>>({});
   const [bulkScopeValue, setBulkScopeValue] = useState<string>("");
@@ -109,41 +114,37 @@ export function useRolePermissionsDialog({
   // Track which role we have already initialized assignments for
   const [initializedRoleId, setInitializedRoleId] = useState<string | null>(null);
 
-  // ── Reset state when dialog closes or switches to a different role ──
-  // useEffect prevents the React render-body setState anti-pattern.
+  // ── Reset state when dialog closes ──
   useEffect(() => {
     if (!open) {
-      // Dialog closed — clear all transient state so the next open is fresh
-      setSearch("");
-      setAssignments(new Map());
-      setExpandedModules(new Set());
-      setExpandedGroups({});
-      setBulkScopeValue("");
-      setInitializedRoleId(null);
+      queueMicrotask(() => {
+        setSearch("");
+        setAssignments(new Map());
+        setInitialKeys(new Set());
+        setExpandedModules(new Set());
+        setExpandedGroups({});
+        setBulkScopeValue("");
+        setInitializedRoleId(null);
+      });
     }
   }, [open]);
 
-  const roleId = role?.id;
-  useEffect(() => {
-    if (open && roleId) {
-      // Role changed while dialog is open — reset so we re-initialize below
-      setSearch("");
-      setAssignments(new Map());
-      setExpandedModules(new Set());
-      setExpandedGroups({});
-      setBulkScopeValue("");
-      setInitializedRoleId(null);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [roleId]);
+  // ── Effective Tenant Scope Resolution ──
+  // If tenantId was explicitly passed, use it; otherwise fall back to role's tenantId.
+  const effectiveTenantId = tenantId || role?.tenantId;
 
-  // ── Fetch tenant's available permissions GROUPED from backend ──
-  // Returns PermissionModuleGroup[] (Module → Category → Permissions)
-  // Zero client-side groupBy needed — backend does all grouping.
+  // ── Fetch available permissions GROUPED from backend ──
+  // If a tenant scope exists, fetch tenant's active licensed permissions.
+  // Otherwise, fetch system-wide / myTenant available permissions.
   const { data: tenantPermissionGroups = [], isLoading: loadingTenant } = useQuery({
-    queryKey: ["tenant-permissions-grouped", tenantId],
-    queryFn: () => identityContainer.roleRepository.getTenantAvailablePermissionsGrouped(tenantId),
-    enabled: open && !!tenantId,
+    queryKey: ["tenant-permissions-grouped", effectiveTenantId ?? "platform"],
+    queryFn: () => {
+      if (effectiveTenantId) {
+        return identityContainer.roleRepository.getTenantAvailablePermissionsGrouped(effectiveTenantId);
+      }
+      return identityContainer.roleRepository.getMyTenantAvailablePermissionsGrouped();
+    },
+    enabled: open,
   });
 
   // Flat permission list derived from groups (for toggle/lookup logic only)
@@ -161,18 +162,18 @@ export function useRolePermissionsDialog({
     enabled: open && !!role?.id,
   });
 
+  // ── Blast Radius: Count of Admins holding this role ──
+  const { data: adminCount = 0 } = useQuery({
+    queryKey: ["role-admin-count", role?.id],
+    queryFn: () => (role?.id ? identityContainer.roleRepository.getAdminCount(role.id) : 0),
+    enabled: open && !!role?.id,
+  });
+
   // ── Initialize assignments from role's permissions (once per role) ──
-  // useEffect is the correct place for derived state initialization.
   useEffect(() => {
-    if (
-      !open ||
-      !role?.id ||
-      allPermissions.length === 0 ||
-      loadingRole ||
-      initializedRoleId === role.id
-    ) {
-      return;
-    }
+    if (!open || !role?.id) return;
+    if (loadingRole || loadingTenant) return;
+    if (initializedRoleId === role.id) return;
 
     const validCodes = new Map<string, string>(); // code → id
     allPermissions.forEach((p) => validCodes.set(p.code, p.id));
@@ -181,63 +182,66 @@ export function useRolePermissionsDialog({
     const groupsWithSelection = new Set<string>();
 
     rolePermissions.forEach((rp: any) => {
-      if (validCodes.has(rp.permissionCode)) {
-        newAssignments.set(rp.permissionCode, {
-          permissionId: rp.permissionId,
-          scopeOverride: rp.scope,
-          restrictedFields: (() => {
-            if (
-              !rp.restrictedFields ||
-              rp.restrictedFields === "null" ||
-              rp.restrictedFields === ""
-            )
-              return [];
-            try {
-              return JSON.parse(rp.restrictedFields);
-            } catch {
-              return [];
-            }
-          })(),
-        });
+      const code = rp.permissionCode || rp.PermissionCode || rp.code || rp.Code;
+      const permId = rp.permissionId || rp.PermissionId || rp.id || rp.Id;
+      if (!code) return;
 
-        // Auto-expand accordion categories that have selected permissions.
-        // Key format matches AccordionItem value: `${module}-${category}`.
-        const permissionDef = allPermissions.find((p) => p.code === rp.permissionCode);
-        if (permissionDef) {
-          const mod = permissionDef.module || "General";
-          const cat = permissionDef.category || permissionDef.resource || "General";
-          groupsWithSelection.add(`${mod}-${cat}`);
-        }
+      newAssignments.set(code, {
+        permissionId: permId || validCodes.get(code) || "",
+        scopeOverride: rp.scope ?? rp.scopeOverride ?? rp.ScopeOverride,
+        restrictedFields: (() => {
+          if (!rp.restrictedFields || rp.restrictedFields === "null" || rp.restrictedFields === "")
+            return [];
+          if (Array.isArray(rp.restrictedFields)) return rp.restrictedFields;
+          try {
+            return JSON.parse(rp.restrictedFields);
+          } catch {
+            return [];
+          }
+        })(),
+      });
+
+      const permissionDef = allPermissions.find((p) => p.code === code);
+      if (permissionDef) {
+        const mod = permissionDef.module || "General";
+        const cat = permissionDef.category || permissionDef.resource || "General";
+        groupsWithSelection.add(`${mod}-${cat}`);
       }
     });
 
-    // Build per-module record: { [moduleKey]: categoryKey[] }
     const perModuleExpanded: Record<string, string[]> = {};
     const modulesWithSelection = new Set<string>();
     groupsWithSelection.forEach((key) => {
-      // key = `${module}-${category}`
       const dashIdx = key.indexOf("-");
       const mod = dashIdx !== -1 ? key.slice(0, dashIdx) : key;
       perModuleExpanded[mod] = [...(perModuleExpanded[mod] ?? []), key];
       modulesWithSelection.add(mod);
     });
 
-    setAssignments(newAssignments);
-    setExpandedModules(new Set(modulesWithSelection)); // auto-open modules that have selections
-    setExpandedGroups(perModuleExpanded);
-    setInitializedRoleId(role.id);
-  }, [open, roleId, allPermissions, rolePermissions, loadingRole, initializedRoleId]);
+    queueMicrotask(() => {
+      setAssignments(newAssignments);
+      setInitialKeys(new Set(newAssignments.keys()));
+      setExpandedModules(new Set(modulesWithSelection));
+      setExpandedGroups(perModuleExpanded);
+      setInitializedRoleId(role.id);
+    });
+  }, [open, role?.id, allPermissions, rolePermissions, loadingRole, loadingTenant, initializedRoleId]);
 
   // Save mutation
   const saveMutation = useMutation({
     mutationFn: async () => {
       if (!role) throw new Error("No role selected");
 
-      const permissions = Array.from(assignments.values()).map((a) => ({
-        permissionId: a.permissionId,
-        scopeOverride: a.scopeOverride ?? null,
-        restrictedFields: a.restrictedFields ?? [],
-      }));
+      const permissions = Array.from(assignments.entries())
+        .map(([code, a]) => {
+          const permId = a.permissionId || allPermissions.find((p) => p.code === code)?.id;
+          return {
+            permissionId: permId,
+            scopeOverride: a.scopeOverride ?? null,
+            restrictedFields: a.restrictedFields ?? [],
+          };
+        })
+        .filter((a): a is { permissionId: string; scopeOverride: string | null; restrictedFields: string[] } => !!a.permissionId);
 
       await identityContainer.roleRepository.assignPermissions(role.id, {
         permissions: permissions,
@@ -395,6 +399,20 @@ export function useRolePermissionsDialog({
     };
   };
 
+  const changesCount = useMemo(() => {
+    let added = 0;
+    let removed = 0;
+    for (const key of assignments.keys()) {
+      if (!initialKeys.has(key)) added++;
+    }
+    for (const key of initialKeys) {
+      if (!assignments.has(key)) removed++;
+    }
+    return { added, removed };
+  }, [assignments, initialKeys]);
+
+  const isDirty = changesCount.added > 0 || changesCount.removed > 0;
+
   return {
     // State
     search,
@@ -410,6 +428,9 @@ export function useRolePermissionsDialog({
     totalCount: allPermissions.length,
     selectedCount: assignments.size,
     isLoading: loadingTenant || loadingRole,
+    adminCount,
+    changesCount,
+    isDirty,
 
     // Actions
     toggle,

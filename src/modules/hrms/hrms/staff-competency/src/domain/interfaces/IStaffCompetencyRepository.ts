@@ -14,10 +14,11 @@ export interface StaffCompetencyListParams {
   sortDirection?: "asc" | "desc";
 }
 
+/**
+ * Documentation for module export
+ */
 export interface IStaffCompetencyRepository {
-  getAll(
-    params: StaffCompetencyListParams
-  ): Promise<{
+  getAll(params: StaffCompetencyListParams): Promise<{
     items: StaffCompetency[];
     totalCount: number;
     page: number;

@@ -1,4 +1,7 @@
-﻿export const ru = {
+﻿/**
+ * Documentation for module export
+ */
+export const ru = {
   modules: {
     auditLogs: {
       title: "Журналы аудита",

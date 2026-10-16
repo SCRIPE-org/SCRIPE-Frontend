@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 // EntityReferenceCustomFieldControl -- Wave 4 item 4.
 //
 // Mirrors MultiSelectCustomFieldControl.test.tsx's mocking conventions (same
@@ -63,9 +64,12 @@ vi.mock("../../../../../entity-lookup/src/presentation/hooks/useResolveEntityRef
 // consequence worth naming: the real hook needs a QueryClientProvider, so a call
 // count of zero here is genuine evidence that the control never mounted it, not
 // an artefact of the mock swallowing the request.
-vi.mock("../../../../../entity-lookup/src/presentation/hooks/useEntityLookupAvailableTypes", () => ({
-  useEntityLookupAvailableTypes: () => (hooks.availableTypes as () => unknown)(),
-}));
+vi.mock(
+  "../../../../../entity-lookup/src/presentation/hooks/useEntityLookupAvailableTypes",
+  () => ({
+    useEntityLookupAvailableTypes: () => (hooks.availableTypes as () => unknown)(),
+  })
+);
 
 if (typeof (globalThis as any).ResizeObserver === "undefined") {
   (globalThis as any).ResizeObserver = class {
@@ -82,8 +86,18 @@ if (typeof Element.prototype.scrollIntoView !== "function") {
 const USER_TYPE = "identity.user";
 const STAFF_TYPE = "hrms.staff-member";
 
-const AHMED = { id: "enc-ahmed", displayName: "Ahmed Ali", secondary: "ahmed@club.test", isActive: true };
-const DORMANT = { id: "enc-dormant", displayName: "Sara Nabil", secondary: "sara@club.test", isActive: false };
+const AHMED = {
+  id: "enc-ahmed",
+  displayName: "Ahmed Ali",
+  secondary: "ahmed@club.test",
+  isActive: true,
+};
+const DORMANT = {
+  id: "enc-dormant",
+  displayName: "Sara Nabil",
+  secondary: "sara@club.test",
+  isActive: false,
+};
 
 /** Real registry shapes -- the server supplies both names, and neither is a locale key. */
 const STAFF_TYPE_META = {
@@ -335,16 +349,12 @@ describe("EntityReferenceCustomFieldControl", () => {
       renderControl({ targetEntityTypeKey: null });
       openTypePanel();
 
-      expect(
-        screen.getByText("customField.entityReference.noTypesAvailable")
-      ).toBeInTheDocument();
+      expect(screen.getByText("customField.entityReference.noTypesAvailable")).toBeInTheDocument();
       expect(
         screen.getByText("customField.entityReference.noTypesAvailableHint")
       ).toBeInTheDocument();
       expect(screen.queryByRole("alert")).not.toBeInTheDocument();
-      expect(
-        screen.queryByRole("button", { name: "common.retry" })
-      ).not.toBeInTheDocument();
+      expect(screen.queryByRole("button", { name: "common.retry" })).not.toBeInTheDocument();
       expect(screen.queryByRole("option")).not.toBeInTheDocument();
     });
 
@@ -419,9 +429,7 @@ describe("EntityReferenceCustomFieldControl", () => {
       // target is server-resolved to identity.user, so offering a choice would
       // be offering a decision the backend has already made.
       expect(screen.getAllByRole("combobox")).toHaveLength(1);
-      expect(
-        screen.queryByRole("combobox", { name: TYPE_FIELD_NAME })
-      ).not.toBeInTheDocument();
+      expect(screen.queryByRole("combobox", { name: TYPE_FIELD_NAME })).not.toBeInTheDocument();
       expect(
         screen.queryByText("customField.entityReference.noTargetConfigured")
       ).not.toBeInTheDocument();
@@ -747,15 +755,11 @@ describe("EntityReferenceCustomFieldControl", () => {
       renderControl();
       openPanel();
 
-      expect(
-        screen.getByText("customField.entityReference.searchForbidden")
-      ).toBeInTheDocument();
+      expect(screen.getByText("customField.entityReference.searchForbidden")).toBeInTheDocument();
       expect(
         screen.getByText("customField.entityReference.searchForbiddenHint")
       ).toBeInTheDocument();
-      expect(
-        screen.queryByRole("button", { name: "common.retry" })
-      ).not.toBeInTheDocument();
+      expect(screen.queryByRole("button", { name: "common.retry" })).not.toBeInTheDocument();
       // Not the transport sentence, and not an alert: nothing broke.
       expect(
         screen.queryByText("customField.entityReference.searchFailed")
@@ -773,15 +777,11 @@ describe("EntityReferenceCustomFieldControl", () => {
       renderControl();
       openPanel();
 
-      expect(
-        screen.getByText("customField.entityReference.searchUnavailable")
-      ).toBeInTheDocument();
+      expect(screen.getByText("customField.entityReference.searchUnavailable")).toBeInTheDocument();
       expect(
         screen.getByText("customField.entityReference.searchUnavailableHint")
       ).toBeInTheDocument();
-      expect(
-        screen.queryByRole("button", { name: "common.retry" })
-      ).not.toBeInTheDocument();
+      expect(screen.queryByRole("button", { name: "common.retry" })).not.toBeInTheDocument();
     });
 
     it("keeps the three panel failures as three DIFFERENT renderings", () => {
@@ -842,9 +842,7 @@ describe("EntityReferenceCustomFieldControl", () => {
       // it names the element that shows the selection, and the resolved name is rendered
       // beside it rather than inside it, so a missed interpolation cannot leak a raw
       // placeholder into the page.
-      expect(
-        screen.getByText("customField.entityReference.selectedLabel")
-      ).toBeInTheDocument();
+      expect(screen.getByText("customField.entityReference.selectedLabel")).toBeInTheDocument();
       expect(screen.getByRole("combobox")).toHaveTextContent("Ahmed Ali");
     });
 

@@ -10,7 +10,7 @@
  * system-level and tenant-scoped data separately.
  */
 import { useQuery } from "@tanstack/react-query";
-import { useCallback, useMemo } from "react";
+import { useCallback } from "react";
 import { monitoringContainer } from "@modules/monitoring/di";
 import { useCurrentTenantId } from "@core/providers/tenant-context-provider";
 
@@ -102,10 +102,7 @@ export function useDashboardViewModel() {
 
   const isLoading = summary.isLoading || loginActivity.isLoading || recentChanges.isLoading;
   const hasError =
-    summary.isError ||
-    loginActivity.isError ||
-    recentChanges.isError ||
-    eventDistribution.isError;
+    summary.isError || loginActivity.isError || recentChanges.isError || eventDistribution.isError;
 
   const refetchAll = useCallback(() => {
     summary.refetch();

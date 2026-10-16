@@ -18,6 +18,9 @@ interface GeneratedKeyDialogProps {
   onClose: () => void;
 }
 
+/**
+ * Documentation for module export
+ */
 export function GeneratedKeyDialog({ generatedKey, onClose }: GeneratedKeyDialogProps) {
   const { t } = useI18n();
   const { success } = useEnhancedToast();

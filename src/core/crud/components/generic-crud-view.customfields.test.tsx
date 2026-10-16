@@ -1,5 +1,6 @@
+/* eslint-disable unused-imports/no-unused-vars */
 import { describe, it, expect, vi, afterEach } from "vitest";
-import { render, screen, fireEvent, waitFor, within } from "@testing-library/react";
+import { render, screen, fireEvent, waitFor, within, act } from "@testing-library/react";
 // `vitest.setup.ts` (which registers jest-dom's matchers at runtime for every
 // suite) is itself excluded from tsc's project (see tsconfig.json "exclude"),
 // and even so, it imports the plain "@testing-library/jest-dom" entry, which
@@ -103,7 +104,10 @@ describe("GenericCrudView + entityTypeKey", () => {
       entityTypeKey: "party.person",
     };
 
-    render(<GenericCrudView viewModel={vm} config={config} />);
+    await act(async () => {
+      render(<GenericCrudView viewModel={vm} config={config} />);
+      await new Promise((r) => setTimeout(r, 0));
+    });
 
     await waitFor(() => expect(screen.getByLabelText("Nationality")).toBeInTheDocument());
 
@@ -141,7 +145,10 @@ describe("GenericCrudView + entityTypeKey", () => {
       // unguarded spread.
     };
 
-    expect(() => render(<GenericCrudView viewModel={vm} config={config} />)).not.toThrow();
+    await act(async () => {
+      expect(() => render(<GenericCrudView viewModel={vm} config={config} />)).not.toThrow();
+      await new Promise((r) => setTimeout(r, 0));
+    });
 
     // No entityTypeKey means the extension must never be consulted.
     expect(extension.getFormFields).not.toHaveBeenCalled();
@@ -162,7 +169,10 @@ describe("GenericCrudView + entityTypeKey", () => {
       entityTypeKey: "party.person",
     };
 
-    render(<GenericCrudView viewModel={vm} config={config} />);
+    await act(async () => {
+      render(<GenericCrudView viewModel={vm} config={config} />);
+      await new Promise((r) => setTimeout(r, 0));
+    });
 
     await waitFor(() => expect(screen.getByLabelText("Nationality")).toBeInTheDocument());
 
@@ -203,7 +213,10 @@ describe("GenericCrudView + entityTypeKey", () => {
       entityTypeKey: "party.person",
     };
 
-    render(<GenericCrudView viewModel={vm} config={config} />);
+    await act(async () => {
+      render(<GenericCrudView viewModel={vm} config={config} />);
+      await new Promise((r) => setTimeout(r, 0));
+    });
     await waitFor(() => expect(screen.getByLabelText("Nationality")).toBeInTheDocument());
     fireEvent.change(screen.getByLabelText("Nationality"), { target: { value: "Egyptian" } });
     fireEvent.click(screen.getByText("common.save"));
@@ -228,7 +241,10 @@ describe("GenericCrudView + entityTypeKey", () => {
       entityTypeKey: "party.person",
     };
 
-    render(<GenericCrudView viewModel={vm} config={config} />);
+    await act(async () => {
+      render(<GenericCrudView viewModel={vm} config={config} />);
+      await new Promise((r) => setTimeout(r, 0));
+    });
 
     await waitFor(() => expect(screen.getByLabelText("Nationality")).toBeInTheDocument());
 
@@ -255,7 +271,10 @@ describe("GenericCrudView + entityTypeKey", () => {
       entityTypeKey: "party.person",
     };
 
-    render(<GenericCrudView viewModel={vm} config={config} />);
+    await act(async () => {
+      render(<GenericCrudView viewModel={vm} config={config} />);
+      await new Promise((r) => setTimeout(r, 0));
+    });
 
     await waitFor(() => expect(screen.getByLabelText("Nationality")).toBeInTheDocument());
 
@@ -281,7 +300,10 @@ describe("GenericCrudView + entityTypeKey", () => {
       entityTypeKey: "party.person",
     };
 
-    render(<GenericCrudView viewModel={vm} config={config} />);
+    await act(async () => {
+      render(<GenericCrudView viewModel={vm} config={config} />);
+      await new Promise((r) => setTimeout(r, 0));
+    });
     await waitFor(() => expect(screen.getByLabelText("Nationality")).toBeInTheDocument());
     fireEvent.change(screen.getByLabelText("First Name"), { target: { value: "Jane" } });
     fireEvent.change(screen.getByLabelText("Nationality"), { target: { value: "Egyptian" } });
@@ -326,7 +348,10 @@ describe("GenericCrudView + entityTypeKey", () => {
       entityTypeKey: "party.person",
     };
 
-    render(<GenericCrudView viewModel={vm} config={config} />);
+    await act(async () => {
+      render(<GenericCrudView viewModel={vm} config={config} />);
+      await new Promise((r) => setTimeout(r, 0));
+    });
 
     await waitFor(() => expect(screen.getByLabelText("Nationality")).toBeInTheDocument());
 
@@ -362,7 +387,10 @@ describe("GenericCrudView + entityTypeKey", () => {
       entityTypeKey: "party.person",
     };
 
-    render(<GenericCrudView viewModel={vm} config={config} />);
+    await act(async () => {
+      render(<GenericCrudView viewModel={vm} config={config} />);
+      await new Promise((r) => setTimeout(r, 0));
+    });
 
     // customFieldsForCreate/Edit are unconditional hooks too (Rules of Hooks)
     // and legitimately also call getFormFields with an undefined ownerId
@@ -391,7 +419,10 @@ describe("GenericCrudView + entityTypeKey", () => {
         entityTypeKey: "identity.admin",
       };
 
-      render(<GenericCrudView viewModel={vm} config={config} />);
+      await act(async () => {
+        render(<GenericCrudView viewModel={vm} config={config} />);
+        await new Promise((r) => setTimeout(r, 0));
+      });
 
       await waitFor(() =>
         expect(
@@ -416,7 +447,10 @@ describe("GenericCrudView + entityTypeKey", () => {
         entityTypeKey: "identity.admin",
       };
 
-      render(<GenericCrudView viewModel={vm} config={config} />);
+      await act(async () => {
+        render(<GenericCrudView viewModel={vm} config={config} />);
+        await new Promise((r) => setTimeout(r, 0));
+      });
 
       const deferSwitch = await screen.findByLabelText(
         /admin\.deferCustomFieldsToSetup|Complete custom fields/i
@@ -465,7 +499,10 @@ describe("GenericCrudView + entityTypeKey", () => {
         entityTypeKey: "identity.admin",
       };
 
-      render(<GenericCrudView viewModel={vm} config={config} />);
+      await act(async () => {
+        render(<GenericCrudView viewModel={vm} config={config} />);
+        await new Promise((r) => setTimeout(r, 0));
+      });
 
       await waitFor(() =>
         expect(
@@ -495,7 +532,10 @@ describe("GenericCrudView + entityTypeKey", () => {
         createFields: [{ name: "firstName", label: "First Name", type: "text" }],
       };
 
-      render(<GenericCrudView viewModel={vm} config={config} />);
+      await act(async () => {
+        render(<GenericCrudView viewModel={vm} config={config} />);
+        await new Promise((r) => setTimeout(r, 0));
+      });
 
       fireEvent.change(screen.getByLabelText("First Name"), { target: { value: "PlainUser" } });
       fireEvent.click(screen.getByText("common.save"));
@@ -517,7 +557,10 @@ describe("GenericCrudView + entityTypeKey", () => {
         createFields: [{ name: "firstName", label: "First Name", type: "text" }],
       };
 
-      render(<GenericCrudView viewModel={vm} config={config} />);
+      await act(async () => {
+        render(<GenericCrudView viewModel={vm} config={config} />);
+        await new Promise((r) => setTimeout(r, 0));
+      });
 
       fireEvent.change(screen.getByLabelText("First Name"), { target: { value: "Alice Updated" } });
       fireEvent.click(screen.getByText("common.save"));
@@ -541,7 +584,10 @@ describe("GenericCrudView + entityTypeKey", () => {
         entityTypeKey: "identity.admin",
       };
 
-      render(<GenericCrudView viewModel={vm} config={config} />);
+      await act(async () => {
+        render(<GenericCrudView viewModel={vm} config={config} />);
+        await new Promise((r) => setTimeout(r, 0));
+      });
 
       const sendEmailSwitch = await screen.findByLabelText("Send setup email");
       expect(
@@ -585,7 +631,10 @@ describe("GenericCrudView + entityTypeKey", () => {
         entityTypeKey: "identity.admin",
       };
 
-      render(<GenericCrudView viewModel={vm} config={config} />);
+      await act(async () => {
+        render(<GenericCrudView viewModel={vm} config={config} />);
+        await new Promise((r) => setTimeout(r, 0));
+      });
 
       await waitFor(() => expect(screen.getByLabelText("First Name")).toBeInTheDocument());
       // Defer switch must not be in document
@@ -652,7 +701,10 @@ describe("GenericCrudView + dynamic custom-field table columns", () => {
       entityTypeKey: "party.person",
     };
 
-    render(<GenericCrudView viewModel={vm} config={config} />);
+    await act(async () => {
+      render(<GenericCrudView viewModel={vm} config={config} />);
+      await new Promise((r) => setTimeout(r, 0));
+    });
 
     // Dependent bulk fetch: keyed on the current page's row ids.
     await waitFor(() =>
@@ -694,7 +746,10 @@ describe("GenericCrudView + dynamic custom-field table columns", () => {
       // Deliberately no entityTypeKey — the vast majority of existing screens.
     };
 
-    render(<GenericCrudView viewModel={vm} config={config} />);
+    await act(async () => {
+      render(<GenericCrudView viewModel={vm} config={config} />);
+      await new Promise((r) => setTimeout(r, 0));
+    });
 
     const table = await screen.findByRole("table");
     await waitFor(() => expect(within(table).getByText("Jane")).toBeInTheDocument());
@@ -782,7 +837,10 @@ describe("GenericCrudView + field-level security on custom-field columns (Tier 1
       { "row-1": { salary: "99000", shirt_size: "M" } }
     );
 
-    render(<GenericCrudView viewModel={rows()} config={baseConfig()} />);
+    await act(async () => {
+      render(<GenericCrudView viewModel={rows()} config={baseConfig()} />);
+      await new Promise((r) => setTimeout(r, 0));
+    });
 
     const table = await screen.findByRole("table");
     // Wait on the one custom-field column that is never restricted in any case

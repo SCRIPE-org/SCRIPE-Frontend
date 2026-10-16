@@ -104,7 +104,9 @@ export function useQrSignInViewModel(
 
   // ── Init session on mount ──
   useEffect(() => {
-    createSession();
+    queueMicrotask(() => {
+      void createSession();
+    });
     return () => {
       if (pollRef.current) clearInterval(pollRef.current);
       if (timerRef.current) clearInterval(timerRef.current);
@@ -167,7 +169,9 @@ export function useQrSignInViewModel(
   // Expire when timer hits zero — separate effect avoids nested setState
   useEffect(() => {
     if (timeLeft === 0 && status === "pending") {
-      setStatus("expired");
+      queueMicrotask(() => {
+        setStatus("expired");
+      });
     }
   }, [timeLeft, status]);
 

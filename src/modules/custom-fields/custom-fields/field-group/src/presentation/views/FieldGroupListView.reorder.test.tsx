@@ -291,12 +291,18 @@ describe("FieldGroupListView — inline create/edit panel", () => {
       screen.getByRole("textbox", { name: translate("fieldGroup.fields.labelEn") }),
       { target: { value: "Contact details" } }
     );
-    fireEvent.change(screen.getByRole("textbox", { name: translate("fieldGroup.fields.labelAr") }), {
-      target: { value: "بيانات الاتصال" },
-    });
-    fireEvent.change(screen.getByRole("spinbutton", { name: translate("fieldGroup.fields.sortOrder") }), {
-      target: { value: "3" },
-    });
+    fireEvent.change(
+      screen.getByRole("textbox", { name: translate("fieldGroup.fields.labelAr") }),
+      {
+        target: { value: "بيانات الاتصال" },
+      }
+    );
+    fireEvent.change(
+      screen.getByRole("spinbutton", { name: translate("fieldGroup.fields.sortOrder") }),
+      {
+        target: { value: "3" },
+      }
+    );
     fireEvent.click(screen.getByRole("button", { name: translate("common.save") }));
 
     await waitFor(() => expect(repository.create).toHaveBeenCalledTimes(1));

@@ -17,13 +17,7 @@ import {
 } from "@core/ui/dialog";
 import { Input } from "@core/ui/input";
 import { Label } from "@core/ui/label";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@core/ui/select";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@core/ui/select";
 import type { CustomerSummary } from "../../domain/entities/Booking";
 
 interface CustomerSelectionProps {
@@ -34,10 +28,17 @@ interface CustomerSelectionProps {
   searching: boolean;
   onSearch: (query: string) => Promise<CustomerSummary[]>;
   onSelect: (id: string) => Promise<CustomerSummary>;
-  onCreateCustomer?: (name: string, type?: "Person" | "Organization") => Promise<CustomerSummary>;
+  onCreateCustomer?: (
+    name: string,
+    type?: "Person" | "Organization",
+    phone?: string
+  ) => Promise<CustomerSummary>;
   onClear: () => void;
 }
 
+/**
+ * Documentation for CustomerSelection
+ */
 export function CustomerSelection({
   t,
   canViewCustomers,
@@ -54,6 +55,7 @@ export function CustomerSelection({
   const [isCreateOpen, setIsCreateOpen] = useState(false);
   const [newName, setNewName] = useState("");
   const [newType, setNewType] = useState<"Person" | "Organization">("Person");
+  const [newPhone, setNewPhone] = useState("");
   const [creating, setCreating] = useState(false);
   const [createError, setCreateError] = useState<string | null>(null);
 
@@ -69,9 +71,10 @@ export function CustomerSelection({
     setCreating(true);
     setCreateError(null);
     try {
-      await onCreateCustomer(newName.trim(), newType);
+      await onCreateCustomer(newName.trim(), newType, newPhone.trim() || undefined);
       setIsCreateOpen(false);
       setNewName("");
+      setNewPhone("");
     } catch (err: unknown) {
       setCreateError(err instanceof Error ? err.message : "Failed to create customer");
     } finally {
@@ -100,7 +103,9 @@ export function CustomerSelection({
             <DialogContent>
               <DialogHeader>
                 <DialogTitle>{t("booking.customer.quickCreate")}</DialogTitle>
-                <DialogDescription>{t("booking.customer.quickCreateDescription")}</DialogDescription>
+                <DialogDescription>
+                  {t("booking.customer.quickCreateDescription")}
+                </DialogDescription>
               </DialogHeader>
               <form onSubmit={handleCreate} className="space-y-4">
                 {createError && (
@@ -120,22 +125,44 @@ export function CustomerSelection({
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="quick-customer-type">{t("booking.customer.typeLabel")}</Label>
-                  <Select value={newType} onValueChange={(val) => setNewType(val as "Person" | "Organization")}>
+                  <Select
+                    value={newType}
+                    onValueChange={(val) => setNewType(val as "Person" | "Organization")}
+                  >
                     <SelectTrigger id="quick-customer-type">
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="Person">{t("booking.customer.person")}</SelectItem>
-                      <SelectItem value="Organization">{t("booking.customer.organization")}</SelectItem>
+                      <SelectItem value="Organization">
+                        {t("booking.customer.organization")}
+                      </SelectItem>
                     </SelectContent>
                   </Select>
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="quick-customer-phone">
+                    {t("booking.customer.phoneLabel") || "Primary Telephone (Optional)"}
+                  </Label>
+                  <Input
+                    id="quick-customer-phone"
+                    type="tel"
+                    value={newPhone}
+                    onChange={(e) => setNewPhone(e.target.value)}
+                    placeholder="+966 5x xxx xxxx"
+                  />
                 </div>
                 <DialogFooter className="gap-2 sm:gap-0">
                   <Button type="button" variant="outline" onClick={() => setIsCreateOpen(false)}>
                     {t("booking.customer.cancel")}
                   </Button>
-                  <Button type="submit" disabled={!newName.trim() || creating}>
-                    {creating ? t("booking.customer.creating") : t("booking.customer.createAction")}
+                  <Button
+                    type="submit"
+                    disabled={!newName.trim() || creating}
+                  >
+                    {creating
+                      ? t("booking.customer.creating")
+                      : t("booking.customer.createAction")}
                   </Button>
                 </DialogFooter>
               </form>
@@ -150,13 +177,15 @@ export function CustomerSelection({
             <AlertDescription>{t("booking.customer.permissionDescription")}</AlertDescription>
           </Alert>
         ) : customer ? (
-          <div className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-nx-border bg-nx-surface-2 p-4">
+          <div className="border-nx-border bg-nx-surface-2 flex flex-wrap items-center justify-between gap-3 rounded-xl border p-4">
             <div className="min-w-0">
               <p className="text-xs font-medium uppercase tracking-wide text-nx-ink-3">
                 {t("booking.customer.selected")}
               </p>
               <p className="truncate font-semibold text-nx-ink">{customer.displayName}</p>
-              <Badge variant="outline" className="mt-2">{customer.type}</Badge>
+              <Badge variant="outline" className="mt-2">
+                {customer.type}
+              </Badge>
             </div>
             <Button type="button" variant="outline" onClick={onClear}>
               <X className="size-4" aria-hidden="true" />
@@ -182,17 +211,22 @@ export function CustomerSelection({
             </form>
 
             {results.length > 0 && (
-              <ul className="divide-y divide-nx-border rounded-xl border border-nx-border list-none p-0 m-0" role="list">
+              <ul
+                className="divide-nx-border border-nx-border m-0 list-none divide-y rounded-xl border p-0"
+                role="list"
+              >
                 {results.map((party) => (
                   <li key={party.id} role="listitem">
                     <Button
                       type="button"
                       variant="ghost"
-                      className="flex w-full h-auto items-center justify-between gap-3 p-3 text-start font-normal rounded-none first:rounded-t-xl last:rounded-b-xl hover:bg-nx-surface-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-nx-accent"
+                      className="hover:bg-nx-surface-2 flex h-auto w-full items-center justify-between gap-3 rounded-none p-3 text-start font-normal first:rounded-t-xl last:rounded-b-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-nx-accent"
                       onClick={() => void onSelect(party.id)}
                     >
                       <span className="min-w-0">
-                        <span className="block truncate font-medium text-nx-ink">{party.displayName}</span>
+                        <span className="block truncate font-medium text-nx-ink">
+                          {party.displayName}
+                        </span>
                         <span className="block text-xs text-nx-ink-3">{party.type}</span>
                       </span>
                       <Check className="size-4 shrink-0 text-nx-accent" aria-hidden="true" />
@@ -203,7 +237,7 @@ export function CustomerSelection({
             )}
 
             {searched && !searching && results.length === 0 && (
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 rounded-xl border border-dashed border-nx-border p-4 bg-nx-surface-2">
+              <div className="border-nx-border bg-nx-surface-2 flex flex-col justify-between gap-3 rounded-xl border border-dashed p-4 sm:flex-row sm:items-center">
                 <p className="text-sm text-nx-ink-2">{t("booking.customer.noResults")}</p>
                 {onCreateCustomer && (
                   <Button

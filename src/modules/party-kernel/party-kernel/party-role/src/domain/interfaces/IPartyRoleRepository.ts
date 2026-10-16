@@ -11,10 +11,11 @@ export interface PartyRoleListParams {
   search?: string;
 }
 
+/**
+ * Documentation for module export
+ */
 export interface IPartyRoleRepository {
-  getAll(
-    params: PartyRoleListParams
-  ): Promise<{
+  getAll(params: PartyRoleListParams): Promise<{
     items: PartyRole[];
     totalCount: number;
     page: number;

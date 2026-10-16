@@ -95,16 +95,7 @@ export function PlanCard({
     const amount = billingCycle === "monthly" ? monthlyPrice : annualPrice;
     const monthly = billingCycle === "annual" && amount ? Math.round(amount / 12) : amount;
     return formatCurrency(monthly, currency, locale, isFxConverted);
-  }, [
-    isFree,
-    isCustom,
-    billingCycle,
-    monthlyPrice,
-    annualPrice,
-    currency,
-    locale,
-    isFxConverted,
-  ]);
+  }, [isFree, isCustom, billingCycle, monthlyPrice, annualPrice, currency, locale, isFxConverted]);
 
   const annualText = useMemo(() => {
     if (isFree || isCustom || billingCycle !== "annual" || !annualPrice) return null;

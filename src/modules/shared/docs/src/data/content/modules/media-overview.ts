@@ -107,7 +107,11 @@ const sections: DocSection[] = [
       { id: "D", label: "Assemble chunks & compute SHA-256 integrity checksum", type: "primary" },
       { id: "E", label: "ClamAV asynchronous anti-malware scan verification", type: "warning" },
       { id: "F", label: "Move to production storage (S3 / Azure Blob / MinIO)", type: "success" },
-      { id: "G", label: "Emit MediaFileCreatedDomainEvent & trigger image optimizer", type: "success" },
+      {
+        id: "G",
+        label: "Emit MediaFileCreatedDomainEvent & trigger image optimizer",
+        type: "success",
+      },
     ],
     connections: [
       { from: "A", to: "B" },
@@ -183,10 +187,6 @@ registerPage({
   category: "modules",
   order: 2.35,
   sections,
-  relatedSlugs: [
-    "infrastructure/file-storage",
-    "infrastructure/media",
-    "modules/custom-fields",
-  ],
+  relatedSlugs: ["infrastructure/file-storage", "infrastructure/media", "modules/custom-fields"],
   lastUpdated: "2026-10-03",
 });

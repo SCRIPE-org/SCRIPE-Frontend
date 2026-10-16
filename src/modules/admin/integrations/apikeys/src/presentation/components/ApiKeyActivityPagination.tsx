@@ -49,7 +49,9 @@ export function ApiKeyActivityPagination({
   const [jumpPageVal, setJumpPageVal] = useState(page.toString());
 
   useEffect(() => {
-    setJumpPageVal(page.toString());
+    queueMicrotask(() => {
+      setJumpPageVal(page.toString());
+    });
   }, [page]);
 
   const totalPages = Math.max(Math.ceil(totalCount / pageSize), 1);

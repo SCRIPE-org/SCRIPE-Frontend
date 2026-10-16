@@ -255,7 +255,9 @@ export function useFeatureDefinitionFormViewModel(featureId?: string) {
       queryClient.invalidateQueries({ queryKey: ["entitlements", "tenant-feature-definitions"] });
       success({
         title: t(
-          isEditMode ? "entitlements.featureDefinitions.updated" : "entitlements.featureDefinitions.created"
+          isEditMode
+            ? "entitlements.featureDefinitions.updated"
+            : "entitlements.featureDefinitions.created"
         ),
         description: t(
           isEditMode

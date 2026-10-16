@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 // NotificationSenderView -- accessible-name coverage for the Category and
 // Type GenericSelect fields (Wave 1 closure, Task 6).
 //

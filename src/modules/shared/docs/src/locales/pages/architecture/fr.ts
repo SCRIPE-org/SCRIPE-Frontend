@@ -527,27 +527,39 @@ export const fr = {
     },
     crossModule: {
       title: "Collaboration Inter-Modules Approfondie",
-      description: "Comment Identity et Entitlements collaborent sans dépendance circulaire : abstractions Core.Application, IRequireFeature et pipeline AstraFlow.",
-      intro: "Les modules Identity et Entitlements doivent interagir étroitement tout en évitant les dépendances circulaires. La couche neutre Core.Application sert de passerelle commune.",
+      description:
+        "Comment Identity et Entitlements collaborent sans dépendance circulaire : abstractions Core.Application, IRequireFeature et pipeline AstraFlow.",
+      intro:
+        "Les modules Identity et Entitlements doivent interagir étroitement tout en évitant les dépendances circulaires. La couche neutre Core.Application sert de passerelle commune.",
       bridgeTitle: "La Passerelle à Trois Niveaux",
-      bridgeContent: "L'espace de noms Core.Application.Abstractions définit plus de 32 contrats d'interfaces partagés et indépendants des implémentations.",
+      bridgeContent:
+        "L'espace de noms Core.Application.Abstractions définit plus de 32 contrats d'interfaces partagés et indépendants des implémentations.",
       gridCoreTitle: "Abstractions Core.Application",
-      gridCoreDesc: "Plus de 32 contrats d'interfaces typés (IFeatureChecker, ITenantPermissionManager, ICurrentUser).",
+      gridCoreDesc:
+        "Plus de 32 contrats d'interfaces typés (IFeatureChecker, ITenantPermissionManager, ICurrentUser).",
       gridEventsTitle: "Événements de Domaine",
-      gridEventsDesc: "Émission d'événements asynchrones traités via INotificationHandler sans import de code direct.",
+      gridEventsDesc:
+        "Émission d'événements asynchrones traités via INotificationHandler sans import de code direct.",
       gridPipelineTitle: "Pipeline AstraFlow",
-      gridPipelineDesc: "Exécution automatique des contrôles de quotas et d'autorisations en amont de chaque gestionnaire.",
+      gridPipelineDesc:
+        "Exécution automatique des contrôles de quotas et d'autorisations en amont de chaque gestionnaire.",
       coreAbstractionsTitle: "Contrats Core.Application",
-      coreAbstractionsContent: "Core.Infrastructure déclare des implémentations NoOp avec TryAddScoped, substituées par AddScoped au chargement des modules actifs.",
+      coreAbstractionsContent:
+        "Core.Infrastructure déclare des implémentations NoOp avec TryAddScoped, substituées par AddScoped au chargement des modules actifs.",
       requireFeatureTitle: "IRequireFeature : Verrouillage de Fonctionnalités",
-      requireFeatureContent: "Les commandes déclarant IRequireFeature sont interceptées en position 4 du pipeline pour vérifier les quotas du locataire.",
+      requireFeatureContent:
+        "Les commandes déclarant IRequireFeature sont interceptées en position 4 du pipeline pour vérifier les quotas du locataire.",
       pipelineTitle: "Ordre d'Exécution du Pipeline AstraFlow",
-      pipelineContent: "Ordre immuable en 7 étapes : Validation, Autorisation, Contrôle de Quota et exécution du Handler.",
+      pipelineContent:
+        "Ordre immuable en 7 étapes : Validation, Autorisation, Contrôle de Quota et exécution du Handler.",
       eventFlowTitle: "Distribution des Événements de Domaine",
-      eventFlowContent: "Sérialisation transactionnelle avec EF Core OutboxInterceptor puis diffusion asynchrone par OutboxProcessor.",
+      eventFlowContent:
+        "Sérialisation transactionnelle avec EF Core OutboxInterceptor puis diffusion asynchrone par OutboxProcessor.",
       realWorldTitle: "Cas Pratique : Identity ↔ Entitlements",
-      realWorldContent: "Étanchéité totale des bases de données : les échanges transitent exclusivement par les contrats partagés.",
-      keyInsightTip: "Enseignement clé : Zéro import direct entre Identity et Entitlements pour une évolutivité et des tests indépendants parfaits.",
+      realWorldContent:
+        "Étanchéité totale des bases de données : les échanges transitent exclusivement par les contrats partagés.",
+      keyInsightTip:
+        "Enseignement clé : Zéro import direct entre Identity et Entitlements pour une évolutivité et des tests indépendants parfaits.",
     },
   },
 };

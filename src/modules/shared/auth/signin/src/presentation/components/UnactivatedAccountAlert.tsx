@@ -5,6 +5,9 @@ import { Button } from "@core/ui/button";
 import { LoadingSpinner } from "@core/ui/loading-spinner";
 import { Mail } from "lucide-react";
 
+/**
+ * Documentation for module export
+ */
 export interface UnactivatedAccountAlertProps {
   t: (key: string) => string;
   accountNotActivatedMessage?: string;
@@ -30,7 +33,7 @@ export function UnactivatedAccountAlert({
   return (
     <div
       id="login-unactivated-alert"
-      className="flex flex-col gap-3 rounded-xl border border-sky-500/30 bg-sky-500/10 dark:bg-sky-950/25 p-4 text-sky-900 dark:text-sky-200 shadow-xs animate-in fade-in duration-300"
+      className="shadow-xs flex flex-col gap-3 rounded-xl border border-sky-500/30 bg-sky-500/10 p-4 text-sky-900 duration-300 animate-in fade-in dark:bg-sky-950/25 dark:text-sky-200"
       role="alert"
       aria-live="polite"
     >
@@ -42,7 +45,7 @@ export function UnactivatedAccountAlert({
           <h4 className="text-sm font-semibold text-foreground">
             {t("auth.accountSetup.activationRequiredTitle") || "Account Setup Required"}
           </h4>
-          <p className="text-xs text-muted-foreground leading-relaxed">
+          <p className="text-xs leading-relaxed text-muted-foreground">
             {accountNotActivatedMessage ||
               t("auth.accountSetup.activationRequiredDesc") ||
               "Your account is not active yet. A setup link was automatically sent to your email address."}
@@ -51,7 +54,7 @@ export function UnactivatedAccountAlert({
       </div>
 
       <div className="flex items-center justify-between border-t border-sky-500/20 pt-2.5 text-xs">
-        <span className="text-[11px] text-muted-foreground font-mono">
+        <span className="font-mono text-[11px] text-muted-foreground">
           {isCooldownActive
             ? `Resend available in ${cooldownSeconds}s`
             : "Didn't receive the email?"}
@@ -62,7 +65,7 @@ export function UnactivatedAccountAlert({
           size="sm"
           disabled={isLoading || isCooldownActive}
           onClick={onResendSetupEmail}
-          className="h-7 text-xs gap-1.5 border-sky-500/30 hover:bg-sky-500/15"
+          className="h-7 gap-1.5 border-sky-500/30 text-xs hover:bg-sky-500/15"
         >
           {isLoading ? (
             <LoadingSpinner className="h-3 w-3" />

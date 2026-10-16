@@ -6,6 +6,9 @@ import { renderStandardControls } from "./renderStandardControls";
 import { renderComplexControls } from "./renderComplexControls";
 import { renderInputControls } from "./renderInputControls";
 
+/**
+ * Documentation for module export
+ */
 export type { CustomFieldControlProps };
 
 /**
@@ -14,8 +17,6 @@ export type { CustomFieldControlProps };
  */
 export function renderCustomFieldControl(props: CustomFieldControlProps): React.ReactNode {
   return (
-    renderStandardControls(props) ??
-    renderComplexControls(props) ??
-    renderInputControls(props)
+    renderStandardControls(props) ?? renderComplexControls(props) ?? renderInputControls(props)
   );
 }

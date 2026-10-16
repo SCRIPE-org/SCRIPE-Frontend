@@ -70,7 +70,12 @@ globalThis.ResizeObserver ??= class {
  * owningModule sort read as a grouping.
  */
 const TYPES: EntityLookupType[] = [
-  { key: "identity.user", owningModule: "Identity", displayNameEn: "User", displayNameAr: "المستخدم" },
+  {
+    key: "identity.user",
+    owningModule: "Identity",
+    displayNameEn: "User",
+    displayNameAr: "المستخدم",
+  },
   {
     key: "hrms.staff-member",
     owningModule: "Hrms",
@@ -245,9 +250,7 @@ describe("reference target picker field config", () => {
     expect(field.description).not.toBe(en.customField.referenceTarget.loadFailed);
     // The sentinel survives: unpinning must stay possible even when nothing can be pinned, or an
     // accidentally-pinned field is uncorrectable by anyone who cannot see that type.
-    expect(field.options).toEqual([
-      { value: "", label: en.customField.referenceTarget.unpinned },
-    ]);
+    expect(field.options).toEqual([{ value: "", label: en.customField.referenceTarget.unpinned }]);
     expect(field.disabled).toBeUndefined();
   });
 
@@ -315,9 +318,10 @@ describe("reference target picker through the real GenericForm", () => {
   it("renders a named combobox for an EntityReference definition", () => {
     renderField({ valueType: "EntityReference", referenceTargetEntityTypeKey: "" });
 
-    expect(
-      screen.getByRole("combobox", { name: PICKER_NAME })
-    ).toHaveAttribute("id", REFERENCE_TARGET_FIELD_NAME);
+    expect(screen.getByRole("combobox", { name: PICKER_NAME })).toHaveAttribute(
+      "id",
+      REFERENCE_TARGET_FIELD_NAME
+    );
   });
 
   it("draws nothing at all for a UserReference definition", () => {
@@ -599,7 +603,9 @@ describe("registry-name wire guards", () => {
   it("picks the active language's name, and the other one only as a fallback", () => {
     expect(resolveRegistryTypeName(WELL_FORMED, "en")).toBe("Staff Member");
     expect(resolveRegistryTypeName(WELL_FORMED, "ar")).toBe("عضو الفريق");
-    expect(resolveRegistryTypeName({ ...WELL_FORMED, displayNameAr: "" }, "ar")).toBe("Staff Member");
+    expect(resolveRegistryTypeName({ ...WELL_FORMED, displayNameAr: "" }, "ar")).toBe(
+      "Staff Member"
+    );
     expect(resolveRegistryTypeName({ ...WELL_FORMED, displayNameEn: "" }, "en")).toBe("عضو الفريق");
   });
 
@@ -614,7 +620,9 @@ describe("registry-name wire guards", () => {
   });
 
   it("labels `Name (key)` normally and the bare key when no name arrived", () => {
-    expect(formatRegistryTypeOptionLabel(WELL_FORMED, "en")).toBe("Staff Member (hrms.staff-member)");
+    expect(formatRegistryTypeOptionLabel(WELL_FORMED, "en")).toBe(
+      "Staff Member (hrms.staff-member)"
+    );
     expect(
       formatRegistryTypeOptionLabel({ ...WELL_FORMED, displayNameEn: "", displayNameAr: "" }, "en")
     ).toBe("hrms.staff-member");
@@ -633,10 +641,7 @@ describe("registry-name wire guards", () => {
     expect(formatRegistryTypeOptionLabel(keyless, "en")).toBe("Staff Member");
     // Both gone is the only empty answer, and both call sites drop such a row before labelling it.
     expect(
-      formatRegistryTypeOptionLabel(
-        { ...nameless, key: undefined as unknown as string },
-        "en"
-      )
+      formatRegistryTypeOptionLabel({ ...nameless, key: undefined as unknown as string }, "en")
     ).toBe("");
   });
 });
@@ -667,7 +672,10 @@ describe("CustomFieldListView wiring (real source)", () => {
   });
 
   it("seeds the key in createInitialValues, without which it could never reach the payload", () => {
-    const createInitialSource = source.slice(createInitialIdx, source.indexOf("editInitialValues:"));
+    const createInitialSource = source.slice(
+      createInitialIdx,
+      source.indexOf("editInitialValues:")
+    );
     expect(createInitialSource).toContain(
       "[REFERENCE_TARGET_FIELD_NAME]: UNPINNED_REFERENCE_TARGET"
     );

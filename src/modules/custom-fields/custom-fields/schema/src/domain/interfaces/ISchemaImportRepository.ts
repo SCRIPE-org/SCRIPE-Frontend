@@ -20,6 +20,9 @@
 import type { SchemaImportBundlePayload } from "../../data/models/SchemaImportModel";
 import type { SchemaImportResult } from "../entities/SchemaImportResult";
 
+/**
+ * Documentation for module export
+ */
 export interface ISchemaImportRepository {
   /**
    * Posts a bundle for import.

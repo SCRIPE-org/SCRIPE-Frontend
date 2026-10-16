@@ -7,6 +7,9 @@
 import { CustomField, type CustomFieldData } from "../../domain/entities/CustomField";
 import { CustomFieldModel, type CustomFieldJson } from "../models/CustomFieldModel";
 
+/**
+ * Documentation for module export
+ */
 export class CustomFieldMapper {
   /**
    * Convert CustomFieldModel to CustomField Entity

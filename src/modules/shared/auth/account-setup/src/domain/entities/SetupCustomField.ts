@@ -5,13 +5,16 @@
  * @module auth/account-setup/domain/entities
  */
 
-import {
-  parseSetupCustomFieldOptions,
-  type SetupFieldOption,
-} from "./setupCustomFieldOptions";
+import { parseSetupCustomFieldOptions, type SetupFieldOption } from "./setupCustomFieldOptions";
 
+/**
+ * Documentation for module export
+ */
 export type { SetupFieldOption };
 
+/**
+ * Documentation for module export
+ */
 export interface SetupCustomFieldData {
   key: string;
   labelEn: string;
@@ -27,22 +30,49 @@ export interface SetupCustomFieldData {
   currentValue?: unknown;
 }
 
+/**
+ * Documentation for module export
+ */
 export class SetupCustomField {
   constructor(private readonly data: SetupCustomFieldData) {}
 
-  get key(): string { return this.data.key ?? ""; }
-  get labelEn(): string { return this.data.labelEn ?? ""; }
-  get labelAr(): string | undefined { return this.data.labelAr; }
-  get placeholderEn(): string | undefined { return this.data.placeholderEn; }
-  get placeholderAr(): string | undefined { return this.data.placeholderAr; }
-  get valueType(): string { return (this.data.valueType ?? "text").toLowerCase(); }
-  get isRequired(): boolean { return this.data.isRequired ?? false; }
-  get sensitivity(): number { return this.data.sensitivity ?? 0; }
-  get sortOrder(): number { return this.data.sortOrder ?? 0; }
-  get currentValue(): unknown { return this.data.currentValue; }
+  get key(): string {
+    return this.data.key ?? "";
+  }
+  get labelEn(): string {
+    return this.data.labelEn ?? "";
+  }
+  get labelAr(): string | undefined {
+    return this.data.labelAr;
+  }
+  get placeholderEn(): string | undefined {
+    return this.data.placeholderEn;
+  }
+  get placeholderAr(): string | undefined {
+    return this.data.placeholderAr;
+  }
+  get valueType(): string {
+    return (this.data.valueType ?? "text").toLowerCase();
+  }
+  get isRequired(): boolean {
+    return this.data.isRequired ?? false;
+  }
+  get sensitivity(): number {
+    return this.data.sensitivity ?? 0;
+  }
+  get sortOrder(): number {
+    return this.data.sortOrder ?? 0;
+  }
+  get currentValue(): unknown {
+    return this.data.currentValue;
+  }
 
-  get isSensitive(): boolean { return this.sensitivity >= 2; }
-  get isEncrypted(): boolean { return this.isSensitive; }
+  get isSensitive(): boolean {
+    return this.sensitivity >= 2;
+  }
+  get isEncrypted(): boolean {
+    return this.isSensitive;
+  }
 
   label(isRtl?: boolean): string {
     return isRtl && this.data.labelAr ? this.data.labelAr : this.labelEn;
@@ -68,8 +98,12 @@ export class SetupCustomField {
   get isMultiSelect(): boolean {
     const t = this.valueType;
     return (
-      t === "multiselect" || t === "multi_select" || t === "multi-select" ||
-      t === "tags" || t === "checkboxgroup" || t === "checkbox_group"
+      t === "multiselect" ||
+      t === "multi_select" ||
+      t === "multi-select" ||
+      t === "tags" ||
+      t === "checkboxgroup" ||
+      t === "checkbox_group"
     );
   }
 
@@ -81,19 +115,31 @@ export class SetupCustomField {
   get isNumber(): boolean {
     const t = this.valueType;
     return (
-      t === "number" || t === "integer" || t === "decimal" ||
-      t === "currency" || t === "percent" || t === "rating"
+      t === "number" ||
+      t === "integer" ||
+      t === "decimal" ||
+      t === "currency" ||
+      t === "percent" ||
+      t === "rating"
     );
   }
 
-  get isDate(): boolean { return this.valueType === "date"; }
-  get isDateTime(): boolean { return this.valueType === "datetime"; }
+  get isDate(): boolean {
+    return this.valueType === "date";
+  }
+  get isDateTime(): boolean {
+    return this.valueType === "datetime";
+  }
   get isTextarea(): boolean {
     const t = this.valueType;
     return t === "textarea" || t === "multiline" || t === "longtext";
   }
-  get isEmail(): boolean { return this.valueType === "email"; }
-  get isUrl(): boolean { return this.valueType === "url"; }
+  get isEmail(): boolean {
+    return this.valueType === "email";
+  }
+  get isUrl(): boolean {
+    return this.valueType === "url";
+  }
   get isPhone(): boolean {
     const t = this.valueType;
     return t === "phone" || t === "tel";

@@ -17,6 +17,9 @@ import type { IEmploymentRecordService } from "../../domain/interfaces/IEmployme
 import type { EmploymentRecord } from "../../domain/entities/EmploymentRecord";
 import { EmploymentRecordMapper } from "../mappers/EmploymentRecordMapper";
 
+/**
+ * Documentation for module export
+ */
 export class EmploymentRecordRepository implements IEmploymentRecordRepository {
   constructor(private readonly service: IEmploymentRecordService) {}
 

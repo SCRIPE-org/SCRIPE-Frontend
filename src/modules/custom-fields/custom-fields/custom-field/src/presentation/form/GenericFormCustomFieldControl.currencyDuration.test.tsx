@@ -211,9 +211,7 @@ describe("GenericForm + the REAL CurrencyCustomFieldControl", () => {
     });
     fireEvent.click(screen.getByRole("button", { name: "common.save" }));
 
-    await waitFor(() =>
-      expect(screen.getByRole("combobox", { name: CODE_NAME })).toBeInvalid()
-    );
+    await waitFor(() => expect(screen.getByRole("combobox", { name: CODE_NAME })).toBeInvalid());
     expect(onSubmit).not.toHaveBeenCalled();
   });
 
@@ -322,10 +320,7 @@ describe("GenericForm + the REAL CurrencyCustomFieldControl", () => {
       screen.getByRole("spinbutton", { name: AMOUNT_NAME }),
       screen.getByRole("combobox", { name: CODE_NAME }),
     ]) {
-      expect(input.getAttribute("aria-describedby")?.split(" ")).toEqual([
-        hostHintId,
-        pairHintId,
-      ]);
+      expect(input.getAttribute("aria-describedby")?.split(" ")).toEqual([hostHintId, pairHintId]);
     }
     // Neither id may dangle -- a dangling aria-describedby is worse than none.
     expect(document.getElementById(hostHintId)).toBeInTheDocument();

@@ -294,7 +294,9 @@
 .docs-sidebar-item-icon {
   flex-shrink: 0;
   opacity: 0.75;
-  transition: opacity var(--nx-t-micro) var(--nx-ease-enter), color var(--nx-t-micro) var(--nx-ease-enter);
+  transition:
+    opacity var(--nx-t-micro) var(--nx-ease-enter),
+    color var(--nx-t-micro) var(--nx-ease-enter);
 }
 
 .docs-sidebar-item:hover .docs-sidebar-item-icon {

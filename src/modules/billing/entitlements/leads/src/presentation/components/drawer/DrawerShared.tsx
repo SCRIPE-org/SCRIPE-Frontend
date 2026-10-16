@@ -104,9 +104,7 @@ export function InfoRow({
           {label}
         </p>
         <div className="flex items-center gap-1.5">
-          <span className={`truncate text-sm text-nx-ink ${mono ? "font-mono" : ""}`}>
-            {value}
-          </span>
+          <span className={`truncate text-sm text-nx-ink ${mono ? "font-mono" : ""}`}>{value}</span>
           {copyable && <CopyButton value={copyable} />}
         </div>
       </div>

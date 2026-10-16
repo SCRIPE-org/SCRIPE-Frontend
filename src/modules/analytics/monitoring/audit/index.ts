@@ -1,4 +1,1 @@
-/**
- * Audit Module Public API
- */
-export { AuditView } from "./src/presentation/views/AuditView";
+﻿export * from "./src/presentation/views/AuditView";

@@ -26,7 +26,10 @@ import {
   useOptionSetBindingViewModel,
   resolveActiveFieldVersion,
 } from "./useOptionSetBindingViewModel";
-import type { FieldVersionSummary, FieldVersionsResponse } from "../../domain/entities/FieldInsight";
+import type {
+  FieldVersionSummary,
+  FieldVersionsResponse,
+} from "../../domain/entities/FieldInsight";
 import { toast } from "@core/hooks/use-enhanced-toast";
 import { OptionSet } from "../../../../option-set/src/domain/entities/OptionSet";
 
@@ -107,13 +110,33 @@ function wrapper({ children }: { children: ReactNode }) {
 
 function setupContainer(options: { sets?: OptionSet[]; versions?: FieldVersionsResponse }) {
   const customFieldRepository = {
-    getVersions: vi.fn(async () => options.versions ?? { fieldId: "field-1", versions: [], hasDraft: false }),
+    getVersions: vi.fn(
+      async () => options.versions ?? { fieldId: "field-1", versions: [], hasDraft: false }
+    ),
   };
   const optionSetRepository = {
     getAll: vi.fn(async () => options.sets ?? []),
-    bind: vi.fn(async () => ({ inserted: 1, updated: 0, deactivated: 0, untouched: 0, preservedLocalOptions: 0 })),
-    rebind: vi.fn(async () => ({ inserted: 1, updated: 0, deactivated: 1, untouched: 0, preservedLocalOptions: 0 })),
-    unbind: vi.fn(async () => ({ inserted: 0, updated: 0, deactivated: 0, untouched: 0, preservedLocalOptions: 2 })),
+    bind: vi.fn(async () => ({
+      inserted: 1,
+      updated: 0,
+      deactivated: 0,
+      untouched: 0,
+      preservedLocalOptions: 0,
+    })),
+    rebind: vi.fn(async () => ({
+      inserted: 1,
+      updated: 0,
+      deactivated: 1,
+      untouched: 0,
+      preservedLocalOptions: 0,
+    })),
+    unbind: vi.fn(async () => ({
+      inserted: 0,
+      updated: 0,
+      deactivated: 0,
+      untouched: 0,
+      preservedLocalOptions: 2,
+    })),
   };
 
   vi.mocked(getCustomFieldsContainer).mockReturnValue({

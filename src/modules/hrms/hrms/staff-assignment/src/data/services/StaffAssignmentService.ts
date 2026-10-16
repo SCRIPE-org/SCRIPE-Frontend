@@ -17,6 +17,9 @@ import type {
 } from "../../domain/interfaces/IStaffAssignmentService";
 import { STAFF_ASSIGNMENT_ENDPOINTS } from "./staff-assignment.endpoints";
 
+/**
+ * Documentation for module export
+ */
 export class StaffAssignmentService implements IStaffAssignmentService {
   constructor(private readonly api: IApiService) {}
 

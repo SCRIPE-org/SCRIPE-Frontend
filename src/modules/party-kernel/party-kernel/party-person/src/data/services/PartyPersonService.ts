@@ -6,7 +6,7 @@
  */
 import type { IApiService } from "@core/interfaces/api.interface";
 import { buildUrl } from "@/core/config/api-endpoints/_shared";
-import { PARTYKERNEL_ENDPOINTS } from "@modules/party-kernel/party-kernel.endpoints";
+import { PARTY_PERSON_ENDPOINTS } from "./party-person.endpoints";
 import {
   PartyPersonModel,
   type PartyPersonJson,
@@ -17,8 +17,9 @@ import type {
   PartyPersonListResult,
 } from "../../domain/interfaces/IPartyPersonService";
 
-const BASE_URL = PARTYKERNEL_ENDPOINTS.PARTY_PEOPLE.LIST;
-
+/**
+ * Service implementation for PartyPerson operations
+ */
 export class PartyPersonService implements IPartyPersonService {
   constructor(private readonly api: IApiService) {}
 
@@ -27,7 +28,7 @@ export class PartyPersonService implements IPartyPersonService {
     pageSize: number;
     search?: string;
   }): Promise<PartyPersonListResult> {
-    const url = buildUrl(BASE_URL, {
+    const url = buildUrl(PARTY_PERSON_ENDPOINTS.LIST, {
       page: params.page,
       pageSize: params.pageSize,
       search: params.search,
@@ -47,19 +48,19 @@ export class PartyPersonService implements IPartyPersonService {
   }
 
   async getById(id: string): Promise<PartyPersonModel> {
-    const json = await this.api.get<PartyPersonJson>(`${BASE_URL}/${id}`);
+    const json = await this.api.get<PartyPersonJson>(PARTY_PERSON_ENDPOINTS.BY_ID(id));
     return PartyPersonModel.fromJson(json);
   }
 
   async create(data: Record<string, unknown>): Promise<{ id: string }> {
-    return this.api.post<{ id: string }>(BASE_URL, data);
+    return this.api.post<{ id: string }>(PARTY_PERSON_ENDPOINTS.CREATE, data);
   }
 
   async update(id: string, data: Record<string, unknown>): Promise<void> {
-    await this.api.put(`${BASE_URL}/${id}`, data);
+    await this.api.put(PARTY_PERSON_ENDPOINTS.UPDATE(id), data);
   }
 
   async delete(id: string): Promise<void> {
-    await this.api.delete(`${BASE_URL}/${id}`);
+    await this.api.delete(PARTY_PERSON_ENDPOINTS.DELETE(id));
   }
 }

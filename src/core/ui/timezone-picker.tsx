@@ -62,9 +62,7 @@ function getZoneOffset(zone: string): string {
 function optionsFor(currentValue: string): { value: string; label: string }[] {
   const zones = allSupportedTimeZones();
   const withCurrent =
-    currentValue && !zones.includes(currentValue)
-      ? [currentValue, ...zones]
-      : zones;
+    currentValue && !zones.includes(currentValue) ? [currentValue, ...zones] : zones;
 
   return withCurrent.map((zone) => {
     const offset = getZoneOffset(zone);
@@ -108,9 +106,7 @@ export function TimezonePicker({
       allowClear={false}
       options={options}
       value={value}
-      onValueChange={(v: string | string[]) =>
-        onChange(Array.isArray(v) ? v[0] ?? value : v)
-      }
+      onValueChange={(v: string | string[]) => onChange(Array.isArray(v) ? (v[0] ?? value) : v)}
       placeholder={placeholder}
       searchPlaceholder="Search time zone or city..."
       disabled={disabled}

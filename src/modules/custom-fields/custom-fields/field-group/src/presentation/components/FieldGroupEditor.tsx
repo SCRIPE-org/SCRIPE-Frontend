@@ -24,6 +24,9 @@ import { Label } from "@core/ui/label";
 import { Switch } from "@core/ui/switch";
 import type { FieldGroup } from "../../domain/entities/FieldGroup";
 
+/**
+ * Documentation for module export
+ */
 export interface FieldGroupFormValues {
   /**
    * Immutable machine key (Wave 6 row 6.5). Meaningful on CREATE only — the update path does not
@@ -37,6 +40,9 @@ export interface FieldGroupFormValues {
   isGlobal: boolean;
 }
 
+/**
+ * Documentation for module export
+ */
 export interface FieldGroupEditorLabels {
   heading: string;
   stableKey: string;
@@ -50,6 +56,9 @@ export interface FieldGroupEditorLabels {
   cancel: string;
 }
 
+/**
+ * Documentation for module export
+ */
 export interface FieldGroupEditorProps {
   /** The group being edited, or null for a create. */
   group: FieldGroup | null;
@@ -63,6 +72,9 @@ export interface FieldGroupEditorProps {
   onCancel: () => void;
 }
 
+/**
+ * Documentation for FieldGroupEditor
+ */
 export function FieldGroupEditor({
   group,
   labels,
@@ -121,7 +133,7 @@ export function FieldGroupEditor({
             disabled={isEdit}
             dir="ltr"
           />
-          <p className="text-xs text-nx-ink-subtle">{labels.stableKeyHint}</p>
+          <p className="text-nx-ink-subtle text-xs">{labels.stableKeyHint}</p>
         </div>
 
         <div className="flex flex-col gap-1.5">
@@ -172,7 +184,11 @@ export function FieldGroupEditor({
       </div>
 
       <div className="flex items-center gap-2">
-        <Button type="submit" size="sm" disabled={isSaving || labelEn.trim().length === 0 || stableKey.trim().length === 0}>
+        <Button
+          type="submit"
+          size="sm"
+          disabled={isSaving || labelEn.trim().length === 0 || stableKey.trim().length === 0}
+        >
           {labels.save}
         </Button>
         <Button type="button" size="sm" variant="ghost" onClick={onCancel}>

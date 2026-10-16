@@ -12,7 +12,13 @@ import {
   type ValueTypeBadgeVariant,
 } from "./valueTypeCatalogData";
 
+/**
+ * Documentation for "../../../../custom-field-value/src/data/models/CustomFieldValueModel"
+ */
 export type { CustomFieldValueTypeName } from "../../../../custom-field-value/src/data/models/CustomFieldValueModel";
+/**
+ * Documentation for module export
+ */
 export type { ValueTypeBadgeVariant, ValueTypeCatalogEntry };
 export { VALUE_TYPE_CATALOG };
 

@@ -10,6 +10,9 @@ import type {
   CustomFieldValueTypeName,
 } from "../../../../custom-field-value/src/data/models/CustomFieldValueModel";
 
+/**
+ * Documentation for string
+ */
 export type FormatTranslateFn = (key: string, params?: Record<string, string | number>) => string;
 
 /**

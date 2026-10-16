@@ -66,26 +66,20 @@ export function CreatableCombobox({
 
   // Normalize options to ComboboxOption shape
   const normalizedOptions = React.useMemo<ComboboxOption[]>(() => {
-    return options.map((opt) =>
-      typeof opt === "string" ? { value: opt, label: opt } : opt
-    );
+    return options.map((opt) => (typeof opt === "string" ? { value: opt, label: opt } : opt));
   }, [options]);
 
   // Selected item display label
   const selectedLabel = React.useMemo(() => {
     if (!value) return "";
-    const matched = normalizedOptions.find(
-      (o) => o.value.toLowerCase() === value.toLowerCase()
-    );
+    const matched = normalizedOptions.find((o) => o.value.toLowerCase() === value.toLowerCase());
     return matched ? matched.label : value;
   }, [value, normalizedOptions]);
 
   // Check if query exactly matches any existing option
   const exactMatch = React.useMemo(() => {
     if (!query.trim()) return true;
-    return normalizedOptions.some(
-      (o) => o.label.toLowerCase() === query.trim().toLowerCase()
-    );
+    return normalizedOptions.some((o) => o.label.toLowerCase() === query.trim().toLowerCase());
   }, [query, normalizedOptions]);
 
   const handleSelect = React.useCallback(
@@ -131,7 +125,9 @@ export function CreatableCombobox({
                 role="button"
                 tabIndex={0}
                 onClick={handleClear}
-                onKeyDown={(e) => e.key === "Enter" && handleClear(e as unknown as React.MouseEvent)}
+                onKeyDown={(e) =>
+                  e.key === "Enter" && handleClear(e as unknown as React.MouseEvent)
+                }
                 className="rounded-full p-0.5 hover:bg-nx-raised hover:text-nx-ink"
                 title="Clear selection"
               >
@@ -142,7 +138,10 @@ export function CreatableCombobox({
           </div>
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="w-[--radix-popover-trigger-width] min-w-[240px] p-0 shadow-nx-lg" align="start">
+      <PopoverContent
+        className="shadow-nx-lg w-[--radix-popover-trigger-width] min-w-[240px] p-0"
+        align="start"
+      >
         <Command
           filter={(itemValue, search) => {
             if (itemValue.toLowerCase().includes(search.toLowerCase())) return 1;
@@ -176,8 +175,7 @@ export function CreatableCombobox({
 
             <CommandGroup>
               {normalizedOptions.map((option) => {
-                const isSelected =
-                  value.toLowerCase() === option.value.toLowerCase();
+                const isSelected = value.toLowerCase() === option.value.toLowerCase();
                 return (
                   <CommandItem
                     key={option.value}
@@ -188,9 +186,7 @@ export function CreatableCombobox({
                     <div className="flex flex-col truncate">
                       <span className="truncate">{option.label}</span>
                       {option.sublabel && (
-                        <span className="text-[10px] text-nx-ink-3">
-                          {option.sublabel}
-                        </span>
+                        <span className="text-[10px] text-nx-ink-3">{option.sublabel}</span>
                       )}
                     </div>
                     <Check

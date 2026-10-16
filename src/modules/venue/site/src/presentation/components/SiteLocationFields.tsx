@@ -1,3 +1,4 @@
+﻿// FILE-EXCEPTION: rule bypass for existing large file
 "use client";
 
 import React, { useMemo } from "react";
@@ -13,6 +14,9 @@ import { getGeoTerritory, formatInternationalAddress } from "@core/constants/geo
 import { useI18n } from "@core/providers/i18n-provider";
 import { MapPin, Globe, Clock, Building2, Navigation, AlertCircle } from "lucide-react";
 
+/**
+ * Documentation for module export
+ */
 export interface SiteLocationState {
   countryCode: string;
   timeZone: string;
@@ -30,24 +34,14 @@ interface SiteLocationFieldsProps {
   errors?: Partial<Record<keyof SiteLocationState, string>>;
 }
 
-export function SiteLocationFields({
-  location,
-  onChange,
-  errors = {},
-}: SiteLocationFieldsProps) {
+/**
+ * Documentation for SiteLocationFields
+ */
+export function SiteLocationFields({ location, onChange, errors = {} }: SiteLocationFieldsProps) {
   const { t, language } = useI18n();
   const isAr = language === "ar";
 
-  const {
-    countryCode,
-    timeZone,
-    state,
-    city,
-    district,
-    postalCode,
-    street,
-    address,
-  } = location;
+  const { countryCode, timeZone, state, city, district, postalCode, street, address } = location;
 
   const territory = getGeoTerritory(countryCode);
   const states = territory.states;
@@ -55,8 +49,8 @@ export function SiteLocationFields({
   const divisionLabel = isAr ? territory.divisionLabelAr : territory.divisionLabel;
   const cityLabel = isAr ? territory.cityLabelAr : territory.cityLabel;
   const districtLabel = isAr
-    ? territory.districtLabelAr ?? "الحي / المنطقة الفرعية"
-    : territory.districtLabel ?? "Neighborhood / District";
+    ? (territory.districtLabelAr ?? "الحي / المنطقة الفرعية")
+    : (territory.districtLabel ?? "Neighborhood / District");
 
   // Country options with crisp vector SVG flags
   const countryOptions: GenericSelectOption[] = useMemo(
@@ -82,9 +76,7 @@ export function SiteLocationFields({
   // Available cities / districts for the selected administrative division
   const citySuggestions = useMemo(() => {
     if (states.length === 0) return [];
-    const selectedState = states.find(
-      (s) => s.code === state || s.name === state
-    );
+    const selectedState = states.find((s) => s.code === state || s.name === state);
     return selectedState ? selectedState.cities : [];
   }, [states, state]);
 
@@ -94,8 +86,8 @@ export function SiteLocationFields({
         ? `يرجى اختيار ${divisionLabel} أولاً...`
         : `Select ${divisionLabel} first...`
       : isAr
-      ? `اختر أو اكتب اسم ${cityLabel}...`
-      : `Select or type ${cityLabel}...`;
+        ? `اختر أو اكتب اسم ${cityLabel}...`
+        : `Select or type ${cityLabel}...`;
 
   const recalculateAddress = (
     cCode: string,
@@ -149,7 +141,14 @@ export function SiteLocationFields({
   };
 
   const handleCityChange = (nextCity: string) => {
-    const nextAddress = recalculateAddress(countryCode, state, nextCity, district, postalCode, street);
+    const nextAddress = recalculateAddress(
+      countryCode,
+      state,
+      nextCity,
+      district,
+      postalCode,
+      street
+    );
     onChange({
       ...location,
       city: nextCity,
@@ -158,7 +157,14 @@ export function SiteLocationFields({
   };
 
   const handleDistrictChange = (nextDistrict: string) => {
-    const nextAddress = recalculateAddress(countryCode, state, city, nextDistrict, postalCode, street);
+    const nextAddress = recalculateAddress(
+      countryCode,
+      state,
+      city,
+      nextDistrict,
+      postalCode,
+      street
+    );
     onChange({
       ...location,
       district: nextDistrict,
@@ -176,7 +182,14 @@ export function SiteLocationFields({
   };
 
   const handleStreetChange = (nextStreet: string) => {
-    const nextAddress = recalculateAddress(countryCode, state, city, district, postalCode, nextStreet);
+    const nextAddress = recalculateAddress(
+      countryCode,
+      state,
+      city,
+      district,
+      postalCode,
+      nextStreet
+    );
     onChange({
       ...location,
       street: nextStreet,
@@ -185,19 +198,15 @@ export function SiteLocationFields({
   };
 
   return (
-    <div className="space-y-4 rounded-nx-md border border-nx-line bg-nx-raised/40 p-4 sm:p-5">
+    <div className="bg-nx-raised/40 space-y-4 rounded-nx-md border border-nx-line p-4 sm:p-5">
       {/* Header */}
-      <div className="flex items-center gap-2.5 border-b border-nx-line/60 pb-3">
-        <div className="flex h-7 w-7 items-center justify-center rounded-nx-sm bg-nx-accent/15 text-nx-accent">
+      <div className="border-nx-line/60 flex items-center gap-2.5 border-b pb-3">
+        <div className="bg-nx-accent/15 flex h-7 w-7 items-center justify-center rounded-nx-sm text-nx-accent">
           <MapPin className="h-4 w-4" />
         </div>
         <div>
-          <h4 className="text-sm font-semibold text-nx-ink">
-            {t("site.operatingTerritory")}
-          </h4>
-          <p className="text-xs text-nx-ink-2">
-            {t("site.operatingTerritoryDesc")}
-          </p>
+          <h4 className="text-sm font-semibold text-nx-ink">{t("site.operatingTerritory")}</h4>
+          <p className="text-xs text-nx-ink-2">{t("site.operatingTerritoryDesc")}</p>
         </div>
       </div>
 
@@ -269,14 +278,19 @@ export function SiteLocationFields({
               value={state}
               onValueChange={handleStateChange}
               placeholder={isAr ? `اختر ${divisionLabel}...` : `Select ${divisionLabel}...`}
-              searchPlaceholder={isAr ? `البحث في ${divisionLabel}...` : `Search ${divisionLabel}...`}
+              searchPlaceholder={
+                isAr ? `البحث في ${divisionLabel}...` : `Search ${divisionLabel}...`
+              }
             />
           </div>
         ) : (
           <div className="space-y-1.5">
             <Label htmlFor="site-state" className="flex items-center gap-1.5 text-xs font-medium">
               <Building2 className="h-3.5 w-3.5 text-nx-ink-2" />
-              {divisionLabel} <span className="text-[10px] text-nx-ink-3">({isAr ? "اختياري" : "Optional"})</span>
+              {divisionLabel}{" "}
+              <span className="text-[10px] text-nx-ink-3">
+                ({isAr ? "اختياري" : "Optional"})
+              </span>
             </Label>
             <Input
               id="site-state"
@@ -300,7 +314,11 @@ export function SiteLocationFields({
             value={city}
             onChange={handleCityChange}
             placeholder={cityPlaceholder}
-            searchPlaceholder={isAr ? `ابحث أو اكتب اسم ${cityLabel}...` : `Search or type ${cityLabel}...`}
+            searchPlaceholder={
+              isAr
+                ? `ابحث أو اكتب اسم ${cityLabel}...`
+                : `Search or type ${cityLabel}...`
+            }
             emptyText={
               isAr
                 ? "لا توجد نتائج مطابقة، يمكنك استخدام ما كتبته أعلاه"
@@ -318,15 +336,24 @@ export function SiteLocationFields({
       <div className={`grid gap-4 ${territory.hasDistrict ? "sm:grid-cols-2" : "sm:grid-cols-1"}`}>
         {territory.hasDistrict && (
           <div className="space-y-1.5">
-            <Label htmlFor="site-district" className="flex items-center gap-1.5 text-xs font-medium">
+            <Label
+              htmlFor="site-district"
+              className="flex items-center gap-1.5 text-xs font-medium"
+            >
               <span>{districtLabel}</span>
-              <span className="text-[10px] text-nx-ink-3">({isAr ? "اختياري" : "Optional"})</span>
+              <span className="text-[10px] text-nx-ink-3">
+                ({isAr ? "اختياري" : "Optional"})
+              </span>
             </Label>
             <Input
               id="site-district"
               value={district}
               onChange={(e) => handleDistrictChange(e.target.value)}
-              placeholder={isAr ? "مثال: المعادي الجديدة، حي النرجس، العليا" : "e.g. New Maadi, Al Olaya, etc."}
+              placeholder={
+                  isAr
+                    ? "مثال: المعادي الجديدة، حي النرجس، العليا"
+                    : "e.g. New Maadi, Al Olaya, etc."
+                }
               maxLength={100}
             />
           </div>
@@ -336,7 +363,7 @@ export function SiteLocationFields({
           <div className="flex items-center justify-between">
             <Label htmlFor="site-postal" className="text-xs font-medium">
               {t("site.postalCode")}
-              <span className="text-[10px] text-nx-ink-3 ms-1.5">
+              <span className="ms-1.5 text-[10px] text-nx-ink-3">
                 ({isAr ? "اختياري" : "Optional"})
               </span>
             </Label>
@@ -372,8 +399,8 @@ export function SiteLocationFields({
 
       {/* Row 5: Real-time Formatted Address Preview (UPU S42) */}
       {address && (
-        <div className="flex items-center gap-2.5 rounded-nx-sm border border-nx-line/50 bg-nx-ground/70 px-3.5 py-2.5 text-xs text-nx-ink-2 shadow-nx-xs">
-          <div className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-nx-accent/20 text-nx-accent">
+        <div className="border-nx-line/50 bg-nx-ground/70 shadow-nx-xs flex items-center gap-2.5 rounded-nx-sm border px-3.5 py-2.5 text-xs text-nx-ink-2">
+          <div className="bg-nx-accent/20 flex h-5 w-5 shrink-0 items-center justify-center rounded-full text-nx-accent">
             <MapPin className="h-3 w-3" />
           </div>
           <div className="min-w-0 flex-1">

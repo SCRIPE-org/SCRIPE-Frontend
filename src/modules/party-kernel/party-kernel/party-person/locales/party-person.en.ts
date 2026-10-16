@@ -9,6 +9,7 @@ export const en = {
     noItems: "No records found",
     searchPlaceholder: "Search...",
     columns: {
+      fullName: "Full Name",
       partyId: "Party ID",
       firstName: "First Name",
       lastName: "Last Name",
@@ -16,8 +17,8 @@ export const en = {
       createdAt: "Created",
     },
     form: {
-      partyId: "Party ID",
-      partyIdPlaceholder: "Enter the linked party's ID",
+      partyId: "Party",
+      partyIdPlaceholder: "Select linked party...",
       firstName: "First Name",
       firstNamePlaceholder: "Jane",
       lastName: "Last Name",

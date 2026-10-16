@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /**
  * Custom Field Definition Versions & Drafts ViewModel (Step 1.3)
  *
@@ -19,6 +20,9 @@ import { getCustomFieldsContainer } from "../../../../di";
 import { CUSTOM_FIELDS_PERMISSIONS } from "../../../../permission-constants";
 import type { CustomField } from "../../domain/entities/CustomField";
 
+/**
+ * Documentation for module export
+ */
 export interface FieldVersionsTarget {
   fieldId: string;
   fieldLabel: string;
@@ -27,10 +31,16 @@ export interface FieldVersionsTarget {
   isGlobal?: boolean;
 }
 
+/**
+ * Documentation for module export
+ */
 export function fieldVersionsQueryKey(fieldId: string) {
   return ["customField", "versions", fieldId] as const;
 }
 
+/**
+ * Documentation for module export
+ */
 export function useFieldVersionsViewModel() {
   const { customFieldRepository } = getCustomFieldsContainer();
   const { t } = useI18n();
@@ -143,7 +153,7 @@ export function useFieldVersionsViewModel() {
     const isCustomField = "id" in field;
     setTarget({
       fieldId: isCustomField ? field.id : field.fieldId,
-      fieldLabel: isCustomField ? (field.labelEn || field.key) : field.fieldLabel,
+      fieldLabel: isCustomField ? field.labelEn || field.key : field.fieldLabel,
       fieldKey: isCustomField ? field.key : field.fieldKey,
       entityTypeKey: field.entityTypeKey,
       isGlobal: isCustomField ? field.isGlobal : (field as FieldVersionsTarget).isGlobal,

@@ -7,6 +7,9 @@
 import { Party, type PartyData } from "../../domain/entities/Party";
 import { PartyModel, type PartyJson } from "../models/PartyModel";
 
+/**
+ * Documentation for module export
+ */
 export class PartyMapper {
   /**
    * Convert PartyModel to Party Entity
@@ -41,5 +44,20 @@ export class PartyMapper {
   static fromJsonToEntity(json: PartyJson): Party {
     const model = PartyModel.fromJson(json);
     return PartyMapper.toEntity(model);
+  }
+
+  /**
+   * Convert PartyContactLookupResponseJson (API lookup DTO) to PartyContactLookup domain entity
+   */
+  static toContactLookup(
+    dto: import("../models/PartyModel").PartyContactLookupResponseJson
+  ): import("../../domain/entities/Party").PartyContactLookup {
+    return {
+      id: dto.id,
+      type: (dto.type === "Person" || dto.type?.toLowerCase() === "person") ? "Person" : "Organization",
+      displayName: dto.displayName ?? "",
+      fullName: dto.fullName ?? null,
+      legalName: dto.legalName ?? null,
+    };
   }
 }

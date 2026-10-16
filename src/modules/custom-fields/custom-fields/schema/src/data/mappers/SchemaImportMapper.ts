@@ -17,6 +17,9 @@ import {
 } from "../../domain/entities/SchemaImportResult";
 import { SchemaImportError } from "../../domain/entities/SchemaImportError";
 
+/**
+ * Documentation for module export
+ */
 export class SchemaImportMapper {
   /** Convert an `ImportSchemaBundleResultModel` to a `SchemaImportResult` entity. */
   static toEntity(model: ImportSchemaBundleResultModel): SchemaImportResult {

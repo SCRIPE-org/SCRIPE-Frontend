@@ -118,9 +118,7 @@ export function PermissionModuleMatrix({
 
         if (!collision && hasCore) {
           const rowLabel =
-            byResource.size > 1
-              ? `${cat.category} — ${humanize(res)}`
-              : cat.category;
+            byResource.size > 1 ? `${cat.category} — ${humanize(res)}` : cat.category;
 
           matrixRows.push({ category: rowLabel, cells });
           for (const p of resPerms) {

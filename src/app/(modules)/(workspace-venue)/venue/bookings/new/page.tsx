@@ -23,7 +23,8 @@ export default async function NewBookingPage({ searchParams }: BookingPageProps)
     resourceId: first(values.resourceId),
     date: first(values.date),
     startTime: first(values.startTime),
-    durationMinutes: Number.isInteger(duration) && duration >= 15 && duration <= 1440 ? duration : undefined,
+    durationMinutes:
+      Number.isInteger(duration) && duration >= 15 && duration <= 1440 ? duration : undefined,
   };
   return (
     <ModuleErrorBoundary moduleName="booking.title">

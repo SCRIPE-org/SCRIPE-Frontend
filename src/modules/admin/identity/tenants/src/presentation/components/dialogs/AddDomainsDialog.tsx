@@ -19,13 +19,7 @@
 
 import React, { useState, useMemo } from "react";
 import { useI18n } from "@core/providers/i18n-provider";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogFooter,
-} from "@core/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@core/ui/dialog";
 import { Button } from "@core/ui/button";
 import { Input } from "@core/ui/input";
 import { Label } from "@core/ui/label";
@@ -44,6 +38,9 @@ import { Globe, Sparkles } from "lucide-react";
 import { cn } from "@core/common/utils";
 import type { TenantDomain } from "../../../domain/entities/TenantDomain";
 
+/**
+ * Documentation for module export
+ */
 export interface AddDomainsDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
@@ -62,7 +59,8 @@ export interface AddDomainsDialogProps {
  * Parses raw input into a list of cleaned, valid domain hostnames.
  */
 function parseRawDomains(input: string): string[] {
-  const domainRegex = /^[a-z0-9]([a-z0-9-]*[a-z0-9])?(\.[a-z0-9]([a-z0-9-]*[a-z0-9])?)*\.[a-z]{2,}$/i;
+  const domainRegex =
+    /^[a-z0-9]([a-z0-9-]*[a-z0-9])?(\.[a-z0-9]([a-z0-9-]*[a-z0-9])?)*\.[a-z]{2,}$/i;
   return input
     .split(/[\n,\s]+/)
     .map((d) =>
@@ -81,14 +79,20 @@ function parseRawDomains(input: string): string[] {
  */
 function inspectDomain(domain: string) {
   const cleaned = domain.trim().toLowerCase().replace(/\/.*$/, "");
-  const domainRegex = /^[a-z0-9]([a-z0-9-]*[a-z0-9])?(\.[a-z0-9]([a-z0-9-]*[a-z0-9])?)*\.[a-z]{2,}$/i;
+  const domainRegex =
+    /^[a-z0-9]([a-z0-9-]*[a-z0-9])?(\.[a-z0-9]([a-z0-9-]*[a-z0-9])?)*\.[a-z]{2,}$/i;
   if (!domainRegex.test(cleaned)) {
     return { isApex: false, isWww: false, partnerDomain: null };
   }
 
   const parts = cleaned.split(".");
   const isWww = parts.length === 3 && parts[0] === "www";
-  const isApex = parts.length === 2 || (parts.length === 3 && (parts[1] === "co" || parts[1] === "com" || parts[1] === "org") && parts[2].length === 2 && parts[0] !== "www");
+  const isApex =
+    parts.length === 2 ||
+    (parts.length === 3 &&
+      (parts[1] === "co" || parts[1] === "com" || parts[1] === "org") &&
+      parts[2].length === 2 &&
+      parts[0] !== "www");
 
   let partnerDomain: string | null = null;
   if (isApex) {
@@ -100,6 +104,9 @@ function inspectDomain(domain: string) {
   return { isApex, isWww, partnerDomain };
 }
 
+/**
+ * Documentation for AddDomainsDialog
+ */
 export function AddDomainsDialog({
   open,
   onOpenChange,
@@ -124,7 +131,9 @@ export function AddDomainsDialog({
   );
 
   // Auto-pair candidate
-  const canAutoPair = Boolean(partnerDomain && parsedDomains.length === 1 && connectMode === "workspace");
+  const canAutoPair = Boolean(
+    partnerDomain && parsedDomains.length === 1 && connectMode === "workspace"
+  );
 
   // Calculate total domains count being added
   const totalCount = parsedDomains.length + (canAutoPair && autoPairChecked ? 1 : 0);
@@ -198,7 +207,7 @@ export function AddDomainsDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-lg p-6 gap-5 bg-nx-surface border-nx-line" dir={direction}>
+      <DialogContent className="max-w-lg gap-5 border-nx-line bg-nx-surface p-6" dir={direction}>
         <DialogHeader className="space-y-1">
           <DialogTitle className="text-xl font-bold tracking-tight text-nx-ink">
             {t("tenant.domainsAddTitle")}
@@ -219,14 +228,14 @@ export function AddDomainsDialog({
               className="font-mono text-sm"
               autoFocus
             />
-            <p className="text-xs text-nx-ink-2 leading-relaxed">
+            <p className="text-xs leading-relaxed text-nx-ink-2">
               {t("tenant.domainsFieldDomainHint")}
             </p>
           </div>
 
           {/* Apex ⇄ WWW Auto-Pair Recommendation */}
           {canAutoPair && partnerDomain && (
-            <div className="rounded-nx-md border border-nx-accent/30 bg-nx-accent/5 p-3.5 space-y-2 transition-all">
+            <div className="border-nx-accent/30 bg-nx-accent/5 space-y-2 rounded-nx-md border p-3.5 transition-all">
               <div className="flex items-start gap-3">
                 <Checkbox
                   id="auto-pair-checkbox"
@@ -237,13 +246,19 @@ export function AddDomainsDialog({
                 <div className="space-y-1 leading-none">
                   <label
                     htmlFor="auto-pair-checkbox"
-                    className="text-xs font-semibold text-nx-ink flex items-center gap-1.5 cursor-pointer"
+                    className="flex cursor-pointer items-center gap-1.5 text-xs font-semibold text-nx-ink"
                   >
                     <Sparkles className="h-3.5 w-3.5 text-nx-accent" aria-hidden="true" />
                     <span>
                       {isApex
-                        ? t("tenant.domainsRecommendAddWww", { partner: partnerDomain, target: primaryDomain })
-                        : t("tenant.domainsRecommendAddApex", { partner: partnerDomain, target: primaryDomain })}
+                        ? t("tenant.domainsRecommendAddWww", {
+                            partner: partnerDomain,
+                            target: primaryDomain,
+                          })
+                        : t("tenant.domainsRecommendAddApex", {
+                            partner: partnerDomain,
+                            target: primaryDomain,
+                          })}
                     </span>
                   </label>
                   <p className="text-[11px] text-nx-ink-2">
@@ -264,16 +279,19 @@ export function AddDomainsDialog({
               {/* Option 1: Route to Tenant Workspace & Public Site */}
               <div
                 className={cn(
-                  "flex items-start gap-3 rounded-nx-md border p-3.5 transition-colors cursor-pointer",
+                  "flex cursor-pointer items-start gap-3 rounded-nx-md border p-3.5 transition-colors",
                   connectMode === "workspace"
-                    ? "border-nx-accent bg-nx-accent/5"
+                    ? "bg-nx-accent/5 border-nx-accent"
                     : "border-nx-line bg-nx-surface hover:border-nx-line-hi"
                 )}
                 onClick={() => setConnectMode("workspace")}
               >
                 <RadioGroupItem value="workspace" id="mode-workspace" className="mt-0.5" />
                 <div className="space-y-1">
-                  <label htmlFor="mode-workspace" className="text-xs font-semibold text-nx-ink cursor-pointer">
+                  <label
+                    htmlFor="mode-workspace"
+                    className="cursor-pointer text-xs font-semibold text-nx-ink"
+                  >
                     {t("tenant.domainsModeConnectWorkspace")}
                   </label>
                   <div className="flex items-center gap-1.5 text-xs text-nx-ink-2">
@@ -288,21 +306,22 @@ export function AddDomainsDialog({
               {/* Option 2: Redirect to Another Domain */}
               <div
                 className={cn(
-                  "flex items-start gap-3 rounded-nx-md border p-3.5 transition-colors cursor-pointer",
+                  "flex cursor-pointer items-start gap-3 rounded-nx-md border p-3.5 transition-colors",
                   connectMode === "redirect"
-                    ? "border-nx-accent bg-nx-accent/5"
+                    ? "bg-nx-accent/5 border-nx-accent"
                     : "border-nx-line bg-nx-surface hover:border-nx-line-hi"
                 )}
                 onClick={() => setConnectMode("redirect")}
               >
                 <RadioGroupItem value="redirect" id="mode-redirect" className="mt-0.5" />
-                <div className="space-y-1 w-full">
-                  <label htmlFor="mode-redirect" className="text-xs font-semibold text-nx-ink cursor-pointer">
+                <div className="w-full space-y-1">
+                  <label
+                    htmlFor="mode-redirect"
+                    className="cursor-pointer text-xs font-semibold text-nx-ink"
+                  >
                     {t("tenant.domainsModeRedirect")}
                   </label>
-                  <p className="text-[11px] text-nx-ink-2">
-                    {t("tenant.domainsModeRedirectDesc")}
-                  </p>
+                  <p className="text-[11px] text-nx-ink-2">{t("tenant.domainsModeRedirectDesc")}</p>
 
                   {/* Redirection Options Sub-form */}
                   {connectMode === "redirect" && (
@@ -312,20 +331,20 @@ export function AddDomainsDialog({
                     >
                       {/* Status Code Dropdown */}
                       <div className="space-y-1.5">
-                        <Label htmlFor="status-code-select" className="text-xs font-medium text-nx-ink">
+                        <Label
+                          htmlFor="status-code-select"
+                          className="text-xs font-medium text-nx-ink"
+                        >
                           {t("tenant.domainsHttpStatusCode")}
                         </Label>
-                        <Select
-                          value={redirectStatusCode}
-                          onValueChange={setRedirectStatusCode}
-                        >
+                        <Select value={redirectStatusCode} onValueChange={setRedirectStatusCode}>
                           <SelectTrigger id="status-code-select" className="h-9 text-xs">
                             <SelectValue placeholder={t("tenant.domainsSelectStatusCode")} />
                           </SelectTrigger>
-                          <SelectContent className="bg-nx-surface border-nx-line">
+                          <SelectContent className="border-nx-line bg-nx-surface">
                             {/* Temporary Group */}
                             <SelectGroup>
-                              <SelectLabel className="text-[10px] font-semibold text-nx-ink-3 uppercase px-2 py-1">
+                              <SelectLabel className="px-2 py-1 text-[10px] font-semibold uppercase text-nx-ink-3">
                                 {t("tenant.domainsStatusTemporary")}
                               </SelectLabel>
                               <SelectItem value="307" className="text-xs">
@@ -337,7 +356,7 @@ export function AddDomainsDialog({
                             </SelectGroup>
                             {/* Permanent Group */}
                             <SelectGroup>
-                              <SelectLabel className="text-[10px] font-semibold text-nx-ink-3 uppercase px-2 py-1">
+                              <SelectLabel className="px-2 py-1 text-[10px] font-semibold uppercase text-nx-ink-3">
                                 {t("tenant.domainsStatusPermanent")}
                               </SelectLabel>
                               <SelectItem value="308" className="text-xs font-medium">
@@ -353,20 +372,27 @@ export function AddDomainsDialog({
 
                       {/* Target Domain Dropdown */}
                       <div className="space-y-1.5">
-                        <Label htmlFor="target-domain-select" className="text-xs font-medium text-nx-ink">
+                        <Label
+                          htmlFor="target-domain-select"
+                          className="text-xs font-medium text-nx-ink"
+                        >
                           {t("tenant.domainsTargetDomain")}
                         </Label>
                         {availableTargets.length > 0 ? (
-                          <Select
-                            value={effectiveTargetDomain}
-                            onValueChange={setTargetDomain}
-                          >
-                            <SelectTrigger id="target-domain-select" className="h-9 text-xs font-mono">
+                          <Select value={effectiveTargetDomain} onValueChange={setTargetDomain}>
+                            <SelectTrigger
+                              id="target-domain-select"
+                              className="h-9 font-mono text-xs"
+                            >
                               <SelectValue placeholder={t("tenant.domainsSelectTargetDomain")} />
                             </SelectTrigger>
-                            <SelectContent className="bg-nx-surface border-nx-line">
+                            <SelectContent className="border-nx-line bg-nx-surface">
                               {availableTargets.map((d) => (
-                                <SelectItem key={d.id} value={d.domain} className="font-mono text-xs">
+                                <SelectItem
+                                  key={d.id}
+                                  value={d.domain}
+                                  className="font-mono text-xs"
+                                >
                                   {d.domain}
                                 </SelectItem>
                               ))}
@@ -378,7 +404,7 @@ export function AddDomainsDialog({
                             value={effectiveTargetDomain}
                             onChange={(e) => setTargetDomain(e.target.value)}
                             placeholder="example.com"
-                            className="font-mono text-xs h-9"
+                            className="h-9 font-mono text-xs"
                           />
                         )}
                       </div>
@@ -390,7 +416,7 @@ export function AddDomainsDialog({
           </div>
         </div>
 
-        <DialogFooter className="gap-2 sm:justify-end border-t border-nx-line pt-4">
+        <DialogFooter className="gap-2 border-t border-nx-line pt-4 sm:justify-end">
           <Button
             variant="ghost"
             size="sm"

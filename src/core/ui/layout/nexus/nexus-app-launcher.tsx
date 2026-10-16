@@ -160,28 +160,40 @@ export function NexusAppLauncher({ open, onOpenChange }: NexusAppLauncherProps) 
 
   // Drive the phase machine from the `open` prop
   useEffect(() => {
-    if (open) {
-      setPhase("pre");
-      // Double rAF: guarantee the hidden pose paints before the transition runs
-      let raf2 = 0;
-      const raf1 = requestAnimationFrame(() => {
-        raf2 = requestAnimationFrame(() => setPhase("open"));
-      });
-      return () => {
-        cancelAnimationFrame(raf1);
-        cancelAnimationFrame(raf2);
-      };
-    }
-    setPhase((p) => (p === "closed" ? "closed" : "closing"));
-    const timer = window.setTimeout(() => setPhase("closed"), EXIT_UNMOUNT_MS);
-    return () => window.clearTimeout(timer);
+    let cancel = false;
+    let raf1 = 0;
+    let raf2 = 0;
+    let timer = 0;
+
+    queueMicrotask(() => {
+      if (cancel) return;
+      if (open) {
+        setPhase("pre");
+        // Double rAF: guarantee the hidden pose paints before the transition runs
+        raf1 = requestAnimationFrame(() => {
+          raf2 = requestAnimationFrame(() => setPhase("open"));
+        });
+      } else {
+        setPhase((p) => (p === "closed" ? "closed" : "closing"));
+        timer = window.setTimeout(() => setPhase("closed"), EXIT_UNMOUNT_MS);
+      }
+    });
+
+    return () => {
+      cancel = true;
+      if (raf1) cancelAnimationFrame(raf1);
+      if (raf2) cancelAnimationFrame(raf2);
+      if (timer) window.clearTimeout(timer);
+    };
   }, [open]);
 
   // Focus search on open, clear state
   useEffect(() => {
     if (open) {
-      setSearch("");
-      setUpgradeTarget(null);
+      queueMicrotask(() => {
+        setSearch("");
+        setUpgradeTarget(null);
+      });
       setTimeout(() => searchRef.current?.focus(), 120);
     }
   }, [open]);
@@ -323,6 +335,7 @@ export function NexusAppLauncher({ open, onOpenChange }: NexusAppLauncherProps) 
       <div
         ref={launcherRef}
         role="dialog"
+        data-testid="nexus-app-launcher"
         aria-modal="true"
         aria-labelledby={titleId}
         className={cn(
@@ -583,6 +596,8 @@ function WorkspaceCard({
   return (
     <div
       role="button"
+      data-testid="nexus-workspace-card"
+      data-status={status}
       // Locked cards stay in the tab order — clicking OR keying one opens the
       // upgrade dialog, and that upsell must be keyboard-reachable. Only
       // coming-soon (a true no-op) leaves the tab order.

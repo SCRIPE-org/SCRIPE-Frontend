@@ -7,7 +7,12 @@ import { useI18n } from "@core/providers/i18n-provider";
 import { Card } from "@core/ui/card";
 
 interface TenantActivityChartsProps {
-  loginActivity?: Array<{ date: string; successCount?: number; count?: number; failedCount?: number }>;
+  loginActivity?: Array<{
+    date: string;
+    successCount?: number;
+    count?: number;
+    failedCount?: number;
+  }>;
   isPresentationMode?: boolean;
 }
 
@@ -17,21 +22,22 @@ export function TenantActivityCharts({
 }: TenantActivityChartsProps) {
   const { t } = useI18n();
 
-  const livePoints = !isPresentationMode && loginActivity && loginActivity.length > 0
-    ? loginActivity.slice(-10)
-    : null;
+  const livePoints =
+    !isPresentationMode && loginActivity && loginActivity.length > 0
+      ? loginActivity.slice(-10)
+      : null;
 
   const maxCount = livePoints
     ? Math.max(1, ...livePoints.map((p) => (p.successCount ?? p.count ?? 0) + (p.failedCount || 0)))
     : 1;
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-[1.2fr_0.8fr] gap-3">
+    <div className="grid grid-cols-1 gap-3 lg:grid-cols-[1.2fr_0.8fr]">
       {/* 1. Organization Growth (Multi-line SVG Chart) */}
-      <Card className="p-4 border-border bg-card shadow-xs">
-        <div className="flex items-start justify-between gap-3 mb-2">
+      <Card className="shadow-xs border-border bg-card p-4">
+        <div className="mb-2 flex items-start justify-between gap-3">
           <div className="flex items-center gap-2.5">
-            <div className="w-8 h-8 rounded-lg bg-sky-500/10 border border-sky-500/20 text-sky-500 flex items-center justify-center">
+            <div className="flex h-8 w-8 items-center justify-center rounded-lg border border-sky-500/20 bg-sky-500/10 text-sky-500">
               <TrendingUp className="h-4 w-4" />
             </div>
             <div>
@@ -45,17 +51,17 @@ export function TenantActivityCharts({
             </div>
           </div>
 
-          <div className="flex items-center gap-3 text-[10px] text-muted-foreground font-medium">
+          <div className="flex items-center gap-3 text-[10px] font-medium text-muted-foreground">
             <span className="flex items-center gap-1.5">
-              <span className="w-2 h-2 rounded-full bg-[#2b83ff]" />
+              <span className="h-2 w-2 rounded-full bg-[#2b83ff]" />
               {t("tenantCommandCenter.charts.members") || "Members"}
             </span>
             <span className="flex items-center gap-1.5">
-              <span className="w-2 h-2 rounded-full bg-[#12b981]" />
+              <span className="h-2 w-2 rounded-full bg-[#12b981]" />
               {t("tenantCommandCenter.charts.bookings") || "Bookings"}
             </span>
             <span className="flex items-center gap-1.5">
-              <span className="w-2 h-2 rounded-full bg-[#8a56f5]" />
+              <span className="h-2 w-2 rounded-full bg-[#8a56f5]" />
               {t("tenantCommandCenter.charts.staff") || "Staff"}
             </span>
           </div>
@@ -63,7 +69,7 @@ export function TenantActivityCharts({
 
         {/* Growth SVG Chart */}
         <div className="h-44 w-full pt-1">
-          <svg className="w-full h-full overflow-visible" viewBox="0 0 620 190">
+          <svg className="h-full w-full overflow-visible" viewBox="0 0 620 190">
             <g className="stroke-border" strokeWidth="1">
               <line x1="32" y1="25" x2="600" y2="25" strokeDasharray="3 3" />
               <line x1="32" y1="68" x2="600" y2="68" strokeDasharray="3 3" />
@@ -91,22 +97,32 @@ export function TenantActivityCharts({
               strokeWidth="2.6"
             />
 
-            <g className="text-[10px] fill-muted-foreground font-mono select-none">
-              <text x="34" y="180">Aug 18</text>
-              <text x="175" y="180">Aug 25</text>
-              <text x="320" y="180">Sep 1</text>
-              <text x="463" y="180">Sep 8</text>
-              <text x="565" y="180">Sep 15</text>
+            <g className="select-none fill-muted-foreground font-mono text-[10px]">
+              <text x="34" y="180">
+                Aug 18
+              </text>
+              <text x="175" y="180">
+                Aug 25
+              </text>
+              <text x="320" y="180">
+                Sep 1
+              </text>
+              <text x="463" y="180">
+                Sep 8
+              </text>
+              <text x="565" y="180">
+                Sep 15
+              </text>
             </g>
           </svg>
         </div>
       </Card>
 
       {/* 2. Login Activity (Bar Chart) */}
-      <Card className="p-4 border-border bg-card shadow-xs">
-        <div className="flex items-start justify-between gap-3 mb-2">
+      <Card className="shadow-xs border-border bg-card p-4">
+        <div className="mb-2 flex items-start justify-between gap-3">
           <div className="flex items-center gap-2.5">
-            <div className="w-8 h-8 rounded-lg bg-emerald-500/10 border border-emerald-500/20 text-emerald-500 flex items-center justify-center">
+            <div className="flex h-8 w-8 items-center justify-center rounded-lg border border-emerald-500/20 bg-emerald-500/10 text-emerald-500">
               <BarChart3 className="h-4 w-4" />
             </div>
             <div>
@@ -122,7 +138,7 @@ export function TenantActivityCharts({
 
           <Link
             href="/audit"
-            className="text-xs font-semibold text-primary hover:underline flex items-center gap-1"
+            className="flex items-center gap-1 text-xs font-semibold text-primary hover:underline"
           >
             <span>{t("tenantCommandCenter.charts.viewAll") || "View all"}</span>
             <ChevronRight className="h-3 w-3 rtl:rotate-180" />
@@ -131,7 +147,7 @@ export function TenantActivityCharts({
 
         {/* Login Activity Bar SVG */}
         <div className="h-44 w-full pt-1">
-          <svg className="w-full h-full overflow-visible" viewBox="0 0 420 190">
+          <svg className="h-full w-full overflow-visible" viewBox="0 0 420 190">
             <g className="stroke-border" strokeWidth="1">
               <line x1="30" y1="25" x2="405" y2="25" strokeDasharray="3 3" />
               <line x1="30" y1="70" x2="405" y2="70" strokeDasharray="3 3" />
@@ -141,7 +157,7 @@ export function TenantActivityCharts({
 
             {/* Dynamic Live Bars or Showcase Mockup */}
             {livePoints ? (
-              <g className="fill-emerald-500 hover:opacity-85 transition-opacity">
+              <g className="fill-emerald-500 transition-opacity hover:opacity-85">
                 {livePoints.map((pt, i) => {
                   const barWidth = 16;
                   const step = (375 - 45) / Math.max(1, livePoints.length);
@@ -150,21 +166,14 @@ export function TenantActivityCharts({
                   const height = Math.max(6, Math.round((count / maxCount) * 110));
                   const y = 160 - height;
                   return (
-                    <rect
-                      key={pt.date || i}
-                      x={x}
-                      y={y}
-                      width={barWidth}
-                      height={height}
-                      rx={3}
-                    >
+                    <rect key={pt.date || i} x={x} y={y} width={barWidth} height={height} rx={3}>
                       <title>{`${pt.date}: ${count} logins`}</title>
                     </rect>
                   );
                 })}
               </g>
             ) : (
-              <g className="fill-emerald-500 hover:opacity-85 transition-opacity">
+              <g className="fill-emerald-500 transition-opacity hover:opacity-85">
                 <rect x="48" y="128" width="18" height="32" rx="3" />
                 <rect x="92" y="106" width="18" height="54" rx="3" />
                 <rect x="136" y="120" width="18" height="40" rx="3" />

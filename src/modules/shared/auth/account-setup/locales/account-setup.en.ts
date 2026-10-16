@@ -70,7 +70,8 @@ export const en = {
       weak: "Weak",
       medium: "Medium",
       strong: "Strong",
-      securityNotice: "Your credentials are encrypted and your one-time activation link has now expired.",
+      securityNotice:
+        "Your credentials are encrypted and your one-time activation link has now expired.",
     },
   },
 };

@@ -97,6 +97,9 @@ export function buildEditIdentityFields(
   ];
 }
 
+/**
+ * Documentation for module export
+ */
 export interface OptionSetSelectionFieldsArgs {
   t: (key: string, params?: Record<string, string | number>) => string;
   optionSetOptions: { value: string; label: string }[];

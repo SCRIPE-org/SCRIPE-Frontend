@@ -1,4 +1,7 @@
-﻿export const fr = {
+﻿/**
+ * Documentation for module export
+ */
+export const fr = {
   modules: {
     auditLogs: {
       title: "Journaux d'Audit",

@@ -4,6 +4,9 @@ import type {
   ResourceAllocationMode,
 } from "../../domain/entities/SchedulableResource";
 
+/**
+ * Documentation for module export
+ */
 export interface SchedulableResourceJson {
   id: string;
   facilityResourceProfileId: string;
@@ -18,6 +21,12 @@ export interface SchedulableResourceJson {
     maxConcurrentUsage: number;
     overbookingAllowed: boolean;
   };
+  slotPolicy?: {
+    slotDurationMinutes: number;
+    startIncrementMinutes: number;
+    timeZoneId?: string | null;
+    allowMultiSlot?: boolean;
+  } | null;
   publicationStatus: PublicationStatus;
   publishedAtUtc?: string;
   archivedAtUtc?: string;
@@ -26,6 +35,9 @@ export interface SchedulableResourceJson {
   modifiedAt?: string;
 }
 
+/**
+ * Documentation for module export
+ */
 export interface SchedulableResourceListResponseJson {
   items: SchedulableResourceJson[];
   totalCount: number;
@@ -36,6 +48,9 @@ export interface SchedulableResourceListResponseJson {
   hasPreviousPage: boolean;
 }
 
+/**
+ * Documentation for module export
+ */
 export class SchedulableResourceModel {
   constructor(
     public readonly id: string,
@@ -52,7 +67,13 @@ export class SchedulableResourceModel {
     public readonly capacity?: CapacityPolicyData,
     public readonly publishedAtUtc?: string,
     public readonly archivedAtUtc?: string,
-    public readonly modifiedAt?: string
+    public readonly modifiedAt?: string,
+    public readonly slotPolicy?: {
+      slotDurationMinutes: number;
+      startIncrementMinutes: number;
+      timeZoneId?: string | null;
+      allowMultiSlot?: boolean;
+    } | null
   ) {}
 
   static fromJson(json: SchedulableResourceJson): SchedulableResourceModel {
@@ -71,7 +92,8 @@ export class SchedulableResourceModel {
       json.capacity,
       json.publishedAtUtc,
       json.archivedAtUtc,
-      json.modifiedAt
+      json.modifiedAt,
+      json.slotPolicy
     );
   }
 }

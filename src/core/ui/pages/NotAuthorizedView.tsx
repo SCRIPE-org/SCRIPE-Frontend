@@ -42,7 +42,10 @@ export default function NotAuthorizedView() {
                     static icon, decoration with no functional purpose. A
                     still blurred wash reads just as intentional. */}
                 <div className="pointer-events-none absolute inset-0 rounded-full bg-destructive/20" />
-                <Shield aria-hidden="true" className="relative z-raised h-12 w-12 text-destructive" />
+                <Shield
+                  aria-hidden="true"
+                  className="relative z-raised h-12 w-12 text-destructive"
+                />
               </div>
             </div>
 
@@ -59,7 +62,10 @@ export default function NotAuthorizedView() {
             {/* Status Alert */}
             <div className="relative w-full rounded-nx-control border border-destructive/20 bg-destructive/5 p-4">
               <div className="flex items-start gap-3">
-                <AlertTriangle aria-hidden="true" className="mt-0.5 flex-shrink-0 text-destructive" />
+                <AlertTriangle
+                  aria-hidden="true"
+                  className="mt-0.5 flex-shrink-0 text-destructive"
+                />
                 <div className="text-start">
                   <strong className="text-destructive">
                     {t("notAuthorized.accessDeniedAlert")}
@@ -141,9 +147,7 @@ export default function NotAuthorizedView() {
                 <Lock aria-hidden="true" className="h-5 w-5 text-nx-accent" />
               </div>
               <div className="space-y-2">
-                <h3 className="font-semibold text-nx-ink">
-                  {t("notAuthorized.needAccessTitle")}
-                </h3>
+                <h3 className="font-semibold text-nx-ink">{t("notAuthorized.needAccessTitle")}</h3>
                 <p className="text-sm leading-relaxed text-nx-ink-2">
                   {t("notAuthorized.needAccessDescription")}
                 </p>

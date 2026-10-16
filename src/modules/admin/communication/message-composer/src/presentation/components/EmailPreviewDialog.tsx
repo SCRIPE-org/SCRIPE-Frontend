@@ -282,7 +282,10 @@ export function EmailPreviewDialog({
         </DialogHeader>
 
         <div
-          className={cn("pt-2", showVariables ? "grid grid-cols-1 gap-4 lg:grid-cols-[1fr_300px]" : "")}
+          className={cn(
+            "pt-2",
+            showVariables ? "grid grid-cols-1 gap-4 lg:grid-cols-[1fr_300px]" : ""
+          )}
         >
           {/* Main Preview */}
           <div className="space-y-4">

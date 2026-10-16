@@ -1,7 +1,4 @@
-import type {
-  ISiteRepository,
-  PagedSiteResult,
-} from "../../domain/interfaces/ISiteRepository";
+import type { ISiteRepository, PagedSiteResult } from "../../domain/interfaces/ISiteRepository";
 import type {
   ISiteService,
   ListSitesParams,

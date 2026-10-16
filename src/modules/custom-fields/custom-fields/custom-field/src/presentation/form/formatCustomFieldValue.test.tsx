@@ -213,11 +213,14 @@ describe("formatCustomFieldValue", () => {
     "data:text/html;base64,PHNjcmlwdD5hbGVydCgxKTwvc2NyaXB0Pg==",
     "vbscript:msgbox(1)",
     "file:///etc/passwd",
-  ])("renders a dangerous-scheme Url value (%s) as inert plain text, never a clickable anchor", (dangerous) => {
-    render(<>{formatCustomFieldValue("Url", dangerous, "en", t)}</>);
-    expect(screen.queryByRole("link")).not.toBeInTheDocument();
-    expect(screen.getByText(dangerous)).toBeInTheDocument();
-  });
+  ])(
+    "renders a dangerous-scheme Url value (%s) as inert plain text, never a clickable anchor",
+    (dangerous) => {
+      render(<>{formatCustomFieldValue("Url", dangerous, "en", t)}</>);
+      expect(screen.queryByRole("link")).not.toBeInTheDocument();
+      expect(screen.getByText(dangerous)).toBeInTheDocument();
+    }
+  );
 
   it("renders an unparsable Url value as inert plain text rather than throwing", () => {
     expect(() => render(<>{formatCustomFieldValue("Url", "not a url", "en", t)}</>)).not.toThrow();
@@ -297,9 +300,9 @@ describe("formatCustomFieldValue", () => {
     // Intl.NumberFormat's currency style separates the code from the amount
     // with a NO-BREAK SPACE (U+00A0), not an ASCII space --   here is
     // deliberate, not a typo.
-    expect(formatCustomFieldValue("Currency", { amount: 1234.5, currencyCode: "USD" }, "en", t)).toBe(
-      "USD 1,234.50"
-    );
+    expect(
+      formatCustomFieldValue("Currency", { amount: 1234.5, currencyCode: "USD" }, "en", t)
+    ).toBe("USD 1,234.50");
   });
 
   it("degrades a Currency value with a malformed stored code to a plain concatenation, never throwing", () => {
@@ -590,9 +593,7 @@ describe("formatCustomFieldValue", () => {
           // field that was never filled in.
           expect(container.textContent?.trim()).not.toBe("");
           expect(screen.getByText("hrms.staff-member")).toBeInTheDocument();
-          expect(
-            screen.getByText(VALUE_TYPE_CATALOG[type].labelKey)
-          ).toBeInTheDocument();
+          expect(screen.getByText(VALUE_TYPE_CATALOG[type].labelKey)).toBeInTheDocument();
           break;
         }
         // ── Wave 3.4 ────────────────────────────────────────────────────
@@ -706,13 +707,20 @@ describe("formatCustomFieldValue -- EntityReference / UserReference", () => {
   it("labels the cell with the value type's own catalog label, so the two reference types read differently", () => {
     render(<>{formatCustomFieldValue("EntityReference", REFERENCE, "en", t)}</>);
     expect(screen.getByText("customField.valueTypes.entityReference")).toBeInTheDocument();
-    expect(
-      screen.queryByText("customField.valueTypes.userReference")
-    ).not.toBeInTheDocument();
+    expect(screen.queryByText("customField.valueTypes.userReference")).not.toBeInTheDocument();
   });
 
   it("shows the target entity-type key, which names a TABLE and reveals nothing about the row", () => {
-    render(<>{formatCustomFieldValue("UserReference", { ...REFERENCE, entityTypeKey: "identity.user" }, "en", t)}</>);
+    render(
+      <>
+        {formatCustomFieldValue(
+          "UserReference",
+          { ...REFERENCE, entityTypeKey: "identity.user" },
+          "en",
+          t
+        )}
+      </>
+    );
     expect(screen.getByText("identity.user")).toBeInTheDocument();
   });
 
@@ -728,7 +736,16 @@ describe("formatCustomFieldValue -- EntityReference / UserReference", () => {
     // A key with no id names a table but no row, and an id with no key cannot
     // be dispatched to a module at all -- Project() already returns null
     // rather than a half-reference, so reaching here means data corruption.
-    render(<>{formatCustomFieldValue("EntityReference", { entityTypeKey: "", entityId: "ENC-1" }, "en", t)}</>);
+    render(
+      <>
+        {formatCustomFieldValue(
+          "EntityReference",
+          { entityTypeKey: "", entityId: "ENC-1" },
+          "en",
+          t
+        )}
+      </>
+    );
     expect(screen.getByText("—")).toBeInTheDocument();
   });
 });
@@ -854,9 +871,7 @@ describe("formatCustomFieldValue -- RichText (Wave 3.4)", () => {
     // A bare string is the shape the write path refuses, so its presence in
     // stored data means out-of-band or stale data. Rendering it would make a cell
     // that looks fine over a value no save can ever accept.
-    const { container } = render(
-      <>{formatCustomFieldValue("RichText", "<p>bare</p>", "en", t)}</>
-    );
+    const { container } = render(<>{formatCustomFieldValue("RichText", "<p>bare</p>", "en", t)}</>);
     expect(container.textContent).not.toContain("bare");
   });
 });

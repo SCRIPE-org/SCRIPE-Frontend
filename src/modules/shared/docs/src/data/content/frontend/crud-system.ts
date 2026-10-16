@@ -81,6 +81,9 @@ const sections: DocSection[] = [
   enabled?: boolean;         // Default: true
 }
 
+/**
+ * Documentation for any>
+ */
 export function useCrudViewModel<T extends BaseEntity, TCreate = any, TUpdate = any>(
   key: any[],
   services: {

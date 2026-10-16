@@ -27,7 +27,8 @@ export function VaultBackground() {
       <div
         className="absolute inset-0"
         style={{
-          background: "radial-gradient(75% 55% at 50% 35%, rgba(198, 255, 0, 0.1), transparent 62%)",
+          background:
+            "radial-gradient(75% 55% at 50% 35%, rgba(198, 255, 0, 0.1), transparent 62%)",
         }}
       />
     </div>

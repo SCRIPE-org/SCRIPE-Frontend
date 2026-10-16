@@ -83,16 +83,21 @@ export const de = {
             "Die Art von Datensatz, zu der das Feld gehört — Personen, Mitarbeitende, Buchungen und so weiter.",
           partKey:
             "Der maschinenlesbare Name, verwendet in Fehlermeldungen und Exporten. Kleinbuchstaben, beginnt mit einem Buchstaben, nur Buchstaben, Ziffern und Unterstriche.",
-          partValueType: "Einer der zweiundzwanzig Typen; er legt fest, was eingegeben werden kann und wie es geprüft wird.",
+          partValueType:
+            "Einer der zweiundzwanzig Typen; er legt fest, was eingegeben werden kann und wie es geprüft wird.",
           partLabelEn: "Die englische Bezeichnung, die Personen über dem Eingabefeld sehen.",
-          partLabelAr: "Die arabische Bezeichnung, optional. Fällt bei leerem Wert auf die englische zurück.",
+          partLabelAr:
+            "Die arabische Bezeichnung, optional. Fällt bei leerem Wert auf die englische zurück.",
           partPlaceholder:
             "Optionaler, grau dargestellter Hinweistext im leeren Eingabefeld, für jede Sprache einzeln.",
-          partRequired: "Ob ein Datensatz gespeichert werden kann, während dieses Feld leer bleibt.",
-          partSortOrder: "Wo das Feld im Verhältnis zu den anderen benutzerdefinierten Feldern im Formular steht.",
+          partRequired:
+            "Ob ein Datensatz gespeichert werden kann, während dieses Feld leer bleibt.",
+          partSortOrder:
+            "Wo das Feld im Verhältnis zu den anderen benutzerdefinierten Feldern im Formular steht.",
           partFieldGroup: "Die optionale Überschrift, unter der das Feld zusammengefasst wird.",
           partOptions: "Die Liste der zulässigen Antworten. Nur bei Select und MultiSelect.",
-          partValidator: "Eine optionale zusätzliche Formatprüfung samt ihrer Einstellung. Nur bei Textfeldern.",
+          partValidator:
+            "Eine optionale zusätzliche Formatprüfung samt ihrer Einstellung. Nur bei Textfeldern.",
           partReferenceTarget:
             "Die eine Art von Datensatz, auf die die Werte dieses Felds verweisen dürfen, oder nichts, damit jeder Wert seine eigene Art wählt. Nur bei EntityReference-Feldern.",
           partSensitivity:
@@ -113,7 +118,7 @@ export const de = {
             "Angenommen, die Akademie muss die Nationalität jedes Spielers erfassen, und das Produkt hat noch kein solches Feld. Nichts davon braucht einen Entwickler.",
           ex1Title: "Entscheiden Sie, wonach Sie fragen",
           ex1Content:
-            "Die Frage lautet: \"Welche Nationalität hat dieser Spieler?\". Die Antwort ist ein kurzer Text ohne feste Auswahlliste, also ist der Werttyp Text. Wollten Sie tatsächlich eine feste Liste, wäre stattdessen Select die richtige Wahl — und diese Entscheidung ist dauerhaft, also lohnt sich ein Moment des Nachdenkens.",
+            'Die Frage lautet: "Welche Nationalität hat dieser Spieler?". Die Antwort ist ein kurzer Text ohne feste Auswahlliste, also ist der Werttyp Text. Wollten Sie tatsächlich eine feste Liste, wäre stattdessen Select die richtige Wahl — und diese Entscheidung ist dauerhaft, also lohnt sich ein Moment des Nachdenkens.',
           ex2Title: "Definieren Sie das Feld",
           ex2Content:
             "Wählen Sie auf dem Bildschirm Benutzerdefinierte Felder Hinzufügen. Wählen Sie den Datensatztyp für Personen, setzen Sie den Schlüssel auf nationality, die englische Bezeichnung auf Nationality, den Werttyp auf Text, und lassen Sie Required vorerst ausgeschaltet. Speichern.",
@@ -190,7 +195,8 @@ export const de = {
           permCreate:
             "Eine Definition anlegen, auch über den Link Add custom field innerhalb eines Datensatzformulars.",
           permUpdate: "Eine bestehende Definition bearbeiten.",
-          permDelete: "Eine Definition löschen, einschließlich der Bestätigung eines zerstörerischen Löschvorgangs.",
+          permDelete:
+            "Eine Definition löschen, einschließlich der Bestätigung eines zerstörerischen Löschvorgangs.",
           permGroups:
             "Die Feldgruppen-Funktion, gesondert freigeschaltet. Eine Rolle, die bereits jede der obigen Berechtigungen für benutzerdefinierte Felder besitzt, erhält diese nicht automatisch mit.",
           planInfoTitle: "Benutzerdefinierte Felder sind Teil Ihres Plans",
@@ -239,7 +245,8 @@ export const de = {
             "Zurückgewiesen: VALIDATION_MAX_LENGTH. Text endet bei 4.000 Zeichen — verwenden Sie LongText für alles, was länger ist.",
           textBlankOptional:
             "Angenommen, und als gelöscht gespeichert. Reine Leerzeichen zählen als leer, sodass ein angehängter Validator darauf nie läuft.",
-          textBlankRequired: "Zurückgewiesen: VALIDATION_REQUIRED. Reine Leerzeichen zählen auch hier als leer.",
+          textBlankRequired:
+            "Zurückgewiesen: VALIDATION_REQUIRED. Reine Leerzeichen zählen auch hier als leer.",
           exText4500: "Ein Wert mit einer Länge von 4.500 Zeichen",
           exSpacesOptional: "Drei Leerzeichen, bei einem Feld, das nicht Required ist",
           exSpacesRequired: "Drei Leerzeichen, bei einem Required-Feld",
@@ -251,7 +258,8 @@ export const de = {
             "Nur die Obergrenze von 10.000 Zeichen. LongText kann keinen Validator tragen. Der Zähler auf dem Bildschirm wird rot, sobald Sie die Obergrenze überschreiten, hindert Sie aber nicht am Weitertippen — die Zurückweisung kommt erst beim Speichern.",
           longTextOk:
             "Angenommen. Das liegt deutlich über der eigenen 4.000-Zeichen-Grenze von Text, was der Grund ist, warum LongText existiert.",
-          longTextTooLong: "Zurückgewiesen: VALIDATION_MAX_LENGTH, unter Nennung der Obergrenze von 10.000 Zeichen.",
+          longTextTooLong:
+            "Zurückgewiesen: VALIDATION_MAX_LENGTH, unter Nennung der Obergrenze von 10.000 Zeichen.",
           exLong6000: "Eine Beschreibung mit 6.000 Zeichen",
           exLong12000: "Eine Beschreibung mit 12.000 Zeichen",
 
@@ -266,11 +274,11 @@ export const de = {
             "Zurückgewiesen: VALIDATION_INVALID_FORMAT. Der Abgleich unterscheidet Groß-/Kleinschreibung, sodass Medium und medium unterschiedliche Antworten sind — was auch bedeutet, dass beide rechtmäßig als getrennte Optionen existieren können.",
           selectUnknown:
             "Zurückgewiesen: VALIDATION_INVALID_FORMAT. Die Meldung zitiert den zurückgewiesenen Wert und den Schlüssel des Felds.",
-          exSelectPadded: "\" Medium\" mit einem führenden Leerzeichen",
+          exSelectPadded: '" Medium" mit einem führenden Leerzeichen',
 
           multiSelectTitle: "MultiSelect",
           multiSelectStores:
-            "Mehrere Antworten aus derselben Art von Liste, bis zu 19 davon. Wird als Mehrfachauswahl-Combobox mit einem live mitlaufenden Zähler \"N of 19 selected\" dargestellt.",
+            'Mehrere Antworten aus derselben Art von Liste, bis zu 19 davon. Wird als Mehrfachauswahl-Combobox mit einem live mitlaufenden Zähler "N of 19 selected" dargestellt.',
           multiSelectChecks:
             "Jede übermittelte Antwort muss eine der konfigurierten Optionen des Felds sein, keine Antwort darf sich wiederholen, und es dürfen höchstens 19 sein. Die Reihenfolge, in der Sie auswählen, bleibt durchgehend erhalten. Für eine Optionsliste aus Red, Green, Blue, Yellow gilt:",
           multiOk:
@@ -279,7 +287,8 @@ export const de = {
             "Zurückgewiesen: VALIDATION_MAX_LENGTH, unter Nennung der Obergrenze von 19. Die Auswahlkomponente selbst macht die zwanzigste Option nicht auswählbar, sodass dies nur über eine Anfrage erreichbar ist, die das Formular umgeht.",
           multiDuplicate:
             "Zurückgewiesen: VALIDATION_UNIQUE. Eine wiederholte Antwort wird zurückgewiesen, statt still auf eine zusammengeführt zu werden.",
-          multiUnknown: "Zurückgewiesen: VALIDATION_INVALID_FORMAT — Purple gehört nicht zu den Optionen des Felds.",
+          multiUnknown:
+            "Zurückgewiesen: VALIDATION_INVALID_FORMAT — Purple gehört nicht zu den Optionen des Felds.",
           multiEmpty:
             "Als leer behandelt: gelöscht, wenn das Feld optional ist, zurückgewiesen mit VALIDATION_REQUIRED, wenn es Required ist.",
           exMultiTwo: "Blue, dann Red",
@@ -298,8 +307,8 @@ export const de = {
           numberPrecision:
             "Angenommen, und auf sechs Nachkommastellen gespeichert. Alles Feinere als das bleibt nicht erhalten.",
           numberInvalid:
-            "Zurückgewiesen: VALIDATION_INVALID_FORMAT — die Meldung lautet \"expects a number\". Eine als Wort geschriebene Zahl wird nicht geparst.",
-          exAboutForty: "\"about 40\"",
+            'Zurückgewiesen: VALIDATION_INVALID_FORMAT — die Meldung lautet "expects a number". Eine als Wort geschriebene Zahl wird nicht geparst.',
+          exAboutForty: '"about 40"',
 
           percentTitle: "Percent",
           percentStores:
@@ -307,23 +316,26 @@ export const de = {
           percentChecks:
             "Der Wert muss sich als Zahl parsen lassen und zwischen 0 und 100 liegen. Er wird exakt so gespeichert, wie eingegeben — das ist das Detail, das Sie richtig haben müssen, falls Sie je die Rohdaten lesen oder einen Export bauen.",
           percentOk: "Angenommen, und anschließend als 25% angezeigt.",
-          percentDecimal: "Angenommen, und als 33,5% angezeigt. Bruchteile eines Prozentpunkts bleiben exakt erhalten.",
+          percentDecimal:
+            "Angenommen, und als 33,5% angezeigt. Bruchteile eines Prozentpunkts bleiben exakt erhalten.",
           percentQuarter:
             "Angenommen — bedeutet aber ein Viertel eines Prozents, angezeigt als 0,25%. Percent speichert die Zahl, die Sie laut aussprechen würden, nie einen Bruch zwischen 0 und 1.",
           percentTooHigh: "Zurückgewiesen: VALIDATION_RANGE, unter Nennung der Grenzen 0 und 100.",
-          percentNegative: "Zurückgewiesen: VALIDATION_RANGE. Die Untergrenze ist 0, und sie ist einschließend.",
+          percentNegative:
+            "Zurückgewiesen: VALIDATION_RANGE. Die Untergrenze ist 0, und sie ist einschließend.",
 
           ratingTitle: "Rating",
           ratingStores:
-            "Eine ganze Zahl von 1 bis 5, erfasst über einen Schieberegler. Wird anschließend als \"4 / 5\" angezeigt.",
+            'Eine ganze Zahl von 1 bis 5, erfasst über einen Schieberegler. Wird anschließend als "4 / 5" angezeigt.',
           ratingChecks:
             "Der Wert muss sich als Zahl parsen lassen, eine ganze Zahl sein und zwischen 1 und 5 einschließlich liegen. Es gibt weder ein Sterne-Element noch eine Freitexteingabe.",
           ratingOk: "Angenommen, und als 4 / 5 angezeigt.",
           ratingZero:
-            "Zurückgewiesen: VALIDATION_RANGE. Eine 0 ist ein echter übermittelter Wert, der die Prüfung von 1 bis 5 nicht besteht; sie wird nicht als \"unbewertet\" gelesen.",
+            'Zurückgewiesen: VALIDATION_RANGE. Eine 0 ist ein echter übermittelter Wert, der die Prüfung von 1 bis 5 nicht besteht; sie wird nicht als "unbewertet" gelesen.',
           ratingFraction:
             "Zurückgewiesen: VALIDATION_RANGE. Halbe Bewertungen werden nicht unterstützt — das ist ein echter Unterschied zu Number, das jede Dezimalzahl erlaubt.",
-          ratingTooHigh: "Zurückgewiesen: VALIDATION_RANGE, mit derselben Meldung, die auch eine 0 erhält.",
+          ratingTooHigh:
+            "Zurückgewiesen: VALIDATION_RANGE, mit derselben Meldung, die auch eine 0 erhält.",
           ratingUntouched:
             "Wird als leer gespeichert, nicht als 1. Der Schieberegler muss irgendwo stehen, sodass ein unberührtes Feld an seiner äußersten linken Position erscheint — das ist ein Anzeigeartefakt, keine gespeicherte Antwort.",
           exRatingUntouched: "Der Schieberegler, unberührt gelassen bei einem neuen Datensatz",
@@ -333,7 +345,8 @@ export const de = {
             "Ein Betrag zusammen mit seinem dreibuchstabigen Währungscode, gehalten als zwei unabhängige Eingaben innerhalb einer beschrifteten Gruppe. Wird anschließend über die eigene Zahlenformatierung des Lesers angezeigt, wobei der Code statt eines Symbols gezeigt wird, sodass EUR und USD nie mehrdeutig sind.",
           currencyChecks:
             "Beide Teile sind zusammen erforderlich. Der Betrag muss sich als Zahl parsen lassen; der Code muss aus genau drei großgeschriebenen ASCII-Buchstaben bestehen. Das Code-Eingabefeld wandelt beim Tippen in Großbuchstaben um und filtert Buchstaben, weil die Prüfung selbst Kleinschreibung nicht umwandelt — sie weist sie zurück.",
-          currencyOk: "Angenommen. Wird als Betrag neben dem Code angezeigt, zum Beispiel USD 100.50.",
+          currencyOk:
+            "Angenommen. Wird als Betrag neben dem Code angezeigt, zum Beispiel USD 100.50.",
           currencyLower:
             "Zurückgewiesen, sofern es je den Server erreicht: VALIDATION_INVALID_FORMAT, unter Nennung der Anforderung von drei Buchstaben nach ISO 4217. Im Formular selbst erzwingt das Eingabefeld beim Tippen Großschreibung, sodass Sie das normalerweise nicht zu sehen bekommen.",
           currencyNoCode:
@@ -341,7 +354,7 @@ export const de = {
           currencyNoAmount:
             "Auf dieselbe Weise zurückgewiesen. Ein Code ohne Betrag ist ein defekter Wert, kein gelöschter — nur wenn beide Teile fehlen, zählt das als leer.",
           currencyZzz:
-            "Angenommen. Geprüft wird nur die Form des Codes, nie seine Mitgliedschaft in der echten ISO-4217-Liste, sodass ein wohlgeformter, aber nicht existierender Code durchkommt. Die Anzeige weicht für einen Code, den der Browser des Lesers nicht erkennt, auf \"ZZZ 100.50\" aus.",
+            'Angenommen. Geprüft wird nur die Form des Codes, nie seine Mitgliedschaft in der echten ISO-4217-Liste, sodass ein wohlgeformter, aber nicht existierender Code durchkommt. Die Anzeige weicht für einen Code, den der Browser des Lesers nicht erkennt, auf "ZZZ 100.50" aus.',
           currencyMinor:
             "Angenommen, und bedeutet zehntausendfünfzig. In der Speicherung benutzerdefinierter Felder gibt es nirgends kleinste Währungseinheiten — 100.50 wird als 100.50 gespeichert, nie als 10050.",
           exCurrencyOk: "100.50 mit dem Code USD",
@@ -353,16 +366,17 @@ export const de = {
 
           durationTitle: "Duration",
           durationStores:
-            "Eine Zeitdauer, gezählt in Minuten. Wird als numerisches Eingabefeld mit sichtbarer Beschriftung \"minutes\" daneben dargestellt, nie als nackte, unbeschriftete Zahl.",
+            'Eine Zeitdauer, gezählt in Minuten. Wird als numerisches Eingabefeld mit sichtbarer Beschriftung "minutes" daneben dargestellt, nie als nackte, unbeschriftete Zahl.',
           durationChecks:
-            "Der Wert muss sich als Zahl parsen lassen und darf nicht negativ sein. Null wird angenommen — ein rechtmäßiger \"kein Puffer\"-Wert. Es gibt überhaupt keine Obergrenze.",
+            'Der Wert muss sich als Zahl parsen lassen und darf nicht negativ sein. Null wird angenommen — ein rechtmäßiger "kein Puffer"-Wert. Es gibt überhaupt keine Obergrenze.',
           durationOk: "Angenommen, und als 90 minutes angezeigt.",
           durationFraction:
             "Angenommen, und exakt als 1.5 gehalten — neunzig Sekunden. Dezimalstellen werden nicht auf ganze Minuten gerundet.",
           durationZero: "Angenommen. Null ist eine echte Antwort, keine leere.",
           durationLarge:
             "Angenommen — 5.400 Minuten, das sind dreieinhalb Tage. Nichts warnt Sie, denn es gibt kein Maximum.",
-          durationNegative: "Zurückgewiesen: VALIDATION_RANGE, mit einer Meldung, dass der Wert nicht negativ sein darf.",
+          durationNegative:
+            "Zurückgewiesen: VALIDATION_RANGE, mit einer Meldung, dass der Wert nicht negativ sein darf.",
 
           groupDateTitle: "Daten und Uhrzeiten",
           dateTitle: "Date",
@@ -370,19 +384,22 @@ export const de = {
             "Ein Kalenderdatum ganz ohne Zeitanteil — ein Geburtstag, ein Vertragsdatum, ein Ablaufdatum. Wird als Datumsauswahl dargestellt.",
           dateChecks:
             "Es wird nur geprüft, ob sich der Wert als Datum parsen lässt. Da der gespeicherte Wert ein reines Kalenderdatum ist und kein Zeitpunkt, liest er sich für jeden Betrachter unabhängig von dessen Zeitzone identisch zurück.",
-          dateOk: "Angenommen, und für jeden Betrachter, überall, als dasselbe Kalenderdatum zurückgelesen.",
+          dateOk:
+            "Angenommen, und für jeden Betrachter, überall, als dasselbe Kalenderdatum zurückgelesen.",
           dateNoTime:
             "Ignoriert. Date hält keinen Zeitanteil, sodass eine zusammen mit dem Datum übermittelte Uhrzeit schlicht nicht gespeichert wird. Verwenden Sie DateTime, wenn die Uhrzeit eine Rolle spielt.",
-          dateInvalid: "Zurückgewiesen: VALIDATION_INVALID_FORMAT — die Meldung lautet \"expects a date\".",
+          dateInvalid:
+            'Zurückgewiesen: VALIDATION_INVALID_FORMAT — die Meldung lautet "expects a date".',
           exDateWithTime: "Ein Datum mit angehängtem Zeitanteil",
-          exNotADate: "\"next Tuesday\"",
+          exNotADate: '"next Tuesday"',
 
           dateTimeTitle: "DateTime",
           dateTimeStores:
             "Ein genauer Zeitpunkt zusammen mit der Zeitzone, zu der er gehört. Beide Hälften werden gespeichert, sodass ein Anstoß um 18:00 Uhr in Kairo für jemanden, der von London aus schaut, weiterhin als 18:00 Uhr in Kairo gelesen wird.",
           dateTimeChecks:
-            "Der Zeitpunkt muss sich parsen lassen, und die Zeitzone muss ein Zonen-Bezeichner sein, den der Server erkennt — in der Praxis ein IANA-Bezeichner wie \"Africa/Cairo\", wobei die zugrunde liegende Prüfung plattformabhängig ist und eine unter Windows gehostete Bereitstellung auch einen nativen Windows-Bezeichner wie \"Egypt Standard Time\" akzeptiert. Die Zone ist erforderlich, sobald eine der beiden Hälften vorhanden ist — ein Zeitpunkt ohne Zone wird zurückgewiesen, nicht still interpretiert. Das Formular zeigt die Zone als kleinen Hinweis neben der eingegebenen Uhrzeit, mit einem Link Change, der eine durchsuchbare Auswahl öffnet.",
-          dateTimeOk: "Angenommen. Sowohl der Zeitpunkt als auch seine Zone werden exakt wie eingegeben zurückgelesen.",
+            'Der Zeitpunkt muss sich parsen lassen, und die Zeitzone muss ein Zonen-Bezeichner sein, den der Server erkennt — in der Praxis ein IANA-Bezeichner wie "Africa/Cairo", wobei die zugrunde liegende Prüfung plattformabhängig ist und eine unter Windows gehostete Bereitstellung auch einen nativen Windows-Bezeichner wie "Egypt Standard Time" akzeptiert. Die Zone ist erforderlich, sobald eine der beiden Hälften vorhanden ist — ein Zeitpunkt ohne Zone wird zurückgewiesen, nicht still interpretiert. Das Formular zeigt die Zone als kleinen Hinweis neben der eingegebenen Uhrzeit, mit einem Link Change, der eine durchsuchbare Auswahl öffnet.',
+          dateTimeOk:
+            "Angenommen. Sowohl der Zeitpunkt als auch seine Zone werden exakt wie eingegeben zurückgelesen.",
           dateTimeNoZone:
             "Zurückgewiesen: VALIDATION_INVALID_TIMEZONE. Ein Zeitpunkt ohne Zone ist genau das, was DateTime verhindern soll.",
           dateTimeBadZone:
@@ -399,11 +416,14 @@ export const de = {
             "Eine Tageszeit im 24-Stunden-Format, einschließlich Sekunden, ohne zugehöriges Datum — eine Öffnungszeit, eine Sperrstunde, ein Anstoßzeitpunkt. Wird als native Zeitauswahl mit aktivierten Sekunden dargestellt und anschließend im jeweils eigenen lokalen Zeitformat des Lesers angezeigt.",
           timeChecks:
             "Der Wert muss aus durch Doppelpunkte getrennten Stunden, Minuten und Sekunden bestehen, mit Stunden von 0 bis 23, Minuten von 0 bis 59 und Sekunden von 0 bis 59. Nicht aufgefüllte Eingaben werden angenommen und normalisiert statt zurückgewiesen.",
-          timeOk: "Angenommen, und im eigenen Format des Lesers angezeigt — zum Beispiel 2:30:00 PM für einen englischsprachigen (US-)Leser.",
+          timeOk:
+            "Angenommen, und im eigenen Format des Lesers angezeigt — zum Beispiel 2:30:00 PM für einen englischsprachigen (US-)Leser.",
           timeNormalised:
             "Angenommen, und vor der Speicherung auf 09:05:00 normalisiert. Zwei Übermittlungen derselben Uhrzeit mit unterschiedlicher Ziffernbreite landen immer identisch.",
-          timeHourRange: "Zurückgewiesen: VALIDATION_INVALID_FORMAT. Stunden laufen von 0 bis 23, sodass 24 außerhalb des Bereichs liegt.",
-          timeMinuteRange: "Zurückgewiesen: VALIDATION_INVALID_FORMAT. Minuten laufen von 0 bis 59.",
+          timeHourRange:
+            "Zurückgewiesen: VALIDATION_INVALID_FORMAT. Stunden laufen von 0 bis 23, sodass 24 außerhalb des Bereichs liegt.",
+          timeMinuteRange:
+            "Zurückgewiesen: VALIDATION_INVALID_FORMAT. Minuten laufen von 0 bis 59.",
           timeAmPm:
             "Zurückgewiesen: VALIDATION_INVALID_FORMAT. Zwölf-Stunden-Text wird nicht geparst — die gespeicherte Form ist immer 24-Stunden, auch wenn die Anzeige es nicht ist.",
 
@@ -418,7 +438,7 @@ export const de = {
           emailDisplayName:
             "Zurückgewiesen: VALIDATION_INVALID_EMAIL. Eine Umhüllung mit Anzeigenamen lässt sich zwar als Adresse parsen, wird aber zurückgewiesen statt still entfernt, weil ein Email-Feld keinen Anzeigenamen zu bewahren hat.",
           emailInvalid: "Zurückgewiesen: VALIDATION_INVALID_EMAIL.",
-          exEmailDisplayName: "\"Test User <test@example.com>\"",
+          exEmailDisplayName: '"Test User <test@example.com>"',
 
           urlTitle: "Url",
           urlStores:
@@ -432,42 +452,53 @@ export const de = {
             "Zurückgewiesen: VALIDATION_INVALID_FORMAT. Ein nackter Host wird zurückgewiesen statt erraten, sodass nichts entscheiden muss, ob http oder https gemeint war.",
           urlScheme:
             "Zurückgewiesen: VALIDATION_INVALID_FORMAT. Das ist eine echte Sicherheitsgrenze, keine Stilregel — und weil das Schema erneut vor der Anzeige geprüft wird, erscheint sogar ein Wert, der vor Einführung dieser Prüfung gespeichert wurde, als reglosen Text statt als aktiver Link.",
-          urlFtp: "Zurückgewiesen: VALIDATION_INVALID_FORMAT. Nur http und https stehen auf der Liste.",
+          urlFtp:
+            "Zurückgewiesen: VALIDATION_INVALID_FORMAT. Nur http und https stehen auf der Liste.",
 
           phoneTitle: "Phone",
           phoneStores:
             "Eine Telefonnummer im internationalen Format. Wird über eine Länderauswahl mit Flaggen und Suche dargestellt und anschließend zur besseren Lesbarkeit umformatiert angezeigt — zum Beispiel +20 123 456 7890.",
           phoneChecks:
             "Der gespeicherte Wert muss mit einem + beginnen, seine erste Ziffer darf nicht Null sein, und er muss insgesamt zwischen 8 und 15 Ziffern enthalten. Das ist eine reine Formprüfung.",
-          phoneOk: "Angenommen, und umformatiert angezeigt statt als nackte gespeicherte Zeichenkette.",
-          phoneNoPlus: "Zurückgewiesen: VALIDATION_INVALID_FORMAT. Das führende + ist Teil des Formats.",
-          phoneLeadingZero: "Zurückgewiesen: VALIDATION_INVALID_FORMAT. Eine Landesvorwahl beginnt nie mit Null.",
-          phoneTooShort: "Zurückgewiesen: VALIDATION_INVALID_FORMAT. Sieben Ziffern liegen unter dem Minimum von acht.",
+          phoneOk:
+            "Angenommen, und umformatiert angezeigt statt als nackte gespeicherte Zeichenkette.",
+          phoneNoPlus:
+            "Zurückgewiesen: VALIDATION_INVALID_FORMAT. Das führende + ist Teil des Formats.",
+          phoneLeadingZero:
+            "Zurückgewiesen: VALIDATION_INVALID_FORMAT. Eine Landesvorwahl beginnt nie mit Null.",
+          phoneTooShort:
+            "Zurückgewiesen: VALIDATION_INVALID_FORMAT. Sieben Ziffern liegen unter dem Minimum von acht.",
           phoneUnassignable:
             "Vom Server angenommen, der nur die Form prüft und nicht, ob die Nummer wirklich existieren könnte. Die Auswahlkomponente des Formulars prüft die Nummer zusätzlich gegen den echten Nummernplan des gewählten Landes, sodass Sie diesen Wert nicht über die Oberfläche erzeugen können — nur über eine Anfrage, die das Formular umgeht.",
 
           groupOtherTitle: "Ja/Nein und Farbe",
           booleanTitle: "Boolean",
-          booleanStores: "Ein einfaches Ja oder Nein. Wird als Ein/Aus-Schalter dargestellt. Hat weder Platzhalter noch Optionen.",
+          booleanStores:
+            "Ein einfaches Ja oder Nein. Wird als Ein/Aus-Schalter dargestellt. Hat weder Platzhalter noch Optionen.",
           booleanChecks:
             "Es werden nur die Wörter true und false geparst, unabhängig von Groß-/Kleinschreibung. Nichts anderes wird als Synonym behandelt.",
           boolTrue: "Angenommen.",
           boolFalse: "Angenommen.",
           boolOne:
-            "Zurückgewiesen: VALIDATION_INVALID_FORMAT — die Meldung lautet \"expects a boolean\". Eine numerische 1 wird nicht als true gelesen.",
-          boolYes: "Zurückgewiesen: VALIDATION_INVALID_FORMAT. Weder yes/no noch on/off wird angenommen.",
+            'Zurückgewiesen: VALIDATION_INVALID_FORMAT — die Meldung lautet "expects a boolean". Eine numerische 1 wird nicht als true gelesen.',
+          boolYes:
+            "Zurückgewiesen: VALIDATION_INVALID_FORMAT. Weder yes/no noch on/off wird angenommen.",
 
           colorTitle: "Color",
           colorStores:
             "Eine Farbe, gespeichert als Hex-Wert. Wird als Raster aus zwanzig Farbfeldern plus einer benutzerdefinierten Hex-Eingabe dargestellt und anschließend als Hex-Text mit einem kleinen passenden Farbchip daneben angezeigt.",
           colorChecks:
             "Der Wert muss aus einem # gefolgt von genau drei oder genau sechs Hexadezimalziffern bestehen. Groß-/Kleinschreibung wird beim Speichern auf Kleinbuchstaben normalisiert; die Länge nicht.",
-          colorOk: "Angenommen, und als #aabbcc gespeichert. Großbuchstaben werden auf Kleinbuchstaben umgelegt.",
+          colorOk:
+            "Angenommen, und als #aabbcc gespeichert. Großbuchstaben werden auf Kleinbuchstaben umgelegt.",
           colorShort:
             "Angenommen, und als #abc beibehalten. Die Kurzform wird nie zu #aabbcc erweitert, auch wenn ein Renderer beide als dieselbe Farbe behandelt — sodass dieselbe Farbe über verschiedene Datensätze hinweg rechtmäßig auf zwei Arten gespeichert sein kann.",
-          colorNoHash: "Zurückgewiesen: VALIDATION_INVALID_FORMAT. Das führende # ist erforderlich.",
-          colorBadLength: "Zurückgewiesen: VALIDATION_INVALID_FORMAT. Drei oder sechs Ziffern, nichts dazwischen.",
-          colorNamed: "Zurückgewiesen: VALIDATION_INVALID_FORMAT. Farbnamen werden nicht angenommen, nur Hex-Werte.",
+          colorNoHash:
+            "Zurückgewiesen: VALIDATION_INVALID_FORMAT. Das führende # ist erforderlich.",
+          colorBadLength:
+            "Zurückgewiesen: VALIDATION_INVALID_FORMAT. Drei oder sechs Ziffern, nichts dazwischen.",
+          colorNamed:
+            "Zurückgewiesen: VALIDATION_INVALID_FORMAT. Farbnamen werden nicht angenommen, nur Hex-Werte.",
 
           groupReferenceTitle: "Verweise auf einen anderen Datensatz",
           referenceGroupIntro:
@@ -507,7 +538,8 @@ export const de = {
             "Ein Verweis auf ein Benutzerkonto — assigned to, reviewed by, account manager. Wird als durchsuchbare Auswahl über Benutzerkonten dargestellt und zeigt nie ein Element zur Wahl einer Art von Datensatz, weil es nur eine gibt.",
           userReferenceChecks:
             "Jede Prüfung, die EntityReference vornimmt, plus eine engere Regel: Die einzige akzeptierte Art von Datensatz ist ein Benutzerkonto. Diese Liste ist von der Plattform festgelegt, nicht durch Konfiguration, und ein Versuch, diesen Typ auf etwas anderes zu richten, wird sowohl bei der Konfiguration einer Definition als auch beim Speichern eines Werts zurückgewiesen.",
-          usrOk: "Angenommen, exakt wie bei EntityReference. Die Antwort ist auf dieselbe Weise selbstbeschreibend.",
+          usrOk:
+            "Angenommen, exakt wie bei EntityReference. Die Antwort ist auf dieselbe Weise selbstbeschreibend.",
           usrDormant:
             "Angenommen. Ein gesperrtes Konto ist ruhend, nicht gelöscht: Es existiert weiterhin, wird von der Auswahlkomponente weiterhin mit einer Inaktiv-Markierung angeboten, und ist eine legitime Antwort für etwas, das bereits geschehen ist.",
           usrAdminRefused:
@@ -533,7 +565,8 @@ export const de = {
           fileChecks:
             "Ein gespeicherter Wert wird nur angenommen, wenn die referenzierte Datei tatsächlich an den Datensatz angehängt ist, den Sie gerade bearbeiten — eine Sicherheitsprüfung, die verhindert, dass eine für einen Datensatz bestimmte Datei von einem anderen aus referenziert wird. Das Anhängen einer neuen Datei ist über diesen Bildschirm noch nicht möglich: Das Feld lässt sich bereits heute definieren, und ein vorhandener Wert lässt sich ansehen oder löschen, aber ihn zum ersten Mal auszufüllen kommt erst mit einem künftigen Release.",
           fileAttachedExample: "Ein Datensatz, dessen File-Feld bereits einen Wert enthält",
-          fileAttachedOutcome: "Wird als angehängt angezeigt, mit einem Element Clear. Ein Element zum Anhängen gibt es derzeit nicht daneben.",
+          fileAttachedOutcome:
+            "Wird als angehängt angezeigt, mit einem Element Clear. Ein Element zum Anhängen gibt es derzeit nicht daneben.",
           fileClearExample: "Eine angehängte Datei löschen, dann speichern",
           fileClearOutcome: "Angenommen — der Wert wird entfernt.",
 
@@ -553,11 +586,14 @@ export const de = {
           richTextOkExample: "Ein Absatz mit einem fett gedruckten Wort und einer Aufzählungsliste",
           richTextOkOutcome: "Angenommen, und jedes Element bleibt erhalten.",
           richTextStyleExample: "Eingefügter Inhalt mit angewendetem Inline-Stil",
-          richTextStyleOutcome: "Angenommen, mit entferntem Stil. Der sichtbare Text und die Struktur bleiben erhalten.",
+          richTextStyleOutcome:
+            "Angenommen, mit entferntem Stil. Der sichtbare Text und die Struktur bleiben erhalten.",
           richTextImgExample: "Inhalt mit eingebettetem Bild",
-          richTextImgOutcome: "Angenommen, mit entferntem Bild. Ein Bild gehört stattdessen in ein File- oder Image-Feld.",
+          richTextImgOutcome:
+            "Angenommen, mit entferntem Bild. Ein Bild gehört stattdessen in ein File- oder Image-Feld.",
           richTextTooLongExample: "Mehr als 50.000 Zeichen Markup",
-          richTextTooLongOutcome: "Zurückgewiesen: VALIDATION_MAX_LENGTH — kürzen Sie es und versuchen Sie es erneut.",
+          richTextTooLongOutcome:
+            "Zurückgewiesen: VALIDATION_MAX_LENGTH — kürzen Sie es und versuchen Sie es erneut.",
 
           emptyTitle: "Leere Werte und der Schalter Required",
           emptyIntro:
@@ -565,8 +601,10 @@ export const de = {
           empty1: "er beim Speichern vollständig fehlt;",
           empty2: "er leer ist oder aus nichts als Leerzeichen besteht;",
           empty3: "bei MultiSelect die Liste der Auswahlen explizit leer ist;",
-          empty4: "bei DateTime sowohl der Zeitpunkt als auch die Zeitzone fehlen — nicht nur eines von beiden;",
-          empty5: "bei Currency sowohl der Betrag als auch der Währungscode fehlen — nicht nur eines von beiden;",
+          empty4:
+            "bei DateTime sowohl der Zeitpunkt als auch die Zeitzone fehlen — nicht nur eines von beiden;",
+          empty5:
+            "bei Currency sowohl der Betrag als auch der Währungscode fehlen — nicht nur eines von beiden;",
           empty6:
             "bei EntityReference, UserReference, File und Image beide Hälften des Verweises fehlen — nicht nur eine davon.",
           emptyOutcome:
@@ -580,10 +618,12 @@ export const de = {
             "Fast jede Zurückweisung ist ein HTTP 422 mit einem dieser maschinenlesbaren Codes; zwei davon sind stattdessen ein 403, weil es dabei um Ihren Zugriff geht, nicht um die Form dessen, was Sie gesendet haben. Ein dritter verdient eine gesonderte Erwähnung: Sein Codename liest sich wie ein 404, aber die Antwort ist trotzdem ein 422 — siehe den Hinweis daneben weiter unten. Sollten Sie je einen 500 beim Speichern eines Werts für ein benutzerdefiniertes Feld sehen, ist das ein meldenswerter Fehler — der Validierungspfad ist so geschrieben, dass er sauber zurückweist, niemals versagt.",
           thCode: "Code",
           thWhenItFires: "Wann er ausgelöst wird",
-          codeRequired: "Das Feld ist Required, und der übermittelte Wert ist leer oder besteht nur aus Leerzeichen.",
+          codeRequired:
+            "Das Feld ist Required, und der übermittelte Wert ist leer oder besteht nur aus Leerzeichen.",
           codeInvalidFormat:
             "Der Wert entspricht nicht der vom Typ erwarteten Form — eine nicht parsbare Zahl, ein nicht parsbares Datum oder eine nicht parsbare Uhrzeit, eine Option, die nicht auf der Liste steht, ein nicht zulässiges URL-Schema, eine falsche Telefonform, eine falsche Hex-Farbe, ein falscher Währungscode, oder die meisten Validator-Fehlschläge.",
-          codeInvalidEmail: "Der Wert eines Email-Felds ist keine echte Adresse oder trägt einen Anzeigenamen.",
+          codeInvalidEmail:
+            "Der Wert eines Email-Felds ist keine echte Adresse oder trägt einen Anzeigenamen.",
           codeInvalidTimezone:
             "Bei einem DateTime-Wert fehlt die Zeitzone, sobald ein Zeitpunkt vorhanden ist, oder er nennt eine Zone, die der Server nicht erkennt.",
           codeRange:
@@ -591,7 +631,8 @@ export const de = {
           codeMaxLength:
             "Text jenseits von 4.000 Zeichen, LongText jenseits von 10.000, RichText jenseits von 50.000, ein Email oder Url jenseits von 4.000, mehr als 19 MultiSelect-Auswahlen, oder die Obergrenze eines Length-Range-Validators.",
           codeMinLength: "Die Untergrenze eines Length-Range-Validators.",
-          codeUnique: "Dieselbe MultiSelect-Option wurde in einem Speichervorgang mehr als einmal übermittelt.",
+          codeUnique:
+            "Dieselbe MultiSelect-Option wurde in einem Speichervorgang mehr als einmal übermittelt.",
           codeUnknownEntityType:
             "Ein Verweis nennt eine Art von Datensatz, die in dieser Installation nicht registriert ist.",
           codeInvalidId:
@@ -646,7 +687,7 @@ export const de = {
             "Um den Namen zu lesen, braucht es die Berechtigung, diese Art von Datensatz anzusehen, nicht die Berechtigung, den Datensatz mit dem Feld anzusehen. Jemand, der den besitzenden Datensatz bearbeiten, aber Personal nicht lesen darf, sieht, dass eine Referenz gesetzt ist, und sieht nicht, worauf sie zeigt.",
           featSearch: "Durchsuchbar, seitenweise, und sagt Ihnen, was sie nicht kann",
           featSearchDesc:
-            "Die Auswahlkomponente durchsucht die eigenen Datensätze des Zielmoduls seitenweise, markiert einen ruhenden Datensatz als inaktiv statt ihn zu verbergen, und sagt in Worten, wenn es nichts gibt, worauf Sie verweisen dürfen — nie ein leeres Dropdown, das sich liest wie \"es gibt keine Datensätze\".",
+            'Die Auswahlkomponente durchsucht die eigenen Datensätze des Zielmoduls seitenweise, markiert einen ruhenden Datensatz als inaktiv statt ihn zu verbergen, und sagt in Worten, wenn es nichts gibt, worauf Sie verweisen dürfen — nie ein leeres Dropdown, das sich liest wie "es gibt keine Datensätze".',
           featPinned: "Kann auf eine Art von Datensatz festgelegt werden",
           featPinnedDesc:
             "Ein Entity-Reference-Feld kann so festgelegt werden, dass jeder Wert auf, sagen wir, ein Mitglied des Personals zeigen muss — oder nicht festgelegt bleiben, wobei dann jeder Wert seine eigene Art von Datensatz wählt und diese Wahl zusammen mit dem Verweis speichert.",
@@ -656,7 +697,7 @@ export const de = {
 
           whichTitle: "Entity Reference oder User Reference",
           whichIntro:
-            "Es gibt zwei Referenz-Werttypen, und sie sind mechanisch fast identisch. Der Unterschied liegt vollständig darin, worauf jeder zeigen darf, und damit darin, wie viel Sie konfigurieren müssen. Wählen Sie User Reference, wenn die Antwort \"eine Person, die sich anmeldet\" lautet; wählen Sie Entity Reference für alles andere.",
+            'Es gibt zwei Referenz-Werttypen, und sie sind mechanisch fast identisch. Der Unterschied liegt vollständig darin, worauf jeder zeigen darf, und damit darin, wie viel Sie konfigurieren müssen. Wählen Sie User Reference, wenn die Antwort "eine Person, die sich anmeldet" lautet; wählen Sie Entity Reference für alles andere.',
           thAspect: "Aspekt",
           thEntityRef: "Entity Reference",
           thUserRef: "User Reference",
@@ -673,19 +714,21 @@ export const de = {
           aspPicker: "Was die ausfüllende Person sieht",
           entPicker:
             "Bei einem festgelegten Feld eine durchsuchbare Liste dieser Art von Datensatz. Bei einem nicht festgelegten Feld zwei Elemente: zuerst die Art des Datensatzes, dann der Datensatz.",
-          usrPicker: "Eine durchsuchbare Liste von Benutzerkonten. Es gibt nie ein Element zur Typwahl.",
+          usrPicker:
+            "Eine durchsuchbare Liste von Benutzerkonten. Es gibt nie ein Element zur Typwahl.",
           aspUse: "Greifen Sie darauf zurück, wenn",
           entUse:
             "Die Antwort ein Geschäftsdatensatz ist — ein Mitglied des Personals, eine Person, eine Anlage — oder wenn verschiedene Datensätze unter demselben Feld rechtmäßig auf unterschiedliche Arten von Dingen zeigen.",
           usrUse:
             "Die Antwort ein Konto ist: assigned to, reviewed by, account manager, approved by.",
           aspStorage: "Wie die Antwort gespeichert wird",
-          entStorage: "Die Art des Datensatzes, plus die eigene Identität dieses Datensatzes. Beides, immer zusammen.",
+          entStorage:
+            "Die Art des Datensatzes, plus die eigene Identität dieses Datensatzes. Beides, immer zusammen.",
           usrStorage:
             "Identisch. Der gespeicherte Wert ist auf genau dieselbe Weise selbstbeschreibend, was ihn dazu befähigt, auch nach einer Änderung der Definition lesbar zu bleiben.",
           whichInfoTitle: "Warum das zwei Typen sind und keine einzelne Einstellung",
           whichInfoContent:
-            "Die Liste dessen, worauf ein User Reference zeigen darf, ist eine Sicherheitsentscheidung, also ist sie in der Plattform festgelegt statt von einem Administrator in eine Definition eingetippt. Und weil der Typ bei jeder gespeicherten Antwort mit erfasst wird, hat die Frage \"welche unserer Felder enthalten Verweise auf Personen?\" eine Antwort, selbst für Werte, deren Definition sich seither geändert hat. Ein einzelner Typ mit einer Einstellung hätte beide Eigenschaften verloren.",
+            'Die Liste dessen, worauf ein User Reference zeigen darf, ist eine Sicherheitsentscheidung, also ist sie in der Plattform festgelegt statt von einem Administrator in eine Definition eingetippt. Und weil der Typ bei jeder gespeicherten Antwort mit erfasst wird, hat die Frage "welche unserer Felder enthalten Verweise auf Personen?" eine Antwort, selbst für Werte, deren Definition sich seither geändert hat. Ein einzelner Typ mit einer Einstellung hätte beide Eigenschaften verloren.',
 
           storedTitle: "Was tatsächlich gespeichert wird",
           storedIntro:
@@ -723,7 +766,7 @@ export const de = {
 
           pinTitle: "Einen Zieltyp auf der Definition festlegen",
           pinIntro:
-            "Eine Entity-Reference-Definition trägt eine eigene optionale Einstellung: Target Entity Type. Sie beantwortet \"auf welche Art von Datensatz darf dieses Feld zeigen?\", und sie wird nur für Entity Reference angeboten — ein User-Reference-Feld zeigt sie nie, weil seine Antwort bereits feststeht.",
+            'Eine Entity-Reference-Definition trägt eine eigene optionale Einstellung: Target Entity Type. Sie beantwortet "auf welche Art von Datensatz darf dieses Feld zeigen?", und sie wird nur für Entity Reference angeboten — ein User-Reference-Feld zeigt sie nie, weil seine Antwort bereits feststeht.',
           thState: "Zustand der Einstellung",
           thMeans: "Was er bedeutet",
           thPickerShows: "Was das Datensatzformular dann zeigt",
@@ -750,7 +793,7 @@ export const de = {
 
           targetsTitle: "Was derzeit referenziert werden kann",
           targetsIntro:
-            "Die Liste lautet nicht \"jeder Datensatztyp im Produkt\". Eine Art von Datensatz kann nur referenziert werden, wenn das Modul, dem sie gehört, eine Möglichkeit bereitstellt, ihre Datensätze zu suchen und aufzulösen — indem es seine eigenen Daten nach den Regeln seiner eigenen Bildschirme liest, sodass eine Auswahlkomponente nie umfassender sein kann als der Bildschirm, den sie spiegelt. Sechs Arten von Datensatz stellen das heute bereit; die letzten drei kamen in einem späteren Release zu den ersten drei hinzu.",
+            'Die Liste lautet nicht "jeder Datensatztyp im Produkt". Eine Art von Datensatz kann nur referenziert werden, wenn das Modul, dem sie gehört, eine Möglichkeit bereitstellt, ihre Datensätze zu suchen und aufzulösen — indem es seine eigenen Daten nach den Regeln seiner eigenen Bildschirme liest, sodass eine Auswahlkomponente nie umfassender sein kann als der Bildschirm, den sie spiegelt. Sechs Arten von Datensatz stellen das heute bereit; die letzten drei kamen in einem späteren Release zu den ersten drei hinzu.',
           thType: "Datensatztyp",
           thKey: "Bezeichner",
           thOwner: "Gehört zu",
@@ -784,11 +827,11 @@ export const de = {
           keyBranch: "organization.branch",
           ownerBranch: "Dem Organisationsmodul",
           showsBranch:
-            "Den Namen der Niederlassung, mit ihrer Zeitzone darunter als Unterscheidungsmerkmal — aus demselben Grund, aus dem zwei beide \"Main\" genannte Niederlassungen bereits auf dem Bildschirm für Niederlassungen selbst auseinandergehalten werden.",
+            'Den Namen der Niederlassung, mit ihrer Zeitzone darunter als Unterscheidungsmerkmal — aus demselben Grund, aus dem zwei beide "Main" genannte Niederlassungen bereits auf dem Bildschirm für Niederlassungen selbst auseinandergehalten werden.',
           targetsRefused:
-            "Alles andere wird zurückgewiesen statt mit einer leeren Liste beantwortet, und dieser Unterschied ist der springende Punkt: Eine leere Liste sieht wie ein normales Ergebnis aus und würde einem Administrator sagen \"es gibt keine Mitarbeitenden\", was eine falsche Aussage im Gewand einer richtigen ist. Eine Art von Datensatz, für die die Plattform nicht zuständig sein kann, erzeugt stattdessen eine klare Zurückweisung, die das Datensatzformular als Satz darstellt, der besagt, dass diese Art von Datensatz in dieser Installation nicht verfügbar ist.",
+            'Alles andere wird zurückgewiesen statt mit einer leeren Liste beantwortet, und dieser Unterschied ist der springende Punkt: Eine leere Liste sieht wie ein normales Ergebnis aus und würde einem Administrator sagen "es gibt keine Mitarbeitenden", was eine falsche Aussage im Gewand einer richtigen ist. Eine Art von Datensatz, für die die Plattform nicht zuständig sein kann, erzeugt stattdessen eine klare Zurückweisung, die das Datensatzformular als Satz darstellt, der besagt, dass diese Art von Datensatz in dieser Installation nicht verfügbar ist.',
           targetsEmpty:
-            "Und eine wirklich leere Liste verfügbarer Typen ist selbst eine legitime Antwort, kein Fehlschlag. Sie bedeutet \"es gibt nichts, worauf Sie eine Referenz richten dürfen\", was aus zwei ganz unterschiedlichen Gründen passieren kann: Die Module, denen diese Datensätze gehören, sind möglicherweise nicht Teil dieser Installation, oder Sie besitzen möglicherweise keinen Lesezugriff auf keinen davon. Das Produkt nennt beide Möglichkeiten, ohne eine davon zu behaupten, denn nur die zweite lässt sich durch das Beantragen von Berechtigungen beheben.",
+            'Und eine wirklich leere Liste verfügbarer Typen ist selbst eine legitime Antwort, kein Fehlschlag. Sie bedeutet "es gibt nichts, worauf Sie eine Referenz richten dürfen", was aus zwei ganz unterschiedlichen Gründen passieren kann: Die Module, denen diese Datensätze gehören, sind möglicherweise nicht Teil dieser Installation, oder Sie besitzen möglicherweise keinen Lesezugriff auf keinen davon. Das Produkt nennt beide Möglichkeiten, ohne eine davon zu behaupten, denn nur die zweite lässt sich durch das Beantragen von Berechtigungen beheben.',
           targetsWhyNot:
             "Zwei Arten von Datensatz, die so aussehen, als gehörten sie auf diese Liste, und die absichtlich ausgeschlossen sind (Administrator-Datensätze waren früher eine dritte, bis ein späteres Release ihnen einen eigenen Lookup-Provider gab — sie stehen jetzt oben in der Tabelle, nicht hier):",
           targetsWhyNotGroup:
@@ -807,27 +850,28 @@ export const de = {
           tenant2:
             "Eine Identität zu besitzen ist keine Berechtigung. Eine Referenz wird bei jedem einzelnen Lesen erneut autorisiert: Die eigene Ansichtsberechtigung des Ziels ist jedes Mal erneut erforderlich, und die Tatsache, dass der Verweis bereits gespeichert ist, zählt für nichts.",
           tenant3:
-            "Ein Datensatz eines anderen Arbeitsbereichs und ein gelöschter Datensatz sind bewusst eine ununterscheidbare Antwort. Wären sie unterscheidbar, könnte jemand Identitäten einzeln durchprobieren, um herauszufinden, was in einem Arbeitsbereich existiert, den er nicht sehen kann. \"Sie dürfen diese Art von Datensatz nicht sehen\" wird von \"dieser Datensatz ist weg\" unterschieden, weil diese beiden entgegengesetzte Abhilfen haben und keine von beiden irgendetwas preisgibt.",
+            'Ein Datensatz eines anderen Arbeitsbereichs und ein gelöschter Datensatz sind bewusst eine ununterscheidbare Antwort. Wären sie unterscheidbar, könnte jemand Identitäten einzeln durchprobieren, um herauszufinden, was in einem Arbeitsbereich existiert, den er nicht sehen kann. "Sie dürfen diese Art von Datensatz nicht sehen" wird von "dieser Datensatz ist weg" unterschieden, weil diese beiden entgegengesetzte Abhilfen haben und keine von beiden irgendetwas preisgibt.',
           tenant4:
             "Datensätze auf Plattformebene gehören Plattformadministratoren. Ein auf Plattformebene angelegtes benutzerdefiniertes Feld wird von jedem Arbeitsbereich geerbt und kann nur von einem Plattformadministrator angelegt, bearbeitet oder gelöscht werden — einschließlich des festgelegten Zieltyps eines Referenzfelds auf Plattformebene, den kein Arbeitsbereich ändern kann.",
           tenant5:
             "Niemand darf einen Administrator außerhalb des eigenen Arbeitsbereichs zuweisen. In der Praxis geht das Produkt über das hinaus, was die Regel verlangt: Ein Administrator-Datensatz kann überhaupt nicht von einem Referenzfeld referenziert werden, weder im eigenen Arbeitsbereich noch in einem anderen, genau weil ein Administrator außerhalb jedes Arbeitsbereichs stehen kann.",
           tenantWarnTitle: "Eine Sache, die dies nicht leistet",
           tenantWarnContent:
-            "Eine Referenz ist so streng wie der eigene Listenbildschirm des Ziels, und nicht strenger. Ist eine Art von Datensatz für eine Rolle über deren eigenen Bildschirm sichtbar, ist sie über eine Auswahlkomponente für dieselbe Rolle auswählbar — engere Regeln als \"dieser gesamte Arbeitsbereich\" werden nicht zusätzlich angewendet. Behandeln Sie eine Referenz-Auswahlkomponente also nicht als Möglichkeit, Datensätze zu verbergen, die das Zielmodul selbst bereits zeigt.",
+            'Eine Referenz ist so streng wie der eigene Listenbildschirm des Ziels, und nicht strenger. Ist eine Art von Datensatz für eine Rolle über deren eigenen Bildschirm sichtbar, ist sie über eine Auswahlkomponente für dieselbe Rolle auswählbar — engere Regeln als "dieser gesamte Arbeitsbereich" werden nicht zusätzlich angewendet. Behandeln Sie eine Referenz-Auswahlkomponente also nicht als Möglichkeit, Datensätze zu verbergen, die das Zielmodul selbst bereits zeigt.',
 
-          exampleTitle: "Ein durchgerechnetes Beispiel: ein Administrator-Datensatz, der auf ein Mitglied des Personals zeigt",
+          exampleTitle:
+            "Ein durchgerechnetes Beispiel: ein Administrator-Datensatz, der auf ein Mitglied des Personals zeigt",
           exampleIntro:
             "Der Fall, für den diese Typen gebaut wurden. Ihre Administratoren sind auch Angestellte, und Sie möchten, dass jeder Administrator-Datensatz angibt, welcher Personal-Datensatz dieselbe Person ist — einmal korrekt erfasst, und nie erneut eingetippt.",
           ex1Title: "Entscheiden Sie, welchen Typ Sie brauchen",
           ex1Content:
-            "Die Antwort ist ein Mitglied des Personals, kein Login-Konto, also ist dies eine Entity Reference. Hätte die Frage \"wer hat das geprüft?\" gelautet, wäre die Antwort ein Konto und User Reference die richtige Wahl gewesen — und der Werttyp ist dauerhaft, also lohnt sich der Moment des Nachdenkens.",
+            'Die Antwort ist ein Mitglied des Personals, kein Login-Konto, also ist dies eine Entity Reference. Hätte die Frage "wer hat das geprüft?" gelautet, wäre die Antwort ein Konto und User Reference die richtige Wahl gewesen — und der Werttyp ist dauerhaft, also lohnt sich der Moment des Nachdenkens.',
           ex2Title: "Definieren Sie das Feld",
           ex2Content:
             "Wählen Sie auf dem Bildschirm Benutzerdefinierte Felder Add, wählen Sie den Administrator-Datensatztyp, setzen Sie den Schlüssel auf staff_record, die englische Bezeichnung auf Staff record, und den Werttyp auf Entity Reference. Ein Element Target Entity Type erscheint, sobald Sie diesen Werttyp wählen.",
           ex3Title: "Legen Sie das Ziel auf Staff Member fest",
           ex3Content:
-            "Setzen Sie Target Entity Type auf Staff Member. Das ist es, was das Feld von \"einem Verweis auf irgendetwas\" zu \"einem Verweis auf ein Mitglied des Personals\" macht, und es ist das, was das Datensatzformular ein einzelnes Element statt zweier zeigen lässt. Lassen Sie es nur dann als Not pinned, wenn Sie wirklich möchten, dass verschiedene Administratoren auf verschiedene Arten von Datensatz zeigen.",
+            'Setzen Sie Target Entity Type auf Staff Member. Das ist es, was das Feld von "einem Verweis auf irgendetwas" zu "einem Verweis auf ein Mitglied des Personals" macht, und es ist das, was das Datensatzformular ein einzelnes Element statt zweier zeigen lässt. Lassen Sie es nur dann als Not pinned, wenn Sie wirklich möchten, dass verschiedene Administratoren auf verschiedene Arten von Datensatz zeigen.',
           ex4Title: "Füllen Sie es bei einem Datensatz aus",
           ex4Content:
             "Öffnen Sie einen beliebigen Administrator-Datensatz. Der Abschnitt Benutzerdefinierte Felder zeigt nun ein Element Staff record mit einem Platzhalter, der Sie einlädt, einen Datensatz zu wählen. Öffnen Sie es, tippen Sie einen Teil eines Namens, und die Liste verengt sich auf passende Mitglieder des Personals mit ihrer Berufsbezeichnung darunter. Wählen Sie eines und speichern Sie den Datensatz.",
@@ -857,18 +901,12 @@ export const de = {
           notTitle: "Was Referenzfelder nicht sind",
           notIntro:
             "Vernünftige Erwartungen, die diese Typen bewusst nicht erfüllen. Keine davon ist ein meldenswerter Fehler.",
-          not1:
-            "Sie sind keine Beziehung, die das Produkt versteht. Nichts wird aus einer Referenz berechnet, nichts wird durch sie ausgelöst, und kein Bildschirm gewinnt eine Liste \"Datensätze, die auf diesen zeigen\", nur weil eine Referenz existiert.",
-          not2:
-            "Sie sind kein Weg, um Datensätze zu verbergen. Eine Auswahlkomponente zeigt exakt das, was die eigenen Bildschirme des Zielmoduls derselben Person zeigen. Sollte jemand eine Art von Datensatz nicht sehen, ist das eine Berechtigung auf dieser Art von Datensatz.",
-          not3:
-            "Sie speichern nie einen Namen, und es gibt keine Einstellung, die das ändert. Ein Feld, das das Löschen des Ziels überleben muss, wobei der alte Name weiterhin lesbar bleibt, ist ein Textfeld, und zu akzeptieren, dass es auseinanderdriftet, ist der Preis dieser Wahl.",
-          not4:
-            "Sie sind nicht mehrwertig. Ein Referenzfeld enthält einen Verweis. Es gibt keinen mehrwertigen Referenztyp, und MultiSelect kann nicht auf Datensätze verweisen — seine Antworten sind von Ihnen verfasster Text.",
-          not5:
-            "Sie können nicht auf jede Art von Datensatz zeigen. Nur die Arten, deren besitzendes Modul eine durchsuchbare, berechtigungsgeprüfte Liste bereitstellt, können referenziert werden, und der Rest wird zurückgewiesen statt still angeboten.",
-          not6:
-            "Sie werden nicht im Tabellenexport der Definitionen mitgeführt. Diese Datei hat achtzehn Spalten, und ein festgelegter Zieltyp ist keine davon, sodass eine exportierte Definition nicht erfasst, worauf ihr Feld zeigt.",
+          not1: 'Sie sind keine Beziehung, die das Produkt versteht. Nichts wird aus einer Referenz berechnet, nichts wird durch sie ausgelöst, und kein Bildschirm gewinnt eine Liste "Datensätze, die auf diesen zeigen", nur weil eine Referenz existiert.',
+          not2: "Sie sind kein Weg, um Datensätze zu verbergen. Eine Auswahlkomponente zeigt exakt das, was die eigenen Bildschirme des Zielmoduls derselben Person zeigen. Sollte jemand eine Art von Datensatz nicht sehen, ist das eine Berechtigung auf dieser Art von Datensatz.",
+          not3: "Sie speichern nie einen Namen, und es gibt keine Einstellung, die das ändert. Ein Feld, das das Löschen des Ziels überleben muss, wobei der alte Name weiterhin lesbar bleibt, ist ein Textfeld, und zu akzeptieren, dass es auseinanderdriftet, ist der Preis dieser Wahl.",
+          not4: "Sie sind nicht mehrwertig. Ein Referenzfeld enthält einen Verweis. Es gibt keinen mehrwertigen Referenztyp, und MultiSelect kann nicht auf Datensätze verweisen — seine Antworten sind von Ihnen verfasster Text.",
+          not5: "Sie können nicht auf jede Art von Datensatz zeigen. Nur die Arten, deren besitzendes Modul eine durchsuchbare, berechtigungsgeprüfte Liste bereitstellt, können referenziert werden, und der Rest wird zurückgewiesen statt still angeboten.",
+          not6: "Sie werden nicht im Tabellenexport der Definitionen mitgeführt. Diese Datei hat achtzehn Spalten, und ein festgelegter Zieltyp ist keine davon, sodass eine exportierte Definition nicht erfasst, worauf ihr Feld zeigt.",
 
           nextTitle: "Wie es weitergeht",
           nextIntro:
@@ -902,9 +940,12 @@ export const de = {
           endpointsTitle: "Die drei Lookups",
           endpointsIntro:
             "Alle drei liegen unter einer eigenen Adresse statt neben den übrigen Aufrufen für benutzerdefinierte Felder, und das ist beabsichtigt: Sie lesen Daten anderer Module, also werden sie von der eigenen Ansichtsberechtigung der jeweiligen Zielart geschützt, nicht von der Berechtigung, Felddefinitionen zu verwalten. Jemand, der benutzerdefinierte Felder verwaltet, aber Personal nicht lesen darf, wird hier zu Recht zurückgewiesen.",
-          endpointsTypes: "Listet die Arten von Datensatz, auf die dieser Aufrufer gerade jetzt verweisen darf.",
-          endpointsSearch: "Gibt eine Seite auswählbarer Datensätze einer Art zurück, optional gefiltert.",
-          endpointsResolve: "Löst einen Verweis, den der Aufrufer bereits hält, zu seinem Datensatz auf.",
+          endpointsTypes:
+            "Listet die Arten von Datensatz, auf die dieser Aufrufer gerade jetzt verweisen darf.",
+          endpointsSearch:
+            "Gibt eine Seite auswählbarer Datensätze einer Art zurück, optional gefiltert.",
+          endpointsResolve:
+            "Löst einen Verweis, den der Aufrufer bereits hält, zu seinem Datensatz auf.",
           endpointsPermission:
             "Es gibt also keine einzelne Berechtigung, die diese Funktion öffnet. Alle drei verlangen, dass Sie als Administrator angemeldet sind, und jeder verlangt dann die Ansichtsberechtigung für die Art von Datensatz in der Adresse: Mitglieder des Personals aufzulisten braucht die Ansichtsberechtigung für Personal, Benutzerkonten aufzulisten braucht die für Benutzerkonten. Die zu erwartende Folge ist, dass dieselbe Person von einem dieser Lookups zugelassen und vom nächsten zurückgewiesen werden kann, auf demselben Bildschirm, und beide Antworten sind korrekt.",
 
@@ -912,7 +953,7 @@ export const de = {
           typesWhat:
             "Dies antwortet mit der gefilterten Menge, nicht dem vollständigen Katalog: registriert, von dieser Installation beantwortbar, und für Sie zulässig. Jeder zurückgegebene Eintrag ist sofort nutzbar, was der ganze Grund für seine Existenz ist — ein Element, das jede registrierte Art von Datensatz anbieten würde, würde Möglichkeiten anbieten, die Sie beim nächsten Klick zurückweisen, und die Alternative, jede der Reihe nach auszuprobieren, wäre eine Handvoll Ablehnungen pro Seitenaufruf.",
           typesEmpty:
-            "Eine leere Liste ist ein Erfolg, kein Fehlschlag. Sie bedeutet \"Sie dürfen auf nichts eine Referenz richten\", und sie wird als erklärender Satz innerhalb des Elements dargestellt statt als Fehler oder als still leeres Dropdown. Sie hat zwei mögliche Ursachen, und das Produkt nennt beide, ohne eine zu behaupten: Die besitzenden Module sind möglicherweise nicht Teil dieser Installation, oder Sie besitzen möglicherweise keinen Lesezugriff auf sie. Nur die zweite lässt sich durch das Beantragen von Berechtigungen beheben, weshalb ein Text, der eine Ursache benennt, jemanden dazu bringen würde, etwas zu tun, das nicht funktionieren kann.",
+            'Eine leere Liste ist ein Erfolg, kein Fehlschlag. Sie bedeutet "Sie dürfen auf nichts eine Referenz richten", und sie wird als erklärender Satz innerhalb des Elements dargestellt statt als Fehler oder als still leeres Dropdown. Sie hat zwei mögliche Ursachen, und das Produkt nennt beide, ohne eine zu behaupten: Die besitzenden Module sind möglicherweise nicht Teil dieser Installation, oder Sie besitzen möglicherweise keinen Lesezugriff auf sie. Nur die zweite lässt sich durch das Beantragen von Berechtigungen beheben, weshalb ein Text, der eine Ursache benennt, jemanden dazu bringen würde, etwas zu tun, das nicht funktionieren kann.',
           typesShape:
             "Jeder Eintrag trägt seinen stabilen Bezeichner, das Modul, dem er gehört, und einen Anzeigenamen auf Englisch und Arabisch. Diese Namen stammen aus der eigenen Registry der Plattform statt aus den Übersetzungen dieser Anwendung, sodass sie so gezeigt werden, wie sie geliefert wurden, und nie als Übersetzungsschlüssel nachgeschlagen werden.",
 
@@ -969,7 +1010,7 @@ export const de = {
             "Wer auch immer den Datensatz ausfüllt — wählen Sie den Datensatz erneut. Dieser wird ersetzt, nie neu verknüpft.",
           statusesInfoTitle: "Was die Antworten bewusst nicht verraten",
           statusesInfoContent:
-            "\"Gelöscht\" und \"in einem Arbeitsbereich, den Sie nicht sehen können\" sind eine Antwort und werden es immer bleiben. Sie zu trennen würde jemandem erlauben, Identitäten einzeln durchzuprobieren, um herauszufinden, was in einem anderen Arbeitsbereich existiert. Alles andere ist unterscheidbar, weil alles andere entweder Ihren eigenen Zugriff oder diese Installation beschreibt — von denen keines ein Geheimnis vor Ihnen ist.",
+            '"Gelöscht" und "in einem Arbeitsbereich, den Sie nicht sehen können" sind eine Antwort und werden es immer bleiben. Sie zu trennen würde jemandem erlauben, Identitäten einzeln durchzuprobieren, um herauszufinden, was in einem anderen Arbeitsbereich existiert. Alles andere ist unterscheidbar, weil alles andere entweder Ihren eigenen Zugriff oder diese Installation beschreibt — von denen keines ein Geheimnis vor Ihnen ist.',
 
           failuresTitle: "Die fünf Fehlerzustände, und warum sie sich unterschiedlich lesen",
           failuresIntro:
@@ -985,7 +1026,8 @@ export const de = {
           stGone: "Der referenzierte Datensatz existiert nicht mehr",
           scrGone:
             "Das Feld gibt an, dass der Datensatz nicht gefunden werden kann, nennt beide möglichen Gründe — gelöscht, oder in einer Organisation, die Sie nicht sehen können — und behauptet keinen von beiden. Es bleibt bearbeitbar.",
-          doGone: "Wählen Sie einen anderen Datensatz, oder leeren Sie das Feld. Erneutes Wählen ist die Abhilfe.",
+          doGone:
+            "Wählen Sie einen anderen Datensatz, oder leeren Sie das Feld. Erneutes Wählen ist die Abhilfe.",
           stMalformed: "Die gespeicherte Referenz ist fehlerhaft",
           scrMalformed:
             "Das Feld gibt an, dass sich das Gespeicherte überhaupt nicht lesen lässt, bleibt bearbeitbar, und markiert sich zusätzlich als ungültig — weil dies, anders als ein baumelnder Verweis, kein Wert ist, den das Produkt je rechtmäßig erzeugt hätte.",
@@ -996,7 +1038,8 @@ export const de = {
             "Das Feld gibt an, dass es den referenzierten Datensatz im Moment nicht laden konnte und dass die Referenz selbst in Ordnung ist, und bietet ein Element Try again.",
           doTransient:
             "Versuchen Sie es erneut. Leeren Sie das Feld auf keinen Fall — der gespeicherte Wert ist gut, und ihn zu leeren ist die eine Handlung, die einen vorübergehenden Fehlschlag in echten Datenverlust verwandelt.",
-          stTypeUnavailable: "Diese Installation kann für diese Art von Datensatz nicht zuständig sein",
+          stTypeUnavailable:
+            "Diese Installation kann für diese Art von Datensatz nicht zuständig sein",
           scrTypeUnavailable:
             "Das Feld gibt an, dass diese Art von Datensatz in dieser Installation nicht verfügbar ist, und bietet kein Element Try again an — weil ein erneuter Versuch jedes Mal identisch zurückgewiesen würde.",
           doTypeUnavailable:
@@ -1006,11 +1049,11 @@ export const de = {
             "Jeder der fünf Fälle könnte als leeres Feld dargestellt werden, und das Ergebnis wäre ein Verweis auf einen gelöschten Datensatz, der ein Jahr lang unbemerkt bleibt — nicht zu unterscheiden von einem Feld, das nie jemand ausgefüllt hat, und nicht zu unterscheiden von einer Kollegin, die einfach keine Berechtigung hat. Diese zusammenzulegen ist keine kosmetische Vereinfachung; es löscht die einzige Information, die sagt, wessen Problem es ist. Sollten Sie je versucht sein, diese gleich lesen zu lassen, ist dies der Absatz, der sagt, warum nicht.",
           emptyVsFailedTitle: "Ein leeres Feld ist eine sechste Sache",
           emptyVsFailedContent:
-            "Eine Referenz, die nie ausgefüllt wurde, liest sich als leer, und das ist eine andere Tatsache als alle fünf oben. Deshalb wird eine ausgefüllte Referenz, deren Ziel weg ist, nie als leer gemeldet: Ein Betrachter, der auf eine leere Zelle schaut, muss \"niemand hat das beantwortet\" von \"die Antwort zeigt auf etwas, das nicht mehr da ist\" unterscheiden können.",
+            'Eine Referenz, die nie ausgefüllt wurde, liest sich als leer, und das ist eine andere Tatsache als alle fünf oben. Deshalb wird eine ausgefüllte Referenz, deren Ziel weg ist, nie als leer gemeldet: Ein Betrachter, der auf eine leere Zelle schaut, muss "niemand hat das beantwortet" von "die Antwort zeigt auf etwas, das nicht mehr da ist" unterscheiden können.',
 
           saveTitle: "Was beim Speichern einer Referenz geprüft wird",
           saveIntro:
-            "Jeder Speichervorgang einer Referenz durchläuft dieselben Prüfungen in derselben Reihenfolge, und jede scheitert mit ihrer eigenen Meldung statt mit einer allgemeinen \"ungültige Referenz\". Diese Reihenfolge zu kennen erklärt jede Zurückweisung, auf die Sie stoßen können.",
+            'Jeder Speichervorgang einer Referenz durchläuft dieselben Prüfungen in derselben Reihenfolge, und jede scheitert mit ihrer eigenen Meldung statt mit einer allgemeinen "ungültige Referenz". Diese Reihenfolge zu kennen erklärt jede Zurückweisung, auf die Sie stoßen können.',
           save1:
             "Beide Teile vorhanden. Eine Übermittlung, der entweder die Art des Datensatzes oder die Identität fehlt, wird als unvollständige Referenz zurückgewiesen — nie als leeres Feld behandelt, weil eine halbe Referenz bedeutet, dass jemand mit dem Antworten begonnen und aufgehört hat.",
           save2:
@@ -1018,7 +1061,7 @@ export const de = {
           save3:
             "Die Art des Datensatzes ist für diesen Werttyp zulässig. Bei Entity Reference immer wahr; bei User Reference ist dies die feste Positivliste der Plattform, und die Zurückweisung nennt, was erlaubt ist, statt nur, dass Ihre Wahl es nicht war.",
           save4:
-            "Die Art des Datensatzes stimmt mit der Festlegung der Definition überein, sofern es eine gibt. Zurückgewiesen, unter Nennung sowohl dessen, was erwartet wurde, als auch dessen, was ankam. Eine nicht festgelegte Definition überspringt diese Prüfung vollständig — nicht festgelegt bedeutet \"jede erlaubte Art\", und darf nie als \"nichts konfiguriert, also nichts gültig\" gelesen werden.",
+            'Die Art des Datensatzes stimmt mit der Festlegung der Definition überein, sofern es eine gibt. Zurückgewiesen, unter Nennung sowohl dessen, was erwartet wurde, als auch dessen, was ankam. Eine nicht festgelegte Definition überspringt diese Prüfung vollständig — nicht festgelegt bedeutet "jede erlaubte Art", und darf nie als "nichts konfiguriert, also nichts gültig" gelesen werden.',
           save5:
             "Die Identität lässt sich lesen. Eine veraltete oder veränderte Identität wird sauber als ungültige Identität zurückgewiesen, bei genau diesem Feld, statt den gesamten Speichervorgang mit einem unerklärten Fehler scheitern zu lassen.",
           save6:
@@ -1065,7 +1108,8 @@ export const de = {
           pkLazy: "Es wird nichts abgerufen, bevor Sie das Element öffnen.",
           pkLazyWhy:
             "Ein Datensatzformular kann mehrere Referenzfelder tragen. Eines, das niemand anfasst, sollte kein anderes Modul überhaupt befragen, und die Antworten werden anschließend zwischengespeichert, sodass das erneute Öffnen des Elements nichts kostet.",
-          pkTwoControls: "Ein nicht festgelegtes Feld zeigt zwei Elemente, und keines nimmt dem anderen den Fokus.",
+          pkTwoControls:
+            "Ein nicht festgelegtes Feld zeigt zwei Elemente, und keines nimmt dem anderen den Fokus.",
           pkTwoControlsWhy:
             "Eine Art von Datensatz zu wählen lässt Sie auf diesem Element, wobei das Datensatz-Element nun einen Schritt entfernt verfügbar ist. Die Datensatzauswahl automatisch zu öffnen würde jemandem den Fokus entziehen, der noch liest, was er gerade gewählt hat.",
           pkAccumulate: "Weitere Seiten ergänzen die Liste, statt sie zu ersetzen.",
@@ -1076,7 +1120,7 @@ export const de = {
             "Er existiert weiterhin und ist weiterhin eine gültige Antwort — ein ausgeschiedenes Mitglied des Personals, das für historische Zuweisungen aufbewahrt wird, ist genau dieser Fall. Ihn als ungültig zu behandeln würde historische Referenzen unspeicherbar machen.",
           pkNoResults: "Ein unpassender Filter und eine leere Liste lesen sich unterschiedlich.",
           pkNoResultsWhy:
-            "\"Ihr Filter traf auf nichts\" betrifft das, was Sie getippt haben. \"Es gibt nichts, worauf Sie zeigen dürfen\" betrifft Ihren Zugriff. Ein Satz für beides würde jemandem, der sich vertippt hat, sagen, er habe keine Berechtigungen.",
+            '"Ihr Filter traf auf nichts" betrifft das, was Sie getippt haben. "Es gibt nichts, worauf Sie zeigen dürfen" betrifft Ihren Zugriff. Ein Satz für beides würde jemandem, der sich vertippt hat, sagen, er habe keine Berechtigungen.',
           pkNoRetry: "Zwei der Fehlerzustände bieten kein Element Try again an.",
           pkNoRetryWhy:
             "Eine Berechtigungsverweigerung und ein nicht verfügbares Modul weisen jedes Mal identisch zurück. Eine Schaltfläche, die Sie einlädt, darauf einzuhämmern, wäre schlechter als keine Schaltfläche. Nur ein echter Übertragungsfehler erhält einen erneuten Versuch, weil das der eine ist, den ein erneuter Versuch behebt.",
@@ -1085,7 +1129,7 @@ export const de = {
             "Eine Referenz-Auswahlkomponente ist eine Auswahlkomponente, sie folgt also derselben Konvention wie jede andere Auswahlkomponente auf diesen Formularen. Ihr eigener schreibgeschützter Zustand, verwendet, wenn Sie den Namen des Ziels nicht ansehen dürfen, ist eine andere Sache und sieht anders aus.",
           pkNoLabelTrick: "Das Element benennt sich selbst für unterstützende Technologien.",
           pkNoLabelTrickWhy:
-            "Seine sichtbare Bezeichnung ist echte, klickbare Verdrahtung, aber der barrierefreie Name wird direkt am Element gesetzt — eine Bezeichnung allein kann ein Element dieser Form nicht benennen. Zwei Referenzfelder auf einem Formular kündigen sich daher unterscheidbar an, statt beide als \"Record type\" anzukündigen.",
+            'Seine sichtbare Bezeichnung ist echte, klickbare Verdrahtung, aber der barrierefreie Name wird direkt am Element gesetzt — eine Bezeichnung allein kann ein Element dieser Form nicht benennen. Zwei Referenzfelder auf einem Formular kündigen sich daher unterscheidbar an, statt beide als "Record type" anzukündigen.',
 
           diagnoseTitle: "Eine Referenz diagnostizieren, die sich nicht anzeigen lässt",
           diagnoseIntro:
@@ -1120,7 +1164,7 @@ export const de = {
           limNoName: "Kein gespeicherter Anzeigename",
           limNoNameDetail:
             "Es gibt nirgends eine Einstellung, um einen Namen als Momentaufnahme neben einem Verweis zu speichern, und es wird auch keine geben — sie würde einen von einer Berechtigung geschützten Namen an jeden aushändigen, der eine andere besitzt.",
-          limNoBacklinks: "Keine Ansicht \"was zeigt auf diesen Datensatz\"",
+          limNoBacklinks: 'Keine Ansicht "was zeigt auf diesen Datensatz"',
           limNoBacklinksDetail:
             "Nichts listet die Referenzen auf, die auf einen gegebenen Datensatz zeigen. Einen Datensatz zu löschen warnt Sie nicht, wie viele Verweise dabei gleich geleert werden.",
           limNoExport: "Nicht im Definitionsexport",
@@ -1131,8 +1175,9 @@ export const de = {
             "Es gibt keinen mehrwertigen Referenztyp. Zwei Antworten bedeuten zwei Felder.",
           limNoTypeFilter: "Die Auswahlkomponente lässt sich durch nichts außer Text eingrenzen",
           limNoTypeFilterDetail:
-            "Welche Spalten der Freitextfilter durchsucht, ist die Wahl des besitzenden Moduls, und es gibt keine zusätzlichen Filter — kein \"nur aktive\", kein Filtern nach Gruppe.",
-          limNoAdminTarget: "User Reference weist einen Administrator weiterhin zurück, obwohl Entity Reference das nicht mehr tut",
+            'Welche Spalten der Freitextfilter durchsucht, ist die Wahl des besitzenden Moduls, und es gibt keine zusätzlichen Filter — kein "nur aktive", kein Filtern nach Gruppe.',
+          limNoAdminTarget:
+            "User Reference weist einen Administrator weiterhin zurück, obwohl Entity Reference das nicht mehr tut",
           limNoAdminTargetDetail:
             "Weder vom Definitionsformular noch von einer Anfrage, die es umgeht. Das zulässige Ziel von User Reference ist von Anfang an genau eine Sache, identity.user — der eigene Datensatz eines Administrators ist eine andere Art von Zeile, und ein User-Reference-Feld darauf zeigen zu lassen wird zurückgewiesen, unabhängig davon, über welches Modul die Anfrage kam. Entity Reference bietet Administratoren als Ziel an, seit ein späteres Release einen Lookup-Provider für sie hinzugefügt hat; diese Grenze gilt allein für User Reference.",
 
@@ -1165,7 +1210,8 @@ export const de = {
             "Der Datensatztyp und der Werttyp sind beide nach dem Speichern dauerhaft, und ebenso der Schlüssel. Alles andere lässt sich später bearbeiten. Sind Sie unsicher, welcher Werttyp passt, lesen Sie zuerst die Seite Werttypen — ein Feld neu anzulegen bedeutet, jede bereits dazu gespeicherte Antwort zu verlieren.",
 
           whereTitle: "Wo sich der Bildschirm befindet",
-          whereIntro: "Benutzerdefinierte Felder werden von vier verwandten Bildschirmen aus verwaltet.",
+          whereIntro:
+            "Benutzerdefinierte Felder werden von vier verwandten Bildschirmen aus verwaltet.",
           where1:
             "Der Bildschirm Benutzerdefinierte Felder selbst, im Arbeitsbereich Administration, ist, wo Definitionen angelegt, bearbeitet, deaktiviert und gelöscht werden, und wo ein Validator angehängt wird.",
           where2:
@@ -1188,7 +1234,8 @@ export const de = {
           ctlKeyDoes:
             "Setzt den maschinenlesbaren Namen, der in Fehlermeldungen, Exporten und der API verwendet wird. Kleinbuchstaben, muss mit einem Buchstaben beginnen, und darf nur Buchstaben, Ziffern und Unterstriche enthalten.",
           ctlKeyWhen: "Nur bei der Erstellung. Dauerhaft nach dem Speichern.",
-          ctlLabelEnDoes: "Die englische Bezeichnung, die über dem Eingabefeld auf jedem Formular gezeigt wird. Erforderlich.",
+          ctlLabelEnDoes:
+            "Die englische Bezeichnung, die über dem Eingabefeld auf jedem Formular gezeigt wird. Erforderlich.",
           ctlLabelArDoes:
             "Die arabische Bezeichnung. Optional — ein arabischsprachiger Leser sieht die englische Bezeichnung, wenn dies leer bleibt.",
           ctlAlways: "Immer.",
@@ -1196,7 +1243,7 @@ export const de = {
             "Wählt einen der zweiundzwanzig Typen und entscheidet damit über das Bedienelement, die Validierung und die Speicherung. Diese Wahl ist es, die das Feld Options, das Dropdown Validator oder das Dropdown Target Entity Type sichtbar macht.",
           ctlValueTypeWhen: "Nur bei der Erstellung. Dauerhaft nach dem Speichern.",
           ctlPlaceholderEnDoes:
-            "Optionaler, grau dargestellter Hinweis im leeren Eingabefeld, auf Englisch — zum Beispiel \"e.g. Enter your shirt size\".",
+            'Optionaler, grau dargestellter Hinweis im leeren Eingabefeld, auf Englisch — zum Beispiel "e.g. Enter your shirt size".',
           ctlPlaceholderArDoes: "Derselbe Hinweis auf Arabisch.",
           ctlPlaceholderWhen:
             "Nur bei den Werttypen, deren Bedienelement überhaupt einen Platzhalter hat. Boolean, Rating, Color, Date und die anderen auswahlbasierten Typen haben keinen.",
@@ -1218,7 +1265,7 @@ export const de = {
           ctlFieldGroupDoes:
             "Ordnet das Feld einer der Feldgruppen des Datensatztyps zu, oder keiner Gruppe. Das Ändern des Datensatztyps löscht die Wahl.",
           ctlFieldGroupWhen:
-            "Nur wenn Sie die Ansichtsberechtigung für Feldgruppen besitzen und — auf dem Hauptbildschirm für Definitionen — sobald ein Datensatztyp gewählt wurde; das Inline-Panel zeigt es bereits, sobald Sie die Berechtigung besitzen, da es den Datensatztyp bereits kennt. In beiden Fällen auch dann gezeigt, wenn der gewählte Datensatztyp noch keine Gruppen hat, wobei bis dahin nur \"no group\" angeboten wird.",
+            'Nur wenn Sie die Ansichtsberechtigung für Feldgruppen besitzen und — auf dem Hauptbildschirm für Definitionen — sobald ein Datensatztyp gewählt wurde; das Inline-Panel zeigt es bereits, sobald Sie die Berechtigung besitzen, da es den Datensatztyp bereits kennt. In beiden Fällen auch dann gezeigt, wenn der gewählte Datensatztyp noch keine Gruppen hat, wobei bis dahin nur "no group" angeboten wird.',
           ctlRequiredDoes:
             "Weist einen Speichervorgang zurück, der das Feld leer lässt. Reine Leerzeichen zählen bei jedem Werttyp als leer.",
           ctlSortOrderDoes:
@@ -1236,7 +1283,8 @@ export const de = {
             "Nur für einen Plattform-Super-Admin, der ohne ausgewählten Arbeitsbereich arbeitet. Nur bei der Erstellung — der Geltungsbereich eines Felds ist dauerhaft.",
 
           stepsTitle: "Schritt für Schritt",
-          stepsIntro: "Der gesamte Ablauf, für den gewöhnlichen Fall eines auf den Arbeitsbereich beschränkten Felds.",
+          stepsIntro:
+            "Der gesamte Ablauf, für den gewöhnlichen Fall eines auf den Arbeitsbereich beschränkten Felds.",
           s1Title: "Öffnen Sie den Bildschirm Benutzerdefinierte Felder und wählen Sie Add",
           s1Content:
             "Der Bildschirm listet jedes Feld, das Ihr Arbeitsbereich sehen kann, einschließlich geerbter globaler Felder von der Plattform. Globale Zeilen tragen ein Abzeichen und bieten keine Bearbeitungs- oder Löschelemente.",
@@ -1268,10 +1316,12 @@ export const de = {
           thKeyExample: "Schlüssel",
           thOutcome: "Was passiert",
           keyOk: "Angenommen. Das ist die Form, die Sie anstreben sollten.",
-          keyOkDigits: "Angenommen. Ziffern und Unterstriche sind nach dem ersten Zeichen in Ordnung.",
+          keyOkDigits:
+            "Angenommen. Ziffern und Unterstriche sind nach dem ersten Zeichen in Ordnung.",
           keyUpper: "Zurückgewiesen. Schlüssel bestehen aus Kleinbuchstaben.",
           keyLeadingDigit: "Zurückgewiesen. Ein Schlüssel muss mit einem Buchstaben beginnen.",
-          keyHyphen: "Zurückgewiesen. Bindestriche gehören nicht zur Grammatik — verwenden Sie einen Unterstrich.",
+          keyHyphen:
+            "Zurückgewiesen. Bindestriche gehören nicht zur Grammatik — verwenden Sie einen Unterstrich.",
           keySpace: "Zurückgewiesen. Leerzeichen sind nicht erlaubt.",
           keyWarnTitle: "Der Schlüssel ist dauerhaft",
           keyWarnContent:
@@ -1318,10 +1368,14 @@ export const de = {
           rejValidatorNonTextMsg:
             "Zurückgewiesen, unter Nennung des Typs: Ein Validator kann nur an ein Textfeld angehängt werden. Das Dropdown wird für diese Typen nicht einmal gezeigt, dies ist also der Server, der dasselbe ein zweites Mal zurückweist.",
           rejValidatorNoParam: "Ein parametrisierter Validator mit leer gelassener Einstellung",
-          rejValidatorNoParamMsg: "Zurückgewiesen, unter Nennung des Validators: Er benötigt einen Parameter.",
-          rejValidatorExtraParam: "Eine Einstellung für einen Validator geliefert, der keine annimmt",
-          rejValidatorExtraParamMsg: "Zurückgewiesen, unter Nennung des Validators: Er akzeptiert keinen Parameter.",
-          rejRequiredRestricted: "Ein Feld als Required markieren, während eine Rolle oder Gruppe es einschränkt",
+          rejValidatorNoParamMsg:
+            "Zurückgewiesen, unter Nennung des Validators: Er benötigt einen Parameter.",
+          rejValidatorExtraParam:
+            "Eine Einstellung für einen Validator geliefert, der keine annimmt",
+          rejValidatorExtraParamMsg:
+            "Zurückgewiesen, unter Nennung des Validators: Er akzeptiert keinen Parameter.",
+          rejRequiredRestricted:
+            "Ein Feld als Required markieren, während eine Rolle oder Gruppe es einschränkt",
           rejRequiredRestrictedMsg:
             "Zurückgewiesen, unter Nennung des Felds: Es kann nicht als erforderlich markiert werden, während es eingeschränkt ist. Entfernen Sie zuerst die Einschränkung, oder lassen Sie das Feld optional.",
           rejGroupWrongType: "Eine Feldgruppe, die zu einem anderen Datensatztyp gehört",
@@ -1330,11 +1384,13 @@ export const de = {
           rejReferenceTargetUnknown: "Ein Ziel festlegen, das kein registrierter Datensatztyp ist",
           rejReferenceTargetUnknownMsg:
             "Zurückgewiesen, unter Nennung des Bezeichners: Er ist kein registrierter Entitätstyp. Nur durch Umgehen des Dropdowns erreichbar, das nichts Unregistriertes anbietet.",
-          rejReferenceTargetNotAllowed: "Ein User-Reference-Feld auf etwas anderes als ein Benutzerkonto festlegen",
+          rejReferenceTargetNotAllowed:
+            "Ein User-Reference-Feld auf etwas anderes als ein Benutzerkonto festlegen",
           rejReferenceTargetNotAllowedMsg:
             "Zurückgewiesen, unter Nennung des Werttyps und Auflistung dessen, was er tatsächlich erlaubt. Das Dropdown wird für diesen Typ überhaupt nicht gezeigt, dies ist also der Server, der zurückweist, was das Formular bereits abgelehnt hat anzubieten.",
           rejGlobalNotSuperAdmin: "Ein globales Feld anlegen, ohne Plattform-Super-Admin zu sein",
-          rejGlobalNotSuperAdminMsg: "Zurückgewiesen: Nur ein Plattform-Super-Admin kann ein globales benutzerdefiniertes Feld anlegen.",
+          rejGlobalNotSuperAdminMsg:
+            "Zurückgewiesen: Nur ein Plattform-Super-Admin kann ein globales benutzerdefiniertes Feld anlegen.",
           rejQuota: "Die Feldgrenze Ihres Plans überschreiten",
           rejQuotaMsg:
             "Wegen Kontingent zurückgewiesen. Die Free-Edition erlaubt null Felder; jeder andere Plan hat sein eigenes Maximum pro Arbeitsbereich. Globale Plattformfelder zählen nicht dagegen.",
@@ -1347,9 +1403,12 @@ export const de = {
           editable2: "Required — sofern keine Rolle oder Benutzergruppe das Feld einschränkt",
           editable3: "Sort Order, und die Field Group",
           editable4: "Sensitivity, und Include in exports",
-          editable5: "Active, was das Feld stilllegt, ohne seine gespeicherten Antworten anzufassen",
-          editable6: "Die Optionsliste — auch wenn das Umbenennen einer Option ändert, was bestehende Datensätze anzeigen",
-          editable7: "Der Validator und seine Einstellung — auch wenn dies bereits gespeicherte Antworten nie erneut prüft",
+          editable5:
+            "Active, was das Feld stilllegt, ohne seine gespeicherten Antworten anzufassen",
+          editable6:
+            "Die Optionsliste — auch wenn das Umbenennen einer Option ändert, was bestehende Datensätze anzeigen",
+          editable7:
+            "Der Validator und seine Einstellung — auch wenn dies bereits gespeicherte Antworten nie erneut prüft",
           editable8:
             "Der Target Entity Type eines Entity-Reference-Felds — bereits gespeicherte Antworten funktionieren weiter, und der nächste Speichervorgang einer Antwort der alten Art wird zurückgewiesen, bis sie erneut gewählt wird",
           permanentTitle: "Nach dem Speichern dauerhaft",
@@ -1399,7 +1458,8 @@ export const de = {
             "Ein maschinenlesbarer Name für die Gruppe, eindeutig innerhalb des Datensatztyps. Kleinbuchstaben, beginnt mit einem Buchstaben, nur Buchstaben, Ziffern und Unterstriche.",
           partLabelEn: "Die englische Überschrift über den Feldern der Gruppe.",
           partLabelAr: "Die arabische Überschrift.",
-          partSortOrder: "Wo die Gruppe im Verhältnis zu den anderen Gruppen des Datensatztyps steht.",
+          partSortOrder:
+            "Wo die Gruppe im Verhältnis zu den anderen Gruppen des Datensatztyps steht.",
           partScope: "Ob die Gruppe Ihrem Arbeitsbereich gehört oder der gesamten Plattform.",
           changeNever: "Nein — nach dem Speichern dauerhaft",
           changeAnytime: "Ja, jederzeit",
@@ -1425,12 +1485,16 @@ export const de = {
           thKeyExample: "Stabiler Schlüssel",
           thOutcome: "Was passiert",
           skOk: "Angenommen.",
-          skLowercased: "Angenommen, und beim Tippen in Kleinbuchstaben umgewandelt. Sie sehen, wie er zu contact_details wird.",
-          skHyphen: "Beim Tippen zurückgewiesen. Das Eingabefeld weist Zeichen außerhalb der Grammatik zurück.",
-          skLeadingDigit: "Zurückgewiesen. Ein stabiler Schlüssel muss mit einem Buchstaben beginnen.",
+          skLowercased:
+            "Angenommen, und beim Tippen in Kleinbuchstaben umgewandelt. Sie sehen, wie er zu contact_details wird.",
+          skHyphen:
+            "Beim Tippen zurückgewiesen. Das Eingabefeld weist Zeichen außerhalb der Grammatik zurück.",
+          skLeadingDigit:
+            "Zurückgewiesen. Ein stabiler Schlüssel muss mit einem Buchstaben beginnen.",
           skDuplicate:
             "Zurückgewiesen, unter Nennung des Schlüssels: Eine Feldgruppe mit diesem Schlüssel existiert für diesen Datensatztyp bereits.",
-          exSkDuplicate: "Ein Schlüssel, den eine andere Gruppe desselben Datensatztyps bereits verwendet",
+          exSkDuplicate:
+            "Ein Schlüssel, den eine andere Gruppe desselben Datensatztyps bereits verwendet",
           stableKeyWhy:
             "Sobald die Gruppe gespeichert ist, ist der stabile Schlüssel sichtbar, aber ausgegraut, und kann von niemandem geändert werden. Das ist beabsichtigt, kein Versehen: Ein exportiertes Schema benennt eine Gruppe über diesen Schlüssel, sodass ein Umbenennen einen künftigen erneuten Import als Update still in ein Anlegen verwandeln würde, gegen ein Paket, das bereits ausgeliefert wurde. Den Schlüssel sehen zu können zählt trotzdem — Sie brauchen ihn, um ein exportiertes Paket der Gruppe zuzuordnen, auf die es sich bezieht —, weshalb er gezeigt statt verborgen wird.",
           stableKeyWarnTitle: "Es gibt kein Umbenennen",
@@ -1475,31 +1539,44 @@ export const de = {
 
           effectTitle: "Was eine Gruppe beeinflusst und was nicht",
           doesTitle: "Eine Gruppe leistet",
-          does1: "Verwandte Felder auf dem Datensatzformular unter einer Überschrift zusammenzufassen",
+          does1:
+            "Verwandte Felder auf dem Datensatzformular unter einer Überschrift zusammenzufassen",
           does2: "Gruppen von Hand zu ordnen, durch Ziehen oder mit Move up und Move down",
-          does3: "Eine eigene englische und arabische Überschrift zu tragen, übersetzt wie alles andere",
-          does4: "Das Löschen eines Felds zu überleben, und ein Feld über den Eintrag no group verlassen zu lassen",
+          does3:
+            "Eine eigene englische und arabische Überschrift zu tragen, übersetzt wie alles andere",
+          does4:
+            "Das Löschen eines Felds zu überleben, und ein Feld über den Eintrag no group verlassen zu lassen",
           doesNotTitle: "Eine Gruppe leistet nicht",
-          doesNot1: "Zu steuern, wer ein Feld sehen kann — das ist Sicherheit auf Feldebene, ein unabhängiges Thema",
+          doesNot1:
+            "Zu steuern, wer ein Feld sehen kann — das ist Sicherheit auf Feldebene, ein unabhängiges Thema",
           doesNot2: "Ihre Felder zu löschen, wenn die Gruppe selbst gelöscht wird",
-          doesNot3: "Datensatztypen zu überschreiten oder auf mehr als einen Datensatztyp gleichzeitig zu wirken",
-          doesNot4: "Zu ändern, wie ein Wert validiert, gespeichert, exportiert oder angezeigt wird",
+          doesNot3:
+            "Datensatztypen zu überschreiten oder auf mehr als einen Datensatztyp gleichzeitig zu wirken",
+          doesNot4:
+            "Zu ändern, wie ein Wert validiert, gespeichert, exportiert oder angezeigt wird",
 
           errorsTitle: "Gruppenfehler, die Ihnen begegnen können",
           thSituation: "Situation",
           thWhatYouSee: "Was Sie sehen",
-          errDuplicateKey: "Ein stabiler Schlüssel, der bei diesem Datensatztyp bereits verwendet wird",
-          errDuplicateKeyMsg: "Zurückgewiesen, unter Nennung des Schlüssels: Eine Feldgruppe mit diesem Schlüssel existiert für diesen Entitätstyp bereits.",
+          errDuplicateKey:
+            "Ein stabiler Schlüssel, der bei diesem Datensatztyp bereits verwendet wird",
+          errDuplicateKeyMsg:
+            "Zurückgewiesen, unter Nennung des Schlüssels: Eine Feldgruppe mit diesem Schlüssel existiert für diesen Entitätstyp bereits.",
           errWrongEntityType: "Ein Feld einer Gruppe eines anderen Datensatztyps zuordnen",
-          errWrongEntityTypeMsg: "Zurückgewiesen: Die gewählte Feldgruppe gehört zu einem anderen Entitätstyp.",
+          errWrongEntityTypeMsg:
+            "Zurückgewiesen: Die gewählte Feldgruppe gehört zu einem anderen Entitätstyp.",
           errTooManyReorder: "Mehr als 100 Gruppen auf einmal umsortieren",
-          errTooManyReorderMsg: "Zurückgewiesen, unter Nennung der Obergrenze: So viele Gruppen lassen sich nicht in einer Anfrage umsortieren.",
+          errTooManyReorderMsg:
+            "Zurückgewiesen, unter Nennung der Obergrenze: So viele Gruppen lassen sich nicht in einer Anfrage umsortieren.",
           errDuplicateReorder: "Dieselbe Gruppe zweimal in einer Umsortierung aufgeführt",
-          errDuplicateReorderMsg: "Zurückgewiesen: Dieselbe Feldgruppe erscheint mehr als einmal in der Umsortierungsliste.",
+          errDuplicateReorderMsg:
+            "Zurückgewiesen: Dieselbe Feldgruppe erscheint mehr als einmal in der Umsortierungsliste.",
           errMixedReorder: "Gruppen aus zwei Datensatztypen in einer Umsortierung",
-          errMixedReorderMsg: "Zurückgewiesen: Alle Feldgruppen in einer Umsortierungsanfrage müssen zum selben Entitätstyp gehören.",
+          errMixedReorderMsg:
+            "Zurückgewiesen: Alle Feldgruppen in einer Umsortierungsanfrage müssen zum selben Entitätstyp gehören.",
           errGlobalNotSuperAdmin: "Eine globale Gruppe anlegen, ohne Plattform-Super-Admin zu sein",
-          errGlobalNotSuperAdminMsg: "Zurückgewiesen: Nur ein Plattform-Super-Admin kann eine globale Feldgruppe anlegen.",
+          errGlobalNotSuperAdminMsg:
+            "Zurückgewiesen: Nur ein Plattform-Super-Admin kann eine globale Feldgruppe anlegen.",
           errNoDefinition: "Einem Feld ohne bisherigen Definitionsdatensatz eine Gruppe zuordnen",
           errNoDefinitionMsg:
             "Zurückgewiesen, mit der Erklärung, dass das Feld keinen Definitionsdatensatz hat und die Nachbefüllung der Definitionen zuerst ausgeführt werden muss. Das passiert nur in einer Umgebung, die von einer älteren Version aktualisiert wurde.",
@@ -1556,7 +1633,7 @@ export const de = {
             "Zurückgewiesen: VALIDATION_INVALID_FORMAT, mit einer Meldung, die sowohl den zurückgewiesenen Wert als auch den Schlüssel des Felds zitiert.",
           matchBlank:
             "Als leer behandelt: bei einem optionalen Feld als gelöscht gespeichert, bei einem erforderlichen mit VALIDATION_REQUIRED zurückgewiesen.",
-          exPadded: "\" Medium\" mit einem führenden Leerzeichen",
+          exPadded: '" Medium" mit einem führenden Leerzeichen',
           exBlank: "Ein leerer Wert",
 
           multiTitle: "Besonderheiten von MultiSelect",
@@ -1567,8 +1644,9 @@ export const de = {
           multiRemove:
             "Angenommen. Das Entfernen einer Auswahl lässt die übrigen in ihrer bestehenden relativen Reihenfolge.",
           multiTooMany:
-            "Zurückgewiesen: VALIDATION_MAX_LENGTH, unter Nennung der Obergrenze von 19. Die Auswahlkomponente macht jede nicht gewählte Option ab 19 nicht mehr auswählbar und zeigt einen live mitlaufenden Zähler \"N of 19 selected\", sodass dies über die Oberfläche normalerweise unerreichbar ist.",
-          multiDuplicate: "Zurückgewiesen: VALIDATION_UNIQUE. Eine wiederholte Auswahl wird zurückgewiesen, nicht zusammengelegt.",
+            'Zurückgewiesen: VALIDATION_MAX_LENGTH, unter Nennung der Obergrenze von 19. Die Auswahlkomponente macht jede nicht gewählte Option ab 19 nicht mehr auswählbar und zeigt einen live mitlaufenden Zähler "N of 19 selected", sodass dies über die Oberfläche normalerweise unerreichbar ist.',
+          multiDuplicate:
+            "Zurückgewiesen: VALIDATION_UNIQUE. Eine wiederholte Auswahl wird zurückgewiesen, nicht zusammengelegt.",
           multiEmpty:
             "Als leer behandelt, genau wie ein leerer skalarer Wert bei jedem anderen Typ: bei einem optionalen Feld gelöscht, bei einem erforderlichen zurückgewiesen.",
           exMultiOrder: "Blue, dann Red — bei einem Feld, dessen Optionsliste Red vor Blue führt",
@@ -1586,7 +1664,8 @@ export const de = {
           thChange: "Bearbeitung",
           thEffect: "Wirkung auf bereits bestehende Datensätze",
           chgAdd: "Eine neue Option hinzufügen",
-          chgAddEffect: "Keine. Bestehende Antworten bleiben unberührt; die neue Option wird schlicht verfügbar.",
+          chgAddEffect:
+            "Keine. Bestehende Antworten bleiben unberührt; die neue Option wird schlicht verfügbar.",
           chgRename: "Eine englische Bezeichnung umbenennen",
           chgRenameEffect:
             "Jeder Datensatz, der bereits den alten Text trägt, zeigt nun den neuen Text. Nichts wird migriert und nichts geht verloren, weil die Optionszeile das ist, worauf der Datensatz zeigt — aber die Antwort, die Menschen sehen, hat sich unter ihnen geändert.",
@@ -1601,7 +1680,7 @@ export const de = {
             "Nur die Anzeige. Die gespeicherte Antwort ist die englische Bezeichnung, sodass sich an den Daten nichts ändert.",
           renameWarnTitle: "Mit Vorsicht umbenennen, und Hinzufügen bevorzugen",
           renameWarnContent:
-            "Eine Option umzubenennen ist die eine Bearbeitung, die still umschreibt, wie sich der Verlauf liest: Ein Datensatz, der letztes Jahr mit \"Medium\" beantwortet wurde, liest sich als das, wozu Sie Medium umbenannt haben. Ist Ihnen die Unterscheidung wichtig, fügen Sie eine neue Option hinzu und bieten Sie die alte nicht mehr an, statt sie umzubenennen.",
+            'Eine Option umzubenennen ist die eine Bearbeitung, die still umschreibt, wie sich der Verlauf liest: Ein Datensatz, der letztes Jahr mit "Medium" beantwortet wurde, liest sich als das, wozu Sie Medium umbenannt haben. Ist Ihnen die Unterscheidung wichtig, fügen Sie eine neue Option hinzu und bieten Sie die alte nicht mehr an, statt sie umzubenennen.',
 
           errorsTitle: "Optionsfehler, die Ihnen begegnen können",
           thSituation: "Situation",
@@ -1614,12 +1693,14 @@ export const de = {
           errNotAllowedMsg:
             "Zurückgewiesen: VALIDATION_INVALID_FORMAT, unter Zitat des Werts und des Schlüssels des Felds.",
           errTooMany: "Mehr als 19 MultiSelect-Auswahlen",
-          errTooManyMsg: "Zurückgewiesen: VALIDATION_MAX_LENGTH, unter Nennung der Obergrenze von 19.",
+          errTooManyMsg:
+            "Zurückgewiesen: VALIDATION_MAX_LENGTH, unter Nennung der Obergrenze von 19.",
           errDuplicate: "Dieselbe MultiSelect-Option zweimal in einem Speichervorgang",
           errDuplicateMsg: "Zurückgewiesen: VALIDATION_UNIQUE, unter Zitat des wiederholten Werts.",
 
           notYetTitle: "Was die Optionsliste nicht leistet",
-          notYetIntro: "Drei Dinge, die vernünftigerweise nachgefragt werden, und was die Antwort heute ist.",
+          notYetIntro:
+            "Drei Dinge, die vernünftigerweise nachgefragt werden, und was die Antwort heute ist.",
           notYet1:
             "Die eigene Inline-Liste dieses Felds kann nicht selbst von einem anderen Feld wiederverwendet werden — die Options jedes Felds sind seine eigenen, hier eingetippt. Eine Länderliste, die drei Felder brauchen, muss deshalb aber nicht mehr dreimal geschrieben werden: Binden Sie stattdessen alle drei an ein gemeinsam genutztes, versioniertes Option Set (siehe Optionssets) und bearbeiten Sie es einmal.",
           notYet2:
@@ -1646,11 +1727,11 @@ export const de = {
             "Es gibt bewusst nirgends im Produkt eine Freitext- oder Regex-Eingabe. Ein von Hand geschriebenes Muster lässt sich so gestalten, dass es enorm viel Rechenzeit für eine kurze Eingabe verbraucht, was ein Dateneingabeformular in einen Weg verwandelt, das System lahmzulegen. Die Menge der Prüfungen ist deshalb stattdessen fest und kuratiert, und jede trägt ihre eigene kurze Längenobergrenze und ihr eigenes Zeitlimit.",
 
           howTitle: "Wie ein Validator läuft",
-          howIntro: "Vier Dinge geschehen in dieser Reihenfolge, jedes Mal, wenn ein Wert in das Feld gespeichert wird.",
+          howIntro:
+            "Vier Dinge geschehen in dieser Reihenfolge, jedes Mal, wenn ein Wert in das Feld gespeichert wird.",
           how1: "Ist der Wert leer oder besteht er aus nichts als Leerzeichen, wird er als leer behandelt, und es läuft überhaupt kein Validator.",
           how2: "Die globale Textobergrenze von 4.000 Zeichen läuft und weist mit VALIDATION_MAX_LENGTH zurück, falls der Wert länger ist.",
-          how3:
-            "Die eigene, deutlich kürzere Längenobergrenze des Validators läuft — 11 Zeichen für einen SWIFT-Code, 15 für eine IMEI, und so weiter — und weist ebenfalls mit VALIDATION_MAX_LENGTH zurück.",
+          how3: "Die eigene, deutlich kürzere Längenobergrenze des Validators läuft — 11 Zeichen für einen SWIFT-Code, 15 für eine IMEI, und so weiter — und weist ebenfalls mit VALIDATION_MAX_LENGTH zurück.",
           how4: "Erst dann läuft die tatsächliche Prüfung des Validators, die mit ihrem eigenen Code und ihrer eigenen Meldung zurückweist.",
           howTwoPoints:
             "Die Prüfung wird an zwei getrennten Punkten durchgesetzt, und es lohnt sich, zu wissen, dass es beide gibt. Bei der Definition wird eine ungültige Kombination aus Validator und Einstellung zurückgewiesen, wenn Sie die Definition speichern. Beim Wert läuft der Validator erneut gegen jeden Wert, den jemand in das Feld speichert.",
@@ -1665,8 +1746,10 @@ export const de = {
           shapeIban: "Zwei Buchstaben, zwei Ziffern, dann 11 bis 30 Buchstaben oder Ziffern",
           shapeImei: "Genau 15 Ziffern",
           shapeSwift: "Sechs Buchstaben, zwei Buchstaben oder Ziffern, optional drei weitere",
-          shapePlate: "2 bis 15 Buchstaben, Ziffern, Leerzeichen oder Bindestriche, beliebige Groß-/Kleinschreibung",
-          shapeEgypt: "14 Ziffern: Jahrhundertmarker, dann ein plausibles JJMMTT, dann sieben weitere",
+          shapePlate:
+            "2 bis 15 Buchstaben, Ziffern, Leerzeichen oder Bindestriche, beliebige Groß-/Kleinschreibung",
+          shapeEgypt:
+            "14 Ziffern: Jahrhundertmarker, dann ein plausibles JJMMTT, dann sieben weitere",
           shapeSaudi: "10 Ziffern, beginnend mit 1 oder 2",
           shapeEmirati: "784, vier Ziffern, sieben Ziffern, eine Ziffer — Bindestriche optional",
           checksumReal: "Ja — verifiziert",
@@ -1688,7 +1771,8 @@ export const de = {
             "Zurückgewiesen. IBANs werden zur besseren Lesbarkeit oft in Vierergruppen gedruckt, aber die gespeicherte Form enthält keine Leerzeichen.",
 
           imeiTitle: "IMEI",
-          imeiFor: "Für die Identitätsnummer eines Mobilgeräts, wie sie auf dem Gerät oder seiner Verpackung aufgedruckt ist.",
+          imeiFor:
+            "Für die Identitätsnummer eines Mobilgeräts, wie sie auf dem Gerät oder seiner Verpackung aufgedruckt ist.",
           imeiChecks:
             "Genau 15 Ziffern, dann wird die echte Prüfziffer verifiziert. Auf 15 Zeichen gedeckelt. Die 16- und 17-stelligen Anzeigevarianten mancher Geräte werden nicht angenommen.",
           imeiOk: "Angenommen.",
@@ -1698,13 +1782,16 @@ export const de = {
             "Zurückgewiesen: VALIDATION_INVALID_FORMAT. Vierzehn Ziffern scheitern an der Formprüfung — die Längenobergrenze erfasst nur einen Wert, der länger als 15 ist.",
 
           swiftBicTitle: "SWIFT / BIC Code",
-          swiftBicFor: "Für einen Bankleitzahl-Code, verwendet zusammen mit einer Kontonummer bei einer internationalen Überweisung.",
+          swiftBicFor:
+            "Für einen Bankleitzahl-Code, verwendet zusammen mit einer Kontonummer bei einer internationalen Überweisung.",
           swiftBicChecks:
             "Acht oder elf Zeichen: sechs Buchstaben, dann zwei Buchstaben oder Ziffern, dann optional drei weitere Buchstaben oder Ziffern. Nur Großbuchstaben, keine Trennzeichen, auf 11 Zeichen gedeckelt. Es gibt im Standard keine Prüfziffer, sodass ein wohlgeformter Code, der zu keiner echten Bank gehört, angenommen wird.",
           swiftOk8: "Angenommen — die achtstellige Form.",
           swiftOk11: "Angenommen — die elfstellige Form mit einem Filialcode.",
-          swiftDigit: "Zurückgewiesen: VALIDATION_INVALID_FORMAT. Die ersten sechs Zeichen müssen alle Buchstaben sein.",
-          swiftLower: "Zurückgewiesen. Dies ist ein festes externes Format, und Kleinbuchstaben gehören nicht dazu.",
+          swiftDigit:
+            "Zurückgewiesen: VALIDATION_INVALID_FORMAT. Die ersten sechs Zeichen müssen alle Buchstaben sein.",
+          swiftLower:
+            "Zurückgewiesen. Dies ist ein festes externes Format, und Kleinbuchstaben gehören nicht dazu.",
           swiftLength: "Zurückgewiesen. Acht oder elf Zeichen genau — neun ist keins von beiden.",
 
           plateTitle: "Vehicle Plate Number",
@@ -1713,26 +1800,32 @@ export const de = {
           plateChecks:
             "2 bis 15 Zeichen, bestehend aus Buchstaben, Ziffern, Leerzeichen und Bindestrichen in beliebiger Kombination. Ohne Unterscheidung von Groß-/Kleinschreibung. Bewusst großzügig — es gibt in dieser Prüfung nirgends ein länderspezifisches Kennzeichenformat, weil sich Kennzeichenformate von Land zu Land und von Fahrzeugklasse zu Fahrzeugklasse innerhalb eines Landes unterscheiden.",
           plateOk: "Angenommen.",
-          plateLowerOk: "Angenommen. Anders als SWIFT kümmert sich diese Prüfung nicht um Groß-/Kleinschreibung.",
-          plateTooShort: "Zurückgewiesen: VALIDATION_INVALID_FORMAT. Das Minimum sind zwei Zeichen.",
-          plateBadChar: "Zurückgewiesen. Ein Schrägstrich gehört zu keiner der vier erlaubten Zeichenklassen.",
+          plateLowerOk:
+            "Angenommen. Anders als SWIFT kümmert sich diese Prüfung nicht um Groß-/Kleinschreibung.",
+          plateTooShort:
+            "Zurückgewiesen: VALIDATION_INVALID_FORMAT. Das Minimum sind zwei Zeichen.",
+          plateBadChar:
+            "Zurückgewiesen. Ein Schrägstrich gehört zu keiner der vier erlaubten Zeichenklassen.",
 
           egyptIdTitle: "Egyptian National ID",
           egyptIdFor: "Für eine ägyptische nationale Personalausweisnummer.",
           egyptIdChecks:
             "Vierzehn Ziffern: ein Jahrhundertmarker von 2 oder 3, dann ein Geburtsdatum als JJMMTT, das kalendarisch plausibel sein muss, dann sieben weitere Ziffern. Nur Struktur — Ägypten hat nie einen Prüfziffer-Algorithmus veröffentlicht, die letzte Ziffer wird also nicht verifiziert. Einen geratenen Algorithmus auszuliefern würde echte, gültige Ausweisnummern zurückweisen, was schlimmer ist, als gar nicht zu prüfen.",
           egyptOk: "Angenommen.",
-          egyptBadMonth: "Zurückgewiesen: VALIDATION_INVALID_FORMAT. Monat 13 ist kein plausibler Monat.",
+          egyptBadMonth:
+            "Zurückgewiesen: VALIDATION_INVALID_FORMAT. Monat 13 ist kein plausibler Monat.",
           egyptBadDay: "Zurückgewiesen. Tag 32 ist kein plausibler Tag.",
           egyptBadCentury: "Zurückgewiesen. Der Jahrhundertmarker muss 2 oder 3 sein.",
           egyptLength: "Zurückgewiesen. Dreizehn Ziffern sind keine vierzehn.",
 
           saudiIdTitle: "Saudi National ID",
-          saudiIdFor: "Für eine saudi-arabische nationale Personalausweisnummer oder eine Iqama-Nummer (Aufenthaltstitel).",
+          saudiIdFor:
+            "Für eine saudi-arabische nationale Personalausweisnummer oder eine Iqama-Nummer (Aufenthaltstitel).",
           saudiIdChecks:
             "Zehn Ziffern, die erste ist 1 für Staatsangehörige oder 2 für Ansässige, und die echte Prüfziffer wird verifiziert. Auf 10 Zeichen gedeckelt.",
           saudiOk: "Angenommen. Form und Prüfziffer stimmen beide.",
-          saudiBadCheck: "Zurückgewiesen: VALIDATION_INVALID_FORMAT. Richtige Form, falsche Prüfziffer.",
+          saudiBadCheck:
+            "Zurückgewiesen: VALIDATION_INVALID_FORMAT. Richtige Form, falsche Prüfziffer.",
           saudiBadPrefix: "Zurückgewiesen. Die erste Ziffer muss 1 oder 2 sein.",
           saudiLength: "Zurückgewiesen. Neun Ziffern sind keine zehn.",
 
@@ -1741,8 +1834,10 @@ export const de = {
           emiratiIdChecks:
             "Die Form 784-JJJJ-XXXXXXX-C, mit optionalen Bindestrichen. Auf 18 Zeichen gedeckelt. Nur Struktur — die VAE haben nie einen Prüfziffer-Algorithmus veröffentlicht, die letzte Ziffer wird also aus demselben Grund wie bei der ägyptischen Prüfung nicht verifiziert.",
           emiratiOk: "Angenommen, Bindestriche und alles.",
-          emiratiNoHyphens: "Angenommen. Die Bindestriche sind optional, beide geschriebenen Formen funktionieren also.",
-          emiratiBadPrefix: "Zurückgewiesen: VALIDATION_INVALID_FORMAT. Jede Emirates-ID beginnt mit 784.",
+          emiratiNoHyphens:
+            "Angenommen. Die Bindestriche sind optional, beide geschriebenen Formen funktionieren also.",
+          emiratiBadPrefix:
+            "Zurückgewiesen: VALIDATION_INVALID_FORMAT. Jede Emirates-ID beginnt mit 784.",
           emiratiLength: "Zurückgewiesen. Der mittlere Block hat sieben Ziffern, nicht sechs.",
 
           paramTitle: "Die sechs Prüfungen, die eine Einstellung benötigen",
@@ -1751,7 +1846,8 @@ export const de = {
           thParamFormat: "Format der Einstellung",
           thParamExample: "Beispieleinstellung",
           paramFmtPostal: "Ein Land, gewählt aus einem Dropdown der sieben unterstützten",
-          paramFmtNumeric: "Zwei durch Komma getrennte Grenzen; jede Seite darf für ein offenes Ende leer bleiben",
+          paramFmtNumeric:
+            "Zwei durch Komma getrennte Grenzen; jede Seite darf für ein offenes Ende leer bleiben",
           paramFmtLength: "Zwei durch Komma getrennte Zeichenzahlen; jede Seite darf leer bleiben",
           paramFmtOneOf: "Ein zulässiger Wert pro Zeile",
           paramFmtContains: "Beliebiger literaler Text",
@@ -1766,8 +1862,10 @@ export const de = {
           postalEgOk: "Angenommen. Ägypten hat fünf Ziffern.",
           postalEgBad: "Zurückgewiesen: VALIDATION_INVALID_FORMAT. Vier Ziffern sind keine fünf.",
           postalUsOk: "Angenommen. Sowohl die fünfstellige als auch die ZIP+4-Form sind gültig.",
-          postalGbOk: "Angenommen. Das britische Format wird in beiden Fällen abgeglichen, mit oder ohne Leerzeichen.",
-          postalCaOk: "Angenommen, einschließlich der echten Buchstabenausschlüsse, die Canada Post anwendet.",
+          postalGbOk:
+            "Angenommen. Das britische Format wird in beiden Fällen abgeglichen, mit oder ohne Leerzeichen.",
+          postalCaOk:
+            "Angenommen, einschließlich der echten Buchstabenausschlüsse, die Canada Post anwendet.",
           exPostalEg: "11511, mit der Einstellung EG",
           exPostalEgBad: "1151, mit der Einstellung EG",
           exPostalUsPlus4: "90210-1234, mit der Einstellung US",
@@ -1781,13 +1879,15 @@ export const de = {
             "Der Wert muss sich als Zahl parsen lassen und innerhalb des Bereichs liegen. Die Einstellung besteht aus zwei durch Komma getrennten Grenzen; eine Seite leer zu lassen macht dieses Ende offen, aber beide leer zu lassen wird zurückgewiesen, weil ein Bereich, der alles akzeptiert, dasselbe ist wie gar keinen Validator anzuhängen.",
           numericOk: "Angenommen.",
           numericOut: "Zurückgewiesen: VALIDATION_RANGE.",
-          numericNotANumber: "Zurückgewiesen: VALIDATION_RANGE. Ein Wert, der keine Zahl ist, kann nicht innerhalb eines Bereichs liegen.",
-          numericOpenOk: "Angenommen. Eine offene Obergrenze bedeutet jede Zahl bei oder über der unteren.",
+          numericNotANumber:
+            "Zurückgewiesen: VALIDATION_RANGE. Ein Wert, der keine Zahl ist, kann nicht innerhalb eines Bereichs liegen.",
+          numericOpenOk:
+            "Angenommen. Eine offene Obergrenze bedeutet jede Zahl bei oder über der unteren.",
           numericBothBlank:
             "Bei der Definition zurückgewiesen, mit der Erklärung, dass der Validator mindestens eine Grenze braucht.",
           exNumeric50: "50, mit der Einstellung 1,100",
           exNumeric150: "150, mit der Einstellung 1,100",
-          exNumericText: "\"fifty\", mit der Einstellung 1,100",
+          exNumericText: '"fifty", mit der Einstellung 1,100',
           exNumericOpen: "5000, mit der Einstellung 1,",
           exNumericBothBlank: "Die Einstellung , mit beiden Seiten leer",
 
@@ -1799,8 +1899,8 @@ export const de = {
           lengthOk: "Angenommen.",
           lengthTooShort: "Zurückgewiesen: VALIDATION_MIN_LENGTH, unter Nennung des Minimums.",
           lengthTooLong: "Zurückgewiesen: VALIDATION_MAX_LENGTH, unter Nennung des Maximums.",
-          exLength10: "\"Alexandria\" — 10 Zeichen, mit der Einstellung 2,50",
-          exLength1: "\"A\" — 1 Zeichen, mit der Einstellung 2,50",
+          exLength10: '"Alexandria" — 10 Zeichen, mit der Einstellung 2,50',
+          exLength1: '"A" — 1 Zeichen, mit der Einstellung 2,50',
           exLength80: "Ein Wert mit 80 Zeichen, mit der Einstellung 2,50",
 
           oneOfListTitle: "One of a List",
@@ -1809,25 +1909,32 @@ export const de = {
           oneOfListChecks:
             "Der Wert muss exakt einer Zeile der von Ihnen konfigurierten Liste entsprechen, ein Wert pro Zeile. Der Abgleich unterscheidet Groß-/Kleinschreibung.",
           oneOfOk: "Angenommen.",
-          oneOfCase: "Zurückgewiesen: VALIDATION_INVALID_FORMAT. Der Abgleich unterscheidet Groß-/Kleinschreibung.",
-          oneOfUnknown: "Zurückgewiesen: VALIDATION_INVALID_FORMAT. Der Wert steht nicht auf der Liste.",
+          oneOfCase:
+            "Zurückgewiesen: VALIDATION_INVALID_FORMAT. Der Abgleich unterscheidet Groß-/Kleinschreibung.",
+          oneOfUnknown:
+            "Zurückgewiesen: VALIDATION_INVALID_FORMAT. Der Wert steht nicht auf der Liste.",
 
           containsTitle: "Contains Text",
           containsFor:
             "Für einen Wert, der irgendwo eine Kennzeichnung enthalten muss — ein Vereinspräfix, eine Saison-Kennung, einen Abteilungscode.",
-          containsChecks: "Der Wert muss den von Ihnen konfigurierten literalen Text enthalten, unter Berücksichtigung der Groß-/Kleinschreibung.",
+          containsChecks:
+            "Der Wert muss den von Ihnen konfigurierten literalen Text enthalten, unter Berücksichtigung der Groß-/Kleinschreibung.",
           containsOk: "Angenommen, mit der Einstellung FC-.",
-          containsCase: "Zurückgewiesen: VALIDATION_INVALID_FORMAT. Der Abgleich beachtet Groß-/Kleinschreibung.",
-          containsMissing: "Zurückgewiesen: VALIDATION_INVALID_FORMAT. Die Kennzeichnung ist nicht vorhanden.",
+          containsCase:
+            "Zurückgewiesen: VALIDATION_INVALID_FORMAT. Der Abgleich beachtet Groß-/Kleinschreibung.",
+          containsMissing:
+            "Zurückgewiesen: VALIDATION_INVALID_FORMAT. Die Kennzeichnung ist nicht vorhanden.",
 
           startsWithTitle: "Starts With Text",
           startsWithFor:
             "Für einen Wert, der mit einem Präfix beginnen muss — einem Ländercode, einem Filialcode, einem festen Referenzstamm.",
-          startsWithChecks: "Der Wert muss mit dem von Ihnen konfigurierten literalen Text beginnen, unter Berücksichtigung der Groß-/Kleinschreibung.",
+          startsWithChecks:
+            "Der Wert muss mit dem von Ihnen konfigurierten literalen Text beginnen, unter Berücksichtigung der Groß-/Kleinschreibung.",
           startsOk: "Angenommen, mit der Einstellung EG-.",
           startsWrongPlace:
             "Zurückgewiesen: VALIDATION_INVALID_FORMAT. Der Text ist vorhanden, aber nicht am Anfang — verwenden Sie Contains Text, wenn die Position keine Rolle spielt.",
-          startsCase: "Zurückgewiesen: VALIDATION_INVALID_FORMAT. Der Abgleich beachtet Groß-/Kleinschreibung.",
+          startsCase:
+            "Zurückgewiesen: VALIDATION_INVALID_FORMAT. Der Abgleich beachtet Groß-/Kleinschreibung.",
 
           postalCountriesTitle: "Die sieben Länder für Postal Code",
           postalCountriesIntro:
@@ -1837,11 +1944,14 @@ export const de = {
           thValidExample: "Gültiges Beispiel",
           fmtEg: "Genau fünf Ziffern",
           fmtSa: "Fünf Ziffern, optional ein Bindestrich und eine vierstellige Erweiterung",
-          fmtUs: "Ein fünfstelliges ZIP, optional ein Bindestrich und eine vierstellige Erweiterung",
-          fmtGb: "Die standardmäßige Form eines britischen Postcodes, beliebige Groß-/Kleinschreibung, Leerzeichen optional",
+          fmtUs:
+            "Ein fünfstelliges ZIP, optional ein Bindestrich und eine vierstellige Erweiterung",
+          fmtGb:
+            "Die standardmäßige Form eines britischen Postcodes, beliebige Groß-/Kleinschreibung, Leerzeichen optional",
           fmtDe: "Genau fünf Ziffern, führende Null erlaubt",
           fmtFr: "Genau fünf Ziffern",
-          fmtCa: "Die Form A1A 1A1, mit den echten Buchstabenausschlüssen von Canada Post angewendet",
+          fmtCa:
+            "Die Form A1A 1A1, mit den echten Buchstabenausschlüssen von Canada Post angewendet",
           uaeTitle: "Die Vereinigten Arabischen Emirate fehlen bewusst",
           uaeContent:
             "Die VAE haben kein nationales Postleitzahlensystem, es gibt also kein echtes Format, gegen das ein Wert geprüft werden könnte — weder streng noch locker. Das ist kein fehlender Eintrag, der noch hinzugefügt werden soll: Der Versuch, es zu verwenden, wird bei der Definition mit einer eigenen erklärenden Meldung zurückgewiesen, verschieden von der allgemeinen Meldung für ein nicht unterstütztes Land, die Sie bei einem Tippfehler bekämen, und die Ihnen sagt, das Feld stattdessen ohne Validator zu lassen. Das Dropdown bietet es nie an.",
@@ -1855,9 +1965,11 @@ export const de = {
           attNonTextMsg:
             "Zurückgewiesen, unter Nennung des Werttyps: Ein Validator kann nur an ein Textfeld angehängt werden.",
           attNoParam: "Ein parametrisierter Validator mit leerer Einstellung",
-          attNoParamMsg: "Zurückgewiesen, unter Nennung des Validators: Er benötigt einen Parameter.",
+          attNoParamMsg:
+            "Zurückgewiesen, unter Nennung des Validators: Er benötigt einen Parameter.",
           attExtraParam: "Eine Einstellung bei einem der sieben, die keine annehmen",
-          attExtraParamMsg: "Zurückgewiesen, unter Nennung des Validators: Er akzeptiert keinen Parameter.",
+          attExtraParamMsg:
+            "Zurückgewiesen, unter Nennung des Validators: Er akzeptiert keinen Parameter.",
           attBadRange: "Eine fehlerhafte Bereichseinstellung",
           attBadRangeMsg:
             "Zurückgewiesen, mit der Erklärung, dass zwei durch Komma getrennte Grenzen benötigt werden, dass jede Seite leer bleiben darf, und dass die untere Grenze die obere nicht überschreiten darf.",
@@ -1878,7 +1990,8 @@ export const de = {
           thWhenItFires: "Wann er ausgelöst wird",
           codeInvalidFormat:
             "Die meisten Validator-Fehlschläge: eine Form, die nicht passt, eine Prüfziffer, die sich nicht verifizieren lässt, ein Wert, der nicht auf einer One-of-a-List-Liste steht, eine fehlende Contains- oder Starts-With-Kennzeichnung, oder eine Postleitzahl, die nicht zu ihrem Land passt.",
-          codeRange: "Numeric Range — der Wert liegt außerhalb der Grenzen, oder ist überhaupt keine Zahl.",
+          codeRange:
+            "Numeric Range — der Wert liegt außerhalb der Grenzen, oder ist überhaupt keine Zahl.",
           codeMaxLength:
             "Die globale Textobergrenze von 4.000 Zeichen, die eigene kürzere Obergrenze eines Validators, oder die Obergrenze von Length Range.",
           codeMinLength: "Die Untergrenze von Length Range.",
@@ -1930,7 +2043,8 @@ export const de = {
           behSources:
             "Eine Rolleneinschränkung und eine Gruppeneinschränkung vereinigen sich. Eine Gruppe kann nie erweitern, was eine Rolle eingeschränkt hat, und es gibt in keiner Richtung eine Überschreibung.",
           aspCase: "Groß-/Kleinschreibung",
-          behCase: "Der Abgleich ignoriert Groß-/Kleinschreibung, sodass Salary, salary und SALARY dasselbe Feld sind.",
+          behCase:
+            "Der Abgleich ignoriert Groß-/Kleinschreibung, sodass Salary, salary und SALARY dasselbe Feld sind.",
           aspResource: "Verschlüsselung",
           behResource:
             "Einschränkungen sind über die Berechtigungsressource verschlüsselt, dieselbe Ressource, die auch den Datensatz selbst schützt — nicht über den Entitätstyp und nicht über die Feldgruppe.",
@@ -1949,7 +2063,7 @@ export const de = {
 
           savingTitle: "Speichern rund um ein verborgenes Feld",
           savingIntro:
-            "Das ist der Teil, den es sich lohnt, richtig zu verstehen, weil die naheliegende Umsetzung Daten zerstören würde. Wenn jemand einen Datensatz speichert, ersetzt der Speichervorgang die gesamte Menge der Werte benutzerdefinierter Felder auf einmal — ein in der Anfrage fehlendes Feld würde also normalerweise \"leeren\" bedeuten.",
+            'Das ist der Teil, den es sich lohnt, richtig zu verstehen, weil die naheliegende Umsetzung Daten zerstören würde. Wenn jemand einen Datensatz speichert, ersetzt der Speichervorgang die gesamte Menge der Werte benutzerdefinierter Felder auf einmal — ein in der Anfrage fehlendes Feld würde also normalerweise "leeren" bedeuten.',
           savingWhy:
             "Ein eingeschränktes Feld fehlt aus einem ganz anderen Grund: Der Person wurde es nie gesendet. Das Produkt unterscheidet diese beiden Fälle und lässt den gespeicherten Wert eines eingeschränkten Felds exakt so, wie er war. Jemand, der einen Wert nicht sehen kann, kann ihn nicht mehr löschen, indem er den Datensatz drum herum bearbeitet.",
           savingInfoTitle: "Die praktische Konsequenz",
@@ -1983,7 +2097,8 @@ export const de = {
           thWhatYouSee: "Was Sie sehen",
           reqRestrictRequired: "Ein derzeit erforderliches Feld einschränken",
           reqRestrictRequiredMsg: "Zurückgewiesen, unter Nennung des Felds.",
-          reqRequireRestricted: "Ein Feld als erforderlich markieren, während eine Rolle oder Gruppe es einschränkt",
+          reqRequireRestricted:
+            "Ein Feld als erforderlich markieren, während eine Rolle oder Gruppe es einschränkt",
           reqRequireRestrictedMsg:
             "Zurückgewiesen, unter Nennung des Felds und mit dem Hinweis, zuerst die Einschränkung zu entfernen oder das Feld optional zu lassen.",
           requiredInfoTitle: "Die Reihenfolge hilft nicht",
@@ -2031,7 +2146,7 @@ export const de = {
           description:
             "Definitionen bearbeiten und stilllegen, der Dialog zum Änderungsverlauf, der Nutzungs- und Auswirkungsbericht, das Löschen ohne Datenverlust, der Tabellenexport mit 18 Spalten, und die beiden schreibgeschützten Referenzbildschirme.",
           intro:
-            "Sobald Felder existieren, ist der Bildschirm Benutzerdefinierte Felder die Stelle, an der sie gepflegt werden: bearbeitet, stillgelegt, geprüft, gemessen und exportiert. Diese Seite behandelt jedes davon, sowie die beiden schreibgeschützten Referenzbildschirme, die \"welche Typen existieren\" und \"welche Datensatztypen kann ich anhängen\" beantworten.",
+            'Sobald Felder existieren, ist der Bildschirm Benutzerdefinierte Felder die Stelle, an der sie gepflegt werden: bearbeitet, stillgelegt, geprüft, gemessen und exportiert. Diese Seite behandelt jedes davon, sowie die beiden schreibgeschützten Referenzbildschirme, die "welche Typen existieren" und "welche Datensatztypen kann ich anhängen" beantworten.',
 
           rowMenuTitle: "Das Zeilenmenü",
           rowMenuIntro:
@@ -2039,7 +2154,8 @@ export const de = {
           thAction: "Aktion",
           thDoes: "Was sie tut",
           thNeeds: "Berechtigung",
-          actEdit: "Öffnet das Definitionsformular, befüllt mit dem vollständigen Detail des Felds.",
+          actEdit:
+            "Öffnet das Definitionsformular, befüllt mit dem vollständigen Detail des Felds.",
           actOptionSets:
             "Hängt ein gemeinsam genutztes, versioniertes Option Set für Select- oder MultiSelect-Felder an, konfiguriert es oder trennt es ab.",
           actVisibilityRules:
@@ -2075,25 +2191,30 @@ export const de = {
           opEqualsMeaning: "Der Wert des steuernden Felds stimmt exakt mit dem Zielwert überein.",
           opEqualsExample: "Zeige Kit Size, wenn Staff Role gleich Coach ist.",
           opNotEquals: "Does not equal",
-          opNotEqualsMeaning: "Das steuernde Feld hat einen beliebigen anderen Wert als den Zielwert.",
+          opNotEqualsMeaning:
+            "Das steuernde Feld hat einen beliebigen anderen Wert als den Zielwert.",
           opNotEqualsExample: "Zeige Dietary Requirements, wenn Meal Plan ungleich None ist.",
           opIsEmpty: "Is empty",
           opIsEmptyMeaning: "Das steuernde Feld enthält keine gespeicherte Antwort oder null.",
           opIsEmptyExample: "Zeige Explanation, wenn ID Number leer ist.",
           opIsNotEmpty: "Is not empty",
-          opIsNotEmptyMeaning: "Das steuernde Feld hat einen beliebigen nicht-null, nicht-leeren Wert.",
+          opIsNotEmptyMeaning:
+            "Das steuernde Feld hat einen beliebigen nicht-null, nicht-leeren Wert.",
           opIsNotEmptyExample: "Zeige Expiry Date, wenn Passport Number nicht leer ist.",
           opIn: "In set",
-          opInMeaning: "Die Antwort des steuernden Felds ist einer von mehreren durch Komma getrennten Werten.",
+          opInMeaning:
+            "Die Antwort des steuernden Felds ist einer von mehreren durch Komma getrennten Werten.",
           opInExample: "Zeige Specialization, wenn Department in Medical, Coaching, Analytics ist.",
           opNotIn: "Not in set",
           opNotInMeaning: "Die Antwort des steuernden Felds ist keiner der aufgeführten Werte.",
           opNotInExample: "Zeige General Notes, wenn Category nicht in VIP, Board ist.",
           opGreaterThan: "Greater than",
-          opGreaterThanMeaning: "Die numerische oder Datumsantwort übersteigt den Schwellenwert echt.",
+          opGreaterThanMeaning:
+            "Die numerische oder Datumsantwort übersteigt den Schwellenwert echt.",
           opGreaterThanExample: "Zeige Clearance Details, wenn Security Level größer als 3 ist.",
           opLessThan: "Less than",
-          opLessThanMeaning: "Die numerische oder Datumsantwort liegt echt unter dem Schwellenwert.",
+          opLessThanMeaning:
+            "Die numerische oder Datumsantwort liegt echt unter dem Schwellenwert.",
           opLessThanExample: "Zeige Parental Consent, wenn Age kleiner als 18 ist.",
           visibilityRulesEvaluation:
             "Ein Feld mit mehreren Regeln ist nur sichtbar, wenn jede einzelne davon erfüllt ist — ein einfaches UND über alle hinweg, kein Wettstreit zwischen konkurrierenden Show- und Hide-Aktionen, denn eine Regel drückt immer nur eine Bedingung aus, unter der das Feld sichtbar ist. Priority ordnet die Regeln nur für Diagnose und Anzeige; sie ändert nie, welche Regeln gelten. Ein Feld, das eine Regel gerade verbirgt, wird auch von der Required-Validierung ausgelassen, sodass eine Bedingung, die niemand sehen kann, nie einen Speichervorgang blockiert.",
@@ -2151,7 +2272,8 @@ export const de = {
           vStatusDeprecated: "Deprecated",
           vMeaningDeprecated:
             "Eine frühere Published-Version, ersetzt, als ein Entwurf befördert wurde. Ihre geklonten Optionen und Regeln bleiben an ihr hängen, sind jedoch wirkungslos — die Durchsetzung liest ausschließlich die aktuelle Published-Version.",
-          vActionsDeprecated: "Schreibgeschützter Prüfeintrag. Aufbewahrt für die historische Integrität.",
+          vActionsDeprecated:
+            "Schreibgeschützter Prüfeintrag. Aufbewahrt für die historische Integrität.",
           vStatusArchived: "Archived",
           vMeaningArchived:
             "Ein verworfener Entwurf, der aufbewahrt statt gelöscht wird, damit seine Versionsnummer niemals erneut vergeben werden kann.",
@@ -2170,15 +2292,22 @@ export const de = {
           retireIntro:
             "Das sind nicht dieselben Vorgänge, und der Unterschied zählt. Sind Sie unsicher, deaktivieren Sie — das ist der umkehrbare.",
           deactivateTitle: "Active ausschalten",
-          deactivate1: "Das Feld wird nicht mehr auf Erstellungs- und Bearbeitungsformularen angeboten",
+          deactivate1:
+            "Das Feld wird nicht mehr auf Erstellungs- und Bearbeitungsformularen angeboten",
           deactivate2: "Jede bereits gespeicherte Antwort bleibt erhalten, unberührt",
-          deactivate3: "Es ist umkehrbar — Active wieder einzuschalten stellt das Feld wieder her, wie es war",
-          deactivate4: "Es wird im Verlauf als Deactivated erfasst und kann später Reactivated werden",
+          deactivate3:
+            "Es ist umkehrbar — Active wieder einzuschalten stellt das Feld wieder her, wie es war",
+          deactivate4:
+            "Es wird im Verlauf als Deactivated erfasst und kann später Reactivated werden",
           deleteColTitle: "Die Definition löschen",
-          deleteCol1: "Beim ersten Versuch zurückgewiesen, falls das Feld irgendwelche Antworten enthält",
-          deleteCol2: "Zerstört diese Antworten, sobald das Aufbewahrungsfenster verstreicht, falls Sie bestätigen",
-          deleteCol3: "Gibt den Schlüssel frei, sodass ein neues Feld ihn später wiederverwenden könnte — ohne eine der alten Antworten",
-          deleteCol4: "Wird im Verlauf als Deleted erfasst und kann Restored werden, solange sie wiederherstellbar ist",
+          deleteCol1:
+            "Beim ersten Versuch zurückgewiesen, falls das Feld irgendwelche Antworten enthält",
+          deleteCol2:
+            "Zerstört diese Antworten, sobald das Aufbewahrungsfenster verstreicht, falls Sie bestätigen",
+          deleteCol3:
+            "Gibt den Schlüssel frei, sodass ein neues Feld ihn später wiederverwenden könnte — ohne eine der alten Antworten",
+          deleteCol4:
+            "Wird im Verlauf als Deleted erfasst und kann Restored werden, solange sie wiederherstellbar ist",
 
           historyTitle: "Definitionsverlauf",
           historyIntro:
@@ -2186,8 +2315,10 @@ export const de = {
           thEvent: "Ereignis",
           thMeans: "Was es bedeutet",
           evCreated: "Das Feld wurde definiert.",
-          evUpdated: "Etwas an der Definition hat sich geändert — eine Bezeichnung, ein Kennzeichen, der Validator, die Optionen.",
-          evDeactivated: "Active wurde ausgeschaltet, wodurch das Feld stillgelegt wird, ohne seine Antworten anzufassen.",
+          evUpdated:
+            "Etwas an der Definition hat sich geändert — eine Bezeichnung, ein Kennzeichen, der Validator, die Optionen.",
+          evDeactivated:
+            "Active wurde ausgeschaltet, wodurch das Feld stillgelegt wird, ohne seine Antworten anzufassen.",
           evReactivated: "Active wurde wieder eingeschaltet.",
           evDeleted: "Die Definition wurde gelöscht und ist noch wiederherstellbar.",
           evRestored: "Eine gelöschte Definition wurde zurückgeholt.",
@@ -2219,7 +2350,8 @@ export const de = {
           readLegacyValuesMeans:
             "Antworten, die noch im älteren Speicher von vor dem aktuellen Werte-Speicher gehalten werden. Gesondert gezählt, damit eine laufende Migration sichtbar ist statt verborgen.",
           readOptions: "Optionen",
-          readOptionsMeans: "Wie viele Optionen die Liste des Felds enthält, bei einem Select- oder MultiSelect-Feld.",
+          readOptionsMeans:
+            "Wie viele Optionen die Liste des Felds enthält, bei einem Select- oder MultiSelect-Feld.",
           readByRecordType: "Nach Datensatztyp",
           readByRecordTypeMeans:
             "Dieselbe Anzahl von Antworten, aufgeschlüsselt nach der Art des Datensatzes, der sie hält, sodass Sie sehen können, wo sich die Daten tatsächlich befinden.",
@@ -2231,7 +2363,7 @@ export const de = {
             "Sagt, ob die untenstehenden Zahlen nur Ihren Arbeitsbereich oder jeden Arbeitsbereich der Plattform abdecken. Die beiden unterscheiden sich bei einem geerbten Feld um Größenordnungen, und nichts an einer nackten Zahl sagt Ihnen, welche der beiden Sie gerade betrachten.",
           usageWarnTitle: "Lesen Sie die Warnung, nicht die Zahl",
           usageWarnContent:
-            "Die Zeile \"this will destroy data\" stammt aus dem eigenen Urteil des Servers, nie aus der Zahl auf dem Bildschirm. Ein globales Plattformfeld wird über jeden Arbeitsbereich gemessen, der es geerbt hat, sodass es in Ihrem eigenen Arbeitsbereich null zeigen und Sie trotzdem zu Recht warnen kann. Die Warnung ist das, dem Sie vertrauen sollten.",
+            'Die Zeile "this will destroy data" stammt aus dem eigenen Urteil des Servers, nie aus der Zahl auf dem Bildschirm. Ein globales Plattformfeld wird über jeden Arbeitsbereich gemessen, der es geerbt hat, sodass es in Ihrem eigenen Arbeitsbereich null zeigen und Sie trotzdem zu Recht warnen kann. Die Warnung ist das, dem Sie vertrauen sollten.',
 
           deleteTitle: "Löschen, ohne Daten zu zerstören",
           deleteIntro:
@@ -2263,7 +2395,8 @@ export const de = {
           colValueType: "Einer der zweiundzwanzig Werttypen.",
           colRequired: "Ob das Feld erforderlich ist.",
           colActive: "Ob das Feld weiterhin in Formularen angeboten wird.",
-          colSortOrder: "Die Position des Felds unter den benutzerdefinierten Feldern des Datensatztyps.",
+          colSortOrder:
+            "Die Position des Felds unter den benutzerdefinierten Feldern des Datensatztyps.",
           colOptionsEn: "Die englischen Optionen, bei einem Select- oder MultiSelect-Feld.",
           colOptionsAr: "Die arabischen Optionen, an die englischen angepasst.",
           colSensitivity: "Das auf der Definition gesetzte Klassifizierungs-Label.",
@@ -2289,7 +2422,7 @@ export const de = {
             "Beide sind über Links im Seitenkopf der Seite Benutzerdefinierte Felder erreichbar, beide sind schreibgeschützt, und beide sind hinter derselben Ansichtsberechtigung wie der Bildschirm Benutzerdefinierte Felder selbst gesperrt. Keiner hat einen eigenen Eintrag in der Seitenleiste, was beabsichtigt ist.",
           valueTypesScreenTitle: "Werttypen",
           valueTypesScreenIntro:
-            "Eine Tabelle aller zweiundzwanzig Werttypen mit, für jeden, einer Beschreibung, wofür er gedacht ist, ob er einen Platzhalter annimmt, ob er eine eigene Optionsliste besitzt, und ob er einen Validator unterstützt. Nutzen Sie sie, um \"welche Typen existieren\" zu beantworten, ohne ein Definitionsformular zu öffnen. Text ist die einzige Zeile, die Validator-Unterstützung zeigt, und die vier referenzförmigen Typen zeigen keine eigene Optionsliste — was sie anbieten, stammt aus einem anderen Modul oder aus einer hochgeladenen Datei, nicht aus einer von Ihnen verfassten Liste.",
+            'Eine Tabelle aller zweiundzwanzig Werttypen mit, für jeden, einer Beschreibung, wofür er gedacht ist, ob er einen Platzhalter annimmt, ob er eine eigene Optionsliste besitzt, und ob er einen Validator unterstützt. Nutzen Sie sie, um "welche Typen existieren" zu beantworten, ohne ein Definitionsformular zu öffnen. Text ist die einzige Zeile, die Validator-Unterstützung zeigt, und die vier referenzförmigen Typen zeigen keine eigene Optionsliste — was sie anbieten, stammt aus einem anderen Modul oder aus einer hochgeladenen Datei, nicht aus einer von Ihnen verfassten Liste.',
           entityTypesScreenTitle: "Entitätstypen",
           entityTypesScreenIntro:
             "Eine Liste jedes Datensatztyps, an den ein benutzerdefiniertes Feld angehängt werden kann: sein Anzeigename, sein Schlüssel, und das Modul, dem er gehört.",
@@ -2343,19 +2476,22 @@ export const de = {
           vNoRetro: "Einen Validator anzuhängen prüft nie bereits gespeicherte Antworten erneut.",
           vNoRetroWhy:
             "Die Validierung läuft an genau einer Stelle: dem Speicherpfad. Nichts durchläuft historische Daten, wenn ein Validator neu angehängt wird, sodass ein Feld rechtmäßig Werte enthalten kann, die sein eigener aktueller Validator zurückweisen würde, bis jemand sie erneut eingibt.",
-          vWhitespace: "Ein Wert aus nichts als Leerzeichen überspringt die Validierung vollständig, außer das Feld ist Required.",
+          vWhitespace:
+            "Ein Wert aus nichts als Leerzeichen überspringt die Validierung vollständig, außer das Feld ist Required.",
           vWhitespaceWhy:
             "Die Leere-Prüfung läuft vor jeder Typ- oder Validator-Prüfung. Bei einem optionalen Feld wird ein Wert aus nichts als Leerzeichen daher ohne jeden Validator-Fehler als gelöscht gespeichert. Markieren Sie das Feld als Required, falls eine leere Antwort zurückgewiesen werden soll.",
           vNoRegex: "Es gibt nirgends ein Muster- oder Regex-Feld.",
           vNoRegexWhy:
             "Ein von Hand geschriebenes Muster lässt sich so gestalten, dass es enorm viel Rechenzeit für eine kurze Eingabe verbraucht, was ein Dateneingabeformular in einen Weg verwandelt, das System lahmzulegen. Die 13 kuratierten Prüfungen existieren genau deshalb, damit niemand eines verfassen muss.",
-          vNoFilter: "Die Definitionsliste lässt sich nicht nach Validator filtern oder durchsuchen.",
+          vNoFilter:
+            "Die Definitionsliste lässt sich nicht nach Validator filtern oder durchsuchen.",
           vNoFilterWhy:
             "Eine solche Ansicht wurde nicht gebaut. Um zu sehen, welchen Validator ein Feld nutzt, öffnen Sie das Definitionsformular dieses Felds.",
           vNoReference: "Es gibt keine durchsuchbare Validator-Referenz im Produkt selbst.",
           vNoReferenceWhy:
             "Werttypen und Datensatztypen erhielten je einen schreibgeschützten Referenzbildschirm; Validatoren nicht. Das Dropdown auf dem Definitionsformular eines Textfelds ist die einzige produktinterne Liste.",
-          vNoChecksumEgUae: "Die Prüfungen für ägyptische und emiratische Ausweise verifizieren die Struktur, aber keine Prüfziffer.",
+          vNoChecksumEgUae:
+            "Die Prüfungen für ägyptische und emiratische Ausweise verifizieren die Struktur, aber keine Prüfziffer.",
           vNoChecksumEgUaeWhy:
             "Keines der beiden Länder veröffentlicht einen Prüfziffer-Algorithmus, und die während der Recherche gefundenen Vermutungen der Community widersprachen einander. Ein falscher Algorithmus würde echte, gültige Ausweisnummern zurückweisen, was schlimmer ist, als die letzte Ziffer gar nicht zu prüfen.",
           vNoAe: "Postal Code unterstützt die Vereinigten Arabischen Emirate nicht.",
@@ -2363,10 +2499,12 @@ export const de = {
             "Die VAE haben kein nationales Postleitzahlensystem, es gibt also nichts, wogegen geprüft werden könnte. Der Versuch wird mit einer eigenen erklärenden Meldung zurückgewiesen statt mit einer allgemeinen.",
 
           typesTitle: "Werttyp-Verhalten",
-          tValueTypeFixed: "Der Schlüssel, der Datensatztyp und der Geltungsbereich lassen sich nie mehr ändern, sobald ein Feld gespeichert ist.",
+          tValueTypeFixed:
+            "Der Schlüssel, der Datensatztyp und der Geltungsbereich lassen sich nie mehr ändern, sobald ein Feld gespeichert ist.",
           tValueTypeFixedWhy:
             "Ein nachträgliches Umbenennen, Neuausrichten oder Ändern des Geltungsbereichs würde jede bereits gespeicherte Antwort darüber im Unklaren lassen, was sie bedeutet. Der Werttyp ist die eine Ausnahme mit einem schmalen Hintertürchen: Neun bestimmte Typenpaare lassen sich nachträglich umwandeln — siehe die Seite Felder verwalten —, bei allem anderen bedeutet es weiterhin Löschen und Neuanlegen.",
-          tMultiOrder: "Eine MultiSelect-Antwort liest sich in Auswahlreihenfolge zurück, nicht in Optionsreihenfolge.",
+          tMultiOrder:
+            "Eine MultiSelect-Antwort liest sich in Auswahlreihenfolge zurück, nicht in Optionsreihenfolge.",
           tMultiOrderWhy:
             "Die Reihenfolge zu bewahren, in der jemand gewählt hat, ist es, was den Wert originalgetreu hin- und zurückreisen lässt. Der Preis dafür ist, dass eine Listenspalte, die diese Antwort zeigt, nicht garantiert der Reihenfolge folgt, in der Sie die Optionen verfasst haben.",
           tLongTextNoBlock: "LongText lässt Sie über seine 10.000-Zeichen-Grenze hinaus tippen.",
@@ -2381,7 +2519,8 @@ export const de = {
           tDurationMinutes: "Die Einheit von Duration ist immer Minuten, und es gibt kein Maximum.",
           tDurationMinutesWhy:
             "Minuten sind die Konvention, die die Planungs- und Buchungsteile des Produkts bereits für zeitdauerförmige Daten verwenden, und das Formular beschriftet die Einheit sichtbar statt eine nackte Zahl zu lassen. Nur negative Werte werden zurückgewiesen; es gibt keine Obergrenze und keinen Weg pro Feld, eine zu setzen.",
-          tRatingSlider: "Ein unberührtes Rating-Feld zeigt seinen Schieberegler bei 1, während es leer bleibt.",
+          tRatingSlider:
+            "Ein unberührtes Rating-Feld zeigt seinen Schieberegler bei 1, während es leer bleibt.",
           tRatingSliderWhy:
             "Ein Schieberegler braucht immer eine echte Zahl, um seinen Griff zu positionieren. Nichts wird übermittelt, bevor jemand ihn tatsächlich bewegt, das Feld speichert also tatsächlich als leer — sieht aber wie eine 1 aus, bis man das weiß.",
           tRatingZero: "Eine Rating von 0 wird zurückgewiesen statt als unbewertet behandelt.",
@@ -2390,7 +2529,8 @@ export const de = {
           tPhoneShape: "Phone validiert die Form, nicht, ob die Nummer existieren könnte.",
           tPhoneShapeWhy:
             "Der Server prüft nur die internationale Grammatik. Die eigene Auswahlkomponente des Formulars prüft die Ziffern zusätzlich gegen den echten Nummernplan des gewählten Landes, sodass die Lücke nur über eine Anfrage erreichbar ist, die das Formular umgeht — eine akzeptierte Einschränkung der Datenqualität, keine der Sicherheit.",
-          tPhoneFlag: "Die angezeigte Länderflagge von Phone kann bei einer gemeinsam genutzten Vorwahl falsch sein.",
+          tPhoneFlag:
+            "Die angezeigte Länderflagge von Phone kann bei einer gemeinsam genutzten Vorwahl falsch sein.",
           tPhoneFlagWhy:
             "Manche Vorwahlen werden von mehreren Ländern gemeinsam genutzt, und es gibt keine gesonderte Länderspalte — die Flagge wird aus der Nummer selbst abgeleitet. Die gespeicherte Nummer ist unberührt; nur die Flagge daneben kann innerhalb eines gemeinsam genutzten Codes das falsche Land wählen.",
           tColorShorthand: "Color vereinheitlicht nie die drei- und sechsstelligen Formen.",
@@ -2399,48 +2539,59 @@ export const de = {
           tTimeText: "Time wird als kanonischer Text gespeichert statt als Datenbank-Zeit.",
           tTimeTextWhy:
             "Eine bewusste Speicherentscheidung, getroffen, um ein bekanntes Sortierproblem zu vermeiden, das eine bestehende Zeit-Spalte anderswo im Produkt bei einer Datenbank hat. Nicht aufgefüllte Eingaben werden angenommen und normalisiert, sodass zwei Schreibweisen derselben Uhrzeit immer zusammenlaufen.",
-          tPercentStorage: "Percent speichert die Zahl, die Sie laut aussprechen würden, keinen Bruch.",
+          tPercentStorage:
+            "Percent speichert die Zahl, die Sie laut aussprechen würden, keinen Bruch.",
           tPercentStorageWhy:
             "25 wird als 25 gespeichert und als 25% angezeigt. Nie als 0.25, und die Anzeige hängt das Zeichen an, statt einen bruchbasierten Formatierer laufen zu lassen, gerade damit eine 25 nie als 2500% erscheinen kann.",
           tTextNotTrimmed: "Text entfernt keine umgebenden Leerzeichen; Select schon.",
           tTextNotTrimmedWhy:
             "Ein Text-Wert wird exakt so gespeichert, wie übermittelt, weil ein führendes oder folgendes Leerzeichen in Freitext bedeutungsvoll sein kann. Ein Select-Wert wird auf beiden Seiten getrimmt, bevor er mit den Optionen abgeglichen wird, sodass ein verirrtes Leerzeichen nie eine unbegründete Zurückweisung verursacht.",
-          tOracleBytes: "Langer arabischer Text kann unterhalb der genannten Zeichenobergrenze bei einer Datenbank zurückgewiesen werden.",
+          tOracleBytes:
+            "Langer arabischer Text kann unterhalb der genannten Zeichenobergrenze bei einer Datenbank zurückgewiesen werden.",
           tOracleBytesWhy:
             "Die 4.000-Zeichen-Grenze von Text ist bei zwei der drei unterstützten Datenbanken eine exakte Zeichenanzahl. Bei der dritten wird sie in Bytes gezählt, sodass mehrbyteiger Text — Arabisch eingeschlossen — die Grenze früher erreichen kann. Verwenden Sie LongText, wenn Sie nahe an der Grenze sind.",
 
           referencesTitle: "Referenz-Verhalten",
-          fNoStoredName: "Eine Referenz speichert nie den Namen des Datensatzes, auf den sie zeigt.",
+          fNoStoredName:
+            "Eine Referenz speichert nie den Namen des Datensatzes, auf den sie zeigt.",
           fNoStoredNameWhy:
             "Ein gespeicherter Name würde innerhalb des Datensatzes mit dem Feld liegen und wäre daher für jeden lesbar, der diesen Datensatz lesen kann — während der Name selbst von der eigenen Berechtigung des Ziels geschützt wird. Es gibt keine Einstellung, um das einzuschalten, und es wird auch keine geben. Der ausgleichende Vorteil ist, dass ein auf seinem eigenen Datensatz korrigierter Name sofort überall korrigiert ist, wo er referenziert wird.",
-          fIdOpaque: "Die Identität des referenzierten Datensatzes ist undurchsichtig und muss unverändert hin- und zurückreisen.",
+          fIdOpaque:
+            "Die Identität des referenzierten Datensatzes ist undurchsichtig und muss unverändert hin- und zurückreisen.",
           fIdOpaqueWhy:
             "Es ist der Schlüssel eines anderen Moduls, für die Übertragung verschlüsselt, und nichts daran ist zum Lesen oder Umformen gedacht. Ein verändertes Zeichen, und das Produkt meldet den gespeicherten Verweis zu Recht als fehlerhaft. Senden Sie exakt die Zeichenkette zurück, die Sie empfangen haben.",
-          fSameNames: "Eine Referenz wird unter denselben zwei Namen geschrieben, unter denen sie gelesen wird.",
+          fSameNames:
+            "Eine Referenz wird unter denselben zwei Namen geschrieben, unter denen sie gelesen wird.",
           fSameNamesWhy:
             "Es gibt keine Asymmetrie zwischen der Leseform und der Schreibform. Wer gegen die Values-API integriert, sollte die beiden Eigenschaftsnamen widerspiegeln, die er erhalten hat; für die Identität auf dem Hinweg einen anderen Namen zu erfinden erzeugt einen Speichervorgang, der überhaupt keinen Verweis mit sich führt, der dann als unvollständige Referenz zurückgewiesen wird.",
-          fFiveFailures: "Eine Referenz, die sich nicht anzeigen lässt, sagt, welches von fünf Dingen geschehen ist.",
+          fFiveFailures:
+            "Eine Referenz, die sich nicht anzeigen lässt, sagt, welches von fünf Dingen geschehen ist.",
           fFiveFailuresWhy:
             "Keine Berechtigung, der Datensatz ist weg, ein fehlerhafter Wert, ein Lookup, der gerade eben gescheitert ist, und eine Art von Datensatz, für die diese Installation nicht zuständig sein kann, sind fünf verschiedene Probleme mit fünf verschiedenen Abhilfen. Sie alle als ein leeres Feld darzustellen ist es, was einen Verweis auf einen gelöschten Datensatz ein Jahr lang unbemerkt lässt.",
-          fMergedAnswers: "\"Gelöscht\" und \"in einem Arbeitsbereich, den Sie nicht sehen können\" sind eine Antwort.",
+          fMergedAnswers:
+            '"Gelöscht" und "in einem Arbeitsbereich, den Sie nicht sehen können" sind eine Antwort.',
           fMergedAnswersWhy:
-            "Sie zu unterscheiden würde jemandem erlauben, Identitäten einzeln durchzuprobieren, um herauszufinden, was in einem anderen Arbeitsbereich existiert. \"Sie dürfen diese Art von Datensatz nicht ansehen\" wird von beiden unterschieden, weil es den eigenen Zugriff des Lesers beschreibt und nichts preisgibt.",
-          fDeleteClears: "Das Löschen eines referenzierten Datensatzes leert jeden Verweis darauf und behält jede Wertzeile.",
+            'Sie zu unterscheiden würde jemandem erlauben, Identitäten einzeln durchzuprobieren, um herauszufinden, was in einem anderen Arbeitsbereich existiert. "Sie dürfen diese Art von Datensatz nicht ansehen" wird von beiden unterschieden, weil es den eigenen Zugriff des Lesers beschreibt und nichts preisgibt.',
+          fDeleteClears:
+            "Das Löschen eines referenzierten Datensatzes leert jeden Verweis darauf und behält jede Wertzeile.",
           fDeleteClearsWhy:
             "Beide Teile jeder betroffenen Antwort werden zusammen geleert, nie eines ohne das andere. Nichts wird gelöscht: Die Antwort behält ihre Zeile, ihre Version und ihren Prüfpfad, sodass sich das Feld anschließend wirklich als leer liest statt als defekt.",
-          fNoBacklinks: "Nichts listet die Referenzen auf, die auf einen gegebenen Datensatz zeigen.",
+          fNoBacklinks:
+            "Nichts listet die Referenzen auf, die auf einen gegebenen Datensatz zeigen.",
           fNoBacklinksWhy:
-            "Es gibt nirgends eine Ansicht \"was zeigt hierauf?\", und einen Datensatz zu löschen warnt Sie nicht, wie viele Verweise dabei gleich geleert werden. Das Leeren geschieht still, weil es sicher ist, nicht weil es verborgen ist.",
+            'Es gibt nirgends eine Ansicht "was zeigt hierauf?", und einen Datensatz zu löschen warnt Sie nicht, wie viele Verweise dabei gleich geleert werden. Das Leeren geschieht still, weil es sicher ist, nicht weil es verborgen ist.',
           fLimitedTargets: "Derzeit können nur drei Arten von Datensatz referenziert werden.",
           fLimitedTargetsWhy:
-            "Mitglieder des Personals, Benutzerkonten und Personen (Party Person) — die Arten, deren besitzendes Modul eine durchsuchbare, berechtigungsgeprüfte Liste bereitstellt. Alles andere wird zurückgewiesen statt mit einer leeren Liste beantwortet, weil eine leere Liste wie ein korrektes Ergebnis aussieht und \"es gibt keine davon\" sagen würde, wenn die Wahrheit \"das lässt sich nicht fragen\" ist.",
+            'Mitglieder des Personals, Benutzerkonten und Personen (Party Person) — die Arten, deren besitzendes Modul eine durchsuchbare, berechtigungsgeprüfte Liste bereitstellt. Alles andere wird zurückgewiesen statt mit einer leeren Liste beantwortet, weil eine leere Liste wie ein korrektes Ergebnis aussieht und "es gibt keine davon" sagen würde, wenn die Wahrheit "das lässt sich nicht fragen" ist.',
           fNoAdminTarget: "Administrator-Datensätze können überhaupt nicht referenziert werden.",
           fNoAdminTargetWhy:
             "Ein Administrator kann zu keinem Arbeitsbereich gehören — ein Plattformadministrator hat keinen —, sodass ein Verweis auf einen davon jede Arbeitsbereichsgrenze im Produkt überschreiten könnte. Ein User-Reference-Feld weist einen rundheraus zurück, und das Definitionsformular bietet nie einen an.",
-          fUnpinnedIsLegal: "Ein Referenzfeld nicht festzulegen ist ein dauerhafter, unterstützter Zustand.",
+          fUnpinnedIsLegal:
+            "Ein Referenzfeld nicht festzulegen ist ein dauerhafter, unterstützter Zustand.",
           fUnpinnedIsLegalWhy:
-            "Es bedeutet \"jede Art, die diese Person referenzieren darf\", und jede Antwort erfasst, welche Art sie gewählt hat. Es darf nie als \"nichts konfiguriert, also nichts gültig\" gelesen werden — das Datensatzformular behandelt es, indem es zuerst nach der Art von Datensatz fragt und danach nach dem Datensatz.",
-          fPopulatedUnpinned: "Ein ausgefülltes, nicht festgelegtes Feld bietet keinen Weg, die Art des Datensatzes zu ändern.",
+            'Es bedeutet "jede Art, die diese Person referenzieren darf", und jede Antwort erfasst, welche Art sie gewählt hat. Es darf nie als "nichts konfiguriert, also nichts gültig" gelesen werden — das Datensatzformular behandelt es, indem es zuerst nach der Art von Datensatz fragt und danach nach dem Datensatz.',
+          fPopulatedUnpinned:
+            "Ein ausgefülltes, nicht festgelegtes Feld bietet keinen Weg, die Art des Datensatzes zu ändern.",
           fPopulatedUnpinnedWhy:
             "Die eigene Art der gespeicherten Antwort wird für die Auswahlkomponente verwendet, ein erneutes Wählen ist also auf diese Art beschränkt. Das Leeren des Felds bringt das Typ-Element zurück. Eine echte Grenze und kein Fehler, und die Ausprägung dieser Funktion, die am ehesten als einer gemeldet wird.",
           fNotExported: "Ein festgelegter Zieltyp steht nicht im Definitionsexport.",
@@ -2460,7 +2611,8 @@ export const de = {
           oEnglishStored: "Die arabische Optionsbezeichnung dient nur der Anzeige.",
           oEnglishStoredWhy:
             "Die beiden Bezeichnungslisten werden Zeile für Zeile abgeglichen, und die englische ist es, was auf den Datensatz geschrieben und dagegen validiert wird. Ein arabischsprachiger Leser sieht Arabisch auf dem Hin- und dem Rückweg; die zugrunde liegenden Daten bleiben ein einziger konsistenter Wert.",
-          oNoSharedSets: "Die Inline-Optionsliste eines Felds ist seine eigene — eine gemeinsam zu nutzen ist ein separater, bewusster Schritt.",
+          oNoSharedSets:
+            "Die Inline-Optionsliste eines Felds ist seine eigene — eine gemeinsam zu nutzen ist ein separater, bewusster Schritt.",
           oNoSharedSetsWhy:
             "Eine Optionsliste bei einem Feld einzutippen hält sie privat für dieses Feld; sie wird nicht automatisch woanders wiederverwendet. Eine Länderliste, die drei Felder brauchen, muss deshalb aber nicht mehr dreimal geschrieben und gepflegt werden — binden Sie stattdessen alle drei an dasselbe gemeinsam genutzte, versionierte Option Set, und eine spätere Bearbeitung des Sets aktualisiert jedes gebundene Feld zusammen.",
 
@@ -2468,10 +2620,12 @@ export const de = {
           gStableKeyFixed: "Der stabile Schlüssel einer Gruppe kann von niemandem geändert werden.",
           gStableKeyFixedWhy:
             "Exportiertes Schema benennt eine Gruppe über diesen Schlüssel, sodass ein Umbenennen einen künftigen erneuten Import als Update still in ein Anlegen verwandeln würde, gegen ein Paket, das bereits ausgeliefert wurde. Ein falscher Schlüssel bedeutet, die Gruppe neu anzulegen.",
-          gReorderCeiling: "Das Umsortieren weist mehr als 100 Gruppen bei einem Datensatztyp zurück.",
+          gReorderCeiling:
+            "Das Umsortieren weist mehr als 100 Gruppen bei einem Datensatztyp zurück.",
           gReorderCeilingWhy:
             "Eine Umsortierungsanfrage trägt die gesamte Menge auf einmal. Ab 100 kann keine Gruppe dieses Datensatztyps mehr bewegt werden — der Bildschirm sagt das, statt allgemein zu scheitern.",
-          gGlobalOrdering: "Ein Arbeitsbereich kann seine Gruppe nicht relativ zu einer globalen positionieren.",
+          gGlobalOrdering:
+            "Ein Arbeitsbereich kann seine Gruppe nicht relativ zu einer globalen positionieren.",
           gGlobalOrderingWhy:
             "Das Umsortieren ist alles oder nichts und weist jede Gruppe zurück, die der Aufrufer nicht besitzt, sodass die eigenen Gruppen eines Arbeitsbereichs bei null neu nummeriert werden. Diese Zahlen können mit denen einer globalen Gruppe kollidieren, der Gleichstand wird über die englische Bezeichnung entschieden, und der sichtbare Effekt ist, dass das Verschieben Ihrer Gruppe an die Spitze sie unterhalb einer globalen landen lassen kann.",
           gSeparatePerms: "Feldgruppen brauchen ihre eigenen Berechtigungen.",
@@ -2480,7 +2634,8 @@ export const de = {
           gOneEntityType: "Eine Gruppe gehört zu genau einem Datensatztyp.",
           gOneEntityTypeWhy:
             "Nichts wird aufgelistet, bis Sie einen Datensatztyp wählen, und das Ändern des Datensatztyps eines Felds löscht dessen Gruppe, weil eine Gruppe eines Typs für einen anderen nie gültig ist.",
-          gUniquenessIndex: "In einer aktualisierten Datenbank ruht die Eindeutigkeit des stabilen Schlüssels auf der Anwendungsprüfung.",
+          gUniquenessIndex:
+            "In einer aktualisierten Datenbank ruht die Eindeutigkeit des stabilen Schlüssels auf der Anwendungsprüfung.",
           gUniquenessIndexWhy:
             "Gruppen, die vor stabilen Schlüsseln existierten, tragen einen leeren Schlüssel, bis eine Nachbefüllung läuft, und die Eindeutigkeitsbeschränkung auf Datenbankebene bleibt abgeschaltet, bis das überall geschehen ist — sie würde sonst den zweiten dieser leeren Schlüssel zurückweisen.",
 
@@ -2488,13 +2643,15 @@ export const de = {
           sSensitivityLabel: "Sensitivity ist ein Label, keine Zugriffskontrolle.",
           sSensitivityLabelWhy:
             "Es wird gespeichert, hin- und zurückgereicht und berichtet, und es ändert nichts daran, wer einen Wert lesen kann. Sicherheit auf Feldebene ist der Mechanismus, der den Zugriff einschränkt, und die beiden sind unabhängig voneinander.",
-          sRestrictedByResource: "Einschränkungen sind über die Berechtigungsressource verschlüsselt, nicht über den Datensatztyp.",
+          sRestrictedByResource:
+            "Einschränkungen sind über die Berechtigungsressource verschlüsselt, nicht über den Datensatztyp.",
           sRestrictedByResourceWhy:
             "Es ist dieselbe Ressource, die bereits den Datensatz selbst schützt, sodass eine Liste eingeschränkter Felder sowohl die eingebauten Felder eines Bildschirms als auch seine benutzerdefinierten Felder abdeckt. Namen werden ohne Rücksicht auf Groß-/Kleinschreibung abgeglichen.",
           sRestrictedInvisible: "Ein eingeschränktes Feld fehlt, ist nicht leer.",
           sRestrictedInvisibleWhy:
             "Einen Platzhalter zu zeigen würde verraten, dass ein Wert existiert, was selbst eine Information ist. Die Folge ist, dass ein eingeschränktes Feld nicht von einem zu unterscheiden ist, das nie definiert wurde — es lohnt sich, das zu wissen, wenn jemand ein fehlendes Feld meldet.",
-          sRejectWholeSave: "Ein eingeschränktes Feld zu schreiben weist den gesamten Speichervorgang zurück.",
+          sRejectWholeSave:
+            "Ein eingeschränktes Feld zu schreiben weist den gesamten Speichervorgang zurück.",
           sRejectWholeSaveWhy:
             "Das eine Feld still fallen zu lassen und Erfolg zu melden ist der schwerer zu bemerkende Fehlschlag. Die Zurückweisung greift auch dann, wenn der übermittelte Wert dem gespeicherten entspricht, sodass niemand einen verborgenen Wert erproben kann, indem er testet, was angenommen wird.",
           sRequiredExclusive: "Required und eingeschränkt lassen sich nicht kombinieren.",
@@ -2508,13 +2665,16 @@ export const de = {
           eDefinitionsOnly: "Der Tabellenexport enthält Definitionen, nie Antworten.",
           eDefinitionsOnlyWhy:
             "Er ist per Entwurf ein Definitionsexport — ein separater Werteexport existiert als eigener Endpunkt und eigene Schaltfläche im Seitenkopf für die Antworten selbst, gedeckelt bei 10.000 Zellen statt darüber hinaus abgeschnitten zu werden.",
-          eRefusesPastLimit: "Über 10.000 Definitionen hinaus weist der Export zurück, statt abzuschneiden.",
+          eRefusesPastLimit:
+            "Über 10.000 Definitionen hinaus weist der Export zurück, statt abzuschneiden.",
           eRefusesPastLimitWhy:
             "Eine still abgeschnittene Datei ist schlimmer als keine Datei, weil sie vollständig aussieht. Die Zurückweisung sagt Ihnen, den Export auf einen einzigen Datensatztyp einzugrenzen.",
-          eRestrictedAbsent: "Vor Ihnen eingeschränkte Felder fehlen in der Datei, sind nicht leer.",
+          eRestrictedAbsent:
+            "Vor Ihnen eingeschränkte Felder fehlen in der Datei, sind nicht leer.",
           eRestrictedAbsentWhy:
             "Sicherheit auf Feldebene gilt für den Export exakt wie auf dem Bildschirm, und eine leere Spalte würde immer noch verraten, dass das Feld existiert.",
-          eNoImport: "Der Tabellenexport ist eine Einbahnstraße, und der einzige Weg zur Massenerstellung, den dieses Produkt je angeboten hat, ist abgeschaltet.",
+          eNoImport:
+            "Der Tabellenexport ist eine Einbahnstraße, und der einzige Weg zur Massenerstellung, den dieses Produkt je angeboten hat, ist abgeschaltet.",
           eNoImportWhy:
             "Die exportierte Tabelle ist ein Bericht zum Lesen, keine Vorlage, die sich erneut importieren lässt. Ein JSON-Schema-Paket-Import existiert — mit eigenem Dialog, eigenem Endpunkt, eigener Ergebnistabelle pro Gruppe —, aber jeder Aufruf davon wird mit einem 409 zurückgewiesen, durch einen bewussten, dauerhaften Sperrschalter, zusammen mit dem passenden Schema-Export. Die Massenerstellung von Feldern ist über das Produkt heute nicht verfügbar, aufgrund der Auslegung dieses Schalters und nicht aus Versehen.",
           eTextCells: "Jede Export-Zelle wird als Text geschrieben.",
@@ -2525,16 +2685,20 @@ export const de = {
           rApiOnlyTypes: "Manche Datensatztypen haben überhaupt keinen Bildschirm.",
           rApiOnlyTypesWhy:
             "Sie sind rechtmäßige Ziele und werden auf dem Definitionsformular zuletzt aufgeführt, mit einem Zusatz API only. Ein gegen einen davon definiertes Feld ist über die API erreichbar und hat in der Oberfläche nirgends, wo es dargestellt werden könnte.",
-          rHandRolledForms: "Eine Handvoll Bildschirme verdrahtet ihre benutzerdefinierten Felder von Hand.",
+          rHandRolledForms:
+            "Eine Handvoll Bildschirme verdrahtet ihre benutzerdefinierten Felder von Hand.",
           rHandRolledFormsWhy:
             "Die meisten Bildschirme übernehmen benutzerdefinierte Felder automatisch. Ein paar, deren Erstellungs- und Bearbeitungsoberflächen älter sind als dieser Mechanismus — darunter Webhooks, Nachrichtenvorlagen, Mandantenpläne, Plugin-Definitionen, Leads und Themes — implementieren denselben Abschnitt Benutzerdefinierte Felder selbst. Das Verhalten sollte identisch sein; ist es das nicht, lohnt sich eine Meldung.",
-          rDsrCreateOnly: "Datenschutzanfragen (Data Subject Requests) nehmen benutzerdefinierte Felder nur bei der Erstellung an.",
+          rDsrCreateOnly:
+            "Datenschutzanfragen (Data Subject Requests) nehmen benutzerdefinierte Felder nur bei der Erstellung an.",
           rDsrCreateOnlyWhy:
             "Eine eingereichte Anfrage durchläuft einen Prüf-Workflow statt allgemein bearbeitbar zu sein, es gibt also kein Bearbeitungsformular, das benutzerdefinierte Felder hineintragen könnte. Das ist Design, keine Auslassung.",
-          rDialogForms: "Die meisten Erstellungs- und Bearbeitungsformulare für Datensätze sind noch Dialoge.",
+          rDialogForms:
+            "Die meisten Erstellungs- und Bearbeitungsformulare für Datensätze sind noch Dialoge.",
           rDialogFormsWhy:
             "Das Verfassen benutzerdefinierter Felder selbst zog aus einem verschachtelten Dialog in ein Seitenpanel um, weshalb das Hinzufügen eines Felds aus einem Datensatz heraus nicht mehr zwei Dialoge stapelt. Die umgebenden Datensatzformulare wurden bewusst unangetastet gelassen — sie zu verschieben ist eine viel breitere Änderung über Module hinweg, die mit benutzerdefinierten Feldern nichts zu tun haben.",
-          rNoSidebarEntry: "Die Bildschirme Werttypen und Entitätstypen haben keinen Eintrag in der Seitenleiste.",
+          rNoSidebarEntry:
+            "Die Bildschirme Werttypen und Entitätstypen haben keinen Eintrag in der Seitenleiste.",
           rNoSidebarEntryWhy:
             "Die Navigation der Seitenleiste wird zentral eingesät, und diese beiden wurden bewusst aus dieser Aussaat ausgelassen. Sie sind stattdessen über Links im Seitenkopf der Seite Benutzerdefinierte Felder erreichbar.",
 
@@ -2753,10 +2917,14 @@ export const de = {
           thLength: "Länge",
           thDescription: "Kryptografischer Zweck",
           descVersion: "Magic-Frame-Versionsbyte (0x02 für authentifizierte v2-Frames).",
-          descPlatformKey: "Big-Endian-32-Bit-Ganzzahl zur Identifikation des Plattform-Root-Schlüssels im Schlüsselbund.",
-          descTenantVersion: "Big-Endian-16-Bit-Ganzzahl zur Identifikation der Schlüsselrotationsversion des Mandanten.",
-          descNonce: "Kryptografisch sicherer, zufälliger 96-Bit-Initialisierungsvektor, der pro Verschlüsselungsvorgang generiert wird.",
-          descAuthTag: "128-Bit-GCM-Authentifizierungs-Tag zur Verifikation der Integrität von Geheimtext und AAD.",
+          descPlatformKey:
+            "Big-Endian-32-Bit-Ganzzahl zur Identifikation des Plattform-Root-Schlüssels im Schlüsselbund.",
+          descTenantVersion:
+            "Big-Endian-16-Bit-Ganzzahl zur Identifikation der Schlüsselrotationsversion des Mandanten.",
+          descNonce:
+            "Kryptografisch sicherer, zufälliger 96-Bit-Initialisierungsvektor, der pro Verschlüsselungsvorgang generiert wird.",
+          descAuthTag:
+            "128-Bit-GCM-Authentifizierungs-Tag zur Verifikation der Integrität von Geheimtext und AAD.",
           descCiphertext: "Mit AES-256-GCM verschlüsselte Nutzlast des Feldwerts.",
           aadTitle: "Zusätzliche authentifizierte Daten (AAD)",
           aadContent:
@@ -2782,22 +2950,29 @@ export const de = {
           thStrategy: "Betriebsstrategie",
           thBehavior: "Engine-Implementierung",
           stratLocking: "Keine Tabellensperren",
-          behLocking: "Verwendet cursorbasierte Paginierung und optimistische Nebenläufigkeit (`RowVersion`), um Zeilen ohne exklusive Tabellensperren zu aktualisieren.",
+          behLocking:
+            "Verwendet cursorbasierte Paginierung und optimistische Nebenläufigkeit (`RowVersion`), um Zeilen ohne exklusive Tabellensperren zu aktualisieren.",
           stratBatching: "Konfigurierbare Cursor-Batches",
-          behBatching: "Verarbeitet 500 Datensätze pro Schleifendurchlauf und drosselt die Ausführung, um I/O-Engpässe auf Produktionsdatenbanken zu vermeiden.",
+          behBatching:
+            "Verarbeitet 500 Datensätze pro Schleifendurchlauf und drosselt die Ausführung, um I/O-Engpässe auf Produktionsdatenbanken zu vermeiden.",
           stratResilience: "Absturzsicher & idempotent",
-          behResilience: "Wird der Prozess neu gestartet, setzt der Cursor beim letzten bestätigten Offset fort. Bereits migrierte Datensätze werden sicher übersprungen.",
+          behResilience:
+            "Wird der Prozess neu gestartet, setzt der Cursor beim letzten bestätigten Offset fort. Bereits migrierte Datensätze werden sicher übersprungen.",
           stratObservability: "Echtzeit-Metriken & Fortschritt",
-          behObservability: "Meldet verarbeitete Datensätze, Fehlerrate, Durchsatz und Fortschrittsprozentsatz an das Studio-Dashboard und Administrationsportal.",
+          behObservability:
+            "Meldet verarbeitete Datensätze, Fehlerrate, Durchsatz und Fortschrittsprozentsatz an das Studio-Dashboard und Administrationsportal.",
           stratCluster: "Plattformweites Cluster-Rewrap",
           behCluster:
             "SuperAdmin-Migration, die alle Mandantengeheimnisse unter dem neuen Plattformschlüssel neu verpackt und Datensätze ohne Ausfallzeit migriert.",
           toolingTitle: "Verwaltungsschnittstellen",
           toolingIntro:
             "Betreiber und Entwickler verfügen über drei komplementäre Schnittstellen zur Verwaltung der Verschlüsselung:",
-          toolPortal: "Mandanten-Sicherheitsportal: Web-UI unter `/custom-fields/security` für Self-Service-Rotation und Migrationsüberwachung.",
-          toolCli: "SCRIPE CLI: Vollständige Terminal-Tools über `scripe crypto status`, `rotate`, `rewrap`, `verify` und `revoke`.",
-          toolStudio: "SCRIPE Studio: Visuelles interaktives Dashboard unter `/crypto` mit Schlüsselbund-Tabellen und Live-Fortschrittsanzeige.",
+          toolPortal:
+            "Mandanten-Sicherheitsportal: Web-UI unter `/custom-fields/security` für Self-Service-Rotation und Migrationsüberwachung.",
+          toolCli:
+            "SCRIPE CLI: Vollständige Terminal-Tools über `scripe crypto status`, `rotate`, `rewrap`, `verify` und `revoke`.",
+          toolStudio:
+            "SCRIPE Studio: Visuelles interaktives Dashboard unter `/crypto` mit Schlüsselbund-Tabellen und Live-Fortschrittsanzeige.",
         },
       },
     },

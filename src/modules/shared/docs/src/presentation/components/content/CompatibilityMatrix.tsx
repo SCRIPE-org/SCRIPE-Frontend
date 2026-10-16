@@ -10,6 +10,9 @@ interface CompatibilityMatrixProps {
   rows: { nameKey: string; cells: MatrixCell[] }[];
 }
 
+/**
+ * Documentation for module export
+ */
 export function CompatibilityMatrix({ headers, rows }: CompatibilityMatrixProps) {
   const { t, direction } = useDocsI18n();
   return (

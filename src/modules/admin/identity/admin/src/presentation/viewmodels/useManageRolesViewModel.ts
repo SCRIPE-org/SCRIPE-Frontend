@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
 import { useMemo } from "react";
@@ -48,7 +49,11 @@ export function useManageRolesViewModel({
   }): GenericSelectOption => ({
     value: role.id,
     label: resolveBilingualLabel(role.nameEn, role.nameAr, language),
-    description: resolveBilingualLabel(role.descriptionEn ?? "", role.descriptionAr ?? "", language),
+    description: resolveBilingualLabel(
+      role.descriptionEn ?? "",
+      role.descriptionAr ?? "",
+      language
+    ),
   });
 
   // Fetch available roles (first page — default browse list before the admin
@@ -105,27 +110,28 @@ export function useManageRolesViewModel({
     );
   }, [scopedCurrentRoles, rolesData]);
 
-  const { data: resolvedExtraRoles = EMPTY_RESOLVED_ROLES, isLoading: isResolvingExtraRoles } = useQuery({
-    queryKey: ["roles-for-manage-resolve", scopeTenantId, missingRoleCodes],
-    queryFn: async () => {
-      const found = await Promise.all(
-        missingRoleCodes.map(async (code) => {
-          const page = scopeTenantId
-            ? await roleRepository.getAll({
-                page: 1,
-                pageSize: 5,
-                tenantId: scopeTenantId,
-                search: code,
-                strict: true,
-              })
-            : await roleRepository.getMyTenantRoles({ page: 1, pageSize: 5, search: code });
-          return page.items.find((r) => r.code === code) ?? null;
-        })
-      );
-      return found.filter((r): r is NonNullable<typeof r> => !!r);
-    },
-    enabled: open && !!adminId && missingRoleCodes.length > 0,
-  });
+  const { data: resolvedExtraRoles = EMPTY_RESOLVED_ROLES, isLoading: isResolvingExtraRoles } =
+    useQuery({
+      queryKey: ["roles-for-manage-resolve", scopeTenantId, missingRoleCodes],
+      queryFn: async () => {
+        const found = await Promise.all(
+          missingRoleCodes.map(async (code) => {
+            const page = scopeTenantId
+              ? await roleRepository.getAll({
+                  page: 1,
+                  pageSize: 5,
+                  tenantId: scopeTenantId,
+                  search: code,
+                  strict: true,
+                })
+              : await roleRepository.getMyTenantRoles({ page: 1, pageSize: 5, search: code });
+            return page.items.find((r) => r.code === code) ?? null;
+          })
+        );
+        return found.filter((r): r is NonNullable<typeof r> => !!r);
+      },
+      enabled: open && !!adminId && missingRoleCodes.length > 0,
+    });
 
   // Sync roles mutation
   const syncMutation = useMutation({

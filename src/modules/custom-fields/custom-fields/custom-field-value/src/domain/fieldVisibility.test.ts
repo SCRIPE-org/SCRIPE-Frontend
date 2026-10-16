@@ -106,9 +106,9 @@ describe("isFieldVisible", () => {
     const rules = [rule("d", "equals", "2026-08-19")];
     expect(isFieldVisible(rules, from({ d: "2026-08-19" }))).toBe(true);
     expect(isFieldVisible(rules, from({ d: "2026-08-19T00:00:00.000Z" }))).toBe(true);
-    expect(isFieldVisible([rule("d", "greaterThan", "2026-01-01")], from({ d: "2026-08-19" }))).toBe(
-      true
-    );
+    expect(
+      isFieldVisible([rule("d", "greaterThan", "2026-01-01")], from({ d: "2026-08-19" }))
+    ).toBe(true);
   });
 
   it("does not probe a numeric operand as a date", () => {

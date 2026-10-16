@@ -1,3 +1,6 @@
+/**
+ * Documentation for module export
+ */
 export interface KeyDistributionItemDto {
   platformKeyId: number;
   tenantKeyVersion: number;
@@ -7,6 +10,9 @@ export interface KeyDistributionItemDto {
   isActiveVersion?: boolean;
 }
 
+/**
+ * Documentation for module export
+ */
 export interface TenantEncryptionStatusDto {
   id?: string;
   tenantCode: string;
@@ -30,6 +36,9 @@ export interface TenantEncryptionStatusDto {
   minDecryptionVersion?: number;
 }
 
+/**
+ * Documentation for module export
+ */
 export interface MigrationSessionDto {
   id: string;
   tenantCode?: string;
@@ -48,6 +57,9 @@ export interface MigrationSessionDto {
   errorMessage?: string;
 }
 
+/**
+ * Documentation for module export
+ */
 export interface EncryptionAuditLogDto {
   id: string;
   action: string;
@@ -62,21 +74,33 @@ export interface EncryptionAuditLogDto {
   timestamp: string;
 }
 
+/**
+ * Documentation for module export
+ */
 export interface InitializeTenantKeyRequest {
   providerType?: string;
   keyVaultKeyUri?: string;
 }
 
+/**
+ * Documentation for module export
+ */
 export interface RotateTenantKeyRequest {
   reason: string;
   autoMigrate?: boolean;
 }
 
+/**
+ * Documentation for module export
+ */
 export interface RevokeTenantKeyRequest {
   reason: string;
   confirmationCode: string;
 }
 
+/**
+ * Documentation for module export
+ */
 export interface StartRewrapRequest {
   targetPlatformKeyId?: number;
   targetTenantVersion?: number;

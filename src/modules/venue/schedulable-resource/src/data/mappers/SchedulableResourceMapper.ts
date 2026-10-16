@@ -1,9 +1,12 @@
-import {
+﻿import {
   SchedulableResource,
   type SchedulableResourceData,
 } from "../../domain/entities/SchedulableResource";
 import { SchedulableResourceModel } from "../models/SchedulableResourceModel";
 
+/**
+ * Documentation for module export
+ */
 export class SchedulableResourceMapper {
   static toEntity(model: SchedulableResourceModel): SchedulableResource {
     const data: SchedulableResourceData = {
@@ -16,6 +19,7 @@ export class SchedulableResourceMapper {
       namedUnitLabel: model.namedUnitLabel,
       unitCount: model.unitCount,
       capacity: model.capacity,
+      slotPolicy: model.slotPolicy,
       publicationStatus: model.publicationStatus,
       publishedAtUtc: model.publishedAtUtc,
       archivedAtUtc: model.archivedAtUtc,

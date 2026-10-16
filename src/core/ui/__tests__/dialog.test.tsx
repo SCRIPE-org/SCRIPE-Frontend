@@ -1,3 +1,4 @@
+/* eslint-disable jsx-a11y/role-has-required-aria-props */
 import React from "react";
 import { render, screen, waitFor, fireEvent } from "@testing-library/react";
 import { describe, it, expect, vi } from "vitest";

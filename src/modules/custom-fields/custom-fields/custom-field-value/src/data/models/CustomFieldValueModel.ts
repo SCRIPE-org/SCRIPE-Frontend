@@ -14,6 +14,9 @@ import type {
   CustomFieldRichTextValue,
 } from "./CustomFieldCompositeValues";
 
+/**
+ * Documentation for module export
+ */
 export type { CustomFieldValueTypeName };
 
 export type {

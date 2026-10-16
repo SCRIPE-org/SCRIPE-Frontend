@@ -409,7 +409,10 @@ export interface TopbarContextPillProps {
 export function TopbarContextPill({ isModuleMode, tenantName }: TopbarContextPillProps) {
   return (
     <div
-      className={cn("hidden items-center rounded-full duration-nx-standard sm:flex", CONTROL_MOTION)}
+      className={cn(
+        "hidden items-center rounded-full duration-nx-standard sm:flex",
+        CONTROL_MOTION
+      )}
       style={{
         gap: 6,
         padding: "4px 12px",

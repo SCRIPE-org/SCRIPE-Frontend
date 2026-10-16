@@ -221,7 +221,11 @@ const Switch = React.forwardRef<React.ElementRef<typeof SwitchPrimitives.Root>, 
               wrong word in English. */}
           <span
             aria-hidden="true"
-            className={cn(LABEL_BASE, isOn ? "text-nx-ink-3" : "text-nx-ink", dimmed && "text-nx-ink-3")}
+            className={cn(
+              LABEL_BASE,
+              isOn ? "text-nx-ink-3" : "text-nx-ink",
+              dimmed && "text-nx-ink-3"
+            )}
           >
             {defaultOffLabel}
           </span>
@@ -230,7 +234,11 @@ const Switch = React.forwardRef<React.ElementRef<typeof SwitchPrimitives.Root>, 
           </SwitchPrimitives.Root>
           <span
             aria-hidden="true"
-            className={cn(LABEL_BASE, isOn ? "text-nx-ink" : "text-nx-ink-3", dimmed && "text-nx-ink-3")}
+            className={cn(
+              LABEL_BASE,
+              isOn ? "text-nx-ink" : "text-nx-ink-3",
+              dimmed && "text-nx-ink-3"
+            )}
           >
             {defaultOnLabel}
           </span>

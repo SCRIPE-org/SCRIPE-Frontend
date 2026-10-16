@@ -4,7 +4,9 @@ import { ar } from "./operations-calendar.ar";
 
 function keys(value: unknown, prefix = ""): string[] {
   if (!value || typeof value !== "object") return [prefix];
-  return Object.entries(value).flatMap(([key, child]) => keys(child, prefix ? `${prefix}.${key}` : key));
+  return Object.entries(value).flatMap(([key, child]) =>
+    keys(child, prefix ? `${prefix}.${key}` : key)
+  );
 }
 
 describe("Operations Calendar locales", () => {

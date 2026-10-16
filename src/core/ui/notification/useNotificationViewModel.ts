@@ -73,7 +73,9 @@ export function useNotificationViewModel(): NotificationViewModel {
       readAt: null,
       metadataJson: null,
     };
-    setNotifications((prev) => [item, ...prev].slice(0, 20));
+    queueMicrotask(() => {
+      setNotifications((prev) => [item, ...prev].slice(0, 20));
+    });
   }, [latestNotification]);
 
   // ─── Fetch notification list (only when dropdown opens) ────────

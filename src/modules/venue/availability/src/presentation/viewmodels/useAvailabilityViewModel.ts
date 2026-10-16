@@ -14,6 +14,9 @@ import type {
 
 const PAGE_SIZE = 100;
 
+/**
+ * Documentation for module export
+ */
 export function useAvailabilityViewModel() {
   const { schedulableResourceRepository, availabilityRepository } = getVenueContainer();
   const [resources, setResources] = useState<
@@ -33,7 +36,9 @@ export function useAvailabilityViewModel() {
     () => resources.filter((resource) => !resource.isComposite),
     [resources]
   );
-  const selectedResource = searchableResources.find((resource) => resource.id === selectedResourceId);
+  const selectedResource = searchableResources.find(
+    (resource) => resource.id === selectedResourceId
+  );
 
   const loadResources = useCallback(async () => {
     const result = await schedulableResourceRepository.getAll({ page: 1, pageSize: PAGE_SIZE });
@@ -78,18 +83,22 @@ export function useAvailabilityViewModel() {
   }, [loadBlocks, loadCalendar, loadResources]);
 
   useEffect(() => {
-    void loadResources()
-      .catch((caught) =>
-        setError(caught instanceof Error ? caught : new Error("resource-load-failed"))
-      )
-      .finally(() => setLoading(false));
+    void Promise.resolve().then(() => {
+      void loadResources()
+        .catch((caught) =>
+          setError(caught instanceof Error ? caught : new Error("resource-load-failed"))
+        )
+        .finally(() => setLoading(false));
+    });
   }, [loadResources]);
 
   useEffect(() => {
-    setSearchResult(null);
-    void Promise.all([loadCalendar(), loadBlocks()]).catch((caught) =>
-      setError(caught instanceof Error ? caught : new Error("availability-load-failed"))
-    );
+    void Promise.resolve().then(() => {
+      setSearchResult(null);
+      void Promise.all([loadCalendar(), loadBlocks()]).catch((caught) =>
+        setError(caught instanceof Error ? caught : new Error("availability-load-failed"))
+      );
+    });
   }, [loadBlocks, loadCalendar]);
 
   const saveCalendar = useCallback(
@@ -119,30 +128,36 @@ export function useAvailabilityViewModel() {
     [availabilityRepository]
   );
 
-  const saveBlock = useCallback(async (kind: ResourceBlockKind, existing: ResourceBlock | null, data: SaveResourceBlock) => {
-    setSaving(true);
-    try {
-      if (existing) {
-        const { resourceId: _resourceId, ...update } = data;
-        await availabilityRepository.updateBlock(kind, existing, update);
-      } else {
-        await availabilityRepository.createBlock(kind, data);
+  const saveBlock = useCallback(
+    async (kind: ResourceBlockKind, existing: ResourceBlock | null, data: SaveResourceBlock) => {
+      setSaving(true);
+      try {
+        if (existing) {
+          const { resourceId: _resourceId, ...update } = data;
+          await availabilityRepository.updateBlock(kind, existing, update);
+        } else {
+          await availabilityRepository.createBlock(kind, data);
+        }
+        await loadBlocks();
+      } finally {
+        setSaving(false);
       }
-      await loadBlocks();
-    } finally {
-      setSaving(false);
-    }
-  }, [availabilityRepository, loadBlocks]);
+    },
+    [availabilityRepository, loadBlocks]
+  );
 
-  const deleteBlock = useCallback(async (kind: ResourceBlockKind, block: ResourceBlock) => {
-    setSaving(true);
-    try {
-      await availabilityRepository.deleteBlock(kind, block);
-      await loadBlocks();
-    } finally {
-      setSaving(false);
-    }
-  }, [availabilityRepository, loadBlocks]);
+  const deleteBlock = useCallback(
+    async (kind: ResourceBlockKind, block: ResourceBlock) => {
+      setSaving(true);
+      try {
+        await availabilityRepository.deleteBlock(kind, block);
+        await loadBlocks();
+      } finally {
+        setSaving(false);
+      }
+    },
+    [availabilityRepository, loadBlocks]
+  );
 
   return {
     resources: searchableResources,

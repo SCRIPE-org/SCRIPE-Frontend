@@ -150,7 +150,11 @@ export function SchedulePicker({ value, onChange, disabled }: SchedulePickerProp
     <Card>
       <CardContent className="space-y-4 pt-4">
         {/* Mode Selector */}
-        <div role="radiogroup" aria-label={t("messaging.email.schedule")} className="grid grid-cols-3 gap-2">
+        <div
+          role="radiogroup"
+          aria-label={t("messaging.email.schedule")}
+          className="grid grid-cols-3 gap-2"
+        >
           {modes.map((mode, index) => {
             const checked = value.mode === mode.id;
             return (

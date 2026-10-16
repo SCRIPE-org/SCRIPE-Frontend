@@ -33,7 +33,9 @@ describe("translateCore", () => {
 
   it("reads Arabic once STORAGE_KEYS.LANGUAGE is set to ar", () => {
     setStoredLanguage("ar");
-    expect(translateCore("errors.network.timeout")).toBe("انتهت مهلة الطلب. يرجى المحاولة مرة أخرى.");
+    expect(translateCore("errors.network.timeout")).toBe(
+      "انتهت مهلة الطلب. يرجى المحاولة مرة أخرى."
+    );
   });
 
   it("falls back to English for any value other than ar", () => {

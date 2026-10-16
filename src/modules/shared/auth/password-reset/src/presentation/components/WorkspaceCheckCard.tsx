@@ -52,12 +52,7 @@ export function WorkspaceCheckCard({ workspace, isSelected, onToggle }: Workspac
         }}
       >
         {workspace.logoUrl && resolvedLogoUrl ? (
-          <Image
-            src={resolvedLogoUrl}
-            alt={workspace.tenantName}
-            fill
-            className="object-cover"
-          />
+          <Image src={resolvedLogoUrl} alt={workspace.tenantName} fill className="object-cover" />
         ) : (
           <Building2 className="h-4 w-4" style={{ color: "var(--sx-accent-text)" }} />
         )}

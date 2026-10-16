@@ -7,14 +7,19 @@ import {
   type CustomFieldsExtensionApi,
 } from "@core/crud/customFieldsExtension";
 
-const { mockCreateLead, mockGetAll, mockGetEditionsForConversion, mockSuccessToast, mockErrorToast } =
-  vi.hoisted(() => ({
-    mockCreateLead: vi.fn(),
-    mockGetAll: vi.fn(),
-    mockGetEditionsForConversion: vi.fn(),
-    mockSuccessToast: vi.fn(),
-    mockErrorToast: vi.fn(),
-  }));
+const {
+  mockCreateLead,
+  mockGetAll,
+  mockGetEditionsForConversion,
+  mockSuccessToast,
+  mockErrorToast,
+} = vi.hoisted(() => ({
+  mockCreateLead: vi.fn(),
+  mockGetAll: vi.fn(),
+  mockGetEditionsForConversion: vi.fn(),
+  mockSuccessToast: vi.fn(),
+  mockErrorToast: vi.fn(),
+}));
 
 vi.mock("@core/providers/i18n-provider", () => ({
   useI18n: () => ({ t: (key: string) => key }),

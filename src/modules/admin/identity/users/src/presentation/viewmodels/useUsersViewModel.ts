@@ -34,38 +34,42 @@ export function useUsersViewModel() {
 
   // ============ Core CRUD ViewModel ============
   // No create (users self-register). Update + Delete only.
-  const vm = useCrudViewModel<UsersEntity, never, UpdateUserRequest>(queryKey, {
-    getAll: async (params) => {
-      const res = await usersRepository.getAll({
-        page: params.page,
-        pageSize: params.pageSize,
-        search: params.search,
-      });
-      return {
-        items: res.items || [],
-        pagination: {
-          itemsCount: res.totalCount,
-          pageSize: params.pageSize,
+  const vm = useCrudViewModel<UsersEntity, never, UpdateUserRequest>(
+    queryKey,
+    {
+      getAll: async (params) => {
+        const res = await usersRepository.getAll({
           page: params.page,
-          pagesCount: Math.ceil((res.totalCount || 0) / params.pageSize),
-        },
-      };
+          pageSize: params.pageSize,
+          search: params.search,
+        });
+        return {
+          items: res.items || [],
+          pagination: {
+            itemsCount: res.totalCount,
+            pageSize: params.pageSize,
+            page: params.page,
+            pagesCount: Math.ceil((res.totalCount || 0) / params.pageSize),
+          },
+        };
+      },
+      update: async (id, data) => {
+        await usersRepository.update(id, data);
+        // No manual success() here on purpose -- deferSuccessEffects (below) holds
+        // the toast until GenericCrudView confirms the custom-field save (if any)
+        // also succeeded; firing it here unconditionally would defeat that.
+        return {} as UsersEntity;
+      },
+      delete: async (id) => {
+        await usersRepository.delete(id);
+        success({
+          title: t("users.deleted"),
+          description: t("users.deletedDesc"),
+        });
+      },
     },
-    update: async (id, data) => {
-      await usersRepository.update(id, data);
-      // No manual success() here on purpose -- deferSuccessEffects (below) holds
-      // the toast until GenericCrudView confirms the custom-field save (if any)
-      // also succeeded; firing it here unconditionally would defeat that.
-      return {} as UsersEntity;
-    },
-    delete: async (id) => {
-      await usersRepository.delete(id);
-      success({
-        title: t("users.deleted"),
-        description: t("users.deletedDesc"),
-      });
-    },
-  }, { deferSuccessEffects: true });
+    { deferSuccessEffects: true }
+  );
 
   // ============ Toggle Active Status ============
   const toggleActiveMutation = useMutation({

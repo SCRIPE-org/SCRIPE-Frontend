@@ -81,9 +81,6 @@ registerPage({
   category: "module-venue",
   order: 6,
   sections,
-  relatedSlugs: [
-    "modules/venue-overview",
-    "modules/venue/booking-workspace",
-  ],
+  relatedSlugs: ["modules/venue-overview", "modules/venue/booking-workspace"],
   lastUpdated: "2026-10-03",
 });

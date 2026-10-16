@@ -27,6 +27,9 @@ import {
 import { ValueExport, type ValueExportData } from "../../domain/entities/ValueExport";
 import { ValueExportError } from "../../domain/entities/ValueExportError";
 
+/**
+ * Documentation for module export
+ */
 export class ValueExportMapper {
   /** Convert a `ValueExportFileModel` to a `ValueExport` entity. */
   static toEntity(model: ValueExportFileModel): ValueExport {

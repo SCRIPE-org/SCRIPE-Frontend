@@ -121,7 +121,10 @@ export function NotificationSenderView(): React.JSX.Element {
             {/* Message Body Content */}
             <div className="space-y-2">
               <div className="flex items-center justify-between">
-                <Label htmlFor={messageId} className={cn(vm.fieldErrors.message && "text-destructive")}>
+                <Label
+                  htmlFor={messageId}
+                  className={cn(vm.fieldErrors.message && "text-destructive")}
+                >
                   {t("messaging.notifications.message")} *
                 </Label>
                 <span

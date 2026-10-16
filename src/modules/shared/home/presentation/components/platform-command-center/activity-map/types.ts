@@ -1,5 +1,9 @@
 import type { CountryData } from "../data/worldMapData";
-import type { DashboardSummary, LoginActivityPoint, RecentChange } from "@modules/monitoring/dashboard/src/domain/entities/DashboardEntities";
+import type {
+  DashboardSummary,
+  LoginActivityPoint,
+  RecentChange,
+} from "@modules/monitoring/dashboard/src/domain/entities/DashboardEntities";
 import type { usePlatformHealthViewModel } from "@modules/monitoring/platform-health/src/presentation/viewmodels/usePlatformHealthViewModel";
 
 export interface RegionNodeInfo {

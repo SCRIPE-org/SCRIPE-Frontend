@@ -1,5 +1,8 @@
 import { V1 } from "@/core/config/api-endpoints/_shared";
 
+/**
+ * DASHBOARD_ENDPOINTS
+ */
 export const DASHBOARD_ENDPOINTS = {
   SUMMARY: `${V1}/Dashboard/summary`,
   LOGIN_ACTIVITY: `${V1}/Dashboard/login-activity`,

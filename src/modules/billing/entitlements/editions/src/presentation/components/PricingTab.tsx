@@ -381,9 +381,7 @@ export const PricingTab = memo(function PricingTab({
                           <span className="text-lg leading-none">{info?.flag || "FX"}</span>
                           <div>
                             <span className="text-sm font-semibold">{row.currency}</span>
-                            <p className="text-[10px] leading-tight text-nx-ink-3">
-                              {info?.name}
-                            </p>
+                            <p className="text-[10px] leading-tight text-nx-ink-3">{info?.name}</p>
                           </div>
                         </div>
 
@@ -555,9 +553,7 @@ export const PricingTab = memo(function PricingTab({
                     <p className="text-sm font-medium">
                       {t("entitlements.pricing.unsavedChanges")}
                     </p>
-                    <p className="text-xs text-nx-ink-3">
-                      {t("entitlements.pricing.versionHint")}
-                    </p>
+                    <p className="text-xs text-nx-ink-3">{t("entitlements.pricing.versionHint")}</p>
                   </div>
                 </div>
                 <div className="flex shrink-0 items-center gap-2">

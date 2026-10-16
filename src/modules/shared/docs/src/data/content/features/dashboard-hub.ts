@@ -71,6 +71,9 @@ import { useQueryClient } from "@tanstack/react-query";
 import { useSignalR } from "@core/hooks/useSignalR";
 import { HUB_EVENTS, HUB_METHODS } from "@core/common/constants/signalr";
 
+/**
+ * Documentation for module export
+ */
 export function useDashboardRealtime() {
   const queryClient = useQueryClient();
   const { connection, connectionState } = useSignalR();
@@ -248,6 +251,9 @@ function getSystemContainer(): SystemContainer {
   };
 }
 
+/**
+ * Documentation for module export
+ */
 export const systemContainer = {
   get auditRepository() { return getSystemContainer().auditRepository; },
   get securityRepository() { return getSystemContainer().securityRepository; },

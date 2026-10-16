@@ -7,6 +7,9 @@
 import { StaffMember, type StaffMemberData } from "../../domain/entities/StaffMember";
 import { StaffMemberModel, type StaffMemberJson } from "../models/StaffMemberModel";
 
+/**
+ * Documentation for module export
+ */
 export class StaffMemberMapper {
   /**
    * Convert StaffMemberModel to StaffMember Entity

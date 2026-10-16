@@ -48,13 +48,11 @@ export class PasskeyRepository implements IPasskeyRepository {
       attestation: (dto.attestation as AttestationConveyancePreference) ?? "none",
       authenticatorSelection: {
         authenticatorAttachment: dto.authenticatorSelection.authenticatorAttachment as
-          | AuthenticatorAttachment
-          | undefined,
+          AuthenticatorAttachment | undefined,
         residentKey: dto.authenticatorSelection.residentKey as ResidentKeyRequirement | undefined,
         requireResidentKey: dto.authenticatorSelection.requireResidentKey,
         userVerification: dto.authenticatorSelection.userVerification as
-          | UserVerificationRequirement
-          | undefined,
+          UserVerificationRequirement | undefined,
       },
       excludeCredentials,
     };

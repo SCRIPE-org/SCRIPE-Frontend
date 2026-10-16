@@ -30,6 +30,9 @@ function formatTimeOfDay(value: string, locale: string): string {
 }
 
 // P5.4: React.memo prevents unnecessary re-renders
+/**
+ * Documentation for module export
+ */
 export const StaffAvailabilityListView = React.memo(function StaffAvailabilityListView() {
   useModuleLocales(() => import("../../../locales"), "hrms-staff-availability");
   const { vm } = useStaffAvailabilityViewModel();

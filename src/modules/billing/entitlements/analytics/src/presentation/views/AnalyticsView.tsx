@@ -77,7 +77,7 @@ export function AnalyticsView() {
               <TabsTrigger
                 key={tab.id}
                 value={tab.id}
-                className="gap-1.5 whitespace-nowrap rounded-nx-md px-3 py-2 text-xs font-medium transition-[color,background-color,border-color,box-shadow] duration-nx-standard ease-nx-enter motion-reduce:transition-none data-[state=active]:border-[color:color-mix(in_srgb,var(--nx-line)_50%,transparent)] data-[state=active]:bg-nx-ground data-[state=active]:text-nx-ink"
+                className="gap-1.5 whitespace-nowrap rounded-nx-md px-3 py-2 text-xs font-medium transition-[color,background-color,border-color,box-shadow] duration-nx-standard ease-nx-enter data-[state=active]:border-[color:color-mix(in_srgb,var(--nx-line)_50%,transparent)] data-[state=active]:bg-nx-ground data-[state=active]:text-nx-ink motion-reduce:transition-none"
               >
                 <Icon className="h-3.5 w-3.5" />
                 {t(tab.labelKey)}

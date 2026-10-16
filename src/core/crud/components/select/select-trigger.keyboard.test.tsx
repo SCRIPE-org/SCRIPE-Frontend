@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 // SelectTrigger -- keyboard operability of the whole select family.
 //
 // WHY THIS FILE USES fireEvent.keyDown AND NOT fireEvent.click.

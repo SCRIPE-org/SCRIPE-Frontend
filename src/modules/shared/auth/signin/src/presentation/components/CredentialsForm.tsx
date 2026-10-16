@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any, unused-imports/no-unused-vars */
 "use client";
 
 import { useI18n } from "@core/providers/i18n-provider";
@@ -90,7 +91,12 @@ export function CredentialsForm({
       label: t("auth.qr.chip") || "QR code",
       onClick: onSwitchToQrLogin,
     },
-  ].filter(Boolean) as Array<{ key: string; icon: React.ReactNode; label: string; onClick: () => void }>;
+  ].filter(Boolean) as Array<{
+    key: string;
+    icon: React.ReactNode;
+    label: string;
+    onClick: () => void;
+  }>;
 
   return (
     <form

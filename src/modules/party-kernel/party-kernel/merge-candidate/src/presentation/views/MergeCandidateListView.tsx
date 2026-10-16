@@ -37,9 +37,12 @@ function shortId(id: string | undefined): string {
 }
 
 // P5.4: React.memo prevents unnecessary re-renders
+/**
+ * Documentation for module export
+ */
 export const MergeCandidateListView = React.memo(function MergeCandidateListView() {
   useModuleLocales(() => import("../../../locales"), "party-kernel.mergeCandidate");
-  const { vm } = useMergeCandidateViewModel();
+  const { vm, lookupParties } = useMergeCandidateViewModel();
   const { t, language } = useI18n();
 
   const STATUS_OPTIONS = [
@@ -115,14 +118,18 @@ export const MergeCandidateListView = React.memo(function MergeCandidateListView
       {
         name: "primaryPartyId",
         label: t("mergeCandidate.form.primaryPartyId"),
-        type: "text" as const,
+        type: "server-select" as const,
+        searchType: "server" as const,
+        onServerSearch: lookupParties,
         placeholder: t("mergeCandidate.form.primaryPartyIdPlaceholder"),
         required: true,
       },
       {
         name: "duplicatePartyId",
         label: t("mergeCandidate.form.duplicatePartyId"),
-        type: "text" as const,
+        type: "server-select" as const,
+        searchType: "server" as const,
+        onServerSearch: lookupParties,
         placeholder: t("mergeCandidate.form.duplicatePartyIdPlaceholder"),
         required: true,
       },
@@ -146,14 +153,18 @@ export const MergeCandidateListView = React.memo(function MergeCandidateListView
       {
         name: "primaryPartyId",
         label: t("mergeCandidate.form.primaryPartyId"),
-        type: "text" as const,
+        type: "server-select" as const,
+        searchType: "server" as const,
+        onServerSearch: lookupParties,
         placeholder: t("mergeCandidate.form.primaryPartyIdPlaceholder"),
         required: true,
       },
       {
         name: "duplicatePartyId",
         label: t("mergeCandidate.form.duplicatePartyId"),
-        type: "text" as const,
+        type: "server-select" as const,
+        searchType: "server" as const,
+        onServerSearch: lookupParties,
         placeholder: t("mergeCandidate.form.duplicatePartyIdPlaceholder"),
         required: true,
       },

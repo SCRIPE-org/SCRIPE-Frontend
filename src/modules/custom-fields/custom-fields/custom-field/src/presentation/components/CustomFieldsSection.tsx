@@ -17,6 +17,9 @@ import type { FieldConfig } from "@core/ui/forms/generic-form";
 import { getCustomFieldsExtension } from "@core/crud/customFieldsExtension";
 import { renderCustomFieldControl } from "../form/renderCustomFieldControl";
 
+/**
+ * Documentation for module export
+ */
 export interface CustomFieldsSectionProps {
   /** The field configuration schemas (from useEntityCustomFields or ViewModel). */
   configs: readonly FieldConfig[];
@@ -44,6 +47,9 @@ export interface CustomFieldsSectionProps {
   touched?: boolean;
 }
 
+/**
+ * Documentation for CustomFieldsSection
+ */
 export const CustomFieldsSection = React.memo(function CustomFieldsSection({
   configs,
   values,

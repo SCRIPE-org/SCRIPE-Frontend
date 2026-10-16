@@ -213,7 +213,11 @@ describe("GenericForm draws the real reference picker through the extension", ()
   it("blocks submit and marks the real trigger invalid when a required reference is blank", async () => {
     const onSubmit = vi.fn().mockResolvedValue(undefined);
     render(
-      <GenericForm fields={[{ ...FIELD, required: true }]} onSubmit={onSubmit} onCancel={() => {}} />
+      <GenericForm
+        fields={[{ ...FIELD, required: true }]}
+        onSubmit={onSubmit}
+        onCancel={() => {}}
+      />
     );
 
     fireEvent.click(screen.getByRole("button", { name: "common.save" }));

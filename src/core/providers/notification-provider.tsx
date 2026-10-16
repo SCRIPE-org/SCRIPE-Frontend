@@ -188,7 +188,9 @@ export function NotificationSignalRProvider({ children }: { children: React.Reac
         appLogger.debug("[NotifHub] isAuthenticated=true, calling connect()");
         setTimeout(() => connect(), 0);
       } else if (!isAuthenticated || mustChangePassword) {
-        appLogger.debug("[NotifHub] isAuthenticated=false or mustChangePassword=true, tearing down");
+        appLogger.debug(
+          "[NotifHub] isAuthenticated=false or mustChangePassword=true, tearing down"
+        );
         connectionRef.current?.stop();
         connectionRef.current = null;
         setTimeout(() => {

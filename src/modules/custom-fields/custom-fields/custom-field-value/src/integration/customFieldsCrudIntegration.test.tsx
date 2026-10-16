@@ -58,12 +58,26 @@ describe("mapValueToFieldConfig", () => {
 
   it("maps Boolean to switch and Date to date", () => {
     const bool: EntityCustomFieldValueData = {
-      customFieldId: "id-3", key: "isVip", labelEn: "VIP", labelAr: null,
-      valueType: "Boolean", isRequired: false, options: null, sortOrder: 0, value: true,
+      customFieldId: "id-3",
+      key: "isVip",
+      labelEn: "VIP",
+      labelAr: null,
+      valueType: "Boolean",
+      isRequired: false,
+      options: null,
+      sortOrder: 0,
+      value: true,
     };
     const date: EntityCustomFieldValueData = {
-      customFieldId: "id-4", key: "joinedOn", labelEn: "Joined On", labelAr: null,
-      valueType: "Date", isRequired: false, options: null, sortOrder: 0, value: "2026-01-01T00:00:00Z",
+      customFieldId: "id-4",
+      key: "joinedOn",
+      labelEn: "Joined On",
+      labelAr: null,
+      valueType: "Date",
+      isRequired: false,
+      options: null,
+      sortOrder: 0,
+      value: "2026-01-01T00:00:00Z",
     };
 
     expect(mapValueToFieldConfig(bool, "en").type).toBe("switch");

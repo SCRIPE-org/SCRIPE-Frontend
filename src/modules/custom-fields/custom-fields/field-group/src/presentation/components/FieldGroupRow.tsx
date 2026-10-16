@@ -27,6 +27,9 @@ import { cn } from "@core/common/utils";
 import { ArrowDown, ArrowUp, GripVertical, Globe2, Pencil, Trash2 } from "lucide-react";
 import type { FieldGroup } from "../../domain/entities/FieldGroup";
 
+/**
+ * Documentation for module export
+ */
 export interface FieldGroupRowProps {
   group: FieldGroup;
   language: string;
@@ -57,6 +60,9 @@ export interface FieldGroupRowProps {
   onDropOnRow: () => void;
 }
 
+/**
+ * Documentation for FieldGroupRow
+ */
 export function FieldGroupRow({
   group,
   language,

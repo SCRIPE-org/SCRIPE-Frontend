@@ -37,7 +37,8 @@ export const ar = {
       namedUnitLabel: "مثال: ملعب، مسار، حجرة",
     },
     descriptions: {
-      facilityResourceProfileId: "ملف تعريف مورد FacilityOperations الذي يُجدوَل هذا المورد بناءً عليه.",
+      facilityResourceProfileId:
+        "ملف تعريف مورد FacilityOperations الذي يُجدوَل هذا المورد بناءً عليه.",
       parent: "عيّن هذا المورد ضمن مورد مركّب لتضمينه تحته (مثل ملعب ضمن مجمع ملاعب).",
     },
     allocationMode: {

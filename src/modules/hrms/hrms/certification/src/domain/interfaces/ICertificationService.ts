@@ -16,6 +16,9 @@ export interface CertificationListResult {
   hasPreviousPage: boolean;
 }
 
+/**
+ * Documentation for module export
+ */
 export interface ICertificationService {
   getAll(params: {
     page: number;

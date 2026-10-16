@@ -1,3 +1,4 @@
+/* eslint-disable jsx-a11y/role-supports-aria-props */
 // GenericForm draws Wave 3.4's three field types through the CustomFields
 // extension registry.
 //
@@ -143,24 +144,24 @@ beforeEach(() => {
 });
 
 describe("GenericForm — Wave 3.4 types route to the extension control", () => {
-  it.each(ALL_THREE)("consults the extension for a %s field and draws no input itself", (
-    _label,
-    field
-  ) => {
-    // RED WITHOUT THE FIX, both halves: getByRole("group") throws because the
-    // extension is never consulted, and queryByRole("textbox") finds the
-    // fallthrough `<Input type={field.type}>`.
-    const { container } = render(
-      <GenericForm fields={[field]} onSubmit={async () => {}} onCancel={() => {}} />
-    );
+  it.each(ALL_THREE)(
+    "consults the extension for a %s field and draws no input itself",
+    (_label, field) => {
+      // RED WITHOUT THE FIX, both halves: getByRole("group") throws because the
+      // extension is never consulted, and queryByRole("textbox") finds the
+      // fallthrough `<Input type={field.type}>`.
+      const { container } = render(
+        <GenericForm fields={[field]} onSubmit={async () => {}} onCancel={() => {}} />
+      );
 
-    expect(screen.getByRole("group", { name: field.label })).toBeInTheDocument();
-    expect(screen.queryByRole("textbox")).not.toBeInTheDocument();
-    expect(container.querySelector(`input[type="${field.type}"]`)).toBeNull();
-  });
+      expect(screen.getByRole("group", { name: field.label })).toBeInTheDocument();
+      expect(screen.queryByRole("textbox")).not.toBeInTheDocument();
+      expect(container.querySelector(`input[type="${field.type}"]`)).toBeNull();
+    }
+  );
 
   it.each(ALL_THREE)(
-    "hands the %s control the RAW stored object, with no `?? \"\"` normalisation",
+    'hands the %s control the RAW stored object, with no `?? ""` normalisation',
     (_label, field, stored) => {
       // The `?? ""` in the fallthrough is precisely what turned an absent object
       // into an empty string the server then refused. Absent must stay absent and
@@ -179,10 +180,13 @@ describe("GenericForm — Wave 3.4 types route to the extension control", () => 
     }
   );
 
-  it.each(ALL_THREE)("leaves an absent %s value undefined, not an empty string", (_label, field) => {
-    render(<GenericForm fields={[field]} onSubmit={async () => {}} onCancel={() => {}} />);
-    expect(receivedProps.at(-1)?.value).toBeUndefined();
-  });
+  it.each(ALL_THREE)(
+    "leaves an absent %s value undefined, not an empty string",
+    (_label, field) => {
+      render(<GenericForm fields={[field]} onSubmit={async () => {}} onCancel={() => {}} />);
+      expect(receivedProps.at(-1)?.value).toBeUndefined();
+    }
+  );
 
   it.each(ALL_THREE)(
     "leaves nothing typeable that could overwrite a stored %s value",
@@ -235,20 +239,20 @@ describe("GenericForm — Wave 3.4 types route to the extension control", () => 
     }
   );
 
-  it.each(ALL_THREE)("renders exactly one label for a %s field — the host suppresses its own", (
-    _label,
-    field
-  ) => {
-    // RED IN THE OPPOSITE DIRECTION: with the render arm added but the type left
-    // out of `EXTENSION_DRAWN_FIELD_TYPES`'s label-suppression condition, two
-    // identical `<label for>` nodes render. Counted on the `for` attribute rather
-    // than on visible text, so a control that labels itself differently cannot
-    // mask a duplicate.
-    const { container } = render(
-      <GenericForm fields={[field]} onSubmit={async () => {}} onCancel={() => {}} />
-    );
-    expect(container.querySelectorAll(`label[for="${field.name}"]`)).toHaveLength(1);
-  });
+  it.each(ALL_THREE)(
+    "renders exactly one label for a %s field — the host suppresses its own",
+    (_label, field) => {
+      // RED IN THE OPPOSITE DIRECTION: with the render arm added but the type left
+      // out of `EXTENSION_DRAWN_FIELD_TYPES`'s label-suppression condition, two
+      // identical `<label for>` nodes render. Counted on the `for` attribute rather
+      // than on visible text, so a control that labels itself differently cannot
+      // mask a duplicate.
+      const { container } = render(
+        <GenericForm fields={[field]} onSubmit={async () => {}} onCancel={() => {}} />
+      );
+      expect(container.querySelectorAll(`label[for="${field.name}"]`)).toHaveLength(1);
+    }
+  );
 
   it("carries the reference target pin through to a media control untouched", () => {
     // `FieldConfig.referenceTargetEntityTypeKey` is a CARRIER this component never
@@ -256,9 +260,7 @@ describe("GenericForm — Wave 3.4 types route to the extension control", () => 
     // side. Media needs the same carrier the reference types use, so this asserts
     // it survives the crossing rather than being dropped for a type the property's
     // own doc comment was written before.
-    render(
-      <GenericForm fields={[MEDIA_FILE]} onSubmit={async () => {}} onCancel={() => {}} />
-    );
+    render(<GenericForm fields={[MEDIA_FILE]} onSubmit={async () => {}} onCancel={() => {}} />);
     expect(receivedProps.at(-1)?.field.referenceTargetEntityTypeKey).toBe("media.file");
   });
 
@@ -269,19 +271,19 @@ describe("GenericForm — Wave 3.4 types route to the extension control", () => 
 });
 
 describe("GenericForm — Wave 3.4 types receive the host-owned a11y facts", () => {
-  it.each(ALL_THREE)("passes the form's read-only state to a %s control as disabled", (
-    _label,
-    field
-  ) => {
-    render(
-      <GenericForm fields={[field]} onSubmit={async () => {}} onCancel={() => {}} readOnly />
-    );
-    expect(receivedProps.at(-1)?.disabled).toBe(true);
-    expect(screen.getByRole("group", { name: field.label })).toHaveAttribute(
-      "aria-disabled",
-      "true"
-    );
-  });
+  it.each(ALL_THREE)(
+    "passes the form's read-only state to a %s control as disabled",
+    (_label, field) => {
+      render(
+        <GenericForm fields={[field]} onSubmit={async () => {}} onCancel={() => {}} readOnly />
+      );
+      expect(receivedProps.at(-1)?.disabled).toBe(true);
+      expect(screen.getByRole("group", { name: field.label })).toHaveAttribute(
+        "aria-disabled",
+        "true"
+      );
+    }
+  );
 
   it.each(ALL_THREE)("passes a per-field disabled flag to a %s control", (_label, field) => {
     render(

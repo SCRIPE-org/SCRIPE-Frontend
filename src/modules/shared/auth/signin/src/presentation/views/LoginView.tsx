@@ -66,7 +66,9 @@ export function LoginView() {
   const sso = useSsoProviders({ tenantId, mode: branding?.identityProviderMode ?? "inherit" });
 
   const resolvedLogoSrc = useResolvedFileUrl(branding?.logoUrl);
-  const logoSrc = branding?.logoUrl ? resolvedLogoSrc || "/brand/app-logo-1024.png" : "/brand/app-logo-1024.png";
+  const logoSrc = branding?.logoUrl
+    ? resolvedLogoSrc || "/brand/app-logo-1024.png"
+    : "/brand/app-logo-1024.png";
   const logoAlt = branding?.companyName ?? branding?.name ?? BRAND.name;
   const companyName = branding?.companyName ?? branding?.name ?? BRAND.name;
 
@@ -87,8 +89,7 @@ export function LoginView() {
   const pageTitle = a11y.pageTitle;
   useEffect(() => {
     if (typeof document === "undefined") return;
-    document.title =
-      pageTitle || (isResolved ? `Login — ${companyName}` : `Login — ${BRAND.name}`);
+    document.title = pageTitle || (isResolved ? `Login — ${companyName}` : `Login — ${BRAND.name}`);
   }, [isResolved, companyName, pageTitle]);
 
   const faviconUrl = branding?.faviconUrl;

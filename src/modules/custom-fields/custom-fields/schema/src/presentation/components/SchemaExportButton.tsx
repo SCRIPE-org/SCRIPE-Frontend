@@ -30,6 +30,9 @@ import { usePermission } from "@core/hooks/use-permission";
 import { CUSTOM_FIELDS_EXPORT_PERMISSION } from "../../../../permission-constants";
 import { SchemaExportDialog } from "./SchemaExportDialog";
 
+/**
+ * Documentation for module export
+ */
 export function SchemaExportButton() {
   useModuleLocales(() => import("../../../locales"), "customFieldSchemaExport");
   const { t } = useI18n();

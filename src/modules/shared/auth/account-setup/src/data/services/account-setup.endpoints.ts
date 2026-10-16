@@ -1,5 +1,8 @@
 import { V1 } from "@/core/config/api-endpoints/_shared";
 
+/**
+ * Documentation for module export
+ */
 export const ACCOUNT_SETUP_ENDPOINTS = {
   VALIDATE_TOKEN: (token: string) =>
     `${V1}/account-setup/validate?token=${encodeURIComponent(token)}`,

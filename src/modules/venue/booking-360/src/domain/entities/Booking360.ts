@@ -1,7 +1,23 @@
+/**
+ * Documentation for =
+ */
 export type Booking360Status =
-  | "Draft" | "Requested" | "Held" | "PendingApproval" | "Confirmed" | "CheckedIn"
-  | "Completed" | "PartiallyFulfilled" | "Cancelled" | "Rejected" | "Expired" | "NoShow";
+  | "Draft"
+  | "Requested"
+  | "Held"
+  | "PendingApproval"
+  | "Confirmed"
+  | "CheckedIn"
+  | "Completed"
+  | "PartiallyFulfilled"
+  | "Cancelled"
+  | "Rejected"
+  | "Expired"
+  | "NoShow";
 
+/**
+ * Documentation for module export
+ */
 export interface Booking360HistoryItem {
   fromStatus: Booking360Status | null;
   toStatus: Booking360Status;
@@ -10,6 +26,9 @@ export interface Booking360HistoryItem {
   reason: string | null;
 }
 
+/**
+ * Documentation for module export
+ */
 export interface Booking360Reservation {
   id: string;
   reservationNumber: string;
@@ -38,38 +57,44 @@ export interface Booking360CustomerContext {
   displayName: string;
 }
 
+/**
+ * Documentation for module export
+ */
 export interface Booking360ResourceContext {
   name: string;
 }
 
+/**
+ * Documentation for module export
+ */
 export interface Booking360ProfileContext {
   name: string;
   timeZoneId: string | null;
 }
 
+/**
+ * Documentation for module export
+ */
 export interface Booking360FacilityContext {
   id: string;
   name: string;
 }
 
+/**
+ * Documentation for =
+ */
 export type Booking360OperationalAction =
-  | "confirm"
-  | "checkIn"
-  | "complete"
-  | "noShow"
-  | "cancel"
-  | "reschedule"
-  | "changeResource";
+  "confirm" | "checkIn" | "complete" | "noShow" | "cancel" | "reschedule" | "changeResource";
 
+/**
+ * Documentation for =
+ */
 export type Booking360OperationalFeedbackKind =
-  | "success"
-  | "invalidState"
-  | "concurrency"
-  | "permission"
-  | "feature"
-  | "validation"
-  | "network";
+  "success" | "invalidState" | "concurrency" | "permission" | "feature" | "validation" | "network";
 
+/**
+ * Documentation for module export
+ */
 export interface Booking360OperationalFeedback {
   action: Exclude<Booking360OperationalAction, "confirm">;
   kind: Booking360OperationalFeedbackKind;
@@ -77,8 +102,15 @@ export interface Booking360OperationalFeedback {
   status: Booking360Status | null;
 }
 
-export type Booking360Stage = "loading" | "notFound" | "failed" | "ready" | "featureUnavailable" | "error";
+/**
+ * Documentation for "error"
+ */
+export type Booking360Stage =
+  "loading" | "notFound" | "failed" | "ready" | "featureUnavailable" | "error";
 
+/**
+ * Documentation for module export
+ */
 export interface Booking360State {
   stage: Booking360Stage;
   reservation: Booking360Reservation | null;

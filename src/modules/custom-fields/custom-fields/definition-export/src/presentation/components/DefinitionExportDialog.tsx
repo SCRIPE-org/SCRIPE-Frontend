@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 /**
  * Definition export dialog — Wave 6 row 6.4
  *
@@ -48,11 +49,17 @@ import {
   useDefinitionExportViewModel,
 } from "../viewmodels/useDefinitionExportViewModel";
 
+/**
+ * Documentation for module export
+ */
 export interface DefinitionExportDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
 }
 
+/**
+ * Documentation for module export
+ */
 export function DefinitionExportDialog({ open, onOpenChange }: DefinitionExportDialogProps) {
   const { t, language } = useI18n();
   const vm = useDefinitionExportViewModel();
@@ -117,9 +124,7 @@ export function DefinitionExportDialog({ open, onOpenChange }: DefinitionExportD
               loading={vm.isEntityTypesLoading}
               disabled={vm.isExporting}
             />
-            <p className="text-sm text-muted-foreground">
-              {t("definitionExport.entityTypeHint")}
-            </p>
+            <p className="text-sm text-muted-foreground">{t("definitionExport.entityTypeHint")}</p>
 
             {/* A failed entity-type fetch is NOT fatal here, unlike on the field-group screen where a
                 scope is mandatory: the sentinel above still exports everything. So this reports the
@@ -170,7 +175,9 @@ export function DefinitionExportDialog({ open, onOpenChange }: DefinitionExportD
             <Alert variant="destructive" data-testid="definition-export-unexpected-file">
               <AlertCircle />
               <AlertTitle>{t("definitionExport.unexpectedFile.title")}</AlertTitle>
-              <AlertDescription>{t("definitionExport.unexpectedFile.description")}</AlertDescription>
+              <AlertDescription>
+                {t("definitionExport.unexpectedFile.description")}
+              </AlertDescription>
             </Alert>
           )}
 

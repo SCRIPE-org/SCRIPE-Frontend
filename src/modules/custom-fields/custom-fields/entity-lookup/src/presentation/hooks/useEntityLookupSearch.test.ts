@@ -345,7 +345,9 @@ describe("useEntityLookupSearch", () => {
     expect(result.current.isLoading).toBe(false);
 
     rerender({ enabled: true });
-    await waitFor(() => expect(result.current.items.map((entry) => entry.id)).toEqual(["reopened"]));
+    await waitFor(() =>
+      expect(result.current.items.map((entry) => entry.id)).toEqual(["reopened"])
+    );
 
     await act(async () => {
       firstResponse.resolve(page(["stale"]));

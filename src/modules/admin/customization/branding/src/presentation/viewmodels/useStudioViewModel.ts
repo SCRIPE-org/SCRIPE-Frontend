@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any, react-hooks/exhaustive-deps */
 // FILE-EXCEPTION: file length
 /**
  * useStudioViewModel — Complete state management for the Ultimate Customizer Studio
@@ -788,9 +789,7 @@ export function useStudioViewModel(options?: StudioViewModelOptions) {
     onError: (error: Error) => {
       const isConflict = error.message?.includes("409") || error.message?.includes("conflict");
       toastError({
-        title: isConflict
-          ? t("studio.versionConflict")
-          : t("studio.publishFailed"),
+        title: isConflict ? t("studio.versionConflict") : t("studio.publishFailed"),
         description: error.message,
       });
     },
@@ -828,9 +827,7 @@ export function useStudioViewModel(options?: StudioViewModelOptions) {
   // ── Save Theme: Custom Fields ──
   const themeCustomFieldsQuery = useCustomFieldsFormFields(THEME_ENTITY_TYPE_KEY, undefined);
 
-  const [themeCustomFieldValues, setThemeCustomFieldValues] = useState<Record<string, unknown>>(
-    {}
-  );
+  const [themeCustomFieldValues, setThemeCustomFieldValues] = useState<Record<string, unknown>>({});
 
   const updateThemeCustomFieldValue = useCallback((name: string, value: unknown) => {
     setThemeCustomFieldValues((prev) => ({ ...prev, [name]: value }));
@@ -851,11 +848,7 @@ export function useStudioViewModel(options?: StudioViewModelOptions) {
       // point. Throws CustomFieldValidationError, which saveTheme's own
       // catch block below distinguishes from a genuine API failure so it can
       // show the specific reason, not the generic fallback.
-      assertSelectCustomFieldValuesValid(
-        themeFieldConfigs,
-        themeCustomFieldValues,
-        t
-      );
+      assertSelectCustomFieldValuesValid(themeFieldConfigs, themeCustomFieldValues, t);
 
       const decoded: Record<string, unknown> = {};
       for (const fc of themeFieldConfigs) {

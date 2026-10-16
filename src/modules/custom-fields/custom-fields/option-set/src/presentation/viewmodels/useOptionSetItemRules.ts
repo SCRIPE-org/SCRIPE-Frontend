@@ -13,6 +13,9 @@ import {
   type OptionSetItemIssueCode,
 } from "../form/optionSetItemRules";
 
+/**
+ * Documentation for module export
+ */
 export function useOptionSetItemRules() {
   const validate = useCallback((rows: readonly OptionSetItemRuleRow[]): OptionSetItemIssue[] => {
     return collectOptionSetItemIssues(rows);

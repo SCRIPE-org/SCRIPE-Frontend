@@ -36,7 +36,11 @@ describe("DurationCustomFieldControl", () => {
 
   it("falls back the accessible name to fc.name when fc.label is undefined", () => {
     render(
-      <DurationCustomFieldControl fc={{ name: "cf_setup_nolabel", type: "duration" }} value="" onChange={vi.fn()} />
+      <DurationCustomFieldControl
+        fc={{ name: "cf_setup_nolabel", type: "duration" }}
+        value=""
+        onChange={vi.fn()}
+      />
     );
     expect(screen.getByRole("spinbutton", { name: "cf_setup_nolabel" })).toBeInTheDocument();
   });
@@ -65,7 +69,9 @@ describe("DurationCustomFieldControl", () => {
   });
 
   it("disables the input when isViewMode is true", () => {
-    render(<DurationCustomFieldControl fc={SETUP_FIELD} value={90} onChange={vi.fn()} isViewMode />);
+    render(
+      <DurationCustomFieldControl fc={SETUP_FIELD} value={90} onChange={vi.fn()} isViewMode />
+    );
     expect(screen.getByRole("spinbutton", { name: "Setup Buffer" })).toBeDisabled();
   });
 
@@ -164,9 +170,7 @@ describe("DurationCustomFieldControl", () => {
       "aria-invalid"
     );
 
-    rerender(
-      <DurationCustomFieldControl fc={SETUP_FIELD} value={90} onChange={vi.fn()} invalid />
-    );
+    rerender(<DurationCustomFieldControl fc={SETUP_FIELD} value={90} onChange={vi.fn()} invalid />);
     expect(screen.getByRole("spinbutton", { name: "Setup Buffer" })).toHaveAttribute(
       "aria-invalid",
       "true"

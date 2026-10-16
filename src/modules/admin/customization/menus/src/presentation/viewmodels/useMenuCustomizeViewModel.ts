@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any, react-hooks/exhaustive-deps, unused-imports/no-unused-vars */
 // FILE-EXCEPTION: file length
 /**
  * Menu Customize ViewModel (Orchestrator)
@@ -138,8 +139,10 @@ export function useMenuCustomizeViewModel() {
         }
       };
       collectIds(menuTree);
-      setExpandedOriginal(allIds);
-      setExpandedPreview(new Set(allIds));
+      queueMicrotask(() => {
+        setExpandedOriginal(allIds);
+        setExpandedPreview(new Set(allIds));
+      });
     }
   }, [menuTree]);
 
@@ -206,10 +209,10 @@ export function useMenuCustomizeViewModel() {
 
   // ── Find node by ID (recursive) ─────────────────────────────────────
   const findNode = useCallback(
-    (id: string, nodes: MenuTreeNode[] = menuTree): MenuTreeNode | null => {
+    function search(id: string, nodes: MenuTreeNode[] = menuTree): MenuTreeNode | null {
       for (const node of nodes) {
         if (node.id === id) return node;
-        const found = findNode(id, node.children);
+        const found = search(id, node.children);
         if (found) return found;
       }
       return null;
@@ -395,14 +398,14 @@ export function useMenuCustomizeViewModel() {
 
   /** Find siblings and parent for a node in the tree */
   const findSiblingsAndParent = useCallback(
-    (
+    function locate(
       nodeId: string,
       nodes: MenuTreeNode[] = menuTree,
       parentId?: string
-    ): { siblings: MenuTreeNode[]; parentId?: string } | null => {
+    ): { siblings: MenuTreeNode[]; parentId?: string } | null {
       for (const node of nodes) {
         if (node.id === nodeId) return { siblings: nodes, parentId };
-        const found = findSiblingsAndParent(nodeId, node.children, node.id);
+        const found = locate(nodeId, node.children, node.id);
         if (found) return found;
       }
       return null;

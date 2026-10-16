@@ -1,6 +1,9 @@
-import { Site } from "../../domain/entities/Site";
+﻿import { Site } from "../../domain/entities/Site";
 import type { SiteDto } from "../models/SiteDto";
 
+/**
+ * Documentation for module export
+ */
 export class SiteMapper {
   static toEntity(dto: SiteDto): Site {
     return new Site({

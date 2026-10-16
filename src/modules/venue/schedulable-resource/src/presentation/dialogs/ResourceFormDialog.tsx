@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import React from "react";
 import {
@@ -22,6 +22,9 @@ interface ResourceFormDialogProps {
   onSubmit: (data: Record<string, unknown>) => Promise<void>;
 }
 
+/**
+ * Documentation for ResourceFormDialog
+ */
 export function ResourceFormDialog({
   open,
   onOpenChange,
@@ -124,18 +127,12 @@ export function ResourceFormDialog({
       <DialogContent>
         <DialogHeader>
           <DialogTitle>
-            {editing
-              ? t("schedulableResource.editTitle")
-              : t("schedulableResource.addNew")}
+            {editing ? t("schedulableResource.editTitle") : t("schedulableResource.addNew")}
           </DialogTitle>
           <DialogDescription>{t("schedulableResource.formDescription")}</DialogDescription>
         </DialogHeader>
         <GenericForm
-          fields={
-            editing
-              ? fields.filter((f) => f.name !== "facilityResourceProfileId")
-              : fields
-          }
+          fields={editing ? fields.filter((f) => f.name !== "facilityResourceProfileId") : fields}
           initialValues={initialValues}
           onSubmit={onSubmit}
           onCancel={() => onOpenChange(false)}

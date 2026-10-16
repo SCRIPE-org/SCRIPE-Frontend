@@ -84,4 +84,3 @@ describe("i18n — fieldGroup namespace resolution", () => {
     expect(resolve(arDict, "fieldGroup.global")).toBe("عام");
   });
 });
-

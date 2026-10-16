@@ -68,7 +68,10 @@ export function MockStatsGrid({ className }: MockStatsGridProps) {
       {stats.map((stat, i) => {
         const Icon = stat.icon;
         return (
-          <div key={i} className="rounded-nx-md border border-nx-line bg-nx-surface p-4 shadow-nx-sm">
+          <div
+            key={i}
+            className="rounded-nx-md border border-nx-line bg-nx-surface p-4 shadow-nx-sm"
+          >
             <div className="mb-3 flex items-center justify-between">
               <span className="text-sm text-nx-ink-3">{stat.label}</span>
               <div className={cn("rounded-nx-md p-2", stat.bg)}>

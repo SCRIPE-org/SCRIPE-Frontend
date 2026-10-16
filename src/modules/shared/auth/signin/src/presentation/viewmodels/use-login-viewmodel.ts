@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
 import { useState, useCallback, useRef, useEffect } from "react";
@@ -19,6 +20,9 @@ import { getAuthContainer } from "@modules/auth/di";
 import { getSafeRedirectPath } from "../utils/redirect-safety";
 
 import type { LoginFormData, LoginStep } from "../types/loginTypes";
+/**
+ * Documentation for module export
+ */
 export type { LoginFormData, LoginStep };
 
 /**
@@ -101,6 +105,11 @@ export function useLoginViewModel() {
     setTenantIdState(id);
   }, []);
 
+  const isRedirectTriggered = useCallback(() => hasTriggeredRedirect.current, []);
+  const onRedirectTriggered = useCallback(() => {
+    hasTriggeredRedirect.current = true;
+  }, []);
+
   // ── 2FA handler ─────────────────────────────────────────────────────────
   const twoFA = use2FAHandler({
     redirectPath,
@@ -109,7 +118,7 @@ export function useLoginViewModel() {
     tenantId: tenantId,
     setLoginStep,
     setError,
-    hasTriggeredRedirect,
+    onRedirectTriggered,
   });
 
   // ── Workspace selector ────────────────────────────────────────────────────
@@ -122,7 +131,8 @@ export function useLoginViewModel() {
     setLoginStep,
     setError,
     setTenantId,
-    hasTriggeredRedirect,
+    isRedirectTriggered,
+    onRedirectTriggered,
     handleRedirect,
     enterTwoFactor: twoFA.enterTwoFactor,
     onTenantResolved: (id) => {

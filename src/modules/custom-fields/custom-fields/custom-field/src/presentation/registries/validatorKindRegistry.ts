@@ -40,6 +40,9 @@ export type { ValidatorKindName } from "../../data/models/CustomFieldModel";
 
 import type { ValidatorKindName } from "../../data/models/CustomFieldModel";
 
+/**
+ * Documentation for module export
+ */
 export interface ValidatorKindCatalogEntry {
   /**
    * i18n key for this kind's display label in the admin picker, under the

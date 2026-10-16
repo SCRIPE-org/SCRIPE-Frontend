@@ -25,9 +25,12 @@ function shortId(id: string | undefined): string {
 }
 
 // P5.4: React.memo prevents unnecessary re-renders
+/**
+ * Documentation for module export
+ */
 export const PartyPersonListView = React.memo(function PartyPersonListView() {
   useModuleLocales(() => import("../../../locales"), "party-kernel.partyPerson");
-  const { vm } = usePartyPersonViewModel();
+  const { vm, lookupParties } = usePartyPersonViewModel();
   const { t, language } = useI18n();
 
   const config: CrudConfig<PartyPerson> = {
@@ -36,6 +39,12 @@ export const PartyPersonListView = React.memo(function PartyPersonListView() {
     resource: "party-people",
     entityTypeKey: "party.person",
     columns: [
+      {
+        key: "fullName",
+        label: t("partyPerson.columns.fullName"),
+        sortable: true,
+        render: (_value: string, item: PartyPerson) => item.displayName,
+      },
       {
         key: "partyId",
         label: t("partyPerson.columns.partyId"),
@@ -77,7 +86,9 @@ export const PartyPersonListView = React.memo(function PartyPersonListView() {
       {
         name: "partyId",
         label: t("partyPerson.form.partyId"),
-        type: "text" as const,
+        type: "server-select" as const,
+        searchType: "server" as const,
+        onServerSearch: lookupParties,
         placeholder: t("partyPerson.form.partyIdPlaceholder"),
         required: true,
       },
@@ -107,7 +118,9 @@ export const PartyPersonListView = React.memo(function PartyPersonListView() {
       {
         name: "partyId",
         label: t("partyPerson.form.partyId"),
-        type: "text" as const,
+        type: "server-select" as const,
+        searchType: "server" as const,
+        onServerSearch: lookupParties,
         placeholder: t("partyPerson.form.partyIdPlaceholder"),
         required: true,
       },
@@ -145,8 +158,7 @@ export const PartyPersonListView = React.memo(function PartyPersonListView() {
       lastName: item.lastName,
       isMinor: item.isMinor,
     }),
-    getItemDisplayName: (item: PartyPerson) =>
-      [item.firstName, item.lastName].filter(Boolean).join(" ") || item.partyId,
+    getItemDisplayName: (item: PartyPerson) => item.displayName || item.partyId,
     deleteService: (id: string) => vm.deleteItem(id),
     getActions: (_vmInstance, tFn, handleDeleteFn): CrudAction<PartyPerson>[] => [
       {

@@ -32,6 +32,9 @@ const STATUS_DOT: Record<ApiKeyDetail["status"], string> = {
   expired: "bg-warning",
 };
 
+/**
+ * Documentation for ApiKeyHeroBand
+ */
 export function ApiKeyHeroBand({
   detail,
   isRotating,
@@ -80,7 +83,7 @@ export function ApiKeyHeroBand({
               size="icon"
               onClick={handleCopy}
               aria-label={t("apikeys.copyPrefix")}
-              className="h-4 w-4 ms-1 p-0 text-nx-ink-3 transition-colors duration-nx-micro ease-nx-enter hover:text-nx-ink motion-reduce:transition-none"
+              className="ms-1 h-4 w-4 p-0 text-nx-ink-3 transition-colors duration-nx-micro ease-nx-enter hover:text-nx-ink motion-reduce:transition-none"
             >
               {copied ? (
                 <Check className="h-3 w-3 text-success" aria-hidden="true" />

@@ -31,7 +31,7 @@ export function GlossaryCard({ term }: GlossaryCardProps) {
       <Button
         type="button"
         variant="ghost"
-        className="docs-glossary-card h-auto p-0 hover:bg-transparent text-start font-normal"
+        className="docs-glossary-card h-auto p-0 text-start font-normal hover:bg-transparent"
         aria-pressed={!primaryIsEnglish}
         onClick={() => setPrimaryIsEnglish((current) => !current)}
       >

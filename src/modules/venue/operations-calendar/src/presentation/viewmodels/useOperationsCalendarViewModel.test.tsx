@@ -1,4 +1,4 @@
-import { act, renderHook, waitFor } from "@testing-library/react";
+﻿import { act, renderHook, waitFor } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { useRouter } from "next/navigation";
 import { getVenueContainer } from "@modules/venue/di";
@@ -51,7 +51,9 @@ function makeContainer() {
     schedulableResourceRepository: { getAll: vi.fn().mockResolvedValue({ items: [resource] }) },
     operationsCalendarRepository: { getDay: vi.fn().mockResolvedValue(day) },
     customerRepository: {
-      getById: vi.fn().mockResolvedValue({ id: "party-1", type: "Person", displayName: "Mona Hassan" }),
+      getById: vi
+        .fn()
+        .mockResolvedValue({ id: "party-1", type: "Person", displayName: "Mona Hassan" }),
     },
     bookingRepository: { confirm: vi.fn().mockResolvedValue({ reservationId: "reservation-1" }) },
   };
@@ -92,9 +94,11 @@ describe("useOperationsCalendarViewModel", () => {
 
     act(() => result.current.nextDay());
     expect(result.current.state.day).toBeNull();
-    await waitFor(() => expect(container.operationsCalendarRepository.getDay).toHaveBeenLastCalledWith(
-      expect.objectContaining({ dateLocal: "2026-09-10" })
-    ));
+    await waitFor(() =>
+      expect(container.operationsCalendarRepository.getDay).toHaveBeenLastCalledWith(
+        expect.objectContaining({ dateLocal: "2026-09-10" })
+      )
+    );
 
     act(() => result.current.previousDay());
     await waitFor(() => expect(result.current.date).toBe("2026-09-09"));
@@ -135,7 +139,9 @@ describe("useOperationsCalendarViewModel", () => {
     const { result } = renderHook(() => useOperationsCalendarViewModel());
     await waitFor(() => expect(result.current.state.stage).toBe("ready"));
 
-    act(() => result.current.createFromSlot(result.current.visibleResources[0], "2026-09-09T07:30:00Z"));
+    act(() =>
+      result.current.createFromSlot(result.current.visibleResources[0], "2026-09-09T07:30:00Z")
+    );
 
     expect(push).toHaveBeenCalledWith(
       "/venue/bookings/new?facilityId=facility-1&resourceId=resource-1&date=2026-09-09&startTime=10%3A30&durationMinutes=60"

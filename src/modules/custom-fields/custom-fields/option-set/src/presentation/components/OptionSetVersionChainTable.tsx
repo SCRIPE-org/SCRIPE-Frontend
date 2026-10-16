@@ -7,6 +7,9 @@ import { formatDateTime } from "@core/common/utils";
 import { OptionSetStatusBadge } from "./OptionSetStatusBadge";
 import type { OptionSetVersion } from "../../domain/entities/OptionSetVersion";
 
+/**
+ * Documentation for module export
+ */
 export interface OptionSetVersionChainTableProps {
   versions: readonly OptionSetVersion[];
   openVersionId: string | null;
@@ -14,6 +17,9 @@ export interface OptionSetVersionChainTableProps {
   chainHeadingId: string;
 }
 
+/**
+ * Documentation for OptionSetVersionChainTable
+ */
 export function OptionSetVersionChainTable({
   versions,
   openVersionId,

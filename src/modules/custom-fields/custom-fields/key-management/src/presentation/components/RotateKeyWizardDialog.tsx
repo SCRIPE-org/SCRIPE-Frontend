@@ -23,6 +23,9 @@ interface RotateKeyWizardDialogProps {
   isLoading?: boolean;
 }
 
+/**
+ * Documentation for RotateKeyWizardDialog
+ */
 export function RotateKeyWizardDialog({
   open,
   onOpenChange,
@@ -45,12 +48,12 @@ export function RotateKeyWizardDialog({
         <form onSubmit={handleSubmit}>
           <DialogHeader>
             <div className="flex items-center gap-2.5">
-              <div className="p-2 rounded-lg bg-primary/10 text-primary">
+              <div className="rounded-lg bg-primary/10 p-2 text-primary">
                 <RotateCw className="h-5 w-5" />
               </div>
               <div>
                 <DialogTitle>{t("customFieldsSecurity.rotateDialogTitle")}</DialogTitle>
-                <DialogDescription className="text-xs pt-1">
+                <DialogDescription className="pt-1 text-xs">
                   {t("customFieldsSecurity.rotateDialogDesc")}
                 </DialogDescription>
               </div>
@@ -59,7 +62,8 @@ export function RotateKeyWizardDialog({
           <div className="space-y-4 py-4">
             <div className="space-y-2">
               <Label htmlFor="rotate-reason">
-                {t("customFieldsSecurity.rotateReasonLabel")} <span className="text-destructive">*</span>
+                {t("customFieldsSecurity.rotateReasonLabel")}{" "}
+                <span className="text-destructive">*</span>
               </Label>
               <Input
                 id="rotate-reason"
@@ -75,7 +79,10 @@ export function RotateKeyWizardDialog({
                 checked={autoMigrate}
                 onCheckedChange={(c) => setAutoMigrate(Boolean(c))}
               />
-              <Label htmlFor="auto-migrate" className="text-xs font-normal cursor-pointer leading-tight">
+              <Label
+                htmlFor="auto-migrate"
+                className="cursor-pointer text-xs font-normal leading-tight"
+              >
                 {t("customFieldsSecurity.autoMigrateCheckbox")}
               </Label>
             </div>
@@ -89,11 +96,7 @@ export function RotateKeyWizardDialog({
             >
               {t("customFieldsSecurity.cancel")}
             </Button>
-            <Button
-              type="submit"
-              disabled={isLoading || !reason.trim()}
-              className="gap-1.5"
-            >
+            <Button type="submit" disabled={isLoading || !reason.trim()} className="gap-1.5">
               {isLoading ? "Rotating..." : t("customFieldsSecurity.confirmRotate")}
             </Button>
           </DialogFooter>

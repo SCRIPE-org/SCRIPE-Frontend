@@ -19,6 +19,9 @@ import {
   getContrastingInkBase,
 } from "./layoutPreviewHelpers";
 
+/**
+ * Documentation for module export
+ */
 export interface LayoutPreviewThumbnailProps {
   /** The layout configuration identifier. */
   layout: string;

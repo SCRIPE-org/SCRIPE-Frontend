@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 // FILE-EXCEPTION: file length
 import React, { useState } from "react";
 import { useI18n } from "@core/providers/i18n-provider";

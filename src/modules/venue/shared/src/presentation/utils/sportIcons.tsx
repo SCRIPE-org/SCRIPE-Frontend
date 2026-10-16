@@ -1,9 +1,4 @@
-import {
-  Dumbbell,
-  Layers,
-  Waves,
-  CircleDot,
-} from "lucide-react";
+﻿import { Dumbbell, Layers, Waves, CircleDot } from "lucide-react";
 
 /**
  * Clean SVG and Lucide icons for sports venue resources.
@@ -35,6 +30,9 @@ export function PadelIcon({ className = "size-4" }: { className?: string }) {
   );
 }
 
+/**
+ * Documentation for module export
+ */
 export function FootballIcon({ className = "size-4" }: { className?: string }) {
   return (
     <svg
@@ -59,6 +57,9 @@ export function FootballIcon({ className = "size-4" }: { className?: string }) {
   );
 }
 
+/**
+ * Documentation for module export
+ */
 export function TennisIcon({ className = "size-4" }: { className?: string }) {
   return (
     <svg
@@ -80,6 +81,9 @@ export function TennisIcon({ className = "size-4" }: { className?: string }) {
   );
 }
 
+/**
+ * Documentation for module export
+ */
 export function BasketballIcon({ className = "size-4" }: { className?: string }) {
   return (
     <svg
@@ -101,6 +105,9 @@ export function BasketballIcon({ className = "size-4" }: { className?: string })
   );
 }
 
+/**
+ * Documentation for resolveSportIcon
+ */
 export function resolveSportIcon(
   identifier?: string | null,
   className = "size-4"

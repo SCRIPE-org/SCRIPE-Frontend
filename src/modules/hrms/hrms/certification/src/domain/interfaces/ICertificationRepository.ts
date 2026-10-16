@@ -14,10 +14,11 @@ export interface CertificationListParams {
   sortDirection?: "asc" | "desc";
 }
 
+/**
+ * Documentation for module export
+ */
 export interface ICertificationRepository {
-  getAll(
-    params: CertificationListParams
-  ): Promise<{
+  getAll(params: CertificationListParams): Promise<{
     items: Certification[];
     totalCount: number;
     page: number;

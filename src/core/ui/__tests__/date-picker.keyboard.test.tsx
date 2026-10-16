@@ -47,9 +47,7 @@ if (typeof Element.prototype.scrollIntoView !== "function") {
 
 /** The current-month day cells, i.e. the ones eligible to hold the tab stop. */
 function currentMonthCells() {
-  return screen
-    .getAllByRole("gridcell")
-    .filter((cell) => !cell.hasAttribute("data-other-month"));
+  return screen.getAllByRole("gridcell").filter((cell) => !cell.hasAttribute("data-other-month"));
 }
 
 function tabStops() {
@@ -112,9 +110,7 @@ describe("DatePicker keyboard reachability", () => {
     // A disabled <button> is not focusable, so a roving target parked on a
     // blocked day would leave the grid unreachable again. Block everything
     // before the 20th of the shown month.
-    render(
-      <DatePicker id="d" value="2026-03-05" minDate="2026-03-20" onChange={vi.fn()} />
-    );
+    render(<DatePicker id="d" value="2026-03-05" minDate="2026-03-20" onChange={vi.fn()} />);
     openByKeyboard();
 
     const stops = tabStops();
@@ -128,9 +124,7 @@ describe("DatePicker keyboard reachability", () => {
     // Deterministic-state check: the grid must not end up with zero or many tab
     // stops just because nothing in the month is selectable. The header and
     // footer controls remain the way out.
-    render(
-      <DatePicker id="d" value="2026-03-05" onChange={vi.fn()} isDateDisabled={() => true} />
-    );
+    render(<DatePicker id="d" value="2026-03-05" onChange={vi.fn()} isDateDisabled={() => true} />);
     openByKeyboard();
 
     expect(tabStops()).toHaveLength(1);
@@ -139,7 +133,9 @@ describe("DatePicker keyboard reachability", () => {
   it("keeps DOM focus with the tab stop as the arrows move it", () => {
     // datetime-local so that arrow navigation does not also commit and close.
     const onChange = vi.fn();
-    render(<DatePicker id="d" type="datetime-local" value="2026-03-15T10:00" onChange={onChange} />);
+    render(
+      <DatePicker id="d" type="datetime-local" value="2026-03-15T10:00" onChange={onChange} />
+    );
     openByKeyboard();
 
     const before = tabStops()[0];

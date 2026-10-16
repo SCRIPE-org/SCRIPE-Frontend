@@ -33,18 +33,15 @@ export function PlatformCustomizeDrawer({
     {
       key: "activity",
       label:
-        t("platformCommandCenter.customizeDrawer.sections.activity") ||
-        "Global activity & health",
+        t("platformCommandCenter.customizeDrawer.sections.activity") || "Global activity & health",
     },
     {
       key: "attention",
-      label:
-        t("platformCommandCenter.customizeDrawer.sections.attention") || "Needs attention",
+      label: t("platformCommandCenter.customizeDrawer.sections.attention") || "Needs attention",
     },
     {
       key: "serviceHealth",
-      label:
-        t("platformCommandCenter.customizeDrawer.sections.serviceHealth") || "Service health",
+      label: t("platformCommandCenter.customizeDrawer.sections.serviceHealth") || "Service health",
     },
     {
       key: "recommendedActions",
@@ -64,7 +61,7 @@ export function PlatformCustomizeDrawer({
     <>
       {/* Scrim / Backdrop */}
       <div
-        className="fixed inset-0 bg-background/80 backdrop-blur-sm z-50 transition-opacity animate-in fade-in"
+        className="fixed inset-0 z-50 bg-background/80 backdrop-blur-sm transition-opacity animate-in fade-in"
         onClick={onClose}
       />
 
@@ -73,16 +70,16 @@ export function PlatformCustomizeDrawer({
         role="dialog"
         aria-modal="true"
         aria-label={t("platformCommandCenter.customizeDrawer.title") || "Customize dashboard"}
-        className="fixed right-0 top-0 bottom-0 w-[350px] max-w-full bg-card border-l border-border p-6 z-50 shadow-2xl flex flex-col justify-between animate-in slide-in-from-right duration-200"
+        className="fixed bottom-0 right-0 top-0 z-50 flex w-[350px] max-w-full flex-col justify-between border-l border-border bg-card p-6 shadow-2xl duration-200 animate-in slide-in-from-right"
       >
         <div>
           {/* Header */}
-          <div className="flex items-center justify-between pb-4 border-b border-border">
+          <div className="flex items-center justify-between border-b border-border pb-4">
             <div>
-              <span className="text-[10px] font-bold uppercase tracking-wider text-primary block mb-1">
+              <span className="mb-1 block text-[10px] font-bold uppercase tracking-wider text-primary">
                 {t("platformCommandCenter.customizeDrawer.personalize") || "Personalize"}
               </span>
-              <h3 className="text-base font-bold text-foreground tracking-tight">
+              <h3 className="text-base font-bold tracking-tight text-foreground">
                 {t("platformCommandCenter.customizeDrawer.title") || "Customize dashboard"}
               </h3>
             </div>
@@ -96,17 +93,17 @@ export function PlatformCustomizeDrawer({
             </Button>
           </div>
 
-          <p className="text-xs text-muted-foreground mt-3 leading-relaxed">
+          <p className="mt-3 text-xs leading-relaxed text-muted-foreground">
             {t("platformCommandCenter.customizeDrawer.description") ||
               "Curate your command center layout by toggling components on or off. Settings are saved locally."}
           </p>
 
           {/* Toggles */}
-          <div className="divide-y divide-border/80 mt-6 border-y border-border/80">
+          <div className="mt-6 divide-y divide-border/80 border-y border-border/80">
             {sections.map((sec) => {
               const isOn = visibleSections[sec.key];
               return (
-                <div key={sec.key} className="py-3 flex items-center justify-between">
+                <div key={sec.key} className="flex items-center justify-between py-3">
                   <span className="text-xs font-medium text-foreground">{sec.label}</span>
                   <Switch
                     checked={isOn}
@@ -123,7 +120,7 @@ export function PlatformCustomizeDrawer({
         <Button
           variant="outline"
           onClick={onReset}
-          className="w-full h-9 gap-2 text-xs font-semibold text-foreground border-border hover:bg-accent"
+          className="h-9 w-full gap-2 border-border text-xs font-semibold text-foreground hover:bg-accent"
         >
           <RotateCcw className="h-3.5 w-3.5 text-muted-foreground" />
           <span>

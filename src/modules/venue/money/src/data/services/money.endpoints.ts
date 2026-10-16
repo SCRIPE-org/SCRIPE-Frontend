@@ -1,5 +1,8 @@
 import { V1 } from "@/core/config/api-endpoints/_shared";
 
+/**
+ * Documentation for module export
+ */
 export const MONEY_ENDPOINTS = {
   INVOICES: `${V1}/finance/customer-invoices`,
   PAYMENTS: `${V1}/finance/recorded-payments`,

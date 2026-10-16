@@ -125,87 +125,90 @@ export function useFinalizeViewModel() {
   );
 
   // ── Polling loop: 3s → 10s after 60s; degrade copy after 2 min (G7/U13) ──
-  const pollOnce = useCallback(async () => {
-    const signupRef = refRef.current;
-    const sessionId = sessionIdRef.current;
-    if (stoppedRef.current) return;
+  const pollOnce = useCallback(
+    async function poll() {
+      const signupRef = refRef.current;
+      const sessionId = sessionIdRef.current;
+      if (stoppedRef.current) return;
 
-    if (signupRef) {
-      try {
-        const result = await signupRepository.getStatus(signupRef);
+      if (signupRef) {
+        try {
+          const result = await signupRepository.getStatus(signupRef);
 
-        switch (result.status) {
-          case "active":
-            await completeSession(signupRef);
-            return; // terminal — no more polling
-          case "consumed":
-            setPhase("consumed");
-            return;
-          case "failed":
-          case "abandoned":
-            setPhase("failed");
-            return;
-          case "unknown":
+          switch (result.status) {
+            case "active":
+              await completeSession(signupRef);
+              return; // terminal — no more polling
+            case "consumed":
+              setPhase("consumed");
+              return;
+            case "failed":
+            case "abandoned":
+              setPhase("failed");
+              return;
+            case "unknown":
+              setPhase("expired");
+              return;
+            default:
+              // pending / awaiting_payment — keep polling
+              break;
+          }
+        } catch {
+          // Transient network error — keep polling at the current cadence
+        }
+      } else if (sessionId) {
+        try {
+          const result = await signupRepository.getCheckoutStatus(sessionId);
+          setSupportReference(result.supportReference || "");
+
+          switch (result.status) {
+            case "completed":
+              setPhase("direct_success");
+              return; // terminal
+            case "failed":
+              setPhase("review_required");
+              setError(result.message || "");
+              return; // terminal
+            case "expired":
+            case "unknown":
+              setPhase("expired");
+              return; // terminal
+            default:
+              // pending / processing — keep polling
+              break;
+          }
+        } catch (err: unknown) {
+          const message = err instanceof Error ? err.message : "";
+          if (message.toLowerCase().includes("not found")) {
             setPhase("expired");
             return;
-          default:
-            // pending / awaiting_payment — keep polling
-            break;
+          }
         }
-      } catch {
-        // Transient network error — keep polling at the current cadence
-      }
-    } else if (sessionId) {
-      try {
-        const result = await signupRepository.getCheckoutStatus(sessionId);
-        setSupportReference(result.supportReference || "");
-
-        switch (result.status) {
-          case "completed":
-            setPhase("direct_success");
-            return; // terminal
-          case "failed":
-            setPhase("review_required");
-            setError(result.message || "");
-            return; // terminal
-          case "expired":
-          case "unknown":
-            setPhase("expired");
-            return; // terminal
-          default:
-            // pending / processing — keep polling
-            break;
-        }
-      } catch (err: unknown) {
-        const message = err instanceof Error ? err.message : "";
-        if (message.toLowerCase().includes("not found")) {
-          setPhase("expired");
-          return;
-        }
-      }
-    } else {
-      setPhase("expired");
-      return;
-    }
-
-    const elapsed = Date.now() - startedAtRef.current;
-
-    if (elapsed >= ABORT_AFTER_MS) {
-      if (sessionId) {
-        setSupportReference(`checkout-${sessionId.slice(-12)}`);
-        setPhase("review_required");
+      } else {
+        setPhase("expired");
         return;
       }
-      setPhase("timeout");
-      return; // terminal — stop polling
-    }
 
-    if (elapsed >= DEGRADE_AFTER_MS) {
-      setPhase((p) => (p === "processing" || p === "slow" ? "slow" : p));
-    }
-    const interval = elapsed >= SLOW_AFTER_MS ? SLOW_POLL_MS : FAST_POLL_MS;
-    timerRef.current = setTimeout(pollOnce, interval);
-  }, [signupRepository, completeSession]);
+      const elapsed = Date.now() - startedAtRef.current;
+
+      if (elapsed >= ABORT_AFTER_MS) {
+        if (sessionId) {
+          setSupportReference(`checkout-${sessionId.slice(-12)}`);
+          setPhase("review_required");
+          return;
+        }
+        setPhase("timeout");
+        return; // terminal — stop polling
+      }
+
+      if (elapsed >= DEGRADE_AFTER_MS) {
+        setPhase((p) => (p === "processing" || p === "slow" ? "slow" : p));
+      }
+      const interval = elapsed >= SLOW_AFTER_MS ? SLOW_POLL_MS : FAST_POLL_MS;
+      timerRef.current = setTimeout(poll, interval);
+    },
+    [signupRepository, completeSession]
+  );
 
   useEffect(() => {
     // ref priority: sessionStorage (same-browser Stripe round-trip) → ?ref= (email link)
@@ -232,7 +235,7 @@ export function useFinalizeViewModel() {
           window.history.replaceState(window.history.state, "", window.location.pathname);
         }
       } else {
-        setPhase("expired");
+        queueMicrotask(() => setPhase("expired"));
         return;
       }
     }

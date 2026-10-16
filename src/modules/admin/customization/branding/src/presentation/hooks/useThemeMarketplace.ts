@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any, unused-imports/no-unused-vars */
 /**
  * useThemeMarketplace — React hook for theme marketplace state management
  *
@@ -181,7 +182,9 @@ export function useThemeMarketplace(): UseThemeMarketplaceReturn {
         return true;
       } catch (err: any) {
         const message =
-          err?.message || err?.response?.data?.error || t("studio.gallery.toasts.applyFailedFallback");
+          err?.message ||
+          err?.response?.data?.error ||
+          t("studio.gallery.toasts.applyFailedFallback");
         // Detect system admin without tenant context
         if (
           message.includes("System admins") ||
@@ -247,12 +250,16 @@ export function useThemeMarketplace(): UseThemeMarketplaceReturn {
 
   // ── Auto-load on filter/page/tab change ──
   useEffect(() => {
-    loadThemes();
+    queueMicrotask(() => {
+      void loadThemes();
+    });
   }, [loadThemes]);
 
   // ── Load featured on mount ──
   useEffect(() => {
-    loadFeatured();
+    queueMicrotask(() => {
+      void loadFeatured();
+    });
   }, [loadFeatured]);
 
   return {

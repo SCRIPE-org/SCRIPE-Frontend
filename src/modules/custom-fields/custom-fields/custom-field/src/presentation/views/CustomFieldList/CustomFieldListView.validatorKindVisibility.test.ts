@@ -36,7 +36,7 @@ describe("CustomFieldListView.tsx — real source", () => {
   const here = dirname(fileURLToPath(import.meta.url));
   const source = readFileSync(resolve(here, "CustomFieldListView.tsx"), "utf-8");
 
-  it("createFields carries a validatorKind select gated on valueType === \"Text\"", () => {
+  it('createFields carries a validatorKind select gated on valueType === "Text"', () => {
     const createFieldsIdx = source.indexOf("createFields: [");
     const editFieldsIdx = source.indexOf("editFields: [");
     expect(createFieldsIdx).toBeGreaterThan(-1);

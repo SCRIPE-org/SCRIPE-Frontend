@@ -24,6 +24,8 @@ import { SYSTEM_PERMISSIONS } from "@core/common/types/permissions";
 import { STORAGE_KEYS } from "@core/config/storage-keys";
 import { appLogger } from "../common/logger";
 import { clearNavigationCaches } from "@modules/auth/core/data/utils/auth-storage-cleanup";
+import { TENANTS_ENDPOINTS } from "@core/config/api-endpoints";
+import { buildUrl } from "@core/config/api-endpoints/_shared";
 
 /**
  * Tenant information for context
@@ -109,8 +111,28 @@ export function TenantContextProvider({ children }: TenantContextProviderProps) 
   useEffect(() => {
     if (currentTenant?.id) {
       apiService.setTenantContext(currentTenant.id);
+      return;
     }
-  }, []);
+
+    // Auto-discover default tenant context if none is active
+    if (canEnterTenantWorld) {
+      const url = buildUrl(TENANTS_ENDPOINTS.TENANTS.LIST, { page: 1, pageSize: 1 });
+      apiService
+        .get<{ items: Array<{ id: string; name: string; code: string }> }>(url)
+        .then((res) => {
+          const first = res?.items?.[0];
+          if (first?.id) {
+            const tenantInfo = { id: first.id, name: first.name, code: first.code };
+            setCurrentTenant(tenantInfo);
+            sessionStorage.setItem(STORAGE_KEYS.tenant_context, JSON.stringify(tenantInfo));
+            apiService.setTenantContext(first.id);
+          }
+        })
+        .catch(() => {
+          // Ignore discovery error in dev
+        });
+    }
+  }, [canEnterTenantWorld, currentTenant?.id, apiService]);
 
   const enterTenantWorld = useCallback(
     (tenant: TenantInfo) => {

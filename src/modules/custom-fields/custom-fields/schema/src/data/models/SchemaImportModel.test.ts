@@ -24,7 +24,12 @@ import { SchemaImportMapper } from "../mappers/SchemaImportMapper";
 describe("looksLikeSchemaBundlePayload", () => {
   it("accepts a well-shaped bundle, even an empty one", () => {
     expect(
-      looksLikeSchemaBundlePayload({ formatVersion: 1, entityTypeKey: null, groups: [], definitions: [] })
+      looksLikeSchemaBundlePayload({
+        formatVersion: 1,
+        entityTypeKey: null,
+        groups: [],
+        definitions: [],
+      })
     ).toBe(true);
   });
 
@@ -111,7 +116,9 @@ describe("ImportSchemaBundleResultModel / SchemaImportMapper — the result mapp
   });
 
   it("reports isEmpty for a bundle that named zero groups", () => {
-    const entity = SchemaImportMapper.toEntity(ImportSchemaBundleResultModel.fromJson({ groups: [] }));
+    const entity = SchemaImportMapper.toEntity(
+      ImportSchemaBundleResultModel.fromJson({ groups: [] })
+    );
 
     expect(entity.isEmpty).toBe(true);
     expect(entity.createdCount).toBe(0);

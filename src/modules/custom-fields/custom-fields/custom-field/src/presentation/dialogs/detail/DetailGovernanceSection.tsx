@@ -5,12 +5,18 @@ import { DetailRow } from "@core/ui/detail-row";
 import { Separator } from "@core/ui/separator";
 import { useI18n } from "@core/providers/i18n-provider";
 
+/**
+ * Documentation for module export
+ */
 export interface DetailGovernanceSectionProps {
   sensitivityBadgeVariant: "outline" | "secondary" | "warning" | "destructive";
   sensitivityDisplayName: string;
   isExportable?: boolean | null;
 }
 
+/**
+ * Documentation for DetailGovernanceSection
+ */
 export function DetailGovernanceSection({
   sensitivityBadgeVariant,
   sensitivityDisplayName,

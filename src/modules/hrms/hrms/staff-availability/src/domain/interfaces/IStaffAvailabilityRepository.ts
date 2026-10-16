@@ -14,10 +14,11 @@ export interface StaffAvailabilityListParams {
   sortDirection?: "asc" | "desc";
 }
 
+/**
+ * Documentation for module export
+ */
 export interface IStaffAvailabilityRepository {
-  getAll(
-    params: StaffAvailabilityListParams
-  ): Promise<{
+  getAll(params: StaffAvailabilityListParams): Promise<{
     items: StaffAvailability[];
     totalCount: number;
     page: number;

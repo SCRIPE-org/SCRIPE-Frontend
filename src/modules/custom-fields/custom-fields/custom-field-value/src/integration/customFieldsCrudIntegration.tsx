@@ -11,6 +11,7 @@ import {
   formatCustomFieldValue,
   GenericFormCustomFieldControl,
   useRestrictableCustomFieldKeys,
+  assertSelectCustomFieldValuesValid,
 } from "../../../custom-field";
 import { mapValueToFieldConfig } from "./mapValueToFieldConfig";
 
@@ -28,17 +29,23 @@ async function getFormFields(entityTypeKey: string, ownerId?: string): Promise<F
   const results = ownerId
     ? await customFieldsContainer.customFieldValueRepository.getValues(entityTypeKey, ownerId)
     : await customFieldsContainer.customFieldValueRepository.getDefinitions(entityTypeKey);
-  return results
-    .slice()
-    .sort((a, b) => a.sortOrder - b.sortOrder)
-    // The sibling fallback reads each field's SERVER-SIDE value, so a rule on an edit form evaluates
-    // correctly before the user has touched anything. Built once over the fetched list rather than
-    // per field, so it is one closure over a map instead of a scan per lookup per keystroke.
-    .map((d, _index, all) =>
-      mapValueToFieldConfig(d, "en", (fieldKey) =>
-        all.find((candidate) => candidate.key.toLowerCase() === fieldKey.toLowerCase())?.value ?? null
+  return (
+    results
+      .slice()
+      .sort((a, b) => a.sortOrder - b.sortOrder)
+      // The sibling fallback reads each field's SERVER-SIDE value, so a rule on an edit form evaluates
+      // correctly before the user has touched anything. Built once over the fetched list rather than
+      // per field, so it is one closure over a map instead of a scan per lookup per keystroke.
+      .map((d, _index, all) =>
+        mapValueToFieldConfig(
+          d,
+          "en",
+          (fieldKey) =>
+            all.find((candidate) => candidate.key.toLowerCase() === fieldKey.toLowerCase())
+              ?.value ?? null
+        )
       )
-    );
+  );
 }
 
 /**
@@ -124,6 +131,7 @@ const customFieldsCrudIntegration: CustomFieldsExtensionApi = {
   formatValueForDisplay: formatCustomFieldValue,
   Section: CustomFieldsSection,
   useRestrictableCustomFieldKeys,
+  assertValuesValid: assertSelectCustomFieldValuesValid,
 };
 
 registerCustomFieldsExtension(customFieldsCrudIntegration);

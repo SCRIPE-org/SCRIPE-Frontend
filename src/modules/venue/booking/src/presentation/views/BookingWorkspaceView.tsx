@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import React from "react";
 import { AlertCircle, CalendarPlus, Lock } from "lucide-react";
@@ -17,7 +17,10 @@ import { AvailabilityCandidates } from "../components/AvailabilityCandidates";
 import { BookingSummaryActions } from "../components/BookingSummaryActions";
 import { CustomerSelection } from "../components/CustomerSelection";
 import { RequestCriteriaSection } from "../components/RequestCriteriaSection";
-import { endLocalFor, useBookingWorkspaceViewModel } from "../viewmodels/useBookingWorkspaceViewModel";
+import {
+  endLocalFor,
+  useBookingWorkspaceViewModel,
+} from "../viewmodels/useBookingWorkspaceViewModel";
 
 const PROGRESS_KEYS = ["customer", "request", "availability", "hold", "confirm"] as const;
 
@@ -27,13 +30,24 @@ function displayError(
 ): string {
   if (value === "booking-validation-failed") return t("booking.validation.required");
   if (value === "booking-search-failed") return t("booking.availability.networkFailure");
-  if (value === "booking-setup-failed" || value === "booking-hold-failed" || value === "booking-confirm-failed") {
+  if (
+    value === "booking-setup-failed" ||
+    value === "booking-hold-failed" ||
+    value === "booking-confirm-failed"
+  ) {
     return t("booking.errors.generic");
   }
   return value || t("booking.errors.generic");
 }
 
-export const BookingWorkspaceView = React.memo(function BookingWorkspaceView({ prefill = {} }: { prefill?: BookingWorkspacePrefill }) {
+/**
+ * Documentation for module export
+ */
+export const BookingWorkspaceView = React.memo(function BookingWorkspaceView({
+  prefill = {},
+}: {
+  prefill?: BookingWorkspacePrefill;
+}) {
   useModuleLocales(() => import("../../../locales"), "venue.booking");
   const { t, language, direction } = useI18n();
   const vm = useBookingWorkspaceViewModel(prefill);
@@ -51,12 +65,26 @@ export const BookingWorkspaceView = React.memo(function BookingWorkspaceView({ p
   const canCalculateQuote = usePermission(VENUE_PERMISSIONS.CATALOG_PRICING_CALCULATE_QUOTE);
   const canOverridePrice = usePermission(VENUE_PERMISSIONS.CATALOG_PRICING_OVERRIDE_PRICE);
 
-  const canUseCoreFlow = canViewCustomers && canViewFacilities && canViewProfiles &&
-    canViewResources && canSearch && canViewReservations && canCreateReservation && canCreateHold;
-  const invalidCriteria = !vm.customer || !vm.criteria.facilityId || !vm.criteria.date ||
-    vm.criteria.quantity < 1 || !endLocalFor(vm.criteria);
-  const workflowLocked = vm.state.stage === "holding" || vm.state.stage === "held" ||
-    vm.state.stage === "confirming" || vm.state.stage === "confirmed";
+  const canUseCoreFlow =
+    canViewCustomers &&
+    canViewFacilities &&
+    canViewProfiles &&
+    canViewResources &&
+    canSearch &&
+    canViewReservations &&
+    canCreateReservation &&
+    canCreateHold;
+  const invalidCriteria =
+    !vm.customer ||
+    !vm.criteria.facilityId ||
+    !vm.criteria.date ||
+    vm.criteria.quantity < 1 ||
+    !endLocalFor(vm.criteria);
+  const workflowLocked =
+    vm.state.stage === "holding" ||
+    vm.state.stage === "held" ||
+    vm.state.stage === "confirming" ||
+    vm.state.stage === "confirmed";
 
   if (!canUseCoreFlow) {
     return (
@@ -86,7 +114,11 @@ export const BookingWorkspaceView = React.memo(function BookingWorkspaceView({ p
         icon={AlertCircle}
         title={t("booking.errors.setup")}
         description={displayError(vm.setupError, t)}
-        action={<Button variant="outline" onClick={() => void vm.refreshSetup()}>{t("booking.errors.retry")}</Button>}
+        action={
+          <Button variant="outline" onClick={() => void vm.refreshSetup()}>
+            {t("booking.errors.retry")}
+          </Button>
+        }
       />
     );
   }
@@ -99,7 +131,10 @@ export const BookingWorkspaceView = React.memo(function BookingWorkspaceView({ p
         description={t("booking.description")}
       />
 
-      <ol className="grid grid-cols-2 gap-2 rounded-xl border border-nx-border bg-nx-surface p-3 sm:grid-cols-5" aria-label={t("booking.title")}>
+      <ol
+        className="border-nx-border grid grid-cols-2 gap-2 rounded-xl border bg-nx-surface p-3 sm:grid-cols-5"
+        aria-label={t("booking.title")}
+      >
         {PROGRESS_KEYS.map((key, index) => (
           <li key={key} className="flex items-center gap-2 text-sm text-nx-ink-2">
             <Badge variant="outline">{index + 1}</Badge>
@@ -170,7 +205,13 @@ export const BookingWorkspaceView = React.memo(function BookingWorkspaceView({ p
             locale={language}
             customer={vm.customer}
             state={vm.state}
-            canHold={canCreateHold && canViewCommercials && canCalculateQuote && Boolean(vm.priceQuote) && !vm.priceQuoteLoading}
+            canHold={
+              canCreateHold &&
+              canViewCommercials &&
+              canCalculateQuote &&
+              Boolean(vm.priceQuote) &&
+              !vm.priceQuoteLoading
+            }
             canConfirm={canConfirm && canViewCommercials && canCalculateQuote}
             priceQuote={vm.priceQuote}
             priceQuoteLoading={vm.priceQuoteLoading}

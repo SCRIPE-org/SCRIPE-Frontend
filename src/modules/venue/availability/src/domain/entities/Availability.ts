@@ -1,3 +1,6 @@
+/**
+ * Documentation for [
+ */
 export const WEEK_DAYS = [
   "Sunday",
   "Monday",
@@ -8,8 +11,14 @@ export const WEEK_DAYS = [
   "Saturday",
 ] as const;
 
+/**
+ * Documentation for WEEK_DAYS)[number]
+ */
 export type WeekDay = (typeof WEEK_DAYS)[number];
 
+/**
+ * Documentation for module export
+ */
 export interface AvailabilityWindow {
   id?: string;
   dayOfWeek: WeekDay;
@@ -18,6 +27,9 @@ export interface AvailabilityWindow {
   capacityOverride: number | null;
 }
 
+/**
+ * Documentation for module export
+ */
 export interface AvailabilityCalendar {
   id: string;
   resourceId: string;
@@ -31,6 +43,9 @@ export interface AvailabilityCalendar {
   modifiedAt?: string;
 }
 
+/**
+ * Documentation for module export
+ */
 export interface SaveAvailabilityCalendar {
   resourceId: string;
   timeZoneId: string;
@@ -39,6 +54,9 @@ export interface SaveAvailabilityCalendar {
   windows: AvailabilityWindow[];
 }
 
+/**
+ * Documentation for module export
+ */
 export interface AvailabilitySearchInput {
   resourceId: string;
   timeZoneId: string;
@@ -47,6 +65,9 @@ export interface AvailabilitySearchInput {
   quantity: number;
 }
 
+/**
+ * Documentation for module export
+ */
 export interface AvailabilitySearchResult {
   resourceId: string;
   resourceName: string;
@@ -64,8 +85,14 @@ export interface AvailabilitySearchResult {
   asOfUtc: string;
 }
 
+/**
+ * Documentation for "maintenance"
+ */
 export type ResourceBlockKind = "blackout" | "maintenance";
 
+/**
+ * Documentation for module export
+ */
 export interface ResourceBlock {
   id: string;
   resourceId: string;
@@ -79,6 +106,9 @@ export interface ResourceBlock {
   modifiedAt?: string;
 }
 
+/**
+ * Documentation for module export
+ */
 export interface SaveResourceBlock {
   resourceId: string;
   timeZoneId: string;

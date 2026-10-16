@@ -24,6 +24,9 @@ const pipelineStageKeys = [
   "handler",
 ] as const;
 
+/**
+ * Documentation for module export
+ */
 export function PipelineSimulator({ titleKey }: PipelineSimulatorProps) {
   const { t } = useDocsI18n();
   const [activeStep, setActiveStep] = useState<number>(-1);

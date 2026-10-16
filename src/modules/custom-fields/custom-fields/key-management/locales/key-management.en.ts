@@ -1,10 +1,12 @@
 export const keyManagementEn = {
   customFieldsSecurity: {
     title: "Security & Encryption",
-    subtitle: "Enterprise-grade multi-tenant envelope encryption, platform keyring rotation, and live database rewrap.",
+    subtitle:
+      "Enterprise-grade multi-tenant envelope encryption, platform keyring rotation, and live database rewrap.",
     activeKey: "Active Cryptographic Key",
     uninitializedTitle: "Tenant Encryption Key Not Initialized",
-    uninitializedDesc: "This tenant has not generated a unique cryptographic key. Confidential and Secret custom fields cannot be created until a key is established.",
+    uninitializedDesc:
+      "This tenant has not generated a unique cryptographic key. Confidential and Secret custom fields cannot be created until a key is established.",
     initializeButton: "Initialize Tenant Key",
     rotateButton: "Rotate Key",
     revokeButton: "Revoke Key",
@@ -17,9 +19,11 @@ export const keyManagementEn = {
     lastRotated: "Last Rotated",
     encryptedRecords: "Total Encrypted Records",
     distributionTitle: "Key Version Distribution",
-    distributionDesc: "Proportion of database records encrypted under historical vs active key versions.",
+    distributionDesc:
+      "Proportion of database records encrypted under historical vs active key versions.",
     healthyNotice: "All records are encrypted under the latest active key version.",
-    needsRewrapNotice: "Records are encrypted under historical key versions. Database rewrap migration is recommended.",
+    needsRewrapNotice:
+      "Records are encrypted under historical key versions. Database rewrap migration is recommended.",
     startRewrapButton: "Start Rewrap Migration",
     migrationInProgress: "Rewrap Migration in Progress",
     progress: "Progress",
@@ -27,14 +31,16 @@ export const keyManagementEn = {
     failed: "Failed",
     cancelMigration: "Cancel Migration",
     auditLogsTitle: "Cryptographic Audit Trail",
-    auditLogsDesc: "Immutable access log for decrypted field reveal events and key lifecycle actions.",
+    auditLogsDesc:
+      "Immutable access log for decrypted field reveal events and key lifecycle actions.",
     action: "Action",
     field: "Field",
     actor: "Actor",
     ipAddress: "IP Address",
     timestamp: "Timestamp",
     rotateDialogTitle: "Rotate Encryption Key",
-    rotateDialogDesc: "Generate a new cryptographic version for this tenant. Previous keys remain readable, and a background rewrap job can migrate existing records.",
+    rotateDialogDesc:
+      "Generate a new cryptographic version for this tenant. Previous keys remain readable, and a background rewrap job can migrate existing records.",
     rotateReasonLabel: "Rotation Reason",
     rotateReasonPlaceholder: "e.g., Scheduled quarterly rotation, compliance audit",
     autoMigrateCheckbox: "Automatically start background database rewrap job after rotation",
@@ -45,7 +51,8 @@ export const keyManagementEn = {
     confirmationCodeLabel: "Type tenant code to confirm",
     confirmRevoke: "Permanently Revoke Key",
     platformTitle: "Platform Cryptographic Security",
-    platformSubtitle: "Platform cryptographic master keyring, cipher suites, and multi-tenant zero-knowledge envelope isolation.",
+    platformSubtitle:
+      "Platform cryptographic master keyring, cipher suites, and multi-tenant zero-knowledge envelope isolation.",
     platformKeyringTitle: "Platform Cryptographic Master Keyring",
     platformKeyringDesc: "System root key management initialized from environment configuration",
     operational: "Operational",
@@ -64,13 +71,16 @@ export const keyManagementEn = {
     colSource: "Source",
     colStatus: "Status",
     architectureNoteTitle: "Zero-Knowledge Tenant Isolation Invariant",
-    architectureNoteBody: "Platform Master Keyring provides the foundation key for the entire cluster. In tenant contexts, tenant-specific secrets are derived via HKDF and XORed with the platform master key. Tenants MUST initialize their own dedicated cryptographic key before confidential custom fields can be created or stored, ensuring total zero-knowledge isolation.",
+    architectureNoteBody:
+      "Platform Master Keyring provides the foundation key for the entire cluster. In tenant contexts, tenant-specific secrets are derived via HKDF and XORed with the platform master key. Tenants MUST initialize their own dedicated cryptographic key before confidential custom fields can be created or stored, ensuring total zero-knowledge isolation.",
     clusterRewrapTitle: "Platform Cluster Rewrap Migration",
-    clusterRewrapDesc: "Re-encrypt all tenant cryptographic keys and confidential custom field records across the entire cluster under the active platform master key.",
-    clusterRewrapActiveDesc: "Cluster rewrap is actively processing encrypted records across all tenants in the background.",
+    clusterRewrapDesc:
+      "Re-encrypt all tenant cryptographic keys and confidential custom field records across the entire cluster under the active platform master key.",
+    clusterRewrapActiveDesc:
+      "Cluster rewrap is actively processing encrypted records across all tenants in the background.",
     startClusterRewrapButton: "Start Cluster Rewrap",
     clusterMigrationRunning: "Cluster Rewrap In Progress",
     recordsMigrated: "Records Migrated",
     cancelClusterRewrap: "Cancel Cluster Rewrap",
-  }
+  },
 };

@@ -46,7 +46,10 @@ vi.mock("@modules/entitlements/di", () => ({
   },
 }));
 
-import { useTenantPlanCreateViewModel, TENANT_PLAN_ENTITY_TYPE_KEY } from "./useTenantPlanCreateViewModel";
+import {
+  useTenantPlanCreateViewModel,
+  TENANT_PLAN_ENTITY_TYPE_KEY,
+} from "./useTenantPlanCreateViewModel";
 
 function wrapper({ children }: { children: ReactNode }) {
   const queryClient = new QueryClient({

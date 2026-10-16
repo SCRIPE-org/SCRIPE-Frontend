@@ -33,6 +33,9 @@ import {
   UNKNOWN_ENTITY_TYPE_ERROR_CODE,
 } from "../../data/models/ValueExportModel";
 
+/**
+ * Documentation for module export
+ */
 export class ValueExportError extends Error {
   /** HTTP status from the `ErrorResponse` body; 0 when the failure carried no body. */
   readonly statusCode: number;

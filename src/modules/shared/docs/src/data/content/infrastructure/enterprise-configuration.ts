@@ -145,12 +145,28 @@ const sections: DocSection[] = [
     direction: "vertical",
     nodes: [
       { id: "A", label: "Inbound HTTP Request from CDN / Cloudflare", type: "default" },
-      { id: "B", label: "Verify Origin Shared Secret Header (X-Scripe-Origin-Verify)", type: "warning" },
+      {
+        id: "B",
+        label: "Verify Origin Shared Secret Header (X-Scripe-Origin-Verify)",
+        type: "warning",
+      },
       { id: "C", label: "Extract Client IP & evaluate GeoIP / CIDR blocklist cache", type: "info" },
-      { id: "D", label: "Distributed Token-Bucket Rate Limiter (Redis counter per endpoint tier)", type: "primary" },
-      { id: "E", label: "Tenant Context Resolver (Subdomain / Path / Header resolution)", type: "info" },
+      {
+        id: "D",
+        label: "Distributed Token-Bucket Rate Limiter (Redis counter per endpoint tier)",
+        type: "primary",
+      },
+      {
+        id: "E",
+        label: "Tenant Context Resolver (Subdomain / Path / Header resolution)",
+        type: "info",
+      },
       { id: "F", label: "AstraFlow Diagnostic & Mapping Validation Gate", type: "success" },
-      { id: "G", label: "Execute CQRS Handler within Tenant Database Filter Scope", type: "success" },
+      {
+        id: "G",
+        label: "Execute CQRS Handler within Tenant Database Filter Scope",
+        type: "success",
+      },
     ],
     connections: [
       { from: "A", to: "B" },

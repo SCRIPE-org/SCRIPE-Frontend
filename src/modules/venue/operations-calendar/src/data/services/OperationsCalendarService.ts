@@ -6,6 +6,9 @@ import type {
 import type { IOperationsCalendarService } from "../../domain/interfaces/IOperationsCalendarService";
 import { OPERATIONS_CALENDAR_ENDPOINTS } from "./operations-calendar.endpoints";
 
+/**
+ * Documentation for module export
+ */
 export class OperationsCalendarService implements IOperationsCalendarService {
   constructor(private readonly api: IApiService) {}
 

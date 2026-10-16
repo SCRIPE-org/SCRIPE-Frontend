@@ -24,7 +24,7 @@ export function FileTreeNode({ file, isActive, onClick }: FileTreeNodeProps) {
       type="button"
       variant="ghost"
       aria-current={isActive ? "true" : undefined}
-      className={`docs-tree-node w-full h-auto justify-start ${isActive ? "active" : ""}`}
+      className={`docs-tree-node h-auto w-full justify-start ${isActive ? "active" : ""}`}
       style={{ paddingInlineStart: `${indent + 8}px` }}
       onClick={onClick}
     >

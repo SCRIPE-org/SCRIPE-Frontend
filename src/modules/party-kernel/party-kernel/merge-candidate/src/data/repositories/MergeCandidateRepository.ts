@@ -17,6 +17,9 @@ import type { IMergeCandidateService } from "../../domain/interfaces/IMergeCandi
 import type { MergeCandidate } from "../../domain/entities/MergeCandidate";
 import { MergeCandidateMapper } from "../mappers/MergeCandidateMapper";
 
+/**
+ * Documentation for module export
+ */
 export class MergeCandidateRepository implements IMergeCandidateRepository {
   constructor(private readonly service: IMergeCandidateService) {}
 

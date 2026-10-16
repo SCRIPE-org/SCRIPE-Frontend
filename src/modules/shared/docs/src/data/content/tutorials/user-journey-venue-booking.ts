@@ -104,9 +104,6 @@ registerPage({
   category: "tutorials",
   order: 2,
   sections,
-  relatedSlugs: [
-    "modules/venue-overview",
-    "tutorials/user-journey-pricing-finance",
-  ],
+  relatedSlugs: ["modules/venue-overview", "tutorials/user-journey-pricing-finance"],
   lastUpdated: "2026-10-03",
 });

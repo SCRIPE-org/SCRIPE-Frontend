@@ -38,7 +38,11 @@ export function FeatureRow({
   language,
   t,
 }: FeatureRowProps) {
-  const displayName = resolveBilingualLabel(definition.displayNameEn, definition.displayNameAr, language);
+  const displayName = resolveBilingualLabel(
+    definition.displayNameEn,
+    definition.displayNameAr,
+    language
+  );
   const labelId = `feature-row-${definition.id}`;
 
   return (

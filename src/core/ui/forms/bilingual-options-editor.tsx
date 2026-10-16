@@ -11,11 +11,7 @@ import {
   type BilingualOptionRow,
 } from "./bilingual-options-parser";
 
-export {
-  parseBilingualOptions,
-  serializeBilingualOptions,
-  type BilingualOptionRow,
-};
+export { parseBilingualOptions, serializeBilingualOptions, type BilingualOptionRow };
 
 export interface BilingualOptionsEditorProps {
   value: string;
@@ -138,7 +134,7 @@ export function BilingualOptionsEditor({
       ) : null}
 
       {rows.length > 5 && (
-        <div className="flex items-center justify-between text-xs text-muted-foreground px-1 pb-1">
+        <div className="flex items-center justify-between px-1 pb-1 text-xs text-muted-foreground">
           <span className="font-medium">{rows.length} options</span>
           <span className="text-[11px] text-muted-foreground/70">Scroll to view all</span>
         </div>
@@ -148,7 +144,7 @@ export function BilingualOptionsEditor({
         className={cn(
           "space-y-2",
           rows.length > 5 &&
-            "max-h-72 overflow-y-auto pe-1 custom-scrollbar rounded-md border border-border/40 p-2 bg-muted/10"
+            "custom-scrollbar max-h-72 overflow-y-auto rounded-md border border-border/40 bg-muted/10 p-2 pe-1"
         )}
       >
         {rows.map((row, index) => (

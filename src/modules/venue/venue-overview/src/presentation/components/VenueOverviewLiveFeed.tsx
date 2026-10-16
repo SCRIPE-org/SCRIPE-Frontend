@@ -1,19 +1,13 @@
-"use client";
+﻿"use client";
 
 import React from "react";
 import Link from "next/link";
-import {
-  CalendarCheck2,
-  Clock,
-  LogIn,
-  ShieldAlert,
-  Activity,
-} from "lucide-react";
+import { CalendarCheck2, Clock, LogIn, ShieldAlert, Activity } from "lucide-react";
 import { cn } from "@core/common/utils";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@core/ui/card";
 import type { VenueOverviewUpNextItem } from "../../domain/entities/VenueOverview";
-import type { VenueAttentionSignal } from "@modules/venue/attention-center/src/domain/entities/VenueAttention";
-import type { OperationsCalendarBlock } from "@modules/venue/operations-calendar/src/domain/entities/OperationsCalendar";
+import type { VenueAttentionSignal } from "@modules/venue";
+import type { OperationsCalendarBlock } from "@modules/venue";
 
 interface FeedEvent {
   id: string;
@@ -53,6 +47,9 @@ function formatRelativeOrLocalTime(isoString: string, timeZoneId: string) {
   }
 }
 
+/**
+ * Documentation for VenueOverviewLiveFeed
+ */
 export function VenueOverviewLiveFeed({
   blocks = [],
   upNext,
@@ -68,8 +65,10 @@ export function VenueOverviewLiveFeed({
     events.push({
       id: `attention-${sig.kind}-${sig.resourceId}-${sig.occurredAtUtc}`,
       type: "attention",
-      title: t("venueOverview.liveFeed.attentionSignal", { defaultValue: "Attention signal detected" }),
-      subtitle: `${sig.resourceName} · ${t(`attention.signal.${sig.kind}.title`, { defaultValue: sig.kind })}`,
+      title: t("venueOverview.liveFeed.attentionSignal", {
+        defaultValue: "Attention signal detected",
+      }),
+      subtitle: `${sig.resourceName} Â· ${t(`attention.signal.${sig.kind}.title`, { defaultValue: sig.kind })}`,
       timeLabel: formatRelativeOrLocalTime(sig.occurredAtUtc, timeZoneId),
       timestampUtc: sig.occurredAtUtc,
       href: "/venue/attention",
@@ -83,7 +82,7 @@ export function VenueOverviewLiveFeed({
       id: `checkedin-${b.reservationId}`,
       type: "checkedIn",
       title: t("venueOverview.liveFeed.guestCheckedIn", { defaultValue: "Guest checked in" }),
-      subtitle: `${b.reservationNumber} · In play`,
+      subtitle: `${b.reservationNumber} Â· In play`,
       timeLabel: formatRelativeOrLocalTime(b.startUtc, timeZoneId),
       timestampUtc: b.startUtc,
       href: `/venue/bookings/${encodeURIComponent(b.reservationId)}`,
@@ -99,7 +98,7 @@ export function VenueOverviewLiveFeed({
       id: `held-${b.reservationId}`,
       type: "held",
       title: t("venueOverview.liveFeed.holdActive", { defaultValue: "Hold pending confirmation" }),
-      subtitle: `${holdIdentifier} · ${label}`,
+      subtitle: `${holdIdentifier} Â· ${label}`,
       timeLabel: formatRelativeOrLocalTime(b.startUtc, timeZoneId),
       timestampUtc: b.startUtc,
       href: "/venue/calendar",
@@ -116,7 +115,7 @@ export function VenueOverviewLiveFeed({
         id: `confirmed-${item.reservationId}`,
         type: "confirmed",
         title: t("venueOverview.liveFeed.bookingConfirmed", { defaultValue: "Booking confirmed" }),
-        subtitle: `${item.resourceName} · ${item.customerDisplayName || item.reservationNumber}`,
+        subtitle: `${item.resourceName} Â· ${item.customerDisplayName || item.reservationNumber}`,
         timeLabel: timePart,
         timestampUtc: item.startUtc,
         href: `/venue/bookings/${encodeURIComponent(item.reservationId)}`,
@@ -128,43 +127,49 @@ export function VenueOverviewLiveFeed({
 
   return (
     <Card
-      className="border-nx-line bg-nx-surface flex flex-col h-full overflow-hidden"
+      className="flex h-full flex-col overflow-hidden border-nx-line bg-nx-surface"
       data-testid="live-venue-feed"
     >
-      <CardHeader className="pb-3 border-b border-nx-line">
+      <CardHeader className="border-b border-nx-line pb-3">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <span className="flex size-2 rounded-full bg-emerald-500 animate-pulse" aria-hidden="true" />
+            <span
+              className="flex size-2 animate-pulse rounded-full bg-emerald-500"
+              aria-hidden="true"
+            />
             <CardTitle className="text-sm font-bold text-nx-ink">
               {t("venueOverview.liveFeed.title", { defaultValue: "Live Venue Feed" })}
             </CardTitle>
           </div>
-          <span className="text-[11px] font-mono text-nx-ink-3">
+          <span className="font-mono text-[11px] text-nx-ink-3">
             {t("venueOverview.liveFeed.pulse", { defaultValue: "Operational Pulse" })}
           </span>
         </div>
         <CardDescription className="text-xs text-nx-ink-2">
           {t("venueOverview.liveFeed.subtitle", {
-            defaultValue: "Authoritative real-time operational events from today’s bookings and attention signals.",
+            defaultValue:
+              "Authoritative real-time operational events from todayâ€™s bookings and attention signals.",
           })}
         </CardDescription>
       </CardHeader>
 
-      <CardContent className="p-4 flex-1 overflow-y-auto max-h-[460px]">
+      <CardContent className="max-h-[460px] flex-1 overflow-y-auto p-4">
         {sortedEvents.length === 0 ? (
-          <div className="flex flex-col items-center justify-center h-full min-h-[220px] rounded-nx-md border border-dashed border-nx-line bg-nx-surfaceSubtle/40 p-6 text-center text-xs text-nx-ink-3">
-            <Activity className="size-6 text-nx-ink-3 mb-2" aria-hidden="true" />
+          <div className="bg-nx-surfaceSubtle/40 flex h-full min-h-[220px] flex-col items-center justify-center rounded-nx-md border border-dashed border-nx-line p-6 text-center text-xs text-nx-ink-3">
+            <Activity className="mb-2 size-6 text-nx-ink-3" aria-hidden="true" />
             <p className="font-semibold text-nx-ink">
-              {t("venueOverview.liveFeed.noEvents", { defaultValue: "No operational events recorded yet" })}
+              {t("venueOverview.liveFeed.noEvents", {
+                defaultValue: "No operational events recorded yet",
+              })}
             </p>
-            <p className="mt-1 text-[11px] text-nx-ink-3 max-w-[200px]">
+            <p className="mt-1 max-w-[200px] text-[11px] text-nx-ink-3">
               {t("venueOverview.liveFeed.noEventsDesc", {
                 defaultValue: "Check-ins, holds, and confirmed reservations will stream here live.",
               })}
             </p>
           </div>
         ) : (
-          <div className="relative ps-6 space-y-4 before:absolute before:start-2.5 before:top-2 before:bottom-2 before:w-px before:bg-nx-line">
+          <div className="relative space-y-4 ps-6 before:absolute before:bottom-2 before:start-2.5 before:top-2 before:w-px before:bg-nx-line">
             {sortedEvents.map((evt) => {
               let Icon = CalendarCheck2;
               let iconStyle = "bg-nx-accent/10 text-nx-accent border-nx-accent/30";
@@ -181,7 +186,7 @@ export function VenueOverviewLiveFeed({
               }
 
               return (
-                <div key={evt.id} className="relative group">
+                <div key={evt.id} className="group relative">
                   {/* Timeline Node Icon */}
                   <div
                     className={cn(
@@ -196,19 +201,20 @@ export function VenueOverviewLiveFeed({
                   {/* Event Content */}
                   <Link
                     href={evt.href}
-                    className="block rounded-nx-sm p-2 -my-1 -mx-1 hover:bg-nx-surfaceSubtle transition-colors group/item"
+                    className="hover:bg-nx-surfaceSubtle group/item -mx-1 -my-1 block rounded-nx-sm p-2 transition-colors"
                   >
                     <div className="flex items-start justify-between gap-2">
-                      <p className="text-xs font-semibold text-nx-ink group-hover/item:text-nx-accent transition-colors leading-tight">
+                      <p className="text-xs font-semibold leading-tight text-nx-ink transition-colors group-hover/item:text-nx-accent">
                         {evt.title}
                       </p>
-                      <span className="text-[10px] font-mono text-nx-ink-3 shrink-0 tabular-nums" dir="ltr">
+                      <span
+                        className="shrink-0 font-mono text-[10px] tabular-nums text-nx-ink-3"
+                        dir="ltr"
+                      >
                         {evt.timeLabel}
                       </span>
                     </div>
-                    <p className="text-[11px] text-nx-ink-2 truncate mt-0.5">
-                      {evt.subtitle}
-                    </p>
+                    <p className="mt-0.5 truncate text-[11px] text-nx-ink-2">{evt.subtitle}</p>
                   </Link>
                 </div>
               );

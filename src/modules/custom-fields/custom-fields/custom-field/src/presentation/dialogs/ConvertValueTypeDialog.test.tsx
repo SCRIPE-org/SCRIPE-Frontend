@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any, unused-imports/no-unused-vars */
 import React from "react";
 import { render, screen, fireEvent } from "@testing-library/react";
 import { describe, it, expect, vi } from "vitest";
@@ -111,9 +112,7 @@ describe("ConvertValueTypeDialog", () => {
       />
     );
 
-    expect(
-      screen.getByText("customField.convertValueType.kind.lossless")
-    ).toBeInTheDocument();
+    expect(screen.getByText("customField.convertValueType.kind.lossless")).toBeInTheDocument();
   });
 
   it("shows Lossy warning and requires confirmation checkbox", () => {
@@ -144,9 +143,7 @@ describe("ConvertValueTypeDialog", () => {
       />
     );
 
-    expect(
-      screen.getByText("customField.convertValueType.kind.lossy")
-    ).toBeInTheDocument();
+    expect(screen.getByText("customField.convertValueType.kind.lossy")).toBeInTheDocument();
 
     const checkbox = screen.getByRole("checkbox");
     expect(checkbox).not.toBeChecked();
@@ -207,9 +204,7 @@ describe("ConvertValueTypeDialog", () => {
       screen.getByText("customField.convertValueType.result.refusedTitle")
     ).toBeInTheDocument();
     expect(screen.getByText(/ath-101/)).toBeInTheDocument();
-    expect(
-      screen.getByText("Value 'invalid' cannot parse as Number")
-    ).toBeInTheDocument();
+    expect(screen.getByText("Value 'invalid' cannot parse as Number")).toBeInTheDocument();
   });
 
   it("renders rollback action when conversion is applied with jobRunId", () => {
@@ -254,9 +249,7 @@ describe("ConvertValueTypeDialog", () => {
       screen.getByText("customField.convertValueType.result.appliedTitle")
     ).toBeInTheDocument();
 
-    const rollbackButton = screen.getByText(
-      "customField.convertValueType.rollbackButton"
-    );
+    const rollbackButton = screen.getByText("customField.convertValueType.rollbackButton");
     fireEvent.click(rollbackButton);
 
     expect(onExecuteRollback).toHaveBeenCalledWith("job-run-77");

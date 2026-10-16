@@ -1,7 +1,5 @@
 "use client";
 
-/* eslint-disable react-hooks/set-state-in-effect */
-
 /**
  * NotificationBell — the bell and its panel.
  *
@@ -179,7 +177,7 @@ export function NotificationBell({ iconClassName = "h-5 w-5", className }: Notif
   const close = vm.close;
   useEffect(() => {
     if (!isOpen) return;
-    recalcPosition();
+    queueMicrotask(recalcPosition);
     const handler = (e: MouseEvent) => {
       const target = e.target as Node;
       if (

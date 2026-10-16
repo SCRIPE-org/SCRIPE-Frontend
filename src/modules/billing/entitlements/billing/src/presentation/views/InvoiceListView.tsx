@@ -164,9 +164,7 @@ export function InvoiceListView() {
                 ) : (
                   <Download className="h-4 w-4" aria-hidden="true" />
                 )}
-                {pdfLoading
-                  ? t("billing.actions.downloading")
-                  : t("billing.actions.downloadPdf")}
+                {pdfLoading ? t("billing.actions.downloading") : t("billing.actions.downloadPdf")}
               </DropdownMenuItem>
               <DropdownMenuSeparator />
               <DropdownMenuItem
@@ -179,9 +177,7 @@ export function InvoiceListView() {
                 ) : (
                   <Mail className="h-4 w-4" aria-hidden="true" />
                 )}
-                {emailLoading
-                  ? t("billing.actions.sending")
-                  : t("billing.actions.sendEmail")}
+                {emailLoading ? t("billing.actions.sending") : t("billing.actions.sendEmail")}
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>

@@ -1,5 +1,8 @@
 import { V1 } from "@/core/config/api-endpoints/_shared";
 
+/**
+ * Documentation for module export
+ */
 export const TENANT_PLANS_ENDPOINTS = {
   TENANT_PLANS: {
     LIST: `${V1}/tenant-plans`,

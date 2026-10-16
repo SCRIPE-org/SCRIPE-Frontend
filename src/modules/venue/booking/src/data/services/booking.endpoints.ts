@@ -1,5 +1,8 @@
 import { V1 } from "@/core/config/api-endpoints/_shared";
 
+/**
+ * Documentation for module export
+ */
 export const BOOKING_ENDPOINTS = {
   RESERVATIONS: `${V1}/Reservations`,
   RESERVATION_BY_ID: (id: string) => `${V1}/Reservations/${id}`,
@@ -13,4 +16,7 @@ export const BOOKING_ENDPOINTS = {
   HOLDS: `${V1}/booking-holds`,
   PARTIES: `${V1}/Parties`,
   PARTY_BY_ID: (id: string) => `${V1}/Parties/${id}`,
+  ORGANIZATIONS: `${V1}/Parties/organizations`,
+  PEOPLE: `${V1}/Parties/people`,
+  CONTACT_POINTS: `${V1}/contact-points`,
 } as const;

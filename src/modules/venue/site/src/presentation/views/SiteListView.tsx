@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import React, { useState, useTransition } from "react";
 import { GenericCrudView } from "@core/crud/components/generic-crud-view";
@@ -9,9 +9,12 @@ import { useI18n } from "@core/providers/i18n-provider";
 import { resolveIntlLocale } from "@core/common/utils";
 import { Pencil, Trash2 } from "lucide-react";
 import { VENUE_PERMISSIONS } from "@modules/venue/permission-constants";
-import { VenueResourceNav } from "@modules/venue/shared/src/presentation/components/VenueResourceNav";
+import { VenueResourceNav } from "@modules/venue";
 import { SiteFormDialog } from "../components/SiteFormDialog";
 
+/**
+ * Documentation for module export
+ */
 export const SiteListView = React.memo(function SiteListView() {
   const { vm } = useSiteViewModel();
   const { t, language } = useI18n();
@@ -72,9 +75,7 @@ export const SiteListView = React.memo(function SiteListView() {
       <GenericCrudView viewModel={vm} config={config} />
       <SiteFormDialog
         open={formDialog.open}
-        onOpenChange={(open) =>
-          setFormDialog((prev) => ({ ...prev, open }))
-        }
+        onOpenChange={(open) => setFormDialog((prev) => ({ ...prev, open }))}
         site={formDialog.site}
         onSuccess={() => {
           startTransition(() => {

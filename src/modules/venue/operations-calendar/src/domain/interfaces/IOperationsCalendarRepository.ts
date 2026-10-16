@@ -3,6 +3,9 @@ import type {
   OperationsCalendarQuery,
 } from "../entities/OperationsCalendar";
 
+/**
+ * Documentation for module export
+ */
 export interface IOperationsCalendarRepository {
   getDay(query: OperationsCalendarQuery): Promise<OperationsCalendarDay>;
 }

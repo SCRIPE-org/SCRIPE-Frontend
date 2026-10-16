@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { renderHook, act } from "@testing-library/react";
 import { describe, it, expect, beforeEach, vi } from "vitest";
 import { useDashboardLayout, type WidgetLayoutConfig } from "../useDashboardLayout";
@@ -124,4 +125,3 @@ describe("useDashboardLayout", () => {
     expect(result.current.isWidgetVisible("widget-1")).toBe(true);
   });
 });
-

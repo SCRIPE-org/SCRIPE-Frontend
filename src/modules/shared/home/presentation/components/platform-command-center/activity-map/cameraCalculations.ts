@@ -8,9 +8,13 @@ export function calculateZoomViewBox(
   clientY?: number
 ): ViewBox {
   const cx =
-    clientX !== undefined ? current.x + ((clientX - rect.left) / rect.width) * current.w : current.x + current.w / 2;
+    clientX !== undefined
+      ? current.x + ((clientX - rect.left) / rect.width) * current.w
+      : current.x + current.w / 2;
   const cy =
-    clientY !== undefined ? current.y + ((clientY - rect.top) / rect.height) * current.h : current.y + current.h / 2;
+    clientY !== undefined
+      ? current.y + ((clientY - rect.top) / rect.height) * current.h
+      : current.y + current.h / 2;
 
   const nw = clamp(current.w * factor, 180, 950);
   const nh = nw / (rect.width / rect.height);

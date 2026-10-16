@@ -28,10 +28,7 @@ import React from "react";
 import { render, screen, fireEvent } from "@testing-library/react";
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import "@testing-library/jest-dom/vitest";
-import {
-  RichTextCustomFieldControl,
-  RICH_TEXT_MAX_CHARACTERS,
-} from "./RichTextCustomFieldControl";
+import { RichTextCustomFieldControl, RICH_TEXT_MAX_CHARACTERS } from "./RichTextCustomFieldControl";
 
 vi.mock("@core/providers/i18n-provider", () => ({
   useI18n: () => ({ t: (key: string) => key, language: "en", direction: "ltr" }),
@@ -80,9 +77,7 @@ function lastEditorProps(): Record<string, unknown> {
  */
 function visibleCounterText(): string {
   const live = document.querySelector('[aria-live="polite"]');
-  const visible = screen
-    .getAllByText(/^customField\.richText\./)
-    .find((node) => node !== live);
+  const visible = screen.getAllByText(/^customField\.richText\./).find((node) => node !== live);
   return visible?.textContent ?? "";
 }
 
@@ -244,9 +239,7 @@ describe("RichTextCustomFieldControl -- the raw-markup counter", () => {
       />
     );
     expect(visibleCounterText()).toBe("customField.richText.characterCount");
-    expect(
-      screen.queryByText("customField.richText.charactersOverLimit")
-    ).not.toBeInTheDocument();
+    expect(screen.queryByText("customField.richText.charactersOverLimit")).not.toBeInTheDocument();
   });
 
   it("announces the overage to a screen reader, and does not announce an in-band count", () => {

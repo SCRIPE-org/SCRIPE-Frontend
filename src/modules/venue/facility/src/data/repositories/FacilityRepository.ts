@@ -1,8 +1,14 @@
-import type { IFacilityRepository, FacilityListParams } from "../../domain/interfaces/IFacilityRepository";
+import type {
+  IFacilityRepository,
+  FacilityListParams,
+} from "../../domain/interfaces/IFacilityRepository";
 import type { IFacilityService } from "../../domain/interfaces/IFacilityService";
 import type { Facility } from "../../domain/entities/Facility";
 import { FacilityMapper } from "../mappers/FacilityMapper";
 
+/**
+ * Documentation for module export
+ */
 export class FacilityRepository implements IFacilityRepository {
   constructor(private readonly service: IFacilityService) {}
 

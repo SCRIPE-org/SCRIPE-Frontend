@@ -84,6 +84,9 @@ async function toFailure(error: unknown): Promise<ValueExportFailure> {
   return new ValueExportFailure(ValueExportFailureModel.fromUnknown(message));
 }
 
+/**
+ * Documentation for module export
+ */
 export class ValueExportService implements IValueExportService {
   constructor(private readonly api: IApiService) {}
 

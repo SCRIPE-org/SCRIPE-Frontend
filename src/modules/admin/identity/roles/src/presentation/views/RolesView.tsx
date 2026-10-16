@@ -10,10 +10,7 @@ import { useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { useI18n } from "@core/providers/i18n-provider";
 import { useRolesViewModel } from "../viewmodels/useRolesViewModel";
-import {
-  GenericCrudView,
-  type CrudConfig,
-} from "@core/crud/components/generic-crud-view";
+import { GenericCrudView, type CrudConfig } from "@core/crud/components/generic-crud-view";
 import { Shield, Pencil, Trash, Copy, Users } from "lucide-react";
 import { SYSTEM_PERMISSIONS } from "@core/common/types/permissions";
 import { usePermissions } from "@core/providers/permission-provider";

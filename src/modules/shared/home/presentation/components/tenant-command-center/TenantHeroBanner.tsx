@@ -25,10 +25,10 @@ export function TenantHeroBanner({
   const { t } = useI18n();
 
   return (
-    <section className="relative rounded-2xl overflow-hidden min-h-[194px] border border-border/70 shadow-lg bg-[#0b171e] text-white">
+    <section className="relative min-h-[194px] overflow-hidden rounded-2xl border border-border/70 bg-[#0b171e] text-white shadow-lg">
       {/* Background SVG Stadium Pitch Artwork */}
       <svg
-        className="absolute inset-0 w-full h-full pointer-events-none"
+        className="pointer-events-none absolute inset-0 h-full w-full"
         viewBox="0 0 1400 300"
         preserveAspectRatio="xMidYMid slice"
         aria-hidden="true"
@@ -83,28 +83,28 @@ export function TenantHeroBanner({
       </svg>
 
       {/* Dark Vignette Overlay */}
-      <div className="absolute inset-0 bg-gradient-to-r from-[#040c12]/95 via-[#040c12]/70 to-[#040c12]/55 pointer-events-none" />
+      <div className="pointer-events-none absolute inset-0 bg-gradient-to-r from-[#040c12]/95 via-[#040c12]/70 to-[#040c12]/55" />
 
       {/* Hero Content Grid */}
-      <div className="relative z-10 p-5 sm:p-6 lg:p-7 grid grid-cols-1 md:grid-cols-[minmax(0,1fr)_270px] gap-6 items-center">
+      <div className="relative z-10 grid grid-cols-1 items-center gap-6 p-5 sm:p-6 md:grid-cols-[minmax(0,1fr)_270px] lg:p-7">
         {/* Left: Organization Title & Badges */}
         <div>
-          <div className="text-[#c9ff43] font-extrabold text-[11px] tracking-wider uppercase">
+          <div className="text-[11px] font-extrabold uppercase tracking-wider text-[#c9ff43]">
             {tenantName}
           </div>
-          <h1 className="text-2xl sm:text-3xl lg:text-[31px] font-extrabold leading-tight tracking-tight mt-1 mb-1.5 text-white">
+          <h1 className="mb-1.5 mt-1 text-2xl font-extrabold leading-tight tracking-tight text-white sm:text-3xl lg:text-[31px]">
             {t("tenantCommandCenter.hero.title") || "Your organization is ready to operate."}
           </h1>
-          <p className="text-xs sm:text-[13px] text-[#c8d5dc] max-w-2xl">
+          <p className="max-w-2xl text-xs text-[#c8d5dc] sm:text-[13px]">
             {t("tenantCommandCenter.hero.subtitle") ||
               "Everything you need to manage your workspace, products and people — in one place."}
           </p>
 
-          <div className="flex gap-2 flex-wrap mt-5">
+          <div className="mt-5 flex flex-wrap gap-2">
             {metaPills.map((pill, idx) => (
               <div
                 key={idx}
-                className="h-8 px-2.5 rounded-lg bg-[#061016]/60 border border-white/12 backdrop-blur-md flex items-center gap-1.5 text-[11px] text-[#e3edf2]"
+                className="border-white/12 flex h-8 items-center gap-1.5 rounded-lg border bg-[#061016]/60 px-2.5 text-[11px] text-[#e3edf2] backdrop-blur-md"
               >
                 <span>{pill.icon}</span>
                 <span>{pill.label}</span>
@@ -114,37 +114,38 @@ export function TenantHeroBanner({
         </div>
 
         {/* Right: Readiness Ring Card */}
-        <aside className="rounded-xl p-3.5 bg-[#071118]/75 border border-white/12 backdrop-blur-md shadow-inner">
+        <aside className="border-white/12 rounded-xl border bg-[#071118]/75 p-3.5 shadow-inner backdrop-blur-md">
           <div className="flex items-center gap-2.5">
             {/* SVG Conic Readiness Ring */}
             <div
-              className="w-10 h-10 rounded-full flex items-center justify-center shrink-0 relative"
+              className="relative flex h-10 w-10 shrink-0 items-center justify-center rounded-full"
               style={{
                 background: `conic-gradient(#b8ee24 0 ${readinessPercent}%, rgba(255,255,255,0.12) ${readinessPercent}% 100%)`,
               }}
             >
-              <div className="w-[30px] h-[30px] rounded-full bg-[#0c1b23] flex items-center justify-center">
+              <div className="flex h-[30px] w-[30px] items-center justify-center rounded-full bg-[#0c1b23]">
                 <span className="text-[10px] font-extrabold text-white">{readinessPercent}%</span>
               </div>
             </div>
             <div>
-              <b className="text-xs font-bold text-white block">
+              <b className="block text-xs font-bold text-white">
                 {t("tenantCommandCenter.hero.readiness") || "Organization readiness"}
               </b>
-              <span className="text-[10px] text-[#b7c8d0] block">
+              <span className="block text-[10px] text-[#b7c8d0]">
                 {t("tenantCommandCenter.hero.stepsComplete", {
                   completed: setupStepsCompleted,
                   total: setupStepsTotal,
-                }) || `${setupStepsCompleted} of ${setupStepsTotal} essential setup steps are complete.`}
+                }) ||
+                  `${setupStepsCompleted} of ${setupStepsTotal} essential setup steps are complete.`}
               </span>
             </div>
           </div>
 
-          <div className="mt-3 pt-2.5 border-t border-white/10 space-y-1">
+          <div className="mt-3 space-y-1 border-t border-white/10 pt-2.5">
             {readinessChecks.map((chk, idx) => (
               <div key={idx} className="flex items-center gap-2 text-[10px] text-[#d6e3e8]">
                 <span
-                  className={`w-1.5 h-1.5 rounded-full shrink-0 shadow-xs ${
+                  className={`shadow-xs h-1.5 w-1.5 shrink-0 rounded-full ${
                     chk.status === "success"
                       ? "bg-[#5adb9d] shadow-[0_0_8px_rgba(90,219,157,0.5)]"
                       : "bg-[#f7aa1c] shadow-[0_0_8px_rgba(247,170,28,0.5)]"

@@ -110,9 +110,7 @@ export function WizardStepBasics({
         </div>
         <div className="mt-5 grid grid-cols-1 gap-5 md:grid-cols-2">
           <div className="space-y-2">
-            <Label htmlFor="category">
-              {t("entitlements.editions.wizard.category")}
-            </Label>
+            <Label htmlFor="category">{t("entitlements.editions.wizard.category")}</Label>
             <Input
               id="category"
               value={form.category ?? ""}
@@ -161,9 +159,7 @@ export function WizardStepBasics({
             </div>
           </div>
           <div className="space-y-2">
-            <Label htmlFor="tagline">
-              {t("entitlements.editions.wizard.tagline")}
-            </Label>
+            <Label htmlFor="tagline">{t("entitlements.editions.wizard.tagline")}</Label>
             <Input
               id="tagline"
               value={form.tagline ?? ""}
@@ -173,9 +169,7 @@ export function WizardStepBasics({
             />
           </div>
           <div className="space-y-2">
-            <Label htmlFor="description">
-              {t("entitlements.editions.wizard.description")}
-            </Label>
+            <Label htmlFor="description">{t("entitlements.editions.wizard.description")}</Label>
             <Textarea
               id="description"
               value={form.description ?? ""}

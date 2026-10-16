@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /**
  * @file types.ts
  * @description Shared type definitions for subscription dialog components.

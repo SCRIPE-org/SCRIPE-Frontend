@@ -17,6 +17,9 @@ import type { IEntityLookupRepository } from "../../domain/interfaces/IEntityLoo
 import type { IEntityLookupService } from "../../domain/interfaces/IEntityLookupService";
 import { EntityLookupMapper } from "../mappers/EntityLookupMapper";
 
+/**
+ * Documentation for module export
+ */
 export class EntityLookupRepository implements IEntityLookupRepository {
   constructor(private readonly service: IEntityLookupService) {}
 

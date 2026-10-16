@@ -61,10 +61,7 @@ describe("CustomFieldService type change & rollback API calls", () => {
     const service = new CustomFieldService(api);
     const result = await service.rollbackFieldTypeChange("job-123");
 
-    expect(api.post).toHaveBeenCalledWith(
-      "/v1/custom-fields/change-type/job-123/rollback",
-      {}
-    );
+    expect(api.post).toHaveBeenCalledWith("/v1/custom-fields/change-type/job-123/rollback", {});
     expect(result).toEqual(mockRollbackResult);
   });
 });

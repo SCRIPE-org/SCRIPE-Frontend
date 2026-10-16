@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /**
  * Auth Repository Implementation
  *
@@ -25,6 +26,7 @@ import { User } from "../../domain/entities/User";
 import { AuthMapper } from "../mappers/AuthMapper";
 import { appLogger } from "@core/common/logger";
 import { LoginRequestModel, type UserProfileJson } from "../models/AuthModel";
+import { getBrowserDeviceInfo } from "../utils/browser-device-info";
 import { Verify2FARequestModel } from "../models/TwoFactorModels";
 import type { IAuthService } from "../../domain/interfaces/IAuthService";
 import type { IAuthRepository, LoginResult } from "../../domain/interfaces/IAuthRepository";
@@ -64,7 +66,7 @@ export class AuthRepository implements IAuthRepository {
       credentials.identifier,
       credentials.password,
       credentials.tenantId,
-      credentials.deviceInfo,
+      credentials.deviceInfo ?? getBrowserDeviceInfo(),
       credentials.isPlatformAdmin
     );
 

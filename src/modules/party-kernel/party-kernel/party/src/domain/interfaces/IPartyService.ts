@@ -16,10 +16,32 @@ export interface PartyListResult {
   hasPreviousPage: boolean;
 }
 
+/**
+ * Documentation for module export
+ */
 export interface IPartyService {
   getAll(params: { page: number; pageSize: number; search?: string }): Promise<PartyListResult>;
   getById(id: string): Promise<PartyModel>;
+  getProfile?(id: string): Promise<import("../../data/models/PartyModel").PartyProfileResponseJson | null>;
   create(data: Record<string, unknown>): Promise<{ id: string }>;
+  createPerson?(
+    data: import("../../data/models/PartyModel").CreatePersonRequestJson,
+    idempotencyKey?: string
+  ): Promise<{ id: string }>;
+  createOrganization?(
+    data: { legalName: string; displayName?: string },
+    idempotencyKey?: string
+  ): Promise<{ id: string }>;
+  lookupPeople?(params: {
+    page: number;
+    pageSize: number;
+    search?: string;
+  }): Promise<import("../../data/models/PartyModel").PartyContactLookupPagedResponseJson>;
+  lookupOrganizations?(params: {
+    page: number;
+    pageSize: number;
+    search?: string;
+  }): Promise<import("../../data/models/PartyModel").PartyContactLookupPagedResponseJson>;
   update(id: string, data: Record<string, unknown>): Promise<void>;
   delete(id: string): Promise<void>;
 }

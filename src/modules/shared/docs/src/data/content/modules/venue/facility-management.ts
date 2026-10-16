@@ -63,9 +63,6 @@ registerPage({
   category: "module-venue",
   order: 8,
   sections,
-  relatedSlugs: [
-    "modules/venue-overview",
-    "modules/venue/schedulable-resources",
-  ],
+  relatedSlugs: ["modules/venue-overview", "modules/venue/schedulable-resources"],
   lastUpdated: "2026-10-03",
 });

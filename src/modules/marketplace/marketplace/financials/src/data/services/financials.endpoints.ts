@@ -1,5 +1,8 @@
 import { V1 } from "@/core/config/api-endpoints/_shared";
 
+/**
+ * Documentation for module export
+ */
 export const FINANCIALS_ENDPOINTS = {
   PURCHASES: `${V1}/marketplace/financials/purchases`,
   PAYOUTS: `${V1}/marketplace/financials/payouts`,

@@ -50,9 +50,7 @@ describe("CurrencyCustomFieldControl", () => {
   // than loosened -- each still asserts the same interpolated accessible name,
   // and the datalist wiring itself is pinned by its own tests below.
   it("gives the amount input its own real, field-named accessible name", () => {
-    render(
-      <CurrencyCustomFieldControl fc={PRICE_FIELD} value={null} onChange={vi.fn()} />
-    );
+    render(<CurrencyCustomFieldControl fc={PRICE_FIELD} value={null} onChange={vi.fn()} />);
     const amountInput = screen.getByRole("spinbutton", {
       name: `customField.currency.amountLabel:${JSON.stringify({ field: "Price" })}`,
     });
@@ -60,9 +58,7 @@ describe("CurrencyCustomFieldControl", () => {
   });
 
   it("gives the currency-code input its own, distinct real accessible name", () => {
-    render(
-      <CurrencyCustomFieldControl fc={PRICE_FIELD} value={null} onChange={vi.fn()} />
-    );
+    render(<CurrencyCustomFieldControl fc={PRICE_FIELD} value={null} onChange={vi.fn()} />);
     const codeInput = screen.getByRole("combobox", {
       name: `customField.currency.codeLabel:${JSON.stringify({ field: "Price" })}`,
     });
@@ -71,7 +67,11 @@ describe("CurrencyCustomFieldControl", () => {
 
   it("falls back the group name to fc.name when fc.label is undefined", () => {
     render(
-      <CurrencyCustomFieldControl fc={{ name: "cf_price_nolabel", type: "currency" }} value={null} onChange={vi.fn()} />
+      <CurrencyCustomFieldControl
+        fc={{ name: "cf_price_nolabel", type: "currency" }}
+        value={null}
+        onChange={vi.fn()}
+      />
     );
     expect(screen.getByRole("group", { name: "cf_price_nolabel" })).toBeInTheDocument();
   });

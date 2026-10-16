@@ -27,6 +27,9 @@ interface IdentityDirectoryEntryJson {
   email?: string | null;
 }
 
+/**
+ * Documentation for module export
+ */
 export class StaffMemberService implements IStaffMemberService {
   constructor(private readonly api: IApiService) {}
 

@@ -3,6 +3,9 @@ import type { PlatformHealth } from "../../domain/entities/PlatformHealth";
 import type { IPlatformHealthService } from "../services/PlatformHealthService";
 import { PlatformHealthMapper } from "../mappers/PlatformHealthMapper";
 
+/**
+ * PlatformHealthRepository
+ */
 export class PlatformHealthRepository implements IPlatformHealthRepository {
   constructor(private readonly service: IPlatformHealthService) {}
 

@@ -83,12 +83,15 @@ describe("customField.valueTypes -- Wave 3.4's three new labels", () => {
     expect(keysOf(ar.customField.valueTypes)).toEqual(keysOf(en.customField.valueTypes));
   });
 
-  it.each(WAVE_34_VALUE_TYPE_LEAVES)("gives `%s` real Arabic copy, not an English carry-over", (leaf) => {
-    const value = (ar.customField.valueTypes as Record<string, string>)[leaf];
-    expect(value.trim()).toBe(value);
-    expect(value.length).toBeGreaterThan(1);
-    expect(value).toMatch(ARABIC_CHAR);
-  });
+  it.each(WAVE_34_VALUE_TYPE_LEAVES)(
+    "gives `%s` real Arabic copy, not an English carry-over",
+    (leaf) => {
+      const value = (ar.customField.valueTypes as Record<string, string>)[leaf];
+      expect(value.trim()).toBe(value);
+      expect(value.length).toBeGreaterThan(1);
+      expect(value).toMatch(ARABIC_CHAR);
+    }
+  );
 });
 
 describe("customField.values -- Wave 3.4's message mirrors", () => {
@@ -160,9 +163,7 @@ describe("customField.richText -- the raw-markup counter's copy", () => {
 
 describe("customField.mediaReference -- the media control's copy", () => {
   it("declares the same keys in both locales", () => {
-    expect(keysOf(ar.customField.mediaReference)).toEqual(
-      keysOf(en.customField.mediaReference)
-    );
+    expect(keysOf(ar.customField.mediaReference)).toEqual(keysOf(en.customField.mediaReference));
   });
 
   it("declares every key the control actually reads", () => {

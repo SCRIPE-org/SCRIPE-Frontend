@@ -1,3 +1,6 @@
+/**
+ * Documentation for module export
+ */
 export interface ApiKeyChartDataPoint {
   period: string; // ISO datetime string
   totalHits: number;

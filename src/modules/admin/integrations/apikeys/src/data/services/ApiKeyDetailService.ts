@@ -15,6 +15,9 @@ import type { UpdateApiKeyDetailRequest } from "../../domain/entities/ApiKeyDeta
 import type { CreateApiKeyResult } from "../../domain/entities/ApiKey";
 import { API_KEYS_ENDPOINTS } from "./apikeys.endpoints";
 
+/**
+ * Documentation for module export
+ */
 export class ApiKeyDetailService implements IApiKeyDetailService {
   constructor(private readonly api: IApiService) {}
 

@@ -17,6 +17,9 @@ import type {
 } from "../../domain/interfaces/IStaffAvailabilityService";
 import { STAFF_AVAILABILITY_ENDPOINTS } from "./staff-availability.endpoints";
 
+/**
+ * Documentation for module export
+ */
 export class StaffAvailabilityService implements IStaffAvailabilityService {
   constructor(private readonly api: IApiService) {}
 

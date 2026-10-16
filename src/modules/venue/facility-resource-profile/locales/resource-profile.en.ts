@@ -2,7 +2,8 @@ export const en = {
   resourceProfile: {
     nav: { ariaLabel: "Resource configuration" },
     title: "Resource Profiles",
-    description: "Define the operational identity, hours, and permitted uses of each facility resource.",
+    description:
+      "Define the operational identity, hours, and permitted uses of each facility resource.",
     add: "Add resource profile",
     facility: "Facility",
     selectFacility: "Select a facility",
@@ -19,7 +20,8 @@ export const en = {
     detailsOpen: "Open the profile to review its operating policy",
     detailsUsage: "Open the profile to review its permitted usage types",
     validation: {
-      complete: "Complete all required fields, select operating days, and add at least one valid usage type.",
+      complete:
+        "Complete all required fields, select operating days, and add at least one valid usage type.",
       duplicateUsage: "Each usage type code must be unique.",
     },
     fields: {

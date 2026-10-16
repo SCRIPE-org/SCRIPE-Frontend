@@ -2,6 +2,9 @@ import type { CustomerSummary } from "../../domain/entities/Booking";
 import type { ICustomerPickerService } from "../../domain/interfaces/ICustomerPickerService";
 import type { ICustomerRepository } from "../../domain/interfaces/ICustomerRepository";
 
+/**
+ * Documentation for module export
+ */
 export class CustomerRepository implements ICustomerRepository {
   constructor(private readonly service: ICustomerPickerService) {}
   search(query: string): Promise<CustomerSummary[]> {
@@ -10,7 +13,11 @@ export class CustomerRepository implements ICustomerRepository {
   getById(id: string): Promise<CustomerSummary> {
     return this.service.getById(id);
   }
-  create(displayName: string, type?: "Person" | "Organization"): Promise<CustomerSummary> {
-    return this.service.create(displayName, type);
+  create(
+    displayName: string,
+    type?: "Person" | "Organization",
+    phone?: string
+  ): Promise<CustomerSummary> {
+    return this.service.create(displayName, type, phone);
   }
 }

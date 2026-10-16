@@ -83,7 +83,11 @@ export function useRoleSelectorWithSearch(options: UseRoleSelectorOptions = {}) 
     return roles.map((role) => ({
       value: role.id,
       label: resolveBilingualLabel(role.nameEn, role.nameAr, language),
-      description: resolveBilingualLabel(role.descriptionEn ?? "", role.descriptionAr ?? "", language),
+      description: resolveBilingualLabel(
+        role.descriptionEn ?? "",
+        role.descriptionAr ?? "",
+        language
+      ),
       priority: role.priority,
       isSystem: role.isSystem,
     }));

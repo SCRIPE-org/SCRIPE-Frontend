@@ -7,44 +7,58 @@ import type { Facility } from "../../domain/entities/Facility";
 
 const VENUE_PROFILE_LOOKUP_PAGE_SIZE = 500;
 
+/**
+ * Documentation for module export
+ */
 export function useFacilityViewModel() {
   const { facilityRepository, venueProfileRepository } = getVenueContainer();
 
-  const vm = useCrudViewModel(["facility"], {
-    getAll: async (params) => {
-      const res = await facilityRepository.getAll({
-        page: params.page,
-        pageSize: params.pageSize,
-        search: params.search,
-      });
-      return {
-        items: res.items || [],
-        pagination: {
-          itemsCount: res.totalCount,
-          pageSize: params.pageSize,
+  const vm = useCrudViewModel(
+    ["facility"],
+    {
+      getAll: async (params) => {
+        const res = await facilityRepository.getAll({
           page: params.page,
-          pagesCount: res.totalPages,
-        },
-      };
+          pageSize: params.pageSize,
+          search: params.search,
+        });
+        return {
+          items: res.items || [],
+          pagination: {
+            itemsCount: res.totalCount,
+            pageSize: params.pageSize,
+            page: params.page,
+            pagesCount: res.totalPages,
+          },
+        };
+      },
+      create: async (data) => {
+        const id = await facilityRepository.create(data as Record<string, unknown>);
+        return { id } as unknown as Facility;
+      },
+      update: async (id, data) => {
+        await facilityRepository.update(id, data as Record<string, unknown>);
+        return { id } as unknown as Facility;
+      },
+      delete: async (id) => {
+        await facilityRepository.delete(id);
+      },
     },
-    create: async (data) => {
-      const id = await facilityRepository.create(data as Record<string, unknown>);
-      return { id } as unknown as Facility;
-    },
-    update: async (id, data) => {
-      await facilityRepository.update(id, data as Record<string, unknown>);
-      return { id } as unknown as Facility;
-    },
-    delete: async (id) => {
-      await facilityRepository.delete(id);
-    },
-  }, { deferSuccessEffects: true });
+    { deferSuccessEffects: true }
+  );
 
   // Powers the Venue `server-select` field on the create form.
   const searchVenueProfiles = useCallback(
     async (query: string) => {
-      const res = await venueProfileRepository.getAll({ page: 1, pageSize: 20, search: query || undefined });
-      return res.items.map((venueProfile) => ({ value: venueProfile.id, label: venueProfile.name }));
+      const res = await venueProfileRepository.getAll({
+        page: 1,
+        pageSize: 20,
+        search: query || undefined,
+      });
+      return res.items.map((venueProfile) => ({
+        value: venueProfile.id,
+        label: venueProfile.name,
+      }));
     },
     [venueProfileRepository]
   );
@@ -58,7 +72,10 @@ export function useFacilityViewModel() {
     let cancelled = false;
     (async () => {
       try {
-        const res = await venueProfileRepository.getAll({ page: 1, pageSize: VENUE_PROFILE_LOOKUP_PAGE_SIZE });
+        const res = await venueProfileRepository.getAll({
+          page: 1,
+          pageSize: VENUE_PROFILE_LOOKUP_PAGE_SIZE,
+        });
         if (cancelled) return;
         const map: Record<string, string> = {};
         for (const venueProfile of res.items) map[venueProfile.id] = venueProfile.name;

@@ -1,5 +1,4 @@
 export * from "./tenantTypes";
-export * from "./tenantMockData";
 export * from "./TenantCommandHeader";
 export * from "./TenantHeroBanner";
 export * from "./TenantKpiCards";

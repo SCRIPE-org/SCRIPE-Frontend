@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 // FILE-EXCEPTION: file length
 /**
  * Feature Overrides View
@@ -228,9 +229,7 @@ function CurrentOverridesCard({ vm, t }: { vm: VM; t: TFn }) {
           <div className="flex items-center gap-2 rounded-nx-md border border-success/30 bg-success/5 px-3 py-2">
             <DollarSign className="h-4 w-4 text-success" />
             <div className="text-sm">
-              <span className="text-nx-ink-3">
-                {t("entitlements.overrides.totalCost")}:
-              </span>{" "}
+              <span className="text-nx-ink-3">{t("entitlements.overrides.totalCost")}:</span>{" "}
               <span className="font-bold text-success">${totalCostUsd.toFixed(2)} USD</span>
             </div>
           </div>
@@ -273,9 +272,7 @@ function CurrentOverridesCard({ vm, t }: { vm: VM; t: TFn }) {
                         <span className="font-semibold">{o.value}</span>
                       )}
                     </TableCell>
-                    <TableCell className="text-sm text-nx-ink-3">
-                      {o.reason || "—"}
-                    </TableCell>
+                    <TableCell className="text-sm text-nx-ink-3">{o.reason || "—"}</TableCell>
                     <TableCell className="text-sm">
                       {formatUtc(o.createdAt, "MMM d, yyyy")}
                     </TableCell>
@@ -425,9 +422,7 @@ function CostDialog({ vm, t }: { vm: VM; t: TFn }) {
       <DialogContent className="max-w-sm">
         <DialogHeader>
           <DialogTitle>{t("entitlements.overrides.setCost")}</DialogTitle>
-          <DialogDescription>
-            {t("entitlements.overrides.setCostDesc")}
-          </DialogDescription>
+          <DialogDescription>{t("entitlements.overrides.setCostDesc")}</DialogDescription>
         </DialogHeader>
         <div className="space-y-4 py-2">
           <div className="space-y-2">

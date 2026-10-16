@@ -21,6 +21,9 @@ import type { DefinitionExport } from "../../domain/entities/DefinitionExport";
 import { DefinitionExportFailure } from "../models/DefinitionExportModel";
 import { DefinitionExportMapper } from "../mappers/DefinitionExportMapper";
 
+/**
+ * Documentation for module export
+ */
 export class DefinitionExportRepository implements IDefinitionExportRepository {
   constructor(private readonly service: IDefinitionExportService) {}
 

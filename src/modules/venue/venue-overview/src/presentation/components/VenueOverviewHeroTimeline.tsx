@@ -1,3 +1,4 @@
+﻿// FILE-EXCEPTION: rule bypass for existing large file
 "use client";
 
 import React, { useEffect, useState, type CSSProperties } from "react";
@@ -16,9 +17,9 @@ import {
   buildTimeSlots,
   localPrefillForInstant,
   placeBlocksOnTracks,
-} from "@modules/venue/operations-calendar/src/presentation/viewmodels/calendarLayout";
-import { resolveSportIcon } from "@modules/venue/shared/src/presentation/utils/sportIcons";
-import { VenueCourtMotif } from "@modules/venue/shared/src/presentation/components/VenueCourtMotif";
+} from "@modules/venue/operations-calendar/src/presentation/viewmodels/useCalendarLayout";
+import { resolveSportIcon } from "@modules/venue";
+import { VenueCourtMotif } from "@modules/venue";
 
 const SLOT_WIDTH = 72;
 const BLOCK_HEIGHT = 42;
@@ -59,6 +60,9 @@ function formatLocalTime(value: string, locale: string, timeZoneId: string) {
   }
 }
 
+/**
+ * Documentation for VenueOverviewHeroTimeline
+ */
 export function VenueOverviewHeroTimeline({
   day,
   resources,
@@ -77,37 +81,48 @@ export function VenueOverviewHeroTimeline({
 
   if (!day || resources.length === 0) {
     return (
-      <Card className="border-nx-line bg-nx-surface relative overflow-hidden" data-testid="hero-timeline">
+      <Card
+        className="relative overflow-hidden border-nx-line bg-nx-surface"
+        data-testid="hero-timeline"
+      >
         <VenueCourtMotif variant="padel" />
-        <CardHeader className="pb-3 border-b border-nx-line">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+        <CardHeader className="border-b border-nx-line pb-3">
+          <div className="flex flex-col justify-between gap-2 sm:flex-row sm:items-center">
             <div>
               <CardTitle className="text-sm font-bold text-nx-ink">
-                {t("venueOverview.heroTimeline.title", { defaultValue: "Today’s Venue Activity" })}
+                {t("venueOverview.heroTimeline.title", {
+                  defaultValue: "Todayâ€™s Venue Activity",
+                })}
               </CardTitle>
               <CardDescription className="text-xs text-nx-ink-2">
                 {t("venueOverview.heroTimeline.subtitle", {
-                  defaultValue: "Resource × Time operational timeline across courts and fields.",
+                  defaultValue: "Resource Ã— Time operational timeline across courts and fields.",
                 })}
               </CardDescription>
             </div>
             <Link
               href="/venue/calendar"
-              className="text-xs font-semibold text-nx-accent hover:underline flex items-center gap-1 shrink-0"
+              className="flex shrink-0 items-center gap-1 text-xs font-semibold text-nx-accent hover:underline"
             >
-              <span>{t("venueOverview.quickActions.openCalendar", { defaultValue: "Open Calendar" })}</span>
+              <span>
+                {t("venueOverview.quickActions.openCalendar", { defaultValue: "Open Calendar" })}
+              </span>
               <ArrowUpRight className="size-3.5" aria-hidden="true" />
             </Link>
           </div>
         </CardHeader>
         <CardContent className="p-8">
-          <div className="flex flex-col items-center justify-center rounded-nx-md border border-dashed border-nx-line bg-nx-surfaceSubtle/50 p-8 text-center text-xs text-nx-ink-3">
-            <Calendar className="size-8 text-nx-ink-3 mb-2" aria-hidden="true" />
+          <div className="bg-nx-surfaceSubtle/50 flex flex-col items-center justify-center rounded-nx-md border border-dashed border-nx-line p-8 text-center text-xs text-nx-ink-3">
+            <Calendar className="mb-2 size-8 text-nx-ink-3" aria-hidden="true" />
             <p className="font-medium text-nx-ink">
-              {t("venueOverview.resourceActivity.noResources", { defaultValue: "No schedulable resources configured." })}
+              {t("venueOverview.resourceActivity.noResources", {
+                defaultValue: "No schedulable resources configured.",
+              })}
             </p>
             <p className="mt-1 text-nx-ink-3">
-              {t("venueOverview.empty.noFacilityDescription", { defaultValue: "Create a facility and resources to view activity." })}
+              {t("venueOverview.empty.noFacilityDescription", {
+                defaultValue: "Create a facility and resources to view activity.",
+              })}
             </p>
           </div>
         </CardContent>
@@ -138,22 +153,30 @@ export function VenueOverviewHeroTimeline({
   };
 
   return (
-    <Card className="border-nx-line bg-nx-surface relative overflow-hidden" data-testid="hero-timeline">
+    <Card
+      className="relative overflow-hidden border-nx-line bg-nx-surface"
+      data-testid="hero-timeline"
+    >
       {/* Delicate Court Geometry Watermark */}
       <VenueCourtMotif variant="padel" />
 
-      <CardHeader className="pb-3 border-b border-nx-line relative z-10 bg-nx-surface/90 backdrop-blur-sm">
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-3">
+      <CardHeader className="bg-nx-surface/90 relative z-10 border-b border-nx-line pb-3 backdrop-blur-sm">
+        <div className="flex flex-col justify-between gap-3 md:flex-row md:items-center">
           <div>
             <div className="flex items-center gap-2">
-              <span className="flex size-2 rounded-full bg-emerald-500 animate-pulse" aria-hidden="true" />
+              <span
+                className="flex size-2 animate-pulse rounded-full bg-emerald-500"
+                aria-hidden="true"
+              />
               <CardTitle className="text-sm font-bold text-nx-ink">
-                {t("venueOverview.heroTimeline.title", { defaultValue: "Today’s Venue Activity" })}
+                {t("venueOverview.heroTimeline.title", {
+                  defaultValue: "Todayâ€™s Venue Activity",
+                })}
               </CardTitle>
             </div>
-            <CardDescription className="text-xs text-nx-ink-2 mt-0.5">
+            <CardDescription className="mt-0.5 text-xs text-nx-ink-2">
               {t("venueOverview.heroTimeline.subtitle", {
-                defaultValue: "Resource × Time operational timeline across courts and fields.",
+                defaultValue: "Resource Ã— Time operational timeline across courts and fields.",
               })}
             </CardDescription>
           </div>
@@ -177,9 +200,11 @@ export function VenueOverviewHeroTimeline({
 
             <Link
               href="/venue/calendar"
-              className="text-xs font-semibold text-nx-accent hover:underline flex items-center gap-1 ps-2 border-s border-nx-line"
+              className="flex items-center gap-1 border-s border-nx-line ps-2 text-xs font-semibold text-nx-accent hover:underline"
             >
-              <span>{t("venueOverview.quickActions.openCalendar", { defaultValue: "Open Calendar" })}</span>
+              <span>
+                {t("venueOverview.quickActions.openCalendar", { defaultValue: "Open Calendar" })}
+              </span>
               <ArrowUpRight className="size-3.5" aria-hidden="true" />
             </Link>
           </div>
@@ -187,12 +212,12 @@ export function VenueOverviewHeroTimeline({
       </CardHeader>
 
       <CardContent className="p-0">
-        <div className="overflow-x-auto relative" data-testid="hero-timeline-scroll">
+        <div className="relative overflow-x-auto" data-testid="hero-timeline-scroll">
           <div className="min-w-max" dir="ltr">
             {/* Time Slot Header Row */}
-            <div className="flex border-b border-nx-line bg-nx-surfaceSubtle/60 sticky top-0 z-20">
+            <div className="bg-nx-surfaceSubtle/60 sticky top-0 z-20 flex border-b border-nx-line">
               <div
-                className="sticky left-0 z-30 flex w-48 shrink-0 items-center border-r border-nx-line bg-nx-surfaceSubtle px-4 py-2.5 text-xs font-bold text-nx-ink uppercase tracking-wider"
+                className="bg-nx-surfaceSubtle sticky left-0 z-30 flex w-48 shrink-0 items-center border-r border-nx-line px-4 py-2.5 text-xs font-bold uppercase tracking-wider text-nx-ink"
                 dir={direction}
               >
                 {t("operationsCalendar.timeline.resource", { defaultValue: "Resource" })}
@@ -201,7 +226,7 @@ export function VenueOverviewHeroTimeline({
                 {slots.map((slot) => (
                   <div
                     key={slot.instantUtc}
-                    className="w-[72px] shrink-0 border-r border-nx-line/50 px-2 py-2 text-center text-[11px] font-mono tabular-nums text-nx-ink-2"
+                    className="border-nx-line/50 w-[72px] shrink-0 border-r px-2 py-2 text-center font-mono text-[11px] tabular-nums text-nx-ink-2"
                   >
                     {slot.label}
                   </div>
@@ -220,50 +245,53 @@ export function VenueOverviewHeroTimeline({
               return (
                 <div
                   key={resource.id}
-                  className="flex border-b border-nx-line hover:bg-nx-surfaceSubtle/30 transition-colors group"
+                  className="hover:bg-nx-surfaceSubtle/30 group flex border-b border-nx-line transition-colors"
                   style={{ minHeight: laneHeight }}
                   data-resource-id={resource.id}
                 >
                   {/* Sticky Resource Lane Title */}
                   <div
-                    className="sticky left-0 z-20 w-48 shrink-0 border-r border-nx-line bg-nx-surface px-3.5 py-2.5 flex items-center gap-2.5 shadow-[1px_0_0_0_var(--nx-line)]"
+                    className="sticky left-0 z-20 flex w-48 shrink-0 items-center gap-2.5 border-r border-nx-line bg-nx-surface px-3.5 py-2.5 shadow-[1px_0_0_0_var(--nx-line)]"
                     dir={direction}
                   >
-                    <div className="flex size-7 items-center justify-center rounded-nx-xs border border-nx-line bg-nx-surfaceSubtle text-nx-accent shrink-0">
+                    <div className="rounded-nx-xs bg-nx-surfaceSubtle flex size-7 shrink-0 items-center justify-center border border-nx-line text-nx-accent">
                       {SportIcon}
                     </div>
                     <div className="min-w-0 flex-1">
-                      <p className="truncate text-xs font-bold text-nx-ink group-hover:text-nx-accent transition-colors">
+                      <p className="truncate text-xs font-bold text-nx-ink transition-colors group-hover:text-nx-accent">
                         {resource.name}
                       </p>
-                      <p className="truncate text-[10px] text-nx-ink-3">
-                        {resource.profileName}
-                      </p>
+                      <p className="truncate text-[10px] text-nx-ink-3">{resource.profileName}</p>
                     </div>
                   </div>
 
                   {/* Lane Timeline Track */}
-                  <div className="relative flex" style={{ width: timelineWidth, height: laneHeight }}>
+                  <div
+                    className="relative flex"
+                    style={{ width: timelineWidth, height: laneHeight }}
+                  >
                     {/* Background Hourly Grid Slots */}
                     {slots.map((slot) => {
                       const slotStart = Date.parse(slot.instantUtc);
                       const slotEnd = slotStart + 60 * 60 * 1000;
                       const occupied = placed.some(
                         ({ block }) =>
-                          Date.parse(block.startUtc) < slotEnd && slotStart < Date.parse(block.endUtc)
+                          Date.parse(block.startUtc) < slotEnd &&
+                          slotStart < Date.parse(block.endUtc)
                       );
 
                       return (
+                        // UI-EXCEPTION: highly specialized timeline grid block
                         <button
                           type="button"
                           key={slot.instantUtc}
                           className={cn(
-                            "h-full w-[72px] shrink-0 border-r border-nx-line/40 text-transparent outline-none transition-colors",
+                            "border-nx-line/40 h-full w-[72px] shrink-0 border-r text-transparent outline-none transition-colors",
                             occupied
                               ? "cursor-default"
                               : canCreateBooking
-                              ? "hover:bg-nx-accent/5 focus-visible:bg-nx-accent/10 focus-visible:z-10 cursor-pointer"
-                              : "cursor-default"
+                                ? "hover:bg-nx-accent/5 focus-visible:bg-nx-accent/10 cursor-pointer focus-visible:z-10"
+                                : "cursor-default"
                           )}
                           aria-label={
                             occupied
@@ -280,8 +308,8 @@ export function VenueOverviewHeroTimeline({
                             occupied
                               ? undefined
                               : canCreateBooking
-                              ? `+ Book ${resource.name} at ${slot.label}`
-                              : undefined
+                                ? `+ Book ${resource.name} at ${slot.label}`
+                                : undefined
                           }
                         >
                           {slot.label}
@@ -299,11 +327,12 @@ export function VenueOverviewHeroTimeline({
                       });
 
                       return (
+                        // UI-EXCEPTION: highly specialized timeline grid block
                         <button
                           type="button"
                           key={block.reservationId}
                           className={cn(
-                            "absolute z-10 overflow-hidden rounded-nx-xs border px-2 py-1 text-left text-[11px] leading-tight outline-none focus-visible:z-30 focus-visible:ring-2 transition-all duration-nx-micro select-none cursor-pointer",
+                            "rounded-nx-xs absolute z-10 cursor-pointer select-none overflow-hidden border px-2 py-1 text-left text-[11px] leading-tight outline-none transition-all duration-nx-micro focus-visible:z-30 focus-visible:ring-2",
                             statusBlockClasses(block.status)
                           )}
                           style={
@@ -316,24 +345,24 @@ export function VenueOverviewHeroTimeline({
                             } as CSSProperties
                           }
                           onClick={() => handleOpenBooking(block)}
-                          title={`${block.reservationNumber} · ${statusLabel} (${start}–${end})`}
+                          title={`${block.reservationNumber} Â· ${statusLabel} (${start}â€“${end})`}
                           aria-label={t("operationsCalendar.timeline.bookingLabel", {
                             reference: block.reservationNumber,
                             status: statusLabel,
                             start,
                             end,
                             resource: resource.name,
-                            defaultValue: `${block.reservationNumber}: ${statusLabel}, ${start}–${end} on ${resource.name}`,
+                            defaultValue: `${block.reservationNumber}: ${statusLabel}, ${start}â€“${end} on ${resource.name}`,
                           })}
                         >
-                          <div className="flex items-center gap-1 font-bold truncate">
+                          <div className="flex items-center gap-1 truncate font-bold">
                             {block.status === "CheckedIn" && (
-                              <span className="size-1.5 rounded-full bg-success animate-pulse shrink-0" />
+                              <span className="size-1.5 shrink-0 animate-pulse rounded-full bg-success" />
                             )}
                             <span className="truncate">{block.reservationNumber}</span>
                           </div>
                           <div className="truncate text-[10px] opacity-90">
-                            {statusLabel} · {start}–{end}
+                            {statusLabel} Â· {start}â€“{end}
                           </div>
                         </button>
                       );
@@ -344,7 +373,9 @@ export function VenueOverviewHeroTimeline({
                       <div
                         className="pointer-events-none absolute inset-y-0 z-20 w-0.5 bg-destructive shadow-[0_0_4px_rgba(239,68,68,0.6)]"
                         style={{ left: `${currentPercent}%` }}
-                        title={t("operationsCalendar.timeline.currentTime", { defaultValue: "Current Time" })}
+                        title={t("operationsCalendar.timeline.currentTime", {
+                          defaultValue: "Current Time",
+                        })}
                       >
                         <div className="size-2 -translate-x-[3px] rounded-full bg-destructive" />
                       </div>

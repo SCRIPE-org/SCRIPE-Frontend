@@ -2026,7 +2026,7 @@ export const en = {
     invalidPhone: "Invalid phone number",
     invalidEmail: "Invalid email address",
     correctErrorsTitle: "Please correct the following errors to continue:",
-    requiredFieldNamed: "Field \"{name}\" is required",
+    requiredFieldNamed: 'Field "{name}" is required',
     patternMismatch: "Invalid format",
   },
   customField: {

@@ -18,15 +18,15 @@ export function PlatformRecommendedActions({
   const actions: RecommendedActionItem[] = propActions ?? [];
 
   return (
-    <div className="rounded-xl border border-border bg-card shadow-sm overflow-hidden flex flex-col h-[280px]">
+    <div className="flex h-[280px] flex-col overflow-hidden rounded-xl border border-border bg-card shadow-sm">
       {/* Header */}
-      <div className="h-[58px] px-4 py-3 flex items-center justify-between border-b border-border bg-muted/40">
+      <div className="flex h-[58px] items-center justify-between border-b border-border bg-muted/40 px-4 py-3">
         <div className="flex items-center gap-2.5">
-          <div className="w-8 h-8 rounded-lg bg-primary/10 border border-primary/20 text-primary flex items-center justify-center shadow-xs">
+          <div className="shadow-xs flex h-8 w-8 items-center justify-center rounded-lg border border-primary/20 bg-primary/10 text-primary">
             <Zap className="h-4 w-4" />
           </div>
           <div>
-            <h3 className="text-sm font-bold text-foreground tracking-tight">
+            <h3 className="text-sm font-bold tracking-tight text-foreground">
               {t("platformCommandCenter.recommendedActions.title") || "Recommended actions"}
             </h3>
             <p className="text-[11px] text-muted-foreground">
@@ -38,17 +38,17 @@ export function PlatformRecommendedActions({
 
         <Link
           href="/overview"
-          className="text-xs font-semibold text-muted-foreground hover:text-primary flex items-center gap-1 transition-colors group"
+          className="group flex items-center gap-1 text-xs font-semibold text-muted-foreground transition-colors hover:text-primary"
         >
           <span>{t("platformCommandCenter.recommendedActions.viewAll") || "View all"}</span>
-          <ChevronRight className="h-3.5 w-3.5 group-hover:translate-x-0.5 transition-transform" />
+          <ChevronRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5" />
         </Link>
       </div>
 
       {/* Actions List */}
-      <div className="flex-1 p-3 divide-y divide-border/60 overflow-y-auto">
+      <div className="flex-1 divide-y divide-border/60 overflow-y-auto p-3">
         {actions.length === 0 ? (
-          <div className="h-full flex items-center justify-center text-center p-6 text-muted-foreground text-xs">
+          <div className="flex h-full items-center justify-center p-6 text-center text-xs text-muted-foreground">
             {t("platformCommandCenter.recommendedActions.allNominal") ||
               "All operational systems nominal. No pending actions."}
           </div>
@@ -58,22 +58,22 @@ export function PlatformRecommendedActions({
               action.severity === "critical"
                 ? "bg-destructive/10 text-destructive border-destructive/20"
                 : action.severity === "warning"
-                ? "bg-amber-500/10 text-amber-500 border-amber-500/20"
-                : "bg-sky-500/10 text-sky-500 border-sky-500/20";
+                  ? "bg-amber-500/10 text-amber-500 border-amber-500/20"
+                  : "bg-sky-500/10 text-sky-500 border-sky-500/20";
 
             return (
-              <div key={action.id} className="py-2.5 px-2 flex items-center justify-between gap-3">
-                <div className="flex items-center gap-2.5 min-w-0 flex-1">
+              <div key={action.id} className="flex items-center justify-between gap-3 px-2 py-2.5">
+                <div className="flex min-w-0 flex-1 items-center gap-2.5">
                   <span
-                    className={`w-6 h-6 rounded-md border flex items-center justify-center text-xs font-bold font-mono shrink-0 ${rankColor}`}
+                    className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-md border font-mono text-xs font-bold ${rankColor}`}
                   >
                     {action.rank}
                   </span>
                   <div className="min-w-0 flex-1">
-                    <b className="text-xs font-semibold text-foreground block truncate">
+                    <b className="block truncate text-xs font-semibold text-foreground">
                       {action.title}
                     </b>
-                    <small className="text-[10px] text-muted-foreground block mt-0.5 truncate">
+                    <small className="mt-0.5 block truncate text-[10px] text-muted-foreground">
                       {action.subtitle}
                     </small>
                   </div>
@@ -81,7 +81,7 @@ export function PlatformRecommendedActions({
 
                 <Link
                   href={action.href}
-                  className="px-2.5 py-1 rounded-md border border-border bg-secondary/60 hover:bg-primary/10 hover:border-primary/30 text-foreground hover:text-primary text-[10px] font-semibold transition-colors shrink-0"
+                  className="shrink-0 rounded-md border border-border bg-secondary/60 px-2.5 py-1 text-[10px] font-semibold text-foreground transition-colors hover:border-primary/30 hover:bg-primary/10 hover:text-primary"
                 >
                   {action.buttonLabel}
                 </Link>

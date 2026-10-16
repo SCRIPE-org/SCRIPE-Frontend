@@ -18,6 +18,9 @@ interface PlatformKeyringCardProps {
   isCancellingRewrap?: boolean;
 }
 
+/**
+ * Documentation for PlatformKeyringCard
+ */
 export function PlatformKeyringCard({
   status,
   activeSession,
@@ -28,23 +31,27 @@ export function PlatformKeyringCard({
 }: PlatformKeyringCardProps) {
   const { t } = useI18n();
 
-  const activeKeyId = (status?.activeVersion && status.activeVersion > 0)
-    ? status.activeVersion
-    : (status?.currentPlatformKeyId && status.currentPlatformKeyId > 0 ? status.currentPlatformKeyId : 1);
+  const activeKeyId =
+    status?.activeVersion && status.activeVersion > 0
+      ? status.activeVersion
+      : status?.currentPlatformKeyId && status.currentPlatformKeyId > 0
+        ? status.currentPlatformKeyId
+        : 1;
   const cipherSuite = status?.algorithm ?? "AES-256-GCM + HKDF-SHA256";
   const providerType = status?.providerType ?? "Environment Keyring (Local)";
   const minVersion = status?.minDecryptionVersion ?? 1;
 
-  const catalogItems = status?.distribution && status.distribution.length > 0
-    ? status.distribution
-    : [{ platformKeyId: activeKeyId, tenantKeyVersion: 1, recordCount: 0, percentage: 100 }];
+  const catalogItems =
+    status?.distribution && status.distribution.length > 0
+      ? status.distribution
+      : [{ platformKeyId: activeKeyId, tenantKeyVersion: 1, recordCount: 0, percentage: 100 }];
 
   return (
     <div className="space-y-6">
-      <Card className="shadow-sm border border-border">
+      <Card className="border border-border shadow-sm">
         <CardHeader className="flex flex-row items-center justify-between pb-4">
           <div className="flex items-center gap-3">
-            <div className="p-2.5 rounded-xl bg-primary/10 text-primary">
+            <div className="rounded-xl bg-primary/10 p-2.5 text-primary">
               <ShieldCheck className="h-6 w-6" />
             </div>
             <div>
@@ -52,7 +59,10 @@ export function PlatformKeyringCard({
                 <CardTitle className="text-lg">
                   {t("customFieldsSecurity.platformKeyringTitle")}
                 </CardTitle>
-                <Badge variant="default" className="bg-emerald-600 hover:bg-emerald-700 gap-1 text-xs">
+                <Badge
+                  variant="default"
+                  className="gap-1 bg-emerald-600 text-xs hover:bg-emerald-700"
+                >
                   <CheckCircle2 className="h-3 w-3" />
                   {t("customFieldsSecurity.operational")}
                 </Badge>
@@ -62,14 +72,14 @@ export function PlatformKeyringCard({
               </CardDescription>
             </div>
           </div>
-          <Badge variant="outline" className="font-mono text-xs hidden sm:flex">
+          <Badge variant="outline" className="hidden font-mono text-xs sm:flex">
             {providerType}
           </Badge>
         </CardHeader>
 
-        <CardContent className="grid grid-cols-2 sm:grid-cols-4 gap-4 pt-3 border-t border-border/50 text-sm">
-          <div className="p-3 rounded-lg bg-muted/40 border border-border/40">
-            <div className="flex items-center gap-2 text-muted-foreground text-xs mb-1">
+        <CardContent className="grid grid-cols-2 gap-4 border-t border-border/50 pt-3 text-sm sm:grid-cols-4">
+          <div className="rounded-lg border border-border/40 bg-muted/40 p-3">
+            <div className="mb-1 flex items-center gap-2 text-xs text-muted-foreground">
               <ShieldCheck className="h-3.5 w-3.5 text-primary" />
               <span>{t("customFieldsSecurity.masterKeyStatus")}</span>
             </div>
@@ -78,88 +88,100 @@ export function PlatformKeyringCard({
             </span>
           </div>
 
-          <div className="p-3 rounded-lg bg-muted/40 border border-border/40">
-            <div className="flex items-center gap-2 text-muted-foreground text-xs mb-1">
+          <div className="rounded-lg border border-border/40 bg-muted/40 p-3">
+            <div className="mb-1 flex items-center gap-2 text-xs text-muted-foreground">
               <KeyRound className="h-3.5 w-3.5 text-primary" />
               <span>{t("customFieldsSecurity.activeKeyId")}</span>
             </div>
-            <span className="font-semibold font-mono text-base">#{activeKeyId}</span>
+            <span className="font-mono text-base font-semibold">#{activeKeyId}</span>
           </div>
 
-          <div className="p-3 rounded-lg bg-muted/40 border border-border/40">
-            <div className="flex items-center gap-2 text-muted-foreground text-xs mb-1">
+          <div className="rounded-lg border border-border/40 bg-muted/40 p-3">
+            <div className="mb-1 flex items-center gap-2 text-xs text-muted-foreground">
               <Cpu className="h-3.5 w-3.5 text-primary" />
               <span>{t("customFieldsSecurity.cipherSuite")}</span>
             </div>
-            <span className="font-semibold font-mono text-xs">{cipherSuite}</span>
+            <span className="font-mono text-xs font-semibold">{cipherSuite}</span>
           </div>
 
-          <div className="p-3 rounded-lg bg-muted/40 border border-border/40">
-            <div className="flex items-center gap-2 text-muted-foreground text-xs mb-1">
+          <div className="rounded-lg border border-border/40 bg-muted/40 p-3">
+            <div className="mb-1 flex items-center gap-2 text-xs text-muted-foreground">
               <Layers className="h-3.5 w-3.5 text-primary" />
               <span>{t("customFieldsSecurity.isolationModel")}</span>
             </div>
-            <span className="font-semibold text-xs">{t("customFieldsSecurity.dualEnvelope")}</span>
+            <span className="text-xs font-semibold">{t("customFieldsSecurity.dualEnvelope")}</span>
           </div>
         </CardContent>
       </Card>
 
-      <Card className="shadow-sm border border-border">
+      <Card className="border border-border shadow-sm">
         <CardHeader className="pb-3">
           <div className="flex items-center justify-between">
             <div>
-              <CardTitle className="text-base flex items-center gap-2">
+              <CardTitle className="flex items-center gap-2 text-base">
                 <Server className="h-4 w-4 text-primary" />
                 {t("customFieldsSecurity.keyCatalogTitle")}
               </CardTitle>
-              <CardDescription className="text-xs mt-1">
+              <CardDescription className="mt-1 text-xs">
                 {t("customFieldsSecurity.keyCatalogDesc")}
               </CardDescription>
             </div>
-            <Badge variant="secondary" className="text-[11px] font-mono">
+            <Badge variant="secondary" className="font-mono text-[11px]">
               {catalogItems.length} {catalogItems.length === 1 ? "Slot" : "Slots"}
             </Badge>
           </div>
         </CardHeader>
         <CardContent className="pt-0">
-          <div className="rounded-lg border border-border/60 overflow-hidden bg-card">
+          <div className="overflow-hidden rounded-lg border border-border/60 bg-card">
             <Table>
               <TableHeader>
                 <TableRow className="border-b border-border/60 bg-muted/40">
                   <TableHead className="text-xs">{t("customFieldsSecurity.colKeyId")}</TableHead>
                   <TableHead className="text-xs">{t("customFieldsSecurity.colCipher")}</TableHead>
-                  <TableHead className="text-xs">{t("customFieldsSecurity.colMinVersion")}</TableHead>
+                  <TableHead className="text-xs">
+                    {t("customFieldsSecurity.colMinVersion")}
+                  </TableHead>
                   <TableHead className="text-xs">{t("customFieldsSecurity.colSource")}</TableHead>
-                  <TableHead className="text-xs text-end">{t("customFieldsSecurity.colStatus")}</TableHead>
+                  <TableHead className="text-end text-xs">
+                    {t("customFieldsSecurity.colStatus")}
+                  </TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {catalogItems.map((item) => {
                   const isActive = item.platformKeyId === activeKeyId;
                   return (
-                    <TableRow key={item.platformKeyId} className="hover:bg-muted/15 transition-colors">
-                      <TableCell className="py-3 px-4 font-mono font-semibold text-xs">
+                    <TableRow
+                      key={item.platformKeyId}
+                      className="transition-colors hover:bg-muted/15"
+                    >
+                      <TableCell className="px-4 py-3 font-mono text-xs font-semibold">
                         <span className="inline-flex items-center gap-1.5">
-                          <KeyRound className="h-3.5 w-3.5 text-primary" />
-                          #{item.platformKeyId}
+                          <KeyRound className="h-3.5 w-3.5 text-primary" />#{item.platformKeyId}
                         </span>
                       </TableCell>
-                      <TableCell className="py-3 px-4 font-mono text-muted-foreground text-xs">
+                      <TableCell className="px-4 py-3 font-mono text-xs text-muted-foreground">
                         AES-256-GCM
                       </TableCell>
-                      <TableCell className="py-3 px-4 font-mono text-muted-foreground text-xs">
+                      <TableCell className="px-4 py-3 font-mono text-xs text-muted-foreground">
                         v{minVersion}
                       </TableCell>
-                      <TableCell className="py-3 px-4 text-muted-foreground text-xs">
+                      <TableCell className="px-4 py-3 text-xs text-muted-foreground">
                         {providerType}
                       </TableCell>
-                      <TableCell className="py-3 px-4 text-end">
+                      <TableCell className="px-4 py-3 text-end">
                         {isActive ? (
-                          <Badge variant="outline" className="text-emerald-600 border-emerald-500/30 bg-emerald-500/10 text-[10px] font-medium">
+                          <Badge
+                            variant="outline"
+                            className="border-emerald-500/30 bg-emerald-500/10 text-[10px] font-medium text-emerald-600"
+                          >
                             {t("customFieldsSecurity.activeStatus")}
                           </Badge>
                         ) : (
-                          <Badge variant="outline" className="text-muted-foreground border-border/60 text-[10px]">
+                          <Badge
+                            variant="outline"
+                            className="border-border/60 text-[10px] text-muted-foreground"
+                          >
                             {t("customFieldsSecurity.standbyStatus")}
                           </Badge>
                         )}
@@ -183,12 +205,12 @@ export function PlatformKeyringCard({
         />
       )}
 
-      <div className="p-4 rounded-xl border border-blue-500/20 bg-blue-500/5 text-xs text-blue-900 dark:text-blue-200 space-y-1.5">
+      <div className="space-y-1.5 rounded-xl border border-blue-500/20 bg-blue-500/5 p-4 text-xs text-blue-900 dark:text-blue-200">
         <div className="flex items-center gap-2 font-medium">
           <Layers className="h-4 w-4 text-blue-600 dark:text-blue-400" />
           <span>{t("customFieldsSecurity.architectureNoteTitle")}</span>
         </div>
-        <p className="text-muted-foreground dark:text-blue-200/80 leading-relaxed">
+        <p className="leading-relaxed text-muted-foreground dark:text-blue-200/80">
           {t("customFieldsSecurity.architectureNoteBody")}
         </p>
       </div>

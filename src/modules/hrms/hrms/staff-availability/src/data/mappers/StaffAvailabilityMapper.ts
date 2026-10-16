@@ -13,6 +13,9 @@ import {
   type StaffAvailabilityJson,
 } from "../models/StaffAvailabilityModel";
 
+/**
+ * Documentation for module export
+ */
 export class StaffAvailabilityMapper {
   /**
    * Convert StaffAvailabilityModel to StaffAvailability Entity

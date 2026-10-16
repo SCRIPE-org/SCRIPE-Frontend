@@ -1,5 +1,8 @@
 import { V1 } from "@/core/config/api-endpoints/_shared";
 
+/**
+ * Documentation for module export
+ */
 export const BRANDING_ENDPOINTS = {
   TENANTS: {
     MY_BRANDING: `${V1}/customization/branding`,

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 // Slider -- aria-label forwarding fix (Wave 3.2 Batch 3, CustomFields Rating).
 //
 // Radix's own SliderThumb computes its accessible name from ITS OWN

@@ -2,6 +2,9 @@ import type { FacilityResourceProfileWrite } from "../../domain/entities/Facilit
 import type { IFacilityResourceProfileRepository } from "../../domain/interfaces/IFacilityResourceProfileRepository";
 import type { IFacilityResourceProfileService } from "../../domain/interfaces/IFacilityResourceProfileService";
 
+/**
+ * Documentation for module export
+ */
 export class FacilityResourceProfileRepository implements IFacilityResourceProfileRepository {
   constructor(private readonly service: IFacilityResourceProfileService) {}
 

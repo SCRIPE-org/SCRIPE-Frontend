@@ -9,6 +9,9 @@ import { usePermissions } from "@core/hooks/use-permission";
 import { getCustomFieldsContainer } from "../../../../di";
 import { isEntityTypeViewableForValueExport } from "./useValueExportViewModel";
 
+/**
+ * Documentation for module export
+ */
 export function useValueExportButtonViewModel() {
   const { has: hasPermission } = usePermissions();
   const { customFieldRepository } = getCustomFieldsContainer();

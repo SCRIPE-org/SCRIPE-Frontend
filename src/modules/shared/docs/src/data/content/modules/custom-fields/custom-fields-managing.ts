@@ -145,12 +145,7 @@ const sections: DocSection[] = [
       {
         titleKey: `${K}.deactivateTitle`,
         variant: "positive",
-        items: [
-          `${K}.deactivate1`,
-          `${K}.deactivate2`,
-          `${K}.deactivate3`,
-          `${K}.deactivate4`,
-        ],
+        items: [`${K}.deactivate1`, `${K}.deactivate2`, `${K}.deactivate3`, `${K}.deactivate4`],
       },
       {
         titleKey: `${K}.deleteColTitle`,

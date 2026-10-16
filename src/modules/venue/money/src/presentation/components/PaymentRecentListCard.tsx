@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import React from "react";
 import { RefreshCw } from "lucide-react";
@@ -14,11 +14,10 @@ interface PaymentRecentListCardProps {
   canRefund: boolean;
 }
 
-export function PaymentRecentListCard({
-  model,
-  canRecord,
-  canRefund,
-}: PaymentRecentListCardProps) {
+/**
+ * Documentation for PaymentRecentListCard
+ */
+export function PaymentRecentListCard({ model, canRecord, canRefund }: PaymentRecentListCardProps) {
   const { t } = useI18n();
 
   return (
@@ -71,11 +70,7 @@ export function PaymentRecentListCard({
                     {t("money.payments.timeline.action")}
                   </Button>
                   {canRefund && (
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      onClick={() => model.beginRefund(payment)}
-                    >
+                    <Button size="sm" variant="outline" onClick={() => model.beginRefund(payment)}>
                       {t("money.payments.refund.action")}
                     </Button>
                   )}

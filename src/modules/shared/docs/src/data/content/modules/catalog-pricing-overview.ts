@@ -102,10 +102,22 @@ const sections: DocSection[] = [
     direction: "vertical",
     nodes: [
       { id: "A", label: "Quotation Requested with Target Offerings & Quantity", type: "default" },
-      { id: "B", label: "Check Customer Agreement Rate overrides (VIP / Negotiated)", type: "primary" },
-      { id: "C", label: "Locate Active Price Book Version by Effective Date & Currency", type: "info" },
+      {
+        id: "B",
+        label: "Check Customer Agreement Rate overrides (VIP / Negotiated)",
+        type: "primary",
+      },
+      {
+        id: "C",
+        label: "Locate Active Price Book Version by Effective Date & Currency",
+        type: "info",
+      },
       { id: "D", label: "Calculate Base Item Subtotals & Rental Multipliers", type: "default" },
-      { id: "E", label: "Evaluate Stackable Discount Rules & Promotional Coupons", type: "warning" },
+      {
+        id: "E",
+        label: "Evaluate Stackable Discount Rules & Promotional Coupons",
+        type: "warning",
+      },
       { id: "F", label: "Compute Jurisdictional Taxes via Tax Categories", type: "info" },
       { id: "G", label: "Freeze PriceSnapshot with Immutable Line Item Hash", type: "success" },
     ],

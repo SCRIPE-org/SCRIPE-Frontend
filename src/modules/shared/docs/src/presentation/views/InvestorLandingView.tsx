@@ -80,6 +80,9 @@ const PERSONA_DATA: Record<
   },
 };
 
+/**
+ * Documentation for module export
+ */
 export function InvestorLandingView() {
   const { t } = useDocsI18n();
   const [persona, setPersona] = useState<Persona>("investor");

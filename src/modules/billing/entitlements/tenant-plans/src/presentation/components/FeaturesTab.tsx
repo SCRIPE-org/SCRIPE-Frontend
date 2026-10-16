@@ -1,3 +1,4 @@
+/* eslint-disable unused-imports/no-unused-vars */
 /**
  * FeaturesTab — Interactive Feature Assignment Editor for TenantPlan Detail
  *
@@ -225,7 +226,7 @@ export function FeaturesTab({
                   onClick={() => toggleCategory(category)}
                   aria-expanded={!isCollapsed}
                   className={cn(
-                    "flex h-auto w-full items-center justify-between gap-2 p-0 rounded-nx-sm text-start hover:bg-transparent",
+                    "flex h-auto w-full items-center justify-between gap-2 rounded-nx-sm p-0 text-start hover:bg-transparent",
                     "transition-colors duration-nx-micro ease-nx-enter motion-reduce:transition-none",
                     "focus-visible:shadow-nx-focus focus-visible:outline-none"
                   )}

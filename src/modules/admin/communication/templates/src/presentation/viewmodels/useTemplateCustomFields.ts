@@ -12,9 +12,7 @@ import {
   getCustomFieldsExtension,
   decodeCustomFieldName,
 } from "@core/crud/customFieldsExtension";
-import {
-  assertSelectCustomFieldValuesValid,
-} from "@modules/custom-fields/custom-field";
+import { assertSelectCustomFieldValuesValid } from "@modules/custom-fields/custom-field";
 import {
   MESSAGE_TEMPLATE_ENTITY_TYPE_KEY,
   type TemplateFormMode,

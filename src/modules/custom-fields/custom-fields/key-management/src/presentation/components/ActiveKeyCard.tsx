@@ -15,6 +15,9 @@ interface ActiveKeyCardProps {
   isInitializing?: boolean;
 }
 
+/**
+ * Documentation for ActiveKeyCard
+ */
 export function ActiveKeyCard({
   status,
   onInitialize,
@@ -29,7 +32,7 @@ export function ActiveKeyCard({
       <Card className="border border-amber-500/30 bg-amber-500/5 shadow-sm">
         <CardHeader>
           <div className="flex items-center gap-3">
-            <div className="p-2.5 rounded-xl bg-amber-500/10 text-amber-600 dark:text-amber-400">
+            <div className="rounded-xl bg-amber-500/10 p-2.5 text-amber-600 dark:text-amber-400">
               <KeyRound className="h-6 w-6" />
             </div>
             <div>
@@ -46,7 +49,7 @@ export function ActiveKeyCard({
           <Button
             onClick={onInitialize}
             disabled={isInitializing}
-            className="gap-2 bg-amber-600 hover:bg-amber-700 text-white font-medium shadow-sm"
+            className="gap-2 bg-amber-600 font-medium text-white shadow-sm hover:bg-amber-700"
           >
             <Lock className="h-4 w-4" />
             {isInitializing ? t("common.loading") : t("customFieldsSecurity.initializeButton")}
@@ -59,10 +62,10 @@ export function ActiveKeyCard({
   const isRevoked = status.status === "Revoked";
 
   return (
-    <Card className="shadow-sm border border-border">
+    <Card className="border border-border shadow-sm">
       <CardHeader className="flex flex-row items-center justify-between pb-3">
         <div className="flex items-center gap-3">
-          <div className="p-2.5 rounded-xl bg-primary/10 text-primary">
+          <div className="rounded-xl bg-primary/10 p-2.5 text-primary">
             <ShieldCheck className="h-6 w-6" />
           </div>
           <div>
@@ -95,28 +98,28 @@ export function ActiveKeyCard({
             size="sm"
             onClick={onRevoke}
             disabled={isRevoked}
-            className="text-destructive hover:text-destructive hover:bg-destructive/10 gap-1.5"
+            className="gap-1.5 text-destructive hover:bg-destructive/10 hover:text-destructive"
           >
             <AlertOctagon className="h-3.5 w-3.5" />
             {t("customFieldsSecurity.revokeButton")}
           </Button>
         </div>
       </CardHeader>
-      <CardContent className="grid grid-cols-2 sm:grid-cols-4 gap-4 pt-2 border-t border-border/50 text-sm">
+      <CardContent className="grid grid-cols-2 gap-4 border-t border-border/50 pt-2 text-sm sm:grid-cols-4">
         <div>
-          <span className="text-muted-foreground block text-xs">
+          <span className="block text-xs text-muted-foreground">
             {t("customFieldsSecurity.activeVersion")}
           </span>
-          <span className="font-semibold font-mono text-base">v{status.activeVersion}</span>
+          <span className="font-mono text-base font-semibold">v{status.activeVersion}</span>
         </div>
         <div>
-          <span className="text-muted-foreground block text-xs">
+          <span className="block text-xs text-muted-foreground">
             {t("customFieldsSecurity.platformKeyId")}
           </span>
-          <span className="font-semibold font-mono text-base">#{status.currentPlatformKeyId}</span>
+          <span className="font-mono text-base font-semibold">#{status.currentPlatformKeyId}</span>
         </div>
         <div>
-          <span className="text-muted-foreground block text-xs">
+          <span className="block text-xs text-muted-foreground">
             {t("customFieldsSecurity.lastRotated")}
           </span>
           <span className="text-sm font-medium">
@@ -124,10 +127,10 @@ export function ActiveKeyCard({
           </span>
         </div>
         <div>
-          <span className="text-muted-foreground block text-xs">
+          <span className="block text-xs text-muted-foreground">
             {t("customFieldsSecurity.encryptedRecords")}
           </span>
-          <span className="font-semibold font-mono text-base">
+          <span className="font-mono text-base font-semibold">
             {status.totalEncryptedRecords.toLocaleString()}
           </span>
         </div>

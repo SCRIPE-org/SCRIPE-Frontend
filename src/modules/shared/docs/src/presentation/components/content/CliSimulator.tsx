@@ -124,6 +124,9 @@ const mockOutputs: Record<string, string[]> = {
   ],
 };
 
+/**
+ * Documentation for module export
+ */
 export function CliSimulator({ titleKey }: CliSimulatorProps) {
   const { t } = useDocsI18n();
   const [activeCmd, setActiveCmd] = useState<string>("scripe info");

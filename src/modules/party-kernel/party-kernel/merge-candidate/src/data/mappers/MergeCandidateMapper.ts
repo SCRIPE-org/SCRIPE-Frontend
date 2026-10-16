@@ -7,6 +7,9 @@
 import { MergeCandidate, type MergeCandidateData } from "../../domain/entities/MergeCandidate";
 import { MergeCandidateModel, type MergeCandidateJson } from "../models/MergeCandidateModel";
 
+/**
+ * Documentation for module export
+ */
 export class MergeCandidateMapper {
   /**
    * Convert MergeCandidateModel to MergeCandidate Entity

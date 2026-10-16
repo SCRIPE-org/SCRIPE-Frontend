@@ -32,6 +32,9 @@ import { SelectTrigger } from "@core/crud/components/select/select-trigger";
 import { SelectOptionRow } from "@core/crud/components/select/select-option-row";
 import type { OptionSet } from "../../../../../option-set/src/domain/entities/OptionSet";
 
+/**
+ * Documentation for module export
+ */
 export interface OptionSetPickerProps {
   id: string;
   label: string;
@@ -47,6 +50,9 @@ export interface OptionSetPickerProps {
   describedBy?: string;
 }
 
+/**
+ * Documentation for OptionSetPicker
+ */
 export function OptionSetPicker({
   id,
   label,
@@ -162,7 +168,10 @@ export function OptionSetPicker({
           onRemoveOne={() => undefined}
         />
 
-        <PopoverContent align="start" className="w-[var(--radix-popover-trigger-width)] min-w-64 p-0">
+        <PopoverContent
+          align="start"
+          className="w-[var(--radix-popover-trigger-width)] min-w-64 p-0"
+        >
           <Command label={t("select.optionsLabel")}>
             <CommandInput
               aria-label={t("select.searchLabel")}

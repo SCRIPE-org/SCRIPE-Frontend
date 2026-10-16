@@ -34,6 +34,9 @@ export const FIELD_VISIBILITY_OPERATORS = [
   "lessThan",
 ] as const;
 
+/**
+ * Documentation for FIELD_VISIBILITY_OPERATORS)[number]
+ */
 export type FieldVisibilityOperator = (typeof FIELD_VISIBILITY_OPERATORS)[number];
 
 /** One rule as the API ships it — mirrors `FieldVisibilityRuleDescriptor`. */
@@ -130,7 +133,8 @@ function compareValues(operand: unknown, comparand: unknown): number | null {
   if (typeof comparand === "string") {
     const operandDate = asDate(operand);
     const comparandDate = asDate(comparand);
-    if (operandDate !== null && comparandDate !== null) return Math.sign(operandDate - comparandDate);
+    if (operandDate !== null && comparandDate !== null)
+      return Math.sign(operandDate - comparandDate);
   }
 
   // Deliberately NO lexicographic fallback. Comparing two numbers as text ("9" > "10") is the classic
@@ -160,9 +164,14 @@ function isRuleSatisfied(rule: FieldVisibilityRuleData, getOperand: OperandLooku
     case "notEquals":
       return !valuesEqual(operand, rule.value);
     case "in":
-      return Array.isArray(rule.value) && rule.value.some((candidate) => valuesEqual(operand, candidate));
+      return (
+        Array.isArray(rule.value) && rule.value.some((candidate) => valuesEqual(operand, candidate))
+      );
     case "notIn":
-      return Array.isArray(rule.value) && !rule.value.some((candidate) => valuesEqual(operand, candidate));
+      return (
+        Array.isArray(rule.value) &&
+        !rule.value.some((candidate) => valuesEqual(operand, candidate))
+      );
     case "greaterThan": {
       const comparison = compareValues(operand, rule.value);
       return comparison !== null && comparison > 0;

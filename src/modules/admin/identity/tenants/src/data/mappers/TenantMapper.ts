@@ -13,10 +13,7 @@ import {
   type TenantProps,
   type TenantTreeNodeProps,
 } from "../../domain/entities/Tenant";
-import {
-  TenantDomain,
-  TenantDomainsConfig,
-} from "../../domain/entities/TenantDomain";
+import { TenantDomain, TenantDomainsConfig } from "../../domain/entities/TenantDomain";
 import type {
   TenantDomainJson,
   TenantDomainsResponse,

@@ -1,5 +1,8 @@
 import { V1 } from "@/core/config/api-endpoints/_shared";
 
+/**
+ * Documentation for module export
+ */
 export const PROFILE_ENDPOINTS = {
   ME: `${V1}/Admins/me`,
   UPDATE_ME: `${V1}/Admins/me`,

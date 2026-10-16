@@ -24,6 +24,9 @@ import type {
   DowngradeImpactReport,
 } from "../types/SubscriptionTypes";
 
+/**
+ * Documentation for module export
+ */
 export type {
   TenantDomainJson,
   TenantDomainsResponse,
@@ -39,7 +42,6 @@ import type {
   TenantDomainsResponse,
   TenantDomainJson,
 } from "./tenantServiceTypes";
-
 
 /**
  * Http API network service for i tenant.

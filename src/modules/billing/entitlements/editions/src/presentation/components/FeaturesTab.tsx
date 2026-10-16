@@ -259,9 +259,7 @@ export function FeaturesTab({
                                     />
                                   )}
                                 </div>
-                                <p className="font-mono text-xs text-nx-ink-3">
-                                  {feature.name}
-                                </p>
+                                <p className="font-mono text-xs text-nx-ink-3">{feature.name}</p>
                               </div>
 
                               <div className="flex items-center gap-2">
@@ -342,7 +340,9 @@ export function FeaturesTab({
                                           onChange={(e) =>
                                             setLocalLabel(feature.name, "en", e.target.value)
                                           }
-                                          placeholder={t("entitlements.editions.englishLabelPlaceholder")}
+                                          placeholder={t(
+                                            "entitlements.editions.englishLabelPlaceholder"
+                                          )}
                                           className="h-8 text-sm"
                                         />
                                       </div>
@@ -357,7 +357,9 @@ export function FeaturesTab({
                                           onChange={(e) =>
                                             setLocalLabel(feature.name, "ar", e.target.value)
                                           }
-                                          placeholder={t("entitlements.editions.arabicLabelPlaceholder")}
+                                          placeholder={t(
+                                            "entitlements.editions.arabicLabelPlaceholder"
+                                          )}
                                           className="h-8 text-sm"
                                         />
                                       </div>
@@ -428,9 +430,7 @@ export function FeaturesTab({
                                         </div>
                                         {highlight.isHighlight && (
                                           <div className="flex items-center gap-2">
-                                            <Label className="text-xs text-nx-ink-3">
-                                              Order
-                                            </Label>
+                                            <Label className="text-xs text-nx-ink-3">Order</Label>
                                             <Input
                                               type="number"
                                               min={0}

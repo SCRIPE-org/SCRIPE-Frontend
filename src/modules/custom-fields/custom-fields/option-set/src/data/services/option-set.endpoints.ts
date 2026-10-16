@@ -38,6 +38,9 @@ import { V1 } from "@/core/config/api-endpoints/_shared";
 
 const BASE = `${V1}/custom-fields/option-sets`;
 
+/**
+ * Documentation for module export
+ */
 export const OPTION_SET_ENDPOINTS = {
   /** `GET ""` -- every set visible to the caller: their tenant's plus every platform-owned one. */
   LIST: BASE,

@@ -63,7 +63,10 @@ describe("SchemaImportButton — permission gate", () => {
   });
 
   it("renders once BOTH required permissions are granted", () => {
-    grant(CUSTOM_FIELDS_PERMISSIONS.FIELD_GROUP_CREATE, CUSTOM_FIELDS_PERMISSIONS.CUSTOM_FIELD_CREATE);
+    grant(
+      CUSTOM_FIELDS_PERMISSIONS.FIELD_GROUP_CREATE,
+      CUSTOM_FIELDS_PERMISSIONS.CUSTOM_FIELD_CREATE
+    );
     render(<SchemaImportButton />);
     expect(screen.getByText("schemaImport.openLabel")).toBeInTheDocument();
   });

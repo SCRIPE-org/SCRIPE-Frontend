@@ -13,6 +13,7 @@ import type {
   AuditAnalyticsSummary,
   TopAuditUser,
   ComplianceReport,
+  HubActivitySummary,
 } from "../../domain/entities/AuditEntities";
 import { AuditMapper } from "../mappers/AuditMapper";
 
@@ -31,6 +32,10 @@ export class AuditRepository implements IAuditRepository {
   async getLogDetail(id: string): Promise<AuditLogDetail> {
     const dto = await this.service.getLogDetail(id);
     return AuditMapper.toLogDetail(dto);
+  }
+
+  async getHubSummary(): Promise<HubActivitySummary> {
+    return this.service.getHubSummary();
   }
 
   async getAnalytics(): Promise<AuditAnalyticsSummary> {

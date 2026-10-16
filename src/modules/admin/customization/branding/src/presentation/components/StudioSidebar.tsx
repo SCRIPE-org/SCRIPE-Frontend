@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /**
  * StudioSidebar -- 11-tab sidebar for the Ultimate Customizer Studio
  * All labels localized via t()

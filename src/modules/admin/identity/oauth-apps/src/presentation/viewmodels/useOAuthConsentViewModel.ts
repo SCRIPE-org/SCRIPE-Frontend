@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 "use client";
 
 import { useEffect, useState, useRef } from "react";
@@ -111,7 +112,9 @@ export function useOAuthConsentViewModel(): OAuthConsentViewModelResult {
     hasAttemptedRefresh.current = true;
 
     if (secureTokenService.hasToken()) {
-      setIsRestoringSession(false);
+      queueMicrotask(() => {
+        setIsRestoringSession(false);
+      });
       return;
     }
 

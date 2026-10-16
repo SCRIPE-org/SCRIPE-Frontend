@@ -25,6 +25,9 @@ export interface IdentityUserSearchResult {
   kind: "admin" | "user";
 }
 
+/**
+ * Documentation for module export
+ */
 export interface IStaffMemberService {
   getAll(params: {
     page: number;

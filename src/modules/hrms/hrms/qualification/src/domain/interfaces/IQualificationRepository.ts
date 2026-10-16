@@ -14,10 +14,11 @@ export interface QualificationListParams {
   sortDirection?: "asc" | "desc";
 }
 
+/**
+ * Documentation for module export
+ */
 export interface IQualificationRepository {
-  getAll(
-    params: QualificationListParams
-  ): Promise<{
+  getAll(params: QualificationListParams): Promise<{
     items: Qualification[];
     totalCount: number;
     page: number;

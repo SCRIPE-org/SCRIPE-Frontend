@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 // SelectTrigger -- the POINTER half of disabled/read-only enforcement.
 //
 // WHY THIS FILE RENDERS SelectTrigger DIRECTLY AND NOT GenericSelect.

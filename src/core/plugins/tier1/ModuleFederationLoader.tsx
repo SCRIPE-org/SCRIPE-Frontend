@@ -85,8 +85,7 @@ async function loadFederatedModule(
 
   // Access the module federation container on window
   const container = (window as unknown as Record<string, unknown>)[scope] as
-    | FederationContainer
-    | undefined;
+    FederationContainer | undefined;
   if (!container) throw new Error(`Remote container "${scope}" not found on window`);
 
   // G12 Fix: __webpack_share_scopes__ is a webpack-only global.

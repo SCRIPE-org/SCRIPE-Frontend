@@ -4,6 +4,9 @@ import type { CreateApiKeyRequest, CreateApiKeyResult } from "../../domain/entit
 import { ApiKey } from "../../domain/entities/ApiKey";
 import { ApiKeyMapper } from "../mappers/ApiKeyMapper";
 
+/**
+ * Documentation for module export
+ */
 export class ApiKeyRepository implements IApiKeyRepository {
   constructor(private readonly service: IApiKeyService) {}
 

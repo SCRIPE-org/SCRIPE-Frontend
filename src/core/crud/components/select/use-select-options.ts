@@ -86,9 +86,10 @@ export function useSelectOptions({
   const [loadedTreeData, setLoadedTreeData] = React.useState<GenericSelectOption[] | null>(null);
 
   // Selected labels are cached so a value stays readable after a server search
-  // pages its results away. A ref, not state: writing it must never trigger a
-  // render, or picking an option would re-render the panel mid-interaction.
-  const selectedLabelCache = React.useRef(new Map<string, GenericSelectOption>());
+  // pages its results away.
+  const [selectedLabelMap, setSelectedLabelMap] = React.useState<Map<string, GenericSelectOption>>(
+    () => new Map()
+  );
 
   const currentValues = React.useMemo(
     () => (Array.isArray(value) ? value : value ? [value] : []),
@@ -155,25 +156,29 @@ export function useSelectOptions({
       });
     };
     add(options || []);
-    selectedLabelCache.current.forEach((option, key) => map.set(key, option));
+    selectedLabelMap.forEach((option, key) => map.set(key, option));
     add(serverOptions);
     if (isTreeSelect) {
       add(flattenedTreeOptions);
       add(collectTreeNodes(treeSource));
     }
     return map;
-  }, [options, serverOptions, isTreeSelect, flattenedTreeOptions, treeSource]);
+  }, [options, serverOptions, isTreeSelect, flattenedTreeOptions, treeSource, selectedLabelMap]);
 
   // Sync options matching currentValues into cache to persist labels across server searches
-  React.useEffect(() => {
-    if (options && options.length > 0) {
-      options.forEach((opt) => {
-        if (currentValues.includes(opt.value)) {
-          selectedLabelCache.current.set(opt.value, opt);
+  if (options && options.length > 0) {
+    const matches = options.filter((opt) => currentValues.includes(opt.value));
+    if (matches.length > 0) {
+      const hasNew = matches.some((opt) => !selectedLabelMap.has(opt.value));
+      if (hasNew) {
+        const next = new Map(selectedLabelMap);
+        for (const opt of matches) {
+          next.set(opt.value, opt);
         }
-      });
+        setSelectedLabelMap(next);
+      }
     }
-  }, [options, currentValues]);
+  }
 
   const selectedOptions = React.useMemo(
     () =>
@@ -190,9 +195,9 @@ export function useSelectOptions({
 
   // Client-side filtering. Tree mode filters the flattened rows so a match deep
   // in the tree is still reachable.
-  const clientPool = isTreeSelect ? flattenedTreeOptions : options || [];
   const displayOptions = React.useMemo(() => {
     if (searchType === "server") return serverOptions;
+    const clientPool = isTreeSelect ? flattenedTreeOptions : options || [];
     if (!query.trim()) return clientPool;
     const needle = query.trim().toLowerCase();
     return clientPool.filter(
@@ -200,7 +205,7 @@ export function useSelectOptions({
         option.label.toLowerCase().includes(needle) ||
         option.description?.toLowerCase().includes(needle)
     );
-  }, [searchType, serverOptions, query, clientPool]);
+  }, [searchType, serverOptions, query, isTreeSelect, flattenedTreeOptions, options]);
 
   const runServerSearch = React.useCallback(
     async (nextQuery: string) => {
@@ -260,7 +265,14 @@ export function useSelectOptions({
 
   /** Remember an option's label so it survives a later server page turn. */
   const rememberOption = React.useCallback((option: GenericSelectOption | undefined) => {
-    if (option) selectedLabelCache.current.set(option.value, option);
+    if (option) {
+      setSelectedLabelMap((prev) => {
+        if (prev.has(option.value)) return prev;
+        const next = new Map(prev);
+        next.set(option.value, option);
+        return next;
+      });
+    }
   }, []);
 
   /**
@@ -271,9 +283,7 @@ export function useSelectOptions({
   const findSelectedMatch = React.useCallback(
     (option: GenericSelectOption): string | undefined => {
       if (option.uniqueKey) {
-        return currentValues.find(
-          (val) => allOptionsMap.get(val)?.uniqueKey === option.uniqueKey
-        );
+        return currentValues.find((val) => allOptionsMap.get(val)?.uniqueKey === option.uniqueKey);
       }
       return currentValues.includes(option.value) ? option.value : undefined;
     },

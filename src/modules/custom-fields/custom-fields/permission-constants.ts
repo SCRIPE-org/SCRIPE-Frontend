@@ -75,4 +75,3 @@ export const CUSTOM_FIELDS_EXPORT_PERMISSION = "custom-fields.export";
 export const CUSTOM_FIELDS_IMPORT_PERMISSION = "custom-fields.import";
 export const CUSTOM_FIELDS_VIEW_SENSITIVE_PERMISSION = "custom-fields.view-sensitive";
 export const CUSTOM_FIELDS_MANAGE_KEYS_PERMISSION = "custom-fields.manage-keys";
-

@@ -34,7 +34,8 @@ export const ar = {
       tenantOnly: "المستأجر فقط",
       tenantWithChildren: "المستأجر والفروع",
     },
-    urlHttpsRequired: "يجب أن يستخدم الرابط HTTPS، ولا يُسمح بعناوين localhost أو العناوين المحلية.",
+    urlHttpsRequired:
+      "يجب أن يستخدم الرابط HTTPS، ولا يُسمح بعناوين localhost أو العناوين المحلية.",
     status: {
       active: "نشط",
       inactive: "غير نشط",

@@ -1,7 +1,5 @@
 "use client";
 
-/* eslint-disable react-hooks/set-state-in-effect */
-
 /**
  * NexusTransitionOverlay
  *
@@ -132,8 +130,10 @@ export function NexusTransitionOverlay() {
     const enterMs = reducedRef.current ? REDUCED_MS : ENTER_MS;
     const exitMs = reducedRef.current ? REDUCED_MS : EXIT_MS;
 
-    setPhase("entering");
-    setLit(false);
+    queueMicrotask(() => {
+      setPhase("entering");
+      setLit(false);
+    });
     // Two frames: the first commits the transparent mount, the second is the
     // one the browser can actually transition from.
     rafRef.current = requestAnimationFrame(() => {

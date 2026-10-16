@@ -54,6 +54,9 @@ function toFailure(error: unknown): ImportSchemaBundleFailure {
   return new ImportSchemaBundleFailure(ImportSchemaBundleFailureModel.fromUnknown(message));
 }
 
+/**
+ * Documentation for module export
+ */
 export class SchemaImportService implements ISchemaImportService {
   constructor(private readonly api: IApiService) {}
 

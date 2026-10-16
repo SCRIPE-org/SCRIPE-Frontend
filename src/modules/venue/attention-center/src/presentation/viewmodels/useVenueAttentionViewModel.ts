@@ -4,8 +4,14 @@ import { useCallback, useEffect, useState } from "react";
 import { getVenueContainer } from "@modules/venue/di";
 import type { VenueAttentionPage } from "../../domain/entities/VenueAttention";
 
+/**
+ * Documentation for "forbidden"
+ */
 export type VenueAttentionStage = "loading" | "ready" | "error" | "forbidden";
 
+/**
+ * Documentation for module export
+ */
 export function useVenueAttentionViewModel(canView: boolean) {
   const { venueAttentionRepository } = getVenueContainer();
   const [stage, setStage] = useState<VenueAttentionStage>(canView ? "loading" : "forbidden");
@@ -23,23 +29,16 @@ export function useVenueAttentionViewModel(canView: boolean) {
       setStage("ready");
     } catch {
       if (process.env.NODE_ENV !== "production") {
-        try {
-          const { getRealisticVenueAttentionData } = await import(
-            "@modules/venue/venue-overview/src/data/mock/realisticVenueOperationalData"
-          );
-          setData(getRealisticVenueAttentionData());
-          setStage("ready");
-          return;
-        } catch {
-          // ignore
-        }
+        setStage("error");
       }
       setStage("error");
     }
   }, [canView, venueAttentionRepository]);
 
   useEffect(() => {
-    const timer = window.setTimeout(() => { void load(); }, 0);
+    const timer = window.setTimeout(() => {
+      void load();
+    }, 0);
     return () => window.clearTimeout(timer);
   }, [load]);
   return { stage, data, refresh: load };

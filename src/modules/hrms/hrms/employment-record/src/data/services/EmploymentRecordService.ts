@@ -19,6 +19,9 @@ import type {
 
 const BASE_URL = EMPLOYMENT_RECORD_ENDPOINTS.LIST;
 
+/**
+ * Documentation for module export
+ */
 export class EmploymentRecordService implements IEmploymentRecordService {
   constructor(private readonly api: IApiService) {}
 

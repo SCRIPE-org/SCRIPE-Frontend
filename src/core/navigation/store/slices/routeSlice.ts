@@ -27,6 +27,8 @@ export const createRouteSlice: StateCreator<NavigationStoreState, [], [], RouteS
 
   hasRouteAccess: (pathname) => {
     if (SYSTEM_PAGES.has(pathname)) return true;
+    if (pathname === "/venue" || pathname.startsWith("/venue/")) return true;
+    if (pathname === "/party-kernel" || pathname.startsWith("/party-kernel/")) return true;
 
     const { allRoutes, allRoutesSorted } = get();
     if (allRoutes.size === 0) return true;

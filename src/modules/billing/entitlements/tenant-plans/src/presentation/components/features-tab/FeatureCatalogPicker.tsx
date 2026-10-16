@@ -116,7 +116,11 @@ export function FeatureCatalogPicker({
                       <div className="min-w-0 flex-1">
                         <div className="flex items-center gap-2">
                           <span className="text-sm font-medium">
-                            {resolveBilingualLabel(feature.displayNameEn, feature.displayNameAr, language)}
+                            {resolveBilingualLabel(
+                              feature.displayNameEn,
+                              feature.displayNameAr,
+                              language
+                            )}
                           </span>
                           <Badge variant="outline" className="text-[10px]">
                             {feature.valueType}

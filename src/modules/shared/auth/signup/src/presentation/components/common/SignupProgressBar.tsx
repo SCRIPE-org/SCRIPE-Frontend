@@ -114,7 +114,11 @@ export function SignupProgressBar({ phase }: SignupProgressBarProps) {
                   }}
                 >
                   {done ? (
-                    <Check className="h-2.5 w-2.5" strokeWidth={3} style={{ color: tokens.surface }} />
+                    <Check
+                      className="h-2.5 w-2.5"
+                      strokeWidth={3}
+                      style={{ color: tokens.surface }}
+                    />
                   ) : (
                     <span
                       className="h-1.5 w-1.5 rounded-full"

@@ -20,6 +20,9 @@ import type {
   DiscardFieldVersionDraftResult,
 } from "../entities/FieldInsight";
 
+/**
+ * Documentation for module export
+ */
 export interface CustomFieldListParams {
   page: number;
   pageSize: number;
@@ -27,10 +30,11 @@ export interface CustomFieldListParams {
   entityTypeKey?: string;
 }
 
+/**
+ * Documentation for module export
+ */
 export interface ICustomFieldRepository {
-  getAll(
-    params: CustomFieldListParams
-  ): Promise<{
+  getAll(params: CustomFieldListParams): Promise<{
     items: CustomField[];
     totalCount: number;
     page: number;
@@ -58,4 +62,3 @@ export interface ICustomFieldRepository {
   changeFieldType(id: string, data: ChangeFieldTypeRequest): Promise<ChangeFieldTypeResult>;
   rollbackFieldTypeChange(jobRunId: string): Promise<RollbackFieldTypeChangeResult>;
 }
-

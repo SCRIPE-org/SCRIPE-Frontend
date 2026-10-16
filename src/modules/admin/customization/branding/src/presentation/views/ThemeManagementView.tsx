@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 // FILE-EXCEPTION: file length
 /**
  * Theme Management View

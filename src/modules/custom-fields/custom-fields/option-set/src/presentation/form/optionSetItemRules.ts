@@ -64,13 +64,11 @@ export interface OptionSetItemRuleRow {
  * `optionSet.items.validation` (see `optionSetItemIssueMessageKey`).
  */
 export type OptionSetItemIssueCode =
-  | "keyRequired"
-  | "labelEnRequired"
-  | "duplicateKey"
-  | "keyTooLong"
-  | "labelTooLong"
-  | "atLeastOne";
+  "keyRequired" | "labelEnRequired" | "duplicateKey" | "keyTooLong" | "labelTooLong" | "atLeastOne";
 
+/**
+ * Documentation for module export
+ */
 export interface OptionSetItemIssue {
   /** The row it belongs to, or null for a whole-list problem (`atLeastOne`). */
   rowId: string | null;

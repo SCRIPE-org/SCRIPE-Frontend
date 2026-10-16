@@ -33,11 +33,17 @@ import { GenericSelect } from "@core/crud/components/generic-select";
 import { useI18n } from "@core/providers/i18n-provider";
 import { useValueExportViewModel } from "../viewmodels/useValueExportViewModel";
 
+/**
+ * Documentation for module export
+ */
 export interface ValueExportDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
 }
 
+/**
+ * Documentation for module export
+ */
 export function ValueExportDialog({ open, onOpenChange }: ValueExportDialogProps) {
   const { t, language } = useI18n();
   const vm = useValueExportViewModel();

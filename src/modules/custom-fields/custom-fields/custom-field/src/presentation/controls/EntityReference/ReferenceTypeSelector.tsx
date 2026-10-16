@@ -146,6 +146,9 @@ function ReferenceTypeOptions({
   );
 }
 
+/**
+ * Documentation for module export
+ */
 export interface ReferenceTypeSelectorProps {
   /**
    * The RECORD field's id. This selector derives its own from it rather than taking a second
@@ -175,6 +178,9 @@ export interface ReferenceTypeSelectorProps {
   onChosenTypeChange: (type: EntityLookupType) => void;
 }
 
+/**
+ * Documentation for ReferenceTypeSelector
+ */
 export function ReferenceTypeSelector({
   recordFieldId,
   recordFieldLabel,
@@ -223,9 +229,7 @@ export function ReferenceTypeSelector({
           // announce as "Record type". The short label is a substring of
           // it, which is what WCAG's Label-in-Name asks for.
           ariaLabel={t(`${I18N}.typeLabelFor`, { field: recordFieldLabel ?? recordFieldId })}
-          selectedOptions={
-            chosenType ? [{ value: chosenType.key, label: chosenTypeLabel }] : []
-          }
+          selectedOptions={chosenType ? [{ value: chosenType.key, label: chosenTypeLabel }] : []}
           displayLabel={chosenTypeLabel}
           maxSelectedDisplay={1}
           // Nothing to clear TO. The field is already unpinned; emptying

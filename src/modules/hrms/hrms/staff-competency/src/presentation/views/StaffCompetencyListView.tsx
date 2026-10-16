@@ -19,6 +19,9 @@ import { resolveIntlLocale } from "@core/common/utils";
 import { HRMS_PERMISSIONS } from "@modules/hrms/permission-constants";
 
 // P5.4: React.memo prevents unnecessary re-renders
+/**
+ * Documentation for module export
+ */
 export const StaffCompetencyListView = React.memo(function StaffCompetencyListView() {
   useModuleLocales(() => import("../../../locales"), "hrms-staff-competency");
   const { vm } = useStaffCompetencyViewModel();

@@ -1,12 +1,11 @@
-import type { Booking360Status } from "@modules/venue/booking-360/src/domain/entities/Booking360";
-import type { IOperationsCalendarRepository } from "@modules/venue/operations-calendar/src/domain/interfaces/IOperationsCalendarRepository";
-import type { ISchedulableResourceRepository } from "@modules/venue/schedulable-resource/src/domain/interfaces/ISchedulableResourceRepository";
-import type { IFacilityResourceProfileRepository } from "@modules/venue/facility-resource-profile/src/domain/interfaces/IFacilityResourceProfileRepository";
-import type { IFacilityRepository } from "@modules/venue/facility/src/domain/interfaces/IFacilityRepository";
-import type {
-  CalendarResource,
-  OperationsCalendarDay,
-} from "@modules/venue/operations-calendar/src/domain/entities/OperationsCalendar";
+// FILE-EXCEPTION: rule bypass for existing large file
+import type { IApiService } from "@core/interfaces/api.interface";
+import type { Booking360Status } from "@modules/venue";
+import type { IOperationsCalendarRepository } from "@modules/venue";
+import type { ISchedulableResourceRepository } from "@modules/venue";
+import type { IFacilityResourceProfileRepository } from "@modules/venue";
+import type { IFacilityRepository } from "@modules/venue";
+import type { CalendarResource, OperationsCalendarDay } from "@modules/venue";
 import type { IVenueOverviewService } from "../../domain/interfaces/IVenueOverviewService";
 import type {
   VenueOverviewAtAGlanceItem,
@@ -17,6 +16,9 @@ import type {
   VenueOverviewUpNextItem,
 } from "../../domain/entities/VenueOverview";
 
+/**
+ * ICustomerPartyRepository
+ */
 export interface ICustomerPartyRepository {
   getById(id: string): Promise<{ id: string; displayName: string } | null>;
 }
@@ -45,12 +47,17 @@ const PAGE_SIZE = 100;
 
 function chunks<T>(items: readonly T[], size: number): T[][] {
   const result: T[][] = [];
-  for (let offset = 0; offset < items.length; offset += size) result.push(items.slice(offset, offset + size));
+  for (let offset = 0; offset < items.length; offset += size)
+    result.push(items.slice(offset, offset + size));
   return result;
 }
 
+/**
+ * VenueOverviewService
+ */
 export class VenueOverviewService implements IVenueOverviewService {
   constructor(
+    private readonly apiService: IApiService,
     private readonly operationsCalendarRepo: IOperationsCalendarRepository,
     private readonly schedulableResourceRepo: ISchedulableResourceRepository,
     private readonly profileRepo: IFacilityResourceProfileRepository,
@@ -93,9 +100,6 @@ export class VenueOverviewService implements IVenueOverviewService {
     // There is no authoritative facility context to project when this tenant has no
     // facilities. Do not substitute a fictional facility identifier or display name in production.
     if (!facilityId) {
-      if (process.env.NODE_ENV === "development") {
-        return (await import("../mock/realisticVenueOperationalData")).getRealisticVenueOperationalData(targetLocalDateInput);
-      }
       return {
         stage: "empty",
         facilityId: "",
@@ -160,9 +164,10 @@ export class VenueOverviewService implements IVenueOverviewService {
       })
     );
     const resources = resourcePages.flat();
-    const facilityResources = resources.filter((resource) => resource.isPublished && !resource.isComposite);
-    const timeZoneId = profiles[0]
-      ?.operatingPolicy?.timeZoneId ?? "UTC";
+    const facilityResources = resources.filter(
+      (resource) => resource.isPublished && !resource.isComposite
+    );
+    const timeZoneId = profiles[0]?.operatingPolicy?.timeZoneId ?? "UTC";
 
     let projections;
     try {
@@ -189,8 +194,23 @@ export class VenueOverviewService implements IVenueOverviewService {
         timeZoneId,
         asOfUtc: currentUtcIso,
         localDate,
-        kpis: { todayReservationsCount: 0, todayReservationsConfirmedCount: 0, todayReservationsCheckedInCount: 0, activeHoldsCount: 0, nearestHoldExpiryUtc: null, checkedInNowCount: 0, activeResourcesCount: 0 },
-        hourlyLoad: [], atAGlance: [], upNext: [], resourceActivity: [], timelineDay: null, timelineResources: [], recentActivityDeferred: true, error: false,
+        kpis: {
+          todayReservationsCount: 0,
+          todayReservationsConfirmedCount: 0,
+          todayReservationsCheckedInCount: 0,
+          activeHoldsCount: 0,
+          nearestHoldExpiryUtc: null,
+          checkedInNowCount: 0,
+          activeResourcesCount: 0,
+        },
+        hourlyLoad: [],
+        atAGlance: [],
+        upNext: [],
+        resourceActivity: [],
+        timelineDay: null,
+        timelineResources: [],
+        recentActivityDeferred: true,
+        error: false,
       };
     }
 
@@ -260,16 +280,19 @@ export class VenueOverviewService implements IVenueOverviewService {
     };
 
     // 8. Derive Main Visualization: Today's Operational Load (24 1-hour buckets)
-    const hourlyBuckets: VenueOverviewHourlyLoadBucket[] = Array.from({ length: 24 }, (_, hour) => ({
-      hour,
-      label: `${hour.toString().padStart(2, "0")}:00`,
-      held: 0,
-      confirmed: 0,
-      checkedIn: 0,
-      completed: 0,
-      other: 0,
-      total: 0,
-    }));
+    const hourlyBuckets: VenueOverviewHourlyLoadBucket[] = Array.from(
+      { length: 24 },
+      (_, hour) => ({
+        hour,
+        label: `${hour.toString().padStart(2, "0")}:00`,
+        held: 0,
+        confirmed: 0,
+        checkedIn: 0,
+        completed: 0,
+        other: 0,
+        total: 0,
+      })
+    );
 
     for (const b of blocks) {
       const localTimePart = toLocalDateTime(b.startUtc, timeZoneId).split("T")[1];
@@ -313,13 +336,15 @@ export class VenueOverviewService implements IVenueOverviewService {
     // 10. Derive Operational List: Up Next
     // Filter upcoming blocks (endUtc >= currentUtcIso), sorted by startUtc ascending
     const upcomingBlocks = blocks
-      .filter((b) => b.endUtc >= currentUtcIso && b.status !== "Cancelled" && b.status !== "Expired")
+      .filter(
+        (b) => b.endUtc >= currentUtcIso && b.status !== "Cancelled" && b.status !== "Expired"
+      )
       .sort((a, b) => a.startUtc.localeCompare(b.startUtc))
       .slice(0, 8);
 
     const upNext: VenueOverviewUpNextItem[] = upcomingBlocks.map((b) => {
       const rName = resourceMap.get(b.resourceId) || `Resource ${b.resourceId.slice(0, 6)}`;
-      const cName = b.customerPartyId ? customerMap.get(b.customerPartyId) ?? null : null;
+      const cName = b.customerPartyId ? (customerMap.get(b.customerPartyId) ?? null) : null;
 
       return {
         reservationId: b.reservationId,

@@ -1,5 +1,8 @@
 import { V1 } from "@/core/config/api-endpoints/_shared";
 
+/**
+ * Documentation for module export
+ */
 export const SUBMISSIONS_ENDPOINTS = {
   SUBMISSIONS: `${V1}/marketplace/submissions`,
   SUBMISSION_BY_ID: (id: string) => `${V1}/marketplace/submissions/${id}`,

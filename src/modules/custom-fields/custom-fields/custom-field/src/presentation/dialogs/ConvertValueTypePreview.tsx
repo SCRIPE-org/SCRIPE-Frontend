@@ -1,18 +1,15 @@
 "use client";
 
 import React from "react";
-import {
-  AlertTriangle,
-  ArrowRight,
-  CheckCircle2,
-  Info,
-  XCircle,
-} from "lucide-react";
+import { AlertTriangle, ArrowRight, CheckCircle2, Info, XCircle } from "lucide-react";
 import { Badge } from "@core/ui/badge";
 import { Checkbox } from "@core/ui/checkbox";
 import { useI18n } from "@core/providers/i18n-provider";
 import type { ConversionKind } from "../../domain/entities/FieldInsight";
 
+/**
+ * Documentation for module export
+ */
 export interface ConvertValueTypePreviewProps {
   currentType: string;
   selectedTargetType: string;
@@ -23,6 +20,9 @@ export interface ConvertValueTypePreviewProps {
   isApplied: boolean;
 }
 
+/**
+ * Documentation for ConvertValueTypePreview
+ */
 export function ConvertValueTypePreview({
   currentType,
   selectedTargetType,
@@ -75,25 +75,25 @@ export function ConvertValueTypePreview({
     <div className="space-y-3 rounded-lg border border-nx-line bg-nx-raised p-3.5">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2 text-sm font-medium text-nx-ink">
-          <Badge variant="outline" className="font-mono">{currentType}</Badge>
-          <ArrowRight className="h-3.5 w-3.5 text-nx-ink-4" />
-          <Badge variant="outline" className="font-mono">{selectedTargetType}</Badge>
+          <Badge variant="outline" className="font-mono">
+            {currentType}
+          </Badge>
+          <ArrowRight className="text-nx-ink-4 h-3.5 w-3.5" />
+          <Badge variant="outline" className="font-mono">
+            {selectedTargetType}
+          </Badge>
         </div>
         {renderConversionKindBadge(conversionKind)}
       </div>
 
       {/* Kind Explanation Notes */}
       {conversionKind === "Lossless" && (
-        <p className="text-xs text-success">
-          {t("customField.convertValueType.notes.lossless")}
-        </p>
+        <p className="text-xs text-success">{t("customField.convertValueType.notes.lossless")}</p>
       )}
 
       {conversionKind === "Lossy" && (
         <div className="space-y-2">
-          <p className="text-xs text-warning">
-            {t("customField.convertValueType.notes.lossy")}
-          </p>
+          <p className="text-xs text-warning">{t("customField.convertValueType.notes.lossy")}</p>
           <div className="flex items-start gap-2 pt-1">
             <Checkbox
               id="confirm-data-loss"
@@ -103,7 +103,7 @@ export function ConvertValueTypePreview({
             />
             <label
               htmlFor="confirm-data-loss"
-              className="text-xs font-medium leading-none text-nx-ink cursor-pointer pt-0.5"
+              className="cursor-pointer pt-0.5 text-xs font-medium leading-none text-nx-ink"
             >
               {t("customField.convertValueType.confirmDataLossCheckbox")}
             </label>
@@ -118,9 +118,7 @@ export function ConvertValueTypePreview({
       )}
 
       {conversionKind === "NoChange" && (
-        <p className="text-xs text-nx-ink-4">
-          {t("customField.convertValueType.notes.noChange")}
-        </p>
+        <p className="text-nx-ink-4 text-xs">{t("customField.convertValueType.notes.noChange")}</p>
       )}
     </div>
   );

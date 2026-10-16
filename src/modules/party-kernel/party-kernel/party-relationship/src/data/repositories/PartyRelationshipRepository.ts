@@ -17,6 +17,9 @@ import type { IPartyRelationshipService } from "../../domain/interfaces/IPartyRe
 import type { PartyRelationship } from "../../domain/entities/PartyRelationship";
 import { PartyRelationshipMapper } from "../mappers/PartyRelationshipMapper";
 
+/**
+ * Documentation for module export
+ */
 export class PartyRelationshipRepository implements IPartyRelationshipRepository {
   constructor(private readonly service: IPartyRelationshipService) {}
 

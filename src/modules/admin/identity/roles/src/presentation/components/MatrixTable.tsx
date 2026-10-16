@@ -6,20 +6,8 @@
  */
 "use client";
 
-import {
-  Table,
-  TableHeader,
-  TableBody,
-  TableHead,
-  TableRow,
-  TableCell,
-} from "@core/ui/table";
-import {
-  Tooltip,
-  TooltipTrigger,
-  TooltipContent,
-  TooltipProvider,
-} from "@core/ui/tooltip";
+import { Table, TableHeader, TableBody, TableHead, TableRow, TableCell } from "@core/ui/table";
+import { Tooltip, TooltipTrigger, TooltipContent, TooltipProvider } from "@core/ui/tooltip";
 import { useI18n } from "@core/providers/i18n-provider";
 import { cn } from "@core/common/utils";
 import type { Permission } from "@modules/identity/permissions";
@@ -111,7 +99,7 @@ export function MatrixTable({
 
   return (
     <Table className={cn("border-collapse text-sm", className)}>
-      <TableHeader className="border-b border-nx-line-hi bg-nx-surface-sunken/60">
+      <TableHeader className="bg-nx-surface-sunken/60 border-b border-nx-line-hi">
         <TableRow className="border-b-0 hover:bg-transparent">
           <TableHead
             scope="col"
@@ -183,7 +171,7 @@ export function MatrixTable({
               {row.cells.map((perm, col) => (
                 <TableCell
                   key={coreActions[col]}
-                  className="h-9 px-2 text-center align-middle [&:has([role=checkbox])]:ps-2 [&:has([role=checkbox])]:pe-2"
+                  className="h-9 px-2 text-center align-middle [&:has([role=checkbox])]:pe-2 [&:has([role=checkbox])]:ps-2"
                 >
                   {perm ? (
                     <MatrixCell

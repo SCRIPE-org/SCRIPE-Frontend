@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import React, { useState } from "react";
 import { Building2, Clock3, Lock, Pencil, Plus, Tag } from "lucide-react";
@@ -15,12 +15,15 @@ import { useModuleLocales } from "@core/hooks/use-module-locales";
 import { usePermission } from "@core/hooks/use-permission";
 import { useI18n } from "@core/providers/i18n-provider";
 import { VENUE_PERMISSIONS } from "@modules/venue/permission-constants";
-import { VenueResourceNav } from "@modules/venue/shared/src/presentation/components/VenueResourceNav";
+import { VenueResourceNav } from "@modules/venue";
 import type { FacilityResourceProfile } from "../../domain/entities/FacilityResourceProfile";
 import { useFacilityResourceProfilesViewModel } from "../viewmodels/useFacilityResourceProfilesViewModel";
 import { FacilityResourceProfileDialog } from "../dialogs/FacilityResourceProfileDialog";
-import { FacilityQuickCreateDialog } from "@modules/venue/facility/src/presentation/components/FacilityQuickCreateDialog";
+import { FacilityQuickCreateDialog } from "@modules/venue";
 
+/**
+ * Documentation for module export
+ */
 export const FacilityResourceProfilesView = React.memo(function FacilityResourceProfilesView() {
   useModuleLocales(() => import("../../../locales"), "venue.resourceProfile");
   const { t } = useI18n();
@@ -40,12 +43,21 @@ export const FacilityResourceProfilesView = React.memo(function FacilityResource
   }));
 
   if (!canView) {
-    return <EmptyState icon={Lock} title={t("notAuthorized.title")} description={t("notAuthorized.description")} />;
+    return (
+      <EmptyState
+        icon={Lock}
+        title={t("notAuthorized.title")}
+        description={t("notAuthorized.description")}
+      />
+    );
   }
 
   if (vm.loading && vm.facilities.length === 0) return <LoadingSpinner showText={false} />;
 
-  const beginCreate = () => { setEditingProfile(undefined); setOpen(true); };
+  const beginCreate = () => {
+    setEditingProfile(undefined);
+    setOpen(true);
+  };
 
   const beginEdit = async (profile: FacilityResourceProfile) => {
     try {
@@ -76,7 +88,9 @@ export const FacilityResourceProfilesView = React.memo(function FacilityResource
 
       <div className="flex max-w-xl items-end gap-3">
         <div className="flex-1 space-y-2">
-          <Label id="profile-facility-label" htmlFor="profile-facility-select">{t("resourceProfile.facility")}</Label>
+          <Label id="profile-facility-label" htmlFor="profile-facility-select">
+            {t("resourceProfile.facility")}
+          </Label>
           <GenericSelect
             id="profile-facility-select"
             aria-labelledby="profile-facility-label"
@@ -86,7 +100,7 @@ export const FacilityResourceProfilesView = React.memo(function FacilityResource
             options={facilityOptions}
             value={vm.selectedFacilityId}
             onValueChange={(value: string | string[]) =>
-              vm.setSelectedFacilityId(Array.isArray(value) ? value[0] ?? "" : value)
+              vm.setSelectedFacilityId(Array.isArray(value) ? (value[0] ?? "") : value)
             }
             placeholder={t("resourceProfile.selectFacility")}
           />
@@ -109,7 +123,11 @@ export const FacilityResourceProfilesView = React.memo(function FacilityResource
           icon={Building2}
           title={t("common.error")}
           description={vm.error.message}
-          action={<Button variant="outline" onClick={() => void vm.refresh()}>{t("common.retry")}</Button>}
+          action={
+            <Button variant="outline" onClick={() => void vm.refresh()}>
+              {t("common.retry")}
+            </Button>
+          }
         />
       )}
       {!vm.error && !vm.loading && vm.facilities.length === 0 && (
@@ -117,11 +135,20 @@ export const FacilityResourceProfilesView = React.memo(function FacilityResource
           icon={Building2}
           title={t("resourceProfile.noFacilities")}
           description={t("resourceProfile.noFacilitiesDescription")}
-          action={<Button onClick={() => setQuickCreateFacilityOpen(true)}><Plus className="mr-1 size-4" />{t("facility.addNew") || "New Facility"}</Button>}
+          action={
+            <Button onClick={() => setQuickCreateFacilityOpen(true)}>
+              <Plus className="mr-1 size-4" />
+              {t("facility.addNew") || "New Facility"}
+            </Button>
+          }
         />
       )}
       {!vm.error && vm.selectedFacilityId && vm.profiles.length === 0 && (
-        <EmptyState icon={Building2} title={t("resourceProfile.empty")} description={t("resourceProfile.emptyDescription")} />
+        <EmptyState
+          icon={Building2}
+          title={t("resourceProfile.empty")}
+          description={t("resourceProfile.emptyDescription")}
+        />
       )}
 
       <div className="grid gap-4 lg:grid-cols-2">

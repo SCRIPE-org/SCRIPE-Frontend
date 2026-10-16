@@ -111,10 +111,22 @@ const sections: DocSection[] = [
     type: "flowchart",
     direction: "vertical",
     nodes: [
-      { id: "A", label: "Payment received via Payment Gateway, Bank Transfer, or POS", type: "default" },
+      {
+        id: "A",
+        label: "Payment received via Payment Gateway, Bank Transfer, or POS",
+        type: "default",
+      },
       { id: "B", label: "Record Payment into Immutable RecordedPayment table", type: "primary" },
-      { id: "C", label: "Retrieve Outstanding Customer Invoices ordered by Due Date (FIFO)", type: "info" },
-      { id: "D", label: "Create Atomic PaymentAllocation record per targeted Invoice", type: "warning" },
+      {
+        id: "C",
+        label: "Retrieve Outstanding Customer Invoices ordered by Due Date (FIFO)",
+        type: "info",
+      },
+      {
+        id: "D",
+        label: "Create Atomic PaymentAllocation record per targeted Invoice",
+        type: "warning",
+      },
       { id: "E", label: "Update Invoice Status (PartiallyPaid or Paid)", type: "success" },
       { id: "F", label: "Generate Cryptographically-Hashed Payment Receipt", type: "success" },
     ],

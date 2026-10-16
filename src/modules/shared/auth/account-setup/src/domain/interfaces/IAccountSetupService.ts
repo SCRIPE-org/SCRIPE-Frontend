@@ -11,6 +11,9 @@ import type {
   ActivateAccountResponse,
 } from "../../data/models/AccountSetupModel";
 
+/**
+ * Documentation for module export
+ */
 export type {
   ValidateTokenResponse,
   SetupCustomFieldDto,
@@ -18,6 +21,9 @@ export type {
   ActivateAccountResponse,
 };
 
+/**
+ * Documentation for module export
+ */
 export interface IAccountSetupService {
   validateToken(token: string): Promise<ValidateTokenResponse>;
   getCustomFields(token: string): Promise<SetupCustomFieldDto[]>;

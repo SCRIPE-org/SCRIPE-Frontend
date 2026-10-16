@@ -1,7 +1,15 @@
 "use client";
 
 import React, { useState } from "react";
-import { Zap, ChevronDown, ChevronRight, Users, Building2, Database, ShieldAlert } from "lucide-react";
+import {
+  Zap,
+  ChevronDown,
+  ChevronRight,
+  Users,
+  Building2,
+  Database,
+  ShieldAlert,
+} from "lucide-react";
 import Link from "next/link";
 import { useI18n } from "@core/providers/i18n-provider";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@core/ui/card";
@@ -46,11 +54,11 @@ export function PlatformWorkbench() {
   ];
 
   return (
-    <Card className="h-full flex flex-col justify-between bg-[#0c101a] border-border/60 shadow-xl overflow-hidden">
+    <Card className="flex h-full flex-col justify-between overflow-hidden border-border/60 bg-[#0c101a] shadow-xl">
       {/* Header */}
-      <CardHeader className="flex flex-row items-center justify-between pb-3 border-b border-border/50 gap-2">
+      <CardHeader className="flex flex-row items-center justify-between gap-2 border-b border-border/50 pb-3">
         <div className="flex items-center gap-2.5">
-          <div className="w-8 h-8 rounded-lg bg-[#84cc16]/10 text-[#84cc16] flex items-center justify-center">
+          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-[#84cc16]/10 text-[#84cc16]">
             <Zap className="h-4 w-4" />
           </div>
           <div>
@@ -68,14 +76,14 @@ export function PlatformWorkbench() {
           <button
             type="button"
             onClick={() => setDropdownOpen((v) => !v)}
-            className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-[#141a29] border border-slate-700/60 text-xs text-white hover:bg-slate-800/80 transition-colors"
+            className="flex items-center gap-2 rounded-lg border border-slate-700/60 bg-[#141a29] px-3 py-1.5 text-xs text-white transition-colors hover:bg-slate-800/80"
           >
             <span>{t("platformCommandCenter.workbench.quickActions") || "Quick actions"}</span>
             <ChevronDown className="h-3.5 w-3.5 text-slate-400" />
           </button>
 
           {dropdownOpen && (
-            <div className="absolute right-0 mt-1.5 w-40 rounded-lg bg-[#141a29] border border-slate-700 shadow-xl py-1 z-30">
+            <div className="absolute right-0 z-30 mt-1.5 w-40 rounded-lg border border-slate-700 bg-[#141a29] py-1 shadow-xl">
               <Link
                 href="/tenants"
                 onClick={() => setDropdownOpen(false)}
@@ -103,30 +111,32 @@ export function PlatformWorkbench() {
       </CardHeader>
 
       {/* 2x2 Grid */}
-      <CardContent className="pt-4 pb-4 flex-1 flex flex-col justify-between">
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+      <CardContent className="flex flex-1 flex-col justify-between pb-4 pt-4">
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
           {actions.map((action) => {
             const Icon = action.icon;
             return (
               <Link
                 key={action.title}
                 href={action.href}
-                className="flex items-center justify-between p-3 rounded-xl bg-[#0e131f] border border-slate-800/80 hover:border-slate-700 hover:bg-slate-800/30 transition-all group"
+                className="group flex items-center justify-between rounded-xl border border-slate-800/80 bg-[#0e131f] p-3 transition-all hover:border-slate-700 hover:bg-slate-800/30"
               >
-                <div className="flex items-center gap-3 min-w-0">
-                  <div className={`w-8 h-8 rounded-lg border flex items-center justify-center shrink-0 ${action.iconBg} ${action.iconColor}`}>
+                <div className="flex min-w-0 items-center gap-3">
+                  <div
+                    className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border ${action.iconBg} ${action.iconColor}`}
+                  >
                     <Icon className="h-4 w-4" />
                   </div>
                   <div className="min-w-0">
-                    <span className="text-xs font-semibold text-white group-hover:text-[#84cc16] transition-colors block truncate">
+                    <span className="block truncate text-xs font-semibold text-white transition-colors group-hover:text-[#84cc16]">
                       {action.title}
                     </span>
-                    <span className="text-[11px] text-slate-400 block truncate">
+                    <span className="block truncate text-[11px] text-slate-400">
                       {action.subtitle}
                     </span>
                   </div>
                 </div>
-                <ChevronRight className="h-3.5 w-3.5 text-slate-600 group-hover:text-slate-300 shrink-0 transition-colors" />
+                <ChevronRight className="h-3.5 w-3.5 shrink-0 text-slate-600 transition-colors group-hover:text-slate-300" />
               </Link>
             );
           })}
@@ -135,4 +145,3 @@ export function PlatformWorkbench() {
     </Card>
   );
 }
-

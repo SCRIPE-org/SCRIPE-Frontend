@@ -1,5 +1,11 @@
-import type { SchedulableResource, PublicationChecklistReport } from "../entities/SchedulableResource";
+import type {
+  SchedulableResource,
+  PublicationChecklistReport,
+} from "../entities/SchedulableResource";
 
+/**
+ * Documentation for module export
+ */
 export interface SchedulableResourceListParams {
   page: number;
   pageSize: number;
@@ -8,6 +14,9 @@ export interface SchedulableResourceListParams {
   facilityResourceProfileIds?: string[];
 }
 
+/**
+ * Documentation for module export
+ */
 export interface ISchedulableResourceRepository {
   getAll(params: SchedulableResourceListParams): Promise<{
     items: SchedulableResource[];

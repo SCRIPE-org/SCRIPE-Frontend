@@ -7,7 +7,7 @@
  */
 "use client";
 
-import { useState, useCallback, useRef } from "react";
+import { useState, useCallback, useRef, useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useI18n } from "@core/providers/i18n-provider";
@@ -35,11 +35,7 @@ import {
 } from "../types/templateFormTypes";
 import { useTemplateCustomFields } from "./useTemplateCustomFields";
 
-export {
-  MESSAGE_TEMPLATE_ENTITY_TYPE_KEY,
-  type TemplateFormMode,
-  type TemplateFormValues,
-};
+export { MESSAGE_TEMPLATE_ENTITY_TYPE_KEY, type TemplateFormMode, type TemplateFormValues };
 
 const QUERY_KEY = ["message-templates"];
 
@@ -100,28 +96,32 @@ export function useTemplateFormViewModel() {
   const originalDesignRawRef = useRef<Partial<DesignVariables> | null>(null);
   const initialParsedDesignRef = useRef<DesignVariables | null>(null);
 
-  if (template && initializedForId !== templateId) {
-    setInitializedForId(templateId);
+  useEffect(() => {
+    if (template && initializedForId !== templateId) {
+      queueMicrotask(() => {
+        setInitializedForId(templateId);
 
-    const parsedSchema = parseTemplateSchema(template.placeholderSchema);
-    const { parsedDesign, rawDesign } = parseTemplateDesign(template.designVariables);
+        const parsedSchema = parseTemplateSchema(template.placeholderSchema);
+        const { parsedDesign, rawDesign } = parseTemplateDesign(template.designVariables);
 
-    originalDesignRawRef.current = rawDesign;
-    initialParsedDesignRef.current = parsedDesign;
+        originalDesignRawRef.current = rawDesign;
+        initialParsedDesignRef.current = parsedDesign;
 
-    setForm({
-      key: template.key,
-      channel: template.channel,
-      language: template.language,
-      subject: template.subject || "",
-      body: template.body || "",
-      description: template.description || "",
-      isActive: template.isActive,
-      category: (template.category as TemplateCategory) || "",
-      placeholderSchema: parsedSchema,
-      designVariables: parsedDesign,
-    });
-  }
+        setForm({
+          key: template.key,
+          channel: template.channel,
+          language: template.language,
+          subject: template.subject || "",
+          body: template.body || "",
+          description: template.description || "",
+          isActive: template.isActive,
+          category: (template.category as TemplateCategory) || "",
+          placeholderSchema: parsedSchema,
+          designVariables: parsedDesign,
+        });
+      });
+    }
+  }, [template, initializedForId, templateId]);
 
   // ─── Field updaters ──────────────────────────────────────
   const updateField = useCallback(
@@ -252,8 +252,17 @@ export function useTemplateFormViewModel() {
       setIsSubmitting(false);
     }
   }, [
-    mode, form, createMutation, updateMutation, templateId,
-    saveCustomFieldValues, queryClient, success, t, toastError, router,
+    mode,
+    form,
+    createMutation,
+    updateMutation,
+    templateId,
+    saveCustomFieldValues,
+    queryClient,
+    success,
+    t,
+    toastError,
+    router,
   ]);
 
   const handleCancel = useCallback(() => {

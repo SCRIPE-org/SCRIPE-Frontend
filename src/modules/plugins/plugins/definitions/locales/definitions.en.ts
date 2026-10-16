@@ -83,6 +83,7 @@ export const en = {
     defCustomFieldsSection: "Custom Fields",
     defCustomFieldsSectionDesc: "Additional platform-configured fields for this plugin definition.",
     defNoCustomFields: "No custom fields yet.",
-    defCustomFieldsSaveError: "The definition was saved, but its custom field values failed to save.",
+    defCustomFieldsSaveError:
+      "The definition was saved, but its custom field values failed to save.",
   },
 };

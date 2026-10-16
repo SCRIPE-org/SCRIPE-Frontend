@@ -43,6 +43,9 @@ export {
   type OptionSetDraftItem,
 } from "./optionSetItemEditorTypes";
 
+/**
+ * Documentation for module export
+ */
 export interface OptionSetItemsEditorProps {
   items: readonly OptionSetDraftItem[];
   onItemsChange: (items: OptionSetDraftItem[]) => void;

@@ -36,7 +36,7 @@ export function TenantOverviewView() {
   const { data } = vm;
 
   return (
-    <div className="space-y-4 max-w-[1560px] mx-auto pb-8">
+    <div className="mx-auto max-w-[1560px] space-y-4 pb-8">
       {/* 1. Header Bar */}
       <TenantCommandHeader
         tenantName={data.tenantName}
@@ -59,9 +59,9 @@ export function TenantOverviewView() {
       <TenantKpiCards kpis={data.kpis} />
 
       {/* 4. Main 2-Column Dashboard Grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,2fr)_minmax(310px,0.9fr)] gap-3.5 items-start">
+      <div className="grid grid-cols-1 items-start gap-3.5 lg:grid-cols-[minmax(0,2fr)_minmax(310px,0.9fr)]">
         {/* Left Column (Main Operational Core) */}
-        <div className="space-y-3.5 min-w-0">
+        <div className="min-w-0 space-y-3.5">
           {/* Step 1: Get Started */}
           <TenantGetStartedSteps
             steps={data.steps}
@@ -83,7 +83,7 @@ export function TenantOverviewView() {
         </div>
 
         {/* Right Column (Administrative Sidebar) */}
-        <aside className="space-y-3.5 min-w-0">
+        <aside className="min-w-0 space-y-3.5">
           {/* Needs Attention */}
           <TenantNeedsAttention alerts={data.alerts} />
 

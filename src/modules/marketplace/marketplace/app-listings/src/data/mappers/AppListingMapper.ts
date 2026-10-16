@@ -80,7 +80,9 @@ export class AppListingMapper {
         .map((s) => s.imageUrl)
         .filter((url): url is string => !!url),
       version: validated.version ?? "1.0.0",
-      pricingModel: (validated.pricingModel ?? validated.pricing?.model ?? "Free") as AppListingData["pricingModel"],
+      pricingModel: (validated.pricingModel ??
+        validated.pricing?.model ??
+        "Free") as AppListingData["pricingModel"],
       price: validated.price ?? validated.pricing?.price ?? null,
       // Currency is nested under `pricing.currency` on the detail response and
       // is absent entirely from the list response — never a top-level field.

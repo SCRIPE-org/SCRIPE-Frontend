@@ -25,7 +25,8 @@ interface UseWorkspaceSelectorOptions {
   setLoginStep: (step: LoginStep) => void;
   setError: (msg: string) => void;
   setTenantId: (id: string | undefined) => void;
-  hasTriggeredRedirect: React.MutableRefObject<boolean>;
+  isRedirectTriggered: () => boolean;
+  onRedirectTriggered: () => void;
   handleRedirect: (path: string) => void;
   enterTwoFactor: () => void;
   /** Called by enterTwoFactor so 2FA knows which tenantId to verify against */
@@ -49,7 +50,8 @@ export function useWorkspaceSelector(opts: UseWorkspaceSelectorOptions) {
     setLoginStep,
     setError,
     setTenantId,
-    hasTriggeredRedirect,
+    isRedirectTriggered,
+    onRedirectTriggered,
     handleRedirect,
     enterTwoFactor,
     onTenantResolved,
@@ -93,8 +95,8 @@ export function useWorkspaceSelector(opts: UseWorkspaceSelectorOptions) {
         });
 
         setIsRedirecting(true);
-        if (!hasTriggeredRedirect.current) {
-          hasTriggeredRedirect.current = true;
+        if (!isRedirectTriggered()) {
+          onRedirectTriggered();
           const { useAppStore } = await import("@core/store/useAppStore");
           const mustChange = useAppStore.getState().mustChangePassword;
           // redirectPath can originate from the attacker-controlled `?redirect=`
@@ -126,7 +128,8 @@ export function useWorkspaceSelector(opts: UseWorkspaceSelectorOptions) {
       setIsRedirecting,
       setError,
       setTenantId,
-      hasTriggeredRedirect,
+      isRedirectTriggered,
+      onRedirectTriggered,
       handleRedirect,
       enterTwoFactor,
       onTenantResolved,
@@ -157,8 +160,8 @@ export function useWorkspaceSelector(opts: UseWorkspaceSelectorOptions) {
 
         // Login succeeded — redirect
         setIsRedirecting(true);
-        if (!hasTriggeredRedirect.current) {
-          hasTriggeredRedirect.current = true;
+        if (!isRedirectTriggered()) {
+          onRedirectTriggered();
           const { useAppStore } = await import("@core/store/useAppStore");
           const mustChange = useAppStore.getState().mustChangePassword;
           const targetPath = mustChange ? "/change-password" : getSafeRedirectPath(redirectPath);
@@ -181,7 +184,8 @@ export function useWorkspaceSelector(opts: UseWorkspaceSelectorOptions) {
       redirectPath,
       setIsRedirecting,
       setTenantId,
-      hasTriggeredRedirect,
+      isRedirectTriggered,
+      onRedirectTriggered,
       handleRedirect,
       enterTwoFactor,
       onTenantResolved,

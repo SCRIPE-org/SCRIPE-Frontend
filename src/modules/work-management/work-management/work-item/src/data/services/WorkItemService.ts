@@ -15,6 +15,9 @@ import type {
 } from "../../domain/interfaces/IWorkItemService";
 import { WORK_ITEM_ENDPOINTS } from "./work-item.endpoints";
 
+/**
+ * Documentation for module export
+ */
 export class WorkItemService implements IWorkItemService {
   constructor(private readonly api: IApiService) {}
 

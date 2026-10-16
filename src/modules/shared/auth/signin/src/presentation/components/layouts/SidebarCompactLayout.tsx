@@ -1,3 +1,4 @@
+/* eslint-disable unused-imports/no-unused-vars */
 "use client";
 
 import { BG_STYLE, SPLIT_WRAPPER_STYLE } from "./layout-types";

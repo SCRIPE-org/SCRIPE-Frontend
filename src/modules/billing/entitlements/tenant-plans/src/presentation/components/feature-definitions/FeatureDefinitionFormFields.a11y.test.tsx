@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 // FeatureDefinitionFormFields -- accessible-name coverage for the Value Type
 // GenericSelect (Wave 1 closure, Task 6).
 //

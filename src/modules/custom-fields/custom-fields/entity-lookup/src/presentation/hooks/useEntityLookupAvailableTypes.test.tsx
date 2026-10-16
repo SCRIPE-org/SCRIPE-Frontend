@@ -20,8 +20,12 @@ import { getCustomFieldsContainer } from "../../../../di";
 import type { EntityLookupType } from "../../data/models/EntityLookupModel";
 
 vi.mock("../../../../di", () => ({ getCustomFieldsContainer: vi.fn() }));
-vi.mock("@core/providers/permission-provider", () => ({ usePermissions: () => ({ permissions: [] }) }));
-vi.mock("@core/providers/tenant-context-provider", () => ({ useTenantContext: () => ({ currentTenant: null }) }));
+vi.mock("@core/providers/permission-provider", () => ({
+  usePermissions: () => ({ permissions: [] }),
+}));
+vi.mock("@core/providers/tenant-context-provider", () => ({
+  useTenantContext: () => ({ currentTenant: null }),
+}));
 
 const getAvailableTypes = vi.fn();
 
@@ -33,7 +37,12 @@ const TYPES: EntityLookupType[] = [
     displayNameEn: "Staff Member",
     displayNameAr: "عضو الفريق",
   },
-  { key: "identity.user", owningModule: "Identity", displayNameEn: "User", displayNameAr: "المستخدم" },
+  {
+    key: "identity.user",
+    owningModule: "Identity",
+    displayNameEn: "User",
+    displayNameAr: "المستخدم",
+  },
 ];
 
 // A fresh client per render: react-query caches by key, and a shared client would let one case's

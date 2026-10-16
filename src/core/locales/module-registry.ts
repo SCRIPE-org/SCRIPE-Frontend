@@ -26,7 +26,10 @@ import { en as analyticsEn, ar as analyticsAr } from "@modules/monitoring/analyt
 import { en as auditEn, ar as auditAr } from "@modules/monitoring/audit/locales";
 import { en as dashboardEn, ar as dashboardAr } from "@modules/monitoring/dashboard/locales";
 import { en as securityEn, ar as securityAr } from "@modules/monitoring/security/locales";
-import { en as platformHealthEn, ar as platformHealthAr } from "@modules/monitoring/platform-health/locales";
+import {
+  en as platformHealthEn,
+  ar as platformHealthAr,
+} from "@modules/monitoring/platform-health/locales";
 
 // ─── Identity ──────────────────────────────────────────
 import { en as adminEn, ar as adminAr } from "@modules/identity/admin/locales";
@@ -210,14 +213,8 @@ import {
   en as customFieldsEn,
   ar as customFieldsAr,
 } from "@modules/custom-fields/custom-field/locales";
-import {
-  en as fieldGroupEn,
-  ar as fieldGroupAr,
-} from "@modules/custom-fields/field-group/locales";
-import {
-  en as optionSetEn,
-  ar as optionSetAr,
-} from "@modules/custom-fields/option-set/locales";
+import { en as fieldGroupEn, ar as fieldGroupAr } from "@modules/custom-fields/field-group/locales";
+import { en as optionSetEn, ar as optionSetAr } from "@modules/custom-fields/option-set/locales";
 import {
   en as definitionExportEn,
   ar as definitionExportAr,
@@ -247,21 +244,30 @@ import {
 // ─── Party Kernel (7 sub-modules) ───────────────────────────────────────────
 import { en as partyEn, ar as partyAr } from "@modules/party-kernel/party/locales";
 import { en as partyRoleEn, ar as partyRoleAr } from "@modules/party-kernel/party-role/locales";
-import { en as partyPersonEn, ar as partyPersonAr } from "@modules/party-kernel/party-person/locales";
-import { en as partyOrgEn, ar as partyOrgAr } from "@modules/party-kernel/party-organization/locales";
-import { en as partyRelEn, ar as partyRelAr } from "@modules/party-kernel/party-relationship/locales";
-import { en as contactPointEn, ar as contactPointAr } from "@modules/party-kernel/contact-point/locales";
-import { en as mergeCandidateEn, ar as mergeCandidateAr } from "@modules/party-kernel/merge-candidate/locales";
+import {
+  en as partyPersonEn,
+  ar as partyPersonAr,
+} from "@modules/party-kernel/party-person/locales";
+import {
+  en as partyOrgEn,
+  ar as partyOrgAr,
+} from "@modules/party-kernel/party-organization/locales";
+import {
+  en as partyRelEn,
+  ar as partyRelAr,
+} from "@modules/party-kernel/party-relationship/locales";
+import {
+  en as contactPointEn,
+  ar as contactPointAr,
+} from "@modules/party-kernel/contact-point/locales";
+import {
+  en as mergeCandidateEn,
+  ar as mergeCandidateAr,
+} from "@modules/party-kernel/merge-candidate/locales";
 
 // ─── Venue (9 sub-modules) ──────────────────────────────────────────────────
-import {
-  en as venueProfileEn,
-  ar as venueProfileAr,
-} from "@modules/venue/venue-profile/locales";
-import {
-  en as facilityEn,
-  ar as facilityAr,
-} from "@modules/venue/facility/locales";
+import { en as venueProfileEn, ar as venueProfileAr } from "@modules/venue/venue-profile/locales";
+import { en as facilityEn, ar as facilityAr } from "@modules/venue/facility/locales";
 import {
   en as schedulableResourceEn,
   ar as schedulableResourceAr,
@@ -276,7 +282,10 @@ import { en as booking360En } from "@modules/venue/booking-360/locales/booking-3
 import { ar as booking360Ar } from "@modules/venue/booking-360/locales/booking-360.ar";
 import { en as calendarEn } from "@modules/venue/operations-calendar/locales/operations-calendar.en";
 import { ar as calendarAr } from "@modules/venue/operations-calendar/locales/operations-calendar.ar";
-import { en as venueOverviewEn, ar as venueOverviewAr } from "@modules/venue/venue-overview/locales";
+import {
+  en as venueOverviewEn,
+  ar as venueOverviewAr,
+} from "@modules/venue/venue-overview/locales";
 import {
   en as attentionCenterEn,
   ar as attentionCenterAr,
@@ -285,14 +294,8 @@ import {
   en as venueCommercialEn,
   ar as venueCommercialAr,
 } from "@modules/venue/commercial/locales";
-import {
-  en as venueMoneyEn,
-  ar as venueMoneyAr,
-} from "@modules/venue/money/locales";
-import {
-  en as siteEn,
-  ar as siteAr,
-} from "@modules/venue/site/locales";
+import { en as venueMoneyEn, ar as venueMoneyAr } from "@modules/venue/money/locales";
+import { en as siteEn, ar as siteAr } from "@modules/venue/site/locales";
 
 // ─── Merged Dictionaries ───────────────────────────────
 export const allModulesEn: Record<string, unknown> = deepMerge(

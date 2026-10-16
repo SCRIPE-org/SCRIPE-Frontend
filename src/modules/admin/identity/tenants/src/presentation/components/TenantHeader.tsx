@@ -17,16 +17,7 @@ import { Button } from "@core/ui/button";
 import { Badge } from "@core/ui/badge";
 import { PageHeader, type PageHeaderMeta } from "@core/ui/page-header";
 import { ConfirmationDialog } from "@core/ui/confirmation-dialog";
-import {
-  Building2,
-  Pencil,
-  Power,
-  Trash2,
-  LogIn,
-  Pause,
-  Ban,
-  XCircle,
-} from "lucide-react";
+import { Building2, Pencil, Power, Trash2, LogIn, Pause, Ban, XCircle } from "lucide-react";
 import type { Tenant } from "../../domain/entities/Tenant";
 import { TenantDeleteDialog } from "./TenantDeleteDialog";
 import { TenantEditDialog } from "./TenantEditDialog";
@@ -222,4 +213,3 @@ export function TenantHeader({ tenant, onUpdate, onEnter }: TenantHeaderProps) {
     </>
   );
 }
-

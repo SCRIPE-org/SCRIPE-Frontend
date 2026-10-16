@@ -1,7 +1,19 @@
-import type { CalculatePriceQuoteInput, ConfigureResourceRentalPriceInput, CreateTaxCategoryInput, OverridePriceQuoteInput, PriceQuote, PriceQuoteOverride, ResourceRentalPriceConfiguration, TaxCategory } from "../../domain/entities/CommercialPricing";
+import type {
+  CalculatePriceQuoteInput,
+  ConfigureResourceRentalPriceInput,
+  CreateTaxCategoryInput,
+  OverridePriceQuoteInput,
+  PriceQuote,
+  PriceQuoteOverride,
+  ResourceRentalPriceConfiguration,
+  TaxCategory,
+} from "../../domain/entities/CommercialPricing";
 import type { ICommercialPricingRepository } from "../../domain/interfaces/ICommercialPricingRepository";
 import type { ICommercialPricingService } from "../../domain/interfaces/ICommercialPricingService";
 
+/**
+ * Documentation for module export
+ */
 export class CommercialPricingRepository implements ICommercialPricingRepository {
   constructor(private readonly service: ICommercialPricingService) {}
 
@@ -9,7 +21,9 @@ export class CommercialPricingRepository implements ICommercialPricingRepository
     return this.service.getResourceConfiguration(resourceId);
   }
 
-  configureResourcePrice(input: ConfigureResourceRentalPriceInput): Promise<ResourceRentalPriceConfiguration> {
+  configureResourcePrice(
+    input: ConfigureResourceRentalPriceInput
+  ): Promise<ResourceRentalPriceConfiguration> {
     return this.service.configureResourcePrice(input);
   }
 

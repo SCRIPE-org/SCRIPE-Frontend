@@ -10,6 +10,9 @@ import type { CustomField } from "../../domain/entities/CustomField";
 import type { FieldVisibilityRuleAdmin } from "../../domain/entities/FieldInsight";
 import { parseFieldVisibilityExpressionJson } from "../viewmodels/useFieldVisibilityRulesViewModel";
 
+/**
+ * Documentation for module export
+ */
 export interface FieldVisibilityRuleListProps {
   rules: readonly FieldVisibilityRuleAdmin[];
   siblingFields: readonly CustomField[];
@@ -23,6 +26,9 @@ export interface FieldVisibilityRuleListProps {
   onDelete: (id: string) => void;
 }
 
+/**
+ * Documentation for FieldVisibilityRuleList
+ */
 export function FieldVisibilityRuleList({
   rules,
   siblingFields,
@@ -76,7 +82,9 @@ export function FieldVisibilityRuleList({
 
     return (
       <div className="flex flex-wrap items-center gap-1.5 text-sm text-nx-ink">
-        <span className="font-medium text-nx-ink-2">{t("customField.visibilityRules.visibleWhen")}</span>
+        <span className="font-medium text-nx-ink-2">
+          {t("customField.visibilityRules.visibleWhen")}
+        </span>
         <Badge variant="outline" className="font-mono text-xs">
           {operandDisplay}
         </Badge>
@@ -134,11 +142,11 @@ export function FieldVisibilityRuleList({
           {rules.map((rule, idx) => (
             <div
               key={rule.id || idx}
-              className="flex items-center justify-between rounded-md border border-nx-line bg-card p-3 shadow-sm transition-colors hover:border-nx-line-strong"
+              className="hover:border-nx-line-strong flex items-center justify-between rounded-md border border-nx-line bg-card p-3 shadow-sm transition-colors"
             >
               <div className="space-y-1">
                 {renderRuleSummary(rule)}
-                <div className="flex items-center gap-2 text-xs text-nx-ink-4">
+                <div className="text-nx-ink-4 flex items-center gap-2 text-xs">
                   <span>
                     {t("customField.visibilityRules.priority")}: {rule.priority}
                   </span>

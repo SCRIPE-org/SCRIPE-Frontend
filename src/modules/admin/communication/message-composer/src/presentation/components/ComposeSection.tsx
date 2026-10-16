@@ -78,7 +78,9 @@ function RecipientSearchInput({
   // A highlighted index from a previous keystroke must never survive into a
   // result set it no longer indexes into.
   React.useEffect(() => {
-    setActiveIndex(-1);
+    queueMicrotask(() => {
+      setActiveIndex(-1);
+    });
   }, [search, results]);
 
   const noResults = search.length >= 2 && !isSearching && results.length === 0;
@@ -94,7 +96,11 @@ function RecipientSearchInput({
       {selectedRecipients.length > 0 && (
         <div className="mb-2 flex flex-wrap gap-1.5">
           {selectedRecipients.map((r) => (
-            <Badge key={r.email} variant={r.type === "custom" ? "outline" : "secondary"} className="gap-1">
+            <Badge
+              key={r.email}
+              variant={r.type === "custom" ? "outline" : "secondary"}
+              className="gap-1"
+            >
               {r.type === "custom" && <Mail className="h-3 w-3" aria-hidden="true" />}
               {r.name || r.email}
               <button
@@ -219,7 +225,11 @@ function RecipientSearchInput({
               </div>
             ) : (
               noResults && (
-                <div id={listboxId} role="status" className="px-3 py-4 text-center text-sm text-nx-ink-3">
+                <div
+                  id={listboxId}
+                  role="status"
+                  className="px-3 py-4 text-center text-sm text-nx-ink-3"
+                >
                   <Search className="mx-auto mb-1 h-5 w-5 opacity-40" aria-hidden="true" />
                   {t("messaging.email.noRecipientsFound")}{" "}
                   {t("messaging.email.noRecipientsFoundHint")}

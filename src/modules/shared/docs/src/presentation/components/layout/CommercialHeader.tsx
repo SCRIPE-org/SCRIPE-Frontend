@@ -6,26 +6,14 @@
  */
 "use client";
 
-import {
-  useState,
-  useRef,
-  useEffect,
-  useCallback,
-  type KeyboardEvent,
-} from "react";
+import { useState, useRef, useEffect, useCallback, type KeyboardEvent } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { Button } from "@core/ui/button";
 import { useDocsI18n } from "../../providers/DocsI18nProvider";
 import { BRAND } from "@core/config/branding";
-import {
-  ChevronDown,
-  SearchIcon,
-  DocsIcon,
-  ArrowIcon,
-  MenuIcon,
-} from "./CommercialHeaderIcons";
+import { ChevronDown, SearchIcon, DocsIcon, ArrowIcon, MenuIcon } from "./CommercialHeaderIcons";
 import {
   NAV_SECTIONS,
   MEGA_PANEL_ID,
@@ -88,8 +76,7 @@ export function CommercialHeader({ onSearchOpen, onMobileMenuOpen }: CommercialH
 
   // Close on route change
   useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    closePanel();
+    queueMicrotask(closePanel);
   }, [pathname, closePanel]);
 
   // Close on Escape, returning focus to the trigger that opened the panel

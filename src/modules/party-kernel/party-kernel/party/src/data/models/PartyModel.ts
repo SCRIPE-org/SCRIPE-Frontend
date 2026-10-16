@@ -18,6 +18,66 @@ export interface PartyJson {
 }
 
 /**
+ * Canonical Party Profile Response from API
+ */
+export interface PartyProfileResponseJson {
+  id: string;
+  type: string;
+  displayName: string;
+  fullName?: string | null;
+  legalName?: string | null;
+}
+
+/**
+ * Safe Contact Lookup response JSON shape from API
+ * Canonical encrypted Party ID in id; no subtype IDs or sensitive PII fields.
+ */
+export interface PartyContactLookupResponseJson {
+  id: string;
+  type: string;
+  displayName: string;
+  fullName?: string | null;
+  legalName?: string | null;
+}
+
+/**
+ * Paginated Party Contact Lookup response from API
+ */
+export interface PartyContactLookupPagedResponseJson {
+  items: PartyContactLookupResponseJson[];
+  totalCount: number;
+  pageNumber: number;
+  pageSize: number;
+  totalPages: number;
+  hasNextPage: boolean;
+  hasPreviousPage: boolean;
+}
+
+/**
+ * Atomic Person creation request JSON shape
+ */
+export interface CreatePersonRequestJson {
+  fullName: string;
+  displayName?: string | null;
+  givenName?: string | null;
+  middleNames?: string | null;
+  familyName?: string | null;
+}
+
+/**
+ * Atomic Person creation response JSON shape
+ */
+export interface PersonResponseJson {
+  id: string;
+  type: string;
+  displayName: string;
+  fullName: string;
+  givenName?: string | null;
+  middleNames?: string | null;
+  familyName?: string | null;
+}
+
+/**
  * Paginated Party list response from API
  */
 export interface PartyListResponseJson {

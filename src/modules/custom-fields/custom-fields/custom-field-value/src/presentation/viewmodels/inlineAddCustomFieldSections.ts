@@ -14,6 +14,9 @@ import {
   VALUE_TYPE_CATALOG,
 } from "../../../../custom-field";
 
+/**
+ * Documentation for buildInlineIdentityFields
+ */
 export function buildInlineIdentityFields(
   t: (key: string, params?: Record<string, string | number>) => string
 ): FieldConfig[] {
@@ -51,30 +54,34 @@ export function buildInlineIdentityFields(
   ];
 }
 
+/**
+ * Documentation for buildInlineValidatorParamFields
+ */
 export function buildInlineValidatorParamFields(
   t: (key: string, params?: Record<string, string | number>) => string
 ): FieldConfig[] {
-  return ALL_VALIDATOR_KINDS.filter((kind) => VALIDATOR_KIND_CATALOG[kind].hasParam).map(
-    (kind) => {
-      const entry = VALIDATOR_KIND_CATALOG[kind];
-      const isClosedSet = entry.supportedParamValues !== undefined;
-      return {
-        name: "validatorParam",
-        label: t("customField.fields.validatorParam"),
-        type: isClosedSet ? "select" : "text",
-        placeholder: isClosedSet ? undefined : t(entry.paramHintKey as string),
-        description: t(entry.paramHintKey as string),
-        options: isClosedSet
-          ? entry.supportedParamValues!.map((code) => ({ value: code, label: code }))
-          : undefined,
-        isVisible: (form: Record<string, unknown>) =>
-          form.valueType === "Text" && form.validatorKind === kind,
-        section: t("customField.formSections.typeAndValidation"),
-      };
-    }
-  );
+  return ALL_VALIDATOR_KINDS.filter((kind) => VALIDATOR_KIND_CATALOG[kind].hasParam).map((kind) => {
+    const entry = VALIDATOR_KIND_CATALOG[kind];
+    const isClosedSet = entry.supportedParamValues !== undefined;
+    return {
+      name: "validatorParam",
+      label: t("customField.fields.validatorParam"),
+      type: isClosedSet ? "select" : "text",
+      placeholder: isClosedSet ? undefined : t(entry.paramHintKey as string),
+      description: t(entry.paramHintKey as string),
+      options: isClosedSet
+        ? entry.supportedParamValues!.map((code) => ({ value: code, label: code }))
+        : undefined,
+      isVisible: (form: Record<string, unknown>) =>
+        form.valueType === "Text" && form.validatorKind === kind,
+      section: t("customField.formSections.typeAndValidation"),
+    };
+  });
 }
 
+/**
+ * Documentation for buildInlineClassificationFields
+ */
 export function buildInlineClassificationFields(
   t: (key: string, params?: Record<string, string | number>) => string
 ): FieldConfig[] {
@@ -102,6 +109,9 @@ export function buildInlineClassificationFields(
   ];
 }
 
+/**
+ * Documentation for module export
+ */
 export interface BuildTypeAndValidationFieldsArgs {
   t: (key: string, params?: Record<string, string | number>) => string;
   validatorKindOptions: { value: string; label: string }[];
@@ -112,6 +122,9 @@ export interface BuildTypeAndValidationFieldsArgs {
   canBindOptionSets: boolean;
 }
 
+/**
+ * Documentation for buildInlineTypeAndValidationFields
+ */
 export function buildInlineTypeAndValidationFields({
   t,
   validatorKindOptions,

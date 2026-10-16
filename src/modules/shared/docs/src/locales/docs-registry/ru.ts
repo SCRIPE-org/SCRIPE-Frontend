@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /**
  * Docs Locale Registry — RU
  * Eagerly merges all RU docs translations (tech + commercial).

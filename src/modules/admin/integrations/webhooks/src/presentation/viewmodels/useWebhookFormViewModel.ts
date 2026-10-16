@@ -27,6 +27,9 @@ import {
 import { useWebhookCustomFields } from "./useWebhookCustomFields";
 import { useWebhookEvents } from "./useWebhookEvents";
 
+/**
+ * Documentation for module export
+ */
 export { WEBHOOK_ENTITY_TYPE_KEY, type UseWebhookFormViewModelOptions, isValidWebhookUrl };
 
 /**
@@ -68,12 +71,8 @@ export function useWebhookFormViewModel({
   }
 
   // ─── Custom Fields ─────────────────────────────────────────
-  const {
-    customFieldsQuery,
-    customFieldValues,
-    updateCustomFieldValue,
-    saveCustomFieldValues,
-  } = useWebhookCustomFields(mode, webhook?.id, t);
+  const { customFieldsQuery, customFieldValues, updateCustomFieldValue, saveCustomFieldValues } =
+    useWebhookCustomFields(mode, webhook?.id, t);
 
   // ─── Events catalog & filtering ───────────────────────────
   const {
@@ -177,8 +176,7 @@ export function useWebhookFormViewModel({
   };
 
   // ─── Validation ──────────────────────────────────────────
-  const isValid =
-    url.trim().length > 0 && selectedEvents.length > 0 && isValidWebhookUrl(url);
+  const isValid = url.trim().length > 0 && selectedEvents.length > 0 && isValidWebhookUrl(url);
 
   const urlError =
     url.length > 0 && !isValidWebhookUrl(url) ? t("webhooks.urlHttpsRequired") : undefined;
@@ -238,4 +236,3 @@ export function useWebhookFormViewModel({
  * Exported type defining parameters and fields for webhook form view model configurations.
  */
 export type WebhookFormViewModel = ReturnType<typeof useWebhookFormViewModel>;
-

@@ -276,12 +276,7 @@ export class PlatformLead {
  * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
  */
 export type LeadActivityType =
-  | "Submitted"
-  | "StatusChanged"
-  | "NoteAdded"
-  | "Assigned"
-  | "Converted"
-  | "Closed";
+  "Submitted" | "StatusChanged" | "NoteAdded" | "Assigned" | "Converted" | "Closed";
 
 /**
  * Domain model representing a Lead Activity structure.

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { renderHook, waitFor, act } from "@testing-library/react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
@@ -39,10 +40,7 @@ vi.mock("@modules/integrations/di", () => ({
   },
 }));
 
-import {
-  useWebhookFormViewModel,
-  WEBHOOK_ENTITY_TYPE_KEY,
-} from "./useWebhookFormViewModel";
+import { useWebhookFormViewModel, WEBHOOK_ENTITY_TYPE_KEY } from "./useWebhookFormViewModel";
 
 function wrapper({ children }: { children: ReactNode }) {
   const queryClient = new QueryClient({
@@ -213,10 +211,9 @@ describe("useWebhookFormViewModel + custom fields", () => {
     });
     const onSuccess = vi.fn();
 
-    const { result } = renderHook(
-      () => useWebhookFormViewModel({ mode: "create", onSuccess }),
-      { wrapper }
-    );
+    const { result } = renderHook(() => useWebhookFormViewModel({ mode: "create", onSuccess }), {
+      wrapper,
+    });
     await waitFor(() => expect(result.current.customFieldConfigs).toEqual([PRIORITY_FIELD]));
 
     act(() => {
@@ -253,10 +250,9 @@ describe("useWebhookFormViewModel + custom fields", () => {
     });
     const onSuccess = vi.fn();
 
-    const { result } = renderHook(
-      () => useWebhookFormViewModel({ mode: "create", onSuccess }),
-      { wrapper }
-    );
+    const { result } = renderHook(() => useWebhookFormViewModel({ mode: "create", onSuccess }), {
+      wrapper,
+    });
     await waitFor(() => expect(result.current.customFieldConfigs).toEqual([SEVERITY_FIELD]));
 
     act(() => {
@@ -296,10 +292,9 @@ describe("useWebhookFormViewModel + custom fields", () => {
     });
     const onSuccess = vi.fn();
 
-    const { result } = renderHook(
-      () => useWebhookFormViewModel({ mode: "create", onSuccess }),
-      { wrapper }
-    );
+    const { result } = renderHook(() => useWebhookFormViewModel({ mode: "create", onSuccess }), {
+      wrapper,
+    });
     await waitFor(() => expect(result.current.customFieldsLoading).toBe(false));
 
     act(() => {

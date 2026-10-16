@@ -31,24 +31,14 @@ const sections: DocSection[] = [
     type: "table",
     headers: [`${K}.thKind`, `${K}.thOwner`, `${K}.thWhoCanEdit`, `${K}.thScope`],
     rows: [
-      [
-        `${K}.kindSeeded`,
-        `${K}.ownerPlatform`,
-        `${K}.editNobody`,
-        `${K}.scopeGlobal`,
-      ],
+      [`${K}.kindSeeded`, `${K}.ownerPlatform`, `${K}.editNobody`, `${K}.scopeGlobal`],
       [
         `${K}.kindPlatform`,
         `${K}.ownerPlatform`,
         `${K}.editPlatformAdmin`,
         `${K}.scopeGlobalOrTenant`,
       ],
-      [
-        `${K}.kindTenant`,
-        `${K}.ownerTenant`,
-        `${K}.editTenantAdmin`,
-        `${K}.scopeTenantOnly`,
-      ],
+      [`${K}.kindTenant`, `${K}.ownerTenant`, `${K}.editTenantAdmin`, `${K}.scopeTenantOnly`],
     ],
   },
   {
@@ -85,12 +75,7 @@ const sections: DocSection[] = [
   {
     type: "list",
     variant: "ordered",
-    items: [
-      `${K}.draft1`,
-      `${K}.draft2`,
-      `${K}.draft3`,
-      `${K}.draft4`,
-    ],
+    items: [`${K}.draft1`, `${K}.draft2`, `${K}.draft3`, `${K}.draft4`],
   },
   {
     type: "info",
@@ -144,13 +129,7 @@ const sections: DocSection[] = [
   {
     type: "list",
     variant: "unordered",
-    items: [
-      `${K}.rule1`,
-      `${K}.rule2`,
-      `${K}.rule3`,
-      `${K}.rule4`,
-      `${K}.rule5`,
-    ],
+    items: [`${K}.rule1`, `${K}.rule2`, `${K}.rule3`, `${K}.rule4`, `${K}.rule5`],
   },
 ];
 

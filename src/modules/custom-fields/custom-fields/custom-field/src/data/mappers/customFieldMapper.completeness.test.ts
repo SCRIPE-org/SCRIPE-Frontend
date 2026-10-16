@@ -134,8 +134,7 @@ describe("CustomFieldMapper round-trip completeness", () => {
     void referenceTargetEntityTypeKey;
 
     expect(
-      CustomFieldMapper.fromJsonToEntity(withoutPin as CustomFieldJson)
-        .referenceTargetEntityTypeKey
+      CustomFieldMapper.fromJsonToEntity(withoutPin as CustomFieldJson).referenceTargetEntityTypeKey
     ).toBeUndefined();
   });
 
@@ -242,8 +241,9 @@ describe("CustomFieldMapper round-trip completeness", () => {
     ];
 
     const unpopulated = declared.filter((k) => read(k as string) === undefined);
-    expect(unpopulated, "these CustomFieldData keys were not populated from a full detail JSON").toEqual(
-      []
-    );
+    expect(
+      unpopulated,
+      "these CustomFieldData keys were not populated from a full detail JSON"
+    ).toEqual([]);
   });
 });

@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import React from "react";
 import { Alert, AlertDescription } from "@core/ui/alert";
@@ -14,6 +14,9 @@ interface PaymentAllocateCardProps {
   model: ReturnType<typeof usePaymentsViewModel>;
 }
 
+/**
+ * Documentation for module export
+ */
 export function PaymentAllocateCard({ model }: PaymentAllocateCardProps) {
   const { t } = useI18n();
 
@@ -33,7 +36,9 @@ export function PaymentAllocateCard({ model }: PaymentAllocateCardProps) {
           </AlertDescription>
         </Alert>
         <div className="space-y-2">
-          <Label id="allocate-invoice-label" htmlFor="allocate-invoice-select">{t("money.payments.allocate.selectInvoice")}</Label>
+          <Label id="allocate-invoice-label" htmlFor="allocate-invoice-select">
+            {t("money.payments.allocate.selectInvoice")}
+          </Label>
           <GenericSelect
             id="allocate-invoice-select"
             aria-labelledby="allocate-invoice-label"
@@ -43,7 +48,7 @@ export function PaymentAllocateCard({ model }: PaymentAllocateCardProps) {
             options={model.allocationInvoiceOptions}
             value={model.allocationInvoiceId}
             onValueChange={(value: string | string[]) =>
-              model.setAllocationInvoiceId(Array.isArray(value) ? value[0] ?? "" : value)
+              model.setAllocationInvoiceId(Array.isArray(value) ? (value[0] ?? "") : value)
             }
             placeholder={t("money.payments.allocate.selectInvoice")}
           />

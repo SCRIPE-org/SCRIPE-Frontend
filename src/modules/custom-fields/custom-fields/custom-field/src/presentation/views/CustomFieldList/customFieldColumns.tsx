@@ -25,6 +25,9 @@ import {
   Trash2,
 } from "lucide-react";
 
+/**
+ * Documentation for module export
+ */
 export interface BuildCustomFieldColumnsArgs {
   t: (key: string) => string;
   language: string;
@@ -32,6 +35,9 @@ export interface BuildCustomFieldColumnsArgs {
   valueTypeLabelOf: (value: string) => string;
 }
 
+/**
+ * Documentation for buildCustomFieldColumns
+ */
 export function buildCustomFieldColumns({
   t,
   language,
@@ -96,6 +102,9 @@ export function buildCustomFieldColumns({
   ];
 }
 
+/**
+ * Documentation for module export
+ */
 export interface BuildCustomFieldActionsArgs {
   openDetail: (id: string) => void;
   openEditModal: (item: CustomField) => void;
@@ -118,6 +127,9 @@ export interface BuildCustomFieldActionsArgs {
   refreshItems: () => Promise<void>;
 }
 
+/**
+ * Documentation for buildCustomFieldActions
+ */
 export function buildCustomFieldActions(
   tFn: (key: string) => string,
   args: BuildCustomFieldActionsArgs
@@ -164,7 +176,9 @@ export function buildCustomFieldActions(
       variant: "ghost" as const,
       icon: <Layers className="h-4 w-4" />,
       show: (item: CustomField) =>
-        canViewOptionSets && (isPlatformContext || !item.isGlobal) && hasOptionsList(item.valueType),
+        canViewOptionSets &&
+        (isPlatformContext || !item.isGlobal) &&
+        hasOptionsList(item.valueType),
     },
     {
       label: tFn("customField.impact.actionLabel"),
@@ -185,7 +199,8 @@ export function buildCustomFieldActions(
       onClick: (item: CustomField) => openConvert(item),
       variant: "ghost" as const,
       icon: <RefreshCcw className="h-4 w-4" />,
-      show: (item: CustomField) => convertValueTypeCanUpdate && (isPlatformContext || !item.isGlobal),
+      show: (item: CustomField) =>
+        convertValueTypeCanUpdate && (isPlatformContext || !item.isGlobal),
     },
     {
       label: tFn("customField.versions.actionLabel"),

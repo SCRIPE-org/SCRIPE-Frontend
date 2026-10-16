@@ -7,8 +7,14 @@ import { toast } from "@core/hooks/use-enhanced-toast";
 import { getCustomFieldsContainer } from "../../../../di";
 import type { FieldGroup } from "../../domain/entities/FieldGroup";
 
+/**
+ * Documentation for 100
+ */
 export const REORDER_MAX_ITEMS = 100;
 
+/**
+ * Documentation for module export
+ */
 export interface UseFieldGroupReorderProps {
   groups: readonly FieldGroup[];
   canMutate: (group: FieldGroup) => boolean;
@@ -28,8 +34,7 @@ export function useFieldGroupReorder({
   const { t } = useI18n();
 
   const reorderMutation = useMutation({
-    mutationFn: (items: { id: string; sortOrder: number }[]) =>
-      fieldGroupRepository.reorder(items),
+    mutationFn: (items: { id: string; sortOrder: number }[]) => fieldGroupRepository.reorder(items),
     onSuccess: () => {
       onInvalidate();
       toast.success(t("fieldGroup.toast.reordered"));

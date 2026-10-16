@@ -23,7 +23,7 @@ export interface Use2FAHandlerOptions {
   tenantId: string | undefined;
   setLoginStep: (step: LoginStep) => void;
   setError: (msg: string) => void;
-  hasTriggeredRedirect: React.MutableRefObject<boolean>;
+  onRedirectTriggered: () => void;
 }
 
 /**
@@ -41,7 +41,7 @@ export function use2FAHandler(opts: Use2FAHandlerOptions) {
     tenantId,
     setLoginStep,
     setError,
-    hasTriggeredRedirect,
+    onRedirectTriggered,
   } = opts;
 
   const [twoFactorCode, setTwoFactorCode] = useState("");
@@ -84,7 +84,7 @@ export function use2FAHandler(opts: Use2FAHandlerOptions) {
         queryClient.invalidateQueries();
       }
 
-      hasTriggeredRedirect.current = true;
+      onRedirectTriggered();
       // redirectPath can come from the attacker-controlled `?redirect=` query
       // param — validate same-origin/relative before navigating (open-redirect
       // protection), since this bypasses use-login-viewmodel's handleRedirect.
@@ -110,7 +110,7 @@ export function use2FAHandler(opts: Use2FAHandlerOptions) {
     t,
     setError,
     redirectPath,
-    hasTriggeredRedirect,
+    onRedirectTriggered,
   ]);
 
   const toggleBackupCode = useCallback(() => {

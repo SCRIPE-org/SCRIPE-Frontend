@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
 import { useEnhancedToast } from "@core/hooks/use-enhanced-toast";
@@ -18,6 +19,9 @@ import { ApiKeyQuickStart } from "../components/ApiKeyQuickStart";
 import { Skeleton } from "@core/ui/skeleton";
 import { Button } from "@core/ui/button";
 
+/**
+ * Documentation for module export
+ */
 export default function ApiKeyDetailView() {
   const params = useParams();
   const router = useRouter();
@@ -82,7 +86,11 @@ export default function ApiKeyDetailView() {
     return (
       <div className="flex flex-1 flex-col items-center justify-center space-y-4 p-8 text-center">
         <div className="font-semibold text-destructive">{t("apikeys.error.notFound")}</div>
-        <Button variant="link" onClick={() => router.push("/integrations/apikeys")} className="text-sm">
+        <Button
+          variant="link"
+          onClick={() => router.push("/integrations/apikeys")}
+          className="text-sm"
+        >
           {t("apikeys.backToList")}
         </Button>
       </div>

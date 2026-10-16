@@ -59,7 +59,12 @@ describe("parse/serialize round trip", () => {
   it("emits no Arabic string at all when nothing is translated", () => {
     // So a wholly untranslated field stores null rather than a run of empty lines that would parse
     // back as a ragged list.
-    expect(serializeBilingualOptions([{ en: "Small", ar: "" }, { en: "Large", ar: "" }])).toEqual({
+    expect(
+      serializeBilingualOptions([
+        { en: "Small", ar: "" },
+        { en: "Large", ar: "" },
+      ])
+    ).toEqual({
       en: "Small\nLarge",
       ar: "",
     });
@@ -107,9 +112,7 @@ describe("BilingualOptionsEditor", () => {
 
   it("writes BOTH halves when an Arabic label is typed", () => {
     const onChange = vi.fn();
-    render(
-      <BilingualOptionsEditor value="Small" valueAr="" onChange={onChange} {...props} />
-    );
+    render(<BilingualOptionsEditor value="Small" valueAr="" onChange={onChange} {...props} />);
 
     fireEvent.change(screen.getByLabelText("Arabic label 1"), { target: { value: "صغير" } });
 
@@ -119,9 +122,7 @@ describe("BilingualOptionsEditor", () => {
 
   it("adds a row without disturbing the existing ones", () => {
     const onChange = vi.fn();
-    render(
-      <BilingualOptionsEditor value="Small" valueAr="صغير" onChange={onChange} {...props} />
-    );
+    render(<BilingualOptionsEditor value="Small" valueAr="صغير" onChange={onChange} {...props} />);
 
     fireEvent.click(screen.getByRole("button", { name: "Add option" }));
 

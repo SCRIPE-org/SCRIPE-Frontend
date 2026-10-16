@@ -8,10 +8,7 @@ import React from "react";
 import { render, screen, fireEvent } from "@testing-library/react";
 import { describe, it, expect, vi } from "vitest";
 import "@testing-library/jest-dom";
-import {
-  LongTextCustomFieldControl,
-  LONG_TEXT_MAX_CHARACTERS,
-} from "./LongTextCustomFieldControl";
+import { LongTextCustomFieldControl, LONG_TEXT_MAX_CHARACTERS } from "./LongTextCustomFieldControl";
 import type { FieldConfig } from "@core/ui/forms/generic-form";
 
 vi.mock("@core/providers/settings-provider", () => ({
@@ -52,9 +49,7 @@ describe("LongTextCustomFieldControl", () => {
   });
 
   it("disables the textarea when isViewMode is true", () => {
-    render(
-      <LongTextCustomFieldControl fc={BIO_FIELD} value="x" onChange={vi.fn()} isViewMode />
-    );
+    render(<LongTextCustomFieldControl fc={BIO_FIELD} value="x" onChange={vi.fn()} isViewMode />);
     expect(screen.getByRole("textbox", { name: "Bio" })).toBeDisabled();
   });
 
@@ -156,9 +151,13 @@ describe("LongTextCustomFieldControl", () => {
         <LongTextCustomFieldControl fc={BIO_FIELD} value={"a".repeat(50)} onChange={vi.fn()} />
       );
       const textarea = screen.getByRole("textbox", { name: "Bio" });
-      const describedBy = (textarea.getAttribute("aria-describedby") ?? "").split(" ").filter(Boolean);
+      const describedBy = (textarea.getAttribute("aria-describedby") ?? "")
+        .split(" ")
+        .filter(Boolean);
       expect(describedBy.length).toBe(2);
-      const describedText = describedBy.map((id) => document.getElementById(id)?.textContent ?? "").join(" ");
+      const describedText = describedBy
+        .map((id) => document.getElementById(id)?.textContent ?? "")
+        .join(" ");
       expect(describedText).toContain("customField.longText.characterCount");
     });
   });

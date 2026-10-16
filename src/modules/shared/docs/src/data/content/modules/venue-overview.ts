@@ -111,7 +111,11 @@ const sections: DocSection[] = [
       { id: "E", label: "Acquire Temporary BookingHold (15-min TTL mutex)", type: "primary" },
       { id: "F", label: "Payment Transaction Completed / Handshake verified", type: "info" },
       { id: "G", label: "Commit Reservation to Confirmed Status", type: "success" },
-      { id: "H", label: "Emit ReservationConfirmedDomainEvent & Update Capacity Ledger", type: "success" },
+      {
+        id: "H",
+        label: "Emit ReservationConfirmedDomainEvent & Update Capacity Ledger",
+        type: "success",
+      },
     ],
     connections: [
       { from: "A", to: "B" },

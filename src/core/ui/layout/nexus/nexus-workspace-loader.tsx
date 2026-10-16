@@ -64,8 +64,14 @@ export function NexusWorkspaceLoader({
 }: NexusWorkspaceLoaderProps) {
   const { t } = useI18n();
   const reducedMotion = useNexusReducedMotion();
-  const [phase, setPhase] = useState<Phase>("idle");
-  const timers = useRef<ReturnType<typeof setTimeout>[]>([]);
+  const [phase, setPhase] = useState<Phase>(show ? "entering" : "idle");
+  const onExitedRef = useRef(onExited);
+  useEffect(() => {
+    onExitedRef.current = onExited;
+  }, [onExited]);
+
+  const isMountedRef = useRef(false);
+  const wasShownRef = useRef(show);
 
   // A workspace switch always has a name; the fallback covers the mount that
   // happens before the target resolves, and it is translated like everything
@@ -73,35 +79,36 @@ export function NexusWorkspaceLoader({
   const displayName = workspaceName ?? t("common.loading");
   const abbr = workspaceAbbr ?? displayName.slice(0, 2).toUpperCase();
 
-  // Clear all pending timers
-  const clearAll = () => {
-    timers.current.forEach(clearTimeout);
-    timers.current = [];
-  };
-  const schedule = (fn: () => void, ms: number) => {
-    const id = setTimeout(fn, ms);
-    timers.current.push(id);
-  };
-
   useEffect(() => {
-    if (show && phase === "idle") {
+    if (!isMountedRef.current) {
+      isMountedRef.current = true;
+      if (!show) {
+        return;
+      }
+    }
+
+    let enterTimer: ReturnType<typeof setTimeout> | null = null;
+    let exitTimer: ReturnType<typeof setTimeout> | null = null;
+
+    if (show) {
+      wasShownRef.current = true;
       setPhase("entering");
-      schedule(() => setPhase("visible"), ENTER_MS);
+      enterTimer = setTimeout(() => {
+        setPhase("visible");
+      }, ENTER_MS);
+    } else if (wasShownRef.current) {
+      wasShownRef.current = false;
+      setPhase("exiting");
+      exitTimer = setTimeout(() => {
+        setPhase("idle");
+        onExitedRef.current?.();
+      }, EXIT_MS);
     }
 
-    if (!show && (phase === "visible" || phase === "entering")) {
-      // ensure minimum visible time has passed by waiting a beat
-      schedule(() => {
-        setPhase("exiting");
-        schedule(() => {
-          setPhase("idle");
-          onExited?.();
-        }, EXIT_MS);
-      }, 60);
-    }
-
-    return clearAll;
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    return () => {
+      if (enterTimer) clearTimeout(enterTimer);
+      if (exitTimer) clearTimeout(exitTimer);
+    };
   }, [show]);
 
   if (phase === "idle") return null;
@@ -112,6 +119,9 @@ export function NexusWorkspaceLoader({
 
   return (
     <div
+      id="nexus-workspace-loader"
+      data-testid="nexus-workspace-loader"
+      data-phase={phase}
       role="status"
       aria-busy={!isExiting}
       aria-live="polite"

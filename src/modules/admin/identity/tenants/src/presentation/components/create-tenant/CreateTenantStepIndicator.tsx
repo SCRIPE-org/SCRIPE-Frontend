@@ -112,8 +112,10 @@ export function CreateTenantStepIndicator({
                     "focus-visible:z-raised focus-visible:shadow-nx-focus focus-visible:outline-none",
                     // A disabled button must not advertise a pointer.
                     "disabled:pointer-events-none",
-                    state === "current" && "border border-nx-accent bg-nx-accent-wash hover:bg-nx-accent-wash",
-                    state === "done" && "cursor-pointer border border-transparent hover:bg-nx-hover",
+                    state === "current" &&
+                      "border border-nx-accent bg-nx-accent-wash hover:bg-nx-accent-wash",
+                    state === "done" &&
+                      "cursor-pointer border border-transparent hover:bg-nx-hover",
                     state === "error" &&
                       "cursor-pointer border border-nx-danger bg-[color:color-mix(in_srgb,var(--nx-danger)_10%,transparent)]",
                     // Upcoming reads quiet through its own tokens. The old

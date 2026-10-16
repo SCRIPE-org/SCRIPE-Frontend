@@ -21,7 +21,7 @@
  * - Search filters tiles by name (debounced)
  */
 
-import React, { useEffect, useMemo, useRef, useState, useCallback } from "react";
+import React, { useEffect, useMemo, useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { useWorkspace } from "@core/providers/workspace-provider";
 import { useTenantContext } from "@core/providers/tenant-context-provider";
@@ -64,7 +64,7 @@ export function WorkspaceHubView() {
   }, []);
 
   // Track whether auto-redirect has already fired this session.
-  const hasAutoRedirected = useRef(false);
+  const [hasAutoRedirected, setHasAutoRedirected] = useState(false);
 
   // ── Workspace splits ──────────────────────────────────────────────────────
 
@@ -135,12 +135,14 @@ export function WorkspaceHubView() {
   // ── Auto-redirect: 1 unlocked workspace → skip hub ────────────────────────
   useEffect(() => {
     if (isLoading) return;
-    if (hasAutoRedirected.current) return;
+    if (hasAutoRedirected) return;
     if (allUnlocked.length === 1 && lockedWorkspaces.length === 0) {
-      hasAutoRedirected.current = true;
-      switchWorkspace(allUnlocked[0].workspaceKey);
+      queueMicrotask(() => {
+        setHasAutoRedirected(true);
+        switchWorkspace(allUnlocked[0].workspaceKey);
+      });
     }
-  }, [isLoading, allUnlocked, lockedWorkspaces, switchWorkspace]);
+  }, [isLoading, allUnlocked, lockedWorkspaces, switchWorkspace, hasAutoRedirected]);
 
   // ── Pin toggle handler ────────────────────────────────────────────────────
   const handleTogglePin = useCallback(
@@ -197,7 +199,7 @@ export function WorkspaceHubView() {
   }
 
   // Auto-redirect in progress
-  if (allUnlocked.length === 1 && lockedWorkspaces.length === 0 && !hasAutoRedirected.current) {
+  if (allUnlocked.length === 1 && lockedWorkspaces.length === 0 && !hasAutoRedirected) {
     return <LoadingSpinner fullHeight />;
   }
 

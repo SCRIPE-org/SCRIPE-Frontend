@@ -1,4 +1,4 @@
-import { fireEvent, render, screen } from "@testing-library/react";
+﻿import { fireEvent, render, screen } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
 import type { BookingWorkspaceState } from "../../domain/entities/Booking";
 import { BookingSummaryActions } from "./BookingSummaryActions";
@@ -71,14 +71,31 @@ describe("BookingSummaryActions", () => {
   });
 
   it("fails closed while an authoritative server quote is unavailable", () => {
-    render(<BookingSummaryActions {...baseProps} state={state({ stage: "results", hold: null })} canConfirm />);
+    render(
+      <BookingSummaryActions
+        {...baseProps}
+        state={state({ stage: "results", hold: null })}
+        canConfirm
+      />
+    );
 
     expect(screen.getByText("booking.quote.unavailable")).toBeInTheDocument();
     expect(screen.getByRole("button", { name: "booking.hold.action" })).toBeDisabled();
   });
 
   it("presents a Search-to-Hold conflict as a recoverable operational state", () => {
-    render(<BookingSummaryActions {...baseProps} state={state({ stage: "holdConflict", selectedCandidate: null, candidates: [], hold: null })} canConfirm />);
+    render(
+      <BookingSummaryActions
+        {...baseProps}
+        state={state({
+          stage: "holdConflict",
+          selectedCandidate: null,
+          candidates: [],
+          hold: null,
+        })}
+        canConfirm
+      />
+    );
 
     expect(screen.getByText("booking.hold.conflictTitle")).toBeInTheDocument();
     expect(screen.getByText("booking.hold.conflictDescription")).toBeInTheDocument();
@@ -86,15 +103,21 @@ describe("BookingSummaryActions", () => {
   });
 
   it("shows the required booking context after confirmation", () => {
-    render(<BookingSummaryActions {...baseProps} state={state({
-      stage: "confirmed",
-      hold: null,
-      reservation: {
-        ...state({}).reservation!,
-        reservationNumber: "RES-1",
-        status: "Confirmed",
-      },
-    })} canConfirm />);
+    render(
+      <BookingSummaryActions
+        {...baseProps}
+        state={state({
+          stage: "confirmed",
+          hold: null,
+          reservation: {
+            ...state({}).reservation!,
+            reservationNumber: "RES-1",
+            status: "Confirmed",
+          },
+        })}
+        canConfirm
+      />
+    );
 
     expect(screen.getByText("booking.confirm.title")).toBeInTheDocument();
     expect(screen.getByText("Mona Hassan")).toBeInTheDocument();
@@ -102,17 +125,37 @@ describe("BookingSummaryActions", () => {
     expect(screen.getByText("RES-1")).toBeInTheDocument();
     expect(screen.getByText("booking.confirm.createAnother")).toBeInTheDocument();
     expect(screen.getByRole("link", { name: "booking.confirm.viewBooking" })).toHaveAttribute(
-      "href", "/venue/bookings/reservation-1");
+      "href",
+      "/venue/bookings/reservation-1"
+    );
   });
 
   it("requires a non-zero adjustment and reason before submitting the privileged override", () => {
     const onOverridePrice = vi.fn().mockResolvedValue(undefined);
-    render(<BookingSummaryActions {...baseProps} state={state({ stage: "results", hold: null })} canConfirm
-      canOverridePrice priceQuote={{ id: "quote-1", grandTotal: 250, currencyCode: "EGP", expiresAtUtc: "2999-09-10T08:00:00Z" } as never}
-      onOverridePrice={onOverridePrice} />);
+    render(
+      <BookingSummaryActions
+        {...baseProps}
+        state={state({ stage: "results", hold: null })}
+        canConfirm
+        canOverridePrice
+        priceQuote={
+          {
+            id: "quote-1",
+            grandTotal: 250,
+            currencyCode: "EGP",
+            expiresAtUtc: "2999-09-10T08:00:00Z",
+          } as never
+        }
+        onOverridePrice={onOverridePrice}
+      />
+    );
 
-    fireEvent.change(screen.getByLabelText("booking.quote.overrideAmount"), { target: { value: "-20" } });
-    fireEvent.change(screen.getByLabelText("booking.quote.overrideReason"), { target: { value: "approved concession" } });
+    fireEvent.change(screen.getByLabelText("booking.quote.overrideAmount"), {
+      target: { value: "-20" },
+    });
+    fireEvent.change(screen.getByLabelText("booking.quote.overrideReason"), {
+      target: { value: "approved concession" },
+    });
     fireEvent.click(screen.getByRole("button", { name: "booking.quote.overrideAction" }));
 
     expect(onOverridePrice).toHaveBeenCalledWith(-20, "approved concession");

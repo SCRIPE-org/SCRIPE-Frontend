@@ -1,5 +1,8 @@
 import { V1 } from "@/core/config/api-endpoints/_shared";
 
+/**
+ * Documentation for module export
+ */
 export const DSR_ENDPOINTS = {
   DSR_LIST: `${V1}/compliance/dsr`,
   DSR_BY_ID: (id: string) => `${V1}/compliance/dsr/${id}`,

@@ -74,7 +74,14 @@ const GOOD_BUNDLE = {
   formatVersion: 1,
   entityTypeKey: null,
   groups: [
-    { entityTypeKey: "party.person", stableKey: "hr_basics", labelEn: "HR Basics", labelAr: null, sortOrder: 0, isGlobal: false },
+    {
+      entityTypeKey: "party.person",
+      stableKey: "hr_basics",
+      labelEn: "HR Basics",
+      labelAr: null,
+      sortOrder: 0,
+      isGlobal: false,
+    },
   ],
   definitions: [
     {
@@ -226,7 +233,13 @@ describe("useSchemaImportViewModel — a successful response", () => {
   it("reports the per-group breakdown and toasts the counts", async () => {
     setup(async () => ({
       groups: [
-        { entityTypeKey: "party.person", stableKey: "hr_basics", outcome: "Created", reason: null, fieldsCreated: 1 },
+        {
+          entityTypeKey: "party.person",
+          stableKey: "hr_basics",
+          outcome: "Created",
+          reason: null,
+          fieldsCreated: 1,
+        },
       ],
     }));
     const { result } = renderHook(() => useSchemaImportViewModel(), { wrapper });

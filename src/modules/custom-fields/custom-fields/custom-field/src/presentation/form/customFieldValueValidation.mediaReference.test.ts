@@ -46,10 +46,12 @@ describe("validateMediaReferenceCustomFieldValue", () => {
   it("accepts a complete reference on BOTH media types", () => {
     // Both, not one: the two field types are separate arms of the type filter, and
     // testing only one would leave the other free to reject everything.
-    expect(validateMediaReferenceCustomFieldValue({ ...FILE_FIELD, required: true }, COMPLETE, t))
-      .toBeNull();
-    expect(validateMediaReferenceCustomFieldValue({ ...IMAGE_FIELD, required: true }, COMPLETE, t))
-      .toBeNull();
+    expect(
+      validateMediaReferenceCustomFieldValue({ ...FILE_FIELD, required: true }, COMPLETE, t)
+    ).toBeNull();
+    expect(
+      validateMediaReferenceCustomFieldValue({ ...IMAGE_FIELD, required: true }, COMPLETE, t)
+    ).toBeNull();
   });
 
   it("does NOT try to judge the owner pair or the content type it cannot see", () => {
@@ -109,8 +111,9 @@ describe("validateMediaReferenceCustomFieldValue", () => {
       // hand-wired sites this is the ONLY client-side gate a media field has --
       // `isRequiredFieldEmpty` covers the GenericForm path and nothing covers this
       // one.
-      expect(validateMediaReferenceCustomFieldValue({ ...FILE_FIELD, required: true }, null, t))
-        .toBe("validation.required");
+      expect(
+        validateMediaReferenceCustomFieldValue({ ...FILE_FIELD, required: true }, null, t)
+      ).toBe("validation.required");
       expect(
         validateMediaReferenceCustomFieldValue(
           { ...FILE_FIELD, required: true },
@@ -126,9 +129,9 @@ describe("validateMediaReferenceCustomFieldValue", () => {
       // Asserted on the message KEY, so a validator that answered
       // `validation.required` here -- non-null, and wrong -- fails. The two are
       // different facts: this value is not missing, it is unusable.
-      expect(
-        validateMediaReferenceCustomFieldValue(FILE_FIELD, { entityId: "ENC-1" }, t)
-      ).toBe('customField.values.mediaReferenceIncomplete:{"field":"Waiver"}');
+      expect(validateMediaReferenceCustomFieldValue(FILE_FIELD, { entityId: "ENC-1" }, t)).toBe(
+        'customField.values.mediaReferenceIncomplete:{"field":"Waiver"}'
+      );
     });
 
     it("refuses a value with a target key but no id", () => {

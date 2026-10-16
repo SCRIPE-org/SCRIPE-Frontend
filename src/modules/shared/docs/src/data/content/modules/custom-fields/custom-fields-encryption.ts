@@ -27,8 +27,16 @@ const sections: DocSection[] = [
     columns: 3,
     items: [
       { icon: "key", titleKey: `${K}.featKeyringTitle`, descriptionKey: `${K}.featKeyringDesc` },
-      { icon: "shield", titleKey: `${K}.featDerivationTitle`, descriptionKey: `${K}.featDerivationDesc` },
-      { icon: "layers", titleKey: `${K}.featEnvelopeTitle`, descriptionKey: `${K}.featEnvelopeDesc` },
+      {
+        icon: "shield",
+        titleKey: `${K}.featDerivationTitle`,
+        descriptionKey: `${K}.featDerivationDesc`,
+      },
+      {
+        icon: "layers",
+        titleKey: `${K}.featEnvelopeTitle`,
+        descriptionKey: `${K}.featEnvelopeDesc`,
+      },
       { icon: "lock", titleKey: `${K}.featAadTitle`, descriptionKey: `${K}.featAadDesc` },
       { icon: "refresh", titleKey: `${K}.featRewrapTitle`, descriptionKey: `${K}.featRewrapDesc` },
       { icon: "terminal", titleKey: `${K}.featCliTitle`, descriptionKey: `${K}.featCliDesc` },
@@ -111,11 +119,7 @@ const sections: DocSection[] = [
   {
     type: "list",
     variant: "unordered",
-    items: [
-      `${K}.toolPortal`,
-      `${K}.toolCli`,
-      `${K}.toolStudio`,
-    ],
+    items: [`${K}.toolPortal`, `${K}.toolCli`, `${K}.toolStudio`],
   },
 ];
 

@@ -17,6 +17,9 @@ import type { IPartyRoleService } from "../../domain/interfaces/IPartyRoleServic
 import type { PartyRole } from "../../domain/entities/PartyRole";
 import { PartyRoleMapper } from "../mappers/PartyRoleMapper";
 
+/**
+ * Documentation for module export
+ */
 export class PartyRoleRepository implements IPartyRoleRepository {
   constructor(private readonly service: IPartyRoleService) {}
 

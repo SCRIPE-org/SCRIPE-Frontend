@@ -1,5 +1,8 @@
 import { V1 } from "@/core/config/api-endpoints/_shared";
 
+/**
+ * Documentation for module export
+ */
 export const USER_GROUPS_ENDPOINTS = {
   LIST: `${V1}/user-groups`,
   MY_TENANT_GROUPS: `${V1}/user-groups/myTenantGroups`,

@@ -47,7 +47,14 @@ export function AppListingCard({
         {/* Icon */}
         <div className="flex size-10 shrink-0 items-center justify-center overflow-hidden rounded-nx-md bg-nx-raised">
           {listing.iconUrl ? (
-            <Image src={listing.iconUrl} alt="" width={40} height={40} unoptimized className="size-full object-cover" />
+            <Image
+              src={listing.iconUrl}
+              alt=""
+              width={40}
+              height={40}
+              unoptimized
+              className="size-full object-cover"
+            />
           ) : (
             <span className="text-lg font-bold text-nx-ink-2" aria-hidden="true">
               {listing.name.charAt(0)}

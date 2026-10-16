@@ -42,9 +42,7 @@ export function MockChartsRow({ className }: MockChartsRowProps) {
                 key={period}
                 className={cn(
                   "rounded-nx-control px-2 py-1 text-xs",
-                  i === 1
-                    ? "bg-nx-accent-fill text-nx-on-fill"
-                    : "text-nx-ink-3 hover:bg-nx-hover"
+                  i === 1 ? "bg-nx-accent-fill text-nx-on-fill" : "text-nx-ink-3 hover:bg-nx-hover"
                 )}
               >
                 {period}

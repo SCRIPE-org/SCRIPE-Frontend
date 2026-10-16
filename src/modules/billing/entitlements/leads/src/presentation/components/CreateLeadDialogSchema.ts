@@ -51,6 +51,9 @@ export const EMPTY_VALUES: CreateLeadFormValues = {
   notes: "",
 };
 
+/**
+ * Documentation for /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+ */
 export const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 /**

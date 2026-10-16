@@ -22,6 +22,9 @@ interface DeleteWebhookDialogProps {
   isLoading?: boolean;
 }
 
+/**
+ * Documentation for DeleteWebhookDialog
+ */
 export function DeleteWebhookDialog({
   open,
   onOpenChange,

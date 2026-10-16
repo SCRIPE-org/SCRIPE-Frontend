@@ -1,4 +1,4 @@
-import React from "react";
+﻿import React from "react";
 
 interface Props {
   className?: string;
@@ -12,7 +12,7 @@ interface Props {
 export function VenueCourtMotif({ className = "", variant = "padel" }: Props) {
   return (
     <div
-      className={`pointer-events-none absolute inset-0 overflow-hidden select-none opacity-[0.035] ${className}`}
+      className={`pointer-events-none absolute inset-0 select-none overflow-hidden opacity-[0.035] ${className}`}
       aria-hidden="true"
     >
       {variant === "padel" ? (

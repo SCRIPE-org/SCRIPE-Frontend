@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { getModuleApiService } from "@core/services/api-factory";
 import { HubActivityService } from "./hub/src/data/services/HubActivityService";
 import { HubActivityRepository } from "./hub/src/data/repositories/HubActivityRepository";

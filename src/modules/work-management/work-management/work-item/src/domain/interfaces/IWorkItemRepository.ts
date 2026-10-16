@@ -26,10 +26,11 @@ export interface AssignableAdmin {
   isPlatformAdmin: boolean;
 }
 
+/**
+ * Documentation for module export
+ */
 export interface IWorkItemRepository {
-  getAll(
-    params: WorkItemListParams
-  ): Promise<{
+  getAll(params: WorkItemListParams): Promise<{
     items: WorkItem[];
     totalCount: number;
     page: number;

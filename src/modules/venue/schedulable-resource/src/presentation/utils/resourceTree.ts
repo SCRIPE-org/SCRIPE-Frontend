@@ -13,6 +13,9 @@ export interface SchedulableResourceTreeNode extends TreeNode {
   children?: SchedulableResourceTreeNode[];
 }
 
+/**
+ * Documentation for module export
+ */
 export function buildResourceTree(items: SchedulableResource[]): SchedulableResourceTreeNode[] {
   const nodesById = new Map<string, SchedulableResourceTreeNode>();
   for (const item of items) {

@@ -4,6 +4,9 @@ import { useCallback, useEffect, useState } from "react";
 import { getVenueContainer } from "@modules/venue/di";
 import type { MoneyInvoice } from "../../domain/entities/Money";
 
+/**
+ * Documentation for module export
+ */
 export function useReceivablesViewModel(canView: boolean, fallbackError: string) {
   const { moneyRepository } = getVenueContainer();
   const [items, setItems] = useState<MoneyInvoice[] | null>(null);

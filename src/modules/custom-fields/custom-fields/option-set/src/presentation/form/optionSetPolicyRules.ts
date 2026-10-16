@@ -2,6 +2,9 @@ import type { OptionSet } from "../../domain/entities/OptionSet";
 import type { OptionSetVersion } from "../../domain/entities/OptionSetVersion";
 import type { OptionSetRefusal } from "./optionSetRefusalTypes";
 
+/**
+ * Documentation for checkOwnershipRefusal
+ */
 export function checkOwnershipRefusal(
   set: OptionSet,
   isPlatformContext: boolean
@@ -12,6 +15,9 @@ export function checkOwnershipRefusal(
   return null;
 }
 
+/**
+ * Documentation for checkSetLevelRefusal
+ */
 export function checkSetLevelRefusal(
   set: OptionSet,
   isPlatformContext: boolean
@@ -22,6 +28,9 @@ export function checkSetLevelRefusal(
   return checkOwnershipRefusal(set, isPlatformContext);
 }
 
+/**
+ * Documentation for checkUpdateRefusal
+ */
 export function checkUpdateRefusal(
   set: OptionSet,
   canUpdate: boolean,
@@ -33,6 +42,9 @@ export function checkUpdateRefusal(
   return checkSetLevelRefusal(set, isPlatformContext);
 }
 
+/**
+ * Documentation for checkDeleteRefusal
+ */
 export function checkDeleteRefusal(
   set: OptionSet,
   canDelete: boolean,
@@ -44,6 +56,9 @@ export function checkDeleteRefusal(
   return checkSetLevelRefusal(set, isPlatformContext);
 }
 
+/**
+ * Documentation for checkCreateVersionRefusal
+ */
 export function checkCreateVersionRefusal(
   set: OptionSet,
   canCreate: boolean,
@@ -55,6 +70,9 @@ export function checkCreateVersionRefusal(
   return checkSetLevelRefusal(set, isPlatformContext);
 }
 
+/**
+ * Documentation for checkPublishRefusal
+ */
 export function checkPublishRefusal(
   set: OptionSet,
   version: OptionSetVersion,

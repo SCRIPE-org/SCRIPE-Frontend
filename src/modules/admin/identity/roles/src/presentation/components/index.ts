@@ -13,6 +13,9 @@ export { PermissionModuleMatrix, type PermissionModuleMatrixProps } from "./Perm
 export { PermissionTreeSkeleton } from "./PermissionTreeSkeleton";
 export { PermissionTreeCard } from "./PermissionTreeCard";
 export { PermissionConfigDialog } from "./PermissionConfigDialog";
+/**
+ * Documentation for "./PermissionConfigDialog"
+ */
 export type { PermissionConfigDialogProps } from "./PermissionConfigDialog";
 /**
  * The bulk scope ACTION. It replaced BulkScopeSelect, which rendered the same

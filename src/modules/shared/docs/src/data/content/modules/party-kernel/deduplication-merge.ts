@@ -63,9 +63,6 @@ registerPage({
   category: "module-party-kernel",
   order: 4,
   sections,
-  relatedSlugs: [
-    "modules/party-kernel-overview",
-    "modules/party-kernel/polymorphic-model",
-  ],
+  relatedSlugs: ["modules/party-kernel-overview", "modules/party-kernel/polymorphic-model"],
   lastUpdated: "2026-10-03",
 });

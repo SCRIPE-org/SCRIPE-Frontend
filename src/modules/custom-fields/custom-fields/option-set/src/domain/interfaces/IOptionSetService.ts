@@ -19,6 +19,9 @@ import type {
   BindOptionSetRequestJson,
 } from "../../data/models/OptionSetModel";
 
+/**
+ * Documentation for module export
+ */
 export interface IOptionSetService {
   /**
    * `GET /v1/custom-fields/option-sets`
@@ -72,7 +75,10 @@ export interface IOptionSetService {
    * the single place the "exactly one Published per set" invariant is enforced -- no database
    * constraint stands behind it.
    */
-  createVersion(optionSetId: string, data: OptionSetVersionItemsRequestJson): Promise<{ id: string }>;
+  createVersion(
+    optionSetId: string,
+    data: OptionSetVersionItemsRequestJson
+  ): Promise<{ id: string }>;
 
   /**
    * `PUT /v1/custom-fields/option-sets/versions/{versionId}` -> 204
@@ -98,7 +104,10 @@ export interface IOptionSetService {
    * incoming item -- the refusal names the offending keys, because renaming a local option is a
    * decision only an admin can take.
    */
-  bind(fieldVersionId: string, data: BindOptionSetRequestJson): Promise<OptionSetBindingResultModel>;
+  bind(
+    fieldVersionId: string,
+    data: BindOptionSetRequestJson
+  ): Promise<OptionSetBindingResultModel>;
 
   /**
    * `PUT /v1/custom-fields/option-sets/bindings/{fieldVersionId}` -> 200 `OptionSetBindingResult`
@@ -110,7 +119,10 @@ export interface IOptionSetService {
    * DEACTIVATED (never deleted), so an admin can withdraw options a tenant is currently offering by
    * rebinding. Hence the separate `.bind` permission rather than reusing `.update`.
    */
-  rebind(fieldVersionId: string, data: BindOptionSetRequestJson): Promise<OptionSetBindingResultModel>;
+  rebind(
+    fieldVersionId: string,
+    data: BindOptionSetRequestJson
+  ): Promise<OptionSetBindingResultModel>;
 
   /**
    * `DELETE /v1/custom-fields/option-sets/bindings/{fieldVersionId}` -> 200 `OptionSetBindingResult`

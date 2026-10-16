@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import React, { useState } from "react";
 import { PageHeader } from "@core/ui/page-header";
@@ -11,7 +11,7 @@ import { useModuleLocales } from "@core/hooks/use-module-locales";
 import { useI18n } from "@core/providers/i18n-provider";
 import { usePermission } from "@core/hooks/use-permission";
 import { VENUE_PERMISSIONS } from "@modules/venue/permission-constants";
-import { VenueResourceNav } from "@modules/venue/shared/src/presentation/components/VenueResourceNav";
+import { VenueResourceNav } from "@modules/venue";
 import { useResourceBuilderViewModel } from "../viewmodels/useResourceBuilderViewModel";
 import type { SchedulableResourceTreeNode } from "../utils/resourceTree";
 import type { PublicationChecklistReport } from "../../domain/entities/SchedulableResource";
@@ -20,6 +20,9 @@ import { ResourceChecklistDialog } from "../dialogs/ResourceChecklistDialog";
 import { ResourceDeleteDialog } from "../dialogs/ResourceDeleteDialog";
 import { ResourceFormDialog } from "../dialogs/ResourceFormDialog";
 
+/**
+ * Documentation for module export
+ */
 export const ResourceBuilderView = React.memo(function ResourceBuilderView() {
   useModuleLocales(() => import("../../../locales"), "venue.schedulableResource");
   const { t } = useI18n();
@@ -118,7 +121,12 @@ export const ResourceBuilderView = React.memo(function ResourceBuilderView() {
         description={t("schedulableResource.builderDescription")}
         actions={
           canCreate ? (
-            <Button onClick={() => { setEditing(null); setFormOpen(true); }}>
+            <Button
+              onClick={() => {
+                setEditing(null);
+                setFormOpen(true);
+              }}
+            >
               <Plus className="size-4" />
               {t("schedulableResource.addNew")}
             </Button>
@@ -133,7 +141,12 @@ export const ResourceBuilderView = React.memo(function ResourceBuilderView() {
           description={t("schedulableResource.emptyDescription")}
           action={
             canCreate ? (
-              <Button onClick={() => { setEditing(null); setFormOpen(true); }}>
+              <Button
+                onClick={() => {
+                  setEditing(null);
+                  setFormOpen(true);
+                }}
+              >
                 <Plus className="size-4" />
                 {t("schedulableResource.addNew")}
               </Button>
@@ -149,7 +162,10 @@ export const ResourceBuilderView = React.memo(function ResourceBuilderView() {
             node={node}
             depth={0}
             t={t}
-            onEdit={(n) => { setEditing(n); setFormOpen(true); }}
+            onEdit={(n) => {
+              setEditing(n);
+              setFormOpen(true);
+            }}
             onDelete={(n) => setDeleteTarget(n)}
             onChecklist={openChecklist}
             canEdit={canUpdate}

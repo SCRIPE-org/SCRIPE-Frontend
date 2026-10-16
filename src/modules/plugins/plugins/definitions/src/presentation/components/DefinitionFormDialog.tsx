@@ -1,8 +1,6 @@
 // FILE-EXCEPTION: file length
 "use client";
 
-/* eslint-disable react-hooks/set-state-in-effect */
-
 import { useState, useEffect } from "react";
 import {
   Dialog,
@@ -86,24 +84,26 @@ export function DefinitionFormDialog({
 
   // ── Sync form when editing ──────────────────────────────────────────────────
   useEffect(() => {
-    if (editingDefinition) {
-      setForm({
-        key: editingDefinition.key,
-        name: editingDefinition.name,
-        nameAr: editingDefinition.nameAr,
-        description: editingDefinition.description,
-        descriptionAr: editingDefinition.descriptionAr,
-        tier: editingDefinition.tier,
-        scope: editingDefinition.scope,
-        manifestJson: editingDefinition.manifestJson,
-        iconUrl: editingDefinition.iconUrl ?? "",
-        baseUrl: editingDefinition.baseUrl ?? "",
-        frontendUrl: editingDefinition.frontendUrl ?? "",
-      });
-    } else {
-      setForm(EMPTY_FORM);
-    }
-    setErrors({});
+    queueMicrotask(() => {
+      if (editingDefinition) {
+        setForm({
+          key: editingDefinition.key,
+          name: editingDefinition.name,
+          nameAr: editingDefinition.nameAr,
+          description: editingDefinition.description,
+          descriptionAr: editingDefinition.descriptionAr,
+          tier: editingDefinition.tier,
+          scope: editingDefinition.scope,
+          manifestJson: editingDefinition.manifestJson,
+          iconUrl: editingDefinition.iconUrl ?? "",
+          baseUrl: editingDefinition.baseUrl ?? "",
+          frontendUrl: editingDefinition.frontendUrl ?? "",
+        });
+      } else {
+        setForm(EMPTY_FORM);
+      }
+      setErrors({});
+    });
   }, [editingDefinition, open]);
 
   // ── Field update ────────────────────────────────────────────────────────────

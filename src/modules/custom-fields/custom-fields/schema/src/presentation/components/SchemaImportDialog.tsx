@@ -33,30 +33,31 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@core/ui/dialog";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@core/ui/table";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@core/ui/table";
 import { useI18n } from "@core/providers/i18n-provider";
 import type { SchemaImportGroupOutcome } from "../../domain/entities/SchemaImportResult";
 import { useSchemaImportViewModel } from "../viewmodels/useSchemaImportViewModel";
 import { SchemaImportDropZone } from "./SchemaImportDropZone";
 
+/**
+ * Documentation for module export
+ */
 export interface SchemaImportDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
 }
 
-function outcomeBadgeVariant(outcome: SchemaImportGroupOutcome): "success" | "warning" | "destructive" {
+function outcomeBadgeVariant(
+  outcome: SchemaImportGroupOutcome
+): "success" | "warning" | "destructive" {
   if (outcome === "Created") return "success";
   if (outcome === "Skipped") return "warning";
   return "destructive";
 }
 
+/**
+ * Documentation for module export
+ */
 export function SchemaImportDialog({ open, onOpenChange }: SchemaImportDialogProps) {
   const { t } = useI18n();
   const vm = useSchemaImportViewModel();

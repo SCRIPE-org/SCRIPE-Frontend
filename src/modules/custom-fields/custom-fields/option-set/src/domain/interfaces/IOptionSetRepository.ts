@@ -33,6 +33,9 @@ import type { OptionSet, OptionSetDetail } from "../entities/OptionSet";
 import type { OptionSetVersion } from "../entities/OptionSetVersion";
 import type { OptionSetItemWritableStatus } from "../entities/OptionSetItem";
 
+/**
+ * Documentation for module export
+ */
 export interface CreateOptionSetInput {
   /** Immutable machine key, <=100 chars, unique per tenant. Absent from the update input on purpose. */
   stableKey: string;
@@ -46,6 +49,9 @@ export interface CreateOptionSetInput {
   isGlobal: boolean;
 }
 
+/**
+ * Documentation for module export
+ */
 export interface UpdateOptionSetInput {
   labelEn: string;
   labelAr?: string | null;
@@ -88,6 +94,9 @@ export interface OptionSetBindingOutcome {
   preservedLocalOptions: number;
 }
 
+/**
+ * Documentation for module export
+ */
 export interface IOptionSetRepository {
   /** Every set visible to the caller, in the server's order (`labelEn`, then `stableKey`). */
   getAll(): Promise<OptionSet[]>;

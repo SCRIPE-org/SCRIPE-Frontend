@@ -124,9 +124,7 @@ export function CatalogFiltersBar({
         <SelectContent>
           <SelectItem value={ALL_FILTER}>{t("entitlements.features.allControls")}</SelectItem>
           <SelectItem value="enforced">{t("entitlements.features.enforced")}</SelectItem>
-          <SelectItem value="marketing">
-            {t("entitlements.features.marketingOnly")}
-          </SelectItem>
+          <SelectItem value="marketing">{t("entitlements.features.marketingOnly")}</SelectItem>
         </SelectContent>
       </Select>
     </div>

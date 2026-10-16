@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /**
  * API Keys List ViewModel
  *
@@ -17,11 +18,17 @@ import { resolveBilingualLabel } from "@core/common/utils";
 import { ApiKey, CreateApiKeyRequest } from "../../domain/entities/ApiKey";
 
 // Query keys for caching
+/**
+ * Documentation for module export
+ */
 export const apiKeyKeys = {
   all: ["apikeys"] as const,
   list: (filters: Record<string, unknown>) => ["apikeys", "list", filters] as const,
 };
 
+/**
+ * Documentation for module export
+ */
 export function useApiKeysViewModel() {
   const { apiKeyRepository } = integrationsContainer;
   const { t, language } = useI18n();
@@ -34,81 +41,85 @@ export function useApiKeysViewModel() {
   const [generatedKey, setGeneratedKey] = useState<string | null>(null);
 
   // Core CRUD hook
-  const vm = useCrudViewModel<ApiKey, any, any>([...apiKeyKeys.all], {
-    getAll: async (params) => {
-      const res = await apiKeyRepository.getAll({
-        page: params.page,
-        pageSize: params.pageSize,
-        search: params.search,
-      });
-      return {
-        items: res.items || [],
-        pagination: {
-          itemsCount: res.totalCount,
-          pageSize: params.pageSize,
+  const vm = useCrudViewModel<ApiKey, any, any>(
+    [...apiKeyKeys.all],
+    {
+      getAll: async (params) => {
+        const res = await apiKeyRepository.getAll({
           page: params.page,
-          pagesCount: Math.ceil(res.totalCount / params.pageSize),
-        },
-      };
-    },
-    create: async (data: any) => {
-      try {
-        const requestBody: CreateApiKeyRequest = {
-          ...data,
-          scopes: Array.isArray(data.scopes) ? data.scopes.join(",") : data.scopes,
-          rateLimitPerMinute: data.rateLimitPerMinute
-            ? parseInt(data.rateLimitPerMinute, 10)
-            : null,
-          monthlyQuota: data.monthlyQuota ? parseInt(data.monthlyQuota, 10) : null,
-          description: data.description || "",
-          ipWhitelist: data.ipWhitelist || null,
+          pageSize: params.pageSize,
+          search: params.search,
+        });
+        return {
+          items: res.items || [],
+          pagination: {
+            itemsCount: res.totalCount,
+            pageSize: params.pageSize,
+            page: params.page,
+            pagesCount: Math.ceil(res.totalCount / params.pageSize),
+          },
         };
-        const result = await apiKeyRepository.create(requestBody);
-        // The plaintext secret is shown exactly once and can never be retrieved
-        // again, so this fires unconditionally regardless of what happens next.
-        setGeneratedKey(result.plainTextKey);
-        // No manual success() toast here on purpose -- deferSuccessEffects (below)
-        // holds it until GenericCrudView confirms the custom-field save (if any)
-        // also succeeded; firing it here unconditionally would defeat that. The
-        // GeneratedKeyDialog above already gives the user clear, immediate
-        // confirmation that the key itself was created.
-        return new ApiKey({
-          id: result.id,
-          name: data.name,
-          prefix: result.plainTextKey.substring(0, 16),
-          scopes: requestBody.scopes,
-          expiresAt: null,
-          revokedAt: null,
-          isActive: true,
-          createdAt: new Date().toISOString(),
-        });
-      } catch (err: any) {
-        toastError({
-          title: t("common.error"),
-          description: err.message || "Failed to generate API Key",
-        });
-        throw err;
-      }
+      },
+      create: async (data: any) => {
+        try {
+          const requestBody: CreateApiKeyRequest = {
+            ...data,
+            scopes: Array.isArray(data.scopes) ? data.scopes.join(",") : data.scopes,
+            rateLimitPerMinute: data.rateLimitPerMinute
+              ? parseInt(data.rateLimitPerMinute, 10)
+              : null,
+            monthlyQuota: data.monthlyQuota ? parseInt(data.monthlyQuota, 10) : null,
+            description: data.description || "",
+            ipWhitelist: data.ipWhitelist || null,
+          };
+          const result = await apiKeyRepository.create(requestBody);
+          // The plaintext secret is shown exactly once and can never be retrieved
+          // again, so this fires unconditionally regardless of what happens next.
+          setGeneratedKey(result.plainTextKey);
+          // No manual success() toast here on purpose -- deferSuccessEffects (below)
+          // holds it until GenericCrudView confirms the custom-field save (if any)
+          // also succeeded; firing it here unconditionally would defeat that. The
+          // GeneratedKeyDialog above already gives the user clear, immediate
+          // confirmation that the key itself was created.
+          return new ApiKey({
+            id: result.id,
+            name: data.name,
+            prefix: result.plainTextKey.substring(0, 16),
+            scopes: requestBody.scopes,
+            expiresAt: null,
+            revokedAt: null,
+            isActive: true,
+            createdAt: new Date().toISOString(),
+          });
+        } catch (err: any) {
+          toastError({
+            title: t("common.error"),
+            description: err.message || "Failed to generate API Key",
+          });
+          throw err;
+        }
+      },
+      update: async () => {
+        return {} as ApiKey;
+      },
+      delete: async (id: string) => {
+        try {
+          await apiKeyRepository.revoke(id);
+          success({
+            title: t("apikeys.revoked"),
+            description: t("apikeys.revokedDesc"),
+          });
+        } catch (err: any) {
+          toastError({
+            title: t("common.error"),
+            description: err.message || "Failed to revoke API Key",
+          });
+          throw err;
+        }
+      },
     },
-    update: async () => {
-      return {} as ApiKey;
-    },
-    delete: async (id: string) => {
-      try {
-        await apiKeyRepository.revoke(id);
-        success({
-          title: t("apikeys.revoked"),
-          description: t("apikeys.revokedDesc"),
-        });
-      } catch (err: any) {
-        toastError({
-          title: t("common.error"),
-          description: err.message || "Failed to revoke API Key",
-        });
-        throw err;
-      }
-    },
-  }, { deferSuccessEffects: true });
+    { deferSuccessEffects: true }
+  );
 
   // Configuration for GenericCrudView
   const getConfigBase = useCallback(

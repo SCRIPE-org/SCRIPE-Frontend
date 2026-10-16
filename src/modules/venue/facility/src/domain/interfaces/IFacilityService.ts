@@ -1,5 +1,8 @@
 import type { FacilityModel } from "../../data/models/FacilityModel";
 
+/**
+ * Documentation for module export
+ */
 export interface FacilityListResult {
   items: FacilityModel[];
   totalCount: number;
@@ -10,6 +13,9 @@ export interface FacilityListResult {
   hasPreviousPage: boolean;
 }
 
+/**
+ * Documentation for module export
+ */
 export interface IFacilityService {
   getAll(params: { page: number; pageSize: number; search?: string }): Promise<FacilityListResult>;
   getById(id: string): Promise<FacilityModel>;

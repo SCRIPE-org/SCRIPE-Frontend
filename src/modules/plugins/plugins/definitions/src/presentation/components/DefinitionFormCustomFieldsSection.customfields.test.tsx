@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import "@testing-library/jest-dom/vitest";
@@ -204,13 +205,17 @@ describe("DefinitionFormDialog + custom fields", () => {
 
     await waitFor(() => expect(mockCreate).toHaveBeenCalled());
     await waitFor(() =>
-      expect(extension.saveValues).toHaveBeenCalledWith(DEFINITION_ENTITY_TYPE_KEY, "new-definition-id", {
-        nickname: "Mo",
-        score: "42",
-        featured: true,
-        startdate: "2026-08-17",
-        tier: "Medium",
-      })
+      expect(extension.saveValues).toHaveBeenCalledWith(
+        DEFINITION_ENTITY_TYPE_KEY,
+        "new-definition-id",
+        {
+          nickname: "Mo",
+          score: "42",
+          featured: true,
+          startdate: "2026-08-17",
+          tier: "Medium",
+        }
+      )
     );
   });
 
@@ -250,16 +255,11 @@ describe("DefinitionFormDialog + custom fields", () => {
     renderWithQueryClient(<DefinitionsView />);
     await openCreateForm();
 
-    await waitFor(() =>
-      expect(screen.getByText("plugins.defNoCustomFields")).toBeInTheDocument()
-    );
+    await waitFor(() => expect(screen.getByText("plugins.defNoCustomFields")).toBeInTheDocument());
   });
 
   it("renders the inline add-custom-field trigger and refetches definitions when it reports a new field was created", async () => {
-    const getFormFields = vi
-      .fn()
-      .mockResolvedValueOnce([])
-      .mockResolvedValue([PRIORITY_FIELD]);
+    const getFormFields = vi.fn().mockResolvedValueOnce([]).mockResolvedValue([PRIORITY_FIELD]);
     registerFakeCustomFieldsExtension({
       getFormFields,
       InlineAddTrigger: ({ onCreated }) => (

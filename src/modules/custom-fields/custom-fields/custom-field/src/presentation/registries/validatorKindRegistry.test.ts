@@ -54,7 +54,9 @@ describe("VALIDATOR_KIND_CATALOG", () => {
 
   it("matches ValidatorKindOwnership's 7/6 non-parameterized/parameterized split exactly", () => {
     expect(PARAMETERIZED_KINDS).toHaveLength(6);
-    expect(ALL_VALIDATOR_KINDS.filter((kind) => !PARAMETERIZED_KINDS.includes(kind))).toHaveLength(7);
+    expect(ALL_VALIDATOR_KINDS.filter((kind) => !PARAMETERIZED_KINDS.includes(kind))).toHaveLength(
+      7
+    );
 
     for (const kind of ALL_VALIDATOR_KINDS) {
       expect(VALIDATOR_KIND_CATALOG[kind].hasParam).toBe(PARAMETERIZED_KINDS.includes(kind));

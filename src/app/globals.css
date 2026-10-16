@@ -249,8 +249,7 @@ html[data-reduced-motion="true"] {
   }
 }
 .scripe-monument-settle {
-  animation: scripeMonumentSettle 650ms var(--scripe-ease-out, cubic-bezier(0.16, 1, 0.3, 1))
-    both;
+  animation: scripeMonumentSettle 650ms var(--scripe-ease-out, cubic-bezier(0.16, 1, 0.3, 1)) both;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -2319,7 +2318,8 @@ html {
    MODERATE — Empty State Entrance
    Centered empty states scale in softly
    ======================================== */
-:root[data-animation="moderate"] .flex.flex-col.items-center.justify-center {
+:root[data-animation="moderate"] [data-empty-state-entrance],
+:root[data-animation="moderate"] .nx-empty-state-entrance {
   animation: nxScaleIn 0.35s ease-out both;
 }
 

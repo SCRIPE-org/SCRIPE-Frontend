@@ -35,6 +35,9 @@ import {
 } from "../types/menuOverrideTypes";
 
 // Re-export contract interfaces for external consumers
+/**
+ * Documentation for module export
+ */
 export type {
   OverrideDialogState,
   OverrideFormData,

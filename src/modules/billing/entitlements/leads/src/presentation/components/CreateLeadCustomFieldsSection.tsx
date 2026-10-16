@@ -37,9 +37,7 @@ export function CreateLeadCustomFieldsSection({
           <h3 className="text-sm font-semibold text-nx-ink">
             {t("leads.createDialog.customFieldsSection")}
           </h3>
-          <p className="text-xs text-nx-ink-2">
-            {t("leads.createDialog.customFieldsSectionDesc")}
-          </p>
+          <p className="text-xs text-nx-ink-2">{t("leads.createDialog.customFieldsSectionDesc")}</p>
         </div>
       </div>
 

@@ -69,8 +69,7 @@ export const ar = {
       failed: "فشل",
     },
     summary: "{created} تم إنشاؤها، {skipped} تم تجاوزها، {failed} فشلت.",
-    allSkippedOrFailed:
-      "لم تُنشأ أي مجموعة من هذا الملف. راجع السبب في كل سطر أدناه.",
+    allSkippedOrFailed: "لم تُنشأ أي مجموعة من هذا الملف. راجع السبب في كل سطر أدناه.",
     emptyBundle: {
       title: "لا يوجد ما يمكن استيراده",
       description: "لم يصف هذا الملف أي مجموعة حقول، فلم يُنشأ شيء.",

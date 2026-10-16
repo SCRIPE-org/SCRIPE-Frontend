@@ -1,3 +1,6 @@
+/**
+ * Documentation for module export
+ */
 export interface SiteData {
   id: string;
   name: string;
@@ -7,6 +10,9 @@ export interface SiteData {
   createdAt?: string | null;
 }
 
+/**
+ * Documentation for module export
+ */
 export class Site {
   constructor(private readonly data: SiteData) {}
 

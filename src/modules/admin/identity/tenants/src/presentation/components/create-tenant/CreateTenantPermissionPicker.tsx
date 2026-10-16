@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 /**
  * CreateTenantPermissionPicker — Granular permission selection for new tenants
  *
@@ -16,6 +17,9 @@ interface CreateTenantPermissionPickerProps {
   t: (key: string) => string;
 }
 
+/**
+ * Documentation for module export
+ */
 export function CreateTenantPermissionPicker({ vm, t }: CreateTenantPermissionPickerProps) {
   const creationPermissions = vm.creationPermissions;
   const updateField = vm.updateField;

@@ -106,14 +106,42 @@ export function useWorkspaceTransition() {
     // pathname included so navigation completing also triggers the dismiss
   }, [isWorkspaceLoading, activeWorkspaceKey, pathname, isLoaderShowing]);
 
-  // Safety net: if the loader is still visible after 8 seconds, dismiss it.
+  // Handle route completion or abort via routing-progress-stop event
+  useEffect(() => {
+    if (!isLoaderShowing) return;
+
+    const handleRoutingStop = () => {
+      if (!isWorkspaceLoading) {
+        const elapsed = Date.now() - loaderStartAt.current;
+        const remaining = Math.max(0, MIN_VISIBLE_MS - elapsed);
+
+        clearSettle();
+        settleTimer.current = setTimeout(() => {
+          useNavigationStore.getState().setTransitionTargetRoute(null);
+          setLoaderState((s) => ({ ...s, show: false }));
+          targetKey.current = null;
+        }, remaining + SETTLE_MS);
+      }
+    };
+
+    window.addEventListener("routing-progress-stop", handleRoutingStop);
+    return () => {
+      window.removeEventListener("routing-progress-stop", handleRoutingStop);
+    };
+  }, [isLoaderShowing, isWorkspaceLoading]);
+
+  // Safety net: if the loader is still visible after 3 seconds, dismiss it.
   // This handles edge-cases where the JIT fetch resolves but the workspace key
   // never matches (e.g. rapid workspace switches, stale closures, or network
   // errors that were swallowed before reaching this effect).
-  const SAFETY_TIMEOUT_MS = 8000;
+  const SAFETY_TIMEOUT_MS = 3000;
   useEffect(() => {
     if (!isLoaderShowing) return;
     const timeout = setTimeout(() => {
+      appLogger.warn(
+        "[useWorkspaceTransition] Safety timeout reached (3000ms). Forcing loader dismissal."
+      );
+      useNavigationStore.getState().setTransitionTargetRoute(null);
       setLoaderState((s) => ({ ...s, show: false }));
       targetKey.current = null;
     }, SAFETY_TIMEOUT_MS);

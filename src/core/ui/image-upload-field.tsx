@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /**
  * ImageUploadField — Reusable image upload component
  *
@@ -98,6 +99,32 @@ export function ImageUploadField({
   );
 
   // ─── File handling ────────────────────
+  const uploadFile = useCallback(
+    async (file: File) => {
+      setIsUploading(true);
+      setError(null);
+      try {
+        const formData = new FormData();
+        formData.append("file", file);
+        const api = getCoreContainer().apiService;
+        const result = await api.post<{ url: string }>(SYSTEM_ENDPOINTS.UPLOADS.IMAGE, formData);
+        // Append cache-buster so browser fetches the new image (not a stale cached one)
+        const resolved = resolveFileUrl(result.url);
+        const cacheBusted = resolved.includes("?")
+          ? `${resolved}&v=${Date.now()}`
+          : `${resolved}?v=${Date.now()}`;
+        onChange(cacheBusted);
+        setPreviewUrl(null); // Clear preview, use the resolved value
+      } catch (err: any) {
+        setError(err?.message || t("imageUpload.uploadFailed"));
+        setPreviewUrl(null);
+      } finally {
+        setIsUploading(false);
+      }
+    },
+    [onChange, t]
+  );
+
   const handleFile = useCallback(
     (file: File) => {
       if (!validateFile(file)) return;
@@ -107,31 +134,8 @@ export function ImageUploadField({
       // Upload to server
       uploadFile(file);
     },
-    [validateFile]
+    [validateFile, uploadFile]
   );
-
-  const uploadFile = async (file: File) => {
-    setIsUploading(true);
-    setError(null);
-    try {
-      const formData = new FormData();
-      formData.append("file", file);
-      const api = getCoreContainer().apiService;
-      const result = await api.post<{ url: string }>(SYSTEM_ENDPOINTS.UPLOADS.IMAGE, formData);
-      // Append cache-buster so browser fetches the new image (not a stale cached one)
-      const resolved = resolveFileUrl(result.url);
-      const cacheBusted = resolved.includes("?")
-        ? `${resolved}&v=${Date.now()}`
-        : `${resolved}?v=${Date.now()}`;
-      onChange(cacheBusted);
-      setPreviewUrl(null); // Clear preview, use the resolved value
-    } catch (err: any) {
-      setError(err?.message || t("imageUpload.uploadFailed"));
-      setPreviewUrl(null);
-    } finally {
-      setIsUploading(false);
-    }
-  };
 
   // ─── Drag & drop ──────────────────────
   const handleDrop = useCallback(

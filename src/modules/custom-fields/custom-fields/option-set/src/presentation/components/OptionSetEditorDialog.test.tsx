@@ -107,7 +107,9 @@ function optionSetFixture(overrides: Partial<OptionSetData> = {}): OptionSet {
  * Returned rather than spread inline because the reseed tests below have to `rerender` with the SAME
  * props except one, and a helper is the only way to keep those two calls honestly identical.
  */
-function editorProps(overrides: Partial<OptionSetEditorDialogProps> = {}): OptionSetEditorDialogProps {
+function editorProps(
+  overrides: Partial<OptionSetEditorDialogProps> = {}
+): OptionSetEditorDialogProps {
   return {
     open: true,
     onOpenChange: vi.fn(),
@@ -250,7 +252,12 @@ describe("stableKey input", () => {
 
     // Asserted in the negative direction too, so allowing the hyphen cannot be "fixed" next time by
     // widening the pattern to everything -- which would pass the test above and gate nothing.
-    for (const rejected of ["iso 3166 countries", "3166-countries", "countries.iso", "-countries"]) {
+    for (const rejected of [
+      "iso 3166 countries",
+      "3166-countries",
+      "countries.iso",
+      "-countries",
+    ]) {
       expect(typeKey(rejected).validity.patternMismatch).toBe(true);
     }
   });
@@ -369,9 +376,7 @@ describe("reseeding when the dialog is reused", () => {
 
     // A background refetch: same id, brand-new object identity, same server values. Widening the
     // effect deps to the entity (or to the individual fields) discards the admin's typing here.
-    rerender(
-      <OptionSetEditorDialog {...props} optionSet={optionSetFixture({ id: "set-1" })} />
-    );
+    rerender(<OptionSetEditorDialog {...props} optionSet={optionSetFixture({ id: "set-1" })} />);
 
     expect(labelEnInput()).toHaveValue("Session intensity");
   });

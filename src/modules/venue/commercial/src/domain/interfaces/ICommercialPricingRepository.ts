@@ -1,8 +1,22 @@
-import type { CalculatePriceQuoteInput, ConfigureResourceRentalPriceInput, CreateTaxCategoryInput, OverridePriceQuoteInput, PriceQuote, PriceQuoteOverride, ResourceRentalPriceConfiguration, TaxCategory } from "../entities/CommercialPricing";
+import type {
+  CalculatePriceQuoteInput,
+  ConfigureResourceRentalPriceInput,
+  CreateTaxCategoryInput,
+  OverridePriceQuoteInput,
+  PriceQuote,
+  PriceQuoteOverride,
+  ResourceRentalPriceConfiguration,
+  TaxCategory,
+} from "../entities/CommercialPricing";
 
+/**
+ * Documentation for module export
+ */
 export interface ICommercialPricingRepository {
   getResourceConfiguration(resourceId: string): Promise<ResourceRentalPriceConfiguration>;
-  configureResourcePrice(input: ConfigureResourceRentalPriceInput): Promise<ResourceRentalPriceConfiguration>;
+  configureResourcePrice(
+    input: ConfigureResourceRentalPriceInput
+  ): Promise<ResourceRentalPriceConfiguration>;
   calculateQuote(input: CalculatePriceQuoteInput): Promise<PriceQuote>;
   overrideQuote(quoteId: string, input: OverridePriceQuoteInput): Promise<PriceQuoteOverride>;
   getTaxCategories(): Promise<TaxCategory[]>;

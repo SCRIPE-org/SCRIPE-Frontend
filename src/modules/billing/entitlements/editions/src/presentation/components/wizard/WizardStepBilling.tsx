@@ -54,7 +54,9 @@ function CycleToggle({
     <label
       htmlFor={id}
       className={`flex cursor-pointer items-center gap-4 border px-4 py-3.5 transition-[border-color,background-color,box-shadow] duration-nx-micro ease-nx-enter motion-reduce:transition-none ${
-        checked ? "border-nx-accent bg-nx-accent-wash shadow-nx-sm" : "border-nx-line hover:bg-nx-hover"
+        checked
+          ? "border-nx-accent bg-nx-accent-wash shadow-nx-sm"
+          : "border-nx-line hover:bg-nx-hover"
       }`}
     >
       <Checkbox id={id} checked={checked} onCheckedChange={(v) => onChange(!!v)} />

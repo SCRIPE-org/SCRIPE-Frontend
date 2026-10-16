@@ -35,6 +35,9 @@ import type { OptionSetVersion } from "../../domain/entities/OptionSetVersion";
 import type { OptionSetItemRequestJson } from "../models/OptionSetModel";
 import { OptionSetMapper } from "../mappers/OptionSetMapper";
 
+/**
+ * Documentation for module export
+ */
 export class OptionSetRepository implements IOptionSetRepository {
   constructor(private readonly service: IOptionSetService) {}
 
@@ -103,7 +106,10 @@ export class OptionSetRepository implements IOptionSetRepository {
     return OptionSetMapper.bindingResultToOutcome(model);
   }
 
-  async rebind(fieldVersionId: string, optionSetVersionId: string): Promise<OptionSetBindingOutcome> {
+  async rebind(
+    fieldVersionId: string,
+    optionSetVersionId: string
+  ): Promise<OptionSetBindingOutcome> {
     const model = await this.service.rebind(fieldVersionId, { optionSetVersionId });
     return OptionSetMapper.bindingResultToOutcome(model);
   }

@@ -1,5 +1,8 @@
 import type { ApiKey, CreateApiKeyRequest, CreateApiKeyResult } from "../entities/ApiKey";
 
+/**
+ * Documentation for module export
+ */
 export interface IApiKeyRepository {
   getAll(params: {
     page: number;

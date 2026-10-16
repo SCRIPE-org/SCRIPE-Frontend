@@ -83,7 +83,7 @@ export function EmailHtmlBlockView({ node, deleteNode, selected }: NodeViewProps
         // "group" backs the delete button's focus-within reveal below.
         // Selection lights the EDGE rather than growing the border: a 2px→1px
         // swap moved every following line in the document by a pixel.
-        "group email-html-block relative my-2 rounded-nx-md border transition-[border-color,box-shadow] duration-nx-micro ease-nx-enter motion-reduce:transition-none",
+        "email-html-block group relative my-2 rounded-nx-md border transition-[border-color,box-shadow] duration-nx-micro ease-nx-enter motion-reduce:transition-none",
         selected
           ? "border-nx-accent shadow-[inset_0_0_0_1px_var(--nx-accent)]"
           : hovered

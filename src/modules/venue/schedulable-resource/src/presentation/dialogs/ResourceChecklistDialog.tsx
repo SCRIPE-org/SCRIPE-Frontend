@@ -1,4 +1,4 @@
-import React from "react";
+﻿import React from "react";
 import { CheckCircle2 } from "lucide-react";
 import { Button } from "@core/ui/button";
 import {
@@ -12,6 +12,9 @@ import {
 import type { SchedulableResourceTreeNode } from "../utils/resourceTree";
 import type { PublicationChecklistReport } from "../../domain/entities/SchedulableResource";
 
+/**
+ * Documentation for module export
+ */
 export interface ResourceChecklistDialogProps {
   target: SchedulableResourceTreeNode | null;
   checklist: PublicationChecklistReport | null;
@@ -23,6 +26,9 @@ export interface ResourceChecklistDialogProps {
   onPublish: () => void;
 }
 
+/**
+ * Documentation for ResourceChecklistDialog
+ */
 export function ResourceChecklistDialog({
   target,
   checklist,
@@ -39,7 +45,7 @@ export function ResourceChecklistDialog({
         <DialogHeader>
           <DialogTitle>{t("schedulableResource.checklistTitle")}</DialogTitle>
           <DialogDescription>
-            {target?.resource.name} — {target?.resource.commercialReadinessNote}
+            {target?.resource.name} â€” {target?.resource.commercialReadinessNote}
           </DialogDescription>
         </DialogHeader>
         {loading && <p className="text-sm text-nx-ink-3">{t("common.loading")}</p>}

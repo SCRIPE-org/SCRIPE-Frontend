@@ -30,6 +30,9 @@ export interface AppListingScreenshotDto {
   sortOrder?: number;
 }
 
+/**
+ * Documentation for module export
+ */
 export interface AppListingPricingDto {
   id?: string;
   model?: string;
@@ -38,6 +41,9 @@ export interface AppListingPricingDto {
   trialDays?: number;
 }
 
+/**
+ * Documentation for module export
+ */
 export interface AppListingDto {
   id: string;
   developerProfileId?: string;

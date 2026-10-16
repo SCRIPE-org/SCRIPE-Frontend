@@ -10,6 +10,9 @@ import {
 } from "../../domain/entities/EmploymentRecord";
 import { EmploymentRecordModel, type EmploymentRecordJson } from "../models/EmploymentRecordModel";
 
+/**
+ * Documentation for module export
+ */
 export class EmploymentRecordMapper {
   /**
    * Convert EmploymentRecordModel to EmploymentRecord Entity

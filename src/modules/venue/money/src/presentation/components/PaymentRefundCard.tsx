@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import React from "react";
 import { Alert, AlertDescription } from "@core/ui/alert";
@@ -14,6 +14,9 @@ interface PaymentRefundCardProps {
   model: ReturnType<typeof usePaymentsViewModel>;
 }
 
+/**
+ * Documentation for module export
+ */
 export function PaymentRefundCard({ model }: PaymentRefundCardProps) {
   const { t } = useI18n();
 
@@ -27,7 +30,9 @@ export function PaymentRefundCard({ model }: PaymentRefundCardProps) {
           <AlertDescription>{t("money.payments.refund.description")}</AlertDescription>
         </Alert>
         <div className="space-y-2">
-          <Label id="refund-invoice-label" htmlFor="refund-invoice-select">{t("money.payments.invoice")}</Label>
+          <Label id="refund-invoice-label" htmlFor="refund-invoice-select">
+            {t("money.payments.invoice")}
+          </Label>
           <GenericSelect
             id="refund-invoice-select"
             aria-labelledby="refund-invoice-label"
@@ -37,7 +42,7 @@ export function PaymentRefundCard({ model }: PaymentRefundCardProps) {
             options={model.refundInvoiceOptions}
             value={model.refundInvoiceId}
             onValueChange={(value: string | string[]) =>
-              model.setRefundInvoiceId(Array.isArray(value) ? value[0] ?? "" : value)
+              model.setRefundInvoiceId(Array.isArray(value) ? (value[0] ?? "") : value)
             }
             placeholder={t("money.payments.refund.selectInvoice")}
           />
@@ -74,14 +79,8 @@ export function PaymentRefundCard({ model }: PaymentRefundCardProps) {
             />
           </div>
         </div>
-        <Button
-          type="button"
-          disabled={model.refunding}
-          onClick={() => void model.submitRefund()}
-        >
-          {model.refunding
-            ? t("money.payments.refund.saving")
-            : t("money.payments.refund.record")}
+        <Button type="button" disabled={model.refunding} onClick={() => void model.submitRefund()}>
+          {model.refunding ? t("money.payments.refund.saving") : t("money.payments.refund.record")}
         </Button>
       </CardContent>
     </Card>

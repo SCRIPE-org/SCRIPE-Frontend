@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 // UI-EXCEPTION: compact studio layout
 "use client";
 

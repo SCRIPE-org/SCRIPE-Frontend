@@ -24,16 +24,19 @@ export function TenantCommandHeader({
   const { isPresentationMode, togglePresentationMode } = usePresentationMode();
 
   return (
-    <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 pb-2 border-b border-border/60">
+    <div className="flex flex-col gap-3 border-b border-border/60 pb-2 sm:flex-row sm:items-center sm:justify-between">
       <div className="flex items-center gap-3">
         <div className="flex items-center gap-2 text-xs text-muted-foreground">
           <span>{t("tenantCommandCenter.administration")}</span>
           <span className="rtl:rotate-180">›</span>
           <b className="text-foreground">{t("tenantCommandCenter.overview")}</b>
         </div>
-        <div className="h-3.5 w-px bg-border hidden sm:block" />
+        <div className="hidden h-3.5 w-px bg-border sm:block" />
         <div className="flex items-center gap-2">
-          <Badge variant="outline" className="text-xs font-semibold gap-1.5 py-0.5 px-2 bg-muted/40">
+          <Badge
+            variant="outline"
+            className="gap-1.5 bg-muted/40 px-2 py-0.5 text-xs font-semibold"
+          >
             <Building2 className="h-3 w-3 text-primary" />
             <span>{tenantName}</span>
           </Badge>
@@ -45,7 +48,7 @@ export function TenantCommandHeader({
         </div>
       </div>
 
-      <div className="flex items-center gap-2 shrink-0">
+      <div className="flex shrink-0 items-center gap-2">
         <Button
           type="button"
           variant="outline"
@@ -54,16 +57,23 @@ export function TenantCommandHeader({
           title={
             isPresentationMode
               ? t("tenantCommandCenter.switchToLiveTooltip") || "Switch to live backend telemetry"
-              : t("tenantCommandCenter.switchToDemoTooltip") || "Switch to presentation showcase mode"
+              : t("tenantCommandCenter.switchToDemoTooltip") ||
+                "Switch to presentation showcase mode"
           }
-          className={`h-8 px-2.5 text-xs font-semibold gap-1.5 transition-colors cursor-pointer border shadow-xs ${
+          className={`shadow-xs h-8 cursor-pointer gap-1.5 border px-2.5 text-xs font-semibold transition-colors ${
             isPresentationMode
-              ? "bg-amber-500/10 border-amber-500/30 text-amber-500 hover:bg-amber-500/20"
-              : "bg-card border-border text-muted-foreground hover:text-foreground"
+              ? "border-amber-500/30 bg-amber-500/10 text-amber-500 hover:bg-amber-500/20"
+              : "border-border bg-card text-muted-foreground hover:text-foreground"
           }`}
         >
-          <Sparkles className={`h-3 w-3 ${isPresentationMode ? "text-amber-500 fill-amber-500/30" : "text-muted-foreground"}`} />
-          <span>{isPresentationMode ? t("tenantCommandCenter.demoMode") : t("tenantCommandCenter.liveData")}</span>
+          <Sparkles
+            className={`h-3 w-3 ${isPresentationMode ? "fill-amber-500/30 text-amber-500" : "text-muted-foreground"}`}
+          />
+          <span>
+            {isPresentationMode
+              ? t("tenantCommandCenter.demoMode")
+              : t("tenantCommandCenter.liveData")}
+          </span>
         </Button>
 
         {onRefresh && (
@@ -73,9 +83,11 @@ export function TenantCommandHeader({
             size="sm"
             onClick={onRefresh}
             title={t("tenantCommandCenter.refreshTooltip") || "Refresh organization data"}
-            className="h-8 w-8 p-0 rounded-lg border-border bg-card hover:bg-accent text-muted-foreground hover:text-foreground"
+            className="h-8 w-8 rounded-lg border-border bg-card p-0 text-muted-foreground hover:bg-accent hover:text-foreground"
           >
-            <RotateCw className={`h-3.5 w-3.5 ${isRefreshing ? "animate-spin text-primary" : ""}`} />
+            <RotateCw
+              className={`h-3.5 w-3.5 ${isRefreshing ? "animate-spin text-primary" : ""}`}
+            />
           </Button>
         )}
       </div>

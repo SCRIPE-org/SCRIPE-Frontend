@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import Link from "next/link";
 import { Plus, Calendar, ShieldAlert, ReceiptText } from "lucide-react";
@@ -10,6 +10,9 @@ interface Props {
   t: (key: string, values?: Record<string, string | number>) => string;
 }
 
+/**
+ * Documentation for module export
+ */
 export function VenueOverviewQuickActions({ t }: Props) {
   const canViewAttention = usePermission(VENUE_PERMISSIONS.VENUE_ATTENTION_VIEW);
   const canViewReceivables = usePermission(VENUE_PERMISSIONS.FINANCE_RECEIVABLES_VIEW);
@@ -18,11 +21,7 @@ export function VenueOverviewQuickActions({ t }: Props) {
 
   return (
     <div className="flex flex-wrap items-center gap-2.5">
-      <Button
-        asChild
-        size="sm"
-        className="gap-2 shadow-nx-sm font-semibold"
-      >
+      <Button asChild size="sm" className="gap-2 font-semibold shadow-nx-sm">
         <Link href="/venue/bookings/new">
           <Plus className="size-4" aria-hidden="true" />
           <span>{t("venueOverview.quickActions.newBooking")}</span>

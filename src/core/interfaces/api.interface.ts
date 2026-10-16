@@ -47,7 +47,12 @@ export interface IApiService {
    * @param data - Request body
    * @param signal - AbortSignal for cancellation
    */
-  post<T>(endpoint: string, data?: unknown, signal?: AbortSignal): Promise<T>;
+  post<T>(
+    endpoint: string,
+    data?: unknown,
+    signal?: AbortSignal,
+    options?: { headers?: Record<string, string> }
+  ): Promise<T>;
 
   /**
    * POST request (public - no auth token)

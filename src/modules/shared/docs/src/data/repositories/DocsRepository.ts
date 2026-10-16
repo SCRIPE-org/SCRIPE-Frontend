@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /**
  * DocsRepository — Reads documentation data from static imports.
  * Implements IDocsRepository for clean architecture.

@@ -74,11 +74,7 @@ export function ThemeMarketplacePanel({
   // When selectedTheme loads with data and we're actively previewing, forward to parent
   const selectedTheme = mp.selectedTheme;
   useEffect(() => {
-    if (
-      previewingSlug &&
-      selectedTheme?.slug === previewingSlug &&
-      selectedTheme.themeDataJson
-    ) {
+    if (previewingSlug && selectedTheme?.slug === previewingSlug && selectedTheme.themeDataJson) {
       onPreviewTheme?.(selectedTheme.themeDataJson);
     }
   }, [selectedTheme, previewingSlug, onPreviewTheme]);
@@ -138,7 +134,7 @@ export function ThemeMarketplacePanel({
               placeholder={t("studio.marketplace.search")}
               value={mp.filters.search}
               onChange={(e) => mp.setFilters({ search: e.target.value })}
-              className="h-8 w-full rounded-nx-control border border-nx-line bg-nx-ground ps-8 pe-3 text-xs text-nx-ink placeholder:text-nx-ink-3 focus:outline-none focus:ring-1 focus:ring-nx-accent"
+              className="h-8 w-full rounded-nx-control border border-nx-line bg-nx-ground pe-3 ps-8 text-xs text-nx-ink placeholder:text-nx-ink-3 focus:outline-none focus:ring-1 focus:ring-nx-accent"
             />
             {mp.filters.search && (
               <button
@@ -320,8 +316,8 @@ export function ThemeMarketplacePanel({
         {totalPages > 1 && (
           <div className="flex items-center justify-between py-2">
             <span className="text-[10px] text-nx-ink-3">
-              {mp.totalCount} {t("studio.marketplace.themes")} •{" "}
-              {t("studio.marketplace.page")} {mp.page}/{totalPages}
+              {mp.totalCount} {t("studio.marketplace.themes")} • {t("studio.marketplace.page")}{" "}
+              {mp.page}/{totalPages}
             </span>
             <div className="flex gap-1">
               <button
@@ -426,7 +422,7 @@ function ThemeCard({
               onToggleFavorite();
             }}
             disabled={isTogglingFavorite}
-            className="flex h-6 w-6 items-center justify-center rounded-nx-control transition-colors duration-nx-micro ease-nx-enter motion-reduce:transition-none hover:bg-nx-hover"
+            className="flex h-6 w-6 items-center justify-center rounded-nx-control transition-colors duration-nx-micro ease-nx-enter hover:bg-nx-hover motion-reduce:transition-none"
           >
             <Heart
               className={cn(
@@ -467,7 +463,9 @@ function ThemeCard({
               className="flex h-6 cursor-not-allowed items-center gap-0.5 rounded-nx-control border border-[color:color-mix(in_srgb,var(--nx-accent)_40%,transparent)] px-2 text-[10px] text-nx-accent opacity-80"
             >
               <ShoppingCart className="h-2.5 w-2.5" />
-              {theme.price ? formatCurrency(theme.price, theme.priceCurrency || "USD") : t("studio.marketplace.buy")}
+              {theme.price
+                ? formatCurrency(theme.price, theme.priceCurrency || "USD")
+                : t("studio.marketplace.buy")}
             </button>
           ) : (
             <Lock className="h-3 w-3 text-nx-ink-3" />
@@ -507,7 +505,8 @@ function ThemeCard({
           )}
           {theme.isFeatured && !theme.isNew && (
             <span className="flex items-center gap-0.5 rounded-full bg-[color:color-mix(in_srgb,var(--nx-ground)_90%,transparent)] px-1.5 py-0.5 text-[9px] font-bold text-nx-ink">
-              <Crown className="h-2.5 w-2.5" /> <Star className="h-2.5 w-2.5 fill-current" aria-hidden="true" />
+              <Crown className="h-2.5 w-2.5" />{" "}
+              <Star className="h-2.5 w-2.5 fill-current" aria-hidden="true" />
             </span>
           )}
           {isPreviewing && (
@@ -529,7 +528,7 @@ function ThemeCard({
             onToggleFavorite();
           }}
           disabled={isTogglingFavorite}
-          className="absolute bottom-1.5 end-1.5 flex h-6 w-6 items-center justify-center rounded-full bg-[color:color-mix(in_srgb,var(--nx-ink)_30%,transparent)] transition-colors duration-nx-micro ease-nx-enter motion-reduce:transition-none hover:bg-[color:color-mix(in_srgb,var(--nx-ink)_50%,transparent)]"
+          className="absolute bottom-1.5 end-1.5 flex h-6 w-6 items-center justify-center rounded-full bg-[color:color-mix(in_srgb,var(--nx-ink)_30%,transparent)] transition-colors duration-nx-micro ease-nx-enter hover:bg-[color:color-mix(in_srgb,var(--nx-ink)_50%,transparent)] motion-reduce:transition-none"
         >
           <Heart
             className={cn(
@@ -641,7 +640,9 @@ function ThemeCard({
                 title={t("studio.marketplace.contactAdminToBuy")}
               >
                 <ShoppingCart className="h-3 w-3" />
-                {theme.price ? formatCurrency(theme.price, theme.priceCurrency || "USD") : t("studio.marketplace.buy")}
+                {theme.price
+                  ? formatCurrency(theme.price, theme.priceCurrency || "USD")
+                  : t("studio.marketplace.buy")}
               </button>
             ) : (
               <div className="flex h-6 flex-1 items-center justify-center gap-1 rounded-nx-control border border-warning/50 bg-warning/5 text-[9px] text-warning">

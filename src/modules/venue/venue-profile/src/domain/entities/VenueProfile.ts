@@ -16,6 +16,9 @@ export interface VenueProfileData {
   siteName?: string;
 }
 
+/**
+ * Documentation for module export
+ */
 export class VenueProfile {
   constructor(public readonly data: VenueProfileData) {}
 

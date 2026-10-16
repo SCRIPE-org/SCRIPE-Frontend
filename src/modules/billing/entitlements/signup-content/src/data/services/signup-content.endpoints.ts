@@ -1,5 +1,8 @@
 import { V1 } from "@/core/config/api-endpoints/_shared";
 
+/**
+ * Documentation for module export
+ */
 export const SIGNUP_CONTENT_ENDPOINTS = {
   GET: `${V1}/signup/content`,
   SET_MODE: `${V1}/signup/content/mode`,

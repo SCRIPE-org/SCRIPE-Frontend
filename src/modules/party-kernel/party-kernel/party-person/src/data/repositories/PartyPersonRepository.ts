@@ -17,6 +17,9 @@ import type { IPartyPersonService } from "../../domain/interfaces/IPartyPersonSe
 import type { PartyPerson } from "../../domain/entities/PartyPerson";
 import { PartyPersonMapper } from "../mappers/PartyPersonMapper";
 
+/**
+ * Documentation for module export
+ */
 export class PartyPersonRepository implements IPartyPersonRepository {
   constructor(private readonly service: IPartyPersonService) {}
 

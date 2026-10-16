@@ -51,9 +51,27 @@ describe("VenueOverviewService", () => {
   const mockSchedulableResourceRepo = {
     getAll: vi.fn().mockResolvedValue({
       items: [
-        { id: "court-1", name: "Padel Court 1", facilityResourceProfileId: "prof-1", isPublished: true, isComposite: false },
-        { id: "court-2", name: "Padel Court 2", facilityResourceProfileId: "prof-1", isPublished: true, isComposite: false },
-        { id: "court-3", name: "Tennis Court 1", facilityResourceProfileId: "prof-1", isPublished: true, isComposite: false },
+        {
+          id: "court-1",
+          name: "Padel Court 1",
+          facilityResourceProfileId: "prof-1",
+          isPublished: true,
+          isComposite: false,
+        },
+        {
+          id: "court-2",
+          name: "Padel Court 2",
+          facilityResourceProfileId: "prof-1",
+          isPublished: true,
+          isComposite: false,
+        },
+        {
+          id: "court-3",
+          name: "Tennis Court 1",
+          facilityResourceProfileId: "prof-1",
+          isPublished: true,
+          isComposite: false,
+        },
       ],
       totalCount: 3,
     }),
@@ -61,7 +79,9 @@ describe("VenueOverviewService", () => {
 
   const mockProfileRepo = {
     getAll: vi.fn().mockResolvedValue({
-      items: [{ id: "prof-1", facilityId: "facility-1", operatingPolicy: { timeZoneId: "Africa/Cairo" } }],
+      items: [
+        { id: "prof-1", facilityId: "facility-1", operatingPolicy: { timeZoneId: "Africa/Cairo" } },
+      ],
       totalCount: 1,
     }),
   };
@@ -84,6 +104,7 @@ describe("VenueOverviewService", () => {
 
   it("derives all overview metrics, hourly load, at a glance, up next, and resource activity from authoritative projection", async () => {
     const service = new VenueOverviewService(
+      {} as never,
       mockOperationsCalendarRepo as never,
       mockSchedulableResourceRepo as never,
       mockProfileRepo as never,
@@ -98,7 +119,9 @@ describe("VenueOverviewService", () => {
     expect(overview.facilityName).toBe("Downtown Sports Arena");
     expect(overview.timeZoneId).toBe("Africa/Cairo");
     expect(mockOperationsCalendarRepo.getDay).toHaveBeenCalledWith({
-      dateLocal: "2026-09-12", timeZoneId: "Africa/Cairo", resourceIds: ["court-1", "court-2", "court-3"],
+      dateLocal: "2026-09-12",
+      timeZoneId: "Africa/Cairo",
+      resourceIds: ["court-1", "court-2", "court-3"],
     });
 
     // KPI Verification
@@ -150,6 +173,7 @@ describe("VenueOverviewService", () => {
     };
 
     const service = new VenueOverviewService(
+      {} as never,
       mockOperationsCalendarRepo as never,
       mockSchedulableResourceRepo as never,
       mockProfileRepo as never,
@@ -170,6 +194,7 @@ describe("VenueOverviewService", () => {
       getAll: vi.fn().mockResolvedValue({ items: [], totalCount: 0 }),
     };
     const service = new VenueOverviewService(
+      {} as never,
       mockOperationsCalendarRepo as never,
       mockSchedulableResourceRepo as never,
       mockProfileRepo as never,
@@ -188,22 +213,35 @@ describe("VenueOverviewService", () => {
   it("keeps a caller-selected facility instead of silently replacing it with the first list page", async () => {
     const selectedFacilityRepo = {
       getAll: vi.fn().mockResolvedValue({
-        items: [{ id: "facility-1", name: "First Facility" }], totalCount: 2,
+        items: [{ id: "facility-1", name: "First Facility" }],
+        totalCount: 2,
       }),
       getById: vi.fn().mockResolvedValue({ id: "facility-2", name: "Selected Facility" }),
     };
     const selectedProfiles = {
       getAll: vi.fn().mockResolvedValue({
-        items: [{ id: "profile-2", facilityId: "facility-2", operatingPolicy: { timeZoneId: "UTC" } }], totalCount: 1,
+        items: [
+          { id: "profile-2", facilityId: "facility-2", operatingPolicy: { timeZoneId: "UTC" } },
+        ],
+        totalCount: 1,
       }),
     };
     const selectedResources = {
       getAll: vi.fn().mockResolvedValue({
-        items: [{ id: "court-2", name: "Selected Court", facilityResourceProfileId: "profile-2", isPublished: true, isComposite: false }],
+        items: [
+          {
+            id: "court-2",
+            name: "Selected Court",
+            facilityResourceProfileId: "profile-2",
+            isPublished: true,
+            isComposite: false,
+          },
+        ],
         totalCount: 1,
       }),
     };
     const service = new VenueOverviewService(
+      {} as never,
       mockOperationsCalendarRepo as never,
       selectedResources as never,
       selectedProfiles as never,
@@ -231,6 +269,7 @@ describe("VenueOverviewService", () => {
       getAll: vi.fn().mockResolvedValue({ items: resources, totalCount: resources.length }),
     };
     const service = new VenueOverviewService(
+      {} as never,
       mockOperationsCalendarRepo as never,
       resourceRepo as never,
       mockProfileRepo as never,
@@ -244,10 +283,14 @@ describe("VenueOverviewService", () => {
     expect(overview.facilityId).toBe("facility-1");
     expect(mockOperationsCalendarRepo.getDay).toHaveBeenCalledTimes(2);
     expect(mockOperationsCalendarRepo.getDay).toHaveBeenNthCalledWith(1, {
-      dateLocal: "2026-09-12", timeZoneId: "Africa/Cairo", resourceIds: resources.slice(0, 50).map((resource) => resource.id),
+      dateLocal: "2026-09-12",
+      timeZoneId: "Africa/Cairo",
+      resourceIds: resources.slice(0, 50).map((resource) => resource.id),
     });
     expect(mockOperationsCalendarRepo.getDay).toHaveBeenNthCalledWith(2, {
-      dateLocal: "2026-09-12", timeZoneId: "Africa/Cairo", resourceIds: resources.slice(50).map((resource) => resource.id),
+      dateLocal: "2026-09-12",
+      timeZoneId: "Africa/Cairo",
+      resourceIds: resources.slice(50).map((resource) => resource.id),
     });
   });
 
@@ -256,6 +299,7 @@ describe("VenueOverviewService", () => {
       getDay: vi.fn().mockResolvedValue({ ...mockProjection, isTruncated: true }),
     };
     const service = new VenueOverviewService(
+      {} as never,
       truncatedCalendarRepo as never,
       mockSchedulableResourceRepo as never,
       mockProfileRepo as never,

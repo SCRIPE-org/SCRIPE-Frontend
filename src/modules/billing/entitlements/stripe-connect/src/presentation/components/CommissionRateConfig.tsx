@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/incompatible-library */
 /**
  * CommissionRateConfig
  * Dialog for setting or clearing a per-tenant commission rate override.

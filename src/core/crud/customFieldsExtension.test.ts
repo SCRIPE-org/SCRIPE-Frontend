@@ -60,7 +60,9 @@ describe("useCustomFieldsFormFields", () => {
   });
 
   it("fetches and returns fields from the registered extension when entityTypeKey is set", async () => {
-    const fields: FieldConfig[] = [{ name: encodeCustomFieldName("nationality"), label: "Nationality", type: "text" }];
+    const fields: FieldConfig[] = [
+      { name: encodeCustomFieldName("nationality"), label: "Nationality", type: "text" },
+    ];
     const api = makeApi({ getFormFields: vi.fn().mockResolvedValue(fields) });
     registerCustomFieldsExtension(api);
 
@@ -190,9 +192,9 @@ describe("useCustomFieldColumns — per-record visibility (Wave 5 row 5.3)", () 
     // The point of the parallel channel: the same field is shown for one record and hidden for the
     // next, so this can never be expressed by dropping the column.
     const api = makeApi({
-      getBulkColumnValues: vi.fn().mockResolvedValue(
-        bulk({ hiddenKeysByOwnerId: { "owner-b": ["reason"] } })
-      ),
+      getBulkColumnValues: vi
+        .fn()
+        .mockResolvedValue(bulk({ hiddenKeysByOwnerId: { "owner-b": ["reason"] } })),
     });
     registerCustomFieldsExtension(api);
 
@@ -233,10 +235,7 @@ describe("useCustomFieldColumns — per-record visibility (Wave 5 row 5.3)", () 
     // the second page, which is exactly the kind nobody reproduces by hand.
     const first = bulk({ hiddenKeysByOwnerId: { "owner-b": ["reason"] } });
     const second = bulk();
-    const getBulkColumnValues = vi
-      .fn()
-      .mockResolvedValueOnce(first)
-      .mockResolvedValueOnce(second);
+    const getBulkColumnValues = vi.fn().mockResolvedValueOnce(first).mockResolvedValueOnce(second);
     registerCustomFieldsExtension(makeApi({ getBulkColumnValues }));
 
     const { result, rerender } = renderHook(
@@ -260,9 +259,9 @@ describe("useCustomFieldColumns — per-record visibility (Wave 5 row 5.3)", () 
     // Key casing is provider-collation-dependent in the database, and every other key comparison in
     // this feature is case-insensitive. A case-sensitive match here would silently show a hidden cell.
     const api = makeApi({
-      getBulkColumnValues: vi.fn().mockResolvedValue(
-        bulk({ hiddenKeysByOwnerId: { "owner-b": ["REASON"] } })
-      ),
+      getBulkColumnValues: vi
+        .fn()
+        .mockResolvedValue(bulk({ hiddenKeysByOwnerId: { "owner-b": ["REASON"] } })),
     });
     registerCustomFieldsExtension(api);
 

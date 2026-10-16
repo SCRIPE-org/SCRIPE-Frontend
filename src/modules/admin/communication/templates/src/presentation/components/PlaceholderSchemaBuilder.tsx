@@ -187,8 +187,7 @@ export function PlaceholderSchemaBuilder({
             {t("messaging.templates.placeholderSchema")}
           </CardTitle>
           <Badge variant="secondary" className="text-xs">
-            {fields.length}{" "}
-            {t("messaging.templates.fields")}
+            {fields.length} {t("messaging.templates.fields")}
           </Badge>
         </div>
       </CardHeader>
@@ -197,15 +196,12 @@ export function PlaceholderSchemaBuilder({
           <div className="rounded-nx-lg border-2 border-dashed border-nx-line py-6 text-center text-sm text-nx-ink-2">
             <Braces className="mx-auto mb-2 h-6 w-6 opacity-40" aria-hidden="true" />
             <p>{t("messaging.templates.noPlaceholders")}</p>
-            <p className="mt-1 text-xs">
-              {t("messaging.templates.addFieldsHint")}
-            </p>
+            <p className="mt-1 text-xs">{t("messaging.templates.addFieldsHint")}</p>
             {bodyVarKeys.size > 0 && (
               <div className="mt-3 flex items-center justify-center gap-1.5 text-warning">
                 <Sparkles className="h-3.5 w-3.5" aria-hidden="true" />
                 <span className="text-xs">
-                  {bodyVarKeys.size}{" "}
-                  {t("messaging.templates.varsDetected")}
+                  {bodyVarKeys.size} {t("messaging.templates.varsDetected")}
                 </span>
               </div>
             )}
@@ -238,9 +234,7 @@ export function PlaceholderSchemaBuilder({
                   <div className="min-w-0 flex-1">
                     <div className="flex items-center gap-2">
                       <span className="truncate text-sm font-medium">
-                        {field.label ||
-                          field.key ||
-                          t("messaging.templates.untitled")}
+                        {field.label || field.key || t("messaging.templates.untitled")}
                       </span>
                       {field.key && (
                         <Badge
@@ -254,7 +248,10 @@ export function PlaceholderSchemaBuilder({
                   </div>
                   {isOrphaned && (
                     <span role="img" aria-label={t("messaging.templates.orphanedVar")}>
-                      <AlertTriangle className="h-3.5 w-3.5 shrink-0 text-warning" aria-hidden="true" />
+                      <AlertTriangle
+                        className="h-3.5 w-3.5 shrink-0 text-warning"
+                        aria-hidden="true"
+                      />
                     </span>
                   )}
                   <Badge variant="secondary" className="shrink-0 gap-1 px-1.5 py-0 text-[10px]">
@@ -270,9 +267,7 @@ export function PlaceholderSchemaBuilder({
                     {isOrphaned && (
                       <div className="flex items-center gap-2 rounded bg-warning/10 p-2 text-xs text-warning">
                         <AlertTriangle className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
-                        <span>
-                          {t("messaging.templates.orphanedVar")}
-                        </span>
+                        <span>{t("messaging.templates.orphanedVar")}</span>
                       </div>
                     )}
 
@@ -359,9 +354,7 @@ export function PlaceholderSchemaBuilder({
                           id={`${field.id}-default`}
                           value={field.defaultValue}
                           onChange={(e) => updateField(field.id, { defaultValue: e.target.value })}
-                          placeholder={
-                            t("messaging.templates.optionalDefault")
-                          }
+                          placeholder={t("messaging.templates.optionalDefault")}
                           className="h-7 text-xs"
                         />
                       </div>
@@ -397,9 +390,7 @@ export function PlaceholderSchemaBuilder({
                         id={`${field.id}-description`}
                         value={field.description || ""}
                         onChange={(e) => updateField(field.id, { description: e.target.value })}
-                        placeholder={
-                          t("messaging.templates.descriptionHint")
-                        }
+                        placeholder={t("messaging.templates.descriptionHint")}
                         className="h-7 text-xs"
                       />
                     </div>

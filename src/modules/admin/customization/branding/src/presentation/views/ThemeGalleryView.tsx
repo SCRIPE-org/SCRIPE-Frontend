@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 // FILE-EXCEPTION: file length
 // UI-EXCEPTION: compact studio layout — native <button> used for category filter
 // pills and theme card overlay controls where @core/ui/button's sizing would break

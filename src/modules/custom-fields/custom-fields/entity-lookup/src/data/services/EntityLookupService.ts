@@ -27,6 +27,9 @@ import { EntityLookupError } from "../../domain/entities/EntityLookupError";
 import type { IEntityLookupService } from "../../domain/interfaces/IEntityLookupService";
 import { ENTITY_LOOKUP_ENDPOINTS } from "./entity-lookup.endpoints";
 
+/**
+ * Documentation for module export
+ */
 export class EntityLookupService implements IEntityLookupService {
   constructor(private readonly api: IApiService) {}
 

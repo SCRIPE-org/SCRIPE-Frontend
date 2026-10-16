@@ -16,6 +16,9 @@ export interface ContactPointListResult {
   hasPreviousPage: boolean;
 }
 
+/**
+ * Documentation for module export
+ */
 export interface IContactPointService {
   getAll(params: {
     page: number;

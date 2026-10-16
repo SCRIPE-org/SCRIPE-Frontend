@@ -17,6 +17,9 @@ import { SubscriptionStatusCard } from "../components/my-subscription/Subscripti
 import { SubscriptionFeaturesCard } from "../components/my-subscription/SubscriptionFeaturesCard";
 import { SubscriptionActionsCard } from "../components/my-subscription/SubscriptionActionsCard";
 
+/**
+ * Documentation for module export
+ */
 export function MyUserSubscriptionView() {
   useModuleLocales(() => import("../../../locales"), "user-subscriptions");
   const vm = useMyUserSubscriptionViewModel();

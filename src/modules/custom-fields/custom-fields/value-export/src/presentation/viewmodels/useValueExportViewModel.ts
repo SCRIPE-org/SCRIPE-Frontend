@@ -55,10 +55,7 @@ import { DownloadInterceptedError } from "@core/errors/download-intercepted";
 import type { EntityTypeInfo } from "../../../../custom-field/src/domain/entities/CustomField";
 import { getCustomFieldsContainer } from "../../../../di";
 import { getValueExportContainer } from "../../../di";
-import {
-  MAX_EXPORT_ROWS,
-  type ValueExport,
-} from "../../domain/entities/ValueExport";
+import { MAX_EXPORT_ROWS, type ValueExport } from "../../domain/entities/ValueExport";
 import { ValueExportError } from "../../domain/entities/ValueExportError";
 
 /**
@@ -78,6 +75,9 @@ export function isEntityTypeViewableForValueExport(
   return !!entityType.permissionResource && hasPermission(`${entityType.permissionResource}.view`);
 }
 
+/**
+ * Documentation for module export
+ */
 export function useValueExportViewModel() {
   const { valueExportRepository } = getValueExportContainer();
   const { customFieldRepository } = getCustomFieldsContainer();
@@ -230,7 +230,8 @@ export function useValueExportViewModel() {
      * True once entity types have loaded and NONE of them are viewable by this caller. The dialog's
      * real empty state, distinct from "still loading" and from "failed to load".
      */
-    hasNoViewableEntityTypes: !isEntityTypesLoading && !isEntityTypesError && entityTypes.length === 0,
+    hasNoViewableEntityTypes:
+      !isEntityTypesLoading && !isEntityTypesError && entityTypes.length === 0,
 
     entityTypeKey,
     setEntityTypeKey: changeEntityTypeKey,

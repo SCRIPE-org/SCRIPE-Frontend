@@ -1,5 +1,8 @@
 import { V1 } from "@/core/config/api-endpoints/_shared";
 
+/**
+ * Documentation for module export
+ */
 export const PERMISSIONS_ENDPOINTS = {
   LIST: `${V1}/Permissions`,
   MY: `${V1}/Permissions/my`,

@@ -10,6 +10,9 @@ import { isFieldRequired, type FieldConfig } from "@core/ui/forms/generic-form";
 import type { CustomFieldCurrencyValue } from "../../../../../custom-field-value/src/data/models/CustomFieldValueModel";
 import { isBlankAmount, getCurrencySuggestions } from "./currencyControlUtils";
 
+/**
+ * Documentation for module export
+ */
 export interface CurrencyCustomFieldControlProps {
   fc: FieldConfig;
   value: unknown;
@@ -73,14 +76,20 @@ export function CurrencyCustomFieldControl({
 
   // Filter input to uppercase ASCII characters with a maximum length of 3 letters.
   const handleCodeChange = (raw: string) =>
-    emit(amount, raw.toUpperCase().replace(/[^A-Z]/g, "").slice(0, 3));
+    emit(
+      amount,
+      raw
+        .toUpperCase()
+        .replace(/[^A-Z]/g, "")
+        .slice(0, 3)
+    );
 
   return (
     <div role="group" aria-label={fieldName} className="space-y-2">
       <Label htmlFor={fc.name} className="text-sm font-medium">
         {fc.label}
         {isRequired && (
-          <span className="text-destructive ms-1" aria-hidden="true">
+          <span className="ms-1 text-destructive" aria-hidden="true">
             *
           </span>
         )}
@@ -98,7 +107,10 @@ export function CurrencyCustomFieldControl({
           disabled={isViewMode}
           aria-invalid={invalid || undefined}
           aria-describedby={describedByValue}
-          className={cn("flex-1 text-sm", invalid && "border-destructive focus-visible:ring-destructive")}
+          className={cn(
+            "flex-1 text-sm",
+            invalid && "border-destructive focus-visible:ring-destructive"
+          )}
         />
         <Input
           id={`${fc.name}-currency-code`}
@@ -117,7 +129,10 @@ export function CurrencyCustomFieldControl({
           disabled={isViewMode}
           aria-invalid={invalid || undefined}
           aria-describedby={describedByValue}
-          className={cn("w-24 shrink-0 font-mono text-sm uppercase", invalid && "border-destructive focus-visible:ring-destructive")}
+          className={cn(
+            "w-24 shrink-0 font-mono text-sm uppercase",
+            invalid && "border-destructive focus-visible:ring-destructive"
+          )}
         />
         <datalist id={suggestionsId}>
           {suggestions.map((suggestion) => (
@@ -137,4 +152,3 @@ export function CurrencyCustomFieldControl({
     </div>
   );
 }
-

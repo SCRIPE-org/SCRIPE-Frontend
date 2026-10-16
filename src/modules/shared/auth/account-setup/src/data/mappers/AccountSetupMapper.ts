@@ -5,17 +5,16 @@
  * @module auth/account-setup/data/mappers
  */
 
-import {
-  SetupTokenInfo,
-  SetupCustomField,
-  AccountActivationResult,
-} from "../../domain/entities";
+import { SetupTokenInfo, SetupCustomField, AccountActivationResult } from "../../domain/entities";
 import type {
   ValidateTokenResponse,
   SetupCustomFieldDto,
   ActivateAccountResponse,
 } from "../../domain/interfaces/IAccountSetupService";
 
+/**
+ * Documentation for module export
+ */
 export class AccountSetupMapper {
   /**
    * Transforms token validation DTO to SetupTokenInfo domain entity.

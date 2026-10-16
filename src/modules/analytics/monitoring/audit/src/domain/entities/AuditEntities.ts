@@ -121,3 +121,20 @@ export interface AuditExportParams {
   dateTo?: string;
   eventType?: string;
 }
+
+/** Hub recent activity item */
+export interface HubRecentItem {
+  eventType: string;
+  entityType: string | null;
+  moduleTag: string | null;
+  username: string | null;
+  timestamp: string;
+}
+
+/** Hub activity summary for monitoring panels */
+export interface HubActivitySummary {
+  todayActionCount: number;
+  todayModuleCount: number;
+  yesterdayActionCount: number;
+  recentItems: HubRecentItem[];
+}

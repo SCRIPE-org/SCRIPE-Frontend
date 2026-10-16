@@ -7,6 +7,9 @@
 import { StaffAssignment, type StaffAssignmentData } from "../../domain/entities/StaffAssignment";
 import { StaffAssignmentModel, type StaffAssignmentJson } from "../models/StaffAssignmentModel";
 
+/**
+ * Documentation for module export
+ */
 export class StaffAssignmentMapper {
   /**
    * Convert StaffAssignmentModel to StaffAssignment Entity

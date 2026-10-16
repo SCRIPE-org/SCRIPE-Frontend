@@ -381,11 +381,13 @@ export function useSignupWizard(args?: UseSignupWizardArgs): SignupWizardViewMod
       devCurrencyOverride ?? pricingContext?.recommendedCurrency ?? initialCurrency;
     const resolvedCountry = initialCountry ?? pricingContext?.detectedCountry;
     if (resolvedCurrency) {
-      setWizardData((prev) => ({
-        ...prev,
-        currency: resolvedCurrency,
-        region: resolvedCountry || prev.region,
-      }));
+      queueMicrotask(() => {
+        setWizardData((prev) => ({
+          ...prev,
+          currency: resolvedCurrency,
+          region: resolvedCountry || prev.region,
+        }));
+      });
     }
   }, [initialCurrency, initialCountry, pricingContext]);
   const retryWelcome = useCallback(() => {
@@ -484,24 +486,28 @@ export function useSignupWizard(args?: UseSignupWizardArgs): SignupWizardViewMod
     // Stripe cancel-url round-trip: restore the persisted (password-free) state
     // and drop the user back on Review with a dismissible "canceled" banner.
     if (isCanceled) {
-      const persisted = signupRepository.readPersistedWizardState();
-      if (persisted?.wizardData?.emailVerificationToken) {
-        setWizardData((prev) => ({ ...prev, ...persisted.wizardData }));
-        if (persisted.selectedPlan) setSelectedPlan(persisted.selectedPlan);
-        setPhase("review");
-      }
-      setCheckoutCanceled(true);
+      queueMicrotask(() => {
+        const persisted = signupRepository.readPersistedWizardState();
+        if (persisted?.wizardData?.emailVerificationToken) {
+          setWizardData((prev) => ({ ...prev, ...persisted.wizardData }));
+          if (persisted.selectedPlan) setSelectedPlan(persisted.selectedPlan);
+          setPhase("review");
+        }
+        setCheckoutCanceled(true);
+      });
       return;
     }
 
     // Change-plan round-trip from the finalize page: restore + jump to plan.
     if (isChangePlan) {
-      const persisted = signupRepository.readPersistedWizardState();
-      if (persisted?.wizardData) {
-        setWizardData((prev) => ({ ...prev, ...persisted.wizardData }));
-        if (persisted.selectedPlan) setSelectedPlan(persisted.selectedPlan);
-      }
-      setPhase("plan");
+      queueMicrotask(() => {
+        const persisted = signupRepository.readPersistedWizardState();
+        if (persisted?.wizardData) {
+          setWizardData((prev) => ({ ...prev, ...persisted.wizardData }));
+          if (persisted.selectedPlan) setSelectedPlan(persisted.selectedPlan);
+        }
+        setPhase("plan");
+      });
       return;
     }
 

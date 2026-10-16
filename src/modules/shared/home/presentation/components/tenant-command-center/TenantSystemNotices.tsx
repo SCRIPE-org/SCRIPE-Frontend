@@ -14,10 +14,10 @@ export function TenantSystemNotices({ notices }: TenantSystemNoticesProps) {
   const { t } = useI18n();
 
   return (
-    <Card className="p-4 border-border bg-card shadow-xs">
+    <Card className="shadow-xs border-border bg-card p-4">
       {/* Header */}
-      <div className="flex items-center gap-2.5 mb-2.5">
-        <div className="w-8 h-8 rounded-lg bg-emerald-500/10 border border-emerald-500/20 text-emerald-500 flex items-center justify-center">
+      <div className="mb-2.5 flex items-center gap-2.5">
+        <div className="flex h-8 w-8 items-center justify-center rounded-lg border border-emerald-500/20 bg-emerald-500/10 text-emerald-500">
           <CheckCircle2 className="h-4 w-4" />
         </div>
         <div>
@@ -33,23 +33,28 @@ export function TenantSystemNotices({ notices }: TenantSystemNoticesProps) {
       {/* Notices */}
       <div className="divide-y divide-border/60">
         {notices.map((notice) => {
-          const title = notice.id === "sn-1"
-            ? t("tenantCommandCenter.notices.operationalTitle") || notice.title
-            : notice.id === "sn-2"
-            ? t("tenantCommandCenter.notices.customFieldsTitle") || notice.title
-            : notice.title;
+          const title =
+            notice.id === "sn-1"
+              ? t("tenantCommandCenter.notices.operationalTitle") || notice.title
+              : notice.id === "sn-2"
+                ? t("tenantCommandCenter.notices.customFieldsTitle") || notice.title
+                : notice.title;
 
-          const desc = notice.id === "sn-1"
-            ? t("tenantCommandCenter.notices.operationalDesc") || notice.description
-            : notice.id === "sn-2"
-            ? t("tenantCommandCenter.notices.customFieldsDesc") || notice.description
-            : notice.description;
+          const desc =
+            notice.id === "sn-1"
+              ? t("tenantCommandCenter.notices.operationalDesc") || notice.description
+              : notice.id === "sn-2"
+                ? t("tenantCommandCenter.notices.customFieldsDesc") || notice.description
+                : notice.description;
 
           return (
-            <div key={notice.id} className="py-2.5 flex items-center justify-between gap-3 text-left">
-              <div className="flex items-center gap-2.5 min-w-0">
+            <div
+              key={notice.id}
+              className="flex items-center justify-between gap-3 py-2.5 text-left"
+            >
+              <div className="flex min-w-0 items-center gap-2.5">
                 <div
-                  className={`w-7 h-7 rounded-lg flex items-center justify-center shrink-0 ${
+                  className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-lg ${
                     notice.isSuccess
                       ? "bg-emerald-500/10 text-emerald-500"
                       : "bg-sky-500/10 text-sky-500"
@@ -62,17 +67,15 @@ export function TenantSystemNotices({ notices }: TenantSystemNoticesProps) {
                   )}
                 </div>
                 <div className="min-w-0">
-                  <b className="text-xs font-semibold text-foreground block truncate">
-                    {title}
-                  </b>
-                  <span className="text-[10px] text-muted-foreground block truncate">
-                    {desc}
-                  </span>
+                  <b className="block truncate text-xs font-semibold text-foreground">{title}</b>
+                  <span className="block truncate text-[10px] text-muted-foreground">{desc}</span>
                 </div>
               </div>
 
-              <time className="text-[10px] text-muted-foreground font-mono shrink-0">
-                {notice.timeAgo === "Now" ? t("tenantCommandCenter.notices.now") || notice.timeAgo : notice.timeAgo}
+              <time className="shrink-0 font-mono text-[10px] text-muted-foreground">
+                {notice.timeAgo === "Now"
+                  ? t("tenantCommandCenter.notices.now") || notice.timeAgo
+                  : notice.timeAgo}
               </time>
             </div>
           );

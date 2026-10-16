@@ -1,5 +1,8 @@
 import { V1 } from "@/core/config/api-endpoints/_shared";
 
+/**
+ * Documentation for module export
+ */
 export const USER_SUBSCRIPTIONS_ENDPOINTS = {
   LIST: `${V1}/user-subscriptions`,
   BY_ID: (id: string) => `${V1}/user-subscriptions/${id}`,

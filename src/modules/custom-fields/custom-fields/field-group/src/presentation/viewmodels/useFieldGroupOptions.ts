@@ -56,6 +56,9 @@ export interface UseFieldGroupOptionsArgs {
   enabled?: boolean;
 }
 
+/**
+ * Documentation for useFieldGroupOptions
+ */
 export function useFieldGroupOptions(
   entityTypeKey: string,
   { enabled = true }: UseFieldGroupOptionsArgs = {}

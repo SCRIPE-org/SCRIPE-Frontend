@@ -1,3 +1,4 @@
+﻿/* eslint-disable unused-imports/no-unused-vars */
 "use client";
 
 import Link from "next/link";
@@ -8,15 +9,10 @@ import {
   Sliders,
   CircleDollarSign,
   ShieldAlert,
-  Building2,
   GitFork,
-  Layers,
-  MapPin,
-  Clock,
   Plus,
   Receipt,
   CreditCard,
-  Tag,
 } from "lucide-react";
 import { cn } from "@core/common/utils";
 import { useI18n } from "@core/providers/i18n-provider";
@@ -28,6 +24,9 @@ interface Props {
   className?: string;
 }
 
+/**
+ * Documentation for module export
+ */
 export function VenueNav({ attentionCount = 0, className = "" }: Props) {
   const pathname = usePathname();
   const { t, language } = useI18n();
@@ -40,43 +39,49 @@ export function VenueNav({ attentionCount = 0, className = "" }: Props) {
   const canViewMoney = canViewReceivables || canViewPayments;
 
   // Determine active primary category
-  const isOverview = pathname === "/venue";
-  const isOperations =
-    pathname.startsWith("/venue/calendar") ||
-    pathname.startsWith("/venue/bookings") ||
-    pathname.startsWith("/venue/attention") ||
-    (pathname.startsWith("/venue/availability") && !pathname.includes("resource-builder"));
-  const isSetup =
+  const isDashboard = pathname === "/venue";
+  const isCalendar =
+    pathname.startsWith("/venue/calendar") || pathname.startsWith("/venue/bookings");
+  const isResources =
+    pathname.startsWith("/venue/resources") ||
     pathname.startsWith("/venue/facilities") ||
     pathname.startsWith("/venue/resource-builder") ||
     pathname.startsWith("/venue/resource-profiles") ||
     pathname.startsWith("/venue/sites") ||
     pathname.startsWith("/venue/venue-setup") ||
+    pathname.startsWith("/venue/availability") ||
     pathname.startsWith("/venue/pricing");
   const isMoney = pathname.startsWith("/venue/money");
+  const isAttention = pathname.startsWith("/venue/attention");
 
   const primaryItems = [
     {
       id: "overview",
-      label: t("venueNav.overview", { defaultValue: "Overview" }),
+      label: t("venueNav.dashboard", {
+        defaultValue: t("venueNav.overview", { defaultValue: "Dashboard" }),
+      }),
       href: "/venue",
       icon: LayoutDashboard,
-      active: isOverview,
+      active: isDashboard,
     },
     {
       id: "operations",
-      label: t("venueNav.operations", { defaultValue: "Operations" }),
+      label: t("venueNav.calendar", {
+        defaultValue: t("venueNav.operations", { defaultValue: "Calendar" }),
+      }),
       href: "/venue/calendar",
       icon: CalendarDays,
-      active: isOperations,
+      active: isCalendar,
       badge: canViewAttention && attentionCount > 0 ? attentionCount : undefined,
     },
     {
       id: "setup",
-      label: t("venueNav.setup", { defaultValue: "Venue Setup" }),
-      href: "/venue/facilities",
-      icon: Sliders,
-      active: isSetup,
+      label: t("venueNav.resources", {
+        defaultValue: t("venueNav.setup", { defaultValue: "Resources" }),
+      }),
+      href: "/venue/resources",
+      icon: GitFork,
+      active: isResources,
     },
     ...(canViewMoney
       ? [
@@ -100,13 +105,13 @@ export function VenueNav({ attentionCount = 0, className = "" }: Props) {
     badge?: number;
   }> = [];
 
-  if (isOperations) {
+  if (isCalendar) {
     secondaryLinks = [
       {
         href: "/venue/calendar",
         label: t("venueNav.calendar", { defaultValue: "Calendar" }),
         icon: CalendarDays,
-        active: pathname.startsWith("/venue/calendar"),
+        active: pathname === "/venue/calendar",
       },
       {
         href: "/venue/bookings/new",
@@ -114,60 +119,44 @@ export function VenueNav({ attentionCount = 0, className = "" }: Props) {
         icon: Plus,
         active: pathname.startsWith("/venue/bookings/new"),
       },
-      ...(canViewAttention
+      ...(canViewAttention && attentionCount > 0
         ? [
             {
               href: "/venue/attention",
               label: t("venueNav.attention", { defaultValue: "Attention" }),
               icon: ShieldAlert,
               active: pathname.startsWith("/venue/attention"),
-              badge: attentionCount > 0 ? attentionCount : undefined,
+              badge: attentionCount,
             },
           ]
         : []),
-      {
-        href: "/venue/availability",
-        label: t("venueNav.availability", { defaultValue: "Availability & Operating Hours" }),
-        icon: Clock,
-        active: pathname.startsWith("/venue/availability"),
-      },
     ];
-  } else if (isSetup) {
+  } else if (isResources) {
     secondaryLinks = [
       {
-        href: "/venue/facilities",
-        label: t("facility.title", { defaultValue: "Facilities" }),
-        icon: Building2,
-        active: pathname.startsWith("/venue/facilities"),
-      },
-      {
-        href: "/venue/resource-builder",
-        label: t("schedulableResource.title", { defaultValue: "Resources" }),
+        href: "/venue/resources",
+        label: t("venueNav.allResources", { defaultValue: "Courts & Fields" }),
         icon: GitFork,
-        active: pathname.startsWith("/venue/resource-builder"),
+        active: pathname === "/venue/resources" || pathname.startsWith("/venue/resources/"),
       },
       {
-        href: "/venue/resource-profiles",
-        label: t("resourceProfile.title", { defaultValue: "Resource Profiles" }),
-        icon: Layers,
-        active: pathname.startsWith("/venue/resource-profiles"),
+        href: "/venue/resources?setup=new",
+        label: t("venueNav.addCourt", { defaultValue: "+ Add Court / Field" }),
+        icon: Plus,
+        active: false,
       },
       {
-        href: "/venue/sites",
-        label: t("site.title", { defaultValue: "Sites & Campuses" }),
-        icon: MapPin,
-        active: pathname.startsWith("/venue/sites"),
+        href: "/venue/facilities",
+        label: t("venueNav.advancedSetup", { defaultValue: "Advanced Setup" }),
+        icon: Sliders,
+        active:
+          pathname.startsWith("/venue/facilities") ||
+          pathname.startsWith("/venue/resource-builder") ||
+          pathname.startsWith("/venue/resource-profiles") ||
+          pathname.startsWith("/venue/sites") ||
+          pathname.startsWith("/venue/availability") ||
+          pathname.startsWith("/venue/pricing"),
       },
-      ...(canViewPricing
-        ? [
-            {
-              href: "/venue/pricing",
-              label: t("venueNav.pricing", { defaultValue: "Pricing" }),
-              icon: Tag,
-              active: pathname.startsWith("/venue/pricing"),
-            },
-          ]
-        : []),
     ];
   } else if (isMoney) {
     secondaryLinks = [
@@ -192,14 +181,24 @@ export function VenueNav({ attentionCount = 0, className = "" }: Props) {
           ]
         : []),
     ];
+  } else if (isAttention) {
+    secondaryLinks = [
+      {
+        href: "/venue/attention",
+        label: t("venueNav.attention", { defaultValue: "Attention" }),
+        icon: ShieldAlert,
+        active: true,
+        badge: attentionCount > 0 ? attentionCount : undefined,
+      },
+    ];
   }
 
   return (
-    <div className={cn("space-y-3 mb-6", className)} dir={isRtl ? "rtl" : "ltr"}>
+    <div className={cn("mb-6 space-y-3", className)} dir={isRtl ? "rtl" : "ltr"}>
       {/* Primary Category Bar */}
       <nav
         aria-label="Venue primary navigation"
-        className="flex items-center gap-1.5 border-b border-nx-line pb-2 overflow-x-auto no-scrollbar"
+        className="no-scrollbar flex items-center gap-1.5 overflow-x-auto border-b border-nx-line pb-2"
       >
         {primaryItems.map((item) => {
           const Icon = item.icon;
@@ -209,22 +208,25 @@ export function VenueNav({ attentionCount = 0, className = "" }: Props) {
               href={item.href}
               aria-current={item.active ? "page" : undefined}
               className={cn(
-                "relative inline-flex items-center gap-2 px-3.5 py-2 rounded-nx-md text-xs font-semibold transition-all duration-nx-micro shrink-0 select-none",
+                "relative inline-flex shrink-0 select-none items-center gap-2 rounded-nx-md px-3.5 py-2 text-xs font-semibold transition-all duration-nx-micro",
                 item.active
-                  ? "bg-nx-surface text-nx-ink shadow-nx-sm border border-nx-line/80 font-bold"
-                  : "text-nx-ink-2 hover:text-nx-ink hover:bg-nx-surface/60"
+                  ? "border-nx-line/80 border bg-nx-surface font-bold text-nx-ink shadow-nx-sm"
+                  : "hover:bg-nx-surface/60 text-nx-ink-2 hover:text-nx-ink"
               )}
             >
-              <Icon className={cn("size-4", item.active ? "text-nx-accent" : "text-nx-ink-3")} aria-hidden="true" />
+              <Icon
+                className={cn("size-4", item.active ? "text-nx-accent" : "text-nx-ink-3")}
+                aria-hidden="true"
+              />
               <span>{item.label}</span>
               {item.badge != null && (
-                <span className="flex size-4.5 items-center justify-center rounded-full bg-amber-500 text-[10px] font-bold text-white leading-none">
+                <span className="size-4.5 flex items-center justify-center rounded-full bg-amber-500 text-[10px] font-bold leading-none text-white">
                   {item.badge}
                 </span>
               )}
               {item.active && (
                 <span
-                  className="absolute bottom-[-9px] inset-x-3 h-0.5 bg-nx-accent rounded-full"
+                  className="absolute inset-x-3 bottom-[-9px] h-0.5 rounded-full bg-nx-accent"
                   aria-hidden="true"
                 />
               )}
@@ -238,7 +240,7 @@ export function VenueNav({ attentionCount = 0, className = "" }: Props) {
         <div
           role="navigation"
           aria-label="Contextual navigation"
-          className="flex items-center gap-1.5 overflow-x-auto no-scrollbar py-1"
+          className="no-scrollbar flex items-center gap-1.5 overflow-x-auto py-1"
         >
           {secondaryLinks.map((link) => {
             const Icon = link.icon;
@@ -248,10 +250,10 @@ export function VenueNav({ attentionCount = 0, className = "" }: Props) {
                 href={link.href}
                 aria-current={link.active ? "page" : undefined}
                 className={cn(
-                  "inline-flex items-center gap-1.5 px-2.5 py-1 rounded-nx-sm text-xs font-medium transition-colors shrink-0",
+                  "inline-flex shrink-0 items-center gap-1.5 rounded-nx-sm px-2.5 py-1 text-xs font-medium transition-colors",
                   link.active
-                    ? "bg-nx-surfaceSubtle text-nx-ink font-semibold border border-nx-line"
-                    : "text-nx-ink-2 hover:text-nx-ink hover:bg-nx-surfaceSubtle/50"
+                    ? "bg-nx-surfaceSubtle border border-nx-line font-semibold text-nx-ink"
+                    : "hover:bg-nx-surfaceSubtle/50 text-nx-ink-2 hover:text-nx-ink"
                 )}
               >
                 <Icon className="size-3.5 text-nx-ink-3" aria-hidden="true" />

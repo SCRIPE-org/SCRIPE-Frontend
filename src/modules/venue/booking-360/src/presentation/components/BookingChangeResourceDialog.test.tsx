@@ -4,7 +4,7 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import { getVenueContainer } from "@modules/venue/di";
 import { BookingChangeResourceDialog } from "./BookingChangeResourceDialog";
 
-vi.mock("@modules/venue/di", () => ({ getVenueContainer: vi.fn() }));
+vi.mock("@modules/venue/di", () => ({ getVenueContainer: vi.fn(), venueContainer: {} }));
 
 const t = (key: string, values?: Record<string, string | number>) =>
   Object.entries(values ?? {}).reduce(
@@ -19,9 +19,24 @@ describe("BookingChangeResourceDialog candidate authority", () => {
     const mockSchedulableResourceRepository = {
       getAll: vi.fn().mockResolvedValue({
         items: [
-          { id: "court-1", isPublished: true, isComposite: false, facilityResourceProfileId: "profile-1" },
-          { id: "court-2", isPublished: true, isComposite: false, facilityResourceProfileId: "profile-1" },
-          { id: "court-3", isPublished: true, isComposite: false, facilityResourceProfileId: "profile-2" }, // Different facility
+          {
+            id: "court-1",
+            isPublished: true,
+            isComposite: false,
+            facilityResourceProfileId: "profile-1",
+          },
+          {
+            id: "court-2",
+            isPublished: true,
+            isComposite: false,
+            facilityResourceProfileId: "profile-1",
+          },
+          {
+            id: "court-3",
+            isPublished: true,
+            isComposite: false,
+            facilityResourceProfileId: "profile-2",
+          }, // Different facility
         ],
         totalCount: 3,
       }),

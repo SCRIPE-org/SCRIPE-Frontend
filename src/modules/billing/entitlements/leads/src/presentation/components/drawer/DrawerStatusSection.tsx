@@ -121,7 +121,7 @@ export function DrawerStatusSection({
               </div>
 
               {sendEmailToggle && (
-                <div className="space-y-4 border-t border-nx-line pt-4 duration-nx-standard animate-in fade-in ease-nx-enter motion-reduce:animate-none slide-in-from-top-1">
+                <div className="space-y-4 border-t border-nx-line pt-4 duration-nx-standard ease-nx-enter animate-in fade-in slide-in-from-top-1 motion-reduce:animate-none">
                   {isFetchingPreview ? (
                     <div className="space-y-3 py-2">
                       <Skeleton shape="text" className="h-4 w-1/4" />

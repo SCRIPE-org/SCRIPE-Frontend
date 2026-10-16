@@ -160,10 +160,7 @@ function ExpandedEmailRow({
     () => detectDir(`${emailSubject} ${emailBody}`),
     [emailSubject, emailBody]
   );
-  const sanitizedBody = useMemo(
-    () => DOMPurify.sanitize(emailBody, SANITIZE_OPTIONS),
-    [emailBody]
-  );
+  const sanitizedBody = useMemo(() => DOMPurify.sanitize(emailBody, SANITIZE_OPTIONS), [emailBody]);
   const previewSrcDoc = useMemo(
     () =>
       `<!DOCTYPE html><html dir="${previewDir}" lang="${previewLang}"><head><meta charset="utf-8"/><style>*{margin:0;padding:0;box-sizing:border-box}body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;font-size:13px;line-height:1.5;color:${skin.text};padding:12px;background:${skin.surface}}img{max-width:100%;height:auto}a{color:${skin.link}}</style></head><body>${sanitizedBody}</body></html>`,

@@ -1,11 +1,11 @@
 import type { OptionSet } from "../../domain/entities/OptionSet";
 import type { OptionSetVersion } from "../../domain/entities/OptionSetVersion";
-import {
-  optionSetItemIssueMessageKey,
-  type OptionSetItemIssue,
-} from "./optionSetItemRules";
+import { optionSetItemIssueMessageKey, type OptionSetItemIssue } from "./optionSetItemRules";
 import type { OptionSetRefusal } from "./optionSetRefusalTypes";
 
+/**
+ * Documentation for module export
+ */
 export interface SaveRefusalCheckParams {
   canUpdate: boolean;
   set: OptionSet | null;

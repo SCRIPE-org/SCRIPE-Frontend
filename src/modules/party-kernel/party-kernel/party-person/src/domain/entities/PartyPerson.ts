@@ -10,11 +10,13 @@
 export interface PartyPersonData {
   id: string;
   partyId: string;
-  firstName: string;
-  lastName: string;
+  firstName?: string | null;
+  lastName?: string | null;
+  fullName?: string | null;
+  dateOfBirth?: string | null;
   isMinor: boolean;
   createdAt: string;
-  modifiedAt?: string;
+  modifiedAt?: string | null;
 }
 
 /**
@@ -32,11 +34,28 @@ export class PartyPerson {
   }
 
   get firstName(): string {
-    return this.data.firstName;
+    return this.data.firstName ?? "";
   }
 
   get lastName(): string {
-    return this.data.lastName;
+    return this.data.lastName ?? "";
+  }
+
+  get fullName(): string | undefined {
+    return this.data.fullName ?? undefined;
+  }
+
+  get displayName(): string {
+    return (
+      this.data.fullName ||
+      [this.data.firstName, this.data.lastName].filter(Boolean).join(" ") ||
+      this.data.partyId ||
+      "—"
+    );
+  }
+
+  get dateOfBirth(): string | undefined {
+    return this.data.dateOfBirth ?? undefined;
   }
 
   get isMinor(): boolean {
@@ -48,7 +67,7 @@ export class PartyPerson {
   }
 
   get modifiedAt(): string | undefined {
-    return this.data.modifiedAt;
+    return this.data.modifiedAt ?? undefined;
   }
 
   /**

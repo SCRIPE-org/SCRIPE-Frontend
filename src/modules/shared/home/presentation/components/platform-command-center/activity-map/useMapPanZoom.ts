@@ -2,7 +2,11 @@
 
 import { useState, useRef, useCallback, useEffect } from "react";
 import { ViewBox, DEFAULT_VB, EnrichedCountryData } from "./types";
-import { calculateZoomViewBox, calculateCountryViewBox, safeReleaseCapture } from "./cameraCalculations";
+import {
+  calculateZoomViewBox,
+  calculateCountryViewBox,
+  safeReleaseCapture,
+} from "./cameraCalculations";
 
 export function useMapPanZoom() {
   const [vb, setVb] = useState<ViewBox>(DEFAULT_VB);
@@ -19,7 +23,11 @@ export function useMapPanZoom() {
   }, []);
 
   const [selectedCountry, setSelectedCountry] = useState<EnrichedCountryData | null>(null);
-  const [hoveredCountry, setHoveredCountry] = useState<{ country: EnrichedCountryData; x: number; y: number } | null>(null);
+  const [hoveredCountry, setHoveredCountry] = useState<{
+    country: EnrichedCountryData;
+    x: number;
+    y: number;
+  } | null>(null);
 
   const mapStageRef = useRef<HTMLDivElement>(null);
   const svgRef = useRef<SVGSVGElement>(null);

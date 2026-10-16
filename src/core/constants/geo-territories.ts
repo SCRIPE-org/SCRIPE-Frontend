@@ -10,11 +10,11 @@
 
 export type TerritoryDivisionType =
   | "governorate" // Egypt
-  | "province"    // Saudi Arabia, Canada, Italy
-  | "emirate"     // UAE
-  | "state"       // USA, Germany, Australia, India
-  | "county"      // UK, Ireland
-  | "region";     // General fallback
+  | "province" // Saudi Arabia, Canada, Italy
+  | "emirate" // UAE
+  | "state" // USA, Germany, Australia, India
+  | "county" // UK, Ireland
+  | "region"; // General fallback
 
 export interface GeoState {
   code: string;
@@ -370,19 +370,42 @@ const SAUDI_TERRITORY: GeoCountryTerritory = {
       code: "MADINAH",
       name: "Madinah Region",
       nameAr: "منطقة المدينة المنورة",
-      cities: ["Medina (Al-Madinah Al-Munawwarah)", "Yanbu", "Al-Ula", "Badr", "Khaybar", "Mahd adh Dhahab"],
+      cities: [
+        "Medina (Al-Madinah Al-Munawwarah)",
+        "Yanbu",
+        "Al-Ula",
+        "Badr",
+        "Khaybar",
+        "Mahd adh Dhahab",
+      ],
     },
     {
       code: "QASSIM",
       name: "Al-Qassim Region",
       nameAr: "منطقة القصيم",
-      cities: ["Buraidah", "Unaizah", "Ar Rass", "Al Bukayriyah", "Al Badayea", "Al Mithnab", "Riyadh Al Khabra"],
+      cities: [
+        "Buraidah",
+        "Unaizah",
+        "Ar Rass",
+        "Al Bukayriyah",
+        "Al Badayea",
+        "Al Mithnab",
+        "Riyadh Al Khabra",
+      ],
     },
     {
       code: "ASIR",
       name: "Asir Region",
       nameAr: "منطقة عسير",
-      cities: ["Abha", "Khamis Mushait", "Bisha", "Muhayil", "Ahad Rafidah", "Dhahran Al Janub", "Tanomah"],
+      cities: [
+        "Abha",
+        "Khamis Mushait",
+        "Bisha",
+        "Muhayil",
+        "Ahad Rafidah",
+        "Dhahran Al Janub",
+        "Tanomah",
+      ],
     },
     {
       code: "TABUK",
@@ -489,7 +512,15 @@ const UAE_TERRITORY: GeoCountryTerritory = {
       code: "SHJ",
       name: "Sharjah",
       nameAr: "الشارقة",
-      cities: ["Sharjah City", "Al Majaz", "Al Nahda", "Al Qasimia", "Muwaileh", "Khorfakkan", "Kalba"],
+      cities: [
+        "Sharjah City",
+        "Al Majaz",
+        "Al Nahda",
+        "Al Qasimia",
+        "Muwaileh",
+        "Khorfakkan",
+        "Kalba",
+      ],
     },
     {
       code: "AJM",
@@ -538,23 +569,101 @@ const US_TERRITORY: GeoCountryTerritory = {
   postalCodeHelpText: "5-digit or 9-digit (ZIP+4) format",
   postalCodeHelpTextAr: "رمز بريدي أمريكي من 5 أو 9 أرقام",
   states: [
-    { code: "CA", name: "California", nameAr: "كاليفورنيا", cities: ["Los Angeles", "San Francisco", "San Diego", "San Jose", "Sacramento", "Oakland", "Fresno"] },
-    { code: "NY", name: "New York", nameAr: "نيويورك", cities: ["New York City", "Buffalo", "Albany", "Rochester", "Yonkers", "Syracuse"] },
-    { code: "TX", name: "Texas", nameAr: "تكساس", cities: ["Houston", "Austin", "Dallas", "San Antonio", "Fort Worth", "El Paso", "Arlington"] },
-    { code: "FL", name: "Florida", nameAr: "فلوريدا", cities: ["Miami", "Orlando", "Tampa", "Jacksonville", "Fort Lauderdale", "St. Petersburg"] },
-    { code: "IL", name: "Illinois", nameAr: "إلينوي", cities: ["Chicago", "Aurora", "Naperville", "Rockford", "Springfield"] },
-    { code: "WA", name: "Washington", nameAr: "واشنطن", cities: ["Seattle", "Spokane", "Tacoma", "Bellevue", "Everett"] },
-    { code: "MA", name: "Massachusetts", nameAr: "ماساتشوستس", cities: ["Boston", "Cambridge", "Worcester", "Springfield"] },
+    {
+      code: "CA",
+      name: "California",
+      nameAr: "كاليفورنيا",
+      cities: [
+        "Los Angeles",
+        "San Francisco",
+        "San Diego",
+        "San Jose",
+        "Sacramento",
+        "Oakland",
+        "Fresno",
+      ],
+    },
+    {
+      code: "NY",
+      name: "New York",
+      nameAr: "نيويورك",
+      cities: ["New York City", "Buffalo", "Albany", "Rochester", "Yonkers", "Syracuse"],
+    },
+    {
+      code: "TX",
+      name: "Texas",
+      nameAr: "تكساس",
+      cities: ["Houston", "Austin", "Dallas", "San Antonio", "Fort Worth", "El Paso", "Arlington"],
+    },
+    {
+      code: "FL",
+      name: "Florida",
+      nameAr: "فلوريدا",
+      cities: ["Miami", "Orlando", "Tampa", "Jacksonville", "Fort Lauderdale", "St. Petersburg"],
+    },
+    {
+      code: "IL",
+      name: "Illinois",
+      nameAr: "إلينوي",
+      cities: ["Chicago", "Aurora", "Naperville", "Rockford", "Springfield"],
+    },
+    {
+      code: "WA",
+      name: "Washington",
+      nameAr: "واشنطن",
+      cities: ["Seattle", "Spokane", "Tacoma", "Bellevue", "Everett"],
+    },
+    {
+      code: "MA",
+      name: "Massachusetts",
+      nameAr: "ماساتشوستس",
+      cities: ["Boston", "Cambridge", "Worcester", "Springfield"],
+    },
     { code: "DC", name: "District of Columbia", nameAr: "واشنطن العاصمة", cities: ["Washington"] },
-    { code: "PA", name: "Pennsylvania", nameAr: "بنسلفانيا", cities: ["Philadelphia", "Pittsburgh", "Allentown"] },
+    {
+      code: "PA",
+      name: "Pennsylvania",
+      nameAr: "بنسلفانيا",
+      cities: ["Philadelphia", "Pittsburgh", "Allentown"],
+    },
     { code: "OH", name: "Ohio", nameAr: "أوهايو", cities: ["Columbus", "Cleveland", "Cincinnati"] },
     { code: "GA", name: "Georgia", nameAr: "جورجيا", cities: ["Atlanta", "Savannah", "Augusta"] },
-    { code: "NC", name: "North Carolina", nameAr: "كارولاينا الشمالية", cities: ["Charlotte", "Raleigh", "Greensboro"] },
-    { code: "MI", name: "Michigan", nameAr: "ميشيغان", cities: ["Detroit", "Grand Rapids", "Ann Arbor"] },
-    { code: "NJ", name: "New Jersey", nameAr: "نيوجيرسي", cities: ["Newark", "Jersey City", "Paterson", "Princeton"] },
-    { code: "VA", name: "Virginia", nameAr: "فيرجينيا", cities: ["Virginia Beach", "Norfolk", "Richmond", "Arlington", "Alexandria"] },
-    { code: "CO", name: "Colorado", nameAr: "كولورادو", cities: ["Denver", "Colorado Springs", "Aurora", "Boulder"] },
-    { code: "AZ", name: "Arizona", nameAr: "أريزونا", cities: ["Phoenix", "Tucson", "Mesa", "Scottsdale"] },
+    {
+      code: "NC",
+      name: "North Carolina",
+      nameAr: "كارولاينا الشمالية",
+      cities: ["Charlotte", "Raleigh", "Greensboro"],
+    },
+    {
+      code: "MI",
+      name: "Michigan",
+      nameAr: "ميشيغان",
+      cities: ["Detroit", "Grand Rapids", "Ann Arbor"],
+    },
+    {
+      code: "NJ",
+      name: "New Jersey",
+      nameAr: "نيوجيرسي",
+      cities: ["Newark", "Jersey City", "Paterson", "Princeton"],
+    },
+    {
+      code: "VA",
+      name: "Virginia",
+      nameAr: "فيرجينيا",
+      cities: ["Virginia Beach", "Norfolk", "Richmond", "Arlington", "Alexandria"],
+    },
+    {
+      code: "CO",
+      name: "Colorado",
+      nameAr: "كولورادو",
+      cities: ["Denver", "Colorado Springs", "Aurora", "Boulder"],
+    },
+    {
+      code: "AZ",
+      name: "Arizona",
+      nameAr: "أريزونا",
+      cities: ["Phoenix", "Tucson", "Mesa", "Scottsdale"],
+    },
   ],
 };
 
@@ -579,10 +688,34 @@ const UK_TERRITORY: GeoCountryTerritory = {
   postalCodeHelpText: "UK standard alphanumeric postcode",
   postalCodeHelpTextAr: "الرمز البريدي البريطاني",
   states: [
-    { code: "ENG", name: "England", nameAr: "إنجلترا", cities: ["London", "Manchester", "Birmingham", "Leeds", "Liverpool", "Bristol", "Sheffield", "Newcastle"] },
-    { code: "SCT", name: "Scotland", nameAr: "اسكتلندا", cities: ["Edinburgh", "Glasgow", "Aberdeen", "Dundee"] },
+    {
+      code: "ENG",
+      name: "England",
+      nameAr: "إنجلترا",
+      cities: [
+        "London",
+        "Manchester",
+        "Birmingham",
+        "Leeds",
+        "Liverpool",
+        "Bristol",
+        "Sheffield",
+        "Newcastle",
+      ],
+    },
+    {
+      code: "SCT",
+      name: "Scotland",
+      nameAr: "اسكتلندا",
+      cities: ["Edinburgh", "Glasgow", "Aberdeen", "Dundee"],
+    },
     { code: "WLS", name: "Wales", nameAr: "ويلز", cities: ["Cardiff", "Swansea", "Newport"] },
-    { code: "NIR", name: "Northern Ireland", nameAr: "أيرلندا الشمالية", cities: ["Belfast", "Derry", "Lisburn"] },
+    {
+      code: "NIR",
+      name: "Northern Ireland",
+      nameAr: "أيرلندا الشمالية",
+      cities: ["Belfast", "Derry", "Lisburn"],
+    },
   ],
 };
 
@@ -607,10 +740,30 @@ const GERMANY_TERRITORY: GeoCountryTerritory = {
   postalCodeHelpTextAr: "الرمز البريدي الألماني المكون من 5 أرقام",
   states: [
     { code: "BE", name: "Berlin", nameAr: "برلين", cities: ["Berlin"] },
-    { code: "BY", name: "Bavaria", nameAr: "بافاريا", cities: ["Munich", "Nuremberg", "Augsburg", "Regensburg"] },
-    { code: "BW", name: "Baden-Württemberg", nameAr: "بادن-فورتمبيرغ", cities: ["Stuttgart", "Karlsruhe", "Mannheim", "Freiburg", "Heidelberg"] },
-    { code: "NW", name: "North Rhine-Westphalia", nameAr: "شمال الراين-وستفاليا", cities: ["Cologne", "Düsseldorf", "Dortmund", "Essen", "Bonn"] },
-    { code: "HE", name: "Hesse", nameAr: "هيسن", cities: ["Frankfurt am Main", "Wiesbaden", "Kassel", "Darmstadt"] },
+    {
+      code: "BY",
+      name: "Bavaria",
+      nameAr: "بافاريا",
+      cities: ["Munich", "Nuremberg", "Augsburg", "Regensburg"],
+    },
+    {
+      code: "BW",
+      name: "Baden-Württemberg",
+      nameAr: "بادن-فورتمبيرغ",
+      cities: ["Stuttgart", "Karlsruhe", "Mannheim", "Freiburg", "Heidelberg"],
+    },
+    {
+      code: "NW",
+      name: "North Rhine-Westphalia",
+      nameAr: "شمال الراين-وستفاليا",
+      cities: ["Cologne", "Düsseldorf", "Dortmund", "Essen", "Bonn"],
+    },
+    {
+      code: "HE",
+      name: "Hesse",
+      nameAr: "هيسن",
+      cities: ["Frankfurt am Main", "Wiesbaden", "Kassel", "Darmstadt"],
+    },
     { code: "HH", name: "Hamburg", nameAr: "هامبورغ", cities: ["Hamburg"] },
     { code: "SN", name: "Saxony", nameAr: "ساكسونيا", cities: ["Leipzig", "Dresden", "Chemnitz"] },
   ],
@@ -634,8 +787,18 @@ const QATAR_TERRITORY: GeoCountryTerritory = {
   postalCodePlaceholder: "Optional",
   postalCodePlaceholderAr: "اختياري",
   states: [
-    { code: "DOH", name: "Doha", nameAr: "الدوحة", cities: ["Doha", "The Pearl", "West Bay", "Lusail"] },
-    { code: "RAY", name: "Al Rayyan", nameAr: "الريان", cities: ["Al Rayyan", "Education City", "Al Gharrafa"] },
+    {
+      code: "DOH",
+      name: "Doha",
+      nameAr: "الدوحة",
+      cities: ["Doha", "The Pearl", "West Bay", "Lusail"],
+    },
+    {
+      code: "RAY",
+      name: "Al Rayyan",
+      nameAr: "الريان",
+      cities: ["Al Rayyan", "Education City", "Al Gharrafa"],
+    },
     { code: "WAK", name: "Al Wakrah", nameAr: "الوكرة", cities: ["Al Wakrah", "Al Wukair"] },
     { code: "KHO", name: "Al Khor", nameAr: "الخور", cities: ["Al Khor", "Al Thakhira"] },
   ],
@@ -656,12 +819,37 @@ const KUWAIT_TERRITORY: GeoCountryTerritory = {
   postalCodePlaceholder: "e.g. 13001",
   postalCodePlaceholderAr: "مثال: 13001",
   states: [
-    { code: "ASI", name: "Al Asimah (Capital)", nameAr: "العاصمة", cities: ["Kuwait City", "Sharq", "Dasman", "Mirgab", "Salhiya", "Yarmouk"] },
-    { code: "HAW", name: "Hawalli", nameAr: "حولي", cities: ["Hawalli", "Salmiya", "Jabriya", "Rumaithiya", "Bayan"] },
-    { code: "FAR", name: "Farwaniya", nameAr: "الفروانية", cities: ["Farwaniya", "Khaitan", "Andalous", "Rabiya"] },
-    { code: "AHM", name: "Al Ahmadi", nameAr: "الأحمدي", cities: ["Ahmadi", "Fahaheel", "Mangaf", "Sabah Al Ahmad"] },
+    {
+      code: "ASI",
+      name: "Al Asimah (Capital)",
+      nameAr: "العاصمة",
+      cities: ["Kuwait City", "Sharq", "Dasman", "Mirgab", "Salhiya", "Yarmouk"],
+    },
+    {
+      code: "HAW",
+      name: "Hawalli",
+      nameAr: "حولي",
+      cities: ["Hawalli", "Salmiya", "Jabriya", "Rumaithiya", "Bayan"],
+    },
+    {
+      code: "FAR",
+      name: "Farwaniya",
+      nameAr: "الفروانية",
+      cities: ["Farwaniya", "Khaitan", "Andalous", "Rabiya"],
+    },
+    {
+      code: "AHM",
+      name: "Al Ahmadi",
+      nameAr: "الأحمدي",
+      cities: ["Ahmadi", "Fahaheel", "Mangaf", "Sabah Al Ahmad"],
+    },
     { code: "JAH", name: "Al Jahra", nameAr: "الجهراء", cities: ["Jahra", "Sulaibiya", "Oyoun"] },
-    { code: "MUB", name: "Mubarak Al-Kabeer", nameAr: "مبارك الكبير", cities: ["Mubarak Al-Kabeer", "Qurain", "Sabah Al-Salem"] },
+    {
+      code: "MUB",
+      name: "Mubarak Al-Kabeer",
+      nameAr: "مبارك الكبير",
+      cities: ["Mubarak Al-Kabeer", "Qurain", "Sabah Al-Salem"],
+    },
   ],
 };
 
@@ -680,10 +868,30 @@ const BAHRAIN_TERRITORY: GeoCountryTerritory = {
   postalCodePlaceholder: "e.g. 317",
   postalCodePlaceholderAr: "مثال: 317",
   states: [
-    { code: "CAP", name: "Capital Governorate", nameAr: "محافظة العاصمة", cities: ["Manama", "Juffair", "Seef", "Zinj"] },
-    { code: "MUH", name: "Muharraq", nameAr: "محافظة المحرق", cities: ["Muharraq", "Busaiteen", "Amwaj Islands", "Hidd"] },
-    { code: "NOR", name: "Northern Governorate", nameAr: "المحافظة الشمالية", cities: ["Budaiya", "Saar", "Hamad Town"] },
-    { code: "SOU", name: "Southern Governorate", nameAr: "المحافظة الجنوبية", cities: ["Riffa", "Isa Town", "Zallaq"] },
+    {
+      code: "CAP",
+      name: "Capital Governorate",
+      nameAr: "محافظة العاصمة",
+      cities: ["Manama", "Juffair", "Seef", "Zinj"],
+    },
+    {
+      code: "MUH",
+      name: "Muharraq",
+      nameAr: "محافظة المحرق",
+      cities: ["Muharraq", "Busaiteen", "Amwaj Islands", "Hidd"],
+    },
+    {
+      code: "NOR",
+      name: "Northern Governorate",
+      nameAr: "المحافظة الشمالية",
+      cities: ["Budaiya", "Saar", "Hamad Town"],
+    },
+    {
+      code: "SOU",
+      name: "Southern Governorate",
+      nameAr: "المحافظة الجنوبية",
+      cities: ["Riffa", "Isa Town", "Zallaq"],
+    },
   ],
 };
 
@@ -702,10 +910,25 @@ const OMAN_TERRITORY: GeoCountryTerritory = {
   postalCodePlaceholder: "e.g. 100",
   postalCodePlaceholderAr: "مثال: 100",
   states: [
-    { code: "MUS", name: "Muscat", nameAr: "مسقط", cities: ["Muscat", "Seeb", "Bawshar", "Muttrah", "Al Amerat"] },
+    {
+      code: "MUS",
+      name: "Muscat",
+      nameAr: "مسقط",
+      cities: ["Muscat", "Seeb", "Bawshar", "Muttrah", "Al Amerat"],
+    },
     { code: "DHO", name: "Dhofar", nameAr: "ظفار", cities: ["Salalah", "Taqah", "Mirbat"] },
-    { code: "BAT_N", name: "Al Batinah North", nameAr: "شمال الباطنة", cities: ["Sohar", "Shinas", "Saham"] },
-    { code: "DAK", name: "Al Dakhiliyah", nameAr: "الداخلية", cities: ["Nizwa", "Bahla", "Samail"] },
+    {
+      code: "BAT_N",
+      name: "Al Batinah North",
+      nameAr: "شمال الباطنة",
+      cities: ["Sohar", "Shinas", "Saham"],
+    },
+    {
+      code: "DAK",
+      name: "Al Dakhiliyah",
+      nameAr: "الداخلية",
+      cities: ["Nizwa", "Bahla", "Samail"],
+    },
   ],
 };
 
@@ -724,7 +947,12 @@ const JORDAN_TERRITORY: GeoCountryTerritory = {
   postalCodePlaceholder: "e.g. 11118",
   postalCodePlaceholderAr: "مثال: 11118",
   states: [
-    { code: "AMM", name: "Amman", nameAr: "عمان", cities: ["Amman", "Sweifieh", "Abdoun", "Jabal Amman", "Shmeisani", "Tla' Al-Ali"] },
+    {
+      code: "AMM",
+      name: "Amman",
+      nameAr: "عمان",
+      cities: ["Amman", "Sweifieh", "Abdoun", "Jabal Amman", "Shmeisani", "Tla' Al-Ali"],
+    },
     { code: "ZAR", name: "Zarqa", nameAr: "الزرقاء", cities: ["Zarqa", "Russeifa"] },
     { code: "IRB", name: "Irbid", nameAr: "إربد", cities: ["Irbid", "Ar Ramtha"] },
     { code: "AQA", name: "Aqaba", nameAr: "العقبة", cities: ["Aqaba"] },
@@ -746,10 +974,30 @@ const MOROCCO_TERRITORY: GeoCountryTerritory = {
   postalCodePlaceholder: "e.g. 20000",
   postalCodePlaceholderAr: "مثال: 20000",
   states: [
-    { code: "CAS", name: "Casablanca-Settat", nameAr: "الدار البيضاء - سطات", cities: ["Casablanca", "Mohammedia", "El Jadida", "Settat"] },
-    { code: "RAB", name: "Rabat-Salé-Kénitra", nameAr: "الرباط - سلا - القنيطرة", cities: ["Rabat", "Salé", "Kénitra", "Temara"] },
-    { code: "MAR", name: "Marrakech-Safi", nameAr: "مراكش - آسفي", cities: ["Marrakech", "Safi", "Essaouira"] },
-    { code: "TAN", name: "Tanger-Tétouan-Al Hoceïma", nameAr: "طنجة - تطوان - الحسيمة", cities: ["Tangier", "Tétouan", "Al Hoceïma"] },
+    {
+      code: "CAS",
+      name: "Casablanca-Settat",
+      nameAr: "الدار البيضاء - سطات",
+      cities: ["Casablanca", "Mohammedia", "El Jadida", "Settat"],
+    },
+    {
+      code: "RAB",
+      name: "Rabat-Salé-Kénitra",
+      nameAr: "الرباط - سلا - القنيطرة",
+      cities: ["Rabat", "Salé", "Kénitra", "Temara"],
+    },
+    {
+      code: "MAR",
+      name: "Marrakech-Safi",
+      nameAr: "مراكش - آسفي",
+      cities: ["Marrakech", "Safi", "Essaouira"],
+    },
+    {
+      code: "TAN",
+      name: "Tanger-Tétouan-Al Hoceïma",
+      nameAr: "طنجة - تطوان - الحسيمة",
+      cities: ["Tangier", "Tétouan", "Al Hoceïma"],
+    },
     { code: "FES", name: "Fès-Meknès", nameAr: "فاس - مكناس", cities: ["Fes", "Meknes", "Taza"] },
   ],
 };

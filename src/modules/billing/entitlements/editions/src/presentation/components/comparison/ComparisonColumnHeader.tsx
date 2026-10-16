@@ -26,6 +26,9 @@ interface ComparisonColumnHeaderProps {
   recommendedLabel?: string;
 }
 
+/**
+ * Documentation for ComparisonColumnHeader
+ */
 export function ComparisonColumnHeader({
   displayName,
   tierLevel,

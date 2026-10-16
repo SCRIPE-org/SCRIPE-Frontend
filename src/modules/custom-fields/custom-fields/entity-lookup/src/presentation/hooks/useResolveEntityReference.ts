@@ -39,10 +39,7 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import { customFieldsContainer } from "../../../../di";
-import type {
-  EntityLookupItem,
-  EntityLookupReference,
-} from "../../data/models/EntityLookupModel";
+import type { EntityLookupItem, EntityLookupReference } from "../../data/models/EntityLookupModel";
 import {
   EntityLookupError,
   type EntityLookupFailureKind,
@@ -63,13 +60,7 @@ import {
  * - `error` — everything else: offline, a 500, or a type this deployment does not have composed.
  */
 export type EntityReferenceResolveStatus =
-  | "idle"
-  | "loading"
-  | "resolved"
-  | "forbidden"
-  | "missing"
-  | "invalid"
-  | "error";
+  "idle" | "loading" | "resolved" | "forbidden" | "missing" | "invalid" | "error";
 
 /** The statuses a finished request can land on — everything but the two the request key derives. */
 type SettledResolveStatus = Exclude<EntityReferenceResolveStatus, "idle" | "loading">;

@@ -30,16 +30,8 @@ if (typeof Element.prototype.scrollIntoView !== "function") {
 
 describe("GenericForm PhoneInput integration", () => {
   it("renders PhoneInput component with accessible name for type: 'phone'", () => {
-    const fields: FieldConfig[] = [
-      { name: "phoneNumber", label: "Phone Number", type: "phone" },
-    ];
-    render(
-      <GenericForm
-        fields={fields}
-        onSubmit={async () => {}}
-        onCancel={() => {}}
-      />
-    );
+    const fields: FieldConfig[] = [{ name: "phoneNumber", label: "Phone Number", type: "phone" }];
+    render(<GenericForm fields={fields} onSubmit={async () => {}} onCancel={() => {}} />);
 
     const input = screen.getByRole("textbox", { name: "Phone Number" });
     expect(input).toBeInTheDocument();
@@ -48,30 +40,22 @@ describe("GenericForm PhoneInput integration", () => {
     // The country select button exists
     const countryButton =
       input.closest(".PhoneInput")?.querySelector("button") ||
-      screen.getByRole("button", { name: /(الولايات المتحدة|united states|search country|بحث عن دولة)/i });
+      screen.getByRole("button", {
+        name: /(الولايات المتحدة|united states|search country|بحث عن دولة)/i,
+      });
     expect(countryButton).toBeInTheDocument();
   });
 
   it("renders PhoneInput component for type: 'tel'", () => {
-    const fields: FieldConfig[] = [
-      { name: "phoneNumber", label: "Telephone", type: "tel" },
-    ];
-    render(
-      <GenericForm
-        fields={fields}
-        onSubmit={async () => {}}
-        onCancel={() => {}}
-      />
-    );
+    const fields: FieldConfig[] = [{ name: "phoneNumber", label: "Telephone", type: "tel" }];
+    render(<GenericForm fields={fields} onSubmit={async () => {}} onCancel={() => {}} />);
 
     const input = screen.getByRole("textbox", { name: "Telephone" });
     expect(input).toBeInTheDocument();
   });
 
   it("pre-populates with existing international phone number and displays national digits", () => {
-    const fields: FieldConfig[] = [
-      { name: "phoneNumber", label: "Phone Number", type: "phone" },
-    ];
+    const fields: FieldConfig[] = [{ name: "phoneNumber", label: "Phone Number", type: "phone" }];
     render(
       <GenericForm
         fields={fields}
@@ -156,9 +140,7 @@ describe("GenericForm PhoneInput integration", () => {
 
   it("blocks submission and displays error when phone number format is invalid", async () => {
     const onSubmit = vi.fn().mockResolvedValue(undefined);
-    const fields: FieldConfig[] = [
-      { name: "phoneNumber", label: "Phone Number", type: "phone" },
-    ];
+    const fields: FieldConfig[] = [{ name: "phoneNumber", label: "Phone Number", type: "phone" }];
     render(
       <GenericForm
         fields={fields}
@@ -203,9 +185,7 @@ describe("GenericForm PhoneInput integration", () => {
   });
 
   it("disables input and country picker when readOnly is true", () => {
-    const fields: FieldConfig[] = [
-      { name: "phoneNumber", label: "Phone Number", type: "phone" },
-    ];
+    const fields: FieldConfig[] = [{ name: "phoneNumber", label: "Phone Number", type: "phone" }];
     render(
       <GenericForm
         fields={fields}

@@ -1,22 +1,10 @@
-"use client";
+﻿"use client";
 
 import Link from "next/link";
-import {
-  Clock,
-  RefreshCw,
-  Building2,
-  Plus,
-  CalendarDays,
-} from "lucide-react";
+import { Clock, RefreshCw, Building2, Plus, CalendarDays } from "lucide-react";
 import { Badge } from "@core/ui/badge";
 import { Button } from "@core/ui/button";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@core/ui/select";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@core/ui/select";
 
 interface FacilityOption {
   id: string;
@@ -32,6 +20,7 @@ interface Props {
   refreshing: boolean;
   onRefresh: () => void;
   onFacilityChange: (facilityId: string) => void;
+  onBlockTime?: () => void;
   t: (key: string, values?: Record<string, string | number>) => string;
 }
 
@@ -51,6 +40,9 @@ function formatDisplayDate(dateStr: string, timeZoneId: string): string {
   }
 }
 
+/**
+ * Documentation for VenueOverviewHeader
+ */
 export function VenueOverviewHeader({
   facilityName,
   selectedFacilityId,
@@ -60,24 +52,28 @@ export function VenueOverviewHeader({
   refreshing,
   onRefresh,
   onFacilityChange,
+  onBlockTime,
   t,
 }: Props) {
   const formattedDate = formatDisplayDate(localDate, timeZoneId);
 
   return (
     <div
-      className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between border-b border-nx-line pb-4 mb-6"
+      className="mb-6 flex flex-col gap-4 border-b border-nx-line pb-4 lg:flex-row lg:items-center lg:justify-between"
       data-testid="venue-overview-header"
     >
       {/* Left Context: Title, Venue/Branch context, Date */}
       <div className="space-y-1.5">
         <div className="flex flex-wrap items-center gap-2.5">
-          <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-nx-ink">
+          <h1 className="text-xl font-bold tracking-tight text-nx-ink sm:text-2xl">
             {t("venueOverview.title", { defaultValue: "Venue Operations" })}
           </h1>
           {facilityName && (
-            <Badge variant="outline" className="text-xs font-semibold px-2 py-0.5 border-nx-line/80 bg-nx-surfaceSubtle">
-              <Building2 className="size-3 me-1.5 text-nx-accent" aria-hidden="true" />
+            <Badge
+              variant="outline"
+              className="border-nx-line/80 bg-nx-surfaceSubtle px-2 py-0.5 text-xs font-semibold"
+            >
+              <Building2 className="me-1.5 size-3 text-nx-accent" aria-hidden="true" />
               <span>{facilityName}</span>
             </Badge>
           )}
@@ -85,24 +81,27 @@ export function VenueOverviewHeader({
 
         <div className="flex flex-wrap items-center gap-2 text-xs text-nx-ink-2">
           <span className="font-medium text-nx-ink">{formattedDate}</span>
-          <span className="text-nx-line">·</span>
-          <span className="inline-flex items-center gap-1 font-mono text-[11px] text-nx-ink-3" dir="ltr">
+          <span className="text-nx-line">Â·</span>
+          <span
+            className="inline-flex items-center gap-1 font-mono text-[11px] text-nx-ink-3"
+            dir="ltr"
+          >
             <Clock className="size-3" aria-hidden="true" />
             <span>{timeZoneId || "UTC"}</span>
           </span>
-          <span className="text-nx-line">·</span>
+          <span className="text-nx-line">Â·</span>
           <span className="text-xs text-nx-ink-3">
             {t("venueOverview.subtitle", { defaultValue: "Sports Operations Console" })}
           </span>
         </div>
       </div>
 
-      {/* Right Actions: Facility Switcher, Calendar, Refresh, + New Booking CTA */}
+      {/* Right Actions: Facility Switcher, Block Time, Record Payment, Calendar, Refresh, + New Booking CTA */}
       <div className="flex flex-wrap items-center gap-2">
         {facilities.length > 1 && (
           <Select value={selectedFacilityId} onValueChange={onFacilityChange}>
             <SelectTrigger
-              className="h-8.5 w-auto min-w-[130px] text-xs bg-nx-surface"
+              className="h-8.5 w-auto min-w-[130px] bg-nx-surface text-xs"
               aria-label={t("venueOverview.header.facility", { defaultValue: "Facility" })}
             >
               <SelectValue />
@@ -117,12 +116,51 @@ export function VenueOverviewHeader({
           </Select>
         )}
 
+        {/* Quick Action: Block Time */}
+        {onBlockTime ? (
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            onClick={onBlockTime}
+            className="h-8.5 hover:bg-nx-surfaceSubtle gap-1.5 border-nx-line text-xs font-medium"
+          >
+            <span className="font-bold text-amber-500">âŠ˜</span>
+            <span className="hidden sm:inline">Block Time</span>
+          </Button>
+        ) : (
+          <Button
+            asChild
+            variant="outline"
+            size="sm"
+            className="h-8.5 hover:bg-nx-surfaceSubtle gap-1.5 border-nx-line text-xs font-medium"
+          >
+            <Link href="/venue/calendar">
+              <span className="font-bold text-amber-500">âŠ˜</span>
+              <span className="hidden sm:inline">Block Time</span>
+            </Link>
+          </Button>
+        )}
+
+        {/* Quick Action: Record Payment */}
+        <Button
+          asChild
+          variant="outline"
+          size="sm"
+          className="h-8.5 hover:bg-nx-surfaceSubtle gap-1.5 border-nx-line text-xs font-medium"
+        >
+          <Link href="/venue/money/payments">
+            <span className="font-bold text-emerald-500">$</span>
+            <span className="hidden sm:inline">Record Payment</span>
+          </Link>
+        </Button>
+
         {/* Secondary: Calendar */}
         <Button
           asChild
           variant="outline"
           size="sm"
-          className="h-8.5 gap-1.5 text-xs font-semibold border-nx-line hover:border-nx-accent hover:text-nx-accent"
+          className="h-8.5 gap-1.5 border-nx-line text-xs font-semibold hover:border-nx-accent hover:text-nx-accent"
         >
           <Link href="/venue/calendar">
             <CalendarDays className="size-3.5 text-nx-accent" aria-hidden="true" />
@@ -140,7 +178,7 @@ export function VenueOverviewHeader({
           onClick={onRefresh}
           disabled={refreshing}
           aria-label={t("venueOverview.header.refresh", { defaultValue: "Refresh data" })}
-          className="h-8.5 w-8.5 p-0 sm:w-auto sm:px-2.5 gap-1.5 text-xs font-medium border-nx-line"
+          className="h-8.5 w-8.5 gap-1.5 border-nx-line p-0 text-xs font-medium sm:w-auto sm:px-2.5"
           title={t("venueOverview.header.refresh", { defaultValue: "Refresh" })}
         >
           <RefreshCw
@@ -155,14 +193,12 @@ export function VenueOverviewHeader({
         </Button>
 
         {/* Primary CTA: + New Booking */}
-        <Button
-          asChild
-          size="sm"
-          className="h-8.5 gap-1.5 text-xs font-bold shadow-nx-sm px-3.5"
-        >
+        <Button asChild size="sm" className="h-8.5 gap-1.5 px-3.5 text-xs font-bold shadow-nx-sm">
           <Link href="/venue/bookings/new">
             <Plus className="size-4" aria-hidden="true" />
-            <span>{t("venueOverview.quickActions.newBooking", { defaultValue: "New Booking" })}</span>
+            <span>
+              {t("venueOverview.quickActions.newBooking", { defaultValue: "New Booking" })}
+            </span>
           </Link>
         </Button>
       </div>

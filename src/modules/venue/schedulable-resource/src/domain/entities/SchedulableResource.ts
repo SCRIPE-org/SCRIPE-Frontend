@@ -1,12 +1,34 @@
+/**
+ * Documentation for "PooledUnits"
+ */
 export type ResourceAllocationMode = "SingleUnit" | "PooledUnits";
+/**
+ * Documentation for "Published"
+ */
 export type PublicationStatus = "Draft" | "Published";
 
+/**
+ * Documentation for module export
+ */
 export interface CapacityPolicyData {
   allocationMode: ResourceAllocationMode;
   maxConcurrentUsage: number;
   overbookingAllowed: boolean;
 }
 
+/**
+ * Documentation for module export
+ */
+export interface BookingSlotPolicyData {
+  slotDurationMinutes: number;
+  startIncrementMinutes: number;
+  timeZoneId?: string | null;
+  allowMultiSlot?: boolean;
+}
+
+/**
+ * Documentation for module export
+ */
 export interface SchedulableResourceData {
   id: string;
   facilityResourceProfileId: string;
@@ -17,6 +39,7 @@ export interface SchedulableResourceData {
   namedUnitLabel?: string;
   unitCount: number;
   capacity?: CapacityPolicyData;
+  slotPolicy?: BookingSlotPolicyData | null;
   publicationStatus: PublicationStatus;
   publishedAtUtc?: string;
   archivedAtUtc?: string;
@@ -25,6 +48,9 @@ export interface SchedulableResourceData {
   modifiedAt?: string;
 }
 
+/**
+ * Documentation for module export
+ */
 export class SchedulableResource {
   constructor(public readonly data: SchedulableResourceData) {}
 
@@ -55,6 +81,9 @@ export class SchedulableResource {
   get capacity(): CapacityPolicyData | undefined {
     return this.data.capacity;
   }
+  get slotPolicy(): BookingSlotPolicyData | undefined | null {
+    return this.data.slotPolicy;
+  }
   get publicationStatus(): PublicationStatus {
     return this.data.publicationStatus;
   }
@@ -82,11 +111,17 @@ export class SchedulableResource {
   }
 }
 
+/**
+ * Documentation for module export
+ */
 export interface PublicationBlocker {
   code: string;
   message: string;
 }
 
+/**
+ * Documentation for module export
+ */
 export interface PublicationChecklistReport {
   canPublish: boolean;
   blockers: PublicationBlocker[];

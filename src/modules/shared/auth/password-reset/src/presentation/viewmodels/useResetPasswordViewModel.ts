@@ -39,7 +39,9 @@ export function useResetPasswordViewModel(params: {
     verifiedRef.current = true;
 
     if (!otp || !email) {
-      setStep("invalid");
+      queueMicrotask(() => {
+        setStep("invalid");
+      });
       return;
     }
 

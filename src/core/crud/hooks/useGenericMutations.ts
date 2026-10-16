@@ -146,7 +146,11 @@ export function useGenericMutations<T extends { id: string }, TCreate = unknown,
           if (context?.previous !== undefined) {
             queryClient.setQueryData(baseKey as readonly unknown[], context.previous);
           }
-          operationError("Delete", undefined, (_ as Error)?.message || t("common.messages.deleteFailed"));
+          operationError(
+            "Delete",
+            undefined,
+            (_ as Error)?.message || t("common.messages.deleteFailed")
+          );
           options?.onError?.(_ as Error);
         }
       : (error: Error) => {

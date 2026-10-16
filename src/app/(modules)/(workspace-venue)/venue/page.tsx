@@ -4,7 +4,8 @@ import { VenueOverviewView } from "@modules/venue/venue-overview/src/presentatio
 
 export const metadata: Metadata = {
   title: "Venue Command Center",
-  description: "Operational overview, KPI health metrics, and fast navigation for venue management.",
+  description:
+    "Operational overview, KPI health metrics, and fast navigation for venue management.",
 };
 
 export default function VenuePage() {

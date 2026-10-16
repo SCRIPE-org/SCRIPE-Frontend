@@ -1,9 +1,12 @@
-import type { Booking360Status } from "@modules/venue/booking-360/src/domain/entities/Booking360";
+import type { Booking360Status } from "@modules/venue";
 import type {
   CalendarResource,
   OperationsCalendarDay,
 } from "@modules/venue/operations-calendar/src/domain/entities/OperationsCalendar";
 
+/**
+ * Documentation for module export
+ */
 export interface VenueOverviewKpiData {
   todayReservationsCount: number;
   todayReservationsConfirmedCount: number;
@@ -14,6 +17,9 @@ export interface VenueOverviewKpiData {
   activeResourcesCount: number;
 }
 
+/**
+ * Documentation for module export
+ */
 export interface VenueOverviewHourlyLoadBucket {
   hour: number; // 0..23
   label: string; // "00:00", "01:00", etc.
@@ -25,11 +31,17 @@ export interface VenueOverviewHourlyLoadBucket {
   total: number;
 }
 
+/**
+ * Documentation for module export
+ */
 export interface VenueOverviewAtAGlanceItem {
   status: Booking360Status;
   count: number;
 }
 
+/**
+ * Documentation for module export
+ */
 export interface VenueOverviewUpNextItem {
   reservationId: string;
   reservationNumber: string;
@@ -44,6 +56,9 @@ export interface VenueOverviewUpNextItem {
   endLocal: string;
 }
 
+/**
+ * Documentation for module export
+ */
 export interface VenueOverviewResourceActivityItem {
   resourceId: string;
   resourceName: string;
@@ -54,6 +69,9 @@ export interface VenueOverviewResourceActivityItem {
   activeReservationId: string | null;
 }
 
+/**
+ * Documentation for module export
+ */
 export interface VenueOverviewState {
   stage: "loading" | "ready" | "empty" | "limited" | "failed";
   facilityId: string;

@@ -3,6 +3,9 @@
 import { useCallback, useEffect, useState } from "react";
 import { getVenueContainer } from "@modules/venue/di";
 
+/**
+ * Documentation for module export
+ */
 export interface BookingFinanceSummary {
   invoiceId: string;
   invoiceNumber: string;
@@ -12,6 +15,9 @@ export interface BookingFinanceSummary {
   status: string;
 }
 
+/**
+ * Documentation for module export
+ */
 export function useBookingFinanceSummary(reservationId: string, canViewReceivables: boolean) {
   const { moneyRepository } = getVenueContainer();
   const [summary, setSummary] = useState<BookingFinanceSummary | null>(null);
@@ -29,14 +35,18 @@ export function useBookingFinanceSummary(reservationId: string, canViewReceivabl
     try {
       const page = await moneyRepository.getInvoices(1, 50, { reservationId });
       const invoice = page.items[0];
-      setSummary(invoice ? {
-        invoiceId: invoice.id,
-        invoiceNumber: invoice.invoiceNumber,
-        currencyCode: invoice.currencyCode,
-        effectiveTotalAmount: invoice.effectiveTotalAmount,
-        outstandingAmount: invoice.outstandingAmount,
-        status: invoice.status,
-      } : null);
+      setSummary(
+        invoice
+          ? {
+              invoiceId: invoice.id,
+              invoiceNumber: invoice.invoiceNumber,
+              currencyCode: invoice.currencyCode,
+              effectiveTotalAmount: invoice.effectiveTotalAmount,
+              outstandingAmount: invoice.outstandingAmount,
+              status: invoice.status,
+            }
+          : null
+      );
     } catch {
       setError(true);
       setSummary(null);
@@ -45,6 +55,10 @@ export function useBookingFinanceSummary(reservationId: string, canViewReceivabl
     }
   }, [canViewReceivables, moneyRepository, reservationId]);
 
-  useEffect(() => { void load(); }, [load]);
+  useEffect(() => {
+    void Promise.resolve().then(() => {
+      void load();
+    });
+  }, [load]);
   return { summary, error, loading, refresh: load };
 }

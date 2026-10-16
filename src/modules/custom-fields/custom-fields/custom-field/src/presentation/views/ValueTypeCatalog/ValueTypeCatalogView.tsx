@@ -96,7 +96,9 @@ export function ValueTypeCatalogView() {
   );
 
   const stats = useMemo(() => {
-    const withOptions = ALL_VALUE_TYPES.filter((type) => VALUE_TYPE_CATALOG[type].hasOptions).length;
+    const withOptions = ALL_VALUE_TYPES.filter(
+      (type) => VALUE_TYPE_CATALOG[type].hasOptions
+    ).length;
     const withValidator = ALL_VALUE_TYPES.filter(
       (type) => type === VALIDATOR_ELIGIBLE_VALUE_TYPE
     ).length;
@@ -144,7 +146,9 @@ export function ValueTypeCatalogView() {
                 <TableCell>
                   <Badge variant={entry.badgeVariant}>{t(entry.labelKey)}</Badge>
                 </TableCell>
-                <TableCell className="max-w-md text-sm text-nx-ink-2">{t(descriptionKey)}</TableCell>
+                <TableCell className="max-w-md text-sm text-nx-ink-2">
+                  {t(descriptionKey)}
+                </TableCell>
                 <TableCell>
                   <Badge variant={entry.hasPlaceholder ? "active" : "inactive"}>
                     {entry.hasPlaceholder ? t("common.yes") : t("common.no")}

@@ -1,5 +1,8 @@
 import { V1 } from "@/core/config/api-endpoints/_shared";
 
+/**
+ * Documentation for module export
+ */
 export const SITE_ENDPOINTS = {
   LIST: `${V1}/sites`,
   BY_ID: (id: string) => `${V1}/sites/${id}`,

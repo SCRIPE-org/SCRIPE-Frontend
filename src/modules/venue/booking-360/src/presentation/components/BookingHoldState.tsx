@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useEffect, useState } from "react";
 import { Clock3 } from "lucide-react";
@@ -22,9 +22,14 @@ function secondsBetween(expiresAtUtc: string, now: number): number {
   return Math.max(0, Math.ceil((Date.parse(expiresAtUtc) - now) / 1000));
 }
 
+/**
+ * Documentation for module export
+ */
 export function BookingHoldState(props: Props) {
   const { asOfUtc, expiresAtUtc, onExpired } = props;
-  const [remaining, setRemaining] = useState(() => secondsBetween(props.expiresAtUtc, Date.parse(props.asOfUtc)));
+  const [remaining, setRemaining] = useState(() =>
+    secondsBetween(props.expiresAtUtc, Date.parse(props.asOfUtc))
+  );
   useEffect(() => {
     let reported = false;
     const serverAnchor = Date.parse(asOfUtc);
@@ -43,7 +48,9 @@ export function BookingHoldState(props: Props) {
     return () => window.clearInterval(timer);
   }, [asOfUtc, expiresAtUtc, onExpired]);
   const expiry = new Intl.DateTimeFormat(props.locale, {
-    dateStyle: "medium", timeStyle: "short", timeZone: props.timeZoneId,
+    dateStyle: "medium",
+    timeStyle: "short",
+    timeZone: props.timeZoneId,
   }).format(new Date(props.expiresAtUtc));
 
   return (
@@ -53,17 +60,26 @@ export function BookingHoldState(props: Props) {
         <AlertTitle>{props.t("booking360.hold.active")}</AlertTitle>
         <AlertDescription>
           <p>{props.t("booking360.hold.expires", { time: expiry })}</p>
-          <p>{props.t("booking360.hold.remaining", { minutes: Math.floor(remaining / 60), seconds: remaining % 60 })}</p>
+          <p>
+            {props.t("booking360.hold.remaining", {
+              minutes: Math.floor(remaining / 60),
+              seconds: remaining % 60,
+            })}
+          </p>
         </AlertDescription>
       </Alert>
       {props.actionError && (
         <Alert variant={props.actionError === "failed" ? "destructive" : "warning"} role="status">
-          <AlertDescription>{props.t(`booking360.actionError.${props.actionError}`)}</AlertDescription>
+          <AlertDescription>
+            {props.t(`booking360.actionError.${props.actionError}`)}
+          </AlertDescription>
         </Alert>
       )}
       {props.canConfirm && remaining > 0 && (
         <Button type="button" loading={props.confirming} onClick={props.onConfirm}>
-          {props.confirming ? props.t("booking360.actions.confirming") : props.t("booking360.actions.confirm")}
+          {props.confirming
+            ? props.t("booking360.actions.confirming")
+            : props.t("booking360.actions.confirm")}
         </Button>
       )}
     </div>

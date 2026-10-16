@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { describe, it, expect } from "vitest";
 import { navigationData } from "../data/navigation";
 import { DocsRepository } from "../data/repositories/DocsRepository";
@@ -85,9 +86,7 @@ describe("Docs Navigation and Page Completeness", () => {
       for (const [lang, reg] of Object.entries(registries)) {
         const val = resolveKey(reg, item.titleKey);
         if (!val || val.trim() === "" || val === item.titleKey) {
-          missingTranslations.push(
-            `Item ${item.id} [${lang}]: missing ${item.titleKey}`
-          );
+          missingTranslations.push(`Item ${item.id} [${lang}]: missing ${item.titleKey}`);
         }
       }
     }

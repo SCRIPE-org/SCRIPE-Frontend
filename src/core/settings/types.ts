@@ -82,14 +82,7 @@ export type BackgroundMode = "preset" | "gradient";
 // ── Gradient Themes ───────────────────────────────────────
 
 export type GradientDirection =
-  | "to-t"
-  | "to-tr"
-  | "to-r"
-  | "to-br"
-  | "to-b"
-  | "to-bl"
-  | "to-l"
-  | "to-tl";
+  "to-t" | "to-tr" | "to-r" | "to-br" | "to-b" | "to-bl" | "to-l" | "to-tl";
 
 export type LightGradientTheme =
   | "none"
@@ -214,23 +207,9 @@ export type LoadingStyle =
   | "morphing";
 
 export type TooltipStyle =
-  | "default"
-  | "rounded"
-  | "sharp"
-  | "bubble"
-  | "glass"
-  | "neon"
-  | "minimal"
-  | "elegant";
+  "default" | "rounded" | "sharp" | "bubble" | "glass" | "neon" | "minimal" | "elegant";
 export type ModalStyle =
-  | "default"
-  | "centered"
-  | "fullscreen"
-  | "drawer"
-  | "glass"
-  | "floating"
-  | "card"
-  | "overlay";
+  "default" | "centered" | "fullscreen" | "drawer" | "glass" | "floating" | "card" | "overlay";
 
 export type TreeStyle =
   | "lines"
@@ -249,13 +228,7 @@ export type TreeStyle =
 export type ToastDesign = "minimal" | "modern" | "gradient" | "outlined" | "filled";
 
 export type DatePickerStyle =
-  | "default"
-  | "modern"
-  | "glass"
-  | "outlined"
-  | "filled"
-  | "minimal"
-  | "elegant";
+  "default" | "modern" | "glass" | "outlined" | "filled" | "minimal" | "elegant";
 export type CalendarStyle = "default" | "modern" | "glass" | "elegant" | "minimal" | "dark";
 
 // Twenty-six invented skins collapsed to one token surface — the select now
@@ -347,13 +320,7 @@ export type ToastStyle =
   | "outlined";
 
 export type HoverEffectType =
-  | "none"
-  | "elevate"
-  | "scale"
-  | "glow"
-  | "shimmer"
-  | "rotate"
-  | "slide";
+  "none" | "elevate" | "scale" | "glow" | "shimmer" | "rotate" | "slide";
 export type HoverEffectIntensity = "none" | "small" | "medium" | "strong";
 
 // ── Settings Interface ────────────────────────────────────

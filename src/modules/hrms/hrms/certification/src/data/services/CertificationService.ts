@@ -19,6 +19,9 @@ import type {
 
 const BASE_URL = CERTIFICATION_ENDPOINTS.LIST;
 
+/**
+ * Documentation for module export
+ */
 export class CertificationService implements ICertificationService {
   constructor(private readonly api: IApiService) {}
 

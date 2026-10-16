@@ -12,6 +12,9 @@ import type {
   ReorderFieldGroupsRequestJson,
 } from "../../data/models/FieldGroupModel";
 
+/**
+ * Documentation for module export
+ */
 export interface IFieldGroupService {
   /**
    * `GET /v1/custom-fields/field-groups?entityTypeKey=...`

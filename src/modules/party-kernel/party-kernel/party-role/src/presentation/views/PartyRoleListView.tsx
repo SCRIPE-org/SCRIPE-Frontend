@@ -37,9 +37,12 @@ function shortId(id: string | undefined): string {
 }
 
 // P5.4: React.memo prevents unnecessary re-renders
+/**
+ * Documentation for module export
+ */
 export const PartyRoleListView = React.memo(function PartyRoleListView() {
   useModuleLocales(() => import("../../../locales"), "party-kernel.partyRole");
-  const { vm } = usePartyRoleViewModel();
+  const { vm, lookupParties } = usePartyRoleViewModel();
   const { t, language } = useI18n();
 
   const TYPE_OPTIONS = [
@@ -88,7 +91,9 @@ export const PartyRoleListView = React.memo(function PartyRoleListView() {
       {
         name: "partyId",
         label: t("partyRole.form.partyId"),
-        type: "text" as const,
+        type: "server-select" as const,
+        searchType: "server" as const,
+        onServerSearch: lookupParties,
         placeholder: t("partyRole.form.partyIdPlaceholder"),
         required: true,
       },
@@ -106,7 +111,9 @@ export const PartyRoleListView = React.memo(function PartyRoleListView() {
       {
         name: "partyId",
         label: t("partyRole.form.partyId"),
-        type: "text" as const,
+        type: "server-select" as const,
+        searchType: "server" as const,
+        onServerSearch: lookupParties,
         placeholder: t("partyRole.form.partyIdPlaceholder"),
         required: true,
       },

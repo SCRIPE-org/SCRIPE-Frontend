@@ -9,13 +9,7 @@ import type { CSSProperties } from "react";
 import { motion } from "framer-motion";
 import { useDocsI18n } from "../../providers/DocsI18nProvider";
 import type { ValuePropsBlockSection } from "../../../domain/entities/DocSection";
-import {
-  ICONS,
-  ICON_COLORS,
-  ICON_BG_COLORS,
-  BAR_DATA,
-  CELL_SIZES,
-} from "./ValuePropsIcons";
+import { ICONS, ICON_COLORS, ICON_BG_COLORS, BAR_DATA, CELL_SIZES } from "./ValuePropsIcons";
 import { ValuePropsCodeSnippet } from "./ValuePropsCodeSnippet";
 
 const EASE: [number, number, number, number] = [0.16, 1, 0.3, 1];

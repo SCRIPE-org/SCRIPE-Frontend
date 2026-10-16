@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 // FILE-EXCEPTION: file length
 /**
  * DashboardBuilderTab — Full 61-setting dashboard builder for Customizer Studio
@@ -947,20 +948,11 @@ export function DashboardBuilderTab({ settings, onUpdate }: DashboardBuilderTabP
   const animationLabel = useCallback((v: string) => t(`studio.dashboard.animation.${v}`), [t]);
   const hoverLabel = useCallback((v: string) => t(`studio.dashboard.hover.${v}`), [t]);
   const logoTypeLabel = useCallback((v: string) => t(`studio.dashboard.logoTypes.${v}`), [t]);
-  const logoAnimLabel = useCallback(
-    (v: string) => t(`studio.dashboard.logoAnimations.${v}`),
-    [t]
-  );
+  const logoAnimLabel = useCallback((v: string) => t(`studio.dashboard.logoAnimations.${v}`), [t]);
   const logoSizeLabel = useCallback((v: string) => t(`studio.dashboard.logoSizes.${v}`), [t]);
   const navStyleLabel = useCallback((v: string) => t(`studio.dashboard.navStyles.${v}`), [t]);
-  const iconStyleLabel = useCallback(
-    (v: string) => t(`studio.dashboard.iconStyles.${v}`),
-    [t]
-  );
-  const toastStyleLabel = useCallback(
-    (v: string) => t(`studio.dashboard.toastStyles.${v}`),
-    [t]
-  );
+  const iconStyleLabel = useCallback((v: string) => t(`studio.dashboard.iconStyles.${v}`), [t]);
+  const toastStyleLabel = useCallback((v: string) => t(`studio.dashboard.toastStyles.${v}`), [t]);
   const sidebarStyleLabel = useCallback((v: string) => t(`studio.dashboard.styles.${v}`), [t]);
   const headerStyleLabel = useCallback((v: string) => t(`studio.dashboard.styles.${v}`), [t]);
   const sidebarPosLabel = useCallback(
@@ -978,10 +970,7 @@ export function DashboardBuilderTab({ settings, onUpdate }: DashboardBuilderTabP
     [t]
   );
   // Generic component style label
-  const componentStyleLabel = useCallback(
-    (v: string) => t(`studio.dashboard.styles.${v}`),
-    [t]
-  );
+  const componentStyleLabel = useCallback((v: string) => t(`studio.dashboard.styles.${v}`), [t]);
 
   // Localized component style items (memoized so the list rebuilds on language change)
   const componentStyles = useMemo(
@@ -1047,7 +1036,9 @@ export function DashboardBuilderTab({ settings, onUpdate }: DashboardBuilderTabP
                 }}
               />
               <div className="flex items-center gap-1.5 pt-0.5">
-                <span className="text-sm" aria-hidden="true">{preset.icon}</span>
+                <span className="text-sm" aria-hidden="true">
+                  {preset.icon}
+                </span>
                 <span className="text-[10px] font-semibold text-nx-ink">
                   {t(`studio.dashboard.preset.${preset.localeKey}`)}
                 </span>

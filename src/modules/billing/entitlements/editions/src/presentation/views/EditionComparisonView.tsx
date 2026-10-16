@@ -12,7 +12,7 @@
 "use client";
 
 import { useRef, useState } from "react";
-import {  cn , resolveIntlLocale } from "@core/common/utils";
+import { cn, resolveIntlLocale } from "@core/common/utils";
 // Aliased because this file keeps a locale-aware wrapper of the same name below.
 import { formatPrice as formatCurrency } from "@core/constants/currencies";
 import { useI18n } from "@core/providers/i18n-provider";

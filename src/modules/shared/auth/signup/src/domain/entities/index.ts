@@ -320,13 +320,7 @@ export interface SignupResult {
 /** GET /signup/status response — the finalize page polls this. */
 export interface SignupStatusResult {
   status:
-    | "pending"
-    | "awaiting_payment"
-    | "active"
-    | "consumed"
-    | "failed"
-    | "abandoned"
-    | "unknown";
+    "pending" | "awaiting_payment" | "active" | "consumed" | "failed" | "abandoned" | "unknown";
   statusMessage: string | null;
   expiresAt: string | null;
 }
@@ -357,13 +351,7 @@ export interface SignupCompleteResult {
 /** Result of POST /signup/resume — plan snapshot for the resume modal. */
 export interface ResumeSessionResult {
   status:
-    | "pending"
-    | "awaiting_payment"
-    | "active"
-    | "failed"
-    | "consumed"
-    | "abandoned"
-    | "unknown";
+    "pending" | "awaiting_payment" | "active" | "failed" | "consumed" | "abandoned" | "unknown";
   editionId: string | null;
   billingCycle: "monthly" | "yearly" | null;
   currency: string | null;

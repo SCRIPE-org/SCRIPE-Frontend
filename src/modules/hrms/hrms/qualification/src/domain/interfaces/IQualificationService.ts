@@ -16,6 +16,9 @@ export interface QualificationListResult {
   hasPreviousPage: boolean;
 }
 
+/**
+ * Documentation for module export
+ */
 export interface IQualificationService {
   getAll(params: {
     page: number;

@@ -38,8 +38,14 @@ export const ENTITY_TYPE_SCREEN_AGREEMENTS = [
   "frontendScreenOnly",
 ] as const;
 
+/**
+ * Documentation for ENTITY_TYPE_SCREEN_AGREEMENTS)[number]
+ */
 export type EntityTypeScreenAgreement = (typeof ENTITY_TYPE_SCREEN_AGREEMENTS)[number];
 
+/**
+ * Documentation for module export
+ */
 export interface EntityTypeCatalogRow {
   entityType: EntityTypeInfo;
   /** The backend registry's own `HasFrontendScreen` for this key. */
@@ -49,12 +55,18 @@ export interface EntityTypeCatalogRow {
   agreement: EntityTypeScreenAgreement;
 }
 
+/**
+ * Documentation for module export
+ */
 export interface EntityTypeCatalogStats {
   total: number;
   withScreen: number;
   drift: number;
 }
 
+/**
+ * Documentation for module export
+ */
 export function useEntityTypeCatalogViewModel() {
   const { customFieldRepository } = getCustomFieldsContainer();
 

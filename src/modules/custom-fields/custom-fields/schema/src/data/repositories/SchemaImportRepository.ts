@@ -8,9 +8,15 @@
 import type { ISchemaImportRepository } from "../../domain/interfaces/ISchemaImportRepository";
 import type { ISchemaImportService } from "../../domain/interfaces/ISchemaImportService";
 import type { SchemaImportResult } from "../../domain/entities/SchemaImportResult";
-import { ImportSchemaBundleFailure, type SchemaImportBundlePayload } from "../models/SchemaImportModel";
+import {
+  ImportSchemaBundleFailure,
+  type SchemaImportBundlePayload,
+} from "../models/SchemaImportModel";
 import { SchemaImportMapper } from "../mappers/SchemaImportMapper";
 
+/**
+ * Documentation for module export
+ */
 export class SchemaImportRepository implements ISchemaImportRepository {
   constructor(private readonly service: ISchemaImportService) {}
 

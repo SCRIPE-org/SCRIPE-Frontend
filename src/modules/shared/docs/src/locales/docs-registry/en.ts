@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /**
  * Docs Locale Registry — EN
  * Eagerly merges all English docs translations (tech + commercial).

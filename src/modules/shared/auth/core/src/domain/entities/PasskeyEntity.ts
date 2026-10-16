@@ -7,6 +7,9 @@
 
 import { formatDateUtc } from "@core/common/utils";
 
+/**
+ * Documentation for module export
+ */
 export interface PasskeyData {
   id: string;
   deviceName: string;
