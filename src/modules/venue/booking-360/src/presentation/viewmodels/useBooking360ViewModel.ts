@@ -77,6 +77,22 @@ function holdIsAuthoritativelyExpired(reservation: Booking360Reservation): boole
   );
 }
 
+type ActionIntentKey = { fingerprint: string; key: string };
+
+// Preserve ambiguous retries for identical payloads while edits start a distinct business intent.
+function getActionIntentKey(
+  actionKeys: Map<string, ActionIntentKey>,
+  actionKey: string,
+  fingerprint: string
+): string {
+  const existing = actionKeys.get(actionKey);
+  if (existing?.fingerprint === fingerprint) return existing.key;
+
+  const key = crypto.randomUUID();
+  actionKeys.set(actionKey, { fingerprint, key });
+  return key;
+}
+
 /**
  * Documentation for useBooking360ViewModel
  */
@@ -100,7 +116,7 @@ export function useBooking360ViewModel(
   const [state, setState] = useState(initialState);
   const generation = useRef(0);
   const submitting = useRef(false);
-  const actionKeys = useRef(new Map<string, string>());
+  const actionKeys = useRef(new Map<string, ActionIntentKey>());
   const quoteIntents = useRef(
     new Map<string, { key: string; expiresAtUtc: string; quoteId?: string }>()
   );
@@ -259,15 +275,15 @@ export function useBooking360ViewModel(
       operationalFeedback: null,
     }));
     try {
-      const mapKey = `${reservation.id}:confirm`;
-      const key = actionKeys.current.get(mapKey) ?? crypto.randomUUID();
-      actionKeys.current.set(mapKey, key);
+      const mapKey = "confirm";
       const priceQuoteId = await calculateCurrentQuote(
         reservation,
         reservation.resourceId,
         reservation.requestedStartUtc,
         reservation.requestedEndUtc
       );
+      const intent = JSON.stringify(["confirm", reservation.id, priceQuoteId]);
+      const key = getActionIntentKey(actionKeys.current, mapKey, intent);
       await bookingRepository.confirm(reservation.id, key, priceQuoteId);
       const refreshed = await load();
       if (refreshed?.status === "Confirmed") quoteIntents.current.clear();
@@ -339,18 +355,33 @@ export function useBooking360ViewModel(
       }));
 
       try {
-        const mapKey = `${reservation.id}:${action}`;
-        const idempotencyKey = actionKeys.current.get(mapKey) ?? crypto.randomUUID();
-        actionKeys.current.set(mapKey, idempotencyKey);
+        const mapKey = action;
+        const getIntentKey = (priceQuoteId?: string) =>
+          getActionIntentKey(
+            actionKeys.current,
+            mapKey,
+            JSON.stringify([
+              action,
+              reservation.id,
+              normalizedReason,
+              options?.rescheduleInput?.resourceId,
+              options?.rescheduleInput?.requestedStartUtc,
+              options?.rescheduleInput?.requestedEndUtc,
+              options?.changeResourceInput?.targetResourceId,
+              options?.changeResourceInput?.requestedStartUtc,
+              options?.changeResourceInput?.requestedEndUtc,
+              priceQuoteId ?? null,
+            ])
+          );
 
         if (action === "checkIn") {
-          await bookingRepository.checkIn(reservation.id, idempotencyKey);
+          await bookingRepository.checkIn(reservation.id, getIntentKey());
         } else if (action === "complete") {
-          await bookingRepository.complete(reservation.id, idempotencyKey);
+          await bookingRepository.complete(reservation.id, getIntentKey());
         } else if (action === "noShow") {
-          await bookingRepository.markNoShow(reservation.id, idempotencyKey, normalizedReason);
+          await bookingRepository.markNoShow(reservation.id, getIntentKey(), normalizedReason);
         } else if (action === "cancel") {
-          await bookingRepository.cancel(reservation.id, idempotencyKey, normalizedReason);
+          await bookingRepository.cancel(reservation.id, getIntentKey(), normalizedReason);
         } else if (action === "reschedule" && options?.rescheduleInput) {
           const priceQuoteId = reservation.priceSnapshotId
             ? await calculateCurrentQuote(
@@ -360,6 +391,7 @@ export function useBooking360ViewModel(
                 options.rescheduleInput.requestedEndUtc
               )
             : undefined;
+          const idempotencyKey = getIntentKey(priceQuoteId);
           await bookingRepository.reschedule(reservation.id, {
             resourceId: options.rescheduleInput.resourceId,
             requestedStartUtc: options.rescheduleInput.requestedStartUtc,
@@ -376,6 +408,7 @@ export function useBooking360ViewModel(
                 options.changeResourceInput.requestedEndUtc
               )
             : undefined;
+          const idempotencyKey = getIntentKey(priceQuoteId);
           await bookingRepository.changeResource(reservation.id, {
             targetResourceId: options.changeResourceInput.targetResourceId,
             requestedStartUtc: options.changeResourceInput.requestedStartUtc,

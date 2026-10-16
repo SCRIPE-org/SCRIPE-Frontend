@@ -2022,6 +2022,9 @@ export const es = {
         holdLifecycleTitle: "Ciclo de Vida del Bloqueo en 2 Fases",
         holdLifecycleDesc:
           "Retenciones temporales de 15 minutos que protegen el turno durante la pasarela de pago.",
+        retrySafetyTitle: "Reintentos seguros y recibos de reserva",
+        retrySafetyDesc:
+          "Conserve la misma clave de idempotencia al reintentar una misma intención de reserva. El resultado exitoso guardado solo se devuelve después de volver a comprobar el tenant y el alcance operativo actual del usuario en la instalación; no se confirma otra vez la reserva ni se consume de nuevo la cuota. Reutilizar la clave con otra reserva, cotización, instalación, intervalo o motivo de cancelación/ausencia produce un conflicto. En Booking 360, los reintentos sin cambios conservan la clave; editar el motivo de cancelación o ausencia inicia una intención nueva con otra clave, y una cotización actualizada crea una nueva intención de confirmación. Los recibos antiguos sin huella de la solicitud siguen siendo legibles con garantías de comparación más limitadas.",
         reducerTitle: "Reductor de Estado en Cliente",
         reducerDesc:
           "Actualizaciones reactivas en interfaz para mantener los turnos sincronizados entre navegadores.",

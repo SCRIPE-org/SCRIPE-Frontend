@@ -34,6 +34,15 @@ const sections: DocSection[] = [
 [Checked-In] ────► [Completed]`,
   },
 
+  // ─── Retry Safety and Receipt Replay ──────────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "modules.venue.booking.retrySafetyTitle",
+    id: "retry-safety",
+  },
+  { type: "paragraph", contentKey: "modules.venue.booking.retrySafetyDesc" },
+
   // ─── Client-Side Reducer Architecture ─────────────────────────────
   {
     type: "heading",

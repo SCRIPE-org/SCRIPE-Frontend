@@ -1981,6 +1981,9 @@ export const de = {
         holdLifecycleTitle: "Zwei-Phasen-Buchungszyklus",
         holdLifecycleDesc:
           "Temporäre 15-Minuten-Reservierungen sichern Plätze während des Bezahlvorgangs.",
+        retrySafetyTitle: "Sichere Wiederholungen und Buchungsbelege",
+        retrySafetyDesc:
+          "Verwenden Sie bei Wiederholungen derselben Buchungsabsicht denselben Idempotenzschlüssel. Ein gespeichertes erfolgreiches Ergebnis wird erst nach erneuter Prüfung des aktuellen Mandanten und des betrieblichen Zugriffs auf den Standort zurückgegeben; die Buchung wird dabei weder erneut bestätigt noch das Kontingent erneut belastet. Derselbe Schlüssel mit anderer Buchung, anderem Preisangebot, Ziel, Zeitraum oder Stornierungs-/Nichterscheinensgrund führt zu einem Konflikt. In Booking 360 behält eine unveränderte Wiederholung denselben Schlüssel; eine geänderte Begründung für Stornierung oder Nichterscheinen startet eine neue Absicht mit einem neuen Schlüssel. Ein aktualisiertes Preisangebot erzeugt ebenfalls eine neue Bestätigungsabsicht. Ältere Belege ohne Anfrage-Fingerabdruck bleiben mit eingeschränkten Vergleichsgarantien lesbar.",
         reducerTitle: "Client-seitiger Zustands-Reducer",
         reducerDesc:
           "Vorausschauende UI-Aktualisierungen halten Schlitze über alle Browserfenster synchron.",

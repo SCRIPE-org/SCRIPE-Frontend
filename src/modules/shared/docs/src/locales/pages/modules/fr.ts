@@ -2043,6 +2043,9 @@ export const fr = {
         holdLifecycleTitle: "Cycle de l'Option en 2 Phases",
         holdLifecycleDesc:
           "Réservation temporaire de 15 minutes protégeant le créneau durant le paiement.",
+        retrySafetyTitle: "Nouvelles tentatives sûres et reçus de réservation",
+        retrySafetyDesc:
+          "Conservez la même clé d’idempotence pour les tentatives d’une même intention de réservation. Un résultat positif enregistré n’est renvoyé qu’après une nouvelle vérification du tenant et des droits opérationnels actuels sur le site ; la réservation n’est pas confirmée une seconde fois et le quota n’est pas débité à nouveau. Réutiliser la clé avec une autre réservation, un autre devis, une autre ressource, une autre période ou un autre motif d’annulation/non-présentation provoque un conflit. Dans Booking 360, une nouvelle tentative au contenu inchangé conserve la même clé ; modifier le motif d’annulation ou de non-présentation crée une nouvelle intention avec une nouvelle clé. Un devis actualisé crée également une nouvelle intention de confirmation. Les anciens reçus sans empreinte de requête restent lisibles avec des garanties de comparaison plus limitées.",
         reducerTitle: "Réducteur d'État Côté Client",
         reducerDesc:
           "Mise à jour prédictive maintenant les créneaux synchronisés entre onglets ouverts.",
