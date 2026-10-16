@@ -20,6 +20,10 @@ export interface PartyProfileData {
   roles: PartyRole[];
   relationships: PartyRelationship[];
   mergeCandidates: MergeCandidate[];
+  canonicalProfile?: {
+    fullName?: string | null;
+    legalName?: string | null;
+  } | null;
 }
 
 export class PartyProfile {
@@ -110,7 +114,7 @@ export class PartyProfile {
   }
 
   get legalName(): string | null {
-    return this.data.organization?.legalName || null;
+    return this.data.organization?.legalName || this.data.canonicalProfile?.legalName || null;
   }
 
   get taxId(): string | null {
@@ -119,8 +123,14 @@ export class PartyProfile {
 
   get fullName(): string {
     if (this.data.person) {
+      if (this.data.person.fullName && this.data.person.fullName.trim().length > 0) {
+        return this.data.person.fullName.trim();
+      }
       const parts = [this.data.person.firstName, this.data.person.lastName].filter(Boolean);
       if (parts.length > 0) return parts.join(" ");
+    }
+    if (this.data.canonicalProfile?.fullName && this.data.canonicalProfile.fullName.trim().length > 0) {
+      return this.data.canonicalProfile.fullName.trim();
     }
     return this.data.party.displayName;
   }

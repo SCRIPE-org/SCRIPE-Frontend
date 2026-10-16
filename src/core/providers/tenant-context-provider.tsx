@@ -24,6 +24,8 @@ import { SYSTEM_PERMISSIONS } from "@core/common/types/permissions";
 import { STORAGE_KEYS } from "@core/config/storage-keys";
 import { appLogger } from "../common/logger";
 import { clearNavigationCaches } from "@modules/auth/core/data/utils/auth-storage-cleanup";
+import { TENANTS_ENDPOINTS } from "@core/config/api-endpoints";
+import { buildUrl } from "@core/config/api-endpoints/_shared";
 
 /**
  * Tenant information for context
@@ -114,10 +116,9 @@ export function TenantContextProvider({ children }: TenantContextProviderProps) 
 
     // Auto-discover default tenant context if none is active
     if (canEnterTenantWorld) {
+      const url = buildUrl(TENANTS_ENDPOINTS.TENANTS.LIST, { page: 1, pageSize: 1 });
       apiService
-        .get<{ items: Array<{ id: string; name: string; code: string }> }>(
-          "/api/v1/tenants?page=1&pageSize=1"
-        )
+        .get<{ items: Array<{ id: string; name: string; code: string }> }>(url)
         .then((res) => {
           const first = res?.items?.[0];
           if (first?.id) {

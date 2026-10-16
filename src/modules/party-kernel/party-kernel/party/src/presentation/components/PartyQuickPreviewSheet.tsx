@@ -34,6 +34,9 @@ interface PartyQuickPreviewSheetProps {
   onEditParty?: (party: Party) => void;
 }
 
+/**
+ * Slide-over sheet for inspecting quick summary details of a party.
+ */
 export function PartyQuickPreviewSheet({
   party,
   open,
@@ -105,10 +108,12 @@ export function PartyQuickPreviewSheet({
                 <span className="text-nx-ink-3 font-medium">
                   {t("party.quickPreview.canonicalId")}
                 </span>
-                <button
+                <Button
                   type="button"
+                  variant="ghost"
+                  size="sm"
                   onClick={handleCopyId}
-                  className="flex items-center gap-1 text-nx-ink hover:text-nx-accent transition-colors font-mono text-[11px]"
+                  className="h-6 px-1.5 py-0 flex items-center gap-1 text-nx-ink hover:text-nx-accent transition-colors font-mono text-[11px]"
                   title="Copy ID"
                 >
                   {copiedId ? (
@@ -122,7 +127,7 @@ export function PartyQuickPreviewSheet({
                       <span>Copy</span>
                     </>
                   )}
-                </button>
+                </Button>
               </div>
               <div className="font-mono text-xs text-nx-ink truncate bg-nx-surface px-2 py-1 rounded border border-nx-border select-all">
                 {party.id}

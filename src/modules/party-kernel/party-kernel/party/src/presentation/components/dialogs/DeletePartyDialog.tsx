@@ -23,6 +23,9 @@ interface DeletePartyDialogProps {
   onSuccess?: () => void;
 }
 
+/**
+ * Confirmation dialog for soft-deleting a party record.
+ */
 export function DeletePartyDialog({
   party,
   open,

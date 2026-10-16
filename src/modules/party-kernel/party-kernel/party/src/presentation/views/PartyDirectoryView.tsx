@@ -10,6 +10,8 @@ import { useModuleLocales } from "@core/hooks/use-module-locales";
 import { useI18n } from "@core/providers/i18n-provider";
 import { resolveIntlLocale } from "@core/common/utils";
 
+import { useBreadcrumbOverride } from "@core/hooks/use-breadcrumb-override";
+
 // Design System Primitives (@core/ui/*)
 import { Button } from "@core/ui/button";
 import { Input } from "@core/ui/input";
@@ -40,12 +42,22 @@ import {
   SelectItem,
 } from "@core/ui/select";
 
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter,
+} from "@core/ui/dialog";
+
 // Dialogs & Sheets
 import { CreatePersonDialog } from "../components/dialogs/CreatePersonDialog";
 import { CreateOrganizationDialog } from "../components/dialogs/CreateOrganizationDialog";
 import { EditPartyDialog } from "../components/dialogs/EditPartyDialog";
 import { DeletePartyDialog } from "../components/dialogs/DeletePartyDialog";
 import { PartyQuickPreviewSheet } from "../components/PartyQuickPreviewSheet";
+import { PartyPicker, type PartySelectionResult } from "../components/PartyPicker";
 
 // Icons
 import {
@@ -67,6 +79,9 @@ import {
   Eye,
 } from "lucide-react";
 
+/**
+ * Enterprise party directory view supporting table/grid slicing, search, filtering, and create dialogs.
+ */
 export const PartyDirectoryView = React.memo(function PartyDirectoryView() {
   useModuleLocales(() => import("../../../locales"), "party-kernel.party");
   const router = useRouter();
@@ -74,6 +89,11 @@ export const PartyDirectoryView = React.memo(function PartyDirectoryView() {
   const intlLocale = resolveIntlLocale(language);
 
   const vm = usePartyDirectoryViewModel();
+  const [isPickerDemoOpen, setIsPickerDemoOpen] = React.useState(false);
+  const [pickerSelection, setPickerSelection] = React.useState<PartySelectionResult | null>(null);
+
+  // Customer-facing naming strictly unified to Contacts / جهات الاتصال
+  useBreadcrumbOverride(t("party.directory.breadcrumb") || t("party.directory.title") || "Contacts");
 
   const handleNavigateToProfile = (partyId: string) => {
     router.push(`/party-kernel/parties/${partyId}`);
@@ -109,6 +129,17 @@ export const PartyDirectoryView = React.memo(function PartyDirectoryView() {
           <Button
             variant="outline"
             size="sm"
+            onClick={() => setIsPickerDemoOpen(true)}
+            className="gap-1.5"
+            data-testid="open-party-picker-btn"
+          >
+            <Search className="h-4 w-4 text-nx-accent" />
+            <span>{t("party.picker.findExisting") || "Quick Lookup"}</span>
+          </Button>
+
+          <Button
+            variant="outline"
+            size="sm"
             onClick={() => vm.refetch()}
             disabled={vm.isFetching}
             className="gap-1.5"
@@ -116,7 +147,9 @@ export const PartyDirectoryView = React.memo(function PartyDirectoryView() {
             <RefreshCw
               className={`h-4 w-4 ${vm.isFetching ? "animate-spin" : ""}`}
             />
-            <span className="sr-only sm:not-sr-only">Refresh</span>
+            <span className="sr-only sm:not-sr-only">
+              {t("party.directory.refresh") || "Refresh"}
+            </span>
           </Button>
 
           {vm.permissions.canCreatePerson && (
@@ -145,10 +178,17 @@ export const PartyDirectoryView = React.memo(function PartyDirectoryView() {
       {/* ── Metric / Stats Filter Chips ────────────────────────────── */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
         {/* Total Parties */}
-        <button
-          type="button"
+        <Card
+          role="button"
+          tabIndex={0}
           onClick={() => vm.setSelectedType("all")}
-          className={`flex items-center justify-between rounded-xl p-4 text-start transition-all border ${
+          onKeyDown={(e) => {
+            if (e.key === "Enter" || e.key === " ") {
+              e.preventDefault();
+              vm.setSelectedType("all");
+            }
+          }}
+          className={`flex items-center justify-between rounded-xl p-4 text-start transition-all cursor-pointer border ${
             vm.selectedType === "all"
               ? "bg-nx-accent/5 border-nx-accent shadow-sm"
               : "bg-nx-surface border-nx-border hover:bg-nx-surface-2"
@@ -165,19 +205,26 @@ export const PartyDirectoryView = React.memo(function PartyDirectoryView() {
           <div
             className={`flex h-10 w-10 items-center justify-center rounded-lg ${
               vm.selectedType === "all"
-                ? "bg-nx-accent text-white"
+                ? "bg-nx-accent-fill text-nx-on-fill"
                 : "bg-nx-surface-2 text-nx-ink-2"
             }`}
           >
             <Users className="h-5 w-5" />
           </div>
-        </button>
+        </Card>
 
         {/* People */}
-        <button
-          type="button"
+        <Card
+          role="button"
+          tabIndex={0}
           onClick={() => vm.setSelectedType("Person")}
-          className={`flex items-center justify-between rounded-xl p-4 text-start transition-all border ${
+          onKeyDown={(e) => {
+            if (e.key === "Enter" || e.key === " ") {
+              e.preventDefault();
+              vm.setSelectedType("Person");
+            }
+          }}
+          className={`flex items-center justify-between rounded-xl p-4 text-start transition-all cursor-pointer border ${
             vm.selectedType === "Person"
               ? "bg-blue-500/5 border-blue-500 shadow-sm"
               : "bg-nx-surface border-nx-border hover:bg-nx-surface-2"
@@ -200,13 +247,20 @@ export const PartyDirectoryView = React.memo(function PartyDirectoryView() {
           >
             <User className="h-5 w-5" />
           </div>
-        </button>
+        </Card>
 
         {/* Organizations */}
-        <button
-          type="button"
+        <Card
+          role="button"
+          tabIndex={0}
           onClick={() => vm.setSelectedType("Organization")}
-          className={`flex items-center justify-between rounded-xl p-4 text-start transition-all border ${
+          onKeyDown={(e) => {
+            if (e.key === "Enter" || e.key === " ") {
+              e.preventDefault();
+              vm.setSelectedType("Organization");
+            }
+          }}
+          className={`flex items-center justify-between rounded-xl p-4 text-start transition-all cursor-pointer border ${
             vm.selectedType === "Organization"
               ? "bg-emerald-500/5 border-emerald-500 shadow-sm"
               : "bg-nx-surface border-nx-border hover:bg-nx-surface-2"
@@ -229,7 +283,7 @@ export const PartyDirectoryView = React.memo(function PartyDirectoryView() {
           >
             <Building className="h-5 w-5" />
           </div>
-        </button>
+        </Card>
       </div>
 
       {/* ── Search, Sort, View Controls ────────────────────────────── */}
@@ -269,30 +323,36 @@ export const PartyDirectoryView = React.memo(function PartyDirectoryView() {
 
           {/* View Mode Toggle */}
           <div className="flex items-center rounded-lg bg-nx-surface-2 p-1 border border-nx-border">
-            <button
+            <Button
               type="button"
+              variant="ghost"
+              size="icon"
               onClick={() => vm.setViewMode("table")}
-              className={`rounded-md p-1.5 transition-colors ${
+              className={`h-7 w-7 rounded-md p-1.5 transition-colors ${
                 vm.viewMode === "table"
                   ? "bg-nx-surface text-nx-ink shadow-xs"
                   : "text-nx-ink-3 hover:text-nx-ink"
               }`}
               title={t("party.directory.viewTable")}
+              aria-label={t("party.directory.viewTable")}
             >
               <List className="h-4 w-4" />
-            </button>
-            <button
+            </Button>
+            <Button
               type="button"
+              variant="ghost"
+              size="icon"
               onClick={() => vm.setViewMode("grid")}
-              className={`rounded-md p-1.5 transition-colors ${
+              className={`h-7 w-7 rounded-md p-1.5 transition-colors ${
                 vm.viewMode === "grid"
                   ? "bg-nx-surface text-nx-ink shadow-xs"
                   : "text-nx-ink-3 hover:text-nx-ink"
               }`}
               title={t("party.directory.viewGrid")}
+              aria-label={t("party.directory.viewGrid")}
             >
               <LayoutGrid className="h-4 w-4" />
-            </button>
+            </Button>
           </div>
         </div>
       </div>
@@ -359,8 +419,10 @@ export const PartyDirectoryView = React.memo(function PartyDirectoryView() {
                         <div className="font-medium text-nx-ink group-hover:text-nx-accent transition-colors truncate">
                           {party.displayName}
                         </div>
-                        <div className="text-xs font-mono text-nx-ink-3 truncate max-w-[220px]">
-                          {party.id}
+                        <div className="text-xs text-nx-ink-3 truncate max-w-[220px]">
+                          {party.isPerson
+                            ? t("party.types.Person")
+                            : t("party.types.Organization")}
                         </div>
                       </div>
                     </div>
@@ -472,8 +534,10 @@ export const PartyDirectoryView = React.memo(function PartyDirectoryView() {
                       <CardTitle className="text-base truncate">
                         {party.displayName}
                       </CardTitle>
-                      <div className="text-xs font-mono text-nx-ink-3 truncate max-w-[180px]">
-                        {party.id}
+                      <div className="text-xs text-nx-ink-3 truncate max-w-[180px]">
+                        {party.isPerson
+                          ? t("party.types.Person")
+                          : t("party.types.Organization")}
                       </div>
                     </div>
                   </div>
@@ -616,6 +680,47 @@ export const PartyDirectoryView = React.memo(function PartyDirectoryView() {
           vm.setEditingParty(party);
         }}
       />
+
+      {/* ── PartyPicker Modal ────────────────────────────── */}
+      <Dialog open={isPickerDemoOpen} onOpenChange={setIsPickerDemoOpen}>
+        <DialogContent className="sm:max-w-[480px]">
+          <DialogHeader>
+            <DialogTitle>{t("party.picker.title") || "Select Contact"}</DialogTitle>
+            <DialogDescription>
+              {t("party.picker.searchPlaceholder") || "Search contacts by name..."}
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className="py-4">
+            <PartyPicker
+              value={pickerSelection}
+              onSelect={setPickerSelection}
+              label={t("party.picker.selectedContact") || "Contact Lookup"}
+            />
+          </div>
+
+          <DialogFooter className="gap-2 sm:gap-0">
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => setIsPickerDemoOpen(false)}
+            >
+              {t("party.dialog.cancel") || "Close"}
+            </Button>
+            {pickerSelection && (
+              <Button
+                type="button"
+                onClick={() => {
+                  setIsPickerDemoOpen(false);
+                  handleNavigateToProfile(pickerSelection.id);
+                }}
+              >
+                {t("party.directory.viewProfile") || "View Profile"}
+              </Button>
+            )}
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 });

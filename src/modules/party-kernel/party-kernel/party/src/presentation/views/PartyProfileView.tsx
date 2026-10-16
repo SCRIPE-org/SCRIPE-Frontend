@@ -7,6 +7,8 @@ import { useModuleLocales } from "@core/hooks/use-module-locales";
 import { useI18n } from "@core/providers/i18n-provider";
 import { resolveIntlLocale } from "@core/common/utils";
 
+import { useBreadcrumbOverride } from "@core/hooks/use-breadcrumb-override";
+
 // Design System Primitives (@core/ui/*)
 import { Button } from "@core/ui/button";
 import { Badge } from "@core/ui/badge";
@@ -14,6 +16,12 @@ import { Card, CardContent, CardHeader, CardTitle } from "@core/ui/card";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@core/ui/tabs";
 import { Skeleton } from "@core/ui/skeleton";
 import { EmptyState } from "@core/ui/empty-state";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@core/ui/tooltip";
 
 // Dialogs
 import { EditPartyDialog } from "../components/dialogs/EditPartyDialog";
@@ -36,6 +44,7 @@ import {
   Users,
   ShieldCheck,
   AlertTriangle,
+  AlertCircle,
   Plus,
   Trash2,
   Edit3,
@@ -49,6 +58,9 @@ interface PartyProfileViewProps {
   partyId: string;
 }
 
+/**
+ * Comprehensive 360-degree party profile workspace view.
+ */
 export const PartyProfileView = React.memo(function PartyProfileView({
   partyId,
 }: PartyProfileViewProps) {
@@ -63,6 +75,11 @@ export const PartyProfileView = React.memo(function PartyProfileView({
   const vm = usePartyProfileViewModel(partyId);
   const profile = vm.profile;
 
+  // Unify customer-facing breadcrumbs to Contacts and use authorized display name for terminal segment
+  useBreadcrumbOverride(
+    profile?.displayName || t("party.profile.title") || "Contact Profile"
+  );
+
   const completeness = React.useMemo(() => {
     if (!profile) return { score: 0, checks: [] };
     if (profile.isPerson) {
@@ -75,16 +92,15 @@ export const PartyProfileView = React.memo(function PartyProfileView({
       const passedCount = checks.filter((c) => c.passed).length;
       return { score: passedCount * 25, checks };
     } else {
-      const isRepLinked = profile.relationships.some((r) =>
-        /representative|authorizedsignatory|director|manager|liaison|rep/i.test(
-          r.relationshipType
-        )
-      );
       const checks = [
         { label: "Legal Name", passed: !!profile.legalName },
         { label: "Commercial Name", passed: !!profile.displayName },
         { label: "Corporate Contact", passed: !!(profile.primaryPhone || profile.primaryEmail) },
-        { label: "Authorized Representative", passed: !!isRepLinked },
+        {
+          label: "Authorized Representative (Contract Pending)",
+          passed: false,
+          pendingContract: true,
+        },
       ];
       const passedCount = checks.filter((c) => c.passed).length;
       return { score: passedCount * 25, checks };
@@ -204,22 +220,28 @@ export const PartyProfileView = React.memo(function PartyProfileView({
                   </p>
                 )}
 
-                {/* Canonical ID & Type Immutability Banner */}
+                {/* Canonical Reference & Type Immutability Banner */}
                 <div className="flex flex-wrap items-center gap-3 pt-1 text-xs text-nx-ink-3">
-                  <div className="flex items-center gap-1.5 bg-nx-surface-2 px-2.5 py-1 rounded-md border border-nx-border font-mono">
-                    <span>ID: {profile.id}</span>
-                    <button
+                  <div className="flex items-center gap-1.5 bg-nx-surface-2/80 px-2 py-0.5 rounded-md border border-nx-border/70 text-[11px] font-mono">
+                    <span className="opacity-60">Ref:</span>
+                    <span className="truncate max-w-[140px]" title={profile.id}>
+                      {profile.id.length > 18 ? `${profile.id.slice(0, 12)}…` : profile.id}
+                    </span>
+                    <Button
                       type="button"
+                      variant="ghost"
+                      size="icon"
                       onClick={handleCopyId}
-                      className="text-nx-ink-3 hover:text-nx-ink transition-colors ml-1"
-                      title="Copy ID"
+                      className="h-4 w-4 text-nx-ink-3 hover:text-nx-ink transition-colors ml-0.5 p-0"
+                      title={t("party.profile.copyCanonicalId") || "Copy Canonical ID"}
+                      aria-label={t("party.profile.copyCanonicalId") || "Copy Canonical ID"}
                     >
                       {copiedId ? (
-                        <Check className="h-3.5 w-3.5 text-emerald-500" />
+                        <Check className="h-3 w-3 text-emerald-500" />
                       ) : (
-                        <Copy className="h-3.5 w-3.5" />
+                        <Copy className="h-3 w-3" />
                       )}
-                    </button>
+                    </Button>
                   </div>
 
                   <div className="flex items-center gap-1">
@@ -239,30 +261,24 @@ export const PartyProfileView = React.memo(function PartyProfileView({
 
             {/* Right Column: Completeness & Quick Actions */}
             <div className="flex flex-col sm:items-end gap-3 shrink-0">
-              {/* Data Completeness Meter */}
+              {/* Truthful Data Summary */}
               <div className="flex flex-col gap-1.5 w-full sm:w-[220px] p-2.5 rounded-xl bg-nx-surface-2/60 border border-nx-border">
                 <div className="flex items-center justify-between text-xs">
                   <span className="text-nx-ink-2 font-medium">
                     {t("party.profile.completenessScore")}
                   </span>
-                  <span className="font-bold text-nx-accent">
-                    {completeness.score}%
+                  <span className="text-xs font-mono text-nx-ink-3">
+                    {completeness.checks.filter((c) => c.passed).length}/{completeness.checks.length}
                   </span>
                 </div>
-                <div className="h-1.5 w-full rounded-full bg-nx-surface border border-nx-border overflow-hidden">
-                  <div
-                    className="h-full bg-nx-accent transition-all duration-500 rounded-full"
-                    style={{ width: `${completeness.score}%` }}
-                  />
-                </div>
-                <div className="flex items-center gap-2 text-[10px] text-nx-ink-3 flex-wrap">
+                <div className="flex items-center gap-1.5 text-[10px] text-nx-ink-3 flex-wrap pt-0.5">
                   {completeness.checks.map((chk) => (
                     <span
                       key={chk.label}
                       className={
                         chk.passed
-                          ? "text-emerald-500 font-medium"
-                          : "text-nx-ink-3"
+                          ? "text-emerald-500 font-medium inline-flex items-center gap-0.5"
+                          : "text-nx-ink-3 inline-flex items-center gap-0.5"
                       }
                     >
                       {chk.passed ? "✓" : "○"} {chk.label}
@@ -342,9 +358,9 @@ export const PartyProfileView = React.memo(function PartyProfileView({
             <TabsTrigger value="representatives" className="gap-2">
               <Building className="h-4 w-4" />
               <span>{t("party.profile.tabRepresentatives")}</span>
-              <span className="text-xs rounded-full bg-nx-surface-2 px-1.5 py-0.5">
-                {representativesList.length}
-              </span>
+              <Badge variant="outline" className="text-[10px] px-1.5 py-0 h-4 border-amber-500/30 text-amber-400">
+                Pending Contract
+              </Badge>
             </TabsTrigger>
           )}
           <TabsTrigger value="relationships" className="gap-2">
@@ -453,8 +469,10 @@ export const PartyProfileView = React.memo(function PartyProfileView({
                       <span className="text-nx-ink-3">
                         Authorized Representatives
                       </span>
-                      <span className="font-semibold text-nx-accent">
-                        {representativesList.length}
+                      <span className="font-semibold text-xs flex items-center gap-1">
+                        <Badge variant="outline" className="text-[10px] px-1.5 py-0 h-4 border-amber-500/30 text-amber-400">
+                          Contract Pending (V1)
+                        </Badge>
                       </span>
                     </div>
                   </>
@@ -606,6 +624,28 @@ export const PartyProfileView = React.memo(function PartyProfileView({
         {/* ── Tab: Representatives & Contacts (Organization Only) ──── */}
         {profile.isOrganization && (
           <TabsContent value="representatives" className="space-y-4">
+            {/* Informative Contract Pending Banner */}
+            <div className="rounded-xl border border-amber-500/40 bg-amber-500/10 dark:bg-amber-950/60 p-4">
+              <div className="flex items-start gap-3">
+                <AlertCircle className="h-5 w-5 text-amber-600 dark:text-amber-400 shrink-0 mt-0.5" />
+                <div className="space-y-1">
+                  <div className="flex items-center gap-2">
+                    <h4 className="text-sm font-semibold text-amber-800 dark:text-amber-300">
+                      {t("party.profile.representativesContractPending") ||
+                        "Pending Backend Contract (V1 Deferred)"}
+                    </h4>
+                    <Badge variant="outline" className="text-[10px] border-amber-600/50 dark:border-amber-400/60 text-amber-700 dark:text-amber-300 bg-amber-500/10">
+                      RFC-PARTY-AFFILIATIONS
+                    </Badge>
+                  </div>
+                  <p className="text-xs text-amber-900 dark:text-amber-200/90 leading-relaxed font-medium">
+                    {t("party.profile.representativesContractPendingBanner") ||
+                      "Corporate representative and signatory affiliation contracts are deferred in PartyKernel V1 (backend supports Guardian and EmergencyContact only). Corporate signatory links will activate upon contract finalization."}
+                  </p>
+                </div>
+              </div>
+            </div>
+
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
               <div>
                 <h3 className="text-base font-semibold text-nx-ink">
@@ -615,32 +655,37 @@ export const PartyProfileView = React.memo(function PartyProfileView({
                   {t("party.profile.representativesDesc")}
                 </p>
               </div>
-              {vm.permissions.canManageRelationships && (
-                <Button
-                  size="sm"
-                  onClick={() => setIsAddRepresentativeOpen(true)}
-                  className="gap-1.5 text-xs self-start sm:self-auto"
-                >
-                  <Plus className="h-3.5 w-3.5" />
-                  <span>{t("party.profile.addRepresentative")}</span>
-                </Button>
-              )}
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <span tabIndex={0} className="inline-block">
+                      <Button
+                        size="sm"
+                        disabled
+                        className="gap-1.5 text-xs self-start sm:self-auto opacity-50 cursor-not-allowed pointer-events-none"
+                      >
+                        <Plus className="h-3.5 w-3.5" />
+                        <span>{t("party.profile.addRepresentative")}</span>
+                      </Button>
+                    </span>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p className="text-xs">
+                      {t("party.profile.addRepresentativeDisabledTooltip") ||
+                        "Representative affiliation contract is pending in V1 backend"}
+                    </p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
             </div>
 
             {representativesList.length === 0 ? (
               <EmptyState
                 icon={Building}
-                title={t("party.profile.noRepresentatives")}
-                description={t("party.profile.noRepresentativesDesc")}
-                action={
-                  vm.permissions.canManageRelationships ? (
-                    <Button
-                      variant="outline"
-                      onClick={() => setIsAddRepresentativeOpen(true)}
-                    >
-                      {t("party.profile.addRepresentative")}
-                    </Button>
-                  ) : undefined
+                title={t("party.profile.noRepresentatives") || "No Representatives Linked"}
+                description={
+                  t("party.profile.noRepresentativesDesc") ||
+                  "No corporate representatives linked. Corporate signatory affiliation is deferred in PartyKernel V1."
                 }
               />
             ) : (
