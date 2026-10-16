@@ -38,7 +38,7 @@ function shortId(id: string | undefined): string {
  */
 export const PartyRelationshipListView = React.memo(function PartyRelationshipListView() {
   useModuleLocales(() => import("../../../locales"), "party-kernel.partyRelationship");
-  const { vm } = usePartyRelationshipViewModel();
+  const { vm, lookupParties } = usePartyRelationshipViewModel();
   const { t, language } = useI18n();
 
   const TYPE_OPTIONS = [
@@ -93,14 +93,18 @@ export const PartyRelationshipListView = React.memo(function PartyRelationshipLi
       {
         name: "sourcePartyId",
         label: t("partyRelationship.form.sourcePartyId"),
-        type: "text" as const,
+        type: "server-select" as const,
+        searchType: "server" as const,
+        onServerSearch: lookupParties,
         placeholder: t("partyRelationship.form.sourcePartyIdPlaceholder"),
         required: true,
       },
       {
         name: "targetPartyId",
         label: t("partyRelationship.form.targetPartyId"),
-        type: "text" as const,
+        type: "server-select" as const,
+        searchType: "server" as const,
+        onServerSearch: lookupParties,
         placeholder: t("partyRelationship.form.targetPartyIdPlaceholder"),
         required: true,
       },
@@ -118,14 +122,18 @@ export const PartyRelationshipListView = React.memo(function PartyRelationshipLi
       {
         name: "sourcePartyId",
         label: t("partyRelationship.form.sourcePartyId"),
-        type: "text" as const,
+        type: "server-select" as const,
+        searchType: "server" as const,
+        onServerSearch: lookupParties,
         placeholder: t("partyRelationship.form.sourcePartyIdPlaceholder"),
         required: true,
       },
       {
         name: "targetPartyId",
         label: t("partyRelationship.form.targetPartyId"),
-        type: "text" as const,
+        type: "server-select" as const,
+        searchType: "server" as const,
+        onServerSearch: lookupParties,
         placeholder: t("partyRelationship.form.targetPartyIdPlaceholder"),
         required: true,
       },

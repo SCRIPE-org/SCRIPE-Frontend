@@ -358,6 +358,7 @@ export const PAGE_PERMISSIONS: Record<string, PermissionCode[]> = {
 
   // Party Feature
   "/party-kernel/parties": [SYSTEM_PERMISSIONS.PARTY_VIEW],
+  "/party-kernel/parties/[id]": [SYSTEM_PERMISSIONS.PARTY_VIEW],
 
   // PartyPerson Feature
   "/party-kernel/party-people": [SYSTEM_PERMISSIONS.PARTY_PERSON_VIEW],

@@ -22,6 +22,8 @@ describe("PartyRepository", () => {
     create: vi.fn(),
     createPerson: vi.fn(),
     createOrganization: vi.fn(),
+    lookupPeople: vi.fn(),
+    lookupOrganizations: vi.fn(),
     update: vi.fn(),
     delete: vi.fn(),
   };
@@ -179,10 +181,13 @@ describe("PartyRepository", () => {
       });
 
       expect(partyId).toBe("org-party-200");
-      expect(partyService.createOrganization).toHaveBeenCalledWith({
-        legalName: "Riyadh Sports Hub LLC",
-        displayName: "Riyadh Sports Hub",
-      });
+      expect(partyService.createOrganization).toHaveBeenCalledWith(
+        {
+          legalName: "Riyadh Sports Hub LLC",
+          displayName: "Riyadh Sports Hub",
+        },
+        expect.any(String)
+      );
       expect(contactPointRepo.create).toHaveBeenCalledWith({
         partyId: "org-party-200",
         type: "phone",
@@ -330,26 +335,37 @@ describe("PartyRepository", () => {
       });
 
       expect(partyId).toBe("typed-org-1");
-      expect(partyService.createOrganization).toHaveBeenCalledWith({
-        legalName: "Riyadh Falcons Sports Academy LLC",
-        displayName: "Riyadh Falcons",
-      });
+      expect(partyService.createOrganization).toHaveBeenCalledWith(
+        {
+          legalName: "Riyadh Falcons Sports Academy LLC",
+          displayName: "Riyadh Falcons",
+        },
+        expect.any(String)
+      );
     });
 
-    it("never infers Organization legalName from displayName and falls back to legacy create", async () => {
-      partyService.create.mockResolvedValue({ id: "legacy-party-1" });
+    it("rejects untyped or missing legalName on Organization creation without falling back to generic root create", async () => {
+      await expect(
+        repository.create({
+          type: "Organization",
+          displayName: "Unnamed Org Display Only",
+        })
+      ).rejects.toThrow("Organization creation requires legalName");
 
-      const partyId = await repository.create({
-        type: "Organization",
-        displayName: "Unnamed Org Display Only",
-      });
-
-      expect(partyId).toBe("legacy-party-1");
-      expect(partyService.create).toHaveBeenCalledWith({
-        type: "Organization",
-        displayName: "Unnamed Org Display Only",
-      });
+      expect(partyService.create).not.toHaveBeenCalled();
       expect(partyService.createOrganization).not.toHaveBeenCalled();
+    });
+
+    it("rejects untyped or missing fullName on Person creation without falling back to generic root create", async () => {
+      await expect(
+        repository.create({
+          type: "Person",
+          displayName: "Unnamed Person Display Only",
+        })
+      ).rejects.toThrow("Person creation requires fullName");
+
+      expect(partyService.create).not.toHaveBeenCalled();
+      expect(partyService.createPerson).not.toHaveBeenCalled();
     });
 
     it("preserves stable idempotency key provided by caller across retries", async () => {
@@ -368,6 +384,113 @@ describe("PartyRepository", () => {
         }),
         stableKey
       );
+    });
+  });
+
+  describe("lookupContacts and typed lookups", () => {
+    it("delegates to lookupPeople when type is Person", async () => {
+      partyService.lookupPeople.mockResolvedValue({
+        items: [
+          {
+            id: "person-1",
+            type: "Person",
+            displayName: "Dr. Fatima Zahra",
+            fullName: "Dr. Fatima Zahra",
+            legalName: null,
+          },
+        ],
+        totalCount: 1,
+        page: 1,
+        pageSize: 20,
+      });
+
+      const res = await repository.lookupContacts({ search: "Fatima", type: "Person" });
+      expect(partyService.lookupPeople).toHaveBeenCalledWith({ search: "Fatima", page: 1, pageSize: 20 });
+      expect(res.items).toHaveLength(1);
+      expect(res.items[0].displayName).toBe("Dr. Fatima Zahra");
+      expect(res.items[0].type).toBe("Person");
+    });
+
+    it("delegates to lookupOrganizations when type is Organization", async () => {
+      partyService.lookupOrganizations.mockResolvedValue({
+        items: [
+          {
+            id: "org-1",
+            type: "Organization",
+            displayName: "Riyadh Falcons",
+            fullName: null,
+            legalName: "Riyadh Falcons Sports LLC",
+          },
+        ],
+        totalCount: 1,
+        page: 1,
+        pageSize: 20,
+      });
+
+      const res = await repository.lookupContacts({ search: "Falcons", type: "Organization" });
+      expect(partyService.lookupOrganizations).toHaveBeenCalledWith({ search: "Falcons", page: 1, pageSize: 20 });
+      expect(res.items).toHaveLength(1);
+      expect(res.items[0].legalName).toBe("Riyadh Falcons Sports LLC");
+    });
+
+    it("queries both people and organizations concurrently and sorts alphabetically when type is all", async () => {
+      partyService.lookupPeople.mockResolvedValue({
+        items: [
+          {
+            id: "p-2",
+            type: "Person",
+            displayName: "Zaid Omar",
+            fullName: "Zaid Omar",
+            legalName: null,
+          },
+        ],
+        totalCount: 1,
+        page: 1,
+        pageSize: 20,
+      });
+      partyService.lookupOrganizations.mockResolvedValue({
+        items: [
+          {
+            id: "org-2",
+            type: "Organization",
+            displayName: "Al-Ahli Club",
+            fullName: null,
+            legalName: "Al-Ahli Club LLC",
+          },
+        ],
+        totalCount: 1,
+        page: 1,
+        pageSize: 20,
+      });
+
+      const res = await repository.lookupContacts({ type: "all" });
+      expect(partyService.lookupPeople).toHaveBeenCalled();
+      expect(partyService.lookupOrganizations).toHaveBeenCalled();
+      expect(res.items).toHaveLength(2);
+      expect(res.items[0].displayName).toBe("Al-Ahli Club");
+      expect(res.items[1].displayName).toBe("Zaid Omar");
+    });
+  });
+
+  describe("addContactPoint and partial-save recovery", () => {
+    it("attaches contact point to an existing party ID without re-invoking creation", async () => {
+      contactPointRepo.create.mockResolvedValue({ id: "cp-recovery-1" });
+
+      await repository.addContactPoint({
+        partyId: "existing-party-123",
+        type: "phone",
+        value: "+966509998877",
+        isPrimary: true,
+      });
+
+      expect(contactPointRepo.create).toHaveBeenCalledWith({
+        partyId: "existing-party-123",
+        type: "phone",
+        value: "+966509998877",
+        isPrimary: true,
+      });
+      expect(partyService.createPerson).not.toHaveBeenCalled();
+      expect(partyService.createOrganization).not.toHaveBeenCalled();
     });
   });
 });

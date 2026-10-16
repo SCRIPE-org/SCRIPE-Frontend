@@ -10,6 +10,8 @@ export const PARTY_ENDPOINTS = {
   PROFILE: (id: string) => `${V1}/Parties/${id}/profile`,
   ORGANIZATIONS: `${V1}/Parties/organizations`,
   PEOPLE: `${V1}/Parties/people`,
+  PEOPLE_LOOKUP: `${V1}/Parties/people/lookup`,
+  ORGANIZATIONS_LOOKUP: `${V1}/Parties/organizations/lookup`,
   INTEGRITY_AUDIT: `${V1}/Parties/integrity-audit`,
   CREATE: `${V1}/Parties`,
   UPDATE: (id: string) => `${V1}/Parties/${id}`,

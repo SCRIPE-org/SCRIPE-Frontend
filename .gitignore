@@ -46,4 +46,3 @@ storybook-static
 /playwright-report
 /test-results
 .vscode/
-e2e/screenshots

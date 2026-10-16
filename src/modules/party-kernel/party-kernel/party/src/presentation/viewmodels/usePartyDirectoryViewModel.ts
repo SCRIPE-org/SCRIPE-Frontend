@@ -13,14 +13,28 @@ import type {
   CreateOrganizationParams,
 } from "../../domain/interfaces/IPartyRepository";
 
+/**
+ * Filter options for party directory list
+ */
 export type PartyDirectoryTypeFilter = "all" | "Person" | "Organization";
+
+/**
+ * View mode for the party directory
+ */
 export type PartyDirectoryViewMode = "table" | "grid";
+
+/**
+ * Sort options for the party directory
+ */
 export type PartyDirectorySort = "name_asc" | "name_desc" | "newest";
 
+/**
+ * Hook providing state, data, and mutations for the Party Directory view.
+ */
 export function usePartyDirectoryViewModel() {
   const { partyRepository } = getPartyKernelContainer();
   const queryClient = useQueryClient();
-  const { success, error: showError } = useEnhancedToast();
+  const { success, error: showError, warning } = useEnhancedToast();
   const { t } = useI18n();
   const [, startTransition] = useTransition();
 
@@ -100,16 +114,38 @@ export function usePartyDirectoryViewModel() {
 
   // Mutations
   const createPersonMutation = useMutation({
-    mutationFn: (params: CreatePersonParams) => partyRepository.createPerson(params),
-    onSuccess: (newPartyId) => {
+    mutationFn: (params: CreatePersonParams) => {
+      let contactFailed = false;
+      const effectiveParams: CreatePersonParams = {
+        ...params,
+        onContactPointFailure: (err, partyId) => {
+          contactFailed = true;
+          params.onContactPointFailure?.(err, partyId);
+        },
+      };
+      return partyRepository.createPerson(effectiveParams).then((partyId) => ({
+        partyId,
+        contactFailed,
+      }));
+    },
+    onSuccess: ({ partyId, contactFailed }) => {
       queryClient.invalidateQueries({ queryKey: ["parties-directory"] });
       queryClient.invalidateQueries({ queryKey: ["parties-stats-summary"] });
-      setIsCreatePersonOpen(false);
-      success({
-        title: t("party.toast.personCreated") || "Person created successfully",
-        description: t("party.toast.personCreatedDesc") || "Navigating to profile workspace",
-      });
-      return newPartyId;
+      if (contactFailed) {
+        warning({
+          title: t("party.toast.partialContactSave") || "Contact created with warnings",
+          description:
+            t("party.toast.partialContactSaveDesc") ||
+            "The contact was created, but phone or email could not be linked. You can add them from the contact profile.",
+        });
+      } else {
+        setIsCreatePersonOpen(false);
+        success({
+          title: t("party.toast.personCreated") || "Person created successfully",
+          description: t("party.toast.personCreatedDesc") || "Navigating to profile workspace",
+        });
+      }
+      return partyId;
     },
     onError: (err: Error) => {
       showError({
@@ -120,17 +156,38 @@ export function usePartyDirectoryViewModel() {
   });
 
   const createOrgMutation = useMutation({
-    mutationFn: (params: CreateOrganizationParams) =>
-      partyRepository.createOrganization(params),
-    onSuccess: (newPartyId) => {
+    mutationFn: (params: CreateOrganizationParams) => {
+      let contactFailed = false;
+      const effectiveParams: CreateOrganizationParams = {
+        ...params,
+        onContactPointFailure: (err, partyId) => {
+          contactFailed = true;
+          params.onContactPointFailure?.(err, partyId);
+        },
+      };
+      return partyRepository.createOrganization(effectiveParams).then((partyId) => ({
+        partyId,
+        contactFailed,
+      }));
+    },
+    onSuccess: ({ partyId, contactFailed }) => {
       queryClient.invalidateQueries({ queryKey: ["parties-directory"] });
       queryClient.invalidateQueries({ queryKey: ["parties-stats-summary"] });
-      setIsCreateOrgOpen(false);
-      success({
-        title: t("party.toast.orgCreated") || "Organization created successfully",
-        description: t("party.toast.orgCreatedDesc") || "Navigating to profile workspace",
-      });
-      return newPartyId;
+      if (contactFailed) {
+        warning({
+          title: t("party.toast.partialContactSave") || "Contact created with warnings",
+          description:
+            t("party.toast.partialContactSaveDesc") ||
+            "The contact was created, but phone or email could not be linked. You can add them from the contact profile.",
+        });
+      } else {
+        setIsCreateOrgOpen(false);
+        success({
+          title: t("party.toast.orgCreated") || "Organization created successfully",
+          description: t("party.toast.orgCreatedDesc") || "Navigating to profile workspace",
+        });
+      }
+      return partyId;
     },
     onError: (err: Error) => {
       showError({
@@ -237,12 +294,16 @@ export function usePartyDirectoryViewModel() {
     setPreviewParty,
 
     // Actions & Handlers
-    handleCreatePerson: (params: CreatePersonParams) =>
-      createPersonMutation.mutateAsync(params),
+    handleCreatePerson: async (params: CreatePersonParams): Promise<string> => {
+      const res = await createPersonMutation.mutateAsync(params);
+      return res.partyId;
+    },
     isCreatingPerson: createPersonMutation.isPending,
 
-    handleCreateOrganization: (params: CreateOrganizationParams) =>
-      createOrgMutation.mutateAsync(params),
+    handleCreateOrganization: async (params: CreateOrganizationParams): Promise<string> => {
+      const res = await createOrgMutation.mutateAsync(params);
+      return res.partyId;
+    },
     isCreatingOrg: createOrgMutation.isPending,
 
     handleUpdateName: (id: string, displayName: string) =>

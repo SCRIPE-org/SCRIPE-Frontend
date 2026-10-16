@@ -28,7 +28,20 @@ export interface IPartyService {
     data: import("../../data/models/PartyModel").CreatePersonRequestJson,
     idempotencyKey?: string
   ): Promise<{ id: string }>;
-  createOrganization?(data: { legalName: string; displayName?: string }): Promise<{ id: string }>;
+  createOrganization?(
+    data: { legalName: string; displayName?: string },
+    idempotencyKey?: string
+  ): Promise<{ id: string }>;
+  lookupPeople?(params: {
+    page: number;
+    pageSize: number;
+    search?: string;
+  }): Promise<import("../../data/models/PartyModel").PartyContactLookupPagedResponseJson>;
+  lookupOrganizations?(params: {
+    page: number;
+    pageSize: number;
+    search?: string;
+  }): Promise<import("../../data/models/PartyModel").PartyContactLookupPagedResponseJson>;
   update(id: string, data: Record<string, unknown>): Promise<void>;
   delete(id: string): Promise<void>;
 }

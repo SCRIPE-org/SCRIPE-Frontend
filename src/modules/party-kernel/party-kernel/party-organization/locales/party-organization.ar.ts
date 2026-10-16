@@ -15,8 +15,8 @@ export const ar = {
       createdAt: "تاريخ الإنشاء",
     },
     form: {
-      partyId: "معرف الطرف",
-      partyIdPlaceholder: "أدخل معرف الطرف المرتبط",
+      partyId: "الطرف",
+      partyIdPlaceholder: "اختر الطرف المرتبط...",
       legalName: "الاسم القانوني",
       legalNamePlaceholder: "مثال: شركة نادي أكمي الرياضي",
       taxId: "الرقم الضريبي",

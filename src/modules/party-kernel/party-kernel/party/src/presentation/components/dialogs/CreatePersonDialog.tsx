@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useRef } from "react";
 import {
   Dialog,
   DialogContent,
@@ -24,7 +24,10 @@ import {
   ChevronDown,
   ChevronUp,
   AlertTriangle,
+  CheckCircle2,
+  RefreshCw,
 } from "lucide-react";
+import { getPartyKernelContainer } from "../../../../../di";
 import type { CreatePersonParams } from "../../../domain/interfaces/IPartyRepository";
 
 interface CreatePersonDialogProps {
@@ -35,6 +38,9 @@ interface CreatePersonDialogProps {
   existingPartyNames?: string[];
 }
 
+/**
+ * Modal dialog for creating a new Person party with primary contact details.
+ */
 export function CreatePersonDialog({
   open,
   onOpenChange,
@@ -57,12 +63,22 @@ export function CreatePersonDialog({
   const [email, setEmail] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [partialSaveState, setPartialSaveState] = useState<{
+    partyId: string;
+    fullName: string;
+    failedPhone?: string;
+    failedEmail?: string;
+    errorMessage: string;
+  } | null>(null);
+  const [isRetrying, setIsRetrying] = useState(false);
+  const [retryError, setRetryError] = useState<string | null>(null);
 
   // TASK 3: Maintain a stable idempotency key for the SAME business intent.
   // Preserved across double-submits, network timeouts, and retries.
   const [idempotencyKey, setIdempotencyKey] = useState<string>(() =>
     typeof crypto !== "undefined" && crypto.randomUUID ? crypto.randomUUID() : ""
   );
+  const lastPayloadRef = useRef<string>("");
 
   const isPossibleDuplicate = useMemo(() => {
     const trimmed = fullName.trim().toLowerCase();
@@ -84,6 +100,9 @@ export function CreatePersonDialog({
     setPhone("");
     setEmail("");
     setError(null);
+    setPartialSaveState(null);
+    setRetryError(null);
+    lastPayloadRef.current = "";
     setIdempotencyKey(
       typeof crypto !== "undefined" && crypto.randomUUID ? crypto.randomUUID() : ""
     );
@@ -92,6 +111,59 @@ export function CreatePersonDialog({
   const handleClose = () => {
     resetForm();
     onOpenChange(false);
+  };
+
+  const handleRetryAttach = async () => {
+    if (!partialSaveState) return;
+    try {
+      setIsRetrying(true);
+      setRetryError(null);
+      const { partyRepository, contactPointRepository } = getPartyKernelContainer();
+
+      // Re-read existing contacts to avoid duplicating an attached contact method if the 500/timeout was an uncertain write
+      let existingContacts: { value: string; type: string }[] = [];
+      try {
+        if (contactPointRepository) {
+          const res = await contactPointRepository.getAll({ page: 1, pageSize: 50 });
+          existingContacts = res.items.filter((c) => c.partyId === partialSaveState.partyId);
+        }
+      } catch {
+        // Fall back to safe write
+      }
+
+      if (
+        partialSaveState.failedPhone &&
+        !existingContacts.some((c) => c.value === partialSaveState.failedPhone)
+      ) {
+        await partyRepository.addContactPoint({
+          partyId: partialSaveState.partyId,
+          type: "phone",
+          value: partialSaveState.failedPhone,
+          isPrimary: true,
+        });
+      }
+      if (
+        partialSaveState.failedEmail &&
+        !existingContacts.some((c) => c.value === partialSaveState.failedEmail)
+      ) {
+        await partyRepository.addContactPoint({
+          partyId: partialSaveState.partyId,
+          type: "email",
+          value: partialSaveState.failedEmail,
+          isPrimary: true,
+        });
+      }
+
+      const partyId = partialSaveState.partyId;
+      handleClose();
+      if (onSuccessNavigate && partyId) {
+        onSuccessNavigate(partyId);
+      }
+    } catch (err: unknown) {
+      setRetryError(err instanceof Error ? err.message : "Failed to attach contact points");
+    } finally {
+      setIsRetrying(false);
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -105,6 +177,28 @@ export function CreatePersonDialog({
     try {
       setIsSubmitting(true);
       setError(null);
+      let failedAttachment: { error: Error; partyId: string } | null = null;
+
+      // Rotate idempotency key if intent payload changed, retain if retrying exact same payload
+      const currentPayload = JSON.stringify({
+        fullName: trimmedName,
+        displayName: displayName.trim(),
+        givenName: givenName.trim(),
+        middleNames: middleNames.trim(),
+        familyName: familyName.trim(),
+        dateOfBirth,
+        isMinor,
+      });
+
+      let currentKey = idempotencyKey;
+      if (lastPayloadRef.current && lastPayloadRef.current !== currentPayload) {
+        currentKey = typeof crypto !== "undefined" && crypto.randomUUID ? crypto.randomUUID() : `key-${Date.now()}`;
+        setIdempotencyKey(currentKey);
+      } else if (!currentKey) {
+        currentKey = typeof crypto !== "undefined" && crypto.randomUUID ? crypto.randomUUID() : `key-${Date.now()}`;
+        setIdempotencyKey(currentKey);
+      }
+      lastPayloadRef.current = currentPayload;
 
       // Stable idempotency key per intent passed to repository
       const partyId = await onSubmit({
@@ -117,8 +211,25 @@ export function CreatePersonDialog({
         isMinor,
         phone: phone.trim() || undefined,
         email: email.trim() || undefined,
-        idempotencyKey: idempotencyKey || undefined,
+        idempotencyKey: currentKey || undefined,
+        onContactPointFailure: (err, pId) => {
+          failedAttachment = { error: err, partyId: pId };
+        },
       });
+
+      if (failedAttachment) {
+        setPartialSaveState({
+          partyId,
+          fullName: trimmedName,
+          failedPhone: phone.trim() || undefined,
+          failedEmail: email.trim() || undefined,
+          errorMessage:
+            (failedAttachment as { error: Error }).error.message ||
+            t("party.dialog.partialSaveDesc") ||
+            "Contact point service failed to attach",
+        });
+        return;
+      }
 
       handleClose();
       if (onSuccessNavigate && partyId) {
@@ -139,6 +250,94 @@ export function CreatePersonDialog({
       setIsSubmitting(false);
     }
   };
+
+  if (partialSaveState) {
+    return (
+      <Dialog open={open} onOpenChange={handleClose}>
+        <DialogContent className="sm:max-w-[540px]">
+          <DialogHeader>
+            <div className="flex items-center gap-2">
+              <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-amber-500/10 text-amber-500">
+                <AlertTriangle className="h-5 w-5" />
+              </div>
+              <div>
+                <DialogTitle>{t("party.dialog.partialSaveTitle") || "Party Identity Created"}</DialogTitle>
+                <DialogDescription>
+                  {t("party.dialog.partialSaveDesc") ||
+                    "The contact record was created with canonical ID, but secondary contact points failed to attach."}
+                </DialogDescription>
+              </div>
+            </div>
+          </DialogHeader>
+
+          <div className="grid gap-4 py-4">
+            <div className="rounded-lg border border-nx-border bg-nx-surface-2/40 p-4 space-y-2.5">
+              <div className="flex items-center justify-between text-xs">
+                <span className="text-nx-ink-3">Canonical Party ID</span>
+                <span className="font-mono text-nx-ink font-semibold">{partialSaveState.partyId}</span>
+              </div>
+              <div className="flex items-center justify-between text-xs">
+                <span className="text-nx-ink-3">Full Name</span>
+                <span className="text-nx-ink font-medium">{partialSaveState.fullName}</span>
+              </div>
+              {partialSaveState.failedPhone && (
+                <div className="flex items-center justify-between text-xs">
+                  <span className="text-nx-ink-3">Pending Phone</span>
+                  <span className="text-amber-400 font-mono">{partialSaveState.failedPhone}</span>
+                </div>
+              )}
+              {partialSaveState.failedEmail && (
+                <div className="flex items-center justify-between text-xs">
+                  <span className="text-nx-ink-3">Pending Email</span>
+                  <span className="text-amber-400 font-mono">{partialSaveState.failedEmail}</span>
+                </div>
+              )}
+            </div>
+
+            {retryError && (
+              <div className="rounded-md bg-destructive/10 p-3 text-xs text-destructive border border-destructive/20">
+                {retryError}
+              </div>
+            )}
+          </div>
+
+          <DialogFooter className="gap-2 sm:gap-0">
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => {
+                const partyId = partialSaveState.partyId;
+                handleClose();
+                if (onSuccessNavigate && partyId) {
+                  onSuccessNavigate(partyId);
+                }
+              }}
+              disabled={isRetrying}
+            >
+              {t("party.dialog.continueToProfile") || "Continue to Profile"}
+            </Button>
+            <Button
+              type="button"
+              onClick={handleRetryAttach}
+              disabled={isRetrying}
+            >
+              {isRetrying ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  {t("party.dialog.retryAttachContact") || "Retrying..."}
+                </>
+              ) : (
+                <>
+                  <RefreshCw className="mr-2 h-4 w-4" />
+                  {t("party.dialog.retryAttachContact") || "Retry Attach Contact Details"}
+                </>
+              )}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+    );
+  }
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -200,10 +399,11 @@ export function CreatePersonDialog({
 
             {/* Optional Additional Names Accordion */}
             <div className="rounded-lg border border-nx-border bg-nx-surface-2/30 p-3">
-              <button
+              <Button
                 type="button"
+                variant="ghost"
                 onClick={() => setShowAdditionalNames(!showAdditionalNames)}
-                className="flex w-full items-center justify-between text-xs font-medium text-nx-ink hover:text-nx-accent transition-colors"
+                className="flex w-full items-center justify-between text-xs font-medium text-nx-ink hover:text-nx-accent transition-colors p-0 h-auto hover:bg-transparent"
               >
                 <span>{t("party.dialog.additionalNames")}</span>
                 {showAdditionalNames ? (
@@ -211,7 +411,7 @@ export function CreatePersonDialog({
                 ) : (
                   <ChevronDown className="h-3.5 w-3.5 text-nx-ink-3" />
                 )}
-              </button>
+              </Button>
 
               {showAdditionalNames && (
                 <div className="grid gap-3 pt-3 mt-2 border-t border-nx-border/60">

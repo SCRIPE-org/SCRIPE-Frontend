@@ -381,6 +381,7 @@ export function NexusPrimaryRail({
               <TooltipTrigger asChild>
                 <button
                   type="button"
+                  data-testid="nexus-launcher-trigger"
                   aria-label={t("shell.launcher.title")}
                   onClick={onOpenAppLauncher}
                   className={cn(

@@ -28,7 +28,7 @@ vi.mock("../viewmodels/useBookingWorkspaceViewModel", () => ({
       durationMinutes: 60,
       quantity: 1,
     },
-    customer: { id: "party-1", displayName: "Ù…Ù†Ù‰", type: "Person" },
+    customer: { id: "party-1", displayName: "منى", type: "Person" },
     customerResults: [],
     customerSearching: false,
     facilities: [],

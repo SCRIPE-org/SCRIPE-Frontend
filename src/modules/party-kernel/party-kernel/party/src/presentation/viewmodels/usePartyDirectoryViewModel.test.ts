@@ -169,9 +169,11 @@ describe("usePartyDirectoryViewModel", () => {
         fullName: "New Athlete",
       });
     });
-    expect(mockPartyRepo.createPerson).toHaveBeenCalledWith({
-      fullName: "New Athlete",
-    });
+    expect(mockPartyRepo.createPerson).toHaveBeenCalledWith(
+      expect.objectContaining({
+        fullName: "New Athlete",
+      })
+    );
     expect(personId).toBe("person-new-id");
 
     let orgId: string = "";
@@ -180,9 +182,11 @@ describe("usePartyDirectoryViewModel", () => {
         legalName: "Falcon Academy LLC",
       });
     });
-    expect(mockPartyRepo.createOrganization).toHaveBeenCalledWith({
-      legalName: "Falcon Academy LLC",
-    });
+    expect(mockPartyRepo.createOrganization).toHaveBeenCalledWith(
+      expect.objectContaining({
+        legalName: "Falcon Academy LLC",
+      })
+    );
     expect(orgId).toBe("org-new-id");
   });
 });
