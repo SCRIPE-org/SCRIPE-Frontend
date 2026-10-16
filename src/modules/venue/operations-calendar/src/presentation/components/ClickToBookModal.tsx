@@ -36,14 +36,33 @@ interface Props {
   onBlockTime?: (resource: CalendarResource, instantUtc: string) => void;
 }
 
+type BookingIntentKeyReference = {
+  fingerprint: string;
+  key: string;
+  expiresAtUtc?: string;
+};
+
 function getIntentKey(
-  keyRef: { current: { fingerprint: string; key: string } | null },
+  keyRef: { current: BookingIntentKeyReference | null },
   fingerprint: string
 ): string {
-  if (keyRef.current?.fingerprint !== fingerprint) {
+  const expiry = keyRef.current?.expiresAtUtc;
+  const expiryTime = expiry ? Date.parse(expiry) : null;
+  const expired = expiry !== undefined && (expiryTime === null || !Number.isFinite(expiryTime) || expiryTime <= Date.now());
+  if (keyRef.current?.fingerprint !== fingerprint || expired) {
     keyRef.current = { fingerprint, key: crypto.randomUUID() };
   }
   return keyRef.current.key;
+}
+
+function setIntentExpiry(
+  keyRef: { current: BookingIntentKeyReference | null },
+  key: string,
+  expiresAtUtc: string
+): void {
+  if (keyRef.current?.key === key) {
+    keyRef.current.expiresAtUtc = expiresAtUtc;
+  }
 }
 
 /** Reuses the quote request key and expiry so a lost response can be replayed exactly. */
@@ -85,10 +104,9 @@ export function ClickToBookModal({
   const [stage, setStage] = useState<"form" | "held" | "confirmed">("form");
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const wasOpenRef = useRef(false);
-  const draftIntentKeyRef = useRef<{ fingerprint: string; key: string } | null>(null);
-  const holdIntentKeyRef = useRef<{ fingerprint: string; key: string } | null>(null);
-  const confirmIntentKeyRef = useRef<{ fingerprint: string; key: string } | null>(null);
+  const draftIntentKeyRef = useRef<BookingIntentKeyReference | null>(null);
+  const holdIntentKeyRef = useRef<BookingIntentKeyReference | null>(null);
+  const confirmIntentKeyRef = useRef<BookingIntentKeyReference | null>(null);
   const quoteIntentKeyRef = useRef<{
     fingerprint: string;
     key: string;
@@ -125,16 +143,10 @@ export function ClickToBookModal({
   const startUtc = instantUtc ?? new Date().toISOString();
   const endUtc = new Date(Date.parse(startUtc) + durationMinutes * 60 * 1000).toISOString();
 
-  // Reset when dialog opens with a new slot
+  // Reset view state when the dialog opens. Intent keys survive close/reopen and rotate only
+  // when their payload fingerprint changes, a hold expires, or the workflow succeeds.
   useEffect(() => {
     if (open) {
-      if (!wasOpenRef.current) {
-        draftIntentKeyRef.current = null;
-        holdIntentKeyRef.current = null;
-        confirmIntentKeyRef.current = null;
-        quoteIntentKeyRef.current = null;
-      }
-      wasOpenRef.current = true;
       void Promise.resolve().then(() => {
         setStage("form");
         setError(null);
@@ -145,8 +157,6 @@ export function ClickToBookModal({
         setAmountPaid(0);
         setPaymentSuccess(false);
       });
-    } else {
-      wasOpenRef.current = false;
     }
   }, [instantUtc, open, resource]);
 
@@ -293,7 +303,8 @@ export function ClickToBookModal({
       });
 
       // 2. Create Hold
-      await bookingRepository.createHold(draft.id, holdIntentKey);
+      const hold = await bookingRepository.createHold(draft.id, holdIntentKey);
+      setIntentExpiry(holdIntentKeyRef, holdIntentKey, hold.expiresAtUtc);
 
       // 3. Confirm with authoritative quote ID
       const confirmIntentKey = getIntentKey(confirmIntentKeyRef, `${draft.id}|${quote.id}`);
@@ -301,6 +312,10 @@ export function ClickToBookModal({
 
       const reservation = await bookingRepository.getReservation(draft.id);
 
+      draftIntentKeyRef.current = null;
+      holdIntentKeyRef.current = null;
+      confirmIntentKeyRef.current = null;
+      quoteIntentKeyRef.current = null;
       setReservationId(draft.id);
       setReservationNumber(reservation.reservationNumber);
       setStage("confirmed");
@@ -340,6 +355,7 @@ export function ClickToBookModal({
       });
 
       const hold = await bookingRepository.createHold(draft.id, holdIntentKey);
+      setIntentExpiry(holdIntentKeyRef, holdIntentKey, hold.expiresAtUtc);
       const reservation = await bookingRepository.getReservation(draft.id);
 
       setReservationId(draft.id);
@@ -362,6 +378,10 @@ export function ClickToBookModal({
     try {
       const confirmIntentKey = getIntentKey(confirmIntentKeyRef, `${reservationId}|${quote.id}`);
       await bookingRepository.confirm(reservationId, confirmIntentKey, quote.id);
+      draftIntentKeyRef.current = null;
+      holdIntentKeyRef.current = null;
+      confirmIntentKeyRef.current = null;
+      quoteIntentKeyRef.current = null;
       setStage("confirmed");
       onSuccess();
     } catch (err) {
