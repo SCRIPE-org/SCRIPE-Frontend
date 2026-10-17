@@ -57,17 +57,28 @@ const nextConfig: NextConfig = {
   // Security: Hide X-Powered-By header
   poweredByHeader: false,
 
-  // Server-level redirects for documentation portals
+  // Server-level redirects to standalone documentation portal (SCRIPE-Docs-Portal)
   async redirects() {
+    const docsUrl = process.env.NEXT_PUBLIC_DOCS_URL || "http://localhost:3002";
     return [
       {
         source: "/docs",
-        destination: "/docs/get-started/overview",
+        destination: `${docsUrl}/technical/get-started/overview`,
+        permanent: false,
+      },
+      {
+        source: "/docs/:path*",
+        destination: `${docsUrl}/technical/:path*`,
         permanent: false,
       },
       {
         source: "/commercial",
-        destination: "/commercial/why-scripe-overview",
+        destination: `${docsUrl}/commercial/why-scripe-overview`,
+        permanent: false,
+      },
+      {
+        source: "/commercial/:path*",
+        destination: `${docsUrl}/commercial/:path*`,
         permanent: false,
       },
     ];
