@@ -245,7 +245,7 @@ export const ar = {
       publisherTitle: "IDomainEventPublisher",
       outboxTitle: "نمط صندوق الصادر (Outbox Pattern)",
       outboxIntro:
-        "يحل نمط الـ Outbox مشكلة الكتابة المزدوجة (Dual-write problem): كيفية تحديث قاعدة البيانات ونشر حدث بشكل متزامن وبشكل ذري.",
+        "يحل نمط الـ Outbox مشكلة الكتابة المزدوجة (Dual-write problem): كيفية تحديث قاعدة البيانات ونشر حدث بشكل متزامن وبشكل ذري. أثناء ترحيل مخطط Identity في PostgreSQL، تُنقل سجلات Outbox وInbox السابقة إلى مخطط identity؛ ويوقف تعارض محتوى رسالتين لهما المعرّف نفسه الترحيل لمراجعته من المسؤول.",
       outboxWarning:
         "يوفر نمط الـ Outbox تسليماً بمعدل (مرة واحدة على الأقل). يجب أن تكون معالجات الأحداث غير متأثرة بالتكرار (Idempotent).",
       committedAuditTitle: "تدقيق تغييرات الكيانات المعتمدة",

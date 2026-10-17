@@ -483,7 +483,7 @@ export const es = {
     outboxPattern: {
       title: "Patrón Outbox",
       description:
-        "Garantía de entrega de eventos de dominio exactamente una vez mediante EF Core OutboxInterceptor, tabla OutboxMessage y trabajo en segundo plano OutboxProcessor.",
+        "Persistencia de eventos de dominio dentro de la transacción de negocio y entrega asíncrona al menos una vez.",
       intro:
         "El patrón Outbox resuelve el problema de la doble escritura: persistir una entidad y emitir efectos secundarios (emails, webhooks, permisos) de forma atómica en una sola transacción.",
       dualWriteProblemTitle: "El Problema de la Doble Escritura",
@@ -499,9 +499,25 @@ export const es = {
         "OutboxProcessor procesa eventos de dominio pendientes y registra el estado de reintento cuando falla una entrega. Cada entrega obtiene un ámbito nuevo de inyección de dependencias, por lo que los cambios rastreados por una entrega fallida no pueden guardarse durante una entrega posterior. La entrega es al menos una vez: los consumidores que modifican estado persistente deben guardar un recibo Inbox atómicamente con sus cambios de negocio; este ámbito no garantiza procesamiento único entre varios hosts.",
       idempotencyTitle: "Requisitos de Idempotencia",
       idempotencyContent:
-        "OutboxMessage.Id actúa como clave de idempotencia. Todos los manejadores que procesen eventos despachados deben ser idempotentes.",
+        "OutboxMessage.Id identifica una entrega de evento y puede servir como clave de recibo Inbox; no sustituye a la clave de idempotencia de una solicitud de negocio. Un consumidor que modifica estado persistente debe guardar el recibo Inbox y el efecto de negocio en la misma transacción local.",
       idempotencyTip:
-        "OutboxProcessor garantiza entrega al menos una vez; la idempotencia de los manejadores proporciona la semántica de exactamente una vez.",
+        "Outbox entrega al menos una vez. El procesamiento idempotente y los recibos Inbox transaccionales pueden evitar efectos persistentes duplicados en la base del consumidor, pero no garantizan una sola entrega entre hosts ni un único efecto en proveedores externos.",
+    },
+    sharedFoundations: {
+      title: "Fundamentos compartidos de idempotencia y búsqueda",
+      description: "Repetición de intenciones de negocio propiedad del módulo y búsqueda multilingüe con autorización.",
+      intro: "SCRIPE ofrece primitivas reutilizables de idempotencia y búsqueda. No son propietarias de los datos ni de las políticas de negocio de los módulos; cada contexto delimitado las adopta mediante sus propias capas de aplicación e infraestructura.",
+      ownershipTitle: "Propiedad y límites de los módulos",
+      ownershipContent: "El módulo propietario conserva su DbContext, recibos duraderos, filtros de tenant, comprobaciones PBAC y de seguridad a nivel de campo, reglas de funciones y cuotas, y contrato de respuesta. El Core compartido puede normalizar o clasificar valores proporcionados por el llamador, pero no consulta la persistencia de otro módulo ni define las políticas de contactos, duplicados o fusiones de Party.",
+      idempotencyTitle: "Idempotencia en backend",
+      idempotencyContent: "Use una clave estable por intención de negocio. El módulo propietario guarda su recibo junto con la mutación y los efectos requeridos de cuota u outbox en la misma transacción local cuando su implementación ofrece esa garantía. Una clave y solicitud canónica coincidentes pueden reproducir el resultado guardado; una solicitud diferente con la misma clave debe causar conflicto. Vuelva a comprobar el tenant y la autorización actual antes de reproducir. Outbox entrega al menos una vez, por lo que los consumidores duraderos deben procesar de forma idempotente y confirmar un recibo Inbox junto con su efecto.",
+      frontendIntentTitle: "Ciclo de vida de la intención frontend",
+      frontendIntentContent: "Cree la clave de idempotencia al iniciar una intención de negocio y consérvela en los reintentos de esa misma intención sin cambios, incluso si se perdió la respuesta. Un payload modificado o una intención nueva requiere una clave nueva. Los nonces de protección contra repetición son valores de transporte por intento y no reemplazan la clave de negocio estable. El transporte Axios compartido no hace que todos los POST sean seguros para reintentar automáticamente; el llamador debe optar por el contrato de idempotencia del endpoint.",
+      searchTitle: "Búsqueda multilingüe y autorización",
+      searchContent: "Use un perfil de normalización versionado y clases explícitas de coincidencia: exacta, prefijo, tokens o difusa. La similitud difusa ayuda a recuperar candidatos, pero no prueba identidad ni autoriza una fusión. El módulo propietario aplica filtros de tenant, PBAC, seguridad de campos, funciones y cuotas antes de devolver resultados o conteos observables; también limita las páginas y establece un orden determinista. Normalizar teléfono y correo electrónico facilita comparaciones, pero no establece igualdad de identidad.",
+      adoptionTitle: "Adopción y límites de la evidencia",
+      adoptionContent: "OrganizationCore es un consumidor verificado para búsquedas de sucursales en PostgreSQL y SQL Server. HRMS es un consumidor verificado para búsquedas limitadas por alias de dominio de correo a través de su ruta HTTP registrada en PostgreSQL. Estos resultados solo prueban lo que cubren sus pruebas. Party mantiene su propiedad independiente: los helpers compartidos y el contrato de transferencia no significan que Party los haya adoptado ni autorizan acceso a su persistencia.",
+      idempotencyTip: "La clave pertenece a una intención del usuario, no a un intento de red. Verifique el contrato del endpoint, el ámbito y la retención de la clave, y la autorización vigente antes de confiar en una reproducción.",
     },
     communication: {
       title: "Communication Module",

@@ -40,6 +40,7 @@ export type BookingWorkspaceAction =
   | { type: "held"; result: BookingHoldResult; reservation: ReservationDetails }
   | { type: "confirmed"; reservation: ReservationDetails }
   | { type: "operationFailed"; message: string }
+  | { type: "confirmationFailed"; message: string }
   | { type: "reset" };
 
 /**
@@ -76,6 +77,10 @@ export function reduceBookingWorkspace(
     case "searchFailed":
     case "operationFailed":
       return { ...state, stage: "error", errorMessage: action.message };
+    case "confirmationFailed":
+      return state.stage === "confirming"
+        ? { ...state, stage: "held", errorMessage: action.message }
+        : state;
     case "featureUnavailable":
       return { ...state, stage: "featureUnavailable", errorMessage: null };
     case "candidateSelected":

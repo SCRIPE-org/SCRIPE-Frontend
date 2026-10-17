@@ -415,6 +415,30 @@ describe("useBookingWorkspaceViewModel", () => {
     expect(container.bookingRepository.confirm).toHaveBeenCalledTimes(1);
   });
 
+  it("keeps an ambiguous confirmation retryable with the same business intent key", async () => {
+    const container = makeContainer();
+    container.bookingRepository.confirm
+      .mockRejectedValueOnce(new Error("Confirmation response was lost"))
+      .mockResolvedValueOnce({ reservationId: "reservation-1", bookingHoldId: "hold-1" });
+    vi.mocked(getVenueContainer).mockReturnValue(container as never);
+    const { result } = renderHook(() => useBookingWorkspaceViewModel());
+    await prepareSelection(result);
+
+    await act(async () => result.current.createHold());
+    await act(async () => result.current.confirm());
+
+    expect(result.current.state.stage).toBe("held");
+    expect(result.current.state.errorMessage).toBe("Confirmation response was lost");
+
+    await act(async () => result.current.confirm());
+
+    expect(container.bookingRepository.confirm).toHaveBeenCalledTimes(2);
+    expect(container.bookingRepository.confirm.mock.calls[1]?.[1]).toBe(
+      container.bookingRepository.confirm.mock.calls[0]?.[1]
+    );
+    expect(result.current.state.stage).toBe("confirmed");
+  });
+
   it("applies a privileged quote override with an explicit reason before confirmation", async () => {
     const container = makeContainer();
     vi.mocked(getVenueContainer).mockReturnValue(container as never);

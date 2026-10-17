@@ -576,7 +576,7 @@ export function useBookingWorkspaceViewModel(prefill: BookingWorkspacePrefill = 
         dispatch({ type: "featureUnavailable" });
       } else {
         dispatch({
-          type: "operationFailed",
+          type: "confirmationFailed",
           message: errorMessage(error, "booking-confirm-failed"),
         });
       }

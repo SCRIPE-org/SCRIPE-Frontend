@@ -245,7 +245,7 @@ export const en = {
       publisherTitle: "IDomainEventPublisher",
       outboxTitle: "Outbox Pattern",
       outboxIntro:
-        "The Outbox Pattern solves the dual-write problem: how to atomically update the database AND publish an event. By persisting events in the same transaction as entity changes, we guarantee that events are never lost — even if the application crashes immediately after SaveChanges.",
+        "The Outbox Pattern solves the dual-write problem: how to atomically update the database AND publish an event. By persisting events in the same transaction as entity changes, we guarantee that events are never lost — even if the application crashes immediately after SaveChanges. During PostgreSQL Identity schema upgrades, historical outbox and inbox rows are moved into the identity schema; conflicting outbox payloads stop the migration for operator review.",
       outboxWarning:
         "The Outbox Pattern provides at-least-once delivery, not exactly-once. Event handlers must be idempotent — they should produce the same result whether invoked once or multiple times with the same event.",
       committedAuditTitle: "Committed Entity-Change Auditing",
