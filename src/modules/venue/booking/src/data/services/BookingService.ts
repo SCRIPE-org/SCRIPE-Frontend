@@ -1,5 +1,6 @@
 import type { IApiService } from "@core/interfaces/api.interface";
 import type {
+  BookingBusinessIntent,
   BookingHoldResult,
   ChangeReservationResourceInput,
   ConfirmBookingResult,
@@ -10,12 +11,24 @@ import type {
 } from "../../domain/entities/Booking";
 import type { IBookingService } from "../../domain/interfaces/IBookingService";
 import { BOOKING_ENDPOINTS } from "./booking.endpoints";
+import { clearBookingIntent, getOrCreateBookingIntent } from "./bookingIntentStore";
 
 /**
  * Documentation for module export
  */
 export class BookingService implements IBookingService {
   constructor(private readonly api: IApiService) {}
+
+  getOrCreateBusinessIntent(
+    fingerprint: string,
+    confirmationFingerprint?: string
+  ): Promise<BookingBusinessIntent> {
+    return getOrCreateBookingIntent(fingerprint, confirmationFingerprint);
+  }
+
+  clearBusinessIntent(): void {
+    clearBookingIntent();
+  }
 
   /**
    * Sends a business mutation through the shared bounded retry policy using its caller-owned key.
@@ -25,9 +38,11 @@ export class BookingService implements IBookingService {
    * @returns The endpoint response after success or the final retryable failure.
    */
   private postIntent<T>(endpoint: string, payload: unknown, idempotencyKey: string): Promise<T> {
-    return this.api.postWithRetry(endpoint, payload, undefined, {
-      headers: { "Idempotency-Key": idempotencyKey },
-    });
+    const intent = { idempotencyKey };
+    return (
+      this.api.postWithRetry?.(endpoint, payload, undefined, intent) ??
+      this.api.post(endpoint, payload, undefined, intent)
+    );
   }
 
   createDraft(input: CreateBookingDraftInput): Promise<{ id: string }> {

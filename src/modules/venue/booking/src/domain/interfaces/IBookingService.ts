@@ -1,5 +1,6 @@
 import type {
   BookingHoldResult,
+  BookingBusinessIntent,
   ChangeReservationResourceInput,
   ConfirmBookingResult,
   CreateBookingDraftInput,
@@ -12,6 +13,8 @@ import type {
  * Documentation for module export
  */
 export interface IBookingService {
+  getOrCreateBusinessIntent(fingerprint: string, confirmationFingerprint?: string): Promise<BookingBusinessIntent>;
+  clearBusinessIntent(): void;
   createDraft(input: CreateBookingDraftInput): Promise<{ id: string }>;
   createHold(reservationId: string, idempotencyKey: string): Promise<BookingHoldResult>;
   confirm(

@@ -64,6 +64,12 @@ function makeContainer() {
       create: vi.fn().mockResolvedValue(customer),
     },
     bookingRepository: {
+      getOrCreateBusinessIntent: vi.fn().mockResolvedValue({
+        draftIdempotencyKey: "draft-intent",
+        holdIdempotencyKey: "hold-intent",
+        confirmIdempotencyKey: "confirm-intent",
+      }),
+      clearBusinessIntent: vi.fn(),
       createDraft: vi.fn().mockResolvedValue({ id: "reservation-1" }),
       createHold: vi.fn().mockResolvedValue({
         reservationId: "reservation-1",

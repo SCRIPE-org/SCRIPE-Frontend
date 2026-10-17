@@ -1,5 +1,6 @@
 import type {
   BookingHoldResult,
+  BookingBusinessIntent,
   ChangeReservationResourceInput,
   ConfirmBookingResult,
   CreateBookingDraftInput,
@@ -17,6 +18,14 @@ import type { IBookingService } from "../../domain/interfaces/IBookingService";
  */
 export class BookingRepository implements IBookingRepository {
   constructor(private readonly service: IBookingService) {}
+
+  getOrCreateBusinessIntent(fingerprint: string, confirmationFingerprint?: string): Promise<BookingBusinessIntent> {
+    return this.service.getOrCreateBusinessIntent(fingerprint, confirmationFingerprint);
+  }
+
+  clearBusinessIntent(): void {
+    this.service.clearBusinessIntent();
+  }
 
   /**
    * Initializes a pending reservation draft for a specific resource, time window, and customer.

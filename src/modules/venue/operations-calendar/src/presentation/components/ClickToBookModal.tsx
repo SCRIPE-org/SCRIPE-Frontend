@@ -36,35 +36,6 @@ interface Props {
   onBlockTime?: (resource: CalendarResource, instantUtc: string) => void;
 }
 
-type BookingIntentKeyReference = {
-  fingerprint: string;
-  key: string;
-  expiresAtUtc?: string;
-};
-
-function getIntentKey(
-  keyRef: { current: BookingIntentKeyReference | null },
-  fingerprint: string
-): string {
-  const expiry = keyRef.current?.expiresAtUtc;
-  const expiryTime = expiry ? Date.parse(expiry) : null;
-  const expired = expiry !== undefined && (expiryTime === null || !Number.isFinite(expiryTime) || expiryTime <= Date.now());
-  if (keyRef.current?.fingerprint !== fingerprint || expired) {
-    keyRef.current = { fingerprint, key: crypto.randomUUID() };
-  }
-  return keyRef.current.key;
-}
-
-function setIntentExpiry(
-  keyRef: { current: BookingIntentKeyReference | null },
-  key: string,
-  expiresAtUtc: string
-): void {
-  if (keyRef.current?.key === key) {
-    keyRef.current.expiresAtUtc = expiresAtUtc;
-  }
-}
-
 /** Reuses the quote request key and expiry so a lost response can be replayed exactly. */
 function getQuoteIntent(
   keyRef: { current: { fingerprint: string; key: string; expiresAtUtc: string } | null },
@@ -104,9 +75,7 @@ export function ClickToBookModal({
   const [stage, setStage] = useState<"form" | "held" | "confirmed">("form");
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const draftIntentKeyRef = useRef<BookingIntentKeyReference | null>(null);
-  const holdIntentKeyRef = useRef<BookingIntentKeyReference | null>(null);
-  const confirmIntentKeyRef = useRef<BookingIntentKeyReference | null>(null);
+  const quickAddIntentRef = useRef<{ fingerprint: string; idempotencyKey: string } | null>(null);
   const quoteIntentKeyRef = useRef<{
     fingerprint: string;
     key: string;
@@ -142,6 +111,17 @@ export function ClickToBookModal({
 
   const startUtc = instantUtc ?? new Date().toISOString();
   const endUtc = new Date(Date.parse(startUtc) + durationMinutes * 60 * 1000).toISOString();
+  const getBookingIntent = useCallback(async (confirmationFingerprint?: string) => {
+    if (!resource || !selectedCustomer) throw new Error("Choose a resource and customer first.");
+    const fingerprint = JSON.stringify([
+      resource.id,
+      selectedCustomer.id,
+      startUtc,
+      endUtc,
+      1,
+    ]);
+    return bookingRepository.getOrCreateBusinessIntent(fingerprint, confirmationFingerprint);
+  }, [bookingRepository, endUtc, resource, selectedCustomer, startUtc]);
 
   // Reset view state when the dialog opens. Intent keys survive close/reopen and rotate only
   // when their payload fingerprint changes, a hold expires, or the workflow succeeds.
@@ -172,7 +152,7 @@ export function ClickToBookModal({
     const timer = setTimeout(async () => {
       setCustomerSearching(true);
       try {
-        const results = await (customerRepository as any).searchCustomers(customerSearch.trim());
+        const results = await customerRepository.search(customerSearch.trim());
         if (active) setCustomerResults(results);
       } catch {
         // Fallback
@@ -269,18 +249,26 @@ export function ClickToBookModal({
     }
   };
 
-  const handleQuickAddCustomer = () => {
-    if (!quickName.trim()) return;
-    const customer = {
-      id: crypto.randomUUID(),
-      displayName: quickName.trim(),
-      primaryEmail: "",
-      primaryPhone: quickPhone.trim(),
-    } as any;
-    setSelectedCustomer(customer);
-    setQuickAddOpen(false);
-    setQuickName("");
-    setQuickPhone("");
+  const handleQuickAddCustomer = async () => {
+    const displayName = quickName.trim();
+    if (!displayName) return;
+    const phone = quickPhone.trim() || undefined;
+    const fingerprint = JSON.stringify([displayName, "Person", phone ?? null]);
+    if (quickAddIntentRef.current?.fingerprint !== fingerprint) {
+      quickAddIntentRef.current = { fingerprint, idempotencyKey: crypto.randomUUID() };
+    }
+    try {
+      const customer = await customerRepository.create(displayName, "Person", phone, {
+        idempotencyKey: quickAddIntentRef.current.idempotencyKey,
+      });
+      quickAddIntentRef.current = null;
+      setSelectedCustomer(customer);
+      setQuickAddOpen(false);
+      setQuickName("");
+      setQuickPhone("");
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to create customer.");
+    }
   };
 
   // Primary Action: Confirm Booking (orchestrates draft -> hold -> confirm)
@@ -289,9 +277,7 @@ export function ClickToBookModal({
     setSubmitting(true);
     setError(null);
     try {
-      const bookingFingerprint = [resource.id, selectedCustomer.id, startUtc, endUtc, 1].join("|");
-      const draftIntentKey = getIntentKey(draftIntentKeyRef, bookingFingerprint);
-      const holdIntentKey = getIntentKey(holdIntentKeyRef, bookingFingerprint);
+      const intent = await getBookingIntent(quote.id);
       // 1. Create Draft
       const draft = await bookingRepository.createDraft({
         resourceId: resource.id,
@@ -299,22 +285,18 @@ export function ClickToBookModal({
         requestedStartUtc: startUtc,
         requestedEndUtc: endUtc,
         quantity: 1,
-        idempotencyKey: draftIntentKey,
+        idempotencyKey: intent.draftIdempotencyKey,
       });
 
       // 2. Create Hold
-      const hold = await bookingRepository.createHold(draft.id, holdIntentKey);
-      setIntentExpiry(holdIntentKeyRef, holdIntentKey, hold.expiresAtUtc);
+      await bookingRepository.createHold(draft.id, intent.holdIdempotencyKey);
 
       // 3. Confirm with authoritative quote ID
-      const confirmIntentKey = getIntentKey(confirmIntentKeyRef, `${draft.id}|${quote.id}`);
-      await bookingRepository.confirm(draft.id, confirmIntentKey, quote.id);
+      await bookingRepository.confirm(draft.id, intent.confirmIdempotencyKey, quote.id);
 
       const reservation = await bookingRepository.getReservation(draft.id);
 
-      draftIntentKeyRef.current = null;
-      holdIntentKeyRef.current = null;
-      confirmIntentKeyRef.current = null;
+      bookingRepository.clearBusinessIntent();
       quoteIntentKeyRef.current = null;
       setReservationId(draft.id);
       setReservationNumber(reservation.reservationNumber);
@@ -328,6 +310,7 @@ export function ClickToBookModal({
   }, [
     bookingRepository,
     endUtc,
+    getBookingIntent,
     onSuccess,
     quote,
     resource,
@@ -342,20 +325,17 @@ export function ClickToBookModal({
     setSubmitting(true);
     setError(null);
     try {
-      const bookingFingerprint = [resource.id, selectedCustomer.id, startUtc, endUtc, 1].join("|");
-      const draftIntentKey = getIntentKey(draftIntentKeyRef, bookingFingerprint);
-      const holdIntentKey = getIntentKey(holdIntentKeyRef, bookingFingerprint);
+      const intent = await getBookingIntent();
       const draft = await bookingRepository.createDraft({
         resourceId: resource.id,
         customerPartyId: selectedCustomer.id,
         requestedStartUtc: startUtc,
         requestedEndUtc: endUtc,
         quantity: 1,
-        idempotencyKey: draftIntentKey,
+        idempotencyKey: intent.draftIdempotencyKey,
       });
 
-      const hold = await bookingRepository.createHold(draft.id, holdIntentKey);
-      setIntentExpiry(holdIntentKeyRef, holdIntentKey, hold.expiresAtUtc);
+      const hold = await bookingRepository.createHold(draft.id, intent.holdIdempotencyKey);
       const reservation = await bookingRepository.getReservation(draft.id);
 
       setReservationId(draft.id);
@@ -368,19 +348,17 @@ export function ClickToBookModal({
     } finally {
       setSubmitting(false);
     }
-  }, [bookingRepository, endUtc, onSuccess, resource, selectedCustomer, startUtc, submitting]);
+  }, [bookingRepository, endUtc, getBookingIntent, onSuccess, resource, selectedCustomer, startUtc, submitting]);
 
   // Complete confirmation after a hold
   const handleConfirmFromHold = useCallback(async () => {
-    if (!reservationId || !quote || submitting) return;
+    if (!reservationId || !quote || !resource || !selectedCustomer || submitting) return;
     setSubmitting(true);
     setError(null);
     try {
-      const confirmIntentKey = getIntentKey(confirmIntentKeyRef, `${reservationId}|${quote.id}`);
-      await bookingRepository.confirm(reservationId, confirmIntentKey, quote.id);
-      draftIntentKeyRef.current = null;
-      holdIntentKeyRef.current = null;
-      confirmIntentKeyRef.current = null;
+      const intent = await getBookingIntent(quote.id);
+      await bookingRepository.confirm(reservationId, intent.confirmIdempotencyKey, quote.id);
+      bookingRepository.clearBusinessIntent();
       quoteIntentKeyRef.current = null;
       setStage("confirmed");
       onSuccess();
@@ -389,7 +367,7 @@ export function ClickToBookModal({
     } finally {
       setSubmitting(false);
     }
-  }, [bookingRepository, onSuccess, quote, reservationId, submitting]);
+  }, [bookingRepository, getBookingIntent, onSuccess, quote, reservationId, resource, selectedCustomer, submitting]);
 
   // Record Payment
   const handleRecordPayment = async (e: React.FormEvent) => {

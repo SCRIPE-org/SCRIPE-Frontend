@@ -65,6 +65,13 @@ export interface CreateBookingDraftInput {
   idempotencyKey: string;
 }
 
+/** Stable request keys scoped to one booking intent across draft, hold, and confirmation. */
+export interface BookingBusinessIntent {
+  draftIdempotencyKey: string;
+  holdIdempotencyKey: string;
+  confirmIdempotencyKey: string;
+}
+
 /**
  * Documentation for module export
  */

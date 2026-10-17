@@ -12,6 +12,7 @@ export const en = {
       resource: "Resource",
       allResources: "All resources",
       refresh: "Refresh",
+      blockTime: "+ Block Time",
     },
     timeline: {
       resource: "Resource",

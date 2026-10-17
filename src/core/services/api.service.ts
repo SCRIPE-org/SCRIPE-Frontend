@@ -7,7 +7,10 @@ import axios, {
   AxiosRequestConfig,
   InternalAxiosRequestConfig,
 } from "axios";
-import type { IApiService } from "../interfaces/api.interface";
+import type {
+  IApiService,
+  MutationRequestOptions,
+} from "../interfaces/api.interface";
 import { appLogger } from "@core/common/logger";
 import { secureTokenService } from "@core/common/secure-token-service";
 import { authBroadcast } from "@core/common/broadcast-auth";
@@ -502,14 +505,14 @@ export class ApiService implements IApiService {
    * Check if error is retryable
    */
   private isRetryableError(error: unknown): boolean {
-    if (!(error instanceof Error)) {
+    if (typeof error !== "object" || error === null) {
       return false;
     }
 
-    const requestError = error as Error & {
-      code?: string;
-      status?: number;
-      response?: { status?: number };
+    const requestError = error as {
+      code?: unknown;
+      status?: unknown;
+      response?: { status?: unknown };
     };
 
     if (requestError.code === "ERR_NETWORK" || requestError.code === "ECONNABORTED") {
@@ -517,7 +520,7 @@ export class ApiService implements IApiService {
     }
 
     const status = requestError.response?.status ?? requestError.status;
-    if (status && this.retryableStatusCodes.includes(status)) {
+    if (typeof status === "number" && this.retryableStatusCodes.includes(status)) {
       return true; // 5xx errors are retryable
     }
     return false;
@@ -565,8 +568,21 @@ export class ApiService implements IApiService {
     throw lastError || new Error("Request failed after retries");
   }
 
-  private hasExplicitIdempotencyKey(headers?: Record<string, string>): boolean {
-    return Object.entries(headers ?? {}).some(
+  private getRequestHeaders(options?: MutationRequestOptions): Record<string, string> | undefined {
+    if (!options) return undefined;
+
+    const headers = { ...options.headers };
+    const key = options.idempotencyKey?.trim();
+    if (key) headers["Idempotency-Key"] = key;
+    return Object.keys(headers).length > 0 ? headers : undefined;
+  }
+
+  private hasExplicitIdempotencyKey(options?: MutationRequestOptions): boolean {
+    if (!options) return false;
+
+    if (options.idempotencyKey?.trim()) return true;
+
+    return Object.entries(this.getRequestHeaders(options) ?? {}).some(
       ([name, value]) => name.toLowerCase() === "idempotency-key" && value.trim().length > 0
     );
   }
@@ -611,7 +627,7 @@ export class ApiService implements IApiService {
   private buildConfig(
     signal?: AbortSignal,
     params?: Record<string, unknown>,
-    headers?: Record<string, string>
+    options?: MutationRequestOptions
   ): AxiosRequestConfig {
     const config: AxiosRequestConfig = {};
     if (signal) {
@@ -620,6 +636,7 @@ export class ApiService implements IApiService {
     if (params) {
       config.params = params;
     }
+    const headers = this.getRequestHeaders(options);
     if (headers) {
       config.headers = headers;
     }
@@ -674,12 +691,12 @@ export class ApiService implements IApiService {
     endpoint: string,
     data?: unknown,
     signal?: AbortSignal,
-    options?: { headers?: Record<string, string> }
+    options?: MutationRequestOptions
   ): Promise<T> {
     const response = await this.axiosInstance.post(
       endpoint,
       data,
-      this.buildConfig(signal, undefined, options?.headers)
+      this.buildConfig(signal, undefined, options)
     );
     return this.unwrap<T>(response.data);
   }
@@ -688,23 +705,39 @@ export class ApiService implements IApiService {
     endpoint: string,
     data?: unknown,
     signal?: AbortSignal,
-    options?: { headers?: Record<string, string> }
+    options?: MutationRequestOptions
   ): Promise<T> {
     const response = await this.axiosInstance.put(
       endpoint,
       data,
-      this.buildConfig(signal, undefined, options?.headers)
+      this.buildConfig(signal, undefined, options)
     );
     return this.unwrap<T>(response.data);
   }
 
-  async patch<T>(endpoint: string, data?: unknown, signal?: AbortSignal): Promise<T> {
-    const response = await this.axiosInstance.patch(endpoint, data, this.buildConfig(signal));
+  async patch<T>(
+    endpoint: string,
+    data?: unknown,
+    signal?: AbortSignal,
+    options?: MutationRequestOptions
+  ): Promise<T> {
+    const response = await this.axiosInstance.patch(
+      endpoint,
+      data,
+      this.buildConfig(signal, undefined, options)
+    );
     return this.unwrap<T>(response.data);
   }
 
-  async delete<T>(endpoint: string, signal?: AbortSignal): Promise<T> {
-    const response = await this.axiosInstance.delete(endpoint, this.buildConfig(signal));
+  async delete<T>(
+    endpoint: string,
+    signal?: AbortSignal,
+    options?: MutationRequestOptions
+  ): Promise<T> {
+    const response = await this.axiosInstance.delete(
+      endpoint,
+      this.buildConfig(signal, undefined, options)
+    );
     return this.unwrap<T>(response.data);
   }
 
@@ -749,9 +782,9 @@ export class ApiService implements IApiService {
     endpoint: string,
     data?: unknown,
     signal?: AbortSignal,
-    options?: { headers?: Record<string, string> }
+    options?: MutationRequestOptions
   ): Promise<T> {
-    const retries = this.hasExplicitIdempotencyKey(options?.headers) ? this.maxRetries : 0;
+    const retries = this.hasExplicitIdempotencyKey(options) ? this.maxRetries : 0;
     return this.withRetry(() => this.post<T>(endpoint, data, signal, options), retries);
   }
 
@@ -762,9 +795,9 @@ export class ApiService implements IApiService {
     endpoint: string,
     data?: unknown,
     signal?: AbortSignal,
-    options?: { headers?: Record<string, string> }
+    options?: MutationRequestOptions
   ): Promise<T> {
-    const retries = this.hasExplicitIdempotencyKey(options?.headers) ? this.maxRetries : 0;
+    const retries = this.hasExplicitIdempotencyKey(options) ? this.maxRetries : 0;
     return this.withRetry(() => this.put<T>(endpoint, data, signal, options), retries);
   }
 

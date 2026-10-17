@@ -13,6 +13,7 @@ export const ar = {
       resource: "المورد",
       allResources: "كل الموارد",
       refresh: "تحديث",
+      blockTime: "+ حظر الوقت",
     },
     timeline: {
       resource: "المورد",

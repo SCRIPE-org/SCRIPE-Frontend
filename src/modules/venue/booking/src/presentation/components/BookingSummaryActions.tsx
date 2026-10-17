@@ -198,6 +198,13 @@ export function BookingSummaryActions({
         {held && <p className="text-sm text-nx-ink-2">{t("booking.hold.description")}</p>}
       </CardHeader>
       <CardContent className="space-y-5">
+        {held && state.errorMessage && (
+          <Alert variant="destructive">
+            <AlertCircle aria-hidden="true" />
+            <AlertTitle>{t("booking.errors.generic")}</AlertTitle>
+            <AlertDescription>{state.errorMessage}</AlertDescription>
+          </Alert>
+        )}
         <dl className="border-nx-border grid gap-4 rounded-xl border p-4 sm:grid-cols-2">
           <div>
             <dt className="text-xs text-nx-ink-3">{t("booking.summary.customer")}</dt>
