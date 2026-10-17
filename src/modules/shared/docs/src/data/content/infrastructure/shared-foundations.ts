@@ -54,6 +54,6 @@ registerPage({
   order: 13,
   sections,
   relatedSlugs: ["infrastructure/outbox-pattern", "modules/hrms/staff-directory"],
-  lastUpdated: "2026-10-16",
+  lastUpdated: "2026-10-17",
 });
 
