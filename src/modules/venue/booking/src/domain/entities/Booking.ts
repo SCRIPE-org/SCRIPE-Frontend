@@ -70,6 +70,7 @@ export interface BookingBusinessIntent {
   draftIdempotencyKey: string;
   holdIdempotencyKey: string;
   confirmIdempotencyKey: string;
+  holdExpiresAtUtc?: string;
 }
 
 /**

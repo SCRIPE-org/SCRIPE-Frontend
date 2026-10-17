@@ -11,6 +11,7 @@ const mocks = vi.hoisted(() => ({
     getReservation: vi.fn(),
     getOrCreateBusinessIntent: vi.fn(),
     clearBusinessIntent: vi.fn(),
+    recordBusinessHoldExpiry: vi.fn(),
   },
   customerRepository: { search: vi.fn(), create: vi.fn() },
   commercialPricingRepository: {
@@ -80,6 +81,17 @@ beforeEach(() => {
           confirmIdempotencyKey: `confirm-key-${mockIntentSequence}`,
         };
       }
+      if (
+        mockIntent.holdExpiresAtUtc &&
+        Date.parse(mockIntent.holdExpiresAtUtc) <= Date.now()
+      ) {
+        mockIntentSequence += 1;
+        mockIntent = {
+          ...mockIntent,
+          holdIdempotencyKey: `hold-key-${mockIntentSequence}`,
+          holdExpiresAtUtc: undefined,
+        };
+      }
       return {
         draftIdempotencyKey: mockIntent.draftIdempotencyKey,
         holdIdempotencyKey: mockIntent.holdIdempotencyKey,
@@ -90,6 +102,16 @@ beforeEach(() => {
   mocks.bookingRepository.clearBusinessIntent.mockImplementation(() => {
     mockIntent = null;
   });
+  mocks.bookingRepository.recordBusinessHoldExpiry.mockImplementation(
+    (draftKey: string, holdKey: string, expiresAtUtc: string) => {
+      if (
+        mockIntent?.draftIdempotencyKey === draftKey &&
+        mockIntent.holdIdempotencyKey === holdKey
+      ) {
+        mockIntent.holdExpiresAtUtc = expiresAtUtc;
+      }
+    }
+  );
   mocks.customerRepository.search.mockResolvedValue([]);
   mocks.customerRepository.create.mockResolvedValue({
     id: "customer-1",
@@ -257,7 +279,7 @@ describe("ClickToBookModal quote intent retry", () => {
       .mockResolvedValueOnce({ id: "draft-1" })
       .mockResolvedValueOnce({ id: "draft-2" });
     mocks.bookingRepository.createHold.mockReset().mockResolvedValue({
-      expiresAtUtc: "2026-10-16T13:00:00.000Z",
+      expiresAtUtc: new Date(Date.now() + 60_000).toISOString(),
     });
     mocks.bookingRepository.confirm.mockReset().mockResolvedValue(undefined);
     mocks.bookingRepository.getReservation.mockReset().mockResolvedValue({
@@ -376,7 +398,7 @@ describe("ClickToBookModal quote intent retry", () => {
     fireEvent.click(screen.getByRole("button", { name: "Select Customer" }));
     await waitFor(() => expect(screen.getByRole("button", { name: "Hold Temporarily" })).toBeEnabled());
     fireEvent.click(screen.getByRole("button", { name: "Hold Temporarily" }));
-    await waitFor(() => expect(screen.getByRole("button", { name: "Confirm Booking Now" })).toBeInTheDocument());
+    await waitFor(() => expect(screen.getByText("The booking hold expired before it could be reserved. Please try again.")).toBeInTheDocument());
 
     const firstDraftKey = mocks.bookingRepository.createDraft.mock.calls[0]?.[0].idempotencyKey;
     const firstHoldKey = mocks.bookingRepository.createHold.mock.calls[0]?.[1];
@@ -385,7 +407,6 @@ describe("ClickToBookModal quote intent retry", () => {
 
     view.rerender(<ClickToBookModal {...props} open={false} />);
     view.rerender(<ClickToBookModal {...props} open />);
-    await waitFor(() => expect(mocks.commercialPricingRepository.calculateQuote).toHaveBeenCalledTimes(2));
     await waitFor(() => expect(screen.getByRole("button", { name: "Hold Temporarily" })).toBeEnabled());
     fireEvent.click(screen.getByRole("button", { name: "Hold Temporarily" }));
 

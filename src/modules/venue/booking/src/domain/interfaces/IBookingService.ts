@@ -15,6 +15,7 @@ import type {
 export interface IBookingService {
   getOrCreateBusinessIntent(fingerprint: string, confirmationFingerprint?: string): Promise<BookingBusinessIntent>;
   clearBusinessIntent(): void;
+  recordBusinessHoldExpiry(draftIdempotencyKey: string, holdIdempotencyKey: string, expiresAtUtc: string): void;
   createDraft(input: CreateBookingDraftInput): Promise<{ id: string }>;
   createHold(reservationId: string, idempotencyKey: string): Promise<BookingHoldResult>;
   confirm(

@@ -70,6 +70,7 @@ function makeContainer() {
         confirmIdempotencyKey: "confirm-intent",
       }),
       clearBusinessIntent: vi.fn(),
+      recordBusinessHoldExpiry: vi.fn(),
       createDraft: vi.fn().mockResolvedValue({ id: "reservation-1" }),
       createHold: vi.fn().mockResolvedValue({
         reservationId: "reservation-1",

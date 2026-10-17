@@ -33,7 +33,13 @@ function isStoredIntent(value: unknown): value is BookingBusinessIntent & {
   return typeof candidate.fingerprintDigest === "string" &&
     typeof candidate.draftIdempotencyKey === "string" &&
     typeof candidate.holdIdempotencyKey === "string" &&
-    typeof candidate.confirmIdempotencyKey === "string";
+    typeof candidate.confirmIdempotencyKey === "string" &&
+    (candidate.holdExpiresAtUtc === undefined || typeof candidate.holdExpiresAtUtc === "string");
+}
+
+function isExpired(expiresAtUtc: string): boolean {
+  const expiresAt = Date.parse(expiresAtUtc);
+  return !Number.isFinite(expiresAt) || expiresAt <= Date.now();
 }
 
 function reuseInMemoryIntent(
@@ -42,20 +48,23 @@ function reuseInMemoryIntent(
   candidate: BookingBusinessIntent
 ): BookingBusinessIntent {
   if (memoryIntent?.fingerprint === fingerprint) {
+    const intent = { ...memoryIntent.intent };
+    if (intent.holdExpiresAtUtc && isExpired(intent.holdExpiresAtUtc)) {
+      intent.holdIdempotencyKey = candidate.holdIdempotencyKey;
+      delete intent.holdExpiresAtUtc;
+    }
     if (
       confirmationFingerprint !== undefined &&
       memoryIntent.confirmationFingerprint !== confirmationFingerprint
     ) {
-      memoryIntent = {
-        ...memoryIntent,
-        confirmationFingerprint,
-        intent: {
-          ...memoryIntent.intent,
-          confirmIdempotencyKey: candidate.confirmIdempotencyKey,
-        },
-      };
+      intent.confirmIdempotencyKey = candidate.confirmIdempotencyKey;
     }
-    return memoryIntent.intent;
+    memoryIntent = {
+      ...memoryIntent,
+      confirmationFingerprint: confirmationFingerprint ?? memoryIntent.confirmationFingerprint,
+      intent,
+    };
+    return intent;
   }
 
   memoryIntent = { fingerprint, confirmationFingerprint, intent: candidate };
@@ -93,10 +102,15 @@ export async function getOrCreateBookingIntent(
       if (isStoredIntent(parsed) && parsed.fingerprintDigest === fingerprintDigestValue) {
         const confirmationKeyChanged = confirmationDigestValue !== undefined &&
           parsed.confirmationFingerprintDigest !== confirmationDigestValue;
+        const holdExpired = typeof parsed.holdExpiresAtUtc === "string" &&
+          isExpired(parsed.holdExpiresAtUtc);
         const current: BookingBusinessIntent = {
           draftIdempotencyKey: parsed.draftIdempotencyKey,
-          holdIdempotencyKey: parsed.holdIdempotencyKey,
+          holdIdempotencyKey: holdExpired ? intent.holdIdempotencyKey : parsed.holdIdempotencyKey,
           confirmIdempotencyKey: confirmationKeyChanged ? intent.confirmIdempotencyKey : parsed.confirmIdempotencyKey,
+          ...(holdExpired || !parsed.holdExpiresAtUtc
+            ? {}
+            : { holdExpiresAtUtc: parsed.holdExpiresAtUtc }),
         };
         memoryIntent = {
           fingerprint,
@@ -107,12 +121,14 @@ export async function getOrCreateBookingIntent(
           ),
           intent: current,
         };
-        if (!confirmationKeyChanged) return current;
+        if (!confirmationKeyChanged && !holdExpired) return current;
 
         window.sessionStorage.setItem(STORAGE_KEY, JSON.stringify({
           ...current,
           fingerprintDigest: fingerprintDigestValue,
-          confirmationFingerprintDigest: confirmationDigestValue,
+          ...(confirmationDigestValue || parsed.confirmationFingerprintDigest
+            ? { confirmationFingerprintDigest: confirmationDigestValue ?? parsed.confirmationFingerprintDigest }
+            : {}),
         }));
         return current;
       }
@@ -130,6 +146,45 @@ export async function getOrCreateBookingIntent(
   }
 
   return intent;
+}
+
+export function recordBookingHoldExpiry(
+  draftIdempotencyKey: string,
+  holdIdempotencyKey: string,
+  expiresAtUtc: string
+): void {
+  if (
+    !memoryIntent ||
+    memoryIntent.intent.draftIdempotencyKey !== draftIdempotencyKey ||
+    memoryIntent.intent.holdIdempotencyKey !== holdIdempotencyKey
+  ) {
+    return;
+  }
+
+  memoryIntent = {
+    ...memoryIntent,
+    intent: { ...memoryIntent.intent, holdExpiresAtUtc: expiresAtUtc },
+  };
+
+  try {
+    if (typeof window === "undefined") return;
+    const storedValue = window.sessionStorage.getItem(STORAGE_KEY);
+    if (!storedValue) return;
+    const parsed: unknown = JSON.parse(storedValue);
+    if (
+      !isStoredIntent(parsed) ||
+      parsed.draftIdempotencyKey !== draftIdempotencyKey ||
+      parsed.holdIdempotencyKey !== holdIdempotencyKey
+    ) {
+      return;
+    }
+    window.sessionStorage.setItem(
+      STORAGE_KEY,
+      JSON.stringify({ ...parsed, holdExpiresAtUtc: expiresAtUtc })
+    );
+  } catch {
+    // In-memory expiry still protects the active view when browser storage is unavailable.
+  }
 }
 
 export function clearBookingIntent(): void {

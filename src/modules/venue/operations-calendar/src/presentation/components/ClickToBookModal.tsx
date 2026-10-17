@@ -54,21 +54,9 @@ function getQuoteIntent(
   return keyRef.current;
 }
 
-function getHoldIntentKey(
-  keyRef: { current: { draftKey: string; key: string; expiresAtUtc?: string } | null },
-  draftKey: string,
-  persistedKey: string
-): string {
-  const current = keyRef.current;
-  if (current?.draftKey === draftKey) {
-    if (!current.expiresAtUtc) return current.key;
-    const expiresAt = Date.parse(current.expiresAtUtc);
-    if (Number.isFinite(expiresAt) && expiresAt > Date.now()) return current.key;
-  }
-
-  const key = current?.draftKey === draftKey ? crypto.randomUUID() : persistedKey;
-  keyRef.current = { draftKey, key };
-  return key;
+function isExpiredHold(expiresAtUtc: string): boolean {
+  const expiresAt = Date.parse(expiresAtUtc);
+  return !Number.isFinite(expiresAt) || expiresAt <= Date.now();
 }
 
 /**
@@ -93,11 +81,6 @@ export function ClickToBookModal({
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const quickAddIntentRef = useRef<{ fingerprint: string; idempotencyKey: string } | null>(null);
-  const holdIntentRef = useRef<{
-    draftKey: string;
-    key: string;
-    expiresAtUtc?: string;
-  } | null>(null);
   const quoteIntentKeyRef = useRef<{
     fingerprint: string;
     key: string;
@@ -311,17 +294,15 @@ export function ClickToBookModal({
       });
 
       // 2. Create Hold
-      const holdIntentKey = getHoldIntentKey(
-        holdIntentRef,
+      const hold = await bookingRepository.createHold(draft.id, intent.holdIdempotencyKey);
+      bookingRepository.recordBusinessHoldExpiry(
         intent.draftIdempotencyKey,
-        intent.holdIdempotencyKey
+        intent.holdIdempotencyKey,
+        hold.expiresAtUtc
       );
-      const hold = await bookingRepository.createHold(draft.id, holdIntentKey);
-      holdIntentRef.current = {
-        draftKey: intent.draftIdempotencyKey,
-        key: holdIntentKey,
-        expiresAtUtc: hold.expiresAtUtc,
-      };
+      if (isExpiredHold(hold.expiresAtUtc)) {
+        throw new Error("The booking hold has expired. Please retry confirmation.");
+      }
 
       // 3. Confirm with authoritative quote ID
       await bookingRepository.confirm(draft.id, intent.confirmIdempotencyKey, quote.id);
@@ -329,7 +310,6 @@ export function ClickToBookModal({
       const reservation = await bookingRepository.getReservation(draft.id);
 
       bookingRepository.clearBusinessIntent();
-      holdIntentRef.current = null;
       quoteIntentKeyRef.current = null;
       setReservationId(draft.id);
       setReservationNumber(reservation.reservationNumber);
@@ -368,17 +348,16 @@ export function ClickToBookModal({
         idempotencyKey: intent.draftIdempotencyKey,
       });
 
-      const holdIntentKey = getHoldIntentKey(
-        holdIntentRef,
+      const hold = await bookingRepository.createHold(draft.id, intent.holdIdempotencyKey);
+      bookingRepository.recordBusinessHoldExpiry(
         intent.draftIdempotencyKey,
-        intent.holdIdempotencyKey
+        intent.holdIdempotencyKey,
+        hold.expiresAtUtc
       );
-      const hold = await bookingRepository.createHold(draft.id, holdIntentKey);
-      holdIntentRef.current = {
-        draftKey: intent.draftIdempotencyKey,
-        key: holdIntentKey,
-        expiresAtUtc: hold.expiresAtUtc,
-      };
+      if (isExpiredHold(hold.expiresAtUtc)) {
+        setError("The booking hold expired before it could be reserved. Please try again.");
+        return;
+      }
       const reservation = await bookingRepository.getReservation(draft.id);
 
       setReservationId(draft.id);
@@ -413,7 +392,6 @@ export function ClickToBookModal({
       const intent = await getBookingIntent(quote.id);
       await bookingRepository.confirm(reservationId, intent.confirmIdempotencyKey, quote.id);
       bookingRepository.clearBusinessIntent();
-      holdIntentRef.current = null;
       quoteIntentKeyRef.current = null;
       setStage("confirmed");
       onSuccess();

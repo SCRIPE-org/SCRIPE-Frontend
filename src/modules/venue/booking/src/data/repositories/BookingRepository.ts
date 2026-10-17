@@ -27,6 +27,14 @@ export class BookingRepository implements IBookingRepository {
     this.service.clearBusinessIntent();
   }
 
+  recordBusinessHoldExpiry(
+    draftIdempotencyKey: string,
+    holdIdempotencyKey: string,
+    expiresAtUtc: string
+  ): void {
+    this.service.recordBusinessHoldExpiry(draftIdempotencyKey, holdIdempotencyKey, expiresAtUtc);
+  }
+
   /**
    * Initializes a pending reservation draft for a specific resource, time window, and customer.
    * @param input Draft specifications including facility, resource, customer, and local time range.

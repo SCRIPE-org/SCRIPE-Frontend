@@ -1,5 +1,9 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { clearBookingIntent, getOrCreateBookingIntent } from "./bookingIntentStore";
+import {
+  clearBookingIntent,
+  getOrCreateBookingIntent,
+  recordBookingHoldExpiry,
+} from "./bookingIntentStore";
 
 function createBrowserStorage(
   digest: (algorithm: string, input: BufferSource) => Promise<ArrayBuffer> = async (_algorithm, input) => {
@@ -66,6 +70,23 @@ describe("bookingIntentStore", () => {
     expect(changedQuote.draftIdempotencyKey).toBe(first.draftIdempotencyKey);
     expect(changedQuote.holdIdempotencyKey).toBe(first.holdIdempotencyKey);
     expect(changedQuote.confirmIdempotencyKey).not.toBe(first.confirmIdempotencyKey);
+  });
+
+  it("renews an expired hold key from persisted intent while preserving draft and confirmation keys", async () => {
+    createBrowserStorage();
+    const first = await getOrCreateBookingIntent("same-booking", "quote-1");
+    recordBookingHoldExpiry(
+      first.draftIdempotencyKey,
+      first.holdIdempotencyKey,
+      new Date(Date.now() - 1_000).toISOString()
+    );
+
+    const resumed = await getOrCreateBookingIntent("same-booking", "quote-1");
+
+    expect(resumed.draftIdempotencyKey).toBe(first.draftIdempotencyKey);
+    expect(resumed.holdIdempotencyKey).not.toBe(first.holdIdempotencyKey);
+    expect(resumed.confirmIdempotencyKey).toBe(first.confirmIdempotencyKey);
+    expect(resumed.holdExpiresAtUtc).toBeUndefined();
   });
 
   it("does not repopulate storage when an intent is cleared while its fingerprint is hashing", async () => {

@@ -11,7 +11,11 @@ import type {
 } from "../../domain/entities/Booking";
 import type { IBookingService } from "../../domain/interfaces/IBookingService";
 import { BOOKING_ENDPOINTS } from "./booking.endpoints";
-import { clearBookingIntent, getOrCreateBookingIntent } from "./bookingIntentStore";
+import {
+  clearBookingIntent,
+  getOrCreateBookingIntent,
+  recordBookingHoldExpiry,
+} from "./bookingIntentStore";
 
 /**
  * Documentation for module export
@@ -28,6 +32,14 @@ export class BookingService implements IBookingService {
 
   clearBusinessIntent(): void {
     clearBookingIntent();
+  }
+
+  recordBusinessHoldExpiry(
+    draftIdempotencyKey: string,
+    holdIdempotencyKey: string,
+    expiresAtUtc: string
+  ): void {
+    recordBookingHoldExpiry(draftIdempotencyKey, holdIdempotencyKey, expiresAtUtc);
   }
 
   /**
