@@ -1,5 +1,5 @@
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
-import { describe, expect, it, vi } from "vitest";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 import { ClickToBookModal } from "./ClickToBookModal";
 
 const mocks = vi.hoisted(() => ({
@@ -9,8 +9,10 @@ const mocks = vi.hoisted(() => ({
     createHold: vi.fn(),
     confirm: vi.fn(),
     getReservation: vi.fn(),
+    getOrCreateBusinessIntent: vi.fn(),
+    clearBusinessIntent: vi.fn(),
   },
-  customerRepository: { searchCustomers: vi.fn().mockResolvedValue([]) },
+  customerRepository: { search: vi.fn(), create: vi.fn() },
   commercialPricingRepository: {
     getResourceConfiguration: vi.fn(),
     calculateQuote: vi.fn(),
@@ -34,7 +36,122 @@ vi.mock("@modules/venue", () => ({
   }),
 }));
 
+let mockIntent:
+  | {
+      fingerprint: string;
+      confirmationFingerprint?: string;
+      draftIdempotencyKey: string;
+      holdIdempotencyKey: string;
+      confirmIdempotencyKey: string;
+    }
+  | null = null;
+let mockIntentSequence = 0;
+
+beforeEach(() => {
+  vi.resetAllMocks();
+  mockIntent = null;
+  mockIntentSequence = 0;
+  mocks.translate.mockImplementation((_key, options) => options?.defaultValue ?? _key);
+  mocks.bookingRepository.createDraft.mockResolvedValue({ id: "draft-1" });
+  mocks.bookingRepository.createHold.mockResolvedValue({
+    expiresAtUtc: new Date(Date.now() + 60_000).toISOString(),
+  });
+  mocks.bookingRepository.confirm.mockResolvedValue(undefined);
+  mocks.bookingRepository.getReservation.mockResolvedValue({ reservationNumber: "R-1" });
+  mocks.bookingRepository.getOrCreateBusinessIntent.mockImplementation(
+    async (fingerprint: string, confirmationFingerprint?: string) => {
+      if (!mockIntent || mockIntent.fingerprint !== fingerprint) {
+        mockIntentSequence += 1;
+        mockIntent = {
+          fingerprint,
+          confirmationFingerprint,
+          draftIdempotencyKey: `draft-key-${mockIntentSequence}`,
+          holdIdempotencyKey: `hold-key-${mockIntentSequence}`,
+          confirmIdempotencyKey: `confirm-key-${mockIntentSequence}`,
+        };
+      } else if (
+        confirmationFingerprint !== undefined &&
+        mockIntent.confirmationFingerprint !== confirmationFingerprint
+      ) {
+        mockIntentSequence += 1;
+        mockIntent = {
+          ...mockIntent,
+          confirmationFingerprint,
+          confirmIdempotencyKey: `confirm-key-${mockIntentSequence}`,
+        };
+      }
+      return {
+        draftIdempotencyKey: mockIntent.draftIdempotencyKey,
+        holdIdempotencyKey: mockIntent.holdIdempotencyKey,
+        confirmIdempotencyKey: mockIntent.confirmIdempotencyKey,
+      };
+    }
+  );
+  mocks.bookingRepository.clearBusinessIntent.mockImplementation(() => {
+    mockIntent = null;
+  });
+  mocks.customerRepository.search.mockResolvedValue([]);
+  mocks.customerRepository.create.mockResolvedValue({
+    id: "customer-1",
+    type: "Person",
+    displayName: "Synthetic Customer",
+  });
+  mocks.commercialPricingRepository.getResourceConfiguration.mockResolvedValue({
+    offeringId: "offering-1",
+    currencyCode: "EGP",
+  });
+  mocks.commercialPricingRepository.calculateQuote.mockResolvedValue({
+    id: "quote-1",
+    quoteNumber: "Q-1",
+    grandTotal: 250,
+    currencyCode: "EGP",
+  });
+});
+
 describe("ClickToBookModal quote intent retry", () => {
+  it("reuses the quick-add customer key after an ambiguous create failure", async () => {
+    mocks.customerRepository.create
+      .mockRejectedValueOnce(new Error("customer response lost after commit"))
+      .mockResolvedValueOnce({
+        id: "customer-1",
+        type: "Person",
+        displayName: "Synthetic Customer",
+      });
+    render(
+      <ClickToBookModal
+        open
+        onOpenChange={vi.fn()}
+        resource={{
+          id: "resource-1",
+          name: "Court 1",
+          profileId: "profile-1",
+          profileName: "Court",
+          facilityId: "facility-1",
+          facilityName: "Main Facility",
+          resourceKindCode: "COURT",
+          timeZoneId: "UTC",
+        }}
+        instantUtc="2026-10-20T09:00:00.000Z"
+        timeZoneId="UTC"
+        onSuccess={vi.fn()}
+      />
+    );
+
+    fireEvent.click(screen.getByRole("button", { name: "+ Quick Add" }));
+    fireEvent.change(screen.getByPlaceholderText("Customer Name (e.g. Ahmed Hassan)"), {
+      target: { value: "Synthetic Customer" },
+    });
+    fireEvent.click(screen.getByRole("button", { name: "Select Customer" }));
+    await waitFor(() => expect(screen.getByText("customer response lost after commit")).toBeInTheDocument());
+
+    fireEvent.click(screen.getByRole("button", { name: "Select Customer" }));
+    await waitFor(() => expect(mocks.commercialPricingRepository.calculateQuote).toHaveBeenCalledTimes(1));
+    const firstKey = mocks.customerRepository.create.mock.calls[0]?.[3]?.idempotencyKey;
+    const retryKey = mocks.customerRepository.create.mock.calls[1]?.[3]?.idempotencyKey;
+    expect(firstKey).toBeTruthy();
+    expect(retryKey).toBe(firstKey);
+  });
+
   it("reuses the same CatalogPricing key and expiry when the first response is lost", async () => {
     mocks.commercialPricingRepository.getResourceConfiguration.mockResolvedValue({
       offeringId: "offering-1",
@@ -146,7 +263,7 @@ describe("ClickToBookModal quote intent retry", () => {
     mocks.bookingRepository.getReservation.mockReset().mockResolvedValue({
       reservationNumber: "R-1",
     });
-    mocks.customerRepository.searchCustomers.mockReset().mockResolvedValue([]);
+    mocks.customerRepository.search.mockReset().mockResolvedValue([]);
     mocks.commercialPricingRepository.getResourceConfiguration.mockReset().mockResolvedValue({
       offeringId: "offering-1",
       currencyCode: "EGP",
@@ -220,7 +337,7 @@ describe("ClickToBookModal quote intent retry", () => {
     mocks.bookingRepository.getReservation.mockReset().mockResolvedValue({
       reservationNumber: "R-1",
     });
-    mocks.customerRepository.searchCustomers.mockReset().mockResolvedValue([]);
+    mocks.customerRepository.search.mockReset().mockResolvedValue([]);
     mocks.commercialPricingRepository.getResourceConfiguration.mockReset().mockResolvedValue({
       offeringId: "offering-1",
       currencyCode: "EGP",
