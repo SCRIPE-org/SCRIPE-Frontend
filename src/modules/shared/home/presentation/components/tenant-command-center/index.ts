@@ -1,4 +1,6 @@
 export * from "./tenantTypes";
+export * from "./tenantCustomizationTypes";
+export * from "./tenantWidgetRegistry";
 export * from "./TenantCommandHeader";
 export * from "./TenantHeroBanner";
 export * from "./TenantKpiCards";
@@ -11,3 +13,8 @@ export * from "./TenantQuickActions";
 export * from "./TenantRecentActivityFeed";
 export * from "./TenantSystemNotices";
 export * from "./TenantSuccessPartnerCard";
+export * from "./TenantWidgetRenderer";
+export * from "./TenantWidgetCardWrapper";
+export * from "./TenantWidgetSettingsDialog";
+export * from "./TenantWidgetLibraryDialog";
+export * from "./TenantDashboardGrid";

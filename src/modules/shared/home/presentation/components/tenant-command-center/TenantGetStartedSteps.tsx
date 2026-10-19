@@ -6,6 +6,7 @@ import Link from "next/link";
 import { useI18n } from "@core/providers/i18n-provider";
 import { Card } from "@core/ui/card";
 import { Button } from "@core/ui/button";
+import { cn } from "@core/common/utils";
 import type { TenantStepItem } from "./tenantTypes";
 
 interface TenantGetStartedStepsProps {
@@ -22,25 +23,31 @@ export function TenantGetStartedSteps({
   const { t } = useI18n();
 
   return (
-    <Card className="shadow-xs border-border bg-card p-4">
+    <Card className="p-4 sm:p-5 min-w-0 overflow-hidden border-nx-line bg-nx-surface text-nx-ink hover:border-nx-line-hi">
       {/* Section Header */}
-      <div className="mb-3 flex items-start justify-between gap-3">
-        <div className="flex items-center gap-2.5">
-          <div className="flex h-8 w-8 items-center justify-center rounded-lg border border-primary/20 bg-primary/10 text-primary">
-            <Rocket className="h-4 w-4" />
+      <div className="mb-3.5 flex flex-wrap items-center justify-between gap-2 min-w-0">
+        <div className="flex items-center gap-2.5 min-w-0">
+          <div
+            className="flex h-9 w-9 shrink-0 items-center justify-center rounded-nx-md"
+            style={{
+              background: "color-mix(in oklch, var(--nx-accent) 12%, transparent)",
+              color: "var(--nx-accent)",
+            }}
+          >
+            <Rocket className="h-4.5 w-4.5" />
           </div>
-          <div>
-            <h3 className="text-sm font-bold text-foreground">
+          <div className="min-w-0">
+            <h3 className="text-sm font-semibold text-nx-ink truncate">
               {t("tenantCommandCenter.getStarted.title") || "Get Started"}
             </h3>
-            <p className="text-[11px] text-muted-foreground">
+            <p className="text-xs text-nx-ink-3 truncate">
               {t("tenantCommandCenter.getStarted.subtitle") ||
                 "Finish the essentials to unlock the full SCRIPE workspace."}
             </p>
           </div>
         </div>
 
-        <span className="text-xs font-semibold text-primary">
+        <span className="text-xs font-semibold text-nx-accent shrink-0">
           {t("tenantCommandCenter.getStarted.progress", {
             completed: completedCount,
             total: totalCount,
@@ -48,8 +55,8 @@ export function TenantGetStartedSteps({
         </span>
       </div>
 
-      {/* 5 Steps Responsive Grid */}
-      <div className="grid grid-cols-1 gap-2.5 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5">
+      {/* Steps Container Grid */}
+      <div className="getstarted-container-grid">
         {steps.map((step) => {
           const isDone = step.status === "done";
           const isCurrent = step.status === "current";
@@ -57,54 +64,64 @@ export function TenantGetStartedSteps({
           return (
             <div
               key={step.id}
-              className={`flex min-h-[136px] flex-col justify-between rounded-xl border p-3 transition-colors ${
+              className={cn(
+                "group flex min-h-[136px] flex-col justify-between rounded-nx-md border p-3.5 min-w-0 transition-[color,background-color,border-color] duration-nx-micro ease-nx-enter",
                 isCurrent
-                  ? "shadow-xs border-primary/50 bg-primary/5"
+                  ? "border-nx-accent bg-nx-accent-wash"
                   : isDone
-                    ? "border-border bg-muted/20"
-                    : "border-border bg-card"
-              }`}
+                    ? "border-nx-line bg-nx-raised/40"
+                    : "border-nx-line bg-transparent hover:border-nx-line-hi hover:bg-nx-raised"
+              )}
             >
-              <div>
-                <div className="flex items-center justify-between">
+              <div className="min-w-0">
+                <div className="flex items-center justify-between gap-1.5 min-w-0">
                   <div
-                    className={`flex h-6 w-6 items-center justify-center rounded-full border text-[10px] font-bold ${
+                    className={cn(
+                      "flex h-6 w-6 shrink-0 items-center justify-center rounded-full border text-[10px] font-bold",
                       isDone
-                        ? "border-emerald-500 bg-emerald-500 text-white"
+                        ? "border-emerald-500/40 bg-emerald-500/15 text-emerald-500"
                         : isCurrent
-                          ? "border-primary bg-primary text-primary-foreground"
-                          : "border-border bg-muted text-muted-foreground"
-                    }`}
+                          ? "border-nx-accent bg-nx-accent text-white"
+                          : "border-nx-line bg-nx-raised text-nx-ink-3"
+                    )}
                   >
                     {isDone ? <Check className="h-3 w-3" /> : step.id}
                   </div>
                   {isCurrent && (
-                    <span className="rounded bg-primary/10 px-1.5 py-0.5 text-[9px] font-bold text-primary">
+                    <span className="rounded-nx-sm bg-nx-accent/10 px-1.5 py-0.5 text-[9px] font-bold text-nx-accent shrink-0">
                       {t("tenantCommandCenter.getStarted.nextUp")}
                     </span>
                   )}
                 </div>
 
-                <h4 className="mt-2.5 text-xs font-bold leading-tight text-foreground">
+                <h4
+                  className="mt-2 text-xs font-semibold leading-tight text-nx-ink truncate"
+                  title={step.title}
+                >
                   {step.title}
                 </h4>
-                <p className="mt-1 text-[10px] leading-snug text-muted-foreground">
+                <p
+                  className="mt-1 line-clamp-2 text-[11px] leading-snug text-nx-ink-3"
+                  title={step.description}
+                >
                   {step.description}
                 </p>
               </div>
 
-              <div className="mt-3 pt-2">
+              <div className="mt-3.5 pt-1 min-w-0">
                 {isDone ? (
-                  <span className="flex items-center gap-1 text-[10px] font-semibold text-emerald-500">
-                    <Check className="h-3 w-3" />
-                    <span>{t("tenantCommandCenter.getStarted.completed")}</span>
+                  <span className="flex items-center gap-1 text-[11px] font-semibold text-emerald-500">
+                    <Check className="h-3.5 w-3.5 shrink-0" />
+                    <span className="truncate">
+                      {t("tenantCommandCenter.getStarted.completed")}
+                    </span>
                   </span>
                 ) : (
                   <Button
                     asChild
                     variant={isCurrent ? "default" : "outline"}
                     size="sm"
-                    className="h-7 w-full text-[10px] font-semibold"
+                    className="h-7 w-full text-[11px] font-semibold truncate border-nx-line"
                   >
                     <Link href={step.href || "/settings"}>
                       {step.actionLabel || t("tenantCommandCenter.getStarted.start")}

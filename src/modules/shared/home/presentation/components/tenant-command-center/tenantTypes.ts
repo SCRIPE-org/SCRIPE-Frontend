@@ -15,6 +15,13 @@ export interface TenantReadinessCheck {
   status: "success" | "warning" | "error";
 }
 
+export interface TenantLoginActivityItem {
+  date: string;
+  successCount?: number;
+  count?: number;
+  failedCount?: number;
+}
+
 export interface TenantKpiCardMetric {
   value: number;
   sub: string;

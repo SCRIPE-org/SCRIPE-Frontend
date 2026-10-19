@@ -5,26 +5,19 @@ import { useTenantOverviewViewModel } from "../viewmodels/useTenantOverviewViewM
 import { MinimalWelcome } from "../components/MinimalWelcome";
 import {
   TenantCommandHeader,
-  TenantHeroBanner,
-  TenantKpiCards,
-  TenantGetStartedSteps,
-  TenantProductsSection,
-  TenantUsageGrid,
-  TenantActivityCharts,
-  TenantNeedsAttention,
-  TenantQuickActions,
-  TenantRecentActivityFeed,
-  TenantSystemNotices,
-  TenantSuccessPartnerCard,
+  TenantDashboardGrid,
 } from "../components/tenant-command-center";
 
 /**
  * TenantOverviewView
  *
- * Dedicated Tenant Organization Control Center.
- * Faithful implementation of the approved SCRIPE Tenant Command Center V1 prototype.
- * Seamlessly integrates live backend telemetry with presentation showcase mode.
- * Adheres strictly to Clean Architecture (View -> ViewModel -> Repository -> Service -> IApiService).
+ * Dedicated Tenant Organization Control Center & Customizable Workspace.
+ * Upgraded to a professional, responsive grid-based dashboard customization experience.
+ *
+ * Adheres strictly to:
+ * - Clean Architecture (View -> ViewModel -> Repository -> Service -> IApiService)
+ * - Mandatory `@core/ui/*` design system components
+ * - RBAC / PBAC authorization boundaries and Tenant Isolation
  */
 export function TenantOverviewView() {
   const vm = useTenantOverviewViewModel();
@@ -37,69 +30,34 @@ export function TenantOverviewView() {
 
   return (
     <div className="mx-auto max-w-[1560px] space-y-4 pb-8">
-      {/* 1. Header Bar */}
+      {/* 1. Command Header Bar with Customization Toolbar */}
       <TenantCommandHeader
         tenantName={data.tenantName}
         isImpersonating={vm.isImpersonating}
         onRefresh={vm.refetchAll}
         isRefreshing={vm.isRefreshing}
+        canCustomize={vm.canCustomize}
+        isEditing={vm.isEditing}
+        hasUnsavedChanges={vm.hasUnsavedChanges}
+        isSaving={vm.isSavingLayout}
+        onEnterEditMode={vm.enterEditMode}
+        onCancelEditMode={vm.cancelEditMode}
+        onSaveLayout={vm.saveLayout}
+        onRestoreDefault={vm.restoreDefaultLayout}
+        onOpenLibrary={() => vm.setIsLibraryOpen(true)}
       />
 
-      {/* 2. Hero Pitch Banner with Readiness Ring */}
-      <TenantHeroBanner
-        tenantName={data.tenantName}
-        readinessPercent={data.readinessPercent}
-        setupStepsCompleted={data.setupStepsCompleted}
-        setupStepsTotal={data.setupStepsTotal}
-        metaPills={data.metaPills}
-        readinessChecks={data.readinessChecks}
+      {/* 2. Responsive Configurable 12-Column Dashboard Grid */}
+      <TenantDashboardGrid
+        layout={vm.activeLayout}
+        data={data}
+        loginActivity={vm.overviewVm.loginActivity.data}
+        isPresentationMode={vm.isPresentationMode}
+        isEditing={vm.isEditing}
+        onLayoutChange={vm.updateDraftLayout}
+        isLibraryOpen={vm.isLibraryOpen}
+        setIsLibraryOpen={vm.setIsLibraryOpen}
       />
-
-      {/* 3. 4 Top KPI Cards */}
-      <TenantKpiCards kpis={data.kpis} />
-
-      {/* 4. Main 2-Column Dashboard Grid */}
-      <div className="grid grid-cols-1 items-start gap-3.5 lg:grid-cols-[minmax(0,2fr)_minmax(310px,0.9fr)]">
-        {/* Left Column (Main Operational Core) */}
-        <div className="min-w-0 space-y-3.5">
-          {/* Step 1: Get Started */}
-          <TenantGetStartedSteps
-            steps={data.steps}
-            completedCount={data.setupStepsCompleted}
-            totalCount={data.setupStepsTotal}
-          />
-
-          {/* Step 2: Your SCRIPE Products */}
-          <TenantProductsSection products={data.products} />
-
-          {/* Step 3: Organization Usage */}
-          <TenantUsageGrid quotas={data.quotas} />
-
-          {/* Step 4: Split Charts (Growth & Login Activity) */}
-          <TenantActivityCharts
-            loginActivity={vm.overviewVm.loginActivity.data}
-            isPresentationMode={vm.isPresentationMode}
-          />
-        </div>
-
-        {/* Right Column (Administrative Sidebar) */}
-        <aside className="min-w-0 space-y-3.5">
-          {/* Needs Attention */}
-          <TenantNeedsAttention alerts={data.alerts} />
-
-          {/* Quick Actions 2x2 Grid */}
-          <TenantQuickActions actions={data.quickActions} />
-
-          {/* Activity Feed */}
-          <TenantRecentActivityFeed activityFeed={data.activityFeed} />
-
-          {/* System Notices */}
-          <TenantSystemNotices notices={data.systemNotices} />
-
-          {/* Success Partner */}
-          <TenantSuccessPartnerCard />
-        </aside>
-      </div>
     </div>
   );
 }
