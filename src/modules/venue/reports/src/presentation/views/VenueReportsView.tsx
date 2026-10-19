@@ -171,83 +171,132 @@ export function VenueReportsView() {
 
       {/* Currency Isolation KPI Cards (Requirement A11 & A10: Never sum unlike currencies) */}
       {Object.keys(currencyTotals).length > 0 && (
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-          {Object.entries(currencyTotals).map(([curr, values]) => (
-            <Card key={curr} className="border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-xs">
-              <CardContent className="p-4 space-y-3">
-                <div className="flex items-center justify-between">
-                  <Badge variant="outline" className="text-xs font-mono font-bold bg-blue-50 text-blue-700 dark:bg-blue-950/60 dark:text-blue-300">
-                    {curr}
-                  </Badge>
-                  <span className="text-[11px] text-slate-500">
-                    {isRtl ? "ملخص معزول العملة" : "Isolated Currency Balance"}
-                  </span>
-                </div>
-                <div className="grid grid-cols-3 gap-2 pt-1 border-t border-slate-100 dark:border-slate-800 text-center">
-                  <div>
-                    <div className="text-[10px] text-slate-500 uppercase">{isRtl ? "القيمة التجارية" : "Commercial"}</div>
-                    <div className="text-xs sm:text-sm font-bold text-slate-900 dark:text-slate-100">
-                      {values.commercialValue.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+        <div className="space-y-2">
+          <div className="flex items-center justify-between text-xs text-nx-ink-3 px-1">
+            <span className="font-semibold uppercase tracking-wider text-[11px]">
+              {category === "financial"
+                ? isRtl
+                  ? "ملخص المالية المعتمد (من محرك المالية المركزي)"
+                  : "Authoritative Finance Summary (Central Finance Engine)"
+                : isRtl
+                ? "ملخص السجلات المحملة (معاينة مقيدة بالصفحة الحالية)"
+                : "Loaded Records Summary (Bounded Page Preview)"}
+            </span>
+            <span className="text-[11px] font-mono">
+              {category === "financial"
+                ? isRtl
+                  ? "تجميع شامل للنظام"
+                  : "Holistic Domain Aggregation"
+                : isRtl
+                ? "عينة مقيدة بـ 100 سجل"
+                : "Page Bounded (Up to 100 records)"}
+            </span>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+            {Object.entries(currencyTotals).map(([curr, values]) => {
+              const isUnspecified = curr === "UNSPECIFIED";
+              return (
+                <Card
+                  key={curr}
+                  className={`border-nx-line bg-nx-surface rounded-nx-xl shadow-xs ${
+                    isUnspecified ? "border-amber-500/40 bg-amber-500/5" : ""
+                  }`}
+                >
+                  <CardContent className="p-4 space-y-3">
+                    <div className="flex items-center justify-between">
+                      <Badge
+                        variant={isUnspecified ? "destructive" : "outline"}
+                        className="text-xs font-mono font-bold bg-nx-surfaceSubtle text-nx-ink border-nx-line"
+                      >
+                        {isUnspecified ? (isRtl ? "عملة غير محددة" : "Unspecified Currency") : curr}
+                      </Badge>
+                      <span className="text-[11px] text-nx-ink-3">
+                        {isRtl ? "ملخص معزول العملة" : "Isolated Currency Balance"}
+                      </span>
                     </div>
-                  </div>
-                  <div>
-                    <div className="text-[10px] text-slate-500 uppercase">{isRtl ? "المحصل" : "Collected"}</div>
-                    <div className="text-xs sm:text-sm font-bold text-emerald-600 dark:text-emerald-400">
-                      {values.collected.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                    <div className="grid grid-cols-3 gap-2 pt-1 border-t border-nx-line/50 text-center">
+                      <div>
+                        <div className="text-[10px] text-nx-ink-3 uppercase font-semibold">
+                          {isRtl ? "القيمة التجارية" : "Commercial"}
+                        </div>
+                        <div className="text-xs sm:text-sm font-bold font-mono text-nx-ink">
+                          {values.commercialValue.toLocaleString(undefined, {
+                            minimumFractionDigits: 2,
+                            maximumFractionDigits: 2,
+                          })}
+                        </div>
+                      </div>
+                      <div>
+                        <div className="text-[10px] text-nx-ink-3 uppercase font-semibold">
+                          {isRtl ? "المحصل" : "Collected"}
+                        </div>
+                        <div className="text-xs sm:text-sm font-bold font-mono text-emerald-600 dark:text-emerald-400">
+                          {values.collected.toLocaleString(undefined, {
+                            minimumFractionDigits: 2,
+                            maximumFractionDigits: 2,
+                          })}
+                        </div>
+                      </div>
+                      <div>
+                        <div className="text-[10px] text-nx-ink-3 uppercase font-semibold">
+                          {isRtl ? "المستحق" : "Outstanding"}
+                        </div>
+                        <div className="text-xs sm:text-sm font-bold font-mono text-amber-600 dark:text-amber-400">
+                          {values.outstanding.toLocaleString(undefined, {
+                            minimumFractionDigits: 2,
+                            maximumFractionDigits: 2,
+                          })}
+                        </div>
+                      </div>
                     </div>
-                  </div>
-                  <div>
-                    <div className="text-[10px] text-slate-500 uppercase">{isRtl ? "المستحق" : "Outstanding"}</div>
-                    <div className="text-xs sm:text-sm font-bold text-amber-600 dark:text-amber-400">
-                      {values.outstanding.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-                    </div>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          ))}
+                  </CardContent>
+                </Card>
+              );
+            })}
+          </div>
         </div>
       )}
 
       {/* Filter Bar (A9) */}
-      <Card className="border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-xs">
+      <Card className="border-nx-line bg-nx-surface rounded-nx-xl shadow-xs">
         <CardContent className="p-4">
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3">
             {/* Date Range From */}
             <div className="space-y-1">
-              <label className="text-[11px] font-semibold text-slate-500">
+              <label className="text-[11px] font-semibold text-nx-ink-2">
                 {isRtl ? "من تاريخ" : "From Date"}
               </label>
               <input
                 type="date"
                 value={filters.dateFrom}
                 onChange={(e) => setFilters((prev) => ({ ...prev, dateFrom: e.target.value }))}
-                className="w-full text-xs h-9 px-2.5 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900"
+                className="w-full text-xs h-9 px-2.5 rounded-nx-md border border-nx-line bg-nx-surfaceSubtle text-nx-ink focus:border-nx-accent focus:outline-none"
               />
             </div>
 
             {/* Date Range To */}
             <div className="space-y-1">
-              <label className="text-[11px] font-semibold text-slate-500">
+              <label className="text-[11px] font-semibold text-nx-ink-2">
                 {isRtl ? "إلى تاريخ" : "To Date"}
               </label>
               <input
                 type="date"
                 value={filters.dateTo}
                 onChange={(e) => setFilters((prev) => ({ ...prev, dateTo: e.target.value }))}
-                className="w-full text-xs h-9 px-2.5 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900"
+                className="w-full text-xs h-9 px-2.5 rounded-nx-md border border-nx-line bg-nx-surfaceSubtle text-nx-ink focus:border-nx-accent focus:outline-none"
               />
             </div>
 
             {/* Court / Resource Filter */}
             <div className="space-y-1">
-              <label className="text-[11px] font-semibold text-slate-500">
+              <label className="text-[11px] font-semibold text-nx-ink-2">
                 {isRtl ? "الملعب / المساحة" : "Court / Space"}
               </label>
               <select
                 value={filters.resourceId}
                 onChange={(e) => setFilters((prev) => ({ ...prev, resourceId: e.target.value }))}
-                className="w-full text-xs h-9 px-2.5 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900"
+                className="w-full text-xs h-9 px-2.5 rounded-nx-md border border-nx-line bg-nx-surfaceSubtle text-nx-ink focus:border-nx-accent focus:outline-none"
               >
                 <option value="">{isRtl ? "جميع الملاعب" : "All Courts & Spaces"}</option>
                 {resources.map((r) => (
@@ -260,13 +309,13 @@ export function VenueReportsView() {
 
             {/* Status Filter */}
             <div className="space-y-1">
-              <label className="text-[11px] font-semibold text-slate-500">
+              <label className="text-[11px] font-semibold text-nx-ink-2">
                 {isRtl ? "الحالة" : "Status"}
               </label>
               <select
                 value={filters.bookingStatus}
                 onChange={(e) => setFilters((prev) => ({ ...prev, bookingStatus: e.target.value }))}
-                className="w-full text-xs h-9 px-2.5 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900"
+                className="w-full text-xs h-9 px-2.5 rounded-nx-md border border-nx-line bg-nx-surfaceSubtle text-nx-ink focus:border-nx-accent focus:outline-none"
               >
                 <option value="all">{isRtl ? "جميع الحالات" : "All Statuses"}</option>
                 <option value="Confirmed">{isRtl ? "مؤكد" : "Confirmed"}</option>
@@ -280,8 +329,8 @@ export function VenueReportsView() {
       </Card>
 
       {/* Authoritative Live Preview Table (A10) */}
-      <Card className="border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-xs overflow-hidden">
-        <CardHeader className="pb-3 border-b border-slate-100 dark:border-slate-800 flex flex-row items-center justify-between">
+      <Card className="border-nx-line bg-nx-surface rounded-nx-xl shadow-xs overflow-hidden">
+        <CardHeader className="pb-3 border-b border-nx-line/60 bg-nx-surfaceSubtle/30 flex flex-row items-center justify-between">
           <div>
             <CardTitle className="text-sm font-bold">
               {category === "financial" && (isRtl ? "معاينة الفواتير والذمم المالية" : "Financial Invoices & Receivables")}
@@ -320,7 +369,7 @@ export function VenueReportsView() {
               {/* Category 1: Financial */}
               {category === "financial" && (
                 <Table>
-                  <TableHeader className="bg-slate-50 dark:bg-slate-900/50">
+                  <TableHeader className="bg-nx-surfaceSubtle/80">
                     <TableRow>
                       <TableHead>{isRtl ? "رقم الفاتورة" : "Invoice #"}</TableHead>
                       <TableHead>{isRtl ? "العميل / المدين" : "Customer / Payer"}</TableHead>
@@ -335,7 +384,7 @@ export function VenueReportsView() {
                   <TableBody>
                     {invoices.length === 0 ? (
                       <TableRow>
-                        <TableCell colSpan={8} className="py-12 text-center text-xs text-slate-400">
+                        <TableCell colSpan={8} className="py-12 text-center text-xs text-nx-ink-3">
                           {isRtl ? "لا توجد فواتير مطابقة لمعايير البحث." : "No financial records matching current filters."}
                         </TableCell>
                       </TableRow>
@@ -349,7 +398,7 @@ export function VenueReportsView() {
                               {inv.status}
                             </Badge>
                           </TableCell>
-                          <TableCell className="text-xs text-slate-500">{inv.issuedAtUtc.slice(0, 10)}</TableCell>
+                          <TableCell className="text-xs text-nx-ink-2">{inv.issuedAtUtc.slice(0, 10)}</TableCell>
                           <TableCell className="font-mono text-xs">{inv.currencyCode}</TableCell>
                           <TableCell className="text-end font-mono text-xs font-semibold">
                             {inv.totalAmount.toFixed(2)}
@@ -370,7 +419,7 @@ export function VenueReportsView() {
               {/* Category 2: Bookings */}
               {category === "bookings" && (
                 <Table>
-                  <TableHeader className="bg-slate-50 dark:bg-slate-900/50">
+                  <TableHeader className="bg-nx-surfaceSubtle/80">
                     <TableRow>
                       <TableHead>{isRtl ? "مرجع الحجز" : "Reservation Ref"}</TableHead>
                       <TableHead>{isRtl ? "الملعب" : "Court / Space"}</TableHead>
@@ -384,7 +433,7 @@ export function VenueReportsView() {
                   <TableBody>
                     {bookings.length === 0 ? (
                       <TableRow>
-                        <TableCell colSpan={7} className="py-12 text-center text-xs text-slate-400">
+                        <TableCell colSpan={7} className="py-12 text-center text-xs text-nx-ink-3">
                           {isRtl ? "لا توجد حجوزات مطابقة." : "No reservations found."}
                         </TableCell>
                       </TableRow>
@@ -398,14 +447,14 @@ export function VenueReportsView() {
                               {b.status}
                             </Badge>
                           </TableCell>
-                          <TableCell className="text-xs text-slate-500">
+                          <TableCell className="text-xs text-nx-ink-2">
                             {new Date(b.requestedStartUtc).toLocaleString()}
                           </TableCell>
-                          <TableCell className="text-xs text-slate-500">
+                          <TableCell className="text-xs text-nx-ink-2">
                             {new Date(b.requestedEndUtc).toLocaleString()}
                           </TableCell>
                           <TableCell className="text-end font-mono text-xs">{b.quantity}</TableCell>
-                          <TableCell className="text-xs text-slate-400">{b.createdAt.slice(0, 10)}</TableCell>
+                          <TableCell className="text-xs text-nx-ink-3">{b.createdAt.slice(0, 10)}</TableCell>
                         </TableRow>
                       ))
                     )}
@@ -416,7 +465,7 @@ export function VenueReportsView() {
               {/* Category 3: Court Performance */}
               {category === "court-performance" && (
                 <Table>
-                  <TableHeader className="bg-slate-50 dark:bg-slate-900/50">
+                  <TableHeader className="bg-nx-surfaceSubtle/80">
                     <TableRow>
                       <TableHead>{isRtl ? "الملعب / المساحة" : "Court / Space"}</TableHead>
                       <TableHead>{isRtl ? "العملة" : "Currency"}</TableHead>
@@ -430,7 +479,7 @@ export function VenueReportsView() {
                   <TableBody>
                     {courtPerformance.length === 0 ? (
                       <TableRow>
-                        <TableCell colSpan={7} className="py-12 text-center text-xs text-slate-400">
+                        <TableCell colSpan={7} className="py-12 text-center text-xs text-nx-ink-3">
                           {isRtl ? "لا توجد بيانات أداء مسجلة." : "No court performance records."}
                         </TableCell>
                       </TableRow>
@@ -463,7 +512,7 @@ export function VenueReportsView() {
               {/* Category 4: Collections */}
               {category === "collections" && (
                 <Table>
-                  <TableHeader className="bg-slate-50 dark:bg-slate-900/50">
+                  <TableHeader className="bg-nx-surfaceSubtle/80">
                     <TableRow>
                       <TableHead>{isRtl ? "رقم الدفعة" : "Payment #"}</TableHead>
                       <TableHead>{isRtl ? "طريقة الدفع" : "Method"}</TableHead>
@@ -478,7 +527,7 @@ export function VenueReportsView() {
                   <TableBody>
                     {payments.length === 0 ? (
                       <TableRow>
-                        <TableCell colSpan={8} className="py-12 text-center text-xs text-slate-400">
+                        <TableCell colSpan={8} className="py-12 text-center text-xs text-nx-ink-3">
                           {isRtl ? "لا توجد دفعات مسجلة." : "No recorded payments found."}
                         </TableCell>
                       </TableRow>
@@ -496,11 +545,11 @@ export function VenueReportsView() {
                           <TableCell className="text-end font-mono text-xs font-semibold text-emerald-600">
                             {p.amount.toFixed(2)}
                           </TableCell>
-                          <TableCell className="text-end font-mono text-xs text-slate-500">
+                          <TableCell className="text-end font-mono text-xs text-nx-ink-2">
                             {p.allocatedAmount.toFixed(2)}
                           </TableCell>
-                          <TableCell className="text-xs text-slate-500">{p.recordedAtUtc.slice(0, 10)}</TableCell>
-                          <TableCell className="text-xs text-slate-400 font-mono">
+                          <TableCell className="text-xs text-nx-ink-2">{p.recordedAtUtc.slice(0, 10)}</TableCell>
+                          <TableCell className="text-xs text-nx-ink-3 font-mono">
                             {p.externalReference || "-"}
                           </TableCell>
                         </TableRow>

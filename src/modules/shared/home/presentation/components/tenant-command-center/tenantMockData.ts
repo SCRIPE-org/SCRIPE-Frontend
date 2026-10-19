@@ -54,8 +54,8 @@ export const TENANT_MOCK_DATA: TenantOverviewData = {
     },
     {
       id: 2,
-      title: "Add Branches / Sites",
-      description: "3 active sites configured.",
+      title: "Add Sites / Locations",
+      description: "Physical sites and operational facilities configuration.",
       status: "done",
     },
     {
@@ -88,12 +88,12 @@ export const TENANT_MOCK_DATA: TenantOverviewData = {
       description: "Manage facilities, bookings and daily venue operations.",
       status: "active",
       stats: [
-        { label: "Sites", value: "3" },
-        { label: "Resources", value: "14" },
-        { label: "Bookings", value: "2.4K" },
+        { label: "Sites", value: "—" },
+        { label: "Resources", value: "—" },
+        { label: "Bookings", value: "—" },
       ],
       buttonLabel: "Open Venue →",
-      href: "/venues",
+      href: "/venue",
     },
     {
       id: "academy",
@@ -166,10 +166,10 @@ export const TENANT_MOCK_DATA: TenantOverviewData = {
   alerts: [
     {
       id: "alt-1",
-      title: "Finish branch configuration",
-      description: "Main Branch is missing contact information",
+      title: "Finish site configuration",
+      description: "Main site is missing location details",
       severity: "warning",
-      href: "/branches",
+      href: "/venue/sites",
     },
     {
       id: "alt-2",
@@ -204,11 +204,11 @@ export const TENANT_MOCK_DATA: TenantOverviewData = {
     },
     {
       id: "qa-2",
-      title: "Create Branch",
-      description: "Add a new site",
+      title: "Add Site / Location",
+      description: "Configure physical location",
       icon: "🏢",
       color: "#2b83ff",
-      href: "/branches",
+      href: "/venue/sites",
     },
     {
       id: "qa-3",
