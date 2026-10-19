@@ -79,7 +79,7 @@ export function VenueOverviewView({ facilityId, localDate }: Props) {
     );
   }
 
-  if (state.stage === "empty" && facilities.length === 0 && !state.facilityName) {
+  if (state.stage === "empty") {
     return (
       <div className="p-6 max-w-[1600px] mx-auto space-y-6" dir={dir} data-testid="venue-overview-empty">
         <EmptyState

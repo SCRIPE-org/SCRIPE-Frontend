@@ -3,7 +3,7 @@
 import React from "react";
 import Link from "next/link";
 import { Card } from "@core/ui/card";
-import { MoreHorizontal } from "lucide-react";
+import { User, MoreHorizontal } from "lucide-react";
 import type {
   VenueOverviewResourceActivityItem,
   VenueOverviewState,
@@ -15,193 +15,139 @@ interface VenueOverviewLiveCourtsProps {
   t: (key: string, options?: any) => string;
 }
 
-// Preset visual court fixtures matching the design references when backend data is sparse
-const DEFAULT_PRESET_COURTS = [
-  {
-    name: "Padel 1",
-    image: "/images/venue/padel-court-indoor.svg",
-    status: "In Use",
-    statusVariant: "inUse" as const,
-    time: "10:00 - 11:00",
-    occupant: "Ahmed Salah",
-    avatar: "AS",
-  },
-  {
-    name: "Padel 2",
-    image: "/images/venue/padel-court-indoor.svg",
-    status: "In Use",
-    statusVariant: "inUse" as const,
-    time: "10:00 - 11:00",
-    occupant: "Team Warriors",
-    avatar: "TW",
-  },
-  {
-    name: "Padel 3",
-    image: "/images/venue/padel-court-outdoor.svg",
-    status: "Free",
-    statusVariant: "free" as const,
-    time: "Next: 12:00",
-    occupant: "—",
-    avatar: "",
-  },
-  {
-    name: "Football A",
-    image: "/images/venue/football-turf-night.svg",
-    status: "In Use",
-    statusVariant: "inUse" as const,
-    time: "10:00 - 11:00",
-    occupant: "Sara & Friends",
-    avatar: "SF",
-  },
-  {
-    name: "Football B",
-    image: "/images/venue/football-turf-night.svg",
-    status: "Maintenance",
-    statusVariant: "maintenance" as const,
-    time: "Until 16:00",
-    occupant: "—",
-    avatar: "",
-  },
+// Visual motif background colors for sports courts
+const COURT_BG_GRADIENTS = [
+  "linear-gradient(135deg, #1e3a8a 0%, #0284c7 100%)", // Padel Court Blue
+  "linear-gradient(135deg, #065f46 0%, #059669 100%)", // Football Turf Green
+  "linear-gradient(135deg, #7c2d12 0%, #ea580c 100%)", // Clay Court Orange
+  "linear-gradient(135deg, #312e81 0%, #6366f1 100%)", // Indoor Wood/Navy
+  "linear-gradient(135deg, #1e293b 0%, #475569 100%)", // Slate Multi-court
 ];
 
-export function VenueOverviewLiveCourts({
-  items,
-  overview,
-  t,
-}: VenueOverviewLiveCourtsProps) {
-  const backendCourts = items || overview?.resourceActivity || [];
+function getCourtBg(name: string): string {
+  let hash = 0;
+  for (let i = 0; i < name.length; i++) {
+    hash = name.charCodeAt(i) + ((hash << 5) - hash);
+  }
+  return COURT_BG_GRADIENTS[Math.abs(hash) % COURT_BG_GRADIENTS.length];
+}
 
-  // Map backend courts to rich visual cards, or use presentation presets if no active bookings exist
-  const displayCourts =
-    backendCourts.length > 0
-      ? backendCourts.slice(0, 5).map((court, idx) => {
-          const isFootball = court.resourceName.toLowerCase().includes("foot") || court.resourceName.toLowerCase().includes("pitch");
-          const isOutdoor = court.resourceName.toLowerCase().includes("out") || idx === 2;
-          const image = isFootball
-            ? "/images/venue/football-turf-night.svg"
-            : isOutdoor
-            ? "/images/venue/padel-court-outdoor.svg"
-            : "/images/venue/padel-court-indoor.svg";
-
-          const isCheckedIn = court.statusLabel === "checkedIn";
-          const isMaintenance = court.statusLabel === ("maintenance" as string);
-
-          let status = "Free";
-          let statusVariant: "inUse" | "free" | "maintenance" = "free";
-          let time = "Available";
-          let occupant = "—";
-          let avatar = "";
-
-          if (isCheckedIn) {
-            status = "In Use";
-            statusVariant = "inUse";
-            const end = court.currentOrNextEndUtc?.slice(11, 16) || "11:00";
-            const start = court.currentOrNextStartUtc?.slice(11, 16) || "10:00";
-            time = `${start} - ${end}`;
-            occupant = "Active Match";
-            avatar = "AM";
-          } else if (isMaintenance) {
-            status = "Maintenance";
-            statusVariant = "maintenance";
-            time = "Until 16:00";
-          } else if (court.currentOrNextStartUtc) {
-            const nextTime = court.currentOrNextStartUtc.slice(11, 16);
-            time = `Next: ${nextTime}`;
-          }
-
-          return {
-            name: court.resourceName,
-            image,
-            status,
-            statusVariant,
-            time,
-            occupant,
-            avatar,
-          };
-        })
-      : DEFAULT_PRESET_COURTS;
+export function VenueOverviewLiveCourts({ items, overview, t }: VenueOverviewLiveCourtsProps) {
+  const courts = items || overview?.resourceActivity || [];
+  // Take up to 5 courts to show in the live strip
+  const displayCourts = courts.slice(0, 5);
 
   return (
-    <div className="space-y-3.5" data-testid="venue-overview-live-courts">
+    <div className="space-y-3" data-testid="venue-overview-live-courts">
       <div className="flex items-center justify-between">
-        <h2 className="text-base font-bold text-nx-ink">
+        <h2 className="text-sm font-bold text-nx-ink">
           {t("venueOverview.liveCourts.title", { defaultValue: "Live Courts" })}
         </h2>
         <Link
           href="/venue/resources"
-          className="text-xs font-semibold text-blue-500 hover:text-blue-600 transition-colors"
+          className="text-xs font-semibold text-nx-accent hover:underline"
         >
           {t("venueOverview.liveCourts.viewAll", { defaultValue: "View All" })}
         </Link>
       </div>
 
       <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3">
-        {displayCourts.map((court, idx) => {
-          let badgeBg = "bg-sky-500/10 text-sky-600 dark:text-sky-400 border-sky-500/20";
-          if (court.statusVariant === "inUse") {
-            badgeBg = "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/20";
-          } else if (court.statusVariant === "maintenance") {
-            badgeBg = "bg-rose-500/10 text-rose-600 dark:text-rose-400 border-rose-500/20";
-          }
+        {displayCourts.length === 0 ? (
+          <div className="col-span-full py-8 text-center text-xs text-nx-ink-2 bg-nx-surface rounded-nx-xl border border-nx-line">
+            {t("venueOverview.liveCourts.noCourts", { defaultValue: "No active courts configured" })}
+          </div>
+        ) : (
+          displayCourts.map((court: VenueOverviewResourceActivityItem, idx: number) => {
+            const isCheckedIn = court.statusLabel === "checkedIn";
+            const isNext = court.statusLabel === "nextBooking";
+            const isMaintenance = court.statusLabel === ("maintenance" as string);
 
-          return (
-            <Card
-              key={`${court.name}-${idx}`}
-              className="overflow-hidden border border-nx-line bg-nx-surface shadow-xs hover:shadow-md transition-all rounded-nx-xl flex flex-col justify-between"
-            >
-              <div>
-                {/* Court Photo Header */}
+            let statusText = t("venueOverview.liveCourts.idle", { defaultValue: "No Current Booking" });
+            let statusBadge = "bg-nx-surfaceSubtle text-nx-ink-2 border-nx-line";
+            let timeText = t("venueOverview.resourceActivity.status.noActiveBooking", { defaultValue: "No Active Booking" });
+
+            if (isCheckedIn && court.currentOrNextEndUtc) {
+              statusText = t("venueOverview.liveCourts.inUse", { defaultValue: "In Use" });
+              statusBadge = "bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 border-emerald-500/20";
+              const time = court.currentOrNextEndUtc.slice(11, 16);
+              timeText = t("venueOverview.liveCourts.until", { time, defaultValue: `Until ${time}` });
+            } else if (isNext && court.currentOrNextStartUtc) {
+              statusText = t("venueOverview.liveCourts.booked", { defaultValue: "Booked" });
+              statusBadge = "bg-purple-500/10 text-purple-700 dark:text-purple-300 border-purple-500/20";
+              const time = court.currentOrNextStartUtc.slice(11, 16);
+              timeText = t("venueOverview.liveCourts.next", { time, defaultValue: `Next: ${time}` });
+            } else if (isMaintenance) {
+              statusText = t("venueOverview.liveCourts.maintenance", { defaultValue: "Maintenance" });
+              statusBadge = "bg-amber-500/10 text-amber-700 dark:text-amber-300 border-amber-500/20";
+              timeText = t("venueOverview.liveCourts.blocked", { defaultValue: "Blocked" });
+            }
+
+            return (
+              <Card
+                key={court.resourceId || idx}
+                className="overflow-hidden border border-nx-line bg-nx-surface shadow-xs hover:shadow-md transition-all rounded-nx-xl"
+              >
+                {/* Court Thumbnail Image with Court Line Aesthetics */}
                 <div
-                  className="h-24 w-full bg-cover bg-center relative p-2.5 flex items-start justify-end"
-                  style={{ backgroundImage: `url(${court.image})` }}
+                  className="h-20 w-full relative p-2 flex flex-col justify-between overflow-hidden"
+                  style={{ background: getCourtBg(court.resourceName) }}
                 >
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-black/20" />
-                  <button
-                    type="button"
-                    className="relative z-10 size-6 rounded-full bg-black/40 hover:bg-black/60 text-white flex items-center justify-center transition-colors"
-                    aria-label="Court options"
-                  >
-                    <MoreHorizontal className="size-3.5" />
-                  </button>
+                  <div className="absolute inset-0 bg-black/20 backdrop-blur-[0.5px]" />
+                  {/* Subtle sports court line markings */}
+                  <div className="absolute inset-x-2 inset-y-1 border border-white/20 rounded-xs pointer-events-none" />
+                  <div className="absolute inset-x-2 top-1/2 -translate-y-1/2 border-t border-white/20 pointer-events-none" />
+
+                  <div className="relative z-10 flex items-center justify-between">
+                    <span className="text-[10px] font-bold tracking-wider uppercase text-white/90 bg-black/40 px-1.5 py-0.5 rounded-xs backdrop-blur-xs">
+                      {court.resourceName.includes("Padel") ? "Padel" : court.resourceName.includes("Foot") ? "Football" : "Court"}
+                    </span>
+                  </div>
                 </div>
 
                 {/* Court Info */}
                 <div className="p-3 space-y-2">
-                  <div className="flex items-center justify-between gap-1">
-                    <span className="font-bold text-xs text-nx-ink truncate">
-                      {court.name}
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-bold text-nx-ink truncate">
+                      {court.resourceName}
                     </span>
-                    <span
-                      className={`text-[10px] font-bold px-1.5 py-0.5 rounded-md border shrink-0 ${badgeBg}`}
+                    <button
+                      type="button"
+                      className="p-1 text-nx-ink-3 hover:text-nx-ink rounded-xs"
+                      aria-label="Court options"
                     >
-                      {court.status}
+                      <MoreHorizontal className="size-3.5" />
+                    </button>
+                  </div>
+
+                  {/* Status Pill */}
+                  <div>
+                    <span
+                      className={`inline-block text-[10px] font-bold px-2 py-0.5 rounded-md border ${statusBadge}`}
+                    >
+                      {statusText}
                     </span>
                   </div>
 
-                  <div className="text-[11px] font-medium text-nx-ink-3">
-                    {court.time}
+                  {/* Time info */}
+                  <div className="text-[11px] font-medium text-nx-ink-2 truncate">
+                    {timeText}
+                  </div>
+
+                  <div className="flex items-center gap-1.5 pt-1 border-t border-nx-line text-[11px] text-nx-ink-2 truncate">
+                    <User className="size-3 text-nx-ink-3 shrink-0" />
+                    <span className="truncate">
+                      {isCheckedIn
+                        ? t("venueOverview.liveCourts.activeNow", { defaultValue: "Active Match" })
+                        : isNext
+                        ? t("venueOverview.liveCourts.reserved", { defaultValue: "Reserved" })
+                        : "—"}
+                    </span>
                   </div>
                 </div>
-              </div>
-
-              {/* Occupant Avatar + Name */}
-              <div className="px-3 pb-3 pt-1 border-t border-nx-line/50 flex items-center gap-2">
-                {court.avatar ? (
-                  <div className="size-5 rounded-full bg-nx-accent/20 text-nx-accent font-bold text-[9px] flex items-center justify-center shrink-0">
-                    {court.avatar}
-                  </div>
-                ) : (
-                  <div className="size-5 rounded-full bg-nx-surfaceSubtle text-nx-ink-3 font-medium text-[9px] flex items-center justify-center shrink-0">
-                    —
-                  </div>
-                )}
-                <span className="text-[11px] text-nx-ink-2 truncate font-medium">
-                  {court.occupant}
-                </span>
-              </div>
-            </Card>
-          );
-        })}
+              </Card>
+            );
+          })
+        )}
       </div>
     </div>
   );

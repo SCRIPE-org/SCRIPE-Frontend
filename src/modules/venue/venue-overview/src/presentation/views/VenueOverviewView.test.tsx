@@ -91,6 +91,7 @@ describe("VenueOverviewView", () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
+    mockVenueOverviewService.getOverview.mockResolvedValue(mockOverviewState);
     useAppStore.setState({ permissions: [], user: null });
     vi.mocked(getVenueContainer).mockReturnValue({
       venueOverviewService: mockVenueOverviewService,
@@ -131,8 +132,8 @@ describe("VenueOverviewView", () => {
     // Up Next List
     expect(screen.getByText("venueOverview.upNext.title")).toBeInTheDocument();
     expect(screen.getAllByText("Padel Court 1").length).toBeGreaterThan(0);
-    expect(screen.getByText("Hassan Ali")).toBeInTheDocument();
-    expect(screen.getByText("RES-9871")).toBeInTheDocument();
+    expect(screen.getAllByText("Hassan Ali").length).toBeGreaterThan(0);
+    expect(screen.getAllByText("RES-9871").length).toBeGreaterThan(0);
 
     // Resource Activity List
     expect(screen.getByText("venueOverview.resourceActivity.title")).toBeInTheDocument();
@@ -240,7 +241,7 @@ describe("VenueOverviewView", () => {
   });
 
   it("renders an explicit empty state instead of a fictional facility", async () => {
-    mockVenueOverviewService.getOverview.mockResolvedValue({
+    mockVenueOverviewService.getOverview.mockResolvedValueOnce({
       ...mockOverviewState,
       stage: "empty",
       facilityId: "",
