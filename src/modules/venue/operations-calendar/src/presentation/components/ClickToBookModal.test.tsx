@@ -31,6 +31,9 @@ vi.mock("@core/providers/i18n-provider", () => ({
         "operationsCalendar.clickToBook.pricing.failed": "Failed to calculate price quote.",
         "operationsCalendar.clickToBook.pricing.retry": "Retry Quote",
         "operationsCalendar.clickToBook.pricing.total": "Total",
+        "operationsCalendar.clickToBook.pricing.override": "Override Price",
+        "operationsCalendar.clickToBook.pricing.overrideReason": "Reason for price override",
+        "operationsCalendar.clickToBook.pricing.applyOverride": "Apply Override",
         "operationsCalendar.clickToBook.confirm.action": "Confirm Booking",
         "operationsCalendar.clickToBook.confirm.next": "Next",
         "operationsCalendar.clickToBook.confirm.back": "Back",
@@ -80,7 +83,7 @@ vi.mock("@core/hooks/use-permission", () => ({
   usePermission: (perm: string) => {
     if (perm === "Venue.Reservation.Create") return mockCanCreateBooking;
     if (perm === "Venue.Finance.Payments.Create" || perm === "Venue.Finance.Payments.View") return mockCanRecordPayment;
-    if (perm === "Venue.CatalogPricing.OverrideCommercials") return mockCanOverridePrice;
+    if (perm === "Venue.CatalogPricing.OverrideCommercials" || perm === "catalog-pricing.override-price.manage") return mockCanOverridePrice;
     return true;
   },
 }));
@@ -101,6 +104,7 @@ const mockCustomerRepository = {
 const mockCommercialPricingRepository = {
   getResourceConfiguration: vi.fn(),
   calculateQuote: vi.fn(),
+  overrideQuote: vi.fn(),
 };
 
 const mockMoneyRepository = {
@@ -768,5 +772,107 @@ describe("ClickToBookModal — Gate 4 Booking Closure", () => {
       expect(screen.getByRole("button", { name: "Find Another Time" })).toBeInTheDocument();
       expect(screen.getByRole("button", { name: "Return to Calendar" })).toBeInTheDocument();
     });
+  });
+
+  it("15. Price override: authorized manager can enter adjustment and reason to apply quote override", async () => {
+    mockCanOverridePrice = true;
+    mockCommercialPricingRepository.overrideQuote.mockResolvedValue({
+      id: "override-1",
+      priceQuoteId: "quote-123",
+      originalGrandTotal: 570,
+      adjustmentAmount: -70,
+      overriddenGrandTotal: 500,
+      reason: "VIP discount",
+      appliedAtUtc: new Date().toISOString(),
+      wasIdempotentReplay: false,
+    });
+
+    mockCustomerRepository.create.mockResolvedValue({
+      id: "cust-1",
+      displayName: "VIP Player",
+      type: "Person",
+    });
+
+    render(
+      <ClickToBookModal
+        open={true}
+        onOpenChange={vi.fn()}
+        resource={mockResource}
+        instantUtc="2026-10-09T10:00:00.000Z"
+        timeZoneId="Africa/Cairo"
+        onSuccess={vi.fn()}
+      />
+    );
+
+    // Create customer to advance to Step 2
+    fireEvent.click(screen.getByText("+ New Customer"));
+    fireEvent.change(screen.getByPlaceholderText("Customer Name"), {
+      target: { value: "VIP Player" },
+    });
+    fireEvent.click(screen.getByText("Create & Select"));
+
+    await waitFor(() => expect(screen.getByText("570 EGP")).toBeInTheDocument());
+
+    // Click Override Price
+    fireEvent.click(screen.getByText("Override Price"));
+
+    // Fill in adjustment amount and reason
+    fireEvent.change(
+      screen.getByPlaceholderText("Adjustment Amount (e.g. -20 for discount)"),
+      { target: { value: "-70" } }
+    );
+    fireEvent.change(
+      screen.getByPlaceholderText("Reason for price override"),
+      { target: { value: "VIP discount" } }
+    );
+
+    // Click Apply Override
+    fireEvent.click(screen.getByRole("button", { name: "Apply Override" }));
+
+    // Verify overrideQuote was called with correct parameters
+    await waitFor(() => {
+      expect(mockCommercialPricingRepository.overrideQuote).toHaveBeenCalledWith(
+        "quote-123",
+        expect.objectContaining({
+          adjustmentAmount: -70,
+          reason: "VIP discount",
+        })
+      );
+      // New total rendered
+      expect(screen.getByText("500 EGP")).toBeInTheDocument();
+    });
+
+    mockCanOverridePrice = false;
+  });
+
+  it("16. Step 0 (Global Mode B): date and time changes update the start instant without timezone skew", async () => {
+    render(
+      <ClickToBookModal
+        open={true}
+        onOpenChange={vi.fn()}
+        resource={mockResource}
+        instantUtc={null} // Global Mode B
+        resources={[mockResource]}
+        timeZoneId="Africa/Cairo"
+        onSuccess={vi.fn()}
+      />
+    );
+
+    // Step 0 Court & Time is rendered
+    expect(screen.getByText("Court & Time")).toBeInTheDocument();
+
+    const dateInput = screen.getByLabelText("Booking Date");
+    const timeInput = screen.getByLabelText("Start Time");
+
+    expect(dateInput).toBeInTheDocument();
+    expect(timeInput).toBeInTheDocument();
+
+    // Change date to 2026-10-25
+    fireEvent.change(dateInput, { target: { value: "2026-10-25" } });
+    expect(dateInput).toHaveValue("2026-10-25");
+
+    // Change time to 15:00
+    fireEvent.change(timeInput, { target: { value: "15:00" } });
+    expect(timeInput).toHaveValue("15:00");
   });
 });

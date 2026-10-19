@@ -2,7 +2,7 @@
 
 import React from "react";
 import Link from "next/link";
-import { AlertCircle, ArrowLeft, CalendarClock, CreditCard, Lock, RefreshCw, UserRound } from "lucide-react";
+import { AlertCircle, ArrowLeft, CalendarClock, Clock, CreditCard, Lock, RefreshCw, UserRound } from "lucide-react";
 import { Alert, AlertDescription } from "@core/ui/alert";
 import { Badge } from "@core/ui/badge";
 import { Button } from "@core/ui/button";
@@ -211,9 +211,40 @@ export const Booking360View = React.memo(function Booking360View({ reservationId
                 <Alert variant="warning"><AlertDescription>{t("booking360.commercial.unavailable")}</AlertDescription></Alert>
               ) : finance.summary ? (
                 <>
+                  {finance.summary.allocationState === "PendingAllocation" && (
+                    <Alert variant="warning" className="bg-amber-500/10 border-amber-500/30 text-amber-900 dark:text-amber-200 py-2">
+                      <div className="flex items-center gap-2">
+                        <AlertCircle className="size-4 text-amber-600 dark:text-amber-400 shrink-0" />
+                        <AlertDescription className="text-xs">
+                          {t("booking360.commercial.pendingAllocationNotice", {
+                            amount: new Intl.NumberFormat(language, { style: "currency", currency: finance.summary.currencyCode }).format(finance.summary.unallocatedPaymentAmount),
+                            invoiceNumber: finance.summary.invoiceNumber,
+                          })}
+                        </AlertDescription>
+                      </div>
+                    </Alert>
+                  )}
+                  {finance.summary.allocationState === "PendingSynchronization" && (
+                    <Alert variant="info" className="bg-blue-500/10 border-blue-500/30 text-blue-900 dark:text-blue-200 py-2">
+                      <div className="flex items-center gap-2">
+                        <Clock className="size-4 text-blue-600 dark:text-blue-400 shrink-0" />
+                        <AlertDescription className="text-xs">
+                          {t("booking360.commercial.pendingSyncNotice")}
+                        </AlertDescription>
+                      </div>
+                    </Alert>
+                  )}
                   <div className="flex items-center justify-between text-xs text-nx-ink-2 pb-1 border-b border-nx-line/50">
                     <span>{t("booking360.commercial.invoice")}: <strong className="font-mono text-nx-ink" dir="ltr">{finance.summary.invoiceNumber}</strong></span>
-                    <span className="text-[11px] text-nx-ink-3">{finance.summary.status}</span>
+                    <span className={`text-[11px] font-semibold px-2 py-0.5 rounded-full ${
+                      finance.summary.status === "Paid"
+                        ? "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20"
+                        : finance.summary.status === "PartiallyPaid"
+                        ? "bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20"
+                        : "bg-nx-raised text-nx-ink-2"
+                    }`}>
+                      {finance.summary.status}
+                    </span>
                   </div>
                   <div className="grid gap-4 sm:grid-cols-3 p-3 rounded-nx-md bg-nx-surfaceSubtle border border-nx-line/60 text-center">
                     <div>
@@ -225,10 +256,13 @@ export const Booking360View = React.memo(function Booking360View({ reservationId
                     <div>
                       <p className="text-xs text-nx-ink-3 font-semibold uppercase">{t("booking360.commercial.paid")}</p>
                       <p className="text-base font-bold text-emerald-600 dark:text-emerald-400 mt-0.5">
-                        {new Intl.NumberFormat(language, { style: "currency", currency: finance.summary.currencyCode }).format(
-                          finance.summary.paidAmount ?? Math.max(0, finance.summary.effectiveTotalAmount - finance.summary.outstandingAmount)
-                        )}
+                        {new Intl.NumberFormat(language, { style: "currency", currency: finance.summary.currencyCode }).format(finance.summary.paidAmount)}
                       </p>
+                      {finance.summary.unallocatedPaymentAmount > 0 && (
+                        <p className="text-[10px] text-amber-600 dark:text-amber-400 font-medium mt-0.5">
+                          + {new Intl.NumberFormat(language, { style: "currency", currency: finance.summary.currencyCode }).format(finance.summary.unallocatedPaymentAmount)} {t("booking360.commercial.unallocated")}
+                        </p>
+                      )}
                     </div>
                     <div>
                       <p className="text-xs text-nx-ink-3 font-semibold uppercase">{t("booking360.commercial.outstanding")}</p>
@@ -237,6 +271,45 @@ export const Booking360View = React.memo(function Booking360View({ reservationId
                       </p>
                     </div>
                   </div>
+                  {finance.summary.payments && finance.summary.payments.length > 0 && (
+                    <div className="space-y-1.5 pt-2 border-t border-nx-line/40">
+                      <p className="text-[11px] font-semibold text-nx-ink-3 uppercase tracking-wider">
+                        {t("booking360.commercial.recordedPayments")}
+                      </p>
+                      <div className="space-y-1">
+                        {finance.summary.payments.map((p) => (
+                          <div key={p.id} className="flex items-center justify-between text-xs text-nx-ink-2 bg-nx-surfaceSubtle/60 px-2.5 py-1.5 rounded-md border border-nx-line/30">
+                            <div className="flex items-center gap-2">
+                              <span className="font-medium text-nx-ink">
+                                {p.method} • <span className="font-mono text-[11px] text-nx-ink-3" dir="ltr">{p.paymentNumber}</span>
+                              </span>
+                              {p.externalReference && (
+                                <span className="text-[10px] text-nx-ink-3">({p.externalReference})</span>
+                              )}
+                            </div>
+                            <div className="flex items-center gap-2">
+                              {p.status === "Refunded" ? (
+                                <span className="text-[10px] font-semibold px-1.5 py-0.5 rounded bg-rose-500/15 text-rose-700 dark:text-rose-300">
+                                  {t("booking360.commercial.refunded")}
+                                </span>
+                              ) : p.unallocatedAmount > 0 ? (
+                                <span className="text-[10px] font-semibold px-1.5 py-0.5 rounded bg-amber-500/15 text-amber-700 dark:text-amber-300">
+                                  {t("booking360.commercial.unallocated")}
+                                </span>
+                              ) : (
+                                <span className="text-[10px] font-semibold px-1.5 py-0.5 rounded bg-emerald-500/15 text-emerald-700 dark:text-emerald-300">
+                                  {t("booking360.commercial.allocated")}
+                                </span>
+                              )}
+                              <span className={`font-bold ${p.status === "Refunded" ? "text-rose-600 dark:text-rose-400 line-through" : "text-emerald-600 dark:text-emerald-400"}`}>
+                                {new Intl.NumberFormat(language, { style: "currency", currency: finance.summary?.currencyCode || "EGP" }).format(p.amount)}
+                              </span>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
                   <div className="flex flex-wrap items-center justify-between gap-3 pt-2">
                     <Link
                       href="/venue/money/receivables"

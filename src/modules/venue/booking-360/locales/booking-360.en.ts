@@ -68,6 +68,13 @@ export const en = {
       unavailable: "Finance details are temporarily unavailable.",
       viewReceivables: "View in Receivables",
       recordPayment: "Record Payment",
+      recordedPayments: "Recorded Payments",
+      pendingAllocationNotice: "Recorded payment of {{amount}} is pending allocation to invoice {{invoiceNumber}}.",
+      pendingSyncNotice: "Financial invoice is synchronizing in the background. Recorded payments are safely stored.",
+      unallocated: "Unallocated",
+      allocated: "Allocated",
+      refunded: "Refunded",
+      unallocatedAmount: "Unallocated: {{amount}}",
     },
     cancelledPaid: {
       title: "Payment Retained — Refund Not Automatically Processed",

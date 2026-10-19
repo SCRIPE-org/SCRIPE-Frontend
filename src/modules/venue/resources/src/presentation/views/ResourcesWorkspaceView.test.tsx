@@ -78,6 +78,8 @@ describe("ResourcesWorkspaceView", () => {
       wizardOpen: false,
       setWizardOpen: vi.fn(),
       wizardSubmitting: false,
+      lastSetupResults: [],
+      metrics: { totalSpaces: 1, activeSpaces: 1, readySpaces: 1, activatingSpaces: 0, setupRequired: 0, branchCount: 1 },
       executeFirstTimeSetup: vi.fn(),
       refresh: vi.fn(),
     });
@@ -105,6 +107,8 @@ describe("ResourcesWorkspaceView", () => {
       wizardOpen: false,
       setWizardOpen: vi.fn(),
       wizardSubmitting: false,
+      lastSetupResults: [],
+      metrics: { totalSpaces: 0, activeSpaces: 0, readySpaces: 0, activatingSpaces: 0, setupRequired: 0, branchCount: 0 },
       executeFirstTimeSetup: vi.fn(),
       refresh: vi.fn(),
     });
@@ -129,6 +133,8 @@ describe("ResourcesWorkspaceView", () => {
       wizardOpen: false,
       setWizardOpen: vi.fn(),
       wizardSubmitting: false,
+      lastSetupResults: [],
+      metrics: { totalSpaces: 1, activeSpaces: 1, readySpaces: 1, activatingSpaces: 0, setupRequired: 0, branchCount: 0 },
       executeFirstTimeSetup: vi.fn(),
       refresh: vi.fn(),
     });
@@ -137,6 +143,7 @@ describe("ResourcesWorkspaceView", () => {
 
     const addButtons = screen.getAllByRole("button", { name: /\+ Add Court/i });
     fireEvent.click(addButtons[0]);
-    expect(screen.getByText("1. Branch")).toBeInTheDocument();
+    expect(screen.getByText("1. WHERE")).toBeInTheDocument();
   });
 });
+

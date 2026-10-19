@@ -1,0 +1,52 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 380" width="100%" height="100%">
+  <defs>
+    <linearGradient id="twilightSky" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#0f172a"/>
+      <stop offset="40%" stop-color="#1e1b4b"/>
+      <stop offset="80%" stop-color="#312e81"/>
+      <stop offset="100%" stop-color="#1e293b"/>
+    </linearGradient>
+    <linearGradient id="outdoorTurf" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#0284c7"/>
+      <stop offset="60%" stop-color="#0369a1"/>
+      <stop offset="100%" stop-color="#0c4a6e"/>
+    </linearGradient>
+    <radialGradient id="twilightGlow" cx="50%" cy="30%" r="70%">
+      <stop offset="0%" stop-color="#818cf8" stop-opacity="0.3"/>
+      <stop offset="100%" stop-color="#1e1b4b" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+
+  <rect width="600" height="380" fill="url(#twilightSky)"/>
+  <rect width="600" height="200" fill="url(#twilightGlow)"/>
+
+  <!-- Mountain/City Silhouette Backdrop -->
+  <polygon points="0,170 80,140 160,165 240,130 350,160 460,135 550,155 600,145 600,180 0,180" fill="#090d16" opacity="0.6"/>
+
+  <!-- Outdoor Court Enclosure Glass & Mesh -->
+  <polygon points="50,185 550,185 550,100 50,100" fill="#38bdf8" fill-opacity="0.08" stroke="#38bdf8" stroke-opacity="0.35" stroke-width="1.5"/>
+  <line x1="175" y1="100" x2="175" y2="185" stroke="#38bdf8" stroke-opacity="0.4" stroke-width="1"/>
+  <line x1="300" y1="100" x2="300" y2="185" stroke="#38bdf8" stroke-opacity="0.4" stroke-width="1"/>
+  <line x1="425" y1="100" x2="425" y2="185" stroke="#38bdf8" stroke-opacity="0.4" stroke-width="1"/>
+
+  <!-- Court Floor -->
+  <polygon points="15,380 585,380 535,185 65,185" fill="url(#outdoorTurf)"/>
+
+  <!-- White Court Markings -->
+  <polygon points="50,365 550,365 510,195 90,195" fill="none" stroke="#ffffff" stroke-width="3" stroke-opacity="0.95"/>
+  <line x1="72" y1="265" x2="528" y2="265" stroke="#ffffff" stroke-width="2.5" stroke-opacity="0.9"/>
+  <line x1="300" y1="195" x2="300" y2="265" stroke="#ffffff" stroke-width="2.5" stroke-opacity="0.9"/>
+  <line x1="300" y1="265" x2="300" y2="365" stroke="#ffffff" stroke-width="3" stroke-opacity="0.95"/>
+
+  <!-- Net -->
+  <polygon points="62,230 538,230 536,240 64,240" fill="#020617" fill-opacity="0.75"/>
+  <line x1="62" y1="230" x2="538" y2="230" stroke="#ffffff" stroke-width="2.5"/>
+
+  <!-- Floodlight Masts -->
+  <line x1="45" y1="40" x2="45" y2="190" stroke="#475569" stroke-width="3"/>
+  <line x1="555" y1="40" x2="555" y2="190" stroke="#475569" stroke-width="3"/>
+  <circle cx="45" cy="40" r="8" fill="#ffffff"/>
+  <circle cx="555" cy="40" r="8" fill="#ffffff"/>
+  <circle cx="45" cy="40" r="60" fill="#38bdf8" fill-opacity="0.2"/>
+  <circle cx="555" cy="40" r="60" fill="#38bdf8" fill-opacity="0.2"/>
+</svg>

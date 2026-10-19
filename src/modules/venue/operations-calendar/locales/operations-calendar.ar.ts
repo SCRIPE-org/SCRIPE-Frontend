@@ -15,6 +15,10 @@ export const ar = {
       dayView: "عرض اليوم",
       blockTime: "+ حظر وقت",
       newBooking: "+ حجز جديد",
+      filter: "تصفية",
+      day: "يوم",
+      week: "أسبوع",
+      month: "شهر",
     },
     timeline: {
       resource: "الملعب / المساحة",
@@ -30,6 +34,9 @@ export const ar = {
       Held: "محجوز مؤقتًا",
       Confirmed: "مؤكد",
       CheckedIn: "تم تسجيل الحضور",
+      Completed: "مكتمل",
+      NoShow: "لم يحضر",
+      Cancelled: "ملغى",
       Maintenance: "صيانة",
       Blocked: "غير متاح",
       Unavailable: "غير متاح",
@@ -88,6 +95,7 @@ export const ar = {
     },
     readiness: {
       courtNotReady: "الملعب المحدد غير جاهز للحجز. يرجى إكمال إعداد الملعب أولاً.",
+      courtActivating: "التسعير المعتمد لهذا الملعب قيد التفعيل حالياً. ستصبح الحجوزات متاحة بمجرد تفعيل التسعير.",
     },
     clickToBook: {
       title: "حجز جديد",
@@ -127,11 +135,15 @@ export const ar = {
         priceChanged: "تم تحديث السعر: القديم: {{oldPrice}} {{currency}}، الجديد: {{newPrice}} {{currency}}. يرجى التأكيد للمتابعة.",
         acknowledge: "تأكيد السعر",
         failed: "تعذر احتساب عرض السعر.",
+        activating: "التسعير المعتمد لهذا الملعب قيد التفعيل حالياً. لا يمكن قبول الحجوزات حتى اكتمال التفعيل.",
         retry: "إعادة المحاولة",
         total: "الإجمالي",
         currency: "ج.م",
         override: "تعديل السعر",
         overrideReason: "سبب تعديل السعر",
+        overrideAmountPlaceholder: "مبلغ التعديل (مثال: -20 للخصم)",
+        applyOverride: "تطبيق التعديل",
+        overriding: "جاري التطبيق...",
       },
       hold: {
         temporaryBadge: "محجوز مؤقتاً",
@@ -142,6 +154,11 @@ export const ar = {
       },
       step0: {
         slotUnavailable: "هذا الموعد غير متاح (محجوز أو خارج ساعات العمل أو تحت الصيانة). يرجى اختيار وقت آخر.",
+        courtDraftError: "هذا الملعب في حالة مسودة أو لم يكتمل إعداده. يرجى إكمال إعداده ونشره في الملاعب والمساحات قبل الحجز.",
+        courtClosed: "الملعب مغلق خلال هذا الوقت بناءً على ساعات العمل.",
+        courtMaintenance: "الملعب تحت الصيانة خلال هذا الوقت.",
+        courtBooked: "هذا الوقت محجوز بالفعل لحجز آخر.",
+        pricingActivating: "التسعير المعتمد لهذا الملعب قيد التفعيل حالياً. لا يمكن قبول الحجوزات حتى اكتمال التفعيل.",
       },
       payment: {
         title: "الدفع",

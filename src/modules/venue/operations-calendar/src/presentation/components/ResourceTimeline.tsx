@@ -22,6 +22,8 @@ interface ResourceTimelineProps {
 function statusClass(status: OperationsCalendarBlock["status"]) {
   if (status === "Held") return "border-warning/50 bg-warning/15 text-warning-strong";
   if (status === "CheckedIn") return "border-info/50 bg-info/15 text-info";
+  if (status === "Completed") return "border-nx-border bg-nx-raised/70 text-nx-ink-2";
+  if (status === "NoShow") return "border-destructive/60 bg-destructive/15 text-destructive font-semibold";
   if (
     status === ("Maintenance" as any) ||
     (status as string) === "Blocked" ||
@@ -96,7 +98,8 @@ export function ResourceTimeline(props: ResourceTimelineProps) {
                   const isClosure =
                     block.status === ("Maintenance" as any) ||
                     (block.status as string) === "Blocked" ||
-                    (block.status as string) === "Unavailable";
+                    (block.status as string) === "Unavailable" ||
+                    block.reservationId.startsWith("closure-");
                   const status = isClosure
                     ? props.t("operationsCalendar.status.Maintenance", { defaultValue: "Maintenance" })
                     : props.t(`operationsCalendar.status.${block.status}`, { defaultValue: block.status });
@@ -125,7 +128,10 @@ export function ResourceTimeline(props: ResourceTimelineProps) {
                         end,
                         resource: resource.name,
                       })}
-                      onClick={() => props.onOpen(block)}
+                      onClick={() => {
+                        if (isClosure) return;
+                        props.onOpen(block);
+                      }}
                     >
                       <span className="block truncate font-semibold">
                         {isClosure ? `⊘ ${status}` : block.reservationNumber}

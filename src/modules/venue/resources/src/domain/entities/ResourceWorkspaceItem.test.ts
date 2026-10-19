@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import { evaluateCourtReadiness } from "./ResourceWorkspaceItem";
 
 describe("evaluateCourtReadiness", () => {
-  it("returns Active when all mandatory dependencies are satisfied", () => {
+  it("returns Ready when all mandatory dependencies are satisfied", () => {
     const result = evaluateCourtReadiness({
       isPublished: true,
       profileId: "prof-1",
@@ -11,7 +11,55 @@ describe("evaluateCourtReadiness", () => {
       hasCalendar: true,
     });
 
-    expect(result.state).toBe("Active");
+    expect(result.state).toBe("Ready");
+    expect(result.missingActions).toHaveLength(0);
+  });
+
+  it("returns Pricing Activating when priceEffectiveFromUtc is in the future", () => {
+    const futureUtc = new Date(Date.now() + 60_000).toISOString();
+    const result = evaluateCourtReadiness({
+      isPublished: true,
+      profileId: "prof-1",
+      slotDurationMinutes: 60,
+      pricePerSlot: 800,
+      hasCalendar: true,
+      priceEffectiveFromUtc: futureUtc,
+      asOfUtc: new Date().toISOString(),
+    });
+
+    expect(result.state).toBe("Pricing Activating");
+    expect(result.activatingUntilUtc).toBe(futureUtc);
+    expect(result.missingActions).toHaveLength(0);
+  });
+
+  it("returns Ready when asOfUtc reaches or passes priceEffectiveFromUtc", () => {
+    const pastUtc = "2026-10-18T12:00:00.000Z";
+    const asOfUtc = "2026-10-18T12:00:15.000Z";
+    const result = evaluateCourtReadiness({
+      isPublished: true,
+      profileId: "prof-1",
+      slotDurationMinutes: 60,
+      pricePerSlot: 800,
+      hasCalendar: true,
+      priceEffectiveFromUtc: pastUtc,
+      asOfUtc,
+    });
+
+    expect(result.state).toBe("Ready");
+    expect(result.missingActions).toHaveLength(0);
+  });
+
+  it("returns Unavailable when isUnavailable is true even if configured", () => {
+    const result = evaluateCourtReadiness({
+      isPublished: true,
+      profileId: "prof-1",
+      slotDurationMinutes: 60,
+      pricePerSlot: 800,
+      hasCalendar: true,
+      isUnavailable: true,
+    });
+
+    expect(result.state).toBe("Unavailable");
     expect(result.missingActions).toHaveLength(0);
   });
 

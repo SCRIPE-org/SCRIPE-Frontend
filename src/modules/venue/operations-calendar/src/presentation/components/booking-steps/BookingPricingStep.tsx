@@ -35,6 +35,9 @@ interface BookingPricingStepProps {
   onOverrideAmountChange: (val: string) => void;
   overrideReason: string;
   onOverrideReasonChange: (val: string) => void;
+  overrideLoading?: boolean;
+  overrideError?: string | null;
+  onApplyOverride?: () => void;
 }
 
 export function BookingPricingStep({
@@ -58,6 +61,9 @@ export function BookingPricingStep({
   onOverrideAmountChange,
   overrideReason,
   onOverrideReasonChange,
+  overrideLoading = false,
+  overrideError = null,
+  onApplyOverride,
 }: BookingPricingStepProps) {
   return (
     <div className="space-y-3">
@@ -237,19 +243,60 @@ export function BookingPricingStep({
               <Label className="text-xs font-bold text-nx-ink">
                 {t("operationsCalendar.clickToBook.pricing.override")}
               </Label>
+              {overrideError && (
+                <p className="text-xs text-destructive">{overrideError}</p>
+              )}
               <Input
                 type="number"
-                placeholder="Override Amount"
+                placeholder={t("operationsCalendar.clickToBook.pricing.overrideAmountPlaceholder", {
+                  defaultValue: "Adjustment Amount (e.g. -20 for discount)",
+                })}
                 value={overrideAmount}
+                disabled={overrideLoading}
                 onChange={(e) => onOverrideAmountChange(e.target.value)}
                 className="h-7 text-xs"
               />
               <Input
                 placeholder={t("operationsCalendar.clickToBook.pricing.overrideReason")}
                 value={overrideReason}
+                disabled={overrideLoading}
+                maxLength={500}
                 onChange={(e) => onOverrideReasonChange(e.target.value)}
                 className="h-7 text-xs"
               />
+              <div className="flex items-center gap-2 pt-1">
+                <Button
+                  type="button"
+                  size="sm"
+                  disabled={
+                    overrideLoading ||
+                    !Number.isFinite(Number(overrideAmount)) ||
+                    Number(overrideAmount) === 0 ||
+                    !overrideReason.trim()
+                  }
+                  onClick={onApplyOverride}
+                  className="h-7 text-xs font-semibold"
+                >
+                  {overrideLoading ? (
+                    <>
+                      <LoadingSpinner size="sm" className="me-1" />
+                      <span>{t("operationsCalendar.clickToBook.pricing.overriding", { defaultValue: "Applying..." })}</span>
+                    </>
+                  ) : (
+                    t("operationsCalendar.clickToBook.pricing.applyOverride", { defaultValue: "Apply Override" })
+                  )}
+                </Button>
+                <Button
+                  type="button"
+                  size="sm"
+                  variant="ghost"
+                  disabled={overrideLoading}
+                  onClick={onToggleOverride}
+                  className="h-7 text-xs"
+                >
+                  {t("common.cancel", { defaultValue: "Cancel" })}
+                </Button>
+              </div>
             </div>
           )}
         </div>

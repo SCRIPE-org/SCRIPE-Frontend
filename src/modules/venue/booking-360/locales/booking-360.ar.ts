@@ -68,6 +68,13 @@ export const ar = {
       unavailable: "تفاصيل المالية غير متاحة مؤقتًا.",
       viewReceivables: "عرض في المستحقات",
       recordPayment: "تسجيل دفعة",
+      recordedPayments: "المدفوعات المسجلة",
+      pendingAllocationNotice: "الدفعة المسجلة بمبلغ {{amount}} قيد التخصيص للفاتورة {{invoiceNumber}}.",
+      pendingSyncNotice: "تجري مزامنة الفاتورة المالية في الخلفية. المدفوعات المسجلة محفوظة بأمان.",
+      unallocated: "غير مخصص",
+      allocated: "مخصص",
+      refunded: "مسترد",
+      unallocatedAmount: "غير مخصص: {{amount}}",
     },
     cancelledPaid: {
       title: "دفعة مسجلة — لم يتم استرداد الأموال تلقائيًا",

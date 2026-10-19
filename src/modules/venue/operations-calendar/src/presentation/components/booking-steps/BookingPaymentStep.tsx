@@ -28,6 +28,7 @@ interface BookingPaymentStepProps {
   formatDateDisplay: () => string;
   formatTimeRange: () => string;
   paymentPartialFailure: boolean;
+  paymentErrorMessage?: string | null;
   quote: PriceQuote | null;
   amountPaid: number;
   remainingBalance: number;
@@ -56,6 +57,7 @@ export function BookingPaymentStep({
   formatDateDisplay,
   formatTimeRange,
   paymentPartialFailure,
+  paymentErrorMessage,
   quote,
   amountPaid,
   remainingBalance,
@@ -119,8 +121,8 @@ export function BookingPaymentStep({
   if (stage === "confirmed") {
     return (
       <div className="space-y-4 py-3 text-center">
-        <div className="size-14 rounded-full bg-emerald-500/10 border-2 border-emerald-500 flex items-center justify-center text-emerald-500 mx-auto">
-          <CheckCircle2 className="size-8" />
+        <div className="size-16 rounded-full bg-emerald-500/10 border-2 border-emerald-500/40 dark:border-[#C6FF00]/60 flex items-center justify-center text-emerald-500 dark:text-[#C6FF00] mx-auto shadow-sm">
+          <CheckCircle2 className="size-9" />
         </div>
 
         <div>
@@ -143,13 +145,13 @@ export function BookingPaymentStep({
               {t("operationsCalendar.clickToBook.partialFailure.title")}
             </AlertTitle>
             <AlertDescription className="text-[11px]">
-              {t("operationsCalendar.clickToBook.partialFailure.description")}
+              {paymentErrorMessage || t("operationsCalendar.clickToBook.partialFailure.description")}
             </AlertDescription>
           </Alert>
         )}
 
         {/* Receipt Summary Card */}
-        <div className="p-3 rounded-xl border border-nx-border bg-nx-raised/40 space-y-2 text-left">
+        <div className="p-3.5 rounded-xl border border-nx-border bg-nx-raised/40 space-y-2 text-left">
           <div className="flex items-center justify-between text-xs">
             <span className="text-nx-ink-2">{t("operationsCalendar.clickToBook.success.total")}</span>
             <span className="font-bold text-nx-ink">
@@ -175,7 +177,8 @@ export function BookingPaymentStep({
           {canRecordPayment && remainingBalance > 0 && (
             <Button
               type="button"
-              className="w-full h-9 text-xs font-bold bg-nx-primary hover:bg-nx-primary-hover text-white rounded-lg"
+              className="w-full h-9 text-xs font-bold bg-[#C6FF00] hover:bg-[#b5eb00] text-[#0D0D0E] rounded-xl shadow-sm"
+              loading={recordingPaymentManual}
               disabled={recordingPaymentManual}
               onClick={onManualRecordPayment}
             >
@@ -190,7 +193,7 @@ export function BookingPaymentStep({
             <Button
               asChild
               variant="outline"
-              className="w-full h-9 text-xs font-semibold rounded-lg"
+              className="w-full h-9 text-xs font-semibold rounded-xl border border-nx-border hover:bg-nx-raised"
             >
               <Link href={`/venue/bookings/${encodeURIComponent(reservationId)}`}>
                 <ExternalLink className="size-3.5 me-2" />
@@ -203,7 +206,7 @@ export function BookingPaymentStep({
             type="button"
             variant="ghost"
             onClick={onClose}
-            className="text-xs text-nx-ink-3 hover:text-nx-ink"
+            className="text-xs text-nx-ink-3 hover:text-nx-ink font-semibold"
           >
             {t("operationsCalendar.clickToBook.success.close")}
           </Button>
@@ -218,42 +221,47 @@ export function BookingPaymentStep({
         {t("operationsCalendar.clickToBook.payment.title")}
       </Label>
 
-      <div className="space-y-1.5">
-        <label className="flex items-center gap-2 p-2 rounded-lg border border-nx-border hover:bg-nx-raised cursor-pointer">
+      <div className="space-y-2">
+        <label className={`flex items-center gap-3 p-3 rounded-xl border cursor-pointer transition-colors ${paymentChoice === "later" ? "border-emerald-500/40 dark:border-[#C6FF00]/40 bg-emerald-500/5 dark:bg-[#C6FF00]/5" : "border-nx-border hover:bg-nx-raised/50"}`}>
           <input
             type="radio"
             name="paymentOption"
             checked={paymentChoice === "later"}
             onChange={() => onPaymentChoiceChange("later")}
-            className="text-nx-primary"
+            className="size-4 text-emerald-600 dark:text-[#C6FF00] accent-[#C6FF00]"
           />
-          <span className="text-xs font-semibold text-nx-ink">
-            {t("operationsCalendar.clickToBook.payment.payLater")}
-          </span>
+          <div>
+            <span className="text-xs font-bold text-nx-ink block">
+              {t("operationsCalendar.clickToBook.payment.payLater")}
+            </span>
+            <span className="text-[10px] text-nx-ink-3 block">
+              Customer will pay at the venue desk prior to match
+            </span>
+          </div>
         </label>
 
         {canRecordPayment && (
-          <label className="flex items-start gap-2 p-2 rounded-lg border border-nx-border hover:bg-nx-raised cursor-pointer">
+          <label className={`flex items-start gap-3 p-3 rounded-xl border cursor-pointer transition-colors ${paymentChoice === "now" ? "border-emerald-500/40 dark:border-[#C6FF00]/40 bg-emerald-500/5 dark:bg-[#C6FF00]/5" : "border-nx-border hover:bg-nx-raised/50"}`}>
             <input
               type="radio"
               name="paymentOption"
               checked={paymentChoice === "now"}
               onChange={() => onPaymentChoiceChange("now")}
-              className="mt-0.5 text-nx-primary"
+              className="mt-0.5 size-4 text-emerald-600 dark:text-[#C6FF00] accent-[#C6FF00]"
             />
             <div className="flex-1">
-              <span className="text-xs font-semibold text-nx-ink block">
+              <span className="text-xs font-bold text-nx-ink block">
                 {t("operationsCalendar.clickToBook.payment.recordNow")}
               </span>
 
               {paymentChoice === "now" && (
-                <div className="space-y-2 mt-2 pt-1 border-t border-nx-border/50">
+                <div className="space-y-2.5 mt-2.5 pt-2 border-t border-nx-border/50">
                   <div className="flex items-center gap-2">
                     <Input
                       type="number"
                       value={payNowAmount}
                       onChange={(e) => onPayNowAmountChange(Number(e.target.value) || 0)}
-                      className="h-7 w-28 text-xs font-bold"
+                      className="h-8 w-28 text-xs font-bold bg-nx-surface"
                     />
                     <span className="text-[11px] text-nx-ink-2">
                       {t("operationsCalendar.clickToBook.payment.remaining", {
@@ -276,11 +284,12 @@ export function BookingPaymentStep({
                             | "Other"
                         )
                       }
-                      className="h-7 rounded border border-nx-border bg-nx-surface text-xs px-2"
+                      className="h-8 rounded-lg border border-nx-border bg-nx-surface text-xs px-2.5 text-nx-ink"
                     >
                       <option value="Cash">Cash</option>
                       <option value="Card">Card</option>
                       <option value="BankTransfer">Bank Transfer</option>
+                      <option value="POS">POS Machine</option>
                     </select>
                     <Input
                       placeholder={t(
@@ -288,7 +297,7 @@ export function BookingPaymentStep({
                       )}
                       value={paymentReference}
                       onChange={(e) => onPaymentReferenceChange(e.target.value)}
-                      className="h-7 text-xs"
+                      className="h-8 text-xs bg-nx-surface"
                     />
                   </div>
                 </div>

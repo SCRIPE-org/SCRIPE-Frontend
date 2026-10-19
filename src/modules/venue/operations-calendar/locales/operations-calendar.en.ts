@@ -15,6 +15,10 @@ export const en = {
       dayView: "Day Operations",
       blockTime: "+ Block Time",
       newBooking: "+ New Booking",
+      filter: "Filter",
+      day: "Day",
+      week: "Week",
+      month: "Month",
     },
     timeline: {
       resource: "Court / Space",
@@ -30,6 +34,9 @@ export const en = {
       Held: "Held",
       Confirmed: "Confirmed",
       CheckedIn: "Checked in",
+      Completed: "Completed",
+      NoShow: "No-show",
+      Cancelled: "Cancelled",
       Maintenance: "Maintenance",
       Blocked: "Unavailable",
       Unavailable: "Unavailable",
@@ -88,6 +95,7 @@ export const en = {
     },
     readiness: {
       courtNotReady: "Selected court is not ready for bookings. Please complete court setup first.",
+      courtActivating: "Authoritative pricing for this court is still activating. Bookings will become available once pricing is active.",
     },
     clickToBook: {
       title: "New Booking",
@@ -127,11 +135,15 @@ export const en = {
         priceChanged: "Price updated: Old: {{oldPrice}} {{currency}}, New: {{newPrice}} {{currency}}. Please acknowledge to proceed.",
         acknowledge: "Acknowledge",
         failed: "Failed to calculate price quote.",
+        activating: "Authoritative pricing for this court is still activating. Bookings cannot be accepted until activation completes.",
         retry: "Retry Quote",
         total: "Total",
         currency: "EGP",
         override: "Override Price",
         overrideReason: "Reason for price override",
+        overrideAmountPlaceholder: "Adjustment Amount (e.g. -20 for discount)",
+        applyOverride: "Apply Override",
+        overriding: "Applying...",
       },
       hold: {
         temporaryBadge: "Temporarily Reserved",
@@ -142,6 +154,11 @@ export const en = {
       },
       step0: {
         slotUnavailable: "This time slot is not available (occupied, closed, or maintenance). Please select another time.",
+        courtDraftError: "This court is in Draft status or incomplete setup. Please complete its setup and publish it in Courts & Spaces before booking.",
+        courtClosed: "Court is closed during this time based on its operating hours.",
+        courtMaintenance: "Court is scheduled for maintenance during this time.",
+        courtBooked: "This time slot is already reserved by another booking.",
+        pricingActivating: "Authoritative pricing for this court is still activating. Bookings cannot be accepted until activation completes.",
       },
       payment: {
         title: "Payment",

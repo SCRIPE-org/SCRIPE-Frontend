@@ -16,6 +16,7 @@ import { VenueOverviewHeader } from "../components/VenueOverviewHeader";
 import { VenueOverviewKpiStrip } from "../components/VenueOverviewKpiStrip";
 import { VenueOverviewLiveCourts } from "../components/VenueOverviewLiveCourts";
 import { VenueOverviewTodaySchedule } from "../components/VenueOverviewTodaySchedule";
+import { VenueOverviewEditorialBanner } from "../components/VenueOverviewEditorialBanner";
 import { VenueOverviewHeroTimeline } from "../components/VenueOverviewHeroTimeline";
 import { VenueOverviewLiveFeed } from "../components/VenueOverviewLiveFeed";
 import { VenueOverviewDemandChart } from "../components/VenueOverviewDemandChart";
@@ -78,7 +79,7 @@ export function VenueOverviewView({ facilityId, localDate }: Props) {
     );
   }
 
-  if (state.stage === "empty") {
+  if (state.stage === "empty" && facilities.length === 0 && !state.facilityName) {
     return (
       <div className="p-6 max-w-[1600px] mx-auto space-y-6" dir={dir} data-testid="venue-overview-empty">
         <EmptyState
@@ -179,12 +180,13 @@ export function VenueOverviewView({ facilityId, localDate }: Props) {
         t={t}
       />
 
-      {/* Approved Reference Composition: Live Courts (8 cols) + Today's Schedule (4 cols) */}
+      {/* Approved Reference Composition: Live Courts (7 cols) + Editorial Banner & Today's Schedule (5 cols) */}
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-12 items-start">
-        <div className="lg:col-span-8">
+        <div className="lg:col-span-7">
           <VenueOverviewLiveCourts items={state.resourceActivity} t={t} />
         </div>
-        <div className="lg:col-span-4">
+        <div className="lg:col-span-5 space-y-4">
+          <VenueOverviewEditorialBanner facilityName={state.facilityName} t={t} />
           <VenueOverviewTodaySchedule items={state.upNext} t={t} />
         </div>
       </div>

@@ -43,33 +43,41 @@ export function ResourceGeneralTab({ vm }: Props) {
       {/* Left Column: Court Photo Gallery matching approved reference */}
       <div className="lg:col-span-5 space-y-3">
         {/* Main Large Court Photo */}
-        <div className="relative h-64 sm:h-72 w-full rounded-2xl overflow-hidden shadow-sm border border-slate-200 dark:border-slate-800 bg-gradient-to-tr from-blue-900 via-blue-700 to-indigo-800 p-4 flex flex-col justify-between">
-          <div className="absolute inset-0 bg-black/20 backdrop-blur-[0.5px]" />
-          {/* Subtle sports court line markings */}
-          <div className="absolute inset-4 border-2 border-white/30 rounded-lg pointer-events-none" />
-          <div className="absolute inset-x-4 top-1/2 -translate-y-1/2 border-t border-white/30 pointer-events-none" />
+        <div className="relative h-64 sm:h-72 w-full rounded-2xl overflow-hidden shadow-sm border border-nx-border bg-nx-raised p-4 flex flex-col justify-between group">
+          <img
+            src="/images/venue/padel-court-indoor.svg"
+            alt="Court Preview"
+            className="absolute inset-0 size-full object-cover group-hover:scale-105 transition-transform duration-300"
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-black/30" />
 
           <div className="relative z-10 flex items-center justify-between">
-            <span className="text-xs font-extrabold uppercase tracking-widest text-white bg-black/50 px-2.5 py-1 rounded-md backdrop-blur-xs">
+            <span className="text-xs font-extrabold uppercase tracking-widest text-white bg-black/60 px-2.5 py-1 rounded-md backdrop-blur-xs border border-white/20">
               Primary Photo
             </span>
           </div>
 
           <div className="relative z-10 flex items-center justify-between text-white">
             <span className="text-sm font-bold">Court Preview</span>
-            <span className="text-xs opacity-80">Court Photo</span>
+            <span className="text-xs opacity-80">Tournament Indoor Padel</span>
           </div>
         </div>
 
         {/* Thumbnail Row */}
         <div className="grid grid-cols-4 gap-2.5">
-          <div className="h-16 rounded-nx-xl border-2 border-nx-accent bg-nx-accent/20 overflow-hidden cursor-pointer" />
-          <div className="h-16 rounded-nx-xl border border-nx-line bg-emerald-500/20 overflow-hidden cursor-pointer" />
-          <div className="h-16 rounded-nx-xl border border-nx-line bg-purple-500/20 overflow-hidden cursor-pointer" />
+          <div className="h-16 rounded-xl border-2 border-[#C6FF00] overflow-hidden relative cursor-pointer group">
+            <img src="/images/venue/padel-court-indoor.svg" alt="Padel indoor" className="size-full object-cover group-hover:scale-110 transition-transform" />
+          </div>
+          <div className="h-16 rounded-xl border border-nx-border overflow-hidden relative cursor-pointer group">
+            <img src="/images/venue/padel-court-outdoor.svg" alt="Padel outdoor" className="size-full object-cover group-hover:scale-110 transition-transform" />
+          </div>
+          <div className="h-16 rounded-xl border border-nx-border overflow-hidden relative cursor-pointer group">
+            <img src="/images/venue/football-turf-night.svg" alt="Football turf" className="size-full object-cover group-hover:scale-110 transition-transform" />
+          </div>
           {/* + Add Photo button */}
           <button
             type="button"
-            className="h-16 rounded-nx-xl border-2 border-dashed border-nx-line hover:border-nx-accent hover:bg-nx-accent/5 flex flex-col items-center justify-center text-nx-ink-2 transition-colors"
+            className="h-16 rounded-xl border-2 border-dashed border-nx-border hover:border-[#C6FF00] hover:bg-[#C6FF00]/5 flex flex-col items-center justify-center text-nx-ink-2 transition-colors"
           >
             <Plus className="size-4" />
             <span className="text-[10px] font-bold mt-0.5">Add Photo</span>

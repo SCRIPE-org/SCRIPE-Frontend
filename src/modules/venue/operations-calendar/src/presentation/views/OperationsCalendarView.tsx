@@ -55,12 +55,21 @@ export const OperationsCalendarView = React.memo(function OperationsCalendarView
 
   const handleEmptySlot = React.useCallback(
     (resource: CalendarResource, instantUtc: string, durationMinutes?: number) => {
+      if (resource.priceEffectiveFromUtc && Date.parse(resource.priceEffectiveFromUtc) > Date.now()) {
+        setCourtNotReadyNotice(
+          t("operationsCalendar.readiness.courtActivating", {
+            defaultValue:
+              "Authoritative pricing for this court is still activating. Bookings will become available once pricing is active.",
+          })
+        );
+        return;
+      }
       setSelectedResource(resource);
       setSelectedInstant(instantUtc);
       setSelectedDuration(durationMinutes ?? resource.slotPolicy?.slotDurationMinutes ?? 60);
       setClickToBookOpen(true);
     },
-    []
+    [t]
   );
 
   const handleOpenBlockTime = React.useCallback(
@@ -77,13 +86,23 @@ export const OperationsCalendarView = React.memo(function OperationsCalendarView
   );
 
   const handleOpenNewBooking = React.useCallback(() => {
-    if (facilityResources.length > 0) {
-      setSelectedResource(facilityResources[0]);
+    const readyResource = facilityResources.find(
+      (r) => !r.priceEffectiveFromUtc || Date.parse(r.priceEffectiveFromUtc) <= Date.now()
+    );
+    if (readyResource) {
+      setSelectedResource(readyResource);
       setSelectedInstant(null);
-      setSelectedDuration(facilityResources[0].slotPolicy?.slotDurationMinutes ?? 60);
+      setSelectedDuration(readyResource.slotPolicy?.slotDurationMinutes ?? 60);
       setClickToBookOpen(true);
+    } else if (facilityResources.length > 0) {
+      setCourtNotReadyNotice(
+        t("operationsCalendar.readiness.courtActivating", {
+          defaultValue:
+            "Authoritative pricing for this court is still activating. Bookings will become available once pricing is active.",
+        })
+      );
     }
-  }, [facilityResources]);
+  }, [facilityResources, t]);
 
   React.useEffect(() => {
     if (!searchParams) return;
@@ -107,6 +126,18 @@ export const OperationsCalendarView = React.memo(function OperationsCalendarView
           t("operationsCalendar.readiness.courtNotReady", {
             defaultValue:
               "Selected court is not ready for bookings. Please complete court setup first.",
+          })
+        );
+        if (typeof window !== "undefined") {
+          window.history.replaceState(null, "", window.location.pathname);
+        }
+        return;
+      }
+      if (found.priceEffectiveFromUtc && Date.parse(found.priceEffectiveFromUtc) > Date.now()) {
+        setCourtNotReadyNotice(
+          t("operationsCalendar.readiness.courtActivating", {
+            defaultValue:
+              "Authoritative pricing for this court is still activating. Bookings will become available once pricing is active.",
           })
         );
         if (typeof window !== "undefined") {
@@ -188,7 +219,9 @@ export const OperationsCalendarView = React.memo(function OperationsCalendarView
         resources={facilityResources}
         timeZones={vm.timeZoneOptions}
         loading={vm.state.stage === "loading"}
-        hasBookingReadyCourts={facilityResources.length > 0}
+        hasBookingReadyCourts={facilityResources.some(
+          (resource) => !resource.priceEffectiveFromUtc || Date.parse(resource.priceEffectiveFromUtc) <= Date.now()
+        )}
         onDateChange={vm.setDate}
         onFacilityChange={vm.setFacilityId}
         onTimeZoneChange={vm.setTimeZoneId}

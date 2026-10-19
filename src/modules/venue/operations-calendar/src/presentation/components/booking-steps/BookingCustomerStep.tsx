@@ -78,7 +78,7 @@ export function BookingCustomerStep({
 
       {/* Quick Add Form */}
       {quickAddOpen ? (
-        <div className="p-3 rounded-xl border border-nx-border bg-nx-raised/40 space-y-2.5">
+        <div className="p-3.5 rounded-xl border border-nx-border bg-nx-raised/40 space-y-2.5">
           <h5 className="text-xs font-bold text-nx-ink">
             {t("operationsCalendar.clickToBook.customer.quickAddTitle")}
           </h5>
@@ -118,7 +118,7 @@ export function BookingCustomerStep({
             size="sm"
             onClick={onQuickAddCustomer}
             disabled={!quickName.trim() || submitting}
-            className="h-7 text-xs w-full font-bold bg-nx-primary hover:bg-nx-primary-hover text-white"
+            className="h-8 text-xs w-full font-bold bg-[#C6FF00] hover:bg-[#b5eb00] text-[#0D0D0E]"
           >
             {submitting
               ? t("operationsCalendar.clickToBook.customer.creating")
@@ -127,17 +127,22 @@ export function BookingCustomerStep({
         </div>
       ) : selectedCustomer ? (
         /* Selected Customer Card */
-        <div className="flex items-center justify-between p-3 rounded-xl border border-nx-primary/40 bg-nx-primary/5">
-          <div className="flex items-center gap-2.5">
-            <div className="flex size-8 items-center justify-center rounded-full bg-nx-primary text-white font-bold text-xs">
+        <div className="flex items-center justify-between p-3 rounded-xl border border-emerald-500/30 bg-emerald-500/5 dark:border-[#C6FF00]/30 dark:bg-[#C6FF00]/5">
+          <div className="flex items-center gap-3">
+            <div className="flex size-9 items-center justify-center rounded-full bg-emerald-500/15 text-emerald-600 dark:bg-[#C6FF00]/15 dark:text-[#C6FF00] font-bold text-xs ring-1 ring-emerald-500/30 dark:ring-[#C6FF00]/30 shrink-0">
               {selectedCustomer.displayName.charAt(0)}
             </div>
             <div>
-              <p className="text-xs font-bold text-nx-ink">
-                {selectedCustomer.displayName}
-              </p>
+              <div className="flex items-center gap-2">
+                <p className="text-xs font-bold text-nx-ink">
+                  {selectedCustomer.displayName}
+                </p>
+                <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium bg-nx-raised text-nx-ink-2">
+                  {selectedCustomer.type || "Customer"}
+                </span>
+              </div>
               <p className="text-[10px] text-nx-ink-2">
-                {selectedCustomer.type || "Customer"}
+                {selectedCustomer.phone || "Active Customer"}
               </p>
             </div>
           </div>
@@ -146,7 +151,7 @@ export function BookingCustomerStep({
             variant="ghost"
             size="sm"
             onClick={() => onSelectCustomer(null)}
-            className="h-7 text-xs text-nx-ink-2 hover:text-nx-ink"
+            className="h-7 text-xs text-emerald-600 dark:text-[#C6FF00] font-semibold hover:underline"
           >
             {t("operationsCalendar.clickToBook.customer.change")}
           </Button>
@@ -180,32 +185,45 @@ export function BookingCustomerStep({
           )}
 
           {/* Results List */}
-          <div className="space-y-1 max-h-40 overflow-y-auto">
-            {customerResults.map((cust) => (
-              <button
-                type="button"
-                key={cust.id}
-                onClick={() => {
-                  onSelectCustomer(cust);
-                  onAdvanceToPricing();
-                }}
-                className="w-full p-2 rounded-lg border border-nx-border hover:border-nx-primary hover:bg-nx-primary/5 text-start flex items-center justify-between text-xs transition-colors"
-              >
-                <div className="flex items-center gap-2">
-                  <div className="flex size-6 items-center justify-center rounded-full bg-nx-raised text-nx-ink font-bold text-xs">
-                    {cust.displayName.charAt(0)}
+          <div className="space-y-1.5 max-h-48 overflow-y-auto">
+            {customerResults.map((cust, idx) => {
+              const avatarPalette = [
+                "bg-purple-500/15 text-purple-600 dark:text-purple-400 border-purple-500/20",
+                "bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 border-emerald-500/20",
+                "bg-blue-500/15 text-blue-600 dark:text-blue-400 border-blue-500/20",
+                "bg-amber-500/15 text-amber-600 dark:text-amber-400 border-amber-500/20",
+                "bg-teal-500/15 text-teal-600 dark:text-teal-400 border-teal-500/20",
+              ];
+              const colorClass = avatarPalette[idx % avatarPalette.length];
+              return (
+                <button
+                  type="button"
+                  key={cust.id}
+                  onClick={() => {
+                    onSelectCustomer(cust);
+                    onAdvanceToPricing();
+                  }}
+                  className="w-full p-2.5 rounded-xl border border-nx-border hover:border-emerald-500/40 dark:hover:border-[#C6FF00]/40 hover:bg-nx-raised/60 text-start flex items-center justify-between text-xs transition-colors group"
+                >
+                  <div className="flex items-center gap-2.5">
+                    <div className={`flex size-7 items-center justify-center rounded-full font-bold text-xs border ${colorClass}`}>
+                      {cust.displayName.charAt(0)}
+                    </div>
+                    <div>
+                      <span className="font-semibold text-nx-ink block group-hover:text-emerald-600 dark:group-hover:text-[#C6FF00]">
+                        {cust.displayName}
+                      </span>
+                      <span className="text-[10px] text-nx-ink-3 block">
+                        {cust.phone || cust.type || "Customer"}
+                      </span>
+                    </div>
                   </div>
-                  <div>
-                    <span className="font-semibold text-nx-ink block">
-                      {cust.displayName}
-                    </span>
-                    <span className="text-[10px] text-nx-ink-3 block">
-                      {cust.type}
-                    </span>
+                  <div className="size-4 rounded-full border border-nx-border flex items-center justify-center shrink-0 group-hover:border-emerald-500 dark:group-hover:border-[#C6FF00]">
+                    <div className="size-2 rounded-full bg-transparent group-hover:bg-emerald-500 dark:group-hover:bg-[#C6FF00]" />
                   </div>
-                </div>
-              </button>
-            ))}
+                </button>
+              );
+            })}
 
             {!customerSearching &&
               customerSearch.trim().length >= 2 &&

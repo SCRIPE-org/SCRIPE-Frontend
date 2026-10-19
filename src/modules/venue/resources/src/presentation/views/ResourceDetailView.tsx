@@ -1,7 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 import {
   ArrowLeft,
   CalendarDays,
@@ -33,11 +34,37 @@ interface Props {
   resourceId: string;
 }
 
+export function resolveResourceDetailTab(raw: string | null): string {
+  if (!raw) return "general";
+  const lower = raw.toLowerCase().trim();
+  if (lower === "workinghours" || lower === "hours" || lower === "schedule" || lower === "time") {
+    return "workingHours";
+  }
+  if (lower === "bookingrules" || lower === "rules" || lower === "slots" || lower === "booking") {
+    return "bookingRules";
+  }
+  if (lower === "pricing" || lower === "rates" || lower === "price" || lower === "prices") {
+    return "pricing";
+  }
+  if (lower === "closures" || lower === "maintenance" || lower === "closure" || lower === "blocks") {
+    return "closures";
+  }
+  return "general";
+}
+
 export function ResourceDetailView({ resourceId }: Props) {
   useModuleLocales(() => import("../../../locales"), "venue.resources");
   const { t, direction } = useI18n();
+  const searchParams = useSearchParams();
   const vm = useResourceDetailViewModel(resourceId);
-  const [activeTab, setActiveTab] = useState("general");
+  const [activeTab, setActiveTab] = useState(() => resolveResourceDetailTab(searchParams.get("tab")));
+
+  useEffect(() => {
+    const tabParam = searchParams.get("tab");
+    if (tabParam) {
+      setActiveTab(resolveResourceDetailTab(tabParam));
+    }
+  }, [searchParams]);
 
   if (vm.loading && !vm.resource) {
     return (
@@ -178,7 +205,7 @@ export function ResourceDetailView({ resourceId }: Props) {
                 variant="outline"
                 disabled={vm.saving}
                 onClick={() => {
-                  if (action.id === "publish-court") {
+                  if (action.id === "publish" || action.id === "publish-court") {
                     void vm.publishCourt();
                   } else {
                     setActiveTab(action.tab);
@@ -186,7 +213,7 @@ export function ResourceDetailView({ resourceId }: Props) {
                 }}
                 className="h-7 text-xs border-amber-400 hover:bg-amber-100 dark:hover:bg-amber-900/40 text-amber-900 dark:text-amber-100"
               >
-                {action.id === "publish-court" && vm.saving ? "Publishing..." : action.label}
+                {(action.id === "publish" || action.id === "publish-court") && vm.saving ? "Publishing..." : action.label}
               </Button>
             ))}
           </div>

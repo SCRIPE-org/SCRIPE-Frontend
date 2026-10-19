@@ -179,6 +179,9 @@ export function useBooking360ViewModel(
         reservation, reservation.resourceId, reservation.requestedStartUtc, reservation.requestedEndUtc);
       await bookingRepository.confirm(reservation.id, key, priceQuoteId);
       await load();
+      if (typeof window !== "undefined") {
+        window.dispatchEvent(new CustomEvent("venue-booking-updated", { detail: { reservationId: reservation.id, action: "confirm" } }));
+      }
     } catch (error) {
       let actionError: Booking360State["actionError"] = "failed";
       if (conflict(error)) {
@@ -284,6 +287,9 @@ interface TransitionOptions {
           operationalFeedback: { action, kind: "network", status: snapshot.reservation?.status ?? null },
         });
         return;
+      }
+      if (typeof window !== "undefined") {
+        window.dispatchEvent(new CustomEvent("venue-booking-updated", { detail: { reservationId: reservation.id, action } }));
       }
       setState((current) => ({
         ...current,

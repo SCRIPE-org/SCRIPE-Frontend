@@ -1,10 +1,12 @@
 import { fireEvent, render, screen } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { ResourceDetailView } from "./ResourceDetailView";
+import { ResourceDetailView, resolveResourceDetailTab } from "./ResourceDetailView";
 import { useResourceDetailViewModel } from "../viewmodels/useResourceDetailViewModel";
 
+const mockSearchParams = new URLSearchParams();
 vi.mock("next/navigation", () => ({
   usePathname: vi.fn().mockReturnValue("/venue/resources/res-1"),
+  useSearchParams: vi.fn(() => mockSearchParams),
 }));
 
 vi.mock("@core/providers/i18n-provider", () => ({
@@ -180,5 +182,23 @@ describe("ResourceDetailView", () => {
     expect(screen.getByText("Setup Required")).toBeInTheDocument();
     expect(screen.getByText(/Setup Required: Configure Pricing/i)).toBeInTheDocument();
     expect(screen.getByRole("button", { name: "Configure Pricing" })).toBeInTheDocument();
+  });
+
+  describe("resolveResourceDetailTab", () => {
+    it("resolves canonical and alias tab parameters correctly", () => {
+      expect(resolveResourceDetailTab(null)).toBe("general");
+      expect(resolveResourceDetailTab("")).toBe("general");
+      expect(resolveResourceDetailTab("general")).toBe("general");
+      expect(resolveResourceDetailTab("workingHours")).toBe("workingHours");
+      expect(resolveResourceDetailTab("hours")).toBe("workingHours");
+      expect(resolveResourceDetailTab("schedule")).toBe("workingHours");
+      expect(resolveResourceDetailTab("bookingRules")).toBe("bookingRules");
+      expect(resolveResourceDetailTab("rules")).toBe("bookingRules");
+      expect(resolveResourceDetailTab("pricing")).toBe("pricing");
+      expect(resolveResourceDetailTab("rates")).toBe("pricing");
+      expect(resolveResourceDetailTab("price")).toBe("pricing");
+      expect(resolveResourceDetailTab("closures")).toBe("closures");
+      expect(resolveResourceDetailTab("maintenance")).toBe("closures");
+    });
   });
 });

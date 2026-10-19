@@ -10,7 +10,7 @@ import {
   List,
   CalendarCheck2,
 } from "lucide-react";
-import { Card, CardContent, CardHeader, CardTitle } from "@core/ui/card";
+import { Card } from "@core/ui/card";
 import { Button } from "@core/ui/button";
 
 interface Props {
@@ -35,7 +35,7 @@ export function CalendarRightUtilityPanel({
   onBlockTime,
   onFindSlots,
   onViewToday,
-  statusCounts = { inUse: 0, noActiveBooking: 0, maintenance: 0 },
+  statusCounts,
   t,
 }: Props) {
   // Parse year & month from currentDate
@@ -46,7 +46,7 @@ export function CalendarRightUtilityPanel({
     const d = parts[2] || new Date().getDate();
 
     const firstDate = new Date(Date.UTC(y, m - 1, 1));
-    const startDow = firstDate.getUTCDay();
+    const startDow = (firstDate.getUTCDay() + 6) % 7; // Monday-first index
     const lastDate = new Date(Date.UTC(y, m, 0));
     const dim = lastDate.getUTCDate();
 
@@ -89,7 +89,11 @@ export function CalendarRightUtilityPanel({
     onDateChange(newDateStr);
   };
 
-  const weekdays = ["S", "M", "T", "W", "T", "F", "S"];
+  const weekdays = ["M", "T", "W", "T", "F", "S", "S"];
+
+  const inUseVal = statusCounts?.inUse ?? 0;
+  const freeVal = statusCounts?.noActiveBooking ?? 0;
+  const maintVal = statusCounts?.maintenance ?? 0;
 
   return (
     <div
@@ -97,61 +101,58 @@ export function CalendarRightUtilityPanel({
       data-testid="calendar-right-utility-panel"
     >
       {/* 1. Small Month Calendar */}
-      <Card className="border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 rounded-xl p-3.5 shadow-xs">
-        {/* Month Header with < > */}
-        <div className="flex items-center justify-between pb-2 mb-2 border-b border-slate-100 dark:border-slate-800">
-          <span className="text-xs font-bold text-slate-900 dark:text-white">
+      <Card className="border border-nx-line bg-nx-surface rounded-nx-xl p-3.5 shadow-xs">
+        <div className="flex items-center justify-between mb-3">
+          <span className="text-xs font-bold text-nx-ink">
             {monthName} {year}
           </span>
           <div className="flex items-center gap-1">
             <button
               type="button"
               onClick={handlePrevMonth}
-              className="p-1 rounded-md text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800"
+              className="p-1 rounded hover:bg-nx-surfaceSubtle text-nx-ink-3 hover:text-nx-ink transition-colors"
               aria-label="Previous month"
             >
-              <ChevronLeft className="size-3.5" />
+              <ChevronLeft className="size-3.5 rtl:rotate-180" />
             </button>
             <button
               type="button"
               onClick={handleNextMonth}
-              className="p-1 rounded-md text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800"
+              className="p-1 rounded hover:bg-nx-surfaceSubtle text-nx-ink-3 hover:text-nx-ink transition-colors"
               aria-label="Next month"
             >
-              <ChevronRight className="size-3.5" />
+              <ChevronRight className="size-3.5 rtl:rotate-180" />
             </button>
           </div>
         </div>
 
-        {/* Weekday Labels */}
-        <div className="grid grid-cols-7 gap-1 text-center text-[10px] font-bold text-slate-400 dark:text-slate-500 mb-1">
-          {weekdays.map((w, idx) => (
-            <div key={idx} className="py-0.5">
+        {/* Weekday initials */}
+        <div className="grid grid-cols-7 gap-1 text-center mb-1.5">
+          {weekdays.map((w, i) => (
+            <span key={i} className="text-[10px] font-bold text-nx-ink-3">
               {w}
-            </div>
+            </span>
           ))}
         </div>
 
-        {/* Days Grid */}
+        {/* Days grid */}
         <div className="grid grid-cols-7 gap-1 text-center">
-          {/* Empty cells before first day */}
-          {Array.from({ length: startDayOfWeek }).map((_, idx) => (
-            <div key={`empty-${idx}`} className="h-7 w-7" />
+          {Array.from({ length: startDayOfWeek }).map((_, i) => (
+            <div key={`empty-${i}`} className="h-7 w-7" />
           ))}
 
-          {/* Days of current month */}
-          {Array.from({ length: daysInMonth }).map((_, idx) => {
-            const dayNum = idx + 1;
+          {Array.from({ length: daysInMonth }).map((_, i) => {
+            const dayNum = i + 1;
             const isSelected = dayNum === day;
 
             return (
               <button
-                key={dayNum}
+                key={`day-${dayNum}`}
                 type="button"
                 onClick={() => handleSelectDay(dayNum)}
                 className={`h-7 w-7 rounded-full text-xs font-semibold flex items-center justify-center transition-all ${
                   isSelected
-                    ? "bg-nx-accent text-nx-accent-contrast font-bold shadow-xs shadow-nx-accent/40"
+                    ? "bg-nx-accent text-nx-accent-contrast font-bold shadow-xs"
                     : "text-nx-ink hover:bg-nx-surfaceSubtle"
                 }`}
               >
@@ -167,14 +168,14 @@ export function CalendarRightUtilityPanel({
         <h3 className="text-xs font-bold text-nx-ink mb-2.5">
           {t("operationsCalendar.quickActions.title", { defaultValue: "Quick Actions" })}
         </h3>
-        <div className="space-y-1.5">
+        <div className="space-y-1">
           <Button
             variant="ghost"
             size="sm"
             onClick={onNewBooking}
             className="w-full justify-start text-xs font-semibold gap-2.5 h-8 text-nx-ink hover:bg-nx-surfaceSubtle"
           >
-            <Plus className="size-3.5 text-nx-accent" />
+            <Plus className="size-3.5 text-blue-500" />
             <span>{t("operationsCalendar.quickActions.newBooking", { defaultValue: "New Booking" })}</span>
           </Button>
 
@@ -192,9 +193,9 @@ export function CalendarRightUtilityPanel({
             variant="ghost"
             size="sm"
             onClick={onFindSlots || onNewBooking}
-            className="w-full justify-start text-xs font-semibold gap-2.5 h-8 text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800"
+            className="w-full justify-start text-xs font-semibold gap-2.5 h-8 text-nx-ink hover:bg-nx-surfaceSubtle"
           >
-            <Search className="size-3.5 text-purple-500" />
+            <Search className="size-3.5 text-indigo-500" />
             <span>{t("operationsCalendar.quickActions.findSlots", { defaultValue: "Find Available Slots" })}</span>
           </Button>
 
@@ -202,7 +203,7 @@ export function CalendarRightUtilityPanel({
             variant="ghost"
             size="sm"
             onClick={onViewToday}
-            className="w-full justify-start text-xs font-semibold gap-2.5 h-8 text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800"
+            className="w-full justify-start text-xs font-semibold gap-2.5 h-8 text-nx-ink hover:bg-nx-surfaceSubtle"
           >
             <List className="size-3.5 text-emerald-500" />
             <span>{t("operationsCalendar.quickActions.viewToday", { defaultValue: "View Today's List" })}</span>
@@ -211,38 +212,38 @@ export function CalendarRightUtilityPanel({
       </Card>
 
       {/* 3. Court Status */}
-      <Card className="border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 rounded-xl p-3.5 shadow-xs">
-        <h3 className="text-xs font-bold text-slate-900 dark:text-white mb-2.5">
+      <Card className="border border-nx-line bg-nx-surface rounded-nx-xl p-3.5 shadow-xs">
+        <h3 className="text-xs font-bold text-nx-ink mb-2.5">
           {t("operationsCalendar.courtStatus.title", { defaultValue: "Court Status" })}
         </h3>
         <div className="space-y-2">
           <div className="flex items-center justify-between text-xs">
-            <div className="flex items-center gap-2 text-slate-600 dark:text-slate-300">
+            <div className="flex items-center gap-2 text-nx-ink-2 font-medium">
               <span className="size-2 rounded-full bg-emerald-500" />
-              <span>{t("operationsCalendar.courtStatus.inUse", { defaultValue: "In Use" })}</span>
+              <span>In Use</span>
             </div>
-            <span className="font-bold text-slate-900 dark:text-white tabular-nums">
-              {statusCounts.inUse}
+            <span className="font-bold text-nx-ink tabular-nums">
+              {inUseVal}
             </span>
           </div>
 
           <div className="flex items-center justify-between text-xs">
-            <div className="flex items-center gap-2 text-slate-600 dark:text-slate-300">
-              <span className="size-2 rounded-full bg-slate-400" />
-              <span>{t("operationsCalendar.courtStatus.noActiveBooking", { defaultValue: "No Current Booking" })}</span>
+            <div className="flex items-center gap-2 text-nx-ink-2 font-medium">
+              <span className="size-2 rounded-full bg-sky-500" />
+              <span>Free</span>
             </div>
-            <span className="font-bold text-slate-900 dark:text-white tabular-nums">
-              {statusCounts.noActiveBooking}
+            <span className="font-bold text-nx-ink tabular-nums">
+              {freeVal}
             </span>
           </div>
 
           <div className="flex items-center justify-between text-xs">
-            <div className="flex items-center gap-2 text-slate-600 dark:text-slate-300">
-              <span className="size-2 rounded-full bg-amber-500" />
-              <span>{t("operationsCalendar.courtStatus.maintenance", { defaultValue: "Maintenance" })}</span>
+            <div className="flex items-center gap-2 text-nx-ink-2 font-medium">
+              <span className="size-2 rounded-full bg-rose-500" />
+              <span>Maintenance</span>
             </div>
-            <span className="font-bold text-slate-900 dark:text-white tabular-nums">
-              {statusCounts.maintenance}
+            <span className="font-bold text-nx-ink tabular-nums">
+              {maintVal}
             </span>
           </div>
         </div>

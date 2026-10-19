@@ -26,15 +26,15 @@ const t = (key: string, values?: Record<string, string | number>) => {
 };
 
 describe("ResourceTimeline", () => {
-  it("keeps CheckedIn occupying while NoShow and Completed disappear after refresh", () => {
+  it("renders Confirmed, CheckedIn, Completed, and NoShow on timeline while Cancelled is removed", () => {
     render(<ResourceTimeline day={day} resources={[resource]} locale="en" direction="ltr" canCreate t={t} onOpen={vi.fn()} onEmptySlot={vi.fn()} />);
     const lane = document.querySelector<HTMLElement>('[data-resource-id="resource-1"]')!;
     expect(within(lane).getByText("RES-H")).toBeInTheDocument();
     expect(within(lane).getByText("RES-C")).toBeInTheDocument();
     expect(within(lane).getByText("RES-I")).toBeInTheDocument();
+    expect(within(lane).getByText("RES-D")).toBeInTheDocument();
+    expect(within(lane).getByText("RES-N")).toBeInTheDocument();
     expect(within(lane).queryByText("RES-X")).not.toBeInTheDocument();
-    expect(within(lane).queryByText("RES-D")).not.toBeInTheDocument();
-    expect(within(lane).queryByText("RES-N")).not.toBeInTheDocument();
     expect(screen.getAllByText("03:00").length).toBeGreaterThan(0);
   });
 

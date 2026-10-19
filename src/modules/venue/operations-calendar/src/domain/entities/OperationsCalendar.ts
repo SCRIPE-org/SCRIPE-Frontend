@@ -57,6 +57,7 @@ export interface CalendarResource {
     timeZoneId?: string | null;
     allowMultiSlot?: boolean;
   } | null;
+  priceEffectiveFromUtc?: string | null;
 }
 
 export type OperationsCalendarStage = "loading" | "ready" | "empty" | "featureUnavailable" | "error";

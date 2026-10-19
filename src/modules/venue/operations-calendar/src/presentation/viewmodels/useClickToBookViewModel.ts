@@ -54,9 +54,9 @@ export function useClickToBookViewModel({
   // Permissions
   const canCreateBooking = usePermission(VENUE_PERMISSIONS.RESERVATION_CREATE);
   const canCreateHold = usePermission(VENUE_PERMISSIONS.BOOKING_HOLD_CREATE);
-  const canRecordPayment =
-    usePermission(VENUE_PERMISSIONS.FINANCE_PAYMENTS_CREATE) ||
-    usePermission(VENUE_PERMISSIONS.FINANCE_PAYMENTS_VIEW);
+  const canRecordPayment = usePermission(
+    VENUE_PERMISSIONS.FINANCE_PAYMENTS_CREATE
+  );
   const canOverridePrice = usePermission(
     VENUE_PERMISSIONS.CATALOG_PRICING_OVERRIDE_PRICE
   );
@@ -76,8 +76,8 @@ export function useClickToBookViewModel({
 
   const allowedDurations = useMemo(() => {
     const base = slotPolicy?.slotDurationMinutes ?? 60;
-    const allowMulti = slotPolicy?.allowMultiSlot ?? false;
-    if (!allowMulti) {
+    const allowMulti = slotPolicy?.allowMultiSlot ?? true;
+    if (slotPolicy && slotPolicy.allowMultiSlot === false) {
       return [base];
     }
     return [base, base * 2, base * 3];
@@ -160,6 +160,8 @@ export function useClickToBookViewModel({
   const [overrideOpen, setOverrideOpen] = useState(false);
   const [overrideAmount, setOverrideAmount] = useState<string>("");
   const [overrideReason, setOverrideReason] = useState<string>("");
+  const [overrideLoading, setOverrideLoading] = useState(false);
+  const [overrideError, setOverrideError] = useState<string | null>(null);
 
   // Hold & Countdown state
   const [holdExpiresAtUtc, setHoldExpiresAtUtc] = useState<string | null>(null);
@@ -187,6 +189,7 @@ export function useClickToBookViewModel({
   const [paymentReference, setPaymentReference] = useState("");
   const [amountPaid, setAmountPaid] = useState<number>(0);
   const [paymentPartialFailure, setPaymentPartialFailure] = useState(false);
+  const [paymentErrorMessage, setPaymentErrorMessage] = useState<string | null>(null);
   const [recordingPaymentManual, setRecordingPaymentManual] = useState(false);
 
   // Reservation reference
@@ -241,6 +244,8 @@ export function useClickToBookViewModel({
       setOverrideOpen(false);
       setOverrideAmount("");
       setOverrideReason("");
+      setOverrideLoading(false);
+      setOverrideError(null);
       setHoldExpiresAtUtc(null);
       setHoldCountdown(null);
       setHoldExpired(false);
@@ -248,6 +253,7 @@ export function useClickToBookViewModel({
       setPayNowAmount(0);
       setAmountPaid(0);
       setPaymentPartialFailure(false);
+      setPaymentErrorMessage(null);
       setReservationId(null);
       setReservationNumber("");
     }
@@ -318,6 +324,16 @@ export function useClickToBookViewModel({
       const config = await commercialPricingRepository.getResourceConfiguration(
         selectedResource.id
       );
+      if (config?.effectiveFromUtc && Date.parse(config.effectiveFromUtc) > Date.now()) {
+        setQuote(null);
+        setQuoteError(
+          tRef.current("operationsCalendar.clickToBook.pricing.activating", {
+            defaultValue:
+              "Authoritative pricing for this court is still activating. Bookings cannot be accepted until activation completes.",
+          })
+        );
+        return;
+      }
       const calcQuote = await commercialPricingRepository.calculateQuote({
         offeringId: config.offeringId,
         resourceId: selectedResource.id,
@@ -357,42 +373,93 @@ export function useClickToBookViewModel({
     startUtc,
   ]);
 
+function toLocalIsoDateTime(utcIso: string, timeZone: string): string {
+  const d = new Date(utcIso);
+  const formatter = new Intl.DateTimeFormat("en-CA", {
+    timeZone: timeZone || "UTC",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit",
+    hour12: false,
+    hourCycle: "h23",
+  });
+  return formatter.format(d).replace(", ", "T").replace(" ", "T");
+}
+
   const handleStep0Next = useCallback(async () => {
     if (!selectedResource) return;
     setStep0Checking(true);
     setStep0Error(null);
     try {
       const container = getVenueContainer();
-      const localDate = new Date(startUtc).toISOString().slice(0, 10);
-      const startTimeStr = new Date(startUtc).toLocaleTimeString("en-GB", {
-        hour: "2-digit",
-        minute: "2-digit",
-        hourCycle: "h23",
-        timeZone: timeZoneId || "UTC",
-      });
-      const endTimeStr = new Date(endUtc).toLocaleTimeString("en-GB", {
-        hour: "2-digit",
-        minute: "2-digit",
-        hourCycle: "h23",
-        timeZone: timeZoneId || "UTC",
-      });
-      const startLocal = `${localDate}T${startTimeStr}:00`;
-      const endLocal = `${localDate}T${endTimeStr}:00`;
+      const tz = timeZoneId || "UTC";
+      const startLocal = toLocalIsoDateTime(startUtc, tz);
+      const endLocal = toLocalIsoDateTime(endUtc, tz);
+
+      if (container.commercialPricingRepository?.getResourceConfiguration) {
+        try {
+          const pricingConfig = await container.commercialPricingRepository.getResourceConfiguration(selectedResource.id);
+          if (pricingConfig?.effectiveFromUtc && Date.parse(pricingConfig.effectiveFromUtc) > Date.now()) {
+            setStep0Error(
+              tRef.current("operationsCalendar.clickToBook.step0.pricingActivating", {
+                defaultValue:
+                  "Authoritative pricing for this court is still activating. Bookings cannot be accepted until activation completes.",
+              })
+            );
+            return;
+          }
+        } catch (pricingErr) {
+          console.warn("Pricing configuration preflight exception:", pricingErr);
+        }
+      }
 
       if (container.availabilityRepository?.search) {
-        const res = await container.availabilityRepository.search({
-          resourceId: selectedResource.id,
-          timeZoneId: timeZoneId || "UTC",
-          startLocal,
-          endLocal,
-          quantity: 1,
-        });
+        let res;
+        try {
+          res = await container.availabilityRepository.search({
+            resourceId: selectedResource.id,
+            timeZoneId: tz,
+            startLocal,
+            endLocal,
+            quantity: 1,
+          });
+        } catch (searchErr) {
+          const errMsg = searchErr instanceof Error ? searchErr.message : "";
+          if (
+            errMsg.toLowerCase().includes("notsearchable") ||
+            errMsg.toLowerCase().includes("not published") ||
+            errMsg.toLowerCase().includes("draft")
+          ) {
+            setStep0Error(
+              tRef.current("operationsCalendar.clickToBook.step0.courtDraftError") ||
+                "This court is in Draft status or incomplete setup. Please complete its setup and publish it in Courts & Spaces before booking."
+            );
+            return;
+          }
+          console.warn("Availability search preflight exception:", searchErr);
+        }
 
         if (res && res.isAvailable === false) {
-          setStep0Error(
+          let localizedUnavailable =
             tRef.current("operationsCalendar.clickToBook.step0.slotUnavailable") ||
-              "This time slot is not available (occupied, closed, or maintenance). Please select another time."
-          );
+            "This time slot is not available. Please select another time.";
+          if (res.reasonCode === "availability.baseClosed") {
+            localizedUnavailable =
+              tRef.current("operationsCalendar.clickToBook.step0.courtClosed") ||
+              "Court is closed during this time based on its operating hours.";
+          } else if (res.reasonCode === "availability.maintenance") {
+            localizedUnavailable =
+              tRef.current("operationsCalendar.clickToBook.step0.courtMaintenance") ||
+              "Court is scheduled for maintenance during this time.";
+          } else if (res.reasonCode === "availability.capacityInsufficient") {
+            localizedUnavailable =
+              tRef.current("operationsCalendar.clickToBook.step0.courtBooked") ||
+              "This time slot is already reserved by another booking.";
+          }
+          setStep0Error(localizedUnavailable);
           return;
         }
       }
@@ -450,6 +517,36 @@ export function useClickToBookViewModel({
     }
   };
 
+  // Price Override Action
+  const handleApplyPriceOverride = useCallback(async () => {
+    if (!quote || !canOverridePrice || overrideLoading) return;
+    const amount = Number(overrideAmount);
+    if (!Number.isFinite(amount) || amount === 0) return;
+    if (!overrideReason.trim()) return;
+
+    setOverrideLoading(true);
+    setOverrideError(null);
+    try {
+      const applied = await commercialPricingRepository.overrideQuote(quote.id, {
+        adjustmentAmount: amount,
+        reason: overrideReason.trim(),
+        idempotencyKey: crypto.randomUUID(),
+      });
+      setQuote((current) =>
+        current && current.id === quote.id
+          ? { ...current, grandTotal: applied.overriddenGrandTotal }
+          : current
+      );
+      setOverrideOpen(false);
+    } catch (err) {
+      setOverrideError(
+        err instanceof Error ? err.message : "Failed to apply price override."
+      );
+    } finally {
+      setOverrideLoading(false);
+    }
+  }, [commercialPricingRepository, canOverridePrice, overrideAmount, overrideLoading, overrideReason, quote]);
+
   // Primary Action: Confirm Booking
   const handleConfirm = useCallback(async () => {
     if (!selectedResource || !selectedCustomer || !quote || submitting || holdExpired || priceChangeNotice) return;
@@ -480,11 +577,28 @@ export function useClickToBookViewModel({
 
       if (paymentChoice === "now" && canRecordPayment && payNowAmount > 0) {
         try {
-          await moneyRepository.recordPayment({
+          let profileId: string | null = selectedResource.profileId ?? null;
+          if (!profileId && resources?.length) {
+            profileId = resources.find((r) => r.id === selectedResource.id)?.profileId ?? null;
+          }
+          if (!profileId && schedulableResourceRepository?.getById) {
+            try {
+              const fullResource = await schedulableResourceRepository.getById(selectedResource.id);
+              profileId = fullResource?.facilityResourceProfileId ?? null;
+            } catch {
+              // fallback
+            }
+          }
+
+          if (!profileId) {
+            throw new Error("Unable to resolve facility resource profile for court.");
+          }
+
+          const payment = await moneyRepository.recordPayment({
             reservationId: draft.id,
             payerPartyId: selectedCustomer.id,
             schedulableResourceId: selectedResource.id,
-            facilityResourceProfileId: selectedResource.profileId ?? null,
+            facilityResourceProfileId: profileId,
             amount: payNowAmount,
             currencyCode: quote.currencyCode || "EGP",
             method: paymentMethod,
@@ -494,7 +608,24 @@ export function useClickToBookViewModel({
           });
           setAmountPaid(payNowAmount);
           setPaymentPartialFailure(false);
-        } catch {
+          setPaymentErrorMessage(null);
+
+          try {
+            const invoicePage = await moneyRepository.getInvoices(1, 10, { reservationId: draft.id });
+            const invoice = invoicePage?.items?.find((inv) => inv.reservationId === draft.id) ?? invoicePage?.items?.[0];
+            if (invoice) {
+              await moneyRepository.allocatePayment(payment.id, invoice.id, payNowAmount, crypto.randomUUID());
+            }
+          } catch {
+            // Outbox materialization may still be processing; payment record preserved
+          }
+        } catch (payErr: any) {
+          const msg =
+            payErr?.response?.data?.title ||
+            payErr?.response?.data?.message ||
+            payErr?.message ||
+            "Payment recording failed";
+          setPaymentErrorMessage(msg);
           setAmountPaid(0);
           setPaymentPartialFailure(true);
         }
@@ -526,6 +657,7 @@ export function useClickToBookViewModel({
     paymentReference,
     priceChangeNotice,
     quote,
+    schedulableResourceRepository,
     selectedCustomer,
     selectedResource,
     startUtc,
@@ -575,13 +707,31 @@ export function useClickToBookViewModel({
   const handleManualRecordPayment = async () => {
     if (!reservationId || !selectedCustomer || !quote) return;
     setRecordingPaymentManual(true);
+    setPaymentErrorMessage(null);
     try {
-      const toPay = payNowAmount > 0 ? payNowAmount : quote.grandTotal;
-      await moneyRepository.recordPayment({
+      const toPay = payNowAmount > 0 ? payNowAmount : (remainingBalance > 0 ? remainingBalance : quote.grandTotal);
+      let profileId = selectedResource?.profileId ?? null;
+      if (!profileId && selectedResource && resources?.length) {
+        profileId = resources.find((r) => r.id === selectedResource.id)?.profileId ?? null;
+      }
+      if (!profileId && selectedResource && schedulableResourceRepository?.getById) {
+        try {
+          const fullResource = await schedulableResourceRepository.getById(selectedResource.id);
+          profileId = fullResource?.facilityResourceProfileId ?? null;
+        } catch {
+          // fallback
+        }
+      }
+
+      if (!profileId || !selectedResource) {
+        throw new Error("Unable to resolve facility resource profile for court.");
+      }
+
+      const payment = await moneyRepository.recordPayment({
         reservationId,
         payerPartyId: selectedCustomer.id,
-        schedulableResourceId: selectedResource?.id ?? null,
-        facilityResourceProfileId: selectedResource?.profileId ?? null,
+        schedulableResourceId: selectedResource.id,
+        facilityResourceProfileId: profileId,
         amount: toPay,
         currencyCode: quote.currencyCode || "EGP",
         method: paymentMethod,
@@ -591,7 +741,24 @@ export function useClickToBookViewModel({
       });
       setAmountPaid((prev) => prev + toPay);
       setPaymentPartialFailure(false);
-    } catch {
+      setPaymentErrorMessage(null);
+
+      try {
+        const invoicePage = await moneyRepository.getInvoices(1, 10, { reservationId });
+        const invoice = invoicePage?.items?.find((inv) => inv.reservationId === reservationId) ?? invoicePage?.items?.[0];
+        if (invoice) {
+          await moneyRepository.allocatePayment(payment.id, invoice.id, toPay, crypto.randomUUID());
+        }
+      } catch {
+        // Outbox materialization may still be processing
+      }
+    } catch (payErr: any) {
+      const msg =
+        payErr?.response?.data?.title ||
+        payErr?.response?.data?.message ||
+        payErr?.message ||
+        "Payment recording failed";
+      setPaymentErrorMessage(msg);
       setPaymentPartialFailure(true);
     } finally {
       setRecordingPaymentManual(false);
@@ -682,6 +849,9 @@ export function useClickToBookViewModel({
     setOverrideAmount,
     overrideReason,
     setOverrideReason,
+    overrideLoading,
+    overrideError,
+    handleApplyPriceOverride,
     holdExpiresAtUtc,
     holdCountdown,
     holdExpired,
@@ -700,6 +870,7 @@ export function useClickToBookViewModel({
     setPaymentReference,
     amountPaid,
     paymentPartialFailure,
+    paymentErrorMessage,
     recordingPaymentManual,
     reservationId,
     reservationNumber,

@@ -109,13 +109,20 @@ export function useResourceDetailViewModel(resourceId: string) {
       setFeedback(null);
       try {
         await schedulableResourceRepository.update(resource.id, {
-          ...resource.data,
           name: input.name.trim(),
-          capacity: {
-            allocationMode: resource.capacity?.allocationMode ?? "SingleUnit",
-            maxConcurrentUsage: input.capacity,
-            overbookingAllowed: resource.capacity?.overbookingAllowed ?? false,
-          },
+          description: resource.description ?? null,
+          parentSchedulableResourceId: resource.parentSchedulableResourceId ?? null,
+          isComposite: resource.isComposite,
+          namedUnitLabel: resource.namedUnitLabel ?? null,
+          unitCount: resource.unitCount > 0 ? resource.unitCount : 1,
+          allocationMode: resource.capacity?.allocationMode ?? "SingleUnit",
+          maxConcurrentUsage: input.capacity > 0 ? input.capacity : (resource.capacity?.maxConcurrentUsage ?? 1),
+          slotPolicy: resource.slotPolicy ? {
+            slotDurationMinutes: resource.slotPolicy.slotDurationMinutes,
+            startIncrementMinutes: resource.slotPolicy.startIncrementMinutes,
+            timeZoneId: resource.slotPolicy.timeZoneId ?? null,
+            allowMultiSlot: resource.slotPolicy.allowMultiSlot ?? false,
+          } : null,
         });
         setFeedback("general.saved");
         await loadData();
@@ -190,7 +197,14 @@ export function useResourceDetailViewModel(resourceId: string) {
       try {
         const timeZoneId = profile?.operatingPolicy?.timeZoneId ?? "UTC";
         await schedulableResourceRepository.update(resource.id, {
-          ...resource.data,
+          name: resource.name,
+          description: resource.description ?? null,
+          parentSchedulableResourceId: resource.parentSchedulableResourceId ?? null,
+          isComposite: resource.isComposite,
+          namedUnitLabel: resource.namedUnitLabel ?? null,
+          unitCount: resource.unitCount > 0 ? resource.unitCount : 1,
+          allocationMode: resource.capacity?.allocationMode ?? "SingleUnit",
+          maxConcurrentUsage: resource.capacity?.maxConcurrentUsage ?? 1,
           slotPolicy: {
             slotDurationMinutes: input.slotDurationMinutes,
             startIncrementMinutes: input.startIncrementMinutes,
@@ -227,7 +241,7 @@ export function useResourceDetailViewModel(resourceId: string) {
           displayName: `${resource.name} Rate`,
           currencyCode: input.currencyCode || "EGP",
           unitPrice: input.unitPrice,
-          effectiveFromUtc: new Date().toISOString(),
+          effectiveFromUtc: new Date(Date.now() + 15_000).toISOString(),
           minDurationMinutes: slotDuration,
           maxDurationMinutes: null,
           incrementMinutes: startIncrement,
@@ -310,6 +324,16 @@ export function useResourceDetailViewModel(resourceId: string) {
       await loadData();
       return true;
     } catch (err) {
+      try {
+        const checklist = await schedulableResourceRepository.getPublicationChecklist(resource.id);
+        if (checklist && !checklist.canPublish && checklist.blockers.length > 0) {
+          const blockerText = checklist.blockers.map((b) => b.message).join("; ");
+          setError(`Publication blockers: ${blockerText}`);
+          return false;
+        }
+      } catch {
+        // Fall back to original error
+      }
       setError(err instanceof Error ? err.message : "Failed to publish court");
       return false;
     } finally {

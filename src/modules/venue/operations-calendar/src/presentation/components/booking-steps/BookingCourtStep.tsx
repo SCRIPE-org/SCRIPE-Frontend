@@ -5,6 +5,10 @@ import { Label } from "@core/ui/label";
 import { Input } from "@core/ui/input";
 import { Alert, AlertDescription } from "@core/ui/alert";
 import type { CalendarResource } from "../../../domain/entities/OperationsCalendar";
+import {
+  localPrefillForInstant,
+  localToUtcInstant,
+} from "../../viewmodels/calendarLayout";
 
 interface BookingCourtStepProps {
   resources: CalendarResource[];
@@ -35,6 +39,27 @@ export function BookingCourtStep({
   step0Error,
   courtLabel,
 }: BookingCourtStepProps) {
+  const effectiveTz = selectedResource?.timeZoneId || timeZoneId || "UTC";
+  const prefill = React.useMemo(
+    () => localPrefillForInstant(startUtc, effectiveTz),
+    [startUtc, effectiveTz]
+  );
+
+  const timeOptions = React.useMemo(() => {
+    const increment = selectedResource?.slotPolicy?.startIncrementMinutes ?? 30;
+    const options: string[] = [];
+    for (let m = 0; m < 24 * 60; m += increment) {
+      const hh = String(Math.floor(m / 60)).padStart(2, "0");
+      const mm = String(m % 60).padStart(2, "0");
+      options.push(`${hh}:${mm}`);
+    }
+    if (prefill.startTime && !options.includes(prefill.startTime)) {
+      options.push(prefill.startTime);
+      options.sort();
+    }
+    return options;
+  }, [selectedResource?.slotPolicy?.startIncrementMinutes, prefill.startTime]);
+
   return (
     <div className="space-y-3 py-1">
       {step0Error && (
@@ -44,9 +69,10 @@ export function BookingCourtStep({
       )}
 
       <div className="space-y-1.5">
-        <Label className="text-xs font-bold text-nx-ink">{courtLabel}</Label>
+        <Label htmlFor="booking-court-select" className="text-xs font-bold text-nx-ink">{courtLabel}</Label>
         <select
-          className="w-full h-9 rounded-md border border-nx-border bg-nx-surface px-3 text-xs focus:ring-1 focus:ring-nx-primary"
+          id="booking-court-select"
+          className="w-full h-9 rounded-md border border-nx-border bg-nx-surface px-3 text-xs font-semibold text-nx-ink focus:ring-1 focus:ring-nx-primary"
           value={selectedResource?.id || ""}
           onChange={(e) => {
             const res = resources.find((r) => r.id === e.target.value);
@@ -61,29 +87,48 @@ export function BookingCourtStep({
         </select>
       </div>
 
-      <div className="grid grid-cols-2 gap-3">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
         <div className="space-y-1.5">
-          <Label className="text-xs font-bold text-nx-ink">
-            {isRtl ? "وقت البدء" : "Start Time"}
+          <Label htmlFor="booking-court-date" className="text-xs font-bold text-nx-ink">
+            {isRtl ? "التاريخ" : "Booking Date"}
           </Label>
           <Input
-            type="time"
-            value={new Date(startUtc).toLocaleTimeString("en-GB", {
-              hour: "2-digit",
-              minute: "2-digit",
-              timeZone: timeZoneId || "UTC",
-            })}
+            id="booking-court-date"
+            type="date"
+            value={prefill.date}
             onChange={(e) => {
-              const [h, m] = e.target.value.split(":").map(Number);
-              const d = new Date(startUtc);
-              d.setHours(h, m, 0, 0);
-              onStartTimeChange(d.toISOString());
+              if (!e.target.value) return;
+              const newUtc = localToUtcInstant(e.target.value, prefill.startTime, effectiveTz);
+              onStartTimeChange(newUtc);
             }}
-            className="h-8 text-xs"
+            className="h-8 text-xs font-semibold"
           />
         </div>
+
         <div className="space-y-1.5">
-          <Label className="text-xs font-bold text-nx-ink">
+          <Label htmlFor="booking-court-time" className="text-xs font-bold text-nx-ink">
+            {isRtl ? "وقت البدء" : "Start Time"}
+          </Label>
+          <select
+            id="booking-court-time"
+            value={prefill.startTime}
+            onChange={(e) => {
+              if (!e.target.value) return;
+              const newUtc = localToUtcInstant(prefill.date, e.target.value, effectiveTz);
+              onStartTimeChange(newUtc);
+            }}
+            className="w-full h-8 rounded-md border border-nx-border bg-nx-surface px-2.5 text-xs font-semibold text-nx-ink focus:ring-1 focus:ring-nx-primary"
+          >
+            {timeOptions.map((tVal) => (
+              <option key={tVal} value={tVal}>
+                {tVal}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        <div className="space-y-1.5">
+          <Label htmlFor="booking-court-duration" className="text-xs font-bold text-nx-ink">
             {isRtl ? "المدة" : "Duration"}
           </Label>
           {allowedDurations.length <= 1 ? (
@@ -92,7 +137,8 @@ export function BookingCourtStep({
             </div>
           ) : (
             <select
-              className="w-full h-8 rounded-md border border-nx-border bg-nx-surface px-3 text-xs"
+              id="booking-court-duration"
+              className="w-full h-8 rounded-md border border-nx-border bg-nx-surface px-2.5 text-xs font-semibold text-nx-ink focus:ring-1 focus:ring-nx-primary"
               value={duration}
               onChange={(e) => onDurationChange(Number(e.target.value))}
             >

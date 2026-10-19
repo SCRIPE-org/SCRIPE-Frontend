@@ -130,7 +130,8 @@ describe("useResourceDetailViewModel", () => {
       "res-1",
       expect.objectContaining({
         name: "Court 1 - Premium",
-        capacity: expect.objectContaining({ maxConcurrentUsage: 4 }),
+        maxConcurrentUsage: 4,
+        allocationMode: "SingleUnit",
       })
     );
   });
