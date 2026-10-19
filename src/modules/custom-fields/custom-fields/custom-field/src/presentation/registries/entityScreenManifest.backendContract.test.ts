@@ -97,6 +97,30 @@ function collectCatalogFiles(dir: string, out: string[] = []): string[] {
   return out;
 }
 
+/**
+ * Only catalogs registered by module DI participate in startup initialization.
+ * Obsolete catalog source files may remain for compatibility references, but
+ * scanning them as live registrations creates false duplicate-key failures.
+ */
+function collectRegisteredCatalogNames(dir: string, names = new Set<string>()): Set<string> {
+  if (!fs.existsSync(dir)) return names;
+  for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
+    if (entry.isDirectory()) {
+      if (SKIP_DIRS.has(entry.name)) continue;
+      collectRegisteredCatalogNames(path.join(dir, entry.name), names);
+      continue;
+    }
+    if (entry.name !== "DependencyInjection.cs") continue;
+    const source = fs.readFileSync(path.join(dir, entry.name), "utf8");
+    const registration = /AddSingleton\s*<\s*[^,<>]*IEntityTypeCatalog\s*,\s*(?:global::)?([\w.]+)\s*>/g;
+    let match: RegExpExecArray | null;
+    while ((match = registration.exec(source)) !== null) {
+      names.add(match[1].split(".").at(-1)!);
+    }
+  }
+  return names;
+}
+
 interface BackendRegistration {
   key: string;
   owningModule: string;
@@ -177,7 +201,11 @@ const suiteName = backendAvailable
 const suite = backendAvailable ? describe : describe.skip;
 
 suite(suiteName, () => {
-  const catalogFiles = backendAvailable ? collectCatalogFiles(path.join(BACKEND_ROOT, "src")) : [];
+  const backendSource = path.join(BACKEND_ROOT, "src");
+  const registeredCatalogNames = backendAvailable ? collectRegisteredCatalogNames(backendSource) : new Set<string>();
+  const catalogFiles = backendAvailable
+    ? collectCatalogFiles(backendSource).filter((file) => registeredCatalogNames.has(path.basename(file, ".cs")))
+    : [];
   const { registrations, rawCallCount } = parseRegistrations(catalogFiles);
 
   const manifest = [...ENTITY_TYPES_WITH_FRONTEND_SCREEN].sort();
