@@ -44,6 +44,7 @@ let mockIntent:
       draftIdempotencyKey: string;
       holdIdempotencyKey: string;
       confirmIdempotencyKey: string;
+      holdExpiresAtUtc?: string;
     }
   | null = null;
 let mockIntentSequence = 0;
@@ -61,9 +62,10 @@ beforeEach(() => {
   mocks.bookingRepository.getReservation.mockResolvedValue({ reservationNumber: "R-1" });
   mocks.bookingRepository.getOrCreateBusinessIntent.mockImplementation(
     async (fingerprint: string, confirmationFingerprint?: string) => {
-      if (!mockIntent || mockIntent.fingerprint !== fingerprint) {
+      let intent = mockIntent;
+      if (!intent || intent.fingerprint !== fingerprint) {
         mockIntentSequence += 1;
-        mockIntent = {
+        intent = {
           fingerprint,
           confirmationFingerprint,
           draftIdempotencyKey: `draft-key-${mockIntentSequence}`,
@@ -72,30 +74,32 @@ beforeEach(() => {
         };
       } else if (
         confirmationFingerprint !== undefined &&
-        mockIntent.confirmationFingerprint !== confirmationFingerprint
+        intent.confirmationFingerprint !== confirmationFingerprint
       ) {
         mockIntentSequence += 1;
-        mockIntent = {
-          ...mockIntent,
+        intent = {
+          ...intent,
           confirmationFingerprint,
           confirmIdempotencyKey: `confirm-key-${mockIntentSequence}`,
         };
       }
       if (
-        mockIntent.holdExpiresAtUtc &&
-        Date.parse(mockIntent.holdExpiresAtUtc) <= Date.now()
+        intent.holdExpiresAtUtc &&
+        Date.parse(intent.holdExpiresAtUtc) <= Date.now()
       ) {
         mockIntentSequence += 1;
-        mockIntent = {
-          ...mockIntent,
+        intent = {
+          ...intent,
           holdIdempotencyKey: `hold-key-${mockIntentSequence}`,
           holdExpiresAtUtc: undefined,
         };
       }
+      if (!intent) throw new Error("Booking intent was not created.");
+      mockIntent = intent;
       return {
-        draftIdempotencyKey: mockIntent.draftIdempotencyKey,
-        holdIdempotencyKey: mockIntent.holdIdempotencyKey,
-        confirmIdempotencyKey: mockIntent.confirmIdempotencyKey,
+        draftIdempotencyKey: intent.draftIdempotencyKey,
+        holdIdempotencyKey: intent.holdIdempotencyKey,
+        confirmIdempotencyKey: intent.confirmIdempotencyKey,
       };
     }
   );
@@ -105,10 +109,11 @@ beforeEach(() => {
   mocks.bookingRepository.recordBusinessHoldExpiry.mockImplementation(
     (draftKey: string, holdKey: string, expiresAtUtc: string) => {
       if (
-        mockIntent?.draftIdempotencyKey === draftKey &&
+        mockIntent &&
+        mockIntent.draftIdempotencyKey === draftKey &&
         mockIntent.holdIdempotencyKey === holdKey
       ) {
-        mockIntent.holdExpiresAtUtc = expiresAtUtc;
+        mockIntent = { ...mockIntent, holdExpiresAtUtc: expiresAtUtc };
       }
     }
   );

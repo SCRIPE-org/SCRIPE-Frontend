@@ -7,8 +7,7 @@ describe("Admin Domain Entity - Guardian Protection & Modifiability", () => {
     username: "opsadmin",
     isActive: true,
     createdAt: "2026-10-17T00:00:00Z",
-    updatedAt: "2026-10-17T00:00:00Z",
-    rowVersion: "AAAA",
+    modifiedAt: "2026-10-17T00:00:00Z",
   };
 
   it("should have hasGuardianProtection = true when isProtected = true", () => {
