@@ -103,17 +103,17 @@ export function ImportDataModal({
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
       <DialogContent className="max-w-4xl max-h-[90vh] flex flex-col p-6 overflow-hidden">
-        <DialogHeader className="pb-4 border-b border-slate-200 dark:border-slate-800">
+        <DialogHeader className="pb-4 border-b border-nx-line">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               <div className="size-9 rounded-lg bg-nx-accent/10 text-nx-accent flex items-center justify-center">
                 <FileSpreadsheet className="size-5" />
               </div>
               <div>
-                <DialogTitle className="text-lg font-bold text-slate-900 dark:text-slate-100">
+                <DialogTitle className="text-lg font-bold text-nx-ink">
                   {isRtl ? "معالج استيراد البيانات المعتمدة" : "Staged Data Import Wizard"}
                 </DialogTitle>
-                <DialogDescription className="text-xs text-slate-500 dark:text-slate-400">
+                <DialogDescription className="text-xs text-nx-ink-2">
                   {isRtl
                     ? "استيراد آمن خاضع للتدقيق والتحقق المسبق عبر خدمات النطاق المعتمدة"
                     : "Secure, audited staged import utilizing authoritative domain workflows"}
@@ -146,10 +146,10 @@ export function ImportDataModal({
               >
                 3
               </span>
-              <span className="text-slate-300">→</span>
+              <span className="text-nx-line">→</span>
               <span
                 className={`px-2 py-0.5 rounded-full ${
-                  importStep === 4 ? "bg-emerald-600 text-white" : "bg-slate-100 text-slate-500"
+                  importStep === 4 ? "bg-emerald-600 text-white" : "bg-nx-surfaceSubtle text-nx-ink-3"
                 }`}
               >
                 4
@@ -165,7 +165,7 @@ export function ImportDataModal({
             <div className="space-y-6">
               {/* Scope Selection (A13: Safe Scope Only) */}
               <div className="space-y-2">
-                <label className="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
+                <label className="text-xs font-bold uppercase tracking-wider text-nx-ink-2">
                   {isRtl ? "1. اختر نوع البيانات الآمن للاستيراد" : "1. Select Safe Import Scope"}
                 </label>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -207,10 +207,10 @@ export function ImportDataModal({
                         <Layers className="size-4" />
                       </div>
                       <div>
-                        <div className="text-sm font-bold text-slate-900 dark:text-slate-100">
+                        <div className="text-sm font-bold text-nx-ink">
                           {isRtl ? "الملاعب والمساحات" : "Courts & Spaces"}
                         </div>
-                        <div className="text-xs text-slate-500">
+                        <div className="text-xs text-nx-ink-2">
                           {isRtl ? "التكوين الأولي للمرافق" : "Basic Facility configuration"}
                         </div>
                       </div>
@@ -221,15 +221,15 @@ export function ImportDataModal({
 
               {/* Upload Dropzone */}
               <div className="space-y-2">
-                <label className="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
+                <label className="text-xs font-bold uppercase tracking-wider text-nx-ink-2">
                   {isRtl ? "2. رفع ملف Excel أو CSV" : "2. Upload Spreadsheet or CSV File"}
                 </label>
-                <label className="border-2 border-dashed border-slate-300 dark:border-slate-700 hover:border-blue-500 rounded-xl p-8 flex flex-col items-center justify-center cursor-pointer bg-slate-50/50 dark:bg-slate-900/50 transition-colors">
-                  <UploadCloud className="size-10 text-blue-500 mb-2" />
-                  <span className="text-sm font-semibold text-slate-700 dark:text-slate-300">
+                <label className="border-2 border-dashed border-nx-line hover:border-nx-accent rounded-nx-xl p-8 flex flex-col items-center justify-center cursor-pointer bg-nx-surfaceSubtle/40 hover:bg-nx-surfaceSubtle/70 transition-colors">
+                  <UploadCloud className="size-10 text-nx-accent mb-2" />
+                  <span className="text-sm font-semibold text-nx-ink">
                     {isRtl ? "انقر لاختيار ملف أو اسحبه إلى هنا" : "Click to select .csv / .txt file or drag and drop"}
                   </span>
-                  <span className="text-xs text-slate-400 mt-1">
+                  <span className="text-xs text-nx-ink-3 mt-1">
                     {isRtl ? "يدعم ملفات CSV و TSV و UTF-8" : "Supports UTF-8 CSV, TSV, or Tab-delimited files"}
                   </span>
                   <input
@@ -244,7 +244,7 @@ export function ImportDataModal({
               {/* Quick Paste Alternative */}
               <div className="space-y-2">
                 <div className="flex items-center justify-between">
-                  <label className="text-xs font-semibold text-slate-600 dark:text-slate-300">
+                  <label className="text-xs font-semibold text-nx-ink-2">
                     {isRtl ? "أو الصق البيانات النصية مباشرة (CSV / TSV):" : "Or paste delimited table data directly:"}
                   </label>
                   <Button
@@ -299,16 +299,16 @@ export function ImportDataModal({
               </div>
 
               <div className="space-y-3">
-                <div className="text-xs font-bold uppercase tracking-wider text-slate-500">
+                <div className="text-xs font-bold uppercase tracking-wider text-nx-ink-2">
                   {isRtl ? "مطابقة أعمدة الملف مع حقول النظام" : "Map File Columns to Target Fields"}
                 </div>
 
-                <div className="space-y-2 border border-slate-200 dark:border-slate-800 rounded-lg divide-y divide-slate-100 dark:divide-slate-800">
+                <div className="space-y-2 border border-nx-line rounded-nx-lg divide-y divide-nx-line">
                   {schema.fields.map((field) => (
                     <div key={field.key} className="p-3 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                       <div className="space-y-0.5">
                         <div className="flex items-center gap-2">
-                          <span className="text-xs font-bold text-slate-900 dark:text-slate-100">
+                          <span className="text-xs font-bold text-nx-ink">
                             {field.label}
                           </span>
                           {field.required && (
@@ -317,14 +317,14 @@ export function ImportDataModal({
                             </Badge>
                           )}
                         </div>
-                        <div className="text-[11px] text-slate-500">{field.description}</div>
+                        <div className="text-[11px] text-nx-ink-3">{field.description}</div>
                       </div>
 
                       <div className="w-full sm:w-64">
                         <select
                           value={columnMapping[field.key] || ""}
                           onChange={(e) => handleMappingChange(field.key, e.target.value)}
-                          className="w-full text-xs h-9 px-2 rounded-md border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900"
+                          className="w-full text-xs h-9 px-2 rounded-nx-md border border-nx-line bg-nx-surface text-nx-ink"
                         >
                           <option value="">{isRtl ? "-- اختر العمود --" : "-- Select Column --"}</option>
                           {parsedTable.headers.map((hdr) => (
@@ -388,9 +388,9 @@ export function ImportDataModal({
               </div>
 
               {/* Preview Table */}
-              <div className="border border-slate-200 dark:border-slate-800 rounded-lg overflow-hidden">
+              <div className="border border-nx-line rounded-nx-lg overflow-hidden">
                 <Table>
-                  <TableHeader className="bg-slate-50 dark:bg-slate-900/50">
+                  <TableHeader className="bg-nx-surfaceSubtle/80">
                     <TableRow>
                       <TableHead className="w-16">{isRtl ? "الصف" : "Row #"}</TableHead>
                       <TableHead>{isRtl ? "الحالة" : "Status"}</TableHead>
@@ -402,7 +402,7 @@ export function ImportDataModal({
                   <TableBody>
                     {validationReport.rows.slice(0, 15).map((row) => (
                       <TableRow key={row.rowNumber}>
-                        <TableCell className="font-mono text-xs text-slate-500">
+                        <TableCell className="font-mono text-xs text-nx-ink-3">
                           {row.rowNumber}
                         </TableCell>
                         <TableCell>
@@ -427,15 +427,15 @@ export function ImportDataModal({
                             </Badge>
                           )}
                         </TableCell>
-                        <TableCell className="font-semibold text-xs text-slate-900 dark:text-slate-100">
+                        <TableCell className="font-semibold text-xs text-nx-ink">
                           {row.data.name || "-"}
                         </TableCell>
-                        <TableCell className="text-xs text-slate-500">
+                        <TableCell className="text-xs text-nx-ink-2">
                           {importType === "customers"
                             ? `${row.data.type || "Person"} | ${row.data.email || "-"}`
                             : `${row.data.category || "-"} (Cap: ${row.data.capacity || "-"})`}
                         </TableCell>
-                        <TableCell className="text-xs text-slate-600 dark:text-slate-400">
+                        <TableCell className="text-xs text-nx-ink-3">
                           {row.messages.join(", ")}
                         </TableCell>
                       </TableRow>
@@ -452,10 +452,10 @@ export function ImportDataModal({
               {isCommitting ? (
                 <div className="space-y-3">
                   <Loader2 className="size-10 animate-spin text-nx-accent mx-auto" />
-                  <div className="text-base font-bold">
+                  <div className="text-base font-bold text-nx-ink">
                     {isRtl ? "جارٍ تنفيذ الاستيراد عبر خدمات النطاق..." : "Committing import via domain services..."}
                   </div>
-                  <div className="text-xs text-slate-500">
+                  <div className="text-xs text-nx-ink-3">
                     {isRtl
                       ? "جاري الحفظ الآمن وسجلات التدقيق المعتمدة"
                       : "Ensuring authoritative validation and tenant isolation"}
@@ -466,16 +466,16 @@ export function ImportDataModal({
                   <div className="size-12 rounded-full bg-emerald-100 dark:bg-emerald-950/60 text-emerald-600 mx-auto flex items-center justify-center">
                     <CheckCircle2 className="size-6" />
                   </div>
-                  <h3 className="text-lg font-bold text-slate-900 dark:text-slate-100">
+                  <h3 className="text-lg font-bold text-nx-ink">
                     {isRtl ? "اكتملت عملية الاستيراد" : "Import Process Completed"}
                   </h3>
-                  <div className="p-4 rounded-xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-xs space-y-2">
+                  <div className="p-4 rounded-xl bg-nx-surfaceSubtle border border-nx-line text-xs space-y-2">
                     <div className="flex justify-between">
-                      <span className="text-slate-500">{isRtl ? "السجلات الناجحة:" : "Successful Records:"}</span>
+                      <span className="text-nx-ink-2">{isRtl ? "السجلات الناجحة:" : "Successful Records:"}</span>
                       <span className="font-bold text-emerald-600">{importSummaryResult.successCount}</span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-slate-500">{isRtl ? "السجلات المتعثرة:" : "Failed Records:"}</span>
+                      <span className="text-nx-ink-2">{isRtl ? "السجلات المتعثرة:" : "Failed Records:"}</span>
                       <span className="font-bold text-rose-600">{importSummaryResult.errorCount}</span>
                     </div>
                   </div>
@@ -486,7 +486,7 @@ export function ImportDataModal({
         </div>
 
         {/* Modal Footer Controls */}
-        <DialogFooter className="pt-4 border-t border-slate-200 dark:border-slate-800 flex items-center justify-between">
+        <DialogFooter className="pt-4 border-t border-nx-line flex items-center justify-between">
           <div>
             {importStep > 1 && importStep < 4 && (
               <Button

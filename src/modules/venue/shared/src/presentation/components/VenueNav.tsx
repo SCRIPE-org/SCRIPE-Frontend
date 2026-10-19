@@ -26,9 +26,11 @@ import { VENUE_PERMISSIONS } from "@modules/venue/permission-constants";
 interface Props {
   attentionCount?: number;
   className?: string;
+  /** When true, suppresses top-level category pills to avoid duplicating the sidebar */
+  hidePrimaryBar?: boolean;
 }
 
-export function VenueNav({ attentionCount = 0, className = "" }: Props) {
+export function VenueNav({ attentionCount = 0, className = "", hidePrimaryBar = false }: Props) {
   const pathname = usePathname();
   const { t, language } = useI18n();
   const isRtl = language === "ar";
@@ -183,42 +185,44 @@ export function VenueNav({ attentionCount = 0, className = "" }: Props) {
 
   return (
     <div className={cn("space-y-3 mb-6", className)} dir={isRtl ? "rtl" : "ltr"}>
-      {/* Primary Category Bar */}
-      <nav
-        aria-label="Venue primary navigation"
-        className="flex items-center gap-1.5 border-b border-nx-line pb-2 overflow-x-auto no-scrollbar"
-      >
-        {primaryItems.map((item) => {
-          const Icon = item.icon;
-          return (
-            <Link
-              key={item.id}
-              href={item.href}
-              aria-current={item.active ? "page" : undefined}
-              className={cn(
-                "relative inline-flex items-center gap-2 px-3.5 py-2 rounded-nx-md text-xs font-semibold transition-all duration-nx-micro shrink-0 select-none",
-                item.active
-                  ? "bg-nx-surface text-nx-ink shadow-nx-sm border border-nx-line/80 font-bold"
-                  : "text-nx-ink-2 hover:text-nx-ink hover:bg-nx-surface/60"
-              )}
-            >
-              <Icon className={cn("size-4", item.active ? "text-nx-accent" : "text-nx-ink-3")} aria-hidden="true" />
-              <span>{item.label}</span>
-              {item.badge != null && (
-                <span className="flex size-4.5 items-center justify-center rounded-full bg-amber-500 text-[10px] font-bold text-white leading-none">
-                  {item.badge}
-                </span>
-              )}
-              {item.active && (
-                <span
-                  className="absolute bottom-[-9px] inset-x-3 h-0.5 bg-nx-accent rounded-full"
-                  aria-hidden="true"
-                />
-              )}
-            </Link>
-          );
-        })}
-      </nav>
+      {/* Primary Category Bar (suppressed when hidePrimaryBar=true to prevent duplication with sidebar) */}
+      {!hidePrimaryBar && (
+        <nav
+          aria-label="Venue primary navigation"
+          className="flex items-center gap-1.5 border-b border-nx-line pb-2 overflow-x-auto no-scrollbar"
+        >
+          {primaryItems.map((item) => {
+            const Icon = item.icon;
+            return (
+              <Link
+                key={item.id}
+                href={item.href}
+                aria-current={item.active ? "page" : undefined}
+                className={cn(
+                  "relative inline-flex items-center gap-2 px-3.5 py-2 rounded-nx-md text-xs font-semibold transition-all duration-nx-micro shrink-0 select-none",
+                  item.active
+                    ? "bg-nx-surface text-nx-ink shadow-nx-sm border border-nx-line/80 font-bold"
+                    : "text-nx-ink-2 hover:text-nx-ink hover:bg-nx-surface/60"
+                )}
+              >
+                <Icon className={cn("size-4", item.active ? "text-nx-accent" : "text-nx-ink-3")} aria-hidden="true" />
+                <span>{item.label}</span>
+                {item.badge != null && (
+                  <span className="flex size-4.5 items-center justify-center rounded-full bg-amber-500 text-[10px] font-bold text-white leading-none">
+                    {item.badge}
+                  </span>
+                )}
+                {item.active && (
+                  <span
+                    className="absolute bottom-[-9px] inset-x-3 h-0.5 bg-nx-accent rounded-full"
+                    aria-hidden="true"
+                  />
+                )}
+              </Link>
+            );
+          })}
+        </nav>
+      )}
 
       {/* Contextual Secondary Bar */}
       {secondaryLinks.length > 0 && (

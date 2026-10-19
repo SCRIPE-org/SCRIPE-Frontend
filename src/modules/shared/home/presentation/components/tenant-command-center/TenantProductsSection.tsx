@@ -3,7 +3,11 @@
 import React from "react";
 import { Layers, ChevronRight, Shield, GraduationCap, Trophy } from "lucide-react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useI18n } from "@core/providers/i18n-provider";
+import { useWorkspaceActions } from "@core/providers/hooks/useWorkspaceActions";
+import { usePermissions } from "@core/providers/permission-provider";
+import { startRoutingProgress } from "@core/ui/routing-progress-bar";
 import { Card } from "@core/ui/card";
 import { Button } from "@core/ui/button";
 import { Badge } from "@core/ui/badge";
@@ -15,6 +19,9 @@ interface TenantProductsSectionProps {
 
 export function TenantProductsSection({ products }: TenantProductsSectionProps) {
   const { t } = useI18n();
+  const { setActiveWorkspace } = useWorkspaceActions();
+  const { canAccessPage } = usePermissions();
+  const router = useRouter();
 
   return (
     <Card className="p-4 border-border bg-card shadow-xs">
@@ -159,18 +166,47 @@ export function TenantProductsSection({ products }: TenantProductsSectionProps) 
                   </div>
                 </div>
 
-                <Button
-                  asChild
-                  variant={isActive ? "outline" : "secondary"}
-                  size="sm"
-                  className={`w-full h-8 mt-3 text-[11px] font-semibold ${
-                    isActive
-                      ? "bg-primary/10 text-primary border-primary/30 hover:bg-primary/20"
-                      : ""
-                  }`}
-                >
-                  <Link href={product.href}>{product.buttonLabel}</Link>
-                </Button>
+                {(() => {
+                  const canonicalHref = product.id === "venue" ? "/venue" : product.href;
+                  const isPermitted = canAccessPage(canonicalHref);
+
+                  const handleClick = (e: React.MouseEvent) => {
+                    if (!isActive || !isPermitted) return;
+                    if (product.id === "venue") {
+                      e.preventDefault();
+                      startRoutingProgress();
+                      void setActiveWorkspace("venue", true);
+                      return;
+                    }
+                    if (product.id === "academy") {
+                      e.preventDefault();
+                      startRoutingProgress();
+                      void setActiveWorkspace("academy", true);
+                      return;
+                    }
+                  };
+
+                  return (
+                    <Button
+                      asChild
+                      variant={isActive && isPermitted ? "outline" : "secondary"}
+                      size="sm"
+                      disabled={!isActive || !isPermitted}
+                      className={`w-full h-8 mt-3 text-[11px] font-semibold ${
+                        isActive && isPermitted
+                          ? "bg-primary/10 text-primary border-primary/30 hover:bg-primary/20"
+                          : "opacity-60 cursor-not-allowed"
+                      }`}
+                    >
+                      <Link
+                        href={canonicalHref}
+                        onClick={handleClick}
+                      >
+                        {product.buttonLabel}
+                      </Link>
+                    </Button>
+                  );
+                })()}
               </div>
             </div>
           );

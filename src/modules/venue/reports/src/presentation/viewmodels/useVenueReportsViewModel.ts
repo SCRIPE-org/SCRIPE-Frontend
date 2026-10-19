@@ -2,10 +2,10 @@
 
 import { useState, useEffect, useCallback, useMemo } from "react";
 import { getVenueContainer } from "@modules/venue/di";
-import { getModuleApiService } from "@/core/services/api-factory";
 import { useI18n } from "@core/providers/i18n-provider";
 import { useTenantContext } from "@core/providers/tenant-context-provider";
 import { useEnhancedToast } from "@core/hooks/use-enhanced-toast";
+import type { BookingReportItem } from "../../domain/entities/VenueReports";
 import {
   downloadReportSpreadsheet,
   ExportColumn,
@@ -38,17 +38,7 @@ export interface ReportFilters {
   currency: string;
 }
 
-export interface BookingReportItem {
-  id: string;
-  reservationNumber: string;
-  status: string;
-  resourceId: string;
-  resourceName?: string;
-  requestedStartUtc: string;
-  requestedEndUtc: string;
-  quantity: number;
-  createdAt: string;
-}
+export type { BookingReportItem } from "../../domain/entities/VenueReports";
 
 export function useVenueReportsViewModel() {
   const { t, language } = useI18n();
@@ -128,7 +118,6 @@ export function useVenueReportsViewModel() {
     setError(null);
     try {
       const container = getVenueContainer();
-      const venueApi = getModuleApiService("VENUE");
 
       if (category === "financial") {
         const [invRes, sumRes] = await Promise.all([
@@ -138,20 +127,15 @@ export function useVenueReportsViewModel() {
         setInvoices(invRes.items || []);
         setSummary(sumRes || null);
       } else if (category === "bookings") {
-        const res = await venueApi.get<{ items: any[] }>(
-          `/v1/Reservations?page=1&pageSize=100${filters.resourceId ? `&resourceId=${filters.resourceId}` : ""}`
-        );
+        const rawBookings = await container.venueReportsRepository.getBookings({
+          page: 1,
+          pageSize: 100,
+          resourceId: filters.resourceId || undefined,
+        });
         const resourceMap = new Map(resources.map((r) => [r.id, r.name]));
-        const mapped = (res.items || []).map((b) => ({
-          id: b.id,
-          reservationNumber: b.reservationNumber,
-          status: b.status,
-          resourceId: b.resourceId,
+        const mapped = rawBookings.map((b) => ({
+          ...b,
           resourceName: resourceMap.get(b.resourceId) || b.resourceId,
-          requestedStartUtc: b.requestedStartUtc,
-          requestedEndUtc: b.requestedEndUtc,
-          quantity: b.quantity,
-          createdAt: b.createdAt,
         }));
         setBookings(mapped);
       } else if (category === "court-performance") {
@@ -192,7 +176,8 @@ export function useVenueReportsViewModel() {
       }
     } else if (category === "court-performance" && courtPerformance.length > 0) {
       for (const row of courtPerformance) {
-        const curr = row.currencyCode || "SAR";
+        const trimmed = row.currencyCode?.trim();
+        const curr = trimmed ? trimmed.toUpperCase() : "UNSPECIFIED";
         if (!totals[curr]) totals[curr] = { commercialValue: 0, collected: 0, outstanding: 0 };
         totals[curr].commercialValue += row.commercialValue;
         totals[curr].collected += row.collected;
@@ -200,7 +185,8 @@ export function useVenueReportsViewModel() {
       }
     } else if (category === "collections" && payments.length > 0) {
       for (const p of payments) {
-        const curr = p.currencyCode || "SAR";
+        const trimmed = p.currencyCode?.trim();
+        const curr = trimmed ? trimmed.toUpperCase() : "UNSPECIFIED";
         if (!totals[curr]) totals[curr] = { commercialValue: 0, collected: 0, outstanding: 0 };
         totals[curr].collected += p.amount;
       }

@@ -36,7 +36,7 @@ export function PaymentRecentListCard({
             {model.payments.map((payment) => (
               <li
                 key={payment.id}
-                className="border-nx-border flex flex-wrap items-center justify-between gap-2 rounded-lg border p-3"
+                className="border-nx-line flex flex-wrap items-center justify-between gap-2 rounded-nx-lg border p-3 hover:bg-nx-surfaceSubtle transition-colors shadow-xs"
               >
                 <div className="flex flex-wrap items-center gap-2">
                   <span className="font-medium" dir="ltr">
