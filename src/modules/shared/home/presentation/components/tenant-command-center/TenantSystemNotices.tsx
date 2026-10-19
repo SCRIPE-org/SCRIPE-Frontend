@@ -14,17 +14,17 @@ export function TenantSystemNotices({ notices }: TenantSystemNoticesProps) {
   const { t } = useI18n();
 
   return (
-    <Card className="shadow-xs border-border bg-card p-4">
+    <Card className="shadow-xs border-border bg-card p-3.5 sm:p-4 min-w-0 overflow-hidden">
       {/* Header */}
-      <div className="mb-2.5 flex items-center gap-2.5">
-        <div className="flex h-8 w-8 items-center justify-center rounded-lg border border-emerald-500/20 bg-emerald-500/10 text-emerald-500">
+      <div className="mb-2.5 flex items-center gap-2.5 min-w-0">
+        <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border border-emerald-500/20 bg-emerald-500/10 text-emerald-500">
           <CheckCircle2 className="h-4 w-4" />
         </div>
-        <div>
-          <h3 className="text-sm font-bold text-foreground">
+        <div className="min-w-0">
+          <h3 className="text-sm font-bold text-foreground truncate">
             {t("tenantCommandCenter.notices.title") || "System Notices"}
           </h3>
-          <p className="text-[11px] text-muted-foreground">
+          <p className="text-[11px] text-muted-foreground truncate">
             {t("tenantCommandCenter.notices.subtitle") || "Updates relevant to your workspace."}
           </p>
         </div>
@@ -50,7 +50,7 @@ export function TenantSystemNotices({ notices }: TenantSystemNoticesProps) {
           return (
             <div
               key={notice.id}
-              className="flex items-center justify-between gap-3 py-2.5 text-left"
+              className="flex items-center justify-between gap-2.5 py-2.5 min-w-0"
             >
               <div className="flex min-w-0 items-center gap-2.5">
                 <div

@@ -167,10 +167,10 @@ export function buildTenantOverviewLiveData({
     setupStepsCompleted: completedCount,
     setupStepsTotal: 3,
     metaPills: [
-      { label: t("tenantCommandCenter.hero.meta.branches", { count: subTenants }), icon: "??" },
-      { label: t("tenantCommandCenter.hero.meta.admins", { count: totalAdmins }), icon: "??" },
-      { label: planName, icon: "?" },
-      { label: t("tenantCommandCenter.hero.checks.coreHealthy"), icon: "?" },
+      { label: t("tenantCommandCenter.hero.meta.branches", { count: subTenants }), icon: "branches" },
+      { label: t("tenantCommandCenter.hero.meta.admins", { count: totalAdmins }), icon: "admins" },
+      { label: planName || "Standard", icon: "plan" },
+      { label: t("tenantCommandCenter.hero.checks.coreHealthy"), icon: "healthy" },
     ],
     readinessChecks: [
       { label: t("tenantCommandCenter.hero.checks.coreHealthy"), status: "success" },
@@ -190,7 +190,7 @@ export function buildTenantOverviewLiveData({
       setupCompletion: {
         value: readinessPercent,
         sub: t("tenantCommandCenter.kpis.setupRemaining", { count: 3 - completedCount }),
-        trend: "? 12%",
+        trend: "+12%",
       },
       adminsAndUsers: {
         value: totalAdmins,
@@ -198,14 +198,14 @@ export function buildTenantOverviewLiveData({
           active: summary?.activeAdmins ?? totalAdmins,
           total: totalAdmins,
         }),
-        trend: summary?.activeUsers ? "+" : "Live",
+        trend: "Live",
       },
       branchesAndSites: {
         current: subTenants,
         total: branchesTotal,
         percent: branchPercent,
         sub: t("tenantCommandCenter.kpis.planCapacity", { percent: branchPercent }),
-        trend: subTenants > 0 ? "+" : "0",
+        trend: subTenants > 0 ? `+${subTenants}` : "0",
       },
       enabledProducts: {
         active: 2,
