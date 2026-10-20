@@ -36,27 +36,31 @@ export function ResourceGeneralTab({ vm }: Props) {
     const raw = vm.profile?.name ?? vm.profile?.resourceKindCode;
     if (!raw) return "Padel Court";
     const lower = raw.toLowerCase();
-    if (lower.includes("schedulable") || lower.includes("profile") || lower.includes("facility resource")) {
+    if (
+      lower.includes("schedulable") ||
+      lower.includes("profile") ||
+      lower.includes("facility resource")
+    ) {
       return "Padel Court";
     }
     return raw;
   };
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+    <div className="grid grid-cols-1 items-start gap-6 lg:grid-cols-12">
       {/* Left Column: Court Photo Gallery matching approved reference */}
-      <div className="lg:col-span-5 space-y-3">
+      <div className="space-y-3 lg:col-span-5">
         {/* Main Large Court Photo */}
-        <div className="relative h-64 sm:h-72 w-full rounded-2xl overflow-hidden shadow-sm border border-nx-border bg-nx-raised p-4 flex flex-col justify-between group">
+        <div className="border-nx-border group relative flex h-64 w-full flex-col justify-between overflow-hidden rounded-2xl border bg-nx-raised p-4 shadow-sm sm:h-72">
           <img
             src="/images/venue/padel-court-indoor.svg"
             alt="Court Preview"
-            className="absolute inset-0 size-full object-cover group-hover:scale-105 transition-transform duration-300"
+            className="absolute inset-0 size-full object-cover transition-transform duration-300 group-hover:scale-105"
           />
           <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-black/30" />
 
           <div className="relative z-10 flex items-center justify-between">
-            <span className="text-xs font-extrabold uppercase tracking-widest text-white bg-black/60 px-2.5 py-1 rounded-md backdrop-blur-xs border border-white/20">
+            <span className="backdrop-blur-xs rounded-md border border-white/20 bg-black/60 px-2.5 py-1 text-xs font-extrabold uppercase tracking-widest text-white">
               Primary Photo
             </span>
           </div>
@@ -69,45 +73,59 @@ export function ResourceGeneralTab({ vm }: Props) {
 
         {/* Thumbnail Row */}
         <div className="grid grid-cols-4 gap-2.5">
-          <div className="h-16 rounded-xl border-2 border-[#C6FF00] overflow-hidden relative cursor-pointer group">
-            <img src="/images/venue/padel-court-indoor.svg" alt="Padel indoor" className="size-full object-cover group-hover:scale-110 transition-transform" />
+          <div className="group relative h-16 cursor-pointer overflow-hidden rounded-xl border-2 border-[#C6FF00]">
+            <img
+              src="/images/venue/padel-court-indoor.svg"
+              alt="Padel indoor"
+              className="size-full object-cover transition-transform group-hover:scale-110"
+            />
           </div>
-          <div className="h-16 rounded-xl border border-nx-border overflow-hidden relative cursor-pointer group">
-            <img src="/images/venue/padel-court-outdoor.svg" alt="Padel outdoor" className="size-full object-cover group-hover:scale-110 transition-transform" />
+          <div className="border-nx-border group relative h-16 cursor-pointer overflow-hidden rounded-xl border">
+            <img
+              src="/images/venue/padel-court-outdoor.svg"
+              alt="Padel outdoor"
+              className="size-full object-cover transition-transform group-hover:scale-110"
+            />
           </div>
-          <div className="h-16 rounded-xl border border-nx-border overflow-hidden relative cursor-pointer group">
-            <img src="/images/venue/football-turf-night.svg" alt="Football turf" className="size-full object-cover group-hover:scale-110 transition-transform" />
+          <div className="border-nx-border group relative h-16 cursor-pointer overflow-hidden rounded-xl border">
+            <img
+              src="/images/venue/football-turf-night.svg"
+              alt="Football turf"
+              className="size-full object-cover transition-transform group-hover:scale-110"
+            />
           </div>
           {/* + Add Photo button */}
           <Button
             variant="outline"
             type="button"
-            className="h-16 rounded-xl border-2 border-dashed border-nx-border hover:border-[#C6FF00] hover:bg-[#C6FF00]/5 flex flex-col items-center justify-center text-nx-ink-2 transition-colors"
+            className="border-nx-border flex h-16 flex-col items-center justify-center rounded-xl border-2 border-dashed text-nx-ink-2 transition-colors hover:border-[#C6FF00] hover:bg-[#C6FF00]/5"
           >
             <Plus className="size-4" />
-            <span className="text-[10px] font-bold mt-0.5">{t("resources.general.addPhoto", { defaultValue: "Add Photo" })}</span>
+            <span className="mt-0.5 text-[10px] font-bold">
+              {t("resources.general.addPhoto", { defaultValue: "Add Photo" })}
+            </span>
           </Button>
         </div>
       </div>
 
       {/* Right Column: General Information Form */}
-      <Card className="lg:col-span-7 border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 rounded-2xl p-6 shadow-xs">
+      <Card className="shadow-xs rounded-2xl border border-slate-200 bg-white p-6 dark:border-slate-800 dark:bg-slate-900 lg:col-span-7">
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-1.5">
             <Label htmlFor="res-name" className="text-xs font-bold text-slate-900 dark:text-white">
               {t("resources.general.name", { defaultValue: "Name" })}
             </Label>
-              <Input
+            <Input
               id="res-name"
               value={name}
               onChange={(e) => setName(e.target.value)}
-                placeholder={t("resources.general.namePlaceholder", { defaultValue: "e.g. Padel 1" })}
+              placeholder={t("resources.general.namePlaceholder", { defaultValue: "e.g. Padel 1" })}
               required
-              className="h-9 text-xs rounded-lg"
+              className="h-9 rounded-lg text-xs"
             />
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             <div className="space-y-1.5">
               <Label className="text-xs font-bold text-slate-900 dark:text-white">
                 {t("resources.general.sportType", { defaultValue: "Type" })}
@@ -115,38 +133,50 @@ export function ResourceGeneralTab({ vm }: Props) {
               <Input
                 value={getCleanCategory()}
                 disabled
-                className="h-9 text-xs rounded-lg bg-slate-50 dark:bg-slate-800 text-slate-700 dark:text-slate-300"
+                className="h-9 rounded-lg bg-slate-50 text-xs text-slate-700 dark:bg-slate-800 dark:text-slate-300"
               />
             </div>
 
             <div className="space-y-1.5">
-              <Label className="text-xs font-bold text-slate-900 dark:text-white">{t("resources.general.status", { defaultValue: "Status" })}</Label>
+              <Label className="text-xs font-bold text-slate-900 dark:text-white">
+                {t("resources.general.status", { defaultValue: "Status" })}
+              </Label>
               <Input
-                value={vm.resource?.isPublished && vm.priceConfig?.unitPrice != null ? t("resources.filters.active", { defaultValue: "Active" }) : t("resources.filters.setupRequired", { defaultValue: "Setup Required" })}
-                disabled
-                className={`h-9 text-xs rounded-lg font-bold ${
+                value={
                   vm.resource?.isPublished && vm.priceConfig?.unitPrice != null
-                    ? "bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 border-emerald-200"
-                    : "bg-amber-50 dark:bg-amber-950/40 text-amber-700 dark:text-amber-300 border-amber-200"
+                    ? t("resources.filters.active", { defaultValue: "Active" })
+                    : t("resources.filters.setupRequired", { defaultValue: "Setup Required" })
+                }
+                disabled
+                className={`h-9 rounded-lg text-xs font-bold ${
+                  vm.resource?.isPublished && vm.priceConfig?.unitPrice != null
+                    ? "border-emerald-200 bg-emerald-50 text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-300"
+                    : "border-amber-200 bg-amber-50 text-amber-700 dark:bg-amber-950/40 dark:text-amber-300"
                 }`}
               />
             </div>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             <div className="space-y-1.5">
               <Label className="text-xs font-bold text-slate-900 dark:text-white">
                 {t("resources.general.branch", { defaultValue: "Branch" })}
               </Label>
               <Input
-                value={vm.facility?.name ?? t("resources.general.unknownFacility", { defaultValue: "Facility not set" })}
+                value={
+                  vm.facility?.name ??
+                  t("resources.general.unknownFacility", { defaultValue: "Facility not set" })
+                }
                 disabled
-                className="h-9 text-xs rounded-lg bg-slate-50 dark:bg-slate-800 text-slate-700 dark:text-slate-300"
+                className="h-9 rounded-lg bg-slate-50 text-xs text-slate-700 dark:bg-slate-800 dark:text-slate-300"
               />
             </div>
 
             <div className="space-y-1.5">
-              <Label htmlFor="res-capacity" className="text-xs font-bold text-slate-900 dark:text-white">
+              <Label
+                htmlFor="res-capacity"
+                className="text-xs font-bold text-slate-900 dark:text-white"
+              >
                 {t("resources.general.capacity", { defaultValue: "Player / Participant Capacity" })}
               </Label>
               <Input
@@ -155,33 +185,38 @@ export function ResourceGeneralTab({ vm }: Props) {
                 min={1}
                 value={capacity}
                 onChange={(e) => setCapacity(Number(e.target.value) || 1)}
-                className="h-9 text-xs rounded-lg"
+                className="h-9 rounded-lg text-xs"
               />
               <p className="text-[10px] text-slate-400 dark:text-slate-500">
                 {t("resources.general.capacityHelp", {
-                  defaultValue: "Max players on court (e.g. 4 for Padel doubles). Does not affect booking concurrency.",
+                  defaultValue:
+                    "Max players on court (e.g. 4 for Padel doubles). Does not affect booking concurrency.",
                 })}
               </p>
             </div>
           </div>
 
           <div className="space-y-1.5">
-            <Label className="text-xs font-bold text-slate-900 dark:text-white">{t("resources.general.descriptionField", { defaultValue: "Description" })}</Label>
+            <Label className="text-xs font-bold text-slate-900 dark:text-white">
+              {t("resources.general.descriptionField", { defaultValue: "Description" })}
+            </Label>
             <Textarea
               rows={3}
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               className="w-full rounded-nx-lg border border-nx-line bg-nx-surface p-2.5 text-xs text-nx-ink placeholder:text-nx-ink-3 focus:outline-none focus:ring-2 focus:ring-nx-accent"
-              placeholder={t("resources.general.descriptionPlaceholder", { defaultValue: "Describe this court or space" })}
+              placeholder={t("resources.general.descriptionPlaceholder", {
+                defaultValue: "Describe this court or space",
+              })}
             />
           </div>
 
-          <div className="pt-3 border-t border-nx-line flex items-center justify-end gap-2">
+          <div className="flex items-center justify-end gap-2 border-t border-nx-line pt-3">
             <Button
               type="button"
               variant="outline"
               size="sm"
-              className="text-xs font-semibold rounded-nx-lg"
+              className="rounded-nx-lg text-xs font-semibold"
             >
               {t("resources.general.cancel", { defaultValue: "Cancel" })}
             </Button>
@@ -192,7 +227,7 @@ export function ResourceGeneralTab({ vm }: Props) {
                 size="sm"
                 disabled={vm.saving}
                 onClick={() => void vm.publishCourt()}
-                className="text-xs font-bold border-emerald-500 text-emerald-700 hover:bg-emerald-50 dark:hover:bg-emerald-950/40 rounded-nx-lg px-4"
+                className="rounded-nx-lg border-emerald-500 px-4 text-xs font-bold text-emerald-700 hover:bg-emerald-50 dark:hover:bg-emerald-950/40"
               >
                 {vm.saving ? "Publishing..." : "Publish Court"}
               </Button>
@@ -202,7 +237,7 @@ export function ResourceGeneralTab({ vm }: Props) {
               size="sm"
               disabled={vm.saving}
               loading={vm.saving}
-              className="text-xs font-bold bg-nx-accent hover:bg-nx-accent/90 text-nx-accent-contrast rounded-nx-lg px-4"
+              className="hover:bg-nx-accent/90 text-nx-accent-contrast rounded-nx-lg bg-nx-accent px-4 text-xs font-bold"
             >
               {t("resources.general.save", { defaultValue: "Save Changes" })}
             </Button>

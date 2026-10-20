@@ -11,7 +11,8 @@ let memoryIntent: {
 
 function newIntent(): BookingBusinessIntent {
   const browserCrypto = typeof window === "undefined" ? undefined : window.crypto;
-  if (!browserCrypto?.randomUUID) throw new Error("Secure booking intent generation is unavailable.");
+  if (!browserCrypto?.randomUUID)
+    throw new Error("Secure booking intent generation is unavailable.");
   return {
     draftIdempotencyKey: browserCrypto.randomUUID(),
     holdIdempotencyKey: browserCrypto.randomUUID(),
@@ -21,7 +22,9 @@ function newIntent(): BookingBusinessIntent {
 
 async function fingerprintDigest(fingerprint: string): Promise<string> {
   const digest = await window.crypto.subtle.digest("SHA-256", encoder.encode(fingerprint));
-  return Array.from(new Uint8Array(digest), (value) => value.toString(16).padStart(2, "0")).join("");
+  return Array.from(new Uint8Array(digest), (value) => value.toString(16).padStart(2, "0")).join(
+    ""
+  );
 }
 
 function isStoredIntent(value: unknown): value is BookingBusinessIntent & {
@@ -30,11 +33,13 @@ function isStoredIntent(value: unknown): value is BookingBusinessIntent & {
 } {
   if (!value || typeof value !== "object") return false;
   const candidate = value as Record<string, unknown>;
-  return typeof candidate.fingerprintDigest === "string" &&
+  return (
+    typeof candidate.fingerprintDigest === "string" &&
     typeof candidate.draftIdempotencyKey === "string" &&
     typeof candidate.holdIdempotencyKey === "string" &&
     typeof candidate.confirmIdempotencyKey === "string" &&
-    (candidate.holdExpiresAtUtc === undefined || typeof candidate.holdExpiresAtUtc === "string");
+    (candidate.holdExpiresAtUtc === undefined || typeof candidate.holdExpiresAtUtc === "string")
+  );
 }
 
 function isExpired(expiresAtUtc: string): boolean {
@@ -100,36 +105,45 @@ export async function getOrCreateBookingIntent(
     if (storedValue) {
       const parsed: unknown = JSON.parse(storedValue);
       if (isStoredIntent(parsed) && parsed.fingerprintDigest === fingerprintDigestValue) {
-        const confirmationKeyChanged = confirmationDigestValue !== undefined &&
+        const confirmationKeyChanged =
+          confirmationDigestValue !== undefined &&
           parsed.confirmationFingerprintDigest !== confirmationDigestValue;
-        const holdExpired = typeof parsed.holdExpiresAtUtc === "string" &&
-          isExpired(parsed.holdExpiresAtUtc);
+        const holdExpired =
+          typeof parsed.holdExpiresAtUtc === "string" && isExpired(parsed.holdExpiresAtUtc);
         const current: BookingBusinessIntent = {
           draftIdempotencyKey: parsed.draftIdempotencyKey,
           holdIdempotencyKey: holdExpired ? intent.holdIdempotencyKey : parsed.holdIdempotencyKey,
-          confirmIdempotencyKey: confirmationKeyChanged ? intent.confirmIdempotencyKey : parsed.confirmIdempotencyKey,
+          confirmIdempotencyKey: confirmationKeyChanged
+            ? intent.confirmIdempotencyKey
+            : parsed.confirmIdempotencyKey,
           ...(holdExpired || !parsed.holdExpiresAtUtc
             ? {}
             : { holdExpiresAtUtc: parsed.holdExpiresAtUtc }),
         };
         memoryIntent = {
           fingerprint,
-          confirmationFingerprint: confirmationFingerprint ?? (
-            memoryIntent?.fingerprint === fingerprint
+          confirmationFingerprint:
+            confirmationFingerprint ??
+            (memoryIntent?.fingerprint === fingerprint
               ? memoryIntent.confirmationFingerprint
-              : undefined
-          ),
+              : undefined),
           intent: current,
         };
         if (!confirmationKeyChanged && !holdExpired) return current;
 
-        window.sessionStorage.setItem(STORAGE_KEY, JSON.stringify({
-          ...current,
-          fingerprintDigest: fingerprintDigestValue,
-          ...(confirmationDigestValue || parsed.confirmationFingerprintDigest
-            ? { confirmationFingerprintDigest: confirmationDigestValue ?? parsed.confirmationFingerprintDigest }
-            : {}),
-        }));
+        window.sessionStorage.setItem(
+          STORAGE_KEY,
+          JSON.stringify({
+            ...current,
+            fingerprintDigest: fingerprintDigestValue,
+            ...(confirmationDigestValue || parsed.confirmationFingerprintDigest
+              ? {
+                  confirmationFingerprintDigest:
+                    confirmationDigestValue ?? parsed.confirmationFingerprintDigest,
+                }
+              : {}),
+          })
+        );
         return current;
       }
     }
@@ -137,7 +151,9 @@ export async function getOrCreateBookingIntent(
     const storedIntent = {
       ...intent,
       fingerprintDigest: fingerprintDigestValue,
-      ...(confirmationDigestValue ? { confirmationFingerprintDigest: confirmationDigestValue } : {}),
+      ...(confirmationDigestValue
+        ? { confirmationFingerprintDigest: confirmationDigestValue }
+        : {}),
     };
     window.sessionStorage.setItem(STORAGE_KEY, JSON.stringify(storedIntent));
     memoryIntent = { fingerprint, confirmationFingerprint, intent };

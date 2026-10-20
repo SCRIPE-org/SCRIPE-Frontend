@@ -7,10 +7,7 @@ import axios, {
   AxiosRequestConfig,
   InternalAxiosRequestConfig,
 } from "axios";
-import type {
-  IApiService,
-  MutationRequestOptions,
-} from "../interfaces/api.interface";
+import type { IApiService, MutationRequestOptions } from "../interfaces/api.interface";
 import { appLogger } from "@core/common/logger";
 import { secureTokenService } from "@core/common/secure-token-service";
 import { authBroadcast } from "@core/common/broadcast-auth";

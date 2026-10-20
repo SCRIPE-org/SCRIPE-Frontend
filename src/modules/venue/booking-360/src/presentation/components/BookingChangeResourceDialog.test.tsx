@@ -133,7 +133,14 @@ describe("BookingChangeResourceDialog candidate authority", () => {
   it("shows price delta and review step when a candidate is selected", async () => {
     const mockSchedulableResourceRepository = {
       getAll: vi.fn().mockResolvedValue({
-        items: [{ id: "court-1", isPublished: true, isComposite: false, facilityResourceProfileId: "profile-1" }],
+        items: [
+          {
+            id: "court-1",
+            isPublished: true,
+            isComposite: false,
+            facilityResourceProfileId: "profile-1",
+          },
+        ],
         totalCount: 1,
       }),
     };

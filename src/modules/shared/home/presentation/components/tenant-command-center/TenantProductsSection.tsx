@@ -37,10 +37,10 @@ export function TenantProductsSection({ products }: TenantProductsSectionProps) 
   const { canAccessPage } = usePermissions();
 
   return (
-    <Card className="p-4 sm:p-5 min-w-0 overflow-hidden border-nx-line bg-nx-surface text-nx-ink hover:border-nx-line-hi">
+    <Card className="min-w-0 overflow-hidden border-nx-line bg-nx-surface p-4 text-nx-ink hover:border-nx-line-hi sm:p-5">
       {/* Section Header */}
-      <div className="mb-3.5 flex flex-wrap items-center justify-between gap-2 min-w-0">
-        <div className="flex items-center gap-2.5 min-w-0">
+      <div className="mb-3.5 flex min-w-0 flex-wrap items-center justify-between gap-2">
+        <div className="flex min-w-0 items-center gap-2.5">
           <div
             className="flex h-9 w-9 shrink-0 items-center justify-center rounded-nx-md"
             style={{
@@ -51,10 +51,10 @@ export function TenantProductsSection({ products }: TenantProductsSectionProps) 
             <Layers className="h-4.5 w-4.5" />
           </div>
           <div className="min-w-0">
-            <h3 className="text-sm font-semibold text-nx-ink truncate">
+            <h3 className="truncate text-sm font-semibold text-nx-ink">
               {t("tenantCommandCenter.products.title") || "Your SCRIPE Products"}
             </h3>
-            <p className="text-xs text-nx-ink-3 truncate">
+            <p className="truncate text-xs text-nx-ink-3">
               {t("tenantCommandCenter.products.subtitle") ||
                 "Manage and access the operational products enabled for your organization."}
             </p>
@@ -63,7 +63,7 @@ export function TenantProductsSection({ products }: TenantProductsSectionProps) 
 
         <Link
           href="/settings"
-          className="flex items-center gap-1 text-xs font-semibold text-nx-accent hover:underline shrink-0"
+          className="flex shrink-0 items-center gap-1 text-xs font-semibold text-nx-accent hover:underline"
         >
           <span>{t("tenantCommandCenter.products.manageProducts") || "Manage Products"}</span>
           <ChevronRight className="h-3 w-3 rtl:rotate-180" />
@@ -83,10 +83,10 @@ export function TenantProductsSection({ products }: TenantProductsSectionProps) 
           return (
             <div
               key={product.id}
-              className="group relative flex flex-col justify-between overflow-hidden rounded-nx-md border border-nx-line bg-nx-surface transition-[color,background-color,border-color,box-shadow] duration-nx-micro ease-nx-enter hover:border-nx-line-hi hover:bg-nx-raised/40"
+              className="hover:bg-nx-raised/40 group relative flex flex-col justify-between overflow-hidden rounded-nx-md border border-nx-line bg-nx-surface transition-[color,background-color,border-color,box-shadow] duration-nx-micro ease-nx-enter hover:border-nx-line-hi"
             >
               {/* Card Visual Header matching Nexus Workspace & App Launcher Cards */}
-              <div className="relative flex items-center justify-between border-b border-nx-line bg-nx-raised/30 px-4 py-3.5">
+              <div className="bg-nx-raised/30 relative flex items-center justify-between border-b border-nx-line px-4 py-3.5">
                 <div
                   className="flex h-11 w-11 shrink-0 items-center justify-center rounded-nx-md transition-transform duration-nx-micro group-hover:scale-105"
                   style={{
@@ -114,10 +114,10 @@ export function TenantProductsSection({ products }: TenantProductsSectionProps) 
               {/* Card Body */}
               <div className="flex flex-1 flex-col justify-between p-4">
                 <div>
-                  <h4 className="text-sm font-semibold text-nx-ink group-hover:text-nx-accent transition-colors">
+                  <h4 className="text-sm font-semibold text-nx-ink transition-colors group-hover:text-nx-accent">
                     {product.name}
                   </h4>
-                  <p className="mt-1 line-clamp-2 text-xs leading-relaxed text-nx-ink-3 min-h-[32px]">
+                  <p className="mt-1 line-clamp-2 min-h-[32px] text-xs leading-relaxed text-nx-ink-3">
                     {product.description}
                   </p>
 

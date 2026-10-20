@@ -267,10 +267,18 @@ describe("useResourceDetailViewModel", () => {
     await waitFor(() => expect(result.current.loading).toBe(false));
 
     await act(async () => {
-      await result.current.updatePricing({ unitPrice: 850, currencyCode: "EGP", taxCategoryId: "tax-1" });
+      await result.current.updatePricing({
+        unitPrice: 850,
+        currencyCode: "EGP",
+        taxCategoryId: "tax-1",
+      });
     });
     await act(async () => {
-      await result.current.updatePricing({ unitPrice: 850, currencyCode: "EGP", taxCategoryId: "tax-1" });
+      await result.current.updatePricing({
+        unitPrice: 850,
+        currencyCode: "EGP",
+        taxCategoryId: "tax-1",
+      });
     });
 
     const calls = mockContainer.commercialPricingRepository.configureResourcePrice.mock.calls;

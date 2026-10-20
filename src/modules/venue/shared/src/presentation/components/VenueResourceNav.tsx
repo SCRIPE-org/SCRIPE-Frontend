@@ -86,7 +86,7 @@ export function VenueResourceNav() {
                 "inline-flex shrink-0 items-center gap-2 rounded-nx-sm px-3 py-1.5 text-xs font-medium transition-colors",
                 link.active
                   ? "bg-nx-surface text-nx-ink shadow-[inset_0_0_0_1px_var(--nx-line-hi)]"
-                  : "bg-nx-surface/0 text-nx-ink-2 hover:bg-nx-surface/50 hover:text-nx-ink"
+                  : "bg-nx-surface/0 hover:bg-nx-surface/50 text-nx-ink-2 hover:text-nx-ink"
               )}
             >
               <Icon className="size-3.5" aria-hidden="true" />

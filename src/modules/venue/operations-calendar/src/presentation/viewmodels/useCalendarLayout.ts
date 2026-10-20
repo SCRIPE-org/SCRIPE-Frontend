@@ -141,4 +141,3 @@ export function localToUtcInstant(dateStr: string, timeStr: string, timeZoneId: 
 
   return new Date(candidate).toISOString();
 }
-

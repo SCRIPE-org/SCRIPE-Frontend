@@ -53,9 +53,7 @@ export function VenueOverviewTodaySchedule({ items, t }: Props) {
     items && items.length > 0
       ? items.slice(0, 5).map((item) => {
           const time =
-            item.startLocal.split("T")[1]?.slice(0, 5) ||
-            item.startLocal.slice(11, 16) ||
-            "10:00";
+            item.startLocal.split("T")[1]?.slice(0, 5) || item.startLocal.slice(11, 16) || "10:00";
           const isCheckedIn = item.status === "CheckedIn";
           return {
             time,
@@ -75,13 +73,13 @@ export function VenueOverviewTodaySchedule({ items, t }: Props) {
         </h2>
         <Link
           href="/venue/calendar"
-          className="text-xs font-semibold text-blue-500 hover:text-blue-600 transition-colors"
+          className="text-xs font-semibold text-blue-500 transition-colors hover:text-blue-600"
         >
           {t("venueOverview.todaySchedule.viewAll", { defaultValue: "View All" })}
         </Link>
       </div>
 
-      <Card className="divide-y divide-nx-line/60 border border-nx-line bg-nx-surface rounded-nx-xl overflow-hidden shadow-xs">
+      <Card className="divide-nx-line/60 rounded-nx-xl shadow-xs divide-y overflow-hidden border border-nx-line bg-nx-surface">
         {displayItems.map((item, idx) => {
           const badgeClass =
             item.variant === "progress"
@@ -91,26 +89,24 @@ export function VenueOverviewTodaySchedule({ items, t }: Props) {
           return (
             <div
               key={`${item.court}-${item.time}-${idx}`}
-              className="flex items-center justify-between gap-3 p-3.5 hover:bg-nx-surfaceSubtle transition-colors"
+              className="hover:bg-nx-surfaceSubtle flex items-center justify-between gap-3 p-3.5 transition-colors"
             >
               {/* Time Pill */}
-              <span className="shrink-0 text-xs font-medium text-nx-ink-3 tabular-nums">
+              <span className="shrink-0 text-xs font-medium tabular-nums text-nx-ink-3">
                 {item.time}
               </span>
 
               {/* Court Name */}
-              <span className="w-24 shrink-0 text-xs font-bold text-nx-ink truncate">
+              <span className="w-24 shrink-0 truncate text-xs font-bold text-nx-ink">
                 {item.court}
               </span>
 
               {/* Customer / Group */}
-              <span className="min-w-0 flex-1 text-xs text-nx-ink-2 truncate">
-                {item.customer}
-              </span>
+              <span className="min-w-0 flex-1 truncate text-xs text-nx-ink-2">{item.customer}</span>
 
               {/* Status Pill */}
               <span
-                className={`inline-block text-[10px] font-bold px-2 py-0.5 rounded-md border shrink-0 ${badgeClass}`}
+                className={`inline-block shrink-0 rounded-md border px-2 py-0.5 text-[10px] font-bold ${badgeClass}`}
               >
                 {item.status}
               </span>

@@ -127,13 +127,16 @@ export function useResourceDetailViewModel(resourceId: string) {
           namedUnitLabel: resource.namedUnitLabel ?? null,
           unitCount: resource.unitCount > 0 ? resource.unitCount : 1,
           allocationMode: resource.capacity?.allocationMode ?? "SingleUnit",
-          maxConcurrentUsage: input.capacity > 0 ? input.capacity : (resource.capacity?.maxConcurrentUsage ?? 1),
-          slotPolicy: resource.slotPolicy ? {
-            slotDurationMinutes: resource.slotPolicy.slotDurationMinutes,
-            startIncrementMinutes: resource.slotPolicy.startIncrementMinutes,
-            timeZoneId: resource.slotPolicy.timeZoneId ?? null,
-            allowMultiSlot: resource.slotPolicy.allowMultiSlot ?? false,
-          } : null,
+          maxConcurrentUsage:
+            input.capacity > 0 ? input.capacity : (resource.capacity?.maxConcurrentUsage ?? 1),
+          slotPolicy: resource.slotPolicy
+            ? {
+                slotDurationMinutes: resource.slotPolicy.slotDurationMinutes,
+                startIncrementMinutes: resource.slotPolicy.startIncrementMinutes,
+                timeZoneId: resource.slotPolicy.timeZoneId ?? null,
+                allowMultiSlot: resource.slotPolicy.allowMultiSlot ?? false,
+              }
+            : null,
         });
         setFeedback("general.saved");
         await loadData();
@@ -371,15 +374,15 @@ export function useResourceDetailViewModel(resourceId: string) {
 
   const isCalendar247 = Boolean(
     calendar?.windows &&
-      calendar.windows.length >= 7 &&
-      calendar.windows.every(
-        (w) =>
-          w.startLocal === "00:00" &&
-          (w.endLocal === "23:59:59" ||
-            w.endLocal === "24:00" ||
-            w.endLocal === "23:59" ||
-            w.endLocal === "00:00")
-      )
+    calendar.windows.length >= 7 &&
+    calendar.windows.every(
+      (w) =>
+        w.startLocal === "00:00" &&
+        (w.endLocal === "23:59:59" ||
+          w.endLocal === "24:00" ||
+          w.endLocal === "23:59" ||
+          w.endLocal === "00:00")
+    )
   );
 
   return {

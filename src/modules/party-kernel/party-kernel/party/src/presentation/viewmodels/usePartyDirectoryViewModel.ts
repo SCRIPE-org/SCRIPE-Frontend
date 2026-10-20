@@ -217,7 +217,8 @@ export function usePartyDirectoryViewModel() {
     onError: (err: Error) => {
       showError({
         title: t("common.error") || "Error",
-        description: err.message || t("party.toast.errorCreating") || "Failed to create organization",
+        description:
+          err.message || t("party.toast.errorCreating") || "Failed to create organization",
       });
     },
   });
@@ -274,8 +275,7 @@ export function usePartyDirectoryViewModel() {
         });
       }
 
-      const hasExtendedOrgFields =
-        options?.legalName !== undefined || options?.taxId !== undefined;
+      const hasExtendedOrgFields = options?.legalName !== undefined || options?.taxId !== undefined;
 
       if (
         type === "Organization" &&

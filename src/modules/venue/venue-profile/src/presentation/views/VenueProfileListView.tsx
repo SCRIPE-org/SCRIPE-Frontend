@@ -143,14 +143,22 @@ export const VenueProfileListView = React.memo(function VenueProfileListView() {
       },
       {
         name: "enableGuestExperience",
-        label: t("venueProfile.fields.enableGuestExperience", { defaultValue: "Enable Guest Experience" }),
-        description: t("venueProfile.descriptions.enableGuestExperience", { defaultValue: "Allow customers to view bookings via secure no-app guest links" }),
+        label: t("venueProfile.fields.enableGuestExperience", {
+          defaultValue: "Enable Guest Experience",
+        }),
+        description: t("venueProfile.descriptions.enableGuestExperience", {
+          defaultValue: "Allow customers to view bookings via secure no-app guest links",
+        }),
         type: "switch" as const,
       },
       {
         name: "exposeCancellationToGuests",
-        label: t("venueProfile.fields.exposeCancellationToGuests", { defaultValue: "Allow Guest Self-Service Cancellation" }),
-        description: t("venueProfile.descriptions.exposeCancellationToGuests", { defaultValue: "Expose online cancellation on the guest portal" }),
+        label: t("venueProfile.fields.exposeCancellationToGuests", {
+          defaultValue: "Allow Guest Self-Service Cancellation",
+        }),
+        description: t("venueProfile.descriptions.exposeCancellationToGuests", {
+          defaultValue: "Expose online cancellation on the guest portal",
+        }),
         type: "switch" as const,
       },
     ],

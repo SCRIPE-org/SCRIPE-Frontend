@@ -6,10 +6,7 @@ import { Input } from "@core/ui/input";
 import { GenericSelect } from "@core/crud/components/generic-select";
 import { Alert, AlertDescription } from "@core/ui/alert";
 import type { CalendarResource } from "../../../domain/entities/OperationsCalendar";
-import {
-  localPrefillForInstant,
-  localToUtcInstant,
-} from "../../viewmodels/useCalendarLayout";
+import { localPrefillForInstant, localToUtcInstant } from "../../viewmodels/useCalendarLayout";
 
 interface BookingCourtStepProps {
   resources: CalendarResource[];
@@ -70,7 +67,9 @@ export function BookingCourtStep({
       )}
 
       <div className="space-y-1.5">
-        <Label id="booking-court-select-label" className="text-xs font-bold text-nx-ink">{courtLabel}</Label>
+        <Label id="booking-court-select-label" className="text-xs font-bold text-nx-ink">
+          {courtLabel}
+        </Label>
         <GenericSelect
           id="booking-court-select"
           aria-labelledby="booking-court-select-label"
@@ -88,7 +87,7 @@ export function BookingCourtStep({
         />
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
         <div className="space-y-1.5">
           <Label htmlFor="booking-court-date" className="text-xs font-bold text-nx-ink">
             {t("operationsCalendar.clickToBook.courtStep.bookingDate")}
@@ -130,7 +129,7 @@ export function BookingCourtStep({
             {t("operationsCalendar.clickToBook.courtStep.duration")}
           </Label>
           {allowedDurations.length <= 1 ? (
-            <div className="w-full h-8 rounded-md border border-nx-border bg-nx-raised/40 px-3 flex items-center text-xs font-semibold text-nx-ink">
+            <div className="border-nx-border bg-nx-raised/40 flex h-8 w-full items-center rounded-md border px-3 text-xs font-semibold text-nx-ink">
               {t("operationsCalendar.clickToBook.courtStep.minutes", {
                 minutes: allowedDurations[0] ?? 60,
               })}

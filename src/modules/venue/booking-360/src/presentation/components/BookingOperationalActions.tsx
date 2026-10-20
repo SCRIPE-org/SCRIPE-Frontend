@@ -164,7 +164,7 @@ export function BookingOperationalActions(props: Props) {
               {confirmed && props.canCheckIn && (
                 <Button
                   type="button"
-                  className="font-bold shadow-sm bg-nx-accent hover:opacity-95 text-white gap-2 px-5"
+                  className="gap-2 bg-nx-accent px-5 font-bold text-white shadow-sm hover:opacity-95"
                   loading={props.activeAction === "checkIn"}
                   disabled={props.activeAction !== null}
                   onClick={props.onCheckIn}
@@ -179,7 +179,7 @@ export function BookingOperationalActions(props: Props) {
               {checkedIn && props.canComplete && (
                 <Button
                   type="button"
-                  className="font-bold shadow-sm bg-emerald-600 hover:bg-emerald-700 text-white gap-2 px-5"
+                  className="gap-2 bg-emerald-600 px-5 font-bold text-white shadow-sm hover:bg-emerald-700"
                   loading={props.activeAction === "complete"}
                   disabled={props.activeAction !== null}
                   onClick={props.onComplete}
@@ -191,48 +191,59 @@ export function BookingOperationalActions(props: Props) {
                 </Button>
               )}
 
-              {confirmed && props.canReschedule && props.onReschedule && props.resourceId && props.currentStartUtc && props.currentEndUtc && (
-                <BookingRescheduleDialog
-                  open={rescheduleOpen}
-                  onOpenChange={setRescheduleOpen}
-                  resourceId={props.resourceId}
-                  resourceName={props.resourceName ?? ""}
-                  facilityName={props.facilityName ?? ""}
-                  currentStartUtc={props.currentStartUtc}
-                  currentEndUtc={props.currentEndUtc}
-                  timeZoneId={props.timeZoneId ?? "UTC"}
-                  quantity={props.quantity ?? 1}
-                  direction={props.direction}
-                  disabled={props.activeAction !== null}
-                  t={props.t}
-                  onConfirmReschedule={(input) => {
-                    setRescheduleOpen(false);
-                    props.onReschedule?.(input);
-                  }}
-                />
-              )}
+              {confirmed &&
+                props.canReschedule &&
+                props.onReschedule &&
+                props.resourceId &&
+                props.currentStartUtc &&
+                props.currentEndUtc && (
+                  <BookingRescheduleDialog
+                    open={rescheduleOpen}
+                    onOpenChange={setRescheduleOpen}
+                    resourceId={props.resourceId}
+                    resourceName={props.resourceName ?? ""}
+                    facilityName={props.facilityName ?? ""}
+                    currentStartUtc={props.currentStartUtc}
+                    currentEndUtc={props.currentEndUtc}
+                    timeZoneId={props.timeZoneId ?? "UTC"}
+                    quantity={props.quantity ?? 1}
+                    direction={props.direction}
+                    disabled={props.activeAction !== null}
+                    t={props.t}
+                    onConfirmReschedule={(input) => {
+                      setRescheduleOpen(false);
+                      props.onReschedule?.(input);
+                    }}
+                  />
+                )}
 
-              {confirmed && props.canChangeResource && props.onChangeResource && props.facilityId && props.resourceId && props.currentStartUtc && props.currentEndUtc && (
-                <BookingChangeResourceDialog
-                  open={changeResourceOpen}
-                  onOpenChange={setChangeResourceOpen}
-                  facilityId={props.facilityId}
-                  currentResourceId={props.resourceId}
-                  currentResourceName={props.resourceName ?? ""}
-                  currentFacilityName={props.facilityName ?? ""}
-                  currentStartUtc={props.currentStartUtc}
-                  currentEndUtc={props.currentEndUtc}
-                  timeZoneId={props.timeZoneId ?? "UTC"}
-                  quantity={props.quantity ?? 1}
-                  direction={props.direction}
-                  disabled={props.activeAction !== null}
-                  t={props.t}
-                  onConfirmChangeResource={(input) => {
-                    setChangeResourceOpen(false);
-                    props.onChangeResource?.(input);
-                  }}
-                />
-              )}
+              {confirmed &&
+                props.canChangeResource &&
+                props.onChangeResource &&
+                props.facilityId &&
+                props.resourceId &&
+                props.currentStartUtc &&
+                props.currentEndUtc && (
+                  <BookingChangeResourceDialog
+                    open={changeResourceOpen}
+                    onOpenChange={setChangeResourceOpen}
+                    facilityId={props.facilityId}
+                    currentResourceId={props.resourceId}
+                    currentResourceName={props.resourceName ?? ""}
+                    currentFacilityName={props.facilityName ?? ""}
+                    currentStartUtc={props.currentStartUtc}
+                    currentEndUtc={props.currentEndUtc}
+                    timeZoneId={props.timeZoneId ?? "UTC"}
+                    quantity={props.quantity ?? 1}
+                    direction={props.direction}
+                    disabled={props.activeAction !== null}
+                    t={props.t}
+                    onConfirmChangeResource={(input) => {
+                      setChangeResourceOpen(false);
+                      props.onChangeResource?.(input);
+                    }}
+                  />
+                )}
 
               {confirmed && props.canMarkNoShow && (
                 <AlertDialog open={noShowOpen} onOpenChange={changeDialog}>

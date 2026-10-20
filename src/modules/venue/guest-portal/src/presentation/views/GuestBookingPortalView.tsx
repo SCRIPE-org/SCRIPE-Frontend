@@ -47,10 +47,13 @@ export function GuestBookingPortalView() {
   // Loading States
   if (stage === "loading" || stage === "exchanging") {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center p-4 bg-nx-surfaceSubtle/30" dir={direction}>
-        <div className="text-center space-y-4">
+      <div
+        className="bg-nx-surfaceSubtle/30 flex min-h-screen flex-col items-center justify-center p-4"
+        dir={direction}
+      >
+        <div className="space-y-4 text-center">
           <LoadingSpinner showText={false} />
-          <p className="text-sm font-medium text-nx-ink-2 animate-pulse">
+          <p className="animate-pulse text-sm font-medium text-nx-ink-2">
             {stage === "exchanging"
               ? t("guestPortal.loading.securing")
               : t("guestPortal.loading.loadingBooking")}
@@ -63,14 +66,14 @@ export function GuestBookingPortalView() {
   // Error States
   if (stage === "missing-token" || stage === "error" || !booking) {
     return (
-      <div className="min-h-screen bg-nx-surfaceSubtle/20" dir={direction}>
-        <header className="w-full bg-nx-surfaceSubtle/80 backdrop-blur-md border-b border-nx-line/60 px-4 py-3 sm:px-6 sticky top-0 z-30">
-          <div className="max-w-2xl mx-auto flex items-center justify-end">
+      <div className="bg-nx-surfaceSubtle/20 min-h-screen" dir={direction}>
+        <header className="bg-nx-surfaceSubtle/80 border-nx-line/60 sticky top-0 z-30 w-full border-b px-4 py-3 backdrop-blur-md sm:px-6">
+          <div className="mx-auto flex max-w-2xl items-center justify-end">
             <Button
               variant="ghost"
               size="sm"
               onClick={handleToggleLanguage}
-              className="flex items-center gap-1.5 text-xs text-nx-ink-2 hover:text-nx-ink h-8 px-2.5 rounded-full border border-nx-line/50"
+              className="border-nx-line/50 flex h-8 items-center gap-1.5 rounded-full border px-2.5 text-xs text-nx-ink-2 hover:text-nx-ink"
               aria-label="Toggle Language"
             >
               <Globe className="size-3.5" aria-hidden="true" />
@@ -80,7 +83,11 @@ export function GuestBookingPortalView() {
         </header>
         <GuestPortalEmptyState
           title={t("guestPortal.errors.invalidOrExpiredTitle")}
-          description={stage === "missing-token" ? t("guestPortal.errors.invalidOrExpiredDescription") : (errorMessage || t("guestPortal.errors.invalidOrExpiredDescription"))}
+          description={
+            stage === "missing-token"
+              ? t("guestPortal.errors.invalidOrExpiredDescription")
+              : errorMessage || t("guestPortal.errors.invalidOrExpiredDescription")
+          }
           onRetry={stage === "error" ? handleRefresh : undefined}
           t={t}
         />
@@ -90,7 +97,7 @@ export function GuestBookingPortalView() {
 
   return (
     <div
-      className="min-h-screen bg-gradient-to-b from-nx-surfaceSubtle/40 via-nx-surface to-nx-surfaceSubtle/30 pb-16"
+      className="from-nx-surfaceSubtle/40 to-nx-surfaceSubtle/30 min-h-screen bg-gradient-to-b via-nx-surface pb-16"
       dir={direction}
       data-testid="guest-booking-portal"
     >
@@ -102,11 +109,17 @@ export function GuestBookingPortalView() {
         t={t}
       />
 
-      <main className="max-w-2xl mx-auto px-4 sm:px-6 pt-6 space-y-5">
+      <main className="mx-auto max-w-2xl space-y-5 px-4 pt-6 sm:px-6">
         {/* Success Banner upon Cancellation */}
         {cancelSuccessBanner && (
-          <Alert variant="info" className="border-emerald-500/30 bg-emerald-500/10 text-emerald-800 dark:text-emerald-300">
-            <CheckCircle className="size-4 text-emerald-600 dark:text-emerald-400" aria-hidden="true" />
+          <Alert
+            variant="info"
+            className="border-emerald-500/30 bg-emerald-500/10 text-emerald-800 dark:text-emerald-300"
+          >
+            <CheckCircle
+              className="size-4 text-emerald-600 dark:text-emerald-400"
+              aria-hidden="true"
+            />
             <AlertDescription className="text-sm font-medium">
               {t("guestPortal.messages.cancelSuccess")}
             </AlertDescription>
@@ -115,7 +128,10 @@ export function GuestBookingPortalView() {
 
         {/* Status Callout Banner */}
         {isCancelled && (
-          <Alert variant="destructive" className="border-rose-500/30 bg-rose-500/10 text-rose-800 dark:text-rose-300">
+          <Alert
+            variant="destructive"
+            className="border-rose-500/30 bg-rose-500/10 text-rose-800 dark:text-rose-300"
+          >
             <XCircle className="size-4 text-rose-600 dark:text-rose-400" aria-hidden="true" />
             <AlertDescription className="text-sm font-medium">
               This reservation has been cancelled.
@@ -124,14 +140,14 @@ export function GuestBookingPortalView() {
         )}
 
         {/* Primary Booking Card */}
-        <Card className="border border-nx-line shadow-md overflow-hidden bg-nx-surface">
+        <Card className="overflow-hidden border border-nx-line bg-nx-surface shadow-md">
           {/* Card Top Strip: Reservation Number */}
-          <div className="bg-nx-surfaceSubtle px-4 py-3 sm:px-6 border-b border-nx-line/60 flex items-center justify-between">
+          <div className="bg-nx-surfaceSubtle border-nx-line/60 flex items-center justify-between border-b px-4 py-3 sm:px-6">
             <div className="flex items-center gap-2">
-              <span className="text-xs text-nx-ink-3 uppercase font-semibold tracking-wider">
+              <span className="text-xs font-semibold uppercase tracking-wider text-nx-ink-3">
                 {t("guestPortal.reservationNumber")}
               </span>
-              <span className="font-mono text-sm sm:text-base font-bold text-nx-ink" dir="ltr">
+              <span className="font-mono text-sm font-bold text-nx-ink sm:text-base" dir="ltr">
                 {booking.reservationNumber}
               </span>
             </div>
@@ -140,12 +156,12 @@ export function GuestBookingPortalView() {
               variant="ghost"
               size="sm"
               onClick={handleCopyReservationNumber}
-              className="h-7 px-2 text-xs text-nx-ink-2 hover:text-nx-ink flex items-center gap-1"
+              className="flex h-7 items-center gap-1 px-2 text-xs text-nx-ink-2 hover:text-nx-ink"
             >
               {copied ? (
                 <>
                   <Check className="size-3 text-emerald-600" aria-hidden="true" />
-                  <span className="text-emerald-600 font-medium text-[11px]">Copied</span>
+                  <span className="text-[11px] font-medium text-emerald-600">Copied</span>
                 </>
               ) : (
                 <>
@@ -156,32 +172,32 @@ export function GuestBookingPortalView() {
             </Button>
           </div>
 
-          <CardContent className="p-4 sm:p-6 space-y-6">
+          <CardContent className="space-y-6 p-4 sm:p-6">
             {/* Facility & Court Info */}
             <div className="space-y-1">
-              <h2 className="text-lg sm:text-xl font-bold text-nx-ink tracking-tight">
+              <h2 className="text-lg font-bold tracking-tight text-nx-ink sm:text-xl">
                 {booking.facilityName}
               </h2>
-              <div className="flex items-center gap-2 text-sm text-nx-ink-2 font-medium">
-                <MapPin className="size-4 text-nx-accent shrink-0" aria-hidden="true" />
+              <div className="flex items-center gap-2 text-sm font-medium text-nx-ink-2">
+                <MapPin className="size-4 shrink-0 text-nx-accent" aria-hidden="true" />
                 <span>{booking.resourceName}</span>
                 <span className="text-nx-ink-3">•</span>
-                <span className="text-xs text-nx-ink-3 font-normal">{booking.venueName}</span>
+                <span className="text-xs font-normal text-nx-ink-3">{booking.venueName}</span>
               </div>
             </div>
 
             {/* Schedule & Time Details */}
             {formattedDates && (
-              <div className="p-4 rounded-nx-lg bg-nx-surfaceSubtle/60 border border-nx-line/70 grid gap-3 sm:grid-cols-2">
+              <div className="bg-nx-surfaceSubtle/60 border-nx-line/70 grid gap-3 rounded-nx-lg border p-4 sm:grid-cols-2">
                 <div className="flex items-start gap-3">
-                  <div className="size-8 rounded-nx-md bg-nx-accent/10 text-nx-accent flex items-center justify-center shrink-0 mt-0.5">
+                  <div className="bg-nx-accent/10 mt-0.5 flex size-8 shrink-0 items-center justify-center rounded-nx-md text-nx-accent">
                     <Calendar className="size-4" aria-hidden="true" />
                   </div>
                   <div>
-                    <span className="block text-xs font-semibold text-nx-ink-3 uppercase">
+                    <span className="block text-xs font-semibold uppercase text-nx-ink-3">
                       {t("guestPortal.schedule")}
                     </span>
-                    <span className="block text-sm font-bold text-nx-ink mt-0.5">
+                    <span className="mt-0.5 block text-sm font-bold text-nx-ink">
                       {formattedDates.dateStr}
                     </span>
                     <span className="block text-xs text-nx-ink-3" dir="ltr">
@@ -191,14 +207,14 @@ export function GuestBookingPortalView() {
                 </div>
 
                 <div className="flex items-start gap-3">
-                  <div className="size-8 rounded-nx-md bg-nx-accent/10 text-nx-accent flex items-center justify-center shrink-0 mt-0.5">
+                  <div className="bg-nx-accent/10 mt-0.5 flex size-8 shrink-0 items-center justify-center rounded-nx-md text-nx-accent">
                     <Clock className="size-4" aria-hidden="true" />
                   </div>
                   <div>
-                    <span className="block text-xs font-semibold text-nx-ink-3 uppercase">
+                    <span className="block text-xs font-semibold uppercase text-nx-ink-3">
                       {t("guestPortal.duration")} ({formattedDates.duration})
                     </span>
-                    <span className="block text-sm font-bold text-nx-ink mt-0.5 tabular-nums">
+                    <span className="mt-0.5 block text-sm font-bold tabular-nums text-nx-ink">
                       {formattedDates.startTimeStr} – {formattedDates.endTimeStr}
                     </span>
                   </div>
@@ -207,22 +223,20 @@ export function GuestBookingPortalView() {
             )}
 
             {/* Key Meta: Quantity & Customer */}
-            <div className="grid grid-cols-2 gap-4 text-xs border-t border-nx-line/40 pt-4">
+            <div className="border-nx-line/40 grid grid-cols-2 gap-4 border-t pt-4 text-xs">
               <div>
-                <span className="text-nx-ink-3 font-medium block">
-                  {t("guestPortal.quantity")}
-                </span>
-                <span className="font-semibold text-nx-ink text-sm mt-0.5 block">
+                <span className="block font-medium text-nx-ink-3">{t("guestPortal.quantity")}</span>
+                <span className="mt-0.5 block text-sm font-semibold text-nx-ink">
                   {booking.quantity}
                 </span>
               </div>
 
               {booking.customerName && (
                 <div>
-                  <span className="text-nx-ink-3 font-medium block">
+                  <span className="block font-medium text-nx-ink-3">
                     {t("guestPortal.customer")}
                   </span>
-                  <span className="font-semibold text-nx-ink text-sm mt-0.5 block truncate">
+                  <span className="mt-0.5 block truncate text-sm font-semibold text-nx-ink">
                     {booking.customerName}
                   </span>
                 </div>
@@ -231,12 +245,12 @@ export function GuestBookingPortalView() {
 
             {/* Directions & Instructions */}
             {booking.instructions && (
-              <div className="border-t border-nx-line/40 pt-4 space-y-2">
-                <div className="flex items-center gap-1.5 text-xs font-semibold text-nx-ink-2 uppercase tracking-wide">
+              <div className="border-nx-line/40 space-y-2 border-t pt-4">
+                <div className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wide text-nx-ink-2">
                   <Info className="size-3.5 text-nx-accent" aria-hidden="true" />
                   <span>{t("guestPortal.instructions")}</span>
                 </div>
-                <div className="p-3 rounded-nx-md bg-nx-surfaceSubtle text-xs sm:text-sm text-nx-ink leading-relaxed whitespace-pre-line">
+                <div className="bg-nx-surfaceSubtle whitespace-pre-line rounded-nx-md p-3 text-xs leading-relaxed text-nx-ink sm:text-sm">
                   {booking.instructions}
                 </div>
               </div>
@@ -255,28 +269,28 @@ export function GuestBookingPortalView() {
 
         {/* Self-service Cancellation Action */}
         {booking.canCancel && !isCancelled && (
-          <div className="pt-2 pb-4 flex flex-col items-center gap-2">
+          <div className="flex flex-col items-center gap-2 pb-4 pt-2">
             <Button
               variant="outline"
               size="default"
               onClick={() => setCancelModalOpen(true)}
-              className="text-xs sm:text-sm text-destructive hover:bg-destructive/10 border-destructive/30 hover:border-destructive/60 transition-colors w-full sm:w-auto px-6 font-medium"
+              className="w-full border-destructive/30 px-6 text-xs font-medium text-destructive transition-colors hover:border-destructive/60 hover:bg-destructive/10 sm:w-auto sm:text-sm"
             >
               {t("guestPortal.actions.cancelBooking")}
             </Button>
-            <p className="text-[11px] text-nx-ink-3 text-center">
+            <p className="text-center text-[11px] text-nx-ink-3">
               Free cancellation available according to venue policy.
             </p>
           </div>
         )}
 
         {/* Refresh Action */}
-        <div className="pt-4 pb-8 flex justify-center">
+        <div className="flex justify-center pb-8 pt-4">
           <Button
             variant="ghost"
             size="sm"
             onClick={handleRefresh}
-            className="text-xs text-nx-ink-3 hover:text-nx-ink flex items-center gap-1.5"
+            className="flex items-center gap-1.5 text-xs text-nx-ink-3 hover:text-nx-ink"
           >
             <RefreshCw className="size-3.5" aria-hidden="true" />
             <span>Refresh details</span>

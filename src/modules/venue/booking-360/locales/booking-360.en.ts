@@ -61,7 +61,8 @@ export const en = {
       outstanding: "Outstanding",
       paid: "Paid",
       recordedPayments: "Recorded payments",
-      pendingAllocationNotice: "A recorded payment of {{amount}} is waiting to be allocated to invoice {{invoiceNumber}}.",
+      pendingAllocationNotice:
+        "A recorded payment of {{amount}} is waiting to be allocated to invoice {{invoiceNumber}}.",
       pendingSyncNotice: "Finance invoice synchronization is still in progress.",
       unallocated: "Unallocated",
       allocated: "Allocated",
@@ -207,7 +208,8 @@ export const en = {
     },
     cancelledPaid: {
       title: "Payment remains in Finance",
-      description: "This booking was cancelled, but {{amount}} remains recorded in Finance. Cancellation does not issue a refund.",
+      description:
+        "This booking was cancelled, but {{amount}} remains recorded in Finance. Cancellation does not issue a refund.",
       manageRefund: "Manage payment in Finance",
     },
     permission: {

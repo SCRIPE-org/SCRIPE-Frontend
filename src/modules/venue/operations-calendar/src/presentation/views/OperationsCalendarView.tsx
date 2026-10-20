@@ -60,7 +60,10 @@ export const OperationsCalendarView = React.memo(function OperationsCalendarView
 
   const handleEmptySlot = React.useCallback(
     (resource: CalendarResource, instantUtc: string, durationMinutes?: number) => {
-      if (resource.priceEffectiveFromUtc && Date.parse(resource.priceEffectiveFromUtc) > Date.now()) {
+      if (
+        resource.priceEffectiveFromUtc &&
+        Date.parse(resource.priceEffectiveFromUtc) > Date.now()
+      ) {
         setCourtNotReadyNotice(
           t("operationsCalendar.readiness.courtActivating", {
             defaultValue:
@@ -87,8 +90,7 @@ export const OperationsCalendarView = React.memo(function OperationsCalendarView
   );
 
   const facilityResources = vm.allResources.filter(
-    (resource) =>
-      resource.facilityId === vm.facilityId && resource.timeZoneId === vm.timeZoneId
+    (resource) => resource.facilityId === vm.facilityId && resource.timeZoneId === vm.timeZoneId
   );
 
   const handleOpenNewBooking = React.useCallback(() => {
@@ -223,7 +225,11 @@ export const OperationsCalendarView = React.memo(function OperationsCalendarView
 
   return (
     <div className="space-y-5" dir={direction} data-testid="operations-calendar-view">
-      <PageHeader icon={CalendarDays} title={t("operationsCalendar.title")} description={t("operationsCalendar.description")} />
+      <PageHeader
+        icon={CalendarDays}
+        title={t("operationsCalendar.title")}
+        description={t("operationsCalendar.description")}
+      />
       {courtNotReadyNotice && (
         <Alert variant="warning">
           <AlertCircle className="size-4" />
@@ -243,7 +249,9 @@ export const OperationsCalendarView = React.memo(function OperationsCalendarView
         timeZones={vm.timeZoneOptions}
         loading={vm.state.stage === "loading"}
         hasBookingReadyCourts={facilityResources.some(
-          (resource) => !resource.priceEffectiveFromUtc || Date.parse(resource.priceEffectiveFromUtc) <= Date.now()
+          (resource) =>
+            !resource.priceEffectiveFromUtc ||
+            Date.parse(resource.priceEffectiveFromUtc) <= Date.now()
         )}
         onDateChange={vm.setDate}
         onFacilityChange={vm.setFacilityId}
@@ -282,9 +290,13 @@ export const OperationsCalendarView = React.memo(function OperationsCalendarView
       {vm.state.stage === "loading" && !vm.state.day && <LoadingSpinner showText={false} />}
       {!vm.state.day && vm.state.stage === "empty" && <EmptyResourcesState t={t} />}
       {vm.state.day && (
-        <div className="flex flex-col lg:flex-row gap-5 items-start">
-          <div className="flex-1 min-w-0 w-full space-y-3">
-            {vm.state.day.blocks.length === 0 && <p className="text-sm text-nx-ink-2">{t("operationsCalendar.timeline.noOccupancy")}</p>}
+        <div className="flex flex-col items-start gap-5 lg:flex-row">
+          <div className="w-full min-w-0 flex-1 space-y-3">
+            {vm.state.day.blocks.length === 0 && (
+              <p className="text-sm text-nx-ink-2">
+                {t("operationsCalendar.timeline.noOccupancy")}
+              </p>
+            )}
             <ResourceTimeline
               day={vm.state.day}
               resources={vm.visibleResources}
@@ -386,7 +398,11 @@ export const OperationsCalendarView = React.memo(function OperationsCalendarView
   );
 });
 
-function EmptyResourcesState({ t }: { t: (key: string, params?: Record<string, string | number>) => string }) {
+function EmptyResourcesState({
+  t,
+}: {
+  t: (key: string, params?: Record<string, string | number>) => string;
+}) {
   return (
     <EmptyState
       icon={CalendarDays}
@@ -395,7 +411,7 @@ function EmptyResourcesState({ t }: { t: (key: string, params?: Record<string, s
       action={
         <Button asChild>
           <Link href="/venue/resources?setup=new">
-            <Plus className="size-4 me-1.5" />
+            <Plus className="me-1.5 size-4" />
             {t("operationsCalendar.empty.action") || "Add Court / Space"}
           </Link>
         </Button>

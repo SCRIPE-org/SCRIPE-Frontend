@@ -55,7 +55,9 @@ export function ResourceBookingRulesTab({ vm }: Props) {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>{t("resources.bookingRules.title", { defaultValue: "Booking Rules" })}</CardTitle>
+        <CardTitle>
+          {t("resources.bookingRules.title", { defaultValue: "Booking Rules" })}
+        </CardTitle>
         <CardDescription>
           {t("resources.bookingRules.description", {
             defaultValue: "Define the booking duration and grid intervals.",
@@ -82,7 +84,7 @@ export function ResourceBookingRulesTab({ vm }: Props) {
                   type="button"
                   key={value}
                   onClick={() => handleDurationChange(value)}
-                  className={`h-auto justify-start p-3 rounded-nx-md border text-left rtl:text-right transition-all ${
+                  className={`h-auto justify-start rounded-nx-md border p-3 text-left transition-all rtl:text-right ${
                     slotDuration === value
                       ? "bg-nx-accent/10 border-nx-accent font-bold text-nx-ink ring-1 ring-nx-accent"
                       : "hover:bg-nx-surfaceSubtle border-nx-line text-nx-ink-2"
@@ -91,7 +93,12 @@ export function ResourceBookingRulesTab({ vm }: Props) {
                   <p className="text-xs font-semibold">
                     {t(`resources.bookingRules.${labelKey}`, { defaultValue: fallback })}
                   </p>
-                  <p className="mt-0.5 text-[10px] text-nx-ink-3">{t("resources.bookingRules.gridEvery", { defaultValue: `Grid: every ${value} min`, value })}</p>
+                  <p className="mt-0.5 text-[10px] text-nx-ink-3">
+                    {t("resources.bookingRules.gridEvery", {
+                      defaultValue: `Grid: every ${value} min`,
+                      value,
+                    })}
+                  </p>
                 </Button>
               ))}
             </div>
@@ -117,24 +124,37 @@ export function ResourceBookingRulesTab({ vm }: Props) {
                   setStartIncrementOverride(Number.isInteger(parsed) && parsed > 0 ? parsed : null);
                 }}
               >
-                <SelectTrigger className="w-full text-xs font-medium"><SelectValue /></SelectTrigger>
+                <SelectTrigger className="w-full text-xs font-medium">
+                  <SelectValue />
+                </SelectTrigger>
                 <SelectContent>
-                <SelectItem value={String(slotDuration)}>
-                  {t("resources.bookingRules.incrementRecommended", { defaultValue: `Every ${slotDuration} minutes (Recommended · Clean slots)`, value: slotDuration })}
-                </SelectItem>
-                {slotDuration > 30 && (
-                  <SelectItem value="30">{t("resources.bookingRules.incrementHalfHour", { defaultValue: "Every 30 minutes (Half-hour starts)" })}</SelectItem>
-                )}
-                {slotDuration > 15 && (
-                  <SelectItem value="15">{t("resources.bookingRules.incrementQuarterHour", { defaultValue: "Every 15 minutes (Quarter-hour starts)" })}</SelectItem>
-                )}
+                  <SelectItem value={String(slotDuration)}>
+                    {t("resources.bookingRules.incrementRecommended", {
+                      defaultValue: `Every ${slotDuration} minutes (Recommended · Clean slots)`,
+                      value: slotDuration,
+                    })}
+                  </SelectItem>
+                  {slotDuration > 30 && (
+                    <SelectItem value="30">
+                      {t("resources.bookingRules.incrementHalfHour", {
+                        defaultValue: "Every 30 minutes (Half-hour starts)",
+                      })}
+                    </SelectItem>
+                  )}
+                  {slotDuration > 15 && (
+                    <SelectItem value="15">
+                      {t("resources.bookingRules.incrementQuarterHour", {
+                        defaultValue: "Every 15 minutes (Quarter-hour starts)",
+                      })}
+                    </SelectItem>
+                  )}
                 </SelectContent>
               </Select>
             </div>
           </div>
 
-          <div className="space-y-2 pt-2 border-t border-nx-line/60">
-            <div className="flex items-start gap-3 p-3.5 rounded-nx-md border border-nx-line bg-nx-surfaceSubtle/30">
+          <div className="border-nx-line/60 space-y-2 border-t pt-2">
+            <div className="bg-nx-surfaceSubtle/30 flex items-start gap-3 rounded-nx-md border border-nx-line p-3.5">
               <Checkbox
                 id="allow-multi-slot"
                 checked={allowMultiSlot}
@@ -142,7 +162,10 @@ export function ResourceBookingRulesTab({ vm }: Props) {
                 className="mt-0.5 size-4 rounded border-nx-line text-nx-accent focus:ring-nx-accent"
               />
               <div className="space-y-0.5">
-                <Label htmlFor="allow-multi-slot" className="text-xs font-bold text-nx-ink cursor-pointer">
+                <Label
+                  htmlFor="allow-multi-slot"
+                  className="cursor-pointer text-xs font-bold text-nx-ink"
+                >
                   {t("resources.bookingRules.allowMultiSlot", {
                     defaultValue: "Allow Multiple Consecutive Slots",
                   })}

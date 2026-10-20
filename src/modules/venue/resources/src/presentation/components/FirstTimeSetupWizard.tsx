@@ -2,12 +2,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from "@core/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@core/ui/dialog";
 import { Button } from "@core/ui/button";
 import { Input } from "@core/ui/input";
 import { Label } from "@core/ui/label";
@@ -351,13 +346,13 @@ export function FirstTimeSetupWizard({
 
           {/* Stepper Progress Bar (Exact 3 Steps) */}
           {!finished && (
-            <div className="flex items-center justify-between gap-1.5 mt-4 text-[11px] font-semibold text-nx-ink-3">
+            <div className="mt-4 flex items-center justify-between gap-1.5 text-[11px] font-semibold text-nx-ink-3">
               {[1, 2, 3].map((s) => (
                 <div
                   key={s}
-                  className={`flex-1 text-center py-1.5 border-b-2 transition-colors ${
+                  className={`flex-1 border-b-2 py-1.5 text-center transition-colors ${
                     step === s
-                      ? "border-[#C6FF00] text-nx-ink font-bold"
+                      ? "border-[#C6FF00] font-bold text-nx-ink"
                       : step > s
                         ? "border-emerald-500 text-emerald-600 dark:text-emerald-400"
                         : "border-nx-line text-nx-ink-3"
@@ -377,8 +372,9 @@ export function FirstTimeSetupWizard({
           <div className="space-y-4 py-3">
             {/* Explicit Mode Selector if authorized facilities exist */}
             {facilities.length > 0 && (
-              <div className="flex rounded-lg border border-nx-line p-1 bg-nx-raised/40 gap-1">
-                <Button variant="ghost"
+              <div className="bg-nx-raised/40 flex gap-1 rounded-lg border border-nx-line p-1">
+                <Button
+                  variant="ghost"
                   type="button"
                   onClick={() => {
                     setFacilityMode("existing");
@@ -387,24 +383,27 @@ export function FirstTimeSetupWizard({
                       setBranchName(facilities[0].name);
                     }
                   }}
-                  className={`flex-1 py-1.5 px-3 rounded-md text-xs font-bold transition-all ${
+                  className={`flex-1 rounded-md px-3 py-1.5 text-xs font-bold transition-all ${
                     facilityMode === "existing"
-                      ? "bg-[#C6FF00] text-[#0D0D0E] shadow-xs"
+                      ? "shadow-xs bg-[#C6FF00] text-[#0D0D0E]"
                       : "text-nx-ink-2 hover:text-nx-ink"
                   }`}
                 >
-                  {t("resources.wizard.useExistingFacility", { defaultValue: "Select Existing Facility" })}
+                  {t("resources.wizard.useExistingFacility", {
+                    defaultValue: "Select Existing Facility",
+                  })}
                 </Button>
-                <Button variant="ghost"
+                <Button
+                  variant="ghost"
                   type="button"
                   onClick={() => {
                     setFacilityMode("new");
                     setSelectedFacilityId("");
                     setBranchName("");
                   }}
-                  className={`flex-1 py-1.5 px-3 rounded-md text-xs font-bold transition-all ${
+                  className={`flex-1 rounded-md px-3 py-1.5 text-xs font-bold transition-all ${
                     facilityMode === "new"
-                      ? "bg-[#C6FF00] text-[#0D0D0E] shadow-xs"
+                      ? "shadow-xs bg-[#C6FF00] text-[#0D0D0E]"
                       : "text-nx-ink-2 hover:text-nx-ink"
                   }`}
                 >
@@ -417,28 +416,36 @@ export function FirstTimeSetupWizard({
             {facilityMode === "existing" && facilities.length > 0 && (
               <div className="space-y-2">
                 <Label className="text-xs font-bold text-nx-ink">
-                  {t("resources.wizard.authorizedFacility", { defaultValue: "Authorized Facility / Location" })}
+                  {t("resources.wizard.authorizedFacility", {
+                    defaultValue: "Authorized Facility / Location",
+                  })}
                 </Label>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
                   {facilities.map((fac) => (
-                    <Button variant="ghost"
+                    <Button
+                      variant="ghost"
                       type="button"
                       key={fac.id}
                       onClick={() => {
                         setSelectedFacilityId(fac.id);
                         setBranchName(fac.name);
                       }}
-                      className={`p-2.5 rounded-xl border text-left transition-all ${
+                      className={`rounded-xl border p-2.5 text-left transition-all ${
                         selectedFacilityId === fac.id
-                          ? "border-[#C6FF00] bg-[#C6FF00]/10 ring-1 ring-[#C6FF00] font-semibold"
+                          ? "border-[#C6FF00] bg-[#C6FF00]/10 font-semibold ring-1 ring-[#C6FF00]"
                           : "border-nx-line bg-nx-surface hover:bg-nx-raised"
                       }`}
                     >
-                      <p className="text-xs font-bold text-nx-ink flex items-center gap-1.5">
+                      <p className="flex items-center gap-1.5 text-xs font-bold text-nx-ink">
                         <Building2 className="size-3.5 text-nx-ink-3" />
                         <span>{fac.name}</span>
                       </p>
-                      <p className="text-[10px] text-nx-ink-3 mt-0.5">{fac.code || t("resources.wizard.standardFacility", { defaultValue: "Standard Facility" })}</p>
+                      <p className="mt-0.5 text-[10px] text-nx-ink-3">
+                        {fac.code ||
+                          t("resources.wizard.standardFacility", {
+                            defaultValue: "Standard Facility",
+                          })}
+                      </p>
                     </Button>
                   ))}
                 </div>
@@ -478,43 +485,51 @@ export function FirstTimeSetupWizard({
               />
             </div>
 
-            <div className="space-y-2 pt-2 border-t border-nx-line/60">
+            <div className="border-nx-line/60 space-y-2 border-t pt-2">
               <Label className="text-sm font-semibold">
-                {t("resources.wizard.managementMode", { defaultValue: "Who will manage this venue?" })}
+                {t("resources.wizard.managementMode", {
+                  defaultValue: "Who will manage this venue?",
+                })}
               </Label>
               <div className="grid grid-cols-2 gap-2">
-                <Button variant="ghost"
+                <Button
+                  variant="ghost"
                   type="button"
                   onClick={() => handleSelectManagementMode("solo")}
-                  className={`p-2.5 rounded-nx-md border text-left transition-all ${
+                  className={`rounded-nx-md border p-2.5 text-left transition-all ${
                     managementMode === "solo"
                       ? "border-[#C6FF00] bg-[#C6FF00]/10 ring-1 ring-[#C6FF00]"
-                      : "border-nx-line hover:bg-nx-surfaceSubtle"
+                      : "hover:bg-nx-surfaceSubtle border-nx-line"
                   }`}
                 >
-                  <p className="text-xs font-bold text-nx-ink flex items-center gap-1.5">
+                  <p className="flex items-center gap-1.5 text-xs font-bold text-nx-ink">
                     <User className="size-3.5 text-nx-accent" aria-hidden="true" />
                     <span>{t("resources.wizard.justMe", { defaultValue: "Just me" })}</span>
                   </p>
-                  <p className="text-[10px] text-nx-ink-2 mt-0.5">
-                    {t("resources.wizard.justMeHelp", { defaultValue: "Operate everything directly. Simple & fast." })}
+                  <p className="mt-0.5 text-[10px] text-nx-ink-2">
+                    {t("resources.wizard.justMeHelp", {
+                      defaultValue: "Operate everything directly. Simple & fast.",
+                    })}
                   </p>
                 </Button>
-                <Button variant="ghost"
+                <Button
+                  variant="ghost"
                   type="button"
                   onClick={() => handleSelectManagementMode("team")}
-                  className={`p-2.5 rounded-nx-md border text-left transition-all ${
+                  className={`rounded-nx-md border p-2.5 text-left transition-all ${
                     managementMode === "team"
                       ? "border-[#C6FF00] bg-[#C6FF00]/10 ring-1 ring-[#C6FF00]"
-                      : "border-nx-line hover:bg-nx-surfaceSubtle"
+                      : "hover:bg-nx-surfaceSubtle border-nx-line"
                   }`}
                 >
-                  <p className="text-xs font-bold text-nx-ink flex items-center gap-1.5">
+                  <p className="flex items-center gap-1.5 text-xs font-bold text-nx-ink">
                     <Users className="size-3.5 text-nx-accent" aria-hidden="true" />
                     <span>{t("resources.wizard.team", { defaultValue: "Me and my team" })}</span>
                   </p>
-                  <p className="text-[10px] text-nx-ink-2 mt-0.5">
-                    {t("resources.wizard.teamHelp", { defaultValue: "Invite managers and receptionists in Settings." })}
+                  <p className="mt-0.5 text-[10px] text-nx-ink-2">
+                    {t("resources.wizard.teamHelp", {
+                      defaultValue: "Invite managers and receptionists in Settings.",
+                    })}
                   </p>
                 </Button>
               </div>
@@ -530,18 +545,21 @@ export function FirstTimeSetupWizard({
                 {t("resources.wizard.sportTypeLabel", { defaultValue: "Type" })}
               </Label>
               <div className="flex flex-wrap gap-1.5">
-                  {SPORT_TYPES.map((type) => (
-                  <Button variant="ghost"
+                {SPORT_TYPES.map((type) => (
+                  <Button
+                    variant="ghost"
                     type="button"
                     key={type}
                     onClick={() => {
                       setSportType(type);
-                      setCourtItems(courtItems.map((c, i) => ({ ...c, name: `${type} Court ${i + 1}` })));
+                      setCourtItems(
+                        courtItems.map((c, i) => ({ ...c, name: `${type} Court ${i + 1}` }))
+                      );
                     }}
-                    className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all ${
+                    className={`rounded-xl px-3 py-1.5 text-xs font-bold transition-all ${
                       sportType === type
-                        ? "bg-[#C6FF00] text-[#0D0D0E] shadow-xs"
-                        : "bg-nx-surface border border-nx-line text-nx-ink hover:bg-nx-raised"
+                        ? "shadow-xs bg-[#C6FF00] text-[#0D0D0E]"
+                        : "border border-nx-line bg-nx-surface text-nx-ink hover:bg-nx-raised"
                     }`}
                   >
                     {t(`resources.sports.${type}`, { defaultValue: type })}
@@ -560,7 +578,7 @@ export function FirstTimeSetupWizard({
                 })}
               </p>
 
-              <div className="space-y-2 max-h-48 overflow-y-auto pr-1">
+              <div className="max-h-48 space-y-2 overflow-y-auto pr-1">
                 {courtItems.map((courtItem, index) => (
                   <div key={courtItem.clientKey || index} className="flex items-center gap-2">
                     <Input
@@ -578,7 +596,9 @@ export function FirstTimeSetupWizard({
                       onClick={() => removeCourt(index)}
                       disabled={courtItems.length <= 1}
                       className="h-8 w-8 p-0 text-nx-ink-3 hover:text-destructive"
-                      aria-label={t("resources.wizard.removeCourt", { defaultValue: "Remove court" })}
+                      aria-label={t("resources.wizard.removeCourt", {
+                        defaultValue: "Remove court",
+                      })}
                     >
                       <Trash2 className="size-3.5" aria-hidden="true" />
                     </Button>
@@ -593,7 +613,11 @@ export function FirstTimeSetupWizard({
                 className="mt-2 gap-1 text-xs"
               >
                 <Plus className="size-3.5" aria-hidden="true" />
-                <span>{t("resources.wizard.addMoreCourts", { defaultValue: "+ Add Another Court / Space" })}</span>
+                <span>
+                  {t("resources.wizard.addMoreCourts", {
+                    defaultValue: "+ Add Another Court / Space",
+                  })}
+                </span>
               </Button>
             </div>
           </div>
@@ -602,7 +626,7 @@ export function FirstTimeSetupWizard({
         {/* STEP 3: WHEN & HOW MUCH (Operating Schedule, Slot Duration, Pricing, and Review) */}
         {step === 3 && (
           <div className="space-y-4 py-2">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
               {/* Left Column: Operating Schedule & Booking Slot Duration */}
               <div className="space-y-4">
                 {/* 1. Operating Schedule */}
@@ -618,19 +642,23 @@ export function FirstTimeSetupWizard({
                   >
                     {/* Option A: Open 24/7 */}
                     <div
-                      className={`flex items-start gap-2.5 p-3 rounded-xl border cursor-pointer transition-all ${
+                      className={`flex cursor-pointer items-start gap-2.5 rounded-xl border p-3 transition-all ${
                         isOpen247
                           ? "border-[#C6FF00] bg-[#C6FF00]/10 ring-1 ring-[#C6FF00]"
-                          : "border-nx-line bg-nx-surface hover:bg-nx-surfaceSubtle"
+                          : "hover:bg-nx-surfaceSubtle border-nx-line bg-nx-surface"
                       }`}
                     >
                       <RadioGroupItem id="wizard-open247" value="open247" className="mt-0.5" />
                       <div>
-                        <p className="text-xs font-bold text-nx-ink flex items-center gap-1.5">
+                        <p className="flex items-center gap-1.5 text-xs font-bold text-nx-ink">
                           <Clock className="size-3.5 text-nx-accent" aria-hidden="true" />
-                          <Label htmlFor="wizard-open247" className="cursor-pointer">{t("resources.workingHours.open247", { defaultValue: "Open 24 Hours (24/7)" })}</Label>
+                          <Label htmlFor="wizard-open247" className="cursor-pointer">
+                            {t("resources.workingHours.open247", {
+                              defaultValue: "Open 24 Hours (24/7)",
+                            })}
+                          </Label>
                         </p>
-                        <p className="text-[10px] text-nx-ink-2 mt-0.5">
+                        <p className="mt-0.5 text-[10px] text-nx-ink-2">
                           {t("resources.workingHours.open247Description", {
                             defaultValue: "Open all day and night every day of the week.",
                           })}
@@ -640,26 +668,30 @@ export function FirstTimeSetupWizard({
 
                     {/* Option B: Custom Hours */}
                     <div
-                      className={`flex items-start gap-2.5 p-3 rounded-xl border cursor-pointer transition-all ${
+                      className={`flex cursor-pointer items-start gap-2.5 rounded-xl border p-3 transition-all ${
                         !isOpen247
                           ? "border-[#C6FF00] bg-[#C6FF00]/10 ring-1 ring-[#C6FF00]"
-                          : "border-nx-line bg-nx-surface hover:bg-nx-surfaceSubtle"
+                          : "hover:bg-nx-surfaceSubtle border-nx-line bg-nx-surface"
                       }`}
                     >
                       <RadioGroupItem id="wizard-custom-hours" value="custom" className="mt-0.5" />
                       <div className="flex-1">
-                        <p className="text-xs font-bold text-nx-ink flex items-center gap-1.5">
+                        <p className="flex items-center gap-1.5 text-xs font-bold text-nx-ink">
                           <Building2 className="size-3.5 text-nx-ink-2" aria-hidden="true" />
-                          <Label htmlFor="wizard-custom-hours" className="cursor-pointer">{t("resources.workingHours.custom", { defaultValue: "Custom Working Hours" })}</Label>
+                          <Label htmlFor="wizard-custom-hours" className="cursor-pointer">
+                            {t("resources.workingHours.custom", {
+                              defaultValue: "Custom Working Hours",
+                            })}
+                          </Label>
                         </p>
-                        <p className="text-[10px] text-nx-ink-2 mt-0.5">
+                        <p className="mt-0.5 text-[10px] text-nx-ink-2">
                           {t("resources.workingHours.customDescription", {
                             defaultValue: "Specify daily opening and closing hours.",
                           })}
                         </p>
 
                         {!isOpen247 && (
-                          <div className="grid grid-cols-2 gap-2 mt-2 pt-2 border-t border-nx-line/60">
+                          <div className="border-nx-line/60 mt-2 grid grid-cols-2 gap-2 border-t pt-2">
                             <div>
                               <Label className="text-[10px] text-nx-ink-3">
                                 {t("resources.workingHours.openTime", { defaultValue: "Opens At" })}
@@ -668,18 +700,20 @@ export function FirstTimeSetupWizard({
                                 type="time"
                                 value={opensAt}
                                 onChange={(e) => setOpensAt(e.target.value)}
-                                className="h-7 text-xs mt-0.5"
+                                className="mt-0.5 h-7 text-xs"
                               />
                             </div>
                             <div>
                               <Label className="text-[10px] text-nx-ink-3">
-                                {t("resources.workingHours.closeTime", { defaultValue: "Closes At" })}
+                                {t("resources.workingHours.closeTime", {
+                                  defaultValue: "Closes At",
+                                })}
                               </Label>
                               <Input
                                 type="time"
                                 value={closesAt}
                                 onChange={(e) => setClosesAt(e.target.value)}
-                                className="h-7 text-xs mt-0.5"
+                                className="mt-0.5 h-7 text-xs"
                               />
                             </div>
                           </div>
@@ -692,7 +726,9 @@ export function FirstTimeSetupWizard({
                 {/* 2. Booking Slot Duration */}
                 <div className="space-y-2">
                   <Label className="text-xs font-bold uppercase tracking-wider text-nx-ink-3">
-                    {t("resources.bookingRules.slotDuration", { defaultValue: "2. Booking Slot Duration" })}
+                    {t("resources.bookingRules.slotDuration", {
+                      defaultValue: "2. Booking Slot Duration",
+                    })}
                   </Label>
 
                   <div className="grid grid-cols-2 gap-2">
@@ -702,14 +738,15 @@ export function FirstTimeSetupWizard({
                       { duration: 90, labelKey: "duration90" },
                       { duration: 120, labelKey: "duration120" },
                     ].map(({ duration, labelKey }) => (
-                      <Button variant="ghost"
+                      <Button
+                        variant="ghost"
                         type="button"
                         key={duration}
                         onClick={() => setSlotDurationMinutes(duration)}
-                        className={`p-2 rounded-xl border text-left rtl:text-right transition-all ${
+                        className={`rounded-xl border p-2 text-left transition-all rtl:text-right ${
                           slotDurationMinutes === duration
                             ? "border-[#C6FF00] bg-[#C6FF00]/10 font-bold text-nx-ink ring-1 ring-[#C6FF00]"
-                            : "border-nx-line bg-nx-surface hover:bg-nx-raised text-nx-ink-2"
+                            : "border-nx-line bg-nx-surface text-nx-ink-2 hover:bg-nx-raised"
                         }`}
                       >
                         <p className="text-xs font-semibold">
@@ -717,7 +754,12 @@ export function FirstTimeSetupWizard({
                             defaultValue: `${duration} minutes`,
                           })}
                         </p>
-                        <p className="text-[10px] text-nx-ink-3">{t("resources.wizard.everyMinutes", { defaultValue: "Every {{value}} minutes", value: duration })}</p>
+                        <p className="text-[10px] text-nx-ink-3">
+                          {t("resources.wizard.everyMinutes", {
+                            defaultValue: "Every {{value}} minutes",
+                            value: duration,
+                          })}
+                        </p>
                       </Button>
                     ))}
                   </div>
@@ -734,7 +776,10 @@ export function FirstTimeSetupWizard({
 
                   <div className="grid grid-cols-2 gap-2">
                     <div className="space-y-1">
-                      <Label htmlFor="wizard-price" className="text-[11px] font-medium text-nx-ink-2">
+                      <Label
+                        htmlFor="wizard-price"
+                        className="text-[11px] font-medium text-nx-ink-2"
+                      >
                         {t("resources.pricing.pricePerSlot", { defaultValue: "Price per Slot" })}
                       </Label>
                       <div className="relative">
@@ -745,29 +790,59 @@ export function FirstTimeSetupWizard({
                           step={10}
                           value={pricePerSlot}
                           onChange={(e) => setPricePerSlot(Number(e.target.value) || 0)}
-                          className="pr-12 rtl:pr-3 rtl:pl-12 text-sm font-semibold h-9"
+                          className="h-9 pr-12 text-sm font-semibold rtl:pl-12 rtl:pr-3"
                         />
-                        <span className="absolute right-3 rtl:right-auto rtl:left-3 top-2 text-xs font-bold text-nx-ink-3">
+                        <span className="absolute right-3 top-2 text-xs font-bold text-nx-ink-3 rtl:left-3 rtl:right-auto">
                           {currencyCode}
                         </span>
                       </div>
                     </div>
 
                     <div className="space-y-1">
-                      <Label htmlFor="wizard-currency" className="text-[11px] font-medium text-nx-ink-2">
+                      <Label
+                        htmlFor="wizard-currency"
+                        className="text-[11px] font-medium text-nx-ink-2"
+                      >
                         {t("resources.pricing.currency", { defaultValue: "Currency" })}
                       </Label>
                       <GenericSelect
                         id="wizard-currency"
                         value={currencyCode}
                         options={[
-                          { value: "EGP", label: t("resources.pricing.currencies.EGP", { defaultValue: "EGP (Egyptian Pound)" }) },
-                          { value: "SAR", label: t("resources.pricing.currencies.SAR", { defaultValue: "SAR (Saudi Riyal)" }) },
-                          { value: "AED", label: t("resources.pricing.currencies.AED", { defaultValue: "AED (UAE Dirham)" }) },
-                          { value: "USD", label: t("resources.pricing.currencies.USD", { defaultValue: "USD (US Dollar)" }) },
-                          { value: "EUR", label: t("resources.pricing.currencies.EUR", { defaultValue: "EUR (Euro)" }) },
+                          {
+                            value: "EGP",
+                            label: t("resources.pricing.currencies.EGP", {
+                              defaultValue: "EGP (Egyptian Pound)",
+                            }),
+                          },
+                          {
+                            value: "SAR",
+                            label: t("resources.pricing.currencies.SAR", {
+                              defaultValue: "SAR (Saudi Riyal)",
+                            }),
+                          },
+                          {
+                            value: "AED",
+                            label: t("resources.pricing.currencies.AED", {
+                              defaultValue: "AED (UAE Dirham)",
+                            }),
+                          },
+                          {
+                            value: "USD",
+                            label: t("resources.pricing.currencies.USD", {
+                              defaultValue: "USD (US Dollar)",
+                            }),
+                          },
+                          {
+                            value: "EUR",
+                            label: t("resources.pricing.currencies.EUR", {
+                              defaultValue: "EUR (Euro)",
+                            }),
+                          },
                         ]}
-                        aria-label={t("resources.wizard.currencyLabel", { defaultValue: "Currency" })}
+                        aria-label={t("resources.wizard.currencyLabel", {
+                          defaultValue: "Currency",
+                        })}
                         onValueChange={(value: string | string[]) => {
                           if (typeof value === "string") setCurrencyCode(value);
                         }}
@@ -778,26 +853,32 @@ export function FirstTimeSetupWizard({
                 </div>
 
                 {/* 4. Configuration Review Summary */}
-                <div className="p-3 rounded-xl border border-nx-border bg-nx-raised/40 text-xs space-y-2">
-                  <span className="font-bold text-nx-ink text-[11px] uppercase tracking-wider">
-                    {t("resources.wizard.configurationReview", { defaultValue: "Configuration Review" })}
+                <div className="border-nx-border bg-nx-raised/40 space-y-2 rounded-xl border p-3 text-xs">
+                  <span className="text-[11px] font-bold uppercase tracking-wider text-nx-ink">
+                    {t("resources.wizard.configurationReview", {
+                      defaultValue: "Configuration Review",
+                    })}
                   </span>
                   <div className="grid grid-cols-2 gap-2 text-nx-ink-2">
                     <div>
                       <span className="text-nx-ink-3">Facility: </span>
-                      <span className="font-semibold text-nx-ink truncate block">{branchName}</span>
+                      <span className="block truncate font-semibold text-nx-ink">{branchName}</span>
                     </div>
                     <div>
                       <span className="text-nx-ink-3">Sport: </span>
-                      <span className="font-semibold text-nx-ink truncate block">{sportType}</span>
+                      <span className="block truncate font-semibold text-nx-ink">{sportType}</span>
                     </div>
                     <div>
                       <span className="text-nx-ink-3">Courts: </span>
-                      <span className="font-semibold text-nx-ink block">{courtItems.length} spaces</span>
+                      <span className="block font-semibold text-nx-ink">
+                        {courtItems.length} spaces
+                      </span>
                     </div>
                     <div>
                       <span className="text-nx-ink-3">Rate: </span>
-                      <span className="font-semibold text-nx-ink block">{pricePerSlot} {currencyCode} / {slotDurationMinutes}m</span>
+                      <span className="block font-semibold text-nx-ink">
+                        {pricePerSlot} {currencyCode} / {slotDurationMinutes}m
+                      </span>
                     </div>
                   </div>
                 </div>
@@ -815,7 +896,7 @@ export function FirstTimeSetupWizard({
 
             {/* Partial Failure Breakdown & Safe Retry */}
             {partialResults.length > 0 && partialResults.some((r) => !r.success) && (
-              <div className="mt-3 p-3 rounded-xl border border-amber-300 bg-amber-50/50 dark:bg-amber-950/20 text-xs space-y-2">
+              <div className="mt-3 space-y-2 rounded-xl border border-amber-300 bg-amber-50/50 p-3 text-xs dark:bg-amber-950/20">
                 <p className="font-bold text-amber-800 dark:text-amber-200">
                   Partial Creation Status:
                 </p>
@@ -824,9 +905,9 @@ export function FirstTimeSetupWizard({
                     <div key={i} className="flex items-center justify-between">
                       <span className="font-semibold">{r.name}</span>
                       {r.success ? (
-                        <span className="text-emerald-600 font-bold text-[11px]">Created ✓</span>
+                        <span className="text-[11px] font-bold text-emerald-600">Created ✓</span>
                       ) : (
-                        <span className="text-amber-600 text-[11px] font-medium">
+                        <span className="text-[11px] font-medium text-amber-600">
                           Failed ({r.stepFailed || "create"}): {r.error}
                         </span>
                       )}
@@ -838,9 +919,9 @@ export function FirstTimeSetupWizard({
                   size="sm"
                   variant="outline"
                   onClick={retryFailedCourts}
-                  className="w-full mt-2 text-xs border-amber-400 text-amber-800 hover:bg-amber-100"
+                  className="mt-2 w-full border-amber-400 text-xs text-amber-800 hover:bg-amber-100"
                 >
-                  <RotateCcw className="size-3.5 mr-1.5" />
+                  <RotateCcw className="mr-1.5 size-3.5" />
                   <span>Retry Only Failed Courts</span>
                 </Button>
               </div>
@@ -867,14 +948,22 @@ export function FirstTimeSetupWizard({
             </div>
 
             <div className="flex flex-wrap items-center justify-center gap-3 pt-2">
-              <Button asChild size="sm" className="font-bold bg-[#C6FF00] hover:bg-[#b5eb00] text-[#0D0D0E] shadow-sm">
+              <Button
+                asChild
+                size="sm"
+                className="bg-[#C6FF00] font-bold text-[#0D0D0E] shadow-sm hover:bg-[#b5eb00]"
+              >
                 <a href="/venue/calendar">
-                  <CalendarDays className="size-4 mr-1.5" aria-hidden="true" />
-                  <span>{t("resources.wizard.goToCalendar", { defaultValue: "Open Calendar" })}</span>
+                  <CalendarDays className="mr-1.5 size-4" aria-hidden="true" />
+                  <span>
+                    {t("resources.wizard.goToCalendar", { defaultValue: "Open Calendar" })}
+                  </span>
                 </a>
               </Button>
               <Button variant="outline" size="sm" onClick={resetAndClose}>
-                <span>{t("resources.wizard.goToResources", { defaultValue: "View Courts & Spaces" })}</span>
+                <span>
+                  {t("resources.wizard.goToResources", { defaultValue: "View Courts & Spaces" })}
+                </span>
               </Button>
             </div>
           </div>
@@ -911,9 +1000,9 @@ export function FirstTimeSetupWizard({
                   size="sm"
                   disabled={submitting}
                   onClick={() => void handleFinish(false)}
-                  className="font-medium text-xs border-nx-border"
+                  className="border-nx-border text-xs font-medium"
                 >
-                  <FileCheck className="size-3.5 mr-1.5" />
+                  <FileCheck className="mr-1.5 size-3.5" />
                   <span>Save as Draft</span>
                 </Button>
 
@@ -924,7 +1013,7 @@ export function FirstTimeSetupWizard({
                   disabled={submitting}
                   loading={submitting}
                   onClick={() => void handleFinish(true)}
-                  className="font-bold bg-[#C6FF00] hover:bg-[#b5eb00] text-[#0D0D0E] shadow-sm"
+                  className="bg-[#C6FF00] font-bold text-[#0D0D0E] shadow-sm hover:bg-[#b5eb00]"
                 >
                   {submitting
                     ? t("resources.wizard.finishing", { defaultValue: "Setting up venue..." })
@@ -938,4 +1027,3 @@ export function FirstTimeSetupWizard({
     </Dialog>
   );
 }
-

@@ -1,7 +1,8 @@
 export const en = {
   venueSettings: {
     title: "Venue Settings",
-    description: "Branch profiles, booking defaults, team collaboration, and advanced configuration.",
+    description:
+      "Branch profiles, booking defaults, team collaboration, and advanced configuration.",
     tabs: {
       branch: "Branch & Venue",
       booking: "Booking Defaults",
@@ -16,25 +17,30 @@ export const en = {
       timezone: "Operating Timezone",
       noSelection: "No branch selected",
       timezoneUnavailable: "Timezone unavailable",
-      multiBranchNote: "To configure multiple branches or update physical campus records, open Advanced Settings → Branch Registry.",
+      multiBranchNote:
+        "To configure multiple branches or update physical campus records, open Advanced Settings → Branch Registry.",
     },
     booking: {
       title: "Global Booking Preferences",
       description: "Venue-wide scheduling defaults and booking policies.",
       courtRulesTitle: "Court-Specific Rules Architecture",
-      courtRulesDescription: "Slot duration (60 min, 90 min, etc.), pricing, and working hours are configured canonically inside each Court's Detail view.",
+      courtRulesDescription:
+        "Slot duration (60 min, 90 min, etc.), pricing, and working hours are configured canonically inside each Court's Detail view.",
       courtsLink: "Courts & Spaces",
       windowTitle: "Advance Booking Window",
-      windowDescription: "Maximum days in advance clients and operators can reserve slots (Default: 14 days).",
+      windowDescription:
+        "Maximum days in advance clients and operators can reserve slots (Default: 14 days).",
       windowDays: "{{count}} Days",
     },
     team: {
       title: "Venue Management Mode & Collaboration",
       description: "Control whether you operate solo or collaborate with staff members.",
       soloTitle: "Just Me (Solo Owner)",
-      soloDescription: "Keep navigation simple and clean. Team management is hidden from normal menus.",
+      soloDescription:
+        "Keep navigation simple and clean. Team management is hidden from normal menus.",
       teamTitle: "Me and My Team (Collaborative)",
-      teamDescription: "Expose Team in the secondary sidebar to invite managers, receptionists, and assign roles.",
+      teamDescription:
+        "Expose Team in the secondary sidebar to invite managers, receptionists, and assign roles.",
       manageTitle: "Manage Team Members & Permissions",
       manageDescription: "Configure staff accounts, roles, and administrative access.",
       openTeam: "Open Team Management",
@@ -47,7 +53,8 @@ export const en = {
     },
     advanced: {
       title: "Advanced Administrative Configuration",
-      description: "Technical registries and multi-campus configurations for power operators and administrators.",
+      description:
+        "Technical registries and multi-campus configurations for power operators and administrators.",
       badge: "Admin Only",
       registries: {
         facilitiesTitle: "Branch & Facility Registry",

@@ -134,7 +134,7 @@ export function AvailabilitySearchCard({ vm, timeZoneId, canSearch }: Availabili
         {vm.searchResult?.isAvailable && (
           <Button
             type="button"
-            className="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-medium shadow-sm"
+            className="w-full bg-emerald-600 font-medium text-white shadow-sm hover:bg-emerald-700"
             onClick={() => {
               const startIso = new Date(startLocal).toISOString();
               const params = new URLSearchParams({

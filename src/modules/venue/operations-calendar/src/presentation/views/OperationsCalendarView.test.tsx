@@ -40,7 +40,13 @@ vi.mock("../components/FindAvailableSlotsModal", () => ({
     props.open ? (
       <button
         data-testid="find-slots-select"
-        onClick={() => props.onSelectSlot({ id: "res-padel-2", name: "Court 2", facilityId: "fac-1" }, "2026-10-15T10:00:00.000Z", 90)}
+        onClick={() =>
+          props.onSelectSlot(
+            { id: "res-padel-2", name: "Court 2", facilityId: "fac-1" },
+            "2026-10-15T10:00:00.000Z",
+            90
+          )
+        }
       >
         Select Slot
       </button>
@@ -140,7 +146,10 @@ describe("OperationsCalendarView — Phase 3 Entry Points & Court Readiness", ()
 
     render(<OperationsCalendarView />);
     expect(screen.getByTestId("click-to-book-modal")).toBeInTheDocument();
-    expect(screen.getByTestId("click-to-book-modal")).toHaveAttribute("data-resource-id", "res-padel-1");
+    expect(screen.getByTestId("click-to-book-modal")).toHaveAttribute(
+      "data-resource-id",
+      "res-padel-1"
+    );
     expect(screen.getByTestId("click-to-book-modal")).toHaveAttribute("data-duration", "90");
     expect(window.history.replaceState).toHaveBeenCalled();
   });
@@ -184,6 +193,9 @@ describe("OperationsCalendarView — Phase 3 Entry Points & Court Readiness", ()
     render(<OperationsCalendarView />);
     expect(customVm.setFacilityId).toHaveBeenCalledWith("fac-2");
     expect(screen.getByTestId("click-to-book-modal")).toBeInTheDocument();
-    expect(screen.getByTestId("click-to-book-modal")).toHaveAttribute("data-resource-id", "res-branch-2");
+    expect(screen.getByTestId("click-to-book-modal")).toHaveAttribute(
+      "data-resource-id",
+      "res-branch-2"
+    );
   });
 });

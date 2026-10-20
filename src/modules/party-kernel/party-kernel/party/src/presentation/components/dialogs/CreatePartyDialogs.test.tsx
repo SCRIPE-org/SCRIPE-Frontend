@@ -94,7 +94,10 @@ describe("CreatePersonDialog Component", () => {
 
   it("handles contact point failure by entering partial save state and retrying with derived key", async () => {
     const onSubmit = vi.fn().mockImplementation(async (params) => {
-      params.onContactPointFailure?.(new Error("Network timeout on phone write"), "party-recovered-456");
+      params.onContactPointFailure?.(
+        new Error("Network timeout on phone write"),
+        "party-recovered-456"
+      );
       return "party-recovered-456";
     });
     mockPartyRepository.addContactPoint.mockResolvedValue("cp-new-1");
@@ -196,4 +199,3 @@ describe("CreateOrganizationDialog Component", () => {
     expect(callArgs.taxId).toBe("300112233400003");
   });
 });
-

@@ -23,10 +23,10 @@ export function TenantNeedsAttention({ alerts }: TenantNeedsAttentionProps) {
   const { t } = useI18n();
 
   return (
-    <Card className="p-4 sm:p-5 min-w-0 overflow-hidden border-nx-line bg-nx-surface text-nx-ink hover:border-nx-line-hi">
+    <Card className="min-w-0 overflow-hidden border-nx-line bg-nx-surface p-4 text-nx-ink hover:border-nx-line-hi sm:p-5">
       {/* Header */}
-      <div className="mb-3.5 flex flex-wrap items-center justify-between gap-2 min-w-0">
-        <div className="flex items-center gap-2.5 min-w-0">
+      <div className="mb-3.5 flex min-w-0 flex-wrap items-center justify-between gap-2">
+        <div className="flex min-w-0 items-center gap-2.5">
           <div
             className="flex h-8 w-8 shrink-0 items-center justify-center rounded-nx-md"
             style={{
@@ -36,12 +36,12 @@ export function TenantNeedsAttention({ alerts }: TenantNeedsAttentionProps) {
           >
             <AlertTriangle className="h-4 w-4" />
           </div>
-          <h3 className="text-sm font-semibold text-nx-ink truncate">
+          <h3 className="truncate text-sm font-semibold text-nx-ink">
             {t("tenantCommandCenter.attention.title") || "Needs Attention"}
           </h3>
           <Badge
             variant={alerts.length > 0 ? "destructive" : "secondary"}
-            className="h-5 px-1.5 text-[10px] font-bold shrink-0"
+            className="h-5 shrink-0 px-1.5 text-[10px] font-bold"
           >
             {alerts.length}
           </Badge>
@@ -49,7 +49,7 @@ export function TenantNeedsAttention({ alerts }: TenantNeedsAttentionProps) {
 
         <Link
           href="/settings"
-          className="flex items-center gap-1 text-xs font-semibold text-nx-accent hover:underline shrink-0"
+          className="flex shrink-0 items-center gap-1 text-xs font-semibold text-nx-accent hover:underline"
         >
           <span>{t("tenantCommandCenter.attention.viewAll") || "View all"}</span>
           <ChevronRight className="h-3 w-3 rtl:rotate-180" />

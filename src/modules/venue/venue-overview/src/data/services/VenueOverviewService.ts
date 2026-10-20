@@ -68,7 +68,8 @@ export class VenueOverviewService implements IVenueOverviewService {
 
   constructor(
     apiOrOpsRepo?: IApiService | IOperationsCalendarRepository | null,
-    schedulableResourceRepoOrOpsRepo?: ISchedulableResourceRepository | IOperationsCalendarRepository,
+    schedulableResourceRepoOrOpsRepo?:
+      ISchedulableResourceRepository | IOperationsCalendarRepository,
     profileRepoOrSched?: IFacilityResourceProfileRepository | ISchedulableResourceRepository,
     facilityRepoOrProf?: IFacilityRepository | IFacilityResourceProfileRepository,
     customerRepoOrFacility?: ICustomerPartyRepository | IFacilityRepository,
@@ -76,19 +77,23 @@ export class VenueOverviewService implements IVenueOverviewService {
   ) {
     if (apiOrOpsRepo && "getDay" in apiOrOpsRepo) {
       this.operationsCalendarRepo = apiOrOpsRepo as IOperationsCalendarRepository;
-      this.schedulableResourceRepo = schedulableResourceRepoOrOpsRepo as ISchedulableResourceRepository;
+      this.schedulableResourceRepo =
+        schedulableResourceRepoOrOpsRepo as ISchedulableResourceRepository;
       this.profileRepo = profileRepoOrSched as IFacilityResourceProfileRepository;
       this.facilityRepo = facilityRepoOrProf as IFacilityRepository;
       this.customerRepo = customerRepoOrFacility as ICustomerPartyRepository;
     } else if (apiOrOpsRepo && typeof (apiOrOpsRepo as IApiService).get === "function") {
       this.api = apiOrOpsRepo as IApiService | null;
-      this.operationsCalendarRepo = schedulableResourceRepoOrOpsRepo as IOperationsCalendarRepository | undefined;
-      this.schedulableResourceRepo = profileRepoOrSched as ISchedulableResourceRepository | undefined;
+      this.operationsCalendarRepo = schedulableResourceRepoOrOpsRepo as
+        IOperationsCalendarRepository | undefined;
+      this.schedulableResourceRepo = profileRepoOrSched as
+        ISchedulableResourceRepository | undefined;
       this.profileRepo = facilityRepoOrProf as IFacilityResourceProfileRepository | undefined;
       this.facilityRepo = customerRepoOrFacility as IFacilityRepository | undefined;
       this.customerRepo = maybeCustomerRepo;
     } else if (schedulableResourceRepoOrOpsRepo) {
-      this.operationsCalendarRepo = schedulableResourceRepoOrOpsRepo as IOperationsCalendarRepository;
+      this.operationsCalendarRepo =
+        schedulableResourceRepoOrOpsRepo as IOperationsCalendarRepository;
       this.schedulableResourceRepo = profileRepoOrSched as ISchedulableResourceRepository;
       this.profileRepo = facilityRepoOrProf as IFacilityResourceProfileRepository;
       this.facilityRepo = customerRepoOrFacility as IFacilityRepository;
@@ -120,7 +125,12 @@ export class VenueOverviewService implements IVenueOverviewService {
     facilityIdInput?: string,
     targetLocalDateInput?: string
   ): Promise<VenueOverviewState> {
-    if (!this.facilityRepo || !this.profileRepo || !this.schedulableResourceRepo || !this.operationsCalendarRepo) {
+    if (
+      !this.facilityRepo ||
+      !this.profileRepo ||
+      !this.schedulableResourceRepo ||
+      !this.operationsCalendarRepo
+    ) {
       throw new Error("Repository dependencies are required when API client is not configured.");
     }
     const facilityRepo = this.facilityRepo;

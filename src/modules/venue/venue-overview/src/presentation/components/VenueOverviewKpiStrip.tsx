@@ -25,11 +25,14 @@ export function VenueOverviewKpiStrip({ kpis, attentionCount, t }: Props) {
   }
 
   return (
-    <div className="mb-6 grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4" data-testid="venue-overview-kpi-strip">
+    <div
+      className="mb-6 grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4"
+      data-testid="venue-overview-kpi-strip"
+    >
       <Link href="/venue/calendar" className="group block">
-        <Card className="border-nx-line bg-nx-surface transition-all duration-nx-micro hover:border-nx-accent/50 hover:shadow-nx-sm">
+        <Card className="hover:border-nx-accent/50 border-nx-line bg-nx-surface transition-all duration-nx-micro hover:shadow-nx-sm">
           <CardContent className="flex items-center gap-3.5 p-4">
-            <div className="flex size-11 shrink-0 items-center justify-center rounded-nx-md border border-nx-accent/30 bg-nx-accent/10 text-nx-accent transition-colors group-hover:bg-nx-accent/20">
+            <div className="border-nx-accent/30 bg-nx-accent/10 group-hover:bg-nx-accent/20 flex size-11 shrink-0 items-center justify-center rounded-nx-md border text-nx-accent transition-colors">
               <CalendarCheck2 className="size-5" aria-hidden="true" />
             </div>
             <div className="min-w-0 flex-1">
@@ -56,7 +59,11 @@ export function VenueOverviewKpiStrip({ kpis, attentionCount, t }: Props) {
             <div className="min-w-0 flex-1">
               <MetricHeading t={t} label="checkedInNow" />
               <MetricValue>{kpis.checkedInNowCount}</MetricValue>
-              <MetricSubtext>{t("venueOverview.kpis.checkedInNowSubtext", { defaultValue: "Currently in session" })}</MetricSubtext>
+              <MetricSubtext>
+                {t("venueOverview.kpis.checkedInNowSubtext", {
+                  defaultValue: "Currently in session",
+                })}
+              </MetricSubtext>
             </div>
           </CardContent>
         </Card>
@@ -79,17 +86,21 @@ export function VenueOverviewKpiStrip({ kpis, attentionCount, t }: Props) {
 
       {attentionCount !== undefined ? (
         <Link href="/venue/attention" className="group block">
-          <Card className={cn(
-            "border-nx-line bg-nx-surface transition-all duration-nx-micro hover:shadow-nx-sm",
-            attentionCount > 0 && "border-amber-500/40 bg-amber-500/5 hover:border-amber-500"
-          )}>
+          <Card
+            className={cn(
+              "border-nx-line bg-nx-surface transition-all duration-nx-micro hover:shadow-nx-sm",
+              attentionCount > 0 && "border-amber-500/40 bg-amber-500/5 hover:border-amber-500"
+            )}
+          >
             <CardContent className="flex items-center gap-3.5 p-4">
-              <div className={cn(
-                "flex size-11 shrink-0 items-center justify-center rounded-nx-md border transition-colors",
-                attentionCount > 0
-                  ? "border-amber-500/40 bg-amber-500/15 text-amber-600 dark:text-amber-400"
-                  : "border-nx-line bg-nx-surfaceSubtle text-nx-ink-2"
-              )}>
+              <div
+                className={cn(
+                  "flex size-11 shrink-0 items-center justify-center rounded-nx-md border transition-colors",
+                  attentionCount > 0
+                    ? "border-amber-500/40 bg-amber-500/15 text-amber-600 dark:text-amber-400"
+                    : "bg-nx-surfaceSubtle border-nx-line text-nx-ink-2"
+                )}
+              >
                 <ShieldAlert className="size-5" aria-hidden="true" />
               </div>
               <div className="min-w-0 flex-1">
@@ -109,17 +120,24 @@ export function VenueOverviewKpiStrip({ kpis, attentionCount, t }: Props) {
         </Link>
       ) : (
         <Link href="/venue/facilities" className="group block">
-          <Card className="border-nx-line bg-nx-surface transition-all duration-nx-micro hover:border-nx-accent/50 hover:shadow-nx-sm">
+          <Card className="hover:border-nx-accent/50 border-nx-line bg-nx-surface transition-all duration-nx-micro hover:shadow-nx-sm">
             <CardContent className="flex items-center gap-3.5 p-4">
-              <div className="flex size-11 shrink-0 items-center justify-center rounded-nx-md border border-nx-line bg-nx-surfaceSubtle text-nx-ink-2 transition-colors group-hover:bg-nx-hover">
+              <div className="bg-nx-surfaceSubtle flex size-11 shrink-0 items-center justify-center rounded-nx-md border border-nx-line text-nx-ink-2 transition-colors group-hover:bg-nx-hover">
                 <Layers className="size-5" aria-hidden="true" />
               </div>
               <div className="min-w-0 flex-1">
                 <MetricHeading t={t} label="activeResources" />
                 <MetricValue>{kpis.activeResourcesCount}</MetricValue>
-                <MetricSubtext>{t("venueOverview.kpis.activeResourcesSubtext", { defaultValue: "Featured in today's schedule" })}</MetricSubtext>
+                <MetricSubtext>
+                  {t("venueOverview.kpis.activeResourcesSubtext", {
+                    defaultValue: "Featured in today's schedule",
+                  })}
+                </MetricSubtext>
               </div>
-              <ArrowUpRight className="size-3 shrink-0 text-nx-ink-3 opacity-0 transition-opacity group-hover:opacity-100" aria-hidden="true" />
+              <ArrowUpRight
+                className="size-3 shrink-0 text-nx-ink-3 opacity-0 transition-opacity group-hover:opacity-100"
+                aria-hidden="true"
+              />
             </CardContent>
           </Card>
         </Link>

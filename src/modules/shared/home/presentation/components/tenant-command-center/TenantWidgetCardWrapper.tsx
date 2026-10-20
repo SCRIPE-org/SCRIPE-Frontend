@@ -3,18 +3,11 @@
 import React from "react";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
-import {
-  GripVertical,
-  Settings,
-  Trash2,
-} from "lucide-react";
+import { GripVertical, Settings, Trash2 } from "lucide-react";
 import { Button } from "@core/ui/button";
 import { Badge } from "@core/ui/badge";
 import { useI18n } from "@core/providers/i18n-provider";
-import type {
-  TenantOverviewWidgetItem,
-  TenantWidgetColSpan,
-} from "./tenantCustomizationTypes";
+import type { TenantOverviewWidgetItem, TenantWidgetColSpan } from "./tenantCustomizationTypes";
 import {
   COL_SPAN_CLASSES,
   getWidgetDefinition,
@@ -82,14 +75,7 @@ export function TenantWidgetCardWrapper({
     }
   }, [item.colSpan, item.widgetId, isEditing]);
 
-  const {
-    attributes,
-    listeners,
-    setNodeRef,
-    transform,
-    transition,
-    isDragging,
-  } = useSortable({
+  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
     id: item.id,
     disabled: !isEditing,
   });
@@ -107,7 +93,7 @@ export function TenantWidgetCardWrapper({
     return (
       <div
         style={{ gridRowEnd: `span ${rowSpan}` }}
-        className={`min-w-0 widget-container ${colSpanClass}`}
+        className={`widget-container min-w-0 ${colSpanClass}`}
       >
         <div ref={contentRef} className="h-fit">
           {children}
@@ -120,23 +106,23 @@ export function TenantWidgetCardWrapper({
     <div
       ref={setNodeRef}
       style={style}
-      className={`min-w-0 widget-container ${colSpanClass} group relative transition-all ${
+      className={`widget-container min-w-0 ${colSpanClass} group relative transition-all ${
         isDragging ? "z-50 opacity-40" : "z-0"
       }`}
     >
       <div
         ref={contentRef}
-        className="relative h-fit rounded-nx-lg border-2 border-dashed border-nx-accent/40 bg-nx-surface/90 p-2.5 transition-all hover:border-nx-accent hover:bg-nx-surface"
+        className="border-nx-accent/40 bg-nx-surface/90 relative h-fit rounded-nx-lg border-2 border-dashed p-2.5 transition-all hover:border-nx-accent hover:bg-nx-surface"
       >
         {/* Responsive Customization Controls Toolbar */}
         <div className="widget-toolbar-container mb-2.5 rounded-nx-md border border-nx-line bg-nx-raised px-2.5 py-1.5">
           {/* Header Row: Drag Handle, Title & Category */}
-          <div className="widget-toolbar-header-row flex items-center gap-1.5 min-w-0">
+          <div className="widget-toolbar-header-row flex min-w-0 items-center gap-1.5">
             <button
               type="button"
               {...attributes}
               {...listeners}
-              className="flex h-7 w-7 shrink-0 cursor-grab items-center justify-center rounded-nx-sm border border-nx-line bg-nx-surface text-nx-ink-3 hover:border-nx-line-hi hover:bg-nx-raised hover:text-nx-ink active:cursor-grabbing focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+              className="flex h-7 w-7 shrink-0 cursor-grab items-center justify-center rounded-nx-sm border border-nx-line bg-nx-surface text-nx-ink-3 hover:border-nx-line-hi hover:bg-nx-raised hover:text-nx-ink focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring active:cursor-grabbing"
               title={t("tenantCommandCenter.customization.dragToReorder") || "Drag to reorder"}
               aria-label={t("tenantCommandCenter.customization.dragToReorder") || "Drag to reorder"}
             >
@@ -150,7 +136,7 @@ export function TenantWidgetCardWrapper({
             {definition && (
               <Badge
                 variant="outline"
-                className="hidden sm:inline-flex text-[9px] px-1.5 py-0 capitalize text-nx-ink-3 border-nx-line shrink-0"
+                className="hidden shrink-0 border-nx-line px-1.5 py-0 text-[9px] capitalize text-nx-ink-3 sm:inline-flex"
               >
                 {definition.category}
               </Badge>
@@ -158,7 +144,7 @@ export function TenantWidgetCardWrapper({
           </div>
 
           {/* Actions Row: Quick Width Selector, Settings & Remove */}
-          <div className="widget-toolbar-actions-row flex items-center gap-1 shrink-0">
+          <div className="widget-toolbar-actions-row flex shrink-0 items-center gap-1">
             {/* Width Selector Pills */}
             <div className="flex items-center rounded-nx-sm border border-nx-line bg-nx-surface p-0.5">
               {WIDTH_PILLS.map(({ span, label }) => {
@@ -179,7 +165,7 @@ export function TenantWidgetCardWrapper({
                     }}
                     className={`rounded-nx-xs px-1.5 py-0.5 text-[10px] font-semibold transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring ${
                       isCurrent
-                        ? "bg-nx-accent text-white shadow-xs"
+                        ? "shadow-xs bg-nx-accent text-white"
                         : "text-nx-ink-3 hover:bg-nx-raised hover:text-nx-ink"
                     }`}
                     title={`Set width to ${label}`}
@@ -198,9 +184,11 @@ export function TenantWidgetCardWrapper({
                 variant="ghost"
                 size="sm"
                 onClick={() => onConfigure(item)}
-                className="h-7 w-7 p-0 text-nx-ink-3 hover:text-nx-ink hover:bg-nx-raised"
+                className="h-7 w-7 p-0 text-nx-ink-3 hover:bg-nx-raised hover:text-nx-ink"
                 title={t("tenantCommandCenter.customization.widgetSettings") || "Widget settings"}
-                aria-label={t("tenantCommandCenter.customization.widgetSettings") || "Widget settings"}
+                aria-label={
+                  t("tenantCommandCenter.customization.widgetSettings") || "Widget settings"
+                }
               >
                 <Settings className="h-3.5 w-3.5" />
               </Button>
@@ -224,9 +212,7 @@ export function TenantWidgetCardWrapper({
         </div>
 
         {/* Live Widget Content */}
-        <div className="pointer-events-none select-none opacity-95">
-          {children}
-        </div>
+        <div className="pointer-events-none select-none opacity-95">{children}</div>
       </div>
     </div>
   );

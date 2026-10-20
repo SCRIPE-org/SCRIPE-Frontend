@@ -19,11 +19,7 @@ export type TenantWidgetId =
   | "successPartner";
 
 export type TenantWidgetCategory =
-  | "overview"
-  | "analytics"
-  | "operations"
-  | "productivity"
-  | "people";
+  "overview" | "analytics" | "operations" | "productivity" | "people";
 
 export type TenantWidgetColSpan = 3 | 4 | 6 | 8 | 12;
 

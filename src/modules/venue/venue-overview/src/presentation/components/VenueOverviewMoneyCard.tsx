@@ -58,16 +58,16 @@ export function VenueOverviewMoneyCard({ t }: Props) {
 
         {/* Live Financial Metrics Pill (when available from authoritative Finance contract) */}
         {summary && currency && !loading && (
-          <div className="flex flex-wrap items-center gap-4 px-4 py-2 rounded-nx-lg bg-nx-surfaceSubtle/80 border border-nx-line text-xs">
+          <div className="bg-nx-surfaceSubtle/80 flex flex-wrap items-center gap-4 rounded-nx-lg border border-nx-line px-4 py-2 text-xs">
             <div className="flex items-center gap-2">
-              <div className="p-1 rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400">
+              <div className="rounded-full bg-emerald-500/10 p-1 text-emerald-600 dark:text-emerald-400">
                 <Wallet className="size-3.5" aria-hidden="true" />
               </div>
               <div>
-                <span className="text-[10px] text-nx-ink-3 uppercase block leading-none font-semibold">
+                <span className="block text-[10px] font-semibold uppercase leading-none text-nx-ink-3">
                   {t("venueOverview.moneyCard.collectedToday", { defaultValue: "Collected Today" })}
                 </span>
-                <span className="text-xs font-bold font-mono text-emerald-600 dark:text-emerald-400">
+                <span className="font-mono text-xs font-bold text-emerald-600 dark:text-emerald-400">
                   {formatMoney(summary.collectedToday, currency, language)}
                 </span>
               </div>
@@ -76,28 +76,29 @@ export function VenueOverviewMoneyCard({ t }: Props) {
             <div className="h-6 w-px bg-nx-line" />
 
             <div className="flex items-center gap-2">
-              <div className="p-1 rounded-full bg-amber-500/10 text-amber-600 dark:text-amber-400">
+              <div className="rounded-full bg-amber-500/10 p-1 text-amber-600 dark:text-amber-400">
                 <Clock className="size-3.5" aria-hidden="true" />
               </div>
               <div>
-                <span className="text-[10px] text-nx-ink-3 uppercase block leading-none font-semibold">
+                <span className="block text-[10px] font-semibold uppercase leading-none text-nx-ink-3">
                   {t("venueOverview.moneyCard.outstanding", { defaultValue: "Outstanding" })}
                 </span>
-                <span className="text-xs font-bold font-mono text-amber-600 dark:text-amber-400">
+                <span className="font-mono text-xs font-bold text-amber-600 dark:text-amber-400">
                   {formatMoney(summary.outstanding, currency, language)}
                 </span>
               </div>
             </div>
 
             {summary.unallocatedPaymentsCount > 0 && (
-              <Badge variant="warning" className="text-[10px] px-1.5 py-0.5">
-                {summary.unallocatedPaymentsCount} {t("venueOverview.moneyCard.unallocated", { defaultValue: "unallocated" })}
+              <Badge variant="warning" className="px-1.5 py-0.5 text-[10px]">
+                {summary.unallocatedPaymentsCount}{" "}
+                {t("venueOverview.moneyCard.unallocated", { defaultValue: "unallocated" })}
               </Badge>
             )}
           </div>
         )}
 
-        <div className="flex flex-wrap items-center gap-2.5 shrink-0">
+        <div className="flex shrink-0 flex-wrap items-center gap-2.5">
           {canViewReceivables && (
             <Button
               asChild
@@ -145,4 +146,3 @@ export function VenueOverviewMoneyCard({ t }: Props) {
     </Card>
   );
 }
-

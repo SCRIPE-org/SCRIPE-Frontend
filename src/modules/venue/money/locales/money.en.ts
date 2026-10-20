@@ -25,7 +25,8 @@ export const en = {
     },
     landing: {
       title: "Money & Commercials",
-      description: "Invoice balances, receivables, and customer payments for your venue operations.",
+      description:
+        "Invoice balances, receivables, and customer payments for your venue operations.",
       viewReceivables: "View Receivables",
       viewPayments: "View Payments",
       recordPayment: "Record Payment",
@@ -116,7 +117,8 @@ export const en = {
       },
       exceptions: {
         title: "Financial Exceptions & Actions",
-        unallocatedWarning: "Unallocated payments exist. Ensure payments are explicitly allocated to avoid duplicate recording.",
+        unallocatedWarning:
+          "Unallocated payments exist. Ensure payments are explicitly allocated to avoid duplicate recording.",
         allGood: "No unallocated payments or outstanding reconciliation errors detected.",
       },
     },

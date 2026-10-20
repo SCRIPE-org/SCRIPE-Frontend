@@ -31,9 +31,9 @@ export function GuestBookingFinancialCard({
   const isFullyPaid = financialSummary.outstandingAmount <= 0;
 
   return (
-    <Card className="border border-nx-line/80 shadow-sm overflow-hidden bg-nx-surface">
-      <CardHeader className="py-3 px-4 sm:px-6 bg-nx-surfaceSubtle/50 border-b border-nx-line/50 flex flex-row items-center justify-between">
-        <CardTitle className="text-sm font-semibold flex items-center gap-2 text-nx-ink">
+    <Card className="border-nx-line/80 overflow-hidden border bg-nx-surface shadow-sm">
+      <CardHeader className="bg-nx-surfaceSubtle/50 border-nx-line/50 flex flex-row items-center justify-between border-b px-4 py-3 sm:px-6">
+        <CardTitle className="flex items-center gap-2 text-sm font-semibold text-nx-ink">
           <CreditCard className="size-4 text-nx-accent" aria-hidden="true" />
           {t("guestPortal.finance.title")}
         </CardTitle>
@@ -53,9 +53,9 @@ export function GuestBookingFinancialCard({
         </div>
       </CardHeader>
 
-      <CardContent className="p-4 sm:p-6 space-y-4">
+      <CardContent className="space-y-4 p-4 sm:p-6">
         {financialSummary.invoiceNumber && (
-          <div className="flex items-center justify-between text-xs text-nx-ink-2 border-b border-nx-line/40 pb-2">
+          <div className="border-nx-line/40 flex items-center justify-between border-b pb-2 text-xs text-nx-ink-2">
             <span>{t("guestPortal.finance.invoiceNumber")}</span>
             <span className="font-mono font-medium text-nx-ink" dir="ltr">
               {financialSummary.invoiceNumber}
@@ -63,29 +63,29 @@ export function GuestBookingFinancialCard({
           </div>
         )}
 
-        <div className="grid grid-cols-3 gap-2 sm:gap-4 text-center">
-          <div className="p-2.5 sm:p-3 rounded-nx-md bg-nx-surfaceSubtle border border-nx-line/40">
-            <span className="block text-[11px] font-semibold text-nx-ink-3 uppercase tracking-wider">
+        <div className="grid grid-cols-3 gap-2 text-center sm:gap-4">
+          <div className="bg-nx-surfaceSubtle border-nx-line/40 rounded-nx-md border p-2.5 sm:p-3">
+            <span className="block text-[11px] font-semibold uppercase tracking-wider text-nx-ink-3">
               {t("guestPortal.finance.totalAmount")}
             </span>
-            <span className="block text-sm sm:text-base font-bold text-nx-ink mt-1">
+            <span className="mt-1 block text-sm font-bold text-nx-ink sm:text-base">
               {formatCurrency(financialSummary.totalAmount)}
             </span>
           </div>
 
-          <div className="p-2.5 sm:p-3 rounded-nx-md bg-emerald-500/5 dark:bg-emerald-500/10 border border-emerald-500/20">
-            <span className="block text-[11px] font-semibold text-emerald-700 dark:text-emerald-400 uppercase tracking-wider">
+          <div className="rounded-nx-md border border-emerald-500/20 bg-emerald-500/5 p-2.5 dark:bg-emerald-500/10 sm:p-3">
+            <span className="block text-[11px] font-semibold uppercase tracking-wider text-emerald-700 dark:text-emerald-400">
               {t("guestPortal.finance.paidAmount")}
             </span>
-            <span className="block text-sm sm:text-base font-bold text-emerald-600 dark:text-emerald-400 mt-1">
+            <span className="mt-1 block text-sm font-bold text-emerald-600 dark:text-emerald-400 sm:text-base">
               {formatCurrency(financialSummary.paidAmount)}
             </span>
           </div>
 
           <div
-            className={`p-2.5 sm:p-3 rounded-nx-md border ${
+            className={`rounded-nx-md border p-2.5 sm:p-3 ${
               financialSummary.outstandingAmount > 0
-                ? "bg-amber-500/5 dark:bg-amber-500/10 border-amber-500/20"
+                ? "border-amber-500/20 bg-amber-500/5 dark:bg-amber-500/10"
                 : "bg-nx-surfaceSubtle border-nx-line/40"
             }`}
           >
@@ -99,7 +99,7 @@ export function GuestBookingFinancialCard({
               {t("guestPortal.finance.outstandingAmount")}
             </span>
             <span
-              className={`block text-sm sm:text-base font-bold mt-1 ${
+              className={`mt-1 block text-sm font-bold sm:text-base ${
                 financialSummary.outstandingAmount > 0
                   ? "text-amber-600 dark:text-amber-400"
                   : "text-nx-ink-3"

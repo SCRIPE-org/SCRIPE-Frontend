@@ -61,7 +61,8 @@ export const ar = {
       outstanding: "المستحق",
       paid: "المدفوع",
       recordedPayments: "الدفعات المسجلة",
-      pendingAllocationNotice: "تنتظر دفعة مسجلة بقيمة {{amount}} تخصيصها للفاتورة {{invoiceNumber}}.",
+      pendingAllocationNotice:
+        "تنتظر دفعة مسجلة بقيمة {{amount}} تخصيصها للفاتورة {{invoiceNumber}}.",
       pendingSyncNotice: "لا تزال مزامنة الفاتورة المالية قيد التنفيذ.",
       unallocated: "غير مخصصة",
       allocated: "مخصصة",
@@ -200,7 +201,8 @@ export const ar = {
     },
     cancelledPaid: {
       title: "لا تزال الدفعة مسجلة في المالية",
-      description: "تم إلغاء هذا الحجز، لكن مبلغ {{amount}} ما زال مسجلًا في المالية. الإلغاء لا ينفذ استردادًا.",
+      description:
+        "تم إلغاء هذا الحجز، لكن مبلغ {{amount}} ما زال مسجلًا في المالية. الإلغاء لا ينفذ استردادًا.",
       manageRefund: "إدارة الدفعة في المالية",
     },
     permission: {

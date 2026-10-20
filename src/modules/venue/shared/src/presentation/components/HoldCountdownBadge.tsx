@@ -59,9 +59,9 @@ export function HoldCountdownBadge({
     <Badge
       variant="outline"
       className={cn(
-        "gap-1.5 font-mono text-xs px-2.5 py-1 border transition-colors",
+        "gap-1.5 border px-2.5 py-1 font-mono text-xs transition-colors",
         isCritical
-          ? "border-red-500/50 bg-red-500/10 text-red-400 animate-pulse"
+          ? "animate-pulse border-red-500/50 bg-red-500/10 text-red-400"
           : "border-amber-500/40 bg-amber-500/10 text-amber-300",
         className
       )}

@@ -51,10 +51,12 @@ export function VenueOverviewLiveCourts({ items, overview, t }: VenueOverviewLiv
         </Link>
       </div>
 
-      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3">
+      <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
         {displayCourts.length === 0 ? (
-          <div className="col-span-full py-8 text-center text-xs text-nx-ink-2 bg-nx-surface rounded-nx-xl border border-nx-line">
-            {t("venueOverview.liveCourts.noCourts", { defaultValue: "No active courts configured" })}
+          <div className="rounded-nx-xl col-span-full border border-nx-line bg-nx-surface py-8 text-center text-xs text-nx-ink-2">
+            {t("venueOverview.liveCourts.noCourts", {
+              defaultValue: "No active courts configured",
+            })}
           </div>
         ) : (
           displayCourts.map((court: VenueOverviewResourceActivityItem, idx: number) => {
@@ -62,57 +64,76 @@ export function VenueOverviewLiveCourts({ items, overview, t }: VenueOverviewLiv
             const isNext = court.statusLabel === "nextBooking";
             const isMaintenance = court.statusLabel === ("maintenance" as string);
 
-            let statusText = t("venueOverview.liveCourts.idle", { defaultValue: "No Current Booking" });
+            let statusText = t("venueOverview.liveCourts.idle", {
+              defaultValue: "No Current Booking",
+            });
             let statusBadge = "bg-nx-surfaceSubtle text-nx-ink-2 border-nx-line";
-            let timeText = t("venueOverview.resourceActivity.status.noActiveBooking", { defaultValue: "No Active Booking" });
+            let timeText = t("venueOverview.resourceActivity.status.noActiveBooking", {
+              defaultValue: "No Active Booking",
+            });
 
             if (isCheckedIn && court.currentOrNextEndUtc) {
               statusText = t("venueOverview.liveCourts.inUse", { defaultValue: "In Use" });
-              statusBadge = "bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 border-emerald-500/20";
+              statusBadge =
+                "bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 border-emerald-500/20";
               const time = court.currentOrNextEndUtc.slice(11, 16);
-              timeText = t("venueOverview.liveCourts.until", { time, defaultValue: `Until ${time}` });
+              timeText = t("venueOverview.liveCourts.until", {
+                time,
+                defaultValue: `Until ${time}`,
+              });
             } else if (isNext && court.currentOrNextStartUtc) {
               statusText = t("venueOverview.liveCourts.booked", { defaultValue: "Booked" });
-              statusBadge = "bg-purple-500/10 text-purple-700 dark:text-purple-300 border-purple-500/20";
+              statusBadge =
+                "bg-purple-500/10 text-purple-700 dark:text-purple-300 border-purple-500/20";
               const time = court.currentOrNextStartUtc.slice(11, 16);
-              timeText = t("venueOverview.liveCourts.next", { time, defaultValue: `Next: ${time}` });
+              timeText = t("venueOverview.liveCourts.next", {
+                time,
+                defaultValue: `Next: ${time}`,
+              });
             } else if (isMaintenance) {
-              statusText = t("venueOverview.liveCourts.maintenance", { defaultValue: "Maintenance" });
-              statusBadge = "bg-amber-500/10 text-amber-700 dark:text-amber-300 border-amber-500/20";
+              statusText = t("venueOverview.liveCourts.maintenance", {
+                defaultValue: "Maintenance",
+              });
+              statusBadge =
+                "bg-amber-500/10 text-amber-700 dark:text-amber-300 border-amber-500/20";
               timeText = t("venueOverview.liveCourts.blocked", { defaultValue: "Blocked" });
             }
 
             return (
               <Card
                 key={court.resourceId || idx}
-                className="overflow-hidden border border-nx-line bg-nx-surface shadow-xs hover:shadow-md transition-all rounded-nx-xl"
+                className="shadow-xs rounded-nx-xl overflow-hidden border border-nx-line bg-nx-surface transition-all hover:shadow-md"
               >
                 {/* Court Thumbnail Image with Court Line Aesthetics */}
                 <div
-                  className="h-20 w-full relative p-2 flex flex-col justify-between overflow-hidden"
+                  className="relative flex h-20 w-full flex-col justify-between overflow-hidden p-2"
                   style={{ background: getCourtBg(court.resourceName) }}
                 >
                   <div className="absolute inset-0 bg-black/20 backdrop-blur-[0.5px]" />
                   {/* Subtle sports court line markings */}
-                  <div className="absolute inset-x-2 inset-y-1 border border-white/20 rounded-xs pointer-events-none" />
-                  <div className="absolute inset-x-2 top-1/2 -translate-y-1/2 border-t border-white/20 pointer-events-none" />
+                  <div className="rounded-xs pointer-events-none absolute inset-x-2 inset-y-1 border border-white/20" />
+                  <div className="pointer-events-none absolute inset-x-2 top-1/2 -translate-y-1/2 border-t border-white/20" />
 
                   <div className="relative z-10 flex items-center justify-between">
-                    <span className="text-[10px] font-bold tracking-wider uppercase text-white/90 bg-black/40 px-1.5 py-0.5 rounded-xs backdrop-blur-xs">
-                      {court.resourceName.includes("Padel") ? "Padel" : court.resourceName.includes("Foot") ? "Football" : "Court"}
+                    <span className="rounded-xs backdrop-blur-xs bg-black/40 px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-wider text-white/90">
+                      {court.resourceName.includes("Padel")
+                        ? "Padel"
+                        : court.resourceName.includes("Foot")
+                          ? "Football"
+                          : "Court"}
                     </span>
                   </div>
                 </div>
 
                 {/* Court Info */}
-                <div className="p-3 space-y-2">
+                <div className="space-y-2 p-3">
                   <div className="flex items-center justify-between">
-                    <span className="text-xs font-bold text-nx-ink truncate">
+                    <span className="truncate text-xs font-bold text-nx-ink">
                       {court.resourceName}
                     </span>
                     <button
                       type="button"
-                      className="p-1 text-nx-ink-3 hover:text-nx-ink rounded-xs"
+                      className="rounded-xs p-1 text-nx-ink-3 hover:text-nx-ink"
                       aria-label="Court options"
                     >
                       <MoreHorizontal className="size-3.5" />
@@ -122,25 +143,23 @@ export function VenueOverviewLiveCourts({ items, overview, t }: VenueOverviewLiv
                   {/* Status Pill */}
                   <div>
                     <span
-                      className={`inline-block text-[10px] font-bold px-2 py-0.5 rounded-md border ${statusBadge}`}
+                      className={`inline-block rounded-md border px-2 py-0.5 text-[10px] font-bold ${statusBadge}`}
                     >
                       {statusText}
                     </span>
                   </div>
 
                   {/* Time info */}
-                  <div className="text-[11px] font-medium text-nx-ink-2 truncate">
-                    {timeText}
-                  </div>
+                  <div className="truncate text-[11px] font-medium text-nx-ink-2">{timeText}</div>
 
-                  <div className="flex items-center gap-1.5 pt-1 border-t border-nx-line text-[11px] text-nx-ink-2 truncate">
-                    <User className="size-3 text-nx-ink-3 shrink-0" />
+                  <div className="flex items-center gap-1.5 truncate border-t border-nx-line pt-1 text-[11px] text-nx-ink-2">
+                    <User className="size-3 shrink-0 text-nx-ink-3" />
                     <span className="truncate">
                       {isCheckedIn
                         ? t("venueOverview.liveCourts.activeNow", { defaultValue: "Active Match" })
                         : isNext
-                        ? t("venueOverview.liveCourts.reserved", { defaultValue: "Reserved" })
-                        : "—"}
+                          ? t("venueOverview.liveCourts.reserved", { defaultValue: "Reserved" })
+                          : "—"}
                     </span>
                   </div>
                 </div>

@@ -1,24 +1,12 @@
 "use client";
 
 import { useState } from "react";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogFooter,
-} from "@core/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@core/ui/dialog";
 import { Button } from "@core/ui/button";
 import { Input } from "@core/ui/input";
 import { Label } from "@core/ui/label";
 import { Checkbox } from "@core/ui/checkbox";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@core/ui/select";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@core/ui/select";
 import { useI18n } from "@core/providers/i18n-provider";
 import { Phone, Loader2 } from "lucide-react";
 import type { AddContactPointParams } from "../../../domain/interfaces/IPartyRepository";
@@ -32,11 +20,7 @@ interface AddContactDialogProps {
 /**
  * Modal dialog for registering a new contact method on a party.
  */
-export function AddContactDialog({
-  open,
-  onOpenChange,
-  onSubmit,
-}: AddContactDialogProps) {
+export function AddContactDialog({ open, onOpenChange, onSubmit }: AddContactDialogProps) {
   const { t } = useI18n();
 
   const [type, setType] = useState("Phone");
@@ -93,7 +77,7 @@ export function AddContactDialog({
         <form onSubmit={handleSubmit}>
           <DialogHeader>
             <div className="flex items-center gap-2">
-              <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-nx-accent/10 text-nx-accent">
+              <div className="bg-nx-accent/10 flex h-9 w-9 items-center justify-center rounded-lg text-nx-accent">
                 <Phone className="h-5 w-5" />
               </div>
               <DialogTitle>{t("party.dialog.addContactTitle")}</DialogTitle>
@@ -104,14 +88,14 @@ export function AddContactDialog({
             {error && (
               <div
                 role="alert"
-                className="rounded-md bg-destructive/10 p-3 text-sm text-destructive border border-destructive/20"
+                className="rounded-md border border-destructive/20 bg-destructive/10 p-3 text-sm text-destructive"
               >
                 {error}
               </div>
             )}
 
             <div className="grid gap-2">
-              <Label htmlFor="contact-type" className="text-nx-ink font-medium">
+              <Label htmlFor="contact-type" className="font-medium text-nx-ink">
                 {t("party.dialog.contactType")}
               </Label>
               <Select value={type} onValueChange={setType} disabled={isSubmitting}>
@@ -128,9 +112,8 @@ export function AddContactDialog({
             </div>
 
             <div className="grid gap-2">
-              <Label htmlFor="contact-val" className="text-nx-ink font-medium">
-                {t("party.dialog.contactValue")}{" "}
-                <span className="text-destructive">*</span>
+              <Label htmlFor="contact-val" className="font-medium text-nx-ink">
+                {t("party.dialog.contactValue")} <span className="text-destructive">*</span>
               </Label>
               <Input
                 id="contact-val"
@@ -153,22 +136,14 @@ export function AddContactDialog({
                 onCheckedChange={(c) => setIsPrimary(c === true)}
                 disabled={isSubmitting}
               />
-              <Label
-                htmlFor="contact-is-primary"
-                className="text-xs text-nx-ink cursor-pointer"
-              >
+              <Label htmlFor="contact-is-primary" className="cursor-pointer text-xs text-nx-ink">
                 {t("party.dialog.isPrimaryContact")}
               </Label>
             </div>
           </div>
 
           <DialogFooter className="gap-2 sm:gap-0">
-            <Button
-              type="button"
-              variant="outline"
-              onClick={handleClose}
-              disabled={isSubmitting}
-            >
+            <Button type="button" variant="outline" onClick={handleClose} disabled={isSubmitting}>
               {t("party.dialog.cancel")}
             </Button>
             <Button type="submit" disabled={isSubmitting || !value.trim()}>

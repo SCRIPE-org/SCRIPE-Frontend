@@ -2,7 +2,10 @@
 
 import React from "react";
 import { useRouter } from "next/navigation";
-import { usePartyProfileViewModel, type PartyProfileTab } from "../viewmodels/usePartyProfileViewModel";
+import {
+  usePartyProfileViewModel,
+  type PartyProfileTab,
+} from "../viewmodels/usePartyProfileViewModel";
 import { useModuleLocales } from "@core/hooks/use-module-locales";
 import { useI18n } from "@core/providers/i18n-provider";
 import { resolveIntlLocale } from "@core/common/utils";
@@ -16,12 +19,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@core/ui/card";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@core/ui/tabs";
 import { Skeleton } from "@core/ui/skeleton";
 import { EmptyState } from "@core/ui/empty-state";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@core/ui/tooltip";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@core/ui/tooltip";
 
 // Dialogs
 import { EditPartyDialog } from "../components/dialogs/EditPartyDialog";
@@ -78,9 +76,7 @@ export const PartyProfileView = React.memo(function PartyProfileView({
   const profile = vm.profile;
 
   // Unify customer-facing breadcrumbs to Contacts and use authorized display name for terminal segment
-  useBreadcrumbOverride(
-    profile?.displayName || t("party.profile.title") || "Contact Profile"
-  );
+  useBreadcrumbOverride(profile?.displayName || t("party.profile.title") || "Contact Profile");
 
   const completeness = React.useMemo(() => {
     if (!profile) return { score: 0, checks: [] };
@@ -181,7 +177,7 @@ export const PartyProfileView = React.memo(function PartyProfileView({
   }
 
   return (
-    <div className="space-y-6 p-4 sm:p-6 lg:p-8 max-w-7xl mx-auto">
+    <div className="mx-auto max-w-7xl space-y-6 p-4 sm:p-6 lg:p-8">
       {/* ── Back Navigation ────────────────────────────────────────── */}
       <div>
         <Button
@@ -196,37 +192,33 @@ export const PartyProfileView = React.memo(function PartyProfileView({
       </div>
 
       {/* ── Identity Hero Card ──────────────────────────────────────── */}
-      <Card className="border-nx-border overflow-hidden bg-nx-surface shadow-xs">
+      <Card className="border-nx-border shadow-xs overflow-hidden bg-nx-surface">
         <div className="p-6 sm:p-8">
-          <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-6">
+          <div className="flex flex-col justify-between gap-6 sm:flex-row sm:items-start">
             <div className="flex items-start gap-4">
-              <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl bg-nx-accent/10 text-xl font-bold text-nx-accent">
+              <div className="bg-nx-accent/10 flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl text-xl font-bold text-nx-accent">
                 {profile.initials}
               </div>
 
-              <div className="space-y-1.5 min-w-0">
+              <div className="min-w-0 space-y-1.5">
                 <div className="flex flex-wrap items-center gap-2">
-                  <h1 className="text-2xl font-bold text-nx-ink tracking-tight truncate">
+                  <h1 className="truncate text-2xl font-bold tracking-tight text-nx-ink">
                     {profile.displayName}
                   </h1>
                   <Badge variant={profile.isPerson ? "info" : "success"}>
-                    {profile.isPerson
-                      ? t("party.types.Person")
-                      : t("party.types.Organization")}
+                    {profile.isPerson ? t("party.types.Person") : t("party.types.Organization")}
                   </Badge>
                 </div>
 
                 {profile.isOrganization && profile.legalName && (
-                  <p className="text-sm text-nx-ink-2 font-medium">
-                    {profile.legalName}
-                  </p>
+                  <p className="text-sm font-medium text-nx-ink-2">{profile.legalName}</p>
                 )}
 
                 {/* Canonical Reference & Type Immutability Banner */}
                 <div className="flex flex-wrap items-center gap-3 pt-1 text-xs text-nx-ink-3">
-                  <div className="flex items-center gap-1.5 bg-nx-surface-2/80 px-2 py-0.5 rounded-md border border-nx-border/70 text-[11px] font-mono">
+                  <div className="bg-nx-surface-2/80 border-nx-border/70 flex items-center gap-1.5 rounded-md border px-2 py-0.5 font-mono text-[11px]">
                     <span className="opacity-60">Ref:</span>
-                    <span className="truncate max-w-[140px]" title={profile.id}>
+                    <span className="max-w-[140px] truncate" title={profile.id}>
                       {profile.id.length > 18 ? `${profile.id.slice(0, 12)}…` : profile.id}
                     </span>
                     <Button
@@ -234,7 +226,7 @@ export const PartyProfileView = React.memo(function PartyProfileView({
                       variant="ghost"
                       size="icon"
                       onClick={handleCopyId}
-                      className="h-4 w-4 text-nx-ink-3 hover:text-nx-ink transition-colors ml-0.5 p-0"
+                      className="ml-0.5 h-4 w-4 p-0 text-nx-ink-3 transition-colors hover:text-nx-ink"
                       title={t("party.profile.copyCanonicalId") || "Copy Canonical ID"}
                       aria-label={t("party.profile.copyCanonicalId") || "Copy Canonical ID"}
                     >
@@ -262,25 +254,26 @@ export const PartyProfileView = React.memo(function PartyProfileView({
             </div>
 
             {/* Right Column: Completeness & Quick Actions */}
-            <div className="flex flex-col sm:items-end gap-3 shrink-0">
+            <div className="flex shrink-0 flex-col gap-3 sm:items-end">
               {/* Truthful Data Summary */}
-              <div className="flex flex-col gap-1.5 w-full sm:w-[220px] p-2.5 rounded-xl bg-nx-surface-2/60 border border-nx-border">
+              <div className="bg-nx-surface-2/60 border-nx-border flex w-full flex-col gap-1.5 rounded-xl border p-2.5 sm:w-[220px]">
                 <div className="flex items-center justify-between text-xs">
-                  <span className="text-nx-ink-2 font-medium">
+                  <span className="font-medium text-nx-ink-2">
                     {t("party.profile.completenessScore")}
                   </span>
-                  <span className="text-xs font-mono text-nx-ink-3">
-                    {completeness.checks.filter((c) => c.passed).length}/{completeness.checks.length}
+                  <span className="font-mono text-xs text-nx-ink-3">
+                    {completeness.checks.filter((c) => c.passed).length}/
+                    {completeness.checks.length}
                   </span>
                 </div>
-                <div className="flex items-center gap-1.5 text-[10px] text-nx-ink-3 flex-wrap pt-0.5">
+                <div className="flex flex-wrap items-center gap-1.5 pt-0.5 text-[10px] text-nx-ink-3">
                   {completeness.checks.map((chk) => (
                     <span
                       key={chk.label}
                       className={
                         chk.passed
-                          ? "text-emerald-500 font-medium inline-flex items-center gap-0.5"
-                          : "text-nx-ink-3 inline-flex items-center gap-0.5"
+                          ? "inline-flex items-center gap-0.5 font-medium text-emerald-500"
+                          : "inline-flex items-center gap-0.5 text-nx-ink-3"
                       }
                     >
                       {chk.passed ? "✓" : "○"} {chk.label}
@@ -324,11 +317,9 @@ export const PartyProfileView = React.memo(function PartyProfileView({
       {profile.mergeCandidates.length > 0 && (
         <div className="rounded-xl border border-amber-500/30 bg-amber-500/10 p-4 text-amber-900 dark:text-amber-200">
           <div className="flex items-start gap-3">
-            <AlertTriangle className="h-5 w-5 text-amber-600 shrink-0 mt-0.5" />
+            <AlertTriangle className="mt-0.5 h-5 w-5 shrink-0 text-amber-600" />
             <div className="space-y-1">
-              <h4 className="text-sm font-semibold">
-                {t("party.profile.duplicateAlert")}
-              </h4>
+              <h4 className="text-sm font-semibold">{t("party.profile.duplicateAlert")}</h4>
               <p className="text-xs text-amber-800 dark:text-amber-300">
                 {t("party.profile.duplicateAlertDesc")}{" "}
                 {profile.mergeCandidates.map((m) => m.reason).join(", ")}
@@ -344,7 +335,7 @@ export const PartyProfileView = React.memo(function PartyProfileView({
         onValueChange={(val) => vm.setActiveTab(val as PartyProfileTab)}
         className="space-y-6"
       >
-        <TabsList className="bg-nx-surface border border-nx-border p-1 rounded-xl">
+        <TabsList className="border-nx-border rounded-xl border bg-nx-surface p-1">
           <TabsTrigger value="overview" className="gap-2">
             <User className="h-4 w-4" />
             <span>{t("party.profile.tabOverview")}</span>
@@ -352,7 +343,7 @@ export const PartyProfileView = React.memo(function PartyProfileView({
           <TabsTrigger value="contacts" className="gap-2">
             <Phone className="h-4 w-4" />
             <span>{t("party.profile.tabContacts")}</span>
-            <span className="text-xs rounded-full bg-nx-surface-2 px-1.5 py-0.5">
+            <span className="bg-nx-surface-2 rounded-full px-1.5 py-0.5 text-xs">
               {profile.contactPoints.length}
             </span>
           </TabsTrigger>
@@ -360,7 +351,10 @@ export const PartyProfileView = React.memo(function PartyProfileView({
             <TabsTrigger value="representatives" className="gap-2">
               <Building className="h-4 w-4" />
               <span>{t("party.profile.tabRepresentatives")}</span>
-              <Badge variant="outline" className="text-[10px] px-1.5 py-0 h-4 border-amber-500/30 text-amber-400">
+              <Badge
+                variant="outline"
+                className="h-4 border-amber-500/30 px-1.5 py-0 text-[10px] text-amber-400"
+              >
                 Pending Contract
               </Badge>
             </TabsTrigger>
@@ -368,14 +362,14 @@ export const PartyProfileView = React.memo(function PartyProfileView({
           <TabsTrigger value="relationships" className="gap-2">
             <Users className="h-4 w-4" />
             <span>{t("party.profile.tabRelationships")}</span>
-            <span className="text-xs rounded-full bg-nx-surface-2 px-1.5 py-0.5">
+            <span className="bg-nx-surface-2 rounded-full px-1.5 py-0.5 text-xs">
               {profile.relationships.length}
             </span>
           </TabsTrigger>
           <TabsTrigger value="roles" className="gap-2">
             <Briefcase className="h-4 w-4" />
             <span>{t("party.profile.tabRoles")}</span>
-            <span className="text-xs rounded-full bg-nx-surface-2 px-1.5 py-0.5">
+            <span className="bg-nx-surface-2 rounded-full px-1.5 py-0.5 text-xs">
               {profile.roles.length}
             </span>
           </TabsTrigger>
@@ -383,7 +377,7 @@ export const PartyProfileView = React.memo(function PartyProfileView({
             <ShieldCheck className="h-4 w-4" />
             <span>{t("party.profile.tabAudit")}</span>
             {profile.mergeCandidates.length > 0 && (
-              <span className="text-xs rounded-full bg-amber-500/20 text-amber-700 px-1.5 py-0.5 font-bold">
+              <span className="rounded-full bg-amber-500/20 px-1.5 py-0.5 text-xs font-bold text-amber-700">
                 {profile.mergeCandidates.length}
               </span>
             )}
@@ -392,11 +386,11 @@ export const PartyProfileView = React.memo(function PartyProfileView({
 
         {/* ── Tab 1: Overview ────────────────────────────────────────── */}
         <TabsContent value="overview" className="space-y-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
             {/* Specific Type Details */}
-            <Card className="border-nx-border bg-nx-surface shadow-xs">
+            <Card className="border-nx-border shadow-xs bg-nx-surface">
               <CardHeader>
-                <CardTitle className="text-base flex items-center gap-2">
+                <CardTitle className="flex items-center gap-2 text-base">
                   {profile.isPerson ? (
                     <User className="h-4 w-4 text-nx-accent" />
                   ) : (
@@ -412,62 +406,40 @@ export const PartyProfileView = React.memo(function PartyProfileView({
               <CardContent className="space-y-4 text-sm">
                 {profile.isPerson ? (
                   <>
-                    <div className="flex justify-between py-2 border-b border-nx-border">
-                      <span className="text-nx-ink-3">
-                        {t("party.profile.fullName")}
-                      </span>
-                      <span className="font-medium text-nx-ink">
-                        {profile.fullName}
-                      </span>
+                    <div className="border-nx-border flex justify-between border-b py-2">
+                      <span className="text-nx-ink-3">{t("party.profile.fullName")}</span>
+                      <span className="font-medium text-nx-ink">{profile.fullName}</span>
                     </div>
                     {profile.person?.givenName && (
-                      <div className="flex justify-between py-2 border-b border-nx-border">
-                        <span className="text-nx-ink-3">
-                          {t("party.profile.givenName")}
-                        </span>
-                        <span className="font-medium text-nx-ink">
-                          {profile.person.givenName}
-                        </span>
+                      <div className="border-nx-border flex justify-between border-b py-2">
+                        <span className="text-nx-ink-3">{t("party.profile.givenName")}</span>
+                        <span className="font-medium text-nx-ink">{profile.person.givenName}</span>
                       </div>
                     )}
                     {profile.person?.middleNames && (
-                      <div className="flex justify-between py-2 border-b border-nx-border">
-                        <span className="text-nx-ink-3">
-                          {t("party.profile.middleNames")}
-                        </span>
+                      <div className="border-nx-border flex justify-between border-b py-2">
+                        <span className="text-nx-ink-3">{t("party.profile.middleNames")}</span>
                         <span className="font-medium text-nx-ink">
                           {profile.person.middleNames}
                         </span>
                       </div>
                     )}
                     {profile.person?.familyName && (
-                      <div className="flex justify-between py-2 border-b border-nx-border">
-                        <span className="text-nx-ink-3">
-                          {t("party.profile.familyName")}
-                        </span>
-                        <span className="font-medium text-nx-ink">
-                          {profile.person.familyName}
-                        </span>
+                      <div className="border-nx-border flex justify-between border-b py-2">
+                        <span className="text-nx-ink-3">{t("party.profile.familyName")}</span>
+                        <span className="font-medium text-nx-ink">{profile.person.familyName}</span>
                       </div>
                     )}
-                    <div className="flex justify-between py-2 border-b border-nx-border">
-                      <span className="text-nx-ink-3">
-                        {t("party.profile.isMinor")}
-                      </span>
-                      <Badge
-                        variant={
-                          profile.person?.isMinor ? "secondary" : "outline"
-                        }
-                      >
+                    <div className="border-nx-border flex justify-between border-b py-2">
+                      <span className="text-nx-ink-3">{t("party.profile.isMinor")}</span>
+                      <Badge variant={profile.person?.isMinor ? "secondary" : "outline"}>
                         {profile.person?.isMinor
                           ? t("party.profile.minorYes")
                           : t("party.profile.minorNo")}
                       </Badge>
                     </div>
                     <div className="flex justify-between py-2">
-                      <span className="text-nx-ink-3">
-                        {t("party.profile.dob")}
-                      </span>
+                      <span className="text-nx-ink-3">{t("party.profile.dob")}</span>
                       {profile.person?.dateOfBirth ? (
                         <span className="font-medium text-nx-ink">
                           {formatDate(profile.person.dateOfBirth)}
@@ -475,7 +447,7 @@ export const PartyProfileView = React.memo(function PartyProfileView({
                       ) : profile.person !== null ? (
                         <span className="text-nx-ink-3">—</span>
                       ) : (
-                        <span className="text-xs text-nx-ink-3 italic">
+                        <span className="text-xs italic text-nx-ink-3">
                           {t("party.profile.dobRestricted")}
                         </span>
                       )}
@@ -483,36 +455,25 @@ export const PartyProfileView = React.memo(function PartyProfileView({
                   </>
                 ) : (
                   <>
-                    <div className="flex justify-between py-2 border-b border-nx-border">
-                      <span className="text-nx-ink-3">
-                        {t("party.profile.legalName")}
-                      </span>
-                      <span className="font-medium text-nx-ink">
-                        {profile.legalName || "—"}
-                      </span>
+                    <div className="border-nx-border flex justify-between border-b py-2">
+                      <span className="text-nx-ink-3">{t("party.profile.legalName")}</span>
+                      <span className="font-medium text-nx-ink">{profile.legalName || "—"}</span>
                     </div>
-                    <div className="flex justify-between py-2 border-b border-nx-border">
-                      <span className="text-nx-ink-3">
-                        {t("party.profile.commercialName")}
-                      </span>
-                      <span className="font-medium text-nx-ink">
-                        {profile.displayName}
-                      </span>
+                    <div className="border-nx-border flex justify-between border-b py-2">
+                      <span className="text-nx-ink-3">{t("party.profile.commercialName")}</span>
+                      <span className="font-medium text-nx-ink">{profile.displayName}</span>
                     </div>
-                    <div className="flex justify-between py-2 border-b border-nx-border">
-                      <span className="text-nx-ink-3">
-                        {t("party.profile.taxId")}
-                      </span>
-                      <span className="font-mono text-xs text-nx-ink">
-                        {profile.taxId || "—"}
-                      </span>
+                    <div className="border-nx-border flex justify-between border-b py-2">
+                      <span className="text-nx-ink-3">{t("party.profile.taxId")}</span>
+                      <span className="font-mono text-xs text-nx-ink">{profile.taxId || "—"}</span>
                     </div>
                     <div className="flex justify-between py-2">
-                      <span className="text-nx-ink-3">
-                        Authorized Representatives
-                      </span>
-                      <span className="font-semibold text-xs flex items-center gap-1">
-                        <Badge variant="outline" className="text-[10px] px-1.5 py-0 h-4 border-amber-500/30 text-amber-400">
+                      <span className="text-nx-ink-3">Authorized Representatives</span>
+                      <span className="flex items-center gap-1 text-xs font-semibold">
+                        <Badge
+                          variant="outline"
+                          className="h-4 border-amber-500/30 px-1.5 py-0 text-[10px] text-amber-400"
+                        >
                           Contract Pending (V1)
                         </Badge>
                       </span>
@@ -523,9 +484,9 @@ export const PartyProfileView = React.memo(function PartyProfileView({
             </Card>
 
             {/* Primary Contact Overview */}
-            <Card className="border-nx-border bg-nx-surface shadow-xs">
+            <Card className="border-nx-border shadow-xs bg-nx-surface">
               <CardHeader className="flex flex-row items-center justify-between">
-                <CardTitle className="text-base flex items-center gap-2">
+                <CardTitle className="flex items-center gap-2 text-base">
                   <Phone className="h-4 w-4 text-nx-accent" />
                   <span>{t("party.directory.quickContact")}</span>
                 </CardTitle>
@@ -542,46 +503,38 @@ export const PartyProfileView = React.memo(function PartyProfileView({
                 )}
               </CardHeader>
               <CardContent className="space-y-4 text-sm">
-                <div className="flex justify-between py-2 border-b border-nx-border">
-                  <span className="text-nx-ink-3">
-                    {t("party.profile.primaryTelephone")}
-                  </span>
+                <div className="border-nx-border flex justify-between border-b py-2">
+                  <span className="text-nx-ink-3">{t("party.profile.primaryTelephone")}</span>
                   <span className="font-medium text-nx-ink">
                     {profile.primaryPhone || t("party.directory.noContactRegistered")}
                   </span>
                 </div>
-                <div className="flex justify-between py-2 border-b border-nx-border">
-                  <span className="text-nx-ink-3">
-                    {t("party.profile.primaryEmail")}
-                  </span>
+                <div className="border-nx-border flex justify-between border-b py-2">
+                  <span className="text-nx-ink-3">{t("party.profile.primaryEmail")}</span>
                   <span className="font-medium text-nx-ink">
                     {profile.primaryEmail || t("party.directory.noContactRegistered")}
                   </span>
                 </div>
                 <div className="flex justify-between py-2">
-                  <span className="text-nx-ink-3">
-                    {t("party.profile.totalMethods")}
-                  </span>
-                  <span className="font-semibold text-nx-ink">
-                    {profile.contactPoints.length}
-                  </span>
+                  <span className="text-nx-ink-3">{t("party.profile.totalMethods")}</span>
+                  <span className="font-semibold text-nx-ink">{profile.contactPoints.length}</span>
                 </div>
               </CardContent>
             </Card>
 
             {/* Addresses Section for Person */}
             {profile.isPerson && (
-              <Card className="border-nx-border bg-nx-surface shadow-xs md:col-span-2">
+              <Card className="border-nx-border shadow-xs bg-nx-surface md:col-span-2">
                 <CardHeader>
-                  <CardTitle className="text-base flex items-center gap-2">
+                  <CardTitle className="flex items-center gap-2 text-base">
                     <MapPin className="h-4 w-4 text-nx-accent" />
                     <span>{t("party.profile.addressesTitle")}</span>
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-2 text-sm">
-                  <div className="rounded-lg bg-nx-surface-2/60 border border-nx-border p-3.5 flex items-start gap-3">
-                    <Info className="h-4 w-4 text-nx-accent shrink-0 mt-0.5" />
-                    <p className="text-xs text-nx-ink-2 leading-relaxed">
+                  <div className="bg-nx-surface-2/60 border-nx-border flex items-start gap-3 rounded-lg border p-3.5">
+                    <Info className="mt-0.5 h-4 w-4 shrink-0 text-nx-accent" />
+                    <p className="text-xs leading-relaxed text-nx-ink-2">
                       {t("party.profile.addressesPendingDesc")}
                     </p>
                   </div>
@@ -616,38 +569,33 @@ export const PartyProfileView = React.memo(function PartyProfileView({
               description="Register telephone, email, WhatsApp, or address details for this party."
               action={
                 vm.permissions.canManageContacts ? (
-                  <Button
-                    variant="outline"
-                    onClick={() => vm.setIsAddContactOpen(true)}
-                  >
+                  <Button variant="outline" onClick={() => vm.setIsAddContactOpen(true)}>
                     {t("party.profile.addContact")}
                   </Button>
                 ) : undefined
               }
             />
           ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
               {profile.contactPoints.map((contact) => (
                 <Card
                   key={contact.id}
-                  className="border-nx-border bg-nx-surface p-4 flex items-center justify-between shadow-xs"
+                  className="border-nx-border shadow-xs flex items-center justify-between bg-nx-surface p-4"
                 >
-                  <div className="flex items-center gap-3 min-w-0">
-                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-nx-accent/10 text-nx-accent">
+                  <div className="flex min-w-0 items-center gap-3">
+                    <div className="bg-nx-accent/10 flex h-10 w-10 shrink-0 items-center justify-center rounded-xl text-nx-accent">
                       {getContactIcon(contact.type)}
                     </div>
                     <div className="min-w-0">
                       <div className="flex items-center gap-2">
-                        <span className="text-xs text-nx-ink-3">
-                          {contact.type}
-                        </span>
+                        <span className="text-xs text-nx-ink-3">{contact.type}</span>
                         {contact.isPrimary && (
-                          <Badge variant="outline" className="text-[10px] py-0">
+                          <Badge variant="outline" className="py-0 text-[10px]">
                             {t("party.profile.primaryContact")}
                           </Badge>
                         )}
                       </div>
-                      <div className="font-medium text-sm text-nx-ink truncate">
+                      <div className="truncate text-sm font-medium text-nx-ink">
                         {contact.value}
                       </div>
                     </div>
@@ -686,20 +634,23 @@ export const PartyProfileView = React.memo(function PartyProfileView({
         {profile.isOrganization && (
           <TabsContent value="representatives" className="space-y-4">
             {/* Informative Contract Pending Banner */}
-            <div className="rounded-xl border border-amber-500/40 bg-amber-500/10 dark:bg-amber-950/60 p-4">
+            <div className="rounded-xl border border-amber-500/40 bg-amber-500/10 p-4 dark:bg-amber-950/60">
               <div className="flex items-start gap-3">
-                <AlertCircle className="h-5 w-5 text-amber-600 dark:text-amber-400 shrink-0 mt-0.5" />
+                <AlertCircle className="mt-0.5 h-5 w-5 shrink-0 text-amber-600 dark:text-amber-400" />
                 <div className="space-y-1">
                   <div className="flex items-center gap-2">
                     <h4 className="text-sm font-semibold text-amber-800 dark:text-amber-300">
                       {t("party.profile.representativesContractPending") ||
                         "Pending Backend Contract (V1 Deferred)"}
                     </h4>
-                    <Badge variant="outline" className="text-[10px] border-amber-600/50 dark:border-amber-400/60 text-amber-700 dark:text-amber-300 bg-amber-500/10">
+                    <Badge
+                      variant="outline"
+                      className="border-amber-600/50 bg-amber-500/10 text-[10px] text-amber-700 dark:border-amber-400/60 dark:text-amber-300"
+                    >
                       RFC-PARTY-AFFILIATIONS
                     </Badge>
                   </div>
-                  <p className="text-xs text-amber-900 dark:text-amber-200/90 leading-relaxed font-medium">
+                  <p className="text-xs font-medium leading-relaxed text-amber-900 dark:text-amber-200/90">
                     {t("party.profile.representativesContractPendingBanner") ||
                       "Corporate representative and signatory affiliation contracts are deferred in PartyKernel V1 (backend supports Guardian and EmergencyContact only). Corporate signatory links will activate upon contract finalization."}
                   </p>
@@ -707,14 +658,12 @@ export const PartyProfileView = React.memo(function PartyProfileView({
               </div>
             </div>
 
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <div className="flex flex-col justify-between gap-3 sm:flex-row sm:items-center">
               <div>
                 <h3 className="text-base font-semibold text-nx-ink">
                   {t("party.profile.representativesTitle")}
                 </h3>
-                <p className="text-xs text-nx-ink-3">
-                  {t("party.profile.representativesDesc")}
-                </p>
+                <p className="text-xs text-nx-ink-3">{t("party.profile.representativesDesc")}</p>
               </div>
               <TooltipProvider>
                 <Tooltip>
@@ -723,7 +672,7 @@ export const PartyProfileView = React.memo(function PartyProfileView({
                       <Button
                         size="sm"
                         disabled
-                        className="gap-1.5 text-xs self-start sm:self-auto opacity-50 cursor-not-allowed pointer-events-none"
+                        className="pointer-events-none cursor-not-allowed gap-1.5 self-start text-xs opacity-50 sm:self-auto"
                       >
                         <Plus className="h-3.5 w-3.5" />
                         <span>{t("party.profile.addRepresentative")}</span>
@@ -750,11 +699,11 @@ export const PartyProfileView = React.memo(function PartyProfileView({
                 }
               />
             ) : (
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
                 {representativesList.map((rep) => (
                   <Card
                     key={rep.id}
-                    className="border-nx-border bg-nx-surface p-4 flex flex-col justify-between shadow-xs hover:border-nx-accent/30 transition-colors"
+                    className="border-nx-border shadow-xs hover:border-nx-accent/30 flex flex-col justify-between bg-nx-surface p-4 transition-colors"
                   >
                     <div className="space-y-2">
                       <div className="flex items-center justify-between gap-2">
@@ -774,7 +723,7 @@ export const PartyProfileView = React.memo(function PartyProfileView({
                       <div>
                         <div className="text-xs text-nx-ink-3">Canonical ID:</div>
                         <div
-                          className="font-mono text-xs text-nx-ink truncate"
+                          className="truncate font-mono text-xs text-nx-ink"
                           title={rep.targetPartyId}
                         >
                           {rep.targetPartyId}
@@ -785,14 +734,12 @@ export const PartyProfileView = React.memo(function PartyProfileView({
                       </div>
                     </div>
 
-                    <div className="pt-3 mt-3 border-t border-nx-border">
+                    <div className="border-nx-border mt-3 border-t pt-3">
                       <Button
                         variant="ghost"
                         size="sm"
-                        onClick={() =>
-                          router.push(`/party-kernel/parties/${rep.targetPartyId}`)
-                        }
-                        className="w-full text-xs text-nx-accent hover:text-nx-accent justify-between h-8"
+                        onClick={() => router.push(`/party-kernel/parties/${rep.targetPartyId}`)}
+                        className="h-8 w-full justify-between text-xs text-nx-accent hover:text-nx-accent"
                       >
                         <span>View Person Profile</span>
                         <ArrowLeft className="h-3.5 w-3.5 rotate-180" />
@@ -830,35 +777,26 @@ export const PartyProfileView = React.memo(function PartyProfileView({
               description="Establish connections such as parent/guardian, club member, employee, or partner."
               action={
                 vm.permissions.canManageRelationships ? (
-                  <Button
-                    variant="outline"
-                    onClick={() => vm.setIsAddRelationshipOpen(true)}
-                  >
+                  <Button variant="outline" onClick={() => vm.setIsAddRelationshipOpen(true)}>
                     {t("party.profile.addRelationship")}
                   </Button>
                 ) : undefined
               }
             />
           ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
               {profile.relationships.map((rel) => {
                 const isOutbound = rel.sourcePartyId === partyId;
-                const otherPartyId = isOutbound
-                  ? rel.targetPartyId
-                  : rel.sourcePartyId;
-                const relatedInfo = otherPartyId
-                  ? vm.relatedPartiesMap[otherPartyId]
-                  : undefined;
-                const canNavigate = Boolean(
-                  otherPartyId && otherPartyId !== partyId
-                );
+                const otherPartyId = isOutbound ? rel.targetPartyId : rel.sourcePartyId;
+                const relatedInfo = otherPartyId ? vm.relatedPartiesMap[otherPartyId] : undefined;
+                const canNavigate = Boolean(otherPartyId && otherPartyId !== partyId);
 
                 return (
                   <Card
                     key={rel.id}
-                    className="border-nx-border bg-nx-surface p-4 flex items-center justify-between gap-4 shadow-xs"
+                    className="border-nx-border shadow-xs flex items-center justify-between gap-4 bg-nx-surface p-4"
                   >
-                    <div className="space-y-1.5 min-w-0">
+                    <div className="min-w-0 space-y-1.5">
                       <div className="flex flex-wrap items-center gap-2">
                         <Badge variant="secondary">{rel.relationshipType}</Badge>
                         <Badge
@@ -871,24 +809,22 @@ export const PartyProfileView = React.memo(function PartyProfileView({
                             : t("party.profile.inboundRelation")}
                         </Badge>
                       </div>
-                      <div className="text-sm font-medium text-nx-ink truncate">
+                      <div className="truncate text-sm font-medium text-nx-ink">
                         {relatedInfo?.displayName || otherPartyId}
                       </div>
-                      <div className="text-xs font-mono text-nx-ink-3 truncate">
+                      <div className="truncate font-mono text-xs text-nx-ink-3">
                         {t("party.profile.relatedContact")}: {otherPartyId}
                       </div>
                     </div>
 
-                    <div className="flex items-center gap-1.5 shrink-0">
+                    <div className="flex shrink-0 items-center gap-1.5">
                       {canNavigate && (
                         <Button
                           variant="outline"
                           size="sm"
-                          className="h-8 text-xs gap-1"
+                          className="h-8 gap-1 text-xs"
                           data-testid="relationship-navigate-btn"
-                          onClick={() =>
-                            router.push(`/party-kernel/parties/${otherPartyId}`)
-                          }
+                          onClick={() => router.push(`/party-kernel/parties/${otherPartyId}`)}
                         >
                           <span>{t("party.profile.openRelatedProfile")}</span>
                           <ArrowLeft className="h-3.5 w-3.5 rotate-180" />
@@ -915,9 +851,7 @@ export const PartyProfileView = React.memo(function PartyProfileView({
         {/* ── Tab 4: Roles & Associations ────────────────────────────── */}
         <TabsContent value="roles" className="space-y-4">
           <div className="flex items-center justify-between">
-            <h3 className="text-base font-semibold text-nx-ink">
-              {t("party.profile.tabRoles")}
-            </h3>
+            <h3 className="text-base font-semibold text-nx-ink">{t("party.profile.tabRoles")}</h3>
             {vm.permissions.canManageRoles && (
               <Button
                 size="sm"
@@ -937,26 +871,21 @@ export const PartyProfileView = React.memo(function PartyProfileView({
               description="Assign operational roles such as Customer, Coach, Player, Vendor, or Sponsor."
               action={
                 vm.permissions.canManageRoles ? (
-                  <Button
-                    variant="outline"
-                    onClick={() => vm.setIsAddRoleOpen(true)}
-                  >
+                  <Button variant="outline" onClick={() => vm.setIsAddRoleOpen(true)}>
                     {t("party.profile.addRole")}
                   </Button>
                 ) : undefined
               }
             />
           ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
               {profile.roles.map((role) => (
                 <Card
                   key={role.id}
-                  className="border-nx-border bg-nx-surface p-4 flex items-center justify-between shadow-xs"
+                  className="border-nx-border shadow-xs flex items-center justify-between bg-nx-surface p-4"
                 >
                   <div className="space-y-1">
-                    <div className="font-semibold text-sm text-nx-ink">
-                      {role.roleType}
-                    </div>
+                    <div className="text-sm font-semibold text-nx-ink">{role.roleType}</div>
                     <div className="text-xs text-nx-ink-3">
                       {t("party.profile.assignedOn")}: {formatDate(role.createdAt)}
                     </div>
@@ -984,71 +913,56 @@ export const PartyProfileView = React.memo(function PartyProfileView({
             <h3 className="text-base font-semibold text-nx-ink">
               {t("party.profile.tabAuditTitle")}
             </h3>
-            <p className="text-xs text-nx-ink-3">
-              {t("party.profile.auditDisclaimer")}
-            </p>
+            <p className="text-xs text-nx-ink-3">{t("party.profile.auditDisclaimer")}</p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
             {/* Entity Audit Metadata Card */}
-            <Card className="border-nx-border bg-nx-surface shadow-xs">
+            <Card className="border-nx-border shadow-xs bg-nx-surface">
               <CardHeader>
-                <CardTitle className="text-base flex items-center gap-2">
+                <CardTitle className="flex items-center gap-2 text-base">
                   <ShieldCheck className="h-4 w-4 text-nx-accent" />
                   <span>{t("party.profile.tabAudit")}</span>
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-3 text-sm">
-                <div className="flex justify-between py-2 border-b border-nx-border">
-                  <span className="text-nx-ink-3">
-                    {t("party.profile.canonicalPartyId")}
-                  </span>
-                  <span className="font-mono text-xs text-nx-ink truncate max-w-[200px]" title={profile.id}>
+                <div className="border-nx-border flex justify-between border-b py-2">
+                  <span className="text-nx-ink-3">{t("party.profile.canonicalPartyId")}</span>
+                  <span
+                    className="max-w-[200px] truncate font-mono text-xs text-nx-ink"
+                    title={profile.id}
+                  >
                     {profile.id}
                   </span>
                 </div>
-                <div className="flex justify-between py-2 border-b border-nx-border">
-                  <span className="text-nx-ink-3">
-                    {t("party.profile.partyType")}
-                  </span>
-                  <Badge variant={profile.isPerson ? "default" : "secondary"}>
-                    {profile.type}
-                  </Badge>
+                <div className="border-nx-border flex justify-between border-b py-2">
+                  <span className="text-nx-ink-3">{t("party.profile.partyType")}</span>
+                  <Badge variant={profile.isPerson ? "default" : "secondary"}>{profile.type}</Badge>
                 </div>
-                <div className="flex justify-between py-2 border-b border-nx-border">
-                  <span className="text-nx-ink-3">
-                    {t("party.profile.createdAtLabel")}
-                  </span>
-                  <span className="font-medium text-nx-ink">
-                    {formatDate(profile.createdAt)}
-                  </span>
+                <div className="border-nx-border flex justify-between border-b py-2">
+                  <span className="text-nx-ink-3">{t("party.profile.createdAtLabel")}</span>
+                  <span className="font-medium text-nx-ink">{formatDate(profile.createdAt)}</span>
                 </div>
-                <div className="flex justify-between py-2 border-b border-nx-border">
-                  <span className="text-nx-ink-3">
-                    {t("party.profile.lastModifiedLabel")}
-                  </span>
-                  <span className="font-medium text-nx-ink">
-                    {formatDate(profile.modifiedAt)}
-                  </span>
+                <div className="border-nx-border flex justify-between border-b py-2">
+                  <span className="text-nx-ink-3">{t("party.profile.lastModifiedLabel")}</span>
+                  <span className="font-medium text-nx-ink">{formatDate(profile.modifiedAt)}</span>
                 </div>
                 <div className="flex justify-between py-2">
                   <span className="text-nx-ink-3">{t("party.profile.recordStatus")}</span>
-                  <Badge variant="outline">
-                    {t("party.profile.statusActive")}
-                  </Badge>
+                  <Badge variant="outline">{t("party.profile.statusActive")}</Badge>
                 </div>
               </CardContent>
             </Card>
 
             {/* Deduplication & Merge Candidates */}
-            <Card className="border-nx-border bg-nx-surface shadow-xs">
+            <Card className="border-nx-border shadow-xs bg-nx-surface">
               <CardHeader>
-                <CardTitle className="text-base flex items-center justify-between">
+                <CardTitle className="flex items-center justify-between text-base">
                   <span className="flex items-center gap-2">
                     <AlertTriangle className="h-4 w-4 text-amber-500" />
                     <span>{t("party.profile.mergeCandidatesTitle")}</span>
                   </span>
-                  <span className="text-xs rounded-full bg-nx-surface-2 px-2 py-0.5 text-nx-ink-3">
+                  <span className="bg-nx-surface-2 rounded-full px-2 py-0.5 text-xs text-nx-ink-3">
                     {profile.mergeCandidates.length}
                   </span>
                 </CardTitle>
@@ -1064,9 +978,7 @@ export const PartyProfileView = React.memo(function PartyProfileView({
                   <div className="space-y-3">
                     {profile.mergeCandidates.map((m) => {
                       const otherDuplicateId =
-                        m.primaryPartyId === partyId
-                          ? m.duplicatePartyId
-                          : m.primaryPartyId;
+                        m.primaryPartyId === partyId ? m.duplicatePartyId : m.primaryPartyId;
                       const dupInfo = otherDuplicateId
                         ? vm.relatedPartiesMap[otherDuplicateId]
                         : undefined;
@@ -1077,7 +989,7 @@ export const PartyProfileView = React.memo(function PartyProfileView({
                       return (
                         <div
                           key={m.id}
-                          className="rounded-lg border border-amber-500/30 bg-amber-500/5 p-3 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs"
+                          className="flex flex-col justify-between gap-3 rounded-lg border border-amber-500/30 bg-amber-500/5 p-3 text-xs sm:flex-row sm:items-center"
                         >
                           <div className="space-y-1">
                             <div className="flex items-center gap-2">
@@ -1092,13 +1004,12 @@ export const PartyProfileView = React.memo(function PartyProfileView({
                               <span className="font-medium">{m.reason}</span>
                             </div>
                             {dupInfo?.displayName && (
-                              <div className="font-medium text-nx-ink truncate max-w-[220px]">
+                              <div className="max-w-[220px] truncate font-medium text-nx-ink">
                                 {dupInfo.displayName}
                               </div>
                             )}
-                            <div className="font-mono text-nx-ink-3 truncate max-w-[220px]">
-                              {t("party.profile.duplicateContact")}:{" "}
-                              {otherDuplicateId}
+                            <div className="max-w-[220px] truncate font-mono text-nx-ink-3">
+                              {t("party.profile.duplicateContact")}: {otherDuplicateId}
                             </div>
                           </div>
 
@@ -1106,11 +1017,9 @@ export const PartyProfileView = React.memo(function PartyProfileView({
                             <Button
                               variant="outline"
                               size="sm"
-                              className="text-xs gap-1 self-start sm:self-auto"
+                              className="gap-1 self-start text-xs sm:self-auto"
                               onClick={() =>
-                                router.push(
-                                  `/party-kernel/parties/${otherDuplicateId}`
-                                )
+                                router.push(`/party-kernel/parties/${otherDuplicateId}`)
                               }
                             >
                               <span>{t("party.profile.reviewMerge")}</span>

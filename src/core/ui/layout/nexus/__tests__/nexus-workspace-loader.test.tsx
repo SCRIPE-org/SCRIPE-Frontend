@@ -36,9 +36,7 @@ describe("NexusWorkspaceLoader", () => {
   });
 
   it("renders into DOM when show is true and transitions entering -> visible", () => {
-    render(
-      <NexusWorkspaceLoader show={true} workspaceName="Academy" workspaceAbbr="AC" />
-    );
+    render(<NexusWorkspaceLoader show={true} workspaceName="Academy" workspaceAbbr="AC" />);
 
     const loader = screen.getByTestId("nexus-workspace-loader");
     expect(loader).toBeInTheDocument();

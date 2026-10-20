@@ -15,7 +15,8 @@ export interface BookingFinancePaymentItem {
   externalReference?: string | null;
 }
 
-export type BookingAllocationState = "Synchronized" | "PendingAllocation" | "PendingSynchronization";
+export type BookingAllocationState =
+  "Synchronized" | "PendingAllocation" | "PendingSynchronization";
 
 export interface BookingFinanceSummary {
   invoiceId: string;
@@ -67,10 +68,7 @@ export function useBookingFinanceSummary(reservationId: string, canViewReceivabl
         return moneyRepository.getPayments(1, 50, { reservationId });
       };
 
-      const [invoicesPage, paymentsPage] = await Promise.all([
-        fetchInvoices(),
-        fetchPayments(),
-      ]);
+      const [invoicesPage, paymentsPage] = await Promise.all([fetchInvoices(), fetchPayments()]);
 
       if (paymentsPage.totalCount > paymentsPage.items.length) {
         setError(true);
@@ -83,9 +81,10 @@ export function useBookingFinanceSummary(reservationId: string, canViewReceivabl
       const payments: BookingFinancePaymentItem[] = rawPayments.map((p) => {
         const amount = Number(p.amount) || 0;
         const allocatedAmount = typeof p.allocatedAmount === "number" ? p.allocatedAmount : 0;
-        const unallocatedAmount = typeof p.unallocatedAmount === "number"
-          ? p.unallocatedAmount
-          : Math.max(0, amount - allocatedAmount);
+        const unallocatedAmount =
+          typeof p.unallocatedAmount === "number"
+            ? p.unallocatedAmount
+            : Math.max(0, amount - allocatedAmount);
         return {
           id: p.id,
           paymentNumber: p.paymentNumber,
@@ -99,8 +98,13 @@ export function useBookingFinanceSummary(reservationId: string, canViewReceivabl
         };
       });
 
-      const activePayments = payments.filter((p) => p.status !== "Refunded" && p.status !== "Reversed");
-      const unallocatedPaymentAmount = activePayments.reduce((sum, p) => sum + p.unallocatedAmount, 0);
+      const activePayments = payments.filter(
+        (p) => p.status !== "Refunded" && p.status !== "Reversed"
+      );
+      const unallocatedPaymentAmount = activePayments.reduce(
+        (sum, p) => sum + p.unallocatedAmount,
+        0
+      );
       const refundedAmount = payments
         .filter((p) => p.status === "Refunded")
         .reduce((sum, p) => sum + p.amount, 0);
@@ -109,12 +113,14 @@ export function useBookingFinanceSummary(reservationId: string, canViewReceivabl
         // Authoritative invoice truth:
         // paidAmount is strictly the authoritative paid amount on the invoice.
         // It must NOT artificially include unallocated recorded payments.
-        const paidAmount = typeof invoice.paidAmount === "number"
-          ? invoice.paidAmount
-          : Math.max(0, invoice.effectiveTotalAmount - invoice.outstandingAmount);
-        const outstandingAmount = typeof invoice.outstandingAmount === "number"
-          ? invoice.outstandingAmount
-          : Math.max(0, invoice.effectiveTotalAmount - paidAmount);
+        const paidAmount =
+          typeof invoice.paidAmount === "number"
+            ? invoice.paidAmount
+            : Math.max(0, invoice.effectiveTotalAmount - invoice.outstandingAmount);
+        const outstandingAmount =
+          typeof invoice.outstandingAmount === "number"
+            ? invoice.outstandingAmount
+            : Math.max(0, invoice.effectiveTotalAmount - paidAmount);
         const status = invoice.status;
 
         const allocationState: BookingAllocationState =

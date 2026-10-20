@@ -110,13 +110,17 @@ describe("calendarLayout", () => {
 
   it("converts local date and time back to authoritative UTC instant across timezones", () => {
     // Cairo is UTC+3 in September (daylight saving time)
-    expect(localToUtcInstant("2026-09-09", "10:30", "Africa/Cairo")).toBe("2026-09-09T07:30:00.000Z");
+    expect(localToUtcInstant("2026-09-09", "10:30", "Africa/Cairo")).toBe(
+      "2026-09-09T07:30:00.000Z"
+    );
 
     // UTC
     expect(localToUtcInstant("2026-09-09", "10:30", "UTC")).toBe("2026-09-09T10:30:00.000Z");
 
     // Riyadh is UTC+3 standard year-round
-    expect(localToUtcInstant("2026-04-16", "14:00", "Asia/Riyadh")).toBe("2026-04-16T11:00:00.000Z");
+    expect(localToUtcInstant("2026-04-16", "14:00", "Asia/Riyadh")).toBe(
+      "2026-04-16T11:00:00.000Z"
+    );
 
     // Exact round-trip check
     const originalUtc = "2026-10-15T18:45:00.000Z";

@@ -181,10 +181,7 @@ export function useGuestBookingPortalViewModel() {
       const intent = cancelIntent.current;
       if (!intent) throw new Error(t("guestPortal.messages.cancelFailed"));
 
-      await guestPortalService.cancelBooking(
-        normalizedReason,
-        intent.idempotencyKey
-      );
+      await guestPortalService.cancelBooking(normalizedReason, intent.idempotencyKey);
 
       const refreshedBooking = await guestPortalService.getBooking();
       setBooking(refreshedBooking);

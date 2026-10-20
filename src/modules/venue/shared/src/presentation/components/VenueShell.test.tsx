@@ -101,13 +101,25 @@ describe("VenueShell — Gate 1 Navigation & Shell", () => {
 
     // Primary 5 dominant items
     expect(screen.getByRole("link", { name: /dashboard/i })).toHaveAttribute("href", "/venue");
-    expect(screen.getByRole("link", { name: /calendar/i })).toHaveAttribute("href", "/venue/calendar");
-    expect(screen.getByRole("link", { name: /courts & spaces/i })).toHaveAttribute("href", "/venue/resources");
+    expect(screen.getByRole("link", { name: /calendar/i })).toHaveAttribute(
+      "href",
+      "/venue/calendar"
+    );
+    expect(screen.getByRole("link", { name: /courts & spaces/i })).toHaveAttribute(
+      "href",
+      "/venue/resources"
+    );
     expect(screen.getByRole("link", { name: /money/i })).toHaveAttribute("href", "/venue/money");
-    expect(screen.getByRole("link", { name: /reports/i })).toHaveAttribute("href", "/venue/reports");
+    expect(screen.getByRole("link", { name: /reports/i })).toHaveAttribute(
+      "href",
+      "/venue/reports"
+    );
 
     // Client-safe Settings entry
-    expect(screen.getByRole("link", { name: /settings/i })).toHaveAttribute("href", "/venue/settings");
+    expect(screen.getByRole("link", { name: /settings/i })).toHaveAttribute(
+      "href",
+      "/venue/settings"
+    );
 
     // No technical configurations in primary navigation
     expect(screen.queryByText("Resource Profile")).not.toBeInTheDocument();

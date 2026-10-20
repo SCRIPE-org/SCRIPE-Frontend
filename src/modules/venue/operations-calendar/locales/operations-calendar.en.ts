@@ -25,10 +25,13 @@ export const en = {
       courtOrSpace: "Court / Space",
       emptySlot: "Create booking for {{resource}} at {{time}}",
       bookingLabel: "Open {{reference}}, {{status}}, {{start}} to {{end}} on {{resource}}",
-      noOccupancy: "No active occupancy for this day. Select an empty time slot to start a booking.",
+      noOccupancy:
+        "No active occupancy for this day. Select an empty time slot to start a booking.",
       currentTime: "Current time",
-      truncatedResources: "Only the first 50 courts and spaces are shown. Select one to narrow the view.",
-      truncatedBlocks: "The calendar result reached its 500-booking limit. Filter by court or space.",
+      truncatedResources:
+        "Only the first 50 courts and spaces are shown. Select one to narrow the view.",
+      truncatedBlocks:
+        "The calendar result reached its 500-booking limit. Filter by court or space.",
     },
     status: {
       Held: "Held",
@@ -85,7 +88,8 @@ export const en = {
     },
     empty: {
       title: "Add your first Court / Space",
-      description: "Get started by adding courts or spaces to this branch so you can begin taking bookings.",
+      description:
+        "Get started by adding courts or spaces to this branch so you can begin taking bookings.",
       action: "Add Court / Space",
     },
     permission: {
@@ -103,12 +107,14 @@ export const en = {
     },
     readiness: {
       courtNotReady: "Selected court is not ready for bookings. Please complete court setup first.",
-      courtActivating: "Authoritative pricing for this court is still activating. Bookings will become available once pricing is active.",
+      courtActivating:
+        "Authoritative pricing for this court is still activating. Bookings will become available once pricing is active.",
     },
     findSlots: {
       available: "Court is open and available for this time.",
       unavailable: "Court is occupied or outside operating hours.",
-      verificationFailed: "Could not verify availability at this moment. Please check the timeline.",
+      verificationFailed:
+        "Could not verify availability at this moment. Please check the timeline.",
       title: "Find Available Slots",
       description: "Search courts and available slots to book directly without leaving operations.",
       court: "Court / Space",
@@ -169,10 +175,12 @@ export const en = {
         courtPrice: "Court Rental",
         calculating: "Calculating authoritative price...",
         expired: "The price quote has expired and was refreshed.",
-        priceChanged: "Price updated: Old: {{oldPrice}} {{currency}}, New: {{newPrice}} {{currency}}. Please acknowledge to proceed.",
+        priceChanged:
+          "Price updated: Old: {{oldPrice}} {{currency}}, New: {{newPrice}} {{currency}}. Please acknowledge to proceed.",
         acknowledge: "Acknowledge",
         failed: "Failed to calculate price quote.",
-        activating: "Authoritative pricing for this court is still activating. Bookings cannot be accepted until activation completes.",
+        activating:
+          "Authoritative pricing for this court is still activating. Bookings cannot be accepted until activation completes.",
         retry: "Retry Quote",
         total: "Total",
         currency: "EGP",
@@ -190,12 +198,15 @@ export const en = {
         holdAction: "Hold Temporarily",
       },
       step0: {
-        slotUnavailable: "This time slot is not available (occupied, closed, or maintenance). Please select another time.",
-        courtDraftError: "This court is in Draft status or incomplete setup. Please complete its setup and publish it in Courts & Spaces before booking.",
+        slotUnavailable:
+          "This time slot is not available (occupied, closed, or maintenance). Please select another time.",
+        courtDraftError:
+          "This court is in Draft status or incomplete setup. Please complete its setup and publish it in Courts & Spaces before booking.",
         courtClosed: "Court is closed during this time based on its operating hours.",
         courtMaintenance: "Court is scheduled for maintenance during this time.",
         courtBooked: "This time slot is already reserved by another booking.",
-        pricingActivating: "Authoritative pricing for this court is still activating. Bookings cannot be accepted until activation completes.",
+        pricingActivating:
+          "Authoritative pricing for this court is still activating. Bookings cannot be accepted until activation completes.",
       },
       payment: {
         title: "Payment",
@@ -228,7 +239,8 @@ export const en = {
       },
       partialFailure: {
         title: "Booking confirmed. Payment was not recorded.",
-        description: "The reservation is secured, but recording the transaction encountered an issue. You can record it now.",
+        description:
+          "The reservation is secured, but recording the transaction encountered an issue. You can record it now.",
         recordPayment: "Record Payment",
       },
       success: {

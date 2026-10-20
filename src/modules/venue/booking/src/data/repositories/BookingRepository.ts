@@ -19,7 +19,10 @@ import type { IBookingService } from "../../domain/interfaces/IBookingService";
 export class BookingRepository implements IBookingRepository {
   constructor(private readonly service: IBookingService) {}
 
-  getOrCreateBusinessIntent(fingerprint: string, confirmationFingerprint?: string): Promise<BookingBusinessIntent> {
+  getOrCreateBusinessIntent(
+    fingerprint: string,
+    confirmationFingerprint?: string
+  ): Promise<BookingBusinessIntent> {
     return this.service.getOrCreateBusinessIntent(fingerprint, confirmationFingerprint);
   }
 

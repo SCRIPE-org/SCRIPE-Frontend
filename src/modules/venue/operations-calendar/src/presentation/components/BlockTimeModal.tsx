@@ -102,9 +102,11 @@ export function BlockTimeModal({
         hardBlock: true,
         reason:
           reason.trim() ||
-        (reasonType === "Maintenance"
-          ? t("resources.blockTimeModal.typeMaintenance", { defaultValue: "Scheduled Maintenance" })
-          : t("resources.blockTimeModal.typeUnavailable", { defaultValue: "Court Closed" })),
+          (reasonType === "Maintenance"
+            ? t("resources.blockTimeModal.typeMaintenance", {
+                defaultValue: "Scheduled Maintenance",
+              })
+            : t("resources.blockTimeModal.typeUnavailable", { defaultValue: "Court Closed" })),
       });
 
       onOpenChange(false);
@@ -143,7 +145,12 @@ export function BlockTimeModal({
               {t("resources.blockTimeModal.resource", { defaultValue: "Court / Field" })}
             </Label>
             <Select value={selectedResourceId} onValueChange={setSelectedResourceId}>
-              <SelectTrigger className="h-9 w-full text-xs font-semibold" aria-label={t("resources.blockTimeModal.resource", { defaultValue: "Court / Field" })}>
+              <SelectTrigger
+                className="h-9 w-full text-xs font-semibold"
+                aria-label={t("resources.blockTimeModal.resource", {
+                  defaultValue: "Court / Field",
+                })}
+              >
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -175,7 +182,9 @@ export function BlockTimeModal({
               >
                 <div className="flex items-center gap-1.5">
                   <Wrench className="size-3.5" aria-hidden="true" />
-                  <span>{t("resources.blockTimeModal.typeMaintenance", { defaultValue: "Maintenance" })}</span>
+                  <span>
+                    {t("resources.blockTimeModal.typeMaintenance", { defaultValue: "Maintenance" })}
+                  </span>
                 </div>
               </Button>
 
@@ -192,7 +201,9 @@ export function BlockTimeModal({
               >
                 <div className="flex items-center gap-1.5">
                   <Ban className="size-3.5" aria-hidden="true" />
-                  <span>{t("resources.blockTimeModal.typeUnavailable", { defaultValue: "Unavailable" })}</span>
+                  <span>
+                    {t("resources.blockTimeModal.typeUnavailable", { defaultValue: "Unavailable" })}
+                  </span>
                 </div>
               </Button>
             </div>
@@ -201,7 +212,9 @@ export function BlockTimeModal({
           {/* Date & Time range */}
           <div className="grid grid-cols-2 gap-3">
             <div className="space-y-1">
-              <Label className="text-xs">{t("resources.blockTimeModal.date", { defaultValue: "Start Date" })}</Label>
+              <Label className="text-xs">
+                {t("resources.blockTimeModal.date", { defaultValue: "Start Date" })}
+              </Label>
               <Input
                 type="date"
                 value={startDate}
@@ -211,7 +224,9 @@ export function BlockTimeModal({
               />
             </div>
             <div className="space-y-1">
-              <Label className="text-xs">{t("resources.blockTimeModal.startTime", { defaultValue: "Start Time" })}</Label>
+              <Label className="text-xs">
+                {t("resources.blockTimeModal.startTime", { defaultValue: "Start Time" })}
+              </Label>
               <Input
                 type="time"
                 value={startTime}
@@ -224,7 +239,9 @@ export function BlockTimeModal({
 
           <div className="grid grid-cols-2 gap-3">
             <div className="space-y-1">
-              <Label className="text-xs">{t("resources.blockTimeModal.endDate", { defaultValue: "End Date" })}</Label>
+              <Label className="text-xs">
+                {t("resources.blockTimeModal.endDate", { defaultValue: "End Date" })}
+              </Label>
               <Input
                 type="date"
                 value={endDate}
@@ -234,7 +251,9 @@ export function BlockTimeModal({
               />
             </div>
             <div className="space-y-1">
-              <Label className="text-xs">{t("resources.blockTimeModal.endTime", { defaultValue: "End Time" })}</Label>
+              <Label className="text-xs">
+                {t("resources.blockTimeModal.endTime", { defaultValue: "End Time" })}
+              </Label>
               <Input
                 type="time"
                 value={endTime}
@@ -252,7 +271,9 @@ export function BlockTimeModal({
             </Label>
             <Input
               id="block-time-reason"
-              placeholder={t("resources.blockTimeModal.reasonPlaceholder", { defaultValue: "e.g. Net repair and surface cleaning" })}
+              placeholder={t("resources.blockTimeModal.reasonPlaceholder", {
+                defaultValue: "e.g. Net repair and surface cleaning",
+              })}
               value={reason}
               onChange={(e) => setReason(e.target.value)}
               className="h-8 text-xs"

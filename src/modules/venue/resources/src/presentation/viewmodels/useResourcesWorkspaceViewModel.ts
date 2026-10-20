@@ -196,7 +196,10 @@ export function useResourcesWorkspaceViewModel() {
           }
         }
 
-        const hasCal = hasCalendar || isOpen247 || Boolean(workingHoursSummary && workingHoursSummary !== "Schedule Not Set");
+        const hasCal =
+          hasCalendar ||
+          isOpen247 ||
+          Boolean(workingHoursSummary && workingHoursSummary !== "Schedule Not Set");
 
         const readiness = evaluateCourtReadiness({
           isPublished: r.isPublished,
@@ -247,12 +250,8 @@ export function useResourcesWorkspaceViewModel() {
     const readySpaces = items.filter(
       (i) => i.readinessState === "Ready" || i.readinessState === "Active"
     ).length;
-    const activatingSpaces = items.filter(
-      (i) => i.readinessState === "Pricing Activating"
-    ).length;
-    const setupRequired = items.filter(
-      (i) => i.readinessState === "Setup Required"
-    ).length;
+    const activatingSpaces = items.filter((i) => i.readinessState === "Pricing Activating").length;
+    const setupRequired = items.filter((i) => i.readinessState === "Setup Required").length;
     const branchCount = new Set(facilities.map((f) => f.id)).size;
     return {
       totalSpaces,
@@ -396,11 +395,13 @@ export function useResourcesWorkspaceViewModel() {
         const courtItemsToProcess: CourtSetupItem[] = (
           input.courtItems && input.courtItems.length > 0
             ? input.courtItems
-            : input.courts.filter((c) => c.trim().length > 0).map((name, idx) => ({
-                clientKey: `court-${idx}`,
-                name: name.trim(),
-                resourceId: input.existingCourtResources?.[name.trim()],
-              }))
+            : input.courts
+                .filter((c) => c.trim().length > 0)
+                .map((name, idx) => ({
+                  clientKey: `court-${idx}`,
+                  name: name.trim(),
+                  resourceId: input.existingCourtResources?.[name.trim()],
+                }))
         ).filter((c) => c.name.trim().length > 0);
 
         for (const courtItem of courtItemsToProcess) {
@@ -486,7 +487,8 @@ export function useResourcesWorkspaceViewModel() {
               } catch (calErr) {
                 console.error(`Calendar save failed for ${trimmedName}:`, calErr);
                 courtResult.stepFailed = "calendar";
-                courtResult.error = calErr instanceof Error ? calErr.message : "Calendar setup failed";
+                courtResult.error =
+                  calErr instanceof Error ? calErr.message : "Calendar setup failed";
                 courtItem.stepFailed = "calendar";
                 courtItem.error = courtResult.error;
                 results.push(courtResult);
@@ -504,7 +506,8 @@ export function useResourcesWorkspaceViewModel() {
               } catch (pubErr) {
                 console.error(`Publish failed for ${trimmedName}:`, pubErr);
                 courtResult.stepFailed = "publish";
-                courtResult.error = pubErr instanceof Error ? pubErr.message : "Publication validation failed";
+                courtResult.error =
+                  pubErr instanceof Error ? pubErr.message : "Publication validation failed";
                 courtItem.stepFailed = "publish";
                 courtItem.error = courtResult.error;
                 results.push(courtResult);
@@ -514,7 +517,11 @@ export function useResourcesWorkspaceViewModel() {
             }
 
             // 4. Configure rental pricing AFTER publication with a UTC future safety buffer
-            if (input.pricePerSlot > 0 && input.publishImmediately !== false && !courtItem.isPriceConfigured) {
+            if (
+              input.pricePerSlot > 0 &&
+              input.publishImmediately !== false &&
+              !courtItem.isPriceConfigured
+            ) {
               try {
                 const pricingFingerprint = JSON.stringify([
                   input.currencyCode || "EGP",
@@ -524,9 +531,10 @@ export function useResourcesWorkspaceViewModel() {
                 ]);
                 const pricingIntentId = `${courtItem.clientKey}:${resourceId}`;
                 const idempotencyKey =
-                  courtItem.priceIntentFingerprint === pricingFingerprint && courtItem.priceIntentKey
+                  courtItem.priceIntentFingerprint === pricingFingerprint &&
+                  courtItem.priceIntentKey
                     ? courtItem.priceIntentKey
-                    : pricingIntentKeys.current.get(pricingIntentId) ?? crypto.randomUUID();
+                    : (pricingIntentKeys.current.get(pricingIntentId) ?? crypto.randomUUID());
                 pricingIntentKeys.current.set(pricingIntentId, idempotencyKey);
                 await commercialPricingRepository.configureResourcePrice({
                   schedulableResourceId: resourceId,
@@ -545,7 +553,8 @@ export function useResourcesWorkspaceViewModel() {
               } catch (priceErr) {
                 console.error(`Pricing setup failed for ${trimmedName}:`, priceErr);
                 courtResult.stepFailed = "pricing";
-                courtResult.error = priceErr instanceof Error ? priceErr.message : "Pricing setup failed";
+                courtResult.error =
+                  priceErr instanceof Error ? priceErr.message : "Pricing setup failed";
                 courtItem.stepFailed = "pricing";
                 courtItem.error = courtResult.error;
                 results.push(courtResult);
@@ -562,7 +571,8 @@ export function useResourcesWorkspaceViewModel() {
           } catch (createErr) {
             console.error(`Creation failed for ${trimmedName}:`, createErr);
             courtResult.stepFailed = "create";
-            courtResult.error = createErr instanceof Error ? createErr.message : "Court creation failed";
+            courtResult.error =
+              createErr instanceof Error ? createErr.message : "Court creation failed";
             courtItem.stepFailed = "create";
             courtItem.error = courtResult.error;
             results.push(courtResult);

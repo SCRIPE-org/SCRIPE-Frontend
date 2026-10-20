@@ -15,72 +15,91 @@ vi.mock("@core/providers/i18n-provider", async () => {
 
   return {
     useI18n: () => ({
-    t: (key: string, opts?: { defaultValue?: string; time?: string; duration?: number; amount?: number; currency?: string }) => {
-      const dict: Record<string, string> = {
-        "operationsCalendar.clickToBook.stepper.courtAndTime": "Court & Time",
-        "operationsCalendar.clickToBook.stepper.customer": "Customer",
-        "operationsCalendar.clickToBook.stepper.confirm": "Confirm",
-        "operationsCalendar.clickToBook.courtStep.bookingDate": "Booking Date",
-        "operationsCalendar.clickToBook.courtStep.startTime": "Start Time",
-        "operationsCalendar.clickToBook.customer.title": "Customer",
-        "operationsCalendar.clickToBook.customer.searchPlaceholder": "Search customer by name, phone or email...",
-        "operationsCalendar.clickToBook.customer.addNew": "+ New Customer",
-        "operationsCalendar.clickToBook.customer.searchExisting": "Search Existing",
-        "operationsCalendar.clickToBook.customer.quickAddTitle": "Quick Add Customer",
-        "operationsCalendar.clickToBook.customer.namePlaceholder": "Customer Name",
-        "operationsCalendar.clickToBook.customer.createAndSelect": "Create & Select",
-        "operationsCalendar.clickToBook.customer.duplicateWarning": "A customer with similar details already exists",
-        "operationsCalendar.clickToBook.pricing.title": "Pricing Summary",
-        "operationsCalendar.clickToBook.pricing.courtPrice": "Court Rental",
-        "operationsCalendar.clickToBook.pricing.calculating": "Calculating authoritative price...",
-        "operationsCalendar.clickToBook.pricing.failed": "Failed to calculate price quote.",
-        "operationsCalendar.clickToBook.pricing.retry": "Retry Quote",
-        "operationsCalendar.clickToBook.pricing.total": "Total",
-        "operationsCalendar.clickToBook.pricing.override": "Override Price",
-        "operationsCalendar.clickToBook.pricing.overrideReason": "Reason for price override",
-        "operationsCalendar.clickToBook.pricing.applyOverride": "Apply Override",
-        "operationsCalendar.clickToBook.confirm.action": "Confirm Booking",
-        "operationsCalendar.clickToBook.confirm.next": "Next",
-        "operationsCalendar.clickToBook.confirm.back": "Back",
-        "operationsCalendar.clickToBook.confirm.cancel": "Cancel",
-        "operationsCalendar.clickToBook.conflict.title": "This time is no longer available",
-        "operationsCalendar.clickToBook.conflict.description": "Another booking was created for this court and time window.",
-        "operationsCalendar.clickToBook.conflict.findAnother": "Find Another Time",
-        "operationsCalendar.clickToBook.conflict.returnToCalendar": "Return to Calendar",
-        "operationsCalendar.clickToBook.partialFailure.title": "Booking confirmed. Payment was not recorded.",
-        "operationsCalendar.clickToBook.success.title": "Booking Confirmed!",
-        "operationsCalendar.clickToBook.success.total": "Total",
-        "operationsCalendar.clickToBook.success.paid": "Paid",
-        "operationsCalendar.clickToBook.success.remaining": "Remaining",
-        "operationsCalendar.clickToBook.success.recordPayment": "Record Payment",
-        "operationsCalendar.clickToBook.success.recordAnotherPayment": "Record Another Payment",
-        "operationsCalendar.clickToBook.success.openBooking": "Open Booking",
-        "operationsCalendar.clickToBook.success.close": "Close",
-        "operationsCalendar.clickToBook.payment.title": "Payment",
-        "operationsCalendar.clickToBook.payment.payLater": "Pay Later",
-        "operationsCalendar.clickToBook.payment.recordNow": "Record Payment Now",
-        "operationsCalendar.clickToBook.hold.holdAction": "Hold Temporarily",
-        "operationsCalendar.clickToBook.hold.temporaryBadge": "Temporarily Reserved",
-        "operationsCalendar.clickToBook.hold.expired": "This time is no longer reserved. Please check availability again.",
-        "operationsCalendar.clickToBook.hold.refreshAvailability": "Check Availability Again",
-        "operationsCalendar.clickToBook.pricing.priceChanged": "Price updated: Old: {{oldPrice}} {{currency}}, New: {{newPrice}} {{currency}}. Please acknowledge to proceed.",
-        "operationsCalendar.clickToBook.pricing.acknowledge": "Acknowledge",
-        "operationsCalendar.clickToBook.step0.slotUnavailable": "This time slot is not available (occupied, closed, or maintenance). Please select another time.",
-      };
-      const localizedText = key.split(".").reduce<unknown>((current, segment) => {
-        if (!current || typeof current !== "object") return undefined;
-        return (current as Record<string, unknown>)[segment];
-      }, en);
-      let text = dict[key] ?? (typeof localizedText === "string" ? localizedText : opts?.defaultValue ?? key);
-      if (opts) {
-        for (const [k, v] of Object.entries(opts)) {
-          text = text.replace(new RegExp(`{{${k}}}`, "g"), String(v));
+      t: (
+        key: string,
+        opts?: {
+          defaultValue?: string;
+          time?: string;
+          duration?: number;
+          amount?: number;
+          currency?: string;
         }
-      }
-      return text;
-    },
-    language: mockLang,
-    direction: mockLang === "ar" ? "rtl" : "ltr",
+      ) => {
+        const dict: Record<string, string> = {
+          "operationsCalendar.clickToBook.stepper.courtAndTime": "Court & Time",
+          "operationsCalendar.clickToBook.stepper.customer": "Customer",
+          "operationsCalendar.clickToBook.stepper.confirm": "Confirm",
+          "operationsCalendar.clickToBook.courtStep.bookingDate": "Booking Date",
+          "operationsCalendar.clickToBook.courtStep.startTime": "Start Time",
+          "operationsCalendar.clickToBook.customer.title": "Customer",
+          "operationsCalendar.clickToBook.customer.searchPlaceholder":
+            "Search customer by name, phone or email...",
+          "operationsCalendar.clickToBook.customer.addNew": "+ New Customer",
+          "operationsCalendar.clickToBook.customer.searchExisting": "Search Existing",
+          "operationsCalendar.clickToBook.customer.quickAddTitle": "Quick Add Customer",
+          "operationsCalendar.clickToBook.customer.namePlaceholder": "Customer Name",
+          "operationsCalendar.clickToBook.customer.createAndSelect": "Create & Select",
+          "operationsCalendar.clickToBook.customer.duplicateWarning":
+            "A customer with similar details already exists",
+          "operationsCalendar.clickToBook.pricing.title": "Pricing Summary",
+          "operationsCalendar.clickToBook.pricing.courtPrice": "Court Rental",
+          "operationsCalendar.clickToBook.pricing.calculating":
+            "Calculating authoritative price...",
+          "operationsCalendar.clickToBook.pricing.failed": "Failed to calculate price quote.",
+          "operationsCalendar.clickToBook.pricing.retry": "Retry Quote",
+          "operationsCalendar.clickToBook.pricing.total": "Total",
+          "operationsCalendar.clickToBook.pricing.override": "Override Price",
+          "operationsCalendar.clickToBook.pricing.overrideReason": "Reason for price override",
+          "operationsCalendar.clickToBook.pricing.applyOverride": "Apply Override",
+          "operationsCalendar.clickToBook.confirm.action": "Confirm Booking",
+          "operationsCalendar.clickToBook.confirm.next": "Next",
+          "operationsCalendar.clickToBook.confirm.back": "Back",
+          "operationsCalendar.clickToBook.confirm.cancel": "Cancel",
+          "operationsCalendar.clickToBook.conflict.title": "This time is no longer available",
+          "operationsCalendar.clickToBook.conflict.description":
+            "Another booking was created for this court and time window.",
+          "operationsCalendar.clickToBook.conflict.findAnother": "Find Another Time",
+          "operationsCalendar.clickToBook.conflict.returnToCalendar": "Return to Calendar",
+          "operationsCalendar.clickToBook.partialFailure.title":
+            "Booking confirmed. Payment was not recorded.",
+          "operationsCalendar.clickToBook.success.title": "Booking Confirmed!",
+          "operationsCalendar.clickToBook.success.total": "Total",
+          "operationsCalendar.clickToBook.success.paid": "Paid",
+          "operationsCalendar.clickToBook.success.remaining": "Remaining",
+          "operationsCalendar.clickToBook.success.recordPayment": "Record Payment",
+          "operationsCalendar.clickToBook.success.recordAnotherPayment": "Record Another Payment",
+          "operationsCalendar.clickToBook.success.openBooking": "Open Booking",
+          "operationsCalendar.clickToBook.success.close": "Close",
+          "operationsCalendar.clickToBook.payment.title": "Payment",
+          "operationsCalendar.clickToBook.payment.payLater": "Pay Later",
+          "operationsCalendar.clickToBook.payment.recordNow": "Record Payment Now",
+          "operationsCalendar.clickToBook.hold.holdAction": "Hold Temporarily",
+          "operationsCalendar.clickToBook.hold.temporaryBadge": "Temporarily Reserved",
+          "operationsCalendar.clickToBook.hold.expired":
+            "This time is no longer reserved. Please check availability again.",
+          "operationsCalendar.clickToBook.hold.refreshAvailability": "Check Availability Again",
+          "operationsCalendar.clickToBook.pricing.priceChanged":
+            "Price updated: Old: {{oldPrice}} {{currency}}, New: {{newPrice}} {{currency}}. Please acknowledge to proceed.",
+          "operationsCalendar.clickToBook.pricing.acknowledge": "Acknowledge",
+          "operationsCalendar.clickToBook.step0.slotUnavailable":
+            "This time slot is not available (occupied, closed, or maintenance). Please select another time.",
+        };
+        const localizedText = key.split(".").reduce<unknown>((current, segment) => {
+          if (!current || typeof current !== "object") return undefined;
+          return (current as Record<string, unknown>)[segment];
+        }, en);
+        let text =
+          dict[key] ??
+          (typeof localizedText === "string" ? localizedText : (opts?.defaultValue ?? key));
+        if (opts) {
+          for (const [k, v] of Object.entries(opts)) {
+            text = text.replace(new RegExp(`{{${k}}}`, "g"), String(v));
+          }
+        }
+        return text;
+      },
+      language: mockLang,
+      direction: mockLang === "ar" ? "rtl" : "ltr",
     }),
   };
 });
@@ -92,8 +111,13 @@ let mockCanOverridePrice = false;
 vi.mock("@core/hooks/use-permission", () => ({
   usePermission: (perm: string) => {
     if (perm === "Venue.Reservation.Create") return mockCanCreateBooking;
-    if (perm === "Venue.Finance.Payments.Create" || perm === "Venue.Finance.Payments.View") return mockCanRecordPayment;
-    if (perm === "Venue.CatalogPricing.OverrideCommercials" || perm === "catalog-pricing.override-price.manage") return mockCanOverridePrice;
+    if (perm === "Venue.Finance.Payments.Create" || perm === "Venue.Finance.Payments.View")
+      return mockCanRecordPayment;
+    if (
+      perm === "Venue.CatalogPricing.OverrideCommercials" ||
+      perm === "catalog-pricing.override-price.manage"
+    )
+      return mockCanOverridePrice;
     return true;
   },
 }));
@@ -356,9 +380,7 @@ describe("ClickToBookModal — Gate 4 Booking Closure", () => {
       />
     );
 
-    const input = screen.getByPlaceholderText(
-      "Search customer by name, phone or email..."
-    );
+    const input = screen.getByPlaceholderText("Search customer by name, phone or email...");
     fireEvent.change(input, { target: { value: "Ahmed" } });
 
     await waitFor(() => {
@@ -423,9 +445,7 @@ describe("ClickToBookModal — Gate 4 Booking Closure", () => {
     );
 
     // Search for existing
-    const searchInput = screen.getByPlaceholderText(
-      "Search customer by name, phone or email..."
-    );
+    const searchInput = screen.getByPlaceholderText("Search customer by name, phone or email...");
     fireEvent.change(searchInput, { target: { value: "Ahmed" } });
     await waitFor(() => expect(screen.getByText("Ahmed Salah")).toBeInTheDocument());
 
@@ -582,9 +602,7 @@ describe("ClickToBookModal — Gate 4 Booking Closure", () => {
       // Booking is CONFIRMED!
       expect(screen.getByText("Booking Confirmed!")).toBeInTheDocument();
       // Partial failure notice displayed
-      expect(
-        screen.getByText("Booking confirmed. Payment was not recorded.")
-      ).toBeInTheDocument();
+      expect(screen.getByText("Booking confirmed. Payment was not recorded.")).toBeInTheDocument();
       // Record Payment button is available to retry
       expect(screen.getByRole("button", { name: "Record Payment" })).toBeInTheDocument();
     });
@@ -633,7 +651,10 @@ describe("ClickToBookModal — Gate 4 Booking Closure", () => {
     });
 
     // First quote is 570 and expired
-    const expiredQuote = { ...sampleQuote, expiresAtUtc: new Date(Date.now() - 5000).toISOString() };
+    const expiredQuote = {
+      ...sampleQuote,
+      expiresAtUtc: new Date(Date.now() - 5000).toISOString(),
+    };
     mockCommercialPricingRepository.calculateQuote.mockResolvedValueOnce(expiredQuote);
 
     render(
@@ -664,9 +685,7 @@ describe("ClickToBookModal — Gate 4 Booking Closure", () => {
 
     // Price change alert must appear
     await waitFor(() => {
-      expect(
-        screen.getByText(/Price updated: Old: 570 EGP, New: 700 EGP/)
-      ).toBeInTheDocument();
+      expect(screen.getByText(/Price updated: Old: 570 EGP, New: 700 EGP/)).toBeInTheDocument();
     });
 
     // Confirm button must be disabled while unacknowledged
@@ -718,9 +737,7 @@ describe("ClickToBookModal — Gate 4 Booking Closure", () => {
       expect(
         screen.getAllByText("This time is no longer reserved. Please check availability again.")
       ).toHaveLength(2);
-      expect(
-        screen.getByRole("button", { name: "Check Availability Again" })
-      ).toBeInTheDocument();
+      expect(screen.getByRole("button", { name: "Check Availability Again" })).toBeInTheDocument();
     });
   });
 
@@ -841,14 +858,12 @@ describe("ClickToBookModal — Gate 4 Booking Closure", () => {
     fireEvent.click(screen.getByText("Override Price"));
 
     // Fill in adjustment amount and reason
-    fireEvent.change(
-      screen.getByPlaceholderText("Adjustment Amount (e.g. -20 for discount)"),
-      { target: { value: "-70" } }
-    );
-    fireEvent.change(
-      screen.getByPlaceholderText("Reason for price override"),
-      { target: { value: "VIP discount" } }
-    );
+    fireEvent.change(screen.getByPlaceholderText("Adjustment Amount (e.g. -20 for discount)"), {
+      target: { value: "-70" },
+    });
+    fireEvent.change(screen.getByPlaceholderText("Reason for price override"), {
+      target: { value: "VIP discount" },
+    });
 
     // Click Apply Override
     fireEvent.click(screen.getByRole("button", { name: "Apply Override" }));

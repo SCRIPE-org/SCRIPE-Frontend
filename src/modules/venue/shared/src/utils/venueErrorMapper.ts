@@ -20,7 +20,9 @@ export function mapVenueError(error: unknown, language = "en"): VenueMappedError
   if (!error) {
     return {
       code: "UNKNOWN",
-      message: isAr ? "حدث خطأ غير متوقع. يرجى المحاولة مرة أخرى." : "An unexpected error occurred. Please try again.",
+      message: isAr
+        ? "حدث خطأ غير متوقع. يرجى المحاولة مرة أخرى."
+        : "An unexpected error occurred. Please try again.",
     };
   }
 
@@ -106,7 +108,11 @@ export function mapVenueError(error: unknown, language = "en"): VenueMappedError
     };
   }
 
-  if (status === 409 || code === "OperationConflict" || rawMessage.toLowerCase().includes("conflict")) {
+  if (
+    status === 409 ||
+    code === "OperationConflict" ||
+    rawMessage.toLowerCase().includes("conflict")
+  ) {
     return {
       code: "CONFLICT",
       message: isAr
@@ -130,7 +136,12 @@ export function mapVenueError(error: unknown, language = "en"): VenueMappedError
   }
 
   // If there's a clean user message, use it; otherwise provide client-safe fallback
-  if (rawMessage && !rawMessage.includes("{") && !rawMessage.includes("Exception") && !rawMessage.includes("Error:")) {
+  if (
+    rawMessage &&
+    !rawMessage.includes("{") &&
+    !rawMessage.includes("Exception") &&
+    !rawMessage.includes("Error:")
+  ) {
     return {
       code: code || "VALIDATION_ERROR",
       message: rawMessage,
@@ -139,7 +150,9 @@ export function mapVenueError(error: unknown, language = "en"): VenueMappedError
 
   return {
     code: "GENERIC_ERROR",
-    message: isAr ? "حدث خطأ غير متوقع. يرجى المحاولة مرة أخرى." : "An unexpected error occurred. Please try again.",
+    message: isAr
+      ? "حدث خطأ غير متوقع. يرجى المحاولة مرة أخرى."
+      : "An unexpected error occurred. Please try again.",
   };
 }
 
@@ -168,6 +181,8 @@ function mapCodeOrMessage(text: string, isAr: boolean): VenueMappedError {
 
   return {
     code: "ERROR",
-    message: isAr ? "حدث خطأ أثناء تنفيذ العملية. يرجى المحاولة لاحقاً." : "An error occurred while processing the request.",
+    message: isAr
+      ? "حدث خطأ أثناء تنفيذ العملية. يرجى المحاولة لاحقاً."
+      : "An error occurred while processing the request.",
   };
 }

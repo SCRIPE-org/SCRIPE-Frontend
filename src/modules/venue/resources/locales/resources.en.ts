@@ -36,7 +36,8 @@ export const en = {
     },
     empty: {
       title: "No courts or spaces yet",
-      description: "Set up your facility and courts in under two minutes with the simplified operator journey.",
+      description:
+        "Set up your facility and courts in under two minutes with the simplified operator journey.",
       action: "Start Setup Journey",
     },
     card: {
@@ -52,7 +53,8 @@ export const en = {
       statusReady: "Ready",
       statusActivating: "Pricing Activating",
       statusUnavailable: "Unavailable",
-      activatingTooltip: "Pricing is activating on the network and will become effective shortly. Bookings cannot be accepted until activation completes.",
+      activatingTooltip:
+        "Pricing is activating on the network and will become effective shortly. Bookings cannot be accepted until activation completes.",
       activatingButton: "Activating...",
       statusDraft: "Draft",
       setupRequired: "Setup Required",
@@ -88,7 +90,8 @@ export const en = {
       unknownFacility: "Facility not set",
       cancel: "Cancel",
       capacity: "Capacity",
-      capacityHelp: "Max players on court (e.g. 4 for Padel doubles). Does not affect booking concurrency.",
+      capacityHelp:
+        "Max players on court (e.g. 4 for Padel doubles). Does not affect booking concurrency.",
       branch: "Branch",
       save: "Save Changes",
       saved: "Information updated successfully.",
@@ -132,7 +135,8 @@ export const en = {
       bookingStartsEvery: "Booking Starts Every",
       startsEveryDefault: "Equal to slot duration (e.g. 13:00, 14:00, 15:00)",
       allowMultiSlot: "Allow Multiple Consecutive Slots",
-      allowMultiSlotHelp: "Allow clients to book 2x or 3x slot multiples (e.g. 60 min, 120 min, 180 min)",
+      allowMultiSlotHelp:
+        "Allow clients to book 2x or 3x slot multiples (e.g. 60 min, 120 min, 180 min)",
       save: "Save Booking Rules",
       saved: "Booking rules updated successfully.",
       gridEvery: "Grid: every {{value}} min",

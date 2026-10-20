@@ -73,7 +73,10 @@ describe("VenueSettingsView", () => {
     fireEvent.click(teamModeBtn);
 
     expect(localStorage.getItem("scripe_venue_management_mode")).toBe("team");
-    expect(screen.getByRole("link", { name: /open team management/i })).toHaveAttribute("href", "/admins");
+    expect(screen.getByRole("link", { name: /open team management/i })).toHaveAttribute(
+      "href",
+      "/admins"
+    );
   });
 
   it("exposes advanced technical registries under Advanced tab via progressive disclosure", () => {
@@ -84,11 +87,29 @@ describe("VenueSettingsView", () => {
     fireEvent.mouseDown(advancedTab);
 
     expect(screen.getByText("Advanced Administrative Configuration")).toBeInTheDocument();
-    expect(screen.getByRole("link", { name: /branch & facility registry/i })).toHaveAttribute("href", "/venue/facilities");
-    expect(screen.getByRole("link", { name: /operating hours & matrix/i })).toHaveAttribute("href", "/venue/availability");
-    expect(screen.getByRole("link", { name: /sites & campuses/i })).toHaveAttribute("href", "/venue/sites");
-    expect(screen.getByRole("link", { name: /commercial pricing catalog/i })).toHaveAttribute("href", "/venue/pricing");
-    expect(screen.getByRole("link", { name: /resource builder/i })).toHaveAttribute("href", "/venue/resource-builder");
-    expect(screen.getByRole("link", { name: /resource profiles/i })).toHaveAttribute("href", "/venue/resource-profiles");
+    expect(screen.getByRole("link", { name: /branch & facility registry/i })).toHaveAttribute(
+      "href",
+      "/venue/facilities"
+    );
+    expect(screen.getByRole("link", { name: /operating hours & matrix/i })).toHaveAttribute(
+      "href",
+      "/venue/availability"
+    );
+    expect(screen.getByRole("link", { name: /sites & campuses/i })).toHaveAttribute(
+      "href",
+      "/venue/sites"
+    );
+    expect(screen.getByRole("link", { name: /commercial pricing catalog/i })).toHaveAttribute(
+      "href",
+      "/venue/pricing"
+    );
+    expect(screen.getByRole("link", { name: /resource builder/i })).toHaveAttribute(
+      "href",
+      "/venue/resource-builder"
+    );
+    expect(screen.getByRole("link", { name: /resource profiles/i })).toHaveAttribute(
+      "href",
+      "/venue/resource-profiles"
+    );
   });
 });

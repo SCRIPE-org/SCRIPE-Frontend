@@ -1,6 +1,6 @@
 /**
  * Excel Report Export Utility
- * 
+ *
  * Generates standards-compliant Excel XML Workbooks (SpreadsheetML) and CSV files
  * that open natively in Microsoft Excel, Apple Numbers, and Google Sheets.
  * Adheres strictly to Requirement A11:
@@ -24,7 +24,10 @@ export interface ReportExportOptions<T> {
   filters: Record<string, string>;
   columns: ExportColumn<T>[];
   data: T[];
-  currencyTotals?: Record<string, { commercialValue: number; collected: number; outstanding: number }>;
+  currencyTotals?: Record<
+    string,
+    { commercialValue: number; collected: number; outstanding: number }
+  >;
 }
 
 /**
@@ -46,7 +49,7 @@ function escapeXml(unsafe: string | number | undefined | null): string {
 function escapeCsv(cell: string | number | undefined | null): string {
   if (cell === undefined || cell === null) return "";
   const str = String(cell);
-  if (str.includes(",") || str.includes("\"") || str.includes("\n") || str.includes("\r")) {
+  if (str.includes(",") || str.includes('"') || str.includes("\n") || str.includes("\r")) {
     return `"${str.replace(/"/g, '""')}"`;
   }
   return str;
@@ -56,7 +59,8 @@ function escapeCsv(cell: string | number | undefined | null): string {
  * Generates an Excel Workbook in SpreadsheetML 2003 XML format (.xls / .xlsx compatible).
  */
 export function generateExcelWorkbookXml<T>(options: ReportExportOptions<T>): string {
-  const { title, categoryName, tenantName, generatedBy, filters, columns, data, currencyTotals } = options;
+  const { title, categoryName, tenantName, generatedBy, filters, columns, data, currencyTotals } =
+    options;
   const now = new Date().toISOString();
 
   let xml = `<?xml version="1.0" encoding="UTF-8"?>
@@ -151,7 +155,11 @@ export function generateExcelWorkbookXml<T>(options: ReportExportOptions<T>): st
    <Row>
     <Cell ss:StyleID="MetaLabel"><Data ss:Type="String">Filters Applied:</Data></Cell>
     <Cell ss:MergeAcross="${columns.length - 2}" ss:StyleID="MetaValue">
-     <Data ss:Type="String">${escapeXml(Object.entries(filters).map(([k, v]) => `${k}: ${v}`).join(" | "))}</Data>
+     <Data ss:Type="String">${escapeXml(
+       Object.entries(filters)
+         .map(([k, v]) => `${k}: ${v}`)
+         .join(" | ")
+     )}</Data>
     </Cell>
    </Row>
    <Row ss:Height="12"/>
@@ -221,14 +229,22 @@ export function generateCsv<T>(options: ReportExportOptions<T>): string {
   lines.push(`\uFEFF# ${escapeCsv(title)}`);
   lines.push(`# Tenant: ${escapeCsv(tenantName)}`);
   lines.push(`# Generated: ${new Date().toISOString()}`);
-  lines.push(`# Filters: ${escapeCsv(Object.entries(filters).map(([k, v]) => `${k}=${v}`).join("; "))}`);
+  lines.push(
+    `# Filters: ${escapeCsv(
+      Object.entries(filters)
+        .map(([k, v]) => `${k}=${v}`)
+        .join("; ")
+    )}`
+  );
   lines.push("");
 
   if (currencyTotals && Object.keys(currencyTotals).length > 0) {
     lines.push("# CURRENCY SUMMARY (ISOLATED - NEVER SUMMED ACROSS CURRENCIES)");
     lines.push("Currency,Commercial Value,Total Collected,Outstanding");
     for (const [curr, totals] of Object.entries(currencyTotals)) {
-      lines.push(`${escapeCsv(curr)},${totals.commercialValue.toFixed(2)},${totals.collected.toFixed(2)},${totals.outstanding.toFixed(2)}`);
+      lines.push(
+        `${escapeCsv(curr)},${totals.commercialValue.toFixed(2)},${totals.collected.toFixed(2)},${totals.outstanding.toFixed(2)}`
+      );
     }
     lines.push("");
   }

@@ -1,7 +1,8 @@
 export const en = {
   venueReports: {
     title: "Reports & Data Hub",
-    description: "Financial and operational reports, multi-currency spreadsheet exports, and staged data import.",
+    description:
+      "Financial and operational reports, multi-currency spreadsheet exports, and staged data import.",
     refresh: "Refresh",
     refreshing: "Refreshing...",
     export: "Export to Excel",
@@ -65,7 +66,8 @@ export const en = {
       financeSummaryScope: "Backend summary; no date, resource, or currency filters are applied",
       loadedRecordsSummary: "Loaded records by currency",
       currentLoadedScope: "Currently loaded report data",
-      bookingFilterScope: "Only bookings support this resource filter. Date and status filters are not available.",
+      bookingFilterScope:
+        "Only bookings support this resource filter. Date and status filters are not available.",
       category: "Report category",
       exportScope: "Data included",
       exportCurrentLoadedData: "Currently loaded report data; query limits vary by report",
@@ -115,7 +117,8 @@ export const en = {
     },
     import: {
       title: "Staged Data Import Wizard",
-      description: "Import validated rows through module repositories. Rows are submitted individually and may complete partially.",
+      description:
+        "Import validated rows through module repositories. Rows are submitted individually and may complete partially.",
       stepOne: "1. Select Safe Import Scope",
       customers: "Customer Directory",
       parties: "Individuals & Organizations",
@@ -151,7 +154,8 @@ export const en = {
       duplicate: "Duplicate",
       rejected: "Invalid",
       committing: "Submitting valid rows individually...",
-      committingDescription: "Saving valid rows individually. Some rows may succeed if others fail.",
+      committingDescription:
+        "Saving valid rows individually. Some rows may succeed if others fail.",
       completed: "Import Process Completed",
       successfulRecords: "Successful Records:",
       failedRecords: "Failed Records:",

@@ -16,7 +16,9 @@ function translateEnglish(key: string, options?: { defaultValue?: string }) {
 }
 
 const mocks = vi.hoisted(() => ({
-  translate: vi.fn((_key: string, options?: { defaultValue?: string }) => options?.defaultValue ?? _key),
+  translate: vi.fn(
+    (_key: string, options?: { defaultValue?: string }) => options?.defaultValue ?? _key
+  ),
   bookingRepository: {
     createDraft: vi.fn(),
     createHold: vi.fn(),
@@ -64,16 +66,14 @@ vi.mock("@modules/venue/di", () => ({
   venueContainer: {},
 }));
 
-let mockIntent:
-  | {
-      fingerprint: string;
-      confirmationFingerprint?: string;
-      draftIdempotencyKey: string;
-      holdIdempotencyKey: string;
-      confirmIdempotencyKey: string;
-      holdExpiresAtUtc?: string;
-    }
-  | null = null;
+let mockIntent: {
+  fingerprint: string;
+  confirmationFingerprint?: string;
+  draftIdempotencyKey: string;
+  holdIdempotencyKey: string;
+  confirmIdempotencyKey: string;
+  holdExpiresAtUtc?: string;
+} | null = null;
 let mockIntentSequence = 0;
 
 beforeEach(() => {
@@ -110,10 +110,7 @@ beforeEach(() => {
           confirmIdempotencyKey: `confirm-key-${mockIntentSequence}`,
         };
       }
-      if (
-        intent.holdExpiresAtUtc &&
-        Date.parse(intent.holdExpiresAtUtc) <= Date.now()
-      ) {
+      if (intent.holdExpiresAtUtc && Date.parse(intent.holdExpiresAtUtc) <= Date.now()) {
         mockIntentSequence += 1;
         intent = {
           ...intent,
@@ -196,10 +193,14 @@ describe("ClickToBookModal quote intent retry", () => {
       target: { value: "Synthetic Customer" },
     });
     fireEvent.click(screen.getByRole("button", { name: "Create & Select" }));
-    await waitFor(() => expect(screen.getByText("customer response lost after commit")).toBeInTheDocument());
+    await waitFor(() =>
+      expect(screen.getByText("customer response lost after commit")).toBeInTheDocument()
+    );
 
     fireEvent.click(screen.getByRole("button", { name: "Create & Select" }));
-    await waitFor(() => expect(mocks.commercialPricingRepository.calculateQuote).toHaveBeenCalledTimes(1));
+    await waitFor(() =>
+      expect(mocks.commercialPricingRepository.calculateQuote).toHaveBeenCalledTimes(1)
+    );
     const firstKey = mocks.customerRepository.create.mock.calls[0]?.[3]?.idempotencyKey;
     const retryKey = mocks.customerRepository.create.mock.calls[1]?.[3]?.idempotencyKey;
     expect(firstKey).toBeTruthy();
@@ -268,7 +269,9 @@ describe("ClickToBookModal quote intent retry", () => {
       offeringId: "offering-1",
       currencyCode: "EGP",
     });
-    mocks.commercialPricingRepository.calculateQuote.mockRejectedValue(new Error("service unavailable"));
+    mocks.commercialPricingRepository.calculateQuote.mockRejectedValue(
+      new Error("service unavailable")
+    );
     const resource = {
       id: "resource-1",
       name: "Court 1",
@@ -296,16 +299,15 @@ describe("ClickToBookModal quote intent retry", () => {
     });
     fireEvent.click(screen.getByRole("button", { name: "Create & Select" }));
 
-    await waitFor(() =>
-    expect(screen.getByText("service unavailable")).toBeInTheDocument()
-    );
+    await waitFor(() => expect(screen.getByText("service unavailable")).toBeInTheDocument());
     expect(screen.getByRole("button", { name: "Confirm Booking" })).toBeDisabled();
     expect(screen.queryByText("ESTIMATE")).not.toBeInTheDocument();
     expect(mocks.bookingRepository.createDraft).not.toHaveBeenCalled();
   });
 
   it("reuses an ambiguous booking intent key after the dialog closes and reopens", async () => {
-    mocks.bookingRepository.createDraft.mockReset()
+    mocks.bookingRepository.createDraft
+      .mockReset()
       .mockRejectedValueOnce(new Error("draft response was lost after commit"))
       .mockResolvedValueOnce({ id: "draft-1" })
       .mockResolvedValueOnce({ id: "draft-2" });
@@ -353,21 +355,31 @@ describe("ClickToBookModal quote intent retry", () => {
       target: { value: "Synthetic Customer" },
     });
     fireEvent.click(screen.getByRole("button", { name: "Create & Select" }));
-    await waitFor(() => expect(screen.getByRole("button", { name: "Confirm Booking" })).toBeEnabled());
+    await waitFor(() =>
+      expect(screen.getByRole("button", { name: "Confirm Booking" })).toBeEnabled()
+    );
 
     fireEvent.click(screen.getByRole("button", { name: "Confirm Booking" }));
-    await waitFor(() => expect(screen.getByText("draft response was lost after commit")).toBeInTheDocument());
+    await waitFor(() =>
+      expect(screen.getByText("draft response was lost after commit")).toBeInTheDocument()
+    );
     const firstIntentKey = mocks.bookingRepository.createDraft.mock.calls[0]?.[0].idempotencyKey;
     expect(firstIntentKey).toBeTruthy();
 
     view.rerender(<ClickToBookModal {...props} open={false} />);
     view.rerender(<ClickToBookModal {...props} open />);
-    await waitFor(() => expect(mocks.commercialPricingRepository.calculateQuote).toHaveBeenCalledTimes(2));
-    await waitFor(() => expect(screen.getByRole("button", { name: "Confirm Booking" })).toBeEnabled());
+    await waitFor(() =>
+      expect(mocks.commercialPricingRepository.calculateQuote).toHaveBeenCalledTimes(2)
+    );
+    await waitFor(() =>
+      expect(screen.getByRole("button", { name: "Confirm Booking" })).toBeEnabled()
+    );
     fireEvent.click(screen.getByRole("button", { name: "Confirm Booking" }));
 
     await waitFor(() => expect(mocks.bookingRepository.createDraft).toHaveBeenCalledTimes(2));
-    expect(mocks.bookingRepository.createDraft.mock.calls[1]?.[0].idempotencyKey).toBe(firstIntentKey);
+    expect(mocks.bookingRepository.createDraft.mock.calls[1]?.[0].idempotencyKey).toBe(
+      firstIntentKey
+    );
     await waitFor(() => expect(props.onSuccess).toHaveBeenCalledTimes(1));
 
     view.rerender(<ClickToBookModal {...props} open={false} />);
@@ -377,12 +389,18 @@ describe("ClickToBookModal quote intent retry", () => {
       target: { value: "Synthetic Customer" },
     });
     fireEvent.click(screen.getByRole("button", { name: "Create & Select" }));
-    await waitFor(() => expect(mocks.commercialPricingRepository.calculateQuote).toHaveBeenCalledTimes(3));
-    await waitFor(() => expect(screen.getByRole("button", { name: "Confirm Booking" })).toBeEnabled());
+    await waitFor(() =>
+      expect(mocks.commercialPricingRepository.calculateQuote).toHaveBeenCalledTimes(3)
+    );
+    await waitFor(() =>
+      expect(screen.getByRole("button", { name: "Confirm Booking" })).toBeEnabled()
+    );
     fireEvent.click(screen.getByRole("button", { name: "Confirm Booking" }));
 
     await waitFor(() => expect(mocks.bookingRepository.createDraft).toHaveBeenCalledTimes(3));
-    expect(mocks.bookingRepository.createDraft.mock.calls[2]?.[0].idempotencyKey).not.toBe(firstIntentKey);
+    expect(mocks.bookingRepository.createDraft.mock.calls[2]?.[0].idempotencyKey).not.toBe(
+      firstIntentKey
+    );
     await waitFor(() => expect(props.onSuccess).toHaveBeenCalledTimes(2));
   });
 
@@ -432,11 +450,15 @@ describe("ClickToBookModal quote intent retry", () => {
       target: { value: "Synthetic Customer" },
     });
     fireEvent.click(screen.getByRole("button", { name: "Create & Select" }));
-    await waitFor(() => expect(screen.getByRole("button", { name: "Hold Temporarily" })).toBeEnabled());
+    await waitFor(() =>
+      expect(screen.getByRole("button", { name: "Hold Temporarily" })).toBeEnabled()
+    );
     fireEvent.click(screen.getByRole("button", { name: "Hold Temporarily" }));
-    await waitFor(() => expect(
-      screen.getAllByText("This time is no longer reserved. Please check availability again.")
-    ).toHaveLength(2));
+    await waitFor(() =>
+      expect(
+        screen.getAllByText("This time is no longer reserved. Please check availability again.")
+      ).toHaveLength(2)
+    );
 
     const firstDraftKey = mocks.bookingRepository.createDraft.mock.calls[0]?.[0].idempotencyKey;
     const firstHoldKey = mocks.bookingRepository.createHold.mock.calls[0]?.[1];
@@ -445,13 +467,15 @@ describe("ClickToBookModal quote intent retry", () => {
 
     view.rerender(<ClickToBookModal {...props} open={false} />);
     view.rerender(<ClickToBookModal {...props} open />);
-    await waitFor(() => expect(screen.getByRole("button", { name: "Hold Temporarily" })).toBeEnabled());
+    await waitFor(() =>
+      expect(screen.getByRole("button", { name: "Hold Temporarily" })).toBeEnabled()
+    );
     fireEvent.click(screen.getByRole("button", { name: "Hold Temporarily" }));
 
     await waitFor(() => expect(mocks.bookingRepository.createHold).toHaveBeenCalledTimes(2));
-    expect(mocks.bookingRepository.createDraft.mock.calls[1]?.[0].idempotencyKey).toBe(firstDraftKey);
+    expect(mocks.bookingRepository.createDraft.mock.calls[1]?.[0].idempotencyKey).toBe(
+      firstDraftKey
+    );
     expect(mocks.bookingRepository.createHold.mock.calls[1]?.[1]).not.toBe(firstHoldKey);
   });
 });
-
-

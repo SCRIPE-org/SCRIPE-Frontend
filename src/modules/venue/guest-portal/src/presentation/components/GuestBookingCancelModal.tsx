@@ -42,14 +42,14 @@ export function GuestBookingCancelModal({
       <DialogContent className="sm:max-w-md">
         <DialogHeader className="space-y-2">
           <div className="flex items-center gap-2 text-destructive">
-            <div className="size-9 rounded-full bg-destructive/10 flex items-center justify-center shrink-0">
+            <div className="flex size-9 shrink-0 items-center justify-center rounded-full bg-destructive/10">
               <AlertTriangle className="size-5 text-destructive" aria-hidden="true" />
             </div>
             <DialogTitle className="text-lg font-semibold">
               {t("guestPortal.cancelModal.title")}
             </DialogTitle>
           </div>
-          <DialogDescription className="text-sm text-nx-ink-2 leading-relaxed">
+          <DialogDescription className="text-sm leading-relaxed text-nx-ink-2">
             {t("guestPortal.cancelModal.description", { reservationNumber })}
           </DialogDescription>
         </DialogHeader>
@@ -71,12 +71,12 @@ export function GuestBookingCancelModal({
             />
           </div>
 
-          <p className="text-xs text-amber-600 dark:text-amber-400 font-medium">
+          <p className="text-xs font-medium text-amber-600 dark:text-amber-400">
             {t("guestPortal.cancelModal.warning")}
           </p>
         </div>
 
-        <DialogFooter className="flex flex-col-reverse sm:flex-row gap-2 sm:justify-end">
+        <DialogFooter className="flex flex-col-reverse gap-2 sm:flex-row sm:justify-end">
           <Button
             type="button"
             variant="outline"
@@ -92,7 +92,7 @@ export function GuestBookingCancelModal({
             variant="destructive"
             onClick={handleConfirm}
             disabled={loading}
-            className="w-full sm:w-auto font-medium"
+            className="w-full font-medium sm:w-auto"
           >
             {loading ? t("guestPortal.actions.cancelling") : t("guestPortal.actions.confirmCancel")}
           </Button>

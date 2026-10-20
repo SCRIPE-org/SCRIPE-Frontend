@@ -291,12 +291,10 @@ export function BookingRescheduleDialog(props: Props) {
                     {props.t("booking360.reschedule.targetLabel")}
                   </span>
                   <p className="font-medium tabular-nums text-nx-ink">
-                    {formatUtc(selectedCandidate.startUtc)} –{" "}
-                    {formatUtc(selectedCandidate.endUtc)}
+                    {formatUtc(selectedCandidate.startUtc)} – {formatUtc(selectedCandidate.endUtc)}
                   </p>
                 </div>
               </div>
-
             </div>
           )}
         </div>

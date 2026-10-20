@@ -19,13 +19,17 @@ export class OperationsCalendarService implements IOperationsCalendarService {
       timeZoneId: query.timeZoneId,
       resourceIds: query.resourceIds.join(","),
     });
-    const res = await this.api.get<any>(`${OPERATIONS_CALENDAR_ENDPOINTS.DAY}?${params.toString()}`);
+    const res = await this.api.get<any>(
+      `${OPERATIONS_CALENDAR_ENDPOINTS.DAY}?${params.toString()}`
+    );
     const blocks: OperationsCalendarBlock[] = [...(res.blocks || [])];
     if (Array.isArray(res.closures)) {
       for (const closure of res.closures) {
         blocks.push({
           reservationId: `closure-${closure.resourceId}-${closure.startUtc}`,
-          reservationNumber: closure.reason ? `⊘ ${closure.reason}` : `⊘ ${closure.closureType || "Closure"}`,
+          reservationNumber: closure.reason
+            ? `⊘ ${closure.reason}`
+            : `⊘ ${closure.closureType || "Closure"}`,
           resourceId: closure.resourceId,
           status: (closure.closureType === "Maintenance" ? "Maintenance" : "Unavailable") as any,
           startUtc: closure.startUtc,

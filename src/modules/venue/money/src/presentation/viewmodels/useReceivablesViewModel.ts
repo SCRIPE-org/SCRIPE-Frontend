@@ -106,4 +106,3 @@ export function useReceivablesViewModel(canView: boolean, fallbackError: string)
     isPartial: totalCount > (items?.length ?? 0) || filteredItems.length !== (items?.length ?? 0),
   };
 }
-

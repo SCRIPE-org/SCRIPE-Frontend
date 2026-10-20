@@ -14,7 +14,8 @@ vi.mock("@core/providers/i18n-provider", () => ({
     t: (key: string, opts?: { defaultValue?: string }) => {
       const map: Record<string, string> = {
         "resources.title": "Courts & Spaces",
-        "resources.subtitle": "Manage your courts, spaces, working hours, booking slots, and pricing.",
+        "resources.subtitle":
+          "Manage your courts, spaces, working hours, booking slots, and pricing.",
         "resources.addCourt": "+ Add Court / Space",
         "resources.advancedSetup": "Settings",
         "resources.empty.title": "No courts or spaces yet",
@@ -88,7 +89,14 @@ describe("ResourcesWorkspaceView", () => {
       setWizardOpen: vi.fn(),
       wizardSubmitting: false,
       lastSetupResults: [],
-      metrics: { totalSpaces: 1, activeSpaces: 1, readySpaces: 1, activatingSpaces: 0, setupRequired: 0, branchCount: 1 },
+      metrics: {
+        totalSpaces: 1,
+        activeSpaces: 1,
+        readySpaces: 1,
+        activatingSpaces: 0,
+        setupRequired: 0,
+        branchCount: 1,
+      },
       executeFirstTimeSetup: vi.fn(),
       refresh: vi.fn(),
     });
@@ -117,7 +125,14 @@ describe("ResourcesWorkspaceView", () => {
       setWizardOpen: vi.fn(),
       wizardSubmitting: false,
       lastSetupResults: [],
-      metrics: { totalSpaces: 0, activeSpaces: 0, readySpaces: 0, activatingSpaces: 0, setupRequired: 0, branchCount: 0 },
+      metrics: {
+        totalSpaces: 0,
+        activeSpaces: 0,
+        readySpaces: 0,
+        activatingSpaces: 0,
+        setupRequired: 0,
+        branchCount: 0,
+      },
       executeFirstTimeSetup: vi.fn(),
       refresh: vi.fn(),
     });
@@ -143,7 +158,14 @@ describe("ResourcesWorkspaceView", () => {
       setWizardOpen: vi.fn(),
       wizardSubmitting: false,
       lastSetupResults: [],
-      metrics: { totalSpaces: 1, activeSpaces: 1, readySpaces: 1, activatingSpaces: 0, setupRequired: 0, branchCount: 0 },
+      metrics: {
+        totalSpaces: 1,
+        activeSpaces: 1,
+        readySpaces: 1,
+        activatingSpaces: 0,
+        setupRequired: 0,
+        branchCount: 0,
+      },
       executeFirstTimeSetup: vi.fn(),
       refresh: vi.fn(),
     });
@@ -155,4 +177,3 @@ describe("ResourcesWorkspaceView", () => {
     expect(screen.getByText("1. WHERE")).toBeInTheDocument();
   });
 });
-

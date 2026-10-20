@@ -94,7 +94,7 @@ export function ReceivablesView() {
     <div className="space-y-6" dir={direction} data-testid="venue-receivables">
       <VenueMoneyNav />
 
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-nx-line/80 pb-5">
+      <div className="border-nx-line/80 flex flex-col justify-between gap-4 border-b pb-5 sm:flex-row sm:items-center">
         <PageHeader
           icon={ReceiptText}
           title={t("money.receivables.title", { defaultValue: "Customer Receivables & Invoices" })}
@@ -107,7 +107,7 @@ export function ReceivablesView() {
             variant="outline"
             size="sm"
             onClick={() => void model.load()}
-            className="h-8 gap-1.5 text-xs border-nx-line hover:border-nx-accent hover:text-nx-accent"
+            className="h-8 gap-1.5 border-nx-line text-xs hover:border-nx-accent hover:text-nx-accent"
           >
             <RefreshCw className="size-3.5" aria-hidden="true" />
             <span>{t("money.retry", { defaultValue: "Refresh" })}</span>
@@ -115,7 +115,9 @@ export function ReceivablesView() {
           {canRecordPayment && (
             <Button asChild size="sm" className="h-8 gap-1.5 text-xs font-semibold">
               <Link href="/venue/money/payments">
-                <span>{t("money.receivables.recordPayment", { defaultValue: "Record Payment" })}</span>
+                <span>
+                  {t("money.receivables.recordPayment", { defaultValue: "Record Payment" })}
+                </span>
               </Link>
             </Button>
           )}
@@ -125,11 +127,13 @@ export function ReceivablesView() {
       {/* Multi-Currency Isolated Balance KPI Cards (Never sum different currencies into one total!) */}
       {currencyKeys.length > 0 && (
         <div className="space-y-2">
-          <div className="flex items-center justify-between text-xs text-nx-ink-3 px-1">
-            <span className="font-semibold uppercase tracking-wider text-[11px]">
-              {t("money.receivables.pageSummaryTitle", { defaultValue: "Page Receivables Summary" })}
+          <div className="flex items-center justify-between px-1 text-xs text-nx-ink-3">
+            <span className="text-[11px] font-semibold uppercase tracking-wider">
+              {t("money.receivables.pageSummaryTitle", {
+                defaultValue: "Page Receivables Summary",
+              })}
             </span>
-            <span className="text-[11px] font-mono">
+            <span className="font-mono text-[11px]">
               {model.isPartial
                 ? t("money.receivables.partialBadge", {
                     defaultValue: `Showing ${model.filteredItems.length} of ${model.totalCount} authoritative records`,
@@ -143,53 +147,60 @@ export function ReceivablesView() {
             </span>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3.5">
+          <div className="grid grid-cols-1 gap-3.5 sm:grid-cols-2 md:grid-cols-3">
             {currencyKeys.map((curr) => {
               const stats = model.currencyTotals[curr]!;
               const isUnspecified = curr === "UNSPECIFIED";
               return (
                 <Card
                   key={curr}
-                  className={`border-nx-line/80 bg-nx-surface p-4 rounded-nx-xl shadow-xs space-y-2.5 ${
+                  className={`border-nx-line/80 rounded-nx-xl shadow-xs space-y-2.5 bg-nx-surface p-4 ${
                     isUnspecified ? "border-amber-500/40 bg-amber-500/5" : ""
                   }`}
                 >
                   <div className="flex items-center justify-between">
                     <Badge
                       variant={isUnspecified ? "destructive" : "outline"}
-                      className="font-mono text-xs font-bold px-2 py-0.5"
+                      className="px-2 py-0.5 font-mono text-xs font-bold"
                     >
                       {isUnspecified
-                        ? t("money.receivables.unspecifiedCurrency", { defaultValue: "Unspecified Currency" })
+                        ? t("money.receivables.unspecifiedCurrency", {
+                            defaultValue: "Unspecified Currency",
+                          })
                         : curr}
                     </Badge>
                     <span className="text-[11px] text-nx-ink-3">
-                      {stats.count} {t("money.receivables.invoicesCount", { defaultValue: "invoices" })}
+                      {stats.count}{" "}
+                      {t("money.receivables.invoicesCount", { defaultValue: "invoices" })}
                     </span>
                   </div>
-                  <div className="grid grid-cols-3 gap-2 pt-2 border-t border-nx-line/60 text-center">
+                  <div className="border-nx-line/60 grid grid-cols-3 gap-2 border-t pt-2 text-center">
                     <div>
-                      <span className="text-[10px] uppercase font-semibold text-nx-ink-3 block">
+                      <span className="block text-[10px] font-semibold uppercase text-nx-ink-3">
                         {t("money.receivables.total", { defaultValue: "Total" })}
                       </span>
-                      <span className="text-xs sm:text-sm font-bold font-mono text-nx-ink">
-                        {isUnspecified ? stats.total.toFixed(2) : money(stats.total, curr, language)}
+                      <span className="font-mono text-xs font-bold text-nx-ink sm:text-sm">
+                        {isUnspecified
+                          ? stats.total.toFixed(2)
+                          : money(stats.total, curr, language)}
                       </span>
                     </div>
                     <div>
-                      <span className="text-[10px] uppercase font-semibold text-nx-ink-3 block">
+                      <span className="block text-[10px] font-semibold uppercase text-nx-ink-3">
                         {t("money.receivables.paid", { defaultValue: "Paid" })}
                       </span>
-                      <span className="text-xs sm:text-sm font-bold font-mono text-emerald-600 dark:text-emerald-400">
+                      <span className="font-mono text-xs font-bold text-emerald-600 dark:text-emerald-400 sm:text-sm">
                         {isUnspecified ? stats.paid.toFixed(2) : money(stats.paid, curr, language)}
                       </span>
                     </div>
                     <div>
-                      <span className="text-[10px] uppercase font-semibold text-nx-ink-3 block">
+                      <span className="block text-[10px] font-semibold uppercase text-nx-ink-3">
                         {t("money.receivables.outstanding", { defaultValue: "Outstanding" })}
                       </span>
-                      <span className="text-xs sm:text-sm font-bold font-mono text-amber-600 dark:text-amber-400">
-                        {isUnspecified ? stats.outstanding.toFixed(2) : money(stats.outstanding, curr, language)}
+                      <span className="font-mono text-xs font-bold text-amber-600 dark:text-amber-400 sm:text-sm">
+                        {isUnspecified
+                          ? stats.outstanding.toFixed(2)
+                          : money(stats.outstanding, curr, language)}
                       </span>
                     </div>
                   </div>
@@ -201,15 +212,21 @@ export function ReceivablesView() {
       )}
 
       {/* Filter and Search Bar */}
-      <Card className="border-nx-line/80 bg-nx-surface p-3.5 rounded-nx-xl shadow-xs">
-        <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
+      <Card className="border-nx-line/80 rounded-nx-xl shadow-xs bg-nx-surface p-3.5">
+        <div className="flex flex-col items-stretch justify-between gap-3 sm:flex-row sm:items-center">
           {/* Status Tabs */}
-          <div className="flex items-center rounded-nx-md border border-nx-line bg-nx-surfaceSubtle p-0.5 text-xs">
+          <div className="bg-nx-surfaceSubtle flex items-center rounded-nx-md border border-nx-line p-0.5 text-xs">
             {(
               [
                 ["all", t("money.receivables.filterAll", { defaultValue: "All" })],
-                ["outstanding", t("money.receivables.filterOutstanding", { defaultValue: "Outstanding" })],
-                ["partiallyPaid", t("money.receivables.filterPartiallyPaid", { defaultValue: "Partial" })],
+                [
+                  "outstanding",
+                  t("money.receivables.filterOutstanding", { defaultValue: "Outstanding" }),
+                ],
+                [
+                  "partiallyPaid",
+                  t("money.receivables.filterPartiallyPaid", { defaultValue: "Partial" }),
+                ],
                 ["paid", t("money.receivables.filterPaid", { defaultValue: "Paid" })],
               ] as const
             ).map(([key, label]) => (
@@ -219,8 +236,8 @@ export function ReceivablesView() {
                 onClick={() => model.setStatusFilter(key as ReceivablesStatusFilter)}
                 className={`rounded-nx-sm px-3 py-1 font-medium transition-colors ${
                   model.statusFilter === key
-                    ? "bg-nx-accent text-nx-surface font-semibold shadow-xs"
-                    : "text-nx-ink-2 hover:text-nx-ink hover:bg-nx-hover"
+                    ? "shadow-xs bg-nx-accent font-semibold text-nx-surface"
+                    : "text-nx-ink-2 hover:bg-nx-hover hover:text-nx-ink"
                 }`}
               >
                 {label}
@@ -230,7 +247,7 @@ export function ReceivablesView() {
 
           {/* Search Field */}
           <div className="relative w-full sm:w-72">
-            <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 size-3.5 text-nx-ink-3 rtl:left-auto rtl:right-2.5" />
+            <Search className="absolute left-2.5 top-1/2 size-3.5 -translate-y-1/2 text-nx-ink-3 rtl:left-auto rtl:right-2.5" />
             <Input
               type="text"
               placeholder={t("money.receivables.searchPlaceholder", {
@@ -238,7 +255,7 @@ export function ReceivablesView() {
               })}
               value={model.searchQuery}
               onChange={(e) => model.setSearchQuery(e.target.value)}
-              className="h-8 text-xs pl-8 rtl:pl-3 rtl:pr-8 bg-nx-surfaceSubtle border-nx-line"
+              className="bg-nx-surfaceSubtle h-8 border-nx-line pl-8 text-xs rtl:pl-3 rtl:pr-8"
             />
           </div>
         </div>
@@ -252,8 +269,12 @@ export function ReceivablesView() {
           description={t("money.receivables.empty.description")}
         />
       ) : model.filteredItems.length === 0 ? (
-        <div className="py-12 text-center text-xs text-nx-ink-3 border border-dashed border-nx-line rounded-nx-xl p-8">
-          <p>{t("money.receivables.noSearchResults", { defaultValue: "No receivables match your active filters." })}</p>
+        <div className="rounded-nx-xl border border-dashed border-nx-line p-8 py-12 text-center text-xs text-nx-ink-3">
+          <p>
+            {t("money.receivables.noSearchResults", {
+              defaultValue: "No receivables match your active filters.",
+            })}
+          </p>
           <Button
             variant="outline"
             size="sm"
@@ -277,15 +298,15 @@ export function ReceivablesView() {
             return (
               <Card
                 key={invoice.id}
-                className="border-nx-line/80 bg-nx-surface rounded-nx-xl overflow-hidden hover:border-nx-line transition-colors shadow-xs"
+                className="border-nx-line/80 rounded-nx-xl shadow-xs overflow-hidden bg-nx-surface transition-colors hover:border-nx-line"
               >
-                <CardHeader className="flex-row items-start justify-between gap-3 space-y-0 pb-3 border-b border-nx-line/40 bg-nx-surfaceSubtle/30">
+                <CardHeader className="border-nx-line/40 bg-nx-surfaceSubtle/30 flex-row items-start justify-between gap-3 space-y-0 border-b pb-3">
                   <div className="space-y-1">
                     <div className="flex flex-wrap items-center gap-2">
-                      <CardTitle className="text-sm font-bold font-mono text-nx-ink" dir="ltr">
+                      <CardTitle className="font-mono text-sm font-bold text-nx-ink" dir="ltr">
                         {invoice.invoiceNumber}
                       </CardTitle>
-                      <Badge variant={badgeVariant} className="text-[10px] px-1.5 py-0">
+                      <Badge variant={badgeVariant} className="px-1.5 py-0 text-[10px]">
                         {invoice.status}
                       </Badge>
                       {invoice.reservationId && (
@@ -293,7 +314,9 @@ export function ReceivablesView() {
                           href={`/venue/bookings/${encodeURIComponent(invoice.reservationId)}`}
                           className="inline-flex items-center gap-1 text-[11px] font-medium text-nx-accent hover:underline"
                         >
-                          <span>{t("money.receivables.viewBooking", { defaultValue: "Booking" })}</span>
+                          <span>
+                            {t("money.receivables.viewBooking", { defaultValue: "Booking" })}
+                          </span>
                           <ExternalLink className="size-3" aria-hidden="true" />
                         </Link>
                       )}
@@ -318,40 +341,42 @@ export function ReceivablesView() {
                           )}
                         </span>
                       )}
-                      <span className="text-[11px] text-nx-ink-3 font-mono">
+                      <span className="font-mono text-[11px] text-nx-ink-3">
                         Payer: {invoice.payerPartyId.slice(0, 8)}...
                       </span>
                     </div>
                   </div>
 
-                  <div className="text-right shrink-0">
-                    <span className="text-[10px] text-nx-ink-3 block uppercase font-semibold">
+                  <div className="shrink-0 text-right">
+                    <span className="block text-[10px] font-semibold uppercase text-nx-ink-3">
                       {t("money.receivables.outstanding", { defaultValue: "Outstanding" })}
                     </span>
-                    <span className={`text-base font-bold font-mono ${hasBalance ? "text-amber-600 dark:text-amber-400" : "text-nx-ink"}`}>
+                    <span
+                      className={`font-mono text-base font-bold ${hasBalance ? "text-amber-600 dark:text-amber-400" : "text-nx-ink"}`}
+                    >
                       {money(invoice.outstandingAmount, invoice.currencyCode, language)}
                     </span>
                   </div>
                 </CardHeader>
 
-                <CardContent className="pt-3 pb-3 flex flex-wrap items-center justify-between gap-4">
-                  <dl className="grid grid-cols-2 sm:grid-cols-3 gap-x-6 gap-y-1 text-xs">
+                <CardContent className="flex flex-wrap items-center justify-between gap-4 pb-3 pt-3">
+                  <dl className="grid grid-cols-2 gap-x-6 gap-y-1 text-xs sm:grid-cols-3">
                     <div>
                       <dt className="text-[11px] text-nx-ink-3">{t("money.receivables.total")}</dt>
-                      <dd className="font-semibold font-mono text-nx-ink">
+                      <dd className="font-mono font-semibold text-nx-ink">
                         {money(invoice.effectiveTotalAmount, invoice.currencyCode, language)}
                       </dd>
                     </div>
                     <div>
                       <dt className="text-[11px] text-nx-ink-3">{t("money.receivables.paid")}</dt>
-                      <dd className="font-semibold font-mono text-emerald-600 dark:text-emerald-400">
+                      <dd className="font-mono font-semibold text-emerald-600 dark:text-emerald-400">
                         {money(invoice.paidAmount, invoice.currencyCode, language)}
                       </dd>
                     </div>
                     {invoice.creditAmount > 0 && (
                       <div>
                         <dt className="text-[11px] text-nx-ink-3">Credit</dt>
-                        <dd className="font-semibold font-mono text-blue-500">
+                        <dd className="font-mono font-semibold text-blue-500">
                           {money(invoice.creditAmount, invoice.currencyCode, language)}
                         </dd>
                       </div>
@@ -359,8 +384,10 @@ export function ReceivablesView() {
                   </dl>
 
                   {canRecordPayment && hasBalance && (
-                    <Button size="sm" asChild className="h-7 text-xs font-semibold px-3">
-                      <Link href={`/venue/money/payments?invoiceId=${encodeURIComponent(invoice.id)}`}>
+                    <Button size="sm" asChild className="h-7 px-3 text-xs font-semibold">
+                      <Link
+                        href={`/venue/money/payments?invoiceId=${encodeURIComponent(invoice.id)}`}
+                      >
                         {t("money.receivables.recordPayment", { defaultValue: "Record Payment" })}
                       </Link>
                     </Button>
@@ -374,4 +401,3 @@ export function ReceivablesView() {
     </div>
   );
 }
-

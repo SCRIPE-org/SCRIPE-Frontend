@@ -297,22 +297,10 @@ import {
 import { en as venueMoneyEn, ar as venueMoneyAr } from "@modules/venue/money/locales";
 import { en as siteEn, ar as siteAr } from "@modules/venue/site/locales";
 import { en as venueResourcesEn, ar as venueResourcesAr } from "@modules/venue/resources/locales";
-import {
-  en as venueCustomersEn,
-  ar as venueCustomersAr,
-} from "@modules/venue/customers/locales";
-import {
-  en as venueReportsEn,
-  ar as venueReportsAr,
-} from "@modules/venue/reports/locales";
-import {
-  en as venueSettingsEn,
-  ar as venueSettingsAr,
-} from "@modules/venue/settings/locales";
-import {
-  en as venueSharedEn,
-  ar as venueSharedAr,
-} from "@modules/venue/shared/locales";
+import { en as venueCustomersEn, ar as venueCustomersAr } from "@modules/venue/customers/locales";
+import { en as venueReportsEn, ar as venueReportsAr } from "@modules/venue/reports/locales";
+import { en as venueSettingsEn, ar as venueSettingsAr } from "@modules/venue/settings/locales";
+import { en as venueSharedEn, ar as venueSharedAr } from "@modules/venue/shared/locales";
 
 // ─── Merged Dictionaries ───────────────────────────────
 export const allModulesEn: Record<string, unknown> = deepMerge(

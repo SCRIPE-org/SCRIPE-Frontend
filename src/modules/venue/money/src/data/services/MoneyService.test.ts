@@ -101,4 +101,3 @@ describe("MoneyService", () => {
     expect(api.get).toHaveBeenCalledWith("/v1/finance/analytics/payment-methods?currencyCode=EGP");
   });
 });
-

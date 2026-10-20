@@ -1,12 +1,7 @@
 "use client";
 
 import React, { useState, useMemo } from "react";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from "@core/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@core/ui/dialog";
 import { Button } from "@core/ui/button";
 import { Input } from "@core/ui/input";
 import { Badge } from "@core/ui/badge";
@@ -131,30 +126,34 @@ export function TenantWidgetLibraryDialog({
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
-      <DialogContent className="max-w-3xl sm:max-h-[88vh] flex flex-col p-6 gap-4">
+      <DialogContent className="flex max-w-3xl flex-col gap-4 p-6 sm:max-h-[88vh]">
         {/* Header with Title and Quick Stats */}
         <DialogHeader className="shrink-0 space-y-1">
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+          <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
             <div>
-              <DialogTitle className="text-lg font-bold flex items-center gap-2">
+              <DialogTitle className="flex items-center gap-2 text-lg font-bold">
                 <LayoutGrid className="h-5 w-5 text-primary" />
                 <span>{t("tenantCommandCenter.library.title") || "Widget Library"}</span>
               </DialogTitle>
-              <p className="text-xs text-muted-foreground mt-0.5">
+              <p className="mt-0.5 text-xs text-muted-foreground">
                 {t("tenantCommandCenter.library.subtitle") ||
                   "Select widgets to add to your organization overview workspace."}
               </p>
             </div>
 
             {/* Visual Workspace Stats Counters */}
-            <div className="flex items-center gap-2 shrink-0 self-start sm:self-auto">
-              <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-semibold">
+            <div className="flex shrink-0 items-center gap-2 self-start sm:self-auto">
+              <div className="flex items-center gap-1.5 rounded-lg border border-emerald-500/20 bg-emerald-500/10 px-2.5 py-1 text-xs font-semibold text-emerald-400">
                 <CheckCircle2 className="h-3.5 w-3.5" />
-                <span>{addedCount} {t("tenantCommandCenter.library.alreadyAdded") || "Added"}</span>
+                <span>
+                  {addedCount} {t("tenantCommandCenter.library.alreadyAdded") || "Added"}
+                </span>
               </div>
-              <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-primary/10 border border-primary/20 text-primary text-xs font-semibold">
+              <div className="flex items-center gap-1.5 rounded-lg border border-primary/20 bg-primary/10 px-2.5 py-1 text-xs font-semibold text-primary">
                 <Plus className="h-3.5 w-3.5" />
-                <span>{availableCount} {t("tenantCommandCenter.library.readyToAdd") || "Available"}</span>
+                <span>
+                  {availableCount} {t("tenantCommandCenter.library.readyToAdd") || "Available"}
+                </span>
               </div>
             </div>
           </div>
@@ -168,14 +167,16 @@ export function TenantWidgetLibraryDialog({
             <Input
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder={t("tenantCommandCenter.library.searchPlaceholder") || "Search available widgets..."}
-              className="h-9 ps-9 pe-8 text-xs bg-muted/20"
+              placeholder={
+                t("tenantCommandCenter.library.searchPlaceholder") || "Search available widgets..."
+              }
+              className="h-9 bg-muted/20 pe-8 ps-9 text-xs"
             />
             {searchQuery && (
               <button
                 type="button"
                 onClick={() => setSearchQuery("")}
-                className="absolute end-2.5 top-2.5 text-muted-foreground hover:text-foreground cursor-pointer"
+                className="absolute end-2.5 top-2.5 cursor-pointer text-muted-foreground hover:text-foreground"
               >
                 <X className="h-4 w-4" />
               </button>
@@ -183,18 +184,18 @@ export function TenantWidgetLibraryDialog({
           </div>
 
           {/* Segmented Status Tabs (All vs Available vs In Dashboard) */}
-          <div className="flex items-center gap-1 p-1 bg-muted/40 rounded-xl border border-border/50 text-xs">
+          <div className="flex items-center gap-1 rounded-xl border border-border/50 bg-muted/40 p-1 text-xs">
             <button
               type="button"
               onClick={() => setStatusFilter("all")}
-              className={`flex-1 flex items-center justify-center gap-1.5 py-1.5 px-3 rounded-lg font-semibold transition-all cursor-pointer ${
+              className={`flex flex-1 cursor-pointer items-center justify-center gap-1.5 rounded-lg px-3 py-1.5 font-semibold transition-all ${
                 statusFilter === "all"
-                  ? "bg-background text-foreground shadow-xs border border-border/60"
-                  : "text-muted-foreground hover:text-foreground hover:bg-muted/50"
+                  ? "shadow-xs border border-border/60 bg-background text-foreground"
+                  : "text-muted-foreground hover:bg-muted/50 hover:text-foreground"
               }`}
             >
               <span>{t("tenantCommandCenter.library.allWidgets") || "All Widgets"}</span>
-              <Badge variant="secondary" className="text-[10px] px-1.5 py-0 h-4">
+              <Badge variant="secondary" className="h-4 px-1.5 py-0 text-[10px]">
                 {totalCount}
               </Badge>
             </button>
@@ -202,16 +203,16 @@ export function TenantWidgetLibraryDialog({
             <button
               type="button"
               onClick={() => setStatusFilter("available")}
-              className={`flex-1 flex items-center justify-center gap-1.5 py-1.5 px-3 rounded-lg font-semibold transition-all cursor-pointer ${
+              className={`flex flex-1 cursor-pointer items-center justify-center gap-1.5 rounded-lg px-3 py-1.5 font-semibold transition-all ${
                 statusFilter === "available"
-                  ? "bg-primary text-primary-foreground shadow-xs font-bold"
-                  : "text-muted-foreground hover:text-foreground hover:bg-muted/50"
+                  ? "shadow-xs bg-primary font-bold text-primary-foreground"
+                  : "text-muted-foreground hover:bg-muted/50 hover:text-foreground"
               }`}
             >
               <Plus className="h-3.5 w-3.5" />
               <span>{t("tenantCommandCenter.library.readyToAdd") || "Available to Add"}</span>
               <span
-                className={`text-[10px] px-1.5 py-0 rounded-full font-bold ${
+                className={`rounded-full px-1.5 py-0 text-[10px] font-bold ${
                   statusFilter === "available"
                     ? "bg-primary-foreground/20 text-primary-foreground"
                     : "bg-primary/15 text-primary"
@@ -224,16 +225,16 @@ export function TenantWidgetLibraryDialog({
             <button
               type="button"
               onClick={() => setStatusFilter("added")}
-              className={`flex-1 flex items-center justify-center gap-1.5 py-1.5 px-3 rounded-lg font-semibold transition-all cursor-pointer ${
+              className={`flex flex-1 cursor-pointer items-center justify-center gap-1.5 rounded-lg px-3 py-1.5 font-semibold transition-all ${
                 statusFilter === "added"
-                  ? "bg-emerald-600 text-white shadow-xs font-bold"
-                  : "text-muted-foreground hover:text-foreground hover:bg-muted/50"
+                  ? "shadow-xs bg-emerald-600 font-bold text-white"
+                  : "text-muted-foreground hover:bg-muted/50 hover:text-foreground"
               }`}
             >
               <Check className="h-3.5 w-3.5" />
               <span>{t("tenantCommandCenter.library.inDashboard") || "In Dashboard"}</span>
               <span
-                className={`text-[10px] px-1.5 py-0 rounded-full font-bold ${
+                className={`rounded-full px-1.5 py-0 text-[10px] font-bold ${
                   statusFilter === "added"
                     ? "bg-white/20 text-white"
                     : "bg-emerald-500/15 text-emerald-400"
@@ -251,10 +252,10 @@ export function TenantWidgetLibraryDialog({
                 key={cat.id}
                 type="button"
                 onClick={() => setSelectedCategory(cat.id)}
-                className={`rounded-full px-2.5 py-0.5 text-[11px] font-medium transition-colors cursor-pointer ${
+                className={`cursor-pointer rounded-full px-2.5 py-0.5 text-[11px] font-medium transition-colors ${
                   selectedCategory === cat.id
-                    ? "bg-secondary text-secondary-foreground border border-secondary-foreground/20 font-semibold"
-                    : "text-muted-foreground hover:text-foreground hover:bg-muted/60"
+                    ? "border border-secondary-foreground/20 bg-secondary font-semibold text-secondary-foreground"
+                    : "text-muted-foreground hover:bg-muted/60 hover:text-foreground"
                 }`}
               >
                 {cat.label}
@@ -264,14 +265,14 @@ export function TenantWidgetLibraryDialog({
         </div>
 
         {/* Widget Grid */}
-        <div className="flex-1 overflow-y-auto pr-1 py-1">
+        <div className="flex-1 overflow-y-auto py-1 pr-1">
           {filteredWidgets.length === 0 ? (
             <div className="flex min-h-[180px] flex-col items-center justify-center p-6 text-center">
-              <Search className="h-6 w-6 text-muted-foreground/40 mb-2" />
+              <Search className="mb-2 h-6 w-6 text-muted-foreground/40" />
               <p className="text-xs font-semibold text-foreground">
                 {t("tenantCommandCenter.library.noWidgetsFound") || "No widgets found"}
               </p>
-              <p className="text-[11px] text-muted-foreground mt-1">
+              <p className="mt-1 text-[11px] text-muted-foreground">
                 {t("tenantCommandCenter.library.tryAnotherSearch") ||
                   "Try adjusting your search terms or category filter."}
               </p>
@@ -288,57 +289,61 @@ export function TenantWidgetLibraryDialog({
                   def.defaultColSpan === 12
                     ? "Full width"
                     : def.defaultColSpan === 8
-                    ? "2/3 width"
-                    : def.defaultColSpan === 6
-                    ? "1/2 width"
-                    : "1/3 width";
+                      ? "2/3 width"
+                      : def.defaultColSpan === 6
+                        ? "1/2 width"
+                        : "1/3 width";
 
                 // Visual State 1: ALREADY ADDED TO DASHBOARD
                 if (isAlreadyAdded) {
                   return (
                     <div
                       key={def.id}
-                      className="flex flex-col justify-between rounded-xl border border-emerald-500/35 bg-emerald-950/10 dark:bg-emerald-950/25 p-3.5 transition-all shadow-xs ring-1 ring-emerald-500/20 relative"
+                      className="shadow-xs relative flex flex-col justify-between rounded-xl border border-emerald-500/35 bg-emerald-950/10 p-3.5 ring-1 ring-emerald-500/20 transition-all dark:bg-emerald-950/25"
                     >
                       <div>
-                        <div className="flex items-start justify-between gap-2 mb-2">
+                        <div className="mb-2 flex items-start justify-between gap-2">
                           <div className="flex items-center gap-2.5">
-                            <div className="flex h-8 w-8 items-center justify-center rounded-lg border border-emerald-500/30 bg-emerald-500/15 text-emerald-400 shrink-0">
+                            <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border border-emerald-500/30 bg-emerald-500/15 text-emerald-400">
                               <IconComponent className="h-4 w-4" />
                             </div>
                             <div>
-                              <h4 className="text-xs font-bold text-foreground leading-tight flex items-center gap-1.5">
+                              <h4 className="flex items-center gap-1.5 text-xs font-bold leading-tight text-foreground">
                                 <span>{title}</span>
                               </h4>
-                              <span className="text-[10px] text-emerald-400/80 font-medium capitalize">
+                              <span className="text-[10px] font-medium capitalize text-emerald-400/80">
                                 {def.category}
                               </span>
                             </div>
                           </div>
 
-                          <div className="flex items-center gap-1.5 shrink-0">
+                          <div className="flex shrink-0 items-center gap-1.5">
                             <Badge
                               variant="outline"
-                              className="text-[10px] px-1.5 py-0 text-muted-foreground border-border/40 font-normal"
+                              className="border-border/40 px-1.5 py-0 text-[10px] font-normal text-muted-foreground"
                             >
                               {widthLabel}
                             </Badge>
-                            <Badge className="bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 text-[10px] font-semibold px-2 py-0.5 flex items-center gap-1">
+                            <Badge className="flex items-center gap-1 border border-emerald-500/40 bg-emerald-500/20 px-2 py-0.5 text-[10px] font-semibold text-emerald-400">
                               <Check className="h-3 w-3 text-emerald-400" />
-                              <span>{t("tenantCommandCenter.library.alreadyAdded") || "Added"}</span>
+                              <span>
+                                {t("tenantCommandCenter.library.alreadyAdded") || "Added"}
+                              </span>
                             </Badge>
                           </div>
                         </div>
 
-                        <p className="text-[11px] leading-relaxed text-muted-foreground/90 line-clamp-2 mb-3">
+                        <p className="mb-3 line-clamp-2 text-[11px] leading-relaxed text-muted-foreground/90">
                           {desc}
                         </p>
                       </div>
 
-                      <div className="pt-2.5 border-t border-emerald-500/20 flex items-center justify-between">
-                        <span className="text-[10px] text-emerald-400/80 font-medium flex items-center gap-1">
+                      <div className="flex items-center justify-between border-t border-emerald-500/20 pt-2.5">
+                        <span className="flex items-center gap-1 text-[10px] font-medium text-emerald-400/80">
                           <CheckCircle2 className="h-3.5 w-3.5 text-emerald-400" />
-                          <span>{t("tenantCommandCenter.library.inWorkspace") || "Active in Workspace"}</span>
+                          <span>
+                            {t("tenantCommandCenter.library.inWorkspace") || "Active in Workspace"}
+                          </span>
                         </span>
 
                         {onRemoveWidget ? (
@@ -347,13 +352,15 @@ export function TenantWidgetLibraryDialog({
                             variant="outline"
                             size="sm"
                             onClick={() => onRemoveWidget(def.id)}
-                            className="h-7 gap-1 px-2.5 text-[11px] text-destructive border-destructive/30 hover:bg-destructive/10 hover:text-destructive hover:border-destructive/60 cursor-pointer"
+                            className="h-7 cursor-pointer gap-1 border-destructive/30 px-2.5 text-[11px] text-destructive hover:border-destructive/60 hover:bg-destructive/10 hover:text-destructive"
                           >
                             <Trash2 className="h-3 w-3" />
-                            <span>{t("tenantCommandCenter.library.removeFromLayout") || "Remove"}</span>
+                            <span>
+                              {t("tenantCommandCenter.library.removeFromLayout") || "Remove"}
+                            </span>
                           </Button>
                         ) : (
-                          <div className="flex items-center gap-1 px-2.5 py-0.5 rounded bg-emerald-500/15 text-emerald-400 text-[11px] font-semibold">
+                          <div className="flex items-center gap-1 rounded bg-emerald-500/15 px-2.5 py-0.5 text-[11px] font-semibold text-emerald-400">
                             <Check className="h-3 w-3" />
                             <span>{t("tenantCommandCenter.library.alreadyAdded") || "Added"}</span>
                           </div>
@@ -367,19 +374,19 @@ export function TenantWidgetLibraryDialog({
                 return (
                   <div
                     key={def.id}
-                    className="flex flex-col justify-between rounded-xl border border-border/80 bg-card hover:border-primary/60 hover:bg-card/95 hover:shadow-md p-3.5 transition-all group relative"
+                    className="group relative flex flex-col justify-between rounded-xl border border-border/80 bg-card p-3.5 transition-all hover:border-primary/60 hover:bg-card/95 hover:shadow-md"
                   >
                     <div>
-                      <div className="flex items-start justify-between gap-2 mb-2">
+                      <div className="mb-2 flex items-start justify-between gap-2">
                         <div className="flex items-center gap-2.5">
-                          <div className="flex h-8 w-8 items-center justify-center rounded-lg border border-primary/25 bg-primary/10 text-primary group-hover:scale-105 transition-transform shrink-0">
+                          <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border border-primary/25 bg-primary/10 text-primary transition-transform group-hover:scale-105">
                             <IconComponent className="h-4 w-4" />
                           </div>
                           <div>
-                            <h4 className="text-xs font-bold text-foreground leading-tight">
+                            <h4 className="text-xs font-bold leading-tight text-foreground">
                               {title}
                             </h4>
-                            <span className="text-[10px] text-muted-foreground capitalize">
+                            <span className="text-[10px] capitalize text-muted-foreground">
                               {def.category}
                             </span>
                           </div>
@@ -387,18 +394,18 @@ export function TenantWidgetLibraryDialog({
 
                         <Badge
                           variant="outline"
-                          className="text-[10px] px-1.5 py-0 font-normal border-border/60 bg-muted/40 shrink-0"
+                          className="shrink-0 border-border/60 bg-muted/40 px-1.5 py-0 text-[10px] font-normal"
                         >
                           {widthLabel}
                         </Badge>
                       </div>
 
-                      <p className="text-[11px] leading-relaxed text-muted-foreground line-clamp-2 mb-3">
+                      <p className="mb-3 line-clamp-2 text-[11px] leading-relaxed text-muted-foreground">
                         {desc}
                       </p>
                     </div>
 
-                    <div className="pt-2.5 border-t border-border/40 flex items-center justify-between">
+                    <div className="flex items-center justify-between border-t border-border/40 pt-2.5">
                       <span className="text-[10px] text-muted-foreground/70">
                         {def.singleton ? "Singleton widget" : "Customizable widget"}
                       </span>
@@ -408,7 +415,7 @@ export function TenantWidgetLibraryDialog({
                         variant="default"
                         size="sm"
                         onClick={() => handleAdd(def.id)}
-                        className="h-7 gap-1.5 px-3 text-[11px] font-semibold bg-primary text-primary-foreground hover:bg-primary/90 shadow-xs cursor-pointer"
+                        className="shadow-xs h-7 cursor-pointer gap-1.5 bg-primary px-3 text-[11px] font-semibold text-primary-foreground hover:bg-primary/90"
                       >
                         <Plus className="h-3 w-3" />
                         <span>{t("tenantCommandCenter.library.addWidget") || "Add Widget"}</span>
@@ -422,8 +429,8 @@ export function TenantWidgetLibraryDialog({
         </div>
 
         {/* Footer Summary & Done Button */}
-        <div className="shrink-0 pt-3 border-t border-border/50 flex items-center justify-between">
-          <div className="text-xs text-muted-foreground flex items-center gap-1.5">
+        <div className="flex shrink-0 items-center justify-between border-t border-border/50 pt-3">
+          <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
             <span className="font-semibold text-foreground">{addedCount}</span>
             <span>of</span>
             <span className="font-semibold text-foreground">{totalCount}</span>
@@ -435,7 +442,7 @@ export function TenantWidgetLibraryDialog({
             variant="default"
             size="sm"
             onClick={onClose}
-            className="h-8 px-4 text-xs font-semibold cursor-pointer"
+            className="h-8 cursor-pointer px-4 text-xs font-semibold"
           >
             {t("tenantCommandCenter.library.done") || "Done"}
           </Button>

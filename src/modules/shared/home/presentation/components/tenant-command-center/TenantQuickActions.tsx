@@ -15,10 +15,10 @@ export function TenantQuickActions({ actions }: TenantQuickActionsProps) {
   const { t } = useI18n();
 
   return (
-    <Card className="p-4 sm:p-5 min-w-0 overflow-hidden border-nx-line bg-nx-surface text-nx-ink hover:border-nx-line-hi">
+    <Card className="min-w-0 overflow-hidden border-nx-line bg-nx-surface p-4 text-nx-ink hover:border-nx-line-hi sm:p-5">
       {/* Header */}
-      <div className="mb-3.5 flex flex-wrap items-center justify-between gap-2 min-w-0">
-        <div className="flex items-center gap-2.5 min-w-0">
+      <div className="mb-3.5 flex min-w-0 flex-wrap items-center justify-between gap-2">
+        <div className="flex min-w-0 items-center gap-2.5">
           <div
             className="flex h-9 w-9 shrink-0 items-center justify-center rounded-nx-md"
             style={{
@@ -29,10 +29,10 @@ export function TenantQuickActions({ actions }: TenantQuickActionsProps) {
             <Zap className="h-4.5 w-4.5" />
           </div>
           <div className="min-w-0">
-            <h3 className="text-sm font-semibold text-nx-ink truncate">
+            <h3 className="truncate text-sm font-semibold text-nx-ink">
               {t("tenantCommandCenter.quickActions.title") || "Quick Actions"}
             </h3>
-            <p className="text-xs text-nx-ink-3 truncate">
+            <p className="truncate text-xs text-nx-ink-3">
               {t("tenantCommandCenter.quickActions.subtitle") || "Common workspace tasks."}
             </p>
           </div>
@@ -40,7 +40,7 @@ export function TenantQuickActions({ actions }: TenantQuickActionsProps) {
 
         <Link
           href="/settings"
-          className="text-xs font-semibold text-nx-accent hover:underline shrink-0"
+          className="shrink-0 text-xs font-semibold text-nx-accent hover:underline"
         >
           {t("tenantCommandCenter.quickActions.customize") || "Customize"}
         </Link>

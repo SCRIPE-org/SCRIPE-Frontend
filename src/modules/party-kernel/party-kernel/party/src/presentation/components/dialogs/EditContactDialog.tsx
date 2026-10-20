@@ -1,24 +1,12 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogFooter,
-} from "@core/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@core/ui/dialog";
 import { Button } from "@core/ui/button";
 import { Input } from "@core/ui/input";
 import { Label } from "@core/ui/label";
 import { Checkbox } from "@core/ui/checkbox";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@core/ui/select";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@core/ui/select";
 import { useI18n } from "@core/providers/i18n-provider";
 import { Edit3, Loader2 } from "lucide-react";
 import type { ContactPoint } from "../../../../../contact-point/src/domain/entities/ContactPoint";
@@ -107,7 +95,7 @@ export function EditContactDialog({
         <form onSubmit={handleSubmit}>
           <DialogHeader>
             <div className="flex items-center gap-2">
-              <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-nx-accent/10 text-nx-accent">
+              <div className="bg-nx-accent/10 flex h-9 w-9 items-center justify-center rounded-lg text-nx-accent">
                 <Edit3 className="h-5 w-5" />
               </div>
               <DialogTitle>
@@ -120,14 +108,14 @@ export function EditContactDialog({
             {error && (
               <div
                 role="alert"
-                className="rounded-md bg-destructive/10 p-3 text-sm text-destructive border border-destructive/20"
+                className="rounded-md border border-destructive/20 bg-destructive/10 p-3 text-sm text-destructive"
               >
                 {error}
               </div>
             )}
 
             <div className="grid gap-2">
-              <Label htmlFor="edit-contact-type" className="text-nx-ink font-medium">
+              <Label htmlFor="edit-contact-type" className="font-medium text-nx-ink">
                 {t("party.dialog.contactType")}
               </Label>
               <Select value={type} onValueChange={setType} disabled={isSubmitting}>
@@ -144,9 +132,8 @@ export function EditContactDialog({
             </div>
 
             <div className="grid gap-2">
-              <Label htmlFor="edit-contact-val" className="text-nx-ink font-medium">
-                {t("party.dialog.contactValue")}{" "}
-                <span className="text-destructive">*</span>
+              <Label htmlFor="edit-contact-val" className="font-medium text-nx-ink">
+                {t("party.dialog.contactValue")} <span className="text-destructive">*</span>
               </Label>
               <Input
                 id="edit-contact-val"
@@ -170,7 +157,7 @@ export function EditContactDialog({
               />
               <Label
                 htmlFor="edit-contact-primary"
-                className="text-sm font-normal text-nx-ink-2 cursor-pointer"
+                className="cursor-pointer text-sm font-normal text-nx-ink-2"
               >
                 {t("party.dialog.markAsPrimary")}
               </Label>
@@ -178,18 +165,10 @@ export function EditContactDialog({
           </div>
 
           <DialogFooter className="gap-2 sm:gap-0">
-            <Button
-              type="button"
-              variant="outline"
-              onClick={handleClose}
-              disabled={isSubmitting}
-            >
+            <Button type="button" variant="outline" onClick={handleClose} disabled={isSubmitting}>
               {t("party.dialog.cancel")}
             </Button>
-            <Button
-              type="submit"
-              disabled={isSubmitting || !value.trim()}
-            >
+            <Button type="submit" disabled={isSubmitting || !value.trim()}>
               {isSubmitting ? (
                 <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />

@@ -343,9 +343,11 @@ describe("useResourcesWorkspaceViewModel", () => {
     mockContainer.schedulableResourceRepository.publish = vi.fn().mockImplementation(async () => {
       callOrder.push("publish");
     });
-    mockContainer.commercialPricingRepository.configureResourcePrice = vi.fn().mockImplementation(async () => {
-      callOrder.push("pricing");
-    });
+    mockContainer.commercialPricingRepository.configureResourcePrice = vi
+      .fn()
+      .mockImplementation(async () => {
+        callOrder.push("pricing");
+      });
 
     const { result } = renderHook(() => useResourcesWorkspaceViewModel());
 
@@ -390,7 +392,9 @@ describe("useResourcesWorkspaceViewModel", () => {
   });
 
   it("simulates pricing failure after publication, marking court as Setup Required and preserving resourceId for retry", async () => {
-    mockContainer.schedulableResourceRepository.create = vi.fn().mockResolvedValue("res-pricing-fail");
+    mockContainer.schedulableResourceRepository.create = vi
+      .fn()
+      .mockResolvedValue("res-pricing-fail");
     mockContainer.availabilityRepository.saveCalendar = vi.fn().mockResolvedValue(undefined);
     mockContainer.schedulableResourceRepository.publish = vi.fn().mockResolvedValue(undefined);
     mockContainer.commercialPricingRepository.configureResourcePrice = vi
@@ -435,13 +439,17 @@ describe("useResourcesWorkspaceViewModel", () => {
     expect(pricingFailure?.error).toBe("CatalogPricing: service unavailable");
 
     // Publication succeeded before pricing failure
-    expect(mockContainer.schedulableResourceRepository.publish).toHaveBeenCalledWith("res-pricing-fail");
+    expect(mockContainer.schedulableResourceRepository.publish).toHaveBeenCalledWith(
+      "res-pricing-fail"
+    );
   });
 
   it("fails safely and truthfully on 409 conflict when no persisted resourceId exists (does not hijack existing resources by name)", async () => {
     mockContainer.schedulableResourceRepository.create = vi
       .fn()
-      .mockRejectedValue(new Error("409 Conflict: SchedulableResource with name 'Padel Court 1' already exists"));
+      .mockRejectedValue(
+        new Error("409 Conflict: SchedulableResource with name 'Padel Court 1' already exists")
+      );
 
     const { result } = renderHook(() => useResourcesWorkspaceViewModel());
 
@@ -603,4 +611,3 @@ describe("useResourcesWorkspaceViewModel", () => {
     expect(diffSeconds).toBeLessThanOrEqual(16);
   });
 });
-

@@ -13,9 +13,16 @@ import type {
  * Documentation for module export
  */
 export interface IBookingRepository {
-  getOrCreateBusinessIntent(fingerprint: string, confirmationFingerprint?: string): Promise<BookingBusinessIntent>;
+  getOrCreateBusinessIntent(
+    fingerprint: string,
+    confirmationFingerprint?: string
+  ): Promise<BookingBusinessIntent>;
   clearBusinessIntent(): void;
-  recordBusinessHoldExpiry(draftIdempotencyKey: string, holdIdempotencyKey: string, expiresAtUtc: string): void;
+  recordBusinessHoldExpiry(
+    draftIdempotencyKey: string,
+    holdIdempotencyKey: string,
+    expiresAtUtc: string
+  ): void;
   createDraft(input: CreateBookingDraftInput): Promise<{ id: string }>;
   createHold(reservationId: string, idempotencyKey: string): Promise<BookingHoldResult>;
   confirm(

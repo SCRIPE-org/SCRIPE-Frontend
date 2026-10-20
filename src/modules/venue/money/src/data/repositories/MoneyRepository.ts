@@ -77,4 +77,3 @@ export class MoneyRepository implements IMoneyRepository {
     return this.service.getPaymentMethods(filter);
   }
 }
-

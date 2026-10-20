@@ -28,11 +28,7 @@ export interface ResourceWorkspaceItem {
 }
 
 export type CourtReadinessState =
-  | "Ready"
-  | "Pricing Activating"
-  | "Setup Required"
-  | "Unavailable"
-  | "Active";
+  "Ready" | "Pricing Activating" | "Setup Required" | "Unavailable" | "Active";
 
 export interface CourtMissingAction {
   id: string;
@@ -179,5 +175,3 @@ export interface FirstTimeSetupInput {
   publishImmediately?: boolean;
   existingCourtResources?: Record<string, string>; // legacy fallback
 }
-
-

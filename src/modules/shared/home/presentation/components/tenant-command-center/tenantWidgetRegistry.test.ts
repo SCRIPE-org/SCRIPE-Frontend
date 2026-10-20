@@ -111,4 +111,3 @@ describe("Tenant Widget Registry & Customization Domain", () => {
     }
   });
 });
-

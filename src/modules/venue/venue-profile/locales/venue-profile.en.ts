@@ -27,7 +27,8 @@ export const en = {
     descriptions: {
       siteId: "The OrganizationCore site this venue operates at.",
       enableGuestExperience: "Allow customers to view bookings via secure no-app guest links.",
-      exposeCancellationToGuests: "Allow customers to cancel their booking directly from the guest portal.",
+      exposeCancellationToGuests:
+        "Allow customers to cancel their booking directly from the guest portal.",
     },
     manageSites: "Manage Sites & Campuses",
     quickCreateSite: "Quick Create Site",

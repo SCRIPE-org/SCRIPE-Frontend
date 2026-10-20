@@ -81,13 +81,13 @@ describe("excelReportExport", () => {
     });
 
     // Contains isolated currency rows
-    expect(xml).toContain("<Data ss:Type=\"String\">EGP</Data>");
-    expect(xml).toContain("<Data ss:Type=\"Number\">500</Data>");
-    expect(xml).toContain("<Data ss:Type=\"String\">USD</Data>");
-    expect(xml).toContain("<Data ss:Type=\"Number\">80</Data>");
+    expect(xml).toContain('<Data ss:Type="String">EGP</Data>');
+    expect(xml).toContain('<Data ss:Type="Number">500</Data>');
+    expect(xml).toContain('<Data ss:Type="String">USD</Data>');
+    expect(xml).toContain('<Data ss:Type="Number">80</Data>');
 
     // Never merged unlike currencies together into 580
-    expect(xml).not.toContain("<Data ss:Type=\"Number\">580</Data>");
+    expect(xml).not.toContain('<Data ss:Type="Number">580</Data>');
   });
 
   it("generates RFC 4180 CSV with proper headers and escaping", () => {

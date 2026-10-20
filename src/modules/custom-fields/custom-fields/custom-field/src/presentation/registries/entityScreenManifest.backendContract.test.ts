@@ -112,7 +112,8 @@ function collectRegisteredCatalogNames(dir: string, names = new Set<string>()): 
     }
     if (entry.name !== "DependencyInjection.cs") continue;
     const source = fs.readFileSync(path.join(dir, entry.name), "utf8");
-    const registration = /AddSingleton\s*<\s*[^,<>]*IEntityTypeCatalog\s*,\s*(?:global::)?([\w.]+)\s*>/g;
+    const registration =
+      /AddSingleton\s*<\s*[^,<>]*IEntityTypeCatalog\s*,\s*(?:global::)?([\w.]+)\s*>/g;
     let match: RegExpExecArray | null;
     while ((match = registration.exec(source)) !== null) {
       names.add(match[1].split(".").at(-1)!);
@@ -202,9 +203,13 @@ const suite = backendAvailable ? describe : describe.skip;
 
 suite(suiteName, () => {
   const backendSource = path.join(BACKEND_ROOT, "src");
-  const registeredCatalogNames = backendAvailable ? collectRegisteredCatalogNames(backendSource) : new Set<string>();
+  const registeredCatalogNames = backendAvailable
+    ? collectRegisteredCatalogNames(backendSource)
+    : new Set<string>();
   const catalogFiles = backendAvailable
-    ? collectCatalogFiles(backendSource).filter((file) => registeredCatalogNames.has(path.basename(file, ".cs")))
+    ? collectCatalogFiles(backendSource).filter((file) =>
+        registeredCatalogNames.has(path.basename(file, ".cs"))
+      )
     : [];
   const { registrations, rawCallCount } = parseRegistrations(catalogFiles);
 

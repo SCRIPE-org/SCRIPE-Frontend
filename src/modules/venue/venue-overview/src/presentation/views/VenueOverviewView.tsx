@@ -40,7 +40,7 @@ export function VenueOverviewView({ facilityId, localDate }: Props) {
   const dir = language === "ar" ? "rtl" : "ltr";
   const canViewAttention = usePermission(VENUE_PERMISSIONS.VENUE_ATTENTION_VIEW);
   const attentionVm = useVenueAttentionViewModel(canViewAttention);
-  const attentionCount = canViewAttention ? attentionVm.data?.items.length ?? 0 : undefined;
+  const attentionCount = canViewAttention ? (attentionVm.data?.items.length ?? 0) : undefined;
 
   const { state, facilities, selectedFacilityId, refreshing, refresh, changeFacility } =
     useVenueOverviewViewModel(facilityId, localDate);
@@ -194,11 +194,11 @@ export function VenueOverviewView({ facilityId, localDate }: Props) {
       />
 
       {/* Approved Reference Composition: Live Courts (7 cols) + Editorial Banner & Today's Schedule (5 cols) */}
-      <div className="grid grid-cols-1 gap-6 lg:grid-cols-12 items-start">
+      <div className="grid grid-cols-1 items-start gap-6 lg:grid-cols-12">
         <div className="lg:col-span-7">
           <VenueOverviewLiveCourts items={state.resourceActivity} t={t} />
         </div>
-        <div className="lg:col-span-5 space-y-4">
+        <div className="space-y-4 lg:col-span-5">
           <VenueOverviewEditorialBanner facilityName={state.facilityName} t={t} />
           <VenueOverviewTodaySchedule items={state.upNext} t={t} />
         </div>

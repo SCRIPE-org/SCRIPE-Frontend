@@ -33,7 +33,8 @@ export const ar = {
       creating: "جارٍ إنشاء العميل…",
       cancel: "إلغاء",
       phoneLabel: "رقم الهاتف الأساسي (اختياري)",
-      personGuarded: "تم تعليق الإنشاء السريع للأفراد مؤقتًا بانتظار اكتمال عقد الإدراج الذري المتعدد في الواجهة الخلفية (ADR-PARTY-PERSON-FULL-NAME-STORAGE). يتم الاحتفاظ بحقل الهاتف.",
+      personGuarded:
+        "تم تعليق الإنشاء السريع للأفراد مؤقتًا بانتظار اكتمال عقد الإدراج الذري المتعدد في الواجهة الخلفية (ADR-PARTY-PERSON-FULL-NAME-STORAGE). يتم الاحتفاظ بحقل الهاتف.",
       personGuardedBtn: "معلّق (بانتظار العقد)",
       permissionTitle: "يلزم إذن الوصول إلى العملاء",
       permissionDescription: "تحتاج إلى إذن عرض الأطراف قبل إنشاء الحجز.",

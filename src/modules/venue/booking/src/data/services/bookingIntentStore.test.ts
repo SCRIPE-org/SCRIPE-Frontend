@@ -6,7 +6,10 @@ import {
 } from "./bookingIntentStore";
 
 function createBrowserStorage(
-  digest: (algorithm: string, input: BufferSource) => Promise<ArrayBuffer> = async (_algorithm, input) => {
+  digest: (algorithm: string, input: BufferSource) => Promise<ArrayBuffer> = async (
+    _algorithm,
+    input
+  ) => {
     const bytes = new Uint8Array(input as Uint8Array);
     const value = bytes.reduce((total, byte) => (total + byte) % 256, 0);
     return new Uint8Array([value]).buffer;
@@ -91,7 +94,9 @@ describe("bookingIntentStore", () => {
 
   it("does not repopulate storage when an intent is cleared while its fingerprint is hashing", async () => {
     let finishDigest!: (value: ArrayBuffer) => void;
-    const pendingDigest = new Promise<ArrayBuffer>((resolve) => { finishDigest = resolve; });
+    const pendingDigest = new Promise<ArrayBuffer>((resolve) => {
+      finishDigest = resolve;
+    });
     const { sessionStorage } = createBrowserStorage(() => pendingDigest);
 
     const pendingIntent = getOrCreateBookingIntent("abandoned-intent");

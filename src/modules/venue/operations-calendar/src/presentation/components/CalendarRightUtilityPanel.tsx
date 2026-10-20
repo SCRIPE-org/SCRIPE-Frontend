@@ -1,14 +1,7 @@
 "use client";
 
 import React, { useMemo } from "react";
-import {
-  ChevronLeft,
-  ChevronRight,
-  Plus,
-  Clock,
-  Search,
-  List,
-} from "lucide-react";
+import { ChevronLeft, ChevronRight, Plus, Clock, Search, List } from "lucide-react";
 import { Card } from "@core/ui/card";
 import { Button } from "@core/ui/button";
 import { useI18n } from "@core/providers/i18n-provider";
@@ -103,12 +96,12 @@ export function CalendarRightUtilityPanel({
 
   return (
     <div
-      className="space-y-4 w-full lg:w-72 shrink-0 select-none"
+      className="w-full shrink-0 select-none space-y-4 lg:w-72"
       data-testid="calendar-right-utility-panel"
     >
       {/* 1. Small Month Calendar */}
-      <Card className="border border-nx-line bg-nx-surface rounded-nx-xl p-3.5 shadow-xs">
-        <div className="flex items-center justify-between mb-3">
+      <Card className="rounded-nx-xl shadow-xs border border-nx-line bg-nx-surface p-3.5">
+        <div className="mb-3 flex items-center justify-between">
           <span className="text-xs font-bold text-nx-ink">
             {monthName} {year}
           </span>
@@ -118,8 +111,10 @@ export function CalendarRightUtilityPanel({
               size="sm"
               type="button"
               onClick={handlePrevMonth}
-              className="p-1 rounded hover:bg-nx-surfaceSubtle text-nx-ink-3 hover:text-nx-ink transition-colors"
-              aria-label={t("operationsCalendar.utility.previousMonth", { defaultValue: "Previous month" })}
+              className="hover:bg-nx-surfaceSubtle rounded p-1 text-nx-ink-3 transition-colors hover:text-nx-ink"
+              aria-label={t("operationsCalendar.utility.previousMonth", {
+                defaultValue: "Previous month",
+              })}
             >
               <ChevronLeft className="size-3.5 rtl:rotate-180" />
             </Button>
@@ -128,7 +123,7 @@ export function CalendarRightUtilityPanel({
               size="sm"
               type="button"
               onClick={handleNextMonth}
-              className="p-1 rounded hover:bg-nx-surfaceSubtle text-nx-ink-3 hover:text-nx-ink transition-colors"
+              className="hover:bg-nx-surfaceSubtle rounded p-1 text-nx-ink-3 transition-colors hover:text-nx-ink"
               aria-label={t("operationsCalendar.utility.nextMonth", { defaultValue: "Next month" })}
             >
               <ChevronRight className="size-3.5 rtl:rotate-180" />
@@ -137,7 +132,7 @@ export function CalendarRightUtilityPanel({
         </div>
 
         {/* Weekday initials */}
-        <div className="grid grid-cols-7 gap-1 text-center mb-1.5">
+        <div className="mb-1.5 grid grid-cols-7 gap-1 text-center">
           {weekdays.map((w, i) => (
             <span key={i} className="text-[10px] font-bold text-nx-ink-3">
               {w}
@@ -162,10 +157,10 @@ export function CalendarRightUtilityPanel({
                 key={`day-${dayNum}`}
                 type="button"
                 onClick={() => handleSelectDay(dayNum)}
-                className={`h-7 w-7 rounded-full text-xs font-semibold flex items-center justify-center transition-all ${
+                className={`flex h-7 w-7 items-center justify-center rounded-full text-xs font-semibold transition-all ${
                   isSelected
-                    ? "bg-nx-accent text-nx-accent-contrast font-bold shadow-xs"
-                    : "text-nx-ink hover:bg-nx-surfaceSubtle"
+                    ? "text-nx-accent-contrast shadow-xs bg-nx-accent font-bold"
+                    : "hover:bg-nx-surfaceSubtle text-nx-ink"
                 }`}
               >
                 {dayNum}
@@ -176,8 +171,8 @@ export function CalendarRightUtilityPanel({
       </Card>
 
       {/* 2. Quick Actions */}
-      <Card className="border border-nx-line bg-nx-surface rounded-nx-xl p-3.5 shadow-xs">
-        <h3 className="text-xs font-bold text-nx-ink mb-2.5">
+      <Card className="rounded-nx-xl shadow-xs border border-nx-line bg-nx-surface p-3.5">
+        <h3 className="mb-2.5 text-xs font-bold text-nx-ink">
           {t("operationsCalendar.quickActions.title", { defaultValue: "Quick Actions" })}
         </h3>
         <div className="space-y-1">
@@ -185,78 +180,86 @@ export function CalendarRightUtilityPanel({
             variant="ghost"
             size="sm"
             onClick={onNewBooking}
-            className="w-full justify-start text-xs font-semibold gap-2.5 h-8 text-nx-ink hover:bg-nx-surfaceSubtle"
+            className="hover:bg-nx-surfaceSubtle h-8 w-full justify-start gap-2.5 text-xs font-semibold text-nx-ink"
           >
             <Plus className="size-3.5 text-blue-500" />
-            <span>{t("operationsCalendar.quickActions.newBooking", { defaultValue: "New Booking" })}</span>
+            <span>
+              {t("operationsCalendar.quickActions.newBooking", { defaultValue: "New Booking" })}
+            </span>
           </Button>
 
           <Button
             variant="ghost"
             size="sm"
             onClick={onBlockTime}
-            className="w-full justify-start text-xs font-semibold gap-2.5 h-8 text-nx-ink hover:bg-nx-surfaceSubtle"
+            className="hover:bg-nx-surfaceSubtle h-8 w-full justify-start gap-2.5 text-xs font-semibold text-nx-ink"
           >
             <Clock className="size-3.5 text-amber-500" />
-            <span>{t("operationsCalendar.quickActions.blockTime", { defaultValue: "Block Time" })}</span>
+            <span>
+              {t("operationsCalendar.quickActions.blockTime", { defaultValue: "Block Time" })}
+            </span>
           </Button>
 
           <Button
             variant="ghost"
             size="sm"
             onClick={onFindSlots || onNewBooking}
-            className="w-full justify-start text-xs font-semibold gap-2.5 h-8 text-nx-ink hover:bg-nx-surfaceSubtle"
+            className="hover:bg-nx-surfaceSubtle h-8 w-full justify-start gap-2.5 text-xs font-semibold text-nx-ink"
           >
             <Search className="size-3.5 text-indigo-500" />
-            <span>{t("operationsCalendar.quickActions.findSlots", { defaultValue: "Find Available Slots" })}</span>
+            <span>
+              {t("operationsCalendar.quickActions.findSlots", {
+                defaultValue: "Find Available Slots",
+              })}
+            </span>
           </Button>
 
           <Button
             variant="ghost"
             size="sm"
             onClick={onViewToday}
-            className="w-full justify-start text-xs font-semibold gap-2.5 h-8 text-nx-ink hover:bg-nx-surfaceSubtle"
+            className="hover:bg-nx-surfaceSubtle h-8 w-full justify-start gap-2.5 text-xs font-semibold text-nx-ink"
           >
             <List className="size-3.5 text-emerald-500" />
-            <span>{t("operationsCalendar.quickActions.viewToday", { defaultValue: "View Today's List" })}</span>
+            <span>
+              {t("operationsCalendar.quickActions.viewToday", {
+                defaultValue: "View Today's List",
+              })}
+            </span>
           </Button>
         </div>
       </Card>
 
       {/* 3. Court Status */}
-      <Card className="border border-nx-line bg-nx-surface rounded-nx-xl p-3.5 shadow-xs">
-        <h3 className="text-xs font-bold text-nx-ink mb-2.5">
+      <Card className="rounded-nx-xl shadow-xs border border-nx-line bg-nx-surface p-3.5">
+        <h3 className="mb-2.5 text-xs font-bold text-nx-ink">
           {t("operationsCalendar.courtStatus.title", { defaultValue: "Court Status" })}
         </h3>
         <div className="space-y-2">
           <div className="flex items-center justify-between text-xs">
-            <div className="flex items-center gap-2 text-nx-ink-2 font-medium">
+            <div className="flex items-center gap-2 font-medium text-nx-ink-2">
               <span className="size-2 rounded-full bg-emerald-500" />
               <span>{t("operationsCalendar.courtStatus.inUse", { defaultValue: "In Use" })}</span>
             </div>
-            <span className="font-bold text-nx-ink tabular-nums">
-              {inUseVal}
-            </span>
+            <span className="font-bold tabular-nums text-nx-ink">{inUseVal}</span>
           </div>
 
           <div className="flex items-center justify-between text-xs">
-            <div className="flex items-center gap-2 text-nx-ink-2 font-medium">
+            <div className="flex items-center gap-2 font-medium text-nx-ink-2">
               <span className="size-2 rounded-full bg-sky-500" />
               <span>{t("operationsCalendar.courtStatus.free", { defaultValue: "Free" })}</span>
             </div>
-            <span className="font-bold text-nx-ink tabular-nums">
-              {freeVal}
-            </span>
+            <span className="font-bold tabular-nums text-nx-ink">{freeVal}</span>
           </div>
 
           <div className="flex items-center justify-between text-xs">
-            <div className="flex items-center gap-2 text-nx-ink-2 font-medium">
+            <div className="flex items-center gap-2 font-medium text-nx-ink-2">
               <span className="size-2 rounded-full bg-rose-500" />
-              <span>{t("operationsCalendar.courtStatus.maintenance", { defaultValue: "Maintenance" })}</span>
+              <span>
+                {t("operationsCalendar.courtStatus.maintenance", { defaultValue: "Maintenance" })}
+              </span>
             </div>
-            <span className="font-bold text-nx-ink tabular-nums">
-              {maintVal}
-            </span>
+            <span className="font-bold tabular-nums text-nx-ink">{maintVal}</span>
           </div>
         </div>
       </Card>

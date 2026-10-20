@@ -16,4 +16,3 @@ export const MONEY_ENDPOINTS = {
   ANALYTICS_BY_TIME: `${V1}/finance/analytics/by-time`,
   ANALYTICS_PAYMENT_METHODS: `${V1}/finance/analytics/payment-methods`,
 };
-

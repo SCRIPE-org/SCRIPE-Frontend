@@ -19,7 +19,8 @@ vi.mock("@core/providers/i18n-provider", () => ({
         "money.receivables.title": "Receivables",
         "money.payments.title": "Payments",
         "money.permission.title": "Finance access required",
-        "money.permission.description": "You do not have permission to view Venue financial records.",
+        "money.permission.description":
+          "You do not have permission to view Venue financial records.",
         "money.landing.viewReceivables": "View Receivables",
         "money.landing.viewPayments": "View Payments",
         "money.landing.recordPayment": "Record Payment",
@@ -65,16 +66,26 @@ describe("MoneyLandingView", () => {
 
     const mockInvoices = {
       items: [
-        { id: "inv-1", invoiceNumber: "INV-001", effectiveTotalAmount: 1000, outstandingAmount: 500, currencyCode: "EGP" },
-        { id: "inv-2", invoiceNumber: "INV-002", effectiveTotalAmount: 800, outstandingAmount: 0, currencyCode: "EGP" },
+        {
+          id: "inv-1",
+          invoiceNumber: "INV-001",
+          effectiveTotalAmount: 1000,
+          outstandingAmount: 500,
+          currencyCode: "EGP",
+        },
+        {
+          id: "inv-2",
+          invoiceNumber: "INV-002",
+          effectiveTotalAmount: 800,
+          outstandingAmount: 0,
+          currencyCode: "EGP",
+        },
       ],
       totalCount: 2,
     };
 
     const mockPayments = {
-      items: [
-        { id: "pay-1", paymentNumber: "PAY-001", amount: 500, currencyCode: "EGP" },
-      ],
+      items: [{ id: "pay-1", paymentNumber: "PAY-001", amount: 500, currencyCode: "EGP" }],
       totalCount: 1,
     };
 

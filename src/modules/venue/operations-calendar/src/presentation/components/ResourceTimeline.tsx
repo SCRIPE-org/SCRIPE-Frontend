@@ -32,7 +32,8 @@ function statusClass(status: OperationsCalendarBlock["status"]) {
   if (status === "Held") return "border-warning/50 bg-warning/15 text-warning-strong";
   if (status === "CheckedIn") return "border-info/50 bg-info/15 text-info";
   if (status === "Completed") return "border-nx-border bg-nx-raised/70 text-nx-ink-2";
-  if (status === "NoShow") return "border-destructive/60 bg-destructive/15 text-destructive font-semibold";
+  if (status === "NoShow")
+    return "border-destructive/60 bg-destructive/15 text-destructive font-semibold";
   if (
     status === ("Maintenance" as any) ||
     (status as string) === "Blocked" ||
@@ -77,7 +78,10 @@ export function ResourceTimeline(props: ResourceTimelineProps) {
     >
       <div className="min-w-max" dir="ltr">
         <div className="flex border-b border-nx-line bg-nx-raised">
-          <div className="sticky left-0 z-30 flex w-48 shrink-0 items-center border-r border-nx-line bg-nx-raised px-4 text-sm font-semibold" dir={props.direction}>
+          <div
+            className="sticky left-0 z-30 flex w-48 shrink-0 items-center border-r border-nx-line bg-nx-raised px-4 text-sm font-semibold"
+            dir={props.direction}
+          >
             {props.t("operationsCalendar.timeline.courtOrSpace", { defaultValue: "Court / Space" })}
           </div>
           <div className="flex" style={{ width: timelineWidth }}>
@@ -152,8 +156,12 @@ export function ResourceTimeline(props: ResourceTimelineProps) {
                     (block.status as string) === "Unavailable" ||
                     block.reservationId.startsWith("closure-");
                   const status = isClosure
-                    ? props.t("operationsCalendar.status.Maintenance", { defaultValue: "Maintenance" })
-                    : props.t(`operationsCalendar.status.${block.status}`, { defaultValue: block.status });
+                    ? props.t("operationsCalendar.status.Maintenance", {
+                        defaultValue: "Maintenance",
+                      })
+                    : props.t(`operationsCalendar.status.${block.status}`, {
+                        defaultValue: block.status,
+                      });
                   return (
                     <Button
                       variant="ghost"

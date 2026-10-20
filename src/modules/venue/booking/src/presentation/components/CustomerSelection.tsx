@@ -156,13 +156,8 @@ export function CustomerSelection({
                   <Button type="button" variant="outline" onClick={() => setIsCreateOpen(false)}>
                     {t("booking.customer.cancel")}
                   </Button>
-                  <Button
-                    type="submit"
-                    disabled={!newName.trim() || creating}
-                  >
-                    {creating
-                      ? t("booking.customer.creating")
-                      : t("booking.customer.createAction")}
+                  <Button type="submit" disabled={!newName.trim() || creating}>
+                    {creating ? t("booking.customer.creating") : t("booking.customer.createAction")}
                   </Button>
                 </DialogFooter>
               </form>

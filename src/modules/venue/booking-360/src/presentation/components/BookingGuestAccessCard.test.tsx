@@ -26,12 +26,7 @@ describe("BookingGuestAccessCard", () => {
       isRevoked: false,
     });
 
-    render(
-      <BookingGuestAccessCard
-        reservationId="res-123"
-        t={(k) => k}
-      />
-    );
+    render(<BookingGuestAccessCard reservationId="res-123" t={(k) => k} />);
 
     await waitFor(() => {
       expect(screen.getByText("Not Generated")).toBeInTheDocument();
@@ -50,12 +45,7 @@ describe("BookingGuestAccessCard", () => {
       expiresAtUtc: "2026-10-15T00:00:00Z",
     });
 
-    render(
-      <BookingGuestAccessCard
-        reservationId="res-123"
-        t={(k) => k}
-      />
-    );
+    render(<BookingGuestAccessCard reservationId="res-123" t={(k) => k} />);
 
     await waitFor(() => {
       expect(screen.getByText("Generate Guest Link")).toBeInTheDocument();
@@ -80,12 +70,7 @@ describe("BookingGuestAccessCard", () => {
     mockDelete.mockResolvedValueOnce(true);
     vi.spyOn(window, "confirm").mockReturnValue(true);
 
-    render(
-      <BookingGuestAccessCard
-        reservationId="res-123"
-        t={(k) => k}
-      />
-    );
+    render(<BookingGuestAccessCard reservationId="res-123" t={(k) => k} />);
 
     await waitFor(() => {
       expect(screen.getByText("Revoke Link")).toBeInTheDocument();

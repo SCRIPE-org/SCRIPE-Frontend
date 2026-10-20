@@ -51,7 +51,7 @@ Element.prototype.scrollIntoView ??= () => {};
 
 // Suppress console errors during tests (optional)
 const originalError = console.error;
-vi.spyOn(console, 'error').mockImplementation((...args: unknown[]) => {
+vi.spyOn(console, "error").mockImplementation((...args: unknown[]) => {
   if (typeof args[0] === "string" && args[0].includes("was not wrapped in act")) {
     return;
   }

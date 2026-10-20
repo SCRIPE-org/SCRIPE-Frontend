@@ -16,8 +16,8 @@ export function TenantKpiCards({ kpis }: TenantKpiCardsProps) {
   return (
     <section className="kpi-container-grid">
       {/* 1. Setup Completion */}
-      <Card className="p-3.5 sm:p-4 min-w-0 overflow-hidden border-nx-line bg-nx-surface text-nx-ink hover:border-nx-line-hi transition-[border-color,background-color] duration-nx-micro ease-nx-enter">
-        <div className="flex items-start gap-3 min-w-0">
+      <Card className="min-w-0 overflow-hidden border-nx-line bg-nx-surface p-3.5 text-nx-ink transition-[border-color,background-color] duration-nx-micro ease-nx-enter hover:border-nx-line-hi sm:p-4">
+        <div className="flex min-w-0 items-start gap-3">
           <div
             className="flex h-10 w-10 shrink-0 items-center justify-center rounded-nx-md"
             style={{
@@ -27,8 +27,8 @@ export function TenantKpiCards({ kpis }: TenantKpiCardsProps) {
           >
             <Check className="h-5 w-5" />
           </div>
-          <div className="flex-1 min-w-0">
-            <div className="flex items-center justify-between gap-1.5 min-w-0">
+          <div className="min-w-0 flex-1">
+            <div className="flex min-w-0 items-center justify-between gap-1.5">
               <span
                 className="truncate text-xs font-medium text-nx-ink-3"
                 title={t("tenantCommandCenter.kpis.setupCompletion") || "Setup completion"}
@@ -39,7 +39,7 @@ export function TenantKpiCards({ kpis }: TenantKpiCardsProps) {
                 {kpis.setupCompletion.trend}
               </span>
             </div>
-            <b className="mt-1 block font-mono text-xl sm:text-2xl font-extrabold leading-tight tracking-tight text-nx-ink truncate">
+            <b className="mt-1 block truncate font-mono text-xl font-extrabold leading-tight tracking-tight text-nx-ink sm:text-2xl">
               {kpis.setupCompletion.value}%
             </b>
             <div className="mt-2.5 h-1.5 w-full max-w-[130px] overflow-hidden rounded-full bg-nx-raised-2">
@@ -49,7 +49,7 @@ export function TenantKpiCards({ kpis }: TenantKpiCardsProps) {
               />
             </div>
             <span
-              className="mt-1.5 block text-[10px] text-nx-ink-3 truncate"
+              className="mt-1.5 block truncate text-[10px] text-nx-ink-3"
               title={kpis.setupCompletion.sub}
             >
               {kpis.setupCompletion.sub}
@@ -59,8 +59,8 @@ export function TenantKpiCards({ kpis }: TenantKpiCardsProps) {
       </Card>
 
       {/* 2. Admins & Users */}
-      <Card className="p-3.5 sm:p-4 min-w-0 overflow-hidden border-nx-line bg-nx-surface text-nx-ink hover:border-nx-line-hi transition-[border-color,background-color] duration-nx-micro ease-nx-enter">
-        <div className="flex items-start gap-3 min-w-0">
+      <Card className="min-w-0 overflow-hidden border-nx-line bg-nx-surface p-3.5 text-nx-ink transition-[border-color,background-color] duration-nx-micro ease-nx-enter hover:border-nx-line-hi sm:p-4">
+        <div className="flex min-w-0 items-start gap-3">
           <div
             className="flex h-10 w-10 shrink-0 items-center justify-center rounded-nx-md"
             style={{
@@ -70,8 +70,8 @@ export function TenantKpiCards({ kpis }: TenantKpiCardsProps) {
           >
             <Users className="h-5 w-5" />
           </div>
-          <div className="flex-1 min-w-0">
-            <div className="flex items-center justify-between gap-1.5 min-w-0">
+          <div className="min-w-0 flex-1">
+            <div className="flex min-w-0 items-center justify-between gap-1.5">
               <span
                 className="truncate text-xs font-medium text-nx-ink-3"
                 title={t("tenantCommandCenter.kpis.adminsAndUsers") || "Admins & users"}
@@ -82,11 +82,11 @@ export function TenantKpiCards({ kpis }: TenantKpiCardsProps) {
                 {kpis.adminsAndUsers.trend}
               </span>
             </div>
-            <b className="mt-1 block font-mono text-xl sm:text-2xl font-extrabold leading-tight tracking-tight text-nx-ink truncate">
+            <b className="mt-1 block truncate font-mono text-xl font-extrabold leading-tight tracking-tight text-nx-ink sm:text-2xl">
               {kpis.adminsAndUsers.value}
             </b>
             <span
-              className="mt-3 block text-[10px] text-nx-ink-3 truncate"
+              className="mt-3 block truncate text-[10px] text-nx-ink-3"
               title={kpis.adminsAndUsers.sub}
             >
               {kpis.adminsAndUsers.sub}
@@ -96,8 +96,8 @@ export function TenantKpiCards({ kpis }: TenantKpiCardsProps) {
       </Card>
 
       {/* 3. Branches & Sites */}
-      <Card className="p-3.5 sm:p-4 min-w-0 overflow-hidden border-nx-line bg-nx-surface text-nx-ink hover:border-nx-line-hi transition-[border-color,background-color] duration-nx-micro ease-nx-enter">
-        <div className="flex items-start gap-3 min-w-0">
+      <Card className="min-w-0 overflow-hidden border-nx-line bg-nx-surface p-3.5 text-nx-ink transition-[border-color,background-color] duration-nx-micro ease-nx-enter hover:border-nx-line-hi sm:p-4">
+        <div className="flex min-w-0 items-start gap-3">
           <div
             className="flex h-10 w-10 shrink-0 items-center justify-center rounded-nx-md"
             style={{
@@ -107,8 +107,8 @@ export function TenantKpiCards({ kpis }: TenantKpiCardsProps) {
           >
             <Building2 className="h-5 w-5" />
           </div>
-          <div className="flex-1 min-w-0">
-            <div className="flex items-center justify-between gap-1.5 min-w-0">
+          <div className="min-w-0 flex-1">
+            <div className="flex min-w-0 items-center justify-between gap-1.5">
               <span
                 className="truncate text-xs font-medium text-nx-ink-3"
                 title={t("tenantCommandCenter.kpis.branchesAndSites") || "Branches & sites"}
@@ -119,7 +119,7 @@ export function TenantKpiCards({ kpis }: TenantKpiCardsProps) {
                 {kpis.branchesAndSites.trend}
               </span>
             </div>
-            <b className="mt-1 block font-mono text-xl sm:text-2xl font-extrabold leading-tight tracking-tight text-nx-ink truncate">
+            <b className="mt-1 block truncate font-mono text-xl font-extrabold leading-tight tracking-tight text-nx-ink sm:text-2xl">
               {kpis.branchesAndSites.current} / {kpis.branchesAndSites.total}
             </b>
             <div className="mt-2.5 h-1.5 w-full max-w-[130px] overflow-hidden rounded-full bg-nx-raised-2">
@@ -129,7 +129,7 @@ export function TenantKpiCards({ kpis }: TenantKpiCardsProps) {
               />
             </div>
             <span
-              className="mt-1.5 block text-[10px] text-nx-ink-3 truncate"
+              className="mt-1.5 block truncate text-[10px] text-nx-ink-3"
               title={kpis.branchesAndSites.sub}
             >
               {kpis.branchesAndSites.sub}
@@ -139,8 +139,8 @@ export function TenantKpiCards({ kpis }: TenantKpiCardsProps) {
       </Card>
 
       {/* 4. Enabled Products */}
-      <Card className="p-3.5 sm:p-4 min-w-0 overflow-hidden border-nx-line bg-nx-surface text-nx-ink hover:border-nx-line-hi transition-[border-color,background-color] duration-nx-micro ease-nx-enter">
-        <div className="flex items-start gap-3 min-w-0">
+      <Card className="min-w-0 overflow-hidden border-nx-line bg-nx-surface p-3.5 text-nx-ink transition-[border-color,background-color] duration-nx-micro ease-nx-enter hover:border-nx-line-hi sm:p-4">
+        <div className="flex min-w-0 items-start gap-3">
           <div
             className="flex h-10 w-10 shrink-0 items-center justify-center rounded-nx-md"
             style={{
@@ -150,8 +150,8 @@ export function TenantKpiCards({ kpis }: TenantKpiCardsProps) {
           >
             <Package className="h-5 w-5" />
           </div>
-          <div className="flex-1 min-w-0">
-            <div className="flex items-center justify-between gap-1.5 min-w-0">
+          <div className="min-w-0 flex-1">
+            <div className="flex min-w-0 items-center justify-between gap-1.5">
               <span
                 className="truncate text-xs font-medium text-nx-ink-3"
                 title={t("tenantCommandCenter.kpis.enabledProducts") || "Enabled products"}
@@ -162,11 +162,11 @@ export function TenantKpiCards({ kpis }: TenantKpiCardsProps) {
                 {kpis.enabledProducts.trend}
               </span>
             </div>
-            <b className="mt-1 block font-mono text-xl sm:text-2xl font-extrabold leading-tight tracking-tight text-nx-ink truncate">
+            <b className="mt-1 block truncate font-mono text-xl font-extrabold leading-tight tracking-tight text-nx-ink sm:text-2xl">
               {kpis.enabledProducts.active} / {kpis.enabledProducts.total}
             </b>
             <span
-              className="mt-3 block text-[10px] text-nx-ink-3 truncate"
+              className="mt-3 block truncate text-[10px] text-nx-ink-3"
               title={kpis.enabledProducts.sub}
             >
               {kpis.enabledProducts.sub}

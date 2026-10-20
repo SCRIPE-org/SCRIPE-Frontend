@@ -194,14 +194,23 @@ export function RouteGuard({ children }: RouteGuardProps) {
         appLogger.debug("[RouteGuard] Authenticated user on auth page → dashboard");
         hasRedirected.current = true;
         const mcp = useAppStore.getState().mustChangePassword;
-        const redirectParam = typeof window !== "undefined" ? new URLSearchParams(window.location.search).get("redirect") : null;
+        const redirectParam =
+          typeof window !== "undefined"
+            ? new URLSearchParams(window.location.search).get("redirect")
+            : null;
         const rawDefault = useAppStore.getState().defaultRedirectPath;
-        const safeRedirect = redirectParam && redirectParam.startsWith("/") && !redirectParam.startsWith("//") ? redirectParam : null;
-        let targetPath = safeRedirect || (!rawDefault || rawDefault === "/" ? "/overview" : rawDefault);
+        const safeRedirect =
+          redirectParam && redirectParam.startsWith("/") && !redirectParam.startsWith("//")
+            ? redirectParam
+            : null;
+        let targetPath =
+          safeRedirect || (!rawDefault || rawDefault === "/" ? "/overview" : rawDefault);
         if (targetPath === "/overview" && !canAccessPage("/overview")) {
           const workspaceRouteMap = useNavigationStore.getState().workspaceRouteMap;
           const allRoutes = Object.values(workspaceRouteMap).flat();
-          targetPath = allRoutes.find((r) => canAccessPage(r)) || (canAccessPage("/party-kernel/parties") ? "/party-kernel/parties" : "/overview");
+          targetPath =
+            allRoutes.find((r) => canAccessPage(r)) ||
+            (canAccessPage("/party-kernel/parties") ? "/party-kernel/parties" : "/overview");
         }
         router.replace(mcp ? "/change-password" : targetPath);
         return;
@@ -276,7 +285,9 @@ export function RouteGuard({ children }: RouteGuardProps) {
             }
           }
           const allRoutes = Object.values(workspaceRouteMap).flat();
-          const fallbackRoute = allRoutes.find((r) => canAccessPage(r)) || (canAccessPage("/party-kernel/parties") ? "/party-kernel/parties" : null);
+          const fallbackRoute =
+            allRoutes.find((r) => canAccessPage(r)) ||
+            (canAccessPage("/party-kernel/parties") ? "/party-kernel/parties" : null);
           if (fallbackRoute && fallbackRoute !== pathname) {
             appLogger.debug(
               `[RouteGuard] Redirecting to global accessible route: ${fallbackRoute}`
@@ -337,7 +348,11 @@ export function RouteGuard({ children }: RouteGuardProps) {
             }
           }
           const allRoutes = Object.values(workspaceRouteMap).flat();
-          const fallbackRoute = allRoutes.find((r) => canAccessPage(r) && hasRouteAccess(r)) || (canAccessPage("/party-kernel/parties") && hasRouteAccess("/party-kernel/parties") ? "/party-kernel/parties" : null);
+          const fallbackRoute =
+            allRoutes.find((r) => canAccessPage(r) && hasRouteAccess(r)) ||
+            (canAccessPage("/party-kernel/parties") && hasRouteAccess("/party-kernel/parties")
+              ? "/party-kernel/parties"
+              : null);
           if (fallbackRoute && fallbackRoute !== pathname) {
             appLogger.debug(
               `[RouteGuard] Redirecting to global accessible navigation route: ${fallbackRoute}`

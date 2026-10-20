@@ -405,26 +405,33 @@ export function useCustomFieldsFormFields(
     }));
   }
 
-  const fetchFields = useCallback(async (isRefetch = false) => {
-    const api = getCustomFieldsExtension();
-    if (!entityTypeKey || !api) {
-      if (isRefetch) {
-        setState((s) => ({ ...s, fieldConfigs: [], isLoading: false, error: null }));
+  const fetchFields = useCallback(
+    async (isRefetch = false) => {
+      const api = getCustomFieldsExtension();
+      if (!entityTypeKey || !api) {
+        if (isRefetch) {
+          setState((s) => ({ ...s, fieldConfigs: [], isLoading: false, error: null }));
+        }
+        return;
       }
-      return;
-    }
-    
-    if (isRefetch) {
-      setState((s) => ({ ...s, isLoading: true, error: null }));
-    }
-    
-    try {
-      const configs = await api.getFormFields(entityTypeKey, ownerId);
-      setState((s) => ({ ...s, fieldConfigs: configs, isLoading: false }));
-    } catch (err) {
-      setState((s) => ({ ...s, error: err instanceof Error ? err : new Error(String(err)), isLoading: false }));
-    }
-  }, [entityTypeKey, ownerId]);
+
+      if (isRefetch) {
+        setState((s) => ({ ...s, isLoading: true, error: null }));
+      }
+
+      try {
+        const configs = await api.getFormFields(entityTypeKey, ownerId);
+        setState((s) => ({ ...s, fieldConfigs: configs, isLoading: false }));
+      } catch (err) {
+        setState((s) => ({
+          ...s,
+          error: err instanceof Error ? err : new Error(String(err)),
+          isLoading: false,
+        }));
+      }
+    },
+    [entityTypeKey, ownerId]
+  );
 
   useEffect(() => {
     // Initial fetch for a given key/owner pair. State is already marked loading during render.
@@ -432,11 +439,11 @@ export function useCustomFieldsFormFields(
     void fetchFields(false);
   }, [fetchFields]);
 
-  return { 
-    fieldConfigs: state.fieldConfigs, 
-    isLoading: state.isLoading, 
-    error: state.error, 
-    refetch: () => fetchFields(true) 
+  return {
+    fieldConfigs: state.fieldConfigs,
+    isLoading: state.isLoading,
+    error: state.error,
+    refetch: () => fetchFields(true),
   };
 }
 
@@ -597,44 +604,47 @@ export function useCustomFieldColumns(
     }));
   }
 
-  const fetchColumns = useCallback(async (isRefetch = false) => {
-    const api = getCustomFieldsExtension();
-    const targetOwnerIds = ownerIdsKey ? ownerIdsKey.split(",") : [];
-    if (!entityTypeKey || !api || targetOwnerIds.length === 0) {
+  const fetchColumns = useCallback(
+    async (isRefetch = false) => {
+      const api = getCustomFieldsExtension();
+      const targetOwnerIds = ownerIdsKey ? ownerIdsKey.split(",") : [];
+      if (!entityTypeKey || !api || targetOwnerIds.length === 0) {
+        if (isRefetch) {
+          setState((s) => ({
+            ...s,
+            definitions: [],
+            valuesByOwnerId: {},
+            hiddenKeysByOwnerId: {},
+            isLoading: false,
+            error: null,
+          }));
+        }
+        return;
+      }
+
       if (isRefetch) {
+        setState((s) => ({ ...s, isLoading: true, error: null }));
+      }
+
+      try {
+        const result = await api.getBulkColumnValues(entityTypeKey, targetOwnerIds);
         setState((s) => ({
           ...s,
-          definitions: [],
-          valuesByOwnerId: {},
-          hiddenKeysByOwnerId: {},
+          definitions: result.columns.slice().sort((a, b) => a.sortOrder - b.sortOrder),
+          valuesByOwnerId: result.valuesByOwnerId,
+          hiddenKeysByOwnerId: result.hiddenKeysByOwnerId ?? {},
           isLoading: false,
-          error: null,
+        }));
+      } catch (err) {
+        setState((s) => ({
+          ...s,
+          error: err instanceof Error ? err : new Error(String(err)),
+          isLoading: false,
         }));
       }
-      return;
-    }
-    
-    if (isRefetch) {
-      setState((s) => ({ ...s, isLoading: true, error: null }));
-    }
-    
-    try {
-      const result = await api.getBulkColumnValues(entityTypeKey, targetOwnerIds);
-      setState((s) => ({
-        ...s,
-        definitions: result.columns.slice().sort((a, b) => a.sortOrder - b.sortOrder),
-        valuesByOwnerId: result.valuesByOwnerId,
-        hiddenKeysByOwnerId: result.hiddenKeysByOwnerId ?? {},
-        isLoading: false,
-      }));
-    } catch (err) {
-      setState((s) => ({
-        ...s,
-        error: err instanceof Error ? err : new Error(String(err)),
-        isLoading: false,
-      }));
-    }
-  }, [entityTypeKey, ownerIdsKey]);
+    },
+    [entityTypeKey, ownerIdsKey]
+  );
 
   useEffect(() => {
     void fetchColumns(false);
@@ -652,7 +662,14 @@ export function useCustomFieldColumns(
           entityTypeKey
         )
       ),
-    [state.definitions, state.valuesByOwnerId, state.hiddenKeysByOwnerId, language, t, entityTypeKey]
+    [
+      state.definitions,
+      state.valuesByOwnerId,
+      state.hiddenKeysByOwnerId,
+      language,
+      t,
+      entityTypeKey,
+    ]
   );
 
   return { columns, isLoading: state.isLoading, error: state.error };

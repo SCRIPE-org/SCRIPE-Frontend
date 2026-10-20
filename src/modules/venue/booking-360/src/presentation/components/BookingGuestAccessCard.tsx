@@ -6,16 +6,7 @@ import { Button } from "@core/ui/button";
 import { Badge } from "@core/ui/badge";
 import { Input } from "@core/ui/input";
 import { LoadingSpinner } from "@core/ui/loading-spinner";
-import {
-  Link2,
-  Copy,
-  Check,
-  Send,
-  Trash2,
-  ShieldCheck,
-  AlertCircle,
-  Clock,
-} from "lucide-react";
+import { Link2, Copy, Check, Send, Trash2, ShieldCheck, AlertCircle, Clock } from "lucide-react";
 import { getModuleApiService } from "@/core/services/api-factory";
 
 interface GuestAccessStatus {
@@ -131,7 +122,9 @@ export function BookingGuestAccessCard({
       if (res.sent) {
         setSendSuccess(`Guest link dispatched to ${res.recipient || "customer"}.`);
       } else {
-        setFeedbackError("Email delivery could not be completed. You can copy and share the link manually.");
+        setFeedbackError(
+          "Email delivery could not be completed. You can copy and share the link manually."
+        );
       }
     } catch (err: any) {
       setFeedbackError(err?.message || "Failed to dispatch guest link.");
@@ -141,7 +134,11 @@ export function BookingGuestAccessCard({
   };
 
   const handleRevokeLink = async () => {
-    if (!window.confirm("Are you sure you want to revoke this guest link? The customer will no longer be able to view or manage their booking with it.")) {
+    if (
+      !window.confirm(
+        "Are you sure you want to revoke this guest link? The customer will no longer be able to view or manage their booking with it."
+      )
+    ) {
       return;
     }
 
@@ -174,9 +171,9 @@ export function BookingGuestAccessCard({
   };
 
   return (
-    <Card className="border border-nx-line/80 shadow-sm overflow-hidden bg-nx-surface">
-      <CardHeader className="py-3 px-4 sm:px-6 bg-nx-surfaceSubtle/50 border-b border-nx-line/50 flex flex-row items-center justify-between">
-        <CardTitle className="text-sm font-semibold flex items-center gap-2 text-nx-ink">
+    <Card className="border-nx-line/80 overflow-hidden border bg-nx-surface shadow-sm">
+      <CardHeader className="bg-nx-surfaceSubtle/50 border-nx-line/50 flex flex-row items-center justify-between border-b px-4 py-3 sm:px-6">
+        <CardTitle className="flex items-center gap-2 text-sm font-semibold text-nx-ink">
           <Link2 className="size-4 text-nx-accent" aria-hidden="true" />
           <span>No-App Guest Access</span>
         </CardTitle>
@@ -200,35 +197,38 @@ export function BookingGuestAccessCard({
         </div>
       </CardHeader>
 
-      <CardContent className="p-4 sm:p-6 space-y-4">
+      <CardContent className="space-y-4 p-4 sm:p-6">
         {loading ? (
-          <div className="py-4 flex justify-center">
+          <div className="flex justify-center py-4">
             <LoadingSpinner showText={false} />
           </div>
         ) : (
           <>
             {feedbackError && (
-              <div className="p-3 rounded-nx-md bg-destructive/10 border border-destructive/20 text-xs text-destructive font-medium flex items-center gap-2">
+              <div className="flex items-center gap-2 rounded-nx-md border border-destructive/20 bg-destructive/10 p-3 text-xs font-medium text-destructive">
                 <AlertCircle className="size-4 shrink-0" aria-hidden="true" />
                 <span>{feedbackError}</span>
               </div>
             )}
 
             {sendSuccess && (
-              <div className="p-3 rounded-nx-md bg-emerald-500/10 border border-emerald-500/20 text-xs text-emerald-800 dark:text-emerald-300 font-medium flex items-center gap-2">
-                <Check className="size-4 shrink-0 text-emerald-600 dark:text-emerald-400" aria-hidden="true" />
+              <div className="flex items-center gap-2 rounded-nx-md border border-emerald-500/20 bg-emerald-500/10 p-3 text-xs font-medium text-emerald-800 dark:text-emerald-300">
+                <Check
+                  className="size-4 shrink-0 text-emerald-600 dark:text-emerald-400"
+                  aria-hidden="true"
+                />
                 <span>{sendSuccess}</span>
               </div>
             )}
 
             {/* When an active link exists (either loaded or freshly generated) */}
-            {(activeLink || (status?.hasActiveLink && !status?.isRevoked)) ? (
+            {activeLink || (status?.hasActiveLink && !status?.isRevoked) ? (
               <div className="space-y-3">
                 <div className="space-y-1.5">
                   <div className="flex items-center justify-between text-xs text-nx-ink-2">
                     <span className="font-medium">Secure Guest Link (Fragment Credential)</span>
                     {status?.expiresAtUtc && (
-                      <span className="text-[11px] text-nx-ink-3 flex items-center gap-1">
+                      <span className="flex items-center gap-1 text-[11px] text-nx-ink-3">
                         <Clock className="size-3" aria-hidden="true" />
                         Expires {formatExpiry(status.expiresAtUtc)}
                       </span>
@@ -240,14 +240,14 @@ export function BookingGuestAccessCard({
                       <Input
                         value={activeLink}
                         readOnly
-                        className="font-mono text-xs h-9 bg-nx-surfaceSubtle select-all"
+                        className="bg-nx-surfaceSubtle h-9 select-all font-mono text-xs"
                         dir="ltr"
                       />
                       <Button
                         variant="outline"
                         size="sm"
                         onClick={handleCopyLink}
-                        className="h-9 px-3 shrink-0 flex items-center gap-1.5 text-xs font-medium"
+                        className="flex h-9 shrink-0 items-center gap-1.5 px-3 text-xs font-medium"
                       >
                         {copied ? (
                           <>
@@ -263,7 +263,7 @@ export function BookingGuestAccessCard({
                       </Button>
                     </div>
                   ) : (
-                    <div className="p-3 rounded-nx-md bg-nx-surfaceSubtle border border-nx-line/50 flex items-center justify-between">
+                    <div className="bg-nx-surfaceSubtle border-nx-line/50 flex items-center justify-between rounded-nx-md border p-3">
                       <div className="flex items-center gap-2 text-xs text-nx-ink">
                         <ShieldCheck className="size-4 text-emerald-600" aria-hidden="true" />
                         <span>Active guest link issued and valid.</span>
@@ -281,13 +281,13 @@ export function BookingGuestAccessCard({
                   )}
                 </div>
 
-                <div className="flex flex-wrap items-center justify-between gap-2 pt-1 border-t border-nx-line/40">
+                <div className="border-nx-line/40 flex flex-wrap items-center justify-between gap-2 border-t pt-1">
                   <Button
                     variant="outline"
                     size="sm"
                     onClick={handleSendLink}
                     disabled={sending}
-                    className="h-8 text-xs flex items-center gap-1.5 text-nx-ink"
+                    className="flex h-8 items-center gap-1.5 text-xs text-nx-ink"
                   >
                     <Send className="size-3.5 text-nx-accent" aria-hidden="true" />
                     <span>{sending ? "Sending..." : "Send via Email"}</span>
@@ -298,7 +298,7 @@ export function BookingGuestAccessCard({
                     size="sm"
                     onClick={handleRevokeLink}
                     disabled={revoking}
-                    className="h-8 text-xs flex items-center gap-1.5 text-destructive hover:bg-destructive/10"
+                    className="flex h-8 items-center gap-1.5 text-xs text-destructive hover:bg-destructive/10"
                   >
                     <Trash2 className="size-3.5" aria-hidden="true" />
                     <span>{revoking ? "Revoking..." : "Revoke Link"}</span>
@@ -307,13 +307,13 @@ export function BookingGuestAccessCard({
               </div>
             ) : status?.isRevoked ? (
               <div className="space-y-3">
-                <div className="p-3 rounded-nx-md bg-rose-500/10 border border-rose-500/20 text-xs space-y-1">
-                  <div className="font-semibold text-rose-700 dark:text-rose-400 flex items-center gap-1.5">
+                <div className="space-y-1 rounded-nx-md border border-rose-500/20 bg-rose-500/10 p-3 text-xs">
+                  <div className="flex items-center gap-1.5 font-semibold text-rose-700 dark:text-rose-400">
                     <AlertCircle className="size-4" aria-hidden="true" />
                     <span>Previous Guest Link Revoked</span>
                   </div>
                   {status.revokedReason && (
-                    <p className="text-nx-ink-2 pl-5.5">Reason: {status.revokedReason}</p>
+                    <p className="pl-5.5 text-nx-ink-2">Reason: {status.revokedReason}</p>
                   )}
                 </div>
 
@@ -322,7 +322,7 @@ export function BookingGuestAccessCard({
                   size="sm"
                   onClick={handleGenerateLink}
                   disabled={generating}
-                  className="w-full text-xs font-medium flex items-center justify-center gap-1.5"
+                  className="flex w-full items-center justify-center gap-1.5 text-xs font-medium"
                 >
                   <Link2 className="size-3.5 text-nx-accent" aria-hidden="true" />
                   <span>{generating ? "Generating..." : "Generate New Guest Link"}</span>
@@ -330,8 +330,9 @@ export function BookingGuestAccessCard({
               </div>
             ) : (
               <div className="space-y-3 text-center sm:text-left">
-                <p className="text-xs text-nx-ink-2 leading-relaxed">
-                  Provide customer with zero-friction, mobile-optimized booking details without requiring an app download or account creation.
+                <p className="text-xs leading-relaxed text-nx-ink-2">
+                  Provide customer with zero-friction, mobile-optimized booking details without
+                  requiring an app download or account creation.
                 </p>
 
                 <Button
@@ -339,7 +340,7 @@ export function BookingGuestAccessCard({
                   size="sm"
                   onClick={handleGenerateLink}
                   disabled={generating}
-                  className="w-full sm:w-auto text-xs font-semibold flex items-center justify-center gap-1.5 border-nx-accent/30 text-nx-accent hover:bg-nx-accent/10"
+                  className="border-nx-accent/30 hover:bg-nx-accent/10 flex w-full items-center justify-center gap-1.5 text-xs font-semibold text-nx-accent sm:w-auto"
                 >
                   <Link2 className="size-3.5" aria-hidden="true" />
                   <span>{generating ? "Generating..." : "Generate Guest Link"}</span>

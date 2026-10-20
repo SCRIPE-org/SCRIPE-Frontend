@@ -19,27 +19,27 @@ export function GuestPortalEmptyState({
   t,
 }: GuestPortalEmptyStateProps) {
   return (
-    <div className="min-h-[70vh] flex items-center justify-center p-4">
-      <Card className="w-full max-w-md border border-nx-line/70 shadow-lg bg-nx-surface p-6 sm:p-8 text-center space-y-5">
-        <div className="size-14 mx-auto rounded-full bg-amber-500/10 dark:bg-amber-500/20 text-amber-600 dark:text-amber-400 flex items-center justify-center">
+    <div className="flex min-h-[70vh] items-center justify-center p-4">
+      <Card className="border-nx-line/70 w-full max-w-md space-y-5 border bg-nx-surface p-6 text-center shadow-lg sm:p-8">
+        <div className="mx-auto flex size-14 items-center justify-center rounded-full bg-amber-500/10 text-amber-600 dark:bg-amber-500/20 dark:text-amber-400">
           <ShieldAlert className="size-7" aria-hidden="true" />
         </div>
 
         <div className="space-y-2">
-          <h1 className="text-xl font-bold text-nx-ink tracking-tight">
+          <h1 className="text-xl font-bold tracking-tight text-nx-ink">
             {title || t("guestPortal.errors.invalidOrExpiredTitle")}
           </h1>
-          <p className="text-sm text-nx-ink-2 leading-relaxed">
+          <p className="text-sm leading-relaxed text-nx-ink-2">
             {description || t("guestPortal.errors.invalidOrExpiredDescription")}
           </p>
         </div>
 
-        <div className="p-3.5 rounded-nx-md bg-nx-surfaceSubtle border border-nx-line/50 text-xs text-nx-ink-3">
+        <div className="bg-nx-surfaceSubtle border-nx-line/50 rounded-nx-md border p-3.5 text-xs text-nx-ink-3">
           {t("guestPortal.errors.contactVenue")}
         </div>
 
         {onRetry && (
-          <div className="pt-2 flex justify-center">
+          <div className="flex justify-center pt-2">
             <Button
               variant="outline"
               size="sm"

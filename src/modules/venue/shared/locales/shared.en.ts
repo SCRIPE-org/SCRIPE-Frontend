@@ -25,7 +25,8 @@ export const en = {
     },
     errors: {
       general: "An unexpected venue operational error occurred.",
-      concurrencyConflict: "This reservation was modified by another user. Please refresh and review.",
+      concurrencyConflict:
+        "This reservation was modified by another user. Please refresh and review.",
       resourceUnavailable: "The selected court is unavailable for the requested timeframe.",
       holdExpired: "The temporary reservation hold has expired.",
     },

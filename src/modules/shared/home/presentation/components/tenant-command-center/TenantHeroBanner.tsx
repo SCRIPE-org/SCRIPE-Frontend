@@ -18,13 +18,13 @@ interface TenantHeroBannerProps {
 function renderPillIcon(icon: string) {
   switch (icon) {
     case "branches":
-      return <Building2 className="h-3.5 w-3.5 text-nx-accent shrink-0" />;
+      return <Building2 className="h-3.5 w-3.5 shrink-0 text-nx-accent" />;
     case "admins":
-      return <Users className="h-3.5 w-3.5 text-sky-500 shrink-0" />;
+      return <Users className="h-3.5 w-3.5 shrink-0 text-sky-500" />;
     case "plan":
-      return <ShieldCheck className="h-3.5 w-3.5 text-purple-500 shrink-0" />;
+      return <ShieldCheck className="h-3.5 w-3.5 shrink-0 text-purple-500" />;
     case "healthy":
-      return <CheckCircle2 className="h-3.5 w-3.5 text-success shrink-0" />;
+      return <CheckCircle2 className="h-3.5 w-3.5 shrink-0 text-success" />;
     default:
       return <span className="shrink-0">{icon}</span>;
   }
@@ -51,7 +51,7 @@ export function TenantHeroBanner({
       "Finish the essential setup steps below to unlock your full operational capabilities.";
 
   return (
-    <Card className="relative min-h-[170px] overflow-hidden p-5 sm:p-6 lg:p-7 border border-nx-line bg-nx-surface text-nx-ink hover:border-nx-line-hi transition-[border-color,background-color] duration-nx-micro">
+    <Card className="relative min-h-[170px] overflow-hidden border border-nx-line bg-nx-surface p-5 text-nx-ink transition-[border-color,background-color] duration-nx-micro hover:border-nx-line-hi sm:p-6 lg:p-7">
       {/* Subtle Tactical Architectural Background Lines */}
       <svg
         className="pointer-events-none absolute inset-0 h-full w-full opacity-20"
@@ -75,21 +75,21 @@ export function TenantHeroBanner({
       <div className="hero-container-layout relative z-10 min-w-0">
         {/* Left: Organization Title & Badges */}
         <div className="min-w-0">
-          <div className="text-xs font-bold uppercase tracking-wider text-nx-accent truncate">
+          <div className="truncate text-xs font-bold uppercase tracking-wider text-nx-accent">
             {tenantName}
           </div>
-          <h1 className="mb-1.5 mt-1 text-xl sm:text-2xl lg:text-[26px] font-bold leading-tight tracking-tight text-nx-ink">
+          <h1 className="mb-1.5 mt-1 text-xl font-bold leading-tight tracking-tight text-nx-ink sm:text-2xl lg:text-[26px]">
             {heroTitle}
           </h1>
-          <p className="max-w-2xl text-xs sm:text-[13px] text-nx-ink-3 leading-relaxed">
+          <p className="max-w-2xl text-xs leading-relaxed text-nx-ink-3 sm:text-[13px]">
             {heroSubtitle}
           </p>
 
-          <div className="mt-4 sm:mt-5 flex flex-wrap gap-2">
+          <div className="mt-4 flex flex-wrap gap-2 sm:mt-5">
             {metaPills.map((pill, idx) => (
               <div
                 key={idx}
-                className="flex h-8 items-center gap-1.5 rounded-nx-md border border-nx-line bg-nx-raised px-2.5 text-xs text-nx-ink-2 min-w-0"
+                className="flex h-8 min-w-0 items-center gap-1.5 rounded-nx-md border border-nx-line bg-nx-raised px-2.5 text-xs text-nx-ink-2"
               >
                 {renderPillIcon(pill.icon)}
                 <span className="truncate">{pill.label}</span>
@@ -99,7 +99,7 @@ export function TenantHeroBanner({
         </div>
 
         {/* Right: Readiness Ring Card */}
-        <aside className="rounded-nx-md border border-nx-line bg-nx-raised/40 p-4 min-w-0 w-full backdrop-blur-xs">
+        <aside className="bg-nx-raised/40 backdrop-blur-xs w-full min-w-0 rounded-nx-md border border-nx-line p-4">
           <div className="flex items-center gap-3">
             {/* SVG Conic Readiness Ring */}
             <div
@@ -109,16 +109,16 @@ export function TenantHeroBanner({
               }}
             >
               <div className="flex h-[32px] w-[32px] items-center justify-center rounded-full bg-nx-surface">
-                <span className="text-[11px] font-mono font-bold text-nx-ink">
+                <span className="font-mono text-[11px] font-bold text-nx-ink">
                   {readinessPercent}%
                 </span>
               </div>
             </div>
             <div className="min-w-0 flex-1">
-              <b className="block text-xs font-semibold text-nx-ink truncate">
+              <b className="block truncate text-xs font-semibold text-nx-ink">
                 {t("tenantCommandCenter.hero.readiness") || "Organization readiness"}
               </b>
-              <span className="block text-[11px] text-nx-ink-3 truncate">
+              <span className="block truncate text-[11px] text-nx-ink-3">
                 {t("tenantCommandCenter.hero.stepsComplete", {
                   completed: setupStepsCompleted,
                   total: setupStepsTotal,
@@ -130,15 +130,10 @@ export function TenantHeroBanner({
 
           <div className="mt-3.5 space-y-2 border-t border-nx-line pt-2.5">
             {readinessChecks.map((chk, idx) => (
-              <div
-                key={idx}
-                className="flex items-center gap-2 text-[11px] text-nx-ink-2 min-w-0"
-              >
+              <div key={idx} className="flex min-w-0 items-center gap-2 text-[11px] text-nx-ink-2">
                 <span
                   className={`h-2 w-2 shrink-0 rounded-full ${
-                    chk.status === "success"
-                      ? "bg-success"
-                      : "bg-warning"
+                    chk.status === "success" ? "bg-success" : "bg-warning"
                   }`}
                 />
                 <span className="truncate">{chk.label}</span>

@@ -78,17 +78,21 @@ export function TenantCommandHeader({
           {isEditing && (
             <Badge
               variant="outline"
-              className="gap-1 border-nx-accent/40 bg-nx-accent-wash text-nx-accent text-[10px] font-semibold animate-pulse"
+              className="border-nx-accent/40 animate-pulse gap-1 bg-nx-accent-wash text-[10px] font-semibold text-nx-accent"
             >
-              <span>{t("tenantCommandCenter.customization.editingLayout") || "Customizing Layout"}</span>
+              <span>
+                {t("tenantCommandCenter.customization.editingLayout") || "Customizing Layout"}
+              </span>
             </Badge>
           )}
           {isEditing && hasUnsavedChanges && (
             <Badge
               variant="outline"
-              className="border-amber-500/40 bg-amber-500/10 text-amber-500 text-[10px] font-medium"
+              className="border-amber-500/40 bg-amber-500/10 text-[10px] font-medium text-amber-500"
             >
-              <span>{t("tenantCommandCenter.customization.unsavedChanges") || "Unsaved Changes"}</span>
+              <span>
+                {t("tenantCommandCenter.customization.unsavedChanges") || "Unsaved Changes"}
+              </span>
             </Badge>
           )}
         </div>
@@ -105,7 +109,7 @@ export function TenantCommandHeader({
                 variant="outline"
                 size="sm"
                 onClick={onOpenLibrary}
-                className="h-8 gap-1.5 border-nx-line bg-nx-surface px-2.5 text-xs font-semibold hover:border-nx-line-hi hover:bg-nx-raised text-nx-ink"
+                className="h-8 gap-1.5 border-nx-line bg-nx-surface px-2.5 text-xs font-semibold text-nx-ink hover:border-nx-line-hi hover:bg-nx-raised"
               >
                 <Plus className="h-3.5 w-3.5 text-nx-accent" />
                 <span>{t("tenantCommandCenter.library.addWidget") || "Add Widget"}</span>
@@ -118,8 +122,11 @@ export function TenantCommandHeader({
                 variant="ghost"
                 size="sm"
                 onClick={onRestoreDefault}
-                className="h-8 gap-1.5 px-2 text-xs text-nx-ink-3 hover:text-nx-ink hover:bg-nx-raised"
-                title={t("tenantCommandCenter.customization.restoreDefaultTooltip") || "Reset to system default"}
+                className="h-8 gap-1.5 px-2 text-xs text-nx-ink-3 hover:bg-nx-raised hover:text-nx-ink"
+                title={
+                  t("tenantCommandCenter.customization.restoreDefaultTooltip") ||
+                  "Reset to system default"
+                }
               >
                 <RotateCcw className="h-3.5 w-3.5" />
                 <span className="hidden sm:inline">
@@ -135,7 +142,7 @@ export function TenantCommandHeader({
                 size="sm"
                 onClick={onCancelEditMode}
                 disabled={isSaving}
-                className="h-8 gap-1 border-nx-line px-2.5 text-xs text-nx-ink-3 hover:text-nx-ink hover:bg-nx-raised"
+                className="h-8 gap-1 border-nx-line px-2.5 text-xs text-nx-ink-3 hover:bg-nx-raised hover:text-nx-ink"
               >
                 <X className="h-3.5 w-3.5" />
                 <span>{t("common.cancel") || "Cancel"}</span>
@@ -148,7 +155,7 @@ export function TenantCommandHeader({
                 size="sm"
                 onClick={onSaveLayout}
                 disabled={isSaving}
-                className="h-8 gap-1.5 px-3 text-xs font-semibold shadow-xs"
+                className="shadow-xs h-8 gap-1.5 px-3 text-xs font-semibold"
               >
                 {isSaving ? (
                   <Loader2 className="h-3.5 w-3.5 animate-spin" />
@@ -173,7 +180,10 @@ export function TenantCommandHeader({
                 size="sm"
                 onClick={onEnterEditMode}
                 className="h-8 gap-1.5 border-nx-line bg-nx-surface px-2.5 text-xs font-semibold text-nx-ink hover:border-nx-line-hi hover:bg-nx-raised"
-                title={t("tenantCommandCenter.customization.customizeTooltip") || "Customize overview widgets and grid"}
+                title={
+                  t("tenantCommandCenter.customization.customizeTooltip") ||
+                  "Customize overview widgets and grid"
+                }
               >
                 <SlidersHorizontal className="h-3.5 w-3.5 text-nx-accent" />
                 <span>
@@ -189,14 +199,15 @@ export function TenantCommandHeader({
               onClick={togglePresentationMode}
               title={
                 isPresentationMode
-                  ? t("tenantCommandCenter.switchToLiveTooltip") || "Switch to live backend telemetry"
+                  ? t("tenantCommandCenter.switchToLiveTooltip") ||
+                    "Switch to live backend telemetry"
                   : t("tenantCommandCenter.switchToDemoTooltip") ||
                     "Switch to presentation showcase mode"
               }
               className={`h-8 cursor-pointer gap-1.5 border px-2.5 text-xs font-semibold transition-colors ${
                 isPresentationMode
                   ? "border-amber-500/30 bg-amber-500/10 text-amber-500 hover:bg-amber-500/20"
-                  : "border-nx-line bg-nx-surface text-nx-ink-3 hover:text-nx-ink hover:border-nx-line-hi hover:bg-nx-raised"
+                  : "border-nx-line bg-nx-surface text-nx-ink-3 hover:border-nx-line-hi hover:bg-nx-raised hover:text-nx-ink"
               }`}
             >
               <Sparkles

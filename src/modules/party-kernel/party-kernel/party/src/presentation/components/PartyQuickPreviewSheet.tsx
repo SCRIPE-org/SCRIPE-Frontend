@@ -78,37 +78,34 @@ export function PartyQuickPreviewSheet({
   const primaryPhone = profile?.primaryPhone || party.primaryPhone || null;
   const primaryEmail = profile?.primaryEmail || party.primaryEmail || null;
   const activeRoles =
-    profile?.roles && profile.roles.length > 0
-      ? profile.roles.map((r) => r.roleType)
-      : party.roles;
+    profile?.roles && profile.roles.length > 0 ? profile.roles.map((r) => r.roleType) : party.roles;
   const secondarySubtitle = party.isPerson
     ? profile?.fullName || party.fullName
     : profile?.legalName || party.legalName;
 
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
-      <SheetContent side="end" className="w-full sm:max-w-md flex flex-col justify-between overflow-y-auto">
+      <SheetContent
+        side="end"
+        className="flex w-full flex-col justify-between overflow-y-auto sm:max-w-md"
+      >
         <div className="space-y-6">
-          <SheetHeader className="pb-4 border-b border-nx-border">
+          <SheetHeader className="border-nx-border border-b pb-4">
             <div className="flex items-center gap-2">
               <Badge variant={party.isPerson ? "info" : "success"}>
-                {party.isPerson
-                  ? t("party.types.Person")
-                  : t("party.types.Organization")}
+                {party.isPerson ? t("party.types.Person") : t("party.types.Organization")}
               </Badge>
-              <span className="text-xs text-nx-ink-3 font-mono">
+              <span className="font-mono text-xs text-nx-ink-3">
                 {party.isPerson ? "INDIVIDUAL" : "CORPORATE"}
               </span>
             </div>
             <div className="flex items-start gap-3 pt-2">
-              <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-nx-accent/10 text-base font-bold text-nx-accent">
+              <div className="bg-nx-accent/10 flex h-12 w-12 shrink-0 items-center justify-center rounded-xl text-base font-bold text-nx-accent">
                 {party.initials}
               </div>
               <div className="min-w-0">
-                <SheetTitle className="text-xl font-bold truncate">
-                  {party.displayName}
-                </SheetTitle>
-                <SheetDescription className="text-xs text-nx-ink-2 truncate">
+                <SheetTitle className="truncate text-xl font-bold">{party.displayName}</SheetTitle>
+                <SheetDescription className="truncate text-xs text-nx-ink-2">
                   {secondarySubtitle && secondarySubtitle !== party.displayName
                     ? secondarySubtitle
                     : party.isPerson
@@ -121,9 +118,9 @@ export function PartyQuickPreviewSheet({
 
           {/* Canonical ID & Type Protection Banner */}
           <div className="space-y-3">
-            <div className="rounded-lg bg-nx-surface-2 p-3 border border-nx-border space-y-2">
+            <div className="bg-nx-surface-2 border-nx-border space-y-2 rounded-lg border p-3">
               <div className="flex items-center justify-between text-xs">
-                <span className="text-nx-ink-3 font-medium">
+                <span className="font-medium text-nx-ink-3">
                   {t("party.quickPreview.canonicalId")}
                 </span>
                 <Button
@@ -131,7 +128,7 @@ export function PartyQuickPreviewSheet({
                   variant="ghost"
                   size="sm"
                   onClick={handleCopyId}
-                  className="h-6 px-1.5 py-0 flex items-center gap-1 text-nx-ink hover:text-nx-accent transition-colors font-mono text-[11px]"
+                  className="flex h-6 items-center gap-1 px-1.5 py-0 font-mono text-[11px] text-nx-ink transition-colors hover:text-nx-accent"
                   title="Copy ID"
                 >
                   {copiedId ? (
@@ -147,17 +144,20 @@ export function PartyQuickPreviewSheet({
                   )}
                 </Button>
               </div>
-              <div className="font-mono text-xs text-nx-ink truncate bg-nx-surface px-2 py-1 rounded border border-nx-border select-all">
+              <div className="border-nx-border select-all truncate rounded border bg-nx-surface px-2 py-1 font-mono text-xs text-nx-ink">
                 {party.id}
               </div>
             </div>
 
-            <div className="flex items-center justify-between px-3 py-2 rounded-lg bg-emerald-500/5 border border-emerald-500/20 text-xs">
-              <div className="flex items-center gap-1.5 text-emerald-600 dark:text-emerald-400 font-medium">
+            <div className="flex items-center justify-between rounded-lg border border-emerald-500/20 bg-emerald-500/5 px-3 py-2 text-xs">
+              <div className="flex items-center gap-1.5 font-medium text-emerald-600 dark:text-emerald-400">
                 <Lock className="h-3.5 w-3.5" />
                 <span>{t("party.profile.immutableType")}</span>
               </div>
-              <Badge variant="outline" className="text-[10px] text-emerald-600 border-emerald-500/30">
+              <Badge
+                variant="outline"
+                className="border-emerald-500/30 text-[10px] text-emerald-600"
+              >
                 ADR-002
               </Badge>
             </div>
@@ -168,7 +168,7 @@ export function PartyQuickPreviewSheet({
             <h4 className="text-xs font-semibold uppercase tracking-wider text-nx-ink-3">
               {t("party.quickPreview.contacts")}
             </h4>
-            <div className="space-y-2 rounded-xl bg-nx-surface p-3.5 border border-nx-border text-xs">
+            <div className="border-nx-border space-y-2 rounded-xl border bg-nx-surface p-3.5 text-xs">
               <div className="flex items-center justify-between gap-2">
                 <span className="flex items-center gap-1.5 text-nx-ink-2">
                   <Phone className="h-3.5 w-3.5 text-nx-accent" />
@@ -177,17 +177,15 @@ export function PartyQuickPreviewSheet({
                 {primaryPhone ? (
                   <a
                     href={`tel:${primaryPhone}`}
-                    className="font-mono font-medium text-nx-ink hover:text-nx-accent truncate"
+                    className="truncate font-mono font-medium text-nx-ink hover:text-nx-accent"
                   >
                     {primaryPhone}
                   </a>
                 ) : (
-                  <span className="text-nx-ink-3">
-                    {t("party.directory.noContactRegistered")}
-                  </span>
+                  <span className="text-nx-ink-3">{t("party.directory.noContactRegistered")}</span>
                 )}
               </div>
-              <div className="flex items-center justify-between gap-2 pt-1.5 border-t border-nx-border/60">
+              <div className="border-nx-border/60 flex items-center justify-between gap-2 border-t pt-1.5">
                 <span className="flex items-center gap-1.5 text-nx-ink-2">
                   <Mail className="h-3.5 w-3.5 text-nx-accent" />
                   <span>{t("party.profile.primaryEmail") || "Email"}</span>
@@ -195,14 +193,12 @@ export function PartyQuickPreviewSheet({
                 {primaryEmail ? (
                   <a
                     href={`mailto:${primaryEmail}`}
-                    className="font-medium text-nx-ink hover:text-nx-accent truncate max-w-[200px]"
+                    className="max-w-[200px] truncate font-medium text-nx-ink hover:text-nx-accent"
                   >
                     {primaryEmail}
                   </a>
                 ) : (
-                  <span className="text-nx-ink-3">
-                    {t("party.directory.noContactRegistered")}
-                  </span>
+                  <span className="text-nx-ink-3">{t("party.directory.noContactRegistered")}</span>
                 )}
               </div>
             </div>
@@ -211,7 +207,7 @@ export function PartyQuickPreviewSheet({
           {/* Active Roles */}
           {activeRoles.length > 0 && (
             <div className="space-y-2">
-              <h4 className="text-xs font-semibold uppercase tracking-wider text-nx-ink-3 flex items-center gap-1.5">
+              <h4 className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-nx-ink-3">
                 <Briefcase className="h-3.5 w-3.5" />
                 <span>{t("party.profile.activeRoles")}</span>
               </h4>
@@ -231,7 +227,7 @@ export function PartyQuickPreviewSheet({
               {t("party.quickPreview.completeness")}
             </h4>
 
-            <div className="space-y-2 rounded-xl bg-nx-surface p-4 border border-nx-border">
+            <div className="border-nx-border space-y-2 rounded-xl border bg-nx-surface p-4">
               <div className="flex items-center justify-between text-sm">
                 <span className="text-nx-ink-2">{t("party.columns.type")}</span>
                 <div className="flex items-center gap-1 font-medium text-nx-ink">
@@ -256,7 +252,7 @@ export function PartyQuickPreviewSheet({
               {party.isOrganization && (profile?.taxId || profile?.organization?.taxId) && (
                 <div className="flex items-center justify-between text-sm">
                   <span className="text-nx-ink-2">{t("party.profile.taxId")}</span>
-                  <span className="text-xs font-mono text-nx-ink">
+                  <span className="font-mono text-xs text-nx-ink">
                     {profile.taxId || profile.organization?.taxId}
                   </span>
                 </div>
@@ -264,7 +260,7 @@ export function PartyQuickPreviewSheet({
 
               <div className="flex items-center justify-between text-sm">
                 <span className="text-nx-ink-2">{t("party.quickPreview.created")}</span>
-                <div className="flex items-center gap-1.5 text-xs text-nx-ink-2 font-mono">
+                <div className="flex items-center gap-1.5 font-mono text-xs text-nx-ink-2">
                   <Calendar className="h-3.5 w-3.5 text-nx-ink-3" />
                   <span>{formatDate(party.createdAt || profile?.createdAt)}</span>
                 </div>
@@ -272,7 +268,7 @@ export function PartyQuickPreviewSheet({
 
               <div className="flex items-center justify-between text-sm">
                 <span className="text-nx-ink-2">{t("party.profile.recordStatus")}</span>
-                <Badge variant="success" className="text-[11px] gap-1">
+                <Badge variant="success" className="gap-1 text-[11px]">
                   <ShieldCheck className="h-3 w-3" />
                   <span>{t("party.quickPreview.active")}</span>
                 </Badge>
@@ -281,7 +277,7 @@ export function PartyQuickPreviewSheet({
           </div>
         </div>
 
-        <SheetFooter className="flex-col sm:flex-col gap-2 pt-6 border-t border-nx-border">
+        <SheetFooter className="border-nx-border flex-col gap-2 border-t pt-6 sm:flex-col">
           <Button
             onClick={() => {
               onOpenChange(false);
@@ -310,7 +306,7 @@ export function PartyQuickPreviewSheet({
           <Button
             variant="ghost"
             onClick={() => onOpenChange(false)}
-            className="w-full text-nx-ink-3 hover:text-nx-ink text-xs"
+            className="w-full text-xs text-nx-ink-3 hover:text-nx-ink"
           >
             {t("party.quickPreview.close")}
           </Button>

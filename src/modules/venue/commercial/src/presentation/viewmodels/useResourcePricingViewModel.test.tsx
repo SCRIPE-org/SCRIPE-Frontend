@@ -144,7 +144,8 @@ describe("useResourcePricingViewModel", () => {
       .mockResolvedValue(configuration)
       .mockResolvedValue(configuration);
     vi.mocked(getVenueContainer).mockReturnValue(value as never);
-    const randomUUID = vi.fn()
+    const randomUUID = vi
+      .fn()
       .mockReturnValueOnce("first-intent")
       .mockReturnValueOnce("edited-intent")
       .mockReturnValueOnce("next-intent");

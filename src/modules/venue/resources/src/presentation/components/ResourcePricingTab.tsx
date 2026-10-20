@@ -57,10 +57,10 @@ export function ResourcePricingTab({ vm }: Props) {
                   step={10}
                   value={unitPrice}
                   onChange={(e) => setUnitPrice(Number(e.target.value) || 0)}
-                  className="pr-12 rtl:pr-3 rtl:pl-12 text-sm font-semibold"
+                  className="pr-12 text-sm font-semibold rtl:pl-12 rtl:pr-3"
                   required
                 />
-                <span className="absolute right-3 rtl:right-auto rtl:left-3 top-2 text-xs font-bold text-nx-ink-3">
+                <span className="absolute right-3 top-2 text-xs font-bold text-nx-ink-3 rtl:left-3 rtl:right-auto">
                   {currencyCode}
                 </span>
               </div>
@@ -75,11 +75,23 @@ export function ResourcePricingTab({ vm }: Props) {
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="EGP">{t("resources.pricing.currencies.EGP", { defaultValue: "EGP (Egyptian Pound)" })}</SelectItem>
-                  <SelectItem value="SAR">{t("resources.pricing.currencies.SAR", { defaultValue: "SAR (Saudi Riyal)" })}</SelectItem>
-                  <SelectItem value="AED">{t("resources.pricing.currencies.AED", { defaultValue: "AED (UAE Dirham)" })}</SelectItem>
-                  <SelectItem value="USD">{t("resources.pricing.currencies.USD", { defaultValue: "USD (US Dollar)" })}</SelectItem>
-                  <SelectItem value="EUR">{t("resources.pricing.currencies.EUR", { defaultValue: "EUR (Euro)" })}</SelectItem>
+                  <SelectItem value="EGP">
+                    {t("resources.pricing.currencies.EGP", {
+                      defaultValue: "EGP (Egyptian Pound)",
+                    })}
+                  </SelectItem>
+                  <SelectItem value="SAR">
+                    {t("resources.pricing.currencies.SAR", { defaultValue: "SAR (Saudi Riyal)" })}
+                  </SelectItem>
+                  <SelectItem value="AED">
+                    {t("resources.pricing.currencies.AED", { defaultValue: "AED (UAE Dirham)" })}
+                  </SelectItem>
+                  <SelectItem value="USD">
+                    {t("resources.pricing.currencies.USD", { defaultValue: "USD (US Dollar)" })}
+                  </SelectItem>
+                  <SelectItem value="EUR">
+                    {t("resources.pricing.currencies.EUR", { defaultValue: "EUR (Euro)" })}
+                  </SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -89,7 +101,10 @@ export function ResourcePricingTab({ vm }: Props) {
             <Label htmlFor="res-tax">
               {t("resources.pricing.taxCategory", { defaultValue: "Tax Category" })}
             </Label>
-            <Select value={taxCategoryId || "none"} onValueChange={(value) => setTaxCategoryId(value === "none" ? "" : value)}>
+            <Select
+              value={taxCategoryId || "none"}
+              onValueChange={(value) => setTaxCategoryId(value === "none" ? "" : value)}
+            >
               <SelectTrigger id="res-tax" className="w-full text-xs font-medium">
                 <SelectValue />
               </SelectTrigger>

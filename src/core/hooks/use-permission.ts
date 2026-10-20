@@ -27,8 +27,7 @@ import {
 type SessionUser = ReturnType<typeof useAppStore.getState>["user"];
 
 function isPlatformSuperAdmin(user: SessionUser, permissions: PermissionCode[]): boolean {
-  const hasSuperAdminFlag =
-    user !== null && "isSuperAdmin" in user && user.isSuperAdmin === true;
+  const hasSuperAdminFlag = user !== null && "isSuperAdmin" in user && user.isSuperAdmin === true;
 
   return (
     hasSuperAdminFlag ||

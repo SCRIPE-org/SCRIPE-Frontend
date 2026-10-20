@@ -3,8 +3,7 @@ import { GuestBookingPortalView } from "@modules/venue/guest-portal/src/presenta
 
 export const metadata: Metadata = {
   title: "Guest Reservation — SCRIPE",
-  description:
-    "View your reservation details, facility directions, and manage your booking.",
+  description: "View your reservation details, facility directions, and manage your booking.",
   robots: { index: false, follow: false },
 };
 

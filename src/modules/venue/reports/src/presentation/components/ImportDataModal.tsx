@@ -122,11 +122,14 @@ export function ImportDataModal({
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
-      <DialogContent dir={isRtl ? "rtl" : "ltr"} className="max-w-4xl max-h-[90vh] flex flex-col p-6 overflow-hidden">
-        <DialogHeader className="pb-4 border-b border-nx-line">
+      <DialogContent
+        dir={isRtl ? "rtl" : "ltr"}
+        className="flex max-h-[90vh] max-w-4xl flex-col overflow-hidden p-6"
+      >
+        <DialogHeader className="border-b border-nx-line pb-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <div className="size-9 rounded-lg bg-nx-accent/10 text-nx-accent flex items-center justify-center">
+              <div className="bg-nx-accent/10 flex size-9 items-center justify-center rounded-lg text-nx-accent">
                 <FileSpreadsheet className="size-5" />
               </div>
               <div>
@@ -140,34 +143,42 @@ export function ImportDataModal({
             </div>
 
             {/* Step Indicators */}
-            <div className="hidden sm:flex items-center gap-1.5 text-xs font-semibold">
+            <div className="hidden items-center gap-1.5 text-xs font-semibold sm:flex">
               <span
-                className={`px-2 py-0.5 rounded-full ${
-                  importStep >= 1 ? "bg-nx-accent text-nx-accent-contrast" : "bg-nx-surfaceSubtle text-nx-ink-3"
+                className={`rounded-full px-2 py-0.5 ${
+                  importStep >= 1
+                    ? "text-nx-accent-contrast bg-nx-accent"
+                    : "bg-nx-surfaceSubtle text-nx-ink-3"
                 }`}
               >
                 1
               </span>
               <span className="text-nx-line">→</span>
               <span
-                className={`px-2 py-0.5 rounded-full ${
-                  importStep >= 2 ? "bg-nx-accent text-nx-accent-contrast" : "bg-nx-surfaceSubtle text-nx-ink-3"
+                className={`rounded-full px-2 py-0.5 ${
+                  importStep >= 2
+                    ? "text-nx-accent-contrast bg-nx-accent"
+                    : "bg-nx-surfaceSubtle text-nx-ink-3"
                 }`}
               >
                 2
               </span>
               <span className="text-nx-line">→</span>
               <span
-                className={`px-2 py-0.5 rounded-full ${
-                  importStep >= 3 ? "bg-nx-accent text-nx-accent-contrast" : "bg-nx-surfaceSubtle text-nx-ink-3"
+                className={`rounded-full px-2 py-0.5 ${
+                  importStep >= 3
+                    ? "text-nx-accent-contrast bg-nx-accent"
+                    : "bg-nx-surfaceSubtle text-nx-ink-3"
                 }`}
               >
                 3
               </span>
               <span className="text-nx-line">→</span>
               <span
-                className={`px-2 py-0.5 rounded-full ${
-                  importStep === 4 ? "bg-emerald-600 text-white" : "bg-nx-surfaceSubtle text-nx-ink-3"
+                className={`rounded-full px-2 py-0.5 ${
+                  importStep === 4
+                    ? "bg-emerald-600 text-white"
+                    : "bg-nx-surfaceSubtle text-nx-ink-3"
                 }`}
               >
                 4
@@ -177,7 +188,7 @@ export function ImportDataModal({
         </DialogHeader>
 
         {/* Modal Body */}
-        <div className="flex-1 overflow-y-auto py-4 space-y-4">
+        <div className="flex-1 space-y-4 overflow-y-auto py-4">
           {/* STEP 1: Upload and Select Type */}
           {importStep === 1 && (
             <div className="space-y-6">
@@ -186,19 +197,19 @@ export function ImportDataModal({
                 <label className="text-xs font-bold uppercase tracking-wider text-nx-ink-2">
                   {t("venueReports.import.stepOne")}
                 </label>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
                   <Button
                     type="button"
                     onClick={() => setImportType("customers")}
                     variant="outline"
                     className={`h-auto min-h-20 w-full justify-start whitespace-normal p-4 text-start transition-all ${
                       importType === "customers"
-                        ? "border-nx-accent bg-nx-accent/5 ring-1 ring-nx-accent"
-                        : "border-nx-line hover:border-nx-line/80 bg-nx-surface"
+                        ? "bg-nx-accent/5 border-nx-accent ring-1 ring-nx-accent"
+                        : "hover:border-nx-line/80 border-nx-line bg-nx-surface"
                     }`}
                   >
                     <div className="flex items-center gap-3">
-                      <div className="size-8 rounded-lg bg-nx-accent/10 text-nx-accent flex items-center justify-center">
+                      <div className="bg-nx-accent/10 flex size-8 items-center justify-center rounded-lg text-nx-accent">
                         <Users className="size-4" />
                       </div>
                       <div>
@@ -218,12 +229,12 @@ export function ImportDataModal({
                     variant="outline"
                     className={`h-auto min-h-20 w-full justify-start whitespace-normal p-4 text-start transition-all ${
                       importType === "courts"
-                        ? "border-nx-accent bg-nx-accent/5 ring-1 ring-nx-accent"
-                        : "border-nx-line hover:border-nx-line/80 bg-nx-surface"
+                        ? "bg-nx-accent/5 border-nx-accent ring-1 ring-nx-accent"
+                        : "hover:border-nx-line/80 border-nx-line bg-nx-surface"
                     }`}
                   >
                     <div className="flex items-center gap-3">
-                      <div className="size-8 rounded-lg bg-nx-accent/10 text-nx-accent flex items-center justify-center">
+                      <div className="bg-nx-accent/10 flex size-8 items-center justify-center rounded-lg text-nx-accent">
                         <Layers className="size-4" />
                       </div>
                       <div>
@@ -244,12 +255,12 @@ export function ImportDataModal({
                 <label className="text-xs font-bold uppercase tracking-wider text-nx-ink-2">
                   {t("venueReports.import.upload")}
                 </label>
-                <label className="border-2 border-dashed border-nx-line hover:border-nx-accent rounded-nx-xl p-8 flex flex-col items-center justify-center cursor-pointer bg-nx-surfaceSubtle/40 hover:bg-nx-surfaceSubtle/70 transition-colors">
-                  <UploadCloud className="size-10 text-nx-accent mb-2" />
+                <label className="rounded-nx-xl bg-nx-surfaceSubtle/40 hover:bg-nx-surfaceSubtle/70 flex cursor-pointer flex-col items-center justify-center border-2 border-dashed border-nx-line p-8 transition-colors hover:border-nx-accent">
+                  <UploadCloud className="mb-2 size-10 text-nx-accent" />
                   <span className="text-sm font-semibold text-nx-ink">
                     {t("venueReports.import.dropFile")}
                   </span>
-                  <span className="text-xs text-nx-ink-3 mt-1">
+                  <span className="mt-1 text-xs text-nx-ink-3">
                     {t("venueReports.import.supportedFormats")}
                   </span>
                   <Input
@@ -271,16 +282,20 @@ export function ImportDataModal({
                     type="button"
                     variant="ghost"
                     size="sm"
-                    className="text-xs text-nx-accent h-7"
+                    className="h-7 text-xs text-nx-accent"
                     onClick={() => {
                       if (importType === "customers") {
-                        setPasteContent(`Name,Type,Email,Phone\nZaid Al-Mansoor,Person,zaid@example.com,+966501234567\nRiyadh Padel Academy,Organization,contact@riyadhpadel.com,+966509876543`);
+                        setPasteContent(
+                          `Name,Type,Email,Phone\nZaid Al-Mansoor,Person,zaid@example.com,+966501234567\nRiyadh Padel Academy,Organization,contact@riyadhpadel.com,+966509876543`
+                        );
                       } else {
-                        setPasteContent(`Name,Category,Capacity\nCourt 1 - Outdoor,Padel,4\nCourt 2 - Indoor Panoramic,Padel,4\nTraining Pitch,Football,10`);
+                        setPasteContent(
+                          `Name,Category,Capacity\nCourt 1 - Outdoor,Padel,4\nCourt 2 - Indoor Panoramic,Padel,4\nTraining Pitch,Football,10`
+                        );
                       }
                     }}
                   >
-                    <Copy className="size-3 me-1" />
+                    <Copy className="me-1 size-3" />
                     {t("venueReports.import.sampleRows")}
                   </Button>
                 </div>
@@ -289,14 +304,14 @@ export function ImportDataModal({
                   onChange={(e) => setPasteContent(e.target.value)}
                   placeholder={t("venueReports.import.pastePlaceholder")}
                   rows={4}
-                  className="w-full text-xs font-mono p-3 rounded-nx-lg border border-nx-line bg-nx-surface text-nx-ink focus:ring-1 focus:ring-nx-accent focus:outline-none"
+                  className="w-full rounded-nx-lg border border-nx-line bg-nx-surface p-3 font-mono text-xs text-nx-ink focus:outline-none focus:ring-1 focus:ring-nx-accent"
                 />
                 {pasteContent.trim().length > 0 && (
                   <Button
                     type="button"
                     size="sm"
                     onClick={handlePasteSubmit}
-                    className="gap-1.5 text-xs bg-nx-accent text-nx-accent-contrast hover:bg-nx-accent/90"
+                    className="text-nx-accent-contrast hover:bg-nx-accent/90 gap-1.5 bg-nx-accent text-xs"
                   >
                     <span>{t("venueReports.import.parsePasted")}</span>
                     <ArrowRight className="size-3 rtl:rotate-180" />
@@ -309,9 +324,12 @@ export function ImportDataModal({
           {/* STEP 2: Column Mapping */}
           {importStep === 2 && parsedTable && (
             <div className="space-y-4">
-              <div className="p-3 bg-blue-50/70 dark:bg-blue-950/30 rounded-lg text-xs text-blue-800 dark:text-blue-300 flex items-center justify-between">
+              <div className="flex items-center justify-between rounded-lg bg-blue-50/70 p-3 text-xs text-blue-800 dark:bg-blue-950/30 dark:text-blue-300">
                 <span>
-                  {t("venueReports.import.detectedRows", { columns: parsedTable.headers.length, rows: parsedTable.rowCount })}
+                  {t("venueReports.import.detectedRows", {
+                    columns: parsedTable.headers.length,
+                    rows: parsedTable.rowCount,
+                  })}
                 </span>
                 <span className="font-bold">{schema.title}</span>
               </div>
@@ -321,16 +339,17 @@ export function ImportDataModal({
                   {t("venueReports.import.mapColumns")}
                 </div>
 
-                <div className="space-y-2 border border-nx-line rounded-nx-lg divide-y divide-nx-line">
+                <div className="space-y-2 divide-y divide-nx-line rounded-nx-lg border border-nx-line">
                   {schema.fields.map((field) => (
-                    <div key={field.key} className="p-3 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                    <div
+                      key={field.key}
+                      className="flex flex-col justify-between gap-3 p-3 sm:flex-row sm:items-center"
+                    >
                       <div className="space-y-0.5">
                         <div className="flex items-center gap-2">
-                          <span className="text-xs font-bold text-nx-ink">
-                            {field.label}
-                          </span>
+                          <span className="text-xs font-bold text-nx-ink">{field.label}</span>
                           {field.required && (
-                            <Badge variant="destructive" className="text-[10px] py-0 px-1.5">
+                            <Badge variant="destructive" className="px-1.5 py-0 text-[10px]">
                               {t("venueReports.import.required")}
                             </Badge>
                           )}
@@ -341,18 +360,25 @@ export function ImportDataModal({
                       <div className="w-full sm:w-64">
                         <Select
                           value={columnMapping[field.key] || "unmapped"}
-                          onValueChange={(headerName) => handleMappingChange(field.key, headerName === "unmapped" ? "" : headerName)}
+                          onValueChange={(headerName) =>
+                            handleMappingChange(
+                              field.key,
+                              headerName === "unmapped" ? "" : headerName
+                            )
+                          }
                         >
                           <SelectTrigger aria-label={field.label} className="h-9 text-xs">
                             <SelectValue placeholder={t("venueReports.import.selectColumn")} />
                           </SelectTrigger>
                           <SelectContent>
-                          <SelectItem value="unmapped">{t("venueReports.import.selectColumn")}</SelectItem>
-                          {parsedTable.headers.map((hdr) => (
-                            <SelectItem key={hdr} value={hdr}>
-                              {hdr}
+                            <SelectItem value="unmapped">
+                              {t("venueReports.import.selectColumn")}
                             </SelectItem>
-                          ))}
+                            {parsedTable.headers.map((hdr) => (
+                              <SelectItem key={hdr} value={hdr}>
+                                {hdr}
+                              </SelectItem>
+                            ))}
                           </SelectContent>
                         </Select>
                       </div>
@@ -367,50 +393,52 @@ export function ImportDataModal({
           {importStep === 3 && validationReport && (
             <div className="space-y-4">
               {/* Summary Badges */}
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-                <div className="p-3 rounded-xl border border-emerald-200 dark:border-emerald-800/50 bg-emerald-50/50 dark:bg-emerald-950/20">
+              <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+                <div className="rounded-xl border border-emerald-200 bg-emerald-50/50 p-3 dark:border-emerald-800/50 dark:bg-emerald-950/20">
                   <div className="flex items-center gap-2 text-emerald-700 dark:text-emerald-400">
                     <CheckCircle2 className="size-4" />
                     <span className="text-xs font-bold">{t("venueReports.import.validRows")}</span>
                   </div>
-                  <div className="text-2xl font-bold text-emerald-800 dark:text-emerald-200 mt-1">
+                  <div className="mt-1 text-2xl font-bold text-emerald-800 dark:text-emerald-200">
                     {validationReport.validCount}
                   </div>
                 </div>
 
-                <div className="p-3 rounded-xl border border-amber-200 dark:border-amber-800/50 bg-amber-50/50 dark:bg-amber-950/20">
+                <div className="rounded-xl border border-amber-200 bg-amber-50/50 p-3 dark:border-amber-800/50 dark:bg-amber-950/20">
                   <div className="flex items-center gap-2 text-amber-700 dark:text-amber-400">
                     <AlertTriangle className="size-4" />
                     <span className="text-xs font-bold">{t("venueReports.import.warnings")}</span>
                   </div>
-                  <div className="text-2xl font-bold text-amber-800 dark:text-amber-200 mt-1">
+                  <div className="mt-1 text-2xl font-bold text-amber-800 dark:text-amber-200">
                     {validationReport.warningCount}
                   </div>
                 </div>
 
-                <div className="p-3 rounded-xl border border-purple-200 dark:border-purple-800/50 bg-purple-50/50 dark:bg-purple-950/20">
+                <div className="rounded-xl border border-purple-200 bg-purple-50/50 p-3 dark:border-purple-800/50 dark:bg-purple-950/20">
                   <div className="flex items-center gap-2 text-purple-700 dark:text-purple-400">
                     <Copy className="size-4" />
                     <span className="text-xs font-bold">{t("venueReports.import.duplicates")}</span>
                   </div>
-                  <div className="text-2xl font-bold text-purple-800 dark:text-purple-200 mt-1">
+                  <div className="mt-1 text-2xl font-bold text-purple-800 dark:text-purple-200">
                     {validationReport.duplicateCount}
                   </div>
                 </div>
 
-                <div className="p-3 rounded-xl border border-rose-200 dark:border-rose-800/50 bg-rose-50/50 dark:bg-rose-950/20">
+                <div className="rounded-xl border border-rose-200 bg-rose-50/50 p-3 dark:border-rose-800/50 dark:bg-rose-950/20">
                   <div className="flex items-center gap-2 text-rose-700 dark:text-rose-400">
                     <XCircle className="size-4" />
-                    <span className="text-xs font-bold">{t("venueReports.import.invalidRows")}</span>
+                    <span className="text-xs font-bold">
+                      {t("venueReports.import.invalidRows")}
+                    </span>
                   </div>
-                  <div className="text-2xl font-bold text-rose-800 dark:text-rose-200 mt-1">
+                  <div className="mt-1 text-2xl font-bold text-rose-800 dark:text-rose-200">
                     {validationReport.invalidCount}
                   </div>
                 </div>
               </div>
 
               {/* Preview Table */}
-              <div className="border border-nx-line rounded-nx-lg overflow-hidden">
+              <div className="overflow-hidden rounded-nx-lg border border-nx-line">
                 <Table>
                   <TableHeader className="bg-nx-surfaceSubtle/80">
                     <TableRow>
@@ -429,17 +457,17 @@ export function ImportDataModal({
                         </TableCell>
                         <TableCell>
                           {row.status === "valid" && (
-                            <Badge className="bg-emerald-500/10 text-emerald-600 border-emerald-300 text-[10px]">
+                            <Badge className="border-emerald-300 bg-emerald-500/10 text-[10px] text-emerald-600">
                               {t("venueReports.import.valid")}
                             </Badge>
                           )}
                           {row.status === "warning" && (
-                            <Badge className="bg-amber-500/10 text-amber-600 border-amber-300 text-[10px]">
+                            <Badge className="border-amber-300 bg-amber-500/10 text-[10px] text-amber-600">
                               {t("venueReports.import.warning")}
                             </Badge>
                           )}
                           {row.status === "duplicate" && (
-                            <Badge className="bg-purple-500/10 text-purple-600 border-purple-300 text-[10px]">
+                            <Badge className="border-purple-300 bg-purple-500/10 text-[10px] text-purple-600">
                               {t("venueReports.import.duplicate")}
                             </Badge>
                           )}
@@ -449,7 +477,7 @@ export function ImportDataModal({
                             </Badge>
                           )}
                         </TableCell>
-                        <TableCell className="font-semibold text-xs text-nx-ink">
+                        <TableCell className="text-xs font-semibold text-nx-ink">
                           {row.data.name || "-"}
                         </TableCell>
                         <TableCell className="text-xs text-nx-ink-2">
@@ -470,10 +498,10 @@ export function ImportDataModal({
 
           {/* STEP 4: Execution / Result */}
           {importStep === 4 && (
-            <div className="py-8 text-center space-y-4">
+            <div className="space-y-4 py-8 text-center">
               {isCommitting ? (
                 <div className="space-y-3">
-                  <Loader2 className="size-10 animate-spin text-nx-accent mx-auto" />
+                  <Loader2 className="mx-auto size-10 animate-spin text-nx-accent" />
                   <div className="text-base font-bold text-nx-ink">
                     {t("venueReports.import.committing")}
                   </div>
@@ -482,27 +510,37 @@ export function ImportDataModal({
                   </div>
                 </div>
               ) : importSummaryResult ? (
-                <div className="space-y-4 max-w-md mx-auto">
-                  <div className="size-12 rounded-full bg-emerald-100 dark:bg-emerald-950/60 text-emerald-600 mx-auto flex items-center justify-center">
+                <div className="mx-auto max-w-md space-y-4">
+                  <div className="mx-auto flex size-12 items-center justify-center rounded-full bg-emerald-100 text-emerald-600 dark:bg-emerald-950/60">
                     <CheckCircle2 className="size-6" />
                   </div>
                   <h3 className="text-lg font-bold text-nx-ink">
                     {t("venueReports.import.completed")}
                   </h3>
-                  <div className="p-4 rounded-xl bg-nx-surfaceSubtle border border-nx-line text-xs space-y-2">
+                  <div className="bg-nx-surfaceSubtle space-y-2 rounded-xl border border-nx-line p-4 text-xs">
                     <div className="flex justify-between">
-                      <span className="text-nx-ink-2">{t("venueReports.import.successfulRecords")}</span>
-                      <span className="font-bold text-emerald-600">{importSummaryResult.successCount}</span>
+                      <span className="text-nx-ink-2">
+                        {t("venueReports.import.successfulRecords")}
+                      </span>
+                      <span className="font-bold text-emerald-600">
+                        {importSummaryResult.successCount}
+                      </span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-nx-ink-2">{t("venueReports.import.failedRecords")}</span>
-                      <span className="font-bold text-rose-600">{importSummaryResult.errorCount}</span>
+                      <span className="text-nx-ink-2">
+                        {t("venueReports.import.failedRecords")}
+                      </span>
+                      <span className="font-bold text-rose-600">
+                        {importSummaryResult.errorCount}
+                      </span>
                     </div>
                   </div>
                   {importSummaryResult.errors.length > 0 && (
-                    <div className="text-start rounded-xl border border-nx-line bg-nx-surfaceSubtle p-4 text-xs space-y-2">
-                      <h4 className="font-semibold text-nx-ink">{t("venueReports.import.rowErrors")}</h4>
-                      <ul className="list-disc ps-5 space-y-1 text-nx-ink-2">
+                    <div className="bg-nx-surfaceSubtle space-y-2 rounded-xl border border-nx-line p-4 text-start text-xs">
+                      <h4 className="font-semibold text-nx-ink">
+                        {t("venueReports.import.rowErrors")}
+                      </h4>
+                      <ul className="list-disc space-y-1 ps-5 text-nx-ink-2">
                         {importSummaryResult.errors.map((message, index) => (
                           <li key={`${index}-${message}`}>{message}</li>
                         ))}
@@ -516,7 +554,7 @@ export function ImportDataModal({
         </div>
 
         {/* Modal Footer Controls */}
-        <DialogFooter className="pt-4 border-t border-nx-line flex items-center justify-between">
+        <DialogFooter className="flex items-center justify-between border-t border-nx-line pt-4">
           <div>
             {importStep > 1 && importStep < 4 && (
               <Button
@@ -550,7 +588,7 @@ export function ImportDataModal({
                 type="button"
                 size="sm"
                 onClick={onExecuteValidation}
-                className="gap-1.5 text-xs bg-nx-accent text-nx-accent-contrast hover:bg-nx-accent/90"
+                className="text-nx-accent-contrast hover:bg-nx-accent/90 gap-1.5 bg-nx-accent text-xs"
               >
                 <span>{t("venueReports.import.validate")}</span>
                 <ArrowRight className="size-3 rtl:rotate-180" />
@@ -563,7 +601,7 @@ export function ImportDataModal({
                 size="sm"
                 onClick={handleCommitImport}
                 disabled={!validationReport.canCommit || isCommitting}
-                className="gap-1.5 text-xs bg-emerald-600 text-white hover:bg-emerald-700"
+                className="gap-1.5 bg-emerald-600 text-xs text-white hover:bg-emerald-700"
               >
                 {isCommitting ? (
                   <Loader2 className="size-3 animate-spin" />
@@ -571,7 +609,9 @@ export function ImportDataModal({
                   <CheckCircle2 className="size-3.5" />
                 )}
                 <span>
-                  {t("venueReports.import.commitRows", { count: validationReport.validCount + validationReport.warningCount })}
+                  {t("venueReports.import.commitRows", {
+                    count: validationReport.validCount + validationReport.warningCount,
+                  })}
                 </span>
               </Button>
             )}

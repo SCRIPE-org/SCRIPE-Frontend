@@ -10,7 +10,7 @@ export function TenantSuccessPartnerCard() {
   const { t } = useI18n();
 
   return (
-    <Card className="p-4 sm:p-5 min-w-0 border-nx-line bg-nx-surface text-nx-ink hover:border-nx-line-hi transition-[border-color,background-color] duration-nx-micro">
+    <Card className="min-w-0 border-nx-line bg-nx-surface p-4 text-nx-ink transition-[border-color,background-color] duration-nx-micro hover:border-nx-line-hi sm:p-5">
       <div className="mb-2 flex items-center gap-2.5">
         <div
           className="flex h-9 w-9 shrink-0 items-center justify-center rounded-nx-md"

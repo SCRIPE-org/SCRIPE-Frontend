@@ -1,13 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogFooter,
-} from "@core/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@core/ui/dialog";
 import { Button } from "@core/ui/button";
 import { Input } from "@core/ui/input";
 import { Label } from "@core/ui/label";
@@ -18,10 +12,7 @@ import type {
   TenantWidgetColSpan,
   TenantWidgetDefinition,
 } from "./tenantCustomizationTypes";
-import {
-  getWidgetDefinition,
-  clampColSpan,
-} from "./tenantWidgetRegistry";
+import { getWidgetDefinition, clampColSpan } from "./tenantWidgetRegistry";
 
 interface TenantWidgetSettingsDialogProps {
   isOpen: boolean;
@@ -78,12 +69,13 @@ function WidgetSettingsForm({
           <DialogTitle className="text-base font-bold text-nx-ink">
             {t("tenantCommandCenter.settings.configureWidget") || "Configure Widget"}
           </DialogTitle>
-          <Badge variant="outline" className="capitalize text-[10px] border-nx-line text-nx-ink-3">
+          <Badge variant="outline" className="border-nx-line text-[10px] capitalize text-nx-ink-3">
             {definition.category}
           </Badge>
         </div>
         <p className="text-xs text-nx-ink-3">
-          {t(definition.descriptionKey) || "Configure presentation and grid settings for this widget."}
+          {t(definition.descriptionKey) ||
+            "Configure presentation and grid settings for this widget."}
         </p>
       </DialogHeader>
 
@@ -99,7 +91,7 @@ function WidgetSettingsForm({
               value={customTitle}
               onChange={(e) => setCustomTitle(e.target.value)}
               placeholder={defaultTitle}
-              className="h-9 text-xs border-nx-line bg-nx-surface text-nx-ink"
+              className="h-9 border-nx-line bg-nx-surface text-xs text-nx-ink"
             />
             {customTitle && (
               <Button
@@ -114,8 +106,7 @@ function WidgetSettingsForm({
             )}
           </div>
           <p className="text-[11px] text-nx-ink-3">
-            {t("tenantCommandCenter.settings.titleHelp") ||
-              "Leave blank to use the default title."}
+            {t("tenantCommandCenter.settings.titleHelp") || "Leave blank to use the default title."}
           </p>
         </div>
 
@@ -126,8 +117,7 @@ function WidgetSettingsForm({
           </Label>
           <div className="grid grid-cols-5 gap-1.5">
             {AVAILABLE_SPANS.map(({ span, label, fraction }) => {
-              const isAllowed =
-                span >= definition.minColSpan && span <= definition.maxColSpan;
+              const isAllowed = span >= definition.minColSpan && span <= definition.maxColSpan;
               const isSelected = colSpan === span;
 
               return (
@@ -138,10 +128,10 @@ function WidgetSettingsForm({
                   onClick={() => setColSpan(span)}
                   className={`flex flex-col items-center justify-center rounded-nx-md border p-2 text-center transition-all ${
                     isSelected
-                      ? "border-nx-accent bg-nx-accent-wash text-nx-accent font-semibold shadow-xs"
+                      ? "shadow-xs border-nx-accent bg-nx-accent-wash font-semibold text-nx-accent"
                       : isAllowed
                         ? "border-nx-line bg-nx-surface text-nx-ink hover:border-nx-line-hi hover:bg-nx-raised"
-                        : "cursor-not-allowed border-nx-line/40 bg-nx-raised/20 text-nx-ink-3/40"
+                        : "border-nx-line/40 bg-nx-raised/20 text-nx-ink-3/40 cursor-not-allowed"
                   }`}
                 >
                   <span className="text-xs">{label}</span>
@@ -158,7 +148,13 @@ function WidgetSettingsForm({
       </div>
 
       <DialogFooter className="gap-2 sm:gap-0">
-        <Button type="button" variant="outline" size="sm" onClick={onClose} className="border-nx-line">
+        <Button
+          type="button"
+          variant="outline"
+          size="sm"
+          onClick={onClose}
+          className="border-nx-line"
+        >
           {t("common.cancel") || "Cancel"}
         </Button>
         <Button type="button" size="sm" onClick={handleApply}>
@@ -179,7 +175,7 @@ export function TenantWidgetSettingsDialog({
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
-      <DialogContent className="max-w-md sm:max-w-lg border-nx-line bg-nx-surface text-nx-ink">
+      <DialogContent className="max-w-md border-nx-line bg-nx-surface text-nx-ink sm:max-w-lg">
         {widgetItem && definition ? (
           <WidgetSettingsForm
             key={widgetItem.id}

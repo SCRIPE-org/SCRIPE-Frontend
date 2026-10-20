@@ -238,4 +238,3 @@ export function getEstimatedRowSpan(
       return 16 + editOffset;
   }
 }
-

@@ -6,10 +6,7 @@ import { useI18n } from "@core/providers/i18n-provider";
 import { useTenantContext } from "@core/providers/tenant-context-provider";
 import { useEnhancedToast } from "@core/hooks/use-enhanced-toast";
 import type { BookingReportItem } from "../../domain/entities/VenueReports";
-import {
-  downloadReportSpreadsheet,
-  ExportColumn,
-} from "../../utils/excelReportExport";
+import { downloadReportSpreadsheet, ExportColumn } from "../../utils/excelReportExport";
 import {
   ImportType,
   ParsedTableData,
@@ -152,7 +149,10 @@ export function useVenueReportsViewModel() {
 
   // Currency Isolation Totals calculation (Requirement A11: Never sum unlike currencies together)
   const currencyTotals = useMemo(() => {
-    const totals: Record<string, { commercialValue: number; collected: number; outstanding: number }> = {};
+    const totals: Record<
+      string,
+      { commercialValue: number; collected: number; outstanding: number }
+    > = {};
 
     if (category === "financial" && summary?.items) {
       for (const item of summary.items) {
@@ -198,7 +198,8 @@ export function useVenueReportsViewModel() {
         [t("venueReports.ui.exportScope")]: t("venueReports.ui.exportCurrentLoadedData"),
       };
       if (category === "bookings" && filters.resourceId) {
-        const rName = resources.find((r) => r.id === filters.resourceId)?.name || filters.resourceId;
+        const rName =
+          resources.find((r) => r.id === filters.resourceId)?.name || filters.resourceId;
         filterSummary[t("venueReports.ui.court")] = rName;
       }
 
@@ -212,7 +213,11 @@ export function useVenueReportsViewModel() {
           },
           { header: "Booking Reference", key: "reservationId" },
           { header: "Status", key: "status" },
-          { header: "Issued Date", key: "issuedAtUtc", getValue: (i) => i.issuedAtUtc.slice(0, 10) },
+          {
+            header: "Issued Date",
+            key: "issuedAtUtc",
+            getValue: (i) => i.issuedAtUtc.slice(0, 10),
+          },
           { header: "Currency", key: "currencyCode" },
           { header: "Total Amount", key: "totalAmount", format: "currency" },
           { header: "Paid Amount", key: "paidAmount", format: "currency" },
@@ -295,8 +300,16 @@ export function useVenueReportsViewModel() {
           { header: "Amount", key: "amount", format: "currency" },
           { header: "Allocated", key: "allocatedAmount", format: "currency" },
           { header: "Unallocated", key: "unallocatedAmount", format: "currency" },
-          { header: "Recorded Date", key: "recordedAtUtc", getValue: (p) => p.recordedAtUtc.slice(0, 10) },
-          { header: "Reference", key: "externalReference", getValue: (p) => p.externalReference || "-" },
+          {
+            header: "Recorded Date",
+            key: "recordedAtUtc",
+            getValue: (p) => p.recordedAtUtc.slice(0, 10),
+          },
+          {
+            header: "Reference",
+            key: "externalReference",
+            getValue: (p) => p.externalReference || "-",
+          },
         ];
 
         downloadReportSpreadsheet<MoneyPayment>(
@@ -339,7 +352,7 @@ export function useVenueReportsViewModel() {
       const parsed = parseDelimitedText(rawContent);
       if (parsed.headers.length === 0 || parsed.rowCount === 0) {
         toastError({
-        title: t("venueReports.import.invalidFile"),
+          title: t("venueReports.import.invalidFile"),
         });
         return;
       }
@@ -373,14 +386,24 @@ export function useVenueReportsViewModel() {
     let errorCount = 0;
     const errors: string[] = [];
 
-    const validRows = validationReport.rows.filter((r) => r.status === "valid" || r.status === "warning");
+    const validRows = validationReport.rows.filter(
+      (r) => r.status === "valid" || r.status === "warning"
+    );
 
     try {
       const container = getVenueContainer();
 
-      let cachedProfiles: Array<{ id: string; name: string; resourceKindCode: string; timeZoneId?: string }> = [];
+      let cachedProfiles: Array<{
+        id: string;
+        name: string;
+        resourceKindCode: string;
+        timeZoneId?: string;
+      }> = [];
       if (importType === "courts") {
-        const profPage = await container.facilityResourceProfileRepository.getAll({ page: 1, pageSize: 100 });
+        const profPage = await container.facilityResourceProfileRepository.getAll({
+          page: 1,
+          pageSize: 100,
+        });
         cachedProfiles = profPage.items.map((p) => ({
           id: p.id,
           name: p.name,
@@ -431,7 +454,8 @@ export function useVenueReportsViewModel() {
           }
         } catch (rowErr) {
           errorCount++;
-          const msg = rowErr instanceof Error ? rowErr.message : t("venueReports.errors.unknownImportError");
+          const msg =
+            rowErr instanceof Error ? rowErr.message : t("venueReports.errors.unknownImportError");
           errors.push(`Row ${row.rowNumber} (${row.data.name || "unnamed"}): ${msg}`);
         }
       }
@@ -443,7 +467,8 @@ export function useVenueReportsViewModel() {
 
       toastSuccess({ title: t("venueReports.import.successToast", { count: successCount }) });
     } catch (fatalErr) {
-      const msg = fatalErr instanceof Error ? fatalErr.message : t("venueReports.errors.importFailed");
+      const msg =
+        fatalErr instanceof Error ? fatalErr.message : t("venueReports.errors.importFailed");
       toastError({ title: msg });
     } finally {
       setIsCommitting(false);

@@ -194,4 +194,3 @@ export interface MoneyAnalyticsFilter {
   resourceId?: string;
   facilityResourceProfileId?: string;
 }
-

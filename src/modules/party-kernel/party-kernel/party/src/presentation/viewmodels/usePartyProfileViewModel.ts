@@ -18,12 +18,7 @@ import type {
  * Tabs available in the party profile workspace
  */
 export type PartyProfileTab =
-  | "overview"
-  | "contacts"
-  | "representatives"
-  | "relationships"
-  | "roles"
-  | "history";
+  "overview" | "contacts" | "representatives" | "relationships" | "roles" | "history";
 
 /**
  * Payload for updating a Party's profile and subtype attributes.
@@ -71,9 +66,7 @@ export function usePartyProfileViewModel(partyId: string) {
   const canDeleteParty = usePermission(PARTY_KERNEL_PERMISSIONS.PARTY_DELETE);
   const canManageContacts = usePermission(PARTY_KERNEL_PERMISSIONS.CONTACT_POINT_CREATE);
   const canManageRoles = usePermission(PARTY_KERNEL_PERMISSIONS.PARTY_ROLE_CREATE);
-  const canManageRelationships = usePermission(
-    PARTY_KERNEL_PERMISSIONS.PARTY_RELATIONSHIP_CREATE
-  );
+  const canManageRelationships = usePermission(PARTY_KERNEL_PERMISSIONS.PARTY_RELATIONSHIP_CREATE);
   const canViewHistory = usePermission(PARTY_KERNEL_PERMISSIONS.MERGE_CANDIDATE_VIEW);
 
   // Main Profile Query
@@ -168,8 +161,7 @@ export function usePartyProfileViewModel(partyId: string) {
           });
         }
 
-        const hasExtendedOrgFields =
-          param.legalName !== undefined || param.taxId !== undefined;
+        const hasExtendedOrgFields = param.legalName !== undefined || param.taxId !== undefined;
 
         if (
           type === "Organization" &&
@@ -340,8 +332,7 @@ export function usePartyProfileViewModel(partyId: string) {
     onError: (err: Error) => {
       showError({
         title: t("common.error") || "Error",
-        description:
-          err.message || t("party.toast.errorRel") || "Failed to add relationship",
+        description: err.message || t("party.toast.errorRel") || "Failed to add relationship",
       });
     },
   });
@@ -357,8 +348,7 @@ export function usePartyProfileViewModel(partyId: string) {
     onError: (err: Error) => {
       showError({
         title: t("common.error") || "Error",
-        description:
-          err.message || t("party.toast.errorRel") || "Failed to remove relationship",
+        description: err.message || t("party.toast.errorRel") || "Failed to remove relationship",
       });
     },
   });
@@ -435,8 +425,7 @@ export function usePartyProfileViewModel(partyId: string) {
     handleRemoveContact: (id: string) => removeContactMutation.mutateAsync(id),
     isRemovingContact: removeContactMutation.isPending,
 
-    handleAddRole: (data: Omit<AddPartyRoleParams, "partyId">) =>
-      addRoleMutation.mutateAsync(data),
+    handleAddRole: (data: Omit<AddPartyRoleParams, "partyId">) => addRoleMutation.mutateAsync(data),
     isAddingRole: addRoleMutation.isPending,
 
     handleRemoveRole: (id: string) => removeRoleMutation.mutateAsync(id),
@@ -450,8 +439,7 @@ export function usePartyProfileViewModel(partyId: string) {
     }) => addRelationshipMutation.mutateAsync(data),
     isAddingRelationship: addRelationshipMutation.isPending,
 
-    handleRemoveRelationship: (id: string) =>
-      removeRelationshipMutation.mutateAsync(id),
+    handleRemoveRelationship: (id: string) => removeRelationshipMutation.mutateAsync(id),
     isRemovingRelationship: removeRelationshipMutation.isPending,
 
     handleDeleteParty: () => deletePartyMutation.mutateAsync(),

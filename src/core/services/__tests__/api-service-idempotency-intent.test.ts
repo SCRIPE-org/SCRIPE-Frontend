@@ -44,9 +44,7 @@ describe("ApiService mutation intent", () => {
     ).resolves.toEqual({ ok: true });
 
     expect(requests).toHaveLength(1);
-    expect(AxiosHeaders.from(requests[0].headers).get("Idempotency-Key")).toBe(
-      "intent-key-padded"
-    );
+    expect(AxiosHeaders.from(requests[0].headers).get("Idempotency-Key")).toBe("intent-key-padded");
   });
 
   it("reuses one intent key and creates a fresh nonce for an opted-in retry", async () => {

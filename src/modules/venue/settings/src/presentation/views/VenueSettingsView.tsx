@@ -92,7 +92,7 @@ export function VenueSettingsView() {
 
   return (
     <div
-      className="space-y-6 max-w-[1200px] mx-auto text-nx-ink"
+      className="mx-auto max-w-[1200px] space-y-6 text-nx-ink"
       dir={direction}
       data-testid="venue-settings-view"
     >
@@ -104,7 +104,7 @@ export function VenueSettingsView() {
       />
 
       <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-        <TabsList className="bg-nx-surface border border-nx-line p-1">
+        <TabsList className="border border-nx-line bg-nx-surface p-1">
           <TabsTrigger value="branch" className="gap-1.5 text-xs font-semibold">
             <Building2 className="size-3.5" aria-hidden="true" />
             <span>{t("venueSettings.tabs.branch")}</span>
@@ -139,29 +139,29 @@ export function VenueSettingsView() {
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div className="rounded-nx-lg border border-nx-line p-3.5 bg-nx-surfaceSubtle space-y-1">
+              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                <div className="bg-nx-surfaceSubtle space-y-1 rounded-nx-lg border border-nx-line p-3.5">
                   <div className="text-[11px] font-medium text-nx-ink-3">
                     {t("venueSettings.branch.name")}
                   </div>
-                  <div className="text-sm font-bold text-nx-ink flex items-center gap-2">
+                  <div className="flex items-center gap-2 text-sm font-bold text-nx-ink">
                     <Building2 className="size-4 text-nx-accent" />
                     <span>{branchName}</span>
                   </div>
                 </div>
 
-                <div className="rounded-nx-lg border border-nx-line p-3.5 bg-nx-surfaceSubtle space-y-1">
+                <div className="bg-nx-surfaceSubtle space-y-1 rounded-nx-lg border border-nx-line p-3.5">
                   <div className="text-[11px] font-medium text-nx-ink-3">
                     {t("venueSettings.branch.timezone")}
                   </div>
-                  <div className="text-sm font-bold text-nx-ink flex items-center gap-2">
+                  <div className="flex items-center gap-2 text-sm font-bold text-nx-ink">
                     <Clock className="size-4 text-nx-accent" />
                     <span>{branchTimezone}</span>
                   </div>
                 </div>
               </div>
 
-              <Alert className="py-2.5 bg-nx-accent/5 border-nx-accent/20 text-nx-ink">
+              <Alert className="bg-nx-accent/5 border-nx-accent/20 py-2.5 text-nx-ink">
                 <Info className="size-4 text-nx-accent" />
                 <AlertDescription className="text-xs">
                   {t("venueSettings.branch.multiBranchNote")}
@@ -184,7 +184,7 @@ export function VenueSettingsView() {
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="space-y-3">
-                <div className="flex items-start justify-between gap-4 p-3.5 rounded-nx-lg border border-nx-line bg-nx-surface">
+                <div className="flex items-start justify-between gap-4 rounded-nx-lg border border-nx-line bg-nx-surface p-3.5">
                   <div className="space-y-1">
                     <div className="text-xs font-bold text-nx-ink">
                       {t("venueSettings.booking.courtRulesTitle")}
@@ -193,7 +193,12 @@ export function VenueSettingsView() {
                       {t("venueSettings.booking.courtRulesDescription")}
                     </p>
                   </div>
-                  <Button asChild variant="outline" size="sm" className="text-xs shrink-0 border-nx-line">
+                  <Button
+                    asChild
+                    variant="outline"
+                    size="sm"
+                    className="shrink-0 border-nx-line text-xs"
+                  >
                     <Link href="/venue/resources">
                       <span>{t("venueSettings.booking.courtsLink")}</span>
                       <ChevronRight className="size-3.5 rtl:rotate-180" />
@@ -201,7 +206,7 @@ export function VenueSettingsView() {
                   </Button>
                 </div>
 
-                <div className="flex items-start justify-between gap-4 p-3.5 rounded-nx-lg border border-nx-line bg-nx-surface">
+                <div className="flex items-start justify-between gap-4 rounded-nx-lg border border-nx-line bg-nx-surface p-3.5">
                   <div className="space-y-1">
                     <div className="text-xs font-bold text-nx-ink">
                       {t("venueSettings.booking.windowTitle")}
@@ -210,7 +215,10 @@ export function VenueSettingsView() {
                       {t("venueSettings.booking.windowDescription")}
                     </p>
                   </div>
-                  <Badge variant="outline" className="text-xs font-semibold border-nx-line bg-nx-surfaceSubtle text-nx-ink">
+                  <Badge
+                    variant="outline"
+                    className="bg-nx-surfaceSubtle border-nx-line text-xs font-semibold text-nx-ink"
+                  >
                     {t("venueSettings.booking.windowDays", { count: 14 })}
                   </Badge>
                 </div>
@@ -231,50 +239,46 @@ export function VenueSettingsView() {
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                 <button
                   type="button"
                   onClick={() => handleModeChange("solo")}
-                  className={`text-start p-4 rounded-nx-xl border transition-all ${
+                  className={`rounded-nx-xl border p-4 text-start transition-all ${
                     managementMode === "solo"
-                      ? "border-nx-accent bg-nx-accent/5 ring-1 ring-nx-accent shadow-xs"
-                      : "border-nx-line hover:border-nx-line/80 bg-nx-surface"
+                      ? "bg-nx-accent/5 shadow-xs border-nx-accent ring-1 ring-nx-accent"
+                      : "hover:border-nx-line/80 border-nx-line bg-nx-surface"
                   }`}
                 >
-                  <div className="flex items-center justify-between mb-2">
+                  <div className="mb-2 flex items-center justify-between">
                     <span className="text-xs font-bold text-nx-ink">
                       {t("venueSettings.team.soloTitle")}
                     </span>
                     {managementMode === "solo" && <Check className="size-4 text-nx-accent" />}
                   </div>
-                  <p className="text-xs text-nx-ink-2">
-                    {t("venueSettings.team.soloDescription")}
-                  </p>
+                  <p className="text-xs text-nx-ink-2">{t("venueSettings.team.soloDescription")}</p>
                 </button>
 
                 <button
                   type="button"
                   onClick={() => handleModeChange("team")}
-                  className={`text-start p-4 rounded-nx-xl border transition-all ${
+                  className={`rounded-nx-xl border p-4 text-start transition-all ${
                     managementMode === "team"
-                      ? "border-nx-accent bg-nx-accent/5 ring-1 ring-nx-accent shadow-xs"
-                      : "border-nx-line hover:border-nx-line/80 bg-nx-surface"
+                      ? "bg-nx-accent/5 shadow-xs border-nx-accent ring-1 ring-nx-accent"
+                      : "hover:border-nx-line/80 border-nx-line bg-nx-surface"
                   }`}
                 >
-                  <div className="flex items-center justify-between mb-2">
+                  <div className="mb-2 flex items-center justify-between">
                     <span className="text-xs font-bold text-nx-ink">
                       {t("venueSettings.team.teamTitle")}
                     </span>
                     {managementMode === "team" && <Check className="size-4 text-nx-accent" />}
                   </div>
-                  <p className="text-xs text-nx-ink-2">
-                    {t("venueSettings.team.teamDescription")}
-                  </p>
+                  <p className="text-xs text-nx-ink-2">{t("venueSettings.team.teamDescription")}</p>
                 </button>
               </div>
 
               {managementMode === "team" && canViewTeam && (
-                <div className="pt-2 flex items-center justify-between p-3.5 rounded-nx-lg border border-nx-line bg-nx-surfaceSubtle">
+                <div className="bg-nx-surfaceSubtle flex items-center justify-between rounded-nx-lg border border-nx-line p-3.5 pt-2">
                   <div className="space-y-0.5">
                     <div className="text-xs font-bold text-nx-ink">
                       {t("venueSettings.team.manageTitle")}
@@ -283,7 +287,7 @@ export function VenueSettingsView() {
                       {t("venueSettings.team.manageDescription")}
                     </div>
                   </div>
-                  <Button asChild size="sm" className="text-xs font-bold gap-1.5">
+                  <Button asChild size="sm" className="gap-1.5 text-xs font-bold">
                     <Link href="/admins">
                       <ShieldCheck className="size-3.5" />
                       <span>{t("venueSettings.team.openTeam")}</span>
@@ -307,7 +311,7 @@ export function VenueSettingsView() {
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
-              <div className="flex items-center justify-between p-3.5 rounded-nx-lg border border-nx-line bg-nx-surface">
+              <div className="flex items-center justify-between rounded-nx-lg border border-nx-line bg-nx-surface p-3.5">
                 <div>
                   <div className="text-xs font-bold text-nx-ink">
                     {t("venueSettings.preferences.languageTitle")}
@@ -351,21 +355,24 @@ export function VenueSettingsView() {
                   <CardTitle className="text-base font-bold text-nx-ink">
                     {t("venueSettings.advanced.title")}
                   </CardTitle>
-                  <CardDescription className="text-xs mt-1 text-nx-ink-2">
+                  <CardDescription className="mt-1 text-xs text-nx-ink-2">
                     {t("venueSettings.advanced.description")}
                   </CardDescription>
                 </div>
-                <Badge variant="outline" className="text-xs bg-nx-surfaceSubtle text-nx-ink-2 border-nx-line">
+                <Badge
+                  variant="outline"
+                  className="bg-nx-surfaceSubtle border-nx-line text-xs text-nx-ink-2"
+                >
                   {t("venueSettings.advanced.badge")}
                 </Badge>
               </div>
             </CardHeader>
             <CardContent className="space-y-3">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+              <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
                 {/* Branch & Facility Registry */}
                 <Link
                   href="/venue/facilities"
-                  className="flex items-start justify-between p-3.5 rounded-nx-lg border border-nx-line hover:border-nx-accent/50 hover:bg-nx-surfaceSubtle transition-colors group"
+                  className="hover:border-nx-accent/50 hover:bg-nx-surfaceSubtle group flex items-start justify-between rounded-nx-lg border border-nx-line p-3.5 transition-colors"
                 >
                   <div className="space-y-1">
                     <div className="flex items-center gap-2 text-xs font-bold text-nx-ink group-hover:text-nx-accent">
@@ -376,13 +383,13 @@ export function VenueSettingsView() {
                       {t("venueSettings.advanced.registries.facilitiesDesc")}
                     </p>
                   </div>
-                  <ChevronRight className="size-4 text-nx-ink-3 group-hover:text-nx-accent rtl:rotate-180 shrink-0 mt-1" />
+                  <ChevronRight className="mt-1 size-4 shrink-0 text-nx-ink-3 group-hover:text-nx-accent rtl:rotate-180" />
                 </Link>
 
                 {/* Operating Hours Matrix */}
                 <Link
                   href="/venue/availability"
-                  className="flex items-start justify-between p-3.5 rounded-nx-lg border border-nx-line hover:border-nx-accent/50 hover:bg-nx-surfaceSubtle transition-colors group"
+                  className="hover:border-nx-accent/50 hover:bg-nx-surfaceSubtle group flex items-start justify-between rounded-nx-lg border border-nx-line p-3.5 transition-colors"
                 >
                   <div className="space-y-1">
                     <div className="flex items-center gap-2 text-xs font-bold text-nx-ink group-hover:text-nx-accent">
@@ -393,13 +400,13 @@ export function VenueSettingsView() {
                       {t("venueSettings.advanced.registries.availabilityDesc")}
                     </p>
                   </div>
-                  <ChevronRight className="size-4 text-nx-ink-3 group-hover:text-nx-accent rtl:rotate-180 shrink-0 mt-1" />
+                  <ChevronRight className="mt-1 size-4 shrink-0 text-nx-ink-3 group-hover:text-nx-accent rtl:rotate-180" />
                 </Link>
 
                 {/* Sites & Campuses */}
                 <Link
                   href="/venue/sites"
-                  className="flex items-start justify-between p-3.5 rounded-nx-lg border border-nx-line hover:border-nx-accent/50 hover:bg-nx-surfaceSubtle transition-colors group"
+                  className="hover:border-nx-accent/50 hover:bg-nx-surfaceSubtle group flex items-start justify-between rounded-nx-lg border border-nx-line p-3.5 transition-colors"
                 >
                   <div className="space-y-1">
                     <div className="flex items-center gap-2 text-xs font-bold text-nx-ink group-hover:text-nx-accent">
@@ -410,13 +417,13 @@ export function VenueSettingsView() {
                       {t("venueSettings.advanced.registries.sitesDesc")}
                     </p>
                   </div>
-                  <ChevronRight className="size-4 text-nx-ink-3 group-hover:text-nx-accent rtl:rotate-180 shrink-0 mt-1" />
+                  <ChevronRight className="mt-1 size-4 shrink-0 text-nx-ink-3 group-hover:text-nx-accent rtl:rotate-180" />
                 </Link>
 
                 {/* Pricing Catalog */}
                 <Link
                   href="/venue/pricing"
-                  className="flex items-start justify-between p-3.5 rounded-nx-lg border border-nx-line hover:border-nx-accent/50 hover:bg-nx-surfaceSubtle transition-colors group"
+                  className="hover:border-nx-accent/50 hover:bg-nx-surfaceSubtle group flex items-start justify-between rounded-nx-lg border border-nx-line p-3.5 transition-colors"
                 >
                   <div className="space-y-1">
                     <div className="flex items-center gap-2 text-xs font-bold text-nx-ink group-hover:text-nx-accent">
@@ -427,13 +434,13 @@ export function VenueSettingsView() {
                       {t("venueSettings.advanced.registries.pricingDesc")}
                     </p>
                   </div>
-                  <ChevronRight className="size-4 text-nx-ink-3 group-hover:text-nx-accent rtl:rotate-180 shrink-0 mt-1" />
+                  <ChevronRight className="mt-1 size-4 shrink-0 text-nx-ink-3 group-hover:text-nx-accent rtl:rotate-180" />
                 </Link>
 
                 {/* Resource Builder */}
                 <Link
                   href="/venue/resource-builder"
-                  className="flex items-start justify-between p-3.5 rounded-nx-lg border border-nx-line hover:border-nx-accent/50 hover:bg-nx-surfaceSubtle transition-colors group"
+                  className="hover:border-nx-accent/50 hover:bg-nx-surfaceSubtle group flex items-start justify-between rounded-nx-lg border border-nx-line p-3.5 transition-colors"
                 >
                   <div className="space-y-1">
                     <div className="flex items-center gap-2 text-xs font-bold text-nx-ink group-hover:text-nx-accent">
@@ -444,13 +451,13 @@ export function VenueSettingsView() {
                       {t("venueSettings.advanced.registries.builderDesc")}
                     </p>
                   </div>
-                  <ChevronRight className="size-4 text-nx-ink-3 group-hover:text-nx-accent rtl:rotate-180 shrink-0 mt-1" />
+                  <ChevronRight className="mt-1 size-4 shrink-0 text-nx-ink-3 group-hover:text-nx-accent rtl:rotate-180" />
                 </Link>
 
                 {/* Resource Profiles */}
                 <Link
                   href="/venue/resource-profiles"
-                  className="flex items-start justify-between p-3.5 rounded-nx-lg border border-nx-line hover:border-nx-accent/50 hover:bg-nx-surfaceSubtle transition-colors group"
+                  className="hover:border-nx-accent/50 hover:bg-nx-surfaceSubtle group flex items-start justify-between rounded-nx-lg border border-nx-line p-3.5 transition-colors"
                 >
                   <div className="space-y-1">
                     <div className="flex items-center gap-2 text-xs font-bold text-nx-ink group-hover:text-nx-accent">
@@ -461,7 +468,7 @@ export function VenueSettingsView() {
                       {t("venueSettings.advanced.registries.profilesDesc")}
                     </p>
                   </div>
-                  <ChevronRight className="size-4 text-nx-ink-3 group-hover:text-nx-accent rtl:rotate-180 shrink-0 mt-1" />
+                  <ChevronRight className="mt-1 size-4 shrink-0 text-nx-ink-3 group-hover:text-nx-accent rtl:rotate-180" />
                 </Link>
               </div>
             </CardContent>

@@ -72,7 +72,8 @@ export class MoneyService implements IMoneyService {
     if (filter?.dateToUtc) query.set("dateToUtc", filter.dateToUtc);
     if (filter?.currencyCode) query.set("currencyCode", filter.currencyCode);
     if (filter?.resourceId) query.set("resourceId", filter.resourceId);
-    if (filter?.facilityResourceProfileId) query.set("facilityResourceProfileId", filter.facilityResourceProfileId);
+    if (filter?.facilityResourceProfileId)
+      query.set("facilityResourceProfileId", filter.facilityResourceProfileId);
     const qs = query.toString();
     return this.api.get(`${MONEY_ENDPOINTS.ANALYTICS_SUMMARY}${qs ? `?${qs}` : ""}`);
   }
@@ -84,7 +85,8 @@ export class MoneyService implements IMoneyService {
     if (filter?.interval) query.set("interval", filter.interval);
     if (filter?.currencyCode) query.set("currencyCode", filter.currencyCode);
     if (filter?.resourceId) query.set("resourceId", filter.resourceId);
-    if (filter?.facilityResourceProfileId) query.set("facilityResourceProfileId", filter.facilityResourceProfileId);
+    if (filter?.facilityResourceProfileId)
+      query.set("facilityResourceProfileId", filter.facilityResourceProfileId);
     const qs = query.toString();
     return this.api.get(`${MONEY_ENDPOINTS.ANALYTICS_TREND}${qs ? `?${qs}` : ""}`);
   }
@@ -94,10 +96,14 @@ export class MoneyService implements IMoneyService {
     if (filter?.dateFromUtc) query.set("dateFromUtc", filter.dateFromUtc);
     if (filter?.dateToUtc) query.set("dateToUtc", filter.dateToUtc);
     if (filter?.currencyCode) query.set("currencyCode", filter.currencyCode);
-    if (filter?.facilityResourceProfileId) query.set("facilityResourceProfileId", filter.facilityResourceProfileId);
+    if (filter?.facilityResourceProfileId)
+      query.set("facilityResourceProfileId", filter.facilityResourceProfileId);
     const qs = query.toString();
-    return this.api.get<{ items: MoneyResourcePerformance[] }>(`${MONEY_ENDPOINTS.ANALYTICS_BY_RESOURCE}${qs ? `?${qs}` : ""}`)
-      .then(res => res.items || []);
+    return this.api
+      .get<{ items: MoneyResourcePerformance[] }>(
+        `${MONEY_ENDPOINTS.ANALYTICS_BY_RESOURCE}${qs ? `?${qs}` : ""}`
+      )
+      .then((res) => res.items || []);
   }
 
   getByTimeOfDay(filter?: MoneyAnalyticsFilter): Promise<MoneyTimeOfDayBucket[]> {
@@ -106,10 +112,14 @@ export class MoneyService implements IMoneyService {
     if (filter?.dateToUtc) query.set("dateToUtc", filter.dateToUtc);
     if (filter?.currencyCode) query.set("currencyCode", filter.currencyCode);
     if (filter?.resourceId) query.set("resourceId", filter.resourceId);
-    if (filter?.facilityResourceProfileId) query.set("facilityResourceProfileId", filter.facilityResourceProfileId);
+    if (filter?.facilityResourceProfileId)
+      query.set("facilityResourceProfileId", filter.facilityResourceProfileId);
     const qs = query.toString();
-    return this.api.get<{ items: MoneyTimeOfDayBucket[] }>(`${MONEY_ENDPOINTS.ANALYTICS_BY_TIME}${qs ? `?${qs}` : ""}`)
-      .then(res => res.items || []);
+    return this.api
+      .get<{ items: MoneyTimeOfDayBucket[] }>(
+        `${MONEY_ENDPOINTS.ANALYTICS_BY_TIME}${qs ? `?${qs}` : ""}`
+      )
+      .then((res) => res.items || []);
   }
 
   getPaymentMethods(filter?: MoneyAnalyticsFilter): Promise<MoneyPaymentMethodItem[]> {
@@ -118,10 +128,13 @@ export class MoneyService implements IMoneyService {
     if (filter?.dateToUtc) query.set("dateToUtc", filter.dateToUtc);
     if (filter?.currencyCode) query.set("currencyCode", filter.currencyCode);
     if (filter?.resourceId) query.set("resourceId", filter.resourceId);
-    if (filter?.facilityResourceProfileId) query.set("facilityResourceProfileId", filter.facilityResourceProfileId);
+    if (filter?.facilityResourceProfileId)
+      query.set("facilityResourceProfileId", filter.facilityResourceProfileId);
     const qs = query.toString();
-    return this.api.get<{ items: MoneyPaymentMethodItem[] }>(`${MONEY_ENDPOINTS.ANALYTICS_PAYMENT_METHODS}${qs ? `?${qs}` : ""}`)
-      .then(res => res.items || []);
+    return this.api
+      .get<{ items: MoneyPaymentMethodItem[] }>(
+        `${MONEY_ENDPOINTS.ANALYTICS_PAYMENT_METHODS}${qs ? `?${qs}` : ""}`
+      )
+      .then((res) => res.items || []);
   }
 }
-

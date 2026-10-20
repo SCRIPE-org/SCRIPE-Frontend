@@ -111,7 +111,11 @@ describe("GuestBookingPortalView", () => {
       reservationNumber: "RES-9999",
       status: "Cancelled",
     });
-    guestPortalServiceMock.getBooking.mockResolvedValueOnce({ ...mockBooking, status: "Cancelled", canCancel: false });
+    guestPortalServiceMock.getBooking.mockResolvedValueOnce({
+      ...mockBooking,
+      status: "Cancelled",
+      canCancel: false,
+    });
 
     render(<GuestBookingPortalView />);
 

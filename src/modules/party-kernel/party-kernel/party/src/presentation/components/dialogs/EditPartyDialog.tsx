@@ -50,11 +50,7 @@ interface EditPartyDialogProps {
   initialFullName?: string | null;
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  onSubmit: (
-    id: string,
-    displayName: string,
-    options?: EditPartySubmitOptions
-  ) => Promise<void>;
+  onSubmit: (id: string, displayName: string, options?: EditPartySubmitOptions) => Promise<void>;
 }
 
 function toDateInputValue(isoOrDate?: string | null): string {
@@ -83,37 +79,26 @@ function EditPartyForm({
   profile?: PartyProfile | null;
   initialFullName?: string | null;
   onClose: () => void;
-  onSubmit: (
-    id: string,
-    displayName: string,
-    options?: EditPartySubmitOptions
-  ) => Promise<void>;
+  onSubmit: (id: string, displayName: string, options?: EditPartySubmitOptions) => Promise<void>;
 }) {
   const { t } = useI18n();
 
   const resolvedInitialFullName =
     initialFullName || profile?.fullName || party.fullName || party.displayName;
-  const resolvedInitialLegalName =
-    profile?.legalName || party.legalName || party.displayName;
+  const resolvedInitialLegalName = profile?.legalName || party.legalName || party.displayName;
 
   const [fullName, setFullName] = useState(resolvedInitialFullName);
   const [displayName, setDisplayName] = useState(party.displayName);
   const [givenName, setGivenName] = useState(
     profile?.person?.givenName || profile?.person?.firstName || ""
   );
-  const [middleNames, setMiddleNames] = useState(
-    profile?.person?.middleNames || ""
-  );
+  const [middleNames, setMiddleNames] = useState(profile?.person?.middleNames || "");
   const [familyName, setFamilyName] = useState(
     profile?.person?.familyName || profile?.person?.lastName || ""
   );
   const [showAdditionalNames, setShowAdditionalNames] = useState(false);
-  const [dateOfBirth, setDateOfBirth] = useState(
-    toDateInputValue(profile?.person?.dateOfBirth)
-  );
-  const [isMinor, setIsMinor] = useState<boolean>(
-    Boolean(profile?.person?.isMinor)
-  );
+  const [dateOfBirth, setDateOfBirth] = useState(toDateInputValue(profile?.person?.dateOfBirth));
+  const [isMinor, setIsMinor] = useState<boolean>(Boolean(profile?.person?.isMinor));
 
   const [legalName, setLegalName] = useState(resolvedInitialLegalName);
   const [taxId, setTaxId] = useState(profile?.organization?.taxId || profile?.taxId || "");
@@ -202,7 +187,7 @@ function EditPartyForm({
     <form onSubmit={handleSubmit}>
       <DialogHeader>
         <div className="flex items-center gap-2">
-          <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-nx-accent/10 text-nx-accent">
+          <div className="bg-nx-accent/10 flex h-9 w-9 items-center justify-center rounded-lg text-nx-accent">
             <Edit3 className="h-5 w-5" />
           </div>
           <div>
@@ -220,21 +205,17 @@ function EditPartyForm({
         {error && (
           <div
             role="alert"
-            className="rounded-md bg-destructive/10 p-3 text-sm text-destructive border border-destructive/20"
+            className="rounded-md border border-destructive/20 bg-destructive/10 p-3 text-sm text-destructive"
           >
             {error}
           </div>
         )}
 
         {/* Immutable Identity Attributes Info */}
-        <div className="flex items-center justify-between rounded-lg bg-nx-surface-2 p-3 text-xs border border-nx-border">
+        <div className="bg-nx-surface-2 border-nx-border flex items-center justify-between rounded-lg border p-3 text-xs">
           <div className="space-y-1">
-            <span className="text-nx-ink-3 block">
-              {t("party.profile.immutableType")}
-            </span>
-            <Badge variant={party.isPerson ? "info" : "success"}>
-              {party.type}
-            </Badge>
+            <span className="block text-nx-ink-3">{t("party.profile.immutableType")}</span>
+            <Badge variant={party.isPerson ? "info" : "success"}>{party.type}</Badge>
           </div>
           <div className="flex items-center gap-1.5 text-nx-ink-3">
             <Lock className="h-3.5 w-3.5" />
@@ -245,7 +226,7 @@ function EditPartyForm({
         {party.isPerson ? (
           <>
             <div className="grid gap-2">
-              <Label htmlFor="edit-party-fullname" className="text-nx-ink font-medium">
+              <Label htmlFor="edit-party-fullname" className="font-medium text-nx-ink">
                 {t("party.dialog.fullName") || "Full Name"}{" "}
                 <span className="text-destructive">*</span>
               </Label>
@@ -265,9 +246,8 @@ function EditPartyForm({
 
             {/* Display Name Input */}
             <div className="grid gap-2">
-              <Label htmlFor="edit-party-name" className="text-nx-ink font-medium">
-                {t("party.dialog.displayName")}{" "}
-                <span className="text-destructive">*</span>
+              <Label htmlFor="edit-party-name" className="font-medium text-nx-ink">
+                {t("party.dialog.displayName")} <span className="text-destructive">*</span>
               </Label>
               <Input
                 id="edit-party-name"
@@ -282,12 +262,12 @@ function EditPartyForm({
             </div>
 
             {/* Optional Additional Names Accordion */}
-            <div className="rounded-lg border border-nx-border bg-nx-surface-2/30 p-3">
+            <div className="border-nx-border bg-nx-surface-2/30 rounded-lg border p-3">
               <Button
                 type="button"
                 variant="ghost"
                 onClick={() => setShowAdditionalNames(!showAdditionalNames)}
-                className="flex w-full items-center justify-between text-xs font-medium text-nx-ink hover:text-nx-accent transition-colors p-0 h-auto hover:bg-transparent"
+                className="flex h-auto w-full items-center justify-between p-0 text-xs font-medium text-nx-ink transition-colors hover:bg-transparent hover:text-nx-accent"
               >
                 <span>{t("party.dialog.additionalNames")}</span>
                 {showAdditionalNames ? (
@@ -298,7 +278,7 @@ function EditPartyForm({
               </Button>
 
               {showAdditionalNames && (
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 pt-3 mt-2 border-t border-nx-border/60">
+                <div className="border-nx-border/60 mt-2 grid grid-cols-1 gap-2 border-t pt-3 sm:grid-cols-3">
                   <div className="grid gap-1.5">
                     <Label htmlFor="edit-person-given-name" className="text-xs text-nx-ink-2">
                       {t("party.dialog.givenName")}
@@ -340,9 +320,9 @@ function EditPartyForm({
             </div>
 
             {/* Date of Birth & Minor Flag */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
               <div className="grid gap-2">
-                <Label htmlFor="edit-person-dob" className="text-nx-ink flex items-center gap-1.5">
+                <Label htmlFor="edit-person-dob" className="flex items-center gap-1.5 text-nx-ink">
                   <Calendar className="h-3.5 w-3.5 text-nx-ink-3" />
                   {t("party.dialog.dob")}
                 </Label>
@@ -364,7 +344,7 @@ function EditPartyForm({
                 />
                 <Label
                   htmlFor="edit-person-is-minor"
-                  className="text-xs text-nx-ink cursor-pointer flex items-center gap-1"
+                  className="flex cursor-pointer items-center gap-1 text-xs text-nx-ink"
                 >
                   <ShieldCheck className="h-3.5 w-3.5 text-nx-accent" />
                   {t("party.dialog.isMinorLabel")}
@@ -376,9 +356,8 @@ function EditPartyForm({
           <>
             {/* Organization Legal Name */}
             <div className="grid gap-2">
-              <Label htmlFor="edit-org-legal-name" className="text-nx-ink font-medium">
-                {t("party.dialog.legalName")}{" "}
-                <span className="text-destructive">*</span>
+              <Label htmlFor="edit-org-legal-name" className="font-medium text-nx-ink">
+                {t("party.dialog.legalName")} <span className="text-destructive">*</span>
               </Label>
               <Input
                 id="edit-org-legal-name"
@@ -395,9 +374,8 @@ function EditPartyForm({
 
             {/* Display Name Input */}
             <div className="grid gap-2">
-              <Label htmlFor="edit-party-name" className="text-nx-ink font-medium">
-                {t("party.dialog.displayName")}{" "}
-                <span className="text-destructive">*</span>
+              <Label htmlFor="edit-party-name" className="font-medium text-nx-ink">
+                {t("party.dialog.displayName")} <span className="text-destructive">*</span>
               </Label>
               <Input
                 id="edit-party-name"
@@ -413,7 +391,7 @@ function EditPartyForm({
 
             {/* Organization Tax / CR Registration ID */}
             <div className="grid gap-2">
-              <Label htmlFor="edit-org-tax-id" className="text-nx-ink flex items-center gap-1.5">
+              <Label htmlFor="edit-org-tax-id" className="flex items-center gap-1.5 text-nx-ink">
                 <FileText className="h-3.5 w-3.5 text-nx-ink-3" />
                 {t("party.dialog.taxId")}
               </Label>
@@ -430,12 +408,7 @@ function EditPartyForm({
       </div>
 
       <DialogFooter className="gap-2 sm:gap-0">
-        <Button
-          type="button"
-          variant="outline"
-          onClick={onClose}
-          disabled={isSubmitting}
-        >
+        <Button type="button" variant="outline" onClick={onClose} disabled={isSubmitting}>
           {t("party.dialog.cancel")}
         </Button>
         <Button

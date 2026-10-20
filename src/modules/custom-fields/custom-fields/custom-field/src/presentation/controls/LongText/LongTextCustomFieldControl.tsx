@@ -156,9 +156,15 @@ export function LongTextCustomFieldControl({
   if (zone !== announcementState.zone) {
     let newText = "";
     if (zone === "over") {
-      newText = t("customField.longText.charactersOverLimit", { overBy, max: LONG_TEXT_MAX_CHARACTERS });
+      newText = t("customField.longText.charactersOverLimit", {
+        overBy,
+        max: LONG_TEXT_MAX_CHARACTERS,
+      });
     } else if (zone === "nearLimit") {
-      newText = t("customField.longText.characterCount", { count: length, max: LONG_TEXT_MAX_CHARACTERS });
+      newText = t("customField.longText.characterCount", {
+        count: length,
+        max: LONG_TEXT_MAX_CHARACTERS,
+      });
     }
     setAnnouncementState({ zone, text: newText });
   }

@@ -172,8 +172,9 @@ describe("useBookingWorkspaceViewModel", () => {
     await waitFor(() => expect(result.current.setupLoading).toBe(false));
 
     await act(async () => {
-      await expect(result.current.createCustomer("Mona Hassan", "Person", "synthetic-phone"))
-        .rejects.toThrow("Network response was lost");
+      await expect(
+        result.current.createCustomer("Mona Hassan", "Person", "synthetic-phone")
+      ).rejects.toThrow("Network response was lost");
     });
     await act(async () => {
       await result.current.createCustomer("Mona Hassan", "Person", "synthetic-phone");

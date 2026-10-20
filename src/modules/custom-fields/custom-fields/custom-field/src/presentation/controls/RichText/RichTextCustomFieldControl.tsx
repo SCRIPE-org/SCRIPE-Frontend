@@ -205,9 +205,15 @@ export function RichTextCustomFieldControl({
   if (zone !== announcementState.zone) {
     let newText = "";
     if (zone === "over") {
-      newText = t("customField.richText.charactersOverLimit", { overBy, max: RICH_TEXT_MAX_CHARACTERS });
+      newText = t("customField.richText.charactersOverLimit", {
+        overBy,
+        max: RICH_TEXT_MAX_CHARACTERS,
+      });
     } else if (zone === "nearLimit") {
-      newText = t("customField.richText.characterCount", { count: length, max: RICH_TEXT_MAX_CHARACTERS });
+      newText = t("customField.richText.characterCount", {
+        count: length,
+        max: RICH_TEXT_MAX_CHARACTERS,
+      });
     }
     setAnnouncementState({ zone, text: newText });
   }

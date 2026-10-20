@@ -30,9 +30,9 @@ export function TenantActivityCharts({
   return (
     <div className="charts-container-grid">
       {/* 1. Organization Growth (Multi-line SVG Chart) */}
-      <Card className="p-4 sm:p-5 min-w-0 overflow-hidden border-nx-line bg-nx-surface text-nx-ink hover:border-nx-line-hi">
-        <div className="mb-2 flex flex-wrap items-center justify-between gap-2 min-w-0">
-          <div className="flex items-center gap-2.5 min-w-0">
+      <Card className="min-w-0 overflow-hidden border-nx-line bg-nx-surface p-4 text-nx-ink hover:border-nx-line-hi sm:p-5">
+        <div className="mb-2 flex min-w-0 flex-wrap items-center justify-between gap-2">
+          <div className="flex min-w-0 items-center gap-2.5">
             <div
               className="flex h-9 w-9 shrink-0 items-center justify-center rounded-nx-md"
               style={{
@@ -43,17 +43,17 @@ export function TenantActivityCharts({
               <TrendingUp className="h-4.5 w-4.5" />
             </div>
             <div className="min-w-0">
-              <h3 className="text-sm font-semibold text-nx-ink truncate">
+              <h3 className="truncate text-sm font-semibold text-nx-ink">
                 {t("tenantCommandCenter.charts.growthTitle") || "Organization Growth"}
               </h3>
-              <p className="text-xs text-nx-ink-3 truncate">
+              <p className="truncate text-xs text-nx-ink-3">
                 {t("tenantCommandCenter.charts.growthSubtitle") ||
                   "Members, bookings and active staff over the last 30 days."}
               </p>
             </div>
           </div>
 
-          <div className="flex flex-wrap items-center gap-3 text-xs font-medium text-nx-ink-3 shrink-0">
+          <div className="flex shrink-0 flex-wrap items-center gap-3 text-xs font-medium text-nx-ink-3">
             <span className="flex items-center gap-1.5">
               <span className="h-2 w-2 rounded-full bg-[#0ea5e9]" />
               {t("tenantCommandCenter.charts.members") || "Members"}
@@ -121,7 +121,7 @@ export function TenantActivityCharts({
       </Card>
 
       {/* 2. Login Activity (Bar Chart) */}
-      <Card className="p-4 sm:p-5 min-w-0 overflow-hidden border-nx-line bg-nx-surface text-nx-ink hover:border-nx-line-hi">
+      <Card className="min-w-0 overflow-hidden border-nx-line bg-nx-surface p-4 text-nx-ink hover:border-nx-line-hi sm:p-5">
         <div className="mb-2 flex items-start justify-between gap-3">
           <div className="flex items-center gap-2.5">
             <div

@@ -14,12 +14,8 @@ import { identityContainer } from "@modules/admin/identity/di";
 import { useOverviewViewModel } from "./useOverviewViewModel";
 import { usePresentationMode } from "./usePresentationMode";
 import { buildTenantOverviewLiveData } from "./tenantOverviewMapper";
-import {
-  DEFAULT_TENANT_OVERVIEW_LAYOUT,
-} from "../components/tenant-command-center/tenantWidgetRegistry";
-import type {
-  TenantOverviewLayout,
-} from "../components/tenant-command-center/tenantCustomizationTypes";
+import { DEFAULT_TENANT_OVERVIEW_LAYOUT } from "../components/tenant-command-center/tenantWidgetRegistry";
+import type { TenantOverviewLayout } from "../components/tenant-command-center/tenantCustomizationTypes";
 
 export function useTenantOverviewViewModel() {
   const { t } = useI18n();
@@ -78,9 +74,7 @@ export function useTenantOverviewViewModel() {
   // Dashboard Workspace Layout & Customization State
   // ══════════════════════════════════════════════════════════
 
-  const canUpdateCustomization = usePermission(
-    CUSTOMIZATION_PERMISSIONS.DASHBOARD_BUILDER_UPDATE
-  );
+  const canUpdateCustomization = usePermission(CUSTOMIZATION_PERMISSIONS.DASHBOARD_BUILDER_UPDATE);
   // Tenant Admins in their own tenant context have customization rights
   const canCustomize = canUpdateCustomization || !isImpersonating;
 
@@ -184,10 +178,7 @@ export function useTenantOverviewViewModel() {
       // Update client caches
       localStorage.setItem(STORAGE_KEYS.PREF_DASHBOARD_SETTINGS, json);
       if (tenantId) {
-        localStorage.setItem(
-          `scr_tenant_overview_layout_${tenantId}`,
-          JSON.stringify(draftLayout)
-        );
+        localStorage.setItem(`scr_tenant_overview_layout_${tenantId}`, JSON.stringify(draftLayout));
       }
 
       // Invalidate queries so tenant branding refreshes
@@ -201,9 +192,7 @@ export function useTenantOverviewViewModel() {
       setIsEditing(false);
 
       toastSuccess({
-        title:
-          t("tenantCommandCenter.customization.layoutSavedTitle") ||
-          "Dashboard Layout Saved",
+        title: t("tenantCommandCenter.customization.layoutSavedTitle") || "Dashboard Layout Saved",
         description:
           t("tenantCommandCenter.customization.layoutSavedDesc") ||
           "Your custom overview layout has been saved and applied across sessions.",
@@ -212,8 +201,7 @@ export function useTenantOverviewViewModel() {
       const errorObj = err as Error;
       toastError({
         title:
-          t("tenantCommandCenter.customization.saveFailed") ||
-          "Failed to save dashboard layout",
+          t("tenantCommandCenter.customization.saveFailed") || "Failed to save dashboard layout",
         description: errorObj?.message || "An unexpected error occurred while saving.",
       });
     } finally {
@@ -225,9 +213,7 @@ export function useTenantOverviewViewModel() {
     if (isEditing) {
       setDraftLayout(DEFAULT_TENANT_OVERVIEW_LAYOUT);
       toastSuccess({
-        title:
-          t("tenantCommandCenter.customization.draftReset") ||
-          "Draft Reset to Default",
+        title: t("tenantCommandCenter.customization.draftReset") || "Draft Reset to Default",
         description:
           t("tenantCommandCenter.customization.draftResetDesc") ||
           "Default layout loaded. Click 'Save Layout' to apply.",
@@ -264,9 +250,7 @@ export function useTenantOverviewViewModel() {
       setDraftLayout(DEFAULT_TENANT_OVERVIEW_LAYOUT);
 
       toastSuccess({
-        title:
-          t("tenantCommandCenter.customization.defaultRestored") ||
-          "Default Layout Restored",
+        title: t("tenantCommandCenter.customization.defaultRestored") || "Default Layout Restored",
         description:
           t("tenantCommandCenter.customization.defaultRestoredDesc") ||
           "The organization overview has been reset to its default layout.",

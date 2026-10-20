@@ -188,11 +188,7 @@ describe("AddRelationshipDialog Component", () => {
     const onSubmit = vi.fn();
 
     renderWithClient(
-      <AddRelationshipDialog
-        open={true}
-        onOpenChange={vi.fn()}
-        onSubmit={onSubmit}
-      />
+      <AddRelationshipDialog open={true} onOpenChange={vi.fn()} onSubmit={onSubmit} />
     );
 
     const form = document.querySelector("form") as HTMLFormElement;
@@ -224,7 +220,9 @@ describe("AddRelationshipDialog Component", () => {
     fireEvent.submit(form);
 
     expect(onSubmit).not.toHaveBeenCalled();
-    expect(screen.getByText("A contact cannot have a relationship with itself.")).toBeInTheDocument();
+    expect(
+      screen.getByText("A contact cannot have a relationship with itself.")
+    ).toBeInTheDocument();
   });
 
   it("blocks Guardian relationship when sourcePartyType is Organization and renders role=alert (C1.1)", async () => {
@@ -257,4 +255,3 @@ describe("AddRelationshipDialog Component", () => {
     );
   });
 });
-

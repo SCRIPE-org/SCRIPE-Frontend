@@ -344,7 +344,9 @@ describe("VenueOverviewService", () => {
     const overview = await service.getOverview("fac-123", "2026-09-12");
 
     expect(mockApi.get).toHaveBeenCalledTimes(1);
-    expect(mockApi.get).toHaveBeenCalledWith(expect.stringContaining("/v1/venue-overview?facilityId=fac-123&date=2026-09-12"));
+    expect(mockApi.get).toHaveBeenCalledWith(
+      expect.stringContaining("/v1/venue-overview?facilityId=fac-123&date=2026-09-12")
+    );
     expect(overview.stage).toBe("ready");
     expect(overview.facilityName).toBe("Metis Cairo Club");
     expect(overview.kpis.todayReservationsCount).toBe(15);

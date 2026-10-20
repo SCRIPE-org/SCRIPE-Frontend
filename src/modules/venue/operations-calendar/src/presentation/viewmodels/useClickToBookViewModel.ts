@@ -85,20 +85,14 @@ export function useClickToBookViewModel({
   // Permissions
   const canCreateBooking = usePermission(VENUE_PERMISSIONS.RESERVATION_CREATE);
   const canCreateHold = usePermission(VENUE_PERMISSIONS.BOOKING_HOLD_CREATE);
-  const canRecordPayment = usePermission(
-    VENUE_PERMISSIONS.FINANCE_PAYMENTS_CREATE
-  );
-  const canOverridePrice = usePermission(
-    VENUE_PERMISSIONS.CATALOG_PRICING_OVERRIDE_PRICE
-  );
+  const canRecordPayment = usePermission(VENUE_PERMISSIONS.FINANCE_PAYMENTS_CREATE);
+  const canOverridePrice = usePermission(VENUE_PERMISSIONS.CATALOG_PRICING_OVERRIDE_PRICE);
 
   // Selected court & time context
   const [selectedResource, setSelectedResource] = useState<CalendarResource | null>(
     initialResource
   );
-  const [selectedInstantUtc, setSelectedInstantUtc] = useState<string | null>(
-    initialInstantUtc
-  );
+  const [selectedInstantUtc, setSelectedInstantUtc] = useState<string | null>(initialInstantUtc);
   const [slotPolicy, setSlotPolicy] = useState<{
     slotDurationMinutes: number;
     startIncrementMinutes?: number;
@@ -256,13 +250,7 @@ export function useClickToBookViewModel({
         throw new Error("Choose a resource and customer first.");
       }
       return bookingRepository.getOrCreateBusinessIntent(
-        JSON.stringify([
-          selectedResource.id,
-          selectedCustomer.id,
-          startUtc,
-          endUtc,
-          1,
-        ]),
+        JSON.stringify([selectedResource.id, selectedCustomer.id, startUtc, endUtc, 1]),
         confirmationFingerprint
       );
     },
@@ -275,8 +263,12 @@ export function useClickToBookViewModel({
   useEffect(() => {
     if (open && !prevOpenRef.current) {
       const pendingBookingContext = pendingBookingContextRef.current;
-      setSelectedResource(pendingBookingContext?.resource ?? initialResource ?? (resources[0] || null));
-      setSelectedInstantUtc(pendingBookingContext?.instantUtc ?? initialInstantUtc ?? new Date().toISOString());
+      setSelectedResource(
+        pendingBookingContext?.resource ?? initialResource ?? (resources[0] || null)
+      );
+      setSelectedInstantUtc(
+        pendingBookingContext?.instantUtc ?? initialInstantUtc ?? new Date().toISOString()
+      );
       setDuration(pendingBookingContext?.durationMinutes ?? initialDurationMinutes);
       setStep(pendingBookingContext ? 2 : initialResource && initialInstantUtc ? 1 : 0);
       setStage("booking");
@@ -288,9 +280,12 @@ export function useClickToBookViewModel({
       setCustomerResults([]);
       setSelectedCustomer(pendingBookingContext?.customer ?? null);
       if (!pendingBookingContext && initialCustomerId) {
-        customerRepository.getById(initialCustomerId).then((c) => {
-          setSelectedCustomer(c);
-        }).catch(() => {});
+        customerRepository
+          .getById(initialCustomerId)
+          .then((c) => {
+            setSelectedCustomer(c);
+          })
+          .catch(() => {});
       }
       setQuickAddOpen(false);
       setQuickName("");
@@ -324,7 +319,15 @@ export function useClickToBookViewModel({
       setReservationNumber("");
     }
     prevOpenRef.current = open;
-  }, [open, initialResource, initialInstantUtc, initialDurationMinutes, resources, customerRepository, initialCustomerId]);
+  }, [
+    open,
+    initialResource,
+    initialInstantUtc,
+    initialDurationMinutes,
+    resources,
+    customerRepository,
+    initialCustomerId,
+  ]);
 
   // Customer search with debounce
   useEffect(() => {
@@ -423,7 +426,10 @@ export function useClickToBookViewModel({
         expiresAtUtc: quoteIntent.expiresAtUtc,
         idempotencyKey: quoteIntent.key,
       });
-      if (previousQuoteRef.current && calcQuote.grandTotal !== previousQuoteRef.current.grandTotal) {
+      if (
+        previousQuoteRef.current &&
+        calcQuote.grandTotal !== previousQuoteRef.current.grandTotal
+      ) {
         setPriceChangeNotice({
           oldPrice: previousQuoteRef.current.grandTotal,
           newPrice: calcQuote.grandTotal,
@@ -443,29 +449,23 @@ export function useClickToBookViewModel({
     } finally {
       setQuoteLoading(false);
     }
-  }, [
-    commercialPricingRepository,
-    endUtc,
-    selectedCustomer,
-    selectedResource,
-    startUtc,
-  ]);
+  }, [commercialPricingRepository, endUtc, selectedCustomer, selectedResource, startUtc]);
 
-function toLocalIsoDateTime(utcIso: string, timeZone: string): string {
-  const d = new Date(utcIso);
-  const formatter = new Intl.DateTimeFormat("en-CA", {
-    timeZone: timeZone || "UTC",
-    year: "numeric",
-    month: "2-digit",
-    day: "2-digit",
-    hour: "2-digit",
-    minute: "2-digit",
-    second: "2-digit",
-    hour12: false,
-    hourCycle: "h23",
-  });
-  return formatter.format(d).replace(", ", "T").replace(" ", "T");
-}
+  function toLocalIsoDateTime(utcIso: string, timeZone: string): string {
+    const d = new Date(utcIso);
+    const formatter = new Intl.DateTimeFormat("en-CA", {
+      timeZone: timeZone || "UTC",
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+      hour: "2-digit",
+      minute: "2-digit",
+      second: "2-digit",
+      hour12: false,
+      hourCycle: "h23",
+    });
+    return formatter.format(d).replace(", ", "T").replace(" ", "T");
+  }
 
   const handleStep0Next = useCallback(async () => {
     if (!selectedResource) return;
@@ -479,8 +479,14 @@ function toLocalIsoDateTime(utcIso: string, timeZone: string): string {
 
       if (container.commercialPricingRepository?.getResourceConfiguration) {
         try {
-          const pricingConfig = await container.commercialPricingRepository.getResourceConfiguration(selectedResource.id);
-          if (pricingConfig?.effectiveFromUtc && Date.parse(pricingConfig.effectiveFromUtc) > Date.now()) {
+          const pricingConfig =
+            await container.commercialPricingRepository.getResourceConfiguration(
+              selectedResource.id
+            );
+          if (
+            pricingConfig?.effectiveFromUtc &&
+            Date.parse(pricingConfig.effectiveFromUtc) > Date.now()
+          ) {
             setStep0Error(
               tRef.current("operationsCalendar.clickToBook.step0.pricingActivating", {
                 defaultValue:
@@ -627,17 +633,31 @@ function toLocalIsoDateTime(utcIso: string, timeZone: string): string {
       );
       setOverrideOpen(false);
     } catch (err) {
-      setOverrideError(
-        err instanceof Error ? err.message : "Failed to apply price override."
-      );
+      setOverrideError(err instanceof Error ? err.message : "Failed to apply price override.");
     } finally {
       setOverrideLoading(false);
     }
-  }, [commercialPricingRepository, canOverridePrice, overrideAmount, overrideLoading, overrideReason, quote]);
+  }, [
+    commercialPricingRepository,
+    canOverridePrice,
+    overrideAmount,
+    overrideLoading,
+    overrideReason,
+    quote,
+  ]);
 
   // Primary Action: Confirm Booking
   const handleConfirm = useCallback(async () => {
-    if (!canCreateBooking || !selectedResource || !selectedCustomer || !quote || submitting || holdExpired || priceChangeNotice) return;
+    if (
+      !canCreateBooking ||
+      !selectedResource ||
+      !selectedCustomer ||
+      !quote ||
+      submitting ||
+      holdExpired ||
+      priceChangeNotice
+    )
+      return;
 
     if (quote.expiresAtUtc && Date.parse(quote.expiresAtUtc) < Date.now()) {
       setQuoteExpiredMessage(true);
@@ -672,7 +692,10 @@ function toLocalIsoDateTime(utcIso: string, timeZone: string): string {
         intent.holdIdempotencyKey,
         hold.expiresAtUtc
       );
-      if (!Number.isFinite(Date.parse(hold.expiresAtUtc)) || Date.parse(hold.expiresAtUtc) <= Date.now()) {
+      if (
+        !Number.isFinite(Date.parse(hold.expiresAtUtc)) ||
+        Date.parse(hold.expiresAtUtc) <= Date.now()
+      ) {
         setHoldExpired(true);
         throw new Error(tRef.current("operationsCalendar.clickToBook.hold.expired"));
       }
@@ -733,8 +756,12 @@ function toLocalIsoDateTime(utcIso: string, timeZone: string): string {
           setPaymentErrorMessage(null);
 
           try {
-            const invoicePage = await moneyRepository.getInvoices(1, 10, { reservationId: draft.id });
-            const invoice = invoicePage?.items?.find((inv) => inv.reservationId === draft.id) ?? invoicePage?.items?.[0];
+            const invoicePage = await moneyRepository.getInvoices(1, 10, {
+              reservationId: draft.id,
+            });
+            const invoice =
+              invoicePage?.items?.find((inv) => inv.reservationId === draft.id) ??
+              invoicePage?.items?.[0];
             if (invoice) {
               await moneyRepository.allocatePayment(
                 payment.id,
@@ -765,7 +792,12 @@ function toLocalIsoDateTime(utcIso: string, timeZone: string): string {
       onSuccess();
     } catch (err) {
       const errMsg = err instanceof Error ? err.message : String(err);
-      if (errMsg.includes("409") || errMsg.includes("Conflict") || errMsg.includes("overlap") || errMsg.includes("already booked")) {
+      if (
+        errMsg.includes("409") ||
+        errMsg.includes("Conflict") ||
+        errMsg.includes("overlap") ||
+        errMsg.includes("already booked")
+      ) {
         setStage("conflict");
       } else {
         setError(errMsg || "Failed to confirm booking.");
@@ -824,7 +856,10 @@ function toLocalIsoDateTime(utcIso: string, timeZone: string): string {
         intent.holdIdempotencyKey,
         hold.expiresAtUtc
       );
-      if (!Number.isFinite(Date.parse(hold.expiresAtUtc)) || Date.parse(hold.expiresAtUtc) <= Date.now()) {
+      if (
+        !Number.isFinite(Date.parse(hold.expiresAtUtc)) ||
+        Date.parse(hold.expiresAtUtc) <= Date.now()
+      ) {
         setHoldExpired(true);
         setError(tRef.current("operationsCalendar.clickToBook.hold.expired"));
         return;
@@ -862,7 +897,12 @@ function toLocalIsoDateTime(utcIso: string, timeZone: string): string {
     setRecordingPaymentManual(true);
     setPaymentErrorMessage(null);
     try {
-      const toPay = payNowAmount > 0 ? payNowAmount : (remainingBalance > 0 ? remainingBalance : quote.grandTotal);
+      const toPay =
+        payNowAmount > 0
+          ? payNowAmount
+          : remainingBalance > 0
+            ? remainingBalance
+            : quote.grandTotal;
       let profileId = selectedResource?.profileId ?? null;
       if (!profileId && selectedResource && resources?.length) {
         profileId = resources.find((r) => r.id === selectedResource.id)?.profileId ?? null;
@@ -911,7 +951,9 @@ function toLocalIsoDateTime(utcIso: string, timeZone: string): string {
 
       try {
         const invoicePage = await moneyRepository.getInvoices(1, 10, { reservationId });
-        const invoice = invoicePage?.items?.find((inv) => inv.reservationId === reservationId) ?? invoicePage?.items?.[0];
+        const invoice =
+          invoicePage?.items?.find((inv) => inv.reservationId === reservationId) ??
+          invoicePage?.items?.[0];
         if (invoice) {
           await moneyRepository.allocatePayment(
             payment.id,

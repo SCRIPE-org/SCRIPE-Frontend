@@ -11,11 +11,7 @@ import {
   type DragStartEvent,
   type DragEndEvent,
 } from "@dnd-kit/core";
-import {
-  SortableContext,
-  rectSortingStrategy,
-  arrayMove,
-} from "@dnd-kit/sortable";
+import { SortableContext, rectSortingStrategy, arrayMove } from "@dnd-kit/sortable";
 import { Plus, LayoutGrid } from "lucide-react";
 import { Button } from "@core/ui/button";
 import { useI18n } from "@core/providers/i18n-provider";
@@ -69,9 +65,7 @@ export function TenantDashboardGrid({
     })
   );
 
-  const activeDragItem = activeDragId
-    ? layout.widgets.find((w) => w.id === activeDragId)
-    : null;
+  const activeDragItem = activeDragId ? layout.widgets.find((w) => w.id === activeDragId) : null;
 
   const handleDragStart = (event: DragStartEvent) => {
     setActiveDragId(String(event.active.id));
@@ -96,9 +90,7 @@ export function TenantDashboardGrid({
   };
 
   const handleResize = (widgetInstanceId: string, colSpan: TenantWidgetColSpan) => {
-    const updated = layout.widgets.map((w) =>
-      w.id === widgetInstanceId ? { ...w, colSpan } : w
-    );
+    const updated = layout.widgets.map((w) => (w.id === widgetInstanceId ? { ...w, colSpan } : w));
     onLayoutChange({ ...layout, widgets: updated });
   };
 
@@ -156,19 +148,16 @@ export function TenantDashboardGrid({
         onDragStart={handleDragStart}
         onDragEnd={handleDragEnd}
       >
-        <SortableContext
-          items={visibleWidgets.map((w) => w.id)}
-          strategy={rectSortingStrategy}
-        >
+        <SortableContext items={visibleWidgets.map((w) => w.id)} strategy={rectSortingStrategy}>
           {visibleWidgets.length === 0 ? (
-            <div className="flex min-h-[300px] flex-col items-center justify-center rounded-nx-lg border-2 border-dashed border-nx-line bg-nx-raised/30 p-8 text-center">
-              <div className="flex h-12 w-12 items-center justify-center rounded-nx-md bg-nx-accent/10 text-nx-accent mb-3">
+            <div className="bg-nx-raised/30 flex min-h-[300px] flex-col items-center justify-center rounded-nx-lg border-2 border-dashed border-nx-line p-8 text-center">
+              <div className="bg-nx-accent/10 mb-3 flex h-12 w-12 items-center justify-center rounded-nx-md text-nx-accent">
                 <LayoutGrid className="h-6 w-6" />
               </div>
               <h3 className="text-sm font-semibold text-nx-ink">
                 {t("tenantCommandCenter.grid.emptyTitle") || "Your overview layout is empty"}
               </h3>
-              <p className="text-xs text-nx-ink-3 mt-1 max-w-sm mb-4">
+              <p className="mb-4 mt-1 max-w-sm text-xs text-nx-ink-3">
                 {t("tenantCommandCenter.grid.emptySubtitle") ||
                   "Add widgets from the widget library to customize your organization control center."}
               </p>
@@ -208,7 +197,7 @@ export function TenantDashboardGrid({
         {/* Drag Overlay Ghost */}
         <DragOverlay adjustScale={false}>
           {activeDragItem ? (
-            <div className="rounded-nx-lg border-2 border-nx-accent bg-nx-surface p-3 shadow-nx-modal opacity-95 cursor-grabbing">
+            <div className="cursor-grabbing rounded-nx-lg border-2 border-nx-accent bg-nx-surface p-3 opacity-95 shadow-nx-modal">
               <div className="flex items-center gap-2">
                 <span className="text-xs font-semibold text-nx-ink">
                   {activeDragItem.customTitle ||

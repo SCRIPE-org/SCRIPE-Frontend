@@ -44,8 +44,7 @@ export function VenueNav({ attentionCount = 0, className = "", hidePrimaryBar = 
   const isDashboard = pathname === "/venue";
   const isCalendar =
     pathname.startsWith("/venue/calendar") || pathname.startsWith("/venue/bookings");
-  const isResources =
-    pathname === "/venue/resources" || pathname.startsWith("/venue/resources/");
+  const isResources = pathname === "/venue/resources" || pathname.startsWith("/venue/resources/");
   const isMoney = pathname.startsWith("/venue/money");
   const isAttention = pathname.startsWith("/venue/attention");
 
@@ -87,8 +86,8 @@ export function VenueNav({ attentionCount = 0, className = "", hidePrimaryBar = 
               canViewReceivables && canViewPayments
                 ? "/venue/money"
                 : canViewReceivables
-                ? "/venue/money/receivables"
-                : "/venue/money/payments",
+                  ? "/venue/money/receivables"
+                  : "/venue/money/payments",
             icon: CircleDollarSign,
             active: isMoney,
           },
@@ -193,7 +192,7 @@ export function VenueNav({ attentionCount = 0, className = "", hidePrimaryBar = 
       {!hidePrimaryBar && (
         <nav
           aria-label="Venue primary navigation"
-          className="flex items-center gap-1.5 border-b border-nx-line pb-2 overflow-x-auto no-scrollbar"
+          className="no-scrollbar flex items-center gap-1.5 overflow-x-auto border-b border-nx-line pb-2"
         >
           {primaryItems.map((item) => {
             const Icon = item.icon;
@@ -203,22 +202,25 @@ export function VenueNav({ attentionCount = 0, className = "", hidePrimaryBar = 
                 href={item.href}
                 aria-current={item.active ? "page" : undefined}
                 className={cn(
-                  "relative inline-flex items-center gap-2 px-3.5 py-2 rounded-nx-md text-xs font-semibold transition-all duration-nx-micro shrink-0 select-none",
+                  "relative inline-flex shrink-0 select-none items-center gap-2 rounded-nx-md px-3.5 py-2 text-xs font-semibold transition-all duration-nx-micro",
                   item.active
-                    ? "bg-nx-surface text-nx-ink shadow-nx-sm border border-nx-line/80 font-bold"
-                    : "text-nx-ink-2 hover:text-nx-ink hover:bg-nx-surface/60"
+                    ? "border-nx-line/80 border bg-nx-surface font-bold text-nx-ink shadow-nx-sm"
+                    : "hover:bg-nx-surface/60 text-nx-ink-2 hover:text-nx-ink"
                 )}
               >
-                <Icon className={cn("size-4", item.active ? "text-nx-accent" : "text-nx-ink-3")} aria-hidden="true" />
+                <Icon
+                  className={cn("size-4", item.active ? "text-nx-accent" : "text-nx-ink-3")}
+                  aria-hidden="true"
+                />
                 <span>{item.label}</span>
                 {item.badge != null && (
-                  <span className="flex size-4.5 items-center justify-center rounded-full bg-amber-500 text-[10px] font-bold text-white leading-none">
+                  <span className="size-4.5 flex items-center justify-center rounded-full bg-amber-500 text-[10px] font-bold leading-none text-white">
                     {item.badge}
                   </span>
                 )}
                 {item.active && (
                   <span
-                    className="absolute bottom-[-9px] inset-x-3 h-0.5 bg-nx-accent rounded-full"
+                    className="absolute inset-x-3 bottom-[-9px] h-0.5 rounded-full bg-nx-accent"
                     aria-hidden="true"
                   />
                 )}

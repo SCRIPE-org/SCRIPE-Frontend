@@ -50,7 +50,9 @@ export function buildTenantOverviewLiveData({
   const sitesCapacity = 0;
   const sitePercent = 0;
 
-  const completedCount = [true, details != null, hasAdminCount && totalAdmins > 1].filter(Boolean).length;
+  const completedCount = [true, details != null, hasAdminCount && totalAdmins > 1].filter(
+    Boolean
+  ).length;
   const readinessPercent = Math.min(100, Math.round((completedCount / 3) * 100));
 
   const liveActivity: TenantActivityItem[] =
@@ -164,7 +166,12 @@ export function buildTenantOverviewLiveData({
     setupStepsTotal: 3,
     metaPills: [
       ...(hasAdminCount
-        ? [{ label: t("tenantCommandCenter.hero.meta.admins", { count: totalAdmins }), icon: "admins" }]
+        ? [
+            {
+              label: t("tenantCommandCenter.hero.meta.admins", { count: totalAdmins }),
+              icon: "admins",
+            },
+          ]
         : []),
       ...(planName ? [{ label: planName, icon: "plan" }] : []),
       { label: t("tenantCommandCenter.hero.checks.coreHealthy"), icon: "healthy" },
@@ -173,7 +180,7 @@ export function buildTenantOverviewLiveData({
       { label: t("tenantCommandCenter.hero.checks.coreHealthy"), status: "success" },
       {
         label:
-            hasAdminCount && totalAdmins <= 1
+          hasAdminCount && totalAdmins <= 1
             ? t("tenantCommandCenter.hero.checks.invitationsPending", { count: 1 })
             : t("tenantCommandCenter.hero.checks.coreHealthy"),
         status: hasAdminCount && totalAdmins <= 1 ? "warning" : "success",

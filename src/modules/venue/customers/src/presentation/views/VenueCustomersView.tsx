@@ -82,7 +82,7 @@ export function VenueCustomersView() {
           <CardHeader className="pb-3">
             <div className="flex flex-wrap items-center justify-between gap-3">
               <div className="flex items-center gap-3">
-                <div className="flex size-10 items-center justify-center rounded-full bg-nx-accent/10 text-nx-accent">
+                <div className="bg-nx-accent/10 flex size-10 items-center justify-center rounded-full text-nx-accent">
                   {selectedCustomer.type === "Organization" ? (
                     <Building className="size-5" />
                   ) : (
@@ -102,16 +102,16 @@ export function VenueCustomersView() {
               </div>
               <div className="flex items-center gap-2">
                 <Button asChild size="sm" className="gap-1.5 font-semibold">
-                  <Link href={`/venue/calendar?newBooking=true&customerId=${encodeURIComponent(selectedCustomer.id)}`}>
+                  <Link
+                    href={`/venue/calendar?newBooking=true&customerId=${encodeURIComponent(selectedCustomer.id)}`}
+                  >
                     <CalendarDays className="size-4" />
-                    <span>{tr("venueCustomers.bookForCustomer", "Book for Customer", "حجز جديد للعميل")}</span>
+                    <span>
+                      {tr("venueCustomers.bookForCustomer", "Book for Customer", "حجز جديد للعميل")}
+                    </span>
                   </Link>
                 </Button>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => setSelectedCustomer(null)}
-                >
+                <Button variant="outline" size="sm" onClick={() => setSelectedCustomer(null)}>
                   {tr("venueCustomers.dismiss", "Dismiss", "إلغاء التحديد")}
                 </Button>
               </div>
@@ -121,7 +121,7 @@ export function VenueCustomersView() {
       )}
 
       {/* Search Bar */}
-      <form onSubmit={handleSearch} className="flex gap-2 max-w-xl">
+      <form onSubmit={handleSearch} className="flex max-w-xl gap-2">
         <div className="relative flex-1">
           <Search className="absolute start-3 top-1/2 size-4 -translate-y-1/2 text-nx-ink-3" />
           <Input
@@ -153,7 +153,13 @@ export function VenueCustomersView() {
       {error && (
         <Alert variant="destructive">
           <AlertCircle className="size-4" />
-          <AlertTitle>{tr("venueCustomers.errors.loadFailed", "Error loading customers", "خطأ في تحميل العملاء")}</AlertTitle>
+          <AlertTitle>
+            {tr(
+              "venueCustomers.errors.loadFailed",
+              "Error loading customers",
+              "خطأ في تحميل العملاء"
+            )}
+          </AlertTitle>
           <AlertDescription>{error}</AlertDescription>
         </Alert>
       )}
@@ -194,14 +200,14 @@ export function VenueCustomersView() {
             return (
               <Card
                 key={c.id}
-                className={`transition-colors cursor-pointer hover:border-nx-accent/50 ${
+                className={`hover:border-nx-accent/50 cursor-pointer transition-colors ${
                   isSelected ? "border-nx-accent ring-1 ring-nx-accent" : ""
                 }`}
                 onClick={() => setSelectedCustomer(c)}
               >
-                <CardContent className="p-4 flex items-center justify-between gap-3">
-                  <div className="flex items-center gap-3 min-w-0">
-                    <div className="flex size-9 shrink-0 items-center justify-center rounded-full bg-nx-surfaceSubtle text-nx-ink-2">
+                <CardContent className="flex items-center justify-between gap-3 p-4">
+                  <div className="flex min-w-0 items-center gap-3">
+                    <div className="bg-nx-surfaceSubtle flex size-9 shrink-0 items-center justify-center rounded-full text-nx-ink-2">
                       {c.type === "Organization" ? (
                         <Building className="size-4" />
                       ) : (
@@ -209,10 +215,8 @@ export function VenueCustomersView() {
                       )}
                     </div>
                     <div className="min-w-0">
-                      <p className="font-semibold text-sm text-nx-ink truncate">
-                        {c.displayName}
-                      </p>
-                      <Badge variant="outline" className="text-[10px] mt-0.5">
+                      <p className="truncate text-sm font-semibold text-nx-ink">{c.displayName}</p>
+                      <Badge variant="outline" className="mt-0.5 text-[10px]">
                         {c.type === "Organization"
                           ? tr("venueCustomers.types.organization", "Organization", "مؤسسة")
                           : tr("venueCustomers.types.person", "Person", "فرد")}
@@ -220,12 +224,17 @@ export function VenueCustomersView() {
                     </div>
                   </div>
 
-                  <Button asChild size="sm" variant="ghost" className="shrink-0 text-xs text-nx-accent">
+                  <Button
+                    asChild
+                    size="sm"
+                    variant="ghost"
+                    className="shrink-0 text-xs text-nx-accent"
+                  >
                     <Link
                       href={`/venue/calendar?newBooking=true&customerId=${encodeURIComponent(c.id)}`}
                       onClick={(e) => e.stopPropagation()}
                     >
-                      <CalendarDays className="size-3.5 me-1" />
+                      <CalendarDays className="me-1 size-3.5" />
                       {tr("venueCustomers.actions.book", "Book", "حجز")}
                     </Link>
                   </Button>
@@ -241,7 +250,9 @@ export function VenueCustomersView() {
         <DialogContent>
           <form onSubmit={handleCreateCustomer}>
             <DialogHeader>
-              <DialogTitle>{tr("venueCustomers.dialog.title", "Add New Customer", "إضافة عميل جديد")}</DialogTitle>
+              <DialogTitle>
+                {tr("venueCustomers.dialog.title", "Add New Customer", "إضافة عميل جديد")}
+              </DialogTitle>
               <DialogDescription>
                 {tr(
                   "venueCustomers.dialog.description",
@@ -260,18 +271,26 @@ export function VenueCustomersView() {
               )}
 
               <div className="space-y-1.5">
-                <Label htmlFor="customer-name">{tr("venueCustomers.dialog.customerName", "Customer Name", "اسم العميل")}</Label>
+                <Label htmlFor="customer-name">
+                  {tr("venueCustomers.dialog.customerName", "Customer Name", "اسم العميل")}
+                </Label>
                 <Input
                   id="customer-name"
                   value={newName}
                   onChange={(e) => setNewName(e.target.value)}
-                  placeholder={tr("venueCustomers.dialog.namePlaceholder", "e.g. John Doe", "مثال: أحمد محمد")}
+                  placeholder={tr(
+                    "venueCustomers.dialog.namePlaceholder",
+                    "e.g. John Doe",
+                    "مثال: أحمد محمد"
+                  )}
                   required
                 />
               </div>
 
               <div className="space-y-1.5">
-                <Label htmlFor="customer-type">{tr("venueCustomers.dialog.customerType", "Customer Type", "نوع العميل")}</Label>
+                <Label htmlFor="customer-type">
+                  {tr("venueCustomers.dialog.customerType", "Customer Type", "نوع العميل")}
+                </Label>
                 <div className="flex gap-2">
                   <Button
                     type="button"
@@ -280,7 +299,7 @@ export function VenueCustomersView() {
                     onClick={() => setNewType("Person")}
                     className="flex-1"
                   >
-                    <User className="size-3.5 me-1.5" />
+                    <User className="me-1.5 size-3.5" />
                     {tr("venueCustomers.types.individual", "Individual", "فرد")}
                   </Button>
                   <Button
@@ -290,7 +309,7 @@ export function VenueCustomersView() {
                     onClick={() => setNewType("Organization")}
                     className="flex-1"
                   >
-                    <Building className="size-3.5 me-1.5" />
+                    <Building className="me-1.5 size-3.5" />
                     {tr("venueCustomers.types.organization", "Organization", "مؤسسة")}
                   </Button>
                 </div>

@@ -18,27 +18,27 @@ export function VenueOverviewEditorialBanner({
 }: Props) {
   return (
     <div
-      className="relative overflow-hidden rounded-nx-xl border border-nx-line/60 bg-gradient-to-br from-emerald-950 via-slate-900 to-black p-5 text-white shadow-md"
+      className="rounded-nx-xl border-nx-line/60 relative overflow-hidden border bg-gradient-to-br from-emerald-950 via-slate-900 to-black p-5 text-white shadow-md"
       data-testid="venue-overview-editorial-banner"
     >
       {/* Background Court Lighting Motif */}
       <div
-        className="absolute inset-0 bg-cover bg-center opacity-30 mix-blend-screen pointer-events-none"
+        className="pointer-events-none absolute inset-0 bg-cover bg-center opacity-30 mix-blend-screen"
         style={{ backgroundImage: "url('/images/venue/venue-promo-banner.svg')" }}
       />
-      <div className="absolute -top-12 -end-12 size-48 rounded-full bg-emerald-500/20 blur-3xl pointer-events-none" />
-      <div className="absolute -bottom-8 -start-8 size-40 rounded-full bg-lime-400/15 blur-2xl pointer-events-none" />
+      <div className="pointer-events-none absolute -end-12 -top-12 size-48 rounded-full bg-emerald-500/20 blur-3xl" />
+      <div className="pointer-events-none absolute -bottom-8 -start-8 size-40 rounded-full bg-lime-400/15 blur-2xl" />
 
-      <div className="relative z-10 flex flex-col justify-between h-full min-h-[140px] space-y-4">
-        <div className="space-y-1.5 max-w-sm">
-          <div className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-lime-400/20 text-lime-300 text-[10px] font-bold uppercase tracking-wider">
+      <div className="relative z-10 flex h-full min-h-[140px] flex-col justify-between space-y-4">
+        <div className="max-w-sm space-y-1.5">
+          <div className="inline-flex items-center gap-1.5 rounded-full bg-lime-400/20 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-lime-300">
             <Sparkles className="size-3" aria-hidden="true" />
             <span>Community Pulse</span>
           </div>
-          <h3 className="text-base sm:text-lg font-black tracking-tight text-white leading-tight">
+          <h3 className="text-base font-black leading-tight tracking-tight text-white sm:text-lg">
             Great games build stronger communities.
           </h3>
-          <p className="text-xs text-slate-300 line-clamp-2 leading-relaxed">
+          <p className="line-clamp-2 text-xs leading-relaxed text-slate-300">
             Modern facilities, seamless bookings, and happier players at {facilityName}.
           </p>
         </div>
@@ -48,7 +48,7 @@ export function VenueOverviewEditorialBanner({
             <Button
               type="button"
               onClick={onNewBooking}
-              className="gap-2 bg-nx-accent hover:bg-nx-accent/90 text-nx-accent-contrast font-bold text-xs h-9 px-4 rounded-nx-lg shadow-sm"
+              className="hover:bg-nx-accent/90 text-nx-accent-contrast h-9 gap-2 rounded-nx-lg bg-nx-accent px-4 text-xs font-bold shadow-sm"
             >
               <span>Keep the games going</span>
               <ArrowRight className="size-3.5 rtl:rotate-180" aria-hidden="true" />
@@ -56,7 +56,7 @@ export function VenueOverviewEditorialBanner({
           ) : (
             <Button
               asChild
-              className="gap-2 bg-nx-accent hover:bg-nx-accent/90 text-nx-accent-contrast font-bold text-xs h-9 px-4 rounded-nx-lg shadow-sm"
+              className="hover:bg-nx-accent/90 text-nx-accent-contrast h-9 gap-2 rounded-nx-lg bg-nx-accent px-4 text-xs font-bold shadow-sm"
             >
               <Link href="/venue/calendar">
                 <span>Keep the games going</span>

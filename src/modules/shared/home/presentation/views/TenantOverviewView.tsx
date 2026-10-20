@@ -3,10 +3,7 @@
 import React from "react";
 import { useTenantOverviewViewModel } from "../viewmodels/useTenantOverviewViewModel";
 import { MinimalWelcome } from "../components/MinimalWelcome";
-import {
-  TenantCommandHeader,
-  TenantDashboardGrid,
-} from "../components/tenant-command-center";
+import { TenantCommandHeader, TenantDashboardGrid } from "../components/tenant-command-center";
 
 /**
  * TenantOverviewView

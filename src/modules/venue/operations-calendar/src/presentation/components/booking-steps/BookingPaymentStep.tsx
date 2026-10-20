@@ -2,13 +2,7 @@
 
 import React from "react";
 import Link from "next/link";
-import {
-  AlertCircle,
-  CheckCircle2,
-  CreditCard,
-  ExternalLink,
-  Search,
-} from "lucide-react";
+import { AlertCircle, CheckCircle2, CreditCard, ExternalLink, Search } from "lucide-react";
 import { Label } from "@core/ui/label";
 import { Input } from "@core/ui/input";
 import { Button } from "@core/ui/button";
@@ -79,14 +73,14 @@ export function BookingPaymentStep({
   if (stage === "conflict") {
     return (
       <div className="space-y-4 py-4 text-center">
-        <div className="size-14 rounded-full bg-amber-500/10 border-2 border-amber-500 flex items-center justify-center text-amber-500 mx-auto">
+        <div className="mx-auto flex size-14 items-center justify-center rounded-full border-2 border-amber-500 bg-amber-500/10 text-amber-500">
           <AlertCircle className="size-8" />
         </div>
         <div>
           <h3 className="text-base font-bold text-nx-ink">
             {t("operationsCalendar.clickToBook.conflict.title")}
           </h3>
-          <p className="text-xs text-nx-ink-2 mt-1">
+          <p className="mt-1 text-xs text-nx-ink-2">
             {t("operationsCalendar.clickToBook.conflict.description")}
           </p>
         </div>
@@ -94,20 +88,20 @@ export function BookingPaymentStep({
           {onFindSlots && (
             <Button
               type="button"
-              className="w-full h-9 text-xs font-bold bg-nx-primary hover:bg-nx-primary-hover text-white rounded-lg"
+              className="bg-nx-primary hover:bg-nx-primary-hover h-9 w-full rounded-lg text-xs font-bold text-white"
               onClick={() => {
                 onClose();
                 onFindSlots();
               }}
             >
-              <Search className="h-3.5 w-3.5 me-2" />
+              <Search className="me-2 h-3.5 w-3.5" />
               {t("operationsCalendar.clickToBook.conflict.findAnother")}
             </Button>
           )}
           <Button
             type="button"
             variant="outline"
-            className="w-full h-9 text-xs font-semibold rounded-lg"
+            className="h-9 w-full rounded-lg text-xs font-semibold"
             onClick={() => {
               onClose();
               onSuccess();
@@ -123,7 +117,7 @@ export function BookingPaymentStep({
   if (stage === "confirmed") {
     return (
       <div className="space-y-4 py-3 text-center">
-        <div className="size-16 rounded-full bg-emerald-500/10 border-2 border-emerald-500/40 dark:border-[#C6FF00]/60 flex items-center justify-center text-emerald-500 dark:text-[#C6FF00] mx-auto shadow-sm">
+        <div className="mx-auto flex size-16 items-center justify-center rounded-full border-2 border-emerald-500/40 bg-emerald-500/10 text-emerald-500 shadow-sm dark:border-[#C6FF00]/60 dark:text-[#C6FF00]">
           <CheckCircle2 className="size-9" />
         </div>
 
@@ -131,43 +125,48 @@ export function BookingPaymentStep({
           <h3 className="text-lg font-black text-nx-ink">
             {t("operationsCalendar.clickToBook.success.title")}
           </h3>
-          <p className="text-xs text-nx-ink-2 mt-0.5">
+          <p className="mt-0.5 text-xs text-nx-ink-2">
             {selectedResource?.name} • {formatDateDisplay()} • {formatTimeRange()}
           </p>
-          <p className="text-xs font-bold text-nx-ink mt-0.5">
-            {selectedCustomer?.displayName}
-          </p>
+          <p className="mt-0.5 text-xs font-bold text-nx-ink">{selectedCustomer?.displayName}</p>
         </div>
 
         {/* Critical Partial Failure Alert */}
         {paymentPartialFailure && (
-          <Alert variant="warning" className="text-left text-xs my-2">
+          <Alert variant="warning" className="my-2 text-left text-xs">
             <AlertCircle className="size-4" />
             <AlertTitle className="text-xs font-bold">
               {t("operationsCalendar.clickToBook.partialFailure.title")}
             </AlertTitle>
             <AlertDescription className="text-[11px]">
-              {paymentErrorMessage || t("operationsCalendar.clickToBook.partialFailure.description")}
+              {paymentErrorMessage ||
+                t("operationsCalendar.clickToBook.partialFailure.description")}
             </AlertDescription>
           </Alert>
         )}
 
         {/* Receipt Summary Card */}
-        <div className="p-3.5 rounded-xl border border-nx-border bg-nx-raised/40 space-y-2 text-left">
+        <div className="border-nx-border bg-nx-raised/40 space-y-2 rounded-xl border p-3.5 text-left">
           <div className="flex items-center justify-between text-xs">
-            <span className="text-nx-ink-2">{t("operationsCalendar.clickToBook.success.total")}</span>
+            <span className="text-nx-ink-2">
+              {t("operationsCalendar.clickToBook.success.total")}
+            </span>
             <span className="font-bold text-nx-ink">
               {quote?.grandTotal ?? 0} {quote?.currencyCode || "EGP"}
             </span>
           </div>
           <div className="flex items-center justify-between text-xs">
-            <span className="text-nx-ink-2">{t("operationsCalendar.clickToBook.success.paid")}</span>
+            <span className="text-nx-ink-2">
+              {t("operationsCalendar.clickToBook.success.paid")}
+            </span>
             <span className="font-bold text-emerald-500">
               {amountPaid} {quote?.currencyCode || "EGP"}
             </span>
           </div>
-          <div className="border-t border-nx-border pt-1.5 flex items-center justify-between text-xs">
-            <span className="text-nx-ink-2">{t("operationsCalendar.clickToBook.success.remaining")}</span>
+          <div className="border-nx-border flex items-center justify-between border-t pt-1.5 text-xs">
+            <span className="text-nx-ink-2">
+              {t("operationsCalendar.clickToBook.success.remaining")}
+            </span>
             <span className="font-bold text-amber-500">
               {remainingBalance} {quote?.currencyCode || "EGP"}
             </span>
@@ -179,12 +178,12 @@ export function BookingPaymentStep({
           {canRecordPayment && remainingBalance > 0 && (
             <Button
               type="button"
-              className="w-full h-9 text-xs font-bold bg-[#C6FF00] hover:bg-[#b5eb00] text-[#0D0D0E] rounded-xl shadow-sm"
+              className="h-9 w-full rounded-xl bg-[#C6FF00] text-xs font-bold text-[#0D0D0E] shadow-sm hover:bg-[#b5eb00]"
               loading={recordingPaymentManual}
               disabled={recordingPaymentManual}
               onClick={onManualRecordPayment}
             >
-              <CreditCard className="size-3.5 me-2" />
+              <CreditCard className="me-2 size-3.5" />
               {amountPaid === 0
                 ? t("operationsCalendar.clickToBook.success.recordPayment")
                 : t("operationsCalendar.clickToBook.success.recordAnotherPayment")}
@@ -195,10 +194,10 @@ export function BookingPaymentStep({
             <Button
               asChild
               variant="outline"
-              className="w-full h-9 text-xs font-semibold rounded-xl border border-nx-border hover:bg-nx-raised"
+              className="border-nx-border h-9 w-full rounded-xl border text-xs font-semibold hover:bg-nx-raised"
             >
               <Link href={`/venue/bookings/${encodeURIComponent(reservationId)}`}>
-                <ExternalLink className="size-3.5 me-2" />
+                <ExternalLink className="me-2 size-3.5" />
                 {t("operationsCalendar.clickToBook.success.openBooking")}
               </Link>
             </Button>
@@ -208,7 +207,7 @@ export function BookingPaymentStep({
             type="button"
             variant="ghost"
             onClick={onClose}
-            className="text-xs text-nx-ink-3 hover:text-nx-ink font-semibold"
+            className="text-xs font-semibold text-nx-ink-3 hover:text-nx-ink"
           >
             {t("operationsCalendar.clickToBook.success.close")}
           </Button>
@@ -229,7 +228,9 @@ export function BookingPaymentStep({
         onValueChange={(value) => onPaymentChoiceChange(value as "later" | "now")}
         className="space-y-2"
       >
-        <div className={`flex items-start gap-3 p-3 rounded-xl border transition-colors ${paymentChoice === "later" ? "border-emerald-500/40 dark:border-[#C6FF00]/40 bg-emerald-500/5 dark:bg-[#C6FF00]/5" : "border-nx-border hover:bg-nx-raised/50"}`}>
+        <div
+          className={`flex items-start gap-3 rounded-xl border p-3 transition-colors ${paymentChoice === "later" ? "border-emerald-500/40 bg-emerald-500/5 dark:border-[#C6FF00]/40 dark:bg-[#C6FF00]/5" : "border-nx-border hover:bg-nx-raised/50"}`}
+        >
           <RadioGroupItem id="booking-payment-later" value="later" className="mt-0.5" />
           <div>
             <Label htmlFor="booking-payment-later" className="text-xs font-bold text-nx-ink">
@@ -242,7 +243,9 @@ export function BookingPaymentStep({
         </div>
 
         {canRecordPayment && (
-          <div className={`flex items-start gap-3 p-3 rounded-xl border transition-colors ${paymentChoice === "now" ? "border-emerald-500/40 dark:border-[#C6FF00]/40 bg-emerald-500/5 dark:bg-[#C6FF00]/5" : "border-nx-border hover:bg-nx-raised/50"}`}>
+          <div
+            className={`flex items-start gap-3 rounded-xl border p-3 transition-colors ${paymentChoice === "now" ? "border-emerald-500/40 bg-emerald-500/5 dark:border-[#C6FF00]/40 dark:bg-[#C6FF00]/5" : "border-nx-border hover:bg-nx-raised/50"}`}
+          >
             <RadioGroupItem id="booking-payment-now" value="now" className="mt-0.5" />
             <div className="flex-1">
               <Label htmlFor="booking-payment-now" className="text-xs font-bold text-nx-ink">
@@ -250,13 +253,13 @@ export function BookingPaymentStep({
               </Label>
 
               {paymentChoice === "now" && (
-                <div className="space-y-2.5 mt-2.5 pt-2 border-t border-nx-border/50">
+                <div className="border-nx-border/50 mt-2.5 space-y-2.5 border-t pt-2">
                   <div className="flex items-center gap-2">
                     <Input
                       type="number"
                       value={payNowAmount}
                       onChange={(e) => onPayNowAmountChange(Number(e.target.value) || 0)}
-                      className="h-8 w-28 text-xs font-bold bg-nx-surface"
+                      className="h-8 w-28 bg-nx-surface text-xs font-bold"
                     />
                     <span className="text-[11px] text-nx-ink-2">
                       {t("operationsCalendar.clickToBook.payment.remaining", {
@@ -274,7 +277,10 @@ export function BookingPaymentStep({
                       options={[
                         { value: "Cash", label: t("operationsCalendar.clickToBook.payment.cash") },
                         { value: "Card", label: t("operationsCalendar.clickToBook.payment.card") },
-                        { value: "BankTransfer", label: t("operationsCalendar.clickToBook.payment.transfer") },
+                        {
+                          value: "BankTransfer",
+                          label: t("operationsCalendar.clickToBook.payment.transfer"),
+                        },
                         { value: "POS", label: t("operationsCalendar.clickToBook.payment.pos") },
                       ]}
                       onValueChange={(value: string | string[]) => {
@@ -287,12 +293,10 @@ export function BookingPaymentStep({
                       }}
                     />
                     <Input
-                      placeholder={t(
-                        "operationsCalendar.clickToBook.payment.referencePlaceholder"
-                      )}
+                      placeholder={t("operationsCalendar.clickToBook.payment.referencePlaceholder")}
                       value={paymentReference}
                       onChange={(e) => onPaymentReferenceChange(e.target.value)}
-                      className="h-8 text-xs bg-nx-surface"
+                      className="h-8 bg-nx-surface text-xs"
                     />
                   </div>
                 </div>

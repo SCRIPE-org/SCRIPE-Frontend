@@ -19,10 +19,7 @@ export interface IGuestPortalService {
   /**
    * Authoritative guest self-service cancellation.
    */
-  cancelBooking(
-    reason: string,
-    idempotencyKey: string
-  ): Promise<CancelGuestReservationResponse>;
+  cancelBooking(reason: string, idempotencyKey: string): Promise<CancelGuestReservationResponse>;
 
   /**
    * Terminates guest session and clears session cookies.

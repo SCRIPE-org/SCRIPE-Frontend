@@ -21,7 +21,10 @@ export interface TargetField {
   description: string;
 }
 
-export const IMPORT_SCHEMAS: Record<ImportType, { title: string; description: string; fields: TargetField[] }> = {
+export const IMPORT_SCHEMAS: Record<
+  ImportType,
+  { title: string; description: string; fields: TargetField[] }
+> = {
   customers: {
     title: "Customer Directory Import",
     description: "Import individual or corporate customers into the canonical Party Registry.",
@@ -63,7 +66,8 @@ export const IMPORT_SCHEMAS: Record<ImportType, { title: string; description: st
   },
   courts: {
     title: "Courts & Spaces Import",
-    description: "Import sports courts and rentable spaces into the Schedulable Resources registry.",
+    description:
+      "Import sports courts and rentable spaces into the Schedulable Resources registry.",
     fields: [
       {
         key: "name",
@@ -111,7 +115,8 @@ export function parseDelimitedText(text: string): ParsedTableData {
   let inQuotes = false;
 
   // Auto-detect delimiter from first non-comment line (comma vs semicolon vs tab)
-  const firstLine = clean.split(/\r?\n/).find((l) => l.trim().length > 0 && !l.startsWith("#")) || "";
+  const firstLine =
+    clean.split(/\r?\n/).find((l) => l.trim().length > 0 && !l.startsWith("#")) || "";
   let delimiter = ",";
   if (firstLine.includes("\t")) delimiter = "\t";
   else if (firstLine.includes(";") && !firstLine.includes(",")) delimiter = ";";

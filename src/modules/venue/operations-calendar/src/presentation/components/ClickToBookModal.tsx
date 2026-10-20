@@ -1,5 +1,5 @@
 // FILE-EXCEPTION: rule bypass for existing large file
- 
+
 "use client";
 
 import React from "react";
@@ -26,7 +26,13 @@ import { BookingPaymentStep } from "./booking-steps/BookingPaymentStep";
 function getCourtImage(resourceName?: string, sportType?: string): string {
   const lower = (resourceName || "").toLowerCase();
   const sport = (sportType || "").toLowerCase();
-  if (lower.includes("football") || lower.includes("turf") || lower.includes("pitch") || sport.includes("football") || sport.includes("soccer")) {
+  if (
+    lower.includes("football") ||
+    lower.includes("turf") ||
+    lower.includes("pitch") ||
+    sport.includes("football") ||
+    sport.includes("soccer")
+  ) {
     return "/images/venue/football-turf-night.svg";
   }
   if (lower.includes("2") || lower.includes("outdoor") || lower.includes("court 2")) {
@@ -44,7 +50,7 @@ export function ClickToBookModal(props: ClickToBookModalProps) {
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-md p-6 bg-nx-surface border border-nx-border rounded-2xl shadow-xl">
+      <DialogContent className="border-nx-border max-w-md rounded-2xl border bg-nx-surface p-6 shadow-xl">
         <DialogHeader className="sr-only">
           <DialogTitle>{t("operationsCalendar.clickToBook.title")}</DialogTitle>
           <DialogDescription>
@@ -56,7 +62,7 @@ export function ClickToBookModal(props: ClickToBookModalProps) {
 
         {/* Stepper Header (Only during normal booking flow) */}
         {vm.stage === "booking" && (
-          <div className="flex items-center justify-between pb-3 border-b border-nx-border">
+          <div className="border-nx-border flex items-center justify-between border-b pb-3">
             {!vm.isContextual && (
               <>
                 <div className="flex items-center gap-2">
@@ -69,7 +75,9 @@ export function ClickToBookModal(props: ClickToBookModalProps) {
                   >
                     1
                   </span>
-                  <span className={`text-xs font-semibold ${vm.step >= 0 ? "text-nx-ink font-bold" : "text-nx-ink-3"}`}>
+                  <span
+                    className={`text-xs font-semibold ${vm.step >= 0 ? "font-bold text-nx-ink" : "text-nx-ink-3"}`}
+                  >
                     {t("operationsCalendar.clickToBook.stepper.courtAndTime")}
                   </span>
                 </div>
@@ -87,7 +95,9 @@ export function ClickToBookModal(props: ClickToBookModalProps) {
               >
                 {vm.isContextual ? 1 : 2}
               </span>
-              <span className={`text-xs font-semibold ${vm.step >= 1 ? "text-nx-ink font-bold" : "text-nx-ink-3"}`}>
+              <span
+                className={`text-xs font-semibold ${vm.step >= 1 ? "font-bold text-nx-ink" : "text-nx-ink-3"}`}
+              >
                 {t("operationsCalendar.clickToBook.stepper.customer")}
               </span>
             </div>
@@ -104,7 +114,9 @@ export function ClickToBookModal(props: ClickToBookModalProps) {
               >
                 {vm.isContextual ? 2 : 3}
               </span>
-              <span className={`text-xs font-semibold ${vm.step >= 2 ? "text-nx-ink font-bold" : "text-nx-ink-3"}`}>
+              <span
+                className={`text-xs font-semibold ${vm.step >= 2 ? "font-bold text-nx-ink" : "text-nx-ink-3"}`}
+              >
                 {t("operationsCalendar.clickToBook.stepper.confirm")}
               </span>
             </div>
@@ -153,8 +165,8 @@ export function ClickToBookModal(props: ClickToBookModalProps) {
           <div className="space-y-4 py-2">
             {/* Context Summary Card (Shown in Steps 1 & 2) */}
             {vm.step >= 1 && vm.selectedResource && (
-              <div className="flex items-center gap-3 p-3 rounded-xl border border-nx-border bg-nx-raised/40">
-                <div className="relative size-12 rounded-lg overflow-hidden border border-nx-border shrink-0 bg-nx-surface">
+              <div className="border-nx-border bg-nx-raised/40 flex items-center gap-3 rounded-xl border p-3">
+                <div className="border-nx-border relative size-12 shrink-0 overflow-hidden rounded-lg border bg-nx-surface">
                   <img
                     src={getCourtImage(vm.selectedResource.name)}
                     alt={vm.selectedResource.name}
@@ -164,7 +176,7 @@ export function ClickToBookModal(props: ClickToBookModalProps) {
                 </div>
                 <div className="min-w-0 flex-1">
                   <div className="flex items-center justify-between">
-                    <h4 className="text-xs font-bold text-nx-ink truncate">
+                    <h4 className="truncate text-xs font-bold text-nx-ink">
                       {vm.selectedResource.name}
                     </h4>
                     {!vm.isContextual && (
@@ -173,16 +185,16 @@ export function ClickToBookModal(props: ClickToBookModalProps) {
                         size="sm"
                         type="button"
                         onClick={() => vm.setStep(0)}
-                        className="h-auto px-0 text-[11px] font-semibold text-emerald-600 dark:text-[#C6FF00] hover:underline"
+                        className="h-auto px-0 text-[11px] font-semibold text-emerald-600 hover:underline dark:text-[#C6FF00]"
                       >
                         {t("operationsCalendar.clickToBook.context.change")}
                       </Button>
                     )}
                   </div>
-                  <p className="text-[11px] text-nx-ink-2 truncate">
+                  <p className="truncate text-[11px] text-nx-ink-2">
                     {vm.selectedResource.facilityName}
                   </p>
-                  <p className="text-[11px] font-medium text-nx-ink mt-0.5">
+                  <p className="mt-0.5 text-[11px] font-medium text-nx-ink">
                     {vm.formatDateDisplay()} • {vm.formatTimeRange()} ({vm.duration} min)
                   </p>
                 </div>
@@ -302,7 +314,7 @@ export function ClickToBookModal(props: ClickToBookModalProps) {
 
         {/* Footer Controls */}
         {vm.stage === "booking" && (
-          <DialogFooter className="pt-3 border-t border-nx-border flex items-center justify-between">
+          <DialogFooter className="border-nx-border flex items-center justify-between border-t pt-3">
             {vm.step === 2 && vm.canCreateHold && !vm.holdExpiresAtUtc ? (
               <Button
                 type="button"
@@ -312,7 +324,7 @@ export function ClickToBookModal(props: ClickToBookModalProps) {
                 disabled={vm.submitting || !vm.selectedCustomer}
                 className="text-xs text-nx-ink-2"
               >
-                <Timer className="size-3.5 me-1" />
+                <Timer className="me-1 size-3.5" />
                 {t("operationsCalendar.clickToBook.hold.holdAction")}
               </Button>
             ) : (
@@ -354,14 +366,14 @@ export function ClickToBookModal(props: ClickToBookModalProps) {
                     (vm.step === 0 && (vm.step0Checking || !vm.selectedResource)) ||
                     (vm.step === 1 && !vm.selectedCustomer)
                   }
-                  className="text-xs font-bold bg-[#C6FF00] hover:bg-[#b5eb00] text-[#0D0D0E] shadow-sm disabled:opacity-50"
+                  className="bg-[#C6FF00] text-xs font-bold text-[#0D0D0E] shadow-sm hover:bg-[#b5eb00] disabled:opacity-50"
                 >
                   {vm.step === 0 && vm.step0Checking ? (
                     <span>{t("operationsCalendar.clickToBook.courtStep.checking")}</span>
                   ) : (
                     <>
                       {t("operationsCalendar.clickToBook.confirm.next")}
-                      <ArrowRight className="size-3.5 ms-1 rtl:rotate-180" />
+                      <ArrowRight className="ms-1 size-3.5 rtl:rotate-180" />
                     </>
                   )}
                 </Button>
@@ -379,7 +391,7 @@ export function ClickToBookModal(props: ClickToBookModalProps) {
                     Boolean(vm.priceChangeNotice) ||
                     !vm.canCreateBooking
                   }
-                  className="text-xs font-bold bg-[#C6FF00] hover:bg-[#b5eb00] text-[#0D0D0E] shadow-sm disabled:opacity-50"
+                  className="bg-[#C6FF00] text-xs font-bold text-[#0D0D0E] shadow-sm hover:bg-[#b5eb00] disabled:opacity-50"
                 >
                   {vm.submitting ? (
                     <span>{t("operationsCalendar.clickToBook.courtStep.confirming")}</span>

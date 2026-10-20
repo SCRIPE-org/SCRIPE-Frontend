@@ -23,10 +23,7 @@ export class GuestPortalService implements IGuestPortalService {
     return this.api.getPublic<GuestBooking>(GUEST_PORTAL_ENDPOINTS.BOOKING);
   }
 
-  cancelBooking(
-    reason: string,
-    idempotencyKey: string
-  ): Promise<CancelGuestReservationResponse> {
+  cancelBooking(reason: string, idempotencyKey: string): Promise<CancelGuestReservationResponse> {
     const key = idempotencyKey.trim();
     if (!key) {
       return Promise.reject(new Error("A stable idempotency key is required to cancel a booking."));

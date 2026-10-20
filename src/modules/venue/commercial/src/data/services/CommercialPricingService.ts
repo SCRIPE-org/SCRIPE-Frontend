@@ -23,7 +23,11 @@ export class CommercialPricingService implements ICommercialPricingService {
   configureResourcePrice(
     input: ConfigureResourceRentalPriceInput
   ): Promise<ResourceRentalPriceConfiguration> {
-    return this.postIntent(COMMERCIAL_PRICING_ENDPOINTS.RESOURCE_PRICING, input, input.idempotencyKey);
+    return this.postIntent(
+      COMMERCIAL_PRICING_ENDPOINTS.RESOURCE_PRICING,
+      input,
+      input.idempotencyKey
+    );
   }
 
   calculateQuote(input: CalculatePriceQuoteInput): Promise<PriceQuote> {

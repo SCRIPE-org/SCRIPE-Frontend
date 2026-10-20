@@ -222,7 +222,9 @@ describe("VenueOverviewView", () => {
       user: { id: "op-1", username: "operator" } as never,
     });
 
-    const { unmount } = render(<VenueOverviewView facilityId="facility-1" localDate="2026-09-12" />);
+    const { unmount } = render(
+      <VenueOverviewView facilityId="facility-1" localDate="2026-09-12" />
+    );
 
     await waitFor(() => {
       expect(screen.getByTestId("venue-overview-view")).toBeInTheDocument();

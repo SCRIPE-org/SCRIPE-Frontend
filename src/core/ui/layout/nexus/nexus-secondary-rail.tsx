@@ -104,7 +104,13 @@ export function NexusSecondaryRail({
 
     // 2. Courts & Sites (supporting contextual access to Courts & Spaces, Sites & Locations, Facilities)
     const courtsSitesChildren = [
-      makeItem("venue-sub-courts", "Courts & Spaces", "الملاعب والمساحات", "/venue/resources", "Layers"),
+      makeItem(
+        "venue-sub-courts",
+        "Courts & Spaces",
+        "الملاعب والمساحات",
+        "/venue/resources",
+        "Layers"
+      ),
       makeItem("venue-sub-sites", "Sites & Locations", "المواقع والفروع", "/venue/sites", "MapPin"),
       makeItem("venue-sub-facilities", "Facilities", "المنشآت", "/venue/facilities", "Building2"),
     ];
@@ -119,9 +125,27 @@ export function NexusSecondaryRail({
 
     // 3. Calendar (supporting contextual access to Calendar Grid, New Booking, Attention Queue)
     const calendarChildren = [
-      makeItem("venue-sub-calendar-grid", "Calendar Grid", "التقويم اليومي", "/venue/calendar", "CalendarDays"),
-      makeItem("venue-sub-new-booking", "New Booking", "حجز جديد", "/venue/bookings/new", "CalendarPlus"),
-      makeItem("venue-sub-attention", "Attention Queue", "مركز الانتباه", "/venue/attention", "AlertTriangle"),
+      makeItem(
+        "venue-sub-calendar-grid",
+        "Calendar Grid",
+        "التقويم اليومي",
+        "/venue/calendar",
+        "CalendarDays"
+      ),
+      makeItem(
+        "venue-sub-new-booking",
+        "New Booking",
+        "حجز جديد",
+        "/venue/bookings/new",
+        "CalendarPlus"
+      ),
+      makeItem(
+        "venue-sub-attention",
+        "Attention Queue",
+        "مركز الانتباه",
+        "/venue/attention",
+        "AlertTriangle"
+      ),
     ];
     const calendar = makeItem(
       "venue-sec-calendar",
@@ -134,9 +158,27 @@ export function NexusSecondaryRail({
 
     // 4. Money (supporting contextual access to Overview, Receivables, Payments)
     const moneyChildren = [
-      makeItem("venue-sub-money-overview", "Financial Overview", "نظرة عامة مالية", "/venue/money", "ReceiptText"),
-      makeItem("venue-sub-receivables", "Invoices & Receivables", "الفواتير والمستحقات", "/venue/money/receivables", "Receipt"),
-      makeItem("venue-sub-payments", "Payment History", "سجل المدفوعات", "/venue/money/payments", "CreditCard"),
+      makeItem(
+        "venue-sub-money-overview",
+        "Financial Overview",
+        "نظرة عامة مالية",
+        "/venue/money",
+        "ReceiptText"
+      ),
+      makeItem(
+        "venue-sub-receivables",
+        "Invoices & Receivables",
+        "الفواتير والمستحقات",
+        "/venue/money/receivables",
+        "Receipt"
+      ),
+      makeItem(
+        "venue-sub-payments",
+        "Payment History",
+        "سجل المدفوعات",
+        "/venue/money/payments",
+        "CreditCard"
+      ),
     ];
     const money = makeItem(
       "venue-sec-money",
@@ -158,12 +200,42 @@ export function NexusSecondaryRail({
 
     // 6. Settings (preserving advanced management destinations)
     const settingsChildren = [
-      makeItem("venue-sub-general-settings", "General Settings", "إعدادات المنشأة", "/venue/settings", "Sliders"),
-      makeItem("venue-sub-profile", "Venue & Site Profile", "ملف المنشأة والموقع", "/venue/venue-setup", "Building"),
+      makeItem(
+        "venue-sub-general-settings",
+        "General Settings",
+        "إعدادات المنشأة",
+        "/venue/settings",
+        "Sliders"
+      ),
+      makeItem(
+        "venue-sub-profile",
+        "Venue & Site Profile",
+        "ملف المنشأة والموقع",
+        "/venue/venue-setup",
+        "Building"
+      ),
       makeItem("venue-sub-pricing", "Pricing Rules", "قواعد التسعير", "/venue/pricing", "Tag"),
-      makeItem("venue-sub-availability", "Operating Hours", "ساعات العمل والإتاحة", "/venue/availability", "Clock"),
-      makeItem("venue-sub-resource-profiles", "Resource Profiles", "ملفات تعريف الموارد", "/venue/resource-profiles", "Layers"),
-      makeItem("venue-sub-resource-builder", "Resource Builder", "منشئ الموارد", "/venue/resource-builder", "Boxes"),
+      makeItem(
+        "venue-sub-availability",
+        "Operating Hours",
+        "ساعات العمل والإتاحة",
+        "/venue/availability",
+        "Clock"
+      ),
+      makeItem(
+        "venue-sub-resource-profiles",
+        "Resource Profiles",
+        "ملفات تعريف الموارد",
+        "/venue/resource-profiles",
+        "Layers"
+      ),
+      makeItem(
+        "venue-sub-resource-builder",
+        "Resource Builder",
+        "منشئ الموارد",
+        "/venue/resource-builder",
+        "Boxes"
+      ),
     ];
     const settings = makeItem(
       "venue-sec-settings",

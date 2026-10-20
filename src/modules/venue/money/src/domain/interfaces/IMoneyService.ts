@@ -44,4 +44,3 @@ export interface IMoneyService {
   getByTimeOfDay(filter?: MoneyAnalyticsFilter): Promise<MoneyTimeOfDayBucket[]>;
   getPaymentMethods(filter?: MoneyAnalyticsFilter): Promise<MoneyPaymentMethodItem[]>;
 }
-

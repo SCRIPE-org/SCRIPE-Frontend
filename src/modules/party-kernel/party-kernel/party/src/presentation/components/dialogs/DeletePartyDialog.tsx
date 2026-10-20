@@ -67,33 +67,25 @@ export function DeletePartyDialog({
               <DialogTitle className="text-destructive">
                 {t("party.dialog.deleteTitle")}
               </DialogTitle>
-              <DialogDescription>
-                {t("party.dialog.deleteWarning")}
-              </DialogDescription>
+              <DialogDescription>{t("party.dialog.deleteWarning")}</DialogDescription>
             </div>
           </div>
         </DialogHeader>
 
-        <div className="py-3 space-y-3">
+        <div className="space-y-3 py-3">
           {error && (
-            <div className="rounded-md bg-destructive/10 p-3 text-sm text-destructive border border-destructive/20">
+            <div className="rounded-md border border-destructive/20 bg-destructive/10 p-3 text-sm text-destructive">
               {error}
             </div>
           )}
 
-          <div className="rounded-lg bg-nx-surface-2 p-3 space-y-1.5 border border-nx-border">
+          <div className="bg-nx-surface-2 border-nx-border space-y-1.5 rounded-lg border p-3">
             <div className="text-xs text-nx-ink-3">Target Entity:</div>
             <div className="flex items-center justify-between">
-              <span className="font-semibold text-nx-ink">
-                {party.displayName}
-              </span>
-              <Badge variant={party.isPerson ? "info" : "success"}>
-                {party.type}
-              </Badge>
+              <span className="font-semibold text-nx-ink">{party.displayName}</span>
+              <Badge variant={party.isPerson ? "info" : "success"}>{party.type}</Badge>
             </div>
-            <div className="text-xs font-mono text-nx-ink-3 truncate">
-              ID: {party.id}
-            </div>
+            <div className="truncate font-mono text-xs text-nx-ink-3">ID: {party.id}</div>
           </div>
         </div>
 
@@ -106,12 +98,7 @@ export function DeletePartyDialog({
           >
             {t("party.dialog.cancel")}
           </Button>
-          <Button
-            type="button"
-            variant="destructive"
-            onClick={handleConfirm}
-            disabled={isDeleting}
-          >
+          <Button type="button" variant="destructive" onClick={handleConfirm} disabled={isDeleting}>
             {isDeleting ? (
               <>
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />

@@ -2409,13 +2409,15 @@ export const en = {
     },
     grid: {
       emptyTitle: "Your overview layout is empty",
-      emptySubtitle: "Add widgets from the widget library to customize your organization control center.",
+      emptySubtitle:
+        "Add widgets from the widget library to customize your organization control center.",
     },
     widgets: {
       heroBannerTitle: "Organization Readiness",
       heroBannerDesc: "High-level status banner with readiness ring and operational checks.",
       kpiCardsTitle: "Key Metrics & KPIs",
-      kpiCardsDesc: "Primary organization KPIs including setup progress, active users, and products.",
+      kpiCardsDesc:
+        "Primary organization KPIs including setup progress, active users, and products.",
       getStartedTitle: "Getting Started Roadmap",
       getStartedDesc: "Interactive onboarding steps and milestone guidance.",
       needsAttentionTitle: "Needs Attention Alerts",
@@ -2433,9 +2435,9 @@ export const en = {
       systemNoticesTitle: "System Notices & Releases",
       systemNoticesDesc: "Platform maintenance announcements and latest feature releases.",
       successPartnerTitle: "Success Partner & Support",
-      successPartnerDesc: "Direct contact information for your dedicated enterprise success partner.",
+      successPartnerDesc:
+        "Direct contact information for your dedicated enterprise success partner.",
       unknown: "Unknown widget component",
     },
   },
 };
-

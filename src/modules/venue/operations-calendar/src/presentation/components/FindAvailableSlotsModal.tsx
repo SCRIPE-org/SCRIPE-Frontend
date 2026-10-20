@@ -2,7 +2,13 @@
 
 import React, { useState } from "react";
 import { Search, CheckCircle2, AlertCircle, ArrowRight } from "lucide-react";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@core/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+} from "@core/ui/dialog";
 import { Button } from "@core/ui/button";
 import { Input } from "@core/ui/input";
 import { Label } from "@core/ui/label";
@@ -31,9 +37,7 @@ export function FindAvailableSlotsModal({
 }: FindAvailableSlotsModalProps) {
   const { t } = useI18n();
 
-  const [selectedResourceId, setSelectedResourceId] = useState<string>(
-    resources[0]?.id ?? ""
-  );
+  const [selectedResourceId, setSelectedResourceId] = useState<string>(resources[0]?.id ?? "");
   const [selectedDate, setSelectedDate] = useState<string>(currentDate);
   const [startTime, setStartTime] = useState<string>("09:00");
   const [durationMinutes, setDurationMinutes] = useState<number>(60);
@@ -64,7 +68,7 @@ export function FindAvailableSlotsModal({
     try {
       const container = getVenueContainer();
       const startLocal = `${selectedDate}T${startTime}`;
-      
+
       // Calculate end time
       const [h, m] = startTime.split(":").map(Number);
       const totalMinutes = h * 60 + m + durationMinutes;
@@ -110,12 +114,10 @@ export function FindAvailableSlotsModal({
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
-            <Search className="h-5 w-5 text-nx-primary" />
+            <Search className="text-nx-primary h-5 w-5" />
             {t("operationsCalendar.findSlots.title")}
           </DialogTitle>
-          <DialogDescription>
-            {t("operationsCalendar.findSlots.description")}
-          </DialogDescription>
+          <DialogDescription>{t("operationsCalendar.findSlots.description")}</DialogDescription>
         </DialogHeader>
 
         <div className="space-y-4 py-2">
@@ -189,12 +191,12 @@ export function FindAvailableSlotsModal({
 
           <Button
             type="button"
-            className="w-full mt-2"
+            className="mt-2 w-full"
             variant="outline"
             disabled={checking || !selectedResourceId}
             onClick={handleCheck}
           >
-            <Search className="h-4 w-4 me-2" />
+            <Search className="me-2 h-4 w-4" />
             {checking
               ? t("operationsCalendar.findSlots.checking")
               : t("operationsCalendar.findSlots.check")}
@@ -204,25 +206,27 @@ export function FindAvailableSlotsModal({
           {result && (
             <div className="pt-2">
               <Alert variant={result.isAvailable ? "success" : "warning"}>
-                {result.isAvailable ? <CheckCircle2 className="h-4 w-4" /> : <AlertCircle className="h-4 w-4" />}
+                {result.isAvailable ? (
+                  <CheckCircle2 className="h-4 w-4" />
+                ) : (
+                  <AlertCircle className="h-4 w-4" />
+                )}
                 <AlertTitle>
                   {result.isAvailable
                     ? t("operationsCalendar.findSlots.slotAvailable")
                     : t("operationsCalendar.findSlots.slotUnavailable")}
                 </AlertTitle>
-                <AlertDescription className="text-xs">
-                  {result.message}
-                </AlertDescription>
+                <AlertDescription className="text-xs">{result.message}</AlertDescription>
               </Alert>
 
               {result.isAvailable && (
                 <Button
                   type="button"
-                  className="w-full mt-3 bg-emerald-600 hover:bg-emerald-700 text-white font-medium shadow-sm"
+                  className="mt-3 w-full bg-emerald-600 font-medium text-white shadow-sm hover:bg-emerald-700"
                   onClick={handleProceedToBooking}
                 >
                   {t("operationsCalendar.findSlots.proceed")}
-                  <ArrowRight className="h-4 w-4 ms-2 rtl:rotate-180" />
+                  <ArrowRight className="ms-2 h-4 w-4 rtl:rotate-180" />
                 </Button>
               )}
             </div>

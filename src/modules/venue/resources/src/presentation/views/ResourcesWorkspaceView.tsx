@@ -33,13 +33,19 @@ export function ResourcesWorkspaceView() {
 
   const categories = useMemo(() => {
     const sports = Array.from(new Set(vm.allItems.map((i) => i.sportType))).filter(Boolean);
-    return [{ value: "__all_categories__", label: allCategoriesLabel }, ...sports.map((sport) => ({ value: sport, label: sport }))];
+    return [
+      { value: "__all_categories__", label: allCategoriesLabel },
+      ...sports.map((sport) => ({ value: sport, label: sport })),
+    ];
   }, [vm.allItems, allCategoriesLabel]);
 
   const displayedItems = useMemo(() => {
     return vm.items.filter((item) => {
       // Category filter
-      if (selectedCategory !== "__all_categories__" && item.sportType.toLowerCase() !== selectedCategory.toLowerCase()) {
+      if (
+        selectedCategory !== "__all_categories__" &&
+        item.sportType.toLowerCase() !== selectedCategory.toLowerCase()
+      ) {
         return false;
       }
       // Status filter
@@ -89,7 +95,7 @@ export function ResourcesWorkspaceView() {
           <Button
             size="sm"
             onClick={() => setSetupWizardOpen(true)}
-            className="gap-1.5 font-bold bg-[#C6FF00] hover:bg-[#b5eb00] text-[#0D0D0E] shadow-sm rounded-xl text-xs"
+            className="gap-1.5 rounded-xl bg-[#C6FF00] text-xs font-bold text-[#0D0D0E] shadow-sm hover:bg-[#b5eb00]"
           >
             <Plus className="size-4" aria-hidden="true" />
             <span>{t("resources.addCourt", { defaultValue: "+ Add Court / Space" })}</span>
@@ -105,38 +111,56 @@ export function ResourcesWorkspaceView() {
 
       {/* Operational Metrics Strip derived from source-backed data */}
       {vm.metrics && (
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-          <div className="p-3.5 rounded-2xl border border-nx-border bg-nx-surface shadow-xs">
-            <p className="text-[11px] font-semibold text-nx-ink-3">{t("resources.metrics.total", { defaultValue: "Total Courts & Spaces" })}</p>
-            <p className="text-xl font-bold text-nx-ink mt-0.5">{vm.metrics.totalSpaces}</p>
+        <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+          <div className="border-nx-border shadow-xs rounded-2xl border bg-nx-surface p-3.5">
+            <p className="text-[11px] font-semibold text-nx-ink-3">
+              {t("resources.metrics.total", { defaultValue: "Total Courts & Spaces" })}
+            </p>
+            <p className="mt-0.5 text-xl font-bold text-nx-ink">{vm.metrics.totalSpaces}</p>
           </div>
-          <div className="p-3.5 rounded-2xl border border-nx-border bg-nx-surface shadow-xs">
-            <p className="text-[11px] font-semibold text-nx-ink-3">{t("resources.metrics.active", { defaultValue: "Active & Bookable" })}</p>
-            <div className="flex items-center gap-1.5 mt-0.5">
-              <p className="text-xl font-bold text-emerald-600 dark:text-emerald-400">{vm.metrics.activeSpaces}</p>
-              <span className="text-[10px] font-bold px-1.5 py-0.5 rounded-full bg-emerald-500/10 text-emerald-600">{t("resources.metrics.ready", { defaultValue: "Ready" })}</span>
+          <div className="border-nx-border shadow-xs rounded-2xl border bg-nx-surface p-3.5">
+            <p className="text-[11px] font-semibold text-nx-ink-3">
+              {t("resources.metrics.active", { defaultValue: "Active & Bookable" })}
+            </p>
+            <div className="mt-0.5 flex items-center gap-1.5">
+              <p className="text-xl font-bold text-emerald-600 dark:text-emerald-400">
+                {vm.metrics.activeSpaces}
+              </p>
+              <span className="rounded-full bg-emerald-500/10 px-1.5 py-0.5 text-[10px] font-bold text-emerald-600">
+                {t("resources.metrics.ready", { defaultValue: "Ready" })}
+              </span>
             </div>
           </div>
-          <div className="p-3.5 rounded-2xl border border-nx-border bg-nx-surface shadow-xs">
-            <p className="text-[11px] font-semibold text-nx-ink-3">{t("resources.metrics.setupRequired", { defaultValue: "Setup Required" })}</p>
-            <div className="flex items-center gap-1.5 mt-0.5">
-              <p className="text-xl font-bold text-amber-600 dark:text-amber-400">{vm.metrics.setupRequired}</p>
+          <div className="border-nx-border shadow-xs rounded-2xl border bg-nx-surface p-3.5">
+            <p className="text-[11px] font-semibold text-nx-ink-3">
+              {t("resources.metrics.setupRequired", { defaultValue: "Setup Required" })}
+            </p>
+            <div className="mt-0.5 flex items-center gap-1.5">
+              <p className="text-xl font-bold text-amber-600 dark:text-amber-400">
+                {vm.metrics.setupRequired}
+              </p>
               {vm.metrics.setupRequired > 0 && (
-                <span className="text-[10px] font-bold px-1.5 py-0.5 rounded-full bg-amber-500/10 text-amber-600">{t("resources.metrics.actionNeeded", { defaultValue: "Action needed" })}</span>
+                <span className="rounded-full bg-amber-500/10 px-1.5 py-0.5 text-[10px] font-bold text-amber-600">
+                  {t("resources.metrics.actionNeeded", { defaultValue: "Action needed" })}
+                </span>
               )}
             </div>
           </div>
-          <div className="p-3.5 rounded-2xl border border-nx-border bg-nx-surface shadow-xs">
-            <p className="text-[11px] font-semibold text-nx-ink-3">{t("resources.metrics.authorizedFacilities", { defaultValue: "Authorized Facilities" })}</p>
-            <p className="text-xl font-bold text-nx-ink mt-0.5">{vm.metrics.branchCount}</p>
+          <div className="border-nx-border shadow-xs rounded-2xl border bg-nx-surface p-3.5">
+            <p className="text-[11px] font-semibold text-nx-ink-3">
+              {t("resources.metrics.authorizedFacilities", {
+                defaultValue: "Authorized Facilities",
+              })}
+            </p>
+            <p className="mt-0.5 text-xl font-bold text-nx-ink">{vm.metrics.branchCount}</p>
           </div>
         </div>
       )}
 
       {/* Filter Chips Bar & Dropdowns */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         {/* Category Tabs: Dynamically derived from domain items */}
-        <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar pb-1">
+        <div className="no-scrollbar flex items-center gap-1.5 overflow-x-auto pb-1">
           {categories.map((category) => (
             <Button
               variant="outline"
@@ -144,10 +168,10 @@ export function ResourcesWorkspaceView() {
               type="button"
               onClick={() => setSelectedCategory(category.value)}
               aria-pressed={selectedCategory === category.value}
-              className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all shrink-0 ${
+              className={`shrink-0 rounded-xl px-3.5 py-1.5 text-xs font-bold transition-all ${
                 selectedCategory === category.value
-                  ? "bg-[#C6FF00] text-[#0D0D0E] shadow-xs"
-                  : "bg-nx-surface border border-nx-border text-nx-ink-2 hover:bg-nx-raised"
+                  ? "shadow-xs bg-[#C6FF00] text-[#0D0D0E]"
+                  : "border-nx-border border bg-nx-surface text-nx-ink-2 hover:bg-nx-raised"
               }`}
             >
               {category.label}
@@ -158,12 +182,15 @@ export function ResourcesWorkspaceView() {
         {/* Dropdowns & Search */}
         <div className="flex items-center gap-2">
           <div className="relative w-48 sm:w-60">
-            <Search className="absolute left-2.5 top-2.5 size-3.5 text-slate-400" aria-hidden="true" />
+            <Search
+              className="absolute left-2.5 top-2.5 size-3.5 text-slate-400"
+              aria-hidden="true"
+            />
             <Input
               value={vm.searchQuery}
               onChange={(e) => vm.setSearchQuery(e.target.value)}
               placeholder={t("resources.search", { defaultValue: "Search courts & spaces..." })}
-              className="pl-8 h-8 text-xs rounded-lg"
+              className="h-8 rounded-lg pl-8 text-xs"
             />
           </div>
 
@@ -171,12 +198,16 @@ export function ResourcesWorkspaceView() {
             <GenericSelect
               value={vm.selectedFacilityId || "__all_facilities__"}
               options={[
-                { value: "__all_facilities__", label: t("resources.allBranches", { defaultValue: "All Facilities" }) },
+                {
+                  value: "__all_facilities__",
+                  label: t("resources.allBranches", { defaultValue: "All Facilities" }),
+                },
                 ...vm.facilities.map((fac) => ({ value: fac.id, label: fac.name })),
               ]}
               aria-label={t("resources.filters.facility", { defaultValue: "Facility" })}
               onValueChange={(value: string | string[]) => {
-                if (typeof value === "string") vm.setSelectedFacilityId(value === "__all_facilities__" ? "" : value);
+                if (typeof value === "string")
+                  vm.setSelectedFacilityId(value === "__all_facilities__" ? "" : value);
               }}
               className="h-8 w-48 text-xs"
             />
@@ -185,13 +216,20 @@ export function ResourcesWorkspaceView() {
           <GenericSelect
             value={selectedStatus}
             options={[
-              { value: "all", label: t("resources.filters.allStatuses", { defaultValue: "All Statuses" }) },
+              {
+                value: "all",
+                label: t("resources.filters.allStatuses", { defaultValue: "All Statuses" }),
+              },
               { value: "active", label: t("resources.filters.active", { defaultValue: "Active" }) },
-              { value: "setup-required", label: t("resources.filters.setupRequired", { defaultValue: "Setup Required" }) },
+              {
+                value: "setup-required",
+                label: t("resources.filters.setupRequired", { defaultValue: "Setup Required" }),
+              },
             ]}
             aria-label={t("resources.filters.status", { defaultValue: "Status" })}
             onValueChange={(value: string | string[]) => {
-              if (typeof value === "string") setSelectedStatus(value as "all" | "active" | "setup-required");
+              if (typeof value === "string")
+                setSelectedStatus(value as "all" | "active" | "setup-required");
             }}
             className="h-8 w-40 text-xs"
           />
@@ -213,7 +251,10 @@ export function ResourcesWorkspaceView() {
               "Set up your branch and courts in under two minutes with the simplified operator journey.",
           })}
           action={
-            <Button onClick={() => setSetupWizardOpen(true)} className="gap-2 font-bold bg-[#C6FF00] hover:bg-[#b5eb00] text-[#0D0D0E]">
+            <Button
+              onClick={() => setSetupWizardOpen(true)}
+              className="gap-2 bg-[#C6FF00] font-bold text-[#0D0D0E] hover:bg-[#b5eb00]"
+            >
               <Sparkles className="size-4" aria-hidden="true" />
               <span>{t("resources.empty.action", { defaultValue: "Start Setup Journey" })}</span>
             </Button>
@@ -225,7 +266,7 @@ export function ResourcesWorkspaceView() {
         </div>
       ) : (
         /* Courts Grid + Add New Empty Card */
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+        <div className="grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-3">
           {displayedItems.map((item) => (
             <ResourceCard key={item.id} item={item} />
           ))}
@@ -235,16 +276,18 @@ export function ResourcesWorkspaceView() {
             type="button"
             onClick={() => setSetupWizardOpen(true)}
             variant="outline"
-            className="flex flex-col items-center justify-center p-6 rounded-2xl border-2 border-dashed border-nx-border bg-nx-raised/30 hover:bg-[#C6FF00]/5 hover:border-[#C6FF00]/60 transition-all text-center min-h-[140px] group cursor-pointer"
+            className="border-nx-border bg-nx-raised/30 group flex min-h-[140px] cursor-pointer flex-col items-center justify-center rounded-2xl border-2 border-dashed p-6 text-center transition-all hover:border-[#C6FF00]/60 hover:bg-[#C6FF00]/5"
           >
-            <div className="size-11 rounded-full bg-[#C6FF00]/15 text-[#0D0D0E] dark:text-[#C6FF00] flex items-center justify-center mb-2.5 group-hover:scale-110 transition-transform">
+            <div className="mb-2.5 flex size-11 items-center justify-center rounded-full bg-[#C6FF00]/15 text-[#0D0D0E] transition-transform group-hover:scale-110 dark:text-[#C6FF00]">
               <Plus className="size-5" />
             </div>
-            <span className="text-xs font-bold text-nx-ink group-hover:text-emerald-600 dark:group-hover:text-[#C6FF00] transition-colors">
+            <span className="text-xs font-bold text-nx-ink transition-colors group-hover:text-emerald-600 dark:group-hover:text-[#C6FF00]">
               {t("resources.addCourt", { defaultValue: "+ Add New Court / Space" })}
             </span>
-            <span className="text-[11px] text-nx-ink-3 mt-1 max-w-[200px]">
-              {t("resources.addCourtDescription", { defaultValue: "Padel Court, Football Field, Pool, Studio, or any other space" })}
+            <span className="mt-1 max-w-[200px] text-[11px] text-nx-ink-3">
+              {t("resources.addCourtDescription", {
+                defaultValue: "Padel Court, Football Field, Pool, Studio, or any other space",
+              })}
             </span>
           </Button>
         </div>

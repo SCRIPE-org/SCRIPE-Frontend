@@ -263,9 +263,11 @@ describe("Booking360View", () => {
   });
 
   it("renders authoritative advisory when booking is cancelled with recorded payment without fabricating refund", () => {
-    vi.mocked(useBooking360ViewModel).mockReturnValue(vm({
-      reservation: { ...reservation, status: "Cancelled", activeHold: null },
-    }) as never);
+    vi.mocked(useBooking360ViewModel).mockReturnValue(
+      vm({
+        reservation: { ...reservation, status: "Cancelled", activeHold: null },
+      }) as never
+    );
     vi.mocked(useBookingFinanceSummary).mockReturnValue({
       summary: {
         invoiceId: "inv-202",

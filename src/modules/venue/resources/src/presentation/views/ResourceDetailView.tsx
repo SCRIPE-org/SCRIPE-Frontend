@@ -45,7 +45,12 @@ export function resolveResourceDetailTab(raw: string | null): string {
   if (lower === "pricing" || lower === "rates" || lower === "price" || lower === "prices") {
     return "pricing";
   }
-  if (lower === "closures" || lower === "maintenance" || lower === "closure" || lower === "blocks") {
+  if (
+    lower === "closures" ||
+    lower === "maintenance" ||
+    lower === "closure" ||
+    lower === "blocks"
+  ) {
     return "closures";
   }
   return "general";
@@ -56,7 +61,9 @@ export function ResourceDetailView({ resourceId }: Props) {
   const { t, direction } = useI18n();
   const searchParams = useSearchParams();
   const vm = useResourceDetailViewModel(resourceId);
-  const [activeTab, setActiveTab] = useState(() => resolveResourceDetailTab(searchParams.get("tab")));
+  const [activeTab, setActiveTab] = useState(() =>
+    resolveResourceDetailTab(searchParams.get("tab"))
+  );
 
   useEffect(() => {
     const tabParam = searchParams.get("tab");
@@ -96,7 +103,11 @@ export function ResourceDetailView({ resourceId }: Props) {
     const raw = vm.profile?.name ?? vm.profile?.resourceKindCode;
     if (!raw) return "Court";
     const lower = raw.toLowerCase();
-    if (lower.includes("schedulable") || lower.includes("profile") || lower.includes("facility resource")) {
+    if (
+      lower.includes("schedulable") ||
+      lower.includes("profile") ||
+      lower.includes("facility resource")
+    ) {
       return "Court";
     }
     return raw;
@@ -127,18 +138,22 @@ export function ResourceDetailView({ resourceId }: Props) {
       <div className="flex flex-col gap-3 border-b border-nx-line pb-5 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <div className="flex items-center gap-2.5">
-            <h1 className="text-2xl font-bold tracking-tight text-nx-ink">
-              {vm.resource?.name}
-            </h1>
-            <Badge variant="outline" className="font-medium text-xs">
+            <h1 className="text-2xl font-bold tracking-tight text-nx-ink">{vm.resource?.name}</h1>
+            <Badge variant="outline" className="text-xs font-medium">
               {getCleanCategory()}
             </Badge>
             {isReady ? (
-              <Badge variant="success" className="text-xs bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-emerald-950/60 dark:text-emerald-300 dark:border-emerald-800">
+              <Badge
+                variant="success"
+                className="border-emerald-200 bg-emerald-50 text-xs text-emerald-700 dark:border-emerald-800 dark:bg-emerald-950/60 dark:text-emerald-300"
+              >
                 {t("resources.card.statusPublished", { defaultValue: "Active" })}
               </Badge>
             ) : (
-              <Badge variant="outline" className="text-xs bg-amber-50 text-amber-700 border-amber-300 dark:bg-amber-950/60 dark:text-amber-300 dark:border-amber-800">
+              <Badge
+                variant="outline"
+                className="border-amber-300 bg-amber-50 text-xs text-amber-700 dark:border-amber-800 dark:bg-amber-950/60 dark:text-amber-300"
+              >
                 {t("resources.card.setupRequired", { defaultValue: "Setup Required" })}
               </Badge>
             )}
@@ -174,7 +189,7 @@ export function ResourceDetailView({ resourceId }: Props) {
             <Button
               size="sm"
               variant="outline"
-              className="gap-1.5 text-xs font-bold text-amber-600 border-amber-300 hover:bg-amber-50 dark:hover:bg-amber-950/40"
+              className="gap-1.5 border-amber-300 text-xs font-bold text-amber-600 hover:bg-amber-50 dark:hover:bg-amber-950/40"
               onClick={() => {
                 if (readiness.missingActions.length > 0) {
                   setActiveTab(readiness.missingActions[0].tab);
@@ -189,14 +204,18 @@ export function ResourceDetailView({ resourceId }: Props) {
 
       {/* Setup Required Banner with exact actionable missing steps */}
       {!isReady && (
-        <Alert className="py-2.5 border-amber-300 bg-amber-50/60 dark:bg-amber-950/30 text-amber-900 dark:text-amber-200 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+        <Alert className="flex flex-col gap-2 border-amber-300 bg-amber-50/60 py-2.5 text-amber-900 dark:bg-amber-950/30 dark:text-amber-200 sm:flex-row sm:items-center sm:justify-between">
           <div className="flex items-center gap-2">
-            <AlertCircle className="size-4 text-amber-600 dark:text-amber-400 shrink-0" aria-hidden="true" />
+            <AlertCircle
+              className="size-4 shrink-0 text-amber-600 dark:text-amber-400"
+              aria-hidden="true"
+            />
             <AlertDescription className="text-xs font-semibold">
-              {t("resources.card.setupRequired", { defaultValue: "Setup Required" })}: {readiness.missingActions.map((a) => a.label).join(" · ")}
+              {t("resources.card.setupRequired", { defaultValue: "Setup Required" })}:{" "}
+              {readiness.missingActions.map((a) => a.label).join(" · ")}
             </AlertDescription>
           </div>
-          <div className="flex items-center gap-1.5 shrink-0 self-start sm:self-auto">
+          <div className="flex shrink-0 items-center gap-1.5 self-start sm:self-auto">
             {readiness.missingActions.map((action) => (
               <Button
                 key={action.id}
@@ -210,9 +229,11 @@ export function ResourceDetailView({ resourceId }: Props) {
                     setActiveTab(action.tab);
                   }
                 }}
-                className="h-7 text-xs border-amber-400 hover:bg-amber-100 dark:hover:bg-amber-900/40 text-amber-900 dark:text-amber-100"
+                className="h-7 border-amber-400 text-xs text-amber-900 hover:bg-amber-100 dark:text-amber-100 dark:hover:bg-amber-900/40"
               >
-                {(action.id === "publish" || action.id === "publish-court") && vm.saving ? "Publishing..." : action.label}
+                {(action.id === "publish" || action.id === "publish-court") && vm.saving
+                  ? "Publishing..."
+                  : action.label}
               </Button>
             ))}
           </div>

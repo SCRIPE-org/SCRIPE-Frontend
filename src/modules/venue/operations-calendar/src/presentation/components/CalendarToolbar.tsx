@@ -1,14 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import {
-  ChevronLeft,
-  ChevronRight,
-  Plus,
-  SlidersHorizontal,
-  RefreshCw,
-  Clock,
-} from "lucide-react";
+import { ChevronLeft, ChevronRight, Plus, SlidersHorizontal, RefreshCw, Clock } from "lucide-react";
 import { Button } from "@core/ui/button";
 import { Input } from "@core/ui/input";
 import { Label } from "@core/ui/label";
@@ -69,13 +62,16 @@ export function CalendarToolbar(props: CalendarToolbarProps) {
     : props.date;
 
   return (
-    <div className="flex flex-col gap-4 rounded-nx-xl border border-nx-line bg-nx-surface p-4 shadow-xs" data-testid="calendar-toolbar">
+    <div
+      className="rounded-nx-xl shadow-xs flex flex-col gap-4 border border-nx-line bg-nx-surface p-4"
+      data-testid="calendar-toolbar"
+    >
       {/* Top Main Bar matching reference design */}
       <div className="flex flex-wrap items-center justify-between gap-3">
         {/* Left: Date stepper & Navigation */}
         <div className="flex items-center gap-2">
           {/* Stepper Pill: < Today > */}
-          <div className="flex items-center rounded-lg border border-nx-line bg-nx-surfaceSubtle p-0.5 text-xs font-semibold">
+          <div className="bg-nx-surfaceSubtle flex items-center rounded-lg border border-nx-line p-0.5 text-xs font-semibold">
             <Button
               variant="ghost"
               size="icon"
@@ -105,7 +101,7 @@ export function CalendarToolbar(props: CalendarToolbarProps) {
           </div>
 
           {/* Formatted Date Pill */}
-          <div className="px-3 py-1.5 rounded-lg border border-nx-line bg-nx-surface text-xs font-bold text-nx-ink tracking-tight shadow-2xs">
+          <div className="shadow-2xs rounded-lg border border-nx-line bg-nx-surface px-3 py-1.5 text-xs font-bold tracking-tight text-nx-ink">
             {formattedDisplayDate}
           </div>
         </div>
@@ -117,17 +113,15 @@ export function CalendarToolbar(props: CalendarToolbarProps) {
             variant="outline"
             size="sm"
             onClick={() => setShowFilters((prev) => !prev)}
-            className={`h-8 gap-1.5 text-xs font-semibold border-nx-line transition-colors ${
+            className={`h-8 gap-1.5 border-nx-line text-xs font-semibold transition-colors ${
               showFilters || Boolean(props.resourceId)
-                ? "bg-nx-surfaceSubtle text-nx-ink font-bold border-nx-ink/20"
-                : "text-nx-ink hover:bg-nx-surfaceSubtle"
+                ? "bg-nx-surfaceSubtle border-nx-ink/20 font-bold text-nx-ink"
+                : "hover:bg-nx-surfaceSubtle text-nx-ink"
             }`}
           >
             <SlidersHorizontal className="size-3.5 text-nx-ink-3" aria-hidden="true" />
             <span>{t("operationsCalendar.toolbar.filter") || "Filter"}</span>
-            {props.resourceId ? (
-              <span className="size-1.5 rounded-full bg-nx-accent" />
-            ) : null}
+            {props.resourceId ? <span className="size-1.5 rounded-full bg-nx-accent" /> : null}
           </Button>
 
           {/* Block Time Action */}
@@ -137,10 +131,12 @@ export function CalendarToolbar(props: CalendarToolbarProps) {
               size="sm"
               disabled={actionsDisabled}
               onClick={props.onBlockTime}
-              className="h-8 gap-1.5 text-xs font-semibold border-nx-line hover:bg-nx-surfaceSubtle"
+              className="hover:bg-nx-surfaceSubtle h-8 gap-1.5 border-nx-line text-xs font-semibold"
             >
               <Clock className="size-3.5 text-amber-500" />
-              <span className="hidden sm:inline">{t("operationsCalendar.toolbar.blockTime") || "Block Time"}</span>
+              <span className="hidden sm:inline">
+                {t("operationsCalendar.toolbar.blockTime") || "Block Time"}
+              </span>
             </Button>
           )}
 
@@ -150,7 +146,7 @@ export function CalendarToolbar(props: CalendarToolbarProps) {
               size="sm"
               disabled={actionsDisabled}
               onClick={props.onNewBooking}
-              className="h-8 gap-1.5 text-xs font-bold bg-nx-accent hover:bg-nx-accent/90 text-nx-accent-contrast shadow-sm px-3.5"
+              className="hover:bg-nx-accent/90 text-nx-accent-contrast h-8 gap-1.5 bg-nx-accent px-3.5 text-xs font-bold shadow-sm"
             >
               <Plus className="size-4" aria-hidden="true" />
               <span>{t("operationsCalendar.toolbar.newBooking") || "New Booking"}</span>
@@ -166,16 +162,23 @@ export function CalendarToolbar(props: CalendarToolbarProps) {
             onClick={props.onRefresh}
             aria-label={t("operationsCalendar.toolbar.refresh")}
           >
-            <RefreshCw className={`size-3.5 ${props.loading ? "animate-spin text-nx-accent" : "text-nx-ink-3"}`} aria-hidden="true" />
+            <RefreshCw
+              className={`size-3.5 ${props.loading ? "animate-spin text-nx-accent" : "text-nx-ink-3"}`}
+              aria-hidden="true"
+            />
           </Button>
         </div>
       </div>
 
       {/* Filter Row: Facility, Court/Resource, Jump-to-Date, Timezone */}
       {showFilters && (
-        <div className="grid gap-3 pt-3 border-t border-nx-line/60 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="border-nx-line/60 grid gap-3 border-t pt-3 sm:grid-cols-2 lg:grid-cols-4">
           <div className="space-y-1.5">
-            <Label id="calendar-facility-label" htmlFor="calendar-facility-select" className="text-xs font-bold text-nx-ink">
+            <Label
+              id="calendar-facility-label"
+              htmlFor="calendar-facility-select"
+              className="text-xs font-bold text-nx-ink"
+            >
               {t("operationsCalendar.toolbar.facility") || "Facility"}
             </Label>
             <GenericSelect
@@ -191,7 +194,11 @@ export function CalendarToolbar(props: CalendarToolbarProps) {
           </div>
 
           <div className="space-y-1.5">
-            <Label id="calendar-resource-label" htmlFor="calendar-resource-select" className="text-xs font-bold text-nx-ink">
+            <Label
+              id="calendar-resource-label"
+              htmlFor="calendar-resource-select"
+              className="text-xs font-bold text-nx-ink"
+            >
               {t("operationsCalendar.toolbar.resource") || "Court / Space"}
             </Label>
             <GenericSelect
@@ -220,7 +227,11 @@ export function CalendarToolbar(props: CalendarToolbarProps) {
           </div>
 
           <div className="space-y-1.5">
-            <Label id="calendar-timezone-label" htmlFor="calendar-timezone-select" className="text-xs font-bold text-nx-ink">
+            <Label
+              id="calendar-timezone-label"
+              htmlFor="calendar-timezone-select"
+              className="text-xs font-bold text-nx-ink"
+            >
               {t("operationsCalendar.toolbar.timezone") || "Timezone"}
             </Label>
             <GenericSelect

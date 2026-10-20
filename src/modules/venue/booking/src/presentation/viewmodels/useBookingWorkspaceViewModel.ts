@@ -154,25 +154,28 @@ export function useBookingWorkspaceViewModel(prefill: BookingWorkspacePrefill = 
     });
   }, [loadSetup]);
 
-  const setCriteria = useCallback((patch: Partial<BookingRequestCriteria>) => {
-    setCriteriaState((current) => ({
-      ...current,
-      ...patch,
-      ...(("facilityId" in patch || "resourceKindCode" in patch || "usageTypeCode" in patch) &&
-      !("resourceId" in patch)
-        ? { resourceId: "" }
-        : {}),
-    }));
-    draftRef.current = null;
-    draftIntentKeyRef.current = null;
-    holdKeyRef.current = null;
-    confirmKeyRef.current = null;
-    bookingRepository.clearBusinessIntent();
-    quoteGenerationRef.current += 1;
-    setPriceQuote(null);
-    setPriceQuoteError(null);
-    dispatch({ type: "criteriaChanged" });
-  }, [bookingRepository]);
+  const setCriteria = useCallback(
+    (patch: Partial<BookingRequestCriteria>) => {
+      setCriteriaState((current) => ({
+        ...current,
+        ...patch,
+        ...(("facilityId" in patch || "resourceKindCode" in patch || "usageTypeCode" in patch) &&
+        !("resourceId" in patch)
+          ? { resourceId: "" }
+          : {}),
+      }));
+      draftRef.current = null;
+      draftIntentKeyRef.current = null;
+      holdKeyRef.current = null;
+      confirmKeyRef.current = null;
+      bookingRepository.clearBusinessIntent();
+      quoteGenerationRef.current += 1;
+      setPriceQuote(null);
+      setPriceQuoteError(null);
+      dispatch({ type: "criteriaChanged" });
+    },
+    [bookingRepository]
+  );
 
   const searchCustomers = useCallback(
     async (query: string) => {
@@ -620,7 +623,15 @@ export function useBookingWorkspaceViewModel(prefill: BookingWorkspacePrefill = 
     } finally {
       submittingRef.current = false;
     }
-  }, [bookingRepository, customer, priceQuote, state.hold, state.reservationId, state.selectedCandidate, state.stage]);
+  }, [
+    bookingRepository,
+    customer,
+    priceQuote,
+    state.hold,
+    state.reservationId,
+    state.selectedCandidate,
+    state.stage,
+  ]);
 
   const createAnother = useCallback(() => {
     setCustomerState(null);

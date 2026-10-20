@@ -42,11 +42,10 @@ export function getSavedFacilityId(
   if (typeof window === "undefined" || !authorizedFacilities.length) return null;
   const key = getFacilityStorageKey(explicitTenantId);
   const savedId =
-    localStorage.getItem(key) ||
-    localStorage.getItem("scripe_venue_selected_facility");
+    localStorage.getItem(key) || localStorage.getItem("scripe_venue_selected_facility");
 
   const match = authorizedFacilities.find((f) => f.id === savedId);
-  return match ? match.id : authorizedFacilities[0]?.id ?? null;
+  return match ? match.id : (authorizedFacilities[0]?.id ?? null);
 }
 
 /**

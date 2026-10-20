@@ -123,17 +123,15 @@ export const AvailabilityView = React.memo(function AvailabilityView() {
                 {t("availability.tabs.findSlots", { defaultValue: "Find Available Slots" })}
               </TabsTrigger>
               <TabsTrigger value="operating-windows">
-                {t("availability.tabs.operatingWindows", { defaultValue: "Operating Windows & Rules" })}
+                {t("availability.tabs.operatingWindows", {
+                  defaultValue: "Operating Windows & Rules",
+                })}
               </TabsTrigger>
             </TabsList>
 
             <TabsContent value="find-slots" className="space-y-4">
               <div className="max-w-xl">
-                <AvailabilitySearchCard
-                  vm={vm}
-                  timeZoneId={timeZoneId}
-                  canSearch={canSearch}
-                />
+                <AvailabilitySearchCard vm={vm} timeZoneId={timeZoneId} canSearch={canSearch} />
               </div>
             </TabsContent>
 

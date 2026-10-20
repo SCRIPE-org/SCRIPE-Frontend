@@ -140,7 +140,9 @@ export function useRolePermissionsDialog({
     queryKey: ["tenant-permissions-grouped", effectiveTenantId ?? "platform"],
     queryFn: () => {
       if (effectiveTenantId) {
-        return identityContainer.roleRepository.getTenantAvailablePermissionsGrouped(effectiveTenantId);
+        return identityContainer.roleRepository.getTenantAvailablePermissionsGrouped(
+          effectiveTenantId
+        );
       }
       return identityContainer.roleRepository.getMyTenantAvailablePermissionsGrouped();
     },
@@ -225,7 +227,15 @@ export function useRolePermissionsDialog({
       setExpandedGroups(perModuleExpanded);
       setInitializedRoleId(role.id);
     });
-  }, [open, role?.id, allPermissions, rolePermissions, loadingRole, loadingTenant, initializedRoleId]);
+  }, [
+    open,
+    role?.id,
+    allPermissions,
+    rolePermissions,
+    loadingRole,
+    loadingTenant,
+    initializedRoleId,
+  ]);
 
   // Save mutation
   const saveMutation = useMutation({
@@ -241,7 +251,15 @@ export function useRolePermissionsDialog({
             restrictedFields: a.restrictedFields ?? [],
           };
         })
-        .filter((a): a is { permissionId: string; scopeOverride: string | null; restrictedFields: string[] } => !!a.permissionId);
+        .filter(
+          (
+            a
+          ): a is {
+            permissionId: string;
+            scopeOverride: string | null;
+            restrictedFields: string[];
+          } => !!a.permissionId
+        );
 
       await identityContainer.roleRepository.assignPermissions(role.id, {
         permissions: permissions,
