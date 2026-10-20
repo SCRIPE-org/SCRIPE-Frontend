@@ -4,6 +4,9 @@ import React from "react";
 import { Layers, ChevronRight, Building, GraduationCap, Trophy } from "lucide-react";
 import Link from "next/link";
 import { useI18n } from "@core/providers/i18n-provider";
+import { useWorkspaceActions } from "@core/providers/hooks/useWorkspaceActions";
+import { usePermissions } from "@core/providers/permission-provider";
+import { startRoutingProgress } from "@core/ui/routing-progress-bar";
 import { Card } from "@core/ui/card";
 import { Button } from "@core/ui/button";
 import { Badge } from "@core/ui/badge";
@@ -30,6 +33,8 @@ const PRODUCT_THEMES: Record<string, { color: string; icon: React.ElementType }>
 
 export function TenantProductsSection({ products }: TenantProductsSectionProps) {
   const { t } = useI18n();
+  const { setActiveWorkspace } = useWorkspaceActions();
+  const { canAccessPage } = usePermissions();
 
   return (
     <Card className="p-4 sm:p-5 min-w-0 overflow-hidden border-nx-line bg-nx-surface text-nx-ink hover:border-nx-line-hi">
@@ -128,18 +133,57 @@ export function TenantProductsSection({ products }: TenantProductsSectionProps) 
                   </div>
                 </div>
 
-                <Button
-                  asChild
-                  variant={isActive ? "outline" : "secondary"}
-                  size="sm"
-                  className={`mt-4 h-8 w-full text-xs font-semibold ${
-                    isActive
+                {(() => {
+                  const canonicalHref = product.id === "venue" ? "/venue" : product.href;
+                  const isPermitted = canAccessPage(canonicalHref);
+
+                  const handleClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
+                    if (!isActive || !isPermitted) {
+                      e.preventDefault();
+                      return;
+                    }
+                    if (product.id === "venue") {
+                      e.preventDefault();
+                      startRoutingProgress();
+                      void setActiveWorkspace("venue", true);
+                      return;
+                    }
+                    if (product.id === "academy") {
+                      e.preventDefault();
+                      startRoutingProgress();
+                      void setActiveWorkspace("academy", true);
+                      return;
+                    }
+                  };
+
+                  const className = `mt-4 h-8 w-full text-xs font-semibold ${
+                    isActive && isPermitted
                       ? "border-nx-line hover:border-nx-line-hi hover:bg-nx-raised"
-                      : "text-nx-ink-3"
-                  }`}
-                >
-                  <Link href={product.href}>{product.buttonLabel}</Link>
-                </Button>
+                      : "text-nx-ink-3 opacity-60 cursor-not-allowed"
+                  }`;
+
+                  if (!isActive || !isPermitted) {
+                    return (
+                      <Button
+                        type="button"
+                        variant="secondary"
+                        size="sm"
+                        disabled
+                        className={className}
+                      >
+                        {product.buttonLabel}
+                      </Button>
+                    );
+                  }
+
+                  return (
+                    <Button asChild variant="outline" size="sm" className={className}>
+                      <Link href={canonicalHref} onClick={handleClick}>
+                        {product.buttonLabel}
+                      </Link>
+                    </Button>
+                  );
+                })()}
               </div>
             </div>
           );

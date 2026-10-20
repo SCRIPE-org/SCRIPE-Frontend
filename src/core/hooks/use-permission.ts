@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 /**
  * usePermission Hook
  *
@@ -25,6 +24,20 @@ import {
   type PermissionCode,
 } from "@core/common/types/permissions";
 
+type SessionUser = ReturnType<typeof useAppStore.getState>["user"];
+
+function isPlatformSuperAdmin(user: SessionUser, permissions: PermissionCode[]): boolean {
+  const hasSuperAdminFlag =
+    user !== null && "isSuperAdmin" in user && user.isSuperAdmin === true;
+
+  return (
+    hasSuperAdminFlag ||
+    user?.isProtected === true ||
+    user?.username === "superadmin" ||
+    permissions.includes("*")
+  );
+}
+
 /**
  * Check if current user has a specific permission
  * Returns true if no permission is required (undefined/empty)
@@ -37,12 +50,7 @@ export function usePermission(requiredPermission?: PermissionCode): boolean {
   if (!requiredPermission) return true;
 
   // Platform superadmin bypass
-  if (
-    (user as any)?.isSuperAdmin === true ||
-    (user as any)?.isProtected === true ||
-    user?.username === "superadmin" ||
-    permissions.includes("*")
-  ) {
+  if (isPlatformSuperAdmin(user, permissions)) {
     return true;
   }
 
@@ -58,12 +66,7 @@ export function usePermissions() {
   const permissions = useAppStore((state) => state.permissions);
   const user = useAppStore((state) => state.user);
 
-  const isSuperAdmin = Boolean(
-    (user as any)?.isSuperAdmin === true ||
-    (user as any)?.isProtected === true ||
-    user?.username === "superadmin" ||
-    permissions.includes("*")
-  );
+  const isSuperAdmin = isPlatformSuperAdmin(user, permissions);
 
   return {
     /**

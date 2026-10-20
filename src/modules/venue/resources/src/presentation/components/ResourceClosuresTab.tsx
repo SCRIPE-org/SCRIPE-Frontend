@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { useState } from "react";
 import { Plus, Trash2, Wrench, Ban, Clock } from "lucide-react";
@@ -77,12 +77,10 @@ export function ResourceClosuresTab({ vm }: Props) {
     <Card>
       <CardHeader className="flex flex-row items-center justify-between pb-3">
         <div>
-          <CardTitle>
-            {t("resources.closures.title", { defaultValue: "Closures & Blocked Time" })}
-          </CardTitle>
+          <CardTitle>{t("resources.closures.title", { defaultValue: "Closures" })}</CardTitle>
           <CardDescription className="mt-1">
             {t("resources.closures.description", {
-              defaultValue: "Maintenance windows and unavailable periods for this court.",
+              defaultValue: "Maintenance windows and unavailable periods.",
             })}
           </CardDescription>
         </div>
@@ -93,32 +91,19 @@ export function ResourceClosuresTab({ vm }: Props) {
       </CardHeader>
       <CardContent>
         {allClosures.length === 0 ? (
-          <div className="rounded-nx-md border border-dashed border-nx-line py-8 text-center text-xs text-nx-ink-2">
-            <Clock className="mx-auto mb-2 size-6 text-nx-ink-3" aria-hidden="true" />
-            <p>
-              {t("resources.closures.empty", {
-                defaultValue:
-                  "No closures scheduled. Court is operating according to working hours.",
-              })}
-            </p>
+          <div className="py-8 text-center text-xs text-nx-ink-2 border border-dashed border-nx-line rounded-nx-md">
+            <Clock className="size-6 text-nx-ink-3 mx-auto mb-2" aria-hidden="true" />
+            <p>{t("resources.closures.empty", { defaultValue: "No closures scheduled. Operating according to working hours." })}</p>
           </div>
         ) : (
-          <div className="overflow-hidden rounded-nx-md border border-nx-line bg-nx-surface">
-            <table className="w-full text-left text-xs">
-              <thead className="border-b border-nx-line bg-nx-raised font-semibold text-nx-ink">
+          <div className="border border-nx-line rounded-nx-md overflow-hidden bg-nx-surface">
+            <table className="w-full text-left rtl:text-right text-xs">
+              <thead className="bg-nx-raised border-b border-nx-line text-nx-ink font-semibold">
                 <tr>
-                  <th className="p-3">
-                    {t("resources.closures.table.type", { defaultValue: "Type" })}
-                  </th>
-                  <th className="p-3">
-                    {t("resources.closures.table.period", { defaultValue: "Period" })}
-                  </th>
-                  <th className="p-3">
-                    {t("resources.closures.table.reason", { defaultValue: "Reason" })}
-                  </th>
-                  <th className="p-3 text-right">
-                    {t("resources.closures.table.actions", { defaultValue: "Actions" })}
-                  </th>
+                  <th className="p-3">{t("resources.closures.table.type", { defaultValue: "Type" })}</th>
+                  <th className="p-3">{t("resources.closures.table.period", { defaultValue: "Period" })}</th>
+                  <th className="p-3">{t("resources.closures.table.reason", { defaultValue: "Reason" })}</th>
+                  <th className="p-3 text-right rtl:text-left">{t("resources.closures.table.actions", { defaultValue: "Actions" })}</th>
                 </tr>
               </thead>
               <tbody className="divide-nx-line/60 divide-y">
@@ -155,7 +140,7 @@ export function ResourceClosuresTab({ vm }: Props) {
                       {formatDate(closure.startUtc)} â€“ {formatDate(closure.endUtc)}
                     </td>
                     <td className="p-3 text-nx-ink">{closure.reason}</td>
-                    <td className="p-3 text-right">
+                    <td className="p-3 text-right rtl:text-left">
                       <Button
                         variant="ghost"
                         size="sm"
@@ -191,11 +176,11 @@ export function ResourceClosuresTab({ vm }: Props) {
                   {t("resources.blockTimeModal.reasonType", { defaultValue: "Reason Type" })}
                 </Label>
                 <div className="grid grid-cols-2 gap-2">
-                  {/* UI-EXCEPTION: native element required for compact layout */}
-                  <button
+                  <Button
+                    variant="outline"
                     type="button"
                     onClick={() => setReasonType("Maintenance")}
-                    className={`rounded-nx-md border p-2.5 text-left text-xs font-semibold transition-all ${
+                    className={`p-2.5 rounded-nx-md border text-left rtl:text-right text-xs font-semibold transition-all ${
                       reasonType === "Maintenance"
                         ? "border-amber-500 bg-amber-500/10 text-amber-900 ring-1 ring-amber-500 dark:text-amber-200"
                         : "hover:bg-nx-surfaceSubtle border-nx-line text-nx-ink-2"
@@ -207,13 +192,13 @@ export function ResourceClosuresTab({ vm }: Props) {
                         {t("resources.closures.types.Maintenance", { defaultValue: "Maintenance" })}
                       </span>
                     </div>
-                  </button>
+                  </Button>
 
-                  {/* UI-EXCEPTION: native element required for compact layout */}
-                  <button
+                  <Button
+                    variant="outline"
                     type="button"
                     onClick={() => setReasonType("Unavailable")}
-                    className={`rounded-nx-md border p-2.5 text-left text-xs font-semibold transition-all ${
+                    className={`p-2.5 rounded-nx-md border text-left rtl:text-right text-xs font-semibold transition-all ${
                       reasonType === "Unavailable"
                         ? "border-slate-500 bg-slate-500/10 text-slate-900 ring-1 ring-slate-500 dark:text-slate-200"
                         : "hover:bg-nx-surfaceSubtle border-nx-line text-nx-ink-2"
@@ -225,13 +210,15 @@ export function ResourceClosuresTab({ vm }: Props) {
                         {t("resources.closures.types.Unavailable", { defaultValue: "Unavailable" })}
                       </span>
                     </div>
-                  </button>
+                  </Button>
                 </div>
               </div>
 
               <div className="grid grid-cols-2 gap-3">
                 <div className="space-y-1">
-                  <Label className="text-xs">Start Date</Label>
+                  <Label className="text-xs">
+                    {t("resources.closures.startDate", { defaultValue: "Start Date" })}
+                  </Label>
                   <Input
                     type="date"
                     value={startDate}
@@ -241,7 +228,9 @@ export function ResourceClosuresTab({ vm }: Props) {
                   />
                 </div>
                 <div className="space-y-1">
-                  <Label className="text-xs">Start Time</Label>
+                  <Label className="text-xs">
+                    {t("resources.closures.startTime", { defaultValue: "Start Time" })}
+                  </Label>
                   <Input
                     type="time"
                     value={startTime}
@@ -254,7 +243,9 @@ export function ResourceClosuresTab({ vm }: Props) {
 
               <div className="grid grid-cols-2 gap-3">
                 <div className="space-y-1">
-                  <Label className="text-xs">End Date</Label>
+                  <Label className="text-xs">
+                    {t("resources.closures.endDate", { defaultValue: "End Date" })}
+                  </Label>
                   <Input
                     type="date"
                     value={endDate}
@@ -264,7 +255,9 @@ export function ResourceClosuresTab({ vm }: Props) {
                   />
                 </div>
                 <div className="space-y-1">
-                  <Label className="text-xs">End Time</Label>
+                  <Label className="text-xs">
+                    {t("resources.closures.endTime", { defaultValue: "End Time" })}
+                  </Label>
                   <Input
                     type="time"
                     value={endTime}
@@ -292,13 +285,8 @@ export function ResourceClosuresTab({ vm }: Props) {
               </div>
 
               <DialogFooter className="pt-2">
-                <Button
-                  type="button"
-                  variant="outline"
-                  size="sm"
-                  onClick={() => setModalOpen(false)}
-                >
-                  Cancel
+                <Button type="button" variant="outline" size="sm" onClick={() => setModalOpen(false)}>
+                  {t("resources.closures.cancel", { defaultValue: "Cancel" })}
                 </Button>
                 <Button type="submit" size="sm" disabled={vm.saving} loading={vm.saving}>
                   {t("resources.blockTimeModal.submit", { defaultValue: "Block Time" })}

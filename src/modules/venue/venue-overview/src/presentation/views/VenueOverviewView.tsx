@@ -15,6 +15,9 @@ import { VenueNav } from "@modules/venue";
 import { useVenueOverviewViewModel } from "../viewmodels/useVenueOverviewViewModel";
 import { VenueOverviewHeader } from "../components/VenueOverviewHeader";
 import { VenueOverviewKpiStrip } from "../components/VenueOverviewKpiStrip";
+import { VenueOverviewLiveCourts } from "../components/VenueOverviewLiveCourts";
+import { VenueOverviewTodaySchedule } from "../components/VenueOverviewTodaySchedule";
+import { VenueOverviewEditorialBanner } from "../components/VenueOverviewEditorialBanner";
 import { VenueOverviewHeroTimeline } from "../components/VenueOverviewHeroTimeline";
 import { VenueOverviewLiveFeed } from "../components/VenueOverviewLiveFeed";
 import { VenueOverviewDemandChart } from "../components/VenueOverviewDemandChart";
@@ -37,7 +40,7 @@ export function VenueOverviewView({ facilityId, localDate }: Props) {
   const dir = language === "ar" ? "rtl" : "ltr";
   const canViewAttention = usePermission(VENUE_PERMISSIONS.VENUE_ATTENTION_VIEW);
   const attentionVm = useVenueAttentionViewModel(canViewAttention);
-  const attentionCount = canViewAttention && attentionVm.data ? attentionVm.data.items.length : 0;
+  const attentionCount = canViewAttention ? attentionVm.data?.items.length ?? 0 : undefined;
 
   const { state, facilities, selectedFacilityId, refreshing, refresh, changeFacility } =
     useVenueOverviewViewModel(facilityId, localDate);
@@ -138,9 +141,6 @@ export function VenueOverviewView({ facilityId, localDate }: Props) {
       dir={dir}
       data-testid="venue-overview-view"
     >
-      {/* 4-Tier Product Mental Model Navigation */}
-      <VenueNav attentionCount={attentionCount} />
-
       {/* Metis-Inspired Page Header */}
       <VenueOverviewHeader
         facilityName={state.facilityName}
@@ -192,6 +192,17 @@ export function VenueOverviewView({ facilityId, localDate }: Props) {
         attentionCount={canViewAttention ? attentionCount : undefined}
         t={t}
       />
+
+      {/* Approved Reference Composition: Live Courts (7 cols) + Editorial Banner & Today's Schedule (5 cols) */}
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-12 items-start">
+        <div className="lg:col-span-7">
+          <VenueOverviewLiveCourts items={state.resourceActivity} t={t} />
+        </div>
+        <div className="lg:col-span-5 space-y-4">
+          <VenueOverviewEditorialBanner facilityName={state.facilityName} t={t} />
+          <VenueOverviewTodaySchedule items={state.upNext} t={t} />
+        </div>
+      </div>
 
       {/* Main Hero Row: Today's Venue Activity (8 cols) + Live Venue Feed (4 cols) */}
       <div className="grid grid-cols-1 items-stretch gap-6 lg:grid-cols-12">

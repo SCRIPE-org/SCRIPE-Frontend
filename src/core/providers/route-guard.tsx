@@ -60,6 +60,7 @@ const PUBLIC_PAGES = [
   // ── Passwordless / cross-device flows — public (no auth required) ────────
   "/magic-link", // Magic link email callback — token-authenticated, no session needed
   "/qr-approve", // QR code approval page — scanned from mobile, no auth session
+  "/bookings/guest", // Guest reservation portal — token-authenticated via fragment, no auth session
 ];
 
 const PUBLIC_PREFIXES = ["/docs", "/commercial", "/sso"];

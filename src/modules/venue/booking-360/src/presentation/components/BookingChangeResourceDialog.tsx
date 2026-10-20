@@ -271,6 +271,7 @@ export function BookingChangeResourceDialog(props: Props) {
                   <p className="font-medium text-nx-ink">{selectedCandidate.resourceName}</p>
                 </div>
               </div>
+
             </div>
           )}
         </div>

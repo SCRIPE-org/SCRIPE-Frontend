@@ -1,7 +1,8 @@
-﻿"use client";
+"use client";
 
 import { useEffect, useState, type CSSProperties } from "react";
 import { cn } from "@core/common/utils";
+import { Button } from "@core/ui/button";
 import type {
   CalendarResource,
   OperationsCalendarBlock,
@@ -30,6 +31,18 @@ interface ResourceTimelineProps {
 function statusClass(status: OperationsCalendarBlock["status"]) {
   if (status === "Held") return "border-warning/50 bg-warning/15 text-warning-strong";
   if (status === "CheckedIn") return "border-info/50 bg-info/15 text-info";
+  if (status === "Completed") return "border-nx-border bg-nx-raised/70 text-nx-ink-2";
+  if (status === "NoShow") return "border-destructive/60 bg-destructive/15 text-destructive font-semibold";
+  if (
+    status === ("Maintenance" as any) ||
+    (status as string) === "Blocked" ||
+    (status as string) === "Unavailable"
+  ) {
+    return "border-amber-500/60 bg-amber-500/20 text-amber-950 dark:text-amber-200 font-semibold";
+  }
+  if (status === "Cancelled") {
+    return "border-slate-400 bg-slate-100 text-slate-500 line-through opacity-70";
+  }
   return "border-success/50 bg-success/15 text-success";
 }
 
@@ -64,11 +77,8 @@ export function ResourceTimeline(props: ResourceTimelineProps) {
     >
       <div className="min-w-max" dir="ltr">
         <div className="flex border-b border-nx-line bg-nx-raised">
-          <div
-            className="sticky left-0 z-30 flex w-48 shrink-0 items-center border-r border-nx-line bg-nx-raised px-4 text-sm font-semibold"
-            dir={props.direction}
-          >
-            {props.t("operationsCalendar.timeline.resource")}
+          <div className="sticky left-0 z-30 flex w-48 shrink-0 items-center border-r border-nx-line bg-nx-raised px-4 text-sm font-semibold" dir={props.direction}>
+            {props.t("operationsCalendar.timeline.courtOrSpace", { defaultValue: "Court / Space" })}
           </div>
           <div className="flex" style={{ width: timelineWidth }}>
             {slots.map((slot) => (
@@ -109,9 +119,9 @@ export function ResourceTimeline(props: ResourceTimelineProps) {
                     ({ block }) =>
                       Date.parse(block.startUtc) < slotEnd && slotStart < Date.parse(block.endUtc)
                   );
-                  // UI-EXCEPTION: interactive transparent calendar slot in custom SVG/canvas-like timeline grid
                   return (
-                    <button
+                    <Button
+                      variant="ghost"
                       type="button"
                       key={slot.instantUtc}
                       className="h-full w-[76px] shrink-0 border-r border-nx-line text-transparent outline-none hover:bg-nx-hover focus-visible:z-20 focus-visible:shadow-nx-focus"
@@ -129,17 +139,24 @@ export function ResourceTimeline(props: ResourceTimelineProps) {
                       onClick={() => props.onEmptySlot(resource, slot.instantUtc)}
                     >
                       {slot.label}
-                    </button>
+                    </Button>
                   );
                 })}
                 {placed.map(({ block, track }) => {
                   const position = blockPosition(block, props.day);
                   const start = localTime(block.startUtc, props.locale, props.day.timeZoneId);
                   const end = localTime(block.endUtc, props.locale, props.day.timeZoneId);
-                  const status = props.t(`operationsCalendar.status.${block.status}`);
+                  const isClosure =
+                    block.status === ("Maintenance" as any) ||
+                    (block.status as string) === "Blocked" ||
+                    (block.status as string) === "Unavailable" ||
+                    block.reservationId.startsWith("closure-");
+                  const status = isClosure
+                    ? props.t("operationsCalendar.status.Maintenance", { defaultValue: "Maintenance" })
+                    : props.t(`operationsCalendar.status.${block.status}`, { defaultValue: block.status });
                   return (
-                    // UI-EXCEPTION: absolute-positioned custom calendar booking block chip in timeline grid
-                    <button
+                    <Button
+                      variant="ghost"
                       type="button"
                       key={block.reservationId}
                       className={cn(
@@ -162,15 +179,18 @@ export function ResourceTimeline(props: ResourceTimelineProps) {
                         end,
                         resource: resource.name,
                       })}
-                      onClick={() => props.onOpen(block)}
+                      onClick={() => {
+                        if (isClosure) return;
+                        props.onOpen(block);
+                      }}
                     >
                       <span className="block truncate font-semibold">
-                        {block.reservationNumber}
+                        {isClosure ? `⊘ ${status}` : block.reservationNumber}
                       </span>
                       <span className="block truncate">
-                        {status} Â· {start}â€“{end}
+                        {status} · {start}–{end}
                       </span>
-                    </button>
+                    </Button>
                   );
                 })}
                 {currentPercent != null && (

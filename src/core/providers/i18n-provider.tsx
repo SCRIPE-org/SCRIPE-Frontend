@@ -130,6 +130,16 @@ export function I18nProvider({ children }: { children: React.ReactNode }) {
         if (value && typeof value === "object" && k in value) {
           value = value[k];
         } else {
+          if (params && typeof params.defaultValue === "string") {
+            let def = params.defaultValue;
+            def = def.replace(/\{\{(\w+)\}\}/g, (match, paramKey) => {
+              return params[paramKey] !== undefined ? String(params[paramKey]) : match;
+            });
+            def = def.replace(/\{(\w+)\}/g, (match, paramKey) => {
+              return params[paramKey] !== undefined ? String(params[paramKey]) : match;
+            });
+            return def;
+          }
           return reportMissingKey(key, language); // path not found
         }
       }
@@ -146,6 +156,10 @@ export function I18nProvider({ children }: { children: React.ReactNode }) {
           return interpolated;
         }
         return value;
+      }
+
+      if (params && typeof params.defaultValue === "string") {
+        return params.defaultValue;
       }
 
       // Resolved to a non-string leaf (object/array) — treat as a miss.

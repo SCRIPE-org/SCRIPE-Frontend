@@ -312,4 +312,41 @@ describe("VenueOverviewService", () => {
     expect(overview.stage).toBe("limited");
     expect(overview.kpis.todayReservationsCount).toBe(0);
   });
+
+  it("executes a single HTTP request when IApiService is provided, eliminating N+1 client queries", async () => {
+    const mockApi = {
+      get: vi.fn().mockResolvedValue({
+        stage: "ready",
+        facilityId: "fac-123",
+        facilityName: "Metis Cairo Club",
+        timeZoneId: "Africa/Cairo",
+        asOfUtc: "2026-09-12T10:00:00Z",
+        localDate: "2026-09-12",
+        kpis: {
+          todayReservationsCount: 15,
+          todayReservationsConfirmedCount: 12,
+          todayReservationsCheckedInCount: 3,
+          activeHoldsCount: 2,
+          nearestHoldExpiryUtc: null,
+          checkedInNowCount: 2,
+          activeResourcesCount: 6,
+        },
+        hourlyLoad: [],
+        atAGlance: [],
+        upNext: [],
+        resourceActivity: [],
+        recentActivityDeferred: true,
+        error: false,
+      }),
+    };
+
+    const service = new VenueOverviewService(mockApi as never);
+    const overview = await service.getOverview("fac-123", "2026-09-12");
+
+    expect(mockApi.get).toHaveBeenCalledTimes(1);
+    expect(mockApi.get).toHaveBeenCalledWith(expect.stringContaining("/v1/venue-overview?facilityId=fac-123&date=2026-09-12"));
+    expect(overview.stage).toBe("ready");
+    expect(overview.facilityName).toBe("Metis Cairo Club");
+    expect(overview.kpis.todayReservationsCount).toBe(15);
+  });
 });

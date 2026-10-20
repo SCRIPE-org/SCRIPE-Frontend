@@ -15,6 +15,8 @@ export const en = {
       name: "Venue Name",
       description: "Description",
       isActive: "Active",
+      enableGuestExperience: "Enable Guest Experience",
+      exposeCancellationToGuests: "Allow Guest Self-Service Cancellation",
     },
     placeholders: {
       siteId: "Search for a site...",
@@ -24,6 +26,8 @@ export const en = {
     },
     descriptions: {
       siteId: "The OrganizationCore site this venue operates at.",
+      enableGuestExperience: "Allow customers to view bookings via secure no-app guest links.",
+      exposeCancellationToGuests: "Allow customers to cancel their booking directly from the guest portal.",
     },
     manageSites: "Manage Sites & Campuses",
     quickCreateSite: "Quick Create Site",

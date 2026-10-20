@@ -237,8 +237,14 @@ describe("Booking360View", () => {
         invoiceNumber: "INV-101",
         currencyCode: "USD",
         effectiveTotalAmount: 150,
+        paidAmount: 100,
         outstandingAmount: 50,
+        creditAmount: 0,
         status: "Issued",
+        unallocatedPaymentAmount: 0,
+        refundedAmount: 0,
+        allocationState: "Synchronized",
+        payments: [],
       },
       loading: false,
       error: false,
@@ -253,6 +259,55 @@ describe("Booking360View", () => {
     expect(screen.getByText("booking360.commercial.recordPayment")).toHaveAttribute(
       "href",
       "/venue/money/payments?invoiceId=inv-101"
+    );
+  });
+
+  it("renders authoritative advisory when booking is cancelled with recorded payment without fabricating refund", () => {
+    vi.mocked(useBooking360ViewModel).mockReturnValue(vm({
+      reservation: { ...reservation, status: "Cancelled", activeHold: null },
+    }) as never);
+    vi.mocked(useBookingFinanceSummary).mockReturnValue({
+      summary: {
+        invoiceId: "inv-202",
+        invoiceNumber: "INV-202",
+        currencyCode: "EGP",
+        effectiveTotalAmount: 800,
+        paidAmount: 800,
+        outstandingAmount: 0,
+        creditAmount: 0,
+        status: "Paid",
+        unallocatedPaymentAmount: 0,
+        refundedAmount: 0,
+        allocationState: "Synchronized",
+        payments: [],
+      },
+      loading: false,
+      error: false,
+      refresh: vi.fn(),
+    });
+    render(<Booking360View reservationId="reservation-1" />);
+
+    expect(screen.getByTestId("cancelled-paid-advisory")).toBeInTheDocument();
+    expect(screen.getByText("booking360.cancelledPaid.title")).toBeInTheDocument();
+    expect(screen.getByText("booking360.cancelledPaid.manageRefund")).toHaveAttribute(
+      "href",
+      "/venue/money/payments?invoiceId=inv-202"
+    );
+  });
+
+  it("renders contextual deep links for Court, Calendar, and Customer", () => {
+    render(<Booking360View reservationId="reservation-1" />);
+    expect(screen.getByText("(booking360.schedule.viewCourt)")).toHaveAttribute(
+      "href",
+      "/venue/resources/resource-1"
+    );
+    expect(screen.getByText("(booking360.schedule.viewInCalendar)")).toHaveAttribute(
+      "href",
+      "/venue/calendar?resourceId=resource-1"
+    );
+    expect(screen.getByText("booking360.customer.viewCustomer")).toHaveAttribute(
+      "href",
+      "/venue/customers?partyId=party-1"
     );
   });
 });

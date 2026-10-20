@@ -1,29 +1,35 @@
-﻿"use client";
+"use client";
 
-import React from "react";
 import Link from "next/link";
-import { CircleDollarSign, ArrowUpRight, Receipt, CreditCard } from "lucide-react";
+import { CircleDollarSign, ArrowUpRight, Receipt, CreditCard, Clock, Wallet } from "lucide-react";
 import { Button } from "@core/ui/button";
 import { Card, CardContent } from "@core/ui/card";
-import { usePermission } from "@core/hooks/use-permission";
-import { VENUE_PERMISSIONS } from "@modules/venue/permission-constants";
+import { Badge } from "@core/ui/badge";
+import { useI18n } from "@core/providers/i18n-provider";
+import { useVenueOverviewMoneyCardViewModel } from "../viewmodels/useVenueOverviewMoneyCardViewModel";
 
 interface Props {
   t: (key: string, values?: Record<string, string | number>) => string;
 }
 
-/**
- * Documentation for module export
- */
-export function VenueOverviewMoneyCard({ t }: Props) {
-  const canViewReceivables = usePermission(VENUE_PERMISSIONS.FINANCE_RECEIVABLES_VIEW);
-  const canViewPayments = usePermission(VENUE_PERMISSIONS.FINANCE_PAYMENTS_VIEW);
+function formatMoney(value: number, currency: string, locale: string) {
+  try {
+    return new Intl.NumberFormat(locale, { style: "currency", currency }).format(value);
+  } catch {
+    return `${value.toFixed(2)} ${currency}`;
+  }
+}
 
-  if (!canViewReceivables && !canViewPayments) {
+export function VenueOverviewMoneyCard({ t }: Props) {
+  const { language } = useI18n();
+  const { summary, loading, canView, canViewReceivables, canViewPayments, primaryHref } =
+    useVenueOverviewMoneyCardViewModel();
+
+  if (!canView) {
     return null;
   }
 
-  const primaryHref = canViewReceivables ? "/venue/money/receivables" : "/venue/money/payments";
+  const currency = summary?.currencyCode;
 
   return (
     <Card
@@ -50,7 +56,48 @@ export function VenueOverviewMoneyCard({ t }: Props) {
           </div>
         </div>
 
-        <div className="flex shrink-0 flex-wrap items-center gap-2.5">
+        {/* Live Financial Metrics Pill (when available from authoritative Finance contract) */}
+        {summary && currency && !loading && (
+          <div className="flex flex-wrap items-center gap-4 px-4 py-2 rounded-nx-lg bg-nx-surfaceSubtle/80 border border-nx-line text-xs">
+            <div className="flex items-center gap-2">
+              <div className="p-1 rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400">
+                <Wallet className="size-3.5" aria-hidden="true" />
+              </div>
+              <div>
+                <span className="text-[10px] text-nx-ink-3 uppercase block leading-none font-semibold">
+                  {t("venueOverview.moneyCard.collectedToday", { defaultValue: "Collected Today" })}
+                </span>
+                <span className="text-xs font-bold font-mono text-emerald-600 dark:text-emerald-400">
+                  {formatMoney(summary.collectedToday, currency, language)}
+                </span>
+              </div>
+            </div>
+
+            <div className="h-6 w-px bg-nx-line" />
+
+            <div className="flex items-center gap-2">
+              <div className="p-1 rounded-full bg-amber-500/10 text-amber-600 dark:text-amber-400">
+                <Clock className="size-3.5" aria-hidden="true" />
+              </div>
+              <div>
+                <span className="text-[10px] text-nx-ink-3 uppercase block leading-none font-semibold">
+                  {t("venueOverview.moneyCard.outstanding", { defaultValue: "Outstanding" })}
+                </span>
+                <span className="text-xs font-bold font-mono text-amber-600 dark:text-amber-400">
+                  {formatMoney(summary.outstanding, currency, language)}
+                </span>
+              </div>
+            </div>
+
+            {summary.unallocatedPaymentsCount > 0 && (
+              <Badge variant="warning" className="text-[10px] px-1.5 py-0.5">
+                {summary.unallocatedPaymentsCount} {t("venueOverview.moneyCard.unallocated", { defaultValue: "unallocated" })}
+              </Badge>
+            )}
+          </div>
+        )}
+
+        <div className="flex flex-wrap items-center gap-2.5 shrink-0">
           {canViewReceivables && (
             <Button
               asChild
@@ -98,3 +145,4 @@ export function VenueOverviewMoneyCard({ t }: Props) {
     </Card>
   );
 }
+

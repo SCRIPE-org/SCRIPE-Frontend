@@ -10,6 +10,7 @@ import type {
   OperationsCalendarState,
 } from "../../domain/entities/OperationsCalendar";
 import { localPrefillForInstant } from "./useCalendarLayout";
+import { getSavedFacilityId, saveFacilityId } from "@modules/venue/shared/src/presentation/utils/venueFacilityPersistence";
 
 const PAGE_SIZE = 100;
 const LANE_LIMIT = 50;
@@ -54,6 +55,7 @@ export function useOperationsCalendarViewModel() {
     facilityRepository,
     facilityResourceProfileRepository,
     schedulableResourceRepository,
+    commercialPricingRepository,
   } = getVenueContainer();
   const [state, setState] = useState(initialState);
   const [setupLoading, setSetupLoading] = useState(true);
@@ -76,6 +78,24 @@ export function useOperationsCalendarViewModel() {
           schedulableResourceRepository.getAll({ page: 1, pageSize: PAGE_SIZE }),
         ]);
         if (!active) return;
+        let pricingMap = new Map<string, string | null>();
+        if (commercialPricingRepository?.getResourceConfiguration) {
+          try {
+            const pricingEntries = await Promise.all(
+              resourcePage.items.map(async (resource) => {
+                try {
+                  const cfg = await commercialPricingRepository.getResourceConfiguration(resource.id);
+                  return [resource.id, cfg?.effectiveFromUtc ?? null] as const;
+                } catch {
+                  return [resource.id, null] as const;
+                }
+              })
+            );
+            pricingMap = new Map(pricingEntries);
+          } catch {
+            // Ignore pricing lookup failure if unavailable
+          }
+        }
         const profiles = new Map(profilePage.items.map((profile) => [profile.id, profile]));
         const facilityNames = new Map(
           facilityPage.items.map((facility) => [facility.id, facility.name])
@@ -86,30 +106,30 @@ export function useOperationsCalendarViewModel() {
             const profile = profiles.get(resource.facilityResourceProfileId);
             const zone = profile?.operatingPolicy?.timeZoneId;
             if (!profile || !zone) return [];
-            return [
-              {
-                id: resource.id,
-                name: resource.name,
-                profileId: profile.id,
-                profileName: profile.name,
-                facilityId: profile.facilityId,
-                facilityName: facilityNames.get(profile.facilityId) ?? profile.name,
-                resourceKindCode: profile.resourceKindCode,
-                timeZoneId: zone,
-              } satisfies CalendarResource,
-            ];
+            return [{
+              id: resource.id,
+              name: resource.name,
+              profileId: profile.id,
+              profileName: profile.name,
+              facilityId: profile.facilityId,
+              facilityName: facilityNames.get(profile.facilityId) ?? profile.name,
+              resourceKindCode: profile.resourceKindCode,
+              timeZoneId: zone,
+              slotPolicy: resource.slotPolicy,
+              priceEffectiveFromUtc: pricingMap.get(resource.id) ?? null,
+            } satisfies CalendarResource];
           });
-        const firstFacility = facilityPage.items.find((facility) =>
-          composed.some((resource) => resource.facilityId === facility.id)
-        );
-        const firstZone =
-          composed.find((resource) => resource.facilityId === firstFacility?.id)?.timeZoneId ?? "";
+        const validFacilityId = getSavedFacilityId(facilityPage.items);
+        const initialFacility =
+          (validFacilityId && facilityPage.items.find((f) => f.id === validFacilityId && composed.some((r) => r.facilityId === f.id)))
+          || facilityPage.items.find((facility) => composed.some((resource) => resource.facilityId === facility.id));
+        const initialZone = composed.find((resource) => resource.facilityId === initialFacility?.id)?.timeZoneId ?? "";
         setFacilities(facilityPage.items);
         setAllResources(composed);
         setSetupReady(true);
-        setFacilityIdState(firstFacility?.id ?? "");
-        setTimeZoneIdState(firstZone);
-        if (firstZone) setDateState(todayIn(firstZone));
+        setFacilityIdState(initialFacility?.id ?? "");
+        setTimeZoneIdState(initialZone);
+        if (initialZone) setDateState(todayIn(initialZone));
       } catch (error) {
         if (!active) return;
         setState((current) => ({
@@ -124,10 +144,8 @@ export function useOperationsCalendarViewModel() {
       }
     };
     void load();
-    return () => {
-      active = false;
-    };
-  }, [facilityRepository, facilityResourceProfileRepository, schedulableResourceRepository]);
+    return () => { active = false; };
+  }, [facilityRepository, facilityResourceProfileRepository, schedulableResourceRepository, commercialPricingRepository]);
 
   const timeZoneOptions = useMemo(
     () =>
@@ -194,6 +212,26 @@ export function useOperationsCalendarViewModel() {
     if (!setupLoading && setupReady) void loadDay();
   }, [loadDay, setupLoading, setupReady]);
 
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const handleUpdate = () => {
+      if (!setupLoading && setupReady) {
+        void loadDay();
+      }
+    };
+    const handleVisibility = () => {
+      if (document.visibilityState === "visible" && !setupLoading && setupReady) {
+        void loadDay();
+      }
+    };
+    window.addEventListener("venue-booking-updated", handleUpdate);
+    document.addEventListener("visibilitychange", handleVisibility);
+    return () => {
+      window.removeEventListener("venue-booking-updated", handleUpdate);
+      document.removeEventListener("visibilitychange", handleVisibility);
+    };
+  }, [loadDay, setupLoading, setupReady]);
+
   const invalidate = useCallback(() => {
     requestGeneration.current += 1;
     setState((current) => ({ ...current, stage: "loading", day: null }));
@@ -210,31 +248,42 @@ export function useOperationsCalendarViewModel() {
   const nextDay = useCallback(() => setDate(shiftDate(date, 1)), [date, setDate]);
   const goToday = useCallback(() => setDate(todayIn(timeZoneId || "UTC")), [setDate, timeZoneId]);
 
-  const setFacilityId = useCallback(
-    (value: string) => {
-      const zone = allResources.find((resource) => resource.facilityId === value)?.timeZoneId ?? "";
-      invalidate();
-      setFacilityIdState(value);
-      setTimeZoneIdState(zone);
-      setResourceIdState("");
-    },
-    [allResources, invalidate]
-  );
-  const setTimeZoneId = useCallback(
-    (value: string) => {
-      invalidate();
-      setTimeZoneIdState(value);
-      setResourceIdState("");
-    },
-    [invalidate]
-  );
-  const setResourceId = useCallback(
-    (value: string) => {
-      invalidate();
-      setResourceIdState(value);
-    },
-    [invalidate]
-  );
+  const setFacilityId = useCallback((value: string) => {
+    const zone = allResources.find((resource) => resource.facilityId === value)?.timeZoneId ?? "";
+    invalidate();
+    setFacilityIdState(value);
+    setTimeZoneIdState(zone);
+    setResourceIdState("");
+    if (typeof window !== "undefined") {
+      try {
+        saveFacilityId(value);
+        window.dispatchEvent(new CustomEvent("venue-facility-changed", { detail: { facilityId: value } }));
+      } catch {}
+    }
+  }, [allResources, invalidate]);
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const handleFacilityChanged = (e: Event) => {
+      const customEvent = e as CustomEvent<{ facilityId: string }>;
+      const newFacilityId = customEvent.detail?.facilityId;
+      if (newFacilityId && newFacilityId !== facilityId) {
+        setFacilityId(newFacilityId);
+      }
+    };
+    window.addEventListener("venue-facility-changed", handleFacilityChanged);
+    return () => window.removeEventListener("venue-facility-changed", handleFacilityChanged);
+  }, [facilityId, setFacilityId]);
+
+  const setTimeZoneId = useCallback((value: string) => {
+    invalidate();
+    setTimeZoneIdState(value);
+    setResourceIdState("");
+  }, [invalidate]);
+  const setResourceId = useCallback((value: string) => {
+    invalidate();
+    setResourceIdState(value);
+  }, [invalidate]);
 
   const openBlock = useCallback(
     (block: OperationsCalendarBlock) => {

@@ -22,6 +22,7 @@ import { VENUE_PERMISSIONS } from "@modules/venue/permission-constants";
 import { VenueProfileQuickCreateDialog } from "@modules/venue";
 import { Plus } from "lucide-react";
 import type { VenueProfile } from "@modules/venue";
+import { mapVenueError } from "@modules/venue/shared/src/utils/venueErrorMapper";
 
 interface FacilityQuickCreateDialogProps {
   open: boolean;
@@ -64,7 +65,9 @@ export function FacilityQuickCreateDialog({
         pageSize: 100,
       });
       setVenueProfiles(res.items);
-      setVenueProfileId((current) => current || res.items[0]?.id || "");
+      if (res.items.length > 0) {
+        setVenueProfileId((current) => current || res.items[0].id);
+      }
     } catch {
       // Fail safely
     } finally {
@@ -87,9 +90,12 @@ export function FacilityQuickCreateDialog({
     e.preventDefault();
     const newErrors: { venueProfileId?: string; code?: string; name?: string } = {};
 
-    if (!venueProfileId.trim()) {
-      newErrors.venueProfileId = t("validation.required") || "Venue Profile is required";
+    let targetVenueProfileId = venueProfileId.trim();
+    if (!targetVenueProfileId && venueProfiles.length > 0) {
+      targetVenueProfileId = venueProfiles[0].id;
+      setVenueProfileId(targetVenueProfileId);
     }
+
     if (!code.trim()) {
       newErrors.code = t("validation.required") || "Code is required";
     }
@@ -119,8 +125,8 @@ export function FacilityQuickCreateDialog({
       onOpenChange(false);
       onSuccess?.(createdId);
     } catch (err: unknown) {
-      const message = err instanceof Error ? err.message : t("common.error");
-      toastError(message);
+      const safeError = mapVenueError(err);
+      toastError(safeError.message);
     } finally {
       setSaving(false);
     }

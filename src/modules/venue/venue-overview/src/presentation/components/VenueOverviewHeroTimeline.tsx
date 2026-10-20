@@ -145,9 +145,11 @@ export function VenueOverviewHeroTimeline({
     if (!canCreateBooking) return;
     const prefill = localPrefillForInstant(instantUtc, day.timeZoneId);
     const params = new URLSearchParams({
+      facilityId: resource.facilityId,
       resourceId: resource.id,
       date: prefill.date,
-      time: prefill.startTime,
+      startTime: prefill.startTime,
+      durationMinutes: String(resource.slotPolicy?.slotDurationMinutes ?? 60),
     });
     router.push(`/venue/bookings/new?${params.toString()}`);
   };

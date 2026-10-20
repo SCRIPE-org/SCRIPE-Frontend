@@ -22,12 +22,14 @@ import { VENUE_PERMISSIONS } from "@modules/venue/permission-constants";
 interface Props {
   attentionCount?: number;
   className?: string;
+  /** When true, suppresses top-level category pills to avoid duplicating the sidebar */
+  hidePrimaryBar?: boolean;
 }
 
 /**
  * Documentation for module export
  */
-export function VenueNav({ attentionCount = 0, className = "" }: Props) {
+export function VenueNav({ attentionCount = 0, className = "", hidePrimaryBar = false }: Props) {
   const pathname = usePathname();
   const { t, language } = useI18n();
   const isRtl = language === "ar";
@@ -43,14 +45,7 @@ export function VenueNav({ attentionCount = 0, className = "" }: Props) {
   const isCalendar =
     pathname.startsWith("/venue/calendar") || pathname.startsWith("/venue/bookings");
   const isResources =
-    pathname.startsWith("/venue/resources") ||
-    pathname.startsWith("/venue/facilities") ||
-    pathname.startsWith("/venue/resource-builder") ||
-    pathname.startsWith("/venue/resource-profiles") ||
-    pathname.startsWith("/venue/sites") ||
-    pathname.startsWith("/venue/venue-setup") ||
-    pathname.startsWith("/venue/availability") ||
-    pathname.startsWith("/venue/pricing");
+    pathname === "/venue/resources" || pathname.startsWith("/venue/resources/");
   const isMoney = pathname.startsWith("/venue/money");
   const isAttention = pathname.startsWith("/venue/attention");
 
@@ -88,7 +83,12 @@ export function VenueNav({ attentionCount = 0, className = "" }: Props) {
           {
             id: "money",
             label: t("venueNav.money", { defaultValue: "Money" }),
-            href: canViewReceivables ? "/venue/money/receivables" : "/venue/money/payments",
+            href:
+              canViewReceivables && canViewPayments
+                ? "/venue/money"
+                : canViewReceivables
+                ? "/venue/money/receivables"
+                : "/venue/money/payments",
             icon: CircleDollarSign,
             active: isMoney,
           },
@@ -135,27 +135,21 @@ export function VenueNav({ attentionCount = 0, className = "" }: Props) {
     secondaryLinks = [
       {
         href: "/venue/resources",
-        label: t("venueNav.allResources", { defaultValue: "Courts & Fields" }),
+        label: t("venueNav.allResources", { defaultValue: "Courts & Spaces" }),
         icon: GitFork,
         active: pathname === "/venue/resources" || pathname.startsWith("/venue/resources/"),
       },
       {
         href: "/venue/resources?setup=new",
-        label: t("venueNav.addCourt", { defaultValue: "+ Add Court / Field" }),
+        label: t("venueNav.addCourt", { defaultValue: "+ Add Court / Space" }),
         icon: Plus,
         active: false,
       },
       {
-        href: "/venue/facilities",
-        label: t("venueNav.advancedSetup", { defaultValue: "Advanced Setup" }),
+        href: "/venue/settings",
+        label: t("venueNav.advancedSetup", { defaultValue: "Settings" }),
         icon: Sliders,
-        active:
-          pathname.startsWith("/venue/facilities") ||
-          pathname.startsWith("/venue/resource-builder") ||
-          pathname.startsWith("/venue/resource-profiles") ||
-          pathname.startsWith("/venue/sites") ||
-          pathname.startsWith("/venue/availability") ||
-          pathname.startsWith("/venue/pricing"),
+        active: pathname.startsWith("/venue/settings"),
       },
     ];
   } else if (isMoney) {
@@ -195,45 +189,44 @@ export function VenueNav({ attentionCount = 0, className = "" }: Props) {
 
   return (
     <div className={cn("mb-6 space-y-3", className)} dir={isRtl ? "rtl" : "ltr"}>
-      {/* Primary Category Bar */}
-      <nav
-        aria-label="Venue primary navigation"
-        className="no-scrollbar flex items-center gap-1.5 overflow-x-auto border-b border-nx-line pb-2"
-      >
-        {primaryItems.map((item) => {
-          const Icon = item.icon;
-          return (
-            <Link
-              key={item.id}
-              href={item.href}
-              aria-current={item.active ? "page" : undefined}
-              className={cn(
-                "relative inline-flex shrink-0 select-none items-center gap-2 rounded-nx-md px-3.5 py-2 text-xs font-semibold transition-all duration-nx-micro",
-                item.active
-                  ? "border-nx-line/80 border bg-nx-surface font-bold text-nx-ink shadow-nx-sm"
-                  : "hover:bg-nx-surface/60 text-nx-ink-2 hover:text-nx-ink"
-              )}
-            >
-              <Icon
-                className={cn("size-4", item.active ? "text-nx-accent" : "text-nx-ink-3")}
-                aria-hidden="true"
-              />
-              <span>{item.label}</span>
-              {item.badge != null && (
-                <span className="size-4.5 flex items-center justify-center rounded-full bg-amber-500 text-[10px] font-bold leading-none text-white">
-                  {item.badge}
-                </span>
-              )}
-              {item.active && (
-                <span
-                  className="absolute inset-x-3 bottom-[-9px] h-0.5 rounded-full bg-nx-accent"
-                  aria-hidden="true"
-                />
-              )}
-            </Link>
-          );
-        })}
-      </nav>
+      {/* Primary Category Bar (suppressed when hidePrimaryBar=true to prevent duplication with sidebar) */}
+      {!hidePrimaryBar && (
+        <nav
+          aria-label="Venue primary navigation"
+          className="flex items-center gap-1.5 border-b border-nx-line pb-2 overflow-x-auto no-scrollbar"
+        >
+          {primaryItems.map((item) => {
+            const Icon = item.icon;
+            return (
+              <Link
+                key={item.id}
+                href={item.href}
+                aria-current={item.active ? "page" : undefined}
+                className={cn(
+                  "relative inline-flex items-center gap-2 px-3.5 py-2 rounded-nx-md text-xs font-semibold transition-all duration-nx-micro shrink-0 select-none",
+                  item.active
+                    ? "bg-nx-surface text-nx-ink shadow-nx-sm border border-nx-line/80 font-bold"
+                    : "text-nx-ink-2 hover:text-nx-ink hover:bg-nx-surface/60"
+                )}
+              >
+                <Icon className={cn("size-4", item.active ? "text-nx-accent" : "text-nx-ink-3")} aria-hidden="true" />
+                <span>{item.label}</span>
+                {item.badge != null && (
+                  <span className="flex size-4.5 items-center justify-center rounded-full bg-amber-500 text-[10px] font-bold text-white leading-none">
+                    {item.badge}
+                  </span>
+                )}
+                {item.active && (
+                  <span
+                    className="absolute bottom-[-9px] inset-x-3 h-0.5 bg-nx-accent rounded-full"
+                    aria-hidden="true"
+                  />
+                )}
+              </Link>
+            );
+          })}
+        </nav>
+      )}
 
       {/* Contextual Secondary Bar */}
       {secondaryLinks.length > 0 && (

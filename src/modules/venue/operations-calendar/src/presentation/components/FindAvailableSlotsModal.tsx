@@ -1,0 +1,234 @@
+"use client";
+
+import React, { useState } from "react";
+import { Search, CheckCircle2, AlertCircle, ArrowRight } from "lucide-react";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@core/ui/dialog";
+import { Button } from "@core/ui/button";
+import { Input } from "@core/ui/input";
+import { Label } from "@core/ui/label";
+import { GenericSelect } from "@core/crud/components/generic-select";
+import { Alert, AlertDescription, AlertTitle } from "@core/ui/alert";
+import { useI18n } from "@core/providers/i18n-provider";
+import { getVenueContainer } from "@modules/venue/di";
+import type { CalendarResource } from "../../domain/entities/OperationsCalendar";
+
+interface FindAvailableSlotsModalProps {
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  resources: CalendarResource[];
+  currentDate: string;
+  timeZoneId: string;
+  onSelectSlot: (resource: CalendarResource, startIso: string, durationMinutes?: number) => void;
+}
+
+export function FindAvailableSlotsModal({
+  open,
+  onOpenChange,
+  resources,
+  currentDate,
+  timeZoneId,
+  onSelectSlot,
+}: FindAvailableSlotsModalProps) {
+  const { t } = useI18n();
+
+  const [selectedResourceId, setSelectedResourceId] = useState<string>(
+    resources[0]?.id ?? ""
+  );
+  const [selectedDate, setSelectedDate] = useState<string>(currentDate);
+  const [startTime, setStartTime] = useState<string>("09:00");
+  const [durationMinutes, setDurationMinutes] = useState<number>(60);
+  const [checking, setChecking] = useState(false);
+  const [result, setResult] = useState<{ isAvailable: boolean; message?: string } | null>(null);
+
+  // Update resource default when resources load
+  React.useEffect(() => {
+    if (!selectedResourceId && resources.length > 0) {
+      setSelectedResourceId(resources[0].id);
+    }
+  }, [resources, selectedResourceId]);
+
+  React.useEffect(() => {
+    setSelectedDate(currentDate);
+  }, [currentDate]);
+
+  const resourceOptions = resources.map((r) => ({
+    value: r.id,
+    label: `${r.name} (${r.facilityName})`,
+  }));
+
+  const handleCheck = async () => {
+    if (!selectedResourceId) return;
+    setChecking(true);
+    setResult(null);
+
+    try {
+      const container = getVenueContainer();
+      const startLocal = `${selectedDate}T${startTime}`;
+      
+      // Calculate end time
+      const [h, m] = startTime.split(":").map(Number);
+      const totalMinutes = h * 60 + m + durationMinutes;
+      const endH = String(Math.floor(totalMinutes / 60) % 24).padStart(2, "0");
+      const endM = String(totalMinutes % 60).padStart(2, "0");
+      const endLocal = `${selectedDate}T${endH}:${endM}`;
+
+      const res = await container.availabilityRepository.search({
+        resourceId: selectedResourceId,
+        timeZoneId: timeZoneId || "UTC",
+        startLocal,
+        endLocal,
+        quantity: 1,
+      });
+
+      setResult({
+        isAvailable: res.isAvailable,
+        message: res.isAvailable
+          ? t("operationsCalendar.findSlots.available")
+          : t("operationsCalendar.findSlots.unavailable"),
+      });
+    } catch {
+      // Fallback response for offline or unexpected error
+      setResult({
+        isAvailable: false,
+        message: t("operationsCalendar.findSlots.verificationFailed"),
+      });
+    } finally {
+      setChecking(false);
+    }
+  };
+
+  const handleProceedToBooking = () => {
+    const resource = resources.find((r) => r.id === selectedResourceId);
+    if (!resource) return;
+    const startIso = new Date(`${selectedDate}T${startTime}:00`).toISOString();
+    onOpenChange(false);
+    onSelectSlot(resource, startIso, durationMinutes);
+  };
+
+  return (
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent className="sm:max-w-md">
+        <DialogHeader>
+          <DialogTitle className="flex items-center gap-2">
+            <Search className="h-5 w-5 text-nx-primary" />
+            {t("operationsCalendar.findSlots.title")}
+          </DialogTitle>
+          <DialogDescription>
+            {t("operationsCalendar.findSlots.description")}
+          </DialogDescription>
+        </DialogHeader>
+
+        <div className="space-y-4 py-2">
+          {/* Court Selection */}
+          <div className="space-y-1.5">
+            <Label>{t("operationsCalendar.findSlots.court")}</Label>
+            <GenericSelect
+              id="availability-modal-resource"
+              options={resourceOptions}
+              value={selectedResourceId}
+              onValueChange={(val: string | string[]) => {
+                setSelectedResourceId(Array.isArray(val) ? val[0] : val);
+                setResult(null);
+              }}
+              placeholder={t("operationsCalendar.findSlots.selectCourt")}
+              allowClear={false}
+            />
+          </div>
+
+          {/* Date Picker */}
+          <div className="space-y-1.5">
+            <Label>{t("operationsCalendar.findSlots.date")}</Label>
+            <div className="relative">
+              <Input
+                type="date"
+                value={selectedDate}
+                onChange={(e) => {
+                  setSelectedDate(e.target.value);
+                  setResult(null);
+                }}
+              />
+            </div>
+          </div>
+
+          {/* Start Time & Duration */}
+          <div className="grid grid-cols-2 gap-3">
+            <div className="space-y-1.5">
+              <Label>{t("operationsCalendar.findSlots.startTime")}</Label>
+              <Input
+                type="time"
+                value={startTime}
+                onChange={(e) => {
+                  setStartTime(e.target.value);
+                  setResult(null);
+                }}
+              />
+            </div>
+            <div className="space-y-1.5">
+              <Label>{t("operationsCalendar.findSlots.duration")}</Label>
+              <GenericSelect
+                id="availability-modal-duration"
+                allowClear={false}
+                value={String(durationMinutes)}
+                options={[30, 60, 90, 120].map((minutes) => ({
+                  value: String(minutes),
+                  label:
+                    minutes >= 60 && minutes % 60 === 0
+                      ? t("operationsCalendar.clickToBook.courtStep.hourDuration", {
+                          minutes,
+                          hours: minutes / 60,
+                        })
+                      : t("operationsCalendar.clickToBook.courtStep.minutes", { minutes }),
+                }))}
+                onValueChange={(value: string | string[]) => {
+                  setDurationMinutes(Number(Array.isArray(value) ? value[0] : value));
+                  setResult(null);
+                }}
+              />
+            </div>
+          </div>
+
+          <Button
+            type="button"
+            className="w-full mt-2"
+            variant="outline"
+            disabled={checking || !selectedResourceId}
+            onClick={handleCheck}
+          >
+            <Search className="h-4 w-4 me-2" />
+            {checking
+              ? t("operationsCalendar.findSlots.checking")
+              : t("operationsCalendar.findSlots.check")}
+          </Button>
+
+          {/* Result Feedback */}
+          {result && (
+            <div className="pt-2">
+              <Alert variant={result.isAvailable ? "success" : "warning"}>
+                {result.isAvailable ? <CheckCircle2 className="h-4 w-4" /> : <AlertCircle className="h-4 w-4" />}
+                <AlertTitle>
+                  {result.isAvailable
+                    ? t("operationsCalendar.findSlots.slotAvailable")
+                    : t("operationsCalendar.findSlots.slotUnavailable")}
+                </AlertTitle>
+                <AlertDescription className="text-xs">
+                  {result.message}
+                </AlertDescription>
+              </Alert>
+
+              {result.isAvailable && (
+                <Button
+                  type="button"
+                  className="w-full mt-3 bg-emerald-600 hover:bg-emerald-700 text-white font-medium shadow-sm"
+                  onClick={handleProceedToBooking}
+                >
+                  {t("operationsCalendar.findSlots.proceed")}
+                  <ArrowRight className="h-4 w-4 ms-2 rtl:rotate-180" />
+                </Button>
+              )}
+            </div>
+          )}
+        </div>
+      </DialogContent>
+    </Dialog>
+  );
+}

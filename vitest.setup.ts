@@ -39,6 +39,16 @@ Object.defineProperty(window, "matchMedia", {
   }),
 });
 
+// jsdom has no ResizeObserver; Radix Select measures its trigger during layout.
+globalThis.ResizeObserver ??= class {
+  observe() {}
+  unobserve() {}
+  disconnect() {}
+} as unknown as typeof ResizeObserver;
+
+// cmdk scrolls its active option into view; jsdom does not implement this DOM API.
+Element.prototype.scrollIntoView ??= () => {};
+
 // Suppress console errors during tests (optional)
 const originalError = console.error;
 vi.spyOn(console, 'error').mockImplementation((...args: unknown[]) => {

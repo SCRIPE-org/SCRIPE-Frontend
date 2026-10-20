@@ -5,6 +5,9 @@ export interface CustomerSummary {
   id: string;
   type: string;
   displayName: string;
+  name?: string;
+  phone?: string;
+  email?: string;
 }
 
 /**

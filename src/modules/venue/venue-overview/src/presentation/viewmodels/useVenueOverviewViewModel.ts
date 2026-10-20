@@ -86,7 +86,7 @@ export function useVenueOverviewViewModel(initialFacilityId?: string, initialLoc
           selectedFacilityIdRef.current = overview.facilityId;
         }
       } catch {
-        if (process.env.NODE_ENV !== "production") {
+        if (process.env.NEXT_PUBLIC_ENABLE_MOCK_DATA === "true") {
           setFacilities([
             { id: "fac-cairo-downtown", name: "Al-Ahly Sports Hub & Padel Club" },
             { id: "fac-west", name: "West Padel Club" },

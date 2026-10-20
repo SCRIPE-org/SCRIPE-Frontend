@@ -6,6 +6,8 @@ import { Badge } from "@core/ui/badge";
 import { Button } from "@core/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@core/ui/select";
 
+import { useAppStore } from "@core/store/useAppStore";
+
 interface FacilityOption {
   id: string;
   name: string;
@@ -55,6 +57,8 @@ export function VenueOverviewHeader({
   onBlockTime,
   t,
 }: Props) {
+  const user = useAppStore((s) => s.user);
+  const userName = user?.firstName || user?.username || "Mohamed";
   const formattedDate = formatDisplayDate(localDate, timeZoneId);
 
   return (
@@ -62,8 +66,8 @@ export function VenueOverviewHeader({
       className="mb-6 flex flex-col gap-4 border-b border-nx-line pb-4 lg:flex-row lg:items-center lg:justify-between"
       data-testid="venue-overview-header"
     >
-      {/* Left Context: Title, Venue/Branch context, Date */}
-      <div className="space-y-1.5">
+      {/* Left Context: Friendly Greeting & Facility Context */}
+      <div className="space-y-1">
         <div className="flex flex-wrap items-center gap-2.5">
           <h1 className="text-xl font-bold tracking-tight text-nx-ink sm:text-2xl">
             {t("venueOverview.title", { defaultValue: "Venue Operations" })}
@@ -78,6 +82,13 @@ export function VenueOverviewHeader({
             </Badge>
           )}
         </div>
+
+        <p className="text-xs text-nx-ink-2">
+          {t("venueOverview.greetingSubtext", {
+            facility: facilityName || "Nasr City Club",
+            defaultValue: `Here's what's happening at ${facilityName || "Nasr City Club"} today.`,
+          })}
+        </p>
 
         <div className="flex flex-wrap items-center gap-2 text-xs text-nx-ink-2">
           <span className="font-medium text-nx-ink">{formattedDate}</span>

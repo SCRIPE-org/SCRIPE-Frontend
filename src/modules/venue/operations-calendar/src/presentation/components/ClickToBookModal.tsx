@@ -1,827 +1,396 @@
-﻿// FILE-EXCEPTION: rule bypass for existing large file
-/* eslint-disable @typescript-eslint/no-explicit-any, unused-imports/no-unused-vars */
+// FILE-EXCEPTION: rule bypass for existing large file
+ 
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
-import Link from "next/link";
+import React from "react";
+import { ArrowRight, Timer } from "lucide-react";
 import {
-  CheckCircle2,
-  CreditCard,
-  ExternalLink,
-  Search,
-  Timer,
-  UserPlus,
-  Wrench,
-} from "lucide-react";
-import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@core/ui/dialog";
+  Dialog,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+} from "@core/ui/dialog";
 import { Button } from "@core/ui/button";
-import { Input } from "@core/ui/input";
-import { Label } from "@core/ui/label";
 import { Alert, AlertDescription } from "@core/ui/alert";
-import { LoadingSpinner } from "@core/ui/loading-spinner";
-import { useI18n } from "@core/providers/i18n-provider";
-import { useVenueServiceLocator } from "@modules/venue";
-import type { PriceQuote } from "@modules/venue";
-import type { CustomerSummary } from "@modules/venue";
-import type { CalendarResource } from "../../domain/entities/OperationsCalendar";
+import {
+  useClickToBookViewModel,
+  type UseClickToBookProps,
+} from "../viewmodels/useClickToBookViewModel";
+import { BookingCourtStep } from "./booking-steps/BookingCourtStep";
+import { BookingCustomerStep } from "./booking-steps/BookingCustomerStep";
+import { BookingPricingStep } from "./booking-steps/BookingPricingStep";
+import { BookingPaymentStep } from "./booking-steps/BookingPaymentStep";
 
-interface Props {
-  open: boolean;
-  onOpenChange: (open: boolean) => void;
-  resource: CalendarResource | null;
-  instantUtc: string | null;
-  timeZoneId: string;
-  durationMinutes?: number;
-  onSuccess: () => void;
-  onBlockTime?: (resource: CalendarResource, instantUtc: string) => void;
-}
-
-/** Reuses the quote request key and expiry so a lost response can be replayed exactly. */
-function getQuoteIntent(
-  keyRef: { current: { fingerprint: string; key: string; expiresAtUtc: string } | null },
-  fingerprint: string
-): { key: string; expiresAtUtc: string } {
-  if (
-    keyRef.current?.fingerprint !== fingerprint ||
-    Date.parse(keyRef.current.expiresAtUtc) <= Date.now()
-  ) {
-    keyRef.current = {
-      fingerprint,
-      key: crypto.randomUUID(),
-      expiresAtUtc: new Date(Date.now() + 30 * 60 * 1000).toISOString(),
-    };
+function getCourtImage(resourceName?: string, sportType?: string): string {
+  const lower = (resourceName || "").toLowerCase();
+  const sport = (sportType || "").toLowerCase();
+  if (lower.includes("football") || lower.includes("turf") || lower.includes("pitch") || sport.includes("football") || sport.includes("soccer")) {
+    return "/images/venue/football-turf-night.svg";
   }
-  return keyRef.current;
+  if (lower.includes("2") || lower.includes("outdoor") || lower.includes("court 2")) {
+    return "/images/venue/padel-court-outdoor.svg";
+  }
+  return "/images/venue/padel-court-indoor.svg";
 }
 
-function isExpiredHold(expiresAtUtc: string): boolean {
-  const expiresAt = Date.parse(expiresAtUtc);
-  return !Number.isFinite(expiresAt) || expiresAt <= Date.now();
-}
+export type ClickToBookModalProps = UseClickToBookProps;
 
-/**
- * Documentation for ClickToBookModal
- */
-export function ClickToBookModal({
-  open,
-  onOpenChange,
-  resource,
-  instantUtc,
-  timeZoneId,
-  durationMinutes = 60,
-  onSuccess,
-  onBlockTime,
-}: Props) {
-  const { t, language } = useI18n();
-  const { bookingRepository, customerRepository, commercialPricingRepository, moneyRepository } =
-    useVenueServiceLocator();
-
-  // Dialog stages: "form" | "held" | "confirmed"
-  const [stage, setStage] = useState<"form" | "held" | "confirmed">("form");
-  const [submitting, setSubmitting] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const quickAddIntentRef = useRef<{ fingerprint: string; idempotencyKey: string } | null>(null);
-  const quoteIntentKeyRef = useRef<{
-    fingerprint: string;
-    key: string;
-    expiresAtUtc: string;
-  } | null>(null);
-
-  // Customer state
-  const [customerSearch, setCustomerSearch] = useState("");
-  const [customerSearching, setCustomerSearching] = useState(false);
-  const [customerResults, setCustomerResults] = useState<CustomerSummary[]>([]);
-  const [selectedCustomer, setSelectedCustomer] = useState<CustomerSummary | null>(null);
-  const [quickAddOpen, setQuickAddOpen] = useState(false);
-  const [quickName, setQuickName] = useState("");
-  const [quickPhone, setQuickPhone] = useState("");
-
-  // Pricing quote
-  const [quote, setQuote] = useState<PriceQuote | null>(null);
-  const [quoteLoading, setQuoteLoading] = useState(false);
-
-  // Created reservation & hold details
-  const [reservationId, setReservationId] = useState<string | null>(null);
-  const [reservationNumber, setReservationNumber] = useState<string>("");
-  const [holdExpiresAtUtc, setHoldExpiresAtUtc] = useState<string | null>(null);
-
-  // Payment recording state (after confirmation)
-  const [recordPaymentOpen, setRecordPaymentOpen] = useState(false);
-  const [paymentAmount, setPaymentAmount] = useState<number>(0);
-  const [paymentMethod, setPaymentMethod] = useState("Cash");
-  const [paymentRef, setPaymentRef] = useState("");
-  const [amountPaid, setAmountPaid] = useState<number>(0);
-  const [paymentSubmitting, setPaymentSubmitting] = useState(false);
-  const [paymentSuccess, setPaymentSuccess] = useState(false);
-
-  const startUtc = instantUtc ?? new Date().toISOString();
-  const endUtc = new Date(Date.parse(startUtc) + durationMinutes * 60 * 1000).toISOString();
-  const getBookingIntent = useCallback(async (confirmationFingerprint?: string) => {
-    if (!resource || !selectedCustomer) throw new Error("Choose a resource and customer first.");
-    const fingerprint = JSON.stringify([
-      resource.id,
-      selectedCustomer.id,
-      startUtc,
-      endUtc,
-      1,
-    ]);
-    return bookingRepository.getOrCreateBusinessIntent(fingerprint, confirmationFingerprint);
-  }, [bookingRepository, endUtc, resource, selectedCustomer, startUtc]);
-
-  // Reset view state when the dialog opens. Intent keys survive close/reopen and rotate only
-  // when their payload fingerprint changes, a hold expires, or the workflow succeeds.
-  useEffect(() => {
-    if (open) {
-      void Promise.resolve().then(() => {
-        setStage("form");
-        setError(null);
-        setReservationId(null);
-        setReservationNumber("");
-        setHoldExpiresAtUtc(null);
-        setRecordPaymentOpen(false);
-        setAmountPaid(0);
-        setPaymentSuccess(false);
-      });
-    }
-  }, [instantUtc, open, resource]);
-
-  // Customer search debounced
-  useEffect(() => {
-    if (!open || !customerSearch.trim() || customerSearch.trim().length < 2) {
-      void Promise.resolve().then(() => {
-        setCustomerResults([]);
-      });
-      return;
-    }
-    let active = true;
-    const timer = setTimeout(async () => {
-      setCustomerSearching(true);
-      try {
-        const results = await customerRepository.search(customerSearch.trim());
-        if (active) setCustomerResults(results);
-      } catch {
-        // Fallback
-      } finally {
-        if (active) setCustomerSearching(false);
-      }
-    }, 250);
-    return () => {
-      active = false;
-      clearTimeout(timer);
-    };
-  }, [customerRepository, customerSearch, open]);
-
-  // Calculate authoritative price quote when customer and resource are ready
-  useEffect(() => {
-    if (!open || !resource || !selectedCustomer) {
-      void Promise.resolve().then(() => {
-        setQuote(null);
-      });
-      return;
-    }
-    let active = true;
-    const fetchQuote = async () => {
-      setQuoteLoading(true);
-      setError(null);
-      setQuote(null);
-      try {
-        const config = await commercialPricingRepository.getResourceConfiguration(resource.id);
-        const quoteIntent = getQuoteIntent(
-          quoteIntentKeyRef,
-          JSON.stringify([
-            resource.id,
-            selectedCustomer.id,
-            config.offeringId,
-            config.currencyCode || "EGP",
-            startUtc,
-            endUtc,
-            1,
-          ])
-        );
-        const calcQuote = await commercialPricingRepository.calculateQuote({
-          offeringId: config.offeringId,
-          resourceId: resource.id,
-          partyId: selectedCustomer.id,
-          quantity: 1,
-          requestedStartUtc: startUtc,
-          requestedEndUtc: endUtc,
-          currencyCode: config.currencyCode || "EGP",
-          expiresAtUtc: quoteIntent.expiresAtUtc,
-          idempotencyKey: quoteIntent.key,
-        });
-        if (active) {
-          setQuote(calcQuote);
-          setPaymentAmount(calcQuote.grandTotal);
-        }
-      } catch {
-        // A locally estimated price cannot authorize confirmation without a persisted quote.
-        if (active) {
-          setQuote(null);
-          setError(
-            t("operationsCalendar.quote.unavailable", {
-              defaultValue: "A verified price quote is required before confirmation. Please retry.",
-            })
-          );
-        }
-      } finally {
-        if (active) setQuoteLoading(false);
-      }
-    };
-    void fetchQuote();
-    return () => {
-      active = false;
-    };
-  }, [commercialPricingRepository, endUtc, open, resource, selectedCustomer, startUtc, t]);
-
-  // Format slot time range for display
-  const formatTimeRange = () => {
-    try {
-      const s = new Intl.DateTimeFormat(language, {
-        hour: "2-digit",
-        minute: "2-digit",
-        hourCycle: "h23",
-        timeZone: timeZoneId || "UTC",
-      }).format(new Date(startUtc));
-      const e = new Intl.DateTimeFormat(language, {
-        hour: "2-digit",
-        minute: "2-digit",
-        hourCycle: "h23",
-        timeZone: timeZoneId || "UTC",
-      }).format(new Date(endUtc));
-      return `${s} â€“ ${e}`;
-    } catch {
-      return "";
-    }
-  };
-
-  const handleQuickAddCustomer = async () => {
-    const displayName = quickName.trim();
-    if (!displayName) return;
-    const phone = quickPhone.trim() || undefined;
-    const fingerprint = JSON.stringify([displayName, "Person", phone ?? null]);
-    if (quickAddIntentRef.current?.fingerprint !== fingerprint) {
-      quickAddIntentRef.current = { fingerprint, idempotencyKey: crypto.randomUUID() };
-    }
-    try {
-      const customer = await customerRepository.create(displayName, "Person", phone, {
-        idempotencyKey: quickAddIntentRef.current.idempotencyKey,
-      });
-      quickAddIntentRef.current = null;
-      setSelectedCustomer(customer);
-      setQuickAddOpen(false);
-      setQuickName("");
-      setQuickPhone("");
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to create customer.");
-    }
-  };
-
-  // Primary Action: Confirm Booking (orchestrates draft -> hold -> confirm)
-  const handleConfirm = useCallback(async () => {
-    if (!resource || !selectedCustomer || !quote || submitting) return;
-    setSubmitting(true);
-    setError(null);
-    try {
-      const intent = await getBookingIntent(quote.id);
-      // 1. Create Draft
-      const draft = await bookingRepository.createDraft({
-        resourceId: resource.id,
-        customerPartyId: selectedCustomer.id,
-        requestedStartUtc: startUtc,
-        requestedEndUtc: endUtc,
-        quantity: 1,
-        idempotencyKey: intent.draftIdempotencyKey,
-      });
-
-      // 2. Create Hold
-      const hold = await bookingRepository.createHold(draft.id, intent.holdIdempotencyKey);
-      bookingRepository.recordBusinessHoldExpiry(
-        intent.draftIdempotencyKey,
-        intent.holdIdempotencyKey,
-        hold.expiresAtUtc
-      );
-      if (isExpiredHold(hold.expiresAtUtc)) {
-        throw new Error("The booking hold has expired. Please retry confirmation.");
-      }
-
-      // 3. Confirm with authoritative quote ID
-      await bookingRepository.confirm(draft.id, intent.confirmIdempotencyKey, quote.id);
-
-      const reservation = await bookingRepository.getReservation(draft.id);
-
-      bookingRepository.clearBusinessIntent();
-      quoteIntentKeyRef.current = null;
-      setReservationId(draft.id);
-      setReservationNumber(reservation.reservationNumber);
-      setStage("confirmed");
-      onSuccess();
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to confirm booking.");
-    } finally {
-      setSubmitting(false);
-    }
-  }, [
-    bookingRepository,
-    endUtc,
-    getBookingIntent,
-    onSuccess,
-    quote,
-    resource,
-    selectedCustomer,
-    startUtc,
-    submitting,
-  ]);
-
-  // Secondary Action: Hold Temporarily
-  const handleHold = useCallback(async () => {
-    if (!resource || !selectedCustomer || submitting) return;
-    setSubmitting(true);
-    setError(null);
-    try {
-      const intent = await getBookingIntent();
-      const draft = await bookingRepository.createDraft({
-        resourceId: resource.id,
-        customerPartyId: selectedCustomer.id,
-        requestedStartUtc: startUtc,
-        requestedEndUtc: endUtc,
-        quantity: 1,
-        idempotencyKey: intent.draftIdempotencyKey,
-      });
-
-      const hold = await bookingRepository.createHold(draft.id, intent.holdIdempotencyKey);
-      bookingRepository.recordBusinessHoldExpiry(
-        intent.draftIdempotencyKey,
-        intent.holdIdempotencyKey,
-        hold.expiresAtUtc
-      );
-      if (isExpiredHold(hold.expiresAtUtc)) {
-        setError("The booking hold expired before it could be reserved. Please try again.");
-        return;
-      }
-      const reservation = await bookingRepository.getReservation(draft.id);
-
-      setReservationId(draft.id);
-      setReservationNumber(reservation.reservationNumber);
-      setHoldExpiresAtUtc(hold.expiresAtUtc);
-      setStage("held");
-      onSuccess();
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to hold slot.");
-    } finally {
-      setSubmitting(false);
-    }
-  }, [bookingRepository, endUtc, getBookingIntent, onSuccess, resource, selectedCustomer, startUtc, submitting]);
-
-  // Complete confirmation after a hold
-  const handleConfirmFromHold = useCallback(async () => {
-    if (!reservationId || !quote || !resource || !selectedCustomer || submitting) return;
-    if (holdExpiresAtUtc !== null) {
-      const holdExpiry = Date.parse(holdExpiresAtUtc);
-      if (!Number.isFinite(holdExpiry) || holdExpiry <= Date.now()) {
-        setReservationId(null);
-        setReservationNumber("");
-        setHoldExpiresAtUtc(null);
-        setStage("form");
-        setError("This booking hold has expired. Please create a new hold.");
-        return;
-      }
-    }
-    setSubmitting(true);
-    setError(null);
-    try {
-      const intent = await getBookingIntent(quote.id);
-      await bookingRepository.confirm(reservationId, intent.confirmIdempotencyKey, quote.id);
-      bookingRepository.clearBusinessIntent();
-      quoteIntentKeyRef.current = null;
-      setStage("confirmed");
-      onSuccess();
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to confirm held booking.");
-    } finally {
-      setSubmitting(false);
-    }
-  }, [bookingRepository, getBookingIntent, holdExpiresAtUtc, onSuccess, quote, reservationId, resource, selectedCustomer, submitting]);
-
-  // Record Payment
-  const handleRecordPayment = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (paymentAmount <= 0) return;
-    setPaymentSubmitting(true);
-    try {
-      // Simulate/record payment against booking
-      setAmountPaid((prev) => prev + paymentAmount);
-      setPaymentSuccess(true);
-      setRecordPaymentOpen(false);
-    } catch {
-      // Handle error
-    } finally {
-      setPaymentSubmitting(false);
-    }
-  };
-
-  const remainingAmount = Math.max(0, (quote?.grandTotal ?? 800) - amountPaid);
+export function ClickToBookModal(props: ClickToBookModalProps) {
+  const { open, onOpenChange, resources = [], onFindSlots, onSuccess } = props;
+  const vm = useClickToBookViewModel(props);
+  const { t } = vm;
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-md p-6">
-        <DialogHeader className="border-b border-nx-line pb-3">
-          <div className="flex items-center justify-between gap-2">
-            <div>
-              <DialogTitle className="text-lg font-bold text-nx-ink">
-                {stage === "confirmed"
-                  ? t("booking.confirmed.title", { defaultValue: "Booking Confirmed" })
-                  : stage === "held"
-                    ? t("booking.held.title", { defaultValue: "Slot Reserved Temporarily" })
-                    : t("booking.new.title", { defaultValue: "New Booking" })}
-              </DialogTitle>
-              <div className="mt-1 flex items-center gap-2 text-xs text-nx-ink-2">
-                <span className="font-semibold text-nx-ink">{resource?.name}</span>
-                <span className="text-nx-line">Â·</span>
-                <span className="font-mono text-nx-accent">{formatTimeRange()}</span>
-              </div>
-            </div>
-          </div>
+      <DialogContent className="max-w-md p-6 bg-nx-surface border border-nx-border rounded-2xl shadow-xl">
+        <DialogHeader className="sr-only">
+          <DialogTitle>{t("operationsCalendar.clickToBook.title")}</DialogTitle>
+          <DialogDescription>
+            {vm.selectedResource?.name
+              ? `${vm.selectedResource.name} booking`
+              : t("operationsCalendar.clickToBook.dialogDescription")}
+          </DialogDescription>
         </DialogHeader>
 
-        {error && (
+        {/* Stepper Header (Only during normal booking flow) */}
+        {vm.stage === "booking" && (
+          <div className="flex items-center justify-between pb-3 border-b border-nx-border">
+            {!vm.isContextual && (
+              <>
+                <div className="flex items-center gap-2">
+                  <span
+                    className={`flex size-5 items-center justify-center rounded-full text-[10px] font-bold ${
+                      vm.step >= 0
+                        ? "bg-[#C6FF00] text-[#0D0D0E] shadow-sm ring-1 ring-[#C6FF00]/40"
+                        : "bg-nx-raised text-nx-ink-3"
+                    }`}
+                  >
+                    1
+                  </span>
+                  <span className={`text-xs font-semibold ${vm.step >= 0 ? "text-nx-ink font-bold" : "text-nx-ink-3"}`}>
+                    {t("operationsCalendar.clickToBook.stepper.courtAndTime")}
+                  </span>
+                </div>
+                <div className={`h-px w-6 ${vm.step >= 1 ? "bg-[#C6FF00]" : "bg-nx-border"}`} />
+              </>
+            )}
+
+            <div className="flex items-center gap-2">
+              <span
+                className={`flex size-5 items-center justify-center rounded-full text-[10px] font-bold ${
+                  vm.step >= 1
+                    ? "bg-[#C6FF00] text-[#0D0D0E] shadow-sm ring-1 ring-[#C6FF00]/40"
+                    : "bg-nx-raised text-nx-ink-3"
+                }`}
+              >
+                {vm.isContextual ? 1 : 2}
+              </span>
+              <span className={`text-xs font-semibold ${vm.step >= 1 ? "text-nx-ink font-bold" : "text-nx-ink-3"}`}>
+                {t("operationsCalendar.clickToBook.stepper.customer")}
+              </span>
+            </div>
+
+            <div className={`h-px w-6 ${vm.step >= 2 ? "bg-[#C6FF00]" : "bg-nx-border"}`} />
+
+            <div className="flex items-center gap-2">
+              <span
+                className={`flex size-5 items-center justify-center rounded-full text-[10px] font-bold ${
+                  vm.step >= 2
+                    ? "bg-[#C6FF00] text-[#0D0D0E] shadow-sm ring-1 ring-[#C6FF00]/40"
+                    : "bg-nx-raised text-nx-ink-3"
+                }`}
+              >
+                {vm.isContextual ? 2 : 3}
+              </span>
+              <span className={`text-xs font-semibold ${vm.step >= 2 ? "text-nx-ink font-bold" : "text-nx-ink-3"}`}>
+                {t("operationsCalendar.clickToBook.stepper.confirm")}
+              </span>
+            </div>
+          </div>
+        )}
+
+        {/* Global Error Banner */}
+        {vm.error && (
           <Alert variant="destructive" className="my-2 py-2">
-            <AlertDescription className="text-xs">{error}</AlertDescription>
+            <AlertDescription className="text-xs">{vm.error}</AlertDescription>
           </Alert>
         )}
 
-        {/* STAGE 1: Booking Form (Customer + Price) */}
-        {stage === "form" && (
+        {/* Conflict & Confirmed Stages */}
+        {vm.stage !== "booking" ? (
+          <BookingPaymentStep
+            t={t}
+            stage={vm.stage}
+            onClose={() => onOpenChange(false)}
+            onSuccess={onSuccess}
+            onFindSlots={onFindSlots}
+            selectedResource={vm.selectedResource}
+            selectedCustomer={vm.selectedCustomer}
+            formatDateDisplay={vm.formatDateDisplay}
+            formatTimeRange={vm.formatTimeRange}
+            paymentPartialFailure={vm.paymentPartialFailure}
+            paymentErrorMessage={vm.paymentErrorMessage}
+            quote={vm.quote}
+            amountPaid={vm.amountPaid}
+            remainingBalance={vm.remainingBalance}
+            canRecordPayment={vm.canRecordPayment}
+            recordingPaymentManual={vm.recordingPaymentManual}
+            onManualRecordPayment={vm.handleManualRecordPayment}
+            reservationId={vm.reservationId}
+            paymentChoice={vm.paymentChoice}
+            onPaymentChoiceChange={vm.setPaymentChoice}
+            payNowAmount={vm.payNowAmount}
+            onPayNowAmountChange={vm.setPayNowAmount}
+            paymentMethod={vm.paymentMethod}
+            onPaymentMethodChange={vm.setPaymentMethod}
+            paymentReference={vm.paymentReference}
+            onPaymentReferenceChange={vm.setPaymentReference}
+          />
+        ) : (
+          /* Active Booking Flow */
           <div className="space-y-4 py-2">
-            {/* Customer Section */}
-            <div className="space-y-2">
-              <div className="flex items-center justify-between">
-                <Label className="text-xs font-semibold text-nx-ink">
-                  {t("booking.customer.label", { defaultValue: "Customer" })}
-                </Label>
-                <button
-                  type="button"
-                  onClick={() => setQuickAddOpen(!quickAddOpen)}
-                  className="inline-flex items-center gap-1 text-xs font-medium text-nx-accent hover:underline"
-                >
-                  <UserPlus className="size-3" aria-hidden="true" />
-                  <span>{quickAddOpen ? "Search Existing" : "+ Quick Add"}</span>
-                </button>
-              </div>
-
-              {quickAddOpen ? (
-                <div className="bg-nx-surfaceSubtle space-y-2.5 rounded-nx-md border border-nx-line p-3">
-                  <Input
-                    placeholder="Customer Name (e.g. Ahmed Hassan)"
-                    value={quickName}
-                    onChange={(e) => setQuickName(e.target.value)}
-                    className="h-8 bg-nx-surface text-xs"
+            {/* Context Summary Card (Shown in Steps 1 & 2) */}
+            {vm.step >= 1 && vm.selectedResource && (
+              <div className="flex items-center gap-3 p-3 rounded-xl border border-nx-border bg-nx-raised/40">
+                <div className="relative size-12 rounded-lg overflow-hidden border border-nx-border shrink-0 bg-nx-surface">
+                  <img
+                    src={getCourtImage(vm.selectedResource.name)}
+                    alt={vm.selectedResource.name}
+                    className="size-full object-cover"
                   />
-                  <Input
-                    placeholder="Phone Number (e.g. +20 100 123 4567)"
-                    value={quickPhone}
-                    onChange={(e) => setQuickPhone(e.target.value)}
-                    className="h-8 bg-nx-surface text-xs"
-                  />
-                  <Button
-                    type="button"
-                    size="sm"
-                    onClick={handleQuickAddCustomer}
-                    disabled={!quickName.trim()}
-                    className="h-7 w-full text-xs font-semibold"
-                  >
-                    Select Customer
-                  </Button>
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent" />
                 </div>
-              ) : selectedCustomer ? (
-                <div className="bg-nx-surfaceSubtle flex items-center justify-between rounded-nx-md border border-nx-line p-2.5">
-                  <div className="flex items-center gap-2.5">
-                    <div className="bg-nx-accent/10 flex size-7 items-center justify-center rounded-full text-xs font-bold text-nx-accent">
-                      {selectedCustomer.displayName.charAt(0)}
-                    </div>
-                    <div>
-                      <p className="text-xs font-bold text-nx-ink">
-                        {selectedCustomer.displayName}
-                      </p>
-                      {(selectedCustomer as any).primaryPhone && (
-                        <p className="text-[10px] text-nx-ink-3">
-                          {(selectedCustomer as any).primaryPhone}
-                        </p>
-                      )}
-                    </div>
+                <div className="min-w-0 flex-1">
+                  <div className="flex items-center justify-between">
+                    <h4 className="text-xs font-bold text-nx-ink truncate">
+                      {vm.selectedResource.name}
+                    </h4>
+                    {!vm.isContextual && (
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        type="button"
+                        onClick={() => vm.setStep(0)}
+                        className="h-auto px-0 text-[11px] font-semibold text-emerald-600 dark:text-[#C6FF00] hover:underline"
+                      >
+                        {t("operationsCalendar.clickToBook.context.change")}
+                      </Button>
+                    )}
                   </div>
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => setSelectedCustomer(null)}
-                    className="h-7 text-[11px] text-nx-ink-3 hover:text-nx-ink"
-                  >
-                    Change
-                  </Button>
-                </div>
-              ) : (
-                <div className="relative space-y-1">
-                  <div className="relative">
-                    <Search
-                      className="absolute left-2.5 top-2.5 size-3.5 text-nx-ink-3"
-                      aria-hidden="true"
-                    />
-                    <Input
-                      placeholder="Search customer by name or phone..."
-                      value={customerSearch}
-                      onChange={(e) => setCustomerSearch(e.target.value)}
-                      className="h-8 pl-8 text-xs"
-                    />
-                  </div>
-                  {customerSearching && (
-                    <div className="p-2 text-center text-xs text-nx-ink-3">Searching...</div>
-                  )}
-                  {customerResults.length > 0 && (
-                    <div className="shadow-nx-lg divide-nx-line/60 absolute left-0 right-0 top-9 z-20 max-h-36 divide-y overflow-y-auto rounded-nx-md border border-nx-line bg-nx-surface">
-                      {customerResults.map((cust) => (
-                        <button
-                          type="button"
-                          key={cust.id}
-                          onClick={() => {
-                            setSelectedCustomer(cust);
-                            setCustomerSearch("");
-                            setCustomerResults([]);
-                          }}
-                          className="flex w-full items-center justify-between p-2 text-left text-xs hover:bg-nx-hover"
-                        >
-                          <span className="font-semibold text-nx-ink">{cust.displayName}</span>
-                          <span className="font-mono text-[11px] text-nx-ink-3">
-                            {(cust as any).primaryPhone || (cust as any).primaryEmail}
-                          </span>
-                        </button>
-                      ))}
-                    </div>
-                  )}
-                </div>
-              )}
-            </div>
-
-            {/* Authoritative Price Display */}
-            <div className="border-nx-line/80 bg-nx-surfaceSubtle flex items-center justify-between rounded-nx-md border p-3.5">
-              <div>
-                <p className="flex items-center gap-1.5 text-xs font-semibold text-nx-ink">
-                  <CreditCard
-                    className="size-3.5 text-emerald-600 dark:text-emerald-400"
-                    aria-hidden="true"
-                  />
-                  <span>{t("booking.quote.totalPrice", { defaultValue: "Booking Total" })}</span>
-                </p>
-                <p className="mt-0.5 text-[10px] text-nx-ink-3">Authoritative Catalog Price</p>
-              </div>
-              <div className="text-right">
-                {quoteLoading ? (
-                  <LoadingSpinner showText={false} className="size-4" />
-                ) : quote ? (
-                  <p className="text-base font-bold text-nx-ink">
-                    {quote.grandTotal}{" "}
-                    <span className="text-xs font-semibold text-nx-ink-2">
-                      {quote.currencyCode}
-                    </span>
+                  <p className="text-[11px] text-nx-ink-2 truncate">
+                    {vm.selectedResource.facilityName}
                   </p>
-                ) : (
-                  <span className="text-xs italic text-nx-ink-3">Select customer for quote</span>
-                )}
-              </div>
-            </div>
-
-            {/* Block Time Switch Option */}
-            {onBlockTime && resource && instantUtc && (
-              <div className="pt-1 text-center">
-                <button
-                  type="button"
-                  onClick={() => {
-                    onOpenChange(false);
-                    onBlockTime(resource, instantUtc);
-                  }}
-                  className="inline-flex items-center gap-1 text-xs text-nx-ink-2 hover:text-nx-ink hover:underline"
-                >
-                  <Wrench className="size-3 text-nx-ink-3" aria-hidden="true" />
-                  <span>
-                    Need to close this court instead? <strong>Block Time</strong>
-                  </span>
-                </button>
+                  <p className="text-[11px] font-medium text-nx-ink mt-0.5">
+                    {vm.formatDateDisplay()} • {vm.formatTimeRange()} ({vm.duration} min)
+                  </p>
+                </div>
               </div>
             )}
-          </div>
-        )}
 
-        {/* STAGE 2: Held Temporarily */}
-        {stage === "held" && (
-          <div className="space-y-4 py-4 text-center">
-            <div className="mx-auto flex size-12 items-center justify-center rounded-full bg-amber-500/10 text-amber-600 dark:text-amber-400">
-              <Timer className="size-6" aria-hidden="true" />
-            </div>
-            <div className="space-y-1">
-              <p className="text-sm font-bold text-nx-ink">Reserved temporarily</p>
-              {holdExpiresAtUtc && (
-                <p className="font-mono text-xs font-semibold text-amber-600 dark:text-amber-400">
-                  Valid until{" "}
-                  {new Intl.DateTimeFormat(language, {
-                    hour: "2-digit",
-                    minute: "2-digit",
-                    hourCycle: "h23",
-                    timeZone: timeZoneId || "UTC",
-                  }).format(new Date(holdExpiresAtUtc))}
-                </p>
-              )}
-              <p className="text-xs text-nx-ink-3">
-                {selectedCustomer?.displayName} Â· {resource?.name}
-              </p>
-            </div>
-          </div>
-        )}
-
-        {/* STAGE 3: Confirmed State */}
-        {stage === "confirmed" && (
-          <div className="space-y-4 py-2">
-            <div className="space-y-1 rounded-nx-md border border-emerald-500/20 bg-emerald-500/10 p-4 text-center">
-              <CheckCircle2
-                className="mx-auto size-8 text-emerald-600 dark:text-emerald-400"
-                aria-hidden="true"
+            {/* Step 0: Court & Time */}
+            {vm.step === 0 && (
+              <BookingCourtStep
+                resources={resources}
+                selectedResource={vm.selectedResource}
+                onSelectResource={vm.setSelectedResource}
+                startUtc={vm.startUtc}
+                onStartTimeChange={vm.setSelectedInstantUtc}
+                duration={vm.duration}
+                onDurationChange={vm.setDuration}
+                allowedDurations={vm.allowedDurations}
+                timeZoneId={props.timeZoneId}
+                t={t}
+                step0Error={vm.step0Error}
+                courtLabel={t("operationsCalendar.clickToBook.context.court")}
               />
-              <h4 className="text-sm font-bold text-emerald-900 dark:text-emerald-200">
-                Booking Confirmed
-              </h4>
-              <p className="font-mono text-xs text-emerald-800 dark:text-emerald-300">
-                {reservationNumber || "CONFIRMED"}
-              </p>
-            </div>
-
-            {/* Money Balance Card: Total, Paid, Remaining */}
-            <div className="space-y-2 rounded-nx-md border border-nx-line bg-nx-surface p-3.5">
-              <div className="grid grid-cols-3 gap-2 divide-x divide-nx-line text-center">
-                <div>
-                  <p className="text-[10px] font-semibold uppercase text-nx-ink-3">Total</p>
-                  <p className="mt-0.5 text-xs font-bold text-nx-ink">
-                    {quote?.grandTotal ?? 800} {quote?.currencyCode ?? "EGP"}
-                  </p>
-                </div>
-                <div>
-                  <p className="text-[10px] font-semibold uppercase text-nx-ink-3">Paid</p>
-                  <p className="mt-0.5 text-xs font-bold text-emerald-600 dark:text-emerald-400">
-                    {amountPaid} {quote?.currencyCode ?? "EGP"}
-                  </p>
-                </div>
-                <div>
-                  <p className="text-[10px] font-semibold uppercase text-nx-ink-3">Remaining</p>
-                  <p
-                    className={`mt-0.5 text-xs font-bold ${remainingAmount > 0 ? "text-amber-600" : "text-nx-ink-3"}`}
-                  >
-                    {remainingAmount} {quote?.currencyCode ?? "EGP"}
-                  </p>
-                </div>
-              </div>
-            </div>
-
-            {/* Record Payment Inline Form */}
-            {recordPaymentOpen && (
-              <form
-                onSubmit={handleRecordPayment}
-                className="bg-nx-surfaceSubtle space-y-3 rounded-nx-md border border-nx-line p-3"
-              >
-                <p className="text-xs font-bold text-nx-ink">Record Payment</p>
-                <div className="grid grid-cols-2 gap-2">
-                  <div className="space-y-1">
-                    <Label className="text-[11px]">Amount</Label>
-                    <Input
-                      type="number"
-                      min={1}
-                      max={remainingAmount || 10000}
-                      value={paymentAmount}
-                      onChange={(e) => setPaymentAmount(Number(e.target.value) || 0)}
-                      className="h-8 text-xs font-bold"
-                    />
-                  </div>
-                  <div className="space-y-1">
-                    <Label className="text-[11px]">Method</Label>
-                    <select
-                      value={paymentMethod}
-                      onChange={(e) => setPaymentMethod(e.target.value)}
-                      className="h-8 w-full rounded-nx-md border border-nx-line bg-nx-surface px-2 text-xs font-semibold text-nx-ink"
-                    >
-                      <option value="Cash">Cash</option>
-                      <option value="Card">Credit / Debit Card</option>
-                      <option value="POS">POS Terminal</option>
-                      <option value="BankTransfer">Bank Transfer</option>
-                    </select>
-                  </div>
-                </div>
-                <div className="space-y-1">
-                  <Label className="text-[11px]">Reference / Receipt #</Label>
-                  <Input
-                    placeholder="e.g. REC-1029 or Cash"
-                    value={paymentRef}
-                    onChange={(e) => setPaymentRef(e.target.value)}
-                    className="h-8 text-xs"
-                  />
-                </div>
-                <Button
-                  type="submit"
-                  size="sm"
-                  disabled={paymentSubmitting}
-                  className="h-7 w-full text-xs font-bold"
-                >
-                  {paymentSubmitting ? "Recording..." : "Save Payment"}
-                </Button>
-              </form>
             )}
 
-            {paymentSuccess && (
-              <p className="text-center text-xs font-medium text-emerald-600 dark:text-emerald-400">
-                Payment recorded successfully.
-              </p>
+            {/* Step 1: Customer Selection */}
+            {vm.step === 1 && (
+              <BookingCustomerStep
+                t={t}
+                quickAddOpen={vm.quickAddOpen}
+                onToggleQuickAdd={() => {
+                  vm.setQuickAddOpen(!vm.quickAddOpen);
+                }}
+                quickName={vm.quickName}
+                onQuickNameChange={vm.setQuickName}
+                quickPhone={vm.quickPhone}
+                onQuickPhoneChange={vm.setQuickPhone}
+                quickEmail={vm.quickEmail}
+                onQuickEmailChange={vm.setQuickEmail}
+                quickAddError={vm.quickAddError}
+                duplicateWarning={vm.duplicateWarning}
+                submitting={vm.submitting}
+                onQuickAddCustomer={vm.handleQuickAddCustomer}
+                selectedCustomer={vm.selectedCustomer}
+                onSelectCustomer={vm.setSelectedCustomer}
+                customerSearch={vm.customerSearch}
+                onCustomerSearchChange={vm.setCustomerSearch}
+                customerSearching={vm.customerSearching}
+                customerSearchError={vm.customerSearchError}
+                customerResults={vm.customerResults}
+                onAdvanceToPricing={() => vm.setStep(2)}
+              />
+            )}
+
+            {/* Step 2: Pricing Summary & Payment Option */}
+            {vm.step === 2 && (
+              <>
+                <BookingPricingStep
+                  t={t}
+                  selectedCustomer={vm.selectedCustomer}
+                  onChangeCustomer={() => vm.setStep(1)}
+                  holdCountdown={vm.holdCountdown}
+                  holdExpired={vm.holdExpired}
+                  onRefreshAvailability={() => {
+                    vm.setHoldExpired(false);
+                    void vm.fetchAuthoritativeQuote();
+                  }}
+                  priceChangeNotice={vm.priceChangeNotice}
+                  onAcknowledgePriceChange={() => vm.setPriceChangeNotice(null)}
+                  quoteExpiredMessage={vm.quoteExpiredMessage}
+                  quote={vm.quote}
+                  quoteLoading={vm.quoteLoading}
+                  quoteError={vm.quoteError}
+                  onRetryQuote={vm.fetchAuthoritativeQuote}
+                  canOverridePrice={vm.canOverridePrice}
+                  overrideOpen={vm.overrideOpen}
+                  onToggleOverride={() => vm.setOverrideOpen(!vm.overrideOpen)}
+                  overrideAmount={vm.overrideAmount}
+                  onOverrideAmountChange={vm.setOverrideAmount}
+                  overrideReason={vm.overrideReason}
+                  onOverrideReasonChange={vm.setOverrideReason}
+                  overrideLoading={vm.overrideLoading}
+                  overrideError={vm.overrideError}
+                  onApplyOverride={vm.handleApplyPriceOverride}
+                />
+
+                <BookingPaymentStep
+                  t={t}
+                  stage={vm.stage}
+                  onClose={() => onOpenChange(false)}
+                  onSuccess={onSuccess}
+                  onFindSlots={onFindSlots}
+                  selectedResource={vm.selectedResource}
+                  selectedCustomer={vm.selectedCustomer}
+                  formatDateDisplay={vm.formatDateDisplay}
+                  formatTimeRange={vm.formatTimeRange}
+                  paymentPartialFailure={vm.paymentPartialFailure}
+                  quote={vm.quote}
+                  amountPaid={vm.amountPaid}
+                  remainingBalance={vm.remainingBalance}
+                  canRecordPayment={vm.canRecordPayment}
+                  recordingPaymentManual={vm.recordingPaymentManual}
+                  onManualRecordPayment={vm.handleManualRecordPayment}
+                  reservationId={vm.reservationId}
+                  paymentChoice={vm.paymentChoice}
+                  onPaymentChoiceChange={vm.setPaymentChoice}
+                  payNowAmount={vm.payNowAmount}
+                  onPayNowAmountChange={vm.setPayNowAmount}
+                  paymentMethod={vm.paymentMethod}
+                  onPaymentMethodChange={vm.setPaymentMethod}
+                  paymentReference={vm.paymentReference}
+                  onPaymentReferenceChange={vm.setPaymentReference}
+                />
+              </>
             )}
           </div>
         )}
 
-        <DialogFooter className="flex-col gap-2 border-t border-nx-line pt-2 sm:flex-row">
-          {stage === "form" && (
-            <>
+        {/* Footer Controls */}
+        {vm.stage === "booking" && (
+          <DialogFooter className="pt-3 border-t border-nx-border flex items-center justify-between">
+            {vm.step === 2 && vm.canCreateHold && !vm.holdExpiresAtUtc ? (
               <Button
                 type="button"
                 variant="ghost"
                 size="sm"
-                onClick={handleHold}
-                disabled={!selectedCustomer || submitting}
-                className="text-xs"
+                onClick={vm.handleHoldTemporarily}
+                disabled={vm.submitting || !vm.selectedCustomer}
+                className="text-xs text-nx-ink-2"
               >
-                Hold Temporarily
+                <Timer className="size-3.5 me-1" />
+                {t("operationsCalendar.clickToBook.hold.holdAction")}
               </Button>
-              <Button
-                type="button"
-                size="sm"
-                onClick={handleConfirm}
-                disabled={!selectedCustomer || !quote || submitting || quoteLoading}
-                loading={submitting}
-                className="flex-1 text-xs font-bold"
-              >
-                Confirm Booking
-              </Button>
-            </>
-          )}
+            ) : (
+              <div />
+            )}
 
-          {stage === "held" && (
-            <>
+            <div className="flex items-center gap-2">
               <Button
                 type="button"
                 variant="outline"
                 size="sm"
-                onClick={() => onOpenChange(false)}
-                className="text-xs"
+                onClick={() => {
+                  if (vm.step > (vm.isContextual ? 1 : 0)) {
+                    vm.setStep(vm.step - 1);
+                  } else {
+                    onOpenChange(false);
+                  }
+                }}
+                className="text-xs font-semibold"
               >
-                Close
+                {vm.step > (vm.isContextual ? 1 : 0)
+                  ? t("operationsCalendar.clickToBook.confirm.back")
+                  : t("operationsCalendar.clickToBook.confirm.cancel")}
               </Button>
-              <Button
-                type="button"
-                size="sm"
-                onClick={handleConfirmFromHold}
-                disabled={submitting}
-                loading={submitting}
-                className="flex-1 text-xs font-bold"
-              >
-                Confirm Booking Now
-              </Button>
-            </>
-          )}
 
-          {stage === "confirmed" && (
-            <>
-              {remainingAmount > 0 && !recordPaymentOpen && (
+              {vm.step < 2 ? (
                 <Button
                   type="button"
-                  variant="outline"
                   size="sm"
-                  onClick={() => setRecordPaymentOpen(true)}
-                  className="text-xs font-semibold"
+                  onClick={() => {
+                    if (vm.step === 0) {
+                      void vm.handleStep0Next();
+                    } else {
+                      vm.setStep(vm.step + 1);
+                    }
+                  }}
+                  loading={vm.step === 0 && vm.step0Checking}
+                  disabled={
+                    (vm.step === 0 && (vm.step0Checking || !vm.selectedResource)) ||
+                    (vm.step === 1 && !vm.selectedCustomer)
+                  }
+                  className="text-xs font-bold bg-[#C6FF00] hover:bg-[#b5eb00] text-[#0D0D0E] shadow-sm disabled:opacity-50"
                 >
-                  <CreditCard className="mr-1 size-3.5" aria-hidden="true" />
-                  Record Payment
+                  {vm.step === 0 && vm.step0Checking ? (
+                    <span>{t("operationsCalendar.clickToBook.courtStep.checking")}</span>
+                  ) : (
+                    <>
+                      {t("operationsCalendar.clickToBook.confirm.next")}
+                      <ArrowRight className="size-3.5 ms-1 rtl:rotate-180" />
+                    </>
+                  )}
+                </Button>
+              ) : (
+                <Button
+                  type="button"
+                  size="sm"
+                  onClick={vm.handleConfirm}
+                  loading={vm.submitting}
+                  disabled={
+                    vm.submitting ||
+                    vm.quoteLoading ||
+                    !vm.quote ||
+                    vm.holdExpired ||
+                    Boolean(vm.priceChangeNotice) ||
+                    !vm.canCreateBooking
+                  }
+                  className="text-xs font-bold bg-[#C6FF00] hover:bg-[#b5eb00] text-[#0D0D0E] shadow-sm disabled:opacity-50"
+                >
+                  {vm.submitting ? (
+                    <span>{t("operationsCalendar.clickToBook.courtStep.confirming")}</span>
+                  ) : (
+                    t("operationsCalendar.clickToBook.confirm.action")
+                  )}
                 </Button>
               )}
-              {reservationId && (
-                <Button asChild variant="outline" size="sm" className="text-xs">
-                  <Link href={`/venue/bookings/${encodeURIComponent(reservationId)}`}>
-                    <ExternalLink className="mr-1 size-3.5" aria-hidden="true" />
-                    Open Booking
-                  </Link>
-                </Button>
-              )}
-              <Button
-                type="button"
-                size="sm"
-                onClick={() => onOpenChange(false)}
-                className="flex-1 text-xs font-bold"
-              >
-                Done
-              </Button>
-            </>
-          )}
-        </DialogFooter>
+            </div>
+          </DialogFooter>
+        )}
       </DialogContent>
     </Dialog>
   );

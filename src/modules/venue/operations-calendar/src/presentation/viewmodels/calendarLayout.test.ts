@@ -7,6 +7,7 @@ import {
   blockPosition,
   buildTimeSlots,
   localPrefillForInstant,
+  localToUtcInstant,
   occupyingBlocks,
   placeBlocksOnTracks,
 } from "./useCalendarLayout";
@@ -79,19 +80,24 @@ describe("calendarLayout", () => {
     expect(placeBlocksOnTracks([first, second]).map((item) => item.track)).toEqual([0, 1]);
   });
 
-  it("defensively excludes terminal states from operational occupancy", () => {
+  it("defensively excludes cancelled states from operational occupancy while including active, completed, no-show, and maintenance blocks", () => {
     const blocks = [
       block({ status: "Held" }),
       block({ reservationId: "confirmed", status: "Confirmed" }),
       block({ reservationId: "checked-in", status: "CheckedIn" }),
       block({ reservationId: "cancelled", status: "Cancelled" }),
       block({ reservationId: "completed", status: "Completed" }),
+      block({ reservationId: "noshow", status: "NoShow" }),
+      block({ reservationId: "maintenance", status: "Maintenance" as any }),
     ];
 
     expect(occupyingBlocks(blocks).map((item) => item.status)).toEqual([
       "Held",
       "Confirmed",
       "CheckedIn",
+      "Completed",
+      "NoShow",
+      "Maintenance",
     ]);
   });
 
@@ -100,5 +106,22 @@ describe("calendarLayout", () => {
       date: "2026-09-09",
       startTime: "10:30",
     });
+  });
+
+  it("converts local date and time back to authoritative UTC instant across timezones", () => {
+    // Cairo is UTC+3 in September (daylight saving time)
+    expect(localToUtcInstant("2026-09-09", "10:30", "Africa/Cairo")).toBe("2026-09-09T07:30:00.000Z");
+
+    // UTC
+    expect(localToUtcInstant("2026-09-09", "10:30", "UTC")).toBe("2026-09-09T10:30:00.000Z");
+
+    // Riyadh is UTC+3 standard year-round
+    expect(localToUtcInstant("2026-04-16", "14:00", "Asia/Riyadh")).toBe("2026-04-16T11:00:00.000Z");
+
+    // Exact round-trip check
+    const originalUtc = "2026-10-15T18:45:00.000Z";
+    const prefill = localPrefillForInstant(originalUtc, "America/New_York");
+    const reconstructed = localToUtcInstant(prefill.date, prefill.startTime, "America/New_York");
+    expect(reconstructed).toBe(originalUtc);
   });
 });
