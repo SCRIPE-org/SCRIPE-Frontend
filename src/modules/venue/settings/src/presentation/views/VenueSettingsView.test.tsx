@@ -7,7 +7,25 @@ const mockSetLanguage = vi.fn();
 
 vi.mock("@core/providers/i18n-provider", () => ({
   useI18n: () => ({
-    t: (key: string, opts?: { defaultValue?: string }) => opts?.defaultValue ?? key,
+    t: (key: string, opts?: { defaultValue?: string }) => {
+      const translations: Record<string, string> = {
+        "venueSettings.title": "Venue Settings",
+        "venueSettings.tabs.branch": "Branch & Venue",
+        "venueSettings.branch.title": "Operating Branch Details",
+        "venueSettings.tabs.team": "Team & Access",
+        "venueSettings.team.teamTitle": "Me and My Team (Collaborative)",
+        "venueSettings.team.openTeam": "Open Team Management",
+        "venueSettings.tabs.advanced": "Advanced",
+        "venueSettings.advanced.title": "Advanced Administrative Configuration",
+        "venueSettings.advanced.registries.facilitiesTitle": "Branch & Facility Registry",
+        "venueSettings.advanced.registries.availabilityTitle": "Operating Hours & Matrix",
+        "venueSettings.advanced.registries.sitesTitle": "Sites & Campuses",
+        "venueSettings.advanced.registries.pricingTitle": "Commercial Pricing Catalog",
+        "venueSettings.advanced.registries.builderTitle": "Resource Builder",
+        "venueSettings.advanced.registries.profilesTitle": "Resource Profiles",
+      };
+      return translations[key] ?? opts?.defaultValue ?? key;
+    },
     language: "en",
     setLanguage: mockSetLanguage,
     direction: "ltr",
@@ -23,7 +41,7 @@ vi.mock("@core/hooks/use-permission", () => ({
 }));
 
 vi.mock("@core/store/useAppStore", () => ({
-  useAppStore: (selector: any) =>
+  useAppStore: (selector: (state: { user: { tenantId: string; firstName: string } }) => unknown) =>
     selector({
       user: { tenantId: "tenant-1", firstName: "Ahmed" },
     }),

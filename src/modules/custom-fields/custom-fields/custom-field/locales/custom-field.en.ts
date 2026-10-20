@@ -545,6 +545,8 @@ export const en = {
       searching: "Searching...",
       noResults: "No records match that search.",
       loadMore: "Load more",
+      boundedResultsHint:
+        "Search considered a bounded candidate set. Refine your search if the record isn't listed.",
       resolving: "Loading the referenced record...",
       forbidden:
         "The stored value is fine, but you don't have permission to view this type of record, so its name can't be shown. Ask your system administrator to grant you view access.",

@@ -6,7 +6,17 @@ import { getVenueContainer } from "@modules/venue/di";
 
 vi.mock("@core/providers/i18n-provider", () => ({
   useI18n: () => ({
-    t: (key: string) => key,
+    t: (key: string) => {
+      const translations: Record<string, string> = {
+        "venueCustomers.title": "Customers",
+        "venueCustomers.newCustomer": "+ New Customer",
+        "venueCustomers.bookForCustomer": "Book for Customer",
+        "venueCustomers.search.placeholder": "Search customers by name, phone or email...",
+        "venueCustomers.empty.title": "No customers found",
+        "venueCustomers.empty.action": "Add Customer",
+      };
+      return translations[key] ?? key;
+    },
     language: "en",
     direction: "ltr",
   }),
@@ -33,7 +43,7 @@ describe("VenueCustomersView", () => {
     mockSearchParams.delete("partyId");
     vi.mocked(getVenueContainer).mockReturnValue({
       customerRepository: mockCustomerRepo,
-    } as any);
+    } as unknown as ReturnType<typeof getVenueContainer>);
   });
 
   it("renders page header and customer list successfully", async () => {

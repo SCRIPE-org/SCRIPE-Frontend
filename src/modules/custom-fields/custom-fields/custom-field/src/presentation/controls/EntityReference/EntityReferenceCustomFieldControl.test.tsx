@@ -143,6 +143,7 @@ function searchStub(overrides: Record<string, unknown> = {}) {
     isLoading: false,
     isLoadingMore: false,
     hasNextPage: false,
+    mayHaveMoreResults: false,
     loadMore: vi.fn(),
     error: null as unknown,
     reload: vi.fn(),
@@ -713,6 +714,16 @@ describe("EntityReferenceCustomFieldControl", () => {
       expect(
         screen.queryByRole("button", { name: "customField.entityReference.loadMore" })
       ).not.toBeInTheDocument();
+    });
+
+    it("explains when bounded search may omit additional matches", () => {
+      currentSearch = searchStub({ items: [AHMED], mayHaveMoreResults: true });
+      renderControl();
+      openPanel();
+
+      expect(screen.getByRole("status")).toHaveTextContent(
+        "customField.entityReference.boundedResultsHint"
+      );
     });
 
     it("distinguishes an unmatched search from a failed one", () => {

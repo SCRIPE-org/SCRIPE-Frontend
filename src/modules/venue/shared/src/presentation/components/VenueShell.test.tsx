@@ -30,6 +30,8 @@ vi.mock("@core/providers/i18n-provider", () => ({
         "venueNav.team": "Team",
         "venueNav.reports": "Reports",
         "venueNav.settings": "Settings",
+        "venueNav.openMenu": "Open mobile menu",
+        "venueNav.closeMenu": "Close menu",
       };
       return map[key] ?? opts?.defaultValue ?? key;
     },
@@ -40,7 +42,7 @@ vi.mock("@core/providers/i18n-provider", () => ({
 }));
 
 vi.mock("@core/store/useAppStore", () => ({
-  useAppStore: (selector: any) =>
+  useAppStore: (selector: (state: { user: { firstName: string; username: string } }) => unknown) =>
     selector({
       user: { firstName: "Ahmed", username: "ahmed@example.com" },
     }),

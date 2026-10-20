@@ -71,6 +71,7 @@ describe("Tenant Responsive Widgets & Layout Hardening", () => {
     // Full setup (all complete = 100%)
     const complete = buildTenantOverviewLiveData({
       stats: { subTenantsCount: 3, adminsCount: 4 } as any,
+      details: { id: "tenant-1", name: "SCRIPE Test Tenant" } as any,
       t: (key: string) => key,
     });
     expect(complete.readinessPercent).toBe(100);

@@ -77,6 +77,7 @@ interface AccumulatedPages {
   scopeKey: string;
   items: EntityLookupItem[];
   hasNextPage: boolean;
+  mayHaveMoreResults: boolean;
 }
 
 /** A failure, tagged with the exact page request that produced it. */
@@ -123,6 +124,7 @@ export function useEntityLookupSearch({
   const inScope = accumulated !== null && accumulated.scopeKey === scopeKey;
   const items = inScope ? accumulated.items : (NO_ITEMS as EntityLookupItem[]);
   const hasNextPage = inScope ? accumulated.hasNextPage : false;
+  const mayHaveMoreResults = inScope ? accumulated.mayHaveMoreResults : false;
   const error = failure !== null && failure.requestKey === requestKey ? failure.error : null;
 
   // Busy until THIS request has settled. Derived rather than seeded, which incidentally fixes the
@@ -184,8 +186,14 @@ export function useEntityLookupSearch({
                 scopeKey,
                 items: [...prev.items, ...result.items],
                 hasNextPage: result.hasNextPage,
+                mayHaveMoreResults: prev.mayHaveMoreResults || result.mayHaveMoreResults === true,
               }
-            : { scopeKey, items: result.items, hasNextPage: result.hasNextPage }
+            : {
+                scopeKey,
+                items: result.items,
+                hasNextPage: result.hasNextPage,
+                mayHaveMoreResults: result.mayHaveMoreResults === true,
+              }
         );
       })
       .catch((caught: unknown) => {
@@ -243,6 +251,7 @@ export function useEntityLookupSearch({
     isLoading,
     isLoadingMore,
     hasNextPage,
+    mayHaveMoreResults,
     loadMore,
     error,
     reload,

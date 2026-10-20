@@ -261,7 +261,7 @@ export function useResourceDetailViewModel(resourceId: string) {
           pricingIntentRef.current = {
             fingerprint,
             key: crypto.randomUUID(),
-            effectiveFromUtc: new Date().toISOString(),
+            effectiveFromUtc: new Date(Date.now() + 15_000).toISOString(),
           };
         }
         const intent = pricingIntentRef.current;
@@ -271,7 +271,7 @@ export function useResourceDetailViewModel(resourceId: string) {
           displayName: `${resource.name} Rate`,
           currencyCode: input.currencyCode || "EGP",
           unitPrice: input.unitPrice,
-          effectiveFromUtc: new Date(Date.now() + 15_000).toISOString(),
+          effectiveFromUtc: intent.effectiveFromUtc,
           minDurationMinutes: slotDuration,
           maxDurationMinutes: null,
           incrementMinutes: startIncrement,

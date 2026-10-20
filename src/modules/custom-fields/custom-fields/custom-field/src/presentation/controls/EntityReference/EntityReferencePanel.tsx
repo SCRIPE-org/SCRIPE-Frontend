@@ -23,6 +23,7 @@ export interface EntityReferencePanelProps {
   isLoading: boolean;
   error: EntityLookupError | null;
   hasNextPage: boolean;
+  mayHaveMoreResults: boolean;
   isLoadingMore: boolean;
   onLoadMore: () => void;
   onReload: () => void;
@@ -40,6 +41,7 @@ export function EntityReferencePanel({
   isLoading,
   error,
   hasNextPage,
+  mayHaveMoreResults,
   isLoadingMore,
   onLoadMore,
   onReload,
@@ -120,6 +122,12 @@ export function EntityReferencePanel({
         </span>
 
         <CommandList>{renderBody()}</CommandList>
+
+        {mayHaveMoreResults && (
+          <p className="border-t border-nx-line px-3 py-2 text-xs text-muted-foreground" role="status">
+            {t(`${I18N}.boundedResultsHint`)}
+          </p>
+        )}
 
         {hasNextPage && (
           <div className="border-t border-nx-line p-1">
