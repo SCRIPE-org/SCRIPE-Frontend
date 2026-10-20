@@ -17,6 +17,7 @@ import React from "react";
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import "@testing-library/jest-dom";
+import { ENTITY_LOOKUP_MAX_SEARCH_LENGTH } from "../../../../../entity-lookup";
 import { EntityReferenceCustomFieldControl } from "./EntityReferenceCustomFieldControl";
 
 vi.mock("@core/providers/settings-provider", () => ({
@@ -590,6 +591,14 @@ describe("EntityReferenceCustomFieldControl", () => {
 
   // ── Debounce: N keystrokes, ONE request ────────────────────────────────
   describe("search debounce", () => {
+    it("caps picker search input at the shared server limit", () => {
+      renderControl();
+      openPanel();
+
+      const panelInput = document.querySelector("[cmdk-input]");
+      expect(panelInput).toHaveAttribute("maxLength", String(ENTITY_LOOKUP_MAX_SEARCH_LENGTH));
+    });
+
     it("collapses a burst of keystrokes into a single lookup request", () => {
       // The debounce itself belongs to useEntityLookupSearch, so it is
       // reconstructed here at the mock boundary exactly as that hook's

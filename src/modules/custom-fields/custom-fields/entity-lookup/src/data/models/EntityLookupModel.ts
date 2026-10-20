@@ -27,5 +27,6 @@ export type {
 
 export {
   ENTITY_LOOKUP_DEFAULT_PAGE_SIZE,
+  ENTITY_LOOKUP_MAX_SEARCH_LENGTH,
   ENTITY_LOOKUP_SEARCH_DEBOUNCE_MS,
 } from "../../domain/entities/EntityLookup";

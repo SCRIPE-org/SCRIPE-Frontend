@@ -66,12 +66,10 @@ const UNKNOWN_ERROR_CODE = "UNKNOWN";
  * What a failed lookup means, at the granularity the UI must distinguish.
  *
  * `cancelled` is in the union so a request we aborted ourselves can never be reported as a server
- * failure. It is a real hazard rather than a theoretical one: `ApiService`'s interceptor runs every
- * abort — including an ordinary `AbortController.abort()` on a superseded search — through
- * `isExternalAbort`, which matches axios's `ERR_CANCELED` and rejects with `DownloadInterceptedError`.
- * So the debounce's own cancellations arrive looking like a download-manager event. Named here, they
- * are droppable; unnamed, they would have surfaced as "lookup failed" on every keystroke that
- * outran its request.
+ * failure. `ApiService` now preserves caller-initiated Axios cancellation before download-interception
+ * classification; the lookup service still classifies `ERR_CANCELED` (and legacy
+ * `DownloadInterceptedError`) as droppable control flow, so a superseded search is not surfaced as
+ * "lookup failed". A real Axios timeout (`ECONNABORTED`) is deliberately not cancellation.
  *
  * `unavailable` covers "this deployment cannot answer for that type at all" — an unregistered key or
  * a module not composed into the host. Kept apart from `missing` deliberately: both arrive as a 404
@@ -106,14 +104,15 @@ function isErrorResponseBody(value: unknown): value is ErrorResponseBody {
  * True when the rejection is our own cancellation rather than a server answer.
  *
  * Checks the shapes `ApiService` can produce for an abort: `DownloadInterceptedError` (by name, not
- * `instanceof`, so this does not import the transport's error class into the domain layer),
- * axios's `ERR_CANCELED`/`ECONNABORTED` codes, and the DOM `AbortError`.
+ * `instanceof`, so this does not import the transport's error class into the domain layer), Axios's
+ * explicit `ERR_CANCELED` code, and the DOM `AbortError`. `ECONNABORTED` is intentionally excluded:
+ * Axios also uses it for request timeouts, which must surface as failures rather than be discarded.
  */
 function isCancellation(error: unknown): boolean {
   if (typeof error !== "object" || error === null) return false;
   const candidate = error as { name?: string; code?: string | number };
   if (candidate.name === "DownloadInterceptedError" || candidate.name === "AbortError") return true;
-  return candidate.code === "ERR_CANCELED" || candidate.code === "ECONNABORTED";
+  return candidate.code === "ERR_CANCELED";
 }
 
 /** errorCode -> meaning. The primary table: language-independent and set by the handler that decided. */

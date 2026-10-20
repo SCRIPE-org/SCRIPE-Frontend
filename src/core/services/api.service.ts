@@ -102,8 +102,6 @@ export class ApiService implements IApiService {
   private axiosInstance: AxiosInstance;
   private axiosPublic: AxiosInstance;
 
-  // private tokenKey = "auth-token"; // DEPRECATED: Use SecureTokenService
-  // private refreshTokenKey = "refresh-token"; // DEPRECATED: Use SecureTokenService
   private refreshHandler: (() => Promise<string | null>) | null = null;
   private isRefreshing = false;
   private refreshPromise: Promise<string | null> | null = null;
@@ -239,6 +237,13 @@ export class ApiService implements IApiService {
         return response;
       },
       async (error: AxiosError) => {
+        // Caller-initiated cancellation is control flow, not an API failure.
+        // Preserve Axios's cancellation error for consumers and keep it out of
+        // download-interception classification and global error logging.
+        if (axios.isCancel(error) || error.config?.signal?.aborted) {
+          return Promise.reject(error);
+        }
+
         const originalRequest = error.config as InternalAxiosRequestConfig & { _retry?: boolean };
 
         // Handle 401 - attempt token refresh
@@ -317,7 +322,11 @@ export class ApiService implements IApiService {
 
         // Global check: if IDM or another download manager intercepted the download,
         // we throw DownloadInterceptedError BEFORE the error gets mangled.
-        if (isExternalAbort(error)) {
+        if (
+          error.config?.responseType === "blob" &&
+          !error.config.signal?.aborted &&
+          isExternalAbort(error)
+        ) {
           return Promise.reject(new DownloadInterceptedError());
         }
 
@@ -432,8 +441,16 @@ export class ApiService implements IApiService {
         return response;
       },
       (error: AxiosError) => {
+        if (axios.isCancel(error) || error.config?.signal?.aborted) {
+          return Promise.reject(error);
+        }
+
         // Global check: IDM interception
-        if (isExternalAbort(error)) {
+        if (
+          error.config?.responseType === "blob" &&
+          !error.config.signal?.aborted &&
+          isExternalAbort(error)
+        ) {
           return Promise.reject(new DownloadInterceptedError());
         }
 
@@ -665,7 +682,7 @@ export class ApiService implements IApiService {
       // Global detection: if the download was intercepted by an external
       // download manager (IDM, FDM, etc.), throw a typed error so callers
       // can treat it as success instead of failure.
-      if (isExternalAbort(error)) {
+      if (!signal?.aborted && isExternalAbort(error)) {
         throw new DownloadInterceptedError();
       }
       throw error;
@@ -679,7 +696,7 @@ export class ApiService implements IApiService {
       const response = await this.axiosInstance.post(endpoint, data, config);
       return response.data as Blob;
     } catch (error) {
-      if (isExternalAbort(error)) {
+      if (!signal?.aborted && isExternalAbort(error)) {
         throw new DownloadInterceptedError();
       }
       throw error;

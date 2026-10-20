@@ -285,15 +285,24 @@ describe("EntityLookupService", () => {
     });
 
     it("reports an aborted request as cancelled rather than as a server failure", async () => {
-      // Our own AbortController.abort() reaches ApiService's `isExternalAbort` check and is rejected
-      // as DownloadInterceptedError. Unrecognised, every superseded keystroke would render as a
-      // lookup failure.
+      // Preserve consumer behavior for cancellation-shaped errors while the shared transport
+      // regression test verifies caller AbortSignals are no longer translated as downloads.
       const aborted = new Error("Download intercepted by external download manager");
       aborted.name = "DownloadInterceptedError";
       const service = new EntityLookupService(mockFailingApiService(aborted));
 
       await expect(service.resolve("hrms.staff-member", "id")).rejects.toMatchObject({
         kind: "cancelled",
+      });
+    });
+
+    it("does not hide an Axios timeout as a canceled lookup", async () => {
+      const timeout = Object.assign(new Error("Request timed out"), { code: "ECONNABORTED" });
+      const service = new EntityLookupService(mockFailingApiService(timeout));
+
+      await expect(service.resolve("hrms.staff-member", "id")).rejects.toMatchObject({
+        kind: "unknown",
+        message: "Request timed out",
       });
     });
 

@@ -26,7 +26,7 @@
  * By invoking the registered rejection handler directly with a synthetic `AxiosError`, rather than
  * by mocking the network. The handler IS the unit under test; going through a mock adapter would add
  * a second thing that can fail while testing nothing extra. Synthetic errors are built to avoid
- * every shape `isExternalAbort` matches (no `ERR_CANCELED`/`ECONNABORTED` code, message not
+ * every shape `isExternalAbort` matches (no `ERR_CANCELED` code, message not
  * "canceled"), because that check runs BEFORE the 403 block and would short-circuit it.
  *
  * The body shapes used below are the real ones, read off the backend rather than invented:

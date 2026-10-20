@@ -9,6 +9,7 @@ import { Command, CommandInput, CommandList } from "@core/ui/command";
 import { SelectOptionRow } from "@core/crud/components/select/select-option-row";
 import type { GenericSelectOption } from "@core/crud/components/generic-select";
 import type { EntityLookupError } from "../../../../../entity-lookup/src/domain/entities/EntityLookupError";
+import { ENTITY_LOOKUP_MAX_SEARCH_LENGTH } from "../../../../../entity-lookup";
 import { I18N, LoadingRows } from "./referenceControlPanelParts";
 
 /**
@@ -111,6 +112,7 @@ export function EntityReferencePanel({
         <CommandInput
           aria-label={t("select.searchLabel")}
           placeholder={t(`${I18N}.searchPlaceholder`)}
+          maxLength={ENTITY_LOOKUP_MAX_SEARCH_LENGTH}
           value={draft}
           onValueChange={onDraftChange}
         />

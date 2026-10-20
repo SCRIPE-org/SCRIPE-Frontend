@@ -1,11 +1,17 @@
 import { AxiosError, AxiosHeaders, type AxiosInstance, type AxiosResponse } from "axios";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { ApiService } from "../api.service";
+import { appLogger } from "@core/common/logger";
 
 type AuthenticatedInstance = { axiosInstance: AxiosInstance };
+type PublicInstance = { axiosPublic: AxiosInstance };
 
 function instanceOf(service: ApiService): AxiosInstance {
   return (service as unknown as AuthenticatedInstance).axiosInstance;
+}
+
+function publicInstanceOf(service: ApiService): AxiosInstance {
+  return (service as unknown as PublicInstance).axiosPublic;
 }
 
 function responseFor(
@@ -177,6 +183,139 @@ describe("ApiService mutation intent", () => {
       "intent-key-network",
     ]);
     expect(headers[1].get("X-Request-Nonce")).not.toBe(headers[0].get("X-Request-Nonce"));
+  });
+
+  it("does not auto-retry an in-flight canceled attempt and allows an explicit same-intent retry", async () => {
+    const service = new ApiService("/api");
+    const requests: AxiosResponse["config"][] = [];
+    const axiosInstance = instanceOf(service);
+    let markStarted!: () => void;
+    const firstAttemptStarted = new Promise<void>((resolve) => {
+      markStarted = resolve;
+    });
+
+    axiosInstance.defaults.adapter = async (config) => {
+      requests.push(config);
+      if (requests.length === 1) {
+        markStarted();
+        return new Promise<AxiosResponse>((_resolve, reject) => {
+          config.signal?.addEventListener?.(
+            "abort",
+            () => reject(new AxiosError("canceled", AxiosError.ERR_CANCELED, config)),
+            { once: true }
+          );
+        });
+      }
+
+      return responseFor(200, config);
+    };
+
+    const intent = { idempotencyKey: "intent-key-canceled" };
+    const controller = new AbortController();
+    const logError = vi.spyOn(appLogger, "error");
+    const canceledAttempt = service.postWithRetry(
+      "/v1/example",
+      { value: 1 },
+      controller.signal,
+      intent
+    );
+
+    await firstAttemptStarted;
+    controller.abort();
+    await expect(canceledAttempt).rejects.toMatchObject({ code: AxiosError.ERR_CANCELED });
+    expect(logError).not.toHaveBeenCalled();
+    expect(requests).toHaveLength(1);
+
+    await expect(service.postWithRetry("/v1/example", { value: 1 }, undefined, intent)).resolves.toEqual({
+      ok: true,
+    });
+
+    expect(requests).toHaveLength(2);
+    const headers = requests.map((request) => AxiosHeaders.from(request.headers));
+    expect(headers.map((entry) => entry.get("Idempotency-Key"))).toEqual([
+      "intent-key-canceled",
+      "intent-key-canceled",
+    ]);
+    expect(headers[1].get("X-Request-Nonce")).not.toBe(headers[0].get("X-Request-Nonce"));
+  });
+
+  it("preserves caller cancellation for blob downloads while retaining interception detection", async () => {
+    const service = new ApiService("/api");
+    const axiosInstance = instanceOf(service);
+    let markStarted!: () => void;
+    const requestStarted = new Promise<void>((resolve) => {
+      markStarted = resolve;
+    });
+
+    axiosInstance.defaults.adapter = async (config) => {
+      markStarted();
+      return new Promise<AxiosResponse>((_resolve, reject) => {
+        config.signal?.addEventListener?.(
+          "abort",
+          () => reject(new AxiosError("canceled", AxiosError.ERR_CANCELED, config)),
+          { once: true }
+        );
+      });
+    };
+
+    const controller = new AbortController();
+    const logError = vi.spyOn(appLogger, "error");
+    const canceledDownload = service.getBlob("/v1/files/1", controller.signal);
+    await requestStarted;
+    controller.abort();
+
+    await expect(canceledDownload).rejects.toMatchObject({ code: AxiosError.ERR_CANCELED });
+    expect(logError).not.toHaveBeenCalled();
+
+    axiosInstance.defaults.adapter = async (config) => {
+      throw new AxiosError("canceled", AxiosError.ERR_CANCELED, config);
+    };
+
+    await expect(service.getBlob("/v1/files/1")).rejects.toMatchObject({
+      name: "DownloadInterceptedError",
+    });
+  });
+
+  it("does not report a blob request timeout as external download interception", async () => {
+    const service = new ApiService("/api");
+    const axiosInstance = instanceOf(service);
+
+    axiosInstance.defaults.adapter = async (config) => {
+      throw new AxiosError("timeout", AxiosError.ECONNABORTED, config);
+    };
+
+    await expect(service.getBlob("/v1/files/slow-export")).rejects.toMatchObject({
+      code: AxiosError.ECONNABORTED,
+    });
+  });
+
+  it("preserves public-request cancellation without logging it as an API failure", async () => {
+    const service = new ApiService("/api");
+    const publicClient = publicInstanceOf(service);
+    let markStarted!: () => void;
+    const requestStarted = new Promise<void>((resolve) => {
+      markStarted = resolve;
+    });
+
+    publicClient.defaults.adapter = async (config) => {
+      markStarted();
+      return new Promise<AxiosResponse>((_resolve, reject) => {
+        config.signal?.addEventListener?.(
+          "abort",
+          () => reject(new AxiosError("canceled", AxiosError.ERR_CANCELED, config)),
+          { once: true }
+        );
+      });
+    };
+
+    const controller = new AbortController();
+    const logError = vi.spyOn(appLogger, "error");
+    const canceledRequest = service.getPublic("/v1/public-resource", undefined, controller.signal);
+    await requestStarted;
+    controller.abort();
+
+    await expect(canceledRequest).rejects.toMatchObject({ code: AxiosError.ERR_CANCELED });
+    expect(logError).not.toHaveBeenCalled();
   });
 
   it("preserves the business key while refreshing and replaying the same mutation", async () => {
