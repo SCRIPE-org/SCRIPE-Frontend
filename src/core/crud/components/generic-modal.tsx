@@ -22,6 +22,8 @@ interface GenericModalProps {
   description?: string;
   children: React.ReactNode;
   size?: "sm" | "md" | "lg" | "xl" | "full";
+  /** Optional per-entity form surface override from blueprint UI spec */
+  surface?: "Modal" | "FullPage" | "SlideOverDrawer" | "Wizard";
   // Enhanced props for unified modal behavior
   formKey?: string; // Key for form re-rendering
   showHeader?: boolean; // Whether to show header (default: true)
@@ -52,6 +54,7 @@ function GenericModalInner({
   description,
   children,
   size,
+  surface,
   formKey,
   showHeader = true,
   showDescription = true,
@@ -60,6 +63,8 @@ function GenericModalInner({
 }: GenericModalProps) {
   const { t } = useI18n();
   const settings = useSettings();
+  const isDrawerSurface =
+    surface === "SlideOverDrawer" || (!surface && settings.modalStyle === "drawer");
 
   // The scrim swallows pointer interaction by existing, but wheel and touch
   // moves over it would still scroll-chain into the page. The old code cut
@@ -93,7 +98,7 @@ function GenericModalInner({
     // A sized drawer keeps its edge-pinned height and takes only the width;
     // every other style collapses to the standard centered footprint.
     return cn(
-      settings.modalStyle === "drawer" ? "h-[95vh] max-h-none" : "w-[95vw] max-h-[90vh]",
+      isDrawerSurface ? "h-[95vh] max-h-none" : "w-[95vw] max-h-[90vh]",
       widths[size]
     );
   };
@@ -106,6 +111,19 @@ function GenericModalInner({
   // its geometry and inherits the one surface.
   const getModalClasses = () => {
     const baseClasses = "p-0 overflow-visible flex flex-col";
+
+    if (surface === "SlideOverDrawer") {
+      return cn(baseClasses, "w-full h-[95vh] max-w-md sm:max-w-lg md:max-w-xl max-h-none");
+    }
+    if (surface === "FullPage") {
+      return cn(
+        baseClasses,
+        "w-[98vw] h-[95vh] max-w-none max-h-none sm:w-[95vw] sm:h-[90vh] md:w-[92vw] md:h-[88vh]"
+      );
+    }
+    if (surface === "Wizard") {
+      return cn(baseClasses, "w-[95vw] max-w-3xl max-h-[90vh]");
+    }
 
     // Explicit size supplies the footprint — see getSizeClasses at the
     // render site — so the settings-derived footprint stands down entirely.
@@ -163,7 +181,7 @@ function GenericModalInner({
         />
       </DialogPortal>
       <DialogContent
-        variant={settings.modalStyle === "drawer" ? "drawer" : "default"}
+        variant={isDrawerSurface ? "drawer" : "default"}
         className={cn(getModalClasses(), getSizeClasses())}
       >
         {showHeader && (

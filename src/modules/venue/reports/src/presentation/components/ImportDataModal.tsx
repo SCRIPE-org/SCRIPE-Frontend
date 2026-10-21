@@ -52,6 +52,7 @@ interface ImportDataModalProps {
   onFileSelect: (rawContent: string) => void;
   onExecuteValidation: () => void;
   onCommitImport: () => Promise<void>;
+  onRetryFailedCustomers: () => Promise<void>;
   onReset: () => void;
   isRtl: boolean;
 }
@@ -72,25 +73,37 @@ export function ImportDataModal({
   onFileSelect,
   onExecuteValidation,
   onCommitImport,
+  onRetryFailedCustomers,
   onReset,
   isRtl,
 }: ImportDataModalProps) {
   const { t } = useI18n();
   const [pasteContent, setPasteContent] = useState("");
-  const commitAttemptedRef = useRef(false);
+  const commitInProgressRef = useRef(false);
   const schema = IMPORT_SCHEMAS[importType];
 
   const handleCommitImport = async () => {
-    if (commitAttemptedRef.current || isCommitting) return;
+    if (commitInProgressRef.current || isCommitting) return;
+    commitInProgressRef.current = true;
+    try {
+      await onCommitImport();
+    } finally {
+      commitInProgressRef.current = false;
+    }
+  };
 
-    // The import API has no durable business-intent key. Keep one attempt per
-    // modal session so a response-loss retry cannot resubmit already-created rows.
-    commitAttemptedRef.current = true;
-    await onCommitImport();
+  const handleRetryFailedCustomers = async () => {
+    if (commitInProgressRef.current || isCommitting) return;
+    commitInProgressRef.current = true;
+    try {
+      await onRetryFailedCustomers();
+    } finally {
+      commitInProgressRef.current = false;
+    }
   };
 
   const handleReset = () => {
-    commitAttemptedRef.current = false;
+    commitInProgressRef.current = false;
     onReset();
   };
 
@@ -546,6 +559,20 @@ export function ImportDataModal({
                         ))}
                       </ul>
                     </div>
+                  )}
+                  {importType === "customers" && importSummaryResult.errorCount > 0 && (
+                    <Button
+                      type="button"
+                      size="sm"
+                      onClick={handleRetryFailedCustomers}
+                      disabled={isCommitting}
+                      className="bg-nx-accent text-xs text-nx-accent-contrast hover:bg-nx-accent/90"
+                    >
+                      {isCommitting ? (
+                        <Loader2 className="me-1 size-3 animate-spin" />
+                      ) : null}
+                      {t("venueReports.import.retryFailedCustomers")}
+                    </Button>
                   )}
                 </div>
               ) : null}

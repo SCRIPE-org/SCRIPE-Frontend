@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback, useMemo } from "react";
+import { useState, useEffect, useCallback, useMemo, useRef } from "react";
 import { getVenueContainer } from "@modules/venue/di";
 import { useI18n } from "@core/providers/i18n-provider";
 import { useTenantContext } from "@core/providers/tenant-context-provider";
@@ -13,6 +13,7 @@ import {
   ValidationReport,
   parseDelimitedText,
   autoMapColumns,
+  createImportRowIdempotencyKey,
   validateImportRows,
 } from "../../utils/excelDataImport";
 import type {
@@ -70,6 +71,9 @@ export function useVenueReportsViewModel() {
     errorCount: number;
     errors: string[];
   } | null>(null);
+  const importBatchIdRef = useRef<string | null>(null);
+  const successfulImportRowsRef = useRef(new Set<number>());
+  const failedImportRowsRef = useRef(new Map<number, string>());
 
   // Load Reference Lookups (Branches, Resources, Customers)
   const loadLookups = useCallback(async () => {
@@ -356,6 +360,9 @@ export function useVenueReportsViewModel() {
         });
         return;
       }
+      importBatchIdRef.current = crypto.randomUUID();
+      successfulImportRowsRef.current.clear();
+      failedImportRowsRef.current.clear();
       setParsedTable(parsed);
       const autoMap = autoMapColumns(parsed.headers, importType);
       setColumnMapping(autoMap);
@@ -379,16 +386,16 @@ export function useVenueReportsViewModel() {
     setImportStep(3); // Move to Preview / Validate step
   };
 
-  const commitImport = async () => {
+  const commitImport = async (retryFailedCustomers = false) => {
     if (!validationReport || !parsedTable) return;
     setIsCommitting(true);
-    let successCount = 0;
-    let errorCount = 0;
-    const errors: string[] = [];
 
-    const validRows = validationReport.rows.filter(
-      (r) => r.status === "valid" || r.status === "warning"
-    );
+    const validRows = validationReport.rows.filter((row) => {
+      const isEligible = row.status === "valid" || row.status === "warning";
+      const isUnfinished = !successfulImportRowsRef.current.has(row.rowNumber);
+      const isRetryTarget = !retryFailedCustomers || failedImportRowsRef.current.has(row.rowNumber);
+      return isEligible && isUnfinished && isRetryTarget;
+    });
 
     try {
       const container = getVenueContainer();
@@ -420,8 +427,13 @@ export function useVenueReportsViewModel() {
           if (importType === "customers") {
             const displayName = String(row.data.name).trim();
             const type = row.data.type === "Organization" ? "Organization" : "Person";
-            await container.customerRepository.create(displayName, type);
-            successCount++;
+            const batchId = importBatchIdRef.current ?? crypto.randomUUID();
+            importBatchIdRef.current = batchId;
+            await container.customerRepository.create(displayName, type, undefined, {
+              idempotencyKey: createImportRowIdempotencyKey(batchId, row.rowNumber),
+            });
+            successfulImportRowsRef.current.add(row.rowNumber);
+            failedImportRowsRef.current.delete(row.rowNumber);
           } else if (importType === "courts") {
             const name = String(row.data.name).trim();
             if (!name) {
@@ -450,22 +462,33 @@ export function useVenueReportsViewModel() {
                 allowMultiSlot: false,
               },
             });
-            successCount++;
+            successfulImportRowsRef.current.add(row.rowNumber);
+            failedImportRowsRef.current.delete(row.rowNumber);
           }
         } catch (rowErr) {
-          errorCount++;
           const msg =
             rowErr instanceof Error ? rowErr.message : t("venueReports.errors.unknownImportError");
-          errors.push(`Row ${row.rowNumber} (${row.data.name || "unnamed"}): ${msg}`);
+          failedImportRowsRef.current.set(
+            row.rowNumber,
+            `Row ${row.rowNumber} (${row.data.name || "unnamed"}): ${msg}`
+          );
         }
       }
 
-      setImportSummaryResult({ successCount, errorCount, errors });
+      setImportSummaryResult({
+        successCount: successfulImportRowsRef.current.size,
+        errorCount: failedImportRowsRef.current.size,
+        errors: Array.from(failedImportRowsRef.current.values()),
+      });
       setImportStep(4); // Summary result step
       await loadLookups(); // Refresh lookups
       await loadReportData(); // Refresh current report
 
-      toastSuccess({ title: t("venueReports.import.successToast", { count: successCount }) });
+      toastSuccess({
+        title: t("venueReports.import.successToast", {
+          count: successfulImportRowsRef.current.size,
+        }),
+      });
     } catch (fatalErr) {
       const msg =
         fatalErr instanceof Error ? fatalErr.message : t("venueReports.errors.importFailed");

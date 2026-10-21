@@ -1,8 +1,22 @@
 import { describe, it, expect } from "vitest";
-import { parseDelimitedText, autoMapColumns, validateImportRows } from "./excelDataImport";
+import {
+  parseDelimitedText,
+  autoMapColumns,
+  createImportRowIdempotencyKey,
+  validateImportRows,
+} from "./excelDataImport";
 import { generateExcelWorkbookXml, generateCsv } from "./excelReportExport";
 
 describe("excelDataImport", () => {
+  it("keeps a customer import row key stable across retries and unique per row and batch", () => {
+    const firstAttempt = createImportRowIdempotencyKey("batch-a", 4);
+    const replayAttempt = createImportRowIdempotencyKey("batch-a", 4);
+
+    expect(replayAttempt).toBe(firstAttempt);
+    expect(createImportRowIdempotencyKey("batch-a", 5)).not.toBe(firstAttempt);
+    expect(createImportRowIdempotencyKey("batch-b", 4)).not.toBe(firstAttempt);
+  });
+
   it("parses CSV with quoted commas and headers correctly", () => {
     const csv = `Name,Type,Email,Phone\n"Al-Mansoor, Zaid",Person,zaid@test.com,+966500000001\n"Padel Club Pro",Organization,club@test.com,+966500000002`;
     const result = parseDelimitedText(csv);

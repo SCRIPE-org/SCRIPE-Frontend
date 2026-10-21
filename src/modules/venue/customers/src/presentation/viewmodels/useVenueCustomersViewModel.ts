@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useState, useMemo } from "react";
+import { useCallback, useEffect, useRef, useState, useMemo } from "react";
 import { useSearchParams } from "next/navigation";
 import { useI18n } from "@core/providers/i18n-provider";
 import { getVenueContainer } from "@modules/venue/di";
@@ -27,6 +27,7 @@ export function useVenueCustomersViewModel() {
   const [newType, setNewType] = useState<"Person" | "Organization">("Person");
   const [createLoading, setCreateLoading] = useState(false);
   const [createError, setCreateError] = useState<string | null>(null);
+  const customerCreateIntentRef = useRef<{ fingerprint: string; key: string } | null>(null);
 
   const fetchCustomers = useCallback(
     async (query = "") => {
@@ -78,7 +79,15 @@ export function useVenueCustomersViewModel() {
     setCreateLoading(true);
     setCreateError(null);
     try {
-      const created = await customerRepository.create(newName.trim(), newType);
+      const displayName = newName.trim();
+      const fingerprint = JSON.stringify([displayName, newType]);
+      if (customerCreateIntentRef.current?.fingerprint !== fingerprint) {
+        customerCreateIntentRef.current = { fingerprint, key: crypto.randomUUID() };
+      }
+      const created = await customerRepository.create(displayName, newType, undefined, {
+        idempotencyKey: customerCreateIntentRef.current.key,
+      });
+      customerCreateIntentRef.current = null;
       setCreateOpen(false);
       setNewName("");
       setSelectedCustomer(created);

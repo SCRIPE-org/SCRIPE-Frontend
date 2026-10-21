@@ -11,6 +11,14 @@
 
 export type ImportType = "customers" | "courts";
 
+/**
+ * Derives a stable idempotency key for one customer row within an import intent.
+ * A new batch id is created for each newly parsed file; retries reuse it.
+ */
+export function createImportRowIdempotencyKey(batchId: string, rowNumber: number): string {
+  return `${batchId}:customer-import:${rowNumber}`;
+}
+
 export interface TargetField {
   key: string;
   label: string;

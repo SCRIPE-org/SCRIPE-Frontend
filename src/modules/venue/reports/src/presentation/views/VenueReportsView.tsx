@@ -567,7 +567,8 @@ export function VenueReportsView() {
         importSummaryResult={importSummaryResult}
         onFileSelect={handleFileSelect}
         onExecuteValidation={executeValidation}
-        onCommitImport={commitImport}
+        onCommitImport={() => commitImport(false)}
+        onRetryFailedCustomers={() => commitImport(true)}
         onReset={resetImport}
         isRtl={isRtl}
       />

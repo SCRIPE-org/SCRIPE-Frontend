@@ -116,6 +116,7 @@ export const en = {
       noPayments: "No recorded payments found.",
     },
     import: {
+      retryFailedCustomers: "Retry failed customers",
       title: "Staged Data Import Wizard",
       description:
         "Import validated rows through module repositories. Rows are submitted individually and may complete partially.",
