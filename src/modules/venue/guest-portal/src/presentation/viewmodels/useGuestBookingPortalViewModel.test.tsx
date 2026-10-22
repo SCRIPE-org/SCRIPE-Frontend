@@ -12,7 +12,7 @@ const { guestPortalServiceMock } = vi.hoisted(() => ({
 }));
 
 vi.mock("@modules/venue/di", () => ({
-  getVenueContainer: vi.fn(() => ({ guestPortalService: guestPortalServiceMock })),
+  getVenueContainer: vi.fn(() => ({ guestPortalService: guestPortalServiceMock, guestPortalRepository: guestPortalServiceMock })),
 }));
 
 vi.mock("@core/providers/i18n-provider", () => ({

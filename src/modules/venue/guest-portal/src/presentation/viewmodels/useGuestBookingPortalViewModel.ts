@@ -40,7 +40,7 @@ function createGuestCancelIdempotencyKey(): string {
 
 export function useGuestBookingPortalViewModel() {
   const { t: contextT, language, direction, setLanguage, registerBothLanguages } = useI18n();
-  const { guestPortalService } = getVenueContainer();
+  const { guestPortalRepository } = getVenueContainer();
 
   // Register guest portal translations into context
   useEffect(() => {
@@ -114,7 +114,7 @@ export function useGuestBookingPortalViewModel() {
 
         if (rawToken) {
           setStage("exchanging");
-          const sessionRes = await guestPortalService.exchangeSession(rawToken);
+          const sessionRes = await guestPortalRepository.exchangeSession(rawToken);
 
           if (!active) return;
           setBooking(sessionRes.reservation);
@@ -124,7 +124,7 @@ export function useGuestBookingPortalViewModel() {
 
         // If no token in fragment, check if there's already an active session cookie
         try {
-          const existingBooking = await guestPortalService.getBooking();
+          const existingBooking = await guestPortalRepository.getBooking();
           if (!active) return;
           setBooking(existingBooking);
           setStage("ready");
@@ -154,7 +154,7 @@ export function useGuestBookingPortalViewModel() {
   const handleRefresh = async () => {
     try {
       setStage("loading");
-      const updated = await guestPortalService.getBooking();
+      const updated = await guestPortalRepository.getBooking();
       setBooking(updated);
       setStage("ready");
     } catch (err: any) {
@@ -181,9 +181,9 @@ export function useGuestBookingPortalViewModel() {
       const intent = cancelIntent.current;
       if (!intent) throw new Error(t("guestPortal.messages.cancelFailed"));
 
-      await guestPortalService.cancelBooking(normalizedReason, intent.idempotencyKey);
+      await guestPortalRepository.cancelBooking(normalizedReason, intent.idempotencyKey);
 
-      const refreshedBooking = await guestPortalService.getBooking();
+      const refreshedBooking = await guestPortalRepository.getBooking();
       setBooking(refreshedBooking);
       if (refreshedBooking.status !== "Cancelled") {
         throw new Error(t("guestPortal.messages.cancelFailed"));

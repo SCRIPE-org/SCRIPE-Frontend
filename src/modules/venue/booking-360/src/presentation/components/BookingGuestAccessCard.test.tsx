@@ -3,16 +3,20 @@ import { render, screen, waitFor, fireEvent } from "@testing-library/react";
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { BookingGuestAccessCard } from "./BookingGuestAccessCard";
 
-const mockGet = vi.fn();
-const mockPost = vi.fn();
-const mockDelete = vi.fn();
+const { booking360RepoMock } = vi.hoisted(() => ({
+  booking360RepoMock: {
+    getById: vi.fn(),
+    getGuestAccessStatus: vi.fn(),
+    generateGuestAccess: vi.fn(),
+    sendGuestLink: vi.fn(),
+    revokeGuestAccess: vi.fn(),
+  },
+}));
 
-vi.mock("@/core/services/api-factory", () => ({
-  getModuleApiService: () => ({
-    get: mockGet,
-    post: mockPost,
-    delete: mockDelete,
-  }),
+vi.mock("@modules/venue/di", () => ({
+  getVenueContainer: vi.fn(() => ({
+    booking360Repository: booking360RepoMock,
+  })),
 }));
 
 describe("BookingGuestAccessCard", () => {
@@ -21,7 +25,7 @@ describe("BookingGuestAccessCard", () => {
   });
 
   it("loads status and displays not generated state if no active link", async () => {
-    mockGet.mockResolvedValueOnce({
+    booking360RepoMock.getGuestAccessStatus.mockResolvedValueOnce({
       hasActiveLink: false,
       isRevoked: false,
     });
@@ -35,12 +39,12 @@ describe("BookingGuestAccessCard", () => {
   });
 
   it("generates guest link on button click and renders link with copy button", async () => {
-    mockGet.mockResolvedValueOnce({
+    booking360RepoMock.getGuestAccessStatus.mockResolvedValueOnce({
       hasActiveLink: false,
       isRevoked: false,
     });
 
-    mockPost.mockResolvedValueOnce({
+    booking360RepoMock.generateGuestAccess.mockResolvedValueOnce({
       guestAccessLink: "/bookings/guest#test-token-777",
       expiresAtUtc: "2026-10-15T00:00:00Z",
     });
@@ -54,33 +58,34 @@ describe("BookingGuestAccessCard", () => {
     fireEvent.click(screen.getByText("Generate Guest Link"));
 
     await waitFor(() => {
-      expect(mockPost).toHaveBeenCalledWith("/v1/reservations/res-123/guest-access");
+      expect(booking360RepoMock.generateGuestAccess).toHaveBeenCalledWith("res-123");
       expect(screen.getByDisplayValue(/test-token-777/)).toBeInTheDocument();
       expect(screen.getByText("Copy")).toBeInTheDocument();
     });
   });
 
   it("revokes guest link when user clicks revoke", async () => {
-    mockGet.mockResolvedValue({
+    booking360RepoMock.getGuestAccessStatus.mockResolvedValue({
       hasActiveLink: true,
       expiresAtUtc: "2026-10-15T00:00:00Z",
       isRevoked: false,
     });
 
-    mockDelete.mockResolvedValueOnce(true);
+    booking360RepoMock.revokeGuestAccess.mockResolvedValueOnce(undefined);
     vi.spyOn(window, "confirm").mockReturnValue(true);
 
     render(<BookingGuestAccessCard reservationId="res-123" t={(k) => k} />);
 
     await waitFor(() => {
-      expect(screen.getByText("Revoke Link")).toBeInTheDocument();
+      expect(screen.getByText("Revoke Access")).toBeInTheDocument();
     });
 
-    fireEvent.click(screen.getByText("Revoke Link"));
+    fireEvent.click(screen.getByText("Revoke Access"));
 
     await waitFor(() => {
-      expect(mockDelete).toHaveBeenCalledWith(
-        expect.stringContaining("/v1/reservations/res-123/guest-access")
+      expect(booking360RepoMock.revokeGuestAccess).toHaveBeenCalledWith(
+        "res-123",
+        "Revoked by operator"
       );
     });
   });

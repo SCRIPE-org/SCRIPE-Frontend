@@ -100,7 +100,9 @@ import type { IVenueReportsService } from "./reports/src/domain/interfaces/IVenu
 import type { IVenueReportsRepository } from "./reports/src/domain/interfaces/IVenueReportsRepository";
 
 import { GuestPortalService } from "./guest-portal/src/data/services/guest-portal.service";
+import { GuestPortalRepository } from "./guest-portal/src/data/repositories/GuestPortalRepository";
 import type { IGuestPortalService } from "./guest-portal/src/domain/interfaces/IGuestPortalService";
+import type { IGuestPortalRepository } from "./guest-portal/src/domain/interfaces/IGuestPortalRepository";
 
 interface VenueContainer {
   venueProfileRepository: IVenueProfileRepository;
@@ -118,6 +120,7 @@ interface VenueContainer {
   venueOverviewService: IVenueOverviewService;
   venueReportsRepository: IVenueReportsRepository;
   guestPortalService: IGuestPortalService;
+  guestPortalRepository: IGuestPortalRepository;
   siteRepository: ISiteRepository;
   /** Site picker for the Venue Profile "Site" field — OrganizationCore is a different backend module. */
   sitePickerService: ISitePickerService;
@@ -213,6 +216,7 @@ export function getVenueContainer(): VenueContainer {
     venueOverviewService: new VenueOverviewService(venueApi),
     venueReportsRepository: new VenueReportsRepository(venueReportsService),
     guestPortalService: new GuestPortalService(venueApi),
+    guestPortalRepository: new GuestPortalRepository(new GuestPortalService(venueApi)),
     siteRepository: new SiteRepository(siteService),
     sitePickerService: new SitePickerService(organizationCoreApi),
     facilityResourceProfilePickerService: new FacilityResourceProfilePickerService(venueApi),
@@ -266,6 +270,9 @@ export const venueContainer = {
   },
   get guestPortalService() {
     return getVenueContainer().guestPortalService;
+  },
+  get guestPortalRepository() {
+    return getVenueContainer().guestPortalRepository;
   },
   get siteRepository() {
     return getVenueContainer().siteRepository;

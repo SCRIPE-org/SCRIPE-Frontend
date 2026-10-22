@@ -1,31 +1,13 @@
 "use client";
 
-import React, { useState, useEffect, useCallback } from "react";
+import React from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@core/ui/card";
 import { Button } from "@core/ui/button";
 import { Badge } from "@core/ui/badge";
 import { Input } from "@core/ui/input";
 import { LoadingSpinner } from "@core/ui/loading-spinner";
 import { Link2, Copy, Check, Send, Trash2, ShieldCheck, AlertCircle, Clock } from "lucide-react";
-import { getModuleApiService } from "@/core/services/api-factory";
-
-interface GuestAccessStatus {
-  hasActiveLink: boolean;
-  expiresAtUtc?: string | null;
-  isRevoked: boolean;
-  revokedReason?: string | null;
-  maskedRecipient?: string | null;
-}
-
-interface GenerateGuestAccessResult {
-  guestAccessLink: string;
-  expiresAtUtc: string;
-}
-
-interface SendGuestLinkResult {
-  sent: boolean;
-  recipient?: string | null;
-}
+import { useBookingGuestAccessViewModel } from "../viewmodels/useBookingGuestAccessViewModel";
 
 interface BookingGuestAccessCardProps {
   reservationId: string;
@@ -40,123 +22,21 @@ export function BookingGuestAccessCard({
   direction = "ltr",
   t,
 }: BookingGuestAccessCardProps) {
-  const [loading, setLoading] = useState(true);
-  const [status, setStatus] = useState<GuestAccessStatus | null>(null);
-  const [activeLink, setActiveLink] = useState<string | null>(null);
-  const [copied, setCopied] = useState(false);
-  const [generating, setGenerating] = useState(false);
-  const [sending, setSending] = useState(false);
-  const [revoking, setRevoking] = useState(false);
-  const [sendSuccess, setSendSuccess] = useState<string | null>(null);
-  const [feedbackError, setFeedbackError] = useState<string | null>(null);
-
-  const api = getModuleApiService("venue");
-
-  const loadStatus = useCallback(async () => {
-    try {
-      setLoading(true);
-      setFeedbackError(null);
-      const res = await api.get<GuestAccessStatus>(
-        `/v1/reservations/${encodeURIComponent(reservationId)}/guest-access`
-      );
-      setStatus(res);
-    } catch (err: any) {
-      // 404 or missing access simply means no link generated yet
-      setStatus({
-        hasActiveLink: false,
-        isRevoked: false,
-      });
-    } finally {
-      setLoading(false);
-    }
-  }, [api, reservationId]);
-
-  useEffect(() => {
-    void loadStatus();
-  }, [loadStatus]);
-
-  const handleGenerateLink = async () => {
-    try {
-      setGenerating(true);
-      setFeedbackError(null);
-      setSendSuccess(null);
-      const res = await api.post<GenerateGuestAccessResult>(
-        `/v1/reservations/${encodeURIComponent(reservationId)}/guest-access`
-      );
-
-      // Build full absolute link if relative path returned
-      const fullUrl = res.guestAccessLink.startsWith("http")
-        ? res.guestAccessLink
-        : `${typeof window !== "undefined" ? window.location.origin : ""}${res.guestAccessLink}`;
-
-      setActiveLink(fullUrl);
-      setStatus({
-        hasActiveLink: true,
-        expiresAtUtc: res.expiresAtUtc,
-        isRevoked: false,
-      });
-    } catch (err: any) {
-      setFeedbackError(err?.message || "Failed to generate guest link.");
-    } finally {
-      setGenerating(false);
-    }
-  };
-
-  const handleCopyLink = () => {
-    if (!activeLink) return;
-    navigator.clipboard.writeText(activeLink);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
-  };
-
-  const handleSendLink = async () => {
-    try {
-      setSending(true);
-      setFeedbackError(null);
-      setSendSuccess(null);
-      const res = await api.post<SendGuestLinkResult>(
-        `/v1/reservations/${encodeURIComponent(reservationId)}/send-guest-link`,
-        { recipientEmail: customerEmail || null }
-      );
-
-      if (res.sent) {
-        setSendSuccess(`Guest link dispatched to ${res.recipient || "customer"}.`);
-      } else {
-        setFeedbackError(
-          "Email delivery could not be completed. You can copy and share the link manually."
-        );
-      }
-    } catch (err: any) {
-      setFeedbackError(err?.message || "Failed to dispatch guest link.");
-    } finally {
-      setSending(false);
-    }
-  };
-
-  const handleRevokeLink = async () => {
-    if (
-      !window.confirm(
-        "Are you sure you want to revoke this guest link? The customer will no longer be able to view or manage their booking with it."
-      )
-    ) {
-      return;
-    }
-
-    try {
-      setRevoking(true);
-      setFeedbackError(null);
-      setSendSuccess(null);
-      await api.delete(
-        `/v1/reservations/${encodeURIComponent(reservationId)}/guest-access?reason=Revoked+by+operator`
-      );
-      setActiveLink(null);
-      await loadStatus();
-    } catch (err: any) {
-      setFeedbackError(err?.message || "Failed to revoke guest link.");
-    } finally {
-      setRevoking(false);
-    }
-  };
+  const {
+    loading,
+    status,
+    activeLink,
+    copied,
+    generating,
+    sending,
+    revoking,
+    sendSuccess,
+    feedbackError,
+    handleGenerateLink,
+    handleCopyLink,
+    handleSendLink,
+    handleRevokeLink,
+  } = useBookingGuestAccessViewModel({ reservationId, customerEmail });
 
   const formatExpiry = (expiryUtc?: string | null) => {
     if (!expiryUtc) return "";
@@ -263,10 +143,10 @@ export function BookingGuestAccessCard({
                       </Button>
                     </div>
                   ) : (
-                    <div className="bg-nx-surfaceSubtle border-nx-line/50 flex items-center justify-between rounded-nx-md border p-3">
-                      <div className="flex items-center gap-2 text-xs text-nx-ink">
+                    <div className="bg-nx-surfaceSubtle border-nx-line/60 flex items-center justify-between rounded-nx-md border p-3 text-xs">
+                      <div className="flex items-center gap-2 text-nx-ink-2">
                         <ShieldCheck className="size-4 text-emerald-600" aria-hidden="true" />
-                        <span>Active guest link issued and valid.</span>
+                        <span>Link generated & active. Generate again to view and copy token.</span>
                       </div>
                       <Button
                         variant="outline"
@@ -275,76 +155,67 @@ export function BookingGuestAccessCard({
                         disabled={generating}
                         className="h-8 text-xs font-medium"
                       >
-                        {generating ? "Re-issuing..." : "View / Re-issue Link"}
+                        {generating ? "Regenerating..." : "Regenerate Link"}
                       </Button>
                     </div>
                   )}
                 </div>
 
-                <div className="border-nx-line/40 flex flex-wrap items-center justify-between gap-2 border-t pt-1">
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={handleSendLink}
-                    disabled={sending}
-                    className="flex h-8 items-center gap-1.5 text-xs text-nx-ink"
-                  >
-                    <Send className="size-3.5 text-nx-accent" aria-hidden="true" />
-                    <span>{sending ? "Sending..." : "Send via Email"}</span>
-                  </Button>
+                {/* Actions row: Dispath to email or Revoke */}
+                <div className="border-nx-line/40 flex flex-wrap items-center justify-between gap-2 border-t pt-2">
+                  <div className="flex items-center gap-2">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={handleSendLink}
+                      disabled={sending}
+                      className="flex h-8 items-center gap-1.5 text-xs font-medium"
+                    >
+                      <Send className="size-3 text-nx-ink-2" aria-hidden="true" />
+                      <span>{sending ? "Sending..." : "Dispatch to Email"}</span>
+                    </Button>
+                    {customerEmail && (
+                      <span className="text-[11px] text-nx-ink-3">to {customerEmail}</span>
+                    )}
+                  </div>
 
                   <Button
                     variant="ghost"
                     size="sm"
                     onClick={handleRevokeLink}
                     disabled={revoking}
-                    className="flex h-8 items-center gap-1.5 text-xs text-destructive hover:bg-destructive/10"
+                    className="flex h-8 items-center gap-1.5 text-xs text-destructive hover:bg-destructive/10 hover:text-destructive"
                   >
-                    <Trash2 className="size-3.5" aria-hidden="true" />
-                    <span>{revoking ? "Revoking..." : "Revoke Link"}</span>
+                    <Trash2 className="size-3" aria-hidden="true" />
+                    <span>{revoking ? "Revoking..." : "Revoke Access"}</span>
                   </Button>
                 </div>
               </div>
-            ) : status?.isRevoked ? (
+            ) : (
+              /* When no link exists or previous was revoked */
               <div className="space-y-3">
-                <div className="space-y-1 rounded-nx-md border border-rose-500/20 bg-rose-500/10 p-3 text-xs">
-                  <div className="flex items-center gap-1.5 font-semibold text-rose-700 dark:text-rose-400">
-                    <AlertCircle className="size-4" aria-hidden="true" />
-                    <span>Previous Guest Link Revoked</span>
-                  </div>
-                  {status.revokedReason && (
-                    <p className="pl-5.5 text-nx-ink-2">Reason: {status.revokedReason}</p>
-                  )}
+                <div className="bg-nx-surfaceSubtle/70 border-nx-line/50 rounded-nx-md border p-3 text-xs leading-relaxed text-nx-ink-2">
+                  <p>
+                    Guest access links allow customers to view their booking details and request
+                    cancellations via a self-service portal without requiring an account or mobile app.
+                  </p>
+                  <p className="mt-1 text-nx-ink-3">
+                    Tokens are cryptographically bound to the URL fragment and never logged in server
+                    access logs.
+                  </p>
                 </div>
 
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={handleGenerateLink}
-                  disabled={generating}
-                  className="flex w-full items-center justify-center gap-1.5 text-xs font-medium"
-                >
-                  <Link2 className="size-3.5 text-nx-accent" aria-hidden="true" />
-                  <span>{generating ? "Generating..." : "Generate New Guest Link"}</span>
-                </Button>
-              </div>
-            ) : (
-              <div className="space-y-3 text-center sm:text-left">
-                <p className="text-xs leading-relaxed text-nx-ink-2">
-                  Provide customer with zero-friction, mobile-optimized booking details without
-                  requiring an app download or account creation.
-                </p>
-
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={handleGenerateLink}
-                  disabled={generating}
-                  className="border-nx-accent/30 hover:bg-nx-accent/10 flex w-full items-center justify-center gap-1.5 text-xs font-semibold text-nx-accent sm:w-auto"
-                >
-                  <Link2 className="size-3.5" aria-hidden="true" />
-                  <span>{generating ? "Generating..." : "Generate Guest Link"}</span>
-                </Button>
+                <div className="flex items-center justify-start gap-2">
+                  <Button
+                    size="sm"
+                    onClick={handleGenerateLink}
+                    disabled={generating}
+                    className="flex h-9 items-center gap-2 px-4 text-xs font-semibold"
+                  >
+                    <Link2 className="size-3.5" aria-hidden="true" />
+                    <span>{generating ? "Generating..." : "Generate Guest Link"}</span>
+                  </Button>
+                </div>
               </div>
             )}
           </>
