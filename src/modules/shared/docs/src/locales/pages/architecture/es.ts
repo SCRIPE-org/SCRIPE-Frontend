@@ -249,6 +249,9 @@ export const es = {
         "El patrón Outbox resuelve el problema de la doble escritura: cómo actualizar atómicamente la base de datos Y publicar un evento al mismo tiempo.",
       outboxWarning:
         "El patrón Outbox proporciona una entrega de 'al menos una vez' (at-least-once), no 'exactamente una vez'. Los manejadores de eventos deben ser idempotentes.",
+      committedAuditTitle: "Auditoría de cambios de entidad confirmados",
+      committedAuditIntro:
+        "Las instantáneas de auditoría de cambios de entidad se escriben en OutboxMessages del módulo propietario junto con la mutación de negocio, por lo que una reversión elimina ambos. El procesador de outbox entrega la instantánea al almacén central de auditoría de Identity al menos una vez. El ID del evento es el ID de AuditLog; una redelivery solo se considera completada si ya existen ese ID y ese tenant exactos, incluso si el worker no tiene ámbito de consulta por tenant. La entrega es al menos una vez, no exactamente una; los fallos se pueden reintentar.",
       outboxMessageTitle: "Entidad OutboxMessage",
       outboxInterceptorTitle: "OutboxInterceptor",
       outboxInterceptorIntro:

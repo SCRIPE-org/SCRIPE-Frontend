@@ -43,6 +43,8 @@ export const en = {
       allocated: "Payment was successfully allocated to the invoice.",
       allocationPending:
         "Payment {payment} was recorded, but allocation did not complete. Do not re-record the payment; resolve the allocation from Finance.",
+      receiptPending:
+        "Payment {payment} was recorded and allocated, but receipt issuance did not complete. Retry this same payment to finish safely.",
       validation:
         "Select an outstanding invoice and provide a positive payment that does not exceed its current outstanding balance, with a reason.",
       recent: "Recent payments",

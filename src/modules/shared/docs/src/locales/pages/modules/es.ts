@@ -1437,6 +1437,12 @@ export const es = {
         treeFlowTitle: "Resolución del Árbol Jerárquico en 6 Niveles",
         treeFlowIntro:
           "Propagación descendente de directivas y privilegios a través de la estructura empresarial:",
+        searchTitle: "Búsqueda multilingüe de sucursales",
+        searchIntro:
+          "La búsqueda de sucursales normaliza nombres árabes y latinos con reglas Unicode versionadas. Obtiene candidatos de un índice limitado al tenant; para tokens de cuatro o cinco runas usa bigramas además de trigramas para que los errores cortos aceptados lleguen al evaluador difuso. Los tokens de menos de cuatro runas deben coincidir exactamente; los más largos toleran una edición. Cada página se limita a 100 resultados.",
+        searchSafetyTitle: "Alcance de búsqueda y carga inicial del índice",
+        searchSafetyContent:
+          "El alcance del tenant y de las filas de plataforma se aplica antes de ordenar y contar resultados. La similitud solo sirve para buscar; no identifica ni fusiona personas u organizaciones. Las nuevas sucursales mantienen el índice. Un superadministrador de plataforma puede actualizar registros existentes en lotes limitados con POST /api/v1/Branches/search-index/backfill?batchSize=200; repite la solicitud hasta que la respuesta indique updated=0. Los registros pendientes siguen siendo buscables durante la actualización.",
         apiTitle: "API de Estructura Organizativa",
         apiIntro:
           "Endpoints para definir sociedades, dependencias entre delegaciones y recintos deportivos.",
@@ -2016,6 +2022,9 @@ export const es = {
         holdLifecycleTitle: "Ciclo de Vida del Bloqueo en 2 Fases",
         holdLifecycleDesc:
           "Retenciones temporales de 15 minutos que protegen el turno durante la pasarela de pago.",
+        retrySafetyTitle: "Reintentos seguros y recibos de reserva",
+        retrySafetyDesc:
+          "Conserve la misma clave de idempotencia al reintentar una misma intención de reserva. El resultado exitoso guardado solo se devuelve después de volver a comprobar el tenant y el alcance operativo actual del usuario en la instalación; no se confirma otra vez la reserva ni se consume de nuevo la cuota. Reutilizar la clave con otra reserva, cotización, instalación, intervalo o motivo de cancelación/ausencia produce un conflicto. En Booking 360, los reintentos sin cambios conservan la clave; editar el motivo de cancelación o ausencia inicia una intención nueva con otra clave, y una cotización actualizada crea una nueva intención de confirmación. Los recibos antiguos sin huella de la solicitud siguen siendo legibles con garantías de comparación más limitadas. Las mutaciones Venue envían la misma clave en el cuerpo y en el encabezado `Idempotency-Key`; Axios realiza hasta tres reintentos por errores de red/tiempo de espera o respuestas HTTP 500, 502, 503 y 504, con un nonce anti-repetición nuevo en cada intento.",
         reducerTitle: "Reductor de Estado en Cliente",
         reducerDesc:
           "Actualizaciones reactivas en interfaz para mantener los turnos sincronizados entre navegadores.",
@@ -2160,6 +2169,9 @@ export const es = {
         pricingFlowTitle: "Motor de Resolución de Precios Multitarifa",
         pricingFlowIntro:
           "Cómo calcula SCRIPE el precio definitivo a partir de tarifas base, acuerdos, rebajas y tributos:",
+        snapshotCaptureTitle: "Captura de instantánea de reserva y reintentos",
+        snapshotCaptureIntro:
+          "CatalogPricing captura una cotización aún válida y sus líneas como una instantánea pendiente para una reserva. La clave de idempotencia se recorta y es única dentro del tenant. Repetirla con la misma reserva, cotización, recurso, pagador, cantidad e intervalo devuelve la instantánea existente; reutilizarla con una intención distinta genera un conflicto. La instantánea y todas sus líneas se guardan juntas. El flujo de reserva la vincula y convierte la cotización solo después de confirmar correctamente la reserva.",
         apiTitle: "Puntos de Entrada API Principales",
         apiIntro:
           "Endpoints de CatalogPricingControllers para gestión del catálogo, libros de tarifas y cálculo de ofertas.",
@@ -2169,7 +2181,8 @@ export const es = {
         createItem: "Registrar un nuevo servicio, recurso de alquiler o producto",
         listOfferings: "Listar servicios reservables con precios base y condiciones",
         listPriceBooks: "Consultar libros de precios vigentes y programados",
-        calculateQuote: "Simular el cálculo de una cotización sin guardar estado",
+        calculateQuote:
+          "Calcular y guardar una cotización. Reutiliza la misma Idempotency-Key al reintentar para recuperar la cotización original; cambiar los datos con la misma clave genera un conflicto.",
         createQuote: "Generar y guardar una cotización formal con plazo de validez",
       },
       rateCards: {

@@ -73,6 +73,12 @@ const sections: DocSection[] = [
   { type: "paragraph", contentKey: `${K}.searchPaging` },
   { type: "paragraph", contentKey: `${K}.searchRows` },
   { type: "paragraph", contentKey: `${K}.searchTyping` },
+  {
+    type: "info",
+    variant: "note",
+    titleKey: `${K}.fieldAccessTitle`,
+    contentKey: `${K}.fieldAccessContent`,
+  },
 
   { type: "heading", level: 3, titleKey: `${K}.resolveTitle`, id: "resolving-a-reference" },
   { type: "paragraph", contentKey: `${K}.resolveWhat` },

@@ -1455,6 +1455,12 @@ export const fr = {
         treeFlowTitle: "Résolution de la Hiérarchie à 6 Niveaux",
         treeFlowIntro:
           "Propagation descendante des données et habilitations à travers l'arborescence de l'entreprise :",
+        searchTitle: "Recherche multilingue de succursales",
+        searchIntro:
+          "La recherche de succursales normalise les noms arabes et latins avec des règles Unicode versionnées. Elle récupère les candidats depuis un index limité au tenant ; les jetons de quatre ou cinq runes utilisent aussi des bigrammes afin que les fautes courtes acceptées atteignent le moteur flou. Les jetons de moins de quatre runes exigent une correspondance exacte ; les plus longs tolèrent une modification. Les pages sont limitées à 100 résultats.",
+        searchSafetyTitle: "Périmètre de recherche et alimentation de l'index",
+        searchSafetyContent:
+          "Le périmètre du tenant et des lignes de plateforme est appliqué avant le classement et le comptage. La similarité sert uniquement à la recherche ; elle n'identifie ni ne fusionne des personnes ou des organisations. Les nouvelles succursales mettent l'index à jour. Un superadministrateur de plateforme peut compléter les anciennes lignes par lots limités via POST /api/v1/Branches/search-index/backfill?batchSize=200 ; répétez jusqu'à ce que la réponse indique updated=0. Les lignes en attente restent recherchables pendant cette opération.",
         apiTitle: "API d'Organisation Générale",
         apiIntro:
           "Routes principales pour déclarer les structures morales, les filiales et administrer les complexes sportifs.",
@@ -2037,6 +2043,9 @@ export const fr = {
         holdLifecycleTitle: "Cycle de l'Option en 2 Phases",
         holdLifecycleDesc:
           "Réservation temporaire de 15 minutes protégeant le créneau durant le paiement.",
+        retrySafetyTitle: "Nouvelles tentatives sûres et reçus de réservation",
+        retrySafetyDesc:
+          "Conservez la même clé d’idempotence pour les tentatives d’une même intention de réservation. Un résultat positif enregistré n’est renvoyé qu’après une nouvelle vérification du tenant et des droits opérationnels actuels sur le site ; la réservation n’est pas confirmée une seconde fois et le quota n’est pas débité à nouveau. Réutiliser la clé avec une autre réservation, un autre devis, une autre ressource, une autre période ou un autre motif d’annulation/non-présentation provoque un conflit. Dans Booking 360, une nouvelle tentative au contenu inchangé conserve la même clé ; modifier le motif d’annulation ou de non-présentation crée une nouvelle intention avec une nouvelle clé. Un devis actualisé crée également une nouvelle intention de confirmation. Les anciens reçus sans empreinte de requête restent lisibles avec des garanties de comparaison plus limitées. Les mutations Venue envoient la même clé dans le corps et l’en-tête `Idempotency-Key` ; Axios effectue jusqu’à trois nouvelles tentatives après une erreur réseau, un délai dépassé ou les réponses HTTP 500, 502, 503 et 504, avec un nonce anti-rejeu renouvelé à chaque tentative.",
         reducerTitle: "Réducteur d'État Côté Client",
         reducerDesc:
           "Mise à jour prédictive maintenant les créneaux synchronisés entre onglets ouverts.",
@@ -2183,6 +2192,9 @@ export const fr = {
         pricingFlowTitle: "Moteur de Résolution Tarifaire Multi-Paliers",
         pricingFlowIntro:
           "Comment SCRIPE détermine le prix net à partir des barèmes de référence, accords, remises et taxes :",
+        snapshotCaptureTitle: "Capture du devis de réservation et nouvelles tentatives",
+        snapshotCaptureIntro:
+          "CatalogPricing capture un devis encore valide et ses lignes sous forme d'instantané en attente pour une réservation. La clé d'idempotence est nettoyée et unique au sein du tenant. Une nouvelle tentative avec la même clé, la même réservation, le même devis, la même ressource, le même payeur, la même quantité et le même intervalle renvoie l'instantané existant ; une intention différente entraîne un conflit. L'instantané et toutes ses lignes sont enregistrés ensemble. Le parcours de réservation lie l'instantané et convertit le devis uniquement après confirmation réussie de la réservation.",
         apiTitle: "Points d'Entrée API Essentiels",
         apiIntro:
           "Endpoints de CatalogPricingControllers pour le catalogue, les grilles de prix et le calcul des devis.",
@@ -2192,7 +2204,8 @@ export const fr = {
         createItem: "Enregistrer un nouveau service, équipement en location ou produit",
         listOfferings: "Afficher les offres réservables avec tarif de base",
         listPriceBooks: "Lister les barèmes de prix actifs et planifiés",
-        calculateQuote: "Simuler le montant d'un devis sans enregistrer l'état",
+        calculateQuote:
+          "Calculer et enregistrer un devis. Réutilisez la même Idempotency-Key lors d'une nouvelle tentative pour récupérer le devis initial ; une même clé avec des données modifiées provoque un conflit.",
         createQuote: "Générer et figer un devis officiel avec date de validité",
       },
       rateCards: {

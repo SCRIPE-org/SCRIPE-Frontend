@@ -131,6 +131,15 @@ const sections: DocSection[] = [
     ],
   },
 
+  // ─── Reservation snapshot capture and retry contract ───────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "modules.catalogPricing.overview.snapshotCaptureTitle",
+    id: "reservation-price-snapshot-capture",
+  },
+  { type: "paragraph", contentKey: "modules.catalogPricing.overview.snapshotCaptureIntro" },
+
   // ─── API Reference ────────────────────────────────────────────────
   {
     type: "heading",
@@ -175,7 +184,7 @@ const sections: DocSection[] = [
         path: "/api/v1/catalog-pricing/price-quotes/calculate",
         descriptionKey: "modules.catalogPricing.api.calculateQuote",
         auth: "Bearer JWT",
-        permission: "catalog-pricing.quotes.create",
+        permission: "catalog-pricing.calculate-quote.view",
       },
       {
         method: "POST",
@@ -200,5 +209,5 @@ registerPage({
     "modules/finance-overview",
     "modules/entitlements-overview",
   ],
-  lastUpdated: "2026-10-03",
+  lastUpdated: "2026-10-15",
 });

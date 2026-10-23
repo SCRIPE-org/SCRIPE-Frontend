@@ -491,7 +491,7 @@ export const fr = {
     outboxPattern: {
       title: "Modèle Outbox",
       description:
-        "Garantie d'expédition des événements de domaine avec EF Core OutboxInterceptor, table OutboxMessage et tâche OutboxProcessor.",
+        "Persistance des événements de domaine dans la transaction métier, puis distribution asynchrone avec une livraison au moins une fois.",
       intro:
         "Le modèle Outbox résout le dilemme de la double écriture en enregistrant les mutations d'entités et leurs événements dérivés dans une même transaction atomique.",
       dualWriteProblemTitle: "Le Problème de Double Écriture",
@@ -504,12 +504,28 @@ export const fr = {
       outboxMessageTitle: "Entité OutboxMessage",
       processorTitle: "OutboxProcessor — Le Distributeur Fiable",
       processorContent:
-        "Exécuté toutes les 30 secondes, le processeur dépile les messages en attente et les publie via IMediator.Publish avec verrouillage optimiste.",
+        "OutboxProcessor traite les événements de domaine en attente et enregistre l’état de nouvelle tentative en cas d’échec. Chaque livraison reçoit un nouveau scope d’injection de dépendances : les changements suivis par une livraison échouée ne peuvent donc pas être enregistrés par une livraison ultérieure. La livraison est au moins une fois ; les consommateurs qui modifient un état persistant doivent enregistrer un reçu Inbox dans la même transaction que leurs changements métier. Ce scope ne garantit pas un traitement unique entre plusieurs hôtes.",
       idempotencyTitle: "Exigences d'Idempotence",
       idempotencyContent:
-        "OutboxMessage.Id sert de clé d'idempotence. Tous les récepteurs d'événements doivent vérifier l'exécution antérieure avant traitement.",
+        "OutboxMessage.Id identifie une livraison d'événement et peut servir de clé à un reçu Inbox ; il ne remplace pas une clé d'idempotence de requête métier. Un consommateur qui modifie un état durable doit enregistrer son reçu Inbox et son effet métier dans la même transaction locale.",
       idempotencyTip:
-        "La distribution au moins une fois combinée à des récepteurs idempotents garantit l'effet exactement une fois.",
+        "La livraison reste au moins une fois. Des traitements idempotents et des reçus Inbox transactionnels peuvent éviter des effets durables en double dans la base du consommateur, mais ne garantissent pas une livraison unique entre hôtes ni un effet unique chez un fournisseur externe.",
+    },
+    sharedFoundations: {
+      title: "Fondations partagées pour l'idempotence et la recherche",
+      description: "Rejeu des intentions métier détenues par chaque module et recherche multilingue respectant les autorisations.",
+      intro: "SCRIPE fournit des primitives réutilisables d'idempotence et de recherche. Elles ne possèdent ni les données métier ni les politiques des modules ; chaque contexte délimité les adopte via ses propres couches applicatives et d'infrastructure.",
+      ownershipTitle: "Propriété des modules et frontières",
+      ownershipContent: "Le module propriétaire conserve son DbContext, ses reçus durables, ses filtres de tenant, ses contrôles PBAC et de sécurité au niveau des champs, ses règles de fonctionnalités et quotas, ainsi que son contrat de réponse. Le Core partagé peut normaliser ou classer les valeurs fournies par l'appelant, mais ne consulte pas la persistance d'un autre module et ne définit pas les politiques de contact, de doublon ou de fusion de Party.",
+      idempotencyTitle: "Idempotence côté serveur",
+      idempotencyContent: "Utilisez une clé stable par intention métier. Le module propriétaire enregistre son reçu avec la mutation et les effets de quota ou d'outbox requis dans la même transaction locale lorsque son implémentation garantit cette atomicité. Une clé et une requête canonique identiques peuvent rejouer le résultat enregistré ; une requête modifiée avec la même clé doit provoquer un conflit. Vérifiez à nouveau le tenant et les autorisations actuels avant le rejeu. L'outbox est livrée au moins une fois : les consommateurs durables doivent traiter les doublons et valider un reçu Inbox avec leur propre effet.",
+      frontendIntentTitle: "Cycle de vie de l'intention frontend",
+      frontendIntentContent: "Créez la clé d'idempotence au début d'une intention métier et conservez-la pour les nouvelles tentatives de cette même intention inchangée, y compris après la perte d'une réponse. Une charge utile modifiée ou une nouvelle intention nécessite une nouvelle clé. Les nonces de protection contre le rejeu sont propres à chaque tentative et ne remplacent pas la clé métier stable. Le transport Axios partagé ne rend pas automatiquement chaque POST rejouable ; l'appelant doit choisir le contrat d'idempotence de l'endpoint.",
+      searchTitle: "Recherche multilingue et autorisations",
+      searchContent: "Utilisez un profil de normalisation versionné et des classes de correspondance explicites : exacte, préfixe, jetons ou approximative. La similarité approximative aide à retrouver des éléments, mais ne prouve pas une identité et n'autorise pas une fusion. Le module propriétaire applique les filtres tenant, PBAC, sécurité des champs, fonctionnalités et quotas avant les résultats ou leurs nombres observables ; il borne aussi les pages et fixe un tri déterministe. La normalisation du téléphone et de l'email sert à la comparaison, pas à établir l'identité.",
+      adoptionTitle: "Adoption et limites des preuves",
+      adoptionContent: "OrganizationCore est un consommateur vérifié pour la recherche de branches sur PostgreSQL et SQL Server. HRMS est un consommateur vérifié pour la recherche limitée par alias de domaine email via son chemin HTTP enregistré sur PostgreSQL. Ces résultats ne prouvent que les comportements couverts par leurs tests. Party reste indépendante : les helpers partagés et le contrat de transfert ne signifient pas que Party les a adoptés et n'autorisent aucun accès à sa persistance.",
+      idempotencyTip: "La clé correspond à une intention utilisateur, pas à une tentative réseau. Vérifiez le contrat de l'endpoint, la portée et la durée de conservation de la clé, ainsi que le contrôle d'autorisation au moment du rejeu.",
     },
     communication: {
       title: "Communication Module",

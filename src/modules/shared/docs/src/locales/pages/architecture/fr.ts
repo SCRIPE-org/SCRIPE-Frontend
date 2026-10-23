@@ -249,6 +249,9 @@ export const fr = {
         "Le modèle Outbox résout le problème de la double écriture : comment mettre à jour atomiquement la base de données ET publier un événement de manière fiable.",
       outboxWarning:
         "Le modèle Outbox fournit une livraison 'au moins une fois' (at-least-once). Les gestionnaires d'événements doivent donc être idempotents.",
+      committedAuditTitle: "Audit des modifications d'entité validées",
+      committedAuditIntro:
+        "Les instantanés d'audit des modifications d'entité sont écrits dans la table OutboxMessages du module propriétaire avec la mutation métier ; une annulation supprime donc les deux. Le processeur Outbox transmet l'instantané au dépôt d'audit central Identity au moins une fois. L'identifiant de l'événement est celui de l'AuditLog ; une nouvelle livraison n'est considérée comme terminée que si cet identifiant et ce tenant exacts existent déjà, même si le worker n'a aucun contexte de requête tenant. La livraison est au moins une fois, pas exactement une ; les échecs restent réessayables.",
       outboxMessageTitle: "Entité OutboxMessage",
       outboxInterceptorTitle: "OutboxInterceptor",
       outboxInterceptorIntro:

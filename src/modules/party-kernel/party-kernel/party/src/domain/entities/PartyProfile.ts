@@ -5,13 +5,16 @@
  * aggregating contact methods, business roles, relationships, and subtype specifics.
  */
 import { Party } from "./Party";
-import type { PartyPerson } from "@modules/party-kernel/party-person/src/domain/entities/PartyPerson";
-import type { PartyOrganization } from "@modules/party-kernel/party-organization/src/domain/entities/PartyOrganization";
-import type { ContactPoint } from "@modules/party-kernel/contact-point/src/domain/entities/ContactPoint";
-import type { PartyRole } from "@modules/party-kernel/party-role/src/domain/entities/PartyRole";
-import type { PartyRelationship } from "@modules/party-kernel/party-relationship/src/domain/entities/PartyRelationship";
-import type { MergeCandidate } from "@modules/party-kernel/merge-candidate/src/domain/entities/MergeCandidate";
+import type { PartyPerson } from "../../../../party-person/src/domain/entities/PartyPerson";
+import type { PartyOrganization } from "../../../../party-organization/src/domain/entities/PartyOrganization";
+import type { ContactPoint } from "../../../../contact-point/src/domain/entities/ContactPoint";
+import type { PartyRole } from "../../../../party-role/src/domain/entities/PartyRole";
+import type { PartyRelationship } from "../../../../party-relationship/src/domain/entities/PartyRelationship";
+import type { MergeCandidate } from "../../../../merge-candidate/src/domain/entities/MergeCandidate";
 
+/**
+ * Underlying composite data for a PartyProfile
+ */
 export interface PartyProfileData {
   party: Party;
   person?: PartyPerson | null;
@@ -23,14 +26,24 @@ export interface PartyProfileData {
   canonicalProfile?: {
     fullName?: string | null;
     legalName?: string | null;
+    rowVersion?: string | null;
+    createdAt?: string | null;
+    modifiedAt?: string | null;
   } | null;
 }
 
+/**
+ * Composite domain entity representing the complete 360-degree party profile
+ */
 export class PartyProfile {
   constructor(public readonly data: PartyProfileData) {}
 
   get party(): Party {
     return this.data.party;
+  }
+
+  get rowVersion(): string | null {
+    return this.data.canonicalProfile?.rowVersion ?? null;
   }
 
   get id(): string {
@@ -58,11 +71,23 @@ export class PartyProfile {
   }
 
   get createdAt(): string {
-    return this.data.party.createdAt;
+    return (
+      this.data.party.createdAt ||
+      this.data.canonicalProfile?.createdAt ||
+      this.data.person?.createdAt ||
+      this.data.organization?.createdAt ||
+      ""
+    );
   }
 
   get modifiedAt(): string | undefined {
-    return this.data.party.modifiedAt;
+    return (
+      this.data.party.modifiedAt ||
+      this.data.canonicalProfile?.modifiedAt ||
+      this.data.person?.modifiedAt ||
+      this.data.organization?.modifiedAt ||
+      undefined
+    );
   }
 
   get person(): PartyPerson | null | undefined {

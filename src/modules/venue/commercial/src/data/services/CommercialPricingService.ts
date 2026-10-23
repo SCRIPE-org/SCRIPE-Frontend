@@ -27,17 +27,22 @@ export class CommercialPricingService implements ICommercialPricingService {
   }
 
   calculateQuote(input: CalculatePriceQuoteInput): Promise<PriceQuote> {
-    return this.api.post(COMMERCIAL_PRICING_ENDPOINTS.CALCULATE_QUOTE, {
-      offeringId: input.offeringId,
-      schedulableResourceId: input.resourceId,
-      partyId: input.partyId,
-      quantity: input.quantity,
-      requestedStartUtc: input.requestedStartUtc,
-      requestedEndUtc: input.requestedEndUtc,
-      currencyCode: input.currencyCode,
-      expiresAtUtc: input.expiresAtUtc,
-      idempotencyKey: input.idempotencyKey,
-    });
+    return this.api.postWithRetry(
+      COMMERCIAL_PRICING_ENDPOINTS.CALCULATE_QUOTE,
+      {
+        offeringId: input.offeringId,
+        schedulableResourceId: input.resourceId,
+        partyId: input.partyId,
+        quantity: input.quantity,
+        requestedStartUtc: input.requestedStartUtc,
+        requestedEndUtc: input.requestedEndUtc,
+        currencyCode: input.currencyCode,
+        expiresAtUtc: input.expiresAtUtc,
+        idempotencyKey: input.idempotencyKey,
+      },
+      undefined,
+      { headers: { "Idempotency-Key": input.idempotencyKey } }
+    );
   }
 
   overrideQuote(quoteId: string, input: OverridePriceQuoteInput): Promise<PriceQuoteOverride> {

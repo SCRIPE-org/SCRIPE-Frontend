@@ -1235,6 +1235,12 @@ export const zh = {
           "为特定大型联赛锦标赛、梯队年龄段或特定季节性训练营临时组建的专业教练与运营专项工作组。",
         treeFlowTitle: "六层企业树形拓扑与权限继承解析",
         treeFlowIntro: "系统核心机制如何将组织数据与权限规则自顶向下逐层平滑穿透与动态下发：",
+        searchTitle: "多语言分支搜索",
+        searchIntro:
+          "分支搜索使用带版本的 Unicode 规则规范化阿拉伯语和拉丁语名称，并从租户范围的索引检索候选项。四到五个 Unicode 字符的词项同时使用二元组和三元组，使可接受的短词拼写错误能够进入模糊评分；少于四个字符的词项必须完全匹配，较长词项允许一次编辑。每页最多返回 100 条，并采用确定性排序。",
+        searchSafetyTitle: "搜索范围与索引补全",
+        searchSafetyContent:
+          "租户和平台记录范围会在排序和计数前应用。相似度仅用于搜索，不用于识别或合并个人及组织。新建分支会维护索引。平台超级管理员可通过 POST /api/v1/Branches/search-index/backfill?batchSize=200 分批补全现有记录；重复调用，直到响应显示 updated=0。等待补全的记录仍可通过过渡查询搜索。",
         apiTitle: "企业组织核心架构 API 服务接口",
         apiIntro:
           "由 OrganizationCore 控制器暴露的权威接口，用于配置法人主体、分支机构树以及综合体物理坐标查询。",
@@ -1746,6 +1752,9 @@ export const zh = {
         apiCommit: "提交锁定状态并转为正式生效的预订订单",
         holdLifecycleTitle: "两阶段锁全生命周期",
         holdLifecycleDesc: "支付环节 15 分钟临时锁定，防止多方并发抢单造成数据混乱。",
+        retrySafetyTitle: "安全重试与预订回执",
+        retrySafetyDesc:
+          "重试同一预订意图时请始终使用相同的幂等键。系统只有在重新校验调用方当前租户及场馆操作权限后，才会返回已保存的成功结果；不会再次确认预订，也不会重复扣减配额。若同一键用于不同预订、报价、资源、时间段或取消/未到场原因，系统将返回冲突。在 Booking 360 中，未更改请求的重试会保留原键；编辑取消或未到场原因会创建新意图并使用新键。更新后的报价也会创建新的确认意图。缺少请求指纹的旧回执仍可读取，但其请求比较保证范围较窄。Venue 变更请求会在请求正文和 `Idempotency-Key` 标头中发送同一密钥；Axios 在网络/超时错误或 HTTP 500、502、503、504 响应时最多重试三次，并在每次请求中刷新防重放 nonce。",
         reducerTitle: "客户端状态合并 Reducer",
         reducerDesc: "预测性界面渲染，保证各用户窗口场次可用状态始终保持一致。",
         apiConfirm: "在支付网关握手成功后确认预订生效",
@@ -1865,6 +1874,9 @@ export const zh = {
         pricingFlowTitle: "多层级动态价格解算流水线",
         pricingFlowIntro:
           "SCRIPE 如何在毫秒级时间内依次结合基准手册、大客协议、促销满减与税率推导出最终实付价格：",
+        snapshotCaptureTitle: "预订快照捕获与重试",
+        snapshotCaptureIntro:
+          "CatalogPricing 会将仍有效的报价及其明细行作为预订的待处理快照捕获。幂等键会去除首尾空白，并在租户内保持唯一。使用相同幂等键以及相同预订、报价、资源、付款方、数量和时间范围重试时，将返回现有快照；参数意图不同则返回冲突。快照及其所有明细行会一并保存。只有预订成功确认后，预订流程才会绑定快照并转换报价。",
         apiTitle: "核心业务 API 端点",
         apiIntro:
           "由 CatalogPricingControllers 暴露的接口，提供目录检索、价格表版本控制及报价测算。",
@@ -1874,7 +1886,8 @@ export const zh = {
         createItem: "向目录库中录入全新的训练服务、设备租借或商品",
         listOfferings: "查看可预约服务项目的基准费率与预约先决条件",
         listPriceBooks: "调取当前生效中及未来预定排期的价格手册版本",
-        calculateQuote: "在不持久化落库的前提下快速模拟测算报价总金额",
+        calculateQuote:
+          "计算并保存报价。重试时请复用相同的 Idempotency-Key 以返回原报价；使用相同密钥提交不同输入会产生冲突。",
         createQuote: "正式持久化生成附带锁定有效期的正式业务报价单",
       },
       rateCards: {

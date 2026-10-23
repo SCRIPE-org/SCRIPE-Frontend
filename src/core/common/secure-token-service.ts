@@ -56,7 +56,12 @@ export class SecureTokenService {
       }
 
       this._accessToken = token;
-      if (typeof window !== "undefined" && process.env.NODE_ENV === "development") {
+      if (
+        typeof window !== "undefined" &&
+        (process.env.NODE_ENV === "development" ||
+          window.location.hostname === "localhost" ||
+          window.location.hostname === "127.0.0.1")
+      ) {
         try {
           sessionStorage.setItem("dev_access_token", token);
         } catch {}
@@ -112,7 +117,13 @@ export class SecureTokenService {
    */
   static getAccessToken(): string | null {
     try {
-      if (!this._accessToken && typeof window !== "undefined" && process.env.NODE_ENV === "development") {
+      if (
+        !this._accessToken &&
+        typeof window !== "undefined" &&
+        (process.env.NODE_ENV === "development" ||
+          window.location.hostname === "localhost" ||
+          window.location.hostname === "127.0.0.1")
+      ) {
         try {
           const devToken = sessionStorage.getItem("dev_access_token");
           if (devToken && this.validateTokenFormat(devToken)) {
@@ -194,7 +205,12 @@ export class SecureTokenService {
    * Get token info for debugging (development only)
    */
   static getTokenInfo(): { hasToken: boolean; isExpired: boolean; expiresAt?: number } {
-    if (process.env.NODE_ENV !== "development") {
+    const isLocal =
+      process.env.NODE_ENV === "development" ||
+      (typeof window !== "undefined" &&
+        (window.location.hostname === "localhost" ||
+          window.location.hostname === "127.0.0.1"));
+    if (!isLocal) {
       return { hasToken: false, isExpired: true };
     }
 

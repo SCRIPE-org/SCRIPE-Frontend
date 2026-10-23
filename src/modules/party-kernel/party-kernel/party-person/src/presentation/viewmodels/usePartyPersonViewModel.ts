@@ -60,7 +60,7 @@ export function usePartyPersonViewModel() {
       });
       return (res.items || []).map((p) => ({
         value: p.id,
-        label: p.displayName ? `${p.displayName} (${p.id.length > 8 ? `${p.id.slice(0, 8)}…` : p.id})` : p.id,
+        label: p.displayName || p.fullName || "—",
       }));
     },
     [partyRepository]

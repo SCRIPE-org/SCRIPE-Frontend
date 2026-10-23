@@ -27,11 +27,13 @@ export class MergeCandidateService implements IMergeCandidateService {
     page: number;
     pageSize: number;
     search?: string;
+    partyId?: string;
   }): Promise<MergeCandidateListResult> {
     const url = buildUrl(MERGE_CANDIDATE_ENDPOINTS.LIST, {
       page: params.page,
       pageSize: params.pageSize,
       search: params.search,
+      partyId: params.partyId,
     });
 
     const response = await this.api.get<MergeCandidateListResponseJson>(url);

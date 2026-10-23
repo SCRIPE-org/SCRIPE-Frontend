@@ -42,6 +42,7 @@ export function PaymentsView() {
       fallbackError: t("money.error.description"),
       validation: t("money.payments.validation"),
       allocationPending: (payment) => t("money.payments.allocationPending", { payment }),
+      receiptPending: (payment) => t("money.payments.receiptPending", { payment }),
     },
   });
 

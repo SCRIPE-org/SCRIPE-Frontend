@@ -9,6 +9,7 @@ export interface ContactPointListParams {
   page: number;
   pageSize: number;
   search?: string;
+  partyId?: string;
 }
 
 /**
@@ -25,7 +26,7 @@ export interface IContactPointRepository {
     hasPreviousPage: boolean;
   }>;
   getById(id: string): Promise<ContactPoint>;
-  create(data: Record<string, unknown>): Promise<string>;
+  create(data: Record<string, unknown>, idempotencyKey?: string): Promise<string>;
   update(id: string, data: Record<string, unknown>): Promise<void>;
   delete(id: string): Promise<void>;
 }

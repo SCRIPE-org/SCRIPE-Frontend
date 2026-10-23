@@ -27,11 +27,13 @@ export class PartyPersonService implements IPartyPersonService {
     page: number;
     pageSize: number;
     search?: string;
+    partyId?: string;
   }): Promise<PartyPersonListResult> {
     const url = buildUrl(PARTY_PERSON_ENDPOINTS.LIST, {
       page: params.page,
       pageSize: params.pageSize,
       search: params.search,
+      partyId: params.partyId,
     });
 
     const response = await this.api.get<PartyPersonListResponseJson>(url);

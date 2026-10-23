@@ -1294,6 +1294,13 @@ export const navigationData: DocCategoryData[] = [
         icon: "mail",
         order: 12,
       },
+      {
+        id: "infra-shared-foundations",
+        titleKey: "infrastructure.sharedFoundations.title",
+        slug: "infrastructure/shared-foundations",
+        icon: "layers",
+        order: 13,
+      },
     ],
   },
 

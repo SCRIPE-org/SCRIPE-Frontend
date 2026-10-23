@@ -150,7 +150,7 @@ export const BookingWorkspaceView = React.memo(function BookingWorkspaceView({
         </Alert>
       )}
 
-      {vm.state.stage === "error" && (
+      {vm.state.errorMessage && (
         <Alert variant="destructive">
           <AlertCircle aria-hidden="true" />
           <AlertTitle>{t("booking.errors.generic")}</AlertTitle>

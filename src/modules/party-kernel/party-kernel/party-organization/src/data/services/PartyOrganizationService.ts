@@ -27,11 +27,13 @@ export class PartyOrganizationService implements IPartyOrganizationService {
     page: number;
     pageSize: number;
     search?: string;
+    partyId?: string;
   }): Promise<PartyOrganizationListResult> {
     const url = buildUrl(PARTY_ORGANIZATION_ENDPOINTS.LIST, {
       page: params.page,
       pageSize: params.pageSize,
       search: params.search,
+      partyId: params.partyId,
     });
 
     const response = await this.api.get<PartyOrganizationListResponseJson>(url);

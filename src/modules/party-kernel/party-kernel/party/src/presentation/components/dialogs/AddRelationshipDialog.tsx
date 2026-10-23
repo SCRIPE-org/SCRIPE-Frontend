@@ -20,6 +20,7 @@ import {
 } from "@core/ui/select";
 import { useI18n } from "@core/providers/i18n-provider";
 import { Users, Loader2, Check } from "lucide-react";
+import { PartyPicker, type PartySelectionResult } from "../PartyPicker";
 
 interface AddRelationshipDialogProps {
   open: boolean;
@@ -32,6 +33,8 @@ interface AddRelationshipDialogProps {
   }) => Promise<string>;
   defaultRelationshipType?: string;
   title?: string;
+  currentPartyId?: string;
+  sourcePartyType?: string;
 }
 
 /**
@@ -43,10 +46,18 @@ export function AddRelationshipDialog({
   onSubmit,
   defaultRelationshipType = "",
   title,
+  currentPartyId,
+  sourcePartyType,
 }: AddRelationshipDialogProps) {
   const { t } = useI18n();
+  const tr = (key: string, fallback: string) => {
+    const val = t(key);
+    return (!val || val === key) ? fallback : val;
+  };
 
   const [targetPartyId, setTargetPartyId] = useState("");
+  const [selectedParty, setSelectedParty] = useState<PartySelectionResult | null>(null);
+  const [isManualInput, setIsManualInput] = useState(false);
   const [relationshipType, setRelationshipType] = useState(defaultRelationshipType || "Guardian");
   const [validFrom, setValidFrom] = useState("");
   const [validTo, setValidTo] = useState("");
@@ -61,7 +72,9 @@ export function AddRelationshipDialog({
   }, [open, defaultRelationshipType]);
 
   const resetForm = () => {
+    setSelectedParty(null);
     setTargetPartyId("");
+    setIsManualInput(false);
     setRelationshipType(defaultRelationshipType);
     setValidFrom("");
     setValidTo("");
@@ -76,11 +89,29 @@ export function AddRelationshipDialog({
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!targetPartyId.trim()) {
-      setError("Target Party ID is required");
+      setError(
+        tr("party.dialog.targetPartyRequired", "Please select a target contact or enter an ID")
+      );
+      return;
+    }
+    if (currentPartyId && targetPartyId.trim() === currentPartyId.trim()) {
+      setError("A contact cannot have a relationship with itself.");
       return;
     }
     if (!relationshipType.trim()) {
       setError("Relationship type is required");
+      return;
+    }
+    if (
+      relationshipType.trim().toLowerCase() === "guardian" &&
+      (sourcePartyType === "Organization" || selectedParty?.type === "Organization")
+    ) {
+      setError(
+        tr(
+          "party.dialog.guardianOrgError",
+          "Guardian relationships can only be established between Person contacts."
+        )
+      );
       return;
     }
 
@@ -113,45 +144,88 @@ export function AddRelationshipDialog({
                 <Users className="h-5 w-5" />
               </div>
               <DialogTitle>
-                {title || t("party.dialog.addRelTitle")}
+                {title || tr("party.dialog.addRelTitle", "Establish Relationship")}
               </DialogTitle>
             </div>
           </DialogHeader>
 
           <div className="grid gap-4 py-4">
             {error && (
-              <div className="rounded-md bg-destructive/10 p-3 text-sm text-destructive border border-destructive/20">
+              <div
+                role="alert"
+                className="rounded-md bg-destructive/10 p-3 text-sm text-destructive border border-destructive/20"
+              >
                 {error}
               </div>
             )}
 
             <div className="grid gap-2">
               <div className="flex items-center justify-between">
-                <Label htmlFor="rel-target" className="text-nx-ink font-medium">
-                  {t("party.dialog.targetPartyId")}{" "}
+                <Label htmlFor={isManualInput ? "rel-target" : undefined} className="text-nx-ink font-medium">
+                  {tr("party.dialog.targetPartyId", "Target Contact / Organization")}{" "}
                   <span className="text-destructive">*</span>
                 </Label>
-                {targetPartyId && (
-                  <span className="text-[11px] font-mono text-emerald-500 flex items-center gap-1">
-                    <Check className="h-3 w-3" /> Valid Target
-                  </span>
-                )}
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setIsManualInput(!isManualInput)}
+                  className="h-6 px-2 text-[11px] text-nx-accent hover:text-nx-accent/80 font-normal"
+                >
+                  {isManualInput
+                    ? tr("party.dialog.usePicker", "Search Directory")
+                    : tr("party.dialog.enterIdManually", "Enter ID Manually")}
+                </Button>
               </div>
-              <Input
-                id="rel-target"
-                value={targetPartyId}
-                onChange={(e) => {
-                  setTargetPartyId(e.target.value);
-                  if (error) setError(null);
-                }}
-                placeholder="e.g. enc-org-1, enc-person-2"
-                disabled={isSubmitting}
-                autoFocus
-                required
-              />
-              <p className="text-[11px] text-nx-ink-3">
-                Enter canonical encrypted Party ID of the target person or organization.
-              </p>
+
+              {isManualInput ? (
+                <div className="space-y-1">
+                  <Input
+                    id="rel-target"
+                    value={targetPartyId}
+                    onChange={(e) => {
+                      setTargetPartyId(e.target.value);
+                      if (error) setError(null);
+                    }}
+                    placeholder="e.g. enc-org-1, enc-person-2"
+                    disabled={isSubmitting}
+                    autoFocus
+                  />
+                  <p className="text-[11px] text-nx-ink-3">
+                    {tr(
+                      "party.dialog.enterEncryptedIdHint",
+                      "Enter canonical encrypted Party ID of the target person or organization."
+                    )}
+                  </p>
+                </div>
+              ) : (
+                <PartyPicker
+                  value={selectedParty}
+                  onSelect={(party) => {
+                    setSelectedParty(party);
+                    setTargetPartyId(party?.id ?? "");
+                    if (error) setError(null);
+                  }}
+                  placeholder={tr(
+                    "party.dialog.selectTargetPartyPlaceholder",
+                    "Search by name, email, or phone..."
+                  )}
+                  disabled={isSubmitting}
+                  allowCreate={false}
+                  excludeId={currentPartyId}
+                />
+              )}
+
+              {targetPartyId && !isManualInput && selectedParty && (
+                <div className="flex items-center justify-between rounded-lg bg-nx-accent/5 border border-nx-accent/20 px-3 py-1.5 text-xs">
+                  <span className="text-nx-ink-2">
+                    {selectedParty.type}: <strong className="text-nx-ink">{selectedParty.displayName}</strong>
+                  </span>
+                  <span className="inline-flex items-center gap-1 text-[11px] font-medium text-emerald-600">
+                    <Check className="h-3 w-3" /> Selected
+                  </span>
+                </div>
+              )}
             </div>
 
             <div className="grid gap-2">

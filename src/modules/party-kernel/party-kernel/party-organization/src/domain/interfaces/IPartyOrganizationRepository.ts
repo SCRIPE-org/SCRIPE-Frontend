@@ -9,6 +9,7 @@ export interface PartyOrganizationListParams {
   page: number;
   pageSize: number;
   search?: string;
+  partyId?: string;
 }
 
 /**

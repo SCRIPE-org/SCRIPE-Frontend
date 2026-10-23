@@ -2,66 +2,24 @@ import { registerPage } from "../../repositories/DocsRepository";
 import type { DocSection } from "../../../domain/entities/DocSection";
 
 const sections: DocSection[] = [
-  { type: "paragraph", contentKey: "commercial.customer360.intro" },
   {
-    type: "stats-strip-block",
-    stats: [
-      { value: "360°", labelKey: "commercial.customer360.statView" },
-      { value: "0", labelKey: "commercial.customer360.statSilos" },
-      { value: "Automated", labelKey: "commercial.customer360.statDeduplication" },
-      { value: "Graph-Based", labelKey: "commercial.customer360.statRelationships" },
-    ],
-  },
-  {
-    type: "heading",
-    level: 2,
-    titleKey: "commercial.customer360.valueTitle",
-    id: "business-value",
-  },
-  {
-    type: "feature-grid",
-    columns: 3,
-    items: [
-      {
-        icon: "Users2",
-        titleKey: "commercial.customer360.featUnifiedParties",
-        descriptionKey: "commercial.customer360.featUnifiedPartiesDesc",
-      },
-      {
-        icon: "Network",
-        titleKey: "commercial.customer360.featRelationships",
-        descriptionKey: "commercial.customer360.featRelationshipsDesc",
-      },
-      {
-        icon: "Tag",
-        titleKey: "commercial.customer360.featDynamicRoles",
-        descriptionKey: "commercial.customer360.featDynamicRolesDesc",
-      },
-      {
-        icon: "GitMerge",
-        titleKey: "commercial.customer360.featSmartDeduplication",
-        descriptionKey: "commercial.customer360.featSmartDeduplicationDesc",
-      },
-      {
-        icon: "PhoneCall",
-        titleKey: "commercial.customer360.featOmniContacts",
-        descriptionKey: "commercial.customer360.featOmniContactsDesc",
-      },
-      {
-        icon: "ShieldCheck",
-        titleKey: "commercial.customer360.featGdprReadiness",
-        descriptionKey: "commercial.customer360.featGdprReadinessDesc",
-      },
-    ],
-  },
-  {
-    type: "cta-banner-block",
-    titleKey: "commercial.customer360.ctaTitle",
-    subtitleKey: "commercial.customer360.ctaSubtitle",
-    primaryCtaKey: "commercial.customer360.ctaPrimary",
-    primaryCtaHref: "/commercial/pricing-showcase",
-    secondaryCtaKey: "commercial.customer360.ctaSecondary",
-    secondaryCtaHref: "/docs/modules/party-kernel-overview",
+    type: "code",
+    language: "text",
+    filename: "Current integration boundary",
+    code: `PartyKernel currently provides:
+- Atomic typed Person and Organization creation.
+- Tenant-scoped, permission-checked profile and selector reads.
+- Separate ContactPoint, PartyRole, and PartyRelationship APIs.
+
+CRM is not implemented by this contract. There is no published duplicate-resolution,
+merge, customer lifecycle, or cross-module foreign-key API in this handoff.
+
+Use the technical PartyKernel contract:
+POST /api/v1/Parties/people
+POST /api/v1/Parties/organizations
+GET  /api/v1/Parties/{encryptedPartyId}/profile
+GET  /api/v1/Parties/people/lookup
+GET  /api/v1/Parties/organizations/lookup`,
   },
 ];
 
@@ -72,10 +30,6 @@ registerPage({
   category: "commercial-modules",
   order: 14,
   sections,
-  relatedSlugs: [
-    "commercial/workforce-hrms",
-    "commercial/multi-branch-organization",
-    "commercial/custom-fields",
-  ],
-  lastUpdated: "2026-10-03",
+  relatedSlugs: ["commercial/workforce-hrms", "commercial/multi-branch-organization", "commercial/custom-fields"],
+  lastUpdated: "2026-10-14",
 });

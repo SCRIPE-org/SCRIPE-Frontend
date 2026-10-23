@@ -490,7 +490,7 @@ export const en = {
     outboxPattern: {
       title: "Outbox Pattern",
       description:
-        "How SCRIPE guarantees exactly-once domain event dispatch using an EF Core OutboxInterceptor, OutboxMessage table, and OutboxProcessor background job.",
+        "How SCRIPE stores domain events in the business transaction and dispatches them asynchronously with at-least-once delivery.",
       intro:
         "The Outbox Pattern solves the dual-write problem: how do you atomically save an entity AND dispatch a side-effect (email, webhook, permission sync) without risking sending the side-effect even if the database transaction rolls back? SCRIPE's implementation uses EF Core interceptors to capture domain events into an OutboxMessage table in the same database transaction as the entity mutation. The OutboxProcessor background job then dispatches them asynchronously.",
       dualWriteProblemTitle: "The Dual-Write Problem",
@@ -503,12 +503,28 @@ export const en = {
       outboxMessageTitle: "OutboxMessage Entity",
       processorTitle: "OutboxProcessor — The Reliable Dispatcher",
       processorContent:
-        "OutboxProcessor runs every 30 seconds. It fetches a batch of unprocessed OutboxMessage records (ordered by CreatedAt), dispatches each via IMediator.Publish, and marks successful dispatches as ProcessedAt = DateTime.UtcNow. Failed dispatches increment the Retries counter. Messages that exceed 5 retries are marked as failed and logged to observability. The processor uses optimistic concurrency (CompareExchange in Redis) to prevent double-dispatch in multi-instance deployments.",
+        "OutboxProcessor dispatches pending domain events and records retry state after failures. Each domain-event delivery resolves its publisher from a fresh dependency-injection scope, so tracked changes from a failed delivery cannot be saved by a later delivery. Delivery is at least once: consumers that mutate durable state still need an Inbox receipt committed atomically with their business changes; this scope boundary does not provide multi-host exactly-once delivery.",
       idempotencyTitle: "Idempotency Requirements",
       idempotencyContent:
-        "OutboxMessage.Id (a GUID generated at event time) is the idempotency key. Each INotificationHandler that processes outbox-dispatched events MUST be idempotent — check if the operation was already applied before re-applying. In practice, most handlers are naturally idempotent (e.g., writing a value that was already written has no additional effect). For non-idempotent operations (e.g., sending an email), store the OutboxMessageId in a processed-events table and skip if already present.",
+        "OutboxMessage.Id identifies one event delivery and can key an Inbox receipt; it is not a substitute for a business request idempotency key. A consumer that changes durable state should commit its Inbox receipt and business effect in the same local transaction. External effects such as email remain at least once unless the external provider offers its own idempotency contract.",
       idempotencyTip:
-        "The OutboxProcessor guarantees at-least-once delivery, not exactly-once. The exactly-once semantic comes from idempotent event handlers. Always design handlers to be safe to run twice. This is especially important for Entitlements' SubscriptionChangedEvent handler that syncs permissions — double-syncing is safe (idempotent), double-charging would not be.",
+        "The OutboxProcessor guarantees at-least-once delivery. Idempotent handlers and transactional Inbox receipts can prevent duplicate durable effects within one consumer database; they do not guarantee exactly-once delivery across hosts or exactly-once effects at an external provider. Design every handler for redelivery.",
+    },
+    sharedFoundations: {
+      title: "Shared Idempotency and Search Foundations",
+      description: "Module-owned business intent replay and authorization-safe multilingual search primitives.",
+      intro: "SCRIPE provides reusable idempotency and search primitives. These helpers do not own module business records or policies; each bounded context adopts them through its own application and infrastructure paths.",
+      ownershipTitle: "Module Ownership and Boundaries",
+      ownershipContent: "The owning module keeps its DbContext, durable receipts, tenant filters, PBAC and field-level security checks, feature and quota rules, and response contract. Shared Core code may normalize or rank caller-provided values, but it must not query another module's persistence or define Party's contact, duplicate, or merge policies.",
+      idempotencyTitle: "Backend Idempotency",
+      idempotencyContent: "Use one stable key for one business intent. The owning module persists its receipt with the mutation and any required quota or outbox effects in the same local transaction where that module implements the guarantee. A matching key and canonical request can replay the stored result; reusing the key with a changed request should conflict. Recheck current tenant and authorization before replay. Outbox delivery remains at least once, so durable consumers need idempotent processing and an inbox receipt committed with their own effect.",
+      frontendIntentTitle: "Frontend Intent Lifecycle",
+      frontendIntentContent: "Create an idempotency key when a user starts a business intent and retain it for retries of that unchanged intent, including a retry after response loss. A changed payload or a new intent needs a new key. Per-attempt replay-protection nonces are separate transport values and must not replace the stable business key. The shared Axios transport does not make every POST safe to retry automatically; callers must opt into an endpoint's idempotency contract.",
+      searchTitle: "Multilingual Search and Authorization",
+      searchContent: "Use a versioned normalization profile and explicit exact, prefix, token, or fuzzy match classes. Fuzzy similarity is a retrieval aid, never proof of identity or permission to merge. The owning module applies tenant, PBAC, field-level security, feature, and quota rules before returning results or observable counts; it also bounds pages and defines deterministic sorting. Phone and email normalization supports comparison only and does not establish identity equality.",
+      adoptionTitle: "Adoption and Evidence Boundaries",
+      adoptionContent: "OrganizationCore is a verified adopter for branch lookup on PostgreSQL and SQL Server. HRMS is a verified adopter for bounded email-domain alias lookup through its registered HTTP path on PostgreSQL. These results prove only the behaviors exercised by their tests. Party remains independently owned: shared helpers and the handoff contract do not mean Party has adopted them or authorize shared persistence access.",
+      idempotencyTip: "The key belongs to one user intent, not one network attempt. Confirm the module's endpoint contract, key scope, retention, and current-authorization behavior before relying on replay.",
     },
     communication: {
       title: "Communication Module",

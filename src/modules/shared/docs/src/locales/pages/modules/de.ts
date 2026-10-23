@@ -1403,6 +1403,12 @@ export const de = {
         treeFlowTitle: "6-stufige Hierarchieauflösung",
         treeFlowIntro:
           "Kaskadierung von Berechtigungen und Datenstrukturen durch die Unternehmensgliederung:",
+        searchTitle: "Mehrsprachige Branchensuche",
+        searchIntro:
+          "Die Branchensuche normalisiert arabische und lateinische Namen mit versionierten Unicode-Regeln. Sie lädt Kandidaten aus einem tenantbezogenen Index; für Token mit vier oder fünf Runen werden neben Trigrammen auch Bigramme verwendet, damit akzeptierte kurze Tippfehler den Fuzzy-Scorer erreichen. Token unter vier Runen müssen exakt übereinstimmen; längere Token erlauben eine Änderung. Seiten sind auf 100 Ergebnisse begrenzt.",
+        searchSafetyTitle: "Suchbereich und Indexaufbau",
+        searchSafetyContent:
+          "Tenant- und Plattformbereich werden vor Bewertung und Trefferzählung angewendet. Ähnlichkeit dient nur der Suche und identifiziert oder vereinigt keine Personen oder Organisationen. Neue Brancheneinträge aktualisieren den Index. Ein Plattform-Superadmin kann vorhandene Einträge in begrenzten Stapeln mit POST /api/v1/Branches/search-index/backfill?batchSize=200 nachpflegen; wiederholen, bis die Antwort updated=0 meldet. Nicht indizierte Einträge bleiben währenddessen suchbar.",
         apiTitle: "Organisations-API-Endpunkte",
         apiIntro:
           "Zentrale Schnittstellen zur Pflege von Unternehmensstrukturen, Standorten und Liegenschaften.",
@@ -1975,6 +1981,9 @@ export const de = {
         holdLifecycleTitle: "Zwei-Phasen-Buchungszyklus",
         holdLifecycleDesc:
           "Temporäre 15-Minuten-Reservierungen sichern Plätze während des Bezahlvorgangs.",
+        retrySafetyTitle: "Sichere Wiederholungen und Buchungsbelege",
+        retrySafetyDesc:
+          "Verwenden Sie bei Wiederholungen derselben Buchungsabsicht denselben Idempotenzschlüssel. Ein gespeichertes erfolgreiches Ergebnis wird erst nach erneuter Prüfung des aktuellen Mandanten und des betrieblichen Zugriffs auf den Standort zurückgegeben; die Buchung wird dabei weder erneut bestätigt noch das Kontingent erneut belastet. Derselbe Schlüssel mit anderer Buchung, anderem Preisangebot, Ziel, Zeitraum oder Stornierungs-/Nichterscheinensgrund führt zu einem Konflikt. In Booking 360 behält eine unveränderte Wiederholung denselben Schlüssel; eine geänderte Begründung für Stornierung oder Nichterscheinen startet eine neue Absicht mit einem neuen Schlüssel. Ein aktualisiertes Preisangebot erzeugt ebenfalls eine neue Bestätigungsabsicht. Ältere Belege ohne Anfrage-Fingerabdruck bleiben mit eingeschränkten Vergleichsgarantien lesbar. Venue-Mutationen senden denselben Schlüssel im Request-Body und im Header `Idempotency-Key`; Axios führt bei Netzwerk-/Zeitüberschreitungsfehlern sowie HTTP 500, 502, 503 oder 504 bis zu drei Wiederholungen aus und erneuert dabei den Anti-Replay-Nonce pro Versuch.",
         reducerTitle: "Client-seitiger Zustands-Reducer",
         reducerDesc:
           "Vorausschauende UI-Aktualisierungen halten Schlitze über alle Browserfenster synchron.",
@@ -2118,6 +2127,9 @@ export const de = {
         pricingFlowTitle: "Mehrstufige Preisfindungs-Pipeline",
         pricingFlowIntro:
           "Wie SCRIPE den Endpreis aus Preisbüchern, Verträgen, Rabatten und Steuern berechnet:",
+        snapshotCaptureTitle: "Reservierungssnapshot und Wiederholungen",
+        snapshotCaptureIntro:
+          "CatalogPricing übernimmt ein noch gültiges Angebot samt Positionen als ausstehenden Snapshot für eine Reservierung. Der Idempotenzschlüssel wird getrimmt und ist innerhalb des Mandanten eindeutig. Eine Wiederholung mit demselben Schlüssel sowie derselben Reservierung, demselben Angebot, derselben Ressource, zahlenden Person, Menge und Zeitspanne gibt den vorhandenen Snapshot zurück; bei abweichender Absicht entsteht ein Konflikt. Snapshot und Positionen werden gemeinsam gespeichert. Der Buchungsablauf bindet den Snapshot und wandelt das Angebot erst nach erfolgreicher Reservierungsbestätigung um.",
         apiTitle: "Wichtigste API-Endpunkte",
         apiIntro:
           "Endpunkte der CatalogPricingControllers für Katalogverwaltung, Preisbücher und Angebotskalkulation.",
@@ -2127,7 +2139,8 @@ export const de = {
         createItem: "Eine neue Dienstleistung, Leihressource oder ein Produkt anlegen",
         listOfferings: "Buchbare Angebote mit Basispreisen abrufen",
         listPriceBooks: "Aktive und geplante Preisbücher einsehen",
-        calculateQuote: "Angebot simulieren ohne Zustand zu speichern",
+        calculateQuote:
+          "Ein Preisangebot berechnen und speichern. Bei Wiederholungen denselben Idempotency-Key verwenden, um das ursprüngliche Angebot zurückzuerhalten; geänderte Eingaben mit demselben Schlüssel führen zu einem Konflikt.",
         createQuote: "Verbindliches Angebot mit Gültigkeitsdauer erstellen",
       },
       rateCards: {

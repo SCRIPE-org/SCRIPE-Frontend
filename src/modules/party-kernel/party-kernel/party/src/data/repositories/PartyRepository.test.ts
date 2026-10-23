@@ -1,18 +1,18 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { PartyRepository } from "./PartyRepository";
 import { PartyModel } from "../models/PartyModel";
-import { PartyPerson } from "@modules/party-kernel/party-person/src/domain/entities/PartyPerson";
-import { ContactPoint } from "@modules/party-kernel/contact-point/src/domain/entities/ContactPoint";
-import { PartyRole } from "@modules/party-kernel/party-role/src/domain/entities/PartyRole";
-import { PartyRelationship } from "@modules/party-kernel/party-relationship/src/domain/entities/PartyRelationship";
-import { MergeCandidate } from "@modules/party-kernel/merge-candidate/src/domain/entities/MergeCandidate";
+import { PartyPerson } from "../../../../party-person/src/domain/entities/PartyPerson";
+import { ContactPoint } from "../../../../contact-point/src/domain/entities/ContactPoint";
+import { PartyRole } from "../../../../party-role/src/domain/entities/PartyRole";
+import { PartyRelationship } from "../../../../party-relationship/src/domain/entities/PartyRelationship";
+import { MergeCandidate } from "../../../../merge-candidate/src/domain/entities/MergeCandidate";
 import type { IPartyService } from "../../domain/interfaces/IPartyService";
-import type { IPartyPersonRepository } from "@modules/party-kernel/party-person/src/domain/interfaces/IPartyPersonRepository";
-import type { IPartyOrganizationRepository } from "@modules/party-kernel/party-organization/src/domain/interfaces/IPartyOrganizationRepository";
-import type { IContactPointRepository } from "@modules/party-kernel/contact-point/src/domain/interfaces/IContactPointRepository";
-import type { IPartyRoleRepository } from "@modules/party-kernel/party-role/src/domain/interfaces/IPartyRoleRepository";
-import type { IPartyRelationshipRepository } from "@modules/party-kernel/party-relationship/src/domain/interfaces/IPartyRelationshipRepository";
-import type { IMergeCandidateRepository } from "@modules/party-kernel/merge-candidate/src/domain/interfaces/IMergeCandidateRepository";
+import type { IPartyPersonRepository } from "../../../../party-person/src/domain/interfaces/IPartyPersonRepository";
+import type { IPartyOrganizationRepository } from "../../../../party-organization/src/domain/interfaces/IPartyOrganizationRepository";
+import type { IContactPointRepository } from "../../../../contact-point/src/domain/interfaces/IContactPointRepository";
+import type { IPartyRoleRepository } from "../../../../party-role/src/domain/interfaces/IPartyRoleRepository";
+import type { IPartyRelationshipRepository } from "../../../../party-relationship/src/domain/interfaces/IPartyRelationshipRepository";
+import type { IMergeCandidateRepository } from "../../../../merge-candidate/src/domain/interfaces/IMergeCandidateRepository";
 
 describe("PartyRepository", () => {
   const partyService = {
@@ -25,6 +25,8 @@ describe("PartyRepository", () => {
     lookupPeople: vi.fn(),
     lookupOrganizations: vi.fn(),
     update: vi.fn(),
+    updatePerson: vi.fn(),
+    updateOrganization: vi.fn(),
     delete: vi.fn(),
   };
 
@@ -145,13 +147,13 @@ describe("PartyRepository", () => {
       );
       expect(contactPointRepo.create).toHaveBeenCalledWith({
         partyId: "person-party-1",
-        type: "phone",
+        type: "Phone",
         value: "+966501234567",
         isPrimary: true,
       });
       expect(contactPointRepo.create).toHaveBeenCalledWith({
         partyId: "person-party-1",
-        type: "email",
+        type: "Email",
         value: "fatima.zahra@scripe.com",
         isPrimary: true,
       });
@@ -190,7 +192,7 @@ describe("PartyRepository", () => {
       );
       expect(contactPointRepo.create).toHaveBeenCalledWith({
         partyId: "org-party-200",
-        type: "phone",
+        type: "Phone",
         value: "+966114445555",
         isPrimary: true,
       });
@@ -385,6 +387,55 @@ describe("PartyRepository", () => {
         stableKey
       );
     });
+
+    it("passes derived idempotency keys to contact point sub-writes when caller supplies idempotencyKey", async () => {
+      partyService.createPerson.mockResolvedValue({ id: "idempotent-person-2" });
+      contactPointRepo.create.mockResolvedValue("cp-id-1");
+
+      const stableKey = "intent-uuid-456";
+      const partyId = await repository.createPerson({
+        fullName: "Yousef Al-Harbi",
+        phone: "+966551122334",
+        email: "yousef@harbi.sa",
+        idempotencyKey: stableKey,
+      });
+
+      expect(partyId).toBe("idempotent-person-2");
+      expect(contactPointRepo.create).toHaveBeenCalledWith(
+        expect.objectContaining({
+          partyId: "idempotent-person-2",
+          type: "Phone",
+          value: "+966551122334",
+        }),
+        "intent-uuid-456:phone"
+      );
+      expect(contactPointRepo.create).toHaveBeenCalledWith(
+        expect.objectContaining({
+          partyId: "idempotent-person-2",
+          type: "Email",
+          value: "yousef@harbi.sa",
+        }),
+        "intent-uuid-456:email"
+      );
+    });
+
+    it("survives contact point failure and triggers onContactPointFailure without blocking party creation", async () => {
+      partyService.createPerson.mockResolvedValue({ id: "resilient-person-1" });
+      contactPointRepo.create.mockRejectedValue(new Error("Contact point quota exceeded"));
+
+      const failureCallback = vi.fn();
+      const partyId = await repository.createPerson({
+        fullName: "Maryam Khalid",
+        phone: "+966500000000",
+        onContactPointFailure: failureCallback,
+      });
+
+      expect(partyId).toBe("resilient-person-1");
+      expect(failureCallback).toHaveBeenCalledWith(
+        expect.any(Error),
+        "resilient-person-1"
+      );
+    });
   });
 
   describe("lookupContacts and typed lookups", () => {
@@ -483,14 +534,207 @@ describe("PartyRepository", () => {
         isPrimary: true,
       });
 
-      expect(contactPointRepo.create).toHaveBeenCalledWith({
-        partyId: "existing-party-123",
-        type: "phone",
-        value: "+966509998877",
-        isPrimary: true,
-      });
+      expect(contactPointRepo.create).toHaveBeenCalledWith(
+        {
+          partyId: "existing-party-123",
+          type: "phone",
+          value: "+966509998877",
+          isPrimary: true,
+        },
+        undefined
+      );
       expect(partyService.createPerson).not.toHaveBeenCalled();
       expect(partyService.createOrganization).not.toHaveBeenCalled();
     });
+
+    it("forwards caller idempotencyKey to contactPointRepo.create", async () => {
+      contactPointRepo.create.mockResolvedValue({ id: "cp-recovery-2" });
+
+      await repository.addContactPoint({
+        partyId: "existing-party-456",
+        type: "email",
+        value: "info@example.com",
+        isPrimary: true,
+        idempotencyKey: "retry-key-abc:email",
+      });
+
+      expect(contactPointRepo.create).toHaveBeenCalledWith(
+        {
+          partyId: "existing-party-456",
+          type: "email",
+          value: "info@example.com",
+          isPrimary: true,
+        },
+        "retry-key-abc:email"
+      );
+    });
+  });
+
+  describe("updatePartyName and updatePerson concurrency rowVersion", () => {
+    it("forwards explicit rowVersion to service.updatePerson without calling getProfile", async () => {
+      partyService.updatePerson.mockResolvedValue(undefined);
+
+      await repository.updatePartyName("p-person-1", "Dr. Fatima Al-Zahra", {
+        type: "Person",
+        fullName: "Dr. Fatima Bint Al-Zahra",
+        rowVersion: "AAAAAAAAAAAAAAAAAAAAAA==",
+      });
+
+      expect(partyService.updatePerson).toHaveBeenCalledWith("p-person-1", {
+        fullName: "Dr. Fatima Bint Al-Zahra",
+        displayName: "Dr. Fatima Al-Zahra",
+        rowVersion: "AAAAAAAAAAAAAAAAAAAAAA==",
+      });
+      expect(partyService.getProfile).not.toHaveBeenCalled();
+    });
+
+    it("fetches rowVersion from service.getProfile when updating a Person without explicit rowVersion", async () => {
+      partyService.getProfile.mockResolvedValue({
+        id: "p-person-2",
+        type: "Person",
+        displayName: "Tariq Aziz",
+        fullName: "Tariq Aziz",
+        legalName: null,
+        rowVersion: "AQEBAQEBAQEBAQEBAQEBAQ==",
+      });
+      partyService.updatePerson.mockResolvedValue(undefined);
+
+      await repository.updatePartyName("p-person-2", "Tariq Aziz Updated", {
+        type: "Person",
+        fullName: "Tariq Aziz Full",
+      });
+
+      expect(partyService.getProfile).toHaveBeenCalledWith("p-person-2");
+      expect(partyService.updatePerson).toHaveBeenCalledWith("p-person-2", {
+        fullName: "Tariq Aziz Full",
+        displayName: "Tariq Aziz Updated",
+        rowVersion: "AQEBAQEBAQEBAQEBAQEBAQ==",
+      });
+    });
+
+    it("forwards dateOfBirth and isMinor when creating or updating a Person (C1.1)", async () => {
+      partyService.createPerson.mockResolvedValue({ id: "person-dob-1" });
+
+      const partyId = await repository.createPerson({
+        fullName: "Layla Al-Rashid",
+        dateOfBirth: "2014-05-15",
+        isMinor: true,
+      });
+
+      expect(partyId).toBe("person-dob-1");
+      expect(partyService.createPerson).toHaveBeenCalledWith(
+        expect.objectContaining({
+          fullName: "Layla Al-Rashid",
+          dateOfBirth: "2014-05-15",
+          isMinor: true,
+        }),
+        expect.any(String)
+      );
+
+      partyService.updatePerson.mockResolvedValue(undefined);
+      await repository.updatePartyName("person-dob-1", "Layla Al-Rashid", {
+        type: "Person",
+        fullName: "Layla Al-Rashid",
+        givenName: "Layla",
+        familyName: "Al-Rashid",
+        dateOfBirth: "2014-05-15",
+        isMinor: true,
+        rowVersion: "AAAAAAAAAAAAAAAAAAAAAA==",
+      });
+
+      expect(partyService.updatePerson).toHaveBeenCalledWith("person-dob-1", {
+        fullName: "Layla Al-Rashid",
+        displayName: "Layla Al-Rashid",
+        givenName: "Layla",
+        familyName: "Al-Rashid",
+        dateOfBirth: "2014-05-15",
+        isMinor: true,
+        rowVersion: "AAAAAAAAAAAAAAAAAAAAAA==",
+      });
+    });
+
+    it("forwards taxId when creating or updating an Organization (C1.1)", async () => {
+      partyService.createOrganization.mockResolvedValue({ id: "org-tax-1" });
+      partyService.getProfile.mockResolvedValue({
+        id: "org-tax-1",
+        type: "Organization",
+        displayName: "Al-Nassr Academy",
+        legalName: "Al-Nassr Academy LLC",
+        rowVersion: "AAAAAAAAAAAAAAAAAAAAAA==",
+      });
+      partyService.updateOrganization.mockResolvedValue(undefined);
+
+      const orgId = await repository.createOrganization({
+        legalName: "Al-Nassr Academy LLC",
+        displayName: "Al-Nassr Academy",
+        taxId: "300987654300003",
+      });
+
+      expect(orgId).toBe("org-tax-1");
+      expect(partyService.createOrganization).toHaveBeenCalledWith(
+        {
+          legalName: "Al-Nassr Academy LLC",
+          displayName: "Al-Nassr Academy",
+        },
+        expect.any(String)
+      );
+      expect(partyService.updateOrganization).toHaveBeenCalledWith("org-tax-1", {
+        legalName: "Al-Nassr Academy LLC",
+        displayName: "Al-Nassr Academy",
+        taxId: "300987654300003",
+        rowVersion: "AAAAAAAAAAAAAAAAAAAAAA==",
+      });
+
+      partyService.updateOrganization.mockClear();
+      await repository.updatePartyName("org-tax-1", "Al-Nassr Academy Pro", {
+        type: "Organization",
+        legalName: "Al-Nassr Academy Pro LLC",
+        taxId: "300987654300999",
+        rowVersion: "AQEBAQEBAQEBAQEBAQEBAQ==",
+      });
+
+      expect(partyService.updateOrganization).toHaveBeenCalledWith("org-tax-1", {
+        legalName: "Al-Nassr Academy Pro LLC",
+        displayName: "Al-Nassr Academy Pro",
+        taxId: "300987654300999",
+        rowVersion: "AQEBAQEBAQEBAQEBAQEBAQ==",
+      });
+    });
+
+    it("passes partyId filter to sub-repositories in getProfile for >100 contact scale (C1.1)", async () => {
+      partyService.getById.mockResolvedValue(
+        new PartyModel("p-scale-150", "Person", "Scale Person", "2026-03-01T00:00:00Z")
+      );
+      partyService.getProfile.mockResolvedValue({
+        id: "p-scale-150",
+        type: "Person",
+        displayName: "Scale Person",
+        fullName: "Scale Person",
+      });
+      personRepo.getAll.mockResolvedValue({ items: [] });
+      contactPointRepo.getAll.mockResolvedValue({ items: [] });
+      roleRepo.getAll.mockResolvedValue({ items: [] });
+      relationshipRepo.getAll.mockResolvedValue({ items: [] });
+      mergeCandidateRepo.getAll.mockResolvedValue({ items: [] });
+
+      await repository.getProfile("p-scale-150");
+
+      expect(personRepo.getAll).toHaveBeenCalledWith(
+        expect.objectContaining({ partyId: "p-scale-150" })
+      );
+      expect(contactPointRepo.getAll).toHaveBeenCalledWith(
+        expect.objectContaining({ partyId: "p-scale-150" })
+      );
+      expect(roleRepo.getAll).toHaveBeenCalledWith(
+        expect.objectContaining({ partyId: "p-scale-150" })
+      );
+      expect(relationshipRepo.getAll).toHaveBeenCalledWith(
+        expect.objectContaining({ partyId: "p-scale-150" })
+      );
+      expect(mergeCandidateRepo.getAll).toHaveBeenCalledWith(
+        expect.objectContaining({ partyId: "p-scale-150" })
+      );
+    });
   });
 });
+

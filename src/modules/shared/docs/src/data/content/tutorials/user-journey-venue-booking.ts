@@ -81,18 +81,48 @@ const sections: DocSection[] = [
   {
     type: "code",
     language: "bash",
-    filename: "Hold Acquisition (POST /api/v1/venue/booking-holds)",
-    code: `curl -X POST http://localhost:5000/api/v1/venue/booking-holds \\
+    filename: "Create Draft (POST /api/v1/Reservations)",
+    code: `curl -X POST http://localhost:5000/api/v1/Reservations \\
   -H "Authorization: Bearer \$TOKEN" \\
-  -H "X-Idempotency-Key: hold_8f93a10c-2374-4b51" \\
   -H "Content-Type: application/json" \\
   -d '{
-    "facilityId": "f781a921-2e55-46aa-bfa7-4f51e0618012",
-    "resourceId": "b1836f33-1498-466d-8e68-07d4fa124991",
-    "customerReferenceId": "cust_9921",
-    "startTimeUtc": "2026-10-10T14:00:00Z",
-    "endTimeUtc": "2026-10-10T15:00:00Z",
-    "holdDurationMinutes": 10
+    "resourceId": "<encrypted-resource-id>",
+    "customerPartyId": "<encrypted-party-id>",
+    "requestedStartUtc": "2026-10-20T09:00:00Z",
+    "requestedEndUtc": "2026-10-20T10:00:00Z",
+    "quantity": 1,
+    "idempotencyKey": "draft_intent_8f93a10c-2374-4b51"
+  }'`,
+  },
+  {
+    type: "code",
+    language: "bash",
+    filename: "Hold Acquisition (POST /api/v1/BookingHolds)",
+    code: `curl -X POST http://localhost:5000/api/v1/BookingHolds \\
+  -H "Authorization: Bearer \$TOKEN" \\
+  -H "Content-Type: application/json" \\
+  -d '{
+    "reservationId": "<encrypted-reservation-id>",
+    "idempotencyKey": "hold_intent_45ae79e1-65d1-447e"
+  }'`,
+  },
+  {
+    type: "code",
+    language: "bash",
+    filename: "Calculate Price Quote (reuse the same body and key on retry)",
+    code: `curl -X POST http://localhost:5000/api/v1/catalog-pricing/price-quotes/calculate \\
+  -H "Authorization: Bearer \$TOKEN" \\
+  -H "Content-Type: application/json" \\
+  -d '{
+    "offeringId": "<encrypted-offering-id>",
+    "schedulableResourceId": "<encrypted-resource-id>",
+    "partyId": "<encrypted-party-id>",
+    "quantity": 1,
+    "requestedStartUtc": "2026-10-20T09:00:00Z",
+    "requestedEndUtc": "2026-10-20T10:00:00Z",
+    "currencyCode": "EGP",
+    "expiresAtUtc": "2026-10-20T09:30:00Z",
+    "idempotencyKey": "quote_intent_6198e7f8-52b2-4e73"
   }'`,
   },
 ];
@@ -105,5 +135,5 @@ registerPage({
   order: 2,
   sections,
   relatedSlugs: ["modules/venue-overview", "tutorials/user-journey-pricing-finance"],
-  lastUpdated: "2026-10-03",
+  lastUpdated: "2026-10-14",
 });

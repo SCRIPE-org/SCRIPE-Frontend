@@ -15,5 +15,7 @@ export const PARTY_ENDPOINTS = {
   INTEGRITY_AUDIT: `${V1}/Parties/integrity-audit`,
   CREATE: `${V1}/Parties`,
   UPDATE: (id: string) => `${V1}/Parties/${id}`,
+  PERSON_UPDATE: (id: string) => `${V1}/Parties/people/${id}`,
+  ORGANIZATION_UPDATE: (id: string) => `${V1}/Parties/organizations/${id}`,
   DELETE: (id: string) => `${V1}/Parties/${id}`,
 } as const;

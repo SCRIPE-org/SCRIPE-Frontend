@@ -434,7 +434,7 @@ export const zh = {
     outboxPattern: {
       title: "事务性发件箱模式 (Outbox Pattern)",
       description:
-        "通过 EF Core OutboxInterceptor、OutboxMessage 消息表与 OutboxProcessor 后台任务，保障领域事件的 Exactly-Once 可靠投递。",
+        "在业务事务中保存领域事件，并以至少一次语义异步投递。",
       intro:
         "Outbox 模式彻底解决双写不一致难题：将领域实体变更与副作用派发（邮件、Webhook、权限同步）统一纳入同一个数据库原子事务中。",
       dualWriteProblemTitle: "分布式双写不一致难题",
@@ -447,12 +447,28 @@ export const zh = {
       outboxMessageTitle: "OutboxMessage 实体定义",
       processorTitle: "OutboxProcessor — 可靠消息派发器",
       processorContent:
-        "OutboxProcessor 每 30 秒轮询一次，批量获取待派发消息并通过 IMediator.Publish 发布，自动进行指数重试与失败告警。",
+        "OutboxProcessor 处理待发送的领域事件，并在失败时记录重试状态。每次领域事件投递都会使用新的依赖注入作用域，因此失败投递中跟踪的更改不会由后续投递保存。投递语义是至少一次：修改持久状态的消费者仍须在同一事务中原子保存 Inbox 收据和业务更改；新的作用域不保证多主机间只处理一次。",
       idempotencyTitle: "幂等性设计准则",
       idempotencyContent:
-        "OutboxMessage.Id 作为全局唯一幂等键。所有领域事件处理器均必须实现幂等，防止重试过程中的重复处理。",
+        "OutboxMessage.Id 标识一次事件投递，可作为 Inbox 回执键；它不能替代业务请求幂等键。修改持久状态的消费者应在同一本地事务中保存 Inbox 回执和业务效果。",
       idempotencyTip:
-        "OutboxProcessor 保证 At-Least-Once 投递语义，结合消费端的幂等控制，即可达成最终的 Exactly-Once 处理保证。",
+        "Outbox 至少投递一次。幂等处理和事务性 Inbox 回执可避免消费者数据库中的重复持久化效果，但不保证跨主机只投递一次，也不保证外部服务只产生一次效果。",
+    },
+    sharedFoundations: {
+      title: "共享幂等与搜索基础",
+      description: "由模块拥有的业务意图重放，以及遵循授权边界的多语言搜索。",
+      intro: "SCRIPE 提供可复用的幂等与搜索基础能力。它们不拥有模块业务数据或策略；每个有界上下文都通过自身的应用和基础设施层显式采用这些能力。",
+      ownershipTitle: "模块所有权与边界",
+      ownershipContent: "所属模块保留自己的 DbContext、持久化回执、租户过滤、PBAC 与字段安全检查、功能和配额规则以及响应契约。共享 Core 可以规范化或排序调用方提供的值，但不得查询其他模块的持久化，也不得定义 Party 的联系人、重复项或合并策略。",
+      idempotencyTitle: "后端幂等性",
+      idempotencyContent: "每个业务意图使用一个稳定键。所属模块应在其实现能够保证时，将回执与业务变更以及所需配额或 Outbox 效果写入同一本地事务。相同键和规范化请求可以重放已保存结果；同一键对应不同请求应产生冲突。重放前重新检查当前租户和授权。Outbox 至少投递一次，因此持久化消费者需要幂等处理，并将 Inbox 回执与自身效果一同提交。",
+      frontendIntentTitle: "前端意图生命周期",
+      frontendIntentContent: "用户开始业务意图时创建幂等键，并在该意图未改变的重试中保留该键，包括响应丢失后的重试。请求内容变化或开始新意图时必须使用新键。每次请求的防重放 nonce 属于传输层，不可替代稳定业务键。共享 Axios 传输不会自动使所有 POST 都可安全重试；调用方必须明确使用端点的幂等契约。",
+      searchTitle: "多语言搜索与授权",
+      searchContent: "使用带版本的规范化配置，并明确区分精确、前缀、分词和模糊匹配。相似度只用于检索候选，不证明身份，也不授权合并。所属模块必须先应用租户、PBAC、字段安全、功能和配额过滤，再返回结果或可观察计数；同时限制分页并定义确定性排序。电话和邮箱规范化仅用于比较，不代表身份相等。",
+      adoptionTitle: "采用情况与证据边界",
+      adoptionContent: "OrganizationCore 已在 PostgreSQL 和 SQL Server 上验证分支搜索；HRMS 已通过注册的 PostgreSQL HTTP 路径验证受限的邮箱域别名搜索。这些结果仅证明相应测试覆盖的行为。Party 仍由独立团队负责：共享辅助工具和交接契约不代表 Party 已采用，也不授权访问其持久化数据。",
+      idempotencyTip: "幂等键属于一次用户业务意图，而非一次网络请求。依赖重放前，请确认端点契约、键的作用域与保留期限，以及重放时是否重新验证当前授权。",
     },
     communication: {
       title: "Communication Module",

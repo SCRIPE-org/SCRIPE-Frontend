@@ -919,6 +919,9 @@ export const en = {
             "Each row carries a display name that is never blank, an optional second line to tell two similarly named records apart, and a flag saying whether the record is dormant. Deleted records are not returned at all, so that flag never means deleted — a dormant row is present, selectable, and a perfectly valid answer.",
           searchTyping:
             "Typing is debounced before it becomes a request. Without that, an eight-character name would fire eight cross-module queries, seven of whose answers are thrown away — and the one that renders would be whichever returned last rather than the one matching what you typed.",
+          fieldAccessTitle: "Field access also limits lookup results",
+          fieldAccessContent:
+            "Your view permission for a record type does not grant access to every field used by its picker. If your role restricts a field used for matching, ordering, or the displayed label, the owning module may return no matches or omit that detail. Resolving a saved reference applies the same field restrictions. This prevents search counts and saved references from revealing protected values.",
 
           resolveTitle: "Resolving a pointer you already hold",
           resolveWhat:

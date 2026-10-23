@@ -3,4 +3,5 @@ export * from "./PartyQuickPreviewSheet";
 export * from "./dialogs/CreatePersonDialog";
 export * from "./dialogs/CreateOrganizationDialog";
 export * from "./dialogs/EditPartyDialog";
+export * from "./dialogs/EditContactDialog";
 export * from "./dialogs/DeletePartyDialog";

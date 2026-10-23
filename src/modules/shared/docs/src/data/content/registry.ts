@@ -227,6 +227,7 @@ import "./infrastructure/audit-trail";
 import "./infrastructure/load-testing";
 import "./infrastructure/cache-invalidation";
 import "./infrastructure/outbox-pattern";
+import "./infrastructure/shared-foundations";
 import "./infrastructure/communication";
 import "./infrastructure/integrations";
 import "./infrastructure/media";

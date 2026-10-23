@@ -165,5 +165,5 @@ registerPage({
     "modules/webhooks",
     "modules/audit-logs",
   ],
-  lastUpdated: "2026-06-28",
+  lastUpdated: "2026-10-15",
 });

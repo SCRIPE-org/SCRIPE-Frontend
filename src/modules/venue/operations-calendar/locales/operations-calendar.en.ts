@@ -30,6 +30,9 @@ export const en = {
       Confirmed: "Confirmed",
       CheckedIn: "Checked in",
     },
+    quote: {
+      unavailable: "A verified price quote is required before confirmation. Please retry.",
+    },
     detail: {
       title: "Booking details",
       description: "Current operational booking information.",

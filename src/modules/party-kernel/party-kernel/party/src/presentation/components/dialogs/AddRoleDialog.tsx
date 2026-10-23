@@ -68,7 +68,7 @@ export function AddRoleDialog({
       setError(null);
       await onSubmit({
         roleType: roleType.trim(),
-        validFrom: validFrom || undefined,
+        validFrom: validFrom.trim() || new Date().toISOString(),
         validTo: validTo || undefined,
       });
       handleClose();
@@ -79,6 +79,15 @@ export function AddRoleDialog({
       setIsSubmitting(false);
     }
   };
+
+  const CANONICAL_ROLES = [
+    { value: "Customer", labelEn: "Customer", labelAr: "عميل" },
+    { value: "Booker", labelEn: "Booker", labelAr: "حاجز" },
+    { value: "Payer", labelEn: "Payer", labelAr: "دافع" },
+    { value: "Partner", labelEn: "Partner", labelAr: "شريك" },
+    { value: "Vendor", labelEn: "Vendor", labelAr: "مورد" },
+    { value: "AcademyOrganization", labelEn: "Academy Organization", labelAr: "منظمة أكاديمية" },
+  ];
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -95,7 +104,10 @@ export function AddRoleDialog({
 
           <div className="grid gap-4 py-4">
             {error && (
-              <div className="rounded-md bg-destructive/10 p-3 text-sm text-destructive border border-destructive/20">
+              <div
+                role="alert"
+                className="rounded-md bg-destructive/10 p-3 text-sm text-destructive border border-destructive/20"
+              >
                 {error}
               </div>
             )}
@@ -111,13 +123,13 @@ export function AddRoleDialog({
               {/* Standard Role Dropdown Selector */}
               <Select
                 value={
-                  ["Customer", "Player", "Coach", "Guardian", "Staff", "Vendor", "Sponsor"].includes(roleType)
+                  CANONICAL_ROLES.some((r) => r.value === roleType)
                     ? roleType
                     : "custom"
                 }
                 onValueChange={(val) => {
                   if (val === "custom") {
-                    if (["Customer", "Player", "Coach", "Guardian", "Staff", "Vendor", "Sponsor"].includes(roleType)) {
+                    if (CANONICAL_ROLES.some((r) => r.value === roleType)) {
                       setRoleType("");
                     }
                   } else {
@@ -131,36 +143,34 @@ export function AddRoleDialog({
                   <SelectValue placeholder="Choose standard role (اختيار دور تشغيلي)" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="Customer">Customer (عميل)</SelectItem>
-                  <SelectItem value="Player">Player (لاعب)</SelectItem>
-                  <SelectItem value="Coach">Coach (مدرب)</SelectItem>
-                  <SelectItem value="Guardian">Guardian (ولي أمر)</SelectItem>
-                  <SelectItem value="Staff">Staff (طاقم العمل)</SelectItem>
-                  <SelectItem value="Vendor">Vendor (مورد)</SelectItem>
-                  <SelectItem value="Sponsor">Sponsor (راعٍ)</SelectItem>
+                  {CANONICAL_ROLES.map((r) => (
+                    <SelectItem key={r.value} value={r.value}>
+                      {r.labelEn} ({r.labelAr})
+                    </SelectItem>
+                  ))}
                   <SelectItem value="custom">Custom / Other (دور مخصص)</SelectItem>
                 </SelectContent>
               </Select>
 
               {/* Quick Select Preset Buttons using @core/ui/button */}
               <div className="flex flex-wrap items-center gap-1.5 pt-1">
-                {["Customer", "Player", "Coach", "Guardian", "Staff", "Vendor", "Sponsor"].map((preset) => (
+                {CANONICAL_ROLES.map((r) => (
                   <Button
-                    key={preset}
+                    key={r.value}
                     type="button"
                     size="sm"
-                    variant={roleType === preset ? "default" : "outline"}
+                    variant={roleType === r.value ? "default" : "outline"}
                     onClick={() => {
-                      setRoleType(preset);
+                      setRoleType(r.value);
                       if (error) setError(null);
                     }}
                     className={`h-7 px-2.5 text-xs rounded-lg transition-colors ${
-                      roleType === preset
+                      roleType === r.value
                         ? "bg-nx-accent-fill text-nx-on-fill font-semibold shadow-sm"
                         : "border-nx-border text-nx-ink-2 hover:text-nx-ink"
                     }`}
                   >
-                    {preset}
+                    {r.value}
                   </Button>
                 ))}
               </div>

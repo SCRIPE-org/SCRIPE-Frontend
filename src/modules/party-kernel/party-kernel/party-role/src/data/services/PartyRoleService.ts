@@ -27,11 +27,13 @@ export class PartyRoleService implements IPartyRoleService {
     page: number;
     pageSize: number;
     search?: string;
+    partyId?: string;
   }): Promise<PartyRoleListResult> {
     const url = buildUrl(PARTY_ROLE_ENDPOINTS.LIST, {
       page: params.page,
       pageSize: params.pageSize,
       search: params.search,
+      partyId: params.partyId,
     });
 
     const response = await this.api.get<PartyRoleListResponseJson>(url);

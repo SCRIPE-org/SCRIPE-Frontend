@@ -460,7 +460,7 @@ export const de = {
     outboxPattern: {
       title: "Outbox-Muster",
       description:
-        "Wie SCRIPE die Exactly-Once-Zustellung von Domänenereignissen über EF Core OutboxInterceptor, OutboxMessage-Tabelle und OutboxProcessor garantiert.",
+        "Persistenz von Domänenereignissen in der Geschäftstransaktion und asynchrone Zustellung mindestens einmal.",
       intro:
         "Das Outbox-Muster löst das Problem des doppelten Schreibens: Speichern einer Entität und Auslösen von Nebeneffekten (E-Mail, Webhook, Berechtigungssynchronisierung) in einer atomaren Datenbanktransaktion.",
       dualWriteProblemTitle: "Das Problem des doppelten Schreibens",
@@ -473,12 +473,28 @@ export const de = {
       outboxMessageTitle: "OutboxMessage-Entität",
       processorTitle: "OutboxProcessor — Zuverlässiger Dispatcher",
       processorContent:
-        "Der OutboxProcessor läuft alle 30 Sekunden, liest unverarbeitete Nachrichten stapelweise aus und veröffentlicht sie über IMediator.Publish mit automatischer Wiederholungslogik.",
+        "Der OutboxProcessor verarbeitet ausstehende Domänenereignisse und speichert bei Fehlern den Wiederholungsstatus. Jede Zustellung eines Domänenereignisses erhält einen neuen Dependency-Injection-Scope, sodass nach einer fehlgeschlagenen Zustellung nachverfolgte Änderungen nicht durch eine spätere Zustellung gespeichert werden. Die Zustellung erfolgt mindestens einmal: Verbraucher, die dauerhaften Zustand ändern, müssen einen Inbox-Beleg atomar mit den Geschäftsdaten speichern; der Scope garantiert keine einmalige Verarbeitung über mehrere Hosts hinweg.",
       idempotencyTitle: "Idempotenz-Anforderungen",
       idempotencyContent:
-        "Die OutboxMessage.Id dient als Idempotenz-Schlüssel. Ereignishandler müssen idempotent implementiert werden, um Doppelausführungen sicher abzufangen.",
+        "OutboxMessage.Id identifiziert eine Ereigniszustellung und kann als Schlüssel für einen Inbox-Beleg dienen; sie ersetzt keinen Idempotenzschlüssel für eine Geschäftsanfrage. Verbraucher, die dauerhaften Zustand ändern, müssen den Inbox-Beleg und den Geschäftseffekt in derselben lokalen Transaktion speichern.",
       idempotencyTip:
-        "Der OutboxProcessor garantiert At-Least-Once-Zustellung. Idempotente Handler gewährleisten die semantische Exactly-Once-Verarbeitung.",
+        "Die Outbox stellt mindestens einmal zu. Idempotente Verarbeitung und transaktionale Inbox-Belege können doppelte dauerhafte Effekte in der Verbraucherdatenbank verhindern, garantieren aber weder eine einmalige Zustellung über mehrere Hosts noch einen einmaligen Effekt bei externen Anbietern.",
+    },
+    sharedFoundations: {
+      title: "Gemeinsame Grundlagen für Idempotenz und Suche",
+      description: "Wiederholung modulgebundener Geschäftsvorgänge und mehrsprachige Suche mit Autorisierungsprüfung.",
+      intro: "SCRIPE stellt wiederverwendbare Idempotenz- und Suchbausteine bereit. Sie besitzen weder die Geschäftsdaten noch die Richtlinien der Module; jeder abgegrenzte Kontext bindet sie über seine eigenen Anwendungs- und Infrastrukturschichten ein.",
+      ownershipTitle: "Modulverantwortung und Grenzen",
+      ownershipContent: "Das verantwortliche Modul behält seinen DbContext, dauerhafte Belege, Tenant-Filter, PBAC- und Feldsicherheitsprüfungen, Funktions- und Quotenregeln sowie den Antwortvertrag. Gemeinsamer Core darf übergebene Werte normalisieren oder bewerten, aber weder auf die Persistenz eines anderen Moduls zugreifen noch Party-Richtlinien für Kontakte, Duplikate oder Zusammenführungen festlegen.",
+      idempotencyTitle: "Backend-Idempotenz",
+      idempotencyContent: "Verwenden Sie einen stabilen Schlüssel pro Geschäftsvorgang. Das verantwortliche Modul speichert seinen Beleg zusammen mit der Änderung und erforderlichen Quoten- oder Outbox-Effekten in derselben lokalen Transaktion, sofern seine Implementierung dies garantiert. Ein übereinstimmender Schlüssel und eine kanonische Anfrage können das gespeicherte Ergebnis erneut liefern; eine geänderte Anfrage mit demselben Schlüssel sollte einen Konflikt auslösen. Prüfen Sie Tenant und aktuelle Berechtigung vor der Wiederholung erneut. Die Outbox liefert mindestens einmal; dauerhafte Verbraucher benötigen daher idempotente Verarbeitung und einen Inbox-Beleg, der zusammen mit der eigenen Wirkung gespeichert wird.",
+      frontendIntentTitle: "Lebenszyklus einer Frontend-Absicht",
+      frontendIntentContent: "Erzeugen Sie den Idempotenzschlüssel beim Start einer Geschäftsabsicht und behalten Sie ihn für Wiederholungen derselben unveränderten Absicht, auch nach einem Antwortverlust. Geänderte Nutzdaten oder eine neue Absicht benötigen einen neuen Schlüssel. Replay-Schutz-Nonces gelten pro Übertragungsversuch und ersetzen nicht den stabilen Geschäftsschlüssel. Der gemeinsame Axios-Transport macht nicht automatisch jeden POST wiederholbar; Aufrufer müssen den Idempotenzvertrag des Endpunkts ausdrücklich nutzen.",
+      searchTitle: "Mehrsprachige Suche und Autorisierung",
+      searchContent: "Verwenden Sie ein versioniertes Normalisierungsprofil und klare Trefferklassen: exakt, Präfix, Token oder unscharf. Ähnlichkeit hilft beim Auffinden, beweist aber weder Identität noch erlaubt sie eine Zusammenführung. Das verantwortliche Modul wendet Tenant-, PBAC-, Feldsicherheits-, Funktions- und Quotenfilter vor Ergebnissen und beobachtbaren Zählwerten an; es begrenzt Seiten und definiert eine deterministische Sortierung. Telefon- und E-Mail-Normalisierung unterstützt nur den Vergleich und begründet keine Identitätsgleichheit.",
+      adoptionTitle: "Adoption und Grenzen der Nachweise",
+      adoptionContent: "OrganizationCore ist ein verifizierter Verbraucher für die Branchensuche mit PostgreSQL und SQL Server. HRMS ist ein verifizierter Verbraucher für eine begrenzte Suche nach E-Mail-Domain-Aliasen über seinen registrierten HTTP-Pfad mit PostgreSQL. Die Ergebnisse belegen nur das Verhalten der jeweiligen Tests. Party bleibt unabhängig verantwortlich: gemeinsame Hilfsfunktionen und der Übergabevertrag bedeuten weder, dass Party sie übernommen hat, noch erlauben sie Zugriff auf Party-Persistenz.",
+      idempotencyTip: "Der Schlüssel gehört zu einer Benutzerabsicht, nicht zu einem Netzwerkversuch. Prüfen Sie Endpoint-Vertrag, Schlüsselbereich und Aufbewahrung sowie die aktuelle Autorisierungsprüfung, bevor Sie sich auf eine Wiederholung verlassen.",
     },
     communication: {
       title: "Kommunikationsmodul",

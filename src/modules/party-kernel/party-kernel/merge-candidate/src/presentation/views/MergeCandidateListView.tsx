@@ -199,7 +199,7 @@ export const MergeCandidateListView = React.memo(function MergeCandidateListView
     // MergeCandidate is a dedup-workflow join entity — no name field exists on either the
     // frontend entity or the backend DTO. `reason` (e.g. "Same email address") is the most
     // human-identifying text available; falls back to the primary party's id if empty.
-    getItemDisplayName: (item: MergeCandidate) => item.reason || item.primaryPartyId,
+    getItemDisplayName: (item: MergeCandidate) => item.reason || "—",
     deleteService: (id: string) => vm.deleteItem(id),
     getActions: (_vmInstance, tFn, handleDeleteFn): CrudAction<MergeCandidate>[] => [
       {

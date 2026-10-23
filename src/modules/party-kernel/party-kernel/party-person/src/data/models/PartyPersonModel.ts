@@ -15,6 +15,9 @@ export interface PartyPersonJson {
   firstName?: string | null;
   lastName?: string | null;
   fullName?: string | null;
+  givenName?: string | null;
+  middleNames?: string | null;
+  familyName?: string | null;
   dateOfBirth?: string | null;
   isMinor?: boolean;
   createdAt?: string;
@@ -49,7 +52,10 @@ export class PartyPersonModel {
     public readonly createdAt: string,
     public readonly modifiedAt?: string,
     public readonly fullName?: string,
-    public readonly dateOfBirth?: string
+    public readonly dateOfBirth?: string,
+    public readonly givenName?: string,
+    public readonly middleNames?: string,
+    public readonly familyName?: string
   ) {}
 
   /**
@@ -65,7 +71,10 @@ export class PartyPersonModel {
       json.createdAt ?? "",
       json.modifiedAt ?? undefined,
       json.fullName ?? undefined,
-      json.dateOfBirth ?? undefined
+      json.dateOfBirth ?? undefined,
+      json.givenName ?? json.firstName ?? undefined,
+      json.middleNames ?? undefined,
+      json.familyName ?? json.lastName ?? undefined
     );
   }
 
@@ -79,6 +88,9 @@ export class PartyPersonModel {
       firstName: this.firstName,
       lastName: this.lastName,
       fullName: this.fullName,
+      givenName: this.givenName,
+      middleNames: this.middleNames,
+      familyName: this.familyName,
       dateOfBirth: this.dateOfBirth,
       isMinor: this.isMinor,
       createdAt: this.createdAt,

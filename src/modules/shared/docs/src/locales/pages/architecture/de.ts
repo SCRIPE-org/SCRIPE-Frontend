@@ -249,6 +249,9 @@ export const de = {
         "Das Outbox-Pattern löst das Dual-Write-Problem: Wie man atomar die Datenbank aktualisiert UND ein Ereignis veröffentlicht.",
       outboxWarning:
         "Das Outbox-Pattern bietet eine At-Least-Once-Zustellung, keine Exactly-Once. Event-Handler müssen idempotent sein.",
+      committedAuditTitle: "Auditierung abgeschlossener Entitätsänderungen",
+      committedAuditIntro:
+        "Audit-Snapshots für Entitätsänderungen werden zusammen mit der Geschäftsänderung in die OutboxMessages-Tabelle des zuständigen Moduls geschrieben; ein Rollback entfernt beides. Der Outbox-Prozessor liefert den Snapshot mindestens einmal an den zentralen Identity-Audit-Speicher. Die Event-ID entspricht der AuditLog-ID. Eine erneute Zustellung gilt nur dann als erledigt, wenn genau diese ID und der zugehörige Mandant bereits vorhanden sind – auch wenn der Worker keinen Mandantenabfragekontext besitzt. Die Zustellung erfolgt mindestens einmal, nicht genau einmal; Fehler können erneut versucht werden.",
       outboxMessageTitle: "OutboxMessage Entität",
       outboxInterceptorTitle: "OutboxInterceptor",
       outboxInterceptorIntro:

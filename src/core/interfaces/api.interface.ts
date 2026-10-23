@@ -55,6 +55,17 @@ export interface IApiService {
   ): Promise<T>;
 
   /**
+   * POST with bounded transport retries, enabled only when an explicit stable business
+   * Idempotency-Key header is supplied. Use only for endpoints with server-side replay guarantees.
+   */
+  postWithRetry<T>(
+    endpoint: string,
+    data?: unknown,
+    signal?: AbortSignal,
+    options?: { headers?: Record<string, string> }
+  ): Promise<T>;
+
+  /**
    * POST request (public - no auth token)
    * Use this for endpoints that don't require authentication (e.g., login, register)
    * @param endpoint - API endpoint
@@ -69,7 +80,12 @@ export interface IApiService {
    * @param data - Request body
    * @param signal - AbortSignal for cancellation
    */
-  put<T>(endpoint: string, data?: unknown, signal?: AbortSignal): Promise<T>;
+  put<T>(
+    endpoint: string,
+    data?: unknown,
+    signal?: AbortSignal,
+    options?: { headers?: Record<string, string> }
+  ): Promise<T>;
 
   /**
    * PATCH request (authenticated)

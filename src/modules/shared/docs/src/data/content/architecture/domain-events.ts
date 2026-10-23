@@ -169,6 +169,28 @@ public interface IDomainEventHandler<TEvent> :
     contentKey: "architecture.domainEvents.outboxWarning",
   },
 
+  // ─── Committed Entity-Change Auditing ─────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "architecture.domainEvents.committedAuditTitle",
+    id: "committed-entity-audit",
+  },
+  { type: "paragraph", contentKey: "architecture.domainEvents.committedAuditIntro" },
+  {
+    type: "code",
+    language: "csharp",
+    filename: "Core.Domain/Events/EntityChangeAuditCommittedEvent.cs",
+    code: `/// <summary>
+/// Carries a committed entity-change audit record through the owning module's transactional outbox.
+/// The event ID is the deterministic central audit-log ID, making redelivery idempotent.
+/// </summary>
+public sealed record EntityChangeAuditCommittedEvent(
+    Guid EventId,
+    DateTime OccurredOn,
+    AuditLog AuditLog) : IDomainEvent;`,
+  },
+
   // ─── OutboxMessage Entity ─────────────────────────────────
   {
     type: "heading",

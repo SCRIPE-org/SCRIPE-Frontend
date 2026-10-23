@@ -13,6 +13,9 @@ export interface PartyPersonData {
   firstName?: string | null;
   lastName?: string | null;
   fullName?: string | null;
+  givenName?: string | null;
+  middleNames?: string | null;
+  familyName?: string | null;
   dateOfBirth?: string | null;
   isMinor: boolean;
   createdAt: string;
@@ -34,11 +37,23 @@ export class PartyPerson {
   }
 
   get firstName(): string {
-    return this.data.firstName ?? "";
+    return this.data.firstName ?? this.data.givenName ?? "";
   }
 
   get lastName(): string {
-    return this.data.lastName ?? "";
+    return this.data.lastName ?? this.data.familyName ?? "";
+  }
+
+  get givenName(): string {
+    return this.data.givenName ?? this.data.firstName ?? "";
+  }
+
+  get middleNames(): string {
+    return this.data.middleNames ?? "";
+  }
+
+  get familyName(): string {
+    return this.data.familyName ?? this.data.lastName ?? "";
   }
 
   get fullName(): string | undefined {
@@ -48,8 +63,7 @@ export class PartyPerson {
   get displayName(): string {
     return (
       this.data.fullName ||
-      [this.data.firstName, this.data.lastName].filter(Boolean).join(" ") ||
-      this.data.partyId ||
+      [this.givenName, this.middleNames, this.familyName].filter(Boolean).join(" ") ||
       "—"
     );
   }

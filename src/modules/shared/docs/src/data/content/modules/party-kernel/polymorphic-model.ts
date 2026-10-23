@@ -2,88 +2,63 @@ import { registerPage } from "../../../repositories/DocsRepository";
 import type { DocSection } from "../../../../domain/entities/DocSection";
 
 const sections: DocSection[] = [
-  { type: "paragraph", contentKey: "modules.partyKernel.polymorphic.intro" },
-  {
-    type: "info",
-    variant: "note",
-    titleKey: "modules.partyKernel.polymorphic.infoTitle",
-    contentKey: "modules.partyKernel.polymorphic.infoContent",
-  },
-
-  // ─── Polymorphic Party Abstraction ────────────────────────────────
   {
     type: "heading",
     level: 2,
     titleKey: "modules.partyKernel.polymorphic.modelTitle",
-    id: "polymorphic-party",
+    id: "party-identity-contract",
   },
-  { type: "paragraph", contentKey: "modules.partyKernel.polymorphic.modelDesc" },
   {
     type: "code",
     language: "csharp",
-    filename: "src/Modules/PartyKernel/PartyKernel.Domain/Entities/Party.cs",
-    code: `public abstract class Party : TenantAggregateRoot
+    filename: "PartyKernel.Domain/Entities",
+    code: `// Party.Type is assigned at creation and is immutable through ordinary updates.
+public class Party : AuditableEntity<Guid>, ITenantAwareEntity
 {
-    public PartyType Type { get; protected set; }
-    public string DisplayName { get; protected set; } = string.Empty;
-    public List<ContactPoint> ContactPoints { get; } = new();
-    public List<PartyRole> Roles { get; } = new();
-
-    public void AddContactPoint(ContactPointType type, string value, bool isPrimary = false)
-    {
-        if (isPrimary) ContactPoints.ForEach(cp => cp.ClearPrimary());
-        ContactPoints.Add(new ContactPoint(Id, type, value, isPrimary));
-    }
+    public Guid? TenantId { get; init; }
+    public PartyType Type { get; init; }
+    public string DisplayName { get; set; }
 }
 
-public sealed class PartyPerson : Party
+// Person names preserve the entered full name. Structured parts are optional;
+// legacy FirstName/LastName fields are retained without manufacturing a split.
+public class PartyPerson : AggregateRoot<Guid>, ITenantAwareEntity
 {
-    public string FirstName { get; private set; } = string.Empty;
-    public string LastName { get; private set; } = string.Empty;
-    public DateOnly? BirthDate { get; private set; }
+    public Guid PartyId { get; init; }
+    public string? FullName { get; set; }
+    public string? GivenName { get; set; }
+    public string? MiddleNames { get; set; }
+    public string? FamilyName { get; set; }
+    public string? FirstName { get; set; }
+    public string? LastName { get; set; }
 }
 
-public sealed class PartyOrganization : Party
+public class PartyOrganization : AuditableEntity<Guid>, ITenantAwareEntity
 {
-    public string LegalName { get; private set; } = string.Empty;
-    public string TaxRegistrationNumber { get; private set; } = string.Empty;
+    public Guid PartyId { get; init; }
+    public string LegalName { get; set; }
+    public string? TaxId { get; set; }
 }`,
   },
-
-  // ─── Contact Points & Verification ────────────────────────────────
-  {
-    type: "heading",
-    level: 2,
-    titleKey: "modules.partyKernel.polymorphic.contactTitle",
-    id: "contact-points",
-  },
-  { type: "paragraph", contentKey: "modules.partyKernel.polymorphic.contactDesc" },
-
-  // ─── API Reference Table ──────────────────────────────────────────
   {
     type: "heading",
     level: 2,
     titleKey: "modules.partyKernel.polymorphic.apiTitle",
-    id: "api-endpoints",
+    id: "safe-party-reads",
   },
   {
-    type: "api-table",
-    endpoints: [
-      {
-        method: "GET",
-        path: "/api/v1/party-kernel/parties",
-        descriptionKey: "modules.partyKernel.polymorphic.apiList",
-        auth: "Bearer JWT",
-        permission: "parties.view",
-      },
-      {
-        method: "POST",
-        path: "/api/v1/party-kernel/parties/person",
-        descriptionKey: "modules.partyKernel.polymorphic.apiCreatePerson",
-        auth: "Bearer JWT",
-        permission: "parties.create",
-      },
-    ],
+    type: "code",
+    language: "http",
+    filename: "Tenant-scoped profile and lookup routes",
+    code: `# Profile uses the encrypted Party ID and a safe typed projection.
+GET /api/v1/Parties/{encryptedPartyId}/profile
+# Requires parties.view and party-people.view or party-organizations.view.
+
+# Selector results expose encrypted Party IDs and safe summary fields only.
+GET /api/v1/Parties/people/lookup?page=1&pageSize=20&search=...
+GET /api/v1/Parties/organizations/lookup?page=1&pageSize=20&search=...
+# Requires parties.view and the matching party-people.view / party-organizations.view.
+# The server derives tenant scope from the authenticated caller; request tenant IDs are ignored.`,
   },
 ];
 
@@ -94,10 +69,6 @@ registerPage({
   category: "module-party-kernel",
   order: 2,
   sections,
-  relatedSlugs: [
-    "modules/party-kernel-overview",
-    "modules/party-kernel/relationship-graph",
-    "modules/party-kernel/deduplication-merge",
-  ],
-  lastUpdated: "2026-10-03",
+  relatedSlugs: ["modules/party-kernel-overview", "modules/party-kernel/relationship-graph"],
+  lastUpdated: "2026-10-14",
 });
