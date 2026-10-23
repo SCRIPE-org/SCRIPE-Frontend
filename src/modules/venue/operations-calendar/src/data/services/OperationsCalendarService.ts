@@ -4,6 +4,7 @@ import type {
   OperationsCalendarQuery,
 } from "../../domain/entities/OperationsCalendar";
 import type { IOperationsCalendarService } from "../../domain/interfaces/IOperationsCalendarService";
+import { OperationsCalendarMapper } from "../mappers/OperationsCalendarMapper";
 import { OPERATIONS_CALENDAR_ENDPOINTS } from "./operations-calendar.endpoints";
 
 /**
@@ -12,12 +13,15 @@ import { OPERATIONS_CALENDAR_ENDPOINTS } from "./operations-calendar.endpoints";
 export class OperationsCalendarService implements IOperationsCalendarService {
   constructor(private readonly api: IApiService) {}
 
-  getDay(query: OperationsCalendarQuery): Promise<OperationsCalendarDay> {
+  async getDay(query: OperationsCalendarQuery): Promise<OperationsCalendarDay> {
     const params = new URLSearchParams({
       dateLocal: query.dateLocal,
       timeZoneId: query.timeZoneId,
       resourceIds: query.resourceIds.join(","),
     });
-    return this.api.get(`${OPERATIONS_CALENDAR_ENDPOINTS.DAY}?${params.toString()}`);
+    const res = await this.api.get<any>(
+      `${OPERATIONS_CALENDAR_ENDPOINTS.DAY}?${params.toString()}`
+    );
+    return OperationsCalendarMapper.toDayEntity(res);
   }
 }

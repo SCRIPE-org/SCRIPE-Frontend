@@ -24,6 +24,7 @@ export interface IPartyRelationshipService {
     page: number;
     pageSize: number;
     search?: string;
+    partyId?: string;
   }): Promise<PartyRelationshipListResult>;
   getById(id: string): Promise<PartyRelationshipModel>;
   create(data: Record<string, unknown>): Promise<{ id: string }>;

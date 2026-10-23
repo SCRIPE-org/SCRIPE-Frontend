@@ -57,11 +57,11 @@ export const SecurityTrendsChart = memo(function SecurityTrendsChart({
   }, [data]);
 
   return (
-    <Card className={`flex h-full flex-col ${cardClasses || ""}`}>
+    <Card className={`flex h-full flex-col border-nx-line bg-nx-surface text-nx-ink hover:border-nx-line-hi ${cardClasses || ""}`}>
       <CardHeader className="pb-3">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <div className="rounded-md bg-primary/10 p-1.5 text-primary">
+            <div className="flex h-8 w-8 items-center justify-center rounded-lg border border-primary/20 bg-primary/10 text-primary">
               <Activity className="h-4 w-4" aria-hidden="true" />
             </div>
             <div>
@@ -77,11 +77,11 @@ export const SecurityTrendsChart = memo(function SecurityTrendsChart({
 
           {/* Quick legend pills */}
           <div className="flex items-center gap-3 text-xs">
-            <span className="flex items-center gap-1.5 text-muted-foreground">
+            <span className="flex items-center gap-1.5 text-nx-ink-3">
               <span className="h-2 w-2 rounded-full bg-destructive" />
               <span>{t("security.trends.failed") || "Failed"}</span>
             </span>
-            <span className="flex items-center gap-1.5 text-muted-foreground">
+            <span className="flex items-center gap-1.5 text-nx-ink-3">
               <span className="h-2 w-2 rounded-full bg-primary" />
               <span>{t("security.trends.success") || "Successful"}</span>
             </span>
@@ -111,18 +111,18 @@ export const SecurityTrendsChart = memo(function SecurityTrendsChart({
                   <stop offset="95%" stopColor="var(--color-failed)" stopOpacity={0.0} />
                 </linearGradient>
               </defs>
-              <CartesianGrid vertical={false} strokeDasharray="3 3" className="stroke-border/40" />
+              <CartesianGrid vertical={false} strokeDasharray="3 3" className="stroke-nx-line/40" />
               <XAxis
                 dataKey="date"
                 tickLine={false}
                 axisLine={false}
-                className="fill-muted-foreground text-[11px]"
+                className="fill-nx-ink-3 text-[11px]"
               />
               <YAxis
                 allowDecimals={false}
                 tickLine={false}
                 axisLine={false}
-                className="fill-muted-foreground text-[11px]"
+                className="fill-nx-ink-3 text-[11px]"
               />
               <ChartTooltip content={<ChartTooltipContent />} />
               <Area

@@ -126,3 +126,30 @@ export interface Booking360State {
   actionError: "expired" | "conflict" | "failed" | null;
   operationalFeedback: Booking360OperationalFeedback | null;
 }
+
+/**
+ * Guest self-service access link status for a booking.
+ */
+export interface GuestAccessStatus {
+  hasActiveLink: boolean;
+  expiresAtUtc?: string | null;
+  isRevoked: boolean;
+  revokedReason?: string | null;
+  maskedRecipient?: string | null;
+}
+
+/**
+ * Result of generating a guest self-service access link.
+ */
+export interface GenerateGuestAccessResult {
+  guestAccessLink: string;
+  expiresAtUtc: string;
+}
+
+/**
+ * Result of sending a guest self-service link to a recipient.
+ */
+export interface SendGuestLinkResult {
+  sent: boolean;
+  recipient?: string | null;
+}

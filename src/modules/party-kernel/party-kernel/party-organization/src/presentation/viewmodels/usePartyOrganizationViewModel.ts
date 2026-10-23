@@ -9,12 +9,13 @@
 import { useCrudViewModel } from "@core/crud/hooks/useCrudViewModel";
 import { getPartyKernelContainer } from "../../../../di";
 import type { PartyOrganization } from "../../domain/entities/PartyOrganization";
+import { useCallback } from "react";
 
 /**
  * Documentation for module export
  */
 export function usePartyOrganizationViewModel() {
-  const { partyOrganizationRepository } = getPartyKernelContainer();
+  const { partyOrganizationRepository, partyRepository } = getPartyKernelContainer();
 
   const vm = useCrudViewModel(
     ["partyOrganization"],
@@ -50,5 +51,20 @@ export function usePartyOrganizationViewModel() {
     { deferSuccessEffects: true }
   );
 
-  return { vm };
+  const lookupOrganizations = useCallback(
+    async (query: string) => {
+      const res = await partyRepository.lookupContacts({
+        search: query,
+        type: "Organization",
+        pageSize: 20,
+      });
+      return (res.items || []).map((o) => ({
+        value: o.id,
+        label: o.displayName || o.legalName || "—",
+      }));
+    },
+    [partyRepository]
+  );
+
+  return { vm, lookupOrganizations };
 }

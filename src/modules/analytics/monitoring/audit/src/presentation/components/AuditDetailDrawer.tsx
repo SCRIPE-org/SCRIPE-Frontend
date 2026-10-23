@@ -162,10 +162,10 @@ export function AuditDetailDrawer({
       ) : data ? (
         <Tabs defaultValue="overview" className="flex min-h-0 flex-1 flex-col">
           {/* 1. Pinned Header */}
-          <DetailSheetHeader className="bg-card">
+          <DetailSheetHeader className="border-b border-nx-line bg-nx-surface text-nx-ink">
             {/* Badges row */}
             <div className="flex flex-wrap items-center gap-2">
-              <Badge variant="outline" className="px-2 py-0.5 font-mono text-xs font-bold">
+              <Badge variant="outline" className="border-nx-line px-2 py-0.5 font-mono text-xs font-bold text-nx-ink">
                 {data.eventType}
               </Badge>
 
@@ -173,7 +173,7 @@ export function AuditDetailDrawer({
                 variant={data.isSuccess ? "outline" : "destructive"}
                 className={`gap-1 text-[11px] font-semibold ${
                   data.isSuccess
-                    ? "border-emerald-500/40 bg-emerald-500/10 text-emerald-500"
+                    ? "border-success/40 bg-success/10 text-success"
                     : "bg-destructive text-destructive-foreground"
                 }`}
               >
@@ -191,31 +191,31 @@ export function AuditDetailDrawer({
                 variant="outline"
                 className={`text-[10px] font-bold uppercase tracking-wider ${
                   severity === "critical"
-                    ? "border-rose-500/50 bg-rose-500/10 text-rose-500"
+                    ? "border-destructive/50 bg-destructive/10 text-destructive"
                     : severity === "warning"
-                      ? "border-amber-500/50 bg-amber-500/10 text-amber-500"
-                      : "border-blue-500/50 bg-blue-500/10 text-blue-500"
+                      ? "border-warning/50 bg-warning/10 text-warning"
+                      : "border-info/50 bg-info/10 text-info"
                 }`}
               >
                 {severity}
               </Badge>
 
-              <span className="ms-auto flex items-center gap-1 text-xs tabular-nums text-muted-foreground">
+              <span className="ms-auto flex items-center gap-1 text-xs tabular-nums text-nx-ink-3">
                 <Clock className="h-3.5 w-3.5" />
                 {formatDateTimeUtc(data.timestamp)}
               </span>
             </div>
 
             {/* Human-readable Headline */}
-            <h2 className="mt-3 text-base font-bold leading-snug text-foreground sm:text-lg">
+            <h2 className="mt-3 text-base font-bold leading-snug text-nx-ink sm:text-lg">
               <span className="font-mono text-primary">{data.username ?? "System"}</span>{" "}
-              <span className="font-normal text-muted-foreground">executed</span>{" "}
-              <span className="font-semibold text-foreground">{data.eventType}</span>
+              <span className="font-normal text-nx-ink-3">executed</span>{" "}
+              <span className="font-semibold text-nx-ink">{data.eventType}</span>
               {data.entityType && (
                 <>
                   {" "}
-                  <span className="font-normal text-muted-foreground">on</span>{" "}
-                  <span className="font-mono font-semibold text-foreground">
+                  <span className="font-normal text-nx-ink-3">on</span>{" "}
+                  <span className="font-mono font-semibold text-nx-ink">
                     {data.entityType}
                     {data.entityId ? ` #${data.entityId.slice(0, 8)}` : ""}
                   </span>
@@ -225,13 +225,13 @@ export function AuditDetailDrawer({
 
             {/* Correlation ID banner */}
             {data.correlationId && (
-              <div className="mt-2.5 flex items-center justify-between gap-2 rounded-md border border-border/80 bg-accent/30 px-2.5 py-1.5 text-xs text-muted-foreground">
+              <div className="mt-2.5 flex items-center justify-between gap-2 rounded-md border border-nx-line bg-nx-raised/40 px-2.5 py-1.5 text-xs text-nx-ink-3">
                 <div className="flex min-w-0 items-center gap-1.5">
                   <Hash className="h-3.5 w-3.5 shrink-0 text-primary" />
                   <span className="shrink-0 text-[11px] font-semibold uppercase tracking-wider">
                     Trace:
                   </span>
-                  <span className="select-all truncate font-mono text-foreground">
+                  <span className="select-all truncate font-mono text-nx-ink">
                     {data.correlationId}
                   </span>
                 </div>
@@ -244,7 +244,7 @@ export function AuditDetailDrawer({
                   title="Copy Correlation ID"
                 >
                   {copiedKey === "corr" ? (
-                    <Check className="h-3 w-3 text-emerald-500" />
+                    <Check className="h-3 w-3 text-success" />
                   ) : (
                     <Copy className="h-3 w-3" />
                   )}
@@ -254,7 +254,7 @@ export function AuditDetailDrawer({
           </DetailSheetHeader>
 
           {/* 2. Pinned Tab Bar */}
-          <DetailSheetTabBar className="border-b border-border/80 bg-card/90">
+          <DetailSheetTabBar className="border-b border-nx-line bg-nx-surface">
             <TabsTrigger value="overview" className="gap-1.5 text-xs">
               <Eye className="h-3.5 w-3.5" />
               <span>{t("audit.detail.tabs.overview") || "Overview"}</span>
@@ -283,7 +283,7 @@ export function AuditDetailDrawer({
             <TabsContent value="overview" className="focus-visible:outline-hidden mt-0 space-y-5">
               {/* Error Banner if failed */}
               {!data.isSuccess && (
-                <div className="rounded-lg border border-rose-500/40 bg-rose-500/10 p-4 text-rose-500">
+                <div className="rounded-lg border border-destructive/40 bg-destructive/10 p-4 text-destructive">
                   <div className="flex items-start gap-3">
                     <AlertOctagon className="mt-0.5 h-5 w-5 shrink-0" />
                     <div className="space-y-1">
@@ -291,7 +291,7 @@ export function AuditDetailDrawer({
                         {t("audit.detail.executionFailure") || "Operation Failed"}
                         {data.statusCode ? ` (HTTP ${data.statusCode})` : ""}
                       </p>
-                      <p className="break-all font-mono text-sm text-foreground">
+                      <p className="break-all font-mono text-sm text-nx-ink">
                         {data.errorMessage || "Unknown error during operation execution."}
                       </p>
                     </div>
@@ -302,20 +302,20 @@ export function AuditDetailDrawer({
               {/* Grid of Key Info Cards */}
               <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                 {/* Card A: Actor Context */}
-                <Card className="shadow-2xs border-border/80 bg-card/80">
+                <Card className="border-nx-line bg-nx-surface text-nx-ink">
                   <CardContent className="space-y-3 p-4">
-                    <div className="flex items-center gap-2 border-b border-border/60 pb-2">
+                    <div className="flex items-center gap-2 border-b border-nx-line pb-2">
                       <User className="h-4 w-4 text-primary" />
-                      <h3 className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
+                      <h3 className="text-xs font-bold uppercase tracking-wider text-nx-ink-3">
                         {t("audit.detail.actorContext") || "Actor / Principal"}
                       </h3>
                     </div>
 
                     <div className="space-y-2 text-xs">
                       <div className="flex items-center justify-between">
-                        <span className="text-muted-foreground">Username:</span>
+                        <span className="text-nx-ink-3">Username:</span>
                         <div className="flex items-center gap-1.5">
-                          <span className="font-semibold text-foreground">
+                          <span className="font-semibold text-nx-ink">
                             {data.username ?? "System"}
                           </span>
                           {data.isAdmin && (
@@ -331,9 +331,9 @@ export function AuditDetailDrawer({
 
                       {data.userId && (
                         <div className="flex items-center justify-between gap-2">
-                          <span className="shrink-0 text-muted-foreground">User ID:</span>
+                          <span className="shrink-0 text-nx-ink-3">User ID:</span>
                           <span
-                            className="max-w-[180px] select-all truncate font-mono text-[11px] text-foreground"
+                            className="max-w-[180px] select-all truncate font-mono text-[11px] text-nx-ink"
                             title={data.userId}
                           >
                             {data.userId}
@@ -343,9 +343,9 @@ export function AuditDetailDrawer({
 
                       {data.tenantId && (
                         <div className="flex items-center justify-between gap-2">
-                          <span className="shrink-0 text-muted-foreground">Tenant ID:</span>
+                          <span className="shrink-0 text-nx-ink-3">Tenant ID:</span>
                           <span
-                            className="max-w-[180px] select-all truncate font-mono text-[11px] text-foreground"
+                            className="max-w-[180px] select-all truncate font-mono text-[11px] text-nx-ink"
                             title={data.tenantId}
                           >
                             {data.tenantId}
@@ -357,27 +357,27 @@ export function AuditDetailDrawer({
                 </Card>
 
                 {/* Card B: Target & Operation */}
-                <Card className="shadow-2xs border-border/80 bg-card/80">
+                <Card className="border-nx-line bg-nx-surface text-nx-ink">
                   <CardContent className="space-y-3 p-4">
-                    <div className="flex items-center gap-2 border-b border-border/60 pb-2">
+                    <div className="flex items-center gap-2 border-b border-nx-line pb-2">
                       <Layers className="h-4 w-4 text-primary" />
-                      <h3 className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
+                      <h3 className="text-xs font-bold uppercase tracking-wider text-nx-ink-3">
                         {t("audit.detail.targetResource") || "Target Resource"}
                       </h3>
                     </div>
 
                     <div className="space-y-2 text-xs">
                       <div className="flex items-center justify-between">
-                        <span className="text-muted-foreground">Entity Type:</span>
-                        <span className="font-mono font-semibold text-foreground">
+                        <span className="text-nx-ink-3">Entity Type:</span>
+                        <span className="font-mono font-semibold text-nx-ink">
                           {data.entityType ?? "None"}
                         </span>
                       </div>
 
                       {data.entityId && (
                         <div className="flex items-center justify-between">
-                          <span className="text-muted-foreground">Entity ID:</span>
-                          <span className="select-all font-mono text-[11px] text-foreground">
+                          <span className="text-nx-ink-3">Entity ID:</span>
+                          <span className="select-all font-mono text-[11px] text-nx-ink">
                             {data.entityId}
                           </span>
                         </div>
@@ -385,8 +385,8 @@ export function AuditDetailDrawer({
 
                       {data.endpoint && (
                         <div className="flex items-center justify-between">
-                          <span className="text-muted-foreground">Endpoint:</span>
-                          <span className="max-w-[200px] truncate font-mono text-[11px] text-foreground">
+                          <span className="text-nx-ink-3">Endpoint:</span>
+                          <span className="max-w-[200px] truncate font-mono text-[11px] text-nx-ink">
                             {data.httpMethod ? `${data.httpMethod} ` : ""}
                             {data.endpoint}
                           </span>
@@ -394,8 +394,8 @@ export function AuditDetailDrawer({
                       )}
 
                       <div className="flex items-center justify-between">
-                        <span className="text-muted-foreground">Duration:</span>
-                        <span className="font-mono text-foreground">
+                        <span className="text-nx-ink-3">Duration:</span>
+                        <span className="font-mono text-nx-ink">
                           {data.durationMs !== null ? `${data.durationMs}ms` : "—"}
                         </span>
                       </div>
@@ -404,28 +404,28 @@ export function AuditDetailDrawer({
                 </Card>
 
                 {/* Card C: Network & Client Origin */}
-                <Card className="shadow-2xs border-border/80 bg-card/80 md:col-span-2">
+                <Card className="border-nx-line bg-nx-surface text-nx-ink md:col-span-2">
                   <CardContent className="space-y-3 p-4">
-                    <div className="flex items-center gap-2 border-b border-border/60 pb-2">
+                    <div className="flex items-center gap-2 border-b border-nx-line pb-2">
                       <Globe className="h-4 w-4 text-primary" />
-                      <h3 className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
+                      <h3 className="text-xs font-bold uppercase tracking-wider text-nx-ink-3">
                         {t("audit.detail.originTelemetry") || "Network & Origin Telemetry"}
                       </h3>
                     </div>
 
                     <div className="grid grid-cols-1 gap-3 text-xs md:grid-cols-2">
                       <div className="space-y-1">
-                        <span className="text-muted-foreground">Client IP Address:</span>
-                        <div className="flex items-center gap-2 font-mono text-foreground">
+                        <span className="text-nx-ink-3">Client IP Address:</span>
+                        <div className="flex items-center gap-2 font-mono text-nx-ink">
                           <span>{data.ipAddress ?? "—"}</span>
                           {data.ipAddress && (
                             /* UI-EXCEPTION */ <button
                               type="button"
-                              className="cursor-pointer text-muted-foreground hover:text-foreground"
+                              className="cursor-pointer text-nx-ink-3 hover:text-nx-ink"
                               onClick={() => copyToClipboard(data.ipAddress!, "ip")}
                             >
                               {copiedKey === "ip" ? (
-                                <Check className="h-3 w-3 text-emerald-500" />
+                                <Check className="h-3 w-3 text-success" />
                               ) : (
                                 <Copy className="h-3 w-3" />
                               )}
@@ -435,8 +435,8 @@ export function AuditDetailDrawer({
                       </div>
 
                       <div className="space-y-1">
-                        <span className="text-muted-foreground">User Agent:</span>
-                        <p className="break-all font-mono text-[11px] text-foreground">
+                        <span className="text-nx-ink-3">User Agent:</span>
+                        <p className="break-all font-mono text-[11px] text-nx-ink">
                           {data.userAgent ?? "—"}
                         </p>
                       </div>
@@ -449,12 +449,12 @@ export function AuditDetailDrawer({
             {/* ──────── TAB 2: CHANGES & DIFF ──────── */}
             <TabsContent value="changes" className="focus-visible:outline-hidden mt-0 space-y-4">
               {changedFieldsList.length > 0 && (
-                <div className="flex flex-wrap items-center gap-1.5 rounded-md border border-border/60 bg-accent/30 p-3">
-                  <span className="me-1 text-xs font-semibold text-muted-foreground">
+                <div className="flex flex-wrap items-center gap-1.5 rounded-md border border-nx-line bg-nx-raised/40 p-3">
+                  <span className="me-1 text-xs font-semibold text-nx-ink-2">
                     {t("audit.detail.changedFields") || "Modified Fields"}:
                   </span>
                   {changedFieldsList.map((f) => (
-                    <Badge key={f} variant="outline" className="bg-card font-mono text-[11px]">
+                    <Badge key={f} variant="outline" className="border-nx-line bg-nx-raised font-mono text-[11px] text-nx-ink">
                       {f}
                     </Badge>
                   ))}
@@ -462,58 +462,58 @@ export function AuditDetailDrawer({
               )}
 
               {parsedDiff && parsedDiff.length > 0 ? (
-                <div className="overflow-hidden rounded-lg border border-border">
+                <div className="overflow-hidden rounded-lg border border-nx-line">
                   <table className="w-full text-left text-xs">
-                    <thead className="border-b border-border bg-muted/50">
+                    <thead className="border-b border-nx-line bg-nx-raised/50">
                       <tr>
-                        <th className="w-1/4 px-3 py-2 font-semibold text-muted-foreground">
+                        <th className="w-1/4 px-3 py-2 font-semibold text-nx-ink-3">
                           Field
                         </th>
-                        <th className="w-3/8 px-3 py-2 font-semibold text-muted-foreground">
+                        <th className="w-3/8 px-3 py-2 font-semibold text-nx-ink-3">
                           Previous Value
                         </th>
-                        <th className="w-3/8 px-3 py-2 font-semibold text-muted-foreground">
+                        <th className="w-3/8 px-3 py-2 font-semibold text-nx-ink-3">
                           New Value
                         </th>
                       </tr>
                     </thead>
-                    <tbody className="divide-y divide-border/60 font-mono">
+                    <tbody className="divide-y divide-nx-line font-mono">
                       {parsedDiff.map((row) => (
                         <tr
                           key={row.key}
                           className={
                             row.status === "added"
-                              ? "bg-emerald-500/5"
+                              ? "bg-success/5"
                               : row.status === "removed"
-                                ? "bg-rose-500/5"
+                                ? "bg-destructive/5"
                                 : row.status === "modified"
-                                  ? "bg-amber-500/5"
+                                  ? "bg-warning/5"
                                   : ""
                           }
                         >
-                          <td className="px-3 py-2 font-semibold text-foreground">
+                          <td className="px-3 py-2 font-semibold text-nx-ink">
                             <div className="flex items-center gap-1.5">
                               <span>{row.key}</span>
                               {row.status === "added" && (
-                                <Badge className="bg-emerald-500/20 px-1 py-0 text-[9px] text-emerald-500">
+                                <Badge className="border-success/20 bg-success/10 px-1 py-0 text-[9px] text-success">
                                   +new
                                 </Badge>
                               )}
                               {row.status === "removed" && (
-                                <Badge className="bg-rose-500/20 px-1 py-0 text-[9px] text-rose-500">
+                                <Badge className="border-destructive/20 bg-destructive/10 px-1 py-0 text-[9px] text-destructive">
                                   -deleted
                                 </Badge>
                               )}
                             </div>
                           </td>
-                          <td className="select-all break-all px-3 py-2 text-muted-foreground">
+                          <td className="select-all break-all px-3 py-2 text-nx-ink-2">
                             {row.oldVal ?? (
-                              <span className="italic text-muted-foreground/40">null</span>
+                              <span className="italic text-nx-ink-3">null</span>
                             )}
                           </td>
-                          <td className="select-all break-all px-3 py-2 font-semibold text-foreground">
+                          <td className="select-all break-all px-3 py-2 font-semibold text-nx-ink">
                             {row.newVal ?? (
-                              <span className="italic text-muted-foreground/40">null</span>
+                              <span className="italic text-nx-ink-3">null</span>
                             )}
                           </td>
                         </tr>
@@ -537,18 +537,18 @@ export function AuditDetailDrawer({
             {/* ──────── TAB 3: RAW PAYLOAD ──────── */}
             <TabsContent value="raw" className="focus-visible:outline-hidden mt-0 space-y-3">
               <div className="flex items-center justify-between">
-                <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                <span className="text-xs font-semibold uppercase tracking-wider text-nx-ink-3">
                   Full Raw Audit Record
                 </span>
                 <Button
                   type="button"
                   variant="outline"
                   size="sm"
-                  className="h-7 cursor-pointer gap-1.5 px-2.5 text-xs"
+                  className="h-7 cursor-pointer gap-1.5 px-2.5 text-xs text-nx-ink hover:bg-nx-raised hover:text-nx-ink"
                   onClick={() => copyToClipboard(JSON.stringify(data, null, 2), "rawJson")}
                 >
                   {copiedKey === "rawJson" ? (
-                    <Check className="h-3 w-3 text-emerald-500" />
+                    <Check className="h-3 w-3 text-success" />
                   ) : (
                     <Copy className="h-3 w-3" />
                   )}
@@ -556,14 +556,14 @@ export function AuditDetailDrawer({
                 </Button>
               </div>
 
-              <pre className="select-all overflow-x-auto rounded-lg border border-border bg-muted/40 p-4 font-mono text-xs leading-relaxed text-foreground">
+              <pre className="select-all overflow-x-auto rounded-lg border border-nx-line bg-nx-raised/40 p-4 font-mono text-xs leading-relaxed text-nx-ink">
                 {JSON.stringify(data, null, 2)}
               </pre>
             </TabsContent>
           </DetailSheetBody>
 
           {/* 4. Pinned Footer */}
-          <DetailSheetFooter className="bg-card">
+          <DetailSheetFooter className="border-t border-nx-line bg-nx-surface">
             {/* Quick cross-investigation filters */}
             {data.username && onQuickFilterByUser && (
               <Button

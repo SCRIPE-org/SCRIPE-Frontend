@@ -11,12 +11,17 @@
  */
 export interface PartyPersonJson {
   id: string;
-  partyId: string;
-  firstName: string;
-  lastName: string;
-  isMinor: boolean;
-  createdAt: string;
-  modifiedAt?: string;
+  partyId?: string;
+  firstName?: string | null;
+  lastName?: string | null;
+  fullName?: string | null;
+  givenName?: string | null;
+  middleNames?: string | null;
+  familyName?: string | null;
+  dateOfBirth?: string | null;
+  isMinor?: boolean;
+  createdAt?: string;
+  modifiedAt?: string | null;
 }
 
 /**
@@ -45,7 +50,12 @@ export class PartyPersonModel {
     public readonly lastName: string,
     public readonly isMinor: boolean,
     public readonly createdAt: string,
-    public readonly modifiedAt?: string
+    public readonly modifiedAt?: string,
+    public readonly fullName?: string,
+    public readonly dateOfBirth?: string,
+    public readonly givenName?: string,
+    public readonly middleNames?: string,
+    public readonly familyName?: string
   ) {}
 
   /**
@@ -54,12 +64,17 @@ export class PartyPersonModel {
   static fromJson(json: PartyPersonJson): PartyPersonModel {
     return new PartyPersonModel(
       json.id,
-      json.partyId,
-      json.firstName,
-      json.lastName,
-      json.isMinor,
-      json.createdAt,
-      json.modifiedAt
+      json.partyId ?? "",
+      json.firstName ?? "",
+      json.lastName ?? "",
+      json.isMinor ?? false,
+      json.createdAt ?? "",
+      json.modifiedAt ?? undefined,
+      json.fullName ?? undefined,
+      json.dateOfBirth ?? undefined,
+      json.givenName ?? json.firstName ?? undefined,
+      json.middleNames ?? undefined,
+      json.familyName ?? json.lastName ?? undefined
     );
   }
 
@@ -72,6 +87,11 @@ export class PartyPersonModel {
       partyId: this.partyId,
       firstName: this.firstName,
       lastName: this.lastName,
+      fullName: this.fullName,
+      givenName: this.givenName,
+      middleNames: this.middleNames,
+      familyName: this.familyName,
+      dateOfBirth: this.dateOfBirth,
       isMinor: this.isMinor,
       createdAt: this.createdAt,
       modifiedAt: this.modifiedAt,

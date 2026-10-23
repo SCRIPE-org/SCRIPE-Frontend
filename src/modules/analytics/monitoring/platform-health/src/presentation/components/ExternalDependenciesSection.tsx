@@ -3,6 +3,7 @@
 import React from "react";
 import { Link2, Mail, CreditCard, Globe, Cloud } from "lucide-react";
 import { useI18n } from "@core/providers/i18n-provider";
+import { Card } from "@core/ui/card";
 import type { ExternalDependency } from "../../domain/entities/PlatformHealth";
 
 interface ExternalDependenciesSectionProps {
@@ -67,18 +68,18 @@ export function ExternalDependenciesSection({
         ];
 
   return (
-    <div className="shadow-xs flex flex-col gap-4 rounded-xl border border-border bg-card p-4 sm:p-5">
+    <Card className="flex flex-col gap-4 p-4 sm:p-5">
       {/* Header */}
-      <div className="flex items-center justify-between border-b border-border/60 pb-3">
+      <div className="flex items-center justify-between border-b border-nx-line pb-3">
         <div className="flex items-center gap-2.5">
-          <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border border-sky-500/20 bg-sky-500/10 text-sky-400">
+          <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border border-info/20 bg-info/10 text-info">
             <Link2 className="h-4.5 w-4.5" />
           </div>
           <div>
-            <h2 className="text-base font-bold tracking-tight text-foreground">
+            <h2 className="text-base font-bold tracking-tight text-nx-ink">
               {t("platformHealth.external.title") || "External Dependencies"}
             </h2>
-            <p className="text-xs text-muted-foreground">
+            <p className="text-xs text-nx-ink-3">
               {t("platformHealth.external.subtitle") ||
                 "Third-party services, cloud providers, and external integrations"}
             </p>
@@ -96,24 +97,24 @@ export function ExternalDependenciesSection({
           return (
             <div
               key={dep.name}
-              className="shadow-2xs flex flex-col justify-between gap-3 rounded-lg border border-border/70 bg-card/60 p-3.5 transition-colors hover:border-border"
+              className="flex flex-col justify-between gap-3 rounded-lg border border-nx-line bg-nx-surface p-3.5 transition-colors hover:border-nx-line-hi hover:bg-nx-raised/40"
             >
               <div className="flex items-center justify-between">
-                <div className="flex h-8 w-8 items-center justify-center rounded-md border border-border/80 bg-muted/60 text-muted-foreground">
+                <div className="flex h-8 w-8 items-center justify-center rounded-md border border-nx-line bg-nx-raised text-nx-ink-3">
                   <Icon className="h-4 w-4" />
                 </div>
                 <span
                   className={`inline-flex items-center gap-1.5 text-xs font-semibold ${
-                    isHealthy ? "text-emerald-400" : isDegraded ? "text-amber-400" : "text-rose-400"
+                    isHealthy ? "text-success" : isDegraded ? "text-warning" : "text-destructive"
                   }`}
                 >
                   <span
                     className={`h-1.5 w-1.5 rounded-full ${
                       isHealthy
-                        ? "bg-emerald-500 shadow-[0_0_6px_rgba(16,185,129,0.8)]"
+                        ? "bg-success shadow-[0_0_6px_rgba(34,197,94,0.7)]"
                         : isDegraded
-                          ? "bg-amber-500 shadow-[0_0_6px_rgba(245,158,11,0.8)]"
-                          : "bg-rose-500 shadow-[0_0_6px_rgba(244,63,94,0.8)]"
+                          ? "bg-warning shadow-[0_0_6px_rgba(234,179,8,0.7)]"
+                          : "bg-destructive shadow-[0_0_6px_rgba(239,68,68,0.7)]"
                     }`}
                   />
                   {isHealthy
@@ -125,17 +126,17 @@ export function ExternalDependenciesSection({
               </div>
 
               <div>
-                <div className="truncate text-sm font-semibold text-foreground" title={dep.name}>
+                <div className="truncate text-sm font-semibold text-nx-ink" title={dep.name}>
                   {dep.name}
                 </div>
-                <div className="mt-0.5 truncate font-mono text-xs text-muted-foreground">
+                <div className="mt-0.5 truncate font-mono text-xs text-nx-ink-3">
                   {dep.category}
                 </div>
               </div>
 
-              <div className="flex items-center justify-between border-t border-border/50 pt-2 text-[11px] text-muted-foreground">
+              <div className="flex items-center justify-between border-t border-nx-line pt-2 text-[11px] text-nx-ink-3">
                 <span>Latency: {isLoading ? "..." : `${Math.round(dep.latencyMs)} ms`}</span>
-                <span className="font-mono text-[10.5px] text-muted-foreground">
+                <span className="font-mono text-[10.5px] text-nx-ink-3">
                   {new Date(dep.lastCheckedAt).toLocaleTimeString([], {
                     hour: "2-digit",
                     minute: "2-digit",
@@ -146,6 +147,6 @@ export function ExternalDependenciesSection({
           );
         })}
       </div>
-    </div>
+    </Card>
   );
 }

@@ -196,6 +196,66 @@ describe("useBooking360ViewModel", () => {
     expect(confirm).toHaveBeenCalledWith("reservation-1", expect.any(String), "quote-1");
   });
 
+  it("reuses the exact quote request after a lost calculation response", async () => {
+    const value = container();
+    value.commercialPricingRepository.calculateQuote
+      .mockRejectedValueOnce(new Error("quote response was lost after commit"))
+      .mockResolvedValueOnce({ id: "quote-1" });
+    vi.mocked(getVenueContainer).mockReturnValue(value as never);
+    const { result } = renderHook(() =>
+      useBooking360ViewModel("reservation-1", true, true, true, true, true)
+    );
+    await waitFor(() => {
+      expect(result.current.state.stage).toBe("ready");
+      expect(result.current.state.enrichmentLoading).toBe(false);
+    });
+
+    await act(async () => result.current.confirm());
+    expect(value.bookingRepository.confirm).not.toHaveBeenCalled();
+    await act(async () => result.current.confirm());
+
+    const quoteCalls = value.commercialPricingRepository.calculateQuote.mock.calls;
+    expect(quoteCalls).toHaveLength(2);
+    expect(quoteCalls[1][0].idempotencyKey).toBe(quoteCalls[0][0].idempotencyKey);
+    expect(quoteCalls[1][0].expiresAtUtc).toBe(quoteCalls[0][0].expiresAtUtc);
+    expect(value.bookingRepository.confirm).toHaveBeenCalledOnce();
+  });
+
+  it("uses a new confirmation intent when an expired quote is replaced", async () => {
+    const value = container();
+    const confirm = vi
+      .fn()
+      .mockRejectedValueOnce(new Error("confirmation response was lost"))
+      .mockResolvedValueOnce({ reservationId: "reservation-1" });
+    value.bookingRepository.confirm = confirm;
+    value.commercialPricingRepository.calculateQuote
+      .mockResolvedValueOnce({ id: "quote-before-expiry" })
+      .mockResolvedValueOnce({ id: "quote-after-expiry" });
+    vi.mocked(getVenueContainer).mockReturnValue(value as never);
+    const { result } = renderHook(() =>
+      useBooking360ViewModel("reservation-1", true, true, true, true, true)
+    );
+    await waitFor(() => {
+      expect(result.current.state.stage).toBe("ready");
+      expect(result.current.state.enrichmentLoading).toBe(false);
+    });
+
+    let now = Date.now();
+    const clock = vi.spyOn(Date, "now").mockImplementation(() => now);
+    try {
+      await act(async () => result.current.confirm());
+      now += 31 * 60 * 1000;
+      await act(async () => result.current.confirm());
+    } finally {
+      clock.mockRestore();
+    }
+
+    expect(confirm).toHaveBeenCalledTimes(2);
+    expect(confirm.mock.calls[0]?.[2]).toBe("quote-before-expiry");
+    expect(confirm.mock.calls[1]?.[2]).toBe("quote-after-expiry");
+    expect(confirm.mock.calls[0]?.[1]).not.toBe(confirm.mock.calls[1]?.[1]);
+  });
+
   it("does not use the workstation clock as confirmation authority", async () => {
     const serverValid = {
       ...detail,
@@ -498,6 +558,49 @@ describe("useBooking360ViewModel", () => {
       status: "Cancelled",
     });
   });
+
+  it.each([
+    ["cancel", "Cancelled"],
+    ["noShow", "NoShow"],
+  ] as const)(
+    "reuses a %s key for an ambiguous retry but starts a new intent when its reason changes",
+    async (action, terminalStatus) => {
+      const confirmed = { ...detail, status: "Confirmed" as const, activeHold: null };
+      const terminal = { ...confirmed, status: terminalStatus as "Cancelled" | "NoShow" };
+      const method = action === "noShow" ? "markNoShow" : "cancel";
+      const mutate = vi
+        .fn()
+        .mockRejectedValueOnce(new Error("network"))
+        .mockRejectedValueOnce(new Error("network"))
+        .mockResolvedValue({ reservationId: "reservation-1", status: terminalStatus });
+      const bookingRepository = { ...container().bookingRepository, [method]: mutate };
+      const getById = vi.fn().mockResolvedValueOnce(confirmed).mockResolvedValue(terminal);
+      vi.mocked(getVenueContainer).mockReturnValue(
+        container({ booking360Repository: { getById }, bookingRepository }) as never
+      );
+
+      const { result } = renderHook(() =>
+        useBooking360ViewModel("reservation-1", true, true, true, true, true)
+      );
+      await waitFor(() => expect(result.current.state.stage).toBe("ready"));
+      const invoke = (reason: string) =>
+        action === "noShow" ? result.current.markNoShow(reason) : result.current.cancel(reason);
+
+      await act(async () => invoke("Customer request"));
+      await act(async () => invoke("Customer request"));
+      await act(async () => invoke("Updated customer request"));
+
+      expect(mutate).toHaveBeenCalledTimes(3);
+      expect(mutate.mock.calls[0]?.[1]).toBe(mutate.mock.calls[1]?.[1]);
+      expect(mutate.mock.calls[2]?.[1]).not.toBe(mutate.mock.calls[1]?.[1]);
+      expect(mutate.mock.calls.map((call) => call[2])).toEqual([
+        "Customer request",
+        "Customer request",
+        "Updated customer request",
+      ]);
+      expect(result.current.state.reservation?.status).toBe(terminalStatus);
+    }
+  );
 
   it("executes reschedule with selected resource and slot, reloading detail", async () => {
     const confirmed = { ...detail, status: "Confirmed" as const, priceSnapshotId: "snapshot-1" };

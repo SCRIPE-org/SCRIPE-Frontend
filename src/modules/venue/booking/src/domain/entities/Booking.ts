@@ -5,6 +5,9 @@ export interface CustomerSummary {
   id: string;
   type: string;
   displayName: string;
+  name?: string;
+  phone?: string;
+  email?: string;
 }
 
 /**
@@ -62,6 +65,15 @@ export interface CreateBookingDraftInput {
   requestedStartUtc: string;
   requestedEndUtc: string;
   quantity: number;
+  idempotencyKey: string;
+}
+
+/** Stable request keys scoped to one booking intent across draft, hold, and confirmation. */
+export interface BookingBusinessIntent {
+  draftIdempotencyKey: string;
+  holdIdempotencyKey: string;
+  confirmIdempotencyKey: string;
+  holdExpiresAtUtc?: string;
 }
 
 /**

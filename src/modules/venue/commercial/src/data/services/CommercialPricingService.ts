@@ -23,25 +23,37 @@ export class CommercialPricingService implements ICommercialPricingService {
   configureResourcePrice(
     input: ConfigureResourceRentalPriceInput
   ): Promise<ResourceRentalPriceConfiguration> {
-    return this.api.post(COMMERCIAL_PRICING_ENDPOINTS.RESOURCE_PRICING, input);
+    return this.postIntent(
+      COMMERCIAL_PRICING_ENDPOINTS.RESOURCE_PRICING,
+      input,
+      input.idempotencyKey
+    );
   }
 
   calculateQuote(input: CalculatePriceQuoteInput): Promise<PriceQuote> {
-    return this.api.post(COMMERCIAL_PRICING_ENDPOINTS.CALCULATE_QUOTE, {
-      offeringId: input.offeringId,
-      schedulableResourceId: input.resourceId,
-      partyId: input.partyId,
-      quantity: input.quantity,
-      requestedStartUtc: input.requestedStartUtc,
-      requestedEndUtc: input.requestedEndUtc,
-      currencyCode: input.currencyCode,
-      expiresAtUtc: input.expiresAtUtc,
-      idempotencyKey: input.idempotencyKey,
-    });
+    return this.postIntent(
+      COMMERCIAL_PRICING_ENDPOINTS.CALCULATE_QUOTE,
+      {
+        offeringId: input.offeringId,
+        schedulableResourceId: input.resourceId,
+        partyId: input.partyId,
+        quantity: input.quantity,
+        requestedStartUtc: input.requestedStartUtc,
+        requestedEndUtc: input.requestedEndUtc,
+        currencyCode: input.currencyCode,
+        expiresAtUtc: input.expiresAtUtc,
+        idempotencyKey: input.idempotencyKey,
+      },
+      input.idempotencyKey
+    );
   }
 
   overrideQuote(quoteId: string, input: OverridePriceQuoteInput): Promise<PriceQuoteOverride> {
-    return this.api.post(COMMERCIAL_PRICING_ENDPOINTS.OVERRIDE_QUOTE(quoteId), input);
+    return this.postIntent(
+      COMMERCIAL_PRICING_ENDPOINTS.OVERRIDE_QUOTE(quoteId),
+      input,
+      input.idempotencyKey
+    );
   }
 
   getTaxCategories(): Promise<TaxCategory[]> {
@@ -50,5 +62,13 @@ export class CommercialPricingService implements ICommercialPricingService {
 
   createTaxCategory(input: CreateTaxCategoryInput): Promise<TaxCategory> {
     return this.api.post(COMMERCIAL_PRICING_ENDPOINTS.TAX_CATEGORIES, input);
+  }
+
+  private postIntent<T>(endpoint: string, payload: unknown, idempotencyKey: string): Promise<T> {
+    const intent = { idempotencyKey };
+    return (
+      this.api.postWithRetry?.(endpoint, payload, undefined, intent) ??
+      this.api.post(endpoint, payload, undefined, intent)
+    );
   }
 }

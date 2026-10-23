@@ -38,12 +38,21 @@ export function buildTenantOverviewLiveData({
   const location = details?.countryCode || "";
   const planName = stats?.editionName || "";
 
-  const totalAdmins = summary?.totalAdmins ?? stats?.adminsCount ?? 1;
-  const subTenants = stats?.subTenantsCount ?? 0;
-  const branchesTotal = 5;
-  const branchPercent = Math.min(100, Math.round((subTenants / branchesTotal) * 100));
+  const hasAdminCount = summary?.totalAdmins != null || stats?.adminsCount != null;
+  const totalAdmins = summary?.totalAdmins ?? stats?.adminsCount ?? 0;
+  // Subtenants represent independent child tenant organizations, NOT branches or physical sites.
+  // Physical locations (OrganizationCore.Site) are managed at /venue/sites.
+  // Authoritative hierarchy: OrganizationCore.Branch -> OrganizationCore.Site -> VenueProfile -> Facility.
+  // Site usage is not present in the tenant overview contracts yet. Keep its
+  // numeric KPI neutral and render the quota as unavailable instead of
+  // presenting a fabricated site count or plan capacity.
+  const activeSitesCount = 0;
+  const sitesCapacity = 0;
+  const sitePercent = 0;
 
-  const completedCount = [true, subTenants > 0, totalAdmins > 1].filter(Boolean).length;
+  const completedCount = [true, details != null, hasAdminCount && totalAdmins > 1].filter(
+    Boolean
+  ).length;
   const readinessPercent = Math.min(100, Math.round((completedCount / 3) * 100));
 
   const liveActivity: TenantActivityItem[] =
@@ -69,16 +78,7 @@ export function buildTenantOverviewLiveData({
       href: "/audit",
     });
   }
-  if (subTenants === 0) {
-    alerts.push({
-      id: "alt-add-branch",
-      title: t("tenantCommandCenter.attention.addBranchTitle"),
-      description: t("tenantCommandCenter.attention.addBranchDesc"),
-      severity: "warning",
-      href: "/branches",
-    });
-  }
-  if (totalAdmins <= 1) {
+  if (hasAdminCount && totalAdmins <= 1) {
     alerts.push({
       id: "alt-invite-team",
       title: t("tenantCommandCenter.attention.inviteTeamTitle"),
@@ -99,62 +99,60 @@ export function buildTenantOverviewLiveData({
       id: 2,
       title: t("tenantCommandCenter.getStarted.steps.branches.title"),
       description: t("tenantCommandCenter.getStarted.steps.branches.desc"),
-      status: subTenants > 0 ? "done" : "current",
+      status: "current",
       actionLabel: t("tenantCommandCenter.getStarted.setUp"),
-      href: "/branches",
+      href: "/venue/sites",
     },
     {
       id: 3,
       title: t("tenantCommandCenter.getStarted.steps.team.title"),
       description: t("tenantCommandCenter.getStarted.steps.team.desc"),
-      status: totalAdmins > 1 ? "done" : subTenants > 0 ? "current" : "upcoming",
+      status: hasAdminCount && totalAdmins > 1 ? "done" : "current",
       actionLabel: t("tenantCommandCenter.getStarted.start"),
       href: "/admins",
     },
   ];
 
-  const staffPct = Math.min(100, Math.round((totalAdmins / 50) * 100));
+  const staffPct = 0;
   const quotas: TenantQuotaItem[] = [
     {
       id: "staff",
       label: t("tenantCommandCenter.usage.staff"),
-      current: String(totalAdmins),
-      total: "50",
+      current: hasAdminCount ? String(totalAdmins) : "—",
+      total: "—",
       percent: staffPct,
-      subLeft: t("tenantCommandCenter.usage.used", { percent: staffPct }),
-      subRight: t("tenantCommandCenter.usage.left", { count: Math.max(0, 50 - totalAdmins) }),
+      subLeft: "—",
+      subRight: "—",
       color: "green",
     },
     {
       id: "sites",
       label: t("tenantCommandCenter.usage.sites"),
-      current: String(subTenants),
-      total: String(branchesTotal),
-      percent: branchPercent,
-      subLeft: t("tenantCommandCenter.usage.used", { percent: branchPercent }),
-      subRight: t("tenantCommandCenter.usage.left", {
-        count: Math.max(0, branchesTotal - subTenants),
-      }),
+      current: "—",
+      total: "—",
+      percent: 0,
+      subLeft: "—",
+      subRight: "—",
       color: "blue",
     },
     {
       id: "storage",
       label: t("tenantCommandCenter.usage.storage"),
-      current: "12 GB",
-      total: "100 GB",
-      percent: 12,
-      subLeft: t("tenantCommandCenter.usage.used", { percent: 12 }),
-      subRight: t("tenantCommandCenter.usage.left", { count: 88 }),
+      current: "—",
+      total: "—",
+      percent: 0,
+      subLeft: "—",
+      subRight: "—",
       color: "violet",
     },
     {
       id: "api",
       label: t("tenantCommandCenter.usage.api"),
-      current: "2.4K",
-      total: "50K",
-      percent: 5,
-      subLeft: t("tenantCommandCenter.usage.used", { percent: 5 }),
-      subRight: t("tenantCommandCenter.usage.thisMonth"),
+      current: "—",
+      total: "—",
+      percent: 0,
+      subLeft: "—",
+      subRight: "—",
       color: "amber",
     },
   ];
@@ -167,30 +165,32 @@ export function buildTenantOverviewLiveData({
     setupStepsCompleted: completedCount,
     setupStepsTotal: 3,
     metaPills: [
-      { label: t("tenantCommandCenter.hero.meta.branches", { count: subTenants }), icon: "??" },
-      { label: t("tenantCommandCenter.hero.meta.admins", { count: totalAdmins }), icon: "??" },
-      { label: planName, icon: "?" },
-      { label: t("tenantCommandCenter.hero.checks.coreHealthy"), icon: "?" },
+      ...(hasAdminCount
+        ? [
+            {
+              label: t("tenantCommandCenter.hero.meta.admins", { count: totalAdmins }),
+              icon: "admins",
+            },
+          ]
+        : []),
+      ...(planName ? [{ label: planName, icon: "plan" }] : []),
+      { label: t("tenantCommandCenter.hero.checks.coreHealthy"), icon: "healthy" },
     ],
     readinessChecks: [
       { label: t("tenantCommandCenter.hero.checks.coreHealthy"), status: "success" },
       {
-        label: t("tenantCommandCenter.hero.checks.productsActive", { count: 2 }),
-        status: "success",
-      },
-      {
         label:
-          totalAdmins <= 1
+          hasAdminCount && totalAdmins <= 1
             ? t("tenantCommandCenter.hero.checks.invitationsPending", { count: 1 })
             : t("tenantCommandCenter.hero.checks.coreHealthy"),
-        status: totalAdmins <= 1 ? "warning" : "success",
+        status: hasAdminCount && totalAdmins <= 1 ? "warning" : "success",
       },
     ],
     kpis: {
       setupCompletion: {
         value: readinessPercent,
         sub: t("tenantCommandCenter.kpis.setupRemaining", { count: 3 - completedCount }),
-        trend: "? 12%",
+        trend: "—",
       },
       adminsAndUsers: {
         value: totalAdmins,
@@ -198,19 +198,19 @@ export function buildTenantOverviewLiveData({
           active: summary?.activeAdmins ?? totalAdmins,
           total: totalAdmins,
         }),
-        trend: summary?.activeUsers ? "+" : "Live",
+        trend: "—",
       },
       branchesAndSites: {
-        current: subTenants,
-        total: branchesTotal,
-        percent: branchPercent,
-        sub: t("tenantCommandCenter.kpis.planCapacity", { percent: branchPercent }),
-        trend: subTenants > 0 ? "+" : "0",
+        current: activeSitesCount,
+        total: sitesCapacity,
+        percent: sitePercent,
+        sub: "—",
+        trend: "—",
       },
       enabledProducts: {
-        active: 2,
-        total: 3,
-        sub: "Venue & Academy",
+        active: 0,
+        total: 0,
+        sub: "—",
         trend: t("tenantCommandCenter.kpis.explore"),
       },
     },

@@ -42,7 +42,7 @@ function shortId(id: string | undefined): string {
  */
 export const MergeCandidateListView = React.memo(function MergeCandidateListView() {
   useModuleLocales(() => import("../../../locales"), "party-kernel.mergeCandidate");
-  const { vm } = useMergeCandidateViewModel();
+  const { vm, lookupParties } = useMergeCandidateViewModel();
   const { t, language } = useI18n();
 
   const STATUS_OPTIONS = [
@@ -118,14 +118,18 @@ export const MergeCandidateListView = React.memo(function MergeCandidateListView
       {
         name: "primaryPartyId",
         label: t("mergeCandidate.form.primaryPartyId"),
-        type: "text" as const,
+        type: "server-select" as const,
+        searchType: "server" as const,
+        onServerSearch: lookupParties,
         placeholder: t("mergeCandidate.form.primaryPartyIdPlaceholder"),
         required: true,
       },
       {
         name: "duplicatePartyId",
         label: t("mergeCandidate.form.duplicatePartyId"),
-        type: "text" as const,
+        type: "server-select" as const,
+        searchType: "server" as const,
+        onServerSearch: lookupParties,
         placeholder: t("mergeCandidate.form.duplicatePartyIdPlaceholder"),
         required: true,
       },
@@ -149,14 +153,18 @@ export const MergeCandidateListView = React.memo(function MergeCandidateListView
       {
         name: "primaryPartyId",
         label: t("mergeCandidate.form.primaryPartyId"),
-        type: "text" as const,
+        type: "server-select" as const,
+        searchType: "server" as const,
+        onServerSearch: lookupParties,
         placeholder: t("mergeCandidate.form.primaryPartyIdPlaceholder"),
         required: true,
       },
       {
         name: "duplicatePartyId",
         label: t("mergeCandidate.form.duplicatePartyId"),
-        type: "text" as const,
+        type: "server-select" as const,
+        searchType: "server" as const,
+        onServerSearch: lookupParties,
         placeholder: t("mergeCandidate.form.duplicatePartyIdPlaceholder"),
         required: true,
       },
@@ -191,7 +199,7 @@ export const MergeCandidateListView = React.memo(function MergeCandidateListView
     // MergeCandidate is a dedup-workflow join entity — no name field exists on either the
     // frontend entity or the backend DTO. `reason` (e.g. "Same email address") is the most
     // human-identifying text available; falls back to the primary party's id if empty.
-    getItemDisplayName: (item: MergeCandidate) => item.reason || item.primaryPartyId,
+    getItemDisplayName: (item: MergeCandidate) => item.reason || "—",
     deleteService: (id: string) => vm.deleteItem(id),
     getActions: (_vmInstance, tFn, handleDeleteFn): CrudAction<MergeCandidate>[] => [
       {

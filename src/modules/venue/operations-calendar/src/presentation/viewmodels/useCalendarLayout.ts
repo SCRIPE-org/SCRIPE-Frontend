@@ -1,10 +1,18 @@
 import type {
-  OccupyingReservationStatus,
   OperationsCalendarBlock,
   OperationsCalendarDay,
 } from "../../domain/entities/OperationsCalendar";
 
-const OCCUPYING = new Set<OccupyingReservationStatus>(["Held", "Confirmed", "CheckedIn"]);
+const OCCUPYING = new Set<string>([
+  "Held",
+  "Confirmed",
+  "CheckedIn",
+  "Completed",
+  "NoShow",
+  "Maintenance",
+  "Blocked",
+  "Unavailable",
+]);
 const HOUR_MS = 60 * 60 * 1000;
 
 export interface CalendarTimeSlot {
@@ -24,7 +32,7 @@ export interface TrackedCalendarBlock {
  * Documentation for module export
  */
 export function occupyingBlocks(blocks: OperationsCalendarBlock[]): OperationsCalendarBlock[] {
-  return blocks.filter((block) => OCCUPYING.has(block.status as OccupyingReservationStatus));
+  return blocks.filter((block) => OCCUPYING.has(block.status));
 }
 
 /**
@@ -101,4 +109,35 @@ export function localPrefillForInstant(instantUtc: string, timeZoneId: string) {
     date: `${value("year")}-${value("month")}-${value("day")}`,
     startTime: `${value("hour")}:${value("minute")}`,
   };
+}
+
+export function localToUtcInstant(dateStr: string, timeStr: string, timeZoneId: string): string {
+  const [yearStr, monthStr, dayStr] = (dateStr || "").split("-");
+  const [hourStr, minuteStr] = (timeStr || "").split(":");
+  const y = parseInt(yearStr, 10);
+  const m = parseInt(monthStr, 10) - 1;
+  const d = parseInt(dayStr, 10);
+  const h = parseInt(hourStr || "0", 10);
+  const min = parseInt(minuteStr || "0", 10);
+
+  if (isNaN(y) || isNaN(m) || isNaN(d)) {
+    return new Date().toISOString();
+  }
+
+  let candidate = Date.UTC(y, m, d, isNaN(h) ? 0 : h, isNaN(min) ? 0 : min, 0, 0);
+
+  for (let i = 0; i < 3; i++) {
+    const prefill = localPrefillForInstant(new Date(candidate).toISOString(), timeZoneId);
+    const [pYear, pMonth, pDay] = prefill.date.split("-").map(Number);
+    const [pHour, pMin] = prefill.startTime.split(":").map(Number);
+
+    const diffMs =
+      Date.UTC(y, m, d, isNaN(h) ? 0 : h, isNaN(min) ? 0 : min, 0, 0) -
+      Date.UTC(pYear, pMonth - 1, pDay, pHour, pMin, 0, 0);
+
+    if (diffMs === 0) break;
+    candidate += diffMs;
+  }
+
+  return new Date(candidate).toISOString();
 }

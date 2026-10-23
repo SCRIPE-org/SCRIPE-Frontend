@@ -62,7 +62,7 @@ export function AuditView() {
       />
 
       {/* 3. Enterprise Investigation Filter Toolbar */}
-      <Card className="shadow-2xs border-border/80 bg-card/90">
+      <Card className="border-nx-line bg-nx-surface text-nx-ink">
         <CardContent className="p-4">
           <AuditFilterPanel
             filters={vm.filters}
@@ -76,20 +76,20 @@ export function AuditView() {
       </Card>
 
       {/* 4. Results Audit Trail Table */}
-      <Card className="shadow-2xs border-border/80 bg-card/90">
-        <CardHeader className="border-b border-border/60 pb-3">
+      <Card className="border-nx-line bg-nx-surface text-nx-ink">
+        <CardHeader className="border-b border-nx-line pb-3">
           <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
             <div>
-              <CardTitle className="text-sm font-bold text-foreground sm:text-base">
+              <CardTitle className="text-sm font-bold text-nx-ink sm:text-base">
                 {t("audit.results.title") || "Audit Event Records"}
               </CardTitle>
-              <CardDescription className="text-xs text-muted-foreground">
+              <CardDescription className="text-xs text-nx-ink-3">
                 {t("audit.results.description") ||
                   "Chronological ledger of security, administrative, and data mutations."}
               </CardDescription>
             </div>
             {vm.logs.data && (
-              <span className="rounded-md border border-border/60 bg-muted/40 px-2 py-1 text-xs font-semibold tabular-nums text-muted-foreground">
+              <span className="rounded-md border border-nx-line bg-nx-raised/40 px-2 py-1 text-xs font-semibold tabular-nums text-nx-ink-2">
                 {t("audit.results.totalCount", { count: vm.logs.data.totalCount }) ||
                   `${vm.logs.data.totalCount.toLocaleString()} indexed records`}
               </span>

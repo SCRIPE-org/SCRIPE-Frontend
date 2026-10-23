@@ -42,8 +42,8 @@ export class ContactPointRepository implements IContactPointRepository {
     return ContactPointMapper.toEntity(model);
   }
 
-  async create(data: Record<string, unknown>): Promise<string> {
-    const response = await this.service.create(data);
+  async create(data: Record<string, unknown>, idempotencyKey?: string): Promise<string> {
+    const response = await this.service.create(data, idempotencyKey);
     return response.id;
   }
 

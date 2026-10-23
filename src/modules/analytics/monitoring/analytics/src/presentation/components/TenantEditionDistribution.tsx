@@ -20,15 +20,15 @@ export function TenantEditionDistribution({ data, isLoading }: TenantEditionDist
   const totalAssigned = data.reduce((acc, curr) => acc + curr.count, 0);
 
   return (
-    <Card className="backdrop-blur-xs shadow-xs flex h-full flex-col border-border/80 bg-card/80">
+    <Card className="flex h-full flex-col border-nx-line bg-nx-surface text-nx-ink hover:border-nx-line-hi">
       <CardHeader className="p-4 pb-2 sm:p-5">
         <div className="flex items-center gap-2">
           <Layers className="h-4 w-4 text-primary" />
-          <CardTitle className="text-sm font-bold text-foreground">
+          <CardTitle className="text-sm font-bold text-nx-ink">
             {t("tenantAnalytics.editions.title") || "Tenants by Edition"}
           </CardTitle>
         </div>
-        <CardDescription className="text-xs text-muted-foreground">
+        <CardDescription className="text-xs text-nx-ink-3">
           {t("tenantAnalytics.editions.subtitle") ||
             "Distribution across SCRIPE platform editions and subscription tiers"}
         </CardDescription>
@@ -38,11 +38,11 @@ export function TenantEditionDistribution({ data, isLoading }: TenantEditionDist
         {isLoading ? (
           <div className="space-y-3">
             {[...Array(3)].map((_, i) => (
-              <div key={i} className="h-8 animate-pulse rounded-lg bg-muted/20" />
+              <div key={i} className="h-8 animate-pulse rounded-lg bg-nx-raised" />
             ))}
           </div>
         ) : data.length === 0 ? (
-          <div className="flex flex-1 items-center justify-center text-xs text-muted-foreground">
+          <div className="flex flex-1 items-center justify-center text-xs text-nx-ink-3">
             {t("tenantAnalytics.editions.noData") || "No edition distribution data available"}
           </div>
         ) : (
@@ -53,24 +53,24 @@ export function TenantEditionDistribution({ data, isLoading }: TenantEditionDist
                 const barColors = [
                   "bg-primary",
                   "bg-info",
-                  "bg-amber-400",
-                  "bg-purple-400",
-                  "bg-emerald-400",
+                  "bg-warning",
+                  "bg-primary/80",
+                  "bg-success",
                 ];
                 const barColor = barColors[idx % barColors.length];
 
                 return (
                   <div key={item.edition} className="space-y-1.5">
                     <div className="flex items-center justify-between text-xs">
-                      <span className="truncate font-semibold text-foreground">{item.edition}</span>
-                      <div className="flex items-center gap-2 text-muted-foreground">
-                        <span className="font-bold text-foreground">{item.count}</span>
+                      <span className="truncate font-semibold text-nx-ink">{item.edition}</span>
+                      <div className="flex items-center gap-2 text-nx-ink-3">
+                        <span className="font-bold text-nx-ink">{item.count}</span>
                         <span className="text-[11px]">({item.percentage}%)</span>
                       </div>
                     </div>
 
                     {/* Bar track */}
-                    <div className="h-2 w-full overflow-hidden rounded-full bg-muted/30">
+                    <div className="h-2 w-full overflow-hidden rounded-full bg-nx-raised-2">
                       <div
                         className={`h-full rounded-full ${barColor} transition-all duration-500`}
                         style={{ width: `${Math.max(item.percentage, 4)}%` }}
@@ -82,7 +82,7 @@ export function TenantEditionDistribution({ data, isLoading }: TenantEditionDist
             </div>
 
             {/* Bottom summary info banner */}
-            <div className="mt-auto flex items-center justify-between border-t border-border/50 pt-3 text-[11px] text-muted-foreground">
+            <div className="mt-auto flex items-center justify-between border-t border-nx-line pt-3 text-[11px] text-nx-ink-3">
               <span className="flex items-center gap-1.5">
                 <Layers className="h-3 w-3 text-primary" />
                 <span>
@@ -92,7 +92,7 @@ export function TenantEditionDistribution({ data, isLoading }: TenantEditionDist
                     : t("tenantAnalytics.editions.tierPlural") || "platform tiers"}
                 </span>
               </span>
-              <span className="font-semibold text-foreground">
+              <span className="font-semibold text-nx-ink">
                 {totalAssigned}{" "}
                 {totalAssigned === 1
                   ? t("tenantAnalytics.editions.licenseSingular") || "tenant assigned"

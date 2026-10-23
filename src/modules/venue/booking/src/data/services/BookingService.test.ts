@@ -6,12 +6,13 @@ describe("BookingService", () => {
   const api = {
     get: vi.fn(),
     post: vi.fn(),
+    postWithRetry: vi.fn(),
   } as unknown as IApiService;
 
   beforeEach(() => vi.clearAllMocks());
 
   it("maps the server-authoritative availability interval into T01", async () => {
-    vi.mocked(api.post).mockResolvedValue({ id: "reservation-1" });
+    vi.mocked(api.postWithRetry!).mockResolvedValue({ id: "reservation-1" });
 
     const input = {
       resourceId: "resource-1",
@@ -19,19 +20,21 @@ describe("BookingService", () => {
       requestedStartUtc: "2026-09-10T07:00:00Z",
       requestedEndUtc: "2026-09-10T08:00:00Z",
       quantity: 2,
+      idempotencyKey: "draft-key",
     };
     const result = await new BookingService(api).createDraft(input);
 
-    expect(api.post).toHaveBeenCalledWith("/v1/Reservations", {
-      ...input,
-      bookerPartyId: null,
-      payerPartyId: null,
-    });
+    expect(api.postWithRetry).toHaveBeenCalledWith(
+      "/v1/Reservations",
+      { ...input, bookerPartyId: null, payerPartyId: null },
+      undefined,
+      { idempotencyKey: "draft-key" }
+    );
     expect(result.id).toBe("reservation-1");
   });
 
   it("creates T04 with a caller-owned idempotency key", async () => {
-    vi.mocked(api.post).mockResolvedValue({
+    vi.mocked(api.postWithRetry!).mockResolvedValue({
       reservationId: "reservation-1",
       bookingHoldId: "hold-1",
       expiresAtUtc: "2026-09-10T07:15:00Z",
@@ -39,59 +42,83 @@ describe("BookingService", () => {
 
     await new BookingService(api).createHold("reservation-1", "hold-key");
 
-    expect(api.post).toHaveBeenCalledWith("/v1/booking-holds", {
-      reservationId: "reservation-1",
-      idempotencyKey: "hold-key",
-    });
+    expect(api.postWithRetry).toHaveBeenCalledWith(
+      "/v1/booking-holds",
+      { reservationId: "reservation-1", idempotencyKey: "hold-key" },
+      undefined,
+      { idempotencyKey: "hold-key" }
+    );
   });
 
   it("confirms T06 through the explicit action endpoint", async () => {
-    vi.mocked(api.post).mockResolvedValue({
+    vi.mocked(api.postWithRetry!).mockResolvedValue({
       reservationId: "reservation-1",
       bookingHoldId: "hold-1",
     });
 
     await new BookingService(api).confirm("reservation-1", "confirm-key", "price-quote-1");
 
-    expect(api.post).toHaveBeenCalledWith("/v1/Reservations/reservation-1/confirm", {
-      idempotencyKey: "confirm-key",
-      priceQuoteId: "price-quote-1",
-    });
+    expect(api.postWithRetry).toHaveBeenCalledWith(
+      "/v1/Reservations/reservation-1/confirm",
+      { idempotencyKey: "confirm-key", priceQuoteId: "price-quote-1" },
+      undefined,
+      { idempotencyKey: "confirm-key" }
+    );
   });
 
   it("checks in through the explicit T09 action endpoint", async () => {
-    vi.mocked(api.post).mockResolvedValue({ reservationId: "reservation-1", status: "CheckedIn" });
+    vi.mocked(api.postWithRetry!).mockResolvedValue({
+      reservationId: "reservation-1",
+      status: "CheckedIn",
+    });
 
     await new BookingService(api).checkIn("reservation-1", "check-in-key");
 
-    expect(api.post).toHaveBeenCalledWith("/v1/Reservations/reservation-1/check-in", {
-      idempotencyKey: "check-in-key",
-    });
+    expect(api.postWithRetry).toHaveBeenCalledWith(
+      "/v1/Reservations/reservation-1/check-in",
+      { idempotencyKey: "check-in-key" },
+      undefined,
+      { idempotencyKey: "check-in-key" }
+    );
   });
 
   it("completes through the explicit T10 action endpoint", async () => {
-    vi.mocked(api.post).mockResolvedValue({ reservationId: "reservation-1", status: "Completed" });
+    vi.mocked(api.postWithRetry!).mockResolvedValue({
+      reservationId: "reservation-1",
+      status: "Completed",
+    });
 
     await new BookingService(api).complete("reservation-1", "complete-key");
 
-    expect(api.post).toHaveBeenCalledWith("/v1/Reservations/reservation-1/complete", {
-      idempotencyKey: "complete-key",
-    });
+    expect(api.postWithRetry).toHaveBeenCalledWith(
+      "/v1/Reservations/reservation-1/complete",
+      { idempotencyKey: "complete-key" },
+      undefined,
+      { idempotencyKey: "complete-key" }
+    );
   });
 
   it("marks no-show through T12 with its bounded operator reason", async () => {
-    vi.mocked(api.post).mockResolvedValue({ reservationId: "reservation-1", status: "NoShow" });
+    vi.mocked(api.postWithRetry!).mockResolvedValue({
+      reservationId: "reservation-1",
+      status: "NoShow",
+    });
 
     await new BookingService(api).markNoShow("reservation-1", "no-show-key", "Did not arrive");
 
-    expect(api.post).toHaveBeenCalledWith("/v1/Reservations/reservation-1/no-show", {
-      idempotencyKey: "no-show-key",
-      reason: "Did not arrive",
-    });
+    expect(api.postWithRetry).toHaveBeenCalledWith(
+      "/v1/Reservations/reservation-1/no-show",
+      { idempotencyKey: "no-show-key", reason: "Did not arrive" },
+      undefined,
+      { idempotencyKey: "no-show-key" }
+    );
   });
 
   it("cancels through T13 with the supplied operator reason", async () => {
-    vi.mocked(api.post).mockResolvedValue({ reservationId: "reservation-1", status: "Cancelled" });
+    vi.mocked(api.postWithRetry!).mockResolvedValue({
+      reservationId: "reservation-1",
+      status: "Cancelled",
+    });
 
     await new BookingService(api).cancel(
       "reservation-1",
@@ -99,14 +126,19 @@ describe("BookingService", () => {
       "Customer requested cancellation"
     );
 
-    expect(api.post).toHaveBeenCalledWith("/v1/Reservations/reservation-1/cancel", {
-      idempotencyKey: "cancel-key",
-      reason: "Customer requested cancellation",
-    });
+    expect(api.postWithRetry).toHaveBeenCalledWith(
+      "/v1/Reservations/reservation-1/cancel",
+      { idempotencyKey: "cancel-key", reason: "Customer requested cancellation" },
+      undefined,
+      { idempotencyKey: "cancel-key" }
+    );
   });
 
   it("reschedules through T14 without converting it into a generic update", async () => {
-    vi.mocked(api.post).mockResolvedValue({ reservationId: "reservation-1", status: "Confirmed" });
+    vi.mocked(api.postWithRetry!).mockResolvedValue({
+      reservationId: "reservation-1",
+      status: "Confirmed",
+    });
     const input = {
       resourceId: "resource-1",
       requestedStartUtc: "2026-09-10T09:00:00Z",
@@ -116,11 +148,19 @@ describe("BookingService", () => {
 
     await new BookingService(api).reschedule("reservation-1", input);
 
-    expect(api.post).toHaveBeenCalledWith("/v1/Reservations/reservation-1/reschedule", input);
+    expect(api.postWithRetry).toHaveBeenCalledWith(
+      "/v1/Reservations/reservation-1/reschedule",
+      input,
+      undefined,
+      { idempotencyKey: "reschedule-key" }
+    );
   });
 
   it("changes resource through T15 while preserving the explicit interval contract", async () => {
-    vi.mocked(api.post).mockResolvedValue({ reservationId: "reservation-1", status: "Confirmed" });
+    vi.mocked(api.postWithRetry!).mockResolvedValue({
+      reservationId: "reservation-1",
+      status: "Confirmed",
+    });
     const input = {
       targetResourceId: "resource-2",
       requestedStartUtc: "2026-09-10T07:00:00Z",
@@ -130,7 +170,12 @@ describe("BookingService", () => {
 
     await new BookingService(api).changeResource("reservation-1", input);
 
-    expect(api.post).toHaveBeenCalledWith("/v1/Reservations/reservation-1/change-resource", input);
+    expect(api.postWithRetry).toHaveBeenCalledWith(
+      "/v1/Reservations/reservation-1/change-resource",
+      input,
+      undefined,
+      { idempotencyKey: "resource-key" }
+    );
   });
 
   it("hydrates the reservation reference from the read contract", async () => {

@@ -36,7 +36,7 @@ jobs:
       - name: Install Dependencies
         run: pnpm install --no-frozen-lockfile
 
-      - name: Run ESLint
+      - name: Run oxlint
         run: pnpm run lint
 
       - name: Type Check (TypeScript)

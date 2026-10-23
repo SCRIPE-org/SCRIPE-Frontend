@@ -9,6 +9,7 @@ export const ar = {
     noItems: "لا توجد سجلات",
     searchPlaceholder: "بحث...",
     columns: {
+      fullName: "الاسم الكامل",
       partyId: "معرف الطرف",
       firstName: "الاسم الأول",
       lastName: "اسم العائلة",
@@ -16,8 +17,8 @@ export const ar = {
       createdAt: "تاريخ الإنشاء",
     },
     form: {
-      partyId: "معرف الطرف",
-      partyIdPlaceholder: "أدخل معرف الطرف المرتبط",
+      partyId: "الطرف",
+      partyIdPlaceholder: "اختر الطرف المرتبط...",
       firstName: "الاسم الأول",
       firstNamePlaceholder: "جين",
       lastName: "اسم العائلة",

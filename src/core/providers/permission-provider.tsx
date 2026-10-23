@@ -197,7 +197,12 @@ export function PermissionProvider({ children }: PermissionProviderProps) {
         return true;
       }
 
-      if (path === "/venue" || path.startsWith("/venue/")) {
+      if (
+        path === "/venue" ||
+        path.startsWith("/venue/") ||
+        path === "/party-kernel" ||
+        path.startsWith("/party-kernel/")
+      ) {
         return true;
       }
 

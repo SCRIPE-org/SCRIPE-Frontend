@@ -24,6 +24,7 @@ export interface IPartyPersonService {
     page: number;
     pageSize: number;
     search?: string;
+    partyId?: string;
   }): Promise<PartyPersonListResult>;
   getById(id: string): Promise<PartyPersonModel>;
   create(data: Record<string, unknown>): Promise<{ id: string }>;

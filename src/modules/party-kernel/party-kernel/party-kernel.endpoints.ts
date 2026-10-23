@@ -1,53 +1,33 @@
-import { V1 } from "@/core/config/api-endpoints/_shared";
+/**
+ * PartyKernel Module API Endpoints Barrel & Aggregator
+ *
+ * Each submodule defines its own co-located *.endpoints.ts file in src/data/services/.
+ * This file aggregates them for module-level reference and backward compatibility.
+ */
+import { PARTY_ENDPOINTS } from "./party/src/data/services/party.endpoints";
+import { PARTY_PERSON_ENDPOINTS } from "./party-person/src/data/services/party-person.endpoints";
+import { PARTY_ORGANIZATION_ENDPOINTS } from "./party-organization/src/data/services/party-organization.endpoints";
+import { PARTY_ROLE_ENDPOINTS } from "./party-role/src/data/services/party-role.endpoints";
+import { PARTY_RELATIONSHIP_ENDPOINTS } from "./party-relationship/src/data/services/party-relationship.endpoints";
+import { CONTACT_POINT_ENDPOINTS } from "./contact-point/src/data/services/contact-point.endpoints";
+import { MERGE_CANDIDATE_ENDPOINTS } from "./merge-candidate/src/data/services/merge-candidate.endpoints";
 
 export const PARTYKERNEL_ENDPOINTS = {
-  PARTIES: {
-    LIST: `${V1}/Parties`,
-    BY_ID: (id: string) => `${V1}/Parties/${id}`,
-    CREATE: `${V1}/Parties`,
-    UPDATE: (id: string) => `${V1}/Parties/${id}`,
-    DELETE: (id: string) => `${V1}/Parties/${id}`,
-  },
-  PARTY_PEOPLE: {
-    LIST: `${V1}/party-people`,
-    BY_ID: (id: string) => `${V1}/party-people/${id}`,
-    CREATE: `${V1}/party-people`,
-    UPDATE: (id: string) => `${V1}/party-people/${id}`,
-    DELETE: (id: string) => `${V1}/party-people/${id}`,
-  },
-  PARTY_ORGANIZATIONS: {
-    LIST: `${V1}/party-organizations`,
-    BY_ID: (id: string) => `${V1}/party-organizations/${id}`,
-    CREATE: `${V1}/party-organizations`,
-    UPDATE: (id: string) => `${V1}/party-organizations/${id}`,
-    DELETE: (id: string) => `${V1}/party-organizations/${id}`,
-  },
-  PARTY_ROLES: {
-    LIST: `${V1}/party-roles`,
-    BY_ID: (id: string) => `${V1}/party-roles/${id}`,
-    CREATE: `${V1}/party-roles`,
-    UPDATE: (id: string) => `${V1}/party-roles/${id}`,
-    DELETE: (id: string) => `${V1}/party-roles/${id}`,
-  },
-  PARTY_RELATIONSHIPS: {
-    LIST: `${V1}/party-relationships`,
-    BY_ID: (id: string) => `${V1}/party-relationships/${id}`,
-    CREATE: `${V1}/party-relationships`,
-    UPDATE: (id: string) => `${V1}/party-relationships/${id}`,
-    DELETE: (id: string) => `${V1}/party-relationships/${id}`,
-  },
-  CONTACT_POINTS: {
-    LIST: `${V1}/contact-points`,
-    BY_ID: (id: string) => `${V1}/contact-points/${id}`,
-    CREATE: `${V1}/contact-points`,
-    UPDATE: (id: string) => `${V1}/contact-points/${id}`,
-    DELETE: (id: string) => `${V1}/contact-points/${id}`,
-  },
-  MERGE_CANDIDATES: {
-    LIST: `${V1}/merge-candidates`,
-    BY_ID: (id: string) => `${V1}/merge-candidates/${id}`,
-    CREATE: `${V1}/merge-candidates`,
-    UPDATE: (id: string) => `${V1}/merge-candidates/${id}`,
-    DELETE: (id: string) => `${V1}/merge-candidates/${id}`,
-  },
+  PARTIES: PARTY_ENDPOINTS,
+  PARTY_PEOPLE: PARTY_PERSON_ENDPOINTS,
+  PARTY_ORGANIZATIONS: PARTY_ORGANIZATION_ENDPOINTS,
+  PARTY_ROLES: PARTY_ROLE_ENDPOINTS,
+  PARTY_RELATIONSHIPS: PARTY_RELATIONSHIP_ENDPOINTS,
+  CONTACT_POINTS: CONTACT_POINT_ENDPOINTS,
+  MERGE_CANDIDATES: MERGE_CANDIDATE_ENDPOINTS,
 } as const;
+
+export {
+  PARTY_ENDPOINTS,
+  PARTY_PERSON_ENDPOINTS,
+  PARTY_ORGANIZATION_ENDPOINTS,
+  PARTY_ROLE_ENDPOINTS,
+  PARTY_RELATIONSHIP_ENDPOINTS,
+  CONTACT_POINT_ENDPOINTS,
+  MERGE_CANDIDATE_ENDPOINTS,
+};

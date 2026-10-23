@@ -20,15 +20,15 @@ export function TenantRegionDistribution({ data, isLoading }: TenantRegionDistri
   const totalTenants = data.reduce((acc, curr) => acc + curr.count, 0);
 
   return (
-    <Card className="backdrop-blur-xs shadow-xs flex h-full flex-col border-border/80 bg-card/80">
+    <Card className="flex h-full flex-col border-nx-line bg-nx-surface text-nx-ink hover:border-nx-line-hi">
       <CardHeader className="p-4 pb-2 sm:p-5">
         <div className="flex items-center gap-2">
           <Globe className="h-4 w-4 text-primary" />
-          <CardTitle className="text-sm font-bold text-foreground">
+          <CardTitle className="text-sm font-bold text-nx-ink">
             {t("tenantAnalytics.regions.title") || "Tenants by Region"}
           </CardTitle>
         </div>
-        <CardDescription className="text-xs text-muted-foreground">
+        <CardDescription className="text-xs text-nx-ink-3">
           {t("tenantAnalytics.regions.subtitle") ||
             "Distribution of tenant workspaces across global operational regions"}
         </CardDescription>
@@ -38,11 +38,11 @@ export function TenantRegionDistribution({ data, isLoading }: TenantRegionDistri
         {isLoading ? (
           <div className="space-y-3">
             {[...Array(4)].map((_, i) => (
-              <div key={i} className="h-8 animate-pulse rounded-lg bg-muted/20" />
+              <div key={i} className="h-8 animate-pulse rounded-lg bg-nx-raised" />
             ))}
           </div>
         ) : data.length === 0 ? (
-          <div className="flex flex-1 items-center justify-center text-xs text-muted-foreground">
+          <div className="flex flex-1 items-center justify-center text-xs text-nx-ink-3">
             {t("tenantAnalytics.regions.noData") || "No regional distribution data available"}
           </div>
         ) : (
@@ -52,19 +52,19 @@ export function TenantRegionDistribution({ data, isLoading }: TenantRegionDistri
                 <div key={item.region} className="space-y-1.5">
                   <div className="flex items-center justify-between text-xs">
                     <div className="flex items-center gap-2">
-                      <span className="rounded-xs flex h-5 w-7 items-center justify-center bg-muted/40 font-mono text-[10px] font-bold text-muted-foreground">
+                      <span className="rounded-xs flex h-5 w-7 items-center justify-center bg-nx-raised font-mono text-[10px] font-bold text-nx-ink-3">
                         {item.code}
                       </span>
-                      <span className="font-medium text-foreground">{item.region}</span>
+                      <span className="font-medium text-nx-ink">{item.region}</span>
                     </div>
-                    <div className="flex items-center gap-2 text-muted-foreground">
-                      <span className="font-semibold text-foreground">{item.count}</span>
+                    <div className="flex items-center gap-2 text-nx-ink-3">
+                      <span className="font-semibold text-nx-ink">{item.count}</span>
                       <span className="text-[11px]">({item.percentage}%)</span>
                     </div>
                   </div>
 
                   {/* Progress track */}
-                  <div className="h-2 w-full overflow-hidden rounded-full bg-muted/30">
+                  <div className="h-2 w-full overflow-hidden rounded-full bg-nx-raised-2">
                     <div
                       className="h-full rounded-full bg-primary/80 transition-all duration-500"
                       style={{ width: `${Math.max(item.percentage, 4)}%` }}
@@ -75,7 +75,7 @@ export function TenantRegionDistribution({ data, isLoading }: TenantRegionDistri
             </div>
 
             {/* Bottom summary info banner */}
-            <div className="mt-auto flex items-center justify-between border-t border-border/50 pt-3 text-[11px] text-muted-foreground">
+            <div className="mt-auto flex items-center justify-between border-t border-nx-line pt-3 text-[11px] text-nx-ink-3">
               <span className="flex items-center gap-1.5">
                 <MapPin className="h-3 w-3 text-primary" />
                 <span>
@@ -85,7 +85,7 @@ export function TenantRegionDistribution({ data, isLoading }: TenantRegionDistri
                     : t("tenantAnalytics.regions.plural") || "operational regions"}
                 </span>
               </span>
-              <span className="font-semibold text-foreground">
+              <span className="font-semibold text-nx-ink">
                 {totalTenants}{" "}
                 {totalTenants === 1
                   ? t("tenantAnalytics.regions.workspaceSingular") || "workspace mapped"

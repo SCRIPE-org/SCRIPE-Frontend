@@ -32,6 +32,10 @@ export const en = {
       createAction: "Create customer",
       creating: "Creating customer…",
       cancel: "Cancel",
+      phoneLabel: "Primary Telephone (Optional)",
+      personGuarded:
+        "Quick-creation of individual contacts is temporarily paused for system maintenance. Telephone entry is preserved.",
+      personGuardedBtn: "Temporarily Unavailable",
       permissionTitle: "Customer access required",
       permissionDescription: "You need permission to view Parties before creating a booking.",
     },

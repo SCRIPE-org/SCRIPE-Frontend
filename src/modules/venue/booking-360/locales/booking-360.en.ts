@@ -26,6 +26,8 @@ export const en = {
       quantity: "Quantity",
       profile: "Resource profile",
       reference: "Reservation number",
+      viewCourt: "View resource",
+      viewInCalendar: "View in calendar",
     },
     resource: {
       unavailable: "Resource details unavailable",
@@ -40,6 +42,7 @@ export const en = {
       unavailable: "Customer details are temporarily unavailable. The booking remains accessible.",
       restricted: "Customer details require Party access.",
       unspecified: "Unspecified customer",
+      viewCustomer: "View customer",
     },
     hold: {
       title: "Hold and confirmation",
@@ -56,6 +59,14 @@ export const en = {
       invoice: "Invoice",
       total: "Invoice total",
       outstanding: "Outstanding",
+      paid: "Paid",
+      recordedPayments: "Recorded payments",
+      pendingAllocationNotice:
+        "A recorded payment of {{amount}} is waiting to be allocated to invoice {{invoiceNumber}}.",
+      pendingSyncNotice: "Finance invoice synchronization is still in progress.",
+      unallocated: "Unallocated",
+      allocated: "Allocated",
+      refunded: "Refunded",
       invoicePending: "No Finance invoice is available for this booking yet.",
       restricted: "Commercial details require receivables access.",
       unavailable: "Finance details are temporarily unavailable.",
@@ -194,6 +205,12 @@ export const en = {
       expired: "The hold expired. Reservation state was reloaded from the server.",
       conflict: "Another operator changed this booking. Authoritative state was reloaded.",
       failed: "The booking could not be confirmed. Retry after reviewing its state.",
+    },
+    cancelledPaid: {
+      title: "Payment remains in Finance",
+      description:
+        "This booking was cancelled, but {{amount}} remains recorded in Finance. Cancellation does not issue a refund.",
+      manageRefund: "Manage payment in Finance",
     },
     permission: {
       title: "Booking access required",

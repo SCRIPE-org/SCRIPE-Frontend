@@ -6,14 +6,18 @@
  */
 import type { IApiService } from "@core/interfaces/api.interface";
 import { buildUrl } from "@/core/config/api-endpoints/_shared";
-import { PARTYKERNEL_ENDPOINTS } from "@modules/party-kernel/party-kernel.endpoints";
-import { PartyModel, type PartyJson, type PartyListResponseJson } from "../models/PartyModel";
+import { PARTY_ENDPOINTS } from "./party.endpoints";
+import {
+  PartyModel,
+  type PartyJson,
+  type PartyListResponseJson,
+  type PartyProfileResponseJson,
+  type PartyContactLookupPagedResponseJson,
+} from "../models/PartyModel";
 import type { IPartyService, PartyListResult } from "../../domain/interfaces/IPartyService";
 
-const BASE_URL = PARTYKERNEL_ENDPOINTS.PARTIES.LIST;
-
 /**
- * Documentation for module export
+ * Service implementation for Party operations
  */
 export class PartyService implements IPartyService {
   constructor(private readonly api: IApiService) {}
@@ -22,11 +26,15 @@ export class PartyService implements IPartyService {
     page: number;
     pageSize: number;
     search?: string;
+    type?: string;
+    sortBy?: string;
   }): Promise<PartyListResult> {
-    const url = buildUrl(BASE_URL, {
+    const url = buildUrl(PARTY_ENDPOINTS.LIST, {
       page: params.page,
       pageSize: params.pageSize,
       search: params.search,
+      type: params.type && params.type !== "all" ? params.type : undefined,
+      sortBy: params.sortBy,
     });
 
     const response = await this.api.get<PartyListResponseJson>(url);
@@ -43,19 +51,121 @@ export class PartyService implements IPartyService {
   }
 
   async getById(id: string): Promise<PartyModel> {
-    const json = await this.api.get<PartyJson>(`${BASE_URL}/${id}`);
+    const json = await this.api.get<PartyJson>(PARTY_ENDPOINTS.BY_ID(id));
     return PartyModel.fromJson(json);
   }
 
+  async getProfile(id: string): Promise<PartyProfileResponseJson | null> {
+    try {
+      return await this.api.get<PartyProfileResponseJson>(PARTY_ENDPOINTS.PROFILE(id));
+    } catch {
+      return null;
+    }
+  }
+
   async create(data: Record<string, unknown>): Promise<{ id: string }> {
-    return this.api.post<{ id: string }>(BASE_URL, data);
+    return this.api.post<{ id: string }>(PARTY_ENDPOINTS.CREATE, data);
+  }
+
+  async createPerson(
+    data: {
+      fullName: string;
+      displayName?: string | null;
+      givenName?: string | null;
+      middleNames?: string | null;
+      familyName?: string | null;
+      dateOfBirth?: string | null;
+      isMinor?: boolean;
+    },
+    idempotencyKey?: string
+  ): Promise<{ id: string }> {
+    const headers: Record<string, string> = {};
+    if (idempotencyKey) {
+      headers["Idempotency-Key"] = idempotencyKey;
+    }
+    return this.api.post<{ id: string }>(
+      PARTY_ENDPOINTS.PEOPLE,
+      data,
+      undefined,
+      Object.keys(headers).length > 0 ? { headers } : undefined
+    );
+  }
+
+  async createOrganization(
+    data: { legalName: string; displayName?: string; taxId?: string | null },
+    idempotencyKey?: string
+  ): Promise<{ id: string }> {
+    const headers: Record<string, string> = {};
+    if (idempotencyKey) {
+      headers["Idempotency-Key"] = idempotencyKey;
+    }
+    return this.api.post<{ id: string }>(
+      PARTY_ENDPOINTS.ORGANIZATIONS,
+      data,
+      undefined,
+      Object.keys(headers).length > 0 ? { headers } : undefined
+    );
+  }
+
+  async lookupPeople(params: {
+    page: number;
+    pageSize: number;
+    search?: string;
+  }): Promise<PartyContactLookupPagedResponseJson> {
+    const url = buildUrl(PARTY_ENDPOINTS.PEOPLE_LOOKUP, {
+      page: params.page,
+      pageSize: Math.min(params.pageSize, 100),
+      search: params.search?.slice(0, 300),
+    });
+    return this.api.get<PartyContactLookupPagedResponseJson>(url);
+  }
+
+  async lookupOrganizations(params: {
+    page: number;
+    pageSize: number;
+    search?: string;
+  }): Promise<PartyContactLookupPagedResponseJson> {
+    const url = buildUrl(PARTY_ENDPOINTS.ORGANIZATIONS_LOOKUP, {
+      page: params.page,
+      pageSize: Math.min(params.pageSize, 100),
+      search: params.search?.slice(0, 300),
+    });
+    return this.api.get<PartyContactLookupPagedResponseJson>(url);
   }
 
   async update(id: string, data: Record<string, unknown>): Promise<void> {
-    await this.api.put(`${BASE_URL}/${id}`, data);
+    await this.api.put(PARTY_ENDPOINTS.UPDATE(id), data);
+  }
+
+  async updatePerson(
+    id: string,
+    data: {
+      fullName: string;
+      displayName?: string | null;
+      givenName?: string | null;
+      middleNames?: string | null;
+      familyName?: string | null;
+      dateOfBirth?: string | null;
+      isMinor?: boolean | null;
+      rowVersion?: string | null;
+    }
+  ): Promise<void> {
+    await this.api.put(PARTY_ENDPOINTS.PERSON_UPDATE(id), data);
+  }
+
+  async updateOrganization(
+    id: string,
+    data: {
+      legalName: string;
+      displayName?: string | null;
+      taxId?: string | null;
+      rowVersion?: string | null;
+    }
+  ): Promise<void> {
+    await this.api.put(PARTY_ENDPOINTS.ORGANIZATION_UPDATE(id), data);
   }
 
   async delete(id: string): Promise<void> {
-    await this.api.delete(`${BASE_URL}/${id}`);
+    await this.api.delete(PARTY_ENDPOINTS.DELETE(id));
   }
 }

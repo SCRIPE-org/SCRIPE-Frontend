@@ -1,7 +1,7 @@
 // FILE-EXCEPTION: rule bypass for existing large file
 "use client";
 
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { getVenueContainer } from "@modules/venue/di";
 import type { MoneyInvoice, MoneyPayment, MoneyPaymentTimeline } from "../../domain/entities/Money";
 
@@ -18,6 +18,21 @@ export interface PaymentsViewModelMessages {
   fallbackError: string;
   validation: string;
   allocationPending: (paymentNumber: string) => string;
+  receiptPending: (paymentNumber: string) => string;
+}
+
+/**
+ * Returns the same idempotency key while a business intent is retried, and rotates it when the
+ * request fingerprint changes.
+ */
+function getIntentKey(
+  keyRef: { current: { fingerprint: string; key: string } | null },
+  fingerprint: string
+): string {
+  if (keyRef.current?.fingerprint !== fingerprint) {
+    keyRef.current = { fingerprint, key: crypto.randomUUID() };
+  }
+  return keyRef.current.key;
 }
 
 /**
@@ -66,6 +81,10 @@ export function usePaymentsViewModel({
   const [allocating, setAllocating] = useState(false);
   const [timeline, setTimeline] = useState<MoneyPaymentTimeline | null>(null);
   const [timelineLoading, setTimelineLoading] = useState(false);
+  const recordIntentKeyRef = useRef<{ fingerprint: string; key: string } | null>(null);
+  const allocationIntentKeyRef = useRef<{ fingerprint: string; key: string } | null>(null);
+  const receiptIntentKeyRef = useRef<{ fingerprint: string; key: string } | null>(null);
+  const refundIntentKeyRef = useRef<{ fingerprint: string; key: string } | null>(null);
 
   const load = useCallback(
     async (preserveError = false) => {
@@ -140,6 +159,18 @@ export function usePaymentsViewModel({
     setError(null);
     setNotice(null);
     try {
+      const externalReference = reference.trim() || null;
+      const paymentFingerprint = JSON.stringify([
+        selectedInvoice.id,
+        selectedInvoice.payerPartyId,
+        selectedInvoice.reservationId,
+        selectedInvoice.schedulableResourceId,
+        selectedInvoice.currencyCode,
+        method,
+        numericAmount,
+        externalReference,
+        reason.trim(),
+      ]);
       const payment = await moneyRepository.recordPayment({
         payerPartyId: selectedInvoice.payerPartyId,
         reservationId: selectedInvoice.reservationId,
@@ -148,27 +179,45 @@ export function usePaymentsViewModel({
         method,
         currencyCode: selectedInvoice.currencyCode,
         amount: numericAmount,
-        idempotencyKey: crypto.randomUUID(),
-        externalReference: reference.trim() || null,
+        idempotencyKey: getIntentKey(recordIntentKeyRef, paymentFingerprint),
+        externalReference,
         reason: reason.trim(),
       });
+      const allocationFingerprint = JSON.stringify([payment.id, selectedInvoice.id, numericAmount]);
+      const allocationKey = getIntentKey(allocationIntentKeyRef, allocationFingerprint);
+      let recoveryError: string | null = null;
       try {
         await moneyRepository.allocatePayment(
           payment.id,
           selectedInvoice.id,
           numericAmount,
-          crypto.randomUUID()
+          allocationKey
         );
-        if (canIssueReceipt) await moneyRepository.issueReceipt(payment.id, crypto.randomUUID());
-        setNotice("saved");
       } catch {
-        // The payment fact is durable; never re-record it after allocation/receipt recovery fails.
-        setError(messages.allocationPending(payment.paymentNumber));
+        recoveryError = messages.allocationPending(payment.paymentNumber);
       }
+      if (!recoveryError && canIssueReceipt) {
+        try {
+          await moneyRepository.issueReceipt(
+            payment.id,
+            getIntentKey(receiptIntentKeyRef, payment.id)
+          );
+        } catch {
+          recoveryError = messages.receiptPending(payment.paymentNumber);
+        }
+      }
+      if (recoveryError) {
+        setError(recoveryError);
+        return;
+      }
+      setNotice("saved");
       await load(true);
       setAmount("");
       setReference("");
       setReason("");
+      recordIntentKeyRef.current = null;
+      allocationIntentKeyRef.current = null;
+      receiptIntentKeyRef.current = null;
     } catch (caught) {
       setError(caught instanceof Error ? caught.message : messages.fallbackError);
     } finally {
@@ -235,15 +284,24 @@ export function usePaymentsViewModel({
     setError(null);
     setNotice(null);
     try {
+      const externalReference = refundReference.trim() || null;
+      const refundFingerprint = JSON.stringify([
+        refundPayment.id,
+        refundInvoiceId,
+        numericAmount,
+        refundReason.trim(),
+        externalReference,
+      ]);
       await moneyRepository.refundPayment(refundPayment.id, {
         invoiceId: refundInvoiceId,
         amount: numericAmount,
-        idempotencyKey: crypto.randomUUID(),
+        idempotencyKey: getIntentKey(refundIntentKeyRef, refundFingerprint),
         reason: refundReason.trim(),
-        externalReference: refundReference.trim() || null,
+        externalReference,
       });
       setNotice("refunded");
       setRefundPayment(null);
+      refundIntentKeyRef.current = null;
       await load();
     } catch (caught) {
       setError(caught instanceof Error ? caught.message : messages.fallbackError);
@@ -333,21 +391,32 @@ export function usePaymentsViewModel({
     setError(null);
     setNotice(null);
     try {
+      const allocationFingerprint = JSON.stringify([
+        allocatingPayment.id,
+        allocationInvoiceId,
+        numericAmount,
+      ]);
       await moneyRepository.allocatePayment(
         allocatingPayment.id,
         allocationInvoiceId,
         numericAmount,
-        crypto.randomUUID()
+        getIntentKey(allocationIntentKeyRef, allocationFingerprint)
       );
       if (canIssueReceipt) {
         try {
-          await moneyRepository.issueReceipt(allocatingPayment.id, crypto.randomUUID());
+          await moneyRepository.issueReceipt(
+            allocatingPayment.id,
+            getIntentKey(receiptIntentKeyRef, allocatingPayment.id)
+          );
         } catch {
-          // Allocation succeeded even if receipt issue is unavailable
+          setError(messages.receiptPending(allocatingPayment.paymentNumber));
+          return;
         }
       }
       setNotice("allocated");
       setAllocatingPayment(null);
+      allocationIntentKeyRef.current = null;
+      receiptIntentKeyRef.current = null;
       await load();
     } catch (caught) {
       setError(caught instanceof Error ? caught.message : messages.fallbackError);

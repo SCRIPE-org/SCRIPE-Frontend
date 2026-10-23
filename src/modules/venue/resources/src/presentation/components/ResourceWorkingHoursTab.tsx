@@ -1,11 +1,13 @@
-﻿"use client";
+"use client";
 
 import { useState } from "react";
 import Link from "next/link";
-import { Clock, Sliders, ExternalLink } from "lucide-react";
+import { Clock, Sliders, ExternalLink, Copy } from "lucide-react";
 import { Button } from "@core/ui/button";
 import { Input } from "@core/ui/input";
 import { Label } from "@core/ui/label";
+import { Checkbox } from "@core/ui/checkbox";
+import { RadioGroup, RadioGroupItem } from "@core/ui/radio-group";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@core/ui/card";
 import { useI18n } from "@core/providers/i18n-provider";
 import type { WeekDay, AvailabilityWindow } from "@modules/venue";
@@ -69,6 +71,19 @@ export function ResourceWorkingHoursTab({ vm }: Props) {
     }));
   };
 
+  const copyHoursToAll = (sourceDay: WeekDay) => {
+    const { start, end } = dailyWindows[sourceDay];
+    setDailyWindows((prev) => {
+      const next = { ...prev };
+      for (const d of DAYS) {
+        if (!next[d].closed) {
+          next[d] = { ...next[d], start, end };
+        }
+      }
+      return next;
+    });
+  };
+
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
     if (isOpen247) {
@@ -95,85 +110,85 @@ export function ResourceWorkingHoursTab({ vm }: Props) {
           </CardTitle>
           <CardDescription>
             {t("resources.workingHours.description", {
-              defaultValue: "Configure when this court is open for customer bookings.",
+              defaultValue: "Configure when this space is open for bookings.",
             })}
           </CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSave} className="max-w-2xl space-y-6">
             {/* Mode selection: Open 24/7 vs Custom Hours */}
-            <div className="space-y-3">
-              <label
+            <RadioGroup
+              value={isOpen247 ? "open247" : "custom"}
+              onValueChange={(value) => setIsOpen247(value === "open247")}
+              className="space-y-3"
+            >
+              <div
                 className={`flex cursor-pointer items-start gap-3 rounded-nx-md border p-3.5 transition-all ${
                   isOpen247
                     ? "bg-nx-accent/5 border-nx-accent ring-1 ring-nx-accent"
                     : "hover:bg-nx-surfaceSubtle border-nx-line"
                 }`}
               >
-                {/* UI-EXCEPTION: native element required for compact layout */}
-                <input
-                  type="radio"
-                  name="court-working-hours"
-                  checked={isOpen247}
-                  onChange={() => setIsOpen247(true)}
-                  className="mt-1"
-                />
+                <RadioGroupItem id="res-hours-open247" value="open247" className="mt-1" />
                 <div>
-                  <p className="flex items-center gap-1.5 text-sm font-bold text-nx-ink">
+                  <Label
+                    htmlFor="res-hours-open247"
+                    className="flex cursor-pointer items-center gap-1.5 text-sm font-bold text-nx-ink"
+                  >
                     <Clock className="size-4 text-nx-accent" aria-hidden="true" />
                     <span>
                       {t("resources.workingHours.open247", {
                         defaultValue: "Open 24 Hours (24/7)",
                       })}
                     </span>
-                  </p>
+                  </Label>
                   <p className="mt-0.5 text-xs text-nx-ink-2">
                     {t("resources.workingHours.open247Description", {
-                      defaultValue: "Court is bookable all day and night every day of the week.",
+                      defaultValue: "Open all day and night every day of the week.",
                     })}
                   </p>
                 </div>
-              </label>
+              </div>
 
-              <label
+              <div
                 className={`flex cursor-pointer items-start gap-3 rounded-nx-md border p-3.5 transition-all ${
                   !isOpen247
                     ? "bg-nx-accent/5 border-nx-accent ring-1 ring-nx-accent"
                     : "hover:bg-nx-surfaceSubtle border-nx-line"
                 }`}
               >
-                {/* UI-EXCEPTION: native element required for compact layout */}
-                <input
-                  type="radio"
-                  name="court-working-hours"
-                  checked={!isOpen247}
-                  onChange={() => setIsOpen247(false)}
-                  className="mt-1"
-                />
+                <RadioGroupItem id="res-hours-custom" value="custom" className="mt-1" />
                 <div>
-                  <p className="flex items-center gap-1.5 text-sm font-bold text-nx-ink">
+                  <Label
+                    htmlFor="res-hours-custom"
+                    className="flex cursor-pointer items-center gap-1.5 text-sm font-bold text-nx-ink"
+                  >
                     <Sliders className="size-4 text-nx-ink-2" aria-hidden="true" />
                     <span>
                       {t("resources.workingHours.custom", { defaultValue: "Custom Working Hours" })}
                     </span>
-                  </p>
+                  </Label>
                   <p className="mt-0.5 text-xs text-nx-ink-2">
                     {t("resources.workingHours.customDescription", {
                       defaultValue: "Specify exact daily opening and closing hours.",
                     })}
                   </p>
                 </div>
-              </label>
-            </div>
+              </div>
+            </RadioGroup>
 
             {/* Daily Schedule Table (When Custom is selected) */}
             {!isOpen247 && (
               <div className="overflow-hidden rounded-nx-md border border-nx-line bg-nx-surface">
                 <div className="flex items-center justify-between border-b border-nx-line bg-nx-raised p-3 text-xs font-semibold text-nx-ink">
-                  <span>Day</span>
-                  <div className="mr-4 flex items-center gap-8">
-                    <span>Opening Time</span>
-                    <span>Closing Time</span>
+                  <span>{t("resources.workingHours.day", { defaultValue: "Day" })}</span>
+                  <div className="mr-4 flex items-center gap-8 rtl:ml-4 rtl:mr-0">
+                    <span>
+                      {t("resources.workingHours.openingTime", { defaultValue: "Opening Time" })}
+                    </span>
+                    <span>
+                      {t("resources.workingHours.closingTime", { defaultValue: "Closing Time" })}
+                    </span>
                   </div>
                 </div>
 
@@ -188,12 +203,11 @@ export function ResourceWorkingHoursTab({ vm }: Props) {
                         }`}
                       >
                         <div className="flex items-center gap-3">
-                          {/* UI-EXCEPTION: native element required for compact layout */}
-                          <input
-                            type="checkbox"
+                          <Checkbox
                             checked={!closed}
-                            onChange={(e) => updateDay(day, "closed", !e.target.checked)}
-                            className="size-4 rounded"
+                            onCheckedChange={(checked) =>
+                              updateDay(day, "closed", checked !== true)
+                            }
                             id={`check-${day}`}
                           />
                           <Label
@@ -205,23 +219,35 @@ export function ResourceWorkingHoursTab({ vm }: Props) {
                         </div>
 
                         {!closed ? (
-                          <div className="flex items-center gap-3">
+                          <div className="flex items-center gap-2">
                             <Input
                               type="time"
                               value={start}
                               onChange={(e) => updateDay(day, "start", e.target.value)}
-                              className="h-8 w-28 font-mono text-xs"
+                              className="h-8 w-24 font-mono text-xs"
                             />
-                            <span className="text-nx-ink-3">â†’</span>
+                            <span className="text-nx-ink-3">→</span>
                             <Input
                               type="time"
                               value={end}
                               onChange={(e) => updateDay(day, "end", e.target.value)}
-                              className="h-8 w-28 font-mono text-xs"
+                              className="h-8 w-24 font-mono text-xs"
                             />
+                            <Button
+                              type="button"
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => copyHoursToAll(day)}
+                              className="h-8 px-2 text-[11px] text-nx-ink-3 hover:text-nx-ink"
+                              title={t("resources.workingHours.copyToAll", {
+                                defaultValue: "Copy to all open days",
+                              })}
+                            >
+                              <Copy className="size-3.5" aria-hidden="true" />
+                            </Button>
                           </div>
                         ) : (
-                          <span className="mr-16 text-xs italic text-nx-ink-3">
+                          <span className="mr-16 text-xs italic text-nx-ink-3 rtl:ml-16 rtl:mr-0">
                             {t("resources.workingHours.closed", { defaultValue: "Closed" })}
                           </span>
                         )}

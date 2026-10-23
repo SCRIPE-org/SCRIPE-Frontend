@@ -11,7 +11,7 @@ vi.mock("@core/providers/i18n-provider", () => ({
 }));
 
 describe("FirstTimeSetupWizard", () => {
-  it("walks through the 5 steps and submits configuration", async () => {
+  it("walks through the 3 steps and submits configuration", async () => {
     const onSubmit = vi.fn().mockResolvedValue(true);
     const onOpenChange = vi.fn();
 
@@ -24,45 +24,40 @@ describe("FirstTimeSetupWizard", () => {
       />
     );
 
-    // Step 1: Branch
-    expect(screen.getByText("1. Branch")).toBeInTheDocument();
-    expect(screen.getByLabelText("Branch Name")).toBeInTheDocument();
+    // Step 1: WHERE (Facility & Location)
+    expect(screen.getByText("1. WHERE")).toBeInTheDocument();
+    expect(screen.getByLabelText("Facility / Location Name")).toBeInTheDocument();
     const branchInput = screen.getByDisplayValue("Nasr City");
     fireEvent.change(branchInput, { target: { value: "Sheikh Zayed" } });
 
-    // Click Next
+    // Click Next Step
     fireEvent.click(screen.getByText("Next Step"));
 
-    // Step 2: Courts
-    expect(screen.getByText("2. Courts")).toBeInTheDocument();
+    // Step 2: WHAT (Sport & Courts)
+    expect(screen.getByText("2. WHAT")).toBeInTheDocument();
     expect(screen.getByDisplayValue("Padel Court 1")).toBeInTheDocument();
-    fireEvent.click(screen.getByText("+ Add Another Court"));
+    fireEvent.click(screen.getByText("+ Add Another Court / Space"));
     expect(screen.getByDisplayValue("Padel Court 4")).toBeInTheDocument();
 
-    // Click Next
+    // Click Next Step
     fireEvent.click(screen.getByText("Next Step"));
 
-    // Step 3: Working Hours
-    expect(screen.getByText("3. Hours")).toBeInTheDocument();
+    // Step 3: WHEN & HOW MUCH (Schedule, Duration, Pricing, Review)
+    expect(screen.getByText("3. WHEN & HOW MUCH")).toBeInTheDocument();
     expect(screen.getByText("Open 24 Hours (24/7)")).toBeInTheDocument();
 
-    // Click Next
-    fireEvent.click(screen.getByText("Next Step"));
-
-    // Step 4: Booking Slot
-    expect(screen.getByText("4. Slot")).toBeInTheDocument();
     // Select 90 minutes
-    fireEvent.click(screen.getByText("90 min"));
+    fireEvent.click(screen.getByText("90 minutes"));
 
-    // Click Next
-    fireEvent.click(screen.getByText("Next Step"));
-
-    // Step 5: Pricing
-    expect(screen.getByText("5. Price")).toBeInTheDocument();
+    // Change price
     const priceInput = screen.getByDisplayValue("800");
     fireEvent.change(priceInput, { target: { value: "950" } });
 
-    // Submit
+    // Both Save as Draft and Complete Setup & Publish are present
+    expect(screen.getByText("Save as Draft")).toBeInTheDocument();
+    expect(screen.getByText("Complete Setup & Publish")).toBeInTheDocument();
+
+    // Submit via Complete Setup & Publish
     fireEvent.click(screen.getByText("Complete Setup & Publish"));
 
     await waitFor(() => {
@@ -72,11 +67,12 @@ describe("FirstTimeSetupWizard", () => {
           isOpen247: true,
           slotDurationMinutes: 90,
           pricePerSlot: 950,
+          publishImmediately: true,
         })
       );
     });
 
-    // Ready screen
+    // Step 4: Ready screen
     expect(await screen.findByText("Your Venue is Ready!")).toBeInTheDocument();
     expect(screen.getByText("Open Calendar")).toBeInTheDocument();
   });

@@ -4,6 +4,7 @@ import React from "react";
 import { Database, ChevronRight } from "lucide-react";
 import Link from "next/link";
 import { useI18n } from "@core/providers/i18n-provider";
+import { Card } from "@core/ui/card";
 import type { usePlatformHealthViewModel } from "@modules/monitoring/platform-health/src/presentation/viewmodels/usePlatformHealthViewModel";
 
 interface ServiceHealthRow {
@@ -111,18 +112,18 @@ export function PlatformServiceHealth({ healthVm }: PlatformServiceHealthProps) 
   }, [healthVm?.health]);
 
   return (
-    <div className="flex h-[400px] flex-col overflow-hidden rounded-xl border border-border bg-card shadow-sm">
+    <Card className="flex h-[400px] flex-col overflow-hidden p-0">
       {/* Header */}
-      <div className="flex h-[60px] shrink-0 items-center justify-between border-b border-border bg-muted/40 px-4 py-3">
+      <div className="flex h-[60px] shrink-0 items-center justify-between border-b border-nx-line bg-nx-raised/40 px-4 py-3">
         <div className="flex min-w-0 items-center gap-2.5">
-          <div className="shadow-xs flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border border-[#84cc16]/20 bg-[#84cc16]/10 text-[#84cc16]">
+          <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border border-primary/20 bg-primary/10 text-primary">
             <Database className="h-4 w-4" />
           </div>
           <div className="min-w-0">
-            <h2 className="truncate text-sm font-bold tracking-tight text-foreground sm:text-base">
+            <h2 className="truncate text-sm font-bold tracking-tight text-nx-ink sm:text-base">
               {t("platformCommandCenter.serviceHealth.title") || "Platform Services Health"}
             </h2>
-            <p className="truncate text-[11px] text-muted-foreground">
+            <p className="truncate text-[11px] text-nx-ink-3">
               {t("platformCommandCenter.serviceHealth.subtitle") ||
                 "Status of core platform services and dependencies."}
             </p>
@@ -131,7 +132,7 @@ export function PlatformServiceHealth({ healthVm }: PlatformServiceHealthProps) 
 
         <Link
           href="/platform-health"
-          className="group flex shrink-0 items-center gap-1 text-xs font-semibold text-muted-foreground transition-colors hover:text-primary"
+          className="group flex shrink-0 items-center gap-1 text-xs font-semibold text-nx-ink-3 transition-colors hover:text-nx-ink"
         >
           <span>{t("platformCommandCenter.serviceHealth.viewAll") || "View All"}</span>
           <ChevronRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5" />
@@ -139,22 +140,22 @@ export function PlatformServiceHealth({ healthVm }: PlatformServiceHealthProps) 
       </div>
 
       {/* Services List */}
-      <div className="flex-1 divide-y divide-border/60 overflow-y-auto p-3">
+      <div className="flex-1 divide-y divide-nx-line overflow-y-auto p-3">
         {services.map((svc) => {
           const isHealthy = svc.status === "Healthy";
           const isDegraded = svc.status === "Degraded";
 
           const dotColor = isHealthy
-            ? "bg-emerald-500 shadow-[0_0_6px_rgba(16,185,129,0.7)]"
+            ? "bg-success shadow-[0_0_6px_rgba(34,197,94,0.7)]"
             : isDegraded
-              ? "bg-amber-500 shadow-[0_0_6px_rgba(245,158,11,0.7)]"
-              : "bg-rose-500 shadow-[0_0_6px_rgba(244,63,94,0.7)]";
+              ? "bg-warning shadow-[0_0_6px_rgba(234,179,8,0.7)]"
+              : "bg-destructive shadow-[0_0_6px_rgba(239,68,68,0.7)]";
 
           const statusTextColor = isHealthy
-            ? "text-emerald-500"
+            ? "text-success"
             : isDegraded
-              ? "text-amber-500"
-              : "text-rose-500";
+              ? "text-warning"
+              : "text-destructive";
 
           const statusLabel = isHealthy
             ? t("platformCommandCenter.serviceHealth.statuses.healthy") || "Healthy"
@@ -165,10 +166,10 @@ export function PlatformServiceHealth({ healthVm }: PlatformServiceHealthProps) 
           return (
             <div
               key={svc.id}
-              className="flex items-center justify-between gap-3 rounded-lg px-2 py-2.5 transition-colors hover:bg-muted/20"
+              className="flex items-center justify-between gap-3 rounded-lg px-2 py-2.5 transition-colors hover:bg-nx-raised"
             >
               {/* Service Name */}
-              <div className="w-[140px] shrink-0 truncate text-xs font-medium text-foreground">
+              <div className="w-[140px] shrink-0 truncate text-xs font-medium text-nx-ink">
                 {svc.name}
               </div>
 
@@ -181,7 +182,7 @@ export function PlatformServiceHealth({ healthVm }: PlatformServiceHealthProps) 
               </div>
 
               {/* Uptime % */}
-              <div className="w-[60px] shrink-0 text-end font-mono text-[11px] text-muted-foreground">
+              <div className="w-[60px] shrink-0 text-end font-mono text-[11px] text-nx-ink-3">
                 {svc.uptime}
               </div>
 
@@ -191,7 +192,7 @@ export function PlatformServiceHealth({ healthVm }: PlatformServiceHealthProps) 
                   <span
                     key={`bar-${idx}`}
                     className={`rounded-xs w-1 transition-all ${
-                      isDegraded ? "bg-amber-500/80" : "bg-[#84cc16]/75"
+                      isDegraded ? "bg-warning/80" : "bg-success/75"
                     }`}
                     style={{ height: `${Math.max(2, val * 1.5)}px` }}
                   />
@@ -199,13 +200,13 @@ export function PlatformServiceHealth({ healthVm }: PlatformServiceHealthProps) 
               </div>
 
               {/* Latency ms */}
-              <div className="w-[50px] shrink-0 text-end font-mono text-xs font-semibold text-foreground">
+              <div className="w-[50px] shrink-0 text-end font-mono text-xs font-semibold text-nx-ink">
                 {svc.latencyMs} ms
               </div>
             </div>
           );
         })}
       </div>
-    </div>
+    </Card>
   );
 }

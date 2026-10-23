@@ -47,18 +47,18 @@ export const RecentSecurityEventsTable = memo(function RecentSecurityEventsTable
   const { t } = useI18n();
 
   return (
-    <Card className={`flex h-full flex-col ${cardClasses || ""}`}>
+    <Card className={`flex h-full flex-col border-nx-line bg-nx-surface text-nx-ink ${cardClasses || ""}`}>
       <CardHeader className="pb-3">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <div className="rounded-md bg-primary/10 p-1.5 text-primary">
+            <div className="rounded-md border border-primary/20 bg-primary/10 p-1.5 text-primary">
               <Shield className="h-4 w-4" aria-hidden="true" />
             </div>
             <div>
-              <CardTitle className="text-base font-semibold">
+              <CardTitle className="text-base font-semibold text-nx-ink">
                 {t("security.events.title") || "Recent Security Events"}
               </CardTitle>
-              <CardDescription className="text-xs">
+              <CardDescription className="text-xs text-nx-ink-3">
                 {t("security.events.subtitle") ||
                   "Audit events, authentication attempts and security state mutations"}
               </CardDescription>
@@ -89,24 +89,24 @@ export const RecentSecurityEventsTable = memo(function RecentSecurityEventsTable
         >
           <div className="max-h-[340px] overflow-x-auto overflow-y-auto pe-1">
             <Table>
-              <TableHeader className="shadow-xs sticky top-0 z-10 bg-card">
-                <TableRow className="border-b border-border">
-                  <TableHead className="bg-card text-xs font-semibold">
+              <TableHeader className="sticky top-0 z-10 bg-nx-surface">
+                <TableRow className="border-b border-nx-line hover:bg-transparent">
+                  <TableHead className="bg-nx-surface text-xs font-semibold text-nx-ink-3">
                     {t("security.events.time") || "Timestamp"}
                   </TableHead>
-                  <TableHead className="bg-card text-xs font-semibold">
+                  <TableHead className="bg-nx-surface text-xs font-semibold text-nx-ink-3">
                     {t("security.events.eventType") || "Event Type"}
                   </TableHead>
-                  <TableHead className="bg-card text-xs font-semibold">
+                  <TableHead className="bg-nx-surface text-xs font-semibold text-nx-ink-3">
                     {t("security.events.actor") || "Actor / User"}
                   </TableHead>
-                  <TableHead className="bg-card text-xs font-semibold">
+                  <TableHead className="bg-nx-surface text-xs font-semibold text-nx-ink-3">
                     {t("security.events.sourceIp") || "IP Address"}
                   </TableHead>
-                  <TableHead className="bg-card text-center text-xs font-semibold">
+                  <TableHead className="bg-nx-surface text-center text-xs font-semibold text-nx-ink-3">
                     {t("common.status") || "Status"}
                   </TableHead>
-                  <TableHead className="bg-card text-end text-xs font-semibold">
+                  <TableHead className="bg-nx-surface text-end text-xs font-semibold text-nx-ink-3">
                     {t("common.details") || "Details"}
                   </TableHead>
                 </TableRow>
@@ -125,9 +125,9 @@ export const RecentSecurityEventsTable = memo(function RecentSecurityEventsTable
                     <TableRow
                       key={eventKey}
                       onClick={() => onSelectEvent(event)}
-                      className="cursor-pointer transition-colors hover:bg-accent/40"
+                      className="cursor-pointer border-b border-nx-line transition-colors hover:bg-nx-raised/40"
                     >
-                      <TableCell className="whitespace-nowrap py-2.5 text-xs tabular-nums text-muted-foreground">
+                      <TableCell className="whitespace-nowrap py-2.5 text-xs tabular-nums text-nx-ink-3">
                         {formatDateTimeUtc(event.timestamp)}
                       </TableCell>
 
@@ -137,12 +137,12 @@ export const RecentSecurityEventsTable = memo(function RecentSecurityEventsTable
                         </Badge>
                       </TableCell>
 
-                      <TableCell className="py-2.5 text-xs font-medium text-foreground">
+                      <TableCell className="py-2.5 text-xs font-medium text-nx-ink">
                         {event.username || "System / Anonymous"}
                       </TableCell>
 
                       <TableCell
-                        className="py-2.5 font-mono text-xs text-muted-foreground"
+                        className="py-2.5 font-mono text-xs text-nx-ink-2"
                         dir="ltr"
                       >
                         {event.ipAddress || "—"}
@@ -165,7 +165,7 @@ export const RecentSecurityEventsTable = memo(function RecentSecurityEventsTable
                             e.stopPropagation();
                             onSelectEvent(event);
                           }}
-                          className="h-7 w-7 p-0 text-muted-foreground hover:text-foreground"
+                          className="h-7 w-7 p-0 text-nx-ink-3 hover:text-nx-ink"
                           title="View event details"
                         >
                           <Eye className="h-3.5 w-3.5" />

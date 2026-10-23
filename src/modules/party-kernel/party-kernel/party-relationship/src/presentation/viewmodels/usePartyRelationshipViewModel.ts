@@ -9,12 +9,13 @@
 import { useCrudViewModel } from "@core/crud/hooks/useCrudViewModel";
 import { getPartyKernelContainer } from "../../../../di";
 import type { PartyRelationship } from "../../domain/entities/PartyRelationship";
+import { useCallback } from "react";
 
 /**
  * Documentation for module export
  */
 export function usePartyRelationshipViewModel() {
-  const { partyRelationshipRepository } = getPartyKernelContainer();
+  const { partyRelationshipRepository, partyRepository } = getPartyKernelContainer();
 
   const vm = useCrudViewModel(
     ["partyRelationship"],
@@ -50,5 +51,20 @@ export function usePartyRelationshipViewModel() {
     { deferSuccessEffects: true }
   );
 
-  return { vm };
+  const lookupParties = useCallback(
+    async (query: string) => {
+      const res = await partyRepository.lookupContacts({
+        search: query,
+        type: "all",
+        pageSize: 20,
+      });
+      return (res.items || []).map((p) => ({
+        value: p.id,
+        label: p.displayName || p.fullName || "—",
+      }));
+    },
+    [partyRepository]
+  );
+
+  return { vm, lookupParties };
 }

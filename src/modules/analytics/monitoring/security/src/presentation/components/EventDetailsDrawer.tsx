@@ -50,13 +50,13 @@ export function EventDetailsDrawer({ event, open, onOpenChange }: EventDetailsDr
             >
               {event.isSuccess ? "Success" : "Failed / Blocked"}
             </Badge>
-            <span className="font-mono text-xs text-muted-foreground" dir="ltr">
+            <span className="font-mono text-xs text-nx-ink-3" dir="ltr">
               {event.eventType}
             </span>
           </div>
 
-          <SheetTitle className="text-lg font-bold">{event.eventType} Event Details</SheetTitle>
-          <SheetDescription className="text-xs text-muted-foreground">
+          <SheetTitle className="text-lg font-bold text-nx-ink">{event.eventType} Event Details</SheetTitle>
+          <SheetDescription className="text-xs text-nx-ink-3">
             Authoritative security audit record captured by Identity telemetry.
           </SheetDescription>
         </SheetHeader>
@@ -67,10 +67,10 @@ export function EventDetailsDrawer({ event, open, onOpenChange }: EventDetailsDr
         <div className="space-y-4 text-xs">
           {/* Timestamp */}
           <div className="flex items-start gap-3">
-            <Clock className="mt-0.5 h-4 w-4 text-muted-foreground" />
+            <Clock className="mt-0.5 h-4 w-4 text-nx-ink-3" />
             <div className="flex-1">
-              <span className="font-semibold text-foreground">Timestamp (UTC)</span>
-              <p className="mt-0.5 tabular-nums text-muted-foreground">
+              <span className="font-semibold text-nx-ink">Timestamp (UTC)</span>
+              <p className="mt-0.5 tabular-nums text-nx-ink-2">
                 {formatDateTimeUtc(event.timestamp)}
               </p>
             </div>
@@ -78,17 +78,17 @@ export function EventDetailsDrawer({ event, open, onOpenChange }: EventDetailsDr
 
           {/* Actor */}
           <div className="flex items-start gap-3">
-            <User className="mt-0.5 h-4 w-4 text-muted-foreground" />
+            <User className="mt-0.5 h-4 w-4 text-nx-ink-3" />
             <div className="flex-1">
               <div className="flex items-center gap-2">
-                <span className="font-semibold text-foreground">Actor</span>
+                <span className="font-semibold text-nx-ink">Actor</span>
                 {event.isAdmin && (
-                  <Badge variant="outline" className="px-1 py-0 text-[9px]">
+                  <Badge variant="outline" className="border-nx-line px-1 py-0 text-[9px] text-nx-ink">
                     Admin
                   </Badge>
                 )}
               </div>
-              <p className="mt-0.5 text-muted-foreground">
+              <p className="mt-0.5 text-nx-ink-2">
                 {event.username || "System / Unauthenticated"}
               </p>
             </div>
@@ -96,10 +96,10 @@ export function EventDetailsDrawer({ event, open, onOpenChange }: EventDetailsDr
 
           {/* IP Address */}
           <div className="flex items-start gap-3">
-            <Globe className="mt-0.5 h-4 w-4 text-muted-foreground" />
+            <Globe className="mt-0.5 h-4 w-4 text-nx-ink-3" />
             <div className="flex-1">
-              <span className="font-semibold text-foreground">Source IP Address</span>
-              <p className="mt-0.5 font-mono text-muted-foreground" dir="ltr">
+              <span className="font-semibold text-nx-ink">Source IP Address</span>
+              <p className="mt-0.5 font-mono text-nx-ink-2" dir="ltr">
                 {event.ipAddress || "—"}
               </p>
             </div>
@@ -108,10 +108,10 @@ export function EventDetailsDrawer({ event, open, onOpenChange }: EventDetailsDr
           {/* Endpoint / Method */}
           {(event.endpoint || event.httpMethod) && (
             <div className="flex items-start gap-3">
-              <Terminal className="mt-0.5 h-4 w-4 text-muted-foreground" />
+              <Terminal className="mt-0.5 h-4 w-4 text-nx-ink-3" />
               <div className="flex-1">
-                <span className="font-semibold text-foreground">Endpoint</span>
-                <p className="mt-0.5 font-mono text-[11px] text-muted-foreground" dir="ltr">
+                <span className="font-semibold text-nx-ink">Endpoint</span>
+                <p className="mt-0.5 font-mono text-[11px] text-nx-ink-2" dir="ltr">
                   {event.httpMethod ? `[${event.httpMethod}] ` : ""}
                   {event.endpoint || "—"}
                 </p>
@@ -122,10 +122,10 @@ export function EventDetailsDrawer({ event, open, onOpenChange }: EventDetailsDr
           {/* Entity Context */}
           {event.entityType && (
             <div className="flex items-start gap-3">
-              <FileCode className="mt-0.5 h-4 w-4 text-muted-foreground" />
+              <FileCode className="mt-0.5 h-4 w-4 text-nx-ink-3" />
               <div className="flex-1">
-                <span className="font-semibold text-foreground">Target Resource</span>
-                <p className="mt-0.5 text-muted-foreground">
+                <span className="font-semibold text-nx-ink">Target Resource</span>
+                <p className="mt-0.5 text-nx-ink-2">
                   {event.entityType} {event.entityId ? `(${event.entityId})` : ""}
                 </p>
               </div>
@@ -136,16 +136,16 @@ export function EventDetailsDrawer({ event, open, onOpenChange }: EventDetailsDr
           {event.errorMessage && (
             <div className="space-y-1 rounded-md border border-destructive/30 bg-destructive/10 p-3">
               <span className="font-semibold text-destructive">Failure Detail</span>
-              <p className="text-[11px] leading-relaxed text-muted-foreground">
+              <p className="text-[11px] leading-relaxed text-destructive/90">
                 {event.errorMessage}
               </p>
             </div>
           )}
 
           {/* Event / Correlation ID */}
-          <div className="space-y-2 rounded-lg border border-border/80 bg-muted/30 p-3">
+          <div className="space-y-2 rounded-lg border border-nx-line bg-nx-raised/40 p-3">
             <div className="flex items-center justify-between">
-              <span className="text-[11px] font-semibold text-muted-foreground">
+              <span className="text-[11px] font-semibold text-nx-ink-3">
                 Audit Record ID
               </span>
               <Button
@@ -158,7 +158,7 @@ export function EventDetailsDrawer({ event, open, onOpenChange }: EventDetailsDr
                 <span>{copied ? "Copied" : "Copy"}</span>
               </Button>
             </div>
-            <p className="select-all break-all font-mono text-[11px] text-foreground" dir="ltr">
+            <p className="select-all break-all font-mono text-[11px] text-nx-ink" dir="ltr">
               {event.id}
             </p>
           </div>

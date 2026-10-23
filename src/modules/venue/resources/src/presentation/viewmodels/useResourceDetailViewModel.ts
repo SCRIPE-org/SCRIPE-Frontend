@@ -1,7 +1,7 @@
 // FILE-EXCEPTION: rule bypass for existing large file
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { getVenueContainer } from "@modules/venue/di";
 import type { Facility } from "@modules/venue";
 import type { FacilityResourceProfile } from "@modules/venue";
@@ -53,6 +53,11 @@ export function useResourceDetailViewModel(resourceId: string) {
   const [taxCategories, setTaxCategories] = useState<TaxCategory[]>([]);
   const [maintenanceBlocks, setMaintenanceBlocks] = useState<ResourceBlock[]>([]);
   const [blackoutBlocks, setBlackoutBlocks] = useState<ResourceBlock[]>([]);
+  const pricingIntentRef = useRef<{
+    fingerprint: string;
+    key: string;
+    effectiveFromUtc: string;
+  } | null>(null);
 
   const loadData = useCallback(async () => {
     if (!resourceId) return;
@@ -115,13 +120,23 @@ export function useResourceDetailViewModel(resourceId: string) {
       setFeedback(null);
       try {
         await schedulableResourceRepository.update(resource.id, {
-          ...resource.data,
           name: input.name.trim(),
-          capacity: {
-            allocationMode: resource.capacity?.allocationMode ?? "SingleUnit",
-            maxConcurrentUsage: input.capacity,
-            overbookingAllowed: resource.capacity?.overbookingAllowed ?? false,
-          },
+          description: resource.description ?? null,
+          parentSchedulableResourceId: resource.parentSchedulableResourceId ?? null,
+          isComposite: resource.isComposite,
+          namedUnitLabel: resource.namedUnitLabel ?? null,
+          unitCount: resource.unitCount > 0 ? resource.unitCount : 1,
+          allocationMode: resource.capacity?.allocationMode ?? "SingleUnit",
+          maxConcurrentUsage:
+            input.capacity > 0 ? input.capacity : (resource.capacity?.maxConcurrentUsage ?? 1),
+          slotPolicy: resource.slotPolicy
+            ? {
+                slotDurationMinutes: resource.slotPolicy.slotDurationMinutes,
+                startIncrementMinutes: resource.slotPolicy.startIncrementMinutes,
+                timeZoneId: resource.slotPolicy.timeZoneId ?? null,
+                allowMultiSlot: resource.slotPolicy.allowMultiSlot ?? false,
+              }
+            : null,
         });
         setFeedback("general.saved");
         await loadData();
@@ -150,7 +165,7 @@ export function useResourceDetailViewModel(resourceId: string) {
           ? WEEK_DAYS.map((dayOfWeek) => ({
               dayOfWeek,
               startLocal: "00:00",
-              endLocal: "23:59",
+              endLocal: "23:59:59",
               capacityOverride: null,
             }))
           : input.windows && input.windows.length > 0
@@ -184,7 +199,11 @@ export function useResourceDetailViewModel(resourceId: string) {
   );
 
   const updateBookingRules = useCallback(
-    async (input: { slotDurationMinutes: number; startIncrementMinutes: number }) => {
+    async (input: {
+      slotDurationMinutes: number;
+      startIncrementMinutes: number;
+      allowMultiSlot?: boolean;
+    }) => {
       if (!resource) return false;
       setSaving(true);
       setError(null);
@@ -192,12 +211,19 @@ export function useResourceDetailViewModel(resourceId: string) {
       try {
         const timeZoneId = profile?.operatingPolicy?.timeZoneId ?? "UTC";
         await schedulableResourceRepository.update(resource.id, {
-          ...resource.data,
+          name: resource.name,
+          description: resource.description ?? null,
+          parentSchedulableResourceId: resource.parentSchedulableResourceId ?? null,
+          isComposite: resource.isComposite,
+          namedUnitLabel: resource.namedUnitLabel ?? null,
+          unitCount: resource.unitCount > 0 ? resource.unitCount : 1,
+          allocationMode: resource.capacity?.allocationMode ?? "SingleUnit",
+          maxConcurrentUsage: resource.capacity?.maxConcurrentUsage ?? 1,
           slotPolicy: {
             slotDurationMinutes: input.slotDurationMinutes,
             startIncrementMinutes: input.startIncrementMinutes,
             timeZoneId,
-            allowMultiSlot: false,
+            allowMultiSlot: input.allowMultiSlot ?? false,
           },
         });
 
@@ -223,20 +249,37 @@ export function useResourceDetailViewModel(resourceId: string) {
       try {
         const slotDuration = resource.slotPolicy?.slotDurationMinutes ?? 60;
         const startIncrement = resource.slotPolicy?.startIncrementMinutes ?? slotDuration;
+        const fingerprint = JSON.stringify([
+          resource.id,
+          input.currencyCode || "EGP",
+          input.unitPrice,
+          input.taxCategoryId ?? null,
+          slotDuration,
+          startIncrement,
+        ]);
+        if (pricingIntentRef.current?.fingerprint !== fingerprint) {
+          pricingIntentRef.current = {
+            fingerprint,
+            key: crypto.randomUUID(),
+            effectiveFromUtc: new Date(Date.now() + 15_000).toISOString(),
+          };
+        }
+        const intent = pricingIntentRef.current;
 
         await commercialPricingRepository.configureResourcePrice({
           schedulableResourceId: resource.id,
           displayName: `${resource.name} Rate`,
           currencyCode: input.currencyCode || "EGP",
           unitPrice: input.unitPrice,
-          effectiveFromUtc: new Date().toISOString(),
+          effectiveFromUtc: intent.effectiveFromUtc,
           minDurationMinutes: slotDuration,
           maxDurationMinutes: null,
           incrementMinutes: startIncrement,
           taxCategoryId: input.taxCategoryId ?? null,
-          idempotencyKey: crypto.randomUUID(),
+          idempotencyKey: intent.key,
         });
 
+        if (pricingIntentRef.current?.key === intent.key) pricingIntentRef.current = null;
         setFeedback("pricing.saved");
         await loadData();
         return true;
@@ -301,11 +344,44 @@ export function useResourceDetailViewModel(resourceId: string) {
     [availabilityRepository, loadData]
   );
 
+  const publishCourt = useCallback(async () => {
+    if (!resource) return false;
+    setSaving(true);
+    setError(null);
+    setFeedback(null);
+    try {
+      await schedulableResourceRepository.publish(resource.id);
+      setFeedback("courtPublished");
+      await loadData();
+      return true;
+    } catch (err) {
+      try {
+        const checklist = await schedulableResourceRepository.getPublicationChecklist(resource.id);
+        if (checklist && !checklist.canPublish && checklist.blockers.length > 0) {
+          const blockerText = checklist.blockers.map((b) => b.message).join("; ");
+          setError(`Publication blockers: ${blockerText}`);
+          return false;
+        }
+      } catch {
+        // Fall back to original error
+      }
+      setError(err instanceof Error ? err.message : "Failed to publish court");
+      return false;
+    } finally {
+      setSaving(false);
+    }
+  }, [loadData, resource, schedulableResourceRepository]);
+
   const isCalendar247 = Boolean(
     calendar?.windows &&
     calendar.windows.length >= 7 &&
     calendar.windows.every(
-      (w) => w.startLocal === "00:00" && (w.endLocal === "23:59" || w.endLocal === "00:00")
+      (w) =>
+        w.startLocal === "00:00" &&
+        (w.endLocal === "23:59:59" ||
+          w.endLocal === "24:00" ||
+          w.endLocal === "23:59" ||
+          w.endLocal === "00:00")
     )
   );
 
@@ -327,6 +403,7 @@ export function useResourceDetailViewModel(resourceId: string) {
     updateWorkingHours,
     updateBookingRules,
     updatePricing,
+    publishCourt,
     addClosure,
     deleteClosure,
     refresh: loadData,

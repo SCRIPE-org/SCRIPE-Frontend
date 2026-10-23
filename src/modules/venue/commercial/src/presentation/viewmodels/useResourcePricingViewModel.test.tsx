@@ -1,9 +1,14 @@
 ﻿import { act, renderHook, waitFor } from "@testing-library/react";
-import { describe, expect, it, vi } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 import { getVenueContainer } from "@modules/venue/di";
 import { useResourcePricingViewModel } from "./useResourcePricingViewModel";
 
 vi.mock("@modules/venue/di", () => ({ getVenueContainer: vi.fn() }));
+
+afterEach(() => {
+  vi.restoreAllMocks();
+  vi.unstubAllGlobals();
+});
 
 const resource = { id: "resource-1", name: "Court 1", isPublished: true, isComposite: false };
 const configuration = {
@@ -107,5 +112,62 @@ describe("useResourcePricingViewModel", () => {
         effectiveFromUtc: "2026-09-19T00:00:00.000Z",
       })
     );
+  });
+
+  it("reuses the configuration key after an ambiguous pricing response", async () => {
+    const value = container();
+    value.commercialPricingRepository.configureResourcePrice
+      .mockRejectedValueOnce(new Error("pricing response was lost after commit"))
+      .mockResolvedValueOnce(configuration);
+    vi.mocked(getVenueContainer).mockReturnValue(value as never);
+    const { result } = renderHook(() =>
+      useResourcePricingViewModel({
+        messages: { fallbackError: "unavailable", validation: "invalid" },
+      })
+    );
+    await waitFor(() => expect(result.current.currencyCode).toBe("EGP"));
+
+    await act(async () => result.current.save());
+    expect(result.current.error).toBe("pricing response was lost after commit");
+    await act(async () => result.current.save());
+
+    const calls = value.commercialPricingRepository.configureResourcePrice.mock.calls;
+    expect(calls).toHaveLength(2);
+    expect(calls[1][0].idempotencyKey).toBe(calls[0][0].idempotencyKey);
+    expect(result.current.success).toBe(true);
+  });
+
+  it("renews the intent when the payload changes or a prior save succeeds", async () => {
+    const value = container();
+    value.commercialPricingRepository.configureResourcePrice
+      .mockRejectedValueOnce(new Error("network unavailable"))
+      .mockResolvedValue(configuration)
+      .mockResolvedValue(configuration);
+    vi.mocked(getVenueContainer).mockReturnValue(value as never);
+    const randomUUID = vi
+      .fn()
+      .mockReturnValueOnce("first-intent")
+      .mockReturnValueOnce("edited-intent")
+      .mockReturnValueOnce("next-intent");
+    vi.stubGlobal("crypto", { randomUUID } as unknown as Crypto);
+    const { result } = renderHook(() =>
+      useResourcePricingViewModel({
+        messages: { fallbackError: "unavailable", validation: "invalid" },
+      })
+    );
+    await waitFor(() => expect(result.current.currencyCode).toBe("EGP"));
+
+    await act(async () => result.current.save());
+    act(() => result.current.setUnitPrice("275"));
+    await act(async () => result.current.save());
+    await act(async () => result.current.save());
+
+    const calls = value.commercialPricingRepository.configureResourcePrice.mock.calls;
+    expect(calls.map(([input]) => input.idempotencyKey)).toEqual([
+      "first-intent",
+      "edited-intent",
+      "next-intent",
+    ]);
+    expect(randomUUID).toHaveBeenCalledTimes(3);
   });
 });

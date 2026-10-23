@@ -107,7 +107,16 @@ export function useBookingWorkspaceViewModel(prefill: BookingWorkspacePrefill = 
   const [setupFeatureUnavailable, setSetupFeatureUnavailable] = useState(false);
   const submittingRef = useRef(false);
   const draftRef = useRef<{ fingerprint: string; reservationId: string } | null>(null);
+  const draftIntentKeyRef = useRef<{ fingerprint: string; key: string } | null>(null);
+  const holdKeyRef = useRef<{ fingerprint: string; key: string } | null>(null);
   const confirmKeyRef = useRef<string | null>(null);
+  const customerCreateIntentKeyRef = useRef<{ fingerprint: string; key: string } | null>(null);
+  const quoteIntentKeyRef = useRef<{
+    fingerprint: string;
+    key: string;
+    expiresAtUtc: string;
+  } | null>(null);
+  const quoteOverrideIntentKeyRef = useRef<{ fingerprint: string; key: string } | null>(null);
   const quoteGenerationRef = useRef(0);
   const [priceQuote, setPriceQuote] = useState<PriceQuote | null>(null);
   const [priceQuoteLoading, setPriceQuoteLoading] = useState(false);
@@ -145,22 +154,28 @@ export function useBookingWorkspaceViewModel(prefill: BookingWorkspacePrefill = 
     });
   }, [loadSetup]);
 
-  const setCriteria = useCallback((patch: Partial<BookingRequestCriteria>) => {
-    setCriteriaState((current) => ({
-      ...current,
-      ...patch,
-      ...(("facilityId" in patch || "resourceKindCode" in patch || "usageTypeCode" in patch) &&
-      !("resourceId" in patch)
-        ? { resourceId: "" }
-        : {}),
-    }));
-    draftRef.current = null;
-    confirmKeyRef.current = null;
-    quoteGenerationRef.current += 1;
-    setPriceQuote(null);
-    setPriceQuoteError(null);
-    dispatch({ type: "criteriaChanged" });
-  }, []);
+  const setCriteria = useCallback(
+    (patch: Partial<BookingRequestCriteria>) => {
+      setCriteriaState((current) => ({
+        ...current,
+        ...patch,
+        ...(("facilityId" in patch || "resourceKindCode" in patch || "usageTypeCode" in patch) &&
+        !("resourceId" in patch)
+          ? { resourceId: "" }
+          : {}),
+      }));
+      draftRef.current = null;
+      draftIntentKeyRef.current = null;
+      holdKeyRef.current = null;
+      confirmKeyRef.current = null;
+      bookingRepository.clearBusinessIntent();
+      quoteGenerationRef.current += 1;
+      setPriceQuote(null);
+      setPriceQuoteError(null);
+      dispatch({ type: "criteriaChanged" });
+    },
+    [bookingRepository]
+  );
 
   const searchCustomers = useCallback(
     async (query: string) => {
@@ -182,25 +197,45 @@ export function useBookingWorkspaceViewModel(prefill: BookingWorkspacePrefill = 
       setCustomerState(hydrated);
       setCustomerResults([]);
       draftRef.current = null;
+      draftIntentKeyRef.current = null;
+      holdKeyRef.current = null;
       confirmKeyRef.current = null;
+      bookingRepository.clearBusinessIntent();
       quoteGenerationRef.current += 1;
       setPriceQuote(null);
       setPriceQuoteError(null);
       dispatch({ type: "customerChanged" });
       return hydrated;
     },
-    [customerRepository]
+    [bookingRepository, customerRepository]
   );
 
   const createCustomer = useCallback(
-    async (displayName: string, type?: "Person" | "Organization") => {
+    async (displayName: string, type?: "Person" | "Organization", phone?: string) => {
       setCustomerSearching(true);
       try {
-        const created = await customerRepository.create(displayName, type);
+        const intentFingerprint = JSON.stringify([
+          displayName.trim(),
+          type ?? "Person",
+          phone?.trim() || null,
+        ]);
+        if (customerCreateIntentKeyRef.current?.fingerprint !== intentFingerprint) {
+          customerCreateIntentKeyRef.current = {
+            fingerprint: intentFingerprint,
+            key: crypto.randomUUID(),
+          };
+        }
+        const created = await customerRepository.create(displayName, type, phone, {
+          idempotencyKey: customerCreateIntentKeyRef.current.key,
+        });
         setCustomerState(created);
         setCustomerResults([]);
         draftRef.current = null;
+        draftIntentKeyRef.current = null;
+        holdKeyRef.current = null;
+        customerCreateIntentKeyRef.current = null;
         confirmKeyRef.current = null;
+        bookingRepository.clearBusinessIntent();
         quoteGenerationRef.current += 1;
         setPriceQuote(null);
         setPriceQuoteError(null);
@@ -210,18 +245,21 @@ export function useBookingWorkspaceViewModel(prefill: BookingWorkspacePrefill = 
         setCustomerSearching(false);
       }
     },
-    [customerRepository]
+    [bookingRepository, customerRepository]
   );
 
   const clearCustomer = useCallback(() => {
     setCustomerState(null);
     draftRef.current = null;
+    draftIntentKeyRef.current = null;
+    holdKeyRef.current = null;
     confirmKeyRef.current = null;
+    bookingRepository.clearBusinessIntent();
     quoteGenerationRef.current += 1;
     setPriceQuote(null);
     setPriceQuoteError(null);
     dispatch({ type: "customerChanged" });
-  }, []);
+  }, [bookingRepository]);
 
   const { facilityId, resourceKindCode, usageTypeCode } = criteria;
 
@@ -283,8 +321,11 @@ export function useBookingWorkspaceViewModel(prefill: BookingWorkspacePrefill = 
     const settled = await Promise.allSettled(
       matchingResources.map(async (resource) => {
         const profile = profileById.get(resource.facilityResourceProfileId)!;
-        const timeZoneId = profile.operatingPolicy?.timeZoneId;
-        if (!timeZoneId) throw new Error("booking-timezone-missing");
+        const timeZoneId =
+          resource.slotPolicy?.timeZoneId ||
+          profile?.operatingPolicy?.timeZoneId ||
+          (typeof Intl !== "undefined" ? Intl.DateTimeFormat().resolvedOptions().timeZone : "") ||
+          "UTC";
         const result = await availabilityRepository.search({
           resourceId: resource.id,
           timeZoneId,
@@ -365,6 +406,26 @@ export function useBookingWorkspaceViewModel(prefill: BookingWorkspacePrefill = 
         const configuration = await commercialPricingRepository.getResourceConfiguration(
           candidate.resourceId
         );
+        const quoteFingerprint = JSON.stringify([
+          customer.id,
+          candidate.resourceId,
+          configuration.offeringId,
+          configuration.currencyCode,
+          candidate.requestedQuantity,
+          candidate.startUtc,
+          candidate.endUtc,
+        ]);
+        if (
+          quoteIntentKeyRef.current?.fingerprint !== quoteFingerprint ||
+          Date.parse(quoteIntentKeyRef.current.expiresAtUtc) <= Date.now()
+        ) {
+          quoteIntentKeyRef.current = {
+            fingerprint: quoteFingerprint,
+            key: crypto.randomUUID(),
+            expiresAtUtc: new Date(Date.now() + 30 * 60 * 1000).toISOString(),
+          };
+        }
+        const quoteIntent = quoteIntentKeyRef.current;
         const quote = await commercialPricingRepository.calculateQuote({
           offeringId: configuration.offeringId,
           resourceId: candidate.resourceId,
@@ -373,10 +434,13 @@ export function useBookingWorkspaceViewModel(prefill: BookingWorkspacePrefill = 
           requestedStartUtc: candidate.startUtc,
           requestedEndUtc: candidate.endUtc,
           currencyCode: configuration.currencyCode,
-          expiresAtUtc: new Date(Date.now() + 30 * 60 * 1000).toISOString(),
-          idempotencyKey: crypto.randomUUID(),
+          expiresAtUtc: quoteIntent.expiresAtUtc,
+          idempotencyKey: quoteIntent.key,
         });
-        if (generation === quoteGenerationRef.current) setPriceQuote(quote);
+        if (generation === quoteGenerationRef.current) {
+          setPriceQuote(quote);
+          if (quoteIntentKeyRef.current?.key === quoteIntent.key) quoteIntentKeyRef.current = null;
+        }
       } catch (error) {
         if (generation === quoteGenerationRef.current) {
           setPriceQuoteError(errorMessage(error, "booking-quote-failed"));
@@ -401,16 +465,24 @@ export function useBookingWorkspaceViewModel(prefill: BookingWorkspacePrefill = 
       setPriceOverrideLoading(true);
       setPriceQuoteError(null);
       try {
+        const fingerprint = JSON.stringify([priceQuote.id, adjustmentAmount, reason.trim()]);
+        if (quoteOverrideIntentKeyRef.current?.fingerprint !== fingerprint) {
+          quoteOverrideIntentKeyRef.current = { fingerprint, key: crypto.randomUUID() };
+        }
+        const overrideIntent = quoteOverrideIntentKeyRef.current;
         const applied = await commercialPricingRepository.overrideQuote(priceQuote.id, {
           adjustmentAmount,
           reason: reason.trim(),
-          idempotencyKey: crypto.randomUUID(),
+          idempotencyKey: overrideIntent.key,
         });
         setPriceQuote((current) =>
           current && current.id === priceQuote.id
             ? { ...current, grandTotal: applied.overriddenGrandTotal }
             : current
         );
+        if (quoteOverrideIntentKeyRef.current?.key === overrideIntent.key) {
+          quoteOverrideIntentKeyRef.current = null;
+        }
         return true;
       } catch (error) {
         setPriceQuoteError(errorMessage(error, "booking-quote-override-failed"));
@@ -435,8 +507,18 @@ export function useBookingWorkspaceViewModel(prefill: BookingWorkspacePrefill = 
     dispatch({ type: "holding" });
     try {
       const fingerprint = candidateFingerprint(state.selectedCandidate, customer.id);
+      const businessIntent = await bookingRepository.getOrCreateBusinessIntent(
+        fingerprint,
+        priceQuote.id
+      );
       let reservationId =
         draftRef.current?.fingerprint === fingerprint ? draftRef.current.reservationId : null;
+      let draftIntent = draftIntentKeyRef.current;
+      if (!draftIntent || draftIntent.fingerprint !== fingerprint) {
+        draftIntent = { fingerprint, key: businessIntent.draftIdempotencyKey };
+        draftIntentKeyRef.current = draftIntent;
+        holdKeyRef.current = null;
+      }
       if (!reservationId) {
         const draft = await bookingRepository.createDraft({
           resourceId: state.selectedCandidate.resourceId,
@@ -444,18 +526,29 @@ export function useBookingWorkspaceViewModel(prefill: BookingWorkspacePrefill = 
           requestedStartUtc: state.selectedCandidate.startUtc,
           requestedEndUtc: state.selectedCandidate.endUtc,
           quantity: state.selectedCandidate.requestedQuantity,
+          idempotencyKey: draftIntent.key,
         });
         reservationId = draft.id;
         draftRef.current = { fingerprint, reservationId };
         dispatch({ type: "holding", reservationId });
       }
 
-      const hold = await bookingRepository.createHold(reservationId, crypto.randomUUID());
+      let holdIntent = holdKeyRef.current;
+      if (!holdIntent || holdIntent.fingerprint !== fingerprint) {
+        holdIntent = { fingerprint, key: businessIntent.holdIdempotencyKey };
+        holdKeyRef.current = holdIntent;
+      }
+      const hold = await bookingRepository.createHold(reservationId, holdIntent.key);
       const reservation = await bookingRepository.getReservation(reservationId);
-      confirmKeyRef.current = crypto.randomUUID();
+      confirmKeyRef.current = businessIntent.confirmIdempotencyKey;
       dispatch({ type: "held", result: hold, reservation });
     } catch (error) {
       if (isOperationalConflict(error)) {
+        draftRef.current = null;
+        draftIntentKeyRef.current = null;
+        holdKeyRef.current = null;
+        confirmKeyRef.current = null;
+        bookingRepository.clearBusinessIntent();
         dispatch({ type: "holdConflict" });
       } else if (isFeatureUnavailable(error)) {
         dispatch({ type: "featureUnavailable" });
@@ -469,9 +562,12 @@ export function useBookingWorkspaceViewModel(prefill: BookingWorkspacePrefill = 
 
   const markHoldExpired = useCallback(() => {
     draftRef.current = null;
+    draftIntentKeyRef.current = null;
+    holdKeyRef.current = null;
     confirmKeyRef.current = null;
+    bookingRepository.clearBusinessIntent();
     dispatch({ type: "holdExpired" });
-  }, []);
+  }, [bookingRepository]);
 
   const confirm = useCallback(async () => {
     if (
@@ -479,50 +575,81 @@ export function useBookingWorkspaceViewModel(prefill: BookingWorkspacePrefill = 
       state.stage !== "held" ||
       !state.reservationId ||
       !state.hold ||
-      !priceQuote
+      !priceQuote ||
+      !customer ||
+      !state.selectedCandidate
     )
       return;
     if (Date.parse(state.hold.expiresAtUtc) <= Date.now()) {
+      draftRef.current = null;
+      draftIntentKeyRef.current = null;
+      holdKeyRef.current = null;
+      bookingRepository.clearBusinessIntent();
+      confirmKeyRef.current = null;
       dispatch({ type: "holdExpired" });
       return;
     }
     submittingRef.current = true;
     dispatch({ type: "confirming" });
     try {
-      const key = confirmKeyRef.current ?? crypto.randomUUID();
+      const fingerprint = candidateFingerprint(state.selectedCandidate, customer.id);
+      const businessIntent = await bookingRepository.getOrCreateBusinessIntent(
+        fingerprint,
+        priceQuote.id
+      );
+      const key = confirmKeyRef.current ?? businessIntent.confirmIdempotencyKey;
       confirmKeyRef.current = key;
       await bookingRepository.confirm(state.reservationId, key, priceQuote.id);
       const reservation = await bookingRepository.getReservation(state.reservationId);
+      bookingRepository.clearBusinessIntent();
+      draftRef.current = null;
+      draftIntentKeyRef.current = null;
+      holdKeyRef.current = null;
+      confirmKeyRef.current = null;
       dispatch({ type: "confirmed", reservation });
     } catch (error) {
       if (isOperationalConflict(error)) {
         draftRef.current = null;
+        draftIntentKeyRef.current = null;
+        holdKeyRef.current = null;
         confirmKeyRef.current = null;
+        bookingRepository.clearBusinessIntent();
         dispatch({ type: "holdExpired" });
       } else if (isFeatureUnavailable(error)) {
         dispatch({ type: "featureUnavailable" });
       } else {
         dispatch({
-          type: "operationFailed",
+          type: "confirmationFailed",
           message: errorMessage(error, "booking-confirm-failed"),
         });
       }
     } finally {
       submittingRef.current = false;
     }
-  }, [bookingRepository, priceQuote, state.hold, state.reservationId, state.stage]);
+  }, [
+    bookingRepository,
+    customer,
+    priceQuote,
+    state.hold,
+    state.reservationId,
+    state.selectedCandidate,
+    state.stage,
+  ]);
 
   const createAnother = useCallback(() => {
     setCustomerState(null);
     setCustomerResults([]);
     setCriteriaState((current) => ({ ...initialBookingCriteria, facilityId: current.facilityId }));
     draftRef.current = null;
+    draftIntentKeyRef.current = null;
+    holdKeyRef.current = null;
     confirmKeyRef.current = null;
+    bookingRepository.clearBusinessIntent();
     quoteGenerationRef.current += 1;
     setPriceQuote(null);
     setPriceQuoteError(null);
     dispatch({ type: "reset" });
-  }, []);
+  }, [bookingRepository]);
 
   const resourceOptions = useMemo(() => {
     const profileIds = new Set(applicableProfiles.map((profile) => profile.id));

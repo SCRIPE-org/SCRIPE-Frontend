@@ -84,8 +84,9 @@ export function EmptyState({
   return (
     <div
       role="status"
+      data-empty-state-entrance=""
       className={cn(
-        "flex flex-col items-center justify-center px-6 text-center",
+        "nx-empty-state-entrance flex flex-col items-center justify-center px-6 text-center",
         s.wrap,
         // --nx-hover is the 5% ink tint that layers over any nx surface — the
         // faintest legal wash, which is all an empty container should carry.

@@ -11,7 +11,27 @@ vi.mock("next/navigation", () => ({
 
 vi.mock("@core/providers/i18n-provider", () => ({
   useI18n: () => ({
-    t: (key: string, opts?: { defaultValue?: string }) => opts?.defaultValue || key,
+    t: (key: string, opts?: { defaultValue?: string }) => {
+      const map: Record<string, string> = {
+        "resources.title": "Courts & Spaces",
+        "resources.subtitle":
+          "Manage your courts, spaces, working hours, booking slots, and pricing.",
+        "resources.addCourt": "+ Add Court / Space",
+        "resources.advancedSetup": "Settings",
+        "resources.empty.title": "No courts or spaces yet",
+        "resources.empty.action": "Start Setup Journey",
+        "resources.card.viewEdit": "Edit",
+        "resources.card.calendar": "Calendar",
+        "resources.card.book": "Book",
+        "resources.card.slot": "min slots",
+        "resources.card.perSlot": "/ slot",
+        "resources.card.open247": "Open 24/7",
+        "resources.tabs.workingHours": "Working Hours",
+        "resources.tabs.bookingRules": "Booking Rules",
+        "resources.tabs.pricing": "Pricing",
+      };
+      return map[key] ?? opts?.defaultValue ?? key;
+    },
     language: "en",
     direction: "ltr",
   }),
@@ -68,6 +88,15 @@ describe("ResourcesWorkspaceView", () => {
       wizardOpen: false,
       setWizardOpen: vi.fn(),
       wizardSubmitting: false,
+      lastSetupResults: [],
+      metrics: {
+        totalSpaces: 1,
+        activeSpaces: 1,
+        readySpaces: 1,
+        activatingSpaces: 0,
+        setupRequired: 0,
+        branchCount: 1,
+      },
       executeFirstTimeSetup: vi.fn(),
       refresh: vi.fn(),
     });
@@ -75,10 +104,10 @@ describe("ResourcesWorkspaceView", () => {
     render(<ResourcesWorkspaceView />);
 
     expect(screen.getByTestId("venue-resources-workspace")).toBeInTheDocument();
-    expect(screen.getByRole("heading", { name: "Courts & Fields" })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "Courts & Spaces" })).toBeInTheDocument();
     expect(screen.getByText("Padel Court 1")).toBeInTheDocument();
     expect(screen.getByText("800 EGP")).toBeInTheDocument();
-    expect(screen.getByText("Advanced Settings")).toBeInTheDocument();
+    expect(screen.getAllByText("Settings")[0]).toBeInTheDocument();
   });
 
   it("renders empty state when no items exist", () => {
@@ -95,17 +124,26 @@ describe("ResourcesWorkspaceView", () => {
       wizardOpen: false,
       setWizardOpen: vi.fn(),
       wizardSubmitting: false,
+      lastSetupResults: [],
+      metrics: {
+        totalSpaces: 0,
+        activeSpaces: 0,
+        readySpaces: 0,
+        activatingSpaces: 0,
+        setupRequired: 0,
+        branchCount: 0,
+      },
       executeFirstTimeSetup: vi.fn(),
       refresh: vi.fn(),
     });
 
     render(<ResourcesWorkspaceView />);
 
-    expect(screen.getByText("No courts or fields yet")).toBeInTheDocument();
+    expect(screen.getByText("No courts or spaces yet")).toBeInTheDocument();
     expect(screen.getByText("Start Setup Journey")).toBeInTheDocument();
   });
 
-  it("opens wizard when + Add Court / Field button is clicked", () => {
+  it("opens wizard when + Add Court / Space button is clicked", () => {
     vi.mocked(useResourcesWorkspaceViewModel).mockReturnValue({
       loading: false,
       error: null,
@@ -119,6 +157,15 @@ describe("ResourcesWorkspaceView", () => {
       wizardOpen: false,
       setWizardOpen: vi.fn(),
       wizardSubmitting: false,
+      lastSetupResults: [],
+      metrics: {
+        totalSpaces: 1,
+        activeSpaces: 1,
+        readySpaces: 1,
+        activatingSpaces: 0,
+        setupRequired: 0,
+        branchCount: 0,
+      },
       executeFirstTimeSetup: vi.fn(),
       refresh: vi.fn(),
     });
@@ -127,6 +174,6 @@ describe("ResourcesWorkspaceView", () => {
 
     const addButtons = screen.getAllByRole("button", { name: /\+ Add Court/i });
     fireEvent.click(addButtons[0]);
-    expect(screen.getByText("1. Branch")).toBeInTheDocument();
+    expect(screen.getByText("1. WHERE")).toBeInTheDocument();
   });
 });

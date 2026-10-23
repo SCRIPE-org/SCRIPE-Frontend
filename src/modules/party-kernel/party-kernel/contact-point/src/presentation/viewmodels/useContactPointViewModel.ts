@@ -9,12 +9,13 @@
 import { useCrudViewModel } from "@core/crud/hooks/useCrudViewModel";
 import { getPartyKernelContainer } from "../../../../di";
 import type { ContactPoint } from "../../domain/entities/ContactPoint";
+import { useCallback } from "react";
 
 /**
  * Documentation for module export
  */
 export function useContactPointViewModel() {
-  const { contactPointRepository } = getPartyKernelContainer();
+  const { contactPointRepository, partyRepository } = getPartyKernelContainer();
 
   const vm = useCrudViewModel(
     ["contactPoint"],
@@ -50,5 +51,20 @@ export function useContactPointViewModel() {
     { deferSuccessEffects: true }
   );
 
-  return { vm };
+  const lookupParties = useCallback(
+    async (query: string) => {
+      const res = await partyRepository.lookupContacts({
+        search: query,
+        type: "all",
+        pageSize: 20,
+      });
+      return (res.items || []).map((p) => ({
+        value: p.id,
+        label: p.displayName || p.fullName || "—",
+      }));
+    },
+    [partyRepository]
+  );
+
+  return { vm, lookupParties };
 }

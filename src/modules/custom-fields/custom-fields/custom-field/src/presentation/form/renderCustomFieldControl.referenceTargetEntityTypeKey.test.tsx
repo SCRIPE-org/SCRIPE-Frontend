@@ -53,6 +53,7 @@ vi.mock("../../../../entity-lookup/src/presentation/hooks/useEntityLookupSearch"
       isLoading: false,
       isLoadingMore: false,
       hasNextPage: false,
+      mayHaveMoreResults: false,
       loadMore: vi.fn(),
       error: null,
       reload: vi.fn(),

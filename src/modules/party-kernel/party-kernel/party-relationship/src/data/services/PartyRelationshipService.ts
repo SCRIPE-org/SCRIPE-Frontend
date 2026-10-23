@@ -6,7 +6,7 @@
  */
 import type { IApiService } from "@core/interfaces/api.interface";
 import { buildUrl } from "@/core/config/api-endpoints/_shared";
-import { PARTYKERNEL_ENDPOINTS } from "@modules/party-kernel/party-kernel.endpoints";
+import { PARTY_RELATIONSHIP_ENDPOINTS } from "./party-relationship.endpoints";
 import {
   PartyRelationshipModel,
   type PartyRelationshipJson,
@@ -17,10 +17,8 @@ import type {
   PartyRelationshipListResult,
 } from "../../domain/interfaces/IPartyRelationshipService";
 
-const BASE_URL = PARTYKERNEL_ENDPOINTS.PARTY_RELATIONSHIPS.LIST;
-
 /**
- * Documentation for module export
+ * Service implementation for PartyRelationship operations
  */
 export class PartyRelationshipService implements IPartyRelationshipService {
   constructor(private readonly api: IApiService) {}
@@ -29,11 +27,13 @@ export class PartyRelationshipService implements IPartyRelationshipService {
     page: number;
     pageSize: number;
     search?: string;
+    partyId?: string;
   }): Promise<PartyRelationshipListResult> {
-    const url = buildUrl(BASE_URL, {
+    const url = buildUrl(PARTY_RELATIONSHIP_ENDPOINTS.LIST, {
       page: params.page,
       pageSize: params.pageSize,
       search: params.search,
+      partyId: params.partyId,
     });
 
     const response = await this.api.get<PartyRelationshipListResponseJson>(url);
@@ -50,19 +50,19 @@ export class PartyRelationshipService implements IPartyRelationshipService {
   }
 
   async getById(id: string): Promise<PartyRelationshipModel> {
-    const json = await this.api.get<PartyRelationshipJson>(`${BASE_URL}/${id}`);
+    const json = await this.api.get<PartyRelationshipJson>(PARTY_RELATIONSHIP_ENDPOINTS.BY_ID(id));
     return PartyRelationshipModel.fromJson(json);
   }
 
   async create(data: Record<string, unknown>): Promise<{ id: string }> {
-    return this.api.post<{ id: string }>(BASE_URL, data);
+    return this.api.post<{ id: string }>(PARTY_RELATIONSHIP_ENDPOINTS.CREATE, data);
   }
 
   async update(id: string, data: Record<string, unknown>): Promise<void> {
-    await this.api.put(`${BASE_URL}/${id}`, data);
+    await this.api.put(PARTY_RELATIONSHIP_ENDPOINTS.UPDATE(id), data);
   }
 
   async delete(id: string): Promise<void> {
-    await this.api.delete(`${BASE_URL}/${id}`);
+    await this.api.delete(PARTY_RELATIONSHIP_ENDPOINTS.DELETE(id));
   }
 }

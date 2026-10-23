@@ -62,17 +62,17 @@ export function HealthHeader({
   const currentRangeLabel = ranges.find((r) => r.key === timeRange)?.label ?? ranges[1].label;
 
   return (
-    <header className="flex flex-col gap-4 border-b border-border/80 pb-4 lg:flex-row lg:items-end lg:justify-between">
+    <header className="flex flex-col gap-4 border-b border-nx-line pb-4 lg:flex-row lg:items-end lg:justify-between">
       <div className="min-w-0">
         <div className="flex items-center gap-2">
           <p className="text-[11px] font-bold uppercase tracking-[0.16em] text-primary">
             {t("platformHealth.eyebrow") || "MONITORING"}
           </p>
         </div>
-        <h1 className="mt-1 text-2xl font-extrabold leading-tight tracking-tight text-foreground sm:text-3xl">
+        <h1 className="mt-1 text-2xl font-extrabold leading-tight tracking-tight text-nx-ink sm:text-3xl">
           {t("platformHealth.title") || "Platform Health"}
         </h1>
-        <p className="mt-1 max-w-2xl text-xs text-muted-foreground sm:text-sm">
+        <p className="mt-1 max-w-2xl text-xs text-nx-ink-3 sm:text-sm">
           {t("platformHealth.subtitle") ||
             "Real-time health and performance of the SCRIPE platform, its infrastructure, services and external dependencies."}
         </p>
@@ -81,18 +81,18 @@ export function HealthHeader({
       {/* Header Right Actions */}
       <div className="flex flex-wrap items-center gap-2">
         {/* Operational State Pill */}
-        <span className="shadow-xs inline-flex items-center gap-2 rounded-lg border border-border bg-card px-3 py-1.5 text-xs font-medium">
+        <span className="inline-flex items-center gap-2 rounded-lg border border-nx-line bg-nx-surface px-3 py-1.5 text-xs font-medium">
           <span
             className={`h-2 w-2 rounded-full ${
               isHealthy
-                ? "bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.7)]"
+                ? "bg-success shadow-[0_0_8px_rgba(34,197,94,0.7)]"
                 : isDegraded
-                  ? "bg-amber-500 shadow-[0_0_8px_rgba(245,158,11,0.7)]"
-                  : "bg-rose-500 shadow-[0_0_8px_rgba(244,63,94,0.7)]"
+                  ? "bg-warning shadow-[0_0_8px_rgba(234,179,8,0.7)]"
+                  : "bg-destructive shadow-[0_0_8px_rgba(239,68,68,0.7)]"
             }`}
             aria-hidden="true"
           />
-          <span className="text-foreground">{statusLabel}</span>
+          <span className="text-nx-ink">{statusLabel}</span>
         </span>
 
         {/* Live Data Toggle Indicator */}
@@ -102,17 +102,17 @@ export function HealthHeader({
           size="sm"
           onClick={() => setAutoRefresh(!autoRefresh)}
           title={autoRefresh ? "Telemetry live stream active (8s)" : "Telemetry stream paused"}
-          className={`h-8.5 shadow-xs cursor-pointer gap-1.5 border-border bg-card px-3 text-xs font-semibold transition-colors ${
+          className={`h-8.5 cursor-pointer gap-1.5 border-nx-line bg-nx-surface px-3 text-xs font-semibold transition-colors ${
             autoRefresh
-              ? "border-primary/40 bg-primary/5 text-foreground"
-              : "text-muted-foreground hover:text-foreground"
+              ? "border-primary/40 bg-primary/10 text-nx-ink"
+              : "text-nx-ink-3 hover:text-nx-ink"
           }`}
         >
           <span
             className={`h-2 w-2 rounded-full ${
               autoRefresh
-                ? "animate-pulse bg-primary shadow-[0_0_6px_rgba(132,204,22,0.8)]"
-                : "bg-muted-foreground/60"
+                ? "animate-pulse bg-primary shadow-[0_0_6px_rgba(198,255,0,0.8)]"
+                : "bg-nx-ink-3/60"
             }`}
           />
           <Sparkles className="h-3.5 w-3.5 text-primary" />
@@ -125,19 +125,19 @@ export function HealthHeader({
             <Button
               variant="outline"
               size="sm"
-              className="h-8.5 shadow-xs cursor-pointer gap-2 border-border bg-card px-3 text-xs font-semibold text-foreground hover:bg-accent"
+              className="h-8.5 cursor-pointer gap-2 border-nx-line bg-nx-surface px-3 text-xs font-semibold text-nx-ink hover:bg-nx-raised"
             >
-              <Calendar className="h-3.5 w-3.5 text-muted-foreground" />
+              <Calendar className="h-3.5 w-3.5 text-nx-ink-3" />
               <span>{currentRangeLabel}</span>
             </Button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" className="w-40">
+          <DropdownMenuContent align="end" className="w-40 border-nx-line bg-nx-surface text-nx-ink">
             {ranges.map((range) => (
               <DropdownMenuItem
                 key={range.key}
                 onClick={() => setTimeRange(range.key)}
                 className={`cursor-pointer text-xs ${
-                  timeRange === range.key ? "font-semibold text-primary" : ""
+                  timeRange === range.key ? "font-semibold text-primary" : "text-nx-ink"
                 }`}
               >
                 {range.label}
@@ -153,7 +153,7 @@ export function HealthHeader({
           size="sm"
           onClick={() => refetch()}
           disabled={isRefetching}
-          className="h-8.5 shadow-xs cursor-pointer gap-1.5 border-border bg-card px-3 text-xs font-semibold text-foreground hover:bg-accent"
+          className="h-8.5 cursor-pointer gap-1.5 border-nx-line bg-nx-surface px-3 text-xs font-semibold text-nx-ink hover:bg-nx-raised"
         >
           <RotateCw className={`h-3.5 w-3.5 ${isRefetching ? "animate-spin text-primary" : ""}`} />
           <span className="hidden sm:inline">
@@ -169,7 +169,7 @@ export function HealthHeader({
           variant="outline"
           size="sm"
           asChild
-          className="h-8.5 shadow-xs gap-1.5 border-border bg-card px-3 text-xs font-semibold text-foreground hover:bg-accent"
+          className="h-8.5 gap-1.5 border-nx-line bg-nx-surface px-3 text-xs font-semibold text-nx-ink hover:bg-nx-raised"
         >
           <a
             href="/health"
@@ -178,7 +178,7 @@ export function HealthHeader({
             title="Open raw health probe endpoint"
           >
             <span>{t("platformHealth.viewStatusPage") || "View Status Page"}</span>
-            <ExternalLink className="h-3 w-3 text-muted-foreground" />
+            <ExternalLink className="h-3 w-3 text-nx-ink-3" />
           </a>
         </Button>
       </div>

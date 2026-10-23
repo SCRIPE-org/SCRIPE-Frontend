@@ -24,6 +24,7 @@ export interface IMergeCandidateService {
     page: number;
     pageSize: number;
     search?: string;
+    partyId?: string;
   }): Promise<MergeCandidateListResult>;
   getById(id: string): Promise<MergeCandidateModel>;
   create(data: Record<string, unknown>): Promise<{ id: string }>;

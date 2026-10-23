@@ -3,6 +3,7 @@
 
 import React from "react";
 import { Building2, Users, ShieldAlert, Activity } from "lucide-react";
+import { Card } from "@core/ui/card";
 import { useI18n } from "@core/providers/i18n-provider";
 import type { DashboardSummary } from "@modules/monitoring/dashboard/src/domain/entities/DashboardEntities";
 import type { usePlatformHealthViewModel } from "@modules/monitoring/platform-health/src/presentation/viewmodels/usePlatformHealthViewModel";
@@ -58,20 +59,20 @@ export function PlatformKpiCards({
   return (
     <div className="grid grid-cols-1 gap-3.5 sm:grid-cols-2 lg:grid-cols-4">
       {/* 1. Total Tenants */}
-      <div className="relative flex h-[92px] items-center justify-between gap-3 overflow-hidden rounded-xl border border-border bg-card p-3.5 shadow-sm before:absolute before:left-0 before:right-0 before:top-0 before:h-[1px] before:bg-gradient-to-r before:from-transparent before:via-sky-500/20 before:to-transparent">
+      <Card className="relative flex h-[92px] items-center justify-between gap-3 overflow-hidden border-nx-line bg-nx-surface p-3.5 text-nx-ink transition-[border-color,background-color] duration-nx-micro hover:border-nx-line-hi">
         <div className="flex min-w-0 items-center gap-3">
-          <div className="flex h-[42px] w-[42px] shrink-0 items-center justify-center rounded-lg border border-sky-500/20 bg-sky-500/10 text-sky-400">
+          <div className="flex h-[42px] w-[42px] shrink-0 items-center justify-center rounded-nx-md border border-info/30 bg-info/10 text-info">
             <Building2 className="h-5 w-5" />
           </div>
           <div className="min-w-0">
-            <span className="block truncate text-[11.5px] text-muted-foreground">
+            <span className="block truncate text-[11.5px] text-nx-ink-3">
               {t("platformCommandCenter.kpis.tenants") || "Total Tenants"}
             </span>
             <div className="mt-0.5 flex items-baseline gap-2">
-              <span className="font-mono text-2xl font-bold tracking-tight text-foreground">
+              <span className="font-mono text-2xl font-bold tracking-tight text-nx-ink">
                 {isLoading ? "..." : totalTenants.toLocaleString()}
               </span>
-              <span className="truncate text-[10.5px] font-bold text-emerald-500">
+              <span className="truncate text-[10.5px] font-bold text-success">
                 {t("platformCommandCenter.kpis.activeTenantsRatio", {
                   active: activeTenants,
                   total: totalTenants,
@@ -82,7 +83,7 @@ export function PlatformKpiCards({
         </div>
 
         {/* Sparkline */}
-        <div className="h-[32px] w-[84px] shrink-0 text-emerald-500">
+        <div className="h-[32px] w-[84px] shrink-0 text-success">
           <svg viewBox="0 0 100 40" className="h-full w-full overflow-visible">
             <polyline
               fill="none"
@@ -95,35 +96,35 @@ export function PlatformKpiCards({
               cy="8"
               r="3"
               fill="currentColor"
-              className="drop-shadow-[0_0_6px_rgba(16,185,129,0.7)]"
+              className="drop-shadow-[0_0_6px_var(--success)]"
             />
           </svg>
         </div>
-      </div>
+      </Card>
 
       {/* 2. Platform Health */}
-      <div className="relative flex h-[92px] items-center justify-between gap-3 overflow-hidden rounded-xl border border-border bg-card p-3.5 shadow-sm before:absolute before:left-0 before:right-0 before:top-0 before:h-[1px] before:bg-gradient-to-r before:from-transparent before:via-primary/20 before:to-transparent">
+      <Card className="relative flex h-[92px] items-center justify-between gap-3 overflow-hidden border-nx-line bg-nx-surface p-3.5 text-nx-ink transition-[border-color,background-color] duration-nx-micro hover:border-nx-line-hi">
         <div className="flex min-w-0 items-center gap-3">
           <div
-            className={`flex h-[42px] w-[42px] shrink-0 items-center justify-center rounded-lg border ${
+            className={`flex h-[42px] w-[42px] shrink-0 items-center justify-center rounded-nx-md border ${
               degradedCount === 0
-                ? "border-[#84cc16]/20 bg-[#84cc16]/10 text-[#84cc16]"
-                : "border-amber-500/20 bg-amber-500/10 text-amber-500"
+                ? "border-success/30 bg-success/10 text-success"
+                : "border-warning/30 bg-warning/10 text-warning"
             }`}
           >
             <Activity className="h-5 w-5" />
           </div>
           <div className="min-w-0">
-            <span className="block truncate text-[11.5px] text-muted-foreground">
+            <span className="block truncate text-[11.5px] text-nx-ink-3">
               {t("platformCommandCenter.kpis.serviceHealth") || "Platform Health"}
             </span>
             <div className="mt-0.5 flex items-baseline gap-2">
-              <span className="font-mono text-2xl font-bold tracking-tight text-foreground">
+              <span className="font-mono text-2xl font-bold tracking-tight text-nx-ink">
                 {isLoading ? "..." : overallHealth}
               </span>
               <span
                 className={`truncate text-[10.5px] font-bold ${
-                  degradedCount === 0 ? "text-emerald-500" : "text-amber-500"
+                  degradedCount === 0 ? "text-success" : "text-warning"
                 }`}
               >
                 {degradedCount === 0 ? "" : `${degradedCount} degraded`}
@@ -135,7 +136,7 @@ export function PlatformKpiCards({
         {/* Sparkline Area */}
         <div
           className={`h-[32px] w-[84px] shrink-0 ${
-            degradedCount === 0 ? "text-emerald-500" : "text-amber-500"
+            degradedCount === 0 ? "text-success" : "text-warning"
           }`}
         >
           <svg viewBox="0 0 100 40" className="h-full w-full overflow-visible">
@@ -157,27 +158,27 @@ export function PlatformKpiCards({
             />
           </svg>
         </div>
-      </div>
+      </Card>
 
       {/* 3. Active Admins */}
-      <div className="relative flex h-[92px] items-center justify-between gap-3 overflow-hidden rounded-xl border border-border bg-card p-3.5 shadow-sm before:absolute before:left-0 before:right-0 before:top-0 before:h-[1px] before:bg-gradient-to-r before:from-transparent before:via-blue-500/20 before:to-transparent">
+      <Card className="relative flex h-[92px] items-center justify-between gap-3 overflow-hidden border-nx-line bg-nx-surface p-3.5 text-nx-ink transition-[border-color,background-color] duration-nx-micro hover:border-nx-line-hi">
         <div className="flex min-w-0 items-center gap-3">
-          <div className="flex h-[42px] w-[42px] shrink-0 items-center justify-center rounded-lg border border-blue-500/20 bg-blue-500/10 text-blue-400">
+          <div className="flex h-[42px] w-[42px] shrink-0 items-center justify-center rounded-nx-md border border-primary/20 bg-primary/10 text-primary">
             <Users className="h-5 w-5" />
           </div>
           <div className="min-w-0">
-            <span className="block truncate text-[11.5px] text-muted-foreground">
+            <span className="block truncate text-[11.5px] text-nx-ink-3">
               {t("platformCommandCenter.kpis.platformAdmins") || "Active Admins"}
             </span>
             <div className="mt-0.5 flex items-baseline gap-2">
-              <span className="font-mono text-2xl font-bold tracking-tight text-foreground">
+              <span className="font-mono text-2xl font-bold tracking-tight text-nx-ink">
                 {isLoading
                   ? "..."
                   : activeAdmins > 0
                     ? activeAdmins.toLocaleString()
                     : totalAdmins.toLocaleString()}
               </span>
-              <span className="truncate text-[10.5px] font-bold text-emerald-500">
+              <span className="truncate text-[10.5px] font-bold text-success">
                 {t("platformCommandCenter.kpis.activeAdminsRatio", {
                   active: activeAdmins,
                   total: totalAdmins,
@@ -188,7 +189,7 @@ export function PlatformKpiCards({
         </div>
 
         {/* Sparkline */}
-        <div className="h-[32px] w-[84px] shrink-0 text-emerald-500">
+        <div className="h-[32px] w-[84px] shrink-0 text-success">
           <svg viewBox="0 0 100 40" className="h-full w-full overflow-visible">
             <polyline
               fill="none"
@@ -201,35 +202,35 @@ export function PlatformKpiCards({
               cy="10"
               r="3"
               fill="currentColor"
-              className="drop-shadow-[0_0_6px_rgba(16,185,129,0.7)]"
+              className="drop-shadow-[0_0_6px_var(--success)]"
             />
           </svg>
         </div>
-      </div>
+      </Card>
 
       {/* 4. Live Incidents */}
-      <div className="relative flex h-[92px] items-center justify-between gap-3 overflow-hidden rounded-xl border border-border bg-card p-3.5 shadow-sm before:absolute before:left-0 before:right-0 before:top-0 before:h-[1px] before:bg-gradient-to-r before:from-transparent before:via-rose-500/20 before:to-transparent">
+      <Card className="relative flex h-[92px] items-center justify-between gap-3 overflow-hidden border-nx-line bg-nx-surface p-3.5 text-nx-ink transition-[border-color,background-color] duration-nx-micro hover:border-nx-line-hi">
         <div className="flex min-w-0 items-center gap-3">
           <div
-            className={`flex h-[42px] w-[42px] shrink-0 items-center justify-center rounded-lg border ${
+            className={`flex h-[42px] w-[42px] shrink-0 items-center justify-center rounded-nx-md border ${
               securityIncidents > 0 || degradedCount > 0
-                ? "border-rose-500/20 bg-rose-500/10 text-rose-500"
-                : "border-emerald-500/20 bg-emerald-500/10 text-emerald-500"
+                ? "border-destructive/30 bg-destructive/10 text-destructive"
+                : "border-success/30 bg-success/10 text-success"
             }`}
           >
             <ShieldAlert className="h-5 w-5" />
           </div>
           <div className="min-w-0">
-            <span className="block truncate text-[11.5px] text-muted-foreground">
+            <span className="block truncate text-[11.5px] text-nx-ink-3">
               {t("platformCommandCenter.kpis.liveIncidents") || "Live Incidents"}
             </span>
             <div className="mt-0.5 flex items-baseline gap-2">
-              <span className="font-mono text-2xl font-bold tracking-tight text-foreground">
+              <span className="font-mono text-2xl font-bold tracking-tight text-nx-ink">
                 {isLoading ? "..." : securityIncidents > 0 ? securityIncidents : degradedCount}
               </span>
               <span
                 className={`truncate text-[10.5px] font-bold ${
-                  securityIncidents > 0 || degradedCount > 0 ? "text-rose-500" : "text-emerald-500"
+                  securityIncidents > 0 || degradedCount > 0 ? "text-destructive" : "text-success"
                 }`}
               >
                 {securityIncidents > 0
@@ -242,7 +243,7 @@ export function PlatformKpiCards({
         </div>
 
         {/* Sparkline */}
-        <div className="h-[32px] w-[84px] shrink-0 text-rose-500">
+        <div className="h-[32px] w-[84px] shrink-0 text-destructive">
           <svg viewBox="0 0 100 40" className="h-full w-full overflow-visible">
             <polyline
               fill="none"
@@ -253,7 +254,7 @@ export function PlatformKpiCards({
             <circle cx="96" cy="8" r="2.5" fill="currentColor" />
           </svg>
         </div>
-      </div>
+      </Card>
     </div>
   );
 }

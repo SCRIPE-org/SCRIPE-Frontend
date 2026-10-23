@@ -37,18 +37,18 @@ export function MapTooltip({ hoveredCountry, mapStageRef }: MapTooltipProps) {
 
   return (
     <div
-      className="pointer-events-none absolute z-20 min-w-[170px] rounded-lg border border-border bg-card/95 p-2.5 text-[11px] shadow-xl backdrop-blur-md"
+      className="pointer-events-none absolute z-20 min-w-[170px] rounded-lg border border-nx-line bg-nx-surface/95 p-2.5 text-[11px] backdrop-blur-md"
       style={{ left, top }}
     >
       <div className="flex items-center justify-between gap-2">
-        <b className="block font-semibold text-foreground">{hoveredCountry.country.name}</b>
+        <b className="block font-semibold text-nx-ink">{hoveredCountry.country.name}</b>
         {hoveredCountry.country.isHost && (
           <span className="py-0.2 shrink-0 rounded border border-primary/30 bg-primary/20 px-1.5 font-mono text-[9px] text-primary">
             Host
           </span>
         )}
         {hoveredCountry.country.tenantCount > 0 && !hoveredCountry.country.isHost && (
-          <span className="py-0.2 shrink-0 rounded border border-sky-500/30 bg-sky-500/20 px-1.5 font-mono text-[9px] text-sky-400">
+          <span className="py-0.2 shrink-0 rounded border border-info/30 bg-info/20 px-1.5 font-mono text-[9px] text-info">
             {hoveredCountry.country.tenantCount}{" "}
             {hoveredCountry.country.tenantCount === 1 ? "tenant" : "tenants"}
           </span>
@@ -59,11 +59,11 @@ export function MapTooltip({ hoveredCountry, mapStageRef }: MapTooltipProps) {
       hoveredCountry.country.isHost ||
       hoveredCountry.country.requests > 0 ? (
         <>
-          <span className="mt-0.5 block text-[10px] text-muted-foreground">
+          <span className="mt-0.5 block text-[10px] text-nx-ink-3">
             {fmt(hoveredCountry.country.requests)} requests · {fmt(hoveredCountry.country.signins)}{" "}
             sign-ins
           </span>
-          <span className="block text-[10px] text-muted-foreground">
+          <span className="block text-[10px] text-nx-ink-3">
             {fmt(hoveredCountry.country.events)} events · {fmt(hoveredCountry.country.errors)}{" "}
             errors
           </span>
@@ -74,7 +74,7 @@ export function MapTooltip({ hoveredCountry, mapStageRef }: MapTooltipProps) {
           )}
         </>
       ) : (
-        <span className="mt-0.5 block text-[10px] text-muted-foreground">
+        <span className="mt-0.5 block text-[10px] text-nx-ink-3">
           {t("platformCommandCenter.activity.noTenantSites") ||
             "No tenant sites registered in this region"}
         </span>

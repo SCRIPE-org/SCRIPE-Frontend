@@ -61,8 +61,16 @@ function makeContainer() {
     customerRepository: {
       search: vi.fn().mockResolvedValue([customer]),
       getById: vi.fn().mockResolvedValue(customer),
+      create: vi.fn().mockResolvedValue(customer),
     },
     bookingRepository: {
+      getOrCreateBusinessIntent: vi.fn().mockResolvedValue({
+        draftIdempotencyKey: "draft-intent",
+        holdIdempotencyKey: "hold-intent",
+        confirmIdempotencyKey: "confirm-intent",
+      }),
+      clearBusinessIntent: vi.fn(),
+      recordBusinessHoldExpiry: vi.fn(),
       createDraft: vi.fn().mockResolvedValue({ id: "reservation-1" }),
       createHold: vi.fn().mockResolvedValue({
         reservationId: "reservation-1",
@@ -102,6 +110,83 @@ async function prepareSelection(result: {
 
 describe("useBookingWorkspaceViewModel", () => {
   beforeEach(() => vi.clearAllMocks());
+
+  it("reuses the stable CatalogPricing quote key and expiry after a lost response", async () => {
+    const container = makeContainer();
+    container.commercialPricingRepository.calculateQuote
+      .mockRejectedValueOnce(new Error("quote response was lost after commit"))
+      .mockResolvedValueOnce({
+        id: "quote-replayed",
+        quoteNumber: "Q-1",
+        currencyCode: "EGP",
+        grandTotal: 250,
+        expiresAtUtc: "2999-09-10T08:00:00Z",
+      });
+    vi.mocked(getVenueContainer).mockReturnValue(container as never);
+    const { result } = renderHook(() => useBookingWorkspaceViewModel());
+    await waitFor(() => expect(result.current.setupLoading).toBe(false));
+    await act(async () => result.current.selectCustomer("party-1"));
+    act(() => result.current.setCriteria({ date: "2026-09-10" }));
+    await act(async () => result.current.searchAvailability());
+    const candidate = result.current.state.candidates[0];
+
+    await act(async () => result.current.selectCandidate(candidate));
+    await act(async () => result.current.selectCandidate(candidate));
+
+    const quoteCalls = container.commercialPricingRepository.calculateQuote.mock.calls;
+    expect(quoteCalls).toHaveLength(2);
+    expect(quoteCalls[1][0].idempotencyKey).toBe(quoteCalls[0][0].idempotencyKey);
+    expect(quoteCalls[1][0].expiresAtUtc).toBe(quoteCalls[0][0].expiresAtUtc);
+    expect(result.current.priceQuote?.id).toBe("quote-replayed");
+  });
+
+  it("reuses the quote-override key after an ambiguous response", async () => {
+    const container = makeContainer();
+    container.commercialPricingRepository.overrideQuote
+      .mockRejectedValueOnce(new Error("override response was lost after commit"))
+      .mockResolvedValueOnce({ overriddenGrandTotal: 240 });
+    vi.mocked(getVenueContainer).mockReturnValue(container as never);
+    const { result } = renderHook(() => useBookingWorkspaceViewModel());
+    await prepareSelection(result);
+
+    await act(async () => {
+      expect(await result.current.applyPriceOverride(-10, "approved discount")).toBe(false);
+    });
+    await act(async () => {
+      expect(await result.current.applyPriceOverride(-10, "approved discount")).toBe(true);
+    });
+
+    const calls = container.commercialPricingRepository.overrideQuote.mock.calls;
+    expect(calls).toHaveLength(2);
+    expect(calls[1][1].idempotencyKey).toBe(calls[0][1].idempotencyKey);
+    expect(result.current.priceQuote?.grandTotal).toBe(240);
+  });
+
+  it("reuses the same Party create intent key after an ambiguous response", async () => {
+    const container = makeContainer();
+    container.customerRepository.create
+      .mockRejectedValueOnce(new Error("Network response was lost"))
+      .mockResolvedValueOnce(customer);
+    vi.mocked(getVenueContainer).mockReturnValue(container as never);
+    const { result } = renderHook(() => useBookingWorkspaceViewModel());
+    await waitFor(() => expect(result.current.setupLoading).toBe(false));
+
+    await act(async () => {
+      await expect(
+        result.current.createCustomer("Mona Hassan", "Person", "synthetic-phone")
+      ).rejects.toThrow("Network response was lost");
+    });
+    await act(async () => {
+      await result.current.createCustomer("Mona Hassan", "Person", "synthetic-phone");
+    });
+
+    expect(container.customerRepository.create).toHaveBeenCalledTimes(2);
+    const firstOptions = container.customerRepository.create.mock.calls[0]?.[3];
+    const secondOptions = container.customerRepository.create.mock.calls[1]?.[3];
+    expect(firstOptions?.idempotencyKey).toBeTruthy();
+    expect(secondOptions?.idempotencyKey).toBe(firstOptions?.idempotencyKey);
+    expect(result.current.customer?.id).toBe(customer.id);
+  });
 
   it("honors a calendar resource/date/time prefill while keeping Availability Search authoritative", async () => {
     const container = makeContainer();
@@ -253,6 +338,58 @@ describe("useBookingWorkspaceViewModel", () => {
     expect(result.current.state.errorMessage).toBe("Hold duration is outside policy");
   });
 
+  it("reuses the same hold intent key after a lost response", async () => {
+    const container = makeContainer();
+    container.bookingRepository.createHold
+      .mockRejectedValueOnce(new Error("Network response was lost"))
+      .mockResolvedValueOnce({
+        reservationId: "reservation-1",
+        bookingHoldId: "hold-1",
+        expiresAtUtc: "2026-09-10T10:00:00.000Z",
+      });
+    vi.mocked(getVenueContainer).mockReturnValue(container as never);
+    const { result } = renderHook(() => useBookingWorkspaceViewModel());
+    await prepareSelection(result);
+
+    await act(async () => {
+      await result.current.createHold();
+    });
+    await act(async () => {
+      await result.current.createHold();
+    });
+
+    expect(container.bookingRepository.createDraft).toHaveBeenCalledTimes(1);
+    expect(container.bookingRepository.createHold).toHaveBeenCalledTimes(2);
+    expect(container.bookingRepository.createHold.mock.calls[1]?.[1]).toBe(
+      container.bookingRepository.createHold.mock.calls[0]?.[1]
+    );
+    expect(result.current.state.stage).toBe("held");
+  });
+
+  it("reuses the same draft intent key when the draft response is lost", async () => {
+    const container = makeContainer();
+    container.bookingRepository.createDraft
+      .mockRejectedValueOnce(new Error("Network response was lost"))
+      .mockResolvedValueOnce({ id: "reservation-1" });
+    vi.mocked(getVenueContainer).mockReturnValue(container as never);
+    const { result } = renderHook(() => useBookingWorkspaceViewModel());
+    await prepareSelection(result);
+
+    await act(async () => {
+      await result.current.createHold();
+    });
+    await act(async () => {
+      await result.current.createHold();
+    });
+
+    expect(container.bookingRepository.createDraft).toHaveBeenCalledTimes(2);
+    expect(container.bookingRepository.createDraft.mock.calls[1]?.[0].idempotencyKey).toBe(
+      container.bookingRepository.createDraft.mock.calls[0]?.[0].idempotencyKey
+    );
+    expect(container.bookingRepository.createHold).toHaveBeenCalledTimes(1);
+    expect(result.current.state.stage).toBe("held");
+  });
+
   it("calls T01 then T04 then T06 once and cannot reconfirm a confirmed booking", async () => {
     const container = makeContainer();
     vi.mocked(getVenueContainer).mockReturnValue(container as never);
@@ -284,6 +421,30 @@ describe("useBookingWorkspaceViewModel", () => {
       await result.current.confirm();
     });
     expect(container.bookingRepository.confirm).toHaveBeenCalledTimes(1);
+  });
+
+  it("keeps an ambiguous confirmation retryable with the same business intent key", async () => {
+    const container = makeContainer();
+    container.bookingRepository.confirm
+      .mockRejectedValueOnce(new Error("Confirmation response was lost"))
+      .mockResolvedValueOnce({ reservationId: "reservation-1", bookingHoldId: "hold-1" });
+    vi.mocked(getVenueContainer).mockReturnValue(container as never);
+    const { result } = renderHook(() => useBookingWorkspaceViewModel());
+    await prepareSelection(result);
+
+    await act(async () => result.current.createHold());
+    await act(async () => result.current.confirm());
+
+    expect(result.current.state.stage).toBe("held");
+    expect(result.current.state.errorMessage).toBe("Confirmation response was lost");
+
+    await act(async () => result.current.confirm());
+
+    expect(container.bookingRepository.confirm).toHaveBeenCalledTimes(2);
+    expect(container.bookingRepository.confirm.mock.calls[1]?.[1]).toBe(
+      container.bookingRepository.confirm.mock.calls[0]?.[1]
+    );
+    expect(result.current.state.stage).toBe("confirmed");
   });
 
   it("applies a privileged quote override with an explicit reason before confirmation", async () => {

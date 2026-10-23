@@ -15,11 +15,13 @@
  * accent only on the active leaf.
  */
 
-import React, { useCallback } from "react";
+import React, { useCallback, useMemo } from "react";
 import { usePathname } from "next/navigation";
 import { useWorkspace } from "@core/providers/workspace-provider";
 import { useI18n } from "@core/providers/i18n-provider";
-import type { MenuItem } from "@core/navigation";
+import { usePermissions } from "@core/providers/permission-provider";
+import { MenuItem } from "@core/navigation";
+import { resolveBilingualLabel } from "@core/common/utils";
 import { RailHeader, RailContent } from "./_parts/secondary-rail-parts";
 import { useNexusReducedMotion } from "./nexus-transition";
 import { NEXUS_PANEL_W } from "./_parts/nexus-layout-constants";
@@ -38,25 +40,161 @@ export function NexusSecondaryRail({
 }: NexusSecondaryRailProps) {
   const { activeWorkspace, activeRootItem, isModuleMode } = useWorkspace();
   const { language, t } = useI18n();
+  const { canAccessPage } = usePermissions();
   const pathname = usePathname();
   const reducedMotion = useNexusReducedMotion();
 
+  const isVenueWorkspace = activeWorkspace?.workspaceKey === "venue";
+
+  // ── Authoritative 5-Group Navigation for SCRIPE Venue ──────────────────────
+  // Canonical structure aligned with VenueMenuProvider.cs (5 groups, 18 routes):
+  // 1. Operations & Bookings → Dashboard, Calendar, New Booking, Attention Queue, Customers
+  // 2. Courts & Facilities → Courts & Spaces, Facilities, Availability, Resource Profiles, Resource Builder
+  // 3. Commercial & Rates → Financial Overview, Invoices & Receivables, Payments, Pricing & Rates
+  // 4. Analytics & Reports → Reports & Analytics
+  // 5. Settings & Setup → Venue & Site Profile, Sites & Campuses, Venue Settings
+  const venueMenuItems: MenuItem[] = useMemo(() => {
+    if (!isVenueWorkspace) return [];
+
+    const makeItem = (
+      id: string,
+      nameEn: string,
+      nameAr: string,
+      href: string,
+      icon: string,
+      children: MenuItem[] = []
+    ): MenuItem =>
+      new MenuItem({
+        id,
+        slug: id,
+        name: nameEn,
+        nameEn,
+        nameAr,
+        href,
+        icon,
+        order: 0,
+        resource: null,
+        actions: null,
+        children: children
+          .filter((c) => !c.href || canAccessPage(c.href))
+          .map((c) => ({
+            id: c.id,
+            slug: c.slug,
+            name: c.name,
+            nameEn: c.nameEn,
+            nameAr: c.nameAr,
+            href: c.href,
+            icon: c.icon,
+            order: c.order,
+            resource: c.resource,
+            actions: c.actions,
+            children: [],
+          })),
+      });
+
+    // ── 1. Operations & Bookings Group ──
+    const operationsGroup = makeItem(
+      "venue-group-operations",
+      "Operations & Bookings",
+      "العمليات والحجوزات",
+      "",
+      "LayoutDashboard",
+      [
+        makeItem("venue-dashboard", "Operations Dashboard", "لوحة التحكم", "/venue", "LayoutDashboard"),
+        makeItem("venue-calendar", "Calendar Grid", "تقويم العمليات", "/venue/calendar", "CalendarDays"),
+        makeItem("venue-booking-create", "New Booking", "حجز جديد", "/venue/bookings/new", "CalendarPlus"),
+        makeItem("venue-attention", "Attention Queue", "مركز الانتباه", "/venue/attention", "AlertTriangle"),
+        makeItem("venue-customers", "Customers & Guests", "العملاء والضيوف", "/venue/customers", "Users"),
+      ]
+    );
+
+    // ── 2. Courts & Facilities Group ──
+    const spacesGroup = makeItem(
+      "venue-group-spaces",
+      "Courts & Facilities",
+      "المنشآت والملاعب",
+      "",
+      "Building2",
+      [
+        makeItem("venue-resources", "Courts & Spaces", "الملاعب والمساحات", "/venue/resources", "Layers"),
+        makeItem("venue-facilities", "Facilities & Complexes", "المجمعات والمنشآت", "/venue/facilities", "Building"),
+        makeItem("venue-availability", "Operating Hours & Schedules", "ساعات العمل والإتاحة", "/venue/availability", "Clock"),
+        makeItem("venue-resource-profiles", "Resource Profiles", "ملفات تعريف الموارد", "/venue/resource-profiles", "FileSliders"),
+        makeItem("venue-resource-builder", "Resource Builder", "منشئ الموارد", "/venue/resource-builder", "Boxes"),
+      ]
+    );
+
+    // ── 3. Commercial & Rates Group ──
+    const commercialGroup = makeItem(
+      "venue-group-commercial",
+      "Commercial & Rates",
+      "المالية والتسعير",
+      "",
+      "Receipt",
+      [
+        makeItem("venue-money", "Financial Overview", "النظرة المالية العامة", "/venue/money", "WalletCards"),
+        makeItem("venue-receivables", "Invoices & Receivables", "الفواتير والمستحقات", "/venue/money/receivables", "Receipt"),
+        makeItem("venue-payments", "Payment History", "سجل المدفوعات", "/venue/money/payments", "CreditCard"),
+        makeItem("venue-pricing", "Pricing & Rates", "قواعد التسعير والتعريفات", "/venue/pricing", "Tag"),
+      ]
+    );
+
+    // ── 4. Analytics & Reports Group ──
+    const analyticsGroup = makeItem(
+      "venue-group-analytics",
+      "Analytics & Reports",
+      "التقارير والتحليلات",
+      "",
+      "BarChart3",
+      [
+        makeItem("venue-reports", "Reports & Analytics", "التقارير والتحليلات", "/venue/reports", "BarChart3"),
+      ]
+    );
+
+    // ── 5. Settings & Setup Group ──
+    const settingsGroup = makeItem(
+      "venue-group-settings",
+      "Settings & Setup",
+      "الإعدادات والتكوين",
+      "",
+      "Settings",
+      [
+        makeItem("venue-setup", "Venue & Site Profile", "إعداد المنشأة والموقع", "/venue/venue-setup", "Sliders"),
+        makeItem("venue-sites", "Sites & Campuses", "المواقع والمجمعات", "/venue/sites", "MapPin"),
+        makeItem("venue-settings", "Venue Settings", "إعدادات المنشأة", "/venue/settings", "Settings"),
+      ]
+    );
+
+    const candidates = [operationsGroup, spacesGroup, commercialGroup, analyticsGroup, settingsGroup];
+    return candidates.filter((item) => {
+      if (item.href && canAccessPage(item.href)) return true;
+      if (item.children.some((c) => c.href && canAccessPage(c.href))) return true;
+      return false;
+    });
+  }, [isVenueWorkspace, canAccessPage]);
+
   // ── Context label ─────────────────────────────────────────────────────────
-  const contextLabel = activeWorkspace
-    ? (activeWorkspace.getLocalizedName(language) ?? activeWorkspace.workspaceKey.toUpperCase())
-    : isModuleMode
-      ? t("chrome.section.module")
-      : t("chrome.section.platform");
+  const contextLabel = isVenueWorkspace
+    ? resolveBilingualLabel("VENUE", "المنشآت والملاعب", language)
+    : activeWorkspace
+      ? (activeWorkspace.getLocalizedName(language) ?? activeWorkspace.workspaceKey.toUpperCase())
+      : isModuleMode
+        ? t("chrome.section.module")
+        : t("chrome.section.platform");
 
   // ── Title: selected root item name ────────────────────────────────────────
-  const title = activeRootItem
-    ? language === "ar"
-      ? activeRootItem.nameAr || activeRootItem.nameEn
-      : activeRootItem.nameEn || activeRootItem.nameAr
-    : (activeWorkspace?.getLocalizedName(language) ?? t("chrome.section.workspace"));
+  const title = isVenueWorkspace
+    ? resolveBilingualLabel("Venue Operations", "عمليات المنشآت", language)
+    : activeRootItem
+      ? language === "ar"
+        ? activeRootItem.nameAr || activeRootItem.nameEn
+        : activeRootItem.nameEn || activeRootItem.nameAr
+      : (activeWorkspace?.getLocalizedName(language) ?? t("chrome.section.workspace"));
 
-  // ── Menu items to display: children of the selected root item ─────────────
-  const menuItems: MenuItem[] = activeRootItem?.children ?? [];
+  // ── Menu items to display: children of the selected root item (or focused venue menu) ─────
+  const menuItems: MenuItem[] = isVenueWorkspace
+    ? (activeRootItem?.children && activeRootItem.children.length > 0 ? activeRootItem.children : venueMenuItems)
+    : (activeRootItem?.children ?? []);
   const hasSubmenu = menuItems.length > 0;
 
   const handleNavigate = useCallback(() => onMobileClose?.(), [onMobileClose]);

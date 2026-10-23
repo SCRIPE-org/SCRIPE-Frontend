@@ -55,7 +55,7 @@ export function ResourceNode({
           <p className="text-sm text-nx-ink-3">
             {r.isComposite
               ? t("schedulableResource.compositeHint")
-              : `${r.namedUnitLabel ?? t("schedulableResource.fields.unitCount")}: ${r.unitCount} Â· ${t(
+              : `${r.namedUnitLabel ?? t("schedulableResource.fields.unitCount")}: ${r.unitCount} · ${t(
                   "schedulableResource.fields.maxConcurrentUsage"
                 )}: ${r.capacity?.maxConcurrentUsage ?? "-"}`}
           </p>

@@ -1,18 +1,19 @@
 /**
  * DownloadInterceptedError
  *
- * Thrown by ApiService.getBlob() when the browser's XHR/fetch is aborted
- * by an external download manager (IDM, FDM, etc.).
+ * Thrown by ApiService blob-download methods when an external download manager
+ * (IDM, FDM, etc.) intercepts a request and aborts its network transfer.
  *
  * When IDM or any download manager intercepts a file download, the browser's
  * network request is aborted mid-stream, which triggers:
  *   - Axios: error.code === 'ERR_CANCELED' or error.message === 'canceled'
  *   - Fetch:  error.name === 'AbortError'
  *   - DOM:    error.code === 20 (DOMException ABORT_ERR)
- *   - Axios:  error.code === 'ECONNABORTED'
  *
- * All of these mean the file WAS captured by the download manager.
- * Callers should treat this as a success, not an error.
+ * These shapes overlap with a user-initiated AbortSignal cancellation. The API
+ * service only treats them as download interception for blob responses when
+ * the caller did not abort the request. A caller cancellation remains an error
+ * so UI flows can stop work without falsely reporting download success.
  *
  * Usage:
  *   try {
@@ -37,8 +38,9 @@ export class DownloadInterceptedError extends Error {
 }
 
 /**
- * Check if an error was caused by an external download manager
- * intercepting the browser's network request.
+ * Check whether an error has a shape used by external download-manager
+ * interception. Callers must scope this check to blob downloads and preserve
+ * any caller-initiated AbortSignal cancellation.
  */
 export function isExternalAbort(error: unknown): boolean {
   // DOMException AbortError (Fetch API)
@@ -50,8 +52,10 @@ export function isExternalAbort(error: unknown): boolean {
   if (typeof error === "object" && error !== null) {
     const errObj = error as { code?: string; message?: string; config?: { responseType?: string } };
 
-    // Standard aborts
-    if (errObj.code === "ERR_CANCELED" || errObj.code === "ECONNABORTED") return true;
+    // Axios uses ECONNABORTED for request timeouts as well as some adapters'
+    // aborts. Treating it as interception can make a failed download look
+    // successful to consumers, so only the explicit cancellation code qualifies.
+    if (errObj.code === "ERR_CANCELED") return true;
     if (errObj.message?.toLowerCase() === "canceled") return true;
 
     // IDM Advanced Integration specifically causes a "CORS error" in the browser

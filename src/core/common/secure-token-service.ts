@@ -56,6 +56,16 @@ export class SecureTokenService {
       }
 
       this._accessToken = token;
+      if (
+        typeof window !== "undefined" &&
+        (process.env.NODE_ENV === "development" ||
+          window.location.hostname === "localhost" ||
+          window.location.hostname === "127.0.0.1")
+      ) {
+        try {
+          sessionStorage.setItem("dev_access_token", token);
+        } catch {}
+      }
       appLogger.auth("Access token stored in memory");
       this.notifyListeners();
       return true;
@@ -107,6 +117,21 @@ export class SecureTokenService {
    */
   static getAccessToken(): string | null {
     try {
+      if (
+        !this._accessToken &&
+        typeof window !== "undefined" &&
+        (process.env.NODE_ENV === "development" ||
+          window.location.hostname === "localhost" ||
+          window.location.hostname === "127.0.0.1")
+      ) {
+        try {
+          const devToken = sessionStorage.getItem("dev_access_token");
+          if (devToken && this.validateTokenFormat(devToken)) {
+            this._accessToken = devToken;
+          }
+        } catch {}
+      }
+
       if (!this._accessToken) {
         return null;
       }
@@ -128,7 +153,7 @@ export class SecureTokenService {
    * Check if token exists in memory.
    */
   static hasToken(): boolean {
-    return !!this._accessToken && !this.isTokenExpired();
+    return this.getAccessToken() !== null;
   }
 
   /**
@@ -163,6 +188,9 @@ export class SecureTokenService {
         localStorage.removeItem("accessToken");
         localStorage.removeItem("tokenExpiry");
         localStorage.removeItem("refreshToken");
+        try {
+          sessionStorage.removeItem("dev_access_token");
+        } catch {}
       }
 
       this.notifyListeners();
@@ -177,7 +205,11 @@ export class SecureTokenService {
    * Get token info for debugging (development only)
    */
   static getTokenInfo(): { hasToken: boolean; isExpired: boolean; expiresAt?: number } {
-    if (process.env.NODE_ENV !== "development") {
+    const isLocal =
+      process.env.NODE_ENV === "development" ||
+      (typeof window !== "undefined" &&
+        (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1"));
+    if (!isLocal) {
       return { hasToken: false, isExpired: true };
     }
 

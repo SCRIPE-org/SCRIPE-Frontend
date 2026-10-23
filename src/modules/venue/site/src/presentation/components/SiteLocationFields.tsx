@@ -49,7 +49,7 @@ export function SiteLocationFields({ location, onChange, errors = {} }: SiteLoca
   const divisionLabel = isAr ? territory.divisionLabelAr : territory.divisionLabel;
   const cityLabel = isAr ? territory.cityLabelAr : territory.cityLabel;
   const districtLabel = isAr
-    ? (territory.districtLabelAr ?? "Ø§Ù„Ø­ÙŠ / Ø§Ù„Ù…Ù†Ø·Ù‚Ø© Ø§Ù„ÙØ±Ø¹ÙŠØ©")
+    ? (territory.districtLabelAr ?? "الحي / المنطقة الفرعية")
     : (territory.districtLabel ?? "Neighborhood / District");
 
   // Country options with crisp vector SVG flags
@@ -83,10 +83,10 @@ export function SiteLocationFields({ location, onChange, errors = {} }: SiteLoca
   const cityPlaceholder =
     states.length > 0 && !state
       ? isAr
-        ? `ÙŠØ±Ø¬Ù‰ Ø§Ø®ØªÙŠØ§Ø± ${divisionLabel} Ø£ÙˆÙ„Ø§Ù‹...`
+        ? `يرجى اختيار ${divisionLabel} أولاً...`
         : `Select ${divisionLabel} first...`
       : isAr
-        ? `Ø§Ø®ØªØ± Ø£Ùˆ Ø§ÙƒØªØ¨ Ø§Ø³Ù… ${cityLabel}...`
+        ? `اختر أو اكتب اسم ${cityLabel}...`
         : `Select or type ${cityLabel}...`;
 
   const recalculateAddress = (
@@ -277,9 +277,9 @@ export function SiteLocationFields({ location, onChange, errors = {} }: SiteLoca
               options={stateOptions}
               value={state}
               onValueChange={handleStateChange}
-              placeholder={isAr ? `Ø§Ø®ØªØ± ${divisionLabel}...` : `Select ${divisionLabel}...`}
+              placeholder={isAr ? `اختر ${divisionLabel}...` : `Select ${divisionLabel}...`}
               searchPlaceholder={
-                isAr ? `Ø§Ù„Ø¨Ø­Ø« ÙÙŠ ${divisionLabel}...` : `Search ${divisionLabel}...`
+                isAr ? `البحث في ${divisionLabel}...` : `Search ${divisionLabel}...`
               }
             />
           </div>
@@ -288,15 +288,13 @@ export function SiteLocationFields({ location, onChange, errors = {} }: SiteLoca
             <Label htmlFor="site-state" className="flex items-center gap-1.5 text-xs font-medium">
               <Building2 className="h-3.5 w-3.5 text-nx-ink-2" />
               {divisionLabel}{" "}
-              <span className="text-[10px] text-nx-ink-3">
-                ({isAr ? "Ø§Ø®ØªÙŠØ§Ø±ÙŠ" : "Optional"})
-              </span>
+              <span className="text-[10px] text-nx-ink-3">({isAr ? "اختياري" : "Optional"})</span>
             </Label>
             <Input
               id="site-state"
               value={state}
               onChange={(e) => handleStateChange(e.target.value)}
-              placeholder={isAr ? `Ø£Ø¯Ø®Ù„ ${divisionLabel}...` : `Enter ${divisionLabel}...`}
+              placeholder={isAr ? `أدخل ${divisionLabel}...` : `Enter ${divisionLabel}...`}
               maxLength={100}
             />
           </div>
@@ -315,16 +313,14 @@ export function SiteLocationFields({ location, onChange, errors = {} }: SiteLoca
             onChange={handleCityChange}
             placeholder={cityPlaceholder}
             searchPlaceholder={
-              isAr
-                ? `Ø§Ø¨Ø­Ø« Ø£Ùˆ Ø§ÙƒØªØ¨ Ø§Ø³Ù… ${cityLabel}...`
-                : `Search or type ${cityLabel}...`
+              isAr ? `ابحث أو اكتب اسم ${cityLabel}...` : `Search or type ${cityLabel}...`
             }
             emptyText={
               isAr
-                ? "Ù„Ø§ ØªÙˆØ¬Ø¯ Ù†ØªØ§Ø¦Ø¬ Ù…Ø·Ø§Ø¨Ù‚Ø©ØŒ ÙŠÙ…ÙƒÙ†Ùƒ Ø§Ø³ØªØ®Ø¯Ø§Ù… Ù…Ø§ ÙƒØªØ¨ØªÙ‡ Ø£Ø¹Ù„Ø§Ù‡"
+                ? "لا توجد نتائج مطابقة، يمكنك استخدام ما كتبته أعلاه"
                 : "No preset match. You can use typed entry above."
             }
-            createLabel={(q) => (isAr ? `+ Ø§Ø³ØªØ®Ø¯Ø§Ù… "${q}"` : `+ Use "${q}"`)}
+            createLabel={(q) => (isAr ? `+ استخدام "${q}"` : `+ Use "${q}"`)}
             allowCreate={true}
             allowClear={true}
             disabled={territory.states.length > 0 && !state}
@@ -341,18 +337,14 @@ export function SiteLocationFields({ location, onChange, errors = {} }: SiteLoca
               className="flex items-center gap-1.5 text-xs font-medium"
             >
               <span>{districtLabel}</span>
-              <span className="text-[10px] text-nx-ink-3">
-                ({isAr ? "Ø§Ø®ØªÙŠØ§Ø±ÙŠ" : "Optional"})
-              </span>
+              <span className="text-[10px] text-nx-ink-3">({isAr ? "اختياري" : "Optional"})</span>
             </Label>
             <Input
               id="site-district"
               value={district}
               onChange={(e) => handleDistrictChange(e.target.value)}
               placeholder={
-                isAr
-                  ? "Ù…Ø«Ø§Ù„: Ø§Ù„Ù…Ø¹Ø§Ø¯ÙŠ Ø§Ù„Ø¬Ø¯ÙŠØ¯Ø©ØŒ Ø­ÙŠ Ø§Ù„Ù†Ø±Ø¬Ø³ØŒ Ø§Ù„Ø¹Ù„ÙŠØ§"
-                  : "e.g. New Maadi, Al Olaya, etc."
+                isAr ? "مثال: المعادي الجديدة، حي النرجس، العليا" : "e.g. New Maadi, Al Olaya, etc."
               }
               maxLength={100}
             />
@@ -364,7 +356,7 @@ export function SiteLocationFields({ location, onChange, errors = {} }: SiteLoca
             <Label htmlFor="site-postal" className="text-xs font-medium">
               {t("site.postalCode")}
               <span className="ms-1.5 text-[10px] text-nx-ink-3">
-                ({isAr ? "Ø§Ø®ØªÙŠØ§Ø±ÙŠ" : "Optional"})
+                ({isAr ? "اختياري" : "Optional"})
               </span>
             </Label>
             {(isAr ? territory.postalCodeHelpTextAr : territory.postalCodeHelpText) && (

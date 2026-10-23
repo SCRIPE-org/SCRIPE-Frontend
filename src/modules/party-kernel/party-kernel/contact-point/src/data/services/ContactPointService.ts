@@ -6,7 +6,7 @@
  */
 import type { IApiService } from "@core/interfaces/api.interface";
 import { buildUrl } from "@/core/config/api-endpoints/_shared";
-import { PARTYKERNEL_ENDPOINTS } from "@modules/party-kernel/party-kernel.endpoints";
+import { CONTACT_POINT_ENDPOINTS } from "./contact-point.endpoints";
 import {
   ContactPointModel,
   type ContactPointJson,
@@ -17,10 +17,8 @@ import type {
   ContactPointListResult,
 } from "../../domain/interfaces/IContactPointService";
 
-const BASE_URL = PARTYKERNEL_ENDPOINTS.CONTACT_POINTS.LIST;
-
 /**
- * Documentation for module export
+ * Service implementation for ContactPoint operations
  */
 export class ContactPointService implements IContactPointService {
   constructor(private readonly api: IApiService) {}
@@ -29,11 +27,13 @@ export class ContactPointService implements IContactPointService {
     page: number;
     pageSize: number;
     search?: string;
+    partyId?: string;
   }): Promise<ContactPointListResult> {
-    const url = buildUrl(BASE_URL, {
+    const url = buildUrl(CONTACT_POINT_ENDPOINTS.LIST, {
       page: params.page,
       pageSize: params.pageSize,
       search: params.search,
+      partyId: params.partyId,
     });
 
     const response = await this.api.get<ContactPointListResponseJson>(url);
@@ -50,19 +50,28 @@ export class ContactPointService implements IContactPointService {
   }
 
   async getById(id: string): Promise<ContactPointModel> {
-    const json = await this.api.get<ContactPointJson>(`${BASE_URL}/${id}`);
+    const json = await this.api.get<ContactPointJson>(CONTACT_POINT_ENDPOINTS.BY_ID(id));
     return ContactPointModel.fromJson(json);
   }
 
-  async create(data: Record<string, unknown>): Promise<{ id: string }> {
-    return this.api.post<{ id: string }>(BASE_URL, data);
+  async create(data: Record<string, unknown>, idempotencyKey?: string): Promise<{ id: string }> {
+    const headers: Record<string, string> = {};
+    if (idempotencyKey) {
+      headers["Idempotency-Key"] = idempotencyKey;
+    }
+    return this.api.post<{ id: string }>(
+      CONTACT_POINT_ENDPOINTS.CREATE,
+      data,
+      undefined,
+      Object.keys(headers).length > 0 ? { headers } : undefined
+    );
   }
 
   async update(id: string, data: Record<string, unknown>): Promise<void> {
-    await this.api.put(`${BASE_URL}/${id}`, data);
+    await this.api.put(CONTACT_POINT_ENDPOINTS.UPDATE(id), data);
   }
 
   async delete(id: string): Promise<void> {
-    await this.api.delete(`${BASE_URL}/${id}`);
+    await this.api.delete(CONTACT_POINT_ENDPOINTS.DELETE(id));
   }
 }

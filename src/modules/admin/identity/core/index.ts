@@ -17,6 +17,10 @@ export type {
 } from "../permissions/src/data/models/PermissionModel";
 export type { IPermissionService } from "../permissions/src/domain/interfaces/IPermissionService";
 
+// Tenants
+export { SYSTEM_TENANT_ID, Tenant } from "../tenants/src/domain/entities/Tenant";
+export type { TenantProps, TenantTreeNode } from "../tenants/src/domain/entities/Tenant";
+
 // Roles
 export { Role } from "../roles/src/domain/entities/Role";
 export { useRolesViewModel } from "../roles/src/presentation/viewmodels/useRolesViewModel";
@@ -33,7 +37,3 @@ export { AssignToGroupDialog } from "../user-groups/src/presentation/components/
 // Admins
 export { AdminsView } from "../admin/src/presentation/views/AdminsView";
 export { useAdminsViewModel } from "../admin/src/presentation/viewmodels/useAdminsViewModel";
-
-// Tenants
-export { SYSTEM_TENANT_ID, Tenant } from "../tenants/src/domain/entities/Tenant";
-export type { TenantProps, TenantTreeNode } from "../tenants/src/domain/entities/Tenant";

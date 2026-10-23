@@ -169,7 +169,8 @@ describe("useResourceDetailViewModel", () => {
       "res-1",
       expect.objectContaining({
         name: "Court 1 - Premium",
-        capacity: expect.objectContaining({ maxConcurrentUsage: 4 }),
+        maxConcurrentUsage: 4,
+        allocationMode: "SingleUnit",
       })
     );
   });
@@ -202,7 +203,7 @@ describe("useResourceDetailViewModel", () => {
     );
   });
 
-  it("updates booking rules (slot duration and increment)", async () => {
+  it("updates booking rules (slot duration, increment, and allowMultiSlot)", async () => {
     const { result } = renderHook(() => useResourceDetailViewModel("res-1"));
 
     await waitFor(() => {
@@ -214,6 +215,7 @@ describe("useResourceDetailViewModel", () => {
       success = await result.current.updateBookingRules({
         slotDurationMinutes: 90,
         startIncrementMinutes: 90,
+        allowMultiSlot: true,
       });
     });
 
@@ -224,6 +226,7 @@ describe("useResourceDetailViewModel", () => {
         slotPolicy: expect.objectContaining({
           slotDurationMinutes: 90,
           startIncrementMinutes: 90,
+          allowMultiSlot: true,
         }),
       })
     );
@@ -254,6 +257,35 @@ describe("useResourceDetailViewModel", () => {
         taxCategoryId: "tax-1",
       })
     );
+  });
+
+  it("reuses the same pricing configuration intent after a lost response", async () => {
+    mockContainer.commercialPricingRepository.configureResourcePrice
+      .mockRejectedValueOnce(new Error("pricing response was lost after commit"))
+      .mockResolvedValueOnce(mockPriceConfig);
+    const { result } = renderHook(() => useResourceDetailViewModel("res-1"));
+    await waitFor(() => expect(result.current.loading).toBe(false));
+
+    await act(async () => {
+      await result.current.updatePricing({
+        unitPrice: 850,
+        currencyCode: "EGP",
+        taxCategoryId: "tax-1",
+      });
+    });
+    await act(async () => {
+      await result.current.updatePricing({
+        unitPrice: 850,
+        currencyCode: "EGP",
+        taxCategoryId: "tax-1",
+      });
+    });
+
+    const calls = mockContainer.commercialPricingRepository.configureResourcePrice.mock.calls;
+    expect(calls).toHaveLength(2);
+    expect(calls[1][0].idempotencyKey).toBe(calls[0][0].idempotencyKey);
+    expect(calls[1][0].effectiveFromUtc).toBe(calls[0][0].effectiveFromUtc);
+    expect(result.current.feedback).toBe("pricing.saved");
   });
 
   it("adds and deletes closures (maintenance and blackout)", async () => {
@@ -296,13 +328,13 @@ describe("useResourceDetailViewModel", () => {
 
     let delSuccess = false;
     await act(async () => {
-      delSuccess = await result.current.deleteClosure("maintenance", blockToDelete);
+      delSuccess = await result.current.deleteClosure("maintenance", blockToDelete as never);
     });
 
     expect(delSuccess).toBe(true);
     expect(mockContainer.availabilityRepository.deleteBlock).toHaveBeenCalledWith(
       "maintenance",
-      blockToDelete
+      blockToDelete as never
     );
   });
 });

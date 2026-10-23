@@ -358,6 +358,7 @@ export const PAGE_PERMISSIONS: Record<string, PermissionCode[]> = {
 
   // Party Feature
   "/party-kernel/parties": [SYSTEM_PERMISSIONS.PARTY_VIEW],
+  "/party-kernel/parties/[id]": [SYSTEM_PERMISSIONS.PARTY_VIEW],
 
   // PartyPerson Feature
   "/party-kernel/party-people": [SYSTEM_PERMISSIONS.PARTY_PERSON_VIEW],
@@ -401,8 +402,13 @@ export const PAGE_PERMISSIONS: Record<string, PermissionCode[]> = {
   // StaffAvailability Feature
   "/hrms/staff-availabilities": [SYSTEM_PERMISSIONS.STAFF_AVAILABILITY_VIEW],
 
-  // Venue Module (workspace home redirects to venue-setup — see venue/page.tsx)
+  // Venue Module Canonical Routes
   "/venue": [SYSTEM_PERMISSIONS.VENUE_PROFILE_VIEW],
+  "/venue/resources": [SYSTEM_PERMISSIONS.FACILITY_VIEW],
+  "/venue/resources/[id]": [SYSTEM_PERMISSIONS.FACILITY_VIEW],
+  "/venue/money": [SYSTEM_PERMISSIONS.FINANCE_RECEIVABLES_VIEW],
+  "/venue/reports": [SYSTEM_PERMISSIONS.VENUE_PROFILE_VIEW],
+  "/venue/settings": [SYSTEM_PERMISSIONS.VENUE_PROFILE_VIEW],
 
   // VenueProfile Feature
   "/venue/venue-setup": [SYSTEM_PERMISSIONS.VENUE_PROFILE_VIEW],

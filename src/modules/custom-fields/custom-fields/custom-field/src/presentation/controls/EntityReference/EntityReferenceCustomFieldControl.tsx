@@ -202,6 +202,7 @@ export function EntityReferenceCustomFieldControl({
             isLoading={search.isLoading}
             error={search.error}
             hasNextPage={search.hasNextPage}
+            mayHaveMoreResults={search.mayHaveMoreResults}
             isLoadingMore={search.isLoadingMore}
             onLoadMore={search.loadMore}
             onReload={search.reload}

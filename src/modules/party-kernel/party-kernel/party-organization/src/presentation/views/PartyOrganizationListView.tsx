@@ -29,7 +29,7 @@ function shortId(id: string | undefined): string {
  */
 export const PartyOrganizationListView = React.memo(function PartyOrganizationListView() {
   useModuleLocales(() => import("../../../locales"), "party-kernel.partyOrganization");
-  const { vm } = usePartyOrganizationViewModel();
+  const { vm, lookupOrganizations } = usePartyOrganizationViewModel();
   const { t, language } = useI18n();
 
   const config: CrudConfig<PartyOrganization> = {
@@ -70,7 +70,9 @@ export const PartyOrganizationListView = React.memo(function PartyOrganizationLi
       {
         name: "partyId",
         label: t("partyOrganization.form.partyId"),
-        type: "text" as const,
+        type: "server-select" as const,
+        searchType: "server" as const,
+        onServerSearch: lookupOrganizations,
         placeholder: t("partyOrganization.form.partyIdPlaceholder"),
         required: true,
       },
@@ -93,7 +95,9 @@ export const PartyOrganizationListView = React.memo(function PartyOrganizationLi
       {
         name: "partyId",
         label: t("partyOrganization.form.partyId"),
-        type: "text" as const,
+        type: "server-select" as const,
+        searchType: "server" as const,
+        onServerSearch: lookupOrganizations,
         placeholder: t("partyOrganization.form.partyIdPlaceholder"),
         required: true,
       },
@@ -122,7 +126,7 @@ export const PartyOrganizationListView = React.memo(function PartyOrganizationLi
       legalName: item.legalName,
       taxId: item.taxId,
     }),
-    getItemDisplayName: (item: PartyOrganization) => item.legalName || item.partyId,
+    getItemDisplayName: (item: PartyOrganization) => item.legalName || "—",
     deleteService: (id: string) => vm.deleteItem(id),
     getActions: (_vmInstance, tFn, handleDeleteFn): CrudAction<PartyOrganization>[] => [
       {

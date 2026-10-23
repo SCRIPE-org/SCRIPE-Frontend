@@ -40,7 +40,7 @@ function shortId(id: string | undefined): string {
  */
 export const ContactPointListView = React.memo(function ContactPointListView() {
   useModuleLocales(() => import("../../../locales"), "party-kernel.contactPoint");
-  const { vm } = useContactPointViewModel();
+  const { vm, lookupParties } = useContactPointViewModel();
   const { t, language } = useI18n();
 
   const TYPE_OPTIONS = [
@@ -102,7 +102,9 @@ export const ContactPointListView = React.memo(function ContactPointListView() {
       {
         name: "partyId",
         label: t("contactPoint.form.partyId"),
-        type: "text" as const,
+        type: "server-select" as const,
+        searchType: "server" as const,
+        onServerSearch: lookupParties,
         placeholder: t("contactPoint.form.partyIdPlaceholder"),
         required: true,
       },
@@ -133,7 +135,9 @@ export const ContactPointListView = React.memo(function ContactPointListView() {
       {
         name: "partyId",
         label: t("contactPoint.form.partyId"),
-        type: "text" as const,
+        type: "server-select" as const,
+        searchType: "server" as const,
+        onServerSearch: lookupParties,
         placeholder: t("contactPoint.form.partyIdPlaceholder"),
         required: true,
       },
@@ -173,7 +177,7 @@ export const ContactPointListView = React.memo(function ContactPointListView() {
       isPrimary: item.isPrimary,
     }),
     getItemDisplayName: (item: ContactPoint) =>
-      item.type && item.value ? `${item.type}: ${item.value}` : item.value || item.partyId,
+      item.type && item.value ? `${item.type}: ${item.value}` : item.value || "—",
     deleteService: (id: string) => vm.deleteItem(id),
     getActions: (_vmInstance, tFn, handleDeleteFn): CrudAction<ContactPoint>[] => [
       {

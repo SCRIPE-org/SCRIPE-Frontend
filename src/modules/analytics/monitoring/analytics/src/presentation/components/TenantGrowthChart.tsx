@@ -43,24 +43,24 @@ export function TenantGrowthChart({ data, isLoading, timeRangeLabel }: TenantGro
   }, [data]);
 
   return (
-    <Card className="backdrop-blur-xs shadow-xs flex h-full flex-col border-border/80 bg-card/80">
+    <Card className="flex h-full flex-col border-nx-line bg-nx-surface text-nx-ink hover:border-nx-line-hi">
       <CardHeader className="p-4 pb-2 sm:p-5">
         <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
           <div className="space-y-1">
             <div className="flex items-center gap-2">
               <TrendingUp className="h-4 w-4 text-primary" />
-              <CardTitle className="text-sm font-bold text-foreground">
+              <CardTitle className="text-sm font-bold text-nx-ink">
                 {t("tenantAnalytics.growth.title") || "Tenant Growth"}
               </CardTitle>
             </div>
-            <CardDescription className="text-xs text-muted-foreground">
+            <CardDescription className="text-xs text-nx-ink-3">
               {t("tenantAnalytics.growth.subtitle") ||
                 `Total tenants and new tenants over time (${timeRangeLabel.toLowerCase()})`}
             </CardDescription>
           </div>
 
           {/* Legend indicator */}
-          <div className="flex flex-wrap items-center gap-3 text-[11px] font-medium text-muted-foreground sm:gap-4">
+          <div className="flex flex-wrap items-center gap-3 text-[11px] font-medium text-nx-ink-3 sm:gap-4">
             <div className="flex items-center gap-1.5">
               <span className="h-2 w-2 rounded-full bg-primary" />
               <span>{t("tenantAnalytics.growth.totalTenants") || "Total Tenants"}</span>
@@ -75,9 +75,9 @@ export function TenantGrowthChart({ data, isLoading, timeRangeLabel }: TenantGro
 
       <CardContent className="flex min-h-[220px] flex-1 flex-col justify-between p-4 pt-2 sm:p-5">
         {isLoading ? (
-          <div className="h-[220px] w-full flex-1 animate-pulse rounded-lg bg-muted/20" />
+          <div className="h-[220px] w-full flex-1 animate-pulse rounded-lg bg-nx-raised" />
         ) : formattedData.length === 0 ? (
-          <div className="flex h-[220px] flex-1 items-center justify-center text-xs text-muted-foreground">
+          <div className="flex h-[220px] flex-1 items-center justify-center text-xs text-nx-ink-3">
             {t("tenantAnalytics.growth.noData") || "No tenant growth data in this time range"}
           </div>
         ) : (
@@ -95,42 +95,42 @@ export function TenantGrowthChart({ data, isLoading, timeRangeLabel }: TenantGro
                 </defs>
                 <CartesianGrid
                   strokeDasharray="3 3"
-                  stroke="hsl(var(--border))"
+                  stroke="var(--nx-line, #2c3033)"
                   opacity={0.4}
                   vertical={false}
                 />
                 <XAxis
                   dataKey="displayDate"
                   tickLine={false}
-                  axisLine={{ stroke: "hsl(var(--border))", opacity: 0.5 }}
-                  tick={{ fill: "hsl(var(--muted-foreground))", fontSize: 10 }}
+                  axisLine={{ stroke: "var(--nx-line, #2c3033)", opacity: 0.5 }}
+                  tick={{ fill: "var(--nx-ink-3, #8c918d)", fontSize: 10 }}
                   interval="preserveStartEnd"
                 />
                 <YAxis
                   allowDecimals={false}
                   tickLine={false}
                   axisLine={false}
-                  tick={{ fill: "hsl(var(--muted-foreground))", fontSize: 10 }}
+                  tick={{ fill: "var(--nx-ink-3, #8c918d)", fontSize: 10 }}
                 />
                 <Tooltip
                   content={({ active, payload, label }) => {
                     if (active && payload && payload.length) {
                       return (
-                        <div className="backdrop-blur-xs rounded-lg border border-border bg-popover/95 p-2.5 shadow-md">
-                          <p className="mb-1 text-[11px] font-semibold text-foreground">{label}</p>
+                        <div className="rounded-lg border border-nx-line bg-nx-surface/95 p-2.5 backdrop-blur-md">
+                          <p className="mb-1 text-[11px] font-semibold text-nx-ink">{label}</p>
                           {payload.map((entry, idx) => (
                             <div
                               key={idx}
                               className="flex items-center justify-between gap-4 text-xs"
                             >
-                              <span className="flex items-center gap-1.5 text-muted-foreground">
+                              <span className="flex items-center gap-1.5 text-nx-ink-3">
                                 <span
                                   className="h-2 w-2 rounded-full"
                                   style={{ backgroundColor: entry.color }}
                                 />
                                 {entry.name}:
                               </span>
-                              <span className="font-bold text-foreground">{entry.value}</span>
+                              <span className="font-bold text-nx-ink">{entry.value}</span>
                             </div>
                           ))}
                         </div>

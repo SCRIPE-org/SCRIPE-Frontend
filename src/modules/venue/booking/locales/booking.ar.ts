@@ -32,6 +32,10 @@ export const ar = {
       createAction: "إنشاء العميل",
       creating: "جارٍ إنشاء العميل…",
       cancel: "إلغاء",
+      phoneLabel: "رقم الهاتف الأساسي (اختياري)",
+      personGuarded:
+        "تم تعليق الإنشاء السريع للأفراد مؤقتًا لأعمال الصيانة والترقية. يتم الاحتفاظ بحقل الهاتف.",
+      personGuardedBtn: "غير متاح مؤقتًا",
       permissionTitle: "يلزم إذن الوصول إلى العملاء",
       permissionDescription: "تحتاج إلى إذن عرض الأطراف قبل إنشاء الحجز.",
     },

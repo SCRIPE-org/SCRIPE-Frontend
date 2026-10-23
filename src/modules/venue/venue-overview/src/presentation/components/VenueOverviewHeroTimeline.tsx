@@ -1,4 +1,4 @@
-﻿// FILE-EXCEPTION: rule bypass for existing large file
+// FILE-EXCEPTION: rule bypass for existing large file
 "use client";
 
 import React, { useEffect, useState, type CSSProperties } from "react";
@@ -7,6 +7,13 @@ import { useRouter } from "next/navigation";
 import { ArrowUpRight, Calendar } from "lucide-react";
 import { cn } from "@core/common/utils";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@core/ui/card";
+import { Button } from "@core/ui/button";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@core/ui/tooltip";
 import type {
   CalendarResource,
   OperationsCalendarBlock,
@@ -38,7 +45,7 @@ function statusBlockClasses(status: OperationsCalendarBlock["status"]) {
     case "CheckedIn":
       return "border-success/60 bg-success/15 text-success hover:bg-success/25 focus-visible:ring-success shadow-nx-xs";
     case "Held":
-      return "border-amber-500/60 bg-amber-500/15 text-amber-600 dark:text-amber-400 border-dashed hover:bg-amber-500/25 focus-visible:ring-amber-500";
+      return "border-warning/60 bg-warning/15 text-warning border-dashed hover:bg-warning/25 focus-visible:ring-warning";
     case "Completed":
       return "border-nx-line bg-nx-surfaceSubtle text-nx-ink-2 hover:bg-nx-hover";
     case "Confirmed":
@@ -91,12 +98,12 @@ export function VenueOverviewHeroTimeline({
             <div>
               <CardTitle className="text-sm font-bold text-nx-ink">
                 {t("venueOverview.heroTimeline.title", {
-                  defaultValue: "Todayâ€™s Venue Activity",
+                  defaultValue: "Today’s Venue Activity",
                 })}
               </CardTitle>
               <CardDescription className="text-xs text-nx-ink-2">
                 {t("venueOverview.heroTimeline.subtitle", {
-                  defaultValue: "Resource Ã— Time operational timeline across courts and fields.",
+                  defaultValue: "Resource × Time operational timeline across courts and fields.",
                 })}
               </CardDescription>
             </div>
@@ -145,9 +152,11 @@ export function VenueOverviewHeroTimeline({
     if (!canCreateBooking) return;
     const prefill = localPrefillForInstant(instantUtc, day.timeZoneId);
     const params = new URLSearchParams({
+      facilityId: resource.facilityId,
       resourceId: resource.id,
       date: prefill.date,
-      time: prefill.startTime,
+      startTime: prefill.startTime,
+      durationMinutes: String(resource.slotPolicy?.slotDurationMinutes ?? 60),
     });
     router.push(`/venue/bookings/new?${params.toString()}`);
   };
@@ -165,18 +174,18 @@ export function VenueOverviewHeroTimeline({
           <div>
             <div className="flex items-center gap-2">
               <span
-                className="flex size-2 animate-pulse rounded-full bg-emerald-500"
+                className="flex size-2 animate-pulse rounded-full bg-success shadow-[0_0_6px_rgba(34,197,94,0.7)]"
                 aria-hidden="true"
               />
               <CardTitle className="text-sm font-bold text-nx-ink">
                 {t("venueOverview.heroTimeline.title", {
-                  defaultValue: "Todayâ€™s Venue Activity",
+                  defaultValue: "Today’s Venue Activity",
                 })}
               </CardTitle>
             </div>
             <CardDescription className="mt-0.5 text-xs text-nx-ink-2">
               {t("venueOverview.heroTimeline.subtitle", {
-                defaultValue: "Resource Ã— Time operational timeline across courts and fields.",
+                defaultValue: "Resource × Time operational timeline across courts and fields.",
               })}
             </CardDescription>
           </div>
@@ -193,7 +202,7 @@ export function VenueOverviewHeroTimeline({
                 {t("operationsCalendar.status.Confirmed", { defaultValue: "Confirmed" })}
               </span>
               <span className="inline-flex items-center gap-1 text-[11px] text-nx-ink-2">
-                <span className="size-2 rounded-full bg-amber-500" />
+                <span className="size-2 rounded-full bg-warning" />
                 {t("operationsCalendar.status.Held", { defaultValue: "Held" })}
               </span>
             </div>
@@ -212,7 +221,8 @@ export function VenueOverviewHeroTimeline({
       </CardHeader>
 
       <CardContent className="p-0">
-        <div className="relative overflow-x-auto" data-testid="hero-timeline-scroll">
+        <TooltipProvider delayDuration={150}>
+          <div className="relative overflow-x-auto" data-testid="hero-timeline-scroll">
           <div className="min-w-max" dir="ltr">
             {/* Time Slot Header Row */}
             <div className="bg-nx-surfaceSubtle/60 sticky top-0 z-20 flex border-b border-nx-line">
@@ -281,17 +291,17 @@ export function VenueOverviewHeroTimeline({
                       );
 
                       return (
-                        // UI-EXCEPTION: highly specialized timeline grid block
-                        <button
+                        <Button
+                          variant="ghost"
                           type="button"
                           key={slot.instantUtc}
                           className={cn(
-                            "border-nx-line/40 h-full w-[72px] shrink-0 border-r text-transparent outline-none transition-colors",
+                            "border-nx-line/40 h-full w-[72px] shrink-0 rounded-none border-r p-0 text-transparent outline-none transition-colors",
                             occupied
-                              ? "cursor-default"
+                              ? "cursor-default hover:bg-transparent"
                               : canCreateBooking
                                 ? "hover:bg-nx-accent/5 focus-visible:bg-nx-accent/10 cursor-pointer focus-visible:z-10"
-                                : "cursor-default"
+                                : "cursor-default hover:bg-transparent"
                           )}
                           aria-label={
                             occupied
@@ -313,7 +323,7 @@ export function VenueOverviewHeroTimeline({
                           }
                         >
                           {slot.label}
-                        </button>
+                        </Button>
                       );
                     })}
 
@@ -325,46 +335,82 @@ export function VenueOverviewHeroTimeline({
                       const statusLabel = t(`operationsCalendar.status.${block.status}`, {
                         defaultValue: block.status,
                       });
+                      const pixelWidth = (position.widthPercent / 100) * timelineWidth;
+                      const isCompact = pixelWidth < 60;
+                      const compactRef = `#${block.reservationNumber.replace(/^RES-?/i, "") || block.reservationNumber}`;
+                      const accessibleLabel = t("operationsCalendar.timeline.bookingLabel", {
+                        reference: block.reservationNumber,
+                        status: statusLabel,
+                        start,
+                        end,
+                        resource: resource.name,
+                        defaultValue: `${block.reservationNumber}: ${statusLabel}, ${start}–${end} on ${resource.name}`,
+                      });
 
-                      return (
-                        // UI-EXCEPTION: highly specialized timeline grid block
-                        <button
+                      const blockButton = (
+                        <Button
+                          variant="ghost"
                           type="button"
-                          key={block.reservationId}
                           className={cn(
-                            "rounded-nx-xs absolute z-10 cursor-pointer select-none overflow-hidden border px-2 py-1 text-left text-[11px] leading-tight outline-none transition-all duration-nx-micro focus-visible:z-30 focus-visible:ring-2",
+                            "rounded-nx-xs absolute z-10 cursor-pointer select-none overflow-hidden border p-1 text-left text-[11px] leading-tight outline-none transition-all duration-nx-micro focus-visible:z-30 focus-visible:ring-2",
                             statusBlockClasses(block.status)
                           )}
                           style={
                             {
                               left: `${position.leftPercent}%`,
                               width: `${position.widthPercent}%`,
-                              minWidth: 44,
+                              minWidth: isCompact ? 36 : 44,
                               top: 6 + track * BLOCK_HEIGHT,
                               height: BLOCK_HEIGHT - 6,
                             } as CSSProperties
                           }
                           onClick={() => handleOpenBooking(block)}
-                          title={`${block.reservationNumber} Â· ${statusLabel} (${start}â€“${end})`}
-                          aria-label={t("operationsCalendar.timeline.bookingLabel", {
-                            reference: block.reservationNumber,
-                            status: statusLabel,
-                            start,
-                            end,
-                            resource: resource.name,
-                            defaultValue: `${block.reservationNumber}: ${statusLabel}, ${start}â€“${end} on ${resource.name}`,
-                          })}
+                          title={isCompact ? undefined : `${block.reservationNumber} · ${statusLabel} (${start}–${end})`}
+                          aria-label={accessibleLabel}
                         >
-                          <div className="flex items-center gap-1 truncate font-bold">
-                            {block.status === "CheckedIn" && (
-                              <span className="size-1.5 shrink-0 animate-pulse rounded-full bg-success" />
-                            )}
-                            <span className="truncate">{block.reservationNumber}</span>
-                          </div>
-                          <div className="truncate text-[10px] opacity-90">
-                            {statusLabel} Â· {start}â€“{end}
-                          </div>
-                        </button>
+                          {isCompact ? (
+                            <div className="flex h-full w-full items-center justify-center font-mono text-[10px] font-bold">
+                              {block.status === "CheckedIn" && (
+                                <span className="me-1 size-1.5 shrink-0 animate-pulse rounded-full bg-success" />
+                              )}
+                              <span className="truncate">{compactRef}</span>
+                            </div>
+                          ) : (
+                            <div className="flex h-full w-full flex-col justify-center">
+                              <div className="flex items-center gap-1 truncate font-bold">
+                                {block.status === "CheckedIn" && (
+                                  <span className="size-1.5 shrink-0 animate-pulse rounded-full bg-success" />
+                                )}
+                                <span className="truncate">{block.reservationNumber}</span>
+                              </div>
+                              <div className="truncate text-[10px] opacity-90">
+                                {statusLabel} · {start}–{end}
+                              </div>
+                            </div>
+                          )}
+                        </Button>
+                      );
+
+                      if (isCompact) {
+                        return (
+                          <Tooltip key={block.reservationId}>
+                            <TooltipTrigger asChild>
+                              {blockButton}
+                            </TooltipTrigger>
+                            <TooltipContent side="top" className="text-xs">
+                              <div className="font-semibold">{block.reservationNumber}</div>
+                              <div className="text-[10px] text-nx-ink-2">
+                                {statusLabel} · {start}–{end}
+                              </div>
+                            </TooltipContent>
+                          </Tooltip>
+                        );
+                      }
+
+                      return (
+                        <React.Fragment key={block.reservationId}>
+                          {blockButton}
+                        </React.Fragment>
                       );
                     })}
 
@@ -386,6 +432,7 @@ export function VenueOverviewHeroTimeline({
             })}
           </div>
         </div>
+        </TooltipProvider>
       </CardContent>
     </Card>
   );

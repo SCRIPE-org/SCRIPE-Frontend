@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { useState } from "react";
 import { Check, Search, UserPlus, UserRound, X } from "lucide-react";
@@ -28,7 +28,11 @@ interface CustomerSelectionProps {
   searching: boolean;
   onSearch: (query: string) => Promise<CustomerSummary[]>;
   onSelect: (id: string) => Promise<CustomerSummary>;
-  onCreateCustomer?: (name: string, type?: "Person" | "Organization") => Promise<CustomerSummary>;
+  onCreateCustomer?: (
+    name: string,
+    type?: "Person" | "Organization",
+    phone?: string
+  ) => Promise<CustomerSummary>;
   onClear: () => void;
 }
 
@@ -51,6 +55,7 @@ export function CustomerSelection({
   const [isCreateOpen, setIsCreateOpen] = useState(false);
   const [newName, setNewName] = useState("");
   const [newType, setNewType] = useState<"Person" | "Organization">("Person");
+  const [newPhone, setNewPhone] = useState("");
   const [creating, setCreating] = useState(false);
   const [createError, setCreateError] = useState<string | null>(null);
 
@@ -66,9 +71,10 @@ export function CustomerSelection({
     setCreating(true);
     setCreateError(null);
     try {
-      await onCreateCustomer(newName.trim(), newType);
+      await onCreateCustomer(newName.trim(), newType, newPhone.trim() || undefined);
       setIsCreateOpen(false);
       setNewName("");
+      setNewPhone("");
     } catch (err: unknown) {
       setCreateError(err instanceof Error ? err.message : "Failed to create customer");
     } finally {
@@ -134,6 +140,18 @@ export function CustomerSelection({
                     </SelectContent>
                   </Select>
                 </div>
+                <div className="space-y-2">
+                  <Label htmlFor="quick-customer-phone">
+                    {t("booking.customer.phoneLabel") || "Primary Telephone (Optional)"}
+                  </Label>
+                  <Input
+                    id="quick-customer-phone"
+                    type="tel"
+                    value={newPhone}
+                    onChange={(e) => setNewPhone(e.target.value)}
+                    placeholder="+966 5x xxx xxxx"
+                  />
+                </div>
                 <DialogFooter className="gap-2 sm:gap-0">
                   <Button type="button" variant="outline" onClick={() => setIsCreateOpen(false)}>
                     {t("booking.customer.cancel")}
@@ -154,7 +172,7 @@ export function CustomerSelection({
             <AlertDescription>{t("booking.customer.permissionDescription")}</AlertDescription>
           </Alert>
         ) : customer ? (
-          <div className="border-nx-border bg-nx-surface-2 flex flex-wrap items-center justify-between gap-3 rounded-xl border p-4">
+          <div className="border-nx-line bg-nx-raised flex flex-wrap items-center justify-between gap-3 rounded-xl border p-4">
             <div className="min-w-0">
               <p className="text-xs font-medium uppercase tracking-wide text-nx-ink-3">
                 {t("booking.customer.selected")}
@@ -189,7 +207,7 @@ export function CustomerSelection({
 
             {results.length > 0 && (
               <ul
-                className="divide-nx-border border-nx-border m-0 list-none divide-y rounded-xl border p-0"
+                className="divide-nx-line border-nx-line m-0 list-none divide-y rounded-xl border p-0"
                 role="list"
               >
                 {results.map((party) => (
@@ -197,7 +215,7 @@ export function CustomerSelection({
                     <Button
                       type="button"
                       variant="ghost"
-                      className="hover:bg-nx-surface-2 flex h-auto w-full items-center justify-between gap-3 rounded-none p-3 text-start font-normal first:rounded-t-xl last:rounded-b-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-nx-accent"
+                      className="hover:bg-nx-raised flex h-auto w-full items-center justify-between gap-3 rounded-none p-3 text-start font-normal first:rounded-t-xl last:rounded-b-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-nx-accent"
                       onClick={() => void onSelect(party.id)}
                     >
                       <span className="min-w-0">
@@ -214,7 +232,7 @@ export function CustomerSelection({
             )}
 
             {searched && !searching && results.length === 0 && (
-              <div className="border-nx-border bg-nx-surface-2 flex flex-col justify-between gap-3 rounded-xl border border-dashed p-4 sm:flex-row sm:items-center">
+              <div className="border-nx-line bg-nx-raised flex flex-col justify-between gap-3 rounded-xl border border-dashed p-4 sm:flex-row sm:items-center">
                 <p className="text-sm text-nx-ink-2">{t("booking.customer.noResults")}</p>
                 {onCreateCustomer && (
                   <Button
@@ -236,10 +254,9 @@ export function CustomerSelection({
           </>
         )}
 
-        <div className="space-y-1 text-xs text-nx-ink-3">
-          <p>{t("booking.customer.contactLimitation")}</p>
-          <p>{t("booking.customer.existingOnly")}</p>
-        </div>
+        <p className="text-xs text-nx-ink-3">
+          {customer ? t("booking.customer.customerLinked", { defaultValue: "Customer linked to this booking reservation." }) : t("booking.customer.helperTip", { defaultValue: "Search by customer name or use Quick Create to register a customer." })}
+        </p>
       </CardContent>
     </Card>
   );

@@ -1,0 +1,472 @@
+"use client";
+
+import { useState, useMemo, useEffect, useTransition } from "react";
+import { useSearchParams } from "next/navigation";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { getPartyKernelContainer } from "../../../../di";
+import { PARTY_KERNEL_PERMISSIONS } from "../../../../permission-constants";
+import { usePermission } from "@core/hooks/use-permission";
+import { useEnhancedToast } from "@core/hooks/use-enhanced-toast";
+import { useI18n } from "@core/providers/i18n-provider";
+import type { Party } from "../../domain/entities/Party";
+import type {
+  CreatePersonParams,
+  CreateOrganizationParams,
+} from "../../domain/interfaces/IPartyRepository";
+
+/**
+ * Filter options for party directory list
+ */
+export type PartyDirectoryTypeFilter = "all" | "Person" | "Organization";
+
+/**
+ * View mode for the party directory
+ */
+export type PartyDirectoryViewMode = "table" | "grid";
+
+/**
+ * Sort options for the party directory
+ */
+export type PartyDirectorySort = "name_asc" | "name_desc" | "newest";
+
+/**
+ * Hook providing state, data, and mutations for the Party Directory view.
+ */
+export function usePartyDirectoryViewModel() {
+  const { partyRepository } = getPartyKernelContainer();
+  const queryClient = useQueryClient();
+  const { success, error: showError, warning } = useEnhancedToast();
+  const { t } = useI18n();
+  const [, startTransition] = useTransition();
+
+  const searchParams = useSearchParams();
+  const partyTypeParam = searchParams?.get("partyType");
+
+  const initialType: PartyDirectoryTypeFilter =
+    partyTypeParam === "Person" || partyTypeParam === "Organization" ? partyTypeParam : "all";
+
+  // Permissions (authoritative checks enforced on server, UX guards in client)
+  // Backend requires BOTH parties.create AND party-people.create / party-organizations.create
+  const canPartiesCreate = usePermission(PARTY_KERNEL_PERMISSIONS.PARTY_CREATE);
+  const canPersonCreate = usePermission(PARTY_KERNEL_PERMISSIONS.PARTY_PERSON_CREATE);
+  const canOrgCreate = usePermission(PARTY_KERNEL_PERMISSIONS.PARTY_ORGANIZATION_CREATE);
+
+  const canCreatePerson = canPartiesCreate && canPersonCreate;
+  const canCreateOrg = canPartiesCreate && canOrgCreate;
+  const canEdit = usePermission(PARTY_KERNEL_PERMISSIONS.PARTY_UPDATE);
+  const canDelete = usePermission(PARTY_KERNEL_PERMISSIONS.PARTY_DELETE);
+
+  // Filter and Layout States
+  const [selectedType, setSelectedType] = useState<PartyDirectoryTypeFilter>(initialType);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [viewMode, setViewMode] = useState<PartyDirectoryViewMode>("table");
+  const [sortBy, setSortBy] = useState<PartyDirectorySort>("name_asc");
+  const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState(20);
+
+  // Synchronize filter when navigating with ?partyType= query parameter
+  useEffect(() => {
+    if (partyTypeParam === "Person" || partyTypeParam === "Organization") {
+      setSelectedType(partyTypeParam);
+      setPage(1);
+    } else if (partyTypeParam === "all") {
+      setSelectedType("all");
+      setPage(1);
+    }
+  }, [partyTypeParam]);
+
+  // Dialog & Sheet States
+  const [isCreatePersonOpen, setIsCreatePersonOpen] = useState(false);
+  const [isCreateOrgOpen, setIsCreateOrgOpen] = useState(false);
+  const [editingParty, setEditingParty] = useState<Party | null>(null);
+  const [deletingParty, setDeletingParty] = useState<Party | null>(null);
+  const [previewParty, setPreviewParty] = useState<Party | null>(null);
+
+  const editingPartyId = editingParty?.id ?? "";
+  const editingProfileQuery = useQuery({
+    queryKey: ["party-profile", editingPartyId],
+    queryFn: async () => partyRepository.getProfile(editingPartyId),
+    enabled: Boolean(editingPartyId),
+    staleTime: 15_000,
+  });
+
+  const previewPartyId = previewParty?.id ?? "";
+  const previewProfileQuery = useQuery({
+    queryKey: ["party-profile", previewPartyId],
+    queryFn: async () => partyRepository.getProfile(previewPartyId),
+    enabled: Boolean(previewPartyId),
+    staleTime: 15_000,
+  });
+
+  // Data Query
+  const query = useQuery({
+    queryKey: ["parties-directory", selectedType, searchTerm, page, pageSize, sortBy],
+    queryFn: async () => {
+      return partyRepository.getAll({
+        page,
+        pageSize,
+        search: searchTerm.trim() || undefined,
+        type: selectedType === "all" ? undefined : selectedType,
+        sortBy,
+      });
+    },
+    staleTime: 30_000,
+  });
+
+  // Client-side Sort ordering
+  const sortedItems = useMemo(() => {
+    const raw = query.data?.items ?? [];
+    const cloned = [...raw];
+
+    switch (sortBy) {
+      case "name_asc":
+        return cloned.sort((a, b) => a.displayName.localeCompare(b.displayName));
+      case "name_desc":
+        return cloned.sort((a, b) => b.displayName.localeCompare(a.displayName));
+      case "newest":
+        return cloned.sort(
+          (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+        );
+      default:
+        return cloned;
+    }
+  }, [query.data?.items, sortBy]);
+
+  // Global counts query for stats chips
+  const statsQuery = useQuery({
+    queryKey: ["parties-stats-summary"],
+    queryFn: async () => {
+      const [totalRes, peopleRes, orgsRes] = await Promise.allSettled([
+        partyRepository.getAll({ page: 1, pageSize: 1 }),
+        partyRepository.lookupPeople({ page: 1, pageSize: 1 }),
+        partyRepository.lookupOrganizations({ page: 1, pageSize: 1 }),
+      ]);
+
+      const total = totalRes.status === "fulfilled" ? totalRes.value.totalCount : 0;
+      const people = peopleRes.status === "fulfilled" ? peopleRes.value.totalCount : 0;
+      const organizations = orgsRes.status === "fulfilled" ? orgsRes.value.totalCount : 0;
+
+      return {
+        total,
+        people,
+        organizations,
+      };
+    },
+    staleTime: 60_000,
+  });
+
+  // Mutations
+  const createPersonMutation = useMutation({
+    mutationFn: (params: CreatePersonParams) => {
+      let contactFailed = false;
+      const effectiveParams: CreatePersonParams = {
+        ...params,
+        onContactPointFailure: (err, partyId) => {
+          contactFailed = true;
+          params.onContactPointFailure?.(err, partyId);
+        },
+      };
+      return partyRepository.createPerson(effectiveParams).then((partyId) => ({
+        partyId,
+        contactFailed,
+      }));
+    },
+    onSuccess: ({ partyId, contactFailed }) => {
+      queryClient.invalidateQueries({ queryKey: ["parties-directory"] });
+      queryClient.invalidateQueries({ queryKey: ["parties-stats-summary"] });
+      if (contactFailed) {
+        warning({
+          title: t("party.toast.partialContactSave") || "Contact created with warnings",
+          description:
+            t("party.toast.partialContactSaveDesc") ||
+            "The contact was created, but phone or email could not be linked. You can add them from the contact profile.",
+        });
+      } else {
+        setIsCreatePersonOpen(false);
+        success({
+          title: t("party.toast.personCreated") || "Person created successfully",
+          description: t("party.toast.personCreatedDesc") || "Navigating to profile workspace",
+        });
+      }
+      return partyId;
+    },
+    onError: (err: Error) => {
+      showError({
+        title: t("common.error") || "Error",
+        description: err.message || t("party.toast.errorCreating") || "Failed to create person",
+      });
+    },
+  });
+
+  const createOrgMutation = useMutation({
+    mutationFn: (params: CreateOrganizationParams) => {
+      let contactFailed = false;
+      const effectiveParams: CreateOrganizationParams = {
+        ...params,
+        onContactPointFailure: (err, partyId) => {
+          contactFailed = true;
+          params.onContactPointFailure?.(err, partyId);
+        },
+      };
+      return partyRepository.createOrganization(effectiveParams).then((partyId) => ({
+        partyId,
+        contactFailed,
+      }));
+    },
+    onSuccess: ({ partyId, contactFailed }) => {
+      queryClient.invalidateQueries({ queryKey: ["parties-directory"] });
+      queryClient.invalidateQueries({ queryKey: ["parties-stats-summary"] });
+      if (contactFailed) {
+        warning({
+          title: t("party.toast.partialContactSave") || "Contact created with warnings",
+          description:
+            t("party.toast.partialContactSaveDesc") ||
+            "The contact was created, but phone or email could not be linked. You can add them from the contact profile.",
+        });
+      } else {
+        setIsCreateOrgOpen(false);
+        success({
+          title: t("party.toast.orgCreated") || "Organization created successfully",
+          description: t("party.toast.orgCreatedDesc") || "Navigating to profile workspace",
+        });
+      }
+      return partyId;
+    },
+    onError: (err: Error) => {
+      showError({
+        title: t("common.error") || "Error",
+        description:
+          err.message || t("party.toast.errorCreating") || "Failed to create organization",
+      });
+    },
+  });
+
+  const updateNameMutation = useMutation({
+    mutationFn: ({
+      id,
+      displayName,
+      options,
+    }: {
+      id: string;
+      displayName: string;
+      options?: {
+        type?: string;
+        fullName?: string;
+        givenName?: string;
+        middleNames?: string;
+        familyName?: string;
+        dateOfBirth?: string | null;
+        isMinor?: boolean;
+        legalName?: string;
+        taxId?: string | null;
+        rowVersion?: string | null;
+      };
+    }) => {
+      const type = options?.type ?? editingParty?.type;
+      const fullName = options?.fullName ?? editingProfileQuery.data?.fullName ?? undefined;
+      const rowVersion =
+        options?.rowVersion !== undefined
+          ? options.rowVersion
+          : editingProfileQuery.data?.rowVersion;
+
+      const hasExtendedPersonFields =
+        options?.dateOfBirth !== undefined ||
+        options?.isMinor !== undefined ||
+        options?.givenName !== undefined ||
+        options?.middleNames !== undefined ||
+        options?.familyName !== undefined;
+
+      if (
+        type === "Person" &&
+        hasExtendedPersonFields &&
+        typeof partyRepository.updatePerson === "function"
+      ) {
+        return partyRepository.updatePerson(id, {
+          fullName: fullName || displayName,
+          displayName,
+          givenName: options?.givenName,
+          middleNames: options?.middleNames,
+          familyName: options?.familyName,
+          dateOfBirth: options?.dateOfBirth,
+          isMinor: options?.isMinor,
+          rowVersion: rowVersion ?? null,
+        });
+      }
+
+      const hasExtendedOrgFields = options?.legalName !== undefined || options?.taxId !== undefined;
+
+      if (
+        type === "Organization" &&
+        hasExtendedOrgFields &&
+        typeof partyRepository.updateOrganization === "function"
+      ) {
+        return partyRepository.updateOrganization(id, {
+          legalName: options?.legalName || displayName,
+          displayName,
+          taxId: options?.taxId,
+          rowVersion: rowVersion ?? null,
+        });
+      }
+
+      return partyRepository.updatePartyName(id, displayName, {
+        ...(type !== undefined ? { type } : {}),
+        ...(fullName !== undefined ? { fullName } : {}),
+        ...(rowVersion !== undefined && rowVersion !== null ? { rowVersion } : {}),
+      });
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["parties-directory"] });
+      queryClient.invalidateQueries({ queryKey: ["party-profile"] });
+      setEditingParty(null);
+      success({
+        title: t("party.toast.updated") || "Party updated successfully",
+      });
+    },
+    onError: (err: Error) => {
+      const typedErr = err as Error & {
+        status?: number;
+        details?: { statusCode?: number; errorCode?: string };
+      };
+      const isConflict =
+        typedErr.status === 409 ||
+        typedErr.details?.statusCode === 409 ||
+        typedErr.details?.errorCode === "ENTITY_CONCURRENCY_CONFLICT" ||
+        /changed after it was read|modified by another|concurrency|conflict/i.test(
+          err.message || ""
+        );
+      if (isConflict) {
+        queryClient.invalidateQueries({ queryKey: ["parties-directory"] });
+        queryClient.invalidateQueries({ queryKey: ["party-profile"] });
+      }
+      showError({
+        title: isConflict
+          ? t("party.toast.concurrencyConflict") || "Concurrent modification detected"
+          : t("common.error") || "Error",
+        description: err.message || t("party.toast.errorUpdating") || "Failed to update party",
+      });
+    },
+  });
+
+  const deleteMutation = useMutation({
+    mutationFn: (id: string) => partyRepository.delete(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["parties-directory"] });
+      queryClient.invalidateQueries({ queryKey: ["parties-stats-summary"] });
+      setDeletingParty(null);
+      success({
+        title: t("party.toast.deleted") || "Party removed successfully",
+      });
+    },
+    onError: (err: Error) => {
+      showError({
+        title: t("common.error") || "Error",
+        description: err.message || t("party.toast.errorDeleting") || "Failed to delete party",
+      });
+    },
+  });
+
+  const handleSearchChange = (term: string) => {
+    startTransition(() => {
+      setSearchTerm(term);
+      setPage(1);
+    });
+  };
+
+  const handleTypeSelect = (type: PartyDirectoryTypeFilter) => {
+    startTransition(() => {
+      setSelectedType(type);
+      setPage(1);
+    });
+  };
+
+  return {
+    // Data & Slicing
+    parties: sortedItems,
+    rawCount: query.data?.totalCount ?? 0,
+    totalCount: query.data?.totalCount ?? 0,
+    totalPages: query.data?.totalPages ?? 1,
+    page,
+    pageSize,
+    isLoading: query.isLoading,
+    isFetching: query.isFetching,
+    isError: query.isError,
+    error: query.error as Error | null,
+    refetch: query.refetch,
+
+    // Stats
+    stats: {
+      total: statsQuery.data?.total ?? query.data?.totalCount ?? 0,
+      people: statsQuery.data?.people ?? 0,
+      organizations: statsQuery.data?.organizations ?? 0,
+    },
+
+    // Filter & Presentation controls
+    selectedType,
+    setSelectedType: handleTypeSelect,
+    searchTerm,
+    setSearchTerm: handleSearchChange,
+    viewMode,
+    setViewMode,
+    sortBy,
+    setSortBy,
+    setPage,
+    setPageSize,
+
+    // Dialog state
+    isCreatePersonOpen,
+    setIsCreatePersonOpen,
+    isCreateOrgOpen,
+    setIsCreateOrgOpen,
+    editingParty,
+    setEditingParty,
+    editingPartyProfile: editingProfileQuery.data ?? null,
+    editingPartyFullName: editingProfileQuery.data?.fullName ?? null,
+    deletingParty,
+    setDeletingParty,
+    previewParty,
+    setPreviewParty,
+    previewPartyProfile: previewProfileQuery.data ?? null,
+
+    // Actions & Handlers
+    handleCreatePerson: async (params: CreatePersonParams): Promise<string> => {
+      const res = await createPersonMutation.mutateAsync(params);
+      return res.partyId;
+    },
+    isCreatingPerson: createPersonMutation.isPending,
+
+    handleCreateOrganization: async (params: CreateOrganizationParams): Promise<string> => {
+      const res = await createOrgMutation.mutateAsync(params);
+      return res.partyId;
+    },
+    isCreatingOrg: createOrgMutation.isPending,
+
+    handleUpdateName: (
+      id: string,
+      displayName: string,
+      options?: {
+        type?: string;
+        fullName?: string;
+        givenName?: string;
+        middleNames?: string;
+        familyName?: string;
+        dateOfBirth?: string | null;
+        isMinor?: boolean;
+        legalName?: string;
+        taxId?: string | null;
+        rowVersion?: string | null;
+      }
+    ) => updateNameMutation.mutateAsync({ id, displayName, options }),
+    isUpdatingName: updateNameMutation.isPending,
+
+    handleDelete: (id: string) => deleteMutation.mutateAsync(id),
+    isDeleting: deleteMutation.isPending,
+
+    // Permissions
+    permissions: {
+      canCreatePerson,
+      canCreateOrg,
+      canEdit,
+      canDelete,
+    },
+  };
+}

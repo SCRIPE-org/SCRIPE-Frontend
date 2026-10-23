@@ -31,7 +31,7 @@ function formatInterval(candidate: AvailabilityCandidate, locale: string): strin
     minute: "2-digit",
     timeZone: candidate.timeZoneId,
   });
-  return `${date} Â· ${time.format(new Date(candidate.startUtc))}â€“${time.format(new Date(candidate.endUtc))}`;
+  return `${date} · ${time.format(new Date(candidate.startUtc))}–${time.format(new Date(candidate.endUtc))}`;
 }
 
 function CandidateCard({
@@ -49,7 +49,7 @@ function CandidateCard({
 }) {
   return (
     <div
-      className={`rounded-xl border p-4 ${selected ? "bg-nx-accent/5 border-nx-accent" : "border-nx-border bg-nx-surface"}`}
+      className={`rounded-xl border p-4 ${selected ? "bg-nx-accent/5 border-nx-accent" : "border-nx-line bg-nx-surface"}`}
     >
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div className="min-w-0">
@@ -64,7 +64,7 @@ function CandidateCard({
             </Badge>
           </div>
           <p className="mt-1 text-sm text-nx-ink-2">
-            {candidate.facilityName} Â· {candidate.profileName}
+            {candidate.facilityName} · {candidate.profileName}
           </p>
           <p className="mt-2 text-sm text-nx-ink">{formatInterval(candidate, locale)}</p>
           <p className="mt-1 text-xs text-nx-ink-3">{candidate.timeZoneId}</p>
@@ -75,7 +75,7 @@ function CandidateCard({
             })}
           </p>
           {!candidate.isAvailable && candidate.reason && (
-            <p className="mt-2 text-sm text-nx-danger">{candidate.reason}</p>
+            <p className="mt-2 text-sm text-destructive">{candidate.reason}</p>
           )}
         </div>
         {candidate.isAvailable && onSelect && (
@@ -156,7 +156,7 @@ export function AvailabilityCandidates({
         ))}
 
         {unavailable.length > 0 && (
-          <details className="border-nx-border rounded-xl border p-4">
+          <details className="border-nx-line rounded-xl border p-4">
             <summary className="flex cursor-pointer list-none items-center justify-between gap-3 font-medium text-nx-ink">
               {t("booking.availability.unavailableGroup")}
               <ChevronDown className="size-4" aria-hidden="true" />

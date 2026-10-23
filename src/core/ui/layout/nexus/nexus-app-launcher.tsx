@@ -335,6 +335,7 @@ export function NexusAppLauncher({ open, onOpenChange }: NexusAppLauncherProps) 
       <div
         ref={launcherRef}
         role="dialog"
+        data-testid="nexus-app-launcher"
         aria-modal="true"
         aria-labelledby={titleId}
         className={cn(
@@ -595,6 +596,8 @@ function WorkspaceCard({
   return (
     <div
       role="button"
+      data-testid="nexus-workspace-card"
+      data-status={status}
       // Locked cards stay in the tab order — clicking OR keying one opens the
       // upgrade dialog, and that upsell must be keyboard-reachable. Only
       // coming-soon (a true no-op) leaves the tab order.
