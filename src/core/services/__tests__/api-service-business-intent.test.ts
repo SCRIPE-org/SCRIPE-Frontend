@@ -35,13 +35,19 @@ function mutationConfig(headers: Record<string, string> = {}): InternalAxiosRequ
 
 function unavailableResponseError(): AxiosError {
   const config = mutationConfig();
-  return new AxiosError("Request failed with status code 503", "ERR_BAD_RESPONSE", config, undefined, {
-    status: 503,
-    statusText: "Service Unavailable",
-    headers: {},
+  return new AxiosError(
+    "Request failed with status code 503",
+    "ERR_BAD_RESPONSE",
     config,
-    data: {},
-  });
+    undefined,
+    {
+      status: 503,
+      statusText: "Service Unavailable",
+      headers: {},
+      config,
+      data: {},
+    }
+  );
 }
 
 describe("ApiService business intent and replay nonce separation", () => {
@@ -148,13 +154,19 @@ describe("ApiService business intent and replay nonce separation", () => {
     instance.defaults.adapter = vi.fn<AxiosAdapter>(async (config) => {
       requests.push(config as InternalAxiosRequestConfig);
       if (requests.length === 1) {
-        throw new AxiosError("Request failed with status code 503", "ERR_BAD_RESPONSE", config, undefined, {
-          status: 503,
-          statusText: "Service Unavailable",
-          headers: {},
+        throw new AxiosError(
+          "Request failed with status code 503",
+          "ERR_BAD_RESPONSE",
           config,
-          data: {},
-        });
+          undefined,
+          {
+            status: 503,
+            statusText: "Service Unavailable",
+            headers: {},
+            config,
+            data: {},
+          }
+        );
       }
 
       return {
@@ -192,13 +204,19 @@ describe("ApiService business intent and replay nonce separation", () => {
     instance.defaults.adapter = vi.fn<AxiosAdapter>(async (config) => {
       requests.push(config as InternalAxiosRequestConfig);
       if (requests.length === 1) {
-        throw new AxiosError("Request failed with status code 401", "ERR_BAD_REQUEST", config, undefined, {
-          status: 401,
-          statusText: "Unauthorized",
-          headers: {},
+        throw new AxiosError(
+          "Request failed with status code 401",
+          "ERR_BAD_REQUEST",
           config,
-          data: {},
-        });
+          undefined,
+          {
+            status: 401,
+            statusText: "Unauthorized",
+            headers: {},
+            config,
+            data: {},
+          }
+        );
       }
 
       return {

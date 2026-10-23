@@ -30,7 +30,7 @@ describe("CommercialPricingService", () => {
         idempotencyKey: "quote-key",
       }),
       undefined,
-      { headers: { "Idempotency-Key": "quote-key" } }
+      { idempotencyKey: "quote-key" }
     );
   });
 
@@ -51,7 +51,12 @@ describe("CommercialPricingService", () => {
 
     await new CommercialPricingService(api).configureResourcePrice(input);
 
-    expect(api.post).toHaveBeenCalledWith("/v1/catalog-pricing/resource-rental-prices", input);
+    expect(api.post).toHaveBeenCalledWith(
+      "/v1/catalog-pricing/resource-rental-prices",
+      input,
+      undefined,
+      { idempotencyKey: "price-config-1" }
+    );
   });
 
   it("uses the dedicated privileged quote-override action with its audit reason", async () => {
@@ -66,7 +71,9 @@ describe("CommercialPricingService", () => {
 
     expect(api.post).toHaveBeenCalledWith(
       "/v1/catalog-pricing/price-quotes/quote-1/override",
-      input
+      input,
+      undefined,
+      { idempotencyKey: "override-1" }
     );
   });
 

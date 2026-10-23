@@ -31,18 +31,18 @@ export const SecurityPoliciesCard = memo(function SecurityPoliciesCard({
   const { t } = useI18n();
 
   return (
-    <Card className={`flex h-full flex-col ${cardClasses || ""}`}>
+    <Card className={`flex h-full flex-col border-nx-line bg-nx-surface text-nx-ink ${cardClasses || ""}`}>
       <CardHeader className="pb-3">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <div className="rounded-md bg-emerald-500/10 p-1.5 text-emerald-500">
+            <div className="rounded-md border border-success/20 bg-success/10 p-1.5 text-success">
               <ShieldCheck className="h-4 w-4" aria-hidden="true" />
             </div>
             <div>
-              <CardTitle className="text-base font-semibold">
+              <CardTitle className="text-base font-semibold text-nx-ink">
                 {t("security.policies.title") || "Security Policies Posture"}
               </CardTitle>
-              <CardDescription className="text-xs">
+              <CardDescription className="text-xs text-nx-ink-3">
                 {t("security.policies.description") ||
                   "Platform-enforced security boundaries and baseline policies"}
               </CardDescription>
@@ -66,14 +66,14 @@ export const SecurityPoliciesCard = memo(function SecurityPoliciesCard({
             return (
               <div
                 key={policy.id}
-                className="flex flex-col justify-between space-y-2 rounded-lg border border-border/70 bg-card/60 p-3"
+                className="flex flex-col justify-between space-y-2 rounded-lg border border-nx-line bg-nx-raised/40 p-3 transition-colors hover:border-nx-line-hi hover:bg-nx-raised/60"
               >
                 <div className="flex items-start justify-between gap-2">
                   <div className="flex items-center gap-2">
-                    <div className="rounded-md bg-emerald-500/10 p-1.5 text-emerald-500">
+                    <div className="rounded-md border border-success/20 bg-success/10 p-1.5 text-success">
                       <Icon className="h-4 w-4" />
                     </div>
-                    <p className="text-xs font-semibold text-foreground">{policy.name}</p>
+                    <p className="text-xs font-semibold text-nx-ink">{policy.name}</p>
                   </div>
 
                   <Badge variant="success" className="shrink-0 text-[10px] font-bold uppercase">
@@ -81,7 +81,7 @@ export const SecurityPoliciesCard = memo(function SecurityPoliciesCard({
                   </Badge>
                 </div>
 
-                <p className="text-[11px] leading-relaxed text-muted-foreground">
+                <p className="text-[11px] leading-relaxed text-nx-ink-2">
                   {policy.details}
                 </p>
               </div>

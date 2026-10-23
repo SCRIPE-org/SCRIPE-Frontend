@@ -30,6 +30,8 @@ export interface UseEntityLookupSearchResult {
   isLoadingMore: boolean;
   /** Indicates if additional pages are available from the server. */
   hasNextPage: boolean;
+  /** True when the server's bounded candidate window may omit additional matches. */
+  mayHaveMoreResults: boolean;
   /** Fetches the next page of results. */
   loadMore: () => void;
   /** Any error encountered during entity lookup. */

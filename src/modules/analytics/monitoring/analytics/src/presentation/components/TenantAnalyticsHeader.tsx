@@ -63,16 +63,16 @@ export function TenantAnalyticsHeader({
     timeRanges.find((r) => r.key === timeRange)?.label ?? timeRanges[1].label;
 
   return (
-    <header className="flex flex-col gap-4 border-b border-border/80 pb-5 lg:flex-row lg:items-end lg:justify-between">
+    <header className="flex flex-col gap-4 border-b border-nx-line pb-5 lg:flex-row lg:items-end lg:justify-between">
       {/* Page Title & Breadcrumb context */}
       <div className="min-w-0">
         <p className="text-[11px] font-bold uppercase tracking-[0.16em] text-primary">
           {t("tenantAnalytics.header.eyebrow") || "MONITORING"}
         </p>
-        <h1 className="mt-1 text-2xl font-extrabold leading-tight tracking-tight text-foreground sm:text-3xl">
+        <h1 className="mt-1 text-2xl font-extrabold leading-tight tracking-tight text-nx-ink sm:text-3xl">
           {t("tenantAnalytics.header.title") || "Tenant Analytics"}
         </h1>
-        <p className="mt-1 max-w-2xl text-xs text-muted-foreground sm:text-sm">
+        <p className="mt-1 max-w-2xl text-xs text-nx-ink-3 sm:text-sm">
           {t("tenantAnalytics.header.subtitle") ||
             "Platform-wide insights into tenant growth, usage, adoption and engagement."}
         </p>
@@ -86,14 +86,14 @@ export function TenantAnalyticsHeader({
             <Button
               variant="outline"
               size="sm"
-              className="h-8.5 shadow-xs cursor-pointer gap-2 border-border bg-card px-3 text-xs font-semibold text-foreground hover:bg-accent"
+              className="h-8.5 cursor-pointer gap-2 border-nx-line bg-nx-surface px-3 text-xs font-semibold text-nx-ink hover:border-nx-line-hi hover:bg-nx-raised"
             >
-              <Calendar className="h-3.5 w-3.5 text-muted-foreground" />
+              <Calendar className="h-3.5 w-3.5 text-nx-ink-3" />
               <span>{currentRangeLabel}</span>
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end" className="w-44">
-            <DropdownMenuLabel className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
+            <DropdownMenuLabel className="text-[11px] font-semibold uppercase tracking-wider text-nx-ink-3">
               {t("tenantAnalytics.header.timeRangeLabel") || "Time Horizon"}
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
@@ -117,11 +117,11 @@ export function TenantAnalyticsHeader({
             <Button
               variant="outline"
               size="sm"
-              className={`h-8.5 shadow-xs cursor-pointer gap-2 border-border bg-card px-3 text-xs font-semibold text-foreground hover:bg-accent ${
+              className={`h-8.5 cursor-pointer gap-2 border-nx-line bg-nx-surface px-3 text-xs font-semibold text-nx-ink hover:border-nx-line-hi hover:bg-nx-raised ${
                 regionFilter !== "all" ? "border-primary/50 text-primary" : ""
               }`}
             >
-              <Globe className="h-3.5 w-3.5 text-muted-foreground" />
+              <Globe className="h-3.5 w-3.5 text-nx-ink-3" />
               <span>
                 {regionFilter === "all"
                   ? t("tenantAnalytics.header.allRegions") || "All Regions"
@@ -159,11 +159,11 @@ export function TenantAnalyticsHeader({
             <Button
               variant="outline"
               size="sm"
-              className={`h-8.5 shadow-xs cursor-pointer gap-2 border-border bg-card px-3 text-xs font-semibold text-foreground hover:bg-accent ${
+              className={`h-8.5 cursor-pointer gap-2 border-nx-line bg-nx-surface px-3 text-xs font-semibold text-nx-ink hover:border-nx-line-hi hover:bg-nx-raised ${
                 statusFilter !== "all" ? "border-primary/50 text-primary" : ""
               }`}
             >
-              <SlidersHorizontal className="h-3.5 w-3.5 text-muted-foreground" />
+              <SlidersHorizontal className="h-3.5 w-3.5 text-nx-ink-3" />
               <span>
                 {statusFilter === "all"
                   ? t("tenantAnalytics.header.allStatuses") || "All Statuses"
@@ -201,11 +201,11 @@ export function TenantAnalyticsHeader({
             <Button
               variant="outline"
               size="sm"
-              className={`h-8.5 shadow-xs cursor-pointer gap-2 border-border bg-card px-3 text-xs font-semibold text-foreground hover:bg-accent ${
+              className={`h-8.5 cursor-pointer gap-2 border-nx-line bg-nx-surface px-3 text-xs font-semibold text-nx-ink hover:border-nx-line-hi hover:bg-nx-raised ${
                 editionFilter !== "all" ? "border-primary/50 text-primary" : ""
               }`}
             >
-              <Layers className="h-3.5 w-3.5 text-muted-foreground" />
+              <Layers className="h-3.5 w-3.5 text-nx-ink-3" />
               <span>
                 {editionFilter === "all"
                   ? t("tenantAnalytics.header.allEditions") || "All Editions"
@@ -244,7 +244,7 @@ export function TenantAnalyticsHeader({
           size="sm"
           onClick={onRefresh}
           disabled={isRefetching}
-          className="h-8.5 shadow-xs cursor-pointer gap-1.5 border-border bg-card px-3 text-xs font-semibold text-foreground hover:bg-accent"
+          className="h-8.5 cursor-pointer gap-1.5 border-nx-line bg-nx-surface px-3 text-xs font-semibold text-nx-ink hover:border-nx-line-hi hover:bg-nx-raised"
         >
           <RotateCw className={`h-3.5 w-3.5 ${isRefetching ? "animate-spin text-primary" : ""}`} />
           <span className="hidden sm:inline">
@@ -254,12 +254,12 @@ export function TenantAnalyticsHeader({
           </span>
         </Button>
 
-        {/* Export Button (Primary Lime) */}
+        {/* Export Button (Primary Lime with text-nx-on-fill) */}
         <Button
           type="button"
           size="sm"
           onClick={onExport}
-          className="h-8.5 shadow-xs cursor-pointer gap-1.5 bg-primary px-3.5 text-xs font-bold text-primary-foreground hover:bg-primary/90"
+          className="h-8.5 cursor-pointer gap-1.5 bg-primary px-3.5 text-xs font-bold text-nx-on-fill hover:bg-primary/90"
         >
           <Download className="h-3.5 w-3.5" />
           <span>{t("tenantAnalytics.header.export") || "Export"}</span>

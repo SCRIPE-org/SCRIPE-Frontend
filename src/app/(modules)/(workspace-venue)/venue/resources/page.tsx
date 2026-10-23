@@ -1,11 +1,16 @@
 import { Metadata } from "next";
+import { ModuleErrorBoundary } from "@core/ui/module-error-boundary";
 import { ResourcesWorkspaceView } from "@modules/venue/resources/src/presentation/views/ResourcesWorkspaceView";
 
 export const metadata: Metadata = {
-  title: "Courts & Fields | SCRIPE Venue",
-  description: "Manage venue courts, fields, working hours, booking slots, and pricing.",
+  title: "Courts & Spaces | SCRIPE Venue",
+  description: "Manage venue courts, spaces, working hours, booking slots, and pricing.",
 };
 
 export default function VenueResourcesPage() {
-  return <ResourcesWorkspaceView />;
+  return (
+    <ModuleErrorBoundary moduleName="venue.resources.title">
+      <ResourcesWorkspaceView />
+    </ModuleErrorBoundary>
+  );
 }

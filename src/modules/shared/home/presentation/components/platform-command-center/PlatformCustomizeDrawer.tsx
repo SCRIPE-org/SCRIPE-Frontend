@@ -70,16 +70,16 @@ export function PlatformCustomizeDrawer({
         role="dialog"
         aria-modal="true"
         aria-label={t("platformCommandCenter.customizeDrawer.title") || "Customize dashboard"}
-        className="fixed bottom-0 right-0 top-0 z-50 flex w-[350px] max-w-full flex-col justify-between border-l border-border bg-card p-6 shadow-2xl duration-200 animate-in slide-in-from-right"
+        className="fixed bottom-0 right-0 top-0 z-50 flex w-[350px] max-w-full flex-col justify-between border-s border-nx-line bg-nx-surface p-6 text-nx-ink shadow-2xl duration-200 animate-in slide-in-from-right"
       >
         <div>
           {/* Header */}
-          <div className="flex items-center justify-between border-b border-border pb-4">
+          <div className="flex items-center justify-between border-b border-nx-line pb-4">
             <div>
               <span className="mb-1 block text-[10px] font-bold uppercase tracking-wider text-primary">
                 {t("platformCommandCenter.customizeDrawer.personalize") || "Personalize"}
               </span>
-              <h3 className="text-base font-bold tracking-tight text-foreground">
+              <h3 className="text-base font-bold tracking-tight text-nx-ink">
                 {t("platformCommandCenter.customizeDrawer.title") || "Customize dashboard"}
               </h3>
             </div>
@@ -87,24 +87,24 @@ export function PlatformCustomizeDrawer({
               variant="ghost"
               size="icon"
               onClick={onClose}
-              className="h-8 w-8 text-muted-foreground hover:text-foreground"
+              className="h-8 w-8 text-nx-ink-3 hover:text-nx-ink"
             >
               <X className="h-4 w-4" />
             </Button>
           </div>
 
-          <p className="mt-3 text-xs leading-relaxed text-muted-foreground">
+          <p className="mt-3 text-xs leading-relaxed text-nx-ink-3">
             {t("platformCommandCenter.customizeDrawer.description") ||
               "Curate your command center layout by toggling components on or off. Settings are saved locally."}
           </p>
 
           {/* Toggles */}
-          <div className="mt-6 divide-y divide-border/80 border-y border-border/80">
+          <div className="mt-6 divide-y divide-nx-line border-y border-nx-line">
             {sections.map((sec) => {
               const isOn = visibleSections[sec.key];
               return (
                 <div key={sec.key} className="flex items-center justify-between py-3">
-                  <span className="text-xs font-medium text-foreground">{sec.label}</span>
+                  <span className="text-xs font-medium text-nx-ink">{sec.label}</span>
                   <Switch
                     checked={isOn}
                     onCheckedChange={() => onToggleSection(sec.key)}
@@ -120,9 +120,9 @@ export function PlatformCustomizeDrawer({
         <Button
           variant="outline"
           onClick={onReset}
-          className="h-9 w-full gap-2 border-border text-xs font-semibold text-foreground hover:bg-accent"
+          className="h-9 w-full gap-2 border-nx-line text-xs font-semibold text-nx-ink hover:border-nx-line-hi hover:bg-nx-raised"
         >
-          <RotateCcw className="h-3.5 w-3.5 text-muted-foreground" />
+          <RotateCcw className="h-3.5 w-3.5 text-nx-ink-3" />
           <span>
             {t("platformCommandCenter.customizeDrawer.reset") || "Reset to canonical layout"}
           </span>

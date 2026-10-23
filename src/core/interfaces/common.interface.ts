@@ -17,6 +17,8 @@ export interface PagedResult<T> {
   totalPages: number;
   hasNextPage: boolean;
   hasPreviousPage: boolean;
+  /** True when a bounded search may have omitted additional matches. */
+  mayHaveMoreResults?: boolean;
 }
 
 export type SortDirection = "asc" | "desc";

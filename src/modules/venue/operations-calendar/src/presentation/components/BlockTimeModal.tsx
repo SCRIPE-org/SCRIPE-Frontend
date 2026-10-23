@@ -6,6 +6,7 @@ import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "
 import { Button } from "@core/ui/button";
 import { Input } from "@core/ui/input";
 import { Label } from "@core/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@core/ui/select";
 import { Alert, AlertDescription } from "@core/ui/alert";
 import { useI18n } from "@core/providers/i18n-provider";
 import { useVenueServiceLocator } from "@modules/venue";
@@ -101,7 +102,11 @@ export function BlockTimeModal({
         hardBlock: true,
         reason:
           reason.trim() ||
-          (reasonType === "Maintenance" ? "Scheduled Maintenance" : "Court Closed"),
+          (reasonType === "Maintenance"
+            ? t("resources.blockTimeModal.typeMaintenance", {
+                defaultValue: "Scheduled Maintenance",
+              })
+            : t("resources.blockTimeModal.typeUnavailable", { defaultValue: "Court Closed" })),
       });
 
       onOpenChange(false);
@@ -139,18 +144,23 @@ export function BlockTimeModal({
             <Label className="text-xs font-semibold">
               {t("resources.blockTimeModal.resource", { defaultValue: "Court / Field" })}
             </Label>
-            <select
-              value={selectedResourceId}
-              onChange={(e) => setSelectedResourceId(e.target.value)}
-              className="h-8.5 w-full rounded-nx-md border border-nx-line bg-nx-surface px-3 text-xs font-semibold text-nx-ink"
-              required
-            >
-              {resources.map((r) => (
-                <option key={r.id} value={r.id}>
-                  {r.name} ({r.profileName})
-                </option>
-              ))}
-            </select>
+            <Select value={selectedResourceId} onValueChange={setSelectedResourceId}>
+              <SelectTrigger
+                className="h-9 w-full text-xs font-semibold"
+                aria-label={t("resources.blockTimeModal.resource", {
+                  defaultValue: "Court / Field",
+                })}
+              >
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                {resources.map((r) => (
+                  <SelectItem key={r.id} value={r.id}>
+                    {r.name} ({r.profileName})
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
 
           {/* Reason Type Toggle: Maintenance vs Unavailable */}
@@ -159,7 +169,9 @@ export function BlockTimeModal({
               {t("resources.blockTimeModal.reasonType", { defaultValue: "Reason Type" })}
             </Label>
             <div className="grid grid-cols-2 gap-2">
-              <button
+              <Button
+                variant="outline"
+                aria-pressed={reasonType === "Maintenance"}
                 type="button"
                 onClick={() => setReasonType("Maintenance")}
                 className={`rounded-nx-md border p-2.5 text-left text-xs font-semibold transition-all ${
@@ -170,31 +182,39 @@ export function BlockTimeModal({
               >
                 <div className="flex items-center gap-1.5">
                   <Wrench className="size-3.5" aria-hidden="true" />
-                  <span>Maintenance</span>
+                  <span>
+                    {t("resources.blockTimeModal.typeMaintenance", { defaultValue: "Maintenance" })}
+                  </span>
                 </div>
-              </button>
+              </Button>
 
-              <button
+              <Button
+                variant="outline"
+                aria-pressed={reasonType === "Unavailable"}
                 type="button"
                 onClick={() => setReasonType("Unavailable")}
                 className={`rounded-nx-md border p-2.5 text-left text-xs font-semibold transition-all ${
                   reasonType === "Unavailable"
-                    ? "border-slate-500 bg-slate-500/10 text-slate-900 ring-1 ring-slate-500 dark:text-slate-200"
+                    ? "border-nx-accent bg-nx-accent/10 text-nx-ink ring-1 ring-nx-accent font-bold"
                     : "hover:bg-nx-surfaceSubtle border-nx-line text-nx-ink-2"
                 }`}
               >
                 <div className="flex items-center gap-1.5">
                   <Ban className="size-3.5" aria-hidden="true" />
-                  <span>Unavailable</span>
+                  <span>
+                    {t("resources.blockTimeModal.typeUnavailable", { defaultValue: "Unavailable" })}
+                  </span>
                 </div>
-              </button>
+              </Button>
             </div>
           </div>
 
           {/* Date & Time range */}
           <div className="grid grid-cols-2 gap-3">
             <div className="space-y-1">
-              <Label className="text-xs">Start Date</Label>
+              <Label className="text-xs">
+                {t("resources.blockTimeModal.date", { defaultValue: "Start Date" })}
+              </Label>
               <Input
                 type="date"
                 value={startDate}
@@ -204,7 +224,9 @@ export function BlockTimeModal({
               />
             </div>
             <div className="space-y-1">
-              <Label className="text-xs">Start Time</Label>
+              <Label className="text-xs">
+                {t("resources.blockTimeModal.startTime", { defaultValue: "Start Time" })}
+              </Label>
               <Input
                 type="time"
                 value={startTime}
@@ -217,7 +239,9 @@ export function BlockTimeModal({
 
           <div className="grid grid-cols-2 gap-3">
             <div className="space-y-1">
-              <Label className="text-xs">End Date</Label>
+              <Label className="text-xs">
+                {t("resources.blockTimeModal.endDate", { defaultValue: "End Date" })}
+              </Label>
               <Input
                 type="date"
                 value={endDate}
@@ -227,7 +251,9 @@ export function BlockTimeModal({
               />
             </div>
             <div className="space-y-1">
-              <Label className="text-xs">End Time</Label>
+              <Label className="text-xs">
+                {t("resources.blockTimeModal.endTime", { defaultValue: "End Time" })}
+              </Label>
               <Input
                 type="time"
                 value={endTime}
@@ -245,7 +271,9 @@ export function BlockTimeModal({
             </Label>
             <Input
               id="block-time-reason"
-              placeholder="e.g. Net repair, court resurfacing, private match"
+              placeholder={t("resources.blockTimeModal.reasonPlaceholder", {
+                defaultValue: "e.g. Net repair and surface cleaning",
+              })}
               value={reason}
               onChange={(e) => setReason(e.target.value)}
               className="h-8 text-xs"
@@ -255,7 +283,7 @@ export function BlockTimeModal({
 
           <DialogFooter className="border-t border-nx-line pt-2">
             <Button type="button" variant="outline" size="sm" onClick={() => onOpenChange(false)}>
-              Cancel
+              {t("resources.blockTimeModal.cancel", { defaultValue: "Cancel" })}
             </Button>
             <Button
               type="submit"

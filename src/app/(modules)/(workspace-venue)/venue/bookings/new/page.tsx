@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { ModuleErrorBoundary } from "@core/ui/module-error-boundary";
 import { BookingWorkspaceView } from "@modules/venue/booking/src/presentation/views/BookingWorkspaceView";
+import type { BookingWorkspacePrefill } from "@modules/venue/booking/src/domain/entities/Booking";
 
 export const metadata: Metadata = {
   title: "New Venue Booking",
@@ -18,11 +19,11 @@ function first(value: string | string[] | undefined): string | undefined {
 export default async function NewBookingPage({ searchParams }: BookingPageProps) {
   const values = await searchParams;
   const duration = Number(first(values.durationMinutes));
-  const prefill = {
+  const prefill: BookingWorkspacePrefill = {
     facilityId: first(values.facilityId),
     resourceId: first(values.resourceId),
     date: first(values.date),
-    startTime: first(values.startTime),
+    startTime: first(values.startTime) ?? first(values.time),
     durationMinutes:
       Number.isInteger(duration) && duration >= 15 && duration <= 1440 ? duration : undefined,
   };

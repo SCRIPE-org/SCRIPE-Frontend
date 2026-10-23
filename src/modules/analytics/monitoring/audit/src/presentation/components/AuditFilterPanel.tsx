@@ -170,7 +170,7 @@ export const AuditFilterPanel = memo(function AuditFilterPanel({
         {/* Free-text Search */}
         <div className="relative min-w-[260px] flex-1">
           <Search
-            className="pointer-events-none absolute start-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground"
+            className="pointer-events-none absolute start-3 top-1/2 h-4 w-4 -translate-y-1/2 text-nx-ink-3"
             aria-hidden="true"
           />
           <Input
@@ -186,7 +186,7 @@ export const AuditFilterPanel = memo(function AuditFilterPanel({
             /* UI-EXCEPTION */ <button
               type="button"
               onClick={() => updateFilter("search", "")}
-              className="absolute end-2.5 top-1/2 -translate-y-1/2 cursor-pointer text-muted-foreground hover:text-foreground"
+              className="absolute end-2.5 top-1/2 -translate-y-1/2 cursor-pointer text-nx-ink-3 hover:text-nx-ink"
             >
               <X className="h-3.5 w-3.5" />
             </button>
@@ -194,8 +194,8 @@ export const AuditFilterPanel = memo(function AuditFilterPanel({
         </div>
 
         {/* Date Presets Pill Group */}
-        <div className="flex flex-wrap items-center gap-1.5 rounded-lg border border-border/60 bg-muted/40 p-1">
-          <Calendar className="me-0.5 ms-1.5 h-3.5 w-3.5 shrink-0 text-muted-foreground" />
+        <div className="flex flex-wrap items-center gap-1.5 rounded-lg border border-nx-line bg-nx-raised/40 p-1">
+          <Calendar className="me-0.5 ms-1.5 h-3.5 w-3.5 shrink-0 text-nx-ink-3" />
           {DATE_PRESETS.map((p) => {
             const isActive = filters.datePreset === p.key;
             return (
@@ -207,8 +207,8 @@ export const AuditFilterPanel = memo(function AuditFilterPanel({
                 onClick={() => setDatePreset(p.key)}
                 className={`h-7 cursor-pointer px-2.5 text-xs font-semibold ${
                   isActive
-                    ? "shadow-2xs border border-border/80 bg-card font-bold text-foreground"
-                    : "text-muted-foreground hover:text-foreground"
+                    ? "border border-nx-line bg-nx-surface font-bold text-nx-ink"
+                    : "text-nx-ink-3 hover:text-nx-ink"
                 }`}
               >
                 {t(`audit.filters.presets.${p.key}`) || p.label}
@@ -220,8 +220,8 @@ export const AuditFilterPanel = memo(function AuditFilterPanel({
 
       {/* Optional Custom Date Range Row */}
       {filters.datePreset === "custom" && (
-        <div className="flex flex-wrap items-center gap-2 rounded-md border border-border/60 bg-accent/20 p-2.5">
-          <span className="text-xs font-semibold text-muted-foreground">
+        <div className="flex flex-wrap items-center gap-2 rounded-md border border-nx-line bg-nx-raised/40 p-2.5">
+          <span className="text-xs font-semibold text-nx-ink-2">
             {t("audit.filters.customRange") || "Custom Range"}:
           </span>
           <DatePicker
@@ -231,7 +231,7 @@ export const AuditFilterPanel = memo(function AuditFilterPanel({
             onChange={(v) => updateFilter("dateFrom", v)}
             className="h-8 w-44 text-xs"
           />
-          <span className="text-xs text-muted-foreground">→</span>
+          <span className="text-xs text-nx-ink-3">→</span>
           <DatePicker
             id="audit-date-to"
             placeholder={t("audit.filters.dateTo") || "To (UTC)"}
@@ -243,8 +243,8 @@ export const AuditFilterPanel = memo(function AuditFilterPanel({
       )}
 
       {/* Row 2: Faceted Select Filters & Clear Button */}
-      <div className="flex flex-wrap items-center gap-2.5 border-t border-border/40 pt-1">
-        <div className="me-1 flex items-center gap-1.5 text-xs font-semibold text-muted-foreground">
+      <div className="flex flex-wrap items-center gap-2.5 border-t border-nx-line pt-1">
+        <div className="me-1 flex items-center gap-1.5 text-xs font-semibold text-nx-ink-2">
           <Filter className="h-3.5 w-3.5 text-primary" aria-hidden="true" />
           <span>{t("common.filter") || "Filters"}</span>
         </div>
@@ -261,7 +261,7 @@ export const AuditFilterPanel = memo(function AuditFilterPanel({
             <SelectItem value="all">{t("audit.filters.allEvents") || "All Events"}</SelectItem>
             {EVENT_TYPE_GROUPS.map((group) => (
               <SelectGroup key={group.key}>
-                <SelectLabel className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground">
+                <SelectLabel className="text-[11px] font-bold uppercase tracking-wider text-nx-ink-3">
                   {t(`audit.filters.groups.${group.key}`) || group.key}
                 </SelectLabel>
                 {group.members.map((type) => (
@@ -273,7 +273,7 @@ export const AuditFilterPanel = memo(function AuditFilterPanel({
             ))}
             {UNGROUPED_EVENT_TYPES.length > 0 && (
               <SelectGroup>
-                <SelectLabel className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground">
+                <SelectLabel className="text-[11px] font-bold uppercase tracking-wider text-nx-ink-3">
                   {t("audit.filters.groups.other") || "Other"}
                 </SelectLabel>
                 {UNGROUPED_EVENT_TYPES.map((type) => (
@@ -316,10 +316,10 @@ export const AuditFilterPanel = memo(function AuditFilterPanel({
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="all">{t("audit.filters.allStatus") || "All Status"}</SelectItem>
-            <SelectItem value="success" className="text-xs font-medium text-emerald-500">
+            <SelectItem value="success" className="text-xs font-medium text-success">
               ✓ {t("audit.filters.success") || "Success"}
             </SelectItem>
-            <SelectItem value="failed" className="text-xs font-medium text-rose-500">
+            <SelectItem value="failed" className="text-xs font-medium text-destructive">
               ✕ {t("audit.filters.failed") || "Failed"}
             </SelectItem>
           </SelectContent>
@@ -327,7 +327,7 @@ export const AuditFilterPanel = memo(function AuditFilterPanel({
 
         {/* 4. Username Filter */}
         <div className="relative w-36">
-          <User className="pointer-events-none absolute start-2 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-muted-foreground" />
+          <User className="pointer-events-none absolute start-2 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-nx-ink-3" />
           <Input
             placeholder={t("audit.filters.username") || "Username"}
             value={filters.username}
@@ -338,7 +338,7 @@ export const AuditFilterPanel = memo(function AuditFilterPanel({
             /* UI-EXCEPTION */ <button
               type="button"
               onClick={() => updateFilter("username", "")}
-              className="absolute end-1.5 top-1/2 -translate-y-1/2 cursor-pointer text-muted-foreground hover:text-foreground"
+              className="absolute end-1.5 top-1/2 -translate-y-1/2 cursor-pointer text-nx-ink-3 hover:text-nx-ink"
             >
               <X className="h-3 w-3" />
             </button>
@@ -347,7 +347,7 @@ export const AuditFilterPanel = memo(function AuditFilterPanel({
 
         {/* 5. Correlation ID Filter */}
         <div className="relative w-36">
-          <Hash className="pointer-events-none absolute start-2 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-muted-foreground" />
+          <Hash className="pointer-events-none absolute start-2 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-nx-ink-3" />
           <Input
             placeholder={t("audit.filters.correlationId") || "Trace ID"}
             value={filters.correlationId}
@@ -358,7 +358,7 @@ export const AuditFilterPanel = memo(function AuditFilterPanel({
             /* UI-EXCEPTION */ <button
               type="button"
               onClick={() => updateFilter("correlationId", "")}
-              className="absolute end-1.5 top-1/2 -translate-y-1/2 cursor-pointer text-muted-foreground hover:text-foreground"
+              className="absolute end-1.5 top-1/2 -translate-y-1/2 cursor-pointer text-nx-ink-3 hover:text-nx-ink"
             >
               <X className="h-3 w-3" />
             </button>
@@ -372,7 +372,7 @@ export const AuditFilterPanel = memo(function AuditFilterPanel({
             variant="ghost"
             size="sm"
             onClick={resetFilters}
-            className="ms-auto h-8 cursor-pointer gap-1 px-2.5 text-xs text-muted-foreground hover:text-foreground"
+            className="ms-auto h-8 cursor-pointer gap-1 px-2.5 text-xs text-nx-ink-3 hover:text-nx-ink"
           >
             <X className="h-3.5 w-3.5" aria-hidden="true" />
             <span>{t("audit.filters.reset") || "Reset"}</span>

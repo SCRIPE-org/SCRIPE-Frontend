@@ -131,6 +131,23 @@ export function AvailabilitySearchCard({ vm, timeZoneId, canSearch }: Availabili
           </Alert>
         )}
 
+        {vm.searchResult?.isAvailable && (
+          <Button
+            type="button"
+            className="w-full bg-nx-accent font-bold text-nx-on-fill shadow-sm hover:opacity-90"
+            onClick={() => {
+              const startIso = new Date(startLocal).toISOString();
+              const params = new URLSearchParams({
+                resourceId: vm.selectedResourceId,
+                start: startIso,
+              });
+              window.location.href = `/venue/calendar?${params.toString()}`;
+            }}
+          >
+            {t("availability.bookThisSlot", { defaultValue: "Book This Slot Now" })}
+          </Button>
+        )}
+
         {!canSearch && (
           <p className="text-sm text-nx-ink-3">{t("availability.searchPermission")}</p>
         )}

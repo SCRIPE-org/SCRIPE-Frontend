@@ -28,7 +28,9 @@ export interface IPartyService {
     sortBy?: string;
   }): Promise<PartyListResult>;
   getById(id: string): Promise<PartyModel>;
-  getProfile?(id: string): Promise<import("../../data/models/PartyModel").PartyProfileResponseJson | null>;
+  getProfile?(
+    id: string
+  ): Promise<import("../../data/models/PartyModel").PartyProfileResponseJson | null>;
   create(data: Record<string, unknown>): Promise<{ id: string }>;
   createPerson?(
     data: import("../../data/models/PartyModel").CreatePersonRequestJson,

@@ -199,7 +199,9 @@ describe("usePaymentsViewModel", () => {
     const paymentKeys = value.moneyRepository.recordPayment.mock.calls.map(
       ([request]) => request.idempotencyKey
     );
-    const allocationKeys = value.moneyRepository.allocatePayment.mock.calls.map(([, , , key]) => key);
+    const allocationKeys = value.moneyRepository.allocatePayment.mock.calls.map(
+      ([, , , key]) => key
+    );
     expect(paymentKeys[1]).toBe(paymentKeys[0]);
     expect(allocationKeys).toHaveLength(2);
     expect(allocationKeys[1]).toBe(allocationKeys[0]);
@@ -238,7 +240,9 @@ describe("usePaymentsViewModel", () => {
     const paymentKeys = value.moneyRepository.recordPayment.mock.calls.map(
       ([request]) => request.idempotencyKey
     );
-    const allocationKeys = value.moneyRepository.allocatePayment.mock.calls.map(([, , , key]) => key);
+    const allocationKeys = value.moneyRepository.allocatePayment.mock.calls.map(
+      ([, , , key]) => key
+    );
     const receiptKeys = value.moneyRepository.issueReceipt.mock.calls.map(([, key]) => key);
     expect(paymentKeys[1]).toBe(paymentKeys[0]);
     expect(allocationKeys[1]).toBe(allocationKeys[0]);

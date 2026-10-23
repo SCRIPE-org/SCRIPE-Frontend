@@ -196,9 +196,9 @@ export class Admin {
     return this.data.canModify ?? true;
   }
 
-  /** Whether any guardian protection is active (inverse of canModify) */
+  /** Whether guardian protection is active (explicitly protected) */
   get hasGuardianProtection(): boolean {
-    return !this.canModify;
+    return this.isProtected;
   }
 
   /**

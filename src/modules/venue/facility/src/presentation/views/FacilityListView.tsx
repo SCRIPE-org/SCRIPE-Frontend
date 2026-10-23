@@ -40,7 +40,7 @@ export const FacilityListView = React.memo(function FacilityListView() {
         key: "venueProfileId",
         label: t("facility.fields.venueProfileId"),
         render: (_value: string, row: Facility) =>
-          row.venueProfileName || venueProfileNameById[row.venueProfileId] || "â€”",
+          row.venueProfileName || venueProfileNameById[row.venueProfileId] || "—",
       },
       {
         key: "createdAt",

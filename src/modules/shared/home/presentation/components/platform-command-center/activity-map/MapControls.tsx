@@ -44,15 +44,15 @@ export function MapControls({
   return (
     <>
       {/* 1. Host Node Badge (Top Left) */}
-      <div className="absolute left-3 top-3 z-10 flex h-7 items-center gap-2 rounded-full border border-primary/20 bg-card/85 px-2.5 text-[10px] font-medium uppercase tracking-wider text-muted-foreground shadow-sm backdrop-blur-md">
+      <div className="absolute left-3 top-3 z-10 flex h-7 items-center gap-2 rounded-full border border-nx-line bg-nx-surface/90 px-2.5 text-[10px] font-medium uppercase tracking-wider text-nx-ink-3 backdrop-blur-md">
         <span className="relative flex h-2 w-2">
           <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-primary opacity-75"></span>
           <span className="relative inline-flex h-2 w-2 rounded-full bg-primary shadow-[0_0_8px_rgba(198,255,0,0.6)]"></span>
         </span>
-        <span className="font-semibold text-foreground">
+        <span className="font-semibold text-nx-ink">
           {t("platformCommandCenter.activity.hostNode") || "SCRIPE Platform Host"}
         </span>
-        <b className="font-mono text-[11px] normal-case tracking-normal text-foreground">
+        <b className="font-mono text-[11px] normal-case tracking-normal text-nx-ink-2">
           {t("platformCommandCenter.activity.hostNodeInfo", {
             provider: healthVm?.health?.infrastructure?.database?.provider ?? "PostgreSql",
             tenants: summary?.totalTenants ?? 0,
@@ -77,7 +77,7 @@ export function MapControls({
               }
             }
           }}
-          className="h-7 max-w-[150px] rounded-lg border border-border bg-card/85 px-2 text-[11px] text-foreground outline-none backdrop-blur-md transition-colors hover:border-primary/40"
+          className="h-7 max-w-[150px] rounded-lg border border-nx-line bg-nx-surface/90 px-2 text-[11px] text-nx-ink outline-none backdrop-blur-md transition-colors hover:border-nx-line-hi"
         >
           <option value="">
             {t("platformCommandCenter.activity.globalView") || "Global view"}
@@ -115,24 +115,24 @@ export function MapControls({
           type="button"
           onClick={onReset}
           title={t("platformCommandCenter.activity.resetMap") || "Reset map view"}
-          className="h-7 w-7 rounded-lg border-border bg-card/85 text-muted-foreground backdrop-blur-md hover:border-primary/40 hover:text-foreground"
+          className="h-7 w-7 rounded-lg border-nx-line bg-nx-surface/90 text-nx-ink-3 backdrop-blur-md hover:border-nx-line-hi hover:text-nx-ink"
         >
           <RotateCcw className="h-3 w-3" />
         </Button>
       </div>
 
       {/* 3. Bottom Legend (Bottom Left) */}
-      <div className="absolute bottom-3 left-3 z-10 flex items-center gap-3 rounded-lg border border-border bg-card/85 px-2.5 py-1.5 text-[9.5px] font-medium text-muted-foreground backdrop-blur-md">
+      <div className="absolute bottom-3 left-3 z-10 flex items-center gap-3 rounded-lg border border-nx-line bg-nx-surface/90 px-2.5 py-1.5 text-[9.5px] font-medium text-nx-ink-3 backdrop-blur-md">
         <span className="flex items-center gap-1.5">
           <span className="h-2 w-2 rounded-full bg-primary shadow-[0_0_6px_rgba(198,255,0,0.6)]"></span>
           {t("platformCommandCenter.activity.legend.host") || "Platform Host"}
         </span>
         <span className="flex items-center gap-1.5">
-          <span className="h-2 w-2 rounded-full bg-sky-500 shadow-[0_0_6px_rgba(14,165,233,0.6)]"></span>
+          <span className="h-2 w-2 rounded-full bg-info shadow-[0_0_6px_rgba(14,165,233,0.7)]"></span>
           {t("platformCommandCenter.activity.legend.tenant") || "Tenant Region"}
         </span>
         <span className="flex items-center gap-1.5">
-          <span className="h-2 w-2 rounded-full bg-muted-foreground/30"></span>
+          <span className="h-2 w-2 rounded-full bg-nx-ink-3/30"></span>
           {t("platformCommandCenter.activity.legend.inactive") || "Inactive Region"}
         </span>
       </div>
@@ -145,7 +145,7 @@ export function MapControls({
           type="button"
           onClick={onZoomIn}
           title={t("platformCommandCenter.activity.zoomIn") || "Zoom in"}
-          className="h-7 w-7 rounded-lg border-border bg-card/85 text-muted-foreground backdrop-blur-md hover:border-primary/40 hover:text-foreground"
+          className="h-7 w-7 rounded-lg border-nx-line bg-nx-surface/90 text-nx-ink-3 backdrop-blur-md hover:border-nx-line-hi hover:text-nx-ink"
         >
           <Plus className="h-3.5 w-3.5" />
         </Button>
@@ -155,7 +155,7 @@ export function MapControls({
           type="button"
           onClick={onZoomOut}
           title={t("platformCommandCenter.activity.zoomOut") || "Zoom out"}
-          className="h-7 w-7 rounded-lg border-border bg-card/85 text-muted-foreground backdrop-blur-md hover:border-primary/40 hover:text-foreground"
+          className="h-7 w-7 rounded-lg border-nx-line bg-nx-surface/90 text-nx-ink-3 backdrop-blur-md hover:border-nx-line-hi hover:text-nx-ink"
         >
           <Minus className="h-3.5 w-3.5" />
         </Button>

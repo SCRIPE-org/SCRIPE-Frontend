@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import React from "react";
 import Link from "next/link";
@@ -27,9 +27,11 @@ interface Props {
   t: (key: string, values?: Record<string, string | number>) => string;
 }
 
-function formatRelativeOrLocalTime(isoString: string, timeZoneId: string) {
+function formatRelativeOrLocalTime(isoString?: string, timeZoneId?: string) {
+  if (!isoString) return "";
   try {
     const date = new Date(isoString);
+    if (isNaN(date.getTime())) return "";
     const now = new Date();
     const diffMinutes = Math.round((now.getTime() - date.getTime()) / 60000);
 
@@ -37,13 +39,13 @@ function formatRelativeOrLocalTime(isoString: string, timeZoneId: string) {
       return `${diffMinutes}m ago`;
     }
     return new Intl.DateTimeFormat("en-US", {
-      timeZone: timeZoneId,
+      timeZone: timeZoneId || "UTC",
       hour: "2-digit",
       minute: "2-digit",
       hourCycle: "h23",
     }).format(date);
   } catch {
-    return isoString.slice(11, 16);
+    return isoString ? isoString.slice(11, 16) : "";
   }
 }
 
@@ -68,7 +70,7 @@ export function VenueOverviewLiveFeed({
       title: t("venueOverview.liveFeed.attentionSignal", {
         defaultValue: "Attention signal detected",
       }),
-      subtitle: `${sig.resourceName} Â· ${t(`attention.signal.${sig.kind}.title`, { defaultValue: sig.kind })}`,
+      subtitle: `${sig.resourceName} · ${t(`attention.signal.${sig.kind}.title`, { defaultValue: sig.kind })}`,
       timeLabel: formatRelativeOrLocalTime(sig.occurredAtUtc, timeZoneId),
       timestampUtc: sig.occurredAtUtc,
       href: "/venue/attention",
@@ -82,7 +84,7 @@ export function VenueOverviewLiveFeed({
       id: `checkedin-${b.reservationId}`,
       type: "checkedIn",
       title: t("venueOverview.liveFeed.guestCheckedIn", { defaultValue: "Guest checked in" }),
-      subtitle: `${b.reservationNumber} Â· In play`,
+      subtitle: `${b.reservationNumber} · In play`,
       timeLabel: formatRelativeOrLocalTime(b.startUtc, timeZoneId),
       timestampUtc: b.startUtc,
       href: `/venue/bookings/${encodeURIComponent(b.reservationId)}`,
@@ -98,7 +100,7 @@ export function VenueOverviewLiveFeed({
       id: `held-${b.reservationId}`,
       type: "held",
       title: t("venueOverview.liveFeed.holdActive", { defaultValue: "Hold pending confirmation" }),
-      subtitle: `${holdIdentifier} Â· ${label}`,
+      subtitle: `${holdIdentifier} · ${label}`,
       timeLabel: formatRelativeOrLocalTime(b.startUtc, timeZoneId),
       timestampUtc: b.startUtc,
       href: "/venue/calendar",
@@ -115,7 +117,7 @@ export function VenueOverviewLiveFeed({
         id: `confirmed-${item.reservationId}`,
         type: "confirmed",
         title: t("venueOverview.liveFeed.bookingConfirmed", { defaultValue: "Booking confirmed" }),
-        subtitle: `${item.resourceName} Â· ${item.customerDisplayName || item.reservationNumber}`,
+        subtitle: `${item.resourceName} · ${item.customerDisplayName || item.reservationNumber}`,
         timeLabel: timePart,
         timestampUtc: item.startUtc,
         href: `/venue/bookings/${encodeURIComponent(item.reservationId)}`,
@@ -134,7 +136,7 @@ export function VenueOverviewLiveFeed({
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <span
-              className="flex size-2 animate-pulse rounded-full bg-emerald-500"
+              className="flex size-2 animate-pulse rounded-full bg-success shadow-[0_0_6px_rgba(34,197,94,0.7)]"
               aria-hidden="true"
             />
             <CardTitle className="text-sm font-bold text-nx-ink">
@@ -148,7 +150,7 @@ export function VenueOverviewLiveFeed({
         <CardDescription className="text-xs text-nx-ink-2">
           {t("venueOverview.liveFeed.subtitle", {
             defaultValue:
-              "Authoritative real-time operational events from todayâ€™s bookings and attention signals.",
+              "Authoritative real-time operational events from today’s bookings and attention signals.",
           })}
         </CardDescription>
       </CardHeader>
@@ -179,7 +181,7 @@ export function VenueOverviewLiveFeed({
                 iconStyle = "bg-success/10 text-success border-success/30";
               } else if (evt.type === "held") {
                 Icon = Clock;
-                iconStyle = "bg-amber-500/10 text-amber-500 border-amber-500/30";
+                iconStyle = "bg-warning/10 text-warning border-warning/30";
               } else if (evt.type === "attention") {
                 Icon = ShieldAlert;
                 iconStyle = "bg-destructive/10 text-destructive border-destructive/30";

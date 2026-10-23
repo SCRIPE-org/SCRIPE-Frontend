@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import Link from "next/link";
 import { Plus, Calendar, ShieldAlert, ReceiptText } from "lucide-react";
@@ -48,7 +48,7 @@ export function VenueOverviewQuickActions({ t }: Props) {
           className="gap-2 border-nx-line text-nx-ink hover:bg-nx-hover"
         >
           <Link href="/venue/attention">
-            <ShieldAlert className="size-4 text-amber-500" aria-hidden="true" />
+            <ShieldAlert className="size-4 text-warning" aria-hidden="true" />
             <span>{t("venueOverview.quickActions.attentionCenter")}</span>
           </Link>
         </Button>
@@ -62,7 +62,7 @@ export function VenueOverviewQuickActions({ t }: Props) {
           className="gap-2 border-nx-line text-nx-ink hover:bg-nx-hover"
         >
           <Link href="/venue/money/receivables">
-            <ReceiptText className="size-4 text-emerald-500" aria-hidden="true" />
+            <ReceiptText className="size-4 text-success" aria-hidden="true" />
             <span>{t("venueOverview.quickActions.receivables")}</span>
           </Link>
         </Button>

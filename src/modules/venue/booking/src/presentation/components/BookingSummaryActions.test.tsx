@@ -70,6 +70,30 @@ describe("BookingSummaryActions", () => {
     expect(screen.queryByText("booking.confirm.action")).not.toBeInTheDocument();
   });
 
+  it("keeps a user-accessible confirmation retry and displays the ambiguous failure", () => {
+    const onConfirm = vi.fn().mockResolvedValue(undefined);
+    render(
+      <BookingSummaryActions
+        {...baseProps}
+        onConfirm={onConfirm}
+        state={state({ errorMessage: "booking-confirm-failed" })}
+        canConfirm
+        priceQuote={
+          {
+            id: "quote-1",
+            grandTotal: 250,
+            currencyCode: "EGP",
+            expiresAtUtc: "2999-09-10T08:00:00Z",
+          } as never
+        }
+      />
+    );
+
+    expect(screen.getByText("booking-confirm-failed")).toBeInTheDocument();
+    fireEvent.click(screen.getByRole("button", { name: "booking.confirm.action" }));
+    expect(onConfirm).toHaveBeenCalledOnce();
+  });
+
   it("fails closed while an authoritative server quote is unavailable", () => {
     render(
       <BookingSummaryActions

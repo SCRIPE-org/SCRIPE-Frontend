@@ -47,6 +47,8 @@ export interface EntityLookupSearchQuery {
  * Documentation for 20
  */
 export const ENTITY_LOOKUP_DEFAULT_PAGE_SIZE = 20;
+/** Maximum raw search input accepted by the backend entity-lookup registry. */
+export const ENTITY_LOOKUP_MAX_SEARCH_LENGTH = 256;
 /**
  * Documentation for 300
  */

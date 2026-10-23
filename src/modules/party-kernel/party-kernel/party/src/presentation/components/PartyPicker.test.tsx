@@ -37,11 +37,7 @@ function renderWithClient(ui: React.ReactElement) {
       },
     },
   });
-  return render(
-    <QueryClientProvider client={queryClient}>
-      {ui}
-    </QueryClientProvider>
-  );
+  return render(<QueryClientProvider client={queryClient}>{ui}</QueryClientProvider>);
 }
 
 describe("PartyPicker Component", () => {
@@ -51,11 +47,7 @@ describe("PartyPicker Component", () => {
 
   it("renders trigger placeholder when no party is selected", () => {
     renderWithClient(
-      <PartyPicker
-        value={null}
-        onSelect={vi.fn()}
-        placeholder="Select a contact..."
-      />
+      <PartyPicker value={null} onSelect={vi.fn()} placeholder="Select a contact..." />
     );
 
     expect(screen.getByText("Select a contact...")).toBeInTheDocument();
@@ -72,12 +64,7 @@ describe("PartyPicker Component", () => {
       fullName: "Dr. Fatima Zahra",
     };
 
-    renderWithClient(
-      <PartyPicker
-        value={selected}
-        onSelect={vi.fn()}
-      />
-    );
+    renderWithClient(<PartyPicker value={selected} onSelect={vi.fn()} />);
 
     expect(screen.getByText("Dr. Fatima Zahra")).toBeInTheDocument();
     // Must NOT leak truncated token or raw token in the text
@@ -107,12 +94,7 @@ describe("PartyPicker Component", () => {
     });
 
     const onSelect = vi.fn();
-    renderWithClient(
-      <PartyPicker
-        value={null}
-        onSelect={onSelect}
-      />
-    );
+    renderWithClient(<PartyPicker value={null} onSelect={onSelect} />);
 
     const trigger = screen.getByTestId("party-picker-trigger");
     fireEvent.click(trigger);
@@ -166,12 +148,7 @@ describe("PartyPicker Component", () => {
     });
 
     const onSelect = vi.fn();
-    renderWithClient(
-      <PartyPicker
-        value={null}
-        onSelect={onSelect}
-      />
-    );
+    renderWithClient(<PartyPicker value={null} onSelect={onSelect} />);
 
     fireEvent.click(screen.getByTestId("party-picker-trigger"));
 
@@ -296,13 +273,7 @@ describe("PartyPicker Component", () => {
       totalCount: 2,
     });
 
-    renderWithClient(
-      <PartyPicker
-        value={null}
-        onSelect={vi.fn()}
-        excludeId="party-excluded"
-      />
-    );
+    renderWithClient(<PartyPicker value={null} onSelect={vi.fn()} excludeId="party-excluded" />);
     const trigger = screen.getByTestId("party-picker-trigger");
     fireEvent.click(trigger);
 

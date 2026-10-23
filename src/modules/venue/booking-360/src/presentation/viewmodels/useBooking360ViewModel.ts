@@ -286,7 +286,16 @@ export function useBooking360ViewModel(
       const key = getActionIntentKey(actionKeys.current, mapKey, intent);
       await bookingRepository.confirm(reservation.id, key, priceQuoteId);
       const refreshed = await load();
-      if (refreshed?.status === "Confirmed") quoteIntents.current.clear();
+      if (refreshed?.status === "Confirmed") {
+        quoteIntents.current.clear();
+        if (typeof window !== "undefined") {
+          window.dispatchEvent(
+            new CustomEvent("venue-booking-updated", {
+              detail: { reservationId: reservation.id, action: "confirm" },
+            })
+          );
+        }
+      }
     } catch (error) {
       let actionError: Booking360State["actionError"] = "failed";
       if (conflict(error)) {
@@ -431,6 +440,13 @@ export function useBooking360ViewModel(
             },
           });
           return;
+        }
+        if (typeof window !== "undefined") {
+          window.dispatchEvent(
+            new CustomEvent("venue-booking-updated", {
+              detail: { reservationId: reservation.id, action },
+            })
+          );
         }
         setState((current) => ({
           ...current,

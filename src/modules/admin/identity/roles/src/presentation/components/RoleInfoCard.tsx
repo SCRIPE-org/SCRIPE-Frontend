@@ -31,7 +31,13 @@ export interface RoleInfoCardProps {
  * Presentation UI component rendering the role info card.
  * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
  */
-export function RoleInfoCard({ role, isLoading, selectedCount, totalCount, adminCount }: RoleInfoCardProps) {
+export function RoleInfoCard({
+  role,
+  isLoading,
+  selectedCount,
+  totalCount,
+  adminCount,
+}: RoleInfoCardProps) {
   const { t, language } = useI18n();
   const pct = totalCount > 0 ? (selectedCount / totalCount) * 100 : 0;
 
@@ -77,7 +83,10 @@ export function RoleInfoCard({ role, isLoading, selectedCount, totalCount, admin
                   <p className="text-xs font-medium uppercase tracking-wide text-nx-ink-3">
                     {t("roles.activeUsers") || "Assigned Users"}
                   </p>
-                  <Badge variant="outline" className="mt-1.5 flex w-fit items-center gap-1.5 border-amber-500/30 bg-amber-500/10 text-amber-600 dark:text-amber-400 tabular-nums">
+                  <Badge
+                    variant="outline"
+                    className="mt-1.5 flex w-fit items-center gap-1.5 border-amber-500/30 bg-amber-500/10 tabular-nums text-amber-600 dark:text-amber-400"
+                  >
                     <Users className="h-3 w-3" aria-hidden="true" />
                     <span>{adminCount}</span>
                   </Badge>

@@ -84,9 +84,7 @@ export function CreatePersonDialog({
   const isPossibleDuplicate = useMemo(() => {
     const trimmed = fullName.trim().toLowerCase();
     if (!trimmed || trimmed.length < 3) return false;
-    return existingPartyNames.some(
-      (name) => name.toLowerCase() === trimmed
-    );
+    return existingPartyNames.some((name) => name.toLowerCase() === trimmed);
   }, [fullName, existingPartyNames]);
 
   const resetForm = () => {
@@ -201,10 +199,16 @@ export function CreatePersonDialog({
 
       let currentKey = idempotencyKey;
       if (lastPayloadRef.current && lastPayloadRef.current !== currentPayload) {
-        currentKey = typeof crypto !== "undefined" && crypto.randomUUID ? crypto.randomUUID() : `key-${Date.now()}`;
+        currentKey =
+          typeof crypto !== "undefined" && crypto.randomUUID
+            ? crypto.randomUUID()
+            : `key-${Date.now()}`;
         setIdempotencyKey(currentKey);
       } else if (!currentKey) {
-        currentKey = typeof crypto !== "undefined" && crypto.randomUUID ? crypto.randomUUID() : `key-${Date.now()}`;
+        currentKey =
+          typeof crypto !== "undefined" && crypto.randomUUID
+            ? crypto.randomUUID()
+            : `key-${Date.now()}`;
         setIdempotencyKey(currentKey);
       }
       lastPayloadRef.current = currentPayload;
@@ -267,11 +271,13 @@ export function CreatePersonDialog({
         <DialogContent className="sm:max-w-[540px]">
           <DialogHeader>
             <div className="flex items-center gap-2">
-              <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-amber-500/10 text-amber-500">
+              <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-warning/10 text-warning">
                 <AlertTriangle className="h-5 w-5" />
               </div>
               <div>
-                <DialogTitle>{t("party.dialog.partialSaveTitle") || "Party Identity Created"}</DialogTitle>
+                <DialogTitle>
+                  {t("party.dialog.partialSaveTitle") || "Party Identity Created"}
+                </DialogTitle>
                 <DialogDescription>
                   {t("party.dialog.partialSaveDesc") ||
                     "The contact record was created with canonical ID, but secondary contact points failed to attach."}
@@ -281,31 +287,33 @@ export function CreatePersonDialog({
           </DialogHeader>
 
           <div className="grid gap-4 py-4">
-            <div className="rounded-lg border border-nx-border bg-nx-surface-2/40 p-4 space-y-2.5">
+            <div className="border-nx-line bg-nx-raised/40 space-y-2.5 rounded-lg border p-4">
               <div className="flex items-center justify-between text-xs">
                 <span className="text-nx-ink-3">Canonical Party ID</span>
-                <span className="font-mono text-nx-ink font-semibold">{partialSaveState.partyId}</span>
+                <span className="font-mono font-semibold text-nx-ink">
+                  {partialSaveState.partyId}
+                </span>
               </div>
               <div className="flex items-center justify-between text-xs">
                 <span className="text-nx-ink-3">Full Name</span>
-                <span className="text-nx-ink font-medium">{partialSaveState.fullName}</span>
+                <span className="font-medium text-nx-ink">{partialSaveState.fullName}</span>
               </div>
               {partialSaveState.failedPhone && (
                 <div className="flex items-center justify-between text-xs">
                   <span className="text-nx-ink-3">Pending Phone</span>
-                  <span className="text-amber-400 font-mono">{partialSaveState.failedPhone}</span>
+                  <span className="font-mono text-warning">{partialSaveState.failedPhone}</span>
                 </div>
               )}
               {partialSaveState.failedEmail && (
                 <div className="flex items-center justify-between text-xs">
                   <span className="text-nx-ink-3">Pending Email</span>
-                  <span className="text-amber-400 font-mono">{partialSaveState.failedEmail}</span>
+                  <span className="font-mono text-warning">{partialSaveState.failedEmail}</span>
                 </div>
               )}
             </div>
 
             {retryError && (
-              <div className="rounded-md bg-destructive/10 p-3 text-xs text-destructive border border-destructive/20">
+              <div className="rounded-md border border-destructive/20 bg-destructive/10 p-3 text-xs text-destructive">
                 {retryError}
               </div>
             )}
@@ -326,11 +334,7 @@ export function CreatePersonDialog({
             >
               {t("party.dialog.continueToProfile") || "Continue to Profile"}
             </Button>
-            <Button
-              type="button"
-              onClick={handleRetryAttach}
-              disabled={isRetrying}
-            >
+            <Button type="button" onClick={handleRetryAttach} disabled={isRetrying}>
               {isRetrying ? (
                 <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
@@ -355,14 +359,12 @@ export function CreatePersonDialog({
         <form onSubmit={handleSubmit}>
           <DialogHeader>
             <div className="flex items-center gap-2">
-              <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-nx-accent/10 text-nx-accent">
+              <div className="bg-nx-accent/10 flex h-9 w-9 items-center justify-center rounded-lg text-nx-accent">
                 <User className="h-5 w-5" />
               </div>
               <div>
                 <DialogTitle>{t("party.dialog.createPersonTitle")}</DialogTitle>
-                <DialogDescription>
-                  {t("party.dialog.createPersonDesc")}
-                </DialogDescription>
+                <DialogDescription>{t("party.dialog.createPersonDesc")}</DialogDescription>
               </div>
             </div>
           </DialogHeader>
@@ -371,7 +373,7 @@ export function CreatePersonDialog({
             {error && (
               <div
                 role="alert"
-                className="rounded-md bg-destructive/10 p-3 text-sm text-destructive border border-destructive/20"
+                className="rounded-md border border-destructive/20 bg-destructive/10 p-3 text-sm text-destructive"
               >
                 {error}
               </div>
@@ -379,9 +381,8 @@ export function CreatePersonDialog({
 
             {/* Full Name */}
             <div className="grid gap-2">
-              <Label htmlFor="person-full-name" className="text-nx-ink font-medium">
-                {t("party.dialog.fullName")}{" "}
-                <span className="text-destructive">*</span>
+              <Label htmlFor="person-full-name" className="font-medium text-nx-ink">
+                {t("party.dialog.fullName")} <span className="text-destructive">*</span>
               </Label>
               <div className="relative">
                 <Input
@@ -397,13 +398,11 @@ export function CreatePersonDialog({
                   required
                 />
               </div>
-              <p className="text-xs text-nx-ink-3">
-                {t("party.dialog.fullNameHelp")}
-              </p>
+              <p className="text-xs text-nx-ink-3">{t("party.dialog.fullNameHelp")}</p>
 
               {/* Duplicate Detection Warning */}
               {isPossibleDuplicate && (
-                <div className="flex items-center gap-2 rounded-md bg-amber-500/10 p-2.5 text-xs text-amber-500 border border-amber-500/20">
+                <div className="flex items-center gap-2 rounded-md border border-warning/20 bg-warning/10 p-2.5 text-xs text-warning">
                   <AlertTriangle className="h-4 w-4 shrink-0" />
                   <span>{t("party.dialog.duplicateWarning")}</span>
                 </div>
@@ -411,12 +410,12 @@ export function CreatePersonDialog({
             </div>
 
             {/* Optional Additional Names Accordion */}
-            <div className="rounded-lg border border-nx-border bg-nx-surface-2/30 p-3">
+            <div className="border-nx-line bg-nx-raised/30 rounded-lg border p-3">
               <Button
                 type="button"
                 variant="ghost"
                 onClick={() => setShowAdditionalNames(!showAdditionalNames)}
-                className="flex w-full items-center justify-between text-xs font-medium text-nx-ink hover:text-nx-accent transition-colors p-0 h-auto hover:bg-transparent"
+                className="flex h-auto w-full items-center justify-between p-0 text-xs font-medium text-nx-ink transition-colors hover:bg-transparent hover:text-nx-accent"
               >
                 <span>{t("party.dialog.additionalNames")}</span>
                 {showAdditionalNames ? (
@@ -427,7 +426,7 @@ export function CreatePersonDialog({
               </Button>
 
               {showAdditionalNames && (
-                <div className="grid gap-3 pt-3 mt-2 border-t border-nx-border/60">
+                <div className="border-nx-line/60 mt-2 grid gap-3 border-t pt-3">
                   <div className="grid gap-1.5">
                     <Label htmlFor="person-display-name" className="text-xs text-nx-ink-2">
                       {t("party.dialog.displayName")}
@@ -442,7 +441,7 @@ export function CreatePersonDialog({
                     />
                   </div>
 
-                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                  <div className="grid grid-cols-1 gap-2 sm:grid-cols-3">
                     <div className="grid gap-1.5">
                       <Label htmlFor="person-given-name" className="text-xs text-nx-ink-2">
                         {t("party.dialog.givenName")}
@@ -490,9 +489,9 @@ export function CreatePersonDialog({
             </div>
 
             {/* Date of Birth & Minor Flag */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
               <div className="grid gap-2">
-                <Label htmlFor="person-dob" className="text-nx-ink flex items-center gap-1.5">
+                <Label htmlFor="person-dob" className="flex items-center gap-1.5 text-nx-ink">
                   <Calendar className="h-3.5 w-3.5 text-nx-ink-3" />
                   {t("party.dialog.dob")}
                 </Label>
@@ -514,7 +513,7 @@ export function CreatePersonDialog({
                 />
                 <Label
                   htmlFor="person-is-minor"
-                  className="text-xs text-nx-ink cursor-pointer flex items-center gap-1"
+                  className="flex cursor-pointer items-center gap-1 text-xs text-nx-ink"
                 >
                   <ShieldCheck className="h-3.5 w-3.5 text-nx-accent" />
                   {t("party.dialog.isMinorLabel")}
@@ -523,9 +522,9 @@ export function CreatePersonDialog({
             </div>
 
             {/* Contact Methods */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-1">
+            <div className="grid grid-cols-1 gap-4 pt-1 sm:grid-cols-2">
               <div className="grid gap-2">
-                <Label htmlFor="person-phone" className="text-nx-ink flex items-center gap-1.5">
+                <Label htmlFor="person-phone" className="flex items-center gap-1.5 text-nx-ink">
                   <Phone className="h-3.5 w-3.5 text-nx-ink-3" />
                   {t("party.dialog.phone")}
                 </Label>
@@ -540,7 +539,7 @@ export function CreatePersonDialog({
               </div>
 
               <div className="grid gap-2">
-                <Label htmlFor="person-email" className="text-nx-ink flex items-center gap-1.5">
+                <Label htmlFor="person-email" className="flex items-center gap-1.5 text-nx-ink">
                   <Mail className="h-3.5 w-3.5 text-nx-ink-3" />
                   {t("party.dialog.email")}
                 </Label>
@@ -557,18 +556,10 @@ export function CreatePersonDialog({
           </div>
 
           <DialogFooter className="gap-2 sm:gap-0">
-            <Button
-              type="button"
-              variant="outline"
-              onClick={handleClose}
-              disabled={isSubmitting}
-            >
+            <Button type="button" variant="outline" onClick={handleClose} disabled={isSubmitting}>
               {t("party.dialog.cancel")}
             </Button>
-            <Button
-              type="submit"
-              disabled={isSubmitting || !fullName.trim()}
-            >
+            <Button type="submit" disabled={isSubmitting || !fullName.trim()}>
               {isSubmitting ? (
                 <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />

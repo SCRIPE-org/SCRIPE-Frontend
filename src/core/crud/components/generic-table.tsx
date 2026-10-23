@@ -88,6 +88,8 @@ export interface Column<T> {
   className?: string;
   /** Omit this column from the mobile card layout. */
   hideOnMobile?: boolean;
+  /** Pin column to the inline-start ('left') or inline-end ('right') edge of the scrollable table. */
+  pin?: "left" | "right" | "none";
   /** Custom render function for the column content */
 
   render?: (value: any, row: T) => React.ReactNode;
@@ -404,6 +406,16 @@ function GenericTableInner<T extends Record<string, any>>({
   // it, a hairline start edge instead of the old painted rails.
   const stickyActionsClasses = "sticky end-0 z-raised border-s border-nx-line-hi bg-nx-surface";
 
+  const getPinClasses = (pin?: "left" | "right" | "none") => {
+    if (pin === "left") {
+      return "sticky start-0 z-raised border-e border-nx-line-hi bg-nx-surface";
+    }
+    if (pin === "right") {
+      return "sticky end-0 z-raised border-s border-nx-line-hi bg-nx-surface";
+    }
+    return undefined;
+  };
+
   if (loading) {
     // The shared placeholder primitive, in the row silhouette — the region
     // announces the load, so the blocks themselves stay decorative.
@@ -623,6 +635,7 @@ function GenericTableInner<T extends Record<string, any>>({
                       className={cn(
                         "whitespace-nowrap",
                         column.className,
+                        getPinClasses(column.pin),
                         // Same lit-edge focus treatment TableRow uses — the th
                         // itself is the sort control, so it must take focus.
                         column.sortable &&
@@ -682,7 +695,10 @@ function GenericTableInner<T extends Record<string, any>>({
                           // numeric columns, for instance — and every one of
                           // them was silently discarded, so numbers rendered
                           // start-aligned with proportional figures.
-                          <TableCell key={String(column.key)} className={column.className}>
+                          <TableCell
+                            key={String(column.key)}
+                            className={cn(column.className, getPinClasses(column.pin))}
+                          >
                             {column.render
                               ? column.render(row[column.key], row)
                               : // Bare String() printed the literal text

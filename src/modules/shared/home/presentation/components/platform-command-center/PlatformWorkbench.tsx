@@ -24,48 +24,48 @@ export function PlatformWorkbench() {
       subtitle: "5 pending",
       href: "/roles",
       icon: Users,
-      iconBg: "bg-slate-800/60 border-slate-700/60",
-      iconColor: "text-slate-300",
+      iconBg: "bg-nx-raised border-nx-line",
+      iconColor: "text-nx-ink-2",
     },
     {
       title: t("platformCommandCenter.workbench.manageTenants") || "Manage tenants",
       subtitle: "View and manage",
       href: "/tenants",
       icon: Building2,
-      iconBg: "bg-slate-800/60 border-slate-700/60",
-      iconColor: "text-slate-300",
+      iconBg: "bg-nx-raised border-nx-line",
+      iconColor: "text-nx-ink-2",
     },
     {
       title: t("platformCommandCenter.workbench.resolveQuota") || "Resolve quota pressure",
       subtitle: "4 tenants near limit",
       href: "/entitlements",
       icon: Database,
-      iconBg: "bg-[#84cc16]/10 border-[#84cc16]/20",
-      iconColor: "text-[#84cc16]",
+      iconBg: "bg-warning/10 border-warning/30",
+      iconColor: "text-warning",
     },
     {
       title: t("platformCommandCenter.workbench.reviewSecurity") || "Review security events",
       subtitle: "3 critical events",
       href: "/security",
       icon: ShieldAlert,
-      iconBg: "bg-rose-500/10 border-rose-500/20",
-      iconColor: "text-rose-500",
+      iconBg: "bg-destructive/10 border-destructive/30",
+      iconColor: "text-destructive",
     },
   ];
 
   return (
-    <Card className="flex h-full flex-col justify-between overflow-hidden border-border/60 bg-[#0c101a] shadow-xl">
+    <Card className="flex h-full flex-col justify-between overflow-hidden">
       {/* Header */}
-      <CardHeader className="flex flex-row items-center justify-between gap-2 border-b border-border/50 pb-3">
+      <CardHeader className="flex flex-row items-center justify-between gap-2 border-b border-nx-line pb-3">
         <div className="flex items-center gap-2.5">
-          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-[#84cc16]/10 text-[#84cc16]">
+          <div className="flex h-8 w-8 items-center justify-center rounded-lg border border-primary/20 bg-primary/10 text-primary">
             <Zap className="h-4 w-4" />
           </div>
           <div>
-            <CardTitle className="text-base font-semibold text-white">
+            <CardTitle className="text-base font-semibold text-nx-ink">
               {t("platformCommandCenter.workbench.title") || "Operational workbench"}
             </CardTitle>
-            <CardDescription className="text-xs text-slate-400">
+            <CardDescription className="text-xs text-nx-ink-2">
               {t("platformCommandCenter.workbench.subtitle") || "Common administrative tasks"}
             </CardDescription>
           </div>
@@ -76,32 +76,32 @@ export function PlatformWorkbench() {
           <button
             type="button"
             onClick={() => setDropdownOpen((v) => !v)}
-            className="flex items-center gap-2 rounded-lg border border-slate-700/60 bg-[#141a29] px-3 py-1.5 text-xs text-white transition-colors hover:bg-slate-800/80"
+            className="flex items-center gap-2 rounded-lg border border-nx-line bg-nx-raised px-3 py-1.5 text-xs text-nx-ink transition-colors hover:bg-nx-raised-2"
           >
             <span>{t("platformCommandCenter.workbench.quickActions") || "Quick actions"}</span>
-            <ChevronDown className="h-3.5 w-3.5 text-slate-400" />
+            <ChevronDown className="h-3.5 w-3.5 text-nx-ink-3" />
           </button>
 
           {dropdownOpen && (
-            <div className="absolute right-0 z-30 mt-1.5 w-40 rounded-lg border border-slate-700 bg-[#141a29] py-1 shadow-xl">
+            <div className="absolute right-0 z-30 mt-1.5 w-40 rounded-lg border border-nx-line bg-nx-surface py-1 shadow-nx-popover">
               <Link
                 href="/tenants"
                 onClick={() => setDropdownOpen(false)}
-                className="block px-3 py-1.5 text-xs text-slate-300 hover:bg-slate-800"
+                className="block px-3 py-1.5 text-xs text-nx-ink-2 hover:bg-nx-raised hover:text-nx-ink"
               >
                 Provision Tenant
               </Link>
               <Link
                 href="/roles"
                 onClick={() => setDropdownOpen(false)}
-                className="block px-3 py-1.5 text-xs text-slate-300 hover:bg-slate-800"
+                className="block px-3 py-1.5 text-xs text-nx-ink-2 hover:bg-nx-raised hover:text-nx-ink"
               >
                 Assign Permissions
               </Link>
               <Link
                 href="/security"
                 onClick={() => setDropdownOpen(false)}
-                className="block px-3 py-1.5 text-xs text-slate-300 hover:bg-slate-800"
+                className="block px-3 py-1.5 text-xs text-nx-ink-2 hover:bg-nx-raised hover:text-nx-ink"
               >
                 Block Threat IP
               </Link>
@@ -119,7 +119,7 @@ export function PlatformWorkbench() {
               <Link
                 key={action.title}
                 href={action.href}
-                className="group flex items-center justify-between rounded-xl border border-slate-800/80 bg-[#0e131f] p-3 transition-all hover:border-slate-700 hover:bg-slate-800/30"
+                className="group flex items-center justify-between rounded-xl border border-nx-line bg-nx-raised/40 p-3 transition-all hover:border-nx-line-hi hover:bg-nx-raised"
               >
                 <div className="flex min-w-0 items-center gap-3">
                   <div
@@ -128,15 +128,15 @@ export function PlatformWorkbench() {
                     <Icon className="h-4 w-4" />
                   </div>
                   <div className="min-w-0">
-                    <span className="block truncate text-xs font-semibold text-white transition-colors group-hover:text-[#84cc16]">
+                    <span className="block truncate text-xs font-semibold text-nx-ink transition-colors group-hover:text-primary">
                       {action.title}
                     </span>
-                    <span className="block truncate text-[11px] text-slate-400">
+                    <span className="block truncate text-[11px] text-nx-ink-3">
                       {action.subtitle}
                     </span>
                   </div>
                 </div>
-                <ChevronRight className="h-3.5 w-3.5 shrink-0 text-slate-600 transition-colors group-hover:text-slate-300" />
+                <ChevronRight className="h-3.5 w-3.5 shrink-0 text-nx-ink-3 transition-colors group-hover:text-nx-ink" />
               </Link>
             );
           })}

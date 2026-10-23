@@ -192,7 +192,7 @@ export function BookingChangeResourceDialog(props: Props) {
             <div className="flex justify-between">
               <span className="text-nx-ink-2">{props.t("booking360.schedule.time")}:</span>
               <span className="font-medium tabular-nums text-nx-ink">
-                {formatUtc(props.currentStartUtc)} â€“ {formatUtc(props.currentEndUtc)}
+                {formatUtc(props.currentStartUtc)} – {formatUtc(props.currentEndUtc)}
               </span>
             </div>
           </div>
@@ -234,7 +234,7 @@ export function BookingChangeResourceDialog(props: Props) {
                         <div className="text-start">
                           <p className="font-semibold text-nx-ink">{c.resourceName}</p>
                           <p className="tabular-nums text-nx-ink-2">
-                            {formatUtc(c.startUtc)} â€“ {formatUtc(c.endUtc)}
+                            {formatUtc(c.startUtc)} – {formatUtc(c.endUtc)}
                           </p>
                         </div>
                         <Badge variant="outline">

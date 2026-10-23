@@ -100,12 +100,12 @@ export class PartyRepository implements IPartyRepository {
 
     const person =
       personResult.status === "fulfilled"
-        ? personResult.value.items.find((p) => p.partyId === id) ?? null
+        ? (personResult.value.items.find((p) => p.partyId === id) ?? null)
         : null;
 
     const organization =
       organizationResult.status === "fulfilled"
-        ? organizationResult.value.items.find((o) => o.partyId === id) ?? null
+        ? (organizationResult.value.items.find((o) => o.partyId === id) ?? null)
         : null;
 
     const contactPoints =
@@ -120,12 +120,16 @@ export class PartyRepository implements IPartyRepository {
 
     const relationships =
       relationshipsResult.status === "fulfilled"
-        ? relationshipsResult.value.items.filter((rel) => rel.sourcePartyId === id || rel.targetPartyId === id)
+        ? relationshipsResult.value.items.filter(
+            (rel) => rel.sourcePartyId === id || rel.targetPartyId === id
+          )
         : [];
 
     const mergeCandidates =
       mergeCandidatesResult.status === "fulfilled"
-        ? mergeCandidatesResult.value.items.filter((m) => m.primaryPartyId === id || m.duplicatePartyId === id)
+        ? mergeCandidatesResult.value.items.filter(
+            (m) => m.primaryPartyId === id || m.duplicatePartyId === id
+          )
         : [];
 
     const canonicalProfile =
@@ -154,9 +158,7 @@ export class PartyRepository implements IPartyRepository {
       (typeof data.fullName === "string" && data.fullName.trim().length > 0);
 
     if (isPerson) {
-      const fullName = (
-        typeof data.fullName === "string" ? data.fullName : ""
-      ).trim();
+      const fullName = (typeof data.fullName === "string" ? data.fullName : "").trim();
 
       if (!fullName) {
         throw new Error("Person creation requires fullName");
@@ -177,9 +179,7 @@ export class PartyRepository implements IPartyRepository {
     }
 
     if (data.type === "Organization") {
-      const legalName = (
-        typeof data.legalName === "string" ? data.legalName : ""
-      ).trim();
+      const legalName = (typeof data.legalName === "string" ? data.legalName : "").trim();
 
       if (!legalName) {
         throw new Error("Organization creation requires legalName");
@@ -200,10 +200,7 @@ export class PartyRepository implements IPartyRepository {
     );
   }
 
-  async createPerson(
-    params: CreatePersonParams,
-    explicitIdempotencyKey?: string
-  ): Promise<string> {
+  async createPerson(params: CreatePersonParams, explicitIdempotencyKey?: string): Promise<string> {
     const fullName = params.fullName.trim();
     if (!fullName) {
       throw new Error("Full name is required");
@@ -218,9 +215,7 @@ export class PartyRepository implements IPartyRepository {
     const idempotencyKey =
       explicitIdempotencyKey ||
       params.idempotencyKey ||
-      (typeof crypto !== "undefined" && crypto.randomUUID
-        ? crypto.randomUUID()
-        : undefined);
+      (typeof crypto !== "undefined" && crypto.randomUUID ? crypto.randomUUID() : undefined);
 
     const response = await this.service.createPerson(
       {
@@ -311,9 +306,7 @@ export class PartyRepository implements IPartyRepository {
     const idempotencyKey =
       explicitIdempotencyKey ||
       params.idempotencyKey ||
-      (typeof crypto !== "undefined" && crypto.randomUUID
-        ? crypto.randomUUID()
-        : undefined);
+      (typeof crypto !== "undefined" && crypto.randomUUID ? crypto.randomUUID() : undefined);
 
     const response = await this.service.createOrganization(
       {
@@ -433,12 +426,14 @@ export class PartyRepository implements IPartyRepository {
     };
   }
 
-  async lookupContacts(params: {
-    page?: number;
-    pageSize?: number;
-    search?: string;
-    type?: "all" | "Person" | "Organization";
-  } = {}) {
+  async lookupContacts(
+    params: {
+      page?: number;
+      pageSize?: number;
+      search?: string;
+      type?: "all" | "Person" | "Organization";
+    } = {}
+  ) {
     const type = params.type ?? "all";
     if (type === "Person") {
       const res = await this.lookupPeople(params);
@@ -572,7 +567,10 @@ export class PartyRepository implements IPartyRepository {
       middleNames: data.middleNames ? data.middleNames.trim() : null,
       familyName: data.familyName ? data.familyName.trim() : null,
       ...(data.dateOfBirth !== undefined
-        ? { dateOfBirth: data.dateOfBirth && data.dateOfBirth.trim() ? data.dateOfBirth.trim() : null }
+        ? {
+            dateOfBirth:
+              data.dateOfBirth && data.dateOfBirth.trim() ? data.dateOfBirth.trim() : null,
+          }
         : {}),
       ...(data.isMinor !== undefined ? { isMinor: data.isMinor } : {}),
       ...(rowVersion !== undefined ? { rowVersion } : {}),

@@ -1,0 +1,76 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 380" width="100%" height="100%">
+  <defs>
+    <linearGradient id="skyGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#0a192f"/>
+      <stop offset="60%" stop-color="#0f2744"/>
+      <stop offset="100%" stop-color="#14345c"/>
+    </linearGradient>
+    <linearGradient id="turfGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#0284c7"/>
+      <stop offset="40%" stop-color="#0369a1"/>
+      <stop offset="100%" stop-color="#075985"/>
+    </linearGradient>
+    <radialGradient id="floodlightL" cx="15%" cy="15%" r="60%">
+      <stop offset="0%" stop-color="#ffffff" stop-opacity="0.8"/>
+      <stop offset="40%" stop-color="#38bdf8" stop-opacity="0.3"/>
+      <stop offset="100%" stop-color="#0369a1" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="floodlightR" cx="85%" cy="15%" r="60%">
+      <stop offset="0%" stop-color="#ffffff" stop-opacity="0.8"/>
+      <stop offset="40%" stop-color="#38bdf8" stop-opacity="0.3"/>
+      <stop offset="100%" stop-color="#0369a1" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="glassWall" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#ffffff" stop-opacity="0.25"/>
+      <stop offset="50%" stop-color="#38bdf8" stop-opacity="0.1"/>
+      <stop offset="100%" stop-color="#ffffff" stop-opacity="0.2"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Arena Ceiling / Background -->
+  <rect width="600" height="380" fill="url(#skyGrad)"/>
+  
+  <!-- Steel Structure Pillars -->
+  <line x1="80" y1="0" x2="80" y2="190" stroke="#334155" stroke-width="4"/>
+  <line x1="220" y1="0" x2="220" y2="190" stroke="#334155" stroke-width="3"/>
+  <line x1="380" y1="0" x2="380" y2="190" stroke="#334155" stroke-width="3"/>
+  <line x1="520" y1="0" x2="520" y2="190" stroke="#334155" stroke-width="4"/>
+  <line x1="0" y1="90" x2="600" y2="90" stroke="#1e293b" stroke-width="3"/>
+
+  <!-- Glass Back Walls -->
+  <polygon points="40,190 560,190 560,90 40,90" fill="url(#glassWall)" stroke="#38bdf8" stroke-opacity="0.4" stroke-width="1.5"/>
+  <line x1="160" y1="90" x2="160" y2="190" stroke="#38bdf8" stroke-opacity="0.5" stroke-width="1"/>
+  <line x1="300" y1="90" x2="300" y2="190" stroke="#38bdf8" stroke-opacity="0.5" stroke-width="1"/>
+  <line x1="440" y1="90" x2="440" y2="190" stroke="#38bdf8" stroke-opacity="0.5" stroke-width="1"/>
+
+  <!-- Blue Turf Court Floor (Perspective Polygon) -->
+  <polygon points="10,380 590,380 540,190 60,190" fill="url(#turfGrad)"/>
+
+  <!-- Court White Lines (Perspective) -->
+  <!-- Outer boundary -->
+  <polygon points="45,365 555,365 515,200 85,200" fill="none" stroke="#ffffff" stroke-width="3.5" stroke-opacity="0.95"/>
+  <!-- Service Line -->
+  <line x1="68" y1="270" x2="532" y2="270" stroke="#ffffff" stroke-width="3" stroke-opacity="0.9"/>
+  <!-- Center Service Line -->
+  <line x1="300" y1="200" x2="300" y2="270" stroke="#ffffff" stroke-width="3" stroke-opacity="0.9"/>
+  <!-- Center Net Line -->
+  <line x1="300" y1="270" x2="300" y2="365" stroke="#ffffff" stroke-width="3.5" stroke-opacity="0.95"/>
+
+  <!-- Net across court -->
+  <polygon points="58,235 542,235 540,245 60,245" fill="#0f172a" fill-opacity="0.8"/>
+  <line x1="58" y1="235" x2="542" y2="235" stroke="#ffffff" stroke-width="2.5"/>
+  <!-- Net Mesh pattern -->
+  <line x1="120" y1="235" x2="120" y2="245" stroke="#cbd5e1" stroke-width="1" stroke-opacity="0.7"/>
+  <line x1="200" y1="235" x2="200" y2="245" stroke="#cbd5e1" stroke-width="1" stroke-opacity="0.7"/>
+  <line x1="300" y1="235" x2="300" y2="245" stroke="#cbd5e1" stroke-width="1" stroke-opacity="0.7"/>
+  <line x1="400" y1="235" x2="400" y2="245" stroke="#cbd5e1" stroke-width="1" stroke-opacity="0.7"/>
+  <line x1="480" y1="235" x2="480" y2="245" stroke="#cbd5e1" stroke-width="1" stroke-opacity="0.7"/>
+
+  <!-- Floodlight Flares -->
+  <circle cx="90" cy="40" r="140" fill="url(#floodlightL)"/>
+  <circle cx="510" cy="40" r="140" fill="url(#floodlightR)"/>
+
+  <!-- Light Fixtures -->
+  <rect x="70" y="25" width="40" height="15" rx="3" fill="#ffffff" stroke="#94a3b8" stroke-width="1"/>
+  <rect x="490" y="25" width="40" height="15" rx="3" fill="#ffffff" stroke="#94a3b8" stroke-width="1"/>
+</svg>

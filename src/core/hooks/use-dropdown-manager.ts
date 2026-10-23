@@ -65,7 +65,7 @@ export function useDropdownManager<TItem>({
   const [loading, setLoading] = useState(true);
   const [currentOptionState, setCurrentOptionState] = useState({
     option: null as DropdownOption | null,
-    selectedId: selectedId
+    selectedId: selectedId,
   });
 
   if (selectedId !== currentOptionState.selectedId) {
@@ -134,8 +134,10 @@ export function useDropdownManager<TItem>({
         .catch(() => {
           if (active) setCurrentOptionState((s) => ({ ...s, option: null }));
         });
-        
-      return () => { active = false; };
+
+      return () => {
+        active = false;
+      };
     }
   }, [selectedId, preloadedOptions, fetchItemById, getId, getLabel]);
 

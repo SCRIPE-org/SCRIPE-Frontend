@@ -1,7 +1,10 @@
 import { buildUrl } from "@/core/config/api-endpoints/_shared";
 import type { IApiService } from "@core/interfaces/api.interface";
 import type { CustomerSummary } from "../../domain/entities/Booking";
-import type { ICustomerPickerService, CustomerCreateOptions } from "../../domain/interfaces/ICustomerPickerService";
+import type {
+  ICustomerPickerService,
+  CustomerCreateOptions,
+} from "../../domain/interfaces/ICustomerPickerService";
 import { BOOKING_ENDPOINTS } from "./booking.endpoints";
 
 interface PartyPage {
@@ -53,9 +56,7 @@ export class CustomerPickerService implements ICustomerPickerService {
 
     const idempotencyKey =
       options?.idempotencyKey ||
-      (typeof crypto !== "undefined" && crypto.randomUUID
-        ? crypto.randomUUID()
-        : undefined);
+      (typeof crypto !== "undefined" && crypto.randomUUID ? crypto.randomUUID() : undefined);
 
     let partyId: string;
 

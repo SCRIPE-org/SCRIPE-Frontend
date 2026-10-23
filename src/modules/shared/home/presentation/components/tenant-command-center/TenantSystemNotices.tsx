@@ -14,24 +14,24 @@ export function TenantSystemNotices({ notices }: TenantSystemNoticesProps) {
   const { t } = useI18n();
 
   return (
-    <Card className="shadow-xs border-border bg-card p-4">
+    <Card className="min-w-0 overflow-hidden border-nx-line bg-nx-surface p-3.5 text-nx-ink hover:border-nx-line-hi sm:p-4">
       {/* Header */}
-      <div className="mb-2.5 flex items-center gap-2.5">
-        <div className="flex h-8 w-8 items-center justify-center rounded-lg border border-emerald-500/20 bg-emerald-500/10 text-emerald-500">
+      <div className="mb-2.5 flex min-w-0 items-center gap-2.5">
+        <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border border-success/20 bg-success/10 text-success">
           <CheckCircle2 className="h-4 w-4" />
         </div>
-        <div>
-          <h3 className="text-sm font-bold text-foreground">
+        <div className="min-w-0">
+          <h3 className="truncate text-sm font-bold text-nx-ink">
             {t("tenantCommandCenter.notices.title") || "System Notices"}
           </h3>
-          <p className="text-[11px] text-muted-foreground">
+          <p className="truncate text-[11px] text-nx-ink-3">
             {t("tenantCommandCenter.notices.subtitle") || "Updates relevant to your workspace."}
           </p>
         </div>
       </div>
 
       {/* Notices */}
-      <div className="divide-y divide-border/60">
+      <div className="divide-y divide-nx-line">
         {notices.map((notice) => {
           const title =
             notice.id === "sn-1"
@@ -50,14 +50,14 @@ export function TenantSystemNotices({ notices }: TenantSystemNoticesProps) {
           return (
             <div
               key={notice.id}
-              className="flex items-center justify-between gap-3 py-2.5 text-left"
+              className="flex min-w-0 items-center justify-between gap-2.5 py-2.5"
             >
               <div className="flex min-w-0 items-center gap-2.5">
                 <div
                   className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-lg ${
                     notice.isSuccess
-                      ? "bg-emerald-500/10 text-emerald-500"
-                      : "bg-sky-500/10 text-sky-500"
+                      ? "bg-success/10 text-success"
+                      : "bg-info/10 text-info"
                   }`}
                 >
                   {notice.isSuccess ? (
@@ -67,12 +67,12 @@ export function TenantSystemNotices({ notices }: TenantSystemNoticesProps) {
                   )}
                 </div>
                 <div className="min-w-0">
-                  <b className="block truncate text-xs font-semibold text-foreground">{title}</b>
-                  <span className="block truncate text-[10px] text-muted-foreground">{desc}</span>
+                  <b className="block truncate text-xs font-semibold text-nx-ink">{title}</b>
+                  <span className="block truncate text-[10px] text-nx-ink-3">{desc}</span>
                 </div>
               </div>
 
-              <time className="shrink-0 font-mono text-[10px] text-muted-foreground">
+              <time className="shrink-0 font-mono text-[10px] text-nx-ink-3">
                 {notice.timeAgo === "Now"
                   ? t("tenantCommandCenter.notices.now") || notice.timeAgo
                   : notice.timeAgo}

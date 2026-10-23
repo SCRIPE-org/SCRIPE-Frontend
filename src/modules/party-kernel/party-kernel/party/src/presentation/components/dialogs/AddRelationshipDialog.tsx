@@ -7,17 +7,13 @@ import {
   DialogHeader,
   DialogTitle,
   DialogFooter,
+  DialogPortal,
+  NonModalScrim,
 } from "@core/ui/dialog";
 import { Button } from "@core/ui/button";
 import { Input } from "@core/ui/input";
 import { Label } from "@core/ui/label";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@core/ui/select";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@core/ui/select";
 import { useI18n } from "@core/providers/i18n-provider";
 import { Users, Loader2, Check } from "lucide-react";
 import { PartyPicker, type PartySelectionResult } from "../PartyPicker";
@@ -52,7 +48,7 @@ export function AddRelationshipDialog({
   const { t } = useI18n();
   const tr = (key: string, fallback: string) => {
     const val = t(key);
-    return (!val || val === key) ? fallback : val;
+    return !val || val === key ? fallback : val;
   };
 
   const [targetPartyId, setTargetPartyId] = useState("");
@@ -126,8 +122,7 @@ export function AddRelationshipDialog({
       });
       handleClose();
     } catch (err: unknown) {
-      const message =
-        err instanceof Error ? err.message : "Failed to establish relationship";
+      const message = err instanceof Error ? err.message : "Failed to establish relationship";
       setError(message);
     } finally {
       setIsSubmitting(false);
@@ -135,12 +130,15 @@ export function AddRelationshipDialog({
   };
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
+    <Dialog open={open} onOpenChange={onOpenChange} modal={false}>
+      <DialogPortal>
+        <NonModalScrim open={open} />
+      </DialogPortal>
       <DialogContent className="sm:max-w-[480px]">
         <form onSubmit={handleSubmit}>
           <DialogHeader>
             <div className="flex items-center gap-2">
-              <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-nx-accent/10 text-nx-accent">
+              <div className="bg-nx-accent/10 flex h-9 w-9 items-center justify-center rounded-lg text-nx-accent">
                 <Users className="h-5 w-5" />
               </div>
               <DialogTitle>
@@ -153,7 +151,7 @@ export function AddRelationshipDialog({
             {error && (
               <div
                 role="alert"
-                className="rounded-md bg-destructive/10 p-3 text-sm text-destructive border border-destructive/20"
+                className="rounded-md border border-destructive/20 bg-destructive/10 p-3 text-sm text-destructive"
               >
                 {error}
               </div>
@@ -161,7 +159,10 @@ export function AddRelationshipDialog({
 
             <div className="grid gap-2">
               <div className="flex items-center justify-between">
-                <Label htmlFor={isManualInput ? "rel-target" : undefined} className="text-nx-ink font-medium">
+                <Label
+                  htmlFor={isManualInput ? "rel-target" : undefined}
+                  className="font-medium text-nx-ink"
+                >
                   {tr("party.dialog.targetPartyId", "Target Contact / Organization")}{" "}
                   <span className="text-destructive">*</span>
                 </Label>
@@ -170,7 +171,7 @@ export function AddRelationshipDialog({
                   variant="ghost"
                   size="sm"
                   onClick={() => setIsManualInput(!isManualInput)}
-                  className="h-6 px-2 text-[11px] text-nx-accent hover:text-nx-accent/80 font-normal"
+                  className="hover:text-nx-accent/80 h-6 px-2 text-[11px] font-normal text-nx-accent"
                 >
                   {isManualInput
                     ? tr("party.dialog.usePicker", "Search Directory")
@@ -217,11 +218,12 @@ export function AddRelationshipDialog({
               )}
 
               {targetPartyId && !isManualInput && selectedParty && (
-                <div className="flex items-center justify-between rounded-lg bg-nx-accent/5 border border-nx-accent/20 px-3 py-1.5 text-xs">
+                <div className="bg-nx-accent/5 border-nx-accent/20 flex items-center justify-between rounded-lg border px-3 py-1.5 text-xs">
                   <span className="text-nx-ink-2">
-                    {selectedParty.type}: <strong className="text-nx-ink">{selectedParty.displayName}</strong>
+                    {selectedParty.type}:{" "}
+                    <strong className="text-nx-ink">{selectedParty.displayName}</strong>
                   </span>
-                  <span className="inline-flex items-center gap-1 text-[11px] font-medium text-emerald-600">
+                  <span className="inline-flex items-center gap-1 text-[11px] font-medium text-success">
                     <Check className="h-3 w-3" /> Selected
                   </span>
                 </div>
@@ -230,12 +232,11 @@ export function AddRelationshipDialog({
 
             <div className="grid gap-2">
               <div className="flex items-center justify-between">
-                <Label htmlFor="rel-type" className="text-nx-ink font-medium">
-                  {t("party.dialog.relType")}{" "}
-                  <span className="text-destructive">*</span>
+                <Label htmlFor="rel-type" className="font-medium text-nx-ink">
+                  {t("party.dialog.relType")} <span className="text-destructive">*</span>
                 </Label>
-                <span className="text-[10px] px-1.5 py-0.5 rounded bg-amber-500/10 text-amber-500 border border-amber-500/20 font-medium">
-                  V1 Supported
+                <span className="rounded border border-warning/20 bg-warning/10 px-1.5 py-0.5 text-[10px] font-medium text-warning">
+                  Supported Type
                 </span>
               </div>
               {/* Standard Type Selection Dropdown */}
@@ -247,7 +248,10 @@ export function AddRelationshipDialog({
                 }
                 onValueChange={(val) => {
                   if (val === "custom") {
-                    if (relationshipType === "Guardian" || relationshipType === "EmergencyContact") {
+                    if (
+                      relationshipType === "Guardian" ||
+                      relationshipType === "EmergencyContact"
+                    ) {
                       setRelationshipType("");
                     }
                   } else {
@@ -261,15 +265,11 @@ export function AddRelationshipDialog({
                   <SelectValue placeholder="Choose relationship type (اختيار نوع العلاقة)" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="Guardian">
-                    Guardian (ولي أمر) — V1 Supported
-                  </SelectItem>
+                  <SelectItem value="Guardian">Guardian (ولي أمر)</SelectItem>
                   <SelectItem value="EmergencyContact">
-                    Emergency Contact (جهة اتصال للطوارئ) — V1 Supported
+                    Emergency Contact (جهة اتصال للطوارئ)
                   </SelectItem>
-                  <SelectItem value="custom">
-                    Custom / Typed (مخصص)
-                  </SelectItem>
+                  <SelectItem value="custom">Custom / Typed (مخصص)</SelectItem>
                 </SelectContent>
               </Select>
 
@@ -283,11 +283,7 @@ export function AddRelationshipDialog({
                     setRelationshipType("Guardian");
                     if (error) setError(null);
                   }}
-                  className={`h-7 px-3 text-xs rounded-lg transition-colors ${
-                    relationshipType === "Guardian"
-                      ? "bg-nx-accent-fill text-nx-on-fill font-semibold shadow-sm"
-                      : "border-nx-border text-nx-ink-2 hover:text-nx-ink"
-                  }`}
+                  className="h-7 rounded-lg px-3 text-xs"
                 >
                   Guardian (ولي أمر)
                 </Button>
@@ -299,11 +295,7 @@ export function AddRelationshipDialog({
                     setRelationshipType("EmergencyContact");
                     if (error) setError(null);
                   }}
-                  className={`h-7 px-3 text-xs rounded-lg transition-colors ${
-                    relationshipType === "EmergencyContact"
-                      ? "bg-nx-accent-fill text-nx-on-fill font-semibold shadow-sm"
-                      : "border-nx-border text-nx-ink-2 hover:text-nx-ink"
-                  }`}
+                  className="h-7 rounded-lg px-3 text-xs"
                 >
                   Emergency Contact (طوارئ)
                 </Button>
@@ -322,13 +314,13 @@ export function AddRelationshipDialog({
                 required
               />
               <p className="text-[11px] text-nx-ink-3">
-                Select a supported type above or type directly. Affiliations/Signatories are deferred under RFC-PARTY-AFFILIATIONS.
+                Select a supported type above or type a custom relationship directly.
               </p>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
               <div className="grid gap-2">
-                <Label htmlFor="rel-from" className="text-nx-ink text-xs">
+                <Label htmlFor="rel-from" className="text-xs text-nx-ink">
                   {t("party.dialog.validFrom")}
                 </Label>
                 <Input
@@ -341,7 +333,7 @@ export function AddRelationshipDialog({
               </div>
 
               <div className="grid gap-2">
-                <Label htmlFor="rel-to" className="text-nx-ink text-xs">
+                <Label htmlFor="rel-to" className="text-xs text-nx-ink">
                   {t("party.dialog.validTo")}
                 </Label>
                 <Input
@@ -356,12 +348,7 @@ export function AddRelationshipDialog({
           </div>
 
           <DialogFooter className="gap-2 sm:gap-0">
-            <Button
-              type="button"
-              variant="outline"
-              onClick={handleClose}
-              disabled={isSubmitting}
-            >
+            <Button type="button" variant="outline" onClick={handleClose} disabled={isSubmitting}>
               {t("party.dialog.cancel")}
             </Button>
             <Button

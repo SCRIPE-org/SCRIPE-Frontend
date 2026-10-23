@@ -33,8 +33,6 @@
       "@modules/custom-fields/*": ["./src/modules/custom-fields/custom-fields/*"],
       "@modules/customization": ["./src/modules/admin/customization"],
       "@modules/customization/*": ["./src/modules/admin/customization/*"],
-      "@modules/docs": ["./src/modules/shared/docs"],
-      "@modules/docs/*": ["./src/modules/shared/docs/*"],
       "@modules/ecosystem": ["./src/modules/admin/ecosystem"],
       "@modules/ecosystem/*": ["./src/modules/admin/ecosystem/*"],
       "@modules/entitlements": ["./src/modules/billing/entitlements"],

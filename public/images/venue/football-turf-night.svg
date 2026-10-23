@@ -1,0 +1,55 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 380" width="100%" height="100%">
+  <defs>
+    <linearGradient id="nightSky" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#021a10"/>
+      <stop offset="60%" stop-color="#06321f"/>
+      <stop offset="100%" stop-color="#0a4d2e"/>
+    </linearGradient>
+    <linearGradient id="turfPattern" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#16a34a"/>
+      <stop offset="25%" stop-color="#15803d"/>
+      <stop offset="50%" stop-color="#166534"/>
+      <stop offset="75%" stop-color="#14532d"/>
+      <stop offset="100%" stop-color="#0f3d22"/>
+    </linearGradient>
+    <radialGradient id="greenFloodlight" cx="50%" cy="10%" r="70%">
+      <stop offset="0%" stop-color="#86efac" stop-opacity="0.45"/>
+      <stop offset="40%" stop-color="#22c55e" stop-opacity="0.2"/>
+      <stop offset="100%" stop-color="#052e16" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+
+  <rect width="600" height="380" fill="url(#nightSky)"/>
+  <rect width="600" height="240" fill="url(#greenFloodlight)"/>
+
+  <!-- Stadium Mast Towers -->
+  <line x1="70" y1="20" x2="70" y2="180" stroke="#334155" stroke-width="4"/>
+  <line x1="530" y1="20" x2="530" y2="180" stroke="#334155" stroke-width="4"/>
+  <!-- Mast light heads -->
+  <rect x="50" y="10" width="40" height="16" fill="#f8fafc" rx="3"/>
+  <rect x="510" y="10" width="40" height="16" fill="#f8fafc" rx="3"/>
+  <circle cx="70" cy="18" r="80" fill="#ffffff" fill-opacity="0.25"/>
+  <circle cx="530" cy="18" r="80" fill="#ffffff" fill-opacity="0.25"/>
+
+  <!-- Football Field Turf Surface (Perspective) -->
+  <polygon points="10,380 590,380 520,180 80,180" fill="url(#turfPattern)"/>
+
+  <!-- Alternating Lawn Cut Stripes -->
+  <polygon points="25,380 140,380 160,180 90,180" fill="#ffffff" fill-opacity="0.04"/>
+  <polygon points="250,380 350,380 330,180 260,180" fill="#ffffff" fill-opacity="0.04"/>
+  <polygon points="460,380 575,380 510,180 430,180" fill="#ffffff" fill-opacity="0.04"/>
+
+  <!-- Football Pitch Lines (Perspective) -->
+  <!-- Outer perimeter -->
+  <polygon points="40,365 560,365 500,190 100,190" fill="none" stroke="#ffffff" stroke-width="3" stroke-opacity="0.9"/>
+  <!-- Center line -->
+  <line x1="70" y1="275" x2="530" y2="275" stroke="#ffffff" stroke-width="2.5" stroke-opacity="0.9"/>
+  <!-- Center circle (ellipse in perspective) -->
+  <ellipse cx="300" cy="275" rx="75" ry="24" fill="none" stroke="#ffffff" stroke-width="2.5" stroke-opacity="0.9"/>
+  <circle cx="300" cy="275" r="3.5" fill="#ffffff" fill-opacity="0.9"/>
+
+  <!-- Penalty Box (Foreground) -->
+  <polygon points="160,365 440,365 410,320 190,320" fill="none" stroke="#ffffff" stroke-width="2.5" stroke-opacity="0.9"/>
+  <!-- Goal area (Foreground) -->
+  <polygon points="220,365 380,365 365,345 235,345" fill="none" stroke="#ffffff" stroke-width="2" stroke-opacity="0.9"/>
+</svg>

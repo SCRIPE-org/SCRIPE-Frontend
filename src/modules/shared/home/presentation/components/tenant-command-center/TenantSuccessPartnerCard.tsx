@@ -10,23 +10,31 @@ export function TenantSuccessPartnerCard() {
   const { t } = useI18n();
 
   return (
-    <Card className="border-[#183747] bg-gradient-to-br from-[#102b37] to-[#0a1d27] p-4 text-white shadow-md">
-      <div className="mb-1.5 flex items-center gap-2">
-        <Headphones className="h-4 w-4 text-[#c9ff43]" />
-        <h3 className="text-sm font-bold text-white">
+    <Card className="min-w-0 border-nx-line bg-nx-surface p-4 text-nx-ink transition-[border-color,background-color] duration-nx-micro hover:border-nx-line-hi sm:p-5">
+      <div className="mb-2 flex items-center gap-2.5">
+        <div
+          className="flex h-9 w-9 shrink-0 items-center justify-center rounded-nx-md"
+          style={{
+            background: "color-mix(in oklch, var(--nx-accent) 12%, transparent)",
+            color: "var(--nx-accent)",
+          }}
+        >
+          <Headphones className="h-4.5 w-4.5" />
+        </div>
+        <h3 className="text-sm font-semibold text-nx-ink">
           {t("tenantCommandCenter.partner.title") || "Your Success Partner"}
         </h3>
       </div>
-      <p className="mb-3 text-[11px] leading-relaxed text-[#b1c4cc]">
+      <p className="mb-4 text-xs leading-relaxed text-nx-ink-3">
         {t("tenantCommandCenter.partner.subtitle") ||
-          "Need help getting the most out of SCRIPE? Our team can help with setup, onboarding and best practices."}
+          "Need help getting the most out of SCRIPE? Our team can help with setup, onboarding and operational best practices."}
       </p>
 
       <Button
         asChild
         variant="outline"
         size="sm"
-        className="h-8 w-full border-white/20 bg-white/10 text-[11px] font-semibold text-white hover:bg-white/20"
+        className="h-8 w-full border-nx-line text-xs font-semibold hover:border-nx-line-hi hover:bg-nx-raised"
       >
         <a href="mailto:support@scripe.org">
           {t("tenantCommandCenter.partner.contactSupport") || "Contact Support"}

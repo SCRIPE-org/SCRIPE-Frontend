@@ -1,5 +1,8 @@
 import type { CustomerSummary } from "../../domain/entities/Booking";
-import type { ICustomerPickerService, CustomerCreateOptions } from "../../domain/interfaces/ICustomerPickerService";
+import type {
+  ICustomerPickerService,
+  CustomerCreateOptions,
+} from "../../domain/interfaces/ICustomerPickerService";
 import type { ICustomerRepository } from "../../domain/interfaces/ICustomerRepository";
 
 /**

@@ -67,6 +67,8 @@ export interface VenueOverviewResourceActivityItem {
   currentOrNextEndUtc: string | null;
   currentOrNextStartUtc: string | null;
   activeReservationId: string | null;
+  reservationNumber?: string | null;
+  customerDisplayName?: string | null;
 }
 
 /**

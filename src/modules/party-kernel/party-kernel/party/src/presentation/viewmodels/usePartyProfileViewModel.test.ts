@@ -4,10 +4,7 @@ import { usePartyProfileViewModel } from "./usePartyProfileViewModel";
 import { Party } from "../../domain/entities/Party";
 import { PartyProfile } from "../../domain/entities/PartyProfile";
 
-const {
-  mockInvalidateQueries,
-  mockShowError,
-} = vi.hoisted(() => ({
+const { mockInvalidateQueries, mockShowError } = vi.hoisted(() => ({
   mockInvalidateQueries: vi.fn(),
   mockShowError: vi.fn(),
 }));

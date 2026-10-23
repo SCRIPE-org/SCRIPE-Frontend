@@ -14,10 +14,10 @@ interface Props {
 function formatTimeString(isoString: string): string {
   try {
     const d = new Date(isoString);
-    if (isNaN(d.getTime())) return isoString.slice(11, 16) || "â€”";
+    if (isNaN(d.getTime())) return isoString.slice(11, 16) || "—";
     return d.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
   } catch {
-    return isoString.slice(11, 16) || "â€”";
+    return isoString.slice(11, 16) || "—";
   }
 }
 

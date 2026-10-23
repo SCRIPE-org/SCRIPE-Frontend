@@ -13,7 +13,16 @@ import { Button } from "@core/ui/button";
 import { Input } from "@core/ui/input";
 import { Label } from "@core/ui/label";
 import { useI18n } from "@core/providers/i18n-provider";
-import { Building2, Phone, Mail, FileText, Loader2, Info, AlertTriangle, RefreshCw } from "lucide-react";
+import {
+  Building2,
+  Phone,
+  Mail,
+  FileText,
+  Loader2,
+  Info,
+  AlertTriangle,
+  RefreshCw,
+} from "lucide-react";
 import { getPartyKernelContainer } from "../../../../../di";
 import type { CreateOrganizationParams } from "../../../domain/interfaces/IPartyRepository";
 
@@ -162,10 +171,16 @@ export function CreateOrganizationDialog({
 
       let currentKey = idempotencyKey;
       if (lastPayloadRef.current && lastPayloadRef.current !== currentPayload) {
-        currentKey = typeof crypto !== "undefined" && crypto.randomUUID ? crypto.randomUUID() : `key-${Date.now()}`;
+        currentKey =
+          typeof crypto !== "undefined" && crypto.randomUUID
+            ? crypto.randomUUID()
+            : `key-${Date.now()}`;
         setIdempotencyKey(currentKey);
       } else if (!currentKey) {
-        currentKey = typeof crypto !== "undefined" && crypto.randomUUID ? crypto.randomUUID() : `key-${Date.now()}`;
+        currentKey =
+          typeof crypto !== "undefined" && crypto.randomUUID
+            ? crypto.randomUUID()
+            : `key-${Date.now()}`;
         setIdempotencyKey(currentKey);
       }
       lastPayloadRef.current = currentPayload;
@@ -226,11 +241,13 @@ export function CreateOrganizationDialog({
         <DialogContent className="sm:max-w-[540px]">
           <DialogHeader>
             <div className="flex items-center gap-2">
-              <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-amber-500/10 text-amber-500">
+              <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-warning/10 text-warning">
                 <AlertTriangle className="h-5 w-5" />
               </div>
               <div>
-                <DialogTitle>{t("party.dialog.partialSaveTitle") || "Party Identity Created"}</DialogTitle>
+                <DialogTitle>
+                  {t("party.dialog.partialSaveTitle") || "Party Identity Created"}
+                </DialogTitle>
                 <DialogDescription>
                   {t("party.dialog.partialSaveDesc") ||
                     "The contact record was created with canonical ID, but secondary contact points failed to attach."}
@@ -240,31 +257,33 @@ export function CreateOrganizationDialog({
           </DialogHeader>
 
           <div className="grid gap-4 py-4">
-            <div className="rounded-lg border border-nx-border bg-nx-surface-2/40 p-4 space-y-2.5">
+            <div className="border-nx-line bg-nx-raised/40 space-y-2.5 rounded-lg border p-4">
               <div className="flex items-center justify-between text-xs">
                 <span className="text-nx-ink-3">Canonical Party ID</span>
-                <span className="font-mono text-nx-ink font-semibold">{partialSaveState.partyId}</span>
+                <span className="font-mono font-semibold text-nx-ink">
+                  {partialSaveState.partyId}
+                </span>
               </div>
               <div className="flex items-center justify-between text-xs">
                 <span className="text-nx-ink-3">Legal Business Name</span>
-                <span className="text-nx-ink font-medium">{partialSaveState.legalName}</span>
+                <span className="font-medium text-nx-ink">{partialSaveState.legalName}</span>
               </div>
               {partialSaveState.failedPhone && (
                 <div className="flex items-center justify-between text-xs">
                   <span className="text-nx-ink-3">Pending Phone</span>
-                  <span className="text-amber-400 font-mono">{partialSaveState.failedPhone}</span>
+                  <span className="font-mono text-warning">{partialSaveState.failedPhone}</span>
                 </div>
               )}
               {partialSaveState.failedEmail && (
                 <div className="flex items-center justify-between text-xs">
                   <span className="text-nx-ink-3">Pending Email</span>
-                  <span className="text-amber-400 font-mono">{partialSaveState.failedEmail}</span>
+                  <span className="font-mono text-warning">{partialSaveState.failedEmail}</span>
                 </div>
               )}
             </div>
 
             {retryError && (
-              <div className="rounded-md bg-destructive/10 p-3 text-xs text-destructive border border-destructive/20">
+              <div className="rounded-md border border-destructive/20 bg-destructive/10 p-3 text-xs text-destructive">
                 {retryError}
               </div>
             )}
@@ -285,11 +304,7 @@ export function CreateOrganizationDialog({
             >
               {t("party.dialog.continueToProfile") || "Continue to Profile"}
             </Button>
-            <Button
-              type="button"
-              onClick={handleRetryAttach}
-              disabled={isRetrying}
-            >
+            <Button type="button" onClick={handleRetryAttach} disabled={isRetrying}>
               {isRetrying ? (
                 <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
@@ -314,14 +329,12 @@ export function CreateOrganizationDialog({
         <form onSubmit={handleSubmit}>
           <DialogHeader>
             <div className="flex items-center gap-2">
-              <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-emerald-500/10 text-emerald-600 dark:text-emerald-400">
+              <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-success/10 text-success">
                 <Building2 className="h-5 w-5" />
               </div>
               <div>
                 <DialogTitle>{t("party.dialog.createOrgTitle")}</DialogTitle>
-                <DialogDescription>
-                  {t("party.dialog.createOrgDesc")}
-                </DialogDescription>
+                <DialogDescription>{t("party.dialog.createOrgDesc")}</DialogDescription>
               </div>
             </div>
           </DialogHeader>
@@ -330,7 +343,7 @@ export function CreateOrganizationDialog({
             {error && (
               <div
                 role="alert"
-                className="rounded-md bg-destructive/10 p-3 text-sm text-destructive border border-destructive/20"
+                className="rounded-md border border-destructive/20 bg-destructive/10 p-3 text-sm text-destructive"
               >
                 {error}
               </div>
@@ -338,9 +351,8 @@ export function CreateOrganizationDialog({
 
             {/* Legal Name */}
             <div className="grid gap-2">
-              <Label htmlFor="org-legal-name" className="text-nx-ink font-medium">
-                {t("party.dialog.legalName")}{" "}
-                <span className="text-destructive">*</span>
+              <Label htmlFor="org-legal-name" className="font-medium text-nx-ink">
+                {t("party.dialog.legalName")} <span className="text-destructive">*</span>
               </Label>
               <Input
                 id="org-legal-name"
@@ -358,7 +370,7 @@ export function CreateOrganizationDialog({
 
             {/* Display / Commercial Name */}
             <div className="grid gap-2">
-              <Label htmlFor="org-display-name" className="text-nx-ink font-medium">
+              <Label htmlFor="org-display-name" className="font-medium text-nx-ink">
                 {t("party.dialog.displayName")}
               </Label>
               <Input
@@ -372,7 +384,7 @@ export function CreateOrganizationDialog({
 
             {/* Tax / CR Registration ID */}
             <div className="grid gap-2">
-              <Label htmlFor="org-tax-id" className="text-nx-ink flex items-center gap-1.5">
+              <Label htmlFor="org-tax-id" className="flex items-center gap-1.5 text-nx-ink">
                 <FileText className="h-3.5 w-3.5 text-nx-ink-3" />
                 {t("party.dialog.taxId")}
               </Label>
@@ -384,15 +396,15 @@ export function CreateOrganizationDialog({
                 disabled={isSubmitting}
               />
               <div className="flex items-start gap-1.5 text-xs text-nx-ink-3">
-                <Info className="h-3.5 w-3.5 shrink-0 mt-0.5 text-nx-ink-3" />
+                <Info className="mt-0.5 h-3.5 w-3.5 shrink-0 text-nx-ink-3" />
                 <span>{t("party.dialog.taxIdHelp")}</span>
               </div>
             </div>
 
             {/* Contact Methods */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-1">
+            <div className="grid grid-cols-1 gap-4 pt-1 sm:grid-cols-2">
               <div className="grid gap-2">
-                <Label htmlFor="org-phone" className="text-nx-ink flex items-center gap-1.5">
+                <Label htmlFor="org-phone" className="flex items-center gap-1.5 text-nx-ink">
                   <Phone className="h-3.5 w-3.5 text-nx-ink-3" />
                   {t("party.dialog.phone")}
                 </Label>
@@ -407,7 +419,7 @@ export function CreateOrganizationDialog({
               </div>
 
               <div className="grid gap-2">
-                <Label htmlFor="org-email" className="text-nx-ink flex items-center gap-1.5">
+                <Label htmlFor="org-email" className="flex items-center gap-1.5 text-nx-ink">
                   <Mail className="h-3.5 w-3.5 text-nx-ink-3" />
                   {t("party.dialog.email")}
                 </Label>
@@ -424,12 +436,7 @@ export function CreateOrganizationDialog({
           </div>
 
           <DialogFooter className="gap-2 sm:gap-0">
-            <Button
-              type="button"
-              variant="outline"
-              onClick={handleClose}
-              disabled={isSubmitting}
-            >
+            <Button type="button" variant="outline" onClick={handleClose} disabled={isSubmitting}>
               {t("party.dialog.cancel")}
             </Button>
             <Button type="submit" disabled={isSubmitting || !legalName.trim()}>

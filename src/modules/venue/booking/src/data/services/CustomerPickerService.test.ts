@@ -173,18 +173,16 @@ describe("CustomerPickerService", () => {
       undefined,
       { headers: { "Idempotency-Key": callerKey } }
     );
-    expect(postMock).toHaveBeenCalledWith(
-      "/v1/contact-points",
-      expect.anything(),
-      undefined,
-      { headers: { "Idempotency-Key": `${callerKey}:phone` } }
-    );
+    expect(postMock).toHaveBeenCalledWith("/v1/contact-points", expect.anything(), undefined, {
+      headers: { "Idempotency-Key": `${callerKey}:phone` },
+    });
   });
 
   it("surfaces partial save error by throwing PartialCustomerSaveError when no callback is provided", async () => {
     const postMock = vi.fn().mockImplementation((url: string) => {
       if (url === "/v1/Parties/people") return Promise.resolve({ id: "party-p-failed-phone" });
-      if (url === "/v1/contact-points") return Promise.reject(new Error("ContactPoint service timeout"));
+      if (url === "/v1/contact-points")
+        return Promise.reject(new Error("ContactPoint service timeout"));
       return Promise.resolve({});
     });
 
@@ -194,9 +192,9 @@ describe("CustomerPickerService", () => {
     } as unknown as IApiService;
 
     const service = new CustomerPickerService(mockApi);
-    await expect(
-      service.create("Majid Abdullah", "Person", "+966559998888")
-    ).rejects.toThrow("Customer was created with ID party-p-failed-phone, but saving the phone number failed.");
+    await expect(service.create("Majid Abdullah", "Person", "+966559998888")).rejects.toThrow(
+      "Customer was created with ID party-p-failed-phone, but saving the phone number failed."
+    );
   });
 
   it("reconciles partial contact point failure via onContactPointFailure callback without swallowing error", async () => {
@@ -223,10 +221,7 @@ describe("CustomerPickerService", () => {
       { onContactPointFailure: failureCallback }
     );
 
-    expect(failureCallback).toHaveBeenCalledWith(
-      expect.any(Error),
-      "party-p-callback"
-    );
+    expect(failureCallback).toHaveBeenCalledWith(expect.any(Error), "party-p-callback");
     expect(result.displayName).toBe("Majid Abdullah");
   });
 });
