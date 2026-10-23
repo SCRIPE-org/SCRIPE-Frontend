@@ -1,17 +1,17 @@
 import { render, screen } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { NexusSecondaryRail } from "./nexus-secondary-rail";
+import { MenuItem } from "@core/navigation/domain/entities/MenuItem";
 
 // Mock Next.js navigation
 vi.mock("next/navigation", () => ({
-  usePathname: () => "/venue",
+  usePathname: () => "/venue/resources",
   useRouter: () => ({
     push: vi.fn(),
     replace: vi.fn(),
   }),
 }));
 
-// Mock workspace provider
 const mockActiveWorkspace = {
   workspaceKey: "venue",
   workspaceNameEn: "Venue",
@@ -19,14 +19,52 @@ const mockActiveWorkspace = {
   getLocalizedName: (lang: string) => (lang === "ar" ? "المنشآت والملاعب" : "Venue"),
 };
 
-const mockActiveRootItem = null;
+const makeMockItem = (
+  id: string,
+  nameEn: string,
+  href: string,
+  children: MenuItem[] = []
+): MenuItem =>
+  new MenuItem({
+    id,
+    slug: id,
+    name: nameEn,
+    nameEn,
+    nameAr: nameEn,
+    href,
+    icon: "LayoutGrid",
+    order: 0,
+    resource: null,
+    actions: null,
+    children,
+  });
+
+const operationsGroup = makeMockItem("venue-group-operations", "Operations & Bookings", "", [
+  makeMockItem("venue-dashboard", "Operations Dashboard", "/venue"),
+  makeMockItem("venue-calendar", "Calendar Grid", "/venue/calendar"),
+  makeMockItem("venue-booking-create", "New Booking", "/venue/bookings/new"),
+  makeMockItem("venue-attention", "Attention Queue", "/venue/attention"),
+  makeMockItem("venue-customers", "Customers & Guests", "/venue/customers"),
+]);
+
+const spacesGroup = makeMockItem("venue-group-spaces", "Courts & Facilities", "", [
+  makeMockItem("venue-resources", "Courts & Spaces", "/venue/resources"),
+  makeMockItem("venue-facilities", "Facilities & Complexes", "/venue/facilities"),
+  makeMockItem("venue-availability", "Operating Hours & Schedules", "/venue/availability"),
+  makeMockItem("venue-resource-profiles", "Resource Profiles", "/venue/resource-profiles"),
+  makeMockItem("venue-resource-builder", "Resource Builder", "/venue/resource-builder"),
+]);
+
+const mockRootMenuItems = [operationsGroup, spacesGroup];
+
+let mockActiveRootItem: MenuItem | null = spacesGroup;
 
 vi.mock("@core/providers/workspace-provider", () => ({
   useWorkspace: () => ({
     activeWorkspace: mockActiveWorkspace,
     activeRootItem: mockActiveRootItem,
     isModuleMode: true,
-    rootMenuItems: [],
+    rootMenuItems: mockRootMenuItems,
   }),
 }));
 
@@ -40,7 +78,7 @@ vi.mock("@core/providers/i18n-provider", () => ({
 
 vi.mock("@core/providers/permission-provider", () => ({
   usePermissions: () => ({
-    canAccessPage: () => true, // User has full access
+    canAccessPage: () => true,
   }),
 }));
 
@@ -55,36 +93,20 @@ vi.mock("./nexus-layout", () => ({
   }),
 }));
 
-describe("NexusSecondaryRail — Authoritative 5-Group Venue Workspace Navigation", () => {
+describe("NexusSecondaryRail — Generic Multi-Group Workspace Secondary Rail", () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    mockActiveRootItem = spacesGroup;
   });
 
-  it("1. Renders the authoritative 5 groups matching VenueMenuProvider.cs", () => {
+  it("1. Displays the active root group title and context label", () => {
     render(<NexusSecondaryRail />);
 
-    // Verify header title
-    expect(screen.getByText("Venue Operations")).toBeInTheDocument();
-
-    // Verify all 5 group section headings exist
-    expect(screen.getByText(/operations & bookings/i)).toBeInTheDocument();
-    expect(screen.getByText(/courts & facilities/i)).toBeInTheDocument();
-    expect(screen.getByText(/commercial & rates/i)).toBeInTheDocument();
-    expect(screen.getByText(/analytics & reports/i)).toBeInTheDocument();
-    expect(screen.getByText(/settings & setup/i)).toBeInTheDocument();
+    expect(screen.getByText("Courts & Facilities")).toBeInTheDocument();
+    expect(screen.getByText(/venue/i)).toBeInTheDocument();
   });
 
-  it("2. Operations & Bookings group provides access to all 5 operational routes", () => {
-    render(<NexusSecondaryRail />);
-
-    expect(screen.getByRole("link", { name: /operations dashboard/i })).toHaveAttribute("href", "/venue");
-    expect(screen.getByRole("link", { name: /calendar grid/i })).toHaveAttribute("href", "/venue/calendar");
-    expect(screen.getByRole("link", { name: /new booking/i })).toHaveAttribute("href", "/venue/bookings/new");
-    expect(screen.getByRole("link", { name: /attention queue/i })).toHaveAttribute("href", "/venue/attention");
-    expect(screen.getByRole("link", { name: /customers & guests/i })).toHaveAttribute("href", "/venue/customers");
-  });
-
-  it("3. Courts & Facilities group provides access to all 5 spaces routes", () => {
+  it("2. Displays children of active group with proper links", () => {
     render(<NexusSecondaryRail />);
 
     expect(screen.getByRole("link", { name: /courts & spaces/i })).toHaveAttribute("href", "/venue/resources");
@@ -94,26 +116,13 @@ describe("NexusSecondaryRail — Authoritative 5-Group Venue Workspace Navigatio
     expect(screen.getByRole("link", { name: /resource builder/i })).toHaveAttribute("href", "/venue/resource-builder");
   });
 
-  it("4. Commercial & Rates group provides access to all 4 financial routes", () => {
+  it("3. Displays Operations & Bookings children when active root item switches", () => {
+    mockActiveRootItem = operationsGroup;
     render(<NexusSecondaryRail />);
 
-    expect(screen.getByRole("link", { name: /financial overview/i })).toHaveAttribute("href", "/venue/money");
-    expect(screen.getByRole("link", { name: /invoices & receivables/i })).toHaveAttribute("href", "/venue/money/receivables");
-    expect(screen.getByRole("link", { name: /payment history/i })).toHaveAttribute("href", "/venue/money/payments");
-    expect(screen.getByRole("link", { name: /pricing & rates/i })).toHaveAttribute("href", "/venue/pricing");
-  });
-
-  it("5. Analytics & Reports group provides access to reports", () => {
-    render(<NexusSecondaryRail />);
-
-    expect(screen.getByRole("link", { name: /reports & analytics/i })).toHaveAttribute("href", "/venue/reports");
-  });
-
-  it("6. Settings & Setup group provides access to all 3 setup routes", () => {
-    render(<NexusSecondaryRail />);
-
-    expect(screen.getByRole("link", { name: /venue & site profile/i })).toHaveAttribute("href", "/venue/venue-setup");
-    expect(screen.getByRole("link", { name: /sites & campuses/i })).toHaveAttribute("href", "/venue/sites");
-    expect(screen.getByRole("link", { name: /venue settings/i })).toHaveAttribute("href", "/venue/settings");
+    expect(screen.getByText("Operations & Bookings")).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: /operations dashboard/i })).toHaveAttribute("href", "/venue");
+    expect(screen.getByRole("link", { name: /calendar grid/i })).toHaveAttribute("href", "/venue/calendar");
+    expect(screen.getByRole("link", { name: /new booking/i })).toHaveAttribute("href", "/venue/bookings/new");
   });
 });

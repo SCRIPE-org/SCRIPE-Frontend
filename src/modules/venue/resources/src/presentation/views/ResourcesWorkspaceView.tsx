@@ -157,44 +157,26 @@ export function ResourcesWorkspaceView() {
         </div>
       )}
 
-      {/* Filter Chips Bar & Dropdowns */}
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        {/* Category Tabs: Dynamically derived from domain items */}
-        <div className="no-scrollbar flex items-center gap-1.5 overflow-x-auto pb-1">
-          {categories.map((category) => (
-            <Button
-              variant="outline"
-              key={category.value}
-              type="button"
-              onClick={() => setSelectedCategory(category.value)}
-              aria-pressed={selectedCategory === category.value}
-              className={`shrink-0 rounded-xl px-3.5 py-1.5 text-xs font-bold transition-all ${
-                selectedCategory === category.value
-                  ? "shadow-xs bg-nx-accent text-nx-on-fill hover:bg-nx-accent/90"
-                  : "border-nx-border border bg-nx-surface text-nx-ink-2 hover:bg-nx-raised"
-              }`}
-            >
-              {category.label}
-            </Button>
-          ))}
-        </div>
-
-        {/* Dropdowns & Search */}
-        <div className="flex items-center gap-2">
-          <div className="relative w-48 sm:w-60">
+      {/* Unified Filter Toolbar — Clean stacked responsive layout with zero horizontal overflow */}
+      <div className="rounded-xl border border-nx-line bg-nx-surface p-3.5 space-y-3">
+        {/* Row 1: Primary Controls — Search, Facility, Space / Category Select, Status Select */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2.5 items-center">
+          {/* Search Input */}
+          <div className="relative w-full">
             <Search
-              className="absolute left-2.5 top-2.5 size-3.5 text-nx-ink-3"
+              className="absolute left-2.5 top-2.5 size-3.5 text-nx-ink-3 rtl:left-auto rtl:right-2.5"
               aria-hidden="true"
             />
             <Input
               value={vm.searchQuery}
               onChange={(e) => vm.setSearchQuery(e.target.value)}
               placeholder={t("resources.search", { defaultValue: "Search courts & spaces..." })}
-              className="h-8 rounded-lg pl-8 text-xs"
+              className="h-9 rounded-lg pl-8 text-xs rtl:pl-3 rtl:pr-8"
             />
           </div>
 
-          {vm.facilities.length > 1 && (
+          {/* Facility Filter */}
+          {vm.facilities.length > 1 ? (
             <GenericSelect
               value={vm.selectedFacilityId || "__all_facilities__"}
               options={[
@@ -209,10 +191,27 @@ export function ResourcesWorkspaceView() {
                 if (typeof value === "string")
                   vm.setSelectedFacilityId(value === "__all_facilities__" ? "" : value);
               }}
-              className="h-8 w-48 text-xs"
+              className="h-9 w-full text-xs"
             />
+          ) : (
+            <div className="hidden lg:block" />
           )}
 
+          {/* Space / Category Dropdown */}
+          <GenericSelect
+            value={selectedCategory}
+            options={categories.map((cat) => ({
+              value: cat.value,
+              label: cat.label,
+            }))}
+            aria-label={t("resources.filters.category", { defaultValue: "Space / Category" })}
+            onValueChange={(value: string | string[]) => {
+              if (typeof value === "string") setSelectedCategory(value);
+            }}
+            className="h-9 w-full text-xs"
+          />
+
+          {/* Status Dropdown */}
           <GenericSelect
             value={selectedStatus}
             options={[
@@ -220,7 +219,7 @@ export function ResourcesWorkspaceView() {
                 value: "all",
                 label: t("resources.filters.allStatuses", { defaultValue: "All Statuses" }),
               },
-              { value: "active", label: t("resources.filters.active", { defaultValue: "Active" }) },
+              { value: "active", label: t("resources.filters.active", { defaultValue: "Active & Bookable" }) },
               {
                 value: "setup-required",
                 label: t("resources.filters.setupRequired", { defaultValue: "Setup Required" }),
@@ -231,9 +230,89 @@ export function ResourcesWorkspaceView() {
               if (typeof value === "string")
                 setSelectedStatus(value as "all" | "active" | "setup-required");
             }}
-            className="h-8 w-40 text-xs"
+            className="h-9 w-full text-xs"
           />
         </div>
+
+        {/* Row 2: Active Quick-Filter Badges (Wrapped, zero horizontal scroll) with Clear Action */}
+        {(selectedCategory !== "all" || selectedStatus !== "all" || vm.selectedFacilityId || vm.searchQuery) && (
+          <div className="flex flex-wrap items-center gap-2 pt-1 border-t border-nx-line/60 text-xs">
+            <span className="text-[11px] font-semibold text-nx-ink-3">
+              {t("resources.filters.activeFilters", { defaultValue: "Active Filters:" })}
+            </span>
+
+            {selectedCategory !== "all" && (
+              <span className="inline-flex items-center gap-1.5 rounded-md bg-nx-accent/15 px-2 py-0.5 text-[11px] font-bold text-nx-accent border border-nx-accent/30">
+                {categories.find((c) => c.value === selectedCategory)?.label || selectedCategory}
+                <button
+                  type="button"
+                  onClick={() => setSelectedCategory("all")}
+                  className="hover:opacity-75"
+                  aria-label="Remove category filter"
+                >
+                  ×
+                </button>
+              </span>
+            )}
+
+            {selectedStatus !== "all" && (
+              <span className="inline-flex items-center gap-1.5 rounded-md bg-primary/10 px-2 py-0.5 text-[11px] font-semibold text-nx-ink border border-primary/20">
+                {selectedStatus === "active" ? "Active & Bookable" : "Setup Required"}
+                <button
+                  type="button"
+                  onClick={() => setSelectedStatus("all")}
+                  className="hover:opacity-75"
+                  aria-label="Remove status filter"
+                >
+                  ×
+                </button>
+              </span>
+            )}
+
+            {vm.selectedFacilityId && (
+              <span className="inline-flex items-center gap-1.5 rounded-md bg-nx-raised px-2 py-0.5 text-[11px] font-semibold text-nx-ink-2 border border-nx-line">
+                {vm.facilities.find((f) => f.id === vm.selectedFacilityId)?.name || "Facility"}
+                <button
+                  type="button"
+                  onClick={() => vm.setSelectedFacilityId("")}
+                  className="hover:opacity-75"
+                  aria-label="Remove facility filter"
+                >
+                  ×
+                </button>
+              </span>
+            )}
+
+            {vm.searchQuery && (
+              <span className="inline-flex items-center gap-1.5 rounded-md bg-nx-raised px-2 py-0.5 text-[11px] font-semibold text-nx-ink-2 border border-nx-line">
+                &ldquo;{vm.searchQuery}&rdquo;
+                <button
+                  type="button"
+                  onClick={() => vm.setSearchQuery("")}
+                  className="hover:opacity-75"
+                  aria-label="Remove search filter"
+                >
+                  ×
+                </button>
+              </span>
+            )}
+
+            <Button
+              variant="ghost"
+              size="sm"
+              type="button"
+              onClick={() => {
+                setSelectedCategory("all");
+                setSelectedStatus("all");
+                vm.setSelectedFacilityId("");
+                vm.setSearchQuery("");
+              }}
+              className="h-6 px-2 text-[10px] text-nx-ink-3 hover:text-nx-ink ml-auto"
+            >
+              {t("resources.filters.resetAll", { defaultValue: "Reset All" })}
+            </Button>
+          </div>
+        )}
       </div>
 
       {/* Loading state */}
