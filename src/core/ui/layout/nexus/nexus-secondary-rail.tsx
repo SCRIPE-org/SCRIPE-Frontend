@@ -46,14 +46,13 @@ export function NexusSecondaryRail({
 
   const isVenueWorkspace = activeWorkspace?.workspaceKey === "venue";
 
-  // ── Focused 6-Item Navigation for SCRIPE Venue ─────────────────────────────
-  // Order mandated by Product Owner:
-  // 1. Dashboard → /venue
-  // 2. Courts & Sites → /venue/resources (contextual: Courts & Spaces, Sites, Facilities)
-  // 3. Calendar → /venue/calendar (contextual: Calendar Grid, New Booking, Attention Queue)
-  // 4. Money → /venue/money (contextual: Overview, Invoices & Receivables, Payment History)
-  // 5. Reports → /venue/reports
-  // 6. Settings → /venue/settings (contextual: Settings, Venue Profile, Pricing Rules, Operating Hours, Resource Profiles, Resource Builder)
+  // ── Authoritative 5-Group Navigation for SCRIPE Venue ──────────────────────
+  // Canonical structure aligned with VenueMenuProvider.cs (5 groups, 18 routes):
+  // 1. Operations & Bookings → Dashboard, Calendar, New Booking, Attention Queue, Customers
+  // 2. Courts & Facilities → Courts & Spaces, Facilities, Availability, Resource Profiles, Resource Builder
+  // 3. Commercial & Rates → Financial Overview, Invoices & Receivables, Payments, Pricing & Rates
+  // 4. Analytics & Reports → Reports & Analytics
+  // 5. Settings & Setup → Venue & Site Profile, Sites & Campuses, Venue Settings
   const venueMenuItems: MenuItem[] = useMemo(() => {
     if (!isVenueWorkspace) return [];
 
@@ -93,160 +92,80 @@ export function NexusSecondaryRail({
           })),
       });
 
-    // 1. Dashboard
-    const dashboard = makeItem(
-      "venue-sec-dashboard",
-      "Dashboard",
-      "لوحة التحكم",
-      "/venue",
-      "LayoutDashboard"
+    // ── 1. Operations & Bookings Group ──
+    const operationsGroup = makeItem(
+      "venue-group-operations",
+      "Operations & Bookings",
+      "العمليات والحجوزات",
+      "",
+      "LayoutDashboard",
+      [
+        makeItem("venue-dashboard", "Operations Dashboard", "لوحة التحكم", "/venue", "LayoutDashboard"),
+        makeItem("venue-calendar", "Calendar Grid", "تقويم العمليات", "/venue/calendar", "CalendarDays"),
+        makeItem("venue-booking-create", "New Booking", "حجز جديد", "/venue/bookings/new", "CalendarPlus"),
+        makeItem("venue-attention", "Attention Queue", "مركز الانتباه", "/venue/attention", "AlertTriangle"),
+        makeItem("venue-customers", "Customers & Guests", "العملاء والضيوف", "/venue/customers", "Users"),
+      ]
     );
 
-    // 2. Courts & Sites (supporting contextual access to Courts & Spaces, Sites & Locations, Facilities)
-    const courtsSitesChildren = [
-      makeItem(
-        "venue-sub-courts",
-        "Courts & Spaces",
-        "الملاعب والمساحات",
-        "/venue/resources",
-        "Layers"
-      ),
-      makeItem("venue-sub-sites", "Sites & Locations", "المواقع والفروع", "/venue/sites", "MapPin"),
-      makeItem("venue-sub-facilities", "Facilities", "المنشآت", "/venue/facilities", "Building2"),
-    ];
-    const courtsSites = makeItem(
-      "venue-sec-courts-sites",
-      "Courts & Sites",
-      "الملاعب والمواقع",
-      "/venue/resources",
-      "GitFork",
-      courtsSitesChildren
+    // ── 2. Courts & Facilities Group ──
+    const spacesGroup = makeItem(
+      "venue-group-spaces",
+      "Courts & Facilities",
+      "المنشآت والملاعب",
+      "",
+      "Building2",
+      [
+        makeItem("venue-resources", "Courts & Spaces", "الملاعب والمساحات", "/venue/resources", "Layers"),
+        makeItem("venue-facilities", "Facilities & Complexes", "المجمعات والمنشآت", "/venue/facilities", "Building"),
+        makeItem("venue-availability", "Operating Hours & Schedules", "ساعات العمل والإتاحة", "/venue/availability", "Clock"),
+        makeItem("venue-resource-profiles", "Resource Profiles", "ملفات تعريف الموارد", "/venue/resource-profiles", "FileSliders"),
+        makeItem("venue-resource-builder", "Resource Builder", "منشئ الموارد", "/venue/resource-builder", "Boxes"),
+      ]
     );
 
-    // 3. Calendar (supporting contextual access to Calendar Grid, New Booking, Attention Queue)
-    const calendarChildren = [
-      makeItem(
-        "venue-sub-calendar-grid",
-        "Calendar Grid",
-        "التقويم اليومي",
-        "/venue/calendar",
-        "CalendarDays"
-      ),
-      makeItem(
-        "venue-sub-new-booking",
-        "New Booking",
-        "حجز جديد",
-        "/venue/bookings/new",
-        "CalendarPlus"
-      ),
-      makeItem(
-        "venue-sub-attention",
-        "Attention Queue",
-        "مركز الانتباه",
-        "/venue/attention",
-        "AlertTriangle"
-      ),
-    ];
-    const calendar = makeItem(
-      "venue-sec-calendar",
-      "Calendar",
-      "تقويم العمليات",
-      "/venue/calendar",
-      "CalendarDays",
-      calendarChildren
+    // ── 3. Commercial & Rates Group ──
+    const commercialGroup = makeItem(
+      "venue-group-commercial",
+      "Commercial & Rates",
+      "المالية والتسعير",
+      "",
+      "Receipt",
+      [
+        makeItem("venue-money", "Financial Overview", "النظرة المالية العامة", "/venue/money", "WalletCards"),
+        makeItem("venue-receivables", "Invoices & Receivables", "الفواتير والمستحقات", "/venue/money/receivables", "Receipt"),
+        makeItem("venue-payments", "Payment History", "سجل المدفوعات", "/venue/money/payments", "CreditCard"),
+        makeItem("venue-pricing", "Pricing & Rates", "قواعد التسعير والتعريفات", "/venue/pricing", "Tag"),
+      ]
     );
 
-    // 4. Money (supporting contextual access to Overview, Receivables, Payments)
-    const moneyChildren = [
-      makeItem(
-        "venue-sub-money-overview",
-        "Financial Overview",
-        "نظرة عامة مالية",
-        "/venue/money",
-        "ReceiptText"
-      ),
-      makeItem(
-        "venue-sub-receivables",
-        "Invoices & Receivables",
-        "الفواتير والمستحقات",
-        "/venue/money/receivables",
-        "Receipt"
-      ),
-      makeItem(
-        "venue-sub-payments",
-        "Payment History",
-        "سجل المدفوعات",
-        "/venue/money/payments",
-        "CreditCard"
-      ),
-    ];
-    const money = makeItem(
-      "venue-sec-money",
-      "Money",
-      "المالية",
-      "/venue/money",
-      "CircleDollarSign",
-      moneyChildren
+    // ── 4. Analytics & Reports Group ──
+    const analyticsGroup = makeItem(
+      "venue-group-analytics",
+      "Analytics & Reports",
+      "التقارير والتحليلات",
+      "",
+      "BarChart3",
+      [
+        makeItem("venue-reports", "Reports & Analytics", "التقارير والتحليلات", "/venue/reports", "BarChart3"),
+      ]
     );
 
-    // 5. Reports
-    const reports = makeItem(
-      "venue-sec-reports",
-      "Reports",
-      "التقارير",
-      "/venue/reports",
-      "BarChart3"
-    );
-
-    // 6. Settings (preserving advanced management destinations)
-    const settingsChildren = [
-      makeItem(
-        "venue-sub-general-settings",
-        "General Settings",
-        "إعدادات المنشأة",
-        "/venue/settings",
-        "Sliders"
-      ),
-      makeItem(
-        "venue-sub-profile",
-        "Venue & Site Profile",
-        "ملف المنشأة والموقع",
-        "/venue/venue-setup",
-        "Building"
-      ),
-      makeItem("venue-sub-pricing", "Pricing Rules", "قواعد التسعير", "/venue/pricing", "Tag"),
-      makeItem(
-        "venue-sub-availability",
-        "Operating Hours",
-        "ساعات العمل والإتاحة",
-        "/venue/availability",
-        "Clock"
-      ),
-      makeItem(
-        "venue-sub-resource-profiles",
-        "Resource Profiles",
-        "ملفات تعريف الموارد",
-        "/venue/resource-profiles",
-        "Layers"
-      ),
-      makeItem(
-        "venue-sub-resource-builder",
-        "Resource Builder",
-        "منشئ الموارد",
-        "/venue/resource-builder",
-        "Boxes"
-      ),
-    ];
-    const settings = makeItem(
-      "venue-sec-settings",
-      "Settings",
+    // ── 5. Settings & Setup Group ──
+    const settingsGroup = makeItem(
+      "venue-group-settings",
+      "Settings & Setup",
       "الإعدادات والتكوين",
-      "/venue/settings",
+      "",
       "Settings",
-      settingsChildren
+      [
+        makeItem("venue-setup", "Venue & Site Profile", "إعداد المنشأة والموقع", "/venue/venue-setup", "Sliders"),
+        makeItem("venue-sites", "Sites & Campuses", "المواقع والمجمعات", "/venue/sites", "MapPin"),
+        makeItem("venue-settings", "Venue Settings", "إعدادات المنشأة", "/venue/settings", "Settings"),
+      ]
     );
 
-    const candidates = [dashboard, courtsSites, calendar, money, reports, settings];
+    const candidates = [operationsGroup, spacesGroup, commercialGroup, analyticsGroup, settingsGroup];
     return candidates.filter((item) => {
       if (item.href && canAccessPage(item.href)) return true;
       if (item.children.some((c) => c.href && canAccessPage(c.href))) return true;
@@ -274,7 +193,7 @@ export function NexusSecondaryRail({
 
   // ── Menu items to display: children of the selected root item (or focused venue menu) ─────
   const menuItems: MenuItem[] = isVenueWorkspace
-    ? venueMenuItems
+    ? (activeRootItem?.children && activeRootItem.children.length > 0 ? activeRootItem.children : venueMenuItems)
     : (activeRootItem?.children ?? []);
   const hasSubmenu = menuItems.length > 0;
 

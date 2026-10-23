@@ -4,7 +4,15 @@ import React from "react";
 import Link from "next/link";
 import { Card } from "@core/ui/card";
 import { Button } from "@core/ui/button";
-import { User, MoreHorizontal } from "lucide-react";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@core/ui/dropdown-menu";
+import { User, MoreHorizontal, Calendar, CalendarPlus, Sliders } from "lucide-react";
 import type {
   VenueOverviewResourceActivityItem,
   VenueOverviewState,
@@ -100,23 +108,35 @@ export function VenueOverviewLiveCourts({ items, overview, t }: VenueOverviewLiv
               timeText = t("venueOverview.liveCourts.blocked", { defaultValue: "Blocked" });
             }
 
+            const courtCalendarUrl = court.resourceId
+              ? `/venue/calendar?resourceId=${encodeURIComponent(court.resourceId)}`
+              : "/venue/calendar";
+            const courtDetailUrl = court.resourceId
+              ? `/venue/resources/${encodeURIComponent(court.resourceId)}`
+              : "/venue/resources";
+            const newBookingUrl = court.resourceId
+              ? `/venue/calendar?newBooking=true&resourceId=${encodeURIComponent(court.resourceId)}`
+              : "/venue/bookings/new";
+
             return (
               <Card
                 key={court.resourceId || idx}
-                className="shadow-xs rounded-nx-xl overflow-hidden border border-nx-line bg-nx-surface transition-all hover:shadow-md"
+                className="group relative flex flex-col justify-between overflow-hidden rounded-xl border border-nx-line bg-nx-surface shadow-xs transition-all hover:border-nx-line-hi hover:shadow-md"
               >
-                {/* Court Thumbnail Image with Court Line Aesthetics */}
-                <div
-                  className="relative flex h-20 w-full flex-col justify-between overflow-hidden p-2"
+                {/* Court Thumbnail Image with Court Line Aesthetics — Clickable Link */}
+                <Link
+                  href={courtCalendarUrl}
+                  className="relative flex h-20 w-full flex-col justify-between overflow-hidden p-2 transition-opacity group-hover:opacity-95"
                   style={{ background: getCourtBg(court.resourceName) }}
+                  title={t("venueOverview.liveCourts.openCalendar", { defaultValue: "Open on Calendar" })}
                 >
                   <div className="absolute inset-0 bg-black/20 backdrop-blur-[0.5px]" />
                   {/* Subtle sports court line markings */}
-                  <div className="rounded-xs pointer-events-none absolute inset-x-2 inset-y-1 border border-white/20" />
+                  <div className="pointer-events-none absolute inset-x-2 inset-y-1 rounded-xs border border-white/20" />
                   <div className="pointer-events-none absolute inset-x-2 top-1/2 -translate-y-1/2 border-t border-white/20" />
 
                   <div className="relative z-10 flex items-center justify-between">
-                    <span className="rounded-xs backdrop-blur-xs bg-black/40 px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-wider text-white/90">
+                    <span className="rounded-xs bg-black/40 px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-wider text-white/90 backdrop-blur-xs">
                       {court.resourceName.includes("Padel")
                         ? "Padel"
                         : court.resourceName.includes("Foot")
@@ -124,23 +144,60 @@ export function VenueOverviewLiveCourts({ items, overview, t }: VenueOverviewLiv
                           : "Court"}
                     </span>
                   </div>
-                </div>
+                </Link>
 
                 {/* Court Info */}
                 <div className="space-y-2 p-3">
                   <div className="flex items-center justify-between gap-1.5 min-w-0">
-                    <span className="truncate text-xs font-bold text-nx-ink flex-1 min-w-0" title={court.resourceName}>
-                      {court.resourceName}
-                    </span>
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      type="button"
-                      className="size-6 shrink-0 rounded-xs p-1 text-nx-ink-3 hover:text-nx-ink"
-                      aria-label="Court options"
+                    <Link
+                      href={courtDetailUrl}
+                      className="truncate text-xs font-bold text-nx-ink flex-1 min-w-0 hover:text-nx-accent hover:underline"
+                      title={court.resourceName}
                     >
-                      <MoreHorizontal className="size-3.5" />
-                    </Button>
+                      {court.resourceName}
+                    </Link>
+
+                    {/* Functional 3-Dots Dropdown Menu */}
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          type="button"
+                          className="size-6 shrink-0 rounded-xs p-1 text-nx-ink-3 hover:bg-nx-raised hover:text-nx-ink"
+                          aria-label={t("venueOverview.liveCourts.options", {
+                            defaultValue: "Options for {{name}}",
+                            name: court.resourceName,
+                          })}
+                        >
+                          <MoreHorizontal className="size-3.5" />
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="end" className="w-48 text-xs">
+                        <DropdownMenuLabel className="text-[10px] font-bold uppercase text-nx-ink-3">
+                          {court.resourceName}
+                        </DropdownMenuLabel>
+                        <DropdownMenuItem asChild>
+                          <Link href={courtCalendarUrl} className="cursor-pointer gap-2">
+                            <Calendar className="size-3.5" />
+                            <span>{t("venueOverview.liveCourts.viewCalendar", { defaultValue: "View on Calendar" })}</span>
+                          </Link>
+                        </DropdownMenuItem>
+                        <DropdownMenuItem asChild>
+                          <Link href={newBookingUrl} className="cursor-pointer gap-2">
+                            <CalendarPlus className="size-3.5" />
+                            <span>{t("venueOverview.liveCourts.bookNow", { defaultValue: "Book This Court" })}</span>
+                          </Link>
+                        </DropdownMenuItem>
+                        <DropdownMenuSeparator />
+                        <DropdownMenuItem asChild>
+                          <Link href={courtDetailUrl} className="cursor-pointer gap-2">
+                            <Sliders className="size-3.5" />
+                            <span>{t("venueOverview.liveCourts.courtDetails", { defaultValue: "Court Settings" })}</span>
+                          </Link>
+                        </DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
                   </div>
 
                   {/* Status Pill */}

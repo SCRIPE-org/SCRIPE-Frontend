@@ -96,90 +96,91 @@ export function ResourceCard({ item }: Props) {
   const isUnavailable = readiness.state === "Unavailable";
 
   return (
-    <Card className="border-nx-border shadow-xs group flex flex-col overflow-hidden rounded-2xl border bg-nx-surface transition-all hover:shadow-md sm:flex-row">
-      {/* Left Column: Court Photo Thumbnail */}
-      <div className="relative h-40 shrink-0 overflow-hidden bg-nx-raised sm:h-auto sm:w-44">
+    <Card className="group flex flex-col justify-between overflow-hidden rounded-2xl border border-nx-line bg-nx-surface shadow-xs transition-all hover:border-nx-line-hi hover:shadow-md">
+      {/* Top Section: Court Photo Thumbnail Banner with Overlays */}
+      <div className="relative h-44 w-full shrink-0 overflow-hidden bg-nx-raised">
         <img
           src={getCourtImage(item.sportType, item.name)}
           alt={item.name}
-          className="size-full object-cover transition-transform duration-300 group-hover:scale-105"
+          className="size-full object-cover transition-transform duration-500 group-hover:scale-105"
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-black/20" />
-        <div className="absolute left-2.5 top-2.5 z-10 max-w-[calc(100%-20px)]">
-          <span className="backdrop-blur-xs block max-w-full truncate rounded-md border border-white/20 bg-black/60 px-2 py-0.5 text-[10px] font-extrabold uppercase tracking-wider text-white" title={item.sportType || undefined}>
+        <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
+
+        {/* Top-Left: Sport Type Badge */}
+        <div className="absolute left-3 top-3 z-10 max-w-[65%]">
+          <span
+            className="block truncate rounded-md border border-white/20 bg-black/60 px-2.5 py-1 text-[11px] font-extrabold uppercase tracking-wider text-white backdrop-blur-xs"
+            title={item.sportType || undefined}
+          >
             {item.sportType || t("resources.card.court", { defaultValue: "Court" })}
           </span>
         </div>
+
+        {/* Top-Right: Readiness Status Pill */}
+        <div className="absolute right-3 top-3 z-10">
+          {isReady ? (
+            <span className="inline-flex items-center gap-1.5 rounded-full border border-emerald-400/40 bg-emerald-950/80 px-2.5 py-1 text-[11px] font-bold text-emerald-300 shadow-xs backdrop-blur-xs">
+              <span className="size-1.5 rounded-full bg-emerald-400 shadow-[0_0_6px_rgba(52,211,153,0.8)]" />
+              {t("resources.card.statusReady", { defaultValue: "Ready" })}
+            </span>
+          ) : isActivating ? (
+            <span
+              className="inline-flex items-center gap-1.5 rounded-full border border-sky-400/40 bg-sky-950/80 px-2.5 py-1 text-[11px] font-bold text-sky-300 shadow-xs backdrop-blur-xs"
+              title={t("resources.card.activatingTooltip", {
+                defaultValue:
+                  "Pricing is activating on the network and will become effective shortly.",
+              })}
+            >
+              <Clock className="size-3 text-sky-400 animate-pulse" />
+              {t("resources.card.statusActivating", { defaultValue: "Activating" })}
+            </span>
+          ) : isUnavailable ? (
+            <span className="inline-flex items-center gap-1.5 rounded-full border border-white/20 bg-black/70 px-2.5 py-1 text-[11px] font-bold text-nx-ink-2 shadow-xs backdrop-blur-xs">
+              <span className="size-1.5 rounded-full bg-nx-ink-3" />
+              {t("resources.card.statusUnavailable", { defaultValue: "Unavailable" })}
+            </span>
+          ) : (
+            <span
+              className="inline-flex items-center gap-1.5 rounded-full border border-amber-400/40 bg-amber-950/80 px-2.5 py-1 text-[11px] font-bold text-amber-300 shadow-xs backdrop-blur-xs"
+              title={readiness.missingActions.map((a) => a.label).join(", ")}
+            >
+              <span className="size-1.5 rounded-full bg-amber-400 shadow-[0_0_6px_rgba(251,191,36,0.8)]" />
+              {t("resources.card.setupRequired", { defaultValue: "Setup Required" })}
+            </span>
+          )}
+        </div>
+
+        {/* Bottom overlay inside thumbnail: Facility / Complex Name */}
+        {item.facilityName && (
+          <div className="absolute bottom-2.5 left-3 right-3 z-10 flex items-center gap-1.5 text-xs font-semibold text-white/95">
+            <MapPin className="size-3.5 shrink-0 text-white/80" />
+            <span className="truncate" title={item.facilityName}>
+              {item.facilityName}
+            </span>
+          </div>
+        )}
       </div>
 
-      {/* Right Column: Court Details & Actions */}
-      <div className="flex flex-1 flex-col justify-between space-y-3 p-4">
-        <div>
-          {/* Top Row: Name, Status Pill, and Options Menu */}
+      {/* Bottom Section: Court Details, Specs & Actions */}
+      <div className="flex flex-1 flex-col justify-between space-y-3.5 p-4">
+        <div className="space-y-2.5">
+          {/* Court Title & Options Menu */}
           <div className="flex items-start justify-between gap-2">
-            <div className="min-w-0 flex-1">
-              <div className="flex min-w-0 items-center gap-2">
-                <h3 className="truncate text-sm font-bold text-nx-ink">{item.name}</h3>
-                {isReady ? (
-                  <span className="inline-flex items-center gap-1 rounded-full border border-emerald-500/30 bg-emerald-500/10 px-2 py-0.5 text-[10px] font-bold text-emerald-600 dark:text-emerald-400">
-                    <span className="size-1.5 rounded-full bg-emerald-500" />
-                    {t("resources.card.statusReady", { defaultValue: "Ready" })}
-                  </span>
-                ) : isActivating ? (
-                  <span
-                    className="inline-flex items-center gap-1 rounded-full border border-sky-500/30 bg-sky-500/10 px-2 py-0.5 text-[10px] font-bold text-sky-600 dark:text-sky-400"
-                    title={t("resources.card.activatingTooltip", {
-                      defaultValue:
-                        "Pricing is activating on the network and will become effective shortly. Bookings cannot be accepted until activation completes.",
-                    })}
-                  >
-                    <Clock className="size-2.5 text-sky-500" />
-                    {t("resources.card.statusActivating", { defaultValue: "Pricing Activating" })}
-                  </span>
-                ) : isUnavailable ? (
-                  <span className="inline-flex items-center gap-1 rounded-full border border-nx-line bg-nx-raised px-2 py-0.5 text-[10px] font-bold text-nx-ink-3">
-                    <span className="size-1.5 rounded-full bg-nx-ink-3" />
-                    {t("resources.card.statusUnavailable", { defaultValue: "Unavailable" })}
-                  </span>
-                ) : (
-                  <span
-                    className="inline-flex items-center gap-1 rounded-full border border-amber-500/30 bg-amber-500/10 px-2 py-0.5 text-[10px] font-bold text-amber-600 dark:text-amber-400"
-                    title={readiness.missingActions.map((a) => a.label).join(", ")}
-                  >
-                    <span className="size-1.5 rounded-full bg-amber-500" />
-                    {t("resources.card.setupRequired", { defaultValue: "Setup Required" })}
-                  </span>
-                )}
-              </div>
-              <div className="mt-1 flex min-w-0 flex-wrap items-center gap-1.5 text-xs font-medium text-nx-ink-2">
-                <span className="shrink-0">
-                  {item.sportType
-                    ? t("resources.card.sportCourt", {
-                        defaultValue: "{{sport}} Court",
-                        sport: item.sportType,
-                      })
-                    : t("resources.card.court", { defaultValue: "Court" })}
-                </span>
-                {item.facilityName && (
-                  <>
-                    <span className="shrink-0">•</span>
-                    <span className="flex min-w-0 items-center gap-1 overflow-hidden">
-                      <MapPin className="size-3 shrink-0 text-nx-ink-3" />
-                      <span className="truncate" title={item.facilityName}>{item.facilityName}</span>
-                    </span>
-                  </>
-                )}
-              </div>
-            </div>
+            <h3
+              className="line-clamp-2 text-sm font-bold text-nx-ink tracking-tight"
+              title={item.name}
+            >
+              {item.name}
+            </h3>
 
-            {/* Functional Options Menu */}
+            {/* Functional Options Dropdown Menu */}
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button
                   variant="ghost"
                   size="icon"
                   type="button"
-                  className="rounded-md p-1 text-nx-ink-3 transition-colors hover:bg-nx-raised hover:text-nx-ink"
+                  className="size-7 shrink-0 rounded-lg p-1 text-nx-ink-3 transition-colors hover:bg-nx-raised hover:text-nx-ink"
                   aria-label={t("resources.card.optionsFor", {
                     defaultValue: "Options for {{name}}",
                     name: item.name,
@@ -188,7 +189,7 @@ export function ResourceCard({ item }: Props) {
                   <MoreHorizontal className="size-4" />
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-48 text-xs">
+              <DropdownMenuContent align="end" className="w-52 text-xs">
                 <DropdownMenuLabel className="text-[10px] font-bold uppercase text-nx-ink-3">
                   {t("resources.card.options", { defaultValue: "Court Options" })}
                 </DropdownMenuLabel>
@@ -263,12 +264,12 @@ export function ResourceCard({ item }: Props) {
             </DropdownMenu>
           </div>
 
-          {/* Metadata Row: Source-Backed Schedule, Slot duration & Price */}
-          <div className="mt-3 flex flex-wrap items-center gap-2 text-xs">
+          {/* Specs / Metadata Grid */}
+          <div className="flex flex-wrap items-center gap-1.5 text-xs">
             {/* Operating Schedule */}
-            <div className="bg-nx-raised/60 flex items-center gap-1.5 rounded-md px-2 py-1 font-semibold text-nx-ink">
-              <Clock className="size-3.5 text-nx-ink-3" />
-              <span>
+            <div className="flex items-center gap-1.5 rounded-lg border border-nx-line bg-nx-raised/50 px-2.5 py-1 text-[11px] font-semibold text-nx-ink">
+              <Clock className="size-3 text-nx-ink-3 shrink-0" />
+              <span className="truncate max-w-[140px]">
                 {item.workingHoursSummary ||
                   (item.isOpen247
                     ? t("resources.card.open247", { defaultValue: "Open 24/7" })
@@ -277,15 +278,15 @@ export function ResourceCard({ item }: Props) {
             </div>
 
             {/* Slot duration */}
-            <div className="bg-nx-raised/60 flex items-center gap-1.5 rounded-md px-2 py-1 font-semibold text-nx-ink">
+            <div className="flex items-center gap-1 rounded-lg border border-nx-line bg-nx-raised/50 px-2.5 py-1 text-[11px] font-semibold text-nx-ink">
               <span>
                 {item.slotDurationMinutes} {t("resources.card.slot", { defaultValue: "min slots" })}
               </span>
             </div>
 
             {/* Price per slot */}
-            <div className="flex items-center gap-1.5 rounded-md border border-emerald-500/20 bg-emerald-500/10 px-2 py-1 font-bold text-emerald-700 dark:border-[#C6FF00]/20 dark:bg-[#C6FF00]/10 dark:text-[#C6FF00]">
-              <CircleDollarSign className="size-3.5" />
+            <div className="flex items-center gap-1 rounded-lg border border-emerald-500/20 bg-emerald-500/10 px-2.5 py-1 text-[11px] font-bold text-emerald-700 dark:border-nx-accent/20 dark:bg-nx-accent/10 dark:text-nx-accent">
+              <CircleDollarSign className="size-3 shrink-0" />
               <span>
                 {item.pricePerSlot != null ? (
                   <>
@@ -296,7 +297,7 @@ export function ResourceCard({ item }: Props) {
                   </>
                 ) : (
                   <span className="font-normal italic text-nx-ink-3">
-                    {t("resources.card.notConfigured", { defaultValue: "Not set" })}
+                    {t("resources.card.notConfigured", { defaultValue: "Not configured" })}
                   </span>
                 )}
               </span>
@@ -305,12 +306,12 @@ export function ResourceCard({ item }: Props) {
         </div>
 
         {/* Action Buttons Row */}
-        <div className="border-nx-border flex items-center gap-2 border-t pt-2">
+        <div className="flex items-center gap-2 border-t border-nx-line pt-3">
           {isReady ? (
             <Button
               asChild
               size="sm"
-              className="h-8 flex-1 rounded-xl bg-[#C6FF00] text-xs font-bold text-[#0D0D0E] shadow-sm hover:bg-[#b5eb00]"
+              className="h-8 flex-1 rounded-xl bg-nx-accent text-xs font-bold text-nx-on-fill shadow-sm hover:bg-nx-accent/90"
             >
               <Link
                 href={`/venue/calendar?newBooking=true&resourceId=${encodeURIComponent(
@@ -339,7 +340,7 @@ export function ResourceCard({ item }: Props) {
               asChild
               size="sm"
               variant="outline"
-              className="h-8 flex-1 rounded-xl border-amber-300 text-xs font-bold text-amber-600 hover:bg-amber-50 dark:hover:bg-amber-950/40"
+              className="h-8 flex-1 rounded-xl border-amber-400/40 bg-amber-500/10 text-xs font-bold text-amber-700 hover:bg-amber-500/20 dark:text-amber-300"
               title={readiness.missingActions.map((a) => a.label).join(", ")}
             >
               <Link href={`/venue/resources/${encodeURIComponent(item.id)}`}>
@@ -353,7 +354,7 @@ export function ResourceCard({ item }: Props) {
             asChild
             variant="outline"
             size="sm"
-            className="border-nx-border h-8 flex-1 rounded-xl text-xs font-semibold hover:bg-nx-raised"
+            className="h-8 flex-1 rounded-xl border-nx-line text-xs font-semibold hover:bg-nx-raised"
           >
             <Link href={`/venue/resources/${encodeURIComponent(item.id)}`}>
               <Edit className="mr-1 size-3.5" />
@@ -365,11 +366,11 @@ export function ResourceCard({ item }: Props) {
             asChild
             variant="ghost"
             size="icon"
-            className="h-8 w-8 shrink-0 rounded-xl text-nx-ink-3 hover:text-nx-ink"
+            className="size-8 shrink-0 rounded-xl text-nx-ink-3 hover:text-nx-ink"
             title={t("resources.card.calendar", { defaultValue: "Calendar" })}
           >
             <Link href={`/venue/calendar?resourceId=${encodeURIComponent(item.id)}`}>
-              <CalendarDays className="size-3.5" />
+              <CalendarDays className="size-4" />
             </Link>
           </Button>
         </div>

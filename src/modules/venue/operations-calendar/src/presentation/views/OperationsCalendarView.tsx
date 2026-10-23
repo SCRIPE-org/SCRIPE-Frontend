@@ -242,9 +242,7 @@ export const OperationsCalendarView = React.memo(function OperationsCalendarView
         facilityId={vm.facilityId}
         timeZoneId={vm.timeZoneId}
         resourceId={vm.resourceId}
-        facilities={vm.facilities.filter((facility) =>
-          vm.allResources.some((resource) => resource.facilityId === facility.id)
-        )}
+        facilities={vm.facilities}
         resources={facilityResources}
         timeZones={vm.timeZoneOptions}
         loading={vm.state.stage === "loading"}
@@ -288,7 +286,7 @@ export const OperationsCalendarView = React.memo(function OperationsCalendarView
         />
       )}
       {vm.state.stage === "loading" && !vm.state.day && <LoadingSpinner showText={false} />}
-      {!vm.state.day && vm.state.stage === "empty" && <EmptyResourcesState t={t} />}
+      {!vm.state.day && vm.state.stage === "empty" && <EmptyResourcesState t={t} hasAnyResources={vm.allResources.length > 0} />}
       {vm.state.day && (
         <div className="flex flex-col items-start gap-5 lg:flex-row">
           <div className="w-full min-w-0 flex-1 space-y-3">
@@ -400,14 +398,29 @@ export const OperationsCalendarView = React.memo(function OperationsCalendarView
 
 function EmptyResourcesState({
   t,
+  hasAnyResources = false,
 }: {
   t: (key: string, params?: Record<string, string | number>) => string;
+  hasAnyResources?: boolean;
 }) {
   return (
     <EmptyState
       icon={CalendarDays}
-      title={t("operationsCalendar.empty.title")}
-      description={t("operationsCalendar.empty.description")}
+      title={
+        hasAnyResources
+          ? t("operationsCalendar.empty.branchEmptyTitle", {
+              defaultValue: "No courts found for this facility",
+            })
+          : t("operationsCalendar.empty.title")
+      }
+      description={
+        hasAnyResources
+          ? t("operationsCalendar.empty.branchEmptyDescription", {
+              defaultValue:
+                "Select another facility using the filter above, or add new courts and spaces to this facility.",
+            })
+          : t("operationsCalendar.empty.description")
+      }
       action={
         <Button asChild>
           <Link href="/venue/resources?setup=new">

@@ -321,8 +321,11 @@ export function useBookingWorkspaceViewModel(prefill: BookingWorkspacePrefill = 
     const settled = await Promise.allSettled(
       matchingResources.map(async (resource) => {
         const profile = profileById.get(resource.facilityResourceProfileId)!;
-        const timeZoneId = profile.operatingPolicy?.timeZoneId;
-        if (!timeZoneId) throw new Error("booking-timezone-missing");
+        const timeZoneId =
+          resource.slotPolicy?.timeZoneId ||
+          profile?.operatingPolicy?.timeZoneId ||
+          (typeof Intl !== "undefined" ? Intl.DateTimeFormat().resolvedOptions().timeZone : "") ||
+          "UTC";
         const result = await availabilityRepository.search({
           resourceId: resource.id,
           timeZoneId,

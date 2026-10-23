@@ -55,114 +55,65 @@ vi.mock("./nexus-layout", () => ({
   }),
 }));
 
-describe("NexusSecondaryRail — Focused Venue Workspace Navigation", () => {
+describe("NexusSecondaryRail — Authoritative 5-Group Venue Workspace Navigation", () => {
   beforeEach(() => {
     vi.clearAllMocks();
   });
 
-  it("1. Renders exactly the 6 required top-level sections in the canonical order", () => {
+  it("1. Renders the authoritative 5 groups matching VenueMenuProvider.cs", () => {
     render(<NexusSecondaryRail />);
 
     // Verify header title
     expect(screen.getByText("Venue Operations")).toBeInTheDocument();
 
-    // Verify top-level sections exist in exact order
-    const dashboardLink = screen.getByRole("link", { name: /dashboard/i });
-    expect(dashboardLink).toHaveAttribute("href", "/venue");
-
-    const courtsSitesButton = screen.getByRole("button", { name: /courts & sites/i });
-    expect(courtsSitesButton).toBeInTheDocument();
-
-    const calendarButton = screen.getByRole("button", { name: /calendar/i });
-    expect(calendarButton).toBeInTheDocument();
-
-    const moneyButton = screen.getByRole("button", { name: /money/i });
-    expect(moneyButton).toBeInTheDocument();
-
-    const reportsLink = screen.getByRole("link", { name: /reports/i });
-    expect(reportsLink).toHaveAttribute("href", "/venue/reports");
-
-    const settingsButton = screen.getByRole("button", { name: /settings/i });
-    expect(settingsButton).toBeInTheDocument();
+    // Verify all 5 group section headings exist
+    expect(screen.getByText(/operations & bookings/i)).toBeInTheDocument();
+    expect(screen.getByText(/courts & facilities/i)).toBeInTheDocument();
+    expect(screen.getByText(/commercial & rates/i)).toBeInTheDocument();
+    expect(screen.getByText(/analytics & reports/i)).toBeInTheDocument();
+    expect(screen.getByText(/settings & setup/i)).toBeInTheDocument();
   });
 
-  it("2. Courts & Sites provides contextual access to Courts & Spaces, Sites & Locations, and Facilities", () => {
+  it("2. Operations & Bookings group provides access to all 5 operational routes", () => {
     render(<NexusSecondaryRail />);
 
-    expect(screen.getByRole("link", { name: /courts & spaces/i })).toHaveAttribute(
-      "href",
-      "/venue/resources"
-    );
-    expect(screen.getByRole("link", { name: /sites & locations/i })).toHaveAttribute(
-      "href",
-      "/venue/sites"
-    );
-    expect(screen.getByRole("link", { name: /facilities/i })).toHaveAttribute(
-      "href",
-      "/venue/facilities"
-    );
+    expect(screen.getByRole("link", { name: /operations dashboard/i })).toHaveAttribute("href", "/venue");
+    expect(screen.getByRole("link", { name: /calendar grid/i })).toHaveAttribute("href", "/venue/calendar");
+    expect(screen.getByRole("link", { name: /new booking/i })).toHaveAttribute("href", "/venue/bookings/new");
+    expect(screen.getByRole("link", { name: /attention queue/i })).toHaveAttribute("href", "/venue/attention");
+    expect(screen.getByRole("link", { name: /customers & guests/i })).toHaveAttribute("href", "/venue/customers");
   });
 
-  it("3. Calendar provides contextual access to Calendar Grid, New Booking, and Attention Queue", () => {
+  it("3. Courts & Facilities group provides access to all 5 spaces routes", () => {
     render(<NexusSecondaryRail />);
 
-    expect(screen.getByRole("link", { name: /calendar grid/i })).toHaveAttribute(
-      "href",
-      "/venue/calendar"
-    );
-    expect(screen.getByRole("link", { name: /new booking/i })).toHaveAttribute(
-      "href",
-      "/venue/bookings/new"
-    );
-    expect(screen.getByRole("link", { name: /attention queue/i })).toHaveAttribute(
-      "href",
-      "/venue/attention"
-    );
+    expect(screen.getByRole("link", { name: /courts & spaces/i })).toHaveAttribute("href", "/venue/resources");
+    expect(screen.getByRole("link", { name: /facilities & complexes/i })).toHaveAttribute("href", "/venue/facilities");
+    expect(screen.getByRole("link", { name: /operating hours & schedules/i })).toHaveAttribute("href", "/venue/availability");
+    expect(screen.getByRole("link", { name: /resource profiles/i })).toHaveAttribute("href", "/venue/resource-profiles");
+    expect(screen.getByRole("link", { name: /resource builder/i })).toHaveAttribute("href", "/venue/resource-builder");
   });
 
-  it("4. Money provides contextual access to Financial Overview, Invoices & Receivables, and Payments", () => {
+  it("4. Commercial & Rates group provides access to all 4 financial routes", () => {
     render(<NexusSecondaryRail />);
 
-    expect(screen.getByRole("link", { name: /financial overview/i })).toHaveAttribute(
-      "href",
-      "/venue/money"
-    );
-    expect(screen.getByRole("link", { name: /invoices & receivables/i })).toHaveAttribute(
-      "href",
-      "/venue/money/receivables"
-    );
-    expect(screen.getByRole("link", { name: /payment history/i })).toHaveAttribute(
-      "href",
-      "/venue/money/payments"
-    );
+    expect(screen.getByRole("link", { name: /financial overview/i })).toHaveAttribute("href", "/venue/money");
+    expect(screen.getByRole("link", { name: /invoices & receivables/i })).toHaveAttribute("href", "/venue/money/receivables");
+    expect(screen.getByRole("link", { name: /payment history/i })).toHaveAttribute("href", "/venue/money/payments");
+    expect(screen.getByRole("link", { name: /pricing & rates/i })).toHaveAttribute("href", "/venue/pricing");
   });
 
-  it("5. Settings preserves advanced management destinations (Profiles, Pricing, Operating Hours)", () => {
+  it("5. Analytics & Reports group provides access to reports", () => {
     render(<NexusSecondaryRail />);
 
-    expect(screen.getByRole("link", { name: /general settings/i })).toHaveAttribute(
-      "href",
-      "/venue/settings"
-    );
-    expect(screen.getByRole("link", { name: /venue & site profile/i })).toHaveAttribute(
-      "href",
-      "/venue/venue-setup"
-    );
-    expect(screen.getByRole("link", { name: /pricing rules/i })).toHaveAttribute(
-      "href",
-      "/venue/pricing"
-    );
-    expect(screen.getByRole("link", { name: /operating hours/i })).toHaveAttribute(
-      "href",
-      "/venue/availability"
-    );
-    expect(screen.getByRole("link", { name: /resource profiles/i })).toHaveAttribute(
-      "href",
-      "/venue/resource-profiles"
-    );
-    expect(screen.getByRole("link", { name: /resource builder/i })).toHaveAttribute(
-      "href",
-      "/venue/resource-builder"
-    );
+    expect(screen.getByRole("link", { name: /reports & analytics/i })).toHaveAttribute("href", "/venue/reports");
+  });
+
+  it("6. Settings & Setup group provides access to all 3 setup routes", () => {
+    render(<NexusSecondaryRail />);
+
+    expect(screen.getByRole("link", { name: /venue & site profile/i })).toHaveAttribute("href", "/venue/venue-setup");
+    expect(screen.getByRole("link", { name: /sites & campuses/i })).toHaveAttribute("href", "/venue/sites");
+    expect(screen.getByRole("link", { name: /venue settings/i })).toHaveAttribute("href", "/venue/settings");
   });
 });

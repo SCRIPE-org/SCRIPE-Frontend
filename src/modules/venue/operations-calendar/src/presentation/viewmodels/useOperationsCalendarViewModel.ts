@@ -105,21 +105,29 @@ export function useOperationsCalendarViewModel() {
         const facilityNames = new Map(
           facilityPage.items.map((facility) => [facility.id, facility.name])
         );
+        const defaultZone =
+          typeof Intl !== "undefined"
+            ? Intl.DateTimeFormat().resolvedOptions().timeZone || "UTC"
+            : "UTC";
         const composed = resourcePage.items
-          .filter((resource) => resource.isPublished && !resource.isComposite)
+          .filter((resource) => !resource.isComposite)
           .flatMap((resource) => {
             const profile = profiles.get(resource.facilityResourceProfileId);
-            const zone = profile?.operatingPolicy?.timeZoneId;
-            if (!profile || !zone) return [];
+            const facilityId = profile?.facilityId || (resource as any).facilityId || "";
+            const zone =
+              profile?.operatingPolicy?.timeZoneId ||
+              resource.slotPolicy?.timeZoneId ||
+              defaultZone;
+            if (!facilityId) return [];
             return [
               {
                 id: resource.id,
                 name: resource.name,
-                profileId: profile.id,
-                profileName: profile.name,
-                facilityId: profile.facilityId,
-                facilityName: facilityNames.get(profile.facilityId) ?? profile.name,
-                resourceKindCode: profile.resourceKindCode,
+                profileId: profile?.id || resource.facilityResourceProfileId,
+                profileName: profile?.name || resource.name,
+                facilityId: facilityId,
+                facilityName: facilityNames.get(facilityId) ?? profile?.name ?? "Facility",
+                resourceKindCode: profile?.resourceKindCode || "court",
                 timeZoneId: zone,
                 slotPolicy: resource.slotPolicy,
                 priceEffectiveFromUtc: pricingMap.get(resource.id) ?? null,
@@ -134,10 +142,13 @@ export function useOperationsCalendarViewModel() {
             )) ||
           facilityPage.items.find((facility) =>
             composed.some((resource) => resource.facilityId === facility.id)
-          );
+          ) ||
+          (validFacilityId && facilityPage.items.find((f) => f.id === validFacilityId)) ||
+          facilityPage.items[0];
         const initialZone =
           composed.find((resource) => resource.facilityId === initialFacility?.id)?.timeZoneId ??
-          "";
+          composed[0]?.timeZoneId ??
+          defaultZone;
         setFacilities(facilityPage.items);
         setAllResources(composed);
         setSetupReady(true);

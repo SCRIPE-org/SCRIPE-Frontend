@@ -128,16 +128,16 @@ export function BookingSummaryActions({
 
   if (state.stage === "confirmed") {
     return (
-      <Card className="border-nx-success/40">
+      <Card className="border-success/40">
         <CardHeader>
-          <CardTitle className="flex items-center gap-2 text-nx-success">
+          <CardTitle className="flex items-center gap-2 text-success">
             <CheckCircle2 className="size-5" aria-hidden="true" />
             {t("booking.confirm.title")}
           </CardTitle>
           <p className="text-sm text-nx-ink-2">{t("booking.confirm.description")}</p>
         </CardHeader>
         <CardContent className="space-y-4">
-          <dl className="bg-nx-surface-2 grid gap-4 rounded-xl p-4 sm:grid-cols-2">
+          <dl className="bg-nx-raised grid gap-4 rounded-xl p-4 sm:grid-cols-2">
             {customer && (
               <div>
                 <dt className="text-xs text-nx-ink-3">{t("booking.summary.customer")}</dt>
@@ -205,7 +205,7 @@ export function BookingSummaryActions({
             <AlertDescription>{state.errorMessage}</AlertDescription>
           </Alert>
         )}
-        <dl className="border-nx-border grid gap-4 rounded-xl border p-4 sm:grid-cols-2">
+        <dl className="border-nx-line grid gap-4 rounded-xl border p-4 sm:grid-cols-2">
           <div>
             <dt className="text-xs text-nx-ink-3">{t("booking.summary.customer")}</dt>
             <dd className="font-medium text-nx-ink">{customer.displayName}</dd>
@@ -245,7 +245,7 @@ export function BookingSummaryActions({
             <AlertDescription>{t("booking.quote.calculatingDescription")}</AlertDescription>
           </Alert>
         ) : priceQuote ? (
-          <dl className="bg-nx-surface-2 grid gap-3 rounded-xl p-4 sm:grid-cols-2">
+          <dl className="bg-nx-raised grid gap-3 rounded-xl p-4 sm:grid-cols-2">
             <div>
               <dt className="text-xs text-nx-ink-3">{t("booking.quote.total")}</dt>
               <dd className="font-semibold text-nx-ink">
@@ -269,7 +269,7 @@ export function BookingSummaryActions({
         )}
 
         {canOverridePrice && priceQuote && (
-          <div className="border-nx-border space-y-3 rounded-xl border p-4">
+          <div className="border-nx-line space-y-3 rounded-xl border p-4">
             <p className="text-sm font-medium text-nx-ink">{t("booking.quote.overrideTitle")}</p>
             <p className="text-sm text-nx-ink-2">{t("booking.quote.overrideDescription")}</p>
             <div className="grid gap-3 sm:grid-cols-2">

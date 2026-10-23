@@ -95,7 +95,7 @@ export function ResourcesWorkspaceView() {
           <Button
             size="sm"
             onClick={() => setSetupWizardOpen(true)}
-            className="gap-1.5 rounded-xl bg-[#C6FF00] text-xs font-bold text-[#0D0D0E] shadow-sm hover:bg-[#b5eb00]"
+            className="gap-1.5 rounded-xl bg-nx-accent text-xs font-bold text-nx-on-fill shadow-sm hover:bg-nx-accent/90"
           >
             <Plus className="size-4" aria-hidden="true" />
             <span>{t("resources.addCourt", { defaultValue: "+ Add Court / Space" })}</span>
@@ -170,7 +170,7 @@ export function ResourcesWorkspaceView() {
               aria-pressed={selectedCategory === category.value}
               className={`shrink-0 rounded-xl px-3.5 py-1.5 text-xs font-bold transition-all ${
                 selectedCategory === category.value
-                  ? "shadow-xs bg-[#C6FF00] text-[#0D0D0E]"
+                  ? "shadow-xs bg-nx-accent text-nx-on-fill hover:bg-nx-accent/90"
                   : "border-nx-border border bg-nx-surface text-nx-ink-2 hover:bg-nx-raised"
               }`}
             >
@@ -253,7 +253,7 @@ export function ResourcesWorkspaceView() {
           action={
             <Button
               onClick={() => setSetupWizardOpen(true)}
-              className="gap-2 bg-[#C6FF00] font-bold text-[#0D0D0E] hover:bg-[#b5eb00]"
+              className="gap-2 bg-nx-accent font-bold text-nx-on-fill hover:bg-nx-accent/90"
             >
               <Sparkles className="size-4" aria-hidden="true" />
               <span>{t("resources.empty.action", { defaultValue: "Start Setup Journey" })}</span>
@@ -266,7 +266,7 @@ export function ResourcesWorkspaceView() {
         </div>
       ) : (
         /* Courts Grid + Add New Empty Card */
-        <div className="grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-3">
+        <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3">
           {displayedItems.map((item) => (
             <ResourceCard key={item.id} item={item} />
           ))}
@@ -276,12 +276,12 @@ export function ResourcesWorkspaceView() {
             type="button"
             onClick={() => setSetupWizardOpen(true)}
             variant="outline"
-            className="border-nx-border bg-nx-raised/30 group flex min-h-[140px] cursor-pointer flex-col items-center justify-center rounded-2xl border-2 border-dashed p-6 text-center transition-all hover:border-[#C6FF00]/60 hover:bg-[#C6FF00]/5"
+            className="border-nx-border bg-nx-raised/30 group flex min-h-[140px] cursor-pointer flex-col items-center justify-center rounded-2xl border-2 border-dashed p-6 text-center transition-all hover:border-nx-accent/60 hover:bg-nx-accent/5"
           >
-            <div className="mb-2.5 flex size-11 items-center justify-center rounded-full bg-[#C6FF00]/15 text-[#0D0D0E] transition-transform group-hover:scale-110 dark:text-[#C6FF00]">
+            <div className="mb-2.5 flex size-11 items-center justify-center rounded-full bg-nx-accent/15 text-nx-ink transition-transform group-hover:scale-110 dark:text-nx-accent">
               <Plus className="size-5" />
             </div>
-            <span className="text-xs font-bold text-nx-ink transition-colors group-hover:text-emerald-600 dark:group-hover:text-[#C6FF00]">
+            <span className="text-xs font-bold text-nx-ink transition-colors group-hover:text-emerald-600 dark:group-hover:text-nx-accent">
               {t("resources.addCourt", { defaultValue: "+ Add New Court / Space" })}
             </span>
             <span className="mt-1 max-w-[200px] text-[11px] text-nx-ink-3">
