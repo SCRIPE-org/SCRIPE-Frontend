@@ -12,7 +12,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@core/ui/dropdown-menu";
-import { User, MoreHorizontal, Calendar, CalendarPlus, Sliders } from "lucide-react";
+import { User, MoreHorizontal, Calendar, CalendarPlus, Sliders, Eye } from "lucide-react";
 import type {
   VenueOverviewResourceActivityItem,
   VenueOverviewState,
@@ -24,27 +24,98 @@ interface VenueOverviewLiveCourtsProps {
   t: (key: string, options?: any) => string;
 }
 
-// Visual motif background colors for sports courts
-const COURT_BG_GRADIENTS = [
-  "linear-gradient(135deg, #1e3a8a 0%, #0284c7 100%)", // Padel Court Blue
-  "linear-gradient(135deg, #065f46 0%, #059669 100%)", // Football Turf Green
-  "linear-gradient(135deg, #7c2d12 0%, #ea580c 100%)", // Clay Court Orange
-  "linear-gradient(135deg, #312e81 0%, #6366f1 100%)", // Indoor Wood/Navy
-  "linear-gradient(135deg, #1e293b 0%, #475569 100%)", // Slate Multi-court
-];
+interface SportBadgeInfo {
+  label: string;
+  gradient: string;
+}
 
-function getCourtBg(name: string): string {
-  let hash = 0;
-  for (let i = 0; i < name.length; i++) {
-    hash = name.charCodeAt(i) + ((hash << 5) - hash);
+function resolveSportBadge(name: string): SportBadgeInfo {
+  const n = name.toLowerCase();
+  if (n.includes("padel")) {
+    return { label: "Padel", gradient: "linear-gradient(135deg, #1e3a8a 0%, #0284c7 100%)" };
   }
-  return COURT_BG_GRADIENTS[Math.abs(hash) % COURT_BG_GRADIENTS.length];
+  if (n.includes("tennis") || n.includes("clay") || n.includes("hardcourt")) {
+    return { label: "Tennis", gradient: "linear-gradient(135deg, #7c2d12 0%, #ea580c 100%)" };
+  }
+  if (n.includes("squash")) {
+    return { label: "Squash", gradient: "linear-gradient(135deg, #4c1d95 0%, #7c3aed 100%)" };
+  }
+  if (
+    n.includes("pool") ||
+    n.includes("swimming") ||
+    n.includes("lane") ||
+    n.includes("aquatic") ||
+    n.includes("hydro")
+  ) {
+    return { label: "Swimming", gradient: "linear-gradient(135deg, #0c4a6e 0%, #0284c7 100%)" };
+  }
+  if (n.includes("basket") || n.includes("hoop") || n.includes("arena")) {
+    return { label: "Basketball", gradient: "linear-gradient(135deg, #9a3412 0%, #f97316 100%)" };
+  }
+  if (n.includes("track") || n.includes("running") || n.includes("athletic")) {
+    return { label: "Athletics", gradient: "linear-gradient(135deg, #831843 0%, #db2777 100%)" };
+  }
+  if (
+    n.includes("gym") ||
+    n.includes("crossfit") ||
+    n.includes("fitness") ||
+    n.includes("conditioning")
+  ) {
+    return { label: "Fitness & Gym", gradient: "linear-gradient(135deg, #18181b 0%, #3f3f46 100%)" };
+  }
+  if (n.includes("volley")) {
+    return { label: "Volleyball", gradient: "linear-gradient(135deg, #14532d 0%, #16a34a 100%)" };
+  }
+  if (n.includes("badminton")) {
+    return { label: "Badminton", gradient: "linear-gradient(135deg, #0f766e 0%, #14b8a6 100%)" };
+  }
+  if (n.includes("table tennis")) {
+    return { label: "Table Tennis", gradient: "linear-gradient(135deg, #047857 0%, #10b981 100%)" };
+  }
+  if (n.includes("handball")) {
+    return { label: "Handball", gradient: "linear-gradient(135deg, #1e40af 0%, #3b82f6 100%)" };
+  }
+  if (
+    n.includes("martial") ||
+    n.includes("judo") ||
+    n.includes("dojo") ||
+    n.includes("boxing")
+  ) {
+    return { label: "Martial Arts", gradient: "linear-gradient(135deg, #701a75 0%, #a21caf 100%)" };
+  }
+  if (n.includes("5-a-side") || n.includes("5a")) {
+    return { label: "5-a-side", gradient: "linear-gradient(135deg, #064e3b 0%, #059669 100%)" };
+  }
+  if (n.includes("7-a-side") || n.includes("7a")) {
+    return { label: "7-a-side", gradient: "linear-gradient(135deg, #065f46 0%, #10b981 100%)" };
+  }
+  if (
+    n.includes("foot") ||
+    n.includes("pitch") ||
+    n.includes("turf") ||
+    n.includes("stadium")
+  ) {
+    return { label: "Football", gradient: "linear-gradient(135deg, #065f46 0%, #059669 100%)" };
+  }
+  return { label: "Court", gradient: "linear-gradient(135deg, #1e293b 0%, #475569 100%)" };
 }
 
 export function VenueOverviewLiveCourts({ items, overview, t }: VenueOverviewLiveCourtsProps) {
   const courts = items || overview?.resourceActivity || [];
-  // Take up to 5 courts to show in the live strip
-  const displayCourts = courts.slice(0, 5);
+
+  // Sort by operational priority: 1. In-Use match (checkedIn) -> 2. Upcoming booked -> 3. Maintenance -> 4. Idle
+  const sortedCourts = [...courts].sort((a, b) => {
+    const priority = (s: string) => {
+      if (s === "checkedIn") return 0;
+      if (s === "nextBooking") return 1;
+      if (s === "maintenance") return 2;
+      return 3;
+    };
+    return priority(a.statusLabel) - priority(b.statusLabel);
+  });
+
+  // Take up to 8 live courts to show in the live grid
+  const displayCourts = sortedCourts.slice(0, 8);
 
   return (
     <div className="space-y-3" data-testid="venue-overview-live-courts">
@@ -60,7 +131,7 @@ export function VenueOverviewLiveCourts({ items, overview, t }: VenueOverviewLiv
         </Link>
       </div>
 
-      <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
+      <div className="grid grid-cols-2 gap-3 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4">
         {displayCourts.length === 0 ? (
           <div className="rounded-nx-xl col-span-full border border-nx-line bg-nx-surface py-8 text-center text-xs text-nx-ink-2">
             {t("venueOverview.liveCourts.noCourts", {
@@ -72,6 +143,7 @@ export function VenueOverviewLiveCourts({ items, overview, t }: VenueOverviewLiv
             const isCheckedIn = court.statusLabel === "checkedIn";
             const isNext = court.statusLabel === "nextBooking";
             const isMaintenance = court.statusLabel === ("maintenance" as string);
+            const sportInfo = resolveSportBadge(court.resourceName);
 
             let statusText = t("venueOverview.liveCourts.idle", {
               defaultValue: "No Current Booking",
@@ -83,8 +155,7 @@ export function VenueOverviewLiveCourts({ items, overview, t }: VenueOverviewLiv
 
             if (isCheckedIn && court.currentOrNextEndUtc) {
               statusText = t("venueOverview.liveCourts.inUse", { defaultValue: "In Use" });
-              statusBadge =
-                "bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 border-emerald-500/20";
+              statusBadge = "bg-success/10 text-success border-success/20";
               const time = court.currentOrNextEndUtc.slice(11, 16);
               timeText = t("venueOverview.liveCourts.until", {
                 time,
@@ -92,8 +163,7 @@ export function VenueOverviewLiveCourts({ items, overview, t }: VenueOverviewLiv
               });
             } else if (isNext && court.currentOrNextStartUtc) {
               statusText = t("venueOverview.liveCourts.booked", { defaultValue: "Booked" });
-              statusBadge =
-                "bg-purple-500/10 text-purple-700 dark:text-purple-300 border-purple-500/20";
+              statusBadge = "bg-info/10 text-info border-info/20";
               const time = court.currentOrNextStartUtc.slice(11, 16);
               timeText = t("venueOverview.liveCourts.next", {
                 time,
@@ -103,8 +173,7 @@ export function VenueOverviewLiveCourts({ items, overview, t }: VenueOverviewLiv
               statusText = t("venueOverview.liveCourts.maintenance", {
                 defaultValue: "Maintenance",
               });
-              statusBadge =
-                "bg-amber-500/10 text-amber-700 dark:text-amber-300 border-amber-500/20";
+              statusBadge = "bg-warning/10 text-warning border-warning/20";
               timeText = t("venueOverview.liveCourts.blocked", { defaultValue: "Blocked" });
             }
 
@@ -117,18 +186,23 @@ export function VenueOverviewLiveCourts({ items, overview, t }: VenueOverviewLiv
             const newBookingUrl = court.resourceId
               ? `/venue/calendar?newBooking=true&resourceId=${encodeURIComponent(court.resourceId)}`
               : "/venue/bookings/new";
+            const booking360Url = court.activeReservationId
+              ? `/venue/bookings/${encodeURIComponent(court.activeReservationId)}`
+              : null;
 
             return (
               <Card
                 key={court.resourceId || idx}
-                className="group relative flex flex-col justify-between overflow-hidden rounded-xl border border-nx-line bg-nx-surface shadow-xs transition-all hover:border-nx-line-hi hover:shadow-md"
+                className="group relative flex flex-col justify-between overflow-hidden rounded-xl border border-nx-line bg-nx-surface transition-all hover:border-nx-line-hi hover:bg-nx-raised/40"
               >
-                {/* Court Thumbnail Image with Court Line Aesthetics — Clickable Link */}
+                {/* Court Thumbnail Image with Sport Court Markings Aesthetic — Clickable Link */}
                 <Link
                   href={courtCalendarUrl}
                   className="relative flex h-20 w-full flex-col justify-between overflow-hidden p-2 transition-opacity group-hover:opacity-95"
-                  style={{ background: getCourtBg(court.resourceName) }}
-                  title={t("venueOverview.liveCourts.openCalendar", { defaultValue: "Open on Calendar" })}
+                  style={{ background: sportInfo.gradient }}
+                  title={t("venueOverview.liveCourts.openCalendar", {
+                    defaultValue: "Open on Calendar",
+                  })}
                 >
                   <div className="absolute inset-0 bg-black/20 backdrop-blur-[0.5px]" />
                   {/* Subtle sports court line markings */}
@@ -137,12 +211,14 @@ export function VenueOverviewLiveCourts({ items, overview, t }: VenueOverviewLiv
 
                   <div className="relative z-10 flex items-center justify-between">
                     <span className="rounded-xs bg-black/40 px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-wider text-white/90 backdrop-blur-xs">
-                      {court.resourceName.includes("Padel")
-                        ? "Padel"
-                        : court.resourceName.includes("Foot")
-                          ? "Football"
-                          : "Court"}
+                      {sportInfo.label}
                     </span>
+                    {isCheckedIn && (
+                      <span className="flex items-center gap-1 rounded-xs bg-black/50 px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wider text-white backdrop-blur-xs">
+                        <span className="size-1.5 rounded-full bg-success shadow-[0_0_6px_rgba(34,197,94,0.9)]" />
+                        LIVE
+                      </span>
+                    )}
                   </div>
                 </Link>
 
@@ -177,23 +253,47 @@ export function VenueOverviewLiveCourts({ items, overview, t }: VenueOverviewLiv
                         <DropdownMenuLabel className="text-[10px] font-bold uppercase text-nx-ink-3">
                           {court.resourceName}
                         </DropdownMenuLabel>
+                        {booking360Url && (
+                          <DropdownMenuItem asChild>
+                            <Link href={booking360Url} className="cursor-pointer gap-2 text-nx-accent">
+                              <Eye className="size-3.5" />
+                              <span>
+                                {t("venueOverview.liveCourts.viewBooking", {
+                                  defaultValue: "Booking 360",
+                                })}
+                              </span>
+                            </Link>
+                          </DropdownMenuItem>
+                        )}
                         <DropdownMenuItem asChild>
                           <Link href={courtCalendarUrl} className="cursor-pointer gap-2">
                             <Calendar className="size-3.5" />
-                            <span>{t("venueOverview.liveCourts.viewCalendar", { defaultValue: "View on Calendar" })}</span>
+                            <span>
+                              {t("venueOverview.liveCourts.viewCalendar", {
+                                defaultValue: "View on Calendar",
+                              })}
+                            </span>
                           </Link>
                         </DropdownMenuItem>
                         <DropdownMenuItem asChild>
                           <Link href={newBookingUrl} className="cursor-pointer gap-2">
                             <CalendarPlus className="size-3.5" />
-                            <span>{t("venueOverview.liveCourts.bookNow", { defaultValue: "Book This Court" })}</span>
+                            <span>
+                              {t("venueOverview.liveCourts.bookNow", {
+                                defaultValue: "Book This Court",
+                              })}
+                            </span>
                           </Link>
                         </DropdownMenuItem>
                         <DropdownMenuSeparator />
                         <DropdownMenuItem asChild>
                           <Link href={courtDetailUrl} className="cursor-pointer gap-2">
                             <Sliders className="size-3.5" />
-                            <span>{t("venueOverview.liveCourts.courtDetails", { defaultValue: "Court Settings" })}</span>
+                            <span>
+                              {t("venueOverview.liveCourts.courtDetails", {
+                                defaultValue: "Court Settings",
+                              })}
+                            </span>
                           </Link>
                         </DropdownMenuItem>
                       </DropdownMenuContent>
@@ -201,10 +301,13 @@ export function VenueOverviewLiveCourts({ items, overview, t }: VenueOverviewLiv
                   </div>
 
                   {/* Status Pill */}
-                  <div>
+                  <div className="flex items-center gap-1.5">
                     <span
-                      className={`inline-block rounded-md border px-2 py-0.5 text-[10px] font-bold ${statusBadge}`}
+                      className={`inline-flex items-center gap-1.5 rounded-md border px-2 py-0.5 text-[10px] font-bold ${statusBadge}`}
                     >
+                      {isCheckedIn && (
+                        <span className="size-1.5 rounded-full bg-success shadow-[0_0_6px_rgba(34,197,94,0.7)]" />
+                      )}
                       {statusText}
                     </span>
                   </div>

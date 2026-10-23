@@ -241,7 +241,7 @@ export function CreateOrganizationDialog({
         <DialogContent className="sm:max-w-[540px]">
           <DialogHeader>
             <div className="flex items-center gap-2">
-              <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-amber-500/10 text-amber-500">
+              <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-warning/10 text-warning">
                 <AlertTriangle className="h-5 w-5" />
               </div>
               <div>
@@ -257,7 +257,7 @@ export function CreateOrganizationDialog({
           </DialogHeader>
 
           <div className="grid gap-4 py-4">
-            <div className="border-nx-border bg-nx-surface-2/40 space-y-2.5 rounded-lg border p-4">
+            <div className="border-nx-line bg-nx-raised/40 space-y-2.5 rounded-lg border p-4">
               <div className="flex items-center justify-between text-xs">
                 <span className="text-nx-ink-3">Canonical Party ID</span>
                 <span className="font-mono font-semibold text-nx-ink">
@@ -271,13 +271,13 @@ export function CreateOrganizationDialog({
               {partialSaveState.failedPhone && (
                 <div className="flex items-center justify-between text-xs">
                   <span className="text-nx-ink-3">Pending Phone</span>
-                  <span className="font-mono text-amber-400">{partialSaveState.failedPhone}</span>
+                  <span className="font-mono text-warning">{partialSaveState.failedPhone}</span>
                 </div>
               )}
               {partialSaveState.failedEmail && (
                 <div className="flex items-center justify-between text-xs">
                   <span className="text-nx-ink-3">Pending Email</span>
-                  <span className="font-mono text-amber-400">{partialSaveState.failedEmail}</span>
+                  <span className="font-mono text-warning">{partialSaveState.failedEmail}</span>
                 </div>
               )}
             </div>
@@ -329,7 +329,7 @@ export function CreateOrganizationDialog({
         <form onSubmit={handleSubmit}>
           <DialogHeader>
             <div className="flex items-center gap-2">
-              <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-emerald-500/10 text-emerald-600 dark:text-emerald-400">
+              <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-success/10 text-success">
                 <Building2 className="h-5 w-5" />
               </div>
               <div>

@@ -34,8 +34,8 @@ export const en = {
       cancel: "Cancel",
       phoneLabel: "Primary Telephone (Optional)",
       personGuarded:
-        "Quick-creation of individual Persons is temporarily guarded pending the backend atomic multi-insert contract (ADR-PARTY-PERSON-FULL-NAME-STORAGE). Telephone entry is preserved.",
-      personGuardedBtn: "Guarded (Contract Pending)",
+        "Quick-creation of individual contacts is temporarily paused for system maintenance. Telephone entry is preserved.",
+      personGuardedBtn: "Temporarily Unavailable",
       permissionTitle: "Customer access required",
       permissionDescription: "You need permission to view Parties before creating a booking.",
     },

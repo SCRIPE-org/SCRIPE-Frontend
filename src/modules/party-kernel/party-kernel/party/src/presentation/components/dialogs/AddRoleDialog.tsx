@@ -145,8 +145,8 @@ export function AddRoleDialog({ open, onOpenChange, onSubmit }: AddRoleDialogPro
                     }}
                     className={`h-7 rounded-lg px-2.5 text-xs transition-colors ${
                       roleType === r.value
-                        ? "bg-nx-accent-fill font-semibold text-nx-on-fill shadow-sm"
-                        : "border-nx-border text-nx-ink-2 hover:text-nx-ink"
+                        ? "bg-nx-accent-fill font-semibold text-nx-on-fill"
+                        : "border-nx-line text-nx-ink-2 hover:text-nx-ink"
                     }`}
                   >
                     {r.value}

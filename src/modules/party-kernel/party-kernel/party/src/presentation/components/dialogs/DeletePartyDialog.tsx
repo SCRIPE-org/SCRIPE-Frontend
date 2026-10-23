@@ -79,7 +79,7 @@ export function DeletePartyDialog({
             </div>
           )}
 
-          <div className="bg-nx-surface-2 border-nx-border space-y-1.5 rounded-lg border p-3">
+          <div className="bg-nx-raised border-nx-line space-y-1.5 rounded-lg border p-3">
             <div className="text-xs text-nx-ink-3">Target Entity:</div>
             <div className="flex items-center justify-between">
               <span className="font-semibold text-nx-ink">{party.displayName}</span>

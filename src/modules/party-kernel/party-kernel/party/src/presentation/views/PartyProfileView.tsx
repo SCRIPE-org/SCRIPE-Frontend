@@ -32,6 +32,7 @@ import { AddRelationshipDialog } from "../components/dialogs/AddRelationshipDial
 // Icons
 import {
   ArrowLeft,
+  ArrowRight,
   User,
   Calendar,
   Lock,
@@ -78,6 +79,16 @@ export const PartyProfileView = React.memo(function PartyProfileView({
   // Unify customer-facing breadcrumbs to Contacts and use authorized display name for terminal segment
   useBreadcrumbOverride(profile?.displayName || t("party.profile.title") || "Contact Profile");
 
+  const representativesList = React.useMemo(() => {
+    if (!profile?.isOrganization) return [];
+    return profile.relationships.filter(
+      (rel) =>
+        /representative|authorizedsignatory|director|manager|liaison|signatory/i.test(
+          rel.relationshipType
+        ) || rel.relationshipType.toLowerCase().includes("rep")
+    );
+  }, [profile]);
+
   const completeness = React.useMemo(() => {
     if (!profile) return { score: 0, checks: [] };
     if (profile.isPerson) {
@@ -95,25 +106,14 @@ export const PartyProfileView = React.memo(function PartyProfileView({
         { label: "Commercial Name", passed: !!profile.displayName },
         { label: "Corporate Contact", passed: !!(profile.primaryPhone || profile.primaryEmail) },
         {
-          label: "Authorized Representative (Contract Pending)",
-          passed: false,
-          pendingContract: true,
+          label: "Authorized Representative",
+          passed: representativesList.length > 0,
         },
       ];
       const passedCount = checks.filter((c) => c.passed).length;
       return { score: passedCount * 25, checks };
     }
-  }, [profile]);
-
-  const representativesList = React.useMemo(() => {
-    if (!profile?.isOrganization) return [];
-    return profile.relationships.filter(
-      (rel) =>
-        /representative|authorizedsignatory|director|manager|liaison|signatory/i.test(
-          rel.relationshipType
-        ) || rel.relationshipType.toLowerCase().includes("rep")
-    );
-  }, [profile]);
+  }, [profile, representativesList]);
 
   const handleCopyId = () => {
     if (!profile?.id) return;
@@ -167,7 +167,7 @@ export const PartyProfileView = React.memo(function PartyProfileView({
               onClick={() => router.push("/party-kernel/parties")}
               className="gap-2"
             >
-              <ArrowLeft className="h-4 w-4" />
+              <ArrowLeft className="h-4 w-4 rtl:rotate-180" />
               {t("party.profile.backToDirectory")}
             </Button>
           }
@@ -186,13 +186,13 @@ export const PartyProfileView = React.memo(function PartyProfileView({
           onClick={() => router.push("/party-kernel/parties")}
           className="gap-1.5 text-xs text-nx-ink-2 hover:text-nx-ink"
         >
-          <ArrowLeft className="h-4 w-4" />
+          <ArrowLeft className="h-4 w-4 rtl:rotate-180" />
           <span>{t("party.profile.backToDirectory")}</span>
         </Button>
       </div>
 
       {/* ── Identity Hero Card ──────────────────────────────────────── */}
-      <Card className="border-nx-border shadow-xs overflow-hidden bg-nx-surface">
+      <Card className="border-nx-line overflow-hidden bg-nx-surface">
         <div className="p-6 sm:p-8">
           <div className="flex flex-col justify-between gap-6 sm:flex-row sm:items-start">
             <div className="flex items-start gap-4">
@@ -216,7 +216,7 @@ export const PartyProfileView = React.memo(function PartyProfileView({
 
                 {/* Canonical Reference & Type Immutability Banner */}
                 <div className="flex flex-wrap items-center gap-3 pt-1 text-xs text-nx-ink-3">
-                  <div className="bg-nx-surface-2/80 border-nx-border/70 flex items-center gap-1.5 rounded-md border px-2 py-0.5 font-mono text-[11px]">
+                  <div className="bg-nx-raised border-nx-line flex items-center gap-1.5 rounded-md border px-2 py-0.5 font-mono text-[11px]">
                     <span className="opacity-60">Ref:</span>
                     <span className="max-w-[140px] truncate" title={profile.id}>
                       {profile.id.length > 18 ? `${profile.id.slice(0, 12)}…` : profile.id}
@@ -231,7 +231,7 @@ export const PartyProfileView = React.memo(function PartyProfileView({
                       aria-label={t("party.profile.copyCanonicalId") || "Copy Canonical ID"}
                     >
                       {copiedId ? (
-                        <Check className="h-3 w-3 text-emerald-500" />
+                        <Check className="h-3 w-3 text-success" />
                       ) : (
                         <Copy className="h-3 w-3" />
                       )}
@@ -245,8 +245,8 @@ export const PartyProfileView = React.memo(function PartyProfileView({
                     </span>
                   </div>
 
-                  <div className="flex items-center gap-1 text-emerald-600 dark:text-emerald-400">
-                    <Lock className="h-3.5 w-3.5" />
+                  <div className="flex items-center gap-1 text-nx-ink-2">
+                    <Lock className="h-3.5 w-3.5 text-nx-ink-3" />
                     <span>{t("party.profile.immutableType")}</span>
                   </div>
                 </div>
@@ -256,7 +256,7 @@ export const PartyProfileView = React.memo(function PartyProfileView({
             {/* Right Column: Completeness & Quick Actions */}
             <div className="flex shrink-0 flex-col gap-3 sm:items-end">
               {/* Truthful Data Summary */}
-              <div className="bg-nx-surface-2/60 border-nx-border flex w-full flex-col gap-1.5 rounded-xl border p-2.5 sm:w-[220px]">
+              <div className="bg-nx-raised/40 border-nx-line flex w-full flex-col gap-1.5 rounded-xl border p-2.5 sm:w-[220px]">
                 <div className="flex items-center justify-between text-xs">
                   <span className="font-medium text-nx-ink-2">
                     {t("party.profile.completenessScore")}
@@ -272,7 +272,7 @@ export const PartyProfileView = React.memo(function PartyProfileView({
                       key={chk.label}
                       className={
                         chk.passed
-                          ? "inline-flex items-center gap-0.5 font-medium text-emerald-500"
+                          ? "inline-flex items-center gap-0.5 font-medium text-success"
                           : "inline-flex items-center gap-0.5 text-nx-ink-3"
                       }
                     >
@@ -335,7 +335,7 @@ export const PartyProfileView = React.memo(function PartyProfileView({
         onValueChange={(val) => vm.setActiveTab(val as PartyProfileTab)}
         className="space-y-6"
       >
-        <TabsList className="border-nx-border rounded-xl border bg-nx-surface p-1">
+        <TabsList className="border-nx-line rounded-xl border bg-nx-surface p-1">
           <TabsTrigger value="overview" className="gap-2">
             <User className="h-4 w-4" />
             <span>{t("party.profile.tabOverview")}</span>
@@ -343,7 +343,7 @@ export const PartyProfileView = React.memo(function PartyProfileView({
           <TabsTrigger value="contacts" className="gap-2">
             <Phone className="h-4 w-4" />
             <span>{t("party.profile.tabContacts")}</span>
-            <span className="bg-nx-surface-2 rounded-full px-1.5 py-0.5 text-xs">
+            <span className="bg-nx-raised rounded-full px-1.5 py-0.5 text-xs text-nx-ink-3">
               {profile.contactPoints.length}
             </span>
           </TabsTrigger>
@@ -351,25 +351,22 @@ export const PartyProfileView = React.memo(function PartyProfileView({
             <TabsTrigger value="representatives" className="gap-2">
               <Building className="h-4 w-4" />
               <span>{t("party.profile.tabRepresentatives")}</span>
-              <Badge
-                variant="outline"
-                className="h-4 border-amber-500/30 px-1.5 py-0 text-[10px] text-amber-400"
-              >
-                Pending Contract
-              </Badge>
+              <span className="bg-nx-raised rounded-full px-1.5 py-0.5 text-xs text-nx-ink-3">
+                {representativesList.length}
+              </span>
             </TabsTrigger>
           )}
           <TabsTrigger value="relationships" className="gap-2">
             <Users className="h-4 w-4" />
             <span>{t("party.profile.tabRelationships")}</span>
-            <span className="bg-nx-surface-2 rounded-full px-1.5 py-0.5 text-xs">
+            <span className="bg-nx-raised rounded-full px-1.5 py-0.5 text-xs text-nx-ink-3">
               {profile.relationships.length}
             </span>
           </TabsTrigger>
           <TabsTrigger value="roles" className="gap-2">
             <Briefcase className="h-4 w-4" />
             <span>{t("party.profile.tabRoles")}</span>
-            <span className="bg-nx-surface-2 rounded-full px-1.5 py-0.5 text-xs">
+            <span className="bg-nx-raised rounded-full px-1.5 py-0.5 text-xs text-nx-ink-3">
               {profile.roles.length}
             </span>
           </TabsTrigger>
@@ -388,7 +385,7 @@ export const PartyProfileView = React.memo(function PartyProfileView({
         <TabsContent value="overview" className="space-y-6">
           <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
             {/* Specific Type Details */}
-            <Card className="border-nx-border shadow-xs bg-nx-surface">
+            <Card className="border-nx-line bg-nx-surface">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2 text-base">
                   {profile.isPerson ? (
@@ -406,18 +403,18 @@ export const PartyProfileView = React.memo(function PartyProfileView({
               <CardContent className="space-y-4 text-sm">
                 {profile.isPerson ? (
                   <>
-                    <div className="border-nx-border flex justify-between border-b py-2">
+                    <div className="border-nx-line flex justify-between border-b py-2">
                       <span className="text-nx-ink-3">{t("party.profile.fullName")}</span>
                       <span className="font-medium text-nx-ink">{profile.fullName}</span>
                     </div>
                     {profile.person?.givenName && (
-                      <div className="border-nx-border flex justify-between border-b py-2">
+                      <div className="border-nx-line flex justify-between border-b py-2">
                         <span className="text-nx-ink-3">{t("party.profile.givenName")}</span>
                         <span className="font-medium text-nx-ink">{profile.person.givenName}</span>
                       </div>
                     )}
                     {profile.person?.middleNames && (
-                      <div className="border-nx-border flex justify-between border-b py-2">
+                      <div className="border-nx-line flex justify-between border-b py-2">
                         <span className="text-nx-ink-3">{t("party.profile.middleNames")}</span>
                         <span className="font-medium text-nx-ink">
                           {profile.person.middleNames}
@@ -425,12 +422,12 @@ export const PartyProfileView = React.memo(function PartyProfileView({
                       </div>
                     )}
                     {profile.person?.familyName && (
-                      <div className="border-nx-border flex justify-between border-b py-2">
+                      <div className="border-nx-line flex justify-between border-b py-2">
                         <span className="text-nx-ink-3">{t("party.profile.familyName")}</span>
                         <span className="font-medium text-nx-ink">{profile.person.familyName}</span>
                       </div>
                     )}
-                    <div className="border-nx-border flex justify-between border-b py-2">
+                    <div className="border-nx-line flex justify-between border-b py-2">
                       <span className="text-nx-ink-3">{t("party.profile.isMinor")}</span>
                       <Badge variant={profile.person?.isMinor ? "secondary" : "outline"}>
                         {profile.person?.isMinor
@@ -455,27 +452,36 @@ export const PartyProfileView = React.memo(function PartyProfileView({
                   </>
                 ) : (
                   <>
-                    <div className="border-nx-border flex justify-between border-b py-2">
+                    <div className="border-nx-line flex justify-between border-b py-2">
                       <span className="text-nx-ink-3">{t("party.profile.legalName")}</span>
                       <span className="font-medium text-nx-ink">{profile.legalName || "—"}</span>
                     </div>
-                    <div className="border-nx-border flex justify-between border-b py-2">
+                    <div className="border-nx-line flex justify-between border-b py-2">
                       <span className="text-nx-ink-3">{t("party.profile.commercialName")}</span>
                       <span className="font-medium text-nx-ink">{profile.displayName}</span>
                     </div>
-                    <div className="border-nx-border flex justify-between border-b py-2">
+                    <div className="border-nx-line flex justify-between border-b py-2">
                       <span className="text-nx-ink-3">{t("party.profile.taxId")}</span>
                       <span className="font-mono text-xs text-nx-ink">{profile.taxId || "—"}</span>
                     </div>
                     <div className="flex justify-between py-2">
                       <span className="text-nx-ink-3">Authorized Representatives</span>
                       <span className="flex items-center gap-1 text-xs font-semibold">
-                        <Badge
-                          variant="outline"
-                          className="h-4 border-amber-500/30 px-1.5 py-0 text-[10px] text-amber-400"
-                        >
-                          Contract Pending (V1)
-                        </Badge>
+                        {representativesList.length > 0 ? (
+                          <Badge
+                            variant="outline"
+                            className="h-4 border-success/30 px-1.5 py-0 text-[10px] text-success"
+                          >
+                            {representativesList.length} Registered
+                          </Badge>
+                        ) : (
+                          <Badge
+                            variant="outline"
+                            className="h-4 border-nx-line px-1.5 py-0 text-[10px] text-nx-ink-3"
+                          >
+                            None Assigned
+                          </Badge>
+                        )}
                       </span>
                     </div>
                   </>
@@ -484,7 +490,7 @@ export const PartyProfileView = React.memo(function PartyProfileView({
             </Card>
 
             {/* Primary Contact Overview */}
-            <Card className="border-nx-border shadow-xs bg-nx-surface">
+            <Card className="border-nx-line bg-nx-surface">
               <CardHeader className="flex flex-row items-center justify-between">
                 <CardTitle className="flex items-center gap-2 text-base">
                   <Phone className="h-4 w-4 text-nx-accent" />
@@ -503,13 +509,13 @@ export const PartyProfileView = React.memo(function PartyProfileView({
                 )}
               </CardHeader>
               <CardContent className="space-y-4 text-sm">
-                <div className="border-nx-border flex justify-between border-b py-2">
+                <div className="border-nx-line flex justify-between border-b py-2">
                   <span className="text-nx-ink-3">{t("party.profile.primaryTelephone")}</span>
                   <span className="font-medium text-nx-ink">
                     {profile.primaryPhone || t("party.directory.noContactRegistered")}
                   </span>
                 </div>
-                <div className="border-nx-border flex justify-between border-b py-2">
+                <div className="border-nx-line flex justify-between border-b py-2">
                   <span className="text-nx-ink-3">{t("party.profile.primaryEmail")}</span>
                   <span className="font-medium text-nx-ink">
                     {profile.primaryEmail || t("party.directory.noContactRegistered")}
@@ -524,7 +530,7 @@ export const PartyProfileView = React.memo(function PartyProfileView({
 
             {/* Addresses Section for Person */}
             {profile.isPerson && (
-              <Card className="border-nx-border shadow-xs bg-nx-surface md:col-span-2">
+              <Card className="border-nx-line bg-nx-surface md:col-span-2">
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2 text-base">
                     <MapPin className="h-4 w-4 text-nx-accent" />
@@ -532,7 +538,7 @@ export const PartyProfileView = React.memo(function PartyProfileView({
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-2 text-sm">
-                  <div className="bg-nx-surface-2/60 border-nx-border flex items-start gap-3 rounded-lg border p-3.5">
+                  <div className="bg-nx-raised/40 border-nx-line flex items-start gap-3 rounded-lg border p-3.5">
                     <Info className="mt-0.5 h-4 w-4 shrink-0 text-nx-accent" />
                     <p className="text-xs leading-relaxed text-nx-ink-2">
                       {t("party.profile.addressesPendingDesc")}
@@ -580,7 +586,7 @@ export const PartyProfileView = React.memo(function PartyProfileView({
               {profile.contactPoints.map((contact) => (
                 <Card
                   key={contact.id}
-                  className="border-nx-border shadow-xs flex items-center justify-between bg-nx-surface p-4"
+                  className="border-nx-line flex items-center justify-between bg-nx-surface p-4"
                 >
                   <div className="flex min-w-0 items-center gap-3">
                     <div className="bg-nx-accent/10 flex h-10 w-10 shrink-0 items-center justify-center rounded-xl text-nx-accent">
@@ -634,25 +640,25 @@ export const PartyProfileView = React.memo(function PartyProfileView({
         {profile.isOrganization && (
           <TabsContent value="representatives" className="space-y-4">
             {/* Informative Contract Pending Banner */}
-            <div className="rounded-xl border border-amber-500/40 bg-amber-500/10 p-4 dark:bg-amber-950/60">
+            <div className="rounded-xl border border-warning/30 bg-warning/10 p-4">
               <div className="flex items-start gap-3">
-                <AlertCircle className="mt-0.5 h-5 w-5 shrink-0 text-amber-600 dark:text-amber-400" />
+                <AlertCircle className="mt-0.5 h-5 w-5 shrink-0 text-warning" />
                 <div className="space-y-1">
                   <div className="flex items-center gap-2">
-                    <h4 className="text-sm font-semibold text-amber-800 dark:text-amber-300">
+                    <h4 className="text-sm font-semibold text-nx-ink">
                       {t("party.profile.representativesContractPending") ||
-                        "Pending Backend Contract (V1 Deferred)"}
+                        "Corporate Affiliations"}
                     </h4>
                     <Badge
-                      variant="outline"
-                      className="border-amber-600/50 bg-amber-500/10 text-[10px] text-amber-700 dark:border-amber-400/60 dark:text-amber-300"
+                      variant="warning"
+                      className="text-[10px]"
                     >
-                      RFC-PARTY-AFFILIATIONS
+                      {t("party.profile.planned") || "Upcoming"}
                     </Badge>
                   </div>
-                  <p className="text-xs font-medium leading-relaxed text-amber-900 dark:text-amber-200/90">
+                  <p className="text-xs font-medium leading-relaxed text-nx-ink-2">
                     {t("party.profile.representativesContractPendingBanner") ||
-                      "Corporate representative and signatory affiliation contracts are deferred in PartyKernel V1 (backend supports Guardian and EmergencyContact only). Corporate signatory links will activate upon contract finalization."}
+                      "Corporate representative and signatory affiliation features are coming soon."}
                   </p>
                 </div>
               </div>
@@ -703,7 +709,7 @@ export const PartyProfileView = React.memo(function PartyProfileView({
                 {representativesList.map((rep) => (
                   <Card
                     key={rep.id}
-                    className="border-nx-border shadow-xs hover:border-nx-accent/30 flex flex-col justify-between bg-nx-surface p-4 transition-colors"
+                    className="border-nx-line hover:border-nx-line-hi flex flex-col justify-between bg-nx-surface p-4 transition-colors"
                   >
                     <div className="space-y-2">
                       <div className="flex items-center justify-between gap-2">
@@ -734,7 +740,7 @@ export const PartyProfileView = React.memo(function PartyProfileView({
                       </div>
                     </div>
 
-                    <div className="border-nx-border mt-3 border-t pt-3">
+                    <div className="border-nx-line mt-3 border-t pt-3">
                       <Button
                         variant="ghost"
                         size="sm"
@@ -742,7 +748,7 @@ export const PartyProfileView = React.memo(function PartyProfileView({
                         className="h-8 w-full justify-between text-xs text-nx-accent hover:text-nx-accent"
                       >
                         <span>View Person Profile</span>
-                        <ArrowLeft className="h-3.5 w-3.5 rotate-180" />
+                        <ArrowRight className="h-3.5 w-3.5 rtl:rotate-180" />
                       </Button>
                     </div>
                   </Card>
@@ -794,7 +800,7 @@ export const PartyProfileView = React.memo(function PartyProfileView({
                 return (
                   <Card
                     key={rel.id}
-                    className="border-nx-border shadow-xs flex items-center justify-between gap-4 bg-nx-surface p-4"
+                    className="border-nx-line flex items-center justify-between gap-4 bg-nx-surface p-4"
                   >
                     <div className="min-w-0 space-y-1.5">
                       <div className="flex flex-wrap items-center gap-2">
@@ -827,7 +833,7 @@ export const PartyProfileView = React.memo(function PartyProfileView({
                           onClick={() => router.push(`/party-kernel/parties/${otherPartyId}`)}
                         >
                           <span>{t("party.profile.openRelatedProfile")}</span>
-                          <ArrowLeft className="h-3.5 w-3.5 rotate-180" />
+                          <ArrowRight className="h-3.5 w-3.5 rtl:rotate-180" />
                         </Button>
                       )}
                       {vm.permissions.canManageRelationships && (
@@ -882,7 +888,7 @@ export const PartyProfileView = React.memo(function PartyProfileView({
               {profile.roles.map((role) => (
                 <Card
                   key={role.id}
-                  className="border-nx-border shadow-xs flex items-center justify-between bg-nx-surface p-4"
+                  className="border-nx-line flex items-center justify-between bg-nx-surface p-4"
                 >
                   <div className="space-y-1">
                     <div className="text-sm font-semibold text-nx-ink">{role.roleType}</div>
@@ -918,7 +924,7 @@ export const PartyProfileView = React.memo(function PartyProfileView({
 
           <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
             {/* Entity Audit Metadata Card */}
-            <Card className="border-nx-border shadow-xs bg-nx-surface">
+            <Card className="border-nx-line bg-nx-surface">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2 text-base">
                   <ShieldCheck className="h-4 w-4 text-nx-accent" />
@@ -926,7 +932,7 @@ export const PartyProfileView = React.memo(function PartyProfileView({
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-3 text-sm">
-                <div className="border-nx-border flex justify-between border-b py-2">
+                <div className="border-nx-line flex justify-between border-b py-2">
                   <span className="text-nx-ink-3">{t("party.profile.canonicalPartyId")}</span>
                   <span
                     className="max-w-[200px] truncate font-mono text-xs text-nx-ink"
@@ -935,15 +941,15 @@ export const PartyProfileView = React.memo(function PartyProfileView({
                     {profile.id}
                   </span>
                 </div>
-                <div className="border-nx-border flex justify-between border-b py-2">
+                <div className="border-nx-line flex justify-between border-b py-2">
                   <span className="text-nx-ink-3">{t("party.profile.partyType")}</span>
                   <Badge variant={profile.isPerson ? "default" : "secondary"}>{profile.type}</Badge>
                 </div>
-                <div className="border-nx-border flex justify-between border-b py-2">
+                <div className="border-nx-line flex justify-between border-b py-2">
                   <span className="text-nx-ink-3">{t("party.profile.createdAtLabel")}</span>
                   <span className="font-medium text-nx-ink">{formatDate(profile.createdAt)}</span>
                 </div>
-                <div className="border-nx-border flex justify-between border-b py-2">
+                <div className="border-nx-line flex justify-between border-b py-2">
                   <span className="text-nx-ink-3">{t("party.profile.lastModifiedLabel")}</span>
                   <span className="font-medium text-nx-ink">{formatDate(profile.modifiedAt)}</span>
                 </div>
@@ -955,14 +961,14 @@ export const PartyProfileView = React.memo(function PartyProfileView({
             </Card>
 
             {/* Deduplication & Merge Candidates */}
-            <Card className="border-nx-border shadow-xs bg-nx-surface">
+            <Card className="border-nx-line bg-nx-surface">
               <CardHeader>
                 <CardTitle className="flex items-center justify-between text-base">
                   <span className="flex items-center gap-2">
-                    <AlertTriangle className="h-4 w-4 text-amber-500" />
+                    <AlertTriangle className="h-4 w-4 text-warning" />
                     <span>{t("party.profile.mergeCandidatesTitle")}</span>
                   </span>
-                  <span className="bg-nx-surface-2 rounded-full px-2 py-0.5 text-xs text-nx-ink-3">
+                  <span className="bg-nx-raised rounded-full px-2 py-0.5 text-xs text-nx-ink-3">
                     {profile.mergeCandidates.length}
                   </span>
                 </CardTitle>

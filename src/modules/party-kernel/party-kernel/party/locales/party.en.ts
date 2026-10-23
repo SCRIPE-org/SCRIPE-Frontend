@@ -26,7 +26,7 @@ export const en = {
     },
     directory: {
       title: "Contacts Directory",
-      breadcrumb: "Contacts",
+      breadcrumb: "Directory",
       description:
         "Enterprise directory of people, organizations, clubs, academies, partners, and facility clients.",
       searchPlaceholder: "Search contacts by name...",
@@ -121,7 +121,7 @@ export const en = {
       tabAudit: "Audit & Identity",
       tabAuditTitle: "Entity Audit Metadata & Identity Verification",
       auditDisclaimer:
-        "Canonical entity audit metadata and deduplication candidate verification. Continuous event sourcing stream and activity timeline are slated for PartyKernel P2.",
+        "Canonical entity audit metadata and deduplication candidate verification. Activity timeline will appear as changes are recorded.",
       recordStatus: "Record Status",
       statusActive: "Active",
       statusTombstoned: "Tombstoned",
@@ -129,18 +129,18 @@ export const en = {
       representativesDesc:
         "Authorized signatories, legal representatives, and primary liaisons for this organization.",
       representativesContractPendingBanner:
-        "Corporate representative and signatory affiliation contracts are deferred in PartyKernel V1 (backend supports Guardian and EmergencyContact only). Corporate signatory links will activate upon contract finalization.",
+        "Corporate representative and signatory affiliations are coming soon. Corporate signatory links will activate in an upcoming release.",
       addRepresentative: "Add Representative",
       noRepresentatives: "No representatives linked",
       noRepresentativesDesc:
-        "No corporate representatives linked. Corporate signatory affiliation is deferred in PartyKernel V1.",
+        "No corporate representatives linked to this organization.",
       copyCanonicalId: "Copy Canonical ID",
       corporateIdentity: "Corporate Legal Identity",
       commercialName: "Commercial Trading Name",
       completenessScore: "Data Summary",
       addressesTitle: "Physical & Postal Addresses",
       addressesPendingDesc:
-        "Contextual postal address storage is scheduled for Wave 2 under the approved PartyAddress specification. Canonical telephone and electronic communication endpoints are active above.",
+        "Physical and postal addresses will be available in an upcoming update. Telephone and electronic contact channels are active above.",
       verifiedBadge: "Verified",
       unverifiedBadge: "Unverified",
       primaryTelephone: "Primary Telephone",
@@ -195,10 +195,10 @@ export const en = {
     dialog: {
       createPersonTitle: "New Person",
       createPersonDesc: "Register an individual contact in the tenant directory.",
-      personCreationGuardedTitle: "Person Creation Temporarily Guarded",
+      personCreationGuardedTitle: "Person Creation Temporarily Unavailable",
       personCreationGuarded:
-        "Individual person creation is temporarily guarded pending the backend atomic multi-insert contract (ADR-PARTY-PERSON-FULL-NAME-STORAGE). You can preview and validate form inputs, but submissions are blocked to prevent orphan or incomplete records.",
-      personCreationGuardedBtn: "Creation Guarded (Contract Pending)",
+        "Individual person creation is temporarily undergoing system maintenance. You can preview and validate form inputs, but submissions are currently paused to ensure data integrity.",
+      personCreationGuardedBtn: "Temporarily Unavailable",
       fullName: "Full Name",
       fullNamePlaceholder: "e.g. Dr. Fatima Zahra Al-Sayed",
       fullNameHelp: "Exact human-entered name without forced first/last splitting.",
@@ -227,7 +227,7 @@ export const en = {
       taxId: "Tax / CR Registration (Optional)",
       taxIdPlaceholder: "CR-1010xxxxxx",
       taxIdHelp:
-        "Commercial registration and tax certificate validation is governed under Wave 2 registry contracts. Display and legal names are established atomically.",
+        "Commercial registration and tax certificate details are verified against official records upon entry.",
       editNameTitle: "Edit Display Name",
       editNameDesc: "Correct the visible name. Contact ID and Type remain immutable.",
       editPartyTitle: "Edit Contact Details",

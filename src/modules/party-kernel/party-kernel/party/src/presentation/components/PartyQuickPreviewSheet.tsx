@@ -90,7 +90,7 @@ export function PartyQuickPreviewSheet({
         className="flex w-full flex-col justify-between overflow-y-auto sm:max-w-md"
       >
         <div className="space-y-6">
-          <SheetHeader className="border-nx-border border-b pb-4">
+          <SheetHeader className="border-nx-line border-b pb-4">
             <div className="flex items-center gap-2">
               <Badge variant={party.isPerson ? "info" : "success"}>
                 {party.isPerson ? t("party.types.Person") : t("party.types.Organization")}
@@ -118,7 +118,7 @@ export function PartyQuickPreviewSheet({
 
           {/* Canonical ID & Type Protection Banner */}
           <div className="space-y-3">
-            <div className="bg-nx-surface-2 border-nx-border space-y-2 rounded-lg border p-3">
+            <div className="bg-nx-raised border-nx-line space-y-2 rounded-lg border p-3">
               <div className="flex items-center justify-between text-xs">
                 <span className="font-medium text-nx-ink-3">
                   {t("party.quickPreview.canonicalId")}
@@ -133,8 +133,8 @@ export function PartyQuickPreviewSheet({
                 >
                   {copiedId ? (
                     <>
-                      <Check className="h-3 w-3 text-emerald-500" />
-                      <span className="text-emerald-500">Copied</span>
+                      <Check className="h-3 w-3 text-success" />
+                      <span className="text-success">Copied</span>
                     </>
                   ) : (
                     <>
@@ -144,21 +144,21 @@ export function PartyQuickPreviewSheet({
                   )}
                 </Button>
               </div>
-              <div className="border-nx-border select-all truncate rounded border bg-nx-surface px-2 py-1 font-mono text-xs text-nx-ink">
+              <div className="border-nx-line select-all truncate rounded border bg-nx-surface px-2 py-1 font-mono text-xs text-nx-ink">
                 {party.id}
               </div>
             </div>
 
-            <div className="flex items-center justify-between rounded-lg border border-emerald-500/20 bg-emerald-500/5 px-3 py-2 text-xs">
-              <div className="flex items-center gap-1.5 font-medium text-emerald-600 dark:text-emerald-400">
-                <Lock className="h-3.5 w-3.5" />
-                <span>{t("party.profile.immutableType")}</span>
+            <div className="flex items-center justify-between rounded-lg border border-nx-line bg-nx-raised/40 px-3 py-2 text-xs">
+              <div className="flex items-center gap-1.5 font-medium text-nx-ink">
+                <Lock className="h-3.5 w-3.5 text-nx-ink-3" />
+                <span>{t("party.profile.immutableType") || "Immutable contact type"}</span>
               </div>
               <Badge
                 variant="outline"
-                className="border-emerald-500/30 text-[10px] text-emerald-600"
+                className="border-nx-line text-[10px] text-nx-ink-2"
               >
-                ADR-002
+                {t("party.profile.immutableBadge") || "Protected"}
               </Badge>
             </div>
           </div>
@@ -168,7 +168,7 @@ export function PartyQuickPreviewSheet({
             <h4 className="text-xs font-semibold uppercase tracking-wider text-nx-ink-3">
               {t("party.quickPreview.contacts")}
             </h4>
-            <div className="border-nx-border space-y-2 rounded-xl border bg-nx-surface p-3.5 text-xs">
+            <div className="border-nx-line space-y-2 rounded-xl border bg-nx-surface p-3.5 text-xs">
               <div className="flex items-center justify-between gap-2">
                 <span className="flex items-center gap-1.5 text-nx-ink-2">
                   <Phone className="h-3.5 w-3.5 text-nx-accent" />
@@ -185,7 +185,7 @@ export function PartyQuickPreviewSheet({
                   <span className="text-nx-ink-3">{t("party.directory.noContactRegistered")}</span>
                 )}
               </div>
-              <div className="border-nx-border/60 flex items-center justify-between gap-2 border-t pt-1.5">
+              <div className="border-nx-line/60 flex items-center justify-between gap-2 border-t pt-1.5">
                 <span className="flex items-center gap-1.5 text-nx-ink-2">
                   <Mail className="h-3.5 w-3.5 text-nx-accent" />
                   <span>{t("party.profile.primaryEmail") || "Email"}</span>
@@ -227,14 +227,14 @@ export function PartyQuickPreviewSheet({
               {t("party.quickPreview.completeness")}
             </h4>
 
-            <div className="border-nx-border space-y-2 rounded-xl border bg-nx-surface p-4">
+            <div className="border-nx-line space-y-2 rounded-xl border bg-nx-surface p-4">
               <div className="flex items-center justify-between text-sm">
                 <span className="text-nx-ink-2">{t("party.columns.type")}</span>
                 <div className="flex items-center gap-1 font-medium text-nx-ink">
                   {party.isPerson ? (
-                    <User className="h-3.5 w-3.5 text-blue-500" />
+                    <User className="h-3.5 w-3.5 text-info" />
                   ) : (
-                    <Building className="h-3.5 w-3.5 text-emerald-500" />
+                    <Building className="h-3.5 w-3.5 text-success" />
                   )}
                   <span>{party.type}</span>
                 </div>
@@ -277,7 +277,7 @@ export function PartyQuickPreviewSheet({
           </div>
         </div>
 
-        <SheetFooter className="border-nx-border flex-col gap-2 border-t pt-6 sm:flex-col">
+        <SheetFooter className="border-nx-line flex-col gap-2 border-t pt-6 sm:flex-col">
           <Button
             onClick={() => {
               onOpenChange(false);

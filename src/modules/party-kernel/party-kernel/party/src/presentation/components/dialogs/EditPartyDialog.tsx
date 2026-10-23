@@ -212,14 +212,14 @@ function EditPartyForm({
         )}
 
         {/* Immutable Identity Attributes Info */}
-        <div className="bg-nx-surface-2 border-nx-border flex items-center justify-between rounded-lg border p-3 text-xs">
+        <div className="bg-nx-raised border-nx-line flex items-center justify-between rounded-lg border p-3 text-xs">
           <div className="space-y-1">
             <span className="block text-nx-ink-3">{t("party.profile.immutableType")}</span>
             <Badge variant={party.isPerson ? "info" : "success"}>{party.type}</Badge>
           </div>
           <div className="flex items-center gap-1.5 text-nx-ink-3">
             <Lock className="h-3.5 w-3.5" />
-            <span>ADR-002 Locked</span>
+            <span>{t("party.profile.immutableType") || "Immutable contact type"}</span>
           </div>
         </div>
 
@@ -262,7 +262,7 @@ function EditPartyForm({
             </div>
 
             {/* Optional Additional Names Accordion */}
-            <div className="border-nx-border bg-nx-surface-2/30 rounded-lg border p-3">
+            <div className="border-nx-line bg-nx-raised/40 rounded-lg border p-3">
               <Button
                 type="button"
                 variant="ghost"
@@ -278,7 +278,7 @@ function EditPartyForm({
               </Button>
 
               {showAdditionalNames && (
-                <div className="border-nx-border/60 mt-2 grid grid-cols-1 gap-2 border-t pt-3 sm:grid-cols-3">
+                <div className="border-nx-line/60 mt-2 grid grid-cols-1 gap-2 border-t pt-3 sm:grid-cols-3">
                   <div className="grid gap-1.5">
                     <Label htmlFor="edit-person-given-name" className="text-xs text-nx-ink-2">
                       {t("party.dialog.givenName")}

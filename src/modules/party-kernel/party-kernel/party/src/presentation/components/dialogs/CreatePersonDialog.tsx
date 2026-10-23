@@ -271,7 +271,7 @@ export function CreatePersonDialog({
         <DialogContent className="sm:max-w-[540px]">
           <DialogHeader>
             <div className="flex items-center gap-2">
-              <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-amber-500/10 text-amber-500">
+              <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-warning/10 text-warning">
                 <AlertTriangle className="h-5 w-5" />
               </div>
               <div>
@@ -287,7 +287,7 @@ export function CreatePersonDialog({
           </DialogHeader>
 
           <div className="grid gap-4 py-4">
-            <div className="border-nx-border bg-nx-surface-2/40 space-y-2.5 rounded-lg border p-4">
+            <div className="border-nx-line bg-nx-raised/40 space-y-2.5 rounded-lg border p-4">
               <div className="flex items-center justify-between text-xs">
                 <span className="text-nx-ink-3">Canonical Party ID</span>
                 <span className="font-mono font-semibold text-nx-ink">
@@ -301,13 +301,13 @@ export function CreatePersonDialog({
               {partialSaveState.failedPhone && (
                 <div className="flex items-center justify-between text-xs">
                   <span className="text-nx-ink-3">Pending Phone</span>
-                  <span className="font-mono text-amber-400">{partialSaveState.failedPhone}</span>
+                  <span className="font-mono text-warning">{partialSaveState.failedPhone}</span>
                 </div>
               )}
               {partialSaveState.failedEmail && (
                 <div className="flex items-center justify-between text-xs">
                   <span className="text-nx-ink-3">Pending Email</span>
-                  <span className="font-mono text-amber-400">{partialSaveState.failedEmail}</span>
+                  <span className="font-mono text-warning">{partialSaveState.failedEmail}</span>
                 </div>
               )}
             </div>
@@ -402,7 +402,7 @@ export function CreatePersonDialog({
 
               {/* Duplicate Detection Warning */}
               {isPossibleDuplicate && (
-                <div className="flex items-center gap-2 rounded-md border border-amber-500/20 bg-amber-500/10 p-2.5 text-xs text-amber-500">
+                <div className="flex items-center gap-2 rounded-md border border-warning/20 bg-warning/10 p-2.5 text-xs text-warning">
                   <AlertTriangle className="h-4 w-4 shrink-0" />
                   <span>{t("party.dialog.duplicateWarning")}</span>
                 </div>
@@ -410,7 +410,7 @@ export function CreatePersonDialog({
             </div>
 
             {/* Optional Additional Names Accordion */}
-            <div className="border-nx-border bg-nx-surface-2/30 rounded-lg border p-3">
+            <div className="border-nx-line bg-nx-raised/30 rounded-lg border p-3">
               <Button
                 type="button"
                 variant="ghost"
@@ -426,7 +426,7 @@ export function CreatePersonDialog({
               </Button>
 
               {showAdditionalNames && (
-                <div className="border-nx-border/60 mt-2 grid gap-3 border-t pt-3">
+                <div className="border-nx-line/60 mt-2 grid gap-3 border-t pt-3">
                   <div className="grid gap-1.5">
                     <Label htmlFor="person-display-name" className="text-xs text-nx-ink-2">
                       {t("party.dialog.displayName")}

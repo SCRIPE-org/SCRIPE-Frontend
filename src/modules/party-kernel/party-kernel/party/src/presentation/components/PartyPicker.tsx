@@ -125,6 +125,14 @@ export const PartyPicker = React.memo(function PartyPicker({
     setHighlightedIndex(-1);
   }, [debouncedSearch, typeFilter, isOpen, data]);
 
+  // Scroll active option into view on keyboard navigation
+  useEffect(() => {
+    if (highlightedIndex >= 0) {
+      const el = document.getElementById(`party-option-${highlightedIndex}`);
+      el?.scrollIntoView({ block: "nearest" });
+    }
+  }, [highlightedIndex]);
+
   const handleSelectParty = (party: PartyContactLookup) => {
     const result: PartySelectionResult = {
       id: party.id,
@@ -206,7 +214,7 @@ export const PartyPicker = React.memo(function PartyPicker({
       )}
 
       {/* ── Trigger / Selected View ───────────────────────────────── */}
-      <Popover open={isOpen} onOpenChange={setIsOpen}>
+      <Popover open={isOpen} onOpenChange={setIsOpen} modal={false}>
         <PopoverTrigger asChild disabled={disabled}>
           <div
             tabIndex={disabled ? -1 : 0}
@@ -226,7 +234,7 @@ export const PartyPicker = React.memo(function PartyPicker({
             className={`flex min-h-[42px] w-full cursor-pointer select-none items-center justify-between rounded-xl border bg-nx-surface px-3 py-2 text-xs transition-colors ${
               error
                 ? "border-destructive/60 focus:ring-1 focus:ring-destructive"
-                : "border-nx-border hover:border-nx-border-hover focus:border-nx-accent"
+                : "border-nx-line hover:border-nx-line-hi focus:border-nx-accent"
             } ${disabled ? "cursor-not-allowed opacity-50" : ""}`}
           >
             {value ? (
@@ -234,8 +242,8 @@ export const PartyPicker = React.memo(function PartyPicker({
                 <div
                   className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-lg ${
                     value.type === "Person"
-                      ? "bg-blue-500/10 text-blue-500"
-                      : "bg-emerald-500/10 text-emerald-500"
+                      ? "bg-info/10 text-info"
+                      : "bg-success/10 text-success"
                   }`}
                 >
                   {value.type === "Person" ? (
@@ -249,7 +257,7 @@ export const PartyPicker = React.memo(function PartyPicker({
                     <span className="truncate font-semibold text-nx-ink">
                       {value.displayName || value.fullName || value.legalName || "—"}
                     </span>
-                    <Badge variant="outline" className="border-nx-border h-4 px-1 py-0 text-[9px]">
+                    <Badge variant="outline" className="border-nx-line h-4 px-1 py-0 text-[9px]">
                       {value.type === "Person"
                         ? t("party.picker.typeFilterPerson") || "Person"
                         : t("party.picker.typeFilterOrg") || "Organization"}
@@ -295,10 +303,10 @@ export const PartyPicker = React.memo(function PartyPicker({
         {/* ── Search & Selection Popover Content ──────────────────────── */}
         <PopoverContent
           align="start"
-          className="border-nx-border w-[calc(100vw-2rem)] max-w-[420px] overflow-hidden rounded-2xl border bg-nx-surface p-0 shadow-2xl sm:w-[420px]"
+          className="border-nx-line shadow-nx-modal w-[calc(100vw-2rem)] max-w-[420px] overflow-hidden rounded-2xl border bg-nx-surface p-0 sm:w-[420px]"
         >
           {/* Header & Search Bar */}
-          <div className="border-nx-border bg-nx-surface-2/30 space-y-2 border-b p-3">
+          <div className="border-nx-line bg-nx-raised/40 space-y-2 border-b p-3">
             <div className="relative">
               <Search className="absolute left-3 top-2.5 h-3.5 w-3.5 text-nx-ink-3 rtl:right-3" />
               <Input
@@ -309,7 +317,7 @@ export const PartyPicker = React.memo(function PartyPicker({
                 }}
                 onKeyDown={handleKeyDown}
                 placeholder={t("party.picker.searchPlaceholder") || "Search contacts by name..."}
-                className="border-nx-border h-9 bg-nx-surface pl-9 pr-3 text-xs rtl:pl-3 rtl:pr-9"
+                className="border-nx-line h-9 bg-nx-surface pl-9 pr-3 text-xs rtl:pl-3 rtl:pr-9"
                 autoFocus
                 data-testid="party-picker-search-input"
                 role="combobox"
@@ -390,7 +398,7 @@ export const PartyPicker = React.memo(function PartyPicker({
                 type="button"
                 variant="outline"
                 size="sm"
-                className="border-nx-border h-7 gap-1 text-xs"
+                className="border-nx-line h-7 gap-1 text-xs"
                 onClick={() => refetch()}
               >
                 <RefreshCw className="h-3 w-3" />
@@ -401,7 +409,7 @@ export const PartyPicker = React.memo(function PartyPicker({
             <div
               id="party-picker-listbox"
               role="listbox"
-              className="divide-nx-border/50 max-h-[260px] divide-y overflow-y-auto p-1"
+              className="divide-nx-line/50 custom-scrollbar max-h-[260px] divide-y overflow-y-auto p-1"
             >
               {isLoading ? (
                 <div className="flex items-center justify-center gap-2 p-8 text-xs text-nx-ink-3">
@@ -410,7 +418,7 @@ export const PartyPicker = React.memo(function PartyPicker({
                 </div>
               ) : parties.length === 0 ? (
                 <div className="space-y-2 p-6 text-center">
-                  <div className="bg-nx-surface-2 mx-auto flex h-10 w-10 items-center justify-center rounded-full text-nx-ink-3">
+                  <div className="bg-nx-raised mx-auto flex h-10 w-10 items-center justify-center rounded-full text-nx-ink-3">
                     <Search className="h-5 w-5" />
                   </div>
                   <div className="space-y-1">
@@ -441,15 +449,15 @@ export const PartyPicker = React.memo(function PartyPicker({
                           ? "bg-nx-accent/20 border-nx-accent/40 border"
                           : isSelected
                             ? "bg-nx-accent/10 border-nx-accent/20 border"
-                            : "hover:bg-nx-surface-2 border border-transparent"
+                            : "hover:bg-nx-raised border border-transparent"
                       }`}
                     >
                       <div className="flex min-w-0 flex-1 items-center gap-2.5">
                         <div
                           className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-lg ${
                             p.type === "Person"
-                              ? "bg-blue-500/10 text-blue-500"
-                              : "bg-emerald-500/10 text-emerald-500"
+                              ? "bg-info/10 text-info"
+                              : "bg-success/10 text-success"
                           }`}
                         >
                           {p.type === "Person" ? (
@@ -498,19 +506,19 @@ export const PartyPicker = React.memo(function PartyPicker({
 
           {/* Creation Actions Footer */}
           {(canAddPerson || canAddOrg) && (
-            <div className="border-nx-border bg-nx-surface-2/40 flex items-center gap-2 border-t p-2">
+            <div className="border-nx-line bg-nx-raised/40 flex items-center gap-2 border-t p-2">
               {canAddPerson && (
                 <Button
                   type="button"
                   variant="outline"
                   size="sm"
-                  className="border-nx-border h-8 flex-1 gap-1.5 bg-nx-surface text-xs"
+                  className="border-nx-line h-8 flex-1 gap-1.5 bg-nx-surface text-xs"
                   onClick={() => {
                     setIsOpen(false);
                     setIsCreatePersonOpen(true);
                   }}
                 >
-                  <Plus className="h-3.5 w-3.5 text-blue-500" />
+                  <Plus className="h-3.5 w-3.5 text-info" />
                   <span>{t("party.picker.newPerson") || "New Person"}</span>
                 </Button>
               )}
@@ -520,13 +528,13 @@ export const PartyPicker = React.memo(function PartyPicker({
                   type="button"
                   variant="outline"
                   size="sm"
-                  className="border-nx-border h-8 flex-1 gap-1.5 bg-nx-surface text-xs"
+                  className="border-nx-line h-8 flex-1 gap-1.5 bg-nx-surface text-xs"
                   onClick={() => {
                     setIsOpen(false);
                     setIsCreateOrgOpen(true);
                   }}
                 >
-                  <Plus className="h-3.5 w-3.5 text-emerald-500" />
+                  <Plus className="h-3.5 w-3.5 text-success" />
                   <span>{t("party.picker.newOrg") || "New Organization"}</span>
                 </Button>
               )}

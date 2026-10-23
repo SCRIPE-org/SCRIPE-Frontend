@@ -174,7 +174,7 @@ export function VenueOverviewHeroTimeline({
           <div>
             <div className="flex items-center gap-2">
               <span
-                className="flex size-2 animate-pulse rounded-full bg-emerald-500"
+                className="flex size-2 animate-pulse rounded-full bg-success shadow-[0_0_6px_rgba(34,197,94,0.7)]"
                 aria-hidden="true"
               />
               <CardTitle className="text-sm font-bold text-nx-ink">

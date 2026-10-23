@@ -73,18 +73,18 @@ export function VenueOverviewTodaySchedule({ items, t }: Props) {
         </h2>
         <Link
           href="/venue/calendar"
-          className="text-xs font-semibold text-blue-500 transition-colors hover:text-blue-600"
+          className="text-xs font-semibold text-nx-accent hover:underline"
         >
           {t("venueOverview.todaySchedule.viewAll", { defaultValue: "View All" })}
         </Link>
       </div>
 
-      <Card className="divide-nx-line/60 rounded-nx-xl shadow-xs divide-y overflow-hidden border border-nx-line bg-nx-surface">
+      <Card className="divide-nx-line/60 rounded-nx-xl divide-y overflow-hidden border border-nx-line bg-nx-surface">
         {displayItems.map((item, idx) => {
           const badgeClass =
             item.variant === "progress"
-              ? "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/20"
-              : "bg-sky-500/10 text-sky-600 dark:text-sky-400 border-sky-500/20";
+              ? "bg-success/10 text-success border-success/20"
+              : "bg-info/10 text-info border-info/20";
 
           return (
             <div

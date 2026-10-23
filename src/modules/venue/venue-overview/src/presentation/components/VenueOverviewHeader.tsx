@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import Link from "next/link";
 import { Clock, RefreshCw, Building2, Plus, CalendarDays } from "lucide-react";
@@ -136,7 +136,7 @@ export function VenueOverviewHeader({
             onClick={onBlockTime}
             className="h-8.5 hover:bg-nx-surfaceSubtle gap-1.5 border-nx-line text-xs font-medium"
           >
-            <span className="font-bold text-amber-500">⊘</span>
+            <span className="font-bold text-warning">⊘</span>
             <span className="hidden sm:inline">Block Time</span>
           </Button>
         ) : (
@@ -147,7 +147,7 @@ export function VenueOverviewHeader({
             className="h-8.5 hover:bg-nx-surfaceSubtle gap-1.5 border-nx-line text-xs font-medium"
           >
             <Link href="/venue/calendar">
-              <span className="font-bold text-amber-500">⊘</span>
+              <span className="font-bold text-warning">⊘</span>
               <span className="hidden sm:inline">Block Time</span>
             </Link>
           </Button>
@@ -161,7 +161,7 @@ export function VenueOverviewHeader({
           className="h-8.5 hover:bg-nx-surfaceSubtle gap-1.5 border-nx-line text-xs font-medium"
         >
           <Link href="/venue/money/payments">
-            <span className="font-bold text-emerald-500">$</span>
+            <span className="font-bold text-success">$</span>
             <span className="hidden sm:inline">Record Payment</span>
           </Link>
         </Button>

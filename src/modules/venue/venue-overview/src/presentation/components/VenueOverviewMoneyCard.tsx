@@ -33,12 +33,12 @@ export function VenueOverviewMoneyCard({ t }: Props) {
 
   return (
     <Card
-      className="overflow-hidden border-nx-line bg-gradient-to-r from-nx-surface via-nx-surface to-emerald-500/5"
+      className="overflow-hidden border-nx-line bg-nx-surface text-nx-ink"
       data-testid="venue-overview-money-card"
     >
       <CardContent className="flex flex-col justify-between gap-4 p-4 sm:p-5 md:flex-row md:items-center">
         <div className="flex items-start gap-3.5 sm:items-center">
-          <div className="flex size-10 shrink-0 items-center justify-center rounded-nx-md border border-emerald-500/30 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400">
+          <div className="flex size-10 shrink-0 items-center justify-center rounded-nx-md border border-success/30 bg-success/10 text-success">
             <CircleDollarSign className="size-5" aria-hidden="true" />
           </div>
           <div>
@@ -60,14 +60,14 @@ export function VenueOverviewMoneyCard({ t }: Props) {
         {summary && currency && !loading && (
           <div className="bg-nx-surfaceSubtle/80 flex flex-wrap items-center gap-4 rounded-nx-lg border border-nx-line px-4 py-2 text-xs">
             <div className="flex items-center gap-2">
-              <div className="rounded-full bg-emerald-500/10 p-1 text-emerald-600 dark:text-emerald-400">
+              <div className="rounded-full bg-success/10 p-1 text-success">
                 <Wallet className="size-3.5" aria-hidden="true" />
               </div>
               <div>
                 <span className="block text-[10px] font-semibold uppercase leading-none text-nx-ink-3">
                   {t("venueOverview.moneyCard.collectedToday", { defaultValue: "Collected Today" })}
                 </span>
-                <span className="font-mono text-xs font-bold text-emerald-600 dark:text-emerald-400">
+                <span className="font-mono text-xs font-bold text-success">
                   {formatMoney(summary.collectedToday, currency, language)}
                 </span>
               </div>
@@ -76,14 +76,14 @@ export function VenueOverviewMoneyCard({ t }: Props) {
             <div className="h-6 w-px bg-nx-line" />
 
             <div className="flex items-center gap-2">
-              <div className="rounded-full bg-amber-500/10 p-1 text-amber-600 dark:text-amber-400">
+              <div className="rounded-full bg-warning/10 p-1 text-warning">
                 <Clock className="size-3.5" aria-hidden="true" />
               </div>
               <div>
                 <span className="block text-[10px] font-semibold uppercase leading-none text-nx-ink-3">
                   {t("venueOverview.moneyCard.outstanding", { defaultValue: "Outstanding" })}
                 </span>
-                <span className="font-mono text-xs font-bold text-amber-600 dark:text-amber-400">
+                <span className="font-mono text-xs font-bold text-warning">
                   {formatMoney(summary.outstanding, currency, language)}
                 </span>
               </div>
@@ -107,7 +107,7 @@ export function VenueOverviewMoneyCard({ t }: Props) {
               className="h-8 gap-1.5 border-nx-line text-xs font-semibold hover:border-nx-accent hover:text-nx-accent"
             >
               <Link href="/venue/money/receivables">
-                <Receipt className="size-3.5 text-emerald-500" aria-hidden="true" />
+                <Receipt className="size-3.5 text-success" aria-hidden="true" />
                 <span>
                   {t("venueOverview.quickActions.receivables", { defaultValue: "Receivables" })}
                 </span>

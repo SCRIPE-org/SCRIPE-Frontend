@@ -1,7 +1,15 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@core/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+  DialogPortal,
+  NonModalScrim,
+} from "@core/ui/dialog";
 import { Button } from "@core/ui/button";
 import { Input } from "@core/ui/input";
 import { Label } from "@core/ui/label";
@@ -122,7 +130,10 @@ export function AddRelationshipDialog({
   };
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
+    <Dialog open={open} onOpenChange={onOpenChange} modal={false}>
+      <DialogPortal>
+        <NonModalScrim open={open} />
+      </DialogPortal>
       <DialogContent className="sm:max-w-[480px]">
         <form onSubmit={handleSubmit}>
           <DialogHeader>
@@ -212,7 +223,7 @@ export function AddRelationshipDialog({
                     {selectedParty.type}:{" "}
                     <strong className="text-nx-ink">{selectedParty.displayName}</strong>
                   </span>
-                  <span className="inline-flex items-center gap-1 text-[11px] font-medium text-emerald-600">
+                  <span className="inline-flex items-center gap-1 text-[11px] font-medium text-success">
                     <Check className="h-3 w-3" /> Selected
                   </span>
                 </div>
@@ -224,8 +235,8 @@ export function AddRelationshipDialog({
                 <Label htmlFor="rel-type" className="font-medium text-nx-ink">
                   {t("party.dialog.relType")} <span className="text-destructive">*</span>
                 </Label>
-                <span className="rounded border border-amber-500/20 bg-amber-500/10 px-1.5 py-0.5 text-[10px] font-medium text-amber-500">
-                  V1 Supported
+                <span className="rounded border border-warning/20 bg-warning/10 px-1.5 py-0.5 text-[10px] font-medium text-warning">
+                  Supported Type
                 </span>
               </div>
               {/* Standard Type Selection Dropdown */}
@@ -254,9 +265,9 @@ export function AddRelationshipDialog({
                   <SelectValue placeholder="Choose relationship type (اختيار نوع العلاقة)" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="Guardian">Guardian (ولي أمر) — V1 Supported</SelectItem>
+                  <SelectItem value="Guardian">Guardian (ولي أمر)</SelectItem>
                   <SelectItem value="EmergencyContact">
-                    Emergency Contact (جهة اتصال للطوارئ) — V1 Supported
+                    Emergency Contact (جهة اتصال للطوارئ)
                   </SelectItem>
                   <SelectItem value="custom">Custom / Typed (مخصص)</SelectItem>
                 </SelectContent>
@@ -272,11 +283,7 @@ export function AddRelationshipDialog({
                     setRelationshipType("Guardian");
                     if (error) setError(null);
                   }}
-                  className={`h-7 rounded-lg px-3 text-xs transition-colors ${
-                    relationshipType === "Guardian"
-                      ? "bg-nx-accent-fill font-semibold text-nx-on-fill shadow-sm"
-                      : "border-nx-border text-nx-ink-2 hover:text-nx-ink"
-                  }`}
+                  className="h-7 rounded-lg px-3 text-xs"
                 >
                   Guardian (ولي أمر)
                 </Button>
@@ -288,11 +295,7 @@ export function AddRelationshipDialog({
                     setRelationshipType("EmergencyContact");
                     if (error) setError(null);
                   }}
-                  className={`h-7 rounded-lg px-3 text-xs transition-colors ${
-                    relationshipType === "EmergencyContact"
-                      ? "bg-nx-accent-fill font-semibold text-nx-on-fill shadow-sm"
-                      : "border-nx-border text-nx-ink-2 hover:text-nx-ink"
-                  }`}
+                  className="h-7 rounded-lg px-3 text-xs"
                 >
                   Emergency Contact (طوارئ)
                 </Button>
@@ -311,8 +314,7 @@ export function AddRelationshipDialog({
                 required
               />
               <p className="text-[11px] text-nx-ink-3">
-                Select a supported type above or type directly. Affiliations/Signatories are
-                deferred under RFC-PARTY-AFFILIATIONS.
+                Select a supported type above or type a custom relationship directly.
               </p>
             </div>
 
