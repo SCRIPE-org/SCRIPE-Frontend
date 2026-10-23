@@ -27,27 +27,27 @@ function loadDpapiTenantAdmins(): { alpha: DpapiTenantAdmin; beta: DpapiTenantAd
   const psScript = [
     '$dirs = @((Join-Path $env:LOCALAPPDATA "SCRIPE\\PartyKernelE2E"))',
     '$pkgRoot = Join-Path $env:USERPROFILE "AppData\\Local\\Packages"',
-    'if (Test-Path $pkgRoot) {',
-    '  $dirs += Get-ChildItem -Path $pkgRoot -Directory -ErrorAction SilentlyContinue | ForEach-Object {',
+    "if (Test-Path $pkgRoot) {",
+    "  $dirs += Get-ChildItem -Path $pkgRoot -Directory -ErrorAction SilentlyContinue | ForEach-Object {",
     '    Join-Path $_.FullName "LocalCache\\Local\\SCRIPE\\PartyKernelE2E"',
-    '  }',
-    '}',
-    '$files = foreach ($d in $dirs) {',
-    '  if (Test-Path $d) {',
+    "  }",
+    "}",
+    "$files = foreach ($d in $dirs) {",
+    "  if (Test-Path $d) {",
     '    Get-ChildItem -Path $d -Filter "tenant-admins-c1-final-flow-*.xml" -File -ErrorAction SilentlyContinue',
-    '  }',
-    '}',
-    '$latest = $files | Sort-Object LastWriteTimeUtc -Descending | Select-Object -First 1',
+    "  }",
+    "}",
+    "$latest = $files | Sort-Object LastWriteTimeUtc -Descending | Select-Object -First 1",
     'if (-not $latest) { throw "DPAPI tenant-admins fixture not found" }',
-    '$items = Import-Clixml -Path $latest.FullName',
-    '$out = foreach ($item in $items) {',
-    '  [PSCustomObject]@{',
-    '    tenantKey = [string]$item.TenantKey',
-    '    email = [string]$item.Credential.UserName',
-    '    password = [string]$item.Credential.GetNetworkCredential().Password',
-    '  }',
-    '}',
-    '$out | ConvertTo-Json -Compress',
+    "$items = Import-Clixml -Path $latest.FullName",
+    "$out = foreach ($item in $items) {",
+    "  [PSCustomObject]@{",
+    "    tenantKey = [string]$item.TenantKey",
+    "    email = [string]$item.Credential.UserName",
+    "    password = [string]$item.Credential.GetNetworkCredential().Password",
+    "  }",
+    "}",
+    "$out | ConvertTo-Json -Compress",
   ].join("\n");
 
   const encoded = Buffer.from(psScript, "utf16le").toString("base64");
@@ -70,7 +70,11 @@ const TENANT_ADMINS = loadDpapiTenantAdmins();
 /**
  * Real browser UI login through `/login` without injecting tokens into storage.
  */
-async function loginViaUi(page: Page, creds: DpapiTenantAdmin, redirectPath = "/party-kernel/parties") {
+async function loginViaUi(
+  page: Page,
+  creds: DpapiTenantAdmin,
+  redirectPath = "/party-kernel/parties"
+) {
   const randomIp = `10.${Math.floor(Math.random() * 200) + 1}.${Math.floor(Math.random() * 200) + 1}.${Math.floor(Math.random() * 200) + 1}`;
   await page.route("**/api/v1/auth/**", async (route) => {
     const headers = { ...route.request().headers(), "x-forwarded-for": randomIp };
@@ -519,7 +523,9 @@ test.describe("Contacts & PartyKernel End-to-End Acceptance (Real UI Auth)", () 
       const firstRow = page.locator("tbody tr, [data-testid='party-row']").first();
       await firstRow.click();
       await page.waitForURL(
-        (url) => /\/party-kernel\/parties\/[^/]+$/.test(url.pathname) && !url.pathname.endsWith("/parties"),
+        (url) =>
+          /\/party-kernel\/parties\/[^/]+$/.test(url.pathname) &&
+          !url.pathname.endsWith("/parties"),
         { timeout: 15_000 }
       );
       await page.waitForLoadState("networkidle");
@@ -644,8 +650,7 @@ test.describe("Contacts & PartyKernel End-to-End Acceptance (Real UI Auth)", () 
 
     await page.waitForURL(
       (url) =>
-        /\/party-kernel\/parties\/[^/]+$/.test(url.pathname) &&
-        !url.pathname.endsWith("/parties"),
+        /\/party-kernel\/parties\/[^/]+$/.test(url.pathname) && !url.pathname.endsWith("/parties"),
       { timeout: 15_000 }
     );
     const c11PersonId = page.url().split("/").pop() || "";
@@ -653,9 +658,7 @@ test.describe("Contacts & PartyKernel End-to-End Acceptance (Real UI Auth)", () 
     await page.waitForLoadState("networkidle");
 
     // Authorized DOB must render formatted date, never privacy-restricted banner
-    await expect(
-      page.locator("text=Date of birth protected under privacy policy")
-    ).toHaveCount(0);
+    await expect(page.locator("text=Date of birth protected under privacy policy")).toHaveCount(0);
     await expect(page.locator("text=/2012/").first()).toBeVisible({ timeout: 10_000 });
     await expect(page.locator("text=Layla").first()).toBeVisible();
     await expect(page.locator("text=Noor").first()).toBeVisible();
@@ -676,7 +679,10 @@ test.describe("Contacts & PartyKernel End-to-End Acceptance (Real UI Auth)", () 
         res.url().includes(`/api/v1/Parties/people/${c11PersonId}`) &&
         res.request().method() === "PUT"
     );
-    await page.locator("form").getByRole("button", { name: /save|حفظ/i }).click();
+    await page
+      .locator("form")
+      .getByRole("button", { name: /save|حفظ/i })
+      .click();
     const personPutRes = await personPutPromise;
     expect([200, 204]).toContain(personPutRes.status());
     await page.waitForLoadState("networkidle");
@@ -700,7 +706,10 @@ test.describe("Contacts & PartyKernel End-to-End Acceptance (Real UI Auth)", () 
     await page.locator("#org-display-name").fill(c11OrgDisplayName);
     await page.locator("#org-tax-id").fill(c11OrgTaxId);
 
-    await page.locator("form").getByRole("button", { name: /create|حفظ|إضافة/i }).click();
+    await page
+      .locator("form")
+      .getByRole("button", { name: /create|حفظ|إضافة/i })
+      .click();
     await page.waitForURL(
       (url) =>
         /\/party-kernel\/parties\/[^/]+$/.test(url.pathname) &&
@@ -735,7 +744,10 @@ test.describe("Contacts & PartyKernel End-to-End Acceptance (Real UI Auth)", () 
         res.url().includes(`/api/v1/Parties/organizations/${c11OrgId}`) &&
         res.request().method() === "PUT"
     );
-    await page.locator("form").getByRole("button", { name: /save|حفظ/i }).click();
+    await page
+      .locator("form")
+      .getByRole("button", { name: /save|حفظ/i })
+      .click();
     const orgPutRes = await orgPutPromise;
     expect([200, 204]).toContain(orgPutRes.status());
     await page.waitForLoadState("networkidle");
@@ -763,7 +775,10 @@ test.describe("Contacts & PartyKernel End-to-End Acceptance (Real UI Auth)", () 
     await manualToggleBtn.click();
 
     await page.locator("#rel-target").fill(c11PersonId);
-    await page.locator("form").getByRole("button", { name: /save|إضافة|حفظ/i }).click();
+    await page
+      .locator("form")
+      .getByRole("button", { name: /save|إضافة|حفظ/i })
+      .click();
 
     // Client-side party-type compatibility guard blocks Guardian on Organization
     await expect(page.getByRole("alert")).toContainText(
@@ -774,16 +789,13 @@ test.describe("Contacts & PartyKernel End-to-End Acceptance (Real UI Auth)", () 
     // Create or use second Person for valid Person-to-Person Guardian relationship
     let secondPersonId = createdPersonId;
     if (!secondPersonId) {
-      const createP2Res = await page.request.post(
-        "http://localhost:5179/api/v1/Parties/people",
-        {
-          headers: mutationHeaders(accessToken!),
-          data: {
-            fullName: `Tariq Al-Rashid ${uniqueTimestamp}`,
-            displayName: `Tariq ${uniqueTimestamp}`,
-          },
-        }
-      );
+      const createP2Res = await page.request.post("http://localhost:5179/api/v1/Parties/people", {
+        headers: mutationHeaders(accessToken!),
+        data: {
+          fullName: `Tariq Al-Rashid ${uniqueTimestamp}`,
+          displayName: `Tariq ${uniqueTimestamp}`,
+        },
+      });
       expect([200, 201]).toContain(createP2Res.status());
       const p2Body = await createP2Res.json();
       secondPersonId = typeof p2Body === "string" ? p2Body : p2Body.id;
@@ -807,7 +819,10 @@ test.describe("Contacts & PartyKernel End-to-End Acceptance (Real UI Auth)", () 
       .getByRole("button", { name: /enter id manually|إدخال المعرف يدوياً|enterIdManually/i })
       .click();
     await page.locator("#rel-target").fill(secondPersonId);
-    await page.locator("form").getByRole("button", { name: /save|إضافة|حفظ/i }).click();
+    await page
+      .locator("form")
+      .getByRole("button", { name: /save|إضافة|حفظ/i })
+      .click();
     await page.waitForLoadState("networkidle");
 
     // Verify Outbound badge and View Related Contact navigation on source profile
@@ -832,7 +847,10 @@ test.describe("Contacts & PartyKernel End-to-End Acceptance (Real UI Auth)", () 
     await page.waitForLoadState("networkidle");
 
     await expect(
-      page.getByTestId("relationship-direction-badge").filter({ hasText: /inbound|وارد/i }).first()
+      page
+        .getByTestId("relationship-direction-badge")
+        .filter({ hasText: /inbound|وارد/i })
+        .first()
     ).toBeVisible({ timeout: 10_000 });
 
     // ── Step 5: 150+ Contacts Scale, Pagination, and Deep-Page Sub-Resource Hydration ──
@@ -873,20 +891,17 @@ test.describe("Contacts & PartyKernel End-to-End Acceptance (Real UI Auth)", () 
     expect(postSeedCountJson.totalCount).toBeGreaterThanOrEqual(152);
 
     // Create the >150th contact with ContactPoint and PartyRole
-    const deepCreateRes = await page.request.post(
-      "http://localhost:5179/api/v1/Parties/people",
-      {
-        headers: mutationHeaders(accessToken!, {
-          "Idempotency-Key": `deep-contact-${uniqueTimestamp}`,
-        }),
-        data: {
-          fullName: `Zayd Al-Nasser Deep150 ${uniqueTimestamp}`,
-          displayName: `Zayd Deep150 ${uniqueTimestamp}`,
-          dateOfBirth: "2008-11-03",
-          isMinor: true,
-        },
-      }
-    );
+    const deepCreateRes = await page.request.post("http://localhost:5179/api/v1/Parties/people", {
+      headers: mutationHeaders(accessToken!, {
+        "Idempotency-Key": `deep-contact-${uniqueTimestamp}`,
+      }),
+      data: {
+        fullName: `Zayd Al-Nasser Deep150 ${uniqueTimestamp}`,
+        displayName: `Zayd Deep150 ${uniqueTimestamp}`,
+        dateOfBirth: "2008-11-03",
+        isMinor: true,
+      },
+    });
     expect([200, 201]).toContain(deepCreateRes.status());
     const deepBody = await deepCreateRes.json();
     const deepPersonId = typeof deepBody === "string" ? deepBody : deepBody.id;

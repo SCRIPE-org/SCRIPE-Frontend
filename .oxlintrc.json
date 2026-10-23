@@ -1,0 +1,22 @@
+{
+  "$schema": "./node_modules/oxlint/configuration_schema.json",
+  "plugins": [
+    "typescript",
+    "react",
+    "nextjs",
+    "jsx-a11y"
+  ],
+  "categories": {
+    "correctness": "warn"
+  },
+  "rules": {
+    "no-unused-vars": "warn",
+    "react/jsx-key": "error"
+  },
+  "ignorePatterns": [
+    ".next/**",
+    "node_modules/**",
+    "dist/**",
+    "storybook-static/**"
+  ]
+}

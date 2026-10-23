@@ -11,7 +11,10 @@ import { render, screen, fireEvent, waitFor, within, act } from "@testing-librar
 // `toBeInTheDocument` on Vitest's own `expect()` return type.
 import "@testing-library/jest-dom/vitest";
 import { GenericCrudView, type CrudConfig } from "./generic-crud-view";
-import { registerCustomFieldsExtension, type CustomFieldsExtensionApi } from "@core/crud/customFieldsExtension";
+import {
+  registerCustomFieldsExtension,
+  type CustomFieldsExtensionApi,
+} from "@core/crud/customFieldsExtension";
 import { useAppStore } from "@core/store/useAppStore";
 
 // GenericCrudView (via @core/hooks/use-permissions, a re-export) and
@@ -79,9 +82,11 @@ function makeViewModel(overrides: Record<string, unknown> = {}) {
 
 function registerFakeCustomFieldsExtension(): CustomFieldsExtensionApi {
   const fake: CustomFieldsExtensionApi = {
-    getFormFields: vi.fn().mockResolvedValue([
-      { name: "__cf__nationality", label: "Nationality", type: "text", section: "Custom Fields" },
-    ]),
+    getFormFields: vi
+      .fn()
+      .mockResolvedValue([
+        { name: "__cf__nationality", label: "Nationality", type: "text", section: "Custom Fields" },
+      ]),
     saveValues: vi.fn().mockResolvedValue(undefined),
     // Empty by default -- these form-focused tests never populate table rows,
     // so useCustomFieldColumns' own ownerIds.length === 0 gate means this is
@@ -98,7 +103,8 @@ describe("GenericCrudView + entityTypeKey", () => {
     const extension = registerFakeCustomFieldsExtension();
     const vm = makeViewModel();
     const config: CrudConfig<{ id: string }> = {
-      titleKey: "t", subtitleKey: "s",
+      titleKey: "t",
+      subtitleKey: "s",
       columns: [{ key: "id", label: "Id" }],
       createFields: [{ name: "firstName", label: "First Name", type: "text" }],
       entityTypeKey: "party.person",
@@ -115,16 +121,18 @@ describe("GenericCrudView + entityTypeKey", () => {
     fireEvent.change(screen.getByLabelText("Nationality"), { target: { value: "Egyptian" } });
     fireEvent.click(screen.getByText("common.save"));
 
-    await waitFor(() => expect(vm.createItem).toHaveBeenCalledWith(
-      expect.objectContaining({ firstName: "Jane" })
-    ));
+    await waitFor(() =>
+      expect(vm.createItem).toHaveBeenCalledWith(expect.objectContaining({ firstName: "Jane" }))
+    );
     // The namespaced custom-field key must NOT leak into the entity's own create payload.
     expect(vm.createItem).not.toHaveBeenCalledWith(
-      expect.objectContaining({ "__cf__nationality": expect.anything() })
+      expect.objectContaining({ __cf__nationality: expect.anything() })
     );
-    await waitFor(() => expect(extension.saveValues).toHaveBeenCalledWith(
-      "party.person", "new-record-id", { nationality: "Egyptian" }
-    ));
+    await waitFor(() =>
+      expect(extension.saveValues).toHaveBeenCalledWith("party.person", "new-record-id", {
+        nationality: "Egyptian",
+      })
+    );
     // The wrapper must confirm success itself, sequenced AFTER saveValues
     // settles — not rely solely on the viewmodel's own onCreateSuccess, which
     // (for a screen NOT opted into deferSuccessEffects) fires before
@@ -138,7 +146,8 @@ describe("GenericCrudView + entityTypeKey", () => {
     const extension = registerFakeCustomFieldsExtension();
     const vm = makeViewModel();
     const config: CrudConfig<{ id: string }> = {
-      titleKey: "t", subtitleKey: "s",
+      titleKey: "t",
+      subtitleKey: "s",
       columns: [{ key: "id", label: "Id" }],
       // Deliberately no createFields, no entityTypeKey — createFields is
       // `undefined` at runtime here, which used to crash createFieldsWithCustom's
@@ -163,7 +172,8 @@ describe("GenericCrudView + entityTypeKey", () => {
       editingItem,
     });
     const config: CrudConfig<{ id: string }> = {
-      titleKey: "t", subtitleKey: "s",
+      titleKey: "t",
+      subtitleKey: "s",
       columns: [{ key: "id", label: "Id" }],
       createFields: [{ name: "firstName", label: "First Name", type: "text" }],
       entityTypeKey: "party.person",
@@ -180,18 +190,22 @@ describe("GenericCrudView + entityTypeKey", () => {
     fireEvent.change(screen.getByLabelText("Nationality"), { target: { value: "Egyptian" } });
     fireEvent.click(screen.getByText("common.save"));
 
-    await waitFor(() => expect(vm.updateItem).toHaveBeenCalledWith(
-      "existing-record-id",
-      expect.objectContaining({ firstName: "Janet" })
-    ));
+    await waitFor(() =>
+      expect(vm.updateItem).toHaveBeenCalledWith(
+        "existing-record-id",
+        expect.objectContaining({ firstName: "Janet" })
+      )
+    );
     // The namespaced custom-field key must NOT leak into the entity's own update payload.
     expect(vm.updateItem).not.toHaveBeenCalledWith(
       "existing-record-id",
-      expect.objectContaining({ "__cf__nationality": expect.anything() })
+      expect.objectContaining({ __cf__nationality: expect.anything() })
     );
-    await waitFor(() => expect(extension.saveValues).toHaveBeenCalledWith(
-      "party.person", "existing-record-id", { nationality: "Egyptian" }
-    ));
+    await waitFor(() =>
+      expect(extension.saveValues).toHaveBeenCalledWith("party.person", "existing-record-id", {
+        nationality: "Egyptian",
+      })
+    );
     // Same sequencing requirement as create: confirm (toast + close) only
     // after saveValues has actually settled, not driven by the viewmodel's
     // own auto-close.
@@ -200,14 +214,17 @@ describe("GenericCrudView + entityTypeKey", () => {
 
   it("does not confirm success (no toast, edit modal stays open) when saveValues fails after updateItem succeeds", async () => {
     const extension = registerFakeCustomFieldsExtension();
-    vi.mocked(extension.saveValues).mockRejectedValueOnce(new Error("Custom field values could not be saved"));
+    vi.mocked(extension.saveValues).mockRejectedValueOnce(
+      new Error("Custom field values could not be saved")
+    );
     const vm = makeViewModel({
       isCreateModalOpen: false,
       isEditModalOpen: true,
       editingItem: { id: "existing-record-id", firstName: "Jane" },
     });
     const config: CrudConfig<{ id: string }> = {
-      titleKey: "t", subtitleKey: "s",
+      titleKey: "t",
+      subtitleKey: "s",
       columns: [{ key: "id", label: "Id" }],
       createFields: [{ name: "firstName", label: "First Name", type: "text" }],
       entityTypeKey: "party.person",
@@ -227,7 +244,7 @@ describe("GenericCrudView + entityTypeKey", () => {
     expect(vm.closeEditModal).not.toHaveBeenCalled();
   });
 
-  it("sends null (not \"\") when the user clears a custom field, so the backend clears it instead of 422-ing", async () => {
+  it('sends null (not "") when the user clears a custom field, so the backend clears it instead of 422-ing', async () => {
     const extension = registerFakeCustomFieldsExtension();
     const vm = makeViewModel({
       isCreateModalOpen: false,
@@ -235,7 +252,8 @@ describe("GenericCrudView + entityTypeKey", () => {
       editingItem: { id: "existing-record-id", firstName: "Jane" },
     });
     const config: CrudConfig<{ id: string }> = {
-      titleKey: "t", subtitleKey: "s",
+      titleKey: "t",
+      subtitleKey: "s",
       columns: [{ key: "id", label: "Id" }],
       createFields: [{ name: "firstName", label: "First Name", type: "text" }],
       entityTypeKey: "party.person",
@@ -254,9 +272,11 @@ describe("GenericCrudView + entityTypeKey", () => {
     fireEvent.change(screen.getByLabelText("Nationality"), { target: { value: "" } });
     fireEvent.click(screen.getByText("common.save"));
 
-    await waitFor(() => expect(extension.saveValues).toHaveBeenCalledWith(
-      "party.person", "existing-record-id", { nationality: null }
-    ));
+    await waitFor(() =>
+      expect(extension.saveValues).toHaveBeenCalledWith("party.person", "existing-record-id", {
+        nationality: null,
+      })
+    );
   });
 
   it("surfaces an error instead of silently dropping custom values when createItem returns no id", async () => {
@@ -265,7 +285,8 @@ describe("GenericCrudView + entityTypeKey", () => {
     // to make the typed custom values vanish with no toast and no error.
     const vm = makeViewModel({ createItem: vi.fn().mockResolvedValue(undefined) });
     const config: CrudConfig<{ id: string }> = {
-      titleKey: "t", subtitleKey: "s",
+      titleKey: "t",
+      subtitleKey: "s",
       columns: [{ key: "id", label: "Id" }],
       createFields: [{ name: "firstName", label: "First Name", type: "text" }],
       entityTypeKey: "party.person",
@@ -283,18 +304,23 @@ describe("GenericCrudView + entityTypeKey", () => {
 
     // ErrorMessage renders its own role="alert" inside GenericForm's wrapper,
     // so the outermost one is the server-error banner.
-    await waitFor(() => expect(screen.getAllByRole("alert")[0]).toHaveTextContent(
-      /create response did not return an id/i
-    ));
+    await waitFor(() =>
+      expect(screen.getAllByRole("alert")[0]).toHaveTextContent(
+        /create response did not return an id/i
+      )
+    );
     expect(extension.saveValues).not.toHaveBeenCalled();
   });
 
   it("keeps the create modal open and does not swallow the error when saveValues fails after createItem succeeds", async () => {
     const extension = registerFakeCustomFieldsExtension();
-    vi.mocked(extension.saveValues).mockRejectedValueOnce(new Error("Custom field values could not be saved"));
+    vi.mocked(extension.saveValues).mockRejectedValueOnce(
+      new Error("Custom field values could not be saved")
+    );
     const vm = makeViewModel();
     const config: CrudConfig<{ id: string }> = {
-      titleKey: "t", subtitleKey: "s",
+      titleKey: "t",
+      subtitleKey: "s",
       columns: [{ key: "id", label: "Id" }],
       createFields: [{ name: "firstName", label: "First Name", type: "text" }],
       entityTypeKey: "party.person",
@@ -319,10 +345,16 @@ describe("GenericCrudView + entityTypeKey", () => {
 
   it("keeps what the user already typed when the inline add-custom-field trigger adds a field mid-form", async () => {
     const nationality = {
-      name: "__cf__nationality", label: "Nationality", type: "text", section: "Custom Fields",
+      name: "__cf__nationality",
+      label: "Nationality",
+      type: "text",
+      section: "Custom Fields",
     };
     const shirtSize = {
-      name: "__cf__shirtSize", label: "Shirt Size", type: "text", section: "Custom Fields",
+      name: "__cf__shirtSize",
+      label: "Shirt Size",
+      type: "text",
+      section: "Custom Fields",
     };
     // First load returns one custom field; the refetch triggered by the inline
     // dialog's onCreated returns two.
@@ -335,14 +367,17 @@ describe("GenericCrudView + entityTypeKey", () => {
       saveValues: vi.fn().mockResolvedValue(undefined),
       getBulkColumnValues: vi.fn().mockResolvedValue({ columns: [], valuesByOwnerId: {} }),
       InlineAddTrigger: ({ onCreated }) => (
-        <button type="button" onClick={onCreated}>inline-add</button>
+        <button type="button" onClick={onCreated}>
+          inline-add
+        </button>
       ),
     };
     registerCustomFieldsExtension(fake);
 
     const vm = makeViewModel();
     const config: CrudConfig<{ id: string }> = {
-      titleKey: "t", subtitleKey: "s",
+      titleKey: "t",
+      subtitleKey: "s",
       columns: [{ key: "id", label: "Id" }],
       createFields: [{ name: "firstName", label: "First Name", type: "text" }],
       entityTypeKey: "party.person",
@@ -381,7 +416,8 @@ describe("GenericCrudView + entityTypeKey", () => {
       editingItem: null,
     });
     const config: CrudConfig<{ id: string }> = {
-      titleKey: "t", subtitleKey: "s",
+      titleKey: "t",
+      subtitleKey: "s",
       columns: [{ key: "id", label: "Id" }],
       createFields: [{ name: "firstName", label: "First Name", type: "text" }],
       entityTypeKey: "party.person",
@@ -398,9 +434,9 @@ describe("GenericCrudView + entityTypeKey", () => {
     // That's expected, not the regression under test. What the fix actually
     // guarantees is that a THIRD call exists, keyed on the view item's own
     // id — before the fix, no call anywhere used "viewed-record-id".
-    await waitFor(() => expect(extension.getFormFields).toHaveBeenCalledWith(
-      "party.person", "viewed-record-id"
-    ));
+    await waitFor(() =>
+      expect(extension.getFormFields).toHaveBeenCalledWith("party.person", "viewed-record-id")
+    );
   });
 
   describe("deferCustomFieldsToSetup layout and visibility", () => {
@@ -461,9 +497,7 @@ describe("GenericCrudView + entityTypeKey", () => {
       fireEvent.click(deferSwitch);
 
       // Custom fields should now be hidden
-      await waitFor(() =>
-        expect(screen.queryByLabelText("Nationality")).not.toBeInTheDocument()
-      );
+      await waitFor(() => expect(screen.queryByLabelText("Nationality")).not.toBeInTheDocument());
 
       // Fill in static field and submit
       fireEvent.change(screen.getByLabelText("First Name"), { target: { value: "Bob" } });
@@ -495,7 +529,11 @@ describe("GenericCrudView + entityTypeKey", () => {
           { name: "sendSetupEmail", label: "Send setup email", type: "switch" },
           { name: "firstName", label: "First Name", type: "text" },
         ],
-        createInitialValues: { sendSetupEmail: true, firstName: "", deferCustomFieldsToSetup: true },
+        createInitialValues: {
+          sendSetupEmail: true,
+          firstName: "",
+          deferCustomFieldsToSetup: true,
+        },
         entityTypeKey: "identity.admin",
       };
 
@@ -565,7 +603,12 @@ describe("GenericCrudView + entityTypeKey", () => {
       fireEvent.change(screen.getByLabelText("First Name"), { target: { value: "Alice Updated" } });
       fireEvent.click(screen.getByText("common.save"));
 
-      await waitFor(() => expect(vm.updateItem).toHaveBeenCalledWith("edit-1", expect.objectContaining({ firstName: "Alice Updated" })));
+      await waitFor(() =>
+        expect(vm.updateItem).toHaveBeenCalledWith(
+          "edit-1",
+          expect.objectContaining({ firstName: "Alice Updated" })
+        )
+      );
       await waitFor(() => expect(vm.confirmUpdateSuccess).toHaveBeenCalled());
     });
 
@@ -625,7 +668,11 @@ describe("GenericCrudView + entityTypeKey", () => {
           { name: "sendSetupEmail", label: "Send setup email", type: "switch" },
           { name: "firstName", label: "First Name", type: "text" },
           // Even if previously present in createFields, it must be removed if no custom fields exist
-          { name: "deferCustomFieldsToSetup", label: "Complete custom fields during account setup", type: "switch" },
+          {
+            name: "deferCustomFieldsToSetup",
+            label: "Complete custom fields during account setup",
+            type: "switch",
+          },
         ],
         createInitialValues: { sendSetupEmail: true, firstName: "" },
         entityTypeKey: "identity.admin",
@@ -693,7 +740,8 @@ describe("GenericCrudView + dynamic custom-field table columns", () => {
       ],
     });
     const config: CrudConfig<{ id: string; firstName: string }> = {
-      titleKey: "t", subtitleKey: "s",
+      titleKey: "t",
+      subtitleKey: "s",
       columns: [
         { key: "id", label: "Id" },
         { key: "firstName", label: "First Name" },
@@ -738,7 +786,8 @@ describe("GenericCrudView + dynamic custom-field table columns", () => {
       items: [{ id: "row-1", firstName: "Jane" }],
     });
     const config: CrudConfig<{ id: string; firstName: string }> = {
-      titleKey: "t", subtitleKey: "s",
+      titleKey: "t",
+      subtitleKey: "s",
       columns: [
         { key: "id", label: "Id" },
         { key: "firstName", label: "First Name" },
@@ -755,10 +804,11 @@ describe("GenericCrudView + dynamic custom-field table columns", () => {
     await waitFor(() => expect(within(table).getByText("Jane")).toBeInTheDocument());
 
     expect(extension.getBulkColumnValues).not.toHaveBeenCalled();
-    expect(within(table).getAllByRole("columnheader").map((cell) => cell.textContent)).toEqual([
-      "Id",
-      "First Name",
-    ]);
+    expect(
+      within(table)
+        .getAllByRole("columnheader")
+        .map((cell) => cell.textContent)
+    ).toEqual(["Id", "First Name"]);
   });
 });
 
@@ -855,7 +905,9 @@ describe("GenericCrudView + field-level security on custom-field columns (Tier 1
           .map((cell) => cell.textContent)
       ).toContain("Shirt Size")
     );
-    return within(table).getAllByRole("columnheader").map((cell) => cell.textContent);
+    return within(table)
+      .getAllByRole("columnheader")
+      .map((cell) => cell.textContent);
   }
 
   it("hides a restricted custom-field column while keeping the unrestricted ones", async () => {

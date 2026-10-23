@@ -94,7 +94,17 @@ import type { IVenueAttentionRepository } from "./attention-center/src/domain/in
 import { VenueOverviewService } from "./venue-overview/src/data/services/VenueOverviewService";
 import type { IVenueOverviewService } from "./venue-overview/src/domain/interfaces/IVenueOverviewService";
 
-interface VenueContainer {
+import { VenueReportsService } from "./reports/src/data/services/VenueReportsService";
+import { VenueReportsRepository } from "./reports/src/data/repositories/VenueReportsRepository";
+import type { IVenueReportsService } from "./reports/src/domain/interfaces/IVenueReportsService";
+import type { IVenueReportsRepository } from "./reports/src/domain/interfaces/IVenueReportsRepository";
+
+import { GuestPortalService } from "./guest-portal/src/data/services/guest-portal.service";
+import { GuestPortalRepository } from "./guest-portal/src/data/repositories/GuestPortalRepository";
+import type { IGuestPortalService } from "./guest-portal/src/domain/interfaces/IGuestPortalService";
+import type { IGuestPortalRepository } from "./guest-portal/src/domain/interfaces/IGuestPortalRepository";
+
+export interface VenueContainer {
   venueProfileRepository: IVenueProfileRepository;
   facilityRepository: IFacilityRepository;
   facilityResourceProfileRepository: IFacilityResourceProfileRepository;
@@ -108,6 +118,9 @@ interface VenueContainer {
   moneyRepository: IMoneyRepository;
   venueAttentionRepository: IVenueAttentionRepository;
   venueOverviewService: IVenueOverviewService;
+  venueReportsRepository: IVenueReportsRepository;
+  guestPortalService: IGuestPortalService;
+  guestPortalRepository: IGuestPortalRepository;
   siteRepository: ISiteRepository;
   /** Site picker for the Venue Profile "Site" field — OrganizationCore is a different backend module. */
   sitePickerService: ISitePickerService;
@@ -183,6 +196,7 @@ export function getVenueContainer(): VenueContainer {
   const commercialPricingService = new CommercialPricingService(catalogPricingApi);
   const moneyService: IMoneyService = new MoneyService(financeApi);
   const siteService: ISiteService = new SiteService(organizationCoreApi);
+  const venueReportsService: IVenueReportsService = new VenueReportsService(venueApi);
 
   container = {
     venueProfileRepository: new VenueProfileRepository(venueProfileService),
@@ -199,14 +213,10 @@ export function getVenueContainer(): VenueContainer {
     commercialPricingRepository: new CommercialPricingRepository(commercialPricingService),
     moneyRepository: new MoneyRepository(moneyService),
     venueAttentionRepository: new VenueAttentionRepository(venueAttentionService),
-    venueOverviewService: new VenueOverviewService(
-      venueApi,
-      new OperationsCalendarRepository(operationsCalendarService),
-      new SchedulableResourceRepository(schedulableResourceService),
-      new FacilityResourceProfileRepository(facilityResourceProfileService),
-      new FacilityRepository(facilityService),
-      new CustomerRepository(customerPickerService)
-    ),
+    venueOverviewService: new VenueOverviewService(venueApi),
+    venueReportsRepository: new VenueReportsRepository(venueReportsService),
+    guestPortalService: new GuestPortalService(venueApi),
+    guestPortalRepository: new GuestPortalRepository(new GuestPortalService(venueApi)),
     siteRepository: new SiteRepository(siteService),
     sitePickerService: new SitePickerService(organizationCoreApi),
     facilityResourceProfilePickerService: new FacilityResourceProfilePickerService(venueApi),
@@ -254,6 +264,15 @@ export const venueContainer = {
   },
   get venueOverviewService() {
     return getVenueContainer().venueOverviewService;
+  },
+  get venueReportsRepository() {
+    return getVenueContainer().venueReportsRepository;
+  },
+  get guestPortalService() {
+    return getVenueContainer().guestPortalService;
+  },
+  get guestPortalRepository() {
+    return getVenueContainer().guestPortalRepository;
   },
   get siteRepository() {
     return getVenueContainer().siteRepository;

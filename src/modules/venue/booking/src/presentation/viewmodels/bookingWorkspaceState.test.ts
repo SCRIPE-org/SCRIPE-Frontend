@@ -88,6 +88,25 @@ describe("bookingWorkspaceState", () => {
     expect(confirmed.stage).toBe("confirmed");
   });
 
+  it("preserves a live hold as retryable after confirmation fails ambiguously", () => {
+    const held = {
+      ...initialBookingWorkspaceState,
+      stage: "confirming" as const,
+      reservationId: "reservation-1",
+      hold: { bookingHoldId: "hold-1", expiresAtUtc: "2999-09-10T07:15:00Z" },
+    };
+
+    const result = reduceBookingWorkspace(held, {
+      type: "confirmationFailed",
+      message: "response lost",
+    });
+
+    expect(result.stage).toBe("held");
+    expect(result.reservationId).toBe("reservation-1");
+    expect(result.hold).toEqual(held.hold);
+    expect(result.errorMessage).toBe("response lost");
+  });
+
   it("represents server feature denial separately from a generic network error", () => {
     const result = reduceBookingWorkspace(initialBookingWorkspaceState, {
       type: "featureUnavailable",

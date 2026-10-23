@@ -55,15 +55,15 @@ export function TenantStatusDistribution({
   }, [data, t]);
 
   return (
-    <Card className="backdrop-blur-xs shadow-xs flex h-full flex-col border-border/80 bg-card/80">
+    <Card className="flex h-full flex-col border-nx-line bg-nx-surface text-nx-ink hover:border-nx-line-hi">
       <CardHeader className="p-4 pb-2 sm:p-5">
         <div className="flex items-center gap-2">
           <Activity className="h-4 w-4 text-primary" />
-          <CardTitle className="text-sm font-bold text-foreground">
+          <CardTitle className="text-sm font-bold text-nx-ink">
             {t("tenantAnalytics.status.title") || "Tenant Status"}
           </CardTitle>
         </div>
-        <CardDescription className="text-xs text-muted-foreground">
+        <CardDescription className="text-xs text-nx-ink-3">
           {t("tenantAnalytics.status.subtitle") ||
             "Operational and lifecycle distribution across all tenant workspaces"}
         </CardDescription>
@@ -71,9 +71,9 @@ export function TenantStatusDistribution({
 
       <CardContent className="flex min-h-[240px] flex-1 flex-col justify-center p-4 pt-2 sm:p-5">
         {isLoading ? (
-          <div className="h-[200px] w-full animate-pulse rounded-lg bg-muted/20" />
+          <div className="h-[200px] w-full animate-pulse rounded-lg bg-nx-raised" />
         ) : chartData.length === 0 ? (
-          <div className="flex flex-1 items-center justify-center text-xs text-muted-foreground">
+          <div className="flex flex-1 items-center justify-center text-xs text-nx-ink-3">
             {t("tenantAnalytics.status.noData") || "No status data available"}
           </div>
         ) : (
@@ -87,8 +87,8 @@ export function TenantStatusDistribution({
                       if (active && payload && payload.length) {
                         const item = payload[0];
                         return (
-                          <div className="backdrop-blur-xs rounded-lg border border-border bg-popover/95 p-2 text-xs shadow-md">
-                            <span className="font-semibold text-foreground">{item.name}: </span>
+                          <div className="rounded-lg border border-nx-line bg-nx-surface/95 p-2 text-xs backdrop-blur-md">
+                            <span className="font-semibold text-nx-ink">{item.name}: </span>
                             <span className="font-bold text-primary">{item.value}</span>
                           </div>
                         );
@@ -113,8 +113,8 @@ export function TenantStatusDistribution({
               </ResponsiveContainer>
               {/* Center count display */}
               <div className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center">
-                <span className="text-lg font-black text-foreground">{totalTenants}</span>
-                <span className="text-[9px] font-bold uppercase tracking-wider text-muted-foreground">
+                <span className="text-lg font-black text-nx-ink">{totalTenants}</span>
+                <span className="text-[9px] font-bold uppercase tracking-wider text-nx-ink-3">
                   {t("tenantAnalytics.status.tenants") || "Tenants"}
                 </span>
               </div>
@@ -129,13 +129,13 @@ export function TenantStatusDistribution({
                       className="h-2 w-2 shrink-0 rounded-full"
                       style={{ backgroundColor: item.fill }}
                     />
-                    <span className="whitespace-nowrap text-[11px] font-medium text-foreground sm:text-xs">
+                    <span className="whitespace-nowrap text-[11px] font-medium text-nx-ink sm:text-xs">
                       {getStatusLabel(item.status)}
                     </span>
                   </div>
-                  <div className="flex shrink-0 items-center gap-1 font-mono text-[11px] text-muted-foreground">
-                    <span className="font-bold text-foreground">{item.count}</span>
-                    <span className="text-[10px] text-muted-foreground">({item.percentage}%)</span>
+                  <div className="flex shrink-0 items-center gap-1 font-mono text-[11px] text-nx-ink-3">
+                    <span className="font-bold text-nx-ink">{item.count}</span>
+                    <span className="text-[10px] text-nx-ink-3">({item.percentage}%)</span>
                   </div>
                 </div>
               ))}

@@ -2,6 +2,7 @@ import { renderHook, act } from "@testing-library/react";
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { usePartyDirectoryViewModel } from "./usePartyDirectoryViewModel";
 import { Party } from "../../domain/entities/Party";
+import * as nextNav from "next/navigation";
 
 const mockPartyRepo = {
   getAll: vi.fn(),
@@ -150,6 +151,25 @@ describe("usePartyDirectoryViewModel", () => {
       result.current.setViewMode("grid");
     });
     expect(result.current.viewMode).toBe("grid");
+  });
+
+  it("synchronizes partyType filter from search parameters (?partyType=Person / Organization)", () => {
+    const searchParamsSpy = vi.spyOn(nextNav, "useSearchParams");
+    searchParamsSpy.mockReturnValue(
+      new URLSearchParams("partyType=Organization") as unknown as ReturnType<typeof nextNav.useSearchParams>
+    );
+
+    const { result, rerender } = renderHook(() => usePartyDirectoryViewModel());
+    expect(result.current.selectedType).toBe("Organization");
+
+    // Dynamic param update
+    searchParamsSpy.mockReturnValue(
+      new URLSearchParams("partyType=Person") as unknown as ReturnType<typeof nextNav.useSearchParams>
+    );
+    rerender();
+    expect(result.current.selectedType).toBe("Person");
+
+    searchParamsSpy.mockRestore();
   });
 
   it("controls create, edit, and delete dialog visibility", () => {

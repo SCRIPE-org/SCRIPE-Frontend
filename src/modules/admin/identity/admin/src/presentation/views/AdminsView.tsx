@@ -400,8 +400,8 @@ export function AdminsView({ tenantId }: AdminsViewProps = {}) {
             className: "text-destructive hover:text-destructive/90",
             icon: <Trash2 className="h-4 w-4" aria-hidden="true" />,
             requiredPermission: SYSTEM_PERMISSIONS.ADMINS_DELETE,
-            // Cannot delete protected admin ever
-            show: (item: Admin) => !item.hasGuardianProtection,
+            // Cannot delete protected admin ever, and must satisfy canModify
+            show: (item: Admin) => !item.hasGuardianProtection && item.canModify,
           },
         ];
 

@@ -27,36 +27,36 @@ export function PlatformTenantDistribution({
       name: t("platformCommandCenter.distribution.enterprise") || "Enterprise",
       count: 48,
       percentage: "19.4%",
-      color: "#84cc16",
-      dotClass: "bg-[#84cc16]",
+      color: "var(--primary)",
+      dotClass: "bg-primary",
     },
     {
       name: t("platformCommandCenter.distribution.professional") || "Professional",
       count: 96,
       percentage: "38.7%",
-      color: "#a855f7",
-      dotClass: "bg-[#a855f7]",
+      color: "var(--info)",
+      dotClass: "bg-info",
     },
     {
       name: t("platformCommandCenter.distribution.academy") || "Academy",
       count: 62,
       percentage: "25.0%",
-      color: "#06b6d4",
-      dotClass: "bg-[#06b6d4]",
+      color: "var(--success)",
+      dotClass: "bg-success",
     },
     {
       name: t("platformCommandCenter.distribution.club") || "Club",
       count: 28,
       percentage: "11.3%",
-      color: "#38bdf8",
-      dotClass: "bg-[#38bdf8]",
+      color: "var(--warning)",
+      dotClass: "bg-warning",
     },
     {
       name: t("platformCommandCenter.distribution.others") || "Others",
       count: 14,
       percentage: "5.6%",
-      color: "#64748b",
-      dotClass: "bg-[#64748b]",
+      color: "var(--nx-line-hi)",
+      dotClass: "bg-nx-ink-3",
     },
   ];
 
@@ -79,18 +79,18 @@ export function PlatformTenantDistribution({
   });
 
   return (
-    <Card className="flex h-full flex-col justify-between overflow-hidden border-border/60 bg-[#0c101a] shadow-xl">
+    <Card className="flex h-full flex-col justify-between overflow-hidden">
       {/* Header */}
-      <CardHeader className="border-b border-border/50 pb-3">
+      <CardHeader className="border-b border-nx-line pb-3">
         <div className="flex items-center gap-2.5">
-          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-[#84cc16]/10 text-[#84cc16]">
+          <div className="flex h-8 w-8 items-center justify-center rounded-lg border border-primary/20 bg-primary/10 text-primary">
             <BarChart3 className="h-4 w-4" />
           </div>
           <div>
-            <CardTitle className="text-base font-semibold text-white">
+            <CardTitle className="text-base font-semibold text-nx-ink">
               {t("platformCommandCenter.distribution.title") || "Tenant distribution"}
             </CardTitle>
-            <CardDescription className="text-xs text-slate-400">
+            <CardDescription className="text-xs text-nx-ink-2">
               {t("platformCommandCenter.distribution.subtitle") || "Tenants by edition"}
             </CardDescription>
           </div>
@@ -109,7 +109,8 @@ export function PlatformTenantDistribution({
                 cy="60"
                 r={r}
                 fill="none"
-                stroke="#1e293b"
+                stroke="currentColor"
+                className="text-nx-line"
                 strokeWidth="14"
                 opacity="0.4"
               />
@@ -132,10 +133,10 @@ export function PlatformTenantDistribution({
 
             {/* Center Cutout Text */}
             <div className="pointer-events-none absolute inset-0 flex select-none flex-col items-center justify-center text-center">
-              <span className="font-mono text-2xl font-bold leading-none text-white">
+              <span className="font-mono text-2xl font-bold leading-none text-nx-ink">
                 {totalTenants}
               </span>
-              <span className="mt-1 text-[11px] font-medium text-slate-400">
+              <span className="mt-1 text-[11px] font-medium text-nx-ink-3">
                 {t("platformCommandCenter.distribution.tenantsCount") || "Tenants"}
               </span>
             </div>
@@ -146,15 +147,15 @@ export function PlatformTenantDistribution({
             {editions.map((item) => (
               <div
                 key={item.name}
-                className="flex items-center justify-between py-0.5 text-slate-300"
+                className="flex items-center justify-between py-0.5 text-nx-ink-2"
               >
-                <div className="flex min-w-0 items-center gap-2">
+                <div className="flex min-w-0 items-center gap-2.5">
                   <span className={`h-2 w-2 shrink-0 rounded-full ${item.dotClass}`} />
-                  <span className="truncate font-medium text-white">{item.name}</span>
+                  <span className="truncate font-medium text-nx-ink">{item.name}</span>
                 </div>
                 <div className="flex shrink-0 items-center gap-4 text-right font-mono">
-                  <span className="text-slate-300">{item.count}</span>
-                  <span className="w-12 text-right text-slate-500">{item.percentage}</span>
+                  <span className="text-nx-ink-2">{item.count}</span>
+                  <span className="w-12 text-right text-nx-ink-3">{item.percentage}</span>
                 </div>
               </div>
             ))}

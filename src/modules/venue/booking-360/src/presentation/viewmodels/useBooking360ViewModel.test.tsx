@@ -584,9 +584,7 @@ describe("useBooking360ViewModel", () => {
       );
       await waitFor(() => expect(result.current.state.stage).toBe("ready"));
       const invoke = (reason: string) =>
-        action === "noShow"
-          ? result.current.markNoShow(reason)
-          : result.current.cancel(reason);
+        action === "noShow" ? result.current.markNoShow(reason) : result.current.cancel(reason);
 
       await act(async () => invoke("Customer request"));
       await act(async () => invoke("Customer request"));

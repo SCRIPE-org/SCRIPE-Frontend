@@ -1,6 +1,7 @@
 ﻿"use client";
 
-import React from "react";
+import React, { useMemo } from "react";
+import { cn } from "@core/common/utils";
 import { AlertCircle, CalendarPlus, Lock } from "lucide-react";
 import { Alert, AlertDescription, AlertTitle } from "@core/ui/alert";
 import { Badge } from "@core/ui/badge";
@@ -80,6 +81,15 @@ export const BookingWorkspaceView = React.memo(function BookingWorkspaceView({
     !vm.criteria.date ||
     vm.criteria.quantity < 1 ||
     !endLocalFor(vm.criteria);
+  const currentStepIndex = useMemo(() => {
+    if (vm.state.stage === "confirmed" || vm.state.stage === "confirming") return 4;
+    if (vm.state.stage === "held" || vm.state.stage === "holding") return 3;
+    if (vm.state.selectedCandidate) return 3;
+    if (vm.state.candidates.length > 0) return 2;
+    if (vm.customer) return 1;
+    return 0;
+  }, [vm.customer, vm.state.candidates.length, vm.state.selectedCandidate, vm.state.stage]);
+
   const workflowLocked =
     vm.state.stage === "holding" ||
     vm.state.stage === "held" ||
@@ -132,15 +142,40 @@ export const BookingWorkspaceView = React.memo(function BookingWorkspaceView({
       />
 
       <ol
-        className="border-nx-border grid grid-cols-2 gap-2 rounded-xl border bg-nx-surface p-3 sm:grid-cols-5"
+        className="border-nx-line grid grid-cols-2 gap-1.5 rounded-xl border bg-nx-surface p-2 sm:grid-cols-5 sm:gap-2 sm:p-2.5"
         aria-label={t("booking.title")}
       >
-        {PROGRESS_KEYS.map((key, index) => (
-          <li key={key} className="flex items-center gap-2 text-sm text-nx-ink-2">
-            <Badge variant="outline">{index + 1}</Badge>
-            <span>{t(`booking.progress.${key}`)}</span>
-          </li>
-        ))}
+        {PROGRESS_KEYS.map((key, index) => {
+          const isCurrent = index === currentStepIndex;
+          const isCompleted = index < currentStepIndex;
+          return (
+            <li
+              key={key}
+              className={cn(
+                "flex items-center gap-2 rounded-lg px-2.5 py-1.5 text-xs font-medium transition-colors sm:text-sm",
+                isCurrent
+                  ? "bg-nx-accent/10 text-nx-ink font-semibold"
+                  : isCompleted
+                    ? "text-nx-ink"
+                    : "text-nx-ink-3"
+              )}
+            >
+              <span
+                className={cn(
+                  "flex size-5 shrink-0 items-center justify-center rounded-full text-xs font-bold transition-all sm:size-6",
+                  isCurrent
+                    ? "bg-nx-accent text-nx-on-fill shadow-[0_0_8px_rgba(198,255,0,0.5)]"
+                    : isCompleted
+                      ? "bg-success/20 text-success"
+                      : "border border-nx-line text-nx-ink-3"
+                )}
+              >
+                {isCompleted ? "✓" : index + 1}
+              </span>
+              <span className="truncate">{t(`booking.progress.${key}`)}</span>
+            </li>
+          );
+        })}
       </ol>
 
       {!canConfirm && (

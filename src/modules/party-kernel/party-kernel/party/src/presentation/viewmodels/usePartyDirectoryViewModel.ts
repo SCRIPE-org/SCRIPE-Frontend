@@ -1,6 +1,7 @@
 "use client";
 
-import { useState, useMemo, useTransition } from "react";
+import { useState, useMemo, useEffect, useTransition } from "react";
+import { useSearchParams } from "next/navigation";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { getPartyKernelContainer } from "../../../../di";
 import { PARTY_KERNEL_PERMISSIONS } from "../../../../permission-constants";
@@ -38,6 +39,12 @@ export function usePartyDirectoryViewModel() {
   const { t } = useI18n();
   const [, startTransition] = useTransition();
 
+  const searchParams = useSearchParams();
+  const partyTypeParam = searchParams?.get("partyType");
+
+  const initialType: PartyDirectoryTypeFilter =
+    partyTypeParam === "Person" || partyTypeParam === "Organization" ? partyTypeParam : "all";
+
   // Permissions (authoritative checks enforced on server, UX guards in client)
   // Backend requires BOTH parties.create AND party-people.create / party-organizations.create
   const canPartiesCreate = usePermission(PARTY_KERNEL_PERMISSIONS.PARTY_CREATE);
@@ -50,12 +57,23 @@ export function usePartyDirectoryViewModel() {
   const canDelete = usePermission(PARTY_KERNEL_PERMISSIONS.PARTY_DELETE);
 
   // Filter and Layout States
-  const [selectedType, setSelectedType] = useState<PartyDirectoryTypeFilter>("all");
+  const [selectedType, setSelectedType] = useState<PartyDirectoryTypeFilter>(initialType);
   const [searchTerm, setSearchTerm] = useState("");
   const [viewMode, setViewMode] = useState<PartyDirectoryViewMode>("table");
   const [sortBy, setSortBy] = useState<PartyDirectorySort>("name_asc");
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(20);
+
+  // Synchronize filter when navigating with ?partyType= query parameter
+  useEffect(() => {
+    if (partyTypeParam === "Person" || partyTypeParam === "Organization") {
+      setSelectedType(partyTypeParam);
+      setPage(1);
+    } else if (partyTypeParam === "all") {
+      setSelectedType("all");
+      setPage(1);
+    }
+  }, [partyTypeParam]);
 
   // Dialog & Sheet States
   const [isCreatePersonOpen, setIsCreatePersonOpen] = useState(false);
@@ -217,7 +235,8 @@ export function usePartyDirectoryViewModel() {
     onError: (err: Error) => {
       showError({
         title: t("common.error") || "Error",
-        description: err.message || t("party.toast.errorCreating") || "Failed to create organization",
+        description:
+          err.message || t("party.toast.errorCreating") || "Failed to create organization",
       });
     },
   });
@@ -274,8 +293,7 @@ export function usePartyDirectoryViewModel() {
         });
       }
 
-      const hasExtendedOrgFields =
-        options?.legalName !== undefined || options?.taxId !== undefined;
+      const hasExtendedOrgFields = options?.legalName !== undefined || options?.taxId !== undefined;
 
       if (
         type === "Organization" &&

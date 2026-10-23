@@ -15,6 +15,10 @@ export * from "./shared";
 export * from "./site";
 export * from "./venue-overview";
 export * from "./venue-profile";
+export * from "./customers";
+export * from "./guest-portal";
+export * from "./reports";
+export * from "./settings";
 
 export {
   useVenueServiceLocator,

@@ -40,7 +40,7 @@ function item(id: string): EntityLookupItem {
 }
 
 /** A `PagedResult` envelope with only the members this hook reads. */
-function page(ids: string[], hasNextPage = false) {
+function page(ids: string[], hasNextPage = false, mayHaveMoreResults = false) {
   return {
     items: ids.map(item),
     totalCount: ids.length,
@@ -49,6 +49,7 @@ function page(ids: string[], hasNextPage = false) {
     totalPages: 1,
     hasNextPage,
     hasPreviousPage: false,
+    ...(mayHaveMoreResults ? { mayHaveMoreResults: true } : {}),
   };
 }
 
@@ -238,6 +239,18 @@ describe("useEntityLookupSearch", () => {
     expect(result.current.items.map((i) => i.id)).toEqual(["a", "b", "c", "d"]);
     expect(search.mock.calls[1][1]).toMatchObject({ page: 2 });
     expect(result.current.hasNextPage).toBe(false);
+  });
+
+  it("surfaces when a bounded server candidate window may omit results", async () => {
+    search.mockResolvedValue(page(["a"], false, true));
+
+    const { result } = renderHook(() =>
+      useEntityLookupSearch({ entityTypeKey: "organization.branch" })
+    );
+
+    await waitFor(() => expect(result.current.items).toHaveLength(1));
+    expect(result.current.hasNextPage).toBe(false);
+    expect(result.current.mayHaveMoreResults).toBe(true);
   });
 
   it("loadMore is a no-op at the end of the list, so it cannot skip a page", async () => {

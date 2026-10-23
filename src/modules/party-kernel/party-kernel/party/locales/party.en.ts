@@ -26,8 +26,9 @@ export const en = {
     },
     directory: {
       title: "Contacts Directory",
-      breadcrumb: "Contacts",
-      description: "Enterprise directory of people, organizations, clubs, academies, partners, and facility clients.",
+      breadcrumb: "Directory",
+      description:
+        "Enterprise directory of people, organizations, clubs, academies, partners, and facility clients.",
       searchPlaceholder: "Search contacts by name...",
       refresh: "Refresh",
       filterAll: "All Contacts",
@@ -77,9 +78,12 @@ export const en = {
       tabRelationships: "Relationships",
       tabRoles: "Roles & Associations",
       tabRepresentatives: "Representatives",
-      representativesContractPending: "Authorized Representative contract pending backend enablement in V1",
-      representativesContractPendingDesc: "Corporate affiliation and authorized signatory contracts are currently pending in the PartyKernel backend. Guardian and Emergency Contact relations are not repurposed for corporate representation.",
-      addRepresentativeDisabledTooltip: "Representative affiliation persistence contract pending backend delivery in V1.",
+      representativesContractPending:
+        "Authorized Representative contract pending backend enablement in V1",
+      representativesContractPendingDesc:
+        "Corporate affiliation and authorized signatory contracts are currently pending in the PartyKernel backend. Guardian and Emergency Contact relations are not repurposed for corporate representation.",
+      addRepresentativeDisabledTooltip:
+        "Representative affiliation persistence contract pending backend delivery in V1.",
       tabHistory: "History & Duplicates",
       immutableType: "Immutable Identity Type",
       canonicalId: "Canonical Contact ID",
@@ -116,22 +120,27 @@ export const en = {
       reviewMerge: "Review Merge Candidate",
       tabAudit: "Audit & Identity",
       tabAuditTitle: "Entity Audit Metadata & Identity Verification",
-      auditDisclaimer: "Canonical entity audit metadata and deduplication candidate verification. Continuous event sourcing stream and activity timeline are slated for PartyKernel P2.",
+      auditDisclaimer:
+        "Canonical entity audit metadata and deduplication candidate verification. Activity timeline will appear as changes are recorded.",
       recordStatus: "Record Status",
       statusActive: "Active",
       statusTombstoned: "Tombstoned",
       representativesTitle: "Representatives & Key Contacts",
-      representativesDesc: "Authorized signatories, legal representatives, and primary liaisons for this organization.",
-      representativesContractPendingBanner: "Corporate representative and signatory affiliation contracts are deferred in PartyKernel V1 (backend supports Guardian and EmergencyContact only). Corporate signatory links will activate upon contract finalization.",
+      representativesDesc:
+        "Authorized signatories, legal representatives, and primary liaisons for this organization.",
+      representativesContractPendingBanner:
+        "Corporate representative and signatory affiliations are coming soon. Corporate signatory links will activate in an upcoming release.",
       addRepresentative: "Add Representative",
       noRepresentatives: "No representatives linked",
-      noRepresentativesDesc: "No corporate representatives linked. Corporate signatory affiliation is deferred in PartyKernel V1.",
+      noRepresentativesDesc:
+        "No corporate representatives linked to this organization.",
       copyCanonicalId: "Copy Canonical ID",
       corporateIdentity: "Corporate Legal Identity",
       commercialName: "Commercial Trading Name",
       completenessScore: "Data Summary",
       addressesTitle: "Physical & Postal Addresses",
-      addressesPendingDesc: "Contextual postal address storage is scheduled for Wave 2 under the approved PartyAddress specification. Canonical telephone and electronic communication endpoints are active above.",
+      addressesPendingDesc:
+        "Physical and postal addresses will be available in an upcoming update. Telephone and electronic contact channels are active above.",
       verifiedBadge: "Verified",
       unverifiedBadge: "Unverified",
       primaryTelephone: "Primary Telephone",
@@ -154,7 +163,8 @@ export const en = {
     },
     overview: {
       title: "Contacts",
-      subtitle: "Central workspace for managing people, organizations, contact channels, roles, and relationships.",
+      subtitle:
+        "Central workspace for managing people, organizations, contact channels, roles, and relationships.",
       openDirectory: "Open Directory",
       searchContacts: "Search Contacts",
       newPerson: "New Person",
@@ -179,14 +189,16 @@ export const en = {
       quickActions: "Quick Actions",
       quickActionsDesc: "Create new contacts or browse the full directory.",
       gettingStartedTitle: "Build Your Contacts Directory",
-      gettingStartedDesc: "Register athletes, parents, coaches, clubs, and corporate sponsors to unify operations.",
+      gettingStartedDesc:
+        "Register athletes, parents, coaches, clubs, and corporate sponsors to unify operations.",
     },
     dialog: {
       createPersonTitle: "New Person",
       createPersonDesc: "Register an individual contact in the tenant directory.",
-      personCreationGuardedTitle: "Person Creation Temporarily Guarded",
-      personCreationGuarded: "Individual person creation is temporarily guarded pending the backend atomic multi-insert contract (ADR-PARTY-PERSON-FULL-NAME-STORAGE). You can preview and validate form inputs, but submissions are blocked to prevent orphan or incomplete records.",
-      personCreationGuardedBtn: "Creation Guarded (Contract Pending)",
+      personCreationGuardedTitle: "Person Creation Temporarily Unavailable",
+      personCreationGuarded:
+        "Individual person creation is temporarily undergoing system maintenance. You can preview and validate form inputs, but submissions are currently paused to ensure data integrity.",
+      personCreationGuardedBtn: "Temporarily Unavailable",
       fullName: "Full Name",
       fullNamePlaceholder: "e.g. Dr. Fatima Zahra Al-Sayed",
       fullNameHelp: "Exact human-entered name without forced first/last splitting.",
@@ -214,13 +226,15 @@ export const en = {
       displayNamePlaceholder: "e.g. Riyadh Falcons",
       taxId: "Tax / CR Registration (Optional)",
       taxIdPlaceholder: "CR-1010xxxxxx",
-      taxIdHelp: "Commercial registration and tax certificate validation is governed under Wave 2 registry contracts. Display and legal names are established atomically.",
+      taxIdHelp:
+        "Commercial registration and tax certificate details are verified against official records upon entry.",
       editNameTitle: "Edit Display Name",
       editNameDesc: "Correct the visible name. Contact ID and Type remain immutable.",
       editPartyTitle: "Edit Contact Details",
       editPartyDesc: "Update contact details. Canonical Contact ID and Type remain immutable.",
       deleteTitle: "Delete Contact Record",
-      deleteWarning: "Are you sure you want to delete this contact? Any historic bookings or operational links will be retained with tombstone status.",
+      deleteWarning:
+        "Are you sure you want to delete this contact? Any historic bookings or operational links will be retained with tombstone status.",
       addContactTitle: "Add Contact Method",
       editContactTitle: "Edit Contact Method",
       contactType: "Contact Type",
@@ -243,13 +257,15 @@ export const en = {
       create: "Create",
       deleteConfirmBtn: "Confirm Deletion",
       partialSaveTitle: "Party Identity Created",
-      partialSaveDesc: "The contact record was created with canonical ID, but secondary contact points failed to attach.",
+      partialSaveDesc:
+        "The contact record was created with canonical ID, but secondary contact points failed to attach.",
       retryAttachContact: "Retry Attach Contact Details",
       continueToProfile: "Continue to Profile",
       contactAttachedSuccess: "Contact details attached successfully",
       enterIdManually: "Enter ID Manually",
       usePicker: "Search Directory",
-      enterEncryptedIdHint: "Enter canonical encrypted Party ID of the target person or organization.",
+      enterEncryptedIdHint:
+        "Enter canonical encrypted Party ID of the target person or organization.",
       selectTargetPartyPlaceholder: "Search by name, email, or phone...",
       targetPartyRequired: "Please select a target contact or enter an ID",
     },
@@ -259,7 +275,8 @@ export const en = {
       orgCreated: "Organization created successfully",
       orgCreatedDesc: "Navigating to profile workspace",
       partialContactSave: "Contact saved; contact details still need attention",
-      partialContactSaveDesc: "The contact record was created, but phone or email details could not be attached. You can retry from the contact profile.",
+      partialContactSaveDesc:
+        "The contact record was created, but phone or email details could not be attached. You can retry from the contact profile.",
       updated: "Contact updated",
       deleted: "Contact deleted",
       contactAdded: "Contact method added",
@@ -278,8 +295,10 @@ export const en = {
       concurrencyConflict: "Concurrent modification detected",
     },
     errors: {
-      quotaExceeded: "Maximum contact profiles limit reached for your tenant subscription. Contact your administrator.",
-      idempotencyConflict: "A contact creation request with this key is already in progress or has been processed with different details.",
+      quotaExceeded:
+        "Maximum contact profiles limit reached for your tenant subscription. Contact your administrator.",
+      idempotencyConflict:
+        "A contact creation request with this key is already in progress or has been processed with different details.",
     },
     picker: {
       title: "Select Contact",

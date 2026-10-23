@@ -1,8 +1,10 @@
-﻿"use client";
+"use client";
 
 import { useState } from "react";
 import { Button } from "@core/ui/button";
 import { Label } from "@core/ui/label";
+import { Checkbox } from "@core/ui/checkbox";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@core/ui/select";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@core/ui/card";
 import { useI18n } from "@core/providers/i18n-provider";
 import type { useResourceDetailViewModel } from "../viewmodels/useResourceDetailViewModel";
@@ -27,13 +29,18 @@ export function ResourceBookingRulesTab({ vm }: Props) {
   const [slotDuration, setSlotDuration] = useState<number>(
     vm.resource?.slotPolicy?.slotDurationMinutes ?? 60
   );
-  const [startIncrement, setStartIncrement] = useState<number>(
-    vm.resource?.slotPolicy?.startIncrementMinutes ?? slotDuration
+  const [startIncrementOverride, setStartIncrementOverride] = useState<number | null>(() => {
+    const configured = vm.resource?.slotPolicy?.startIncrementMinutes;
+    return configured && configured > 0 ? configured : null;
+  });
+  const startIncrement = startIncrementOverride ?? slotDuration;
+  const [allowMultiSlot, setAllowMultiSlot] = useState<boolean>(
+    vm.resource?.slotPolicy?.allowMultiSlot ?? false
   );
 
   const handleDurationChange = (dur: number) => {
     setSlotDuration(dur);
-    setStartIncrement(dur); // Default equals slot duration
+    setStartIncrementOverride(null);
   };
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -41,6 +48,7 @@ export function ResourceBookingRulesTab({ vm }: Props) {
     void vm.updateBookingRules({
       slotDurationMinutes: slotDuration,
       startIncrementMinutes: startIncrement,
+      allowMultiSlot,
     });
   };
 
@@ -48,11 +56,11 @@ export function ResourceBookingRulesTab({ vm }: Props) {
     <Card>
       <CardHeader>
         <CardTitle>
-          {t("resources.bookingRules.title", { defaultValue: "Booking Slot Rules" })}
+          {t("resources.bookingRules.title", { defaultValue: "Booking Rules" })}
         </CardTitle>
         <CardDescription>
           {t("resources.bookingRules.description", {
-            defaultValue: "Define the booking duration and grid intervals for this court.",
+            defaultValue: "Define the booking duration and grid intervals.",
           })}
         </CardDescription>
       </CardHeader>
@@ -60,7 +68,7 @@ export function ResourceBookingRulesTab({ vm }: Props) {
         <form onSubmit={handleSubmit} className="max-w-lg space-y-6">
           <div className="space-y-3">
             <Label className="text-sm font-semibold">
-              {t("resources.bookingRules.slotDuration", { defaultValue: "Slot Duration" })}
+              {t("resources.bookingRules.slotDuration", { defaultValue: "Booking Slot Duration" })}
             </Label>
             <p className="text-xs text-nx-ink-3">
               {t("resources.bookingRules.slotDurationHelp", {
@@ -70,11 +78,13 @@ export function ResourceBookingRulesTab({ vm }: Props) {
 
             <div className="grid grid-cols-2 gap-3">
               {DURATIONS.map(({ value, labelKey, fallback }) => (
-                <button
+                <Button
+                  variant="outline"
+                  aria-pressed={slotDuration === value}
                   type="button"
                   key={value}
                   onClick={() => handleDurationChange(value)}
-                  className={`rounded-nx-md border p-3 text-left transition-all ${
+                  className={`h-auto justify-start rounded-nx-md border p-3 text-left transition-all rtl:text-right ${
                     slotDuration === value
                       ? "bg-nx-accent/10 border-nx-accent font-bold text-nx-ink ring-1 ring-nx-accent"
                       : "hover:bg-nx-surfaceSubtle border-nx-line text-nx-ink-2"
@@ -83,8 +93,13 @@ export function ResourceBookingRulesTab({ vm }: Props) {
                   <p className="text-xs font-semibold">
                     {t(`resources.bookingRules.${labelKey}`, { defaultValue: fallback })}
                   </p>
-                  <p className="mt-0.5 text-[10px] text-nx-ink-3">Grid: every {value} min</p>
-                </button>
+                  <p className="mt-0.5 text-[10px] text-nx-ink-3">
+                    {t("resources.bookingRules.gridEvery", {
+                      defaultValue: `Grid: every ${value} min`,
+                      value,
+                    })}
+                  </p>
+                </Button>
               ))}
             </div>
           </div>
@@ -102,22 +117,66 @@ export function ResourceBookingRulesTab({ vm }: Props) {
             </p>
 
             <div className="flex items-center gap-3">
-              {/* UI-EXCEPTION: native element required for compact layout */}
-              <select
-                className="w-full rounded-nx-md border border-nx-line bg-nx-surface px-3 py-2 text-xs font-medium text-nx-ink"
-                value={startIncrement}
-                onChange={(e) => setStartIncrement(Number(e.target.value))}
+              <Select
+                value={String(startIncrement)}
+                onValueChange={(value) => {
+                  const parsed = Number(value);
+                  setStartIncrementOverride(Number.isInteger(parsed) && parsed > 0 ? parsed : null);
+                }}
               >
-                <option value={slotDuration}>
-                  Every {slotDuration} minutes (Recommended Â· Clean slots)
-                </option>
-                {slotDuration > 30 && (
-                  <option value={30}>Every 30 minutes (Half-hour starts)</option>
-                )}
-                {slotDuration > 15 && (
-                  <option value={15}>Every 15 minutes (Quarter-hour starts)</option>
-                )}
-              </select>
+                <SelectTrigger className="w-full text-xs font-medium">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value={String(slotDuration)}>
+                    {t("resources.bookingRules.incrementRecommended", {
+                      defaultValue: `Every ${slotDuration} minutes (Recommended · Clean slots)`,
+                      value: slotDuration,
+                    })}
+                  </SelectItem>
+                  {slotDuration > 30 && (
+                    <SelectItem value="30">
+                      {t("resources.bookingRules.incrementHalfHour", {
+                        defaultValue: "Every 30 minutes (Half-hour starts)",
+                      })}
+                    </SelectItem>
+                  )}
+                  {slotDuration > 15 && (
+                    <SelectItem value="15">
+                      {t("resources.bookingRules.incrementQuarterHour", {
+                        defaultValue: "Every 15 minutes (Quarter-hour starts)",
+                      })}
+                    </SelectItem>
+                  )}
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+
+          <div className="border-nx-line/60 space-y-2 border-t pt-2">
+            <div className="bg-nx-surfaceSubtle/30 flex items-start gap-3 rounded-nx-md border border-nx-line p-3.5">
+              <Checkbox
+                id="allow-multi-slot"
+                checked={allowMultiSlot}
+                onCheckedChange={(checked) => setAllowMultiSlot(checked === true)}
+                className="mt-0.5 size-4 rounded border-nx-line text-nx-accent focus:ring-nx-accent"
+              />
+              <div className="space-y-0.5">
+                <Label
+                  htmlFor="allow-multi-slot"
+                  className="cursor-pointer text-xs font-bold text-nx-ink"
+                >
+                  {t("resources.bookingRules.allowMultiSlot", {
+                    defaultValue: "Allow Multiple Consecutive Slots",
+                  })}
+                </Label>
+                <p className="text-[11px] text-nx-ink-3">
+                  {t("resources.bookingRules.allowMultiSlotHelp", {
+                    defaultValue:
+                      "Allow operators and clients to book 2x or 3x slot multiples (e.g. 60 min, 120 min, 180 min). When disabled, bookings must match the single slot duration exactly.",
+                  })}
+                </p>
+              </div>
             </div>
           </div>
 

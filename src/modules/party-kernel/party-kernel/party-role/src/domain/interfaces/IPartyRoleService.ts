@@ -20,7 +20,12 @@ export interface PartyRoleListResult {
  * Documentation for module export
  */
 export interface IPartyRoleService {
-  getAll(params: { page: number; pageSize: number; search?: string; partyId?: string }): Promise<PartyRoleListResult>;
+  getAll(params: {
+    page: number;
+    pageSize: number;
+    search?: string;
+    partyId?: string;
+  }): Promise<PartyRoleListResult>;
   getById(id: string): Promise<PartyRoleModel>;
   create(data: Record<string, unknown>): Promise<{ id: string }>;
   update(id: string, data: Record<string, unknown>): Promise<void>;

@@ -29,17 +29,12 @@ export interface ContactsOverviewStats {
  * Adheres strictly to MVVM: View -> ViewModel -> Repository -> Service -> IApiService.
  */
 export function useContactsOverviewViewModel() {
-  const { partyRepository, mergeCandidateRepository } =
-    getPartyKernelContainer();
+  const { partyRepository, mergeCandidateRepository } = getPartyKernelContainer();
   const queryClient = useQueryClient();
 
   const canPartiesCreate = usePermission(PARTY_KERNEL_PERMISSIONS.PARTY_CREATE);
-  const canPersonCreate = usePermission(
-    PARTY_KERNEL_PERMISSIONS.PARTY_PERSON_CREATE
-  );
-  const canOrgCreate = usePermission(
-    PARTY_KERNEL_PERMISSIONS.PARTY_ORGANIZATION_CREATE
-  );
+  const canPersonCreate = usePermission(PARTY_KERNEL_PERMISSIONS.PARTY_PERSON_CREATE);
+  const canOrgCreate = usePermission(PARTY_KERNEL_PERMISSIONS.PARTY_ORGANIZATION_CREATE);
 
   const permissions = {
     canCreatePerson: canPartiesCreate && canPersonCreate,
@@ -52,27 +47,26 @@ export function useContactsOverviewViewModel() {
   const overviewQuery = useQuery<ContactsOverviewStats>({
     queryKey: ["party-overview-stats"],
     queryFn: async () => {
-      const [recentRes, peopleRes, orgsRes, duplicatesRes] =
-        await Promise.all([
-          partyRepository.getAll({
-            page: 1,
-            pageSize: 6,
-            sortBy: "newest",
-          }),
-          partyRepository.getAll({
-            page: 1,
-            pageSize: 1,
-            type: "Person",
-          }),
-          partyRepository.getAll({
-            page: 1,
-            pageSize: 1,
-            type: "Organization",
-          }),
-          mergeCandidateRepository
-            .getAll({ page: 1, pageSize: 5 })
-            .catch(() => ({ items: [], totalCount: 0 })),
-        ]);
+      const [recentRes, peopleRes, orgsRes, duplicatesRes] = await Promise.all([
+        partyRepository.getAll({
+          page: 1,
+          pageSize: 6,
+          sortBy: "newest",
+        }),
+        partyRepository.getAll({
+          page: 1,
+          pageSize: 1,
+          type: "Person",
+        }),
+        partyRepository.getAll({
+          page: 1,
+          pageSize: 1,
+          type: "Organization",
+        }),
+        mergeCandidateRepository
+          .getAll({ page: 1, pageSize: 5 })
+          .catch(() => ({ items: [], totalCount: 0 })),
+      ]);
 
       return {
         totalContacts: recentRes.totalCount,

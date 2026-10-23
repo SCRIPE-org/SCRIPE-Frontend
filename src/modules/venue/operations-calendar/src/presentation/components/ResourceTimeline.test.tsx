@@ -103,7 +103,7 @@ const t = (key: string, values?: Record<string, string | number>) => {
 };
 
 describe("ResourceTimeline", () => {
-  it("keeps CheckedIn occupying while NoShow and Completed disappear after refresh", () => {
+  it("renders completed and no-show blocks as occupied while cancelled bookings are removed", () => {
     render(
       <ResourceTimeline
         day={day}
@@ -120,9 +120,9 @@ describe("ResourceTimeline", () => {
     expect(within(lane).getByText("RES-H")).toBeInTheDocument();
     expect(within(lane).getByText("RES-C")).toBeInTheDocument();
     expect(within(lane).getByText("RES-I")).toBeInTheDocument();
+    expect(within(lane).getByText("RES-D")).toBeInTheDocument();
+    expect(within(lane).getByText("RES-N")).toBeInTheDocument();
     expect(within(lane).queryByText("RES-X")).not.toBeInTheDocument();
-    expect(within(lane).queryByText("RES-D")).not.toBeInTheDocument();
-    expect(within(lane).queryByText("RES-N")).not.toBeInTheDocument();
     expect(screen.getAllByText("03:00").length).toBeGreaterThan(0);
   });
 
@@ -151,5 +151,40 @@ describe("ResourceTimeline", () => {
     fireEvent.click(screen.getByRole("button", { name: /Create booking for Court 1 at 00:00/ }));
     expect(onEmptySlot).toHaveBeenCalledWith(resource, "2026-09-08T21:00:00.000Z");
     expect(screen.getByTestId("resource-timeline").firstElementChild).toHaveAttribute("dir", "ltr");
+  });
+
+  it("renders Maintenance closures distinctly and marks overlapping slots occupied", () => {
+    const dayWithMaintenance: OperationsCalendarDay = {
+      ...day,
+      blocks: [
+        {
+          reservationId: "maint-1",
+          reservationNumber: "MAINT-101",
+          resourceId: "resource-1",
+          status: "Maintenance" as any,
+          startUtc: "2026-09-09T06:00:00Z",
+          endUtc: "2026-09-09T08:00:00Z",
+          quantity: 1,
+          customerPartyId: "",
+          holdExpiresAtUtc: null,
+        },
+      ],
+    };
+
+    render(
+      <ResourceTimeline
+        day={dayWithMaintenance}
+        resources={[resource]}
+        locale="en"
+        direction="ltr"
+        canCreate
+        t={t}
+        onOpen={vi.fn()}
+        onEmptySlot={vi.fn()}
+      />
+    );
+
+    const lane = document.querySelector<HTMLElement>('[data-resource-id="resource-1"]')!;
+    expect(within(lane).getAllByText(/Maintenance/).length).toBeGreaterThan(0);
   });
 });

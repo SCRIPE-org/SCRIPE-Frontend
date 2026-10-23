@@ -46,7 +46,7 @@ export function AuditKpiSummary({
     return (
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
         {Array.from({ length: 4 }).map((_, i) => (
-          <Card key={i} className="border-border/80 bg-card p-4">
+          <Card key={i} className="border-nx-line bg-nx-surface p-4">
             <div className="flex items-center justify-between">
               <Skeleton className="h-4 w-24" />
               <Skeleton className="h-8 w-8 rounded-md" />
@@ -64,10 +64,10 @@ export function AuditKpiSummary({
   return (
     <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
       {/* 1. Total Audit Events */}
-      <Card className="shadow-2xs border-border/80 bg-card/90 transition-colors hover:border-border">
+      <Card className="border-nx-line bg-nx-surface text-nx-ink transition-colors hover:border-nx-line-hi">
         <CardContent className="p-4">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+            <span className="text-xs font-semibold uppercase tracking-wider text-nx-ink-3">
               {t("audit.kpis.totalEvents") || "Total Events"}
             </span>
             <div className="flex h-8 w-8 items-center justify-center rounded-md bg-primary/10 text-primary">
@@ -75,7 +75,7 @@ export function AuditKpiSummary({
             </div>
           </div>
           <div className="mt-2 flex items-baseline gap-2">
-            <span className="text-2xl font-extrabold tabular-nums tracking-tight text-foreground">
+            <span className="text-2xl font-extrabold tabular-nums tracking-tight text-nx-ink">
               {kpis.totalEvents.toLocaleString()}
             </span>
             {hasActiveFilters && (
@@ -88,7 +88,7 @@ export function AuditKpiSummary({
               </Badge>
             )}
           </div>
-          <p className="mt-1 text-xs text-muted-foreground">
+          <p className="mt-1 text-xs text-nx-ink-3">
             {hasActiveFilters
               ? t("audit.kpis.matchedEvents") || "Matching active filter criteria"
               : t("audit.kpis.allAuditTrail") || "Total indexed platform trail"}
@@ -97,24 +97,24 @@ export function AuditKpiSummary({
       </Card>
 
       {/* 2. Today's Activity & Velocity */}
-      <Card className="shadow-2xs border-border/80 bg-card/90 transition-colors hover:border-border">
+      <Card className="border-nx-line bg-nx-surface text-nx-ink transition-colors hover:border-nx-line-hi">
         <CardContent className="p-4">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+            <span className="text-xs font-semibold uppercase tracking-wider text-nx-ink-3">
               {t("audit.kpis.todayActivity") || "Today's Activity"}
             </span>
-            <div className="flex h-8 w-8 items-center justify-center rounded-md bg-blue-500/10 text-blue-500">
+            <div className="flex h-8 w-8 items-center justify-center rounded-md bg-info/10 text-info">
               <Activity className="h-4 w-4" />
             </div>
           </div>
           <div className="mt-2 flex items-baseline gap-2">
-            <span className="text-2xl font-extrabold tabular-nums tracking-tight text-foreground">
+            <span className="text-2xl font-extrabold tabular-nums tracking-tight text-nx-ink">
               {kpis.todayActionCount.toLocaleString()}
             </span>
             {kpis.yesterdayActionCount > 0 && (
               <span
                 className={`inline-flex items-center text-xs font-semibold ${
-                  isTrendPositive ? "text-emerald-500" : "text-amber-500"
+                  isTrendPositive ? "text-success" : "text-warning"
                 }`}
               >
                 {isTrendPositive ? (
@@ -126,7 +126,7 @@ export function AuditKpiSummary({
               </span>
             )}
           </div>
-          <p className="mt-1 text-xs text-muted-foreground">
+          <p className="mt-1 text-xs text-nx-ink-3">
             {kpis.yesterdayActionCount > 0
               ? `${kpis.yesterdayActionCount.toLocaleString()} ${t("audit.kpis.yesterday") || "yesterday"}`
               : t("audit.kpis.eventsLoggedToday") || "Audit events recorded today"}
@@ -135,17 +135,17 @@ export function AuditKpiSummary({
       </Card>
 
       {/* 3. Intercepted / Failed Actions */}
-      <Card className="shadow-2xs border-border/80 bg-card/90 transition-colors hover:border-border">
+      <Card className="border-nx-line bg-nx-surface text-nx-ink transition-colors hover:border-nx-line-hi">
         <CardContent className="p-4">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+            <span className="text-xs font-semibold uppercase tracking-wider text-nx-ink-3">
               {t("audit.kpis.failedActions") || "Failed / Intercepted"}
             </span>
             <div
               className={`flex h-8 w-8 items-center justify-center rounded-md ${
                 kpis.failedEventsCount > 0
-                  ? "bg-rose-500/10 text-rose-500"
-                  : "bg-emerald-500/10 text-emerald-500"
+                  ? "bg-destructive/10 text-destructive"
+                  : "bg-success/10 text-success"
               }`}
             >
               {kpis.failedEventsCount > 0 ? (
@@ -158,7 +158,7 @@ export function AuditKpiSummary({
           <div className="mt-2 flex items-baseline gap-2">
             <span
               className={`text-2xl font-extrabold tabular-nums tracking-tight ${
-                kpis.failedEventsCount > 0 ? "text-rose-500" : "text-foreground"
+                kpis.failedEventsCount > 0 ? "text-destructive" : "text-nx-ink"
               }`}
             >
               {kpis.failedEventsCount.toLocaleString()}
@@ -172,32 +172,32 @@ export function AuditKpiSummary({
                 : t("audit.kpis.clean") || "0 Errors"}
             </Badge>
           </div>
-          <p className="mt-1 text-xs text-muted-foreground">
+          <p className="mt-1 text-xs text-nx-ink-3">
             {t("audit.kpis.failedSubtext") || "Security blocks, 4xx/5xx responses"}
           </p>
         </CardContent>
       </Card>
 
       {/* 4. Active Subsystems / Modules */}
-      <Card className="shadow-2xs border-border/80 bg-card/90 transition-colors hover:border-border">
+      <Card className="border-nx-line bg-nx-surface text-nx-ink transition-colors hover:border-nx-line-hi">
         <CardContent className="p-4">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+            <span className="text-xs font-semibold uppercase tracking-wider text-nx-ink-3">
               {t("audit.kpis.activeServices") || "Active Services"}
             </span>
-            <div className="flex h-8 w-8 items-center justify-center rounded-md bg-purple-500/10 text-purple-500">
+            <div className="flex h-8 w-8 items-center justify-center rounded-md bg-primary/10 text-primary">
               <Server className="h-4 w-4" />
             </div>
           </div>
           <div className="mt-2 flex items-baseline gap-2">
-            <span className="text-2xl font-extrabold tabular-nums tracking-tight text-foreground">
+            <span className="text-2xl font-extrabold tabular-nums tracking-tight text-nx-ink">
               {kpis.todayModuleCount}
             </span>
-            <span className="text-xs font-semibold text-emerald-500">
+            <span className="text-xs font-semibold text-success">
               {t("audit.kpis.reporting") || "Reporting"}
             </span>
           </div>
-          <p className="mt-1 text-xs text-muted-foreground">
+          <p className="mt-1 text-xs text-nx-ink-3">
             {t("audit.kpis.subsystemsLogged") || "Subsystems generating audit telemetry"}
           </p>
         </CardContent>

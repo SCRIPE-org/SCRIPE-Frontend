@@ -11,6 +11,7 @@ import {
   CheckCircle2,
 } from "lucide-react";
 import { useI18n } from "@core/providers/i18n-provider";
+import { Card } from "@core/ui/card";
 import type { PlatformHealth } from "../../domain/entities/PlatformHealth";
 
 interface HealthTopKpiCardsProps {
@@ -45,38 +46,38 @@ export function HealthTopKpiCards({ health, isLoading = false }: HealthTopKpiCar
   return (
     <div className="grid grid-cols-1 gap-3.5 sm:grid-cols-2 lg:grid-cols-4">
       {/* 1. Overall Health */}
-      <div className="shadow-xs relative flex min-h-[100px] items-center justify-between gap-3 overflow-hidden rounded-xl border border-border bg-card p-4 before:absolute before:left-0 before:right-0 before:top-0 before:h-[1px] before:bg-gradient-to-r before:from-transparent before:via-emerald-500/30 before:to-transparent">
+      <Card className="min-w-0 flex min-h-[100px] items-center justify-between gap-3 p-4">
         <div className="flex min-w-0 items-center gap-3.5">
           <div
             className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-lg border ${
               isHealthy
-                ? "border-emerald-500/20 bg-emerald-500/10 text-emerald-400"
+                ? "border-success/30 bg-success/10 text-success"
                 : isDegraded
-                  ? "border-amber-500/20 bg-amber-500/10 text-amber-400"
-                  : "border-rose-500/20 bg-rose-500/10 text-rose-400"
+                  ? "border-warning/30 bg-warning/10 text-warning"
+                  : "border-destructive/30 bg-destructive/10 text-destructive"
             }`}
           >
             {isHealthy ? <ShieldCheck className="h-6 w-6" /> : <ShieldAlert className="h-6 w-6" />}
           </div>
           <div className="min-w-0">
-            <span className="block truncate text-xs text-muted-foreground">
+            <span className="block truncate text-xs text-nx-ink-3">
               {t("platformHealth.kpis.overallHealth") || "Overall Health"}
             </span>
             <div className="mt-0.5 flex items-center gap-2">
-              <span className="text-2xl font-bold tracking-tight text-foreground">
+              <span className="text-2xl font-bold tracking-tight text-nx-ink">
                 {isLoading ? "..." : statusText}
               </span>
               <span
                 className={`h-2.5 w-2.5 shrink-0 rounded-full ${
                   isHealthy
-                    ? "bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.8)]"
+                    ? "bg-success shadow-[0_0_8px_rgba(34,197,94,0.8)]"
                     : isDegraded
-                      ? "bg-amber-500 shadow-[0_0_8px_rgba(245,158,11,0.8)]"
-                      : "bg-rose-500 shadow-[0_0_8px_rgba(244,63,94,0.8)]"
+                      ? "bg-warning shadow-[0_0_8px_rgba(234,179,8,0.8)]"
+                      : "bg-destructive shadow-[0_0_8px_rgba(239,68,68,0.8)]"
                 }`}
               />
             </div>
-            <p className="mt-0.5 truncate text-[11px] text-muted-foreground">
+            <p className="mt-0.5 truncate text-[11px] text-nx-ink-3">
               {isHealthy
                 ? t("platformHealth.allSystemsOperational") || "All systems operational"
                 : t("platformHealth.systemsDegradedNotice") || "Degraded performance"}
@@ -85,7 +86,7 @@ export function HealthTopKpiCards({ health, isLoading = false }: HealthTopKpiCar
         </div>
 
         {/* Status Sparkline / Visual */}
-        <div className="hidden h-[30px] w-[72px] shrink-0 text-emerald-500 sm:block">
+        <div className="hidden h-[30px] w-[72px] shrink-0 text-success sm:block">
           <svg viewBox="0 0 100 40" className="h-full w-full overflow-visible">
             <polyline
               fill="none"
@@ -96,25 +97,25 @@ export function HealthTopKpiCards({ health, isLoading = false }: HealthTopKpiCar
             />
           </svg>
         </div>
-      </div>
+      </Card>
 
       {/* 2. Uptime (24h) */}
-      <div className="shadow-xs relative flex min-h-[100px] items-center justify-between gap-3 overflow-hidden rounded-xl border border-border bg-card p-4 before:absolute before:left-0 before:right-0 before:top-0 before:h-[1px] before:bg-gradient-to-r before:from-transparent before:via-sky-500/30 before:to-transparent">
+      <Card className="min-w-0 flex min-h-[100px] items-center justify-between gap-3 p-4">
         <div className="flex min-w-0 items-center gap-3.5">
-          <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-lg border border-sky-500/20 bg-sky-500/10 text-sky-400">
+          <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-lg border border-info/30 bg-info/10 text-info">
             <Clock className="h-6 w-6" />
           </div>
           <div className="min-w-0">
-            <span className="block truncate text-xs text-muted-foreground">
+            <span className="block truncate text-xs text-nx-ink-3">
               {t("platformHealth.kpis.uptime") || "Uptime (24h)"}
             </span>
             <div className="mt-0.5 flex items-baseline gap-2">
-              <span className="font-mono text-2xl font-bold tracking-tight text-foreground">
+              <span className="font-mono text-2xl font-bold tracking-tight text-nx-ink">
                 {isLoading ? "..." : "99.98%"}
               </span>
-              <span className="text-[10.5px] font-bold text-emerald-500">+0.01%</span>
+              <span className="text-[10.5px] font-bold text-success">+0.01%</span>
             </div>
-            <p className="mt-0.5 truncate text-[11px] text-muted-foreground">
+            <p className="mt-0.5 truncate text-[11px] text-nx-ink-3">
               {uptime !== "—"
                 ? `${uptime} ${t("platformHealth.runtime.uptime") || "uptime"}`
                 : t("platformHealth.kpis.targetSla") || "99.9% Target SLA"}
@@ -124,32 +125,32 @@ export function HealthTopKpiCards({ health, isLoading = false }: HealthTopKpiCar
 
         {/* Mini target gauge */}
         <div className="hidden shrink-0 flex-col items-end justify-center sm:flex">
-          <span className="inline-flex items-center rounded border border-sky-500/20 bg-sky-500/10 px-1.5 py-0.5 text-[10px] font-semibold text-sky-400">
+          <span className="inline-flex items-center rounded border border-info/30 bg-info/10 px-1.5 py-0.5 text-[10px] font-semibold text-info">
             SLA Met
           </span>
         </div>
-      </div>
+      </Card>
 
       {/* 3. Health Score */}
-      <div className="shadow-xs relative flex min-h-[100px] items-center justify-between gap-3 overflow-hidden rounded-xl border border-border bg-card p-4 before:absolute before:left-0 before:right-0 before:top-0 before:h-[1px] before:bg-gradient-to-r before:from-transparent before:via-primary/30 before:to-transparent">
+      <Card className="min-w-0 flex min-h-[100px] items-center justify-between gap-3 p-4">
         <div className="flex min-w-0 items-center gap-3.5">
           <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-lg border border-primary/20 bg-primary/10 text-primary">
             <Activity className="h-6 w-6" />
           </div>
           <div className="min-w-0">
-            <span className="block truncate text-xs text-muted-foreground">
+            <span className="block truncate text-xs text-nx-ink-3">
               {t("platformHealth.kpis.healthScore") || "Health Score"}
             </span>
             <div className="mt-0.5 flex items-baseline gap-1.5">
-              <span className="font-mono text-2xl font-bold tracking-tight text-foreground">
+              <span className="font-mono text-2xl font-bold tracking-tight text-nx-ink">
                 {isLoading ? "..." : healthScore}
               </span>
-              <span className="font-mono text-xs text-muted-foreground">/ 100</span>
+              <span className="font-mono text-xs text-nx-ink-3">/ 100</span>
               {healthScore >= 95 && (
-                <span className="ml-1 text-[10.5px] font-bold text-emerald-500">+2</span>
+                <span className="ml-1 text-[10.5px] font-bold text-success">+2</span>
               )}
             </div>
-            <p className="mt-0.5 truncate text-[11px] text-muted-foreground">
+            <p className="mt-0.5 truncate text-[11px] text-nx-ink-3">
               {totalChecks > 0
                 ? t("platformHealth.kpis.basedOnChecks", { count: totalChecks }) ||
                   `Based on ${totalChecks} health checks`
@@ -159,20 +160,20 @@ export function HealthTopKpiCards({ health, isLoading = false }: HealthTopKpiCar
         </div>
 
         <div className="hidden shrink-0 flex-col items-end justify-center sm:flex">
-          <span className="font-mono text-[11px] font-semibold text-emerald-400">
+          <span className="font-mono text-[11px] font-semibold text-success">
             {healthyChecks}/{totalChecks || "all"} passed
           </span>
         </div>
-      </div>
+      </Card>
 
       {/* 4. Active Incidents */}
-      <div className="shadow-xs relative flex min-h-[100px] items-center justify-between gap-3 overflow-hidden rounded-xl border border-border bg-card p-4 before:absolute before:left-0 before:right-0 before:top-0 before:h-[1px] before:bg-gradient-to-r before:from-transparent before:via-rose-500/20 before:to-transparent">
+      <Card className="min-w-0 flex min-h-[100px] items-center justify-between gap-3 p-4">
         <div className="flex min-w-0 items-center gap-3.5">
           <div
             className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-lg border ${
               activeIncidents.length > 0
-                ? "border-rose-500/20 bg-rose-500/10 text-rose-400"
-                : "border-emerald-500/20 bg-emerald-500/10 text-emerald-400"
+                ? "border-destructive/30 bg-destructive/10 text-destructive"
+                : "border-success/30 bg-success/10 text-success"
             }`}
           >
             {activeIncidents.length > 0 ? (
@@ -182,18 +183,18 @@ export function HealthTopKpiCards({ health, isLoading = false }: HealthTopKpiCar
             )}
           </div>
           <div className="min-w-0">
-            <span className="block truncate text-xs text-muted-foreground">
+            <span className="block truncate text-xs text-nx-ink-3">
               {t("platformHealth.kpis.activeIncidents") || "Active Incidents"}
             </span>
             <div className="mt-0.5 flex items-baseline gap-2">
-              <span className="font-mono text-2xl font-bold tracking-tight text-foreground">
+              <span className="font-mono text-2xl font-bold tracking-tight text-nx-ink">
                 {isLoading ? "..." : activeIncidents.length}
               </span>
               <span
                 className={`inline-flex items-center rounded px-1.5 py-0.5 text-[10px] font-bold ${
                   activeIncidents.length > 0
-                    ? "border border-rose-500/30 bg-rose-500/15 text-rose-400"
-                    : "border border-emerald-500/30 bg-emerald-500/15 text-emerald-400"
+                    ? "border border-destructive/30 bg-destructive/10 text-destructive"
+                    : "border border-success/30 bg-success/10 text-success"
                 }`}
               >
                 {activeIncidents.length > 0
@@ -201,7 +202,7 @@ export function HealthTopKpiCards({ health, isLoading = false }: HealthTopKpiCar
                   : t("platformHealth.kpis.noIncidents") || "All Clear"}
               </span>
             </div>
-            <p className="mt-0.5 truncate text-[11px] text-muted-foreground">
+            <p className="mt-0.5 truncate text-[11px] text-nx-ink-3">
               {activeIncidents.length === 0
                 ? t("platformHealth.allSystemsOperational") || "All systems operating normally"
                 : activeIncidents.length === 1
@@ -212,7 +213,7 @@ export function HealthTopKpiCards({ health, isLoading = false }: HealthTopKpiCar
             </p>
           </div>
         </div>
-      </div>
+      </Card>
     </div>
   );
 }

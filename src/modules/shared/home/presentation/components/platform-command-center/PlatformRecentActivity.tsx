@@ -5,6 +5,7 @@ import React from "react";
 import { ScrollText, ChevronRight } from "lucide-react";
 import Link from "next/link";
 import { useI18n } from "@core/providers/i18n-provider";
+import { Card } from "@core/ui/card";
 import type { RecentChange } from "@modules/monitoring/dashboard/src/domain/entities/DashboardEntities";
 
 interface PlatformRecentActivityProps {
@@ -132,18 +133,18 @@ export function PlatformRecentActivity({
       : DEFAULT_TABLE_ACTIVITIES;
 
   return (
-    <div className="flex h-[400px] flex-col overflow-hidden rounded-xl border border-border bg-card shadow-sm">
+    <Card className="flex h-[400px] flex-col overflow-hidden p-0">
       {/* Header */}
-      <div className="flex h-[60px] shrink-0 items-center justify-between border-b border-border bg-muted/40 px-4 py-3">
+      <div className="flex h-[60px] shrink-0 items-center justify-between border-b border-nx-line bg-nx-raised/40 px-4 py-3">
         <div className="flex min-w-0 items-center gap-2.5">
-          <div className="shadow-xs flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border border-[#84cc16]/20 bg-[#84cc16]/10 text-[#84cc16]">
+          <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border border-primary/20 bg-primary/10 text-primary">
             <ScrollText className="h-4 w-4" />
           </div>
           <div className="min-w-0">
-            <h2 className="truncate text-sm font-bold tracking-tight text-foreground sm:text-base">
+            <h2 className="truncate text-sm font-bold tracking-tight text-nx-ink sm:text-base">
               {t("platformCommandCenter.recentActivity.title") || "Recent Platform Activity"}
             </h2>
-            <p className="truncate text-[11px] text-muted-foreground">
+            <p className="truncate text-[11px] text-nx-ink-3">
               {t("platformCommandCenter.recentActivity.subtitle") ||
                 "Latest important events across the platform."}
             </p>
@@ -152,7 +153,7 @@ export function PlatformRecentActivity({
 
         <Link
           href="/audit"
-          className="group flex shrink-0 items-center gap-1 text-xs font-semibold text-muted-foreground transition-colors hover:text-primary"
+          className="group flex shrink-0 items-center gap-1 text-xs font-semibold text-nx-ink-3 transition-colors hover:text-nx-ink"
         >
           <span>{t("platformCommandCenter.recentActivity.viewAll") || "View All"}</span>
           <ChevronRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5" />
@@ -163,7 +164,7 @@ export function PlatformRecentActivity({
       <div className="flex-1 overflow-x-auto overflow-y-auto">
         <table className="w-full border-collapse text-left text-xs">
           <thead>
-            <tr className="border-b border-border/80 bg-muted/20 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
+            <tr className="border-b border-nx-line bg-nx-raised/20 text-[11px] font-semibold uppercase tracking-wider text-nx-ink-3">
               <th className="px-4 py-2.5 font-medium">
                 {t("platformCommandCenter.recentActivity.headers.time") || "Time"}
               </th>
@@ -181,16 +182,16 @@ export function PlatformRecentActivity({
               </th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-border/60">
+          <tbody className="divide-y divide-nx-line">
             {rows.map((row) => (
-              <tr key={row.id} className="transition-colors hover:bg-muted/30">
+              <tr key={row.id} className="transition-colors hover:bg-nx-raised">
                 {/* Time */}
-                <td className="whitespace-nowrap px-4 py-2.5 font-mono text-[11px] text-muted-foreground">
+                <td className="whitespace-nowrap px-4 py-2.5 font-mono text-[11px] text-nx-ink-3">
                   {row.time}
                 </td>
 
                 {/* Event */}
-                <td className="whitespace-nowrap px-4 py-2.5 font-semibold text-foreground">
+                <td className="whitespace-nowrap px-4 py-2.5 font-semibold text-nx-ink">
                   {row.event}
                 </td>
 
@@ -199,35 +200,35 @@ export function PlatformRecentActivity({
                   {row.tenantHref ? (
                     <Link
                       href={row.tenantHref}
-                      className="font-medium text-sky-400 hover:text-sky-300 hover:underline"
+                      className="font-medium text-info hover:text-info/80 hover:underline"
                     >
                       {row.tenantName}
                     </Link>
                   ) : (
-                    <span className="font-medium text-muted-foreground">{row.tenantName}</span>
+                    <span className="font-medium text-nx-ink-3">{row.tenantName}</span>
                   )}
                 </td>
 
                 {/* User */}
-                <td className="whitespace-nowrap px-4 py-2.5 font-mono text-[11px] text-muted-foreground">
+                <td className="whitespace-nowrap px-4 py-2.5 font-mono text-[11px] text-nx-ink-3">
                   {row.user}
                 </td>
 
                 {/* Severity Badge */}
                 <td className="whitespace-nowrap px-4 py-2.5 text-end">
                   {row.severity === "error" ? (
-                    <span className="inline-flex items-center gap-1.5 rounded-full border border-rose-500/20 bg-rose-500/10 px-2 py-0.5 text-[10px] font-semibold text-rose-500">
-                      <span className="h-1.5 w-1.5 rounded-full bg-rose-500" />
+                    <span className="inline-flex items-center gap-1.5 rounded-full border border-destructive/30 bg-destructive/10 px-2 py-0.5 text-[10px] font-semibold text-destructive">
+                      <span className="h-1.5 w-1.5 rounded-full bg-destructive" />
                       Error
                     </span>
                   ) : row.severity === "warning" ? (
-                    <span className="inline-flex items-center gap-1.5 rounded-full border border-amber-500/20 bg-amber-500/10 px-2 py-0.5 text-[10px] font-semibold text-amber-500">
-                      <span className="h-1.5 w-1.5 rounded-full bg-amber-500" />
+                    <span className="inline-flex items-center gap-1.5 rounded-full border border-warning/30 bg-warning/10 px-2 py-0.5 text-[10px] font-semibold text-warning">
+                      <span className="h-1.5 w-1.5 rounded-full bg-warning" />
                       Warning
                     </span>
                   ) : (
-                    <span className="inline-flex items-center gap-1.5 rounded-full border border-sky-500/20 bg-sky-500/10 px-2 py-0.5 text-[10px] font-semibold text-sky-400">
-                      <span className="h-1.5 w-1.5 rounded-full bg-sky-400" />
+                    <span className="inline-flex items-center gap-1.5 rounded-full border border-info/30 bg-info/10 px-2 py-0.5 text-[10px] font-semibold text-info">
+                      <span className="h-1.5 w-1.5 rounded-full bg-info" />
                       Info
                     </span>
                   )}
@@ -237,6 +238,6 @@ export function PlatformRecentActivity({
           </tbody>
         </table>
       </div>
-    </div>
+    </Card>
   );
 }

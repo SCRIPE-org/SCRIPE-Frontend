@@ -292,9 +292,8 @@ describe("useResolveEntityReference", () => {
 
     const { result } = renderHook(() => useResolveEntityReference(REFERENCE));
 
-    // Our own cancellation reaches the transport's `isExternalAbort` check and comes back as a
-    // DownloadInterceptedError. Left unrecognised it would flash "no access" over a field that is
-    // simply mid-refresh.
+    // Preserve the hook's cancellation state for cancellation-shaped transport failures; the API
+    // service regression test separately verifies caller AbortSignals remain Axios cancellations.
     await act(async () => {
       await Promise.resolve();
     });

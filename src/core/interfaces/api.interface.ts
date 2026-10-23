@@ -2,6 +2,20 @@
  * IApiService Interface
  * Defines the contract for all API operations
  */
+export interface MutationRequestIntent {
+  /**
+   * Stable opaque key for one user-intended mutation. Reuse it only when retrying the same
+   * semantic payload against an endpoint whose backend durably enforces idempotency.
+   */
+  idempotencyKey: string;
+}
+
+/** Backward-compatible transport options for mutation calls. */
+export interface MutationRequestOptions {
+  idempotencyKey?: string;
+  headers?: Record<string, string>;
+}
+
 export interface IApiService {
   /**
    * GET request (authenticated)
@@ -51,18 +65,18 @@ export interface IApiService {
     endpoint: string,
     data?: unknown,
     signal?: AbortSignal,
-    options?: { headers?: Record<string, string> }
+    options?: MutationRequestOptions
   ): Promise<T>;
 
   /**
    * POST with bounded transport retries, enabled only when an explicit stable business
    * Idempotency-Key header is supplied. Use only for endpoints with server-side replay guarantees.
    */
-  postWithRetry<T>(
+  postWithRetry?<T>(
     endpoint: string,
     data?: unknown,
     signal?: AbortSignal,
-    options?: { headers?: Record<string, string> }
+    options?: MutationRequestOptions
   ): Promise<T>;
 
   /**
@@ -84,7 +98,7 @@ export interface IApiService {
     endpoint: string,
     data?: unknown,
     signal?: AbortSignal,
-    options?: { headers?: Record<string, string> }
+    options?: MutationRequestOptions
   ): Promise<T>;
 
   /**
@@ -93,14 +107,19 @@ export interface IApiService {
    * @param data - Request body
    * @param signal - AbortSignal for cancellation
    */
-  patch<T>(endpoint: string, data?: unknown, signal?: AbortSignal): Promise<T>;
+  patch<T>(
+    endpoint: string,
+    data?: unknown,
+    signal?: AbortSignal,
+    options?: MutationRequestOptions
+  ): Promise<T>;
 
   /**
    * DELETE request (authenticated)
    * @param endpoint - API endpoint
    * @param signal - AbortSignal for cancellation
    */
-  delete<T>(endpoint: string, signal?: AbortSignal): Promise<T>;
+  delete<T>(endpoint: string, signal?: AbortSignal, options?: MutationRequestOptions): Promise<T>;
 
   /**
    * PUT with automatic refresh for 204 responses

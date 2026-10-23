@@ -317,8 +317,8 @@ export function ResourceBlocksPanel({
                     </div>
                     <p className="text-sm font-medium">{block.reason}</p>
                     <p className="text-xs text-nx-ink-3">
-                      {asLocalInput(block.startUtc, block.timeZoneId)} â€”{" "}
-                      {asLocalInput(block.endUtc, block.timeZoneId)} Â· {block.timeZoneId}
+                      {asLocalInput(block.startUtc, block.timeZoneId)} —{" "}
+                      {asLocalInput(block.endUtc, block.timeZoneId)} · {block.timeZoneId}
                     </p>
                   </div>
                   <div className="flex gap-1">

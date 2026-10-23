@@ -1,11 +1,14 @@
-// FILE-EXCEPTION: rule bypass for existing large file
 import type { IApiService } from "@core/interfaces/api.interface";
-import type { Booking360Status } from "@modules/venue";
-import type { IOperationsCalendarRepository } from "@modules/venue";
-import type { ISchedulableResourceRepository } from "@modules/venue";
-import type { IFacilityResourceProfileRepository } from "@modules/venue";
-import type { IFacilityRepository } from "@modules/venue";
-import type { CalendarResource, OperationsCalendarDay } from "@modules/venue";
+import { VENUE_OVERVIEW_ENDPOINTS } from "./venue-overview.endpoints";
+import type {
+  Booking360Status,
+  IOperationsCalendarRepository,
+  ISchedulableResourceRepository,
+  IFacilityResourceProfileRepository,
+  IFacilityRepository,
+  CalendarResource,
+  OperationsCalendarDay,
+} from "@modules/venue";
 import type { IVenueOverviewService } from "../../domain/interfaces/IVenueOverviewService";
 import type {
   VenueOverviewAtAGlanceItem,
@@ -56,25 +59,91 @@ function chunks<T>(items: readonly T[], size: number): T[][] {
  * VenueOverviewService
  */
 export class VenueOverviewService implements IVenueOverviewService {
+  private readonly api?: IApiService | null;
+  private readonly operationsCalendarRepo?: IOperationsCalendarRepository;
+  private readonly schedulableResourceRepo?: ISchedulableResourceRepository;
+  private readonly profileRepo?: IFacilityResourceProfileRepository;
+  private readonly facilityRepo?: IFacilityRepository;
+  private readonly customerRepo?: ICustomerPartyRepository;
+
   constructor(
-    private readonly apiService: IApiService,
-    private readonly operationsCalendarRepo: IOperationsCalendarRepository,
-    private readonly schedulableResourceRepo: ISchedulableResourceRepository,
-    private readonly profileRepo: IFacilityResourceProfileRepository,
-    private readonly facilityRepo: IFacilityRepository,
-    private readonly customerRepo?: ICustomerPartyRepository
-  ) {}
+    apiOrOpsRepo?: IApiService | IOperationsCalendarRepository | null,
+    schedulableResourceRepoOrOpsRepo?:
+      ISchedulableResourceRepository | IOperationsCalendarRepository,
+    profileRepoOrSched?: IFacilityResourceProfileRepository | ISchedulableResourceRepository,
+    facilityRepoOrProf?: IFacilityRepository | IFacilityResourceProfileRepository,
+    customerRepoOrFacility?: ICustomerPartyRepository | IFacilityRepository,
+    maybeCustomerRepo?: ICustomerPartyRepository
+  ) {
+    if (apiOrOpsRepo && "getDay" in apiOrOpsRepo) {
+      this.operationsCalendarRepo = apiOrOpsRepo as IOperationsCalendarRepository;
+      this.schedulableResourceRepo =
+        schedulableResourceRepoOrOpsRepo as ISchedulableResourceRepository;
+      this.profileRepo = profileRepoOrSched as IFacilityResourceProfileRepository;
+      this.facilityRepo = facilityRepoOrProf as IFacilityRepository;
+      this.customerRepo = customerRepoOrFacility as ICustomerPartyRepository;
+    } else if (apiOrOpsRepo && typeof (apiOrOpsRepo as IApiService).get === "function") {
+      this.api = apiOrOpsRepo as IApiService | null;
+      this.operationsCalendarRepo = schedulableResourceRepoOrOpsRepo as
+        IOperationsCalendarRepository | undefined;
+      this.schedulableResourceRepo = profileRepoOrSched as
+        ISchedulableResourceRepository | undefined;
+      this.profileRepo = facilityRepoOrProf as IFacilityResourceProfileRepository | undefined;
+      this.facilityRepo = customerRepoOrFacility as IFacilityRepository | undefined;
+      this.customerRepo = maybeCustomerRepo;
+    } else if (schedulableResourceRepoOrOpsRepo) {
+      this.operationsCalendarRepo =
+        schedulableResourceRepoOrOpsRepo as IOperationsCalendarRepository;
+      this.schedulableResourceRepo = profileRepoOrSched as ISchedulableResourceRepository;
+      this.profileRepo = facilityRepoOrProf as IFacilityResourceProfileRepository;
+      this.facilityRepo = customerRepoOrFacility as IFacilityRepository;
+      this.customerRepo = maybeCustomerRepo;
+    }
+  }
 
   async getOverview(
     facilityIdInput?: string,
     targetLocalDateInput?: string
   ): Promise<VenueOverviewState> {
+    if (this.api) {
+      const url = VENUE_OVERVIEW_ENDPOINTS.GET(facilityIdInput, targetLocalDateInput);
+      const res = await this.api.get<VenueOverviewState>(url);
+      return {
+        ...res,
+        stage: res.stage ?? "ready",
+        timelineDay: res.timelineDay ?? null,
+        timelineResources: res.timelineResources ?? [],
+        recentActivityDeferred: res.recentActivityDeferred ?? true,
+        error: res.error ?? false,
+      };
+    }
+
+    return this.getOverviewFallback(facilityIdInput, targetLocalDateInput);
+  }
+
+  private async getOverviewFallback(
+    facilityIdInput?: string,
+    targetLocalDateInput?: string
+  ): Promise<VenueOverviewState> {
+    if (
+      !this.facilityRepo ||
+      !this.profileRepo ||
+      !this.schedulableResourceRepo ||
+      !this.operationsCalendarRepo
+    ) {
+      throw new Error("Repository dependencies are required when API client is not configured.");
+    }
+    const facilityRepo = this.facilityRepo;
+    const profileRepo = this.profileRepo;
+    const schedulableResourceRepo = this.schedulableResourceRepo;
+    const operationsCalendarRepo = this.operationsCalendarRepo;
+
     // 1. Resolve facility context
     let facilityId = facilityIdInput;
     let facilityName = "";
     if (facilityIdInput) {
       try {
-        const facility = await this.facilityRepo.getById(facilityIdInput);
+        const facility = await facilityRepo.getById(facilityIdInput);
         facilityId = facility.id;
         facilityName = facility.name;
       } catch {
@@ -83,7 +152,7 @@ export class VenueOverviewService implements IVenueOverviewService {
       }
     } else {
       try {
-        const facilityPage = await this.facilityRepo.getAll({ page: 1, pageSize: 50 });
+        const facilityPage = await facilityRepo.getAll({ page: 1, pageSize: 50 });
         if (facilityPage.items.length > 0) {
           facilityId = facilityPage.items[0]!.id;
           facilityName = facilityPage.items[0]!.name;
@@ -130,14 +199,14 @@ export class VenueOverviewService implements IVenueOverviewService {
     // 2. Resolve facility resources and timezone before requesting the authoritative projection.
     // The calendar contract deliberately requires both; a facility-level wildcard would leak
     // occupancy outside the resources the overview is allowed to compose.
-    const firstProfilePage = await this.profileRepo.getAll({
+    const firstProfilePage = await profileRepo.getAll({
       page: 1,
       pageSize: PAGE_SIZE,
       facilityId,
     });
     const profiles = [...firstProfilePage.items];
     for (let page = 2; profiles.length < firstProfilePage.totalCount; page += 1) {
-      const nextPage = await this.profileRepo.getAll({ page, pageSize: PAGE_SIZE, facilityId });
+      const nextPage = await profileRepo.getAll({ page, pageSize: PAGE_SIZE, facilityId });
       profiles.push(...nextPage.items);
       if (nextPage.items.length === 0) break;
     }
@@ -145,14 +214,14 @@ export class VenueOverviewService implements IVenueOverviewService {
     const facilityProfileIds = profiles.map((profile) => profile.id);
     const resourcePages = await Promise.all(
       chunks(facilityProfileIds, MAX_PROFILE_FILTERS).map(async (profileIds) => {
-        const firstPage = await this.schedulableResourceRepo.getAll({
+        const firstPage = await schedulableResourceRepo.getAll({
           page: 1,
           pageSize: PAGE_SIZE,
           facilityResourceProfileIds: profileIds,
         });
         const pages = [...firstPage.items];
         for (let page = 2; pages.length < firstPage.totalCount; page += 1) {
-          const nextPage = await this.schedulableResourceRepo.getAll({
+          const nextPage = await schedulableResourceRepo.getAll({
             page,
             pageSize: PAGE_SIZE,
             facilityResourceProfileIds: profileIds,
@@ -173,7 +242,7 @@ export class VenueOverviewService implements IVenueOverviewService {
     try {
       projections = await Promise.all(
         chunks(facilityResources, MAX_OVERVIEW_RESOURCES).map((resourceBatch) =>
-          this.operationsCalendarRepo.getDay({
+          operationsCalendarRepo.getDay({
             dateLocal: localDate,
             timeZoneId,
             resourceIds: resourceBatch.map((resource) => resource.id),
@@ -260,7 +329,7 @@ export class VenueOverviewService implements IVenueOverviewService {
 
     // 6. Derive KPI 3: Checked In Now
     const checkedInNowBlocks = blocks.filter((b) => {
-      if (b.status !== "CheckedIn") return false;
+      if (b.status !== "CheckedIn" && b.status !== "Confirmed") return false;
       return b.startUtc <= currentUtcIso && b.endUtc >= currentUtcIso;
     });
     const checkedInNowCount = checkedInNowBlocks.length;
@@ -366,12 +435,18 @@ export class VenueOverviewService implements IVenueOverviewService {
     const resourceActivity: VenueOverviewResourceActivityItem[] = facilityResources.map((res) => {
       const resBlocks = blocks.filter((b) => b.resourceId === res.id);
 
-      // Active now block (CheckedIn or active period)
+      // Active now block (CheckedIn or Confirmed active period)
       const activeNowBlock = resBlocks.find(
-        (b) => b.startUtc <= currentUtcIso && b.endUtc >= currentUtcIso
+        (b) =>
+          b.startUtc <= currentUtcIso &&
+          b.endUtc >= currentUtcIso &&
+          (b.status === "CheckedIn" || b.status === "Confirmed")
       );
 
-      if (activeNowBlock && activeNowBlock.status === "CheckedIn") {
+      if (activeNowBlock) {
+        const cName = activeNowBlock.customerPartyId
+          ? (customerMap.get(activeNowBlock.customerPartyId) ?? null)
+          : null;
         return {
           resourceId: res.id,
           resourceName: res.name,
@@ -380,15 +455,20 @@ export class VenueOverviewService implements IVenueOverviewService {
           currentOrNextEndUtc: activeNowBlock.endUtc,
           currentOrNextStartUtc: activeNowBlock.startUtc,
           activeReservationId: activeNowBlock.reservationId,
+          reservationNumber: activeNowBlock.reservationNumber ?? null,
+          customerDisplayName: cName,
         };
       }
 
       // Next upcoming block
       const nextBlock = resBlocks
-        .filter((b) => b.startUtc > currentUtcIso && b.status !== "Cancelled")
+        .filter((b) => b.startUtc > currentUtcIso && b.status !== "Cancelled" && b.status !== "Expired")
         .sort((a, b) => a.startUtc.localeCompare(b.startUtc))[0];
 
       if (nextBlock) {
+        const cName = nextBlock.customerPartyId
+          ? (customerMap.get(nextBlock.customerPartyId) ?? null)
+          : null;
         return {
           resourceId: res.id,
           resourceName: res.name,
@@ -397,6 +477,8 @@ export class VenueOverviewService implements IVenueOverviewService {
           currentOrNextEndUtc: nextBlock.endUtc,
           currentOrNextStartUtc: nextBlock.startUtc,
           activeReservationId: nextBlock.reservationId,
+          reservationNumber: nextBlock.reservationNumber ?? null,
+          customerDisplayName: cName,
         };
       }
 
@@ -409,6 +491,8 @@ export class VenueOverviewService implements IVenueOverviewService {
         currentOrNextEndUtc: null,
         currentOrNextStartUtc: null,
         activeReservationId: null,
+        reservationNumber: null,
+        customerDisplayName: null,
       };
     });
 

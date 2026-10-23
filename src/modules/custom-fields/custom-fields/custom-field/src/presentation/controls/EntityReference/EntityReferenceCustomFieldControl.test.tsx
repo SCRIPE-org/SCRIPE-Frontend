@@ -17,6 +17,7 @@ import React from "react";
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import "@testing-library/jest-dom";
+import { ENTITY_LOOKUP_MAX_SEARCH_LENGTH } from "../../../../../entity-lookup";
 import { EntityReferenceCustomFieldControl } from "./EntityReferenceCustomFieldControl";
 
 vi.mock("@core/providers/settings-provider", () => ({
@@ -143,6 +144,7 @@ function searchStub(overrides: Record<string, unknown> = {}) {
     isLoading: false,
     isLoadingMore: false,
     hasNextPage: false,
+    mayHaveMoreResults: false,
     loadMore: vi.fn(),
     error: null as unknown,
     reload: vi.fn(),
@@ -589,6 +591,14 @@ describe("EntityReferenceCustomFieldControl", () => {
 
   // ── Debounce: N keystrokes, ONE request ────────────────────────────────
   describe("search debounce", () => {
+    it("caps picker search input at the shared server limit", () => {
+      renderControl();
+      openPanel();
+
+      const panelInput = document.querySelector("[cmdk-input]");
+      expect(panelInput).toHaveAttribute("maxLength", String(ENTITY_LOOKUP_MAX_SEARCH_LENGTH));
+    });
+
     it("collapses a burst of keystrokes into a single lookup request", () => {
       // The debounce itself belongs to useEntityLookupSearch, so it is
       // reconstructed here at the mock boundary exactly as that hook's
@@ -713,6 +723,16 @@ describe("EntityReferenceCustomFieldControl", () => {
       expect(
         screen.queryByRole("button", { name: "customField.entityReference.loadMore" })
       ).not.toBeInTheDocument();
+    });
+
+    it("explains when bounded search may omit additional matches", () => {
+      currentSearch = searchStub({ items: [AHMED], mayHaveMoreResults: true });
+      renderControl();
+      openPanel();
+
+      expect(screen.getByRole("status")).toHaveTextContent(
+        "customField.entityReference.boundedResultsHint"
+      );
     });
 
     it("distinguishes an unmatched search from a failed one", () => {

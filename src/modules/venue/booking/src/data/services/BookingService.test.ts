@@ -12,7 +12,7 @@ describe("BookingService", () => {
   beforeEach(() => vi.clearAllMocks());
 
   it("maps the server-authoritative availability interval into T01", async () => {
-    vi.mocked(api.postWithRetry).mockResolvedValue({ id: "reservation-1" });
+    vi.mocked(api.postWithRetry!).mockResolvedValue({ id: "reservation-1" });
 
     const input = {
       resourceId: "resource-1",
@@ -28,13 +28,13 @@ describe("BookingService", () => {
       "/v1/Reservations",
       { ...input, bookerPartyId: null, payerPartyId: null },
       undefined,
-      { headers: { "Idempotency-Key": "draft-key" } }
+      { idempotencyKey: "draft-key" }
     );
     expect(result.id).toBe("reservation-1");
   });
 
   it("creates T04 with a caller-owned idempotency key", async () => {
-    vi.mocked(api.postWithRetry).mockResolvedValue({
+    vi.mocked(api.postWithRetry!).mockResolvedValue({
       reservationId: "reservation-1",
       bookingHoldId: "hold-1",
       expiresAtUtc: "2026-09-10T07:15:00Z",
@@ -46,12 +46,12 @@ describe("BookingService", () => {
       "/v1/booking-holds",
       { reservationId: "reservation-1", idempotencyKey: "hold-key" },
       undefined,
-      { headers: { "Idempotency-Key": "hold-key" } }
+      { idempotencyKey: "hold-key" }
     );
   });
 
   it("confirms T06 through the explicit action endpoint", async () => {
-    vi.mocked(api.postWithRetry).mockResolvedValue({
+    vi.mocked(api.postWithRetry!).mockResolvedValue({
       reservationId: "reservation-1",
       bookingHoldId: "hold-1",
     });
@@ -62,12 +62,12 @@ describe("BookingService", () => {
       "/v1/Reservations/reservation-1/confirm",
       { idempotencyKey: "confirm-key", priceQuoteId: "price-quote-1" },
       undefined,
-      { headers: { "Idempotency-Key": "confirm-key" } }
+      { idempotencyKey: "confirm-key" }
     );
   });
 
   it("checks in through the explicit T09 action endpoint", async () => {
-    vi.mocked(api.postWithRetry).mockResolvedValue({
+    vi.mocked(api.postWithRetry!).mockResolvedValue({
       reservationId: "reservation-1",
       status: "CheckedIn",
     });
@@ -78,12 +78,12 @@ describe("BookingService", () => {
       "/v1/Reservations/reservation-1/check-in",
       { idempotencyKey: "check-in-key" },
       undefined,
-      { headers: { "Idempotency-Key": "check-in-key" } }
+      { idempotencyKey: "check-in-key" }
     );
   });
 
   it("completes through the explicit T10 action endpoint", async () => {
-    vi.mocked(api.postWithRetry).mockResolvedValue({
+    vi.mocked(api.postWithRetry!).mockResolvedValue({
       reservationId: "reservation-1",
       status: "Completed",
     });
@@ -94,12 +94,12 @@ describe("BookingService", () => {
       "/v1/Reservations/reservation-1/complete",
       { idempotencyKey: "complete-key" },
       undefined,
-      { headers: { "Idempotency-Key": "complete-key" } }
+      { idempotencyKey: "complete-key" }
     );
   });
 
   it("marks no-show through T12 with its bounded operator reason", async () => {
-    vi.mocked(api.postWithRetry).mockResolvedValue({
+    vi.mocked(api.postWithRetry!).mockResolvedValue({
       reservationId: "reservation-1",
       status: "NoShow",
     });
@@ -110,12 +110,12 @@ describe("BookingService", () => {
       "/v1/Reservations/reservation-1/no-show",
       { idempotencyKey: "no-show-key", reason: "Did not arrive" },
       undefined,
-      { headers: { "Idempotency-Key": "no-show-key" } }
+      { idempotencyKey: "no-show-key" }
     );
   });
 
   it("cancels through T13 with the supplied operator reason", async () => {
-    vi.mocked(api.postWithRetry).mockResolvedValue({
+    vi.mocked(api.postWithRetry!).mockResolvedValue({
       reservationId: "reservation-1",
       status: "Cancelled",
     });
@@ -130,12 +130,12 @@ describe("BookingService", () => {
       "/v1/Reservations/reservation-1/cancel",
       { idempotencyKey: "cancel-key", reason: "Customer requested cancellation" },
       undefined,
-      { headers: { "Idempotency-Key": "cancel-key" } }
+      { idempotencyKey: "cancel-key" }
     );
   });
 
   it("reschedules through T14 without converting it into a generic update", async () => {
-    vi.mocked(api.postWithRetry).mockResolvedValue({
+    vi.mocked(api.postWithRetry!).mockResolvedValue({
       reservationId: "reservation-1",
       status: "Confirmed",
     });
@@ -152,12 +152,12 @@ describe("BookingService", () => {
       "/v1/Reservations/reservation-1/reschedule",
       input,
       undefined,
-      { headers: { "Idempotency-Key": "reschedule-key" } }
+      { idempotencyKey: "reschedule-key" }
     );
   });
 
   it("changes resource through T15 while preserving the explicit interval contract", async () => {
-    vi.mocked(api.postWithRetry).mockResolvedValue({
+    vi.mocked(api.postWithRetry!).mockResolvedValue({
       reservationId: "reservation-1",
       status: "Confirmed",
     });
@@ -174,7 +174,7 @@ describe("BookingService", () => {
       "/v1/Reservations/reservation-1/change-resource",
       input,
       undefined,
-      { headers: { "Idempotency-Key": "resource-key" } }
+      { idempotencyKey: "resource-key" }
     );
   });
 

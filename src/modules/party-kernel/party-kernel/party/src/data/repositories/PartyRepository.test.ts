@@ -431,10 +431,7 @@ describe("PartyRepository", () => {
       });
 
       expect(partyId).toBe("resilient-person-1");
-      expect(failureCallback).toHaveBeenCalledWith(
-        expect.any(Error),
-        "resilient-person-1"
-      );
+      expect(failureCallback).toHaveBeenCalledWith(expect.any(Error), "resilient-person-1");
     });
   });
 
@@ -456,7 +453,11 @@ describe("PartyRepository", () => {
       });
 
       const res = await repository.lookupContacts({ search: "Fatima", type: "Person" });
-      expect(partyService.lookupPeople).toHaveBeenCalledWith({ search: "Fatima", page: 1, pageSize: 20 });
+      expect(partyService.lookupPeople).toHaveBeenCalledWith({
+        search: "Fatima",
+        page: 1,
+        pageSize: 20,
+      });
       expect(res.items).toHaveLength(1);
       expect(res.items[0].displayName).toBe("Dr. Fatima Zahra");
       expect(res.items[0].type).toBe("Person");
@@ -479,7 +480,11 @@ describe("PartyRepository", () => {
       });
 
       const res = await repository.lookupContacts({ search: "Falcons", type: "Organization" });
-      expect(partyService.lookupOrganizations).toHaveBeenCalledWith({ search: "Falcons", page: 1, pageSize: 20 });
+      expect(partyService.lookupOrganizations).toHaveBeenCalledWith({
+        search: "Falcons",
+        page: 1,
+        pageSize: 20,
+      });
       expect(res.items).toHaveLength(1);
       expect(res.items[0].legalName).toBe("Riyadh Falcons Sports LLC");
     });
@@ -737,4 +742,3 @@ describe("PartyRepository", () => {
     });
   });
 });
-

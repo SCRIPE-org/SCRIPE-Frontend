@@ -79,7 +79,7 @@ export function MapSvgCanvas({
         width="1000"
         height="460"
         fill="url(#gridPatternV4)"
-        className="pointer-events-none text-muted-foreground opacity-40"
+        className="pointer-events-none text-nx-line opacity-40"
       />
 
       {/* 172 Country Vector Paths */}
@@ -159,7 +159,7 @@ export function MapSvgCanvas({
                   cy={cy}
                   r={isHost ? "7" : "5.5"}
                   fill="none"
-                  stroke={isHost ? "var(--primary)" : "#0ea5e9"}
+                  stroke={isHost ? "var(--primary)" : "var(--info, #0ea5e9)"}
                   strokeWidth="1.2"
                   opacity="0.8"
                   className="origin-center animate-ping"
@@ -169,14 +169,14 @@ export function MapSvgCanvas({
                   cx={cx}
                   cy={cy}
                   r={isHost ? "8" : "6"}
-                  fill={isHost ? "rgba(198,255,0,0.22)" : "rgba(14,165,233,0.25)"}
+                  fill={isHost ? "rgba(198,255,0,0.22)" : "color-mix(in srgb, var(--info) 25%, transparent)"}
                 />
                 <circle
                   cx={cx}
                   cy={cy}
                   r={isHost ? "3.2" : "2.6"}
-                  fill={isHost ? "var(--primary)" : "#0ea5e9"}
-                  stroke="#0b1622"
+                  fill={isHost ? "var(--primary)" : "var(--info, #0ea5e9)"}
+                  stroke="var(--nx-ground, #0b1622)"
                   strokeWidth="0.8"
                 />
               </g>

@@ -41,26 +41,33 @@ export function useEntityCustomFields(
     }));
   }
 
-  const fetchFields = useCallback(async (isRefetch = false) => {
-    if (!entityTypeKey) {
-      if (isRefetch) {
-        setState((s) => ({ ...s, fields: [], isLoading: false, error: null }));
+  const fetchFields = useCallback(
+    async (isRefetch = false) => {
+      if (!entityTypeKey) {
+        if (isRefetch) {
+          setState((s) => ({ ...s, fields: [], isLoading: false, error: null }));
+        }
+        return;
       }
-      return;
-    }
-    if (isRefetch) {
-      setState((s) => ({ ...s, isLoading: true, error: null }));
-    }
-    
-    try {
-      const result = ownerId
-        ? await customFieldsContainer.customFieldValueRepository.getValues(entityTypeKey, ownerId)
-        : await customFieldsContainer.customFieldValueRepository.getDefinitions(entityTypeKey);
-      setState((s) => ({ ...s, fields: result, isLoading: false }));
-    } catch (err) {
-      setState((s) => ({ ...s, error: err instanceof Error ? err : new Error(String(err)), isLoading: false }));
-    }
-  }, [entityTypeKey, ownerId]);
+      if (isRefetch) {
+        setState((s) => ({ ...s, isLoading: true, error: null }));
+      }
+
+      try {
+        const result = ownerId
+          ? await customFieldsContainer.customFieldValueRepository.getValues(entityTypeKey, ownerId)
+          : await customFieldsContainer.customFieldValueRepository.getDefinitions(entityTypeKey);
+        setState((s) => ({ ...s, fields: result, isLoading: false }));
+      } catch (err) {
+        setState((s) => ({
+          ...s,
+          error: err instanceof Error ? err : new Error(String(err)),
+          isLoading: false,
+        }));
+      }
+    },
+    [entityTypeKey, ownerId]
+  );
 
   useEffect(() => {
     void fetchFields(false);
@@ -83,11 +90,11 @@ export function useEntityCustomFields(
     [entityTypeKey, ownerId]
   );
 
-  return { 
-    fields: state.fields, 
-    isLoading: state.isLoading, 
-    error: state.error, 
-    saveValues, 
-    refetch: () => fetchFields(true) 
+  return {
+    fields: state.fields,
+    isLoading: state.isLoading,
+    error: state.error,
+    saveValues,
+    refetch: () => fetchFields(true),
   };
 }

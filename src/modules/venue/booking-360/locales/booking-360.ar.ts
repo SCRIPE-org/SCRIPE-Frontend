@@ -26,6 +26,8 @@ export const ar = {
       quantity: "الكمية",
       profile: "ملف المورد",
       reference: "رقم الحجز",
+      viewCourt: "عرض المورد",
+      viewInCalendar: "عرض في التقويم",
     },
     resource: {
       unavailable: "تفاصيل المورد غير متاحة",
@@ -40,6 +42,7 @@ export const ar = {
       unavailable: "تفاصيل العميل غير متاحة مؤقتًا. يظل الحجز متاحًا.",
       restricted: "تتطلب تفاصيل العميل إذن الوصول إلى الأطراف.",
       unspecified: "عميل غير محدد",
+      viewCustomer: "عرض العميل",
     },
     hold: {
       title: "الحجز المؤقت والتأكيد",
@@ -56,6 +59,14 @@ export const ar = {
       invoice: "الفاتورة",
       total: "إجمالي الفاتورة",
       outstanding: "المستحق",
+      paid: "المدفوع",
+      recordedPayments: "الدفعات المسجلة",
+      pendingAllocationNotice:
+        "تنتظر دفعة مسجلة بقيمة {{amount}} تخصيصها للفاتورة {{invoiceNumber}}.",
+      pendingSyncNotice: "لا تزال مزامنة الفاتورة المالية قيد التنفيذ.",
+      unallocated: "غير مخصصة",
+      allocated: "مخصصة",
+      refunded: "مستردة",
       invoicePending: "لا تتوفر فاتورة مالية لهذا الحجز بعد.",
       restricted: "تتطلب التفاصيل التجارية إذن الوصول إلى المستحقات.",
       unavailable: "تفاصيل التمويل غير متاحة مؤقتًا.",
@@ -187,6 +198,12 @@ export const ar = {
       expired: "انتهى الحجز المؤقت وتم تحميل حالة الحجز من الخادم.",
       conflict: "غيّر مشغل آخر هذا الحجز وتم تحميل الحالة الموثوقة.",
       failed: "تعذر تأكيد الحجز. أعد المحاولة بعد مراجعة حالته.",
+    },
+    cancelledPaid: {
+      title: "لا تزال الدفعة مسجلة في المالية",
+      description:
+        "تم إلغاء هذا الحجز، لكن مبلغ {{amount}} ما زال مسجلًا في المالية. الإلغاء لا ينفذ استردادًا.",
+      manageRefund: "إدارة الدفعة في المالية",
     },
     permission: {
       title: "يلزم إذن الوصول إلى الحجز",

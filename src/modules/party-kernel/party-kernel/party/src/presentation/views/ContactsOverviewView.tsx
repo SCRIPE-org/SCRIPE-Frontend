@@ -11,12 +11,7 @@ import { useBreadcrumbOverride } from "@core/hooks/use-breadcrumb-override";
 // Design System Primitives (@core/ui/*)
 import { Button } from "@core/ui/button";
 import { Badge } from "@core/ui/badge";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@core/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@core/ui/card";
 import { Skeleton } from "@core/ui/skeleton";
 import { EmptyState } from "@core/ui/empty-state";
 
@@ -68,14 +63,14 @@ export const ContactsOverviewView = React.memo(function ContactsOverviewView() {
 
   if (vm.isLoading) {
     return (
-      <div className="space-y-6 p-4 sm:p-6 lg:p-8 max-w-7xl mx-auto">
+      <div className="mx-auto max-w-7xl space-y-6 p-4 sm:p-6 lg:p-8">
         <Skeleton className="h-12 w-64 rounded-lg" />
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {Array.from({ length: 4 }).map((_, idx) => (
             <Skeleton key={idx} className="h-28 w-full rounded-xl" />
           ))}
         </div>
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
           <Skeleton className="h-80 w-full rounded-xl lg:col-span-2" />
           <Skeleton className="h-80 w-full rounded-xl" />
         </div>
@@ -84,16 +79,14 @@ export const ContactsOverviewView = React.memo(function ContactsOverviewView() {
   }
 
   return (
-    <div className="space-y-6 p-4 sm:p-6 lg:p-8 max-w-7xl mx-auto">
+    <div className="mx-auto max-w-7xl space-y-6 p-4 sm:p-6 lg:p-8">
       {/* ── Page Header & Quick Actions ─────────────────────────────── */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
         <div className="space-y-1">
           <h1 className="text-2xl font-bold tracking-tight text-nx-ink">
             {t("party.overview.title")}
           </h1>
-          <p className="text-sm text-nx-ink-3">
-            {t("party.overview.subtitle")}
-          </p>
+          <p className="text-sm text-nx-ink-3">{t("party.overview.subtitle")}</p>
         </div>
 
         <div className="flex flex-wrap items-center gap-2.5">
@@ -134,87 +127,73 @@ export const ContactsOverviewView = React.memo(function ContactsOverviewView() {
       </div>
 
       {/* ── KPI Summary Cards ──────────────────────────────────────── */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <Card
-          className="border-nx-border bg-nx-surface shadow-xs cursor-pointer transition-colors hover:border-nx-accent/40"
+          className="border-nx-line cursor-pointer bg-nx-surface transition-colors hover:border-nx-line-hi"
           onClick={() => router.push("/party-kernel/parties")}
         >
-          <CardContent className="p-5 flex items-center justify-between">
+          <CardContent className="flex items-center justify-between p-5">
             <div className="space-y-1">
               <p className="text-xs font-medium text-nx-ink-3">
                 {t("party.overview.totalContacts")}
               </p>
-              <p
-                className="text-2xl font-bold text-nx-ink"
-                data-testid="kpi-total-contacts"
-              >
+              <p className="text-2xl font-bold text-nx-ink" data-testid="kpi-total-contacts">
                 {vm.totalContacts}
               </p>
             </div>
-            <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-nx-accent/10 text-nx-accent">
+            <div className="bg-nx-accent/10 flex h-11 w-11 items-center justify-center rounded-xl text-nx-accent">
               <Users className="h-5 w-5" />
             </div>
           </CardContent>
         </Card>
 
         <Card
-          className="border-nx-border bg-nx-surface shadow-xs cursor-pointer transition-colors hover:border-blue-500/40"
+          className="border-nx-line cursor-pointer bg-nx-surface transition-colors hover:border-nx-line-hi"
           onClick={() => router.push("/party-kernel/parties?partyType=Person")}
         >
-          <CardContent className="p-5 flex items-center justify-between">
+          <CardContent className="flex items-center justify-between p-5">
             <div className="space-y-1">
-              <p className="text-xs font-medium text-nx-ink-3">
-                {t("party.overview.peopleCount")}
-              </p>
-              <p
-                className="text-2xl font-bold text-nx-ink"
-                data-testid="kpi-people-count"
-              >
+              <p className="text-xs font-medium text-nx-ink-3">{t("party.overview.peopleCount")}</p>
+              <p className="text-2xl font-bold text-nx-ink" data-testid="kpi-people-count">
                 {vm.peopleCount}
               </p>
             </div>
-            <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-blue-500/10 text-blue-600 dark:text-blue-400">
+            <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-info/10 text-info">
               <User className="h-5 w-5" />
             </div>
           </CardContent>
         </Card>
 
         <Card
-          className="border-nx-border bg-nx-surface shadow-xs cursor-pointer transition-colors hover:border-emerald-500/40"
+          className="border-nx-line cursor-pointer bg-nx-surface transition-colors hover:border-nx-line-hi"
           onClick={() => router.push("/party-kernel/parties?partyType=Organization")}
         >
-          <CardContent className="p-5 flex items-center justify-between">
+          <CardContent className="flex items-center justify-between p-5">
             <div className="space-y-1">
               <p className="text-xs font-medium text-nx-ink-3">
                 {t("party.overview.organizationsCount")}
               </p>
-              <p
-                className="text-2xl font-bold text-nx-ink"
-                data-testid="kpi-organizations-count"
-              >
+              <p className="text-2xl font-bold text-nx-ink" data-testid="kpi-organizations-count">
                 {vm.organizationsCount}
               </p>
             </div>
-            <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400">
+            <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-success/10 text-success">
               <Building className="h-5 w-5" />
             </div>
           </CardContent>
         </Card>
 
-        <Card className="border-nx-border bg-nx-surface shadow-xs">
-          <CardContent className="p-5 flex items-center justify-between">
+        <Card className="border-nx-line bg-nx-surface">
+          <CardContent className="flex items-center justify-between p-5">
             <div className="space-y-1">
               <p className="text-xs font-medium text-nx-ink-3">
                 {t("party.overview.duplicateAlerts")}
               </p>
-              <p
-                className="text-2xl font-bold text-nx-ink"
-                data-testid="kpi-duplicate-alerts"
-              >
+              <p className="text-2xl font-bold text-nx-ink" data-testid="kpi-duplicate-alerts">
                 {vm.duplicateAlertsCount}
               </p>
             </div>
-            <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-amber-500/10 text-amber-600 dark:text-amber-400">
+            <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-warning/10 text-warning">
               <AlertTriangle className="h-5 w-5" />
             </div>
           </CardContent>
@@ -222,10 +201,10 @@ export const ContactsOverviewView = React.memo(function ContactsOverviewView() {
       </div>
 
       {/* ── Main Content Grid: Recent Contacts & Duplicate Alerts ───── */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
         {/* Recent Contacts */}
         <Card
-          className="border-nx-border bg-nx-surface shadow-xs lg:col-span-2"
+          className="border-nx-line bg-nx-surface lg:col-span-2"
           data-testid="recent-contacts-card"
         >
           <CardHeader className="flex flex-row items-center justify-between pb-3">
@@ -233,7 +212,7 @@ export const ContactsOverviewView = React.memo(function ContactsOverviewView() {
               <CardTitle className="text-base font-semibold text-nx-ink">
                 {t("party.overview.recentContacts")}
               </CardTitle>
-              <p className="text-xs text-nx-ink-3 mt-0.5">
+              <p className="mt-0.5 text-xs text-nx-ink-3">
                 {t("party.overview.recentContactsDesc")}
               </p>
             </div>
@@ -244,7 +223,7 @@ export const ContactsOverviewView = React.memo(function ContactsOverviewView() {
               className="gap-1 text-xs text-nx-accent"
             >
               <span>{t("party.overview.viewAllDirectory")}</span>
-              <ArrowRight className="h-3.5 w-3.5" />
+              <ArrowRight className="h-3.5 w-3.5 rtl:rotate-180" />
             </Button>
           </CardHeader>
           <CardContent>
@@ -255,31 +234,31 @@ export const ContactsOverviewView = React.memo(function ContactsOverviewView() {
                 description={t("party.directory.emptySubtitle")}
               />
             ) : (
-              <div className="divide-y divide-nx-border">
+              <div className="divide-nx-line divide-y">
                 {vm.recentContacts.map((party) => (
                   <div
                     key={party.id}
-                    className="py-3 flex flex-col sm:flex-row sm:items-center justify-between gap-3"
+                    className="flex flex-col justify-between gap-3 py-3 sm:flex-row sm:items-center"
                   >
-                    <div className="flex items-center gap-3 min-w-0">
-                      <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-nx-accent/10 text-xs font-bold text-nx-accent">
+                    <div className="flex min-w-0 items-center gap-3">
+                      <div className="bg-nx-accent/10 flex h-9 w-9 shrink-0 items-center justify-center rounded-lg text-xs font-bold text-nx-accent">
                         {party.initials}
                       </div>
                       <div className="min-w-0">
                         <div className="flex items-center gap-2">
-                          <span className="text-sm font-medium text-nx-ink truncate">
+                          <span className="truncate text-sm font-medium text-nx-ink">
                             {party.displayName}
                           </span>
                           <Badge
                             variant={party.isPerson ? "info" : "success"}
-                            className="text-[10px] py-0"
+                            className="py-0 text-[10px]"
                           >
                             {party.isPerson
                               ? t("party.types.Person")
                               : t("party.types.Organization")}
                           </Badge>
                         </div>
-                        <div className="flex flex-wrap items-center gap-3 text-xs text-nx-ink-3 mt-0.5">
+                        <div className="mt-0.5 flex flex-wrap items-center gap-3 text-xs text-nx-ink-3">
                           {party.primaryPhone && (
                             <span className="inline-flex items-center gap-1">
                               <Phone className="h-3 w-3" />
@@ -287,7 +266,7 @@ export const ContactsOverviewView = React.memo(function ContactsOverviewView() {
                             </span>
                           )}
                           {party.primaryEmail && (
-                            <span className="inline-flex items-center gap-1 truncate max-w-[200px]">
+                            <span className="inline-flex max-w-[200px] items-center gap-1 truncate">
                               <Mail className="h-3 w-3" />
                               {party.primaryEmail}
                             </span>
@@ -300,13 +279,11 @@ export const ContactsOverviewView = React.memo(function ContactsOverviewView() {
                     <Button
                       variant="ghost"
                       size="sm"
-                      onClick={() =>
-                        router.push(`/party-kernel/parties/${party.id}`)
-                      }
-                      className="text-xs gap-1 self-start sm:self-auto"
+                      onClick={() => router.push(`/party-kernel/parties/${party.id}`)}
+                      className="gap-1 self-start text-xs sm:self-auto"
                     >
                       <span>{t("party.directory.openProfile")}</span>
-                      <ArrowRight className="h-3.5 w-3.5" />
+                      <ArrowRight className="h-3.5 w-3.5 rtl:rotate-180" />
                     </Button>
                   </div>
                 ))}
@@ -317,38 +294,31 @@ export const ContactsOverviewView = React.memo(function ContactsOverviewView() {
 
         {/* Duplicate Alerts & Quick Actions */}
         <div className="space-y-6">
-          <Card
-            className="border-nx-border bg-nx-surface shadow-xs"
-            data-testid="attention-card"
-          >
+          <Card className="border-nx-line bg-nx-surface" data-testid="attention-card">
             <CardHeader className="pb-3">
-              <CardTitle className="text-base font-semibold text-nx-ink flex items-center justify-between">
+              <CardTitle className="flex items-center justify-between text-base font-semibold text-nx-ink">
                 <span className="flex items-center gap-2">
-                  <AlertTriangle className="h-4 w-4 text-amber-500" />
+                  <AlertTriangle className="h-4 w-4 text-warning" />
                   <span>{t("party.overview.duplicateAlerts")}</span>
                 </span>
                 <Badge variant="outline" className="text-xs">
                   {vm.duplicateAlertsCount}
                 </Badge>
               </CardTitle>
-              <p className="text-xs text-nx-ink-3">
-                {t("party.overview.duplicateAlertsDesc")}
-              </p>
+              <p className="text-xs text-nx-ink-3">{t("party.overview.duplicateAlertsDesc")}</p>
             </CardHeader>
             <CardContent>
               {vm.mergeCandidates.length === 0 ? (
-                <div className="rounded-lg border border-nx-border bg-nx-surface-2/40 p-4 flex items-center gap-3">
-                  <ShieldCheck className="h-5 w-5 text-emerald-500 shrink-0" />
-                  <p className="text-xs text-nx-ink-2">
-                    {t("party.overview.noDuplicates")}
-                  </p>
+                <div className="border-nx-line bg-nx-raised/40 flex items-center gap-3 rounded-lg border p-4">
+                  <ShieldCheck className="h-5 w-5 shrink-0 text-success" />
+                  <p className="text-xs text-nx-ink-2">{t("party.overview.noDuplicates")}</p>
                 </div>
               ) : (
                 <div className="space-y-3">
                   {vm.mergeCandidates.map((candidate) => (
                     <div
                       key={candidate.id}
-                      className="rounded-lg border border-amber-500/30 bg-amber-500/5 p-3 space-y-2 text-xs"
+                      className="space-y-2 rounded-lg border border-warning/30 bg-warning/5 p-3 text-xs"
                     >
                       <div className="flex items-center justify-between">
                         <Badge variant="warning">{candidate.status}</Badge>
@@ -360,11 +330,9 @@ export const ContactsOverviewView = React.memo(function ContactsOverviewView() {
                       <Button
                         variant="outline"
                         size="sm"
-                        className="w-full h-7 text-xs"
+                        className="h-7 w-full text-xs"
                         onClick={() =>
-                          router.push(
-                            `/party-kernel/parties/${candidate.primaryPartyId}`
-                          )
+                          router.push(`/party-kernel/parties/${candidate.primaryPartyId}`)
                         }
                       >
                         {t("party.profile.reviewMerge")}
@@ -377,14 +345,12 @@ export const ContactsOverviewView = React.memo(function ContactsOverviewView() {
           </Card>
 
           {/* Quick Actions Card */}
-          <Card className="border-nx-border bg-nx-surface shadow-xs">
+          <Card className="border-nx-line bg-nx-surface">
             <CardHeader className="pb-3">
               <CardTitle className="text-base font-semibold text-nx-ink">
                 {t("party.overview.quickActions")}
               </CardTitle>
-              <p className="text-xs text-nx-ink-3">
-                {t("party.overview.quickActionsDesc")}
-              </p>
+              <p className="text-xs text-nx-ink-3">{t("party.overview.quickActionsDesc")}</p>
             </CardHeader>
             <CardContent className="space-y-2">
               {vm.permissions.canCreatePerson && (
@@ -397,7 +363,7 @@ export const ContactsOverviewView = React.memo(function ContactsOverviewView() {
                     <UserPlus className="h-4 w-4 text-nx-accent" />
                     <span>{t("party.directory.addPerson")}</span>
                   </span>
-                  <ArrowRight className="h-3.5 w-3.5" />
+                  <ArrowRight className="h-3.5 w-3.5 rtl:rotate-180" />
                 </Button>
               )}
 
@@ -408,10 +374,10 @@ export const ContactsOverviewView = React.memo(function ContactsOverviewView() {
                   onClick={() => vm.setIsCreateOrgOpen(true)}
                 >
                   <span className="inline-flex items-center gap-2">
-                    <Building2 className="h-4 w-4 text-emerald-600" />
+                    <Building2 className="h-4 w-4 text-success" />
                     <span>{t("party.directory.addOrganization")}</span>
                   </span>
-                  <ArrowRight className="h-3.5 w-3.5" />
+                  <ArrowRight className="h-3.5 w-3.5 rtl:rotate-180" />
                 </Button>
               )}
 
@@ -424,7 +390,7 @@ export const ContactsOverviewView = React.memo(function ContactsOverviewView() {
                   <FolderOpen className="h-4 w-4 text-nx-ink-2" />
                   <span>{t("party.overview.openDirectory")}</span>
                 </span>
-                <ArrowRight className="h-3.5 w-3.5" />
+                <ArrowRight className="h-3.5 w-3.5 rtl:rotate-180" />
               </Button>
             </CardContent>
           </Card>

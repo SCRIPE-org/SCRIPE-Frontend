@@ -64,6 +64,13 @@ function makeContainer() {
       create: vi.fn().mockResolvedValue(customer),
     },
     bookingRepository: {
+      getOrCreateBusinessIntent: vi.fn().mockResolvedValue({
+        draftIdempotencyKey: "draft-intent",
+        holdIdempotencyKey: "hold-intent",
+        confirmIdempotencyKey: "confirm-intent",
+      }),
+      clearBusinessIntent: vi.fn(),
+      recordBusinessHoldExpiry: vi.fn(),
       createDraft: vi.fn().mockResolvedValue({ id: "reservation-1" }),
       createHold: vi.fn().mockResolvedValue({
         reservationId: "reservation-1",
@@ -165,8 +172,9 @@ describe("useBookingWorkspaceViewModel", () => {
     await waitFor(() => expect(result.current.setupLoading).toBe(false));
 
     await act(async () => {
-      await expect(result.current.createCustomer("Mona Hassan", "Person", "synthetic-phone"))
-        .rejects.toThrow("Network response was lost");
+      await expect(
+        result.current.createCustomer("Mona Hassan", "Person", "synthetic-phone")
+      ).rejects.toThrow("Network response was lost");
     });
     await act(async () => {
       await result.current.createCustomer("Mona Hassan", "Person", "synthetic-phone");

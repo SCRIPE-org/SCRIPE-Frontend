@@ -1,23 +1,11 @@
 "use client";
 
 import { useState } from "react";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogFooter,
-} from "@core/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@core/ui/dialog";
 import { Button } from "@core/ui/button";
 import { Input } from "@core/ui/input";
 import { Label } from "@core/ui/label";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@core/ui/select";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@core/ui/select";
 import { useI18n } from "@core/providers/i18n-provider";
 import { Briefcase, Loader2 } from "lucide-react";
 import type { AddPartyRoleParams } from "../../../domain/interfaces/IPartyRepository";
@@ -31,11 +19,7 @@ interface AddRoleDialogProps {
 /**
  * Modal dialog for assigning a role to a party.
  */
-export function AddRoleDialog({
-  open,
-  onOpenChange,
-  onSubmit,
-}: AddRoleDialogProps) {
+export function AddRoleDialog({ open, onOpenChange, onSubmit }: AddRoleDialogProps) {
   const { t } = useI18n();
 
   const [roleType, setRoleType] = useState("Customer");
@@ -95,7 +79,7 @@ export function AddRoleDialog({
         <form onSubmit={handleSubmit}>
           <DialogHeader>
             <div className="flex items-center gap-2">
-              <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-nx-accent/10 text-nx-accent">
+              <div className="bg-nx-accent/10 flex h-9 w-9 items-center justify-center rounded-lg text-nx-accent">
                 <Briefcase className="h-5 w-5" />
               </div>
               <DialogTitle>{t("party.dialog.addRoleTitle")}</DialogTitle>
@@ -106,7 +90,7 @@ export function AddRoleDialog({
             {error && (
               <div
                 role="alert"
-                className="rounded-md bg-destructive/10 p-3 text-sm text-destructive border border-destructive/20"
+                className="rounded-md border border-destructive/20 bg-destructive/10 p-3 text-sm text-destructive"
               >
                 {error}
               </div>
@@ -114,19 +98,14 @@ export function AddRoleDialog({
 
             <div className="grid gap-2">
               <div className="flex items-center justify-between">
-                <Label htmlFor="role-type" className="text-nx-ink font-medium">
-                  {t("party.dialog.roleType")}{" "}
-                  <span className="text-destructive">*</span>
+                <Label htmlFor="role-type" className="font-medium text-nx-ink">
+                  {t("party.dialog.roleType")} <span className="text-destructive">*</span>
                 </Label>
                 <span className="text-[11px] text-nx-ink-3">Operational Role</span>
               </div>
               {/* Standard Role Dropdown Selector */}
               <Select
-                value={
-                  CANONICAL_ROLES.some((r) => r.value === roleType)
-                    ? roleType
-                    : "custom"
-                }
+                value={CANONICAL_ROLES.some((r) => r.value === roleType) ? roleType : "custom"}
                 onValueChange={(val) => {
                   if (val === "custom") {
                     if (CANONICAL_ROLES.some((r) => r.value === roleType)) {
@@ -164,10 +143,10 @@ export function AddRoleDialog({
                       setRoleType(r.value);
                       if (error) setError(null);
                     }}
-                    className={`h-7 px-2.5 text-xs rounded-lg transition-colors ${
+                    className={`h-7 rounded-lg px-2.5 text-xs transition-colors ${
                       roleType === r.value
-                        ? "bg-nx-accent-fill text-nx-on-fill font-semibold shadow-sm"
-                        : "border-nx-border text-nx-ink-2 hover:text-nx-ink"
+                        ? "bg-nx-accent-fill font-semibold text-nx-on-fill"
+                        : "border-nx-line text-nx-ink-2 hover:text-nx-ink"
                     }`}
                   >
                     {r.value}
@@ -193,9 +172,9 @@ export function AddRoleDialog({
               </p>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
               <div className="grid gap-2">
-                <Label htmlFor="role-from" className="text-nx-ink text-xs">
+                <Label htmlFor="role-from" className="text-xs text-nx-ink">
                   {t("party.dialog.validFrom")}
                 </Label>
                 <Input
@@ -208,7 +187,7 @@ export function AddRoleDialog({
               </div>
 
               <div className="grid gap-2">
-                <Label htmlFor="role-to" className="text-nx-ink text-xs">
+                <Label htmlFor="role-to" className="text-xs text-nx-ink">
                   {t("party.dialog.validTo")}
                 </Label>
                 <Input
@@ -223,12 +202,7 @@ export function AddRoleDialog({
           </div>
 
           <DialogFooter className="gap-2 sm:gap-0">
-            <Button
-              type="button"
-              variant="outline"
-              onClick={handleClose}
-              disabled={isSubmitting}
-            >
+            <Button type="button" variant="outline" onClick={handleClose} disabled={isSubmitting}>
               {t("party.dialog.cancel")}
             </Button>
             <Button type="submit" disabled={isSubmitting || !roleType.trim()}>

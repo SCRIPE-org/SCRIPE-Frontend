@@ -35,7 +35,7 @@ export function PaymentRecentListCard({ model, canRecord, canRefund }: PaymentRe
             {model.payments.map((payment) => (
               <li
                 key={payment.id}
-                className="border-nx-border flex flex-wrap items-center justify-between gap-2 rounded-lg border p-3"
+                className="hover:bg-nx-surfaceSubtle shadow-xs flex flex-wrap items-center justify-between gap-2 rounded-nx-lg border border-nx-line p-3 transition-colors"
               >
                 <div className="flex flex-wrap items-center gap-2">
                   <span className="font-medium" dir="ltr">

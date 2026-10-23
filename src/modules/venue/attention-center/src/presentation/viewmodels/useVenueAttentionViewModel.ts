@@ -28,9 +28,6 @@ export function useVenueAttentionViewModel(canView: boolean) {
       setData(response);
       setStage("ready");
     } catch {
-      if (process.env.NODE_ENV !== "production") {
-        setStage("error");
-      }
       setStage("error");
     }
   }, [canView, venueAttentionRepository]);

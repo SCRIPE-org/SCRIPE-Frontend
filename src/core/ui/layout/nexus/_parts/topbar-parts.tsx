@@ -45,6 +45,7 @@ const CONTROL_MOTION =
 export function BreadcrumbSep({ isRTL }: { isRTL: boolean }) {
   return (
     <svg
+      data-testid="breadcrumb-separator"
       aria-hidden="true"
       width="12"
       height="12"
@@ -241,98 +242,121 @@ export function TopbarBreadcrumbs({
         </DropdownMenu>
       </div>
 
-      {/* ── Level 2: Root Active Group ── */}
-      {activeRootName && activeRootItem && (
-        <>
-          <BreadcrumbSep isRTL={isRTL} />
-          <div className="flex shrink-0 items-center gap-0.5">
-            <button
-              type="button"
-              onClick={() => {
-                const route = findFirstLeafRoute(activeRootItem, canAccessPage);
-                if (route) {
-                  startRoutingProgress();
-                  router.push(route);
-                }
-              }}
-              className={cn(
-                "cursor-pointer whitespace-nowrap rounded-nx-sm px-1.5 py-0.5 font-medium text-nx-ink-2 duration-nx-micro hover:bg-nx-raised hover:text-nx-ink",
-                CONTROL_MOTION,
-                FOCUS_RING
-              )}
-            >
-              {activeRootName}
-            </button>
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <button
-                  type="button"
-                  aria-label={t("navigation.topbar.sectionsMenu")}
-                  className={cn(
-                    "flex h-5 w-5 cursor-pointer items-center justify-center rounded-nx-sm text-nx-ink-2 duration-nx-micro hover:bg-nx-raised hover:text-nx-ink",
-                    CONTROL_MOTION,
-                    FOCUS_RING
-                  )}
+      {/* ── Level 2: Root Active Group (Deduplicated against workspace name) ── */}
+      {(() => {
+        const normWs = (workspaceName || "").trim().toLowerCase();
+        const normRoot = (activeRootName || "").trim().toLowerCase();
+        const showActiveRoot = Boolean(
+          activeRootName &&
+            activeRootItem &&
+            normRoot &&
+            normRoot !== normWs
+        );
+        const lastRenderedSegment = showActiveRoot ? activeRootName : workspaceName;
+        const normLast = (lastRenderedSegment || "").trim().toLowerCase();
+        const normDisplay = (displayPageName || "").trim().toLowerCase();
+        const showDisplayPage = Boolean(
+          displayPageName &&
+            normDisplay &&
+            normDisplay !== normLast
+        );
+
+        return (
+          <>
+            {showActiveRoot && activeRootItem && (
+              <>
+                <BreadcrumbSep isRTL={isRTL} />
+                <div className="flex shrink-0 items-center gap-0.5">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const route = findFirstLeafRoute(activeRootItem, canAccessPage);
+                      if (route) {
+                        startRoutingProgress();
+                        router.push(route);
+                      }
+                    }}
+                    className={cn(
+                      "cursor-pointer whitespace-nowrap rounded-nx-sm px-1.5 py-0.5 font-medium text-nx-ink-2 duration-nx-micro hover:bg-nx-raised hover:text-nx-ink",
+                      CONTROL_MOTION,
+                      FOCUS_RING
+                    )}
+                  >
+                    {activeRootName}
+                  </button>
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <button
+                        type="button"
+                        aria-label={t("navigation.topbar.sectionsMenu")}
+                        className={cn(
+                          "flex h-5 w-5 cursor-pointer items-center justify-center rounded-nx-sm text-nx-ink-2 duration-nx-micro hover:bg-nx-raised hover:text-nx-ink",
+                          CONTROL_MOTION,
+                          FOCUS_RING
+                        )}
+                      >
+                        <ChevronDown size={12} aria-hidden="true" />
+                      </button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="start" className="w-52 border-nx-line bg-nx-surface">
+                      <DropdownMenuLabel className="text-[10px] font-bold uppercase tracking-wider text-nx-ink-3">
+                        {t("navigation.topbar.sectionsMenu")}
+                      </DropdownMenuLabel>
+                      <DropdownMenuSeparator />
+                      {activeGroupSiblings.map((item) => {
+                        const isActive = activeRootItem?.id === item.id;
+                        const label =
+                          resolveBilingualLabel(item.nameEn, item.nameAr, language) ||
+                          resolveBilingualLabel(item.nameAr, item.nameEn, language);
+
+                        return (
+                          <DropdownMenuItem
+                            key={item.id}
+                            onClick={() => {
+                              if (!isActive) {
+                                setActiveRootItemId(item.id);
+                              }
+                              const route = findFirstLeafRoute(item, canAccessPage);
+                              if (route) {
+                                startRoutingProgress();
+                                router.push(route);
+                              }
+                            }}
+                            className={cn(
+                              "flex cursor-pointer items-center gap-2 rounded-nx-sm px-3 py-1.5 text-sm transition-colors duration-nx-micro motion-reduce:transition-none",
+                              isActive && "bg-nx-accent-wash font-semibold text-nx-accent"
+                            )}
+                          >
+                            <span className="flex-1 truncate">{label}</span>
+                          </DropdownMenuItem>
+                        );
+                      })}
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                </div>
+              </>
+            )}
+
+            {/* ── Level 3: Active Page / Entity Name (Deduplicated against previous segment) ── */}
+            {showDisplayPage && (
+              <>
+                <BreadcrumbSep isRTL={isRTL} />
+                <span
+                  className="px-1.5 py-0.5 font-semibold text-nx-ink duration-nx-standard animate-in fade-in"
+                  style={{
+                    overflow: "hidden",
+                    textOverflow: "ellipsis",
+                    whiteSpace: "nowrap",
+                    letterSpacing: "-0.2px",
+                  }}
                 >
-                  <ChevronDown size={12} aria-hidden="true" />
-                </button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="start" className="w-52 border-nx-line bg-nx-surface">
-                <DropdownMenuLabel className="text-[10px] font-bold uppercase tracking-wider text-nx-ink-3">
-                  {t("navigation.topbar.sectionsMenu")}
-                </DropdownMenuLabel>
-                <DropdownMenuSeparator />
-                {activeGroupSiblings.map((item) => {
-                  const isActive = activeRootItem?.id === item.id;
-                  const label =
-                    resolveBilingualLabel(item.nameEn, item.nameAr, language) ||
-                    resolveBilingualLabel(item.nameAr, item.nameEn, language);
-
-                  return (
-                    <DropdownMenuItem
-                      key={item.id}
-                      onClick={() => {
-                        if (!isActive) {
-                          setActiveRootItemId(item.id);
-                        }
-                        const route = findFirstLeafRoute(item, canAccessPage);
-                        if (route) {
-                          startRoutingProgress();
-                          router.push(route);
-                        }
-                      }}
-                      className={cn(
-                        "flex cursor-pointer items-center gap-2 rounded-nx-sm px-3 py-1.5 text-sm transition-colors duration-nx-micro motion-reduce:transition-none",
-                        isActive && "bg-nx-accent-wash font-semibold text-nx-accent"
-                      )}
-                    >
-                      <span className="flex-1 truncate">{label}</span>
-                    </DropdownMenuItem>
-                  );
-                })}
-              </DropdownMenuContent>
-            </DropdownMenu>
-          </div>
-        </>
-      )}
-
-      {/* ── Level 3: Active Page / Entity Name ── */}
-      {displayPageName && (
-        <>
-          <BreadcrumbSep isRTL={isRTL} />
-          <span
-            className="px-1.5 py-0.5 font-semibold text-nx-ink duration-nx-standard animate-in fade-in"
-            style={{
-              overflow: "hidden",
-              textOverflow: "ellipsis",
-              whiteSpace: "nowrap",
-              letterSpacing: "-0.2px",
-            }}
-          >
-            {displayPageName}
-          </span>
-        </>
-      )}
+                  {displayPageName}
+                </span>
+              </>
+            )}
+          </>
+        );
+      })()}
     </div>
   );
 }

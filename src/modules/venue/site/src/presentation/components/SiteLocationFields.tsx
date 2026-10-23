@@ -288,9 +288,7 @@ export function SiteLocationFields({ location, onChange, errors = {} }: SiteLoca
             <Label htmlFor="site-state" className="flex items-center gap-1.5 text-xs font-medium">
               <Building2 className="h-3.5 w-3.5 text-nx-ink-2" />
               {divisionLabel}{" "}
-              <span className="text-[10px] text-nx-ink-3">
-                ({isAr ? "اختياري" : "Optional"})
-              </span>
+              <span className="text-[10px] text-nx-ink-3">({isAr ? "اختياري" : "Optional"})</span>
             </Label>
             <Input
               id="site-state"
@@ -315,9 +313,7 @@ export function SiteLocationFields({ location, onChange, errors = {} }: SiteLoca
             onChange={handleCityChange}
             placeholder={cityPlaceholder}
             searchPlaceholder={
-              isAr
-                ? `ابحث أو اكتب اسم ${cityLabel}...`
-                : `Search or type ${cityLabel}...`
+              isAr ? `ابحث أو اكتب اسم ${cityLabel}...` : `Search or type ${cityLabel}...`
             }
             emptyText={
               isAr
@@ -341,19 +337,15 @@ export function SiteLocationFields({ location, onChange, errors = {} }: SiteLoca
               className="flex items-center gap-1.5 text-xs font-medium"
             >
               <span>{districtLabel}</span>
-              <span className="text-[10px] text-nx-ink-3">
-                ({isAr ? "اختياري" : "Optional"})
-              </span>
+              <span className="text-[10px] text-nx-ink-3">({isAr ? "اختياري" : "Optional"})</span>
             </Label>
             <Input
               id="site-district"
               value={district}
               onChange={(e) => handleDistrictChange(e.target.value)}
               placeholder={
-                  isAr
-                    ? "مثال: المعادي الجديدة، حي النرجس، العليا"
-                    : "e.g. New Maadi, Al Olaya, etc."
-                }
+                isAr ? "مثال: المعادي الجديدة، حي النرجس، العليا" : "e.g. New Maadi, Al Olaya, etc."
+              }
               maxLength={100}
             />
           </div>

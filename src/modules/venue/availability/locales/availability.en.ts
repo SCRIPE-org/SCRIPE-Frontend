@@ -31,6 +31,10 @@ export const en = {
     remaining: "Remaining capacity",
     decision: "Decision",
     searchPermission: "You do not have permission to run availability search.",
+    tabs: {
+      findSlots: "Find Available Slots",
+      operatingWindows: "Operating Windows & Rules",
+    },
     fields: {
       timezone: "Time zone",
       effectiveFrom: "Effective from",

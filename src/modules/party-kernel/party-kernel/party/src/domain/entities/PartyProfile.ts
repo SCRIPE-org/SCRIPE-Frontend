@@ -132,9 +132,7 @@ export class PartyProfile {
       (c) => c.type?.toLowerCase().includes("email") && c.isPrimary
     );
     if (email) return email.value;
-    const fallback = this.data.contactPoints.find((c) =>
-      c.type?.toLowerCase().includes("email")
-    );
+    const fallback = this.data.contactPoints.find((c) => c.type?.toLowerCase().includes("email"));
     return fallback ? fallback.value : null;
   }
 
@@ -154,7 +152,10 @@ export class PartyProfile {
       const parts = [this.data.person.firstName, this.data.person.lastName].filter(Boolean);
       if (parts.length > 0) return parts.join(" ");
     }
-    if (this.data.canonicalProfile?.fullName && this.data.canonicalProfile.fullName.trim().length > 0) {
+    if (
+      this.data.canonicalProfile?.fullName &&
+      this.data.canonicalProfile.fullName.trim().length > 0
+    ) {
       return this.data.canonicalProfile.fullName.trim();
     }
     return this.data.party.displayName;

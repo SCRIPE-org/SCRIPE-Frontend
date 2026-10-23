@@ -38,32 +38,32 @@ const SEVERITY_CONFIG: Record<
   critical: {
     icon: ShieldAlert,
     badgeVariant: "destructive",
-    colorClass: "text-rose-500",
-    bgClass: "bg-rose-500/10",
+    colorClass: "text-destructive",
+    bgClass: "border border-destructive/20 bg-destructive/10",
   },
   high: {
     icon: Lock,
     badgeVariant: "destructive",
-    colorClass: "text-amber-500",
-    bgClass: "bg-amber-500/10",
+    colorClass: "text-warning",
+    bgClass: "border border-warning/20 bg-warning/10",
   },
   medium: {
     icon: AlertTriangle,
     badgeVariant: "warning",
-    colorClass: "text-amber-500",
-    bgClass: "bg-amber-500/10",
+    colorClass: "text-warning",
+    bgClass: "border border-warning/20 bg-warning/10",
   },
   low: {
     icon: UserX,
     badgeVariant: "secondary",
-    colorClass: "text-sky-500",
-    bgClass: "bg-sky-500/10",
+    colorClass: "text-info",
+    bgClass: "border border-info/20 bg-info/10",
   },
   info: {
     icon: KeyRound,
     badgeVariant: "outline",
-    colorClass: "text-muted-foreground",
-    bgClass: "bg-muted/30",
+    colorClass: "text-nx-ink-3",
+    bgClass: "border border-nx-line bg-nx-raised",
   },
 };
 
@@ -80,18 +80,18 @@ export const SecurityAttentionPanel = memo(function SecurityAttentionPanel({
   const { t } = useI18n();
 
   return (
-    <Card className={`flex h-full flex-col ${cardClasses || ""}`}>
+    <Card className={`flex h-full flex-col border-nx-line bg-nx-surface text-nx-ink ${cardClasses || ""}`}>
       <CardHeader className="pb-3">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <div className="rounded-md bg-amber-500/10 p-1.5 text-amber-500">
+            <div className="rounded-md border border-warning/20 bg-warning/10 p-1.5 text-warning">
               <AlertTriangle className="h-4 w-4" aria-hidden="true" />
             </div>
             <div>
-              <CardTitle className="text-base font-semibold">
+              <CardTitle className="text-base font-semibold text-nx-ink">
                 {t("security.attention.title") || "Security Attention & Signals"}
               </CardTitle>
-              <CardDescription className="text-xs">
+              <CardDescription className="text-xs text-nx-ink-3">
                 {t("security.attention.description") ||
                   "Authoritative security signals and anomalies requiring administrator review"}
               </CardDescription>
@@ -117,7 +117,7 @@ export const SecurityAttentionPanel = memo(function SecurityAttentionPanel({
             t("security.attention.noSignals") ||
             "No security signals currently require administrator attention."
           }
-          emptyIcon={<CheckCircle2 className="h-8 w-8 text-emerald-500" />}
+          emptyIcon={<CheckCircle2 className="h-8 w-8 text-success" />}
           skeletonType="rows"
           skeletonRows={4}
           height={260}
@@ -132,9 +132,9 @@ export const SecurityAttentionPanel = memo(function SecurityAttentionPanel({
                 <div
                   key={sigKey}
                   onClick={() => onSelectSignal?.(sig)}
-                  className={`group flex items-start gap-3 rounded-lg border border-border/60 bg-card/60 p-2.5 transition-colors ${
+                  className={`group flex items-start gap-3 rounded-lg border border-nx-line bg-nx-raised/40 p-2.5 transition-colors ${
                     onSelectSignal
-                      ? "cursor-pointer hover:border-primary/40 hover:bg-accent/40"
+                      ? "cursor-pointer hover:border-nx-line-hi hover:bg-nx-raised/60"
                       : ""
                   }`}
                 >
@@ -146,7 +146,7 @@ export const SecurityAttentionPanel = memo(function SecurityAttentionPanel({
 
                   <div className="min-w-0 flex-1">
                     <div className="flex items-center justify-between gap-2">
-                      <p className="truncate text-xs font-semibold text-foreground">{sig.title}</p>
+                      <p className="truncate text-xs font-semibold text-nx-ink">{sig.title}</p>
                       <Badge
                         variant={config.badgeVariant}
                         className="shrink-0 px-1.5 py-0 text-[10px] font-bold uppercase"
@@ -155,11 +155,11 @@ export const SecurityAttentionPanel = memo(function SecurityAttentionPanel({
                       </Badge>
                     </div>
 
-                    <p className="mt-0.5 line-clamp-2 text-xs text-muted-foreground">
+                    <p className="mt-0.5 line-clamp-2 text-xs text-nx-ink-2">
                       {sig.description}
                     </p>
 
-                    <div className="mt-1.5 flex flex-wrap items-center gap-x-3 gap-y-1 text-[11px] text-muted-foreground">
+                    <div className="mt-1.5 flex flex-wrap items-center gap-x-3 gap-y-1 text-[11px] text-nx-ink-3">
                       {sig.ipAddress && (
                         <span className="font-mono" dir="ltr">
                           IP: {sig.ipAddress}
