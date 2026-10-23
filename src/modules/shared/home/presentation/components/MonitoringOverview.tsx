@@ -40,15 +40,19 @@ export function MonitoringOverview({ vm }: { vm: CommandCenter }) {
     health?.infrastructure?.database?.isConnected === false;
 
   const statusLabel = !health
-    ? t("platformCommandCenter.monitoringOverview.unknown") || "Status unavailable"
+    ? t("platformCommandCenter.monitoringOverview.unknown") ||
+      "Status unavailable"
     : degraded
-      ? t("platformCommandCenter.monitoringOverview.degraded") || "Platform needs attention"
-      : t("platformCommandCenter.monitoringOverview.operational") || "All Systems Operational";
+      ? t("platformCommandCenter.monitoringOverview.degraded") ||
+        "Platform needs attention"
+      : t("platformCommandCenter.monitoringOverview.operational") ||
+        "All Systems Operational";
 
   const ranges = [
     {
       key: "last24Hours",
-      label: t("platformCommandCenter.timeRanges.last24Hours") || "Last 24 hours",
+      label:
+        t("platformCommandCenter.timeRanges.last24Hours") || "Last 24 hours",
     },
     {
       key: "last7Days",
@@ -60,7 +64,8 @@ export function MonitoringOverview({ vm }: { vm: CommandCenter }) {
     },
   ];
 
-  const currentRangeLabel = ranges.find((r) => r.key === vm.timeRangeKey)?.label ?? ranges[0].label;
+  const currentRangeLabel =
+    ranges.find((r) => r.key === vm.timeRangeKey)?.label ?? ranges[0].label;
 
   return (
     <div className="w-full select-none space-y-4 pb-8">
@@ -68,10 +73,12 @@ export function MonitoringOverview({ vm }: { vm: CommandCenter }) {
       <header className="flex flex-col gap-4 border-b border-border/80 pb-4 lg:flex-row lg:items-end lg:justify-between">
         <div className="min-w-0">
           <p className="text-[11px] font-bold uppercase tracking-[0.16em] text-primary">
-            {t("platformCommandCenter.monitoringOverview.eyebrow") || "MONITORING"}
+            {t("platformCommandCenter.monitoringOverview.eyebrow") ||
+              "MONITORING"}
           </p>
           <h1 className="mt-1 text-2xl font-extrabold leading-tight tracking-tight text-foreground sm:text-3xl">
-            {t("platformCommandCenter.monitoringOverview.title") || "Platform Overview"}
+            {t("platformCommandCenter.monitoringOverview.title") ||
+              "Platform Overview"}
           </h1>
           <p className="mt-1 max-w-2xl text-xs text-muted-foreground sm:text-sm">
             {t("platformCommandCenter.monitoringOverview.subtitle") ||
@@ -96,19 +103,6 @@ export function MonitoringOverview({ vm }: { vm: CommandCenter }) {
             <span className="text-foreground">{statusLabel}</span>
           </span>
 
-          {/* Live Data Indicator */}
-          <Button
-            type="button"
-            variant="outline"
-            size="sm"
-            onClick={vm.toggleLive}
-            title={vm.isLive ? "Telemetry live stream active" : "Telemetry stream paused"}
-            className="h-8.5 shadow-xs cursor-pointer gap-1.5 border-border bg-card px-3 text-xs font-semibold text-muted-foreground hover:text-foreground"
-          >
-            <Sparkles className="h-3.5 w-3.5 text-primary" />
-            <span>{t("platformCommandCenter.liveData") || "Live Data"}</span>
-          </Button>
-
           {/* Time Range Dropdown */}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
@@ -121,7 +115,10 @@ export function MonitoringOverview({ vm }: { vm: CommandCenter }) {
                 <span>{currentRangeLabel}</span>
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-44 border-border bg-popover shadow-xl">
+            <DropdownMenuContent
+              align="end"
+              className="w-44 border-border bg-popover shadow-xl"
+            >
               {ranges.map((r) => (
                 <DropdownMenuItem
                   key={r.key}
@@ -161,7 +158,8 @@ export function MonitoringOverview({ vm }: { vm: CommandCenter }) {
             <span>
               {vm.isLive
                 ? t("platformCommandCenter.monitoringOverview.live") || "Live"
-                : t("platformCommandCenter.monitoringOverview.paused") || "Paused"}
+                : t("platformCommandCenter.monitoringOverview.paused") ||
+                  "Paused"}
             </span>
           </Button>
 
@@ -177,7 +175,10 @@ export function MonitoringOverview({ vm }: { vm: CommandCenter }) {
             <RotateCw
               className={`h-3.5 w-3.5 text-muted-foreground ${vm.isRefreshing ? "animate-spin text-primary" : ""}`}
             />
-            <span>{t("platformCommandCenter.monitoringOverview.refresh") || "Refresh"}</span>
+            <span>
+              {t("platformCommandCenter.monitoringOverview.refresh") ||
+                "Refresh"}
+            </span>
           </Button>
         </div>
       </header>
@@ -220,7 +221,10 @@ export function MonitoringOverview({ vm }: { vm: CommandCenter }) {
       {/* ── 4. Lower Section: Recent Platform Activity + Platform Services Health ─ */}
       <section className="grid grid-cols-1 items-start gap-3.5 lg:grid-cols-2">
         {/* Recent Platform Activity Table */}
-        <PlatformRecentActivity activityData={vm.recentChanges} isLoading={vm.isLoading} />
+        <PlatformRecentActivity
+          activityData={vm.recentChanges}
+          isLoading={vm.isLoading}
+        />
 
         {/* Platform Services Health List */}
         <PlatformServiceHealth healthVm={vm.healthVm} />
@@ -230,7 +234,8 @@ export function MonitoringOverview({ vm }: { vm: CommandCenter }) {
       <section className="pt-2">
         <div className="mb-3 flex items-center justify-between">
           <h2 className="text-sm font-bold tracking-tight text-foreground">
-            {t("platformCommandCenter.monitoringOverview.exploreTitle") || "Explore Monitoring"}
+            {t("platformCommandCenter.monitoringOverview.exploreTitle") ||
+              "Explore Monitoring"}
           </h2>
           <span className="text-[11px] text-muted-foreground">
             Specialized platforms & investigation surfaces
@@ -239,7 +244,10 @@ export function MonitoringOverview({ vm }: { vm: CommandCenter }) {
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-4">
           <ExploreDestination
             href="/platform-health"
-            title={t("platformCommandCenter.monitoringOverview.healthTitle") || "Health"}
+            title={
+              t("platformCommandCenter.monitoringOverview.healthTitle") ||
+              "Health"
+            }
             body={
               t("platformCommandCenter.monitoringOverview.healthBody") ||
               "System health, dependencies and operational checks"
@@ -249,7 +257,8 @@ export function MonitoringOverview({ vm }: { vm: CommandCenter }) {
           <ExploreDestination
             href="/analytics"
             title={
-              t("platformCommandCenter.monitoringOverview.analyticsTitle") || "Tenant Analytics"
+              t("platformCommandCenter.monitoringOverview.analyticsTitle") ||
+              "Tenant Analytics"
             }
             body={
               t("platformCommandCenter.monitoringOverview.analyticsBody") ||
@@ -259,7 +268,10 @@ export function MonitoringOverview({ vm }: { vm: CommandCenter }) {
           />
           <ExploreDestination
             href="/audit"
-            title={t("platformCommandCenter.monitoringOverview.auditTitle") || "Audit Log"}
+            title={
+              t("platformCommandCenter.monitoringOverview.auditTitle") ||
+              "Audit Log"
+            }
             body={
               t("platformCommandCenter.monitoringOverview.auditBody") ||
               "Searchable operational and administrative activity history"
@@ -268,7 +280,10 @@ export function MonitoringOverview({ vm }: { vm: CommandCenter }) {
           />
           <ExploreDestination
             href="/security"
-            title={t("platformCommandCenter.monitoringOverview.securityTitle") || "Security"}
+            title={
+              t("platformCommandCenter.monitoringOverview.securityTitle") ||
+              "Security"
+            }
             body={
               t("platformCommandCenter.monitoringOverview.securityBody") ||
               "Security events, access activity and security signals"
@@ -310,7 +325,9 @@ function ExploreDestination({
         <p className="text-sm font-semibold text-foreground transition-colors group-hover:text-primary">
           {title}
         </p>
-        <p className="mt-1 line-clamp-2 text-xs text-muted-foreground">{body}</p>
+        <p className="mt-1 line-clamp-2 text-xs text-muted-foreground">
+          {body}
+        </p>
       </div>
     </Link>
   );
