@@ -30,7 +30,7 @@ export function VenueOverviewKpiStrip({ kpis, attentionCount, t }: Props) {
       data-testid="venue-overview-kpi-strip"
     >
       <Link href="/venue/calendar" className="group block">
-        <Card className="hover:border-nx-accent/50 border-nx-line bg-nx-surface transition-all duration-nx-micro hover:shadow-nx-sm">
+        <Card className="hover:border-nx-accent/50 border-nx-line bg-nx-surface transition-all duration-nx-micro">
           <CardContent className="flex items-center gap-3.5 p-4">
             <div className="border-nx-accent/30 bg-nx-accent/10 group-hover:bg-nx-accent/20 flex size-11 shrink-0 items-center justify-center rounded-nx-md border text-nx-accent transition-colors">
               <CalendarCheck2 className="size-5" aria-hidden="true" />
@@ -51,7 +51,7 @@ export function VenueOverviewKpiStrip({ kpis, attentionCount, t }: Props) {
       </Link>
 
       <Link href="/venue/calendar" className="group block">
-        <Card className="border-nx-line bg-nx-surface transition-all duration-nx-micro hover:border-success/50 hover:shadow-nx-sm">
+        <Card className="border-nx-line bg-nx-surface transition-all duration-nx-micro hover:border-success/50">
           <CardContent className="flex items-center gap-3.5 p-4">
             <div className="flex size-11 shrink-0 items-center justify-center rounded-nx-md border border-success/30 bg-success/10 text-success transition-colors group-hover:bg-success/20">
               <LogIn className="size-5" aria-hidden="true" />
@@ -70,9 +70,9 @@ export function VenueOverviewKpiStrip({ kpis, attentionCount, t }: Props) {
       </Link>
 
       <Link href="/venue/calendar" className="group block">
-        <Card className="border-nx-line bg-nx-surface transition-all duration-nx-micro hover:border-amber-500/50 hover:shadow-nx-sm">
+        <Card className="border-nx-line bg-nx-surface transition-all duration-nx-micro hover:border-warning/50">
           <CardContent className="flex items-center gap-3.5 p-4">
-            <div className="flex size-11 shrink-0 items-center justify-center rounded-nx-md border border-amber-500/30 bg-amber-500/10 text-amber-600 transition-colors group-hover:bg-amber-500/20 dark:text-amber-400">
+            <div className="flex size-11 shrink-0 items-center justify-center rounded-nx-md border border-warning/30 bg-warning/10 text-warning transition-colors group-hover:bg-warning/20">
               <Clock4 className="size-5" aria-hidden="true" />
             </div>
             <div className="min-w-0 flex-1">
@@ -88,8 +88,8 @@ export function VenueOverviewKpiStrip({ kpis, attentionCount, t }: Props) {
         <Link href="/venue/attention" className="group block">
           <Card
             className={cn(
-              "border-nx-line bg-nx-surface transition-all duration-nx-micro hover:shadow-nx-sm",
-              attentionCount > 0 && "border-amber-500/40 bg-amber-500/5 hover:border-amber-500"
+              "border-nx-line bg-nx-surface transition-all duration-nx-micro",
+              attentionCount > 0 && "border-warning/30 bg-warning/10 hover:border-warning/50"
             )}
           >
             <CardContent className="flex items-center gap-3.5 p-4">
@@ -97,7 +97,7 @@ export function VenueOverviewKpiStrip({ kpis, attentionCount, t }: Props) {
                 className={cn(
                   "flex size-11 shrink-0 items-center justify-center rounded-nx-md border transition-colors",
                   attentionCount > 0
-                    ? "border-amber-500/40 bg-amber-500/15 text-amber-600 dark:text-amber-400"
+                    ? "border-warning/30 bg-warning/15 text-warning"
                     : "bg-nx-surfaceSubtle border-nx-line text-nx-ink-2"
                 )}
               >
@@ -120,7 +120,7 @@ export function VenueOverviewKpiStrip({ kpis, attentionCount, t }: Props) {
         </Link>
       ) : (
         <Link href="/venue/facilities" className="group block">
-          <Card className="hover:border-nx-accent/50 border-nx-line bg-nx-surface transition-all duration-nx-micro hover:shadow-nx-sm">
+          <Card className="hover:border-nx-accent/50 border-nx-line bg-nx-surface transition-all duration-nx-micro">
             <CardContent className="flex items-center gap-3.5 p-4">
               <div className="bg-nx-surfaceSubtle flex size-11 shrink-0 items-center justify-center rounded-nx-md border border-nx-line text-nx-ink-2 transition-colors group-hover:bg-nx-hover">
                 <Layers className="size-5" aria-hidden="true" />

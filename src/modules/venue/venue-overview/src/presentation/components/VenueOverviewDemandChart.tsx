@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import React from "react";
 import { BarChart3 } from "lucide-react";
@@ -89,7 +89,7 @@ export function VenueOverviewDemandChart({ buckets, t }: Props) {
                         <div className="flex justify-between gap-3 text-nx-accent">
                           <span>Confirmed:</span> <span>{b.confirmed}</span>
                         </div>
-                        <div className="flex justify-between gap-3 text-amber-500">
+                        <div className="flex justify-between gap-3 text-warning">
                           <span>Held:</span> <span>{b.held}</span>
                         </div>
                         <div className="flex justify-between gap-3 text-nx-ink-3">

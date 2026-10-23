@@ -100,6 +100,16 @@ function resolveSportBadge(name: string): SportBadgeInfo {
   return { label: "Court", gradient: "linear-gradient(135deg, #1e293b 0%, #475569 100%)" };
 }
 
+function computeElapsedPercent(startUtc?: string | null, endUtc?: string | null): number {
+  if (!startUtc || !endUtc) return 50;
+  const startMs = new Date(startUtc).getTime();
+  const endMs = new Date(endUtc).getTime();
+  if (isNaN(startMs) || isNaN(endMs) || endMs <= startMs) return 50;
+  const nowMs = Date.now();
+  const pct = Math.round(((nowMs - startMs) / (endMs - startMs)) * 100);
+  return Math.min(100, Math.max(5, pct));
+}
+
 export function VenueOverviewLiveCourts({ items, overview, t }: VenueOverviewLiveCourtsProps) {
   const courts = items || overview?.resourceActivity || [];
 
@@ -114,8 +124,8 @@ export function VenueOverviewLiveCourts({ items, overview, t }: VenueOverviewLiv
     return priority(a.statusLabel) - priority(b.statusLabel);
   });
 
-  // Take up to 8 live courts to show in the live grid
-  const displayCourts = sortedCourts.slice(0, 8);
+  // Take up to 12 live courts to show in the live grid
+  const displayCourts = sortedCourts.slice(0, 12);
 
   return (
     <div className="space-y-3" data-testid="venue-overview-live-courts">
@@ -189,6 +199,19 @@ export function VenueOverviewLiveCourts({ items, overview, t }: VenueOverviewLiv
             const booking360Url = court.activeReservationId
               ? `/venue/bookings/${encodeURIComponent(court.activeReservationId)}`
               : null;
+
+            const elapsedPercent = computeElapsedPercent(
+              court.currentOrNextStartUtc,
+              court.currentOrNextEndUtc
+            );
+            const resolvedCustomerName =
+              court.customerDisplayName ||
+              overview?.upNext?.find(
+                (u) =>
+                  u.resourceId === court.resourceId ||
+                  (court.activeReservationId && u.reservationId === court.activeReservationId)
+              )?.customerDisplayName ||
+              (court.reservationNumber ? `#${court.reservationNumber}` : null);
 
             return (
               <Card
@@ -300,8 +323,8 @@ export function VenueOverviewLiveCourts({ items, overview, t }: VenueOverviewLiv
                     </DropdownMenu>
                   </div>
 
-                  {/* Status Pill */}
-                  <div className="flex items-center gap-1.5">
+                  {/* Status Pill & Match Progress */}
+                  <div className="flex items-center justify-between gap-1.5">
                     <span
                       className={`inline-flex items-center gap-1.5 rounded-md border px-2 py-0.5 text-[10px] font-bold ${statusBadge}`}
                     >
@@ -310,19 +333,36 @@ export function VenueOverviewLiveCourts({ items, overview, t }: VenueOverviewLiv
                       )}
                       {statusText}
                     </span>
+                    {isCheckedIn && (
+                      <span className="font-mono text-[10px] font-semibold text-success">
+                        {elapsedPercent}%
+                      </span>
+                    )}
                   </div>
+
+                  {/* Occupancy Timeline Progress Bar for In-Use Courts */}
+                  {isCheckedIn && (
+                    <div className="h-1.5 w-full overflow-hidden rounded-full bg-nx-raised-2">
+                      <div
+                        className="h-full rounded-full bg-success transition-all duration-500"
+                        style={{ width: `${elapsedPercent}%` }}
+                      />
+                    </div>
+                  )}
 
                   {/* Time info */}
                   <div className="truncate text-[11px] font-medium text-nx-ink-2">{timeText}</div>
 
+                  {/* Customer / Match Details */}
                   <div className="flex items-center gap-1.5 truncate border-t border-nx-line pt-1 text-[11px] text-nx-ink-2">
                     <User className="size-3 shrink-0 text-nx-ink-3" />
-                    <span className="truncate">
-                      {isCheckedIn
-                        ? t("venueOverview.liveCourts.activeNow", { defaultValue: "Active Match" })
-                        : isNext
-                          ? t("venueOverview.liveCourts.reserved", { defaultValue: "Reserved" })
-                          : "—"}
+                    <span className="truncate font-medium" title={resolvedCustomerName || undefined}>
+                      {resolvedCustomerName ||
+                        (isCheckedIn
+                          ? t("venueOverview.liveCourts.activeNow", { defaultValue: "Active Match" })
+                          : isNext
+                            ? t("venueOverview.liveCourts.reserved", { defaultValue: "Reserved" })
+                            : "—")}
                     </span>
                   </div>
                 </div>

@@ -96,7 +96,7 @@ export function ResourceCard({ item }: Props) {
   const isUnavailable = readiness.state === "Unavailable";
 
   return (
-    <Card className="group flex flex-col justify-between overflow-hidden rounded-2xl border border-nx-line bg-nx-surface shadow-xs transition-all hover:border-nx-line-hi hover:shadow-md">
+    <Card className="group flex flex-col justify-between overflow-hidden rounded-2xl border border-nx-line bg-nx-surface transition-all hover:border-nx-line-hi">
       {/* Top Section: Court Photo Thumbnail Banner with Overlays */}
       <div className="relative h-44 w-full shrink-0 overflow-hidden bg-nx-raised">
         <img
@@ -119,32 +119,32 @@ export function ResourceCard({ item }: Props) {
         {/* Top-Right: Readiness Status Pill */}
         <div className="absolute right-3 top-3 z-10">
           {isReady ? (
-            <span className="inline-flex items-center gap-1.5 rounded-full border border-emerald-400/40 bg-emerald-950/80 px-2.5 py-1 text-[11px] font-bold text-emerald-300 shadow-xs backdrop-blur-xs">
-              <span className="size-1.5 rounded-full bg-emerald-400 shadow-[0_0_6px_rgba(52,211,153,0.8)]" />
+            <span className="inline-flex items-center gap-1.5 rounded-full border border-success/30 bg-black/70 px-2.5 py-1 text-[11px] font-bold text-success backdrop-blur-xs">
+              <span className="size-1.5 rounded-full bg-success shadow-[0_0_6px_rgba(34,197,94,0.8)]" />
               {t("resources.card.statusReady", { defaultValue: "Ready" })}
             </span>
           ) : isActivating ? (
             <span
-              className="inline-flex items-center gap-1.5 rounded-full border border-sky-400/40 bg-sky-950/80 px-2.5 py-1 text-[11px] font-bold text-sky-300 shadow-xs backdrop-blur-xs"
+              className="inline-flex items-center gap-1.5 rounded-full border border-info/30 bg-black/70 px-2.5 py-1 text-[11px] font-bold text-info backdrop-blur-xs"
               title={t("resources.card.activatingTooltip", {
                 defaultValue:
                   "Pricing is activating on the network and will become effective shortly.",
               })}
             >
-              <Clock className="size-3 text-sky-400 animate-pulse" />
+              <Clock className="size-3 text-info animate-pulse" />
               {t("resources.card.statusActivating", { defaultValue: "Activating" })}
             </span>
           ) : isUnavailable ? (
-            <span className="inline-flex items-center gap-1.5 rounded-full border border-white/20 bg-black/70 px-2.5 py-1 text-[11px] font-bold text-nx-ink-2 shadow-xs backdrop-blur-xs">
+            <span className="inline-flex items-center gap-1.5 rounded-full border border-white/20 bg-black/70 px-2.5 py-1 text-[11px] font-bold text-nx-ink-2 backdrop-blur-xs">
               <span className="size-1.5 rounded-full bg-nx-ink-3" />
               {t("resources.card.statusUnavailable", { defaultValue: "Unavailable" })}
             </span>
           ) : (
             <span
-              className="inline-flex items-center gap-1.5 rounded-full border border-amber-400/40 bg-amber-950/80 px-2.5 py-1 text-[11px] font-bold text-amber-300 shadow-xs backdrop-blur-xs"
+              className="inline-flex items-center gap-1.5 rounded-full border border-warning/30 bg-black/70 px-2.5 py-1 text-[11px] font-bold text-warning backdrop-blur-xs"
               title={readiness.missingActions.map((a) => a.label).join(", ")}
             >
-              <span className="size-1.5 rounded-full bg-amber-400 shadow-[0_0_6px_rgba(251,191,36,0.8)]" />
+              <span className="size-1.5 rounded-full bg-warning shadow-[0_0_6px_rgba(234,179,8,0.8)]" />
               {t("resources.card.setupRequired", { defaultValue: "Setup Required" })}
             </span>
           )}
@@ -285,7 +285,7 @@ export function ResourceCard({ item }: Props) {
             </div>
 
             {/* Price per slot */}
-            <div className="flex items-center gap-1 rounded-lg border border-emerald-500/20 bg-emerald-500/10 px-2.5 py-1 text-[11px] font-bold text-emerald-700 dark:border-nx-accent/20 dark:bg-nx-accent/10 dark:text-nx-accent">
+            <div className="flex items-center gap-1 rounded-lg border border-success/20 bg-success/10 px-2.5 py-1 text-[11px] font-bold text-success">
               <CircleDollarSign className="size-3 shrink-0" />
               <span>
                 {item.pricePerSlot != null ? (
@@ -311,7 +311,7 @@ export function ResourceCard({ item }: Props) {
             <Button
               asChild
               size="sm"
-              className="h-8 flex-1 rounded-xl bg-nx-accent text-xs font-bold text-nx-on-fill shadow-sm hover:bg-nx-accent/90"
+              className="h-8 flex-1 rounded-xl bg-nx-accent text-xs font-bold text-nx-on-fill hover:bg-nx-accent/90"
             >
               <Link
                 href={`/venue/calendar?newBooking=true&resourceId=${encodeURIComponent(
@@ -326,7 +326,7 @@ export function ResourceCard({ item }: Props) {
             <Button
               size="sm"
               disabled
-              className="h-8 flex-1 cursor-not-allowed rounded-xl border border-sky-500/30 bg-sky-500/10 text-xs font-bold text-sky-600 opacity-90 dark:text-sky-400"
+              className="h-8 flex-1 cursor-not-allowed rounded-xl border border-info/30 bg-info/10 text-xs font-bold text-info opacity-90"
               title={t("resources.card.activatingTooltip", {
                 defaultValue:
                   "Pricing is activating on the network and will become effective shortly. Bookings cannot be accepted until activation completes.",
@@ -340,7 +340,7 @@ export function ResourceCard({ item }: Props) {
               asChild
               size="sm"
               variant="outline"
-              className="h-8 flex-1 rounded-xl border-amber-400/40 bg-amber-500/10 text-xs font-bold text-amber-700 hover:bg-amber-500/20 dark:text-amber-300"
+              className="h-8 flex-1 rounded-xl border-warning/30 bg-warning/10 text-xs font-bold text-warning hover:bg-warning/20"
               title={readiness.missingActions.map((a) => a.label).join(", ")}
             >
               <Link href={`/venue/resources/${encodeURIComponent(item.id)}`}>

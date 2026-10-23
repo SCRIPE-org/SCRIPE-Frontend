@@ -329,7 +329,7 @@ export class VenueOverviewService implements IVenueOverviewService {
 
     // 6. Derive KPI 3: Checked In Now
     const checkedInNowBlocks = blocks.filter((b) => {
-      if (b.status !== "CheckedIn") return false;
+      if (b.status !== "CheckedIn" && b.status !== "Confirmed") return false;
       return b.startUtc <= currentUtcIso && b.endUtc >= currentUtcIso;
     });
     const checkedInNowCount = checkedInNowBlocks.length;
@@ -435,12 +435,18 @@ export class VenueOverviewService implements IVenueOverviewService {
     const resourceActivity: VenueOverviewResourceActivityItem[] = facilityResources.map((res) => {
       const resBlocks = blocks.filter((b) => b.resourceId === res.id);
 
-      // Active now block (CheckedIn or active period)
+      // Active now block (CheckedIn or Confirmed active period)
       const activeNowBlock = resBlocks.find(
-        (b) => b.startUtc <= currentUtcIso && b.endUtc >= currentUtcIso
+        (b) =>
+          b.startUtc <= currentUtcIso &&
+          b.endUtc >= currentUtcIso &&
+          (b.status === "CheckedIn" || b.status === "Confirmed")
       );
 
-      if (activeNowBlock && activeNowBlock.status === "CheckedIn") {
+      if (activeNowBlock) {
+        const cName = activeNowBlock.customerPartyId
+          ? (customerMap.get(activeNowBlock.customerPartyId) ?? null)
+          : null;
         return {
           resourceId: res.id,
           resourceName: res.name,
@@ -449,15 +455,20 @@ export class VenueOverviewService implements IVenueOverviewService {
           currentOrNextEndUtc: activeNowBlock.endUtc,
           currentOrNextStartUtc: activeNowBlock.startUtc,
           activeReservationId: activeNowBlock.reservationId,
+          reservationNumber: activeNowBlock.reservationNumber ?? null,
+          customerDisplayName: cName,
         };
       }
 
       // Next upcoming block
       const nextBlock = resBlocks
-        .filter((b) => b.startUtc > currentUtcIso && b.status !== "Cancelled")
+        .filter((b) => b.startUtc > currentUtcIso && b.status !== "Cancelled" && b.status !== "Expired")
         .sort((a, b) => a.startUtc.localeCompare(b.startUtc))[0];
 
       if (nextBlock) {
+        const cName = nextBlock.customerPartyId
+          ? (customerMap.get(nextBlock.customerPartyId) ?? null)
+          : null;
         return {
           resourceId: res.id,
           resourceName: res.name,
@@ -466,6 +477,8 @@ export class VenueOverviewService implements IVenueOverviewService {
           currentOrNextEndUtc: nextBlock.endUtc,
           currentOrNextStartUtc: nextBlock.startUtc,
           activeReservationId: nextBlock.reservationId,
+          reservationNumber: nextBlock.reservationNumber ?? null,
+          customerDisplayName: cName,
         };
       }
 
@@ -478,6 +491,8 @@ export class VenueOverviewService implements IVenueOverviewService {
         currentOrNextEndUtc: null,
         currentOrNextStartUtc: null,
         activeReservationId: null,
+        reservationNumber: null,
+        customerDisplayName: null,
       };
     });
 

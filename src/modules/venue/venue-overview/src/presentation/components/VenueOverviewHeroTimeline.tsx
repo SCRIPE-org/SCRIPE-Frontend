@@ -45,7 +45,7 @@ function statusBlockClasses(status: OperationsCalendarBlock["status"]) {
     case "CheckedIn":
       return "border-success/60 bg-success/15 text-success hover:bg-success/25 focus-visible:ring-success shadow-nx-xs";
     case "Held":
-      return "border-amber-500/60 bg-amber-500/15 text-amber-600 dark:text-amber-400 border-dashed hover:bg-amber-500/25 focus-visible:ring-amber-500";
+      return "border-warning/60 bg-warning/15 text-warning border-dashed hover:bg-warning/25 focus-visible:ring-warning";
     case "Completed":
       return "border-nx-line bg-nx-surfaceSubtle text-nx-ink-2 hover:bg-nx-hover";
     case "Confirmed":
@@ -202,7 +202,7 @@ export function VenueOverviewHeroTimeline({
                 {t("operationsCalendar.status.Confirmed", { defaultValue: "Confirmed" })}
               </span>
               <span className="inline-flex items-center gap-1 text-[11px] text-nx-ink-2">
-                <span className="size-2 rounded-full bg-amber-500" />
+                <span className="size-2 rounded-full bg-warning" />
                 {t("operationsCalendar.status.Held", { defaultValue: "Held" })}
               </span>
             </div>

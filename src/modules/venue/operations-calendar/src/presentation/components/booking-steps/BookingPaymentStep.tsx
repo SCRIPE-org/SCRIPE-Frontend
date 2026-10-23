@@ -72,7 +72,7 @@ export function BookingPaymentStep({
   if (stage === "conflict") {
     return (
       <div className="space-y-4 py-4 text-center">
-        <div className="mx-auto flex size-14 items-center justify-center rounded-full border-2 border-amber-500 bg-amber-500/10 text-amber-500">
+        <div className="mx-auto flex size-14 items-center justify-center rounded-full border-2 border-warning/40 bg-warning/10 text-warning">
           <AlertCircle className="size-8" />
         </div>
         <div>
@@ -117,7 +117,7 @@ export function BookingPaymentStep({
   if (stage === "confirmed") {
     return (
       <div className="space-y-4 py-3 text-center">
-        <div className="mx-auto flex size-16 items-center justify-center rounded-full border-2 border-emerald-500/40 bg-emerald-500/10 text-emerald-500 shadow-sm dark:border-[#C6FF00]/60 dark:text-[#C6FF00]">
+        <div className="mx-auto flex size-16 items-center justify-center rounded-full border-2 border-success/40 bg-success/10 text-success">
           <CheckCircle2 className="size-9" />
         </div>
 
@@ -146,7 +146,7 @@ export function BookingPaymentStep({
         )}
 
         {/* Receipt Summary Card */}
-        <div className="border-nx-border bg-nx-raised/40 space-y-2 rounded-xl border p-3.5 text-left">
+        <div className="border-nx-line bg-nx-raised/40 space-y-2 rounded-xl border p-3.5 text-left">
           <div className="flex items-center justify-between text-xs">
             <span className="text-nx-ink-2">
               {t("operationsCalendar.clickToBook.success.total")}
@@ -159,15 +159,15 @@ export function BookingPaymentStep({
             <span className="text-nx-ink-2">
               {t("operationsCalendar.clickToBook.success.paid")}
             </span>
-            <span className="font-bold text-emerald-500">
+            <span className="font-bold text-success">
               {amountPaid} {quote?.currencyCode || "EGP"}
             </span>
           </div>
-          <div className="border-nx-border flex items-center justify-between border-t pt-1.5 text-xs">
+          <div className="border-nx-line flex items-center justify-between border-t pt-1.5 text-xs">
             <span className="text-nx-ink-2">
               {t("operationsCalendar.clickToBook.success.remaining")}
             </span>
-            <span className="font-bold text-amber-500">
+            <span className="font-bold text-warning">
               {remainingBalance} {quote?.currencyCode || "EGP"}
             </span>
           </div>
@@ -178,7 +178,7 @@ export function BookingPaymentStep({
           {canRecordPayment && remainingBalance > 0 && (
             <Button
               type="button"
-              className="h-9 w-full rounded-xl bg-[#C6FF00] text-xs font-bold text-[#0D0D0E] shadow-sm hover:bg-[#b5eb00]"
+              className="h-9 w-full rounded-xl bg-nx-accent-fill text-xs font-bold text-nx-on-fill hover:bg-nx-accent-fill/90"
               loading={recordingPaymentManual}
               disabled={recordingPaymentManual}
               onClick={onManualRecordPayment}
@@ -229,7 +229,7 @@ export function BookingPaymentStep({
         className="space-y-2"
       >
         <div
-          className={`flex items-start gap-3 rounded-xl border p-3 transition-colors ${paymentChoice === "later" ? "border-emerald-500/40 bg-emerald-500/5 dark:border-[#C6FF00]/40 dark:bg-[#C6FF00]/5" : "border-nx-border hover:bg-nx-raised/50"}`}
+          className={`flex items-start gap-3 rounded-xl border p-3 transition-colors ${paymentChoice === "later" ? "border-nx-accent bg-nx-accent-wash" : "border-nx-line hover:bg-nx-raised/50"}`}
         >
           <RadioGroupItem id="booking-payment-later" value="later" className="mt-0.5" />
           <div>
@@ -244,7 +244,7 @@ export function BookingPaymentStep({
 
         {canRecordPayment && (
           <div
-            className={`flex items-start gap-3 rounded-xl border p-3 transition-colors ${paymentChoice === "now" ? "border-emerald-500/40 bg-emerald-500/5 dark:border-[#C6FF00]/40 dark:bg-[#C6FF00]/5" : "border-nx-border hover:bg-nx-raised/50"}`}
+            className={`flex items-start gap-3 rounded-xl border p-3 transition-colors ${paymentChoice === "now" ? "border-nx-accent bg-nx-accent-wash" : "border-nx-line hover:bg-nx-raised/50"}`}
           >
             <RadioGroupItem id="booking-payment-now" value="now" className="mt-0.5" />
             <div className="flex-1">
@@ -253,7 +253,7 @@ export function BookingPaymentStep({
               </Label>
 
               {paymentChoice === "now" && (
-                <div className="border-nx-border/50 mt-2.5 space-y-2.5 border-t pt-2">
+                <div className="border-nx-line mt-2.5 space-y-2.5 border-t pt-2">
                   <div className="flex items-center gap-2">
                     <Input
                       type="number"

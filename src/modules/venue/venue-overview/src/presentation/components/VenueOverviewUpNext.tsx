@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import Link from "next/link";
 import { ArrowUpRight, Clock, User, ExternalLink } from "lucide-react";
@@ -33,7 +33,7 @@ const STATUS_LABELS: Record<Booking360Status, string> = {
 function statusBadgeClass(status: Booking360Status) {
   switch (status) {
     case "Held":
-      return "border-amber-500/50 bg-amber-500/15 text-amber-600 dark:text-amber-400 font-medium";
+      return "border-warning/30 bg-warning/10 text-warning font-medium";
     case "Confirmed":
       return "border-nx-accent/50 bg-nx-accent/15 text-nx-accent font-medium";
     case "CheckedIn":

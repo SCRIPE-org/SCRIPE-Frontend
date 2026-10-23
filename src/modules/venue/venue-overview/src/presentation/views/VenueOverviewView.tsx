@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import Link from "next/link";
 import { useI18n } from "@core/providers/i18n-provider";
@@ -156,11 +156,11 @@ export function VenueOverviewView({ facilityId, localDate }: Props) {
 
       {/* Operational Attention Notice Banner (if active signals exist) */}
       {canViewAttention && attentionVm.data && attentionVm.data.items.length > 0 && (
-        <Card className="border-amber-500/40 bg-amber-500/5">
+        <Card className="border-warning/20 bg-warning/10">
           <CardContent className="flex flex-wrap items-center justify-between gap-3 p-4">
             <div className="flex items-center gap-3">
               <ShieldAlert
-                className="size-5 shrink-0 text-amber-600 dark:text-amber-400"
+                className="size-5 shrink-0 text-warning"
                 aria-hidden="true"
               />
               <div>
@@ -178,7 +178,7 @@ export function VenueOverviewView({ facilityId, localDate }: Props) {
               asChild
               size="sm"
               variant="outline"
-              className="border-amber-500/40 text-xs hover:bg-amber-500/10"
+              className="border-warning/30 text-warning hover:bg-warning/20 text-xs"
             >
               <Link href="/venue/attention">{t("venueOverview.attention.viewAll")}</Link>
             </Button>
@@ -196,7 +196,11 @@ export function VenueOverviewView({ facilityId, localDate }: Props) {
       {/* Approved Reference Composition: Live Courts (7 cols) + Editorial Banner & Today's Schedule (5 cols) */}
       <div className="grid grid-cols-1 items-start gap-6 lg:grid-cols-12">
         <div className="lg:col-span-7">
-          <VenueOverviewLiveCourts items={state.resourceActivity} t={t} />
+          <VenueOverviewLiveCourts
+            items={state.resourceActivity}
+            overview={state}
+            t={t}
+          />
         </div>
         <div className="space-y-4 lg:col-span-5">
           <VenueOverviewEditorialBanner facilityName={state.facilityName} t={t} />

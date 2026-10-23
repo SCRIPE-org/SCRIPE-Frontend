@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import React from "react";
 import { PieChart } from "lucide-react";
@@ -12,18 +12,18 @@ interface Props {
 }
 
 const STATUS_COLORS: Record<Booking360Status, { stroke: string; bg: string; text: string }> = {
-  Confirmed: { stroke: "var(--nx-accent, #3b82f6)", bg: "bg-nx-accent", text: "text-nx-accent" },
-  CheckedIn: { stroke: "#10b981", bg: "bg-emerald-500", text: "text-emerald-500" },
-  Held: { stroke: "#f59e0b", bg: "bg-amber-500", text: "text-amber-500" },
-  Completed: { stroke: "var(--nx-muted, #71717a)", bg: "bg-nx-muted", text: "text-nx-muted" },
-  Cancelled: { stroke: "#ef4444", bg: "bg-rose-500", text: "text-rose-500" },
-  NoShow: { stroke: "#8b5cf6", bg: "bg-purple-500", text: "text-purple-500" },
-  Draft: { stroke: "var(--nx-subtle, #a1a1aa)", bg: "bg-nx-subtle", text: "text-nx-subtle" },
-  Requested: { stroke: "#38bdf8", bg: "bg-sky-400", text: "text-sky-400" },
-  PendingApproval: { stroke: "#f59e0b", bg: "bg-amber-500", text: "text-amber-500" },
-  PartiallyFulfilled: { stroke: "#06b6d4", bg: "bg-cyan-500", text: "text-cyan-500" },
-  Rejected: { stroke: "#ef4444", bg: "bg-rose-500", text: "text-rose-500" },
-  Expired: { stroke: "var(--nx-subtle, #a1a1aa)", bg: "bg-nx-subtle", text: "text-nx-subtle" },
+  Confirmed: { stroke: "#c6ff00", bg: "bg-nx-accent-fill", text: "text-nx-accent" },
+  CheckedIn: { stroke: "#22c55e", bg: "bg-success", text: "text-success" },
+  Held: { stroke: "#eab308", bg: "bg-warning", text: "text-warning" },
+  Completed: { stroke: "#8c918d", bg: "bg-nx-raised", text: "text-nx-ink-3" },
+  Cancelled: { stroke: "#ef4444", bg: "bg-destructive", text: "text-destructive" },
+  NoShow: { stroke: "#eab308", bg: "bg-warning", text: "text-warning" },
+  Draft: { stroke: "#6f756f", bg: "bg-nx-raised-2", text: "text-nx-ink-3" },
+  Requested: { stroke: "#0ea5e9", bg: "bg-info", text: "text-info" },
+  PendingApproval: { stroke: "#eab308", bg: "bg-warning", text: "text-warning" },
+  PartiallyFulfilled: { stroke: "#0ea5e9", bg: "bg-info", text: "text-info" },
+  Rejected: { stroke: "#ef4444", bg: "bg-destructive", text: "text-destructive" },
+  Expired: { stroke: "#6f756f", bg: "bg-nx-raised-2", text: "text-nx-ink-3" },
 };
 
 /** Human-readable labels for booking statuses — avoids cross-module i18n dependency */

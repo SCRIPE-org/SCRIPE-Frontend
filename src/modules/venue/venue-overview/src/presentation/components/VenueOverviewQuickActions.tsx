@@ -48,7 +48,7 @@ export function VenueOverviewQuickActions({ t }: Props) {
           className="gap-2 border-nx-line text-nx-ink hover:bg-nx-hover"
         >
           <Link href="/venue/attention">
-            <ShieldAlert className="size-4 text-amber-500" aria-hidden="true" />
+            <ShieldAlert className="size-4 text-warning" aria-hidden="true" />
             <span>{t("venueOverview.quickActions.attentionCenter")}</span>
           </Link>
         </Button>

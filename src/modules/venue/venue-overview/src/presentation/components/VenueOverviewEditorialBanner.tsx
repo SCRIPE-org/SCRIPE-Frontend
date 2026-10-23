@@ -18,7 +18,7 @@ export function VenueOverviewEditorialBanner({
 }: Props) {
   return (
     <div
-      className="rounded-nx-xl border-nx-line/60 relative overflow-hidden border bg-gradient-to-br from-emerald-950 via-black to-black p-5 text-white shadow-md"
+      className="rounded-nx-xl border-nx-line/60 relative overflow-hidden border bg-gradient-to-br from-nx-surface via-nx-ground to-black p-5 text-white"
       data-testid="venue-overview-editorial-banner"
     >
       {/* Background Court Lighting Motif */}
@@ -26,12 +26,12 @@ export function VenueOverviewEditorialBanner({
         className="pointer-events-none absolute inset-0 bg-cover bg-center opacity-30 mix-blend-screen"
         style={{ backgroundImage: "url('/images/venue/venue-promo-banner.svg')" }}
       />
-      <div className="pointer-events-none absolute -end-12 -top-12 size-48 rounded-full bg-emerald-500/20 blur-3xl" />
-      <div className="pointer-events-none absolute -bottom-8 -start-8 size-40 rounded-full bg-lime-400/15 blur-2xl" />
+      <div className="pointer-events-none absolute -end-12 -top-12 size-48 rounded-full bg-primary/10 blur-3xl" />
+      <div className="pointer-events-none absolute -bottom-8 -start-8 size-40 rounded-full bg-primary/10 blur-2xl" />
 
       <div className="relative z-10 flex h-full min-h-[140px] flex-col justify-between space-y-4">
         <div className="max-w-sm space-y-1.5">
-          <div className="inline-flex items-center gap-1.5 rounded-full bg-lime-400/20 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-lime-300">
+          <div className="inline-flex items-center gap-1.5 rounded-full bg-primary/20 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-primary">
             <Sparkles className="size-3" aria-hidden="true" />
             <span>Community Pulse</span>
           </div>
@@ -48,7 +48,7 @@ export function VenueOverviewEditorialBanner({
             <Button
               type="button"
               onClick={onNewBooking}
-              className="hover:bg-nx-accent/90 text-nx-on-fill h-9 gap-2 rounded-nx-lg bg-nx-accent px-4 text-xs font-bold shadow-sm"
+              className="hover:bg-nx-accent/90 text-nx-on-fill h-9 gap-2 rounded-nx-lg bg-nx-accent px-4 text-xs font-bold"
             >
               <span>Keep the games going</span>
               <ArrowRight className="size-3.5 rtl:rotate-180" aria-hidden="true" />
@@ -56,7 +56,7 @@ export function VenueOverviewEditorialBanner({
           ) : (
             <Button
               asChild
-              className="hover:bg-nx-accent/90 text-nx-on-fill h-9 gap-2 rounded-nx-lg bg-nx-accent px-4 text-xs font-bold shadow-sm"
+              className="hover:bg-nx-accent/90 text-nx-on-fill h-9 gap-2 rounded-nx-lg bg-nx-accent px-4 text-xs font-bold"
             >
               <Link href="/venue/calendar">
                 <span>Keep the games going</span>

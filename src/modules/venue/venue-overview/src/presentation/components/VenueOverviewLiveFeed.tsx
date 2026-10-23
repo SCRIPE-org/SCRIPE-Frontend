@@ -181,7 +181,7 @@ export function VenueOverviewLiveFeed({
                 iconStyle = "bg-success/10 text-success border-success/30";
               } else if (evt.type === "held") {
                 Icon = Clock;
-                iconStyle = "bg-amber-500/10 text-amber-500 border-amber-500/30";
+                iconStyle = "bg-warning/10 text-warning border-warning/30";
               } else if (evt.type === "attention") {
                 Icon = ShieldAlert;
                 iconStyle = "bg-destructive/10 text-destructive border-destructive/30";
