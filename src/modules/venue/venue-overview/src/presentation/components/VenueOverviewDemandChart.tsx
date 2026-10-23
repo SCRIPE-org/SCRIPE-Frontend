@@ -36,7 +36,7 @@ export function VenueOverviewDemandChart({ buckets, t }: Props) {
               </CardTitle>
               <CardDescription className="text-xs text-nx-ink-2">
                 {t("venueOverview.operationalLoad.subtitle", {
-                  defaultValue: "Todayâ€™s booking demand distribution across operating hours.",
+                  defaultValue: "Today’s booking demand distribution across operating hours.",
                 })}
               </CardDescription>
             </div>
@@ -139,7 +139,7 @@ export function VenueOverviewDemandChart({ buckets, t }: Props) {
                 </span>
               </div>
               <span className="font-mono text-[10px] text-nx-ink-3">
-                {t("venueOverview.demandChart.hoursRange", { defaultValue: "06:00 â€“ 23:00" })}
+                {t("venueOverview.demandChart.hoursRange", { defaultValue: "06:00 – 23:00" })}
               </span>
             </div>
           </div>

@@ -2,6 +2,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import Link from "next/link";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@core/ui/dialog";
 import { Button } from "@core/ui/button";
 import { Input } from "@core/ui/input";
@@ -24,13 +25,13 @@ import {
   RotateCcw,
 } from "lucide-react";
 import { useI18n } from "@core/providers/i18n-provider";
-import type { Facility } from "@modules/venue/facility/src/domain/entities/Facility";
+import type { Facility } from "@modules/venue";
 import type {
   CourtCreationResult,
   CourtSetupItem,
   FirstTimeSetupInput,
 } from "../../domain/entities/ResourceWorkspaceItem";
-import { mapVenueError } from "@modules/venue/shared/src/utils/venueErrorMapper";
+import { mapVenueError } from "@modules/venue";
 
 interface Props {
   open: boolean;
@@ -951,14 +952,14 @@ export function FirstTimeSetupWizard({
               <Button
                 asChild
                 size="sm"
-                className="bg-[#C6FF00] font-bold text-[#0D0D0E] shadow-sm hover:bg-[#b5eb00]"
+                className="bg-nx-accent font-bold text-nx-on-fill shadow-sm hover:bg-nx-accent/90"
               >
-                <a href="/venue/calendar">
+                <Link href="/venue/calendar">
                   <CalendarDays className="mr-1.5 size-4" aria-hidden="true" />
                   <span>
                     {t("resources.wizard.goToCalendar", { defaultValue: "Open Calendar" })}
                   </span>
-                </a>
+                </Link>
               </Button>
               <Button variant="outline" size="sm" onClick={resetAndClose}>
                 <span>

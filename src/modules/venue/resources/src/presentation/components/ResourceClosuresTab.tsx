@@ -137,7 +137,7 @@ export function ResourceClosuresTab({ vm }: Props) {
                       ) : (
                         <Badge
                           variant="outline"
-                          className="gap-1 border-slate-500/50 bg-slate-500/10 font-semibold text-slate-700 dark:text-slate-300"
+                          className="gap-1 border-nx-border bg-nx-raised font-semibold text-nx-ink-2"
                         >
                           <Ban className="size-3" aria-hidden="true" />
                           <span>
@@ -149,7 +149,7 @@ export function ResourceClosuresTab({ vm }: Props) {
                       )}
                     </td>
                     <td className="p-3 tabular-nums text-nx-ink-2">
-                      {formatDate(closure.startUtc)} â€“ {formatDate(closure.endUtc)}
+                      {formatDate(closure.startUtc)} – {formatDate(closure.endUtc)}
                     </td>
                     <td className="p-3 text-nx-ink">{closure.reason}</td>
                     <td className="p-3 text-right rtl:text-left">
@@ -212,7 +212,7 @@ export function ResourceClosuresTab({ vm }: Props) {
                     onClick={() => setReasonType("Unavailable")}
                     className={`rounded-nx-md border p-2.5 text-left text-xs font-semibold transition-all rtl:text-right ${
                       reasonType === "Unavailable"
-                        ? "border-slate-500 bg-slate-500/10 text-slate-900 ring-1 ring-slate-500 dark:text-slate-200"
+                        ? "border-nx-accent bg-nx-accent/10 text-nx-ink ring-1 ring-nx-accent font-bold"
                         : "hover:bg-nx-surfaceSubtle border-nx-line text-nx-ink-2"
                     }`}
                   >

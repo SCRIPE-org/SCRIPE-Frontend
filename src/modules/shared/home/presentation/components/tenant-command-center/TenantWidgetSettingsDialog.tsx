@@ -128,7 +128,7 @@ function WidgetSettingsForm({
                   onClick={() => setColSpan(span)}
                   className={`flex flex-col items-center justify-center rounded-nx-md border p-2 text-center transition-all ${
                     isSelected
-                      ? "shadow-xs border-nx-accent bg-nx-accent-wash font-semibold text-nx-accent"
+                      ? "border-nx-accent bg-nx-accent-wash font-semibold text-nx-accent"
                       : isAllowed
                         ? "border-nx-line bg-nx-surface text-nx-ink hover:border-nx-line-hi hover:bg-nx-raised"
                         : "border-nx-line/40 bg-nx-raised/20 text-nx-ink-3/40 cursor-not-allowed"

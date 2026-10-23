@@ -159,7 +159,7 @@ export function CalendarRightUtilityPanel({
                 onClick={() => handleSelectDay(dayNum)}
                 className={`flex h-7 w-7 items-center justify-center rounded-full text-xs font-semibold transition-all ${
                   isSelected
-                    ? "text-nx-accent-contrast shadow-xs bg-nx-accent font-bold"
+                    ? "text-nx-on-fill shadow-xs bg-nx-accent font-bold"
                     : "hover:bg-nx-surfaceSubtle text-nx-ink"
                 }`}
               >

@@ -31,8 +31,8 @@ import { useModuleLocales } from "@core/hooks/use-module-locales";
 import { usePermission } from "@core/hooks/use-permission";
 import { useI18n } from "@core/providers/i18n-provider";
 import { VENUE_PERMISSIONS } from "@modules/venue/permission-constants";
-import { VenueMoneyNav } from "@modules/venue/shared/src/presentation/components/VenueMoneyNav";
-import { getVenueContainer } from "@modules/venue/di";
+import { VenueMoneyNav } from "@modules/venue";
+import { useMoneyLandingViewModel } from "../viewmodels/useMoneyLandingViewModel";
 import type {
   MoneyInvoice,
   MoneyPayment,
@@ -114,153 +114,36 @@ export function MoneyLandingView() {
     }
   }, [canViewReceivables, canViewPayments, router]);
 
-  const [dateFilter, setDateFilter] = useState<DateRangeFilter>("thisMonth");
-
-  // Authoritative State
-  const [loading, setLoading] = useState(true);
-  const [summary, setSummary] = useState<MoneySummaryItem | null>(null);
-  const [summaryError, setSummaryError] = useState<string | null>(null);
-
-  const [trendBuckets, setTrendBuckets] = useState<MoneyTrendBucket[]>([]);
-  const [trendLoading, setTrendLoading] = useState(true);
-  const [trendError, setTrendError] = useState<string | null>(null);
-
-  const [resourcePerformance, setResourcePerformance] = useState<MoneyResourcePerformance[]>([]);
-  const [resourceLoading, setResourceLoading] = useState(true);
-  const [resourceError, setResourceError] = useState<string | null>(null);
-
-  const [timeOfDayBuckets, setTimeOfDayBuckets] = useState<MoneyTimeOfDayBucket[]>([]);
-  const [timeLoading, setTimeLoading] = useState(true);
-  const [timeError, setTimeError] = useState<string | null>(null);
-
-  const [paymentMethods, setPaymentMethods] = useState<MoneyPaymentMethodItem[]>([]);
-  const [methodsLoading, setMethodsLoading] = useState(true);
-  const [methodsError, setMethodsError] = useState<string | null>(null);
-
-  const [invoices, setInvoices] = useState<MoneyInvoice[]>([]);
-  const [payments, setPayments] = useState<MoneyPayment[]>([]);
-  const [tablesLoading, setTablesLoading] = useState(true);
-  const [tablesError, setTablesError] = useState<string | null>(null);
-
-  const currency = summary?.currencyCode || trendBuckets[0]?.currencyCode || "EGP";
-
-  const loadAllData = useCallback(async () => {
-    if (!canViewReceivables && !canViewPayments) return;
-    const { moneyRepository } = getVenueContainer();
-    const { from, to, interval } = getDateRange(dateFilter);
-
-    const filter: MoneyAnalyticsFilter = {
-      dateFromUtc: from,
-      dateToUtc: to,
-      interval,
-    };
-
-    setLoading(true);
-
-    // 1. Authoritative Summary
-    setSummaryError(null);
-    moneyRepository
-      .getSummary(filter)
-      .then((res) => {
-        setSummary(res.primary || res.items[0] || null);
-      })
-      .catch(() => {
-        setSummaryError(
-          t("money.error.description", { defaultValue: "Could not load summary metrics." })
-        );
-      });
-
-    // 2. Trend Time Series
-    setTrendLoading(true);
-    setTrendError(null);
-    moneyRepository
-      .getTrend(filter)
-      .then((res) => {
-        setTrendBuckets(res.buckets || []);
-      })
-      .catch(() => {
-        setTrendError(t("money.error.description", { defaultValue: "Could not load trend data." }));
-      })
-      .finally(() => setTrendLoading(false));
-
-    // 3. Performance by Court
-    setResourceLoading(true);
-    setResourceError(null);
-    moneyRepository
-      .getByResource(filter)
-      .then((items) => {
-        setResourcePerformance(items || []);
-      })
-      .catch(() => {
-        setResourceError(
-          t("money.error.description", { defaultValue: "Could not load court performance." })
-        );
-      })
-      .finally(() => setResourceLoading(false));
-
-    // 4. Performance by Time of Day
-    setTimeLoading(true);
-    setTimeError(null);
-    moneyRepository
-      .getByTimeOfDay(filter)
-      .then((items) => {
-        setTimeOfDayBuckets(items || []);
-      })
-      .catch(() => {
-        setTimeError(
-          t("money.error.description", { defaultValue: "Could not load time breakdown." })
-        );
-      })
-      .finally(() => setTimeLoading(false));
-
-    // 5. Payment Methods
-    setMethodsLoading(true);
-    setMethodsError(null);
-    moneyRepository
-      .getPaymentMethods(filter)
-      .then((items) => {
-        setPaymentMethods(items || []);
-      })
-      .catch(() => {
-        setMethodsError(
-          t("money.error.description", { defaultValue: "Could not load payment methods." })
-        );
-      })
-      .finally(() => setMethodsLoading(false));
-
-    // 6. Actionable Tables (Outstanding Receivables and Recent Payments)
-    setTablesLoading(true);
-    setTablesError(null);
-    Promise.all([
-      canViewReceivables ? moneyRepository.getInvoices(1, 10) : Promise.resolve({ items: [] }),
-      canViewPayments ? moneyRepository.getPayments(1, 10) : Promise.resolve({ items: [] }),
-    ])
-      .then(([invRes, payRes]) => {
-        setInvoices(invRes.items || []);
-        setPayments(payRes.items || []);
-      })
-      .catch(() => {
-        setTablesError(
-          t("money.error.description", { defaultValue: "Could not load recent records." })
-        );
-      })
-      .finally(() => {
-        setTablesLoading(false);
-        setLoading(false);
-      });
-  }, [canViewReceivables, canViewPayments, dateFilter, t]);
-
-  useEffect(() => {
-    if (canViewReceivables && canViewPayments) {
-      void loadAllData();
-    } else if (!canViewReceivables && !canViewPayments) {
-      setLoading(false);
-    }
-  }, [canViewReceivables, canViewPayments, loadAllData]);
-
-  const outstandingInvoices = useMemo(() => {
-    return invoices.filter((i) => i.outstandingAmount > 0);
-  }, [invoices]);
+  const {
+    dateFilter,
+    setDateFilter,
+    loading,
+    summary,
+    summaryError,
+    trendBuckets,
+    trendLoading,
+    trendError,
+    resourcePerformance,
+    resourceLoading,
+    resourceError,
+    timeOfDayBuckets,
+    timeLoading,
+    timeError,
+    paymentMethods,
+    methodsLoading,
+    methodsError,
+    invoices,
+    payments,
+    tablesLoading,
+    tablesError,
+    currency,
+    outstandingInvoices,
+    loadAllData,
+  } = useMoneyLandingViewModel({
+    canViewReceivables,
+    canViewPayments,
+    errorDescriptionMessage: t("money.error.description", { defaultValue: "Could not load summary metrics." }),
+  });
 
   // Access denied for users without any finance permission
   if (!canViewReceivables && !canViewPayments) {
@@ -314,18 +197,20 @@ export function MoneyLandingView() {
                 ["thisMonth", t("money.landing.filters.thisMonth", { defaultValue: "This Month" })],
               ] as const
             ).map(([key, label]) => (
-              <button
+              <Button
                 key={key}
                 type="button"
+                variant={dateFilter === key ? "default" : "ghost"}
+                size="sm"
                 onClick={() => setDateFilter(key)}
-                className={`rounded-nx-sm px-2.5 py-1 font-medium transition-colors ${
+                className={`h-7 rounded-nx-sm px-2.5 py-1 font-medium transition-colors ${
                   dateFilter === key
-                    ? "shadow-xs bg-nx-accent font-semibold text-nx-surface"
+                    ? "shadow-xs bg-nx-accent font-semibold text-nx-on-fill hover:bg-nx-accent/90"
                     : "text-nx-ink-2 hover:bg-nx-hover hover:text-nx-ink"
                 }`}
               >
                 {label}
-              </button>
+              </Button>
             ))}
           </div>
 
@@ -484,7 +369,7 @@ export function MoneyLandingView() {
             <span className="text-[11px] font-semibold uppercase tracking-wider text-nx-ink-3">
               {t("money.landing.kpis.refunds", { defaultValue: "Refunds" })}
             </span>
-            <div className="rounded-full bg-slate-500/10 p-1.5 text-slate-600 dark:text-slate-400">
+            <div className="rounded-full bg-nx-raised p-1.5 text-nx-ink-2">
               <RotateCcw className="size-3.5" aria-hidden="true" />
             </div>
           </div>

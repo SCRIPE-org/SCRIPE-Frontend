@@ -1,4 +1,4 @@
-﻿// FILE-EXCEPTION: rule bypass for existing large file
+// FILE-EXCEPTION: rule bypass for existing large file
 "use client";
 
 import { useEffect, useRef, useState } from "react";
@@ -164,7 +164,7 @@ export function BookingOperationalActions(props: Props) {
               {confirmed && props.canCheckIn && (
                 <Button
                   type="button"
-                  className="gap-2 bg-nx-accent px-5 font-bold text-white shadow-sm hover:opacity-95"
+                  className="gap-2 bg-nx-accent px-5 font-bold text-nx-on-fill shadow-sm hover:opacity-95"
                   loading={props.activeAction === "checkIn"}
                   disabled={props.activeAction !== null}
                   onClick={props.onCheckIn}
@@ -179,7 +179,7 @@ export function BookingOperationalActions(props: Props) {
               {checkedIn && props.canComplete && (
                 <Button
                   type="button"
-                  className="gap-2 bg-emerald-600 px-5 font-bold text-white shadow-sm hover:bg-emerald-700"
+                  className="gap-2 bg-nx-accent px-5 font-bold text-nx-on-fill shadow-sm hover:opacity-90"
                   loading={props.activeAction === "complete"}
                   disabled={props.activeAction !== null}
                   onClick={props.onComplete}

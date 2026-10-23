@@ -135,7 +135,7 @@ export function TenantWidgetLibraryDialog({
                 <LayoutGrid className="h-5 w-5 text-primary" />
                 <span>{t("tenantCommandCenter.library.title") || "Widget Library"}</span>
               </DialogTitle>
-              <p className="mt-0.5 text-xs text-muted-foreground">
+              <p className="mt-0.5 text-xs text-nx-ink-3">
                 {t("tenantCommandCenter.library.subtitle") ||
                   "Select widgets to add to your organization overview workspace."}
               </p>
@@ -143,7 +143,7 @@ export function TenantWidgetLibraryDialog({
 
             {/* Visual Workspace Stats Counters */}
             <div className="flex shrink-0 items-center gap-2 self-start sm:self-auto">
-              <div className="flex items-center gap-1.5 rounded-lg border border-emerald-500/20 bg-emerald-500/10 px-2.5 py-1 text-xs font-semibold text-emerald-400">
+              <div className="flex items-center gap-1.5 rounded-lg border border-success/20 bg-success/10 px-2.5 py-1 text-xs font-semibold text-success">
                 <CheckCircle2 className="h-3.5 w-3.5" />
                 <span>
                   {addedCount} {t("tenantCommandCenter.library.alreadyAdded") || "Added"}
@@ -163,20 +163,20 @@ export function TenantWidgetLibraryDialog({
         <div className="shrink-0 space-y-2.5">
           {/* Search Input */}
           <div className="relative">
-            <Search className="absolute start-3 top-2.5 h-4 w-4 text-muted-foreground" />
+            <Search className="absolute start-3 top-2.5 h-4 w-4 text-nx-ink-3" />
             <Input
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder={
                 t("tenantCommandCenter.library.searchPlaceholder") || "Search available widgets..."
               }
-              className="h-9 bg-muted/20 pe-8 ps-9 text-xs"
+              className="h-9 border-nx-line bg-nx-raised/40 pe-8 ps-9 text-xs text-nx-ink"
             />
             {searchQuery && (
               <button
                 type="button"
                 onClick={() => setSearchQuery("")}
-                className="absolute end-2.5 top-2.5 cursor-pointer text-muted-foreground hover:text-foreground"
+                className="absolute end-2.5 top-2.5 cursor-pointer text-nx-ink-3 hover:text-nx-ink"
               >
                 <X className="h-4 w-4" />
               </button>
@@ -184,14 +184,14 @@ export function TenantWidgetLibraryDialog({
           </div>
 
           {/* Segmented Status Tabs (All vs Available vs In Dashboard) */}
-          <div className="flex items-center gap-1 rounded-xl border border-border/50 bg-muted/40 p-1 text-xs">
+          <div className="flex items-center gap-1 rounded-xl border border-nx-line bg-nx-raised/40 p-1 text-xs">
             <button
               type="button"
               onClick={() => setStatusFilter("all")}
               className={`flex flex-1 cursor-pointer items-center justify-center gap-1.5 rounded-lg px-3 py-1.5 font-semibold transition-all ${
                 statusFilter === "all"
-                  ? "shadow-xs border border-border/60 bg-background text-foreground"
-                  : "text-muted-foreground hover:bg-muted/50 hover:text-foreground"
+                  ? "border border-nx-line bg-nx-surface text-nx-ink"
+                  : "text-nx-ink-3 hover:bg-nx-raised hover:text-nx-ink"
               }`}
             >
               <span>{t("tenantCommandCenter.library.allWidgets") || "All Widgets"}</span>
@@ -205,8 +205,8 @@ export function TenantWidgetLibraryDialog({
               onClick={() => setStatusFilter("available")}
               className={`flex flex-1 cursor-pointer items-center justify-center gap-1.5 rounded-lg px-3 py-1.5 font-semibold transition-all ${
                 statusFilter === "available"
-                  ? "shadow-xs bg-primary font-bold text-primary-foreground"
-                  : "text-muted-foreground hover:bg-muted/50 hover:text-foreground"
+                  ? "bg-primary font-bold text-nx-on-fill"
+                  : "text-nx-ink-3 hover:bg-nx-raised hover:text-nx-ink"
               }`}
             >
               <Plus className="h-3.5 w-3.5" />
@@ -214,7 +214,7 @@ export function TenantWidgetLibraryDialog({
               <span
                 className={`rounded-full px-1.5 py-0 text-[10px] font-bold ${
                   statusFilter === "available"
-                    ? "bg-primary-foreground/20 text-primary-foreground"
+                    ? "bg-nx-on-fill/20 text-nx-on-fill"
                     : "bg-primary/15 text-primary"
                 }`}
               >
@@ -227,8 +227,8 @@ export function TenantWidgetLibraryDialog({
               onClick={() => setStatusFilter("added")}
               className={`flex flex-1 cursor-pointer items-center justify-center gap-1.5 rounded-lg px-3 py-1.5 font-semibold transition-all ${
                 statusFilter === "added"
-                  ? "shadow-xs bg-emerald-600 font-bold text-white"
-                  : "text-muted-foreground hover:bg-muted/50 hover:text-foreground"
+                  ? "bg-success font-bold text-nx-ground"
+                  : "text-nx-ink-3 hover:bg-nx-raised hover:text-nx-ink"
               }`}
             >
               <Check className="h-3.5 w-3.5" />
@@ -236,8 +236,8 @@ export function TenantWidgetLibraryDialog({
               <span
                 className={`rounded-full px-1.5 py-0 text-[10px] font-bold ${
                   statusFilter === "added"
-                    ? "bg-white/20 text-white"
-                    : "bg-emerald-500/15 text-emerald-400"
+                    ? "bg-nx-ground/20 text-nx-ground"
+                    : "bg-success/15 text-success"
                 }`}
               >
                 {addedCount}
@@ -254,8 +254,8 @@ export function TenantWidgetLibraryDialog({
                 onClick={() => setSelectedCategory(cat.id)}
                 className={`cursor-pointer rounded-full px-2.5 py-0.5 text-[11px] font-medium transition-colors ${
                   selectedCategory === cat.id
-                    ? "border border-secondary-foreground/20 bg-secondary font-semibold text-secondary-foreground"
-                    : "text-muted-foreground hover:bg-muted/60 hover:text-foreground"
+                    ? "border border-primary/30 bg-primary/10 font-semibold text-primary"
+                    : "text-nx-ink-3 hover:bg-nx-raised hover:text-nx-ink"
                 }`}
               >
                 {cat.label}
@@ -268,11 +268,11 @@ export function TenantWidgetLibraryDialog({
         <div className="flex-1 overflow-y-auto py-1 pr-1">
           {filteredWidgets.length === 0 ? (
             <div className="flex min-h-[180px] flex-col items-center justify-center p-6 text-center">
-              <Search className="mb-2 h-6 w-6 text-muted-foreground/40" />
-              <p className="text-xs font-semibold text-foreground">
+              <Search className="mb-2 h-6 w-6 text-nx-ink-3/40" />
+              <p className="text-xs font-semibold text-nx-ink">
                 {t("tenantCommandCenter.library.noWidgetsFound") || "No widgets found"}
               </p>
-              <p className="mt-1 text-[11px] text-muted-foreground">
+              <p className="mt-1 text-[11px] text-nx-ink-3">
                 {t("tenantCommandCenter.library.tryAnotherSearch") ||
                   "Try adjusting your search terms or category filter."}
               </p>
@@ -299,19 +299,19 @@ export function TenantWidgetLibraryDialog({
                   return (
                     <div
                       key={def.id}
-                      className="shadow-xs relative flex flex-col justify-between rounded-xl border border-emerald-500/35 bg-emerald-950/10 p-3.5 ring-1 ring-emerald-500/20 transition-all dark:bg-emerald-950/25"
+                      className="relative flex flex-col justify-between rounded-xl border border-success/35 bg-success/10 p-3.5 ring-1 ring-success/20 transition-all"
                     >
                       <div>
                         <div className="mb-2 flex items-start justify-between gap-2">
                           <div className="flex items-center gap-2.5">
-                            <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border border-emerald-500/30 bg-emerald-500/15 text-emerald-400">
+                            <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border border-success/30 bg-success/15 text-success">
                               <IconComponent className="h-4 w-4" />
                             </div>
                             <div>
-                              <h4 className="flex items-center gap-1.5 text-xs font-bold leading-tight text-foreground">
+                              <h4 className="flex items-center gap-1.5 text-xs font-bold leading-tight text-nx-ink">
                                 <span>{title}</span>
                               </h4>
-                              <span className="text-[10px] font-medium capitalize text-emerald-400/80">
+                              <span className="text-[10px] font-medium capitalize text-success/80">
                                 {def.category}
                               </span>
                             </div>
@@ -320,12 +320,12 @@ export function TenantWidgetLibraryDialog({
                           <div className="flex shrink-0 items-center gap-1.5">
                             <Badge
                               variant="outline"
-                              className="border-border/40 px-1.5 py-0 text-[10px] font-normal text-muted-foreground"
+                              className="border-nx-line bg-nx-raised/40 px-1.5 py-0 text-[10px] font-normal text-nx-ink-3"
                             >
                               {widthLabel}
                             </Badge>
-                            <Badge className="flex items-center gap-1 border border-emerald-500/40 bg-emerald-500/20 px-2 py-0.5 text-[10px] font-semibold text-emerald-400">
-                              <Check className="h-3 w-3 text-emerald-400" />
+                            <Badge className="flex items-center gap-1 border border-success/40 bg-success/20 px-2 py-0.5 text-[10px] font-semibold text-success">
+                              <Check className="h-3 w-3 text-success" />
                               <span>
                                 {t("tenantCommandCenter.library.alreadyAdded") || "Added"}
                               </span>
@@ -333,14 +333,14 @@ export function TenantWidgetLibraryDialog({
                           </div>
                         </div>
 
-                        <p className="mb-3 line-clamp-2 text-[11px] leading-relaxed text-muted-foreground/90">
+                        <p className="mb-3 line-clamp-2 text-[11px] leading-relaxed text-nx-ink-3">
                           {desc}
                         </p>
                       </div>
 
-                      <div className="flex items-center justify-between border-t border-emerald-500/20 pt-2.5">
-                        <span className="flex items-center gap-1 text-[10px] font-medium text-emerald-400/80">
-                          <CheckCircle2 className="h-3.5 w-3.5 text-emerald-400" />
+                      <div className="flex items-center justify-between border-t border-success/20 pt-2.5">
+                        <span className="flex items-center gap-1 text-[10px] font-medium text-success/80">
+                          <CheckCircle2 className="h-3.5 w-3.5 text-success" />
                           <span>
                             {t("tenantCommandCenter.library.inWorkspace") || "Active in Workspace"}
                           </span>
@@ -360,7 +360,7 @@ export function TenantWidgetLibraryDialog({
                             </span>
                           </Button>
                         ) : (
-                          <div className="flex items-center gap-1 rounded bg-emerald-500/15 px-2.5 py-0.5 text-[11px] font-semibold text-emerald-400">
+                          <div className="flex items-center gap-1 rounded bg-success/15 px-2.5 py-0.5 text-[11px] font-semibold text-success">
                             <Check className="h-3 w-3" />
                             <span>{t("tenantCommandCenter.library.alreadyAdded") || "Added"}</span>
                           </div>
@@ -374,7 +374,7 @@ export function TenantWidgetLibraryDialog({
                 return (
                   <div
                     key={def.id}
-                    className="group relative flex flex-col justify-between rounded-xl border border-border/80 bg-card p-3.5 transition-all hover:border-primary/60 hover:bg-card/95 hover:shadow-md"
+                    className="group relative flex flex-col justify-between rounded-xl border border-nx-line bg-nx-surface p-3.5 transition-all hover:border-nx-line-hi hover:bg-nx-raised/40"
                   >
                     <div>
                       <div className="mb-2 flex items-start justify-between gap-2">
@@ -383,10 +383,10 @@ export function TenantWidgetLibraryDialog({
                             <IconComponent className="h-4 w-4" />
                           </div>
                           <div>
-                            <h4 className="text-xs font-bold leading-tight text-foreground">
+                            <h4 className="text-xs font-bold leading-tight text-nx-ink">
                               {title}
                             </h4>
-                            <span className="text-[10px] capitalize text-muted-foreground">
+                            <span className="text-[10px] capitalize text-nx-ink-3">
                               {def.category}
                             </span>
                           </div>
@@ -394,19 +394,19 @@ export function TenantWidgetLibraryDialog({
 
                         <Badge
                           variant="outline"
-                          className="shrink-0 border-border/60 bg-muted/40 px-1.5 py-0 text-[10px] font-normal"
+                          className="shrink-0 border-nx-line bg-nx-raised/40 px-1.5 py-0 text-[10px] font-normal text-nx-ink-3"
                         >
                           {widthLabel}
                         </Badge>
                       </div>
 
-                      <p className="mb-3 line-clamp-2 text-[11px] leading-relaxed text-muted-foreground">
+                      <p className="mb-3 line-clamp-2 text-[11px] leading-relaxed text-nx-ink-2">
                         {desc}
                       </p>
                     </div>
 
-                    <div className="flex items-center justify-between border-t border-border/40 pt-2.5">
-                      <span className="text-[10px] text-muted-foreground/70">
+                    <div className="flex items-center justify-between border-t border-nx-line pt-2.5">
+                      <span className="text-[10px] text-nx-ink-3">
                         {def.singleton ? "Singleton widget" : "Customizable widget"}
                       </span>
 
@@ -415,7 +415,7 @@ export function TenantWidgetLibraryDialog({
                         variant="default"
                         size="sm"
                         onClick={() => handleAdd(def.id)}
-                        className="shadow-xs h-7 cursor-pointer gap-1.5 bg-primary px-3 text-[11px] font-semibold text-primary-foreground hover:bg-primary/90"
+                        className="h-7 cursor-pointer gap-1.5 bg-primary px-3 text-[11px] font-semibold text-nx-on-fill hover:bg-primary/90"
                       >
                         <Plus className="h-3 w-3" />
                         <span>{t("tenantCommandCenter.library.addWidget") || "Add Widget"}</span>
@@ -429,11 +429,11 @@ export function TenantWidgetLibraryDialog({
         </div>
 
         {/* Footer Summary & Done Button */}
-        <div className="flex shrink-0 items-center justify-between border-t border-border/50 pt-3">
-          <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
-            <span className="font-semibold text-foreground">{addedCount}</span>
+        <div className="flex shrink-0 items-center justify-between border-t border-nx-line pt-3">
+          <div className="flex items-center gap-1.5 text-xs text-nx-ink-3">
+            <span className="font-semibold text-nx-ink">{addedCount}</span>
             <span>of</span>
-            <span className="font-semibold text-foreground">{totalCount}</span>
+            <span className="font-semibold text-nx-ink">{totalCount}</span>
             <span>widgets active in workspace</span>
           </div>
 
@@ -442,7 +442,7 @@ export function TenantWidgetLibraryDialog({
             variant="default"
             size="sm"
             onClick={onClose}
-            className="h-8 cursor-pointer px-4 text-xs font-semibold"
+            className="h-8 cursor-pointer bg-primary px-4 text-xs font-semibold text-nx-on-fill hover:bg-primary/90"
           >
             {t("tenantCommandCenter.library.done") || "Done"}
           </Button>

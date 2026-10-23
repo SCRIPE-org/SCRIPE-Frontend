@@ -15,7 +15,7 @@ import { Label } from "@core/ui/label";
 import { GenericSelect } from "@core/crud/components/generic-select";
 import { Alert, AlertDescription, AlertTitle } from "@core/ui/alert";
 import { useI18n } from "@core/providers/i18n-provider";
-import { getVenueContainer } from "@modules/venue/di";
+import { useFindAvailableSlotsViewModel } from "../viewmodels/useFindAvailableSlotsViewModel";
 import type { CalendarResource } from "../../domain/entities/OperationsCalendar";
 
 interface FindAvailableSlotsModalProps {
@@ -41,8 +41,7 @@ export function FindAvailableSlotsModal({
   const [selectedDate, setSelectedDate] = useState<string>(currentDate);
   const [startTime, setStartTime] = useState<string>("09:00");
   const [durationMinutes, setDurationMinutes] = useState<number>(60);
-  const [checking, setChecking] = useState(false);
-  const [result, setResult] = useState<{ isAvailable: boolean; message?: string } | null>(null);
+  const { checking, result, setResult, checkSlot } = useFindAvailableSlotsViewModel();
 
   // Update resource default when resources load
   React.useEffect(() => {
@@ -60,45 +59,20 @@ export function FindAvailableSlotsModal({
     label: `${r.name} (${r.facilityName})`,
   }));
 
-  const handleCheck = async () => {
+  const handleCheck = () => {
     if (!selectedResourceId) return;
-    setChecking(true);
-    setResult(null);
-
-    try {
-      const container = getVenueContainer();
-      const startLocal = `${selectedDate}T${startTime}`;
-
-      // Calculate end time
-      const [h, m] = startTime.split(":").map(Number);
-      const totalMinutes = h * 60 + m + durationMinutes;
-      const endH = String(Math.floor(totalMinutes / 60) % 24).padStart(2, "0");
-      const endM = String(totalMinutes % 60).padStart(2, "0");
-      const endLocal = `${selectedDate}T${endH}:${endM}`;
-
-      const res = await container.availabilityRepository.search({
+    checkSlot(
+      {
         resourceId: selectedResourceId,
-        timeZoneId: timeZoneId || "UTC",
-        startLocal,
-        endLocal,
-        quantity: 1,
-      });
-
-      setResult({
-        isAvailable: res.isAvailable,
-        message: res.isAvailable
-          ? t("operationsCalendar.findSlots.available")
-          : t("operationsCalendar.findSlots.unavailable"),
-      });
-    } catch {
-      // Fallback response for offline or unexpected error
-      setResult({
-        isAvailable: false,
-        message: t("operationsCalendar.findSlots.verificationFailed"),
-      });
-    } finally {
-      setChecking(false);
-    }
+        selectedDate,
+        startTime,
+        durationMinutes,
+        timeZoneId,
+      },
+      t("operationsCalendar.findSlots.available"),
+      t("operationsCalendar.findSlots.unavailable"),
+      t("operationsCalendar.findSlots.verificationFailed")
+    );
   };
 
   const handleProceedToBooking = () => {
@@ -222,7 +196,7 @@ export function FindAvailableSlotsModal({
               {result.isAvailable && (
                 <Button
                   type="button"
-                  className="mt-3 w-full bg-emerald-600 font-medium text-white shadow-sm hover:bg-emerald-700"
+                  className="mt-3 w-full bg-nx-accent font-bold text-nx-on-fill shadow-sm hover:opacity-90"
                   onClick={handleProceedToBooking}
                 >
                   {t("operationsCalendar.findSlots.proceed")}

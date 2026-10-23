@@ -92,7 +92,7 @@ export function VenueOverviewHeader({
 
         <div className="flex flex-wrap items-center gap-2 text-xs text-nx-ink-2">
           <span className="font-medium text-nx-ink">{formattedDate}</span>
-          <span className="text-nx-line">Â·</span>
+          <span className="text-nx-line">·</span>
           <span
             className="inline-flex items-center gap-1 font-mono text-[11px] text-nx-ink-3"
             dir="ltr"
@@ -100,7 +100,7 @@ export function VenueOverviewHeader({
             <Clock className="size-3" aria-hidden="true" />
             <span>{timeZoneId || "UTC"}</span>
           </span>
-          <span className="text-nx-line">Â·</span>
+          <span className="text-nx-line">·</span>
           <span className="text-xs text-nx-ink-3">
             {t("venueOverview.subtitle", { defaultValue: "Sports Operations Console" })}
           </span>
@@ -136,7 +136,7 @@ export function VenueOverviewHeader({
             onClick={onBlockTime}
             className="h-8.5 hover:bg-nx-surfaceSubtle gap-1.5 border-nx-line text-xs font-medium"
           >
-            <span className="font-bold text-amber-500">âŠ˜</span>
+            <span className="font-bold text-amber-500">⊘</span>
             <span className="hidden sm:inline">Block Time</span>
           </Button>
         ) : (
@@ -147,7 +147,7 @@ export function VenueOverviewHeader({
             className="h-8.5 hover:bg-nx-surfaceSubtle gap-1.5 border-nx-line text-xs font-medium"
           >
             <Link href="/venue/calendar">
-              <span className="font-bold text-amber-500">âŠ˜</span>
+              <span className="font-bold text-amber-500">⊘</span>
               <span className="hidden sm:inline">Block Time</span>
             </Link>
           </Button>

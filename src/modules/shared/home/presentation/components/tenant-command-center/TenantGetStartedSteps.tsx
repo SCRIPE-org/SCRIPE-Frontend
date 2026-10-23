@@ -79,9 +79,9 @@ export function TenantGetStartedSteps({
                     className={cn(
                       "flex h-6 w-6 shrink-0 items-center justify-center rounded-full border text-[10px] font-bold",
                       isDone
-                        ? "border-emerald-500/40 bg-emerald-500/15 text-emerald-500"
+                        ? "border-success/40 bg-success/15 text-success"
                         : isCurrent
-                          ? "border-nx-accent bg-nx-accent text-white"
+                          ? "border-nx-accent bg-nx-accent text-nx-on-fill"
                           : "border-nx-line bg-nx-raised text-nx-ink-3"
                     )}
                   >
@@ -110,7 +110,7 @@ export function TenantGetStartedSteps({
 
               <div className="mt-3.5 min-w-0 pt-1">
                 {isDone ? (
-                  <span className="flex items-center gap-1 text-[11px] font-semibold text-emerald-500">
+                  <span className="flex items-center gap-1 text-[11px] font-semibold text-success">
                     <Check className="h-3.5 w-3.5 shrink-0" />
                     <span className="truncate">
                       {t("tenantCommandCenter.getStarted.completed")}

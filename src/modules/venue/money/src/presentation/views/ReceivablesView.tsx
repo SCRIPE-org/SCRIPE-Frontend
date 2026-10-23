@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import React from "react";
 import Link from "next/link";
@@ -23,7 +23,7 @@ import { useModuleLocales } from "@core/hooks/use-module-locales";
 import { usePermission } from "@core/hooks/use-permission";
 import { useI18n } from "@core/providers/i18n-provider";
 import { VENUE_PERMISSIONS } from "@modules/venue/permission-constants";
-import { VenueMoneyNav } from "@modules/venue/shared/src/presentation/components/VenueMoneyNav";
+import { VenueMoneyNav } from "@modules/venue";
 import {
   useReceivablesViewModel,
   type ReceivablesStatusFilter,
@@ -230,18 +230,20 @@ export function ReceivablesView() {
                 ["paid", t("money.receivables.filterPaid", { defaultValue: "Paid" })],
               ] as const
             ).map(([key, label]) => (
-              <button
+              <Button
                 key={key}
                 type="button"
+                variant={model.statusFilter === key ? "default" : "ghost"}
+                size="sm"
                 onClick={() => model.setStatusFilter(key as ReceivablesStatusFilter)}
-                className={`rounded-nx-sm px-3 py-1 font-medium transition-colors ${
+                className={`h-7 rounded-nx-sm px-3 py-1 font-medium transition-colors ${
                   model.statusFilter === key
-                    ? "shadow-xs bg-nx-accent font-semibold text-nx-surface"
+                    ? "shadow-xs bg-nx-accent font-semibold text-nx-on-fill hover:bg-nx-accent/90"
                     : "text-nx-ink-2 hover:bg-nx-hover hover:text-nx-ink"
                 }`}
               >
                 {label}
-              </button>
+              </Button>
             ))}
           </div>
 

@@ -1,4 +1,5 @@
 import { Metadata } from "next";
+import { ModuleErrorBoundary } from "@core/ui/module-error-boundary";
 import { ResourcesWorkspaceView } from "@modules/venue/resources/src/presentation/views/ResourcesWorkspaceView";
 
 export const metadata: Metadata = {
@@ -7,5 +8,9 @@ export const metadata: Metadata = {
 };
 
 export default function VenueResourcesPage() {
-  return <ResourcesWorkspaceView />;
+  return (
+    <ModuleErrorBoundary moduleName="venue.resources.title">
+      <ResourcesWorkspaceView />
+    </ModuleErrorBoundary>
+  );
 }

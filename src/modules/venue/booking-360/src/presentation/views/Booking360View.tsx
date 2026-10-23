@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import React from "react";
 import Link from "next/link";
@@ -525,7 +525,7 @@ export const Booking360View = React.memo(function Booking360View({
                     finance.summary.invoiceId ? (
                       <Link
                         href={`/venue/money/payments?invoiceId=${encodeURIComponent(finance.summary.invoiceId)}`}
-                        className="inline-flex items-center justify-center gap-1.5 rounded-nx-md border border-nx-accent bg-nx-accent px-3 py-1.5 text-xs font-bold text-white shadow-sm transition-opacity hover:opacity-90"
+                        className="inline-flex items-center justify-center gap-1.5 rounded-nx-md border border-nx-accent bg-nx-accent px-3 py-1.5 text-xs font-bold text-nx-on-fill shadow-sm transition-opacity hover:opacity-90"
                       >
                         {t("booking360.commercial.recordPayment")}
                       </Link>

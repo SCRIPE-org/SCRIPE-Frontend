@@ -65,7 +65,7 @@ export function VenueResourceNav() {
         </Link>
         <Badge
           variant="outline"
-          className="bg-slate-100 text-[10px] font-semibold text-slate-700 dark:bg-slate-800 dark:text-slate-300"
+          className="bg-nx-raised text-[10px] font-semibold text-nx-ink-2"
         >
           {t("venueSettings.resourceNav.advancedConfiguration")}
         </Badge>

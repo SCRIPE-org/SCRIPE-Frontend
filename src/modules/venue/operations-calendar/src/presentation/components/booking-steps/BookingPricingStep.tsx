@@ -7,8 +7,7 @@ import { Input } from "@core/ui/input";
 import { Button } from "@core/ui/button";
 import { Alert, AlertDescription, AlertTitle } from "@core/ui/alert";
 import { LoadingSpinner } from "@core/ui/loading-spinner";
-import type { CustomerSummary } from "@modules/venue/booking/src/domain/entities/Booking";
-import type { PriceQuote } from "@modules/venue/commercial/src/domain/entities/CommercialPricing";
+import type { CustomerSummary, PriceQuote } from "@modules/venue";
 
 interface BookingPricingStepProps {
   t: (key: string, values?: Record<string, string | number>) => string;
@@ -71,7 +70,7 @@ export function BookingPricingStep({
       {selectedCustomer && (
         <div className="border-nx-border bg-nx-raised/30 flex items-center justify-between rounded-xl border p-2.5 text-xs">
           <div className="flex min-w-0 items-center gap-2">
-            <div className="bg-nx-primary flex size-7 shrink-0 items-center justify-center rounded-full text-xs font-bold text-white">
+            <div className="bg-nx-accent flex size-7 shrink-0 items-center justify-center rounded-full text-xs font-bold text-nx-on-fill">
               {selectedCustomer.displayName.charAt(0)}
             </div>
             <div className="min-w-0">
@@ -86,7 +85,7 @@ export function BookingPricingStep({
             variant="ghost"
             size="sm"
             onClick={onChangeCustomer}
-            className="text-nx-primary h-auto shrink-0 px-0 text-[11px] font-semibold hover:underline"
+            className="text-nx-accent h-auto shrink-0 px-0 text-[11px] font-semibold hover:underline"
           >
             {t("operationsCalendar.clickToBook.customer.change")}
           </Button>

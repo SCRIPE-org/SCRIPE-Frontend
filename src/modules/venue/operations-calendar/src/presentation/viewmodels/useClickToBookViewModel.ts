@@ -5,8 +5,7 @@ import { useI18n } from "@core/providers/i18n-provider";
 import { usePermission } from "@core/hooks/use-permission";
 import { VENUE_PERMISSIONS } from "@modules/venue/permission-constants";
 import { getVenueContainer } from "@modules/venue/di";
-import type { PriceQuote } from "@modules/venue/commercial/src/domain/entities/CommercialPricing";
-import type { CustomerSummary } from "@modules/venue/booking/src/domain/entities/Booking";
+import type { PriceQuote, CustomerSummary } from "@modules/venue";
 import type { CalendarResource } from "../../domain/entities/OperationsCalendar";
 
 type IntentKeyRef = {

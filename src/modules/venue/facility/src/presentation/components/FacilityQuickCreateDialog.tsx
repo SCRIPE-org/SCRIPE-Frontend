@@ -22,7 +22,7 @@ import { VENUE_PERMISSIONS } from "@modules/venue/permission-constants";
 import { VenueProfileQuickCreateDialog } from "@modules/venue";
 import { Plus } from "lucide-react";
 import type { VenueProfile } from "@modules/venue";
-import { mapVenueError } from "@modules/venue/shared/src/utils/venueErrorMapper";
+import { mapVenueError } from "@modules/venue";
 
 interface FacilityQuickCreateDialogProps {
   open: boolean;

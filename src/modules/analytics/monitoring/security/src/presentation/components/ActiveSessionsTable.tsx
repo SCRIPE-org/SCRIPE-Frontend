@@ -81,25 +81,25 @@ export const ActiveSessionsTable = memo(function ActiveSessionsTable({
   };
 
   return (
-    <Card className={`flex h-full flex-col ${cardClasses || ""}`}>
+    <Card className={`flex h-full flex-col border-nx-line bg-nx-surface text-nx-ink ${cardClasses || ""}`}>
       <CardHeader className="pb-3">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <div className="rounded-md bg-sky-500/10 p-1.5 text-sky-500">
+            <div className="rounded-md border border-info/20 bg-info/10 p-1.5 text-info">
               <Laptop className="h-4 w-4" aria-hidden="true" />
             </div>
             <div>
-              <CardTitle className="text-base font-semibold">
+              <CardTitle className="text-base font-semibold text-nx-ink">
                 {t("security.sessions.title") || "Active Sessions & Access"}
               </CardTitle>
-              <CardDescription className="text-xs">
+              <CardDescription className="text-xs text-nx-ink-3">
                 {t("security.sessions.description") ||
                   "Currently authenticated sessions and connected devices"}
               </CardDescription>
             </div>
           </div>
 
-          <Badge variant="outline" className="text-xs font-medium">
+          <Badge variant="outline" className="border-nx-line text-xs font-medium text-nx-ink-2">
             {t("security.sessions.count", { count: sessions.length }) ||
               `${sessions.length} Active`}
           </Badge>
@@ -120,21 +120,21 @@ export const ActiveSessionsTable = memo(function ActiveSessionsTable({
         >
           <div className="max-h-[340px] overflow-x-auto overflow-y-auto pe-1">
             <Table>
-              <TableHeader className="shadow-xs sticky top-0 z-10 bg-card">
-                <TableRow className="border-b border-border">
-                  <TableHead className="bg-card text-xs font-semibold">
+              <TableHeader className="sticky top-0 z-10 bg-nx-surface">
+                <TableRow className="border-b border-nx-line hover:bg-transparent">
+                  <TableHead className="bg-nx-surface text-xs font-semibold text-nx-ink-3">
                     {t("security.sessions.device") || "Device / Client"}
                   </TableHead>
-                  <TableHead className="bg-card text-xs font-semibold">
+                  <TableHead className="bg-nx-surface text-xs font-semibold text-nx-ink-3">
                     {t("security.sessions.ipAddress") || "IP Address"}
                   </TableHead>
-                  <TableHead className="bg-card text-xs font-semibold">
+                  <TableHead className="bg-nx-surface text-xs font-semibold text-nx-ink-3">
                     {t("security.sessions.created") || "Logged In"}
                   </TableHead>
-                  <TableHead className="bg-card text-center text-xs font-semibold">
+                  <TableHead className="bg-nx-surface text-center text-xs font-semibold text-nx-ink-3">
                     {t("common.status") || "Status"}
                   </TableHead>
-                  <TableHead className="bg-card text-end text-xs font-semibold">
+                  <TableHead className="bg-nx-surface text-end text-xs font-semibold text-nx-ink-3">
                     {t("common.actions") || "Actions"}
                   </TableHead>
                 </TableRow>
@@ -149,24 +149,24 @@ export const ActiveSessionsTable = memo(function ActiveSessionsTable({
                       : `session-${sess.ipAddress}-${idx}`;
 
                   return (
-                    <TableRow key={sessionKey} className="hover:bg-accent/40">
+                    <TableRow key={sessionKey} className="border-b border-nx-line transition-colors hover:bg-nx-raised/40">
                       <TableCell className="py-2.5">
                         <div className="flex items-center gap-2">
-                          <div className="rounded-md bg-muted/60 p-1 text-muted-foreground">
+                          <div className="rounded-md bg-nx-raised p-1 text-nx-ink-2">
                             <Icon className="h-3.5 w-3.5" />
                           </div>
-                          <span className="text-xs font-medium text-foreground">{parsed.name}</span>
+                          <span className="text-xs font-medium text-nx-ink">{parsed.name}</span>
                         </div>
                       </TableCell>
 
                       <TableCell
-                        className="py-2.5 font-mono text-xs text-muted-foreground"
+                        className="py-2.5 font-mono text-xs text-nx-ink-2"
                         dir="ltr"
                       >
                         {sess.ipAddress}
                       </TableCell>
 
-                      <TableCell className="py-2.5 text-xs tabular-nums text-muted-foreground">
+                      <TableCell className="py-2.5 text-xs tabular-nums text-nx-ink-3">
                         {formatDateTimeUtc(sess.createdAt)}
                       </TableCell>
 
@@ -176,7 +176,7 @@ export const ActiveSessionsTable = memo(function ActiveSessionsTable({
                             {t("security.sessions.current") || "Current"}
                           </Badge>
                         ) : (
-                          <Badge variant="outline" className="text-[10px] font-semibold uppercase">
+                          <Badge variant="outline" className="border-nx-line text-[10px] font-semibold uppercase text-nx-ink-2">
                             {t("security.sessions.active") || "Active"}
                           </Badge>
                         )}
@@ -184,7 +184,7 @@ export const ActiveSessionsTable = memo(function ActiveSessionsTable({
 
                       <TableCell className="py-2.5 text-end">
                         {sess.isCurrent ? (
-                          <span className="text-[11px] italic text-muted-foreground">
+                          <span className="text-[11px] italic text-nx-ink-3">
                             {t("security.sessions.thisDevice") || "This Device"}
                           </span>
                         ) : (

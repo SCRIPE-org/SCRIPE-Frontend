@@ -195,7 +195,7 @@ export function BlockTimeModal({
                 onClick={() => setReasonType("Unavailable")}
                 className={`rounded-nx-md border p-2.5 text-left text-xs font-semibold transition-all ${
                   reasonType === "Unavailable"
-                    ? "border-slate-500 bg-slate-500/10 text-slate-900 ring-1 ring-slate-500 dark:text-slate-200"
+                    ? "border-nx-accent bg-nx-accent/10 text-nx-ink ring-1 ring-nx-accent font-bold"
                     : "hover:bg-nx-surfaceSubtle border-nx-line text-nx-ink-2"
                 }`}
               >

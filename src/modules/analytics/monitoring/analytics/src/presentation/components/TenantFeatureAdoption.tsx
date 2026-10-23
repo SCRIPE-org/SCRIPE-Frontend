@@ -18,15 +18,15 @@ export function TenantFeatureAdoption({ data, isLoading }: TenantFeatureAdoption
   const { t } = useI18n();
 
   return (
-    <Card className="backdrop-blur-xs shadow-xs flex h-full flex-col border-border/80 bg-card/80">
+    <Card className="flex h-full flex-col border-nx-line bg-nx-surface text-nx-ink hover:border-nx-line-hi">
       <CardHeader className="p-4 pb-2 sm:p-5">
         <div className="flex items-center gap-2">
           <CheckCircle2 className="h-4 w-4 text-primary" />
-          <CardTitle className="text-sm font-bold text-foreground">
+          <CardTitle className="text-sm font-bold text-nx-ink">
             {t("tenantAnalytics.features.title") || "Capability & Feature Adoption"}
           </CardTitle>
         </div>
-        <CardDescription className="text-xs text-muted-foreground">
+        <CardDescription className="text-xs text-nx-ink-3">
           {t("tenantAnalytics.features.subtitle") ||
             "Platform module enablement and capability usage across the tenant base"}
         </CardDescription>
@@ -36,11 +36,11 @@ export function TenantFeatureAdoption({ data, isLoading }: TenantFeatureAdoption
         {isLoading ? (
           <div className="space-y-3">
             {[...Array(4)].map((_, i) => (
-              <div key={i} className="h-8 animate-pulse rounded-lg bg-muted/20" />
+              <div key={i} className="h-8 animate-pulse rounded-lg bg-nx-raised" />
             ))}
           </div>
         ) : data.length === 0 ? (
-          <div className="flex flex-1 items-center justify-center text-xs text-muted-foreground">
+          <div className="flex flex-1 items-center justify-center text-xs text-nx-ink-3">
             {t("tenantAnalytics.features.noData") || "No capability adoption data available"}
           </div>
         ) : (
@@ -50,25 +50,25 @@ export function TenantFeatureAdoption({ data, isLoading }: TenantFeatureAdoption
                 const barColors = [
                   "bg-primary",
                   "bg-info",
-                  "bg-amber-400",
-                  "bg-purple-400",
-                  "bg-teal-400",
-                  "bg-emerald-400",
+                  "bg-warning",
+                  "bg-primary/80",
+                  "bg-info/80",
+                  "bg-success",
                 ];
                 const barColor = barColors[idx % barColors.length];
 
                 return (
                   <div key={item.key} className="space-y-1.5">
                     <div className="flex items-center justify-between text-xs">
-                      <span className="truncate font-semibold text-foreground">{item.name}</span>
-                      <div className="flex items-center gap-2 text-muted-foreground">
-                        <span className="font-bold text-foreground">{item.count}</span>
+                      <span className="truncate font-semibold text-nx-ink">{item.name}</span>
+                      <div className="flex items-center gap-2 text-nx-ink-3">
+                        <span className="font-bold text-nx-ink">{item.count}</span>
                         <span className="text-[11px]">({item.percentage}%)</span>
                       </div>
                     </div>
 
                     {/* Progress bar */}
-                    <div className="h-2 w-full overflow-hidden rounded-full bg-muted/30">
+                    <div className="h-2 w-full overflow-hidden rounded-full bg-nx-raised-2">
                       <div
                         className={`h-full rounded-full ${barColor} transition-all duration-500`}
                         style={{ width: `${Math.max(item.percentage, 4)}%` }}
@@ -80,7 +80,7 @@ export function TenantFeatureAdoption({ data, isLoading }: TenantFeatureAdoption
             </div>
 
             {/* Bottom summary info banner */}
-            <div className="mt-auto flex items-center justify-between border-t border-border/50 pt-3 text-[11px] text-muted-foreground">
+            <div className="mt-auto flex items-center justify-between border-t border-nx-line pt-3 text-[11px] text-nx-ink-3">
               <span className="flex items-center gap-1.5">
                 <CheckCircle2 className="h-3 w-3 text-primary" />
                 <span>
@@ -88,7 +88,7 @@ export function TenantFeatureAdoption({ data, isLoading }: TenantFeatureAdoption
                   {t("tenantAnalytics.features.modulesActive") || "capabilities tracked"}
                 </span>
               </span>
-              <span className="font-semibold text-foreground">
+              <span className="font-semibold text-nx-ink">
                 {t("tenantAnalytics.features.platformWide") || "Platform-wide"}
               </span>
             </div>

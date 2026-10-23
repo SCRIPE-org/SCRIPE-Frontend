@@ -183,7 +183,7 @@ export function ResourcesWorkspaceView() {
         <div className="flex items-center gap-2">
           <div className="relative w-48 sm:w-60">
             <Search
-              className="absolute left-2.5 top-2.5 size-3.5 text-slate-400"
+              className="absolute left-2.5 top-2.5 size-3.5 text-nx-ink-3"
               aria-hidden="true"
             />
             <Input

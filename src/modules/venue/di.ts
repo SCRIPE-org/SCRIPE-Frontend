@@ -104,7 +104,7 @@ import { GuestPortalRepository } from "./guest-portal/src/data/repositories/Gues
 import type { IGuestPortalService } from "./guest-portal/src/domain/interfaces/IGuestPortalService";
 import type { IGuestPortalRepository } from "./guest-portal/src/domain/interfaces/IGuestPortalRepository";
 
-interface VenueContainer {
+export interface VenueContainer {
   venueProfileRepository: IVenueProfileRepository;
   facilityRepository: IFacilityRepository;
   facilityResourceProfileRepository: IFacilityResourceProfileRepository;

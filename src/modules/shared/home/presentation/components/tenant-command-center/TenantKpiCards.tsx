@@ -64,8 +64,8 @@ export function TenantKpiCards({ kpis }: TenantKpiCardsProps) {
           <div
             className="flex h-10 w-10 shrink-0 items-center justify-center rounded-nx-md"
             style={{
-              background: "color-mix(in oklch, #0ea5e9 12%, transparent)",
-              color: "#0ea5e9",
+              background: "color-mix(in oklch, var(--info) 12%, transparent)",
+              color: "var(--info)",
             }}
           >
             <Users className="h-5 w-5" />
@@ -78,7 +78,7 @@ export function TenantKpiCards({ kpis }: TenantKpiCardsProps) {
               >
                 {t("tenantCommandCenter.kpis.adminsAndUsers") || "Admins & users"}
               </span>
-              <span className="shrink-0 font-mono text-[11px] font-bold text-sky-500">
+              <span className="shrink-0 font-mono text-[11px] font-bold text-info">
                 {kpis.adminsAndUsers.trend}
               </span>
             </div>
@@ -101,8 +101,8 @@ export function TenantKpiCards({ kpis }: TenantKpiCardsProps) {
           <div
             className="flex h-10 w-10 shrink-0 items-center justify-center rounded-nx-md"
             style={{
-              background: "color-mix(in oklch, #8b5cf6 12%, transparent)",
-              color: "#8b5cf6",
+              background: "color-mix(in oklch, var(--primary) 12%, transparent)",
+              color: "var(--primary)",
             }}
           >
             <Building2 className="h-5 w-5" />
@@ -115,7 +115,7 @@ export function TenantKpiCards({ kpis }: TenantKpiCardsProps) {
               >
                 {t("tenantCommandCenter.kpis.branchesAndSites") || "Branches & sites"}
               </span>
-              <span className="shrink-0 font-mono text-[11px] font-bold text-purple-500">
+              <span className="shrink-0 font-mono text-[11px] font-bold text-primary">
                 {kpis.branchesAndSites.trend}
               </span>
             </div>
@@ -124,7 +124,7 @@ export function TenantKpiCards({ kpis }: TenantKpiCardsProps) {
             </b>
             <div className="mt-2.5 h-1.5 w-full max-w-[130px] overflow-hidden rounded-full bg-nx-raised-2">
               <div
-                className="h-full rounded-full bg-purple-500"
+                className="h-full rounded-full bg-primary"
                 style={{ width: `${Math.min(100, Math.max(0, kpis.branchesAndSites.percent))}%` }}
               />
             </div>

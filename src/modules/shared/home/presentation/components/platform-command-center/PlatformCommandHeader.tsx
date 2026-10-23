@@ -60,15 +60,15 @@ export function PlatformCommandHeader({
             {t("platformCommandCenter.administration") || "Administration"}
           </span>
           {isPresentationMode && (
-            <span className="rounded-full border border-amber-500/30 bg-amber-500/20 px-2 py-0.5 text-[10px] font-bold text-amber-500">
+            <span className="rounded-full border border-warning/30 bg-warning/20 px-2 py-0.5 text-[10px] font-bold text-warning">
               Demo Mode Active
             </span>
           )}
         </div>
-        <h1 className="text-2xl font-extrabold leading-tight tracking-tight text-foreground sm:text-3xl">
+        <h1 className="text-2xl font-extrabold leading-tight tracking-tight text-nx-ink sm:text-3xl">
           {t("platformCommandCenter.title") || "Platform command center"}
         </h1>
-        <p className="mt-1 max-w-3xl text-xs text-muted-foreground sm:text-sm">
+        <p className="mt-1 max-w-3xl text-xs text-nx-ink-3 sm:text-sm">
           {t("platformCommandCenter.subtitle") ||
             "Global operations, tenant telemetry, and cross-region activity across the SCRIPE ecosystem."}
         </p>
@@ -87,14 +87,14 @@ export function PlatformCommandHeader({
               ? "Switch to live backend data"
               : "Switch to presentation showcase mode"
           }
-          className={`shadow-xs h-9 cursor-pointer gap-1.5 border px-3 text-xs font-semibold transition-colors ${
+          className={`h-9 cursor-pointer gap-1.5 border px-3 text-xs font-semibold transition-colors ${
             isPresentationMode
-              ? "border-amber-500/30 bg-amber-500/10 text-amber-500 hover:bg-amber-500/20"
-              : "border-border bg-card text-muted-foreground hover:text-foreground"
+              ? "border-warning/30 bg-warning/10 text-warning hover:bg-warning/20"
+              : "border-nx-line bg-nx-surface text-nx-ink-3 hover:border-nx-line-hi hover:text-nx-ink"
           }`}
         >
           <Sparkles
-            className={`h-3.5 w-3.5 ${isPresentationMode ? "fill-amber-500/30 text-amber-500" : "text-muted-foreground"}`}
+            className={`h-3.5 w-3.5 ${isPresentationMode ? "fill-warning/30 text-warning" : "text-nx-ink-3"}`}
           />
           <span>{isPresentationMode ? "Demo Mode" : "Live Data"}</span>
         </Button>
@@ -105,13 +105,13 @@ export function PlatformCommandHeader({
             <Button
               variant="outline"
               size="sm"
-              className="shadow-xs h-9 gap-2 border-border bg-card px-3 text-xs font-semibold text-foreground hover:bg-accent"
+              className="h-9 gap-2 border-nx-line bg-nx-surface px-3 text-xs font-semibold text-nx-ink hover:border-nx-line-hi hover:bg-nx-raised"
             >
-              <Calendar className="h-3.5 w-3.5 text-muted-foreground" />
+              <Calendar className="h-3.5 w-3.5 text-nx-ink-3" />
               <span>{currentRangeLabel}</span>
             </Button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" className="w-44 border-border bg-popover shadow-xl">
+          <DropdownMenuContent align="end" className="w-44 border-nx-line bg-nx-surface shadow-xl">
             {ranges.map((r) => (
               <DropdownMenuItem
                 key={r.key}
@@ -119,7 +119,7 @@ export function PlatformCommandHeader({
                 className={`cursor-pointer text-xs ${
                   timeRangeKey === r.key
                     ? "bg-primary/10 font-semibold text-primary"
-                    : "text-popover-foreground"
+                    : "text-nx-ink"
                 }`}
               >
                 {r.label}
@@ -142,26 +142,26 @@ export function PlatformCommandHeader({
               ? t("platformCommandCenter.pauseTelemetry") || "Click to pause telemetry"
               : t("platformCommandCenter.resumeTelemetry") || "Click to resume live stream"
           }
-          className={`shadow-xs h-9 cursor-pointer gap-2 border px-3 text-xs font-semibold transition-colors ${
+          className={`h-9 cursor-pointer gap-2 border px-3 text-xs font-semibold transition-colors ${
             isLive
-              ? "border-emerald-500/25 bg-emerald-500/10 text-emerald-500 hover:bg-emerald-500/20"
-              : "border-border bg-muted/50 text-muted-foreground hover:bg-muted"
+              ? "border-success/25 bg-success/10 text-success hover:bg-success/20"
+              : "border-nx-line bg-nx-raised/40 text-nx-ink-3 hover:border-nx-line-hi hover:bg-nx-raised hover:text-nx-ink"
           }`}
         >
           {isLive ? (
             <span className="relative flex h-2 w-2">
-              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-500 opacity-75"></span>
-              <span className="relative inline-flex h-2 w-2 rounded-full bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.75)]"></span>
+              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-success opacity-75"></span>
+              <span className="relative inline-flex h-2 w-2 rounded-full bg-success shadow-[0_0_6px_rgba(34,197,94,0.7)]"></span>
             </span>
           ) : (
-            <span className="h-2 w-2 rounded-full bg-muted-foreground"></span>
+            <span className="h-2 w-2 rounded-full bg-nx-ink-3"></span>
           )}
           <span>
             {isLive
               ? t("platformCommandCenter.liveStreaming") || "Live · 30s"
               : t("platformCommandCenter.livePaused") || "Paused"}
           </span>
-          {isRefreshing && <RotateCw className="ml-0.5 h-3 w-3 animate-spin text-emerald-500" />}
+          {isRefreshing && <RotateCw className="ml-0.5 h-3 w-3 animate-spin text-success" />}
         </Button>
 
         {/* Customize Button */}
@@ -169,9 +169,9 @@ export function PlatformCommandHeader({
           variant="outline"
           size="sm"
           onClick={onOpenCustomize}
-          className="shadow-xs h-9 gap-2 border-border bg-card px-3 text-xs font-semibold text-foreground hover:bg-accent"
+          className="h-9 gap-2 border-nx-line bg-nx-surface px-3 text-xs font-semibold text-nx-ink hover:border-nx-line-hi hover:bg-nx-raised"
         >
-          <SlidersHorizontal className="h-3.5 w-3.5 text-muted-foreground" />
+          <SlidersHorizontal className="h-3.5 w-3.5 text-nx-ink-3" />
           <span>{t("platformCommandCenter.customize") || "Customize"}</span>
         </Button>
       </div>

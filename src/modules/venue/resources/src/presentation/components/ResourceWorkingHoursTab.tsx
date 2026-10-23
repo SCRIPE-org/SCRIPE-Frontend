@@ -226,7 +226,7 @@ export function ResourceWorkingHoursTab({ vm }: Props) {
                               onChange={(e) => updateDay(day, "start", e.target.value)}
                               className="h-8 w-24 font-mono text-xs"
                             />
-                            <span className="text-nx-ink-3">â†’</span>
+                            <span className="text-nx-ink-3">→</span>
                             <Input
                               type="time"
                               value={end}

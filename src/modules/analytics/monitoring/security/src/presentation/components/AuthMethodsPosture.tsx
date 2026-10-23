@@ -32,18 +32,18 @@ export const AuthMethodsPosture = memo(function AuthMethodsPosture({
   const { t } = useI18n();
 
   return (
-    <Card className={`flex h-full flex-col ${cardClasses || ""}`}>
+    <Card className={`flex h-full flex-col border-nx-line bg-nx-surface text-nx-ink ${cardClasses || ""}`}>
       <CardHeader className="pb-3">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <div className="rounded-md bg-primary/10 p-1.5 text-primary">
+            <div className="rounded-md border border-primary/20 bg-primary/10 p-1.5 text-primary">
               <KeyRound className="h-4 w-4" aria-hidden="true" />
             </div>
             <div>
-              <CardTitle className="text-base font-semibold">
+              <CardTitle className="text-base font-semibold text-nx-ink">
                 {t("security.authMethods.title") || "Authentication Methods"}
               </CardTitle>
-              <CardDescription className="text-xs">
+              <CardDescription className="text-xs text-nx-ink-3">
                 {t("security.authMethods.description") ||
                   "Credential policies and authentication factor adoption"}
               </CardDescription>
@@ -67,16 +67,16 @@ export const AuthMethodsPosture = memo(function AuthMethodsPosture({
             return (
               <div
                 key={method.id}
-                className="flex flex-col justify-between space-y-3 rounded-lg border border-border/70 bg-card/60 p-3.5"
+                className="flex flex-col justify-between space-y-3 rounded-lg border border-nx-line bg-nx-raised/40 p-3.5 transition-colors hover:border-nx-line-hi hover:bg-nx-raised/60"
               >
                 <div className="flex items-start justify-between gap-2">
                   <div className="flex items-center gap-2.5">
-                    <div className="rounded-md bg-muted/60 p-2 text-foreground">
+                    <div className="rounded-md bg-nx-raised p-2 text-nx-ink">
                       <Icon className="h-4 w-4" />
                     </div>
                     <div>
-                      <p className="text-xs font-semibold text-foreground">{method.name}</p>
-                      <p className="mt-0.5 text-lg font-bold tracking-tight text-foreground">
+                      <p className="text-xs font-semibold text-nx-ink">{method.name}</p>
+                      <p className="mt-0.5 text-lg font-bold tracking-tight text-nx-ink">
                         {method.coverage}
                       </p>
                     </div>
@@ -103,7 +103,7 @@ export const AuthMethodsPosture = memo(function AuthMethodsPosture({
                   </div>
                 )}
 
-                <p className="text-[11px] leading-relaxed text-muted-foreground">
+                <p className="text-[11px] leading-relaxed text-nx-ink-2">
                   {method.details}
                 </p>
               </div>

@@ -65,7 +65,7 @@ export function PaymentTimelineCard({ model }: PaymentTimelineCardProps) {
             <ul className="mt-2 space-y-1 text-sm text-nx-ink-2">
               {model.timeline.refunds.map((item) => (
                 <li key={item.id}>
-                  {item.amount} â€” {item.reason}
+                  {item.amount} — {item.reason}
                 </li>
               ))}
             </ul>

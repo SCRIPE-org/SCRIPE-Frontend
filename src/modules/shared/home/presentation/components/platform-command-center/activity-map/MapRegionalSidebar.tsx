@@ -156,11 +156,11 @@ export function MapRegionalSidebar({ summary, regionNodes = [] }: MapRegionalSid
   const dataSyncRate = "24.6 MB/s";
 
   return (
-    <aside className="flex select-none flex-col justify-between overflow-hidden border-t border-border bg-card/60 p-3.5 lg:border-s lg:border-t-0">
+    <aside className="flex select-none flex-col justify-between overflow-hidden border-t border-nx-line bg-nx-surface/60 p-3.5 lg:border-s lg:border-t-0">
       {/* 1. Tenants by Region */}
       <div>
-        <div className="mb-2 border-b border-border/80 pb-2">
-          <h3 className="text-xs font-bold tracking-tight text-foreground">
+        <div className="mb-2 border-b border-nx-line pb-2">
+          <h3 className="text-xs font-bold tracking-tight text-nx-ink">
             {t("platformCommandCenter.activity.tenantsByRegion") || "Tenants by Region"}
           </h3>
         </div>
@@ -169,17 +169,17 @@ export function MapRegionalSidebar({ summary, regionNodes = [] }: MapRegionalSid
           {regionalStats.map((stat) => (
             <div key={stat.id} className="text-xs">
               <div className="mb-1 flex items-center justify-between text-[11px]">
-                <span className="truncate text-muted-foreground">{stat.name}</span>
+                <span className="truncate text-nx-ink-3">{stat.name}</span>
                 <div className="flex shrink-0 items-center gap-2 font-mono">
-                  <span className="font-semibold text-foreground">{stat.count}</span>
-                  <span className="w-7 text-end text-[10px] text-muted-foreground">
+                  <span className="font-semibold text-nx-ink">{stat.count}</span>
+                  <span className="w-7 text-end text-[10px] text-nx-ink-3">
                     {stat.percentage}%
                   </span>
                 </div>
               </div>
-              <div className="h-1.5 w-full overflow-hidden rounded-full bg-muted">
+              <div className="h-1.5 w-full overflow-hidden rounded-full bg-nx-raised-2">
                 <div
-                  className="h-full rounded-full bg-[#84cc16] transition-all duration-500"
+                  className="h-full rounded-full bg-primary transition-all duration-500"
                   style={{ width: `${Math.min(100, Math.max(2, stat.percentage))}%` }}
                 />
               </div>
@@ -189,9 +189,9 @@ export function MapRegionalSidebar({ summary, regionNodes = [] }: MapRegionalSid
       </div>
 
       {/* 2. Live Activity (last 5 minutes) */}
-      <div className="mt-4 border-t border-border/80 pt-3">
-        <div className="mb-2 border-b border-border/50 pb-2">
-          <h3 className="text-xs font-bold tracking-tight text-foreground">
+      <div className="mt-4 border-t border-nx-line pt-3">
+        <div className="mb-2 border-b border-nx-line pb-2">
+          <h3 className="text-xs font-bold tracking-tight text-nx-ink">
             {t("platformCommandCenter.activity.liveActivityLast5Min") ||
               "Live Activity (last 5 minutes)"}
           </h3>
@@ -199,35 +199,35 @@ export function MapRegionalSidebar({ summary, regionNodes = [] }: MapRegionalSid
 
         <div className="space-y-2 text-[11px]">
           <div className="flex items-center justify-between">
-            <span className="flex items-center gap-2 text-muted-foreground">
-              <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
+            <span className="flex items-center gap-2 text-nx-ink-3">
+              <span className="h-1.5 w-1.5 rounded-full bg-success" />
               <span>{t("platformCommandCenter.activity.apiRequests") || "API Requests"}</span>
             </span>
-            <span className="font-mono font-semibold text-foreground">{apiRequests}</span>
+            <span className="font-mono font-semibold text-nx-ink">{apiRequests}</span>
           </div>
 
           <div className="flex items-center justify-between">
-            <span className="flex items-center gap-2 text-muted-foreground">
-              <span className="h-1.5 w-1.5 rounded-full bg-sky-500" />
+            <span className="flex items-center gap-2 text-nx-ink-3">
+              <span className="h-1.5 w-1.5 rounded-full bg-info" />
               <span>{t("platformCommandCenter.activity.activeUsers") || "Active Users"}</span>
             </span>
-            <span className="font-mono font-semibold text-foreground">{activeUsers}</span>
+            <span className="font-mono font-semibold text-nx-ink">{activeUsers}</span>
           </div>
 
           <div className="flex items-center justify-between">
-            <span className="flex items-center gap-2 text-muted-foreground">
-              <span className="h-1.5 w-1.5 rounded-full bg-purple-500" />
+            <span className="flex items-center gap-2 text-nx-ink-3">
+              <span className="h-1.5 w-1.5 rounded-full bg-primary" />
               <span>{t("platformCommandCenter.activity.backgroundJobs") || "Background Jobs"}</span>
             </span>
-            <span className="font-mono font-semibold text-foreground">{backgroundJobs}</span>
+            <span className="font-mono font-semibold text-nx-ink">{backgroundJobs}</span>
           </div>
 
           <div className="flex items-center justify-between">
-            <span className="flex items-center gap-2 text-muted-foreground">
-              <span className="h-1.5 w-1.5 rounded-full bg-amber-500" />
+            <span className="flex items-center gap-2 text-nx-ink-3">
+              <span className="h-1.5 w-1.5 rounded-full bg-warning" />
               <span>{t("platformCommandCenter.activity.dataSyncRate") || "Data Sync Rate"}</span>
             </span>
-            <span className="font-mono font-semibold text-foreground">{dataSyncRate}</span>
+            <span className="font-mono font-semibold text-nx-ink">{dataSyncRate}</span>
           </div>
         </div>
       </div>

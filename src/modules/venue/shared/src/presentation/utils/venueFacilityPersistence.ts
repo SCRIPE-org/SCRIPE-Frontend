@@ -1,6 +1,8 @@
 import { STORAGE_KEYS } from "@core/config/storage-keys";
 import { useAppStore } from "@core/store/useAppStore";
-import type { Facility } from "@modules/venue/facility/src/domain/entities/Facility";
+export interface FacilityLike {
+  id: string;
+}
 
 /**
  * Returns the active tenant identifier from the user profile, app store, or storage context.
@@ -36,7 +38,7 @@ export function getFacilityStorageKey(explicitTenantId?: string | null): string 
  * Falls back to the first authorized facility if the persisted ID is missing, stale, or unauthorized.
  */
 export function getSavedFacilityId(
-  authorizedFacilities: Facility[],
+  authorizedFacilities: FacilityLike[],
   explicitTenantId?: string | null
 ): string | null {
   if (typeof window === "undefined" || !authorizedFacilities.length) return null;

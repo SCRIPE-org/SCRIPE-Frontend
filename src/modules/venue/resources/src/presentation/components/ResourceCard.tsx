@@ -37,11 +37,41 @@ interface Props {
 function getCourtImage(sportType?: string, name?: string): string {
   const s = (sportType || "").toLowerCase();
   const n = (name || "").toLowerCase();
-  if (s.includes("foot") || n.includes("foot") || n.includes("pitch") || s.includes("soccer")) {
-    return "/images/venue/football-turf-night.svg";
+  if (s.includes("5-a-side") || n.includes("5-a-side") || n.includes("5a")) {
+    return "https://images.unsplash.com/photo-1575361204480-aadea25e6e68?auto=format&fit=crop&w=1200&q=80";
   }
-  if (n.includes("2") || n.includes("outdoor") || s.includes("outdoor")) {
-    return "/images/venue/padel-court-outdoor.svg";
+  if (s.includes("foot") || n.includes("foot") || n.includes("pitch") || s.includes("soccer")) {
+    return "https://images.unsplash.com/photo-1529900748604-07564a03e7a6?auto=format&fit=crop&w=1200&q=80";
+  }
+  if (s.includes("tennis") || n.includes("tennis") || n.includes("clay") || n.includes("hardcourt")) {
+    return "https://images.unsplash.com/photo-1595435934249-5df7ed86e1c0?auto=format&fit=crop&w=1200&q=80";
+  }
+  if (s.includes("swim") || n.includes("swim") || n.includes("pool") || n.includes("lane") || s.includes("aqua")) {
+    return "https://images.unsplash.com/photo-1576013551627-0cc20b96c2a7?auto=format&fit=crop&w=1200&q=80";
+  }
+  if (s.includes("squash") || n.includes("squash")) {
+    return "https://images.unsplash.com/photo-1534438327276-14e5300c3a48?auto=format&fit=crop&w=1200&q=80";
+  }
+  if (s.includes("basket") || n.includes("basket") || n.includes("fieldhouse")) {
+    return "https://images.unsplash.com/photo-1519861531473-9200262188bf?auto=format&fit=crop&w=1200&q=80";
+  }
+  if (s.includes("badmin") || n.includes("badmin")) {
+    return "https://images.unsplash.com/photo-1626224583764-f87db24ac4ea?auto=format&fit=crop&w=1200&q=80";
+  }
+  if (s.includes("volley") || n.includes("volley") || n.includes("beach")) {
+    return "https://images.unsplash.com/photo-1612872087720-bb876e2e67d1?auto=format&fit=crop&w=1200&q=80";
+  }
+  if (s.includes("gym") || s.includes("crossfit") || s.includes("fit") || n.includes("gym") || n.includes("crossfit")) {
+    return "https://images.unsplash.com/photo-1517838277536-f5f99be501cd?auto=format&fit=crop&w=1200&q=80";
+  }
+  if (s.includes("run") || s.includes("track") || s.includes("athletic") || n.includes("track")) {
+    return "https://images.unsplash.com/photo-1461896836934-ffe607ba8211?auto=format&fit=crop&w=1200&q=80";
+  }
+  if (n.includes("outdoor") || s.includes("outdoor") || n.includes("panoramic")) {
+    return "https://images.unsplash.com/photo-1599474924187-334a4ae5bd3c?auto=format&fit=crop&w=1200&q=80";
+  }
+  if (s.includes("padel") || n.includes("padel")) {
+    return "https://images.unsplash.com/photo-1626248801379-51a0748a5f96?auto=format&fit=crop&w=1200&q=80";
   }
   return "/images/venue/padel-court-indoor.svg";
 }
@@ -63,7 +93,6 @@ export function ResourceCard({ item }: Props) {
 
   const isReady = readiness.state === "Ready" || readiness.state === "Active";
   const isActivating = readiness.state === "Pricing Activating";
-  const isSetupRequired = readiness.state === "Setup Required";
   const isUnavailable = readiness.state === "Unavailable";
 
   return (
@@ -76,8 +105,8 @@ export function ResourceCard({ item }: Props) {
           className="size-full object-cover transition-transform duration-300 group-hover:scale-105"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-black/20" />
-        <div className="absolute left-2.5 top-2.5 z-10">
-          <span className="backdrop-blur-xs rounded-md border border-white/20 bg-black/60 px-2 py-0.5 text-[10px] font-extrabold uppercase tracking-wider text-white">
+        <div className="absolute left-2.5 top-2.5 z-10 max-w-[calc(100%-20px)]">
+          <span className="backdrop-blur-xs block max-w-full truncate rounded-md border border-white/20 bg-black/60 px-2 py-0.5 text-[10px] font-extrabold uppercase tracking-wider text-white" title={item.sportType || undefined}>
             {item.sportType || t("resources.card.court", { defaultValue: "Court" })}
           </span>
         </div>
@@ -88,8 +117,8 @@ export function ResourceCard({ item }: Props) {
         <div>
           {/* Top Row: Name, Status Pill, and Options Menu */}
           <div className="flex items-start justify-between gap-2">
-            <div>
-              <div className="flex items-center gap-2">
+            <div className="min-w-0 flex-1">
+              <div className="flex min-w-0 items-center gap-2">
                 <h3 className="truncate text-sm font-bold text-nx-ink">{item.name}</h3>
                 {isReady ? (
                   <span className="inline-flex items-center gap-1 rounded-full border border-emerald-500/30 bg-emerald-500/10 px-2 py-0.5 text-[10px] font-bold text-emerald-600 dark:text-emerald-400">
@@ -108,8 +137,8 @@ export function ResourceCard({ item }: Props) {
                     {t("resources.card.statusActivating", { defaultValue: "Pricing Activating" })}
                   </span>
                 ) : isUnavailable ? (
-                  <span className="inline-flex items-center gap-1 rounded-full border border-slate-500/30 bg-slate-500/10 px-2 py-0.5 text-[10px] font-bold text-slate-600 dark:text-slate-400">
-                    <span className="size-1.5 rounded-full bg-slate-500" />
+                  <span className="inline-flex items-center gap-1 rounded-full border border-nx-line bg-nx-raised px-2 py-0.5 text-[10px] font-bold text-nx-ink-3">
+                    <span className="size-1.5 rounded-full bg-nx-ink-3" />
                     {t("resources.card.statusUnavailable", { defaultValue: "Unavailable" })}
                   </span>
                 ) : (
@@ -122,8 +151,8 @@ export function ResourceCard({ item }: Props) {
                   </span>
                 )}
               </div>
-              <p className="mt-1 flex items-center gap-1.5 text-xs font-medium text-nx-ink-2">
-                <span>
+              <div className="mt-1 flex min-w-0 flex-wrap items-center gap-1.5 text-xs font-medium text-nx-ink-2">
+                <span className="shrink-0">
                   {item.sportType
                     ? t("resources.card.sportCourt", {
                         defaultValue: "{{sport}} Court",
@@ -133,14 +162,14 @@ export function ResourceCard({ item }: Props) {
                 </span>
                 {item.facilityName && (
                   <>
-                    <span>•</span>
-                    <span className="flex items-center gap-1">
-                      <MapPin className="size-3 text-nx-ink-3" />
-                      <span>{item.facilityName}</span>
+                    <span className="shrink-0">•</span>
+                    <span className="flex min-w-0 items-center gap-1 overflow-hidden">
+                      <MapPin className="size-3 shrink-0 text-nx-ink-3" />
+                      <span className="truncate" title={item.facilityName}>{item.facilityName}</span>
                     </span>
                   </>
                 )}
-              </p>
+              </div>
             </div>
 
             {/* Functional Options Menu */}

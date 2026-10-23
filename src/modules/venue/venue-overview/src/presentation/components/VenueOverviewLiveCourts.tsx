@@ -3,6 +3,7 @@
 import React from "react";
 import Link from "next/link";
 import { Card } from "@core/ui/card";
+import { Button } from "@core/ui/button";
 import { User, MoreHorizontal } from "lucide-react";
 import type {
   VenueOverviewResourceActivityItem,
@@ -127,17 +128,19 @@ export function VenueOverviewLiveCourts({ items, overview, t }: VenueOverviewLiv
 
                 {/* Court Info */}
                 <div className="space-y-2 p-3">
-                  <div className="flex items-center justify-between">
-                    <span className="truncate text-xs font-bold text-nx-ink">
+                  <div className="flex items-center justify-between gap-1.5 min-w-0">
+                    <span className="truncate text-xs font-bold text-nx-ink flex-1 min-w-0" title={court.resourceName}>
                       {court.resourceName}
                     </span>
-                    <button
+                    <Button
+                      variant="ghost"
+                      size="icon"
                       type="button"
-                      className="rounded-xs p-1 text-nx-ink-3 hover:text-nx-ink"
+                      className="size-6 shrink-0 rounded-xs p-1 text-nx-ink-3 hover:text-nx-ink"
                       aria-label="Court options"
                     >
                       <MoreHorizontal className="size-3.5" />
-                    </button>
+                    </Button>
                   </div>
 
                   {/* Status Pill */}

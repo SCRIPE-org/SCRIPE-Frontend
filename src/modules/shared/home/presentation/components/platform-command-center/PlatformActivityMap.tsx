@@ -4,6 +4,7 @@
 import React from "react";
 import { Globe } from "lucide-react";
 import { useI18n } from "@core/providers/i18n-provider";
+import { Card } from "@core/ui/card";
 import {
   PlatformActivityMapProps,
   RegionNodeInfo,
@@ -53,18 +54,18 @@ export function PlatformActivityMap({
   } = useMapPanZoom();
 
   return (
-    <div className="flex h-[520px] flex-col overflow-hidden rounded-xl border border-border bg-card shadow-sm">
+    <Card className="flex h-[520px] flex-col overflow-hidden p-0">
       {/* 1. Panel Header with Title & Legend matching Command Center */}
-      <div className="flex h-[60px] items-center justify-between gap-4 border-b border-border bg-muted/40 px-4 py-3">
+      <div className="flex h-[60px] items-center justify-between gap-4 border-b border-nx-line bg-nx-raised/40 px-4 py-3">
         <div className="flex min-w-0 items-center gap-2.5">
-          <div className="shadow-xs flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border border-[#84cc16]/20 bg-[#84cc16]/10 text-[#84cc16]">
+          <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border border-primary/20 bg-primary/10 text-primary">
             <Globe className="h-4 w-4" />
           </div>
           <div className="min-w-0">
-            <h2 className="truncate text-sm font-bold tracking-tight text-foreground sm:text-base">
+            <h2 className="truncate text-sm font-bold tracking-tight text-nx-ink sm:text-base">
               {t("platformCommandCenter.activity.globalTenantActivity") || "Global Tenant Activity"}
             </h2>
-            <p className="truncate text-[11px] text-muted-foreground">
+            <p className="truncate text-[11px] text-nx-ink-3">
               {t("platformCommandCenter.activity.globalTenantActivitySub") ||
                 "Deployment distribution and real-time activity across all regions."}
             </p>
@@ -72,21 +73,21 @@ export function PlatformActivityMap({
         </div>
 
         {/* Legend */}
-        <div className="flex shrink-0 select-none items-center gap-3.5 text-[11px] text-muted-foreground">
+        <div className="flex shrink-0 select-none items-center gap-3.5 text-[11px] text-nx-ink-3">
           <span className="flex items-center gap-1.5">
-            <span className="h-2 w-2 rounded-full bg-emerald-500 shadow-[0_0_6px_rgba(16,185,129,0.7)]" />
+            <span className="h-2 w-2 rounded-full bg-success shadow-[0_0_6px_rgba(34,197,94,0.7)]" />
             <span className="hidden sm:inline">
               {t("platformCommandCenter.activity.legendActive") || "Active Tenants"}
             </span>
           </span>
           <span className="flex items-center gap-1.5">
-            <span className="h-2 w-2 rounded-full bg-rose-500 shadow-[0_0_6px_rgba(244,63,94,0.7)]" />
+            <span className="h-2 w-2 rounded-full bg-destructive shadow-[0_0_6px_rgba(239,68,68,0.7)]" />
             <span className="hidden sm:inline">
               {t("platformCommandCenter.activity.legendIncident") || "Incident"}
             </span>
           </span>
           <span className="flex items-center gap-1.5">
-            <span className="h-2 w-2 rounded-full bg-slate-500 opacity-60" />
+            <span className="h-2 w-2 rounded-full bg-nx-ink-3 opacity-60" />
             <span className="hidden sm:inline">
               {t("platformCommandCenter.activity.legendLowActivity") || "Low Activity"}
             </span>
@@ -96,7 +97,7 @@ export function PlatformActivityMap({
 
       {/* 2. Map Stage & Regional Sidebar Grid */}
       <div className="min-h-0 flex-1 p-3">
-        <div className="grid h-full grid-cols-1 overflow-hidden rounded-lg border border-border bg-background shadow-inner lg:grid-cols-[minmax(0,1fr)_260px]">
+        <div className="grid h-full grid-cols-1 overflow-hidden rounded-lg border border-nx-line bg-nx-ground lg:grid-cols-[minmax(0,1fr)_260px]">
           {/* LEFT: Interactive Vector Map Stage */}
           <div
             ref={mapStageRef}
@@ -140,6 +141,6 @@ export function PlatformActivityMap({
           <MapRegionalSidebar summary={summary} regionNodes={regionNodes} />
         </div>
       </div>
-    </div>
+    </Card>
   );
 }

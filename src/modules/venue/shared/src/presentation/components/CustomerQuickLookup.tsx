@@ -6,7 +6,7 @@ import { Input } from "@core/ui/input";
 import { Button } from "@core/ui/button";
 import { LoadingSpinner } from "@core/ui/loading-spinner";
 import { cn } from "@core/common/utils";
-import type { CustomerSummary } from "@modules/venue/booking/src/domain/entities/Booking";
+import type { CustomerSummary } from "@modules/venue";
 
 interface CustomerQuickLookupProps {
   searchQuery: string;
@@ -70,12 +70,13 @@ export function CustomerQuickLookup({
         <div className="divide-nx-line/50 max-h-48 divide-y overflow-y-auto rounded-lg border border-nx-line bg-nx-surface">
           {results.length > 0 ? (
             results.map((c) => (
-              <button
+              <Button
+                variant="ghost"
                 key={c.id}
                 type="button"
                 onClick={() => onSelectCustomer(c)}
                 className={cn(
-                  "flex w-full items-center justify-between p-2.5 text-left text-sm transition-colors",
+                  "h-auto flex w-full items-center justify-between rounded-none p-2.5 text-left text-sm transition-colors",
                   selectedCustomer?.id === c.id
                     ? "bg-nx-accent/15 text-nx-accent-hi"
                     : "hover:bg-nx-surface-raised text-nx-ink"
@@ -93,7 +94,7 @@ export function CustomerQuickLookup({
                 {selectedCustomer?.id === c.id && (
                   <span className="text-xs font-semibold text-nx-accent">Selected</span>
                 )}
-              </button>
+              </Button>
             ))
           ) : !searching ? (
             <div className="text-nx-muted p-4 text-center text-xs">{emptyLabel}</div>

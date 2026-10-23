@@ -3,10 +3,12 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { getVenueContainer } from "@modules/venue/di";
-import type { Facility } from "@modules/venue/facility/src/domain/entities/Facility";
-import type { FacilityResourceProfile } from "@modules/venue/facility-resource-profile/src/domain/entities/FacilityResourceProfile";
-import type { SchedulableResource } from "@modules/venue/schedulable-resource/src/domain/entities/SchedulableResource";
-import type { AvailabilityCalendar } from "@modules/venue/availability/src/domain/entities/Availability";
+import type {
+  Facility,
+  FacilityResourceProfile,
+  SchedulableResource,
+  AvailabilityCalendar,
+} from "@modules/venue";
 import {
   evaluateCourtReadiness,
   type CourtCreationResult,
@@ -14,11 +16,7 @@ import {
   type FirstTimeSetupInput,
   type ResourceWorkspaceItem,
 } from "../../domain/entities/ResourceWorkspaceItem";
-import { mapVenueError } from "@modules/venue/shared/src/utils/venueErrorMapper";
-import {
-  getSavedFacilityId,
-  saveFacilityId,
-} from "@modules/venue/shared/src/presentation/utils/venueFacilityPersistence";
+import { mapVenueError, getSavedFacilityId, saveFacilityId } from "@modules/venue";
 
 const PAGE_SIZE = 100;
 

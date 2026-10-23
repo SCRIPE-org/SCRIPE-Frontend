@@ -122,7 +122,7 @@ export function TenantWidgetCardWrapper({
               type="button"
               {...attributes}
               {...listeners}
-              className="flex h-7 w-7 shrink-0 cursor-grab items-center justify-center rounded-nx-sm border border-nx-line bg-nx-surface text-nx-ink-3 hover:border-nx-line-hi hover:bg-nx-raised hover:text-nx-ink focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring active:cursor-grabbing"
+              className="flex h-7 w-7 shrink-0 cursor-grab items-center justify-center rounded-nx-sm border border-nx-line bg-nx-surface text-nx-ink-3 hover:border-nx-line-hi hover:bg-nx-raised hover:text-nx-ink focus-visible:outline-none focus-visible:shadow-nx-focus active:cursor-grabbing"
               title={t("tenantCommandCenter.customization.dragToReorder") || "Drag to reorder"}
               aria-label={t("tenantCommandCenter.customization.dragToReorder") || "Drag to reorder"}
             >
@@ -163,9 +163,9 @@ export function TenantWidgetCardWrapper({
                         onResize(item.id, clampColSpan(item.widgetId, span));
                       }
                     }}
-                    className={`rounded-nx-xs px-1.5 py-0.5 text-[10px] font-semibold transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring ${
+                    className={`rounded-nx-xs px-1.5 py-0.5 text-[10px] font-semibold transition-colors focus-visible:outline-none focus-visible:shadow-nx-focus ${
                       isCurrent
-                        ? "shadow-xs bg-nx-accent text-white"
+                        ? "bg-nx-accent font-bold text-nx-on-fill"
                         : "text-nx-ink-3 hover:bg-nx-raised hover:text-nx-ink"
                     }`}
                     title={`Set width to ${label}`}

@@ -108,7 +108,7 @@ export function VenueReportsView() {
             <DropdownMenuTrigger asChild>
               <Button
                 size="sm"
-                className="hover:bg-nx-accent/90 text-nx-accent-contrast h-9 gap-1.5 bg-nx-accent text-xs font-semibold"
+                className="hover:bg-nx-accent/90 text-nx-on-fill h-9 gap-1.5 bg-nx-accent text-xs font-semibold"
               >
                 <Download className="size-3.5" />
                 <span>{t("venueReports.ui.exportReport")}</span>

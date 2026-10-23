@@ -22,8 +22,8 @@ export function TenantRecentActivityFeed({ activityFeed }: TenantRecentActivityF
           <div
             className="flex h-9 w-9 shrink-0 items-center justify-center rounded-nx-md"
             style={{
-              background: "color-mix(in oklch, #0ea5e9 12%, transparent)",
-              color: "#0ea5e9",
+              background: "color-mix(in oklch, var(--info) 12%, transparent)",
+              color: "var(--info)",
             }}
           >
             <History className="h-4.5 w-4.5" />
@@ -59,7 +59,7 @@ export function TenantRecentActivityFeed({ activityFeed }: TenantRecentActivityF
       ) : (
         <div className="divide-y divide-nx-line">
           {activityFeed.map((item) => {
-            const avatarColor = item.avatarColor ?? "#0ea5e9";
+            const avatarColor = item.avatarColor ?? "var(--info)";
 
             return (
               <div key={item.id} className="flex min-w-0 items-center justify-between gap-3 py-2.5">

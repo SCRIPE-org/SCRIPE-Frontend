@@ -88,7 +88,7 @@ export function TenantCommandHeader({
           {isEditing && hasUnsavedChanges && (
             <Badge
               variant="outline"
-              className="border-amber-500/40 bg-amber-500/10 text-[10px] font-medium text-amber-500"
+              className="border-warning/40 bg-warning/10 text-[10px] font-medium text-warning"
             >
               <span>
                 {t("tenantCommandCenter.customization.unsavedChanges") || "Unsaved Changes"}
@@ -155,7 +155,7 @@ export function TenantCommandHeader({
                 size="sm"
                 onClick={onSaveLayout}
                 disabled={isSaving}
-                className="shadow-xs h-8 gap-1.5 px-3 text-xs font-semibold"
+                className="h-8 gap-1.5 px-3 text-xs font-semibold"
               >
                 {isSaving ? (
                   <Loader2 className="h-3.5 w-3.5 animate-spin" />
@@ -206,12 +206,12 @@ export function TenantCommandHeader({
               }
               className={`h-8 cursor-pointer gap-1.5 border px-2.5 text-xs font-semibold transition-colors ${
                 isPresentationMode
-                  ? "border-amber-500/30 bg-amber-500/10 text-amber-500 hover:bg-amber-500/20"
+                  ? "border-warning/30 bg-warning/10 text-warning hover:bg-warning/20"
                   : "border-nx-line bg-nx-surface text-nx-ink-3 hover:border-nx-line-hi hover:bg-nx-raised hover:text-nx-ink"
               }`}
             >
               <Sparkles
-                className={`h-3 w-3 ${isPresentationMode ? "fill-amber-500/30 text-amber-500" : "text-nx-ink-3"}`}
+                className={`h-3 w-3 ${isPresentationMode ? "fill-warning/30 text-warning" : "text-nx-ink-3"}`}
               />
               <span>
                 {isPresentationMode

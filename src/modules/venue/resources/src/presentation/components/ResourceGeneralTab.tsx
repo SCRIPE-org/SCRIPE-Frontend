@@ -109,10 +109,10 @@ export function ResourceGeneralTab({ vm }: Props) {
       </div>
 
       {/* Right Column: General Information Form */}
-      <Card className="shadow-xs rounded-2xl border border-slate-200 bg-white p-6 dark:border-slate-800 dark:bg-slate-900 lg:col-span-7">
+      <Card className="shadow-xs rounded-2xl border border-nx-border bg-nx-surface p-6 lg:col-span-7">
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-1.5">
-            <Label htmlFor="res-name" className="text-xs font-bold text-slate-900 dark:text-white">
+            <Label htmlFor="res-name" className="text-xs font-bold text-nx-ink">
               {t("resources.general.name", { defaultValue: "Name" })}
             </Label>
             <Input
@@ -127,18 +127,18 @@ export function ResourceGeneralTab({ vm }: Props) {
 
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             <div className="space-y-1.5">
-              <Label className="text-xs font-bold text-slate-900 dark:text-white">
+              <Label className="text-xs font-bold text-nx-ink">
                 {t("resources.general.sportType", { defaultValue: "Type" })}
               </Label>
               <Input
                 value={getCleanCategory()}
                 disabled
-                className="h-9 rounded-lg bg-slate-50 text-xs text-slate-700 dark:bg-slate-800 dark:text-slate-300"
+                className="h-9 rounded-lg bg-nx-raised text-xs text-nx-ink-2"
               />
             </div>
 
             <div className="space-y-1.5">
-              <Label className="text-xs font-bold text-slate-900 dark:text-white">
+              <Label className="text-xs font-bold text-nx-ink">
                 {t("resources.general.status", { defaultValue: "Status" })}
               </Label>
               <Input
@@ -159,7 +159,7 @@ export function ResourceGeneralTab({ vm }: Props) {
 
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             <div className="space-y-1.5">
-              <Label className="text-xs font-bold text-slate-900 dark:text-white">
+              <Label className="text-xs font-bold text-nx-ink">
                 {t("resources.general.branch", { defaultValue: "Branch" })}
               </Label>
               <Input
@@ -168,14 +168,14 @@ export function ResourceGeneralTab({ vm }: Props) {
                   t("resources.general.unknownFacility", { defaultValue: "Facility not set" })
                 }
                 disabled
-                className="h-9 rounded-lg bg-slate-50 text-xs text-slate-700 dark:bg-slate-800 dark:text-slate-300"
+                className="h-9 rounded-lg bg-nx-raised text-xs text-nx-ink-2"
               />
             </div>
 
             <div className="space-y-1.5">
               <Label
                 htmlFor="res-capacity"
-                className="text-xs font-bold text-slate-900 dark:text-white"
+                className="text-xs font-bold text-nx-ink"
               >
                 {t("resources.general.capacity", { defaultValue: "Player / Participant Capacity" })}
               </Label>
@@ -187,7 +187,7 @@ export function ResourceGeneralTab({ vm }: Props) {
                 onChange={(e) => setCapacity(Number(e.target.value) || 1)}
                 className="h-9 rounded-lg text-xs"
               />
-              <p className="text-[10px] text-slate-400 dark:text-slate-500">
+              <p className="text-[10px] text-nx-ink-3">
                 {t("resources.general.capacityHelp", {
                   defaultValue:
                     "Max players on court (e.g. 4 for Padel doubles). Does not affect booking concurrency.",
@@ -197,7 +197,7 @@ export function ResourceGeneralTab({ vm }: Props) {
           </div>
 
           <div className="space-y-1.5">
-            <Label className="text-xs font-bold text-slate-900 dark:text-white">
+            <Label className="text-xs font-bold text-nx-ink">
               {t("resources.general.descriptionField", { defaultValue: "Description" })}
             </Label>
             <Textarea
@@ -237,7 +237,7 @@ export function ResourceGeneralTab({ vm }: Props) {
               size="sm"
               disabled={vm.saving}
               loading={vm.saving}
-              className="hover:bg-nx-accent/90 text-nx-accent-contrast rounded-nx-lg bg-nx-accent px-4 text-xs font-bold"
+              className="hover:bg-nx-accent/90 text-nx-on-fill rounded-nx-lg bg-nx-accent px-4 text-xs font-bold"
             >
               {t("resources.general.save", { defaultValue: "Save Changes" })}
             </Button>

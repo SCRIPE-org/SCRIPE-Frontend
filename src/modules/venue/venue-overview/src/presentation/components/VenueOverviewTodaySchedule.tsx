@@ -97,7 +97,10 @@ export function VenueOverviewTodaySchedule({ items, t }: Props) {
               </span>
 
               {/* Court Name */}
-              <span className="w-24 shrink-0 truncate text-xs font-bold text-nx-ink">
+              <span
+                className="min-w-0 max-w-[160px] shrink truncate text-xs font-bold text-nx-ink"
+                title={item.court}
+              >
                 {item.court}
               </span>
 

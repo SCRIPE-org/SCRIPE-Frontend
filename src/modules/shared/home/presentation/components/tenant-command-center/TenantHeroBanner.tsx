@@ -20,9 +20,9 @@ function renderPillIcon(icon: string) {
     case "branches":
       return <Building2 className="h-3.5 w-3.5 shrink-0 text-nx-accent" />;
     case "admins":
-      return <Users className="h-3.5 w-3.5 shrink-0 text-sky-500" />;
+      return <Users className="h-3.5 w-3.5 shrink-0 text-info" />;
     case "plan":
-      return <ShieldCheck className="h-3.5 w-3.5 shrink-0 text-purple-500" />;
+      return <ShieldCheck className="h-3.5 w-3.5 shrink-0 text-primary" />;
     case "healthy":
       return <CheckCircle2 className="h-3.5 w-3.5 shrink-0 text-success" />;
     default:

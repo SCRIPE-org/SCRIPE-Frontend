@@ -160,7 +160,7 @@ export function ImportDataModal({
               <span
                 className={`rounded-full px-2 py-0.5 ${
                   importStep >= 1
-                    ? "text-nx-accent-contrast bg-nx-accent"
+                    ? "text-nx-on-fill bg-nx-accent"
                     : "bg-nx-surfaceSubtle text-nx-ink-3"
                 }`}
               >
@@ -170,7 +170,7 @@ export function ImportDataModal({
               <span
                 className={`rounded-full px-2 py-0.5 ${
                   importStep >= 2
-                    ? "text-nx-accent-contrast bg-nx-accent"
+                    ? "text-nx-on-fill bg-nx-accent"
                     : "bg-nx-surfaceSubtle text-nx-ink-3"
                 }`}
               >
@@ -180,7 +180,7 @@ export function ImportDataModal({
               <span
                 className={`rounded-full px-2 py-0.5 ${
                   importStep >= 3
-                    ? "text-nx-accent-contrast bg-nx-accent"
+                    ? "text-nx-on-fill bg-nx-accent"
                     : "bg-nx-surfaceSubtle text-nx-ink-3"
                 }`}
               >
@@ -190,7 +190,7 @@ export function ImportDataModal({
               <span
                 className={`rounded-full px-2 py-0.5 ${
                   importStep === 4
-                    ? "bg-emerald-600 text-white"
+                    ? "bg-nx-accent text-nx-on-fill"
                     : "bg-nx-surfaceSubtle text-nx-ink-3"
                 }`}
               >
@@ -324,7 +324,7 @@ export function ImportDataModal({
                     type="button"
                     size="sm"
                     onClick={handlePasteSubmit}
-                    className="text-nx-accent-contrast hover:bg-nx-accent/90 gap-1.5 bg-nx-accent text-xs"
+                    className="text-nx-on-fill hover:bg-nx-accent/90 gap-1.5 bg-nx-accent text-xs"
                   >
                     <span>{t("venueReports.import.parsePasted")}</span>
                     <ArrowRight className="size-3 rtl:rotate-180" />
@@ -566,7 +566,7 @@ export function ImportDataModal({
                       size="sm"
                       onClick={handleRetryFailedCustomers}
                       disabled={isCommitting}
-                      className="bg-nx-accent text-xs text-nx-accent-contrast hover:bg-nx-accent/90"
+                      className="bg-nx-accent text-xs text-nx-on-fill hover:bg-nx-accent/90"
                     >
                       {isCommitting ? (
                         <Loader2 className="me-1 size-3 animate-spin" />
@@ -615,7 +615,7 @@ export function ImportDataModal({
                 type="button"
                 size="sm"
                 onClick={onExecuteValidation}
-                className="text-nx-accent-contrast hover:bg-nx-accent/90 gap-1.5 bg-nx-accent text-xs"
+                className="text-nx-on-fill hover:bg-nx-accent/90 gap-1.5 bg-nx-accent text-xs"
               >
                 <span>{t("venueReports.import.validate")}</span>
                 <ArrowRight className="size-3 rtl:rotate-180" />
@@ -628,7 +628,7 @@ export function ImportDataModal({
                 size="sm"
                 onClick={handleCommitImport}
                 disabled={!validationReport.canCommit || isCommitting}
-                className="gap-1.5 bg-emerald-600 text-xs text-white hover:bg-emerald-700"
+                className="gap-1.5 bg-nx-accent text-xs font-bold text-nx-on-fill hover:opacity-90"
               >
                 {isCommitting ? (
                   <Loader2 className="size-3 animate-spin" />

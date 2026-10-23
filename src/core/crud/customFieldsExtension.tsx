@@ -674,3 +674,51 @@ export function useCustomFieldColumns(
 
   return { columns, isLoading: state.isLoading, error: state.error };
 }
+
+/**
+ * Core validation helper that delegates to the registered CustomFields extension.
+ */
+export function assertSelectCustomFieldValuesValid(
+  fieldConfigs: FieldConfig[],
+  values: Record<string, unknown>,
+  t: (key: string, params?: any) => string
+): void {
+  const ext = getCustomFieldsExtension();
+  if (ext?.assertValuesValid) {
+    ext.assertValuesValid(fieldConfigs, values, t);
+    return;
+  }
+
+  for (const fc of fieldConfigs) {
+    if (fc.type === "select") {
+      const raw = values[fc.name] ?? fc.defaultValue ?? "";
+      if (raw === undefined || raw === null) continue;
+      const text = String(raw).trim();
+      if (text === "") continue;
+      const allowedLabels = fc.options?.map((opt) => opt.label) ?? [];
+      if (!allowedLabels.includes(text)) {
+        throw new CustomFieldValidationError(
+          t("customField.values.selectInvalidOption", {
+            value: text,
+            field: fc.label ?? fc.name,
+          })
+        );
+      }
+    } else if (fc.type === "multi-select") {
+      const raw = values[fc.name] ?? fc.defaultValue ?? [];
+      if (!Array.isArray(raw) || raw.length === 0) continue;
+      const allowedLabels = fc.options?.map((opt) => opt.label) ?? [];
+      for (const item of raw) {
+        const text = String(item).trim();
+        if (text !== "" && !allowedLabels.includes(text)) {
+          throw new CustomFieldValidationError(
+            t("customField.values.selectInvalidOption", {
+              value: text,
+              field: fc.label ?? fc.name,
+            })
+          );
+        }
+      }
+    }
+  }
+}

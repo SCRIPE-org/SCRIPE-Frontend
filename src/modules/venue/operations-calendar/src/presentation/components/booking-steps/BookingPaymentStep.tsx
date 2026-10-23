@@ -10,8 +10,7 @@ import { RadioGroup, RadioGroupItem } from "@core/ui/radio-group";
 import { GenericSelect } from "@core/crud/components/generic-select";
 import { Alert, AlertDescription, AlertTitle } from "@core/ui/alert";
 import type { CalendarResource } from "../../../domain/entities/OperationsCalendar";
-import type { CustomerSummary } from "@modules/venue/booking/src/domain/entities/Booking";
-import type { PriceQuote } from "@modules/venue/commercial/src/domain/entities/CommercialPricing";
+import type { CustomerSummary, PriceQuote } from "@modules/venue";
 
 interface BookingPaymentStepProps {
   t: (key: string, values?: Record<string, string | number>) => string;
@@ -88,7 +87,8 @@ export function BookingPaymentStep({
           {onFindSlots && (
             <Button
               type="button"
-              className="bg-nx-primary hover:bg-nx-primary-hover h-9 w-full rounded-lg text-xs font-bold text-white"
+              variant="default"
+              className="h-9 w-full rounded-lg text-xs font-bold"
               onClick={() => {
                 onClose();
                 onFindSlots();

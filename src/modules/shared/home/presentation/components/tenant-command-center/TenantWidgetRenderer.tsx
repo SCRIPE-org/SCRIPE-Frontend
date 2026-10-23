@@ -54,7 +54,7 @@ class WidgetErrorBoundary extends Component<WidgetErrorBoundaryProps, WidgetErro
         <Card className="flex min-h-[140px] flex-col items-center justify-center gap-2 border-destructive/20 bg-destructive/5 p-4 text-center">
           <AlertTriangle className="h-5 w-5 text-destructive" />
           <p className="text-xs font-semibold text-destructive">{this.props.widgetTitle}</p>
-          <p className="text-[11px] text-muted-foreground">
+          <p className="text-[11px] text-nx-ink-3">
             This widget encountered an error while rendering.
           </p>
         </Card>
@@ -139,7 +139,7 @@ export function TenantWidgetRenderer({
 
           default:
             return (
-              <Card className="flex min-h-[100px] items-center justify-center p-4 text-xs text-muted-foreground">
+              <Card className="flex min-h-[100px] items-center justify-center border-nx-line bg-nx-surface p-4 text-xs text-nx-ink-3">
                 {t("tenantCommandCenter.widgets.unknown") || "Unknown widget component"}
               </Card>
             );

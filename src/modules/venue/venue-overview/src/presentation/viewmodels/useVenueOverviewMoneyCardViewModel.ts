@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { usePermission } from "@core/hooks/use-permission";
 import { VENUE_PERMISSIONS } from "@modules/venue/permission-constants";
 import { getVenueContainer } from "@modules/venue/di";
-import type { MoneySummaryItem } from "@modules/venue/money/src/domain/entities/Money";
+import type { MoneySummaryItem } from "@modules/venue";
 
 export interface VenueOverviewMoneyCardViewModel {
   summary: MoneySummaryItem | null;

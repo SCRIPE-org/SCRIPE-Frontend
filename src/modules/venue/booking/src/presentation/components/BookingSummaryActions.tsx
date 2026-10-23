@@ -154,7 +154,7 @@ export function BookingSummaryActions({
               <div className="sm:col-span-2">
                 <dt className="text-xs text-nx-ink-3">{t("booking.summary.dateTime")}</dt>
                 <dd className="font-medium text-nx-ink">
-                  {formatDateTime(candidate.startUtc, locale, candidate.timeZoneId)} â€“{" "}
+                  {formatDateTime(candidate.startUtc, locale, candidate.timeZoneId)} –{" "}
                   {formatDateTime(candidate.endUtc, locale, candidate.timeZoneId)}
                 </dd>
               </div>
@@ -225,7 +225,7 @@ export function BookingSummaryActions({
           <div className="sm:col-span-2">
             <dt className="text-xs text-nx-ink-3">{t("booking.summary.dateTime")}</dt>
             <dd className="font-medium text-nx-ink">
-              {formatDateTime(candidate.startUtc, locale, candidate.timeZoneId)} â€“{" "}
+              {formatDateTime(candidate.startUtc, locale, candidate.timeZoneId)} –{" "}
               {formatDateTime(candidate.endUtc, locale, candidate.timeZoneId)}
             </dd>
           </div>

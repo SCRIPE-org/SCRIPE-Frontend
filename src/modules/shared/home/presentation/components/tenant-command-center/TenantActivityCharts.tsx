@@ -36,8 +36,8 @@ export function TenantActivityCharts({
             <div
               className="flex h-9 w-9 shrink-0 items-center justify-center rounded-nx-md"
               style={{
-                background: "color-mix(in oklch, #0ea5e9 12%, transparent)",
-                color: "#0ea5e9",
+                background: "color-mix(in oklch, var(--info) 12%, transparent)",
+                color: "var(--info)",
               }}
             >
               <TrendingUp className="h-4.5 w-4.5" />
@@ -55,15 +55,15 @@ export function TenantActivityCharts({
 
           <div className="flex shrink-0 flex-wrap items-center gap-3 text-xs font-medium text-nx-ink-3">
             <span className="flex items-center gap-1.5">
-              <span className="h-2 w-2 rounded-full bg-[#0ea5e9]" />
+              <span className="h-2 w-2 rounded-full bg-info" />
               {t("tenantCommandCenter.charts.members") || "Members"}
             </span>
             <span className="flex items-center gap-1.5">
-              <span className="h-2 w-2 rounded-full bg-[#10b981]" />
+              <span className="h-2 w-2 rounded-full bg-success" />
               {t("tenantCommandCenter.charts.bookings") || "Bookings"}
             </span>
             <span className="flex items-center gap-1.5">
-              <span className="h-2 w-2 rounded-full bg-[#8b5cf6]" />
+              <span className="h-2 w-2 rounded-full bg-primary" />
               {t("tenantCommandCenter.charts.staff") || "Staff"}
             </span>
           </div>
@@ -83,19 +83,19 @@ export function TenantActivityCharts({
             <path
               d="M35 145 C90 140 105 118 150 120 S220 94 270 98 S340 75 395 84 S470 67 520 74 S565 59 598 61"
               fill="none"
-              stroke="#0ea5e9"
+              stroke="var(--info)"
               strokeWidth="2.6"
             />
             <path
               d="M35 159 C90 152 118 142 155 143 S218 125 268 132 S336 112 392 120 S455 105 514 113 S565 97 598 101"
               fill="none"
-              stroke="#10b981"
+              stroke="var(--success)"
               strokeWidth="2.6"
             />
             <path
               d="M35 169 C100 168 120 159 160 163 S220 149 270 154 S340 143 395 148 S465 138 520 143 S570 136 598 137"
               fill="none"
-              stroke="#8b5cf6"
+              stroke="var(--primary)"
               strokeWidth="2.6"
             />
 

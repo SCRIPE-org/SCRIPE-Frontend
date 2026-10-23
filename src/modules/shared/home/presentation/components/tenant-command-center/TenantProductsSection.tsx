@@ -18,15 +18,15 @@ interface TenantProductsSectionProps {
 
 const PRODUCT_THEMES: Record<string, { color: string; icon: React.ElementType }> = {
   venue: {
-    color: "#10b981",
+    color: "var(--success)",
     icon: Building,
   },
   academy: {
-    color: "#0ea5e9",
+    color: "var(--info)",
     icon: GraduationCap,
   },
   "football-intelligence": {
-    color: "#f59e0b",
+    color: "var(--warning)",
     icon: Trophy,
   },
 };
@@ -101,7 +101,7 @@ export function TenantProductsSection({ products }: TenantProductsSectionProps) 
                   variant={isActive ? "default" : "secondary"}
                   className={`px-2 py-0.5 text-[10px] font-semibold ${
                     isActive
-                      ? "border border-emerald-500/30 bg-emerald-500/10 text-emerald-500"
+                      ? "border border-success/30 bg-success/10 text-success"
                       : "border border-nx-line bg-nx-raised text-nx-ink-3"
                   }`}
                 >

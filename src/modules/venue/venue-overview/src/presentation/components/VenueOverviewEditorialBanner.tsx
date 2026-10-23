@@ -18,7 +18,7 @@ export function VenueOverviewEditorialBanner({
 }: Props) {
   return (
     <div
-      className="rounded-nx-xl border-nx-line/60 relative overflow-hidden border bg-gradient-to-br from-emerald-950 via-slate-900 to-black p-5 text-white shadow-md"
+      className="rounded-nx-xl border-nx-line/60 relative overflow-hidden border bg-gradient-to-br from-emerald-950 via-black to-black p-5 text-white shadow-md"
       data-testid="venue-overview-editorial-banner"
     >
       {/* Background Court Lighting Motif */}
@@ -38,7 +38,7 @@ export function VenueOverviewEditorialBanner({
           <h3 className="text-base font-black leading-tight tracking-tight text-white sm:text-lg">
             Great games build stronger communities.
           </h3>
-          <p className="line-clamp-2 text-xs leading-relaxed text-slate-300">
+          <p className="line-clamp-2 text-xs leading-relaxed text-white/80">
             Modern facilities, seamless bookings, and happier players at {facilityName}.
           </p>
         </div>
@@ -48,7 +48,7 @@ export function VenueOverviewEditorialBanner({
             <Button
               type="button"
               onClick={onNewBooking}
-              className="hover:bg-nx-accent/90 text-nx-accent-contrast h-9 gap-2 rounded-nx-lg bg-nx-accent px-4 text-xs font-bold shadow-sm"
+              className="hover:bg-nx-accent/90 text-nx-on-fill h-9 gap-2 rounded-nx-lg bg-nx-accent px-4 text-xs font-bold shadow-sm"
             >
               <span>Keep the games going</span>
               <ArrowRight className="size-3.5 rtl:rotate-180" aria-hidden="true" />
@@ -56,7 +56,7 @@ export function VenueOverviewEditorialBanner({
           ) : (
             <Button
               asChild
-              className="hover:bg-nx-accent/90 text-nx-accent-contrast h-9 gap-2 rounded-nx-lg bg-nx-accent px-4 text-xs font-bold shadow-sm"
+              className="hover:bg-nx-accent/90 text-nx-on-fill h-9 gap-2 rounded-nx-lg bg-nx-accent px-4 text-xs font-bold shadow-sm"
             >
               <Link href="/venue/calendar">
                 <span>Keep the games going</span>

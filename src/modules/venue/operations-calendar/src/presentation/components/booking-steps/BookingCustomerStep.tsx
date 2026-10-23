@@ -7,7 +7,7 @@ import { Input } from "@core/ui/input";
 import { Button } from "@core/ui/button";
 import { Alert, AlertDescription } from "@core/ui/alert";
 import { LoadingSpinner } from "@core/ui/loading-spinner";
-import type { CustomerSummary } from "@modules/venue/booking/src/domain/entities/Booking";
+import type { CustomerSummary } from "@modules/venue";
 
 interface BookingCustomerStepProps {
   t: (key: string, values?: Record<string, string | number>) => string;

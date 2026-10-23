@@ -146,7 +146,7 @@ export function CalendarToolbar(props: CalendarToolbarProps) {
               size="sm"
               disabled={actionsDisabled}
               onClick={props.onNewBooking}
-              className="hover:bg-nx-accent/90 text-nx-accent-contrast h-8 gap-1.5 bg-nx-accent px-3.5 text-xs font-bold shadow-sm"
+              className="hover:bg-nx-accent/90 text-nx-on-fill h-8 gap-1.5 bg-nx-accent px-3.5 text-xs font-bold shadow-sm"
             >
               <Plus className="size-4" aria-hidden="true" />
               <span>{t("operationsCalendar.toolbar.newBooking") || "New Booking"}</span>

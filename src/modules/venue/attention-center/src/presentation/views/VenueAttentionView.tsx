@@ -18,7 +18,7 @@ import { useVenueAttentionViewModel } from "../viewmodels/useVenueAttentionViewM
 function formatInterval(signal: VenueAttentionSignal, locale: string): string | null {
   if (!signal.startUtc || !signal.endUtc) return null;
   const formatter = new Intl.DateTimeFormat(locale, { dateStyle: "medium", timeStyle: "short" });
-  return `${formatter.format(new Date(signal.startUtc))} â€“ ${formatter.format(new Date(signal.endUtc))}`;
+  return `${formatter.format(new Date(signal.startUtc))} – ${formatter.format(new Date(signal.endUtc))}`;
 }
 
 /**

@@ -15,18 +15,18 @@ const STATUS_COLORS: Record<Booking360Status, { stroke: string; bg: string; text
   Confirmed: { stroke: "var(--nx-accent, #3b82f6)", bg: "bg-nx-accent", text: "text-nx-accent" },
   CheckedIn: { stroke: "#10b981", bg: "bg-emerald-500", text: "text-emerald-500" },
   Held: { stroke: "#f59e0b", bg: "bg-amber-500", text: "text-amber-500" },
-  Completed: { stroke: "#64748b", bg: "bg-slate-500", text: "text-slate-500" },
+  Completed: { stroke: "var(--nx-muted, #71717a)", bg: "bg-nx-muted", text: "text-nx-muted" },
   Cancelled: { stroke: "#ef4444", bg: "bg-rose-500", text: "text-rose-500" },
   NoShow: { stroke: "#8b5cf6", bg: "bg-purple-500", text: "text-purple-500" },
-  Draft: { stroke: "#94a3b8", bg: "bg-slate-400", text: "text-slate-400" },
+  Draft: { stroke: "var(--nx-subtle, #a1a1aa)", bg: "bg-nx-subtle", text: "text-nx-subtle" },
   Requested: { stroke: "#38bdf8", bg: "bg-sky-400", text: "text-sky-400" },
   PendingApproval: { stroke: "#f59e0b", bg: "bg-amber-500", text: "text-amber-500" },
   PartiallyFulfilled: { stroke: "#06b6d4", bg: "bg-cyan-500", text: "text-cyan-500" },
   Rejected: { stroke: "#ef4444", bg: "bg-rose-500", text: "text-rose-500" },
-  Expired: { stroke: "#94a3b8", bg: "bg-slate-400", text: "text-slate-400" },
+  Expired: { stroke: "var(--nx-subtle, #a1a1aa)", bg: "bg-nx-subtle", text: "text-nx-subtle" },
 };
 
-/** Human-readable labels for booking statuses â€” avoids cross-module i18n dependency */
+/** Human-readable labels for booking statuses — avoids cross-module i18n dependency */
 const STATUS_LABELS: Record<Booking360Status, string> = {
   Confirmed: "Confirmed",
   CheckedIn: "Checked In",
@@ -80,11 +80,11 @@ export function VenueOverviewStatusDonut({ items, t }: Props) {
             </div>
             <div>
               <CardTitle className="text-sm font-bold text-nx-ink">
-                {t("venueOverview.statusDonut.title", { defaultValue: "Todayâ€™s Booking Status" })}
+                {t("venueOverview.statusDonut.title", { defaultValue: "Today’s Booking Status" })}
               </CardTitle>
               <CardDescription className="text-xs text-nx-ink-2">
                 {t("venueOverview.statusDonut.subtitle", {
-                  defaultValue: "Lifecycle status distribution of todayâ€™s reservations.",
+                  defaultValue: "Lifecycle status distribution of today’s reservations.",
                 })}
               </CardDescription>
             </div>

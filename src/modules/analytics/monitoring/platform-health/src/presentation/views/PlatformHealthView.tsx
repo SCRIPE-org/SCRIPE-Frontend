@@ -37,16 +37,16 @@ export function PlatformHealthView() {
   if (!isAuthorized) {
     return (
       <div className="flex items-center justify-center p-12">
-        <Card className="w-full max-w-md space-y-4 p-6 text-center">
+        <Card className="w-full max-w-md space-y-4 border-nx-line bg-nx-surface p-6 text-center text-nx-ink">
           <div className="flex justify-center">
             <div className="rounded-full bg-destructive/10 p-3 text-destructive">
               <ShieldAlert className="h-8 w-8" />
             </div>
           </div>
-          <CardTitle className="text-xl">
+          <CardTitle className="text-xl text-nx-ink">
             {t("platformHealth.forbidden.title") || "Access Restricted"}
           </CardTitle>
-          <CardDescription>
+          <CardDescription className="text-nx-ink-3">
             {t("platformHealth.forbidden.description") ||
               "Platform Observability is strictly restricted to global Platform SuperAdmins with observability.view permission."}
           </CardDescription>

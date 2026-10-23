@@ -28,9 +28,7 @@ import { useI18n } from "@core/providers/i18n-provider";
 import { usePermission } from "@core/hooks/use-permission";
 import { VENUE_PERMISSIONS } from "@modules/venue/permission-constants";
 import { useAppStore } from "@core/store/useAppStore";
-import { getVenueContainer } from "@modules/venue/di";
-import type { Facility } from "@modules/venue/facility/src/domain/entities/Facility";
-import { getSavedFacilityId } from "@modules/venue/shared/src/presentation/utils/venueFacilityPersistence";
+import { useVenueSettingsViewModel } from "../viewmodels/useVenueSettingsViewModel";
 
 export function VenueSettingsView() {
   const { t, language, setLanguage, direction } = useI18n();
@@ -43,49 +41,12 @@ export function VenueSettingsView() {
   // Active Tab state
   const [activeTab, setActiveTab] = useState("branch");
 
-  // Facility / Branch state
-  const [selectedFacility, setSelectedFacility] = useState<Facility | null>(null);
-
-  useEffect(() => {
-    let mounted = true;
-    try {
-      const container = getVenueContainer();
-      if (container.facilityRepository?.getAll) {
-        container.facilityRepository
-          .getAll({ page: 1, pageSize: 20 })
-          .then((res) => {
-            if (mounted && res?.items?.length) {
-              const validId = getSavedFacilityId(res.items, user?.tenantId);
-              const match = res.items.find((f) => f.id === validId) ?? res.items[0];
-              setSelectedFacility(match);
-            }
-          })
-          .catch(() => {});
-      }
-    } catch {
-      // Graceful fallback
-    }
-    return () => {
-      mounted = false;
-    };
-  }, [user?.tenantId]);
-
-  // Management Mode state (Solo vs Team)
-  const [managementMode, setManagementMode] = useState<"solo" | "team">(() => {
-    if (typeof window !== "undefined") {
-      const mode = localStorage.getItem("scripe_venue_management_mode");
-      if (mode === "team" || mode === "solo") return mode;
-    }
-    return "solo";
-  });
-
-  const handleModeChange = (mode: "solo" | "team") => {
-    setManagementMode(mode);
-    if (typeof window !== "undefined") {
-      localStorage.setItem("scripe_venue_management_mode", mode);
-      window.dispatchEvent(new Event("venue-management-mode-changed"));
-    }
-  };
+  const {
+    selectedFacility,
+    setSelectedFacility,
+    managementMode,
+    handleModeChange,
+  } = useVenueSettingsViewModel({ tenantId: user?.tenantId ?? undefined });
 
   const branchName = selectedFacility?.name || t("venueSettings.branch.noSelection");
   const branchTimezone = t("venueSettings.branch.timezoneUnavailable");
@@ -240,41 +201,43 @@ export function VenueSettingsView() {
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                <button
+                <Button
                   type="button"
+                  variant="ghost"
                   onClick={() => handleModeChange("solo")}
-                  className={`rounded-nx-xl border p-4 text-start transition-all ${
+                  className={`h-auto w-full flex-col items-stretch justify-start rounded-nx-xl border p-4 text-start transition-all ${
                     managementMode === "solo"
                       ? "bg-nx-accent/5 shadow-xs border-nx-accent ring-1 ring-nx-accent"
                       : "hover:border-nx-line/80 border-nx-line bg-nx-surface"
                   }`}
                 >
-                  <div className="mb-2 flex items-center justify-between">
+                  <div className="mb-2 flex w-full items-center justify-between">
                     <span className="text-xs font-bold text-nx-ink">
                       {t("venueSettings.team.soloTitle")}
                     </span>
                     {managementMode === "solo" && <Check className="size-4 text-nx-accent" />}
                   </div>
-                  <p className="text-xs text-nx-ink-2">{t("venueSettings.team.soloDescription")}</p>
-                </button>
+                  <p className="whitespace-normal text-start text-xs font-normal text-nx-ink-2">{t("venueSettings.team.soloDescription")}</p>
+                </Button>
 
-                <button
+                <Button
                   type="button"
+                  variant="ghost"
                   onClick={() => handleModeChange("team")}
-                  className={`rounded-nx-xl border p-4 text-start transition-all ${
+                  className={`h-auto w-full flex-col items-stretch justify-start rounded-nx-xl border p-4 text-start transition-all ${
                     managementMode === "team"
                       ? "bg-nx-accent/5 shadow-xs border-nx-accent ring-1 ring-nx-accent"
                       : "hover:border-nx-line/80 border-nx-line bg-nx-surface"
                   }`}
                 >
-                  <div className="mb-2 flex items-center justify-between">
+                  <div className="mb-2 flex w-full items-center justify-between">
                     <span className="text-xs font-bold text-nx-ink">
                       {t("venueSettings.team.teamTitle")}
                     </span>
                     {managementMode === "team" && <Check className="size-4 text-nx-accent" />}
                   </div>
-                  <p className="text-xs text-nx-ink-2">{t("venueSettings.team.teamDescription")}</p>
-                </button>
+                  <p className="whitespace-normal text-start text-xs font-normal text-nx-ink-2">{t("venueSettings.team.teamDescription")}</p>
+                </Button>
               </div>
 
               {managementMode === "team" && canViewTeam && (

@@ -43,20 +43,23 @@ export function BookingCourtStep({
     [startUtc, effectiveTz]
   );
 
+  const startIncrementMinutes = selectedResource?.slotPolicy?.startIncrementMinutes;
+  const prefillStartTime = prefill.startTime;
+
   const timeOptions = React.useMemo(() => {
-    const increment = selectedResource?.slotPolicy?.startIncrementMinutes ?? 30;
+    const increment = startIncrementMinutes ?? 30;
     const options: string[] = [];
     for (let m = 0; m < 24 * 60; m += increment) {
       const hh = String(Math.floor(m / 60)).padStart(2, "0");
       const mm = String(m % 60).padStart(2, "0");
       options.push(`${hh}:${mm}`);
     }
-    if (prefill.startTime && !options.includes(prefill.startTime)) {
-      options.push(prefill.startTime);
+    if (prefillStartTime && !options.includes(prefillStartTime)) {
+      options.push(prefillStartTime);
       options.sort();
     }
     return options;
-  }, [selectedResource?.slotPolicy?.startIncrementMinutes, prefill.startTime]);
+  }, [startIncrementMinutes, prefillStartTime]);
 
   return (
     <div className="space-y-3 py-1">

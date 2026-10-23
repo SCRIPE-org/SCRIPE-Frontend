@@ -31,7 +31,7 @@ function formatInterval(candidate: AvailabilityCandidate, locale: string): strin
     minute: "2-digit",
     timeZone: candidate.timeZoneId,
   });
-  return `${date} Â· ${time.format(new Date(candidate.startUtc))}â€“${time.format(new Date(candidate.endUtc))}`;
+  return `${date} · ${time.format(new Date(candidate.startUtc))}–${time.format(new Date(candidate.endUtc))}`;
 }
 
 function CandidateCard({
@@ -64,7 +64,7 @@ function CandidateCard({
             </Badge>
           </div>
           <p className="mt-1 text-sm text-nx-ink-2">
-            {candidate.facilityName} Â· {candidate.profileName}
+            {candidate.facilityName} · {candidate.profileName}
           </p>
           <p className="mt-2 text-sm text-nx-ink">{formatInterval(candidate, locale)}</p>
           <p className="mt-1 text-xs text-nx-ink-3">{candidate.timeZoneId}</p>

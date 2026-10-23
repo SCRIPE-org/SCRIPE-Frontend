@@ -162,7 +162,7 @@ export function ResourceDetailView({ resourceId }: Props) {
           <div className="mt-1.5 flex items-center gap-2 text-xs text-nx-ink-2">
             <Building2 className="size-3.5 text-nx-ink-3" aria-hidden="true" />
             <span>{vm.facility?.name ?? "Main Branch"}</span>
-            <span className="text-nx-line">Â·</span>
+            <span className="text-nx-line">·</span>
             <Clock className="size-3.5 text-nx-ink-3" aria-hidden="true" />
             <span>{vm.profile?.operatingPolicy?.timeZoneId ?? "UTC"}</span>
           </div>

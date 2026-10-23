@@ -182,7 +182,7 @@ describe("BookingOperationalActions", () => {
   it("triggers onComplete from dominant primary action button", () => {
     const { props } = renderActions({ status: "CheckedIn", canComplete: true });
     const completeBtn = screen.getByRole("button", { name: "booking360.actions.complete" });
-    expect(completeBtn).toHaveClass("bg-emerald-600");
+    expect(completeBtn).toHaveClass("bg-nx-accent");
     fireEvent.click(completeBtn);
     expect(props.onComplete).toHaveBeenCalledOnce();
   });

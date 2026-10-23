@@ -4,8 +4,8 @@ import { useCallback, useEffect, useRef, useState, useMemo } from "react";
 import { useSearchParams } from "next/navigation";
 import { useI18n } from "@core/providers/i18n-provider";
 import { getVenueContainer } from "@modules/venue/di";
-import type { CustomerSummary } from "@modules/venue/booking/src/domain/entities/Booking";
-import { mapVenueError } from "@modules/venue/shared/src/utils/venueErrorMapper";
+import type { CustomerSummary } from "@modules/venue";
+import { mapVenueError } from "@modules/venue";
 
 export function useVenueCustomersViewModel() {
   const { t, language, direction } = useI18n();
