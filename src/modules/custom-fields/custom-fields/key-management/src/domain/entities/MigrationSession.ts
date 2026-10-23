@@ -75,4 +75,8 @@ export class MigrationSession {
   get isTerminal(): boolean {
     return this.status === "Completed" || this.status === "Failed" || this.status === "Cancelled";
   }
+
+  copyWith(updates: Partial<MigrationSessionData>): MigrationSession {
+    return new MigrationSession({ ...this.data, ...updates });
+  }
 }

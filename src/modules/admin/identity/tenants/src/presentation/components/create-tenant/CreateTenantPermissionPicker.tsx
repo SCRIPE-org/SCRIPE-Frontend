@@ -10,6 +10,7 @@
 
 import React, { useMemo, useCallback } from "react";
 import { Checkbox } from "@core/ui/checkbox";
+import { Button } from "@core/ui/button";
 import type { CreateTenantVM } from "../../viewmodels/useCreateTenantViewModel";
 
 interface CreateTenantPermissionPickerProps {
@@ -64,7 +65,7 @@ export function CreateTenantPermissionPicker({ vm, t }: CreateTenantPermissionPi
             ? `${selected.size} / ${vm.creationPermissions.length} ${t("tenant.permissionsSelected")}`
             : t("tenant.allPermissionsAllowed")}
         </p>
-        <button
+        <Button variant="link"
           type="button"
           className="text-xs text-nx-accent underline-offset-2 hover:underline"
           onClick={toggleAll}
@@ -72,7 +73,7 @@ export function CreateTenantPermissionPicker({ vm, t }: CreateTenantPermissionPi
           {selected.size === vm.creationPermissions.length
             ? t("common.deselectAll")
             : t("common.selectAll")}
-        </button>
+        </Button>
       </div>
       <div className="max-h-64 overflow-y-auto rounded-nx-md border border-nx-line bg-nx-raised p-2">
         {grouped.map(([group, perms]) => (

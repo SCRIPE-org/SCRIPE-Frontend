@@ -62,4 +62,8 @@ export class EncryptionAuditLog {
       return this.data.timestamp;
     }
   }
+
+  copyWith(updates: Partial<EncryptionAuditLogData>): EncryptionAuditLog {
+    return new EncryptionAuditLog({ ...this.data, ...updates });
+  }
 }
