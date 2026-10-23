@@ -3,6 +3,7 @@
 import React from "react";
 import { cn } from "@core/common/utils";
 import { Badge } from "@core/ui/badge";
+import { Button } from "@core/ui/button";
 import { Building2, KeyRound, User, ShieldCheck, Sparkles, Check, Lock } from "lucide-react";
 import { BRAND } from "@core/config/branding";
 import { useI18n } from "@core/providers/i18n-provider";
@@ -146,7 +147,7 @@ export function DesktopSetupSidebar({
 
                 return (
                   <div key={step.id} className="group relative flex items-start gap-3.5">
-                    <button
+                    <Button variant="ghost"
                       type="button"
                       onClick={() => onStepClick?.(step.id)}
                       disabled={step.id > currentStep}
@@ -166,7 +167,7 @@ export function DesktopSetupSidebar({
                       ) : (
                         <Icon className="h-4 w-4" />
                       )}
-                    </button>
+                    </Button>
                     <div className="min-w-0 flex-1 pt-0.5">
                       <div className="flex items-center gap-1.5">
                         <span
