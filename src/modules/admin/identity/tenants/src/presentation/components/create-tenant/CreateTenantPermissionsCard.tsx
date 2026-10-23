@@ -1,4 +1,4 @@
-﻿/**
+/**
  * CreateTenantPermissionsCard — Expandable permission restriction panel
  *
  * Extracted from CreateTenantStep3 to respect Clean Architecture < 200 lines per file.
@@ -10,6 +10,7 @@
 import React, { useState } from "react";
 import { cn } from "@core/common/utils";
 import { Badge } from "@core/ui/badge";
+import { Button } from "@core/ui/button";
 import { ShieldCheck, ChevronDown } from "lucide-react";
 import type { CreateTenantVM } from "../../viewmodels/useCreateTenantViewModel";
 import { CreateTenantPermissionPicker } from "./CreateTenantPermissionPicker";
@@ -27,7 +28,7 @@ export function CreateTenantPermissionsCard({ vm, t }: CreateTenantPermissionsCa
 
   return (
     <div className="rounded-nx-md border border-nx-line duration-nx-standard ease-nx-enter fade-in-0 motion-safe:animate-in">
-      <button
+      <Button variant="ghost"
         type="button"
         aria-expanded={isPermissionsOpen}
         className="flex w-full items-center justify-between rounded-nx-md p-4 text-start transition-colors duration-nx-micro ease-nx-enter hover:bg-nx-hover focus-visible:shadow-nx-focus focus-visible:outline-none motion-reduce:transition-none"
@@ -54,7 +55,7 @@ export function CreateTenantPermissionsCard({ vm, t }: CreateTenantPermissionsCa
             aria-hidden="true"
           />
         </div>
-      </button>
+      </Button>
 
       {isPermissionsOpen && (
         <div className="border-t border-nx-line p-4">

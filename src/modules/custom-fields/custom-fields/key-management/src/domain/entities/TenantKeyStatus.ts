@@ -106,4 +106,8 @@ export class TenantKeyStatus {
     );
     return currentMatches.length === 1 && currentMatches[0].percentage >= 99.9;
   }
+
+  copyWith(updates: Partial<TenantKeyStatusData>): TenantKeyStatus {
+    return new TenantKeyStatus({ ...this.data, ...updates });
+  }
 }
