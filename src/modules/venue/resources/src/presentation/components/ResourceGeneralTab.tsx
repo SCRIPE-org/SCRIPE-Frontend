@@ -73,7 +73,7 @@ export function ResourceGeneralTab({ vm }: Props) {
 
         {/* Thumbnail Row */}
         <div className="grid grid-cols-4 gap-2.5">
-          <div className="group relative h-16 cursor-pointer overflow-hidden rounded-xl border-2 border-[#C6FF00]">
+          <div className="group relative h-16 cursor-pointer overflow-hidden rounded-xl border-2 border-primary">
             <img
               src="/images/venue/padel-court-indoor.svg"
               alt="Padel indoor"
@@ -98,7 +98,7 @@ export function ResourceGeneralTab({ vm }: Props) {
           <Button
             variant="outline"
             type="button"
-            className="border-nx-border flex h-16 flex-col items-center justify-center rounded-xl border-2 border-dashed text-nx-ink-2 transition-colors hover:border-[#C6FF00] hover:bg-[#C6FF00]/5"
+            className="border-nx-border flex h-16 flex-col items-center justify-center rounded-xl border-2 border-dashed text-nx-ink-2 transition-colors hover:border-primary hover:bg-primary/5"
           >
             <Plus className="size-4" />
             <span className="mt-0.5 text-[10px] font-bold">
@@ -109,7 +109,7 @@ export function ResourceGeneralTab({ vm }: Props) {
       </div>
 
       {/* Right Column: General Information Form */}
-      <Card className="shadow-xs rounded-2xl border border-nx-border bg-nx-surface p-6 lg:col-span-7">
+      <Card className="rounded-2xl border border-nx-border bg-nx-surface p-6 lg:col-span-7">
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-1.5">
             <Label htmlFor="res-name" className="text-xs font-bold text-nx-ink">
@@ -150,8 +150,8 @@ export function ResourceGeneralTab({ vm }: Props) {
                 disabled
                 className={`h-9 rounded-lg text-xs font-bold ${
                   vm.resource?.isPublished && vm.priceConfig?.unitPrice != null
-                    ? "border-emerald-200 bg-emerald-50 text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-300"
-                    : "border-amber-200 bg-amber-50 text-amber-700 dark:bg-amber-950/40 dark:text-amber-300"
+                    ? "border-success/20 bg-success/10 text-success"
+                    : "border-warning/20 bg-warning/10 text-warning"
                 }`}
               />
             </div>
@@ -227,7 +227,7 @@ export function ResourceGeneralTab({ vm }: Props) {
                 size="sm"
                 disabled={vm.saving}
                 onClick={() => void vm.publishCourt()}
-                className="rounded-nx-lg border-emerald-500 px-4 text-xs font-bold text-emerald-700 hover:bg-emerald-50 dark:hover:bg-emerald-950/40"
+                className="rounded-nx-lg border-success/40 px-4 text-xs font-bold text-success hover:bg-success/10"
               >
                 {vm.saving ? "Publishing..." : "Publish Court"}
               </Button>

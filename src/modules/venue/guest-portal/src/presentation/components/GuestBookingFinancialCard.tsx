@@ -40,12 +40,12 @@ export function GuestBookingFinancialCard({
 
         <div className="flex items-center gap-1.5 text-xs">
           {isFullyPaid ? (
-            <span className="inline-flex items-center gap-1 font-medium text-emerald-600 dark:text-emerald-400">
+            <span className="inline-flex items-center gap-1 font-medium text-success">
               <CheckCircle2 className="size-3.5" aria-hidden="true" />
               {t("guestPortal.finance.status.Paid")}
             </span>
           ) : (
-            <span className="inline-flex items-center gap-1 font-medium text-amber-600 dark:text-amber-400">
+            <span className="inline-flex items-center gap-1 font-medium text-warning">
               <Clock className="size-3.5" aria-hidden="true" />
               {t("guestPortal.finance.status.Pending")}
             </span>
@@ -73,11 +73,11 @@ export function GuestBookingFinancialCard({
             </span>
           </div>
 
-          <div className="rounded-nx-md border border-emerald-500/20 bg-emerald-500/5 p-2.5 dark:bg-emerald-500/10 sm:p-3">
-            <span className="block text-[11px] font-semibold uppercase tracking-wider text-emerald-700 dark:text-emerald-400">
+          <div className="rounded-nx-md border border-success/20 bg-success/10 p-2.5 sm:p-3">
+            <span className="block text-[11px] font-semibold uppercase tracking-wider text-success">
               {t("guestPortal.finance.paidAmount")}
             </span>
-            <span className="mt-1 block text-sm font-bold text-emerald-600 dark:text-emerald-400 sm:text-base">
+            <span className="mt-1 block text-sm font-bold text-success sm:text-base">
               {formatCurrency(financialSummary.paidAmount)}
             </span>
           </div>
@@ -85,14 +85,14 @@ export function GuestBookingFinancialCard({
           <div
             className={`rounded-nx-md border p-2.5 sm:p-3 ${
               financialSummary.outstandingAmount > 0
-                ? "border-amber-500/20 bg-amber-500/5 dark:bg-amber-500/10"
+                ? "border-warning/20 bg-warning/10"
                 : "bg-nx-surfaceSubtle border-nx-line/40"
             }`}
           >
             <span
               className={`block text-[11px] font-semibold uppercase tracking-wider ${
                 financialSummary.outstandingAmount > 0
-                  ? "text-amber-700 dark:text-amber-400"
+                  ? "text-warning"
                   : "text-nx-ink-3"
               }`}
             >
@@ -101,7 +101,7 @@ export function GuestBookingFinancialCard({
             <span
               className={`mt-1 block text-sm font-bold sm:text-base ${
                 financialSummary.outstandingAmount > 0
-                  ? "text-amber-600 dark:text-amber-400"
+                  ? "text-warning"
                   : "text-nx-ink-3"
               }`}
             >

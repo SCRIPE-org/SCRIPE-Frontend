@@ -195,7 +195,7 @@ export function BookingPricingStep({
             </div>
 
             {quote.discountAmount > 0 && (
-              <div className="flex items-center justify-between text-emerald-500">
+              <div className="flex items-center justify-between text-success">
                 <span>Discount</span>
                 <span>
                   -{quote.discountAmount} {quote.currencyCode}

@@ -355,7 +355,7 @@ export function FirstTimeSetupWizard({
                     step === s
                       ? "border-primary font-bold text-nx-ink"
                       : step > s
-                        ? "border-emerald-500 text-emerald-600 dark:text-emerald-400"
+                        ? "border-success text-success"
                         : "border-nx-line text-nx-ink-3"
                   }`}
                 >
@@ -894,8 +894,8 @@ export function FirstTimeSetupWizard({
 
             {/* Partial Failure Breakdown & Safe Retry */}
             {partialResults.length > 0 && partialResults.some((r) => !r.success) && (
-              <div className="mt-3 space-y-2 rounded-xl border border-amber-300 bg-amber-50/50 p-3 text-xs dark:bg-amber-950/20">
-                <p className="font-bold text-amber-800 dark:text-amber-200">
+              <div className="mt-3 space-y-2 rounded-xl border border-warning/30 bg-warning/10 p-3 text-xs">
+                <p className="font-bold text-warning">
                   Partial Creation Status:
                 </p>
                 <div className="space-y-1">
@@ -903,9 +903,9 @@ export function FirstTimeSetupWizard({
                     <div key={i} className="flex items-center justify-between">
                       <span className="font-semibold">{r.name}</span>
                       {r.success ? (
-                        <span className="text-[11px] font-bold text-emerald-600">Created ✓</span>
+                        <span className="text-[11px] font-bold text-success">Created ✓</span>
                       ) : (
-                        <span className="text-[11px] font-medium text-amber-600">
+                        <span className="text-[11px] font-medium text-warning">
                           Failed ({r.stepFailed || "create"}): {r.error}
                         </span>
                       )}
@@ -917,7 +917,7 @@ export function FirstTimeSetupWizard({
                   size="sm"
                   variant="outline"
                   onClick={retryFailedCourts}
-                  className="mt-2 w-full border-amber-400 text-xs text-amber-800 hover:bg-amber-100"
+                  className="mt-2 w-full border-warning/40 text-xs text-warning hover:bg-warning/10"
                 >
                   <RotateCcw className="mr-1.5 size-3.5" />
                   <span>Retry Only Failed Courts</span>
@@ -930,7 +930,7 @@ export function FirstTimeSetupWizard({
         {/* STEP 4: Finished / Ready */}
         {(step === 4 || finished) && (
           <div className="space-y-4 py-6 text-center">
-            <div className="mx-auto flex size-14 items-center justify-center rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400">
+            <div className="mx-auto flex size-14 items-center justify-center rounded-full border border-success/20 bg-success/10 text-success">
               <CheckCircle2 className="size-8" aria-hidden="true" />
             </div>
             <div className="space-y-1">

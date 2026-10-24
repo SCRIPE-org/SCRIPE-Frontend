@@ -176,7 +176,7 @@ export function BlockTimeModal({
                 onClick={() => setReasonType("Maintenance")}
                 className={`rounded-nx-md border p-2.5 text-left text-xs font-semibold transition-all ${
                   reasonType === "Maintenance"
-                    ? "border-amber-500 bg-amber-500/10 text-amber-900 ring-1 ring-amber-500 dark:text-amber-200"
+                    ? "border-warning/40 bg-warning/10 text-warning ring-1 ring-warning/30"
                     : "hover:bg-nx-surfaceSubtle border-nx-line text-nx-ink-2"
                 }`}
               >

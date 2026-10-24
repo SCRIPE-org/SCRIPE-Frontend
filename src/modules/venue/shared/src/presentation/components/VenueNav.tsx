@@ -214,7 +214,7 @@ export function VenueNav({ attentionCount = 0, className = "", hidePrimaryBar = 
                 />
                 <span>{item.label}</span>
                 {item.badge != null && (
-                  <span className="size-4.5 flex items-center justify-center rounded-full bg-amber-500 text-[10px] font-bold leading-none text-white">
+                  <span className="size-4.5 flex items-center justify-center rounded-full bg-warning text-[10px] font-bold leading-none text-nx-on-fill">
                     {item.badge}
                   </span>
                 )}
@@ -254,7 +254,7 @@ export function VenueNav({ attentionCount = 0, className = "", hidePrimaryBar = 
                 <Icon className="size-3.5 text-nx-ink-3" aria-hidden="true" />
                 <span>{link.label}</span>
                 {link.badge != null && (
-                  <span className="flex size-4 items-center justify-center rounded-full bg-amber-500 text-[9px] font-bold text-white">
+                  <span className="flex size-4 items-center justify-center rounded-full bg-warning text-[9px] font-bold text-nx-on-fill">
                     {link.badge}
                   </span>
                 )}

@@ -112,41 +112,41 @@ export function ResourcesWorkspaceView() {
       {/* Operational Metrics Strip derived from source-backed data */}
       {vm.metrics && (
         <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-          <div className="border-nx-border shadow-xs rounded-2xl border bg-nx-surface p-3.5">
+          <div className="border-nx-border rounded-2xl border bg-nx-surface p-3.5">
             <p className="text-[11px] font-semibold text-nx-ink-3">
               {t("resources.metrics.total", { defaultValue: "Total Courts & Spaces" })}
             </p>
             <p className="mt-0.5 text-xl font-bold text-nx-ink">{vm.metrics.totalSpaces}</p>
           </div>
-          <div className="border-nx-border shadow-xs rounded-2xl border bg-nx-surface p-3.5">
+          <div className="border-nx-border rounded-2xl border bg-nx-surface p-3.5">
             <p className="text-[11px] font-semibold text-nx-ink-3">
               {t("resources.metrics.active", { defaultValue: "Active & Bookable" })}
             </p>
             <div className="mt-0.5 flex items-center gap-1.5">
-              <p className="text-xl font-bold text-emerald-600 dark:text-emerald-400">
+              <p className="text-xl font-bold text-success">
                 {vm.metrics.activeSpaces}
               </p>
-              <span className="rounded-full bg-emerald-500/10 px-1.5 py-0.5 text-[10px] font-bold text-emerald-600">
+              <span className="rounded-full bg-success/10 px-1.5 py-0.5 text-[10px] font-bold text-success">
                 {t("resources.metrics.ready", { defaultValue: "Ready" })}
               </span>
             </div>
           </div>
-          <div className="border-nx-border shadow-xs rounded-2xl border bg-nx-surface p-3.5">
+          <div className="border-nx-border rounded-2xl border bg-nx-surface p-3.5">
             <p className="text-[11px] font-semibold text-nx-ink-3">
               {t("resources.metrics.setupRequired", { defaultValue: "Setup Required" })}
             </p>
             <div className="mt-0.5 flex items-center gap-1.5">
-              <p className="text-xl font-bold text-amber-600 dark:text-amber-400">
+              <p className="text-xl font-bold text-warning">
                 {vm.metrics.setupRequired}
               </p>
               {vm.metrics.setupRequired > 0 && (
-                <span className="rounded-full bg-amber-500/10 px-1.5 py-0.5 text-[10px] font-bold text-amber-600">
+                <span className="rounded-full bg-warning/10 px-1.5 py-0.5 text-[10px] font-bold text-warning">
                   {t("resources.metrics.actionNeeded", { defaultValue: "Action needed" })}
                 </span>
               )}
             </div>
           </div>
-          <div className="border-nx-border shadow-xs rounded-2xl border bg-nx-surface p-3.5">
+          <div className="border-nx-border rounded-2xl border bg-nx-surface p-3.5">
             <p className="text-[11px] font-semibold text-nx-ink-3">
               {t("resources.metrics.authorizedFacilities", {
                 defaultValue: "Authorized Facilities",
@@ -360,7 +360,7 @@ export function ResourcesWorkspaceView() {
             <div className="mb-2.5 flex size-11 items-center justify-center rounded-full bg-nx-accent/15 text-nx-ink transition-transform group-hover:scale-110 dark:text-nx-accent">
               <Plus className="size-5" />
             </div>
-            <span className="text-xs font-bold text-nx-ink transition-colors group-hover:text-emerald-600 dark:group-hover:text-nx-accent">
+            <span className="text-xs font-bold text-nx-ink transition-colors group-hover:text-primary">
               {t("resources.addCourt", { defaultValue: "+ Add New Court / Space" })}
             </span>
             <span className="mt-1 max-w-[200px] text-[11px] text-nx-ink-3">

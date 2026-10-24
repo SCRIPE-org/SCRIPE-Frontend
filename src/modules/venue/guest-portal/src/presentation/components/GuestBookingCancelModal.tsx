@@ -71,7 +71,7 @@ export function GuestBookingCancelModal({
             />
           </div>
 
-          <p className="text-xs font-medium text-amber-600 dark:text-amber-400">
+          <p className="text-xs font-medium text-warning">
             {t("guestPortal.cancelModal.warning")}
           </p>
         </div>
