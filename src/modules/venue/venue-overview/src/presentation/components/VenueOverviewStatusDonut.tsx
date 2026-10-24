@@ -11,19 +11,19 @@ interface Props {
   t: (key: string, values?: Record<string, string | number>) => string;
 }
 
-const STATUS_COLORS: Record<Booking360Status, { stroke: string; bg: string; text: string }> = {
-  Confirmed: { stroke: "#c6ff00", bg: "bg-nx-accent-fill", text: "text-nx-accent" },
-  CheckedIn: { stroke: "#22c55e", bg: "bg-success", text: "text-success" },
-  Held: { stroke: "#eab308", bg: "bg-warning", text: "text-warning" },
-  Completed: { stroke: "#8c918d", bg: "bg-nx-raised", text: "text-nx-ink-3" },
-  Cancelled: { stroke: "#ef4444", bg: "bg-destructive", text: "text-destructive" },
-  NoShow: { stroke: "#eab308", bg: "bg-warning", text: "text-warning" },
-  Draft: { stroke: "#6f756f", bg: "bg-nx-raised-2", text: "text-nx-ink-3" },
-  Requested: { stroke: "#0ea5e9", bg: "bg-info", text: "text-info" },
-  PendingApproval: { stroke: "#eab308", bg: "bg-warning", text: "text-warning" },
-  PartiallyFulfilled: { stroke: "#0ea5e9", bg: "bg-info", text: "text-info" },
-  Rejected: { stroke: "#ef4444", bg: "bg-destructive", text: "text-destructive" },
-  Expired: { stroke: "#6f756f", bg: "bg-nx-raised-2", text: "text-nx-ink-3" },
+const STATUS_COLORS: Record<Booking360Status, { bg: string; text: string }> = {
+  Confirmed: { bg: "bg-nx-accent-fill", text: "text-nx-accent" },
+  CheckedIn: { bg: "bg-success", text: "text-success" },
+  Held: { bg: "bg-warning", text: "text-warning" },
+  Completed: { bg: "bg-nx-raised", text: "text-nx-ink-3" },
+  Cancelled: { bg: "bg-destructive", text: "text-destructive" },
+  NoShow: { bg: "bg-warning", text: "text-warning" },
+  Draft: { bg: "bg-nx-raised-2", text: "text-nx-ink-3" },
+  Requested: { bg: "bg-info", text: "text-info" },
+  PendingApproval: { bg: "bg-warning", text: "text-warning" },
+  PartiallyFulfilled: { bg: "bg-info", text: "text-info" },
+  Rejected: { bg: "bg-destructive", text: "text-destructive" },
+  Expired: { bg: "bg-nx-raised-2", text: "text-nx-ink-3" },
 };
 
 /** Human-readable labels for booking statuses — avoids cross-module i18n dependency */
@@ -125,12 +125,12 @@ export function VenueOverviewStatusDonut({ items, t }: Props) {
                     cy="50"
                     r={radius}
                     fill="none"
-                    stroke={seg.color.stroke}
+                    stroke="currentColor"
                     strokeWidth="12"
                     strokeDasharray={seg.strokeDasharray}
                     strokeDashoffset={seg.strokeDashoffset}
                     strokeLinecap="round"
-                    className="transition-all duration-nx-standard"
+                    className={`transition-all duration-nx-standard ${seg.color.text}`}
                   />
                 ))}
               </svg>

@@ -145,14 +145,14 @@ export function ResourceDetailView({ resourceId }: Props) {
             {isReady ? (
               <Badge
                 variant="success"
-                className="border-emerald-200 bg-emerald-50 text-xs text-emerald-700 dark:border-emerald-800 dark:bg-emerald-950/60 dark:text-emerald-300"
+                className="border-success/20 bg-success/10 text-xs text-success"
               >
                 {t("resources.card.statusPublished", { defaultValue: "Active" })}
               </Badge>
             ) : (
               <Badge
                 variant="outline"
-                className="border-amber-300 bg-amber-50 text-xs text-amber-700 dark:border-amber-800 dark:bg-amber-950/60 dark:text-amber-300"
+                className="border-warning/20 bg-warning/10 text-xs text-warning"
               >
                 {t("resources.card.setupRequired", { defaultValue: "Setup Required" })}
               </Badge>
@@ -189,7 +189,7 @@ export function ResourceDetailView({ resourceId }: Props) {
             <Button
               size="sm"
               variant="outline"
-              className="gap-1.5 border-amber-300 text-xs font-bold text-amber-600 hover:bg-amber-50 dark:hover:bg-amber-950/40"
+              className="gap-1.5 border-warning/30 text-xs font-bold text-warning hover:bg-warning/10"
               onClick={() => {
                 if (readiness.missingActions.length > 0) {
                   setActiveTab(readiness.missingActions[0].tab);
@@ -204,10 +204,10 @@ export function ResourceDetailView({ resourceId }: Props) {
 
       {/* Setup Required Banner with exact actionable missing steps */}
       {!isReady && (
-        <Alert className="flex flex-col gap-2 border-amber-300 bg-amber-50/60 py-2.5 text-amber-900 dark:bg-amber-950/30 dark:text-amber-200 sm:flex-row sm:items-center sm:justify-between">
+        <Alert className="flex flex-col gap-2 border-warning/30 bg-warning/10 py-2.5 text-warning sm:flex-row sm:items-center sm:justify-between">
           <div className="flex items-center gap-2">
             <AlertCircle
-              className="size-4 shrink-0 text-amber-600 dark:text-amber-400"
+              className="size-4 shrink-0 text-warning"
               aria-hidden="true"
             />
             <AlertDescription className="text-xs font-semibold">
@@ -229,7 +229,7 @@ export function ResourceDetailView({ resourceId }: Props) {
                     setActiveTab(action.tab);
                   }
                 }}
-                className="h-7 border-amber-400 text-xs text-amber-900 hover:bg-amber-100 dark:text-amber-100 dark:hover:bg-amber-900/40"
+                className="h-7 border-warning/40 text-xs text-warning hover:bg-warning/10"
               >
                 {(action.id === "publish" || action.id === "publish-court") && vm.saving
                   ? "Publishing..."
@@ -244,7 +244,7 @@ export function ResourceDetailView({ resourceId }: Props) {
       {vm.feedback && (
         <Alert variant="success" className="py-2.5">
           <CheckCircle2
-            className="size-4 text-emerald-600 dark:text-emerald-400"
+            className="size-4 text-success"
             aria-hidden="true"
           />
           <AlertDescription className="text-xs font-medium">

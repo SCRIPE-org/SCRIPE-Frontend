@@ -92,9 +92,9 @@ export function BookingGuestAccessCard({
             )}
 
             {sendSuccess && (
-              <div className="flex items-center gap-2 rounded-nx-md border border-emerald-500/20 bg-emerald-500/10 p-3 text-xs font-medium text-emerald-800 dark:text-emerald-300">
+              <div className="flex items-center gap-2 rounded-nx-md border border-success/20 bg-success/10 p-3 text-xs font-medium text-success">
                 <Check
-                  className="size-4 shrink-0 text-emerald-600 dark:text-emerald-400"
+                  className="size-4 shrink-0 text-success"
                   aria-hidden="true"
                 />
                 <span>{sendSuccess}</span>
@@ -131,8 +131,8 @@ export function BookingGuestAccessCard({
                       >
                         {copied ? (
                           <>
-                            <Check className="size-3.5 text-emerald-600" aria-hidden="true" />
-                            <span className="text-emerald-600">Copied</span>
+                            <Check className="size-3.5 text-success" aria-hidden="true" />
+                            <span className="text-success">Copied</span>
                           </>
                         ) : (
                           <>
@@ -145,7 +145,7 @@ export function BookingGuestAccessCard({
                   ) : (
                     <div className="bg-nx-surfaceSubtle border-nx-line/60 flex items-center justify-between rounded-nx-md border p-3 text-xs">
                       <div className="flex items-center gap-2 text-nx-ink-2">
-                        <ShieldCheck className="size-4 text-emerald-600" aria-hidden="true" />
+                        <ShieldCheck className="size-4 text-success" aria-hidden="true" />
                         <span>Link generated & active. Generate again to view and copy token.</span>
                       </div>
                       <Button

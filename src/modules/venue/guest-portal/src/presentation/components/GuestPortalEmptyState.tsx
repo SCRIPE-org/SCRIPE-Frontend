@@ -20,8 +20,8 @@ export function GuestPortalEmptyState({
 }: GuestPortalEmptyStateProps) {
   return (
     <div className="flex min-h-[70vh] items-center justify-center p-4">
-      <Card className="border-nx-line/70 w-full max-w-md space-y-5 border bg-nx-surface p-6 text-center shadow-lg sm:p-8">
-        <div className="mx-auto flex size-14 items-center justify-center rounded-full bg-amber-500/10 text-amber-600 dark:bg-amber-500/20 dark:text-amber-400">
+      <Card className="border-nx-line/70 w-full max-w-md space-y-5 border bg-nx-surface p-6 text-center sm:p-8">
+        <div className="mx-auto flex size-14 items-center justify-center rounded-full border border-warning/20 bg-warning/10 text-warning">
           <ShieldAlert className="size-7" aria-hidden="true" />
         </div>
 

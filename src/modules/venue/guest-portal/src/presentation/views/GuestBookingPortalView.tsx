@@ -114,10 +114,10 @@ export function GuestBookingPortalView() {
         {cancelSuccessBanner && (
           <Alert
             variant="info"
-            className="border-emerald-500/30 bg-emerald-500/10 text-emerald-800 dark:text-emerald-300"
+            className="border-success/20 bg-success/10 text-success"
           >
             <CheckCircle
-              className="size-4 text-emerald-600 dark:text-emerald-400"
+              className="size-4 text-success"
               aria-hidden="true"
             />
             <AlertDescription className="text-sm font-medium">
@@ -130,9 +130,9 @@ export function GuestBookingPortalView() {
         {isCancelled && (
           <Alert
             variant="destructive"
-            className="border-rose-500/30 bg-rose-500/10 text-rose-800 dark:text-rose-300"
+            className="border-destructive/20 bg-destructive/10 text-destructive"
           >
-            <XCircle className="size-4 text-rose-600 dark:text-rose-400" aria-hidden="true" />
+            <XCircle className="size-4 text-destructive" aria-hidden="true" />
             <AlertDescription className="text-sm font-medium">
               This reservation has been cancelled.
             </AlertDescription>
@@ -160,8 +160,8 @@ export function GuestBookingPortalView() {
             >
               {copied ? (
                 <>
-                  <Check className="size-3 text-emerald-600" aria-hidden="true" />
-                  <span className="text-[11px] font-medium text-emerald-600">Copied</span>
+                  <Check className="size-3 text-success" aria-hidden="true" />
+                  <span className="text-[11px] font-medium text-success">Copied</span>
                 </>
               ) : (
                 <>

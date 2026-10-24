@@ -120,7 +120,7 @@ export function BookingCustomerStep({
             size="sm"
             onClick={onQuickAddCustomer}
             disabled={!quickName.trim() || submitting}
-            className="h-8 w-full bg-[#C6FF00] text-xs font-bold text-[#0D0D0E] hover:bg-[#b5eb00]"
+            className="h-8 w-full bg-nx-accent text-xs font-bold text-nx-on-fill hover:opacity-90"
           >
             {submitting
               ? t("operationsCalendar.clickToBook.customer.creating")
@@ -129,9 +129,9 @@ export function BookingCustomerStep({
         </div>
       ) : selectedCustomer ? (
         /* Selected Customer Card */
-        <div className="flex items-center justify-between rounded-xl border border-emerald-500/30 bg-emerald-500/5 p-3 dark:border-[#C6FF00]/30 dark:bg-[#C6FF00]/5">
+        <div className="flex items-center justify-between rounded-xl border border-primary/20 bg-primary/10 p-3">
           <div className="flex items-center gap-3">
-            <div className="flex size-9 shrink-0 items-center justify-center rounded-full bg-emerald-500/15 text-xs font-bold text-emerald-600 ring-1 ring-emerald-500/30 dark:bg-[#C6FF00]/15 dark:text-[#C6FF00] dark:ring-[#C6FF00]/30">
+            <div className="flex size-9 shrink-0 items-center justify-center rounded-full bg-primary/20 text-xs font-bold text-primary ring-1 ring-primary/30">
               {selectedCustomer.displayName.charAt(0)}
             </div>
             <div>
@@ -151,7 +151,7 @@ export function BookingCustomerStep({
             variant="ghost"
             size="sm"
             onClick={() => onSelectCustomer(null)}
-            className="h-7 text-xs font-semibold text-emerald-600 hover:underline dark:text-[#C6FF00]"
+            className="h-7 text-xs font-semibold text-primary hover:underline"
           >
             {t("operationsCalendar.clickToBook.customer.change")}
           </Button>
@@ -188,11 +188,11 @@ export function BookingCustomerStep({
           <div className="max-h-48 space-y-1.5 overflow-y-auto">
             {customerResults.map((cust, idx) => {
               const avatarPalette = [
-                "bg-purple-500/15 text-purple-600 dark:text-purple-400 border-purple-500/20",
-                "bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 border-emerald-500/20",
-                "bg-blue-500/15 text-blue-600 dark:text-blue-400 border-blue-500/20",
-                "bg-amber-500/15 text-amber-600 dark:text-amber-400 border-amber-500/20",
-                "bg-teal-500/15 text-teal-600 dark:text-teal-400 border-teal-500/20",
+                "bg-primary/10 text-primary border-primary/20",
+                "bg-info/10 text-info border-info/20",
+                "bg-success/10 text-success border-success/20",
+                "bg-warning/10 text-warning border-warning/20",
+                "bg-nx-raised text-nx-ink border-nx-line",
               ];
               const colorClass = avatarPalette[idx % avatarPalette.length];
               return (
@@ -204,7 +204,7 @@ export function BookingCustomerStep({
                     onSelectCustomer(cust);
                     onAdvanceToPricing();
                   }}
-                  className="border-nx-border hover:bg-nx-raised/60 group h-auto w-full justify-between rounded-xl border p-2.5 text-start text-xs transition-colors hover:border-emerald-500/40 dark:hover:border-[#C6FF00]/40"
+                  className="border-nx-border hover:bg-nx-raised/60 group h-auto w-full justify-between rounded-xl border p-2.5 text-start text-xs transition-colors hover:border-primary/40"
                 >
                   <div className="flex items-center gap-2.5">
                     <div
@@ -213,7 +213,7 @@ export function BookingCustomerStep({
                       {cust.displayName.charAt(0)}
                     </div>
                     <div>
-                      <span className="block font-semibold text-nx-ink group-hover:text-emerald-600 dark:group-hover:text-[#C6FF00]">
+                      <span className="block font-semibold text-nx-ink group-hover:text-primary">
                         {cust.displayName}
                       </span>
                       <span className="block text-[10px] text-nx-ink-3">
@@ -221,8 +221,8 @@ export function BookingCustomerStep({
                       </span>
                     </div>
                   </div>
-                  <div className="border-nx-border flex size-4 shrink-0 items-center justify-center rounded-full border group-hover:border-emerald-500 dark:group-hover:border-[#C6FF00]">
-                    <div className="size-2 rounded-full bg-transparent group-hover:bg-emerald-500 dark:group-hover:bg-[#C6FF00]" />
+                  <div className="border-nx-border flex size-4 shrink-0 items-center justify-center rounded-full border group-hover:border-primary">
+                    <div className="size-2 rounded-full bg-transparent group-hover:bg-primary" />
                   </div>
                 </Button>
               );

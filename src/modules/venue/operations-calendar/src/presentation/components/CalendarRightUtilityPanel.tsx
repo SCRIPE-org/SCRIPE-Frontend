@@ -194,7 +194,7 @@ export function CalendarRightUtilityPanel({
             onClick={onBlockTime}
             className="hover:bg-nx-surfaceSubtle h-8 w-full justify-start gap-2.5 text-xs font-semibold text-nx-ink"
           >
-            <Clock className="size-3.5 text-amber-500" />
+            <Clock className="size-3.5 text-warning" />
             <span>
               {t("operationsCalendar.quickActions.blockTime", { defaultValue: "Block Time" })}
             </span>
@@ -220,7 +220,7 @@ export function CalendarRightUtilityPanel({
             onClick={onViewToday}
             className="hover:bg-nx-surfaceSubtle h-8 w-full justify-start gap-2.5 text-xs font-semibold text-nx-ink"
           >
-            <List className="size-3.5 text-emerald-500" />
+            <List className="size-3.5 text-success" />
             <span>
               {t("operationsCalendar.quickActions.viewToday", {
                 defaultValue: "View Today's List",
@@ -238,7 +238,7 @@ export function CalendarRightUtilityPanel({
         <div className="space-y-2">
           <div className="flex items-center justify-between text-xs">
             <div className="flex items-center gap-2 font-medium text-nx-ink-2">
-              <span className="size-2 rounded-full bg-emerald-500" />
+              <span className="size-2 rounded-full bg-success" />
               <span>{t("operationsCalendar.courtStatus.inUse", { defaultValue: "In Use" })}</span>
             </div>
             <span className="font-bold tabular-nums text-nx-ink">{inUseVal}</span>
@@ -254,7 +254,7 @@ export function CalendarRightUtilityPanel({
 
           <div className="flex items-center justify-between text-xs">
             <div className="flex items-center gap-2 font-medium text-nx-ink-2">
-              <span className="size-2 rounded-full bg-rose-500" />
+              <span className="size-2 rounded-full bg-destructive" />
               <span>
                 {t("operationsCalendar.courtStatus.maintenance", { defaultValue: "Maintenance" })}
               </span>

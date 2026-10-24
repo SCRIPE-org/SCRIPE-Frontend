@@ -45,7 +45,7 @@ function statusClass(status: OperationsCalendarBlock["status"]) {
     (status as string) === "Blocked" ||
     (status as string) === "Unavailable"
   ) {
-    return "border-amber-500/60 bg-amber-500/20 text-amber-950 dark:text-amber-200 font-semibold";
+    return "border-warning/40 bg-warning/20 text-warning font-semibold";
   }
   if (status === "Cancelled") {
     return "border-nx-line bg-nx-surfaceSubtle text-nx-ink-3 line-through opacity-70";

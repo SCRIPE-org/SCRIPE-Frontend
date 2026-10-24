@@ -125,7 +125,7 @@ export function ResourceClosuresTab({ vm }: Props) {
                       {closure.kind === "maintenance" ? (
                         <Badge
                           variant="outline"
-                          className="gap-1 border-amber-500/50 bg-amber-500/10 font-semibold text-amber-700 dark:text-amber-300"
+                          className="gap-1 border-warning/30 bg-warning/10 font-semibold text-warning"
                         >
                           <Wrench className="size-3" aria-hidden="true" />
                           <span>
@@ -194,7 +194,7 @@ export function ResourceClosuresTab({ vm }: Props) {
                     onClick={() => setReasonType("Maintenance")}
                     className={`rounded-nx-md border p-2.5 text-left text-xs font-semibold transition-all rtl:text-right ${
                       reasonType === "Maintenance"
-                        ? "border-amber-500 bg-amber-500/10 text-amber-900 ring-1 ring-amber-500 dark:text-amber-200"
+                        ? "border-warning/40 bg-warning/10 text-warning ring-1 ring-warning/30"
                         : "hover:bg-nx-surfaceSubtle border-nx-line text-nx-ink-2"
                     }`}
                   >

@@ -155,7 +155,7 @@ export function ReceivablesView() {
                 <Card
                   key={curr}
                   className={`border-nx-line/80 rounded-nx-xl shadow-xs space-y-2.5 bg-nx-surface p-4 ${
-                    isUnspecified ? "border-amber-500/40 bg-amber-500/5" : ""
+                    isUnspecified ? "border-warning/30 bg-warning/5" : ""
                   }`}
                 >
                   <div className="flex items-center justify-between">
@@ -189,7 +189,7 @@ export function ReceivablesView() {
                       <span className="block text-[10px] font-semibold uppercase text-nx-ink-3">
                         {t("money.receivables.paid", { defaultValue: "Paid" })}
                       </span>
-                      <span className="font-mono text-xs font-bold text-emerald-600 dark:text-emerald-400 sm:text-sm">
+                      <span className="font-mono text-xs font-bold text-success sm:text-sm">
                         {isUnspecified ? stats.paid.toFixed(2) : money(stats.paid, curr, language)}
                       </span>
                     </div>
@@ -197,7 +197,7 @@ export function ReceivablesView() {
                       <span className="block text-[10px] font-semibold uppercase text-nx-ink-3">
                         {t("money.receivables.outstanding", { defaultValue: "Outstanding" })}
                       </span>
-                      <span className="font-mono text-xs font-bold text-amber-600 dark:text-amber-400 sm:text-sm">
+                      <span className="font-mono text-xs font-bold text-warning sm:text-sm">
                         {isUnspecified
                           ? stats.outstanding.toFixed(2)
                           : money(stats.outstanding, curr, language)}
@@ -354,7 +354,7 @@ export function ReceivablesView() {
                       {t("money.receivables.outstanding", { defaultValue: "Outstanding" })}
                     </span>
                     <span
-                      className={`font-mono text-base font-bold ${hasBalance ? "text-amber-600 dark:text-amber-400" : "text-nx-ink"}`}
+                      className={`font-mono text-base font-bold ${hasBalance ? "text-warning" : "text-nx-ink"}`}
                     >
                       {money(invoice.outstandingAmount, invoice.currencyCode, language)}
                     </span>
@@ -371,7 +371,7 @@ export function ReceivablesView() {
                     </div>
                     <div>
                       <dt className="text-[11px] text-nx-ink-3">{t("money.receivables.paid")}</dt>
-                      <dd className="font-mono font-semibold text-emerald-600 dark:text-emerald-400">
+                      <dd className="font-mono font-semibold text-success">
                         {money(invoice.paidAmount, invoice.currencyCode, language)}
                       </dd>
                     </div>

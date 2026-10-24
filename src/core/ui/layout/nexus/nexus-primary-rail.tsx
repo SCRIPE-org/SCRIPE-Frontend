@@ -178,13 +178,10 @@ export function NexusPrimaryRail({
   const activeWorkspaceKey = activeWorkspace?.workspaceKey;
 
   // Filter out "modules-group" from root items (it's legacy; workspaces are in the rail now).
-  // For the Venue workspace, navigation is unified directly in the secondary rail (sidebar).
   const adminRootItems = useMemo(
     () =>
-      activeWorkspaceKey === "venue"
-        ? []
-        : rootMenuItems.filter((item) => item.slug !== "modules-group"),
-    [rootMenuItems, activeWorkspaceKey]
+      rootMenuItems.filter((item) => item.slug !== "modules-group"),
+    [rootMenuItems]
   );
 
   // Pinned workspaces — sorted by pinSortOrder, then alphabetically as tiebreaker.
@@ -285,11 +282,6 @@ export function NexusPrimaryRail({
           isModuleMode={isModuleMode}
           language={language}
           onClick={() => {
-            if (activeWorkspaceKey === "venue") {
-              startRoutingProgress();
-              router.push("/venue");
-              return;
-            }
             // Clear workspace key so Hub page shows clean state
             // (secondary rail collapses, back button hides, admin items clear)
             useNavigationStore.getState().setActiveWorkspace(null);

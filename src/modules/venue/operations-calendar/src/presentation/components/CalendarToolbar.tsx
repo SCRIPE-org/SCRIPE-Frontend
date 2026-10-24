@@ -133,7 +133,7 @@ export function CalendarToolbar(props: CalendarToolbarProps) {
               onClick={props.onBlockTime}
               className="hover:bg-nx-surfaceSubtle h-8 gap-1.5 border-nx-line text-xs font-semibold"
             >
-              <Clock className="size-3.5 text-amber-500" />
+              <Clock className="size-3.5 text-warning" />
               <span className="hidden sm:inline">
                 {t("operationsCalendar.toolbar.blockTime") || "Block Time"}
               </span>
