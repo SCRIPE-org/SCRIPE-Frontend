@@ -122,7 +122,7 @@ export function VenueReportsView() {
                 onClick={() => handleExport("xls")}
                 className="cursor-pointer gap-2"
               >
-                <FileSpreadsheet className="size-4 text-emerald-600" />
+                <FileSpreadsheet className="size-4 text-success" />
                 <span>{t("venueReports.ui.xlsWorkbook")}</span>
               </DropdownMenuItem>
               <DropdownMenuItem
@@ -148,7 +148,7 @@ export function VenueReportsView() {
             value="financial"
             className="data-[state=active]:shadow-xs gap-2 py-2.5 text-xs font-semibold data-[state=active]:bg-nx-surface"
           >
-            <CircleDollarSign className="size-4 text-emerald-600" />
+            <CircleDollarSign className="size-4 text-success" />
             <span>{t("venueReports.ui.financialReport")}</span>
           </TabsTrigger>
           <TabsTrigger
@@ -169,7 +169,7 @@ export function VenueReportsView() {
             value="collections"
             className="data-[state=active]:shadow-xs gap-2 py-2.5 text-xs font-semibold data-[state=active]:bg-nx-surface"
           >
-            <Receipt className="size-4 text-amber-600" />
+            <Receipt className="size-4 text-warning" />
             <span>{t("venueReports.ui.collectionsReport")}</span>
           </TabsTrigger>
         </TabsList>
@@ -198,7 +198,7 @@ export function VenueReportsView() {
                 <Card
                   key={curr}
                   className={`rounded-nx-xl shadow-xs border-nx-line bg-nx-surface ${
-                    isUnspecified ? "border-amber-500/40 bg-amber-500/5" : ""
+                    isUnspecified ? "border-warning/30 bg-warning/5" : ""
                   }`}
                 >
                   <CardContent className="space-y-3 p-4">
@@ -229,7 +229,7 @@ export function VenueReportsView() {
                         <div className="text-[10px] font-semibold uppercase text-nx-ink-3">
                           {t("venueReports.ui.collected")}
                         </div>
-                        <div className="font-mono text-xs font-bold text-emerald-600 dark:text-emerald-400 sm:text-sm">
+                        <div className="font-mono text-xs font-bold text-success sm:text-sm">
                           {values.collected.toLocaleString(undefined, {
                             minimumFractionDigits: 2,
                             maximumFractionDigits: 2,
@@ -240,7 +240,7 @@ export function VenueReportsView() {
                         <div className="text-[10px] font-semibold uppercase text-nx-ink-3">
                           {t("venueReports.ui.outstanding")}
                         </div>
-                        <div className="font-mono text-xs font-bold text-amber-600 dark:text-amber-400 sm:text-sm">
+                        <div className="font-mono text-xs font-bold text-warning sm:text-sm">
                           {values.outstanding.toLocaleString(undefined, {
                             minimumFractionDigits: 2,
                             maximumFractionDigits: 2,
@@ -325,8 +325,8 @@ export function VenueReportsView() {
               <span>{t("venueReports.ui.loading")}</span>
             </div>
           ) : error ? (
-            <div className="space-y-1 py-12 text-center text-xs text-rose-600">
-              <AlertCircle className="mx-auto mb-1 size-6 text-rose-500" />
+            <div className="space-y-1 py-12 text-center text-xs text-destructive">
+              <AlertCircle className="mx-auto mb-1 size-6 text-destructive" />
               <div className="font-semibold">{error}</div>
             </div>
           ) : (
@@ -374,10 +374,10 @@ export function VenueReportsView() {
                           <TableCell className="text-end font-mono text-xs font-semibold">
                             {inv.totalAmount.toFixed(2)}
                           </TableCell>
-                          <TableCell className="text-end font-mono text-xs text-emerald-600">
+                          <TableCell className="text-end font-mono text-xs text-success">
                             {inv.paidAmount.toFixed(2)}
                           </TableCell>
-                          <TableCell className="text-end font-mono text-xs text-amber-600">
+                          <TableCell className="text-end font-mono text-xs text-warning">
                             {inv.outstandingAmount.toFixed(2)}
                           </TableCell>
                         </TableRow>
@@ -473,10 +473,10 @@ export function VenueReportsView() {
                             <TableCell className="text-end font-mono text-xs">
                               {row.commercialValue.toFixed(2)}
                             </TableCell>
-                            <TableCell className="text-end font-mono text-xs text-emerald-600">
+                            <TableCell className="text-end font-mono text-xs text-success">
                               {row.collected.toFixed(2)}
                             </TableCell>
-                            <TableCell className="text-end font-mono text-xs text-amber-600">
+                            <TableCell className="text-end font-mono text-xs text-warning">
                               {row.outstanding.toFixed(2)}
                             </TableCell>
                             <TableCell className="text-end font-mono text-xs">
@@ -528,7 +528,7 @@ export function VenueReportsView() {
                           </TableCell>
                           <TableCell className="text-xs">{p.status}</TableCell>
                           <TableCell className="font-mono text-xs">{p.currencyCode}</TableCell>
-                          <TableCell className="text-end font-mono text-xs font-semibold text-emerald-600">
+                          <TableCell className="text-end font-mono text-xs font-semibold text-success">
                             {p.amount.toFixed(2)}
                           </TableCell>
                           <TableCell className="text-end font-mono text-xs text-nx-ink-2">

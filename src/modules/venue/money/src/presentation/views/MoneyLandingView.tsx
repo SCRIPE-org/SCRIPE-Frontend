@@ -304,12 +304,12 @@ export function MoneyLandingView() {
             <span className="text-[11px] font-semibold uppercase tracking-wider text-nx-ink-3">
               {t("money.landing.kpis.collected", { defaultValue: "Collected" })}
             </span>
-            <div className="rounded-full bg-emerald-500/10 p-1.5 text-emerald-600 dark:text-emerald-400">
+            <div className="rounded-full bg-success/10 p-1.5 text-success">
               <Wallet className="size-3.5" aria-hidden="true" />
             </div>
           </div>
           <div className="mt-2">
-            <p className="font-mono text-xl font-bold text-emerald-600 dark:text-emerald-400">
+            <p className="font-mono text-xl font-bold text-success">
               {formatMoney(summary?.collected ?? 0, currency, language)}
             </p>
             <p className="mt-0.5 text-[10px] text-nx-ink-3">
@@ -326,12 +326,12 @@ export function MoneyLandingView() {
             <span className="text-[11px] font-semibold uppercase tracking-wider text-nx-ink-3">
               {t("money.landing.kpis.collectedToday", { defaultValue: "Collected Today" })}
             </span>
-            <div className="rounded-full bg-emerald-500/10 p-1.5 text-emerald-600 dark:text-emerald-400">
+            <div className="rounded-full bg-success/10 p-1.5 text-success">
               <CreditCard className="size-3.5" aria-hidden="true" />
             </div>
           </div>
           <div className="mt-2">
-            <p className="font-mono text-xl font-bold text-emerald-600 dark:text-emerald-400">
+            <p className="font-mono text-xl font-bold text-success">
               {formatMoney(summary?.collectedToday ?? 0, currency, language)}
             </p>
             <p className="mt-0.5 text-[10px] text-nx-ink-3">
@@ -348,12 +348,12 @@ export function MoneyLandingView() {
             <span className="text-[11px] font-semibold uppercase tracking-wider text-nx-ink-3">
               {t("money.landing.kpis.outstanding", { defaultValue: "Outstanding" })}
             </span>
-            <div className="rounded-full bg-amber-500/10 p-1.5 text-amber-600 dark:text-amber-400">
+            <div className="rounded-full bg-warning/10 p-1.5 text-warning">
               <Clock className="size-3.5" aria-hidden="true" />
             </div>
           </div>
           <div className="mt-2">
-            <p className="font-mono text-xl font-bold text-amber-600 dark:text-amber-400">
+            <p className="font-mono text-xl font-bold text-warning">
               {formatMoney(summary?.outstanding ?? 0, currency, language)}
             </p>
             <p className="mt-0.5 text-[10px] text-nx-ink-3">
@@ -391,7 +391,7 @@ export function MoneyLandingView() {
             <span className="text-[11px] font-semibold uppercase tracking-wider text-nx-ink-3">
               {t("money.landing.kpis.netCollected", { defaultValue: "Net Collected" })}
             </span>
-            <div className="rounded-full bg-purple-500/10 p-1.5 text-purple-600 dark:text-purple-400">
+            <div className="rounded-full bg-info/10 p-1.5 text-info">
               <ShieldCheck className="size-3.5" aria-hidden="true" />
             </div>
           </div>
@@ -412,9 +412,9 @@ export function MoneyLandingView() {
       {(summary?.unallocatedPaymentsCount ?? 0) > 0 && (
         <Alert
           variant="default"
-          className="border-amber-500/40 bg-amber-500/10 text-amber-900 dark:text-amber-200"
+          className="border-warning/30 bg-warning/10 text-warning"
         >
-          <AlertCircle className="size-4 text-amber-600 dark:text-amber-400" aria-hidden="true" />
+          <AlertCircle className="size-4 text-warning" aria-hidden="true" />
           <AlertDescription className="flex items-center justify-between text-xs">
             <span>
               <strong>{summary?.unallocatedPaymentsCount}</strong>{" "}
@@ -422,7 +422,7 @@ export function MoneyLandingView() {
                 defaultValue: "unallocated payment(s) require reconciliation to invoice balance.",
               })}
             </span>
-            <Button asChild size="sm" variant="outline" className="h-7 border-amber-500/50 text-xs">
+            <Button asChild size="sm" variant="outline" className="h-7 border-warning/40 text-xs">
               <Link href="/venue/money/payments">
                 <span>
                   {t("money.landing.tables.allocateAction", {
@@ -460,7 +460,7 @@ export function MoneyLandingView() {
               </span>
             </span>
             <span className="flex items-center gap-1.5">
-              <span className="size-2.5 rounded-full bg-emerald-500" />
+              <span className="size-2.5 rounded-full bg-success shadow-[0_0_6px_rgba(34,197,94,0.7)]" />
               <span className="font-medium text-nx-ink-2">
                 {t("money.landing.chart.collectedLegend", { defaultValue: "Collected Cash" })}
               </span>
@@ -513,7 +513,7 @@ export function MoneyLandingView() {
                           Commercial:{" "}
                           {formatMoney(bucket.commercialValue, bucket.currencyCode, language)}
                         </span>
-                        <span className="font-mono text-emerald-600">
+                        <span className="font-mono text-success">
                           Collected: {formatMoney(bucket.collected, bucket.currencyCode, language)}
                         </span>
                         {bucket.refunds > 0 && (
@@ -530,7 +530,7 @@ export function MoneyLandingView() {
                           style={{ height: `${commHeight}%` }}
                         />
                         <div
-                          className="rounded-t-xs w-1/2 max-w-[12px] bg-emerald-500/80 transition-all hover:bg-emerald-600"
+                          className="rounded-t-xs w-1/2 max-w-[12px] bg-success/80 hover:bg-success transition-all hover:bg-success"
                           style={{ height: `${collHeight}%` }}
                         />
                       </div>
@@ -612,7 +612,7 @@ export function MoneyLandingView() {
                         <p className="font-mono font-bold text-nx-ink">
                           {formatMoney(r.commercialValue, r.currencyCode, language)}
                         </p>
-                        <p className="font-mono text-[10px] text-emerald-600 dark:text-emerald-400">
+                        <p className="font-mono text-[10px] text-success">
                           {formatMoney(r.collected, r.currencyCode, language)} collected
                         </p>
                       </div>
@@ -786,7 +786,7 @@ export function MoneyLandingView() {
               ) : outstandingInvoices.length === 0 ? (
                 <div className="p-6 text-center text-xs text-nx-ink-3">
                   <CheckCircle2
-                    className="mx-auto mb-1.5 size-6 text-emerald-600"
+                    className="mx-auto mb-1.5 size-6 text-success"
                     aria-hidden="true"
                   />
                   <span>
@@ -817,7 +817,7 @@ export function MoneyLandingView() {
                         </p>
                       </div>
                       <div className="text-right">
-                        <p className="font-mono font-bold text-amber-600 dark:text-amber-400">
+                        <p className="font-mono font-bold text-warning">
                           {formatMoney(inv.outstandingAmount, inv.currencyCode, language)}
                         </p>
                         {canRecordPayment && (
@@ -851,7 +851,7 @@ export function MoneyLandingView() {
             <CardHeader className="border-nx-line/50 flex flex-row items-center justify-between border-b px-4 py-3">
               <div>
                 <CardTitle className="flex items-center gap-1.5 text-xs font-bold text-nx-ink">
-                  <CreditCard className="size-3.5 text-emerald-600" aria-hidden="true" />
+                  <CreditCard className="size-3.5 text-success" aria-hidden="true" />
                   <span>
                     {t("money.landing.tables.recentPaymentsTitle", {
                       defaultValue: "Recent Payments",
@@ -917,7 +917,7 @@ export function MoneyLandingView() {
                         </p>
                       </div>
                       <div className="text-right">
-                        <p className="font-mono font-bold text-emerald-600 dark:text-emerald-400">
+                        <p className="font-mono font-bold text-success">
                           {formatMoney(pay.amount, pay.currencyCode, language)}
                         </p>
                         {pay.unallocatedAmount > 0 && canUpdateAllocations && (
@@ -925,7 +925,7 @@ export function MoneyLandingView() {
                             asChild
                             variant="outline"
                             size="sm"
-                            className="mt-1 h-6 border-amber-500/50 px-2 text-[10px]"
+                            className="mt-1 h-6 border-warning/40 px-2 text-[10px]"
                           >
                             <Link href="/venue/money/payments">
                               <span>

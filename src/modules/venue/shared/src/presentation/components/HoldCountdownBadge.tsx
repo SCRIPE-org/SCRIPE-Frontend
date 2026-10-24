@@ -62,7 +62,7 @@ export function HoldCountdownBadge({
         "gap-1.5 border px-2.5 py-1 font-mono text-xs transition-colors",
         isCritical
           ? "animate-pulse border-red-500/50 bg-red-500/10 text-red-400"
-          : "border-amber-500/40 bg-amber-500/10 text-amber-300",
+          : "border-warning/30 bg-warning/10 text-warning",
         className
       )}
     >

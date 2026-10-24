@@ -92,8 +92,7 @@ export function ClickToBookModal(props: ClickToBookModalProps) {
                 <div className="flex items-center gap-2">
                   <span
                     className={`flex size-5 items-center justify-center rounded-full text-[10px] font-bold ${
-                      vm.step >= 0
-                        ? "bg-[#C6FF00] text-[#0D0D0E] shadow-sm ring-1 ring-[#C6FF00]/40"
+                      vm.step >= 0 ? "bg-nx-accent text-nx-on-fill ring-1 ring-nx-accent"
                         : "bg-nx-raised text-nx-ink-3"
                     }`}
                   >
@@ -105,15 +104,14 @@ export function ClickToBookModal(props: ClickToBookModalProps) {
                     {t("operationsCalendar.clickToBook.stepper.courtAndTime")}
                   </span>
                 </div>
-                <div className={`h-px w-6 ${vm.step >= 1 ? "bg-[#C6FF00]" : "bg-nx-border"}`} />
+                <div className={`h-px w-6 ${vm.step >= 1 ? "bg-nx-accent" : "bg-nx-line"}`} />
               </>
             )}
 
             <div className="flex items-center gap-2">
               <span
                 className={`flex size-5 items-center justify-center rounded-full text-[10px] font-bold ${
-                  vm.step >= 1
-                    ? "bg-[#C6FF00] text-[#0D0D0E] shadow-sm ring-1 ring-[#C6FF00]/40"
+                  vm.step >= 1 ? "bg-nx-accent text-nx-on-fill ring-1 ring-nx-accent"
                     : "bg-nx-raised text-nx-ink-3"
                 }`}
               >
@@ -126,13 +124,12 @@ export function ClickToBookModal(props: ClickToBookModalProps) {
               </span>
             </div>
 
-            <div className={`h-px w-6 ${vm.step >= 2 ? "bg-[#C6FF00]" : "bg-nx-border"}`} />
+            <div className={`h-px w-6 ${vm.step >= 2 ? "bg-nx-accent" : "bg-nx-line"}`} />
 
             <div className="flex items-center gap-2">
               <span
                 className={`flex size-5 items-center justify-center rounded-full text-[10px] font-bold ${
-                  vm.step >= 2
-                    ? "bg-[#C6FF00] text-[#0D0D0E] shadow-sm ring-1 ring-[#C6FF00]/40"
+                  vm.step >= 2 ? "bg-nx-accent text-nx-on-fill ring-1 ring-nx-accent"
                     : "bg-nx-raised text-nx-ink-3"
                 }`}
               >
@@ -209,7 +206,7 @@ export function ClickToBookModal(props: ClickToBookModalProps) {
                         size="sm"
                         type="button"
                         onClick={() => vm.setStep(0)}
-                        className="h-auto px-0 text-[11px] font-semibold text-emerald-600 hover:underline dark:text-[#C6FF00]"
+                        className="h-auto px-0 text-[11px] font-semibold text-primary hover:underline"
                       >
                         {t("operationsCalendar.clickToBook.context.change")}
                       </Button>
@@ -390,7 +387,7 @@ export function ClickToBookModal(props: ClickToBookModalProps) {
                     (vm.step === 0 && (vm.step0Checking || !vm.selectedResource)) ||
                     (vm.step === 1 && !vm.selectedCustomer)
                   }
-                  className="bg-[#C6FF00] text-xs font-bold text-[#0D0D0E] shadow-sm hover:bg-[#b5eb00] disabled:opacity-50"
+                  className="bg-nx-accent text-xs font-bold text-nx-on-fill hover:opacity-90 disabled:opacity-50"
                 >
                   {vm.step === 0 && vm.step0Checking ? (
                     <span>{t("operationsCalendar.clickToBook.courtStep.checking")}</span>
@@ -415,7 +412,7 @@ export function ClickToBookModal(props: ClickToBookModalProps) {
                     Boolean(vm.priceChangeNotice) ||
                     !vm.canCreateBooking
                   }
-                  className="bg-[#C6FF00] text-xs font-bold text-[#0D0D0E] shadow-sm hover:bg-[#b5eb00] disabled:opacity-50"
+                  className="bg-nx-accent text-xs font-bold text-nx-on-fill hover:opacity-90 disabled:opacity-50"
                 >
                   {vm.submitting ? (
                     <span>{t("operationsCalendar.clickToBook.courtStep.confirming")}</span>

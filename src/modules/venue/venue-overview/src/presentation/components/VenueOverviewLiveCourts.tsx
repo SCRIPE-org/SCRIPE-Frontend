@@ -2,6 +2,7 @@
 
 import React from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { Card } from "@core/ui/card";
 import { Button } from "@core/ui/button";
 import {
@@ -111,6 +112,7 @@ function computeElapsedPercent(startUtc?: string | null, endUtc?: string | null)
 }
 
 export function VenueOverviewLiveCourts({ items, overview, t }: VenueOverviewLiveCourtsProps) {
+  const router = useRouter();
   const courts = items || overview?.resourceActivity || [];
 
   // Sort by operational priority: 1. In-Use match (checkedIn) -> 2. Upcoming booked -> 3. Maintenance -> 4. Idle
@@ -216,48 +218,43 @@ export function VenueOverviewLiveCourts({ items, overview, t }: VenueOverviewLiv
             return (
               <Card
                 key={court.resourceId || idx}
-                className="group relative flex flex-col justify-between overflow-hidden rounded-xl border border-nx-line bg-nx-surface transition-all hover:border-nx-line-hi hover:bg-nx-raised/40"
+                onClick={() => router.push(courtCalendarUrl)}
+                className="group relative flex flex-col justify-between overflow-hidden rounded-xl border border-nx-line bg-nx-surface transition-all hover:border-nx-line-hi hover:bg-nx-raised/40 cursor-pointer"
               >
-                {/* Court Thumbnail Image with Sport Court Markings Aesthetic — Clickable Link */}
-                <Link
-                  href={courtCalendarUrl}
-                  className="relative flex h-20 w-full flex-col justify-between overflow-hidden p-2 transition-opacity group-hover:opacity-95"
-                  style={{ background: sportInfo.gradient }}
-                  title={t("venueOverview.liveCourts.openCalendar", {
-                    defaultValue: "Open on Calendar",
-                  })}
-                >
-                  <div className="absolute inset-0 bg-black/20 backdrop-blur-[0.5px]" />
-                  {/* Subtle sports court line markings */}
-                  <div className="pointer-events-none absolute inset-x-2 inset-y-1 rounded-xs border border-white/20" />
-                  <div className="pointer-events-none absolute inset-x-2 top-1/2 -translate-y-1/2 border-t border-white/20" />
-
-                  <div className="relative z-10 flex items-center justify-between">
-                    <span className="rounded-xs bg-black/40 px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-wider text-white/90 backdrop-blur-xs">
-                      {sportInfo.label}
+                {/* Court Header: Clean Architectural Sport Header */}
+                <div className="relative flex h-14 w-full items-center justify-between border-b border-nx-line bg-nx-raised/40 px-3 py-2">
+                  <span className="inline-flex items-center rounded border border-nx-line bg-nx-surface px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-nx-ink">
+                    {sportInfo.label}
+                  </span>
+                  {isCheckedIn ? (
+                    <span className="inline-flex items-center gap-1.5 rounded-full border border-success/20 bg-success/10 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-success">
+                      <span className="size-1.5 rounded-full bg-success shadow-[0_0_6px_rgba(34,197,94,0.7)]" />
+                      LIVE
                     </span>
-                    {isCheckedIn && (
-                      <span className="flex items-center gap-1 rounded-xs bg-black/50 px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wider text-white backdrop-blur-xs">
-                        <span className="size-1.5 rounded-full bg-success shadow-[0_0_6px_rgba(34,197,94,0.9)]" />
-                        LIVE
-                      </span>
-                    )}
-                  </div>
-                </Link>
+                  ) : isNext ? (
+                    <span className="inline-flex items-center rounded-full border border-info/20 bg-info/10 px-2 py-0.5 text-[10px] font-semibold text-info">
+                      BOOKED
+                    </span>
+                  ) : (
+                    <span className="inline-flex items-center rounded-full border border-nx-line bg-nx-surfaceSubtle px-2 py-0.5 text-[10px] font-medium text-nx-ink-3">
+                      IDLE
+                    </span>
+                  )}
+                </div>
 
                 {/* Court Info */}
                 <div className="space-y-2 p-3">
                   <div className="flex items-center justify-between gap-1.5 min-w-0">
-                    <Link
-                      href={courtDetailUrl}
-                      className="truncate text-xs font-bold text-nx-ink flex-1 min-w-0 hover:text-nx-accent hover:underline"
+                    <span
+                      className="truncate text-xs font-bold text-nx-ink flex-1 min-w-0 group-hover:text-nx-accent"
                       title={court.resourceName}
                     >
                       {court.resourceName}
-                    </Link>
+                    </span>
 
                     {/* Functional 3-Dots Dropdown Menu */}
-                    <DropdownMenu>
+                    <div onClick={(e) => e.stopPropagation()}>
+                      <DropdownMenu>
                       <DropdownMenuTrigger asChild>
                         <Button
                           variant="ghost"
@@ -321,6 +318,7 @@ export function VenueOverviewLiveCourts({ items, overview, t }: VenueOverviewLiv
                         </DropdownMenuItem>
                       </DropdownMenuContent>
                     </DropdownMenu>
+                    </div>
                   </div>
 
                   {/* Status Pill & Match Progress */}

@@ -407,44 +407,44 @@ export function ImportDataModal({
             <div className="space-y-4">
               {/* Summary Badges */}
               <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-                <div className="rounded-xl border border-emerald-200 bg-emerald-50/50 p-3 dark:border-emerald-800/50 dark:bg-emerald-950/20">
-                  <div className="flex items-center gap-2 text-emerald-700 dark:text-emerald-400">
+                <div className="rounded-xl border border-success/20 bg-success/10 p-3">
+                  <div className="flex items-center gap-2 text-success">
                     <CheckCircle2 className="size-4" />
                     <span className="text-xs font-bold">{t("venueReports.import.validRows")}</span>
                   </div>
-                  <div className="mt-1 text-2xl font-bold text-emerald-800 dark:text-emerald-200">
+                  <div className="mt-1 text-2xl font-bold text-success">
                     {validationReport.validCount}
                   </div>
                 </div>
 
-                <div className="rounded-xl border border-amber-200 bg-amber-50/50 p-3 dark:border-amber-800/50 dark:bg-amber-950/20">
-                  <div className="flex items-center gap-2 text-amber-700 dark:text-amber-400">
+                <div className="rounded-xl border border-warning/20 bg-warning/10 p-3">
+                  <div className="flex items-center gap-2 text-warning">
                     <AlertTriangle className="size-4" />
                     <span className="text-xs font-bold">{t("venueReports.import.warnings")}</span>
                   </div>
-                  <div className="mt-1 text-2xl font-bold text-amber-800 dark:text-amber-200">
+                  <div className="mt-1 text-2xl font-bold text-warning">
                     {validationReport.warningCount}
                   </div>
                 </div>
 
-                <div className="rounded-xl border border-purple-200 bg-purple-50/50 p-3 dark:border-purple-800/50 dark:bg-purple-950/20">
-                  <div className="flex items-center gap-2 text-purple-700 dark:text-purple-400">
+                <div className="rounded-xl border border-info/20 bg-info/10 p-3">
+                  <div className="flex items-center gap-2 text-info">
                     <Copy className="size-4" />
                     <span className="text-xs font-bold">{t("venueReports.import.duplicates")}</span>
                   </div>
-                  <div className="mt-1 text-2xl font-bold text-purple-800 dark:text-purple-200">
+                  <div className="mt-1 text-2xl font-bold text-info">
                     {validationReport.duplicateCount}
                   </div>
                 </div>
 
-                <div className="rounded-xl border border-rose-200 bg-rose-50/50 p-3 dark:border-rose-800/50 dark:bg-rose-950/20">
-                  <div className="flex items-center gap-2 text-rose-700 dark:text-rose-400">
+                <div className="rounded-xl border border-destructive/20 bg-destructive/10 p-3">
+                  <div className="flex items-center gap-2 text-destructive">
                     <XCircle className="size-4" />
                     <span className="text-xs font-bold">
                       {t("venueReports.import.invalidRows")}
                     </span>
                   </div>
-                  <div className="mt-1 text-2xl font-bold text-rose-800 dark:text-rose-200">
+                  <div className="mt-1 text-2xl font-bold text-destructive">
                     {validationReport.invalidCount}
                   </div>
                 </div>
@@ -470,17 +470,17 @@ export function ImportDataModal({
                         </TableCell>
                         <TableCell>
                           {row.status === "valid" && (
-                            <Badge className="border-emerald-300 bg-emerald-500/10 text-[10px] text-emerald-600">
+                            <Badge className="border-success/20 bg-success/10 text-[10px] text-success">
                               {t("venueReports.import.valid")}
                             </Badge>
                           )}
                           {row.status === "warning" && (
-                            <Badge className="border-amber-300 bg-amber-500/10 text-[10px] text-amber-600">
+                            <Badge className="border-warning/20 bg-warning/10 text-[10px] text-warning">
                               {t("venueReports.import.warning")}
                             </Badge>
                           )}
                           {row.status === "duplicate" && (
-                            <Badge className="border-purple-300 bg-purple-500/10 text-[10px] text-purple-600">
+                            <Badge className="border-info/20 bg-info/10 text-[10px] text-info">
                               {t("venueReports.import.duplicate")}
                             </Badge>
                           )}
@@ -524,7 +524,7 @@ export function ImportDataModal({
                 </div>
               ) : importSummaryResult ? (
                 <div className="mx-auto max-w-md space-y-4">
-                  <div className="mx-auto flex size-12 items-center justify-center rounded-full bg-emerald-100 text-emerald-600 dark:bg-emerald-950/60">
+                  <div className="mx-auto flex size-12 items-center justify-center rounded-full border border-success/20 bg-success/10 text-success">
                     <CheckCircle2 className="size-6" />
                   </div>
                   <h3 className="text-lg font-bold text-nx-ink">
@@ -535,7 +535,7 @@ export function ImportDataModal({
                       <span className="text-nx-ink-2">
                         {t("venueReports.import.successfulRecords")}
                       </span>
-                      <span className="font-bold text-emerald-600">
+                      <span className="font-bold text-success">
                         {importSummaryResult.successCount}
                       </span>
                     </div>
@@ -543,7 +543,7 @@ export function ImportDataModal({
                       <span className="text-nx-ink-2">
                         {t("venueReports.import.failedRecords")}
                       </span>
-                      <span className="font-bold text-rose-600">
+                      <span className="font-bold text-destructive">
                         {importSummaryResult.errorCount}
                       </span>
                     </div>
