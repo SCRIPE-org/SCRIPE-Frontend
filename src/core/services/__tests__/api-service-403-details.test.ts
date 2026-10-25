@@ -262,25 +262,24 @@ describe("ApiService 403 handling", () => {
     });
   });
 
-  describe("Case 3 — unstructured 403 (unchanged)", () => {
-    it("hard-redirects to /not-authorized for an empty body", async () => {
-      // ASP.NET Core's own authorization middleware failing `[Authorize]`/`[AdminOnly]` writes no
-      // body at all — the host registers no custom IAuthorizationMiddlewareResultHandler.
+  describe("Case 3 — unstructured 403 (degraded inline / local recovery)", () => {
+    it("rejects without hard-redirecting to /not-authorized for an empty body", async () => {
       const rejection = await rejectionOf(handler, forbiddenError(undefined));
 
-      expect(location.href).toBe("/not-authorized");
+      expect(location.href).not.toBe("/not-authorized");
       expect(rejection.message).toBe("You do not have permission to perform this action.");
+      expect((rejection as any).status).toBe(403);
     });
 
-    it("hard-redirects for an `error` field that is not a tenant-context code", async () => {
-      // CloudflareOriginVerificationMiddleware's real body. It has an `error` field, so it is worth
-      // pinning that having `error` is not by itself enough to reach Case 1.
-      await rejectionOf(
+    it("rejects without hard-redirecting for an `error` field that is not a tenant-context code", async () => {
+      const rejection = await rejectionOf(
         handler,
         forbiddenError({ error: "forbidden", message: "Origin verification required." })
       );
 
-      expect(location.href).toBe("/not-authorized");
+      expect(location.href).not.toBe("/not-authorized");
+      expect(rejection.message).toBe("Origin verification required.");
+      expect((rejection as any).status).toBe(403);
     });
 
     it("does not redirect when already on /not-authorized", async () => {
@@ -289,7 +288,6 @@ describe("ApiService 403 handling", () => {
 
       await rejectionOf(handler, forbiddenError({}));
 
-      // Without this guard the app would reload itself forever on the error page.
       expect(location.href).toBe("http://localhost/not-authorized");
     });
 
@@ -302,13 +300,13 @@ describe("ApiService 403 handling", () => {
       expect(location.href).toBe("http://localhost/login");
     });
 
-    it("does not attach `details` — scope fence on the Case 2 change", async () => {
+    it("attaches details for caller error handling", async () => {
       const rejection = await rejectionOf(
         handler,
         forbiddenError({ message: "No structured code here." })
       );
 
-      expect(rejection.details).toBeUndefined();
+      expect(rejection.details).toBeDefined();
     });
   });
 

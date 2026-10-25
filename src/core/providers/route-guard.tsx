@@ -50,7 +50,6 @@ const PUBLIC_PAGES = [
   "/authorize",
   "/studio-preview",
   "/dashboard-preview",
-  "/venue",
   "/setup-account",
   // /change-password requires auth — listed as SYSTEM_PAGE below
   "/signup",
@@ -86,7 +85,6 @@ const SYSTEM_PAGES = [
   "/entitlements/signup-content", // Signup content management (no menu)
   "/plugins", // Dynamic plugin pages (no menu)
   "/marketplace", // Marketplace hub page (no menu)
-  "/venue", // Venue operations workspace
   "/party-kernel", // PartyKernel / Contacts workspace
 ];
 
@@ -209,8 +207,7 @@ export function RouteGuard({ children }: RouteGuardProps) {
           const workspaceRouteMap = useNavigationStore.getState().workspaceRouteMap;
           const allRoutes = Object.values(workspaceRouteMap).flat();
           targetPath =
-            allRoutes.find((r) => canAccessPage(r)) ||
-            (canAccessPage("/party-kernel/parties") ? "/party-kernel/parties" : "/overview");
+            allRoutes.find((r) => canAccessPage(r)) || "/hub";
         }
         router.replace(mcp ? "/change-password" : targetPath);
         return;

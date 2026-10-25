@@ -163,46 +163,37 @@ export function PermissionProvider({ children }: PermissionProviderProps) {
 
   const hasPermission = useCallback(
     (permission: PermissionCode): boolean => {
-      if (isPlatformSuperAdmin || isTenantSuperAdmin) {
+      if (isPlatformSuperAdmin) {
         return true;
       }
       return checkPermission(permissions, permission);
     },
-    [permissions, isPlatformSuperAdmin, isTenantSuperAdmin]
+    [permissions, isPlatformSuperAdmin]
   );
 
   const hasAnyPermission = useCallback(
     (requiredPermissions: PermissionCode[]): boolean => {
-      if (isPlatformSuperAdmin || isTenantSuperAdmin) {
+      if (isPlatformSuperAdmin) {
         return true;
       }
       return checkAnyPermission(permissions, requiredPermissions);
     },
-    [permissions, isPlatformSuperAdmin, isTenantSuperAdmin]
+    [permissions, isPlatformSuperAdmin]
   );
 
   const hasAllPermissions = useCallback(
     (requiredPermissions: PermissionCode[]): boolean => {
-      if (isPlatformSuperAdmin || isTenantSuperAdmin) {
+      if (isPlatformSuperAdmin) {
         return true;
       }
       return checkAllPermissions(permissions, requiredPermissions);
     },
-    [permissions, isPlatformSuperAdmin, isTenantSuperAdmin]
+    [permissions, isPlatformSuperAdmin]
   );
 
   const canAccessPage = useCallback(
     (path: string): boolean => {
-      if (isPlatformSuperAdmin || isTenantSuperAdmin) {
-        return true;
-      }
-
-      if (
-        path === "/venue" ||
-        path.startsWith("/venue/") ||
-        path === "/party-kernel" ||
-        path.startsWith("/party-kernel/")
-      ) {
+      if (isPlatformSuperAdmin) {
         return true;
       }
 
@@ -215,7 +206,7 @@ export function PermissionProvider({ children }: PermissionProviderProps) {
 
       return checkAllPermissions(permissions, requiredPermissions);
     },
-    [permissions, isPlatformSuperAdmin, isTenantSuperAdmin]
+    [permissions, isPlatformSuperAdmin]
   );
 
   const value = useMemo(
