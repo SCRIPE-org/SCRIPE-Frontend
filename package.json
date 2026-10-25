@@ -2,7 +2,7 @@
   "name": "scripe",
   "version": "0.1.0",
   "private": true,
-  "packageManager": "pnpm@9.15.4",
+  "packageManager": "pnpm@12.15.0",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
@@ -154,5 +154,12 @@
     "typescript": "^5",
     "vite": "^7.3.5",
     "vitest": "^4.1.2"
+  },
+  "devEngines": {
+    "runtime": {
+      "name": "node",
+      "version": "26.12.1",
+      "onFail": "download"
+    }
   }
 }

@@ -66,6 +66,9 @@ function loadDpapiTenantAdmins(): { alpha: DpapiTenantAdmin; beta: DpapiTenantAd
 }
 
 const TENANT_ADMINS = loadDpapiTenantAdmins();
+const PARTY_API_BASE_URL = (
+  process.env.PARTY_E2E_API_BASE_URL ?? process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:5035/api"
+).replace(/\/$/, "");
 
 /**
  * Real browser UI login through `/login` without injecting tokens into storage.
@@ -958,5 +961,53 @@ test.describe("Contacts & PartyKernel End-to-End Acceptance (Real UI Auth)", () 
     await deepRolesTab.click();
     await page.waitForLoadState("networkidle");
     await expect(page.locator("text=Customer").first()).toBeVisible({ timeout: 10_000 });
+  });
+
+  test("Quick Contact Lookup searches the authorized API result and opens its profile", async ({ page }) => {
+    await loginViaUi(page, TENANT_ADMINS.alpha);
+    const accessToken = await page.evaluate(() => sessionStorage.getItem("dev_access_token"));
+    expect(accessToken).toBeTruthy();
+
+    const fullName = `Quick Lookup ${randomUUID()}`;
+    let encryptedPartyId = "";
+    try {
+      const createResponse = await page.request.post(`${PARTY_API_BASE_URL}/v1/Parties/people`, {
+        headers: mutationHeaders(accessToken!, { "Idempotency-Key": `quick-lookup-${randomUUID()}` }),
+        data: { fullName },
+      });
+      expect([200, 201]).toContain(createResponse.status());
+      encryptedPartyId = (await createResponse.json()).id;
+      expect(encryptedPartyId).toBeTruthy();
+
+      await page.goto("/party-kernel/parties");
+      await expect(page.getByTestId("open-party-picker-btn")).toBeVisible();
+      await page.getByTestId("open-party-picker-btn").click();
+
+      const searchInput = page.locator("[role='combobox'][aria-controls='quick-lookup-listbox']");
+      await expect(searchInput).toBeVisible();
+      const lookupResponsePromise = page.waitForResponse((response) =>
+        response.url().includes("/api/v1/Parties/people/lookup") &&
+        response.request().method() === "GET"
+      );
+      await searchInput.fill(fullName);
+      const lookupResponse = await lookupResponsePromise;
+      expect(lookupResponse.status()).toBe(200);
+      const lookupBody = await lookupResponse.json();
+      expect(lookupBody.items.some((item: { id: string }) => item.id === encryptedPartyId)).toBe(true);
+
+      const matchingOption = page.getByRole("option").filter({ hasText: fullName });
+      await expect(matchingOption).toBeVisible();
+      await matchingOption.click();
+      await page.waitForURL((url) => url.pathname.endsWith(`/party-kernel/parties/${encryptedPartyId}`));
+      await expect(page.getByText(fullName, { exact: true }).first()).toBeVisible();
+    } finally {
+      if (encryptedPartyId) {
+        const deleteResponse = await page.request.delete(
+          `${PARTY_API_BASE_URL}/v1/Parties/${encryptedPartyId}`,
+          { headers: mutationHeaders(accessToken!) }
+        );
+        expect([200, 204]).toContain(deleteResponse.status());
+      }
+    }
   });
 });

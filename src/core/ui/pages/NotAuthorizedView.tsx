@@ -94,7 +94,12 @@ export default function NotAuthorizedView() {
               <Button
                 onClick={() => {
                   appLogger.ui("Home button clicked");
-                  router.push("/");
+                  const defaultPath = useAppStore.getState().defaultRedirectPath;
+                  const safeTarget =
+                    defaultPath && defaultPath !== "/" && defaultPath !== "/overview"
+                      ? defaultPath
+                      : "/hub";
+                  router.push(safeTarget);
                 }}
                 variant="outline"
                 size="lg"

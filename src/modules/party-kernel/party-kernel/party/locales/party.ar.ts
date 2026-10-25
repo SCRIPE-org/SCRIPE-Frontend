@@ -264,7 +264,7 @@ export const ar = {
       enterIdManually: "إدخال المعرف يدوياً",
       usePicker: "البحث في الدليل",
       enterEncryptedIdHint: "أدخل المعرف المرجعي المشفر للطرف الهدف (شخص أو مؤسسة).",
-      selectTargetPartyPlaceholder: "البحث بالاسم أو البريد أو الهاتف...",
+      selectTargetPartyPlaceholder: "البحث عن جهات الاتصال بالاسم...",
       targetPartyRequired: "يرجى اختيار جهة اتصال أو إدخال المعرف",
     },
     toast: {

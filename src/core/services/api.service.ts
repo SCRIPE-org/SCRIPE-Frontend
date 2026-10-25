@@ -397,15 +397,13 @@ export class ApiService implements IApiService {
           // body), or a controller not yet migrated to ErrorResponse. Treated
           // conservatively as "you have no business being on this page" and hard
           // redirected, same as before.
-          appLogger.warn("Permission denied (403) — redirecting to /not-authorized");
-          if (
-            typeof window !== "undefined" &&
-            !window.location.pathname.startsWith("/not-authorized") &&
-            !window.location.pathname.startsWith("/login")
-          ) {
-            window.location.href = "/not-authorized";
-          }
-          return Promise.reject(new Error(data.message || translateCore("errors.auth.forbidden")));
+          appLogger.warn(`API permission denied (403) on ${error.config?.url}`);
+          const forbiddenError = new Error(
+            data.message || translateCore("errors.auth.forbidden")
+          ) as Error & { details?: unknown; status?: number };
+          forbiddenError.details = error.response?.data ?? data;
+          forbiddenError.status = 403;
+          return Promise.reject(forbiddenError);
         }
 
         // Log other errors
