@@ -144,8 +144,8 @@ export function PermissionProvider({ children }: PermissionProviderProps) {
       ) ||
       user?.isProtected === true ||
       (user as any)?.isSuperAdmin === true ||
-      user?.adminTypeName?.toLowerCase() === "system super admin" ||
-      user?.username === "superadmin"
+      user?.adminTypeName?.toLowerCase() === "system super admin"
+
     );
   }, [permissions, roles, user]);
 

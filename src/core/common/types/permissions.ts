@@ -139,12 +139,31 @@ export function matchesPermission(
 }
 
 /**
- * Check if user has a specific permission
+ * Check if user has a specific permission.
+ * Supports '|' alternatives (OR logic) and '&' / '+' combinations (AND logic).
  */
 export function hasPermission(
   userPermissions: PermissionCode[],
   requiredPermission: PermissionCode
 ): boolean {
+  if (!requiredPermission || requiredPermission.trim() === '') return true;
+
+  if (requiredPermission.includes('|')) {
+    const alternatives = requiredPermission
+      .split('|')
+      .map((s) => s.trim())
+      .filter(Boolean);
+    return alternatives.some((alt) => hasPermission(userPermissions, alt));
+  }
+
+  if (requiredPermission.includes('&') || requiredPermission.includes('+')) {
+    const tokens = requiredPermission
+      .split(/[&+]/)
+      .map((s) => s.trim())
+      .filter(Boolean);
+    return tokens.every((token) => hasPermission(userPermissions, token));
+  }
+
   return userPermissions.some((p) => matchesPermission(p, requiredPermission));
 }
 
@@ -217,7 +236,9 @@ export const PAGE_PERMISSIONS: Record<string, PermissionCode[]> = {
   "/settings/permissions": [SYSTEM_PERMISSIONS.PERMISSIONS_VIEW],
   "/tenants": [SYSTEM_PERMISSIONS.TENANTS_VIEW],
   "/tenants/create": [SYSTEM_PERMISSIONS.TENANTS_CREATE],
-  "/tenants/[id]": [SYSTEM_PERMISSIONS.TENANTS_VIEW],
+  "/tenants/[id]": [
+    `${SYSTEM_PERMISSIONS.TENANTS_VIEW}|${SYSTEM_PERMISSIONS.TENANTS_VIEW_SELF}|${SYSTEM_PERMISSIONS.TENANTS_VIEW_DETAILS}`,
+  ],
   "/domains": [SYSTEM_PERMISSIONS.TENANTS_VIEW],
   "/users": [SYSTEM_PERMISSIONS.USERS_VIEW],
   "/user-groups": [SYSTEM_PERMISSIONS.USER_GROUPS_VIEW],
@@ -230,7 +251,7 @@ export const PAGE_PERMISSIONS: Record<string, PermissionCode[]> = {
   "/settings/oauth-apps/[id]": [SYSTEM_PERMISSIONS.OAUTH_APPS_VIEW],
 
   // Monitoring & Analytics pages
-  "/overview": [SYSTEM_PERMISSIONS.DASHBOARD_VIEW],
+  "/overview": [], // Shared authenticated overview
   "/dashboard": [SYSTEM_PERMISSIONS.DASHBOARD_VIEW],
   "/audit": [SYSTEM_PERMISSIONS.AUDIT_VIEW],
   "/security": [SYSTEM_PERMISSIONS.SECURITY_VIEW],
@@ -253,6 +274,7 @@ export const PAGE_PERMISSIONS: Record<string, PermissionCode[]> = {
   "/entitlements/editions/[id]": [SYSTEM_PERMISSIONS.EDITIONS_VIEW],
   "/entitlements/features": [SYSTEM_PERMISSIONS.FEATURES_VIEW],
 
+  "/entitlements/subscriptions": [SYSTEM_PERMISSIONS.SUBSCRIPTIONS_VIEW],
   "/entitlements/subscriptions/[tenantId]": [SYSTEM_PERMISSIONS.SUBSCRIPTIONS_VIEW],
   "/entitlements/overrides": [SYSTEM_PERMISSIONS.FEATURES_OVERRIDE],
   "/entitlements/overrides/[tenantId]": [SYSTEM_PERMISSIONS.FEATURES_OVERRIDE],

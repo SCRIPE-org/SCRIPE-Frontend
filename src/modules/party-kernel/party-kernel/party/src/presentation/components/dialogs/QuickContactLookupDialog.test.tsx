@@ -49,7 +49,7 @@ vi.mock("@core/providers/i18n-provider", () => ({
     t: (key: string) => {
       const translations: Record<string, string> = {
         "party.picker.findExisting": "Quick Contact Lookup",
-        "party.picker.searchPlaceholder": "Search contacts by name, email, or telephone...",
+        "party.picker.searchPlaceholder": "Search contacts by name...",
         "party.picker.typeFilterAll": "All Contacts",
         "party.picker.typeFilterPerson": "People",
         "party.picker.typeFilterOrg": "Organizations",
@@ -137,6 +137,7 @@ describe("QuickContactLookupDialog Component", () => {
     });
 
     expect(screen.getByRole("combobox")).toBeInTheDocument();
+    expect(screen.getByRole("combobox")).toHaveAttribute("placeholder", "Search contacts by name...");
     expect(screen.getByRole("button", { name: /all contacts/i })).toBeInTheDocument();
     expect(screen.getByRole("button", { name: /people/i })).toBeInTheDocument();
     expect(screen.getByRole("button", { name: /organizations/i })).toBeInTheDocument();

@@ -266,7 +266,7 @@ export const en = {
       usePicker: "Search Directory",
       enterEncryptedIdHint:
         "Enter canonical encrypted Party ID of the target person or organization.",
-      selectTargetPartyPlaceholder: "Search by name, email, or phone...",
+      selectTargetPartyPlaceholder: "Search contacts by name...",
       targetPartyRequired: "Please select a target contact or enter an ID",
     },
     toast: {

@@ -80,12 +80,12 @@ const SYSTEM_PAGES = [
   "/profile/settings",
   "/settings",
   "/overview",
-  "/entitlements/subscriptions", // Dynamic detail page (no menu)
-  "/entitlements/overrides", // Dynamic overrides page (no menu)
-  "/entitlements/signup-content", // Signup content management (no menu)
-  "/plugins", // Dynamic plugin pages (no menu)
-  "/marketplace", // Marketplace hub page (no menu)
-  "/party-kernel", // PartyKernel / Contacts workspace
+
+
+
+
+
+
 ];
 
 function isSystemPage(pathname: string): boolean {
@@ -204,7 +204,7 @@ export function RouteGuard({ children }: RouteGuardProps) {
         let targetPath =
           safeRedirect || (!rawDefault || rawDefault === "/" ? "/overview" : rawDefault);
         if (targetPath === "/overview" && !canAccessPage("/overview")) {
-          const workspaceRouteMap = useNavigationStore.getState().workspaceRouteMap;
+          const workspaceRouteMap = useNavigationStore.getState().workspaceRouteMap || {};
           const allRoutes = Object.values(workspaceRouteMap).flat();
           targetPath =
             allRoutes.find((r) => canAccessPage(r)) || "/hub";
@@ -258,7 +258,7 @@ export function RouteGuard({ children }: RouteGuardProps) {
           appLogger.debug(
             "[RouteGuard] Access denied by permission system — checking for alternative workspace pages"
           );
-          const workspaceRouteMap = useNavigationStore.getState().workspaceRouteMap;
+          const workspaceRouteMap = useNavigationStore.getState().workspaceRouteMap || {};
           let currentWorkspaceKey: string | null = null;
           for (const [wsKey, routes] of Object.entries(workspaceRouteMap)) {
             if (
@@ -283,8 +283,8 @@ export function RouteGuard({ children }: RouteGuardProps) {
           }
           const allRoutes = Object.values(workspaceRouteMap).flat();
           const fallbackRoute =
-            allRoutes.find((r) => canAccessPage(r)) ||
-            (canAccessPage("/party-kernel/parties") ? "/party-kernel/parties" : null);
+            allRoutes.find((r) => canAccessPage(r));
+
           if (fallbackRoute && fallbackRoute !== pathname) {
             appLogger.debug(
               `[RouteGuard] Redirecting to global accessible route: ${fallbackRoute}`
@@ -321,7 +321,7 @@ export function RouteGuard({ children }: RouteGuardProps) {
           appLogger.debug(
             "[RouteGuard] Access denied by navigation store — checking for alternative workspace pages"
           );
-          const workspaceRouteMap = useNavigationStore.getState().workspaceRouteMap;
+          const workspaceRouteMap = useNavigationStore.getState().workspaceRouteMap || {};
           let currentWorkspaceKey: string | null = null;
           for (const [wsKey, routes] of Object.entries(workspaceRouteMap)) {
             if (
@@ -346,10 +346,10 @@ export function RouteGuard({ children }: RouteGuardProps) {
           }
           const allRoutes = Object.values(workspaceRouteMap).flat();
           const fallbackRoute =
-            allRoutes.find((r) => canAccessPage(r) && hasRouteAccess(r)) ||
-            (canAccessPage("/party-kernel/parties") && hasRouteAccess("/party-kernel/parties")
-              ? "/party-kernel/parties"
-              : null);
+            allRoutes.find((r) => canAccessPage(r) && hasRouteAccess(r));
+
+
+
           if (fallbackRoute && fallbackRoute !== pathname) {
             appLogger.debug(
               `[RouteGuard] Redirecting to global accessible navigation route: ${fallbackRoute}`
