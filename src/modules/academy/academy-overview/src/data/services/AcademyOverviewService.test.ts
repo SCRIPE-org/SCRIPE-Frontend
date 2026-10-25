@@ -67,4 +67,24 @@ describe("AcademyOverviewService", () => {
     expect(result.stage).toBe("unauthorized");
     expect(result.isEnabled).toBe(false);
   });
+
+  it("handles axios-style response.status error by returning unauthorized stage", async () => {
+    const axiosError = {
+      message: "Request failed with status code 403",
+      response: { status: 403 },
+    };
+    const mockApi = {
+      get: vi.fn().mockRejectedValue(axiosError),
+      post: vi.fn(),
+      put: vi.fn(),
+      patch: vi.fn(),
+      delete: vi.fn(),
+    } as unknown as IApiService;
+
+    const service = new AcademyOverviewService(mockApi);
+    const result = await service.getOverview();
+
+    expect(result.stage).toBe("unauthorized");
+    expect(result.isEnabled).toBe(false);
+  });
 });

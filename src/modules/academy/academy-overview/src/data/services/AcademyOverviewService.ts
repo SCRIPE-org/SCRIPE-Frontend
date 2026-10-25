@@ -42,7 +42,14 @@ export class AcademyOverviewService implements IAcademyOverviewService {
       };
     } catch (err: unknown) {
       const status =
-        err && typeof err === "object" && "status" in err ? (err as { status: number }).status : null;
+        err && typeof err === "object"
+          ? "status" in err && typeof (err as { status: unknown }).status === "number"
+            ? (err as { status: number }).status
+            : "response" in err &&
+              typeof (err as { response?: { status?: unknown } }).response?.status === "number"
+            ? (err as { response: { status: number } }).response.status
+            : null
+          : null;
       const isUnauthorized = status === 401 || status === 403;
 
       return {
