@@ -10,13 +10,6 @@ test.describe("Enterprise Access Foundation: Real Browser Acceptance", () => {
   const superAdminEmail = "admin-seif@scripe.org";
 
   test.beforeEach(async ({ context, page }) => {
-    // Inject a unique random client IP per test to prevent fixed-window rate limiter throttling
-    const randomIp = `10.${Math.floor(Math.random() * 200) + 1}.${Math.floor(Math.random() * 200) + 1}.${Math.floor(Math.random() * 200) + 1}`;
-    await page.route("**/api/v1/auth/**", async (route) => {
-      const headers = { ...route.request().headers(), "x-forwarded-for": randomIp };
-      await route.continue({ headers });
-    });
-
     await context.clearCookies();
     await page.goto("/login");
     await page.evaluate(() => {
