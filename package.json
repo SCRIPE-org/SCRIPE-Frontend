@@ -145,7 +145,7 @@
     "autoprefixer": "^10.4.27",
     "husky": "^9.1.7",
     "jsdom": "^27.4.0",
-    "lint-staged": "^16.4.0",
+    "lint-staged": "^17.6.0",
     "msw": "^2.12.14",
     "oxlint": "^1.89.0",
     "postcss": "^8.5.10",
