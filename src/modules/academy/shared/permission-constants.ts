@@ -8,6 +8,9 @@ export const ACADEMY_PERMISSIONS = {
   // ── Overview & Command Center ──
   ACADEMY_OVERVIEW_VIEW: "academy-overview.view",
 
+  // ── Safeguarding & Child Protection ──
+  ACADEMY_SAFEGUARDING_VIEW: "academy-safeguarding.view",
+
   // ── Programs ──
   ACADEMY_PROGRAMS_VIEW: "academy-programs.view",
   ACADEMY_PROGRAMS_CREATE: "academy-programs.create",

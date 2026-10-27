@@ -4,6 +4,7 @@ import { ACADEMY_PERMISSIONS } from "./permission-constants";
 describe("ACADEMY_PERMISSIONS", () => {
   it("defines all canonical academy permissions matching backend catalog", () => {
     expect(ACADEMY_PERMISSIONS.ACADEMY_OVERVIEW_VIEW).toBe("academy-overview.view");
+    expect(ACADEMY_PERMISSIONS.ACADEMY_SAFEGUARDING_VIEW).toBe("academy-safeguarding.view");
     expect(ACADEMY_PERMISSIONS.ACADEMY_PROGRAMS_VIEW).toBe("academy-programs.view");
     expect(ACADEMY_PERMISSIONS.ACADEMY_PROGRAMS_CREATE).toBe("academy-programs.create");
     expect(ACADEMY_PERMISSIONS.ACADEMY_OFFERINGS_VIEW).toBe("academy-offerings.view");
