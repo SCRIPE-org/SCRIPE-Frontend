@@ -11,6 +11,12 @@ export const ACADEMY_PERMISSIONS = {
   // ── Safeguarding & Child Protection ──
   ACADEMY_SAFEGUARDING_VIEW: "academy-safeguarding.view",
 
+  // ── Athletes & Families Intake ──
+  ACADEMY_ATHLETES_VIEW: "academy-athletes.view",
+  ACADEMY_ATHLETES_CREATE: "academy-athletes.create",
+  ACADEMY_ATHLETES_UPDATE: "academy-athletes.update",
+  ACADEMY_ATHLETES_DELETE: "academy-athletes.delete",
+
   // ── Programs ──
   ACADEMY_PROGRAMS_VIEW: "academy-programs.view",
   ACADEMY_PROGRAMS_CREATE: "academy-programs.create",

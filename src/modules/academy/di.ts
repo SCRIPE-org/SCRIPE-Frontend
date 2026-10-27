@@ -28,12 +28,17 @@ import { ExternalLocationsService } from "./locations/src/data/services/External
 import { ExternalLocationsRepository } from "./locations/src/data/repositories/ExternalLocationsRepository";
 import type { IExternalLocationsRepository } from "./locations/src/domain/interfaces/IExternalLocationsRepository";
 
+import { AcademyAthletesService } from "./athletes/src/data/services/AcademyAthletesService";
+import { AcademyAthletesRepository } from "./athletes/src/data/repositories/AcademyAthletesRepository";
+import type { IAcademyAthletesRepository } from "./athletes/src/domain/interfaces/IAcademyAthletesRepository";
+
 export interface IAcademyServiceLocator {
   overviewRepository: IAcademyOverviewRepository;
   programsRepository: IAcademyProgramsRepository;
   offeringsRepository: IProgramOfferingsRepository;
   seasonsRepository: IAcademySeasonsRepository;
   locationsRepository: IExternalLocationsRepository;
+  athletesRepository: IAcademyAthletesRepository;
 }
 
 class AcademyContainer implements IAcademyServiceLocator {
@@ -42,6 +47,7 @@ class AcademyContainer implements IAcademyServiceLocator {
   private _offeringsRepository?: IProgramOfferingsRepository;
   private _seasonsRepository?: IAcademySeasonsRepository;
   private _locationsRepository?: IExternalLocationsRepository;
+  private _athletesRepository?: IAcademyAthletesRepository;
 
   get overviewRepository(): IAcademyOverviewRepository {
     if (!this._overviewRepository) {
@@ -86,6 +92,15 @@ class AcademyContainer implements IAcademyServiceLocator {
       this._locationsRepository = new ExternalLocationsRepository(service);
     }
     return this._locationsRepository;
+  }
+
+  get athletesRepository(): IAcademyAthletesRepository {
+    if (!this._athletesRepository) {
+      const api = getModuleApiService("ACADEMY");
+      const service = new AcademyAthletesService(api);
+      this._athletesRepository = new AcademyAthletesRepository(service);
+    }
+    return this._athletesRepository;
   }
 }
 
