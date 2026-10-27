@@ -32,6 +32,14 @@ import { AcademyAthletesService } from "./athletes/src/data/services/AcademyAthl
 import { AcademyAthletesRepository } from "./athletes/src/data/repositories/AcademyAthletesRepository";
 import type { IAcademyAthletesRepository } from "./athletes/src/domain/interfaces/IAcademyAthletesRepository";
 
+import { AcademyTrialsService } from "./trials/src/data/services/AcademyTrialsService";
+import { AcademyTrialsRepository } from "./trials/src/data/repositories/AcademyTrialsRepository";
+import type { IAcademyTrialsRepository } from "./trials/src/domain/interfaces/IAcademyTrialsRepository";
+
+import { AcademyEnrollmentsService } from "./enrollments/src/data/services/AcademyEnrollmentsService";
+import { AcademyEnrollmentsRepository } from "./enrollments/src/data/repositories/AcademyEnrollmentsRepository";
+import type { IAcademyEnrollmentsRepository } from "./enrollments/src/domain/interfaces/IAcademyEnrollmentsRepository";
+
 export interface IAcademyServiceLocator {
   overviewRepository: IAcademyOverviewRepository;
   programsRepository: IAcademyProgramsRepository;
@@ -39,6 +47,8 @@ export interface IAcademyServiceLocator {
   seasonsRepository: IAcademySeasonsRepository;
   locationsRepository: IExternalLocationsRepository;
   athletesRepository: IAcademyAthletesRepository;
+  trialsRepository: IAcademyTrialsRepository;
+  enrollmentsRepository: IAcademyEnrollmentsRepository;
 }
 
 class AcademyContainer implements IAcademyServiceLocator {
@@ -48,6 +58,8 @@ class AcademyContainer implements IAcademyServiceLocator {
   private _seasonsRepository?: IAcademySeasonsRepository;
   private _locationsRepository?: IExternalLocationsRepository;
   private _athletesRepository?: IAcademyAthletesRepository;
+  private _trialsRepository?: IAcademyTrialsRepository;
+  private _enrollmentsRepository?: IAcademyEnrollmentsRepository;
 
   get overviewRepository(): IAcademyOverviewRepository {
     if (!this._overviewRepository) {
@@ -101,6 +113,24 @@ class AcademyContainer implements IAcademyServiceLocator {
       this._athletesRepository = new AcademyAthletesRepository(service);
     }
     return this._athletesRepository;
+  }
+
+  get trialsRepository(): IAcademyTrialsRepository {
+    if (!this._trialsRepository) {
+      const api = getModuleApiService("ACADEMY");
+      const service = new AcademyTrialsService(api);
+      this._trialsRepository = new AcademyTrialsRepository(service);
+    }
+    return this._trialsRepository;
+  }
+
+  get enrollmentsRepository(): IAcademyEnrollmentsRepository {
+    if (!this._enrollmentsRepository) {
+      const api = getModuleApiService("ACADEMY");
+      const service = new AcademyEnrollmentsService(api);
+      this._enrollmentsRepository = new AcademyEnrollmentsRepository(service);
+    }
+    return this._enrollmentsRepository;
   }
 }
 

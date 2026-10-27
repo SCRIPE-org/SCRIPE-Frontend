@@ -6,3 +6,5 @@ export * from "./offerings";
 export * from "./seasons";
 export * from "./locations";
 export * from "./athletes";
+export * from "./trials";
+export * from "./enrollments";
