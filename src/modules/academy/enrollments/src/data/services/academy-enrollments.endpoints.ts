@@ -11,4 +11,5 @@ export const ACADEMY_ENROLLMENTS_ENDPOINTS = {
   GET_BY_ID: (id: string) => `/api/v1/academy/enrollments/${id}`,
   CREATE: () => "/api/v1/academy/enrollments",
   FINANCE_HANDOFF: (id: string) => `/api/v1/academy/enrollments/${id}/finance-handoff`,
+  ACTIVATE: (id: string) => `/api/v1/academy/enrollments/${id}/activate`,
 };

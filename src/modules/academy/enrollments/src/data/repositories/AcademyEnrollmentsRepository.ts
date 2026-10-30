@@ -24,4 +24,8 @@ export class AcademyEnrollmentsRepository implements IAcademyEnrollmentsReposito
   async handoffToFinance(enrollmentId: string, payload?: FinanceHandoffPayload): Promise<AcademyEnrollment> {
     return await this.service.handoffToFinance(enrollmentId, payload);
   }
+
+  async activateEnrollment(enrollmentId: string): Promise<AcademyEnrollment> {
+    return await this.service.activateEnrollment(enrollmentId);
+  }
 }

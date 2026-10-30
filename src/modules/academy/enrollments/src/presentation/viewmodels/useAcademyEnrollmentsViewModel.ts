@@ -63,6 +63,24 @@ export function useAcademyEnrollmentsViewModel(repository: IAcademyEnrollmentsRe
     }
   }, [repository, selectedEnrollment]);
 
+  const activateEnrollment = useCallback(async (enrollmentId: string) => {
+    setLoading(true);
+    setError(null);
+    try {
+      const updated = await repository.activateEnrollment(enrollmentId);
+      setEnrollments(prev => prev.map(e => (e.id === enrollmentId ? updated : e)));
+      if (selectedEnrollment?.id === enrollmentId) setSelectedEnrollment(updated);
+      setSuccessMessage("Enrollment activated successfully.");
+      return updated;
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : "Failed to activate enrollment";
+      setError(msg);
+      throw err;
+    } finally {
+      setLoading(false);
+    }
+  }, [repository, selectedEnrollment]);
+
   useEffect(() => {
     fetchEnrollments(undefined, undefined, statusFilter, billingFilter);
   }, [fetchEnrollments, statusFilter, billingFilter]);
@@ -80,6 +98,7 @@ export function useAcademyEnrollmentsViewModel(repository: IAcademyEnrollmentsRe
     setBillingFilter,
     fetchEnrollments,
     createEnrollment,
-    handoffToFinance
+    handoffToFinance,
+    activateEnrollment
   };
 }

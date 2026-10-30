@@ -311,10 +311,21 @@ export function AcademyEnrollmentsView() {
                       {isAr ? "إصدار فاتورة مالية" : "Handoff to Finance"}
                     </Button>
                   )}
-                  {enrollment.billingStatus === "Invoiced" && (
+                  {canUpdate && enrollment.status === "PendingFinance" && enrollment.billingStatus === "Invoiced" && (
+                    <Button
+                      size="sm"
+                      variant="default"
+                      className="text-xs h-8 gap-1 bg-green-600 hover:bg-green-700 text-white"
+                      onClick={() => vm.activateEnrollment(enrollment.id)}
+                    >
+                      <CheckCircle2 className="h-3 w-3" />
+                      {isAr ? "تفعيل التسجيل" : "Activate"}
+                    </Button>
+                  )}
+                  {enrollment.status === "Active" && (
                     <Badge variant="outline" className="text-xs text-green-700 bg-green-50/50">
                       <CheckCircle2 className="h-3 w-3 mr-1" />
-                      {isAr ? "مفوتر بنجاح" : "Invoiced"}
+                      {isAr ? "نشط ومفعل" : "Active"}
                     </Badge>
                   )}
                 </div>

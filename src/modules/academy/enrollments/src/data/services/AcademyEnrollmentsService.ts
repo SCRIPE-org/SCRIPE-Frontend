@@ -29,4 +29,9 @@ export class AcademyEnrollmentsService implements IAcademyEnrollmentsService {
     const url = ACADEMY_ENROLLMENTS_ENDPOINTS.FINANCE_HANDOFF(enrollmentId);
     return await this.api.post<AcademyEnrollment>(url, payload || {});
   }
+
+  async activateEnrollment(enrollmentId: string): Promise<AcademyEnrollment> {
+    const url = ACADEMY_ENROLLMENTS_ENDPOINTS.ACTIVATE(enrollmentId);
+    return await this.api.post<AcademyEnrollment>(url, {});
+  }
 }

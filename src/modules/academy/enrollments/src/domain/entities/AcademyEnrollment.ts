@@ -22,6 +22,8 @@ export interface AcademyEnrollment {
   enrollmentDate: string;
   status: EnrollmentStatus;
   catalogPriceId?: string | null;
+  payerPartyId?: string | null;
+  trialId?: string | null;
   priceAmount: number;
   priceCurrency: string;
   billingStatus: BillingStatus;
@@ -33,6 +35,7 @@ export interface CreateEnrollmentPayload {
   athleteId: string;
   offeringId: string;
   catalogPriceId?: string | null;
+  trialId?: string | null;
   priceAmount: number;
   priceCurrency?: string;
   notes?: string | null;
