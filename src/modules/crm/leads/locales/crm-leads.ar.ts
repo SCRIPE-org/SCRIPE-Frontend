@@ -105,9 +105,9 @@ export const ar = {
       dealKindLabel: "نوع الصفقة",
       dealKinds: {
         newBusiness: "أعمال جديدة",
-        upsell: "ترقية",
-        renewal: "تجديد",
         expansion: "توسع",
+        renewal: "تجديد",
+        services: "خدمات",
       },
       rationaleLabel: "مبررات التحويل",
       rationalePlaceholder: "المبررات التجارية، الملاءمة الاستراتيجية، أو المتطلبات الرئيسية...",

@@ -397,7 +397,9 @@ export function LeadsView() {
           label: t("crmLeads.actions.linkParty"),
           icon: <LinkIcon className="size-3.5" />,
           onClick: (lead: CrmLead) => openLinkPartyDialog(lead),
-          show: (lead: CrmLead) => !lead.organizationPartyId && !lead.personPartyId,
+          show: (lead: CrmLead) =>
+            lead.status !== "Converted" &&
+            lead.status !== "Disqualified",
         },
         {
           label: t("crmLeads.actions.convert"),

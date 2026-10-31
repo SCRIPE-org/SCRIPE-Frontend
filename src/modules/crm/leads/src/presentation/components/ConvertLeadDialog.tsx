@@ -61,9 +61,9 @@ export function ConvertLeadDialog({
 
   const dealKinds: { key: DealKind; label: string }[] = [
     { key: "NewBusiness", label: t("crmLeads.conversion.dealKinds.newBusiness") || "New Business" },
-    { key: "Upsell", label: t("crmLeads.conversion.dealKinds.upsell") || "Upsell" },
-    { key: "Renewal", label: t("crmLeads.conversion.dealKinds.renewal") || "Renewal" },
     { key: "Expansion", label: t("crmLeads.conversion.dealKinds.expansion") || "Expansion" },
+    { key: "Renewal", label: t("crmLeads.conversion.dealKinds.renewal") || "Renewal" },
+    { key: "Services", label: t("crmLeads.conversion.dealKinds.services") || "Services" },
   ];
 
   const handleSubmit = async (e: React.FormEvent) => {

@@ -4,7 +4,7 @@
 
 export type LeadStatus = "New" | "Working" | "Qualified" | "Converted" | "Disqualified";
 export type QualificationDecision = "Qualified" | "Disqualified";
-export type DealKind = "NewBusiness" | "Upsell" | "Renewal" | "Expansion";
+export type DealKind = "NewBusiness" | "Expansion" | "Renewal" | "Services";
 
 export interface CrmLead {
   id: string;

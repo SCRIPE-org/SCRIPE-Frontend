@@ -105,9 +105,9 @@ export const en = {
       dealKindLabel: "Deal Kind",
       dealKinds: {
         newBusiness: "New Business",
-        upsell: "Upsell",
-        renewal: "Renewal",
         expansion: "Expansion",
+        renewal: "Renewal",
+        services: "Services",
       },
       rationaleLabel: "Conversion Rationale",
       rationalePlaceholder: "Commercial justification, strategic fit, or key requirements...",
