@@ -2,6 +2,8 @@
 
 import { useState, useRef } from "react";
 import { Plus } from "lucide-react";
+import { LoadingSpinner } from "@core/ui/loading-spinner";
+import { extractCourtBio } from "../../domain/court-photos";
 import { Button } from "@core/ui/button";
 import { Input } from "@core/ui/input";
 import { Label } from "@core/ui/label";
@@ -24,28 +26,24 @@ export function ResourceGeneralTab({ vm }: Props) {
     vm.resource?.capacity?.maxConcurrentUsage ?? vm.resource?.unitCount ?? 4
   );
   const [description, setDescription] = useState(
-    vm.resource?.description ?? ""
+    extractCourtBio(vm.resource?.description)
   );
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const [courtPhotos, setCourtPhotos] = useState<string[]>([
-    "/images/venue/padel-court-indoor.svg",
-    "/images/venue/padel-court-outdoor.svg",
-    "/images/venue/football-turf-night.svg",
-  ]);
-  const [activePhoto, setActivePhoto] = useState<string>("/images/venue/padel-court-indoor.svg");
-  const handlePhotoSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+
+  const handlePhotoSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      const previewUrl = URL.createObjectURL(file);
-      setCourtPhotos((prev) => [previewUrl, ...prev]);
-      setActivePhoto(previewUrl);
+      await vm.uploadCourtPhoto(file);
+      if (e.target) {
+        e.target.value = "";
+      }
     }
   };
 
   const handleCancel = () => {
     setName(vm.resource?.name ?? "");
     setCapacity(vm.resource?.capacity?.maxConcurrentUsage ?? vm.resource?.unitCount ?? 4);
-    setDescription(vm.resource?.description ?? "");
+    setDescription(extractCourtBio(vm.resource?.description));
   };
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -72,9 +70,9 @@ export function ResourceGeneralTab({ vm }: Props) {
       {/* Left Column: Court Photo Gallery matching approved reference */}
       <div className="space-y-3 lg:col-span-5">
         {/* Main Large Court Photo */}
-        <div className="border-nx-border group relative flex h-64 w-full flex-col justify-between overflow-hidden rounded-2xl border bg-nx-raised p-4 shadow-sm sm:h-72">
+        <div className="border-nx-line group relative flex h-64 w-full flex-col justify-between overflow-hidden rounded-2xl border bg-nx-raised p-4 shadow-sm sm:h-72">
           <img
-            src={activePhoto}
+            src={vm.activePhoto}
             alt="Court Preview"
             className="absolute inset-0 size-full object-cover transition-transform duration-300 group-hover:scale-105"
           />
@@ -94,12 +92,12 @@ export function ResourceGeneralTab({ vm }: Props) {
 
         {/* Thumbnail Row */}
         <div className="grid grid-cols-4 gap-2.5">
-          {courtPhotos.slice(0, 3).map((photo, idx) => (
+          {vm.courtPhotos.slice(0, 3).map((photo, idx) => (
             <div
               key={idx}
-              onClick={() => setActivePhoto(photo)}
+              onClick={() => vm.setActivePhoto(photo)}
               className={`group relative h-16 cursor-pointer overflow-hidden rounded-xl border-2 transition-all ${
-                activePhoto === photo ? "border-primary ring-1 ring-primary" : "border-nx-border hover:border-nx-ink-3"
+                vm.activePhoto === photo ? "border-primary ring-1 ring-primary" : "border-nx-line hover:border-nx-ink-3"
               }`}
             >
               <img
@@ -114,25 +112,33 @@ export function ResourceGeneralTab({ vm }: Props) {
             type="file"
             ref={fileInputRef}
             className="hidden"
-            accept="image/*"
+            accept="image/png,image/jpeg,image/webp,image/svg+xml"
             onChange={handlePhotoSelect}
+            disabled={vm.uploadingPhoto}
           />
           <Button
             variant="outline"
             type="button"
+            disabled={vm.uploadingPhoto}
             onClick={() => fileInputRef.current?.click()}
-            className="border-nx-border flex h-16 flex-col items-center justify-center rounded-xl border-2 border-dashed text-nx-ink-2 transition-colors hover:border-primary hover:bg-primary/5"
+            className="border-nx-line flex h-16 flex-col items-center justify-center rounded-xl border-2 border-dashed text-nx-ink-2 transition-colors hover:border-primary hover:bg-primary/5"
           >
-            <Plus className="size-4" />
-            <span className="mt-0.5 text-[10px] font-bold">
-              {t("resources.general.addPhoto", { defaultValue: "Add Photo" })}
-            </span>
+            {vm.uploadingPhoto ? (
+              <LoadingSpinner size="sm" showText={false} />
+            ) : (
+              <>
+                <Plus className="size-4" />
+                <span className="mt-0.5 text-[10px] font-bold">
+                  {t("resources.general.addPhoto", { defaultValue: "Add Photo" })}
+                </span>
+              </>
+            )}
           </Button>
         </div>
       </div>
 
       {/* Right Column: General Information Form */}
-      <Card className="rounded-2xl border border-nx-border bg-nx-surface p-6 lg:col-span-7">
+      <Card className="rounded-2xl border border-nx-line bg-nx-surface p-6 lg:col-span-7">
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-1.5">
             <Label htmlFor="res-name" className="text-xs font-bold text-nx-ink">

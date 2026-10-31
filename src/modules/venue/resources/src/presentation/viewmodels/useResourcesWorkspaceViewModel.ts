@@ -17,6 +17,7 @@ import {
   type ResourceWorkspaceItem,
 } from "../../domain/entities/ResourceWorkspaceItem";
 import { mapVenueError, getSavedFacilityId, saveFacilityId } from "@modules/venue";
+import { extractCourtPhotos } from "../../domain/court-photos";
 
 const PAGE_SIZE = 100;
 
@@ -226,6 +227,8 @@ export function useResourcesWorkspaceViewModel() {
           priceEffectiveFromUtc: price?.effectiveFromUtc ?? null,
           isPublished: r.isPublished,
           timeZoneId,
+          description: r.description ?? null,
+          imageUrl: extractCourtPhotos(r.description)[0] ?? null,
           readinessState: readiness.state,
           readiness,
         };

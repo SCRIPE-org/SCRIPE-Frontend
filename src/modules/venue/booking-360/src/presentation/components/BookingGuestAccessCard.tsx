@@ -51,8 +51,8 @@ export function BookingGuestAccessCard({
   };
 
   return (
-    <Card className="border-nx-line/80 overflow-hidden border bg-nx-surface shadow-sm">
-      <CardHeader className="bg-nx-surfaceSubtle/50 border-nx-line/50 flex flex-row items-center justify-between border-b px-4 py-3 sm:px-6">
+    <Card className="overflow-hidden border border-nx-line bg-nx-surface">
+      <CardHeader className="bg-nx-raised/50 border-nx-line/50 flex flex-row items-center justify-between border-b px-4 py-3 sm:px-6">
         <CardTitle className="flex items-center gap-2 text-sm font-semibold text-nx-ink">
           <Link2 className="size-4 text-nx-accent" aria-hidden="true" />
           <span>No-App Guest Access</span>
@@ -120,7 +120,7 @@ export function BookingGuestAccessCard({
                       <Input
                         value={activeLink}
                         readOnly
-                        className="bg-nx-surfaceSubtle h-9 select-all font-mono text-xs"
+                        className="bg-nx-raised h-9 select-all font-mono text-xs"
                         dir="ltr"
                       />
                       <Button
@@ -143,7 +143,7 @@ export function BookingGuestAccessCard({
                       </Button>
                     </div>
                   ) : (
-                    <div className="bg-nx-surfaceSubtle border-nx-line/60 flex items-center justify-between rounded-nx-md border p-3 text-xs">
+                    <div className="bg-nx-raised border-nx-line/60 flex items-center justify-between rounded-nx-md border p-3 text-xs">
                       <div className="flex items-center gap-2 text-nx-ink-2">
                         <ShieldCheck className="size-4 text-success" aria-hidden="true" />
                         <span>Link generated & active. Generate again to view and copy token.</span>
@@ -194,7 +194,7 @@ export function BookingGuestAccessCard({
             ) : (
               /* When no link exists or previous was revoked */
               <div className="space-y-3">
-                <div className="bg-nx-surfaceSubtle/70 border-nx-line/50 rounded-nx-md border p-3 text-xs leading-relaxed text-nx-ink-2">
+                <div className="bg-nx-raised/70 border-nx-line/50 rounded-nx-md border p-3 text-xs leading-relaxed text-nx-ink-2">
                   <p>
                     Guest access links allow customers to view their booking details and request
                     cancellations via a self-service portal without requiring an account or mobile app.

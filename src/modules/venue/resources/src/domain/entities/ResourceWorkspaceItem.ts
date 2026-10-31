@@ -19,6 +19,8 @@ export interface ResourceWorkspaceItem {
   hasCalendar?: boolean;
   isPublished: boolean;
   timeZoneId: string;
+  description?: string | null;
+  imageUrl?: string | null;
   readinessState?: CourtReadinessState;
   readiness?: {
     state: CourtReadinessState;

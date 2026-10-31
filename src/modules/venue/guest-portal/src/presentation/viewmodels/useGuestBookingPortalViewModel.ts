@@ -38,6 +38,9 @@ function createGuestCancelIdempotencyKey(): string {
   return `${hex.slice(0, 8)}-${hex.slice(8, 12)}-${hex.slice(12, 16)}-${hex.slice(16, 20)}-${hex.slice(20)}`;
 }
 
+let cachedFragmentToken: string | null = null;
+let inFlightExchangePromise: Promise<any> | null = null;
+
 export function useGuestBookingPortalViewModel() {
   const { t: contextT, language, direction, setLanguage, registerBothLanguages } = useI18n();
   const { guestPortalRepository } = getVenueContainer();
@@ -106,16 +109,24 @@ export function useGuestBookingPortalViewModel() {
 
         if (hash && hash.length > 1) {
           rawToken = decodeURIComponent(hash.substring(1)).trim();
+          cachedFragmentToken = rawToken;
 
           // CRITICAL SECURITY REQUIREMENT:
           // Immediately wipe the bearer token from the visible browser address bar
           // to prevent credential exposure in history, bookmarks, or captures.
           window.history.replaceState(null, "", window.location.pathname);
+        } else if (cachedFragmentToken) {
+          rawToken = cachedFragmentToken;
         }
 
         if (rawToken) {
           setStage("exchanging");
-          const sessionRes = await guestPortalRepository.exchangeSession(rawToken);
+          if (!inFlightExchangePromise) {
+            inFlightExchangePromise = guestPortalRepository.exchangeSession(rawToken);
+          }
+          const sessionRes = await inFlightExchangePromise;
+          cachedFragmentToken = null;
+          inFlightExchangePromise = null;
 
           if (!active) return;
           setBooking(sessionRes.reservation);
@@ -134,6 +145,8 @@ export function useGuestBookingPortalViewModel() {
           setStage("missing-token");
         }
       } catch (err: any) {
+        cachedFragmentToken = null;
+        inFlightExchangePromise = null;
         if (!active) return;
         setErrorMessage(err?.message || "This guest link is invalid or has expired.");
         setStage("error");

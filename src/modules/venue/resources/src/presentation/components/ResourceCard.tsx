@@ -70,7 +70,7 @@ export function ResourceCard({ item }: Props) {
       {/* Top Section: Court Photo Thumbnail Banner with Overlays */}
       <div className="relative h-44 w-full shrink-0 overflow-hidden bg-nx-raised">
         <img
-          src={getCourtImage(item.sportType, item.name)}
+          src={item.imageUrl || getCourtImage(item.sportType, item.name)}
           alt={item.name}
           className="size-full object-cover transition-transform duration-500 group-hover:scale-105"
         />
