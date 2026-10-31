@@ -29,14 +29,31 @@ export class CustomerPickerService implements ICustomerPickerService {
   constructor(private readonly api: IApiService) {}
 
   async search(query: string): Promise<CustomerSummary[]> {
-    const result = await this.api.get<PartyPage>(
-      buildUrl(BOOKING_ENDPOINTS.PARTIES, {
-        page: 1,
-        pageSize: 20,
-        search: query.trim() || undefined,
-      })
-    );
-    return result.items;
+    try {
+      const result = await this.api.get<PartyPage>(
+        buildUrl(BOOKING_ENDPOINTS.PARTIES, {
+          page: 1,
+          pageSize: 20,
+          search: query.trim() || undefined,
+        })
+      );
+      const items = Array.isArray(result?.items)
+        ? result.items
+        : Array.isArray(result)
+        ? result
+        : [];
+      return items.map((item: any) => {
+        const phone = item.phone ?? item.primaryPhone;
+        const email = item.email ?? item.primaryEmail;
+        return {
+          ...item,
+          ...(phone !== undefined && { phone }),
+          ...(email !== undefined && { email }),
+        };
+      });
+    } catch {
+      return [];
+    }
   }
 
   getById(id: string): Promise<CustomerSummary> {

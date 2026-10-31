@@ -74,22 +74,29 @@ export function ClickToBookModal(props: ClickToBookModalProps) {
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="border-nx-border max-w-md rounded-2xl border bg-nx-surface p-6 shadow-xl">
-        <DialogHeader className="sr-only">
-          <DialogTitle>{t("operationsCalendar.clickToBook.title")}</DialogTitle>
-          <DialogDescription>
+      <DialogContent className="border-nx-line max-w-lg rounded-2xl border bg-nx-surface p-6 shadow-xl">
+        <DialogHeader className="border-nx-line border-b pb-3 pe-8 text-start">
+          <DialogTitle className="text-base font-bold text-nx-ink">
+            {t("operationsCalendar.clickToBook.title", { defaultValue: "New Booking" })}
+          </DialogTitle>
+          <DialogDescription className="text-xs text-nx-ink-2">
             {vm.selectedResource?.name
-              ? `${vm.selectedResource.name} booking`
-              : t("operationsCalendar.clickToBook.dialogDescription")}
+              ? `${vm.selectedResource.name} • ${vm.selectedResource.facilityName || ""}`
+              : t("operationsCalendar.clickToBook.dialogDescription", {
+                  defaultValue: "Schedule court time, select customer, and confirm booking.",
+                })}
           </DialogDescription>
         </DialogHeader>
 
         {/* Stepper Header (Only during normal booking flow) */}
         {vm.stage === "booking" && (
-          <div className="border-nx-border flex items-center justify-between border-b pb-3">
+          <div
+            data-testid="click-to-book-stepper"
+            className="border-nx-line bg-nx-raised/40 flex items-center justify-between rounded-xl border px-3.5 py-2.5"
+          >
             {!vm.isContextual && (
               <>
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-2 shrink-0">
                   <span
                     className={`flex size-5 items-center justify-center rounded-full text-[10px] font-bold ${
                       vm.step >= 0 ? "bg-nx-accent text-nx-on-fill ring-1 ring-nx-accent"
@@ -104,11 +111,11 @@ export function ClickToBookModal(props: ClickToBookModalProps) {
                     {t("operationsCalendar.clickToBook.stepper.courtAndTime")}
                   </span>
                 </div>
-                <div className={`h-px w-6 ${vm.step >= 1 ? "bg-nx-accent" : "bg-nx-line"}`} />
+                <div className={`h-px flex-1 mx-2 sm:mx-3 ${vm.step >= 1 ? "bg-nx-accent" : "bg-nx-line"}`} />
               </>
             )}
 
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 shrink-0">
               <span
                 className={`flex size-5 items-center justify-center rounded-full text-[10px] font-bold ${
                   vm.step >= 1 ? "bg-nx-accent text-nx-on-fill ring-1 ring-nx-accent"
@@ -124,9 +131,9 @@ export function ClickToBookModal(props: ClickToBookModalProps) {
               </span>
             </div>
 
-            <div className={`h-px w-6 ${vm.step >= 2 ? "bg-nx-accent" : "bg-nx-line"}`} />
+            <div className={`h-px flex-1 mx-2 sm:mx-3 ${vm.step >= 2 ? "bg-nx-accent" : "bg-nx-line"}`} />
 
-            <div className="flex items-center gap-2">
+            <div data-testid="click-to-book-step-3" className="flex items-center gap-2 shrink-0">
               <span
                 className={`flex size-5 items-center justify-center rounded-full text-[10px] font-bold ${
                   vm.step >= 2 ? "bg-nx-accent text-nx-on-fill ring-1 ring-nx-accent"
@@ -352,7 +359,7 @@ export function ClickToBookModal(props: ClickToBookModalProps) {
               <div />
             )}
 
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 shrink-0">
               <Button
                 type="button"
                 variant="outline"

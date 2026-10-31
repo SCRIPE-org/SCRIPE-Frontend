@@ -53,6 +53,12 @@ export interface UseClickToBookProps {
   onFindSlots?: () => void;
 }
 
+export function getNextSlotInstantUtc(incrementMinutes: number = 30): string {
+  const d = new Date();
+  const ms = 1000 * 60 * incrementMinutes;
+  return new Date(Math.ceil(d.getTime() / ms) * ms).toISOString();
+}
+
 export function useClickToBookViewModel({
   open,
   onOpenChange,
@@ -228,7 +234,7 @@ export function useClickToBookViewModel({
   const paymentIntentRef = useRef<{ fingerprint: string; key: string } | null>(null);
   const allocationIntentRef = useRef<{ fingerprint: string; key: string } | null>(null);
   const overrideIntentRef = useRef<{ fingerprint: string; key: string } | null>(null);
-  const defaultStartUtcRef = useRef(new Date().toISOString());
+  const defaultStartUtcRef = useRef(getNextSlotInstantUtc(30));
   const pendingBookingContextRef = useRef<{
     resource: CalendarResource;
     customer: CustomerSummary;
@@ -265,8 +271,11 @@ export function useClickToBookViewModel({
       setSelectedResource(
         pendingBookingContext?.resource ?? initialResource ?? (resources[0] || null)
       );
+      const defaultStart = getNextSlotInstantUtc(
+        (pendingBookingContext?.resource ?? initialResource ?? resources[0])?.slotPolicy?.startIncrementMinutes ?? 30
+      );
       setSelectedInstantUtc(
-        pendingBookingContext?.instantUtc ?? initialInstantUtc ?? new Date().toISOString()
+        pendingBookingContext?.instantUtc ?? initialInstantUtc ?? defaultStart
       );
       setDuration(pendingBookingContext?.durationMinutes ?? initialDurationMinutes);
       setStep(pendingBookingContext ? 2 : initialResource && initialInstantUtc ? 1 : 0);
@@ -328,28 +337,37 @@ export function useClickToBookViewModel({
     initialCustomerId,
   ]);
 
-  // Customer search with debounce
+  const searchRequestIdRef = useRef(0);
+
+  // Customer search with race-safe debounce & cancellation
   useEffect(() => {
     if (!open || !customerSearch.trim() || customerSearch.trim().length < 2) {
+      searchRequestIdRef.current++;
       setCustomerResults([]);
       setCustomerSearchError(false);
+      setCustomerSearching(false);
       return;
     }
-    let active = true;
+    const requestId = ++searchRequestIdRef.current;
     const timer = setTimeout(async () => {
       setCustomerSearching(true);
       setCustomerSearchError(false);
       try {
         const results = await customerRepository.search(customerSearch.trim());
-        if (active) setCustomerResults(results);
+        if (searchRequestIdRef.current === requestId) {
+          setCustomerResults(results);
+        }
       } catch {
-        if (active) setCustomerSearchError(true);
+        if (searchRequestIdRef.current === requestId) {
+          setCustomerSearchError(true);
+        }
       } finally {
-        if (active) setCustomerSearching(false);
+        if (searchRequestIdRef.current === requestId) {
+          setCustomerSearching(false);
+        }
       }
     }, 250);
     return () => {
-      active = false;
       clearTimeout(timer);
     };
   }, [customerRepository, customerSearch, open]);
@@ -647,16 +665,36 @@ export function useClickToBookViewModel({
 
   // Primary Action: Confirm Booking
   const handleConfirm = useCallback(async () => {
-    if (
-      !canCreateBooking ||
-      !selectedResource ||
-      !selectedCustomer ||
-      !quote ||
-      submitting ||
-      holdExpired ||
-      priceChangeNotice
-    )
+    if (!canCreateBooking || !selectedResource || !selectedCustomer || submitting) {
       return;
+    }
+
+    if (!quote) {
+      setError(
+        tRef.current("operationsCalendar.clickToBook.pricing.missingQuote", {
+          defaultValue: "Pricing quote is unavailable. Please wait for pricing to load or reselect the court.",
+        })
+      );
+      return;
+    }
+
+    if (priceChangeNotice) {
+      setError(
+        tRef.current("operationsCalendar.clickToBook.pricing.acknowledgeNotice", {
+          defaultValue: "Please acknowledge the updated price before confirming.",
+        })
+      );
+      return;
+    }
+
+    if (holdExpired) {
+      setError(
+        tRef.current("operationsCalendar.clickToBook.hold.expired", {
+          defaultValue: "The reservation hold has expired. Please select a time slot again.",
+        })
+      );
+      return;
+    }
 
     if (quote.expiresAtUtc && Date.parse(quote.expiresAtUtc) < Date.now()) {
       setQuoteExpiredMessage(true);

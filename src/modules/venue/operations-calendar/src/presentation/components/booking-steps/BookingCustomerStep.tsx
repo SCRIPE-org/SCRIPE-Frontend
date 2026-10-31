@@ -80,7 +80,7 @@ export function BookingCustomerStep({
 
       {/* Quick Add Form */}
       {quickAddOpen ? (
-        <div className="border-nx-border bg-nx-raised/40 space-y-2.5 rounded-xl border p-3.5">
+        <div className="border-nx-line bg-nx-raised/40 space-y-2.5 rounded-xl border p-3.5">
           <h5 className="text-xs font-bold text-nx-ink">
             {t("operationsCalendar.clickToBook.customer.quickAddTitle")}
           </h5>
@@ -171,8 +171,8 @@ export function BookingCustomerStep({
 
           {customerSearching && (
             <div className="flex items-center justify-center gap-2 p-2 text-center text-xs text-nx-ink-3">
-              <LoadingSpinner size="sm" />
-              <span>Searching...</span>
+              <LoadingSpinner size="inline" className="text-primary" />
+              <span>{t("operationsCalendar.clickToBook.customer.searching", { defaultValue: "Searching..." })}</span>
             </div>
           )}
 
@@ -182,6 +182,26 @@ export function BookingCustomerStep({
                 {t("operationsCalendar.clickToBook.customer.searchError")}
               </AlertDescription>
             </Alert>
+          )}
+
+          {!customerSearching && !customerSearchError && customerSearch.trim().length >= 2 && customerResults.length === 0 && (
+            <div className="border-nx-line bg-nx-raised/30 rounded-xl border p-4 text-center">
+              <p className="text-xs font-semibold text-nx-ink">
+                {t("operationsCalendar.clickToBook.customer.noResultsFound", { defaultValue: "No customers found" })}
+              </p>
+              <p className="mt-1 text-[11px] text-nx-ink-3">
+                {t("operationsCalendar.clickToBook.customer.noResultsHint", { defaultValue: "Try another search or add a new customer." })}
+              </p>
+              <Button
+                type="button"
+                variant="ghost"
+                size="sm"
+                onClick={onToggleQuickAdd}
+                className="mt-2 text-xs font-bold text-primary hover:underline"
+              >
+                + {t("operationsCalendar.clickToBook.customer.addNew")}
+              </Button>
+            </div>
           )}
 
           {/* Results List */}
@@ -204,7 +224,7 @@ export function BookingCustomerStep({
                     onSelectCustomer(cust);
                     onAdvanceToPricing();
                   }}
-                  className="border-nx-border hover:bg-nx-raised/60 group h-auto w-full justify-between rounded-xl border p-2.5 text-start text-xs transition-colors hover:border-primary/40"
+                  className="border-nx-line hover:bg-nx-raised/60 group h-auto w-full justify-between rounded-xl border p-2.5 text-start text-xs transition-colors hover:border-primary/40"
                 >
                   <div className="flex items-center gap-2.5">
                     <div
@@ -221,24 +241,18 @@ export function BookingCustomerStep({
                       </span>
                     </div>
                   </div>
-                  <div className="border-nx-border flex size-4 shrink-0 items-center justify-center rounded-full border group-hover:border-primary">
+                  <div className="border-nx-line flex size-4 shrink-0 items-center justify-center rounded-full border group-hover:border-primary">
                     <div className="size-2 rounded-full bg-transparent group-hover:bg-primary" />
                   </div>
                 </Button>
               );
             })}
 
-            {!customerSearching &&
-              customerSearch.trim().length >= 2 &&
-              customerResults.length === 0 &&
-              !customerSearchError && (
-                <p className="py-2 text-center text-xs text-nx-ink-3">
-                  {t("operationsCalendar.clickToBook.customer.noResults")}
-                </p>
-              )}
+
           </div>
         </div>
       )}
     </div>
   );
 }
+

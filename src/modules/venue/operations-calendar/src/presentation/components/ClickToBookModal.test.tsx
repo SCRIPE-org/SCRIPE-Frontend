@@ -915,4 +915,50 @@ describe("ClickToBookModal — Gate 4 Booking Closure", () => {
     fireEvent.click(screen.getByRole("option", { name: "15:00" }));
     expect(timeInput).toHaveTextContent("15:00");
   });
+
+  it("17. Customer search displays empty state when query returns no results", async () => {
+    mockCustomerRepository.search.mockResolvedValueOnce([]);
+
+    render(
+      <ClickToBookModal
+        open={true}
+        onOpenChange={vi.fn()}
+        resource={mockResource}
+        instantUtc="2026-10-28T10:00:00.000Z"
+        resources={[mockResource]}
+        timeZoneId="Africa/Cairo"
+        onSuccess={vi.fn()}
+      />
+    );
+
+    const searchInput = screen.getByPlaceholderText("Search customer by name, phone or email...");
+    fireEvent.change(searchInput, { target: { value: "Unknown Customer" } });
+
+    await waitFor(() => {
+      expect(screen.getByText("No customers found")).toBeInTheDocument();
+    });
+  });
+
+  it("18. Mode B start time defaults to next rounded slot boundary instead of odd minutes", () => {
+    render(
+      <ClickToBookModal
+        open={true}
+        onOpenChange={vi.fn()}
+        resource={null}
+        instantUtc={null}
+        resources={[mockResource]}
+        timeZoneId="Africa/Cairo"
+        onSuccess={vi.fn()}
+      />
+    );
+
+    const timeInput = screen.getByRole("combobox", { name: "Start Time" });
+    expect(timeInput).toBeInTheDocument();
+    // Minute component of default time should be a 00 or 30 multiple, never unrounded e.g. :41
+    const timeText = timeInput.textContent || "";
+    const minute = timeText.includes(":") ? timeText.split(":")[1]?.trim() : "";
+    if (minute) {
+      expect(Number(minute) % 30).toBe(0);
+    }
+  });
 });

@@ -100,7 +100,7 @@ export function CalendarRightUtilityPanel({
       data-testid="calendar-right-utility-panel"
     >
       {/* 1. Small Month Calendar */}
-      <Card className="rounded-nx-xl shadow-xs border border-nx-line bg-nx-surface p-3.5">
+      <Card className="rounded-xl border border-nx-line bg-nx-surface p-3.5">
         <div className="mb-3 flex items-center justify-between">
           <span className="text-xs font-bold text-nx-ink">
             {monthName} {year}
@@ -180,9 +180,9 @@ export function CalendarRightUtilityPanel({
             variant="ghost"
             size="sm"
             onClick={onNewBooking}
-            className="hover:bg-nx-surfaceSubtle h-8 w-full justify-start gap-2.5 text-xs font-semibold text-nx-ink"
+            className="hover:bg-nx-raised h-8 w-full justify-start gap-2.5 text-xs font-semibold text-nx-ink"
           >
-            <Plus className="size-3.5 text-blue-500" />
+            <Plus className="size-3.5 text-info" />
             <span>
               {t("operationsCalendar.quickActions.newBooking", { defaultValue: "New Booking" })}
             </span>
@@ -206,7 +206,7 @@ export function CalendarRightUtilityPanel({
             onClick={onFindSlots || onNewBooking}
             className="hover:bg-nx-surfaceSubtle h-8 w-full justify-start gap-2.5 text-xs font-semibold text-nx-ink"
           >
-            <Search className="size-3.5 text-indigo-500" />
+            <Search className="size-3.5 text-primary" />
             <span>
               {t("operationsCalendar.quickActions.findSlots", {
                 defaultValue: "Find Available Slots",
@@ -246,7 +246,7 @@ export function CalendarRightUtilityPanel({
 
           <div className="flex items-center justify-between text-xs">
             <div className="flex items-center gap-2 font-medium text-nx-ink-2">
-              <span className="size-2 rounded-full bg-sky-500" />
+              <span className="size-2 rounded-full bg-info" />
               <span>{t("operationsCalendar.courtStatus.free", { defaultValue: "Free" })}</span>
             </div>
             <span className="font-bold tabular-nums text-nx-ink">{freeVal}</span>

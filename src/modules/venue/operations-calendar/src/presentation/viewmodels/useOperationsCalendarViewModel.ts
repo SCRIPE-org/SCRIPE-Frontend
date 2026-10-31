@@ -330,7 +330,16 @@ export function useOperationsCalendarViewModel() {
 
   const openBlock = useCallback(
     (block: OperationsCalendarBlock) => {
-      router.push(`/venue/bookings/${encodeURIComponent(block.reservationId)}`);
+      const isClosure =
+        block.status === ("Maintenance" as any) ||
+        (block.status as string) === "Blocked" ||
+        (block.status as string) === "Unavailable" ||
+        block.reservationId.startsWith("closure-");
+      if (isClosure) {
+        router.push(`/venue/resources/${encodeURIComponent(block.resourceId)}?tab=closures`);
+      } else {
+        router.push(`/venue/bookings/${encodeURIComponent(block.reservationId)}`);
+      }
     },
     [router]
   );

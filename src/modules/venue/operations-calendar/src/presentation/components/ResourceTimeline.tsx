@@ -198,7 +198,6 @@ export function ResourceTimeline(props: ResourceTimelineProps) {
                           resource: resource.name,
                         })}
                         onClick={() => {
-                          if (isClosure) return;
                           props.onOpen(block);
                         }}
                       >
