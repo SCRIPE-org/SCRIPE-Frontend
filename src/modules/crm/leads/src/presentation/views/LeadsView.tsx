@@ -9,16 +9,32 @@ import { Button } from "@core/ui/button";
 import { Input } from "@core/ui/input";
 import { EmptyState } from "@core/ui/empty-state";
 import { Card } from "@core/ui/card";
-import { AlertCircle, RefreshCw, Plus, Search, User, Mail, Phone, Calendar } from "lucide-react";
+import {
+  AlertCircle,
+  RefreshCw,
+  Plus,
+  Search,
+  User,
+  Mail,
+  Phone,
+  Calendar,
+  CheckCircle2,
+  Link as LinkIcon,
+  Sparkles,
+  Building2,
+} from "lucide-react";
 import { cn } from "@core/common/utils";
 
 import { CRM_PERMISSIONS } from "@modules/crm/overview/src/domain/constants/permission-constants";
 import { CrmShell } from "@modules/crm/overview/src/presentation/components/CrmShell";
 import { CrmSectionHeader } from "@modules/crm/overview/src/presentation/components/CrmSectionHeader";
 import { GenericCrudView } from "@core/crud/components/generic-crud-view";
-import type { CrudConfig, CrudColumn } from "@core/crud/components/generic-crud-view";
+import type { CrudConfig, CrudColumn, CrudAction } from "@core/crud/components/generic-crud-view";
 import { LeadStatusBadge } from "../components/LeadStatusBadge";
 import { CreateLeadDialog } from "../components/CreateLeadDialog";
+import { QualifyLeadDialog } from "../components/QualifyLeadDialog";
+import { LinkPartyDialog } from "../components/LinkPartyDialog";
+import { ConvertLeadDialog } from "../components/ConvertLeadDialog";
 import { useLeadsViewModel } from "../viewmodels/useLeadsViewModel";
 import type { CrmLead, LeadStatus } from "../../domain/models/crm-lead.types";
 
@@ -33,12 +49,25 @@ export function LeadsView() {
     search,
     statusFilter,
     isCreateOpen,
+    isQualifyOpen,
+    isLinkPartyOpen,
+    isConvertOpen,
+    activeLead,
     isSubmitting,
     submitError,
     setIsCreateOpen,
+    setIsQualifyOpen,
+    setIsLinkPartyOpen,
+    setIsConvertOpen,
     handleSearchChange,
     handleStatusFilterChange,
     handleCreateLead,
+    handleQualifyLead,
+    handleLinkParty,
+    handleConvertLead,
+    openQualifyDialog,
+    openLinkPartyDialog,
+    openConvertDialog,
     handleUpdateLeadStatus,
     refresh,
   } = viewModel;
@@ -77,9 +106,19 @@ export function LeadsView() {
               <User className="size-3 text-nx-ink-3" />
             </div>
             <div>
-              <span className="font-medium text-nx-ink block">
-                {lead.fullName || `${lead.firstName || ""} ${lead.lastName || ""}`.trim() || "—"}
-              </span>
+              <div className="flex items-center gap-1">
+                <span className="font-medium text-nx-ink block">
+                  {lead.fullName || `${lead.firstName || ""} ${lead.lastName || ""}`.trim() || "—"}
+                </span>
+                {lead.personPartyId && (
+                  <span
+                    title={t("crmLeads.partyLink.partyLinked")}
+                    className="inline-flex items-center size-3.5 rounded-full bg-nx-accent-wash text-nx-accent"
+                  >
+                    <LinkIcon className="size-2 mx-auto" />
+                  </span>
+                )}
+              </div>
               {lead.email && (
                 <span className="text-[11px] text-nx-ink-3 flex items-center gap-1">
                   <Mail className="size-2.5" />
@@ -96,9 +135,19 @@ export function LeadsView() {
         sortable: true,
         render: (_val, lead: CrmLead) => (
           <div>
-            <span className="font-medium text-nx-ink-2 truncate max-w-[160px] block">
-              {lead.companyName || "—"}
-            </span>
+            <div className="flex items-center gap-1">
+              <span className="font-medium text-nx-ink-2 truncate max-w-[160px] block">
+                {lead.companyName || "—"}
+              </span>
+              {lead.organizationPartyId && (
+                <span
+                  title={t("crmLeads.partyLink.partyLinked")}
+                  className="inline-flex items-center size-3.5 rounded-full bg-nx-accent-wash text-nx-accent"
+                >
+                  <Building2 className="size-2.5 mx-auto" />
+                </span>
+              )}
+            </div>
             {lead.phone && (
               <span className="text-[11px] text-nx-ink-3 flex items-center gap-1 mt-0.5">
                 <Phone className="size-2.5" />
@@ -112,7 +161,17 @@ export function LeadsView() {
         key: "status",
         label: t("crmLeads.table.status"),
         sortable: true,
-        render: (_val, lead: CrmLead) => <LeadStatusBadge status={lead.status} />,
+        render: (_val, lead: CrmLead) => (
+          <div className="flex flex-col gap-0.5">
+            <LeadStatusBadge status={lead.status} />
+            {lead.convertedOpportunityId && (
+              <span className="text-[10px] text-nx-accent font-semibold flex items-center gap-0.5">
+                <Sparkles className="size-2.5" />
+                {t("crmLeads.status.converted")}
+              </span>
+            )}
+          </div>
+        ),
       },
       {
         key: "estimatedValue",
@@ -324,6 +383,29 @@ export function LeadsView() {
         </Card>
       ),
       columns,
+      getActions: (_vm: any, _t: any): CrudAction<CrmLead>[] => [
+        {
+          label: t("crmLeads.actions.qualify"),
+          icon: <CheckCircle2 className="size-3.5" />,
+          onClick: (lead: CrmLead) => openQualifyDialog(lead),
+          show: (lead: CrmLead) =>
+            lead.status !== "Qualified" &&
+            lead.status !== "Converted" &&
+            lead.status !== "Disqualified",
+        },
+        {
+          label: t("crmLeads.actions.linkParty"),
+          icon: <LinkIcon className="size-3.5" />,
+          onClick: (lead: CrmLead) => openLinkPartyDialog(lead),
+          show: (lead: CrmLead) => !lead.organizationPartyId && !lead.personPartyId,
+        },
+        {
+          label: t("crmLeads.actions.convert"),
+          icon: <Sparkles className="size-3.5" />,
+          onClick: (lead: CrmLead) => openConvertDialog(lead),
+          show: (lead: CrmLead) => lead.status === "Qualified" && !lead.convertedOpportunityId,
+        },
+      ],
       customTableProps: {
         emptyMessage: (
           <EmptyState
@@ -334,7 +416,7 @@ export function LeadsView() {
       },
       onCreateClick: () => setIsCreateOpen(true),
     }),
-    [columns, handleUpdateLeadStatus, setIsCreateOpen, t]
+    [columns, handleUpdateLeadStatus, setIsCreateOpen, openQualifyDialog, openLinkPartyDialog, openConvertDialog, t]
   );
 
   return (
@@ -451,6 +533,36 @@ export function LeadsView() {
         open={isCreateOpen}
         onOpenChange={setIsCreateOpen}
         onSubmit={handleCreateLead}
+        isSubmitting={isSubmitting}
+        submitError={submitError}
+      />
+
+      {/* Qualify Lead Modal */}
+      <QualifyLeadDialog
+        open={isQualifyOpen}
+        onOpenChange={setIsQualifyOpen}
+        lead={activeLead}
+        onSubmit={handleQualifyLead}
+        isSubmitting={isSubmitting}
+        submitError={submitError}
+      />
+
+      {/* Link Party Modal */}
+      <LinkPartyDialog
+        open={isLinkPartyOpen}
+        onOpenChange={setIsLinkPartyOpen}
+        lead={activeLead}
+        onSubmit={handleLinkParty}
+        isSubmitting={isSubmitting}
+        submitError={submitError}
+      />
+
+      {/* Convert Lead to Opportunity Modal */}
+      <ConvertLeadDialog
+        open={isConvertOpen}
+        onOpenChange={setIsConvertOpen}
+        lead={activeLead}
+        onSubmit={handleConvertLead}
         isSubmitting={isSubmitting}
         submitError={submitError}
       />

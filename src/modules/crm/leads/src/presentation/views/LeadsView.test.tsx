@@ -80,6 +80,21 @@ describe("LeadsView Component", () => {
       currency: "SAR",
       createdAt: "2026-10-29T12:00:00Z",
     },
+    {
+      id: "lead-003",
+      title: "Jeddah Club Facility Deal",
+      firstName: "Omar",
+      lastName: "Al-Harbi",
+      fullName: "Omar Al-Harbi",
+      companyName: "Jeddah Club",
+      email: "omar@jeddah.sa",
+      status: "Qualified",
+      statusName: "Qualified",
+      source: "Partner",
+      estimatedValue: 250000,
+      currency: "SAR",
+      createdAt: "2026-10-28T09:00:00Z",
+    },
   ];
 
   let mockGetLeads: ReturnType<typeof vi.fn>;
@@ -108,6 +123,21 @@ describe("LeadsView Component", () => {
       createdAt: new Date().toISOString(),
     } as CrmLead);
 
+    const mockQualifyLead = vi.fn().mockResolvedValue({
+      id: "lead-1",
+      status: "Qualified",
+    } as any);
+    const mockLinkParty = vi.fn().mockResolvedValue({
+      id: "lead-1",
+      organizationPartyId: "org-1",
+    } as any);
+    const mockConvertLead = vi.fn().mockResolvedValue({
+      opportunityId: "opp-123",
+      accountId: "acc-123",
+      contactId: "cnt-123",
+      redirectUrl: "/crm/opportunities/opp-123",
+    });
+
     const mockContainer: CrmContainer = {
       overviewService: {} as any,
       overviewRepository: {
@@ -135,6 +165,9 @@ describe("LeadsView Component", () => {
         getLeads: mockGetLeads as any,
         getLeadById: vi.fn(),
         createLead: mockCreateLead as any,
+        qualifyLead: mockQualifyLead as any,
+        linkParty: mockLinkParty as any,
+        convertLead: mockConvertLead as any,
       },
     };
 
@@ -228,6 +261,42 @@ describe("LeadsView Component", () => {
     await waitFor(() => {
       expect(screen.getAllByText("Al-Hilal Season Ticket Partnership")[0]).toBeDefined();
       expect(screen.getByText("Estimated Commercial Value")).toBeDefined();
+    });
+  });
+
+  it("renders row action buttons for qualify, party linking, and conversion", async () => {
+    mockGetLeads.mockResolvedValue({
+      items: mockLeads,
+      totalCount: 3,
+      page: 1,
+      pageSize: 20,
+      totalPages: 1,
+    } as PagedLeadsResult);
+
+    render(<LeadsView />);
+
+    await waitFor(() => {
+      expect(screen.getAllByText("Al-Hilal Season Ticket Partnership")[0]).toBeDefined();
+    });
+
+    // Switch to CardGrid mode where action buttons are rendered
+    const cardGridButton = screen.getByText("CardGrid");
+    fireEvent.click(cardGridButton);
+
+    await waitFor(() => {
+      // Qualify and Link Party should be visible for non-qualified leads
+      expect(screen.getAllByText("crmLeads.actions.qualify").length).toBeGreaterThan(0);
+      expect(screen.getAllByText("crmLeads.actions.linkParty").length).toBeGreaterThan(0);
+      // Convert action should be visible for Qualified lead (lead-003)
+      expect(screen.getAllByText("crmLeads.actions.convert").length).toBeGreaterThan(0);
+    });
+
+    // Click Qualify button to open dialog
+    const qualifyButtons = screen.getAllByText("crmLeads.actions.qualify");
+    fireEvent.click(qualifyButtons[0]);
+
+    await waitFor(() => {
+      expect(screen.getByText("crmLeads.qualification.dialogTitle")).toBeDefined();
     });
   });
 });

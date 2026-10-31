@@ -5,6 +5,10 @@ import { getCrmContainer } from "@modules/crm/di";
 import type {
   CrmLead,
   CreateLeadInput,
+  QualifyLeadInput,
+  LinkPartyToLeadInput,
+  ConvertLeadInput,
+  ConvertLeadResult,
   LeadStatus,
 } from "../../domain/models/crm-lead.types";
 
@@ -30,6 +34,10 @@ export function useLeadsViewModel(initialSearch?: string) {
   const [search, setSearch] = useState<string>(initialSearch ?? "");
   const [statusFilter, setStatusFilter] = useState<LeadStatus | undefined>(undefined);
   const [isCreateOpen, setIsCreateOpen] = useState(false);
+  const [isQualifyOpen, setIsQualifyOpen] = useState(false);
+  const [isLinkPartyOpen, setIsLinkPartyOpen] = useState(false);
+  const [isConvertOpen, setIsConvertOpen] = useState(false);
+  const [activeLead, setActiveLead] = useState<CrmLead | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
@@ -38,6 +46,30 @@ export function useLeadsViewModel(initialSearch?: string) {
     setIsCreateOpen(open);
     if (!open) {
       setSubmitError(null);
+    }
+  }, []);
+
+  const handleSetIsQualifyOpen = useCallback((open: boolean) => {
+    setIsQualifyOpen(open);
+    if (!open) {
+      setSubmitError(null);
+      setActiveLead(null);
+    }
+  }, []);
+
+  const handleSetIsLinkPartyOpen = useCallback((open: boolean) => {
+    setIsLinkPartyOpen(open);
+    if (!open) {
+      setSubmitError(null);
+      setActiveLead(null);
+    }
+  }, []);
+
+  const handleSetIsConvertOpen = useCallback((open: boolean) => {
+    setIsConvertOpen(open);
+    if (!open) {
+      setSubmitError(null);
+      setActiveLead(null);
     }
   }, []);
 
@@ -154,6 +186,90 @@ export function useLeadsViewModel(initialSearch?: string) {
     [state.items]
   );
 
+  const handleQualifyLead = useCallback(
+    async (input: QualifyLeadInput): Promise<boolean> => {
+      setIsSubmitting(true);
+      setSubmitError(null);
+      try {
+        const container = getCrmContainer();
+        await container.leadRepository.qualifyLead(input);
+        setIsSubmitting(false);
+        setIsQualifyOpen(false);
+        setActiveLead(null);
+        loadLeads(state.page, search, statusFilter);
+        return true;
+      } catch (err) {
+        setIsSubmitting(false);
+        const errMsg = err instanceof Error ? err.message : "Failed to qualify lead";
+        setSubmitError(errMsg);
+        return false;
+      }
+    },
+    [loadLeads, state.page, search, statusFilter]
+  );
+
+  const handleLinkParty = useCallback(
+    async (input: LinkPartyToLeadInput): Promise<boolean> => {
+      setIsSubmitting(true);
+      setSubmitError(null);
+      try {
+        const container = getCrmContainer();
+        await container.leadRepository.linkParty(input);
+        setIsSubmitting(false);
+        setIsLinkPartyOpen(false);
+        setActiveLead(null);
+        loadLeads(state.page, search, statusFilter);
+        return true;
+      } catch (err) {
+        setIsSubmitting(false);
+        const errMsg = err instanceof Error ? err.message : "Failed to link party";
+        setSubmitError(errMsg);
+        return false;
+      }
+    },
+    [loadLeads, state.page, search, statusFilter]
+  );
+
+  const handleConvertLead = useCallback(
+    async (input: ConvertLeadInput): Promise<ConvertLeadResult | null> => {
+      setIsSubmitting(true);
+      setSubmitError(null);
+      try {
+        const container = getCrmContainer();
+        const result = await container.leadRepository.convertLead(input);
+        setIsSubmitting(false);
+        setIsConvertOpen(false);
+        setActiveLead(null);
+        loadLeads(state.page, search, statusFilter);
+        return result;
+      } catch (err) {
+        setIsSubmitting(false);
+        const errMsg = err instanceof Error ? err.message : "Failed to convert lead";
+        setSubmitError(errMsg);
+        return null;
+      }
+    },
+    [loadLeads, state.page, search, statusFilter]
+  );
+
+  const openQualifyDialog = useCallback((lead: CrmLead) => {
+    setActiveLead(lead);
+    setSubmitError(null);
+    setIsQualifyOpen(true);
+  }, []);
+
+  const openLinkPartyDialog = useCallback((lead: CrmLead) => {
+    setActiveLead(lead);
+    setSubmitError(null);
+    setIsLinkPartyOpen(true);
+  }, []);
+
+  const openConvertDialog = useCallback((lead: CrmLead) => {
+    setActiveLead(lead);
+    setSubmitError(null);
+    setIsConvertOpen(true);
+  }, []);
+
   const [selectedItems, setSelectedItems] = useState<string[]>([]);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [viewModalOpen, setViewModalOpen] = useState(false);
@@ -166,15 +282,29 @@ export function useLeadsViewModel(initialSearch?: string) {
     search,
     statusFilter,
     isCreateOpen,
+    isQualifyOpen,
+    isLinkPartyOpen,
+    isConvertOpen,
+    activeLead,
     isSubmitting,
     submitError,
     isPending,
     setIsCreateOpen: handleSetIsCreateOpen,
+    setIsQualifyOpen: handleSetIsQualifyOpen,
+    setIsLinkPartyOpen: handleSetIsLinkPartyOpen,
+    setIsConvertOpen: handleSetIsConvertOpen,
+    setActiveLead,
     setSubmitError,
     handleSearchChange,
     handleStatusFilterChange,
     handlePageChange,
     handleCreateLead,
+    handleQualifyLead,
+    handleLinkParty,
+    handleConvertLead,
+    openQualifyDialog,
+    openLinkPartyDialog,
+    openConvertDialog,
     handleUpdateLeadStatus,
     refresh,
 

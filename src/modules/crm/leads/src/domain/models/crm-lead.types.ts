@@ -3,6 +3,8 @@
  */
 
 export type LeadStatus = "New" | "Working" | "Qualified" | "Converted" | "Disqualified";
+export type QualificationDecision = "Qualified" | "Disqualified";
+export type DealKind = "NewBusiness" | "Upsell" | "Renewal" | "Expansion";
 
 export interface CrmLead {
   id: string;
@@ -21,6 +23,11 @@ export interface CrmLead {
   notes?: string;
   disqualificationReason?: string;
   verifiedPartyId?: string;
+  organizationPartyId?: string;
+  personPartyId?: string;
+  accountId?: string;
+  qualificationDecision?: QualificationDecision;
+  convertedOpportunityId?: string;
   ownerUserId?: string;
   ownerTeamId?: string;
   createdAt: string;
@@ -49,6 +56,49 @@ export interface CreateLeadInput {
   ownerUserId?: string;
   ownerTeamId?: string;
   idempotencyKey?: string;
+}
+
+export interface QualifyLeadInput {
+  leadId: string;
+  decision: QualificationDecision;
+  disqualificationReasonCode?: string;
+  disqualificationReason?: string;
+  qualificationNotes?: string;
+  expectedRowVersion?: string;
+  idempotencyKey?: string;
+}
+
+export interface LinkPartyToLeadInput {
+  leadId: string;
+  organizationPartyId?: string;
+  personPartyId?: string;
+  accountId?: string;
+  createMissingParties?: boolean;
+  expectedRowVersion?: string;
+  idempotencyKey?: string;
+}
+
+export interface ConvertLeadInput {
+  leadId: string;
+  opportunityTitle: string;
+  estimatedAmount: number;
+  currencyCode?: string;
+  targetStageKey?: string;
+  targetCloseDate?: string;
+  dealKind?: DealKind;
+  directCreateRationale?: string;
+  expectedRowVersion?: string;
+  idempotencyKey?: string;
+}
+
+export interface ConvertLeadResult {
+  leadId: string;
+  opportunityId: string;
+  accountId?: string;
+  organizationPartyId?: string;
+  personPartyId?: string;
+  initialStageKey: string;
+  convertedAtUtc: string;
 }
 
 export interface LeadsFilterParams {
