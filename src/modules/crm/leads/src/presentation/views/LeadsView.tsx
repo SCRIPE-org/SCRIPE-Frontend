@@ -520,8 +520,8 @@ export function LeadsView() {
         </Alert>
       )}
 
-      {/* Render Multi-Mode GenericCrudView ONLY when state.stage === "success" */}
-      {state.stage === "success" && (
+      {/* Render Multi-Mode GenericCrudView */}
+      {(state.stage === "success" || state.items.length > 0) && (
         <GenericCrudView<CrmLead>
           config={crudConfig}
           columns={columns}
