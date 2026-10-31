@@ -1,4 +1,4 @@
 export const CRM_LEAD_ENDPOINTS = {
-  LEADS: "/crm/leads",
-  LEAD_BY_ID: (id: string) => `/crm/leads/${id}`,
+  LEADS: "/v1/crm/leads",
+  LEAD_BY_ID: (id: string) => `/v1/crm/leads/${id}`,
 } as const;

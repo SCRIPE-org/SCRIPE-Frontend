@@ -3,10 +3,10 @@
  * Authority: SCRIPE CRM C1 Specification
  */
 export const CRM_ENDPOINTS = {
-  PIPELINE_DEFAULT: "/api/v1/crm/pipelines/default",
-  OPPORTUNITIES: "/api/v1/crm/opportunities",
-  LEADS: "/api/v1/crm/leads",
-  ACCOUNTS: "/api/v1/crm/accounts",
-  CONTACTS: "/api/v1/crm/contacts",
-  ACTIVITIES: "/api/v1/crm/activities",
+  PIPELINE_DEFAULT: "/v1/crm/pipelines/default",
+  OPPORTUNITIES: "/v1/crm/opportunities",
+  LEADS: "/v1/crm/leads",
+  ACCOUNTS: "/v1/crm/accounts",
+  CONTACTS: "/v1/crm/contacts",
+  ACTIVITIES: "/v1/crm/activities",
 } as const;
