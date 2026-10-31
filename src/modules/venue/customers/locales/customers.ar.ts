@@ -35,6 +35,8 @@ export const ar = {
       description: "أدخل اسم العميل لإضافته إلى قائمة عملاء المنشأة.",
       customerName: "اسم العميل",
       namePlaceholder: "مثال: أحمد محمد",
+      customerPhone: "رقم الهاتف",
+      phonePlaceholder: "مثال: ٠١٠٠١٢٣٤٥٦٧",
       customerType: "نوع العميل",
     },
   },

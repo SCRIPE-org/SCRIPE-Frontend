@@ -35,6 +35,8 @@ export const en = {
       description: "Enter the customer details to add them to your venue directory.",
       customerName: "Customer Name",
       namePlaceholder: "e.g. John Doe",
+      customerPhone: "Phone Number",
+      phonePlaceholder: "e.g. +20 100 123 4567",
       customerType: "Customer Type",
     },
   },

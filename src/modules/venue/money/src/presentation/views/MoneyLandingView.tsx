@@ -65,35 +65,6 @@ function formatDate(dateStr: string, locale: string) {
   }
 }
 
-function getDateRange(range: DateRangeFilter): {
-  from?: string;
-  to?: string;
-  interval: "hour" | "day";
-} {
-  const now = new Date();
-  const to = now.toISOString();
-
-  if (range === "today") {
-    const startOfDay = new Date(
-      Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(), 0, 0, 0)
-    );
-    return { from: startOfDay.toISOString(), to, interval: "hour" };
-  }
-  if (range === "days7") {
-    const d = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
-    return { from: d.toISOString(), to, interval: "day" };
-  }
-  if (range === "days30") {
-    const d = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
-    return { from: d.toISOString(), to, interval: "day" };
-  }
-  if (range === "thisMonth") {
-    const startOfMonth = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), 1, 0, 0, 0));
-    return { from: startOfMonth.toISOString(), to, interval: "day" };
-  }
-  return { interval: "day" };
-}
-
 export function MoneyLandingView() {
   useModuleLocales(() => import("../../../locales"), "venue.money");
   const { t, language, direction } = useI18n();
@@ -277,7 +248,7 @@ export function MoneyLandingView() {
       {/* PRIMARY MONEY KPIS STRIP */}
       <div className="grid grid-cols-2 gap-3.5 lg:grid-cols-6">
         {/* 1. Commercial Value */}
-        <Card className="border-nx-line/80 shadow-xs flex flex-col justify-between p-3.5">
+        <Card className="border-nx-line/80 flex flex-col justify-between p-3.5">
           <div className="flex items-center justify-between">
             <span className="text-[11px] font-semibold uppercase tracking-wider text-nx-ink-3">
               {t("money.landing.kpis.commercialValue", { defaultValue: "Commercial Value" })}
@@ -299,7 +270,7 @@ export function MoneyLandingView() {
         </Card>
 
         {/* 2. Collected */}
-        <Card className="border-nx-line/80 shadow-xs flex flex-col justify-between p-3.5">
+        <Card className="border-nx-line/80 flex flex-col justify-between p-3.5">
           <div className="flex items-center justify-between">
             <span className="text-[11px] font-semibold uppercase tracking-wider text-nx-ink-3">
               {t("money.landing.kpis.collected", { defaultValue: "Collected" })}
@@ -321,7 +292,7 @@ export function MoneyLandingView() {
         </Card>
 
         {/* 3. Collected Today */}
-        <Card className="border-nx-line/80 shadow-xs flex flex-col justify-between p-3.5">
+        <Card className="border-nx-line/80 flex flex-col justify-between p-3.5">
           <div className="flex items-center justify-between">
             <span className="text-[11px] font-semibold uppercase tracking-wider text-nx-ink-3">
               {t("money.landing.kpis.collectedToday", { defaultValue: "Collected Today" })}
@@ -343,7 +314,7 @@ export function MoneyLandingView() {
         </Card>
 
         {/* 4. Outstanding */}
-        <Card className="border-nx-line/80 shadow-xs flex flex-col justify-between p-3.5">
+        <Card className="border-nx-line/80 flex flex-col justify-between p-3.5">
           <div className="flex items-center justify-between">
             <span className="text-[11px] font-semibold uppercase tracking-wider text-nx-ink-3">
               {t("money.landing.kpis.outstanding", { defaultValue: "Outstanding" })}
@@ -364,7 +335,7 @@ export function MoneyLandingView() {
         </Card>
 
         {/* 5. Refunds */}
-        <Card className="border-nx-line/80 shadow-xs flex flex-col justify-between p-3.5">
+        <Card className="border-nx-line/80 flex flex-col justify-between p-3.5">
           <div className="flex items-center justify-between">
             <span className="text-[11px] font-semibold uppercase tracking-wider text-nx-ink-3">
               {t("money.landing.kpis.refunds", { defaultValue: "Refunds" })}
@@ -386,7 +357,7 @@ export function MoneyLandingView() {
         </Card>
 
         {/* 6. Net Collected */}
-        <Card className="border-nx-line/80 shadow-xs flex flex-col justify-between p-3.5">
+        <Card className="border-nx-line/80 flex flex-col justify-between p-3.5">
           <div className="flex items-center justify-between">
             <span className="text-[11px] font-semibold uppercase tracking-wider text-nx-ink-3">
               {t("money.landing.kpis.netCollected", { defaultValue: "Net Collected" })}
@@ -436,7 +407,7 @@ export function MoneyLandingView() {
       )}
 
       {/* PRIMARY FINANCIAL CHART: COMMERCIAL VALUE VS COLLECTED */}
-      <Card className="border-nx-line/80 overflow-hidden shadow-sm">
+      <Card className="border-nx-line/80 overflow-hidden">
         <CardHeader className="border-nx-line/50 bg-nx-surfaceSubtle/30 flex flex-row items-center justify-between border-b px-5 py-4">
           <div>
             <CardTitle className="flex items-center gap-2 text-sm font-bold text-nx-ink">
@@ -556,7 +527,7 @@ export function MoneyLandingView() {
       {/* TWO INSIGHT PANELS: COURT PERFORMANCE & TIME OF DAY */}
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
         {/* Performance by Court / Space */}
-        <Card className="border-nx-line/80 shadow-xs flex flex-col justify-between">
+        <Card className="border-nx-line/80 flex flex-col justify-between">
           <div>
             <CardHeader className="border-nx-line/50 flex flex-row items-center justify-between border-b px-4 py-3">
               <div>
@@ -625,7 +596,7 @@ export function MoneyLandingView() {
         </Card>
 
         {/* Business by Time of Day */}
-        <Card className="border-nx-line/80 shadow-xs flex flex-col justify-between">
+        <Card className="border-nx-line/80 flex flex-col justify-between">
           <div>
             <CardHeader className="border-nx-line/50 flex flex-row items-center justify-between border-b px-4 py-3">
               <div>
@@ -689,7 +660,7 @@ export function MoneyLandingView() {
       </div>
 
       {/* PAYMENT METHODS BREAKDOWN */}
-      <Card className="border-nx-line/80 shadow-xs">
+      <Card className="border-nx-line/80">
         <CardHeader className="border-nx-line/50 border-b px-4 py-3">
           <CardTitle className="flex items-center justify-between text-xs font-bold text-nx-ink">
             <span>
@@ -746,7 +717,7 @@ export function MoneyLandingView() {
       {/* ACTIONABLE OPERATIONAL TABLES */}
       <div className="grid grid-cols-1 gap-5 lg:grid-cols-2">
         {/* Outstanding Receivables Table */}
-        <Card className="border-nx-line/80 shadow-xs flex flex-col justify-between">
+        <Card className="border-nx-line/80 flex flex-col justify-between">
           <div>
             <CardHeader className="border-nx-line/50 flex flex-row items-center justify-between border-b px-4 py-3">
               <div>
@@ -846,7 +817,7 @@ export function MoneyLandingView() {
         </Card>
 
         {/* Recent Payments Table */}
-        <Card className="border-nx-line/80 shadow-xs flex flex-col justify-between">
+        <Card className="border-nx-line/80 flex flex-col justify-between">
           <div>
             <CardHeader className="border-nx-line/50 flex flex-row items-center justify-between border-b px-4 py-3">
               <div>

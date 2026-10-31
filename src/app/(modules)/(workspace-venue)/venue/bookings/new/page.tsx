@@ -1,7 +1,5 @@
 import type { Metadata } from "next";
-import { ModuleErrorBoundary } from "@core/ui/module-error-boundary";
-import { BookingWorkspaceView } from "@modules/venue/booking/src/presentation/views/BookingWorkspaceView";
-import type { BookingWorkspacePrefill } from "@modules/venue/booking/src/domain/entities/Booking";
+import { redirect } from "next/navigation";
 
 export const metadata: Metadata = {
   title: "New Venue Booking",
@@ -18,18 +16,13 @@ function first(value: string | string[] | undefined): string | undefined {
 
 export default async function NewBookingPage({ searchParams }: BookingPageProps) {
   const values = await searchParams;
-  const duration = Number(first(values.durationMinutes));
-  const prefill: BookingWorkspacePrefill = {
-    facilityId: first(values.facilityId),
-    resourceId: first(values.resourceId),
-    date: first(values.date),
-    startTime: first(values.startTime) ?? first(values.time),
-    durationMinutes:
-      Number.isInteger(duration) && duration >= 15 && duration <= 1440 ? duration : undefined,
-  };
-  return (
-    <ModuleErrorBoundary moduleName="booking.title">
-      <BookingWorkspaceView prefill={prefill} />
-    </ModuleErrorBoundary>
-  );
+  const params = new URLSearchParams();
+  params.set("newBooking", "true");
+  for (const [key, val] of Object.entries(values)) {
+    const stringVal = first(val);
+    if (stringVal && key !== "newBooking") {
+      params.set(key, stringVal);
+    }
+  }
+  redirect(`/venue/calendar?${params.toString()}`);
 }

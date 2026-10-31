@@ -49,7 +49,9 @@ export function VenueSettingsView() {
   } = useVenueSettingsViewModel({ tenantId: user?.tenantId ?? undefined });
 
   const branchName = selectedFacility?.name || t("venueSettings.branch.noSelection");
-  const branchTimezone = t("venueSettings.branch.timezoneUnavailable");
+  const branchTimezone = selectedFacility
+    ? (selectedFacility as any).defaultTimeZoneId || (selectedFacility as any).timeZoneId || "UTC"
+    : t("venueSettings.branch.timezoneUnavailable");
 
   return (
     <div
@@ -101,7 +103,7 @@ export function VenueSettingsView() {
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                <div className="bg-nx-surfaceSubtle space-y-1 rounded-nx-lg border border-nx-line p-3.5">
+                <div className="bg-nx-raised space-y-1 rounded-lg border border-nx-line p-3.5">
                   <div className="text-[11px] font-medium text-nx-ink-3">
                     {t("venueSettings.branch.name")}
                   </div>
@@ -116,7 +118,7 @@ export function VenueSettingsView() {
                     {t("venueSettings.branch.timezone")}
                   </div>
                   <div className="flex items-center gap-2 text-sm font-bold text-nx-ink">
-                    <Clock className="size-4 text-nx-accent" />
+                    <Clock className="size-4 text-primary" />
                     <span>{branchTimezone}</span>
                   </div>
                 </div>
@@ -145,7 +147,7 @@ export function VenueSettingsView() {
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="space-y-3">
-                <div className="flex items-start justify-between gap-4 rounded-nx-lg border border-nx-line bg-nx-surface p-3.5">
+                <div className="flex items-start justify-between gap-4 rounded-lg border border-nx-line bg-nx-surface p-3.5">
                   <div className="space-y-1">
                     <div className="text-xs font-bold text-nx-ink">
                       {t("venueSettings.booking.courtRulesTitle")}
@@ -178,9 +180,9 @@ export function VenueSettingsView() {
                   </div>
                   <Badge
                     variant="outline"
-                    className="bg-nx-surfaceSubtle border-nx-line text-xs font-semibold text-nx-ink"
+                    className="bg-nx-raised border-nx-line text-xs font-semibold text-nx-ink"
                   >
-                    {t("venueSettings.booking.windowDays", { count: 14 })}
+                    {t("venueSettings.booking.windowDays", { count: (selectedFacility as any)?.bookingWindowDays || 14 })}
                   </Badge>
                 </div>
               </div>

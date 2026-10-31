@@ -16,6 +16,7 @@ export const en = {
     quantity: "Slots / Capacity",
     customer: "Booked For",
     instructions: "Directions & Access Instructions",
+    cancellationPolicyNote: "Free cancellation available according to venue policy.",
     noInstructions: "No special instructions provided by the venue.",
     status: {
       Confirmed: "Confirmed",
@@ -49,6 +50,9 @@ export const en = {
       confirmCancel: "Yes, Cancel Booking",
       downloadConfirmation: "Save Confirmation",
       backToHome: "Return",
+      copied: "Copied",
+      copy: "Copy",
+      refreshDetails: "Refresh details",
     },
     cancelModal: {
       title: "Cancel this reservation?",
@@ -59,6 +63,7 @@ export const en = {
       warning: "This action cannot be undone once confirmed.",
     },
     messages: {
+      cancelledBanner: "This reservation has been cancelled.",
       cancelSuccess: "Your reservation has been cancelled successfully.",
       cancelFailed: "Unable to cancel reservation. Please contact the venue.",
       cancelNotEligible:

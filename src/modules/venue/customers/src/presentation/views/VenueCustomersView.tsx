@@ -29,6 +29,7 @@ import {
   DialogTitle,
   DialogDescription,
 } from "@core/ui/dialog";
+import { useModuleLocales } from "@core/hooks/use-module-locales";
 import { useVenueCustomersViewModel } from "../viewmodels/useVenueCustomersViewModel";
 
 export function VenueCustomersView() {
@@ -46,6 +47,8 @@ export function VenueCustomersView() {
     setCreateOpen,
     newName,
     setNewName,
+    newPhone,
+    setNewPhone,
     newType,
     setNewType,
     createLoading,
@@ -55,8 +58,9 @@ export function VenueCustomersView() {
     handleCreateCustomer,
   } = useVenueCustomersViewModel();
 
-  // All visible copy comes from the registered EN/AR customer locale module.
-  const tr = (key: string, _enFallback: string, _arFallback: string) => t(key);
+  useModuleLocales(() => import("../../../locales"), "venue.customers");
+  const isRtl = direction === "rtl";
+  const tr = (key: string, enFallback: string, arFallback: string) => t(key, { defaultValue: isRtl ? arFallback : enFallback });
 
   return (
     <div className="space-y-6" dir={direction} data-testid="venue-customers-view">
@@ -284,6 +288,22 @@ export function VenueCustomersView() {
                     "مثال: أحمد محمد"
                   )}
                   required
+                />
+              </div>
+
+              <div className="space-y-1.5">
+                <Label htmlFor="customer-phone">
+                  {tr("venueCustomers.dialog.customerPhone", "Phone Number", "رقم الهاتف")}
+                </Label>
+                <Input
+                  id="customer-phone"
+                  value={newPhone}
+                  onChange={(e) => setNewPhone(e.target.value)}
+                  placeholder={tr(
+                    "venueCustomers.dialog.phonePlaceholder",
+                    "e.g. +20 100 123 4567",
+                    "مثال: ٠١٠٠١٢٣٤٥٦٧"
+                  )}
                 />
               </div>
 

@@ -113,10 +113,10 @@ export function VenueNav({ attentionCount = 0, className = "", hidePrimaryBar = 
         active: pathname === "/venue/calendar",
       },
       {
-        href: "/venue/bookings/new",
+        href: "/venue/calendar?newBooking=true",
         label: t("venueNav.newBooking", { defaultValue: "New Booking" }),
         icon: Plus,
-        active: pathname.startsWith("/venue/bookings/new"),
+        active: pathname === "/venue/calendar",
       },
       ...(canViewAttention && attentionCount > 0
         ? [

@@ -146,28 +146,28 @@ export function VenueReportsView() {
         <TabsList className="bg-nx-surfaceSubtle rounded-nx-xl grid h-auto w-full grid-cols-2 border border-nx-line p-1 md:grid-cols-4">
           <TabsTrigger
             value="financial"
-            className="data-[state=active]:shadow-xs gap-2 py-2.5 text-xs font-semibold data-[state=active]:bg-nx-surface"
+            className="data-[state=active]:gap-2 py-2.5 text-xs font-semibold data-[state=active]:bg-nx-surface"
           >
             <CircleDollarSign className="size-4 text-success" />
             <span>{t("venueReports.ui.financialReport")}</span>
           </TabsTrigger>
           <TabsTrigger
             value="bookings"
-            className="data-[state=active]:shadow-xs gap-2 py-2.5 text-xs font-semibold data-[state=active]:bg-nx-surface"
+            className="data-[state=active]:gap-2 py-2.5 text-xs font-semibold data-[state=active]:bg-nx-surface"
           >
             <CalendarDays className="size-4 text-nx-accent" />
             <span>{t("venueReports.ui.bookingOperations")}</span>
           </TabsTrigger>
           <TabsTrigger
             value="court-performance"
-            className="data-[state=active]:shadow-xs gap-2 py-2.5 text-xs font-semibold data-[state=active]:bg-nx-surface"
+            className="data-[state=active]:gap-2 py-2.5 text-xs font-semibold data-[state=active]:bg-nx-surface"
           >
             <Layers className="size-4 text-nx-accent" />
             <span>{t("venueReports.ui.courtPerformance")}</span>
           </TabsTrigger>
           <TabsTrigger
             value="collections"
-            className="data-[state=active]:shadow-xs gap-2 py-2.5 text-xs font-semibold data-[state=active]:bg-nx-surface"
+            className="data-[state=active]:gap-2 py-2.5 text-xs font-semibold data-[state=active]:bg-nx-surface"
           >
             <Receipt className="size-4 text-warning" />
             <span>{t("venueReports.ui.collectionsReport")}</span>
@@ -197,7 +197,7 @@ export function VenueReportsView() {
               return (
                 <Card
                   key={curr}
-                  className={`rounded-nx-xl shadow-xs border-nx-line bg-nx-surface ${
+                  className={`rounded-nx-xl border-nx-line bg-nx-surface ${
                     isUnspecified ? "border-warning/30 bg-warning/5" : ""
                   }`}
                 >
@@ -258,7 +258,7 @@ export function VenueReportsView() {
 
       {/* Filter Bar (A9) */}
       {category === "bookings" && (
-        <Card className="rounded-nx-xl shadow-xs border-nx-line bg-nx-surface">
+        <Card className="rounded-nx-xl border-nx-line bg-nx-surface">
           <CardContent className="p-4">
             <div className="max-w-sm space-y-1">
               <label className="text-[11px] font-semibold text-nx-ink-2">
@@ -292,7 +292,7 @@ export function VenueReportsView() {
       )}
 
       {/* Authoritative Live Preview Table (A10) */}
-      <Card className="rounded-nx-xl shadow-xs overflow-hidden border-nx-line bg-nx-surface">
+      <Card className="rounded-nx-xl overflow-hidden border-nx-line bg-nx-surface">
         <CardHeader className="border-nx-line/60 bg-nx-surfaceSubtle/30 flex flex-row items-center justify-between border-b pb-3">
           <div>
             <CardTitle className="text-sm font-bold">

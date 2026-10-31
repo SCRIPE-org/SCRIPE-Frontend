@@ -88,6 +88,7 @@ export function useGuestBookingPortalViewModel() {
   const [booking, setBooking] = useState<GuestBooking | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [cancelModalOpen, setCancelModalOpen] = useState(false);
+  const [cancelError, setCancelError] = useState<string | null>(null);
   const [cancelling, setCancelling] = useState(false);
   const [cancelSuccessBanner, setCancelSuccessBanner] = useState(false);
   const [copied, setCopied] = useState(false);
@@ -191,9 +192,10 @@ export function useGuestBookingPortalViewModel() {
 
       setCancelModalOpen(false);
       setCancelSuccessBanner(true);
+      setCancelError(null);
       cancelIntent.current = null;
     } catch (err: any) {
-      alert(err?.message || t("guestPortal.messages.cancelFailed"));
+      setCancelError(err?.message || t("guestPortal.messages.cancelFailed"));
     } finally {
       cancelInFlight.current = false;
       setCancelling(false);
@@ -272,6 +274,8 @@ export function useGuestBookingPortalViewModel() {
     errorMessage,
     cancelModalOpen,
     setCancelModalOpen,
+    cancelError,
+    setCancelError,
     cancelling,
     cancelSuccessBanner,
     copied,

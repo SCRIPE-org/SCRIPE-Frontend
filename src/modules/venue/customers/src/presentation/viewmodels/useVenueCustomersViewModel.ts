@@ -24,6 +24,7 @@ export function useVenueCustomersViewModel() {
   // New Customer Dialog
   const [createOpen, setCreateOpen] = useState(false);
   const [newName, setNewName] = useState("");
+  const [newPhone, setNewPhone] = useState("");
   const [newType, setNewType] = useState<"Person" | "Organization">("Person");
   const [createLoading, setCreateLoading] = useState(false);
   const [createError, setCreateError] = useState<string | null>(null);
@@ -80,16 +81,18 @@ export function useVenueCustomersViewModel() {
     setCreateError(null);
     try {
       const displayName = newName.trim();
-      const fingerprint = JSON.stringify([displayName, newType]);
+      const phone = newPhone.trim() || undefined;
+      const fingerprint = JSON.stringify([displayName, newType, phone]);
       if (customerCreateIntentRef.current?.fingerprint !== fingerprint) {
         customerCreateIntentRef.current = { fingerprint, key: crypto.randomUUID() };
       }
-      const created = await customerRepository.create(displayName, newType, undefined, {
+      const created = await customerRepository.create(displayName, newType, phone, {
         idempotencyKey: customerCreateIntentRef.current.key,
       });
       customerCreateIntentRef.current = null;
       setCreateOpen(false);
       setNewName("");
+      setNewPhone("");
       setSelectedCustomer(created);
       await fetchCustomers(searchQuery);
     } catch (err) {
@@ -115,6 +118,8 @@ export function useVenueCustomersViewModel() {
     setCreateOpen,
     newName,
     setNewName,
+    newPhone,
+    setNewPhone,
     newType,
     setNewType,
     createLoading,

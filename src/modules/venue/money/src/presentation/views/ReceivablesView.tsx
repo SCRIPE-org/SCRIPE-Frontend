@@ -154,7 +154,7 @@ export function ReceivablesView() {
               return (
                 <Card
                   key={curr}
-                  className={`border-nx-line/80 rounded-nx-xl shadow-xs space-y-2.5 bg-nx-surface p-4 ${
+                  className={`border-nx-line/80 rounded-nx-xl space-y-2.5 bg-nx-surface p-4 ${
                     isUnspecified ? "border-warning/30 bg-warning/5" : ""
                   }`}
                 >
@@ -212,7 +212,7 @@ export function ReceivablesView() {
       )}
 
       {/* Filter and Search Bar */}
-      <Card className="border-nx-line/80 rounded-nx-xl shadow-xs bg-nx-surface p-3.5">
+      <Card className="border-nx-line/80 rounded-nx-xl bg-nx-surface p-3.5">
         <div className="flex flex-col items-stretch justify-between gap-3 sm:flex-row sm:items-center">
           {/* Status Tabs */}
           <div className="bg-nx-surfaceSubtle flex items-center rounded-nx-md border border-nx-line p-0.5 text-xs">
@@ -238,7 +238,7 @@ export function ReceivablesView() {
                 onClick={() => model.setStatusFilter(key as ReceivablesStatusFilter)}
                 className={`h-7 rounded-nx-sm px-3 py-1 font-medium transition-colors ${
                   model.statusFilter === key
-                    ? "shadow-xs bg-nx-accent font-semibold text-nx-on-fill hover:bg-nx-accent/90"
+                    ? "bg-nx-accent font-semibold text-nx-on-fill hover:bg-nx-accent/90"
                     : "text-nx-ink-2 hover:bg-nx-hover hover:text-nx-ink"
                 }`}
               >
@@ -300,7 +300,7 @@ export function ReceivablesView() {
             return (
               <Card
                 key={invoice.id}
-                className="border-nx-line/80 rounded-nx-xl shadow-xs overflow-hidden bg-nx-surface transition-colors hover:border-nx-line"
+                className="border-nx-line/80 rounded-nx-xl overflow-hidden bg-nx-surface transition-colors hover:border-nx-line"
               >
                 <CardHeader className="border-nx-line/40 bg-nx-surfaceSubtle/30 flex-row items-start justify-between gap-3 space-y-0 border-b pb-3">
                   <div className="space-y-1">

@@ -20,6 +20,7 @@ interface GuestBookingCancelModalProps {
   reservationNumber: string;
   onConfirmCancel: (reason: string) => Promise<void>;
   loading: boolean;
+  errorMessage?: string | null;
   t: (key: string, values?: Record<string, string | number>) => string;
 }
 
@@ -29,6 +30,7 @@ export function GuestBookingCancelModal({
   reservationNumber,
   onConfirmCancel,
   loading,
+  errorMessage,
   t,
 }: GuestBookingCancelModalProps) {
   const [reason, setReason] = useState("");
@@ -55,6 +57,11 @@ export function GuestBookingCancelModal({
         </DialogHeader>
 
         <div className="space-y-3 py-2">
+          {errorMessage && (
+            <div className="rounded-lg border border-destructive/20 bg-destructive/10 p-2.5 text-xs font-medium text-destructive">
+              {errorMessage}
+            </div>
+          )}
           <div className="space-y-1.5">
             <Label htmlFor="cancel-reason" className="text-xs font-medium text-nx-ink">
               {t("guestPortal.cancelModal.reasonLabel")}
