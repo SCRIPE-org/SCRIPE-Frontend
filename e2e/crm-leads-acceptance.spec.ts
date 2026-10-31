@@ -102,7 +102,45 @@ test.describe("CRM Leads Intake Acceptance & View Mode Tour", () => {
     await tableBtn.click();
     await expect(leadCell).toBeVisible({ timeout: 10_000 });
 
-    // 10. Assert no fatal react runtime exceptions occurred
+    // 10. Tour CardGrid for Direct Action Verification
+    await cardGridBtn.click();
+    await expect(page.locator("main").getByText("Real Madrid Commercial Partnership Q4").first()).toBeVisible({ timeout: 10_000 });
+
+    // 11. Lead Qualification Flow (QualifyLeadDialog)
+    const qualifyActionBtn = page.getByRole("button", { name: /qualify/i }).first();
+    if (await qualifyActionBtn.isVisible({ timeout: 3_000 }).catch(() => false)) {
+      await qualifyActionBtn.click();
+      const qualifyDialog = page.getByRole("dialog").first();
+      await expect(qualifyDialog).toBeVisible({ timeout: 5_000 });
+      const saveDecisionBtn = qualifyDialog.getByRole("button", { name: /save decision/i });
+      await saveDecisionBtn.click();
+      await expect(qualifyDialog).not.toBeVisible({ timeout: 10_000 });
+    }
+
+    // 12. Party Linking Flow (LinkPartyDialog)
+    const linkPartyActionBtn = page.getByRole("button", { name: /link party/i }).first();
+    if (await linkPartyActionBtn.isVisible({ timeout: 3_000 }).catch(() => false)) {
+      await linkPartyActionBtn.click();
+      const linkDialog = page.getByRole("dialog").first();
+      await expect(linkDialog).toBeVisible({ timeout: 5_000 });
+      const saveLinkBtn = linkDialog.getByRole("button", { name: /link parties/i });
+      await saveLinkBtn.click();
+      await expect(linkDialog).not.toBeVisible({ timeout: 10_000 });
+    }
+
+    // 13. Lead Conversion Flow (ConvertLeadDialog)
+    const convertActionBtn = page.getByRole("button", { name: /convert/i }).first();
+    if (await convertActionBtn.isVisible({ timeout: 3_000 }).catch(() => false)) {
+      await convertActionBtn.click();
+      const convertDialog = page.getByRole("dialog").first();
+      await expect(convertDialog).toBeVisible({ timeout: 5_000 });
+      const submitConvertBtn = convertDialog.getByRole("button", { name: /convert to deal/i });
+      if (await submitConvertBtn.isVisible()) {
+        await submitConvertBtn.click();
+      }
+    }
+
+    // 14. Assert no fatal react runtime exceptions occurred
     const fatalErrors = consoleErrors.filter(
       (err) =>
         err.includes("Uncaught Error") ||

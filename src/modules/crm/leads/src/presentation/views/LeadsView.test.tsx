@@ -99,6 +99,9 @@ describe("LeadsView Component", () => {
 
   let mockGetLeads: ReturnType<typeof vi.fn>;
   let mockCreateLead: ReturnType<typeof vi.fn>;
+  let mockQualifyLead: ReturnType<typeof vi.fn>;
+  let mockLinkParty: ReturnType<typeof vi.fn>;
+  let mockConvertLead: ReturnType<typeof vi.fn>;
 
   beforeEach(() => {
     vi.clearAllMocks();
@@ -123,15 +126,15 @@ describe("LeadsView Component", () => {
       createdAt: new Date().toISOString(),
     } as CrmLead);
 
-    const mockQualifyLead = vi.fn().mockResolvedValue({
+    mockQualifyLead = vi.fn().mockResolvedValue({
       id: "lead-1",
       status: "Qualified",
     } as any);
-    const mockLinkParty = vi.fn().mockResolvedValue({
+    mockLinkParty = vi.fn().mockResolvedValue({
       id: "lead-1",
       organizationPartyId: "org-1",
     } as any);
-    const mockConvertLead = vi.fn().mockResolvedValue({
+    mockConvertLead = vi.fn().mockResolvedValue({
       opportunityId: "opp-123",
       accountId: "acc-123",
       contactId: "cnt-123",
@@ -297,6 +300,87 @@ describe("LeadsView Component", () => {
 
     await waitFor(() => {
       expect(screen.getByText("crmLeads.qualification.dialogTitle")).toBeDefined();
+    });
+
+    const saveQualifyBtn = screen.getByText("crmLeads.qualification.save");
+    fireEvent.click(saveQualifyBtn);
+
+    await waitFor(() => {
+      expect(mockQualifyLead).toHaveBeenCalled();
+    });
+  });
+
+  it("opens LinkPartyDialog and calls linkParty on submit", async () => {
+    mockGetLeads.mockResolvedValue({
+      items: mockLeads,
+      totalCount: 3,
+      page: 1,
+      pageSize: 20,
+      totalPages: 1,
+    } as PagedLeadsResult);
+
+    render(<LeadsView />);
+
+    await waitFor(() => {
+      expect(screen.getAllByText("Al-Hilal Season Ticket Partnership")[0]).toBeDefined();
+    });
+
+    const cardGridButton = screen.getByText("CardGrid");
+    fireEvent.click(cardGridButton);
+
+    await waitFor(() => {
+      expect(screen.getAllByText("crmLeads.actions.linkParty").length).toBeGreaterThan(0);
+    });
+
+    const linkButtons = screen.getAllByText("crmLeads.actions.linkParty");
+    fireEvent.click(linkButtons[0]);
+
+    await waitFor(() => {
+      expect(screen.getByText("crmLeads.partyLink.dialogTitle")).toBeDefined();
+    });
+
+    const saveLinkBtn = screen.getByText("crmLeads.partyLink.save");
+    fireEvent.click(saveLinkBtn);
+
+    await waitFor(() => {
+      expect(mockLinkParty).toHaveBeenCalled();
+    });
+  });
+
+  it("opens ConvertLeadDialog and calls convertLead on submit", async () => {
+    mockGetLeads.mockResolvedValue({
+      items: mockLeads,
+      totalCount: 3,
+      page: 1,
+      pageSize: 20,
+      totalPages: 1,
+    } as PagedLeadsResult);
+
+    render(<LeadsView />);
+
+    await waitFor(() => {
+      expect(screen.getAllByText("Al-Hilal Season Ticket Partnership")[0]).toBeDefined();
+    });
+
+    const cardGridButton = screen.getByText("CardGrid");
+    fireEvent.click(cardGridButton);
+
+    await waitFor(() => {
+      expect(screen.getAllByText("crmLeads.actions.convert").length).toBeGreaterThan(0);
+    });
+
+    const convertButtons = screen.getAllByText("crmLeads.actions.convert");
+    fireEvent.click(convertButtons[0]);
+
+    await waitFor(() => {
+      expect(screen.getByText("crmLeads.conversion.dialogTitle")).toBeDefined();
+    });
+
+    const submitConvertBtn = screen.getByText("crmLeads.conversion.convert");
+    fireEvent.click(submitConvertBtn);
+
+    await waitFor(() => {
+      expect(mockConvertLead).toHaveBeenCalled();
     });
   });
 });
