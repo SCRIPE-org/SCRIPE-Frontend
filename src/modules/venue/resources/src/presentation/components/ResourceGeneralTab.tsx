@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { Plus } from "lucide-react";
 import { Button } from "@core/ui/button";
 import { Input } from "@core/ui/input";
@@ -26,6 +26,21 @@ export function ResourceGeneralTab({ vm }: Props) {
   const [description, setDescription] = useState(
     vm.resource?.description ?? ""
   );
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [courtPhotos, setCourtPhotos] = useState<string[]>([
+    "/images/venue/padel-court-indoor.svg",
+    "/images/venue/padel-court-outdoor.svg",
+    "/images/venue/football-turf-night.svg",
+  ]);
+  const [activePhoto, setActivePhoto] = useState<string>("/images/venue/padel-court-indoor.svg");
+  const handlePhotoSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const previewUrl = URL.createObjectURL(file);
+      setCourtPhotos((prev) => [previewUrl, ...prev]);
+      setActivePhoto(previewUrl);
+    }
+  };
 
   const handleCancel = () => {
     setName(vm.resource?.name ?? "");
@@ -59,7 +74,7 @@ export function ResourceGeneralTab({ vm }: Props) {
         {/* Main Large Court Photo */}
         <div className="border-nx-border group relative flex h-64 w-full flex-col justify-between overflow-hidden rounded-2xl border bg-nx-raised p-4 shadow-sm sm:h-72">
           <img
-            src="/images/venue/padel-court-indoor.svg"
+            src={activePhoto}
             alt="Court Preview"
             className="absolute inset-0 size-full object-cover transition-transform duration-300 group-hover:scale-105"
           />
@@ -79,31 +94,33 @@ export function ResourceGeneralTab({ vm }: Props) {
 
         {/* Thumbnail Row */}
         <div className="grid grid-cols-4 gap-2.5">
-          <div className="group relative h-16 cursor-pointer overflow-hidden rounded-xl border-2 border-primary">
-            <img
-              src="/images/venue/padel-court-indoor.svg"
-              alt="Padel indoor"
-              className="size-full object-cover transition-transform group-hover:scale-110"
-            />
-          </div>
-          <div className="border-nx-border group relative h-16 cursor-pointer overflow-hidden rounded-xl border">
-            <img
-              src="/images/venue/padel-court-outdoor.svg"
-              alt="Padel outdoor"
-              className="size-full object-cover transition-transform group-hover:scale-110"
-            />
-          </div>
-          <div className="border-nx-border group relative h-16 cursor-pointer overflow-hidden rounded-xl border">
-            <img
-              src="/images/venue/football-turf-night.svg"
-              alt="Football turf"
-              className="size-full object-cover transition-transform group-hover:scale-110"
-            />
-          </div>
-          {/* + Add Photo button */}
+          {courtPhotos.slice(0, 3).map((photo, idx) => (
+            <div
+              key={idx}
+              onClick={() => setActivePhoto(photo)}
+              className={`group relative h-16 cursor-pointer overflow-hidden rounded-xl border-2 transition-all ${
+                activePhoto === photo ? "border-primary ring-1 ring-primary" : "border-nx-border hover:border-nx-ink-3"
+              }`}
+            >
+              <img
+                src={photo}
+                alt={`Court photo ${idx + 1}`}
+                className="size-full object-cover transition-transform group-hover:scale-110"
+              />
+            </div>
+          ))}
+          {/* + Add Photo button with real file input */}
+          <input
+            type="file"
+            ref={fileInputRef}
+            className="hidden"
+            accept="image/*"
+            onChange={handlePhotoSelect}
+          />
           <Button
             variant="outline"
             type="button"
+            onClick={() => fileInputRef.current?.click()}
             className="border-nx-border flex h-16 flex-col items-center justify-center rounded-xl border-2 border-dashed text-nx-ink-2 transition-colors hover:border-primary hover:bg-primary/5"
           >
             <Plus className="size-4" />

@@ -27,6 +27,8 @@
       "@modules/auth/*": ["./src/modules/shared/auth/*"],
       "@modules/communication": ["./src/modules/admin/communication"],
       "@modules/communication/*": ["./src/modules/admin/communication/*"],
+      "@modules/crm": ["./src/modules/crm"],
+      "@modules/crm/*": ["./src/modules/crm/*"],
       "@modules/compliance": ["./src/modules/admin/compliance"],
       "@modules/compliance/*": ["./src/modules/admin/compliance/*"],
       "@modules/custom-fields": ["./src/modules/custom-fields/custom-fields"],

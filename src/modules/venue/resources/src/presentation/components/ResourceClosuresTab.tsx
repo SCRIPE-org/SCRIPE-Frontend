@@ -86,7 +86,7 @@ export function ResourceClosuresTab({ vm }: Props) {
         </div>
         <Button size="sm" onClick={() => setModalOpen(true)} className="gap-1.5 font-semibold">
           <Plus className="size-4" aria-hidden="true" />
-          <span>{t("resources.closures.blockTimeBtn", { defaultValue: "+ Block Time" })}</span>
+          <span>{t("resources.closures.blockTimeBtn", { defaultValue: "Block Time" })}</span>
         </Button>
       </CardHeader>
       <CardContent>

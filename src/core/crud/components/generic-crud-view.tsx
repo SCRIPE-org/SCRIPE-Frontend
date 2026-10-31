@@ -18,6 +18,8 @@
 "use client";
 
 import { Button } from "@core/ui/button";
+import { Card, CardHeader, CardTitle, CardContent } from "@core/ui/card";
+import { Badge } from "@core/ui/badge";
 import { GenericTable } from "./generic-table";
 import { GenericModal } from "./generic-modal";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@core/ui/dialog";
@@ -240,6 +242,29 @@ export interface PaginationConfig extends PaginationInfo {
 }
 
 /**
+ * Configuration for an explicit Kanban column
+ * @template TItem - The type of items displayed in the column
+ */
+export interface KanbanColumnConfig<TItem = any> {
+  /** The value matching item[kanbanGroupField] */
+  value: string;
+  /** Display label for the column */
+  label: string;
+  /** Accent or badge color styling (e.g. 'border-nx-line bg-nx-surface text-nx-ink') */
+  colorClass?: string;
+  /** Semantic indicator dot CSS classes (e.g. 'bg-info', 'bg-nx-accent') */
+  dotClass?: string;
+  /** Header container styling overrides */
+  headerClass?: string;
+  /** Column container styling overrides */
+  columnClass?: string;
+  /** Column icon element */
+  icon?: React.ReactNode;
+  /** Column summary/aggregate render function (e.g. total pipeline value) */
+  summary?: (items: TItem[]) => React.ReactNode;
+}
+
+/**
  * Main configuration interface for the GenericCrudView
  * @template TItem - The type of items being managed
  */
@@ -305,6 +330,8 @@ export interface CrudConfig<TItem = any> {
   hideAddButton?: boolean;
   /** Hide all action buttons (add and refresh) */
   hideActionButtons?: boolean;
+  /** Hide the page header completely (useful when embedded in a sub-shell) */
+  hidePageHeader?: boolean;
   /** Hide the actions column completely (simpler than returning [] from getActions) */
   hideActionsColumn?: boolean;
   /** Custom render function for actions column - allows complete customization */
@@ -317,8 +344,36 @@ export interface CrudConfig<TItem = any> {
   formSurface?: CrudFormSurface;
   /** Field key used to group records into columns in Kanban view */
   kanbanGroupField?: string;
+  /** Explicit ordered columns for Kanban view with labels, colors, indicators, and summaries */
+  kanbanColumns?: KanbanColumnConfig<TItem>[];
+  /** Custom render function for Kanban card */
+  renderKanbanCard?: (item: TItem, actions: React.ReactNode, index: number) => React.ReactNode;
+  /** Callback fired when an item is moved to another Kanban column (drag-and-drop or column transition) */
+  onKanbanItemMove?: (item: TItem, targetColumnValue: string) => void | Promise<void>;
+
+  /** Custom render function for CardGrid items */
+  renderCardGridItem?: (item: TItem, actions: React.ReactNode, index: number) => React.ReactNode;
+  /** Custom container class for CardGrid view */
+  cardGridClassName?: string;
+  /** Custom card className generator per item in CardGrid */
+  getCardClassName?: (item: TItem) => string;
+
+  /** Custom render function for SplitPane list items (left column) */
+  renderSplitListItem?: (item: TItem, isSelected: boolean, index: number) => React.ReactNode;
+  /** Custom render function for SplitPane detail panel (right column) */
+  renderSplitDetail?: (item: TItem, actions: React.ReactNode) => React.ReactNode;
+
   /** Field key used to group records by date in Calendar view */
   calendarDateField?: string;
+  /** Custom render function for Calendar items */
+  renderCalendarItem?: (item: TItem, actions: React.ReactNode, index: number) => React.ReactNode;
+  /** Custom group title formatter for Calendar view */
+  calendarGroupFormatter?: (rawValue: any, item: TItem) => string;
+
+  /** Where to render the view mode switcher: 'header' (default), 'toolbar', or 'both' */
+  viewSwitchPosition?: "header" | "toolbar" | "both";
+  /** Optional custom toolbar content rendered alongside the view mode switcher */
+  toolbarContent?: React.ReactNode;
   /** Built-in bulk toolbar capabilities (CSV export, CSV import, PDF/print) */
   bulkOptions?: {
     enableCsvExport?: boolean;
@@ -923,6 +978,7 @@ function GenericCrudViewInner<T>(props: GenericCrudViewProps<T>) {
     const res = config?.resource?.toLowerCase() || "";
 
     if (res.includes("staff") || res.includes("hrms") || res.includes("party")) return Users;
+    if (res.includes("crm") || res.includes("lead")) return Users;
     if (res.includes("work") || res.includes("task")) return ListTodo;
     if (res.includes("custom") || res.includes("field")) return Sliders;
     if (res.includes("analytics") || res.includes("metric") || res.includes("event"))
@@ -1190,8 +1246,9 @@ function GenericCrudViewInner<T>(props: GenericCrudViewProps<T>) {
       {/* The one page header. It owns the icon tile, the h1 and the description
           measure; the action cluster rides its actions slot, so a list page and
           a record page open identically. */}
-      <PageHeader
-        className="mb-0"
+      {!config?.hidePageHeader && (
+        <PageHeader
+          className="mb-0"
         icon={getPageIcon()}
         title={title}
         description={subtitle}
@@ -1358,37 +1415,97 @@ function GenericCrudViewInner<T>(props: GenericCrudViewProps<T>) {
           </>
         }
       />
+      )}
+
+      {/* View Switcher & Toolbar */}
+      {((config?.hidePageHeader && availableViewModes.length > 1) ||
+        config?.toolbarContent ||
+        config?.viewSwitchPosition === "toolbar" ||
+        config?.viewSwitchPosition === "both") && (
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-3">
+          <div className="flex items-center gap-2">
+            {config?.toolbarContent}
+          </div>
+          {availableViewModes.length > 1 && (
+            <div
+              className="inline-flex items-center rounded-nx-md border border-nx-line bg-nx-surface p-0.5 ms-auto"
+              role="group"
+              aria-label="View mode switcher"
+            >
+              {availableViewModes.map((mode) => {
+                const Icon =
+                  mode === "Kanban"
+                    ? Columns3
+                    : mode === "CardGrid"
+                      ? LayoutGrid
+                      : mode === "Calendar"
+                        ? CalendarIcon
+                        : mode === "SplitPane"
+                          ? PanelLeft
+                          : Table2;
+                const active = activeViewMode === mode;
+                return (
+                  <Button
+                    key={mode}
+                    type="button"
+                    variant={active ? "default" : "ghost"}
+                    size="sm"
+                    onClick={() => setActiveViewMode(mode)}
+                    className="h-7 px-2.5 text-xs"
+                  >
+                    <Icon className="me-1.5 h-3.5 w-3.5" aria-hidden="true" />
+                    {mode}
+                  </Button>
+                );
+              })}
+            </div>
+          )}
+        </div>
+      )}
 
       {/* Custom header content */}
       {config?.customHeaderContent && <div className="mb-6">{config.customHeaderContent}</div>}
 
       {activeViewMode === "CardGrid" ? (
-        <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
+        <div className={cn("grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3", config?.cardGridClassName)}>
           {(viewModel.items || []).length === 0 ? (
             <div className="col-span-full rounded-nx-lg border border-nx-line bg-nx-surface p-8">
               <EmptyState bare icon={Inbox} title={t("common.noData")} />
             </div>
           ) : (
-            (viewModel.items || []).map((row: any, idx: number) => (
-              <div
-                key={row.id || idx}
-                className="flex flex-col justify-between gap-3 rounded-nx-lg border border-nx-line bg-nx-surface p-4"
-              >
-                <div className="space-y-2">
-                  {columns.map((col) => (
-                    <div key={col.key} className="flex items-center justify-between gap-2 text-sm">
-                      <span className="font-medium text-nx-ink-2">{col.label}</span>
-                      <span className="text-nx-ink">
-                        {col.render
-                          ? col.render(row[col.key], row, idx)
-                          : String(row[col.key] ?? "—")}
-                      </span>
-                    </div>
-                  ))}
-                </div>
-                <div className="border-t border-nx-line pt-3">{renderRowActionButtons(row)}</div>
-              </div>
-            ))
+            (viewModel.items || []).map((row: any, idx: number) => {
+              const actionButtons = renderRowActionButtons(row);
+              if (config?.renderCardGridItem) {
+                return (
+                  <div key={row.id || idx}>
+                    {config.renderCardGridItem(row, actionButtons, idx)}
+                  </div>
+                );
+              }
+              return (
+                <Card
+                  key={row.id || idx}
+                  className={cn(
+                    "flex flex-col justify-between gap-3 rounded-nx-lg border border-nx-line bg-nx-surface p-4 hover:border-nx-line-hi transition-colors",
+                    config?.getCardClassName?.(row)
+                  )}
+                >
+                  <div className="space-y-2">
+                    {columns.map((col) => (
+                      <div key={col.key} className="flex items-center justify-between gap-2 text-sm">
+                        <span className="font-medium text-nx-ink-2">{col.label}</span>
+                        <span className="text-nx-ink">
+                          {col.render
+                            ? col.render(row[col.key], row, idx)
+                            : String(row[col.key] ?? "—")}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                  <div className="border-t border-nx-line pt-3">{actionButtons}</div>
+                </Card>
+              );
+            })
           )}
         </div>
       ) : activeViewMode === "Kanban" ? (
@@ -1399,6 +1516,13 @@ function GenericCrudViewInner<T>(props: GenericCrudViewProps<T>) {
             columns[0]?.key ||
             "status";
           const groups = new Map<string, any[]>();
+
+          if (config?.kanbanColumns && config.kanbanColumns.length > 0) {
+            for (const col of config.kanbanColumns) {
+              groups.set(col.value, []);
+            }
+          }
+
           for (const item of viewModel.items || []) {
             const rawVal = item?.[groupKey];
             const bucket =
@@ -1411,43 +1535,116 @@ function GenericCrudViewInner<T>(props: GenericCrudViewProps<T>) {
             groups.set("All", []);
           }
           return (
-            <div className="grid grid-cols-1 gap-4 md:grid-cols-3 xl:grid-cols-4">
-              {Array.from(groups.entries()).map(([bucket, bucketItems]) => (
-                <div
-                  key={bucket}
-                  className="flex flex-col gap-3 rounded-nx-lg border border-nx-line bg-nx-surface p-3"
-                >
-                  <div className="flex items-center justify-between border-b border-nx-line pb-2">
-                    <span className="text-sm font-semibold text-nx-ink">{bucket}</span>
-                    <span className="rounded-full bg-nx-hover px-2 py-0.5 text-xs font-medium text-nx-ink-2">
-                      {bucketItems.length}
-                    </span>
-                  </div>
-                  <div className="space-y-2.5">
-                    {bucketItems.map((row: any, idx: number) => (
-                      <div
-                        key={row.id || idx}
-                        className="space-y-2 rounded-nx-md border border-nx-line bg-nx-canvas p-3"
-                      >
-                        {columns.slice(0, 4).map((col) => (
-                          <div
-                            key={col.key}
-                            className="flex items-center justify-between gap-2 text-xs"
-                          >
-                            <span className="text-nx-ink-3">{col.label}</span>
-                            <span className="font-medium text-nx-ink">
-                              {col.render
-                                ? col.render(row[col.key], row, idx)
-                                : String(row[col.key] ?? "—")}
-                            </span>
-                          </div>
-                        ))}
-                        <div className="pt-1">{renderRowActionButtons(row)}</div>
+            <div
+              className={cn(
+                "grid grid-cols-1 gap-4",
+                groups.size <= 3
+                  ? "md:grid-cols-3"
+                  : groups.size === 4
+                  ? "md:grid-cols-2 xl:grid-cols-4"
+                  : "md:grid-cols-3 xl:grid-cols-5"
+              )}
+            >
+              {Array.from(groups.entries()).map(([bucket, bucketItems]) => {
+                const colDef = config?.kanbanColumns?.find((c) => c.value === bucket);
+                const displayLabel = colDef?.label || bucket;
+                return (
+                  <div
+                    key={bucket}
+                    onDragOver={(e) => {
+                      if (config?.onKanbanItemMove) {
+                        e.preventDefault();
+                        e.dataTransfer.dropEffect = "move";
+                      }
+                    }}
+                    onDrop={(e) => {
+                      if (config?.onKanbanItemMove) {
+                        e.preventDefault();
+                        const itemId = e.dataTransfer.getData("text/plain");
+                        const item = (viewModel.items || []).find((i: any) => String(i.id) === itemId);
+                        if (item && String(item[groupKey]) !== bucket) {
+                          config.onKanbanItemMove(item, bucket);
+                        }
+                      }
+                    }}
+                    className={cn(
+                      "flex flex-col gap-3 rounded-nx-lg border border-nx-line bg-nx-surface p-3 min-h-[220px]",
+                      colDef?.columnClass
+                    )}
+                  >
+                    <div className={cn("flex flex-col gap-1 border-b border-nx-line pb-2.5", colDef?.headerClass)}>
+                      <div className="flex items-center justify-between gap-2">
+                        <div className="flex items-center gap-2 min-w-0">
+                          {colDef?.dotClass && (
+                            <span className={cn("size-2 rounded-full shrink-0", colDef.dotClass)} />
+                          )}
+                          {colDef?.icon && <span className="text-nx-ink-3 shrink-0">{colDef.icon}</span>}
+                          <span className="text-sm font-semibold text-nx-ink truncate">{displayLabel}</span>
+                        </div>
+                        <Badge
+                          variant="secondary"
+                          className={cn(
+                            "rounded-full px-2 py-0.5 text-xs font-semibold tabular-nums shrink-0",
+                            colDef?.colorClass
+                          )}
+                        >
+                          {bucketItems.length}
+                        </Badge>
                       </div>
-                    ))}
+                      {colDef?.summary && (
+                        <div className="text-xs text-nx-ink-3">
+                          {colDef.summary(bucketItems)}
+                        </div>
+                      )}
+                    </div>
+                    <div className="space-y-2.5 flex-1">
+                      {bucketItems.length === 0 ? (
+                        <div className="py-8 text-center text-xs text-nx-ink-3 border border-dashed border-nx-line/60 rounded-nx-md">
+                          {t("common.noData") || "No items"}
+                        </div>
+                      ) : (
+                        bucketItems.map((row: any, idx: number) => {
+                          const actionButtons = renderRowActionButtons(row);
+                          return (
+                            <div
+                              key={row.id || idx}
+                              draggable={!!config?.onKanbanItemMove}
+                              onDragStart={(e) => {
+                                if (config?.onKanbanItemMove) {
+                                  e.dataTransfer.setData("text/plain", String(row.id));
+                                  e.dataTransfer.effectAllowed = "move";
+                                }
+                              }}
+                              className={cn(config?.onKanbanItemMove ? "cursor-grab active:cursor-grabbing" : "")}
+                            >
+                              {config?.renderKanbanCard ? (
+                                config.renderKanbanCard(row, actionButtons, idx)
+                              ) : (
+                                <Card className="space-y-2 rounded-nx-md border border-nx-line bg-nx-raised p-3 hover:border-nx-line-hi transition-colors">
+                                  {columns.slice(0, 4).map((col) => (
+                                    <div
+                                      key={col.key}
+                                      className="flex items-center justify-between gap-2 text-xs"
+                                    >
+                                      <span className="text-nx-ink-3">{col.label}</span>
+                                      <span className="font-medium text-nx-ink">
+                                        {col.render
+                                          ? col.render(row[col.key], row, idx)
+                                          : String(row[col.key] ?? "—")}
+                                      </span>
+                                    </div>
+                                  ))}
+                                  {actionButtons && <div className="pt-1">{actionButtons}</div>}
+                                </Card>
+                              )}
+                            </div>
+                          );
+                        })
+                      )}
+                    </div>
                   </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           );
         })()
@@ -1460,7 +1657,11 @@ function GenericCrudViewInner<T>(props: GenericCrudViewProps<T>) {
           const groups = new Map<string, any[]>();
           for (const item of viewModel.items || []) {
             const rawVal = item?.[dateKey];
-            const dateLabel = rawVal ? String(rawVal).slice(0, 10) : "Unscheduled";
+            const dateLabel = config?.calendarGroupFormatter
+              ? config.calendarGroupFormatter(rawVal, item)
+              : rawVal
+                ? String(rawVal).slice(0, 10)
+                : "Unscheduled";
             const list = groups.get(dateLabel) ?? [];
             list.push(item);
             groups.set(dateLabel, list);
@@ -1473,35 +1674,47 @@ function GenericCrudViewInner<T>(props: GenericCrudViewProps<T>) {
                 </div>
               ) : (
                 Array.from(groups.entries()).map(([dateLabel, dateItems]) => (
-                  <div
+                  <Card
                     key={dateLabel}
                     className="space-y-3 rounded-nx-lg border border-nx-line bg-nx-surface p-4"
                   >
                     <div className="flex items-center justify-between border-b border-nx-line pb-2">
                       <span className="text-sm font-semibold text-nx-ink">{dateLabel}</span>
-                      <span className="text-xs text-nx-ink-3">{dateItems.length} items</span>
+                      <Badge variant="outline" className="text-xs text-nx-ink-3 font-normal">
+                        {dateItems.length} items
+                      </Badge>
                     </div>
                     <div className="space-y-2">
-                      {dateItems.map((row: any, idx: number) => (
-                        <div
-                          key={row.id || idx}
-                          className="space-y-1.5 rounded-nx-md border border-nx-line p-2.5 text-xs"
-                        >
-                          {columns.slice(0, 3).map((col) => (
-                            <div key={col.key} className="flex items-center justify-between gap-2">
-                              <span className="text-nx-ink-3">{col.label}</span>
-                              <span className="font-medium text-nx-ink">
-                                {col.render
-                                  ? col.render(row[col.key], row, idx)
-                                  : String(row[col.key] ?? "—")}
-                              </span>
+                      {dateItems.map((row: any, idx: number) => {
+                        const actionButtons = renderRowActionButtons(row);
+                        if (config?.renderCalendarItem) {
+                          return (
+                            <div key={row.id || idx}>
+                              {config.renderCalendarItem(row, actionButtons, idx)}
                             </div>
-                          ))}
-                          <div className="pt-1">{renderRowActionButtons(row)}</div>
-                        </div>
-                      ))}
+                          );
+                        }
+                        return (
+                          <div
+                            key={row.id || idx}
+                            className="space-y-1.5 rounded-nx-md border border-nx-line p-2.5 text-xs bg-nx-raised"
+                          >
+                            {columns.slice(0, 3).map((col) => (
+                              <div key={col.key} className="flex items-center justify-between gap-2">
+                                <span className="text-nx-ink-3">{col.label}</span>
+                                <span className="font-medium text-nx-ink">
+                                  {col.render
+                                    ? col.render(row[col.key], row, idx)
+                                    : String(row[col.key] ?? "—")}
+                                </span>
+                              </div>
+                            ))}
+                            {actionButtons && <div className="pt-1">{actionButtons}</div>}
+                          </div>
+                        );
+                      })}
                     </div>
-                  </div>
+                  </Card>
                 ))
               )}
             </div>
@@ -1520,18 +1733,30 @@ function GenericCrudViewInner<T>(props: GenericCrudViewProps<T>) {
                 ) : (
                   items.map((row: any, idx: number) => {
                     const isCurrent = selectedRow && row.id === selectedRow.id;
+                    if (config?.renderSplitListItem) {
+                      return (
+                        <div
+                          key={row.id || idx}
+                          onClick={() => setSplitSelectedId(String(row.id))}
+                          className="cursor-pointer"
+                        >
+                          {config.renderSplitListItem(row, isCurrent, idx)}
+                        </div>
+                      );
+                    }
                     const primaryCol = columns[0];
                     const secondaryCol = columns[1];
                     return (
-                      <button
+                      <Button
                         key={row.id || idx}
                         type="button"
+                        variant="ghost"
                         onClick={() => setSplitSelectedId(String(row.id))}
                         className={cn(
-                          "w-full rounded-nx-md border p-3 text-start transition-colors",
+                          "w-full h-auto rounded-nx-md border p-3 text-start justify-start flex flex-col items-start transition-colors",
                           isCurrent
                             ? "border-nx-accent bg-nx-accent-wash"
-                            : "border-nx-line hover:bg-nx-hover"
+                            : "border-nx-line hover:border-nx-line-hi hover:bg-nx-raised"
                         )}
                       >
                         <div className="text-sm font-medium text-nx-ink">
@@ -1544,38 +1769,42 @@ function GenericCrudViewInner<T>(props: GenericCrudViewProps<T>) {
                             {String(row[secondaryCol.key] ?? "")}
                           </div>
                         )}
-                      </button>
+                      </Button>
                     );
                   })
                 )}
               </div>
               <div className="rounded-nx-lg border border-nx-line bg-nx-surface p-4 lg:col-span-7">
                 {selectedRow ? (
-                  <div className="space-y-4">
-                    <div className="flex items-center justify-between border-b border-nx-line pb-3">
-                      <h3 className="text-base font-semibold text-nx-ink">
-                        {config?.getItemDisplayName
-                          ? config.getItemDisplayName(selectedRow)
-                          : String(selectedRow.name || selectedRow.id || title)}
-                      </h3>
-                      {renderRowActionButtons(selectedRow)}
-                    </div>
-                    <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-                      {columns.map((col, idx) => (
-                        <div
-                          key={col.key}
-                          className="rounded-nx-md border border-nx-line p-2.5 text-sm"
-                        >
-                          <div className="text-xs text-nx-ink-3">{col.label}</div>
-                          <div className="mt-1 font-medium text-nx-ink">
-                            {col.render
-                              ? col.render(selectedRow[col.key], selectedRow, idx)
-                              : String(selectedRow[col.key] ?? "—")}
+                  config?.renderSplitDetail ? (
+                    config.renderSplitDetail(selectedRow, renderRowActionButtons(selectedRow))
+                  ) : (
+                    <div className="space-y-4">
+                      <div className="flex items-center justify-between border-b border-nx-line pb-3">
+                        <h3 className="text-base font-semibold text-nx-ink">
+                          {config?.getItemDisplayName
+                            ? config.getItemDisplayName(selectedRow)
+                            : String(selectedRow.name || selectedRow.id || title)}
+                        </h3>
+                        {renderRowActionButtons(selectedRow)}
+                      </div>
+                      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                        {columns.map((col, idx) => (
+                          <div
+                            key={col.key}
+                            className="rounded-nx-md border border-nx-line bg-nx-raised p-2.5 text-sm"
+                          >
+                            <div className="text-xs text-nx-ink-3">{col.label}</div>
+                            <div className="mt-1 font-medium text-nx-ink">
+                              {col.render
+                                ? col.render(selectedRow[col.key], selectedRow, idx)
+                                : String(selectedRow[col.key] ?? "—")}
+                            </div>
                           </div>
-                        </div>
-                      ))}
+                        ))}
+                      </div>
                     </div>
-                  </div>
+                  )
                 ) : (
                   <EmptyState bare icon={Inbox} title={t("common.noData")} />
                 )}

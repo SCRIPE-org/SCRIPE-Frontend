@@ -30,6 +30,7 @@ import { WORK_MANAGEMENT_PERMISSIONS } from "@modules/work-management/permission
 import { CUSTOM_FIELDS_PERMISSIONS } from "@modules/custom-fields/permission-constants";
 import { ANALYTICS_EVENTS_PERMISSIONS } from "@modules/analytics/permission-constants";
 import { VENUE_PERMISSIONS } from "@modules/venue/permission-constants";
+import { CRM_PERMISSIONS } from "@modules/crm";
 
 // ── Re-export individual module permissions for direct access ─────────────────
 export {
@@ -50,6 +51,7 @@ export {
   CUSTOM_FIELDS_PERMISSIONS,
   ANALYTICS_EVENTS_PERMISSIONS,
   VENUE_PERMISSIONS,
+  CRM_PERMISSIONS,
 };
 
 // ── Types ─────────────────────────────────────────────────────────────────────
@@ -212,6 +214,7 @@ export const SYSTEM_PERMISSIONS = {
   ...CUSTOM_FIELDS_PERMISSIONS,
   ...ANALYTICS_EVENTS_PERMISSIONS,
   ...VENUE_PERMISSIONS,
+  ...CRM_PERMISSIONS,
 } as const;
 
 // ── Page permission mapping ───────────────────────────────────────────────────
@@ -526,6 +529,10 @@ export const PAGE_PERMISSIONS: Record<string, PermissionCode[]> = {
 
   // Studio Customization Preview
   "/studio-preview": [SYSTEM_PERMISSIONS.TENANT_SETTINGS_VIEW],
+
+  // CRM Module
+  "/crm": [],
+  "/crm/leads": [CRM_PERMISSIONS.LEADS_READ],
 
   // Public / Hub / Auth endpoints (No permission required, but mapped so RouteGuard bypasses successfully)
   "/activate-workspace": [],

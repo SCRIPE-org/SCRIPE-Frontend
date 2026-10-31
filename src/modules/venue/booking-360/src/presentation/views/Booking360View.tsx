@@ -24,6 +24,7 @@ import { VENUE_PERMISSIONS } from "@modules/venue/permission-constants";
 import { BookingHoldState } from "../components/BookingHoldState";
 import { BookingLifecycleTimeline } from "../components/BookingLifecycleTimeline";
 import { BookingOperationalActions } from "../components/BookingOperationalActions";
+import { BookingGuestAccessCard } from "../components/BookingGuestAccessCard";
 import { useBookingFinanceSummary } from "../viewmodels/useBookingFinanceSummary";
 import { useBooking360ViewModel } from "../viewmodels/useBooking360ViewModel";
 
@@ -571,6 +572,14 @@ export const Booking360View = React.memo(function Booking360View({
               )}
             </CardContent>
           </Card>
+
+          {/* Guest Access Link Generator & Dispatch */}
+          <BookingGuestAccessCard
+            reservationId={reservationId}
+            customerEmail={null}
+            direction={direction}
+            t={t}
+          />
 
           {(reservation.status === "Held" || reservation.activeHold) && (
             <Card>

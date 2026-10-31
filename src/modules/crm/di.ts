@@ -1,0 +1,53 @@
+/**
+ * SCRIPE CRM Module Dependency Injection Container
+ *
+ * Implements strict SOLID Clean Architecture:
+ * View -> ViewModel (hook) -> Repository -> Service -> IApiService -> HTTP
+ *
+ * Direct HTTP/fetch in presentation components is strictly prohibited.
+ */
+
+import { getModuleApiService } from "@/core/services/api-factory";
+import { CrmOverviewService } from "./overview/src/data/services/CrmOverviewService";
+import { CrmOverviewRepository } from "./overview/src/data/repositories/CrmOverviewRepository";
+import type { ICrmOverviewService } from "./overview/src/domain/interfaces/ICrmOverviewService";
+import type { ICrmOverviewRepository } from "./overview/src/domain/interfaces/ICrmOverviewRepository";
+
+import { CrmLeadService } from "./leads/src/data/services/CrmLeadService";
+import { CrmLeadRepository } from "./leads/src/data/repositories/CrmLeadRepository";
+import type { ICrmLeadService } from "./leads/src/domain/interfaces/ICrmLeadService";
+import type { ICrmLeadRepository } from "./leads/src/domain/interfaces/ICrmLeadRepository";
+
+export interface CrmContainer {
+  readonly overviewService: ICrmOverviewService;
+  readonly overviewRepository: ICrmOverviewRepository;
+  readonly leadService: ICrmLeadService;
+  readonly leadRepository: ICrmLeadRepository;
+}
+
+let instance: CrmContainer | null = null;
+
+export function getCrmContainer(): CrmContainer {
+  if (!instance) {
+    const api = getModuleApiService("CRM");
+    const overviewService = new CrmOverviewService(api);
+    const overviewRepository = new CrmOverviewRepository(overviewService);
+    const leadService = new CrmLeadService(api);
+    const leadRepository = new CrmLeadRepository(leadService);
+
+    instance = {
+      overviewService,
+      overviewRepository,
+      leadService,
+      leadRepository,
+    };
+  }
+  return instance;
+}
+
+/**
+ * Optional override for testing / hermetic test suites
+ */
+export function setCrmContainer(container: CrmContainer | null): void {
+  instance = container;
+}

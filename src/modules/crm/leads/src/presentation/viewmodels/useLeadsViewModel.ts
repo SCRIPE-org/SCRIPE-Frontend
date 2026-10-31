@@ -1,0 +1,233 @@
+"use client";
+
+import { useState, useEffect, useCallback, useTransition } from "react";
+import { getCrmContainer } from "@modules/crm/di";
+import type {
+  CrmLead,
+  CreateLeadInput,
+  LeadStatus,
+} from "../../domain/models/crm-lead.types";
+
+export interface LeadsState {
+  stage: "idle" | "loading" | "success" | "failed";
+  items: CrmLead[];
+  totalCount: number;
+  page: number;
+  pageSize: number;
+  error: string | null;
+}
+
+export function useLeadsViewModel(initialSearch?: string) {
+  const [state, setState] = useState<LeadsState>({
+    stage: "loading",
+    items: [],
+    totalCount: 0,
+    page: 1,
+    pageSize: 20,
+    error: null,
+  });
+
+  const [search, setSearch] = useState<string>(initialSearch ?? "");
+  const [statusFilter, setStatusFilter] = useState<LeadStatus | undefined>(undefined);
+  const [isCreateOpen, setIsCreateOpen] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState<string | null>(null);
+  const [isPending, startTransition] = useTransition();
+
+  const handleSetIsCreateOpen = useCallback((open: boolean) => {
+    setIsCreateOpen(open);
+    if (!open) {
+      setSubmitError(null);
+    }
+  }, []);
+
+  const loadLeads = useCallback(
+    async (pageToLoad = 1, searchQuery?: string, status?: LeadStatus) => {
+      setState((prev) => ({ ...prev, stage: "loading", error: null }));
+      try {
+        const container = getCrmContainer();
+        const result = await container.leadRepository.getLeads({
+          page: pageToLoad,
+          pageSize: 20,
+          search: searchQuery,
+          status,
+        });
+
+        setState({
+          stage: "success",
+          items: result.items,
+          totalCount: result.totalCount,
+          page: result.page,
+          pageSize: result.pageSize,
+          error: null,
+        });
+      } catch (err) {
+        setState((prev) => ({
+          ...prev,
+          stage: "failed",
+          error: err instanceof Error ? err.message : "Failed to load leads",
+        }));
+      }
+    },
+    []
+  );
+
+  useEffect(() => {
+    startTransition(() => {
+      loadLeads(1, search, statusFilter);
+    });
+  }, [loadLeads, search, statusFilter]);
+
+  const refresh = useCallback(() => {
+    loadLeads(state.page, search, statusFilter);
+  }, [loadLeads, state.page, search, statusFilter]);
+
+  const handleSearchChange = useCallback((newSearch: string) => {
+    setSearch(newSearch);
+  }, []);
+
+  const handleStatusFilterChange = useCallback((newStatus?: LeadStatus) => {
+    setStatusFilter(newStatus);
+  }, []);
+
+  const handlePageChange = useCallback(
+    (newPage: number) => {
+      loadLeads(newPage, search, statusFilter);
+    },
+    [loadLeads, search, statusFilter]
+  );
+
+  const handleCreateLead = useCallback(
+    async (input: CreateLeadInput): Promise<boolean> => {
+      setIsSubmitting(true);
+      setSubmitError(null);
+      try {
+        const container = getCrmContainer();
+        await container.leadRepository.createLead(input);
+        setIsSubmitting(false);
+        // Refresh list after successful creation
+        loadLeads(1, search, statusFilter);
+        return true;
+      } catch (err) {
+        setIsSubmitting(false);
+        const errMsg = err instanceof Error ? err.message : "Failed to create lead";
+        setSubmitError(errMsg);
+        setState((prev) => ({
+          ...prev,
+          error: errMsg,
+        }));
+        return false;
+      }
+    },
+    [loadLeads, search, statusFilter]
+  );
+
+  const handleUpdateLeadStatus = useCallback(
+    async (lead: CrmLead, newStatus: string): Promise<boolean> => {
+      const previousItems = state.items;
+      setState((prev) => ({
+        ...prev,
+        items: prev.items.map((item) =>
+          item.id === lead.id
+            ? { ...item, status: newStatus as LeadStatus, statusName: newStatus }
+            : item
+        ),
+      }));
+      try {
+        const container = getCrmContainer();
+        if ((container.leadRepository as any).updateLead) {
+          await (container.leadRepository as any).updateLead(lead.id, {
+            status: newStatus as LeadStatus,
+            rowVersion: lead.rowVersion,
+          });
+        }
+        return true;
+      } catch (err) {
+        setState((prev) => ({
+          ...prev,
+          items: previousItems,
+          error: err instanceof Error ? err.message : "Failed to update lead status",
+        }));
+        return false;
+      }
+    },
+    [state.items]
+  );
+
+  const [selectedItems, setSelectedItems] = useState<string[]>([]);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [viewModalOpen, setViewModalOpen] = useState(false);
+  const [editingItem, setEditingItem] = useState<CrmLead | null>(null);
+  const [viewItem, setViewItem] = useState<CrmLead | null>(null);
+
+  return {
+    // Standard ViewModel properties
+    state,
+    search,
+    statusFilter,
+    isCreateOpen,
+    isSubmitting,
+    submitError,
+    isPending,
+    setIsCreateOpen: handleSetIsCreateOpen,
+    setSubmitError,
+    handleSearchChange,
+    handleStatusFilterChange,
+    handlePageChange,
+    handleCreateLead,
+    handleUpdateLeadStatus,
+    refresh,
+
+    // GenericCrudView Adapter compatibility
+    items: state.items,
+    loading: state.stage === "loading",
+    error: state.error,
+    pagination: {
+      page: state.page,
+      pageSize: state.pageSize,
+      itemsCount: state.totalCount,
+      pagesCount: Math.max(1, Math.ceil(state.totalCount / (state.pageSize || 20))),
+      totalCount: state.totalCount,
+      totalPages: Math.max(1, Math.ceil(state.totalCount / (state.pageSize || 20))),
+      hasNextPage: state.page * state.pageSize < state.totalCount,
+      hasPreviousPage: state.page > 1,
+      onPageChange: handlePageChange,
+      onPageSizeChange: (_size: number) => {
+        loadLeads(1, search, statusFilter);
+      },
+    },
+    searchValue: search,
+    selectedItems,
+    setSelectedItems,
+    isCreateModalOpen: isCreateOpen,
+    setIsCreateModalOpen: handleSetIsCreateOpen,
+    isEditModalOpen,
+    setIsEditModalOpen,
+    viewModalOpen,
+    setViewModalOpen,
+    editingItem,
+    viewItem,
+    openEditModal: (item: CrmLead) => {
+      setEditingItem(item);
+      setIsEditModalOpen(true);
+    },
+    closeEditModal: () => {
+      setIsEditModalOpen(false);
+      setEditingItem(null);
+    },
+    openViewModal: (item: CrmLead) => {
+      setViewItem(item);
+      setViewModalOpen(true);
+    },
+    closeViewModal: () => {
+      setViewModalOpen(false);
+      setViewItem(null);
+    },
+    changePage: handlePageChange,
+    changePageSize: (_size: number) => {
+      loadLeads(1, search, statusFilter);
+    },
+    refreshItems: refresh,
+    createItem: handleCreateLead,
+  };
+}

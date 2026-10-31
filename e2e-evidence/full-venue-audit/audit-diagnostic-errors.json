@@ -1,0 +1,762 @@
+[
+  {
+    "route": "http://localhost:3000/venue/calendar",
+    "type": "console.error",
+    "message": "Failed to load resource: the server responded with a status of 404 (Not Found)"
+  },
+  {
+    "route": "http://localhost:3000/venue/calendar",
+    "type": "console.error",
+    "message": "Failed to load resource: the server responded with a status of 404 (Not Found)"
+  },
+  {
+    "route": "http://localhost:3000/venue/calendar",
+    "type": "console.error",
+    "message": "Failed to load resource: the server responded with a status of 404 (Not Found)"
+  },
+  {
+    "route": "http://localhost:3000/venue/calendar",
+    "type": "console.error",
+    "message": "Failed to load resource: the server responded with a status of 404 (Not Found)"
+  },
+  {
+    "route": "http://localhost:3000/venue/calendar",
+    "type": "console.error",
+    "message": "[Next-Frontend-Template] [2026-10-31T15:02:30.250Z] ERROR: API Error: The published resource pricing target was not found. (GET /v1/catalog-pricing/resource-rental-prices/hYxBQHhE0AjRbjMvWD98MfiK-5TrvgInTU2WrG24hSn_pWnrYApechd7Txc)"
+  },
+  {
+    "route": "http://localhost:3000/venue/calendar",
+    "type": "console.error",
+    "message": "[Next-Frontend-Template] [2026-10-31T15:02:30.253Z] ERROR: API Error: The published resource pricing target was not found. (GET /v1/catalog-pricing/resource-rental-prices/Vtd0x58oX9FQNB_wAZ3W9MAbmqaj8F0NxNrnhL8Wk18WHgDGw9wtTv32KA4)"
+  },
+  {
+    "route": "http://localhost:3000/venue/calendar",
+    "type": "console.error",
+    "message": "[Next-Frontend-Template] [2026-10-31T15:02:30.253Z] ERROR: API Error: The published resource pricing target was not found. (GET /v1/catalog-pricing/resource-rental-prices/SYV88C7f_us2JWtKo3YblIczV9YT36dZSl-b7o9WGpfTKJB4Ty7rdm2IMAY)"
+  },
+  {
+    "route": "http://localhost:3000/venue/calendar",
+    "type": "console.error",
+    "message": "[Next-Frontend-Template] [2026-10-31T15:02:30.254Z] ERROR: API Error: The published resource pricing target was not found. (GET /v1/catalog-pricing/resource-rental-prices/IuPUZyLFFDZDzIZ9dMLCNp4wCmXxQdKNn0TnVen1CcPqz_HPvfbgyIF9Omw)"
+  },
+  {
+    "route": "http://localhost:3000/venue/calendar",
+    "type": "console.error",
+    "message": "Failed to load resource: the server responded with a status of 404 (Not Found)"
+  },
+  {
+    "route": "http://localhost:3000/venue/calendar",
+    "type": "console.error",
+    "message": "[Next-Frontend-Template] [2026-10-31T15:02:30.287Z] ERROR: API Error: The published resource pricing target was not found. (GET /v1/catalog-pricing/resource-rental-prices/ps3LWJrr_0h_Idu8k5ro5YcevGb_JW0oKjoc5JEX9ZMcwjuQE2kqif1wMlI)"
+  },
+  {
+    "route": "http://localhost:3000/venue/calendar",
+    "type": "console.error",
+    "message": "Failed to load resource: the server responded with a status of 404 (Not Found)"
+  },
+  {
+    "route": "http://localhost:3000/venue/calendar",
+    "type": "console.error",
+    "message": "[Next-Frontend-Template] [2026-10-31T15:02:30.289Z] ERROR: API Error: The published resource pricing target was not found. (GET /v1/catalog-pricing/resource-rental-prices/5XmI3zQbGXSwzrKCmrOAod8ZcLD68N-Sikr8XAKi610n0grIsnNe1c9X_Is)"
+  },
+  {
+    "route": "http://localhost:3000/venue/calendar",
+    "type": "console.error",
+    "message": "Failed to load resource: the server responded with a status of 404 (Not Found)"
+  },
+  {
+    "route": "http://localhost:3000/venue/calendar",
+    "type": "console.error",
+    "message": "[Next-Frontend-Template] [2026-10-31T15:02:30.291Z] ERROR: API Error: The published resource pricing target was not found. (GET /v1/catalog-pricing/resource-rental-prices/iDaehSwet__aWDpeTsJJyy0xVGHZ6VJzYs3_sxrvmMC7PRnfZiw6EXWvL_g)"
+  },
+  {
+    "route": "http://localhost:3000/venue/calendar",
+    "type": "console.error",
+    "message": "Failed to load resource: the server responded with a status of 404 (Not Found)"
+  },
+  {
+    "route": "http://localhost:3000/venue/calendar",
+    "type": "console.error",
+    "message": "[Next-Frontend-Template] [2026-10-31T15:02:30.332Z] ERROR: API Error: The published resource pricing target was not found. (GET /v1/catalog-pricing/resource-rental-prices/JNXBnXYIK5dl7IrROW6b2sz1tGajqgv6hIAhAwj_kE90GcEiFaZld57AnzY)"
+  },
+  {
+    "route": "http://localhost:3000/venue/calendar",
+    "type": "console.error",
+    "message": "Failed to load resource: the server responded with a status of 404 (Not Found)"
+  },
+  {
+    "route": "http://localhost:3000/venue/calendar",
+    "type": "console.error",
+    "message": "[Next-Frontend-Template] [2026-10-31T15:02:30.340Z] ERROR: API Error: The published resource pricing target was not found. (GET /v1/catalog-pricing/resource-rental-prices/EdaHQlzhCJPKwdQuqCZRWSFrL5nmwGQhIJCklfXTY1JiSoTcKzyn-A7rYLU)"
+  },
+  {
+    "route": "http://localhost:3000/venue/calendar",
+    "type": "console.error",
+    "message": "Failed to load resource: the server responded with a status of 404 (Not Found)"
+  },
+  {
+    "route": "http://localhost:3000/venue/calendar",
+    "type": "console.error",
+    "message": "[Next-Frontend-Template] [2026-10-31T15:02:30.343Z] ERROR: API Error: The published resource pricing target was not found. (GET /v1/catalog-pricing/resource-rental-prices/24Sv6d2woohr08VZhPXdEXeC9GURCBrUgNmhI4PoGQbuQli_4fYnm1pCW-Q)"
+  },
+  {
+    "route": "http://localhost:3000/venue/calendar",
+    "type": "console.error",
+    "message": "Failed to load resource: the server responded with a status of 404 (Not Found)"
+  },
+  {
+    "route": "http://localhost:3000/venue/calendar",
+    "type": "console.error",
+    "message": "[Next-Frontend-Template] [2026-10-31T15:02:30.374Z] ERROR: API Error: The published resource pricing target was not found. (GET /v1/catalog-pricing/resource-rental-prices/qgZ3QzS0kg2xcwl3fJ3W1tkUIbZpxK4uo10bWMKPjXfGwR3M2J7K2W7_G74)"
+  },
+  {
+    "route": "http://localhost:3000/venue/calendar",
+    "type": "console.error",
+    "message": "Failed to load resource: the server responded with a status of 404 (Not Found)"
+  },
+  {
+    "route": "http://localhost:3000/venue/calendar",
+    "type": "console.error",
+    "message": "[Next-Frontend-Template] [2026-10-31T15:02:30.606Z] ERROR: API Error: The published resource pricing target was not found. (GET /v1/catalog-pricing/resource-rental-prices/VlKihWDXNMs7fe9JL_rD0jvj1dKLqNSQdQ_i1cFF66cpxoAkCZvU5ZP_TJU)"
+  },
+  {
+    "route": "http://localhost:3000/venue/calendar",
+    "type": "console.error",
+    "message": "Failed to load resource: the server responded with a status of 404 (Not Found)"
+  },
+  {
+    "route": "http://localhost:3000/venue/calendar",
+    "type": "console.error",
+    "message": "[Next-Frontend-Template] [2026-10-31T15:02:30.609Z] ERROR: API Error: The published resource pricing target was not found. (GET /v1/catalog-pricing/resource-rental-prices/3ntJXUrhS9C8EwuzTfUmzGo4mJO1pUAoNKh5BTYmcx-OuXtWJFZC9UTSdvI)"
+  },
+  {
+    "route": "http://localhost:3000/venue/calendar",
+    "type": "console.error",
+    "message": "Failed to load resource: the server responded with a status of 404 (Not Found)"
+  },
+  {
+    "route": "http://localhost:3000/venue/calendar",
+    "type": "console.error",
+    "message": "[Next-Frontend-Template] [2026-10-31T15:02:30.630Z] ERROR: API Error: The published resource pricing target was not found. (GET /v1/catalog-pricing/resource-rental-prices/psOqJycJCgxv7ZQ7CmyN0tQqzqc-PerITgq5uHsxUWORIwTkrw9H2DMTfIg)"
+  },
+  {
+    "route": "http://localhost:3000/venue/calendar",
+    "type": "console.error",
+    "message": "Failed to load resource: the server responded with a status of 404 (Not Found)"
+  },
+  {
+    "route": "http://localhost:3000/venue/calendar",
+    "type": "console.error",
+    "message": "[Next-Frontend-Template] [2026-10-31T15:02:30.635Z] ERROR: API Error: The published resource pricing target was not found. (GET /v1/catalog-pricing/resource-rental-prices/mYeDcLuVpLnKx67oquW2AASrgkzm-wjl1xQuPd_OWnOnZn6ZHbRCTJINpSA)"
+  },
+  {
+    "route": "http://localhost:3000/venue/calendar",
+    "type": "console.error",
+    "message": "Failed to load resource: the server responded with a status of 404 (Not Found)"
+  },
+  {
+    "route": "http://localhost:3000/venue/calendar",
+    "type": "console.error",
+    "message": "[Next-Frontend-Template] [2026-10-31T15:02:30.639Z] ERROR: API Error: The published resource pricing target was not found. (GET /v1/catalog-pricing/resource-rental-prices/vxk3r0UgAa9gIJfP_DTol8GcTGRA-kU5R7hdHtISD3L9N_6YcdOIGSLWhbg)"
+  },
+  {
+    "route": "http://localhost:3000/venue/resources",
+    "type": "console.error",
+    "message": "Failed to load resource: the server responded with a status of 404 (Not Found)"
+  },
+  {
+    "route": "http://localhost:3000/venue/resources",
+    "type": "console.error",
+    "message": "[Next-Frontend-Template] [2026-10-31T15:02:39.539Z] ERROR: API Error: The published resource pricing target was not found. (GET /v1/catalog-pricing/resource-rental-prices/SYV88C7f_us2JWtKo3YblIczV9YT36dZSl-b7o9WGpfTKJB4Ty7rdm2IMAY)"
+  },
+  {
+    "route": "http://localhost:3000/venue/resources",
+    "type": "console.error",
+    "message": "Failed to load resource: the server responded with a status of 404 (Not Found)"
+  },
+  {
+    "route": "http://localhost:3000/venue/resources",
+    "type": "console.error",
+    "message": "[Next-Frontend-Template] [2026-10-31T15:02:39.542Z] ERROR: API Error: The published resource pricing target was not found. (GET /v1/catalog-pricing/resource-rental-prices/Vtd0x58oX9FQNB_wAZ3W9MAbmqaj8F0NxNrnhL8Wk18WHgDGw9wtTv32KA4)"
+  },
+  {
+    "route": "http://localhost:3000/venue/resources",
+    "type": "console.error",
+    "message": "Failed to load resource: the server responded with a status of 404 (Not Found)"
+  },
+  {
+    "route": "http://localhost:3000/venue/resources",
+    "type": "console.error",
+    "message": "[Next-Frontend-Template] [2026-10-31T15:02:39.578Z] ERROR: API Error: The published resource pricing target was not found. (GET /v1/catalog-pricing/resource-rental-prices/hYxBQHhE0AjRbjMvWD98MfiK-5TrvgInTU2WrG24hSn_pWnrYApechd7Txc)"
+  },
+  {
+    "route": "http://localhost:3000/venue/resources",
+    "type": "console.error",
+    "message": "Failed to load resource: the server responded with a status of 404 (Not Found)"
+  },
+  {
+    "route": "http://localhost:3000/venue/resources",
+    "type": "console.error",
+    "message": "[Next-Frontend-Template] [2026-10-31T15:02:39.580Z] ERROR: API Error: The published resource pricing target was not found. (GET /v1/catalog-pricing/resource-rental-prices/IuPUZyLFFDZDzIZ9dMLCNp4wCmXxQdKNn0TnVen1CcPqz_HPvfbgyIF9Omw)"
+  },
+  {
+    "route": "http://localhost:3000/venue/resources",
+    "type": "console.error",
+    "message": "Failed to load resource: the server responded with a status of 404 (Not Found)"
+  },
+  {
+    "route": "http://localhost:3000/venue/resources",
+    "type": "console.error",
+    "message": "[Next-Frontend-Template] [2026-10-31T15:02:39.585Z] ERROR: API Error: The published resource pricing target was not found. (GET /v1/catalog-pricing/resource-rental-prices/ps3LWJrr_0h_Idu8k5ro5YcevGb_JW0oKjoc5JEX9ZMcwjuQE2kqif1wMlI)"
+  },
+  {
+    "route": "http://localhost:3000/venue/resources",
+    "type": "console.error",
+    "message": "Failed to load resource: the server responded with a status of 404 (Not Found)"
+  },
+  {
+    "route": "http://localhost:3000/venue/resources",
+    "type": "console.error",
+    "message": "[Next-Frontend-Template] [2026-10-31T15:02:39.587Z] ERROR: API Error: The published resource pricing target was not found. (GET /v1/catalog-pricing/resource-rental-prices/5XmI3zQbGXSwzrKCmrOAod8ZcLD68N-Sikr8XAKi610n0grIsnNe1c9X_Is)"
+  },
+  {
+    "route": "http://localhost:3000/venue/resources",
+    "type": "console.error",
+    "message": "Failed to load resource: the server responded with a status of 404 (Not Found)"
+  },
+  {
+    "route": "http://localhost:3000/venue/resources",
+    "type": "console.error",
+    "message": "[Next-Frontend-Template] [2026-10-31T15:02:39.635Z] ERROR: API Error: The published resource pricing target was not found. (GET /v1/catalog-pricing/resource-rental-prices/JNXBnXYIK5dl7IrROW6b2sz1tGajqgv6hIAhAwj_kE90GcEiFaZld57AnzY)"
+  },
+  {
+    "route": "http://localhost:3000/venue/resources",
+    "type": "console.error",
+    "message": "Failed to load resource: the server responded with a status of 404 (Not Found)"
+  },
+  {
+    "route": "http://localhost:3000/venue/resources",
+    "type": "console.error",
+    "message": "[Next-Frontend-Template] [2026-10-31T15:02:39.639Z] ERROR: API Error: The published resource pricing target was not found. (GET /v1/catalog-pricing/resource-rental-prices/EdaHQlzhCJPKwdQuqCZRWSFrL5nmwGQhIJCklfXTY1JiSoTcKzyn-A7rYLU)"
+  },
+  {
+    "route": "http://localhost:3000/venue/resources",
+    "type": "console.error",
+    "message": "Failed to load resource: the server responded with a status of 404 (Not Found)"
+  },
+  {
+    "route": "http://localhost:3000/venue/resources",
+    "type": "console.error",
+    "message": "[Next-Frontend-Template] [2026-10-31T15:02:39.644Z] ERROR: API Error: The published resource pricing target was not found. (GET /v1/catalog-pricing/resource-rental-prices/VlKihWDXNMs7fe9JL_rD0jvj1dKLqNSQdQ_i1cFF66cpxoAkCZvU5ZP_TJU)"
+  },
+  {
+    "route": "http://localhost:3000/venue/resources",
+    "type": "console.error",
+    "message": "Failed to load resource: the server responded with a status of 404 (Not Found)"
+  },
+  {
+    "route": "http://localhost:3000/venue/resources",
+    "type": "console.error",
+    "message": "[Next-Frontend-Template] [2026-10-31T15:02:39.671Z] ERROR: API Error: The published resource pricing target was not found. (GET /v1/catalog-pricing/resource-rental-prices/3ntJXUrhS9C8EwuzTfUmzGo4mJO1pUAoNKh5BTYmcx-OuXtWJFZC9UTSdvI)"
+  },
+  {
+    "route": "http://localhost:3000/venue/resources",
+    "type": "console.error",
+    "message": "Failed to load resource: the server responded with a status of 404 (Not Found)"
+  },
+  {
+    "route": "http://localhost:3000/venue/resources",
+    "type": "console.error",
+    "message": "[Next-Frontend-Template] [2026-10-31T15:02:39.673Z] ERROR: API Error: The published resource pricing target was not found. (GET /v1/catalog-pricing/resource-rental-prices/iDaehSwet__aWDpeTsJJyy0xVGHZ6VJzYs3_sxrvmMC7PRnfZiw6EXWvL_g)"
+  },
+  {
+    "route": "http://localhost:3000/venue/resources",
+    "type": "console.error",
+    "message": "Failed to load resource: the server responded with a status of 404 (Not Found)"
+  },
+  {
+    "route": "http://localhost:3000/venue/resources",
+    "type": "console.error",
+    "message": "[Next-Frontend-Template] [2026-10-31T15:02:39.675Z] ERROR: API Error: The published resource pricing target was not found. (GET /v1/catalog-pricing/resource-rental-prices/psOqJycJCgxv7ZQ7CmyN0tQqzqc-PerITgq5uHsxUWORIwTkrw9H2DMTfIg)"
+  },
+  {
+    "route": "http://localhost:3000/venue/resources",
+    "type": "console.error",
+    "message": "Failed to load resource: the server responded with a status of 404 (Not Found)"
+  },
+  {
+    "route": "http://localhost:3000/venue/resources",
+    "type": "console.error",
+    "message": "[Next-Frontend-Template] [2026-10-31T15:02:39.677Z] ERROR: API Error: The published resource pricing target was not found. (GET /v1/catalog-pricing/resource-rental-prices/24Sv6d2woohr08VZhPXdEXeC9GURCBrUgNmhI4PoGQbuQli_4fYnm1pCW-Q)"
+  },
+  {
+    "route": "http://localhost:3000/venue/resources",
+    "type": "console.error",
+    "message": "Failed to load resource: the server responded with a status of 404 (Not Found)"
+  },
+  {
+    "route": "http://localhost:3000/venue/resources",
+    "type": "console.error",
+    "message": "[Next-Frontend-Template] [2026-10-31T15:02:39.706Z] ERROR: API Error: The published resource pricing target was not found. (GET /v1/catalog-pricing/resource-rental-prices/mYeDcLuVpLnKx67oquW2AASrgkzm-wjl1xQuPd_OWnOnZn6ZHbRCTJINpSA)"
+  },
+  {
+    "route": "http://localhost:3000/venue/resources",
+    "type": "console.error",
+    "message": "Failed to load resource: the server responded with a status of 404 (Not Found)"
+  },
+  {
+    "route": "http://localhost:3000/venue/resources",
+    "type": "console.error",
+    "message": "[Next-Frontend-Template] [2026-10-31T15:02:39.708Z] ERROR: API Error: The published resource pricing target was not found. (GET /v1/catalog-pricing/resource-rental-prices/qgZ3QzS0kg2xcwl3fJ3W1tkUIbZpxK4uo10bWMKPjXfGwR3M2J7K2W7_G74)"
+  },
+  {
+    "route": "http://localhost:3000/venue/resources",
+    "type": "console.error",
+    "message": "Failed to load resource: the server responded with a status of 404 (Not Found)"
+  },
+  {
+    "route": "http://localhost:3000/venue/resources",
+    "type": "console.error",
+    "message": "[Next-Frontend-Template] [2026-10-31T15:02:39.712Z] ERROR: API Error: The published resource pricing target was not found. (GET /v1/catalog-pricing/resource-rental-prices/vxk3r0UgAa9gIJfP_DTol8GcTGRA-kU5R7hdHtISD3L9N_6YcdOIGSLWhbg)"
+  },
+  {
+    "route": "http://localhost:3000/venue/resources",
+    "type": "console.error",
+    "message": "Failed to load resource: the server responded with a status of 404 (Not Found)"
+  },
+  {
+    "route": "http://localhost:3000/venue/resources",
+    "type": "console.error",
+    "message": "[Next-Frontend-Template] [2026-10-31T15:02:39.720Z] ERROR: API Error: The published resource pricing target was not found. (GET /v1/catalog-pricing/resource-rental-prices/SYV88C7f_us2JWtKo3YblIczV9YT36dZSl-b7o9WGpfTKJB4Ty7rdm2IMAY)"
+  },
+  {
+    "route": "http://localhost:3000/venue/resources",
+    "type": "console.error",
+    "message": "Failed to load resource: the server responded with a status of 404 (Not Found)"
+  },
+  {
+    "route": "http://localhost:3000/venue/resources",
+    "type": "console.error",
+    "message": "[Next-Frontend-Template] [2026-10-31T15:02:39.725Z] ERROR: API Error: The published resource pricing target was not found. (GET /v1/catalog-pricing/resource-rental-prices/Vtd0x58oX9FQNB_wAZ3W9MAbmqaj8F0NxNrnhL8Wk18WHgDGw9wtTv32KA4)"
+  },
+  {
+    "route": "http://localhost:3000/venue/resources",
+    "type": "console.error",
+    "message": "Failed to load resource: the server responded with a status of 404 (Not Found)"
+  },
+  {
+    "route": "http://localhost:3000/venue/resources",
+    "type": "console.error",
+    "message": "[Next-Frontend-Template] [2026-10-31T15:02:39.727Z] ERROR: API Error: The published resource pricing target was not found. (GET /v1/catalog-pricing/resource-rental-prices/hYxBQHhE0AjRbjMvWD98MfiK-5TrvgInTU2WrG24hSn_pWnrYApechd7Txc)"
+  },
+  {
+    "route": "http://localhost:3000/venue/resources",
+    "type": "console.error",
+    "message": "Failed to load resource: the server responded with a status of 404 (Not Found)"
+  },
+  {
+    "route": "http://localhost:3000/venue/resources",
+    "type": "console.error",
+    "message": "[Next-Frontend-Template] [2026-10-31T15:02:39.729Z] ERROR: API Error: The published resource pricing target was not found. (GET /v1/catalog-pricing/resource-rental-prices/IuPUZyLFFDZDzIZ9dMLCNp4wCmXxQdKNn0TnVen1CcPqz_HPvfbgyIF9Omw)"
+  },
+  {
+    "route": "http://localhost:3000/venue/resources",
+    "type": "console.error",
+    "message": "Failed to load resource: the server responded with a status of 404 (Not Found)"
+  },
+  {
+    "route": "http://localhost:3000/venue/resources",
+    "type": "console.error",
+    "message": "[Next-Frontend-Template] [2026-10-31T15:02:39.763Z] ERROR: API Error: The published resource pricing target was not found. (GET /v1/catalog-pricing/resource-rental-prices/ps3LWJrr_0h_Idu8k5ro5YcevGb_JW0oKjoc5JEX9ZMcwjuQE2kqif1wMlI)"
+  },
+  {
+    "route": "http://localhost:3000/venue/resources",
+    "type": "console.error",
+    "message": "Failed to load resource: the server responded with a status of 404 (Not Found)"
+  },
+  {
+    "route": "http://localhost:3000/venue/resources",
+    "type": "console.error",
+    "message": "[Next-Frontend-Template] [2026-10-31T15:02:39.769Z] ERROR: API Error: The published resource pricing target was not found. (GET /v1/catalog-pricing/resource-rental-prices/5XmI3zQbGXSwzrKCmrOAod8ZcLD68N-Sikr8XAKi610n0grIsnNe1c9X_Is)"
+  },
+  {
+    "route": "http://localhost:3000/venue/resources",
+    "type": "console.error",
+    "message": "Failed to load resource: the server responded with a status of 404 (Not Found)"
+  },
+  {
+    "route": "http://localhost:3000/venue/resources",
+    "type": "console.error",
+    "message": "[Next-Frontend-Template] [2026-10-31T15:02:39.772Z] ERROR: API Error: The published resource pricing target was not found. (GET /v1/catalog-pricing/resource-rental-prices/iDaehSwet__aWDpeTsJJyy0xVGHZ6VJzYs3_sxrvmMC7PRnfZiw6EXWvL_g)"
+  },
+  {
+    "route": "http://localhost:3000/venue/resources",
+    "type": "console.error",
+    "message": "Failed to load resource: the server responded with a status of 404 (Not Found)"
+  },
+  {
+    "route": "http://localhost:3000/venue/resources",
+    "type": "console.error",
+    "message": "[Next-Frontend-Template] [2026-10-31T15:02:39.774Z] ERROR: API Error: The published resource pricing target was not found. (GET /v1/catalog-pricing/resource-rental-prices/JNXBnXYIK5dl7IrROW6b2sz1tGajqgv6hIAhAwj_kE90GcEiFaZld57AnzY)"
+  },
+  {
+    "route": "http://localhost:3000/venue/resources",
+    "type": "console.error",
+    "message": "Failed to load resource: the server responded with a status of 404 (Not Found)"
+  },
+  {
+    "route": "http://localhost:3000/venue/resources",
+    "type": "console.error",
+    "message": "[Next-Frontend-Template] [2026-10-31T15:02:39.803Z] ERROR: API Error: The published resource pricing target was not found. (GET /v1/catalog-pricing/resource-rental-prices/EdaHQlzhCJPKwdQuqCZRWSFrL5nmwGQhIJCklfXTY1JiSoTcKzyn-A7rYLU)"
+  },
+  {
+    "route": "http://localhost:3000/venue/resources",
+    "type": "console.error",
+    "message": "Failed to load resource: the server responded with a status of 404 (Not Found)"
+  },
+  {
+    "route": "http://localhost:3000/venue/resources",
+    "type": "console.error",
+    "message": "[Next-Frontend-Template] [2026-10-31T15:02:39.807Z] ERROR: API Error: The published resource pricing target was not found. (GET /v1/catalog-pricing/resource-rental-prices/24Sv6d2woohr08VZhPXdEXeC9GURCBrUgNmhI4PoGQbuQli_4fYnm1pCW-Q)"
+  },
+  {
+    "route": "http://localhost:3000/venue/resources",
+    "type": "console.error",
+    "message": "Failed to load resource: the server responded with a status of 404 (Not Found)"
+  },
+  {
+    "route": "http://localhost:3000/venue/resources",
+    "type": "console.error",
+    "message": "[Next-Frontend-Template] [2026-10-31T15:02:39.808Z] ERROR: API Error: The published resource pricing target was not found. (GET /v1/catalog-pricing/resource-rental-prices/VlKihWDXNMs7fe9JL_rD0jvj1dKLqNSQdQ_i1cFF66cpxoAkCZvU5ZP_TJU)"
+  },
+  {
+    "route": "http://localhost:3000/venue/resources",
+    "type": "console.error",
+    "message": "Failed to load resource: the server responded with a status of 404 (Not Found)"
+  },
+  {
+    "route": "http://localhost:3000/venue/resources",
+    "type": "console.error",
+    "message": "[Next-Frontend-Template] [2026-10-31T15:02:39.811Z] ERROR: API Error: The published resource pricing target was not found. (GET /v1/catalog-pricing/resource-rental-prices/3ntJXUrhS9C8EwuzTfUmzGo4mJO1pUAoNKh5BTYmcx-OuXtWJFZC9UTSdvI)"
+  },
+  {
+    "route": "http://localhost:3000/venue/resources",
+    "type": "console.error",
+    "message": "Failed to load resource: the server responded with a status of 404 (Not Found)"
+  },
+  {
+    "route": "http://localhost:3000/venue/resources",
+    "type": "console.error",
+    "message": "[Next-Frontend-Template] [2026-10-31T15:02:39.813Z] ERROR: API Error: The published resource pricing target was not found. (GET /v1/catalog-pricing/resource-rental-prices/psOqJycJCgxv7ZQ7CmyN0tQqzqc-PerITgq5uHsxUWORIwTkrw9H2DMTfIg)"
+  },
+  {
+    "route": "http://localhost:3000/venue/resources",
+    "type": "console.error",
+    "message": "Failed to load resource: the server responded with a status of 404 (Not Found)"
+  },
+  {
+    "route": "http://localhost:3000/venue/resources",
+    "type": "console.error",
+    "message": "[Next-Frontend-Template] [2026-10-31T15:02:39.815Z] ERROR: API Error: The published resource pricing target was not found. (GET /v1/catalog-pricing/resource-rental-prices/mYeDcLuVpLnKx67oquW2AASrgkzm-wjl1xQuPd_OWnOnZn6ZHbRCTJINpSA)"
+  },
+  {
+    "route": "http://localhost:3000/venue/resources",
+    "type": "console.error",
+    "message": "Failed to load resource: the server responded with a status of 404 (Not Found)"
+  },
+  {
+    "route": "http://localhost:3000/venue/resources",
+    "type": "console.error",
+    "message": "[Next-Frontend-Template] [2026-10-31T15:02:39.841Z] ERROR: API Error: The published resource pricing target was not found. (GET /v1/catalog-pricing/resource-rental-prices/qgZ3QzS0kg2xcwl3fJ3W1tkUIbZpxK4uo10bWMKPjXfGwR3M2J7K2W7_G74)"
+  },
+  {
+    "route": "http://localhost:3000/venue/resources",
+    "type": "console.error",
+    "message": "Failed to load resource: the server responded with a status of 404 (Not Found)"
+  },
+  {
+    "route": "http://localhost:3000/venue/resources",
+    "type": "console.error",
+    "message": "[Next-Frontend-Template] [2026-10-31T15:02:39.846Z] ERROR: API Error: The published resource pricing target was not found. (GET /v1/catalog-pricing/resource-rental-prices/vxk3r0UgAa9gIJfP_DTol8GcTGRA-kU5R7hdHtISD3L9N_6YcdOIGSLWhbg)"
+  },
+  {
+    "route": "http://localhost:3000/venue/resources/0bdf0548-6752-4c90-be81-b761a9b72626",
+    "type": "console.error",
+    "message": "Failed to load resource: the server responded with a status of 404 (Not Found)"
+  },
+  {
+    "route": "http://localhost:3000/venue/resources/0bdf0548-6752-4c90-be81-b761a9b72626",
+    "type": "console.error",
+    "message": "[Next-Frontend-Template] [2026-10-31T15:02:46.718Z] ERROR: API Error: Invalid entities.schedulableResource ID (GET /v1/schedulable-resources/0bdf0548-6752-4c90-be81-b761a9b72626)"
+  },
+  {
+    "route": "http://localhost:3000/venue/resources/0bdf0548-6752-4c90-be81-b761a9b72626",
+    "type": "console.error",
+    "message": "Failed to load resource: the server responded with a status of 404 (Not Found)"
+  },
+  {
+    "route": "http://localhost:3000/venue/resources/0bdf0548-6752-4c90-be81-b761a9b72626",
+    "type": "console.error",
+    "message": "[Next-Frontend-Template] [2026-10-31T15:02:46.722Z] ERROR: API Error: Invalid entities.schedulableResource ID (GET /v1/schedulable-resources/0bdf0548-6752-4c90-be81-b761a9b72626)"
+  },
+  {
+    "route": "http://localhost:3000/venue/bookings/8711c875-6c4f-4a4f-a0e7-7af7375db557",
+    "type": "console.error",
+    "message": "Failed to load resource: the server responded with a status of 422 (Unprocessable Entity)"
+  },
+  {
+    "route": "http://localhost:3000/venue/bookings/8711c875-6c4f-4a4f-a0e7-7af7375db557",
+    "type": "console.error",
+    "message": "Failed to load resource: the server responded with a status of 422 (Unprocessable Entity)"
+  },
+  {
+    "route": "http://localhost:3000/venue/bookings/8711c875-6c4f-4a4f-a0e7-7af7375db557",
+    "type": "console.error",
+    "message": "[Next-Frontend-Template] [2026-10-31T15:04:09.679Z] ERROR: API Error: One or more supplied identifiers are invalid. (GET /v1/finance/customer-invoices?page=1&pageSize=50&reservationId=8711c875-6c4f-4a4f-a0e7-7af7375db557)"
+  },
+  {
+    "route": "http://localhost:3000/venue/bookings/8711c875-6c4f-4a4f-a0e7-7af7375db557",
+    "type": "console.error",
+    "message": "[Next-Frontend-Template] [2026-10-31T15:04:09.827Z] ERROR: API Error: One or more supplied identifiers are invalid. (GET /v1/finance/recorded-payments?page=1&pageSize=50&reservationId=8711c875-6c4f-4a4f-a0e7-7af7375db557)"
+  },
+  {
+    "route": "http://localhost:3000/venue/bookings/8711c875-6c4f-4a4f-a0e7-7af7375db557",
+    "type": "console.error",
+    "message": "Failed to load resource: the server responded with a status of 404 (Not Found)"
+  },
+  {
+    "route": "http://localhost:3000/venue/bookings/8711c875-6c4f-4a4f-a0e7-7af7375db557",
+    "type": "console.error",
+    "message": "[Next-Frontend-Template] [2026-10-31T15:04:09.832Z] ERROR: API Error: Invalid entities.reservation ID (GET /v1/reservations/8711c875-6c4f-4a4f-a0e7-7af7375db557/operational-detail)"
+  },
+  {
+    "route": "http://localhost:3000/venue/bookings/8711c875-6c4f-4a4f-a0e7-7af7375db557",
+    "type": "console.error",
+    "message": "Failed to load resource: the server responded with a status of 422 (Unprocessable Entity)"
+  },
+  {
+    "route": "http://localhost:3000/venue/bookings/8711c875-6c4f-4a4f-a0e7-7af7375db557",
+    "type": "console.error",
+    "message": "[Next-Frontend-Template] [2026-10-31T15:04:09.900Z] ERROR: API Error: One or more supplied identifiers are invalid. (GET /v1/finance/customer-invoices?page=1&pageSize=50&reservationId=8711c875-6c4f-4a4f-a0e7-7af7375db557)"
+  },
+  {
+    "route": "http://localhost:3000/venue/bookings/8711c875-6c4f-4a4f-a0e7-7af7375db557",
+    "type": "console.error",
+    "message": "Failed to load resource: the server responded with a status of 404 (Not Found)"
+  },
+  {
+    "route": "http://localhost:3000/venue/bookings/8711c875-6c4f-4a4f-a0e7-7af7375db557",
+    "type": "console.error",
+    "message": "[Next-Frontend-Template] [2026-10-31T15:04:09.901Z] ERROR: API Error: Invalid entities.reservation ID (GET /v1/reservations/8711c875-6c4f-4a4f-a0e7-7af7375db557/operational-detail)"
+  },
+  {
+    "route": "http://localhost:3000/venue/bookings/8711c875-6c4f-4a4f-a0e7-7af7375db557",
+    "type": "console.error",
+    "message": "Failed to load resource: the server responded with a status of 422 (Unprocessable Entity)"
+  },
+  {
+    "route": "http://localhost:3000/venue/bookings/8711c875-6c4f-4a4f-a0e7-7af7375db557",
+    "type": "console.error",
+    "message": "[Next-Frontend-Template] [2026-10-31T15:04:09.902Z] ERROR: API Error: One or more supplied identifiers are invalid. (GET /v1/finance/recorded-payments?page=1&pageSize=50&reservationId=8711c875-6c4f-4a4f-a0e7-7af7375db557)"
+  },
+  {
+    "route": "http://localhost:3000/venue/calendar?newBooking=true",
+    "type": "console.error",
+    "message": "Failed to load resource: the server responded with a status of 404 (Not Found)"
+  },
+  {
+    "route": "http://localhost:3000/venue/calendar?newBooking=true",
+    "type": "console.error",
+    "message": "Failed to load resource: the server responded with a status of 404 (Not Found)"
+  },
+  {
+    "route": "http://localhost:3000/venue/calendar?newBooking=true",
+    "type": "console.error",
+    "message": "Failed to load resource: the server responded with a status of 404 (Not Found)"
+  },
+  {
+    "route": "http://localhost:3000/venue/calendar?newBooking=true",
+    "type": "console.error",
+    "message": "[Next-Frontend-Template] [2026-10-31T15:04:19.167Z] ERROR: API Error: The published resource pricing target was not found. (GET /v1/catalog-pricing/resource-rental-prices/SYV88C7f_us2JWtKo3YblIczV9YT36dZSl-b7o9WGpfTKJB4Ty7rdm2IMAY)"
+  },
+  {
+    "route": "http://localhost:3000/venue/calendar?newBooking=true",
+    "type": "console.error",
+    "message": "[Next-Frontend-Template] [2026-10-31T15:04:19.168Z] ERROR: API Error: The published resource pricing target was not found. (GET /v1/catalog-pricing/resource-rental-prices/Vtd0x58oX9FQNB_wAZ3W9MAbmqaj8F0NxNrnhL8Wk18WHgDGw9wtTv32KA4)"
+  },
+  {
+    "route": "http://localhost:3000/venue/calendar?newBooking=true",
+    "type": "console.error",
+    "message": "[Next-Frontend-Template] [2026-10-31T15:04:19.168Z] ERROR: API Error: The published resource pricing target was not found. (GET /v1/catalog-pricing/resource-rental-prices/hYxBQHhE0AjRbjMvWD98MfiK-5TrvgInTU2WrG24hSn_pWnrYApechd7Txc)"
+  },
+  {
+    "route": "http://localhost:3000/venue/calendar?newBooking=true",
+    "type": "console.error",
+    "message": "Failed to load resource: the server responded with a status of 404 (Not Found)"
+  },
+  {
+    "route": "http://localhost:3000/venue/calendar?newBooking=true",
+    "type": "console.error",
+    "message": "[Next-Frontend-Template] [2026-10-31T15:04:19.171Z] ERROR: API Error: The published resource pricing target was not found. (GET /v1/catalog-pricing/resource-rental-prices/IuPUZyLFFDZDzIZ9dMLCNp4wCmXxQdKNn0TnVen1CcPqz_HPvfbgyIF9Omw)"
+  },
+  {
+    "route": "http://localhost:3000/venue/calendar?newBooking=true",
+    "type": "console.error",
+    "message": "Failed to load resource: the server responded with a status of 404 (Not Found)"
+  },
+  {
+    "route": "http://localhost:3000/venue/calendar?newBooking=true",
+    "type": "console.error",
+    "message": "[Next-Frontend-Template] [2026-10-31T15:04:19.196Z] ERROR: API Error: The published resource pricing target was not found. (GET /v1/catalog-pricing/resource-rental-prices/ps3LWJrr_0h_Idu8k5ro5YcevGb_JW0oKjoc5JEX9ZMcwjuQE2kqif1wMlI)"
+  },
+  {
+    "route": "http://localhost:3000/venue/calendar?newBooking=true",
+    "type": "console.error",
+    "message": "Failed to load resource: the server responded with a status of 404 (Not Found)"
+  },
+  {
+    "route": "http://localhost:3000/venue/calendar?newBooking=true",
+    "type": "console.error",
+    "message": "[Next-Frontend-Template] [2026-10-31T15:04:19.216Z] ERROR: API Error: The published resource pricing target was not found. (GET /v1/catalog-pricing/resource-rental-prices/5XmI3zQbGXSwzrKCmrOAod8ZcLD68N-Sikr8XAKi610n0grIsnNe1c9X_Is)"
+  },
+  {
+    "route": "http://localhost:3000/venue/calendar?newBooking=true",
+    "type": "console.error",
+    "message": "Failed to load resource: the server responded with a status of 404 (Not Found)"
+  },
+  {
+    "route": "http://localhost:3000/venue/calendar?newBooking=true",
+    "type": "console.error",
+    "message": "[Next-Frontend-Template] [2026-10-31T15:04:19.226Z] ERROR: API Error: The published resource pricing target was not found. (GET /v1/catalog-pricing/resource-rental-prices/iDaehSwet__aWDpeTsJJyy0xVGHZ6VJzYs3_sxrvmMC7PRnfZiw6EXWvL_g)"
+  },
+  {
+    "route": "http://localhost:3000/venue/calendar?newBooking=true",
+    "type": "console.error",
+    "message": "Failed to load resource: the server responded with a status of 404 (Not Found)"
+  },
+  {
+    "route": "http://localhost:3000/venue/calendar?newBooking=true",
+    "type": "console.error",
+    "message": "Failed to load resource: the server responded with a status of 404 (Not Found)"
+  },
+  {
+    "route": "http://localhost:3000/venue/calendar?newBooking=true",
+    "type": "console.error",
+    "message": "[Next-Frontend-Template] [2026-10-31T15:04:19.232Z] ERROR: API Error: The published resource pricing target was not found. (GET /v1/catalog-pricing/resource-rental-prices/EdaHQlzhCJPKwdQuqCZRWSFrL5nmwGQhIJCklfXTY1JiSoTcKzyn-A7rYLU)"
+  },
+  {
+    "route": "http://localhost:3000/venue/calendar?newBooking=true",
+    "type": "console.error",
+    "message": "[Next-Frontend-Template] [2026-10-31T15:04:19.233Z] ERROR: API Error: The published resource pricing target was not found. (GET /v1/catalog-pricing/resource-rental-prices/JNXBnXYIK5dl7IrROW6b2sz1tGajqgv6hIAhAwj_kE90GcEiFaZld57AnzY)"
+  },
+  {
+    "route": "http://localhost:3000/venue/calendar?newBooking=true",
+    "type": "console.error",
+    "message": "Failed to load resource: the server responded with a status of 404 (Not Found)"
+  },
+  {
+    "route": "http://localhost:3000/venue/calendar?newBooking=true",
+    "type": "console.error",
+    "message": "Failed to load resource: the server responded with a status of 404 (Not Found)"
+  },
+  {
+    "route": "http://localhost:3000/venue/calendar?newBooking=true",
+    "type": "console.error",
+    "message": "[Next-Frontend-Template] [2026-10-31T15:04:19.256Z] ERROR: API Error: The published resource pricing target was not found. (GET /v1/catalog-pricing/resource-rental-prices/VlKihWDXNMs7fe9JL_rD0jvj1dKLqNSQdQ_i1cFF66cpxoAkCZvU5ZP_TJU)"
+  },
+  {
+    "route": "http://localhost:3000/venue/calendar?newBooking=true",
+    "type": "console.error",
+    "message": "[Next-Frontend-Template] [2026-10-31T15:04:19.257Z] ERROR: API Error: The published resource pricing target was not found. (GET /v1/catalog-pricing/resource-rental-prices/24Sv6d2woohr08VZhPXdEXeC9GURCBrUgNmhI4PoGQbuQli_4fYnm1pCW-Q)"
+  },
+  {
+    "route": "http://localhost:3000/venue/calendar?newBooking=true",
+    "type": "console.error",
+    "message": "Failed to load resource: the server responded with a status of 404 (Not Found)"
+  },
+  {
+    "route": "http://localhost:3000/venue/calendar?newBooking=true",
+    "type": "console.error",
+    "message": "[Next-Frontend-Template] [2026-10-31T15:04:19.269Z] ERROR: API Error: The published resource pricing target was not found. (GET /v1/catalog-pricing/resource-rental-prices/qgZ3QzS0kg2xcwl3fJ3W1tkUIbZpxK4uo10bWMKPjXfGwR3M2J7K2W7_G74)"
+  },
+  {
+    "route": "http://localhost:3000/venue/calendar?newBooking=true",
+    "type": "console.error",
+    "message": "Failed to load resource: the server responded with a status of 404 (Not Found)"
+  },
+  {
+    "route": "http://localhost:3000/venue/calendar?newBooking=true",
+    "type": "console.error",
+    "message": "Failed to load resource: the server responded with a status of 404 (Not Found)"
+  },
+  {
+    "route": "http://localhost:3000/venue/calendar?newBooking=true",
+    "type": "console.error",
+    "message": "[Next-Frontend-Template] [2026-10-31T15:04:19.281Z] ERROR: API Error: The published resource pricing target was not found. (GET /v1/catalog-pricing/resource-rental-prices/mYeDcLuVpLnKx67oquW2AASrgkzm-wjl1xQuPd_OWnOnZn6ZHbRCTJINpSA)"
+  },
+  {
+    "route": "http://localhost:3000/venue/calendar?newBooking=true",
+    "type": "console.error",
+    "message": "[Next-Frontend-Template] [2026-10-31T15:04:19.281Z] ERROR: API Error: The published resource pricing target was not found. (GET /v1/catalog-pricing/resource-rental-prices/psOqJycJCgxv7ZQ7CmyN0tQqzqc-PerITgq5uHsxUWORIwTkrw9H2DMTfIg)"
+  },
+  {
+    "route": "http://localhost:3000/venue/calendar?newBooking=true",
+    "type": "console.error",
+    "message": "Failed to load resource: the server responded with a status of 404 (Not Found)"
+  },
+  {
+    "route": "http://localhost:3000/venue/calendar?newBooking=true",
+    "type": "console.error",
+    "message": "[Next-Frontend-Template] [2026-10-31T15:04:19.301Z] ERROR: API Error: The published resource pricing target was not found. (GET /v1/catalog-pricing/resource-rental-prices/vxk3r0UgAa9gIJfP_DTol8GcTGRA-kU5R7hdHtISD3L9N_6YcdOIGSLWhbg)"
+  },
+  {
+    "route": "http://localhost:3000/venue/calendar?newBooking=true",
+    "type": "console.error",
+    "message": "Failed to load resource: the server responded with a status of 404 (Not Found)"
+  },
+  {
+    "route": "http://localhost:3000/venue/calendar?newBooking=true",
+    "type": "console.error",
+    "message": "[Next-Frontend-Template] [2026-10-31T15:04:19.725Z] ERROR: API Error: The published resource pricing target was not found. (GET /v1/catalog-pricing/resource-rental-prices/3ntJXUrhS9C8EwuzTfUmzGo4mJO1pUAoNKh5BTYmcx-OuXtWJFZC9UTSdvI)"
+  },
+  {
+    "route": "http://localhost:3000/bookings/guest",
+    "type": "console.error",
+    "message": "Failed to load resource: the server responded with a status of 401 (Unauthorized)"
+  },
+  {
+    "route": "http://localhost:3000/bookings/guest",
+    "type": "console.error",
+    "message": "[Next-Frontend-Template] [2026-10-31T15:04:32.784Z] ERROR: API Error: Unauthorized"
+  },
+  {
+    "route": "http://localhost:3000/bookings/guest",
+    "type": "console.error",
+    "message": "Failed to load resource: the server responded with a status of 404 (Not Found)"
+  },
+  {
+    "route": "http://localhost:3000/bookings/guest",
+    "type": "console.error",
+    "message": "[Next-Frontend-Template] [2026-10-31T15:04:32.879Z] ERROR: API Error: guest.linkNotFoundOrExpired"
+  },
+  {
+    "route": "http://localhost:3000/bookings/guest",
+    "type": "console.error",
+    "message": "Failed to load resource: the server responded with a status of 401 (Unauthorized)"
+  },
+  {
+    "route": "http://localhost:3000/bookings/guest",
+    "type": "console.error",
+    "message": "Failed to load resource: the server responded with a status of 401 (Unauthorized)"
+  },
+  {
+    "route": "http://localhost:3000/bookings/guest",
+    "type": "console.error",
+    "message": "[Next-Frontend-Template] [2026-10-31T15:04:36.740Z] ERROR: API Error: Unauthorized"
+  },
+  {
+    "route": "http://localhost:3000/bookings/guest",
+    "type": "console.error",
+    "message": "[Next-Frontend-Template] [2026-10-31T15:04:36.741Z] ERROR: API Error: Unauthorized"
+  }
+]
