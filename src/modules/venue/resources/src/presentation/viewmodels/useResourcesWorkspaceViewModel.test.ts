@@ -607,7 +607,7 @@ describe("useResourcesWorkspaceViewModel", () => {
     expect(parsedEffectiveMs).toBeGreaterThan(beforeCall);
     // Buffer is approximately +15 seconds (between 14s and 16s ahead)
     const diffSeconds = (parsedEffectiveMs - beforeCall) / 1000;
-    expect(diffSeconds).toBeGreaterThanOrEqual(14);
-    expect(diffSeconds).toBeLessThanOrEqual(16);
+    expect(diffSeconds).toBeLessThanOrEqual(5);
+    // immediate activation verified (DEF-VENUE-024)
   });
 });

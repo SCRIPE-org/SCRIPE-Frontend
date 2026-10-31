@@ -24,12 +24,18 @@ export function ResourceGeneralTab({ vm }: Props) {
     vm.resource?.capacity?.maxConcurrentUsage ?? vm.resource?.unitCount ?? 4
   );
   const [description, setDescription] = useState(
-    "Indoor padel court with premium panoramic glass and tournament lighting."
+    vm.resource?.description ?? ""
   );
+
+  const handleCancel = () => {
+    setName(vm.resource?.name ?? "");
+    setCapacity(vm.resource?.capacity?.maxConcurrentUsage ?? vm.resource?.unitCount ?? 4);
+    setDescription(vm.resource?.description ?? "");
+  };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    void vm.updateGeneral({ name, capacity });
+    void vm.updateGeneral({ name, capacity, description });
   };
 
   const getCleanCategory = () => {
@@ -216,7 +222,8 @@ export function ResourceGeneralTab({ vm }: Props) {
               type="button"
               variant="outline"
               size="sm"
-              className="rounded-nx-lg text-xs font-semibold"
+              onClick={handleCancel}
+              className="rounded-lg text-xs font-semibold"
             >
               {t("resources.general.cancel", { defaultValue: "Cancel" })}
             </Button>
@@ -237,7 +244,7 @@ export function ResourceGeneralTab({ vm }: Props) {
               size="sm"
               disabled={vm.saving}
               loading={vm.saving}
-              className="hover:bg-nx-accent/90 text-nx-on-fill rounded-nx-lg bg-nx-accent px-4 text-xs font-bold"
+              className="bg-primary text-nx-on-fill rounded-lg px-4 text-xs font-bold hover:bg-primary/90"
             >
               {t("resources.general.save", { defaultValue: "Save Changes" })}
             </Button>

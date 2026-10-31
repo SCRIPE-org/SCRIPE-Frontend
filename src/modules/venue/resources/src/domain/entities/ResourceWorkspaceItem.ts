@@ -68,19 +68,19 @@ export function evaluateCourtReadiness(court: {
     });
   }
 
+  if (court.hasCalendar === false) {
+    missingActions.push({
+      id: "calendar",
+      label: "Set Operating Hours",
+      tab: "workingHours",
+    });
+  }
+
   if (!court.slotDurationMinutes || court.slotDurationMinutes <= 0) {
     missingActions.push({
       id: "slotPolicy",
       label: "Set Booking Slot Duration",
       tab: "bookingRules",
-    });
-  }
-
-  if (court.pricePerSlot == null || court.pricePerSlot <= 0) {
-    missingActions.push({
-      id: "pricing",
-      label: "Configure Pricing",
-      tab: "pricing",
     });
   }
 
@@ -92,11 +92,11 @@ export function evaluateCourtReadiness(court: {
     });
   }
 
-  if (court.hasCalendar === false) {
+  if (court.pricePerSlot == null || court.pricePerSlot <= 0) {
     missingActions.push({
-      id: "calendar",
-      label: "Set Operating Hours",
-      tab: "workingHours",
+      id: "pricing",
+      label: "Configure Pricing",
+      tab: "pricing",
     });
   }
 

@@ -112,13 +112,13 @@ export function ResourcesWorkspaceView() {
       {/* Operational Metrics Strip derived from source-backed data */}
       {vm.metrics && (
         <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-          <div className="border-nx-border rounded-2xl border bg-nx-surface p-3.5">
+          <div className="border-nx-line rounded-2xl border bg-nx-surface p-3.5">
             <p className="text-[11px] font-semibold text-nx-ink-3">
               {t("resources.metrics.total", { defaultValue: "Total Courts & Spaces" })}
             </p>
             <p className="mt-0.5 text-xl font-bold text-nx-ink">{vm.metrics.totalSpaces}</p>
           </div>
-          <div className="border-nx-border rounded-2xl border bg-nx-surface p-3.5">
+          <div className="border-nx-line rounded-2xl border bg-nx-surface p-3.5">
             <p className="text-[11px] font-semibold text-nx-ink-3">
               {t("resources.metrics.active", { defaultValue: "Active & Bookable" })}
             </p>
@@ -131,7 +131,7 @@ export function ResourcesWorkspaceView() {
               </span>
             </div>
           </div>
-          <div className="border-nx-border rounded-2xl border bg-nx-surface p-3.5">
+          <div className="border-nx-line rounded-2xl border bg-nx-surface p-3.5">
             <p className="text-[11px] font-semibold text-nx-ink-3">
               {t("resources.metrics.setupRequired", { defaultValue: "Setup Required" })}
             </p>
@@ -146,7 +146,7 @@ export function ResourcesWorkspaceView() {
               )}
             </div>
           </div>
-          <div className="border-nx-border rounded-2xl border bg-nx-surface p-3.5">
+          <div className="border-nx-line rounded-2xl border bg-nx-surface p-3.5">
             <p className="text-[11px] font-semibold text-nx-ink-3">
               {t("resources.metrics.authorizedFacilities", {
                 defaultValue: "Authorized Facilities",
@@ -235,18 +235,18 @@ export function ResourcesWorkspaceView() {
         </div>
 
         {/* Row 2: Active Quick-Filter Badges (Wrapped, zero horizontal scroll) with Clear Action */}
-        {(selectedCategory !== "all" || selectedStatus !== "all" || vm.selectedFacilityId || vm.searchQuery) && (
+        {(selectedCategory !== "__all_categories__" || selectedStatus !== "all" || vm.selectedFacilityId || vm.searchQuery) && (
           <div className="flex flex-wrap items-center gap-2 pt-1 border-t border-nx-line/60 text-xs">
             <span className="text-[11px] font-semibold text-nx-ink-3">
               {t("resources.filters.activeFilters", { defaultValue: "Active Filters:" })}
             </span>
 
-            {selectedCategory !== "all" && (
+            {selectedCategory !== "__all_categories__" && (
               <span className="inline-flex items-center gap-1.5 rounded-md bg-nx-accent/15 px-2 py-0.5 text-[11px] font-bold text-nx-accent border border-nx-accent/30">
                 {categories.find((c) => c.value === selectedCategory)?.label || selectedCategory}
                 <button
                   type="button"
-                  onClick={() => setSelectedCategory("all")}
+                  onClick={() => setSelectedCategory("__all_categories__")}
                   className="hover:opacity-75"
                   aria-label="Remove category filter"
                 >
@@ -355,7 +355,7 @@ export function ResourcesWorkspaceView() {
             type="button"
             onClick={() => setSetupWizardOpen(true)}
             variant="outline"
-            className="border-nx-border bg-nx-raised/30 group flex min-h-[140px] cursor-pointer flex-col items-center justify-center rounded-2xl border-2 border-dashed p-6 text-center transition-all hover:border-nx-accent/60 hover:bg-nx-accent/5"
+            className="border-nx-line bg-nx-raised/30 group flex min-h-[140px] cursor-pointer flex-col items-center justify-center rounded-2xl border-2 border-dashed p-6 text-center transition-all hover:border-nx-accent/60 hover:bg-nx-accent/5"
           >
             <div className="mb-2.5 flex size-11 items-center justify-center rounded-full bg-nx-accent/15 text-nx-ink transition-transform group-hover:scale-110 dark:text-nx-accent">
               <Plus className="size-5" />

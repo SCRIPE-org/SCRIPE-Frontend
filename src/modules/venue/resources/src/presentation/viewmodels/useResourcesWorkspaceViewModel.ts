@@ -469,7 +469,7 @@ export function useResourcesWorkspaceViewModel() {
                   : weekDays.map((dayOfWeek) => ({
                       dayOfWeek,
                       startLocal: input.customWorkingHours?.opensAt ?? "08:00",
-                      endLocal: input.customWorkingHours?.closesAt ?? "00:00",
+                      endLocal: input.customWorkingHours?.closesAt === "00:00" ? "23:59:59" : (input.customWorkingHours?.closesAt ?? "23:59:59"),
                       capacityOverride: null,
                     }));
 
@@ -539,7 +539,7 @@ export function useResourcesWorkspaceViewModel() {
                   displayName: `${trimmedName} Standard Rate`,
                   currencyCode: input.currencyCode || "EGP",
                   unitPrice: input.pricePerSlot,
-                  effectiveFromUtc: new Date(Date.now() + 15_000).toISOString(),
+                  effectiveFromUtc: new Date().toISOString(),
                   minDurationMinutes: input.slotDurationMinutes,
                   maxDurationMinutes: null,
                   incrementMinutes: input.startIncrementMinutes,

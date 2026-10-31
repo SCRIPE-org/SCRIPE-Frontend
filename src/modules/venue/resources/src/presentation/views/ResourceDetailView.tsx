@@ -118,9 +118,11 @@ export function ResourceDetailView({ resourceId }: Props) {
     profileId: vm.profile?.id,
     slotDurationMinutes: vm.resource?.slotPolicy?.slotDurationMinutes,
     pricePerSlot: vm.priceConfig?.unitPrice,
-    hasCalendar: Boolean(vm.calendar?.windows && vm.calendar.windows.length > 0),
+    hasCalendar: Boolean(
+      (vm.calendar?.windows && vm.calendar.windows.length > 0) || vm.isCalendar247
+    ),
   });
-  const isReady = readiness.state === "Active";
+  const isReady = readiness.state === "Ready" || readiness.state === "Active";
 
   return (
     <div className="space-y-6" dir={direction} data-testid="resource-detail-view">

@@ -93,7 +93,7 @@ export function ResourceWorkingHoursTab({ vm }: Props) {
         (day) => ({
           dayOfWeek: day,
           startLocal: dailyWindows[day].start,
-          endLocal: dailyWindows[day].end,
+          endLocal: dailyWindows[day].end === "00:00" ? "23:59:59" : dailyWindows[day].end,
           capacityOverride: null,
         })
       );

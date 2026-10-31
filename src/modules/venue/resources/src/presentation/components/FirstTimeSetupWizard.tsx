@@ -235,7 +235,7 @@ export function FirstTimeSetupWizard({
           ? undefined
           : {
               opensAt,
-              closesAt,
+              closesAt: closesAt === "00:00" ? "23:59:59" : closesAt,
               days: [0, 1, 2, 3, 4, 5, 6],
             },
         slotDurationMinutes,

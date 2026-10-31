@@ -83,6 +83,7 @@ export const FacilityListView = React.memo(function FacilityListView() {
     ],
     editFields: [
       { name: "id", type: "hidden" as const, required: true },
+      { name: "rowVersion", type: "hidden" as const },
       {
         name: "code",
         label: t("facility.fields.code"),
@@ -115,6 +116,7 @@ export const FacilityListView = React.memo(function FacilityListView() {
       code: item.code,
       name: item.name,
       description: item.description ?? "",
+      rowVersion: item.rowVersion,
     }),
     getItemDisplayName: (item: Facility) => item.name,
     deleteService: (id: string) => vm.deleteItem(id),

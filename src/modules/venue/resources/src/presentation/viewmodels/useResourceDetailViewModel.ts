@@ -113,7 +113,7 @@ export function useResourceDetailViewModel(resourceId: string) {
   }, [loadData]);
 
   const updateGeneral = useCallback(
-    async (input: { name: string; capacity: number }) => {
+    async (input: { name: string; capacity: number; description?: string }) => {
       if (!resource) return false;
       setSaving(true);
       setError(null);
@@ -121,7 +121,7 @@ export function useResourceDetailViewModel(resourceId: string) {
       try {
         await schedulableResourceRepository.update(resource.id, {
           name: input.name.trim(),
-          description: resource.description ?? null,
+          description: input.description !== undefined ? input.description.trim() : (resource.description ?? null),
           parentSchedulableResourceId: resource.parentSchedulableResourceId ?? null,
           isComposite: resource.isComposite,
           namedUnitLabel: resource.namedUnitLabel ?? null,
@@ -261,7 +261,7 @@ export function useResourceDetailViewModel(resourceId: string) {
           pricingIntentRef.current = {
             fingerprint,
             key: crypto.randomUUID(),
-            effectiveFromUtc: new Date(Date.now() + 15_000).toISOString(),
+            effectiveFromUtc: new Date().toISOString(),
           };
         }
         const intent = pricingIntentRef.current;

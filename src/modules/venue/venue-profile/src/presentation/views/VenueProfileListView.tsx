@@ -94,6 +94,11 @@ export const VenueProfileListView = React.memo(function VenueProfileListView() {
         required: true,
       },
       {
+        name: "rowVersion",
+        label: "",
+        type: "hidden" as const,
+      },
+      {
         name: "code",
         label: t("venueProfile.fields.code"),
         type: "text" as const,
@@ -176,6 +181,7 @@ export const VenueProfileListView = React.memo(function VenueProfileListView() {
       isActive: item.isActive,
       enableGuestExperience: item.enableGuestExperience,
       exposeCancellationToGuests: item.exposeCancellationToGuests,
+      rowVersion: item.rowVersion,
     }),
     getItemDisplayName: (item: VenueProfile) => item.name,
     deleteService: (id: string) => vm.deleteItem(id),
