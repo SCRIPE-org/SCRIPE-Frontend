@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { ChevronLeft, ChevronRight, Plus, SlidersHorizontal, RefreshCw, Clock } from "lucide-react";
+import { ChevronLeft, ChevronRight, Plus, SlidersHorizontal, RefreshCw, Clock, Search } from "lucide-react";
 import { Button } from "@core/ui/button";
 import { Input } from "@core/ui/input";
 import { Label } from "@core/ui/label";
@@ -28,6 +28,7 @@ interface CalendarToolbarProps {
   onToday: () => void;
   onRefresh: () => void;
   onBlockTime?: () => void;
+  onFindSlots?: () => void;
   onNewBooking?: () => void;
   hasBookingReadyCourts?: boolean;
 }
@@ -123,6 +124,22 @@ export function CalendarToolbar(props: CalendarToolbarProps) {
             <span>{t("operationsCalendar.toolbar.filter") || "Filter"}</span>
             {props.resourceId ? <span className="size-1.5 rounded-full bg-nx-accent" /> : null}
           </Button>
+
+          {/* Find Available Slot */}
+          {props.onFindSlots && (
+            <Button
+              variant="outline"
+              size="sm"
+              disabled={actionsDisabled}
+              onClick={props.onFindSlots}
+              className="hover:bg-nx-surfaceSubtle h-8 gap-1.5 border-nx-line text-xs font-semibold"
+            >
+              <Search className="size-3.5 text-nx-accent" />
+              <span className="hidden sm:inline">
+                {t("operationsCalendar.toolbar.findSlots") || "Find Slot"}
+              </span>
+            </Button>
+          )}
 
           {/* Block Time Action */}
           {props.onBlockTime && (

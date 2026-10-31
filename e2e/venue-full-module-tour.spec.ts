@@ -91,6 +91,18 @@ test.describe("SCRIPE Venue: Exhaustive Full Module Tour & Deep Audit", () => {
       }
     });
 
+    page.on("response", async (res) => {
+      if (res.url().includes("/Reservations") && res.status() === 200) {
+        try {
+          const json = await res.json();
+          if (json.items && json.items.length > 0 && !dynamicReservationId) {
+            dynamicReservationId = json.items[0].id;
+            console.log(`[NETWORK EVENT] Captured dynamicReservationId: ${dynamicReservationId}`);
+          }
+        } catch {}
+      }
+    });
+
     // Authenticate as AHLY admin once for the entire tour
     console.log("Authenticating as AHLY admin...");
     await page.goto("/login?_tenant=AHLY&redirect=%2Fvenue");
@@ -434,15 +446,23 @@ test.describe("SCRIPE Venue: Exhaustive Full Module Tour & Deep Audit", () => {
       console.log("Captured: 26_reports_booking_operations.png");
 
       // Extract real encrypted reservation ID from API or table
-      dynamicReservationId = await page.evaluate(async () => {
-        try {
-          const res = await fetch("/api/v1/Reservations?page=1&pageSize=10");
-          const json = await res.json();
-          return json.items?.[0]?.id || "";
-        } catch {
-          return "";
-        }
-      });
+      if (!dynamicReservationId) {
+        dynamicReservationId = await page.evaluate(async () => {
+          try {
+            const token = sessionStorage.getItem("dev_access_token") || "";
+            const res = await fetch("http://localhost:5035/api/v1/Reservations?page=1&pageSize=10", {
+              headers: {
+                "Authorization": `Bearer ${token}`,
+                "X-Tenant-Code": "AHLY",
+              },
+            });
+            const json = await res.json();
+            return json.items?.[0]?.id || "";
+          } catch {
+            return "";
+          }
+        });
+      }
       console.log(`Discovered active Reservation ID: ${dynamicReservationId}`);
     }
 

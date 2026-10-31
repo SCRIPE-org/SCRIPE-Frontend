@@ -8,7 +8,7 @@ const ALLOWED_EXTENSIONS = [".png", ".jpg", ".jpeg", ".gif", ".svg", ".webp", ".
 export class ResourceMediaService implements IResourceMediaService {
   constructor(private readonly api: IApiService) {}
 
-  async uploadImage(file: File): Promise<{ url: string }> {
+  async uploadImage(file: File, ownerEntityId?: string): Promise<{ url: string }> {
     if (!file) {
       throw new Error("No file provided.");
     }
@@ -27,6 +27,11 @@ export class ResourceMediaService implements IResourceMediaService {
 
     const formData = new FormData();
     formData.append("file", file);
+
+    if (ownerEntityId) {
+      formData.append("ownerEntityTypeKey", "venue.schedulable-resource");
+      formData.append("ownerEntityId", ownerEntityId);
+    }
 
     const result = await this.api.post<{ url: string }>(
       SYSTEM_ENDPOINTS.UPLOADS.IMAGE,

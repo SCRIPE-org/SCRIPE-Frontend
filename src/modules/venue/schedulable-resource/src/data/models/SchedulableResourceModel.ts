@@ -33,6 +33,8 @@ export interface SchedulableResourceJson {
   commercialReadinessNote: string;
   createdAt: string;
   modifiedAt?: string;
+  imageUrl?: string;
+  photoMetadata?: string;
 }
 
 /**
@@ -73,7 +75,9 @@ export class SchedulableResourceModel {
       startIncrementMinutes: number;
       timeZoneId?: string | null;
       allowMultiSlot?: boolean;
-    } | null
+    } | null,
+    public readonly imageUrl?: string,
+    public readonly photoMetadata?: string
   ) {}
 
   static fromJson(json: SchedulableResourceJson): SchedulableResourceModel {
@@ -93,7 +97,9 @@ export class SchedulableResourceModel {
       json.publishedAtUtc,
       json.archivedAtUtc,
       json.modifiedAt,
-      json.slotPolicy
+      json.slotPolicy,
+      json.imageUrl,
+      json.photoMetadata
     );
   }
 }

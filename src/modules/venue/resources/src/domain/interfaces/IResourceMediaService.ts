@@ -1,3 +1,3 @@
 export interface IResourceMediaService {
-  uploadImage(file: File): Promise<{ url: string }>;
+  uploadImage(file: File, ownerEntityId?: string): Promise<{ url: string }>;
 }

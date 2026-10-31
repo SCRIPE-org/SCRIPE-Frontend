@@ -93,6 +93,11 @@ describe("ResourceDetailView", () => {
       publishCourt: vi.fn(),
       addClosure: vi.fn(),
       deleteClosure: vi.fn(),
+      checklist: null,
+      checklistLoading: false,
+      loadChecklist: vi.fn(),
+      availableParentResources: [],
+      updateAdvanced: vi.fn(),
       refresh: vi.fn(),
     });
 
@@ -140,6 +145,11 @@ describe("ResourceDetailView", () => {
       publishCourt: vi.fn(),
       addClosure: vi.fn(),
       deleteClosure: vi.fn(),
+      checklist: null,
+      checklistLoading: false,
+      loadChecklist: vi.fn(),
+      availableParentResources: [],
+      updateAdvanced: vi.fn(),
       refresh: vi.fn(),
     });
 
@@ -189,6 +199,11 @@ describe("ResourceDetailView", () => {
       publishCourt: vi.fn(),
       addClosure: vi.fn(),
       deleteClosure: vi.fn(),
+      checklist: null,
+      checklistLoading: false,
+      loadChecklist: vi.fn(),
+      availableParentResources: [],
+      updateAdvanced: vi.fn(),
       refresh: vi.fn(),
     });
 

@@ -228,7 +228,7 @@ export function useResourcesWorkspaceViewModel() {
           isPublished: r.isPublished,
           timeZoneId,
           description: r.description ?? null,
-          imageUrl: extractCourtPhotos(r.description)[0] ?? null,
+          imageUrl: (r.imageUrl || extractCourtPhotos(r.photoMetadata, r.description)[0]) ?? null,
           readinessState: readiness.state,
           readiness,
         };

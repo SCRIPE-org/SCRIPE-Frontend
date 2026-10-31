@@ -13,6 +13,7 @@ import {
   Building2,
   CheckCircle2,
   AlertCircle,
+  Sliders,
 } from "lucide-react";
 import { Button } from "@core/ui/button";
 import { Badge } from "@core/ui/badge";
@@ -28,6 +29,7 @@ import { ResourceWorkingHoursTab } from "../components/ResourceWorkingHoursTab";
 import { ResourceBookingRulesTab } from "../components/ResourceBookingRulesTab";
 import { ResourcePricingTab } from "../components/ResourcePricingTab";
 import { ResourceClosuresTab } from "../components/ResourceClosuresTab";
+import { ResourceAdvancedTab } from "../components/ResourceAdvancedTab";
 
 interface Props {
   resourceId: string;
@@ -52,6 +54,9 @@ export function resolveResourceDetailTab(raw: string | null): string {
     lower === "blocks"
   ) {
     return "closures";
+  }
+  if (lower === "advanced" || lower === "config" || lower === "composite") {
+    return "advanced";
   }
   return "general";
 }
@@ -285,6 +290,12 @@ export function ResourceDetailView({ resourceId }: Props) {
             <Ban className="size-3.5" aria-hidden="true" />
             <span>{t("resources.tabs.closures", { defaultValue: "Closures" })}</span>
           </TabsTrigger>
+          <TabsTrigger value="advanced" className="gap-1.5 text-xs">
+            <Sliders className="size-3.5" aria-hidden="true" />
+            <span>{t("resources.tabs.advanced", { defaultValue: "Advanced" })}</span>
+          </TabsTrigger>
+
+
         </TabsList>
 
         <TabsContent value="general">
@@ -305,6 +316,10 @@ export function ResourceDetailView({ resourceId }: Props) {
 
         <TabsContent value="closures">
           <ResourceClosuresTab vm={vm} />
+        </TabsContent>
+
+        <TabsContent value="advanced">
+          <ResourceAdvancedTab vm={vm} />
         </TabsContent>
       </Tabs>
     </div>

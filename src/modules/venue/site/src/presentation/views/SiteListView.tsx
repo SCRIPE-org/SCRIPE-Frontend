@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import React, { useState, useTransition } from "react";
 import { GenericCrudView } from "@core/crud/components/generic-crud-view";
@@ -15,7 +15,11 @@ import { SiteFormDialog } from "../components/SiteFormDialog";
 /**
  * Documentation for module export
  */
-export const SiteListView = React.memo(function SiteListView() {
+export const SiteListView = React.memo(function SiteListView({
+  hideNav = false,
+}: {
+  hideNav?: boolean;
+} = {}) {
   const { vm } = useSiteViewModel();
   const { t, language } = useI18n();
   const [, startTransition] = useTransition();
@@ -71,7 +75,7 @@ export const SiteListView = React.memo(function SiteListView() {
 
   return (
     <div className="space-y-4">
-      <VenueResourceNav />
+      {!hideNav && <VenueResourceNav />}
       <GenericCrudView viewModel={vm} config={config} />
       <SiteFormDialog
         open={formDialog.open}

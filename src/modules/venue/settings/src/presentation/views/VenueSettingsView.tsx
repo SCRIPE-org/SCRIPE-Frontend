@@ -2,6 +2,8 @@
 
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
+import { VenueProfileListView } from "@modules/venue/venue-profile/src/presentation/views/VenueProfileListView";
 import {
   Settings,
   Building2,
@@ -38,8 +40,20 @@ export function VenueSettingsView() {
   const canViewTeam = usePermission(VENUE_PERMISSIONS.TEAM_VIEW);
   const canViewSettings = usePermission(VENUE_PERMISSIONS.FACILITY_VIEW);
 
-  // Active Tab state
-  const [activeTab, setActiveTab] = useState("branch");
+  const searchParams = useSearchParams();
+  const [activeTab, setActiveTab] = useState(() => {
+    const tab = searchParams?.get("tab");
+    return tab === "profile" || tab === "venue-setup" ? "profile" : tab || "branch";
+  });
+
+  useEffect(() => {
+    const tab = searchParams?.get("tab");
+    if (tab === "profile" || tab === "venue-setup") {
+      setActiveTab("profile");
+    } else if (tab) {
+      setActiveTab(tab);
+    }
+  }, [searchParams]);
 
   const {
     selectedFacility,
@@ -83,6 +97,10 @@ export function VenueSettingsView() {
           <TabsTrigger value="preferences" className="gap-1.5 text-xs font-semibold">
             <Globe2 className="size-3.5" aria-hidden="true" />
             <span>{t("venueSettings.tabs.preferences")}</span>
+          </TabsTrigger>
+          <TabsTrigger value="profile" className="gap-1.5 text-xs font-semibold">
+            <Sliders className="size-3.5" aria-hidden="true" />
+            <span>{t("venueSettings.tabs.profile", { defaultValue: "Venue Profile" })}</span>
           </TabsTrigger>
           <TabsTrigger value="advanced" className="gap-1.5 text-xs font-semibold">
             <Sliders className="size-3.5" aria-hidden="true" />
@@ -162,7 +180,7 @@ export function VenueSettingsView() {
                     size="sm"
                     className="shrink-0 border-nx-line text-xs"
                   >
-                    <Link href="/venue/resources">
+                    <Link href="/venue/resource-builder">
                       <span>{t("venueSettings.booking.courtsLink")}</span>
                       <ChevronRight className="size-3.5 rtl:rotate-180" />
                     </Link>
@@ -309,6 +327,11 @@ export function VenueSettingsView() {
               </div>
             </CardContent>
           </Card>
+        </TabsContent>
+
+        {/* Venue Profile Configuration (Consolidated from /venue/venue-setup) */}
+        <TabsContent value="profile" className="space-y-6">
+          <VenueProfileListView hideNav={true} />
         </TabsContent>
 
         {/* 5. Advanced Settings (Progressive Disclosure) */}

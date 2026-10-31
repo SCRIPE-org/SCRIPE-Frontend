@@ -1,16 +1,36 @@
-import { Metadata } from "next";
-import { ModuleErrorBoundary } from "@core/ui/module-error-boundary";
-import { ResourceBuilderView } from "@modules/venue/schedulable-resource/src/presentation/views/ResourceBuilderView";
+"use client";
 
-export const metadata: Metadata = {
-  title: "Resource Builder",
-  description: "Compose bookable resources, set capacity, and publish them for scheduling.",
-};
+import { useEffect, Suspense } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { LoadingSpinner } from "@core/ui/loading-spinner";
+
+function ResourceBuilderRedirect() {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+
+  useEffect(() => {
+    const qs = searchParams?.toString();
+    const destination = qs ? `/venue/resources?${qs}` : "/venue/resources";
+    router.replace(destination);
+  }, [router, searchParams]);
+
+  return (
+    <div className="flex h-64 items-center justify-center">
+      <LoadingSpinner showText={false} />
+    </div>
+  );
+}
 
 export default function ResourceBuilderPage() {
   return (
-    <ModuleErrorBoundary moduleName="schedulableResource.title">
-      <ResourceBuilderView />
-    </ModuleErrorBoundary>
+    <Suspense
+      fallback={
+        <div className="flex h-64 items-center justify-center">
+          <LoadingSpinner showText={false} />
+        </div>
+      }
+    >
+      <ResourceBuilderRedirect />
+    </Suspense>
   );
 }

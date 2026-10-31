@@ -58,6 +58,12 @@ export const OperationsCalendarView = React.memo(function OperationsCalendarView
 
   const searchParams = useSearchParams();
 
+  React.useEffect(() => {
+    if (searchParams?.get("findSlot") === "true") {
+      setFindSlotsOpen(true);
+    }
+  }, [searchParams]);
+
   const handleEmptySlot = React.useCallback(
     (resource: CalendarResource, instantUtc: string, durationMinutes?: number) => {
       if (
@@ -260,6 +266,7 @@ export const OperationsCalendarView = React.memo(function OperationsCalendarView
         onToday={vm.goToday}
         onRefresh={() => void vm.refresh()}
         onBlockTime={canCreateMaintenanceBlock ? () => handleOpenBlockTime(null, null) : undefined}
+        onFindSlots={() => setFindSlotsOpen(true)}
         onNewBooking={canCreate ? handleOpenNewBooking : undefined}
       />
 

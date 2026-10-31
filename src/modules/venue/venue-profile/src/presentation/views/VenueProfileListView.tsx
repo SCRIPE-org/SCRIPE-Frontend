@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
@@ -18,7 +18,11 @@ import { SiteQuickCreateDialog } from "@modules/venue";
 /**
  * Documentation for module export
  */
-export const VenueProfileListView = React.memo(function VenueProfileListView() {
+export const VenueProfileListView = React.memo(function VenueProfileListView({
+  hideNav = false,
+}: {
+  hideNav?: boolean;
+} = {}) {
   useModuleLocales(() => import("../../../locales"), "venue.venueProfile");
   const { vm, searchSites, siteNameById, refreshSites } = useVenueProfileViewModel();
   const { t, language } = useI18n();
@@ -206,7 +210,7 @@ export const VenueProfileListView = React.memo(function VenueProfileListView() {
 
   return (
     <div className="space-y-4">
-      <VenueResourceNav />
+      {!hideNav && <VenueResourceNav />}
       <GenericCrudView viewModel={vm} config={config} />
       <SiteQuickCreateDialog
         open={quickCreateSiteOpen}
