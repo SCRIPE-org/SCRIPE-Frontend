@@ -193,7 +193,7 @@ test.describe("CRM Leads Intake & Complete Qualification/Conversion Lifecycle Ac
     await expect(reloadedLeadRow).toBeVisible({ timeout: 15_000 });
     await expect(reloadedLeadRow.getByText("Converted").first()).toBeVisible({ timeout: 10_000 });
 
-    const partyBadges = reloadedLeadRow.locator('[title="Party Linked"]');
+    const partyBadges = reloadedLeadRow.locator('[title="Party Linked"], [title="مرتبط بالجهة"]');
     await expect(partyBadges.first()).toBeVisible({ timeout: 10_000 });
     expect(await partyBadges.count()).toBeGreaterThanOrEqual(1);
 
