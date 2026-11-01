@@ -40,6 +40,10 @@ import { AcademyEnrollmentsService } from "./enrollments/src/data/services/Acade
 import { AcademyEnrollmentsRepository } from "./enrollments/src/data/repositories/AcademyEnrollmentsRepository";
 import type { IAcademyEnrollmentsRepository } from "./enrollments/src/domain/interfaces/IAcademyEnrollmentsRepository";
 
+import { TrainingGroupsService } from "./groups/src/data/services/TrainingGroupsService";
+import { TrainingGroupsRepository } from "./groups/src/data/repositories/TrainingGroupsRepository";
+import type { ITrainingGroupsRepository } from "./groups/src/domain/interfaces/ITrainingGroupsRepository";
+
 export interface IAcademyServiceLocator {
   overviewRepository: IAcademyOverviewRepository;
   programsRepository: IAcademyProgramsRepository;
@@ -49,6 +53,7 @@ export interface IAcademyServiceLocator {
   athletesRepository: IAcademyAthletesRepository;
   trialsRepository: IAcademyTrialsRepository;
   enrollmentsRepository: IAcademyEnrollmentsRepository;
+  groupsRepository: ITrainingGroupsRepository;
 }
 
 class AcademyContainer implements IAcademyServiceLocator {
@@ -60,6 +65,7 @@ class AcademyContainer implements IAcademyServiceLocator {
   private _athletesRepository?: IAcademyAthletesRepository;
   private _trialsRepository?: IAcademyTrialsRepository;
   private _enrollmentsRepository?: IAcademyEnrollmentsRepository;
+  private _groupsRepository?: ITrainingGroupsRepository;
 
   get overviewRepository(): IAcademyOverviewRepository {
     if (!this._overviewRepository) {
@@ -131,6 +137,15 @@ class AcademyContainer implements IAcademyServiceLocator {
       this._enrollmentsRepository = new AcademyEnrollmentsRepository(service);
     }
     return this._enrollmentsRepository;
+  }
+
+  get groupsRepository(): ITrainingGroupsRepository {
+    if (!this._groupsRepository) {
+      const api = getModuleApiService("ACADEMY");
+      const service = new TrainingGroupsService(api);
+      this._groupsRepository = new TrainingGroupsRepository(service);
+    }
+    return this._groupsRepository;
   }
 }
 

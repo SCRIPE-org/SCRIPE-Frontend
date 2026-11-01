@@ -8,3 +8,4 @@ export * from "./locations";
 export * from "./athletes";
 export * from "./trials";
 export * from "./enrollments";
+export * from "./groups";
