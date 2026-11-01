@@ -172,6 +172,8 @@ describe("LeadsView Component", () => {
         linkParty: mockLinkParty as any,
         convertLead: mockConvertLead as any,
       },
+      opportunityService: {} as any,
+      opportunityRepository: {} as any,
     };
 
     setCrmContainer(mockContainer);

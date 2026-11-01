@@ -166,13 +166,13 @@ test.describe("CRM Leads Intake & Complete Qualification/Conversion Lifecycle Ac
     await expect(amountInput).toHaveValue("250000");
 
     const convertResponsePromise = page.waitForResponse(
-      (res) => res.url().includes("/convert") && res.request().method() === "POST" && res.status() === 200,
+      (res) => res.url().includes("/convert") && res.request().method() === "POST" && res.status() === 201,
       { timeout: 15_000 }
     );
     const submitConvertBtn = convertDialog.getByRole("button", { name: /convert to deal/i });
     await submitConvertBtn.click();
     const convertRes = await convertResponsePromise;
-    expect(convertRes.status()).toBe(200);
+    expect(convertRes.status()).toBe(201);
     const convertBody = await convertRes.json();
     expect(convertBody.lead?.status).toBe("Converted");
     expect(convertBody.lead?.convertedOpportunityId).toBeTruthy();
@@ -206,5 +206,117 @@ test.describe("CRM Leads Intake & Complete Qualification/Conversion Lifecycle Ac
         err.includes("Invariant Violation")
     );
     expect(fatalErrors).toHaveLength(0);
+  });
+
+  test("Explicitly converts a Qualified Lead WITHOUT a linked Party into initial Discovery stage (Closure Action 1)", async ({ page }) => {
+    // 1. Log in via UI
+    await page.goto("/login?redirect=%2Fcrm%2Fleads");
+    await page.waitForLoadState("domcontentloaded");
+
+    const identifierInput = page.locator("#identifier");
+    const passwordInput = page.locator("#password");
+    await expect(identifierInput).toBeVisible({ timeout: 15_000 });
+    await expect(passwordInput).toBeVisible({ timeout: 15_000 });
+
+    await identifierInput.fill("ahly.admin@scripe-dev.local");
+    await passwordInput.fill("P@ssw0rd");
+
+    const loginSubmitBtn = page.locator("form button[type='submit']").first();
+    await expect(loginSubmitBtn).toBeEnabled({ timeout: 5_000 });
+    await loginSubmitBtn.click();
+
+    await page.waitForURL((url) => !url.pathname.includes("/login"), { timeout: 30_000 });
+
+    const leadsInitialResponse = page.waitForResponse(
+      (res) => res.url().includes("/crm/leads") && res.request().method() === "GET" && res.status() === 200,
+      { timeout: 30_000 }
+    );
+    await page.goto("/crm/leads");
+    await leadsInitialResponse;
+
+    const titleLocator = page.getByRole("heading", { name: /lead|intake|crm/i }).first();
+    await expect(titleLocator).toBeVisible({ timeout: 20_000 });
+
+    const uniqueSuffix = Date.now().toString().slice(-6);
+    const leadTitle = `Unlinked Discovery Lead ${uniqueSuffix}`;
+    const companyName = `Prospective Enterprise Club ${uniqueSuffix}`;
+
+    // 2. Create Lead
+    const createBtn = page.locator("main").getByRole("button", { name: /new lead/i }).first();
+    await expect(createBtn).toBeVisible({ timeout: 10_000 });
+    await createBtn.click();
+
+    const dialog = page.getByRole("dialog").first();
+    await expect(dialog).toBeVisible({ timeout: 10_000 });
+
+    await dialog.locator("#lead-title").fill(leadTitle);
+    await dialog.locator("#lead-company").fill(companyName);
+    await dialog.locator("#lead-first-name").fill("Tariq");
+    await dialog.locator("#lead-last-name").fill("Hamed");
+    await dialog.locator("#lead-email").fill(`tariq.${uniqueSuffix}@club.example`);
+    await dialog.locator("#lead-value").fill("180000");
+
+    const createResponsePromise = page.waitForResponse(
+      (res) => res.url().includes("/crm/leads") && res.request().method() === "POST" && (res.status() === 201 || res.status() === 200),
+      { timeout: 15_000 }
+    );
+    const submitBtn = dialog.getByRole("button", { name: /create lead/i });
+    await submitBtn.click();
+    const createRes = await createResponsePromise;
+    expect([200, 201]).toContain(createRes.status());
+    await expect(dialog).not.toBeVisible({ timeout: 10_000 });
+
+    // Switch to CardGrid for reliable direct action buttons
+    const cardGridBtn = page.getByRole("button", { name: "CardGrid" }).first();
+    if (await cardGridBtn.isVisible({ timeout: 3_000 })) {
+      await cardGridBtn.click();
+    }
+    const leadCard = page.locator("main").locator(".rounded-nx-lg", { hasText: leadTitle }).first();
+    await expect(leadCard).toBeVisible({ timeout: 10_000 });
+
+    // 3. Qualify Lead
+    const qualifyActionBtn = leadCard.getByRole("button", { name: "Qualify" });
+    await expect(qualifyActionBtn).toBeVisible({ timeout: 5_000 });
+    await qualifyActionBtn.click();
+
+    const qualifyDialog = page.getByRole("dialog").first();
+    await expect(qualifyDialog).toBeVisible({ timeout: 5_000 });
+    await qualifyDialog.locator("#qualify-notes").fill("Direct qualification without pre-linked Party per PD-1 discovery phase.");
+
+    const qualifyResponsePromise = page.waitForResponse(
+      (res) => res.url().includes("/qualify") && res.request().method() === "POST" && res.status() === 200,
+      { timeout: 15_000 }
+    );
+    await qualifyDialog.getByRole("button", { name: /save decision/i }).click();
+    const qualifyRes = await qualifyResponsePromise;
+    expect(qualifyRes.status()).toBe(200);
+    await expect(qualifyDialog).not.toBeVisible({ timeout: 10_000 });
+
+    // 4. Convert directly WITHOUT calling Link Party!
+    // Party linkage is optional at conversion per PD-1 for initial Discovery stage
+    const convertActionBtn = leadCard.getByRole("button", { name: /convert/i });
+    await expect(convertActionBtn).toBeVisible({ timeout: 5_000 });
+    await convertActionBtn.click();
+
+    const convertDialog = page.getByRole("dialog").first();
+    await expect(convertDialog).toBeVisible({ timeout: 5_000 });
+
+    const convertResponsePromise = page.waitForResponse(
+      (res) => res.url().includes("/convert") && res.request().method() === "POST" && res.status() === 201,
+      { timeout: 15_000 }
+    );
+    const submitConvertBtn = convertDialog.getByRole("button", { name: /convert to deal/i });
+    await submitConvertBtn.click();
+    const convertRes = await convertResponsePromise;
+
+    // Must be 201 Created per C1
+    expect(convertRes.status()).toBe(201);
+    const convertBody = await convertRes.json();
+    expect(convertBody.lead?.status).toBe("Converted");
+    expect(convertBody.opportunity?.id).toBeTruthy();
+    expect(convertBody.opportunity?.stageKey).toBe("default.discovery");
+    // Verify partyId is null on opportunity created without party
+    expect(convertBody.opportunity?.partyId).toBeNull();
+    await expect(convertDialog).not.toBeVisible({ timeout: 10_000 });
   });
 });

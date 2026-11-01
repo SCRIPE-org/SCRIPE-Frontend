@@ -117,6 +117,7 @@ export function CrmShell({
                     onTabChange(tab.id);
                     if (tab.id === "overview") router.push("/crm");
                     else if (tab.id === "leads") router.push("/crm/leads");
+                    else if (tab.id === "deals") router.push("/crm/opportunities");
                   }}
                   aria-current={isActive ? "page" : undefined}
                   className={cn(

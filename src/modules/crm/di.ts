@@ -18,11 +18,18 @@ import { CrmLeadRepository } from "./leads/src/data/repositories/CrmLeadReposito
 import type { ICrmLeadService } from "./leads/src/domain/interfaces/ICrmLeadService";
 import type { ICrmLeadRepository } from "./leads/src/domain/interfaces/ICrmLeadRepository";
 
+import { CrmOpportunityService } from "./opportunities/src/data/services/CrmOpportunityService";
+import { CrmOpportunityRepository } from "./opportunities/src/data/repositories/CrmOpportunityRepository";
+import type { ICrmOpportunityService } from "./opportunities/src/domain/interfaces/ICrmOpportunityService";
+import type { ICrmOpportunityRepository } from "./opportunities/src/domain/interfaces/ICrmOpportunityRepository";
+
 export interface CrmContainer {
   readonly overviewService: ICrmOverviewService;
   readonly overviewRepository: ICrmOverviewRepository;
   readonly leadService: ICrmLeadService;
   readonly leadRepository: ICrmLeadRepository;
+  readonly opportunityService: ICrmOpportunityService;
+  readonly opportunityRepository: ICrmOpportunityRepository;
 }
 
 let instance: CrmContainer | null = null;
@@ -34,12 +41,16 @@ export function getCrmContainer(): CrmContainer {
     const overviewRepository = new CrmOverviewRepository(overviewService);
     const leadService = new CrmLeadService(api);
     const leadRepository = new CrmLeadRepository(leadService);
+    const opportunityService = new CrmOpportunityService(api);
+    const opportunityRepository = new CrmOpportunityRepository(opportunityService);
 
     instance = {
       overviewService,
       overviewRepository,
       leadService,
       leadRepository,
+      opportunityService,
+      opportunityRepository,
     };
   }
   return instance;

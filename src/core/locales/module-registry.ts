@@ -306,6 +306,7 @@ import { en as guestPortalEn, ar as guestPortalAr } from "@modules/venue/guest-p
 // ─── CRM ───────────────────────────────────────────────
 import { en as crmOverviewEn, ar as crmOverviewAr } from "@modules/crm/overview/locales";
 import { en as crmLeadsEn, ar as crmLeadsAr } from "@modules/crm/leads/locales";
+import { en as crmOpportunitiesEn, ar as crmOpportunitiesAr } from "@modules/crm/opportunities/locales";
 
 
 
@@ -433,6 +434,7 @@ export const allModulesEn: Record<string, unknown> = deepMerge(
   // CRM
   crmOverviewEn,
   crmLeadsEn,
+  crmOpportunitiesEn,
 );
 
 export const allModulesAr: Record<string, unknown> = deepMerge(
@@ -558,4 +560,5 @@ export const allModulesAr: Record<string, unknown> = deepMerge(
   // CRM
   crmOverviewAr,
   crmLeadsAr,
+  crmOpportunitiesAr,
 );
