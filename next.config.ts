@@ -81,6 +81,12 @@ const nextConfig: NextConfig = {
         destination: `${docsUrl}/commercial/:path*`,
         permanent: false,
       },
+      // Venue Phase 2 Consolidation Redirects
+      { source: "/venue/resource-builder", destination: "/venue/resources", permanent: true },
+      { source: "/venue/resource-profiles", destination: "/venue/resources", permanent: true },
+      { source: "/venue/sites", destination: "/venue/facilities?tab=sites", permanent: true },
+      { source: "/venue/venue-setup", destination: "/venue/settings?tab=profile", permanent: true },
+      { source: "/venue/availability", destination: "/venue/resources", permanent: true },
     ];
   },
 };

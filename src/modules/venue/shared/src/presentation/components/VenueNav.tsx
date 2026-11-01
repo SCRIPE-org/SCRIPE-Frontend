@@ -58,23 +58,17 @@ export function VenueNav({ attentionCount = 0, className = "", hidePrimaryBar = 
 
   const isCalendar =
     pathname.startsWith("/venue/calendar") ||
-    pathname.startsWith("/venue/bookings") ||
-    pathname.startsWith("/venue/availability");
+    pathname.startsWith("/venue/bookings");
 
-  const isResources =
-    pathname.startsWith("/venue/resources") ||
-    pathname.startsWith("/venue/resource-builder") ||
-    pathname.startsWith("/venue/resource-profiles");
+  const isResources = pathname.startsWith("/venue/resources");
 
   const isCustomers = pathname.startsWith("/venue/customers");
 
-  const isFacilities =
-    pathname.startsWith("/venue/facilities") || pathname.startsWith("/venue/sites");
+  const isFacilities = pathname.startsWith("/venue/facilities");
 
   const isMoney = pathname.startsWith("/venue/money") || pathname.startsWith("/venue/pricing");
 
-  const isSettings =
-    pathname.startsWith("/venue/settings") || pathname.startsWith("/venue/venue-setup");
+  const isSettings = pathname.startsWith("/venue/settings");
 
   // 7 Primary Navigation Pillars
   const primaryItems = [
@@ -241,7 +235,7 @@ export function VenueNav({ attentionCount = 0, className = "", hidePrimaryBar = 
         href: "/venue/facilities?tab=sites",
         label: t("venueNav.sites", { defaultValue: "Campuses & Branches" }),
         icon: MapPin,
-        active: pathname.includes("tab=sites") || pathname.startsWith("/venue/sites"),
+        active: pathname.includes("tab=sites"),
       },
     ];
   } else if (isMoney) {

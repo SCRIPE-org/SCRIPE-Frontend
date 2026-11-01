@@ -46,6 +46,10 @@ export class SchedulableResourceRepository implements ISchedulableResourceReposi
     await this.service.delete(id);
   }
 
+  async deleteResource(id: string): Promise<void> {
+    await this.delete(id);
+  }
+
   async getPublicationChecklist(id: string): Promise<PublicationChecklistReport> {
     return this.service.getPublicationChecklist(id);
   }

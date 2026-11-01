@@ -20,8 +20,12 @@ import { SiteQuickCreateDialog } from "@modules/venue";
  */
 export const VenueProfileListView = React.memo(function VenueProfileListView({
   hideNav = false,
+  hidePageHeader = false,
+  hideHeader = false,
 }: {
   hideNav?: boolean;
+  hidePageHeader?: boolean;
+  hideHeader?: boolean;
 } = {}) {
   useModuleLocales(() => import("../../../locales"), "venue.venueProfile");
   const { vm, searchSites, siteNameById, refreshSites } = useVenueProfileViewModel();
@@ -33,6 +37,7 @@ export const VenueProfileListView = React.memo(function VenueProfileListView({
     titleKey: "venueProfile.title",
     subtitleKey: "venueProfile.description",
     resource: "venue-profiles",
+    hidePageHeader: hidePageHeader || hideHeader,
     entityTypeKey: "facilityoperations.venue-profile",
     permissions: {
       canView: VENUE_PERMISSIONS.VENUE_PROFILE_VIEW,
@@ -53,7 +58,7 @@ export const VenueProfileListView = React.memo(function VenueProfileListView({
       {
         label: t("venueProfile.manageSites"),
         onClick: async () => {
-          router.push("/venue/sites");
+          router.push("/venue/facilities?tab=sites");
         },
         variant: "outline" as const,
         icon: <Building2 className="h-4 w-4" />,

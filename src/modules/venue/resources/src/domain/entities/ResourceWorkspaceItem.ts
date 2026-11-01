@@ -18,6 +18,7 @@ export interface ResourceWorkspaceItem {
   priceEffectiveFromUtc?: string | null;
   hasCalendar?: boolean;
   isPublished: boolean;
+  isComposite?: boolean;
   timeZoneId: string;
   description?: string | null;
   imageUrl?: string | null;

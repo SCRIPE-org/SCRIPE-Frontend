@@ -17,8 +17,12 @@ import { SiteFormDialog } from "../components/SiteFormDialog";
  */
 export const SiteListView = React.memo(function SiteListView({
   hideNav = false,
+  hidePageHeader = false,
+  hideHeader = false,
 }: {
   hideNav?: boolean;
+  hidePageHeader?: boolean;
+  hideHeader?: boolean;
 } = {}) {
   const { vm } = useSiteViewModel();
   const { t, language } = useI18n();
@@ -36,6 +40,7 @@ export const SiteListView = React.memo(function SiteListView({
     titleKey: "site.title",
     subtitleKey: "site.description",
     resource: "sites",
+    hidePageHeader: hidePageHeader || hideHeader,
     columns: [
       { key: "name", label: t("site.fields.name"), sortable: true },
       { key: "address", label: t("site.fields.address") },

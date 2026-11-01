@@ -77,6 +77,8 @@ function createMockContainer() {
       create: vi.fn().mockResolvedValue("res-new"),
       update: vi.fn().mockResolvedValue(undefined),
       publish: vi.fn().mockResolvedValue(undefined),
+      delete: vi.fn().mockResolvedValue(undefined),
+      deleteResource: vi.fn().mockResolvedValue(undefined),
     },
     availabilityRepository: {
       saveCalendar: vi.fn().mockResolvedValue(undefined),
@@ -104,7 +106,7 @@ describe("useResourcesWorkspaceViewModel", () => {
     );
   });
 
-  it("loads facilities, profiles, resources, and pricing, filtering out composite resources", async () => {
+  it("loads facilities, profiles, resources, and pricing, including composite resources with badge metadata", async () => {
     const { result } = renderHook(() => useResourcesWorkspaceViewModel());
 
     expect(result.current.loading).toBe(true);
@@ -113,7 +115,7 @@ describe("useResourcesWorkspaceViewModel", () => {
       expect(result.current.loading).toBe(false);
     });
 
-    expect(result.current.allItems).toHaveLength(2);
+    expect(result.current.allItems).toHaveLength(3);
     expect(result.current.allItems[0]).toMatchObject({
       id: "res-1",
       name: "Padel Court 1",
@@ -122,6 +124,7 @@ describe("useResourcesWorkspaceViewModel", () => {
       slotDurationMinutes: 60,
       pricePerSlot: 800,
       currencyCode: "EGP",
+      isComposite: false,
     });
     expect(result.current.allItems[1]).toMatchObject({
       id: "res-2",
@@ -129,6 +132,12 @@ describe("useResourcesWorkspaceViewModel", () => {
       sportType: "Padel",
       slotDurationMinutes: 90,
       pricePerSlot: null,
+      isComposite: false,
+    });
+    expect(result.current.allItems[2]).toMatchObject({
+      id: "res-comp",
+      name: "Combined Court",
+      isComposite: true,
     });
   });
 
@@ -249,11 +258,11 @@ describe("useResourcesWorkspaceViewModel", () => {
     });
 
     expect(result.current.metrics).toEqual({
-      totalSpaces: 2,
-      activeSpaces: 1, // res-1 has price 800 and isPublished true; res-2 has no price
+      totalSpaces: 3,
+      activeSpaces: 1, // res-1 has price 800 and isPublished true; res-2 and res-comp have no price
       readySpaces: 1,
       activatingSpaces: 0,
-      setupRequired: 1,
+      setupRequired: 2,
       branchCount: 1,
     });
   });
@@ -609,5 +618,22 @@ describe("useResourcesWorkspaceViewModel", () => {
     const diffSeconds = (parsedEffectiveMs - beforeCall) / 1000;
     expect(diffSeconds).toBeLessThanOrEqual(5);
     // immediate activation verified (DEF-VENUE-024)
+  });
+
+  it("safely deletes a resource and refreshes the workspace", async () => {
+    const { result } = renderHook(() => useResourcesWorkspaceViewModel());
+
+    await waitFor(() => {
+      expect(result.current.loading).toBe(false);
+    });
+
+    let success = false;
+    await act(async () => {
+      success = await result.current.deleteResource("res-1");
+    });
+
+    expect(success).toBe(true);
+    expect(mockContainer.schedulableResourceRepository.deleteResource).toHaveBeenCalledWith("res-1");
+    expect(mockContainer.schedulableResourceRepository.getAll).toHaveBeenCalledTimes(2);
   });
 });

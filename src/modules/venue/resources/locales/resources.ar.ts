@@ -33,6 +33,9 @@ export const ar = {
       setupRequired: "مطلوب الإعداد",
       facility: "المنشأة",
       status: "الحالة",
+      category: "المساحة / الفئة",
+      activeFilters: "الفلاتر النشطة:",
+      resetAll: "إعادة ضبط الكل",
     },
     empty: {
       title: "لا توجد ملاعب أو مساحات بعد",
@@ -68,6 +71,13 @@ export const ar = {
       maintenanceClosures: "الصيانة والإغلاقات",
       scheduleNotSet: "الجدول غير محدد",
       notConfigured: "غير محدد",
+      compositeBadge: "مركّب",
+      delete: "حذف الملعب",
+      deleteConfirmTitle: "حذف الملعب",
+      deleteConfirmDescription:
+        "هل أنت متأكد من رغبتك في حذف هذا الملعب؟ هذا الإجراء سيزيل المساحة نهائياً ولا يمكن التراجع عنه. يرجى التأكد من عدم وجود حجوزات نشطة قبل المتابعة.",
+      deleteSuccess: "تم حذف الملعب بنجاح",
+      deleteError: "فشل حذف الملعب. يرجى التأكد من عدم وجود حجوزات نشطة مرتبطة به.",
     },
     tabs: {
       general: "عام",
@@ -145,6 +155,8 @@ export const ar = {
       save: "حفظ ساعات العمل",
       saved: "تم حفظ ساعات العمل بنجاح.",
       advancedLink: "إعدادات التوافر المتقدمة (الاستثناءات والتقاويم والفترات المتعددة)",
+      copyToAll: "نسخ لجميع الأيام المفتوحة",
+      openCalendar: "فتح تقويم العمليات",
     },
     bookingRules: {
       title: "قواعد الحجز",

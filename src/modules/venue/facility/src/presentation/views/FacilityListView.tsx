@@ -222,7 +222,7 @@ export const FacilityListView = React.memo(function FacilityListView() {
             />
           </>
         ) : (
-          <SiteListView hideNav={true} />
+          <SiteListView hideNav={true} hideHeader={true} hidePageHeader={true} />
         )}
       </Tabs>
     </div>

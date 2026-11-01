@@ -282,9 +282,9 @@ export function ResourceWorkingHoursTab({ vm }: Props) {
           </div>
           <Button asChild variant="outline" size="sm" className="h-8 shrink-0 gap-1.5 text-xs">
             <Link
-              href={`/venue/availability?resourceId=${encodeURIComponent(vm.resource?.id ?? "")}`}
+              href={`/venue/calendar?resourceId=${encodeURIComponent(vm.resource?.id ?? "")}`}
             >
-              <span>Open Advanced Availability</span>
+              <span>{t("resources.workingHours.openCalendar", { defaultValue: "Open Operations Calendar" })}</span>
               <ExternalLink className="size-3.5 text-nx-ink-3" aria-hidden="true" />
             </Link>
           </Button>

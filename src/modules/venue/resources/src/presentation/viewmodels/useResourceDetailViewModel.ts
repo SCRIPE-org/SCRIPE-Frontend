@@ -541,6 +541,25 @@ export function useResourceDetailViewModel(resourceId: string) {
     )
   );
 
+  const deleteCourt = useCallback(async () => {
+    if (!resource) return false;
+    setSaving(true);
+    setError(null);
+    try {
+      if (typeof (schedulableResourceRepository as any).deleteResource === "function") {
+        await (schedulableResourceRepository as any).deleteResource(resource.id);
+      } else {
+        await schedulableResourceRepository.delete(resource.id);
+      }
+      return true;
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to delete court");
+      return false;
+    } finally {
+      setSaving(false);
+    }
+  }, [resource, schedulableResourceRepository]);
+
   return {
     loading,
     saving,
@@ -572,6 +591,7 @@ export function useResourceDetailViewModel(resourceId: string) {
     loadChecklist,
     availableParentResources,
     updateAdvanced,
+    deleteCourt,
     refresh: loadData,
   };
 }

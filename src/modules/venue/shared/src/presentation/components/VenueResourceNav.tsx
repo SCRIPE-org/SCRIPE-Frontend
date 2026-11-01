@@ -25,13 +25,13 @@ export function VenueResourceNav() {
       href: "/venue/facilities",
       label: t("facility.title", { defaultValue: "Branches & Facilities" }),
       icon: Building2,
-      active: pathname.startsWith("/venue/facilities") || pathname.startsWith("/venue/sites"),
+      active: pathname.startsWith("/venue/facilities"),
     },
     {
       href: "/venue/settings",
       label: t("venueSettings.title", { defaultValue: "Settings & Profile" }),
       icon: Sliders,
-      active: pathname.startsWith("/venue/settings") || pathname.startsWith("/venue/venue-setup"),
+      active: pathname.startsWith("/venue/settings"),
     },
   ];
 

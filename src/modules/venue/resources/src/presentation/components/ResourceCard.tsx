@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
 import {
   CalendarDays,
@@ -13,6 +14,7 @@ import {
   DollarSign,
   Wrench,
   Calendar,
+  Trash2,
 } from "lucide-react";
 import { Button } from "@core/ui/button";
 import { Card } from "@core/ui/card";
@@ -24,7 +26,9 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@core/ui/dropdown-menu";
+import { ConfirmationDialog } from "@core/ui/confirmation-dialog";
 import { useI18n } from "@core/providers/i18n-provider";
+import { getVenueContainer } from "@modules/venue/di";
 import {
   type ResourceWorkspaceItem,
   evaluateCourtReadiness,
@@ -32,6 +36,7 @@ import {
 
 interface Props {
   item: ResourceWorkspaceItem;
+  onDeleted?: () => void;
 }
 
 function getCourtImage(sportType?: string, name?: string): string {
@@ -46,8 +51,11 @@ function getCourtImage(sportType?: string, name?: string): string {
   return "/images/venue/padel-court-indoor.svg";
 }
 
-export function ResourceCard({ item }: Props) {
+export function ResourceCard({ item, onDeleted }: Props) {
   const { t } = useI18n();
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [deleteError, setDeleteError] = useState<string | null>(null);
 
   const readiness = evaluateCourtReadiness({
     isPublished: item.isPublished,
@@ -66,25 +74,34 @@ export function ResourceCard({ item }: Props) {
   const isUnavailable = readiness.state === "Unavailable";
 
   return (
-    <Card className="group flex flex-col justify-between overflow-hidden rounded-2xl border border-nx-line bg-nx-surface transition-all hover:border-nx-line-hi">
-      {/* Top Section: Court Photo Thumbnail Banner with Overlays */}
-      <div className="relative h-44 w-full shrink-0 overflow-hidden bg-nx-raised">
-        <img
-          src={item.imageUrl || getCourtImage(item.sportType, item.name)}
-          alt={item.name}
-          className="size-full object-cover transition-transform duration-500 group-hover:scale-105"
-        />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
+    <>
+      <Card className="group flex flex-col justify-between overflow-hidden rounded-2xl border border-nx-line bg-nx-surface transition-all hover:border-nx-line-hi">
+        {/* Top Section: Court Photo Thumbnail Banner with Overlays */}
+        <div className="relative h-44 w-full shrink-0 overflow-hidden bg-nx-raised">
+          <img
+            src={item.imageUrl || getCourtImage(item.sportType, item.name)}
+            alt={item.name}
+            className="size-full object-cover transition-transform duration-500 group-hover:scale-105"
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
 
-        {/* Top-Left: Sport Type Badge */}
-        <div className="absolute left-3 top-3 z-10 max-w-[65%]">
-          <span
-            className="block truncate rounded-md border border-white/20 bg-black/60 px-2.5 py-1 text-[11px] font-extrabold uppercase tracking-wider text-white backdrop-blur-xs"
-            title={item.sportType || undefined}
-          >
-            {item.sportType || t("resources.card.court", { defaultValue: "Court" })}
-          </span>
-        </div>
+          {/* Top-Left: Sport Type Badge and Composite Badge */}
+          <div className="absolute left-3 top-3 z-10 flex max-w-[75%] flex-wrap items-center gap-1.5">
+            <span
+              className="block truncate rounded-md border border-white/20 bg-black/60 px-2.5 py-1 text-[11px] font-extrabold uppercase tracking-wider text-white backdrop-blur-xs"
+              title={item.sportType || undefined}
+            >
+              {item.sportType || t("resources.card.court", { defaultValue: "Court" })}
+            </span>
+            {item.isComposite && (
+              <span
+                className="inline-flex items-center gap-1 rounded-md border border-nx-accent/40 bg-nx-accent/20 px-2 py-0.5 text-[10px] font-extrabold uppercase tracking-wider text-nx-accent backdrop-blur-xs"
+                title={t("resources.card.compositeBadge", { defaultValue: "Composite Resource" })}
+              >
+                {t("resources.card.compositeBadge", { defaultValue: "Composite" })}
+              </span>
+            )}
+          </div>
 
         {/* Top-Right: Readiness Status Pill */}
         <div className="absolute right-3 top-3 z-10">
@@ -230,6 +247,17 @@ export function ResourceCard({ item }: Props) {
                     </span>
                   </Link>
                 </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem
+                  onClick={() => {
+                    setDeleteError(null);
+                    setDeleteDialogOpen(true);
+                  }}
+                  className="cursor-pointer gap-2 text-destructive focus:bg-destructive/10 focus:text-destructive"
+                >
+                  <Trash2 className="size-3.5" />
+                  <span>{t("resources.card.delete", { defaultValue: "Delete Court" })}</span>
+                </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
           </div>
@@ -346,5 +374,55 @@ export function ResourceCard({ item }: Props) {
         </div>
       </div>
     </Card>
+
+    <ConfirmationDialog
+      open={deleteDialogOpen}
+      onOpenChange={setDeleteDialogOpen}
+      variant="destructive"
+      isLoading={isDeleting}
+      title={t("resources.card.deleteConfirmTitle", {
+        defaultValue: "Delete Court",
+      })}
+      description={t("resources.card.deleteConfirmDescription", {
+        defaultValue:
+          "Are you sure you want to delete this court? This action permanently removes the resource and cannot be undone. Please ensure no active reservations exist before proceeding.",
+      })}
+      confirmText={t("common.delete", { defaultValue: "Delete" })}
+      cancelText={t("common.cancel", { defaultValue: "Cancel" })}
+      onConfirm={async () => {
+        setIsDeleting(true);
+        setDeleteError(null);
+        try {
+          const container = getVenueContainer();
+          if (
+            typeof (container.schedulableResourceRepository as any).deleteResource ===
+            "function"
+          ) {
+            await (container.schedulableResourceRepository as any).deleteResource(item.id);
+          } else {
+            await container.schedulableResourceRepository.delete(item.id);
+          }
+          setDeleteDialogOpen(false);
+          onDeleted?.();
+        } catch (err) {
+          setDeleteError(
+            err instanceof Error
+              ? err.message
+              : t("resources.card.deleteError", {
+                  defaultValue: "Failed to delete court. Please verify no active reservations exist.",
+                })
+          );
+        } finally {
+          setIsDeleting(false);
+        }
+      }}
+    >
+      {deleteError && (
+        <div className="mt-2 rounded-lg border border-destructive/20 bg-destructive/10 p-2.5 text-xs text-destructive">
+          {deleteError}
+        </div>
+      )}
+    </ConfirmationDialog>
+  </>
   );
 }

@@ -7,6 +7,7 @@ export const ar = {
       booking: "قواعد الحجز",
       team: "فريق العمل",
       preferences: "التفضيلات",
+      profile: "ملف المنشأة",
       advanced: "الإعدادات المتقدمة",
     },
     branch: {

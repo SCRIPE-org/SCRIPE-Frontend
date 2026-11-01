@@ -30,6 +30,12 @@ export const ar = {
     selectFacility: "اختيار الفرع أو المرفق",
     branchesAndVenues: "الفروع والمواقع",
     noFacilitySelected: "لم يتم اختيار مرفق",
+    facilities: "الفروع والمرافق",
+    findSlot: "البحث عن موعد متاح",
+    sites: "الفروع والمقرات",
+    financialOverview: "نظرة عامة مالية",
+    generalSettings: "الإعدادات العامة",
+    venueProfile: "ملف المنشأة",
   },
   venueOverview: {
     title: "عمليات الموقع الرياضي",

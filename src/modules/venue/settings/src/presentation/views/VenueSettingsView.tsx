@@ -180,7 +180,7 @@ export function VenueSettingsView() {
                     size="sm"
                     className="shrink-0 border-nx-line text-xs"
                   >
-                    <Link href="/venue/resource-builder">
+                    <Link href="/venue/resources">
                       <span>{t("venueSettings.booking.courtsLink")}</span>
                       <ChevronRight className="size-3.5 rtl:rotate-180" />
                     </Link>
@@ -331,7 +331,7 @@ export function VenueSettingsView() {
 
         {/* Venue Profile Configuration (Consolidated from /venue/venue-setup) */}
         <TabsContent value="profile" className="space-y-6">
-          <VenueProfileListView hideNav={true} />
+          <VenueProfileListView hideNav={true} hideHeader={true} hidePageHeader={true} />
         </TabsContent>
 
         {/* 5. Advanced Settings (Progressive Disclosure) */}
@@ -376,7 +376,7 @@ export function VenueSettingsView() {
 
                 {/* Operating Hours Matrix */}
                 <Link
-                  href="/venue/availability"
+                  href="/venue/calendar"
                   className="hover:border-nx-accent/50 hover:bg-nx-surfaceSubtle group flex items-start justify-between rounded-nx-lg border border-nx-line p-3.5 transition-colors"
                 >
                   <div className="space-y-1">
@@ -393,7 +393,7 @@ export function VenueSettingsView() {
 
                 {/* Sites & Campuses */}
                 <Link
-                  href="/venue/sites"
+                  href="/venue/facilities?tab=sites"
                   className="hover:border-nx-accent/50 hover:bg-nx-surfaceSubtle group flex items-start justify-between rounded-nx-lg border border-nx-line p-3.5 transition-colors"
                 >
                   <div className="space-y-1">
@@ -427,7 +427,7 @@ export function VenueSettingsView() {
 
                 {/* Resource Builder */}
                 <Link
-                  href="/venue/resource-builder"
+                  href="/venue/resources"
                   className="hover:border-nx-accent/50 hover:bg-nx-surfaceSubtle group flex items-start justify-between rounded-nx-lg border border-nx-line p-3.5 transition-colors"
                 >
                   <div className="space-y-1">
@@ -444,7 +444,7 @@ export function VenueSettingsView() {
 
                 {/* Resource Profiles */}
                 <Link
-                  href="/venue/resource-profiles"
+                  href="/venue/resources"
                   className="hover:border-nx-accent/50 hover:bg-nx-surfaceSubtle group flex items-start justify-between rounded-nx-lg border border-nx-line p-3.5 transition-colors"
                 >
                   <div className="space-y-1">

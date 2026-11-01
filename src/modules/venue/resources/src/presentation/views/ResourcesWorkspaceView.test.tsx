@@ -1,4 +1,4 @@
-﻿import { fireEvent, render, screen } from "@testing-library/react";
+import { fireEvent, render, screen } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { ResourcesWorkspaceView } from "./ResourcesWorkspaceView";
 import { useResourcesWorkspaceViewModel } from "../viewmodels/useResourcesWorkspaceViewModel";
@@ -98,6 +98,7 @@ describe("ResourcesWorkspaceView", () => {
         branchCount: 1,
       },
       executeFirstTimeSetup: vi.fn(),
+      deleteResource: vi.fn(),
       refresh: vi.fn(),
     });
 
@@ -134,6 +135,7 @@ describe("ResourcesWorkspaceView", () => {
         branchCount: 0,
       },
       executeFirstTimeSetup: vi.fn(),
+      deleteResource: vi.fn(),
       refresh: vi.fn(),
     });
 
@@ -167,6 +169,7 @@ describe("ResourcesWorkspaceView", () => {
         branchCount: 0,
       },
       executeFirstTimeSetup: vi.fn(),
+      deleteResource: vi.fn(),
       refresh: vi.fn(),
     });
 

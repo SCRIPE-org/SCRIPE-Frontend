@@ -33,6 +33,9 @@ export const en = {
       setupRequired: "Setup Required",
       facility: "Facility",
       status: "Status",
+      category: "Space / Category",
+      activeFilters: "Active Filters:",
+      resetAll: "Reset All",
     },
     empty: {
       title: "No courts or spaces yet",
@@ -69,6 +72,13 @@ export const en = {
       pricingRates: "Pricing & Rates",
       maintenanceClosures: "Maintenance & Closures",
       scheduleNotSet: "Schedule Not Set",
+      compositeBadge: "Composite",
+      delete: "Delete Court",
+      deleteConfirmTitle: "Delete Court",
+      deleteConfirmDescription:
+        "Are you sure you want to delete this court? This action permanently removes the resource and cannot be undone. Please ensure no active reservations exist before proceeding.",
+      deleteSuccess: "Court deleted successfully",
+      deleteError: "Failed to delete court. Please verify no active reservations exist.",
     },
     tabs: {
       general: "General",
@@ -146,6 +156,8 @@ export const en = {
       save: "Save Working Hours",
       saved: "Working hours saved successfully.",
       advancedLink: "Advanced Availability Settings (Date exceptions, calendars, multiple windows)",
+      copyToAll: "Copy to all open days",
+      openCalendar: "Open Operations Calendar",
     },
     bookingRules: {
       title: "Booking Rules",
