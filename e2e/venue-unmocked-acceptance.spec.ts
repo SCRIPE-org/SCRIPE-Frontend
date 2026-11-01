@@ -380,4 +380,76 @@ test.describe("SCRIPE Venue: Real Runtime End-to-End Operational Acceptance", ()
     });
     expect([400, 409]).toContain(staleUpdateRes.status());
   });
+
+  test("6. Unmocked Venue Customers Directory, Detail Drawer & Booking History (Slice 3)", async ({ page }) => {
+    // Navigate to /venue/customers with Al-Ahly tenant scope
+    await page.goto("/login?_tenant=AHLY&redirect=%2Fvenue%2Fcustomers");
+    await page.locator("#identifier").fill(adminEmail);
+    await page.locator("#password").fill(adminPassword);
+    await page.locator("form button[type='submit']").first().click();
+
+    await page.waitForURL((url) => url.pathname.includes("/venue/customers"), { timeout: 45_000 });
+    await page.waitForLoadState("networkidle");
+
+    // 1. Verify View mounts & Total Customer Count badge is displayed
+    await expect(page.locator("[data-testid='venue-customers-view']").first()).toBeVisible({ timeout: 15_000 });
+    await expect(page.locator("h1:has-text('Customers')").first()).toBeVisible({ timeout: 15_000 });
+
+    // 2. Verify Pagination Summary on Page 1 (Showing 1 to 20 of 37X customers)
+    await expect(page.locator("text=/Showing 1 to 20 of \\d+ customers/").first()).toBeVisible({ timeout: 10_000 });
+
+    // 3. Verify Pagination Transition to Page 2
+    const nextBtn = page.getByRole("button", { name: /next|التالي/i }).first();
+    await expect(nextBtn).toBeVisible({ timeout: 10_000 });
+    await expect(nextBtn).toBeEnabled({ timeout: 10_000 });
+    await nextBtn.click();
+    await page.waitForTimeout(500);
+
+    // Verify Page 2 items (Showing 21 to 40 of 37X customers)
+    await expect(page.locator("text=/Showing 21 to 40 of \\d+ customers/").first()).toBeVisible({ timeout: 10_000 });
+
+    // 4. Verify Live Debounced Search for "Omar"
+    const searchInput = page.locator("input[placeholder*='Search customers'], input[placeholder*='البحث']").first();
+    await expect(searchInput).toBeVisible({ timeout: 10_000 });
+    await searchInput.fill("Omar");
+    await page.waitForTimeout(1000); // 300ms debounce wait
+
+    // Select Omar Farouk card
+    const omarCard = page.locator("text=Omar Farouk").first();
+    await expect(omarCard).toBeVisible({ timeout: 15_000 });
+    await omarCard.click();
+
+    // 5. Verify Customer Detail Drawer (DetailSheet) opens
+    const drawer = page.locator("[role='dialog']").first();
+    await expect(drawer).toBeVisible({ timeout: 10_000 });
+    await expect(drawer.locator("text=Party Kernel ID").or(drawer.locator("text=معرّف الهوية"))).toBeVisible({ timeout: 10_000 });
+
+    // Verify Copy Party Kernel ID action
+    const copyBtn = drawer.locator("button:has-text('Copy ID'), button:has-text('نسخ')").first();
+    await expect(copyBtn).toBeVisible({ timeout: 5_000 });
+
+    // 6. Verify Customer Booking History loads with real seeded reservations
+    await expect(drawer.locator("text=Booking History").or(drawer.locator("text=سجل الحجوزات"))).toBeVisible({ timeout: 10_000 });
+    const resRow = drawer.locator("text=RES-AHLY-").first();
+    await expect(resRow).toBeVisible({ timeout: 20_000 });
+
+    // 7. Verify Direct Link to Booking 360
+    const view360Link = drawer.locator("a:has-text('View Booking 360'), a:has-text('عرض تفاصيل الحجز 360')").first();
+    await expect(view360Link).toBeVisible({ timeout: 10_000 });
+    const view360Href = await view360Link.getAttribute("href");
+    expect(view360Href).toContain("/venue/bookings/");
+
+    // 8. Verify "+ Book for Customer" CTA Link
+    const bookCta = drawer.locator("a:has-text('+ Book for Customer'), a:has-text('+ حجز للعميل')").first();
+    await expect(bookCta).toBeVisible({ timeout: 10_000 });
+    const bookHref = await bookCta.getAttribute("href");
+    expect(bookHref).toContain("/venue/calendar?newBooking=true&customerPartyId=");
+
+    // 9. Follow CTA to Operations Calendar and verify modal opens prefilled
+    await bookCta.click();
+    await page.waitForURL((url) => url.pathname.includes("/venue/calendar") && url.searchParams.get("newBooking") === "true", { timeout: 30_000 });
+    const calendarModal = page.locator("[role='dialog']").first();
+    await expect(calendarModal).toBeVisible({ timeout: 15_000 });
+  });
 });
+

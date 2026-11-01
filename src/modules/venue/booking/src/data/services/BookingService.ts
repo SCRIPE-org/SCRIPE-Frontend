@@ -1,3 +1,4 @@
+import { buildUrl } from "@/core/config/api-endpoints/_shared";
 import type { IApiService } from "@core/interfaces/api.interface";
 import type {
   BookingBusinessIntent,
@@ -9,7 +10,11 @@ import type {
   ReservationLifecycleResult,
   RescheduleReservationInput,
 } from "../../domain/entities/Booking";
-import type { IBookingService } from "../../domain/interfaces/IBookingService";
+import type {
+  IBookingService,
+  CustomerReservationSummary,
+  PagedCustomerReservations,
+} from "../../domain/interfaces/IBookingService";
 import { BOOKING_ENDPOINTS } from "./booking.endpoints";
 import {
   clearBookingIntent,
@@ -154,5 +159,52 @@ export class BookingService implements IBookingService {
 
   getReservation(reservationId: string): Promise<ReservationDetails> {
     return this.api.get(BOOKING_ENDPOINTS.RESERVATION_BY_ID(reservationId));
+  }
+
+  async getCustomerReservations(
+    customerPartyId: string,
+    page: number = 1,
+    pageSize: number = 20
+  ): Promise<PagedCustomerReservations> {
+    const url = buildUrl(BOOKING_ENDPOINTS.RESERVATIONS, {
+      customerPartyId: customerPartyId.trim(),
+      page: Math.max(1, page),
+      pageSize: Math.max(1, Math.min(pageSize, 100)),
+    });
+
+    const result = await this.api.get<any>(url);
+
+    const rawItems = Array.isArray(result?.items)
+      ? result.items
+      : Array.isArray(result)
+      ? result
+      : [];
+
+    const items: CustomerReservationSummary[] = rawItems.map((item: any) => ({
+      id: String(item.id ?? ""),
+      reservationNumber: String(item.reservationNumber ?? ""),
+      status: String(item.status ?? ""),
+      resourceId: String(item.resourceId ?? ""),
+      requestedStartUtc: String(item.requestedStartUtc ?? ""),
+      requestedEndUtc: String(item.requestedEndUtc ?? ""),
+      quantity: Number(item.quantity ?? 1),
+      createdAt: String(item.createdAt ?? ""),
+    }));
+
+    const totalCount = typeof result?.totalCount === "number" ? result.totalCount : items.length;
+    const pageNumber = typeof result?.pageNumber === "number" ? result.pageNumber : page;
+    const effectivePageSize = typeof result?.pageSize === "number" ? result.pageSize : pageSize;
+    const totalPages =
+      typeof result?.totalPages === "number"
+        ? result.totalPages
+        : Math.ceil(totalCount / effectivePageSize) || 1;
+
+    return {
+      items,
+      totalCount,
+      pageNumber,
+      pageSize: effectivePageSize,
+      totalPages,
+    };
   }
 }

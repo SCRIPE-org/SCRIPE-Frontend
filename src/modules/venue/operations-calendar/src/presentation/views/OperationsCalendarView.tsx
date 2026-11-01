@@ -42,6 +42,7 @@ function cleanModalActionParams() {
     url.searchParams.delete("startTime");
     url.searchParams.delete("durationMinutes");
     url.searchParams.delete("customerId");
+    url.searchParams.delete("customerPartyId");
     const query = url.searchParams.toString();
     const newUrl = query ? `${url.pathname}?${query}` : url.pathname;
     window.history.replaceState(null, "", newUrl);
@@ -395,7 +396,7 @@ export const OperationsCalendarView = React.memo(function OperationsCalendarView
         timeZoneId={vm.timeZoneId}
         durationMinutes={selectedDuration}
         resources={facilityResources}
-        initialCustomerId={searchParams?.get("customerId")}
+        initialCustomerId={searchParams?.get("customerPartyId") || searchParams?.get("customerId")}
         onSuccess={() => void vm.refresh()}
         onBlockTime={(res, instant) => handleOpenBlockTime(res, instant)}
         onFindSlots={() => {
