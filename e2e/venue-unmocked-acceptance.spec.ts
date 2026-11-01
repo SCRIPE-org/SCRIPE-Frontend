@@ -34,7 +34,8 @@ test.describe("SCRIPE Venue: Real Runtime End-to-End Operational Acceptance", ()
         ? '"C:\\Program Files\\PostgreSQL\\18\\bin\\psql.exe"'
         : "psql");
     const env = { ...process.env, PGPASSWORD: process.env.PGPASSWORD ?? "1598741258" };
-    const cmd = `${psqlBin} -h ${dbHost} -p ${dbPort} -U ${dbUser} -d ${dbName} -c "${sql.replace(/"/g, '\\"')}"`;
+    const normalizedSql = sql.replace(/\r?\n/g, " ").replace(/"/g, '\\"');
+    const cmd = `${psqlBin} -h ${dbHost} -p ${dbPort} -U ${dbUser} -d ${dbName} -c "${normalizedSql}"`;
     return execSync(cmd, { encoding: "utf8", env });
   }
 
@@ -77,15 +78,15 @@ test.describe("SCRIPE Venue: Real Runtime End-to-End Operational Acceptance", ()
     // Ensure test slot (11:00 on 2026-11-01) is free
     try {
       queryPostgres(`
+        DELETE FROM venue.capacity_ledger_entries WHERE reservation_id IN (SELECT id FROM venue.reservations WHERE reservation_number LIKE 'RES-20261101-%') OR booking_hold_id IN (SELECT id FROM venue.booking_holds WHERE reservation_id IN (SELECT id FROM venue.reservations WHERE reservation_number LIKE 'RES-20261101-%'));
+        DELETE FROM venue.booking_holds WHERE reservation_id IN (SELECT id FROM venue.reservations WHERE reservation_number LIKE 'RES-20261101-%');
         DELETE FROM venue.booking_status_histories WHERE reservation_id IN (SELECT id FROM venue.reservations WHERE reservation_number LIKE 'RES-20261101-%');
         DELETE FROM venue.booking_requests WHERE reservation_id IN (SELECT id FROM venue.reservations WHERE reservation_number LIKE 'RES-20261101-%');
         DELETE FROM venue.guest_reservation_accesses WHERE reservation_id IN (SELECT id FROM venue.reservations WHERE reservation_number LIKE 'RES-20261101-%');
-        DELETE FROM venue.capacity_ledger_entries WHERE reservation_id IN (SELECT id FROM venue.reservations WHERE reservation_number LIKE 'RES-20261101-%');
-        DELETE FROM venue.booking_holds WHERE reservation_id IN (SELECT id FROM venue.reservations WHERE reservation_number LIKE 'RES-20261101-%');
         DELETE FROM venue.reservations WHERE reservation_number LIKE 'RES-20261101-%';
       `);
-    } catch {
-      // ignore
+    } catch (err) {
+      console.log("Slot cleanup notice:", err instanceof Error ? err.message : err);
     }
 
     // Direct authenticated session setup
@@ -132,22 +133,29 @@ test.describe("SCRIPE Venue: Real Runtime End-to-End Operational Acceptance", ()
     });
 
     // ── Step 1: Court & Time ──
-    // Select valid daytime time slot (11:00) so booking is within authentic operating hours (07:00 - 23:00)
+    // Select valid daytime time slot within operating hours (07:00 - 23:00) that has no existing reservation
+    const nextBtn = modal.getByRole("button", { name: /next|التالي/i }).first();
+    await expect(nextBtn).toBeVisible({ timeout: 10_000 });
+
     const timeSelectTrigger = modal.locator("#booking-court-time").first();
-    if (await timeSelectTrigger.isVisible()) {
-      await timeSelectTrigger.click();
-      await page.waitForTimeout(400);
-      const option11 = page.locator("[role='option']:has-text('11:00'), [data-value='11:00']").first();
-      if (await option11.isVisible()) {
-        await option11.click();
-        await page.waitForTimeout(400);
-      } else {
-        await page.keyboard.press("Escape");
+    const candidateSlots = ["11:00", "12:00", "13:00", "14:00", "15:00", "16:00", "17:00", "18:00", "19:00", "20:00"];
+    for (const slot of candidateSlots) {
+      if (await timeSelectTrigger.isVisible()) {
+        await timeSelectTrigger.click();
+        await page.waitForTimeout(300);
+        const option = page.locator(`[role='option']:has-text('${slot}'), [data-value='${slot}']`).first();
+        if (await option.isVisible()) {
+          await option.click();
+          await page.waitForTimeout(400);
+        } else {
+          await page.keyboard.press("Escape");
+        }
+      }
+      if (await nextBtn.isEnabled()) {
+        break;
       }
     }
 
-    const nextBtn = modal.getByRole("button", { name: /next|التالي/i }).first();
-    await expect(nextBtn).toBeVisible({ timeout: 10_000 });
     await expect(nextBtn).toBeEnabled({ timeout: 10_000 });
     await nextBtn.click();
 
@@ -243,6 +251,24 @@ test.describe("SCRIPE Venue: Real Runtime End-to-End Operational Acceptance", ()
 
     // Verify Booking 360 loaded with real reservation code
     await expect(page.locator(`text=${createdReservationCode}`).first()).toBeVisible({ timeout: 25_000 });
+
+    // Verify Slice 2 features in Booking 360:
+    // 1. Distinct reservation and payment status badges
+    await expect(page.locator("[data-testid='reservation-status-badge']").first()).toBeVisible({ timeout: 10_000 });
+    await expect(page.locator("[data-testid='payment-status-badge']").first()).toBeVisible({ timeout: 10_000 });
+
+    // 2. Customer identity card & Party Kernel ID
+    await expect(page.locator("[data-testid='customer-identity-card']").first()).toBeVisible({ timeout: 10_000 });
+    await expect(page.locator("[data-testid='customer-party-id']").first()).toBeVisible({ timeout: 10_000 });
+
+    // 3. Guest Access card
+    await expect(page.locator("[data-testid='guest-access-card']").first()).toBeVisible({ timeout: 10_000 });
+
+    // 4. Calendar return link with contextual date and resource query
+    const backToCal = page.locator("[data-testid='back-to-calendar-link']").first();
+    await expect(backToCal).toBeVisible({ timeout: 10_000 });
+    const calHref = await backToCal.getAttribute("href");
+    expect(calHref).toContain("/venue/calendar");
   });
 
   test("5. Critical Negative Security & Concurrency Scenarios", async ({ request }) => {

@@ -56,6 +56,8 @@ interface Props {
   scheduledTime?: string;
   currentStartUtc?: string;
   currentEndUtc?: string;
+  paidAmount?: number;
+  currencyCode?: string;
   t: (key: string, values?: Record<string, string | number>) => string;
   onCheckIn: () => void;
   onComplete: () => void;
@@ -380,6 +382,8 @@ export function BookingOperationalActions(props: Props) {
                   scheduledTime={props.scheduledTime}
                   direction={props.direction}
                   disabled={props.activeAction !== null}
+                  paidAmount={props.paidAmount}
+                  currencyCode={props.currencyCode}
                   t={props.t}
                   onConfirmCancel={(reason) => {
                     setCancelOpen(false);

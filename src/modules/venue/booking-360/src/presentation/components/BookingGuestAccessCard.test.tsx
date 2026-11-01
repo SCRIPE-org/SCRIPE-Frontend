@@ -22,6 +22,29 @@ vi.mock("@modules/venue/di", () => ({
 describe("BookingGuestAccessCard", () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    // @ts-expect-error mock canvas getContext in jsdom
+    HTMLCanvasElement.prototype.getContext = vi.fn(() => ({
+      fillRect: vi.fn(),
+      clearRect: vi.fn(),
+      getImageData: vi.fn(() => ({ data: new Array(4) })),
+      putImageData: vi.fn(),
+      createImageData: vi.fn(() => []),
+      setTransform: vi.fn(),
+      drawImage: vi.fn(),
+      save: vi.fn(),
+      fillText: vi.fn(),
+      restore: vi.fn(),
+      beginPath: vi.fn(),
+      moveTo: vi.fn(),
+      lineTo: vi.fn(),
+      closePath: vi.fn(),
+      stroke: vi.fn(),
+      translate: vi.fn(),
+      scale: vi.fn(),
+      rotate: vi.fn(),
+      arc: vi.fn(),
+      fill: vi.fn(),
+    }));
   });
 
   it("loads status and displays not generated state if no active link", async () => {
@@ -30,7 +53,12 @@ describe("BookingGuestAccessCard", () => {
       isRevoked: false,
     });
 
-    render(<BookingGuestAccessCard reservationId="res-123" t={(k) => k} />);
+    render(
+      <BookingGuestAccessCard
+        reservationId="res-123"
+        t={(k, opts) => String(opts?.defaultValue ?? k)}
+      />
+    );
 
     await waitFor(() => {
       expect(screen.getByText("Not Generated")).toBeInTheDocument();
@@ -38,7 +66,7 @@ describe("BookingGuestAccessCard", () => {
     });
   });
 
-  it("generates guest link on button click and renders link with copy button", async () => {
+  it("generates guest link on button click and renders link with copy button, PIN, and QR pass", async () => {
     booking360RepoMock.getGuestAccessStatus.mockResolvedValueOnce({
       hasActiveLink: false,
       isRevoked: false,
@@ -49,7 +77,12 @@ describe("BookingGuestAccessCard", () => {
       expiresAtUtc: "2026-10-15T00:00:00Z",
     });
 
-    render(<BookingGuestAccessCard reservationId="res-123" t={(k) => k} />);
+    render(
+      <BookingGuestAccessCard
+        reservationId="res-123"
+        t={(k, opts) => String(opts?.defaultValue ?? k)}
+      />
+    );
 
     await waitFor(() => {
       expect(screen.getByText("Generate Guest Link")).toBeInTheDocument();
@@ -60,7 +93,10 @@ describe("BookingGuestAccessCard", () => {
     await waitFor(() => {
       expect(booking360RepoMock.generateGuestAccess).toHaveBeenCalledWith("res-123");
       expect(screen.getByDisplayValue(/test-token-777/)).toBeInTheDocument();
-      expect(screen.getByText("Copy")).toBeInTheDocument();
+      expect(screen.getByTestId("copy-guest-link-button")).toBeInTheDocument();
+      expect(screen.getByTestId("guest-access-pin")).toBeInTheDocument();
+      expect(screen.getByTestId("copy-pin-button")).toBeInTheDocument();
+      expect(screen.getByTestId("guest-access-qrcode")).toBeInTheDocument();
     });
   });
 

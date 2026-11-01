@@ -8,6 +8,8 @@ import {
   CalendarClock,
   Clock,
   Lock,
+  Mail,
+  Phone,
   RefreshCw,
   UserRound,
 } from "lucide-react";
@@ -27,6 +29,20 @@ import { BookingOperationalActions } from "../components/BookingOperationalActio
 import { BookingGuestAccessCard } from "../components/BookingGuestAccessCard";
 import { useBookingFinanceSummary } from "../viewmodels/useBookingFinanceSummary";
 import { useBooking360ViewModel } from "../viewmodels/useBooking360ViewModel";
+
+function getLocalDateString(utcString: string, timeZone: string): string {
+  try {
+    const formatter = new Intl.DateTimeFormat("en-CA", {
+      timeZone,
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+    });
+    return formatter.format(new Date(utcString));
+  } catch {
+    return utcString.slice(0, 10);
+  }
+}
 
 function formatRange(start: string, end: string, locale: string, timeZone: string): string {
   const formatter = new Intl.DateTimeFormat(locale, {
@@ -147,10 +163,48 @@ export const Booking360View = React.memo(function Booking360View({
     canCalculateQuote;
   const canReprice = !reservation.priceSnapshotId || (canViewCommercials && canCalculateQuote);
 
+  const calendarDate = reservation?.requestedStartUtc
+    ? getLocalDateString(reservation.requestedStartUtc, timeZoneId)
+    : "";
+
+  const calendarUrl = (() => {
+    if (!reservation) return "/venue/calendar";
+    const params = new URLSearchParams();
+    if (calendarDate) params.set("date", calendarDate);
+    if (reservation.resourceId) params.set("resourceId", reservation.resourceId);
+    if (vm.state.facility?.id) params.set("facilityId", vm.state.facility.id);
+    const q = params.toString();
+    return q ? `/venue/calendar?${q}` : "/venue/calendar";
+  })();
+
+  const paymentStatus: "Paid" | "Partial" | "Unpaid" | "PendingSync" = (() => {
+    if (!finance.summary) return "Unpaid";
+    if (
+      finance.summary.allocationState === "PendingSynchronization" ||
+      finance.summary.status === "PendingSync"
+    ) {
+      return "PendingSync";
+    }
+    if (
+      finance.summary.status === "Paid" ||
+      (finance.summary.outstandingAmount === 0 && finance.summary.paidAmount > 0)
+    ) {
+      return "Paid";
+    }
+    if (
+      finance.summary.status === "PartiallyPaid" ||
+      finance.summary.status === "Partial" ||
+      (finance.summary.paidAmount > 0 && finance.summary.outstandingAmount > 0)
+    ) {
+      return "Partial";
+    }
+    return "Unpaid";
+  })();
+
   return (
     <div className="space-y-6" dir={direction} data-testid="booking-360">
       <Button variant="ghost" size="sm" asChild>
-        <Link href="/venue/calendar">
+        <Link href={calendarUrl} data-testid="back-to-calendar-link">
           <ArrowLeft className="size-4 rtl:rotate-180" aria-hidden="true" />
           {t("booking360.backToCalendar")}
         </Link>
@@ -175,8 +229,53 @@ export const Booking360View = React.memo(function Booking360View({
               )}
           </p>
         </div>
-        <div className="flex items-center gap-2">
-          <Badge variant="outline">{t(`booking360.status.${reservation.status}`)}</Badge>
+        <div className="flex flex-wrap items-center gap-3">
+          <div className="flex items-center gap-1.5" data-testid="status-badges-group">
+            <span className="text-xs text-nx-ink-3">
+              {t("booking360.status.lifecycleLabel", { defaultValue: "Lifecycle" })}:
+            </span>
+            <Badge
+              data-testid="reservation-status-badge"
+              className={
+                reservation.status === "Confirmed"
+                  ? "border border-info/30 bg-info/10 text-info font-semibold"
+                  : reservation.status === "CheckedIn"
+                    ? "border border-success/30 bg-success/10 text-success font-semibold"
+                    : reservation.status === "Completed"
+                      ? "border border-nx-line bg-nx-raised text-nx-ink font-semibold"
+                      : reservation.status === "Cancelled"
+                        ? "border border-destructive/30 bg-destructive/10 text-destructive font-semibold"
+                        : reservation.status === "NoShow"
+                          ? "border border-warning/30 bg-warning/10 text-warning font-semibold"
+                          : reservation.status === "Held"
+                            ? "border border-warning/30 bg-warning/10 text-warning font-semibold"
+                            : "border border-nx-line bg-nx-raised text-nx-ink-2"
+              }
+            >
+              {t(`booking360.status.${reservation.status}`)}
+            </Badge>
+          </div>
+
+          <div className="flex items-center gap-1.5">
+            <span className="text-xs text-nx-ink-3">
+              {t("booking360.status.financialLabel", { defaultValue: "Payment" })}:
+            </span>
+            <Badge
+              data-testid="payment-status-badge"
+              className={
+                paymentStatus === "Paid"
+                  ? "border border-success/30 bg-success/10 text-success font-semibold"
+                  : paymentStatus === "Partial"
+                    ? "border border-warning/30 bg-warning/10 text-warning font-semibold"
+                    : paymentStatus === "PendingSync"
+                      ? "border border-info/30 bg-info/10 text-info font-semibold"
+                      : "border border-destructive/30 bg-destructive/10 text-destructive font-semibold"
+              }
+            >
+              {t(`booking360.paymentStatus.${paymentStatus}`, { defaultValue: paymentStatus })}
+            </Badge>
+          </div>
+
           {isTerminal && (
             <span className="text-sm text-nx-ink-2">{t("booking360.status.terminal")}</span>
           )}
@@ -254,6 +353,8 @@ export const Booking360View = React.memo(function Booking360View({
         )}
         currentStartUtc={reservation.requestedStartUtc}
         currentEndUtc={reservation.requestedEndUtc}
+        paidAmount={finance.summary?.paidAmount ?? 0}
+        currencyCode={finance.summary?.currencyCode ?? "EGP"}
         t={t}
         onCheckIn={() => void vm.checkIn()}
         onComplete={() => void vm.complete()}
@@ -319,7 +420,8 @@ export const Booking360View = React.memo(function Booking360View({
                     </span>
                     {canViewResource && (
                       <Link
-                        href={`/venue/calendar?resourceId=${encodeURIComponent(reservation.resourceId)}`}
+                        href={calendarUrl}
+                        data-testid="view-in-calendar-link"
                         className="inline-flex items-center text-xs text-nx-accent hover:underline"
                       >
                         ({t("booking360.schedule.viewInCalendar")})
@@ -415,7 +517,7 @@ export const Booking360View = React.memo(function Booking360View({
                       {finance.summary.status}
                     </span>
                   </div>
-                  <div className="bg-nx-surfaceSubtle border-nx-line/60 grid gap-4 rounded-nx-md border p-3 text-center sm:grid-cols-3">
+                  <div className="bg-nx-raised border-nx-line/60 grid gap-4 rounded-nx-md border p-3 text-center sm:grid-cols-3">
                     <div>
                       <p className="text-xs font-semibold uppercase text-nx-ink-3">
                         {t("booking360.commercial.total")}
@@ -471,7 +573,7 @@ export const Booking360View = React.memo(function Booking360View({
                         {finance.summary.payments.map((p) => (
                           <div
                             key={p.id}
-                            className="bg-nx-surfaceSubtle/60 border-nx-line/30 flex items-center justify-between rounded-md border px-2.5 py-1.5 text-xs text-nx-ink-2"
+                            className="bg-nx-raised/60 border-nx-line/30 flex items-center justify-between rounded-md border px-2.5 py-1.5 text-xs text-nx-ink-2"
                           >
                             <div className="flex items-center gap-2">
                               <span className="font-medium text-nx-ink">
@@ -515,12 +617,25 @@ export const Booking360View = React.memo(function Booking360View({
                     </div>
                   )}
                   <div className="flex flex-wrap items-center justify-between gap-3 pt-2">
-                    <Link
-                      href="/venue/money/receivables"
-                      className="inline-flex items-center gap-1 text-xs font-medium text-nx-accent hover:underline"
-                    >
-                      {t("booking360.commercial.viewReceivables")}
-                    </Link>
+                    <div className="flex items-center gap-3">
+                      <Link
+                        href="/venue/money/receivables"
+                        className="inline-flex items-center gap-1 text-xs font-medium text-nx-accent hover:underline"
+                      >
+                        {t("booking360.commercial.viewReceivables")}
+                      </Link>
+                      <Link
+                        href={
+                          finance.summary.invoiceId
+                            ? `/venue/money/payments?invoiceId=${encodeURIComponent(finance.summary.invoiceId)}`
+                            : "/venue/money/payments"
+                        }
+                        data-testid="jump-to-payments-link"
+                        className="inline-flex items-center gap-1 text-xs font-medium text-nx-accent hover:underline"
+                      >
+                        {t("booking360.commercial.viewPayments", { defaultValue: "View Payments" })}
+                      </Link>
+                    </div>
                     {canRecordPayment &&
                     finance.summary.outstandingAmount > 0 &&
                     finance.summary.invoiceId ? (
@@ -539,27 +654,89 @@ export const Booking360View = React.memo(function Booking360View({
             </CardContent>
           </Card>
 
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
+          <Card data-testid="customer-identity-card">
+            <CardHeader className="flex flex-row items-center justify-between pb-2">
+              <CardTitle className="flex items-center gap-2 text-base">
                 <UserRound className="size-5 text-nx-accent" aria-hidden="true" />
                 {t("booking360.customer.title")}
               </CardTitle>
+              {canViewCustomer && reservation.customerPartyId && (
+                <Link
+                  href={`/venue/customers?partyId=${encodeURIComponent(reservation.customerPartyId)}`}
+                  className="text-xs font-medium text-nx-accent hover:underline"
+                >
+                  {t("booking360.customer.viewCustomer")}
+                </Link>
+              )}
             </CardHeader>
             <CardContent>
               {vm.state.enrichmentLoading && !vm.state.customer ? (
                 <LoadingSpinner showText={false} />
               ) : vm.state.customer ? (
-                <div className="flex items-center justify-between">
-                  <p className="font-medium">{vm.state.customer.displayName}</p>
-                  {canViewCustomer && reservation.customerPartyId && (
-                    <Link
-                      href={`/venue/customers?partyId=${encodeURIComponent(reservation.customerPartyId)}`}
-                      className="text-xs text-nx-accent hover:underline"
+                <div className="space-y-3">
+                  <div className="flex flex-wrap items-center justify-between gap-2">
+                    <div>
+                      <p className="text-base font-semibold text-nx-ink">
+                        {vm.state.customer.displayName}
+                      </p>
+                      {vm.state.customer.type && (
+                        <span className="mt-0.5 inline-block text-[11px] font-medium text-nx-ink-3">
+                          {vm.state.customer.type === "Organization"
+                            ? t("booking360.customer.typeOrganization", { defaultValue: "Organization" })
+                            : t("booking360.customer.typePerson", { defaultValue: "Individual" })}
+                        </span>
+                      )}
+                    </div>
+                  </div>
+
+                  <div className="grid gap-2 text-xs sm:grid-cols-2">
+                    <div className="flex items-center gap-2 text-nx-ink-2">
+                      <Phone className="size-3.5 shrink-0 text-nx-ink-3" aria-hidden="true" />
+                      {vm.state.customer.phone ? (
+                        <a
+                          href={`tel:${vm.state.customer.phone}`}
+                          className="font-medium hover:text-nx-accent hover:underline"
+                          dir="ltr"
+                        >
+                          {vm.state.customer.phone}
+                        </a>
+                      ) : (
+                        <span className="italic text-nx-ink-3">
+                          {t("booking360.customer.noPhone", { defaultValue: "No phone recorded" })}
+                        </span>
+                      )}
+                    </div>
+                    <div className="flex items-center gap-2 text-nx-ink-2">
+                      <Mail className="size-3.5 shrink-0 text-nx-ink-3" aria-hidden="true" />
+                      {vm.state.customer.email ? (
+                        <a
+                          href={`mailto:${vm.state.customer.email}`}
+                          className="font-medium hover:text-nx-accent hover:underline"
+                          dir="ltr"
+                        >
+                          {vm.state.customer.email}
+                        </a>
+                      ) : (
+                        <span className="italic text-nx-ink-3">
+                          {t("booking360.customer.noEmail", { defaultValue: "No email recorded" })}
+                        </span>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Party Kernel authoritative identity */}
+                  <div className="flex items-center justify-between rounded-nx-sm border border-nx-line/60 bg-nx-raised px-2.5 py-1.5 text-xs">
+                    <span className="font-medium text-nx-ink-3">
+                      {t("booking360.customer.partyKernelId", { defaultValue: "Party Kernel ID" })}:
+                    </span>
+                    <span
+                      data-testid="customer-party-id"
+                      className="select-all font-mono text-[11px] font-semibold text-nx-ink"
+                      dir="ltr"
                     >
-                      {t("booking360.customer.viewCustomer")}
-                    </Link>
-                  )}
+                      {reservation.customerPartyId}
+                    </span>
+                  </div>
                 </div>
               ) : (
                 <Alert variant="info">
@@ -576,7 +753,7 @@ export const Booking360View = React.memo(function Booking360View({
           {/* Guest Access Link Generator & Dispatch */}
           <BookingGuestAccessCard
             reservationId={reservationId}
-            customerEmail={null}
+            customerEmail={vm.state.customer?.email ?? null}
             direction={direction}
             t={t}
           />

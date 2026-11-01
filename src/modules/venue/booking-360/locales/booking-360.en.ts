@@ -17,6 +17,14 @@ export const en = {
       Expired: "Expired",
       NoShow: "No-show",
       terminal: "Terminal",
+      lifecycleLabel: "Lifecycle",
+      financialLabel: "Payment",
+    },
+    paymentStatus: {
+      Paid: "Paid",
+      Partial: "Partially paid",
+      Unpaid: "Unpaid",
+      PendingSync: "Pending sync",
     },
     schedule: {
       title: "Schedule",
@@ -43,6 +51,11 @@ export const en = {
       restricted: "Customer details require Party access.",
       unspecified: "Unspecified customer",
       viewCustomer: "View customer",
+      typePerson: "Individual",
+      typeOrganization: "Organization",
+      noPhone: "No phone recorded",
+      noEmail: "No email recorded",
+      partyKernelId: "Party Kernel ID",
     },
     hold: {
       title: "Hold and confirmation",
@@ -71,6 +84,7 @@ export const en = {
       restricted: "Commercial details require receivables access.",
       unavailable: "Finance details are temporarily unavailable.",
       viewReceivables: "View in Receivables",
+      viewPayments: "View in Payments",
       recordPayment: "Record payment",
     },
     transition: {
@@ -166,6 +180,9 @@ export const en = {
       reasonTooLong: "The reason must not exceed {{max}} characters.",
       keep: "Keep booking",
       confirm: "Confirm cancellation",
+      paidWarningTitle: "Payment Recorded",
+      paidWarningDescription:
+        "This reservation has recorded payments of {{amount}}. Cancelling will not automatically issue a refund. Refunds must be processed through Finance.",
     },
     reschedule: {
       title: "Reschedule booking",
@@ -228,6 +245,17 @@ export const en = {
       title: "Booking could not be loaded",
       description: "The latest reservation state could not be retrieved.",
       retry: "Retry",
+    },
+    guestAccess: {
+      title: "No-App Guest Access",
+      linkTitle: "Secure Guest Self-Service Link",
+      pinLabel: "Gate / Kiosk PIN",
+      copyPin: "Copy PIN",
+      pinCopied: "Copied",
+      copyLink: "Copy Link",
+      linkCopied: "Copied",
+      qrLabel: "QR Pass",
+      scanPrompt: "Scan with camera for guest self-service access",
     },
   },
 };
