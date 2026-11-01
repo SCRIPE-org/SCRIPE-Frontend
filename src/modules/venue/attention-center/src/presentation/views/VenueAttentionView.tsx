@@ -134,7 +134,7 @@ export function VenueAttentionView() {
                 {canOpenAvailability && (
                   <Button size="sm" variant="outline" asChild>
                     <Link
-                      href={`/venue/availability?resourceId=${encodeURIComponent(signal.resourceId)}`}
+                      href={`/venue/resources/${encodeURIComponent(signal.resourceId)}?tab=workingHours`}
                     >
                       {t("attention.openAvailability")}
                     </Link>

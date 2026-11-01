@@ -436,22 +436,17 @@ export const PAGE_PERMISSIONS: Record<string, PermissionCode[]> = {
   "/venue/settings": [SYSTEM_PERMISSIONS.VENUE_PROFILE_VIEW],
 
   // VenueProfile Feature
-  "/venue/venue-setup": [SYSTEM_PERMISSIONS.VENUE_PROFILE_VIEW],
 
   // Site Feature (OrganizationCore cross-module under Venue workspace)
-  "/venue/sites": [SYSTEM_PERMISSIONS.SITE_VIEW],
 
   // Facility Feature
   "/venue/facilities": [SYSTEM_PERMISSIONS.FACILITY_VIEW],
 
   // Facility Resource Profile Feature
-  "/venue/resource-profiles": [SYSTEM_PERMISSIONS.FACILITY_RESOURCE_PROFILE_VIEW],
 
   // SchedulableResource Feature
-  "/venue/resource-builder": [SYSTEM_PERMISSIONS.SCHEDULABLE_RESOURCE_VIEW],
 
   // Availability Feature
-  "/venue/availability": [SYSTEM_PERMISSIONS.AVAILABILITY_CALENDAR_VIEW],
 
   // Attention Center — individual signals are additionally filtered by their source permissions.
   "/venue/attention": [SYSTEM_PERMISSIONS.VENUE_ATTENTION_VIEW],
