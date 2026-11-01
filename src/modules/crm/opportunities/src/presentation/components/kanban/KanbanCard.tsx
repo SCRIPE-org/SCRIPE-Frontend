@@ -42,11 +42,22 @@ export function KanbanCard({
   const isRtl = language === "ar";
 
   const isMasked = opportunity.maskedFieldKeys?.includes("estimatedAmount");
+  const currencyCode = opportunity.currencyCode || "SAR";
   const formattedAmount = isMasked
     ? "••••••"
     : opportunity.estimatedAmount != null
-    ? `${opportunity.currencyCode} ${Number(opportunity.estimatedAmount).toLocaleString()}`
+    ? `${currencyCode} ${Number(opportunity.estimatedAmount).toLocaleString()}`
     : "—";
+
+  const formattedCloseDate = React.useMemo(() => {
+    if (!opportunity.targetCloseDate) return null;
+    const d = new Date(opportunity.targetCloseDate);
+    if (isNaN(d.getTime())) return null;
+    return d.toLocaleDateString(isRtl ? "ar-SA" : "en-US", {
+      month: "short",
+      day: "numeric",
+    });
+  }, [opportunity.targetCloseDate, isRtl]);
 
   const hasParty = Boolean(opportunity.partyId);
   const canMoveBackward = currentStageIndex > 0;
@@ -63,6 +74,12 @@ export function KanbanCard({
   };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
+    // Only handle keyboard navigation when the card container itself has focus.
+    // Prevents Space/Enter on child action buttons from unexpectedly triggering router.push.
+    if (e.target !== e.currentTarget) {
+      return;
+    }
+
     if (e.key === "Enter" || e.key === " ") {
       e.preventDefault();
       handleCardClick();
@@ -91,6 +108,8 @@ export function KanbanCard({
       onKeyDown={handleKeyDown}
       tabIndex={0}
       role="article"
+      data-testid="kanban-card"
+      data-opportunity-id={opportunity.id}
       aria-label={`${opportunity.title}, ${formattedAmount}`}
       className={cn(
         "group relative p-3.5 space-y-3 cursor-grab active:cursor-grabbing select-none",
@@ -155,13 +174,10 @@ export function KanbanCard({
 
       {/* Footer: Target Close Date & Accessible Stage Shift Actions */}
       <div className="flex items-center justify-between pt-1 border-t border-nx-line/60 text-[11px] text-nx-ink-3">
-        {opportunity.targetCloseDate ? (
+        {formattedCloseDate ? (
           <span className="inline-flex items-center gap-1 font-mono text-[10px]">
             <Calendar className="size-3" />
-            {new Date(opportunity.targetCloseDate).toLocaleDateString(language === "ar" ? "ar-SA" : "en-US", {
-              month: "short",
-              day: "numeric",
-            })}
+            {formattedCloseDate}
           </span>
         ) : (
           <span className="text-[10px] font-mono text-nx-ink-3/70">

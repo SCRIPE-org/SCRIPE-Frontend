@@ -192,28 +192,40 @@ export function useOpportunitiesViewModel(initialSearch?: string) {
         const moveReason =
           reason || (isAdjacentForward ? undefined : "Audited stage override from Kanban board");
 
-        await repo.moveStage({
+        const updatedOpp = await repo.moveStage({
           opportunityId: opportunity.id,
           targetStageKey,
           reason: moveReason,
           expectedRowVersion: opportunity.rowVersion,
         });
 
-        // Re-fetch in background to sync fresh RowVersion and audit snapshot
+        // Immediately update state with server-authoritative record (including fresh RowVersion)
+        if (updatedOpp && updatedOpp.id) {
+          setState((prev) => ({
+            ...prev,
+            items: prev.items.map((item) =>
+              item.id === updatedOpp.id ? updatedOpp : item
+            ),
+          }));
+        }
+
+        // Re-fetch in background to sync total counts, pagination, and audit snapshot
         await fetchOpportunities(state.page);
         return true;
       } catch (err: any) {
-        // 2. Rollback local state on rejection
+        // Rollback only the specific target opportunity's stageKey to its original snapshot
         setState((prev) => ({
           ...prev,
-          items: prevItems,
+          items: prev.items.map((item) =>
+            item.id === opportunity.id ? { ...item, stageKey: opportunity.stageKey } : item
+          ),
         }));
         const message = err.message || "Failed to move opportunity stage";
         setSubmitError(message);
         return false;
       }
     },
-    [fetchOpportunities, state.items, state.page]
+    [fetchOpportunities, state.page]
   );
 
   const handleCloseOpportunity = useCallback(

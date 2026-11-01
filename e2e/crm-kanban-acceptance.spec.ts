@@ -95,7 +95,7 @@ test.describe("CRM Kanban Board Lifecycle Acceptance (SCRIPE-738)", () => {
     await expect(createDialog).not.toBeVisible({ timeout: 10_000 });
 
     // 7. Verify new card appears in Discovery column
-    const oppCard = discoveryCol.locator("article", { hasText: dealTitle }).first();
+    const oppCard = discoveryCol.locator("[role='article']", { hasText: dealTitle }).first();
     await expect(oppCard).toBeVisible({ timeout: 15_000 });
 
     // Since partyId was not provided, verify Unlinked party indicator is visible
@@ -113,9 +113,9 @@ test.describe("CRM Kanban Board Lifecycle Acceptance (SCRIPE-738)", () => {
     await moveStagePromise;
 
     // Verify card has moved to Qualification column
-    const cardInQual = qualificationCol.locator("article", { hasText: dealTitle }).first();
+    const cardInQual = qualificationCol.locator("[role='article']", { hasText: dealTitle }).first();
     await expect(cardInQual).toBeVisible({ timeout: 10_000 });
-    await expect(discoveryCol.locator("article", { hasText: dealTitle })).toHaveCount(0);
+    await expect(discoveryCol.locator("[role='article']", { hasText: dealTitle })).toHaveCount(0);
 
     // 9. Advance from Qualification to Solution Fit using WCAG Keyboard ArrowRight
     await cardInQual.focus();
@@ -126,7 +126,7 @@ test.describe("CRM Kanban Board Lifecycle Acceptance (SCRIPE-738)", () => {
     await page.keyboard.press("ArrowRight");
     await moveStagePromise2;
 
-    const cardInSolFit = solutionFitCol.locator("article", { hasText: dealTitle }).first();
+    const cardInSolFit = solutionFitCol.locator("[role='article']", { hasText: dealTitle }).first();
     await expect(cardInSolFit).toBeVisible({ timeout: 10_000 });
 
     // 10. Test Optimistic Rollback: Attempt to move unlinked card to Proposal
@@ -142,8 +142,8 @@ test.describe("CRM Kanban Board Lifecycle Acceptance (SCRIPE-738)", () => {
     await rejectStagePromise;
 
     // Verify card rolled back to Solution Fit
-    await expect(solutionFitCol.locator("article", { hasText: dealTitle }).first()).toBeVisible({ timeout: 10_000 });
-    await expect(proposalCol.locator("article", { hasText: dealTitle })).toHaveCount(0);
+    await expect(solutionFitCol.locator("[role='article']", { hasText: dealTitle }).first()).toBeVisible({ timeout: 10_000 });
+    await expect(proposalCol.locator("[role='article']", { hasText: dealTitle })).toHaveCount(0);
 
     // Verify Error Alert banner is rendered
     const alertBanner = page.locator("[role='alert']").first();

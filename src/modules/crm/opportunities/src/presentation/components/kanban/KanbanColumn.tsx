@@ -42,19 +42,34 @@ export function KanbanColumn({
   const { t, language } = useI18n();
   const [isDragOver, setIsDragOver] = useState(false);
 
-  // Total deal calculation (respecting FLS masking)
+  // Total deal calculation (respecting FLS masking and PD-5 per-currency discipline)
   const hasMaskedAmount = opportunities.some((o) =>
     o.maskedFieldKeys?.includes("estimatedAmount")
   );
-  const totalAmount = opportunities.reduce((sum, opp) => {
-    if (opp.maskedFieldKeys?.includes("estimatedAmount")) return sum;
-    return sum + (Number(opp.estimatedAmount) || 0);
-  }, 0);
 
-  const currencyCode = opportunities[0]?.currencyCode || "SAR";
-  const formattedTotal = hasMaskedAmount
-    ? "••••••"
-    : `${currencyCode} ${totalAmount.toLocaleString()}`;
+  const distinctCurrencies = Array.from(
+    new Set(opportunities.map((o) => o.currencyCode).filter(Boolean))
+  );
+
+  let formattedTotal = "—";
+  if (opportunities.length === 0) {
+    formattedTotal = "0";
+  } else if (hasMaskedAmount) {
+    formattedTotal = "••••••";
+  } else if (distinctCurrencies.length <= 1) {
+    const curr = distinctCurrencies[0] || "SAR";
+    const sum = opportunities.reduce((acc, opp) => acc + (Number(opp.estimatedAmount) || 0), 0);
+    formattedTotal = `${curr} ${sum.toLocaleString()}`;
+  } else {
+    // Multi-currency bucket: group by currency to strictly enforce PD-5 (never cross-sum disparate currencies)
+    const sumsByCurr = distinctCurrencies.map((curr) => {
+      const sum = opportunities
+        .filter((o) => o.currencyCode === curr)
+        .reduce((acc, opp) => acc + (Number(opp.estimatedAmount) || 0), 0);
+      return `${curr} ${sum.toLocaleString()}`;
+    });
+    formattedTotal = sumsByCurr.join(" / ");
+  }
 
   const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault();

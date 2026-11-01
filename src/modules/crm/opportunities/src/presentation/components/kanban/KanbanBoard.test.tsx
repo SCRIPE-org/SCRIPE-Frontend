@@ -13,9 +13,11 @@ vi.mock("@core/providers/i18n-provider", () => ({
   }),
 }));
 
+const mockPush = vi.fn();
+
 vi.mock("next/navigation", () => ({
   useRouter: () => ({
-    push: vi.fn(),
+    push: mockPush,
     replace: vi.fn(),
     prefetch: vi.fn(),
   }),
@@ -239,5 +241,48 @@ describe("KanbanBoard Component", () => {
     const dismissBtn = screen.getByText("Dismiss");
     fireEvent.click(dismissBtn);
     expect(onClearError).toHaveBeenCalled();
+  });
+
+  it("strictly enforces PD-5 per-currency breakdown without cross-currency sums in column totals", () => {
+    const multiCurrencyOpps: CrmOpportunity[] = [
+      {
+        ...mockOpportunities[0],
+        id: "opp-sar",
+        stageKey: "default.discovery",
+        currencyCode: "SAR",
+        estimatedAmount: 100000,
+      },
+      {
+        ...mockOpportunities[1],
+        id: "opp-usd",
+        stageKey: "default.discovery",
+        currencyCode: "USD",
+        estimatedAmount: 50000,
+      },
+    ];
+
+    render(<KanbanBoard opportunities={multiCurrencyOpps} onMoveStage={vi.fn()} />);
+
+    // Discovery column must display separate currency totals and NOT sum 100k + 50k into 150k
+    const discoveryCol = screen.getByTestId("kanban-column-default.discovery");
+    expect(discoveryCol.textContent).toContain("SAR 100,000 / USD 50,000");
+    expect(discoveryCol.textContent).not.toContain("SAR 150,000");
+  });
+
+  it("does not trigger card click or router navigation when pressing Enter on child action buttons", () => {
+    mockPush.mockClear();
+
+    const onMoveStage = vi.fn();
+    render(<KanbanBoard opportunities={mockOpportunities} onMoveStage={onMoveStage} />);
+
+    // Target the move forward button
+    const forwardBtns = screen.getAllByLabelText("Move forward");
+    const firstForwardBtn = forwardBtns[0];
+
+    // Trigger keydown with Enter directly on button
+    fireEvent.keyDown(firstForwardBtn, { key: "Enter" });
+
+    // router.push must NOT be called on bubbling
+    expect(mockPush).not.toHaveBeenCalled();
   });
 });
