@@ -1,0 +1,243 @@
+import { render, screen, fireEvent, waitFor } from "@testing-library/react";
+import { describe, expect, it, vi } from "vitest";
+import { KanbanBoard, CANONICAL_KANBAN_STAGES } from "./KanbanBoard";
+import type { CrmOpportunity } from "../../../domain/entities/OpportunityEntity";
+
+vi.mock("@core/providers/i18n-provider", () => ({
+  useI18n: () => ({
+    t: (key: string, params?: Record<string, string | number>) => {
+      if (params?.defaultValue) return String(params.defaultValue);
+      return key;
+    },
+    language: "en",
+  }),
+}));
+
+vi.mock("next/navigation", () => ({
+  useRouter: () => ({
+    push: vi.fn(),
+    replace: vi.fn(),
+    prefetch: vi.fn(),
+  }),
+}));
+
+describe("KanbanBoard Component", () => {
+  const mockOpportunities: CrmOpportunity[] = [
+    {
+      id: "opp-001",
+      title: "Al-Hilal Stadium Pitch Lighting Upgrade",
+      leadId: null,
+      accountId: null,
+      partyId: "party-verified-001", // Verified party linked
+      pipelineId: "pipe-001",
+      stageId: "stage-001",
+      stageKey: "default.discovery",
+      stageLabelEnSnapshot: "Discovery",
+      pipelineVersionSnapshot: 1,
+      lastActiveStageKey: null,
+      ownerUserId: "user-001",
+      ownerTeamId: null,
+      dealKind: "NewBusiness",
+      hqOutcomeKind: null,
+      targetExistingTenantId: null,
+      estimatedAmount: 350000,
+      currencyCode: "SAR",
+      targetCloseDate: "2026-12-15T00:00:00Z",
+      status: "Open",
+      statusName: "Open",
+      createdAt: "2026-10-01T10:00:00Z",
+      rowVersion: "AAAA==",
+      maskedFieldKeys: [],
+    },
+    {
+      id: "opp-002",
+      title: "Jeddah Academy Training Equipment",
+      leadId: null,
+      accountId: null,
+      partyId: null, // Unlinked party (triggers PD-1 warning)
+      pipelineId: "pipe-001",
+      stageId: "stage-002",
+      stageKey: "default.qualification",
+      stageLabelEnSnapshot: "Qualification",
+      pipelineVersionSnapshot: 1,
+      lastActiveStageKey: null,
+      ownerUserId: "user-002",
+      ownerTeamId: null,
+      dealKind: "Expansion",
+      hqOutcomeKind: null,
+      targetExistingTenantId: null,
+      estimatedAmount: 180000,
+      currencyCode: "SAR",
+      targetCloseDate: "2026-11-20T00:00:00Z",
+      status: "Open",
+      statusName: "Open",
+      createdAt: "2026-10-05T12:00:00Z",
+      rowVersion: "BBBB==",
+      maskedFieldKeys: [],
+    },
+    {
+      id: "opp-003",
+      title: "Riyadh VIP Box Catering Deal",
+      leadId: null,
+      accountId: null,
+      partyId: "party-verified-002",
+      pipelineId: "pipe-001",
+      stageId: "stage-004",
+      stageKey: "default.proposal",
+      stageLabelEnSnapshot: "Proposal",
+      pipelineVersionSnapshot: 1,
+      lastActiveStageKey: null,
+      ownerUserId: "user-003",
+      ownerTeamId: null,
+      dealKind: "Renewal",
+      hqOutcomeKind: null,
+      targetExistingTenantId: null,
+      estimatedAmount: 90000,
+      currencyCode: "SAR",
+      targetCloseDate: "2026-11-10T00:00:00Z",
+      status: "Open",
+      statusName: "Open",
+      createdAt: "2026-10-08T09:00:00Z",
+      rowVersion: "CCCC==",
+      maskedFieldKeys: ["estimatedAmount"], // FLS masked
+    },
+  ];
+
+  it("renders all 5 canonical pipeline stages in order", () => {
+    const onMoveStage = vi.fn();
+    render(<KanbanBoard opportunities={mockOpportunities} onMoveStage={onMoveStage} />);
+
+    expect(screen.getByTestId("kanban-column-default.discovery")).toBeDefined();
+    expect(screen.getByTestId("kanban-column-default.qualification")).toBeDefined();
+    expect(screen.getByTestId("kanban-column-default.solution_fit")).toBeDefined();
+    expect(screen.getByTestId("kanban-column-default.proposal")).toBeDefined();
+    expect(screen.getByTestId("kanban-column-default.negotiation")).toBeDefined();
+
+    expect(screen.getByText("Discovery")).toBeDefined();
+    expect(screen.getByText("Qualification")).toBeDefined();
+    expect(screen.getByText("Solution Fit")).toBeDefined();
+    expect(screen.getByText("Proposal")).toBeDefined();
+    expect(screen.getByText("Negotiation")).toBeDefined();
+  });
+
+  it("displays visual PD-1 party-verification indicator on Proposal and Negotiation columns", () => {
+    const onMoveStage = vi.fn();
+    render(<KanbanBoard opportunities={mockOpportunities} onMoveStage={onMoveStage} />);
+
+    // PD-1 indicator must appear on Proposal and Negotiation
+    expect(screen.getByTestId("pd1-badge-default.proposal")).toBeDefined();
+    expect(screen.getByTestId("pd1-badge-default.negotiation")).toBeDefined();
+
+    // Must NOT appear on Discovery, Qualification, or Solution Fit
+    expect(screen.queryByTestId("pd1-badge-default.discovery")).toBeNull();
+    expect(screen.queryByTestId("pd1-badge-default.qualification")).toBeNull();
+    expect(screen.queryByTestId("pd1-badge-default.solution_fit")).toBeNull();
+  });
+
+  it("displays verified badge for linked party and unlinked badge for missing party", () => {
+    const onMoveStage = vi.fn();
+    render(<KanbanBoard opportunities={mockOpportunities} onMoveStage={onMoveStage} />);
+
+    expect(screen.getAllByText("Verified").length).toBeGreaterThanOrEqual(1);
+    expect(screen.getByText("Unlinked")).toBeDefined();
+  });
+
+  it("masks financial amounts when estimatedAmount is restricted by FLS", () => {
+    const onMoveStage = vi.fn();
+    render(<KanbanBoard opportunities={mockOpportunities} onMoveStage={onMoveStage} />);
+
+    // opp-003 has maskedFieldKeys: ["estimatedAmount"]
+    expect(screen.getAllByText("••••••").length).toBeGreaterThanOrEqual(1);
+  });
+
+  it("triggers onMoveStage with next stage when clicking move forward", async () => {
+    const onMoveStage = vi.fn();
+    render(<KanbanBoard opportunities={mockOpportunities} onMoveStage={onMoveStage} />);
+
+    // opp-001 is in Discovery (index 0). Forward moves to Qualification (index 1).
+    const forwardBtns = screen.getAllByLabelText("Move forward");
+    fireEvent.click(forwardBtns[0]);
+
+    expect(onMoveStage).toHaveBeenCalledWith(
+      expect.objectContaining({ id: "opp-001" }),
+      "default.qualification"
+    );
+  });
+
+  it("triggers onMoveStage with previous stage when clicking move backward", async () => {
+    const onMoveStage = vi.fn();
+    render(<KanbanBoard opportunities={mockOpportunities} onMoveStage={onMoveStage} />);
+
+    // opp-002 is in Qualification (index 1). Backward moves to Discovery (index 0).
+    const backwardBtns = screen.getAllByLabelText("Move backward");
+    // Find enabled backward button
+    const enabledBackwardBtn = backwardBtns.find(
+      (btn) => !btn.hasAttribute("disabled")
+    );
+    expect(enabledBackwardBtn).toBeDefined();
+
+    fireEvent.click(enabledBackwardBtn!);
+
+    expect(onMoveStage).toHaveBeenCalledWith(
+      expect.objectContaining({ id: "opp-002" }),
+      "default.discovery"
+    );
+  });
+
+  it("supports WCAG keyboard navigation (ArrowRight / ArrowLeft) on cards", () => {
+    const onMoveStage = vi.fn();
+    render(<KanbanBoard opportunities={mockOpportunities} onMoveStage={onMoveStage} />);
+
+    const card = screen.getByLabelText(/Al-Hilal Stadium Pitch Lighting Upgrade/i);
+    card.focus();
+
+    // In LTR, ArrowRight moves forward
+    fireEvent.keyDown(card, { key: "ArrowRight" });
+
+    expect(onMoveStage).toHaveBeenCalledWith(
+      expect.objectContaining({ id: "opp-001" }),
+      "default.qualification"
+    );
+  });
+
+  it("handles drag and drop to move card between columns", () => {
+    const onMoveStage = vi.fn();
+    render(<KanbanBoard opportunities={mockOpportunities} onMoveStage={onMoveStage} />);
+
+    const targetColumn = screen.getByTestId("kanban-column-default.solution_fit");
+
+    // Simulate drop of opp-001 onto Solution Fit
+    fireEvent.drop(targetColumn, {
+      dataTransfer: {
+        getData: (type: string) => (type === "text/plain" ? "opp-001" : ""),
+      },
+    });
+
+    expect(onMoveStage).toHaveBeenCalledWith(
+      expect.objectContaining({ id: "opp-001" }),
+      "default.solution_fit"
+    );
+  });
+
+  it("renders rejection alert with rollback message when errorMessage is provided", () => {
+    const onMoveStage = vi.fn();
+    const onClearError = vi.fn();
+    const errorMessage = "A verified canonical Party must be linked before advancing to Proposal (PD-1).";
+
+    render(
+      <KanbanBoard
+        opportunities={mockOpportunities}
+        onMoveStage={onMoveStage}
+        errorMessage={errorMessage}
+        onClearError={onClearError}
+      />
+    );
+
+    expect(screen.getByText("Stage Transition Rejected")).toBeDefined();
+    expect(screen.getByText(errorMessage)).toBeDefined();
+
+    const dismissBtn = screen.getByText("Dismiss");
+    fireEvent.click(dismissBtn);
+    expect(onClearError).toHaveBeenCalled();
+  });
+});

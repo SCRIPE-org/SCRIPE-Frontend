@@ -52,6 +52,22 @@ export const ar = {
       closed_won: "مغلقة — رابحة",
       closed_lost: "مغلقة — خاسرة",
     },
+    kanban: {
+      viewMode: "نمط العرض",
+      viewTable: "جدول",
+      viewKanban: "كانبان",
+      partyVerified: "معتمد",
+      partyUnlinked: "غير مرتبط",
+      moveForward: "تقديم للمرحلة التالية",
+      moveBackward: "إرجاع للمرحلة السابقة",
+      proposalGateWarning: "ربط طرف معتمد مطلوب قبل الانتقال لمرحلة العرض (PD-1)",
+      proposalGateBadge: "مطلوب طرف معتمد (PD-1)",
+      noDealsInStage: "لا توجد صفقات في هذه المرحلة",
+      totalValue: "الإجمالي",
+      stageMoveFailed: "تم رفض تغيير المرحلة",
+      stageMoveSuccess: "تم تحديث مرحلة الصفقة بنجاح",
+      unlinkedPartyAlert: "لا يمكن نقل الصفقة إلى مرحلة العرض أو ما بعدها بدون طرف معتمد (سياسة PD-1).",
+    },
     dialogs: {
       create: {
         title: "إنشاء فرصة بيعية",

@@ -158,6 +158,64 @@ export function useOpportunitiesViewModel(initialSearch?: string) {
     [fetchOpportunities, state.page]
   );
 
+  const handleMoveStageOptimistic = useCallback(
+    async (opportunity: CrmOpportunity, targetStageKey: string, reason?: string): Promise<boolean> => {
+      const prevItems = state.items;
+
+      // 1. Optimistic update: move card to target stage immediately
+      setState((prev) => ({
+        ...prev,
+        items: prev.items.map((item) =>
+          item.id === opportunity.id ? { ...item, stageKey: targetStageKey } : item
+        ),
+      }));
+      setSubmitError(null);
+
+      try {
+        const repo = (getCrmContainer() as any).opportunityRepository;
+        if (!repo) {
+          throw new Error("OpportunityRepository is not registered in CRM container");
+        }
+
+        const stageKeys = [
+          "default.discovery",
+          "default.qualification",
+          "default.solution_fit",
+          "default.proposal",
+          "default.negotiation",
+        ];
+        const curIdx = stageKeys.indexOf(opportunity.stageKey);
+        const tgtIdx = stageKeys.indexOf(targetStageKey);
+        const isAdjacentForward = tgtIdx === curIdx + 1;
+
+        // Provide default audited reason if skipping or moving backward
+        const moveReason =
+          reason || (isAdjacentForward ? undefined : "Audited stage override from Kanban board");
+
+        await repo.moveStage({
+          opportunityId: opportunity.id,
+          targetStageKey,
+          reason: moveReason,
+          expectedRowVersion: opportunity.rowVersion,
+        });
+
+        // Re-fetch in background to sync fresh RowVersion and audit snapshot
+        await fetchOpportunities(state.page);
+        return true;
+      } catch (err: any) {
+        // 2. Rollback local state on rejection
+        setState((prev) => ({
+          ...prev,
+          items: prevItems,
+        }));
+        const message = err.message || "Failed to move opportunity stage";
+        setSubmitError(message);
+        return false;
+      }
+    },
+    [fetchOpportunities, state.items, state.page]
+  );
+
   const handleCloseOpportunity = useCallback(
     async (input: CloseOpportunityInput): Promise<boolean> => {
       setIsSubmitting(true);
@@ -264,6 +322,7 @@ export function useOpportunitiesViewModel(initialSearch?: string) {
     handleStatusFilterChange,
     handleCreateOpportunity,
     handleMoveStage,
+    handleMoveStageOptimistic,
     handleCloseOpportunity,
     handleReopenOpportunity,
     handleAssignOwner,
@@ -271,6 +330,7 @@ export function useOpportunitiesViewModel(initialSearch?: string) {
     openCloseDialog,
     openReopenDialog,
     openAssignOwnerDialog,
+    clearSubmitError: () => setSubmitError(null),
     refresh: () => fetchOpportunities(state.page),
   };
 }

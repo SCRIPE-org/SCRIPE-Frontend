@@ -14,11 +14,14 @@ import {
   Plus,
   Search,
   Briefcase,
+  LayoutGrid,
+  Table2,
 } from "lucide-react";
 import { cn } from "@core/common/utils";
 
 import { CRM_PERMISSIONS, CrmShell, CrmSectionHeader } from "@modules/crm";
 import { OpportunitiesTable } from "../components/OpportunitiesTable";
+import { KanbanBoard } from "../components/kanban/KanbanBoard";
 import { CreateOpportunityDialog } from "../components/CreateOpportunityDialog";
 import { MoveStageDialog } from "../components/MoveStageDialog";
 import { CloseOpportunityDialog } from "../components/CloseOpportunityDialog";
@@ -26,6 +29,7 @@ import { ReopenOpportunityDialog } from "../components/ReopenOpportunityDialog";
 import { AssignOwnerDialog } from "../components/AssignOwnerDialog";
 import { useOpportunitiesViewModel } from "../viewmodels/useOpportunitiesViewModel";
 import type { CrmOpportunity, OpportunityStatus } from "../../domain/entities/OpportunityEntity";
+import { useState } from "react";
 
 /**
  * Main opportunities list view supporting search, filters, pagination, and deal transitions.
@@ -61,6 +65,7 @@ export function OpportunitiesView() {
     handleStatusFilterChange,
     handleCreateOpportunity,
     handleMoveStage,
+    handleMoveStageOptimistic,
     handleCloseOpportunity,
     handleReopenOpportunity,
     handleAssignOwner,
@@ -68,8 +73,11 @@ export function OpportunitiesView() {
     openCloseDialog,
     openReopenDialog,
     openAssignOwnerDialog,
+    clearSubmitError,
     refresh,
   } = viewModel;
+
+  const [viewMode, setViewMode] = useState<"table" | "kanban">("table");
 
   const stages = [
     { key: undefined, label: t("crmOpportunities.actions.allStages") },
@@ -175,6 +183,48 @@ export function OpportunitiesView() {
           </div>
 
           <div className="flex items-center gap-2 self-end sm:self-auto">
+            {/* View Mode Switcher */}
+            <div
+              role="group"
+              aria-label={t("crmOpportunities.kanban.viewMode", { defaultValue: "View Mode" })}
+              className="flex items-center rounded-nx-md border border-nx-line p-0.5 bg-nx-ground"
+            >
+              <Button
+                type="button"
+                variant={viewMode === "kanban" ? "secondary" : "ghost"}
+                size="sm"
+                onClick={() => setViewMode("kanban")}
+                className={cn(
+                  "h-8 px-2.5 text-xs font-medium gap-1.5",
+                  viewMode === "kanban" && "bg-nx-surface text-nx-ink font-bold shadow-none"
+                )}
+                aria-label={t("crmOpportunities.kanban.viewKanban", { defaultValue: "Kanban Board" })}
+                data-testid="toggle-kanban-view"
+              >
+                <LayoutGrid className="size-3.5" />
+                <span className="hidden md:inline">
+                  {t("crmOpportunities.kanban.viewKanban", { defaultValue: "Kanban" })}
+                </span>
+              </Button>
+              <Button
+                type="button"
+                variant={viewMode === "table" ? "secondary" : "ghost"}
+                size="sm"
+                onClick={() => setViewMode("table")}
+                className={cn(
+                  "h-8 px-2.5 text-xs font-medium gap-1.5",
+                  viewMode === "table" && "bg-nx-surface text-nx-ink font-bold shadow-none"
+                )}
+                aria-label={t("crmOpportunities.kanban.viewTable", { defaultValue: "Table View" })}
+                data-testid="toggle-table-view"
+              >
+                <Table2 className="size-3.5" />
+                <span className="hidden md:inline">
+                  {t("crmOpportunities.kanban.viewTable", { defaultValue: "Table" })}
+                </span>
+              </Button>
+            </div>
+
             <Button
               type="button"
               variant="outline"
@@ -207,6 +257,13 @@ export function OpportunitiesView() {
               </Button>
             </AlertDescription>
           </Alert>
+        ) : viewMode === "kanban" ? (
+          <KanbanBoard
+            opportunities={state.items}
+            onMoveStage={handleMoveStageOptimistic}
+            errorMessage={submitError}
+            onClearError={clearSubmitError}
+          />
         ) : (
           <OpportunitiesTable
             opportunities={state.items}

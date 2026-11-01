@@ -223,4 +223,31 @@ describe("OpportunitiesView Component", () => {
     expect(PAGE_PERMISSIONS["/crm/opportunities"]).toEqual([CRM_PERMISSIONS.OPPORTUNITIES_READ]);
     expect(PAGE_PERMISSIONS["/crm/opportunities/[id]"]).toEqual([CRM_PERMISSIONS.OPPORTUNITIES_READ]);
   });
+
+  it("toggles between Table view and Kanban board view smoothly", async () => {
+    render(<OpportunitiesView />);
+
+    await waitFor(() => {
+      expect(screen.getByText("Al-Nassr Pitch Licensing Contract")).toBeDefined();
+    });
+
+    // Default view is table
+    const kanbanToggle = screen.getByTestId("toggle-kanban-view");
+    fireEvent.click(kanbanToggle);
+
+    // Kanban board should now be rendered with 5 columns
+    await waitFor(() => {
+      expect(screen.getByTestId("kanban-column-default.discovery")).toBeDefined();
+      expect(screen.getByTestId("kanban-column-default.proposal")).toBeDefined();
+    });
+
+    // Switch back to table
+    const tableToggle = screen.getByTestId("toggle-table-view");
+    fireEvent.click(tableToggle);
+
+    await waitFor(() => {
+      expect(screen.queryByTestId("kanban-column-default.discovery")).toBeNull();
+    });
+  });
 });
+

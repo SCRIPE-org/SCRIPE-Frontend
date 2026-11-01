@@ -52,6 +52,22 @@ export const en = {
       closed_won: "Closed Won",
       closed_lost: "Closed Lost",
     },
+    kanban: {
+      viewMode: "View Mode",
+      viewTable: "Table",
+      viewKanban: "Kanban",
+      partyVerified: "Verified",
+      partyUnlinked: "Unlinked",
+      moveForward: "Move forward",
+      moveBackward: "Move backward",
+      proposalGateWarning: "Verified Party required before advancing to Proposal (PD-1)",
+      proposalGateBadge: "Party Required (PD-1)",
+      noDealsInStage: "No deals in this stage",
+      totalValue: "Total",
+      stageMoveFailed: "Stage Transition Rejected",
+      stageMoveSuccess: "Deal stage updated successfully",
+      unlinkedPartyAlert: "Cannot move deal to Proposal or later without a verified Party (PD-1 Policy).",
+    },
     dialogs: {
       create: {
         title: "Create Opportunity",
