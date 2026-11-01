@@ -11,6 +11,8 @@ import type {
   ReopenOpportunityInput,
   OpportunitiesFilterParams,
   PagedOpportunitiesResult,
+  PipelineDefinition,
+  UpdateDefaultPipelineInput,
 } from "../../domain/entities/OpportunityEntity";
 
 /**
@@ -50,4 +52,13 @@ export class CrmOpportunityRepository implements ICrmOpportunityRepository {
   reopenOpportunity(input: ReopenOpportunityInput): Promise<CrmOpportunity> {
     return this.service.reopenOpportunity(input);
   }
+
+  getDefaultPipeline(): Promise<PipelineDefinition> {
+    return this.service.getDefaultPipeline();
+  }
+
+  updateDefaultPipeline(input: UpdateDefaultPipelineInput): Promise<PipelineDefinition> {
+    return this.service.updateDefaultPipeline(input);
+  }
 }
+

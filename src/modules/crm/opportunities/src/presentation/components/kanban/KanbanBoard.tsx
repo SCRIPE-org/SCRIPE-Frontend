@@ -5,7 +5,10 @@ import { AlertCircle } from "lucide-react";
 import { Alert, AlertTitle, AlertDescription } from "@core/ui/alert";
 import { useI18n } from "@core/providers/i18n-provider";
 import { KanbanColumn, type KanbanStageDef } from "./KanbanColumn";
-import type { CrmOpportunity } from "../../../domain/entities/OpportunityEntity";
+import type {
+  CrmOpportunity,
+  PipelineStageConfig,
+} from "../../../domain/entities/OpportunityEntity";
 
 export const CANONICAL_KANBAN_STAGES: KanbanStageDef[] = [
   {
@@ -44,6 +47,7 @@ export const CANONICAL_KANBAN_STAGES: KanbanStageDef[] = [
 
 export interface KanbanBoardProps {
   opportunities: CrmOpportunity[];
+  stages?: PipelineStageConfig[];
   onMoveStage: (opportunity: CrmOpportunity, targetStageKey: string) => Promise<boolean> | void;
   errorMessage?: string | null;
   onClearError?: () => void;
@@ -52,19 +56,38 @@ export interface KanbanBoardProps {
 /**
  * 5-Stage interactive CRM Kanban Board adhering to PD-1 non-bypassable party gates,
  * WCAG accessible keyboard controls, and optimistic rollback mechanics.
+ * Dynamically supports server-provided default pipeline configuration and ordering.
  */
 export function KanbanBoard({
   opportunities,
+  stages,
   onMoveStage,
   errorMessage,
   onClearError,
 }: KanbanBoardProps) {
   const { t } = useI18n();
 
-  // Group open opportunities by canonical stage key
+  // Compute effective stages: server-provided default pipeline if present, else canonical fallbacks
+  const effectiveStages: KanbanStageDef[] = useMemo(() => {
+    if (stages && stages.length > 0) {
+      const sorted = [...stages].sort((a, b) => a.sortOrder - b.sortOrder);
+      return sorted.map((s) => ({
+        key: s.stageKey,
+        labelKey: `crmOpportunities.stages.${s.stageKey.replace("default.", "")}`,
+        defaultLabelEn: s.labelEn,
+        labelAr: s.labelAr,
+        sortOrder: s.sortOrder,
+        winProbabilityPercent: s.winProbabilityPercent ?? s.probabilityPercent ?? null,
+        requiresParty: s.requiresVerifiedParty,
+      }));
+    }
+    return CANONICAL_KANBAN_STAGES;
+  }, [stages]);
+
+  // Group open opportunities by effective stage key
   const groupedOpportunities = useMemo(() => {
     const map = new Map<string, CrmOpportunity[]>();
-    for (const stage of CANONICAL_KANBAN_STAGES) {
+    for (const stage of effectiveStages) {
       map.set(stage.key, []);
     }
 
@@ -76,7 +99,7 @@ export function KanbanBoard({
     }
 
     return map;
-  }, [opportunities]);
+  }, [opportunities, effectiveStages]);
 
   const handleDropOpportunity = (opportunityId: string, targetStageKey: string) => {
     const opp = opportunities.find((o) => o.id === opportunityId);
@@ -85,17 +108,17 @@ export function KanbanBoard({
   };
 
   const handleMoveForward = (opp: CrmOpportunity) => {
-    const currentIndex = CANONICAL_KANBAN_STAGES.findIndex((s) => s.key === opp.stageKey);
-    if (currentIndex >= 0 && currentIndex < CANONICAL_KANBAN_STAGES.length - 1) {
-      const nextStage = CANONICAL_KANBAN_STAGES[currentIndex + 1];
+    const currentIndex = effectiveStages.findIndex((s) => s.key === opp.stageKey);
+    if (currentIndex >= 0 && currentIndex < effectiveStages.length - 1) {
+      const nextStage = effectiveStages[currentIndex + 1];
       onMoveStage(opp, nextStage.key);
     }
   };
 
   const handleMoveBackward = (opp: CrmOpportunity) => {
-    const currentIndex = CANONICAL_KANBAN_STAGES.findIndex((s) => s.key === opp.stageKey);
+    const currentIndex = effectiveStages.findIndex((s) => s.key === opp.stageKey);
     if (currentIndex > 0) {
-      const prevStage = CANONICAL_KANBAN_STAGES[currentIndex - 1];
+      const prevStage = effectiveStages[currentIndex - 1];
       onMoveStage(opp, prevStage.key);
     }
   };
@@ -132,7 +155,7 @@ export function KanbanBoard({
 
       {/* Horizontal Scrollable 5-Column Grid */}
       <div className="flex gap-3 overflow-x-auto pb-4 pt-1 min-h-[550px] scrollbar-thin">
-        {CANONICAL_KANBAN_STAGES.map((stage, index) => {
+        {effectiveStages.map((stage, index) => {
           const colOpps = groupedOpportunities.get(stage.key) || [];
           return (
             <KanbanColumn
@@ -140,7 +163,7 @@ export function KanbanBoard({
               stage={stage}
               opportunities={colOpps}
               stageIndex={index}
-              totalStages={CANONICAL_KANBAN_STAGES.length}
+              totalStages={effectiveStages.length}
               onDropOpportunity={handleDropOpportunity}
               onMoveForward={handleMoveForward}
               onMoveBackward={handleMoveBackward}

@@ -285,4 +285,70 @@ describe("KanbanBoard Component", () => {
     // router.push must NOT be called on bubbling
     expect(mockPush).not.toHaveBeenCalled();
   });
+
+  it("dynamically renders server-provided stage labels, ordering, and win probabilities", () => {
+    const customStages = [
+      {
+        stageKey: "default.discovery",
+        labelEn: "Initial Discovery Phase",
+        labelAr: "مرحلة الاستكشاف الأولي",
+        sortOrder: 1,
+        winProbabilityPercent: 25,
+        requiresVerifiedParty: false,
+        requiredExitFields: [],
+      },
+      {
+        stageKey: "default.qualification",
+        labelEn: "Client Qualification",
+        labelAr: "تأهيل العميل",
+        sortOrder: 2,
+        winProbabilityPercent: 40,
+        requiresVerifiedParty: false,
+        requiredExitFields: [],
+      },
+      {
+        stageKey: "default.solution_fit",
+        labelEn: "Solution Architecture",
+        labelAr: "معمارية الحل",
+        sortOrder: 3,
+        winProbabilityPercent: 60,
+        requiresVerifiedParty: false,
+        requiredExitFields: [],
+      },
+      {
+        stageKey: "default.proposal",
+        labelEn: "Commercial Offer",
+        labelAr: "العرض التجاري",
+        sortOrder: 4,
+        winProbabilityPercent: 80,
+        requiresVerifiedParty: true,
+        requiredExitFields: ["partyId"],
+      },
+      {
+        stageKey: "default.negotiation",
+        labelEn: "Final Closing",
+        labelAr: "الإغلاق النهائي",
+        sortOrder: 5,
+        winProbabilityPercent: 95,
+        requiresVerifiedParty: true,
+        requiredExitFields: ["partyId"],
+      },
+    ];
+
+    render(
+      <KanbanBoard
+        opportunities={mockOpportunities}
+        stages={customStages}
+        onMoveStage={vi.fn()}
+      />
+    );
+
+    expect(screen.getByText("Initial Discovery Phase")).toBeDefined();
+    expect(screen.getByText("Client Qualification")).toBeDefined();
+    expect(screen.getByText("Solution Architecture")).toBeDefined();
+    expect(screen.getByText("Commercial Offer")).toBeDefined();
+    expect(screen.getByText("Final Closing")).toBeDefined();
+    expect(screen.getByText("25%")).toBeDefined();
+    expect(screen.getByText("95%")).toBeDefined();
+  });
 });

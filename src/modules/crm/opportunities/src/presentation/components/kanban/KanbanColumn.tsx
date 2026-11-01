@@ -12,7 +12,9 @@ export interface KanbanStageDef {
   key: string;
   labelKey: string;
   defaultLabelEn: string;
+  labelAr?: string | null;
   sortOrder: number;
+  winProbabilityPercent?: number | null;
   requiresParty?: boolean;
 }
 
@@ -110,8 +112,15 @@ export function KanbanColumn({
               {stage.sortOrder}
             </span>
             <h3 className="text-xs font-bold text-nx-ink uppercase tracking-wider truncate">
-              {t(stage.labelKey, { defaultValue: stage.defaultLabelEn })}
+              {language === "ar" && stage.labelAr
+                ? stage.labelAr
+                : stage.defaultLabelEn || t(stage.labelKey, { defaultValue: stage.key })}
             </h3>
+            {stage.winProbabilityPercent !== undefined && stage.winProbabilityPercent !== null && (
+              <span className="text-[10px] font-mono px-1 py-0.5 rounded bg-nx-raised text-nx-ink-2 border border-nx-line shrink-0">
+                {stage.winProbabilityPercent}%
+              </span>
+            )}
           </div>
 
           <Badge

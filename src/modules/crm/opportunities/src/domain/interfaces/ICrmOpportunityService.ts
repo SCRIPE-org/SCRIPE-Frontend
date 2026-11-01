@@ -9,6 +9,8 @@ import type {
   ReopenOpportunityInput,
   OpportunitiesFilterParams,
   PagedOpportunitiesResult,
+  PipelineDefinition,
+  UpdateDefaultPipelineInput,
 } from "../entities/OpportunityEntity";
 
 /**
@@ -23,4 +25,6 @@ export interface ICrmOpportunityService {
   moveStage(input: MoveOpportunityStageInput): Promise<CrmOpportunity>;
   closeOpportunity(input: CloseOpportunityInput): Promise<CrmOpportunity>;
   reopenOpportunity(input: ReopenOpportunityInput): Promise<CrmOpportunity>;
+  getDefaultPipeline(): Promise<PipelineDefinition>;
+  updateDefaultPipeline(input: UpdateDefaultPipelineInput): Promise<PipelineDefinition>;
 }

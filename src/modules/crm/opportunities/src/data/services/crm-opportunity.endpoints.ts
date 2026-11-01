@@ -9,4 +9,5 @@ export const CRM_OPPORTUNITY_ENDPOINTS = {
   STAGE: (id: string) => `/v1/crm/opportunities/${id}/stage`,
   CLOSE: (id: string) => `/v1/crm/opportunities/${id}/close`,
   REOPEN: (id: string) => `/v1/crm/opportunities/${id}/reopen`,
+  DEFAULT_PIPELINE: "/v1/crm/pipelines/default",
 } as const;

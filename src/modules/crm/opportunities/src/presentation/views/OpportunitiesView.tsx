@@ -16,6 +16,7 @@ import {
   Briefcase,
   LayoutGrid,
   Table2,
+  Settings,
 } from "lucide-react";
 import { cn } from "@core/common/utils";
 
@@ -27,6 +28,7 @@ import { MoveStageDialog } from "../components/MoveStageDialog";
 import { CloseOpportunityDialog } from "../components/CloseOpportunityDialog";
 import { ReopenOpportunityDialog } from "../components/ReopenOpportunityDialog";
 import { AssignOwnerDialog } from "../components/AssignOwnerDialog";
+import { PipelineAdminDialog } from "../components/admin/PipelineAdminDialog";
 import { useOpportunitiesViewModel } from "../viewmodels/useOpportunitiesViewModel";
 import type { CrmOpportunity, OpportunityStatus } from "../../domain/entities/OpportunityEntity";
 import { useState } from "react";
@@ -39,6 +41,7 @@ export function OpportunitiesView() {
   const { t, language } = useI18n();
   const isRtl = language === "ar";
   const canCreateOpp = usePermission(CRM_PERMISSIONS.OPPORTUNITIES_CREATE);
+  const canManagePipeline = usePermission(CRM_PERMISSIONS.PIPELINES_MANAGE);
 
   const viewModel = useOpportunitiesViewModel();
   const {
@@ -46,6 +49,9 @@ export function OpportunitiesView() {
     search,
     stageFilter,
     statusFilter,
+    pipeline,
+    pipelineStages,
+    isPipelineAdminOpen,
     isCreateOpen,
     isMoveStageOpen,
     isCloseOpen,
@@ -55,6 +61,8 @@ export function OpportunitiesView() {
     closeInitialOutcome,
     isSubmitting,
     submitError,
+    setIsPipelineAdminOpen,
+    handleUpdatePipeline,
     setIsCreateOpen,
     setIsMoveStageOpen,
     setIsCloseOpen,
@@ -117,16 +125,32 @@ export function OpportunitiesView() {
           subtitle={t("crmOpportunities.subtitle")}
           badge={`${state.totalCount} deals`}
           actions={
-            canCreateOpp ? (
-              <Button
-                type="button"
-                onClick={() => setIsCreateOpen(true)}
-                className="gap-2 shrink-0 font-bold"
-              >
-                <Plus className="size-4" />
-                {t("crmOpportunities.actions.newDeal")}
-              </Button>
-            ) : undefined
+            <div className="flex items-center gap-2">
+              {canManagePipeline && (
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => setIsPipelineAdminOpen(true)}
+                  className="gap-2 shrink-0 font-medium text-xs"
+                  data-testid="pipeline-settings-button"
+                >
+                  <Settings className="size-3.5" />
+                  {t("crmOpportunities.actions.pipelineSettings", {
+                    defaultValue: "Pipeline Settings",
+                  })}
+                </Button>
+              )}
+              {canCreateOpp && (
+                <Button
+                  type="button"
+                  onClick={() => setIsCreateOpen(true)}
+                  className="gap-2 shrink-0 font-bold"
+                >
+                  <Plus className="size-4" />
+                  {t("crmOpportunities.actions.newDeal")}
+                </Button>
+              )}
+            </div>
           }
         />
 
@@ -260,6 +284,7 @@ export function OpportunitiesView() {
         ) : viewMode === "kanban" ? (
           <KanbanBoard
             opportunities={state.items}
+            stages={pipelineStages}
             onMoveStage={handleMoveStageOptimistic}
             errorMessage={submitError}
             onClearError={clearSubmitError}
@@ -318,6 +343,15 @@ export function OpportunitiesView() {
           onOpenChange={setIsAssignOwnerOpen}
           opportunity={activeOpportunity}
           onSubmit={handleAssignOwner}
+          isSubmitting={isSubmitting}
+          submitError={submitError}
+        />
+
+        <PipelineAdminDialog
+          open={isPipelineAdminOpen}
+          onOpenChange={setIsPipelineAdminOpen}
+          pipeline={pipeline}
+          onSubmit={handleUpdatePipeline}
           isSubmitting={isSubmitting}
           submitError={submitError}
         />

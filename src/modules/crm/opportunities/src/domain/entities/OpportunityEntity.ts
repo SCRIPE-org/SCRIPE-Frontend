@@ -230,3 +230,55 @@ export class OpportunityEntity {
     });
   }
 }
+
+/** Configuration of a pipeline stage in the default pipeline */
+export interface PipelineStageConfig {
+  stageId?: string;
+  stageKey: string;
+  labelEn: string;
+  labelAr?: string | null;
+  sortOrder: number;
+  winProbabilityPercent?: number | null;
+  probabilityPercent?: number | null;
+  requiredExitFields?: string[];
+  requiresVerifiedParty?: boolean;
+  rowVersion?: string | null;
+}
+
+/** Complete definition of tenant's default pipeline */
+export interface PipelineDefinition {
+  id?: string;
+  pipelineId?: string;
+  tenantId?: string;
+  key?: string;
+  code?: string;
+  name?: string;
+  nameEn?: string;
+  nameAr?: string | null;
+  version: number;
+  isDefault?: boolean;
+  stages: PipelineStageConfig[];
+  rowVersion: string;
+}
+
+/** Item payload for updating a pipeline stage */
+export interface UpdatePipelineStageItem {
+  stageKey: string;
+  labelEn: string;
+  labelAr?: string | null;
+  sortOrder: number;
+  winProbabilityPercent?: number | null;
+  probabilityPercent?: number | null;
+  requiredExitFields?: string[];
+  expectedRowVersion?: string | null;
+}
+
+/** Input contract for updating tenant default pipeline */
+export interface UpdateDefaultPipelineInput {
+  nameEn?: string;
+  nameAr?: string | null;
+  stages: UpdatePipelineStageItem[];
+  expectedRowVersion: string;
+  idempotencyKey?: string;
+}
+

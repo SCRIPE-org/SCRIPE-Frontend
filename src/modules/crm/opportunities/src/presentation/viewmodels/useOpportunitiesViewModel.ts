@@ -12,6 +12,9 @@ import type {
   CloseOpportunityInput,
   ReopenOpportunityInput,
   OpportunityStatus,
+  PipelineDefinition,
+  PipelineStageConfig,
+  UpdateDefaultPipelineInput,
 } from "../../domain/entities/OpportunityEntity";
 
 /**
@@ -42,6 +45,9 @@ export function useOpportunitiesViewModel(initialSearch?: string) {
   const [search, setSearch] = useState<string>(initialSearch ?? "");
   const [stageFilter, setStageFilter] = useState<string | undefined>(undefined);
   const [statusFilter, setStatusFilter] = useState<OpportunityStatus | undefined>(undefined);
+
+  const [pipeline, setPipeline] = useState<PipelineDefinition | null>(null);
+  const [isPipelineAdminOpen, setIsPipelineAdminOpen] = useState(false);
 
   const [isCreateOpen, setIsCreateOpen] = useState(false);
   const [isMoveStageOpen, setIsMoveStageOpen] = useState(false);
@@ -90,6 +96,42 @@ export function useOpportunitiesViewModel(initialSearch?: string) {
       }
     },
     [search, stageFilter, statusFilter, state.pageSize]
+  );
+
+  const fetchPipeline = useCallback(async () => {
+    try {
+      const repo = (getCrmContainer() as any).opportunityRepository;
+      if (repo && typeof repo.getDefaultPipeline === "function") {
+        const result = await repo.getDefaultPipeline();
+        setPipeline(result);
+      }
+    } catch {
+      // Non-fatal if permission or endpoint not available
+    }
+  }, []);
+
+  useEffect(() => {
+    fetchPipeline();
+  }, [fetchPipeline]);
+
+  const handleUpdatePipeline = useCallback(
+    async (input: UpdateDefaultPipelineInput): Promise<boolean> => {
+      setIsSubmitting(true);
+      setSubmitError(null);
+      try {
+        const repo = (getCrmContainer() as any).opportunityRepository;
+        const updated = await repo.updateDefaultPipeline(input);
+        setPipeline(updated);
+        setIsSubmitting(false);
+        await fetchOpportunities(state.page);
+        return true;
+      } catch (err: any) {
+        setIsSubmitting(false);
+        setSubmitError(err.message || "Failed to update default pipeline");
+        return false;
+      }
+    },
+    [fetchOpportunities, state.page]
   );
 
   useEffect(() => {
@@ -177,13 +219,16 @@ export function useOpportunitiesViewModel(initialSearch?: string) {
           throw new Error("OpportunityRepository is not registered in CRM container");
         }
 
-        const stageKeys = [
-          "default.discovery",
-          "default.qualification",
-          "default.solution_fit",
-          "default.proposal",
-          "default.negotiation",
-        ];
+        const stageKeys =
+          pipeline?.stages && pipeline.stages.length > 0
+            ? [...pipeline.stages].sort((a, b) => a.sortOrder - b.sortOrder).map((s) => s.stageKey)
+            : [
+                "default.discovery",
+                "default.qualification",
+                "default.solution_fit",
+                "default.proposal",
+                "default.negotiation",
+              ];
         const curIdx = stageKeys.indexOf(opportunity.stageKey);
         const tgtIdx = stageKeys.indexOf(targetStageKey);
         const isAdjacentForward = tgtIdx === curIdx + 1;
@@ -315,6 +360,9 @@ export function useOpportunitiesViewModel(initialSearch?: string) {
     search,
     stageFilter,
     statusFilter,
+    pipeline,
+    pipelineStages: pipeline?.stages ?? [],
+    isPipelineAdminOpen,
     isCreateOpen,
     isMoveStageOpen,
     isCloseOpen,
@@ -324,6 +372,10 @@ export function useOpportunitiesViewModel(initialSearch?: string) {
     closeInitialOutcome,
     isSubmitting,
     submitError,
+    setIsPipelineAdminOpen,
+    openPipelineAdminDialog: () => setIsPipelineAdminOpen(true),
+    handleUpdatePipeline,
+    fetchPipeline,
     setIsCreateOpen,
     setIsMoveStageOpen,
     setIsCloseOpen,

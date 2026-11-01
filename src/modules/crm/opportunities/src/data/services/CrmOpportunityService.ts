@@ -11,6 +11,8 @@ import type {
   ReopenOpportunityInput,
   OpportunitiesFilterParams,
   PagedOpportunitiesResult,
+  PipelineDefinition,
+  UpdateDefaultPipelineInput,
 } from "../../domain/entities/OpportunityEntity";
 import { CRM_OPPORTUNITY_ENDPOINTS } from "./crm-opportunity.endpoints";
 
@@ -251,4 +253,83 @@ export class CrmOpportunityService implements ICrmOpportunityService {
     }
     return response as CrmOpportunity;
   }
+
+  async getDefaultPipeline(): Promise<PipelineDefinition> {
+    const response = await this.api.get<
+      ApiSuccessResponse<PipelineDefinition> | PipelineDefinition
+    >(CRM_OPPORTUNITY_ENDPOINTS.DEFAULT_PIPELINE);
+
+    const raw = "data" in response && response.data ? response.data : (response as PipelineDefinition);
+    return this.normalizePipelineDefinition(raw);
+  }
+
+  async updateDefaultPipeline(input: UpdateDefaultPipelineInput): Promise<PipelineDefinition> {
+    const idempotencyKey =
+      input.idempotencyKey ||
+      `crm-pipe-upd-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`;
+
+    const payload = {
+      nameEn: input.nameEn ?? "Standard Commercial Pipeline",
+      nameAr: input.nameAr ?? null,
+      stages: input.stages.map((s) => ({
+        stageKey: s.stageKey,
+        sortOrder: s.sortOrder,
+        labelEn: s.labelEn,
+        labelAr: s.labelAr ?? null,
+        probabilityPercent: s.probabilityPercent ?? s.winProbabilityPercent ?? null,
+        requiredExitFields: s.requiredExitFields ?? [],
+      })),
+      expectedRowVersion: input.expectedRowVersion,
+    };
+
+    const response = await this.api.put<
+      ApiSuccessResponse<PipelineDefinition> | PipelineDefinition
+    >(
+      CRM_OPPORTUNITY_ENDPOINTS.DEFAULT_PIPELINE,
+      payload,
+      undefined,
+      {
+        idempotencyKey,
+        headers: {
+          "Idempotency-Key": idempotencyKey,
+          "X-Idempotency-Key": idempotencyKey,
+        },
+      }
+    );
+
+    const raw = "data" in response && response.data ? response.data : (response as PipelineDefinition);
+    return this.normalizePipelineDefinition(raw);
+  }
+
+  private normalizePipelineDefinition(p: any): PipelineDefinition {
+    if (!p) return p;
+    return {
+      id: p.pipelineId ?? p.id ?? "",
+      pipelineId: p.pipelineId ?? p.id ?? "",
+      tenantId: p.tenantId ?? "",
+      key: p.code ?? p.key ?? "default",
+      code: p.code ?? p.key ?? "default",
+      name: p.nameEn ?? p.name ?? "Standard Commercial Pipeline",
+      nameEn: p.nameEn ?? p.name ?? "Standard Commercial Pipeline",
+      nameAr: p.nameAr ?? null,
+      version: p.version ?? 1,
+      isDefault: p.isDefault ?? true,
+      rowVersion: p.rowVersion ?? "",
+      stages: Array.isArray(p.stages)
+        ? p.stages.map((s: any) => ({
+            stageId: s.stageId ?? s.id ?? "",
+            stageKey: s.stageKey,
+            labelEn: s.labelEn,
+            labelAr: s.labelAr ?? null,
+            sortOrder: s.sortOrder,
+            winProbabilityPercent: s.probabilityPercent ?? s.winProbabilityPercent ?? null,
+            probabilityPercent: s.probabilityPercent ?? s.winProbabilityPercent ?? null,
+            requiredExitFields: s.requiredExitFields ?? [],
+            requiresVerifiedParty: s.requiresVerifiedParty ?? false,
+            rowVersion: s.rowVersion ?? null,
+          }))
+        : [],
+    };
+  }
 }
+
