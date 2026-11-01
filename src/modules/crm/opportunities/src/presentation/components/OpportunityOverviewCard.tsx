@@ -34,7 +34,11 @@ export function OpportunityOverviewCard({ opp }: OpportunityOverviewCardProps) {
           <div className="text-end">
             <span className="text-xs text-nx-ink-3 block">Estimated Amount</span>
             <span className="text-xl font-bold text-nx-ink">
-              {opp.currencyCode} {Number(opp.estimatedAmount).toLocaleString()}
+              {opp.maskedFieldKeys?.includes("estimatedAmount")
+                ? "••••••"
+                : opp.estimatedAmount != null
+                ? `${opp.currencyCode} ${Number(opp.estimatedAmount).toLocaleString()}`
+                : "—"}
             </span>
           </div>
           <div className="border-s border-nx-line ps-4">

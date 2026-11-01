@@ -44,7 +44,7 @@ export interface CrmOpportunity {
   dealKind: DealKind;
   hqOutcomeKind?: HqOutcomeKind | null;
   targetExistingTenantId?: string | null;
-  estimatedAmount: number;
+  estimatedAmount?: number | null;
   currencyCode: string;
   targetCloseDate?: string | null;
   status: OpportunityStatus;
@@ -204,7 +204,7 @@ export class OpportunityEntity {
   get status(): OpportunityStatus {
     return this.data.status;
   }
-  get estimatedAmount(): number {
+  get estimatedAmount(): number | null | undefined {
     return this.data.estimatedAmount;
   }
   get currencyCode(): string {

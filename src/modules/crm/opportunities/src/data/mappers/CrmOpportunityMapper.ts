@@ -38,7 +38,7 @@ export class CrmOpportunityMapper {
       dealKind: (dto.dealKind as DealKind) ?? "NewBusiness",
       hqOutcomeKind: (dto.hqOutcomeKind as HqOutcomeKind) ?? null,
       targetExistingTenantId: dto.targetExistingTenantId ?? null,
-      estimatedAmount: Number(dto.estimatedAmount) || 0,
+      estimatedAmount: dto.estimatedAmount != null ? Number(dto.estimatedAmount) : null,
       currencyCode: dto.currencyCode || "USD",
       targetCloseDate: dto.targetCloseDate ?? null,
       status: (dto.status as OpportunityStatus) ?? "Open",

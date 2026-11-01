@@ -144,7 +144,11 @@ export function OpportunitiesTable({
 
                   {/* Estimated Amount */}
                   <td className="px-4 py-3 font-bold text-nx-ink whitespace-nowrap">
-                    {opp.currencyCode} {Number(opp.estimatedAmount).toLocaleString()}
+                    {opp.maskedFieldKeys?.includes("estimatedAmount")
+                      ? "••••••"
+                      : opp.estimatedAmount != null
+                      ? `${opp.currencyCode} ${Number(opp.estimatedAmount).toLocaleString()}`
+                      : "—"}
                   </td>
 
                   {/* Party Gate Status */}

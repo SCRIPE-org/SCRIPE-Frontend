@@ -22,7 +22,7 @@ export interface CrmOpportunityDto {
   dealKind: string;
   hqOutcomeKind?: string | null;
   targetExistingTenantId?: string | null;
-  estimatedAmount: number;
+  estimatedAmount?: number | null;
   currencyCode: string;
   targetCloseDate?: string | null;
   status: string;
