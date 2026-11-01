@@ -86,6 +86,12 @@ export const ar = {
       viewReceivables: "عرض في المستحقات",
       viewPayments: "عرض في المدفوعات",
       recordPayment: "تسجيل دفعة",
+      refundRequiredTitle: "مطلوب إجراء استرداد مالي",
+      refundRequiredDescription:
+        "تم إلغاء هذا الحجز ولديه دفعات مسجلة بمبلغ {{amount}}. يرجى تسجيل استرداد في المالية.",
+      issueRefundCta: "إصدار استرداد",
+      refundRequiredBadge: "مطلوب استرداد",
+      refundedBadge: "مستردة",
     },
     transition: {
       T01: "تم إنشاء المسودة",

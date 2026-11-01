@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { useSearchParams } from "next/navigation";
 import { Banknote, Lock } from "lucide-react";
@@ -38,6 +38,9 @@ export function PaymentsView() {
     canIssueReceipt: canReceipt,
     canRefund,
     initialInvoiceId: searchParams.get("invoiceId"),
+    initialPaymentId: searchParams.get("paymentId"),
+    initialReservationId: searchParams.get("reservationId"),
+    initialAction: searchParams.get("action") as "record" | "refund" | "allocate" | null,
     messages: {
       fallbackError: t("money.error.description"),
       validation: t("money.payments.validation"),

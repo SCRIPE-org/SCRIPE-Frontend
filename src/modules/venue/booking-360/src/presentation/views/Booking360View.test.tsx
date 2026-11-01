@@ -297,6 +297,101 @@ describe("Booking360View", () => {
     );
   });
 
+  it("shows Refund Action Required alert and CTA when cancelled with an unrefunded payment", () => {
+    vi.mocked(useBooking360ViewModel).mockReturnValue(
+      vm({
+        reservation: {
+          ...reservation,
+          status: "Cancelled",
+        },
+      }) as never
+    );
+    vi.mocked(useBookingFinanceSummary).mockReturnValue({
+      summary: {
+        invoiceId: "inv-202",
+        invoiceNumber: "INV-202",
+        currencyCode: "EGP",
+        effectiveTotalAmount: 800,
+        paidAmount: 800,
+        outstandingAmount: 0,
+        creditAmount: 0,
+        status: "Paid",
+        unallocatedPaymentAmount: 0,
+        refundedAmount: 0,
+        allocationState: "Synchronized",
+        payments: [
+          {
+            id: "pay-202",
+            paymentNumber: "PAY-202",
+            amount: 800,
+            allocatedAmount: 800,
+            unallocatedAmount: 0,
+            method: "Cash",
+            status: "Recorded",
+            recordedAtUtc: "2026-09-10T06:00:00Z",
+          },
+        ],
+      },
+      loading: false,
+      error: false,
+      refresh: vi.fn(),
+    });
+    render(<Booking360View reservationId="reservation-1" />);
+
+    expect(screen.getByTestId("cancelled-paid-advisory")).toBeInTheDocument();
+    expect(screen.getByText("booking360.finance.refundRequiredTitle")).toBeInTheDocument();
+    expect(screen.getByTestId("issue-refund-cta-btn")).toBeInTheDocument();
+    expect(screen.getByTestId("issue-refund-cta-btn").querySelector("a") ?? screen.getByTestId("issue-refund-cta-btn")).toHaveAttribute(
+      "href",
+      "/venue/money/payments?action=refund&paymentId=pay-202&invoiceId=inv-202"
+    );
+    expect(screen.getByTestId("payment-status-badge")).toHaveTextContent("booking360.finance.refundRequiredBadge");
+  });
+
+  it("shows Refunded payment badge when cancelled and all payments are refunded", () => {
+    vi.mocked(useBooking360ViewModel).mockReturnValue(
+      vm({
+        reservation: {
+          ...reservation,
+          status: "Cancelled",
+        },
+      }) as never
+    );
+    vi.mocked(useBookingFinanceSummary).mockReturnValue({
+      summary: {
+        invoiceId: "inv-202",
+        invoiceNumber: "INV-202",
+        currencyCode: "EGP",
+        effectiveTotalAmount: 800,
+        paidAmount: 800,
+        outstandingAmount: 0,
+        creditAmount: 0,
+        status: "Paid",
+        unallocatedPaymentAmount: 0,
+        refundedAmount: 800,
+        allocationState: "Synchronized",
+        payments: [
+          {
+            id: "pay-202",
+            paymentNumber: "PAY-202",
+            amount: 800,
+            allocatedAmount: 800,
+            unallocatedAmount: 0,
+            method: "Cash",
+            status: "Refunded",
+            recordedAtUtc: "2026-09-10T06:00:00Z",
+          },
+        ],
+      },
+      loading: false,
+      error: false,
+      refresh: vi.fn(),
+    });
+    render(<Booking360View reservationId="reservation-1" />);
+
+    expect(screen.getByTestId("payment-status-badge")).toHaveTextContent("booking360.finance.refundedBadge");
+  });
+
   it("renders contextual deep links for Court, Calendar, and Customer", () => {
     render(<Booking360View reservationId="reservation-1" />);
     expect(screen.getByText("(booking360.schedule.viewCourt)")).toHaveAttribute(

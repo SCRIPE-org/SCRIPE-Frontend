@@ -19,6 +19,9 @@ import {
   BarChart3,
   CheckCircle2,
   ShieldCheck,
+  ExternalLink,
+  Receipt,
+  Building2,
 } from "lucide-react";
 import { Badge } from "@core/ui/badge";
 import { Button } from "@core/ui/button";
@@ -247,11 +250,11 @@ export function MoneyLandingView() {
 
       {/* PRIMARY MONEY KPIS STRIP */}
       <div className="grid grid-cols-2 gap-3.5 lg:grid-cols-6">
-        {/* 1. Commercial Value */}
+        {/* 1. Commercial Value / Amount Due */}
         <Card className="border-nx-line/80 flex flex-col justify-between p-3.5">
           <div className="flex items-center justify-between">
             <span className="text-[11px] font-semibold uppercase tracking-wider text-nx-ink-3">
-              {t("money.landing.kpis.commercialValue", { defaultValue: "Commercial Value" })}
+              {t("money.landing.kpis.amountDue", { defaultValue: "Amount Due (Invoiced)" })}
             </span>
             <div className="bg-nx-accent/10 rounded-full p-1.5 text-nx-accent">
               <TrendingUp className="size-3.5" aria-hidden="true" />
@@ -262,18 +265,18 @@ export function MoneyLandingView() {
               {formatMoney(summary?.commercialValue ?? 0, currency, language)}
             </p>
             <p className="mt-0.5 text-[10px] text-nx-ink-3">
-              {t("money.landing.kpis.commercialValueNote", {
-                defaultValue: "Period booking commitments",
+              {t("money.landing.kpis.amountDueSubtitle", {
+                defaultValue: "Total period invoices issued",
               })}
             </p>
           </div>
         </Card>
 
-        {/* 2. Collected */}
+        {/* 2. Amount Collected */}
         <Card className="border-nx-line/80 flex flex-col justify-between p-3.5">
           <div className="flex items-center justify-between">
             <span className="text-[11px] font-semibold uppercase tracking-wider text-nx-ink-3">
-              {t("money.landing.kpis.collected", { defaultValue: "Collected" })}
+              {t("money.landing.kpis.amountCollected", { defaultValue: "Amount Collected" })}
             </span>
             <div className="rounded-full bg-success/10 p-1.5 text-success">
               <Wallet className="size-3.5" aria-hidden="true" />
@@ -284,8 +287,8 @@ export function MoneyLandingView() {
               {formatMoney(summary?.collected ?? 0, currency, language)}
             </p>
             <p className="mt-0.5 text-[10px] text-nx-ink-3">
-              {t("money.landing.kpis.collectedSubtitle", {
-                defaultValue: "Operational cash collected",
+              {t("money.landing.kpis.amountCollectedSubtitle", {
+                defaultValue: "Allocated cash receipts",
               })}
             </p>
           </div>
@@ -307,17 +310,17 @@ export function MoneyLandingView() {
             </p>
             <p className="mt-0.5 text-[10px] text-nx-ink-3">
               {t("money.landing.kpis.collectedTodaySubtitle", {
-                defaultValue: "Cash inflow today",
+                defaultValue: "Daily cash inflow",
               })}
             </p>
           </div>
         </Card>
 
-        {/* 4. Outstanding */}
+        {/* 4. Outstanding Balance */}
         <Card className="border-nx-line/80 flex flex-col justify-between p-3.5">
           <div className="flex items-center justify-between">
             <span className="text-[11px] font-semibold uppercase tracking-wider text-nx-ink-3">
-              {t("money.landing.kpis.outstanding", { defaultValue: "Outstanding" })}
+              {t("money.landing.kpis.outstandingBalance", { defaultValue: "Outstanding Balance" })}
             </span>
             <div className="rounded-full bg-warning/10 p-1.5 text-warning">
               <Clock className="size-3.5" aria-hidden="true" />
@@ -328,17 +331,19 @@ export function MoneyLandingView() {
               {formatMoney(summary?.outstanding ?? 0, currency, language)}
             </p>
             <p className="mt-0.5 text-[10px] text-nx-ink-3">
-              {summary?.openReceivablesCount ?? 0}{" "}
-              {t("money.landing.outstandingInvoices", { defaultValue: "open receivables" })}
+              {t("money.landing.kpis.outstandingBalanceSubtitle", {
+                defaultValue: `${summary?.openReceivablesCount ?? 0} open receivables`,
+                count: summary?.openReceivablesCount ?? 0,
+              })}
             </p>
           </div>
         </Card>
 
-        {/* 5. Refunds */}
+        {/* 5. Refund Status */}
         <Card className="border-nx-line/80 flex flex-col justify-between p-3.5">
           <div className="flex items-center justify-between">
             <span className="text-[11px] font-semibold uppercase tracking-wider text-nx-ink-3">
-              {t("money.landing.kpis.refunds", { defaultValue: "Refunds" })}
+              {t("money.landing.kpis.refundStatus", { defaultValue: "Refund Status" })}
             </span>
             <div className="rounded-full bg-nx-raised p-1.5 text-nx-ink-2">
               <RotateCcw className="size-3.5" aria-hidden="true" />
@@ -349,7 +354,7 @@ export function MoneyLandingView() {
               {formatMoney(summary?.refunds ?? 0, currency, language)}
             </p>
             <p className="mt-0.5 text-[10px] text-nx-ink-3">
-              {t("money.landing.kpis.refundsSubtitle", {
+              {t("money.landing.kpis.refundStatusSubtitle", {
                 defaultValue: "Explicit recorded refunds",
               })}
             </p>
@@ -378,6 +383,105 @@ export function MoneyLandingView() {
           </div>
         </Card>
       </div>
+
+      {/* CONSOLIDATED TODAY'S OPERATIONAL SHIFT SUMMARY */}
+      {dateFilter === "today" && (
+        <Card className="border-nx-line/80 overflow-hidden" data-testid="today-shift-summary-card">
+          <CardHeader className="border-nx-line/50 bg-nx-raised/30 flex flex-row items-center justify-between border-b px-5 py-3.5">
+            <div>
+              <CardTitle className="flex items-center gap-2 text-sm font-bold text-nx-ink">
+                <Receipt className="size-4 text-nx-accent" aria-hidden="true" />
+                <span>
+                  {t("money.landing.dailyShift.title", { defaultValue: "Today's Operational Shift Summary" })}
+                </span>
+              </CardTitle>
+              <CardDescription className="mt-0.5 text-xs text-nx-ink-2">
+                {t("money.landing.dailyShift.subtitle", {
+                  defaultValue: "Cash and digital collections recorded for today's operational shift.",
+                })}
+              </CardDescription>
+            </div>
+            <div className="flex items-center gap-2">
+              {canRecordPayment && (
+                <Button size="sm" variant="default" asChild className="h-7 text-xs">
+                  <Link href="/venue/money/payments?action=record">
+                    <Plus className="me-1 size-3" aria-hidden="true" />
+                    <span>{t("money.landing.dailyShift.recordPaymentAction", { defaultValue: "Record Payment" })}</span>
+                  </Link>
+                </Button>
+              )}
+              {canViewPayments && (
+                <Button size="sm" variant="outline" asChild className="h-7 text-xs">
+                  <Link href="/venue/money/payments">
+                    <span>{t("money.landing.dailyShift.viewTodayLedger", { defaultValue: "View Today's Ledger" })}</span>
+                  </Link>
+                </Button>
+              )}
+            </div>
+          </CardHeader>
+          <CardContent className="p-5">
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+              {/* Cash Inflow Today */}
+              <div className="rounded-lg border border-nx-line/60 bg-nx-surface p-3.5">
+                <span className="text-[11px] font-semibold uppercase tracking-wider text-nx-ink-3">
+                  {t("money.landing.dailyShift.cashInflow", { defaultValue: "Today's Cash Inflow" })}
+                </span>
+                <p className="font-mono text-xl font-bold text-success mt-1">
+                  {formatMoney(summary?.collectedToday ?? 0, currency, language)}
+                </p>
+                <p className="mt-1 text-[11px] text-nx-ink-3">
+                  {summary?.paymentsCount ?? 0} {t("money.landing.dailyShift.totalTransactions", { defaultValue: "Total Transactions Today" })}
+                </p>
+              </div>
+
+              {/* Cash vs Card/POS vs BankTransfer */}
+              {[
+                {
+                  key: "Cash",
+                  label: t("money.landing.dailyShift.cash", { defaultValue: "Cash" }),
+                  icon: Wallet,
+                  predicate: (pm: MoneyPaymentMethodItem) => pm.method.toLowerCase() === "cash",
+                },
+                {
+                  key: "Card",
+                  label: t("money.landing.dailyShift.cardPos", { defaultValue: "Card & POS" }),
+                  icon: CreditCard,
+                  predicate: (pm: MoneyPaymentMethodItem) =>
+                    pm.method.toLowerCase() === "card" || pm.method.toLowerCase() === "pos",
+                },
+                {
+                  key: "BankTransfer",
+                  label: t("money.landing.dailyShift.bankTransfer", { defaultValue: "Bank Transfer" }),
+                  icon: Building2,
+                  predicate: (pm: MoneyPaymentMethodItem) =>
+                    pm.method.toLowerCase().includes("bank") || pm.method.toLowerCase() === "banktransfer",
+                },
+              ].map(({ key, label, icon: IconComponent, predicate }) => {
+                const matching = paymentMethods.filter(predicate);
+                const totalAmount = matching.reduce((sum, item) => sum + item.amount, 0);
+                const totalCount = matching.reduce((sum, item) => sum + item.count, 0);
+                const totalPct = matching.reduce((sum, item) => sum + item.percentage, 0);
+                return (
+                  <div key={key} className="rounded-lg border border-nx-line/60 bg-nx-surface p-3.5">
+                    <div className="flex items-center justify-between">
+                      <span className="text-[11px] font-semibold uppercase tracking-wider text-nx-ink-3">
+                        {label}
+                      </span>
+                      <IconComponent className="size-3.5 text-nx-ink-3" aria-hidden="true" />
+                    </div>
+                    <p className="font-mono text-lg font-bold text-nx-ink mt-1">
+                      {formatMoney(totalAmount, currency, language)}
+                    </p>
+                    <p className="mt-1 text-[11px] text-nx-ink-3">
+                      {totalCount} {t("money.landing.tables.paid", { defaultValue: "transactions" })} ({Math.round(totalPct)}%)
+                    </p>
+                  </div>
+                );
+              })}
+            </div>
+          </CardContent>
+        </Card>
+      )}
 
       {/* UNALLOCATED EXCEPTION BANNER */}
       {(summary?.unallocatedPaymentsCount ?? 0) > 0 && (
@@ -425,13 +529,13 @@ export function MoneyLandingView() {
           </div>
           <div className="flex items-center gap-4 text-xs">
             <span className="flex items-center gap-1.5">
-              <span className="size-2.5 rounded-full bg-blue-500" />
+              <span className="size-2.5 rounded-full bg-info" />
               <span className="font-medium text-nx-ink-2">
                 {t("money.landing.chart.commercialLegend", { defaultValue: "Commercial Value" })}
               </span>
             </span>
             <span className="flex items-center gap-1.5">
-              <span className="size-2.5 rounded-full bg-success shadow-[0_0_6px_rgba(34,197,94,0.7)]" />
+              <span className="size-2.5 rounded-full bg-success" />
               <span className="font-medium text-nx-ink-2">
                 {t("money.landing.chart.collectedLegend", { defaultValue: "Collected Cash" })}
               </span>
@@ -642,7 +746,7 @@ export function MoneyLandingView() {
                         </p>
                         <div className="bg-nx-line/50 mt-1.5 h-1 w-full overflow-hidden rounded-full">
                           <div
-                            className="h-1 rounded-full bg-blue-500"
+                            className="h-1 rounded-full bg-info"
                             style={{ width: `${pct}%` }}
                           />
                         </div>
@@ -774,13 +878,23 @@ export function MoneyLandingView() {
                       className="flex items-center justify-between gap-3 p-3 hover:bg-nx-hover"
                     >
                       <div className="min-w-0 flex-1">
-                        <div className="flex items-center gap-1.5">
+                        <div className="flex items-center gap-1.5 flex-wrap">
                           <span className="truncate font-mono font-semibold text-nx-ink">
                             {inv.invoiceNumber}
                           </span>
                           <Badge variant="outline" className="px-1 py-0 text-[10px]">
                             {inv.status}
                           </Badge>
+                          {inv.reservationId && (
+                            <Link
+                              href={`/venue/bookings/${encodeURIComponent(inv.reservationId)}`}
+                              className="inline-flex items-center gap-1 text-[11px] font-medium text-nx-accent hover:underline ms-1"
+                              data-testid={`receivable-booking-link-${inv.id}`}
+                            >
+                              <span>{t("money.landing.tables.openBooking", { defaultValue: "Booking 360" })}</span>
+                              <ExternalLink className="size-2.5" aria-hidden="true" />
+                            </Link>
+                          )}
                         </div>
                         <p className="mt-0.5 text-[10px] text-nx-ink-3">
                           Total: {formatMoney(inv.effectiveTotalAmount, inv.currencyCode, language)}{" "}
@@ -870,17 +984,31 @@ export function MoneyLandingView() {
                       className="flex items-center justify-between gap-3 p-3 hover:bg-nx-hover"
                     >
                       <div className="min-w-0 flex-1">
-                        <div className="flex items-center gap-1.5">
+                        <div className="flex items-center gap-1.5 flex-wrap">
                           <span className="truncate font-mono font-semibold text-nx-ink">
                             {pay.paymentNumber}
                           </span>
                           <span className="text-[10px] text-nx-ink-3">• {pay.method}</span>
-                          {pay.unallocatedAmount > 0 && (
+                          {pay.status === "Refunded" ? (
+                            <Badge variant="destructive" className="px-1 py-0 text-[9px]">
+                              {t("money.landing.tables.refundedBadge", { defaultValue: "Refunded" })}
+                            </Badge>
+                          ) : pay.unallocatedAmount > 0 ? (
                             <Badge variant="warning" className="px-1 py-0 text-[9px]">
                               {t("money.landing.tables.unallocated", {
                                 defaultValue: "Unallocated",
                               })}
                             </Badge>
+                          ) : null}
+                          {pay.reservationId && (
+                            <Link
+                              href={`/venue/bookings/${encodeURIComponent(pay.reservationId)}`}
+                              className="inline-flex items-center gap-1 text-[11px] font-medium text-nx-accent hover:underline ms-1"
+                              data-testid={`payment-booking-link-${pay.id}`}
+                            >
+                              <span>{t("money.landing.tables.openBooking", { defaultValue: "Booking 360" })}</span>
+                              <ExternalLink className="size-2.5" aria-hidden="true" />
+                            </Link>
                           )}
                         </div>
                         <p className="mt-0.5 text-[10px] text-nx-ink-3">

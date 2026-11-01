@@ -12,6 +12,7 @@ import {
   Phone,
   RefreshCw,
   UserRound,
+  RotateCcw,
 } from "lucide-react";
 import { Alert, AlertDescription } from "@core/ui/alert";
 import { Badge } from "@core/ui/badge";
@@ -79,6 +80,7 @@ export const Booking360View = React.memo(function Booking360View({
   const canCalculateQuote = usePermission(VENUE_PERMISSIONS.CATALOG_PRICING_CALCULATE_QUOTE);
   const canViewReceivables = usePermission(VENUE_PERMISSIONS.FINANCE_RECEIVABLES_VIEW);
   const canRecordPayment = usePermission(VENUE_PERMISSIONS.FINANCE_PAYMENTS_CREATE);
+  const canRefund = usePermission(VENUE_PERMISSIONS.FINANCE_REFUNDS_APPROVE);
   const vm = useBooking360ViewModel(
     reservationId,
     canViewReservation,
@@ -263,16 +265,30 @@ export const Booking360View = React.memo(function Booking360View({
             <Badge
               data-testid="payment-status-badge"
               className={
-                paymentStatus === "Paid"
-                  ? "border border-success/30 bg-success/10 text-success font-semibold"
-                  : paymentStatus === "Partial"
-                    ? "border border-warning/30 bg-warning/10 text-warning font-semibold"
-                    : paymentStatus === "PendingSync"
-                      ? "border border-info/30 bg-info/10 text-info font-semibold"
-                      : "border border-destructive/30 bg-destructive/10 text-destructive font-semibold"
+                reservation.status === "Cancelled" && finance.summary && (finance.summary.paidAmount > 0 || finance.summary.refundedAmount > 0)
+                  ? (finance.summary.refundedAmount > 0 && finance.summary.paidAmount === 0) ||
+                    (finance.summary.payments.length > 0 &&
+                      finance.summary.payments.every((p) => p.status === "Refunded")) ||
+                    finance.summary.refundedAmount >= finance.summary.paidAmount
+                    ? "border border-nx-line bg-nx-raised text-nx-ink-2 font-semibold"
+                    : "border border-destructive/30 bg-destructive/10 text-destructive font-semibold"
+                  : paymentStatus === "Paid"
+                    ? "border border-success/30 bg-success/10 text-success font-semibold"
+                    : paymentStatus === "Partial"
+                      ? "border border-warning/30 bg-warning/10 text-warning font-semibold"
+                      : paymentStatus === "PendingSync"
+                        ? "border border-info/30 bg-info/10 text-info font-semibold"
+                        : "border border-destructive/30 bg-destructive/10 text-destructive font-semibold"
               }
             >
-              {t(`booking360.paymentStatus.${paymentStatus}`, { defaultValue: paymentStatus })}
+              {reservation.status === "Cancelled" && finance.summary && (finance.summary.paidAmount > 0 || finance.summary.refundedAmount > 0)
+                ? (finance.summary.refundedAmount > 0 && finance.summary.paidAmount === 0) ||
+                  (finance.summary.payments.length > 0 &&
+                    finance.summary.payments.every((p) => p.status === "Refunded")) ||
+                  finance.summary.refundedAmount >= finance.summary.paidAmount
+                  ? t("booking360.finance.refundedBadge", { defaultValue: "Refunded" })
+                  : t("booking360.finance.refundRequiredBadge", { defaultValue: "Refund Required" })
+                : t(`booking360.paymentStatus.${paymentStatus}`, { defaultValue: paymentStatus })}
             </Badge>
           </div>
 
@@ -287,40 +303,70 @@ export const Booking360View = React.memo(function Booking360View({
       </header>
 
       {/* Authoritative Financial Advisory when Cancelled but Money was Recorded */}
-      {reservation.status === "Cancelled" && finance.summary && finance.summary.paidAmount > 0 && (
+      {reservation.status === "Cancelled" &&
+        finance.summary &&
+        finance.summary.paidAmount > 0 &&
+        finance.summary.refundedAmount < finance.summary.paidAmount && (
         <Alert
-          variant="warning"
-          className="border-warning/30 bg-warning/10"
+          variant="destructive"
+          className="border-destructive/30 bg-destructive/10 text-destructive"
           data-testid="cancelled-paid-advisory"
         >
           <div className="flex w-full flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-            <div>
-              <p className="font-semibold text-warning">
-                {t("booking360.cancelledPaid.title")}
-              </p>
-              <p className="mt-1 text-xs text-nx-ink-2">
-                {t("booking360.cancelledPaid.description", {
-                  amount: new Intl.NumberFormat(language, {
-                    style: "currency",
-                    currency: finance.summary.currencyCode,
-                  }).format(finance.summary.paidAmount),
-                })}
-              </p>
+            <div className="flex items-start gap-2.5">
+              <RotateCcw className="mt-0.5 size-4 shrink-0 text-destructive" aria-hidden="true" />
+              <div>
+                <p className="font-semibold text-destructive">
+                  {finance.summary.payments.some((p) => p.status !== "Refunded")
+                    ? t("booking360.finance.refundRequiredTitle", {
+                        defaultValue: "Refund Action Required",
+                      })
+                    : t("booking360.cancelledPaid.title")}
+                </p>
+                <p className="mt-1 text-xs text-nx-ink-2">
+                  {finance.summary.payments.some((p) => p.status !== "Refunded")
+                    ? t("booking360.finance.refundRequiredDescription", {
+                        defaultValue:
+                          "This reservation is cancelled, but has recorded payments totaling {{amount}}. Record a refund in Finance.",
+                        amount: new Intl.NumberFormat(language, {
+                          style: "currency",
+                          currency: finance.summary.currencyCode,
+                        }).format(finance.summary.paidAmount),
+                      })
+                    : t("booking360.cancelledPaid.description", {
+                        amount: new Intl.NumberFormat(language, {
+                          style: "currency",
+                          currency: finance.summary.currencyCode,
+                        }).format(finance.summary.paidAmount),
+                      })}
+                </p>
+              </div>
             </div>
-            {canRecordPayment && finance.summary.invoiceId && (
-              <Button
-                asChild
-                size="sm"
-                variant="outline"
-                className="shrink-0 border-warning/30 text-warning hover:bg-warning/20"
-              >
-                <Link
-                  href={`/venue/money/payments?invoiceId=${encodeURIComponent(finance.summary.invoiceId)}`}
-                >
-                  {t("booking360.cancelledPaid.manageRefund")}
-                </Link>
-              </Button>
-            )}
+            {(canRefund || canRecordPayment) &&
+              finance.summary.invoiceId &&
+              (() => {
+                const unrefundedPayment = finance.summary.payments.find(
+                  (p) => p.status !== "Refunded"
+                );
+                const refundUrl = unrefundedPayment
+                  ? `/venue/money/payments?action=refund&paymentId=${encodeURIComponent(unrefundedPayment.id)}&invoiceId=${encodeURIComponent(finance.summary.invoiceId)}`
+                  : `/venue/money/payments?invoiceId=${encodeURIComponent(finance.summary.invoiceId)}`;
+                return (
+                  <Button
+                    asChild
+                    size="sm"
+                    variant="outline"
+                    className="shrink-0 border-destructive/40 text-destructive hover:bg-destructive/10"
+                    data-testid="issue-refund-cta-btn"
+                  >
+                    <Link href={refundUrl}>
+                      {unrefundedPayment
+                        ? t("booking360.finance.issueRefundCta", { defaultValue: "Issue Refund" })
+                        : t("booking360.cancelledPaid.manageRefund")}
+                    </Link>
+                  </Button>
+                );
+              })()}
           </div>
         </Alert>
       )}

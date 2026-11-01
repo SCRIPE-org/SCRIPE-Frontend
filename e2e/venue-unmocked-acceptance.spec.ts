@@ -39,10 +39,27 @@ test.describe("SCRIPE Venue: Real Runtime End-to-End Operational Acceptance", ()
     return execSync(cmd, { encoding: "utf8", env });
   }
 
+  async function loginAndNavigate(page: any, targetPath: string) {
+    const encodedTarget = encodeURIComponent(targetPath);
+    await page.goto(`/login?_tenant=AHLY&redirect=${encodedTarget}`);
+    await page.waitForLoadState("domcontentloaded");
+
+    const identifierInput = page.locator("#identifier");
+    await expect(identifierInput).toBeVisible({ timeout: 20_000 });
+    await identifierInput.fill(adminEmail);
+    await page.locator("#password").fill(adminPassword);
+    const submitBtn = page.locator("form button[type='submit']").first();
+    await expect(submitBtn).toBeEnabled({ timeout: 5000 });
+    await submitBtn.click();
+
+    await page.waitForURL((url: URL) => !url.pathname.includes("/login"), { timeout: 45_000 });
+    await page.waitForLoadState("networkidle");
+  }
+
   test.beforeEach(async ({ page }) => {
     // Forward random IP to avoid test runner hitting Kestrel rate-limiter
     const randomIp = `10.${Math.floor(Math.random() * 200) + 1}.${Math.floor(Math.random() * 200) + 1}.${Math.floor(Math.random() * 200) + 1}`;
-    await page.route("**/api/v1/auth/**", async (route) => {
+    await page.route("**/auth/**", async (route) => {
       const headers = { ...route.request().headers(), "x-forwarded-for": randomIp };
       await route.continue({ headers });
     });
@@ -90,12 +107,7 @@ test.describe("SCRIPE Venue: Real Runtime End-to-End Operational Acceptance", ()
     }
 
     // Direct authenticated session setup
-    await page.goto("/login?_tenant=AHLY&redirect=%2Fvenue%2Fcalendar");
-    await page.locator("#identifier").fill(adminEmail);
-    await page.locator("#password").fill(adminPassword);
-    await page.locator("form button[type='submit']").first().click();
-    await page.waitForURL((url) => url.pathname.includes("/venue/calendar"), { timeout: 45_000 });
-    await page.waitForLoadState("networkidle");
+    await loginAndNavigate(page, "/venue/calendar");
 
     // Open ClickToBookModal
     const newBookingBtn = page.locator("button:has-text('+ New Booking'), button:has-text('حجز جديد')").first();
@@ -348,7 +360,9 @@ test.describe("SCRIPE Venue: Real Runtime End-to-End Operational Acceptance", ()
         identifier: "city.admin@scripe-dev.local",
         password: "P@ssw0rd",
       },
-      headers: { "x-forwarded-for": "10.20.30.50" },
+      headers: {
+        "x-forwarded-for": `10.${Math.floor(Math.random() * 200) + 1}.${Math.floor(Math.random() * 200) + 1}.${Math.floor(Math.random() * 200) + 1}`,
+      },
     });
     expect(cityLoginRes.status()).toBe(200);
     const cityToken = (await cityLoginRes.json()).accessToken;
@@ -450,6 +464,90 @@ test.describe("SCRIPE Venue: Real Runtime End-to-End Operational Acceptance", ()
     await page.waitForURL((url) => url.pathname.includes("/venue/calendar") && url.searchParams.get("newBooking") === "true", { timeout: 30_000 });
     const calendarModal = page.locator("[role='dialog']").first();
     await expect(calendarModal).toBeVisible({ timeout: 15_000 });
+  });
+
+  test("7. Unmocked Money Landing Overview, Daily Shift Summary, Booking Links & Refund Workflow (Slice 4)", async ({ page }) => {
+    // 1. Authenticate with Al-Ahly tenant scope and navigate to /venue/money
+    await loginAndNavigate(page, "/venue/money");
+
+    // 2. Verify Money Landing Workspace mounts
+    const landingView = page.locator("[data-testid='venue-money-landing']").first();
+    await expect(landingView).toBeVisible({ timeout: 20_000 });
+
+    // 3. Verify Standardized Financial Terminology on KPI cards
+    await expect(page.locator("text=Amount Due (Invoiced)").or(page.locator("text=القيمة المستحقة (المفوترة)")).first()).toBeVisible({ timeout: 10_000 });
+    await expect(page.locator("text=Amount Collected").or(page.locator("text=المبالغ المحصلة")).first()).toBeVisible({ timeout: 10_000 });
+    await expect(page.locator("text=Collected Today").or(page.locator("text=المحصل اليوم")).first()).toBeVisible({ timeout: 10_000 });
+    await expect(page.locator("text=Outstanding Balance").or(page.locator("text=الرصيد المتبقي")).first()).toBeVisible({ timeout: 10_000 });
+    await expect(page.locator("text=Refund Status").or(page.locator("text=حالة الإرجاعات")).first()).toBeVisible({ timeout: 10_000 });
+    await expect(page.locator("text=Net Collected").or(page.locator("text=صافي التحصيل")).first()).toBeVisible({ timeout: 10_000 });
+
+    // 4. Switch to "Today" filter and verify Consolidated Today's Operational Shift Summary card
+    const todayFilterBtn = page.locator("button:has-text('Today'), button:has-text('اليوم')").first();
+    await expect(todayFilterBtn).toBeVisible({ timeout: 10_000 });
+    await todayFilterBtn.click();
+    await page.waitForTimeout(600);
+
+    const shiftSummaryCard = page.locator("[data-testid='today-shift-summary-card']").first();
+    await expect(shiftSummaryCard).toBeVisible({ timeout: 15_000 });
+    await expect(shiftSummaryCard.locator("text=Today's Operational Shift Summary").or(shiftSummaryCard.locator("text=الملخص التشغيلي لوردية اليوم")).first()).toBeVisible({ timeout: 10_000 });
+
+    // 5. Verify Booking 360 Deep Link exists in tables
+    const bookingDeepLink = page.locator("[data-testid^='receivable-booking-link-'], [data-testid^='payment-booking-link-']").first();
+    await expect(bookingDeepLink).toBeVisible({ timeout: 15_000 });
+    const bookingHref = await bookingDeepLink.getAttribute("href");
+    expect(bookingHref).toContain("/venue/bookings/");
+
+    // 6. Navigate directly to Cancelled Reservation RES-AHLY-1008 (Encrypted ID: zkHeRFk-tom-gasJWOK3RTVEEGOGJPPL_s20tVhMbqngNKM2wdKrFy08nZw, DB GUID: d7381f81-7384-4213-b464-f39bc207da9d)
+    const cancelledReservationId = "zkHeRFk-tom-gasJWOK3RTVEEGOGJPPL_s20tVhMbqngNKM2wdKrFy08nZw";
+    await page.goto(`/venue/bookings/${cancelledReservationId}`);
+    await page.waitForLoadState("networkidle");
+
+    // Verify reservation status badge displays Cancelled
+    const resBadge = page.locator("[data-testid='reservation-status-badge']").first();
+    await expect(resBadge).toBeVisible({ timeout: 20_000 });
+    await expect(resBadge).toContainText(/Cancelled|ملغي/i);
+
+    // Verify Secondary Payment Status Badge
+    const payStatusBadge = page.locator("[data-testid='payment-status-badge']").first();
+    await expect(payStatusBadge).toBeVisible({ timeout: 15_000 });
+
+    // Check if refund CTA button is present (meaning payment has not yet been refunded)
+    const issueRefundBtn = page.locator("[data-testid='issue-refund-cta-btn']").first();
+    const cancelledAlert = page.locator("[data-testid='cancelled-paid-advisory']").first();
+    if (await issueRefundBtn.isVisible()) {
+      // Verify Financial Advisory Alert banner for Cancelled booking with unrefunded recorded payment
+      await expect(cancelledAlert).toBeVisible({ timeout: 10_000 });
+      // Badge must indicate refund required
+      await expect(payStatusBadge).toContainText(/Refund Required|مطلوب استرداد/i);
+
+      // Follow Issue Refund link into Payments ledger
+      await issueRefundBtn.click();
+      await page.waitForURL((url) => url.pathname.includes("/venue/money/payments") && url.searchParams.get("action") === "refund", { timeout: 30_000 });
+      await page.waitForLoadState("networkidle");
+
+      // Verify refund card auto-mounts prefilled with the payment
+      const refundReasonInput = page.locator("#refund-reason").first();
+      await expect(refundReasonInput).toBeVisible({ timeout: 15_000 });
+      await refundReasonInput.fill("Automated unmocked test refund for cancelled reservation RES-AHLY-1008");
+
+      // Submit refund
+      const recordRefundBtn = page.locator("[data-testid='submit-refund-btn']").or(page.locator("button:has-text('Record refund'), button:has-text('تسجيل استرداد')")).first();
+      await expect(recordRefundBtn).toBeEnabled({ timeout: 5_000 });
+      await recordRefundBtn.click();
+
+      // Verify success feedback
+      await expect(page.locator("text=/Refund was recorded|تم تسجيل الاسترداد/i").first()).toBeVisible({ timeout: 15_000 });
+
+      // Return to Booking 360 and verify status badge is updated to "Refunded"
+      await page.goto(`/venue/bookings/${cancelledReservationId}`);
+      await page.waitForLoadState("networkidle");
+      const updatedPayBadge = page.locator("[data-testid='payment-status-badge']").first();
+      await expect(updatedPayBadge).toContainText(/Refunded|مستردة/i, { timeout: 15_000 });
+    } else {
+      // Payment was already refunded in an earlier run: verify Refunded badge is shown
+      await expect(payStatusBadge).toContainText(/Refunded|مستردة/i);
+    }
   });
 });
 

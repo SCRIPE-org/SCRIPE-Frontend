@@ -14,7 +14,6 @@ import { useState, useMemo, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { useI18n } from "@core/providers/i18n-provider";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { useAppStore } from "@core/store/useAppStore";
 import { usePermissions } from "@core/hooks/use-permissions";
 import { SYSTEM_PERMISSIONS } from "@core/common/types/permissions";
 import { useEnhancedToast } from "@core/hooks/use-enhanced-toast";
@@ -60,19 +59,15 @@ export function useTenantsViewModel() {
   const router = useRouter();
   const queryClient = useQueryClient();
   const { t } = useI18n();
-  const { hasPermission } = usePermissions();
+  const { hasPermission, isPlatformSuperAdmin } = usePermissions();
   const { success: toastSuccess, error: toastError } = useEnhancedToast();
-  const user = useAppStore((state) => state.user);
   const { tenantRepository } = identityContainer;
 
   // ── Permissions ──
   const canCreate = hasPermission(SYSTEM_PERMISSIONS.TENANTS_CREATE);
 
-  // ── System admin check ──
-  const isSystemAdmin = useMemo(() => {
-    const adminType = user?.adminTypeName?.toLowerCase() || "";
-    return adminType.includes("super") || adminType.includes("system");
-  }, [user]);
+  // Use the same canonical platform-admin decision as route and permission guards.
+  const isSystemAdmin = isPlatformSuperAdmin;
 
   // ── Search ──
   const [search, setSearch] = useState("");

@@ -86,6 +86,12 @@ export const en = {
       viewReceivables: "View in Receivables",
       viewPayments: "View in Payments",
       recordPayment: "Record payment",
+      refundRequiredTitle: "Refund Action Required",
+      refundRequiredDescription:
+        "This reservation is cancelled, but has recorded payments totaling {{amount}}. Record a refund in Finance.",
+      issueRefundCta: "Issue Refund",
+      refundRequiredBadge: "Refund Required",
+      refundedBadge: "Refunded",
     },
     transition: {
       T01: "Draft created",

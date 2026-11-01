@@ -105,9 +105,26 @@ export function useBookingFinanceSummary(reservationId: string, canViewReceivabl
         (sum, p) => sum + p.unallocatedAmount,
         0
       );
-      const refundedAmount = payments
-        .filter((p) => p.status === "Refunded")
-        .reduce((sum, p) => sum + p.amount, 0);
+
+      const timelines =
+        typeof moneyRepository.getPaymentTimeline === "function"
+          ? await Promise.all(
+              rawPayments.map((p) =>
+                moneyRepository.getPaymentTimeline(p.id).catch(() => null)
+              )
+            )
+          : [];
+      const timelineRefundedAmount = timelines.reduce((sum, tl) => {
+        if (!tl?.refunds) return sum;
+        return sum + tl.refunds.reduce((rSum, r) => rSum + (Number(r.amount) || 0), 0);
+      }, 0);
+
+      const refundedAmount = Math.max(
+        payments
+          .filter((p) => p.status === "Refunded")
+          .reduce((sum, p) => sum + p.amount, 0),
+        timelineRefundedAmount
+      );
 
       if (invoice) {
         // Authoritative invoice truth:
