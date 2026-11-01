@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { getVenueContainer } from "@modules/venue/di";
 import type { Facility } from "@modules/venue";
 import type {
@@ -53,6 +53,7 @@ function todayIn(timeZoneId: string): string {
  */
 export function useOperationsCalendarViewModel() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const {
     operationsCalendarRepository,
     facilityRepository,
@@ -69,7 +70,31 @@ export function useOperationsCalendarViewModel() {
   const [timeZoneId, setTimeZoneIdState] = useState("");
   const [resourceId, setResourceIdState] = useState("");
   const [date, setDateState] = useState(new Date().toISOString().slice(0, 10));
+  const [selectedClosure, setSelectedClosure] = useState<OperationsCalendarBlock | null>(null);
   const requestGeneration = useRef(0);
+
+  const syncUrl = useCallback(
+    (newParams: { date?: string; facilityId?: string; resourceId?: string }) => {
+      if (typeof window === "undefined") return;
+      try {
+        const url = new URL(window.location.href);
+        if (newParams.date !== undefined) {
+          if (newParams.date) url.searchParams.set("date", newParams.date);
+          else url.searchParams.delete("date");
+        }
+        if (newParams.facilityId !== undefined) {
+          if (newParams.facilityId) url.searchParams.set("facilityId", newParams.facilityId);
+          else url.searchParams.delete("facilityId");
+        }
+        if (newParams.resourceId !== undefined) {
+          if (newParams.resourceId) url.searchParams.set("resourceId", newParams.resourceId);
+          else url.searchParams.delete("resourceId");
+        }
+        window.history.replaceState(null, "", `${url.pathname}${url.search}`);
+      } catch {}
+    },
+    []
+  );
 
   useEffect(() => {
     let active = true;
@@ -134,16 +159,27 @@ export function useOperationsCalendarViewModel() {
               } satisfies CalendarResource,
             ];
           });
-        const validFacilityId = getSavedFacilityId(facilityPage.items);
+        const paramFacilityId = searchParams?.get("facilityId");
+        const paramResourceId = searchParams?.get("resourceId");
+        const paramDate = searchParams?.get("date");
+
+        const targetFacilityId =
+          (paramFacilityId && facilityPage.items.some((f) => f.id === paramFacilityId)
+            ? paramFacilityId
+            : null) ||
+          (paramResourceId &&
+            composed.find((r) => r.id === paramResourceId)?.facilityId) ||
+          getSavedFacilityId(facilityPage.items);
+
         const initialFacility =
-          (validFacilityId &&
+          (targetFacilityId &&
             facilityPage.items.find(
-              (f) => f.id === validFacilityId && composed.some((r) => r.facilityId === f.id)
+              (f) => f.id === targetFacilityId && composed.some((r) => r.facilityId === f.id)
             )) ||
           facilityPage.items.find((facility) =>
             composed.some((resource) => resource.facilityId === facility.id)
           ) ||
-          (validFacilityId && facilityPage.items.find((f) => f.id === validFacilityId)) ||
+          (targetFacilityId && facilityPage.items.find((f) => f.id === targetFacilityId)) ||
           facilityPage.items[0];
         const initialZone =
           composed.find((resource) => resource.facilityId === initialFacility?.id)?.timeZoneId ??
@@ -154,7 +190,14 @@ export function useOperationsCalendarViewModel() {
         setSetupReady(true);
         setFacilityIdState(initialFacility?.id ?? "");
         setTimeZoneIdState(initialZone);
-        if (initialZone) setDateState(todayIn(initialZone));
+        if (paramResourceId && composed.some((r) => r.id === paramResourceId)) {
+          setResourceIdState(paramResourceId);
+        }
+        if (paramDate) {
+          setDateState(paramDate);
+        } else if (initialZone) {
+          setDateState(todayIn(initialZone));
+        }
       } catch (error) {
         if (!active) return;
         setState((current) => ({
@@ -273,8 +316,9 @@ export function useOperationsCalendarViewModel() {
     (value: string) => {
       invalidate();
       setDateState(value);
+      syncUrl({ date: value });
     },
-    [invalidate]
+    [invalidate, syncUrl]
   );
   const previousDay = useCallback(() => setDate(shiftDate(date, -1)), [date, setDate]);
   const nextDay = useCallback(() => setDate(shiftDate(date, 1)), [date, setDate]);
@@ -287,6 +331,7 @@ export function useOperationsCalendarViewModel() {
       setFacilityIdState(value);
       setTimeZoneIdState(zone);
       setResourceIdState("");
+      syncUrl({ facilityId: value, resourceId: "" });
       if (typeof window !== "undefined") {
         try {
           saveFacilityId(value);
@@ -296,7 +341,7 @@ export function useOperationsCalendarViewModel() {
         } catch {}
       }
     },
-    [allResources, invalidate]
+    [allResources, invalidate, syncUrl]
   );
 
   useEffect(() => {
@@ -317,15 +362,17 @@ export function useOperationsCalendarViewModel() {
       invalidate();
       setTimeZoneIdState(value);
       setResourceIdState("");
+      syncUrl({ resourceId: "" });
     },
-    [invalidate]
+    [invalidate, syncUrl]
   );
   const setResourceId = useCallback(
     (value: string) => {
       invalidate();
       setResourceIdState(value);
+      syncUrl({ resourceId: value });
     },
-    [invalidate]
+    [invalidate, syncUrl]
   );
 
   const openBlock = useCallback(
@@ -336,7 +383,7 @@ export function useOperationsCalendarViewModel() {
         (block.status as string) === "Unavailable" ||
         block.reservationId.startsWith("closure-");
       if (isClosure) {
-        router.push(`/venue/resources/${encodeURIComponent(block.resourceId)}?tab=closures`);
+        setSelectedClosure(block);
       } else {
         router.push(`/venue/bookings/${encodeURIComponent(block.reservationId)}`);
       }
@@ -381,5 +428,8 @@ export function useOperationsCalendarViewModel() {
     refresh: loadDay,
     openBlock,
     createFromSlot,
+    selectedClosure,
+    setSelectedClosure,
+    closeClosure: () => setSelectedClosure(null),
   };
 }

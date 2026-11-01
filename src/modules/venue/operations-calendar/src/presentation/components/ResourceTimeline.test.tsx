@@ -1,4 +1,4 @@
-﻿import { fireEvent, render, screen, within } from "@testing-library/react";
+import { fireEvent, render, screen, within } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
 import type { OperationsCalendarDay } from "../../domain/entities/OperationsCalendar";
 import { ResourceTimeline } from "./ResourceTimeline";
@@ -186,5 +186,46 @@ describe("ResourceTimeline", () => {
 
     const lane = document.querySelector<HTMLElement>('[data-resource-id="resource-1"]')!;
     expect(within(lane).getAllByText(/Maintenance/).length).toBeGreaterThan(0);
+  });
+
+  it("allows clicking a 30-minute free window when the other half of the hour is occupied", () => {
+    const onEmptySlot = vi.fn();
+    const dayWith30MinBooking: OperationsCalendarDay = {
+      ...day,
+      blocks: [
+        {
+          reservationId: "partial-30",
+          reservationNumber: "RES-30M",
+          resourceId: "resource-1",
+          status: "Confirmed",
+          startUtc: "2026-09-08T21:00:00Z", // 00:00 - 00:30 local
+          endUtc: "2026-09-08T21:30:00Z",
+          quantity: 1,
+          customerPartyId: "party-p",
+          holdExpiresAtUtc: null,
+        },
+      ],
+    };
+
+    render(
+      <ResourceTimeline
+        day={dayWith30MinBooking}
+        resources={[resource]}
+        locale="en"
+        direction="ltr"
+        canCreate
+        t={t}
+        onOpen={vi.fn()}
+        onEmptySlot={onEmptySlot}
+      />
+    );
+
+    // The second half (00:30) of the 00:00 hour should be enabled and clickable
+    const freeSubSlot = screen.getByRole("button", {
+      name: /Create booking for Court 1 at 00:30/,
+    });
+    expect(freeSubSlot).not.toBeDisabled();
+    fireEvent.click(freeSubSlot);
+    expect(onEmptySlot).toHaveBeenCalledWith(resource, "2026-09-08T21:30:00.000Z");
   });
 });

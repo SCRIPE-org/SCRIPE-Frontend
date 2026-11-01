@@ -589,7 +589,7 @@ export function useClickToBookViewModel({
     const duplicate = customerResults.find(
       (c) =>
         c.displayName.toLowerCase() === trimmedName.toLowerCase() ||
-        (quickPhone && c.type?.includes(quickPhone))
+        (quickPhone && (c.phone === quickPhone || c.phone?.includes(quickPhone)))
     );
     if (duplicate && !duplicateWarning) {
       setDuplicateWarning(
@@ -601,13 +601,21 @@ export function useClickToBookViewModel({
     setQuickAddError(null);
     setSubmitting(true);
     try {
-      const fingerprint = JSON.stringify([trimmedName, "Person", quickPhone.trim() || null]);
+      const fingerprint = JSON.stringify([
+        trimmedName,
+        "Person",
+        quickPhone.trim() || null,
+        quickEmail.trim() || null,
+      ]);
       const idempotencyKey = getIntentKey(quickAddIntentRef, fingerprint);
       const created = await customerRepository.create(
         trimmedName,
         "Person",
         quickPhone.trim() || undefined,
-        { idempotencyKey }
+        {
+          idempotencyKey,
+          email: quickEmail.trim() || undefined,
+        }
       );
       setSelectedCustomer(created);
       setQuickAddOpen(false);

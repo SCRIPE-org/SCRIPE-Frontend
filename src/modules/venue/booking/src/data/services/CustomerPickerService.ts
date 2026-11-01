@@ -144,6 +144,36 @@ export class CustomerPickerService implements ICustomerPickerService {
       }
     }
 
+    if (options?.email && options.email.trim()) {
+      const emailHeaders: Record<string, string> = {};
+      if (idempotencyKey) {
+        emailHeaders["Idempotency-Key"] = `${idempotencyKey}:email`;
+      }
+      try {
+        await this.api.post(
+          BOOKING_ENDPOINTS.CONTACT_POINTS,
+          {
+            partyId,
+            type: "Email",
+            value: options.email.trim(),
+            isPrimary: true,
+          },
+          undefined,
+          Object.keys(emailHeaders).length > 0 ? { headers: emailHeaders } : undefined
+        );
+      } catch (err) {
+        if (options?.onContactPointFailure) {
+          options.onContactPointFailure(err, partyId);
+        } else {
+          throw new PartialCustomerSaveError(
+            `Customer was created with ID ${partyId}, but saving the email address failed.`,
+            partyId,
+            err
+          );
+        }
+      }
+    }
+
     return this.getById(partyId);
   }
 }

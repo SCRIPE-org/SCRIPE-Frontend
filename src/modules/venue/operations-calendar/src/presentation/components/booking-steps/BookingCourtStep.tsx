@@ -132,7 +132,7 @@ export function BookingCourtStep({
             {t("operationsCalendar.clickToBook.courtStep.duration")}
           </Label>
           {allowedDurations.length <= 1 ? (
-            <div className="border-nx-border bg-nx-raised/40 flex h-8 w-full items-center rounded-md border px-3 text-xs font-semibold text-nx-ink">
+            <div className="border-nx-line bg-nx-raised/40 flex h-8 w-full items-center rounded-md border px-3 text-xs font-semibold text-nx-ink">
               {t("operationsCalendar.clickToBook.courtStep.minutes", {
                 minutes: allowedDurations[0] ?? 60,
               })}

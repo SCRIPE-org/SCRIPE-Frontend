@@ -37,7 +37,7 @@ interface ResourceTimelineProps {
 function statusClass(status: OperationsCalendarBlock["status"]) {
   if (status === "Held") return "border-warning/50 bg-warning/15 text-warning-strong";
   if (status === "CheckedIn") return "border-info/50 bg-info/15 text-info";
-  if (status === "Completed") return "border-nx-border bg-nx-raised/70 text-nx-ink-2";
+  if (status === "Completed") return "border-nx-line bg-nx-raised/70 text-nx-ink-2";
   if (status === "NoShow")
     return "border-destructive/60 bg-destructive/15 text-destructive font-semibold";
   if (
@@ -48,7 +48,7 @@ function statusClass(status: OperationsCalendarBlock["status"]) {
     return "border-warning/40 bg-warning/20 text-warning font-semibold";
   }
   if (status === "Cancelled") {
-    return "border-nx-line bg-nx-surfaceSubtle text-nx-ink-3 line-through opacity-70";
+    return "border-nx-line bg-nx-raised text-nx-ink-3 line-through opacity-70";
   }
   return "border-success/50 bg-success/15 text-success";
 }
@@ -125,32 +125,55 @@ export function ResourceTimeline(props: ResourceTimelineProps) {
                 <div className="relative flex" style={{ width: timelineWidth, height: laneHeight }}>
                   {slots.map((slot) => {
                     const slotStart = Date.parse(slot.instantUtc);
-                    const slotEnd = slotStart + 60 * 60 * 1000;
-                    const occupied = placed.some(
-                      ({ block }) =>
-                        Date.parse(block.startUtc) < slotEnd && slotStart < Date.parse(block.endUtc)
-                    );
+                    const subSlots = [
+                      {
+                        start: slotStart,
+                        end: slotStart + 30 * 60 * 1000,
+                        instantUtc: slot.instantUtc,
+                        label: slot.label,
+                      },
+                      {
+                        start: slotStart + 30 * 60 * 1000,
+                        end: slotStart + 60 * 60 * 1000,
+                        instantUtc: new Date(slotStart + 30 * 60 * 1000).toISOString(),
+                        label: localTime(new Date(slotStart + 30 * 60 * 1000).toISOString(), props.locale, props.day.timeZoneId),
+                      },
+                    ];
+
                     return (
-                      <Button
-                        variant="ghost"
-                        type="button"
+                      <div
                         key={slot.instantUtc}
-                        className="h-full w-[76px] shrink-0 rounded-none border-r border-nx-line p-0 text-transparent outline-none hover:bg-nx-hover focus-visible:z-20 focus-visible:shadow-nx-focus"
-                        aria-label={
-                          occupied
-                            ? undefined
-                            : props.t("operationsCalendar.timeline.emptySlot", {
-                                resource: resource.name,
-                                time: slot.label,
-                              })
-                        }
-                        aria-hidden={occupied || undefined}
-                        tabIndex={occupied ? -1 : undefined}
-                        disabled={!props.canCreate || occupied}
-                        onClick={() => props.onEmptySlot(resource, slot.instantUtc)}
+                        className="flex h-full w-[76px] shrink-0 border-r border-nx-line"
                       >
-                        {slot.label}
-                      </Button>
+                        {subSlots.map((sub) => {
+                          const occupied = placed.some(
+                            ({ block }) =>
+                              Date.parse(block.startUtc) < sub.end && sub.start < Date.parse(block.endUtc)
+                          );
+                          return (
+                            <Button
+                              variant="ghost"
+                              type="button"
+                              key={sub.instantUtc}
+                              className="h-full w-[38px] shrink-0 rounded-none border-r border-dashed border-nx-line/40 p-0 text-transparent outline-none last:border-r-0 hover:bg-nx-hover focus-visible:z-20 focus-visible:shadow-nx-focus"
+                              aria-label={
+                                occupied
+                                  ? undefined
+                                  : props.t("operationsCalendar.timeline.emptySlot", {
+                                      resource: resource.name,
+                                      time: sub.label,
+                                    })
+                              }
+                              aria-hidden={occupied || undefined}
+                              tabIndex={occupied ? -1 : undefined}
+                              disabled={!props.canCreate || occupied}
+                              onClick={() => props.onEmptySlot(resource, sub.instantUtc)}
+                            >
+                              {sub.label}
+                            </Button>
+                          );
+                        })}
+                      </div>
                     );
                   })}
                   {placed.map(({ block, track }) => {

@@ -9,6 +9,14 @@ import { Button } from "@core/ui/button";
 import { EmptyState } from "@core/ui/empty-state";
 import { LoadingSpinner } from "@core/ui/loading-spinner";
 import { PageHeader } from "@core/ui/page-header";
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetFooter,
+  SheetTitle,
+  SheetDescription,
+} from "@core/ui/sheet";
 import { useModuleLocales } from "@core/hooks/use-module-locales";
 import { usePermission } from "@core/hooks/use-permission";
 import { useI18n } from "@core/providers/i18n-provider";
@@ -25,6 +33,23 @@ import type { CalendarResource } from "../../domain/entities/OperationsCalendar"
 /**
  * Documentation for module export
  */
+function cleanModalActionParams() {
+  if (typeof window === "undefined") return;
+  try {
+    const url = new URL(window.location.href);
+    url.searchParams.delete("newBooking");
+    url.searchParams.delete("action");
+    url.searchParams.delete("startTime");
+    url.searchParams.delete("durationMinutes");
+    url.searchParams.delete("customerId");
+    const query = url.searchParams.toString();
+    const newUrl = query ? `${url.pathname}?${query}` : url.pathname;
+    window.history.replaceState(null, "", newUrl);
+  } catch {
+    window.history.replaceState(null, "", window.location.pathname);
+  }
+}
+
 export const OperationsCalendarView = React.memo(function OperationsCalendarView() {
   useModuleLocales(() => import("../../../locales"), "venue.operationsCalendar");
   const { t, language, direction } = useI18n();
@@ -144,7 +169,7 @@ export const OperationsCalendarView = React.memo(function OperationsCalendarView
           })
         );
         if (typeof window !== "undefined") {
-          window.history.replaceState(null, "", window.location.pathname);
+          cleanModalActionParams();
         }
         return;
       }
@@ -156,7 +181,7 @@ export const OperationsCalendarView = React.memo(function OperationsCalendarView
           })
         );
         if (typeof window !== "undefined") {
-          window.history.replaceState(null, "", window.location.pathname);
+          cleanModalActionParams();
         }
         return;
       }
@@ -207,7 +232,7 @@ export const OperationsCalendarView = React.memo(function OperationsCalendarView
 
     // Clean URL query string immediately to avoid stale modal re-trigger on refresh (Requirement 36)
     if (typeof window !== "undefined") {
-      window.history.replaceState(null, "", window.location.pathname);
+      cleanModalActionParams();
     }
   }, [canCreate, searchParams, vm.allResources, vm.facilityId, facilityResources, vm, t]);
 
@@ -361,7 +386,7 @@ export const OperationsCalendarView = React.memo(function OperationsCalendarView
           if (!open) {
             setSelectedInstant(null);
             if (typeof window !== "undefined") {
-              window.history.replaceState(null, "", window.location.pathname);
+              cleanModalActionParams();
             }
           }
         }}
@@ -399,6 +424,94 @@ export const OperationsCalendarView = React.memo(function OperationsCalendarView
         timeZoneId={vm.timeZoneId}
         onSelectSlot={(res, instant, dur) => handleEmptySlot(res, instant, dur)}
       />
+      {/* Maintenance / Blocked Slot Details Drawer */}
+      <Sheet
+        open={Boolean(vm.selectedClosure)}
+        onOpenChange={(open) => {
+          if (!open) vm.closeClosure();
+        }}
+      >
+        <SheetContent side="end" className="w-full sm:max-w-md">
+          <SheetHeader>
+            <SheetTitle className="flex items-center gap-2">
+              <Lock className="size-4 text-nx-warning" />
+              {t("operationsCalendar.maintenanceDrawer.title", {
+                defaultValue: "Maintenance & Block Details",
+              })}
+            </SheetTitle>
+            <SheetDescription>
+              {t("operationsCalendar.maintenanceDrawer.description", {
+                defaultValue:
+                  "This court or space is currently unavailable for bookings due to maintenance or administrative block.",
+              })}
+            </SheetDescription>
+          </SheetHeader>
+
+          {vm.selectedClosure && (
+            <div className="mt-6 space-y-4">
+              <div className="rounded-md border border-nx-line bg-nx-raised p-4 space-y-3">
+                <div className="flex justify-between items-center text-sm">
+                  <span className="text-nx-ink-3">
+                    {t("operationsCalendar.maintenanceDrawer.court", { defaultValue: "Court / Resource" })}
+                  </span>
+                  <span className="font-semibold text-nx-ink">
+                    {vm.allResources.find((r) => r.id === vm.selectedClosure?.resourceId)?.name ||
+                      vm.selectedClosure.resourceId}
+                  </span>
+                </div>
+
+                <div className="flex justify-between items-center text-sm">
+                  <span className="text-nx-ink-3">
+                    {t("operationsCalendar.maintenanceDrawer.status", { defaultValue: "Status" })}
+                  </span>
+                  <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-nx-warning/10 text-nx-warning border border-nx-warning/30">
+                    {vm.selectedClosure.status}
+                  </span>
+                </div>
+
+                <div className="flex justify-between items-center text-sm">
+                  <span className="text-nx-ink-3">
+                    {t("operationsCalendar.maintenanceDrawer.reference", { defaultValue: "Reference" })}
+                  </span>
+                  <span className="font-mono text-xs text-nx-ink-2">
+                    {vm.selectedClosure.reservationNumber || vm.selectedClosure.reservationId}
+                  </span>
+                </div>
+
+                <div className="flex justify-between items-center text-sm">
+                  <span className="text-nx-ink-3">
+                    {t("operationsCalendar.maintenanceDrawer.start", { defaultValue: "Start Time" })}
+                  </span>
+                  <span className="text-nx-ink">
+                    {new Date(vm.selectedClosure.startUtc).toLocaleTimeString([], {
+                      hour: "2-digit",
+                      minute: "2-digit",
+                    })}
+                  </span>
+                </div>
+
+                <div className="flex justify-between items-center text-sm">
+                  <span className="text-nx-ink-3">
+                    {t("operationsCalendar.maintenanceDrawer.end", { defaultValue: "End Time" })}
+                  </span>
+                  <span className="text-nx-ink">
+                    {new Date(vm.selectedClosure.endUtc).toLocaleTimeString([], {
+                      hour: "2-digit",
+                      minute: "2-digit",
+                    })}
+                  </span>
+                </div>
+              </div>
+            </div>
+          )}
+
+          <SheetFooter className="mt-8 flex flex-row justify-end gap-2">
+            <Button variant="outline" onClick={() => vm.closeClosure()}>
+              {t("common.close", { defaultValue: "Close" })}
+            </Button>
+          </SheetFooter>
+        </SheetContent>
+      </Sheet>
     </div>
   );
 });

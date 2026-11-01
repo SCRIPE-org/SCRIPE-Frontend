@@ -2,6 +2,7 @@ import type { CustomerSummary } from "../entities/Booking";
 
 export interface CustomerCreateOptions {
   idempotencyKey?: string;
+  email?: string;
   onContactPointFailure?: (error: unknown, partyId: string) => void;
 }
 

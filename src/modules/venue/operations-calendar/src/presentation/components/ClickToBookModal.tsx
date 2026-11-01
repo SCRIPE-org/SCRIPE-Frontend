@@ -5,13 +5,13 @@
 import React from "react";
 import { ArrowRight, Timer } from "lucide-react";
 import {
-  Dialog,
-  DialogContent,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogDescription,
-} from "@core/ui/dialog";
+  Sheet,
+  SheetContent,
+  SheetFooter,
+  SheetHeader,
+  SheetTitle,
+  SheetDescription,
+} from "@core/ui/sheet";
 import { Button } from "@core/ui/button";
 import { Alert, AlertDescription } from "@core/ui/alert";
 import {
@@ -73,20 +73,20 @@ export function ClickToBookModal(props: ClickToBookModalProps) {
   const { t } = vm;
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="border-nx-line max-w-lg rounded-2xl border bg-nx-surface p-6 shadow-xl">
-        <DialogHeader className="border-nx-line border-b pb-3 pe-8 text-start">
-          <DialogTitle className="text-base font-bold text-nx-ink">
+    <Sheet open={open} onOpenChange={onOpenChange}>
+      <SheetContent side="end" className="border-nx-line flex h-full w-full flex-col justify-between overflow-y-auto border-s bg-nx-surface p-6 shadow-xl sm:max-w-lg">
+        <SheetHeader className="border-nx-line border-b pb-3 pe-8 text-start">
+          <SheetTitle className="text-base font-bold text-nx-ink">
             {t("operationsCalendar.clickToBook.title", { defaultValue: "New Booking" })}
-          </DialogTitle>
-          <DialogDescription className="text-xs text-nx-ink-2">
+          </SheetTitle>
+          <SheetDescription className="text-xs text-nx-ink-2">
             {vm.selectedResource?.name
               ? `${vm.selectedResource.name} • ${vm.selectedResource.facilityName || ""}`
               : t("operationsCalendar.clickToBook.dialogDescription", {
                   defaultValue: "Schedule court time, select customer, and confirm booking.",
                 })}
-          </DialogDescription>
-        </DialogHeader>
+          </SheetDescription>
+        </SheetHeader>
 
         {/* Stepper Header (Only during normal booking flow) */}
         {vm.stage === "booking" && (
@@ -193,8 +193,8 @@ export function ClickToBookModal(props: ClickToBookModalProps) {
           <div className="space-y-4 py-2">
             {/* Context Summary Card (Shown in Steps 1 & 2) */}
             {vm.step >= 1 && vm.selectedResource && (
-              <div className="border-nx-border bg-nx-raised/40 flex items-center gap-3 rounded-xl border p-3">
-                <div className="border-nx-border relative size-12 shrink-0 overflow-hidden rounded-lg border bg-nx-surface">
+              <div className="border-nx-line bg-nx-raised/40 flex items-center gap-3 rounded-xl border p-3">
+                <div className="border-nx-line relative size-12 shrink-0 overflow-hidden rounded-lg border bg-nx-surface">
                   <img
                     src={getCourtImage(vm.selectedResource.name)}
                     alt={vm.selectedResource.name}
@@ -342,7 +342,7 @@ export function ClickToBookModal(props: ClickToBookModalProps) {
 
         {/* Footer Controls */}
         {vm.stage === "booking" && (
-          <DialogFooter className="border-nx-border flex items-center justify-between border-t pt-3">
+          <SheetFooter className="border-nx-line flex items-center justify-between border-t pt-3">
             {vm.step === 2 && vm.canCreateHold && !vm.holdExpiresAtUtc ? (
               <Button
                 type="button"
@@ -429,9 +429,9 @@ export function ClickToBookModal(props: ClickToBookModalProps) {
                 </Button>
               )}
             </div>
-          </DialogFooter>
+          </SheetFooter>
         )}
-      </DialogContent>
-    </Dialog>
+      </SheetContent>
+    </Sheet>
   );
 }

@@ -72,7 +72,7 @@ export function CalendarToolbar(props: CalendarToolbarProps) {
         {/* Left: Date stepper & Navigation */}
         <div className="flex items-center gap-2">
           {/* Stepper Pill: < Today > */}
-          <div className="bg-nx-surfaceSubtle flex items-center rounded-lg border border-nx-line p-0.5 text-xs font-semibold">
+          <div className="bg-nx-raised flex items-center rounded-lg border border-nx-line p-0.5 text-xs font-semibold">
             <Button
               variant="ghost"
               size="icon"
@@ -116,8 +116,8 @@ export function CalendarToolbar(props: CalendarToolbarProps) {
             onClick={() => setShowFilters((prev) => !prev)}
             className={`h-8 gap-1.5 border-nx-line text-xs font-semibold transition-colors ${
               showFilters || Boolean(props.resourceId)
-                ? "bg-nx-surfaceSubtle border-nx-ink/20 font-bold text-nx-ink"
-                : "hover:bg-nx-surfaceSubtle text-nx-ink"
+                ? "bg-nx-raised border-nx-ink/20 font-bold text-nx-ink"
+                : "hover:bg-nx-raised text-nx-ink"
             }`}
           >
             <SlidersHorizontal className="size-3.5 text-nx-ink-3" aria-hidden="true" />
@@ -132,7 +132,7 @@ export function CalendarToolbar(props: CalendarToolbarProps) {
               size="sm"
               disabled={actionsDisabled}
               onClick={props.onFindSlots}
-              className="hover:bg-nx-surfaceSubtle h-8 gap-1.5 border-nx-line text-xs font-semibold"
+              className="hover:bg-nx-raised h-8 gap-1.5 border-nx-line text-xs font-semibold"
             >
               <Search className="size-3.5 text-nx-accent" />
               <span className="hidden sm:inline">
@@ -148,7 +148,7 @@ export function CalendarToolbar(props: CalendarToolbarProps) {
               size="sm"
               disabled={actionsDisabled}
               onClick={props.onBlockTime}
-              className="hover:bg-nx-surfaceSubtle h-8 gap-1.5 border-nx-line text-xs font-semibold"
+              className="hover:bg-nx-raised h-8 gap-1.5 border-nx-line text-xs font-semibold"
             >
               <Clock className="size-3.5 text-warning" />
               <span className="hidden sm:inline">

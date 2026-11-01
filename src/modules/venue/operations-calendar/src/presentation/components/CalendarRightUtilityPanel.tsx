@@ -111,7 +111,7 @@ export function CalendarRightUtilityPanel({
               size="sm"
               type="button"
               onClick={handlePrevMonth}
-              className="hover:bg-nx-surfaceSubtle rounded p-1 text-nx-ink-3 transition-colors hover:text-nx-ink"
+              className="hover:bg-nx-raised rounded p-1 text-nx-ink-3 transition-colors hover:text-nx-ink"
               aria-label={t("operationsCalendar.utility.previousMonth", {
                 defaultValue: "Previous month",
               })}
@@ -123,7 +123,7 @@ export function CalendarRightUtilityPanel({
               size="sm"
               type="button"
               onClick={handleNextMonth}
-              className="hover:bg-nx-surfaceSubtle rounded p-1 text-nx-ink-3 transition-colors hover:text-nx-ink"
+              className="hover:bg-nx-raised rounded p-1 text-nx-ink-3 transition-colors hover:text-nx-ink"
               aria-label={t("operationsCalendar.utility.nextMonth", { defaultValue: "Next month" })}
             >
               <ChevronRight className="size-3.5 rtl:rotate-180" />
@@ -160,7 +160,7 @@ export function CalendarRightUtilityPanel({
                 className={`flex h-7 w-7 items-center justify-center rounded-full text-xs font-semibold transition-all ${
                   isSelected
                     ? "text-nx-on-fill shadow-xs bg-nx-accent font-bold"
-                    : "hover:bg-nx-surfaceSubtle text-nx-ink"
+                    : "hover:bg-nx-raised text-nx-ink"
                 }`}
               >
                 {dayNum}
@@ -192,7 +192,7 @@ export function CalendarRightUtilityPanel({
             variant="ghost"
             size="sm"
             onClick={onBlockTime}
-            className="hover:bg-nx-surfaceSubtle h-8 w-full justify-start gap-2.5 text-xs font-semibold text-nx-ink"
+            className="hover:bg-nx-raised h-8 w-full justify-start gap-2.5 text-xs font-semibold text-nx-ink"
           >
             <Clock className="size-3.5 text-warning" />
             <span>
@@ -204,7 +204,7 @@ export function CalendarRightUtilityPanel({
             variant="ghost"
             size="sm"
             onClick={onFindSlots || onNewBooking}
-            className="hover:bg-nx-surfaceSubtle h-8 w-full justify-start gap-2.5 text-xs font-semibold text-nx-ink"
+            className="hover:bg-nx-raised h-8 w-full justify-start gap-2.5 text-xs font-semibold text-nx-ink"
           >
             <Search className="size-3.5 text-primary" />
             <span>
@@ -218,7 +218,7 @@ export function CalendarRightUtilityPanel({
             variant="ghost"
             size="sm"
             onClick={onViewToday}
-            className="hover:bg-nx-surfaceSubtle h-8 w-full justify-start gap-2.5 text-xs font-semibold text-nx-ink"
+            className="hover:bg-nx-raised h-8 w-full justify-start gap-2.5 text-xs font-semibold text-nx-ink"
           >
             <List className="size-3.5 text-success" />
             <span>

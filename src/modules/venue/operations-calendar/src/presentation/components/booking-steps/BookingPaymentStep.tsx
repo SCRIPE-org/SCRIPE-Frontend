@@ -194,7 +194,7 @@ export function BookingPaymentStep({
             <Button
               asChild
               variant="outline"
-              className="border-nx-border h-9 w-full rounded-xl border text-xs font-semibold hover:bg-nx-raised"
+              className="border-nx-line h-9 w-full rounded-xl border text-xs font-semibold hover:bg-nx-raised"
             >
               <Link href={`/venue/bookings/${encodeURIComponent(reservationId)}`}>
                 <ExternalLink className="me-2 size-3.5" />

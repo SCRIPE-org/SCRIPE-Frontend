@@ -28,8 +28,14 @@ test.describe("SCRIPE Venue: Real Runtime End-to-End Operational Acceptance", ()
     const dbPort = process.env.PGPORT ?? "5432";
     const dbName = process.env.PGDATABASE ?? "SCRIPE_SHARED";
     const dbUser = process.env.PGUSER ?? "postgres";
-    const cmd = `psql -h ${dbHost} -p ${dbPort} -U ${dbUser} -d ${dbName} -c "${sql.replace(/"/g, '\\"')}"`;
-    return execSync(cmd, { encoding: "utf8" });
+    const psqlBin =
+      process.env.PSQL_PATH ??
+      (process.platform === "win32" && require("fs").existsSync("C:\\Program Files\\PostgreSQL\\18\\bin\\psql.exe")
+        ? '"C:\\Program Files\\PostgreSQL\\18\\bin\\psql.exe"'
+        : "psql");
+    const env = { ...process.env, PGPASSWORD: process.env.PGPASSWORD ?? "1598741258" };
+    const cmd = `${psqlBin} -h ${dbHost} -p ${dbPort} -U ${dbUser} -d ${dbName} -c "${sql.replace(/"/g, '\\"')}"`;
+    return execSync(cmd, { encoding: "utf8", env });
   }
 
   test.beforeEach(async ({ page }) => {
@@ -68,6 +74,20 @@ test.describe("SCRIPE Venue: Real Runtime End-to-End Operational Acceptance", ()
   });
 
   test("2. Unmocked Booking Journey via ClickToBookModal (Resolves DEF-VENUE-005 & UI Bugs)", async ({ page }) => {
+    // Ensure test slot (11:00 on 2026-11-01) is free
+    try {
+      queryPostgres(`
+        DELETE FROM venue.booking_status_histories WHERE reservation_id IN (SELECT id FROM venue.reservations WHERE reservation_number LIKE 'RES-20261101-%');
+        DELETE FROM venue.booking_requests WHERE reservation_id IN (SELECT id FROM venue.reservations WHERE reservation_number LIKE 'RES-20261101-%');
+        DELETE FROM venue.guest_reservation_accesses WHERE reservation_id IN (SELECT id FROM venue.reservations WHERE reservation_number LIKE 'RES-20261101-%');
+        DELETE FROM venue.capacity_ledger_entries WHERE reservation_id IN (SELECT id FROM venue.reservations WHERE reservation_number LIKE 'RES-20261101-%');
+        DELETE FROM venue.booking_holds WHERE reservation_id IN (SELECT id FROM venue.reservations WHERE reservation_number LIKE 'RES-20261101-%');
+        DELETE FROM venue.reservations WHERE reservation_number LIKE 'RES-20261101-%';
+      `);
+    } catch {
+      // ignore
+    }
+
     // Direct authenticated session setup
     await page.goto("/login?_tenant=AHLY&redirect=%2Fvenue%2Fcalendar");
     await page.locator("#identifier").fill(adminEmail);

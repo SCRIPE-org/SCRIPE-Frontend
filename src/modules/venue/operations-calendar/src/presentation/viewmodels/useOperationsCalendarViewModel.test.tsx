@@ -1,10 +1,14 @@
-﻿import { act, renderHook, waitFor } from "@testing-library/react";
+import { act, renderHook, waitFor } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { getVenueContainer } from "@modules/venue/di";
 import { useOperationsCalendarViewModel } from "./useOperationsCalendarViewModel";
 
-vi.mock("next/navigation", () => ({ useRouter: vi.fn() }));
+let mockSearchParams = new URLSearchParams();
+vi.mock("next/navigation", () => ({
+  useRouter: vi.fn(),
+  useSearchParams: () => mockSearchParams,
+}));
 vi.mock("@modules/venue/di", () => ({ getVenueContainer: vi.fn() }));
 
 const facility = { id: "facility-1", name: "Downtown" };
@@ -66,6 +70,7 @@ describe("useOperationsCalendarViewModel", () => {
     vi.useFakeTimers({ shouldAdvanceTime: true });
     vi.setSystemTime(new Date("2026-09-09T06:00:00Z"));
     vi.mocked(useRouter).mockReturnValue({ push } as never);
+    mockSearchParams = new URLSearchParams();
     push.mockReset();
   });
 
@@ -147,5 +152,49 @@ describe("useOperationsCalendarViewModel", () => {
       "/venue/bookings/new?facilityId=facility-1&resourceId=resource-1&date=2026-09-09&startTime=10%3A30&durationMinutes=60"
     );
     expect(container.bookingRepository).not.toHaveProperty("createDraft");
+  });
+
+  it("preserves URL query parameters on initialization and updates them on state change", async () => {
+    mockSearchParams = new URLSearchParams({
+      date: "2026-10-15",
+      facilityId: "facility-1",
+      resourceId: "resource-1",
+    });
+    const replaceSpy = vi.spyOn(window.history, "replaceState").mockImplementation(() => {});
+
+    const container = makeContainer();
+    vi.mocked(getVenueContainer).mockReturnValue(container as never);
+    const { result } = renderHook(() => useOperationsCalendarViewModel());
+    await waitFor(() => expect(result.current.state.stage).toBe("ready"));
+
+    expect(result.current.date).toBe("2026-10-15");
+    expect(result.current.facilityId).toBe("facility-1");
+    expect(result.current.resourceId).toBe("resource-1");
+
+    act(() => result.current.setDate("2026-10-20"));
+    expect(result.current.date).toBe("2026-10-20");
+    expect(replaceSpy).toHaveBeenCalled();
+    replaceSpy.mockRestore();
+  });
+
+  it("Maintenance Block Context Preservation: preserves context for closures instead of pushing away", async () => {
+    const container = makeContainer();
+    vi.mocked(getVenueContainer).mockReturnValue(container as never);
+    const { result } = renderHook(() => useOperationsCalendarViewModel());
+    await waitFor(() => expect(result.current.state.stage).toBe("ready"));
+
+    const closureBlock = {
+      ...heldBlock,
+      reservationId: "closure-999",
+      status: "Maintenance" as any,
+    };
+
+    act(() => result.current.openBlock(closureBlock));
+
+    expect(result.current.selectedClosure).toEqual(closureBlock);
+    expect(push).not.toHaveBeenCalled();
+
+    act(() => result.current.closeClosure());
+    expect(result.current.selectedClosure).toBeNull();
   });
 });
