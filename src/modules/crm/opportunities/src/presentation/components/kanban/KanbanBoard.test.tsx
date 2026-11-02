@@ -287,22 +287,23 @@ describe("KanbanBoard Component", () => {
   });
 
   it("dynamically renders server-provided stage labels, ordering, and win probabilities", () => {
+    // Permissible stage reordering: swap Qualification (sortOrder: 1) and Discovery (sortOrder: 2)
     const customStages = [
       {
-        stageKey: "default.discovery",
-        labelEn: "Initial Discovery Phase",
-        labelAr: "مرحلة الاستكشاف الأولي",
+        stageKey: "default.qualification",
+        labelEn: "Client Qualification (Stage 1)",
+        labelAr: "تأهيل العميل",
         sortOrder: 1,
-        winProbabilityPercent: 25,
+        winProbabilityPercent: 20,
         requiresVerifiedParty: false,
         requiredExitFields: [],
       },
       {
-        stageKey: "default.qualification",
-        labelEn: "Client Qualification",
-        labelAr: "تأهيل العميل",
+        stageKey: "default.discovery",
+        labelEn: "Discovery & Scope (Stage 2)",
+        labelAr: "مرحلة الاستكشاف الأولي",
         sortOrder: 2,
-        winProbabilityPercent: 40,
+        winProbabilityPercent: 15,
         requiresVerifiedParty: false,
         requiredExitFields: [],
       },
@@ -343,12 +344,26 @@ describe("KanbanBoard Component", () => {
       />
     );
 
-    expect(screen.getByText("Initial Discovery Phase")).toBeDefined();
-    expect(screen.getByText("Client Qualification")).toBeDefined();
+    expect(screen.getByText("Client Qualification (Stage 1)")).toBeDefined();
+    expect(screen.getByText("Discovery & Scope (Stage 2)")).toBeDefined();
     expect(screen.getByText("Solution Architecture")).toBeDefined();
     expect(screen.getByText("Commercial Offer")).toBeDefined();
     expect(screen.getByText("Final Closing")).toBeDefined();
-    expect(screen.getByText("25%")).toBeDefined();
+    expect(screen.getByText("20%")).toBeDefined();
+    expect(screen.getByText("15%")).toBeDefined();
     expect(screen.getByText("95%")).toBeDefined();
+
+    // Verify the actual Kanban columns in DOM are ordered according to swapped sortOrder (Qualification first, Discovery second)
+    const stageColumnHeadings = Array.from(
+       document.querySelectorAll('[data-testid^="kanban-column-"]')
+    ).map((col) => col.getAttribute("data-testid"));
+
+    expect(stageColumnHeadings).toEqual([
+      "kanban-column-default.qualification",
+      "kanban-column-default.discovery",
+      "kanban-column-default.solution_fit",
+      "kanban-column-default.proposal",
+      "kanban-column-default.negotiation",
+    ]);
   });
 });
