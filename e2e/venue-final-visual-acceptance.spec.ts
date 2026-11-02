@@ -2,6 +2,7 @@ import { test, expect, Page, BrowserContext } from "@playwright/test";
 import { execSync } from "child_process";
 import * as path from "path";
 import * as fs from "fs";
+import { getDevAdminPassword } from "./helpers/auth-credentials";
 
 /**
  * SCRIPE VENUE — FINAL REAL-BROWSER VISUAL ACCEPTANCE & OPERATIONAL WALKTHROUGH
@@ -28,7 +29,7 @@ interface EvidenceIndexEntry {
   notes?: string;
 }
 
-const COMMIT_SHA = "f079d3d6e";
+const COMMIT_SHA = "e9ead0255";
 const evidenceDir = path.resolve(process.cwd(), "e2e-evidence", "venue-final-visual-acceptance");
 const evidenceEntries: EvidenceIndexEntry[] = [];
 let captureCounter = 1;
@@ -39,7 +40,11 @@ function queryPostgresUat(sql: string): string {
   const dbPort = "5432";
   const dbUser = "postgres";
   const dbName = "SCRIPE_UAT";
-  const env = { ...process.env, PGPASSWORD: "1598741258" };
+  const pgPassword = process.env.PGPASSWORD;
+  if (!pgPassword) {
+    throw new Error("PGPASSWORD environment variable must be configured for test execution.");
+  }
+  const env = { ...process.env, PGPASSWORD: pgPassword };
   const normalizedSql = sql.replace(/\r?\n/g, " ").replace(/"/g, '\\"');
   return execSync(`"${psqlPath}" -h ${dbHost} -p ${dbPort} -U ${dbUser} -d ${dbName} -c "${normalizedSql}"`, {
     encoding: "utf8",
@@ -51,9 +56,9 @@ test.describe("SCRIPE Venue: Final Visual Acceptance & Operational Walkthrough",
   test.describe.configure({ mode: "serial", timeout: 600_000 });
 
   const adminEmail = "ahly.admin@scripe-dev.local";
-  const adminPassword = "P@ssw0rd";
+  const adminPassword = getDevAdminPassword();
   const bookingEmail = "ahly.booking@scripe-dev.local";
-  const bookingPassword = "P@ssw0rd";
+  const bookingPassword = getDevAdminPassword();
 
   const runTimestamp = Date.now().toString().slice(-5);
   const newCourtName = `Ahly Center Court ${runTimestamp}`;
