@@ -174,6 +174,10 @@ describe("LeadsView Component", () => {
       },
       opportunityService: {} as any,
       opportunityRepository: {} as any,
+      accountService: {} as any,
+      accountRepository: {} as any,
+      contactService: {} as any,
+      contactRepository: {} as any,
     };
 
     setCrmContainer(mockContainer);

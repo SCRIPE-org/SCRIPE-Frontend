@@ -141,6 +141,10 @@ describe("OpportunityDetailView Component", () => {
       leadRepository: {} as any,
       opportunityService: {} as any,
       opportunityRepository: mockRepo,
+      accountService: {} as any,
+      accountRepository: {} as any,
+      contactService: {} as any,
+      contactRepository: {} as any,
     };
 
     setCrmContainer(container);

@@ -23,6 +23,16 @@ import { CrmOpportunityRepository } from "./opportunities/src/data/repositories/
 import type { ICrmOpportunityService } from "./opportunities/src/domain/interfaces/ICrmOpportunityService";
 import type { ICrmOpportunityRepository } from "./opportunities/src/domain/interfaces/ICrmOpportunityRepository";
 
+import { CrmAccountService } from "./accounts/src/data/services/CrmAccountService";
+import { CrmAccountRepository } from "./accounts/src/data/repositories/CrmAccountRepository";
+import type { ICrmAccountService } from "./accounts/src/domain/interfaces/ICrmAccountService";
+import type { ICrmAccountRepository } from "./accounts/src/domain/interfaces/ICrmAccountRepository";
+
+import { CrmContactService } from "./contacts/src/data/services/CrmContactService";
+import { CrmContactRepository } from "./contacts/src/data/repositories/CrmContactRepository";
+import type { ICrmContactService } from "./contacts/src/domain/interfaces/ICrmContactService";
+import type { ICrmContactRepository } from "./contacts/src/domain/interfaces/ICrmContactRepository";
+
 export interface CrmContainer {
   readonly overviewService: ICrmOverviewService;
   readonly overviewRepository: ICrmOverviewRepository;
@@ -30,6 +40,10 @@ export interface CrmContainer {
   readonly leadRepository: ICrmLeadRepository;
   readonly opportunityService: ICrmOpportunityService;
   readonly opportunityRepository: ICrmOpportunityRepository;
+  readonly accountService: ICrmAccountService;
+  readonly accountRepository: ICrmAccountRepository;
+  readonly contactService: ICrmContactService;
+  readonly contactRepository: ICrmContactRepository;
 }
 
 let instance: CrmContainer | null = null;
@@ -43,6 +57,10 @@ export function getCrmContainer(): CrmContainer {
     const leadRepository = new CrmLeadRepository(leadService);
     const opportunityService = new CrmOpportunityService(api);
     const opportunityRepository = new CrmOpportunityRepository(opportunityService);
+    const accountService = new CrmAccountService(api);
+    const accountRepository = new CrmAccountRepository(accountService);
+    const contactService = new CrmContactService(api);
+    const contactRepository = new CrmContactRepository(contactService);
 
     instance = {
       overviewService,
@@ -51,6 +69,10 @@ export function getCrmContainer(): CrmContainer {
       leadRepository,
       opportunityService,
       opportunityRepository,
+      accountService,
+      accountRepository,
+      contactService,
+      contactRepository,
     };
   }
   return instance;

@@ -1,0 +1,56 @@
+export const en = {
+  crmAccounts: {
+    title: "Commercial Accounts 360",
+    header: {
+      title: "Commercial Accounts 360",
+      subtitle: "Single source of truth for commercial accounts, active opportunities, and stakeholder contacts.",
+      accountsBadge: "Accounts",
+    },
+    actions: {
+      newAccount: "+ New Account",
+      edit: "Edit Commercial Terms",
+      view360: "View 360",
+    },
+    searchPlaceholder: "Search accounts by name or tier...",
+    filters: {
+      allTiers: "All Tiers",
+    },
+    loading: "Loading commercial accounts...",
+    table: {
+      account: "Account / Organization",
+      tier: "Commercial Tier",
+      currency: "Currency",
+      contacts: "Contacts",
+      opportunities: "Deals",
+      createdAt: "Created",
+      actions: "Actions",
+      emptyTitle: "No Accounts Found",
+      emptyDescription: "No commercial accounts match the current filter or search criteria.",
+    },
+    create: {
+      title: "Register Commercial Account",
+      description: "Link an enterprise PartyKernel organization into the CRM commercial catalog.",
+      partyId: "Organization Party ID / GUID",
+      partyRequired: "Organization Party ID is required.",
+      tier: "Commercial Tier",
+      currency: "Currency Code",
+      notes: "Commercial Account Notes",
+      notesPlaceholder: "Key strategic partnership notes...",
+      submit: "Create Account",
+    },
+    edit: {
+      title: "Update Commercial Terms",
+      description: "Edit commercial tier, preferred settlement currency, and account notes.",
+    },
+    detail: {
+      title: "Commercial Account 360",
+      loading: "Loading Account 360 profile...",
+      back: "Back to Accounts",
+      notes: "Commercial Strategy & Notes",
+      contactsTitle: "Key Stakeholders & Contacts",
+      noContacts: "No linked contacts found for this account.",
+      dealsTitle: "Active Pipeline Deals",
+      noDeals: "No active opportunities linked to this account.",
+    },
+  },
+};

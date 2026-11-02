@@ -530,6 +530,10 @@ export const PAGE_PERMISSIONS: Record<string, PermissionCode[]> = {
   "/crm/leads": [CRM_PERMISSIONS.LEADS_READ],
   "/crm/opportunities": [CRM_PERMISSIONS.OPPORTUNITIES_READ],
   "/crm/opportunities/[id]": [CRM_PERMISSIONS.OPPORTUNITIES_READ],
+  "/crm/accounts": [CRM_PERMISSIONS.ACCOUNTS_READ],
+  "/crm/accounts/[id]": [CRM_PERMISSIONS.ACCOUNTS_READ],
+  "/crm/contacts": [CRM_PERMISSIONS.CONTACTS_READ],
+  "/crm/contacts/[id]": [CRM_PERMISSIONS.CONTACTS_READ],
 
   // Public / Hub / Auth endpoints (No permission required, but mapped so RouteGuard bypasses successfully)
   "/activate-workspace": [],
