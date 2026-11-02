@@ -114,9 +114,6 @@ export function OpportunitiesView() {
         if (tab === "overview") router.push("/crm");
         else if (tab === "leads") router.push("/crm/leads");
       }}
-      searchQuery={search}
-      onSearchChange={handleSearchChange}
-      onCreateDeal={canCreateOpp ? () => setIsCreateOpen(true) : undefined}
     >
       <div className="space-y-5" dir={isRtl ? "rtl" : "ltr"}>
         {/* Section Header */}

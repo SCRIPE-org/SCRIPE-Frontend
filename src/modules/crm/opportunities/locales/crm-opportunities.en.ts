@@ -3,7 +3,7 @@ export const en = {
     title: "Opportunities & Deals",
     subtitle: "Track, manage, and close commercial sports deals across pipeline stages",
     actions: {
-      newDeal: "+ New Opportunity",
+      newDeal: "New Opportunity",
       searchPlaceholder: "Search deals by title, currency, or stage...",
       filterByStage: "Filter by Stage",
       filterByStatus: "Filter by Status",

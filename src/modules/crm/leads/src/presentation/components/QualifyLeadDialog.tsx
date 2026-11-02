@@ -17,7 +17,7 @@ import { Textarea } from "@core/ui/textarea";
 import { Alert, AlertDescription } from "@core/ui/alert";
 import { AlertCircle, CheckCircle2, XCircle } from "lucide-react";
 import { cn } from "@core/common/utils";
-import type { CrmLead, QualifyLeadInput, QualificationDecision } from "../../domain/models/crm-lead.types";
+import type { CrmLead, QualifyLeadInput, QualificationDecision } from "../../domain/entities/LeadEntity";
 
 interface QualifyLeadDialogProps {
   open: boolean;

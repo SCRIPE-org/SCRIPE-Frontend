@@ -34,7 +34,7 @@ import { QualifyLeadDialog } from "../components/QualifyLeadDialog";
 import { LinkPartyDialog } from "../components/LinkPartyDialog";
 import { ConvertLeadDialog } from "../components/ConvertLeadDialog";
 import { useLeadsViewModel } from "../viewmodels/useLeadsViewModel";
-import type { CrmLead, LeadStatus } from "../../domain/models/crm-lead.types";
+import type { CrmLead, LeadStatus } from "../../domain/entities/LeadEntity";
 
 export function LeadsView() {
   const { t, language } = useI18n();
@@ -407,6 +407,7 @@ export function LeadsView() {
         },
       ],
       customTableProps: {
+        onSearch: undefined,
         emptyMessage: (
           <EmptyState
             title={t("crmLeads.table.emptyTitle")}
@@ -420,14 +421,7 @@ export function LeadsView() {
   );
 
   return (
-    <CrmShell
-      activeTab="leads"
-      onTabChange={() => {}}
-      searchQuery={search}
-      onSearchChange={handleSearchChange}
-      onCreateDeal={() => {}}
-      onCreateLead={() => setIsCreateOpen(true)}
-    >
+    <CrmShell activeTab="leads" onTabChange={() => {}}>
       <CrmSectionHeader
         title={t("crmLeads.title")}
         subtitle={t("crmLeads.subtitle")}
@@ -482,14 +476,14 @@ export function LeadsView() {
               <Button
                 key={item.label}
                 type="button"
-                variant={isSelected ? "default" : "outline"}
+                variant="outline"
                 size="sm"
                 onClick={() => handleStatusFilterChange(item.key)}
                 className={cn(
                   "h-7 px-2.5 text-xs font-medium rounded-nx-md transition-all select-none whitespace-nowrap",
                   isSelected
-                    ? "bg-nx-accent-fill text-nx-on-fill border-transparent font-bold"
-                    : "border-nx-line bg-nx-surface text-nx-ink-2 hover:bg-nx-surfaceSubtle hover:text-nx-ink"
+                    ? "border-nx-accent/40 bg-nx-accent-wash text-nx-accent font-semibold"
+                    : "border-nx-line bg-nx-surface text-nx-ink-2 hover:bg-nx-raised hover:text-nx-ink"
                 )}
               >
                 {item.label}

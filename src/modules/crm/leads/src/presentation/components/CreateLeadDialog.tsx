@@ -16,7 +16,7 @@ import { Label } from "@core/ui/label";
 import { Textarea } from "@core/ui/textarea";
 import { Alert, AlertDescription } from "@core/ui/alert";
 import { AlertCircle } from "lucide-react";
-import type { CreateLeadInput } from "../../domain/models/crm-lead.types";
+import type { CreateLeadInput } from "../../domain/entities/LeadEntity";
 
 interface CreateLeadDialogProps {
   open: boolean;

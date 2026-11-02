@@ -7,7 +7,7 @@ export const ar = {
       contactsBadge: "جهات اتصال",
     },
     actions: {
-      newContact: "+ جهة اتصال جديدة",
+      newContact: "جهة اتصال جديدة",
       edit: "تعديل سياق جهة الاتصال",
       viewContext: "عرض السياق",
     },

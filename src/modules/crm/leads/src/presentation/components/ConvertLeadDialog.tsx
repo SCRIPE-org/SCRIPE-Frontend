@@ -17,7 +17,7 @@ import { Textarea } from "@core/ui/textarea";
 import { Alert, AlertDescription, AlertTitle } from "@core/ui/alert";
 import { AlertCircle, ArrowRightCircle, Sparkles } from "lucide-react";
 import { cn } from "@core/common/utils";
-import type { CrmLead, ConvertLeadInput, ConvertLeadResult, DealKind } from "../../domain/models/crm-lead.types";
+import type { CrmLead, ConvertLeadInput, ConvertLeadResult, DealKind } from "../../domain/entities/LeadEntity";
 
 interface ConvertLeadDialogProps {
   open: boolean;

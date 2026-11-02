@@ -5,7 +5,7 @@ import { User, Mail, Phone, Calendar, ArrowUpRight } from "lucide-react";
 import { Button } from "@core/ui/button";
 import { EmptyState } from "@core/ui/empty-state";
 import { cn } from "@core/common/utils";
-import type { CrmLead } from "../../domain/models/crm-lead.types";
+import type { CrmLead } from "../../domain/entities/LeadEntity";
 import { LeadStatusBadge } from "./LeadStatusBadge";
 
 interface LeadsTableProps {

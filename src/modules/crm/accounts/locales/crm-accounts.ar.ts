@@ -7,7 +7,7 @@ export const ar = {
       accountsBadge: "حسابات",
     },
     actions: {
-      newAccount: "+ حساب جديد",
+      newAccount: "حساب جديد",
       edit: "تعديل الشروط التجارية",
       view360: "عرض 360",
     },

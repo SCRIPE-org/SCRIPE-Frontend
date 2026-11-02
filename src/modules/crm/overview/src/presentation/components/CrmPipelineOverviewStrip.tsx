@@ -1,9 +1,10 @@
 "use client";
 
 import { useI18n } from "@core/providers/i18n-provider";
-import { ShieldCheck, Lock, ArrowRight } from "lucide-react";
+import { ShieldCheck, Lock } from "lucide-react";
+import { Button } from "@core/ui/button";
 import { cn } from "@core/common/utils";
-import type { CrmPipelineOverview, CrmStageKey } from "../../domain/models/crm-overview.types";
+import type { CrmPipelineOverview, CrmStageKey } from "../../domain/entities/OverviewEntity";
 
 interface CrmPipelineOverviewStripProps {
   pipeline: CrmPipelineOverview;
@@ -61,12 +62,13 @@ export function CrmPipelineOverviewStrip({
           const isProposalOrAfter = stage.requiresVerifiedParty;
 
           return (
-            <button
+            <Button
               key={stage.key}
               type="button"
+              variant="ghost"
               onClick={() => onSelectStage?.(stage.key)}
               className={cn(
-                "group relative flex flex-col justify-between p-3 rounded-nx-md border text-left transition-all duration-nx-micro select-none",
+                "group relative flex h-auto flex-col items-stretch justify-between p-3 rounded-nx-md border text-left transition-all duration-nx-micro select-none whitespace-normal",
                 isSelected
                   ? "border-nx-accent bg-nx-surfaceSubtle ring-1 ring-nx-accent"
                   : "border-nx-line bg-nx-surface hover:border-nx-line-hi hover:bg-nx-surfaceSubtle/40"
@@ -88,7 +90,7 @@ export function CrmPipelineOverviewStrip({
                 )}
               </div>
 
-              <div className="mt-2.5 space-y-0.5">
+              <div className="mt-2.5 space-y-0.5 w-full">
                 <div className="text-base font-extrabold text-nx-ink">
                   {stage.count}
                   <span className="text-[10px] font-normal text-nx-ink-3 ml-1">
@@ -101,12 +103,12 @@ export function CrmPipelineOverviewStrip({
               </div>
 
               {isProposalOrAfter && (
-                <div className="mt-2 pt-1.5 border-t border-nx-line/50 flex items-center gap-1 text-[9px] text-warning font-semibold">
+                <div className="mt-2 pt-1.5 border-t border-nx-line/50 flex items-center gap-1 text-[9px] text-warning font-semibold w-full">
                   <ShieldCheck className="size-2.5 shrink-0" />
                   <span className="truncate">Party Gate</span>
                 </div>
               )}
-            </button>
+            </Button>
           );
         })}
       </div>

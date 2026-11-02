@@ -219,7 +219,7 @@ describe("LeadsView Component", () => {
     });
   });
 
-  it("opens the create lead dialog when '+ New Lead' is clicked", async () => {
+  it("opens the create lead dialog when 'New Lead' is clicked", async () => {
     render(<LeadsView />);
 
     const newLeadButton = screen.getByText("crmLeads.actions.newLead");

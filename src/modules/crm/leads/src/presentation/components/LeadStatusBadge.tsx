@@ -2,7 +2,7 @@
 
 import { Badge } from "@core/ui/badge";
 import { cn } from "@core/common/utils";
-import type { LeadStatus } from "../../domain/models/crm-lead.types";
+import type { LeadStatus } from "../../domain/entities/LeadEntity";
 
 interface LeadStatusBadgeProps {
   status: LeadStatus;

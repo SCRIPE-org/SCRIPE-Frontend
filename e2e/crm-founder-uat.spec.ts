@@ -88,18 +88,42 @@ test.describe("SCRIPE CRM Founder UAT & Live Capability Verification", () => {
     await page.waitForLoadState("networkidle");
     await expect(page.locator("tbody tr").first()).toBeVisible({ timeout: 20_000 });
 
+    // Create New Lead button & UI component invariant checks (Dark + Light theme contrast, single search bar, no '+ +')
+    const createLeadBtn = page
+      .locator("main")
+      .getByRole("button", { name: /new lead/i })
+      .first();
+    await expect(createLeadBtn).toBeVisible({ timeout: 10_000 });
+    const createLeadText = await createLeadBtn.innerText();
+    expect(createLeadText).not.toContain("+ +");
+
+    // Verify single search bar on /crm/leads (no triple search inputs)
+    const searchInputsCount = await page.locator("main input[placeholder*='Search' i]").count();
+    expect(searchInputsCount).toBe(1);
+
+    // Verify Ink-on-Lime (#0d0d0e -> rgb(13, 13, 14)) contrast in Dark Mode AND Light Mode
+    const darkThemeBtnColor = await createLeadBtn.evaluate((el) => window.getComputedStyle(el).color);
+    expect(darkThemeBtnColor).toBe("rgb(13, 13, 14)");
+
+    // Switch temporarily to Light Mode (:root without .dark), verify Ink-on-Lime contrast holds, then restore
+    const lightThemeBtnColor = await page.evaluate(() => {
+      const html = document.documentElement;
+      const wasDark = html.classList.contains("dark");
+      html.classList.remove("dark");
+      const btn = document.querySelector("main button.bg-nx-accent-fill") as HTMLElement | null;
+      const color = btn ? window.getComputedStyle(btn).color : "";
+      if (wasDark) html.classList.add("dark");
+      return color;
+    });
+    expect(lightThemeBtnColor).toBe("rgb(13, 13, 14)");
+
     // Screenshot 02: Leads Directory
     await page.screenshot({
       path: path.join(SCREENSHOT_DIR, "02_crm_leads_list.png"),
       fullPage: true,
     });
 
-    // Create New Lead
-    const createLeadBtn = page
-      .locator("main")
-      .getByRole("button", { name: /new lead/i })
-      .first();
-    await expect(createLeadBtn).toBeVisible({ timeout: 10_000 });
+    // Open Create New Lead Dialog
     await createLeadBtn.click();
 
     const leadDialog = page.getByRole("dialog").first();

@@ -13,8 +13,8 @@ export const en = {
       pipelines: "Pipelines",
     },
     actions: {
-      createDeal: "+ New Deal",
-      createLead: "+ New Lead",
+      createDeal: "New Deal",
+      createLead: "New Lead",
       searchPlaceholder: "Search deals, accounts, parties or owners...",
       filter: "Filter",
       refresh: "Refresh",

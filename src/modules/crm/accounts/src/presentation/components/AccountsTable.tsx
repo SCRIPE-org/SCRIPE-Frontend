@@ -7,7 +7,7 @@ import { Button } from "@core/ui/button";
 import { Badge } from "@core/ui/badge";
 import { EmptyState } from "@core/ui/empty-state";
 import { cn } from "@core/common/utils";
-import type { CrmAccount } from "../../domain/models/crm-account.types";
+import type { CrmAccount } from "../../domain/entities/AccountEntity";
 import { AccountStatusBadge } from "./AccountStatusBadge";
 
 interface AccountsTableProps {

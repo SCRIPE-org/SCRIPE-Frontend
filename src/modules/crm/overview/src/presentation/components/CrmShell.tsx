@@ -167,43 +167,47 @@ export function CrmShell({
         </nav>
 
         {/* Global Filter & Quick Actions */}
-        <div className="flex items-center gap-2.5">
-          <div className="relative w-full sm:w-64">
-            <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 size-3.5 text-nx-ink-3" />
-            <Input
-              type="text"
-              placeholder={t("crm.actions.searchPlaceholder")}
-              value={searchQuery}
-              onChange={(e) => onSearchChange?.(e.target.value)}
-              className="h-8 pl-8 pr-3 text-xs bg-nx-surface border-nx-line focus-visible:ring-nx-accent text-nx-ink placeholder:text-nx-ink-3"
-            />
+        {(onSearchChange || (canCreateOpportunities && onCreateDeal) || (canCreateLeads && onCreateLead)) && (
+          <div className="flex items-center gap-2.5">
+            {onSearchChange && (
+              <div className="relative w-full sm:w-64">
+                <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 size-3.5 text-nx-ink-3" />
+                <Input
+                  type="text"
+                  placeholder={t("crm.actions.searchPlaceholder")}
+                  value={searchQuery}
+                  onChange={(e) => onSearchChange(e.target.value)}
+                  className="h-8 pl-8 pr-3 text-xs bg-nx-surface border-nx-line focus-visible:ring-nx-accent text-nx-ink placeholder:text-nx-ink-3"
+                />
+              </div>
+            )}
+
+            {canCreateOpportunities && onCreateDeal && (
+              <Button
+                type="button"
+                size="sm"
+                onClick={onCreateDeal}
+                className="h-8 gap-1.5 bg-nx-accent-fill text-nx-on-fill font-bold hover:brightness-105 transition-all text-xs shrink-0"
+              >
+                <Plus className="size-3.5" />
+                <span>{t("crm.actions.createDeal")}</span>
+              </Button>
+            )}
+
+            {canCreateLeads && onCreateLead && (
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={onCreateLead}
+                className="h-8 gap-1.5 border-nx-line bg-nx-surface text-nx-ink hover:bg-nx-surfaceSubtle text-xs shrink-0"
+              >
+                <Plus className="size-3.5" />
+                <span>{t("crm.actions.createLead")}</span>
+              </Button>
+            )}
           </div>
-
-          {canCreateOpportunities && onCreateDeal && (
-            <Button
-              type="button"
-              size="sm"
-              onClick={onCreateDeal}
-              className="h-8 gap-1.5 bg-nx-accent-fill text-nx-on-fill font-bold hover:brightness-105 transition-all text-xs shrink-0"
-            >
-              <Plus className="size-3.5" />
-              <span>{t("crm.actions.createDeal")}</span>
-            </Button>
-          )}
-
-          {canCreateLeads && onCreateLead && (
-            <Button
-              type="button"
-              variant="outline"
-              size="sm"
-              onClick={onCreateLead}
-              className="h-8 gap-1.5 border-nx-line bg-nx-surface text-nx-ink hover:bg-nx-surfaceSubtle text-xs shrink-0"
-            >
-              <Plus className="size-3.5" />
-              <span>{t("crm.actions.createLead")}</span>
-            </Button>
-          )}
-        </div>
+        )}
       </div>
 
       {/* Main Workspace Body */}

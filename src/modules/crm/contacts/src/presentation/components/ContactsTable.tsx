@@ -7,7 +7,7 @@ import { Button } from "@core/ui/button";
 import { Badge } from "@core/ui/badge";
 import { EmptyState } from "@core/ui/empty-state";
 import { cn } from "@core/common/utils";
-import type { CrmContact } from "../../domain/models/crm-contact.types";
+import type { CrmContact } from "../../domain/entities/ContactEntity";
 
 interface ContactsTableProps {
   contacts: CrmContact[];

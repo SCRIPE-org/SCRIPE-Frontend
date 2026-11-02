@@ -13,8 +13,8 @@ export const ar = {
       pipelines: "مسارات الصفقات",
     },
     actions: {
-      createDeal: "+ صفقة جديدة",
-      createLead: "+ عميل محتمل جديد",
+      createDeal: "صفقة جديدة",
+      createLead: "عميل محتمل جديد",
       searchPlaceholder: "البحث في الصفقات، الحسابات، الأطراف أو المسؤولين...",
       filter: "تصفية",
       refresh: "تحديث",

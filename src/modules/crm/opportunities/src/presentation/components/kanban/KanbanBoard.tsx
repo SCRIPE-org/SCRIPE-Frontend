@@ -1,8 +1,9 @@
 "use client";
 
-import React, { useMemo } from "react";
+import { useMemo } from "react";
 import { AlertCircle } from "lucide-react";
 import { Alert, AlertTitle, AlertDescription } from "@core/ui/alert";
+import { Button } from "@core/ui/button";
 import { useI18n } from "@core/providers/i18n-provider";
 import { KanbanColumn, type KanbanStageDef } from "./KanbanColumn";
 import type {
@@ -141,13 +142,15 @@ export function KanbanBoard({
           <AlertDescription className="text-xs flex items-center justify-between">
             <span>{errorMessage}</span>
             {onClearError && (
-              <button
+              <Button
                 type="button"
+                variant="ghost"
+                size="sm"
                 onClick={onClearError}
-                className="text-[11px] font-mono underline hover:no-underline ml-4"
+                className="h-6 px-2 text-[11px] font-mono underline hover:no-underline ml-4"
               >
                 Dismiss
-              </button>
+              </Button>
             )}
           </AlertDescription>
         </Alert>

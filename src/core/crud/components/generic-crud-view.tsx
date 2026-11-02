@@ -1276,10 +1276,13 @@ function GenericCrudViewInner<T>(props: GenericCrudViewProps<T>) {
                     <Button
                       key={mode}
                       type="button"
-                      variant={active ? "default" : "ghost"}
+                      variant={active ? "secondary" : "ghost"}
                       size="sm"
                       onClick={() => setActiveViewMode(mode)}
-                      className="h-7 px-2.5 text-xs"
+                      className={cn(
+                        "h-7 px-2.5 text-xs",
+                        active && "bg-nx-raised text-nx-ink font-semibold border-nx-line-hi"
+                      )}
                     >
                       <Icon className="me-1.5 h-3.5 w-3.5" aria-hidden="true" />
                       {mode}
@@ -1448,10 +1451,13 @@ function GenericCrudViewInner<T>(props: GenericCrudViewProps<T>) {
                   <Button
                     key={mode}
                     type="button"
-                    variant={active ? "default" : "ghost"}
+                    variant={active ? "secondary" : "ghost"}
                     size="sm"
                     onClick={() => setActiveViewMode(mode)}
-                    className="h-7 px-2.5 text-xs"
+                    className={cn(
+                      "h-7 px-2.5 text-xs",
+                      active && "bg-nx-raised text-nx-ink font-semibold border-nx-line-hi"
+                    )}
                   >
                     <Icon className="me-1.5 h-3.5 w-3.5" aria-hidden="true" />
                     {mode}

@@ -7,7 +7,7 @@ export const en = {
       contactsBadge: "Contacts",
     },
     actions: {
-      newContact: "+ New Contact",
+      newContact: "New Contact",
       edit: "Edit Contact Context",
       viewContext: "View Context",
     },

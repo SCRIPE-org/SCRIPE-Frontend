@@ -33,7 +33,7 @@ export function CrmOverviewView() {
       onTabChange={handleTabChange}
       searchQuery={searchQuery}
       onSearchChange={handleSearchChange}
-      onCreateDeal={() => {}}
+      onCreateDeal={() => router.push("/crm/opportunities")}
       onCreateLead={() => router.push("/crm/leads")}
     >
       <CrmSectionHeader

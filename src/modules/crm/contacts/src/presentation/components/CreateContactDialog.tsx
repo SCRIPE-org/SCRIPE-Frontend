@@ -15,7 +15,7 @@ import { Input } from "@core/ui/input";
 import { Label } from "@core/ui/label";
 import { Alert, AlertDescription } from "@core/ui/alert";
 import { AlertCircle, User } from "lucide-react";
-import type { CreateContactInput } from "../../domain/models/crm-contact.types";
+import type { CreateContactInput } from "../../domain/entities/ContactEntity";
 
 interface CreateContactDialogProps {
   open: boolean;

@@ -7,7 +7,7 @@ export const en = {
       accountsBadge: "Accounts",
     },
     actions: {
-      newAccount: "+ New Account",
+      newAccount: "New Account",
       edit: "Edit Commercial Terms",
       view360: "View 360",
     },

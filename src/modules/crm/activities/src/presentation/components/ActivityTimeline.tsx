@@ -69,13 +69,13 @@ export function ActivityTimeline({
   const getActivityIcon = (kind: SalesActivityKind) => {
     switch (kind) {
       case "Note":
-        return <FileText className="size-3.5 text-blue-400" />;
+        return <FileText className="size-3.5 text-info" />;
       case "CallLog":
-        return <Phone className="size-3.5 text-emerald-400" />;
+        return <Phone className="size-3.5 text-success" />;
       case "MeetingLog":
-        return <Users className="size-3.5 text-purple-400" />;
+        return <Users className="size-3.5 text-nx-accent" />;
       case "FollowUpLinked":
-        return <CalendarClock className="size-3.5 text-amber-400" />;
+        return <CalendarClock className="size-3.5 text-warning" />;
       default:
         return <Clock className="size-3.5 text-nx-ink-3" />;
     }
@@ -85,25 +85,25 @@ export function ActivityTimeline({
     switch (kind) {
       case "Note":
         return (
-          <Badge variant="outline" className="border-blue-500/20 bg-blue-500/10 text-blue-400 text-[10px] py-0 px-1.5 font-medium">
+          <Badge variant="outline" className="border-info/20 bg-info/10 text-info text-[10px] py-0 px-1.5 font-medium">
             {t("crmActivities.kinds.note") || "Note"}
           </Badge>
         );
       case "CallLog":
         return (
-          <Badge variant="outline" className="border-emerald-500/20 bg-emerald-500/10 text-emerald-400 text-[10px] py-0 px-1.5 font-medium">
+          <Badge variant="outline" className="border-success/20 bg-success/10 text-success text-[10px] py-0 px-1.5 font-medium">
             {t("crmActivities.kinds.call") || "Call"}
           </Badge>
         );
       case "MeetingLog":
         return (
-          <Badge variant="outline" className="border-purple-500/20 bg-purple-500/10 text-purple-400 text-[10px] py-0 px-1.5 font-medium">
+          <Badge variant="outline" className="border-nx-accent/30 bg-nx-accent-wash text-nx-accent text-[10px] py-0 px-1.5 font-medium">
             {t("crmActivities.kinds.meeting") || "Meeting"}
           </Badge>
         );
       case "FollowUpLinked":
         return (
-          <Badge variant="outline" className="border-amber-500/20 bg-amber-500/10 text-amber-400 text-[10px] py-0 px-1.5 font-medium">
+          <Badge variant="outline" className="border-warning/20 bg-warning/10 text-warning text-[10px] py-0 px-1.5 font-medium">
             {t("crmActivities.kinds.followup") || "Follow-up Task"}
           </Badge>
         );
@@ -135,7 +135,7 @@ export function ActivityTimeline({
           <div className="hidden sm:flex items-center gap-1 bg-nx-ground p-0.5 rounded-md border border-nx-line text-[11px]">
             <Button
               type="button"
-              variant={activityKindFilter === "ALL" ? "default" : "ghost"}
+              variant={activityKindFilter === "ALL" ? "secondary" : "ghost"}
               size="sm"
               onClick={() => setActivityKindFilter("ALL")}
               className={`h-6 text-[10px] px-2 ${activityKindFilter === "ALL" ? "bg-nx-surface text-nx-ink font-bold shadow-none" : "text-nx-ink-3 hover:text-nx-ink"}`}
@@ -144,7 +144,7 @@ export function ActivityTimeline({
             </Button>
             <Button
               type="button"
-              variant={activityKindFilter === "Note" ? "default" : "ghost"}
+              variant={activityKindFilter === "Note" ? "secondary" : "ghost"}
               size="sm"
               onClick={() => setActivityKindFilter("Note")}
               className={`h-6 text-[10px] px-2 ${activityKindFilter === "Note" ? "bg-nx-surface text-nx-ink font-bold shadow-none" : "text-nx-ink-3 hover:text-nx-ink"}`}
@@ -153,7 +153,7 @@ export function ActivityTimeline({
             </Button>
             <Button
               type="button"
-              variant={activityKindFilter === "CallLog" ? "default" : "ghost"}
+              variant={activityKindFilter === "CallLog" ? "secondary" : "ghost"}
               size="sm"
               onClick={() => setActivityKindFilter("CallLog")}
               className={`h-6 text-[10px] px-2 ${activityKindFilter === "CallLog" ? "bg-nx-surface text-nx-ink font-bold shadow-none" : "text-nx-ink-3 hover:text-nx-ink"}`}
@@ -162,7 +162,7 @@ export function ActivityTimeline({
             </Button>
             <Button
               type="button"
-              variant={activityKindFilter === "MeetingLog" ? "default" : "ghost"}
+              variant={activityKindFilter === "MeetingLog" ? "secondary" : "ghost"}
               size="sm"
               onClick={() => setActivityKindFilter("MeetingLog")}
               className={`h-6 text-[10px] px-2 ${activityKindFilter === "MeetingLog" ? "bg-nx-surface text-nx-ink font-bold shadow-none" : "text-nx-ink-3 hover:text-nx-ink"}`}
@@ -230,7 +230,7 @@ export function ActivityTimeline({
             return (
               <div key={activity.activityId} className="relative group">
                 {/* Timeline node icon */}
-                <div className="absolute -left-6 top-1 flex size-5 items-center justify-center rounded-full bg-nx-surface border border-nx-line shadow-xs">
+                <div className="absolute -left-6 top-1 flex size-5 items-center justify-center rounded-full bg-nx-surface border border-nx-line">
                   {getActivityIcon(activity.activityKind)}
                 </div>
 

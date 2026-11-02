@@ -3,7 +3,7 @@ export const en = {
     title: "Leads Management",
     subtitle: "Capture, qualify, and track prospective commercial sports partners",
     actions: {
-      newLead: "+ New Lead",
+      newLead: "New Lead",
       searchPlaceholder: "Search by title, name, company, or email...",
       filterByStatus: "Filter by Status",
       allStatuses: "All Statuses",

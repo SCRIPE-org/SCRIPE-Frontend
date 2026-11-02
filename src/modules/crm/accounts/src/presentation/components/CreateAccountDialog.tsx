@@ -15,7 +15,7 @@ import { Input } from "@core/ui/input";
 import { Label } from "@core/ui/label";
 import { Alert, AlertDescription } from "@core/ui/alert";
 import { AlertCircle, Building2 } from "lucide-react";
-import type { CreateAccountInput } from "../../domain/models/crm-account.types";
+import type { CreateAccountInput } from "../../domain/entities/AccountEntity";
 
 interface CreateAccountDialogProps {
   open: boolean;

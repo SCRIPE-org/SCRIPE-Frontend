@@ -5,7 +5,7 @@ import { ShieldCheck, AlertCircle, ArrowUpRight, User } from "lucide-react";
 import { Button } from "@core/ui/button";
 import { EmptyState } from "@core/ui/empty-state";
 import { cn } from "@core/common/utils";
-import type { CrmRecentDeal } from "../../domain/models/crm-overview.types";
+import type { CrmRecentDeal } from "../../domain/entities/OverviewEntity";
 import { CrmStatusBadge } from "./CrmStatusBadge";
 
 interface CrmRecentDealsTableProps {

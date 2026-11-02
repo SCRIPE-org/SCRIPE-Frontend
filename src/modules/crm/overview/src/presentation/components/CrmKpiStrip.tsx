@@ -2,7 +2,7 @@
 
 import { TrendingUp, TrendingDown, Minus } from "lucide-react";
 import { cn } from "@core/common/utils";
-import type { CrmKpiStat } from "../../domain/models/crm-overview.types";
+import type { CrmKpiStat } from "../../domain/entities/OverviewEntity";
 
 interface CrmKpiStripProps {
   stats: CrmKpiStat[];

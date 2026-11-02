@@ -15,7 +15,7 @@ import { Input } from "@core/ui/input";
 import { Label } from "@core/ui/label";
 import { Alert, AlertDescription } from "@core/ui/alert";
 import { AlertCircle, Building2, User, Link as LinkIcon, Check } from "lucide-react";
-import type { CrmLead, LinkPartyToLeadInput } from "../../domain/models/crm-lead.types";
+import type { CrmLead, LinkPartyToLeadInput } from "../../domain/entities/LeadEntity";
 
 interface LinkPartyDialogProps {
   open: boolean;

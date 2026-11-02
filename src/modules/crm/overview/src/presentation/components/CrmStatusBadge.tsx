@@ -2,7 +2,7 @@
 
 import { Badge } from "@core/ui/badge";
 import { cn } from "@core/common/utils";
-import type { CrmStageKey } from "../../domain/models/crm-overview.types";
+import type { CrmStageKey } from "../../domain/entities/OverviewEntity";
 
 interface CrmStatusBadgeProps {
   stage: CrmStageKey;

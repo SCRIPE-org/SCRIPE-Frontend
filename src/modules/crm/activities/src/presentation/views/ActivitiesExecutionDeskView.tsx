@@ -124,7 +124,7 @@ export function ActivitiesExecutionDeskView() {
                       onClick={() => selectAccount(acc)}
                       className={`p-3 rounded-lg border transition-all cursor-pointer ${
                         isSelected
-                          ? "bg-nx-surface border-nx-accent text-nx-ink shadow-xs"
+                          ? "bg-nx-surface border-nx-accent text-nx-ink"
                           : "bg-nx-ground border-nx-line hover:border-nx-line-hi text-nx-ink-2"
                       }`}
                     >

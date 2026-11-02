@@ -449,7 +449,7 @@ export function PipelineAdminDialog({
                         {PERMITTED_EXIT_FIELDS.map((fieldKey) => {
                           const isChecked = stage.requiredExitFields.includes(fieldKey);
                           return (
-                            <label
+                            <Label
                               key={fieldKey}
                               className="flex items-center gap-1.5 text-[11px] font-mono cursor-pointer select-none"
                             >
@@ -458,7 +458,7 @@ export function PipelineAdminDialog({
                                 onCheckedChange={() => handleToggleExitField(idx, fieldKey)}
                               />
                               <span className="text-nx-ink-2">{fieldKey}</span>
-                            </label>
+                            </Label>
                           );
                         })}
                       </div>
