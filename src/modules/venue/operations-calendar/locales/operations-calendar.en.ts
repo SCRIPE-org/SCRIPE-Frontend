@@ -13,6 +13,7 @@ export const en = {
       allResources: "All Courts & Spaces",
       refresh: "Refresh",
       dayView: "Day Operations",
+      findSlots: "Find Slot",
       blockTime: "+ Block Time",
       newBooking: "+ New Booking",
       filter: "Filter",
@@ -58,6 +59,17 @@ export const en = {
       maintenance: "Maintenance",
       free: "Free",
     },
+    maintenanceDrawer: {
+      title: "Maintenance & Block Details",
+      description: "This court or space is currently unavailable for bookings due to maintenance or administrative block.",
+      court: "Court / Resource",
+      status: "Status",
+      reference: "Reference",
+      reason: "Reason",
+      start: "Start Time",
+      end: "End Time",
+      timeWindow: "Time Window",
+    },
     utility: {
       previousMonth: "Previous month",
       nextMonth: "Next month",
@@ -91,6 +103,9 @@ export const en = {
       description:
         "Get started by adding courts or spaces to this branch so you can begin taking bookings.",
       action: "Add Court / Space",
+      branchEmptyTitle: "No courts found for this facility",
+      branchEmptyDescription:
+        "Select another facility using the filter above, or add new courts and spaces to this facility.",
     },
     permission: {
       title: "Calendar access required",
@@ -166,7 +181,10 @@ export const en = {
         creating: "Creating customer...",
         createAndSelect: "Create & Select",
         change: "Change",
+        searching: "Searching...",
         noResults: "No customers found",
+        noResultsFound: "No customers found",
+        noResultsHint: "Try another search or add a new customer.",
         duplicateWarning: "A customer with similar details already exists",
         searchError: "Customer search failed. Please retry.",
       },
@@ -253,6 +271,15 @@ export const en = {
         openBooking: "Open Booking",
         close: "Close",
       },
+    },
+  },
+  resources: {
+    blockTimeModal: {
+      endDate: "End Date",
+      endTime: "End Time",
+      reason: "Reason / Notes",
+      reasonPlaceholder: "e.g. Net repair and surface cleaning",
+      cancel: "Cancel",
     },
   },
 };

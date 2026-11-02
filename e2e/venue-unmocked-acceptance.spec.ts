@@ -26,7 +26,7 @@ test.describe("SCRIPE Venue: Real Runtime End-to-End Operational Acceptance", ()
   function queryPostgres(sql: string): string {
     const dbHost = process.env.PGHOST ?? "127.0.0.1";
     const dbPort = process.env.PGPORT ?? "5432";
-    const dbName = process.env.PGDATABASE ?? "SCRIPE_SHARED";
+    const dbName = process.env.PGDATABASE ?? "SCRIPE_UAT";
     const dbUser = process.env.PGUSER ?? "postgres";
     const psqlBin =
       process.env.PSQL_PATH ??
@@ -220,10 +220,15 @@ test.describe("SCRIPE Venue: Real Runtime End-to-End Operational Acceptance", ()
   });
 
   test("3. Physical Database Persistence Verification in PostgreSQL", async () => {
-    // 1. Authoritative verification by exact reservation number and tenant context
+    // 1. Authoritative verification by exact reservation number, GUID ID, or latest by tenant context
+    const isGuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(createdReservationId);
     const query = createdReservationCode
       ? `SELECT id, reservation_number, status, resource_id, requested_start_utc, requested_end_utc, tenant_id FROM venue.reservations WHERE reservation_number = '${createdReservationCode}' AND tenant_id = '${tenantId}';`
-      : "SELECT id, reservation_number, status, resource_id, requested_start_utc, requested_end_utc, tenant_id FROM venue.reservations ORDER BY created_at DESC LIMIT 1;";
+      : isGuid
+      ? `SELECT id, reservation_number, status, resource_id, requested_start_utc, requested_end_utc, tenant_id FROM venue.reservations WHERE id = '${createdReservationId}' AND tenant_id = '${tenantId}';`
+      : `SELECT id, reservation_number, status, resource_id, requested_start_utc, requested_end_utc, tenant_id FROM venue.reservations WHERE tenant_id = '${tenantId}' ORDER BY created_at DESC LIMIT 1;`;
+
+
 
     const dbOutput = queryPostgres(query);
     console.log("PostgreSQL venue.reservations authoritative query output:\n", dbOutput);
