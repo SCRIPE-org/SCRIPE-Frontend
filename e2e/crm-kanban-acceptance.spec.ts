@@ -1,4 +1,5 @@
 import { test, expect } from "@playwright/test";
+import { getDevAdminPassword } from "./helpers/auth-credentials";
 
 test.describe("CRM Kanban Board Lifecycle Acceptance (SCRIPE-738)", () => {
   test("Renders 5 canonical columns, displays PD-1 party gate badges, moves deals across stages, tests optimistic rollback on rejection, and verifies WCAG accessibility", async ({ page }) => {
@@ -25,7 +26,7 @@ test.describe("CRM Kanban Board Lifecycle Acceptance (SCRIPE-738)", () => {
     await expect(passwordInput).toBeVisible({ timeout: 15_000 });
 
     await identifierInput.fill("ahly.admin@scripe-dev.local");
-    await passwordInput.fill("P@ssw0rd");
+    await passwordInput.fill(getDevAdminPassword());
 
     const submitBtn = page.locator("form button[type='submit']").first();
     await expect(submitBtn).toBeEnabled({ timeout: 5_000 });

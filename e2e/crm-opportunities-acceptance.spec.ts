@@ -1,4 +1,5 @@
 import { test, expect } from "@playwright/test";
+import { getDevAdminPassword } from "./helpers/auth-credentials";
 
 test.describe("CRM Opportunities Lifecycle Acceptance", () => {
   test("Performs login, creates direct opportunity, advances stage, closes, reopens, and verifies audit history & persistence across reload", async ({ page }) => {
@@ -25,7 +26,7 @@ test.describe("CRM Opportunities Lifecycle Acceptance", () => {
     await expect(passwordInput).toBeVisible({ timeout: 15_000 });
 
     await identifierInput.fill("ahly.admin@scripe-dev.local");
-    await passwordInput.fill("P@ssw0rd");
+    await passwordInput.fill(getDevAdminPassword());
 
     const submitBtn = page.locator("form button[type='submit']").first();
     await expect(submitBtn).toBeEnabled({ timeout: 5_000 });

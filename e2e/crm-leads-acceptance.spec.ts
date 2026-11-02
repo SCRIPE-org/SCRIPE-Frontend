@@ -1,4 +1,5 @@
 import { test, expect } from "@playwright/test";
+import { getDevAdminPassword } from "./helpers/auth-credentials";
 
 test.describe("CRM Leads Intake & Complete Qualification/Conversion Lifecycle Acceptance", () => {
   test("Performs login, creates lead, qualifies, links party, converts to opportunity, and verifies persistence across reload", async ({ page }) => {
@@ -25,7 +26,7 @@ test.describe("CRM Leads Intake & Complete Qualification/Conversion Lifecycle Ac
     await expect(passwordInput).toBeVisible({ timeout: 15_000 });
 
     await identifierInput.fill("ahly.admin@scripe-dev.local");
-    await passwordInput.fill("P@ssw0rd");
+    await passwordInput.fill(getDevAdminPassword());
 
     const submitBtn = page.locator("form button[type='submit']").first();
     await expect(submitBtn).toBeEnabled({ timeout: 5_000 });
@@ -219,7 +220,7 @@ test.describe("CRM Leads Intake & Complete Qualification/Conversion Lifecycle Ac
     await expect(passwordInput).toBeVisible({ timeout: 15_000 });
 
     await identifierInput.fill("ahly.admin@scripe-dev.local");
-    await passwordInput.fill("P@ssw0rd");
+    await passwordInput.fill(getDevAdminPassword());
 
     const loginSubmitBtn = page.locator("form button[type='submit']").first();
     await expect(loginSubmitBtn).toBeEnabled({ timeout: 5_000 });

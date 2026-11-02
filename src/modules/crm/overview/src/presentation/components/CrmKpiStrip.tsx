@@ -10,6 +10,7 @@ interface CrmKpiStripProps {
 }
 
 export function CrmKpiStrip({ stats, className }: CrmKpiStripProps) {
+  const safeStats = Array.isArray(stats) ? stats : [];
   return (
     <div
       className={cn(
@@ -17,7 +18,7 @@ export function CrmKpiStrip({ stats, className }: CrmKpiStripProps) {
         className
       )}
     >
-      {stats.map((stat) => {
+      {safeStats.map((stat) => {
         return (
           <div
             key={stat.id}

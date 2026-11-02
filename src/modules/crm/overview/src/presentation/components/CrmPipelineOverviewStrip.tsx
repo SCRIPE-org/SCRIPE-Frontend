@@ -48,7 +48,7 @@ export function CrmPipelineOverviewStrip({
           </div>
           <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-nx-sm bg-nx-surfaceSubtle border border-nx-line text-nx-ink-2">
             <span className="font-bold text-nx-accent">
-              {pipeline.currency} {pipeline.totalPipelineValue.toLocaleString()}
+              {pipeline?.currency ?? "SAR"} {(pipeline?.totalPipelineValue ?? 0).toLocaleString()}
             </span>
           </div>
         </div>
@@ -56,7 +56,7 @@ export function CrmPipelineOverviewStrip({
 
       {/* Progress Strip */}
       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2">
-        {pipeline.stages.map((stage, idx) => {
+        {(Array.isArray(pipeline?.stages) ? pipeline.stages : []).map((stage, idx) => {
           const isSelected = activeFilterStage === stage.key;
           const isProposalOrAfter = stage.requiresVerifiedParty;
 
