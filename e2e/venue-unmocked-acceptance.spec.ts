@@ -61,6 +61,18 @@ test.describe("SCRIPE Venue: Real Runtime End-to-End Operational Acceptance", ()
   let bookedResourceId = "";
   let bookedStartUtc = "";
   let bookedEndUtc = "";
+  let encryptedBookedResourceId = "";
+  let encryptedCustomerPartyId = "";
+
+  /** Helper to generate mandatory replay protection and auth headers for mutating requests */
+  function authMutationHeaders(token: string, tenantId?: string) {
+    return {
+      Authorization: `Bearer ${token}`,
+      ...(tenantId ? { "x-tenant-id": tenantId } : {}),
+      "X-Request-Timestamp": Date.now().toString(),
+      "X-Request-Nonce": crypto.randomUUID(),
+    };
+  }
 
   /** Helper to query PostgreSQL directly for physical read-only database verification */
   function queryPostgres(sql: string): string {
@@ -205,14 +217,23 @@ test.describe("SCRIPE Venue: Real Runtime End-to-End Operational Acceptance", ()
     await page.waitForLoadState("domcontentloaded");
 
     const identifierInput = page.locator("#identifier");
+    const passwordInput = page.locator("#password");
     await expect(identifierInput).toBeVisible({ timeout: 20_000 });
+    await expect(passwordInput).toBeVisible({ timeout: 20_000 });
+
     await identifierInput.fill(adminEmail);
-    await page.locator("#password").fill(adminPassword);
+    await passwordInput.fill(adminPassword);
+
     const submitBtn = page.locator("form button[type='submit']").first();
     await expect(submitBtn).toBeEnabled({ timeout: 5000 });
     await submitBtn.click();
 
     await page.waitForURL((url: URL) => !url.pathname.includes("/login"), { timeout: 45_000 });
+
+    const expectedPath = targetPath.split("?")[0];
+    if (!page.url().includes(expectedPath)) {
+      await page.goto(targetPath);
+    }
     await page.waitForLoadState("networkidle");
   }
 
@@ -251,6 +272,22 @@ test.describe("SCRIPE Venue: Real Runtime End-to-End Operational Acceptance", ()
           if (body?.reservationNumber && !createdReservationCode) {
             createdReservationCode = body.reservationNumber;
             console.log(`[Network Intercept] Correlated reservationNumber: ${createdReservationCode}`);
+          }
+        } catch {}
+      }
+    });
+
+    page.on("request", (req) => {
+      if (req.url().includes("/Reservations") && req.method() === "POST") {
+        try {
+          const postData = req.postDataJSON();
+          if (postData?.resourceId) {
+            encryptedBookedResourceId = postData.resourceId;
+            console.log(`[Network Intercept] Captured encryptedBookedResourceId: ${encryptedBookedResourceId}`);
+          }
+          if (postData?.customerPartyId) {
+            encryptedCustomerPartyId = postData.customerPartyId;
+            console.log(`[Network Intercept] Captured encryptedCustomerPartyId: ${encryptedCustomerPartyId}`);
           }
         } catch {}
       }
@@ -432,13 +469,7 @@ test.describe("SCRIPE Venue: Real Runtime End-to-End Operational Acceptance", ()
     expect(createdReservationId).toBeTruthy();
 
     // Login and navigate directly to Booking 360
-    await page.goto(`/login?_tenant=AHLY&redirect=%2Fvenue%2Fbookings%2F${encodeURIComponent(createdReservationId)}`);
-    await page.locator("#identifier").fill(adminEmail);
-    await page.locator("#password").fill(adminPassword);
-    await page.locator("form button[type='submit']").first().click();
-
-    await page.waitForURL((url) => url.pathname.includes(`/venue/bookings/${encodeURIComponent(createdReservationId)}`) || url.pathname.includes("/venue/bookings/"), { timeout: 45_000 });
-    await page.waitForLoadState("networkidle");
+    await loginAndNavigate(page, `/venue/bookings/${encodeURIComponent(createdReservationId)}`);
 
     // Verify Booking 360 loaded with real reservation code
     await expect(page.locator(`text=${createdReservationCode}`).first()).toBeVisible({ timeout: 25_000 });
@@ -550,15 +581,37 @@ test.describe("SCRIPE Venue: Real Runtime End-to-End Operational Acceptance", ()
     expect(bookedStartUtc).toBeTruthy();
     expect(bookedEndUtc).toBeTruthy();
 
+    let targetResourceId = encryptedBookedResourceId;
+    let targetPartyId = encryptedCustomerPartyId;
+
+    if (!targetResourceId) {
+      const resListRes = await request.get(`${apiBase}/schedulable-resources?pageSize=100`, {
+        headers: { Authorization: `Bearer ${token}`, "x-tenant-id": tenantId },
+      });
+      if (resListRes.status() === 200) {
+        const resListData = await resListRes.json();
+        targetResourceId = resListData.items[0]?.id;
+      }
+    }
+    if (!targetPartyId) {
+      const partiesRes = await request.get(`${apiBase}/Parties?pageSize=1`, {
+        headers: { Authorization: `Bearer ${token}`, "x-tenant-id": tenantId },
+      });
+      if (partiesRes.status() === 200) {
+        const partiesData = await partiesRes.json();
+        targetPartyId = partiesData.items[0]?.id;
+      }
+    }
+
     // Attempt to create a conflicting draft on the exact same resource and overlapping slot
     const conflictDraftKey = `conflict-draft-${Date.now()}`;
     const duplicateDraftRes = await request.post(`${apiBase}/Reservations`, {
-      headers: { Authorization: `Bearer ${token}`, "x-tenant-id": tenantId },
+      headers: authMutationHeaders(token, tenantId),
       data: {
-        resourceId: bookedResourceId,
-        customerPartyId: "7c8d9e0f-1a23-4233-9445-c3d4e5f6a7b8",
-        bookerPartyId: "7c8d9e0f-1a23-4233-9445-c3d4e5f6a7b8",
-        payerPartyId: "7c8d9e0f-1a23-4233-9445-c3d4e5f6a7b8",
+        resourceId: targetResourceId,
+        customerPartyId: targetPartyId,
+        bookerPartyId: targetPartyId,
+        payerPartyId: targetPartyId,
         requestedStartUtc: bookedStartUtc,
         requestedEndUtc: bookedEndUtc,
         quantity: 1,
@@ -572,7 +625,7 @@ test.describe("SCRIPE Venue: Real Runtime End-to-End Operational Acceptance", ()
 
       // Track created conflicting draft reservation for cleanup
       const conflictDbOut = queryPostgres(
-        `SELECT reservation_id FROM venue.booking_idempotency_records WHERE idempotency_key = '${conflictDraftKey}';`
+        `SELECT id FROM venue.reservations WHERE resource_id = '${bookedResourceId}' AND status = 1 AND tenant_id = '${tenantId}' ORDER BY created_at DESC LIMIT 1;`
       );
       const conflictMatch = conflictDbOut.match(
         /([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})/i
@@ -583,7 +636,7 @@ test.describe("SCRIPE Venue: Real Runtime End-to-End Operational Acceptance", ()
 
       // Attempting to hold capacity on already booked single-unit resource MUST return 409 Conflict
       const conflictHoldRes = await request.post(`${apiBase}/booking-holds`, {
-        headers: { Authorization: `Bearer ${token}`, "x-tenant-id": tenantId },
+        headers: authMutationHeaders(token, tenantId),
         data: {
           reservationId: conflictingReservationId,
           idempotencyKey: `double-book-attempt-${Date.now()}`,
@@ -623,12 +676,13 @@ test.describe("SCRIPE Venue: Real Runtime End-to-End Operational Acceptance", ()
     const facData = await facRes.json();
     const targetFacility = facData.items[0];
 
-    // Attempt update with stale rowVersion
+    // Attempt update with stale rowVersion (must include valid code and name to test concurrency check)
     const staleUpdateRes = await request.put(`${apiBase}/Facilities/${targetFacility.id}`, {
-      headers: { Authorization: `Bearer ${token}`, "x-tenant-id": tenantId },
+      headers: authMutationHeaders(token, tenantId),
       data: {
+        code: targetFacility.code,
         name: "Conflict Name Update",
-        timeZoneId: "Africa/Cairo",
+        description: targetFacility.description ?? "Concurrency test description",
         rowVersion: "AQIDBAUGBwgJCgsMDQ4PEA==", // intentionally stale/bogus rowversion
       },
     });
@@ -637,13 +691,7 @@ test.describe("SCRIPE Venue: Real Runtime End-to-End Operational Acceptance", ()
 
   test("6. Unmocked Venue Customers Directory, Detail Drawer & Booking History (Slice 3)", async ({ page }) => {
     // Navigate to /venue/customers with Al-Ahly tenant scope
-    await page.goto("/login?_tenant=AHLY&redirect=%2Fvenue%2Fcustomers");
-    await page.locator("#identifier").fill(adminEmail);
-    await page.locator("#password").fill(adminPassword);
-    await page.locator("form button[type='submit']").first().click();
-
-    await page.waitForURL((url) => url.pathname.includes("/venue/customers"), { timeout: 45_000 });
-    await page.waitForLoadState("networkidle");
+    await loginAndNavigate(page, "/venue/customers");
 
     // 1. Verify View mounts & Total Customer Count badge is displayed
     await expect(page.locator("[data-testid='venue-customers-view']").first()).toBeVisible({ timeout: 15_000 });
@@ -751,13 +799,25 @@ test.describe("SCRIPE Venue: Real Runtime End-to-End Operational Acceptance", ()
 
     // 6.2 Create a dedicated reservation via API to acquire a valid server-encrypted ID
     const fixtureDraftKey = `e2e-refund-draft-${Date.now()}`;
-    const fixtureDraftRes = await page.request.post("http://127.0.0.1:5035/api/v1/Reservations", {
+    const fixtureResListRes = await page.request.get("http://127.0.0.1:5035/api/v1/schedulable-resources?pageSize=1", {
       headers: { Authorization: `Bearer ${apiAdminToken}`, "x-tenant-id": tenantId },
+    });
+    expect(fixtureResListRes.status()).toBe(200);
+    const fixtureResourceId = (await fixtureResListRes.json()).items[0].id;
+
+    const fixturePartiesRes = await page.request.get("http://127.0.0.1:5035/api/v1/Parties?pageSize=1", {
+      headers: { Authorization: `Bearer ${apiAdminToken}`, "x-tenant-id": tenantId },
+    });
+    expect(fixturePartiesRes.status()).toBe(200);
+    const fixturePartyId = (await fixturePartiesRes.json()).items[0].id;
+
+    const fixtureDraftRes = await page.request.post("http://127.0.0.1:5035/api/v1/Reservations", {
+      headers: authMutationHeaders(apiAdminToken, tenantId),
       data: {
-        resourceId: "bddb5176-47c5-41e5-bb57-dc6487a9de71",
-        customerPartyId: "7c8d9e0f-1a23-4233-9445-c3d4e5f6a7b8",
-        bookerPartyId: "7c8d9e0f-1a23-4233-9445-c3d4e5f6a7b8",
-        payerPartyId: "7c8d9e0f-1a23-4233-9445-c3d4e5f6a7b8",
+        resourceId: fixtureResourceId,
+        customerPartyId: fixturePartyId,
+        bookerPartyId: fixturePartyId,
+        payerPartyId: fixturePartyId,
         requestedStartUtc: new Date(Date.now() + 86400000 * 60).toISOString(),
         requestedEndUtc: new Date(Date.now() + 86400000 * 60 + 3600000).toISOString(),
         quantity: 1,
@@ -769,9 +829,9 @@ test.describe("SCRIPE Venue: Real Runtime End-to-End Operational Acceptance", ()
     const fixtureEncryptedResId = fixtureDraftData.id;
     expect(fixtureEncryptedResId).toBeTruthy();
 
-    // 6.3 Query database for raw GUID of created reservation using the exact idempotency key
+    // 6.3 Query database for raw GUID of created reservation
     const fixtureDbOut = queryPostgres(
-      `SELECT reservation_id FROM venue.booking_idempotency_records WHERE idempotency_key = '${fixtureDraftKey}';`
+      `SELECT id FROM venue.reservations WHERE tenant_id = '${tenantId}' ORDER BY created_at DESC LIMIT 1;`
     );
     const fixtureResMatch = fixtureDbOut.match(
       /([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})/i
@@ -811,11 +871,11 @@ test.describe("SCRIPE Venue: Real Runtime End-to-End Operational Acceptance", ()
 
       INSERT INTO finance.customer_invoice_lines (
         id, tenant_id, invoice_id, description, line_type,
-        quantity, unit_amount, total_amount, sort_order,
+        quantity, unit_amount, discount_amount, tax_amount, total_amount, sort_order,
         is_deleted, is_active, created_at
       ) VALUES (
         '${fixtureLineId}', '${tenantId}', '${fixtureInvoiceId}', 'E2E Refund Test Line', 0,
-        1, 1500.00, 1500.00, 1,
+        1, 1500.00, 0, 0, 1500.00, 1,
         FALSE, TRUE, NOW()
       );
 
@@ -898,10 +958,28 @@ test.describe("SCRIPE Venue: Real Runtime End-to-End Operational Acceptance", ()
     await expect(updatedPayBadge).toContainText(/Refunded|مستردة/i, { timeout: 15_000 });
 
     // 6.9 Idempotency / Duplicate Refund check: attempting duplicate refund via API returns strictly 409 Conflict
-    const dupRefundRes = await page.request.post(`http://127.0.0.1:5035/api/v1/finance/recorded-payments/${fixturePaymentId}/refunds`, {
+    // Fetch encrypted payment ID and invoice ID from API for exact server decryption
+    const getPaymentRes = await page.request.get(`http://127.0.0.1:5035/api/v1/finance/recorded-payments?reservationId=${fixtureEncryptedResId}`, {
       headers: { Authorization: `Bearer ${apiAdminToken}`, "x-tenant-id": tenantId },
+    });
+    expect(getPaymentRes.status()).toBe(200);
+    const payData = await getPaymentRes.json();
+    const encryptedPaymentId = payData.items[0]?.id;
+
+    const getInvoiceRes = await page.request.get(`http://127.0.0.1:5035/api/v1/finance/customer-invoices?reservationId=${fixtureEncryptedResId}`, {
+      headers: { Authorization: `Bearer ${apiAdminToken}`, "x-tenant-id": tenantId },
+    });
+    expect(getInvoiceRes.status()).toBe(200);
+    const invData = await getInvoiceRes.json();
+    const encryptedInvoiceId = invData.items[0]?.id;
+
+    expect(encryptedPaymentId).toBeTruthy();
+    expect(encryptedInvoiceId).toBeTruthy();
+
+    const dupRefundRes = await page.request.post(`http://127.0.0.1:5035/api/v1/finance/recorded-payments/${encryptedPaymentId}/refunds`, {
+      headers: authMutationHeaders(apiAdminToken, tenantId),
       data: {
-        invoiceId: fixtureInvoiceId,
+        invoiceId: encryptedInvoiceId,
         amount: 1500.00,
         idempotencyKey: `dup-refund-${Date.now()}`,
         reason: "Attempt duplicate refund on already refunded payment",
