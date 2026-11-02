@@ -299,13 +299,14 @@ test.describe("SCRIPE Venue: Real Runtime End-to-End Operational Acceptance", ()
     const nextBtn = modal.getByRole("button", { name: /next|التالي/i }).first();
     await expect(nextBtn).toBeVisible({ timeout: 10_000 });
 
-    const timeSelectTrigger = modal.locator("#booking-court-time").first();
-    const candidateSlots = ["11:00", "12:00", "13:00", "14:00", "15:00", "16:00", "17:00", "18:00", "19:00", "20:00"];
+    const customerSearchInput = modal.locator("input[placeholder*='Search customer'], input[placeholder*='بحث']").first();
+    const candidateSlots = ["12:00", "13:00", "16:00", "17:00", "18:00", "19:00", "20:00", "11:00"];
     for (const slot of candidateSlots) {
+      const timeSelectTrigger = modal.locator("#booking-court-time").first();
       if (await timeSelectTrigger.isVisible()) {
         await timeSelectTrigger.click();
         await page.waitForTimeout(300);
-        const option = page.locator(`[role='option']:has-text('${slot}'), [data-value='${slot}']`).first();
+        const option = page.locator(`[cmdk-item]:has-text('${slot}'), [role='option']:has-text('${slot}'), [data-value='${slot}']`).first();
         if (await option.isVisible()) {
           await option.click();
           await page.waitForTimeout(400);
@@ -314,15 +315,15 @@ test.describe("SCRIPE Venue: Real Runtime End-to-End Operational Acceptance", ()
         }
       }
       if (await nextBtn.isEnabled()) {
-        break;
+        await nextBtn.click();
+        await page.waitForTimeout(600);
+        if (await customerSearchInput.isVisible()) {
+          break;
+        }
       }
     }
 
-    await expect(nextBtn).toBeEnabled({ timeout: 10_000 });
-    await nextBtn.click();
-
     // ── Step 2: Customer Selection & Search Debounce Check (DEF-VENUE-005) ──
-    const customerSearchInput = modal.locator("input[placeholder*='Search customer'], input[placeholder*='بحث']").first();
     await expect(customerSearchInput).toBeVisible({ timeout: 10_000 });
 
     // Test search for non-existent query "MMWs" — verify spinner resets cleanly and does NOT freeze
