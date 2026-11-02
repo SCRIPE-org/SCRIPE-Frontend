@@ -169,6 +169,9 @@ test.describe("SCRIPE-739: CRM Sales Activities & Interaction Timeline Live UAT 
     const modalTitle = page.getByText(/log sales activity|تسجيل نشاط مبيعات/i).first();
     await expect(modalTitle).toBeVisible({ timeout: 10_000 });
     await expect(page.locator("#activity-summary")).toBeVisible({ timeout: 10_000 });
+    // Verify developer jargon and raw permission strings are removed from Create Activity modal
+    await expect(page.getByText(/crm\.activities\.pii/i)).toHaveCount(0);
+    await expect(page.getByText(/append-only timeline event/i)).toHaveCount(0);
     await page.waitForTimeout(400);
 
     // Capture 03: Create Activity Modal (Light & Dark)
@@ -207,6 +210,7 @@ test.describe("SCRIPE-739: CRM Sales Activities & Interaction Timeline Live UAT 
     const createdActivityData = createdActivityJson.data ?? createdActivityJson;
     const sourceActivityId: string = createdActivityData.activityId;
     expect(sourceActivityId).toBeTruthy();
+    expect(createdActivityData.accountId).toBeTruthy();
 
     await expect(page.locator("#activity-summary")).toBeHidden({ timeout: 15_000 });
     await page.waitForLoadState("networkidle");
@@ -226,6 +230,8 @@ test.describe("SCRIPE-739: CRM Sales Activities & Interaction Timeline Live UAT 
     await expect(
       page.getByText(/schedule follow-up task|جدولة مهمة متابعة/i).first()
     ).toBeVisible({ timeout: 10_000 });
+    // Verify internal module name WorkManagement is not exposed in modal description
+    await expect(page.getByText(/WorkManagement task/i)).toHaveCount(0);
 
     const followUpTitleInput = page.locator("#followup-title");
     await expect(followUpTitleInput).toBeVisible({ timeout: 10_000 });
@@ -294,6 +300,8 @@ test.describe("SCRIPE-739: CRM Sales Activities & Interaction Timeline Live UAT 
     expect(followUpData.workItemStatus).toBe("Todo");
     expect(followUpData.followUpActivity?.activityKind).toBe("FollowUpLinked");
     expect(followUpData.followUpActivity?.summary).toBe(`Follow-up scheduled: ${followUpTaskTitle}`);
+    // Verify relationship to originating CRM record (AccountId preserved across source activity and FollowUpLinked activity)
+    expect(followUpData.followUpActivity?.accountId).toBe(createdActivityData.accountId);
 
     // Modal closes and FollowUpLinked item + WorkManagement status badge appear on timeline
     await expect(followUpTitleInput).toBeHidden({ timeout: 15_000 });
@@ -328,6 +336,9 @@ test.describe("SCRIPE-739: CRM Sales Activities & Interaction Timeline Live UAT 
     expect(idempotentRetryData.workItemRefId).toBe(followUpData.workItemRefId);
     expect(idempotentRetryData.followUpActivity.activityId).toBe(
       followUpData.followUpActivity.activityId
+    );
+    expect(idempotentRetryData.followUpActivity.accountId).toBe(
+      createdActivityData.accountId
     );
     await expect(followUpTitleInput).toBeHidden({ timeout: 15_000 });
 
@@ -424,6 +435,15 @@ test.describe("SCRIPE-739: CRM Sales Activities & Interaction Timeline Live UAT 
     const rtlContainer = page.locator('[dir="rtl"]').first();
     await expect(rtlContainer).toBeVisible({ timeout: 20_000 });
     await expect(page.getByText(expectedFollowUpHeadline).first()).toBeVisible({ timeout: 20_000 });
+    await expect(page.getByText(/مهمة:\s*Todo/i).first()).toBeVisible({ timeout: 15_000 });
+
+    // Verify Arabic section headings do not apply positive letter-spacing that disconnects cursive ligatures
+    const arabicTimelineHeading = page.getByText("الجدول الزمني للأنشطة والتفاعلات").first();
+    await expect(arabicTimelineHeading).toBeVisible({ timeout: 15_000 });
+    const headingLetterSpacing = await arabicTimelineHeading.evaluate((el) => {
+      return window.getComputedStyle(el).letterSpacing;
+    });
+    expect(["normal", "0px"]).toContain(headingLetterSpacing);
 
     // Capture 06: Arabic RTL Mode (Light & Dark)
     await setThemeAndCapture(page, "06_crm_activities_arabic_rtl");

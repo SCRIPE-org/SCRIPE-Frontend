@@ -41,7 +41,7 @@ export function ActivitiesExecutionDeskView() {
           {/* Left: Accounts Navigation Selector */}
           <div className="lg:col-span-4 space-y-3">
             <div className="flex items-center justify-between pb-1 border-b border-nx-line">
-              <span className="text-xs font-bold text-nx-ink flex items-center gap-1.5 font-mono uppercase">
+              <span className={cn("text-xs font-bold text-nx-ink flex items-center gap-1.5", !isRtl && "font-mono uppercase")}>
                 <Building2 className="size-3.5 text-nx-accent" />
                 {t("crmActivities.executionDesk.selectAccount") || "Commercial Accounts"}
               </span>
@@ -115,7 +115,7 @@ export function ActivitiesExecutionDeskView() {
               <Card className="p-5 bg-nx-surface border-nx-line space-y-4">
                 <div className="flex flex-wrap items-center justify-between gap-2 border-b border-nx-line pb-3">
                   <div>
-                    <span className="text-[10px] font-mono text-nx-ink-3 uppercase font-medium">
+                    <span className={cn("text-[10px] text-nx-ink-3 font-medium", !isRtl && "font-mono uppercase")}>
                       {t("crmActivities.executionDesk.activeAccount") || "Selected Target Account"}
                     </span>
                     <h3 className="text-sm font-bold text-nx-ink font-heading">

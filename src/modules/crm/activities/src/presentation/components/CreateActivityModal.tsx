@@ -99,9 +99,9 @@ export function CreateActivityModal({
             </DialogTitle>
             <DialogDescription className="text-xs text-nx-ink-2">
               {targetLabel
-                ? `${t("crmActivities.modal.targetDesc") || "Append a commercial interaction to"} ${targetLabel}.`
+                ? `${t("crmActivities.modal.targetDesc") || "Record a commercial interaction for"} ${targetLabel}.`
                 : t("crmActivities.modal.description") ||
-                  "Record an append-only timeline event (note, call log, or meeting note)."}
+                  "Record a commercial note, phone call summary, or meeting outcome."}
             </DialogDescription>
           </DialogHeader>
 
@@ -191,11 +191,11 @@ export function CreateActivityModal({
               <div className="flex-1 cursor-pointer" onClick={() => setContainsPii(!containsPii)}>
                 <Label htmlFor="activity-pii" className="text-xs font-semibold text-nx-ink cursor-pointer flex items-center gap-1">
                   <ShieldAlert className="size-3 text-warning" />
-                  {t("crmActivities.form.containsPii") || "Contains Restricted / PII Content"}
+                  {t("crmActivities.form.containsPii") || "Contains Confidential / Sensitive Details"}
                 </Label>
                 <p className="text-[10px] text-nx-ink-3">
                   {t("crmActivities.form.piiDesc") ||
-                    "Restricts visibility to users with elevated authorization (crm.activities.pii)."}
+                    "Limits note details to team members with sensitive-data viewing access."}
                 </p>
               </div>
             </div>

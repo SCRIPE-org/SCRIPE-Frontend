@@ -83,7 +83,7 @@ export function CreateFollowUpModal({
             </DialogTitle>
             <DialogDescription className="text-xs text-nx-ink-2">
               {t("crmActivities.followup.description") ||
-                "Creates an actionable WorkManagement task linked to this commercial interaction."}
+                "Assign a follow-up action item with a due date linked to this customer interaction."}
             </DialogDescription>
           </DialogHeader>
 
@@ -100,7 +100,7 @@ export function CreateFollowUpModal({
           <div className="space-y-3.5 py-4 text-xs">
             {activity && (
               <div className="p-2.5 rounded-md bg-nx-raised border border-nx-line">
-                <span className="text-[10px] text-nx-ink-3 uppercase font-medium block">
+                <span className={`text-[10px] text-nx-ink-3 font-medium block ${!isRtl ? "uppercase" : ""}`}>
                   {t("crmActivities.followup.sourceActivity") || "Source Interaction"}
                 </span>
                 <p className="text-xs font-semibold text-nx-ink mt-0.5 line-clamp-1">

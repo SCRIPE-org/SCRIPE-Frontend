@@ -66,7 +66,7 @@ export function ActivityTimeline({ leadId,
       {/* Header and Controls */}
       <div className="flex flex-wrap items-center justify-between gap-3 border-b border-nx-line pb-3">
         <div className="flex items-center gap-2">
-          <h3 className="text-xs font-bold uppercase tracking-wider text-nx-ink font-mono flex items-center gap-1.5">
+          <h3 className={`text-xs font-bold text-nx-ink flex items-center gap-1.5 ${!isRtl ? "uppercase tracking-wider font-mono" : ""}`}>
             <Clock className="size-3.5 text-nx-accent" />
             {t("crmActivities.timeline.title") || "Activity & Interaction Timeline"}
           </h3>
@@ -137,7 +137,7 @@ export function ActivityTimeline({ leadId,
           </h4>
           <p className="text-[11px] text-nx-ink-3 max-w-sm mx-auto mt-1 mb-3">
             {t("crmActivities.timeline.emptyDesc") ||
-              "Record notes, phone calls, or meeting summaries to maintain an auditable timeline."}
+              "Record notes, phone calls, or meeting summaries to maintain a complete account history."}
           </p>
           {canCreateActivity && ( <Button
               type="button"
@@ -152,11 +152,11 @@ export function ActivityTimeline({ leadId,
         </Card> )}
       {/* Timeline List */}
       {state.items.length > 0 && (
-        <div className="relative pl-6 space-y-4 before:absolute before:left-2.5 before:top-2 before:bottom-2 before:w-px before:bg-nx-line">
+        <div className={`relative space-y-4 before:absolute before:top-2 before:bottom-2 before:w-px before:bg-nx-line ${isRtl ? "pr-6 before:right-2.5" : "pl-6 before:left-2.5"}`}>
           {state.items.map((activity) => { const isMasked = activity.maskedFieldKeys?.includes("bodyText");
             return ( <div key={activity.activityId} className="relative group">
                 {/* Timeline node icon */}
-                <div className="absolute -left-6 top-1 flex size-5 items-center justify-center rounded-full bg-nx-surface border border-nx-line">
+                <div className={`absolute top-1 flex size-5 items-center justify-center rounded-full bg-nx-surface border border-nx-line ${isRtl ? "-right-6" : "-left-6"}`}>
                   {getActivityIcon(activity.activityKind)}
                 </div>
                 <div className="p-3.5 rounded-lg bg-nx-surface border border-nx-line hover:border-nx-line-hi transition-colors space-y-2">
@@ -187,10 +187,10 @@ export function ActivityTimeline({ leadId,
                       {/* Linked WorkItem status badge */}
                       {activity.workItemRefId && ( <Badge
                           variant="outline"
-                          className="border-warning/30 bg-warning/10 text-warning text-[10px] py-0.5 px-2 flex items-center gap-1 font-mono font-medium"
+                          className="border-warning/30 bg-warning/10 text-warning text-[10px] py-0.5 px-2 flex items-center gap-1 font-medium"
                         >
                           <ListTodo className="size-2.5" />
-                          <span>Task: {activity.workItemStatus || "Active"}</span>
+                          <span>{t("crmActivities.timeline.taskPrefix") || "Task"}: {activity.workItemStatus || "Active"}</span>
                         </Badge> )}
                       {/* Quick Follow-up button */}
                       {canFollowUp && activity.activityKind !== "FollowUpLinked" && ( <Button
