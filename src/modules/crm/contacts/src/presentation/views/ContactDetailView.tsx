@@ -8,6 +8,7 @@ import { LoadingSpinner } from "@core/ui/loading-spinner";
 import { Alert, AlertTitle, AlertDescription } from "@core/ui/alert";
 import { Button } from "@core/ui/button";
 import { Badge } from "@core/ui/badge";
+import { Card } from "@core/ui/card";
 import { Input } from "@core/ui/input";
 import { Label } from "@core/ui/label";
 import {
@@ -31,7 +32,7 @@ import {
   Calendar,
   ArrowUpRight,
 } from "lucide-react";
-import { CRM_PERMISSIONS, CrmShell } from "@modules/crm";
+import { CRM_PERMISSIONS, CrmShell, ActivityTimeline } from "@modules/crm";
 import { useContactDetailViewModel } from "../viewmodels/useContactDetailViewModel";
 
 interface ContactDetailViewProps {
@@ -324,6 +325,20 @@ export function ContactDetailView({ contactId }: ContactDetailViewProps) {
             )}
           </div>
         </div>
+
+        {/* Sales Activity & Notes Timeline (SCRIPE-739 / D5/B) */}
+        {contact.primaryAccountId && (
+          <Card className="p-5 bg-nx-surface border-nx-line">
+            <ActivityTimeline
+              accountId={contact.primaryAccountId}
+              targetLabel={
+                language === "ar" && contact.personLegalNameAr
+                  ? contact.personLegalNameAr
+                  : contact.personLegalNameEn
+              }
+            />
+          </Card>
+        )}
 
         {/* Edit Dialog */}
         <Dialog open={isEditOpen} onOpenChange={setIsEditOpen}>

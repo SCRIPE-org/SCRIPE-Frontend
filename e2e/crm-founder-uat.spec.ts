@@ -426,17 +426,32 @@ test.describe("SCRIPE CRM Founder UAT & Live Capability Verification", () => {
     await expect(maskedAmounts.first()).toBeVisible({ timeout: 20_000 });
     await page.locator(".animate-spin").waitFor({ state: "detached", timeout: 15_000 }).catch(() => {});
 
-    // Screenshot 11: Sales Rep FLS Masking (Real opportunities screen with •••••• masked financial values)
+    // Screenshot 11: Sales Rep FLS Masking (Real opportunities screen with •••••• masked financial values in table)
     await page.screenshot({
       path: path.join(SCREENSHOT_DIR, "11_crm_sales_rep_fls_masked.png"),
       fullPage: true,
     });
 
-    // Verify Pipeline settings button is NOT visible for Sales Rep
+    // Switch to Kanban View to demonstrate restricted single-deal board and absence of Pipeline Settings button
+    const repKanbanToggle = page.getByTestId("toggle-kanban-view");
+    if (await repKanbanToggle.isVisible()) {
+      await repKanbanToggle.click();
+    } else {
+      const kanbanBtnAlt = page.getByRole("button", { name: /kanban/i }).first();
+      if (await kanbanBtnAlt.isVisible()) {
+        await kanbanBtnAlt.click();
+      }
+    }
+    await page.waitForTimeout(1200);
+
+    // Verify Pipeline settings button is strictly NOT visible for Sales Rep
     const repPipelineSettings = page.getByTestId("pipeline-settings-button");
     await expect(repPipelineSettings).not.toBeVisible();
 
-    // Screenshot 12: Sales Rep Restricted Access (Real opportunities screen with restricted pipeline controls)
+    // Verify Kanban card also displays masked amount
+    await expect(page.getByText("••••••").first()).toBeVisible({ timeout: 15_000 });
+
+    // Screenshot 12: Sales Rep Restricted Access (Kanban board restricted to 1 deal, FLS masked card, no pipeline controls)
     await page.screenshot({
       path: path.join(SCREENSHOT_DIR, "12_crm_sales_rep_restricted_access.png"),
       fullPage: true,

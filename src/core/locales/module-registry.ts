@@ -309,6 +309,7 @@ import { en as crmLeadsEn, ar as crmLeadsAr } from "@modules/crm/leads/locales";
 import { en as crmOpportunitiesEn, ar as crmOpportunitiesAr } from "@modules/crm/opportunities/locales";
 import { en as crmAccountsEn, ar as crmAccountsAr } from "@modules/crm/accounts/locales";
 import { en as crmContactsEn, ar as crmContactsAr } from "@modules/crm/contacts/locales";
+import { en as crmActivitiesEn, ar as crmActivitiesAr } from "@modules/crm/activities/locales";
 
 
 
@@ -439,6 +440,7 @@ export const allModulesEn: Record<string, unknown> = deepMerge(
   crmOpportunitiesEn,
   crmAccountsEn,
   crmContactsEn,
+  crmActivitiesEn,
 );
 
 export const allModulesAr: Record<string, unknown> = deepMerge(
@@ -567,4 +569,5 @@ export const allModulesAr: Record<string, unknown> = deepMerge(
   crmOpportunitiesAr,
   crmAccountsAr,
   crmContactsAr,
+  crmActivitiesAr,
 );

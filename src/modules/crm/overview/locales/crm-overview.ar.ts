@@ -9,6 +9,7 @@ export const ar = {
       deals: "الصفقات والفرص",
       accounts: "الحسابات المؤسسية",
       contacts: "جهات الاتصال",
+      activities: "الأنشطة",
       pipelines: "مسارات الصفقات",
     },
     actions: {

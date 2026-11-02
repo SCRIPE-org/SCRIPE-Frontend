@@ -33,7 +33,7 @@ import {
   Sparkles,
   Layers,
 } from "lucide-react";
-import { CRM_PERMISSIONS, CrmShell, CrmSectionHeader } from "@modules/crm";
+import { CRM_PERMISSIONS, CrmShell, CrmSectionHeader, ActivityTimeline } from "@modules/crm";
 import { AccountStatusBadge } from "../components/AccountStatusBadge";
 import { useAccountDetailViewModel } from "../viewmodels/useAccountDetailViewModel";
 
@@ -333,6 +333,18 @@ export function AccountDetailView({ accountId }: AccountDetailViewProps) {
             )}
           </div>
         </div>
+
+        {/* Sales Activity & Notes Timeline (SCRIPE-739 / D5/B) */}
+        <Card className="p-5 bg-nx-surface border-nx-line">
+          <ActivityTimeline
+            accountId={accountId}
+            targetLabel={
+              language === "ar" && account.partyLegalNameAr
+                ? account.partyLegalNameAr
+                : account.partyLegalNameEn
+            }
+          />
+        </Card>
 
         {/* Edit Dialog */}
         <Dialog open={isEditOpen} onOpenChange={setIsEditOpen}>

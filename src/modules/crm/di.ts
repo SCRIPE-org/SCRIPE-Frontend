@@ -33,6 +33,11 @@ import { CrmContactRepository } from "./contacts/src/data/repositories/CrmContac
 import type { ICrmContactService } from "./contacts/src/domain/interfaces/ICrmContactService";
 import type { ICrmContactRepository } from "./contacts/src/domain/interfaces/ICrmContactRepository";
 
+import { CrmActivityService } from "./activities/src/data/services/CrmActivityService";
+import { CrmActivityRepository } from "./activities/src/data/repositories/CrmActivityRepository";
+import type { ICrmActivityService } from "./activities/src/domain/interfaces/ICrmActivityService";
+import type { ICrmActivityRepository } from "./activities/src/domain/interfaces/ICrmActivityRepository";
+
 export interface CrmContainer {
   readonly overviewService: ICrmOverviewService;
   readonly overviewRepository: ICrmOverviewRepository;
@@ -44,6 +49,8 @@ export interface CrmContainer {
   readonly accountRepository: ICrmAccountRepository;
   readonly contactService: ICrmContactService;
   readonly contactRepository: ICrmContactRepository;
+  readonly activityService?: ICrmActivityService;
+  readonly activityRepository?: ICrmActivityRepository;
 }
 
 let instance: CrmContainer | null = null;
@@ -61,6 +68,8 @@ export function getCrmContainer(): CrmContainer {
     const accountRepository = new CrmAccountRepository(accountService);
     const contactService = new CrmContactService(api);
     const contactRepository = new CrmContactRepository(contactService);
+    const activityService = new CrmActivityService(api);
+    const activityRepository = new CrmActivityRepository(activityService);
 
     instance = {
       overviewService,
@@ -73,6 +82,8 @@ export function getCrmContainer(): CrmContainer {
       accountRepository,
       contactService,
       contactRepository,
+      activityService,
+      activityRepository,
     };
   }
   return instance;

@@ -116,12 +116,22 @@ test.describe("SCRIPE-735 & SCRIPE-736: CRM Accounts 360 & Contacts Context Live
       .catch(() => {});
     await page.waitForLoadState("networkidle");
 
+    // Wait for routing transition to settle and full opacity
+    await page.waitForFunction(() => {
+      const content = document.getElementById("nexus-content");
+      return content && window.getComputedStyle(content).opacity === "1";
+    }, { timeout: 15_000 }).catch(() => {});
+    await page.waitForTimeout(600);
+
+    // Expand viewport height so inner scrolling container displays all sections without cut-off
+    await page.setViewportSize({ width: 1440, height: 1350 });
+
     // Wait for detail view elements: Back button, heading, stakeholder contacts, and active deals
     await expect(page.getByText(/back to accounts|العودة إلى الحسابات/i).first()).toBeVisible({
       timeout: 20_000,
     });
     await expect(page.locator("h1").first()).toBeVisible({ timeout: 15_000 });
-    await expect(page.getByText(/key stakeholders|contacts/i).first()).toBeVisible({
+    await expect(page.getByText(/key stakeholders & contacts|contacts/i).first()).toBeVisible({
       timeout: 15_000,
     });
     await expect(
@@ -136,6 +146,9 @@ test.describe("SCRIPE-735 & SCRIPE-736: CRM Accounts 360 & Contacts Context Live
       path: path.join(SCREENSHOT_DIR, "02_crm_account_360_overview.png"),
       fullPage: true,
     });
+
+    // Reset viewport for normal directory views
+    await page.setViewportSize({ width: 1440, height: 900 });
 
     // ═══════════════════════════════════════════════════════════════════════
     // PHASE 4: Commercial Contacts Directory
@@ -206,12 +219,22 @@ test.describe("SCRIPE-735 & SCRIPE-736: CRM Accounts 360 & Contacts Context Live
       .catch(() => {});
     await page.waitForLoadState("networkidle");
 
+    // Wait for routing transition to settle and full opacity
+    await page.waitForFunction(() => {
+      const content = document.getElementById("nexus-content");
+      return content && window.getComputedStyle(content).opacity === "1";
+    }, { timeout: 15_000 }).catch(() => {});
+    await page.waitForTimeout(600);
+
+    // Expand viewport height so inner scrolling container displays all sections without cut-off
+    await page.setViewportSize({ width: 1440, height: 1350 });
+
     // Wait for contact detail elements: Back button, heading, primary account card, and associated deals
     await expect(page.getByText(/back to contacts|العودة إلى جهات الاتصال/i).first()).toBeVisible({
       timeout: 20_000,
     });
     await expect(page.locator("h1").first()).toBeVisible({ timeout: 15_000 });
-    await expect(page.getByText(/primary account|organization|account/i).first()).toBeVisible({
+    await expect(page.getByText(/primary account organization|primary account|organization/i).first()).toBeVisible({
       timeout: 15_000,
     });
     await expect(
@@ -226,6 +249,9 @@ test.describe("SCRIPE-735 & SCRIPE-736: CRM Accounts 360 & Contacts Context Live
       path: path.join(SCREENSHOT_DIR, "04_crm_contact_context_detail.png"),
       fullPage: true,
     });
+
+    // Reset viewport
+    await page.setViewportSize({ width: 1440, height: 900 });
 
     // ═══════════════════════════════════════════════════════════════════════
     // PHASE 6: Arabic RTL Mode

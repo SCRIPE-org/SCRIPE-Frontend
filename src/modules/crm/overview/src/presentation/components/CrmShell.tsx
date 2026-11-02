@@ -14,12 +14,13 @@ import {
   Search,
   Plus,
   Contact,
+  Clock,
 } from "lucide-react";
 import { Button } from "@core/ui/button";
 import { Input } from "@core/ui/input";
 import { cn } from "@core/common/utils";
 
-export type CrmTabId = "overview" | "leads" | "deals" | "accounts" | "contacts" | "pipelines";
+export type CrmTabId = "overview" | "leads" | "deals" | "accounts" | "contacts" | "activities" | "pipelines";
 
 interface CrmShellProps {
   activeTab: CrmTabId;
@@ -51,6 +52,7 @@ export function CrmShell({
   const canReadOpportunities = usePermission(CRM_PERMISSIONS.OPPORTUNITIES_READ);
   const canReadAccounts = usePermission(CRM_PERMISSIONS.ACCOUNTS_READ);
   const canReadContacts = usePermission(CRM_PERMISSIONS.CONTACTS_READ);
+  const canReadActivities = usePermission(CRM_PERMISSIONS.ACTIVITIES_READ);
   const canCreateOpportunities = usePermission(CRM_PERMISSIONS.OPPORTUNITIES_CREATE);
   const canCreateLeads = usePermission(CRM_PERMISSIONS.LEADS_CREATE);
 
@@ -91,6 +93,12 @@ export function CrmShell({
       visible: canReadContacts,
     },
     {
+      id: "activities",
+      label: t("crm.tabs.activities") || "Activities",
+      icon: Clock,
+      visible: canReadActivities,
+    },
+    {
       id: "pipelines",
       label: t("crm.tabs.pipelines"),
       icon: GitFork,
@@ -128,6 +136,8 @@ export function CrmShell({
                     else if (tab.id === "deals") router.push("/crm/opportunities");
                     else if (tab.id === "accounts") router.push("/crm/accounts");
                     else if (tab.id === "contacts") router.push("/crm/contacts");
+                    else if (tab.id === "activities") router.push("/crm/activities");
+                    else if (tab.id === "pipelines") router.push("/crm/pipelines");
                   }}
                   aria-current={isActive ? "page" : undefined}
                   className={cn(

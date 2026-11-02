@@ -9,6 +9,7 @@ export const en = {
       deals: "Deals & Opportunities",
       accounts: "Accounts",
       contacts: "Contacts",
+      activities: "Activities",
       pipelines: "Pipelines",
     },
     actions: {
