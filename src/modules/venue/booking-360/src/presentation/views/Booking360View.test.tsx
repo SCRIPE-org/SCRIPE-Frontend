@@ -339,13 +339,13 @@ describe("Booking360View", () => {
     render(<Booking360View reservationId="reservation-1" />);
 
     expect(screen.getByTestId("cancelled-paid-advisory")).toBeInTheDocument();
-    expect(screen.getByText("booking360.finance.refundRequiredTitle")).toBeInTheDocument();
+    expect(screen.getByText("booking360.commercial.refundRequiredTitle")).toBeInTheDocument();
     expect(screen.getByTestId("issue-refund-cta-btn")).toBeInTheDocument();
     expect(screen.getByTestId("issue-refund-cta-btn").querySelector("a") ?? screen.getByTestId("issue-refund-cta-btn")).toHaveAttribute(
       "href",
       "/venue/money/payments?action=refund&paymentId=pay-202&invoiceId=inv-202"
     );
-    expect(screen.getByTestId("payment-status-badge")).toHaveTextContent("booking360.finance.refundRequiredBadge");
+    expect(screen.getByTestId("payment-status-badge")).toHaveTextContent("booking360.commercial.refundRequiredBadge");
   });
 
   it("shows Refunded payment badge when cancelled and all payments are refunded", () => {
@@ -389,7 +389,7 @@ describe("Booking360View", () => {
     });
     render(<Booking360View reservationId="reservation-1" />);
 
-    expect(screen.getByTestId("payment-status-badge")).toHaveTextContent("booking360.finance.refundedBadge");
+    expect(screen.getByTestId("payment-status-badge")).toHaveTextContent("booking360.commercial.refundedBadge");
   });
 
   it("renders contextual deep links for Court, Calendar, and Customer", () => {

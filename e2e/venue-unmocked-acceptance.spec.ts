@@ -95,12 +95,12 @@ test.describe("SCRIPE Venue: Real Runtime End-to-End Operational Acceptance", ()
     // Ensure test slot (11:00 on 2026-11-01) is free
     try {
       queryPostgres(`
-        DELETE FROM venue.capacity_ledger_entries WHERE reservation_id IN (SELECT id FROM venue.reservations WHERE reservation_number LIKE 'RES-20261101-%') OR booking_hold_id IN (SELECT id FROM venue.booking_holds WHERE reservation_id IN (SELECT id FROM venue.reservations WHERE reservation_number LIKE 'RES-20261101-%'));
-        DELETE FROM venue.booking_holds WHERE reservation_id IN (SELECT id FROM venue.reservations WHERE reservation_number LIKE 'RES-20261101-%');
-        DELETE FROM venue.booking_status_histories WHERE reservation_id IN (SELECT id FROM venue.reservations WHERE reservation_number LIKE 'RES-20261101-%');
-        DELETE FROM venue.booking_requests WHERE reservation_id IN (SELECT id FROM venue.reservations WHERE reservation_number LIKE 'RES-20261101-%');
-        DELETE FROM venue.guest_reservation_accesses WHERE reservation_id IN (SELECT id FROM venue.reservations WHERE reservation_number LIKE 'RES-20261101-%');
-        DELETE FROM venue.reservations WHERE reservation_number LIKE 'RES-20261101-%';
+        DELETE FROM venue.capacity_ledger_entries WHERE reservation_id IN (SELECT id FROM venue.reservations WHERE reservation_number LIKE 'RES-202611%') OR booking_hold_id IN (SELECT id FROM venue.booking_holds WHERE reservation_id IN (SELECT id FROM venue.reservations WHERE reservation_number LIKE 'RES-202611%'));
+        DELETE FROM venue.booking_holds WHERE reservation_id IN (SELECT id FROM venue.reservations WHERE reservation_number LIKE 'RES-202611%');
+        DELETE FROM venue.booking_status_histories WHERE reservation_id IN (SELECT id FROM venue.reservations WHERE reservation_number LIKE 'RES-202611%');
+        DELETE FROM venue.booking_requests WHERE reservation_id IN (SELECT id FROM venue.reservations WHERE reservation_number LIKE 'RES-202611%');
+        DELETE FROM venue.guest_reservation_accesses WHERE reservation_id IN (SELECT id FROM venue.reservations WHERE reservation_number LIKE 'RES-202611%');
+        DELETE FROM venue.reservations WHERE reservation_number LIKE 'RES-202611%';
       `);
     } catch (err) {
       console.log("Slot cleanup notice:", err instanceof Error ? err.message : err);

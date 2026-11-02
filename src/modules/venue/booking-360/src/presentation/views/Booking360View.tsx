@@ -286,8 +286,8 @@ export const Booking360View = React.memo(function Booking360View({
                   (finance.summary.payments.length > 0 &&
                     finance.summary.payments.every((p) => p.status === "Refunded")) ||
                   finance.summary.refundedAmount >= finance.summary.paidAmount
-                  ? t("booking360.finance.refundedBadge", { defaultValue: "Refunded" })
-                  : t("booking360.finance.refundRequiredBadge", { defaultValue: "Refund Required" })
+                  ? t("booking360.commercial.refundedBadge", { defaultValue: "Refunded" })
+                  : t("booking360.commercial.refundRequiredBadge", { defaultValue: "Refund Required" })
                 : t(`booking360.paymentStatus.${paymentStatus}`, { defaultValue: paymentStatus })}
             </Badge>
           </div>
@@ -318,14 +318,14 @@ export const Booking360View = React.memo(function Booking360View({
               <div>
                 <p className="font-semibold text-destructive">
                   {finance.summary.payments.some((p) => p.status !== "Refunded")
-                    ? t("booking360.finance.refundRequiredTitle", {
+                    ? t("booking360.commercial.refundRequiredTitle", {
                         defaultValue: "Refund Action Required",
                       })
                     : t("booking360.cancelledPaid.title")}
                 </p>
                 <p className="mt-1 text-xs text-nx-ink-2">
                   {finance.summary.payments.some((p) => p.status !== "Refunded")
-                    ? t("booking360.finance.refundRequiredDescription", {
+                    ? t("booking360.commercial.refundRequiredDescription", {
                         defaultValue:
                           "This reservation is cancelled, but has recorded payments totaling {{amount}}. Record a refund in Finance.",
                         amount: new Intl.NumberFormat(language, {
@@ -361,7 +361,7 @@ export const Booking360View = React.memo(function Booking360View({
                   >
                     <Link href={refundUrl}>
                       {unrefundedPayment
-                        ? t("booking360.finance.issueRefundCta", { defaultValue: "Issue Refund" })
+                        ? t("booking360.commercial.issueRefundCta", { defaultValue: "Issue Refund" })
                         : t("booking360.cancelledPaid.manageRefund")}
                     </Link>
                   </Button>
