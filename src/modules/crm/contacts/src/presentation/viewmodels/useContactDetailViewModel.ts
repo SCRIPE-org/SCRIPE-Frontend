@@ -7,12 +7,20 @@ import type {
   UpdateContactInput,
 } from "../../domain/models/crm-contact.types";
 
+/**
+ * State contract for the single contact detail and stakeholder view.
+ */
 export interface ContactDetailState {
   stage: "idle" | "loading" | "success" | "failed";
   contact: CrmContactContext | null;
   error: string | null;
 }
 
+/**
+ * ViewModel hook orchestrating single contact context retrieval and stakeholder updates.
+ * @param contactId - Unique contact identifier.
+ * @returns State and mutation methods for the contact detail view.
+ */
 export function useContactDetailViewModel(contactId: string) {
   const [state, setState] = useState<ContactDetailState>({
     stage: "loading",

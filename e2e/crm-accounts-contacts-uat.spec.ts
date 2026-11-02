@@ -12,6 +12,23 @@ if (!fs.existsSync(SCREENSHOT_DIR)) {
   fs.mkdirSync(SCREENSHOT_DIR, { recursive: true });
 }
 
+async function safeScreenshot(page: Page, targetPath: string) {
+  for (let attempt = 0; attempt < 5; attempt++) {
+    try {
+      if (fs.existsSync(targetPath)) {
+        try {
+          fs.unlinkSync(targetPath);
+        } catch {}
+      }
+      await page.screenshot({ path: targetPath, fullPage: true });
+      return;
+    } catch (err) {
+      if (attempt === 4) throw err;
+      await page.waitForTimeout(400);
+    }
+  }
+}
+
 async function setThemeAndCapture(page: Page, baseName: string) {
   await page.evaluate(() => {
     document.documentElement.setAttribute("data-reduced-motion", "true");
@@ -20,14 +37,8 @@ async function setThemeAndCapture(page: Page, baseName: string) {
     localStorage.setItem("theme", "light");
   });
   await page.waitForTimeout(350);
-  await page.screenshot({
-    path: path.join(SCREENSHOT_DIR, `${baseName}_light.png`),
-    fullPage: true,
-  });
-  await page.screenshot({
-    path: path.join(SCREENSHOT_DIR, `${baseName}.png`),
-    fullPage: true,
-  });
+  await safeScreenshot(page, path.join(SCREENSHOT_DIR, `${baseName}_light.png`));
+  await safeScreenshot(page, path.join(SCREENSHOT_DIR, `${baseName}.png`));
 
   await page.evaluate(() => {
     document.documentElement.setAttribute("data-reduced-motion", "true");
@@ -36,10 +47,7 @@ async function setThemeAndCapture(page: Page, baseName: string) {
     localStorage.setItem("theme", "dark");
   });
   await page.waitForTimeout(350);
-  await page.screenshot({
-    path: path.join(SCREENSHOT_DIR, `${baseName}_dark.png`),
-    fullPage: true,
-  });
+  await safeScreenshot(page, path.join(SCREENSHOT_DIR, `${baseName}_dark.png`));
 
   await page.evaluate(() => {
     document.documentElement.classList.remove("dark");

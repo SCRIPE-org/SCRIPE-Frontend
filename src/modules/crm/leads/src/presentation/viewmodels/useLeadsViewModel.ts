@@ -2,12 +2,23 @@
 import { useState, useEffect, useCallback, useTransition } from "react";
 import { getCrmContainer } from "@modules/crm/di";
 import type { CrmLead, CreateLeadInput, QualifyLeadInput, LinkPartyToLeadInput, ConvertLeadInput, ConvertLeadResult, LeadStatus, } from "../../domain/models/crm-lead.types";
-export interface LeadsState { stage: "idle" | "loading" | "success" | "failed";
+/**
+ * State contract for the lead management viewmodel.
+ */
+export interface LeadsState {
+  stage: "idle" | "loading" | "success" | "failed";
   items: CrmLead[];
   totalCount: number;
   page: number;
   pageSize: number;
-  error: string | null; }
+  error: string | null;
+}
+
+/**
+ * ViewModel hook managing lead catalog search, qualification dialogs, party linking, and dual conversion flows.
+ * @param initialSearch - Optional initial text query.
+ * @returns State and actions for the leads view.
+ */
 export function useLeadsViewModel(initialSearch?: string) { const [state, setState] = useState<LeadsState>({
     stage: "loading", items: [],
     totalCount: 0, page: 1,

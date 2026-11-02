@@ -3,6 +3,9 @@
 import { useState, useEffect, useCallback } from "react";
 import { getCrmContainer } from "@modules/crm/di";
 
+/**
+ * Account summary projection used by the Sales Activities Execution Desk split-view.
+ */
 export interface ExecutionDeskAccountSummary {
   readonly id: string;
   readonly nameEn: string;
@@ -11,6 +14,11 @@ export interface ExecutionDeskAccountSummary {
   readonly preferredCurrencyCode?: string | null;
 }
 
+/**
+ * ViewModel hook orchestrating account selection and timeline contextualization in the Execution Desk.
+ * @param currentLanguage - Active locale ('en' or 'ar') for localized name presentation.
+ * @returns State and actions for the execution desk layout.
+ */
 export function useActivitiesExecutionDeskViewModel(currentLanguage: string) {
   const [accounts, setAccounts] = useState<ExecutionDeskAccountSummary[]>([]);
   const [selectedAccountId, setSelectedAccountId] = useState<string>("");

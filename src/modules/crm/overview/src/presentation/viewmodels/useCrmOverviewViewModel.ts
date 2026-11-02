@@ -7,12 +7,20 @@ import type {
   CrmStageKey,
 } from "../../domain/models/crm-overview.types";
 
+/**
+ * State contract for the top-level CRM overview dashboard.
+ */
 export interface CrmOverviewState {
   stage: "idle" | "loading" | "success" | "failed";
   data: CrmOverviewData | null;
   error: string | null;
 }
 
+/**
+ * ViewModel hook aggregating commercial KPIs, pipeline health, and stage distribution metrics.
+ * @param searchQuery - Optional text search query for filtering overview metrics.
+ * @returns State and stage filter operations for the CRM overview dashboard.
+ */
 export function useCrmOverviewViewModel(searchQuery?: string) {
   const [state, setState] = useState<CrmOverviewState>({
     stage: "loading",

@@ -7,6 +7,9 @@ import type {
   CreateContactInput,
 } from "../../domain/entities/ContactEntity";
 
+/**
+ * State contract for the contacts listing and directory viewmodel.
+ */
 export interface ContactsState {
   stage: "idle" | "loading" | "success" | "failed";
   items: CrmContact[];
@@ -16,6 +19,12 @@ export interface ContactsState {
   error: string | null;
 }
 
+/**
+ * ViewModel hook managing contact person directories, search filters, and association workflows.
+ * @param initialSearch - Initial text query filter.
+ * @param initialAccountId - Optional initial parent commercial account identifier.
+ * @returns State and operations for the contacts presentation view.
+ */
 export function useContactsViewModel(initialSearch?: string, initialAccountId?: string) {
   const [state, setState] = useState<ContactsState>({
     stage: "loading",

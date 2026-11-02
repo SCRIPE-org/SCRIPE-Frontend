@@ -9,6 +9,9 @@ import type {
   CreateActivityFollowUpPayload,
 } from "../../domain/entities/CrmActivityEntity";
 
+/**
+ * State contract for the activities timeline viewmodel.
+ */
 export interface ActivitiesState {
   stage: "idle" | "loading" | "success" | "failed";
   items: CrmActivity[];
@@ -18,6 +21,9 @@ export interface ActivitiesState {
   error: string | null;
 }
 
+/**
+ * Configuration options for the activities viewmodel hook.
+ */
 export interface UseCrmActivitiesProps {
   readonly leadId?: string;
   readonly accountId?: string;
@@ -25,6 +31,11 @@ export interface UseCrmActivitiesProps {
   readonly initialActivityKind?: SalesActivityKind;
 }
 
+/**
+ * ViewModel hook orchestrating chronological sales interaction retrieval, activity logging, and follow-up delegation.
+ * @param props - Filter criteria and initial parameters for the activities query.
+ * @returns State and mutation methods for the sales activity timeline.
+ */
 export function useCrmActivitiesViewModel(props: UseCrmActivitiesProps = {}) {
   const { leadId, accountId, opportunityId, initialActivityKind } = props;
 

@@ -38,6 +38,10 @@ import { CrmActivityRepository } from "./activities/src/data/repositories/CrmAct
 import type { ICrmActivityService } from "./activities/src/domain/interfaces/ICrmActivityService";
 import type { ICrmActivityRepository } from "./activities/src/domain/interfaces/ICrmActivityRepository";
 
+/**
+ * Dependency injection container contract for the SCRIPE CRM module.
+ * Provides singleton resolution for all sub-module repositories and services.
+ */
 export interface CrmContainer {
   readonly overviewService: ICrmOverviewService;
   readonly overviewRepository: ICrmOverviewRepository;
@@ -55,6 +59,11 @@ export interface CrmContainer {
 
 let instance: CrmContainer | null = null;
 
+/**
+ * Resolves the singleton CRM dependency injection container.
+ * Auto-wires domain services and repositories to the module-isolated HTTP API client.
+ * @returns Initialized CrmContainer instance.
+ */
 export function getCrmContainer(): CrmContainer {
   if (!instance) {
     const api = getModuleApiService("CRM");
