@@ -351,7 +351,8 @@ test.describe("SCRIPE CRM Founder UAT & Live Capability Verification (Dark + Lig
     // Verify single search bar on /crm/opportunities and no "+ +"
     const oppSearchCount = await page.locator("main input[placeholder*='Search' i]").count();
     expect(oppSearchCount).toBe(1);
-    const newOppBtn = page.getByTestId("create-opportunity-button");
+    const newOppBtn = page.locator("main").getByRole("button", { name: /new opportunity|new deal/i }).first();
+    await expect(newOppBtn).toBeVisible({ timeout: 10_000 });
     const newOppText = await newOppBtn.innerText();
     expect(newOppText).not.toContain("+ +");
 

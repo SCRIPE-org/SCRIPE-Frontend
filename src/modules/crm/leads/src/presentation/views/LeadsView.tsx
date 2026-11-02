@@ -127,7 +127,7 @@ export function LeadsView() { const { t, language } = useI18n();
         { value: "New", label: t("crmLeads.status.new"), colorClass: "border-nx-line bg-nx-surface text-nx-ink",
           dotClass: "bg-nx-ink-3", summary: (items: CrmLead[]) => {
             const sum = items.reduce((acc, curr) => acc + (curr.estimatedValue || 0), 0);
-            return <span className="font-semibold">{sum > 0 ? `SAR ${sum.toLocaleString()}` : "SAR 0"}</span>; }, }, {
+            return <span className="font-semibold text-nx-ink-2">{sum > 0 ? `SAR ${sum.toLocaleString()}` : "SAR 0"}</span>; }, }, {
           value: "Working", label: t("crmLeads.status.working"),
           colorClass: "border-info/30 bg-info/10 text-info", dotClass: "bg-info",
           summary: (items: CrmLead[]) => { const sum = items.reduce((acc, curr) => acc + (curr.estimatedValue || 0), 0);
@@ -146,7 +146,7 @@ export function LeadsView() { const { t, language } = useI18n();
             return <span className="font-semibold text-destructive">{sum > 0 ? `SAR ${sum.toLocaleString()}` : "SAR 0"}</span>; },
         }, ], onKanbanItemMove: (item: CrmLead, targetColumnValue: string) => { handleUpdateLeadStatus(item, targetColumnValue);
       }, renderKanbanCard: (lead: CrmLead, actions: React.ReactNode) => (
-        <Card className="space-y-2.5 rounded-nx-md border border-nx-line bg-nx-raised p-3 hover:border-nx-line-hi transition-all">
+        <div className="space-y-2.5 rounded-nx-md border border-nx-line bg-nx-raised p-3 hover:border-nx-line-hi transition-all text-nx-ink">
           <div className="flex items-start justify-between gap-2">
             <span className="font-semibold text-xs text-nx-ink line-clamp-1">{lead.title}</span>
             <LeadStatusBadge status={lead.status} />
@@ -163,15 +163,15 @@ export function LeadsView() { const { t, language } = useI18n();
               {lead.email}
             </div> )}
           {actions && <div className="pt-2 border-t border-nx-line/50">{actions}</div>}
-        </Card> ), renderCardGridItem: (lead: CrmLead, actions: React.ReactNode) => (
-        <Card className="flex flex-col justify-between gap-3 rounded-nx-lg border border-nx-line bg-nx-surface p-4 hover:border-nx-line-hi transition-all">
+        </div> ), renderCardGridItem: (lead: CrmLead, actions: React.ReactNode) => (
+        <div className="flex flex-col justify-between gap-3 rounded-nx-lg border border-nx-line bg-nx-surface p-4 hover:border-nx-line-hi transition-all text-nx-ink">
           <div className="space-y-2">
             <div className="flex items-start justify-between gap-2">
               <h4 className="font-bold text-sm text-nx-ink line-clamp-1">{lead.title}</h4>
               <LeadStatusBadge status={lead.status} />
             </div>
             <div className="text-xs text-nx-ink-2 space-y-1">
-              <div className="font-medium">{lead.companyName || lead.fullName || "—"}</div>
+              <div className="font-medium text-nx-ink-2">{lead.companyName || lead.fullName || "—"}</div>
               {lead.email && ( <div className="text-nx-ink-3 flex items-center gap-1.5">
                   <Mail className="size-3" />
                   {lead.email}
@@ -186,8 +186,8 @@ export function LeadsView() { const { t, language } = useI18n();
             <span className="text-[11px] text-nx-ink-3">{lead.source || "Direct"}</span>
             {actions}
           </div>
-        </Card> ), renderSplitDetail: (lead: CrmLead, actions: React.ReactNode) => (
-        <Card className="rounded-nx-lg border border-nx-line bg-nx-surface p-5 space-y-5">
+        </div> ), renderSplitDetail: (lead: CrmLead, actions: React.ReactNode) => (
+        <div className="rounded-nx-lg border border-nx-line bg-nx-surface p-5 space-y-5 text-nx-ink">
           <div className="flex items-start justify-between border-b border-nx-line pb-4">
             <div>
               <h3 className="text-lg font-bold text-nx-ink">{lead.title}</h3>
@@ -224,7 +224,7 @@ export function LeadsView() { const { t, language } = useI18n();
               <span className="font-semibold text-nx-ink block mb-1">Notes & Context</span>
               <p className="text-nx-ink-2 whitespace-pre-wrap">{lead.notes}</p>
             </div> )}
-        </Card> ), columns, getActions: (_vm: any, _t: any): CrudAction<CrmLead>[] => [
+        </div> ), columns, getActions: (_vm: any, _t: any): CrudAction<CrmLead>[] => [
         { label: t("crmLeads.actions.qualify"),
           icon: <CheckCircle2 className="size-3.5" />, onClick: (lead: CrmLead) => openQualifyDialog(lead),
           show: (lead: CrmLead) =>

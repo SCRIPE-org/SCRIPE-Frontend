@@ -23,7 +23,7 @@ export function buildOpportunityColumns(
       label: t("crmOpportunities.table.title"),
       sortable: true,
       render: (_val, opp: CrmOpportunity) => (
-        <div className="max-w-xs">
+        <div className="max-w-[200px]">
           <Button
             type="button"
             variant="link"
@@ -36,7 +36,7 @@ export function buildOpportunityColumns(
             <span className="text-[11px] text-nx-ink-3 uppercase font-mono">{opp.dealKind}</span>
             {opp.directCreateRationale && (
               <span
-                className="text-[11px] text-nx-ink-3 truncate max-w-[140px]"
+                className="text-[11px] text-nx-ink-3 truncate max-w-[110px]"
                 title={opp.directCreateRationale}
               >
                 • {opp.directCreateRationale}

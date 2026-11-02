@@ -256,7 +256,7 @@ export function OpportunitiesView() {
                 </Button>
               )}
               {canCreateOpp && (
-                <Button type="button" size="sm" onClick={() => setIsCreateOpen(true)} className="h-8 gap-1.5 shrink-0 text-xs font-bold">
+                <Button type="button" size="sm" onClick={() => setIsCreateOpen(true)} className="h-8 gap-1.5 shrink-0 text-xs font-bold" data-testid="create-opportunity-button">
                   <Plus className="size-3.5" />
                   {t("crmOpportunities.actions.newDeal")}
                 </Button>
