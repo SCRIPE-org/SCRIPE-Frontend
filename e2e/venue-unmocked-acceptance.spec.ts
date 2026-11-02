@@ -1,5 +1,7 @@
 import { test, expect } from "@playwright/test";
 import { execSync } from "child_process";
+import * as crypto from "crypto";
+import * as fs from "fs";
 
 /**
  * SCRIPE Venue: 100% Real Runtime Unmocked Operational Acceptance Suite
@@ -11,33 +13,191 @@ import { execSync } from "child_process";
  * - Verifies physical database persistence in PostgreSQL venue.reservations.
  * - Verifies Booking 360 (/venue/bookings/[id]).
  * - Verifies Negative Security Scenarios (401, 403, 409).
+ * - Strictly targets SCRIPE_UAT database on localhost:5432.
+ * - Zero wildcard or prefix-based destructive SQL deletions.
+ * - Cleans up only explicitly tracked test fixture IDs in test.afterAll.
  */
 test.describe("SCRIPE Venue: Real Runtime End-to-End Operational Acceptance", () => {
   test.describe.configure({ mode: "serial", timeout: 180_000 });
 
-  const adminEmail = "ahly.admin@scripe-dev.local";
-  const adminPassword = "P@ssw0rd";
+  function requireEnv(name: string, fallback?: string): string {
+    const val = process.env[name] ?? fallback;
+    if (!val || val.trim() === "") {
+      throw new Error(`[SECURITY GATE] Missing required environment variable: '${name}'. Test suite fails closed.`);
+    }
+    return val.trim();
+  }
+
+  const adminEmail = process.env.E2E_AHLY_ADMIN_EMAIL ?? process.env.ADMIN_EMAIL ?? "ahly.admin@scripe-dev.local";
+  const adminPassword = requireEnv("E2E_AHLY_ADMIN_PASSWORD", process.env.ADMIN_PASSWORD);
+  const cityAdminEmail = process.env.E2E_CITY_ADMIN_EMAIL ?? "city.admin@scripe-dev.local";
+  const cityAdminPassword = requireEnv("E2E_CITY_ADMIN_PASSWORD", process.env.ADMIN_PASSWORD);
   const tenantId = "944caec0-f3fd-454c-878a-da833a3c7c6c";
+  const cityTenantId = "2b59128b-1205-4381-95a6-345bf3453e0b";
+
+  interface FixtureTracker {
+    reservationIds: Set<string>;
+    reservationCodes: Set<string>;
+    bookingHoldIds: Set<string>;
+    guestAccessIds: Set<string>;
+    paymentRefundIds: Set<string>;
+    paymentIds: Set<string>;
+    invoiceIds: Set<string>;
+  }
+
+  const testFixtures: FixtureTracker = {
+    reservationIds: new Set<string>(),
+    reservationCodes: new Set<string>(),
+    bookingHoldIds: new Set<string>(),
+    guestAccessIds: new Set<string>(),
+    paymentRefundIds: new Set<string>(),
+    paymentIds: new Set<string>(),
+    invoiceIds: new Set<string>(),
+  };
 
   let createdReservationId = "";
+  let createdReservationRawId = "";
   let createdReservationCode = "";
+  let bookedResourceId = "";
+  let bookedStartUtc = "";
+  let bookedEndUtc = "";
 
   /** Helper to query PostgreSQL directly for physical read-only database verification */
   function queryPostgres(sql: string): string {
     const dbHost = process.env.PGHOST ?? "127.0.0.1";
     const dbPort = process.env.PGPORT ?? "5432";
-    const dbName = process.env.PGDATABASE ?? "SCRIPE_UAT";
+    const dbName = "SCRIPE_UAT";
     const dbUser = process.env.PGUSER ?? "postgres";
     const psqlBin =
       process.env.PSQL_PATH ??
-      (process.platform === "win32" && require("fs").existsSync("C:\\Program Files\\PostgreSQL\\18\\bin\\psql.exe")
+      (process.platform === "win32" && fs.existsSync("C:\\Program Files\\PostgreSQL\\18\\bin\\psql.exe")
         ? '"C:\\Program Files\\PostgreSQL\\18\\bin\\psql.exe"'
         : "psql");
-    const env = { ...process.env, PGPASSWORD: process.env.PGPASSWORD ?? "1598741258" };
+    const pgPassword = process.env.PGPASSWORD;
+    if (!pgPassword) {
+      throw new Error("[SECURITY GATE] Missing required environment variable: 'PGPASSWORD'. Tests fail closed.");
+    }
+    const env = { ...process.env, PGPASSWORD: pgPassword };
     const normalizedSql = sql.replace(/\r?\n/g, " ").replace(/"/g, '\\"');
     const cmd = `${psqlBin} -h ${dbHost} -p ${dbPort} -U ${dbUser} -d ${dbName} -c "${normalizedSql}"`;
     return execSync(cmd, { encoding: "utf8", env });
   }
+
+  test.beforeAll(async () => {
+    // 1. Validate configured database target
+    const configuredDb = process.env.PGDATABASE ?? "SCRIPE_UAT";
+    if (configuredDb !== "SCRIPE_UAT") {
+      throw new Error(
+        `[SECURITY GATE] Target database must be explicitly and exclusively 'SCRIPE_UAT'. Detected PGDATABASE='${configuredDb}'. Mutating or querying SCRIPE_SHARED is strictly forbidden.`
+      );
+    }
+    const dbHost = process.env.PGHOST ?? "127.0.0.1";
+    if (dbHost !== "127.0.0.1" && dbHost !== "localhost") {
+      throw new Error(
+        `[SECURITY GATE] Database host must be localhost or 127.0.0.1. Detected PGHOST='${dbHost}'.`
+      );
+    }
+    const dbPort = process.env.PGPORT ?? "5432";
+    if (dbPort !== "5432") {
+      throw new Error(
+        `[SECURITY GATE] Database port must be 5432. Detected PGPORT='${dbPort}'.`
+      );
+    }
+
+    // 2. Physical verification via PostgreSQL current_database()
+    const dbIdentityOutput = queryPostgres("SELECT current_database(), inet_server_addr(), inet_server_port();");
+    if (!dbIdentityOutput.includes("SCRIPE_UAT")) {
+      throw new Error(
+        `[SECURITY GATE] Physical database is NOT 'SCRIPE_UAT'. Output:\n${dbIdentityOutput}`
+      );
+    }
+    if (dbIdentityOutput.includes("SCRIPE_SHARED")) {
+      throw new Error(
+        `[SECURITY GATE] Detected SCRIPE_SHARED in database connection. Aborting immediately.`
+      );
+    }
+  });
+
+  test.afterAll(async () => {
+    console.log("[CLEANUP] Executing exact fixture-only cleanup...");
+
+    if (testFixtures.guestAccessIds.size > 0) {
+      const ids = Array.from(testFixtures.guestAccessIds).map((id) => `'${id}'`).join(",");
+      try {
+        queryPostgres(`DELETE FROM venue.guest_reservation_accesses WHERE id IN (${ids});`);
+        console.log(`[CLEANUP] Purged ${testFixtures.guestAccessIds.size} exact guest_reservation_accesses fixtures.`);
+      } catch (e) {
+        console.warn("[CLEANUP WARNING] Guest access cleanup error:", e);
+      }
+    }
+
+    if (testFixtures.paymentRefundIds.size > 0) {
+      const ids = Array.from(testFixtures.paymentRefundIds).map((id) => `'${id}'`).join(",");
+      try {
+        queryPostgres(`DELETE FROM finance.payment_refunds WHERE id IN (${ids});`);
+        console.log(`[CLEANUP] Purged ${testFixtures.paymentRefundIds.size} exact payment_refunds fixtures.`);
+      } catch (e) {
+        console.warn("[CLEANUP WARNING] Refund cleanup error:", e);
+      }
+    }
+
+    if (testFixtures.paymentIds.size > 0) {
+      const ids = Array.from(testFixtures.paymentIds).map((id) => `'${id}'`).join(",");
+      try {
+        queryPostgres(`
+          DELETE FROM finance.payment_allocations WHERE payment_id IN (${ids});
+          DELETE FROM finance.payment_receipts WHERE recorded_payment_id IN (${ids});
+          DELETE FROM finance.recorded_payments WHERE id IN (${ids});
+        `);
+        console.log(`[CLEANUP] Purged ${testFixtures.paymentIds.size} exact recorded_payments fixtures.`);
+      } catch (e) {
+        console.warn("[CLEANUP WARNING] Payment cleanup error:", e);
+      }
+    }
+
+    if (testFixtures.invoiceIds.size > 0) {
+      const ids = Array.from(testFixtures.invoiceIds).map((id) => `'${id}'`).join(",");
+      try {
+        queryPostgres(`
+          DELETE FROM finance.customer_invoice_lines WHERE invoice_id IN (${ids});
+          DELETE FROM finance.customer_invoices WHERE id IN (${ids});
+        `);
+        console.log(`[CLEANUP] Purged ${testFixtures.invoiceIds.size} exact customer_invoices fixtures.`);
+      } catch (e) {
+        console.warn("[CLEANUP WARNING] Invoice cleanup error:", e);
+      }
+    }
+
+    if (testFixtures.bookingHoldIds.size > 0) {
+      const ids = Array.from(testFixtures.bookingHoldIds).map((id) => `'${id}'`).join(",");
+      try {
+        queryPostgres(`
+          DELETE FROM venue.capacity_ledger_entries WHERE booking_hold_id IN (${ids});
+          DELETE FROM venue.booking_holds WHERE id IN (${ids});
+        `);
+        console.log(`[CLEANUP] Purged ${testFixtures.bookingHoldIds.size} exact booking_holds fixtures.`);
+      } catch (e) {
+        console.warn("[CLEANUP WARNING] Booking hold cleanup error:", e);
+      }
+    }
+
+    if (testFixtures.reservationIds.size > 0) {
+      const ids = Array.from(testFixtures.reservationIds).map((id) => `'${id}'`).join(",");
+      try {
+        queryPostgres(`
+          DELETE FROM venue.capacity_ledger_entries WHERE reservation_id IN (${ids});
+          DELETE FROM venue.booking_holds WHERE reservation_id IN (${ids});
+          DELETE FROM venue.booking_status_histories WHERE reservation_id IN (${ids});
+          DELETE FROM venue.booking_requests WHERE reservation_id IN (${ids});
+          DELETE FROM venue.guest_reservation_accesses WHERE reservation_id IN (${ids});
+          DELETE FROM venue.reservations WHERE id IN (${ids});
+        `);
+        console.log(`[CLEANUP] Purged ${testFixtures.reservationIds.size} exact reservations fixtures.`);
+      } catch (e) {
+        console.warn("[CLEANUP WARNING] Reservation cleanup error:", e);
+      }
+    }
+  });
 
   async function loginAndNavigate(page: any, targetPath: string) {
     const encodedTarget = encodeURIComponent(targetPath);
@@ -55,15 +215,6 @@ test.describe("SCRIPE Venue: Real Runtime End-to-End Operational Acceptance", ()
     await page.waitForURL((url: URL) => !url.pathname.includes("/login"), { timeout: 45_000 });
     await page.waitForLoadState("networkidle");
   }
-
-  test.beforeEach(async ({ page }) => {
-    // Forward random IP to avoid test runner hitting Kestrel rate-limiter
-    const randomIp = `10.${Math.floor(Math.random() * 200) + 1}.${Math.floor(Math.random() * 200) + 1}.${Math.floor(Math.random() * 200) + 1}`;
-    await page.route("**/auth/**", async (route) => {
-      const headers = { ...route.request().headers(), "x-forwarded-for": randomIp };
-      await route.continue({ headers });
-    });
-  });
 
   test("1. Unmocked Authentication & Calendar Navigation", async ({ page }) => {
     // Navigate to Login with Al-Ahly tenant scope
@@ -92,19 +243,18 @@ test.describe("SCRIPE Venue: Real Runtime End-to-End Operational Acceptance", ()
   });
 
   test("2. Unmocked Booking Journey via ClickToBookModal (Resolves DEF-VENUE-005 & UI Bugs)", async ({ page }) => {
-    // Ensure test slot (11:00 on 2026-11-01) is free
-    try {
-      queryPostgres(`
-        DELETE FROM venue.capacity_ledger_entries WHERE reservation_id IN (SELECT id FROM venue.reservations WHERE reservation_number LIKE 'RES-202611%') OR booking_hold_id IN (SELECT id FROM venue.booking_holds WHERE reservation_id IN (SELECT id FROM venue.reservations WHERE reservation_number LIKE 'RES-202611%'));
-        DELETE FROM venue.booking_holds WHERE reservation_id IN (SELECT id FROM venue.reservations WHERE reservation_number LIKE 'RES-202611%');
-        DELETE FROM venue.booking_status_histories WHERE reservation_id IN (SELECT id FROM venue.reservations WHERE reservation_number LIKE 'RES-202611%');
-        DELETE FROM venue.booking_requests WHERE reservation_id IN (SELECT id FROM venue.reservations WHERE reservation_number LIKE 'RES-202611%');
-        DELETE FROM venue.guest_reservation_accesses WHERE reservation_id IN (SELECT id FROM venue.reservations WHERE reservation_number LIKE 'RES-202611%');
-        DELETE FROM venue.reservations WHERE reservation_number LIKE 'RES-202611%';
-      `);
-    } catch (err) {
-      console.log("Slot cleanup notice:", err instanceof Error ? err.message : err);
-    }
+    // Observe network responses to capture server-issued reservation details
+    page.on("response", async (res) => {
+      if (res.url().includes("/Reservations") && res.status() === 200 && res.request().method() === "GET") {
+        try {
+          const body = await res.json();
+          if (body?.reservationNumber && !createdReservationCode) {
+            createdReservationCode = body.reservationNumber;
+            console.log(`[Network Intercept] Correlated reservationNumber: ${createdReservationCode}`);
+          }
+        } catch {}
+      }
+    });
 
     // Direct authenticated session setup
     await loginAndNavigate(page, "/venue/calendar");
@@ -220,37 +370,60 @@ test.describe("SCRIPE Venue: Real Runtime End-to-End Operational Acceptance", ()
   });
 
   test("3. Physical Database Persistence Verification in PostgreSQL", async () => {
-    // 1. Authoritative verification by exact reservation number, GUID ID, or latest by tenant context
+    // 1. Authoritative verification by exact reservation number or GUID ID (Fail closed, no fallback to latest)
+    if (!createdReservationCode && !createdReservationId) {
+      throw new Error(
+        "[SECURITY GATE] Correlation failure: neither createdReservationCode nor createdReservationId was captured during Test 2. Failing closed without querying random reservations."
+      );
+    }
+
     const isGuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(createdReservationId);
-    const query = createdReservationCode
-      ? `SELECT id, reservation_number, status, resource_id, requested_start_utc, requested_end_utc, tenant_id FROM venue.reservations WHERE reservation_number = '${createdReservationCode}' AND tenant_id = '${tenantId}';`
-      : isGuid
-      ? `SELECT id, reservation_number, status, resource_id, requested_start_utc, requested_end_utc, tenant_id FROM venue.reservations WHERE id = '${createdReservationId}' AND tenant_id = '${tenantId}';`
-      : `SELECT id, reservation_number, status, resource_id, requested_start_utc, requested_end_utc, tenant_id FROM venue.reservations WHERE tenant_id = '${tenantId}' ORDER BY created_at DESC LIMIT 1;`;
+    let whereClause = "";
+    if (createdReservationCode) {
+      whereClause = `reservation_number = '${createdReservationCode}' AND tenant_id = '${tenantId}'`;
+    } else if (isGuid) {
+      whereClause = `id = '${createdReservationId}' AND tenant_id = '${tenantId}'`;
+    } else {
+      throw new Error(
+        `[SECURITY GATE] Created reservation identifier '${createdReservationId}' is not a raw GUID and createdReservationCode is missing. Failing closed.`
+      );
+    }
 
-
-
+    const query = `SELECT id, reservation_number, status, resource_id, requested_start_utc, requested_end_utc, tenant_id FROM venue.reservations WHERE ${whereClause};`;
     const dbOutput = queryPostgres(query);
     console.log("PostgreSQL venue.reservations authoritative query output:\n", dbOutput);
 
-    expect(dbOutput).toContain("RES-");
     expect(dbOutput).toContain("1 row");
     expect(dbOutput).toContain(tenantId);
 
     // Status 4 is Confirmed
     expect(dbOutput).toMatch(/\|\s+4\s+\|/);
 
-    // Extract raw DB GUID
-    const match = dbOutput.match(/([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})\s+\|\s+(RES-[A-Z0-9\-]+)/i);
+    // Extract raw DB GUID, reservation number, resource ID, and requested time slot
+    const match = dbOutput.match(
+      /([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})\s+\|\s+([A-Z0-9\-]+)\s+\|\s+4\s+\|\s+([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})\s+\|\s+([^\s|]+(?:\s+[^\s|]+)?)\s+\|\s+([^\s|]+(?:\s+[^\s|]+)?)/i
+    );
     expect(match).not.toBeNull();
 
     if (match) {
       const rawDbId = match[1];
       createdReservationCode = match[2];
+      createdReservationRawId = rawDbId;
+      bookedResourceId = match[3];
+      bookedStartUtc = new Date(match[4]).toISOString();
+      bookedEndUtc = new Date(match[5]).toISOString();
+
       if (!createdReservationId) {
         createdReservationId = rawDbId;
       }
-      console.log(`Authoritative Reservation Correlated in DB: RawDbId=${rawDbId}, Code=${createdReservationCode}, TenantId=${tenantId}`);
+
+      // Track exact fixtures for cleanup
+      testFixtures.reservationIds.add(rawDbId);
+      testFixtures.reservationCodes.add(createdReservationCode);
+
+      console.log(
+        `Authoritative Reservation Correlated in DB: RawDbId=${rawDbId}, Code=${createdReservationCode}, ResourceId=${bookedResourceId}, Start=${bookedStartUtc}, End=${bookedEndUtc}`
+      );
     }
   });
 
@@ -296,84 +469,142 @@ test.describe("SCRIPE Venue: Real Runtime End-to-End Operational Acceptance", ()
     expect(unauthResponse.status()).toBe(401);
 
     // ── Scenario B: Valid View-Only Guest Token Security (403 Forbidden on cancel) ──
+    const rawToken = crypto.randomBytes(32).toString("hex");
+    const tokenHash = crypto.createHash("sha256").update(rawToken).digest("hex").toUpperCase();
+    const guestAccessId = crypto.randomUUID();
+
+    // Insert guest reservation access record with view-only action scope ('View')
+    queryPostgres(`
+      INSERT INTO venue.guest_reservation_accesses (
+        id, tenant_id, reservation_id, token_hash, expires_at_utc,
+        is_revoked, allowed_actions, access_count,
+        is_deleted, is_active, created_at
+      ) VALUES (
+        '${guestAccessId}', '${tenantId}', '${createdReservationRawId}', '${tokenHash}', NOW() + INTERVAL '7 days',
+        FALSE, 'View', 0,
+        FALSE, TRUE, NOW()
+      );
+    `);
+    testFixtures.guestAccessIds.add(guestAccessId);
+
+    // 1. Exchange unauthenticated bearer token for scoped guest session
+    const sessionRes = await request.post(`${apiBase}/venue/guest/session`, {
+      data: { token: rawToken },
+    });
+    expect(sessionRes.status()).toBe(200);
+
+    // Extract session cookie from Set-Cookie header
+    const setCookieHeader = sessionRes.headers()["set-cookie"] ?? "";
+    const cookieMatch = setCookieHeader.match(/scr_guest_session=([^;]+)/);
+    const sessionCookie = cookieMatch ? `scr_guest_session=${cookieMatch[1]}` : "";
+    expect(sessionCookie).toBeTruthy();
+
+    // 2. View booking succeeds with HTTP 200 and indicates canCancel: false
+    const viewBookingRes = await request.get(`${apiBase}/venue/guest/booking`, {
+      headers: { Cookie: sessionCookie },
+    });
+    expect(viewBookingRes.status()).toBe(200);
+    const viewBookingData = await viewBookingRes.json();
+    expect(viewBookingData.canCancel).toBe(false);
+    expect(viewBookingData.allowedActions).toContain("View");
+    expect(viewBookingData.allowedActions).not.toContain("Cancel");
+
+    // 3. Attempting cancellation with view-only token must be strictly rejected with HTTP 403 Forbidden
+    const cancelAttemptKey = `e2e-guest-cancel-${Date.now()}`;
     const guestCancelResponse = await request.post(`${apiBase}/venue/guest/booking/cancel`, {
+      headers: {
+        Cookie: sessionCookie,
+        "Idempotency-Key": cancelAttemptKey,
+      },
       data: {
-        reason: "Unauthorized attempt with view-only or unauthenticated token",
-        idempotencyKey: "e2e-guest-cancel-key-01"
+        reason: "Unauthorized attempt with view-only guest token",
+        idempotencyKey: cancelAttemptKey,
       },
     });
-    expect([401, 403]).toContain(guestCancelResponse.status());
+    expect(guestCancelResponse.status()).toBe(403);
+
+    // 4. Authoritative DB verification: reservation status remains 4 (Confirmed)
+    const dbStatusCheck = queryPostgres(
+      `SELECT status FROM venue.reservations WHERE id = '${createdReservationRawId}';`
+    );
+    expect(dbStatusCheck).toMatch(/\|\s+4\s+\|/);
 
     // ── Scenario C: Double-Booking Prevention (409 Conflict) ──
-    // Login as Ahly admin to acquire access token
+    // Login as Ahly admin to acquire access token (no spoofed headers)
     const loginRes = await request.post(`${apiBase}/auth/admin/login?tenantId=${tenantId}`, {
       data: {
         identifier: adminEmail,
         password: adminPassword,
       },
-      headers: { "x-forwarded-for": "10.20.30.40" },
     });
     expect(loginRes.status()).toBe(200);
     const loginData = await loginRes.json();
     const token = loginData.accessToken;
 
-    // Retrieve the exact times of the confirmed reservation
-    const resRowOutput = queryPostgres(`SELECT requested_start_utc, requested_end_utc FROM venue.reservations WHERE reservation_number = '${createdReservationCode}';`);
-    const timeMatch = resRowOutput.match(/(\d{4}-\d{2}-\d{2}\s+\d{2}:\d{2}:\d{2}[^\s|]+)\s+\|\s+(\d{4}-\d{2}-\d{2}\s+\d{2}:\d{2}:\d{2}[^\s|]+)/);
-    if (timeMatch) {
-      const startUtc = new Date(timeMatch[1]).toISOString();
-      const endUtc = new Date(timeMatch[2]).toISOString();
-      const resourceId = "bddb5176-47c5-41e5-bb57-dc6487a9de71"; // Zayed Floodlit Pitch
+    // Unconditional assertion on booked resource and time slot
+    expect(bookedResourceId).toBeTruthy();
+    expect(bookedStartUtc).toBeTruthy();
+    expect(bookedEndUtc).toBeTruthy();
 
-      // Attempt to create a conflicting draft on the exact same resource and overlapping slot
-      const duplicateDraftRes = await request.post(`${apiBase}/booking-drafts`, {
+    // Attempt to create a conflicting draft on the exact same resource and overlapping slot
+    const conflictDraftKey = `conflict-draft-${Date.now()}`;
+    const duplicateDraftRes = await request.post(`${apiBase}/Reservations`, {
+      headers: { Authorization: `Bearer ${token}`, "x-tenant-id": tenantId },
+      data: {
+        resourceId: bookedResourceId,
+        customerPartyId: "7c8d9e0f-1a23-4233-9445-c3d4e5f6a7b8",
+        bookerPartyId: "7c8d9e0f-1a23-4233-9445-c3d4e5f6a7b8",
+        payerPartyId: "7c8d9e0f-1a23-4233-9445-c3d4e5f6a7b8",
+        requestedStartUtc: bookedStartUtc,
+        requestedEndUtc: bookedEndUtc,
+        quantity: 1,
+        idempotencyKey: conflictDraftKey,
+      },
+    });
+
+    if (duplicateDraftRes.status() === 201) {
+      const draftData = await duplicateDraftRes.json();
+      const conflictingReservationId = draftData.id;
+
+      // Track created conflicting draft reservation for cleanup
+      const conflictDbOut = queryPostgres(
+        `SELECT reservation_id FROM venue.booking_idempotency_records WHERE idempotency_key = '${conflictDraftKey}';`
+      );
+      const conflictMatch = conflictDbOut.match(
+        /([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})/i
+      );
+      if (conflictMatch) {
+        testFixtures.reservationIds.add(conflictMatch[1]);
+      }
+
+      // Attempting to hold capacity on already booked single-unit resource MUST return 409 Conflict
+      const conflictHoldRes = await request.post(`${apiBase}/booking-holds`, {
         headers: { Authorization: `Bearer ${token}`, "x-tenant-id": tenantId },
         data: {
-          schedulableResourceId: resourceId,
-          startUtc: startUtc,
-          endUtc: endUtc,
-          customerName: "Duplicate Conflict Attempter",
-          customerPhone: "+201000000999"
-        }
+          reservationId: conflictingReservationId,
+          idempotencyKey: `double-book-attempt-${Date.now()}`,
+        },
       });
-
-      if (duplicateDraftRes.status() === 200 || duplicateDraftRes.status() === 201) {
-        const draftData = await duplicateDraftRes.json();
-        const conflictingReservationId = draftData.id || draftData.reservationId;
-
-        // Attempting to hold capacity on already booked single-unit resource MUST return 409 Conflict
-        const conflictHoldRes = await request.post(`${apiBase}/booking-holds`, {
-          headers: { Authorization: `Bearer ${token}`, "x-tenant-id": tenantId },
-          data: {
-            reservationId: conflictingReservationId,
-            idempotencyKey: `double-book-attempt-${Date.now()}`
-          }
-        });
-        expect([409, 422]).toContain(conflictHoldRes.status());
-        console.log(`Double-booking prevented successfully: status=${conflictHoldRes.status()}`);
-      } else {
-        // Even the draft creation rejected the conflicting slot
-        expect([400, 409, 422]).toContain(duplicateDraftRes.status());
-        console.log(`Conflicting slot creation rejected: status=${duplicateDraftRes.status()}`);
-      }
+      expect(conflictHoldRes.status()).toBe(409);
+      console.log(`Double-booking prevented successfully: status=${conflictHoldRes.status()}`);
+    } else {
+      // If the draft creation itself enforced slot exclusivity, it must return 409 Conflict
+      expect(duplicateDraftRes.status()).toBe(409);
+      console.log(`Conflicting slot creation rejected with status=409`);
     }
 
     // ── Scenario D: Tenant Isolation Enforcement (Cross-Tenant 404 Rejection) ──
-    const cityTenantId = "2b59128b-1205-4381-95a6-345bf3453e0b";
     const cityLoginRes = await request.post(`${apiBase}/auth/admin/login?tenantId=${cityTenantId}`, {
       data: {
-        identifier: "city.admin@scripe-dev.local",
-        password: "P@ssw0rd",
-      },
-      headers: {
-        "x-forwarded-for": `10.${Math.floor(Math.random() * 200) + 1}.${Math.floor(Math.random() * 200) + 1}.${Math.floor(Math.random() * 200) + 1}`,
+        identifier: cityAdminEmail,
+        password: cityAdminPassword,
       },
     });
     expect(cityLoginRes.status()).toBe(200);
     const cityToken = (await cityLoginRes.json()).accessToken;
 
     // Attempt to access Al-Ahly reservation with City FC bearer token
-    const crossTenantRes = await request.get(`${apiBase}/reservations/${createdReservationId}`, {
+    const crossTenantRes = await request.get(`${apiBase}/Reservations/${createdReservationId}`, {
       headers: { Authorization: `Bearer ${cityToken}`, "x-tenant-id": cityTenantId },
     });
     // Strict isolation must return 404 Not Found (or 403 Forbidden)
@@ -397,7 +628,7 @@ test.describe("SCRIPE Venue: Real Runtime End-to-End Operational Acceptance", ()
         rowVersion: "AQIDBAUGBwgJCgsMDQ4PEA==", // intentionally stale/bogus rowversion
       },
     });
-    expect([400, 409]).toContain(staleUpdateRes.status());
+    expect(staleUpdateRes.status()).toBe(409);
   });
 
   test("6. Unmocked Venue Customers Directory, Detail Drawer & Booking History (Slice 3)", async ({ page }) => {
@@ -503,9 +734,110 @@ test.describe("SCRIPE Venue: Real Runtime End-to-End Operational Acceptance", ()
     const bookingHref = await bookingDeepLink.getAttribute("href");
     expect(bookingHref).toContain("/venue/bookings/");
 
-    // 6. Navigate directly to Cancelled Reservation RES-AHLY-1008 (Encrypted ID: zkHeRFk-tom-gasJWOK3RTVEEGOGJPPL_s20tVhMbqngNKM2wdKrFy08nZw, DB GUID: d7381f81-7384-4213-b464-f39bc207da9d)
-    const cancelledReservationId = "zkHeRFk-tom-gasJWOK3RTVEEGOGJPPL_s20tVhMbqngNKM2wdKrFy08nZw";
-    await page.goto(`/venue/bookings/${cancelledReservationId}`);
+    // 6. Provision an isolated financial test fixture in SCRIPE_UAT for Refund Workflow verification
+    // 6.1 Authenticate via API to obtain admin access token for API operations
+    const apiLoginRes = await page.request.post(`http://127.0.0.1:5035/api/v1/auth/admin/login?tenantId=${tenantId}`, {
+      data: {
+        identifier: adminEmail,
+        password: adminPassword,
+      },
+    });
+    expect(apiLoginRes.status()).toBe(200);
+    const apiAdminToken = (await apiLoginRes.json()).accessToken;
+
+    // 6.2 Create a dedicated reservation via API to acquire a valid server-encrypted ID
+    const fixtureDraftKey = `e2e-refund-draft-${Date.now()}`;
+    const fixtureDraftRes = await page.request.post("http://127.0.0.1:5035/api/v1/Reservations", {
+      headers: { Authorization: `Bearer ${apiAdminToken}`, "x-tenant-id": tenantId },
+      data: {
+        resourceId: "bddb5176-47c5-41e5-bb57-dc6487a9de71",
+        customerPartyId: "7c8d9e0f-1a23-4233-9445-c3d4e5f6a7b8",
+        bookerPartyId: "7c8d9e0f-1a23-4233-9445-c3d4e5f6a7b8",
+        payerPartyId: "7c8d9e0f-1a23-4233-9445-c3d4e5f6a7b8",
+        requestedStartUtc: new Date(Date.now() + 86400000 * 60).toISOString(),
+        requestedEndUtc: new Date(Date.now() + 86400000 * 60 + 3600000).toISOString(),
+        quantity: 1,
+        idempotencyKey: fixtureDraftKey,
+      },
+    });
+    expect(fixtureDraftRes.status()).toBe(201);
+    const fixtureDraftData = await fixtureDraftRes.json();
+    const fixtureEncryptedResId = fixtureDraftData.id;
+    expect(fixtureEncryptedResId).toBeTruthy();
+
+    // 6.3 Query database for raw GUID of created reservation using the exact idempotency key
+    const fixtureDbOut = queryPostgres(
+      `SELECT reservation_id FROM venue.booking_idempotency_records WHERE idempotency_key = '${fixtureDraftKey}';`
+    );
+    const fixtureResMatch = fixtureDbOut.match(
+      /([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})/i
+    );
+    expect(fixtureResMatch).not.toBeNull();
+    const fixtureReservationRawId = fixtureResMatch![1];
+    testFixtures.reservationIds.add(fixtureReservationRawId);
+
+    // 6.4 Transition reservation status to Cancelled (Status 8) in database
+    queryPostgres(
+      `UPDATE venue.reservations SET status = 8 WHERE id = '${fixtureReservationRawId}';`
+    );
+
+    // 6.5 Provision dedicated paid invoice, customer invoice line, recorded payment, and allocation in SCRIPE_UAT
+    const fixtureInvoiceId = crypto.randomUUID();
+    const fixtureLineId = crypto.randomUUID();
+    const fixturePaymentId = crypto.randomUUID();
+    const fixtureAllocId = crypto.randomUUID();
+    const uniqueSuffix = Date.now().toString();
+
+    testFixtures.invoiceIds.add(fixtureInvoiceId);
+    testFixtures.paymentIds.add(fixturePaymentId);
+
+    queryPostgres(`
+      INSERT INTO finance.customer_invoices (
+        id, tenant_id, invoice_number, status, customer_party_id, payer_party_id,
+        currency_code, subtotal_amount, discount_amount, tax_amount, total_amount,
+        adjustment_amount, paid_amount, reservation_id, issued_at_utc, due_at_utc,
+        source, source_reference, is_deleted, is_active, created_at
+      ) VALUES (
+        '${fixtureInvoiceId}', '${tenantId}', 'INV-E2E-${uniqueSuffix}', 3,
+        '7c8d9e0f-1a23-4233-9445-c3d4e5f6a7b8', '7c8d9e0f-1a23-4233-9445-c3d4e5f6a7b8',
+        'EGP', 1500.00, 0, 0, 1500.00,
+        0, 1500.00, '${fixtureReservationRawId}', NOW(), NOW(),
+        'VenueReservation', 'RES-E2E-${uniqueSuffix}', FALSE, TRUE, NOW()
+      );
+
+      INSERT INTO finance.customer_invoice_lines (
+        id, tenant_id, invoice_id, description, line_type,
+        quantity, unit_amount, total_amount, sort_order,
+        is_deleted, is_active, created_at
+      ) VALUES (
+        '${fixtureLineId}', '${tenantId}', '${fixtureInvoiceId}', 'E2E Refund Test Line', 0,
+        1, 1500.00, 1500.00, 1,
+        FALSE, TRUE, NOW()
+      );
+
+      INSERT INTO finance.recorded_payments (
+        id, tenant_id, payment_number, status, method,
+        currency_code, amount, allocated_amount, payer_party_id,
+        reservation_id, recorded_at_utc, recorded_by_actor_id,
+        idempotency_key, reason, is_deleted, is_active, created_at
+      ) VALUES (
+        '${fixturePaymentId}', '${tenantId}', 'PAY-E2E-${uniqueSuffix}', 2, 2,
+        'EGP', 1500.00, 1500.00, '7c8d9e0f-1a23-4233-9445-c3d4e5f6a7b8',
+        '${fixtureReservationRawId}', NOW(), '1ac0aade-f40c-4df5-b1ba-760ce297b8d7',
+        'pay-key-${uniqueSuffix}', 'E2E Refund Test Payment', FALSE, TRUE, NOW()
+      );
+
+      INSERT INTO finance.payment_allocations (
+        id, tenant_id, payment_id, invoice_id, amount,
+        allocated_at_utc, idempotency_key, is_deleted, is_active, created_at
+      ) VALUES (
+        '${fixtureAllocId}', '${tenantId}', '${fixturePaymentId}', '${fixtureInvoiceId}', 1500.00,
+        NOW(), 'alloc-key-${uniqueSuffix}', FALSE, TRUE, NOW()
+      );
+    `);
+
+    // 6.6 Navigate directly to the Cancelled Reservation's Booking 360 page
+    await page.goto(`/venue/bookings/${fixtureEncryptedResId}`);
     await page.waitForLoadState("networkidle");
 
     // Verify reservation status badge displays Cancelled
@@ -513,46 +845,65 @@ test.describe("SCRIPE Venue: Real Runtime End-to-End Operational Acceptance", ()
     await expect(resBadge).toBeVisible({ timeout: 20_000 });
     await expect(resBadge).toContainText(/Cancelled|ملغي/i);
 
-    // Verify Secondary Payment Status Badge
+    // Verify Secondary Payment Status Badge displays Refund Required
     const payStatusBadge = page.locator("[data-testid='payment-status-badge']").first();
     await expect(payStatusBadge).toBeVisible({ timeout: 15_000 });
+    await expect(payStatusBadge).toContainText(/Refund Required|مطلوب استرداد/i);
 
-    // Check if refund CTA button is present (meaning payment has not yet been refunded)
-    const issueRefundBtn = page.locator("[data-testid='issue-refund-cta-btn']").first();
+    // Verify Financial Advisory Alert banner for Cancelled booking with unrefunded recorded payment
     const cancelledAlert = page.locator("[data-testid='cancelled-paid-advisory']").first();
-    if (await issueRefundBtn.isVisible()) {
-      // Verify Financial Advisory Alert banner for Cancelled booking with unrefunded recorded payment
-      await expect(cancelledAlert).toBeVisible({ timeout: 10_000 });
-      // Badge must indicate refund required
-      await expect(payStatusBadge).toContainText(/Refund Required|مطلوب استرداد/i);
+    await expect(cancelledAlert).toBeVisible({ timeout: 15_000 });
 
-      // Follow Issue Refund link into Payments ledger
-      await issueRefundBtn.click();
-      await page.waitForURL((url) => url.pathname.includes("/venue/money/payments") && url.searchParams.get("action") === "refund", { timeout: 30_000 });
-      await page.waitForLoadState("networkidle");
+    // Verify refund CTA button is present and click it
+    const issueRefundBtn = page.locator("[data-testid='issue-refund-cta-btn']").first();
+    await expect(issueRefundBtn).toBeVisible({ timeout: 15_000 });
+    await issueRefundBtn.click();
 
-      // Verify refund card auto-mounts prefilled with the payment
-      const refundReasonInput = page.locator("#refund-reason").first();
-      await expect(refundReasonInput).toBeVisible({ timeout: 15_000 });
-      await refundReasonInput.fill("Automated unmocked test refund for cancelled reservation RES-AHLY-1008");
+    // Follow Issue Refund link into Payments ledger
+    await page.waitForURL((url) => url.pathname.includes("/venue/money/payments") && url.searchParams.get("action") === "refund", { timeout: 30_000 });
+    await page.waitForLoadState("networkidle");
 
-      // Submit refund
-      const recordRefundBtn = page.locator("[data-testid='submit-refund-btn']").or(page.locator("button:has-text('Record refund'), button:has-text('تسجيل استرداد')")).first();
-      await expect(recordRefundBtn).toBeEnabled({ timeout: 5_000 });
-      await recordRefundBtn.click();
+    // Verify refund card auto-mounts prefilled with the payment
+    const refundReasonInput = page.locator("#refund-reason").first();
+    await expect(refundReasonInput).toBeVisible({ timeout: 15_000 });
+    await refundReasonInput.fill(`Automated unmocked test refund for fixture payment ${fixturePaymentId}`);
 
-      // Verify success feedback
-      await expect(page.locator("text=/Refund was recorded|تم تسجيل الاسترداد/i").first()).toBeVisible({ timeout: 15_000 });
+    // Submit refund
+    const recordRefundBtn = page.locator("[data-testid='submit-refund-btn']").or(page.locator("button:has-text('Record refund'), button:has-text('تسجيل استرداد')")).first();
+    await expect(recordRefundBtn).toBeEnabled({ timeout: 5_000 });
+    await recordRefundBtn.click();
 
-      // Return to Booking 360 and verify status badge is updated to "Refunded"
-      await page.goto(`/venue/bookings/${cancelledReservationId}`);
-      await page.waitForLoadState("networkidle");
-      const updatedPayBadge = page.locator("[data-testid='payment-status-badge']").first();
-      await expect(updatedPayBadge).toContainText(/Refunded|مستردة/i, { timeout: 15_000 });
-    } else {
-      // Payment was already refunded in an earlier run: verify Refunded badge is shown
-      await expect(payStatusBadge).toContainText(/Refunded|مستردة/i);
-    }
+    // Verify success feedback
+    await expect(page.locator("text=/Refund was recorded|تم تسجيل الاسترداد/i").first()).toBeVisible({ timeout: 15_000 });
+
+    // 6.7 Database verification: verify refund persistence in finance.payment_refunds
+    const refundDbOutput = queryPostgres(
+      `SELECT id FROM finance.payment_refunds WHERE recorded_payment_id = '${fixturePaymentId}';`
+    );
+    expect(refundDbOutput).toContain("1 row");
+    const refundMatch = refundDbOutput.match(
+      /([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})/i
+    );
+    expect(refundMatch).not.toBeNull();
+    testFixtures.paymentRefundIds.add(refundMatch![1]);
+
+    // 6.8 Return to Booking 360 and verify status badge is updated to "Refunded"
+    await page.goto(`/venue/bookings/${fixtureEncryptedResId}`);
+    await page.waitForLoadState("networkidle");
+    const updatedPayBadge = page.locator("[data-testid='payment-status-badge']").first();
+    await expect(updatedPayBadge).toContainText(/Refunded|مستردة/i, { timeout: 15_000 });
+
+    // 6.9 Idempotency / Duplicate Refund check: attempting duplicate refund via API returns strictly 409 Conflict
+    const dupRefundRes = await page.request.post(`http://127.0.0.1:5035/api/v1/finance/recorded-payments/${fixturePaymentId}/refunds`, {
+      headers: { Authorization: `Bearer ${apiAdminToken}`, "x-tenant-id": tenantId },
+      data: {
+        invoiceId: fixtureInvoiceId,
+        amount: 1500.00,
+        idempotencyKey: `dup-refund-${Date.now()}`,
+        reason: "Attempt duplicate refund on already refunded payment",
+      },
+    });
+    expect(dupRefundRes.status()).toBe(409);
   });
 });
 

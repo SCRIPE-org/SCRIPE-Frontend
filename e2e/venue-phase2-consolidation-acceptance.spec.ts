@@ -9,7 +9,7 @@ import * as fs from "fs";
  * Targeted real browser verification against live dev servers:
  * - Frontend: http://localhost:3000
  * - Backend API: http://localhost:5035/api/v1
- * - Database: PostgreSQL port 5432 (SCRIPE_UAT / SCRIPE_SHARED)
+ * - Database: PostgreSQL port 5432 (SCRIPE_UAT ONLY)
  * - Tenant: AHLY (944caec0-f3fd-454c-878a-da833a3c7c6c)
  *
  * 9-Point Acceptance Verification Matrix:
@@ -28,10 +28,18 @@ import * as fs from "fs";
 test.describe("SCRIPE Venue: Phase 2 Final Consolidation Acceptance Suite", () => {
   test.describe.configure({ mode: "serial", timeout: 240_000 });
 
-  const adminEmail = "ahly.admin@scripe-dev.local";
-  const adminPassword = "P@ssw0rd";
-  const bookingEmail = "ahly.booking@scripe-dev.local";
-  const bookingPassword = "P@ssw0rd";
+  function requireEnv(name: string, fallback?: string): string {
+    const val = process.env[name] ?? fallback;
+    if (!val || val.trim() === "") {
+      throw new Error(`[SECURITY GATE] Missing required environment variable: '${name}'. Test suite fails closed.`);
+    }
+    return val.trim();
+  }
+
+  const adminEmail = process.env.E2E_AHLY_ADMIN_EMAIL ?? process.env.ADMIN_EMAIL ?? "ahly.admin@scripe-dev.local";
+  const adminPassword = requireEnv("E2E_AHLY_ADMIN_PASSWORD", process.env.ADMIN_PASSWORD);
+  const bookingEmail = process.env.E2E_BOOKING_EMAIL ?? "ahly.booking@scripe-dev.local";
+  const bookingPassword = requireEnv("E2E_BOOKING_PASSWORD", process.env.ADMIN_PASSWORD);
   const tenantId = "944caec0-f3fd-454c-878a-da833a3c7c6c";
 
   const evidenceDir = path.resolve(process.cwd(), "e2e-evidence", "phase2-consolidation");
@@ -40,45 +48,65 @@ test.describe("SCRIPE Venue: Phase 2 Final Consolidation Acceptance Suite", () =
   }
 
   /**
-   * Authoritative query against PostgreSQL with automatic fallback
-   * between SCRIPE_UAT and SCRIPE_SHARED.
+   * Authoritative query against PostgreSQL: strictly SCRIPE_UAT on localhost/127.0.0.1:5432.
+   * Execution against SCRIPE_SHARED or any other database is strictly forbidden.
    */
   function queryPostgres(sql: string): string {
-    const psqlPath = "C:\\Program Files\\PostgreSQL\\18\\bin\\psql.exe";
-    const dbHost = "127.0.0.1";
-    const dbPort = "5432";
-    const dbUser = "postgres";
-    const env = { ...process.env, PGPASSWORD: process.env.PGPASSWORD || "1598741258" };
-    const preferredDb = process.env.PGDATABASE || "SCRIPE_SHARED";
-
-    // If mutating, apply across both databases so all environments are in sync
-    const isMutation = /^(UPDATE|INSERT|DELETE|ALTER|DROP|CREATE)/i.test(sql.trim());
-    if (isMutation) {
-      for (const db of ["SCRIPE_SHARED", "SCRIPE_UAT"]) {
-        try {
-          execFileSync(psqlPath, ["-h", dbHost, "-p", dbPort, "-U", dbUser, "-d", db, "-c", sql], {
-            encoding: "utf8",
-            env,
-          });
-        } catch {
-          // ignore error if db doesn't exist
-        }
-      }
+    const psqlPath =
+      process.env.PSQL_PATH ??
+      (process.platform === "win32" && fs.existsSync("C:\\Program Files\\PostgreSQL\\18\\bin\\psql.exe")
+        ? "C:\\Program Files\\PostgreSQL\\18\\bin\\psql.exe"
+        : "psql");
+    const dbHost = process.env.PGHOST ?? "127.0.0.1";
+    const dbPort = process.env.PGPORT ?? "5432";
+    const dbUser = process.env.PGUSER ?? "postgres";
+    const dbName = "SCRIPE_UAT";
+    const pgPassword = process.env.PGPASSWORD;
+    if (!pgPassword) {
+      throw new Error("[SECURITY GATE] Missing required environment variable: 'PGPASSWORD'. Tests fail closed.");
     }
+    const env = { ...process.env, PGPASSWORD: pgPassword };
 
-    try {
-      return execFileSync(psqlPath, ["-h", dbHost, "-p", dbPort, "-U", dbUser, "-d", preferredDb, "-c", sql], {
-        encoding: "utf8",
-        env,
-      });
-    } catch {
-      // Fallback to SCRIPE_UAT if SCRIPE_SHARED fails
-      return execFileSync(psqlPath, ["-h", dbHost, "-p", dbPort, "-U", dbUser, "-d", "SCRIPE_UAT", "-c", sql], {
-        encoding: "utf8",
-        env,
-      });
-    }
+    return execFileSync(psqlPath, ["-h", dbHost, "-p", dbPort, "-U", dbUser, "-d", dbName, "-c", sql], {
+      encoding: "utf8",
+      env,
+    });
   }
+
+  test.beforeAll(async () => {
+    // 1. Assert database targeting configuration
+    const configuredDb = process.env.PGDATABASE ?? "SCRIPE_UAT";
+    if (configuredDb !== "SCRIPE_UAT") {
+      throw new Error(
+        `[SECURITY GATE] Target database must be explicitly 'SCRIPE_UAT'. Detected PGDATABASE='${configuredDb}'. Mutating or querying SCRIPE_SHARED is strictly prohibited.`
+      );
+    }
+    const dbHost = process.env.PGHOST ?? "127.0.0.1";
+    if (dbHost !== "127.0.0.1" && dbHost !== "localhost") {
+      throw new Error(
+        `[SECURITY GATE] Database host must be localhost or 127.0.0.1. Detected: '${dbHost}'.`
+      );
+    }
+    const dbPort = process.env.PGPORT ?? "5432";
+    if (dbPort !== "5432") {
+      throw new Error(
+        `[SECURITY GATE] Database port must be 5432. Detected: '${dbPort}'.`
+      );
+    }
+
+    // 2. Physical verification via PostgreSQL current_database()
+    const dbIdentityOutput = queryPostgres("SELECT current_database(), inet_server_addr(), inet_server_port();");
+    if (!dbIdentityOutput.includes("SCRIPE_UAT")) {
+      throw new Error(
+        `[SECURITY GATE] Physical database is NOT 'SCRIPE_UAT'. Query result:\n${dbIdentityOutput}`
+      );
+    }
+    if (dbIdentityOutput.includes("SCRIPE_SHARED")) {
+      throw new Error(
+        `[SECURITY GATE] Detected SCRIPE_SHARED in database connection. Aborting immediately.`
+      );
+    }
+  });
 
   /**
    * Helper to capture annotated evidence screenshot
@@ -91,7 +119,7 @@ test.describe("SCRIPE Venue: Phase 2 Final Consolidation Acceptance Suite", () =
   }
 
   /**
-   * Helper to perform authenticated navigation with rate-limit evasion
+   * Helper to perform authenticated navigation
    */
   async function loginAndNavigate(
     page: Page,
@@ -99,13 +127,6 @@ test.describe("SCRIPE Venue: Phase 2 Final Consolidation Acceptance Suite", () =
     pass: string,
     targetPath: string
   ): Promise<void> {
-    // Generate randomized IP to prevent Kestrel rate limiting
-    const randomIp = `10.${Math.floor(Math.random() * 200) + 1}.${Math.floor(Math.random() * 200) + 1}.${Math.floor(Math.random() * 200) + 1}`;
-    await page.route("**/api/v1/auth/**", async (route) => {
-      const headers = { ...route.request().headers(), "x-forwarded-for": randomIp };
-      await route.continue({ headers });
-    });
-
     const loginUrl = `/login?_tenant=AHLY&redirect=${encodeURIComponent(targetPath)}`;
     await page.goto(loginUrl);
     await page.waitForLoadState("domcontentloaded");
