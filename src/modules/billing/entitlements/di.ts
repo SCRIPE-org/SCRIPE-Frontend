@@ -40,8 +40,6 @@ import { ConnectRepository } from "./stripe-connect/src/data/repositories/Connec
 import { AnalyticsRepository } from "./analytics/src/data/repositories/AnalyticsRepository";
 import { CommissionLedgerRepository } from "./commission-ledger/src/data/repositories/CommissionLedgerRepository";
 import { EditionCategoryRepository } from "./edition-categories/src/data/repositories/EditionCategoryRepository";
-import { LeadsService } from "./leads/src/data/services/LeadsService";
-import { LeadsRepository } from "./leads/src/data/repositories/LeadsRepository";
 import { OnboardingQuestionService } from "./onboarding-questions/src/data/services/OnboardingQuestionService";
 import { OnboardingQuestionRepository } from "./onboarding-questions/src/data/repositories/OnboardingQuestionRepository";
 import { RecommendationRuleService } from "./recommendation-rules/src/data/services/RecommendationRuleService";
@@ -65,7 +63,6 @@ import type { IAnalyticsRepository } from "./analytics/src/domain/interfaces/IAn
 import type { ITenantGatewayRepository } from "./tenant-gateways/src/domain/interfaces/ITenantGatewayRepository";
 import type { ICommissionLedgerRepository } from "./commission-ledger/src/domain/interfaces/ICommissionLedgerRepository";
 import type { IEditionCategoryRepository } from "./edition-categories/src/domain/interfaces/IEditionCategoryRepository";
-import type { ILeadsRepository } from "./leads/src/domain/interfaces/ILeadsRepository";
 import type { IOnboardingQuestionRepository } from "./onboarding-questions/src/domain/interfaces/IOnboardingQuestionRepository";
 import type { IRecommendationRuleRepository } from "./recommendation-rules/src/domain/interfaces/IRecommendationRuleRepository";
 import type { ISignupContentRepository } from "./signup-content/src/domain/interfaces/ISignupContentRepository";
@@ -84,7 +81,6 @@ import type { IAnalyticsService } from "./analytics/src/domain/interfaces/IAnaly
 import type { ITenantGatewayService } from "./tenant-gateways/src/domain/interfaces/ITenantGatewayService";
 import type { ICommissionLedgerService } from "./commission-ledger/src/domain/interfaces/ICommissionLedgerService";
 import type { IEditionCategoryService } from "./edition-categories/src/domain/interfaces/IEditionCategoryService";
-import type { ILeadsService } from "./leads/src/domain/interfaces/ILeadsService";
 import type { IOnboardingQuestionService } from "./onboarding-questions/src/domain/interfaces/IOnboardingQuestionService";
 import type { IRecommendationRuleService } from "./recommendation-rules/src/domain/interfaces/IRecommendationRuleService";
 import type { ISignupContentService } from "./signup-content/src/domain/interfaces/ISignupContentService";
@@ -103,7 +99,6 @@ export interface EntitlementsContainer {
   tenantGatewayRepository: ITenantGatewayRepository;
   commissionLedgerRepository: ICommissionLedgerRepository;
   editionCategoryRepository: IEditionCategoryRepository;
-  leadsRepository: ILeadsRepository;
   onboardingQuestionRepository: IOnboardingQuestionRepository;
   recommendationRuleRepository: IRecommendationRuleRepository;
   signupContentRepository: ISignupContentRepository;
@@ -135,7 +130,6 @@ export function getEntitlementsContainer(): EntitlementsContainer {
       tenantGatewayRepository: dummyProxy,
       commissionLedgerRepository: dummyProxy,
       editionCategoryRepository: dummyProxy,
-      leadsRepository: dummyProxy,
       onboardingQuestionRepository: dummyProxy,
       recommendationRuleRepository: dummyProxy,
       signupContentRepository: dummyProxy,
@@ -163,7 +157,6 @@ export function getEntitlementsContainer(): EntitlementsContainer {
       apiService
     );
     const editionCategoryService: IEditionCategoryService = new EditionCategoryService(apiService);
-    const leadsService: ILeadsService = new LeadsService(apiService);
     const onboardingQuestionService: IOnboardingQuestionService = new OnboardingQuestionService(
       apiService
     );
@@ -188,7 +181,6 @@ export function getEntitlementsContainer(): EntitlementsContainer {
       tenantGatewayRepository: new TenantGatewayRepository(tenantGatewayService),
       commissionLedgerRepository: new CommissionLedgerRepository(commissionLedgerService),
       editionCategoryRepository: new EditionCategoryRepository(editionCategoryService),
-      leadsRepository: new LeadsRepository(leadsService),
       onboardingQuestionRepository: new OnboardingQuestionRepository(onboardingQuestionService),
       recommendationRuleRepository: new RecommendationRuleRepository(recommendationRuleService),
     };
@@ -239,9 +231,6 @@ export const entitlementsContainer = {
   },
   get editionCategoryRepository() {
     return getEntitlementsContainer().editionCategoryRepository;
-  },
-  get leadsRepository() {
-    return getEntitlementsContainer().leadsRepository;
   },
   get onboardingQuestionRepository() {
     return getEntitlementsContainer().onboardingQuestionRepository;

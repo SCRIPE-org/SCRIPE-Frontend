@@ -90,7 +90,6 @@ import {
   en as revenueAnalyticsEn,
   ar as revenueAnalyticsAr,
 } from "@modules/entitlements/analytics/locales";
-import { en as leadsEn, ar as leadsAr } from "@modules/entitlements/leads/locales";
 import {
   en as signupContentEn,
   ar as signupContentAr,
@@ -353,7 +352,6 @@ export const allModulesEn: Record<string, unknown> = deepMerge(
   stripeConnectEn,
   platformStripeEn,
   revenueAnalyticsEn,
-  leadsEn,
   signupContentEn,
   activateWorkspaceEn,
   // Communication, Integrations & Media
@@ -482,7 +480,6 @@ export const allModulesAr: Record<string, unknown> = deepMerge(
   stripeConnectAr,
   platformStripeAr,
   revenueAnalyticsAr,
-  leadsAr,
   signupContentAr,
   activateWorkspaceAr,
   // Communication, Integrations & Media
