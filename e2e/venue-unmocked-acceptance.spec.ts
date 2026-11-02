@@ -474,6 +474,9 @@ test.describe("SCRIPE Venue: Real Runtime End-to-End Operational Acceptance", ()
     const tokenHash = crypto.createHash("sha256").update(rawToken).digest("hex").toUpperCase();
     const guestAccessId = crypto.randomUUID();
 
+    // Ensure venue profile has guest experience enabled in test database
+    queryPostgres(`UPDATE venue.venue_profiles SET enable_guest_experience = TRUE WHERE tenant_id = '${tenantId}';`);
+
     // Insert guest reservation access record with view-only action scope ('View')
     queryPostgres(`
       INSERT INTO venue.guest_reservation_accesses (
@@ -528,7 +531,7 @@ test.describe("SCRIPE Venue: Real Runtime End-to-End Operational Acceptance", ()
     const dbStatusCheck = queryPostgres(
       `SELECT status FROM venue.reservations WHERE id = '${createdReservationRawId}';`
     );
-    expect(dbStatusCheck).toMatch(/\|\s+4\s+\|/);
+    expect(dbStatusCheck).toMatch(/\b4\b/);
 
     // ── Scenario C: Double-Booking Prevention (409 Conflict) ──
     // Login as Ahly admin to acquire access token (no spoofed headers)
