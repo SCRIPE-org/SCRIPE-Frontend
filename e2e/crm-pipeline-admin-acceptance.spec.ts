@@ -63,24 +63,24 @@ test.describe("CRM Pipeline Administration Acceptance (SCRIPE-746)", () => {
     await expect(proposalRow).toBeVisible();
     await expect(negotiationRow).toBeVisible();
 
-    // 7. Test Pre-Proposal Reachability Client-Side Validation
-    // Set Solution Fit sort order to 4 and Proposal to 3
-    const solFitOrderInput = solFitRow.locator('input[type="number"]').first();
+    // 7. Test Pre-Proposal Reachability Client-Side Validation (C1 Contract)
+    // Swap Discovery (1 -> 4) and Proposal (4 -> 1) so no pre-proposal stage precedes Proposal
+    const discoveryOrderInput = discoveryRow.locator('input[type="number"]').first();
     const proposalOrderInput = proposalRow.locator('input[type="number"]').first();
 
-    await solFitOrderInput.fill("4");
-    await proposalOrderInput.fill("3");
+    await discoveryOrderInput.fill("4");
+    await proposalOrderInput.fill("1");
 
     const saveBtn = adminDialog.getByRole("button", { name: /save pipeline/i });
     await saveBtn.click();
 
     // Verify pre-proposal rule warning alert is shown
     await expect(
-      adminDialog.getByText(/Pre-proposal stages.*must precede Proposal/i)
+      adminDialog.getByText(/At least one pre-proposal stage.*must precede Proposal/i)
     ).toBeVisible({ timeout: 5_000 });
 
-    // Restore ordering: Solution Fit -> 3, Proposal -> 4
-    await solFitOrderInput.fill("3");
+    // Restore ordering: Discovery -> 1, Proposal -> 4
+    await discoveryOrderInput.fill("1");
     await proposalOrderInput.fill("4");
 
     // 8. Configure Discovery Stage with modified Label and Probability

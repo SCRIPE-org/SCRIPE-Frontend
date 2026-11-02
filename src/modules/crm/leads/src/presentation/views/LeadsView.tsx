@@ -25,9 +25,7 @@ import {
 } from "lucide-react";
 import { cn } from "@core/common/utils";
 
-import { CRM_PERMISSIONS } from "@modules/crm/overview/src/domain/constants/permission-constants";
-import { CrmShell } from "@modules/crm/overview/src/presentation/components/CrmShell";
-import { CrmSectionHeader } from "@modules/crm/overview/src/presentation/components/CrmSectionHeader";
+import { CRM_PERMISSIONS, CrmShell, CrmSectionHeader } from "@modules/crm";
 import { GenericCrudView } from "@core/crud/components/generic-crud-view";
 import type { CrudConfig, CrudColumn, CrudAction } from "@core/crud/components/generic-crud-view";
 import { LeadStatusBadge } from "../components/LeadStatusBadge";

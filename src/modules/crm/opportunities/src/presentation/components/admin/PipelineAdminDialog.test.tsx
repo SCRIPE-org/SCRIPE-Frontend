@@ -127,7 +127,7 @@ describe("PipelineAdminDialog Component", () => {
     expect(onSubmit).not.toHaveBeenCalled();
   });
 
-  it("rejects pre-proposal stage ordered at or after Proposal stage", async () => {
+  it("rejects when all pre-proposal stages are ordered at or after Proposal stage", async () => {
     const onSubmit = vi.fn();
     render(
       <PipelineAdminDialog
@@ -138,15 +138,16 @@ describe("PipelineAdminDialog Component", () => {
       />
     );
 
-    // Swap Solution Fit (order 3) and Proposal (order 4) -> Proposal becomes 3, Solution Fit becomes 4
-    const solutionRow = screen.getByTestId("stage-config-row-default.solution_fit");
+    // Swap Discovery (order 1) and Proposal (order 4) -> Proposal becomes 1, Discovery becomes 4
+    // Now all pre-proposal stages (Qualification: 2, Solution Fit: 3, Discovery: 4) are ordered after Proposal (1)
+    const discoveryRow = screen.getByTestId("stage-config-row-default.discovery");
     const proposalRow = screen.getByTestId("stage-config-row-default.proposal");
 
-    const solutionOrder = solutionRow.querySelector('input[type="number"]') as HTMLInputElement;
+    const discoveryOrder = discoveryRow.querySelector('input[type="number"]') as HTMLInputElement;
     const proposalOrder = proposalRow.querySelector('input[type="number"]') as HTMLInputElement;
 
-    fireEvent.change(solutionOrder, { target: { value: "4" } });
-    fireEvent.change(proposalOrder, { target: { value: "3" } });
+    fireEvent.change(discoveryOrder, { target: { value: "4" } });
+    fireEvent.change(proposalOrder, { target: { value: "1" } });
 
     const saveButton = screen.getByRole("button", { name: "Save Pipeline" });
     fireEvent.click(saveButton);
@@ -154,7 +155,7 @@ describe("PipelineAdminDialog Component", () => {
     await waitFor(() => {
       expect(
         screen.getByText(
-          "Pre-proposal stages (Discovery, Qualification, Solution Fit) must precede Proposal."
+          "At least one pre-proposal stage (Discovery, Qualification, or Solution Fit) must precede Proposal."
         )
       ).toBeDefined();
     });

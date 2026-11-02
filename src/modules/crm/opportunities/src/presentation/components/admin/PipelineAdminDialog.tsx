@@ -209,20 +209,21 @@ export function PipelineAdminDialog({
       });
     }
 
-    // 4. Pre-proposal reachability: Discovery, Qualification, Solution Fit < Proposal
+    // 4. Pre-proposal reachability: At least one pre-proposal stage (Discovery, Qualification, or Solution Fit) must precede Proposal (C1 Contract)
     const proposalStage = draftStages.find((s) => s.stageKey === "default.proposal");
     if (!proposalStage) {
       return "Proposal stage is missing.";
     }
     const preProposalKeys = ["default.discovery", "default.qualification", "default.solution_fit"];
-    for (const key of preProposalKeys) {
-      const preStage = draftStages.find((s) => s.stageKey === key);
-      if (preStage && Number(preStage.sortOrder) >= Number(proposalStage.sortOrder)) {
-        return t("crmOpportunities.dialogs.pipelineAdmin.preProposalRuleWarning", {
-          defaultValue:
-            "Pre-proposal stages (Discovery, Qualification, Solution Fit) must precede Proposal.",
-        });
-      }
+    const hasPreProposalStage = preProposalKeys.some((key) => {
+      const stage = draftStages.find((s) => s.stageKey === key);
+      return stage && Number(stage.sortOrder) < Number(proposalStage.sortOrder);
+    });
+    if (!hasPreProposalStage) {
+      return t("crmOpportunities.dialogs.pipelineAdmin.preProposalRuleWarning", {
+        defaultValue:
+          "At least one pre-proposal stage (Discovery, Qualification, or Solution Fit) must precede Proposal.",
+      });
     }
 
     // 5. Probability limits (0..100)
@@ -332,9 +333,9 @@ export function PipelineAdminDialog({
         <form onSubmit={handleSave} className="space-y-4 pt-1">
           <div className="space-y-3">
             {draftStages.map((stage, idx) => {
-              const isProposalOrLater =
-                stage.stageKey === "default.proposal" ||
-                stage.stageKey === "default.negotiation";
+              const proposalStage = draftStages.find((s) => s.stageKey === "default.proposal");
+              const proposalSortOrder = proposalStage ? Number(proposalStage.sortOrder) : 4;
+              const isProposalOrLater = Number(stage.sortOrder) >= proposalSortOrder;
 
               return (
                 <div

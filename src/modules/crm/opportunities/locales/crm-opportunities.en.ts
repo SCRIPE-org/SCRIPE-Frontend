@@ -136,7 +136,7 @@ export const en = {
         sortOrder: "Sort Order (1..5)",
         winProbability: "Win Probability (%)",
         requiredExitFields: "Required Exit Fields",
-        preProposalRuleWarning: "Pre-proposal stages (Discovery, Qualification, Solution Fit) must precede Proposal.",
+        preProposalRuleWarning: "At least one pre-proposal stage (Discovery, Qualification, or Solution Fit) must precede Proposal.",
         invalidOrderWarning: "Stages must have unique contiguous sort orders from 1 to 5.",
         partyReorderWarning: "Cannot reorder stages while open unlinked deals would land on or after Proposal (PD-1 Policy).",
         save: "Save Pipeline",
