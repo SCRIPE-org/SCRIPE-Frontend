@@ -7,12 +7,22 @@ import type {
   UpdateAccountInput,
 } from "../../domain/models/crm-account.types";
 
+/**
+ * State snapshot for CRM account 360-degree detailed profile.
+ */
 export interface AccountDetailState {
   stage: "idle" | "loading" | "success" | "failed";
   account: CrmAccount360 | null;
   error: string | null;
 }
 
+/**
+ * Presentation ViewModel hook for loading and editing a single Account 360 profile.
+ * Fetches connected contacts, active deals, and financial information.
+ *
+ * @param accountId - Encrypted or raw account ID string.
+ * @returns State, update handler, and edit dialog controls.
+ */
 export function useAccountDetailViewModel(accountId: string) {
   const [state, setState] = useState<AccountDetailState>({
     stage: "loading",

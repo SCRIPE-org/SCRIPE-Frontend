@@ -30,7 +30,7 @@ export function ActivityTimeline({ leadId,
     activityKindFilter, setActivityKindFilter,
     isCreateOpen, setIsCreateOpen,
     selectedActivityForFollowUp, setSelectedActivityForFollowUp,
-    isSubmitting, submitError,
+    isSubmitting, submitError, setSubmitError,
     handleCreateActivity, handleCreateFollowUp,
   } = viewModel;
   const getActivityIcon = (kind: SalesActivityKind) => { switch (kind) {
@@ -197,7 +197,10 @@ export function ActivityTimeline({ leadId,
                           type="button"
                           variant="ghost"
                           size="sm"
-                          onClick={() => setSelectedActivityForFollowUp(activity)}
+                          onClick={() => {
+                            setSubmitError(null);
+                            setSelectedActivityForFollowUp(activity);
+                          }}
                           className="h-6 text-[10px] px-2 text-nx-ink-3 hover:text-nx-ink hover:bg-nx-raised gap-1 opacity-80 group-hover:opacity-100"
                         >
                           <CalendarClock className="size-2.5 text-warning" />
@@ -220,13 +223,21 @@ export function ActivityTimeline({ leadId,
         </div> )}
       {/* Modals */}
       <CreateActivityModal isOpen={isCreateOpen}
-        onOpenChange={setIsCreateOpen}
+        onOpenChange={(open) => {
+          setSubmitError(null);
+          setIsCreateOpen(open);
+        }}
         onSubmit={handleCreateActivity}
         isSubmitting={isSubmitting}
         error={submitError}
         targetLabel={targetLabel} />
-      <CreateFollowUpModal activity={selectedActivityForFollowUp}
-        onClose={() => setSelectedActivityForFollowUp(null)}
+      <CreateFollowUpModal
+        key={selectedActivityForFollowUp?.activityId ?? "closed"}
+        activity={selectedActivityForFollowUp}
+        onClose={() => {
+          setSubmitError(null);
+          setSelectedActivityForFollowUp(null);
+        }}
         onSubmit={handleCreateFollowUp}
         isSubmitting={isSubmitting}
         error={submitError} />

@@ -46,14 +46,10 @@ export const en = {
     },
     executionDesk: {
       title: "Sales Execution Desk",
-      description: "Unified commercial interaction timeline, meeting notes, call logs, and WorkManagement task dispatch.",
+      description: "Record commercial notes, phone calls, meeting summaries, and schedule follow-up tasks across customer accounts.",
       selectAccount: "Commercial Accounts",
       activeAccount: "Selected Target Account",
-    },
-    stats: {
-      mode: "Execution Protocol",
-      dispatch: "Follow-up Engine",
-      privacy: "Field-Level Security",
+      noAccounts: "No accounts available",
     },
   },
 };

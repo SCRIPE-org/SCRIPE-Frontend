@@ -22,71 +22,19 @@ export function ActivitiesExecutionDeskView() {
     selectAccount,
   } = useActivitiesExecutionDeskViewModel(language);
 
+  const selectedAccount = accounts.find((acc) => acc.id === selectedAccountId);
+
   return (
     <CrmShell activeTab="activities" onTabChange={() => {}}>
-      <div className="space-y-6" dir={isRtl ? "rtl" : "ltr"}>
+      <div className="space-y-5" dir={isRtl ? "rtl" : "ltr"}>
         {/* Header */}
         <CrmSectionHeader
           title={t("crmActivities.executionDesk.title") || "Sales Execution Desk"}
           subtitle={
             t("crmActivities.executionDesk.description") ||
-            "Unified commercial interaction timeline, meeting notes, call logs, and WorkManagement task dispatch."
+            "Record commercial notes, phone calls, meeting summaries, and schedule follow-up tasks across customer accounts."
           }
         />
-
-        {/* Quick KPI Overview */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-          <Card className="p-3.5 bg-nx-surface border-nx-line space-y-1">
-            <span className="text-[10px] font-mono text-nx-ink-3 uppercase font-medium">
-              {t("crmActivities.stats.mode") || "Execution Protocol"}
-            </span>
-            <div className="flex items-center justify-between">
-              <span className="text-sm font-bold text-nx-ink font-heading">
-                SCRIPE D5/B Append-Only
-              </span>
-              <Badge variant="outline" className="border-nx-accent/30 bg-nx-accent-wash text-nx-accent text-[10px]">
-                Active
-              </Badge>
-            </div>
-            <p className="text-[10px] text-nx-ink-3">
-              Immutable timeline audit with cryptographic ID scoping
-            </p>
-          </Card>
-
-          <Card className="p-3.5 bg-nx-surface border-nx-line space-y-1">
-            <span className="text-[10px] font-mono text-nx-ink-3 uppercase font-medium">
-              {t("crmActivities.stats.dispatch") || "Follow-up Engine"}
-            </span>
-            <div className="flex items-center justify-between">
-              <span className="text-sm font-bold text-nx-ink font-heading">
-                WorkManagement Tasks
-              </span>
-              <Badge variant="outline" className="border-warning/30 bg-warning/10 text-warning text-[10px]">
-                Cross-Module
-              </Badge>
-            </div>
-            <p className="text-[10px] text-nx-ink-3">
-              Zero physical foreign keys; decoupled AstraFlow correlation
-            </p>
-          </Card>
-
-          <Card className="p-3.5 bg-nx-surface border-nx-line space-y-1">
-            <span className="text-[10px] font-mono text-nx-ink-3 uppercase font-medium">
-              {t("crmActivities.stats.privacy") || "Field-Level Security"}
-            </span>
-            <div className="flex items-center justify-between">
-              <span className="text-sm font-bold text-nx-ink font-heading">
-                PII Policy Enforced
-              </span>
-              <Badge variant="outline" className="border-success/30 bg-success/10 text-success text-[10px]">
-                Verified
-              </Badge>
-            </div>
-            <p className="text-[10px] text-nx-ink-3">
-              Confidential interaction masking per role permissions
-            </p>
-          </Card>
-        </div>
 
         {/* Master-Detail Layout */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-5">
@@ -108,7 +56,7 @@ export function ActivitiesExecutionDeskView() {
               </div>
             ) : accounts.length === 0 ? (
               <Card className="p-4 text-center text-xs text-nx-ink-3 border-nx-line bg-nx-surface">
-                No accounts available
+                {t("crmActivities.executionDesk.noAccounts") || "No accounts available"}
               </Card>
             ) : (
               <div className="space-y-1.5">
@@ -165,7 +113,7 @@ export function ActivitiesExecutionDeskView() {
           <div className="lg:col-span-8 space-y-4">
             {selectedAccountId ? (
               <Card className="p-5 bg-nx-surface border-nx-line space-y-4">
-                <div className="flex items-center justify-between border-b border-nx-line pb-3">
+                <div className="flex flex-wrap items-center justify-between gap-2 border-b border-nx-line pb-3">
                   <div>
                     <span className="text-[10px] font-mono text-nx-ink-3 uppercase font-medium">
                       {t("crmActivities.executionDesk.activeAccount") || "Selected Target Account"}
@@ -174,6 +122,18 @@ export function ActivitiesExecutionDeskView() {
                       {selectedAccountName}
                     </h3>
                   </div>
+                  {selectedAccount && (
+                    <div className="flex items-center gap-2">
+                      <Badge variant="outline" className="border-nx-line bg-nx-raised text-nx-ink-2 text-[10px]">
+                        {selectedAccount.commercialTierCode || "Standard"}
+                      </Badge>
+                      {selectedAccount.preferredCurrencyCode && (
+                        <Badge variant="outline" className="border-nx-line bg-nx-raised text-nx-ink-2 text-[10px] font-mono">
+                          {selectedAccount.preferredCurrencyCode}
+                        </Badge>
+                      )}
+                    </div>
+                  )}
                 </div>
 
                 <ActivityTimeline

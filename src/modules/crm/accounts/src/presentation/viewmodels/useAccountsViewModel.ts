@@ -7,6 +7,9 @@ import type {
   CreateAccountInput,
 } from "../../domain/entities/AccountEntity";
 
+/**
+ * State snapshot for CRM accounts list and pagination.
+ */
 export interface AccountsState {
   stage: "idle" | "loading" | "success" | "failed";
   items: CrmAccount[];
@@ -16,6 +19,13 @@ export interface AccountsState {
   error: string | null;
 }
 
+/**
+ * Presentation ViewModel hook for the commercial CRM Accounts list and search interface.
+ * Connects directly to the scoped CRM DI container repository layer.
+ *
+ * @param initialSearch - Optional initial filter term for party legal name search.
+ * @returns State, pagination controls, filter actions, and mutation handlers.
+ */
 export function useAccountsViewModel(initialSearch?: string) {
   const [state, setState] = useState<AccountsState>({
     stage: "loading",

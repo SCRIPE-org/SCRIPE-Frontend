@@ -129,9 +129,11 @@ export function OpportunitiesView() {
               </Button>
               <Button type="button" size="sm" variant="ghost" aria-label={t("crmOpportunities.actions.closeWon")} title={t("crmOpportunities.actions.closeWon")} className="h-7 px-1.5 text-xs text-success hover:bg-success/10" onClick={() => openCloseDialog(opp, "Won")}>
                 <CheckCircle className="size-3.5" />
+                <span className="sr-only">{t("crmOpportunities.actions.closeWon")}</span>
               </Button>
               <Button type="button" size="sm" variant="ghost" aria-label={t("crmOpportunities.actions.closeLost")} title={t("crmOpportunities.actions.closeLost")} className="h-7 px-1.5 text-xs text-destructive hover:bg-destructive/10" onClick={() => openCloseDialog(opp, "Lost")}>
                 <XCircle className="size-3.5" />
+                <span className="sr-only">{t("crmOpportunities.actions.closeLost")}</span>
               </Button>
               <Button type="button" size="sm" variant="ghost" aria-label={t("crmOpportunities.actions.assignOwner")} title={t("crmOpportunities.actions.assignOwner")} className="h-7 px-1.5 text-nx-ink-3 hover:text-nx-ink" onClick={() => openAssignOwnerDialog(opp)}>
                 <UserCheck className="size-3.5" />
