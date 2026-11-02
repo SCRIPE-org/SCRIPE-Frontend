@@ -799,17 +799,23 @@ test.describe("SCRIPE Venue: Real Runtime End-to-End Operational Acceptance", ()
 
     // 6.2 Create a dedicated reservation via API to acquire a valid server-encrypted ID
     const fixtureDraftKey = `e2e-refund-draft-${Date.now()}`;
-    const fixtureResListRes = await page.request.get("http://127.0.0.1:5035/api/v1/schedulable-resources?pageSize=1", {
+    const fixtureResListRes = await page.request.get("http://127.0.0.1:5035/api/v1/schedulable-resources?pageSize=50", {
       headers: { Authorization: `Bearer ${apiAdminToken}`, "x-tenant-id": tenantId },
     });
     expect(fixtureResListRes.status()).toBe(200);
-    const fixtureResourceId = (await fixtureResListRes.json()).items[0].id;
+    const resItems = (await fixtureResListRes.json()).items;
+    const fixtureResourceId = resItems.find((r: any) => r.name?.toLowerCase().includes("court") || r.name?.toLowerCase().includes("padel"))?.id ?? resItems[0].id;
 
     const fixturePartiesRes = await page.request.get("http://127.0.0.1:5035/api/v1/Parties?pageSize=1", {
       headers: { Authorization: `Bearer ${apiAdminToken}`, "x-tenant-id": tenantId },
     });
     expect(fixturePartiesRes.status()).toBe(200);
     const fixturePartyId = (await fixturePartiesRes.json()).items[0].id;
+
+    const futureDate = new Date();
+    futureDate.setUTCDate(futureDate.getUTCDate() + 10);
+    futureDate.setUTCHours(10, 0, 0, 0);
+    const futureEnd = new Date(futureDate.getTime() + 60 * 60 * 1000);
 
     const fixtureDraftRes = await page.request.post("http://127.0.0.1:5035/api/v1/Reservations", {
       headers: authMutationHeaders(apiAdminToken, tenantId),
@@ -818,8 +824,8 @@ test.describe("SCRIPE Venue: Real Runtime End-to-End Operational Acceptance", ()
         customerPartyId: fixturePartyId,
         bookerPartyId: fixturePartyId,
         payerPartyId: fixturePartyId,
-        requestedStartUtc: new Date(Date.now() + 86400000 * 60).toISOString(),
-        requestedEndUtc: new Date(Date.now() + 86400000 * 60 + 3600000).toISOString(),
+        requestedStartUtc: futureDate.toISOString(),
+        requestedEndUtc: futureEnd.toISOString(),
         quantity: 1,
         idempotencyKey: fixtureDraftKey,
       },

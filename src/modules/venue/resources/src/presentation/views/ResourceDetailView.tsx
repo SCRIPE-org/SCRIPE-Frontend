@@ -95,7 +95,13 @@ export function ResourceDetailView({ resourceId }: Props) {
     return (
       <div className="mx-auto my-12 max-w-lg p-6" dir={direction}>
         <Alert variant="destructive">
-          <AlertDescription>{vm.error}</AlertDescription>
+          <AlertDescription>
+            {vm.error.toLowerCase().includes("schedulableresource") ||
+            vm.error.toLowerCase().includes("entities.") ||
+            vm.error.toLowerCase().includes("invalid entities")
+              ? t("resources.detail.notFound", { defaultValue: "Court not found" })
+              : vm.error}
+          </AlertDescription>
         </Alert>
         <div className="mt-4">
           <Button asChild variant="outline" size="sm">

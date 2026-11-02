@@ -741,18 +741,18 @@ export function FirstTimeSetupWizard({
                         type="button"
                         key={duration}
                         onClick={() => setSlotDurationMinutes(duration)}
-                        className={`rounded-xl border p-2 text-left transition-all rtl:text-right ${
+                        className={`flex flex-col items-start justify-center h-auto w-full py-2.5 px-3 rounded-xl border text-left transition-all rtl:items-end rtl:text-right ${
                           slotDurationMinutes === duration
                             ? "border-primary bg-primary/10 font-bold text-nx-ink ring-1 ring-primary"
                             : "border-nx-line bg-nx-surface text-nx-ink-2 hover:bg-nx-raised"
                         }`}
                       >
-                        <p className="text-xs font-semibold">
+                        <p className="text-xs font-semibold leading-tight">
                           {t(`resources.bookingRules.${labelKey}`, {
                             defaultValue: `${duration} minutes`,
                           })}
                         </p>
-                        <p className="text-[10px] text-nx-ink-3">
+                        <p className="mt-0.5 text-[10px] leading-tight text-nx-ink-3">
                           {t("resources.wizard.everyMinutes", {
                             defaultValue: "Every {{value}} minutes",
                             value: duration,

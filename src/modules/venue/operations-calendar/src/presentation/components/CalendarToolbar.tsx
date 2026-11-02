@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useI18n } from "@core/providers/i18n-provider";
 import { ChevronLeft, ChevronRight, Plus, SlidersHorizontal, RefreshCw, Clock, Search } from "lucide-react";
 import { Button } from "@core/ui/button";
 import { Input } from "@core/ui/input";
@@ -42,6 +43,8 @@ function valueOf(value: string | string[]) {
  */
 export function CalendarToolbar(props: CalendarToolbarProps) {
   const { t } = props;
+  const { language, direction } = useI18n();
+  const isRtl = direction === "rtl" || language === "ar";
   const actionsDisabled = props.hasBookingReadyCourts === false || props.resources.length === 0;
 
   const [showFilters, setShowFilters] = useState(true);
@@ -53,7 +56,7 @@ export function CalendarToolbar(props: CalendarToolbarProps) {
       ? new Date(Date.UTC(dateParts[0], dateParts[1] - 1, dateParts[2], 12))
       : null;
   const formattedDisplayDate = dateValue
-    ? new Intl.DateTimeFormat("en-US", {
+    ? new Intl.DateTimeFormat(isRtl ? "ar-EG" : "en-US", {
         weekday: "short",
         day: "numeric",
         month: "short",

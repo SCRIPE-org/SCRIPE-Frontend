@@ -14,6 +14,8 @@ import {
 } from "@core/ui/sheet";
 import { Button } from "@core/ui/button";
 import { Alert, AlertDescription } from "@core/ui/alert";
+import { useI18n } from "@core/providers/i18n-provider";
+import { cn } from "@core/common/utils";
 import {
   useClickToBookViewModel,
   type UseClickToBookProps,
@@ -71,10 +73,22 @@ export function ClickToBookModal(props: ClickToBookModalProps) {
   const { open, onOpenChange, resources = [], onFindSlots, onSuccess } = props;
   const vm = useClickToBookViewModel(props);
   const { t } = vm;
+  const { language, direction } = useI18n();
+  const isRtl =
+    direction === "rtl" ||
+    language === "ar" ||
+    (typeof document !== "undefined" && document.documentElement.dir === "rtl");
 
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
-      <SheetContent side="end" className="border-nx-line flex h-full w-full flex-col justify-between overflow-y-auto border-s bg-nx-surface p-6 shadow-xl sm:max-w-lg">
+      <SheetContent
+        side={isRtl ? "left" : "right"}
+        dir={isRtl ? "rtl" : "ltr"}
+        className={cn(
+          "border-nx-line flex h-full w-full flex-col overflow-y-auto border-s bg-nx-surface p-6 shadow-xl sm:max-w-lg",
+          vm.stage === "confirmed" ? "justify-start space-y-4" : "justify-between"
+        )}
+      >
         <SheetHeader className="border-nx-line border-b pb-3 pe-8 text-start">
           <SheetTitle className="text-base font-bold text-nx-ink">
             {t("operationsCalendar.clickToBook.title", { defaultValue: "New Booking" })}

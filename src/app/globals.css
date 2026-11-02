@@ -4304,6 +4304,31 @@ html[data-tenant-banner] aside.navigation-main-sidebar {
 }
 
 /* ============================================================================
+   LIGHT MODE PRIMARY CTA BUTTON CONTRAST ENHANCEMENT (WCAG AA >= 4.5:1) (D3)
+   ----------------------------------------------------------------------------
+   In Light mode, --nx-accent resolves to dark olive green (#4c6200).
+   Buttons and elements with bg-nx-accent paired with text-nx-on-fill evaluate to
+   dark ink (#0d0d0e), yielding an unreadable 2.4:1 contrast ratio.
+   This rule ensures that in Light mode, any button or element using bg-nx-accent
+   with text-nx-on-fill renders with white text (#ffffff), guaranteeing a
+   compliant 6.9:1 contrast ratio under WCAG 2.1 AA.
+   ============================================================================ */
+:root:not(.dark) .bg-nx-accent.text-nx-on-fill,
+:root:not(.dark) .bg-nx-accent[class*="text-nx-on-fill"],
+:root:not(.dark) button.bg-nx-accent,
+:root:not(.dark) a.bg-nx-accent,
+:root:not(.dark) [class*="bg-nx-accent"].text-nx-on-fill {
+  --nx-on-fill: #ffffff;
+  color: #ffffff !important;
+}
+:root:not(.dark) .bg-nx-accent .text-nx-on-fill,
+:root:not(.dark) [class*="bg-nx-accent"] .text-nx-on-fill,
+:root:not(.dark) button.bg-nx-accent span,
+:root:not(.dark) a.bg-nx-accent span {
+  color: #ffffff !important;
+}
+
+/* ============================================================================
    TABLE STYLES — [data-table-style] (settings-driven)
    ----------------------------------------------------------------------------
    generic-table emits data-table-style on its root; this section is the

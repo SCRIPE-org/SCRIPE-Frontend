@@ -173,9 +173,17 @@ export const FacilityListView = React.memo(function FacilityListView() {
         requiredPermission: VENUE_PERMISSIONS.FACILITY_DELETE,
       },
     ],
+    hideAddButton: true,
     customActions: [
       {
-        label: t("facility.quickCreateVenueProfile") || "New Venue Profile",
+        label: t("facility.actions.addFacility", { defaultValue: "+ Add Facility" }),
+        onClick: async () => vm.setIsCreateModalOpen(true),
+        icon: <Plus className="h-4 w-4" />,
+        variant: "default" as const,
+        requiredPermission: VENUE_PERMISSIONS.FACILITY_CREATE,
+      },
+      {
+        label: t("facility.quickCreateVenueProfile", { defaultValue: "+ New Branch Profile" }),
         onClick: async () => setQuickCreateVenueProfileOpen(true),
         icon: <Plus className="h-4 w-4" />,
         variant: "outline" as const,
