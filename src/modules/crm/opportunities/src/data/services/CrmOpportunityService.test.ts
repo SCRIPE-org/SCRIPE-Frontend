@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { CrmOpportunityService } from "./CrmOpportunityService";
-import type { IApiService } from "@core/api/interfaces/IApiService";
+import type { IApiService } from "@core/interfaces/api.interface";
 import type { UpdateDefaultPipelineInput } from "../../domain/entities/OpportunityEntity";
 
 describe("CrmOpportunityService - Default Pipeline Administration", () => {

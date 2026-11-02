@@ -28,7 +28,7 @@ import {
 } from "@core/ui/dropdown-menu";
 import { ConfirmationDialog } from "@core/ui/confirmation-dialog";
 import { useI18n } from "@core/providers/i18n-provider";
-import { getVenueContainer } from "@modules/venue/di";
+
 import {
   type ResourceWorkspaceItem,
   evaluateCourtReadiness,
@@ -36,6 +36,7 @@ import {
 
 interface Props {
   item: ResourceWorkspaceItem;
+  onDelete?: (id: string) => Promise<boolean | void>;
   onDeleted?: () => void;
 }
 
@@ -51,7 +52,7 @@ function getCourtImage(sportType?: string, name?: string): string {
   return "/images/venue/padel-court-indoor.svg";
 }
 
-export function ResourceCard({ item, onDeleted }: Props) {
+export function ResourceCard({ item, onDelete, onDeleted }: Props) {
   const { t } = useI18n();
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
@@ -393,14 +394,8 @@ export function ResourceCard({ item, onDeleted }: Props) {
         setIsDeleting(true);
         setDeleteError(null);
         try {
-          const container = getVenueContainer();
-          if (
-            typeof (container.schedulableResourceRepository as any).deleteResource ===
-            "function"
-          ) {
-            await (container.schedulableResourceRepository as any).deleteResource(item.id);
-          } else {
-            await container.schedulableResourceRepository.delete(item.id);
+          if (onDelete) {
+            await onDelete(item.id);
           }
           setDeleteDialogOpen(false);
           onDeleted?.();

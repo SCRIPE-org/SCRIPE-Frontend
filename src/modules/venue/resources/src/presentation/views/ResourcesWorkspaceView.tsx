@@ -347,7 +347,7 @@ export function ResourcesWorkspaceView() {
         /* Courts Grid + Add New Empty Card */
         <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3">
           {displayedItems.map((item) => (
-            <ResourceCard key={item.id} item={item} onDeleted={vm.refresh} />
+            <ResourceCard key={item.id} item={item} onDelete={vm.deleteResource} onDeleted={vm.refresh} />
           ))}
 
           {/* Add New Court / Space Empty Card */}

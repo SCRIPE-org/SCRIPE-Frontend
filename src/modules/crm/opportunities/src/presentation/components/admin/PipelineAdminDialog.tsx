@@ -21,7 +21,7 @@ import type {
   PipelineDefinition,
   UpdateDefaultPipelineInput,
   UpdatePipelineStageItem,
-} from "../../domain/entities/OpportunityEntity";
+} from "../../../domain/entities/OpportunityEntity";
 
 export interface PipelineAdminDialogProps {
   open: boolean;
@@ -128,7 +128,7 @@ export function PipelineAdminDialog({
     }
 
     const loaded: StageDraftState[] = CANONICAL_STAGE_KEYS.map((key, defaultIdx) => {
-      const existing = pipeline.stages.find((s) => s.stageKey === key);
+      const existing = pipeline.stages.find((s: any) => s.stageKey === key);
       return {
         stageKey: key,
         labelEn: existing?.labelEn || `Stage ${defaultIdx + 1}`,

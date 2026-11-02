@@ -13,7 +13,7 @@ import { Pencil, Trash2, Plus, Building2, MapPin, CalendarDays, GitFork } from "
 import { VENUE_PERMISSIONS } from "@modules/venue/permission-constants";
 import { VenueResourceNav } from "@modules/venue";
 import { VenueProfileQuickCreateDialog } from "@modules/venue";
-import { SiteListView } from "@modules/venue/site/src/presentation/views/SiteListView";
+import { SiteListView } from "@modules/venue";
 import { Tabs, TabsList, TabsTrigger } from "@core/ui/tabs";
 
 /**

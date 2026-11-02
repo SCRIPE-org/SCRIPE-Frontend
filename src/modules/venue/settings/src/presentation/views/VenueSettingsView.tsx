@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
-import { VenueProfileListView } from "@modules/venue/venue-profile/src/presentation/views/VenueProfileListView";
+import { VenueProfileListView } from "@modules/venue";
 import {
   Settings,
   Building2,
