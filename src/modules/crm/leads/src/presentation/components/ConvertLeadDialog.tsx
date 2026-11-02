@@ -199,8 +199,8 @@ export function ConvertLeadDialog({
                       className={cn(
                         "h-8 px-2 text-xs font-medium rounded-nx-md border",
                         isSelected
-                          ? "bg-nx-accent-fill text-nx-on-fill border-transparent font-bold"
-                          : "border-nx-line bg-nx-surface text-nx-ink hover:bg-nx-surfaceSubtle"
+                          ? "border-nx-accent/40 bg-nx-accent-wash text-nx-accent font-semibold"
+                          : "border-nx-line bg-nx-surface text-nx-ink hover:bg-nx-raised"
                       )}
                     >
                       {dk.label}
@@ -241,7 +241,7 @@ export function ConvertLeadDialog({
               type="submit"
               size="sm"
               disabled={isSubmitting || !isQualified}
-              className="h-8 text-xs bg-nx-accent-fill text-nx-on-fill font-bold hover:brightness-105 gap-1.5"
+              className="h-8 text-xs font-bold gap-1.5"
             >
               <ArrowRightCircle className="size-3.5" />
               <span>

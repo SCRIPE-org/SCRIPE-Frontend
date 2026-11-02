@@ -3,6 +3,7 @@
 import { useI18n } from "@core/providers/i18n-provider";
 import { ShieldCheck, Lock } from "lucide-react";
 import { Button } from "@core/ui/button";
+import { Card } from "@core/ui/card";
 import { cn } from "@core/common/utils";
 import type { CrmPipelineOverview, CrmStageKey } from "../../domain/entities/OverviewEntity";
 
@@ -23,7 +24,7 @@ export function CrmPipelineOverviewStrip({
   const isRtl = language === "ar";
 
   return (
-    <div
+    <Card
       className={cn(
         "rounded-nx-lg border border-nx-line bg-nx-surface p-4 sm:p-5 space-y-4",
         className
@@ -43,11 +44,11 @@ export function CrmPipelineOverviewStrip({
           </p>
         </div>
         <div className="flex items-center gap-3 self-end sm:self-auto text-xs">
-          <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-nx-sm bg-nx-surfaceSubtle border border-nx-line text-nx-ink-2">
+          <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-nx-sm bg-nx-raised border border-nx-line text-nx-ink-2">
             <span className="font-semibold text-nx-ink">{pipeline.totalDeals}</span>
             <span>{t("crm.pipeline.dealsCount")}</span>
           </div>
-          <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-nx-sm bg-nx-surfaceSubtle border border-nx-line text-nx-ink-2">
+          <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-nx-sm bg-nx-raised border border-nx-line text-nx-ink-2">
             <span className="font-bold text-nx-accent">
               {pipeline?.currency ?? "SAR"} {(pipeline?.totalPipelineValue ?? 0).toLocaleString()}
             </span>
@@ -70,8 +71,8 @@ export function CrmPipelineOverviewStrip({
               className={cn(
                 "group relative flex h-auto flex-col items-stretch justify-between p-3 rounded-nx-md border text-left transition-all duration-nx-micro select-none whitespace-normal",
                 isSelected
-                  ? "border-nx-accent bg-nx-surfaceSubtle ring-1 ring-nx-accent"
-                  : "border-nx-line bg-nx-surface hover:border-nx-line-hi hover:bg-nx-surfaceSubtle/40"
+                  ? "border-nx-accent bg-nx-raised ring-1 ring-nx-accent"
+                  : "border-nx-line bg-nx-surface hover:border-nx-line-hi hover:bg-nx-raised/40"
               )}
             >
               <div className="flex items-center justify-between w-full">
@@ -112,6 +113,6 @@ export function CrmPipelineOverviewStrip({
           );
         })}
       </div>
-    </div>
+    </Card>
   );
 }

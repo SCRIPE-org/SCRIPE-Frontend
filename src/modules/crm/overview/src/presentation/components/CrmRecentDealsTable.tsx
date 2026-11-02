@@ -48,7 +48,7 @@ export function CrmRecentDealsTable({ deals, className }: CrmRecentDealsTablePro
       <div className="overflow-x-auto no-scrollbar">
         <table className="w-full text-left text-xs border-collapse" dir={isRtl ? "rtl" : "ltr"}>
           <thead>
-            <tr className="border-b border-nx-line bg-nx-surfaceSubtle/50 text-nx-ink-2 font-semibold">
+            <tr className="border-b border-nx-line bg-nx-raised/50 text-nx-ink-2 font-semibold">
               <th className="px-4 py-3 text-start">{t("crm.recentDeals.dealName")}</th>
               <th className="px-4 py-3 text-start">{t("crm.recentDeals.party")}</th>
               <th className="px-4 py-3 text-start">{t("crm.recentDeals.stage")}</th>
@@ -62,7 +62,7 @@ export function CrmRecentDealsTable({ deals, className }: CrmRecentDealsTablePro
               return (
                 <tr
                   key={deal.id}
-                  className="group hover:bg-nx-surfaceSubtle/40 transition-colors duration-nx-micro"
+                  className="group hover:bg-nx-raised/40 transition-colors duration-nx-micro"
                 >
                   <td className="px-4 py-3 font-semibold text-nx-ink max-w-xs truncate">
                     {deal.title}
@@ -101,7 +101,7 @@ export function CrmRecentDealsTable({ deals, className }: CrmRecentDealsTablePro
 
                   <td className="px-4 py-3">
                     <div className="flex items-center gap-1.5 text-nx-ink-2">
-                      <div className="size-5 rounded-full bg-nx-surfaceSubtle border border-nx-line flex items-center justify-center shrink-0">
+                      <div className="size-5 rounded-full bg-nx-raised border border-nx-line flex items-center justify-center shrink-0">
                         <User className="size-3 text-nx-ink-3" />
                       </div>
                       <span className="truncate max-w-[120px]">{deal.ownerName}</span>
@@ -112,7 +112,7 @@ export function CrmRecentDealsTable({ deals, className }: CrmRecentDealsTablePro
                     <Button
                       variant="ghost"
                       size="sm"
-                      className="h-7 px-2 text-xs text-nx-ink-2 hover:text-nx-ink hover:bg-nx-surfaceSubtle gap-1"
+                      className="h-7 px-2 text-xs text-nx-ink-2 hover:text-nx-ink hover:bg-nx-raised gap-1"
                     >
                       <span>View</span>
                       <ArrowUpRight className="size-3" />

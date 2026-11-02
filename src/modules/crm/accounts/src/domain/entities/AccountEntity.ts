@@ -5,7 +5,7 @@ import type { CrmAccount } from "../models/crm-account.types";
  * Rich domain entity wrapping CrmAccount data with computed invariants.
  */
 export class AccountEntity {
-  constructor(public readonly data: CrmAccount) {}
+  constructor(private readonly data: CrmAccount) {}
 
   get id(): string {
     return this.data.id;
@@ -17,5 +17,12 @@ export class AccountEntity {
 
   get partyLegalNameEn(): string {
     return this.data.partyLegalNameEn;
+  }
+
+  /**
+   * Returns a new AccountEntity instance with updated properties.
+   */
+  copyWith(updates: Partial<CrmAccount>): AccountEntity {
+    return new AccountEntity({ ...this.data, ...updates });
   }
 }

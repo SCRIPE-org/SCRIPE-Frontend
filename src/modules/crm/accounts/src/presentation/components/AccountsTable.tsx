@@ -45,7 +45,7 @@ export function AccountsTable({ accounts, className }: AccountsTableProps) {
       <div className="overflow-x-auto no-scrollbar">
         <table className="w-full text-left text-xs border-collapse" dir={isRtl ? "rtl" : "ltr"}>
           <thead>
-            <tr className="border-b border-nx-line bg-nx-surfaceSubtle/50 text-nx-ink-2 font-semibold">
+            <tr className="border-b border-nx-line bg-nx-raised/50 text-nx-ink-2 font-semibold">
               <th className="px-4 py-3 text-start">{t("crmAccounts.table.account") || "Account / Organization"}</th>
               <th className="px-4 py-3 text-start">{t("crmAccounts.table.tier") || "Commercial Tier"}</th>
               <th className="px-4 py-3 text-start">{t("crmAccounts.table.currency") || "Currency"}</th>
@@ -68,12 +68,12 @@ export function AccountsTable({ accounts, className }: AccountsTableProps) {
               return (
                 <tr
                   key={account.id}
-                  className="hover:bg-nx-surfaceSubtle/40 transition-colors group cursor-pointer"
+                  className="hover:bg-nx-raised/40 transition-colors group cursor-pointer"
                   onClick={() => router.push(`/crm/accounts/${account.id}`)}
                 >
                   <td className="px-4 py-3.5">
                     <div className="flex items-center gap-2.5">
-                      <div className="size-7 rounded-nx-md bg-nx-surfaceSubtle border border-nx-line flex items-center justify-center shrink-0">
+                      <div className="size-7 rounded-nx-md bg-nx-raised border border-nx-line flex items-center justify-center shrink-0">
                         <Building2 className="size-3.5 text-nx-accent" />
                       </div>
                       <div>
@@ -104,7 +104,7 @@ export function AccountsTable({ accounts, className }: AccountsTableProps) {
                   <td className="px-4 py-3.5 whitespace-nowrap">
                     <Badge
                       variant="outline"
-                      className="border-nx-line bg-nx-surfaceSubtle/60 text-nx-ink-2 gap-1 font-mono text-[11px]"
+                      className="border-nx-line bg-nx-raised/60 text-nx-ink-2 gap-1 font-mono text-[11px]"
                     >
                       <Users className="size-3 text-nx-ink-3" />
                       {account.linkedContactsCount}
@@ -113,7 +113,7 @@ export function AccountsTable({ accounts, className }: AccountsTableProps) {
                   <td className="px-4 py-3.5 whitespace-nowrap">
                     <Badge
                       variant="outline"
-                      className="border-nx-line bg-nx-surfaceSubtle/60 text-nx-ink-2 gap-1 font-mono text-[11px]"
+                      className="border-nx-line bg-nx-raised/60 text-nx-ink-2 gap-1 font-mono text-[11px]"
                     >
                       <Briefcase className="size-3 text-nx-ink-3" />
                       {account.activeOpportunitiesCount}
@@ -131,7 +131,7 @@ export function AccountsTable({ accounts, className }: AccountsTableProps) {
                       variant="ghost"
                       size="sm"
                       onClick={() => router.push(`/crm/accounts/${account.id}`)}
-                      className="h-7 px-2.5 text-xs gap-1 border border-nx-line bg-nx-surface hover:bg-nx-surfaceSubtle text-nx-ink"
+                      className="h-7 px-2.5 text-xs gap-1 border border-nx-line bg-nx-surface hover:bg-nx-raised text-nx-ink"
                     >
                       <Eye className="size-3 text-nx-accent" />
                       <span>{t("crmAccounts.actions.view360") || "View 360"}</span>

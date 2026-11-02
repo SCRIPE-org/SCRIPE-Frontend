@@ -5,7 +5,7 @@ import { getCrmContainer } from "@modules/crm/di";
 import type {
   CrmContact,
   CreateContactInput,
-} from "../../domain/models/crm-contact.types";
+} from "../../domain/entities/ContactEntity";
 
 export interface ContactsState {
   stage: "idle" | "loading" | "success" | "failed";
@@ -32,6 +32,13 @@ export function useContactsViewModel(initialSearch?: string, initialAccountId?: 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [, startTransition] = useTransition();
+
+  // GenericCrudView adapter state
+  const [selectedItems, setSelectedItems] = useState<string[]>([]);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [viewModalOpen, setViewModalOpen] = useState(false);
+  const [editingItem, setEditingItem] = useState<CrmContact | null>(null);
+  const [viewItem, setViewItem] = useState<CrmContact | null>(null);
 
   const handleSetIsCreateOpen = useCallback((open: boolean) => {
     setIsCreateOpen(open);
@@ -88,6 +95,13 @@ export function useContactsViewModel(initialSearch?: string, initialAccountId?: 
     setAccountId(accId);
   }, []);
 
+  const handlePageChange = useCallback(
+    (newPage: number) => {
+      loadContacts(newPage, search, accountId);
+    },
+    [loadContacts, search, accountId]
+  );
+
   const handleCreateContact = useCallback(
     async (input: CreateContactInput): Promise<boolean> => {
       setIsSubmitting(true);
@@ -123,7 +137,61 @@ export function useContactsViewModel(initialSearch?: string, initialAccountId?: 
     setIsCreateOpen: handleSetIsCreateOpen,
     handleSearchChange,
     handleAccountFilterChange,
+    handlePageChange,
     handleCreateContact,
     refresh,
+
+    // GenericCrudView Adapter compatibility
+    items: state.items,
+    loading: state.stage === "loading",
+    error: state.error,
+    pagination: {
+      page: state.page || 1,
+      currentPage: state.page || 1,
+      pageSize: state.pageSize || 20,
+      itemsCount: state.totalCount,
+      pagesCount: Math.max(1, Math.ceil(state.totalCount / (state.pageSize || 20))),
+      totalCount: state.totalCount,
+      totalPages: Math.max(1, Math.ceil(state.totalCount / (state.pageSize || 20))),
+      hasNextPage: state.page * state.pageSize < state.totalCount,
+      hasPreviousPage: state.page > 1,
+      onPageChange: handlePageChange,
+      onPageSizeChange: (_size: number) => {
+        loadContacts(1, search, accountId);
+      },
+    },
+    searchValue: search,
+    selectedItems,
+    setSelectedItems,
+    isCreateModalOpen: isCreateOpen,
+    setIsCreateModalOpen: handleSetIsCreateOpen,
+    isEditModalOpen,
+    setIsEditModalOpen,
+    viewModalOpen,
+    setViewModalOpen,
+    editingItem,
+    viewItem,
+    openEditModal: (item: CrmContact) => {
+      setEditingItem(item);
+      setIsEditModalOpen(true);
+    },
+    closeEditModal: () => {
+      setIsEditModalOpen(false);
+      setEditingItem(null);
+    },
+    openViewModal: (item: CrmContact) => {
+      setViewItem(item);
+      setViewModalOpen(true);
+    },
+    closeViewModal: () => {
+      setViewModalOpen(false);
+      setViewItem(null);
+    },
+    changePage: handlePageChange,
+    changePageSize: (_size: number) => {
+      loadContacts(1, search, accountId);
+    },
+    refreshItems: refresh,
+    createItem: handleCreateContact,
   };
 }

@@ -37,7 +37,7 @@ export function OpportunityAuditTimeline({ stageHistory, isRtl }: OpportunityAud
         <div className="overflow-x-auto no-scrollbar">
           <table className="w-full text-left text-xs border-collapse" dir={isRtl ? "rtl" : "ltr"}>
             <thead>
-              <tr className="border-b border-nx-line bg-nx-surfaceSubtle/50 text-nx-ink-2 font-semibold">
+              <tr className="border-b border-nx-line bg-nx-raised/50 text-nx-ink-2 font-semibold">
                 <th className="px-4 py-2.5 text-start">{t("crmOpportunities.detail.occurredAt")}</th>
                 <th className="px-4 py-2.5 text-start">{t("crmOpportunities.detail.fromStage")}</th>
                 <th className="px-4 py-2.5 text-start">{t("crmOpportunities.detail.toStage")}</th>
@@ -47,7 +47,7 @@ export function OpportunityAuditTimeline({ stageHistory, isRtl }: OpportunityAud
             </thead>
             <tbody className="divide-y divide-nx-line">
               {stageHistory.map((hist) => (
-                <tr key={hist.id} className="hover:bg-nx-surfaceSubtle/30">
+                <tr key={hist.id} className="hover:bg-nx-raised/30">
                   <td className="px-4 py-2.5 text-nx-ink-3 whitespace-nowrap">
                     {new Date(hist.occurredAtUtc).toLocaleString()}
                   </td>

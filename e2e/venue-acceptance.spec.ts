@@ -1,10 +1,11 @@
 import { test, expect } from "@playwright/test";
+import { getDevAdminPassword } from "./helpers/auth-credentials";
 
 test.describe("SCRIPE Venue: End-to-End Real Browser Acceptance", () => {
   test.describe.configure({ mode: "serial", timeout: 120_000 });
 
   const venueAdminEmail = "ahly.booking@scripe-dev.local";
-  const standardPassword = "P@ssw0rd";
+  const standardPassword = getDevAdminPassword();
 
   // Mock API fixtures state
   const mockFacilityId = "fac-cairo-001";

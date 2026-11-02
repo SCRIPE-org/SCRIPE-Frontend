@@ -2,6 +2,7 @@ import { test, expect } from "@playwright/test";
 import { execSync } from "child_process";
 import * as path from "path";
 import * as fs from "fs";
+import { getDevAdminPassword } from "./helpers/auth-credentials";
 
 /**
  * SCRIPE VENUE — OWNER MANUAL UAT PREPARATION & FIRST-TIME COURT SETUP
@@ -19,7 +20,7 @@ test.describe("SCRIPE Venue: Owner Manual UAT & First-Time Court Setup", () => {
   test.describe.configure({ mode: "serial", timeout: 240_000 });
 
   const adminEmail = "ahly.admin@scripe-dev.local";
-  const adminPassword = "P@ssw0rd";
+  const adminPassword = getDevAdminPassword();
   const tenantId = "944caec0-f3fd-454c-878a-da833a3c7c6c";
 
   const runTimestamp = Date.now().toString().slice(-5);

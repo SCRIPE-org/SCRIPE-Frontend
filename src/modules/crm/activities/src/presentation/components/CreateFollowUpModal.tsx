@@ -99,7 +99,7 @@ export function CreateFollowUpModal({
 
           <div className="space-y-3.5 py-4 text-xs">
             {activity && (
-              <div className="p-2.5 rounded-md bg-nx-surfaceSubtle border border-nx-line">
+              <div className="p-2.5 rounded-md bg-nx-raised border border-nx-line">
                 <span className="text-[10px] text-nx-ink-3 uppercase font-medium block">
                   {t("crmActivities.followup.sourceActivity") || "Source Interaction"}
                 </span>
@@ -187,7 +187,7 @@ export function CreateFollowUpModal({
               type="submit"
               size="sm"
               disabled={isSubmitting || !title.trim()}
-              className="h-8 text-xs bg-nx-accent-fill text-nx-on-fill font-bold hover:brightness-105"
+              className="h-8 text-xs font-bold"
             >
               {isSubmitting
                 ? t("common.saving") || "Saving..."

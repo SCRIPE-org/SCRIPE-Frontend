@@ -46,7 +46,7 @@ export function CrmOverviewView() {
             variant="outline"
             size="sm"
             onClick={refresh}
-            className="h-8 gap-1.5 border-nx-line bg-nx-surface text-xs text-nx-ink hover:bg-nx-surfaceSubtle"
+            className="h-8 gap-1.5 border-nx-line bg-nx-surface text-xs text-nx-ink hover:bg-nx-raised"
           >
             <RefreshCw className="size-3.5 text-nx-ink-2" />
             <span>{t("crm.actions.refresh")}</span>

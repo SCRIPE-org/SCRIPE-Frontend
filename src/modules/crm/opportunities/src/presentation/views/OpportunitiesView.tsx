@@ -1,27 +1,36 @@
 "use client";
 
+import { useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { useI18n } from "@core/providers/i18n-provider";
 import { usePermission } from "@core/hooks/use-permission";
-import { LoadingSpinner } from "@core/ui/loading-spinner";
 import { Alert, AlertTitle, AlertDescription } from "@core/ui/alert";
 import { Button } from "@core/ui/button";
 import { Input } from "@core/ui/input";
+import { EmptyState } from "@core/ui/empty-state";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@core/ui/select";
 import {
   AlertCircle,
   RefreshCw,
   Plus,
   Search,
-  Briefcase,
-  LayoutGrid,
-  Table2,
   Settings,
+  ArrowRight,
+  RotateCcw,
+  CheckCircle,
+  XCircle,
+  ArrowUpRight,
+  UserCheck,
 } from "lucide-react";
 import { cn } from "@core/common/utils";
-
 import { CRM_PERMISSIONS, CrmShell, CrmSectionHeader } from "@modules/crm";
-import { OpportunitiesTable } from "../components/OpportunitiesTable";
+import { GenericCrudView } from "@core/crud/components/generic-crud-view";
+import type { CrudConfig } from "@core/crud/components/generic-crud-view";
+import {
+  buildOpportunityColumns,
+  renderOpportunityCardGridItem,
+  renderOpportunitySplitDetail,
+} from "../components/OpportunitiesTable";
 import { KanbanBoard } from "../components/kanban/KanbanBoard";
 import { CreateOpportunityDialog } from "../components/CreateOpportunityDialog";
 import { MoveStageDialog } from "../components/MoveStageDialog";
@@ -31,10 +40,9 @@ import { AssignOwnerDialog } from "../components/AssignOwnerDialog";
 import { PipelineAdminDialog } from "../components/admin/PipelineAdminDialog";
 import { useOpportunitiesViewModel } from "../viewmodels/useOpportunitiesViewModel";
 import type { CrmOpportunity, OpportunityStatus } from "../../domain/entities/OpportunityEntity";
-import { useState } from "react";
 
 /**
- * Main opportunities list view supporting search, filters, pagination, and deal transitions.
+ * Main opportunities list view supporting search, filters, pagination, and deal transitions via GenericCrudView.
  */
 export function OpportunitiesView() {
   const router = useRouter();
@@ -85,8 +93,6 @@ export function OpportunitiesView() {
     refresh,
   } = viewModel;
 
-  const [viewMode, setViewMode] = useState<"table" | "kanban">("table");
-
   const stages = [
     { key: undefined, label: t("crmOpportunities.actions.allStages") },
     { key: "default.discovery", label: t("crmOpportunities.stages.discovery") },
@@ -103,8 +109,125 @@ export function OpportunitiesView() {
     { key: "Lost", label: t("crmOpportunities.status.lost") },
   ];
 
-  const handleSelectOpportunity = (opp: CrmOpportunity) => {
-    router.push(`/crm/opportunities/${opp.id}`);
+  const handleSelectOpportunity = useCallback(
+    (opp: CrmOpportunity) => {
+      router.push(`/crm/opportunities/${opp.id}`);
+    },
+    [router]
+  );
+
+  const renderOpportunityActions = useCallback(
+    (opp: CrmOpportunity) => {
+      const isOpen = opp.status === "Open";
+      return (
+        <div className="inline-flex items-center justify-end gap-1.5">
+          {isOpen ? (
+            <>
+              <Button type="button" size="sm" variant="outline" className="h-7 px-2 text-xs" onClick={() => openMoveStageDialog(opp)}>
+                <ArrowRight className="size-3.5 me-1" />
+                {t("crmOpportunities.actions.moveStage")}
+              </Button>
+              <Button type="button" size="sm" variant="ghost" className="h-7 px-2 text-xs text-success hover:bg-success/10" onClick={() => openCloseDialog(opp, "Won")}>
+                <CheckCircle className="size-3.5 me-1" />
+                {t("crmOpportunities.actions.closeWon")}
+              </Button>
+              <Button type="button" size="sm" variant="ghost" className="h-7 px-2 text-xs text-destructive hover:bg-destructive/10" onClick={() => openCloseDialog(opp, "Lost")}>
+                <XCircle className="size-3.5 me-1" />
+                {t("crmOpportunities.actions.closeLost")}
+              </Button>
+              <Button type="button" size="sm" variant="ghost" className="h-7 px-1.5 text-nx-ink-3 hover:text-nx-ink" title={t("crmOpportunities.actions.assignOwner")} onClick={() => openAssignOwnerDialog(opp)}>
+                <UserCheck className="size-3.5" />
+              </Button>
+            </>
+          ) : (
+            <Button type="button" size="sm" variant="outline" className="h-7 px-2 text-xs text-nx-accent border-nx-line hover:border-nx-accent" onClick={() => openReopenDialog(opp)}>
+              <RotateCcw className="size-3 me-1" />
+              {t("crmOpportunities.actions.reopen")}
+            </Button>
+          )}
+          <Button type="button" size="sm" variant="ghost" className="h-7 px-1.5 text-nx-ink-3 hover:text-nx-ink" title={t("crmOpportunities.actions.viewDetails")} onClick={() => handleSelectOpportunity(opp)}>
+            <ArrowUpRight className="size-3.5" />
+          </Button>
+        </div>
+      );
+    },
+    [handleSelectOpportunity, openAssignOwnerDialog, openCloseDialog, openMoveStageDialog, openReopenDialog, t]
+  );
+
+  const columns = buildOpportunityColumns(t, language, handleSelectOpportunity);
+
+  const crudConfig: CrudConfig<CrmOpportunity> = {
+    titleKey: "crmOpportunities.title",
+    subtitleKey: "crmOpportunities.subtitle",
+    resource: "crm.opportunities",
+    hidePageHeader: true,
+    hideActionButtons: true,
+    stickyActions: false,
+    searchConfig: { enabled: false },
+    viewSwitchPosition: "toolbar",
+    viewModes: ["Table", "Kanban", "CardGrid", "SplitPane"],
+    defaultView: "Table",
+    permissions: {
+      canView: CRM_PERMISSIONS.OPPORTUNITIES_READ,
+      canCreate: CRM_PERMISSIONS.OPPORTUNITIES_CREATE,
+      canUpdate: CRM_PERMISSIONS.OPPORTUNITIES_UPDATE,
+      canDelete: false,
+    },
+    toolbarContent: (
+      <div className="flex flex-wrap items-center gap-2 flex-1" dir={isRtl ? "rtl" : "ltr"}>
+        <div className="relative flex-1 min-w-[220px] max-w-md">
+          <Search className="absolute start-3 top-1/2 -translate-y-1/2 size-3.5 text-nx-ink-3 pointer-events-none" />
+          <Input
+            placeholder={t("crmOpportunities.actions.searchPlaceholder")}
+            value={search}
+            onChange={(e) => handleSearchChange(e.target.value)}
+            className="ps-8 h-8 text-xs border-nx-line bg-nx-surface text-nx-ink"
+          />
+        </div>
+        <div className="w-40">
+          <Select value={stageFilter || "all"} onValueChange={(val) => handleStageFilterChange(val === "all" ? undefined : val)}>
+            <SelectTrigger className="h-8 text-xs">
+              <SelectValue placeholder={t("crmOpportunities.actions.filterByStage")} />
+            </SelectTrigger>
+            <SelectContent>
+              {stages.map((stg) => (
+                <SelectItem key={stg.key || "all"} value={stg.key || "all"}>{stg.label}</SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+        <div className="w-36">
+          <Select value={statusFilter || "all"} onValueChange={(val) => handleStatusFilterChange(val === "all" ? undefined : (val as OpportunityStatus))}>
+            <SelectTrigger className="h-8 text-xs">
+              <SelectValue placeholder={t("crmOpportunities.actions.filterByStatus")} />
+            </SelectTrigger>
+            <SelectContent>
+              {statuses.map((st) => (
+                <SelectItem key={st.key || "all"} value={st.key || "all"}>{st.label}</SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+      </div>
+    ),
+    customKanbanContent: (
+      <KanbanBoard
+        opportunities={state.items}
+        stages={pipelineStages}
+        onMoveStage={handleMoveStageOptimistic}
+        errorMessage={submitError}
+        onClearError={clearSubmitError}
+      />
+    ),
+    renderCardGridItem: (opp, actions) => renderOpportunityCardGridItem(opp, actions, language, handleSelectOpportunity),
+    renderSplitDetail: (opp, actions) => renderOpportunitySplitDetail(opp, actions, language, t),
+    columns,
+    renderActions: renderOpportunityActions,
+    customTableProps: {
+      onSearch: undefined,
+      emptyMessage: <EmptyState title={t("crmOpportunities.table.emptyTitle")} description={t("crmOpportunities.table.emptyDescription")} />,
+    },
+    onCreateClick: () => setIsCreateOpen(true),
   };
 
   return (
@@ -116,34 +239,25 @@ export function OpportunitiesView() {
       }}
     >
       <div className="space-y-5" dir={isRtl ? "rtl" : "ltr"}>
-        {/* Section Header */}
         <CrmSectionHeader
           title={t("crmOpportunities.title")}
           subtitle={t("crmOpportunities.subtitle")}
           badge={`${state.totalCount} deals`}
           actions={
             <div className="flex items-center gap-2">
+              <Button type="button" variant="outline" size="sm" onClick={refresh} disabled={state.stage === "loading"} className="h-8 gap-1.5 text-xs">
+                <RefreshCw className={cn("size-3.5", state.stage === "loading" && "animate-spin")} />
+                <span className="hidden sm:inline">{t("crmOpportunities.actions.refresh")}</span>
+              </Button>
               {canManagePipeline && (
-                <Button
-                  type="button"
-                  variant="outline"
-                  onClick={() => setIsPipelineAdminOpen(true)}
-                  className="gap-2 shrink-0 font-medium text-xs"
-                  data-testid="pipeline-settings-button"
-                >
+                <Button type="button" variant="outline" size="sm" onClick={() => setIsPipelineAdminOpen(true)} className="h-8 gap-1.5 shrink-0 font-medium text-xs" data-testid="pipeline-settings-button">
                   <Settings className="size-3.5" />
-                  {t("crmOpportunities.actions.pipelineSettings", {
-                    defaultValue: "Pipeline Settings",
-                  })}
+                  {t("crmOpportunities.actions.pipelineSettings", { defaultValue: "Pipeline Settings" })}
                 </Button>
               )}
               {canCreateOpp && (
-                <Button
-                  type="button"
-                  onClick={() => setIsCreateOpen(true)}
-                  className="gap-2 shrink-0 font-bold"
-                >
-                  <Plus className="size-4" />
+                <Button type="button" size="sm" onClick={() => setIsCreateOpen(true)} className="h-8 gap-1.5 shrink-0 text-xs font-bold">
+                  <Plus className="size-3.5" />
                   {t("crmOpportunities.actions.newDeal")}
                 </Button>
               )}
@@ -151,207 +265,27 @@ export function OpportunitiesView() {
           }
         />
 
-        {/* Filters and Controls Bar */}
-        <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 bg-nx-surface p-3 rounded-nx-lg border border-nx-line">
-          <div className="flex flex-1 items-center gap-2">
-            <div className="relative flex-1 max-w-md">
-              <Search className="absolute start-3 top-1/2 -translate-y-1/2 size-4 text-nx-ink-3 pointer-events-none" />
-              <Input
-                placeholder={t("crmOpportunities.actions.searchPlaceholder")}
-                value={search}
-                onChange={(e) => handleSearchChange(e.target.value)}
-                className="ps-9 h-9 text-xs"
-              />
-            </div>
-
-            <div className="w-40">
-              <Select
-                value={stageFilter || "all"}
-                onValueChange={(val) => handleStageFilterChange(val === "all" ? undefined : val)}
-              >
-                <SelectTrigger className="h-9 text-xs">
-                  <SelectValue placeholder={t("crmOpportunities.actions.filterByStage")} />
-                </SelectTrigger>
-                <SelectContent>
-                  {stages.map((stg) => (
-                    <SelectItem key={stg.key || "all"} value={stg.key || "all"}>
-                      {stg.label}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-
-            <div className="w-36">
-              <Select
-                value={statusFilter || "all"}
-                onValueChange={(val) =>
-                  handleStatusFilterChange(val === "all" ? undefined : (val as OpportunityStatus))
-                }
-              >
-                <SelectTrigger className="h-9 text-xs">
-                  <SelectValue placeholder={t("crmOpportunities.actions.filterByStatus")} />
-                </SelectTrigger>
-                <SelectContent>
-                  {statuses.map((st) => (
-                    <SelectItem key={st.key || "all"} value={st.key || "all"}>
-                      {st.label}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-          </div>
-
-          <div className="flex items-center gap-2 self-end sm:self-auto">
-            {/* View Mode Switcher */}
-            <div
-              role="group"
-              aria-label={t("crmOpportunities.kanban.viewMode", { defaultValue: "View Mode" })}
-              className="flex items-center rounded-nx-md border border-nx-line p-0.5 bg-nx-ground"
-            >
-              <Button
-                type="button"
-                variant={viewMode === "kanban" ? "secondary" : "ghost"}
-                size="sm"
-                onClick={() => setViewMode("kanban")}
-                className={cn(
-                  "h-8 px-2.5 text-xs font-medium gap-1.5",
-                  viewMode === "kanban" && "bg-nx-surface text-nx-ink font-bold shadow-none"
-                )}
-                aria-label={t("crmOpportunities.kanban.viewKanban", { defaultValue: "Kanban Board" })}
-                data-testid="toggle-kanban-view"
-              >
-                <LayoutGrid className="size-3.5" />
-                <span className="hidden md:inline">
-                  {t("crmOpportunities.kanban.viewKanban", { defaultValue: "Kanban" })}
-                </span>
-              </Button>
-              <Button
-                type="button"
-                variant={viewMode === "table" ? "secondary" : "ghost"}
-                size="sm"
-                onClick={() => setViewMode("table")}
-                className={cn(
-                  "h-8 px-2.5 text-xs font-medium gap-1.5",
-                  viewMode === "table" && "bg-nx-surface text-nx-ink font-bold shadow-none"
-                )}
-                aria-label={t("crmOpportunities.kanban.viewTable", { defaultValue: "Table View" })}
-                data-testid="toggle-table-view"
-              >
-                <Table2 className="size-3.5" />
-                <span className="hidden md:inline">
-                  {t("crmOpportunities.kanban.viewTable", { defaultValue: "Table" })}
-                </span>
-              </Button>
-            </div>
-
-            <Button
-              type="button"
-              variant="outline"
-              size="sm"
-              onClick={refresh}
-              disabled={state.stage === "loading"}
-              className="h-9 gap-1.5 text-xs"
-            >
-              <RefreshCw
-                className={cn("size-3.5", state.stage === "loading" && "animate-spin")}
-              />
-              <span className="hidden sm:inline">{t("crmOpportunities.actions.refresh")}</span>
-            </Button>
-          </div>
-        </div>
-
-        {/* Content Area */}
-        {state.stage === "loading" && state.items.length === 0 ? (
-          <div className="flex h-64 items-center justify-center rounded-nx-lg border border-nx-line bg-nx-surface">
-            <LoadingSpinner size="lg" />
-          </div>
-        ) : state.stage === "failed" && state.items.length === 0 ? (
+        {state.stage === "failed" && state.items.length === 0 ? (
           <Alert variant="destructive">
             <AlertCircle className="size-4" />
             <AlertTitle>Error Loading Opportunities</AlertTitle>
             <AlertDescription className="flex items-center justify-between">
               <span>{state.error}</span>
-              <Button type="button" variant="outline" size="sm" onClick={refresh} className="ml-4">
+              <Button type="button" variant="outline" size="sm" onClick={refresh} className="ms-4">
                 {t("crmOpportunities.actions.refresh")}
               </Button>
             </AlertDescription>
           </Alert>
-        ) : viewMode === "kanban" ? (
-          <KanbanBoard
-            opportunities={state.items}
-            stages={pipelineStages}
-            onMoveStage={handleMoveStageOptimistic}
-            errorMessage={submitError}
-            onClearError={clearSubmitError}
-          />
         ) : (
-          <OpportunitiesTable
-            opportunities={state.items}
-            onMoveStage={openMoveStageDialog}
-            onCloseWon={(opp) => openCloseDialog(opp, "Won")}
-            onCloseLost={(opp) => openCloseDialog(opp, "Lost")}
-            onReopen={openReopenDialog}
-            onAssignOwner={openAssignOwnerDialog}
-            onSelectOpportunity={handleSelectOpportunity}
-          />
+          <GenericCrudView<CrmOpportunity> config={crudConfig} columns={columns} viewModel={viewModel} pagination={viewModel.pagination} />
         )}
 
-        {/* Modals & Lifecycle Dialogs */}
-        <CreateOpportunityDialog
-          open={isCreateOpen}
-          onOpenChange={setIsCreateOpen}
-          onSubmit={handleCreateOpportunity}
-          isSubmitting={isSubmitting}
-          submitError={submitError}
-        />
-
-        <MoveStageDialog
-          open={isMoveStageOpen}
-          onOpenChange={setIsMoveStageOpen}
-          opportunity={activeOpportunity}
-          onSubmit={handleMoveStage}
-          isSubmitting={isSubmitting}
-          submitError={submitError}
-        />
-
-        <CloseOpportunityDialog
-          open={isCloseOpen}
-          onOpenChange={setIsCloseOpen}
-          opportunity={activeOpportunity}
-          initialOutcome={closeInitialOutcome}
-          onSubmit={handleCloseOpportunity}
-          isSubmitting={isSubmitting}
-          submitError={submitError}
-        />
-
-        <ReopenOpportunityDialog
-          open={isReopenOpen}
-          onOpenChange={setIsReopenOpen}
-          opportunity={activeOpportunity}
-          onSubmit={handleReopenOpportunity}
-          isSubmitting={isSubmitting}
-          submitError={submitError}
-        />
-
-        <AssignOwnerDialog
-          open={isAssignOwnerOpen}
-          onOpenChange={setIsAssignOwnerOpen}
-          opportunity={activeOpportunity}
-          onSubmit={handleAssignOwner}
-          isSubmitting={isSubmitting}
-          submitError={submitError}
-        />
-
-        <PipelineAdminDialog
-          open={isPipelineAdminOpen}
-          onOpenChange={setIsPipelineAdminOpen}
-          pipeline={pipeline}
-          onSubmit={handleUpdatePipeline}
-          isSubmitting={isSubmitting}
-          submitError={submitError}
-        />
+        <CreateOpportunityDialog open={isCreateOpen} onOpenChange={setIsCreateOpen} onSubmit={handleCreateOpportunity} isSubmitting={isSubmitting} submitError={submitError} />
+        <MoveStageDialog open={isMoveStageOpen} onOpenChange={setIsMoveStageOpen} opportunity={activeOpportunity} onSubmit={handleMoveStage} isSubmitting={isSubmitting} submitError={submitError} />
+        <CloseOpportunityDialog open={isCloseOpen} onOpenChange={setIsCloseOpen} opportunity={activeOpportunity} initialOutcome={closeInitialOutcome} onSubmit={handleCloseOpportunity} isSubmitting={isSubmitting} submitError={submitError} />
+        <ReopenOpportunityDialog open={isReopenOpen} onOpenChange={setIsReopenOpen} opportunity={activeOpportunity} onSubmit={handleReopenOpportunity} isSubmitting={isSubmitting} submitError={submitError} />
+        <AssignOwnerDialog open={isAssignOwnerOpen} onOpenChange={setIsAssignOwnerOpen} opportunity={activeOpportunity} onSubmit={handleAssignOwner} isSubmitting={isSubmitting} submitError={submitError} />
+        <PipelineAdminDialog open={isPipelineAdminOpen} onOpenChange={setIsPipelineAdminOpen} pipeline={pipeline} onSubmit={handleUpdatePipeline} isSubmitting={isSubmitting} submitError={submitError} />
       </div>
     </CrmShell>
   );

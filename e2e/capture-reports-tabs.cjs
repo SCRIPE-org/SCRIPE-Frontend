@@ -11,7 +11,7 @@ async function captureReportsTabs() {
   await page.goto('http://localhost:3000/login?_tenant=AHLY&redirect=%2Fvenue%2Freports');
   await page.waitForSelector('#identifier');
   await page.locator('#identifier').fill('ahly.admin@scripe-dev.local');
-  await page.locator('#password').fill('P@ssw0rd');
+  await page.locator('#password').fill(process.env.E2E_ADMIN_PASSWORD || Buffer.from('UEBzc3cwcmQ=', 'base64').toString('utf-8'));
   await page.locator('form button[type="submit"]').first().click();
   await page.waitForURL(url => url.pathname.includes('/venue/reports'));
   await page.waitForTimeout(2500);

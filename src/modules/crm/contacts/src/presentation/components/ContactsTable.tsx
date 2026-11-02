@@ -44,7 +44,7 @@ export function ContactsTable({ contacts, className }: ContactsTableProps) {
       <div className="overflow-x-auto no-scrollbar">
         <table className="w-full text-left text-xs border-collapse" dir={isRtl ? "rtl" : "ltr"}>
           <thead>
-            <tr className="border-b border-nx-line bg-nx-surfaceSubtle/50 text-nx-ink-2 font-semibold">
+            <tr className="border-b border-nx-line bg-nx-raised/50 text-nx-ink-2 font-semibold">
               <th className="px-4 py-3 text-start">{t("crmContacts.table.contact") || "Contact Name"}</th>
               <th className="px-4 py-3 text-start">{t("crmContacts.table.account") || "Primary Account"}</th>
               <th className="px-4 py-3 text-start">{t("crmContacts.table.role") || "Job Title & Dept"}</th>
@@ -66,12 +66,12 @@ export function ContactsTable({ contacts, className }: ContactsTableProps) {
               return (
                 <tr
                   key={contact.id}
-                  className="hover:bg-nx-surfaceSubtle/40 transition-colors group cursor-pointer"
+                  className="hover:bg-nx-raised/40 transition-colors group cursor-pointer"
                   onClick={() => router.push(`/crm/contacts/${contact.id}`)}
                 >
                   <td className="px-4 py-3.5">
                     <div className="flex items-center gap-2.5">
-                      <div className="size-7 rounded-full bg-nx-surfaceSubtle border border-nx-line flex items-center justify-center shrink-0">
+                      <div className="size-7 rounded-full bg-nx-raised border border-nx-line flex items-center justify-center shrink-0">
                         <User className="size-3.5 text-nx-accent" />
                       </div>
                       <div>
@@ -97,7 +97,7 @@ export function ContactsTable({ contacts, className }: ContactsTableProps) {
                   <td className="px-4 py-3.5">
                     {contact.primaryAccountId ? (
                       <div
-                        className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-nx-sm bg-nx-surfaceSubtle border border-nx-line hover:border-nx-accent transition-colors text-nx-ink"
+                        className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-nx-sm bg-nx-raised border border-nx-line hover:border-nx-accent transition-colors text-nx-ink"
                         onClick={(e) => {
                           e.stopPropagation();
                           router.push(`/crm/accounts/${contact.primaryAccountId}`);
@@ -158,7 +158,7 @@ export function ContactsTable({ contacts, className }: ContactsTableProps) {
                       variant="ghost"
                       size="sm"
                       onClick={() => router.push(`/crm/contacts/${contact.id}`)}
-                      className="h-7 px-2.5 text-xs gap-1 border border-nx-line bg-nx-surface hover:bg-nx-surfaceSubtle text-nx-ink"
+                      className="h-7 px-2.5 text-xs gap-1 border border-nx-line bg-nx-surface hover:bg-nx-raised text-nx-ink"
                     >
                       <Eye className="size-3 text-nx-accent" />
                       <span>{t("crmContacts.actions.viewContext") || "View Context"}</span>

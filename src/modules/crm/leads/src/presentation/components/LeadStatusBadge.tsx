@@ -28,8 +28,8 @@ export function LeadStatusBadge({ status, label, className }: LeadStatusBadgePro
         };
       case "Qualified":
         return {
-          variant: "default" as const,
-          cls: "bg-nx-accent-fill text-nx-on-fill font-bold border-none",
+          variant: "outline" as const,
+          cls: "border-nx-accent/30 bg-nx-accent-wash text-nx-accent font-semibold",
           text: label || "Qualified",
         };
       case "Converted":

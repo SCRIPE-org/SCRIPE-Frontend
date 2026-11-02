@@ -11,7 +11,7 @@ interface AccountStatusBadgeProps {
 export function AccountStatusBadge({ tierCode, className }: AccountStatusBadgeProps) {
   const tier = (tierCode || "Standard").toUpperCase();
 
-  let variantClass = "bg-nx-surfaceSubtle text-nx-ink-2 border-nx-line";
+  let variantClass = "bg-nx-raised text-nx-ink-2 border-nx-line";
 
   if (tier.includes("ENTERPRISE") || tier.includes("STRATEGIC")) {
     variantClass = "bg-nx-accent-wash text-nx-accent border-nx-accent/30 font-bold";

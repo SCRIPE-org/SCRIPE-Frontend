@@ -39,7 +39,7 @@ export function LeadsTable({ leads, className }: LeadsTableProps) {
       <div className="overflow-x-auto no-scrollbar">
         <table className="w-full text-left text-xs border-collapse" dir={isRtl ? "rtl" : "ltr"}>
           <thead>
-            <tr className="border-b border-nx-line bg-nx-surfaceSubtle/50 text-nx-ink-2 font-semibold">
+            <tr className="border-b border-nx-line bg-nx-raised/50 text-nx-ink-2 font-semibold">
               <th className="px-4 py-3 text-start">{t("crmLeads.table.title")}</th>
               <th className="px-4 py-3 text-start">{t("crmLeads.table.contact")}</th>
               <th className="px-4 py-3 text-start">{t("crmLeads.table.company")}</th>
@@ -63,7 +63,7 @@ export function LeadsTable({ leads, className }: LeadsTableProps) {
               return (
                 <tr
                   key={lead.id}
-                  className="group hover:bg-nx-surfaceSubtle/40 transition-colors duration-nx-micro"
+                  className="group hover:bg-nx-raised/40 transition-colors duration-nx-micro"
                 >
                   {/* Title */}
                   <td className="px-4 py-3 max-w-xs">
@@ -80,7 +80,7 @@ export function LeadsTable({ leads, className }: LeadsTableProps) {
                   {/* Contact */}
                   <td className="px-4 py-3">
                     <div className="flex items-center gap-1.5">
-                      <div className="size-5 rounded-full bg-nx-surfaceSubtle border border-nx-line flex items-center justify-center shrink-0">
+                      <div className="size-5 rounded-full bg-nx-raised border border-nx-line flex items-center justify-center shrink-0">
                         <User className="size-3 text-nx-ink-3" />
                       </div>
                       <div>
@@ -122,7 +122,7 @@ export function LeadsTable({ leads, className }: LeadsTableProps) {
 
                   {/* Source */}
                   <td className="px-4 py-3">
-                    <span className="inline-flex items-center px-2 py-0.5 rounded-nx-xs bg-nx-surfaceSubtle border border-nx-line text-[11px] text-nx-ink-2">
+                    <span className="inline-flex items-center px-2 py-0.5 rounded-nx-xs bg-nx-raised border border-nx-line text-[11px] text-nx-ink-2">
                       {lead.source || "Direct"}
                     </span>
                   </td>
@@ -140,7 +140,7 @@ export function LeadsTable({ leads, className }: LeadsTableProps) {
                     <Button
                       variant="ghost"
                       size="sm"
-                      className="h-7 px-2 text-xs text-nx-ink-2 hover:text-nx-ink hover:bg-nx-surfaceSubtle gap-1"
+                      className="h-7 px-2 text-xs text-nx-ink-2 hover:text-nx-ink hover:bg-nx-raised gap-1"
                     >
                       <span>{t("crmLeads.actions.viewDetails")}</span>
                       <ArrowUpRight className="size-3" />

@@ -5,7 +5,7 @@ import { getCrmContainer } from "@modules/crm/di";
 import type {
   CrmAccount,
   CreateAccountInput,
-} from "../../domain/models/crm-account.types";
+} from "../../domain/entities/AccountEntity";
 
 export interface AccountsState {
   stage: "idle" | "loading" | "success" | "failed";
@@ -32,6 +32,13 @@ export function useAccountsViewModel(initialSearch?: string) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [, startTransition] = useTransition();
+
+  // GenericCrudView adapter state
+  const [selectedItems, setSelectedItems] = useState<string[]>([]);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [viewModalOpen, setViewModalOpen] = useState(false);
+  const [editingItem, setEditingItem] = useState<CrmAccount | null>(null);
+  const [viewItem, setViewItem] = useState<CrmAccount | null>(null);
 
   const handleSetIsCreateOpen = useCallback((open: boolean) => {
     setIsCreateOpen(open);
@@ -88,6 +95,13 @@ export function useAccountsViewModel(initialSearch?: string) {
     setTierFilter(tier);
   }, []);
 
+  const handlePageChange = useCallback(
+    (newPage: number) => {
+      loadAccounts(newPage, search, tierFilter);
+    },
+    [loadAccounts, search, tierFilter]
+  );
+
   const handleCreateAccount = useCallback(
     async (input: CreateAccountInput): Promise<boolean> => {
       setIsSubmitting(true);
@@ -123,7 +137,61 @@ export function useAccountsViewModel(initialSearch?: string) {
     setIsCreateOpen: handleSetIsCreateOpen,
     handleSearchChange,
     handleTierFilterChange,
+    handlePageChange,
     handleCreateAccount,
     refresh,
+
+    // GenericCrudView Adapter compatibility
+    items: state.items,
+    loading: state.stage === "loading",
+    error: state.error,
+    pagination: {
+      page: state.page || 1,
+      currentPage: state.page || 1,
+      pageSize: state.pageSize || 20,
+      itemsCount: state.totalCount,
+      pagesCount: Math.max(1, Math.ceil(state.totalCount / (state.pageSize || 20))),
+      totalCount: state.totalCount,
+      totalPages: Math.max(1, Math.ceil(state.totalCount / (state.pageSize || 20))),
+      hasNextPage: state.page * state.pageSize < state.totalCount,
+      hasPreviousPage: state.page > 1,
+      onPageChange: handlePageChange,
+      onPageSizeChange: (_size: number) => {
+        loadAccounts(1, search, tierFilter);
+      },
+    },
+    searchValue: search,
+    selectedItems,
+    setSelectedItems,
+    isCreateModalOpen: isCreateOpen,
+    setIsCreateModalOpen: handleSetIsCreateOpen,
+    isEditModalOpen,
+    setIsEditModalOpen,
+    viewModalOpen,
+    setViewModalOpen,
+    editingItem,
+    viewItem,
+    openEditModal: (item: CrmAccount) => {
+      setEditingItem(item);
+      setIsEditModalOpen(true);
+    },
+    closeEditModal: () => {
+      setIsEditModalOpen(false);
+      setEditingItem(null);
+    },
+    openViewModal: (item: CrmAccount) => {
+      setViewItem(item);
+      setViewModalOpen(true);
+    },
+    closeViewModal: () => {
+      setViewModalOpen(false);
+      setViewItem(null);
+    },
+    changePage: handlePageChange,
+    changePageSize: (_size: number) => {
+      loadAccounts(1, search, tierFilter);
+    },
+    refreshItems: refresh,
+    createItem: handleCreateAccount,
   };
 }

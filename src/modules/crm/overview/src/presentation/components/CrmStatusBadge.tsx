@@ -30,8 +30,8 @@ export function CrmStatusBadge({ stage, label, className }: CrmStatusBadgeProps)
       case "default.solution_fit":
       case "solution_fit":
         return {
-          variant: "default" as const,
-          cls: "bg-nx-accent-fill text-nx-on-fill font-bold border-none",
+          variant: "outline" as const,
+          cls: "border-nx-accent/30 bg-nx-accent-wash text-nx-accent font-semibold",
           text: label || "Solution Fit",
         };
       case "default.proposal":

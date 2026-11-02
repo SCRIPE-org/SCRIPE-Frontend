@@ -126,13 +126,13 @@ export function CreateActivityModal({
                   <Button
                     key={opt.kind}
                     type="button"
-                    variant={kind === opt.kind ? "default" : "outline"}
+                    variant="outline"
                     size="sm"
                     onClick={() => setKind(opt.kind)}
                     className={`h-8 text-xs font-medium justify-center gap-1.5 border-nx-line ${
                       kind === opt.kind
-                        ? "bg-nx-accent-fill text-nx-on-fill font-bold"
-                        : "text-nx-ink-2 hover:text-nx-ink bg-nx-surfaceSubtle"
+                        ? "border-nx-accent/40 bg-nx-accent-wash text-nx-accent font-semibold"
+                        : "text-nx-ink-2 hover:text-nx-ink bg-nx-raised"
                     }`}
                   >
                     {opt.icon}
@@ -182,7 +182,7 @@ export function CreateActivityModal({
             </div>
 
             {/* PII / Confidentiality Toggle */}
-            <div className="flex items-center gap-2 pt-1 p-2 rounded-md bg-nx-surfaceSubtle border border-nx-line">
+            <div className="flex items-center gap-2 pt-1 p-2 rounded-md bg-nx-raised border border-nx-line">
               <Checkbox
                 id="activity-pii"
                 checked={containsPii}
@@ -216,7 +216,7 @@ export function CreateActivityModal({
               type="submit"
               size="sm"
               disabled={isSubmitting || !summary.trim()}
-              className="h-8 text-xs bg-nx-accent-fill text-nx-on-fill font-bold hover:brightness-105"
+              className="h-8 text-xs font-bold"
             >
               {isSubmitting
                 ? t("common.saving") || "Saving..."

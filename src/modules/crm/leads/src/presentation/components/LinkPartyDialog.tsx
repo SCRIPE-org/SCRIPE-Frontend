@@ -88,7 +88,7 @@ export function LinkPartyDialog({
           )}
 
           {/* Context box showing lead metadata */}
-          <div className="rounded-nx-md bg-nx-surfaceSubtle border border-nx-line p-3 text-xs space-y-2">
+          <div className="rounded-nx-md bg-nx-raised border border-nx-line p-3 text-xs space-y-2">
             <div className="flex items-center gap-2 text-nx-ink font-semibold">
               <Building2 className="size-3.5 text-nx-ink-3" />
               <span>{lead?.companyName || t("crmLeads.partyLink.noCompany")}</span>
@@ -167,7 +167,7 @@ export function LinkPartyDialog({
               type="submit"
               size="sm"
               disabled={isSubmitting}
-              className="h-8 text-xs bg-nx-accent-fill text-nx-on-fill font-bold hover:brightness-105"
+              className="h-8 text-xs font-bold"
             >
               {isSubmitting
                 ? t("crmLeads.partyLink.saving")

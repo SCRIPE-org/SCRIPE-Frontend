@@ -348,6 +348,15 @@ export interface CrudConfig<TItem = any> {
   kanbanColumns?: KanbanColumnConfig<TItem>[];
   /** Custom render function for Kanban card */
   renderKanbanCard?: (item: TItem, actions: React.ReactNode, index: number) => React.ReactNode;
+  /** Custom full Kanban board override content when activeViewMode === "Kanban" */
+  customKanbanContent?: React.ReactNode;
+  /** Search bar configuration for the built-in GenericTable search input */
+  searchConfig?: {
+    enabled?: boolean;
+    placeholder?: string;
+    debounceMs?: number;
+    minSearchLength?: number;
+  };
   /** Callback fired when an item is moved to another Kanban column (drag-and-drop or column transition) */
   onKanbanItemMove?: (item: TItem, targetColumnValue: string) => void | Promise<void>;
 
@@ -852,7 +861,7 @@ function GenericCrudViewInner<T>(props: GenericCrudViewProps<T>) {
 
   const search =
     propSearch ||
-    (config
+    (config && config.searchConfig?.enabled !== false
       ? {
           value: viewModel.searchValue,
           onChange: viewModel.handleSearchChange,
@@ -1193,7 +1202,7 @@ function GenericCrudViewInner<T>(props: GenericCrudViewProps<T>) {
   const anyModalOpen =
     viewModel.isCreateModalOpen || viewModel.isEditModalOpen || viewModel.viewModalOpen;
 
-  if (viewModel.loading && viewModel.items.length === 0 && !anyModalOpen) {
+  if (viewModel.loading && viewModel.items.length === 0 && !anyModalOpen && !config?.toolbarContent) {
     return <LoadingSpinner showText={false} />;
   }
 
@@ -1279,6 +1288,7 @@ function GenericCrudViewInner<T>(props: GenericCrudViewProps<T>) {
                       variant={active ? "secondary" : "ghost"}
                       size="sm"
                       onClick={() => setActiveViewMode(mode)}
+                      data-testid={`toggle-${mode.toLowerCase()}-view`}
                       className={cn(
                         "h-7 px-2.5 text-xs",
                         active && "bg-nx-raised text-nx-ink font-semibold border-nx-line-hi"
@@ -1454,6 +1464,7 @@ function GenericCrudViewInner<T>(props: GenericCrudViewProps<T>) {
                     variant={active ? "secondary" : "ghost"}
                     size="sm"
                     onClick={() => setActiveViewMode(mode)}
+                    data-testid={`toggle-${mode.toLowerCase()}-view`}
                     className={cn(
                       "h-7 px-2.5 text-xs",
                       active && "bg-nx-raised text-nx-ink font-semibold border-nx-line-hi"
@@ -1516,6 +1527,9 @@ function GenericCrudViewInner<T>(props: GenericCrudViewProps<T>) {
         </div>
       ) : activeViewMode === "Kanban" ? (
         (() => {
+          if (config?.customKanbanContent) {
+            return <>{config.customKanbanContent}</>;
+          }
           const groupKey =
             config?.kanbanGroupField ||
             columns.find((c) => /status|state|stage|phase|category|type/i.test(c.key))?.key ||

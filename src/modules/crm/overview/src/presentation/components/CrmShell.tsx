@@ -187,7 +187,7 @@ export function CrmShell({
                 type="button"
                 size="sm"
                 onClick={onCreateDeal}
-                className="h-8 gap-1.5 bg-nx-accent-fill text-nx-on-fill font-bold hover:brightness-105 transition-all text-xs shrink-0"
+                className="h-8 gap-1.5 font-bold transition-all text-xs shrink-0"
               >
                 <Plus className="size-3.5" />
                 <span>{t("crm.actions.createDeal")}</span>
@@ -200,7 +200,7 @@ export function CrmShell({
                 variant="outline"
                 size="sm"
                 onClick={onCreateLead}
-                className="h-8 gap-1.5 border-nx-line bg-nx-surface text-nx-ink hover:bg-nx-surfaceSubtle text-xs shrink-0"
+                className="h-8 gap-1.5 border-nx-line bg-nx-surface text-nx-ink hover:bg-nx-raised text-xs shrink-0"
               >
                 <Plus className="size-3.5" />
                 <span>{t("crm.actions.createLead")}</span>

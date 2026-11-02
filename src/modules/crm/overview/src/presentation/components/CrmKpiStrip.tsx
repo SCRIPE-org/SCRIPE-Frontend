@@ -1,6 +1,7 @@
 "use client";
 
 import { TrendingUp, TrendingDown, Minus } from "lucide-react";
+import { Card } from "@core/ui/card";
 import { cn } from "@core/common/utils";
 import type { CrmKpiStat } from "../../domain/entities/OverviewEntity";
 
@@ -20,7 +21,7 @@ export function CrmKpiStrip({ stats, className }: CrmKpiStripProps) {
     >
       {safeStats.map((stat) => {
         return (
-          <div
+          <Card
             key={stat.id}
             className="rounded-nx-lg border border-nx-line bg-nx-surface p-4 sm:p-5 flex flex-col justify-between transition-colors duration-nx-micro hover:border-nx-line-hi"
           >
@@ -53,7 +54,7 @@ export function CrmKpiStrip({ stats, className }: CrmKpiStripProps) {
             <div className="text-[11px] text-nx-ink-3">
               {stat.description}
             </div>
-          </div>
+          </Card>
         );
       })}
     </div>

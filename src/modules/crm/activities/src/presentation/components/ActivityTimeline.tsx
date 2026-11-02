@@ -1,123 +1,68 @@
 "use client";
-
 import { useI18n } from "@core/providers/i18n-provider";
 import { usePermission } from "@core/hooks/use-permission";
 import { Button } from "@core/ui/button";
 import { Badge } from "@core/ui/badge";
 import { Card } from "@core/ui/card";
 import { LoadingSpinner } from "@core/ui/loading-spinner";
-import {
-  FileText,
-  Phone,
-  Users,
-  CalendarClock,
-  Plus,
-  ShieldAlert,
-  Clock,
-  User,
-  ArrowRight,
-  CheckCircle2,
-  ListTodo,
-} from "lucide-react";
+import { FileText, Phone, Users, CalendarClock, Plus, ShieldAlert, Clock, User, ArrowRight, CheckCircle2, ListTodo, } from "lucide-react";
 import { CRM_PERMISSIONS } from "@modules/crm";
 import type { SalesActivityKind, CrmActivity } from "../../domain/entities/CrmActivityEntity";
 import { useCrmActivitiesViewModel } from "../viewmodels/useCrmActivitiesViewModel";
 import { CreateActivityModal } from "./CreateActivityModal";
 import { CreateFollowUpModal } from "./CreateFollowUpModal";
-
-interface ActivityTimelineProps {
-  readonly leadId?: string;
+interface ActivityTimelineProps { readonly leadId?: string;
   readonly accountId?: string;
   readonly opportunityId?: string;
   readonly targetLabel?: string;
-  readonly className?: string;
-}
-
-export function ActivityTimeline({
-  leadId,
-  accountId,
-  opportunityId,
-  targetLabel,
-  className = "",
-}: ActivityTimelineProps) {
-  const { t, language } = useI18n();
+  readonly className?: string; }
+export function ActivityTimeline({ leadId,
+  accountId, opportunityId,
+  targetLabel, className = "",
+}: ActivityTimelineProps) { const { t, language } = useI18n();
   const isRtl = language === "ar";
-
   const canCreateActivity = usePermission(CRM_PERMISSIONS.ACTIVITIES_CREATE ?? "crm.activities.create");
   const canFollowUp = usePermission(CRM_PERMISSIONS.ACTIVITIES_FOLLOWUP ?? "crm.activities.followup");
-
-  const viewModel = useCrmActivitiesViewModel({
-    leadId,
-    accountId,
-    opportunityId,
+  const viewModel = useCrmActivitiesViewModel({ leadId,
+    accountId, opportunityId,
   });
-
-  const {
-    state,
-    activityKindFilter,
-    setActivityKindFilter,
-    isCreateOpen,
-    setIsCreateOpen,
-    selectedActivityForFollowUp,
-    setSelectedActivityForFollowUp,
-    isSubmitting,
-    submitError,
-    handleCreateActivity,
-    handleCreateFollowUp,
+  const { state,
+    activityKindFilter, setActivityKindFilter,
+    isCreateOpen, setIsCreateOpen,
+    selectedActivityForFollowUp, setSelectedActivityForFollowUp,
+    isSubmitting, submitError,
+    handleCreateActivity, handleCreateFollowUp,
   } = viewModel;
-
-  const getActivityIcon = (kind: SalesActivityKind) => {
-    switch (kind) {
-      case "Note":
-        return <FileText className="size-3.5 text-info" />;
-      case "CallLog":
-        return <Phone className="size-3.5 text-success" />;
-      case "MeetingLog":
-        return <Users className="size-3.5 text-nx-accent" />;
-      case "FollowUpLinked":
-        return <CalendarClock className="size-3.5 text-warning" />;
-      default:
-        return <Clock className="size-3.5 text-nx-ink-3" />;
-    }
-  };
-
-  const getActivityKindBadge = (kind: SalesActivityKind) => {
-    switch (kind) {
-      case "Note":
-        return (
+  const getActivityIcon = (kind: SalesActivityKind) => { switch (kind) {
+      case "Note": return <FileText className="size-3.5 text-info" />;
+      case "CallLog": return <Phone className="size-3.5 text-success" />;
+      case "MeetingLog": return <Users className="size-3.5 text-nx-accent" />;
+      case "FollowUpLinked": return <CalendarClock className="size-3.5 text-warning" />;
+      default: return <Clock className="size-3.5 text-nx-ink-3" />;
+    } };
+  const getActivityKindBadge = (kind: SalesActivityKind) => { switch (kind) {
+      case "Note": return (
           <Badge variant="outline" className="border-info/20 bg-info/10 text-info text-[10px] py-0 px-1.5 font-medium">
             {t("crmActivities.kinds.note") || "Note"}
-          </Badge>
-        );
-      case "CallLog":
-        return (
+          </Badge> );
+      case "CallLog": return (
           <Badge variant="outline" className="border-success/20 bg-success/10 text-success text-[10px] py-0 px-1.5 font-medium">
             {t("crmActivities.kinds.call") || "Call"}
-          </Badge>
-        );
-      case "MeetingLog":
-        return (
+          </Badge> );
+      case "MeetingLog": return (
           <Badge variant="outline" className="border-nx-accent/30 bg-nx-accent-wash text-nx-accent text-[10px] py-0 px-1.5 font-medium">
             {t("crmActivities.kinds.meeting") || "Meeting"}
-          </Badge>
-        );
-      case "FollowUpLinked":
-        return (
+          </Badge> );
+      case "FollowUpLinked": return (
           <Badge variant="outline" className="border-warning/20 bg-warning/10 text-warning text-[10px] py-0 px-1.5 font-medium">
             {t("crmActivities.kinds.followup") || "Follow-up Task"}
-          </Badge>
-        );
-      default:
-        return (
-          <Badge variant="outline" className="border-nx-line bg-nx-surfaceSubtle text-nx-ink-3 text-[10px] py-0 px-1.5">
+          </Badge> );
+      default: return (
+          <Badge variant="outline" className="border-nx-line bg-nx-raised text-nx-ink-3 text-[10px] py-0 px-1.5">
             {kind}
-          </Badge>
-        );
-    }
-  };
-
-  return (
-    <div className={`space-y-4 ${className}`} dir={isRtl ? "rtl" : "ltr"}>
+          </Badge> );
+    } };
+  return ( <div className={`space-y-4 ${className}`} dir={isRtl ? "rtl" : "ltr"}>
       {/* Header and Controls */}
       <div className="flex flex-wrap items-center justify-between gap-3 border-b border-nx-line pb-3">
         <div className="flex items-center gap-2">
@@ -129,12 +74,10 @@ export function ActivityTimeline({
             {state.totalCount}
           </Badge>
         </div>
-
         <div className="flex items-center gap-2">
           {/* Filter Pills */}
           <div className="hidden sm:flex items-center gap-1 bg-nx-ground p-0.5 rounded-md border border-nx-line text-[11px]">
-            <Button
-              type="button"
+            <Button type="button"
               variant={activityKindFilter === "ALL" ? "secondary" : "ghost"}
               size="sm"
               onClick={() => setActivityKindFilter("ALL")}
@@ -142,8 +85,7 @@ export function ActivityTimeline({
             >
               {t("common.all") || "All"}
             </Button>
-            <Button
-              type="button"
+            <Button type="button"
               variant={activityKindFilter === "Note" ? "secondary" : "ghost"}
               size="sm"
               onClick={() => setActivityKindFilter("Note")}
@@ -151,8 +93,7 @@ export function ActivityTimeline({
             >
               {t("crmActivities.kinds.notes") || "Notes"}
             </Button>
-            <Button
-              type="button"
+            <Button type="button"
               variant={activityKindFilter === "CallLog" ? "secondary" : "ghost"}
               size="sm"
               onClick={() => setActivityKindFilter("CallLog")}
@@ -160,8 +101,7 @@ export function ActivityTimeline({
             >
               {t("crmActivities.kinds.calls") || "Calls"}
             </Button>
-            <Button
-              type="button"
+            <Button type="button"
               variant={activityKindFilter === "MeetingLog" ? "secondary" : "ghost"}
               size="sm"
               onClick={() => setActivityKindFilter("MeetingLog")}
@@ -170,21 +110,17 @@ export function ActivityTimeline({
               {t("crmActivities.kinds.meetings") || "Meetings"}
             </Button>
           </div>
-
-          {canCreateActivity && (
-            <Button
+          {canCreateActivity && ( <Button
               type="button"
               size="sm"
               onClick={() => setIsCreateOpen(true)}
-              className="h-7 text-xs bg-nx-accent-fill text-nx-on-fill font-bold gap-1 px-2.5 hover:brightness-105"
+              className="h-7 text-xs font-bold gap-1 px-2.5"
             >
               <Plus className="size-3" />
               <span>{t("crmActivities.timeline.logBtn") || "Log Activity"}</span>
-            </Button>
-          )}
+            </Button> )}
         </div>
       </div>
-
       {/* Loading State */}
       {state.stage === "loading" && state.items.length === 0 && (
         <div className="flex flex-col items-center justify-center py-12">
@@ -192,12 +128,9 @@ export function ActivityTimeline({
           <p className="mt-2 text-xs text-nx-ink-3">
             {t("crmActivities.timeline.loading") || "Loading timeline events..."}
           </p>
-        </div>
-      )}
-
+        </div> )}
       {/* Empty State */}
-      {state.stage !== "loading" && state.items.length === 0 && (
-        <Card className="p-8 text-center bg-nx-surface border-nx-line">
+      {state.stage !== "loading" && state.items.length === 0 && ( <Card className="p-8 text-center bg-nx-surface border-nx-line">
           <Clock className="size-8 mx-auto text-nx-ink-3 opacity-40 mb-2" />
           <h4 className="text-xs font-semibold text-nx-ink">
             {t("crmActivities.timeline.emptyTitle") || "No activities recorded"}
@@ -206,8 +139,7 @@ export function ActivityTimeline({
             {t("crmActivities.timeline.emptyDesc") ||
               "Record notes, phone calls, or meeting summaries to maintain an auditable timeline."}
           </p>
-          {canCreateActivity && (
-            <Button
+          {canCreateActivity && ( <Button
               type="button"
               size="sm"
               variant="outline"
@@ -216,24 +148,17 @@ export function ActivityTimeline({
             >
               <Plus className="size-3" />
               <span>{t("crmActivities.timeline.logFirst") || "Log First Interaction"}</span>
-            </Button>
-          )}
-        </Card>
-      )}
-
+            </Button> )}
+        </Card> )}
       {/* Timeline List */}
       {state.items.length > 0 && (
         <div className="relative pl-6 space-y-4 before:absolute before:left-2.5 before:top-2 before:bottom-2 before:w-px before:bg-nx-line">
-          {state.items.map((activity) => {
-            const isMasked = activity.maskedFieldKeys?.includes("bodyText");
-
-            return (
-              <div key={activity.activityId} className="relative group">
+          {state.items.map((activity) => { const isMasked = activity.maskedFieldKeys?.includes("bodyText");
+            return ( <div key={activity.activityId} className="relative group">
                 {/* Timeline node icon */}
                 <div className="absolute -left-6 top-1 flex size-5 items-center justify-center rounded-full bg-nx-surface border border-nx-line">
                   {getActivityIcon(activity.activityKind)}
                 </div>
-
                 <div className="p-3.5 rounded-lg bg-nx-surface border border-nx-line hover:border-nx-line-hi transition-colors space-y-2">
                   <div className="flex flex-wrap items-start justify-between gap-2">
                     <div className="space-y-1">
@@ -250,83 +175,60 @@ export function ActivityTimeline({
                         </span>
                         <span>•</span>
                         <span className="font-mono">
-                          {new Date(activity.occurredAtUtc).toLocaleDateString(
-                            language === "ar" ? "ar-SA" : "en-US",
-                            {
-                              year: "numeric",
-                              month: "short",
-                              day: "numeric",
-                              hour: "2-digit",
-                              minute: "2-digit",
-                            }
-                          )}
+                          {new Date(activity.occurredAtUtc).toLocaleDateString( language === "ar" ? "ar-SA" : "en-US",
+                            { year: "numeric",
+                              month: "short", day: "numeric",
+                              hour: "2-digit", minute: "2-digit",
+                            } )}
                         </span>
                       </div>
                     </div>
-
                     <div className="flex items-center gap-1.5">
                       {/* Linked WorkItem status badge */}
-                      {activity.workItemRefId && (
-                        <Badge
+                      {activity.workItemRefId && ( <Badge
                           variant="outline"
                           className="border-warning/30 bg-warning/10 text-warning text-[10px] py-0.5 px-2 flex items-center gap-1 font-mono font-medium"
                         >
                           <ListTodo className="size-2.5" />
                           <span>Task: {activity.workItemStatus || "Active"}</span>
-                        </Badge>
-                      )}
-
+                        </Badge> )}
                       {/* Quick Follow-up button */}
-                      {canFollowUp && activity.activityKind !== "FollowUpLinked" && (
-                        <Button
+                      {canFollowUp && activity.activityKind !== "FollowUpLinked" && ( <Button
                           type="button"
                           variant="ghost"
                           size="sm"
                           onClick={() => setSelectedActivityForFollowUp(activity)}
-                          className="h-6 text-[10px] px-2 text-nx-ink-3 hover:text-nx-ink hover:bg-nx-surfaceSubtle gap-1 opacity-80 group-hover:opacity-100"
+                          className="h-6 text-[10px] px-2 text-nx-ink-3 hover:text-nx-ink hover:bg-nx-raised gap-1 opacity-80 group-hover:opacity-100"
                         >
                           <CalendarClock className="size-2.5 text-warning" />
                           <span>{t("crmActivities.timeline.addFollowUp") || "Follow-up"}</span>
-                        </Button>
-                      )}
+                        </Button> )}
                     </div>
                   </div>
-
                   {/* Body text or masked notice */}
                   {isMasked ? (
-                    <div className="flex items-center gap-1.5 p-2 rounded bg-nx-surfaceSubtle border border-nx-line text-[11px] text-nx-ink-3 italic">
+                    <div className="flex items-center gap-1.5 p-2 rounded bg-nx-raised border border-nx-line text-[11px] text-nx-ink-3 italic">
                       <ShieldAlert className="size-3 text-warning" />
                       <span>{t("crmActivities.timeline.piiMasked") || "Activity details contain restricted PII and are masked per authorization policy."}</span>
-                    </div>
-                  ) : activity.bodyText ? (
+                    </div> ) : activity.bodyText ? (
                     <p className="text-xs text-nx-ink-2 whitespace-pre-wrap leading-relaxed pt-1">
                       {activity.bodyText}
-                    </p>
-                  ) : null}
+                    </p> ) : null}
                 </div>
-              </div>
-            );
+              </div> );
           })}
-        </div>
-      )}
-
+        </div> )}
       {/* Modals */}
-      <CreateActivityModal
-        isOpen={isCreateOpen}
+      <CreateActivityModal isOpen={isCreateOpen}
         onOpenChange={setIsCreateOpen}
         onSubmit={handleCreateActivity}
         isSubmitting={isSubmitting}
         error={submitError}
-        targetLabel={targetLabel}
-      />
-
-      <CreateFollowUpModal
-        activity={selectedActivityForFollowUp}
+        targetLabel={targetLabel} />
+      <CreateFollowUpModal activity={selectedActivityForFollowUp}
         onClose={() => setSelectedActivityForFollowUp(null)}
         onSubmit={handleCreateFollowUp}
         isSubmitting={isSubmitting}
-        error={submitError}
-      />
-    </div>
-  );
+        error={submitError} />
+    </div> );
 }

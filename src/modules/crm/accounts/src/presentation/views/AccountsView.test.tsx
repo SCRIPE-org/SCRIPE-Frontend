@@ -135,8 +135,8 @@ describe("AccountsView Component", () => {
     render(<AccountsView />);
 
     await waitFor(() => {
-      expect(screen.getByText("Al Ahly Sporting Club Commercial")).toBeDefined();
-      expect(screen.getByText("Telecom Egypt Academy Tech")).toBeDefined();
+      expect(screen.getAllByText("Al Ahly Sporting Club Commercial")[0]).toBeDefined();
+      expect(screen.getAllByText("Telecom Egypt Academy Tech")[0]).toBeDefined();
     });
 
     expect(screen.getAllByText("Enterprise").length).toBeGreaterThanOrEqual(1);

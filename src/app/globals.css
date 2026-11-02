@@ -4317,7 +4317,10 @@ html[data-tenant-banner] aside.navigation-main-sidebar {
 .bg-nx-accent-fill,
 .bg-nx-accent-fill.text-nx-on-fill,
 button.bg-nx-accent-fill,
-a.bg-nx-accent-fill {
+a.bg-nx-accent-fill,
+.bg-nx-accent-fill .text-nx-on-fill,
+.bg-nx-accent-fill span,
+.bg-nx-accent-fill svg {
   --nx-on-fill: var(--scripe-accent-fg, #0d0d0e);
   color: var(--nx-on-fill);
 }

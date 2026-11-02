@@ -164,8 +164,8 @@ describe("OpportunitiesView Component", () => {
     render(<OpportunitiesView />);
 
     await waitFor(() => {
-      expect(screen.getByText("Al-Nassr Pitch Licensing Contract")).toBeDefined();
-      expect(screen.getByText("Jeddah Stadium Corporate Suite Sponsorship")).toBeDefined();
+      expect(screen.getAllByText("Al-Nassr Pitch Licensing Contract")[0]).toBeDefined();
+      expect(screen.getAllByText("Jeddah Stadium Corporate Suite Sponsorship")[0]).toBeDefined();
     });
 
     expect(mockRepo.getOpportunities).toHaveBeenCalled();
@@ -175,7 +175,7 @@ describe("OpportunitiesView Component", () => {
     render(<OpportunitiesView />);
 
     await waitFor(() => {
-      expect(screen.getByText("Al-Nassr Pitch Licensing Contract")).toBeDefined();
+      expect(screen.getAllByText("Al-Nassr Pitch Licensing Contract")[0]).toBeDefined();
     });
 
     const newDealBtn = screen.getByText("crmOpportunities.actions.newDeal");
@@ -190,7 +190,7 @@ describe("OpportunitiesView Component", () => {
     render(<OpportunitiesView />);
 
     await waitFor(() => {
-      expect(screen.getByText("Al-Nassr Pitch Licensing Contract")).toBeDefined();
+      expect(screen.getAllByText("Al-Nassr Pitch Licensing Contract")[0]).toBeDefined();
     });
 
     const moveStageBtns = screen.getAllByText("crmOpportunities.actions.moveStage");
@@ -212,7 +212,7 @@ describe("OpportunitiesView Component", () => {
     render(<OpportunitiesView />);
 
     await waitFor(() => {
-      expect(screen.getByText("Al-Nassr Pitch Licensing Contract")).toBeDefined();
+      expect(screen.getAllByText("Al-Nassr Pitch Licensing Contract")[0]).toBeDefined();
     });
 
     const closeWonBtns = screen.getAllByText("crmOpportunities.actions.closeWon");
@@ -232,7 +232,7 @@ describe("OpportunitiesView Component", () => {
     render(<OpportunitiesView />);
 
     await waitFor(() => {
-      expect(screen.getByText("Al-Nassr Pitch Licensing Contract")).toBeDefined();
+      expect(screen.getAllByText("Al-Nassr Pitch Licensing Contract")[0]).toBeDefined();
     });
 
     // Default view is table

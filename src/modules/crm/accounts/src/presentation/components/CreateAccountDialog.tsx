@@ -70,7 +70,7 @@ export function CreateAccountDialog({
         <form onSubmit={handleSubmit}>
           <DialogHeader>
             <div className="flex items-center gap-2">
-              <div className="size-8 rounded-nx-md bg-nx-surfaceSubtle border border-nx-line flex items-center justify-center shrink-0">
+              <div className="size-8 rounded-nx-md bg-nx-raised border border-nx-line flex items-center justify-center shrink-0">
                 <Building2 className="size-4 text-nx-accent" />
               </div>
               <div>
@@ -165,7 +165,7 @@ export function CreateAccountDialog({
               type="submit"
               size="sm"
               disabled={isSubmitting}
-              className="h-8 text-xs bg-nx-accent-fill text-nx-on-fill font-bold hover:brightness-105"
+              className="h-8 text-xs font-bold"
             >
               {isSubmitting
                 ? t("common.saving") || "Saving..."

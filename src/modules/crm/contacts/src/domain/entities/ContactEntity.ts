@@ -5,7 +5,7 @@ import type { CrmContact } from "../models/crm-contact.types";
  * Rich domain entity wrapping CrmContact data with computed invariants.
  */
 export class ContactEntity {
-  constructor(public readonly data: CrmContact) {}
+  constructor(private readonly data: CrmContact) {}
 
   get id(): string {
     return this.data.id;
@@ -17,5 +17,12 @@ export class ContactEntity {
 
   get personLegalNameEn(): string {
     return this.data.personLegalNameEn;
+  }
+
+  /**
+   * Returns a new ContactEntity instance with updated properties.
+   */
+  copyWith(updates: Partial<CrmContact>): ContactEntity {
+    return new ContactEntity({ ...this.data, ...updates });
   }
 }

@@ -127,12 +127,12 @@ describe("ContactsView Component", () => {
     render(<ContactsView />);
 
     await waitFor(() => {
-      expect(screen.getByText("Mohamed El-Shenawy")).toBeDefined();
-      expect(screen.getByText("Ahmed Sayed")).toBeDefined();
+      expect(screen.getAllByText("Mohamed El-Shenawy")[0]).toBeDefined();
+      expect(screen.getAllByText("Ahmed Sayed")[0]).toBeDefined();
     });
 
-    expect(screen.getByText("Commercial Director")).toBeDefined();
-    expect(screen.getByText("Al Ahly Commercial")).toBeDefined();
+    expect(screen.getAllByText("Commercial Director")[0]).toBeDefined();
+    expect(screen.getAllByText("Al Ahly Commercial")[0]).toBeDefined();
   });
 
   it("enforces CONTACTS_READ route permissions in PAGE_PERMISSIONS for list and detail paths", () => {

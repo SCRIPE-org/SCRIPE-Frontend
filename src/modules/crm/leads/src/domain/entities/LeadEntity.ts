@@ -5,7 +5,7 @@ import type { CrmLead } from "../models/crm-lead.types";
  * Rich domain entity wrapping CrmLead data with computed invariants.
  */
 export class LeadEntity {
-  constructor(public readonly data: CrmLead) {}
+  constructor(private readonly data: CrmLead) {}
 
   get id(): string {
     return this.data.id;
@@ -17,5 +17,12 @@ export class LeadEntity {
 
   get status(): CrmLead["status"] {
     return this.data.status;
+  }
+
+  /**
+   * Returns a new LeadEntity instance with updated properties.
+   */
+  copyWith(updates: Partial<CrmLead>): LeadEntity {
+    return new LeadEntity({ ...this.data, ...updates });
   }
 }

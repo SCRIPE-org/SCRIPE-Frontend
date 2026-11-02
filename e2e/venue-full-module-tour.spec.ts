@@ -1,6 +1,7 @@
 import { test, expect, type Page, type BrowserContext } from "@playwright/test";
 import * as path from "path";
 import * as fs from "fs";
+import { getDevAdminPassword } from "./helpers/auth-credentials";
 
 /**
  * SCRIPE VENUE — EXHAUSTIVE FULL MODULE TOUR & DEEP AUDIT E2E SUITE
@@ -33,7 +34,7 @@ test.describe("SCRIPE Venue: Exhaustive Full Module Tour & Deep Audit", () => {
   test.describe.configure({ mode: "serial", timeout: 480_000 });
 
   const adminEmail = "ahly.admin@scripe-dev.local";
-  const adminPassword = "P@ssw0rd";
+  const adminPassword = getDevAdminPassword();
 
   const evidenceDir = path.resolve(process.cwd(), "e2e-evidence", "full-venue-audit");
   if (!fs.existsSync(evidenceDir)) {

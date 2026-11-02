@@ -86,7 +86,7 @@ export function OpportunityOverviewCard({ opp }: OpportunityOverviewCardProps) {
       </div>
 
       {opp.directCreateRationale && (
-        <div className="mt-4 p-3 rounded-nx-md bg-nx-surfaceSubtle text-xs border border-nx-line">
+        <div className="mt-4 p-3 rounded-nx-md bg-nx-raised text-xs border border-nx-line">
           <span className="text-nx-ink-3 font-semibold block mb-0.5">
             Direct Creation Rationale:
           </span>
@@ -95,7 +95,7 @@ export function OpportunityOverviewCard({ opp }: OpportunityOverviewCardProps) {
       )}
 
       {!isOpen && (
-        <div className="mt-4 p-3 rounded-nx-md bg-nx-surfaceSubtle text-xs border border-nx-line space-y-1">
+        <div className="mt-4 p-3 rounded-nx-md bg-nx-raised text-xs border border-nx-line space-y-1">
           <span className="text-nx-ink-3 font-semibold block">Closure Summary:</span>
           <div className="flex gap-4 text-nx-ink-2">
             <span>Outcome: <strong>{opp.status}</strong></span>

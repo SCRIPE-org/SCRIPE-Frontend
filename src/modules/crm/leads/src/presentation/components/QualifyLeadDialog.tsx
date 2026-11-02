@@ -108,14 +108,14 @@ export function QualifyLeadDialog({
             <div className="grid grid-cols-2 gap-2">
               <Button
                 type="button"
-                variant={decision === "Qualified" ? "default" : "outline"}
+                variant="outline"
                 size="sm"
                 onClick={() => setDecision("Qualified")}
                 className={cn(
                   "h-9 gap-1.5 text-xs font-medium rounded-nx-md border",
                   decision === "Qualified"
-                    ? "bg-nx-accent-fill text-nx-on-fill border-transparent font-bold"
-                    : "border-nx-line bg-nx-surface text-nx-ink hover:bg-nx-surfaceSubtle"
+                    ? "border-nx-accent/40 bg-nx-accent-wash text-nx-accent font-semibold"
+                    : "border-nx-line bg-nx-surface text-nx-ink hover:bg-nx-raised"
                 )}
               >
                 <CheckCircle2 className="size-4" />
@@ -131,7 +131,7 @@ export function QualifyLeadDialog({
                   "h-9 gap-1.5 text-xs font-medium rounded-nx-md border",
                   decision === "Disqualified"
                     ? "bg-destructive text-destructive-foreground border-transparent font-bold"
-                    : "border-nx-line bg-nx-surface text-nx-ink hover:bg-nx-surfaceSubtle"
+                    : "border-nx-line bg-nx-surface text-nx-ink hover:bg-nx-raised"
                 )}
               >
                 <XCircle className="size-4" />

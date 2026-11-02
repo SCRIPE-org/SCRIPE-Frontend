@@ -6,6 +6,7 @@ import { Card } from "@core/ui/card";
 import { Badge } from "@core/ui/badge";
 import { LoadingSpinner } from "@core/ui/loading-spinner";
 import { Building2, CheckCircle2 } from "lucide-react";
+import { cn } from "@core/common/utils";
 import { useActivitiesExecutionDeskViewModel } from "../viewmodels/useActivitiesExecutionDeskViewModel";
 import { ActivityTimeline } from "../components/ActivityTimeline";
 
@@ -43,7 +44,7 @@ export function ActivitiesExecutionDeskView() {
               <span className="text-sm font-bold text-nx-ink font-heading">
                 SCRIPE D5/B Append-Only
               </span>
-              <Badge variant="outline" className="border-nx-accent/30 bg-nx-accent/10 text-nx-accent text-[10px]">
+              <Badge variant="outline" className="border-nx-accent/30 bg-nx-accent-wash text-nx-accent text-[10px]">
                 Active
               </Badge>
             </div>
@@ -106,9 +107,9 @@ export function ActivitiesExecutionDeskView() {
                 <LoadingSpinner size="sm" className="text-nx-accent" />
               </div>
             ) : accounts.length === 0 ? (
-              <div className="p-4 text-center text-xs text-nx-ink-3 rounded-lg border border-nx-line bg-nx-surface">
+              <Card className="p-4 text-center text-xs text-nx-ink-3 border-nx-line bg-nx-surface">
                 No accounts available
-              </div>
+              </Card>
             ) : (
               <div className="space-y-1.5">
                 {accounts.map((acc) => {
@@ -119,14 +120,15 @@ export function ActivitiesExecutionDeskView() {
                       : acc.nameEn;
 
                   return (
-                    <div
+                    <Card
                       key={acc.id}
                       onClick={() => selectAccount(acc)}
-                      className={`p-3 rounded-lg border transition-all cursor-pointer ${
+                      className={cn(
+                        "p-3 border transition-all cursor-pointer",
                         isSelected
                           ? "bg-nx-surface border-nx-accent text-nx-ink"
-                          : "bg-nx-ground border-nx-line hover:border-nx-line-hi text-nx-ink-2"
-                      }`}
+                          : "bg-nx-surface border-nx-line hover:border-nx-line-hi text-nx-ink-2"
+                      )}
                     >
                       <div className="flex items-start justify-between gap-2">
                         <div className="space-y-0.5">
@@ -134,7 +136,7 @@ export function ActivitiesExecutionDeskView() {
                             {name}
                           </span>
                           <div className="flex items-center gap-1.5 text-[10px] text-nx-ink-3">
-                            <Badge variant="outline" className="border-nx-line bg-nx-surfaceSubtle py-0 px-1 text-[9px]">
+                            <Badge variant="outline" className="border-nx-line bg-nx-raised py-0 px-1 text-[9px]">
                               {acc.commercialTierCode || "Standard"}
                             </Badge>
                             {acc.preferredCurrencyCode && (
@@ -147,12 +149,12 @@ export function ActivitiesExecutionDeskView() {
                         </div>
 
                         {isSelected && (
-                          <div className="flex items-center justify-center size-5 rounded-full bg-nx-accent-fill text-nx-on-fill">
-                            <CheckCircle2 className="size-3" />
+                          <div className="flex items-center justify-center size-5 rounded-full border border-nx-accent/30 bg-nx-accent-wash text-nx-accent shrink-0">
+                            <CheckCircle2 className="size-3.5" />
                           </div>
                         )}
                       </div>
-                    </div>
+                    </Card>
                   );
                 })}
               </div>

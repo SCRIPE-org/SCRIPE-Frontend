@@ -67,6 +67,10 @@ export class CrmActivityEntity implements CrmActivity {
     this.occurredAtUtc = data.occurredAtUtc;
     this.maskedFieldKeys = data.maskedFieldKeys ?? [];
   }
+
+  copyWith(updates: Partial<CrmActivity>): CrmActivityEntity {
+    return new CrmActivityEntity({ ...this, ...updates });
+  }
 }
 
 export interface CreateSalesActivityPayload {
