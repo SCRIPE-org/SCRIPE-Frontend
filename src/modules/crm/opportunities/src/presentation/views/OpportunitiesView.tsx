@@ -120,32 +120,30 @@ export function OpportunitiesView() {
     (opp: CrmOpportunity) => {
       const isOpen = opp.status === "Open";
       return (
-        <div className="inline-flex items-center justify-end gap-1.5">
+        <div className="inline-flex items-center justify-end gap-1 whitespace-nowrap">
           {isOpen ? (
             <>
-              <Button type="button" size="sm" variant="outline" className="h-7 px-2 text-xs" onClick={() => openMoveStageDialog(opp)}>
+              <Button type="button" size="sm" variant="outline" className="h-7 px-2 text-xs whitespace-nowrap" onClick={() => openMoveStageDialog(opp)}>
                 <ArrowRight className="size-3.5 me-1" />
                 {t("crmOpportunities.actions.moveStage")}
               </Button>
-              <Button type="button" size="sm" variant="ghost" className="h-7 px-2 text-xs text-success hover:bg-success/10" onClick={() => openCloseDialog(opp, "Won")}>
-                <CheckCircle className="size-3.5 me-1" />
-                {t("crmOpportunities.actions.closeWon")}
+              <Button type="button" size="sm" variant="ghost" aria-label={t("crmOpportunities.actions.closeWon")} title={t("crmOpportunities.actions.closeWon")} className="h-7 px-1.5 text-xs text-success hover:bg-success/10" onClick={() => openCloseDialog(opp, "Won")}>
+                <CheckCircle className="size-3.5" />
               </Button>
-              <Button type="button" size="sm" variant="ghost" className="h-7 px-2 text-xs text-destructive hover:bg-destructive/10" onClick={() => openCloseDialog(opp, "Lost")}>
-                <XCircle className="size-3.5 me-1" />
-                {t("crmOpportunities.actions.closeLost")}
+              <Button type="button" size="sm" variant="ghost" aria-label={t("crmOpportunities.actions.closeLost")} title={t("crmOpportunities.actions.closeLost")} className="h-7 px-1.5 text-xs text-destructive hover:bg-destructive/10" onClick={() => openCloseDialog(opp, "Lost")}>
+                <XCircle className="size-3.5" />
               </Button>
-              <Button type="button" size="sm" variant="ghost" className="h-7 px-1.5 text-nx-ink-3 hover:text-nx-ink" title={t("crmOpportunities.actions.assignOwner")} onClick={() => openAssignOwnerDialog(opp)}>
+              <Button type="button" size="sm" variant="ghost" aria-label={t("crmOpportunities.actions.assignOwner")} title={t("crmOpportunities.actions.assignOwner")} className="h-7 px-1.5 text-nx-ink-3 hover:text-nx-ink" onClick={() => openAssignOwnerDialog(opp)}>
                 <UserCheck className="size-3.5" />
               </Button>
             </>
           ) : (
-            <Button type="button" size="sm" variant="outline" className="h-7 px-2 text-xs text-nx-accent border-nx-line hover:border-nx-accent" onClick={() => openReopenDialog(opp)}>
+            <Button type="button" size="sm" variant="outline" className="h-7 px-2 text-xs text-nx-accent border-nx-line hover:border-nx-accent whitespace-nowrap" onClick={() => openReopenDialog(opp)}>
               <RotateCcw className="size-3 me-1" />
               {t("crmOpportunities.actions.reopen")}
             </Button>
           )}
-          <Button type="button" size="sm" variant="ghost" className="h-7 px-1.5 text-nx-ink-3 hover:text-nx-ink" title={t("crmOpportunities.actions.viewDetails")} onClick={() => handleSelectOpportunity(opp)}>
+          <Button type="button" size="sm" variant="ghost" aria-label={t("crmOpportunities.actions.viewDetails")} title={t("crmOpportunities.actions.viewDetails")} className="h-7 px-1.5 text-nx-ink-3 hover:text-nx-ink" onClick={() => handleSelectOpportunity(opp)}>
             <ArrowUpRight className="size-3.5" />
           </Button>
         </div>

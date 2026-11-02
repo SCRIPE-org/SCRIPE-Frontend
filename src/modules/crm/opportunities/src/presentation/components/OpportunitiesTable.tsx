@@ -23,12 +23,13 @@ export function buildOpportunityColumns(
       label: t("crmOpportunities.table.title"),
       sortable: true,
       render: (_val, opp: CrmOpportunity) => (
-        <div className="max-w-[200px]">
+        <div className="max-w-[230px] overflow-hidden">
           <Button
             type="button"
             variant="link"
             onClick={() => onSelectOpportunity(opp)}
-            className="p-0 h-auto font-semibold text-nx-ink hover:text-nx-accent transition-colors line-clamp-1 text-start"
+            title={opp.title}
+            className="p-0 h-auto max-w-full font-semibold text-nx-ink hover:text-nx-accent transition-colors truncate block text-start"
           >
             {opp.title}
           </Button>
@@ -146,12 +147,13 @@ export function renderOpportunityCardGridItem(
   return (
     <Card className="flex flex-col justify-between gap-3 rounded-nx-lg border border-nx-line bg-nx-surface p-4 hover:border-nx-line-hi transition-all">
       <div className="space-y-2">
-        <div className="flex items-start justify-between gap-2">
+        <div className="flex items-start justify-between gap-2 overflow-hidden">
           <Button
             type="button"
             variant="link"
             onClick={() => onSelectOpportunity(opp)}
-            className="p-0 h-auto font-bold text-sm text-nx-ink hover:text-nx-accent line-clamp-1 text-start"
+            title={opp.title}
+            className="p-0 h-auto max-w-full font-bold text-sm text-nx-ink hover:text-nx-accent truncate block text-start"
           >
             {opp.title}
           </Button>

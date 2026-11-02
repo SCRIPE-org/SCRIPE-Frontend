@@ -14,10 +14,12 @@ if (!fs.existsSync(SCREENSHOT_DIR)) {
 
 async function setThemeAndCapture(page: Page, baseName: string) {
   await page.evaluate(() => {
+    document.documentElement.setAttribute("data-reduced-motion", "true");
+    document.documentElement.setAttribute("data-animation", "none");
     document.documentElement.classList.remove("dark");
     localStorage.setItem("theme", "light");
   });
-  await page.waitForTimeout(250);
+  await page.waitForTimeout(350);
   await page.screenshot({
     path: path.join(SCREENSHOT_DIR, `${baseName}_light.png`),
     fullPage: true,
@@ -28,10 +30,12 @@ async function setThemeAndCapture(page: Page, baseName: string) {
   });
 
   await page.evaluate(() => {
+    document.documentElement.setAttribute("data-reduced-motion", "true");
+    document.documentElement.setAttribute("data-animation", "none");
     document.documentElement.classList.add("dark");
     localStorage.setItem("theme", "dark");
   });
-  await page.waitForTimeout(250);
+  await page.waitForTimeout(350);
   await page.screenshot({
     path: path.join(SCREENSHOT_DIR, `${baseName}_dark.png`),
     fullPage: true,
@@ -41,7 +45,7 @@ async function setThemeAndCapture(page: Page, baseName: string) {
     document.documentElement.classList.remove("dark");
     localStorage.setItem("theme", "light");
   });
-  await page.waitForTimeout(150);
+  await page.waitForTimeout(200);
 }
 
 test.describe("SCRIPE-735 & SCRIPE-736: CRM Accounts 360 & Contacts Context Live UAT (Dark + Light Themes)", () => {

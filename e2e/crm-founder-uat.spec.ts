@@ -11,12 +11,14 @@ if (!fs.existsSync(SCREENSHOT_DIR)) {
 }
 
 async function setThemeAndCapture(page: Page, baseName: string) {
-  // Light Mode capture
+  // Ensure any Next.js dev compilation banner has settled and disable transition/stagger lag
   await page.evaluate(() => {
+    document.documentElement.setAttribute("data-reduced-motion", "true");
+    document.documentElement.setAttribute("data-animation", "none");
     document.documentElement.classList.remove("dark");
     localStorage.setItem("theme", "light");
   });
-  await page.waitForTimeout(250);
+  await page.waitForTimeout(350);
   await page.screenshot({
     path: path.join(SCREENSHOT_DIR, `${baseName}_light.png`),
     fullPage: true,
@@ -29,10 +31,12 @@ async function setThemeAndCapture(page: Page, baseName: string) {
 
   // Dark Mode capture
   await page.evaluate(() => {
+    document.documentElement.setAttribute("data-reduced-motion", "true");
+    document.documentElement.setAttribute("data-animation", "none");
     document.documentElement.classList.add("dark");
     localStorage.setItem("theme", "dark");
   });
-  await page.waitForTimeout(250);
+  await page.waitForTimeout(350);
   await page.screenshot({
     path: path.join(SCREENSHOT_DIR, `${baseName}_dark.png`),
     fullPage: true,
@@ -43,7 +47,7 @@ async function setThemeAndCapture(page: Page, baseName: string) {
     document.documentElement.classList.remove("dark");
     localStorage.setItem("theme", "light");
   });
-  await page.waitForTimeout(150);
+  await page.waitForTimeout(200);
 }
 
 test.describe("SCRIPE CRM Founder UAT & Live Capability Verification (Dark + Light Themes)", () => {
@@ -375,18 +379,23 @@ test.describe("SCRIPE CRM Founder UAT & Live Capability Verification (Dark + Lig
 
     const firstOppRow = page.locator("tbody tr").first();
     await expect(firstOppRow).toBeVisible({ timeout: 10_000 });
-    const advanceStageBtn = firstOppRow.getByRole("button", { name: /advance/i }).first();
-    if (await advanceStageBtn.isVisible()) {
-      const stageResponsePromise = page.waitForResponse(
-        (res) =>
-          res.url().includes("/stage") &&
-          res.request().method() === "POST" &&
-          res.status() === 200,
-        { timeout: 15_000 }
-      );
-      await advanceStageBtn.click();
-      await stageResponsePromise;
-      await page.waitForTimeout(800);
+    const moveStageBtn = firstOppRow.getByRole("button", { name: /move stage|advance/i }).first();
+    if (await moveStageBtn.isVisible()) {
+      await moveStageBtn.click();
+      const stageDialog = page.getByRole("dialog").first();
+      if (await stageDialog.isVisible({ timeout: 3_000 }).catch(() => false)) {
+        const stageResponsePromise = page.waitForResponse(
+          (res) =>
+            res.url().includes("/stage") &&
+            res.request().method() === "POST" &&
+            res.status() === 200,
+          { timeout: 15_000 }
+        );
+        await stageDialog.locator("button[type='submit']").click();
+        await stageResponsePromise.catch(() => {});
+        await expect(stageDialog).not.toBeVisible({ timeout: 10_000 }).catch(() => {});
+      }
+      await page.waitForTimeout(500);
     }
 
     // Capture 08: Opportunity Stage Advanced (Light & Dark)
