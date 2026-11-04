@@ -205,7 +205,15 @@ export function MoveStageDialog({
     targetStageKey === "default.proposal" ||
     targetStageKey === "default.negotiation";
 
-  const exitFields = isForward ? (currentStageConfig?.requiredExitFields ?? []) : [];
+  const exitFields = isForward
+    ? Array.from(
+        new Set(
+          effectiveStages
+            .slice(Math.max(0, currentStageIndex), targetStageIndex)
+            .flatMap((s) => s.requiredExitFields ?? [])
+        )
+      )
+    : [];
   const needsPartyInput =
     (isTargetProposalOrLater || exitFields.includes("partyId")) && !opportunity.partyId;
   const effectivePartyId = opportunity.partyId || selectedPartyId;
@@ -231,8 +239,18 @@ export function MoveStageDialog({
     e.preventDefault();
     setValidationError(null);
 
+    if (targetStageKey === opportunity.stageKey) {
+      setValidationError("Opportunity is already in the selected stage. Choose a different target stage.");
+      return;
+    }
+
     if (lacksParty) {
       setValidationError(t("crmOpportunities.dialogs.stage.partyNotice"));
+      return;
+    }
+
+    if (estimatedAmount !== "" && (!Number.isFinite(Number(estimatedAmount)) || Number(estimatedAmount) < 0)) {
+      setValidationError("Estimated Deal Value cannot be negative.");
       return;
     }
 

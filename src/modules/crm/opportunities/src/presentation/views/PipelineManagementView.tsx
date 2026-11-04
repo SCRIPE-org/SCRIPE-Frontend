@@ -125,7 +125,7 @@ const LEAD_WORKFLOW_NODES: LeadWorkflowNode[] = [
     postFunctions: [
       "Create CrmOpportunity in Default Commercial Pipeline",
       "Link or create CrmAccountPartyRef / CrmContactPartyRef",
-      "Lock Lead in terminal Converted state",
+      "Transition Lead to Converted (reversible if linked Opportunity is still in its initial Discovery stage)",
     ],
   },
   {

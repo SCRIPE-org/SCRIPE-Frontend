@@ -172,13 +172,17 @@ export function useOpportunityDetailViewModel(opportunityId: string) {
       const repo = (getCrmContainer() as any).opportunityRepository;
       await repo.moveStage(input);
       if (input.customFieldValues && Object.keys(input.customFieldValues).length > 0) {
-        const normalized = normalizeCustomFieldValuesForSave(input.customFieldValues);
-        if (Object.keys(normalized).length > 0) {
-          await getCustomFieldsExtension()?.saveValues(
-            "crm.opportunity",
-            input.opportunityId,
-            normalized
-          );
+        try {
+          const normalized = normalizeCustomFieldValuesForSave(input.customFieldValues);
+          if (Object.keys(normalized).length > 0) {
+            await getCustomFieldsExtension()?.saveValues(
+              "crm.opportunity",
+              input.opportunityId,
+              normalized
+            );
+          }
+        } catch {
+          // Non-blocking custom fields persistence
         }
       }
       await loadData();

@@ -161,7 +161,7 @@ export function LeadsView() { const router = useRouter();
         const prevStage =
           lead.status === "Disqualified"
             ? "Working"
-            : currentIdx > 0 && lead.status !== "Converted"
+            : currentIdx > 0
             ? activeOrder[currentIdx - 1]
             : undefined;
         const nextStage =
@@ -374,11 +374,36 @@ export function LeadsView() { const router = useRouter();
               {t("crm.errors.retry")}
             </Button>
           </AlertDescription>
-        </Alert> ) : ( <GenericCrudView<CrmLead>
-          config={crudConfig}
-          columns={columns}
-          viewModel={viewModel}
-          pagination={viewModel.pagination} /> )}
+        </Alert> ) : ( <>
+          {(state.error || submitError) && !isCreateOpen && !isQualifyOpen && !isLinkPartyOpen && !isConvertOpen && (
+            <Alert
+              variant="destructive"
+              data-testid="leads-transition-error-banner"
+              className="mb-4"
+              dir={isRtl ? "rtl" : "ltr"}
+            >
+              <AlertCircle className="size-4" />
+              <AlertTitle>Status Transition Blocked</AlertTitle>
+              <AlertDescription className="mt-1 flex items-center justify-between gap-3">
+                <span className="text-xs">{state.error || submitError}</span>
+                <Button
+                  type="button"
+                  size="sm"
+                  variant="outline"
+                  onClick={() => viewModel.clearError?.()}
+                  className="text-xs h-7 shrink-0"
+                >
+                  Dismiss
+                </Button>
+              </AlertDescription>
+            </Alert>
+          )}
+          <GenericCrudView<CrmLead>
+            config={crudConfig}
+            columns={columns}
+            viewModel={viewModel}
+            pagination={viewModel.pagination} />
+        </> )}
       {/* Create Lead Modal */}
       <CreateLeadDialog open={isCreateOpen} onOpenChange={setIsCreateOpen} onSubmit={handleCreateLead} isSubmitting={isSubmitting}
         submitError={submitError} />

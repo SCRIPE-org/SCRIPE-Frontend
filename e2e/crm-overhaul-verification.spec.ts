@@ -724,6 +724,31 @@ test.describe("CRM Overhaul Complete Button-by-Button E2E Verification", () => {
     await setThemeAndCapture(page, "06e_crm_opportunity_detail_cockpit_360");
 
     // ═══════════════════════════════════════════════════════════════════════
+    // 6c. /crm/leads Kanban: Verify Converted Lead Rollback Blocked When Linked Deal Progressed
+    // ═══════════════════════════════════════════════════════════════════════
+    await page.goto("/crm/leads");
+    await page.waitForLoadState("networkidle");
+    const leadsKanbanBtnAfterProg = page.getByTestId("toggle-kanban-view").first();
+    await expect(leadsKanbanBtnAfterProg).toBeVisible({ timeout: 15_000 });
+    await leadsKanbanBtnAfterProg.click();
+    await page.waitForTimeout(600);
+
+    const convertedLeadKanbanCard = page
+      .locator("[data-testid^='lead-kanban-card-']", { hasText: `Qiddiya Sports ${uniqueSuffix}` })
+      .first();
+    await expect(convertedLeadKanbanCard).toBeVisible({ timeout: 10_000 });
+
+    const rollbackConvertedBtn = convertedLeadKanbanCard
+      .locator("button[title='Move back to Qualified']")
+      .first();
+    await expect(rollbackConvertedBtn).toBeVisible({ timeout: 5_000 });
+    await rollbackConvertedBtn.click();
+
+    await expect(page.getByTestId("leads-transition-error-banner")).toBeVisible({
+      timeout: 10_000,
+    });
+
+    // ═══════════════════════════════════════════════════════════════════════
     // 7. /crm/activities: Activities & Follow-up Execution Desk
     // ═══════════════════════════════════════════════════════════════════════
     await page.goto("/crm/activities");

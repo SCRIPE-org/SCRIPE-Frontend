@@ -420,4 +420,99 @@ describe("LeadsView Component", () => {
       expect(screen.getByText("crmLeads.conversion.dialogTitle")).toBeDefined();
     });
   });
+
+  it("allows rolling back a Converted lead when deal is unprogressed and renders error banner when deal has progressed", async () => {
+    const convertedLead: CrmLead = {
+      id: "lead-conv-1",
+      title: "Converted Stadium Lead",
+      firstName: "Khalid",
+      lastName: "Al-Saud",
+      fullName: "Khalid Al-Saud",
+      companyName: "Riyadh Arena Co",
+      status: "Converted",
+      statusName: "Converted",
+      convertedOpportunityId: "opp-init-1",
+      estimatedValue: 300000,
+      currency: "SAR",
+      rowVersion: "AAAA==",
+      createdAt: "2026-10-30T00:00:00Z",
+    };
+
+    mockGetLeads.mockResolvedValue({
+      items: [convertedLead],
+      totalCount: 1,
+      page: 1,
+      pageSize: 20,
+      totalPages: 1,
+    } as PagedLeadsResult);
+
+    const mockUpdateLead = vi
+      .fn()
+      .mockRejectedValueOnce(
+        new Error(
+          "Cannot revert lead from Converted because the linked deal 'Riyadh Arena Deal' has already progressed to stage 'Proposal' (Open)."
+        )
+      )
+      .mockResolvedValueOnce({ ...convertedLead, status: "Qualified", convertedOpportunityId: undefined });
+
+    setCrmContainer({
+      overviewService: {} as any,
+      overviewRepository: {} as any,
+      leadService: {} as any,
+      leadRepository: {
+        getLeads: mockGetLeads as any,
+        getLeadById: vi.fn(),
+        createLead: mockCreateLead as any,
+        updateLead: mockUpdateLead as any,
+        qualifyLead: mockQualifyLead as any,
+        linkParty: mockLinkParty as any,
+        convertLead: mockConvertLead as any,
+      } as any,
+      opportunityService: {} as any,
+      opportunityRepository: {} as any,
+      accountService: {} as any,
+      accountRepository: {} as any,
+      contactService: {} as any,
+      contactRepository: {} as any,
+    });
+
+    render(<LeadsView />);
+
+    await waitFor(() => {
+      expect(screen.getAllByText("Converted Stadium Lead")[0]).toBeDefined();
+    });
+
+    fireEvent.click(screen.getByText("Kanban"));
+
+    await waitFor(() => {
+      expect(screen.getByTitle("Move back to Qualified")).toBeDefined();
+    });
+
+    // Attempt 1: Deal has progressed -> shows destructive error banner
+    fireEvent.click(screen.getByTitle("Move back to Qualified"));
+
+    await waitFor(() => {
+      expect(screen.getByTestId("leads-transition-error-banner")).toBeDefined();
+      expect(
+        screen.getByText(/Cannot revert lead from Converted because the linked deal/i)
+      ).toBeDefined();
+    });
+
+    // Dismiss error banner
+    fireEvent.click(screen.getByText("Dismiss"));
+    await waitFor(() => {
+      expect(screen.queryByTestId("leads-transition-error-banner")).toBeNull();
+    });
+
+    // Attempt 2: Deal is in initial Discovery stage -> succeeds and reverts to Qualified
+    fireEvent.click(screen.getByTitle("Move back to Qualified"));
+    await waitFor(() => {
+      expect(mockUpdateLead).toHaveBeenCalledWith(
+        expect.objectContaining({
+          leadId: "lead-conv-1",
+          targetStatus: "Qualified",
+        })
+      );
+    });
+  });
 });

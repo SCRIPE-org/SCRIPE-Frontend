@@ -1,9 +1,10 @@
 "use client";
 
-import { useMemo } from "react";
-import { AlertCircle } from "lucide-react";
+import { useMemo, useState } from "react";
+import { AlertCircle, CheckCircle2, XCircle } from "lucide-react";
 import { Alert, AlertTitle, AlertDescription } from "@core/ui/alert";
 import { Button } from "@core/ui/button";
+import { cn } from "@core/common/utils";
 import { useI18n } from "@core/providers/i18n-provider";
 import { KanbanColumn, type KanbanStageDef } from "./KanbanColumn";
 import type {
@@ -67,6 +68,7 @@ export function KanbanBoard({
   onClearError,
 }: KanbanBoardProps) {
   const { t } = useI18n();
+  const [dragOverOutcome, setDragOverOutcome] = useState<"won" | "lost" | null>(null);
 
   // Compute effective stages: server-provided default pipeline if present, else canonical fallbacks
   const effectiveStages: KanbanStageDef[] = useMemo(() => {
@@ -101,6 +103,15 @@ export function KanbanBoard({
 
     return map;
   }, [opportunities, effectiveStages]);
+
+  const wonDealsCount = useMemo(
+    () => opportunities.filter((o) => o.status === "Won").length,
+    [opportunities]
+  );
+  const lostDealsCount = useMemo(
+    () => opportunities.filter((o) => o.status === "Lost").length,
+    [opportunities]
+  );
 
   const handleDropOpportunity = (opportunityId: string, targetStageKey: string) => {
     const opp = opportunities.find((o) => o.id === opportunityId);
@@ -157,7 +168,7 @@ export function KanbanBoard({
       )}
 
       {/* Responsive 5-Column Jira-Grade Pipeline Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-3 pb-4 pt-1 min-h-[550px] w-full">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-3 pb-2 pt-1 min-h-[520px] w-full">
         {effectiveStages.map((stage, index) => {
           const colOpps = groupedOpportunities.get(stage.key) || [];
           return (
@@ -173,6 +184,93 @@ export function KanbanBoard({
             />
           );
         })}
+      </div>
+
+      {/* Terminal Outcome Drop Zones (Closed Won & Closed Lost) */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
+        <div
+          data-testid="kanban-dropzone-closed-won"
+          onDragOver={(e) => {
+            e.preventDefault();
+            e.dataTransfer.dropEffect = "move";
+            if (dragOverOutcome !== "won") setDragOverOutcome("won");
+          }}
+          onDragLeave={(e) => {
+            e.preventDefault();
+            setDragOverOutcome(null);
+          }}
+          onDrop={(e) => {
+            e.preventDefault();
+            setDragOverOutcome(null);
+            const oppId = e.dataTransfer.getData("text/plain");
+            if (oppId) {
+              handleDropOpportunity(oppId, "default.closed_won");
+            }
+          }}
+          className={cn(
+            "flex items-center justify-between rounded-nx-lg border border-dashed px-4 py-3 transition-colors",
+            dragOverOutcome === "won"
+              ? "border-success bg-success/15 ring-2 ring-success text-success"
+              : "border-success/30 bg-success/5 text-nx-ink-2 hover:border-success/60"
+          )}
+        >
+          <div className="flex items-center gap-2.5">
+            <CheckCircle2 className="size-4 text-success shrink-0" />
+            <div>
+              <div className="text-xs font-bold text-success uppercase tracking-wider">
+                {t("crmOpportunities.dialogs.close.outcomeWon", { defaultValue: "Closed Won" })}
+              </div>
+              <div className="text-[11px] text-nx-ink-3">
+                Drag an open deal here to verify Party & record Close Won notes
+              </div>
+            </div>
+          </div>
+          <span className="text-xs font-mono font-bold text-success bg-success/10 border border-success/30 rounded px-2 py-0.5">
+            {wonDealsCount}
+          </span>
+        </div>
+
+        <div
+          data-testid="kanban-dropzone-closed-lost"
+          onDragOver={(e) => {
+            e.preventDefault();
+            e.dataTransfer.dropEffect = "move";
+            if (dragOverOutcome !== "lost") setDragOverOutcome("lost");
+          }}
+          onDragLeave={(e) => {
+            e.preventDefault();
+            setDragOverOutcome(null);
+          }}
+          onDrop={(e) => {
+            e.preventDefault();
+            setDragOverOutcome(null);
+            const oppId = e.dataTransfer.getData("text/plain");
+            if (oppId) {
+              handleDropOpportunity(oppId, "default.closed_lost");
+            }
+          }}
+          className={cn(
+            "flex items-center justify-between rounded-nx-lg border border-dashed px-4 py-3 transition-colors",
+            dragOverOutcome === "lost"
+              ? "border-destructive bg-destructive/15 ring-2 ring-destructive text-destructive"
+              : "border-destructive/30 bg-destructive/5 text-nx-ink-2 hover:border-destructive/60"
+          )}
+        >
+          <div className="flex items-center gap-2.5">
+            <XCircle className="size-4 text-destructive shrink-0" />
+            <div>
+              <div className="text-xs font-bold text-destructive uppercase tracking-wider">
+                {t("crmOpportunities.dialogs.close.outcomeLost", { defaultValue: "Closed Lost" })}
+              </div>
+              <div className="text-[11px] text-nx-ink-3">
+                Drag an open deal here to capture loss reason & competitor intel
+              </div>
+            </div>
+          </div>
+          <span className="text-xs font-mono font-bold text-destructive bg-destructive/10 border border-destructive/30 rounded px-2 py-0.5">
+            {lostDealsCount}
+          </span>
+        </div>
       </div>
     </section>
   );

@@ -114,8 +114,15 @@ export function useLeadDetailViewModel(leadId: string) {
         return false;
       }
 
-      if (targetStatus === "Qualified" || targetStatus === "Disqualified") {
-        setQualifyDefaultDecision(targetStatus);
+      if (targetStatus === "Disqualified") {
+        setQualifyDefaultDecision("Disqualified");
+        setSubmitError(null);
+        setIsQualifyOpen(true);
+        return false;
+      }
+
+      if (targetStatus === "Qualified" && state.lead.status !== "Converted") {
+        setQualifyDefaultDecision("Qualified");
         setSubmitError(null);
         setIsQualifyOpen(true);
         return false;

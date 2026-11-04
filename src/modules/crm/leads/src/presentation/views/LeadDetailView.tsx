@@ -314,6 +314,29 @@ export function LeadDetailView({ leadId }: LeadDetailViewProps) {
           </div>
         </div>
 
+        {submitError && !isEditOpen && !isQualifyOpen && !isLinkPartyOpen && !isConvertOpen && (
+          <Alert
+            variant="destructive"
+            data-testid="lead-detail-transition-error-banner"
+            dir={isRtl ? "rtl" : "ltr"}
+          >
+            <AlertCircle className="size-4" />
+            <AlertTitle>Status Transition Blocked</AlertTitle>
+            <AlertDescription className="mt-1 flex items-center justify-between gap-3">
+              <span className="text-xs">{submitError}</span>
+              <Button
+                type="button"
+                size="sm"
+                variant="outline"
+                onClick={() => setSubmitError(null)}
+                className="text-xs h-7 shrink-0"
+              >
+                Dismiss
+              </Button>
+            </AlertDescription>
+          </Alert>
+        )}
+
         {/* Interactive Lead Qualification Status Progression Bar */}
         <Card className="p-4 border-nx-line bg-nx-surface space-y-2.5" data-testid="lead-progression-bar">
           <div className="flex items-center justify-between text-xs">
@@ -330,7 +353,7 @@ export function LeadDetailView({ leadId }: LeadDetailViewProps) {
                   key={step.status}
                   type="button"
                   variant="ghost"
-                  disabled={isSubmitting || lead.status === "Converted"}
+                  disabled={isSubmitting}
                   data-testid={`lead-step-${step.status}`}
                   onClick={() => handleStatusProgression(step.status)}
                   className={cn(

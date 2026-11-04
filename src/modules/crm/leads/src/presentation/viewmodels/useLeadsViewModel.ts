@@ -211,16 +211,24 @@ export function useLeadsViewModel(initialSearch?: string) {
         return false;
       }
 
-      // Dragging to "Qualified" or "Disqualified" opens the Qualification dialog with the target decision pre-selected!
-      if (newStatus === "Qualified" || newStatus === "Disqualified") {
-        openQualifyDialog(lead, newStatus);
+      // Dragging to "Disqualified" always opens the Qualification dialog to capture the mandatory disqualification reason
+      if (newStatus === "Disqualified") {
+        openQualifyDialog(lead, "Disqualified");
         return false;
       }
 
-      // Dragging to "Working" updates the lead status on the backend
+      // Moving forward/re-qualifying to "Qualified" (from New, Working, or Disqualified) opens the Qualification dialog
+      if (newStatus === "Qualified" && lead.status !== "Converted") {
+        openQualifyDialog(lead, "Qualified");
+        return false;
+      }
+
+      // Rolling back from "Converted" (to Qualified, Working, or New) or transitioning to Working/New
       const previousItems = state.items;
+      setSubmitError(null);
       setState((prev) => ({
         ...prev,
+        error: null,
         items: prev.items.map((item) =>
           item.id === lead.id
             ? { ...item, status: newStatus as LeadStatus, statusName: newStatus }
@@ -239,16 +247,23 @@ export function useLeadsViewModel(initialSearch?: string) {
         await loadLeads(state.page, search, statusFilter);
         return true;
       } catch (err) {
+        const errMsg = err instanceof Error ? err.message : "Failed to update lead status";
+        setSubmitError(errMsg);
         setState((prev) => ({
           ...prev,
           items: previousItems,
-          error: err instanceof Error ? err.message : "Failed to update lead status",
+          error: errMsg,
         }));
         return false;
       }
     },
     [state.items, state.page, search, statusFilter, loadLeads, openConvertDialog, openQualifyDialog]
   );
+
+  const clearError = useCallback(() => {
+    setSubmitError(null);
+    setState((prev) => ({ ...prev, error: null }));
+  }, []);
 
   const handleQualifyLead = useCallback(
     async (input: QualifyLeadInput): Promise<boolean> => {
@@ -416,5 +431,6 @@ export function useLeadsViewModel(initialSearch?: string) {
     },
     refreshItems: refresh,
     createItem: handleCreateLead,
+    clearError,
   };
 }

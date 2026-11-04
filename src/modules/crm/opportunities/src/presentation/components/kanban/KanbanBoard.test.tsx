@@ -366,4 +366,26 @@ describe("KanbanBoard Component", () => {
       "kanban-column-default.negotiation",
     ]);
   });
+
+  it("triggers onMoveStage with default.closed_won and default.closed_lost when dropping onto terminal outcome dropzones", () => {
+    const onMoveStage = vi.fn();
+    render(<KanbanBoard opportunities={mockOpportunities} onMoveStage={onMoveStage} />);
+
+    const wonDropzone = screen.getByTestId("kanban-dropzone-closed-won");
+    const lostDropzone = screen.getByTestId("kanban-dropzone-closed-lost");
+
+    fireEvent.drop(wonDropzone, {
+      dataTransfer: {
+        getData: (type: string) => (type === "text/plain" ? "opp-001" : ""),
+      },
+    });
+    expect(onMoveStage).toHaveBeenCalledWith(mockOpportunities[0], "default.closed_won");
+
+    fireEvent.drop(lostDropzone, {
+      dataTransfer: {
+        getData: (type: string) => (type === "text/plain" ? "opp-002" : ""),
+      },
+    });
+    expect(onMoveStage).toHaveBeenCalledWith(mockOpportunities[1], "default.closed_lost");
+  });
 });

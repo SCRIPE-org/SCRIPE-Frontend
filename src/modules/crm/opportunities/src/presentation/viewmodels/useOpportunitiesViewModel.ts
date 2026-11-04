@@ -269,6 +269,13 @@ export function useOpportunitiesViewModel(initialSearch?: string) {
     setIsMoveStageOpen(true);
   }, []);
 
+  const openCloseDialog = useCallback((opp: CrmOpportunity, outcome: OpportunityStatus = "Won") => {
+    setActiveOpportunity(opp);
+    setCloseInitialOutcome(outcome);
+    setSubmitError(null);
+    setIsCloseOpen(true);
+  }, []);
+
   const handleMoveStageOptimistic = useCallback(
     async (
       opportunity: CrmOpportunity,
@@ -277,6 +284,16 @@ export function useOpportunitiesViewModel(initialSearch?: string) {
     ): Promise<boolean> => {
       if (opportunity.stageKey === targetStageKey) {
         return true;
+      }
+
+      if (targetStageKey === "default.closed_won" || targetStageKey === "Won") {
+        openCloseDialog(opportunity, "Won");
+        return false;
+      }
+
+      if (targetStageKey === "default.closed_lost" || targetStageKey === "Lost") {
+        openCloseDialog(opportunity, "Lost");
+        return false;
       }
 
       // Check stage ordering and required exit fields / party gates before executing optimistic transition
@@ -294,7 +311,20 @@ export function useOpportunitiesViewModel(initialSearch?: string) {
         targetStageConfig?.requiresVerifiedParty ??
         (targetStageKey === "default.proposal" || targetStageKey === "default.negotiation");
 
-      const exitFields = currentStageConfig?.requiredExitFields ?? [];
+      const traversedExitFields =
+        targetOrder > currentOrder
+          ? Array.from(
+              new Set(
+                stages
+                  .filter((s) => s.sortOrder >= currentOrder && s.sortOrder < targetOrder)
+                  .flatMap((s) => s.requiredExitFields ?? [])
+              )
+            )
+          : [];
+      const exitFields =
+        traversedExitFields.length > 0
+          ? traversedExitFields
+          : currentStageConfig?.requiredExitFields ?? [];
       const missingParty =
         (requiresParty || exitFields.includes("partyId")) && !opportunity.partyId;
       const missingAmount =
@@ -359,7 +389,7 @@ export function useOpportunitiesViewModel(initialSearch?: string) {
         return false;
       }
     },
-    [fetchOpportunities, openMoveStageDialog, pipeline?.stages, state.page]
+    [fetchOpportunities, openCloseDialog, openMoveStageDialog, pipeline?.stages, state.page]
   );
 
   const handleCloseOpportunity = useCallback(
@@ -418,13 +448,6 @@ export function useOpportunitiesViewModel(initialSearch?: string) {
     },
     [fetchOpportunities, state.page]
   );
-
-  const openCloseDialog = useCallback((opp: CrmOpportunity, outcome: OpportunityStatus = "Won") => {
-    setActiveOpportunity(opp);
-    setCloseInitialOutcome(outcome);
-    setSubmitError(null);
-    setIsCloseOpen(true);
-  }, []);
 
   const openReopenDialog = useCallback((opp: CrmOpportunity) => {
     setActiveOpportunity(opp);

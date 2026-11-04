@@ -15,7 +15,8 @@ import { Input } from "@core/ui/input";
 import { Label } from "@core/ui/label";
 import { Textarea } from "@core/ui/textarea";
 import { Alert, AlertDescription, AlertTitle } from "@core/ui/alert";
-import { AlertCircle, ArrowRightCircle, Sparkles } from "lucide-react";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@core/ui/select";
+import { AlertCircle, ArrowRightCircle, ShieldCheck, ShieldAlert, Sparkles } from "lucide-react";
 import { cn } from "@core/common/utils";
 import type { CrmLead, ConvertLeadInput, ConvertLeadResult, DealKind } from "../../domain/entities/LeadEntity";
 
@@ -27,6 +28,16 @@ interface ConvertLeadDialogProps {
   isSubmitting?: boolean;
   submitError?: string | null;
 }
+
+const CONVERSION_STAGE_OPTIONS = [
+  { key: "default.discovery", label: "1. Discovery (Initial Stage)", requiresParty: false },
+  { key: "default.qualification", label: "2. Qualification", requiresParty: false },
+  { key: "default.solution_fit", label: "3. Solution Fit", requiresParty: false },
+  { key: "default.proposal", label: "4. Proposal (Party Required)", requiresParty: true },
+  { key: "default.negotiation", label: "5. Negotiation (Party Required)", requiresParty: true },
+];
+
+const CURRENCY_OPTIONS = ["SAR", "USD", "EUR", "AED", "GBP", "EGP"];
 
 export function ConvertLeadDialog({
   open,
@@ -42,6 +53,7 @@ export function ConvertLeadDialog({
   const [title, setTitle] = useState<string>("");
   const [amount, setAmount] = useState<number>(0);
   const [currency, setCurrency] = useState<string>("SAR");
+  const [targetStageKey, setTargetStageKey] = useState<string>("default.discovery");
   const [dealKind, setDealKind] = useState<DealKind>("NewBusiness");
   const [closeDate, setCloseDate] = useState<string>("");
   const [rationale, setRationale] = useState<string>("");
@@ -52,6 +64,7 @@ export function ConvertLeadDialog({
       setTitle(lead.title || `${lead.companyName || lead.fullName || "New"} Deal`);
       setAmount(lead.estimatedValue ?? 0);
       setCurrency(lead.currency || "SAR");
+      setTargetStageKey("default.discovery");
       setDealKind("NewBusiness");
       setCloseDate("");
       setRationale("");
@@ -66,6 +79,18 @@ export function ConvertLeadDialog({
     { key: "Services", label: t("crmLeads.conversion.dealKinds.services") || "Services" },
   ];
 
+  const hasVerifiedOrAutoParty = Boolean(
+    lead?.verifiedPartyId ||
+      lead?.organizationPartyId ||
+      lead?.personPartyId ||
+      lead?.companyName?.trim() ||
+      lead?.fullName?.trim() ||
+      lead?.firstName?.trim()
+  );
+
+  const selectedStageMeta = CONVERSION_STAGE_OPTIONS.find((s) => s.key === targetStageKey);
+  const lacksPartyForTargetStage = Boolean(selectedStageMeta?.requiresParty && !hasVerifiedOrAutoParty);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!lead) return;
@@ -75,8 +100,13 @@ export function ConvertLeadDialog({
       return;
     }
 
-    if (amount <= 0) {
+    if (!Number.isFinite(amount) || amount <= 0) {
       setValidationError(t("crmLeads.conversion.amountRequired") || "Estimated commercial amount must be greater than zero");
+      return;
+    }
+
+    if (lacksPartyForTargetStage) {
+      setValidationError("A verified Account or Contact (or company/contact name on the lead) is required before converting directly into Proposal or Negotiation.");
       return;
     }
 
@@ -87,6 +117,7 @@ export function ConvertLeadDialog({
       opportunityTitle: title.trim(),
       estimatedAmount: amount,
       currencyCode: currency,
+      targetStageKey,
       targetCloseDate: closeDate ? new Date(closeDate).toISOString() : undefined,
       dealKind,
       directCreateRationale: rationale.trim() || undefined,
@@ -133,6 +164,29 @@ export function ConvertLeadDialog({
             </div>
           )}
 
+          {/* Party Verification Status Indicator */}
+          {lead && (
+            <div className="flex items-center justify-between rounded-nx-md border border-nx-line bg-nx-ground px-3 py-2 text-xs">
+              <span className="text-nx-ink-3 font-medium">Account / Contact Verification:</span>
+              {lead.verifiedPartyId || lead.organizationPartyId || lead.personPartyId ? (
+                <span className="inline-flex items-center gap-1 font-semibold text-success">
+                  <ShieldCheck className="size-3.5" />
+                  <span>Verified Party Linked</span>
+                </span>
+              ) : hasVerifiedOrAutoParty ? (
+                <span className="inline-flex items-center gap-1 font-medium text-nx-accent">
+                  <ShieldCheck className="size-3.5" />
+                  <span>Auto-Provision from Lead Intake</span>
+                </span>
+              ) : (
+                <span className="inline-flex items-center gap-1 font-medium text-warning">
+                  <ShieldAlert className="size-3.5" />
+                  <span>Unlinked (Discovery–Solution Fit only)</span>
+                </span>
+              )}
+            </div>
+          )}
+
           {(submitError || validationError) && (
             <Alert variant="destructive" className="py-2 px-3">
               <AlertCircle className="size-4" />
@@ -156,22 +210,36 @@ export function ConvertLeadDialog({
               />
             </div>
 
-            {/* Estimated Commercial Amount */}
+            {/* Estimated Commercial Amount & Currency */}
             <div className="space-y-1.5">
               <Label htmlFor="opp-amount" className="text-xs font-semibold text-nx-ink">
                 {t("crmLeads.conversion.amountLabel")} ({currency}) *
               </Label>
-              <Input
-                id="opp-amount"
-                type="number"
-                min="0.01"
-                step="any"
-                value={amount || ""}
-                onChange={(e) => setAmount(Number(e.target.value))}
-                placeholder="10000"
-                className="h-9 text-xs border-nx-line bg-nx-ground text-nx-ink"
-                required
-              />
+              <div className="flex items-center gap-1.5">
+                <Select value={currency} onValueChange={setCurrency}>
+                  <SelectTrigger aria-label="Currency" className="h-9 w-24 text-xs border-nx-line bg-nx-ground text-nx-ink shrink-0">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {CURRENCY_OPTIONS.map((curr) => (
+                      <SelectItem key={curr} value={curr}>
+                        {curr}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <Input
+                  id="opp-amount"
+                  type="number"
+                  min="0.01"
+                  step="any"
+                  value={amount || ""}
+                  onChange={(e) => setAmount(Number(e.target.value))}
+                  placeholder="10000"
+                  className="h-9 text-xs border-nx-line bg-nx-ground text-nx-ink flex-1"
+                  required
+                />
+              </div>
             </div>
 
             {/* Target Close Date */}
@@ -186,6 +254,25 @@ export function ConvertLeadDialog({
                 onChange={(e) => setCloseDate(e.target.value)}
                 className="h-9 text-xs border-nx-line bg-nx-ground text-nx-ink"
               />
+            </div>
+
+            {/* Target Pipeline Stage */}
+            <div className="sm:col-span-2 space-y-1.5">
+              <Label htmlFor="opp-target-stage" className="text-xs font-semibold text-nx-ink">
+                Initial Pipeline Stage
+              </Label>
+              <Select value={targetStageKey} onValueChange={setTargetStageKey}>
+                <SelectTrigger id="opp-target-stage" className="h-9 text-xs border-nx-line bg-nx-ground text-nx-ink">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {CONVERSION_STAGE_OPTIONS.map((stg) => (
+                    <SelectItem key={stg.key} value={stg.key}>
+                      {stg.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
 
             {/* Deal Kind Selector */}
