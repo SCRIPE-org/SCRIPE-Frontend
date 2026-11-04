@@ -1,0 +1,44 @@
+export const en = {
+  academyOverview: {
+    title: "Academy Operations Command Center",
+    description: "Multi-Sport academy operations, athlete enrollment, training groups, sessions, and attendance.",
+    status: {
+      active: "Foundation Active",
+      sprintNotice: "Sprint 0 Architecture Baseline Verified",
+      noPrograms: "No operational programs configured yet.",
+    },
+    kpi: {
+      programs: "Active Programs",
+      offerings: "Term Offerings",
+      enrollments: "Active Enrollments",
+      trials: "Pending Trials",
+    },
+    quickActions: {
+      title: "Academy Workflows",
+      setupProgram: "Configure First Program",
+      setupProgramDesc: "Define sports, age criteria, and curriculum levels.",
+      intakeAthlete: "Register / Match Athlete",
+      intakeAthleteDesc: "Search-before-create with PartyKernel deduplication.",
+      scheduleTrial: "Schedule Evaluation Trial",
+      scheduleTrialDesc: "Technical assessment before group placement.",
+      manageGroups: "Training Groups & Rosters",
+      manageGroupsDesc: "Cohort capacity and coach assignment rules.",
+      viewSessions: "Training Sessions & Schedule",
+      viewSessionsDesc: "Weekly sessions at external or internal venues.",
+      attendance: "Attendance Register",
+      attendanceDesc: "Coach attendance capture with audit history.",
+    },
+    empty: {
+      title: "Welcome to SCRIPE Academy",
+      description: "Your academy foundation is active and verified. Begin by configuring your first sport, program offerings, and external training locations.",
+    },
+    unauthorized: {
+      title: "Access Restricted",
+      description: "You do not have permission to view the Academy command center, or your tenant has not activated the Academy capability pack.",
+    },
+    errors: {
+      loadFailed: "Failed to load Academy overview",
+      retry: "Retry Connection",
+    },
+  },
+};
