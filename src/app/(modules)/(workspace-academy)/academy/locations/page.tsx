@@ -1,6 +1,6 @@
 import { Metadata } from "next";
 import { ModuleErrorBoundary } from "@core/ui/module-error-boundary";
-import { ExternalLocationsView } from "@modules/academy/locations";
+import { ExternalLocationsView } from "@modules/academy/locations/src/presentation/views/ExternalLocationsView";
 
 export const metadata: Metadata = {
   title: "External Locations",

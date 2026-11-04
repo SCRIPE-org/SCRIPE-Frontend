@@ -1,3 +1,5 @@
+"use client";
+
 import { useState, useCallback, useEffect } from "react";
 import type { IAcademyAthletesRepository } from "../../domain/interfaces/IAcademyAthletesRepository";
 import type {

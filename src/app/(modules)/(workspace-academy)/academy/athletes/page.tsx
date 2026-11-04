@@ -1,6 +1,6 @@
 import { Metadata } from "next";
 import { ModuleErrorBoundary } from "@core/ui/module-error-boundary";
-import { AcademyAthletesView } from "@modules/academy/athletes";
+import { AcademyAthletesView } from "@modules/academy/athletes/src/presentation/views/AcademyAthletesView";
 
 export const metadata: Metadata = {
   title: "Academy Athletes & Families",

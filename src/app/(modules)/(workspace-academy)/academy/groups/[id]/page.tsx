@@ -1,6 +1,6 @@
 import { Metadata } from "next";
 import { ModuleErrorBoundary } from "@core/ui/module-error-boundary";
-import { TrainingGroupDetailView } from "@modules/academy/groups";
+import { TrainingGroupDetailView } from "@modules/academy/groups/src/presentation/views/TrainingGroupDetailView";
 
 export const metadata: Metadata = {
   title: "Academy Training Group Details & Rosters",
