@@ -30,7 +30,7 @@ import type { CreateContactInput } from "../../domain/entities/ContactEntity";
 export interface ContactCandidatePersonLookup {
   partyId: string;
   legalNameEn: string;
-  legalNameAr: string | null;
+  legalNameAr?: string | null;
   partyKind: string;
   isVerified: boolean;
 }
@@ -38,7 +38,7 @@ export interface ContactCandidatePersonLookup {
 export interface ContactAccountLookup {
   id: string;
   partyLegalNameEn: string;
-  partyLegalNameAr: string | null;
+  partyLegalNameAr?: string | null;
 }
 
 interface CreateContactDialogProps {

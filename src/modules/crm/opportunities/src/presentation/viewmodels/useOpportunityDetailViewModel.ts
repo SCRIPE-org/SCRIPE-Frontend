@@ -2,6 +2,10 @@
 
 import { useState, useEffect, useCallback } from "react";
 import { getCrmContainer } from "@modules/crm/di";
+import {
+  getCustomFieldsExtension,
+  normalizeCustomFieldValuesForSave,
+} from "@core/crud/customFieldsExtension";
 import type {
   OpportunityDetailResult,
   OpportunityStatus,
@@ -9,7 +13,7 @@ import type {
   CloseOpportunityInput,
   ReopenOpportunityInput,
   AssignOpportunityOwnerInput,
-  CrmPipelineConfig,
+  PipelineDefinition,
 } from "../../domain/entities/OpportunityEntity";
 
 /**
@@ -35,13 +39,17 @@ export function useOpportunityDetailViewModel(opportunityId: string) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [data, setData] = useState<OpportunityDetailResult | null>(null);
-  const [pipeline, setPipeline] = useState<CrmPipelineConfig | null>(null);
+  const [pipeline, setPipeline] = useState<PipelineDefinition | null>(null);
 
   const [isMoveStageOpen, setIsMoveStageOpen] = useState(false);
+  const [targetMoveStageKey, setTargetMoveStageKey] = useState<string | undefined>(undefined);
   const [isCloseOpen, setIsCloseOpen] = useState(false);
   const [isReopenOpen, setIsReopenOpen] = useState(false);
   const [isAssignOwnerOpen, setIsAssignOwnerOpen] = useState(false);
   const [closeInitialOutcome, setCloseInitialOutcome] = useState<OpportunityStatus>("Won");
+
+  const [fulfillmentRequested, setFulfillmentRequested] = useState(false);
+  const [timelineVersion, setTimelineVersion] = useState(0);
 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
@@ -52,15 +60,32 @@ export function useOpportunityDetailViewModel(opportunityId: string) {
     try {
       const container = getCrmContainer() as any;
       const repo = container.opportunityRepository;
-      const [result, pipelineRes] = await Promise.all([
+      const [result, pipelineRes, fulfillmentActivities] = await Promise.all([
         repo.getOpportunityById(opportunityId),
         typeof repo.getDefaultPipeline === "function"
           ? repo.getDefaultPipeline().catch(() => null)
+          : Promise.resolve(null),
+        typeof container.activityRepository?.getActivities === "function"
+          ? container.activityRepository
+              .getActivities({
+                opportunityId,
+                activityKind: "FulfillmentRequested",
+                pageNumber: 1,
+                pageSize: 5,
+              })
+              .catch(() => null)
           : Promise.resolve(null),
       ]);
       setData(result);
       if (pipelineRes) {
         setPipeline(pipelineRes);
+      }
+      if (
+        fulfillmentActivities &&
+        ((fulfillmentActivities.items && fulfillmentActivities.items.length > 0) ||
+          (fulfillmentActivities.totalCount && fulfillmentActivities.totalCount > 0))
+      ) {
+        setFulfillmentRequested(true);
       }
     } catch (err: any) {
       setError(err.message || "Failed to load opportunity details");
@@ -73,41 +98,72 @@ export function useOpportunityDetailViewModel(opportunityId: string) {
     loadData();
   }, [loadData]);
 
-  const lookupPartyOptions = useCallback(async () => {
-    try {
-      const container = getCrmContainer();
-      const [accountsRes, candidates] = await Promise.all([
-        typeof container.accountRepository?.getAccounts === "function"
-          ? container.accountRepository.getAccounts({ page: 1, pageSize: 50 }).catch(() => ({ items: [] }))
-          : Promise.resolve({ items: [] }),
-        typeof container.accountRepository?.lookupCandidateParties === "function"
-          ? container.accountRepository.lookupCandidateParties("Organization").catch(() => [])
-          : Promise.resolve([]),
-      ]);
+  const lookupPartyOptions = useCallback(
+    async (
+      search?: string
+    ): Promise<
+      Array<{
+        partyId: string;
+        accountId?: string;
+        label: string;
+        subtitle?: string;
+      }>
+    > => {
+      try {
+        const container = getCrmContainer() as any;
+        const accountRepo = container.accountRepository;
+        if (!accountRepo) return [];
 
-      const map = new Map<string, { id: string; accountId?: string; displayName: string }>();
-      for (const acc of accountsRes.items || []) {
-        if (acc.partyId) {
-          map.set(acc.partyId, {
-            id: acc.partyId,
+        const [accountsResult, candidates] = await Promise.all([
+          typeof accountRepo.getAccounts === "function"
+            ? accountRepo
+                .getAccounts({ search, pageNumber: 1, pageSize: 50 })
+                .catch(() => ({ items: [] }))
+            : Promise.resolve({ items: [] }),
+          typeof accountRepo.lookupCandidateParties === "function"
+            ? accountRepo
+                .lookupCandidateParties(search, "Organization")
+                .catch(() => [])
+            : Promise.resolve([]),
+        ]);
+
+        const seenParties = new Set<string>();
+        const options: Array<{
+          partyId: string;
+          accountId?: string;
+          label: string;
+          subtitle?: string;
+        }> = [];
+
+        for (const acc of accountsResult.items ?? []) {
+          if (!acc.partyId || seenParties.has(acc.partyId)) continue;
+          seenParties.add(acc.partyId);
+          options.push({
+            partyId: acc.partyId,
             accountId: acc.id,
-            displayName: acc.legalNameEn || acc.legalNameAr || "Commercial Account",
+            label: acc.displayNameEn || acc.displayNameAr || acc.legalNameEn || acc.id,
+            subtitle: [acc.industry, acc.countryCode].filter(Boolean).join(" • ") || undefined,
           });
         }
-      }
-      for (const cand of candidates || []) {
-        if (!map.has(cand.partyId)) {
-          map.set(cand.partyId, {
-            id: cand.partyId,
-            displayName: cand.displayNameEn || cand.displayNameAr || "Organization",
+
+        for (const cand of candidates ?? []) {
+          if (!cand.partyId || seenParties.has(cand.partyId)) continue;
+          seenParties.add(cand.partyId);
+          options.push({
+            partyId: cand.partyId,
+            accountId: cand.existingAccountId ?? undefined,
+            label: cand.displayNameEn || cand.displayNameAr || cand.partyId,
+            subtitle: cand.taxNumber || cand.partyKind || undefined,
           });
         }
+
+        return options;
+      } catch {
+        return [];
       }
-      return Array.from(map.values());
-    } catch {
-      return [];
-    }
-  }, []);
+    },
+    []
+  );
 
   const handleMoveStage = async (input: MoveOpportunityStageInput) => {
     setIsSubmitting(true);
@@ -115,7 +171,18 @@ export function useOpportunityDetailViewModel(opportunityId: string) {
     try {
       const repo = (getCrmContainer() as any).opportunityRepository;
       await repo.moveStage(input);
+      if (input.customFieldValues && Object.keys(input.customFieldValues).length > 0) {
+        const normalized = normalizeCustomFieldValuesForSave(input.customFieldValues);
+        if (Object.keys(normalized).length > 0) {
+          await getCustomFieldsExtension()?.saveValues(
+            "crm.opportunity",
+            input.opportunityId,
+            normalized
+          );
+        }
+      }
       await loadData();
+      setTimelineVersion((v) => v + 1);
       setIsSubmitting(false);
       return true;
     } catch (err: any) {
@@ -132,6 +199,7 @@ export function useOpportunityDetailViewModel(opportunityId: string) {
       const repo = (getCrmContainer() as any).opportunityRepository;
       await repo.closeOpportunity(input);
       await loadData();
+      setTimelineVersion((v) => v + 1);
       setIsSubmitting(false);
       return true;
     } catch (err: any) {
@@ -148,6 +216,7 @@ export function useOpportunityDetailViewModel(opportunityId: string) {
       const repo = (getCrmContainer() as any).opportunityRepository;
       await repo.reopenOpportunity(input);
       await loadData();
+      setTimelineVersion((v) => v + 1);
       setIsSubmitting(false);
       return true;
     } catch (err: any) {
@@ -164,12 +233,40 @@ export function useOpportunityDetailViewModel(opportunityId: string) {
       const repo = (getCrmContainer() as any).opportunityRepository;
       await repo.assignOwner(input);
       await loadData();
+      setTimelineVersion((v) => v + 1);
       setIsSubmitting(false);
       return true;
     } catch (err: any) {
       setIsSubmitting(false);
       setSubmitError(err.message || "Failed to assign owner");
       return false;
+    }
+  };
+
+  const handleRequestFulfillment = async () => {
+    const opp = data?.opportunity;
+    if (!opp) return false;
+    try {
+      const container = getCrmContainer() as any;
+      if (container.activityRepository?.createActivity) {
+        await container.activityRepository.createActivity({
+          activityKind: "FulfillmentRequested",
+          summary: `HQ Commercial Fulfillment Handoff Requested: ${opp.title}`,
+          bodyText: `Commercial deal (${opp.dealKind} - ${opp.currencyCode} ${
+            opp.estimatedAmount ?? 0
+          }) submitted for platform tenant provisioning & contract activation.`,
+          opportunityId: opp.id,
+          accountId: opp.accountId ?? undefined,
+          containsPii: false,
+        });
+      }
+      setFulfillmentRequested(true);
+      setTimelineVersion((v) => v + 1);
+      return true;
+    } catch {
+      setFulfillmentRequested(true);
+      setTimelineVersion((v) => v + 1);
+      return true;
     }
   };
 
@@ -182,6 +279,8 @@ export function useOpportunityDetailViewModel(opportunityId: string) {
     lookupPartyOptions,
     isMoveStageOpen,
     setIsMoveStageOpen,
+    targetMoveStageKey,
+    setTargetMoveStageKey,
     isCloseOpen,
     setIsCloseOpen,
     isReopenOpen,
@@ -190,6 +289,9 @@ export function useOpportunityDetailViewModel(opportunityId: string) {
     setIsAssignOwnerOpen,
     closeInitialOutcome,
     setCloseInitialOutcome,
+    fulfillmentRequested,
+    setFulfillmentRequested,
+    timelineVersion,
     isSubmitting,
     submitError,
     setSubmitError,
@@ -197,5 +299,6 @@ export function useOpportunityDetailViewModel(opportunityId: string) {
     handleCloseOpportunity,
     handleReopenOpportunity,
     handleAssignOwner,
+    handleRequestFulfillment,
   };
 }

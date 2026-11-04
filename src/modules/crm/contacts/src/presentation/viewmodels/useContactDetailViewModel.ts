@@ -57,7 +57,10 @@ export function useContactDetailViewModel(contactId: string) {
         setAccountOptions(
           (accountsRes?.items || []).map((a) => ({
             id: a.id,
-            displayName: a.legalNameEn || a.legalNameAr || "Commercial Account",
+            displayName:
+              a.partyLegalNameEn ||
+              a.partyLegalNameAr ||
+              "Commercial Account",
           }))
         );
       });

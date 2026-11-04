@@ -21,6 +21,7 @@ import { AlertCircle, Building2, ShieldAlert } from "lucide-react";
 import {
   CustomFieldsSection,
   encodeCustomFieldName,
+  useCustomFieldsFormFields,
 } from "@core/crud/customFieldsExtension";
 import type {
   CrmOpportunity,
@@ -97,6 +98,34 @@ export function MoveStageDialog({
   const [customFieldValues, setCustomFieldValues] = useState<Record<string, unknown>>({});
   const [partyOptions, setPartyOptions] = useState<MoveStagePartyOption[]>([]);
   const [validationError, setValidationError] = useState<string | null>(null);
+
+  const activeOppId = open && opportunity ? opportunity.id : undefined;
+  const {
+    fieldConfigs: oppCustomFieldConfigs,
+    isLoading: isOppCfLoading,
+    refetch: refetchOppCustomFields,
+  } = useCustomFieldsFormFields(
+    activeOppId ? "crm.opportunity" : undefined,
+    activeOppId
+  );
+
+  useEffect(() => {
+    if (oppCustomFieldConfigs.length > 0) {
+      setCustomFieldValues((prev) => {
+        const next: Record<string, unknown> = { ...prev };
+        for (const fc of oppCustomFieldConfigs) {
+          if (
+            next[fc.name] === undefined &&
+            fc.defaultValue !== undefined &&
+            fc.defaultValue !== null
+          ) {
+            next[fc.name] = fc.defaultValue;
+          }
+        }
+        return next;
+      });
+    }
+  }, [oppCustomFieldConfigs]);
 
   const effectiveStages =
     pipeline?.stages && pipeline.stages.length > 0
@@ -466,6 +495,9 @@ export function MoveStageDialog({
           <CustomFieldsSection
             entityTypeKey="crm.opportunity"
             entityDisplayName={t("crmOpportunities.title") || "Commercial Opportunity"}
+            configs={oppCustomFieldConfigs}
+            isLoading={isOppCfLoading}
+            onFieldCreated={() => void refetchOppCustomFields()}
             values={customFieldValues}
             onChange={(key, val) => setCustomFieldValues((prev) => ({ ...prev, [key]: val }))}
             disabled={isSubmitting}

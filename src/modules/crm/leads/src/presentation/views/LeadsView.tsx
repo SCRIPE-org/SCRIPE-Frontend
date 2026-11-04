@@ -1,4 +1,5 @@
 "use client";
+import { useRouter } from "next/navigation";
 import { useI18n } from "@core/providers/i18n-provider";
 import { usePermission } from "@core/hooks/use-permission";
 import { Alert, AlertTitle, AlertDescription } from "@core/ui/alert";
@@ -6,7 +7,7 @@ import { Button } from "@core/ui/button";
 import { Input } from "@core/ui/input";
 import { EmptyState } from "@core/ui/empty-state";
 import { Card } from "@core/ui/card";
-import { AlertCircle, RefreshCw, Plus, Search, User, Mail, Phone, Calendar, CheckCircle2, Link as LinkIcon, Sparkles, Building2, ChevronLeft, ChevronRight, } from "lucide-react";
+import { AlertCircle, RefreshCw, Plus, Search, User, Mail, Phone, Calendar, CheckCircle2, Link as LinkIcon, Sparkles, Building2, ChevronLeft, ChevronRight, ArrowUpRight, } from "lucide-react";
 import { cn } from "@core/common/utils";
 import { CRM_PERMISSIONS, CrmShell, CrmSectionHeader } from "@modules/crm";
 import { GenericCrudView } from "@core/crud/components/generic-crud-view";
@@ -18,7 +19,8 @@ import { LinkPartyDialog } from "../components/LinkPartyDialog";
 import { ConvertLeadDialog } from "../components/ConvertLeadDialog";
 import { useLeadsViewModel } from "../viewmodels/useLeadsViewModel";
 import type { CrmLead, LeadStatus } from "../../domain/entities/LeadEntity";
-export function LeadsView() { const { t, language } = useI18n();
+export function LeadsView() { const router = useRouter();
+  const { t, language } = useI18n();
   const isRtl = language === "ar";
   const canCreateLead = usePermission(CRM_PERMISSIONS.LEADS_CREATE);
   const viewModel = useLeadsViewModel();
@@ -34,8 +36,15 @@ export function LeadsView() { const { t, language } = useI18n();
       { key: "Disqualified", label: t("crmLeads.status.disqualified") }, ];
   const columns: CrudColumn<CrmLead>[] = [
       { key: "title", label: t("crmLeads.table.title"), sortable: true,
-        render: (_val, lead: CrmLead) => ( <div className="max-w-xs">
-            <span className="font-semibold text-nx-ink line-clamp-1 block">{lead.title}</span>
+        render: (_val, lead: CrmLead) => ( <div
+            onClick={() => router.push(`/crm/leads/${lead.id}`)}
+            data-testid={`lead-row-link-${lead.id}`}
+            className="max-w-xs cursor-pointer group"
+          >
+            <span className="font-semibold text-nx-ink group-hover:text-nx-accent transition-colors line-clamp-1 flex items-center gap-1">
+              <span>{lead.title}</span>
+              <ArrowUpRight className="size-3 opacity-0 group-hover:opacity-100 transition-opacity shrink-0" />
+            </span>
             {lead.notes && ( <span className="text-[11px] text-nx-ink-3 line-clamp-1 mt-0.5">{lead.notes}</span> )}
           </div> ), }, { key: "fullName", label: t("crmLeads.table.contact"), sortable: true, render: (_val, lead: CrmLead) => (
           <div className="flex items-center gap-1.5">
@@ -162,10 +171,11 @@ export function LeadsView() { const { t, language } = useI18n();
         return (
           <div
             data-testid={`lead-kanban-card-${lead.id}`}
-            className="space-y-2.5 rounded-nx-md border border-nx-line bg-nx-raised p-3 hover:border-nx-line-hi transition-all text-nx-ink overflow-hidden"
+            onClick={() => router.push(`/crm/leads/${lead.id}`)}
+            className="space-y-2.5 rounded-nx-md border border-nx-line bg-nx-raised p-3 hover:border-nx-line-hi transition-all text-nx-ink overflow-hidden cursor-pointer"
           >
             <div className="flex items-start justify-between gap-2">
-              <span className="font-semibold text-xs text-nx-ink line-clamp-1">{lead.title}</span>
+              <span className="font-semibold text-xs text-nx-ink hover:text-nx-accent line-clamp-1">{lead.title}</span>
               <LeadStatusBadge status={lead.status} />
             </div>
             <div className="text-xs text-nx-ink-2 truncate">
@@ -258,7 +268,8 @@ export function LeadsView() { const { t, language } = useI18n();
       }, renderCardGridItem: (lead: CrmLead, actions: React.ReactNode) => (
         <div
           data-testid={`lead-grid-card-${lead.id}`}
-          className="flex flex-col justify-between gap-3 rounded-nx-lg border border-nx-line bg-nx-surface p-4 hover:border-nx-line-hi transition-all text-nx-ink"
+          onClick={() => router.push(`/crm/leads/${lead.id}`)}
+          className="flex flex-col justify-between gap-3 rounded-nx-lg border border-nx-line bg-nx-surface p-4 hover:border-nx-line-hi transition-all text-nx-ink cursor-pointer"
         >
           <div className="space-y-2">
             <div className="flex items-start justify-between gap-2">
@@ -277,7 +288,7 @@ export function LeadsView() { const { t, language } = useI18n();
                 {lead.currency || "SAR"} {lead.estimatedValue.toLocaleString()}
               </div> )}
           </div>
-          <div className="border-t border-nx-line pt-3 flex flex-wrap items-center justify-between gap-2">
+          <div className="border-t border-nx-line pt-3 flex flex-wrap items-center justify-between gap-2" onClick={(e) => e.stopPropagation()}>
             <span className="text-[11px] text-nx-ink-3 shrink-0">{lead.source || "Direct"}</span>
             <div className="flex flex-wrap items-center gap-1.5 [&_div]:flex [&_div]:flex-wrap [&_div]:gap-1.5">{actions}</div>
           </div>
@@ -320,6 +331,8 @@ export function LeadsView() { const { t, language } = useI18n();
               <p className="text-nx-ink-2 whitespace-pre-wrap">{lead.notes}</p>
             </div> )}
         </div> ), columns, getActions: (_vm: any, _t: any): CrudAction<CrmLead>[] => [
+        { label: t("crmLeads.actions.viewDetails") || "Lead 360",
+          icon: <ArrowUpRight className="size-3.5" />, onClick: (lead: CrmLead) => router.push(`/crm/leads/${lead.id}`), },
         { label: t("crmLeads.actions.qualify"),
           icon: <CheckCircle2 className="size-3.5" />, onClick: (lead: CrmLead) => openQualifyDialog(lead),
           show: (lead: CrmLead) =>

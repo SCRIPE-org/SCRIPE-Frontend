@@ -118,6 +118,7 @@ describe("AccountsView Component", () => {
         }),
         createAccount: vi.fn().mockResolvedValue(mockAccounts[0]),
         updateAccount: vi.fn().mockResolvedValue(mockAccounts[0]),
+        lookupCandidateParties: vi.fn().mockResolvedValue([]),
       },
       contactService: {} as any,
       contactRepository: {

@@ -11,4 +11,6 @@ export * from "./src/domain/constants/permission-constants";
 export * from "./src/presentation/components/CrmShell";
 export * from "./src/presentation/viewmodels/useCrmShellViewModel";
 export * from "./src/presentation/viewmodels/useCrmOverviewViewModel";
+export * from "./src/presentation/viewmodels/useCrmReportsViewModel";
 export * from "./src/presentation/views/CrmOverviewView";
+export * from "./src/presentation/views/CrmReportsView";

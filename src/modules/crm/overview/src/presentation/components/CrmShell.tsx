@@ -15,12 +15,21 @@ import {
   Plus,
   Contact,
   Clock,
+  BarChart3,
 } from "lucide-react";
 import { Button } from "@core/ui/button";
 import { Input } from "@core/ui/input";
 import { cn } from "@core/common/utils";
 
-export type CrmTabId = "overview" | "leads" | "deals" | "accounts" | "contacts" | "activities" | "pipelines";
+export type CrmTabId =
+  | "overview"
+  | "leads"
+  | "deals"
+  | "accounts"
+  | "contacts"
+  | "activities"
+  | "pipelines"
+  | "reports";
 
 interface CrmShellProps {
   activeTab: CrmTabId;
@@ -53,6 +62,7 @@ export function CrmShell({
   const canReadAccounts = usePermission(CRM_PERMISSIONS.ACCOUNTS_READ);
   const canReadContacts = usePermission(CRM_PERMISSIONS.CONTACTS_READ);
   const canReadActivities = usePermission(CRM_PERMISSIONS.ACTIVITIES_READ);
+  const canReadReports = usePermission(CRM_PERMISSIONS.REPORTS_READ);
   const canCreateOpportunities = usePermission(CRM_PERMISSIONS.OPPORTUNITIES_CREATE);
   const canCreateLeads = usePermission(CRM_PERMISSIONS.LEADS_CREATE);
 
@@ -104,6 +114,12 @@ export function CrmShell({
       icon: GitFork,
       visible: canReadPipelines,
     },
+    {
+      id: "reports",
+      label: t("crm.tabs.reports") || "Reports",
+      icon: BarChart3,
+      visible: canReadReports,
+    },
   ];
 
   return (
@@ -129,6 +145,7 @@ export function CrmShell({
                   key={tab.id}
                   type="button"
                   variant="ghost"
+                  data-testid={`crm-tab-${tab.id}`}
                   onClick={() => {
                     onTabChange(tab.id);
                     if (tab.id === "overview") router.push("/crm");
@@ -138,6 +155,7 @@ export function CrmShell({
                     else if (tab.id === "contacts") router.push("/crm/contacts");
                     else if (tab.id === "activities") router.push("/crm/activities");
                     else if (tab.id === "pipelines") router.push("/crm/pipelines");
+                    else if (tab.id === "reports") router.push("/crm/reports");
                   }}
                   aria-current={isActive ? "page" : undefined}
                   className={cn(

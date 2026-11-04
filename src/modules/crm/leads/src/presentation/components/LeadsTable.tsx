@@ -1,5 +1,6 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import { useI18n } from "@core/providers/i18n-provider";
 import { User, Mail, Phone, Calendar, ArrowUpRight } from "lucide-react";
 import { Button } from "@core/ui/button";
@@ -14,6 +15,7 @@ interface LeadsTableProps {
 }
 
 export function LeadsTable({ leads, className }: LeadsTableProps) {
+  const router = useRouter();
   const { t, language } = useI18n();
   const isRtl = language === "ar";
 
@@ -63,11 +65,12 @@ export function LeadsTable({ leads, className }: LeadsTableProps) {
               return (
                 <tr
                   key={lead.id}
-                  className="group hover:bg-nx-raised/40 transition-colors duration-nx-micro"
+                  onClick={() => router.push(`/crm/leads/${lead.id}`)}
+                  className="group hover:bg-nx-raised/40 transition-colors duration-nx-micro cursor-pointer"
                 >
                   {/* Title */}
                   <td className="px-4 py-3 max-w-xs">
-                    <span className="font-semibold text-nx-ink line-clamp-1 block">
+                    <span className="font-semibold text-nx-ink group-hover:text-nx-accent transition-colors line-clamp-1 block">
                       {lead.title}
                     </span>
                     {lead.notes && (
@@ -140,6 +143,10 @@ export function LeadsTable({ leads, className }: LeadsTableProps) {
                     <Button
                       variant="ghost"
                       size="sm"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        router.push(`/crm/leads/${lead.id}`);
+                      }}
                       className="h-7 px-2 text-xs text-nx-ink-2 hover:text-nx-ink hover:bg-nx-raised gap-1"
                     >
                       <span>{t("crmLeads.actions.viewDetails")}</span>

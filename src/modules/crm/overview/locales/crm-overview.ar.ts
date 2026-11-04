@@ -11,6 +11,7 @@ export const ar = {
       contacts: "جهات الاتصال",
       activities: "الأنشطة",
       pipelines: "مسارات الصفقات",
+      reports: "التقارير والتحليلات",
     },
     actions: {
       createDeal: "صفقة جديدة",

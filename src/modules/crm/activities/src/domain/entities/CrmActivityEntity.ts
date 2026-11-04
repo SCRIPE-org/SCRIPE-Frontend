@@ -8,6 +8,8 @@ export type SalesActivityKind =
   | "MeetingLog"
   | "CallLog"
   | "FollowUpLinked"
+  | "CommunicationSent"
+  | "FulfillmentRequested"
   | "StatusChange"
   | "StageTransition"
   | "DocumentGenerated";

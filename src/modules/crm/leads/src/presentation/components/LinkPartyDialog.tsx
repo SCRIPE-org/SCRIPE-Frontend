@@ -28,7 +28,7 @@ import type { CrmLead, LinkPartyToLeadInput } from "../../domain/entities/LeadEn
 export interface LeadCandidatePartyOption {
   partyId: string;
   legalNameEn: string;
-  legalNameAr: string | null;
+  legalNameAr?: string | null;
   partyKind: string;
   isVerified: boolean;
 }

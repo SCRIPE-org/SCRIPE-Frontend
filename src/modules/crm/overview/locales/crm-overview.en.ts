@@ -11,6 +11,7 @@ export const en = {
       contacts: "Contacts",
       activities: "Activities",
       pipelines: "Pipelines",
+      reports: "Reports & Analytics",
     },
     actions: {
       createDeal: "New Deal",

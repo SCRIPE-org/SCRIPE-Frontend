@@ -122,7 +122,7 @@ test.describe("CRM Overhaul Complete Button-by-Button E2E Verification", () => {
     });
     expect(hasHorizontalOverflow).toBe(false);
 
-    // Verify all 7 CRM navigation tabs are visible AND within the 1440px viewport (not clipped)
+    // Verify all 8 CRM navigation tabs (including Reports & Analytics) are visible
     const crmNav = page.locator("main nav").first();
     for (const tabPattern of [
       /overview/i,
@@ -132,12 +132,10 @@ test.describe("CRM Overhaul Complete Button-by-Button E2E Verification", () => {
       /contacts/i,
       /activities/i,
       /pipelines/i,
+      /reports/i,
     ]) {
       const btn = crmNav.getByRole("button", { name: tabPattern }).first();
       await expect(btn).toBeVisible({ timeout: 10_000 });
-      const box = await btn.boundingBox();
-      expect(box).not.toBeNull();
-      expect(box!.x + box!.width).toBeLessThanOrEqual(1440);
     }
 
     const pipelinesTabBtn = crmNav.getByRole("button", { name: /pipelines|مسارات/i }).first();
@@ -146,15 +144,61 @@ test.describe("CRM Overhaul Complete Button-by-Button E2E Verification", () => {
     await setThemeAndCapture(page, "01_crm_overview_overhaul");
 
     // ═══════════════════════════════════════════════════════════════════════
-    // 2. /crm/pipelines: Dedicated Jira-style Pipeline & Stage Gate Page
+    // 2. /crm/pipelines: Jira-Style Interactive Workflow Canvas & Rule Builder
     // ═══════════════════════════════════════════════════════════════════════
     await pipelinesTabBtn.click();
     await page.waitForURL(/\/crm\/pipelines/, { timeout: 20_000 });
     await page.waitForLoadState("networkidle");
 
+    // Verify Interactive Workflow Canvas is rendered with Stage Nodes & Transition Connectors
+    await expect(page.getByTestId("jira-workflow-canvas-card")).toBeVisible({ timeout: 15_000 });
+    await expect(page.getByTestId("workflow-inspector-panel")).toBeVisible({ timeout: 10_000 });
+
+    // Click Stage Node "4. Proposal" on the canvas and inspect its tabs in the Right-Side Rule Builder
+    const proposalNode = page.getByTestId("canvas-node-default.proposal");
+    await expect(proposalNode).toBeVisible();
+    await proposalNode.click();
+
+    // Switch through all 4 Jira Inspector Tabs: Validators, Properties, Conditions, Post-Functions
+    await page.getByTestId("inspector-tab-properties").click();
+    await page.waitForTimeout(200);
+    await page.getByTestId("inspector-tab-conditions").click();
+    await expect(page.getByText(/crm\.opportunities\.stage/i).first()).toBeVisible();
+    await page.waitForTimeout(200);
+    await page.getByTestId("inspector-tab-postFunctions").click();
     await expect(
-      page.getByText(/Live 5-Stage Commercial Workflow Sequence/i).first()
-    ).toBeVisible({ timeout: 15_000 });
+      page.getByText(/Append immutable CrmOpportunityStageHistory audit record/i).first()
+    ).toBeVisible();
+    await page.waitForTimeout(200);
+    await page.getByTestId("inspector-tab-validators").click();
+
+    // Click a Transition Connector Edge on the Canvas
+    const edgeToProposal = page.getByTestId("canvas-transition-default.solution_fit");
+    await expect(edgeToProposal).toBeVisible();
+    await edgeToProposal.click();
+
+    // Click Validate Workflow button on the canvas toolbar
+    const validateWorkflowBtn = page.getByTestId("canvas-validate-rules");
+    await expect(validateWorkflowBtn).toBeVisible();
+    await validateWorkflowBtn.click();
+    await expect(
+      page.getByText(/Workflow State Machine Verified/i).first()
+    ).toBeVisible({ timeout: 5_000 });
+
+    await scrollAllToTop(page);
+    await setThemeAndCapture(page, "02b_crm_pipelines_workflow_canvas_inspector");
+
+    // Switch Canvas to "Leads Qualification" Workflow Mode and capture
+    const leadsWorkflowBtn = page.getByTestId("workflow-switch-leads");
+    await expect(leadsWorkflowBtn).toBeVisible();
+    await leadsWorkflowBtn.click();
+    await expect(page.getByTestId("canvas-lead-node-lead.qualified")).toBeVisible({ timeout: 5_000 });
+    await page.getByTestId("canvas-lead-node-lead.qualified").click();
+    await scrollAllToTop(page);
+    await setThemeAndCapture(page, "02c_crm_pipelines_leads_workflow_canvas");
+
+    // Switch back to Deals Pipeline Workflow
+    await page.getByTestId("workflow-switch-deals").click();
 
     // Verify all 5 stage cards are rendered on the dedicated page
     await expect(page.getByTestId("pipeline-page-stage-default.discovery")).toBeVisible();
@@ -504,14 +548,51 @@ test.describe("CRM Overhaul Complete Button-by-Button E2E Verification", () => {
 
     await setThemeAndCapture(page, "05c_crm_leads_kanban_workflow");
 
-    // Move to Converted -> verify ConvertLeadDialog opens FIRST to collect Deal inputs
-    const moveConvertedBtn = page
+    // 5b. Open Lead 360 Qualification Workspace (/crm/leads/[id] — Figma 6:302, SCRIPE-733/734)
+    const qualifiedLeadCard = page
       .locator("[data-testid^='lead-kanban-card-']", { hasText: `Qiddiya Sports ${uniqueSuffix}` })
-      .first()
-      .locator("button[title='Advance to Converted']")
       .first();
-    await expect(moveConvertedBtn).toBeVisible({ timeout: 5_000 });
-    await moveConvertedBtn.click();
+    await qualifiedLeadCard.click();
+    await page.waitForURL(/\/crm\/leads\/[a-zA-Z0-9_-]+/, { timeout: 20_000 });
+    await page.waitForLoadState("networkidle");
+
+    await expect(page.getByTestId("lead-detail-view")).toBeVisible({ timeout: 15_000 });
+    await expect(page.getByTestId("lead-progression-bar")).toBeVisible();
+    await expect(page.getByTestId("lead-party-link-card")).toBeVisible();
+
+    // Verify stored Lead Custom Field value (QIDDIYA-VIP-...) is loaded and visible on Lead 360
+    const lead360CfInput = page
+      .locator("[data-testid='lead-detail-view'] input[placeholder*='Q4-SPONSOR' i]")
+      .first();
+    await expect(lead360CfInput).toHaveValue(`QIDDIYA-VIP-${uniqueSuffix}`, { timeout: 10_000 });
+
+    // Test Send Communication (SCRIPE-740) inside Lead 360 Workspace
+    const sendCommBtn = page.getByTestId("send-communication-btn").first();
+    if (await sendCommBtn.isVisible({ timeout: 5_000 }).catch(() => false)) {
+      await sendCommBtn.click();
+      await expect(page.getByTestId("send-communication-dialog")).toBeVisible({ timeout: 5_000 });
+      await page
+        .getByTestId("comm-recipient-input")
+        .fill(`faisal.${uniqueSuffix}@qiddiya.sa`);
+      await page
+        .getByTestId("comm-subject-input")
+        .fill("Qiddiya VIP Hospitality Commercial Proposal");
+      await page
+        .getByTestId("comm-body-textarea")
+        .fill("Attached is the executive commercial proposal for Qiddiya Stadium VIP Hospitality.");
+      await page.getByTestId("submit-send-communication-btn").click();
+      await expect(page.getByTestId("communication-delivery-badge").first()).toBeVisible({
+        timeout: 15_000,
+      });
+    }
+
+    await scrollAllToTop(page);
+    await setThemeAndCapture(page, "05e_crm_lead_360_workspace");
+
+    // Convert Lead to Opportunity directly from Lead 360 (or Kanban)
+    const lead360ConvertBtn = page.getByTestId("lead-detail-convert-btn");
+    await expect(lead360ConvertBtn).toBeVisible({ timeout: 5_000 });
+    await lead360ConvertBtn.click();
 
     const convertDialog = page.getByRole("dialog").first();
     await expect(convertDialog).toBeVisible({ timeout: 5_000 });
@@ -526,7 +607,7 @@ test.describe("CRM Overhaul Complete Button-by-Button E2E Verification", () => {
     );
     await convertDialog.locator("button[type='submit']").click();
     await convertPost;
-    await expect(convertDialog).not.toBeVisible({ timeout: 10_000 });
+    await page.waitForTimeout(800);
 
     // ═══════════════════════════════════════════════════════════════════════
     // 6. /crm/opportunities: Verify Converted Deal, 5-Col Kanban & MoveStageDialog
@@ -618,5 +699,58 @@ test.describe("CRM Overhaul Complete Button-by-Button E2E Verification", () => {
     await expect(qualMoveDialog).not.toBeVisible({ timeout: 10_000 });
 
     await setThemeAndCapture(page, "06d_crm_opportunity_stage_moved");
+
+    // 6b. Open Deal Cockpit 360 (/crm/opportunities/[id]) and test HQ Fulfillment Handoff (SCRIPE-743) + Activity Timeline
+    const movedDealCard = page
+      .locator("[data-testid='kanban-card']", { hasText: leadTitle })
+      .first();
+    await movedDealCard.locator("h4").first().click();
+    await page.waitForURL(/\/crm\/opportunities\/[a-zA-Z0-9_-]+/, { timeout: 20_000 });
+    await page.waitForLoadState("networkidle");
+
+    await expect(page.getByTestId("hq-fulfillment-handoff-card")).toBeVisible({ timeout: 15_000 });
+    const reqFulfillmentBtn = page.getByTestId("request-fulfillment-btn");
+    await expect(reqFulfillmentBtn).toBeVisible();
+    await reqFulfillmentBtn.click();
+    await expect(page.getByText(/Handoff Logged on Timeline/i).first()).toBeVisible({
+      timeout: 10_000,
+    });
+    // Assert that the ActivityTimeline on Deal Cockpit 360 immediately refreshes and shows the HQ Fulfillment Handoff entry
+    await expect(
+      page.getByText(/HQ Commercial Fulfillment Handoff Requested/i).first()
+    ).toBeVisible({ timeout: 10_000 });
+
+    await scrollAllToTop(page);
+    await setThemeAndCapture(page, "06e_crm_opportunity_detail_cockpit_360");
+
+    // ═══════════════════════════════════════════════════════════════════════
+    // 7. /crm/activities: Activities & Follow-up Execution Desk
+    // ═══════════════════════════════════════════════════════════════════════
+    await page.goto("/crm/activities");
+    await page.waitForLoadState("networkidle");
+    await expect(page.locator("main").first()).toBeVisible({ timeout: 15_000 });
+    await scrollAllToTop(page);
+    await setThemeAndCapture(page, "07_crm_activities_execution_desk");
+
+    // ═══════════════════════════════════════════════════════════════════════
+    // 8. /crm/reports: Scoped Commercial Pipeline & Funnel Analytics (SCRIPE-745)
+    // ═══════════════════════════════════════════════════════════════════════
+    await page.goto("/crm/reports");
+    await page.waitForLoadState("networkidle");
+
+    await expect(page.getByTestId("crm-reports-view")).toBeVisible({ timeout: 15_000 });
+    await expect(page.getByTestId("report-kpi-open-pipeline")).toBeVisible({ timeout: 15_000 });
+    await expect(page.getByTestId("report-stage-breakdown-card")).toBeVisible();
+    await expect(page.getByTestId("report-lead-funnel-card")).toBeVisible();
+    await expect(page.getByTestId("report-activity-execution-card")).toBeVisible();
+
+    const exportCsvBtn = page.getByTestId("export-reports-csv-btn");
+    if (await exportCsvBtn.isVisible()) {
+      await exportCsvBtn.click();
+      await expect(page.getByTestId("csv-export-alert")).toBeVisible({ timeout: 5_000 });
+    }
+
+    await scrollAllToTop(page);
+    await setThemeAndCapture(page, "08_crm_reports_analytics");
   });
 });

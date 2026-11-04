@@ -70,3 +70,69 @@ export interface CrmOverviewData {
   pipeline: CrmPipelineOverview;
   recentDeals: CrmRecentDeal[];
 }
+
+export interface CrmStageReportItem {
+  stageKey: string;
+  labelEn: string;
+  labelAr: string;
+  sortOrder: number;
+  probabilityPercent: number;
+  requiresVerifiedParty: boolean;
+  dealCount: number;
+  totalAmount?: number | null;
+  weightedForecastAmount?: number | null;
+}
+
+export interface CrmCurrencyPipelineBreakdown {
+  currencyCode: string;
+  openDealsCount: number;
+  wonDealsCount: number;
+  lostDealsCount: number;
+  totalOpenValue?: number | null;
+  totalWeightedForecastValue?: number | null;
+  totalWonValue?: number | null;
+  totalLostValue?: number | null;
+  stages: CrmStageReportItem[];
+}
+
+export interface CrmLeadFunnelReport {
+  totalLeads: number;
+  newCount: number;
+  workingCount: number;
+  qualifiedCount: number;
+  convertedCount: number;
+  disqualifiedCount: number;
+  qualificationRatePercent: number;
+  conversionRatePercent: number;
+}
+
+export interface CrmWinLossSummary {
+  totalClosedDeals: number;
+  wonCount: number;
+  lostCount: number;
+  openCount?: number;
+  winRatePercent: number;
+  avgCycleDays: number;
+}
+
+export interface CrmActivitySummary {
+  totalActivitiesCount: number;
+  notesCount?: number;
+  callsCount: number;
+  meetingsCount: number;
+  communicationsSentCount: number;
+  followUpsCreatedCount: number;
+}
+
+export interface CrmPipelineReport {
+  generatedAtUtc: string;
+  pipelineId?: string;
+  pipelineCode?: string;
+  pipelineNameEn: string;
+  pipelineNameAr: string | null;
+  isAmountMasked: boolean;
+  currencyBreakdowns: CrmCurrencyPipelineBreakdown[];
+  leadFunnel: CrmLeadFunnelReport;
+  winLoss: CrmWinLossSummary;
+  activities: CrmActivitySummary;
+}
