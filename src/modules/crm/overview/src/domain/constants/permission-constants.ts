@@ -6,6 +6,9 @@
  * Note: Zero 'crm.records.read_all' permitted per Founder Decision D4 and Codex Blocker C1-B1.
  */
 export const CRM_PERMISSIONS = {
+  // ── Overview (1) ────────────────────────────────────────────────
+  OVERVIEW_READ: "crm.overview.read",
+
   // ── Leads (5) ──────────────────────────────────────────────────
   LEADS_READ: "crm.leads.read",
   LEADS_CREATE: "crm.leads.create",

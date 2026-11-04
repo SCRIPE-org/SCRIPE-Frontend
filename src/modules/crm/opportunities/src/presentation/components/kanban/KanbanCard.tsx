@@ -49,15 +49,14 @@ export function KanbanCard({
     ? `${currencyCode} ${Number(opportunity.estimatedAmount).toLocaleString()}`
     : "—";
 
-  const formattedCloseDate = React.useMemo(() => {
-    if (!opportunity.targetCloseDate) return null;
-    const d = new Date(opportunity.targetCloseDate);
-    if (isNaN(d.getTime())) return null;
-    return d.toLocaleDateString(isRtl ? "ar-SA" : "en-US", {
-      month: "short",
-      day: "numeric",
-    });
-  }, [opportunity.targetCloseDate, isRtl]);
+  const closeDateObj = opportunity.targetCloseDate ? new Date(opportunity.targetCloseDate) : null;
+  const formattedCloseDate =
+    closeDateObj && !isNaN(closeDateObj.getTime())
+      ? closeDateObj.toLocaleDateString(isRtl ? "ar-SA" : "en-US", {
+          month: "short",
+          day: "numeric",
+        })
+      : null;
 
   const hasParty = Boolean(opportunity.partyId);
   const canMoveBackward = currentStageIndex > 0;

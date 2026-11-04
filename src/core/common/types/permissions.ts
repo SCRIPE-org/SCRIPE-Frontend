@@ -524,7 +524,7 @@ export const PAGE_PERMISSIONS: Record<string, PermissionCode[]> = {
   "/studio-preview": [SYSTEM_PERMISSIONS.TENANT_SETTINGS_VIEW],
 
   // CRM Module
-  "/crm": [],
+  "/crm": [CRM_PERMISSIONS.OVERVIEW_READ],
   "/crm/leads": [CRM_PERMISSIONS.LEADS_READ],
   "/crm/opportunities": [CRM_PERMISSIONS.OPPORTUNITIES_READ],
   "/crm/opportunities/[id]": [CRM_PERMISSIONS.OPPORTUNITIES_READ],
