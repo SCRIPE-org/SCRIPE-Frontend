@@ -167,7 +167,7 @@ export function CloseOpportunityDialog({
             <Alert variant="destructive">
               <AlertTriangle className="size-4" />
               <AlertDescription>
-                <strong>PD-1 Non-Bypassable Party Gate:</strong> A verified canonical Party must be linked before closing this opportunity as Won. Link a party first or close as Lost.
+                <strong>Account / Contact Verification Required:</strong> A verified Account or Contact must be linked before closing this opportunity as Won. Link an Account or Contact first, or close as Lost.
               </AlertDescription>
             </Alert>
           )}

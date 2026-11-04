@@ -108,15 +108,15 @@ export function CrmShell({
 
   return (
     <div
-      className={cn("flex flex-col space-y-5 p-4 sm:p-6 max-w-7xl mx-auto", className)}
+      className={cn("flex flex-col space-y-5 p-4 sm:p-6 w-full max-w-none", className)}
       dir={isRtl ? "rtl" : "ltr"}
     >
       {/* Top Workspace Bar */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-nx-line pb-3">
+      <div className="flex flex-wrap items-center justify-between gap-3 border-b border-nx-line pb-3">
         {/* Navigation Tabs (Figma CRMTab component) */}
         <nav
           aria-label={t("crm.navigation")}
-          className="no-scrollbar flex items-center gap-1.5 overflow-x-auto"
+          className="flex flex-wrap items-center gap-1"
         >
           {tabs
             .filter((tab) => tab.visible)
@@ -141,7 +141,7 @@ export function CrmShell({
                   }}
                   aria-current={isActive ? "page" : undefined}
                   className={cn(
-                    "relative inline-flex shrink-0 select-none items-center gap-2 rounded-nx-md px-3.5 py-2 text-xs font-semibold transition-all duration-nx-micro h-auto",
+                    "relative inline-flex shrink-0 select-none items-center gap-1.5 rounded-nx-md px-3 py-1.5 text-xs font-semibold transition-all duration-nx-micro h-auto",
                     isActive
                       ? "border-nx-line/80 border bg-nx-surface font-bold text-nx-ink"
                       : "hover:bg-nx-surface/60 text-nx-ink-2 hover:text-nx-ink"
@@ -149,7 +149,7 @@ export function CrmShell({
                 >
                   <Icon
                     className={cn(
-                      "size-4",
+                      "size-3.5",
                       isActive ? "text-nx-accent" : "text-nx-ink-3"
                     )}
                     aria-hidden="true"
@@ -157,7 +157,7 @@ export function CrmShell({
                   <span>{tab.label}</span>
                   {isActive && (
                     <span
-                      className="absolute inset-x-3 bottom-[-13px] h-0.5 rounded-full bg-nx-accent"
+                      className="absolute inset-x-2.5 bottom-[-5px] h-0.5 rounded-full bg-nx-accent"
                       aria-hidden="true"
                     />
                   )}
@@ -168,9 +168,9 @@ export function CrmShell({
 
         {/* Global Filter & Quick Actions */}
         {(onSearchChange || (canCreateOpportunities && onCreateDeal) || (canCreateLeads && onCreateLead)) && (
-          <div className="flex items-center gap-2.5">
+          <div className="flex flex-wrap items-center gap-2 ms-auto">
             {onSearchChange && (
-              <div className="relative w-full sm:w-64">
+              <div className="relative w-full sm:w-52">
                 <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 size-3.5 text-nx-ink-3" />
                 <Input
                   type="text"

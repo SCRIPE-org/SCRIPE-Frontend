@@ -3,6 +3,7 @@ import type { ICrmLeadService } from "../../domain/interfaces/ICrmLeadService";
 import type {
   CrmLead,
   CreateLeadInput,
+  UpdateLeadInput,
   QualifyLeadInput,
   LinkPartyToLeadInput,
   ConvertLeadInput,
@@ -24,6 +25,10 @@ export class CrmLeadRepository implements ICrmLeadRepository {
 
   createLead(input: CreateLeadInput): Promise<CrmLead> {
     return this.service.createLead(input);
+  }
+
+  updateLead(input: UpdateLeadInput): Promise<CrmLead> {
+    return this.service.updateLead(input);
   }
 
   qualifyLead(input: QualifyLeadInput): Promise<CrmLead> {

@@ -19,6 +19,14 @@ export interface OpportunityOverviewCardProps {
 export function OpportunityOverviewCard({ opp }: OpportunityOverviewCardProps) {
   const isOpen = opp.status === "Open";
 
+  const formatDealKind = (kind?: string) => {
+    if (!kind) return "—";
+    if (kind === "NewBusiness") return "New Business";
+    if (kind === "Expansion") return "Expansion";
+    if (kind === "Renewal") return "Renewal";
+    return kind.replace(/([a-z])([A-Z])/g, "$1 $2");
+  };
+
   return (
     <Card className="p-6 border-nx-line bg-nx-surface">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
@@ -27,7 +35,9 @@ export function OpportunityOverviewCard({ opp }: OpportunityOverviewCardProps) {
             <h1 className="text-xl font-bold text-nx-ink">{opp.title}</h1>
             <OpportunityStatusBadge status={opp.status} />
           </div>
-          <p className="text-xs text-nx-ink-3 font-mono">ID: {opp.id}</p>
+          <p className="text-xs text-nx-ink-3">
+            {formatDealKind(opp.dealKind)} • {opp.currencyCode}
+          </p>
         </div>
 
         <div className="flex items-center gap-4">
@@ -55,10 +65,10 @@ export function OpportunityOverviewCard({ opp }: OpportunityOverviewCardProps) {
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mt-6 pt-6 border-t border-nx-line text-xs">
         <div>
           <span className="text-nx-ink-3 block">Deal Type</span>
-          <span className="font-semibold text-nx-ink">{opp.dealKind}</span>
+          <span className="font-semibold text-nx-ink">{formatDealKind(opp.dealKind)}</span>
         </div>
         <div>
-          <span className="text-nx-ink-3 block">Party Verification (PD-1)</span>
+          <span className="text-nx-ink-3 block">Account / Contact Verification</span>
           {opp.partyId ? (
             <span className="font-medium text-success flex items-center gap-1">
               <ShieldCheck className="size-3.5" /> Verified Party Linked

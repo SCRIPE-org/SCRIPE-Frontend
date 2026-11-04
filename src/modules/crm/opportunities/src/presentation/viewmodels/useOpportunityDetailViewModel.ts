@@ -9,6 +9,7 @@ import type {
   CloseOpportunityInput,
   ReopenOpportunityInput,
   AssignOpportunityOwnerInput,
+  CrmPipelineConfig,
 } from "../../domain/entities/OpportunityEntity";
 
 /**
@@ -34,6 +35,7 @@ export function useOpportunityDetailViewModel(opportunityId: string) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [data, setData] = useState<OpportunityDetailResult | null>(null);
+  const [pipeline, setPipeline] = useState<CrmPipelineConfig | null>(null);
 
   const [isMoveStageOpen, setIsMoveStageOpen] = useState(false);
   const [isCloseOpen, setIsCloseOpen] = useState(false);
@@ -48,9 +50,18 @@ export function useOpportunityDetailViewModel(opportunityId: string) {
     setLoading(true);
     setError(null);
     try {
-      const repo = (getCrmContainer() as any).opportunityRepository;
-      const result = await repo.getOpportunityById(opportunityId);
+      const container = getCrmContainer() as any;
+      const repo = container.opportunityRepository;
+      const [result, pipelineRes] = await Promise.all([
+        repo.getOpportunityById(opportunityId),
+        typeof repo.getDefaultPipeline === "function"
+          ? repo.getDefaultPipeline().catch(() => null)
+          : Promise.resolve(null),
+      ]);
       setData(result);
+      if (pipelineRes) {
+        setPipeline(pipelineRes);
+      }
     } catch (err: any) {
       setError(err.message || "Failed to load opportunity details");
     } finally {
@@ -61,6 +72,42 @@ export function useOpportunityDetailViewModel(opportunityId: string) {
   useEffect(() => {
     loadData();
   }, [loadData]);
+
+  const lookupPartyOptions = useCallback(async () => {
+    try {
+      const container = getCrmContainer();
+      const [accountsRes, candidates] = await Promise.all([
+        typeof container.accountRepository?.getAccounts === "function"
+          ? container.accountRepository.getAccounts({ page: 1, pageSize: 50 }).catch(() => ({ items: [] }))
+          : Promise.resolve({ items: [] }),
+        typeof container.accountRepository?.lookupCandidateParties === "function"
+          ? container.accountRepository.lookupCandidateParties("Organization").catch(() => [])
+          : Promise.resolve([]),
+      ]);
+
+      const map = new Map<string, { id: string; accountId?: string; displayName: string }>();
+      for (const acc of accountsRes.items || []) {
+        if (acc.partyId) {
+          map.set(acc.partyId, {
+            id: acc.partyId,
+            accountId: acc.id,
+            displayName: acc.legalNameEn || acc.legalNameAr || "Commercial Account",
+          });
+        }
+      }
+      for (const cand of candidates || []) {
+        if (!map.has(cand.partyId)) {
+          map.set(cand.partyId, {
+            id: cand.partyId,
+            displayName: cand.displayNameEn || cand.displayNameAr || "Organization",
+          });
+        }
+      }
+      return Array.from(map.values());
+    } catch {
+      return [];
+    }
+  }, []);
 
   const handleMoveStage = async (input: MoveOpportunityStageInput) => {
     setIsSubmitting(true);
@@ -130,7 +177,9 @@ export function useOpportunityDetailViewModel(opportunityId: string) {
     loading,
     error,
     data,
+    pipeline,
     loadData,
+    lookupPartyOptions,
     isMoveStageOpen,
     setIsMoveStageOpen,
     isCloseOpen,

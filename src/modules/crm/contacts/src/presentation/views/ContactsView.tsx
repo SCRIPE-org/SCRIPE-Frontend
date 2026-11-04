@@ -107,6 +107,7 @@ export function ContactsView() { const router = useRouter();
     ];
   const crudConfig: CrudConfig<CrmContact> = ({ titleKey: "crmContacts.header.title",
       subtitleKey: "crmContacts.header.subtitle", resource: "crm.contacts",
+      entityTypeKey: "crm.contact",
       hidePageHeader: true, hideActionButtons: true,
       stickyActions: true, searchConfig: { enabled: false },
       viewSwitchPosition: "toolbar", viewModes: ["Table", "CardGrid", "SplitPane"],
@@ -233,6 +234,8 @@ export function ContactsView() { const router = useRouter();
         <CreateContactDialog open={isCreateOpen}
           onOpenChange={setIsCreateOpen}
           onSubmit={handleCreateContact}
+          onLookupPeople={viewModel.lookupCandidatePeople}
+          onLookupAccounts={viewModel.lookupAccounts}
           isSubmitting={isSubmitting}
           error={submitError} />
       </div>

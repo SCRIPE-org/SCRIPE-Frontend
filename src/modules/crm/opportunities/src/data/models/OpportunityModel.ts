@@ -36,6 +36,8 @@ export interface CrmOpportunityDto {
   directCreateSource?: string | null;
   directCreateRationale?: string | null;
   exitChecklistJson?: string | null;
+  primaryContactRole?: string | null;
+  solutionFitConfirmed?: boolean;
   createdAt: string;
   rowVersion: string;
   maskedFieldKeys?: string[];

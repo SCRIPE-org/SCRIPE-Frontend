@@ -100,7 +100,7 @@ export function KanbanColumn({
       onDragLeave={handleDragLeave}
       onDrop={handleDrop}
       className={cn(
-        "flex flex-col min-w-[280px] max-w-[340px] flex-1 bg-nx-ground border border-nx-line rounded-nx-lg p-3 transition-colors",
+        "flex flex-col w-full min-w-0 flex-1 bg-nx-ground border border-nx-line rounded-nx-lg p-3 transition-colors",
         isDragOver && "ring-2 ring-nx-accent bg-nx-raised/40 border-nx-accent"
       )}
     >
@@ -131,19 +131,19 @@ export function KanbanColumn({
           </Badge>
         </div>
 
-        {/* PD-1 Party Verification Indicator */}
+        {/* Account / Contact Verification Gate Indicator */}
         {stage.requiresParty && (
           <div
             data-testid={`pd1-badge-${stage.key}`}
-            className="flex items-center gap-1.5 px-2 py-1 rounded bg-warning/10 border border-warning/30 text-warning text-[10px] font-mono font-medium"
+            className="flex items-center gap-1.5 px-2 py-1 rounded bg-warning/10 border border-warning/30 text-warning text-[10px] font-medium"
             title={t("crmOpportunities.kanban.proposalGateWarning", {
-              defaultValue: "Verified Party required before advancing to Proposal (PD-1)",
+              defaultValue: "Verified Account or Contact required before advancing to Proposal",
             })}
           >
             <ShieldAlert className="size-3.5 shrink-0" />
             <span className="truncate">
               {t("crmOpportunities.kanban.proposalGateBadge", {
-                defaultValue: "Party Required (PD-1)",
+                defaultValue: "Account / Contact Required",
               })}
             </span>
           </div>

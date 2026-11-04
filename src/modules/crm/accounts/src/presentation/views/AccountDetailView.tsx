@@ -11,6 +11,7 @@ import { Card } from "@core/ui/card";
 import { Input } from "@core/ui/input";
 import { Label } from "@core/ui/label";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter, } from "@core/ui/dialog";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue, } from "@core/ui/select";
 import { AlertCircle, Building2, Users, Briefcase, ChevronLeft, ChevronRight, Edit2, Mail, Phone, Calendar, Sparkles, Layers, } from "lucide-react";
 import { CRM_PERMISSIONS, CrmShell, CrmSectionHeader, ActivityTimeline } from "@modules/crm";
 import { AccountStatusBadge } from "../components/AccountStatusBadge";
@@ -149,13 +150,13 @@ export function AccountDetailView({ accountId }: AccountDetailViewProps) { const
             {account.contacts?.length === 0 ? ( <p className="text-xs text-nx-ink-3 py-6 text-center">
                 {t("crmAccounts.detail.noContacts") || "No linked contacts found for this account."}
               </p> ) : ( <div className="divide-y divide-nx-line">
-                {account.contacts?.map((c) => ( <div key={c.id} className="py-2.5 flex items-center justify-between gap-2">
+                {account.contacts?.map((c) => ( <div key={c.id} className="py-2.5 flex items-center justify-between gap-2 hover:bg-nx-raised/30 px-1 rounded-nx-md cursor-pointer transition-colors" onClick={() => router.push(`/crm/contacts/${c.id}`)}>
                     <div className="flex items-center gap-2.5">
                       <div className="size-7 rounded-full bg-nx-raised border border-nx-line flex items-center justify-center shrink-0">
                         <Users className="size-3 text-nx-ink-3" />
                       </div>
                       <div>
-                        <span className="text-xs font-semibold text-nx-ink block">
+                        <span className="text-xs font-semibold text-nx-ink block hover:text-nx-accent">
                           {language === "ar" && c.fullNameAr ? c.fullNameAr : c.fullNameEn}
                         </span>
                         {(c.jobTitle || c.department) && ( <span className="text-[11px] text-nx-ink-3 block">
@@ -195,7 +196,7 @@ export function AccountDetailView({ accountId }: AccountDetailViewProps) { const
                 {account.opportunities?.map((opp) => ( <div
                     key={opp.id}
                     className="py-2.5 flex items-center justify-between gap-3 hover:bg-nx-raised/30 px-1 rounded-nx-md cursor-pointer transition-colors"
-                    onClick={() => router.push(`/crm/opportunities`)}
+                    onClick={() => router.push(`/crm/opportunities/${opp.id}`)}
                   >
                     <div>
                       <span className="text-xs font-semibold text-nx-ink block hover:text-nx-accent">
@@ -255,16 +256,37 @@ export function AccountDetailView({ accountId }: AccountDetailViewProps) { const
                     <Label htmlFor="edit-account-tier" className="text-nx-ink-2 font-medium">
                       {t("crmAccounts.create.tier") || "Commercial Tier"}
                     </Label>
-                    <Input id="edit-account-tier" value={editTier} onChange={(e) => setEditTier(e.target.value)}
-                      className="h-8 text-xs bg-nx-ground border-nx-line text-nx-ink" />
+                    <Select value={editTier || "Standard"} onValueChange={setEditTier}>
+                      <SelectTrigger id="edit-account-tier" className="h-8 text-xs bg-nx-ground border-nx-line text-nx-ink">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="Enterprise">Enterprise</SelectItem>
+                        <SelectItem value="MidMarket">Mid-Market</SelectItem>
+                        <SelectItem value="Standard">Standard</SelectItem>
+                        <SelectItem value="Trial">Trial</SelectItem>
+                      </SelectContent>
+                    </Select>
                   </div>
                   <div className="space-y-1.5">
                     <Label htmlFor="edit-account-currency" className="text-nx-ink-2 font-medium">
                       {t("crmAccounts.create.currency") || "Currency Code"}
                     </Label>
-                    <Input id="edit-account-currency" value={editCurrency} onChange={(e) => setEditCurrency(e.target.value)}
-                      className="h-8 text-xs bg-nx-ground border-nx-line text-nx-ink font-mono uppercase"
-                      maxLength={5} />
+                    <Select value={editCurrency || "SAR"} onValueChange={setEditCurrency}>
+                      <SelectTrigger id="edit-account-currency" className="h-8 text-xs bg-nx-ground border-nx-line text-nx-ink font-mono">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="SAR">SAR</SelectItem>
+                        <SelectItem value="AED">AED</SelectItem>
+                        <SelectItem value="USD">USD</SelectItem>
+                        <SelectItem value="EUR">EUR</SelectItem>
+                        <SelectItem value="GBP">GBP</SelectItem>
+                        <SelectItem value="EGP">EGP</SelectItem>
+                        <SelectItem value="KWD">KWD</SelectItem>
+                        <SelectItem value="QAR">QAR</SelectItem>
+                      </SelectContent>
+                    </Select>
                   </div>
                 </div>
                 <div className="space-y-1.5">

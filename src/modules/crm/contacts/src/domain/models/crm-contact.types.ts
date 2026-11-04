@@ -40,13 +40,17 @@ export interface CrmContactContext extends CrmContact {
 }
 
 export interface CreateContactInput {
-  personPartyId: string;
+  personPartyId?: string;
   primaryAccountId?: string;
   jobTitleSnapshot?: string;
   departmentName?: string;
   commercialNotes?: string;
   ownerUserId?: string;
   ownerTeamId?: string;
+  fullNameEn?: string;
+  fullNameAr?: string;
+  email?: string;
+  phone?: string;
 }
 
 export interface UpdateContactInput {

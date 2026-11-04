@@ -168,10 +168,11 @@ describe("LeadsView Component", () => {
         getLeads: mockGetLeads as any,
         getLeadById: vi.fn(),
         createLead: mockCreateLead as any,
+        updateLead: vi.fn().mockResolvedValue({ id: "lead-002", status: "New" }),
         qualifyLead: mockQualifyLead as any,
         linkParty: mockLinkParty as any,
         convertLead: mockConvertLead as any,
-      },
+      } as any,
       opportunityService: {} as any,
       opportunityRepository: {} as any,
       accountService: {} as any,
@@ -387,6 +388,36 @@ describe("LeadsView Component", () => {
 
     await waitFor(() => {
       expect(mockConvertLead).toHaveBeenCalled();
+    });
+  });
+
+  it("supports Kanban stage step buttons to roll back Working lead to New and advance Qualified lead to Convert dialog", async () => {
+    mockGetLeads.mockResolvedValue({
+      items: mockLeads,
+      totalCount: 3,
+      page: 1,
+      pageSize: 20,
+      totalPages: 1,
+    } as PagedLeadsResult);
+
+    render(<LeadsView />);
+
+    await waitFor(() => {
+      expect(screen.getAllByText("Al-Hilal Season Ticket Partnership")[0]).toBeDefined();
+    });
+
+    const kanbanButton = screen.getByText("Kanban");
+    fireEvent.click(kanbanButton);
+
+    await waitFor(() => {
+      expect(screen.getByTitle("Move back to New")).toBeDefined();
+      expect(screen.getByTitle("Advance to Converted")).toBeDefined();
+    });
+
+    // Clicking "Advance to Converted" on a Qualified lead opens the ConvertLeadDialog
+    fireEvent.click(screen.getByTitle("Advance to Converted"));
+    await waitFor(() => {
+      expect(screen.getByText("crmLeads.conversion.dialogTitle")).toBeDefined();
     });
   });
 });

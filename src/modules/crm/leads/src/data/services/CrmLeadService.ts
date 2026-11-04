@@ -3,6 +3,7 @@ import type { ICrmLeadService } from "../../domain/interfaces/ICrmLeadService";
 import type {
   CrmLead,
   CreateLeadInput,
+  UpdateLeadInput,
   QualifyLeadInput,
   LinkPartyToLeadInput,
   ConvertLeadInput,
@@ -63,6 +64,34 @@ export class CrmLeadService implements ICrmLeadService {
     const response = await this.api.post<ApiSuccessResponse<CrmLead> | CrmLead>(
       CRM_LEAD_ENDPOINTS.LEADS,
       input,
+      undefined,
+      {
+        idempotencyKey,
+        headers: {
+          "Idempotency-Key": idempotencyKey,
+          "X-Idempotency-Key": idempotencyKey,
+        },
+      }
+    );
+
+    if ("data" in response && response.data) {
+      return response.data;
+    }
+    return response as CrmLead;
+  }
+
+  async updateLead(input: UpdateLeadInput): Promise<CrmLead> {
+    const idempotencyKey =
+      input.idempotencyKey ||
+      `crm-lead-upd-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`;
+
+    const { leadId, ...payload } = input;
+    const response = await this.api.put<ApiSuccessResponse<CrmLead> | CrmLead>(
+      CRM_LEAD_ENDPOINTS.LEAD_BY_ID(leadId),
+      {
+        ...payload,
+        expectedRowVersion: input.expectedRowVersion ?? "",
+      },
       undefined,
       {
         idempotencyKey,

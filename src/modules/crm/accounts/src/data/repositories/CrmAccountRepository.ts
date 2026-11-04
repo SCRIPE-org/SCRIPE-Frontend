@@ -3,6 +3,7 @@ import type { ICrmAccountService } from "../../domain/interfaces/ICrmAccountServ
 import type {
   CrmAccount,
   CrmAccount360,
+  CrmCandidatePartyLookup,
   CreateAccountInput,
   UpdateAccountInput,
   AccountsFilterParams,
@@ -18,6 +19,10 @@ export class CrmAccountRepository implements ICrmAccountRepository {
 
   getAccountById(id: string): Promise<CrmAccount360> {
     return this.service.getAccountById(id);
+  }
+
+  lookupCandidateParties(search?: string, partyKind?: string): Promise<CrmCandidatePartyLookup[]> {
+    return this.service.lookupCandidateParties(search, partyKind);
   }
 
   createAccount(input: CreateAccountInput): Promise<CrmAccount> {

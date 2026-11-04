@@ -156,8 +156,8 @@ export function KanbanBoard({
         </Alert>
       )}
 
-      {/* Horizontal Scrollable 5-Column Grid */}
-      <div className="flex gap-3 overflow-x-auto pb-4 pt-1 min-h-[550px] scrollbar-thin">
+      {/* Responsive 5-Column Jira-Grade Pipeline Grid */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-3 pb-4 pt-1 min-h-[550px] w-full">
         {effectiveStages.map((stage, index) => {
           const colOpps = groupedOpportunities.get(stage.key) || [];
           return (

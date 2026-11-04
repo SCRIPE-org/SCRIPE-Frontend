@@ -160,6 +160,7 @@ export function OpportunitiesView() {
     titleKey: "crmOpportunities.title",
     subtitleKey: "crmOpportunities.subtitle",
     resource: "crm.opportunities",
+    entityTypeKey: "crm.opportunity",
     hidePageHeader: true,
     hideActionButtons: true,
     stickyActions: false,
@@ -250,7 +251,14 @@ export function OpportunitiesView() {
                 <span className="hidden sm:inline">{t("crmOpportunities.actions.refresh")}</span>
               </Button>
               {canManagePipeline && (
-                <Button type="button" variant="outline" size="sm" onClick={() => setIsPipelineAdminOpen(true)} className="h-8 gap-1.5 shrink-0 font-medium text-xs" data-testid="pipeline-settings-button">
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={() => router.push("/crm/pipelines")}
+                  className="h-8 gap-1.5 shrink-0 font-medium text-xs"
+                  data-testid="pipeline-settings-button"
+                >
                   <Settings className="size-3.5" />
                   {t("crmOpportunities.actions.pipelineSettings", { defaultValue: "Pipeline Settings" })}
                 </Button>
@@ -280,12 +288,12 @@ export function OpportunitiesView() {
           <GenericCrudView<CrmOpportunity> config={crudConfig} columns={columns} viewModel={viewModel} pagination={viewModel.pagination} />
         )}
 
-        <CreateOpportunityDialog open={isCreateOpen} onOpenChange={setIsCreateOpen} onSubmit={handleCreateOpportunity} isSubmitting={isSubmitting} submitError={submitError} />
-        <MoveStageDialog open={isMoveStageOpen} onOpenChange={setIsMoveStageOpen} opportunity={activeOpportunity} onSubmit={handleMoveStage} isSubmitting={isSubmitting} submitError={submitError} />
+        <CreateOpportunityDialog open={isCreateOpen} onOpenChange={setIsCreateOpen} onSubmit={handleCreateOpportunity} onLookupParties={viewModel.lookupPartyOptions} isSubmitting={isSubmitting} submitError={submitError} />
+        <MoveStageDialog open={isMoveStageOpen} onOpenChange={setIsMoveStageOpen} opportunity={activeOpportunity} initialTargetStageKey={viewModel.targetMoveStageKey} pipeline={pipeline} onSubmit={handleMoveStage} onLookupParties={viewModel.lookupPartyOptions} isSubmitting={isSubmitting} submitError={submitError} />
         <CloseOpportunityDialog open={isCloseOpen} onOpenChange={setIsCloseOpen} opportunity={activeOpportunity} initialOutcome={closeInitialOutcome} onSubmit={handleCloseOpportunity} isSubmitting={isSubmitting} submitError={submitError} />
         <ReopenOpportunityDialog open={isReopenOpen} onOpenChange={setIsReopenOpen} opportunity={activeOpportunity} onSubmit={handleReopenOpportunity} isSubmitting={isSubmitting} submitError={submitError} />
         <AssignOwnerDialog open={isAssignOwnerOpen} onOpenChange={setIsAssignOwnerOpen} opportunity={activeOpportunity} onSubmit={handleAssignOwner} isSubmitting={isSubmitting} submitError={submitError} />
-        <PipelineAdminDialog open={isPipelineAdminOpen} onOpenChange={setIsPipelineAdminOpen} pipeline={pipeline} onSubmit={handleUpdatePipeline} isSubmitting={isSubmitting} submitError={submitError} />
+        <PipelineAdminDialog open={isPipelineAdminOpen} onOpenChange={setIsPipelineAdminOpen} pipeline={pipeline} onSubmit={handleUpdatePipeline} isSubmitting={isSubmitting} submitError={viewModel.pipelineError} />
       </div>
     </CrmShell>
   );

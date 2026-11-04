@@ -3,6 +3,7 @@ import type { ICrmAccountService } from "../../domain/interfaces/ICrmAccountServ
 import type {
   CrmAccount,
   CrmAccount360,
+  CrmCandidatePartyLookup,
   CreateAccountInput,
   UpdateAccountInput,
   AccountsFilterParams,
@@ -53,10 +54,39 @@ export class CrmAccountService implements ICrmAccountService {
     return response as CrmAccount360;
   }
 
+  async lookupCandidateParties(search?: string, partyKind?: string): Promise<CrmCandidatePartyLookup[]> {
+    const queryParams: Record<string, unknown> = {};
+    if (search && search.trim() !== "") {
+      queryParams.search = search.trim();
+    }
+    if (partyKind && partyKind.trim() !== "") {
+      queryParams.partyKind = partyKind.trim();
+    }
+
+    const response = await this.api.get<
+      ApiSuccessResponse<CrmCandidatePartyLookup[]> | CrmCandidatePartyLookup[]
+    >(CRM_ACCOUNT_ENDPOINTS.PARTIES, queryParams);
+
+    if (Array.isArray(response)) {
+      return response;
+    }
+    if (response && typeof response === "object" && "data" in response && Array.isArray(response.data)) {
+      return response.data;
+    }
+    return [];
+  }
+
   async createAccount(input: CreateAccountInput): Promise<CrmAccount> {
+    const idempotencyKey = `crm-acc-${Date.now()}-${Math.random().toString(36).slice(2, 10)}`;
     const response = await this.api.post<
       ApiSuccessResponse<CrmAccount> | CrmAccount
-    >(CRM_ACCOUNT_ENDPOINTS.ACCOUNTS, input);
+    >(CRM_ACCOUNT_ENDPOINTS.ACCOUNTS, input, undefined, {
+      idempotencyKey,
+      headers: {
+        "Idempotency-Key": idempotencyKey,
+        "X-Idempotency-Key": idempotencyKey,
+      },
+    });
 
     if (response && typeof response === "object" && "data" in response && response.data) {
       return response.data;
@@ -65,10 +95,17 @@ export class CrmAccountService implements ICrmAccountService {
   }
 
   async updateAccount(input: UpdateAccountInput): Promise<CrmAccount> {
+    const idempotencyKey = `crm-acc-upd-${Date.now()}-${Math.random().toString(36).slice(2, 10)}`;
     const { id, ...payload } = input;
     const response = await this.api.put<
       ApiSuccessResponse<CrmAccount> | CrmAccount
-    >(CRM_ACCOUNT_ENDPOINTS.ACCOUNT_BY_ID(id), payload);
+    >(CRM_ACCOUNT_ENDPOINTS.ACCOUNT_BY_ID(id), payload, undefined, {
+      idempotencyKey,
+      headers: {
+        "Idempotency-Key": idempotencyKey,
+        "X-Idempotency-Key": idempotencyKey,
+      },
+    });
 
     if (response && typeof response === "object" && "data" in response && response.data) {
       return response.data;

@@ -52,6 +52,8 @@ export class CrmOpportunityMapper {
       directCreateSource: dto.directCreateSource ?? null,
       directCreateRationale: dto.directCreateRationale ?? null,
       exitChecklistJson: dto.exitChecklistJson ?? null,
+      primaryContactRole: dto.primaryContactRole ?? null,
+      solutionFitConfirmed: Boolean(dto.solutionFitConfirmed),
       createdAt: dto.createdAt,
       rowVersion: dto.rowVersion ?? "",
       maskedFieldKeys: dto.maskedFieldKeys ?? [],

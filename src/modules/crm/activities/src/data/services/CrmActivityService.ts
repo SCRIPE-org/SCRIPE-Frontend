@@ -40,9 +40,16 @@ export class CrmActivityService implements ICrmActivityService {
   }
 
   async createActivity(payload: CreateSalesActivityPayload): Promise<CrmActivity> {
+    const idempotencyKey = `crm-act-${Date.now()}-${Math.random().toString(36).slice(2, 10)}`;
     const response = await this.api.post<
       ApiSuccessResponse<CrmActivity> | CrmActivity
-    >(CRM_ACTIVITY_ENDPOINTS.ACTIVITIES, payload);
+    >(CRM_ACTIVITY_ENDPOINTS.ACTIVITIES, payload, undefined, {
+      idempotencyKey,
+      headers: {
+        "Idempotency-Key": idempotencyKey,
+        "X-Idempotency-Key": idempotencyKey,
+      },
+    });
 
     if (response && typeof response === "object" && "data" in response && (response as ApiSuccessResponse<CrmActivity>).data) {
       return (response as ApiSuccessResponse<CrmActivity>).data;
@@ -54,9 +61,16 @@ export class CrmActivityService implements ICrmActivityService {
     activityId: string,
     payload: CreateActivityFollowUpPayload
   ): Promise<FollowUpCreatedResponse> {
+    const idempotencyKey = `crm-fup-${Date.now()}-${Math.random().toString(36).slice(2, 10)}`;
     const response = await this.api.post<
       ApiSuccessResponse<FollowUpCreatedResponse> | FollowUpCreatedResponse
-    >(CRM_ACTIVITY_ENDPOINTS.FOLLOW_UP(activityId), payload);
+    >(CRM_ACTIVITY_ENDPOINTS.FOLLOW_UP(activityId), payload, undefined, {
+      idempotencyKey,
+      headers: {
+        "Idempotency-Key": idempotencyKey,
+        "X-Idempotency-Key": idempotencyKey,
+      },
+    });
 
     if (response && typeof response === "object" && "data" in response && (response as ApiSuccessResponse<FollowUpCreatedResponse>).data) {
       return (response as ApiSuccessResponse<FollowUpCreatedResponse>).data;

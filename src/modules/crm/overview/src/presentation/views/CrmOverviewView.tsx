@@ -39,7 +39,7 @@ export function CrmOverviewView() {
       <CrmSectionHeader
         title={t("crm.title")}
         subtitle={t("crm.subtitle")}
-        badge="C1 Canonical"
+        badge={state.data ? `${state.data.pipeline.totalDeals} ${t("crm.pipeline.dealsCount")}` : undefined}
         actions={
           <Button
             type="button"

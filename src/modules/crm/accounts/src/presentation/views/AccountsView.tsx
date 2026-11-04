@@ -101,6 +101,7 @@ export function AccountsView() { const router = useRouter();
     ];
   const crudConfig: CrudConfig<CrmAccount> = ({ titleKey: "crmAccounts.header.title",
       subtitleKey: "crmAccounts.header.subtitle", resource: "crm.accounts",
+      entityTypeKey: "crm.account",
       hidePageHeader: true, hideActionButtons: true,
       stickyActions: true, searchConfig: { enabled: false },
       viewSwitchPosition: "toolbar", viewModes: ["Table", "CardGrid", "SplitPane"],
@@ -246,6 +247,7 @@ export function AccountsView() { const router = useRouter();
         <CreateAccountDialog open={isCreateOpen}
           onOpenChange={setIsCreateOpen}
           onSubmit={handleCreateAccount}
+          onLookupOrganizations={viewModel.lookupCandidateOrganizations}
           isSubmitting={isSubmitting}
           error={submitError} />
       </div>

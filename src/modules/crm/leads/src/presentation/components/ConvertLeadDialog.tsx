@@ -98,6 +98,8 @@ export function ConvertLeadDialog({
     }
   };
 
+  const isConvertible =
+    lead?.status === "Qualified" || lead?.status === "New" || lead?.status === "Working";
   const isQualified = lead?.status === "Qualified";
 
   return (
@@ -114,7 +116,7 @@ export function ConvertLeadDialog({
             </DialogDescription>
           </DialogHeader>
 
-          {!isQualified && (
+          {!isConvertible && (
             <Alert variant="destructive" className="py-2.5 px-3">
               <AlertCircle className="size-4" />
               <AlertTitle className="text-xs font-bold">
@@ -124,6 +126,11 @@ export function ConvertLeadDialog({
                 {t("crmLeads.conversion.notQualifiedDescription")}
               </AlertDescription>
             </Alert>
+          )}
+          {isConvertible && !isQualified && (
+            <div className="rounded-nx-md border border-nx-accent/30 bg-nx-accent-wash/40 px-3 py-2 text-xs text-nx-ink-2">
+              {t("crmLeads.conversion.autoQualifyNotice")}
+            </div>
           )}
 
           {(submitError || validationError) && (
@@ -240,7 +247,7 @@ export function ConvertLeadDialog({
             <Button
               type="submit"
               size="sm"
-              disabled={isSubmitting || !isQualified}
+              disabled={isSubmitting || !isConvertible}
               className="h-8 text-xs font-bold gap-1.5"
             >
               <ArrowRightCircle className="size-3.5" />

@@ -58,6 +58,8 @@ export interface CrmOpportunity {
   directCreateSource?: string | null;
   directCreateRationale?: string | null;
   exitChecklistJson?: string | null;
+  primaryContactRole?: string | null;
+  solutionFitConfirmed?: boolean;
   createdAt: string;
   rowVersion: string;
   maskedFieldKeys: string[];
@@ -107,6 +109,7 @@ export interface CreateOpportunityInput {
   directCreateSource?: string;
   directCreateRationale?: string;
   idempotencyKey?: string;
+  customFieldValues?: Record<string, unknown>;
 }
 
 /** Input contract for updating opportunity metadata */
@@ -140,6 +143,14 @@ export interface MoveOpportunityStageInput {
   reason?: string;
   expectedRowVersion?: string;
   idempotencyKey?: string;
+  partyId?: string;
+  accountId?: string;
+  estimatedAmount?: number;
+  targetCloseDate?: string;
+  primaryContactRole?: string;
+  solutionFitConfirmed?: boolean;
+  stageTransitionNote?: string;
+  customFieldValues?: Record<string, unknown>;
 }
 
 /** Input contract for closing an opportunity (Won or Lost) */

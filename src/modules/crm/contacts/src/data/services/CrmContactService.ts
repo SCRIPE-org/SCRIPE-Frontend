@@ -54,9 +54,16 @@ export class CrmContactService implements ICrmContactService {
   }
 
   async createContact(input: CreateContactInput): Promise<CrmContact> {
+    const idempotencyKey = `crm-cnt-${Date.now()}-${Math.random().toString(36).slice(2, 10)}`;
     const response = await this.api.post<
       ApiSuccessResponse<CrmContact> | CrmContact
-    >(CRM_CONTACT_ENDPOINTS.CONTACTS, input);
+    >(CRM_CONTACT_ENDPOINTS.CONTACTS, input, undefined, {
+      idempotencyKey,
+      headers: {
+        "Idempotency-Key": idempotencyKey,
+        "X-Idempotency-Key": idempotencyKey,
+      },
+    });
 
     if (response && typeof response === "object" && "data" in response && response.data) {
       return response.data;
@@ -65,10 +72,17 @@ export class CrmContactService implements ICrmContactService {
   }
 
   async updateContact(input: UpdateContactInput): Promise<CrmContact> {
+    const idempotencyKey = `crm-cnt-upd-${Date.now()}-${Math.random().toString(36).slice(2, 10)}`;
     const { id, ...payload } = input;
     const response = await this.api.put<
       ApiSuccessResponse<CrmContact> | CrmContact
-    >(CRM_CONTACT_ENDPOINTS.CONTACT_BY_ID(id), payload);
+    >(CRM_CONTACT_ENDPOINTS.CONTACT_BY_ID(id), payload, undefined, {
+      idempotencyKey,
+      headers: {
+        "Idempotency-Key": idempotencyKey,
+        "X-Idempotency-Key": idempotencyKey,
+      },
+    });
 
     if (response && typeof response === "object" && "data" in response && response.data) {
       return response.data;

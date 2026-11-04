@@ -34,7 +34,11 @@ export function buildOpportunityColumns(
             {opp.title}
           </Button>
           <div className="flex items-center gap-1.5 mt-0.5">
-            <span className="text-[11px] text-nx-ink-3 uppercase font-mono">{opp.dealKind}</span>
+            <span className="text-[11px] text-nx-ink-3 font-medium">
+              {t(`crmOpportunities.dealKind.${opp.dealKind}`, {
+                defaultValue: opp.dealKind === "NewBusiness" ? "New Business" : opp.dealKind,
+              })}
+            </span>
             {opp.directCreateRationale && (
               <span
                 className="text-[11px] text-nx-ink-3 truncate max-w-[110px]"
@@ -89,12 +93,12 @@ export function buildOpportunityColumns(
         opp.partyId ? (
           <span className="inline-flex items-center gap-1 text-[11px] text-success font-medium whitespace-nowrap">
             <ShieldCheck className="size-3.5" />
-            Verified Party
+            {t("crmOpportunities.kanban.partyVerified", { defaultValue: "Linked" })}
           </span>
         ) : (
           <span className="inline-flex items-center gap-1 text-[11px] text-nx-ink-3 whitespace-nowrap">
             <ShieldAlert className="size-3.5 text-warning" />
-            Unlinked (Pre-proposal)
+            {t("crmOpportunities.kanban.partyUnlinked", { defaultValue: "Unlinked" })}
           </span>
         ),
     },
@@ -178,7 +182,9 @@ export function renderOpportunityCardGridItem(
         </div>
       </div>
       <div className="border-t border-nx-line pt-3 flex items-center justify-between gap-2">
-        <span className="text-[11px] text-nx-ink-3 uppercase font-mono">{opp.dealKind}</span>
+        <span className="text-[11px] text-nx-ink-3 font-medium">
+          {opp.dealKind === "NewBusiness" ? "New Business" : opp.dealKind}
+        </span>
         {actions}
       </div>
     </Card>
@@ -199,7 +205,11 @@ export function renderOpportunitySplitDetail(
       <div className="flex items-start justify-between border-b border-nx-line pb-4 gap-3">
         <div>
           <h3 className="text-base font-bold text-nx-ink">{opp.title}</h3>
-          <p className="text-xs text-nx-ink-3 font-mono uppercase mt-1">{opp.dealKind}</p>
+          <p className="text-xs text-nx-ink-3 font-medium mt-1">
+            {t(`crmOpportunities.dealKind.${opp.dealKind}`, {
+              defaultValue: opp.dealKind === "NewBusiness" ? "New Business" : opp.dealKind,
+            })}
+          </p>
         </div>
         <div className="flex items-center gap-2 flex-wrap justify-end">
           <OpportunityStageBadge
@@ -227,7 +237,9 @@ export function renderOpportunitySplitDetail(
         <div className="space-y-1">
           <span className="text-nx-ink-3">{t("crmOpportunities.table.party")}</span>
           <div className="font-medium text-nx-ink">
-            {opp.partyId ? "Verified Party" : "Unlinked (Pre-proposal)"}
+            {opp.partyId
+              ? t("crmOpportunities.kanban.partyVerified", { defaultValue: "Linked" })
+              : t("crmOpportunities.kanban.partyUnlinked", { defaultValue: "Unlinked" })}
           </div>
         </div>
       </div>

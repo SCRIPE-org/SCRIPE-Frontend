@@ -128,14 +128,19 @@ export function KanbanCard({
           </h4>
           <Badge
             variant="outline"
-            className="shrink-0 text-[10px] px-1.5 py-0 uppercase font-mono tracking-wider border-nx-line text-nx-ink-2 bg-nx-raised"
+            className="shrink-0 text-[10px] px-1.5 py-0 font-medium border-nx-line text-nx-ink-2 bg-nx-raised"
           >
-            {opportunity.dealKind}
+            {t(`crmOpportunities.dealKind.${opportunity.dealKind}`, {
+              defaultValue:
+                opportunity.dealKind === "NewBusiness"
+                  ? "New Business"
+                  : opportunity.dealKind,
+            })}
           </Badge>
         </div>
       </div>
 
-      {/* Financial & Party Meta */}
+      {/* Financial & Account/Contact Meta */}
       <div className="flex items-center justify-between text-xs pt-1 border-t border-nx-line/60">
         <div>
           <span className="text-[10px] text-nx-ink-3 uppercase block leading-none mb-1 font-mono">
@@ -146,15 +151,15 @@ export function KanbanCard({
           </span>
         </div>
 
-        {/* PD-1 Party Gate Status */}
+        {/* Account / Contact Status */}
         <div className="text-end">
           <span className="text-[10px] text-nx-ink-3 uppercase block leading-none mb-1 font-mono">
-            {t("crmOpportunities.table.party", { defaultValue: "Party" })}
+            {t("crmOpportunities.table.party", { defaultValue: "Account / Contact" })}
           </span>
           {hasParty ? (
             <span
               className="inline-flex items-center gap-1 text-[11px] font-medium text-success"
-              title="Verified Party Linked (PD-1 Compliant)"
+              title="Verified Account / Contact Linked"
             >
               <ShieldCheck className="size-3.5" />
               <span>{t("crmOpportunities.kanban.partyVerified", { defaultValue: "Verified" })}</span>
@@ -162,7 +167,7 @@ export function KanbanCard({
           ) : (
             <span
               className="inline-flex items-center gap-1 text-[11px] font-medium text-warning"
-              title="Unlinked Party — required before Proposal stage (PD-1)"
+              title="Account or Contact required before Proposal stage"
             >
               <ShieldAlert className="size-3.5" />
               <span>{t("crmOpportunities.kanban.partyUnlinked", { defaultValue: "Unlinked" })}</span>
@@ -179,8 +184,9 @@ export function KanbanCard({
             {formattedCloseDate}
           </span>
         ) : (
-          <span className="text-[10px] font-mono text-nx-ink-3/70">
-            ID: {opportunity.id.slice(0, 8)}...
+          <span className="inline-flex items-center gap-1 text-[10px] text-nx-ink-3/80">
+            <Briefcase className="size-3" />
+            {opportunity.stageLabelEnSnapshot || "Open Deal"}
           </span>
         )}
 

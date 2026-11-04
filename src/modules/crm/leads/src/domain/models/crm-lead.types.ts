@@ -58,6 +58,24 @@ export interface CreateLeadInput {
   idempotencyKey?: string;
 }
 
+export interface UpdateLeadInput {
+  leadId: string;
+  title?: string;
+  firstName?: string;
+  lastName?: string;
+  companyName?: string;
+  email?: string;
+  phone?: string;
+  source?: string;
+  estimatedValue?: number;
+  currency?: string;
+  notes?: string;
+  markWorking?: boolean;
+  targetStatus?: LeadStatus;
+  expectedRowVersion?: string;
+  idempotencyKey?: string;
+}
+
 export interface QualifyLeadInput {
   leadId: string;
   decision: QualificationDecision;

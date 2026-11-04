@@ -52,7 +52,9 @@ export function OpportunityDetailView({ opportunityId }: OpportunityDetailViewPr
     loading,
     error,
     data,
+    pipeline,
     loadData,
+    lookupPartyOptions,
     isMoveStageOpen,
     setIsMoveStageOpen,
     isCloseOpen,
@@ -203,7 +205,9 @@ export function OpportunityDetailView({ opportunityId }: OpportunityDetailViewPr
           open={isMoveStageOpen}
           onOpenChange={setIsMoveStageOpen}
           opportunity={opp}
+          pipeline={pipeline}
           onSubmit={handleMoveStage}
+          onLookupParties={lookupPartyOptions}
           isSubmitting={isSubmitting}
           submitError={submitError}
         />

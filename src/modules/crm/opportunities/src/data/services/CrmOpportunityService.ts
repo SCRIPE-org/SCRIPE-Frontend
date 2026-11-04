@@ -132,6 +132,13 @@ export class CrmOpportunityService implements ICrmOpportunityService {
       targetStageKey: input.targetStageKey,
       reason: input.reason,
       expectedRowVersion: input.expectedRowVersion ?? "",
+      partyId: input.partyId,
+      accountId: input.accountId,
+      estimatedAmount: input.estimatedAmount,
+      targetCloseDate: input.targetCloseDate,
+      primaryContactRole: input.primaryContactRole,
+      solutionFitConfirmed: input.solutionFitConfirmed,
+      stageTransitionNote: input.stageTransitionNote,
     };
     const response = await this.api.post<ApiSuccessResponse<CrmOpportunity> | CrmOpportunity>(
       CRM_OPPORTUNITY_ENDPOINTS.STAGE(input.opportunityId),

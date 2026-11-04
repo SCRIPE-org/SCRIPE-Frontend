@@ -31,6 +31,9 @@ export function useContactDetailViewModel(contactId: string) {
   const [isEditOpen, setIsEditOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
+  const [accountOptions, setAccountOptions] = useState<
+    Array<{ id: string; displayName: string }>
+  >([]);
   const [, startTransition] = useTransition();
 
   const loadContact = useCallback(async () => {
@@ -38,7 +41,12 @@ export function useContactDetailViewModel(contactId: string) {
     setState((prev) => ({ ...prev, stage: "loading", error: null }));
     try {
       const container = getCrmContainer();
-      const result = await container.contactRepository.getContactById(contactId);
+      const [result, accountsRes] = await Promise.all([
+        container.contactRepository.getContactById(contactId),
+        container.accountRepository
+          .getAccounts({ page: 1, pageSize: 50 })
+          .catch(() => ({ items: [] })),
+      ]);
 
       startTransition(() => {
         setState({
@@ -46,6 +54,12 @@ export function useContactDetailViewModel(contactId: string) {
           contact: result,
           error: null,
         });
+        setAccountOptions(
+          (accountsRes?.items || []).map((a) => ({
+            id: a.id,
+            displayName: a.legalNameEn || a.legalNameAr || "Commercial Account",
+          }))
+        );
       });
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : "Failed to load contact context";
@@ -94,6 +108,7 @@ export function useContactDetailViewModel(contactId: string) {
     isEditOpen,
     isSubmitting,
     submitError,
+    accountOptions,
     setIsEditOpen,
     handleUpdateContact,
     refresh: loadContact,

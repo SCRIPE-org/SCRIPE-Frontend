@@ -51,13 +51,25 @@ export interface CrmAccount360 extends CrmAccount {
   opportunities: CrmAccountOpportunityItem[];
 }
 
-export interface CreateAccountInput {
+export interface CrmCandidatePartyLookup {
   partyId: string;
+  legalNameEn: string;
+  legalNameAr?: string;
+  partyKind: string;
+  isVerified: boolean;
+}
+
+export interface CreateAccountInput {
+  partyId?: string;
   commercialTierCode?: string;
   preferredCurrencyCode?: string;
   commercialNotes?: string;
   ownerUserId?: string;
   ownerTeamId?: string;
+  organizationNameEn?: string;
+  organizationNameAr?: string;
+  email?: string;
+  phone?: string;
 }
 
 export interface UpdateAccountInput {

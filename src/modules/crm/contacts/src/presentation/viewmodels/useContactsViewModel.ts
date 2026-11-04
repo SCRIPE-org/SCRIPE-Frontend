@@ -112,12 +112,29 @@ export function useContactsViewModel(initialSearch?: string, initialAccountId?: 
   );
 
   const handleCreateContact = useCallback(
-    async (input: CreateContactInput): Promise<boolean> => {
+    async (
+      input: CreateContactInput,
+      customFieldValues?: Record<string, unknown>
+    ): Promise<boolean> => {
       setIsSubmitting(true);
       setSubmitError(null);
       try {
         const container = getCrmContainer();
-        await container.contactRepository.createContact(input);
+        const created = await container.contactRepository.createContact(input);
+        if (created?.id && customFieldValues && Object.keys(customFieldValues).length > 0) {
+          try {
+            const { getCustomFieldsExtension, normalizeCustomFieldValuesForSave } = await import(
+              "@core/crud/customFieldsExtension"
+            );
+            const ext = getCustomFieldsExtension();
+            const normalized = normalizeCustomFieldValuesForSave(customFieldValues);
+            if (ext?.saveValues && Object.keys(normalized).length > 0) {
+              await ext.saveValues("crm.contact", created.id, normalized);
+            }
+          } catch {
+            // Non-blocking custom fields persistence
+          }
+        }
         setIsCreateOpen(false);
         await loadContacts(1, search, accountId);
         return true;
@@ -136,6 +153,17 @@ export function useContactsViewModel(initialSearch?: string, initialAccountId?: 
     return loadContacts(state.page, search, accountId);
   }, [loadContacts, state.page, search, accountId]);
 
+  const lookupCandidatePeople = useCallback(async (query?: string) => {
+    const container = getCrmContainer();
+    return container.accountRepository.lookupCandidateParties(query, "Person");
+  }, []);
+
+  const lookupAccounts = useCallback(async () => {
+    const container = getCrmContainer();
+    const res = await container.accountRepository.getAccounts({ page: 1, pageSize: 100 });
+    return res.items ?? [];
+  }, []);
+
   return {
     state,
     search,
@@ -148,6 +176,8 @@ export function useContactsViewModel(initialSearch?: string, initialAccountId?: 
     handleAccountFilterChange,
     handlePageChange,
     handleCreateContact,
+    lookupCandidatePeople,
+    lookupAccounts,
     refresh,
 
     // GenericCrudView Adapter compatibility
@@ -172,7 +202,7 @@ export function useContactsViewModel(initialSearch?: string, initialAccountId?: 
     searchValue: search,
     selectedItems,
     setSelectedItems,
-    isCreateModalOpen: isCreateOpen,
+    isCreateModalOpen: false,
     setIsCreateModalOpen: handleSetIsCreateOpen,
     isEditModalOpen,
     setIsEditModalOpen,

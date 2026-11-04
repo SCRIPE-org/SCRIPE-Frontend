@@ -57,8 +57,11 @@ export function CrmPipelineOverviewStrip({
       </div>
 
       {/* Progress Strip */}
-      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2">
-        {(Array.isArray(pipeline?.stages) ? pipeline.stages : []).map((stage, idx) => {
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-2.5">
+        {(Array.isArray(pipeline?.stages)
+          ? [...pipeline.stages].sort((a, b) => a.sortOrder - b.sortOrder)
+          : []
+        ).map((stage, idx) => {
           const isSelected = activeFilterStage === stage.key;
           const isProposalOrAfter = stage.requiresVerifiedParty;
 
@@ -69,7 +72,7 @@ export function CrmPipelineOverviewStrip({
               variant="ghost"
               onClick={() => onSelectStage?.(stage.key)}
               className={cn(
-                "group relative flex h-auto flex-col items-stretch justify-between p-3 rounded-nx-md border text-left transition-all duration-nx-micro select-none whitespace-normal",
+                "group relative flex h-auto flex-col items-stretch justify-between p-3.5 rounded-nx-md border text-left transition-all duration-nx-micro select-none whitespace-normal",
                 isSelected
                   ? "border-nx-accent bg-nx-raised ring-1 ring-nx-accent"
                   : "border-nx-line bg-nx-surface hover:border-nx-line-hi hover:bg-nx-raised/40"
@@ -104,9 +107,11 @@ export function CrmPipelineOverviewStrip({
               </div>
 
               {isProposalOrAfter && (
-                <div className="mt-2 pt-1.5 border-t border-nx-line/50 flex items-center gap-1 text-[9px] text-warning font-semibold w-full">
-                  <ShieldCheck className="size-2.5 shrink-0" />
-                  <span className="truncate">Party Gate</span>
+                <div className="mt-2 pt-1.5 border-t border-nx-line/50 flex items-center gap-1 text-[10px] text-warning font-semibold w-full">
+                  <ShieldCheck className="size-3 shrink-0" />
+                  <span className="truncate">
+                    {t("crm.pipeline.partyGate", { defaultValue: "Account / Contact Required" })}
+                  </span>
                 </div>
               )}
             </Button>

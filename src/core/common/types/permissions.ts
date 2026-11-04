@@ -528,6 +528,7 @@ export const PAGE_PERMISSIONS: Record<string, PermissionCode[]> = {
   "/crm/leads": [CRM_PERMISSIONS.LEADS_READ],
   "/crm/opportunities": [CRM_PERMISSIONS.OPPORTUNITIES_READ],
   "/crm/opportunities/[id]": [CRM_PERMISSIONS.OPPORTUNITIES_READ],
+  "/crm/pipelines": [`${CRM_PERMISSIONS.PIPELINES_READ}|${CRM_PERMISSIONS.OPPORTUNITIES_READ}`],
   "/crm/accounts": [CRM_PERMISSIONS.ACCOUNTS_READ],
   "/crm/accounts/[id]": [CRM_PERMISSIONS.ACCOUNTS_READ],
   "/crm/contacts": [CRM_PERMISSIONS.CONTACTS_READ],

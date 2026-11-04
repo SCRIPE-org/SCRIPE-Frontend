@@ -12,6 +12,7 @@ export * from "./src/data/services/CrmOpportunityService";
 export * from "./src/data/repositories/CrmOpportunityRepository";
 export * from "./src/presentation/views/OpportunitiesView";
 export * from "./src/presentation/views/OpportunityDetailView";
+export * from "./src/presentation/views/PipelineManagementView";
 export * from "./src/presentation/components/OpportunitiesTable";
 export * from "./src/presentation/components/OpportunityStatusBadge";
 export * from "./src/presentation/components/OpportunityStageBadge";

@@ -113,12 +113,29 @@ export function useAccountsViewModel(initialSearch?: string) {
   );
 
   const handleCreateAccount = useCallback(
-    async (input: CreateAccountInput): Promise<boolean> => {
+    async (
+      input: CreateAccountInput,
+      customFieldValues?: Record<string, unknown>
+    ): Promise<boolean> => {
       setIsSubmitting(true);
       setSubmitError(null);
       try {
         const container = getCrmContainer();
-        await container.accountRepository.createAccount(input);
+        const created = await container.accountRepository.createAccount(input);
+        if (created?.id && customFieldValues && Object.keys(customFieldValues).length > 0) {
+          try {
+            const { getCustomFieldsExtension, normalizeCustomFieldValuesForSave } = await import(
+              "@core/crud/customFieldsExtension"
+            );
+            const ext = getCustomFieldsExtension();
+            const normalized = normalizeCustomFieldValuesForSave(customFieldValues);
+            if (ext?.saveValues && Object.keys(normalized).length > 0) {
+              await ext.saveValues("crm.account", created.id, normalized);
+            }
+          } catch {
+            // Non-blocking custom fields persistence
+          }
+        }
         setIsCreateOpen(false);
         await loadAccounts(1, search, tierFilter);
         return true;
@@ -137,6 +154,11 @@ export function useAccountsViewModel(initialSearch?: string) {
     return loadAccounts(state.page, search, tierFilter);
   }, [loadAccounts, state.page, search, tierFilter]);
 
+  const lookupCandidateOrganizations = useCallback(async (query?: string) => {
+    const container = getCrmContainer();
+    return container.accountRepository.lookupCandidateParties(query, "Organization");
+  }, []);
+
   return {
     state,
     search,
@@ -149,6 +171,7 @@ export function useAccountsViewModel(initialSearch?: string) {
     handleTierFilterChange,
     handlePageChange,
     handleCreateAccount,
+    lookupCandidateOrganizations,
     refresh,
 
     // GenericCrudView Adapter compatibility
@@ -173,7 +196,7 @@ export function useAccountsViewModel(initialSearch?: string) {
     searchValue: search,
     selectedItems,
     setSelectedItems,
-    isCreateModalOpen: isCreateOpen,
+    isCreateModalOpen: false,
     setIsCreateModalOpen: handleSetIsCreateOpen,
     isEditModalOpen,
     setIsEditModalOpen,

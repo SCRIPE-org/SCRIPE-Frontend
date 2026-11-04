@@ -107,7 +107,17 @@ export function ReopenOpportunityDialog({
             <div className="flex justify-between">
               <span className="text-nx-ink-3">Restored Stage:</span>
               <span className="font-medium text-nx-ink">
-                {opportunity.lastActiveStageKey || "default.discovery"}
+                {(() => {
+                  const key = opportunity.lastActiveStageKey || "default.discovery";
+                  const map: Record<string, string> = {
+                    "default.discovery": "Discovery",
+                    "default.qualification": "Qualification",
+                    "default.solution_fit": "Solution Fit",
+                    "default.proposal": "Proposal",
+                    "default.negotiation": "Negotiation",
+                  };
+                  return map[key] || opportunity.stageLabelEnSnapshot || key;
+                })()}
               </span>
             </div>
           </div>

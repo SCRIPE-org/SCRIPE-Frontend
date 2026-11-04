@@ -11,10 +11,10 @@ import {
   DialogFooter,
 } from "@core/ui/dialog";
 import { Button } from "@core/ui/button";
-import { Input } from "@core/ui/input";
 import { Label } from "@core/ui/label";
 import { Textarea } from "@core/ui/textarea";
 import { Alert, AlertDescription } from "@core/ui/alert";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@core/ui/select";
 import { AlertCircle, CheckCircle2, XCircle } from "lucide-react";
 import { cn } from "@core/common/utils";
 import type { CrmLead, QualifyLeadInput, QualificationDecision } from "../../domain/entities/LeadEntity";
@@ -26,6 +26,7 @@ interface QualifyLeadDialogProps {
   onSubmit: (input: QualifyLeadInput) => Promise<boolean>;
   isSubmitting?: boolean;
   submitError?: string | null;
+  initialDecision?: QualificationDecision;
 }
 
 export function QualifyLeadDialog({
@@ -35,11 +36,12 @@ export function QualifyLeadDialog({
   onSubmit,
   isSubmitting = false,
   submitError,
+  initialDecision = "Qualified",
 }: QualifyLeadDialogProps) {
   const { t, language } = useI18n();
   const isRtl = language === "ar";
 
-  const [decision, setDecision] = useState<QualificationDecision>("Qualified");
+  const [decision, setDecision] = useState<QualificationDecision>(initialDecision);
   const [reasonCode, setReasonCode] = useState<string>("BUDGET");
   const [reason, setReason] = useState<string>("");
   const [notes, setNotes] = useState<string>("");
@@ -47,13 +49,13 @@ export function QualifyLeadDialog({
 
   useEffect(() => {
     if (open) {
-      setDecision("Qualified");
+      setDecision(initialDecision);
       setReasonCode("BUDGET");
       setReason("");
       setNotes("");
       setValidationError(null);
     }
-  }, [open, lead]);
+  }, [open, lead, initialDecision]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -160,13 +162,19 @@ export function QualifyLeadDialog({
                 <Label htmlFor="disqualify-code" className="text-xs font-semibold text-nx-ink">
                   {t("crmLeads.qualification.reasonCodeLabel")}
                 </Label>
-                <Input
-                  id="disqualify-code"
-                  value={reasonCode}
-                  onChange={(e) => setReasonCode(e.target.value)}
-                  placeholder="e.g. BUDGET, TIMING, COMPETITOR"
-                  className="h-8 text-xs border-nx-line bg-nx-ground text-nx-ink uppercase font-mono"
-                />
+                <Select value={reasonCode} onValueChange={setReasonCode}>
+                  <SelectTrigger id="disqualify-code" className="h-8 text-xs border-nx-line bg-nx-ground text-nx-ink">
+                    <SelectValue placeholder="Select disqualification reason..." />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="BUDGET">Budget Constraints (BUDGET)</SelectItem>
+                    <SelectItem value="TIMING">Timing / Deferred (TIMING)</SelectItem>
+                    <SelectItem value="COMPETITOR">Chose Competitor (COMPETITOR)</SelectItem>
+                    <SelectItem value="NO_NEED">No Commercial Need (NO_NEED)</SelectItem>
+                    <SelectItem value="UNRESPONSIVE">Unresponsive Contact (UNRESPONSIVE)</SelectItem>
+                    <SelectItem value="OTHER">Other Reason (OTHER)</SelectItem>
+                  </SelectContent>
+                </Select>
               </div>
 
               <div className="space-y-1.5">

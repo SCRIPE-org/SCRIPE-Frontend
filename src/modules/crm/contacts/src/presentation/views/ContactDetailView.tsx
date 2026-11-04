@@ -11,6 +11,7 @@ import { Card } from "@core/ui/card";
 import { Input } from "@core/ui/input";
 import { Label } from "@core/ui/label";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter, } from "@core/ui/dialog";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue, } from "@core/ui/select";
 import { AlertCircle, User, Building2, Briefcase, ChevronLeft, ChevronRight, Edit2, Mail, Phone, Calendar, ArrowUpRight, } from "lucide-react";
 import { CRM_PERMISSIONS, CrmShell, ActivityTimeline } from "@modules/crm";
 import { useContactDetailViewModel } from "../viewmodels/useContactDetailViewModel";
@@ -20,19 +21,23 @@ export function ContactDetailView({ contactId }: ContactDetailViewProps) { const
   const isRtl = language === "ar";
   const canUpdateContact = usePermission(CRM_PERMISSIONS.CONTACTS_UPDATE);
   const viewModel = useContactDetailViewModel(contactId);
-  const { state, isEditOpen, isSubmitting, submitError, setIsEditOpen, handleUpdateContact, refresh, } = viewModel;
+  const { state, isEditOpen, isSubmitting, submitError, accountOptions, setIsEditOpen, handleUpdateContact, refresh, } = viewModel;
   const [editPrimaryAccount, setEditPrimaryAccount] = useState("");
   const [editJobTitle, setEditJobTitle] = useState("");
   const [editDepartment, setEditDepartment] = useState("");
   const [editNotes, setEditNotes] = useState("");
   const openEditModal = () => { if (!state.contact) return;
-    setEditPrimaryAccount(state.contact.primaryAccountId || "");
+    setEditPrimaryAccount(state.contact.primaryAccountId || "__none__");
     setEditJobTitle(state.contact.jobTitleSnapshot || "");
     setEditDepartment(state.contact.departmentName || "");
     setEditNotes(state.contact.commercialNotes || "");
     setIsEditOpen(true); };
   const onSaveEdit = async (e: React.FormEvent) => { e.preventDefault();
-    await handleUpdateContact({ primaryAccountId: editPrimaryAccount.trim() || undefined,
+    const resolvedAccount =
+      editPrimaryAccount && editPrimaryAccount !== "__none__"
+        ? editPrimaryAccount.trim()
+        : undefined;
+    await handleUpdateContact({ primaryAccountId: resolvedAccount,
       jobTitleSnapshot: editJobTitle.trim() || undefined, departmentName: editDepartment.trim() || undefined,
       commercialNotes: editNotes.trim() || undefined, }); };
   if (state.stage === "loading" && !state.contact) { return ( <CrmShell activeTab="contacts" onTabChange={() => {}}>
@@ -155,10 +160,10 @@ export function ContactDetailView({ contactId }: ContactDetailViewProps) { const
                     <span className="text-xs font-bold text-nx-ink block hover:text-nx-accent">
                       {language === "ar" && contact.primaryAccountNameAr
                         ? contact.primaryAccountNameAr
-                        : contact.primaryAccountNameEn || "Account"}
+                        : contact.primaryAccountNameEn || "Commercial Account"}
                     </span>
-                    <span className="text-[11px] text-nx-ink-3 font-mono">
-                      ID: {contact.primaryAccountId.slice(0, 8)}...
+                    <span className="text-[11px] text-nx-ink-3">
+                      {t("crmContacts.detail.linkedOrganization", { defaultValue: "Primary Organization Account" })}
                     </span>
                   </div>
                 </div>
@@ -190,7 +195,7 @@ export function ContactDetailView({ contactId }: ContactDetailViewProps) { const
                 {contact.opportunities?.map((opp) => ( <div
                     key={opp.id}
                     className="py-2.5 flex items-center justify-between gap-3 hover:bg-nx-raised/30 px-1 rounded-nx-md cursor-pointer transition-colors"
-                    onClick={() => router.push(`/crm/opportunities`)}
+                    onClick={() => router.push(`/crm/opportunities/${opp.id}`)}
                   >
                     <div>
                       <span className="text-xs font-semibold text-nx-ink block hover:text-nx-accent">
@@ -247,11 +252,23 @@ export function ContactDetailView({ contactId }: ContactDetailViewProps) { const
               <div className="space-y-3.5 py-4 text-xs">
                 <div className="space-y-1.5">
                   <Label htmlFor="edit-primary-account" className="text-nx-ink-2 font-medium">
-                    {t("crmContacts.create.primaryAccountId") || "Primary Account ID (GUID)"}
+                    {t("crmContacts.create.primaryAccount", { defaultValue: "Primary Commercial Account" })}
                   </Label>
-                  <Input id="edit-primary-account" value={editPrimaryAccount}
-                    onChange={(e) => setEditPrimaryAccount(e.target.value)}
-                    className="h-8 text-xs bg-nx-ground border-nx-line text-nx-ink font-mono" />
+                  <Select value={editPrimaryAccount || "__none__"} onValueChange={setEditPrimaryAccount}>
+                    <SelectTrigger id="edit-primary-account" className="h-8 text-xs bg-nx-ground border-nx-line text-nx-ink">
+                      <SelectValue placeholder={t("crmContacts.create.selectAccountPlaceholder", { defaultValue: "Select primary account..." })} />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="__none__">
+                        {t("crmContacts.create.noPrimaryAccount", { defaultValue: "None (Unlinked)" })}
+                      </SelectItem>
+                      {accountOptions.map((acc) => (
+                        <SelectItem key={acc.id} value={acc.id}>
+                          {acc.displayName}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
                 </div>
                 <div className="grid grid-cols-2 gap-3">
                   <div className="space-y-1.5">

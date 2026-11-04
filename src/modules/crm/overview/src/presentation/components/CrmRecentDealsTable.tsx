@@ -1,5 +1,6 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import { useI18n } from "@core/providers/i18n-provider";
 import { ShieldCheck, AlertCircle, ArrowUpRight, User } from "lucide-react";
 import { Button } from "@core/ui/button";
@@ -14,6 +15,7 @@ interface CrmRecentDealsTableProps {
 }
 
 export function CrmRecentDealsTable({ deals, className }: CrmRecentDealsTableProps) {
+  const router = useRouter();
   const { t, language } = useI18n();
   const isRtl = language === "ar";
 
@@ -36,16 +38,28 @@ export function CrmRecentDealsTable({ deals, className }: CrmRecentDealsTablePro
       )}
       dir={isRtl ? "rtl" : "ltr"}
     >
-      <div className="p-4 sm:p-5 border-b border-nx-line">
-        <h3 className="text-sm font-bold text-nx-ink font-heading">
-          {t("crm.recentDeals.title")}
-        </h3>
-        <p className="text-xs text-nx-ink-2 mt-0.5">
-          {t("crm.recentDeals.subtitle")}
-        </p>
+      <div className="p-4 sm:p-5 border-b border-nx-line flex items-center justify-between gap-2">
+        <div>
+          <h3 className="text-sm font-bold text-nx-ink font-heading">
+            {t("crm.recentDeals.title")}
+          </h3>
+          <p className="text-xs text-nx-ink-2 mt-0.5">
+            {t("crm.recentDeals.subtitle")}
+          </p>
+        </div>
+        <Button
+          type="button"
+          variant="outline"
+          size="sm"
+          onClick={() => router.push("/crm/opportunities")}
+          className="h-8 text-xs border-nx-line bg-nx-surface text-nx-ink hover:bg-nx-raised gap-1"
+        >
+          <span>{t("crm.tabs.deals")}</span>
+          <ArrowUpRight className="size-3.5" />
+        </Button>
       </div>
 
-      <div className="overflow-x-auto no-scrollbar">
+      <div className="w-full overflow-x-auto">
         <table className="w-full text-left text-xs border-collapse" dir={isRtl ? "rtl" : "ltr"}>
           <thead>
             <tr className="border-b border-nx-line bg-nx-raised/50 text-nx-ink-2 font-semibold">
@@ -62,7 +76,8 @@ export function CrmRecentDealsTable({ deals, className }: CrmRecentDealsTablePro
               return (
                 <tr
                   key={deal.id}
-                  className="group hover:bg-nx-raised/40 transition-colors duration-nx-micro"
+                  onClick={() => router.push(`/crm/opportunities/${deal.id}`)}
+                  className="group hover:bg-nx-raised/40 transition-colors duration-nx-micro cursor-pointer"
                 >
                   <td className="px-4 py-3 font-semibold text-nx-ink max-w-xs truncate">
                     {deal.title}
@@ -108,13 +123,21 @@ export function CrmRecentDealsTable({ deals, className }: CrmRecentDealsTablePro
                     </div>
                   </td>
 
-                  <td className="px-4 py-3 text-end">
+                  <td
+                    className="px-4 py-3 text-end"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      router.push(`/crm/opportunities/${deal.id}`);
+                    }}
+                  >
                     <Button
+                      type="button"
                       variant="ghost"
                       size="sm"
+                      onClick={() => router.push(`/crm/opportunities/${deal.id}`)}
                       className="h-7 px-2 text-xs text-nx-ink-2 hover:text-nx-ink hover:bg-nx-raised gap-1"
                     >
-                      <span>View</span>
+                      <span>{t("crmOpportunities.actions.viewDetails", { defaultValue: "View" })}</span>
                       <ArrowUpRight className="size-3" />
                     </Button>
                   </td>

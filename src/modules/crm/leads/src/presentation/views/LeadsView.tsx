@@ -6,7 +6,7 @@ import { Button } from "@core/ui/button";
 import { Input } from "@core/ui/input";
 import { EmptyState } from "@core/ui/empty-state";
 import { Card } from "@core/ui/card";
-import { AlertCircle, RefreshCw, Plus, Search, User, Mail, Phone, Calendar, CheckCircle2, Link as LinkIcon, Sparkles, Building2, } from "lucide-react";
+import { AlertCircle, RefreshCw, Plus, Search, User, Mail, Phone, Calendar, CheckCircle2, Link as LinkIcon, Sparkles, Building2, ChevronLeft, ChevronRight, } from "lucide-react";
 import { cn } from "@core/common/utils";
 import { CRM_PERMISSIONS, CrmShell, CrmSectionHeader } from "@modules/crm";
 import { GenericCrudView } from "@core/crud/components/generic-crud-view";
@@ -96,6 +96,7 @@ export function LeadsView() { const { t, language } = useI18n();
               {formattedDate}
             </span> ); }, }, ];
   const crudConfig: CrudConfig<CrmLead> = ({ titleKey: "crmLeads.title", subtitleKey: "crmLeads.subtitle", resource: "crm.leads",
+      entityTypeKey: "crm.lead",
       hidePageHeader: true, hideActionButtons: true, stickyActions: true, searchConfig: { enabled: false },
       viewSwitchPosition: "toolbar", toolbarContent: (
         <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 flex-1" dir={isRtl ? "rtl" : "ltr"} >
@@ -145,26 +146,120 @@ export function LeadsView() { const { t, language } = useI18n();
           summary: (items: CrmLead[]) => { const sum = items.reduce((acc, curr) => acc + (curr.estimatedValue || 0), 0);
             return <span className="font-semibold text-destructive">{sum > 0 ? `SAR ${sum.toLocaleString()}` : "SAR 0"}</span>; },
         }, ], onKanbanItemMove: (item: CrmLead, targetColumnValue: string) => { handleUpdateLeadStatus(item, targetColumnValue);
-      }, renderKanbanCard: (lead: CrmLead, actions: React.ReactNode) => (
-        <div className="space-y-2.5 rounded-nx-md border border-nx-line bg-nx-raised p-3 hover:border-nx-line-hi transition-all text-nx-ink">
-          <div className="flex items-start justify-between gap-2">
-            <span className="font-semibold text-xs text-nx-ink line-clamp-1">{lead.title}</span>
-            <LeadStatusBadge status={lead.status} />
+      }, renderKanbanCard: (lead: CrmLead, actions: React.ReactNode) => {
+        const activeOrder: LeadStatus[] = ["New", "Working", "Qualified", "Converted"];
+        const currentIdx = activeOrder.indexOf(lead.status);
+        const prevStage =
+          lead.status === "Disqualified"
+            ? "Working"
+            : currentIdx > 0 && lead.status !== "Converted"
+            ? activeOrder[currentIdx - 1]
+            : undefined;
+        const nextStage =
+          currentIdx >= 0 && currentIdx < activeOrder.length - 1
+            ? activeOrder[currentIdx + 1]
+            : undefined;
+        return (
+          <div
+            data-testid={`lead-kanban-card-${lead.id}`}
+            className="space-y-2.5 rounded-nx-md border border-nx-line bg-nx-raised p-3 hover:border-nx-line-hi transition-all text-nx-ink overflow-hidden"
+          >
+            <div className="flex items-start justify-between gap-2">
+              <span className="font-semibold text-xs text-nx-ink line-clamp-1">{lead.title}</span>
+              <LeadStatusBadge status={lead.status} />
+            </div>
+            <div className="text-xs text-nx-ink-2 truncate">
+              <span className="font-medium">{lead.companyName || lead.fullName || "—"}</span>
+            </div>
+            {lead.estimatedValue !== undefined && lead.estimatedValue !== null && (
+              <div className="text-xs font-bold text-nx-accent">
+                {lead.currency || "SAR"} {lead.estimatedValue.toLocaleString()}
+              </div>
+            )}
+            {lead.email && (
+              <div className="text-[11px] text-nx-ink-3 truncate flex items-center gap-1">
+                <Mail className="size-2.5 shrink-0" />
+                <span className="truncate">{lead.email}</span>
+              </div>
+            )}
+            <div className="pt-2 border-t border-nx-line/50 flex items-center justify-between gap-1.5">
+              <div className="flex flex-wrap items-center gap-1">
+                {lead.status !== "Converted" && lead.status !== "Disqualified" && (
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    className="h-6 px-1.5 text-[10px] border-nx-line bg-nx-surface text-nx-ink-2 hover:text-nx-ink gap-1"
+                    title={t("crmLeads.actions.linkParty")}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      openLinkPartyDialog(lead);
+                    }}
+                  >
+                    <LinkIcon className="size-2.5" />
+                    <span>Link</span>
+                  </Button>
+                )}
+                {(lead.status === "Qualified" || lead.status === "New" || lead.status === "Working") &&
+                  !lead.convertedOpportunityId && (
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      className="h-6 px-1.5 text-[10px] border-nx-accent/30 bg-nx-accent-wash/40 text-nx-accent hover:bg-nx-accent-wash gap-1 font-semibold"
+                      title={t("crmLeads.actions.convert")}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        openConvertDialog(lead);
+                      }}
+                    >
+                      <Sparkles className="size-2.5" />
+                      <span>Convert</span>
+                    </Button>
+                  )}
+              </div>
+              {(prevStage || nextStage) && (
+                <div className="flex items-center gap-0.5 shrink-0 ms-auto">
+                  {prevStage && (
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="icon"
+                      className="size-6 text-nx-ink-3 hover:text-nx-ink hover:bg-nx-surface"
+                      title={`Move back to ${prevStage}`}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleUpdateLeadStatus(lead, prevStage);
+                      }}
+                    >
+                      <ChevronLeft className={cn("size-3.5", isRtl && "rotate-180")} />
+                    </Button>
+                  )}
+                  {nextStage && (
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="icon"
+                      className="size-6 text-nx-ink-3 hover:text-nx-ink hover:bg-nx-surface"
+                      title={`Advance to ${nextStage}`}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleUpdateLeadStatus(lead, nextStage);
+                      }}
+                    >
+                      <ChevronRight className={cn("size-3.5", isRtl && "rotate-180")} />
+                    </Button>
+                  )}
+                </div>
+              )}
+            </div>
           </div>
-          <div className="text-xs text-nx-ink-2">
-            <span className="font-medium">{lead.companyName || lead.fullName || "—"}</span>
-          </div>
-          {lead.estimatedValue !== undefined && lead.estimatedValue !== null && (
-            <div className="text-xs font-bold text-nx-accent">
-              {lead.currency || "SAR"} {lead.estimatedValue.toLocaleString()}
-            </div> )}
-          {lead.email && ( <div className="text-[11px] text-nx-ink-3 truncate flex items-center gap-1">
-              <Mail className="size-2.5" />
-              {lead.email}
-            </div> )}
-          {actions && <div className="pt-2 border-t border-nx-line/50">{actions}</div>}
-        </div> ), renderCardGridItem: (lead: CrmLead, actions: React.ReactNode) => (
-        <div className="flex flex-col justify-between gap-3 rounded-nx-lg border border-nx-line bg-nx-surface p-4 hover:border-nx-line-hi transition-all text-nx-ink">
+        );
+      }, renderCardGridItem: (lead: CrmLead, actions: React.ReactNode) => (
+        <div
+          data-testid={`lead-grid-card-${lead.id}`}
+          className="flex flex-col justify-between gap-3 rounded-nx-lg border border-nx-line bg-nx-surface p-4 hover:border-nx-line-hi transition-all text-nx-ink"
+        >
           <div className="space-y-2">
             <div className="flex items-start justify-between gap-2">
               <h4 className="font-bold text-sm text-nx-ink line-clamp-1">{lead.title}</h4>
@@ -182,9 +277,9 @@ export function LeadsView() { const { t, language } = useI18n();
                 {lead.currency || "SAR"} {lead.estimatedValue.toLocaleString()}
               </div> )}
           </div>
-          <div className="border-t border-nx-line pt-3 flex items-center justify-between">
-            <span className="text-[11px] text-nx-ink-3">{lead.source || "Direct"}</span>
-            {actions}
+          <div className="border-t border-nx-line pt-3 flex flex-wrap items-center justify-between gap-2">
+            <span className="text-[11px] text-nx-ink-3 shrink-0">{lead.source || "Direct"}</span>
+            <div className="flex flex-wrap items-center gap-1.5 [&_div]:flex [&_div]:flex-wrap [&_div]:gap-1.5">{actions}</div>
           </div>
         </div> ), renderSplitDetail: (lead: CrmLead, actions: React.ReactNode) => (
         <div className="rounded-nx-lg border border-nx-line bg-nx-surface p-5 space-y-5 text-nx-ink">
@@ -235,11 +330,11 @@ export function LeadsView() { const { t, language } = useI18n();
             lead.status !== "Converted" &&
             lead.status !== "Disqualified", }, { label: t("crmLeads.actions.convert"),
           icon: <Sparkles className="size-3.5" />, onClick: (lead: CrmLead) => openConvertDialog(lead),
-          show: (lead: CrmLead) => lead.status === "Qualified" && !lead.convertedOpportunityId, }, ], customTableProps: {
+          show: (lead: CrmLead) => (lead.status === "Qualified" || lead.status === "New" || lead.status === "Working") && !lead.convertedOpportunityId, }, ], customTableProps: {
         onSearch: undefined, emptyMessage: ( <EmptyState title={t("crmLeads.table.emptyTitle")}
             description={t("crmLeads.table.emptyDescription")} /> ), }, onCreateClick: () => setIsCreateOpen(true), });
   return ( <CrmShell activeTab="leads" onTabChange={() => {}}>
-      <CrmSectionHeader title={t("crmLeads.title")} subtitle={t("crmLeads.subtitle")} badge="D4/B Governed"
+      <CrmSectionHeader title={t("crmLeads.title")} subtitle={t("crmLeads.subtitle")} badge={`${state.totalCount} ${t("crm.tabs.leads")}`}
         actions={ <div className="flex items-center gap-2">
             <Button type="button" variant="outline" size="sm" onClick={refresh}
               className="h-8 gap-1.5 border-nx-line bg-nx-surface text-xs text-nx-ink hover:bg-nx-raised"
@@ -275,11 +370,12 @@ export function LeadsView() { const { t, language } = useI18n();
       <CreateLeadDialog open={isCreateOpen} onOpenChange={setIsCreateOpen} onSubmit={handleCreateLead} isSubmitting={isSubmitting}
         submitError={submitError} />
       {/* Qualify Lead Modal */}
-      <QualifyLeadDialog open={isQualifyOpen} onOpenChange={setIsQualifyOpen} lead={activeLead} onSubmit={handleQualifyLead}
+      <QualifyLeadDialog open={isQualifyOpen} onOpenChange={setIsQualifyOpen} lead={activeLead} initialDecision={viewModel.qualifyDefaultDecision} onSubmit={handleQualifyLead}
         isSubmitting={isSubmitting}
         submitError={submitError} />
       {/* Link Party Modal */}
       <LinkPartyDialog open={isLinkPartyOpen} onOpenChange={setIsLinkPartyOpen} lead={activeLead} onSubmit={handleLinkParty}
+        onLookupParties={viewModel.lookupCandidateParties}
         isSubmitting={isSubmitting}
         submitError={submitError} />
       {/* Convert Lead to Opportunity Modal */}
