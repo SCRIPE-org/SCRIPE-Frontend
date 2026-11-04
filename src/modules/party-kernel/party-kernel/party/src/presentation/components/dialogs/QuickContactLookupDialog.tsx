@@ -148,7 +148,7 @@ export function QuickContactLookupDialog({
           {t("party.picker.findExisting") || "Quick Contact Lookup"}
         </DialogTitle>
         <DialogDescription className="sr-only">
-          {t("party.picker.searchPlaceholder") || "Search contacts by name, email, or telephone..."}
+          {t("party.picker.searchPlaceholder") || "Search contacts by name..."}
         </DialogDescription>
 
         {/* ── Top Command Bar ────────────────────────────────────────── */}
@@ -164,7 +164,7 @@ export function QuickContactLookupDialog({
               onKeyDown={handleKeyDown}
               autoFocus
               placeholder={
-                t("party.picker.searchPlaceholder") || "Search contacts by name, email, or telephone..."
+                t("party.picker.searchPlaceholder") || "Search contacts by name..."
               }
               className="h-10 pl-9 pr-9 text-sm border-nx-line bg-nx-raised/40 text-nx-ink placeholder:text-nx-ink-3 focus-visible:ring-1 focus-visible:ring-nx-accent rtl:pl-9 rtl:pr-9"
               role="combobox"

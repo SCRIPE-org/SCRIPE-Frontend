@@ -192,11 +192,16 @@ export function useLoginViewModel() {
         setIsRedirecting(true);
         if (!hasTriggeredRedirect.current) {
           hasTriggeredRedirect.current = true;
-          const mustChange = useAppStore.getState().mustChangePassword;
+          const state = useAppStore.getState();
+          const mustChange = state.mustChangePassword;
+          const queryRedirect = searchParams.get("redirect");
+          const backendTarget = state.defaultRedirectPath;
+          const target = queryRedirect || (backendTarget && backendTarget !== "/" ? backendTarget : "/overview");
+
           // Use requestAnimationFrame to ensure Zustand store persistence flush completes
           // before navigation, preventing RouteGuard from seeing stale state.
           requestAnimationFrame(() => {
-            handleRedirect(mustChange ? "/change-password" : redirectPath);
+            handleRedirect(mustChange ? "/change-password" : target);
           });
         }
       } catch (err: unknown) {

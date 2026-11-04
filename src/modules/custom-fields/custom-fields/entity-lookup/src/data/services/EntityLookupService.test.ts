@@ -105,6 +105,38 @@ describe("EntityLookupService", () => {
       );
     });
 
+    it("uses the Party Person shared-search route and preserves an Arabic query and returned DTO", async () => {
+      const item: EntityLookupItem = {
+        id: "party-person-encrypted-id",
+        displayName: "مريم عبد النور",
+        secondary: null,
+        isActive: true,
+      };
+      const api = mockApiService({
+        items: [item],
+        totalCount: 1,
+        pageNumber: 1,
+        pageSize: 20,
+        totalPages: 1,
+        hasNextPage: false,
+        hasPreviousPage: false,
+      });
+      const service = new EntityLookupService(api);
+
+      const result = await service.search("party.person", {
+        search: "مريم",
+        page: 1,
+        pageSize: 20,
+      });
+
+      expect(api.get).toHaveBeenCalledWith(
+        "/v1/entity-lookup/party.person",
+        { search: "مريم", page: 1, pageSize: 20 },
+        undefined
+      );
+      expect(result.items).toEqual([item]);
+    });
+
     it("sends no search param at all when the query is unfiltered", async () => {
       const api = mockApiService({ items: [], totalCount: 0, hasNextPage: false });
       const service = new EntityLookupService(api);

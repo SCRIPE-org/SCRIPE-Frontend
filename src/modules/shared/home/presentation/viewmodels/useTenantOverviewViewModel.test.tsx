@@ -7,7 +7,7 @@ import { useI18n } from "@core/providers/i18n-provider";
 import { useAdminContext } from "@core/hooks/useAdminContext";
 import { useCurrentTenantId } from "@core/providers/tenant-context-provider";
 import { useEnhancedToast } from "@core/hooks/use-enhanced-toast";
-import { usePermission } from "@core/hooks/use-permission";
+import { usePermission, usePermissions } from "@core/hooks/use-permission";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { saveTenantDisplayPrefs } from "@core/services/module-bridges";
 import { DEFAULT_TENANT_OVERVIEW_LAYOUT } from "../components/tenant-command-center/tenantWidgetRegistry";
@@ -40,7 +40,12 @@ vi.mock("@core/hooks/use-enhanced-toast", () => ({
 }));
 
 vi.mock("@core/hooks/use-permission", () => ({
-  usePermission: vi.fn(),
+  usePermission: vi.fn(() => true),
+  usePermissions: vi.fn(() => ({
+    has: vi.fn(() => true),
+    hasPermission: vi.fn(() => true),
+    canAccessPage: vi.fn(() => true),
+  })),
 }));
 
 vi.mock("@core/services/module-bridges", () => ({
@@ -200,5 +205,49 @@ describe("useTenantOverviewViewModel Customization", () => {
     expect(result.current.activeLayout.widgets).toHaveLength(
       DEFAULT_TENANT_OVERVIEW_LAYOUT.widgets.length
     );
+  });
+
+  it("disables statsQuery and passes hasDashboardPermission: false when user lacks dashboard.view", () => {
+    vi.mocked(usePermissions).mockReturnValue({
+      has: vi.fn((perm: string) => perm === "tenants.view_self"),
+      hasPermission: vi.fn((perm: string) => perm === "tenants.view_self"),
+      canAccessPage: vi.fn(() => true),
+    } as any);
+
+    renderHook(() => useTenantOverviewViewModel());
+
+    expect(useOverviewViewModel).toHaveBeenCalledWith(false);
+
+    const useQueryMock = vi.mocked(useQuery);
+    const statsQueryCall = useQueryMock.mock.calls.find(
+      (call) => Array.isArray(call[0]?.queryKey) && call[0].queryKey[1] === "overview-stats"
+    );
+    expect(statsQueryCall).toBeDefined();
+    expect(statsQueryCall![0].enabled).toBe(false);
+
+    const detailsQueryCall = useQueryMock.mock.calls.find(
+      (call) => Array.isArray(call[0]?.queryKey) && call[0].queryKey[1] === "overview-details"
+    );
+    expect(detailsQueryCall).toBeDefined();
+    expect(detailsQueryCall![0].enabled).toBe(true);
+  });
+
+  it("enables statsQuery and passes hasDashboardPermission: true when user has dashboard.view", () => {
+    vi.mocked(usePermissions).mockReturnValue({
+      has: vi.fn((perm: string) => perm === "dashboard.view" || perm === "tenants.view_self"),
+      hasPermission: vi.fn((perm: string) => perm === "dashboard.view" || perm === "tenants.view_self"),
+      canAccessPage: vi.fn(() => true),
+    } as any);
+
+    renderHook(() => useTenantOverviewViewModel());
+
+    expect(useOverviewViewModel).toHaveBeenCalledWith(true);
+
+    const useQueryMock = vi.mocked(useQuery);
+    const statsQueryCall = useQueryMock.mock.calls.find(
+      (call) => Array.isArray(call[0]?.queryKey) && call[0].queryKey[1] === "overview-stats"
+    );
+    expect(statsQueryCall).toBeDefined();
+    expect(statsQueryCall![0].enabled).toBe(true);
   });
 });

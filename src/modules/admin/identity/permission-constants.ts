@@ -48,6 +48,7 @@ export const IDENTITY_PERMISSIONS = {
 
   // ── Tenants ─────────────────────────────────────────────
   TENANTS_VIEW: "tenants.view",
+  TENANTS_VIEW_SELF: "tenants.view_self",
   TENANTS_VIEW_DETAILS: "tenants.view_details",
   TENANTS_VIEW_SUBTENANTS: "tenants.view_subTenants",
   TENANTS_DRILL_DOWN: "tenants.drill_down",

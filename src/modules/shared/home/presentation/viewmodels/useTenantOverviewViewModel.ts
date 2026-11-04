@@ -6,7 +6,7 @@ import { useI18n } from "@core/providers/i18n-provider";
 import { useAdminContext } from "@core/hooks/useAdminContext";
 import { useCurrentTenantId } from "@core/providers/tenant-context-provider";
 import { useEnhancedToast } from "@core/hooks/use-enhanced-toast";
-import { usePermission } from "@core/hooks/use-permission";
+import { usePermission, usePermissions } from "@core/hooks/use-permission";
 import { STORAGE_KEYS } from "@core/config/storage-keys";
 import { saveTenantDisplayPrefs } from "@core/services/module-bridges";
 import { CUSTOMIZATION_PERMISSIONS } from "@modules/customization/permission-constants";
@@ -26,13 +26,17 @@ export function useTenantOverviewViewModel() {
   const tenantId = contextTenantId || adminTenantId;
   const { isPresentationMode, togglePresentationMode } = usePresentationMode();
 
-  const overviewVm = useOverviewViewModel(true);
+  const { has: can } = usePermissions();
+  const hasDashboardPermission = can("dashboard.view");
+  const hasTenantViewPermission = can("tenants.view_self") || can("tenants.view_details") || can("tenants.view");
+
+  const overviewVm = useOverviewViewModel(hasDashboardPermission);
 
   // Fetch Tenant Stats from Identity API
   const statsQuery = useQuery({
     queryKey: ["tenant", "overview-stats", tenantId],
     queryFn: () => identityContainer.tenantRepository.getStats(tenantId!),
-    enabled: !!tenantId,
+    enabled: !!tenantId && (hasDashboardPermission || can("tenants.view_details")),
     staleTime: 60 * 1000,
     retry: 1,
   });
@@ -41,7 +45,7 @@ export function useTenantOverviewViewModel() {
   const detailsQuery = useQuery({
     queryKey: ["tenant", "overview-details", tenantId],
     queryFn: () => identityContainer.tenantRepository.getById(tenantId!),
-    enabled: !!tenantId,
+    enabled: !!tenantId && hasTenantViewPermission,
     staleTime: 5 * 60 * 1000,
     retry: 1,
   });

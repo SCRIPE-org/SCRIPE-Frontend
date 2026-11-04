@@ -209,7 +209,7 @@ export function AddRelationshipDialog({
                   }}
                   placeholder={tr(
                     "party.dialog.selectTargetPartyPlaceholder",
-                    "Search by name, email, or phone..."
+                    "Search contacts by name..."
                   )}
                   disabled={isSubmitting}
                   allowCreate={false}

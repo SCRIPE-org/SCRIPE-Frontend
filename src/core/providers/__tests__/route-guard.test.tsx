@@ -36,6 +36,7 @@ const {
 
   const mockNavigationState = {
     allRoutes: new Set(["/dashboard", "/activate-workspace"]),
+    workspaceRouteMap: {},
     hasRouteAccess: vi.fn(() => true),
     reset: vi.fn(),
   };
@@ -61,6 +62,7 @@ const {
 
 // Configure next/navigation mock
 let currentPathname = "/dashboard";
+let mockCanAccessPage = vi.fn((_p?: string) => true);
 vi.mock("next/navigation", () => ({
   useRouter: () => ({
     replace: mockRouterReplace,
@@ -95,7 +97,7 @@ vi.mock("@core/providers/service-provider", () => ({
 
 vi.mock("@core/hooks/use-permissions", () => ({
   usePermissions: () => ({
-    canAccessPage: () => true,
+    canAccessPage: (p: string) => mockCanAccessPage(p),
   }),
 }));
 
@@ -180,6 +182,53 @@ describe("RouteGuard - Locked Billing Wall Tests", () => {
     );
 
     expect(screen.getByTestId("guest-portal-content")).toBeInTheDocument();
+    expect(mockRouterReplace).not.toHaveBeenCalled();
+  });
+
+  it("should redirect unauthenticated access to /venue to /login", () => {
+    mockUseAppStore.getState().isAuthenticated = false;
+    mockHasToken.mockReturnValue(false);
+    currentPathname = "/venue";
+
+    render(
+      <RouteGuard>
+        <div data-testid="venue-content">Venue Content</div>
+      </RouteGuard>
+    );
+
+    expect(screen.queryByTestId("venue-content")).not.toBeInTheDocument();
+    expect(mockRouterPush).toHaveBeenCalledWith("/login");
+  });
+
+  it("should enforce page permission on /party-kernel/parties and redirect to /not-authorized when user lacks access", () => {
+    mockUseAppStore.getState().isAuthenticated = true;
+    mockHasToken.mockReturnValue(true);
+    currentPathname = "/party-kernel/parties";
+    mockCanAccessPage.mockReturnValue(false);
+
+    render(
+      <RouteGuard>
+        <div data-testid="party-content">Party Content</div>
+      </RouteGuard>
+    );
+
+    expect(screen.queryByTestId("party-content")).not.toBeInTheDocument();
+    expect(mockRouterPush).toHaveBeenCalledWith("/not-authorized");
+  });
+
+  it("should allow authenticated access to /overview as a system page without redirecting", () => {
+    mockUseAppStore.getState().isAuthenticated = true;
+    mockHasToken.mockReturnValue(true);
+    currentPathname = "/overview";
+
+    render(
+      <RouteGuard>
+        <div data-testid="overview-content">Overview Content</div>
+      </RouteGuard>
+    );
+
+    expect(screen.getByTestId("overview-content")).toBeInTheDocument();
+    expect(mockRouterPush).not.toHaveBeenCalled();
     expect(mockRouterReplace).not.toHaveBeenCalled();
   });
 });

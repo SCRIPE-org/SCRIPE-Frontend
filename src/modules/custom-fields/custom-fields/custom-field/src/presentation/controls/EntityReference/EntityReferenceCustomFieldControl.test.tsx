@@ -86,6 +86,7 @@ if (typeof Element.prototype.scrollIntoView !== "function") {
 
 const USER_TYPE = "identity.user";
 const STAFF_TYPE = "hrms.staff-member";
+const PARTY_PERSON_TYPE = "party.person";
 
 const AHMED = {
   id: "enc-ahmed",
@@ -695,6 +696,30 @@ describe("EntityReferenceCustomFieldControl", () => {
       expect(Object.keys(emitted).sort()).toEqual(["entityId", "entityTypeKey"]);
       expect(emitted).not.toHaveProperty("encryptedEntityId");
       expect(emitted).toEqual({ entityTypeKey: USER_TYPE, entityId: AHMED.id });
+    });
+
+    it("passes a Party Person search to the typed lookup and emits the selected encrypted reference", () => {
+      const maryam = {
+        id: "party-person-encrypted-id",
+        displayName: "مريم عبد النور",
+        secondary: null,
+        isActive: true,
+      };
+      currentSearch = searchStub({ items: [maryam] });
+      const { onChange } = renderControl({ targetEntityTypeKey: PARTY_PERSON_TYPE });
+      openPanel();
+
+      expect(searchArgs.at(-1)).toMatchObject({ entityTypeKey: PARTY_PERSON_TYPE, enabled: true });
+      const input = document.querySelector("[cmdk-input]") as HTMLInputElement;
+      fireEvent.change(input, { target: { value: "مريم" } });
+      expect(currentSearch.setQuery).toHaveBeenCalledWith("مريم");
+
+      fireEvent.click(screen.getByRole("option", { name: /مريم عبد النور/ }));
+
+      expect(onChange).toHaveBeenCalledWith({
+        entityTypeKey: PARTY_PERSON_TYPE,
+        entityId: maryam.id,
+      });
     });
 
     it("renders the secondary line as row context rather than dropping it", () => {

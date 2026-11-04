@@ -30,6 +30,7 @@ import { WORK_MANAGEMENT_PERMISSIONS } from "@modules/work-management/permission
 import { CUSTOM_FIELDS_PERMISSIONS } from "@modules/custom-fields/permission-constants";
 import { ANALYTICS_EVENTS_PERMISSIONS } from "@modules/analytics/permission-constants";
 import { VENUE_PERMISSIONS } from "@modules/venue/permission-constants";
+import { ACADEMY_PERMISSIONS } from "@modules/academy/shared/permission-constants";
 
 // ── Re-export individual module permissions for direct access ─────────────────
 export {
@@ -50,6 +51,7 @@ export {
   CUSTOM_FIELDS_PERMISSIONS,
   ANALYTICS_EVENTS_PERMISSIONS,
   VENUE_PERMISSIONS,
+  ACADEMY_PERMISSIONS,
 };
 
 // ── Types ─────────────────────────────────────────────────────────────────────
@@ -139,12 +141,31 @@ export function matchesPermission(
 }
 
 /**
- * Check if user has a specific permission
+ * Check if user has a specific permission.
+ * Supports '|' alternatives (OR logic) and '&' / '+' combinations (AND logic).
  */
 export function hasPermission(
   userPermissions: PermissionCode[],
   requiredPermission: PermissionCode
 ): boolean {
+  if (!requiredPermission || requiredPermission.trim() === '') return true;
+
+  if (requiredPermission.includes('|')) {
+    const alternatives = requiredPermission
+      .split('|')
+      .map((s) => s.trim())
+      .filter(Boolean);
+    return alternatives.some((alt) => hasPermission(userPermissions, alt));
+  }
+
+  if (requiredPermission.includes('&') || requiredPermission.includes('+')) {
+    const tokens = requiredPermission
+      .split(/[&+]/)
+      .map((s) => s.trim())
+      .filter(Boolean);
+    return tokens.every((token) => hasPermission(userPermissions, token));
+  }
+
   return userPermissions.some((p) => matchesPermission(p, requiredPermission));
 }
 
@@ -193,6 +214,7 @@ export const SYSTEM_PERMISSIONS = {
   ...CUSTOM_FIELDS_PERMISSIONS,
   ...ANALYTICS_EVENTS_PERMISSIONS,
   ...VENUE_PERMISSIONS,
+  ...ACADEMY_PERMISSIONS,
 } as const;
 
 // ── Page permission mapping ───────────────────────────────────────────────────
@@ -217,7 +239,9 @@ export const PAGE_PERMISSIONS: Record<string, PermissionCode[]> = {
   "/settings/permissions": [SYSTEM_PERMISSIONS.PERMISSIONS_VIEW],
   "/tenants": [SYSTEM_PERMISSIONS.TENANTS_VIEW],
   "/tenants/create": [SYSTEM_PERMISSIONS.TENANTS_CREATE],
-  "/tenants/[id]": [SYSTEM_PERMISSIONS.TENANTS_VIEW],
+  "/tenants/[id]": [
+    `${SYSTEM_PERMISSIONS.TENANTS_VIEW}|${SYSTEM_PERMISSIONS.TENANTS_VIEW_SELF}|${SYSTEM_PERMISSIONS.TENANTS_VIEW_DETAILS}`,
+  ],
   "/domains": [SYSTEM_PERMISSIONS.TENANTS_VIEW],
   "/users": [SYSTEM_PERMISSIONS.USERS_VIEW],
   "/user-groups": [SYSTEM_PERMISSIONS.USER_GROUPS_VIEW],
@@ -230,7 +254,7 @@ export const PAGE_PERMISSIONS: Record<string, PermissionCode[]> = {
   "/settings/oauth-apps/[id]": [SYSTEM_PERMISSIONS.OAUTH_APPS_VIEW],
 
   // Monitoring & Analytics pages
-  "/overview": [SYSTEM_PERMISSIONS.DASHBOARD_VIEW],
+  "/overview": [], // Shared authenticated overview
   "/dashboard": [SYSTEM_PERMISSIONS.DASHBOARD_VIEW],
   "/audit": [SYSTEM_PERMISSIONS.AUDIT_VIEW],
   "/security": [SYSTEM_PERMISSIONS.SECURITY_VIEW],
@@ -253,6 +277,7 @@ export const PAGE_PERMISSIONS: Record<string, PermissionCode[]> = {
   "/entitlements/editions/[id]": [SYSTEM_PERMISSIONS.EDITIONS_VIEW],
   "/entitlements/features": [SYSTEM_PERMISSIONS.FEATURES_VIEW],
 
+  "/entitlements/subscriptions": [SYSTEM_PERMISSIONS.SUBSCRIPTIONS_VIEW],
   "/entitlements/subscriptions/[tenantId]": [SYSTEM_PERMISSIONS.SUBSCRIPTIONS_VIEW],
   "/entitlements/overrides": [SYSTEM_PERMISSIONS.FEATURES_OVERRIDE],
   "/entitlements/overrides/[tenantId]": [SYSTEM_PERMISSIONS.FEATURES_OVERRIDE],
@@ -445,6 +470,18 @@ export const PAGE_PERMISSIONS: Record<string, PermissionCode[]> = {
 
   // Canonical operational detail — enrichment and action permissions are checked independently.
   "/venue/bookings/[reservationId]": [SYSTEM_PERMISSIONS.RESERVATION_VIEW],
+
+  // Academy Module
+  "/academy": [ACADEMY_PERMISSIONS.ACADEMY_OVERVIEW_VIEW],
+  "/academy/seasons": [ACADEMY_PERMISSIONS.ACADEMY_PROGRAMS_VIEW],
+  "/academy/programs": [ACADEMY_PERMISSIONS.ACADEMY_PROGRAMS_VIEW],
+  "/academy/locations": [ACADEMY_PERMISSIONS.ACADEMY_LOCATIONS_VIEW],
+  "/academy/offerings": [ACADEMY_PERMISSIONS.ACADEMY_OFFERINGS_VIEW],
+  "/academy/athletes": [ACADEMY_PERMISSIONS.ACADEMY_ATHLETES_VIEW],
+  "/academy/trials": [ACADEMY_PERMISSIONS.ACADEMY_TRIALS_VIEW],
+  "/academy/enrollments": [ACADEMY_PERMISSIONS.ACADEMY_ENROLLMENTS_VIEW],
+  "/academy/groups": [ACADEMY_PERMISSIONS.ACADEMY_GROUPS_VIEW],
+  "/academy/groups/[id]": [ACADEMY_PERMISSIONS.ACADEMY_GROUPS_VIEW],
 
   // Work Items Module
   "/work-items": [SYSTEM_PERMISSIONS.WORK_ITEM_VIEW],
