@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useI18n } from "@core/providers/i18n-provider";
 import { usePermission } from "@core/hooks/use-permission";
@@ -12,6 +12,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@core
 import { Button } from "@core/ui/button";
 import { Alert, AlertTitle, AlertDescription } from "@core/ui/alert";
 import { LoadingSpinner } from "@core/ui/loading-spinner";
+import { GenericSelect, type GenericSelectOption } from "@core/crud/components/generic-select";
 import { Badge } from "@core/ui/badge";
 import {
   GraduationCap,
@@ -44,6 +45,45 @@ export function AcademyEnrollmentsView() {
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [showFinanceModal, setShowFinanceModal] = useState(false);
   const [targetEnrollment, setTargetEnrollment] = useState<AcademyEnrollment | null>(null);
+
+  // Selectors State
+  const [athleteOptions, setAthleteOptions] = useState<GenericSelectOption[]>([]);
+  const [offeringOptions, setOfferingOptions] = useState<GenericSelectOption[]>([]);
+  const [loadingSelectors, setLoadingSelectors] = useState(false);
+
+  useEffect(() => {
+    let mounted = true;
+    async function loadSelectors() {
+      setLoadingSelectors(true);
+      try {
+        const [athletes, offerings] = await Promise.all([
+          locator.athletesRepository.getAthletes().catch(() => []),
+          locator.offeringsRepository.fetchOfferings().catch(() => []),
+        ]);
+        if (!mounted) return;
+        setAthleteOptions(
+          athletes.map((a: any) => ({
+            value: a.id,
+            label: isAr && a.firstNameAr ? `${a.firstNameAr} ${a.lastNameAr || ''}`.trim() : `${a.firstNameEn} ${a.lastNameEn}`.trim(),
+            description: a.primarySportCode ? `Sport: ${a.primarySportCode}` : undefined,
+          }))
+        );
+        setOfferingOptions(
+          offerings.map((o: any) => ({
+            value: o.id,
+            label: isAr && o.nameAr ? o.nameAr : o.nameEn,
+            description: `Enrolled: ${o.enrolledCount ?? 0}/${o.maxCapacity}`,
+          }))
+        );
+      } finally {
+        if (mounted) setLoadingSelectors(false);
+      }
+    }
+    loadSelectors();
+    return () => {
+      mounted = false;
+    };
+  }, [locator, isAr]);
 
   // Form Fields
   const [athleteId, setAthleteId] = useState("");
@@ -351,27 +391,33 @@ export function AcademyEnrollmentsView() {
 
             <div className="space-y-3 text-xs">
               <div>
-                <label className="font-semibold block mb-1">{isAr ? "معرف الرياضي (Athlete ID):" : "Athlete ID (GUID):"}</label>
-                <input
-                  type="text"
+                <label className="font-semibold block mb-1">{isAr ? "الرياضي المراد تسجيله *" : "Athlete to Enroll *"}</label>
+                <GenericSelect
+                  searchable
+                  options={athleteOptions}
                   value={athleteId}
-                  onChange={(e) => setAthleteId(e.target.value)}
-                  placeholder="Paste Athlete GUID..."
-                  className="w-full rounded-md border px-3 py-2 text-sm font-mono"
+                  onValueChange={(val: string | string[]) => setAthleteId(val as string)}
+                  placeholder={isAr ? "اختر الرياضي من القائمة..." : "Select Athlete..."}
+                  loading={loadingSelectors}
                 />
               </div>
 
               <div>
-                <label className="font-semibold block mb-1">{isAr ? "معرف العرض التدريبي (Offering ID):" : "Offering ID (GUID):"}</label>
-                <input
-                  type="text"
+                <label className="font-semibold block mb-1">{isAr ? "العرض التدريبي المستهدف *" : "Target Program Offering *"}</label>
+                <GenericSelect
+                  searchable
+                  options={offeringOptions}
                   value={offeringId}
-                  onChange={(e) => setOfferingId(e.target.value)}
-                  placeholder="Paste Offering GUID..."
-                  className="w-full rounded-md border px-3 py-2 text-sm font-mono"
+                  onValueChange={(val: string | string[]) => {
+                    const id = val as string;
+                    setOfferingId(id);
+                    setPriceAmount(500);
+                  }}
+                  placeholder={isAr ? "اختر العرض التدريبي..." : "Select Program Offering..."}
+                  loading={loadingSelectors}
                 />
                 <span className="text-[11px] text-muted-foreground mt-0.5 block">
-                  {isAr ? "يتم التحقق من الطاقة الاستيعابية وحجز المقعد ذرياً" : "Atomic check validates capacity bounds before reserving seat."}
+                  {isAr ? "يتم التحقق من الطاقة الاستيعابية وحجز المقعد ذرياً وفق ضوابط التسعير المعتمدة." : "Atomic check validates capacity bounds before reserving seat with authoritative pricing."}
                 </span>
               </div>
 

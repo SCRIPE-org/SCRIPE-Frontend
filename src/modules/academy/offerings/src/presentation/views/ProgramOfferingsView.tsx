@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { GenericSelect, type GenericSelectOption } from "@core/crud/components/generic-select";
 import Link from "next/link";
 import { useI18n } from "@core/providers/i18n-provider";
 import { usePermission } from "@core/hooks/use-permission";
@@ -48,6 +49,56 @@ export function ProgramOfferingsView() {
   const [endDate, setEndDate] = useState("2026-12-15");
   const [maxCapacity, setMaxCapacity] = useState(25);
   const [minCapacity, setMinCapacity] = useState(5);
+
+  const [programOptions, setProgramOptions] = useState<GenericSelectOption[]>([]);
+  const [seasonOptions, setSeasonOptions] = useState<GenericSelectOption[]>([]);
+  const [locationOptions, setLocationOptions] = useState<GenericSelectOption[]>([]);
+  const [loadingSelectors, setLoadingSelectors] = useState(false);
+
+  const branchOptions: GenericSelectOption[] = [
+    { value: "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa", label: language === "ar" ? "فرع الرياض الرئيسي" : "Riyadh Main Branch (Riyadh)" },
+    { value: "bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb", label: language === "ar" ? "فرع جدة الساحلي" : "Jeddah Coastal Branch (Jeddah)" },
+  ];
+
+  useEffect(() => {
+    let mounted = true;
+    async function loadSelectOptions() {
+      setLoadingSelectors(true);
+      try {
+        const [progs, seasons, locs] = await Promise.all([
+          locator.programsRepository.fetchPrograms().catch(() => []),
+          locator.seasonsRepository.fetchSeasons().catch(() => []),
+          locator.locationsRepository.fetchLocations().catch(() => []),
+        ]);
+        if (!mounted) return;
+        setProgramOptions(
+          progs.map((p: any) => ({
+            value: p.id,
+            label: language === "ar" && p.nameAr ? `${p.nameAr} (${p.code})` : `${p.nameEn} (${p.code})`,
+          }))
+        );
+        setSeasonOptions(
+          seasons.map((s: any) => ({
+            value: s.id,
+            label: language === "ar" && s.nameAr ? `${s.nameAr} (${s.termCode})` : `${s.nameEn} (${s.termCode})`,
+          }))
+        );
+        setLocationOptions([
+          { value: "", label: language === "ar" ? "لا يوجد (افتراضي)" : "None / External Venue" },
+          ...locs.map((l: any) => ({
+            value: l.id,
+            label: language === "ar" && l.nameAr ? `${l.nameAr} - ${l.city}` : `${l.nameEn} - ${l.city}`,
+          })),
+        ]);
+      } finally {
+        if (mounted) setLoadingSelectors(false);
+      }
+    }
+    loadSelectOptions();
+    return () => {
+      mounted = false;
+    };
+  }, [locator, language]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -216,49 +267,57 @@ export function ProgramOfferingsView() {
             <form onSubmit={handleSubmit} className="space-y-4">
               <div className="grid grid-cols-2 gap-3">
                 <div className="space-y-1">
-                  <label className="text-xs font-semibold text-nx-ink">Program UUID *</label>
-                  <input
-                    required
-                    type="text"
-                    placeholder="Enter Program ID..."
-                    className="w-full h-9 rounded-md border border-nx-line bg-nx-surface px-3 text-xs text-nx-ink font-mono"
+                  <label className="text-xs font-semibold text-nx-ink">
+                    {language === "ar" ? "البرنامج الأكاديمي *" : "Program *"}
+                  </label>
+                  <GenericSelect
+                    searchable
+                    options={programOptions}
                     value={programId}
-                    onChange={(e) => setProgramId(e.target.value)}
+                    onValueChange={(val: string | string[]) => setProgramId(val as string)}
+                    placeholder={language === "ar" ? "اختر البرنامج التدريبي..." : "Select Academic Program..."}
+                    loading={loadingSelectors}
                   />
                 </div>
                 <div className="space-y-1">
-                  <label className="text-xs font-semibold text-nx-ink">Season UUID *</label>
-                  <input
-                    required
-                    type="text"
-                    placeholder="Enter Season ID..."
-                    className="w-full h-9 rounded-md border border-nx-line bg-nx-surface px-3 text-xs text-nx-ink font-mono"
+                  <label className="text-xs font-semibold text-nx-ink">
+                    {language === "ar" ? "الموسم / الفصل التدريبي *" : "Season / Term *"}
+                  </label>
+                  <GenericSelect
+                    searchable
+                    options={seasonOptions}
                     value={seasonId}
-                    onChange={(e) => setSeasonId(e.target.value)}
+                    onValueChange={(val: string | string[]) => setSeasonId(val as string)}
+                    placeholder={language === "ar" ? "اختر الموسم الأكاديمي..." : "Select Season..."}
+                    loading={loadingSelectors}
                   />
                 </div>
               </div>
 
               <div className="grid grid-cols-2 gap-3">
                 <div className="space-y-1">
-                  <label className="text-xs font-semibold text-nx-ink">Branch UUID *</label>
-                  <input
-                    required
-                    type="text"
-                    placeholder="Enter Branch ID..."
-                    className="w-full h-9 rounded-md border border-nx-line bg-nx-surface px-3 text-xs text-nx-ink font-mono"
+                  <label className="text-xs font-semibold text-nx-ink">
+                    {language === "ar" ? "الفرع التشغيلي *" : "Branch *"}
+                  </label>
+                  <GenericSelect
+                    searchable
+                    options={branchOptions}
                     value={branchId}
-                    onChange={(e) => setBranchId(e.target.value)}
+                    onValueChange={(val: string | string[]) => setBranchId(val as string)}
+                    placeholder={language === "ar" ? "اختر الفرع التشغيلي..." : "Select Operational Branch..."}
                   />
                 </div>
                 <div className="space-y-1">
-                  <label className="text-xs font-semibold text-nx-ink">External Location (Optional)</label>
-                  <input
-                    type="text"
-                    placeholder="External Location UUID..."
-                    className="w-full h-9 rounded-md border border-nx-line bg-nx-surface px-3 text-xs text-nx-ink font-mono"
+                  <label className="text-xs font-semibold text-nx-ink">
+                    {language === "ar" ? "الموقع التدريبي الخارجي" : "External Location (Optional)"}
+                  </label>
+                  <GenericSelect
+                    searchable
+                    options={locationOptions}
                     value={externalLocationId}
-                    onChange={(e) => setExternalLocationId(e.target.value)}
+                    onValueChange={(val: string | string[]) => setExternalLocationId(val as string)}
+                    placeholder={language === "ar" ? "اختر الموقع الخارجي (اختياري)..." : "Select Location (Optional)..."}
+                    loading={loadingSelectors}
                   />
                 </div>
               </div>
