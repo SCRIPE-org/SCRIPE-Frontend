@@ -51,7 +51,7 @@ export const VALIDATION_PATTERNS = {
   PHONE: /^[\+]?[1-9][\d]{0,15}$/,
 
   // Username validation (alphanumeric, underscore, hyphen, 3-30 characters)
-  USERNAME: /^[a-zA-Z0-9_-]{3,30}$/,
+  USERNAME: /^[a-zA-Z0-9_.-]{3,30}$/,
 
   // URL validation
   URL: /^https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)$/,

@@ -14,6 +14,16 @@ export interface GroupCoach {
   isActive: boolean;
 }
 
+export interface AvailableCoach {
+  staffMemberId: string;
+  fullName: string;
+  email: string;
+  sportId: string;
+  sportNameEn: string;
+  qualificationLevel: string;
+  licenseExpiryDate?: string | null;
+}
+
 export interface TrainingGroup {
   id: string;
   offeringId: string;

@@ -37,7 +37,7 @@ describe("TrainingGroupsService", () => {
     const result = await service.getGroups("offering-123", "branch-456", "Active");
 
     expect(mockApi.get).toHaveBeenCalledWith(
-      "/api/v1/academy/groups?offeringId=offering-123&branchId=branch-456&status=Active"
+      "/v1/academy/groups?offeringId=offering-123&branchId=branch-456&status=Active"
     );
     expect(result).toEqual(mockGroups);
   });
@@ -56,7 +56,7 @@ describe("TrainingGroupsService", () => {
 
     const result = await service.createGroup(payload);
 
-    expect(mockApi.post).toHaveBeenCalledWith("/api/v1/academy/groups", payload);
+    expect(mockApi.post).toHaveBeenCalledWith("/v1/academy/groups", payload);
     expect(result).toEqual(mockCreated);
   });
 
@@ -73,7 +73,7 @@ describe("TrainingGroupsService", () => {
 
     const result = await service.updateGroup("grp-1", payload);
 
-    expect(mockApi.put).toHaveBeenCalledWith("/api/v1/academy/groups/grp-1", payload);
+    expect(mockApi.put).toHaveBeenCalledWith("/v1/academy/groups/grp-1", payload);
     expect(result).toEqual(mockUpdated);
   });
 
@@ -82,7 +82,7 @@ describe("TrainingGroupsService", () => {
 
     await service.archiveGroup("grp-1");
 
-    expect(mockApi.delete).toHaveBeenCalledWith("/api/v1/academy/groups/grp-1");
+    expect(mockApi.delete).toHaveBeenCalledWith("/v1/academy/groups/grp-1");
   });
 
   it("fetches group roster via GET", async () => {
@@ -91,7 +91,7 @@ describe("TrainingGroupsService", () => {
 
     const result = await service.getRoster("grp-1", true);
 
-    expect(mockApi.get).toHaveBeenCalledWith("/api/v1/academy/groups/grp-1/roster?activeOnly=true");
+    expect(mockApi.get).toHaveBeenCalledWith("/v1/academy/groups/grp-1/roster?activeOnly=true");
     expect(result).toEqual(mockRoster);
   });
 
@@ -102,7 +102,7 @@ describe("TrainingGroupsService", () => {
 
     const result = await service.assignAthlete("grp-1", payload);
 
-    expect(mockApi.post).toHaveBeenCalledWith("/api/v1/academy/groups/grp-1/memberships", payload);
+    expect(mockApi.post).toHaveBeenCalledWith("/v1/academy/groups/grp-1/memberships", payload);
     expect(result).toEqual(mockMembership);
   });
 
@@ -117,7 +117,7 @@ describe("TrainingGroupsService", () => {
     const result = await service.transferAthlete("grp-1", "mem-1", payload);
 
     expect(mockApi.post).toHaveBeenCalledWith(
-      "/api/v1/academy/groups/grp-1/memberships/mem-1/transfer",
+      "/v1/academy/groups/grp-1/memberships/mem-1/transfer",
       payload
     );
     expect(result).toEqual(mockNewMembership);
@@ -133,7 +133,27 @@ describe("TrainingGroupsService", () => {
 
     const result = await service.assignCoach("grp-1", payload);
 
-    expect(mockApi.post).toHaveBeenCalledWith("/api/v1/academy/groups/grp-1/coaches", payload);
+    expect(mockApi.post).toHaveBeenCalledWith("/v1/academy/groups/grp-1/coaches", payload);
     expect(result).toEqual(mockCoach);
+  });
+
+  it("fetches available coaches via GET", async () => {
+    const mockCoaches = [
+      {
+        staffMemberId: "staff-1",
+        fullName: "Coach Tariq",
+        email: "tariq@scripe.com",
+        sportId: "sport-1",
+        sportNameEn: "Football",
+        qualificationLevel: "UEFA-A",
+        licenseExpiryDate: "2027-12-31"
+      }
+    ];
+    vi.mocked(mockApi.get).mockResolvedValue(mockCoaches);
+
+    const result = await service.getAvailableCoaches("sport-1");
+
+    expect(mockApi.get).toHaveBeenCalledWith("/v1/academy/groups/available-coaches?sportId=sport-1");
+    expect(result).toEqual(mockCoaches);
   });
 });

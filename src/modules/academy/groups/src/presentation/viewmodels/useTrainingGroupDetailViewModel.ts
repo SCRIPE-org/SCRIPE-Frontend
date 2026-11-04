@@ -1,3 +1,5 @@
+"use client";
+
 import { useState, useCallback } from "react";
 import type { ITrainingGroupsRepository } from "../../domain/interfaces/ITrainingGroupsRepository";
 import type {

@@ -2,6 +2,7 @@ import type {
   TrainingGroup,
   GroupMembership,
   GroupCoach,
+  AvailableCoach,
   GroupRosterItem,
   CreateTrainingGroupPayload,
   UpdateTrainingGroupPayload,
@@ -17,6 +18,7 @@ export interface ITrainingGroupsService {
   updateGroup(id: string, payload: UpdateTrainingGroupPayload): Promise<TrainingGroup>;
   archiveGroup(id: string): Promise<void>;
   getRoster(groupId: string, activeOnly?: boolean): Promise<GroupRosterItem[]>;
+  getAvailableCoaches(sportId?: string): Promise<AvailableCoach[]>;
   assignAthlete(groupId: string, payload: AssignAthletePayload): Promise<GroupMembership>;
   removeAthlete(groupId: string, membershipId: string, reason?: string): Promise<void>;
   transferAthlete(groupId: string, membershipId: string, payload: TransferAthletePayload): Promise<GroupMembership>;

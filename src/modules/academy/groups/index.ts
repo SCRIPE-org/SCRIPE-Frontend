@@ -8,5 +8,6 @@ export * from "./src/presentation/viewmodels/useTrainingGroupsViewModel";
 export * from "./src/presentation/viewmodels/useTrainingGroupDetailViewModel";
 export * from "./src/presentation/views/TrainingGroupsListView";
 export * from "./src/presentation/views/TrainingGroupDetailView";
+export * from "./src/presentation/views/AcademyGroupsView";
 export * from "./locales/groups.en";
 export * from "./locales/groups.ar";

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import { useI18n } from "@core/providers/i18n-provider";
 import { usePermission } from "@core/hooks/use-permission";
 import { ACADEMY_PERMISSIONS } from "@modules/academy/shared";
@@ -24,14 +25,18 @@ import {
   ShieldCheck,
   Award
 } from "lucide-react";
-import type { GroupRosterItem, GroupCoachRole } from "../../domain/entities/TrainingGroup";
+import type { GroupRosterItem, GroupCoachRole, AvailableCoach, TrainingGroup } from "../../domain/entities/TrainingGroup";
+import type { AcademyEnrollment } from "@modules/academy/enrollments/src/domain/entities/AcademyEnrollment";
+import { GenericSelect, type GenericSelectOption } from "@core/crud/components/generic-select";
 
 interface TrainingGroupDetailViewProps {
   groupId: string;
-  onBack: () => void;
+  onBack?: () => void;
 }
 
 export function TrainingGroupDetailView({ groupId, onBack }: TrainingGroupDetailViewProps) {
+  const router = useRouter();
+  const handleBack = onBack ?? (() => router.push("/academy/groups"));
   const { t, language } = useI18n();
   const dir = language === "ar" ? "rtl" : "ltr";
 
@@ -73,6 +78,72 @@ export function TrainingGroupDetailView({ groupId, onBack }: TrainingGroupDetail
   const [staffMemberIdInput, setStaffMemberIdInput] = useState("");
   const [coachRoleInput, setCoachRoleInput] = useState<GroupCoachRole>("HeadCoach");
   const [coachAssignedDate, setCoachAssignedDate] = useState(new Date().toISOString().split("T")[0]);
+
+  // Searchable Select States & Queries
+  const [availableEnrollments, setAvailableEnrollments] = useState<AcademyEnrollment[]>([]);
+  const [loadingEnrollments, setLoadingEnrollments] = useState(false);
+
+  const [otherGroups, setOtherGroups] = useState<TrainingGroup[]>([]);
+  const [loadingOtherGroups, setLoadingOtherGroups] = useState(false);
+
+  const [availableCoaches, setAvailableCoaches] = useState<AvailableCoach[]>([]);
+  const [loadingCoaches, setLoadingCoaches] = useState(false);
+
+  useEffect(() => {
+    if (showAssignAthleteModal && group?.offeringId) {
+      setLoadingEnrollments(true);
+      locator.enrollmentsRepository.getEnrollments(group.offeringId)
+        .then(data => {
+          const activeRosterEnrollmentIds = new Set(roster.filter(r => r.status === "Active").map(r => r.enrollmentId));
+          setAvailableEnrollments(data.filter(e => !activeRosterEnrollmentIds.has(e.id)));
+        })
+        .catch(() => {})
+        .finally(() => setLoadingEnrollments(false));
+    }
+  }, [showAssignAthleteModal, group?.offeringId, roster, locator.enrollmentsRepository]);
+
+  useEffect(() => {
+    if (transferTargetItem && group?.offeringId) {
+      setLoadingOtherGroups(true);
+      locator.groupsRepository.getGroups(group.offeringId)
+        .then(data => {
+          setOtherGroups(data.filter(g => g.id !== group.id && g.status === "Active"));
+        })
+        .catch(() => {})
+        .finally(() => setLoadingOtherGroups(false));
+    }
+  }, [transferTargetItem, group?.offeringId, group?.id, locator.groupsRepository]);
+
+  useEffect(() => {
+    if (showAssignCoachModal) {
+      setLoadingCoaches(true);
+      locator.groupsRepository.getAvailableCoaches()
+        .then(data => {
+          const assignedStaffIds = new Set((coaches || []).filter(c => c.isActive).map(c => c.staffMemberId));
+          setAvailableCoaches(data.filter(c => !assignedStaffIds.has(c.staffMemberId)));
+        })
+        .catch(() => {})
+        .finally(() => setLoadingCoaches(false));
+    }
+  }, [showAssignCoachModal, coaches, locator.groupsRepository]);
+
+  const enrollmentOptions: GenericSelectOption[] = availableEnrollments.map(e => ({
+    value: e.id,
+    label: (language === "ar" && e.athleteNameAr) ? e.athleteNameAr : (e.athleteNameEn || e.athleteId),
+    description: `${language === "ar" ? "الحالة:" : "Status:"} ${e.status} | ${language === "ar" ? "الفوترة:" : "Billing:"} ${e.billingStatus}`
+  }));
+
+  const groupOptions: GenericSelectOption[] = otherGroups.map(g => ({
+    value: g.id,
+    label: (language === "ar" && g.nameAr) ? g.nameAr : g.nameEn,
+    description: `${language === "ar" ? "السعة:" : "Capacity:"} ${g.activeMemberCount}/${g.maxCapacity}${g.code ? ` (${g.code})` : ""}`
+  }));
+
+  const coachOptions: GenericSelectOption[] = availableCoaches.map(c => ({
+    value: c.staffMemberId,
+    label: c.fullName,
+    description: `${c.sportNameEn} • ${c.qualificationLevel}${c.licenseExpiryDate ? ` (Exp: ${c.licenseExpiryDate})` : ""}`
+  }));
 
   useEffect(() => {
     loadGroupDetails(groupId);
@@ -164,7 +235,7 @@ export function TrainingGroupDetailView({ groupId, onBack }: TrainingGroupDetail
     return (
       <div className="mx-auto max-w-xl p-6 text-center space-y-4" dir={dir}>
         <p className="text-nx-ink-2">{language === "ar" ? "المجموعة التدريبية غير موجودة." : "Training group not found."}</p>
-        <Button onClick={onBack} variant="outline" className="border-nx-line text-nx-ink">
+        <Button onClick={handleBack} variant="outline" className="border-nx-line text-nx-ink">
           <ArrowLeft className="mr-2 size-4" />
           {language === "ar" ? "العودة للقائمة" : "Back to Groups"}
         </Button>
@@ -183,7 +254,7 @@ export function TrainingGroupDetailView({ groupId, onBack }: TrainingGroupDetail
             <Button
               variant="outline"
               size="sm"
-              onClick={onBack}
+              onClick={handleBack}
               className="flex size-8 p-0 items-center justify-center rounded-md border border-nx-line text-nx-ink-2 hover:bg-nx-raised transition-colors"
             >
               <ArrowLeft className="size-4" />
@@ -492,20 +563,20 @@ export function TrainingGroupDetailView({ groupId, onBack }: TrainingGroupDetail
             <form onSubmit={handleAssignAthleteSubmit} className="space-y-4">
               <div>
                 <label className="text-xs font-semibold text-nx-ink-2 block mb-1">
-                  {language === "ar" ? "معرف التسجيل (Enrollment ID) *" : "Enrollment ID *"}
+                  {language === "ar" ? "الرياضي / التسجيل النشط *" : "Athlete / Active Enrollment *"}
                 </label>
-                <input
-                  type="text"
-                  required
+                <GenericSelect
+                  searchable
+                  options={enrollmentOptions}
                   value={enrollmentIdInput}
-                  onChange={e => setEnrollmentIdInput(e.target.value)}
-                  placeholder="e.g. 00000000-0000-0000-0000-000000000000"
-                  className="w-full h-9 px-3 rounded-md border border-nx-line bg-nx-canvas text-sm text-nx-ink"
+                  onValueChange={(val: string | string[]) => setEnrollmentIdInput(val as string)}
+                  placeholder={language === "ar" ? "اختر الرياضي من التسجيلات المتاحة..." : "Select Athlete from available enrollments..."}
+                  loading={loadingEnrollments}
                 />
                 <span className="text-[11px] text-nx-ink-2 mt-1 block">
                   {language === "ar"
-                    ? "يجب أن يكون التسجيل تابعاً لنفس العرض الخاص بالمجموعة."
-                    : "Enrollment must belong to this training group's offering."}
+                    ? "يتم عرض التسجيلات التابعة لنفس العرض والتي لم تلحق بهذه المجموعة بعد."
+                    : "Showing unassigned enrollments belonging to this offering."}
                 </span>
               </div>
 
@@ -565,15 +636,15 @@ export function TrainingGroupDetailView({ groupId, onBack }: TrainingGroupDetail
             <form onSubmit={handleTransferSubmit} className="space-y-4">
               <div>
                 <label className="text-xs font-semibold text-nx-ink-2 block mb-1">
-                  {language === "ar" ? "معرف المجموعة المستهدفة (Target Group ID) *" : "Target Group ID *"}
+                  {language === "ar" ? "المجموعة البديلة (Target Squad) *" : "Target Training Group *"}
                 </label>
-                <input
-                  type="text"
-                  required
+                <GenericSelect
+                  searchable
+                  options={groupOptions}
                   value={targetGroupIdInput}
-                  onChange={e => setTargetGroupIdInput(e.target.value)}
-                  placeholder="e.g. 00000000-0000-0000-0000-000000000000"
-                  className="w-full h-9 px-3 rounded-md border border-nx-line bg-nx-canvas text-sm text-nx-ink"
+                  onValueChange={(val: string | string[]) => setTargetGroupIdInput(val as string)}
+                  placeholder={language === "ar" ? "اختر المجموعة البديلة لنفس العرض..." : "Select Target Training Group..."}
+                  loading={loadingOtherGroups}
                 />
                 <span className="text-[11px] text-nx-ink-2 mt-1 block">
                   {language === "ar"
@@ -682,20 +753,20 @@ export function TrainingGroupDetailView({ groupId, onBack }: TrainingGroupDetail
             <form onSubmit={handleAssignCoachSubmit} className="space-y-4">
               <div>
                 <label className="text-xs font-semibold text-nx-ink-2 block mb-1">
-                  {language === "ar" ? "معرف عضو الكادر (HRMS Staff ID) *" : "Staff Member ID *"}
+                  {language === "ar" ? "المدرب المعتمد (Qualified Coach) *" : "Qualified Coach *"}
                 </label>
-                <input
-                  type="text"
-                  required
+                <GenericSelect
+                  searchable
+                  options={coachOptions}
                   value={staffMemberIdInput}
-                  onChange={e => setStaffMemberIdInput(e.target.value)}
-                  placeholder="e.g. 00000000-0000-0000-0000-000000000000"
-                  className="w-full h-9 px-3 rounded-md border border-nx-line bg-nx-canvas text-sm text-nx-ink"
+                  onValueChange={(val: string | string[]) => setStaffMemberIdInput(val as string)}
+                  placeholder={language === "ar" ? "اختر مدرباً معتمداً..." : "Select Qualified Coach..."}
+                  loading={loadingCoaches}
                 />
                 <span className="text-[11px] text-nx-ink-2 mt-1 block">
                   {language === "ar"
-                    ? "يتم التحقق من هوية المدرب عبر HRMS وصلاحيته الرياضية عبر SportsCore."
-                    : "Coach identity is verified via HRMS and sport qualification via SportsCore."}
+                    ? "يتم التحقق من هوية المدرب عبر HRMS وصلاحية الترخيص عبر SportsCore."
+                    : "Coach identity verified via HRMS and qualification/license verified via SportsCore."}
                 </span>
               </div>
 

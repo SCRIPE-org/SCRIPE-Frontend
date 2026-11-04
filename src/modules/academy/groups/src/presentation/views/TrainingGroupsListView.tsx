@@ -25,6 +25,8 @@ import {
   User
 } from "lucide-react";
 import type { TrainingGroup } from "../../domain/entities/TrainingGroup";
+import type { ProgramOffering } from "@modules/academy/offerings/src/domain/entities/ProgramOffering";
+import { GenericSelect, type GenericSelectOption } from "@core/crud/components/generic-select";
 
 interface TrainingGroupsListViewProps {
   onSelectGroup?: (group: TrainingGroup) => void;
@@ -66,6 +68,29 @@ export function TrainingGroupsListView({ onSelectGroup, offeringId }: TrainingGr
   const [scheduleAr, setScheduleAr] = useState("");
 
   const [archiveTargetId, setArchiveTargetId] = useState<string | null>(null);
+
+  const [offerings, setOfferings] = useState<ProgramOffering[]>([]);
+  const [loadingOfferings, setLoadingOfferings] = useState(false);
+
+  useEffect(() => {
+    let isMounted = true;
+    setLoadingOfferings(true);
+    locator.offeringsRepository.fetchOfferings()
+      .then(data => {
+        if (isMounted) setOfferings(data);
+      })
+      .catch(() => {})
+      .finally(() => {
+        if (isMounted) setLoadingOfferings(false);
+      });
+    return () => { isMounted = false; };
+  }, [locator.offeringsRepository]);
+
+  const offeringOptions: GenericSelectOption[] = offerings.map(o => ({
+    value: o.id,
+    label: (language === "ar" && o.nameAr) ? o.nameAr : o.nameEn,
+    description: `${o.nameEn} (${o.enrolledCount}/${o.maxCapacity})`
+  }));
 
   useEffect(() => {
     fetchGroups(offeringId || selectedOfferingId || undefined, undefined, statusFilter || undefined);
@@ -364,15 +389,15 @@ export function TrainingGroupsListView({ onSelectGroup, offeringId }: TrainingGr
             <form onSubmit={handleCreateSubmit} className="space-y-4">
               <div>
                 <label className="text-xs font-semibold text-nx-ink-2 block mb-1">
-                  {language === "ar" ? "معرف العرض (Offering ID) *" : "Offering ID *"}
+                  {language === "ar" ? "العرض التدريبي *" : "Program Offering *"}
                 </label>
-                <input
-                  type="text"
-                  required
+                <GenericSelect
+                  searchable
+                  options={offeringOptions}
                   value={targetOfferingId}
-                  onChange={e => setTargetOfferingId(e.target.value)}
-                  placeholder="e.g. 00000000-0000-0000-0000-000000000000"
-                  className="w-full h-9 px-3 rounded-md border border-nx-line bg-nx-canvas text-sm text-nx-ink"
+                  onValueChange={(val: string | string[]) => setTargetOfferingId(val as string)}
+                  placeholder={language === "ar" ? "اختر العرض التدريبي..." : "Select Program Offering..."}
+                  loading={loadingOfferings}
                 />
               </div>
 

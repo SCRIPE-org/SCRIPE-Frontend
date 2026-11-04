@@ -4,6 +4,7 @@ import type {
   TrainingGroup,
   GroupMembership,
   GroupCoach,
+  AvailableCoach,
   GroupRosterItem,
   CreateTrainingGroupPayload,
   UpdateTrainingGroupPayload,
@@ -37,6 +38,10 @@ export class TrainingGroupsRepository implements ITrainingGroupsRepository {
 
   async getRoster(groupId: string, activeOnly = true): Promise<GroupRosterItem[]> {
     return await this.service.getRoster(groupId, activeOnly);
+  }
+
+  async getAvailableCoaches(sportId?: string): Promise<AvailableCoach[]> {
+    return await this.service.getAvailableCoaches(sportId);
   }
 
   async assignAthlete(groupId: string, payload: AssignAthletePayload): Promise<GroupMembership> {
