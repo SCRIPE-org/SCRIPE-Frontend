@@ -1062,6 +1062,13 @@ function GenericCrudViewInner<T>(props: GenericCrudViewProps<T>) {
   const [activeViewMode, setActiveViewMode] = useState<CrudViewMode>(
     config?.defaultView ?? config?.viewModes?.[0] ?? "Table"
   );
+
+  // Synchronize view mode when config.defaultView hydrates asynchronously from user preferences / server
+  useEffect(() => {
+    if (config?.defaultView && config.viewModes?.includes(config.defaultView)) {
+      setActiveViewMode(config.defaultView);
+    }
+  }, [config?.defaultView]);
   const [splitSelectedId, setSplitSelectedId] = useState<string | null>(null);
   const csvInputRef = useRef<HTMLInputElement | null>(null);
 

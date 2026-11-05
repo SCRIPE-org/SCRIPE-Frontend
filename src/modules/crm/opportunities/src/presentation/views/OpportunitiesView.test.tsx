@@ -1,5 +1,5 @@
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
-import { describe, expect, it, vi, beforeEach } from "vitest";
+import { describe, expect, it, vi, beforeEach, afterEach } from "vitest";
 import { OpportunitiesView } from "./OpportunitiesView";
 import { setCrmContainer } from "@modules/crm/di";
 import type { CrmContainer } from "@modules/crm/di";
@@ -160,6 +160,13 @@ describe("OpportunitiesView Component", () => {
     setCrmContainer(container);
   });
 
+  afterEach(async () => {
+    try {
+      const { useCrmSettingsStore } = await import("@modules/crm");
+      useCrmSettingsStore.getState().setDefaultDealViewMode("Table");
+    } catch { /* noop */ }
+  });
+
   it("renders opportunity records after fetching successfully", async () => {
     render(<OpportunitiesView />);
 
@@ -289,6 +296,24 @@ describe("OpportunitiesView Component", () => {
     expect(mockRepo.moveStage).not.toHaveBeenCalled();
 
     useCrmWorkflowsStore.getState().resetDefaults();
+  });
+
+  it("renders Kanban board view by default when defaultDealViewMode is set to Kanban in CRM Settings", async () => {
+    const { useCrmSettingsStore } = await import("@modules/crm");
+    useCrmSettingsStore.getState().setDefaultDealViewMode("Kanban");
+
+    render(<OpportunitiesView />);
+
+    await waitFor(() => {
+      expect(screen.getAllByText("Al-Nassr Pitch Licensing Contract")[0]).toBeDefined();
+    });
+
+    // Should render Kanban columns by default
+    expect(screen.getByTestId("kanban-column-default.discovery")).toBeDefined();
+    expect(screen.getByTestId("kanban-column-default.qualification")).toBeDefined();
+
+    // Reset back to Table
+    useCrmSettingsStore.getState().setDefaultDealViewMode("Table");
   });
 });
 

@@ -426,4 +426,193 @@ describe("KanbanBoard Component", () => {
     expect(screen.getByText("Al-Hilal Stadium Pitch Lighting Upgrade")).toBeDefined();
     expect(screen.getByText("Riyadh VIP Box Catering Deal")).toBeDefined();
   });
+
+  describe("SCRIPE-766: Jira-Style Drag-and-Drop Transition Overlay Enforcement", () => {
+    it("renders frosted restriction overlays on forbidden columns and affirmative feedback on allowed columns when dragging a card", () => {
+      const onMoveStage = vi.fn();
+      render(<KanbanBoard opportunities={mockOpportunities} onMoveStage={onMoveStage} />);
+
+      // Find opp-001 card (Discovery stage)
+      const opp1Title = screen.getByText("Al-Hilal Stadium Pitch Lighting Upgrade");
+      const card = opp1Title.closest('[data-testid="kanban-card"]')!;
+      expect(card).toBeDefined();
+
+      // Trigger dragstart on the card
+      fireEvent.dragStart(card, {
+        dataTransfer: {
+          setData: vi.fn(),
+          effectAllowed: "",
+        },
+      });
+
+      // 1. Current stage column (Discovery) should display "Current Stage" pill
+      expect(screen.getByTestId("kanban-current-pill-default.discovery")).toBeDefined();
+      expect(screen.getByText("Current Stage")).toBeDefined();
+
+      // 2. Allowed forward column (Qualification) should display affirmative pill with Signal Lime feedback
+      expect(screen.getByTestId("kanban-allowed-pill-default.qualification")).toBeDefined();
+      expect(screen.getByText("Direct Transition")).toBeDefined();
+      const qualCol = screen.getByTestId("kanban-column-default.qualification");
+      expect(qualCol.className).toContain("border-nx-accent/50");
+
+      // 3. Forbidden columns (Solution Fit, Proposal, Negotiation) should display frosted matte overlays
+      expect(screen.getByTestId("kanban-blocked-overlay-default.solution_fit")).toBeDefined();
+      expect(screen.getByTestId("kanban-blocked-overlay-default.proposal")).toBeDefined();
+      expect(screen.getByTestId("kanban-blocked-overlay-default.negotiation")).toBeDefined();
+
+      // 4. Centered restriction cards with "Can't move here" and specific diagnostic reason
+      expect(screen.getByTestId("kanban-restriction-card-default.proposal")).toBeDefined();
+      expect(screen.getAllByText("Can't move here").length).toBe(3);
+      expect(screen.getAllByText(/Non-adjacent stage skipping restricted/i).length).toBeGreaterThanOrEqual(1);
+
+      // 5. Dragging over forbidden column enforces dropEffect = "none"
+      const dataTransferBlocked = { dropEffect: "move" };
+      fireEvent.dragOver(screen.getByTestId("kanban-column-default.proposal"), {
+        dataTransfer: dataTransferBlocked,
+      });
+      expect(dataTransferBlocked.dropEffect).toBe("none");
+
+      // 6. Complete drop rejection: dropping onto forbidden column does NOT invoke onMoveStage
+      fireEvent.drop(screen.getByTestId("kanban-column-default.proposal"), {
+        dataTransfer: {
+          getData: (type: string) => (type === "text/plain" ? "opp-001" : ""),
+        },
+      });
+      expect(onMoveStage).not.toHaveBeenCalled();
+
+      // 7. Dropping onto allowed column successfully calls onMoveStage
+      fireEvent.drop(screen.getByTestId("kanban-column-default.qualification"), {
+        dataTransfer: {
+          getData: (type: string) => (type === "text/plain" ? "opp-001" : ""),
+        },
+      });
+      expect(onMoveStage).toHaveBeenCalledWith(
+        expect.objectContaining({ id: "opp-001" }),
+        "default.qualification"
+      );
+    });
+
+    it("clears frosted restriction overlays and pills when drag ends", () => {
+      render(<KanbanBoard opportunities={mockOpportunities} onMoveStage={vi.fn()} />);
+
+      const opp1Title = screen.getByText("Al-Hilal Stadium Pitch Lighting Upgrade");
+      const card = opp1Title.closest('[data-testid="kanban-card"]')!;
+
+      // Drag start triggers overlays
+      fireEvent.dragStart(card, {
+        dataTransfer: { setData: vi.fn(), effectAllowed: "" },
+      });
+      expect(screen.getByTestId("kanban-blocked-overlay-default.proposal")).toBeDefined();
+
+      // Drag end removes overlays
+      fireEvent.dragEnd(card);
+      expect(screen.queryByTestId("kanban-blocked-overlay-default.proposal")).toBeNull();
+      expect(screen.queryByTestId("kanban-allowed-pill-default.qualification")).toBeNull();
+    });
+
+    it("displays Stage Gate indicator pill when moving deal to stage requiring party or review", () => {
+      // opp-002 is in Qualification without linked party (partyId: null)
+      render(<KanbanBoard opportunities={mockOpportunities} onMoveStage={vi.fn()} />);
+
+      const opp2Title = screen.getByText("Jeddah Academy Training Equipment");
+      const card = opp2Title.closest('[data-testid="kanban-card"]')!;
+
+      fireEvent.dragStart(card, {
+        dataTransfer: { setData: vi.fn(), effectAllowed: "" },
+      });
+
+      // Backward move to Discovery requires review/modal
+      expect(screen.getByTestId("kanban-allowed-pill-default.discovery")).toBeDefined();
+      expect(screen.getByText("Stage Gate: Review Required")).toBeDefined();
+
+      // Adjacent forward move to Solution Fit is direct transition
+      expect(screen.getByTestId("kanban-allowed-pill-default.solution_fit")).toBeDefined();
+      expect(screen.getByText("Direct Transition")).toBeDefined();
+    });
+
+    it("shows permission restriction diagnostic when canUpdateOpportunity is false", () => {
+      render(
+        <KanbanBoard
+          opportunities={mockOpportunities}
+          onMoveStage={vi.fn()}
+          canUpdateOpportunity={false}
+        />
+      );
+
+      const opp1Title = screen.getByText("Al-Hilal Stadium Pitch Lighting Upgrade");
+      const card = opp1Title.closest('[data-testid="kanban-card"]')!;
+
+      fireEvent.dragStart(card, {
+        dataTransfer: { setData: vi.fn(), effectAllowed: "" },
+      });
+
+      // All destination columns should be blocked due to update permission
+      expect(screen.getByTestId("kanban-blocked-overlay-default.qualification")).toBeDefined();
+      expect(
+        screen.getAllByText("Opportunity update permission required to move deals.").length
+      ).toBeGreaterThanOrEqual(1);
+    });
+
+    it("displays Stage Gate: Account & Contact Required pill when moving deal to Proposal without a linked party", () => {
+      const oppInSolutionFitNoParty: CrmOpportunity = {
+        ...mockOpportunities[0],
+        id: "opp-sol-fit-no-party",
+        title: "Dammam Stadium LED Displays",
+        stageKey: "default.solution_fit",
+        stageLabelEnSnapshot: "Solution Fit",
+        partyId: null,
+      };
+
+      render(
+        <KanbanBoard
+          opportunities={[...mockOpportunities, oppInSolutionFitNoParty]}
+          onMoveStage={vi.fn()}
+        />
+      );
+
+      const cardTitle = screen.getByText("Dammam Stadium LED Displays");
+      const card = cardTitle.closest('[data-testid="kanban-card"]')!;
+
+      fireEvent.dragStart(card, {
+        dataTransfer: { setData: vi.fn(), effectAllowed: "" },
+      });
+
+      // Forward move to Proposal (which requires verified party) should show the Stage Gate Account & Contact pill
+      expect(screen.getByTestId("kanban-allowed-pill-default.proposal")).toBeDefined();
+      expect(screen.getByText("Stage Gate: Account & Contact Required")).toBeDefined();
+    });
+
+    it("rejects drops on terminal Closed Won / Lost zones when canUpdateOpportunity is false", () => {
+      const onMoveStage = vi.fn();
+      render(
+        <KanbanBoard
+          opportunities={mockOpportunities}
+          onMoveStage={onMoveStage}
+          canUpdateOpportunity={false}
+        />
+      );
+
+      const wonZone = screen.getByTestId("kanban-dropzone-closed-won");
+      const lostZone = screen.getByTestId("kanban-dropzone-closed-lost");
+
+      // Verify dragover enforces dropEffect = "none"
+      const wonDt = { dropEffect: "move" };
+      fireEvent.dragOver(wonZone, { dataTransfer: wonDt });
+      expect(wonDt.dropEffect).toBe("none");
+
+      const lostDt = { dropEffect: "move" };
+      fireEvent.dragOver(lostZone, { dataTransfer: lostDt });
+      expect(lostDt.dropEffect).toBe("none");
+
+      // Verify drop is rejected
+      fireEvent.drop(wonZone, {
+        dataTransfer: { getData: () => "opp-001" },
+      });
+      fireEvent.drop(lostZone, {
+        dataTransfer: { getData: () => "opp-001" },
+      });
+
+      expect(onMoveStage).not.toHaveBeenCalled();
+    });
+  });
 });

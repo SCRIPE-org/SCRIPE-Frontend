@@ -58,6 +58,7 @@ export interface CrmModuleSettingsState {
   resetCustomRateOverrides: () => void;
   addCrmCustomField: (field: Omit<CrmCustomFieldDefinition, "id" | "createdAtIso">) => CrmCustomFieldDefinition;
   removeCrmCustomField: (id: string) => void;
+  setDefaultDealViewMode: (mode: "Kanban" | "Table" | "SplitPane") => void;
   updateSettings: (partial: Partial<CrmModuleSettingsState>) => void;
   hydrateFromServer: () => Promise<void>;
   resetDefaults: () => void;
@@ -76,7 +77,7 @@ const DEFAULT_SETTINGS = {
   duplicateDetectionMode: "strict" as const, leadAutoAssignmentRule: "round_robin" as const,
   enableCatalogPricingQuoteHandoff: true, enableVenueAcademyCommercialHandoff: true, autoCreateWorkItemsOnStageMove: true,
   defaultCommunicationChannel: "email" as const, autoSyncPartyKernelOnConvert: true,
-  defaultDealViewMode: "Kanban" as const, defaultPipelineCode: "default", cardDensity: "Comfortable" as const,
+  defaultDealViewMode: "Table" as const, defaultPipelineCode: "default", cardDensity: "Comfortable" as const,
   dailyDigestEnabled: true, stageMoveNotificationsEnabled: true,
   customRateOverrides: {} as Record<string, number>, crmCustomFields: DEFAULT_CRM_CUSTOM_FIELDS,
   isServerHydrated: false, updatedAtIso: null as string | null,
@@ -86,19 +87,24 @@ let serverHydrationInFlight = false;
 
 function syncTenantToServer(st: CrmModuleSettingsState, baseOverride?: string) {
   const base = (baseOverride || st.tenantBaseCurrency || "SAR").toUpperCase();
-  void getCrmContainer().overviewRepository.updateTenantSettings({
-    baseCurrencyCode: base, defaultDealCurrencyCode: baseOverride ? base : st.defaultDealCurrency,
-    autoConvertAmountsToBase: st.autoConvertToBase, showDualCurrencyBadges: st.showOriginalCurrencyOnConverted,
-    allowUserCurrencyOverride: st.allowUserCurrencyOverride, snapshotExchangeRateOnDealCreation: st.snapshotExchangeRateOnDealCreation,
-    stageGateStrictness: st.stageGateStrictness, requireVerifiedPartyOnProposal: st.requirePartyOnProposal,
-    requireCloseNotesOnWin: st.requireCloseNotesOnWin, defaultLeadSource: st.defaultLeadSource,
-    slaLeadResponseHours: st.slaLeadResponseHours, stalledDealThresholdDays: st.stalledDealThresholdDays,
-    duplicateDetectionMode: st.duplicateDetectionMode, leadAutoAssignmentRule: st.leadAutoAssignmentRule,
-    enableCatalogPricingQuoteHandoff: st.enableCatalogPricingQuoteHandoff, enableVenueAcademyCommercialHandoff: st.enableVenueAcademyCommercialHandoff,
-    autoCreateWorkItemsOnStageMove: st.autoCreateWorkItemsOnStageMove, defaultCommunicationChannel: st.defaultCommunicationChannel,
-    autoSyncPartyKernelOnConvert: st.autoSyncPartyKernelOnConvert, defaultDealViewMode: st.defaultDealViewMode,
-    defaultPipelineCode: st.defaultPipelineCode, cardDensity: st.cardDensity, customFieldsConfigJson: serializeCrmTenantCustomConfig(st.crmCustomFields),
-  }).catch(() => undefined);
+  try {
+    const repo = getCrmContainer()?.overviewRepository;
+    if (typeof repo?.updateTenantSettings === "function") {
+      void repo.updateTenantSettings({
+        baseCurrencyCode: base, defaultDealCurrencyCode: baseOverride ? base : st.defaultDealCurrency,
+        autoConvertAmountsToBase: st.autoConvertToBase, showDualCurrencyBadges: st.showOriginalCurrencyOnConverted,
+        allowUserCurrencyOverride: st.allowUserCurrencyOverride, snapshotExchangeRateOnDealCreation: st.snapshotExchangeRateOnDealCreation,
+        stageGateStrictness: st.stageGateStrictness, requireVerifiedPartyOnProposal: st.requirePartyOnProposal,
+        requireCloseNotesOnWin: st.requireCloseNotesOnWin, defaultLeadSource: st.defaultLeadSource,
+        slaLeadResponseHours: st.slaLeadResponseHours, stalledDealThresholdDays: st.stalledDealThresholdDays,
+        duplicateDetectionMode: st.duplicateDetectionMode, leadAutoAssignmentRule: st.leadAutoAssignmentRule,
+        enableCatalogPricingQuoteHandoff: st.enableCatalogPricingQuoteHandoff, enableVenueAcademyCommercialHandoff: st.enableVenueAcademyCommercialHandoff,
+        autoCreateWorkItemsOnStageMove: st.autoCreateWorkItemsOnStageMove, defaultCommunicationChannel: st.defaultCommunicationChannel,
+        autoSyncPartyKernelOnConvert: st.autoSyncPartyKernelOnConvert, defaultDealViewMode: st.defaultDealViewMode,
+        defaultPipelineCode: st.defaultPipelineCode, cardDensity: st.cardDensity, customFieldsConfigJson: serializeCrmTenantCustomConfig(st.crmCustomFields),
+      }).catch(() => undefined);
+    }
+  } catch { /* noop */ }
 }
 
 /** Zustand store for CRM module settings with automatic server-side synchronization. */
@@ -117,10 +123,15 @@ export const useCrmSettingsStore = create<CrmModuleSettingsState>()(
         const st = get();
         const effective = st.allowUserCurrencyOverride && normalized ? normalized : st.tenantBaseCurrency;
         set({ userOverrideCurrency: normalized, baseCurrency: effective, updatedAtIso: new Date().toISOString() });
-        void getCrmContainer().overviewRepository.updateUserPreferences({
-          overrideCurrencyCode: normalized, defaultDealViewMode: st.defaultDealViewMode, defaultPipelineCode: st.defaultPipelineCode,
-          cardDensity: st.cardDensity, dailyDigestEnabled: st.dailyDigestEnabled, stageMoveNotificationsEnabled: st.stageMoveNotificationsEnabled,
-        }).catch(() => undefined);
+        try {
+          const repo = getCrmContainer()?.overviewRepository;
+          if (typeof repo?.updateUserPreferences === "function") {
+            void repo.updateUserPreferences({
+              overrideCurrencyCode: normalized, defaultDealViewMode: st.defaultDealViewMode, defaultPipelineCode: st.defaultPipelineCode,
+              cardDensity: st.cardDensity, dailyDigestEnabled: st.dailyDigestEnabled, stageMoveNotificationsEnabled: st.stageMoveNotificationsEnabled,
+            }).catch(() => undefined);
+          }
+        } catch { /* noop */ }
       },
       setDefaultDealCurrency: (c: string) => set({ defaultDealCurrency: (c || "SAR").toUpperCase(), updatedAtIso: new Date().toISOString() }),
       setAutoConvertToBase: (enabled: boolean) => set({ autoConvertToBase: enabled, updatedAtIso: new Date().toISOString() }),
@@ -144,6 +155,24 @@ export const useCrmSettingsStore = create<CrmModuleSettingsState>()(
       removeCrmCustomField: (id: string) => {
         set((s) => ({ crmCustomFields: s.crmCustomFields.filter((f) => f.id !== id), updatedAtIso: new Date().toISOString() }));
         syncTenantToServer(get());
+      },
+      setDefaultDealViewMode: (mode: "Kanban" | "Table" | "SplitPane") => {
+        set({ defaultDealViewMode: mode, updatedAtIso: new Date().toISOString() });
+        syncTenantToServer(get());
+        try {
+          const repo = getCrmContainer()?.overviewRepository;
+          if (typeof repo?.updateUserPreferences === "function") {
+            const st = get();
+            void repo.updateUserPreferences({
+              overrideCurrencyCode: st.userOverrideCurrency,
+              defaultDealViewMode: mode,
+              defaultPipelineCode: st.defaultPipelineCode,
+              cardDensity: st.cardDensity,
+              dailyDigestEnabled: st.dailyDigestEnabled,
+              stageMoveNotificationsEnabled: st.stageMoveNotificationsEnabled,
+            }).catch(() => undefined);
+          }
+        } catch { /* noop */ }
       },
       updateSettings: (partial) => set((state) => {
         if (partial.baseCurrency) { try { useCurrencyPreference.getState().setDisplayCurrency(partial.baseCurrency.toUpperCase(), "always"); } catch { /* noop */ } }

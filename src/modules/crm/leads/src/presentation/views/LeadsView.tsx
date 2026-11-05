@@ -17,9 +17,9 @@ import {
   ArrowUpRight,
 } from "lucide-react";
 import { cn } from "@core/common/utils";
-import { CRM_PERMISSIONS, CrmShell, CrmSectionHeader, useCrmCurrency, useCrmWorkflowsStore } from "@modules/crm";
+import { CRM_PERMISSIONS, CrmShell, CrmSectionHeader, useCrmCurrency, useCrmWorkflowsStore, useCrmSettingsStore } from "@modules/crm";
 import { GenericCrudView } from "@core/crud/components/generic-crud-view";
-import type { CrudConfig, CrudAction } from "@core/crud/components/generic-crud-view";
+import type { CrudConfig, CrudAction, CrudViewMode } from "@core/crud/components/generic-crud-view";
 import { CreateLeadDialog } from "../components/CreateLeadDialog";
 import { QualifyLeadDialog } from "../components/QualifyLeadDialog";
 import { LinkPartyDialog } from "../components/LinkPartyDialog";
@@ -40,6 +40,7 @@ export function LeadsView() {
   const canCreateLead = usePermission(CRM_PERMISSIONS.LEADS_CREATE);
   const { baseCurrency, autoConvertToBase, convertAmount, showOriginalCurrencyBadge } = useCrmCurrency();
   const activeLeadWorkflow = useCrmWorkflowsStore((s) => s.getActiveWorkflow("lead"));
+  const defaultDealViewMode = useCrmSettingsStore((s) => s.defaultDealViewMode);
   const viewModel = useLeadsViewModel();
   const {
     state,
@@ -160,7 +161,7 @@ export function LeadsView() {
       canDelete: false,
     },
     viewModes: ["Table", "Kanban", "CardGrid", "SplitPane"],
-    defaultView: "Table",
+    defaultView: (defaultDealViewMode as CrudViewMode) || "Table",
     kanbanGroupField: "status",
     kanbanColumns:
       activeLeadWorkflow.id === "wf-lead-default"

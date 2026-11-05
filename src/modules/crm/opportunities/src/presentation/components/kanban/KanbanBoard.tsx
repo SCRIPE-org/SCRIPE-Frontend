@@ -1,228 +1,162 @@
 "use client";
 
-import { useMemo, useState } from "react";
 import { AlertCircle, CheckCircle2, XCircle } from "lucide-react";
 import { Alert, AlertTitle, AlertDescription } from "@core/ui/alert";
 import { Button } from "@core/ui/button";
 import { cn } from "@core/common/utils";
 import { useI18n } from "@core/providers/i18n-provider";
-import { KanbanColumn, type KanbanStageDef } from "./KanbanColumn";
+import { KanbanColumn } from "./KanbanColumn";
+import {
+  useKanbanBoardViewModel,
+} from "../../viewmodels/useKanbanBoardViewModel";
 import type {
   CrmOpportunity,
   PipelineStageConfig,
 } from "../../../domain/entities/OpportunityEntity";
 
-export const CANONICAL_KANBAN_STAGES: KanbanStageDef[] = [
-  {
-    key: "default.discovery",
-    labelKey: "crmOpportunities.stages.discovery",
-    defaultLabelEn: "Discovery",
-    sortOrder: 1,
-  },
-  {
-    key: "default.qualification",
-    labelKey: "crmOpportunities.stages.qualification",
-    defaultLabelEn: "Qualification",
-    sortOrder: 2,
-  },
-  {
-    key: "default.solution_fit",
-    labelKey: "crmOpportunities.stages.solution_fit",
-    defaultLabelEn: "Solution Fit",
-    sortOrder: 3,
-  },
-  {
-    key: "default.proposal",
-    labelKey: "crmOpportunities.stages.proposal",
-    defaultLabelEn: "Proposal",
-    sortOrder: 4,
-    requiresParty: true,
-  },
-  {
-    key: "default.negotiation",
-    labelKey: "crmOpportunities.stages.negotiation",
-    defaultLabelEn: "Negotiation",
-    sortOrder: 5,
-    requiresParty: true,
-  },
-];
+export {
+  type KanbanStageDef,
+  CANONICAL_KANBAN_STAGES,
+} from "../../viewmodels/useKanbanBoardViewModel";
 
 export interface KanbanBoardProps {
   opportunities: CrmOpportunity[];
   stages?: PipelineStageConfig[];
   onMoveStage: (opportunity: CrmOpportunity, targetStageKey: string) => Promise<boolean> | void;
+  canUpdateOpportunity?: boolean;
+  canManagePipelines?: boolean;
   errorMessage?: string | null;
   onClearError?: () => void;
 }
 
 /**
- * 5-Stage interactive CRM Kanban Board adhering to PD-1 non-bypassable party gates,
- * WCAG accessible keyboard controls, and optimistic rollback mechanics.
- * Dynamically supports server-provided default pipeline configuration and ordering.
+ * Presentation View for the CRM Opportunity Kanban Board.
+ * Adheres strictly to MVVM architecture: delegates all state, adjacency logic,
+ * drag-and-drop state, and permissions to `useKanbanBoardViewModel`.
  */
 export function KanbanBoard({
   opportunities,
   stages,
   onMoveStage,
+  canUpdateOpportunity,
+  canManagePipelines,
   errorMessage,
   onClearError,
 }: KanbanBoardProps) {
   const { t } = useI18n();
-  const [dragOverOutcome, setDragOverOutcome] = useState<"won" | "lost" | null>(null);
 
-  // Compute effective stages: server-provided default pipeline if present, else canonical fallbacks
-  const effectiveStages: KanbanStageDef[] = useMemo(() => {
-    if (stages && stages.length > 0) {
-      const sorted = [...stages].sort((a, b) => a.sortOrder - b.sortOrder);
-      return sorted.map((s) => ({
-        key: s.stageKey,
-        labelKey: `crmOpportunities.stages.${s.stageKey.replace("default.", "")}`,
-        defaultLabelEn: s.labelEn,
-        labelAr: s.labelAr,
-        sortOrder: s.sortOrder,
-        winProbabilityPercent: s.winProbabilityPercent ?? s.probabilityPercent ?? null,
-        requiresParty: s.requiresVerifiedParty,
-      }));
-    }
-    return CANONICAL_KANBAN_STAGES;
-  }, [stages]);
-
-  // Group open opportunities by effective stage key (falling back to first column if unmapped in active 2..N workflow)
-  const groupedOpportunities = useMemo(() => {
-    const map = new Map<string, CrmOpportunity[]>();
-    for (const stage of effectiveStages) {
-      map.set(stage.key, []);
-    }
-    const fallbackKey = effectiveStages[0]?.key;
-
-    for (const opp of opportunities) {
-      if (opp.status === "Open") {
-        if (map.has(opp.stageKey)) {
-          map.get(opp.stageKey)!.push(opp);
-        } else if (fallbackKey && map.has(fallbackKey)) {
-          map.get(fallbackKey)!.push(opp);
-        }
-      }
-    }
-
-    return map;
-  }, [opportunities, effectiveStages]);
-
-  const wonDealsCount = useMemo(
-    () => opportunities.filter((o) => o.status === "Won").length,
-    [opportunities]
-  );
-  const lostDealsCount = useMemo(
-    () => opportunities.filter((o) => o.status === "Lost").length,
-    [opportunities]
-  );
-
-  const handleDropOpportunity = (opportunityId: string, targetStageKey: string) => {
-    const opp = opportunities.find((o) => o.id === opportunityId);
-    if (!opp || opp.stageKey === targetStageKey) return;
-    onMoveStage(opp, targetStageKey);
-  };
-
-  const handleMoveForward = (opp: CrmOpportunity) => {
-    const foundIndex = effectiveStages.findIndex((s) => s.key === opp.stageKey);
-    const currentIndex = foundIndex >= 0 ? foundIndex : 0;
-    if (currentIndex >= 0 && currentIndex < effectiveStages.length - 1) {
-      const nextStage = effectiveStages[currentIndex + 1];
-      onMoveStage(opp, nextStage.key);
-    }
-  };
-
-  const handleMoveBackward = (opp: CrmOpportunity) => {
-    const currentIndex = effectiveStages.findIndex((s) => s.key === opp.stageKey);
-    if (currentIndex > 0) {
-      const prevStage = effectiveStages[currentIndex - 1];
-      onMoveStage(opp, prevStage.key);
-    }
-  };
+  const {
+    effectiveStages,
+    groupedOpportunities,
+    wonDealsCount,
+    lostDealsCount,
+    draggedOpportunity,
+    dragOverOutcome,
+    canUpdate,
+    canManage,
+    handleCardDragStart,
+    handleCardDragEnd,
+    handleDropOpportunity,
+    handleMoveForward,
+    handleMoveBackward,
+    handleDragOverOutcome,
+    handleDragLeaveOutcome,
+    handleDropOutcome,
+  } = useKanbanBoardViewModel({
+    opportunities,
+    stages,
+    onMoveStage,
+    canUpdateOpportunity,
+    canManagePipelines,
+  });
 
   return (
     <section
       role="region"
-      aria-label="Opportunity Kanban Board"
+      aria-label={t("crmOpportunities.kanban.boardRegionLabel", {
+        defaultValue: "Opportunity Kanban Board",
+      })}
       className="space-y-3"
     >
       {/* Dynamic Error / Rollback Notice */}
       {errorMessage && (
-        <Alert variant="destructive" className="animate-in fade-in duration-200">
-          <AlertCircle className="size-4 shrink-0" />
-          <AlertTitle className="text-xs font-bold">
-            {t("crmOpportunities.kanban.stageMoveFailed", {
-              defaultValue: "Stage Transition Rejected",
-            })}
-          </AlertTitle>
-          <AlertDescription className="text-xs flex items-center justify-between">
-            <span>{errorMessage}</span>
-            {onClearError && (
-              <Button
-                type="button"
-                variant="ghost"
-                size="sm"
-                onClick={onClearError}
-                className="h-6 px-2 text-[11px] font-mono underline hover:no-underline ml-4"
-              >
-                Dismiss
-              </Button>
-            )}
-          </AlertDescription>
+        <Alert
+          variant="destructive"
+          data-testid="kanban-error-banner"
+          className="border-destructive/40 bg-destructive/10 text-destructive text-xs py-2 px-3 flex items-center justify-between"
+        >
+          <div className="flex items-center gap-2">
+            <AlertCircle className="size-4 shrink-0" />
+            <div>
+              <AlertTitle className="text-xs font-semibold">
+                {t("crmOpportunities.kanban.moveRejectedTitle", { defaultValue: "Stage Transition Rejected" })}
+              </AlertTitle>
+              <AlertDescription className="text-[11px] leading-tight">
+                {errorMessage}
+              </AlertDescription>
+            </div>
+          </div>
+          {onClearError && (
+            <Button
+              type="button"
+              variant="ghost"
+              size="sm"
+              onClick={onClearError}
+              className="h-6 px-2 text-xs text-destructive hover:bg-destructive/20"
+            >
+              {t("common.dismiss", { defaultValue: "Dismiss" })}
+            </Button>
+          )}
         </Alert>
       )}
 
-      {/* Responsive Dynamic 2..N Stage Pipeline Grid */}
-      <div
-        className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 pb-2 pt-1 min-h-[520px] w-full"
-        style={{
-          gridTemplateColumns:
-            effectiveStages.length >= 2
-              ? `repeat(${effectiveStages.length}, minmax(215px, 1fr))`
-              : undefined,
-        }}
-      >
-        {effectiveStages.map((stage, index) => {
-          const colOpps = groupedOpportunities.get(stage.key) || [];
-          return (
-            <KanbanColumn
-              key={stage.key}
-              stage={stage}
-              opportunities={colOpps}
-              stageIndex={index}
-              totalStages={effectiveStages.length}
-              onDropOpportunity={handleDropOpportunity}
-              onMoveForward={handleMoveForward}
-              onMoveBackward={handleMoveBackward}
-            />
-          );
-        })}
+      {/* Horizontal Scrollable Kanban Columns Container */}
+      <div className="w-full overflow-x-auto no-scrollbar pb-2">
+        <div
+          data-testid="kanban-columns-container"
+          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 pb-2 pt-1 min-h-[520px] w-full"
+          style={{
+            gridTemplateColumns:
+              effectiveStages.length >= 2
+                ? `repeat(${effectiveStages.length}, minmax(240px, 1fr))`
+                : undefined,
+          }}
+        >
+          {effectiveStages.map((stage, index) => {
+            const colOpps = groupedOpportunities.get(stage.key) || [];
+            return (
+              <KanbanColumn
+                key={stage.key}
+                stage={stage}
+                opportunities={colOpps}
+                stageIndex={index}
+                totalStages={effectiveStages.length}
+                allStages={effectiveStages}
+                draggedOpportunity={draggedOpportunity}
+                onCardDragStart={handleCardDragStart}
+                onCardDragEnd={handleCardDragEnd}
+                canUpdateOpportunity={canUpdate}
+                canManagePipelines={canManage}
+                onDropOpportunity={handleDropOpportunity}
+                onMoveForward={handleMoveForward}
+                onMoveBackward={handleMoveBackward}
+              />
+            );
+          })}
+        </div>
       </div>
 
       {/* Terminal Outcome Drop Zones (Closed Won & Closed Lost) */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
         <div
           data-testid="kanban-dropzone-closed-won"
-          onDragOver={(e) => {
-            e.preventDefault();
-            e.dataTransfer.dropEffect = "move";
-            if (dragOverOutcome !== "won") setDragOverOutcome("won");
-          }}
-          onDragLeave={(e) => {
-            e.preventDefault();
-            setDragOverOutcome(null);
-          }}
-          onDrop={(e) => {
-            e.preventDefault();
-            setDragOverOutcome(null);
-            const oppId = e.dataTransfer.getData("text/plain");
-            if (oppId) {
-              handleDropOpportunity(oppId, "default.closed_won");
-            }
-          }}
+          onDragOver={(e) => handleDragOverOutcome(e, "won")}
+          onDragLeave={handleDragLeaveOutcome}
+          onDrop={(e) => handleDropOutcome(e, "default.closed_won")}
           className={cn(
             "flex items-center justify-between rounded-nx-lg border border-dashed px-4 py-3 transition-colors",
-            dragOverOutcome === "won"
+            canUpdate === false && "cursor-not-allowed opacity-60",
+            dragOverOutcome === "won" && canUpdate !== false
               ? "border-success bg-success/15 ring-2 ring-success text-success"
               : "border-success/30 bg-success/5 text-nx-ink-2 hover:border-success/60"
           )}
@@ -234,7 +168,9 @@ export function KanbanBoard({
                 {t("crmOpportunities.dialogs.close.outcomeWon", { defaultValue: "Closed Won" })}
               </div>
               <div className="text-[11px] text-nx-ink-3">
-                Drag an open deal here to verify Account/Contact & record Close Won notes
+                {t("crmOpportunities.kanban.dropWonHint", {
+                  defaultValue: "Drag an open deal here to verify Account/Contact & record Close Won notes",
+                })}
               </div>
             </div>
           </div>
@@ -245,26 +181,13 @@ export function KanbanBoard({
 
         <div
           data-testid="kanban-dropzone-closed-lost"
-          onDragOver={(e) => {
-            e.preventDefault();
-            e.dataTransfer.dropEffect = "move";
-            if (dragOverOutcome !== "lost") setDragOverOutcome("lost");
-          }}
-          onDragLeave={(e) => {
-            e.preventDefault();
-            setDragOverOutcome(null);
-          }}
-          onDrop={(e) => {
-            e.preventDefault();
-            setDragOverOutcome(null);
-            const oppId = e.dataTransfer.getData("text/plain");
-            if (oppId) {
-              handleDropOpportunity(oppId, "default.closed_lost");
-            }
-          }}
+          onDragOver={(e) => handleDragOverOutcome(e, "lost")}
+          onDragLeave={handleDragLeaveOutcome}
+          onDrop={(e) => handleDropOutcome(e, "default.closed_lost")}
           className={cn(
             "flex items-center justify-between rounded-nx-lg border border-dashed px-4 py-3 transition-colors",
-            dragOverOutcome === "lost"
+            canUpdate === false && "cursor-not-allowed opacity-60",
+            dragOverOutcome === "lost" && canUpdate !== false
               ? "border-destructive bg-destructive/15 ring-2 ring-destructive text-destructive"
               : "border-destructive/30 bg-destructive/5 text-nx-ink-2 hover:border-destructive/60"
           )}
@@ -276,7 +199,9 @@ export function KanbanBoard({
                 {t("crmOpportunities.dialogs.close.outcomeLost", { defaultValue: "Closed Lost" })}
               </div>
               <div className="text-[11px] text-nx-ink-3">
-                Drag an open deal here to capture loss reason & competitor intel
+                {t("crmOpportunities.kanban.dropLostHint", {
+                  defaultValue: "Drag an open deal here to capture loss competitor and root-cause reasons",
+                })}
               </div>
             </div>
           </div>

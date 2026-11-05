@@ -25,6 +25,8 @@ export interface KanbanCardProps {
   onMoveForward?: (opp: CrmOpportunity) => void;
   onMoveBackward?: (opp: CrmOpportunity) => void;
   isDragging?: boolean;
+  onDragStart?: (opp: CrmOpportunity) => void;
+  onDragEnd?: () => void;
 }
 
 /**
@@ -37,6 +39,8 @@ export function KanbanCard({
   onMoveForward,
   onMoveBackward,
   isDragging = false,
+  onDragStart,
+  onDragEnd,
 }: KanbanCardProps) {
   const router = useRouter();
   const { t, language } = useI18n();
@@ -79,6 +83,11 @@ export function KanbanCard({
     e.dataTransfer.setData("application/json", JSON.stringify(opportunity));
     e.dataTransfer.setData("text/plain", opportunity.id);
     e.dataTransfer.effectAllowed = "move";
+    onDragStart?.(opportunity);
+  };
+
+  const handleDragEnd = (_e: React.DragEvent<HTMLDivElement>) => {
+    onDragEnd?.();
   };
 
   const handleCardClick = () => {
@@ -116,6 +125,7 @@ export function KanbanCard({
     <Card
       draggable
       onDragStart={handleDragStart}
+      onDragEnd={handleDragEnd}
       onClick={handleCardClick}
       onKeyDown={handleKeyDown}
       tabIndex={0}

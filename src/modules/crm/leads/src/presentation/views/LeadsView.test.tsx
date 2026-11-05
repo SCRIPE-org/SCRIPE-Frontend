@@ -1,5 +1,5 @@
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
-import { describe, expect, it, vi, beforeEach } from "vitest";
+import { describe, expect, it, vi, beforeEach, afterEach } from "vitest";
 import { LeadsView } from "./LeadsView";
 import { setCrmContainer } from "@modules/crm/di";
 import type { CrmContainer } from "@modules/crm/di";
@@ -182,6 +182,13 @@ describe("LeadsView Component", () => {
     };
 
     setCrmContainer(mockContainer);
+  });
+
+  afterEach(async () => {
+    try {
+      const { useCrmSettingsStore } = await import("@modules/crm");
+      useCrmSettingsStore.getState().setDefaultDealViewMode("Table");
+    } catch { /* noop */ }
   });
 
   it("renders the Leads View shell, header, and search bar", async () => {
@@ -514,5 +521,31 @@ describe("LeadsView Component", () => {
         })
       );
     });
+  });
+
+  it("renders Kanban view by default when defaultDealViewMode is set to Kanban in CRM Settings", async () => {
+    const { useCrmSettingsStore } = await import("@modules/crm");
+    useCrmSettingsStore.getState().setDefaultDealViewMode("Kanban");
+
+    mockGetLeads.mockResolvedValue({
+      items: mockLeads,
+      totalCount: 3,
+      page: 1,
+      pageSize: 20,
+      totalPages: 1,
+    } as PagedLeadsResult);
+
+    render(<LeadsView />);
+
+    await waitFor(() => {
+      expect(screen.getAllByText("Al-Hilal Season Ticket Partnership")[0]).toBeDefined();
+    });
+
+    // Should render Kanban columns by default
+    expect(screen.getAllByText("crmLeads.status.new")[0]).toBeDefined();
+    expect(screen.getAllByText("crmLeads.status.working")[0]).toBeDefined();
+
+    // Reset back to Table
+    useCrmSettingsStore.getState().setDefaultDealViewMode("Table");
   });
 });

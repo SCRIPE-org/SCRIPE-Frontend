@@ -1,3 +1,3 @@
 export * from "./KanbanCard";
-export * from "./KanbanColumn";
+export { KanbanColumn, type KanbanColumnProps } from "./KanbanColumn";
 export * from "./KanbanBoard";

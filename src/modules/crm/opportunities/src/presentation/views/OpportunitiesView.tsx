@@ -11,9 +11,9 @@ import { EmptyState } from "@core/ui/empty-state";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@core/ui/select";
 import { AlertCircle, RefreshCw, Plus, Search, Settings, ArrowRight, RotateCcw, CheckCircle, XCircle, ArrowUpRight, UserCheck } from "lucide-react";
 import { cn } from "@core/common/utils";
-import { CRM_PERMISSIONS, CrmShell, CrmSectionHeader } from "@modules/crm";
+import { CRM_PERMISSIONS, CrmShell, CrmSectionHeader, useCrmSettingsStore } from "@modules/crm";
 import { GenericCrudView } from "@core/crud/components/generic-crud-view";
-import type { CrudConfig } from "@core/crud/components/generic-crud-view";
+import type { CrudConfig, CrudViewMode } from "@core/crud/components/generic-crud-view";
 import { buildOpportunityColumns, renderOpportunityCardGridItem, renderOpportunitySplitDetail } from "../components/OpportunitiesTable";
 import { KanbanBoard } from "../components/kanban/KanbanBoard";
 import { CreateOpportunityDialog } from "../components/CreateOpportunityDialog";
@@ -30,7 +30,9 @@ export function OpportunitiesView() {
   const { t, language } = useI18n();
   const isRtl = language === "ar";
   const canCreateOpp = usePermission(CRM_PERMISSIONS.OPPORTUNITIES_CREATE);
+  const canUpdateOpp = usePermission(CRM_PERMISSIONS.OPPORTUNITIES_UPDATE);
   const canManagePipeline = usePermission(CRM_PERMISSIONS.PIPELINES_MANAGE);
+  const defaultDealViewMode = useCrmSettingsStore((s) => s.defaultDealViewMode);
 
   const viewModel = useOpportunitiesViewModel();
   const {
@@ -152,7 +154,7 @@ export function OpportunitiesView() {
     searchConfig: { enabled: false },
     viewSwitchPosition: "toolbar",
     viewModes: ["Table", "Kanban", "CardGrid", "SplitPane"],
-    defaultView: "Table",
+    defaultView: (defaultDealViewMode as CrudViewMode) || "Table",
     permissions: {
       canView: CRM_PERMISSIONS.OPPORTUNITIES_READ,
       canCreate: CRM_PERMISSIONS.OPPORTUNITIES_CREATE,
@@ -184,7 +186,15 @@ export function OpportunitiesView() {
       </div>
     ),
     customKanbanContent: (
-      <KanbanBoard opportunities={state.items} stages={pipelineStages} onMoveStage={handleMoveStageOptimistic} errorMessage={submitError} onClearError={clearSubmitError} />
+      <KanbanBoard
+        opportunities={state.items}
+        stages={pipelineStages}
+        onMoveStage={handleMoveStageOptimistic}
+        errorMessage={submitError}
+        onClearError={clearSubmitError}
+        canUpdateOpportunity={canUpdateOpp}
+        canManagePipelines={canManagePipeline}
+      />
     ),
     renderCardGridItem: (opp, actions) => renderOpportunityCardGridItem(opp, actions, language, handleSelectOpportunity),
     renderSplitDetail: (opp, actions) => renderOpportunitySplitDetail(opp, actions, language, t),
