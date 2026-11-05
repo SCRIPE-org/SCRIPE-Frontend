@@ -10,4 +10,7 @@ export const CRM_ENDPOINTS = {
   ACCOUNTS: "/v1/crm/accounts",
   CONTACTS: "/v1/crm/contacts",
   ACTIVITIES: "/v1/crm/activities",
+  SETTINGS: "/v1/crm/settings",
+  SETTINGS_TENANT: "/v1/crm/settings/tenant",
+  SETTINGS_USER: "/v1/crm/settings/user",
 } as const;

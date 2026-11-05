@@ -1,3 +1,4 @@
+export * from "./overview/src/domain/constants/permission-constants";
 export * from "./di";
 export * from "./overview";
 export * from "./activities";

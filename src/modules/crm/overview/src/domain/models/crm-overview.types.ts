@@ -1,7 +1,7 @@
 /**
- * SCRIPE CRM Overview Domain Models
+ * SCRIPE CRM Overview & Settings Domain Models
  *
- * Types for CRM Shell, Dashboard, and Pipeline Progress.
+ * Types for CRM Shell, Dashboard, Pipeline Progress, and Server-Persisted Settings.
  */
 
 export type CanonicalActiveStageKey =
@@ -27,10 +27,6 @@ export interface CrmStageSummary {
   count: number;
   value: number;
   sortOrder: number;
-  /**
-   * Server-authoritative Party verification requirement.
-   * Derived from: stage.sortOrder >= proposalStage.sortOrder
-   */
   requiresVerifiedParty: boolean;
 }
 
@@ -95,6 +91,9 @@ export interface CrmCurrencyPipelineBreakdown {
   stages: CrmStageReportItem[];
 }
 
+export type CrmStageReportBucket = CrmStageReportItem;
+
+
 export interface CrmLeadFunnelReport {
   totalLeads: number;
   newCount: number;
@@ -135,4 +134,56 @@ export interface CrmPipelineReport {
   leadFunnel: CrmLeadFunnelReport;
   winLoss: CrmWinLossSummary;
   activities: CrmActivitySummary;
+}
+
+/** Server-persisted tenant-wide CRM governance and currency configuration. */
+export interface CrmTenantSettingsPayload {
+  baseCurrencyCode: string;
+  defaultDealCurrencyCode: string;
+  autoConvertAmountsToBase: boolean;
+  showDualCurrencyBadges: boolean;
+  allowUserCurrencyOverride: boolean;
+  snapshotExchangeRateOnDealCreation: boolean;
+  stageGateStrictness: "strict" | "advisory" | "custom";
+  requireVerifiedPartyOnProposal: boolean;
+  requireCloseNotesOnWin: boolean;
+  defaultLeadSource: string;
+  slaLeadResponseHours: number;
+  stalledDealThresholdDays: number;
+  duplicateDetectionMode: "strict" | "fuzzy" | "advisory";
+  leadAutoAssignmentRule: "round_robin" | "territory" | "manual";
+  enableCatalogPricingQuoteHandoff: boolean;
+  enableVenueAcademyCommercialHandoff: boolean;
+  autoCreateWorkItemsOnStageMove: boolean;
+  defaultCommunicationChannel: "email" | "whatsapp" | "in_app";
+  autoSyncPartyKernelOnConvert: boolean;
+  customFieldsConfigJson?: string | null;
+  workflowCanvasConfigJson?: string | null;
+  defaultDealViewMode?: "Kanban" | "Table" | "SplitPane";
+  defaultPipelineCode?: string;
+  cardDensity?: "Comfortable" | "Compact";
+  rowVersion?: number | string;
+}
+
+/** Server-persisted per-user CRM display & currency override preferences. */
+export interface CrmUserPreferencePayload {
+  overrideCurrencyCode?: string | null;
+  defaultDealViewMode: "Kanban" | "Table" | "SplitPane";
+  defaultPipelineCode: string;
+  cardDensity: "Comfortable" | "Compact";
+  autoConvertAmountsOverride?: boolean | null;
+  showDualCurrencyBadgesOverride?: boolean | null;
+  dailyDigestEnabled: boolean;
+  stageMoveNotificationsEnabled: boolean;
+  rowVersion?: number | string;
+}
+
+/** Composite server-side CRM settings response including live exchange rates. */
+export interface CrmSettingsResponseData {
+  effectiveBaseCurrencyCode: string;
+  effectiveAutoConvertToBase: boolean;
+  effectiveShowDualCurrencyBadges: boolean;
+  tenantSettings: CrmTenantSettingsPayload;
+  userPreferences: CrmUserPreferencePayload;
+  exchangeRatesUsdBase: Record<string, number>;
 }

@@ -212,7 +212,7 @@ describe("PipelineAdminDialog Component", () => {
     expect(screen.getByText("Reorder Blocked: Unlinked Deals Gate")).toBeDefined();
     expect(
       screen.getByText(
-        "Cannot advance stage order while open unlinked deals reside on this stage without a verified Party (PD-1 Policy). Link deals to Parties or move them backward before saving."
+        "Cannot advance stage order while open unlinked deals reside on this stage without a verified Account or Contact. Link deals to an Account/Contact or move them backward before saving."
       )
     ).toBeDefined();
   });

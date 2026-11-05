@@ -51,7 +51,10 @@ export class CrmOpportunityService implements ICrmOpportunityService {
       `crm-opp-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`;
     const response = await this.api.post<ApiSuccessResponse<CrmOpportunity> | CrmOpportunity>(
       CRM_OPPORTUNITY_ENDPOINTS.OPPORTUNITIES,
-      input,
+      (() => {
+        const { idempotencyKey: _, ...payload } = input;
+        return payload;
+      })(),
       undefined,
       {
         idempotencyKey,
@@ -235,7 +238,13 @@ export class CrmOpportunityService implements ICrmOpportunityService {
         labelAr: s.labelAr ?? null,
         probabilityPercent: s.probabilityPercent ?? s.winProbabilityPercent ?? null,
         requiredExitFields: s.requiredExitFields ?? [],
+        ...(s.triggerDealConversion !== undefined
+          ? { triggerDealConversion: Boolean(s.triggerDealConversion) }
+          : {}),
       })),
+      ...(input.transitionsJson !== undefined
+        ? { transitionsJson: input.transitionsJson }
+        : {}),
       expectedRowVersion: input.expectedRowVersion,
     };
     const response = await this.api.put<
@@ -268,6 +277,7 @@ export class CrmOpportunityService implements ICrmOpportunityService {
       nameAr: p.nameAr ?? null,
       version: p.version ?? 1,
       isDefault: p.isDefault ?? true,
+      transitionsJson: p.transitionsJson ?? null,
       rowVersion: p.rowVersion ?? "",
       stages: Array.isArray(p.stages)
         ? p.stages.map((s: any) => ({
@@ -280,6 +290,7 @@ export class CrmOpportunityService implements ICrmOpportunityService {
             probabilityPercent: s.probabilityPercent ?? s.winProbabilityPercent ?? null,
             requiredExitFields: s.requiredExitFields ?? [],
             requiresVerifiedParty: s.requiresVerifiedParty ?? false,
+            triggerDealConversion: Boolean(s.triggerDealConversion),
             rowVersion: s.rowVersion ?? null,
           }))
         : [],

@@ -61,9 +61,10 @@ export class CrmLeadService implements ICrmLeadService {
       input.idempotencyKey ||
       `crm-lead-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`;
 
+    const { idempotencyKey: _, ...payload } = input;
     const response = await this.api.post<ApiSuccessResponse<CrmLead> | CrmLead>(
       CRM_LEAD_ENDPOINTS.LEADS,
-      input,
+      payload,
       undefined,
       {
         idempotencyKey,

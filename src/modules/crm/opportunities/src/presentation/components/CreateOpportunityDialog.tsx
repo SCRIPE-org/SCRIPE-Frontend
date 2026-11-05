@@ -13,21 +13,17 @@ import {
 import { Button } from "@core/ui/button";
 import { Input } from "@core/ui/input";
 import { Label } from "@core/ui/label";
-import { Textarea } from "@core/ui/textarea";
 import { Alert, AlertDescription } from "@core/ui/alert";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@core/ui/select";
-import { CustomFieldsSection } from "@core/crud/customFieldsExtension";
-import { AlertCircle, AlertTriangle, Building2 } from "lucide-react";
-import type { CreateOpportunityInput, DealKind } from "../../domain/entities/OpportunityEntity";
+import { AlertCircle, ArrowRightLeft } from "lucide-react";
+import { useCrmCurrency, CRM_CURRENCY_OPTIONS } from "@modules/crm";
+import type { CreateOpportunityInput } from "../../domain/entities/OpportunityEntity";
+import {
+  CreateOpportunityPartyStageFields,
+  type OpportunityPartyOption,
+} from "./CreateOpportunityPartyStageFields";
 
-const CURRENCIES = ["SAR", "USD", "AED", "EUR", "GBP", "EGP"];
-
-export interface OpportunityPartyOption {
-  partyId: string;
-  accountId?: string;
-  label: string;
-  subtitle?: string;
-}
+export type { OpportunityPartyOption };
 
 export interface CreateOpportunityDialogProps {
   open: boolean;
@@ -38,9 +34,6 @@ export interface CreateOpportunityDialogProps {
   submitError?: string | null;
 }
 
-/**
- * Dialog to create a new commercial opportunity with searchable Account/Contact selector and Custom Fields.
- */
 export function CreateOpportunityDialog({
   open,
   onOpenChange,
@@ -51,11 +44,12 @@ export function CreateOpportunityDialog({
 }: CreateOpportunityDialogProps) {
   const { t, language } = useI18n();
   const isRtl = language === "ar";
+  const { baseCurrency, defaultDealCurrency, getConversionPreview } = useCrmCurrency();
 
   const [formData, setFormData] = useState<CreateOpportunityInput>({
     title: "",
     estimatedAmount: 0,
-    currencyCode: "SAR",
+    currencyCode: defaultDealCurrency || baseCurrency || "SAR",
     targetStageKey: "default.discovery",
     targetCloseDate: "",
     dealKind: "NewBusiness",
@@ -72,17 +66,11 @@ export function CreateOpportunityDialog({
   useEffect(() => {
     if (!open || !onLookupParties) return;
     let cancelled = false;
-    async function loadOptions() {
-      try {
-        const options = await onLookupParties!(partySearch);
-        if (!cancelled) {
-          setPartyOptions(options);
-        }
-      } catch {
-        // Ignore lookup error in test/offline mode
-      }
-    }
-    loadOptions();
+    onLookupParties(partySearch)
+      .then((options) => {
+        if (!cancelled) setPartyOptions(options);
+      })
+      .catch(() => {});
     return () => {
       cancelled = true;
     };
@@ -90,24 +78,15 @@ export function CreateOpportunityDialog({
 
   const validate = (): boolean => {
     const errs: Record<string, string> = {};
-    if (!formData.title?.trim()) {
-      errs.title = "Deal title is required";
-    }
-    if (
-      formData.estimatedAmount == null ||
-      isNaN(formData.estimatedAmount) ||
-      formData.estimatedAmount < 0
-    ) {
+    if (!formData.title?.trim()) errs.title = "Deal title is required";
+    if (formData.estimatedAmount == null || isNaN(formData.estimatedAmount) || formData.estimatedAmount < 0) {
       errs.estimatedAmount = "Valid estimated amount is required (>= 0)";
     }
     if (
-      formData.targetStageKey === "default.proposal" ||
-      formData.targetStageKey === "default.negotiation"
+      (formData.targetStageKey === "default.proposal" || formData.targetStageKey === "default.negotiation") &&
+      !formData.partyId?.trim()
     ) {
-      if (!formData.partyId?.trim()) {
-        errs.partyId =
-          "A linked Account or Contact is required when creating a deal in Proposal or Negotiation stage.";
-      }
+      errs.partyId = "A linked Account or Contact is required when creating a deal in Proposal or Negotiation stage.";
     }
     setErrors(errs);
     return Object.keys(errs).length === 0;
@@ -135,9 +114,7 @@ export function CreateOpportunityDialog({
       estimatedAmount: Number(formData.estimatedAmount),
       currencyCode: formData.currencyCode?.trim().toUpperCase() || "SAR",
       targetStageKey: formData.targetStageKey || "default.discovery",
-      targetCloseDate: formData.targetCloseDate
-        ? new Date(formData.targetCloseDate).toISOString()
-        : undefined,
+      targetCloseDate: formData.targetCloseDate ? new Date(formData.targetCloseDate).toISOString() : undefined,
       dealKind: formData.dealKind || "NewBusiness",
       directCreateRationale: formData.directCreateRationale?.trim() || undefined,
       partyId: formData.partyId?.trim() || undefined,
@@ -165,17 +142,15 @@ export function CreateOpportunityDialog({
   };
 
   const isProposalOrLater =
-    formData.targetStageKey === "default.proposal" ||
-    formData.targetStageKey === "default.negotiation";
+    formData.targetStageKey === "default.proposal" || formData.targetStageKey === "default.negotiation";
+  const preview = getConversionPreview(formData.estimatedAmount || 0, formData.currencyCode);
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-xl max-h-[90vh] overflow-y-auto" dir={isRtl ? "rtl" : "ltr"}>
         <DialogHeader>
           <DialogTitle>{t("crmOpportunities.dialogs.create.title")}</DialogTitle>
-          <DialogDescription>
-            {t("crmOpportunities.dialogs.create.description")}
-          </DialogDescription>
+          <DialogDescription>{t("crmOpportunities.dialogs.create.description")}</DialogDescription>
         </DialogHeader>
 
         <form onSubmit={handleSubmit} className="space-y-4">
@@ -188,8 +163,7 @@ export function CreateOpportunityDialog({
 
           <div className="space-y-1.5">
             <Label htmlFor="opp-title">
-              {t("crmOpportunities.dialogs.create.titleLabel")}{" "}
-              <span className="text-destructive">*</span>
+              {t("crmOpportunities.dialogs.create.titleLabel")} <span className="text-destructive">*</span>
             </Label>
             <Input
               id="opp-title"
@@ -204,8 +178,7 @@ export function CreateOpportunityDialog({
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="space-y-1.5">
               <Label htmlFor="opp-amount">
-                {t("crmOpportunities.dialogs.create.amountLabel")}{" "}
-                <span className="text-destructive">*</span>
+                {t("crmOpportunities.dialogs.create.amountLabel")} <span className="text-destructive">*</span>
               </Label>
               <Input
                 id="opp-amount"
@@ -214,32 +187,25 @@ export function CreateOpportunityDialog({
                 step="any"
                 placeholder={t("crmOpportunities.dialogs.create.amountPlaceholder")}
                 value={formData.estimatedAmount || ""}
-                onChange={(e) =>
-                  setFormData((prev) => ({
-                    ...prev,
-                    estimatedAmount: parseFloat(e.target.value) || 0,
-                  }))
-                }
+                onChange={(e) => setFormData((prev) => ({ ...prev, estimatedAmount: parseFloat(e.target.value) || 0 }))}
                 aria-invalid={Boolean(errors.estimatedAmount)}
               />
-              {errors.estimatedAmount && (
-                <p className="text-xs text-destructive">{errors.estimatedAmount}</p>
-              )}
+              {errors.estimatedAmount && <p className="text-xs text-destructive">{errors.estimatedAmount}</p>}
             </div>
 
             <div className="space-y-1.5">
               <Label htmlFor="opp-currency">{t("crmOpportunities.dialogs.create.currencyLabel")}</Label>
               <Select
-                value={formData.currencyCode || "SAR"}
+                value={formData.currencyCode || defaultDealCurrency || "SAR"}
                 onValueChange={(val) => setFormData((prev) => ({ ...prev, currencyCode: val }))}
               >
-                <SelectTrigger id="opp-currency">
+                <SelectTrigger id="opp-currency" data-testid="create-opp-currency-select">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  {CURRENCIES.map((c) => (
-                    <SelectItem key={c} value={c}>
-                      {c}
+                  {CRM_CURRENCY_OPTIONS.map((c) => (
+                    <SelectItem key={c.code} value={c.code}>
+                      {c.code} — {c.name} ({c.symbol})
                     </SelectItem>
                   ))}
                 </SelectContent>
@@ -247,146 +213,48 @@ export function CreateOpportunityDialog({
             </div>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div className="space-y-1.5">
-              <Label htmlFor="opp-stage">{t("crmOpportunities.dialogs.create.stageLabel")}</Label>
-              <Select
-                value={formData.targetStageKey}
-                onValueChange={(val) => setFormData((prev) => ({ ...prev, targetStageKey: val }))}
-              >
-                <SelectTrigger id="opp-stage">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="default.discovery">Discovery</SelectItem>
-                  <SelectItem value="default.qualification">Qualification</SelectItem>
-                  <SelectItem value="default.solution_fit">Solution Fit</SelectItem>
-                  <SelectItem value="default.proposal">Proposal (Account/Contact required)</SelectItem>
-                  <SelectItem value="default.negotiation">Negotiation (Account/Contact required)</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-
-            <div className="space-y-1.5">
-              <Label htmlFor="opp-deal-kind">{t("crmOpportunities.dialogs.create.dealKindLabel")}</Label>
-              <Select
-                value={formData.dealKind}
-                onValueChange={(val) =>
-                  setFormData((prev) => ({ ...prev, dealKind: val as DealKind }))
-                }
-              >
-                <SelectTrigger id="opp-deal-kind">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="NewBusiness">New Business</SelectItem>
-                  <SelectItem value="Expansion">Expansion</SelectItem>
-                  <SelectItem value="Renewal">Renewal</SelectItem>
-                  <SelectItem value="Services">Services</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-          </div>
-
-          {/* Searchable Account / Organization Selector */}
-          <div className="space-y-1.5">
-            <Label htmlFor="opp-party-id" className="flex items-center gap-1.5">
-              <Building2 className="size-3.5 text-nx-accent" />
-              <span>{t("crmOpportunities.dialogs.create.partyIdLabel")}</span>
-              {isProposalOrLater && <span className="text-destructive">*</span>}
-            </Label>
-            <Input
-              placeholder={t("crmOpportunities.dialogs.create.partySearchPlaceholder", {
-                defaultValue: "Filter Accounts or Contacts...",
-              })}
-              value={partySearch}
-              onChange={(e) => setPartySearch(e.target.value)}
-              className="h-8 text-xs mb-1"
-            />
-            <Select
-              value={formData.partyId || "__none__"}
-              onValueChange={handleSelectParty}
+          {preview.isDifferentCurrency && (
+            <div
+              data-testid="create-opp-conversion-preview"
+              className="flex items-center justify-between rounded-nx-md border border-nx-line bg-nx-raised px-3 py-2 text-xs"
             >
-              <SelectTrigger id="opp-party-id">
-                <SelectValue
-                  placeholder={t("crmOpportunities.dialogs.create.partyIdPlaceholder")}
-                />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="__none__">
-                  {t("crmOpportunities.dialogs.create.noAccountOption", {
-                    defaultValue: "No linked Account / Contact yet (Link later)",
-                  })}
-                </SelectItem>
-                {partyOptions.map((opt) => (
-                  <SelectItem key={opt.partyId} value={opt.partyId}>
-                    {opt.label} {opt.subtitle ? `(${opt.subtitle})` : ""}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-            {errors.partyId && <p className="text-xs text-destructive">{errors.partyId}</p>}
-            {isProposalOrLater && !formData.partyId && (
-              <p className="text-xs text-warning flex items-center gap-1 mt-1">
-                <AlertTriangle className="size-3" />
-                {t("crmOpportunities.dialogs.create.partyRequiredHint", {
-                  defaultValue: "Advancing to Proposal or Negotiation requires a linked Account or Contact.",
-                })}
-              </p>
-            )}
-          </div>
+              <div className="flex items-center gap-2 text-nx-ink-2">
+                <ArrowRightLeft className="size-3.5 text-nx-accent shrink-0" />
+                <span>
+                  {t("crmOpportunities.dialogs.create.autoConvertedToBase", {
+                    defaultValue: "Auto-Converted to CRM Base",
+                  })}{" "}
+                  (<strong>{preview.baseCurrency}</strong>):
+                </span>
+              </div>
+              <div className="text-end font-mono">
+                <span className="font-bold text-nx-accent">{preview.formattedConverted}</span>
+                <span className="ms-2 text-[10px] text-nx-ink-3">({preview.rateSummary})</span>
+              </div>
+            </div>
+          )}
 
-          <div className="space-y-1.5">
-            <Label htmlFor="opp-close-date">
-              {t("crmOpportunities.dialogs.create.closeDateLabel")}
-            </Label>
-            <Input
-              id="opp-close-date"
-              type="date"
-              value={formData.targetCloseDate || ""}
-              onChange={(e) =>
-                setFormData((prev) => ({ ...prev, targetCloseDate: e.target.value }))
-              }
-            />
-          </div>
-
-          <div className="space-y-1.5">
-            <Label htmlFor="opp-rationale">
-              {t("crmOpportunities.dialogs.create.rationaleLabel")}
-            </Label>
-            <Textarea
-              id="opp-rationale"
-              placeholder={t("crmOpportunities.dialogs.create.rationalePlaceholder")}
-              value={formData.directCreateRationale || ""}
-              onChange={(e) =>
-                setFormData((prev) => ({ ...prev, directCreateRationale: e.target.value }))
-              }
-              rows={2}
-            />
-          </div>
-
-          {/* Custom Fields Integration */}
-          <CustomFieldsSection
-            entityTypeKey="crm.opportunity"
-            entityDisplayName={t("crmOpportunities.title") || "Commercial Opportunity"}
-            values={customFieldValues}
-            onChange={(key, val) => setCustomFieldValues((prev) => ({ ...prev, [key]: val }))}
-            disabled={isSubmitting}
+          <CreateOpportunityPartyStageFields
+            t={t}
+            formData={formData}
+            onChangeFormData={setFormData}
+            partySearch={partySearch}
+            onPartySearchChange={setPartySearch}
+            partyOptions={partyOptions}
+            onSelectParty={handleSelectParty}
+            isProposalOrLater={isProposalOrLater}
+            errors={errors}
+            customFieldValues={customFieldValues}
+            onCustomFieldChange={(key, val) => setCustomFieldValues((prev) => ({ ...prev, [key]: val }))}
+            isSubmitting={isSubmitting}
           />
 
           <DialogFooter className="pt-2">
-            <Button
-              type="button"
-              variant="outline"
-              onClick={() => onOpenChange(false)}
-              disabled={isSubmitting}
-            >
+            <Button type="button" variant="outline" onClick={() => onOpenChange(false)} disabled={isSubmitting}>
               {t("crmOpportunities.actions.cancel")}
             </Button>
             <Button type="submit" disabled={isSubmitting}>
-              {isSubmitting
-                ? t("crmOpportunities.actions.saving")
-                : t("crmOpportunities.dialogs.create.submit")}
+              {isSubmitting ? t("crmOpportunities.actions.saving") : t("crmOpportunities.dialogs.create.submit")}
             </Button>
           </DialogFooter>
         </form>

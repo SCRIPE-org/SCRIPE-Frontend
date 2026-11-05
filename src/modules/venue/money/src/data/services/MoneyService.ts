@@ -38,7 +38,9 @@ export class MoneyService implements IMoneyService {
   }
 
   recordPayment(input: RecordManualPaymentInput): Promise<MoneyPayment> {
-    return this.api.post(MONEY_ENDPOINTS.PAYMENTS, input);
+    const { idempotencyKey, ...payload } = input;
+    const options = idempotencyKey ? { idempotencyKey } : undefined;
+    return this.api.post(MONEY_ENDPOINTS.PAYMENTS, payload, undefined, options);
   }
 
   async allocatePayment(
@@ -47,19 +49,27 @@ export class MoneyService implements IMoneyService {
     amount: number,
     idempotencyKey: string
   ): Promise<void> {
-    await this.api.post(MONEY_ENDPOINTS.ALLOCATIONS(paymentId), {
-      invoiceId,
-      amount,
-      idempotencyKey,
-    });
+    const options = idempotencyKey ? { idempotencyKey } : undefined;
+    await this.api.post(
+      MONEY_ENDPOINTS.ALLOCATIONS(paymentId),
+      {
+        invoiceId,
+        amount,
+      },
+      undefined,
+      options
+    );
   }
 
   async issueReceipt(paymentId: string, idempotencyKey: string): Promise<void> {
-    await this.api.post(MONEY_ENDPOINTS.RECEIPTS(paymentId), { idempotencyKey, notes: null });
+    const options = idempotencyKey ? { idempotencyKey } : undefined;
+    await this.api.post(MONEY_ENDPOINTS.RECEIPTS(paymentId), { notes: null }, undefined, options);
   }
 
   async refundPayment(paymentId: string, input: RefundPaymentInput): Promise<void> {
-    await this.api.post(MONEY_ENDPOINTS.REFUNDS(paymentId), input);
+    const { idempotencyKey, ...payload } = input;
+    const options = idempotencyKey ? { idempotencyKey } : undefined;
+    await this.api.post(MONEY_ENDPOINTS.REFUNDS(paymentId), payload, undefined, options);
   }
 
   getPaymentTimeline(paymentId: string): Promise<MoneyPaymentTimeline> {

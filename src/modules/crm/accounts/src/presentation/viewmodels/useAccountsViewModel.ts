@@ -58,13 +58,13 @@ export function useAccountsViewModel(initialSearch?: string) {
   }, []);
 
   const loadAccounts = useCallback(
-    async (pageToLoad = 1, searchQuery?: string, tier?: string) => {
+    async (pageToLoad = 1, searchQuery?: string, tier?: string, sizeToLoad = 20) => {
       setState((prev) => ({ ...prev, stage: "loading", error: null }));
       try {
         const container = getCrmContainer();
         const result = await container.accountRepository.getAccounts({
           page: pageToLoad,
-          pageSize: 20,
+          pageSize: sizeToLoad,
           search: searchQuery,
           tierCode: tier,
         });
@@ -75,7 +75,7 @@ export function useAccountsViewModel(initialSearch?: string) {
             items: result.items ?? [],
             totalCount: result.totalCount ?? 0,
             page: result.page ?? pageToLoad,
-            pageSize: result.pageSize ?? 20,
+            pageSize: result.pageSize ?? sizeToLoad,
             error: null,
           });
         });
@@ -107,7 +107,15 @@ export function useAccountsViewModel(initialSearch?: string) {
 
   const handlePageChange = useCallback(
     (newPage: number) => {
-      loadAccounts(newPage, search, tierFilter);
+      loadAccounts(newPage, search, tierFilter, state.pageSize);
+    },
+    [loadAccounts, search, tierFilter, state.pageSize]
+  );
+
+  const handlePageSizeChange = useCallback(
+    (newSize: number) => {
+      setState((prev) => ({ ...prev, pageSize: newSize, page: 1 }));
+      loadAccounts(1, search, tierFilter, newSize);
     },
     [loadAccounts, search, tierFilter]
   );
@@ -137,7 +145,7 @@ export function useAccountsViewModel(initialSearch?: string) {
           }
         }
         setIsCreateOpen(false);
-        await loadAccounts(1, search, tierFilter);
+        await loadAccounts(1, search, tierFilter, state.pageSize);
         return true;
       } catch (err: unknown) {
         const message = err instanceof Error ? err.message : "Failed to create commercial account";
@@ -147,12 +155,12 @@ export function useAccountsViewModel(initialSearch?: string) {
         setIsSubmitting(false);
       }
     },
-    [loadAccounts, search, tierFilter]
+    [loadAccounts, search, tierFilter, state.pageSize]
   );
 
   const refresh = useCallback(() => {
-    return loadAccounts(state.page, search, tierFilter);
-  }, [loadAccounts, state.page, search, tierFilter]);
+    return loadAccounts(state.page, search, tierFilter, state.pageSize);
+  }, [loadAccounts, state.page, search, tierFilter, state.pageSize]);
 
   const lookupCandidateOrganizations = useCallback(async (query?: string) => {
     const container = getCrmContainer();
@@ -189,9 +197,7 @@ export function useAccountsViewModel(initialSearch?: string) {
       hasNextPage: state.page * state.pageSize < state.totalCount,
       hasPreviousPage: state.page > 1,
       onPageChange: handlePageChange,
-      onPageSizeChange: (_size: number) => {
-        loadAccounts(1, search, tierFilter);
-      },
+      onPageSizeChange: handlePageSizeChange,
     },
     searchValue: search,
     selectedItems,
@@ -221,9 +227,7 @@ export function useAccountsViewModel(initialSearch?: string) {
       setViewItem(null);
     },
     changePage: handlePageChange,
-    changePageSize: (_size: number) => {
-      loadAccounts(1, search, tierFilter);
-    },
+    changePageSize: handlePageSizeChange,
     refreshItems: refresh,
     createItem: handleCreateAccount,
   };

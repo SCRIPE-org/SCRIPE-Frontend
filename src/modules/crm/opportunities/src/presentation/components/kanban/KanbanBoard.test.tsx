@@ -388,4 +388,42 @@ describe("KanbanBoard Component", () => {
     });
     expect(onMoveStage).toHaveBeenCalledWith(mockOpportunities[1], "default.closed_lost");
   });
+
+  it("places open deals in unmapped stages into the first column when a 2-stage workflow is active", () => {
+    const twoStageWorkflow = [
+      {
+        stageKey: "default.discovery",
+        labelEn: "Discovery",
+        labelAr: "استكشاف",
+        sortOrder: 1,
+        winProbabilityPercent: 30,
+        requiresVerifiedParty: false,
+      },
+      {
+        stageKey: "default.proposal",
+        labelEn: "Proposal & Closing",
+        labelAr: "العرض والإغلاق",
+        sortOrder: 2,
+        winProbabilityPercent: 85,
+        requiresVerifiedParty: true,
+      },
+    ];
+
+    render(
+      <KanbanBoard
+        opportunities={mockOpportunities}
+        stages={twoStageWorkflow}
+        onMoveStage={vi.fn()}
+      />
+    );
+
+    // Only 2 columns rendered
+    const cols = document.querySelectorAll('[data-testid^="kanban-column-"]');
+    expect(cols.length).toBe(2);
+
+    // opp-002 (stageKey: "default.qualification") should not vanish; it should be visible in the first column
+    expect(screen.getByText("Jeddah Academy Training Equipment")).toBeDefined();
+    expect(screen.getByText("Al-Hilal Stadium Pitch Lighting Upgrade")).toBeDefined();
+    expect(screen.getByText("Riyadh VIP Box Catering Deal")).toBeDefined();
+  });
 });

@@ -253,5 +253,42 @@ describe("OpportunitiesView Component", () => {
       expect(screen.queryByTestId("kanban-column-default.discovery")).toBeNull();
     });
   });
+
+  it("blocks disallowed transitions on Kanban board when active Deal workflow restricts a transition", async () => {
+    const { useCrmWorkflowsStore } = await import("@modules/crm");
+    useCrmWorkflowsStore.getState().resetDefaults();
+    const defaultWf = useCrmWorkflowsStore.getState().getActiveWorkflow("deal");
+    // Restrict Discovery -> Qualification transition (allowRollback: false)
+    useCrmWorkflowsStore.getState().saveWorkflow({
+      ...defaultWf,
+      transitions: defaultWf.transitions.map((tr) =>
+        tr.fromStageKey === "default.discovery" && tr.toStageKey === "default.qualification"
+          ? { ...tr, rules: { ...tr.rules, allowRollback: false } }
+          : tr
+      ),
+    });
+
+    render(<OpportunitiesView />);
+
+    await waitFor(() => {
+      expect(screen.getAllByText("Al-Nassr Pitch Licensing Contract")[0]).toBeDefined();
+    });
+
+    fireEvent.click(screen.getByTestId("toggle-kanban-view"));
+
+    const qualCol = await screen.findByTestId("kanban-column-default.qualification");
+    fireEvent.drop(qualCol, {
+      dataTransfer: {
+        getData: (type: string) => (type === "text/plain" ? "opp-001" : ""),
+      },
+    });
+
+    await waitFor(() => {
+      expect(screen.getByText(/restricted or locked in active workflow/i)).toBeDefined();
+    });
+    expect(mockRepo.moveStage).not.toHaveBeenCalled();
+
+    useCrmWorkflowsStore.getState().resetDefaults();
+  });
 });
 

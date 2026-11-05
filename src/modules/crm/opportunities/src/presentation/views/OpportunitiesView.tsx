@@ -9,28 +9,12 @@ import { Button } from "@core/ui/button";
 import { Input } from "@core/ui/input";
 import { EmptyState } from "@core/ui/empty-state";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@core/ui/select";
-import {
-  AlertCircle,
-  RefreshCw,
-  Plus,
-  Search,
-  Settings,
-  ArrowRight,
-  RotateCcw,
-  CheckCircle,
-  XCircle,
-  ArrowUpRight,
-  UserCheck,
-} from "lucide-react";
+import { AlertCircle, RefreshCw, Plus, Search, Settings, ArrowRight, RotateCcw, CheckCircle, XCircle, ArrowUpRight, UserCheck } from "lucide-react";
 import { cn } from "@core/common/utils";
 import { CRM_PERMISSIONS, CrmShell, CrmSectionHeader } from "@modules/crm";
 import { GenericCrudView } from "@core/crud/components/generic-crud-view";
 import type { CrudConfig } from "@core/crud/components/generic-crud-view";
-import {
-  buildOpportunityColumns,
-  renderOpportunityCardGridItem,
-  renderOpportunitySplitDetail,
-} from "../components/OpportunitiesTable";
+import { buildOpportunityColumns, renderOpportunityCardGridItem, renderOpportunitySplitDetail } from "../components/OpportunitiesTable";
 import { KanbanBoard } from "../components/kanban/KanbanBoard";
 import { CreateOpportunityDialog } from "../components/CreateOpportunityDialog";
 import { MoveStageDialog } from "../components/MoveStageDialog";
@@ -41,9 +25,6 @@ import { PipelineAdminDialog } from "../components/admin/PipelineAdminDialog";
 import { useOpportunitiesViewModel } from "../viewmodels/useOpportunitiesViewModel";
 import type { CrmOpportunity, OpportunityStatus } from "../../domain/entities/OpportunityEntity";
 
-/**
- * Main opportunities list view supporting search, filters, pagination, and deal transitions via GenericCrudView.
- */
 export function OpportunitiesView() {
   const router = useRouter();
   const { t, language } = useI18n();
@@ -95,11 +76,20 @@ export function OpportunitiesView() {
 
   const stages = [
     { key: undefined, label: t("crmOpportunities.actions.allStages") },
-    { key: "default.discovery", label: t("crmOpportunities.stages.discovery") },
-    { key: "default.qualification", label: t("crmOpportunities.stages.qualification") },
-    { key: "default.solution_fit", label: t("crmOpportunities.stages.solution_fit") },
-    { key: "default.proposal", label: t("crmOpportunities.stages.proposal") },
-    { key: "default.negotiation", label: t("crmOpportunities.stages.negotiation") },
+    ...(pipelineStages && pipelineStages.length >= 2
+      ? [...pipelineStages]
+          .sort((a, b) => a.sortOrder - b.sortOrder)
+          .map((stg) => ({
+            key: stg.stageKey,
+            label: isRtl && stg.labelAr ? stg.labelAr : stg.labelEn,
+          }))
+      : [
+          { key: "default.discovery", label: t("crmOpportunities.stages.discovery") },
+          { key: "default.qualification", label: t("crmOpportunities.stages.qualification") },
+          { key: "default.solution_fit", label: t("crmOpportunities.stages.solution_fit") },
+          { key: "default.proposal", label: t("crmOpportunities.stages.proposal") },
+          { key: "default.negotiation", label: t("crmOpportunities.stages.negotiation") },
+        ]),
   ];
 
   const statuses: { key: OpportunityStatus | undefined; label: string }[] = [
@@ -109,12 +99,7 @@ export function OpportunitiesView() {
     { key: "Lost", label: t("crmOpportunities.status.lost") },
   ];
 
-  const handleSelectOpportunity = useCallback(
-    (opp: CrmOpportunity) => {
-      router.push(`/crm/opportunities/${opp.id}`);
-    },
-    [router]
-  );
+  const handleSelectOpportunity = useCallback((opp: CrmOpportunity) => router.push(`/crm/opportunities/${opp.id}`), [router]);
 
   const renderOpportunityActions = useCallback(
     (opp: CrmOpportunity) => {
@@ -151,7 +136,7 @@ export function OpportunitiesView() {
         </div>
       );
     },
-    [handleSelectOpportunity, openAssignOwnerDialog, openCloseDialog, openMoveStageDialog, openReopenDialog, t]
+    [handleSelectOpportunity, openAssignOwnerDialog, openCloseDialog, openMoveStageDialog, openReopenDialog, t],
   );
 
   const columns = buildOpportunityColumns(t, language, handleSelectOpportunity);
@@ -178,47 +163,28 @@ export function OpportunitiesView() {
       <div className="flex flex-wrap items-center gap-2 flex-1" dir={isRtl ? "rtl" : "ltr"}>
         <div className="relative flex-1 min-w-[220px] max-w-md">
           <Search className="absolute start-3 top-1/2 -translate-y-1/2 size-3.5 text-nx-ink-3 pointer-events-none" />
-          <Input
-            placeholder={t("crmOpportunities.actions.searchPlaceholder")}
-            value={search}
-            onChange={(e) => handleSearchChange(e.target.value)}
-            className="ps-8 h-8 text-xs border-nx-line bg-nx-surface text-nx-ink"
-          />
+          <Input placeholder={t("crmOpportunities.actions.searchPlaceholder")} value={search} onChange={(e) => handleSearchChange(e.target.value)} className="ps-8 h-8 text-xs border-nx-line bg-nx-surface text-nx-ink" />
         </div>
         <div className="w-40">
           <Select value={stageFilter || "all"} onValueChange={(val) => handleStageFilterChange(val === "all" ? undefined : val)}>
-            <SelectTrigger className="h-8 text-xs">
-              <SelectValue placeholder={t("crmOpportunities.actions.filterByStage")} />
-            </SelectTrigger>
+            <SelectTrigger className="h-8 text-xs"><SelectValue placeholder={t("crmOpportunities.actions.filterByStage")} /></SelectTrigger>
             <SelectContent>
-              {stages.map((stg) => (
-                <SelectItem key={stg.key || "all"} value={stg.key || "all"}>{stg.label}</SelectItem>
-              ))}
+              {stages.map((stg) => <SelectItem key={stg.key || "all"} value={stg.key || "all"}>{stg.label}</SelectItem>)}
             </SelectContent>
           </Select>
         </div>
         <div className="w-36">
           <Select value={statusFilter || "all"} onValueChange={(val) => handleStatusFilterChange(val === "all" ? undefined : (val as OpportunityStatus))}>
-            <SelectTrigger className="h-8 text-xs">
-              <SelectValue placeholder={t("crmOpportunities.actions.filterByStatus")} />
-            </SelectTrigger>
+            <SelectTrigger className="h-8 text-xs"><SelectValue placeholder={t("crmOpportunities.actions.filterByStatus")} /></SelectTrigger>
             <SelectContent>
-              {statuses.map((st) => (
-                <SelectItem key={st.key || "all"} value={st.key || "all"}>{st.label}</SelectItem>
-              ))}
+              {statuses.map((st) => <SelectItem key={st.key || "all"} value={st.key || "all"}>{st.label}</SelectItem>)}
             </SelectContent>
           </Select>
         </div>
       </div>
     ),
     customKanbanContent: (
-      <KanbanBoard
-        opportunities={state.items}
-        stages={pipelineStages}
-        onMoveStage={handleMoveStageOptimistic}
-        errorMessage={submitError}
-        onClearError={clearSubmitError}
-      />
+      <KanbanBoard opportunities={state.items} stages={pipelineStages} onMoveStage={handleMoveStageOptimistic} errorMessage={submitError} onClearError={clearSubmitError} />
     ),
     renderCardGridItem: (opp, actions) => renderOpportunityCardGridItem(opp, actions, language, handleSelectOpportunity),
     renderSplitDetail: (opp, actions) => renderOpportunitySplitDetail(opp, actions, language, t),
@@ -251,14 +217,7 @@ export function OpportunitiesView() {
                 <span className="hidden sm:inline">{t("crmOpportunities.actions.refresh")}</span>
               </Button>
               {canManagePipeline && (
-                <Button
-                  type="button"
-                  variant="outline"
-                  size="sm"
-                  onClick={() => router.push("/crm/pipelines")}
-                  className="h-8 gap-1.5 shrink-0 font-medium text-xs"
-                  data-testid="pipeline-settings-button"
-                >
+                <Button type="button" variant="outline" size="sm" onClick={() => router.push("/crm/pipelines")} className="h-8 gap-1.5 shrink-0 font-medium text-xs" data-testid="pipeline-settings-button">
                   <Settings className="size-3.5" />
                   {t("crmOpportunities.actions.pipelineSettings", { defaultValue: "Pipeline Settings" })}
                 </Button>
@@ -279,9 +238,7 @@ export function OpportunitiesView() {
             <AlertTitle>Error Loading Opportunities</AlertTitle>
             <AlertDescription className="flex items-center justify-between">
               <span>{state.error}</span>
-              <Button type="button" variant="outline" size="sm" onClick={refresh} className="ms-4">
-                {t("crmOpportunities.actions.refresh")}
-              </Button>
+              <Button type="button" variant="outline" size="sm" onClick={refresh} className="ms-4">{t("crmOpportunities.actions.refresh")}</Button>
             </AlertDescription>
           </Alert>
         ) : (

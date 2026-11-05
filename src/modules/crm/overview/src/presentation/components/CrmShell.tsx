@@ -16,10 +16,20 @@ import {
   Contact,
   Clock,
   BarChart3,
+  Settings,
+  Coins,
 } from "lucide-react";
 import { Button } from "@core/ui/button";
 import { Input } from "@core/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@core/ui/select";
 import { cn } from "@core/common/utils";
+import { useCrmCurrency, CRM_CURRENCY_OPTIONS } from "../viewmodels/useCrmSettingsStore";
 
 export type CrmTabId =
   | "overview"
@@ -29,7 +39,8 @@ export type CrmTabId =
   | "contacts"
   | "activities"
   | "pipelines"
-  | "reports";
+  | "reports"
+  | "settings";
 
 interface CrmShellProps {
   activeTab: CrmTabId;
@@ -55,6 +66,7 @@ export function CrmShell({
   const router = useRouter();
   const { t, language } = useI18n();
   const isRtl = language === "ar";
+  const { baseCurrency, setBaseCurrency } = useCrmCurrency();
 
   const canReadPipelines = usePermission(CRM_PERMISSIONS.PIPELINES_READ);
   const canReadLeads = usePermission(CRM_PERMISSIONS.LEADS_READ);
@@ -63,6 +75,7 @@ export function CrmShell({
   const canReadContacts = usePermission(CRM_PERMISSIONS.CONTACTS_READ);
   const canReadActivities = usePermission(CRM_PERMISSIONS.ACTIVITIES_READ);
   const canReadReports = usePermission(CRM_PERMISSIONS.REPORTS_READ);
+  const canManageSettings = usePermission(CRM_PERMISSIONS.SETTINGS_MANAGE);
   const canCreateOpportunities = usePermission(CRM_PERMISSIONS.OPPORTUNITIES_CREATE);
   const canCreateLeads = usePermission(CRM_PERMISSIONS.LEADS_CREATE);
 
@@ -120,6 +133,12 @@ export function CrmShell({
       icon: BarChart3,
       visible: canReadReports,
     },
+    {
+      id: "settings",
+      label: t("crm.tabs.settings") || "Settings",
+      icon: Settings,
+      visible: canManageSettings || canReadPipelines,
+    },
   ];
 
   return (
@@ -128,11 +147,11 @@ export function CrmShell({
       dir={isRtl ? "rtl" : "ltr"}
     >
       {/* Top Workspace Bar */}
-      <div className="flex flex-wrap items-center justify-between gap-3 border-b border-nx-line pb-3">
-        {/* Navigation Tabs (Figma CRMTab component) */}
+      <div className="flex items-center justify-between gap-2 border-b border-nx-line pb-2.5">
+        {/* Navigation Tabs */}
         <nav
           aria-label={t("crm.navigation")}
-          className="flex flex-wrap items-center gap-1"
+          className="flex items-center gap-0.5 overflow-x-auto min-w-0 flex-1"
         >
           {tabs
             .filter((tab) => tab.visible)
@@ -156,10 +175,11 @@ export function CrmShell({
                     else if (tab.id === "activities") router.push("/crm/activities");
                     else if (tab.id === "pipelines") router.push("/crm/pipelines");
                     else if (tab.id === "reports") router.push("/crm/reports");
+                    else if (tab.id === "settings") router.push("/crm/settings");
                   }}
                   aria-current={isActive ? "page" : undefined}
                   className={cn(
-                    "relative inline-flex shrink-0 select-none items-center gap-1.5 rounded-nx-md px-3 py-1.5 text-xs font-semibold transition-all duration-nx-micro h-auto",
+                    "relative inline-flex shrink-0 select-none items-center gap-1.5 rounded-nx-md px-2.5 py-1.5 text-xs font-semibold transition-all duration-nx-micro h-auto",
                     isActive
                       ? "border-nx-line/80 border bg-nx-surface font-bold text-nx-ink"
                       : "hover:bg-nx-surface/60 text-nx-ink-2 hover:text-nx-ink"
@@ -184,48 +204,71 @@ export function CrmShell({
             })}
         </nav>
 
-        {/* Global Filter & Quick Actions */}
-        {(onSearchChange || (canCreateOpportunities && onCreateDeal) || (canCreateLeads && onCreateLead)) && (
-          <div className="flex flex-wrap items-center gap-2 ms-auto">
-            {onSearchChange && (
-              <div className="relative w-full sm:w-52">
-                <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 size-3.5 text-nx-ink-3" />
-                <Input
-                  type="text"
-                  placeholder={t("crm.actions.searchPlaceholder")}
-                  value={searchQuery}
-                  onChange={(e) => onSearchChange(e.target.value)}
-                  className="h-8 pl-8 pr-3 text-xs bg-nx-surface border-nx-line focus-visible:ring-nx-accent text-nx-ink placeholder:text-nx-ink-3"
-                />
-              </div>
-            )}
-
-            {canCreateOpportunities && onCreateDeal && (
-              <Button
-                type="button"
-                size="sm"
-                onClick={onCreateDeal}
-                className="h-8 gap-1.5 font-bold transition-all text-xs shrink-0"
+        {/* Global Base Currency Switcher, Filter & Quick Actions */}
+        <div className="flex items-center gap-2 shrink-0 ms-auto">
+          <div
+            className="flex items-center gap-1.5 rounded-nx-md border border-nx-line bg-nx-surface px-2.5 py-0.5 shrink-0 w-auto min-w-[140px]"
+            title="CRM Base Reporting Currency (Live Exchange Rate Conversion)"
+          >
+            <Coins className="size-3.5 text-nx-accent shrink-0" />
+            <span className="text-[10px] font-bold uppercase tracking-wider text-nx-ink-3 hidden md:inline">
+              {isRtl ? "العملة:" : "Currency:"}
+            </span>
+            <Select value={baseCurrency} onValueChange={setBaseCurrency}>
+              <SelectTrigger
+                data-testid="crm-global-currency-select"
+                className="h-6 min-w-[96px] w-auto border-0 bg-transparent px-1 text-xs font-mono font-bold text-nx-ink shadow-none focus:ring-0"
               >
-                <Plus className="size-3.5" />
-                <span>{t("crm.actions.createDeal")}</span>
-              </Button>
-            )}
-
-            {canCreateLeads && onCreateLead && (
-              <Button
-                type="button"
-                variant="outline"
-                size="sm"
-                onClick={onCreateLead}
-                className="h-8 gap-1.5 border-nx-line bg-nx-surface text-nx-ink hover:bg-nx-raised text-xs shrink-0"
-              >
-                <Plus className="size-3.5" />
-                <span>{t("crm.actions.createLead")}</span>
-              </Button>
-            )}
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                {CRM_CURRENCY_OPTIONS.map((curr) => (
+                  <SelectItem key={curr.code} value={curr.code}>
+                    {curr.code} ({curr.symbol})
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
-        )}
+
+          {onSearchChange && (
+            <div className="relative w-full sm:w-52">
+              <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 size-3.5 text-nx-ink-3" />
+              <Input
+                type="text"
+                placeholder={t("crm.actions.searchPlaceholder")}
+                value={searchQuery}
+                onChange={(e) => onSearchChange(e.target.value)}
+                className="h-8 pl-8 pr-3 text-xs bg-nx-surface border-nx-line focus-visible:ring-nx-accent text-nx-ink placeholder:text-nx-ink-3"
+              />
+            </div>
+          )}
+
+          {canCreateOpportunities && onCreateDeal && (
+            <Button
+              type="button"
+              size="sm"
+              onClick={onCreateDeal}
+              className="h-8 gap-1.5 font-bold transition-all text-xs shrink-0"
+            >
+              <Plus className="size-3.5" />
+              <span>{t("crm.actions.createDeal")}</span>
+            </Button>
+          )}
+
+          {canCreateLeads && onCreateLead && (
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              onClick={onCreateLead}
+              className="h-8 gap-1.5 border-nx-line bg-nx-surface text-nx-ink hover:bg-nx-raised text-xs shrink-0"
+            >
+              <Plus className="size-3.5" />
+              <span>{t("crm.actions.createLead")}</span>
+            </Button>
+          )}
+        </div>
       </div>
 
       {/* Main Workspace Body */}

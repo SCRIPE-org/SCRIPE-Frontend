@@ -54,8 +54,8 @@ export class BookingService implements IBookingService {
    * @param idempotencyKey - Stable key for this business intent and all transport retries.
    * @returns The endpoint response after success or the final retryable failure.
    */
-  private postIntent<T>(endpoint: string, payload: unknown, idempotencyKey: string): Promise<T> {
-    const intent = { idempotencyKey };
+  private postIntent<T>(endpoint: string, payload: unknown, idempotencyKey?: string): Promise<T> {
+    const intent = idempotencyKey ? { idempotencyKey } : undefined;
     return (
       this.api.postWithRetry?.(endpoint, payload, undefined, intent) ??
       this.api.post(endpoint, payload, undefined, intent)
@@ -63,22 +63,22 @@ export class BookingService implements IBookingService {
   }
 
   createDraft(input: CreateBookingDraftInput): Promise<{ id: string }> {
+    const { idempotencyKey, ...payload } = input;
     return this.postIntent(
       BOOKING_ENDPOINTS.RESERVATIONS,
       {
-        ...input,
+        ...payload,
         bookerPartyId: null,
         payerPartyId: null,
-        idempotencyKey: input.idempotencyKey,
       },
-      input.idempotencyKey
+      idempotencyKey
     );
   }
 
   createHold(reservationId: string, idempotencyKey: string): Promise<BookingHoldResult> {
     return this.postIntent(
       BOOKING_ENDPOINTS.HOLDS,
-      { reservationId, idempotencyKey },
+      { reservationId },
       idempotencyKey
     );
   }
@@ -90,7 +90,7 @@ export class BookingService implements IBookingService {
   ): Promise<ConfirmBookingResult> {
     return this.postIntent(
       BOOKING_ENDPOINTS.CONFIRM(reservationId),
-      { idempotencyKey, priceQuoteId },
+      { priceQuoteId },
       idempotencyKey
     );
   }
@@ -98,7 +98,7 @@ export class BookingService implements IBookingService {
   checkIn(reservationId: string, idempotencyKey: string): Promise<ReservationLifecycleResult> {
     return this.postIntent(
       BOOKING_ENDPOINTS.CHECK_IN(reservationId),
-      { idempotencyKey },
+      {},
       idempotencyKey
     );
   }
@@ -106,7 +106,7 @@ export class BookingService implements IBookingService {
   complete(reservationId: string, idempotencyKey: string): Promise<ReservationLifecycleResult> {
     return this.postIntent(
       BOOKING_ENDPOINTS.COMPLETE(reservationId),
-      { idempotencyKey },
+      {},
       idempotencyKey
     );
   }
@@ -118,7 +118,7 @@ export class BookingService implements IBookingService {
   ): Promise<ReservationLifecycleResult> {
     return this.postIntent(
       BOOKING_ENDPOINTS.NO_SHOW(reservationId),
-      { idempotencyKey, reason },
+      { reason },
       idempotencyKey
     );
   }
@@ -130,7 +130,7 @@ export class BookingService implements IBookingService {
   ): Promise<ReservationLifecycleResult> {
     return this.postIntent(
       BOOKING_ENDPOINTS.CANCEL(reservationId),
-      { idempotencyKey, reason },
+      { reason },
       idempotencyKey
     );
   }
@@ -139,10 +139,11 @@ export class BookingService implements IBookingService {
     reservationId: string,
     input: RescheduleReservationInput
   ): Promise<ReservationLifecycleResult> {
+    const { idempotencyKey, ...payload } = input;
     return this.postIntent(
       BOOKING_ENDPOINTS.RESCHEDULE(reservationId),
-      input,
-      input.idempotencyKey
+      payload,
+      idempotencyKey
     );
   }
 
@@ -150,10 +151,11 @@ export class BookingService implements IBookingService {
     reservationId: string,
     input: ChangeReservationResourceInput
   ): Promise<ReservationLifecycleResult> {
+    const { idempotencyKey, ...payload } = input;
     return this.postIntent(
       BOOKING_ENDPOINTS.CHANGE_RESOURCE(reservationId),
-      input,
-      input.idempotencyKey
+      payload,
+      idempotencyKey
     );
   }
 

@@ -6,6 +6,7 @@ import { Button } from "@core/ui/button";
 import { Card } from "@core/ui/card";
 import { cn } from "@core/common/utils";
 import type { CrmPipelineOverview, CrmStageKey } from "../../domain/entities/OverviewEntity";
+import { useCrmCurrency } from "../viewmodels/useCrmSettingsStore";
 
 interface CrmPipelineOverviewStripProps {
   pipeline: CrmPipelineOverview;
@@ -22,6 +23,14 @@ export function CrmPipelineOverviewStrip({
 }: CrmPipelineOverviewStripProps) {
   const { t, language } = useI18n();
   const isRtl = language === "ar";
+  const { baseCurrency, autoConvertToBase, convertAmount } = useCrmCurrency();
+  const sourceCurrency = pipeline?.currency ?? "SAR";
+  const displayCurrency = autoConvertToBase ? baseCurrency : sourceCurrency;
+  const convertedTotal = convertAmount(
+    pipeline?.totalPipelineValue ?? 0,
+    sourceCurrency,
+    displayCurrency
+  );
 
   return (
     <Card
@@ -48,10 +57,18 @@ export function CrmPipelineOverviewStrip({
             <span className="font-semibold text-nx-ink">{pipeline.totalDeals}</span>
             <span>{t("crm.pipeline.dealsCount")}</span>
           </div>
-          <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-nx-sm bg-nx-raised border border-nx-line text-nx-ink-2">
-            <span className="font-bold text-nx-accent">
-              {pipeline?.currency ?? "SAR"} {(pipeline?.totalPipelineValue ?? 0).toLocaleString()}
+          <div
+            data-testid="crm-overview-pipeline-total"
+            className="flex items-center gap-1.5 px-2.5 py-1 rounded-nx-sm bg-nx-raised border border-nx-line text-nx-ink-2"
+          >
+            <span className="font-bold text-nx-accent font-mono">
+              {displayCurrency} {convertedTotal.toLocaleString()}
             </span>
+            {autoConvertToBase && sourceCurrency !== displayCurrency && (
+              <span className="text-[10px] text-nx-ink-3 font-mono">
+                ({sourceCurrency} {(pipeline?.totalPipelineValue ?? 0).toLocaleString()})
+              </span>
+            )}
           </div>
         </div>
       </div>
@@ -101,8 +118,9 @@ export function CrmPipelineOverviewStrip({
                     {t("crm.pipeline.dealsCount")}
                   </span>
                 </div>
-                <div className="text-[11px] font-medium text-nx-ink-2 truncate">
-                  {pipeline.currency} {stage.value.toLocaleString()}
+                <div className="text-[11px] font-medium font-mono text-nx-ink-2 truncate">
+                  {displayCurrency}{" "}
+                  {convertAmount(stage.value, sourceCurrency, displayCurrency).toLocaleString()}
                 </div>
               </div>
 

@@ -8,6 +8,7 @@ import { EmptyState } from "@core/ui/empty-state";
 import { cn } from "@core/common/utils";
 import type { CrmRecentDeal } from "../../domain/entities/OverviewEntity";
 import { CrmStatusBadge } from "./CrmStatusBadge";
+import { useCrmCurrency } from "../viewmodels/useCrmSettingsStore";
 
 interface CrmRecentDealsTableProps {
   deals: CrmRecentDeal[];
@@ -18,6 +19,8 @@ export function CrmRecentDealsTable({ deals, className }: CrmRecentDealsTablePro
   const router = useRouter();
   const { t, language } = useI18n();
   const isRtl = language === "ar";
+  const { baseCurrency, autoConvertToBase, showOriginalCurrencyOnConverted, convertAmount } =
+    useCrmCurrency();
 
   if (deals.length === 0) {
     return (
@@ -66,13 +69,23 @@ export function CrmRecentDealsTable({ deals, className }: CrmRecentDealsTablePro
               <th className="px-4 py-3 text-start">{t("crm.recentDeals.dealName")}</th>
               <th className="px-4 py-3 text-start">{t("crm.recentDeals.party")}</th>
               <th className="px-4 py-3 text-start">{t("crm.recentDeals.stage")}</th>
-              <th className="px-4 py-3 text-start">{t("crm.recentDeals.value")}</th>
+              <th className="px-4 py-3 text-start">
+                {t("crm.recentDeals.value")} ({autoConvertToBase ? baseCurrency : "Native"})
+              </th>
               <th className="px-4 py-3 text-start">{t("crm.recentDeals.owner")}</th>
               <th className="px-4 py-3 text-end">{t("crm.recentDeals.actions")}</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-nx-line">
             {deals.map((deal) => {
+              const dealCurr = (deal.currency || "SAR").toUpperCase();
+              const targetCurr = autoConvertToBase ? baseCurrency : dealCurr;
+              const converted = convertAmount(deal.amount, dealCurr, targetCurr);
+              const showDual =
+                autoConvertToBase &&
+                showOriginalCurrencyOnConverted &&
+                dealCurr !== targetCurr;
+
               return (
                 <tr
                   key={deal.id}
@@ -110,8 +123,15 @@ export function CrmRecentDealsTable({ deals, className }: CrmRecentDealsTablePro
                     <CrmStatusBadge stage={deal.stageKey} />
                   </td>
 
-                  <td className="px-4 py-3 font-bold text-nx-ink">
-                    {deal.currency} {deal.amount.toLocaleString()}
+                  <td className="px-4 py-3 font-bold font-mono text-nx-ink">
+                    <span>
+                      {targetCurr} {converted.toLocaleString()}
+                    </span>
+                    {showDual && (
+                      <span className="block text-[10px] font-normal text-nx-ink-3">
+                        ({dealCurr} {deal.amount.toLocaleString()})
+                      </span>
+                    )}
                   </td>
 
                   <td className="px-4 py-3">

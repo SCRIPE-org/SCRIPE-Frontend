@@ -80,16 +80,16 @@ export function CloseOpportunityDialog({
         return;
       }
       if (!closeNotes.trim()) {
-        setValidationError("Close notes are required when closing an opportunity as Won.");
+        setValidationError(t("crmOpportunities.dialogs.close.closeNotesRequiredWon"));
         return;
       }
     } else {
       if (!lossReasonCode.trim()) {
-        setValidationError("A loss reason code is required when closing as Lost.");
+        setValidationError(t("crmOpportunities.dialogs.close.lossReasonRequiredLost"));
         return;
       }
       if (lossReasonCode === "competitor" && !competitorName.trim()) {
-        setValidationError("Competitor name is required when closing with loss reason 'competitor'.");
+        setValidationError(t("crmOpportunities.dialogs.close.competitorRequiredError"));
         return;
       }
     }
@@ -167,7 +167,8 @@ export function CloseOpportunityDialog({
             <Alert variant="destructive">
               <AlertTriangle className="size-4" />
               <AlertDescription>
-                <strong>Account / Contact Verification Required:</strong> A verified Account or Contact must be linked before closing this opportunity as Won. Link an Account or Contact first, or close as Lost.
+                <strong>{t("crmOpportunities.dialogs.close.partyRequiredAlertTitle")}</strong>{" "}
+                {t("crmOpportunities.dialogs.close.partyRequiredAlertBody")}
               </AlertDescription>
             </Alert>
           )}
@@ -195,10 +196,10 @@ export function CloseOpportunityDialog({
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="NewBusiness">New Business</SelectItem>
-                    <SelectItem value="Expansion">Expansion</SelectItem>
-                    <SelectItem value="Renewal">Renewal</SelectItem>
-                    <SelectItem value="Services">Services</SelectItem>
+                    <SelectItem value="NewBusiness">{t("crmOpportunities.dealKind.NewBusiness")}</SelectItem>
+                    <SelectItem value="Expansion">{t("crmOpportunities.dealKind.Expansion")}</SelectItem>
+                    <SelectItem value="Renewal">{t("crmOpportunities.dealKind.Renewal")}</SelectItem>
+                    <SelectItem value="Services">{t("crmOpportunities.dealKind.Services")}</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -212,13 +213,13 @@ export function CloseOpportunityDialog({
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="budget_cut">Budget Cut / Cancelled</SelectItem>
-                    <SelectItem value="competitor">Lost to Competitor</SelectItem>
-                    <SelectItem value="pricing">Price Mismatch</SelectItem>
-                    <SelectItem value="timing">Poor Timing / Deferred</SelectItem>
-                    <SelectItem value="feature_gap">Feature / Capability Gap</SelectItem>
-                    <SelectItem value="no_decision">No Decision / Stalled</SelectItem>
-                    <SelectItem value="other">Other</SelectItem>
+                    <SelectItem value="budget_cut">{t("crmOpportunities.dialogs.close.lossReasons.budget_cut")}</SelectItem>
+                    <SelectItem value="competitor">{t("crmOpportunities.dialogs.close.lossReasons.competitor")}</SelectItem>
+                    <SelectItem value="pricing">{t("crmOpportunities.dialogs.close.lossReasons.pricing")}</SelectItem>
+                    <SelectItem value="timing">{t("crmOpportunities.dialogs.close.lossReasons.timing")}</SelectItem>
+                    <SelectItem value="feature_gap">{t("crmOpportunities.dialogs.close.lossReasons.feature_gap")}</SelectItem>
+                    <SelectItem value="no_decision">{t("crmOpportunities.dialogs.close.lossReasons.no_decision")}</SelectItem>
+                    <SelectItem value="other">{t("crmOpportunities.dialogs.close.lossReasons.other")}</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -239,10 +240,10 @@ export function CloseOpportunityDialog({
               )}
 
               <div className="space-y-1.5">
-                <Label htmlFor="lost-notes">Close Notes (Optional)</Label>
+                <Label htmlFor="lost-notes">{t("crmOpportunities.dialogs.close.lostNotesLabel")}</Label>
                 <Textarea
                   id="lost-notes"
-                  placeholder="Additional context on why this deal was lost..."
+                  placeholder={t("crmOpportunities.dialogs.close.lostNotesPlaceholder")}
                   value={closeNotes}
                   onChange={(e) => setCloseNotes(e.target.value)}
                   rows={2}

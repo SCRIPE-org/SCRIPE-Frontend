@@ -25,7 +25,7 @@ export function OpportunityStageBadge({ stageKey, label, className }: Opportunit
       case "default.solution_fit":
         return "border-warning/30 bg-warning/10 text-warning";
       case "default.proposal":
-        return "border-primary/30 bg-primary/10 text-primary font-semibold";
+        return "border-nx-accent bg-nx-accent-wash text-nx-accent font-semibold";
       case "default.negotiation":
         return "border-nx-accent-fill bg-nx-accent-fill/15 text-nx-accent font-bold";
       case "default.closed_won":

@@ -1,0 +1,172 @@
+"use client";
+
+import { useRouter } from "next/navigation";
+import { useI18n } from "@core/providers/i18n-provider";
+import { Button } from "@core/ui/button";
+import { Mail, Link as LinkIcon, ChevronLeft, ChevronRight, ArrowUpRight } from "lucide-react";
+import { cn } from "@core/common/utils";
+import type { CrmWorkflowDefinition } from "@modules/crm";
+import { LeadStatusBadge } from "./LeadStatusBadge";
+import type { CrmLead, LeadStatus } from "../../domain/entities/LeadEntity";
+
+export function stageToLeadStatusValue(stageKey: string, labelEn: string): LeadStatus {
+  if (stageKey === "lead.new") return "New";
+  if (stageKey === "lead.working") return "Working";
+  if (stageKey === "lead.qualified") return "Qualified";
+  if (stageKey === "lead.converted") return "Converted";
+  if (stageKey === "lead.disqualified") return "Disqualified";
+  return (labelEn || stageKey.replace(/^lead\./, "")) as LeadStatus;
+}
+
+interface LeadsKanbanCardItemProps {
+  lead: CrmLead;
+  activeLeadWorkflow: CrmWorkflowDefinition;
+  baseCurrency: string;
+  autoConvertToBase: boolean;
+  showOriginalCurrencyBadge: boolean;
+  convertAmount: (amount: number, from: string, to: string) => number;
+  onOpenLinkParty: (lead: CrmLead) => void;
+  onOpenConvert: (lead: CrmLead) => void;
+  onUpdateLeadStatus: (lead: CrmLead, targetStatus: string) => void;
+}
+
+export function LeadsKanbanCardItem({
+  lead,
+  activeLeadWorkflow,
+  baseCurrency,
+  autoConvertToBase,
+  showOriginalCurrencyBadge,
+  convertAmount,
+  onOpenLinkParty,
+  onOpenConvert,
+  onUpdateLeadStatus,
+}: LeadsKanbanCardItemProps) {
+  const router = useRouter();
+  const { t, language } = useI18n();
+  const isRtl = language === "ar";
+
+  const activeOrder: LeadStatus[] =
+    activeLeadWorkflow.id === "wf-lead-default"
+      ? ["New", "Working", "Qualified", "Converted"]
+      : [...activeLeadWorkflow.stages]
+          .sort((a, b) => a.sortOrder - b.sortOrder)
+          .map((stg) => stageToLeadStatusValue(stg.stageKey, stg.labelEn));
+  const currentIdx = activeOrder.indexOf(lead.status);
+  const prevStage =
+    lead.status === "Disqualified"
+      ? "Working"
+      : currentIdx > 0
+        ? activeOrder[currentIdx - 1]
+        : undefined;
+  const nextStage =
+    currentIdx >= 0 && currentIdx < activeOrder.length - 1
+      ? activeOrder[currentIdx + 1]
+      : undefined;
+
+  return (
+    <div
+      data-testid={`lead-kanban-card-${lead.id}`}
+      onClick={() => router.push(`/crm/leads/${lead.id}`)}
+      className="space-y-2.5 rounded-nx-md border border-nx-line bg-nx-raised p-3 hover:border-nx-line-hi transition-all text-nx-ink overflow-hidden cursor-pointer"
+    >
+      <div className="flex items-center justify-between gap-2">
+        <span className="text-[11px] font-medium text-nx-ink-2 truncate">
+          {lead.companyName || lead.fullName || "—"}
+        </span>
+        <LeadStatusBadge status={lead.status} />
+      </div>
+      <div className="font-bold text-xs text-nx-ink hover:text-nx-accent line-clamp-2 leading-snug">
+        {lead.title}
+      </div>
+      {lead.estimatedValue !== undefined && lead.estimatedValue !== null && (
+        <div className="rounded-md bg-nx-surface/80 border border-nx-line/60 px-2.5 py-1.5 flex items-center justify-between gap-2 text-xs font-bold text-nx-ink font-mono">
+          <span>
+            {lead.currency || "SAR"} {lead.estimatedValue.toLocaleString()}
+          </span>
+          {autoConvertToBase && (lead.currency || "SAR").toUpperCase() !== baseCurrency && showOriginalCurrencyBadge && (
+            <span className="text-[10px] font-semibold text-nx-ink-2 shrink-0">
+              ≈ {baseCurrency} {Math.round(convertAmount(lead.estimatedValue, lead.currency || "SAR", baseCurrency)).toLocaleString()}
+            </span>
+          )}
+        </div>
+      )}
+      {lead.email && (
+        <div className="text-[11px] text-nx-ink-3 truncate flex items-center gap-1">
+          <Mail className="size-2.5 shrink-0" />
+          <span className="truncate">{lead.email}</span>
+        </div>
+      )}
+      <div className="pt-2 border-t border-nx-line/50 flex items-center justify-between gap-1.5">
+        <div className="flex flex-wrap items-center gap-1">
+          {lead.status !== "Converted" && lead.status !== "Disqualified" && (
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              className="h-6 px-1.5 text-[10px] border-nx-line bg-nx-surface text-nx-ink-2 hover:text-nx-ink gap-1"
+              title={t("crmLeads.actions.linkParty")}
+              onClick={(e) => {
+                e.stopPropagation();
+                onOpenLinkParty(lead);
+              }}
+            >
+              <LinkIcon className="size-2.5" />
+              <span>{t("crmLeads.actions.linkParty")}</span>
+            </Button>
+          )}
+          {(lead.status === "Qualified" || lead.status === "New" || lead.status === "Working") &&
+            !lead.convertedOpportunityId && (
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                className="h-6 px-1.5 text-[10px] border-nx-accent/30 bg-nx-accent-wash/40 text-nx-accent hover:bg-nx-accent-wash gap-1 font-semibold"
+                title={t("crmLeads.actions.convert")}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onOpenConvert(lead);
+                }}
+              >
+                <ArrowUpRight className="size-2.5" />
+                <span>{t("crmLeads.actions.convert")}</span>
+              </Button>
+            )}
+        </div>
+        {(prevStage || nextStage) && (
+          <div className="flex items-center gap-0.5 shrink-0 ms-auto">
+            {prevStage && (
+              <Button
+                type="button"
+                variant="ghost"
+                size="icon"
+                className="size-6 text-nx-ink-3 hover:text-nx-ink hover:bg-nx-surface"
+                title={`Move back to ${prevStage}`}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onUpdateLeadStatus(lead, prevStage);
+                }}
+              >
+                <ChevronLeft className={cn("size-3.5", isRtl && "rotate-180")} />
+              </Button>
+            )}
+            {nextStage && (
+              <Button
+                type="button"
+                variant="ghost"
+                size="icon"
+                className="size-6 text-nx-ink-3 hover:text-nx-ink hover:bg-nx-surface"
+                title={`Advance to ${nextStage}`}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onUpdateLeadStatus(lead, nextStage);
+                }}
+              >
+                <ChevronRight className={cn("size-3.5", isRtl && "rotate-180")} />
+              </Button>
+            )}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}

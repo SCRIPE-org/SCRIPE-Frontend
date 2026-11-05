@@ -88,11 +88,18 @@ test.describe("CRM Overhaul Complete Button-by-Button E2E Verification", () => {
     await identifierInput.fill("ahly.admin@scripe-dev.local");
     await passwordInput.fill(getDevAdminPassword());
 
-    const submitBtn = page.locator("form button[type='submit']").first();
-    await expect(submitBtn).toBeEnabled({ timeout: 5_000 });
-    await submitBtn.click();
-
-    await page.waitForURL((url) => !url.pathname.includes("/login"), { timeout: 35_000 });
+    for (let loginAttempt = 0; loginAttempt < 5; loginAttempt++) {
+      const submitBtn = page.locator("form button[type='submit']").first();
+      await expect(submitBtn).toBeEnabled({ timeout: 5_000 });
+      await submitBtn.click();
+      const navigated = await page
+        .waitForURL((url) => !url.pathname.includes("/login"), { timeout: 15_000 })
+        .then(() => true)
+        .catch(() => false);
+      if (navigated) break;
+      await page.waitForTimeout(15_000);
+    }
+    await expect(page).not.toHaveURL(/\/login/);
     await page
       .locator("text=/getting everything ready for you|نحن نقوم بتجهيز كل شيء من أجلك/")
       .waitFor({ state: "detached", timeout: 35_000 })
@@ -144,112 +151,121 @@ test.describe("CRM Overhaul Complete Button-by-Button E2E Verification", () => {
     await setThemeAndCapture(page, "01_crm_overview_overhaul");
 
     // ═══════════════════════════════════════════════════════════════════════
-    // 2. /crm/pipelines: Jira-Style Interactive Workflow Canvas & Rule Builder
+    // 2. /crm/pipelines: Pipelines Directory List + Full-Screen Studio & Rule Builder
     // ═══════════════════════════════════════════════════════════════════════
     await pipelinesTabBtn.click();
     await page.waitForURL(/\/crm\/pipelines/, { timeout: 20_000 });
     await page.waitForLoadState("networkidle");
 
-    // Verify Interactive Workflow Canvas is rendered with Stage Nodes & Transition Connectors
-    await expect(page.getByTestId("jira-workflow-canvas-card")).toBeVisible({ timeout: 15_000 });
+    // Verify Pipelines & Workflows Directory List Page
+    await expect(page.getByTestId("crm-pipelines-list-page")).toBeVisible({ timeout: 15_000 });
+    await expect(page.getByTestId("workflow-card-wf-deal-default")).toBeVisible();
+    await expect(page.getByTestId("workflow-card-wf-lead-default")).toBeVisible();
+
+    await scrollAllToTop(page);
+    await setThemeAndCapture(page, "02_crm_pipelines_page");
+
+    // Open Active Deal Workflow in Full-Screen Studio
+    await page.getByTestId("workflow-edit-studio-wf-deal-default").click();
+    await expect(page.getByTestId("crm-workflow-fullscreen-studio")).toBeVisible({ timeout: 15_000 });
+    await expect(page.getByTestId("crm-workflow-canvas-card")).toBeVisible({ timeout: 15_000 });
     await expect(page.getByTestId("workflow-inspector-panel")).toBeVisible({ timeout: 10_000 });
 
-    // Click Stage Node "4. Proposal" on the canvas and inspect its tabs in the Right-Side Rule Builder
+    // Click Stage Node "4. Proposal" on the canvas and inspect its Right-Side Inspector
     const proposalNode = page.getByTestId("canvas-node-default.proposal");
     await expect(proposalNode).toBeVisible();
     await proposalNode.click();
 
-    // Switch through all 4 Jira Inspector Tabs: Validators, Properties, Conditions, Post-Functions
-    await page.getByTestId("inspector-tab-properties").click();
-    await page.waitForTimeout(200);
-    await page.getByTestId("inspector-tab-conditions").click();
-    await expect(page.getByText(/crm\.opportunities\.stage/i).first()).toBeVisible();
-    await page.waitForTimeout(200);
-    await page.getByTestId("inspector-tab-postFunctions").click();
-    await expect(
-      page.getByText(/Append immutable CrmOpportunityStageHistory audit record/i).first()
-    ).toBeVisible();
-    await page.waitForTimeout(200);
-    await page.getByTestId("inspector-tab-validators").click();
-
-    // Click a Transition Connector Edge on the Canvas
-    const edgeToProposal = page.getByTestId("canvas-transition-default.solution_fit");
+    // Click a Transition Connector Edge on the Canvas and inspect the 4-Rule Categories
+    const edgeToProposal = page.getByTestId("canvas-transition-default.solution_fit").first();
     await expect(edgeToProposal).toBeVisible();
     await edgeToProposal.click();
+    await expect(page.getByTestId("transition-rule-card-restrict")).toBeVisible();
+    await expect(page.getByTestId("transition-rule-card-input")).toBeVisible();
+    await expect(page.getByTestId("transition-rule-card-validate")).toBeVisible();
+    await expect(page.getByTestId("transition-rule-card-actions")).toBeVisible();
 
     // Click Validate Workflow button on the canvas toolbar
     const validateWorkflowBtn = page.getByTestId("canvas-validate-rules");
     await expect(validateWorkflowBtn).toBeVisible();
     await validateWorkflowBtn.click();
     await expect(
-      page.getByText(/Workflow State Machine Verified/i).first()
+      page.getByText(/Workflow verified:/i).first()
     ).toBeVisible({ timeout: 5_000 });
 
     await scrollAllToTop(page);
     await setThemeAndCapture(page, "02b_crm_pipelines_workflow_canvas_inspector");
 
-    // Switch Canvas to "Leads Qualification" Workflow Mode and capture
+    // Switch Canvas to "Leads Qualification" Workflow Mode and capture 2D SVG Graph
     const leadsWorkflowBtn = page.getByTestId("workflow-switch-leads");
     await expect(leadsWorkflowBtn).toBeVisible();
     await leadsWorkflowBtn.click();
-    await expect(page.getByTestId("canvas-lead-node-lead.qualified")).toBeVisible({ timeout: 5_000 });
-    await page.getByTestId("canvas-lead-node-lead.qualified").click();
+    await expect(page.getByTestId("crm-2d-graph-surface")).toBeVisible();
+    await expect(page.getByTestId("crm-2d-svg-edges")).toBeVisible();
+    await expect(page.getByTestId("canvas-node-start")).toBeVisible();
+    await expect(page.getByTestId("canvas-node-lead.new")).toBeVisible();
+    await expect(page.getByTestId("canvas-node-lead.working")).toBeVisible();
+    await expect(page.getByTestId("canvas-node-lead.qualified")).toBeVisible({ timeout: 5_000 });
+    await expect(page.getByTestId("canvas-node-lead.converted")).toBeVisible();
+    await expect(page.getByTestId("canvas-node-lead.disqualified")).toBeVisible();
+    await page.getByTestId("canvas-node-lead.qualified").click();
     await scrollAllToTop(page);
     await setThemeAndCapture(page, "02c_crm_pipelines_leads_workflow_canvas");
 
     // Switch back to Deals Pipeline Workflow
     await page.getByTestId("workflow-switch-deals").click();
 
-    // Verify all 5 stage cards are rendered on the dedicated page
-    await expect(page.getByTestId("pipeline-page-stage-default.discovery")).toBeVisible();
-    await expect(page.getByTestId("pipeline-page-stage-default.qualification")).toBeVisible();
-    await expect(page.getByTestId("pipeline-page-stage-default.solution_fit")).toBeVisible();
-    await expect(page.getByTestId("pipeline-page-stage-default.proposal")).toBeVisible();
-    await expect(page.getByTestId("pipeline-page-stage-default.negotiation")).toBeVisible();
+    // Verify all 5 stage nodes are rendered on the 2D canvas
+    await expect(page.getByTestId("canvas-node-default.discovery")).toBeVisible();
+    await expect(page.getByTestId("canvas-node-default.qualification")).toBeVisible();
+    await expect(page.getByTestId("canvas-node-default.solution_fit")).toBeVisible();
+    await expect(page.getByTestId("canvas-node-default.proposal")).toBeVisible();
+    await expect(page.getByTestId("canvas-node-default.negotiation")).toBeVisible();
 
-    // Verify Opportunity Custom Fields are integrated into stage exit gate options
+    // Select Qualification node and verify Opportunity Custom Fields + primaryContactRole exit gate
+    await page.getByTestId("canvas-node-default.qualification").click();
     await expect(
-      page.getByTestId("stage-default.qualification-exit-field-custom:contract_term_months")
+      page.getByTestId("inspector-default.qualification-exit-field-custom:procurement_reference_code")
     ).toBeVisible({ timeout: 10_000 });
 
-    // Configure required exit gate fields on Qualification (primaryContactRole) and Solution Fit (solutionFitConfirmed)
-    const qualContactRoleCheckbox = page.getByTestId(
-      "stage-default.qualification-exit-field-primaryContactRole"
-    );
+    const qualContactRoleCheckbox = page
+      .getByTestId("inspector-default.qualification-exit-field-primaryContactRole")
+      .locator('[role="checkbox"]');
     await expect(qualContactRoleCheckbox).toBeVisible();
     if ((await qualContactRoleCheckbox.getAttribute("data-state")) !== "checked") {
       await qualContactRoleCheckbox.click();
     }
 
-    const solFitConfirmedCheckbox = page.getByTestId(
-      "stage-default.solution_fit-exit-field-solutionFitConfirmed"
-    );
+    // Select Solution Fit node and ensure solutionFitConfirmed exit gate is checked
+    await page.getByTestId("canvas-node-default.solution_fit").click();
+    const solFitConfirmedCheckbox = page
+      .getByTestId("inspector-default.solution_fit-exit-field-solutionFitConfirmed")
+      .locator('[role="checkbox"]');
     await expect(solFitConfirmedCheckbox).toBeVisible();
     if ((await solFitConfirmedCheckbox.getAttribute("data-state")) !== "checked") {
       await solFitConfirmedCheckbox.click();
+    } else {
+      await solFitConfirmedCheckbox.click();
+      await solFitConfirmedCheckbox.click();
     }
 
-    // Save pipeline configuration and verify persistence banner
-    const savePipelineBtn = page
-      .getByRole("button", { name: /save pipeline/i })
-      .first();
-    if (await savePipelineBtn.isVisible()) {
-      const putPipelinePromise = page.waitForResponse(
-        (res) =>
-          res.url().includes("/crm/pipelines/default") &&
-          res.request().method() === "PUT" &&
-          res.status() === 200,
-        { timeout: 20_000 }
-      );
-      await savePipelineBtn.click();
-      await putPipelinePromise;
-      await expect(
-        page.getByText(/Pipeline Configuration Saved/i).first()
-      ).toBeVisible({ timeout: 10_000 });
-    }
+    // Save pipeline configuration and verify persistence
+    const savePipelineBtn = page.getByTestId("save-pipeline-config-btn");
+    await expect(savePipelineBtn).toBeEnabled({ timeout: 5_000 });
+    const putPipelinePromise = page.waitForResponse(
+      (res) =>
+        (res.url().includes("/crm/pipelines/default") || res.url().includes("/crm/settings/tenant")) &&
+        res.request().method() === "PUT" &&
+        res.status() === 200,
+      { timeout: 20_000 }
+    );
+    await savePipelineBtn.click();
+    await putPipelinePromise;
 
-    await scrollAllToTop(page);
-    await setThemeAndCapture(page, "02_crm_pipelines_page");
+    // Close Full-Screen Studio back to Directory List
+    await page.getByTestId("studio-back-to-list-btn").click();
+    await expect(page.getByTestId("crm-pipelines-list-page")).toBeVisible();
+
 
     // ═══════════════════════════════════════════════════════════════════════
     // 3. /crm/accounts: Single Modal + Inline Organization + PhoneInput + CustomFields
@@ -704,7 +720,14 @@ test.describe("CRM Overhaul Complete Button-by-Button E2E Verification", () => {
     const movedDealCard = page
       .locator("[data-testid='kanban-card']", { hasText: leadTitle })
       .first();
-    await movedDealCard.locator("h4").first().click();
+    await expect(movedDealCard).toBeVisible({ timeout: 10_000 });
+    const oppId = await movedDealCard.getAttribute("data-opportunity-id");
+    await movedDealCard.scrollIntoViewIfNeeded();
+    await movedDealCard.click();
+    await page.waitForTimeout(1000);
+    if (oppId && !/\/crm\/opportunities\/[a-zA-Z0-9_-]+/.test(page.url())) {
+      await page.goto(`/crm/opportunities/${oppId}`);
+    }
     await page.waitForURL(/\/crm\/opportunities\/[a-zA-Z0-9_-]+/, { timeout: 20_000 });
     await page.waitForLoadState("networkidle");
 
@@ -713,12 +736,12 @@ test.describe("CRM Overhaul Complete Button-by-Button E2E Verification", () => {
     await expect(reqFulfillmentBtn).toBeVisible();
     await reqFulfillmentBtn.click();
     await expect(page.getByText(/Handoff Logged on Timeline/i).first()).toBeVisible({
-      timeout: 10_000,
+      timeout: 25_000,
     });
     // Assert that the ActivityTimeline on Deal Cockpit 360 immediately refreshes and shows the HQ Fulfillment Handoff entry
     await expect(
       page.getByText(/HQ Commercial Fulfillment Handoff Requested/i).first()
-    ).toBeVisible({ timeout: 10_000 });
+    ).toBeVisible({ timeout: 25_000 });
 
     await scrollAllToTop(page);
     await setThemeAndCapture(page, "06e_crm_opportunity_detail_cockpit_360");

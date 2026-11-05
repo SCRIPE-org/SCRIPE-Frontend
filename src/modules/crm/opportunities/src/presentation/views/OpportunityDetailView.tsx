@@ -15,14 +15,13 @@ import {
   XCircle,
   ArrowRight,
   UserCheck,
-  Sparkles,
   CheckCircle2,
   ShieldCheck,
   Rocket,
 } from "lucide-react";
 import { cn } from "@core/common/utils";
 
-import { CrmShell, ActivityTimeline } from "@modules/crm";
+import { CrmShell, ActivityTimeline, useCrmWorkflowsStore } from "@modules/crm";
 import { OpportunityOverviewCard } from "../components/OpportunityOverviewCard";
 import { OpportunityAuditTimeline } from "../components/OpportunityAuditTimeline";
 import { MoveStageDialog } from "../components/MoveStageDialog";
@@ -31,9 +30,6 @@ import { ReopenOpportunityDialog } from "../components/ReopenOpportunityDialog";
 import { AssignOwnerDialog } from "../components/AssignOwnerDialog";
 import { useOpportunityDetailViewModel } from "../viewmodels/useOpportunityDetailViewModel";
 
-/**
- * Properties for OpportunityDetailView.
- */
 export interface OpportunityDetailViewProps {
   opportunityId: string;
 }
@@ -46,14 +42,11 @@ const DEFAULT_STAGE_STEPS = [
   { key: "default.negotiation", label: "Negotiation", order: 5, requiresParty: true },
 ];
 
-/**
- * Opportunity detail view presenting deal attributes, interactive stage progression,
- * HQ fulfillment handoff, sales activity timeline, and audit history.
- */
 export function OpportunityDetailView({ opportunityId }: OpportunityDetailViewProps) {
   const router = useRouter();
   const { t, language } = useI18n();
   const isRtl = language === "ar";
+  const activeDealWorkflow = useCrmWorkflowsStore((s) => s.getActiveWorkflow("deal"));
 
   const {
     loading,
@@ -116,15 +109,22 @@ export function OpportunityDetailView({ opportunityId }: OpportunityDetailViewPr
   const { opportunity: opp, stageHistory } = data;
   const isOpen = opp.status === "Open";
 
+  const sourceStages =
+    pipeline?.stages && pipeline.stages.length > 0 && activeDealWorkflow.id === "wf-deal-default"
+      ? pipeline.stages
+      : activeDealWorkflow?.stages && activeDealWorkflow.stages.length >= 2
+        ? activeDealWorkflow.stages
+        : pipeline?.stages ?? [];
+
   const stages =
-    pipeline?.stages && pipeline.stages.length > 0
-      ? [...pipeline.stages]
+    sourceStages.length > 0
+      ? [...sourceStages]
           .sort((a, b) => a.sortOrder - b.sortOrder)
           .map((s) => ({
             key: s.stageKey,
             label: isRtl && s.labelAr ? s.labelAr : s.labelEn,
             order: s.sortOrder,
-            requiresParty: Boolean(s.requiresVerifiedParty),
+            requiresParty: Boolean(s.requiresVerifiedParty || s.requiredExitFields?.includes("partyId")),
           }))
       : DEFAULT_STAGE_STEPS;
 
@@ -140,14 +140,8 @@ export function OpportunityDetailView({ opportunityId }: OpportunityDetailViewPr
   return (
     <CrmShell activeTab="deals" onTabChange={() => {}}>
       <div className="space-y-6" dir={isRtl ? "rtl" : "ltr"}>
-        {/* Navigation & Header */}
         <div className="flex flex-wrap items-center justify-between gap-2">
-          <Button
-            type="button"
-            variant="ghost"
-            onClick={() => router.push("/crm/opportunities")}
-            className="gap-2 text-xs"
-          >
+          <Button type="button" variant="ghost" onClick={() => router.push("/crm/opportunities")} className="gap-2 text-xs">
             <ArrowLeft className="size-4" />
             {t("crmOpportunities.detail.backToList")}
           </Button>
@@ -155,78 +149,25 @@ export function OpportunityDetailView({ opportunityId }: OpportunityDetailViewPr
           <div className="flex flex-wrap items-center gap-2">
             {isOpen ? (
               <>
-                <Button
-                  type="button"
-                  variant="outline"
-                  size="sm"
-                  data-testid="deal-detail-move-stage-btn"
-                  className="gap-1.5 text-xs"
-                  onClick={() => {
-                    setTargetMoveStageKey(undefined);
-                    setSubmitError(null);
-                    setIsMoveStageOpen(true);
-                  }}
-                >
+                <Button type="button" variant="outline" size="sm" data-testid="deal-detail-move-stage-btn" className="gap-1.5 text-xs" onClick={() => { setTargetMoveStageKey(undefined); setSubmitError(null); setIsMoveStageOpen(true); }}>
                   <ArrowRight className="size-3.5" />
                   {t("crmOpportunities.actions.moveStage")}
                 </Button>
-                <Button
-                  type="button"
-                  size="sm"
-                  variant="ghost"
-                  data-testid="deal-detail-close-won-btn"
-                  className="gap-1.5 text-xs text-success hover:bg-success/10"
-                  onClick={() => {
-                    setCloseInitialOutcome("Won");
-                    setSubmitError(null);
-                    setIsCloseOpen(true);
-                  }}
-                >
+                <Button type="button" size="sm" variant="ghost" data-testid="deal-detail-close-won-btn" className="gap-1.5 text-xs text-success hover:bg-success/10" onClick={() => { setCloseInitialOutcome("Won"); setSubmitError(null); setIsCloseOpen(true); }}>
                   <CheckCircle className="size-3.5" />
                   {t("crmOpportunities.actions.closeWon")}
                 </Button>
-                <Button
-                  type="button"
-                  size="sm"
-                  variant="ghost"
-                  data-testid="deal-detail-close-lost-btn"
-                  className="gap-1.5 text-xs text-destructive hover:bg-destructive/10"
-                  onClick={() => {
-                    setCloseInitialOutcome("Lost");
-                    setSubmitError(null);
-                    setIsCloseOpen(true);
-                  }}
-                >
+                <Button type="button" size="sm" variant="ghost" data-testid="deal-detail-close-lost-btn" className="gap-1.5 text-xs text-destructive hover:bg-destructive/10" onClick={() => { setCloseInitialOutcome("Lost"); setSubmitError(null); setIsCloseOpen(true); }}>
                   <XCircle className="size-3.5" />
                   {t("crmOpportunities.actions.closeLost")}
                 </Button>
-                <Button
-                  type="button"
-                  variant="ghost"
-                  size="sm"
-                  data-testid="deal-detail-assign-owner-btn"
-                  className="gap-1.5 text-xs text-nx-ink-3 hover:text-nx-ink"
-                  onClick={() => {
-                    setSubmitError(null);
-                    setIsAssignOwnerOpen(true);
-                  }}
-                >
+                <Button type="button" variant="ghost" size="sm" data-testid="deal-detail-assign-owner-btn" className="gap-1.5 text-xs text-nx-ink-3 hover:text-nx-ink" onClick={() => { setSubmitError(null); setIsAssignOwnerOpen(true); }}>
                   <UserCheck className="size-3.5" />
                   {t("crmOpportunities.actions.assignOwner")}
                 </Button>
               </>
             ) : (
-              <Button
-                type="button"
-                variant="outline"
-                size="sm"
-                data-testid="deal-detail-reopen-btn"
-                className="gap-1.5 text-xs text-nx-accent border-nx-line hover:border-nx-accent"
-                onClick={() => {
-                  setSubmitError(null);
-                  setIsReopenOpen(true);
-                }}
-              >
+              <Button type="button" variant="outline" size="sm" data-testid="deal-detail-reopen-btn" className="gap-1.5 text-xs text-nx-accent border-nx-line hover:border-nx-accent" onClick={() => { setSubmitError(null); setIsReopenOpen(true); }}>
                 <RotateCcw className="size-3.5" />
                 {t("crmOpportunities.actions.reopen")}
               </Button>
@@ -234,19 +175,23 @@ export function OpportunityDetailView({ opportunityId }: OpportunityDetailViewPr
           </div>
         </div>
 
-        {/* Interactive 5-Stage Commercial Progression Bar */}
         <Card className="p-4 border-nx-line bg-nx-surface space-y-2.5">
           <div className="flex items-center justify-between text-xs">
             <span className="font-bold uppercase tracking-wider text-nx-ink-2">
-              Pipeline Stage Progression
+              {t("crmOpportunities.detail.stageProgressionTitle", { count: stages.length })}
             </span>
             <span className="text-[11px] text-nx-ink-3">
               {isOpen
-                ? "Click Move Stage to advance or satisfy exit gate fields"
-                : `Terminal State: ${opp.status}`}
+                ? t("crmOpportunities.detail.stageProgressionHint")
+                : t("crmOpportunities.detail.terminalStateLabel", { status: opp.status })}
             </span>
           </div>
-          <div className="grid grid-cols-1 sm:grid-cols-5 gap-2">
+          <div
+            className="grid grid-cols-1 gap-2"
+            style={{
+              gridTemplateColumns: stages.length >= 2 ? `repeat(${stages.length}, minmax(130px, 1fr))` : undefined,
+            }}
+          >
             {stages.map((st) => {
               const isCurrent = st.key === opp.stageKey && isOpen;
               const isCompleted = opp.status === "Won" || st.order < currentSortOrder;
@@ -268,57 +213,45 @@ export function OpportunityDetailView({ opportunityId }: OpportunityDetailViewPr
                     isCurrent
                       ? "border-nx-accent bg-nx-accent-wash/30 text-nx-accent font-bold"
                       : isCompleted
-                      ? "border-success/30 bg-success/10 text-success font-semibold"
-                      : "border-nx-line bg-nx-ground text-nx-ink-2 hover:border-nx-line-hi"
+                        ? "border-success/30 bg-success/10 text-success font-semibold"
+                        : "border-nx-line bg-nx-ground text-nx-ink-2 hover:border-nx-line-hi",
                   )}
                 >
                   <div className="flex items-center gap-2 truncate">
                     <span className="font-mono text-[10px]">{st.order}.</span>
                     <span className="truncate">{st.label}</span>
                   </div>
-                  {st.requiresParty && (
-                    <ShieldCheck className="size-3.5 shrink-0 opacity-80" />
-                  )}
+                  {st.requiresParty && <ShieldCheck className="size-3.5 shrink-0 opacity-80" />}
                 </Button>
               );
             })}
           </div>
         </Card>
 
-        {/* Overview Header Card */}
         <OpportunityOverviewCard opp={opp} />
 
-        {/* HQ Commercial Fulfillment & Provisioning Handoff Card (SCRIPE-743) */}
-        <Card
-          data-testid="hq-fulfillment-handoff-card"
-          className="p-5 border-nx-line bg-nx-surface flex flex-col sm:flex-row sm:items-center justify-between gap-4"
-        >
+        <Card data-testid="hq-fulfillment-handoff-card" className="p-5 border-nx-line bg-nx-surface flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div className="space-y-1">
             <div className="flex items-center gap-2">
               <Rocket className="size-4 text-nx-accent" />
-              <h3 className="text-sm font-bold text-nx-ink">
-                HQ Commercial Fulfillment & Tenant Provisioning Handoff
-              </h3>
+              <h3 className="text-sm font-bold text-nx-ink">{t("crmOpportunities.detail.hqHandoffTitle")}</h3>
               <Badge
                 variant="outline"
                 className={cn(
                   "text-[10px] font-mono",
                   fulfillmentRequested || opp.status === "Won"
                     ? "border-success/40 bg-success/10 text-success"
-                    : "border-nx-line bg-nx-raised text-nx-ink-2"
+                    : "border-nx-line bg-nx-raised text-nx-ink-2",
                 )}
               >
                 {fulfillmentRequested
-                  ? "Fulfillment Dispatched"
+                  ? t("crmOpportunities.detail.fulfillmentDispatched")
                   : opp.status === "Won"
-                  ? opp.hqOutcomeKind || "Ready for Provisioning"
-                  : "Awaiting Deal Closure / Handoff"}
+                    ? opp.hqOutcomeKind || t("crmOpportunities.detail.readyForProvisioning")
+                    : t("crmOpportunities.detail.awaitingClosureHandoff")}
               </Badge>
             </div>
-            <p className="text-xs text-nx-ink-2">
-              Coordinate commercial contract fulfillment, subscription tier activation, and
-              automated tenant provisioning with Platform Commercial Ops.
-            </p>
+            <p className="text-xs text-nx-ink-2">{t("crmOpportunities.detail.hqHandoffDescription")}</p>
           </div>
           <div className="shrink-0">
             <Button
@@ -333,15 +266,15 @@ export function OpportunityDetailView({ opportunityId }: OpportunityDetailViewPr
               {fulfillmentRequested ? (
                 <>
                   <CheckCircle2 className="size-3.5 text-success" />
-                  <span>Handoff Logged on Timeline</span>
+                  <span>{t("crmOpportunities.detail.handoffLoggedBtn")}</span>
                 </>
               ) : (
                 <>
-                  <Sparkles className="size-3.5" />
+                  <Rocket className="size-3.5" />
                   <span>
                     {isRequestingFulfillment
-                      ? "Dispatching..."
-                      : "Request HQ Fulfillment Handoff"}
+                      ? t("crmOpportunities.detail.dispatchingBtn")
+                      : t("crmOpportunities.detail.requestHqHandoffBtn")}
                   </span>
                 </>
               )}
@@ -349,58 +282,16 @@ export function OpportunityDetailView({ opportunityId }: OpportunityDetailViewPr
           </div>
         </Card>
 
-        {/* Sales Activity, Notes, Follow-up & Outbound Communication Timeline */}
         <Card className="p-5 border-nx-line bg-nx-surface">
-          <ActivityTimeline
-            key={`${opp.id}-${opp.rowVersion || ""}-${timelineVersion}`}
-            opportunityId={opp.id}
-            targetLabel={opp.title}
-          />
+          <ActivityTimeline key={`${opp.id}-${opp.rowVersion || ""}-${timelineVersion}`} opportunityId={opp.id} targetLabel={opp.title} />
         </Card>
 
-        {/* Stage Transition Audit History */}
         <OpportunityAuditTimeline stageHistory={stageHistory} isRtl={isRtl} />
 
-        {/* Dialogs */}
-        <MoveStageDialog
-          open={isMoveStageOpen}
-          onOpenChange={setIsMoveStageOpen}
-          opportunity={opp}
-          initialTargetStageKey={targetMoveStageKey}
-          pipeline={pipeline}
-          onSubmit={handleMoveStage}
-          onLookupParties={lookupPartyOptions}
-          isSubmitting={isSubmitting}
-          submitError={submitError}
-        />
-
-        <CloseOpportunityDialog
-          open={isCloseOpen}
-          onOpenChange={setIsCloseOpen}
-          opportunity={opp}
-          initialOutcome={closeInitialOutcome}
-          onSubmit={handleCloseOpportunity}
-          isSubmitting={isSubmitting}
-          submitError={submitError}
-        />
-
-        <ReopenOpportunityDialog
-          open={isReopenOpen}
-          onOpenChange={setIsReopenOpen}
-          opportunity={opp}
-          onSubmit={handleReopenOpportunity}
-          isSubmitting={isSubmitting}
-          submitError={submitError}
-        />
-
-        <AssignOwnerDialog
-          open={isAssignOwnerOpen}
-          onOpenChange={setIsAssignOwnerOpen}
-          opportunity={opp}
-          onSubmit={handleAssignOwner}
-          isSubmitting={isSubmitting}
-          submitError={submitError}
-        />
+        <MoveStageDialog open={isMoveStageOpen} onOpenChange={setIsMoveStageOpen} opportunity={opp} initialTargetStageKey={targetMoveStageKey} pipeline={pipeline} onSubmit={handleMoveStage} onLookupParties={lookupPartyOptions} isSubmitting={isSubmitting} submitError={submitError} />
+        <CloseOpportunityDialog open={isCloseOpen} onOpenChange={setIsCloseOpen} opportunity={opp} initialOutcome={closeInitialOutcome} onSubmit={handleCloseOpportunity} isSubmitting={isSubmitting} submitError={submitError} />
+        <ReopenOpportunityDialog open={isReopenOpen} onOpenChange={setIsReopenOpen} opportunity={opp} onSubmit={handleReopenOpportunity} isSubmitting={isSubmitting} submitError={submitError} />
+        <AssignOwnerDialog open={isAssignOwnerOpen} onOpenChange={setIsAssignOwnerOpen} opportunity={opp} onSubmit={handleAssignOwner} isSubmitting={isSubmitting} submitError={submitError} />
       </div>
     </CrmShell>
   );

@@ -1,0 +1,239 @@
+import { render, screen, fireEvent, waitFor } from "@testing-library/react";
+import { describe, expect, it, vi, beforeEach } from "vitest";
+import { PipelineManagementView } from "./PipelineManagementView";
+import { useCrmSettingsStore, useCrmWorkflowsStore } from "@modules/crm";
+
+const mockFetchPipeline = vi.fn();
+const mockHandleUpdatePipeline = vi.fn().mockResolvedValue(true);
+
+const mockPipeline = {
+  id: "pipe-default",
+  code: "default",
+  name: "Standard Commercial Pipeline",
+  nameEn: "Standard Commercial Pipeline",
+  nameAr: "مسار المبيعات التجاري القياسي",
+  version: 2,
+  rowVersion: "rv-1",
+  stages: [
+    { stageKey: "default.discovery", labelEn: "Discovery", labelAr: "استكشاف", sortOrder: 1, winProbabilityPercent: 10, requiredExitFields: [] },
+    { stageKey: "default.qualification", labelEn: "Qualification", labelAr: "تأهيل", sortOrder: 2, winProbabilityPercent: 25, requiredExitFields: [] },
+    { stageKey: "default.solution_fit", labelEn: "Solution Fit", labelAr: "ملاءمة الحل", sortOrder: 3, winProbabilityPercent: 50, requiredExitFields: ["solutionFitConfirmed"] },
+    { stageKey: "default.proposal", labelEn: "Proposal", labelAr: "عرض السعر", sortOrder: 4, winProbabilityPercent: 75, requiredExitFields: ["partyId", "estimatedAmount"] },
+    { stageKey: "default.negotiation", labelEn: "Negotiation", labelAr: "تفاوض", sortOrder: 5, winProbabilityPercent: 90, requiredExitFields: ["partyId", "targetCloseDate"] },
+  ],
+};
+
+vi.mock("../viewmodels/useOpportunitiesViewModel", () => ({
+  useOpportunitiesViewModel: () => ({
+    pipeline: mockPipeline,
+    fetchPipeline: mockFetchPipeline,
+    handleUpdatePipeline: mockHandleUpdatePipeline,
+    isSubmitting: false,
+    pipelineError: null,
+  }),
+}));
+
+vi.mock("@core/providers/i18n-provider", () => ({
+  useI18n: () => ({
+    t: (key: string, params?: Record<string, string | number>) => {
+      if (params?.defaultValue) return String(params.defaultValue);
+      return key;
+    },
+    language: "en",
+  }),
+}));
+
+vi.mock("@core/hooks/use-permission", () => ({
+  usePermission: () => true,
+}));
+
+vi.mock("next/navigation", () => ({
+  useRouter: () => ({
+    push: vi.fn(),
+    replace: vi.fn(),
+    prefetch: vi.fn(),
+  }),
+  usePathname: () => "/crm/pipelines",
+}));
+
+describe("PipelineManagementView — Pipelines Directory & Full-Screen 2D Workflow Studio", () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    useCrmSettingsStore.getState().resetDefaults();
+    useCrmWorkflowsStore.getState().resetDefaults();
+  });
+
+  it("renders the Pipelines & Workflows Directory list page and protects active workflows from deletion", () => {
+    render(<PipelineManagementView />);
+
+    expect(screen.getByTestId("crm-pipelines-list-page")).toBeDefined();
+    expect(screen.getByTestId("workflow-card-wf-deal-default")).toBeDefined();
+    expect(screen.getByTestId("workflow-card-wf-lead-default")).toBeDefined();
+    expect(screen.getByTestId("workflow-card-wf-lead-custom-3stage")).toBeDefined();
+
+    // Active workflow delete button must be disabled
+    const activeDeleteBtn = screen.getByTestId("workflow-delete-wf-deal-default");
+    expect(activeDeleteBtn.hasAttribute("disabled")).toBe(true);
+
+    // Inactive template can be activated
+    fireEvent.click(screen.getByTestId("workflow-set-active-wf-deal-fast-track"));
+    expect(useCrmWorkflowsStore.getState().activeDealWorkflowId).toBe("wf-deal-fast-track");
+  });
+
+  it("opens Full-Screen Immersive Studio with 2D Diagram Canvas, START circle, forward & backward SVG edges, and minimap", () => {
+    render(<PipelineManagementView />);
+
+    fireEvent.click(screen.getByTestId("workflow-edit-studio-wf-deal-default"));
+
+    expect(screen.getByTestId("crm-workflow-fullscreen-studio")).toBeDefined();
+    expect(screen.getByTestId("crm-workflow-canvas-card")).toBeDefined();
+    expect(screen.getByTestId("crm-2d-graph-surface")).toBeDefined();
+    expect(screen.getByTestId("crm-2d-svg-edges")).toBeDefined();
+    expect(screen.getByTestId("canvas-node-start")).toBeDefined();
+    expect(screen.getByTestId("canvas-node-default.discovery")).toBeDefined();
+    expect(screen.getByTestId("canvas-node-default.proposal")).toBeDefined();
+    expect(screen.getByTestId("canvas-node-terminal-won")).toBeDefined();
+    expect(screen.getByTestId("canvas-node-terminal-lost")).toBeDefined();
+    expect(screen.getAllByTestId("canvas-transition-default.discovery").length).toBeGreaterThanOrEqual(1);
+    expect(screen.getByTestId("workflow-minimap")).toBeDefined();
+  });
+
+  it("switches between Diagram, Classic Flow, and Transitions Table modes and validates workflow rules", async () => {
+    render(<PipelineManagementView defaultOpenStudio />);
+
+    fireEvent.click(screen.getByTestId("workflow-mode-classic"));
+    expect(screen.getByTestId("workflow-classic-flow-surface")).toBeDefined();
+
+    fireEvent.click(screen.getByTestId("workflow-mode-text"));
+    expect(screen.getByTestId("workflow-text-mode-table")).toBeDefined();
+
+    fireEvent.click(screen.getByTestId("workflow-mode-diagram"));
+    expect(screen.getByTestId("crm-2d-graph-surface")).toBeDefined();
+
+    fireEvent.click(screen.getByTestId("canvas-validate-rules"));
+    await waitFor(() => {
+      expect(screen.getByText(/Workflow verified: 5 active statuses/i)).toBeDefined();
+    });
+  });
+
+  it("opens Transition Inspector with 4 Rule cards (Restrict, Request input, Validate details, Perform actions) when clicking a transition pill", async () => {
+    render(<PipelineManagementView defaultOpenStudio />);
+
+    const transitionPills = screen.getAllByTestId("canvas-transition-default.discovery");
+    fireEvent.click(transitionPills[0]);
+
+    expect(screen.getByTestId("transition-rule-card-restrict")).toBeDefined();
+    expect(screen.getByTestId("transition-rule-card-input")).toBeDefined();
+    expect(screen.getByTestId("transition-rule-card-validate")).toBeDefined();
+    expect(screen.getByTestId("transition-rule-card-actions")).toBeDefined();
+
+    // Expand Perform actions card and toggle Lead -> Deal conversion
+    fireEvent.click(screen.getByTestId("transition-rule-card-actions"));
+    expect(screen.getByTestId("transition-action-convert-deal")).toBeDefined();
+  });
+
+  it("creates a custom field inline inside the workflow inspector and binds it to the selected stage gate", async () => {
+    render(<PipelineManagementView defaultOpenStudio />);
+
+    fireEvent.click(screen.getByTestId("canvas-node-default.proposal"));
+    fireEvent.click(screen.getByTestId("workflow-create-custom-field-btn"));
+
+    const keyInput = screen.getByTestId("workflow-cf-key-input");
+    const labelInput = screen.getByTestId("workflow-cf-label-input");
+    fireEvent.change(keyInput, { target: { value: "cfo_budget_signoff" } });
+    fireEvent.change(labelInput, { target: { value: "CFO Budget Sign-Off" } });
+    fireEvent.click(screen.getByTestId("workflow-cf-save-btn"));
+
+    await waitFor(() => {
+      expect(
+        screen.getByTestId("inspector-default.proposal-exit-field-custom:cfo_budget_signoff")
+      ).toBeDefined();
+    });
+  });
+
+  it("switches to Leads workflow in Studio, supports adding a dynamic status and transition, and evaluates configurable Deal conversion", async () => {
+    render(<PipelineManagementView defaultOpenStudio />);
+
+    fireEvent.click(screen.getByTestId("workflow-switch-leads"));
+
+    expect(screen.getByTestId("crm-2d-graph-surface")).toBeDefined();
+    expect(screen.getByTestId("canvas-node-lead.new")).toBeDefined();
+    expect(screen.getByTestId("canvas-node-lead.working")).toBeDefined();
+    expect(screen.getByTestId("canvas-node-lead.qualified")).toBeDefined();
+    expect(screen.getByTestId("canvas-node-lead.converted")).toBeDefined();
+    expect(screen.getByTestId("canvas-node-lead.disqualified")).toBeDefined();
+
+    // Add a new custom status dynamically (6th stage)
+    fireEvent.click(screen.getByTestId("crm-toolbar-add-status"));
+    fireEvent.change(screen.getByTestId("new-status-label-en-input"), {
+      target: { value: "Deal Handover" },
+    });
+    fireEvent.click(screen.getByTestId("new-status-submit-btn"));
+
+    await waitFor(() => {
+      expect(screen.getByTestId("canvas-node-lead.deal_handover")).toBeDefined();
+    });
+
+    // Clicking + Add Rule selects a transition and opens the 4 rule cards
+    fireEvent.click(screen.getByTestId("crm-toolbar-add-rule"));
+    expect(screen.getByTestId("transition-rule-card-restrict")).toBeDefined();
+
+    // Clicking Discard / Close exits Studio back to the list page
+    fireEvent.click(screen.getByTestId("studio-discard-close-btn"));
+    expect(screen.queryByTestId("crm-workflow-fullscreen-studio")).toBeNull();
+    expect(screen.getByTestId("crm-pipelines-list-page")).toBeDefined();
+  });
+
+  it("syncs custom Deals & Leads workflows to CrmTenantSettings.CustomFieldsConfigJson on create, clone, activate, save, and delete", async () => {
+    const { setCrmContainer } = await import("@modules/crm/di");
+    const mockUpdateTenantSettings = vi.fn().mockResolvedValue({});
+    const mockGetSettings = vi.fn();
+    setCrmContainer({
+      overviewRepository: {
+        updateTenantSettings: mockUpdateTenantSettings,
+        getSettings: mockGetSettings,
+      },
+    } as any);
+
+    const created = useCrmWorkflowsStore.getState().createWorkflow({
+      entityType: "lead",
+      nameEn: "VIP Sponsorship Leads",
+      nameAr: "عملاء كبار الرعاة",
+    });
+    expect(mockUpdateTenantSettings).toHaveBeenCalledTimes(1);
+    const lastPayload = mockUpdateTenantSettings.mock.calls[0][0];
+    const parsedConfig = JSON.parse(lastPayload.customFieldsConfigJson);
+    expect(Array.isArray(parsedConfig.workflows)).toBe(true);
+    expect(parsedConfig.workflows.some((w: any) => w.id === created.id)).toBe(true);
+
+    // Activate custom workflow -> syncs activeLeadWorkflowId to backend
+    useCrmWorkflowsStore.getState().setActiveWorkflow(created.id);
+    expect(mockUpdateTenantSettings).toHaveBeenCalledTimes(2);
+    const activePayload = JSON.parse(mockUpdateTenantSettings.mock.calls[1][0].customFieldsConfigJson);
+    expect(activePayload.activeLeadWorkflowId).toBe(created.id);
+
+    // Hydrate from server restores workflows and active IDs after a local reset
+    useCrmWorkflowsStore.getState().resetDefaults();
+    expect(useCrmWorkflowsStore.getState().activeLeadWorkflowId).toBe("wf-lead-default");
+
+    mockGetSettings.mockResolvedValue({
+      effectiveBaseCurrencyCode: "SAR",
+      effectiveAutoConvertToBase: true,
+      effectiveShowDualCurrencyBadges: true,
+      tenantSettings: {
+        baseCurrencyCode: "SAR",
+        defaultDealCurrencyCode: "SAR",
+        customFieldsConfigJson: JSON.stringify(activePayload),
+      },
+      userPreferences: {
+        defaultDealViewMode: "Kanban",
+        defaultPipelineCode: "default",
+        cardDensity: "Comfortable",
+      },
+    });
+    await useCrmSettingsStore.getState().hydrateFromServer();
+    expect(useCrmWorkflowsStore.getState().activeLeadWorkflowId).toBe(created.id);
+    expect(useCrmWorkflowsStore.getState().workflows.some((w) => w.id === created.id)).toBe(true);
+  });
+});
+

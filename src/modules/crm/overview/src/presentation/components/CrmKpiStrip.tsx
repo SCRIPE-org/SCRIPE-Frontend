@@ -4,6 +4,7 @@ import { TrendingUp, TrendingDown, Minus } from "lucide-react";
 import { Card } from "@core/ui/card";
 import { cn } from "@core/common/utils";
 import type { CrmKpiStat } from "../../domain/entities/OverviewEntity";
+import { useCrmCurrency } from "../viewmodels/useCrmSettingsStore";
 
 interface CrmKpiStripProps {
   stats: CrmKpiStat[];
@@ -11,7 +12,21 @@ interface CrmKpiStripProps {
 }
 
 export function CrmKpiStrip({ stats, className }: CrmKpiStripProps) {
+  const { baseCurrency, autoConvertToBase, convertAmount } = useCrmCurrency();
   const safeStats = Array.isArray(stats) ? stats : [];
+
+  const renderStatValue = (rawVal: string) => {
+    if (!autoConvertToBase || !rawVal) return rawVal;
+    const match = rawVal.trim().match(/^([A-Z]{3})\s+([\d,]+(?:\.\d+)?)$/);
+    if (!match) return rawVal;
+    const [, sourceCode, numPart] = match;
+    if (sourceCode.toUpperCase() === baseCurrency.toUpperCase()) return rawVal;
+    const numeric = parseFloat(numPart.replace(/,/g, ""));
+    if (!Number.isFinite(numeric)) return rawVal;
+    const converted = convertAmount(numeric, sourceCode, baseCurrency);
+    return `${baseCurrency} ${Math.round(converted).toLocaleString()}`;
+  };
+
   return (
     <div
       className={cn(
@@ -20,6 +35,7 @@ export function CrmKpiStrip({ stats, className }: CrmKpiStripProps) {
       )}
     >
       {safeStats.map((stat) => {
+        const displayValue = renderStatValue(stat.value);
         return (
           <Card
             key={stat.id}
@@ -48,7 +64,7 @@ export function CrmKpiStrip({ stats, className }: CrmKpiStripProps) {
             </div>
 
             <div className="my-2 text-2xl font-black text-nx-ink tracking-tight font-heading">
-              {stat.value}
+              {displayValue}
             </div>
 
             <div className="text-[11px] text-nx-ink-3">

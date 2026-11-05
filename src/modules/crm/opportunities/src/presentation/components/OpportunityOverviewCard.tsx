@@ -2,8 +2,10 @@
 
 import { Card } from "@core/ui/card";
 import { ShieldCheck, ShieldAlert } from "lucide-react";
+import { useI18n } from "@core/providers/i18n-provider";
 import { OpportunityStatusBadge } from "./OpportunityStatusBadge";
 import { OpportunityStageBadge } from "./OpportunityStageBadge";
+import { useCrmCurrency } from "@modules/crm";
 import type { CrmOpportunity } from "../../domain/entities/OpportunityEntity";
 
 /**
@@ -17,13 +19,23 @@ export interface OpportunityOverviewCardProps {
  * Header card presenting primary opportunity metrics, financial value, and verification status.
  */
 export function OpportunityOverviewCard({ opp }: OpportunityOverviewCardProps) {
+  const { t, language } = useI18n();
   const isOpen = opp.status === "Open";
+  const { baseCurrency, autoConvertToBase, convertAmount, getRate } = useCrmCurrency();
+  const isMasked = opp.maskedFieldKeys?.includes("estimatedAmount");
+  const nativeCurr = (opp.currencyCode || "SAR").toUpperCase();
+  const isForeignCurr =
+    !isMasked &&
+    autoConvertToBase &&
+    opp.estimatedAmount != null &&
+    nativeCurr !== baseCurrency.toUpperCase();
 
   const formatDealKind = (kind?: string) => {
     if (!kind) return "—";
-    if (kind === "NewBusiness") return "New Business";
-    if (kind === "Expansion") return "Expansion";
-    if (kind === "Renewal") return "Renewal";
+    if (kind === "NewBusiness") return t("crmOpportunities.dealKind.NewBusiness", { defaultValue: "New Business" });
+    if (kind === "Expansion") return t("crmOpportunities.dealKind.Expansion", { defaultValue: "Expansion" });
+    if (kind === "Renewal") return t("crmOpportunities.dealKind.Renewal", { defaultValue: "Renewal" });
+    if (kind === "Services") return t("crmOpportunities.dealKind.Services", { defaultValue: "Services" });
     return kind.replace(/([a-z])([A-Z])/g, "$1 $2");
   };
 
@@ -42,20 +54,40 @@ export function OpportunityOverviewCard({ opp }: OpportunityOverviewCardProps) {
 
         <div className="flex items-center gap-4">
           <div className="text-end">
-            <span className="text-xs text-nx-ink-3 block">Estimated Amount</span>
+            <span className="text-xs text-nx-ink-3 block">
+              {t("crmOpportunities.detail.estimatedAmount")}
+            </span>
             <span className="text-xl font-bold text-nx-ink">
-              {opp.maskedFieldKeys?.includes("estimatedAmount")
+              {isMasked
                 ? "••••••"
                 : opp.estimatedAmount != null
                 ? `${opp.currencyCode} ${Number(opp.estimatedAmount).toLocaleString()}`
                 : "—"}
             </span>
+            {isForeignCurr && (
+              <span
+                data-testid="opp-detail-converted-amount"
+                className="block text-xs font-mono text-nx-accent mt-0.5"
+              >
+                ≈ {baseCurrency}{" "}
+                {Math.round(
+                  convertAmount(Number(opp.estimatedAmount), nativeCurr, baseCurrency)
+                ).toLocaleString()}{" "}
+                (1 {nativeCurr} = {getRate(nativeCurr, baseCurrency).toFixed(4)} {baseCurrency})
+              </span>
+            )}
           </div>
           <div className="border-s border-nx-line ps-4">
-            <span className="text-xs text-nx-ink-3 block">Stage</span>
+            <span className="text-xs text-nx-ink-3 block">
+              {t("crmOpportunities.detail.stage")}
+            </span>
             <OpportunityStageBadge
               stageKey={opp.stageKey}
-              label={opp.stageLabelEnSnapshot}
+              label={
+                language === "ar" && opp.stageLabelArSnapshot
+                  ? opp.stageLabelArSnapshot
+                  : opp.stageLabelEnSnapshot
+              }
               className="mt-0.5"
             />
           </div>
@@ -64,31 +96,37 @@ export function OpportunityOverviewCard({ opp }: OpportunityOverviewCardProps) {
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mt-6 pt-6 border-t border-nx-line text-xs">
         <div>
-          <span className="text-nx-ink-3 block">Deal Type</span>
+          <span className="text-nx-ink-3 block">{t("crmOpportunities.detail.dealType")}</span>
           <span className="font-semibold text-nx-ink">{formatDealKind(opp.dealKind)}</span>
         </div>
         <div>
-          <span className="text-nx-ink-3 block">Account / Contact Verification</span>
+          <span className="text-nx-ink-3 block">
+            {t("crmOpportunities.detail.accountVerification")}
+          </span>
           {opp.partyId ? (
             <span className="font-medium text-success flex items-center gap-1">
-              <ShieldCheck className="size-3.5" /> Verified Party Linked
+              <ShieldCheck className="size-3.5" />{" "}
+              {t("crmOpportunities.detail.verifiedAccountLinked", { defaultValue: "Verified Account / Contact Linked" })}
             </span>
           ) : (
             <span className="font-medium text-warning flex items-center gap-1">
-              <ShieldAlert className="size-3.5" /> Unlinked (Pre-proposal)
+              <ShieldAlert className="size-3.5" />{" "}
+              {t("crmOpportunities.detail.unlinkedPreProposal", { defaultValue: "Unlinked (Pre-Proposal)" })}
             </span>
           )}
         </div>
         <div>
-          <span className="text-nx-ink-3 block">Target Close Date</span>
+          <span className="text-nx-ink-3 block">
+            {t("crmOpportunities.detail.targetCloseDate")}
+          </span>
           <span className="font-medium text-nx-ink">
             {opp.targetCloseDate
               ? new Date(opp.targetCloseDate).toLocaleDateString()
-              : "Not set"}
+              : t("crmOpportunities.detail.notSet")}
           </span>
         </div>
         <div>
-          <span className="text-nx-ink-3 block">Created At</span>
+          <span className="text-nx-ink-3 block">{t("crmOpportunities.detail.createdAt")}</span>
           <span className="font-medium text-nx-ink">
             {new Date(opp.createdAt).toLocaleDateString()}
           </span>
@@ -98,7 +136,7 @@ export function OpportunityOverviewCard({ opp }: OpportunityOverviewCardProps) {
       {opp.directCreateRationale && (
         <div className="mt-4 p-3 rounded-nx-md bg-nx-raised text-xs border border-nx-line">
           <span className="text-nx-ink-3 font-semibold block mb-0.5">
-            Direct Creation Rationale:
+            {t("crmOpportunities.detail.directCreationRationale")}
           </span>
           <p className="text-nx-ink-2">{opp.directCreateRationale}</p>
         </div>
@@ -106,12 +144,29 @@ export function OpportunityOverviewCard({ opp }: OpportunityOverviewCardProps) {
 
       {!isOpen && (
         <div className="mt-4 p-3 rounded-nx-md bg-nx-raised text-xs border border-nx-line space-y-1">
-          <span className="text-nx-ink-3 font-semibold block">Closure Summary:</span>
+          <span className="text-nx-ink-3 font-semibold block">
+            {t("crmOpportunities.detail.closureSummary")}
+          </span>
           <div className="flex gap-4 text-nx-ink-2">
-            <span>Outcome: <strong>{opp.status}</strong></span>
-            {opp.lossReasonCode && <span>Loss Reason: <strong>{opp.lossReasonCode}</strong></span>}
-            {opp.competitorName && <span>Competitor: <strong>{opp.competitorName}</strong></span>}
-            {opp.closedAtUtc && <span>Closed At: {new Date(opp.closedAtUtc).toLocaleString()}</span>}
+            <span>
+              {t("crmOpportunities.detail.outcome")} <strong>{opp.status}</strong>
+            </span>
+            {opp.lossReasonCode && (
+              <span>
+                {t("crmOpportunities.detail.lossReason")} <strong>{opp.lossReasonCode}</strong>
+              </span>
+            )}
+            {opp.competitorName && (
+              <span>
+                {t("crmOpportunities.detail.competitor")} <strong>{opp.competitorName}</strong>
+              </span>
+            )}
+            {opp.closedAtUtc && (
+              <span>
+                {t("crmOpportunities.detail.closedAt")}{" "}
+                {new Date(opp.closedAtUtc).toLocaleString()}
+              </span>
+            )}
           </div>
           {opp.closeNotes && <p className="text-nx-ink mt-1 italic">&ldquo;{opp.closeNotes}&rdquo;</p>}
         </div>

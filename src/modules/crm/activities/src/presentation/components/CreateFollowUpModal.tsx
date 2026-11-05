@@ -1,12 +1,19 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { useI18n } from "@core/providers/i18n-provider";
 import { Button } from "@core/ui/button";
 import { Input } from "@core/ui/input";
 import { Textarea } from "@core/ui/textarea";
 import { Label } from "@core/ui/label";
 import { Alert, AlertDescription } from "@core/ui/alert";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@core/ui/select";
 import {
   Dialog,
   DialogContent,
@@ -15,8 +22,31 @@ import {
   DialogDescription,
   DialogFooter,
 } from "@core/ui/dialog";
-import { AlertCircle, CalendarClock, UserCheck } from "lucide-react";
+import { AlertCircle, CalendarClock } from "lucide-react";
 import type { CrmActivity } from "../../domain/entities/CrmActivityEntity";
+
+const COMMERCIAL_ASSIGNEES: Array<{ id: string; labelEn: string; labelAr: string }> = [
+  {
+    id: "11111111-1111-1111-1111-111111111111",
+    labelEn: "Ahmed El-Shenawy — Commercial Director",
+    labelAr: "أحمد الشناوي — المدير التجاري",
+  },
+  {
+    id: "22222222-2222-2222-2222-222222222222",
+    labelEn: "Tariq Al-Dosari — Senior Account Executive",
+    labelAr: "طارق الدوسري — مسؤول حسابات أول",
+  },
+  {
+    id: "33333333-3333-3333-3333-333333333333",
+    labelEn: "Sara Al-Mansour — Enterprise Sponsorship Lead",
+    labelAr: "سارة المنصور — قائد رعايات المؤسسات",
+  },
+  {
+    id: "44444444-4444-4444-4444-444444444444",
+    labelEn: "Khaled Al-Harbi — Sports Partnerships Manager",
+    labelAr: "خالد الحربي — مدير الشراكات الرياضية",
+  },
+];
 
 interface CreateFollowUpModalProps {
   readonly activity: CrmActivity | null;
@@ -45,13 +75,31 @@ export function CreateFollowUpModal({
   const isRtl = language === "ar";
 
   const [title, setTitle] = useState(
-    activity ? `Follow-up on: ${activity.summary}` : ""
+    activity
+      ? `${t("crmActivities.followup.defaultTitlePrefix")}: ${activity.summary}`
+      : ""
   );
   const [description, setDescription] = useState("");
   const [dueDate, setDueDate] = useState(
     new Date(Date.now() + 2 * 24 * 60 * 60 * 1000).toISOString().split("T")[0]
   );
-  const [assigneeId, setAssigneeId] = useState(activity?.actorUserId || "");
+  const [assigneeId, setAssigneeId] = useState(
+    activity?.actorUserId || COMMERCIAL_ASSIGNEES[0].id
+  );
+
+  const assigneeOptions = useMemo(() => {
+    const base = COMMERCIAL_ASSIGNEES.map((a) => ({
+      id: a.id,
+      label: isRtl ? a.labelAr : a.labelEn,
+    }));
+    if (activity?.actorUserId && !base.some((b) => b.id === activity.actorUserId)) {
+      base.unshift({
+        id: activity.actorUserId,
+        label: activity.actorDisplaySnapshot || t("crmActivities.followup.currentActorLabel"),
+      });
+    }
+    return base;
+  }, [activity?.actorDisplaySnapshot, activity?.actorUserId, isRtl, t]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -60,7 +108,7 @@ export function CreateFollowUpModal({
     const success = await onSubmit(activity.activityId, {
       title: title.trim(),
       description: description.trim() || undefined,
-      assigneeUserId: assigneeId.trim() || "00000000-0000-0000-0000-000000000001",
+      assigneeUserId: assigneeId.trim() || COMMERCIAL_ASSIGNEES[0].id,
       dueAtUtc: dueDate ? new Date(dueDate).toISOString() : undefined,
     });
 
@@ -79,11 +127,10 @@ export function CreateFollowUpModal({
           <DialogHeader>
             <DialogTitle className="text-base font-bold text-nx-ink font-heading flex items-center gap-2">
               <CalendarClock className="size-4 text-warning" />
-              {t("crmActivities.followup.title") || "Schedule Follow-up Task"}
+              {t("crmActivities.followup.title")}
             </DialogTitle>
             <DialogDescription className="text-xs text-nx-ink-2">
-              {t("crmActivities.followup.description") ||
-                "Assign a follow-up action item with a due date linked to this customer interaction."}
+              {t("crmActivities.followup.description")}
             </DialogDescription>
           </DialogHeader>
 
@@ -101,7 +148,7 @@ export function CreateFollowUpModal({
             {activity && (
               <div className="p-2.5 rounded-md bg-nx-raised border border-nx-line">
                 <span className={`text-[10px] text-nx-ink-3 font-medium block ${!isRtl ? "uppercase" : ""}`}>
-                  {t("crmActivities.followup.sourceActivity") || "Source Interaction"}
+                  {t("crmActivities.followup.sourceActivity")}
                 </span>
                 <p className="text-xs font-semibold text-nx-ink mt-0.5 line-clamp-1">
                   {activity.summary}
@@ -118,13 +165,13 @@ export function CreateFollowUpModal({
 
             <div className="space-y-1.5">
               <Label htmlFor="followup-title" className="text-nx-ink font-semibold">
-                {t("crmActivities.followup.taskTitle") || "Action Item / Task Title"} *
+                {t("crmActivities.followup.taskTitle")} *
               </Label>
               <Input
                 id="followup-title"
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
-                placeholder="e.g. Send revised pricing schedule, confirm pitch slot..."
+                placeholder={t("crmActivities.followup.taskTitlePlaceholder")}
                 required
                 className="h-8 text-xs bg-nx-ground border-nx-line text-nx-ink"
               />
@@ -132,13 +179,13 @@ export function CreateFollowUpModal({
 
             <div className="space-y-1.5">
               <Label htmlFor="followup-desc" className="text-nx-ink font-semibold">
-                {t("crmActivities.followup.taskDesc") || "Deliverable Details"}
+                {t("crmActivities.followup.taskDesc")}
               </Label>
               <Textarea
                 id="followup-desc"
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
-                placeholder="Requirements, next milestone, or context for the assignee..."
+                placeholder={t("crmActivities.followup.taskDescPlaceholder")}
                 rows={3}
                 className="text-xs bg-nx-ground border-nx-line text-nx-ink resize-none"
               />
@@ -147,7 +194,7 @@ export function CreateFollowUpModal({
             <div className="grid grid-cols-2 gap-3">
               <div className="space-y-1.5">
                 <Label htmlFor="followup-due" className="text-nx-ink font-semibold">
-                  {t("crmActivities.followup.dueDate") || "Due Date"}
+                  {t("crmActivities.followup.dueDate")}
                 </Label>
                 <Input
                   id="followup-due"
@@ -160,14 +207,23 @@ export function CreateFollowUpModal({
 
               <div className="space-y-1.5">
                 <Label htmlFor="followup-assignee" className="text-nx-ink font-semibold">
-                  {t("crmActivities.followup.assignee") || "Assignee"}
+                  {t("crmActivities.followup.assignee")}
                 </Label>
-                <div className="flex items-center gap-1.5 h-8 px-2.5 rounded-md bg-nx-ground border border-nx-line text-nx-ink-2">
-                  <UserCheck className="size-3 text-nx-ink-3" />
-                  <span className="text-[11px] truncate">
-                    {activity?.actorDisplaySnapshot || "Account Executive"}
-                  </span>
-                </div>
+                <Select value={assigneeId} onValueChange={setAssigneeId}>
+                  <SelectTrigger
+                    id="followup-assignee"
+                    className="h-8 text-xs bg-nx-ground border-nx-line text-nx-ink"
+                  >
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {assigneeOptions.map((opt) => (
+                      <SelectItem key={opt.id} value={opt.id}>
+                        {opt.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </div>
             </div>
           </div>
@@ -181,7 +237,7 @@ export function CreateFollowUpModal({
               disabled={isSubmitting}
               className="h-8 text-xs border-nx-line text-nx-ink-2"
             >
-              {t("common.cancel") || "Cancel"}
+              {t("crmActivities.actions.cancel")}
             </Button>
             <Button
               type="submit"
@@ -190,8 +246,8 @@ export function CreateFollowUpModal({
               className="h-8 text-xs font-bold"
             >
               {isSubmitting
-                ? t("common.saving") || "Saving..."
-                : t("crmActivities.followup.scheduleBtn") || "Schedule Follow-up"}
+                ? t("crmActivities.actions.saving")
+                : t("crmActivities.followup.scheduleBtn")}
             </Button>
           </DialogFooter>
         </form>

@@ -5,6 +5,7 @@ import { Badge } from "@core/ui/badge";
 import { ShieldAlert, ShieldCheck } from "lucide-react";
 import { cn } from "@core/common/utils";
 import { useI18n } from "@core/providers/i18n-provider";
+import { useCrmCurrency } from "@modules/crm";
 import { KanbanCard } from "./KanbanCard";
 import type { CrmOpportunity } from "../../../domain/entities/OpportunityEntity";
 
@@ -43,6 +44,7 @@ export function KanbanColumn({
 }: KanbanColumnProps) {
   const { t, language } = useI18n();
   const [isDragOver, setIsDragOver] = useState(false);
+  const { baseCurrency, autoConvertToBase, convertAmount } = useCrmCurrency();
 
   // Total deal calculation (respecting FLS masking and PD-5 per-currency discipline)
   const hasMaskedAmount = opportunities.some((o) =>
@@ -72,6 +74,25 @@ export function KanbanColumn({
     });
     formattedTotal = sumsByCurr.join(" / ");
   }
+
+  const hasForeignCurrency = opportunities.some(
+    (o) => (o.currencyCode || "SAR").toUpperCase() !== baseCurrency.toUpperCase()
+  );
+  const convertedBaseSum =
+    !hasMaskedAmount && opportunities.length > 0 && autoConvertToBase && hasForeignCurrency
+      ? Math.round(
+          opportunities.reduce(
+            (acc, opp) =>
+              acc +
+              convertAmount(
+                Number(opp.estimatedAmount) || 0,
+                opp.currencyCode || "SAR",
+                baseCurrency
+              ),
+            0
+          )
+        )
+      : null;
 
   const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault();
@@ -149,10 +170,33 @@ export function KanbanColumn({
           </div>
         )}
 
-        {/* Column Value Summary */}
-        <div className="flex items-center justify-between text-[11px] text-nx-ink-3 font-mono">
-          <span>{t("crmOpportunities.kanban.totalValue", { defaultValue: "Total" })}</span>
-          <span className="font-semibold text-nx-ink-2">{formattedTotal}</span>
+        {/* Column Value Summary — Single Clean Line */}
+        <div
+          className="flex items-center justify-between gap-2 text-[11px] font-mono pt-0.5"
+          title={
+            convertedBaseSum !== null
+              ? `${t("crmOpportunities.kanban.totalValue", { defaultValue: "Breakdown" })}: ${formattedTotal}`
+              : undefined
+          }
+        >
+          <span className="text-nx-ink-3 shrink-0">
+            {convertedBaseSum !== null
+              ? `${t("crmOpportunities.kanban.totalValue", { defaultValue: "Total" })} (${baseCurrency})`
+              : t("crmOpportunities.kanban.totalValue", { defaultValue: "Total" })}
+          </span>
+          {convertedBaseSum !== null ? (
+            <span
+              data-testid={`kanban-converted-total-${stage.key}`}
+              className="font-bold text-nx-ink truncate"
+            >
+              {baseCurrency} {convertedBaseSum.toLocaleString()}
+              <span className="sr-only"> {formattedTotal}</span>
+            </span>
+          ) : (
+            <span className="font-bold text-nx-ink truncate" title={formattedTotal}>
+              {formattedTotal}
+            </span>
+          )}
         </div>
       </div>
 

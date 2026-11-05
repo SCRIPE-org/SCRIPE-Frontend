@@ -60,7 +60,7 @@ export function ReopenOpportunityDialog({
     setValidationError(null);
 
     if (!reason.trim() || reason.trim().length < 5) {
-      setValidationError("An audited reason of at least 5 characters is required to reopen this opportunity.");
+      setValidationError(t("crmOpportunities.dialogs.reopen.reasonMinCharsError"));
       return;
     }
 
@@ -101,20 +101,20 @@ export function ReopenOpportunityDialog({
 
           <div className="rounded-nx-md border border-nx-line bg-nx-surface p-3 text-xs space-y-1">
             <div className="flex justify-between">
-              <span className="text-nx-ink-3">Deal:</span>
+              <span className="text-nx-ink-3">{t("crmOpportunities.dialogs.reopen.dealLabel")}</span>
               <span className="font-semibold text-nx-ink">{opportunity.title}</span>
             </div>
             <div className="flex justify-between">
-              <span className="text-nx-ink-3">Restored Stage:</span>
+              <span className="text-nx-ink-3">{t("crmOpportunities.dialogs.reopen.restoredStageLabel")}</span>
               <span className="font-medium text-nx-ink">
                 {(() => {
                   const key = opportunity.lastActiveStageKey || "default.discovery";
                   const map: Record<string, string> = {
-                    "default.discovery": "Discovery",
-                    "default.qualification": "Qualification",
-                    "default.solution_fit": "Solution Fit",
-                    "default.proposal": "Proposal",
-                    "default.negotiation": "Negotiation",
+                    "default.discovery": t("crmOpportunities.stages.discovery"),
+                    "default.qualification": t("crmOpportunities.stages.qualification"),
+                    "default.solution_fit": t("crmOpportunities.stages.solutionFit"),
+                    "default.proposal": t("crmOpportunities.stages.proposal"),
+                    "default.negotiation": t("crmOpportunities.stages.negotiation"),
                   };
                   return map[key] || opportunity.stageLabelEnSnapshot || key;
                 })()}

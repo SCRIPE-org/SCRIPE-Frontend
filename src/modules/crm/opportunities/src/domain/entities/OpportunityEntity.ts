@@ -253,6 +253,7 @@ export interface PipelineStageConfig {
   probabilityPercent?: number | null;
   requiredExitFields?: string[];
   requiresVerifiedParty?: boolean;
+  triggerDealConversion?: boolean;
   rowVersion?: string | null;
 }
 
@@ -269,6 +270,7 @@ export interface PipelineDefinition {
   version: number;
   isDefault?: boolean;
   stages: PipelineStageConfig[];
+  transitionsJson?: string | null;
   rowVersion: string;
 }
 
@@ -281,6 +283,7 @@ export interface UpdatePipelineStageItem {
   winProbabilityPercent?: number | null;
   probabilityPercent?: number | null;
   requiredExitFields?: string[];
+  triggerDealConversion?: boolean;
   expectedRowVersion?: string | null;
 }
 
@@ -289,6 +292,7 @@ export interface UpdateDefaultPipelineInput {
   nameEn?: string;
   nameAr?: string | null;
   stages: UpdatePipelineStageItem[];
+  transitionsJson?: string | null;
   expectedRowVersion: string;
   idempotencyKey?: string;
 }

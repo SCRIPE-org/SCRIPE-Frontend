@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback, useTransition } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { getCrmContainer } from "@modules/crm/di";
 import type {
   CrmActivity,
@@ -55,7 +55,6 @@ export function useCrmActivitiesViewModel(props: UseCrmActivitiesProps = {}) {
   const [selectedActivityForFollowUp, setSelectedActivityForFollowUp] = useState<CrmActivity | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
-  const [, startTransition] = useTransition();
 
   const loadActivities = useCallback(
     async (pageToLoad = 1, kind?: SalesActivityKind | "ALL") => {
@@ -88,25 +87,21 @@ export function useCrmActivitiesViewModel(props: UseCrmActivitiesProps = {}) {
           activityKind: activeKind,
         });
 
-        startTransition(() => {
-          setState({
-            stage: "success",
-            items: [...(result.items ?? [])],
-            totalCount: result.totalCount ?? 0,
-            page: result.page ?? pageToLoad,
-            pageSize: result.pageSize ?? 20,
-            error: null,
-          });
+        setState({
+          stage: "success",
+          items: [...(result.items ?? [])],
+          totalCount: result.totalCount ?? 0,
+          page: result.page ?? pageToLoad,
+          pageSize: result.pageSize ?? 20,
+          error: null,
         });
       } catch (err: unknown) {
         const message = err instanceof Error ? err.message : "Failed to load CRM activities";
-        startTransition(() => {
-          setState((prev) => ({
-            ...prev,
-            stage: "failed",
-            error: message,
-          }));
-        });
+        setState((prev) => ({
+          ...prev,
+          stage: "failed",
+          error: message,
+        }));
       }
     },
     [leadId, accountId, opportunityId]

@@ -164,15 +164,15 @@ export function QualifyLeadDialog({
                 </Label>
                 <Select value={reasonCode} onValueChange={setReasonCode}>
                   <SelectTrigger id="disqualify-code" className="h-8 text-xs border-nx-line bg-nx-ground text-nx-ink">
-                    <SelectValue placeholder="Select disqualification reason..." />
+                    <SelectValue placeholder={t("crmLeads.qualification.reasonCodePlaceholder")} />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="BUDGET">Budget Constraints (BUDGET)</SelectItem>
-                    <SelectItem value="TIMING">Timing / Deferred (TIMING)</SelectItem>
-                    <SelectItem value="COMPETITOR">Chose Competitor (COMPETITOR)</SelectItem>
-                    <SelectItem value="NO_NEED">No Commercial Need (NO_NEED)</SelectItem>
-                    <SelectItem value="UNRESPONSIVE">Unresponsive Contact (UNRESPONSIVE)</SelectItem>
-                    <SelectItem value="OTHER">Other Reason (OTHER)</SelectItem>
+                    <SelectItem value="BUDGET">{t("crmLeads.qualification.reasons.BUDGET")} (BUDGET)</SelectItem>
+                    <SelectItem value="TIMING">{t("crmLeads.qualification.reasons.TIMING")} (TIMING)</SelectItem>
+                    <SelectItem value="COMPETITOR">{t("crmLeads.qualification.reasons.COMPETITOR")} (COMPETITOR)</SelectItem>
+                    <SelectItem value="NO_NEED">{t("crmLeads.qualification.reasons.NO_NEED")} (NO_NEED)</SelectItem>
+                    <SelectItem value="UNRESPONSIVE">{t("crmLeads.qualification.reasons.UNRESPONSIVE")} (UNRESPONSIVE)</SelectItem>
+                    <SelectItem value="OTHER">{t("crmLeads.qualification.reasons.OTHER")} (OTHER)</SelectItem>
                   </SelectContent>
                 </Select>
               </div>

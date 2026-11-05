@@ -2,7 +2,14 @@
 
 import { useState, useEffect, useCallback, useTransition } from "react";
 import { getCrmContainer } from "@modules/crm/di";
-import type { CrmPipelineReport } from "../../domain/models/crm-overview.types";
+import type {
+  CrmCurrencyPipelineBreakdown,
+  CrmPipelineReport,
+  CrmStageReportBucket,
+} from "../../domain/models/crm-overview.types";
+import { useCrmCurrency } from "./useCrmSettingsStore";
+
+export type { CrmCurrencyPipelineBreakdown, CrmPipelineReport as CrmCommercialReport };
 
 export interface CrmReportsState {
   stage: "idle" | "loading" | "success" | "failed";
@@ -19,6 +26,7 @@ export function useCrmReportsViewModel() {
   const [selectedCurrency, setSelectedCurrency] = useState<string>("SAR");
   const [csvExportedNotice, setCsvExportedNotice] = useState(false);
   const [isPending, startTransition] = useTransition();
+  const { baseCurrency, convertAmount, getRate } = useCrmCurrency();
 
   const loadReport = useCallback(async () => {
     setState((prev) => ({ ...prev, stage: "loading", error: null }));
@@ -33,6 +41,7 @@ export function useCrmReportsViewModel() {
         });
         if (report.currencyBreakdowns?.length > 0) {
           setSelectedCurrency((curr) =>
+            curr === "CONVERTED" ||
             report.currencyBreakdowns.some((b) => b.currencyCode === curr)
               ? curr
               : report.currencyBreakdowns[0].currencyCode
@@ -52,10 +61,71 @@ export function useCrmReportsViewModel() {
     loadReport();
   }, [loadReport]);
 
+  // Unified multi-currency breakdown converting all deals across currencies into CRM baseCurrency
+  const convertedBaseBreakdown: CrmCurrencyPipelineBreakdown | null = (() => {
+    if (!state.report || state.report.currencyBreakdowns.length === 0) return null;
+    const stageMap = new Map<string, CrmStageReportBucket>();
+    let openDealsCount = 0;
+    let wonDealsCount = 0;
+    let lostDealsCount = 0;
+    let totalOpenValue = 0;
+    let totalWeightedForecastValue = 0;
+    let totalWonValue = 0;
+    let totalLostValue = 0;
+
+    for (const b of state.report.currencyBreakdowns) {
+      openDealsCount += b.openDealsCount;
+      wonDealsCount += b.wonDealsCount;
+      lostDealsCount += b.lostDealsCount;
+      totalOpenValue += Math.round(convertAmount(b.totalOpenValue ?? 0, b.currencyCode, baseCurrency));
+      totalWeightedForecastValue += Math.round(
+        convertAmount(b.totalWeightedForecastValue ?? 0, b.currencyCode, baseCurrency)
+      );
+      totalWonValue += Math.round(convertAmount(b.totalWonValue ?? 0, b.currencyCode, baseCurrency));
+      totalLostValue += Math.round(convertAmount(b.totalLostValue ?? 0, b.currencyCode, baseCurrency));
+
+      for (const st of b.stages) {
+        const convTotal = Math.round(convertAmount(st.totalAmount ?? 0, b.currencyCode, baseCurrency));
+        const convWeighted = Math.round(
+          convertAmount(st.weightedForecastAmount ?? 0, b.currencyCode, baseCurrency)
+        );
+        const existing = stageMap.get(st.stageKey);
+        if (existing) {
+          stageMap.set(st.stageKey, {
+            ...existing,
+            dealCount: existing.dealCount + st.dealCount,
+            totalAmount: (existing.totalAmount ?? 0) + convTotal,
+            weightedForecastAmount: (existing.weightedForecastAmount ?? 0) + convWeighted,
+          });
+        } else {
+          stageMap.set(st.stageKey, {
+            ...st,
+            totalAmount: convTotal,
+            weightedForecastAmount: convWeighted,
+          });
+        }
+      }
+    }
+
+    return {
+      currencyCode: baseCurrency,
+      openDealsCount,
+      wonDealsCount,
+      lostDealsCount,
+      totalOpenValue,
+      totalWeightedForecastValue,
+      totalWonValue,
+      totalLostValue,
+      stages: Array.from(stageMap.values()).sort((a, b) => a.sortOrder - b.sortOrder),
+    };
+  })();
+
   const activeCurrencyBreakdown =
-    state.report?.currencyBreakdowns.find((b) => b.currencyCode === selectedCurrency) ??
-    state.report?.currencyBreakdowns[0] ??
-    null;
+    selectedCurrency === "CONVERTED"
+      ? convertedBaseBreakdown
+      : state.report?.currencyBreakdowns.find((b) => b.currencyCode === selectedCurrency) ??
+        state.report?.currencyBreakdowns[0] ??
+        null;
 
   const exportCsvSummary = useCallback(() => {
     if (!state.report) return;
@@ -132,6 +202,10 @@ export function useCrmReportsViewModel() {
     selectedCurrency,
     setSelectedCurrency,
     activeCurrencyBreakdown,
+    convertedBaseBreakdown,
+    baseCurrency,
+    convertAmount,
+    getRate,
     isPending,
     csvExportedNotice,
     refresh: loadReport,

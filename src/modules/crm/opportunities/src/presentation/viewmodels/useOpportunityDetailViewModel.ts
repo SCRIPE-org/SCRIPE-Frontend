@@ -2,10 +2,7 @@
 
 import { useState, useEffect, useCallback } from "react";
 import { getCrmContainer } from "@modules/crm/di";
-import {
-  getCustomFieldsExtension,
-  normalizeCustomFieldValuesForSave,
-} from "@core/crud/customFieldsExtension";
+import { getCustomFieldsExtension, normalizeCustomFieldValuesForSave } from "@core/crud/customFieldsExtension";
 import type {
   OpportunityDetailResult,
   OpportunityStatus,
@@ -15,10 +12,8 @@ import type {
   AssignOpportunityOwnerInput,
   PipelineDefinition,
 } from "../../domain/entities/OpportunityEntity";
+import { lookupOpportunityPartyOptions } from "./useOpportunityViewModelHelpers";
 
-/**
- * State contract for the single opportunity detail view.
- */
 export interface OpportunityDetailState {
   loading: boolean;
   error: string | null;
@@ -32,9 +27,6 @@ export interface OpportunityDetailState {
   submitError: string | null;
 }
 
-/**
- * ViewModel hook orchestrating single opportunity details, audit history, and lifecycle transitions.
- */
 export function useOpportunityDetailViewModel(opportunityId: string) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -62,9 +54,7 @@ export function useOpportunityDetailViewModel(opportunityId: string) {
       const repo = container.opportunityRepository;
       const [result, pipelineRes, fulfillmentActivities] = await Promise.all([
         repo.getOpportunityById(opportunityId),
-        typeof repo.getDefaultPipeline === "function"
-          ? repo.getDefaultPipeline().catch(() => null)
-          : Promise.resolve(null),
+        typeof repo.getDefaultPipeline === "function" ? repo.getDefaultPipeline().catch(() => null) : Promise.resolve(null),
         typeof container.activityRepository?.getActivities === "function"
           ? container.activityRepository
               .getActivities({
@@ -77,9 +67,7 @@ export function useOpportunityDetailViewModel(opportunityId: string) {
           : Promise.resolve(null),
       ]);
       setData(result);
-      if (pipelineRes) {
-        setPipeline(pipelineRes);
-      }
+      if (pipelineRes) setPipeline(pipelineRes);
       if (
         fulfillmentActivities &&
         ((fulfillmentActivities.items && fulfillmentActivities.items.length > 0) ||
@@ -98,73 +86,6 @@ export function useOpportunityDetailViewModel(opportunityId: string) {
     loadData();
   }, [loadData]);
 
-  const lookupPartyOptions = useCallback(
-    async (
-      search?: string
-    ): Promise<
-      Array<{
-        partyId: string;
-        accountId?: string;
-        label: string;
-        subtitle?: string;
-      }>
-    > => {
-      try {
-        const container = getCrmContainer() as any;
-        const accountRepo = container.accountRepository;
-        if (!accountRepo) return [];
-
-        const [accountsResult, candidates] = await Promise.all([
-          typeof accountRepo.getAccounts === "function"
-            ? accountRepo
-                .getAccounts({ search, pageNumber: 1, pageSize: 50 })
-                .catch(() => ({ items: [] }))
-            : Promise.resolve({ items: [] }),
-          typeof accountRepo.lookupCandidateParties === "function"
-            ? accountRepo
-                .lookupCandidateParties(search, "Organization")
-                .catch(() => [])
-            : Promise.resolve([]),
-        ]);
-
-        const seenParties = new Set<string>();
-        const options: Array<{
-          partyId: string;
-          accountId?: string;
-          label: string;
-          subtitle?: string;
-        }> = [];
-
-        for (const acc of accountsResult.items ?? []) {
-          if (!acc.partyId || seenParties.has(acc.partyId)) continue;
-          seenParties.add(acc.partyId);
-          options.push({
-            partyId: acc.partyId,
-            accountId: acc.id,
-            label: acc.displayNameEn || acc.displayNameAr || acc.legalNameEn || acc.id,
-            subtitle: [acc.industry, acc.countryCode].filter(Boolean).join(" • ") || undefined,
-          });
-        }
-
-        for (const cand of candidates ?? []) {
-          if (!cand.partyId || seenParties.has(cand.partyId)) continue;
-          seenParties.add(cand.partyId);
-          options.push({
-            partyId: cand.partyId,
-            accountId: cand.existingAccountId ?? undefined,
-            label: cand.displayNameEn || cand.displayNameAr || cand.partyId,
-            subtitle: cand.taxNumber || cand.partyKind || undefined,
-          });
-        }
-
-        return options;
-      } catch {
-        return [];
-      }
-    },
-    []
-  );
-
   const handleMoveStage = async (input: MoveOpportunityStageInput) => {
     setIsSubmitting(true);
     setSubmitError(null);
@@ -175,11 +96,7 @@ export function useOpportunityDetailViewModel(opportunityId: string) {
         try {
           const normalized = normalizeCustomFieldValuesForSave(input.customFieldValues);
           if (Object.keys(normalized).length > 0) {
-            await getCustomFieldsExtension()?.saveValues(
-              "crm.opportunity",
-              input.opportunityId,
-              normalized
-            );
+            await getCustomFieldsExtension()?.saveValues("crm.opportunity", input.opportunityId, normalized);
           }
         } catch {
           // Non-blocking custom fields persistence
@@ -280,7 +197,7 @@ export function useOpportunityDetailViewModel(opportunityId: string) {
     data,
     pipeline,
     loadData,
-    lookupPartyOptions,
+    lookupPartyOptions: lookupOpportunityPartyOptions,
     isMoveStageOpen,
     setIsMoveStageOpen,
     targetMoveStageKey,

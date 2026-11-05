@@ -393,4 +393,41 @@ describe("ApiService mutation intent", () => {
       requests.map((request) => AxiosHeaders.from(request.headers).get("Idempotency-Key"))
     ).toEqual(["intent-key-conflict", "intent-key-conflict"]);
   });
+
+  it("surfaces HTTP 409 idempotency.non_replayable_secret inline to caller without triggering token refresh or logout", async () => {
+    const service = new ApiService("/api");
+    const refresh = vi.fn(async () => "fresh-access-token");
+    const logout = vi.fn();
+    service.setRefreshHandler(refresh);
+    service.setLogoutHandler(logout);
+
+    const axiosInstance = instanceOf(service);
+    axiosInstance.defaults.adapter = async (config) => {
+      const response = responseFor(409, config, {
+        code: "idempotency.non_replayable_secret",
+        message: "This operation returned sensitive credentials and cannot be replayed from cache.",
+      });
+      throw new AxiosError(
+        "Request failed with status code 409",
+        AxiosError.ERR_BAD_REQUEST,
+        config,
+        undefined,
+        response
+      );
+    };
+
+    const intent = { idempotencyKey: "secret-key-1" };
+    await expect(
+      service.post("/v1/auth/refresh-token", { refreshToken: "rt-123" }, undefined, intent)
+    ).rejects.toMatchObject({
+      status: 409,
+      details: {
+        code: "idempotency.non_replayable_secret",
+      },
+    });
+
+    // Proves that 409 is strictly NOT treated as 401: no refresh attempted, no logout invoked
+    expect(refresh).not.toHaveBeenCalled();
+    expect(logout).not.toHaveBeenCalled();
+  });
 });

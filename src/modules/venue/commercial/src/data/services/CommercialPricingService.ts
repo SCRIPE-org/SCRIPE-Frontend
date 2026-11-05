@@ -23,10 +23,11 @@ export class CommercialPricingService implements ICommercialPricingService {
   configureResourcePrice(
     input: ConfigureResourceRentalPriceInput
   ): Promise<ResourceRentalPriceConfiguration> {
+    const { idempotencyKey, ...payload } = input;
     return this.postIntent(
       COMMERCIAL_PRICING_ENDPOINTS.RESOURCE_PRICING,
-      input,
-      input.idempotencyKey
+      payload,
+      idempotencyKey
     );
   }
 
@@ -42,17 +43,17 @@ export class CommercialPricingService implements ICommercialPricingService {
         requestedEndUtc: input.requestedEndUtc,
         currencyCode: input.currencyCode,
         expiresAtUtc: input.expiresAtUtc,
-        idempotencyKey: input.idempotencyKey,
       },
       input.idempotencyKey
     );
   }
 
   overrideQuote(quoteId: string, input: OverridePriceQuoteInput): Promise<PriceQuoteOverride> {
+    const { idempotencyKey, ...payload } = input;
     return this.postIntent(
       COMMERCIAL_PRICING_ENDPOINTS.OVERRIDE_QUOTE(quoteId),
-      input,
-      input.idempotencyKey
+      payload,
+      idempotencyKey
     );
   }
 
@@ -64,8 +65,8 @@ export class CommercialPricingService implements ICommercialPricingService {
     return this.api.post(COMMERCIAL_PRICING_ENDPOINTS.TAX_CATEGORIES, input);
   }
 
-  private postIntent<T>(endpoint: string, payload: unknown, idempotencyKey: string): Promise<T> {
-    const intent = { idempotencyKey };
+  private postIntent<T>(endpoint: string, payload: unknown, idempotencyKey?: string): Promise<T> {
+    const intent = idempotencyKey ? { idempotencyKey } : undefined;
     return (
       this.api.postWithRetry?.(endpoint, payload, undefined, intent) ??
       this.api.post(endpoint, payload, undefined, intent)

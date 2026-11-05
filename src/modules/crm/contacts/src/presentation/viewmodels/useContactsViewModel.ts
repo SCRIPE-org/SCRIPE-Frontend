@@ -57,13 +57,13 @@ export function useContactsViewModel(initialSearch?: string, initialAccountId?: 
   }, []);
 
   const loadContacts = useCallback(
-    async (pageToLoad = 1, searchQuery?: string, accId?: string) => {
+    async (pageToLoad = 1, searchQuery?: string, accId?: string, sizeToLoad = 20) => {
       setState((prev) => ({ ...prev, stage: "loading", error: null }));
       try {
         const container = getCrmContainer();
         const result = await container.contactRepository.getContacts({
           page: pageToLoad,
-          pageSize: 20,
+          pageSize: sizeToLoad,
           search: searchQuery,
           accountId: accId,
         });
@@ -74,7 +74,7 @@ export function useContactsViewModel(initialSearch?: string, initialAccountId?: 
             items: result.items ?? [],
             totalCount: result.totalCount ?? 0,
             page: result.page ?? pageToLoad,
-            pageSize: result.pageSize ?? 20,
+            pageSize: result.pageSize ?? sizeToLoad,
             error: null,
           });
         });
@@ -106,7 +106,15 @@ export function useContactsViewModel(initialSearch?: string, initialAccountId?: 
 
   const handlePageChange = useCallback(
     (newPage: number) => {
-      loadContacts(newPage, search, accountId);
+      loadContacts(newPage, search, accountId, state.pageSize);
+    },
+    [loadContacts, search, accountId, state.pageSize]
+  );
+
+  const handlePageSizeChange = useCallback(
+    (newSize: number) => {
+      setState((prev) => ({ ...prev, pageSize: newSize, page: 1 }));
+      loadContacts(1, search, accountId, newSize);
     },
     [loadContacts, search, accountId]
   );
@@ -136,7 +144,7 @@ export function useContactsViewModel(initialSearch?: string, initialAccountId?: 
           }
         }
         setIsCreateOpen(false);
-        await loadContacts(1, search, accountId);
+        await loadContacts(1, search, accountId, state.pageSize);
         return true;
       } catch (err: unknown) {
         const message = err instanceof Error ? err.message : "Failed to create commercial contact";
@@ -146,12 +154,12 @@ export function useContactsViewModel(initialSearch?: string, initialAccountId?: 
         setIsSubmitting(false);
       }
     },
-    [loadContacts, search, accountId]
+    [loadContacts, search, accountId, state.pageSize]
   );
 
   const refresh = useCallback(() => {
-    return loadContacts(state.page, search, accountId);
-  }, [loadContacts, state.page, search, accountId]);
+    return loadContacts(state.page, search, accountId, state.pageSize);
+  }, [loadContacts, state.page, search, accountId, state.pageSize]);
 
   const lookupCandidatePeople = useCallback(async (query?: string) => {
     const container = getCrmContainer();
@@ -195,9 +203,7 @@ export function useContactsViewModel(initialSearch?: string, initialAccountId?: 
       hasNextPage: state.page * state.pageSize < state.totalCount,
       hasPreviousPage: state.page > 1,
       onPageChange: handlePageChange,
-      onPageSizeChange: (_size: number) => {
-        loadContacts(1, search, accountId);
-      },
+      onPageSizeChange: handlePageSizeChange,
     },
     searchValue: search,
     selectedItems,
@@ -227,9 +233,7 @@ export function useContactsViewModel(initialSearch?: string, initialAccountId?: 
       setViewItem(null);
     },
     changePage: handlePageChange,
-    changePageSize: (_size: number) => {
-      loadContacts(1, search, accountId);
-    },
+    changePageSize: handlePageSizeChange,
     refreshItems: refresh,
     createItem: handleCreateContact,
   };

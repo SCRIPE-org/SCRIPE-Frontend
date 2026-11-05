@@ -231,6 +231,36 @@ export function AccountsView() { const router = useRouter();
                 </Button> )}
             </div> }
         />
+
+        {/* Unified Customer 360 Directory Switcher: Companies (Accounts) <-> People (Contacts) */}
+        <div className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-nx-line bg-nx-surface px-3.5 py-2.5">
+          <div className="inline-flex items-center rounded-lg border border-nx-line bg-nx-ground p-0.5 gap-1">
+            <Button
+              type="button"
+              size="sm"
+              variant="ghost"
+              data-testid="customer-dir-companies-tab"
+              className="h-7 px-3 rounded-md text-xs font-bold bg-nx-surface text-foreground border border-nx-line-hi"
+            >
+              {isRtl ? "الشركات والمؤسسات (الحسابات)" : "Companies & Organizations (Accounts)"}
+            </Button>
+            <Button
+              type="button"
+              size="sm"
+              variant="ghost"
+              data-testid="customer-dir-people-tab"
+              onClick={() => router.push("/crm/contacts")}
+              className="h-7 px-3 rounded-md text-xs font-semibold text-nx-ink-2 hover:text-nx-ink"
+            >
+              {isRtl ? "الأفراد وصناع القرار (جهات الاتصال)" : "People & Stakeholders (Contacts)"}
+            </Button>
+          </div>
+          <span className="text-[11px] text-nx-ink-3">
+            {isRtl
+              ? "الحسابات تمثل الشركات والأندية والجهات الراعية؛ وجهات الاتصال تمثل الأفراد المرتبطين بها."
+              : "Accounts represent B2B Organizations, Clubs & Sponsors; Contacts represent Individual Stakeholders linked to them."}
+          </span>
+        </div>
         {/* Content Area */}
         {state.stage === "failed" ? ( <Alert variant="destructive" className="border-destructive/20 bg-destructive/10">
             <AlertCircle className="size-4" />

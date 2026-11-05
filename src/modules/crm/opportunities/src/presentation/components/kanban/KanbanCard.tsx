@@ -15,6 +15,7 @@ import {
 } from "lucide-react";
 import { cn } from "@core/common/utils";
 import { useI18n } from "@core/providers/i18n-provider";
+import { useCrmCurrency } from "@modules/crm";
 import type { CrmOpportunity } from "../../../domain/entities/OpportunityEntity";
 
 export interface KanbanCardProps {
@@ -40,6 +41,7 @@ export function KanbanCard({
   const router = useRouter();
   const { t, language } = useI18n();
   const isRtl = language === "ar";
+  const { baseCurrency, autoConvertToBase, convertAmount } = useCrmCurrency();
 
   const isMasked = opportunity.maskedFieldKeys?.includes("estimatedAmount");
   const currencyCode = opportunity.currencyCode || "SAR";
@@ -48,6 +50,17 @@ export function KanbanCard({
     : opportunity.estimatedAmount != null
     ? `${currencyCode} ${Number(opportunity.estimatedAmount).toLocaleString()}`
     : "—";
+
+  const showConvertedBadge =
+    !isMasked &&
+    autoConvertToBase &&
+    opportunity.estimatedAmount != null &&
+    currencyCode.toUpperCase() !== baseCurrency.toUpperCase();
+  const convertedInBase = showConvertedBadge
+    ? Math.round(
+        convertAmount(Number(opportunity.estimatedAmount), currencyCode, baseCurrency)
+      )
+    : null;
 
   const closeDateObj = opportunity.targetCloseDate ? new Date(opportunity.targetCloseDate) : null;
   const formattedCloseDate =
@@ -117,63 +130,64 @@ export function KanbanCard({
         isDragging && "opacity-40 scale-[0.98]"
       )}
     >
-      {/* Header: Title & Deal Kind */}
-      <div className="space-y-1.5">
-        <div className="flex items-start justify-between gap-2">
-          <h4
-            className="text-xs font-bold text-nx-ink group-hover:text-nx-accent transition-colors line-clamp-2 text-start leading-snug"
-            title={opportunity.title}
+      {/* Top Metadata Strip: Deal Kind & Customer Verification Status */}
+      <div className="flex items-center justify-between gap-1.5">
+        <Badge
+          variant="outline"
+          className="shrink-0 text-[10px] px-1.5 py-0 font-medium border-nx-line text-nx-ink-2 bg-nx-raised"
+        >
+          {t(`crmOpportunities.dealKind.${opportunity.dealKind}`, {
+            defaultValue:
+              opportunity.dealKind === "NewBusiness"
+                ? "New Business"
+                : opportunity.dealKind,
+          })}
+        </Badge>
+
+        {hasParty ? (
+          <span
+            className="inline-flex items-center gap-1 text-[10px] font-semibold text-success shrink-0"
+            title="Verified Account / Contact Linked"
           >
-            {opportunity.title}
-          </h4>
-          <Badge
-            variant="outline"
-            className="shrink-0 text-[10px] px-1.5 py-0 font-medium border-nx-line text-nx-ink-2 bg-nx-raised"
+            <ShieldCheck className="size-3" />
+            <span>
+              {t("crmOpportunities.kanban.partyVerified", { defaultValue: "Verified" })}
+            </span>
+          </span>
+        ) : (
+          <span
+            className="inline-flex items-center gap-1 text-[10px] font-semibold text-warning shrink-0"
+            title="Account or Contact required before Proposal stage"
           >
-            {t(`crmOpportunities.dealKind.${opportunity.dealKind}`, {
-              defaultValue:
-                opportunity.dealKind === "NewBusiness"
-                  ? "New Business"
-                  : opportunity.dealKind,
-            })}
-          </Badge>
-        </div>
+            <ShieldAlert className="size-3" />
+            <span>
+              {t("crmOpportunities.kanban.partyUnlinked", { defaultValue: "Unlinked" })}
+            </span>
+          </span>
+        )}
       </div>
 
-      {/* Financial & Account/Contact Meta */}
-      <div className="flex items-center justify-between text-xs pt-1 border-t border-nx-line/60">
-        <div>
-          <span className="text-[10px] text-nx-ink-3 uppercase block leading-none mb-1 font-mono">
-            {t("crmOpportunities.table.amount", { defaultValue: "Amount" })}
-          </span>
-          <span className="font-bold text-nx-ink text-sm">
-            {formattedAmount}
-          </span>
-        </div>
+      {/* Full-Width Deal Title (Never squished by badges) */}
+      <h4
+        className="text-xs font-bold text-nx-ink group-hover:text-nx-accent transition-colors line-clamp-2 text-start leading-snug"
+        title={opportunity.title}
+      >
+        {opportunity.title}
+      </h4>
 
-        {/* Account / Contact Status */}
-        <div className="text-end">
-          <span className="text-[10px] text-nx-ink-3 uppercase block leading-none mb-1 font-mono">
-            {t("crmOpportunities.table.party", { defaultValue: "Account / Contact" })}
+      {/* Full-Width Deal Value Bar */}
+      <div className="rounded-md bg-nx-raised/60 border border-nx-line/60 px-2.5 py-1.5 flex items-center justify-between gap-2">
+        <span className="font-bold font-mono text-nx-ink text-xs truncate">
+          {formattedAmount}
+        </span>
+        {convertedInBase !== null && (
+          <span
+            data-testid="kanban-card-converted-amount"
+            className="text-[10px] font-mono font-semibold text-nx-ink-2 shrink-0"
+          >
+            ≈ {baseCurrency} {convertedInBase.toLocaleString()}
           </span>
-          {hasParty ? (
-            <span
-              className="inline-flex items-center gap-1 text-[11px] font-medium text-success"
-              title="Verified Account / Contact Linked"
-            >
-              <ShieldCheck className="size-3.5" />
-              <span>{t("crmOpportunities.kanban.partyVerified", { defaultValue: "Verified" })}</span>
-            </span>
-          ) : (
-            <span
-              className="inline-flex items-center gap-1 text-[11px] font-medium text-warning"
-              title="Account or Contact required before Proposal stage"
-            >
-              <ShieldAlert className="size-3.5" />
-              <span>{t("crmOpportunities.kanban.partyUnlinked", { defaultValue: "Unlinked" })}</span>
-            </span>
-          )}
-        </div>
+        )}
       </div>
 
       {/* Footer: Target Close Date & Accessible Stage Shift Actions */}

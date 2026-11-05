@@ -157,7 +157,7 @@ describe("OpportunityDetailView Component", () => {
       expect(screen.getByText("Saudi Pro League Broadcast Rights Extension")).toBeDefined();
       expect(screen.getByText("SAR 1,200,000")).toBeDefined();
       expect(screen.getByText("Renewal")).toBeDefined();
-      expect(screen.getByText("Verified Party Linked")).toBeDefined();
+      expect(screen.getByText("Verified Account / Contact Linked")).toBeDefined();
     });
 
     // Check stage history table rendering

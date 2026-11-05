@@ -87,17 +87,21 @@ export function KanbanBoard({
     return CANONICAL_KANBAN_STAGES;
   }, [stages]);
 
-  // Group open opportunities by effective stage key
+  // Group open opportunities by effective stage key (falling back to first column if unmapped in active 2..N workflow)
   const groupedOpportunities = useMemo(() => {
     const map = new Map<string, CrmOpportunity[]>();
     for (const stage of effectiveStages) {
       map.set(stage.key, []);
     }
+    const fallbackKey = effectiveStages[0]?.key;
 
     for (const opp of opportunities) {
-      // If opportunity is Open, place in its stage column if mapped
-      if (opp.status === "Open" && map.has(opp.stageKey)) {
-        map.get(opp.stageKey)!.push(opp);
+      if (opp.status === "Open") {
+        if (map.has(opp.stageKey)) {
+          map.get(opp.stageKey)!.push(opp);
+        } else if (fallbackKey && map.has(fallbackKey)) {
+          map.get(fallbackKey)!.push(opp);
+        }
       }
     }
 
@@ -120,7 +124,8 @@ export function KanbanBoard({
   };
 
   const handleMoveForward = (opp: CrmOpportunity) => {
-    const currentIndex = effectiveStages.findIndex((s) => s.key === opp.stageKey);
+    const foundIndex = effectiveStages.findIndex((s) => s.key === opp.stageKey);
+    const currentIndex = foundIndex >= 0 ? foundIndex : 0;
     if (currentIndex >= 0 && currentIndex < effectiveStages.length - 1) {
       const nextStage = effectiveStages[currentIndex + 1];
       onMoveStage(opp, nextStage.key);
@@ -167,8 +172,16 @@ export function KanbanBoard({
         </Alert>
       )}
 
-      {/* Responsive 5-Column Jira-Grade Pipeline Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-3 pb-2 pt-1 min-h-[520px] w-full">
+      {/* Responsive Dynamic 2..N Stage Pipeline Grid */}
+      <div
+        className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 pb-2 pt-1 min-h-[520px] w-full"
+        style={{
+          gridTemplateColumns:
+            effectiveStages.length >= 2
+              ? `repeat(${effectiveStages.length}, minmax(215px, 1fr))`
+              : undefined,
+        }}
+      >
         {effectiveStages.map((stage, index) => {
           const colOpps = groupedOpportunities.get(stage.key) || [];
           return (
@@ -221,7 +234,7 @@ export function KanbanBoard({
                 {t("crmOpportunities.dialogs.close.outcomeWon", { defaultValue: "Closed Won" })}
               </div>
               <div className="text-[11px] text-nx-ink-3">
-                Drag an open deal here to verify Party & record Close Won notes
+                Drag an open deal here to verify Account/Contact & record Close Won notes
               </div>
             </div>
           </div>

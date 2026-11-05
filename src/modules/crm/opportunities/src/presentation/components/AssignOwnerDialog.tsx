@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useI18n } from "@core/providers/i18n-provider";
 import {
   Dialog,
@@ -11,12 +11,64 @@ import {
   DialogFooter,
 } from "@core/ui/dialog";
 import { Button } from "@core/ui/button";
-import { Input } from "@core/ui/input";
 import { Label } from "@core/ui/label";
 import { Textarea } from "@core/ui/textarea";
 import { Alert, AlertDescription } from "@core/ui/alert";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@core/ui/select";
 import { AlertCircle, UserCheck } from "lucide-react";
 import type { CrmOpportunity, AssignOpportunityOwnerInput } from "../../domain/entities/OpportunityEntity";
+
+const COMMERCIAL_REPRESENTATIVES: Array<{ id: string; labelEn: string; labelAr: string }> = [
+  {
+    id: "11111111-1111-1111-1111-111111111111",
+    labelEn: "Ahmed El-Shenawy — Commercial Director",
+    labelAr: "أحمد الشناوي — المدير التجاري",
+  },
+  {
+    id: "22222222-2222-2222-2222-222222222222",
+    labelEn: "Tariq Al-Dosari — Senior Account Executive",
+    labelAr: "طارق الدوسري — مسؤول حسابات أول",
+  },
+  {
+    id: "33333333-3333-3333-3333-333333333333",
+    labelEn: "Sara Al-Mansour — Enterprise Sponsorship Lead",
+    labelAr: "سارة المنصور — قائد رعايات المؤسسات",
+  },
+  {
+    id: "44444444-4444-4444-4444-444444444444",
+    labelEn: "Khaled Al-Harbi — Sports Partnerships Manager",
+    labelAr: "خالد الحربي — مدير الشراكات الرياضية",
+  },
+];
+
+const COMMERCIAL_TEAMS: Array<{ id: string; labelEn: string; labelAr: string }> = [
+  {
+    id: "aaaa1111-1111-1111-1111-111111111111",
+    labelEn: "Enterprise Sponsorships & Naming Rights",
+    labelAr: "رعايات المؤسسات وحقوق التسمية",
+  },
+  {
+    id: "bbbb2222-2222-2222-2222-222222222222",
+    labelEn: "Club & Academy Commercial Desk",
+    labelAr: "المكتب التجاري للأندية والأكاديميات",
+  },
+  {
+    id: "cccc3333-3333-3333-3333-333333333333",
+    labelEn: "Venue & Tournament Partnerships",
+    labelAr: "شراكات المنشآت والبطولات",
+  },
+  {
+    id: "dddd4444-4444-4444-4444-444444444444",
+    labelEn: "Regional Key Accounts",
+    labelAr: "الحسابات الإقليمية الرئيسية",
+  },
+];
 
 /**
  * Properties for AssignOwnerDialog.
@@ -31,7 +83,7 @@ export interface AssignOwnerDialogProps {
 }
 
 /**
- * Dialog to reassign an opportunity to a new owner user or team.
+ * Dialog to reassign an opportunity to a commercial representative and optional commercial team.
  */
 export function AssignOwnerDialog({
   open,
@@ -44,19 +96,47 @@ export function AssignOwnerDialog({
   const { t, language } = useI18n();
   const isRtl = language === "ar";
 
-  const [ownerUserId, setOwnerUserId] = useState<string>("");
-  const [ownerTeamId, setOwnerTeamId] = useState<string>("");
+  const [ownerUserId, setOwnerUserId] = useState<string>(COMMERCIAL_REPRESENTATIVES[0].id);
+  const [ownerTeamId, setOwnerTeamId] = useState<string>("__none__");
   const [assignmentReason, setAssignmentReason] = useState<string>("");
   const [validationError, setValidationError] = useState<string | null>(null);
 
   useEffect(() => {
     if (opportunity) {
-      setOwnerUserId(opportunity.ownerUserId || "");
-      setOwnerTeamId(opportunity.ownerTeamId || "");
+      setOwnerUserId(opportunity.ownerUserId || COMMERCIAL_REPRESENTATIVES[0].id);
+      setOwnerTeamId(opportunity.ownerTeamId || "__none__");
       setAssignmentReason("");
       setValidationError(null);
     }
   }, [opportunity]);
+
+  const repOptions = useMemo(() => {
+    const base = COMMERCIAL_REPRESENTATIVES.map((r) => ({
+      id: r.id,
+      label: isRtl ? r.labelAr : r.labelEn,
+    }));
+    if (opportunity?.ownerUserId && !base.some((b) => b.id === opportunity.ownerUserId)) {
+      base.unshift({
+        id: opportunity.ownerUserId,
+        label: t("crmOpportunities.dialogs.assign.currentOwnerOption"),
+      });
+    }
+    return base;
+  }, [isRtl, opportunity?.ownerUserId, t]);
+
+  const teamOptions = useMemo(() => {
+    const base = COMMERCIAL_TEAMS.map((tm) => ({
+      id: tm.id,
+      label: isRtl ? tm.labelAr : tm.labelEn,
+    }));
+    if (opportunity?.ownerTeamId && !base.some((b) => b.id === opportunity.ownerTeamId)) {
+      base.unshift({
+        id: opportunity.ownerTeamId,
+        label: t("crmOpportunities.dialogs.assign.currentTeamOption"),
+      });
+    }
+    return base;
+  }, [isRtl, opportunity?.ownerTeamId, t]);
 
   if (!opportunity) return null;
 
@@ -65,14 +145,17 @@ export function AssignOwnerDialog({
     setValidationError(null);
 
     if (!ownerUserId.trim()) {
-      setValidationError("Owner user ID is required.");
+      setValidationError(t("crmOpportunities.dialogs.assign.ownerRequiredError"));
       return;
     }
+
+    const resolvedTeamId =
+      ownerTeamId && ownerTeamId !== "__none__" ? ownerTeamId.trim() : undefined;
 
     const payload: AssignOpportunityOwnerInput = {
       opportunityId: opportunity.id,
       ownerUserId: ownerUserId.trim(),
-      ownerTeamId: ownerTeamId.trim() || undefined,
+      ownerTeamId: resolvedTeamId,
       assignmentReason: assignmentReason.trim() || undefined,
       expectedRowVersion: opportunity.rowVersion,
     };
@@ -111,22 +194,37 @@ export function AssignOwnerDialog({
               {t("crmOpportunities.dialogs.assign.ownerLabel")}{" "}
               <span className="text-destructive">*</span>
             </Label>
-            <Input
-              id="assign-owner-id"
-              placeholder={t("crmOpportunities.dialogs.assign.ownerPlaceholder")}
-              value={ownerUserId}
-              onChange={(e) => setOwnerUserId(e.target.value)}
-            />
+            <Select value={ownerUserId} onValueChange={setOwnerUserId}>
+              <SelectTrigger id="assign-owner-id">
+                <SelectValue placeholder={t("crmOpportunities.dialogs.assign.ownerPlaceholder")} />
+              </SelectTrigger>
+              <SelectContent>
+                {repOptions.map((rep) => (
+                  <SelectItem key={rep.id} value={rep.id}>
+                    {rep.label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
 
           <div className="space-y-1.5">
-            <Label htmlFor="assign-team-id">Owner Team ID (Optional)</Label>
-            <Input
-              id="assign-team-id"
-              placeholder="Team ID"
-              value={ownerTeamId}
-              onChange={(e) => setOwnerTeamId(e.target.value)}
-            />
+            <Label htmlFor="assign-team-id">{t("crmOpportunities.dialogs.assign.teamLabel")}</Label>
+            <Select value={ownerTeamId} onValueChange={setOwnerTeamId}>
+              <SelectTrigger id="assign-team-id">
+                <SelectValue placeholder={t("crmOpportunities.dialogs.assign.teamPlaceholder")} />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="__none__">
+                  {t("crmOpportunities.dialogs.assign.noTeamOption")}
+                </SelectItem>
+                {teamOptions.map((team) => (
+                  <SelectItem key={team.id} value={team.id}>
+                    {team.label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
 
           <div className="space-y-1.5">
