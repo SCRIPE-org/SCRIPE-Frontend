@@ -85,7 +85,7 @@ export function ActivityTimeline({
         <div className="flex items-center gap-2">
           <h3 className={`text-xs font-bold text-nx-ink flex items-center gap-1.5 ${!isRtl ? "uppercase tracking-wider font-mono" : ""}`}>
             <Clock className="size-3.5 text-nx-accent" />
-            {t("crmActivities.timeline.title") || "Activity & Interaction Timeline"}
+            {t("crmActivities.timeline.title")}
           </h3>
           <Badge variant="secondary" className="bg-nx-surface border-nx-line text-[10px] font-mono px-1.5 py-0 text-nx-ink-2">
             {state.totalCount}
@@ -96,10 +96,10 @@ export function ActivityTimeline({
           <div className="hidden sm:flex items-center gap-1 bg-nx-ground p-0.5 rounded-md border border-nx-line text-[11px]">
             {(
               [
-                { key: "ALL", label: t("common.all") || "All" },
-                { key: "Note", label: t("crmActivities.kinds.notes") || "Notes" },
-                { key: "CallLog", label: t("crmActivities.kinds.calls") || "Calls" },
-                { key: "MeetingLog", label: t("crmActivities.kinds.meetings") || "Meetings" },
+                { key: "ALL", label: t("crmActivities.timeline.filterAll") },
+                { key: "Note", label: t("crmActivities.kinds.notes") },
+                { key: "CallLog", label: t("crmActivities.kinds.calls") },
+                { key: "MeetingLog", label: t("crmActivities.kinds.meetings") },
               ] as const
             ).map((f) => (
               <Button
@@ -219,7 +219,7 @@ export function ActivityTimeline({
                     size="sm"
                     onClick={() => setCommChannel(ch)}
                     className={`h-8 text-xs ${
-                      commChannel === ch ? "border-nx-accent/40 bg-nx-accent-wash text-nx-accent font-bold" : "border-nx-line bg-nx-raised text-nx-ink-2"
+                      commChannel === ch ? "border-primary bg-nx-surface text-nx-ink font-bold" : "border-nx-line bg-nx-raised text-nx-ink-2"
                     }`}
                   >
                     {t(`crmActivities.communication.channels.${ch}`)}
