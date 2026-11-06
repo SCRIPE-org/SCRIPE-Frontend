@@ -67,6 +67,11 @@ export function useTransitionInspectorViewModel({
   const [showTriggerSelector, setShowTriggerSelector] = useState(false);
 
   useEffect(() => {
+    setShowMultiFromSelector(false);
+    setShowTriggerSelector(false);
+  }, [selectedTransition.id]);
+
+  useEffect(() => {
     if (openRuleCatalogSignal && openRuleCatalogSignal > 0) {
       setRuleCatalogFilter("all");
       setRuleCatalogOpen(true);
@@ -111,7 +116,7 @@ export function useTransitionInspectorViewModel({
 
   const attachedCatalogRules = selectedTransition.catalogRules ?? [];
 
-  const handleAddCatalogRule = (ruleTypeKey: string) => {
+  const handleAddCatalogRule = (ruleTypeKey: string, configOverride?: Record<string, string>) => {
     const def = CRM_RULE_CATALOG_DEFINITIONS.find((d) => d.ruleTypeKey === ruleTypeKey);
     if (!def) return;
     const rule: CrmWorkflowCatalogRule = {
@@ -122,12 +127,20 @@ export function useTransitionInspectorViewModel({
       titleAr: def.titleAr,
       descriptionEn: def.descriptionEn,
       descriptionAr: def.descriptionAr,
-      config: def.defaultConfig ? { ...def.defaultConfig } : {},
+      config: configOverride ? { ...configOverride } : def.defaultConfig ? { ...def.defaultConfig } : {},
     };
     const nextRules = [...attachedCatalogRules, rule];
+    const promptKeys =
+      def.ruleTypeKey === "input.prompt_fields" && configOverride?.fieldKeys
+        ? configOverride.fieldKeys.split(",").map((k) => k.trim()).filter(Boolean)
+        : [];
+    const nextRequiredFields = promptKeys.length > 0
+      ? Array.from(new Set([...selectedTransition.requiredFields, ...promptKeys]))
+      : selectedTransition.requiredFields;
     onTransitionChange({
       ...selectedTransition,
       catalogRules: nextRules,
+      requiredFields: nextRequiredFields,
       triggerDealConversion:
         def.ruleTypeKey === "action.convert_lead_to_deal"
           ? true

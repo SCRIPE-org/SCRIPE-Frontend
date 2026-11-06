@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import { Button } from "@core/ui/button";
 import { Input } from "@core/ui/input";
+import { STAGE_COLOR_PALETTE, buildCustomHexHarmonicStyles, resolveDefaultStageColor } from "@modules/crm";
 import type { CrmWorkflowStageNode } from "./CrmWorkflowCanvas2D";
 
 export interface CrmWorkflowMinimapProps {
@@ -15,6 +16,8 @@ export interface CrmWorkflowMinimapProps {
   canvasHeight: number;
   nodeWidth: number;
   nodeHeight: number;
+  scrollLeft?: number;
+  scrollTop?: number;
   onZoomChange: (zoom: number) => void;
   onSelectStage: (stageKey: string | null) => void;
   onSelectTransition: (id: string | null) => void;
@@ -34,14 +37,19 @@ export function CrmWorkflowMinimap({
   canvasHeight,
   nodeWidth,
   nodeHeight,
+  scrollLeft = 0,
+  scrollTop = 0,
   onZoomChange,
   onSelectStage,
   onSelectTransition,
   onPanToNormalized,
 }: CrmWorkflowMinimapProps) {
-  const [viewportLeftPct, setViewportLeftPct] = useState(2);
-  const [viewportTopPct, setViewportTopPct] = useState(4);
-  const viewportWidthPct = Math.min(72, Math.max(28, Math.round((80 / Math.max(50, zoom)) * 46)));
+  const [manualLeftPct, setManualLeftPct] = useState(2);
+  const [manualTopPct, setManualTopPct] = useState(4);
+  const viewportWidthPct = Math.min(82, Math.max(32, Math.round((80 / Math.max(50, zoom)) * 68)));
+  const scale = zoom / 100;
+  const scrollLeftPct = scrollLeft > 0 ? Math.min(100 - viewportWidthPct, Math.round((scrollLeft / Math.max(1, canvasWidth * scale)) * 100)) : manualLeftPct;
+  const scrollTopPct = scrollTop > 0 ? Math.min(24, Math.round((scrollTop / Math.max(1, canvasHeight * scale)) * 100)) : manualTopPct;
 
   return (
     <div
@@ -59,16 +67,16 @@ export function CrmWorkflowMinimap({
           const rect = e.currentTarget.getBoundingClientRect();
           const rx = rect.width > 0 ? (e.clientX - rect.left) / rect.width : 0.25;
           const ry = rect.height > 0 ? (e.clientY - rect.top) / rect.height : 0.25;
-          setViewportLeftPct(Math.min(100 - viewportWidthPct, Math.max(2, Math.round(rx * 100 - viewportWidthPct / 2))));
-          setViewportTopPct(Math.min(20, Math.max(2, Math.round(ry * 20))));
+          setManualLeftPct(Math.min(100 - viewportWidthPct, Math.max(2, Math.round(rx * 100 - viewportWidthPct / 2))));
+          setManualTopPct(Math.min(20, Math.max(2, Math.round(ry * 20))));
           onPanToNormalized(rx, ry);
         }}
       >
         <div
           data-testid="minimap-viewport-box"
           style={{
-            left: `${viewportLeftPct}%`,
-            top: `${viewportTopPct}%`,
+            left: `${scrollLeftPct}%`,
+            top: `${scrollTopPct}%`,
             width: `${viewportWidthPct}%`,
             height: "88%",
           }}
@@ -80,20 +88,16 @@ export function CrmWorkflowMinimap({
           const widthPct = Math.max(7, Math.round((nodeWidth / canvasWidth) * 100));
           const heightPct = Math.max(14, Math.round((nodeHeight / canvasHeight) * 100));
           const isSel = selectedStageKey === s.stageKey;
-          const colorCls =
-            s.isTerminalWon || s.category === "done"
-              ? "bg-success/80 border-success"
-              : s.isTerminalLost || s.category === "lost"
-                ? "bg-destructive/80 border-destructive"
-                : s.category === "todo"
-                  ? "bg-nx-ink-3/70 border-nx-line-hi"
-                  : "bg-info/80 border-info";
+          const colorToken = resolveDefaultStageColor(s.stageKey, s.category, s.order, s.color || s.properties?.color);
+          const colorCls = (STAGE_COLOR_PALETTE[colorToken] ?? STAGE_COLOR_PALETTE.blue).minimapClass;
+          const customHex = buildCustomHexHarmonicStyles(s.customColorHex || s.properties?.customColorHex);
           return (
             <div
               key={s.stageKey}
               role="button"
               tabIndex={0}
               data-testid={`minimap-node-${s.stageKey}`}
+              data-stage-color={customHex.isValidHex ? customHex.normalizedHex : colorToken}
               title={isAr ? s.labelAr : s.labelEn}
               onClick={(ev) => {
                 ev.stopPropagation();
@@ -112,6 +116,9 @@ export function CrmWorkflowMinimap({
                 top: `${topPct}%`,
                 width: `${widthPct}%`,
                 height: `${heightPct}%`,
+                ...(customHex.isValidHex
+                  ? { backgroundColor: customHex.minimapFill, borderColor: customHex.minimapStroke }
+                  : {}),
               }}
               className={`absolute rounded-xs border transition-transform ${colorCls} ${
                 isSel ? "ring-2 ring-primary scale-110 z-10" : "opacity-85 hover:opacity-100"

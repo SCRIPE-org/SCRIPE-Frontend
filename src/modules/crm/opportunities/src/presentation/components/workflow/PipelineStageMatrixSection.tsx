@@ -14,7 +14,7 @@ import {
   PERMITTED_EXIT_FIELDS,
   EXIT_FIELD_LABELS,
   type StageDraftState,
-} from "../admin/PipelineAdminDialog";
+} from "../admin/PipelineAdminStageRow";
 import type { CrmCustomFieldDefinition } from "@modules/crm";
 
 export const CRM_PERMITTED_EXIT_FIELD_KEYS = PERMITTED_EXIT_FIELDS;

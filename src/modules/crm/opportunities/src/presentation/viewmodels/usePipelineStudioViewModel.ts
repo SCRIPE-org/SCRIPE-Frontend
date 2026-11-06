@@ -14,6 +14,7 @@ import type {
 import {
   buildStageNodesFromWorkflow,
   buildTransitionsFromWorkflow,
+  computeBalanced2DStagePosition,
   serializeStudioDraftToWorkflow,
 } from "../components/workflow/crmWorkflowStudioMappers";
 
@@ -26,7 +27,7 @@ export function usePipelineStudioViewModel(defaultOpenStudio = false) {
     workflows, activeDealWorkflowId, activeLeadWorkflowId,
     setActiveWorkflow, saveWorkflow, createWorkflow, cloneWorkflow, deleteWorkflow,
   } = useCrmWorkflowsStore();
-  const { crmCustomFields, addCrmCustomField, isServerHydrated, hydrateFromServer } = useCrmSettingsStore();
+  const { crmCustomFields, addCrmCustomField, isHydrating, isServerHydrated, hydrateFromServer } = useCrmSettingsStore();
 
   useEffect(() => {
     const isTestEnv = typeof process !== "undefined" && process.env?.NODE_ENV === "test";
@@ -127,22 +128,22 @@ export function usePipelineStudioViewModel(defaultOpenStudio = false) {
     setHasChanges(true);
   };
   const handleMoveStageOrder = (stageKey: string, direction: "up" | "down") => {
-    const nonTerm = stages.filter((s) => !s.isTerminalWon && !s.isTerminalLost).sort((a, b) => a.order - b.order);
-    const idx = nonTerm.findIndex((s) => s.stageKey === stageKey);
+    const ordered = [...stages].sort((a, b) => a.order - b.order);
+    const idx = ordered.findIndex((s) => s.stageKey === stageKey);
     const swapIdx = direction === "up" ? idx - 1 : idx + 1;
-    if (idx < 0 || swapIdx < 0 || swapIdx >= nonTerm.length) return;
-    const aKey = nonTerm[idx].stageKey;
-    const bKey = nonTerm[swapIdx].stageKey;
+    if (idx < 0 || swapIdx < 0 || swapIdx >= ordered.length) return;
+    const aKey = ordered[idx].stageKey;
+    const bKey = ordered[swapIdx].stageKey;
     setStages((prev) =>
       prev.map((s) =>
-        s.stageKey === aKey ? { ...s, order: nonTerm[swapIdx].order, x: nonTerm[swapIdx].x }
-        : s.stageKey === bKey ? { ...s, order: nonTerm[idx].order, x: nonTerm[idx].x } : s,
+        s.stageKey === aKey ? { ...s, order: ordered[swapIdx].order, x: ordered[swapIdx].x, y: ordered[swapIdx].y }
+        : s.stageKey === bKey ? { ...s, order: ordered[idx].order, x: ordered[idx].x, y: ordered[idx].y } : s,
       ),
     );
     setHasChanges(true);
   };
   const handleRemoveStage = (stageKey: string) => {
-    if (stages.filter((s) => !s.isTerminalWon && !s.isTerminalLost).length <= 2) {
+    if (stages.length <= 2) {
       setValidationBanner(t("crmOpportunities.pipelinesPage.minTwoStatusesError"));
       return;
     }
@@ -152,7 +153,7 @@ export function usePipelineStudioViewModel(defaultOpenStudio = false) {
     setHasChanges(true);
   };
   const handleReplaceStage = (stageKeyToRemove: string, replacementStageKey: string) => {
-    if (stages.filter((s) => !s.isTerminalWon && !s.isTerminalLost).length <= 2) {
+    if (stages.length <= 2) {
       setValidationBanner(t("crmOpportunities.pipelinesPage.minTwoStatusesError"));
       return;
     }
@@ -180,17 +181,17 @@ export function usePipelineStudioViewModel(defaultOpenStudio = false) {
     const stageKey = `${prefix}.${slug}`;
     const nonTerm = stages.filter((s) => !s.isTerminalWon && !s.isTerminalLost);
     const nextOrder = nonTerm.length + 1;
-    const newStageX = 116 + (nextOrder - 1) * 360;
+    const pos = computeBalanced2DStagePosition(nextOrder - 1);
     const newNode: CrmWorkflowStageNode = {
       stageKey, labelEn: newStageNameEn.trim(), labelAr: newStageNameAr.trim() || newStageNameEn.trim(),
       probability: newStageProb, slaDays: newStageSla, order: nextOrder,
       isTerminalWon: false, isTerminalLost: false, convertsToDeal: activeEntity === "lead" ? newStageConvertsLead : false,
-      requiredExitFields: [], x: newStageX, y: 176,
+      requiredExitFields: [], x: pos.x, y: pos.y,
     };
     setStages((prev) => [
       ...prev.map((s) =>
         s.isTerminalWon || s.isTerminalLost
-          ? { ...s, x: Math.max(s.x, newStageX + 188 + 204), order: s.order + 1 }
+          ? { ...s, order: s.order + 1 }
           : s,
       ),
       newNode,
@@ -267,6 +268,7 @@ export function usePipelineStudioViewModel(defaultOpenStudio = false) {
   };
 
   return {
+    isHydrating,
     workflows, activeDealWorkflowId, activeLeadWorkflowId, selectedWorkflow, selectedWorkflowId,
     isStudioOpen, setIsStudioOpen, directoryFilter, setDirectoryFilter, directorySearch, setDirectorySearch,
     filteredDirectoryWorkflows, activeEntity, viewMode, setViewMode, zoom, setZoom,

@@ -50,6 +50,7 @@ export function useStageInspectorViewModel({
   const [newCfKey, setNewCfKey] = useState("");
   const [newCfNameEn, setNewCfNameEn] = useState("");
   const [newCfNameAr, setNewCfNameAr] = useState("");
+  const [newCfType, setNewCfType] = useState<CrmCustomFieldDefinition["valueType"]>("Text");
   const [replaceModalOpen, setReplaceModalOpen] = useState(false);
   const [replacementTargetKey, setReplacementTargetKey] = useState<string>("");
   const [stagePropKey, setStagePropKey] = useState("");
@@ -57,14 +58,10 @@ export function useStageInspectorViewModel({
   const [showStagePropForm, setShowStagePropForm] = useState(false);
 
   const nonTerminalStages = stages.filter((s) => !s.isTerminalWon && !s.isTerminalLost);
-  const canDeleteStage =
-    selectedStage !== null &&
-    !selectedStage.isTerminalWon &&
-    !selectedStage.isTerminalLost &&
-    nonTerminalStages.length > 2;
+  const canDeleteStage = selectedStage !== null && stages.length > 2;
 
   const candidateReplacementStages = selectedStage
-    ? nonTerminalStages.filter((s) => s.stageKey !== selectedStage.stageKey)
+    ? stages.filter((s) => s.stageKey !== selectedStage.stageKey)
     : [];
 
   const outgoing = selectedStage
@@ -101,7 +98,7 @@ export function useStageInspectorViewModel({
       key,
       labelEn: newCfNameEn.trim(),
       labelAr: newCfNameAr.trim() || newCfNameEn.trim(),
-      valueType: "Text",
+      valueType: newCfType,
       isRequired: false,
       defaultStageGateKey: selectedStage.stageKey,
     });
@@ -109,6 +106,7 @@ export function useStageInspectorViewModel({
     setNewCfKey("");
     setNewCfNameEn("");
     setNewCfNameAr("");
+    setNewCfType("Text");
     setShowCfForm(false);
   };
 
@@ -154,6 +152,8 @@ export function useStageInspectorViewModel({
     setNewCfNameEn,
     newCfNameAr,
     setNewCfNameAr,
+    newCfType,
+    setNewCfType,
     replaceModalOpen,
     setReplaceModalOpen,
     replacementTargetKey,

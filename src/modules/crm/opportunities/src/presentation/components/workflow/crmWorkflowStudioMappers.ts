@@ -1,41 +1,83 @@
-import type { CrmWorkflowDefinition } from "@modules/crm";
+import {
+  resolveDefaultStageColor,
+  type CrmWorkflowDefinition,
+} from "@modules/crm";
 import type {
   CrmWorkflowStageNode,
   CrmWorkflowTransition,
 } from "./CrmWorkflowCanvas2D";
+
+/** Computes a generous 2-row 2D topological position (Row 1 y=64, Row 2 y=340, dx=300) so transition pills have a 172px vertical corridor with zero collisions. */
+export function computeBalanced2DStagePosition(idx: number): { x: number; y: number } {
+  if (idx < 3) {
+    return { x: 110 + idx * 300, y: 64 };
+  }
+  const row = Math.floor(idx / 3);
+  const col = idx % 3;
+  return {
+    x: 160 + col * 300,
+    y: 64 + row * 276,
+  };
+}
 
 /** Builds 2D Studio stage nodes from a persisted CrmWorkflowDefinition. */
 export function buildStageNodesFromWorkflow(
   wf: CrmWorkflowDefinition,
 ): CrmWorkflowStageNode[] {
   const sorted = [...wf.stages].sort((a, b) => a.sortOrder - b.sortOrder);
-  const nodes: CrmWorkflowStageNode[] = sorted.map((st, idx) => ({
-    stageKey: st.stageKey,
-    labelEn: st.labelEn,
-    labelAr: st.labelAr,
-    probability: st.winProbabilityPercent ?? 0,
-    slaDays:
-      st.slaDays ??
-      (st.category === "done" || st.category === "lost"
-        ? 0
-        : Math.max(2, (idx + 1) * 3)),
-    order: st.sortOrder || idx + 1,
-    category: st.category ?? (idx === 0 ? "todo" : "in_progress"),
-    properties: st.properties ? { ...st.properties } : {},
-    isTerminalWon: st.category === "done" && wf.entityType === "deal",
-    isTerminalLost: st.category === "lost",
-    convertsToDeal: Boolean(
-      st.triggerDealConversion || st.triggersDealConversion,
-    ),
-    requiredExitFields: [...(st.requiredExitFields ?? [])],
-    x: st.position?.x && st.position.x >= 116 + idx * 360 ? st.position.x : 116 + idx * 360,
-    y: st.position?.y ?? 176,
-  }));
+  let nonTermIdx = 0;
+  const nodes: CrmWorkflowStageNode[] = sorted.map((st, idx) => {
+    const isDealWon = wf.entityType === "deal" && (st.stageKey === "terminal-won" || st.category === "done");
+    const isDealLost = wf.entityType === "deal" && (st.stageKey === "terminal-lost" || st.category === "lost");
+    const defPos = isDealWon
+      ? { x: 1010, y: 64 }
+      : isDealLost
+        ? { x: 1010, y: 340 }
+        : computeBalanced2DStagePosition(nonTermIdx++);
+    const hasCustomPos =
+      st.position &&
+      typeof st.position.x === "number" &&
+      typeof st.position.y === "number" &&
+      st.position.x <= 1100 &&
+      st.position.y !== 72 &&
+      st.position.y !== 272 &&
+      st.position.y !== 96 &&
+      st.position.y !== 260;
+    const category = st.category ?? (idx === 0 ? "todo" : "in_progress");
+    const color = resolveDefaultStageColor(
+      st.stageKey,
+      category,
+      st.sortOrder || idx + 1,
+      st.color || st.properties?.color,
+    );
+    return {
+      stageKey: st.stageKey,
+      labelEn: st.labelEn,
+      labelAr: st.labelAr,
+      probability: st.winProbabilityPercent ?? 0,
+      slaDays:
+        st.slaDays ??
+        (category === "done" || category === "lost"
+          ? 0
+          : Math.max(2, (idx + 1) * 3)),
+      order: st.sortOrder || idx + 1,
+      category,
+      color,
+      customColorHex: st.customColorHex || st.properties?.customColorHex,
+      properties: st.properties ? { ...st.properties } : {},
+      isTerminalWon: isDealWon,
+      isTerminalLost: isDealLost,
+      convertsToDeal: Boolean(
+        st.triggerDealConversion || st.triggersDealConversion,
+      ),
+      requiredExitFields: [...(st.requiredExitFields ?? [])],
+      x: hasCustomPos ? st.position!.x : defPos.x,
+      y: hasCustomPos ? st.position!.y : defPos.y,
+    };
+  });
 
-  if (wf.entityType === "deal") {
-    const lastStageX = nodes.length > 0 ? Math.max(...nodes.map((n) => n.x)) : 116;
-    const termX = Math.max(116 + sorted.length * 360 + 32, lastStageX + 188 + 204);
-    if (!nodes.some((n) => n.stageKey === "terminal-won")) {
+  if (wf.entityType === "deal" && wf.properties?.customTerminalStages !== "true") {
+    if (!nodes.some((n) => n.stageKey === "terminal-won" || n.isTerminalWon)) {
       nodes.push({
         stageKey: "terminal-won",
         labelEn: "Closed Won",
@@ -44,14 +86,15 @@ export function buildStageNodesFromWorkflow(
         slaDays: 0,
         order: sorted.length + 1,
         category: "done",
+        color: "emerald",
         isTerminalWon: true,
         isTerminalLost: false,
         requiredExitFields: [],
-        x: termX,
-        y: 92,
+        x: 1010,
+        y: 64,
       });
     }
-    if (!nodes.some((n) => n.stageKey === "terminal-lost")) {
+    if (!nodes.some((n) => n.stageKey === "terminal-lost" || n.isTerminalLost)) {
       nodes.push({
         stageKey: "terminal-lost",
         labelEn: "Closed Lost",
@@ -60,22 +103,23 @@ export function buildStageNodesFromWorkflow(
         slaDays: 0,
         order: sorted.length + 2,
         category: "lost",
+        color: "rose",
         isTerminalWon: false,
         isTerminalLost: true,
         requiredExitFields: [],
-        x: termX,
-        y: 260,
+        x: 1010,
+        y: 340,
       });
     }
   }
   return nodes;
 }
 
-/** Builds 2D Studio transitions from a persisted CrmWorkflowDefinition. */
+/** Builds 2D Studio transitions from a persisted CrmWorkflowDefinition, connecting Closed Won and Closed Lost as first-class stages. */
 export function buildTransitionsFromWorkflow(
   wf: CrmWorkflowDefinition,
 ): CrmWorkflowTransition[] {
-  return wf.transitions.map((tr) => ({
+  const mapped: CrmWorkflowTransition[] = wf.transitions.map((tr) => ({
     id: tr.id,
     nameEn: tr.nameEn,
     nameAr: tr.nameAr,
@@ -105,6 +149,72 @@ export function buildTransitionsFromWorkflow(
       ? "crm.transition.work_item"
       : "",
   }));
+
+  if (wf.entityType === "deal" && wf.properties?.customTerminalStages !== "true") {
+    const sorted = [...wf.stages].sort((a, b) => a.sortOrder - b.sortOrder);
+    const firstStage = sorted[0];
+    const lastActive = [...sorted].reverse().find((s) => s.category !== "done" && s.category !== "lost") ?? sorted[sorted.length - 1];
+    if (lastActive && !mapped.some((t) => t.toStageKey === "terminal-won")) {
+      mapped.push({
+        id: "tr-deal-close-won",
+        nameEn: "Close as Won",
+        nameAr: "إغلاق كصفقة رابحة",
+        fromStageKey: lastActive.stageKey,
+        fromStageKeys: [lastActive.stageKey],
+        toStageKey: "terminal-won",
+        direction: "forward",
+        domainEventKey: "DealClosedWonEvent",
+        triggers: [],
+        properties: {},
+        catalogRules: [],
+        requiredFields: ["partyId", "estimatedAmount"],
+        requireReason: false,
+        requireNote: false,
+        allowRollback: true,
+        requireVerifiedParty: true,
+        requireEstimatedAmountPositive: true,
+      });
+    }
+    if (!mapped.some((t) => t.toStageKey === "terminal-lost")) {
+      mapped.push({
+        id: "tr-deal-mark-lost",
+        nameEn: "Mark as Lost",
+        nameAr: "تسجيل كصفقة خاسرة",
+        fromStageKey: "*",
+        fromStageKeys: ["*"],
+        toStageKey: "terminal-lost",
+        direction: "global",
+        domainEventKey: "DealClosedLostEvent",
+        triggers: [],
+        properties: {},
+        catalogRules: [],
+        requiredFields: [],
+        requireReason: true,
+        requireNote: false,
+        allowRollback: true,
+      });
+    }
+    if (firstStage && !mapped.some((t) => t.fromStageKey === "terminal-lost")) {
+      mapped.push({
+        id: "tr-deal-reopen-lost",
+        nameEn: "Reopen Deal",
+        nameAr: "إعادة فتح الصفقة",
+        fromStageKey: "terminal-lost",
+        fromStageKeys: ["terminal-lost"],
+        toStageKey: firstStage.stageKey,
+        direction: "backward",
+        domainEventKey: "DealReopenedEvent",
+        triggers: [],
+        properties: {},
+        catalogRules: [],
+        requiredFields: [],
+        requireReason: true,
+        requireNote: false,
+        allowRollback: true,
+      });
+    }
+  }
+  return mapped;
 }
 
 /** Serializes 2D Studio stage nodes and transitions back into a CrmWorkflowDefinition. */
@@ -113,31 +223,44 @@ export function serializeStudioDraftToWorkflow(
   stages: CrmWorkflowStageNode[],
   transitions: CrmWorkflowTransition[],
 ): CrmWorkflowDefinition {
-  const nonTerm = stages.filter((s) => !s.isTerminalWon && !s.isTerminalLost);
   const existingMap = new Map(selectedWorkflow.stages.map((st) => [st.stageKey, st]));
   const orderMap = new Map(stages.map((st) => [st.stageKey, st.order]));
   return {
     ...selectedWorkflow,
     version: (selectedWorkflow.version ?? 1) + 1,
-    stages: nonTerm.map((s) => {
+    properties: {
+      ...(selectedWorkflow.properties ?? {}),
+      customTerminalStages: "true",
+    },
+    stages: stages.map((s, idx) => {
       const prev = existingMap.get(s.stageKey);
+      const category =
+        s.category ??
+        prev?.category ??
+        (s.isTerminalWon ? "done" : s.isTerminalLost ? "lost" : s.convertsToDeal ? "done" : s.order === 1 ? "todo" : "in_progress");
+      const color = resolveDefaultStageColor(s.stageKey, category, idx + 1, s.color ?? prev?.color);
+      const customColorHex = s.customColorHex ?? s.properties?.customColorHex ?? prev?.customColorHex ?? prev?.properties?.customColorHex;
       return {
         stageKey: s.stageKey,
         labelEn: s.labelEn,
         labelAr: s.labelAr,
-        sortOrder: s.order,
-        category:
-          s.category ??
-          prev?.category ??
-          (s.convertsToDeal ? "done" : s.order === 1 ? "todo" : "in_progress"),
+        sortOrder: idx + 1,
+        category,
+        color,
+        customColorHex,
         winProbabilityPercent: s.probability,
         slaDays: s.slaDays,
-        properties: s.properties ?? prev?.properties,
+        properties: {
+          ...(prev?.properties ?? {}),
+          ...(s.properties ?? {}),
+          color,
+          ...(customColorHex ? { customColorHex } : {}),
+        },
         requiredExitFields: s.requiredExitFields,
         requiresVerifiedParty: s.requiredExitFields.includes("partyId"),
         triggerDealConversion: Boolean(s.convertsToDeal),
         triggersDealConversion: Boolean(s.convertsToDeal),
-        allowInboundFromAny: prev?.allowInboundFromAny,
+        allowInboundFromAny: prev?.allowInboundFromAny ?? s.isTerminalLost,
         position: { x: s.x, y: s.y },
       };
     }),

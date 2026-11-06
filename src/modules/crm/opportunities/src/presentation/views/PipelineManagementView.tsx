@@ -6,6 +6,7 @@ import { usePipelineStudioViewModel } from "../viewmodels/usePipelineStudioViewM
 import { CrmWorkflowsDirectorySection } from "../components/workflow/CrmWorkflowsDirectorySection";
 import { CrmWorkflowFullscreenStudio } from "../components/workflow/CrmWorkflowFullscreenStudio";
 import { CrmWorkflowStudioDialogs } from "../components/workflow/CrmWorkflowStudioDialogs";
+import { PipelineStudioSkeleton } from "../components/workflow/PipelineStudioSkeleton";
 
 export interface PipelineManagementViewProps {
   defaultOpenStudio?: boolean;
@@ -17,6 +18,14 @@ export function PipelineManagementView({
   const { t, language } = useI18n();
   const isAr = language === "ar";
   const vm = usePipelineStudioViewModel(defaultOpenStudio);
+
+  if (vm.isHydrating) {
+    return (
+      <div className="space-y-6 pb-8" data-testid="pipeline-management-page">
+        <PipelineStudioSkeleton />
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6 pb-8" data-testid="pipeline-management-page">

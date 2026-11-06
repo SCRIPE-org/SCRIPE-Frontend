@@ -3,7 +3,12 @@
 import React from "react";
 import { CheckCircle2, Clock, GripVertical, Lock, XCircle } from "lucide-react";
 import { Badge } from "@core/ui/badge";
-import type { CrmCustomFieldDefinition } from "@modules/crm";
+import {
+  STAGE_COLOR_PALETTE,
+  buildCustomHexHarmonicStyles,
+  resolveDefaultStageColor,
+  type CrmCustomFieldDefinition,
+} from "@modules/crm";
 import type {
   CrmWorkflowStageNode,
   CrmWorkflowTransition,
@@ -53,9 +58,24 @@ export function CrmWorkflowStageNodeCard({
   onStartWireDraft,
   onSelectGlobalTransition,
 }: CrmWorkflowStageNodeCardProps) {
+  const colorToken = resolveDefaultStageColor(
+    stage.stageKey,
+    stage.category,
+    stage.order,
+    stage.color || stage.properties?.color,
+  );
+  const palette = STAGE_COLOR_PALETTE[colorToken] ?? STAGE_COLOR_PALETTE.blue;
+  const customHex = buildCustomHexHarmonicStyles(stage.customColorHex || stage.properties?.customColorHex);
+
   return (
     <div
-      style={{ left: stage.x, top: stage.y, width: NODE_WIDTH, height: NODE_HEIGHT }}
+      style={{
+        left: stage.x,
+        top: stage.y,
+        width: NODE_WIDTH,
+        height: NODE_HEIGHT,
+        ...(customHex.isValidHex && !isSelected ? customHex.nodeCardStyle : {}),
+      }}
       onMouseEnter={onMouseEnter}
       onMouseLeave={onMouseLeave}
       onPointerDown={onPointerDownNode}
@@ -64,14 +84,11 @@ export function CrmWorkflowStageNodeCard({
         onClickNode();
       }}
       data-testid={`canvas-node-${stage.stageKey}`}
-      className={`absolute rounded-md border bg-nx-surface p-2.5 flex flex-col justify-between transition-colors cursor-grab active:cursor-grabbing ${
+      data-stage-color={customHex.isValidHex ? customHex.normalizedHex : colorToken}
+      className={`absolute rounded-md border bg-nx-surface p-2.5 flex flex-col justify-between transition-colors cursor-grab active:cursor-grabbing ${palette.headerBorderClass} ${
         isSelected
           ? "border-primary ring-2 ring-primary/30"
-          : stage.isTerminalWon
-            ? "border-success/60 hover:border-success"
-            : stage.isTerminalLost
-              ? "border-destructive/60 hover:border-destructive"
-              : "border-nx-line-hi hover:border-primary/60"
+          : palette.borderClass
       }`}
     >
       {/* 8 Connection Ports (2 per side: Top, Right, Bottom, Left) */}
@@ -99,6 +116,10 @@ export function CrmWorkflowStageNodeCard({
       <div className="flex items-center justify-between gap-1">
         <span className="inline-flex items-center gap-1 text-[10px] font-mono font-bold uppercase text-nx-ink-2">
           <GripVertical className="w-3 h-3 text-nx-ink-3" />
+          <span
+            style={customHex.isValidHex ? customHex.dotStyle : undefined}
+            className={`w-2 h-2 rounded-full shrink-0 ${palette.dotClass}`}
+          />
           {stage.isTerminalWon ? (
             <span className="inline-flex items-center gap-1 text-success">
               <CheckCircle2 className="w-3 h-3" />
@@ -117,7 +138,11 @@ export function CrmWorkflowStageNodeCard({
             `${t("crmOpportunities.pipelinesPage.stageBadgeStep")} ${stage.order}`
           )}
         </span>
-        <Badge variant="outline" className="text-[10px] font-mono px-1.5 py-0 text-nx-ink">
+        <Badge
+          variant="outline"
+          style={customHex.isValidHex ? customHex.badgeStyle : undefined}
+          className={`text-[10px] font-mono px-1.5 py-0 ${palette.badgeClass}`}
+        >
           {stage.probability}%
         </Badge>
       </div>
@@ -151,14 +176,16 @@ export function CrmWorkflowStageNodeCard({
         )}
       </div>
 
-      {globalIncoming.map((gtr) => (
+      {globalIncoming.map((gtr, idx) => (
         <div
           key={gtr.id}
+          data-testid={`canvas-transition-global-${gtr.toStageKey}`}
           onClick={(e) => {
             e.stopPropagation();
             onSelectGlobalTransition(gtr.id);
           }}
-          className="absolute -bottom-6 left-1/2 -translate-x-1/2 px-2 py-0.5 rounded-full border border-nx-line-hi bg-nx-raised text-[9px] font-semibold text-nx-ink whitespace-nowrap cursor-pointer hover:border-primary"
+          style={{ top: NODE_HEIGHT + 14 + idx * 28 }}
+          className="absolute end-1 px-2 py-0.5 rounded-full border border-nx-line-hi bg-nx-surface text-[9.5px] font-semibold text-nx-ink whitespace-nowrap cursor-pointer hover:border-primary z-20"
         >
           {t("crmOpportunities.pipelinesPage.globalAllTransitionBadge")}:{" "}
           {isAr ? gtr.nameAr : gtr.nameEn}

@@ -124,25 +124,38 @@ export function CrmWorkflowTransitionRulesSection({
               )}
               {attachedCatalogRules
                 .filter((r) => r.category === cat.id)
-                .map((r) => (
-                  <div
-                    key={r.id}
-                    className="flex items-center justify-between rounded border border-nx-line bg-nx-raised px-2 py-1 text-[11px]"
-                  >
-                    <span className="truncate font-medium text-nx-ink">
-                      {isAr ? r.titleAr : r.titleEn}
-                    </span>
-                    <Button
-                      size="icon"
-                      variant="ghost"
-                      className="h-5 w-5 text-destructive"
-                      onClick={() => onRemoveCatalogRule(r.id)}
-                      data-testid={`remove-catalog-rule-${r.id}`}
+                .map((r) => {
+                  const cfgSummary = r.config
+                    ? r.config.approverRoles || r.config.allowedPrincipals || r.config.fieldKeys || r.config.fieldKey || r.config.committeeRoles || r.config.priorStageKeys || ""
+                    : "";
+                  return (
+                    <div
+                      key={r.id}
+                      data-testid={`attached-catalog-rule-${r.ruleTypeKey}`}
+                      className="flex items-center justify-between gap-1.5 rounded border border-nx-line bg-nx-raised px-2 py-1 text-[11px]"
                     >
-                      <X className="w-3 h-3" />
-                    </Button>
-                  </div>
-                ))}
+                      <div className="min-w-0 flex-1">
+                        <span className="truncate font-medium text-nx-ink block">
+                          {isAr ? r.titleAr : r.titleEn}
+                        </span>
+                        {cfgSummary && (
+                          <span className="truncate font-mono text-[10px] text-nx-ink-3 block">
+                            {cfgSummary}
+                          </span>
+                        )}
+                      </div>
+                      <Button
+                        size="icon"
+                        variant="ghost"
+                        className="h-5 w-5 text-destructive shrink-0"
+                        onClick={() => onRemoveCatalogRule(r.id)}
+                        data-testid={`remove-catalog-rule-${r.id}`}
+                      >
+                        <X className="w-3 h-3" />
+                      </Button>
+                    </div>
+                  );
+                })}
             </div>
           )}
         </div>
