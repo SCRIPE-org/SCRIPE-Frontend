@@ -614,5 +614,35 @@ describe("KanbanBoard Component", () => {
 
       expect(onMoveStage).not.toHaveBeenCalled();
     });
+
+    it("renders all 7 columns with canonical probabilities (10%, 25%, 50%, 75%, 90%, 100%, 0%), custom labels prioritized, and Closed Won without redundant party gate banner when includeOutcomeStagesAsColumns is true", () => {
+      const uniform50Stages = [
+        { stageKey: "default.discovery", labelEn: "Discovery", labelAr: "استكشاف", sortOrder: 1, winProbabilityPercent: 50, requiresVerifiedParty: false },
+        { stageKey: "default.qualification", labelEn: "Qualification", labelAr: "تأهيل", sortOrder: 2, winProbabilityPercent: 50, requiresVerifiedParty: false },
+        { stageKey: "default.solution_fit", labelEn: "Solution Fit", labelAr: "ملاءمة الحل", sortOrder: 3, winProbabilityPercent: 50, requiresVerifiedParty: false },
+        { stageKey: "default.proposal", labelEn: "Proposal", labelAr: "عرض السعر", sortOrder: 4, winProbabilityPercent: 50, requiresVerifiedParty: true },
+        { stageKey: "default.negotiation", labelEn: "Negotiation", labelAr: "تفاوض", sortOrder: 5, winProbabilityPercent: 50, requiresVerifiedParty: true },
+      ];
+      render(
+        <KanbanBoard
+          opportunities={mockOpportunities}
+          stages={uniform50Stages}
+          hideOutcomeDropzones
+          onMoveStage={vi.fn()}
+        />
+      );
+
+      const cols = document.querySelectorAll('[data-testid^="kanban-column-"]');
+      expect(cols.length).toBe(7);
+      expect(screen.getByText("10%")).toBeDefined();
+      expect(screen.getByText("25%")).toBeDefined();
+      expect(screen.getByText("50%")).toBeDefined();
+      expect(screen.getByText("75%")).toBeDefined();
+      expect(screen.getByText("90%")).toBeDefined();
+      expect(screen.getByText("100%")).toBeDefined();
+      expect(screen.getByText("0%")).toBeDefined();
+      expect(screen.getByText("Closed Won")).toBeDefined();
+      expect(screen.getByText("Closed Lost")).toBeDefined();
+    });
   });
 });

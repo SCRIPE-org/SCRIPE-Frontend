@@ -206,14 +206,23 @@ describe("PipelineManagementView — Pipelines Directory & Full-Screen 2D Workfl
     expect(screen.getByTestId("crm-pipelines-list-page")).toBeDefined();
   });
 
-  it("syncs custom Deals & Leads workflows to CrmTenantSettings.CustomFieldsConfigJson on create, clone, activate, save, and delete", async () => {
+  it("syncs custom Deals & Leads workflows relationally to /api/v1/crm/pipelines without storing workflows in CustomFieldsConfigJson", async () => {
     const { setCrmContainer } = await import("@modules/crm/di");
     const mockUpdateTenantSettings = vi.fn().mockResolvedValue({});
     const mockGetSettings = vi.fn();
+    const mockSavePipeline = vi.fn().mockResolvedValue({});
+    const mockActivatePipeline = vi.fn().mockResolvedValue({});
+    const mockGetPipelines = vi.fn();
     setCrmContainer({
       overviewRepository: {
         updateTenantSettings: mockUpdateTenantSettings,
         getSettings: mockGetSettings,
+      },
+      opportunityRepository: {
+        savePipeline: mockSavePipeline,
+        activatePipeline: mockActivatePipeline,
+        getPipelines: mockGetPipelines,
+        updateDefaultPipeline: vi.fn().mockResolvedValue({}),
       },
     } as any);
 
@@ -222,19 +231,17 @@ describe("PipelineManagementView — Pipelines Directory & Full-Screen 2D Workfl
       nameEn: "VIP Sponsorship Leads",
       nameAr: "عملاء كبار الرعاة",
     });
-    expect(mockUpdateTenantSettings).toHaveBeenCalledTimes(1);
-    const lastPayload = mockUpdateTenantSettings.mock.calls[0][0];
-    const parsedConfig = JSON.parse(lastPayload.customFieldsConfigJson);
-    expect(Array.isArray(parsedConfig.workflows)).toBe(true);
-    expect(parsedConfig.workflows.some((w: any) => w.id === created.id)).toBe(true);
+    expect(mockSavePipeline).toHaveBeenCalledTimes(1);
+    expect(mockSavePipeline.mock.calls[0][0]).toBe(created.id);
+    expect(mockSavePipeline.mock.calls[0][1].entityType).toBe("lead");
+    expect(mockUpdateTenantSettings).not.toHaveBeenCalled();
 
-    // Activate custom workflow -> syncs activeLeadWorkflowId to backend
+    // Activate custom workflow -> calls relational activatePipeline and savePipeline
     useCrmWorkflowsStore.getState().setActiveWorkflow(created.id);
-    expect(mockUpdateTenantSettings).toHaveBeenCalledTimes(2);
-    const activePayload = JSON.parse(mockUpdateTenantSettings.mock.calls[1][0].customFieldsConfigJson);
-    expect(activePayload.activeLeadWorkflowId).toBe(created.id);
+    expect(mockActivatePipeline).toHaveBeenCalledWith(created.id);
+    expect(mockSavePipeline).toHaveBeenCalledTimes(2);
 
-    // Hydrate from server restores workflows and active IDs after a local reset
+    // Hydrate from server restores workflows and active IDs from relational /api/v1/crm/pipelines
     useCrmWorkflowsStore.getState().resetDefaults();
     expect(useCrmWorkflowsStore.getState().activeLeadWorkflowId).toBe("wf-lead-default");
 
@@ -245,7 +252,7 @@ describe("PipelineManagementView — Pipelines Directory & Full-Screen 2D Workfl
       tenantSettings: {
         baseCurrencyCode: "SAR",
         defaultDealCurrencyCode: "SAR",
-        customFieldsConfigJson: JSON.stringify(activePayload),
+        customFieldsConfigJson: JSON.stringify({ customFields: [] }),
       },
       userPreferences: {
         defaultDealViewMode: "Kanban",
@@ -253,6 +260,19 @@ describe("PipelineManagementView — Pipelines Directory & Full-Screen 2D Workfl
         cardDensity: "Comfortable",
       },
     });
+    mockGetPipelines.mockResolvedValue([
+      {
+        id: created.id,
+        code: created.id,
+        entityType: "lead",
+        nameEn: created.nameEn,
+        nameAr: created.nameAr,
+        isDefault: true,
+        version: 1,
+        stages: created.stages,
+        transitionsJson: JSON.stringify(created.transitions),
+      },
+    ]);
     await useCrmSettingsStore.getState().hydrateFromServer();
     expect(useCrmWorkflowsStore.getState().activeLeadWorkflowId).toBe(created.id);
     expect(useCrmWorkflowsStore.getState().workflows.some((w) => w.id === created.id)).toBe(true);
@@ -273,12 +293,29 @@ describe("PipelineManagementView — Pipelines Directory & Full-Screen 2D Workfl
     fireEvent.change(searchInput, { target: { value: "Approval" } });
     expect(screen.getByTestId("rule-catalog-item-restrict.approval_required")).toBeDefined();
 
-    // Click Select on the rule
+    // Click Select on the rule to advance to Step 2 (Rule Configuration)
     fireEvent.click(screen.getByTestId("select-catalog-rule-restrict.approval_required"));
+    expect(screen.getByTestId("rule-catalog-step2-config")).toBeDefined();
+    expect(screen.getByTestId("rule-catalog-transition-select")).toBeDefined();
+
+    // Confirm and add rule in Step 2
+    fireEvent.click(screen.getByTestId("confirm-add-catalog-rule-btn"));
 
     await waitFor(() => {
       expect(screen.queryByTestId("workflow-rule-catalog-modal")).toBeNull();
     });
+
+    // Open Add transition property modal and save a key/value property
+    fireEvent.click(screen.getByTestId("inspector-transition-add-property-btn"));
+    expect(screen.getByTestId("transition-properties-modal")).toBeDefined();
+    fireEvent.change(screen.getByTestId("transition-prop-key-input"), {
+      target: { value: "jira.i18n.title" },
+    });
+    fireEvent.change(screen.getByTestId("transition-prop-val-input"), {
+      target: { value: "Approve Transition" },
+    });
+    fireEvent.click(screen.getByTestId("transition-prop-save-btn"));
+    expect(screen.getByTestId("transition-prop-row-jira.i18n.title")).toBeDefined();
   });
 
   it("supports multi-source transitions, Domain Event selection, proportional 2D Mini-Map, Tidy Auto-Layout, and Status Replacement Migration Wizard", async () => {
@@ -318,6 +355,36 @@ describe("PipelineManagementView — Pipelines Directory & Full-Screen 2D Workfl
     await waitFor(() => {
       expect(screen.queryByTestId("canvas-node-default.solution_fit")).toBeNull();
     });
+  });
+
+  it("restores canonical win probabilities (10, 25, 50, 75, 90) and SLA days (7, 10, 14, 14, 21) when default pipeline hydrates with uniform 50% or null, and supports custom field valueType selection", () => {
+    useCrmWorkflowsStore.getState().hydrateFromBackendPipelines([
+      {
+        id: "backend-default-id",
+        code: "default",
+        entityType: "deal",
+        nameEn: "Standard Commercial Pipeline",
+        nameAr: "مسار المبيعات التجاري القياسي",
+        isDefault: true,
+        version: 1,
+        stages: [
+          { stageKey: "default.discovery", labelEn: "Discovery", labelAr: "استكشاف", sortOrder: 1, winProbabilityPercent: 50, requiresVerifiedParty: false },
+          { stageKey: "default.qualification", labelEn: "Qualification", labelAr: "تأهيل", sortOrder: 2, winProbabilityPercent: 50, requiresVerifiedParty: false },
+          { stageKey: "default.solution_fit", labelEn: "Solution Fit", labelAr: "ملاءمة الحل", sortOrder: 3, winProbabilityPercent: 50, requiresVerifiedParty: false },
+          { stageKey: "default.proposal", labelEn: "Proposal", labelAr: "عرض السعر", sortOrder: 4, winProbabilityPercent: 50, requiresVerifiedParty: true },
+          { stageKey: "default.negotiation", labelEn: "Negotiation", labelAr: "تفاوض", sortOrder: 5, winProbabilityPercent: 50, requiresVerifiedParty: true },
+        ],
+      },
+    ]);
+
+    const wf = useCrmWorkflowsStore.getState().workflows.find((w) => w.id === "wf-deal-default")!;
+    expect(wf.stages.map((s) => s.winProbabilityPercent)).toEqual([10, 25, 50, 75, 90]);
+    expect(wf.stages.map((s) => s.slaDays)).toEqual([7, 10, 14, 14, 21]);
+
+    render(<PipelineManagementView defaultOpenStudio />);
+    fireEvent.click(screen.getByTestId("canvas-node-default.discovery"));
+    fireEvent.click(screen.getByTestId("workflow-create-custom-field-btn"));
+    expect(screen.getByTestId("workflow-cf-type-select")).toBeDefined();
   });
 });
 

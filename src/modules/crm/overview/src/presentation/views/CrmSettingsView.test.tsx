@@ -5,6 +5,7 @@ import {
   useCrmSettingsStore,
   convertCrmCurrencyAmount,
   getCrossExchangeRate,
+  parseCustomGovernanceConfigJson,
 } from "../viewmodels/useCrmSettingsStore";
 import { setCrmContainer, type CrmContainer } from "@modules/crm/di";
 
@@ -159,4 +160,40 @@ describe("CrmSettingsView & Multi-Currency FX Engine", () => {
       expect(mockUpdateTenantSettings).toHaveBeenCalled();
     });
   });
+
+  it("respects empty arrays from server in parseCustomGovernanceConfigJson, keeps memberNames empty by default, and renders CrmSettingsSkeleton while hydrating", () => {
+    const state = useCrmSettingsStore.getState();
+    expect(state.crmRoles.every((r) => r.memberNames.length === 0)).toBe(true);
+
+    // Server returns explicit empty arrays -> must be respected without falling back to non-empty defaults
+    const parsed = parseCustomGovernanceConfigJson(
+      JSON.stringify({
+        customFields: [],
+        crmRoles: [],
+        buyingCommitteeRoles: [],
+        configuredLossReasons: [{ key: "budget_freeze", labelEn: "Budget Freeze", labelAr: "تجميد الميزانية" }],
+        configuredActivityTypes: [{ key: "exec_briefing", labelEn: "Executive Briefing", labelAr: "إحاطة تنفيذية" }],
+      }),
+      {
+        crmCustomFields: state.crmCustomFields,
+        crmRoles: state.crmRoles,
+        buyingCommitteeRoles: state.buyingCommitteeRoles,
+        configuredLossReasons: state.configuredLossReasons,
+        configuredActivityTypes: state.configuredActivityTypes,
+      },
+    );
+
+    expect(parsed.customFields).toEqual([]);
+    expect(parsed.crmRoles).toEqual([]);
+    expect(parsed.buyingCommitteeRoles).toEqual([]);
+    expect(parsed.configuredLossReasons).toHaveLength(1);
+    expect(parsed.configuredActivityTypes).toHaveLength(1);
+
+    // Verify CrmSettingsSkeleton renders when cold hydrating from server
+    mockGetSettings.mockReturnValue(new Promise(() => {}));
+    useCrmSettingsStore.setState({ isServerHydrated: false, isHydrating: true });
+    render(<CrmSettingsView />);
+    expect(screen.getByTestId("crm-settings-skeleton")).toBeDefined();
+  });
 });
+

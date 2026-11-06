@@ -1,8 +1,9 @@
-import { render, screen, waitFor } from "@testing-library/react";
+import { render, screen, waitFor, fireEvent } from "@testing-library/react";
 import { describe, expect, it, vi, beforeEach } from "vitest";
 import { OpportunityDetailView } from "./OpportunityDetailView";
 import { setCrmContainer } from "@modules/crm/di";
 import type { CrmContainer } from "@modules/crm/di";
+import { useCrmSettingsStore } from "@modules/crm";
 import {
   type OpportunityDetailResult,
   OpportunityStageTransitionKind,
@@ -119,9 +120,11 @@ describe("OpportunityDetailView Component", () => {
   };
 
   let mockRepo: any;
+  let mockOverviewRepo: any;
 
   beforeEach(() => {
     vi.clearAllMocks();
+    useCrmSettingsStore.getState().resetDefaults();
 
     mockRepo = {
       getOpportunities: vi.fn(),
@@ -134,9 +137,15 @@ describe("OpportunityDetailView Component", () => {
       reopenOpportunity: vi.fn(),
     };
 
+    mockOverviewRepo = {
+      getSettings: vi.fn().mockResolvedValue({}),
+      updateTenantSettings: vi.fn().mockResolvedValue({}),
+      updateUserPreferences: vi.fn().mockResolvedValue({}),
+    };
+
     const container: CrmContainer = {
       overviewService: {} as any,
-      overviewRepository: {} as any,
+      overviewRepository: mockOverviewRepo,
       leadService: {} as any,
       leadRepository: {} as any,
       opportunityService: {} as any,
@@ -150,7 +159,13 @@ describe("OpportunityDetailView Component", () => {
     setCrmContainer(container);
   });
 
-  it("renders opportunity header, detail metrics, and stage audit history", async () => {
+  it("renders shape-accurate OpportunityDetailSkeleton while opportunity detail is loading", () => {
+    mockRepo.getOpportunityById.mockReturnValue(new Promise(() => {}));
+    render(<OpportunityDetailView opportunityId="opp-123" />);
+    expect(screen.getByTestId("deal-detail-skeleton")).toBeDefined();
+  });
+
+  it("renders opportunity header, detail metrics, unclipped Buying Committee contact placeholder, and stage audit history", async () => {
     render(<OpportunityDetailView opportunityId="opp-123" />);
 
     await waitFor(() => {
@@ -160,6 +175,9 @@ describe("OpportunityDetailView Component", () => {
       expect(screen.getByText("Verified Account / Contact Linked")).toBeDefined();
     });
 
+    const partySelect = screen.getByTestId("committee-party-select");
+    expect(partySelect.textContent).toContain("Select Contact / Stakeholder...");
+
     // Check stage history table rendering
     await waitFor(() => {
       expect(screen.getByText("Pre-approved solution architecture via previous contract renewal")).toBeDefined();
@@ -168,4 +186,43 @@ describe("OpportunityDetailView Component", () => {
 
     expect(mockRepo.getOpportunityById).toHaveBeenCalledWith("opp-123");
   });
+
+  it("persists Deal Commercial Package quote items and handoff statuses to the backend server via CustomFieldsConfigJson", async () => {
+    render(<OpportunityDetailView opportunityId="opp-123" />);
+
+    await waitFor(() => {
+      expect(screen.getByTestId("venue-block-booking-hold-btn")).toBeDefined();
+    });
+
+    fireEvent.click(screen.getByTestId("venue-block-booking-hold-btn"));
+    fireEvent.click(screen.getByTestId("academy-b2b-sponsorship-btn"));
+
+    // Add a new commercial quote line item
+    fireEvent.change(screen.getByTestId("quote-item-name-input"), {
+      target: { value: "VIP Hospitality Suite Add-On" },
+    });
+    fireEvent.change(screen.getByTestId("quote-item-discount-input"), {
+      target: { value: "10" },
+    });
+    fireEvent.click(screen.getByTestId("quote-add-item-btn"));
+
+    await waitFor(() => {
+      const pkg = useCrmSettingsStore.getState().dealCommercialPackages["opp-123"];
+      expect(pkg).toBeDefined();
+      expect(pkg.venueHoldStatus).toBe("reserved");
+      expect(pkg.academyCohortStatus).toBe("provisioned");
+      expect(pkg.quoteItems.some((item) => item.itemName === "VIP Hospitality Suite Add-On")).toBe(true);
+      expect(mockOverviewRepo.updateTenantSettings).toHaveBeenCalled();
+    });
+
+    const lastPayload =
+      mockOverviewRepo.updateTenantSettings.mock.calls[
+        mockOverviewRepo.updateTenantSettings.mock.calls.length - 1
+      ][0];
+    const parsedEnvelope = JSON.parse(lastPayload.customFieldsConfigJson);
+    expect(parsedEnvelope.dealCommercialPackages["opp-123"].venueHoldStatus).toBe("reserved");
+    expect(parsedEnvelope.dealCommercialPackages["opp-123"].academyCohortStatus).toBe("provisioned");
+    expect(parsedEnvelope.dealCommercialPackages["opp-123"].quoteItems).toHaveLength(3);
+  });
 });
+

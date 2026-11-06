@@ -315,5 +315,57 @@ describe("OpportunitiesView Component", () => {
     // Reset back to Table
     useCrmSettingsStore.getState().setDefaultDealViewMode("Table");
   });
+
+  it("supports adding a custom exit gate field inline inside MoveStageDialog and enforces Boolean and Text custom field gate validation", async () => {
+    const { useCrmSettingsStore, useCrmWorkflowsStore } = await import("@modules/crm");
+    useCrmSettingsStore.getState().resetDefaults();
+    useCrmWorkflowsStore.getState().resetDefaults();
+
+    // Pre-register a Boolean custom field on default.discovery exit gate
+    useCrmSettingsStore.getState().addCrmCustomField({
+      entityTypeKey: "crm.opportunity",
+      key: "board_compliance_check",
+      labelEn: "Board Compliance Confirmed",
+      labelAr: "تأكيد امتثال المجلس",
+      valueType: "Boolean",
+      isRequired: true,
+      defaultStageGateKey: "default.discovery",
+    });
+
+    render(<OpportunitiesView />);
+
+    await waitFor(() => {
+      expect(screen.getAllByText("Al-Nassr Pitch Licensing Contract")[0]).toBeDefined();
+    });
+
+    const moveStageBtns = screen.getAllByText("crmOpportunities.actions.moveStage");
+    fireEvent.click(moveStageBtns[0]);
+
+    await waitFor(() => {
+      expect(screen.getByTestId("move-stage-gate-cf-board_compliance_check")).toBeDefined();
+    });
+
+    // Submitting without checking Boolean custom field should fail validation
+    const submitBtn = screen.getByText("crmOpportunities.dialogs.stage.submit");
+    fireEvent.click(submitBtn);
+    expect(mockRepo.moveStage).not.toHaveBeenCalled();
+
+    // Add a new custom field inline inside MoveStageDialog
+    fireEvent.click(screen.getByTestId("move-stage-add-cf-toggle-btn"));
+    fireEvent.change(screen.getByTestId("move-stage-cf-label-input"), {
+      target: { value: "Sponsor PO Number" },
+    });
+    fireEvent.change(screen.getByTestId("move-stage-cf-key-input"), {
+      target: { value: "sponsor_po_num" },
+    });
+    fireEvent.click(screen.getByTestId("move-stage-cf-save-btn"));
+
+    await waitFor(() => {
+      expect(screen.getByTestId("move-stage-gate-cf-sponsor_po_num")).toBeDefined();
+    });
+
+    useCrmSettingsStore.getState().resetDefaults();
+    useCrmWorkflowsStore.getState().resetDefaults();
+  });
 });
 
