@@ -1,7 +1,286 @@
+export * from "./crmWorkflowGovernanceCatalog";
+
 /** Entity types supported by the CRM Workflow Engine. */
 export type CrmWorkflowEntityType = "deal" | "lead";
 /** Visual and lifecycle category of a workflow stage node. */
 export type CrmWorkflowStageCategory = "todo" | "in_progress" | "done" | "lost";
+/** Semantic color token configurable per stage across Deals & Leads workflows, minimap, and Kanban columns (19 curated tokens). */
+export type CrmStageColorToken =
+  | "slate"
+  | "zinc"
+  | "blue"
+  | "sky"
+  | "cyan"
+  | "teal"
+  | "emerald"
+  | "green"
+  | "lime"
+  | "amber"
+  | "orange"
+  | "coral"
+  | "rose"
+  | "crimson"
+  | "pink"
+  | "fuchsia"
+  | "purple"
+  | "violet"
+  | "indigo";
+
+/** Ordered list of 19 semantic stage color tokens for the Status Inspector swatch picker. */
+export const CRM_STAGE_COLOR_TOKENS: CrmStageColorToken[] = [
+  "slate",
+  "zinc",
+  "blue",
+  "sky",
+  "cyan",
+  "teal",
+  "emerald",
+  "green",
+  "lime",
+  "amber",
+  "orange",
+  "coral",
+  "rose",
+  "crimson",
+  "pink",
+  "fuchsia",
+  "purple",
+  "violet",
+  "indigo",
+];
+
+/** Semantic styling classes for each of the 19 stage color tokens (Dark & Light safe). */
+export const STAGE_COLOR_PALETTE: Record<
+  CrmStageColorToken,
+  {
+    labelEn: string;
+    swatchClass: string;
+    borderClass: string;
+    badgeClass: string;
+    headerBorderClass: string;
+    dotClass: string;
+    minimapClass: string;
+    accentBarClass: string;
+  }
+> = {
+  slate: {
+    labelEn: "Slate",
+    swatchClass: "bg-slate-500",
+    borderClass: "border-nx-line bg-nx-surface hover:border-nx-line-hi",
+    badgeClass: "border-nx-line bg-nx-raised text-nx-ink-2",
+    headerBorderClass: "border-t-2 border-t-slate-400/70",
+    dotClass: "bg-slate-400",
+    minimapClass: "border-slate-400/60 bg-slate-500/25",
+    accentBarClass: "bg-slate-400/70",
+  },
+  zinc: {
+    labelEn: "Zinc",
+    swatchClass: "bg-zinc-500",
+    borderClass: "border-zinc-500/45 bg-zinc-500/[0.04] hover:border-zinc-500/70",
+    badgeClass: "border-zinc-500/40 bg-zinc-500/15 text-zinc-400",
+    headerBorderClass: "border-t-2 border-t-zinc-400/80",
+    dotClass: "bg-zinc-400",
+    minimapClass: "border-zinc-400/60 bg-zinc-500/25",
+    accentBarClass: "bg-zinc-400",
+  },
+  blue: {
+    labelEn: "Blue",
+    swatchClass: "bg-blue-500",
+    borderClass: "border-blue-500/45 bg-blue-500/[0.04] hover:border-blue-500/70",
+    badgeClass: "border-blue-500/40 bg-blue-500/15 text-blue-400",
+    headerBorderClass: "border-t-2 border-t-blue-500/80",
+    dotClass: "bg-blue-500",
+    minimapClass: "border-blue-500/60 bg-blue-500/25",
+    accentBarClass: "bg-blue-500",
+  },
+  sky: {
+    labelEn: "Sky",
+    swatchClass: "bg-sky-500",
+    borderClass: "border-sky-500/45 bg-sky-500/[0.04] hover:border-sky-500/70",
+    badgeClass: "border-sky-500/40 bg-sky-500/15 text-sky-400",
+    headerBorderClass: "border-t-2 border-t-sky-500/80",
+    dotClass: "bg-sky-500",
+    minimapClass: "border-sky-500/60 bg-sky-500/25",
+    accentBarClass: "bg-sky-500",
+  },
+  cyan: {
+    labelEn: "Cyan",
+    swatchClass: "bg-cyan-500",
+    borderClass: "border-cyan-500/45 bg-cyan-500/[0.04] hover:border-cyan-500/70",
+    badgeClass: "border-cyan-500/40 bg-cyan-500/15 text-cyan-400",
+    headerBorderClass: "border-t-2 border-t-cyan-500/80",
+    dotClass: "bg-cyan-500",
+    minimapClass: "border-cyan-500/60 bg-cyan-500/25",
+    accentBarClass: "bg-cyan-500",
+  },
+  teal: {
+    labelEn: "Teal",
+    swatchClass: "bg-teal-500",
+    borderClass: "border-teal-500/45 bg-teal-500/[0.04] hover:border-teal-500/70",
+    badgeClass: "border-teal-500/40 bg-teal-500/15 text-teal-400",
+    headerBorderClass: "border-t-2 border-t-teal-500/80",
+    dotClass: "bg-teal-500",
+    minimapClass: "border-teal-500/60 bg-teal-500/25",
+    accentBarClass: "bg-teal-500",
+  },
+  emerald: {
+    labelEn: "Emerald",
+    swatchClass: "bg-emerald-500",
+    borderClass: "border-success/50 bg-success/[0.05] hover:border-success/80",
+    badgeClass: "border-success/40 bg-success/15 text-success",
+    headerBorderClass: "border-t-2 border-t-success",
+    dotClass: "bg-success",
+    minimapClass: "border-success/60 bg-success/25",
+    accentBarClass: "bg-success",
+  },
+  green: {
+    labelEn: "Green",
+    swatchClass: "bg-green-500",
+    borderClass: "border-green-500/45 bg-green-500/[0.04] hover:border-green-500/70",
+    badgeClass: "border-green-500/40 bg-green-500/15 text-green-400",
+    headerBorderClass: "border-t-2 border-t-green-500/80",
+    dotClass: "bg-green-500",
+    minimapClass: "border-green-500/60 bg-green-500/25",
+    accentBarClass: "bg-green-500",
+  },
+  lime: {
+    labelEn: "Lime",
+    swatchClass: "bg-lime-500",
+    borderClass: "border-lime-500/45 bg-lime-500/[0.04] hover:border-lime-500/70",
+    badgeClass: "border-lime-500/40 bg-lime-500/15 text-lime-400",
+    headerBorderClass: "border-t-2 border-t-lime-500/80",
+    dotClass: "bg-lime-500",
+    minimapClass: "border-lime-500/60 bg-lime-500/25",
+    accentBarClass: "bg-lime-500",
+  },
+  amber: {
+    labelEn: "Amber",
+    swatchClass: "bg-amber-500",
+    borderClass: "border-warning/50 bg-warning/[0.05] hover:border-warning/80",
+    badgeClass: "border-warning/40 bg-warning/15 text-warning",
+    headerBorderClass: "border-t-2 border-t-warning",
+    dotClass: "bg-warning",
+    minimapClass: "border-warning/60 bg-warning/25",
+    accentBarClass: "bg-warning",
+  },
+  orange: {
+    labelEn: "Orange",
+    swatchClass: "bg-orange-500",
+    borderClass: "border-orange-500/45 bg-orange-500/[0.04] hover:border-orange-500/70",
+    badgeClass: "border-orange-500/40 bg-orange-500/15 text-orange-400",
+    headerBorderClass: "border-t-2 border-t-orange-500/80",
+    dotClass: "bg-orange-500",
+    minimapClass: "border-orange-500/60 bg-orange-500/25",
+    accentBarClass: "bg-orange-500",
+  },
+  coral: {
+    labelEn: "Coral",
+    swatchClass: "bg-red-400",
+    borderClass: "border-red-400/45 bg-red-400/[0.04] hover:border-red-400/70",
+    badgeClass: "border-red-400/40 bg-red-400/15 text-red-400",
+    headerBorderClass: "border-t-2 border-t-red-400/80",
+    dotClass: "bg-red-400",
+    minimapClass: "border-red-400/60 bg-red-400/25",
+    accentBarClass: "bg-red-400",
+  },
+  rose: {
+    labelEn: "Rose",
+    swatchClass: "bg-rose-500",
+    borderClass: "border-destructive/50 bg-destructive/[0.05] hover:border-destructive/80",
+    badgeClass: "border-destructive/40 bg-destructive/15 text-destructive",
+    headerBorderClass: "border-t-2 border-t-destructive",
+    dotClass: "bg-destructive",
+    minimapClass: "border-destructive/60 bg-destructive/25",
+    accentBarClass: "bg-destructive",
+  },
+  crimson: {
+    labelEn: "Crimson",
+    swatchClass: "bg-red-600",
+    borderClass: "border-red-600/45 bg-red-600/[0.04] hover:border-red-600/70",
+    badgeClass: "border-red-600/40 bg-red-600/15 text-red-500",
+    headerBorderClass: "border-t-2 border-t-red-600/80",
+    dotClass: "bg-red-600",
+    minimapClass: "border-red-600/60 bg-red-600/25",
+    accentBarClass: "bg-red-600",
+  },
+  pink: {
+    labelEn: "Pink",
+    swatchClass: "bg-pink-500",
+    borderClass: "border-pink-500/45 bg-pink-500/[0.04] hover:border-pink-500/70",
+    badgeClass: "border-pink-500/40 bg-pink-500/15 text-pink-400",
+    headerBorderClass: "border-t-2 border-t-pink-500/80",
+    dotClass: "bg-pink-500",
+    minimapClass: "border-pink-500/60 bg-pink-500/25",
+    accentBarClass: "bg-pink-500",
+  },
+  fuchsia: {
+    labelEn: "Fuchsia",
+    swatchClass: "bg-fuchsia-500",
+    borderClass: "border-fuchsia-500/45 bg-fuchsia-500/[0.04] hover:border-fuchsia-500/70",
+    badgeClass: "border-fuchsia-500/40 bg-fuchsia-500/15 text-fuchsia-400",
+    headerBorderClass: "border-t-2 border-t-fuchsia-500/80",
+    dotClass: "bg-fuchsia-500",
+    minimapClass: "border-fuchsia-500/60 bg-fuchsia-500/25",
+    accentBarClass: "bg-fuchsia-500",
+  },
+  purple: {
+    labelEn: "Purple",
+    swatchClass: "bg-purple-500",
+    borderClass: "border-purple-500/45 bg-purple-500/[0.04] hover:border-purple-500/70",
+    badgeClass: "border-purple-500/40 bg-purple-500/15 text-purple-400",
+    headerBorderClass: "border-t-2 border-t-purple-500/80",
+    dotClass: "bg-purple-500",
+    minimapClass: "border-purple-500/60 bg-purple-500/25",
+    accentBarClass: "bg-purple-500",
+  },
+  violet: {
+    labelEn: "Violet",
+    swatchClass: "bg-violet-500",
+    borderClass: "border-violet-500/45 bg-violet-500/[0.04] hover:border-violet-500/70",
+    badgeClass: "border-violet-500/40 bg-violet-500/15 text-violet-400",
+    headerBorderClass: "border-t-2 border-t-violet-500/80",
+    dotClass: "bg-violet-500",
+    minimapClass: "border-violet-500/60 bg-violet-500/25",
+    accentBarClass: "bg-violet-500",
+  },
+  indigo: {
+    labelEn: "Indigo",
+    swatchClass: "bg-indigo-500",
+    borderClass: "border-indigo-500/45 bg-indigo-500/[0.04] hover:border-indigo-500/70",
+    badgeClass: "border-indigo-500/40 bg-indigo-500/15 text-indigo-400",
+    headerBorderClass: "border-t-2 border-t-indigo-500/80",
+    dotClass: "bg-indigo-500",
+    minimapClass: "border-indigo-500/60 bg-indigo-500/25",
+    accentBarClass: "bg-indigo-500",
+  },
+};
+
+/** Resolves a deterministic semantic color token for a stage key or category. */
+export function resolveDefaultStageColor(
+  stageKey?: string | null,
+  category?: string | null,
+  sortOrder?: number | null,
+  explicitColor?: string | null
+): CrmStageColorToken {
+  if (explicitColor && (CRM_STAGE_COLOR_TOKENS as string[]).includes(explicitColor)) {
+    return explicitColor as CrmStageColorToken;
+  }
+  const norm = (stageKey || "").toLowerCase();
+  if (norm.includes("won") || norm.includes("converted") || norm.includes("deal")) return "emerald";
+  if (norm.includes("lost") || norm.includes("disqualified")) return "rose";
+  if (norm.includes("discovery") || norm.includes("new")) return "blue";
+  if (norm.includes("qualification") || norm.includes("working")) return "cyan";
+  if (norm.includes("solution_fit") || norm.includes("qualified")) return "indigo";
+  if (norm.includes("proposal")) return "violet";
+  if (norm.includes("negotiation")) return "amber";
+  if (category === "done") return "emerald";
+  if (category === "lost") return "rose";
+  if (category === "todo") return "blue";
+  const cycle: CrmStageColorToken[] = ["blue", "cyan", "indigo", "violet", "amber", "teal", "purple"];
+  const idx = Math.max(0, (sortOrder ?? 1) - 1) % cycle.length;
+  return cycle[idx];
+}
+
 /** The 4 Jira-surpassing rule categories. */
 export type CrmWorkflowRuleCategory = "restrict" | "input" | "validate" | "actions";
 
@@ -12,6 +291,8 @@ export interface CrmWorkflowStage {
   labelAr: string;
   sortOrder: number;
   category: CrmWorkflowStageCategory;
+  color?: CrmStageColorToken;
+  customColorHex?: string;
   winProbabilityPercent: number;
   requiredExitFields: string[];
   requiresVerifiedParty?: boolean;
@@ -50,17 +331,32 @@ export interface CrmWorkflowRuleCatalogTemplate {
   defaultConfig?: Record<string, string>;
 }
 
-/** Master catalog of 17 Jira-surpassing CRM Workflow Rules across all 4 categories. */
+/** Master catalog of 18 Jira-surpassing CRM Workflow Rules across all 4 categories. */
 export const CRM_RULE_CATALOG_DEFINITIONS: CrmWorkflowRuleCatalogTemplate[] = [
   // Category 1: Restrict (Conditions)
   {
     ruleTypeKey: "restrict.approval_required",
     category: "restrict",
     titleEn: "Block transition until approval",
-    titleAr: "حظر الانتقال حتى اعتماد المدير",
-    descriptionEn: "Require explicit Manager or Commercial Director approval before moving into the target stage.",
-    descriptionAr: "يتطلب موافقة صريحة من المدير قبل الانتقال إلى المرحلة المستهدفة.",
-    defaultConfig: { approverRole: "SalesManager" },
+    titleAr: "حظر الانتقال حتى اعتماد الدور أو المسؤول",
+    descriptionEn: "Require explicit Role or Record Principal approval (with Any/Unanimous Quorum) before moving into the target stage.",
+    descriptionAr: "يتطلب موافقة صريحة من الدور أو المسؤول المحدد (نصاب فردي أو إجماع) قبل الانتقال إلى المرحلة المستهدفة.",
+    defaultConfig: { principals: "role:sales_manager,principal:record.owner_manager", quorum: "any" },
+  },
+  {
+    ruleTypeKey: "restrict.approval_matrix",
+    category: "restrict",
+    titleEn: "Multi-Tier Value & Risk Approval Matrix",
+    titleAr: "مصفوفة الاعتماد متعددة المستويات حسب القيمة والمخاطر",
+    descriptionEn: "Route high-value deals through tiered approval thresholds (e.g. >= 100k Sales Manager; >= 500k Commercial Director + Finance Controller).",
+    descriptionAr: "توجيه الصفقات الكبرى عبر مستويات اعتماد متدرجة حسب القيمة المالية ونصاب الموافقة.",
+    defaultConfig: {
+      tier1MinAmount: "100000",
+      tier1Roles: "role:sales_manager",
+      tier2MinAmount: "500000",
+      tier2Roles: "role:commercial_director,role:finance_controller",
+      quorum: "all",
+    },
   },
   {
     ruleTypeKey: "restrict.subtasks_completed",
@@ -85,7 +381,7 @@ export const CRM_RULE_CATALOG_DEFINITIONS: CrmWorkflowRuleCatalogTemplate[] = [
     titleAr: "تقييد بناءً على قيمة حقل محدد",
     descriptionEn: "Allow transition only when a specified CRM or custom field matches the configured threshold.",
     descriptionAr: "السماح بالانتقال فقط عندما تطابق قيمة الحقل الشرط المحدد.",
-    defaultConfig: { fieldKey: "estimatedAmount", operator: "gt", value: "0" },
+    defaultConfig: { fieldKey: "estimatedAmount", operator: "greater_than", value: "0" },
   },
   {
     ruleTypeKey: "restrict.prior_status",
@@ -94,6 +390,7 @@ export const CRM_RULE_CATALOG_DEFINITIONS: CrmWorkflowRuleCatalogTemplate[] = [
     titleAr: "تقييد بناءً على المرور بمرحلة سابقة",
     descriptionEn: "Ensure the record has previously passed through a required qualification or compliance stage.",
     descriptionAr: "التأكد من مرور السجل بمرحلة تأهيل أو امتثال سابقة مطلوبة.",
+    defaultConfig: { requiredStageKey: "default.discovery" },
   },
   {
     ruleTypeKey: "restrict.separation_of_duties",
@@ -106,11 +403,15 @@ export const CRM_RULE_CATALOG_DEFINITIONS: CrmWorkflowRuleCatalogTemplate[] = [
   {
     ruleTypeKey: "restrict.roles_permissions",
     category: "restrict",
-    titleEn: "Restrict to roles, groups or permissions",
-    titleAr: "تقييد حسب الأدوار أو الصلاحيات",
-    descriptionEn: "Only users holding the specified PBAC permission or role can execute this transition.",
-    descriptionAr: "السماح فقط للمستخدمين الذين يملكون الصلاحية أو الدور المحدد.",
-    defaultConfig: { permission: "Permissions.CRM.Opportunities.Manage" },
+    titleEn: "Restrict to roles, principals or permissions",
+    titleAr: "تقييد حسب الأدوار أو المسؤولين أو الصلاحيات",
+    descriptionEn: "Only users matching the selected CRM Role, Record Principal, or PBAC permission can execute this transition.",
+    descriptionAr: "السماح فقط للمستخدمين الذين يطابقون الدور أو المسؤول النسبى أو الصلاحية المحددة.",
+    defaultConfig: {
+      principals: "role:sales_manager,principal:record.owner",
+      permissions: "crm.opportunities.stage.override",
+      quorum: "any",
+    },
   },
 
   // Category 2: Request Input (Transition Screens)
@@ -121,6 +422,7 @@ export const CRM_RULE_CATALOG_DEFINITIONS: CrmWorkflowRuleCatalogTemplate[] = [
     titleAr: "طلب إدخال حقول أثناء الانتقال",
     descriptionEn: "Open a dynamic transition screen prompting the user to fill missing exit/entry fields inline.",
     descriptionAr: "فتح نافذة ديناميكية لطلب استكمال الحقول المطلوبة أثناء الانتقال.",
+    defaultConfig: { fields: "estimatedAmount,targetCloseDate" },
   },
   {
     ruleTypeKey: "input.require_reason_and_note",
@@ -156,6 +458,7 @@ export const CRM_RULE_CATALOG_DEFINITIONS: CrmWorkflowRuleCatalogTemplate[] = [
     titleAr: "التحقق من القيمة المالية وتاريخ الإغلاق المستقبلي",
     descriptionEn: "Verify that Estimated Amount > 0 and Target Close Date is a valid future date.",
     descriptionAr: "التحقق من أن القيمة المقدرة أكبر من صفر وتاريخ الإغلاق في المستقبل.",
+    defaultConfig: { minAmount: "1000" },
   },
   {
     ruleTypeKey: "validate.active_quote",
@@ -182,6 +485,7 @@ export const CRM_RULE_CATALOG_DEFINITIONS: CrmWorkflowRuleCatalogTemplate[] = [
     titleAr: "إنشاء مهمة متابعة تلقائية",
     descriptionEn: "Automatically generate a follow-up Activity/Task assigned to the record owner upon transition.",
     descriptionAr: "إنشاء نشاط أو مهمة متابعة تلقائياً لمالك السجل فور الانتقال.",
+    defaultConfig: { taskSubject: "Follow up on stage transition", dueInDays: "2" },
   },
   {
     ruleTypeKey: "action.update_field",
@@ -190,6 +494,7 @@ export const CRM_RULE_CATALOG_DEFINITIONS: CrmWorkflowRuleCatalogTemplate[] = [
     titleAr: "تحديث حقل في السجل أو نسبة الفوز",
     descriptionEn: "Automatically set or clear a specified field or synchronize stage win probability.",
     descriptionAr: "تحديث قيمة حقل محدد أو مزامنة احتمالية الفوز تلقائياً.",
+    defaultConfig: { fieldKey: "winProbabilityPercent", value: "75" },
   },
   {
     ruleTypeKey: "action.emit_event_webhook",
@@ -198,6 +503,7 @@ export const CRM_RULE_CATALOG_DEFINITIONS: CrmWorkflowRuleCatalogTemplate[] = [
     titleAr: "إطلاق حدث النظام وإشعار Webhook خارجي",
     descriptionEn: "Publish the configured Domain Event to the Outbox and trigger external CRM/webhook integrations.",
     descriptionAr: "نشر حدث النطاق وإطلاق تكامل Webhook للأنظمة الخارجية.",
+    defaultConfig: { eventKey: "DealStageTransitionedEvent" },
   },
 ];
 
@@ -271,6 +577,12 @@ export interface EvaluatedWorkflowTransition {
   isBackward: boolean;
   domainEventKey?: string;
   postActions?: string[];
+  approvalRequirement?: {
+    required: boolean;
+    roles: string[];
+    quorum: "any" | "all";
+    matchedTierLabel?: string;
+  };
 }
 
 /** Factory helper for constructing a CrmWorkflowTransition with safe rule defaults. */
@@ -401,14 +713,40 @@ export function evaluateWorkflowTransition(
 
   // Evaluate attached 4-category catalog rules
   const catalogRules = matched.catalogRules ?? [];
+  let approvalRequirement: EvaluatedWorkflowTransition["approvalRequirement"] = undefined;
+  const dynamicPromptedFields: string[] = [];
+
   for (const cRule of catalogRules) {
     if (cRule.ruleTypeKey === "restrict.api_only") {
       const msg = `Transition "${matched.nameEn}" is restricted to automated API/system events only.`;
       return { allowed: false, reason: msg, reasonIfBlocked: msg, matchedTransition: matched, targetStage: toStage, shouldTriggerDealConversion: false, triggerDealConversion: false, requiredFields: [], promptForComment: false, isBackward };
     }
-    if (cRule.ruleTypeKey === "restrict.approval_required" && recordContext?.hasManagerApproval === false) {
-      const msg = `Transition "${matched.nameEn}" is blocked until Manager Approval is granted.`;
-      return { allowed: false, reason: msg, reasonIfBlocked: msg, matchedTransition: matched, targetStage: toStage, shouldTriggerDealConversion: false, triggerDealConversion: false, requiredFields: [], promptForComment: false, isBackward };
+    if (cRule.ruleTypeKey === "restrict.approval_required") {
+      const rawPrincipals = cRule.config?.principals || cRule.config?.approverRole || "role:sales_manager";
+      const roles = rawPrincipals.split(",").map((s) => s.trim()).filter(Boolean);
+      const quorum = cRule.config?.quorum === "all" ? "all" : "any";
+      approvalRequirement = { required: true, roles, quorum };
+      if (recordContext?.hasManagerApproval === false) {
+        const msg = `Transition "${matched.nameEn}" is blocked until Approval (${roles.join(", ")}) is granted.`;
+        return { allowed: false, reason: msg, reasonIfBlocked: msg, matchedTransition: matched, targetStage: toStage, shouldTriggerDealConversion: false, triggerDealConversion: false, requiredFields: [], promptForComment: false, isBackward, approvalRequirement };
+      }
+    }
+    if (cRule.ruleTypeKey === "restrict.approval_matrix") {
+      const t1Min = Number(cRule.config?.tier1MinAmount ?? 100000);
+      const t1Roles = (cRule.config?.tier1Roles || "role:sales_manager").split(",").map((s) => s.trim()).filter(Boolean);
+      const t2Min = Number(cRule.config?.tier2MinAmount ?? 500000);
+      const t2Roles = (cRule.config?.tier2Roles || "role:commercial_director,role:finance_controller").split(",").map((s) => s.trim()).filter(Boolean);
+      const matrixQuorum = cRule.config?.quorum === "any" ? "any" : "all";
+      const amt = recordContext?.estimatedAmount ?? t1Min;
+      if (amt >= t2Min) {
+        approvalRequirement = { required: true, roles: t2Roles, quorum: matrixQuorum, matchedTierLabel: `Tier 2 (>= ${t2Min.toLocaleString()})` };
+      } else if (amt >= t1Min) {
+        approvalRequirement = { required: true, roles: t1Roles, quorum: "any", matchedTierLabel: `Tier 1 (>= ${t1Min.toLocaleString()})` };
+      }
+      if (approvalRequirement?.required && recordContext?.hasManagerApproval === false) {
+        const msg = `Transition "${matched.nameEn}" requires ${approvalRequirement.matchedTierLabel} approval (${approvalRequirement.roles.join(", ")}).`;
+        return { allowed: false, reason: msg, reasonIfBlocked: msg, matchedTransition: matched, targetStage: toStage, shouldTriggerDealConversion: false, triggerDealConversion: false, requiredFields: [], promptForComment: false, isBackward, approvalRequirement };
+      }
     }
     if (cRule.ruleTypeKey === "restrict.subtasks_completed" && recordContext?.hasOpenSubtasks === true) {
       const msg = `Transition "${matched.nameEn}" is blocked because open subtasks or activities remain incomplete.`;
@@ -423,11 +761,19 @@ export function evaluateWorkflowTransition(
       const msg = `Four-Eyes Principle: the user who performed the previous stage move cannot execute "${matched.nameEn}".`;
       return { allowed: false, reason: msg, reasonIfBlocked: msg, matchedTransition: matched, targetStage: toStage, shouldTriggerDealConversion: false, triggerDealConversion: false, requiredFields: [], promptForComment: false, isBackward };
     }
-    if (cRule.ruleTypeKey === "validate.buying_committee_role" && recordContext?.contactRoles) {
-      const reqRole = cRule.config?.requiredRole || "DecisionMaker";
-      if (!recordContext.contactRoles.includes(reqRole)) {
-        const msg = `A Buying Committee Contact with role "${reqRole}" must be linked before executing "${matched.nameEn}".`;
-        return { allowed: false, reason: msg, reasonIfBlocked: msg, matchedTransition: matched, targetStage: toStage, shouldTriggerDealConversion: false, triggerDealConversion: false, requiredFields: [`contactRole:${reqRole}`], promptForComment: false, isBackward };
+    if (cRule.ruleTypeKey === "input.prompt_fields" && cRule.config?.fields) {
+      for (const f of cRule.config.fields.split(",").map((s) => s.trim()).filter(Boolean)) {
+        dynamicPromptedFields.push(f);
+      }
+    }
+    if (cRule.ruleTypeKey === "validate.buying_committee_role") {
+      dynamicPromptedFields.push("primaryContactRole");
+      if (recordContext?.contactRoles) {
+        const reqRole = (cRule.config?.requiredRoles || cRule.config?.requiredRole || cRule.config?.role || "DecisionMaker").split(",")[0].trim();
+        if (!recordContext.contactRoles.includes(reqRole)) {
+          const msg = `A Buying Committee Contact with role "${reqRole}" must be linked before executing "${matched.nameEn}".`;
+          return { allowed: false, reason: msg, reasonIfBlocked: msg, matchedTransition: matched, targetStage: toStage, shouldTriggerDealConversion: false, triggerDealConversion: false, requiredFields: [`contactRole:${reqRole}`], promptForComment: false, isBackward };
+        }
       }
     }
   }
@@ -450,6 +796,7 @@ export function evaluateWorkflowTransition(
       requiredFields: ["partyId"],
       promptForComment: false,
       isBackward,
+      approvalRequirement,
     };
   }
 
@@ -459,6 +806,7 @@ export function evaluateWorkflowTransition(
       ...(fromStage?.requiredExitFields ?? []),
       ...matched.rules.requiredFieldKeys,
       ...matched.rules.promptFields,
+      ...dynamicPromptedFields,
       ...(requiresParty ? ["partyId"] : []),
       ...(matched.rules.requireEstimatedAmountPositive || hasFinancialRule ? ["estimatedAmount"] : []),
       ...(matched.rules.requireTargetCloseDate || hasFinancialRule ? ["targetCloseDate"] : []),
@@ -486,6 +834,7 @@ export function evaluateWorkflowTransition(
     isBackward,
     domainEventKey: matched.domainEventKey ?? (shouldConvert ? "LeadConvertedEvent" : "GenericEvent"),
     postActions: catalogRules.filter((r) => r.category === "actions").map((r) => r.ruleTypeKey),
+    approvalRequirement,
   };
 }
 
@@ -498,11 +847,11 @@ export const INITIAL_CRM_WORKFLOWS: CrmWorkflowDefinition[] = [
     descriptionAr: "مسار مبيعات تجاري من 5 مراحل مع انتقالات أمامية وعكسية وبوابة التحقق من الحساب.",
     isActive: true, isTemplate: false, industryCategory: "B2B Commercial", version: 2, updatedAtUtc: "2026-01-01T00:00:00.000Z",
     stages: [
-      { stageKey: "default.discovery", labelEn: "Discovery", labelAr: "استكشاف", sortOrder: 1, category: "todo", winProbabilityPercent: 10, slaDays: 7, requiredExitFields: [] },
-      { stageKey: "default.qualification", labelEn: "Qualification", labelAr: "تأهيل", sortOrder: 2, category: "in_progress", winProbabilityPercent: 25, slaDays: 10, requiredExitFields: [] },
-      { stageKey: "default.solution_fit", labelEn: "Solution Fit", labelAr: "ملاءمة الحل", sortOrder: 3, category: "in_progress", winProbabilityPercent: 50, slaDays: 14, requiredExitFields: ["solutionFitConfirmed"] },
-      { stageKey: "default.proposal", labelEn: "Proposal", labelAr: "عرض السعر", sortOrder: 4, category: "in_progress", winProbabilityPercent: 75, slaDays: 14, requiredExitFields: ["partyId", "estimatedAmount"], requiresVerifiedParty: true },
-      { stageKey: "default.negotiation", labelEn: "Negotiation", labelAr: "تفاوض", sortOrder: 5, category: "in_progress", winProbabilityPercent: 90, slaDays: 21, requiredExitFields: ["partyId", "targetCloseDate"], requiresVerifiedParty: true },
+      { stageKey: "default.discovery", labelEn: "Discovery", labelAr: "استكشاف", sortOrder: 1, category: "todo", color: "blue", winProbabilityPercent: 10, slaDays: 7, requiredExitFields: [] },
+      { stageKey: "default.qualification", labelEn: "Qualification", labelAr: "تأهيل", sortOrder: 2, category: "in_progress", color: "cyan", winProbabilityPercent: 25, slaDays: 10, requiredExitFields: [] },
+      { stageKey: "default.solution_fit", labelEn: "Solution Fit", labelAr: "ملاءمة الحل", sortOrder: 3, category: "in_progress", color: "indigo", winProbabilityPercent: 50, slaDays: 14, requiredExitFields: ["solutionFitConfirmed"] },
+      { stageKey: "default.proposal", labelEn: "Proposal", labelAr: "عرض السعر", sortOrder: 4, category: "in_progress", color: "violet", winProbabilityPercent: 75, slaDays: 14, requiredExitFields: ["partyId", "estimatedAmount"], requiresVerifiedParty: true },
+      { stageKey: "default.negotiation", labelEn: "Negotiation", labelAr: "تفاوض", sortOrder: 5, category: "in_progress", color: "amber", winProbabilityPercent: 90, slaDays: 21, requiredExitFields: ["partyId", "targetCloseDate"], requiresVerifiedParty: true },
     ],
     transitions: [
       makeWorkflowTransition("tr-deal-1-2", "default.discovery", "default.qualification", "forward", "Qualify Deal", "تأهيل الصفقة"),
@@ -522,8 +871,8 @@ export const INITIAL_CRM_WORKFLOWS: CrmWorkflowDefinition[] = [
     descriptionAr: "مسار صفقات مبسط من مرحلتين فقط لإغلاق الرعايات السريعة.",
     isActive: false, isTemplate: true, industryCategory: "Express Sponsorship", version: 1, updatedAtUtc: "2026-01-01T00:00:00.000Z",
     stages: [
-      { stageKey: "default.discovery", labelEn: "Pitch & Qualification", labelAr: "العرض والتأهيل", sortOrder: 1, category: "todo", winProbabilityPercent: 35, slaDays: 5, requiredExitFields: ["estimatedAmount"] },
-      { stageKey: "default.proposal", labelEn: "Contract Closing", labelAr: "إغلاق العقد", sortOrder: 2, category: "in_progress", winProbabilityPercent: 85, slaDays: 7, requiredExitFields: ["partyId", "targetCloseDate"], requiresVerifiedParty: true },
+      { stageKey: "default.discovery", labelEn: "Pitch & Qualification", labelAr: "العرض والتأهيل", sortOrder: 1, category: "todo", color: "blue", winProbabilityPercent: 35, slaDays: 5, requiredExitFields: ["estimatedAmount"] },
+      { stageKey: "default.proposal", labelEn: "Contract Closing", labelAr: "إغلاق العقد", sortOrder: 2, category: "in_progress", color: "violet", winProbabilityPercent: 85, slaDays: 7, requiredExitFields: ["partyId", "targetCloseDate"], requiresVerifiedParty: true },
     ],
     transitions: [
       makeWorkflowTransition("tr-ft-1-2", "default.discovery", "default.proposal", "forward", "Advance to Closing", "الانتقال للإغلاق", { requireVerifiedParty: true, requireEstimatedAmountPositive: true, requiredFieldKeys: ["partyId", "estimatedAmount"] }),
@@ -537,10 +886,10 @@ export const INITIAL_CRM_WORKFLOWS: CrmWorkflowDefinition[] = [
     descriptionAr: "مسار متخصص للرعايات الرياضية وحقوق البث والتسمية من 4 مراحل مع بوابات التدقيق القانوني.",
     isActive: false, isTemplate: true, industryCategory: "Sports Sponsorship", version: 1, updatedAtUtc: "2026-01-01T00:00:00.000Z",
     stages: [
-      { stageKey: "default.discovery", labelEn: "Rights Inventory Match", labelAr: "مطابقة أصول الرعاية", sortOrder: 1, category: "todo", winProbabilityPercent: 15, slaDays: 7, requiredExitFields: [] },
-      { stageKey: "default.qualification", labelEn: "Brand Deck & Valuation", labelAr: "تقديم ملف الرعاية والتقييم", sortOrder: 2, category: "in_progress", winProbabilityPercent: 45, slaDays: 10, requiredExitFields: ["estimatedAmount"] },
-      { stageKey: "default.proposal", labelEn: "Category Exclusivity & Legal", labelAr: "الحصرية والمراجعة القانونية", sortOrder: 3, category: "in_progress", winProbabilityPercent: 75, slaDays: 14, requiredExitFields: ["partyId", "estimatedAmount"], requiresVerifiedParty: true },
-      { stageKey: "default.negotiation", labelEn: "Board Sign-Off & Activation", labelAr: "اعتماد مجلس الإدارة والتفعيل", sortOrder: 4, category: "in_progress", winProbabilityPercent: 95, slaDays: 10, requiredExitFields: ["partyId", "targetCloseDate"], requiresVerifiedParty: true },
+      { stageKey: "default.discovery", labelEn: "Rights Inventory Match", labelAr: "مطابقة أصول الرعاية", sortOrder: 1, category: "todo", color: "blue", winProbabilityPercent: 15, slaDays: 7, requiredExitFields: [] },
+      { stageKey: "default.qualification", labelEn: "Brand Deck & Valuation", labelAr: "تقديم ملف الرعاية والتقييم", sortOrder: 2, category: "in_progress", color: "cyan", winProbabilityPercent: 45, slaDays: 10, requiredExitFields: ["estimatedAmount"] },
+      { stageKey: "default.proposal", labelEn: "Category Exclusivity & Legal", labelAr: "الحصرية والمراجعة القانونية", sortOrder: 3, category: "in_progress", color: "violet", winProbabilityPercent: 75, slaDays: 14, requiredExitFields: ["partyId", "estimatedAmount"], requiresVerifiedParty: true },
+      { stageKey: "default.negotiation", labelEn: "Board Sign-Off & Activation", labelAr: "اعتماد مجلس الإدارة والتفعيل", sortOrder: 4, category: "in_progress", color: "amber", winProbabilityPercent: 95, slaDays: 10, requiredExitFields: ["partyId", "targetCloseDate"], requiresVerifiedParty: true },
     ],
     transitions: [
       makeWorkflowTransition("tr-sp-1-2", "default.discovery", "default.qualification", "forward", "Present Sponsorship Deck", "تقديم عرض الرعاية"),
@@ -556,9 +905,9 @@ export const INITIAL_CRM_WORKFLOWS: CrmWorkflowDefinition[] = [
     descriptionAr: "مسار حجوزات المنشآت والبطولات من 3 مراحل يشمل فحص التعارض، الدفعة المقدمة، والتخصيص النهائي.",
     isActive: false, isTemplate: true, industryCategory: "Venue Operations", version: 1, updatedAtUtc: "2026-01-01T00:00:00.000Z",
     stages: [
-      { stageKey: "default.discovery", labelEn: "Topology & Slot Check", labelAr: "فحص توافر الملاعب", sortOrder: 1, category: "todo", winProbabilityPercent: 25, slaDays: 3, requiredExitFields: [] },
-      { stageKey: "default.proposal", labelEn: "Deposit & Catering Quote", labelAr: "عرض السعر والتأمين", sortOrder: 2, category: "in_progress", winProbabilityPercent: 65, slaDays: 7, requiredExitFields: ["partyId", "estimatedAmount"], requiresVerifiedParty: true },
-      { stageKey: "default.negotiation", labelEn: "Contract & Pitch Lock", labelAr: "تأكيد العقد وحجز الملعب", sortOrder: 3, category: "in_progress", winProbabilityPercent: 90, slaDays: 5, requiredExitFields: ["partyId", "targetCloseDate"], requiresVerifiedParty: true },
+      { stageKey: "default.discovery", labelEn: "Topology & Slot Check", labelAr: "فحص توافر الملاعب", sortOrder: 1, category: "todo", color: "blue", winProbabilityPercent: 25, slaDays: 3, requiredExitFields: [] },
+      { stageKey: "default.proposal", labelEn: "Deposit & Catering Quote", labelAr: "عرض السعر والتأمين", sortOrder: 2, category: "in_progress", color: "violet", winProbabilityPercent: 65, slaDays: 7, requiredExitFields: ["partyId", "estimatedAmount"], requiresVerifiedParty: true },
+      { stageKey: "default.negotiation", labelEn: "Contract & Pitch Lock", labelAr: "تأكيد العقد وحجز الملعب", sortOrder: 3, category: "in_progress", color: "amber", winProbabilityPercent: 90, slaDays: 5, requiredExitFields: ["partyId", "targetCloseDate"], requiresVerifiedParty: true },
     ],
     transitions: [
       makeWorkflowTransition("tr-vb-1-2", "default.discovery", "default.proposal", "forward", "Issue Venue Quote", "إصدار عرض حجز المنشأة", { requireVerifiedParty: true }),
@@ -573,11 +922,11 @@ export const INITIAL_CRM_WORKFLOWS: CrmWorkflowDefinition[] = [
     descriptionAr: "مسار تأهيل العملاء المحتملين مع انتقالات ثنائية الاتجاه وتحويل تلقائي لصفقة عند التحويل.",
     isActive: true, isTemplate: false, industryCategory: "B2B Commercial", version: 1, updatedAtUtc: "2026-01-01T00:00:00.000Z",
     stages: [
-      { stageKey: "lead.new", labelEn: "New Intake", labelAr: "جديد", sortOrder: 1, category: "todo", winProbabilityPercent: 10, slaDays: 2, requiredExitFields: [] },
-      { stageKey: "lead.working", labelEn: "Working (In Progress)", labelAr: "قيد المتابعة", sortOrder: 2, category: "in_progress", winProbabilityPercent: 30, slaDays: 5, requiredExitFields: [] },
-      { stageKey: "lead.qualified", labelEn: "Qualified", labelAr: "مؤهل", sortOrder: 3, category: "in_progress", winProbabilityPercent: 60, slaDays: 7, requiredExitFields: ["qualificationNotes"] },
-      { stageKey: "lead.converted", labelEn: "Converted to Deal", labelAr: "تم التحويل", sortOrder: 4, category: "done", winProbabilityPercent: 100, requiredExitFields: [], triggerDealConversion: true },
-      { stageKey: "lead.disqualified", labelEn: "Disqualified", labelAr: "مستبعد", sortOrder: 5, category: "done", winProbabilityPercent: 0, requiredExitFields: ["disqualificationReasonCode"], allowInboundFromAny: true },
+      { stageKey: "lead.new", labelEn: "New Intake", labelAr: "جديد", sortOrder: 1, category: "todo", color: "blue", winProbabilityPercent: 10, slaDays: 2, requiredExitFields: [] },
+      { stageKey: "lead.working", labelEn: "Working (In Progress)", labelAr: "قيد المتابعة", sortOrder: 2, category: "in_progress", color: "cyan", winProbabilityPercent: 30, slaDays: 5, requiredExitFields: [] },
+      { stageKey: "lead.qualified", labelEn: "Qualified", labelAr: "مؤهل", sortOrder: 3, category: "in_progress", color: "indigo", winProbabilityPercent: 60, slaDays: 7, requiredExitFields: ["qualificationNotes"] },
+      { stageKey: "lead.converted", labelEn: "Converted to Deal", labelAr: "تم التحويل", sortOrder: 4, category: "done", color: "emerald", winProbabilityPercent: 100, requiredExitFields: [], triggerDealConversion: true },
+      { stageKey: "lead.disqualified", labelEn: "Disqualified", labelAr: "مستبعد", sortOrder: 5, category: "done", color: "rose", winProbabilityPercent: 0, requiredExitFields: ["disqualificationReasonCode"], allowInboundFromAny: true },
     ],
     transitions: [
       makeWorkflowTransition("tr-lead-1-2", "lead.new", "lead.working", "forward", "Start Working", "بدء المتابعة"),
@@ -597,8 +946,8 @@ export const INITIAL_CRM_WORKFLOWS: CrmWorkflowDefinition[] = [
     descriptionAr: "مسار من مرحلتين فقط: يبدأ من جديد وينتقل مباشرة إلى تم التحويل لإنشاء صفقة.",
     isActive: false, isTemplate: true, industryCategory: "Express Intake", version: 1, updatedAtUtc: "2026-01-01T00:00:00.000Z",
     stages: [
-      { stageKey: "lead.new", labelEn: "New", labelAr: "جديد", sortOrder: 1, category: "todo", winProbabilityPercent: 25, requiredExitFields: [] },
-      { stageKey: "lead.converted", labelEn: "Converted", labelAr: "تم التحويل", sortOrder: 2, category: "done", winProbabilityPercent: 100, requiredExitFields: [], triggerDealConversion: true },
+      { stageKey: "lead.new", labelEn: "New", labelAr: "جديد", sortOrder: 1, category: "todo", color: "blue", winProbabilityPercent: 25, requiredExitFields: [] },
+      { stageKey: "lead.converted", labelEn: "Converted", labelAr: "تم التحويل", sortOrder: 2, category: "done", color: "emerald", winProbabilityPercent: 100, requiredExitFields: [], triggerDealConversion: true },
     ],
     transitions: [
       makeWorkflowTransition("tr-l2-1-2", "lead.new", "lead.converted", "forward", "Convert to Deal", "تحويل لصفقة", { triggerDealConversion: true }),
@@ -612,9 +961,9 @@ export const INITIAL_CRM_WORKFLOWS: CrmWorkflowDefinition[] = [
     descriptionAr: "مرحلة تم التحويل هي مرحلة وسطية، ويتم إنشاء الصفقة فعلياً في المرحلة الثالثة (صفقة) مع منع التراجع.",
     isActive: false, isTemplate: true, industryCategory: "Academy & Trials", version: 1, updatedAtUtc: "2026-01-01T00:00:00.000Z",
     stages: [
-      { stageKey: "lead.new", labelEn: "New", labelAr: "جديد", sortOrder: 1, category: "todo", winProbabilityPercent: 20, requiredExitFields: [] },
-      { stageKey: "lead.converted", labelEn: "Converted", labelAr: "محول مبدئياً", sortOrder: 2, category: "in_progress", winProbabilityPercent: 65, requiredExitFields: [], triggerDealConversion: false },
-      { stageKey: "lead.deal", labelEn: "Deal", labelAr: "صفقة", sortOrder: 3, category: "done", winProbabilityPercent: 100, requiredExitFields: [], triggerDealConversion: true },
+      { stageKey: "lead.new", labelEn: "New", labelAr: "جديد", sortOrder: 1, category: "todo", color: "blue", winProbabilityPercent: 20, requiredExitFields: [] },
+      { stageKey: "lead.converted", labelEn: "Converted", labelAr: "محول مبدئياً", sortOrder: 2, category: "in_progress", color: "cyan", winProbabilityPercent: 65, requiredExitFields: [], triggerDealConversion: false },
+      { stageKey: "lead.deal", labelEn: "Deal", labelAr: "صفقة", sortOrder: 3, category: "done", color: "emerald", winProbabilityPercent: 100, requiredExitFields: [], triggerDealConversion: true },
     ],
     transitions: [
       makeWorkflowTransition("tr-l3-1-2", "lead.new", "lead.converted", "forward", "Mark Converted (Pre-Deal)", "تحويل مبدئي", { triggerDealConversion: false }),
@@ -630,9 +979,9 @@ export const INITIAL_CRM_WORKFLOWS: CrmWorkflowDefinition[] = [
     descriptionAr: "يدير العملاء المحتملين بشكل مستقل تماماً دون إجبار المستخدم على إنشاء صفقة عند التحويل.",
     isActive: false, isTemplate: true, industryCategory: "Standalone Intake", version: 1, updatedAtUtc: "2026-01-01T00:00:00.000Z",
     stages: [
-      { stageKey: "lead.new", labelEn: "New", labelAr: "جديد", sortOrder: 1, category: "todo", winProbabilityPercent: 20, requiredExitFields: [] },
-      { stageKey: "lead.working", labelEn: "Working", labelAr: "قيد المتابعة", sortOrder: 2, category: "in_progress", winProbabilityPercent: 50, requiredExitFields: [] },
-      { stageKey: "lead.converted", labelEn: "Converted (Standalone)", labelAr: "مكتمل (مستقل)", sortOrder: 3, category: "done", winProbabilityPercent: 100, requiredExitFields: [], triggerDealConversion: false },
+      { stageKey: "lead.new", labelEn: "New", labelAr: "جديد", sortOrder: 1, category: "todo", color: "blue", winProbabilityPercent: 20, requiredExitFields: [] },
+      { stageKey: "lead.working", labelEn: "Working", labelAr: "قيد المتابعة", sortOrder: 2, category: "in_progress", color: "cyan", winProbabilityPercent: 50, requiredExitFields: [] },
+      { stageKey: "lead.converted", labelEn: "Converted (Standalone)", labelAr: "مكتمل (مستقل)", sortOrder: 3, category: "done", color: "emerald", winProbabilityPercent: 100, requiredExitFields: [], triggerDealConversion: false },
     ],
     transitions: [
       makeWorkflowTransition("tr-ls-1-2", "lead.new", "lead.working", "forward", "Start Working", "بدء المتابعة"),

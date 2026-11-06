@@ -7,7 +7,15 @@ import { formatPrice, SUPPORTED_CURRENCIES } from "@core/constants/currencies";
 import { useCurrencyPreference } from "@core/store/useCurrencyPreference";
 import { useCurrencyRates } from "@core/hooks/useCurrencyRates";
 import { getCrmContainer } from "../../../../di";
-import { useCrmWorkflowsStore, serializeCrmTenantCustomConfig } from "./useCrmWorkflowsStore";
+import {
+  useCrmWorkflowsStore,
+  serializeCrmTenantCustomConfig,
+  DEFAULT_CRM_SCOPED_ROLES,
+  DEFAULT_BUYING_COMMITTEE_ROLES,
+  type CrmScopedRoleDefinition,
+  type CrmBuyingCommitteeRoleOption,
+  type CrmDealCommercialPackage,
+} from "./useCrmWorkflowsStore";
 
 /** Baseline USD exchange rates matching SCRIPE-Backend CurrencyExchangeService fallback table. */
 export const CRM_FALLBACK_USD_RATES: Record<string, number> = {
@@ -30,6 +38,13 @@ export interface CrmCustomFieldDefinition {
   isRequired: boolean; options?: string[]; defaultStageGateKey?: string; createdAtIso?: string;
 }
 
+/** Configurable CRM option item (used for Activity Types and Outcome/Loss Reasons). */
+export interface CrmConfigurableOptionItem {
+  code: string;
+  labelEn: string;
+  labelAr: string;
+}
+
 /** Zustand store contract for CRM module settings across all 4 governance domains + user overrides. */
 export interface CrmModuleSettingsState {
   baseCurrency: string; tenantBaseCurrency: string; userOverrideCurrency: string | null; defaultDealCurrency: string;
@@ -41,7 +56,14 @@ export interface CrmModuleSettingsState {
   defaultCommunicationChannel: "email" | "whatsapp" | "in_app"; autoSyncPartyKernelOnConvert: boolean;
   defaultDealViewMode: "Kanban" | "Table" | "SplitPane"; defaultPipelineCode: string; cardDensity: "Comfortable" | "Compact";
   dailyDigestEnabled: boolean; stageMoveNotificationsEnabled: boolean; customRateOverrides: Record<string, number>;
-  crmCustomFields: CrmCustomFieldDefinition[]; isServerHydrated: boolean; updatedAtIso: string | null;
+  crmCustomFields: CrmCustomFieldDefinition[];
+  crmRoles: CrmScopedRoleDefinition[];
+  buyingCommitteeRoles: CrmBuyingCommitteeRoleOption[];
+  configuredLossReasons: CrmConfigurableOptionItem[];
+  configuredActivityTypes: CrmConfigurableOptionItem[];
+  dealCommercialPackages: Record<string, CrmDealCommercialPackage>;
+  isHydrating: boolean;
+  isServerHydrated: boolean; updatedAtIso: string | null;
 
   setBaseCurrency: (currency: string) => void;
   setUserOverrideCurrency: (currency: string | null) => void;
@@ -58,15 +80,46 @@ export interface CrmModuleSettingsState {
   resetCustomRateOverrides: () => void;
   addCrmCustomField: (field: Omit<CrmCustomFieldDefinition, "id" | "createdAtIso">) => CrmCustomFieldDefinition;
   removeCrmCustomField: (id: string) => void;
+  addCrmScopedRole: (input: {
+    nameEn: string;
+    nameAr?: string;
+    descriptionEn?: string;
+    descriptionAr?: string;
+    permissions?: string[];
+    memberNames?: string[];
+    maxApprovalThresholdAmount?: number | null;
+    backupRoleKey?: string | null;
+  }) => CrmScopedRoleDefinition;
+  removeCrmScopedRole: (keyOrId: string) => void;
+  addBuyingCommitteeRole: (input: { labelEn: string; labelAr?: string; key?: string; isSystem?: boolean }) => CrmBuyingCommitteeRoleOption;
+  removeBuyingCommitteeRole: (key: string) => void;
+  setDealCommercialPackage: (opportunityId: string, pkg: CrmDealCommercialPackage) => void;
   setDefaultDealViewMode: (mode: "Kanban" | "Table" | "SplitPane") => void;
   updateSettings: (partial: Partial<CrmModuleSettingsState>) => void;
   hydrateFromServer: () => Promise<void>;
   resetDefaults: () => void;
 }
 
-const DEFAULT_CRM_CUSTOM_FIELDS: CrmCustomFieldDefinition[] = [
+export const DEFAULT_CRM_CUSTOM_FIELDS: CrmCustomFieldDefinition[] = [
   { id: "cf-crm-opp-procurement-ref", entityTypeKey: "crm.opportunity", key: "procurement_reference_code", labelEn: "Procurement / Tender Reference ID", labelAr: "رقم مرجع المناقصة / المشتريات", valueType: "Text", isRequired: false, defaultStageGateKey: "default.proposal", createdAtIso: "2026-01-01T00:00:00.000Z" },
   { id: "cf-crm-opp-legal-signoff", entityTypeKey: "crm.opportunity", key: "legal_review_ticket", labelEn: "Legal Contract Review Ticket", labelAr: "تذكرة المراجعة القانونية للعقد", valueType: "Text", isRequired: false, defaultStageGateKey: "default.negotiation", createdAtIso: "2026-01-01T00:00:00.000Z" },
+];
+
+export const DEFAULT_CONFIGURED_LOSS_REASONS: CrmConfigurableOptionItem[] = [
+  { code: "budget_cut", labelEn: "Budget Cut / Freeze", labelAr: "تخفيض أو تجميد الميزانية" },
+  { code: "competitor", labelEn: "Lost to Competitor", labelAr: "خسارة لصالح منافس" },
+  { code: "pricing", labelEn: "Pricing / Commercial Terms", labelAr: "التسعير أو الشروط التجارية" },
+  { code: "timing", labelEn: "Timing / Postponed", labelAr: "التوقيت أو التأجيل" },
+  { code: "feature_gap", labelEn: "Capability / Feature Gap", labelAr: "فجوة في المتطلبات الفنية" },
+  { code: "no_decision", labelEn: "No Decision / Stalled", labelAr: "عدم اتخاذ قرار" },
+  { code: "other", labelEn: "Other", labelAr: "سبب آخر" },
+];
+
+export const DEFAULT_CONFIGURED_ACTIVITY_TYPES: CrmConfigurableOptionItem[] = [
+  { code: "Note", labelEn: "Note", labelAr: "ملاحظة" },
+  { code: "CallLog", labelEn: "Call Log", labelAr: "سجل مكالمة" },
+  { code: "MeetingLog", labelEn: "Meeting Log", labelAr: "سجل اجتماع" },
+  { code: "SiteVisit", labelEn: "Venue / Pitch Site Visit", labelAr: "زيارة ميدانية للمنشأة" },
 ];
 
 const DEFAULT_SETTINGS = {
@@ -79,9 +132,58 @@ const DEFAULT_SETTINGS = {
   defaultCommunicationChannel: "email" as const, autoSyncPartyKernelOnConvert: true,
   defaultDealViewMode: "Table" as const, defaultPipelineCode: "default", cardDensity: "Comfortable" as const,
   dailyDigestEnabled: true, stageMoveNotificationsEnabled: true,
-  customRateOverrides: {} as Record<string, number>, crmCustomFields: DEFAULT_CRM_CUSTOM_FIELDS,
+  customRateOverrides: {} as Record<string, number>,
+  crmCustomFields: DEFAULT_CRM_CUSTOM_FIELDS,
+  crmRoles: DEFAULT_CRM_SCOPED_ROLES,
+  buyingCommitteeRoles: DEFAULT_BUYING_COMMITTEE_ROLES,
+  configuredLossReasons: DEFAULT_CONFIGURED_LOSS_REASONS,
+  configuredActivityTypes: DEFAULT_CONFIGURED_ACTIVITY_TYPES,
+  dealCommercialPackages: {} as Record<string, CrmDealCommercialPackage>,
+  isHydrating: false,
   isServerHydrated: false, updatedAtIso: null as string | null,
 };
+
+/** Parses server CustomFieldsConfigJson while respecting authoritative empty arrays from server. */
+export function parseCustomGovernanceConfigJson(
+  customFieldsConfigJson: string | null | undefined,
+  fallback: {
+    crmCustomFields: CrmCustomFieldDefinition[];
+    crmRoles: CrmScopedRoleDefinition[];
+    buyingCommitteeRoles: CrmBuyingCommitteeRoleOption[];
+    configuredLossReasons: CrmConfigurableOptionItem[];
+    configuredActivityTypes: CrmConfigurableOptionItem[];
+    dealCommercialPackages?: Record<string, CrmDealCommercialPackage>;
+  },
+) {
+  let customFields = fallback.crmCustomFields;
+  let crmRoles = fallback.crmRoles;
+  let buyingCommitteeRoles = fallback.buyingCommitteeRoles;
+  let configuredLossReasons = fallback.configuredLossReasons;
+  let configuredActivityTypes = fallback.configuredActivityTypes;
+  let dealCommercialPackages = fallback.dealCommercialPackages ?? {};
+
+  if (customFieldsConfigJson) {
+    try {
+      const raw = JSON.parse(customFieldsConfigJson);
+      if (Array.isArray(raw)) {
+        customFields = raw;
+      } else if (raw && typeof raw === "object") {
+        if (Array.isArray(raw.customFields)) customFields = raw.customFields;
+        if (Array.isArray(raw.crmRoles)) crmRoles = raw.crmRoles;
+        if (Array.isArray(raw.buyingCommitteeRoles)) buyingCommitteeRoles = raw.buyingCommitteeRoles;
+        if (Array.isArray(raw.configuredLossReasons)) configuredLossReasons = raw.configuredLossReasons;
+        if (Array.isArray(raw.configuredActivityTypes)) configuredActivityTypes = raw.configuredActivityTypes;
+        if (raw.dealCommercialPackages && typeof raw.dealCommercialPackages === "object") {
+          dealCommercialPackages = raw.dealCommercialPackages;
+        }
+        if (Array.isArray(raw.workflows) && raw.workflows.length > 0) {
+          useCrmWorkflowsStore.getState().hydrateFromServerPayload(raw);
+        }
+      }
+    } catch { /* keep fallback */ }
+  }
+  return { customFields, crmRoles, buyingCommitteeRoles, configuredLossReasons, configuredActivityTypes, dealCommercialPackages };
+}
 
 let serverHydrationInFlight = false;
 
@@ -101,7 +203,15 @@ function syncTenantToServer(st: CrmModuleSettingsState, baseOverride?: string) {
         enableCatalogPricingQuoteHandoff: st.enableCatalogPricingQuoteHandoff, enableVenueAcademyCommercialHandoff: st.enableVenueAcademyCommercialHandoff,
         autoCreateWorkItemsOnStageMove: st.autoCreateWorkItemsOnStageMove, defaultCommunicationChannel: st.defaultCommunicationChannel,
         autoSyncPartyKernelOnConvert: st.autoSyncPartyKernelOnConvert, defaultDealViewMode: st.defaultDealViewMode,
-        defaultPipelineCode: st.defaultPipelineCode, cardDensity: st.cardDensity, customFieldsConfigJson: serializeCrmTenantCustomConfig(st.crmCustomFields),
+        defaultPipelineCode: st.defaultPipelineCode, cardDensity: st.cardDensity,
+        customFieldsConfigJson: serializeCrmTenantCustomConfig(
+          st.crmCustomFields,
+          st.crmRoles,
+          st.buyingCommitteeRoles,
+          st.configuredLossReasons,
+          st.configuredActivityTypes,
+          st.dealCommercialPackages,
+        ),
       }).catch(() => undefined);
     }
   } catch { /* noop */ }
@@ -156,6 +266,67 @@ export const useCrmSettingsStore = create<CrmModuleSettingsState>()(
         set((s) => ({ crmCustomFields: s.crmCustomFields.filter((f) => f.id !== id), updatedAtIso: new Date().toISOString() }));
         syncTenantToServer(get());
       },
+      addCrmScopedRole: (input) => {
+        const slug = input.nameEn.trim().toLowerCase().replace(/[^a-z0-9_]+/g, "_").replace(/^_+|_+$/g, "") || `custom_role_${Date.now()}`;
+        const key = slug.startsWith("pipe_role:") || slug.startsWith("role:") ? slug : `pipe_role:${slug}`;
+        const scopedPermissions = (input.permissions ?? []).filter((p) => p.startsWith("crm."));
+        const created: CrmScopedRoleDefinition = {
+          id: `pipe-role-${Date.now()}`,
+          key,
+          nameEn: input.nameEn.trim() || "Custom Pipeline Role",
+          nameAr: (input.nameAr || input.nameEn).trim() || "دور خط بيع مخصص",
+          descriptionEn: input.descriptionEn?.trim() || "Decoupled CRM Pipeline / Workflow Approval Queue.",
+          descriptionAr: input.descriptionAr?.trim() || "دور اعتماد ومراجعة مخصص لخطوط البيع ومسارات العمل.",
+          memberNames: input.memberNames ?? [],
+          maxApprovalThresholdAmount: input.maxApprovalThresholdAmount ?? null,
+          backupRoleKey: input.backupRoleKey ?? "pipe_role:commercial_director",
+          permissions: scopedPermissions.length > 0 ? scopedPermissions : ["crm.opportunities.read", "crm.opportunities.stage"],
+          isSystem: false,
+        };
+        set((state) => ({
+          crmRoles: [...state.crmRoles.filter((r) => r.key.toLowerCase() !== key.toLowerCase()), created],
+          updatedAtIso: new Date().toISOString(),
+        }));
+        syncTenantToServer(get());
+        return created;
+      },
+      removeCrmScopedRole: (keyOrId: string) => {
+        set((state) => ({
+          crmRoles: state.crmRoles.filter((r) => r.isSystem || (r.key !== keyOrId && r.id !== keyOrId)),
+          updatedAtIso: new Date().toISOString(),
+        }));
+        syncTenantToServer(get());
+      },
+      addBuyingCommitteeRole: (input) => {
+        const rawKey = (input.key || input.labelEn).trim().replace(/[^a-zA-Z0-9_]+/g, "");
+        const key = rawKey || `Stakeholder_${Date.now()}`;
+        const created: CrmBuyingCommitteeRoleOption = {
+          key,
+          labelEn: input.labelEn.trim() || key,
+          labelAr: (input.labelAr || input.labelEn).trim() || key,
+          isSystem: false,
+        };
+        set((state) => ({
+          buyingCommitteeRoles: [...state.buyingCommitteeRoles.filter((r) => r.key.toLowerCase() !== key.toLowerCase()), created],
+          updatedAtIso: new Date().toISOString(),
+        }));
+        syncTenantToServer(get());
+        return created;
+      },
+      removeBuyingCommitteeRole: (key: string) => {
+        set((state) => ({
+          buyingCommitteeRoles: state.buyingCommitteeRoles.filter((r) => r.isSystem || r.key !== key),
+          updatedAtIso: new Date().toISOString(),
+        }));
+        syncTenantToServer(get());
+      },
+      setDealCommercialPackage: (opportunityId: string, pkg: CrmDealCommercialPackage) => {
+        set((state) => ({
+          dealCommercialPackages: { ...state.dealCommercialPackages, [opportunityId]: pkg },
+          updatedAtIso: new Date().toISOString(),
+        }));
+        syncTenantToServer(get());
+      },
       setDefaultDealViewMode: (mode: "Kanban" | "Table" | "SplitPane") => {
         set({ defaultDealViewMode: mode, updatedAtIso: new Date().toISOString() });
         syncTenantToServer(get());
@@ -181,19 +352,21 @@ export const useCrmSettingsStore = create<CrmModuleSettingsState>()(
       hydrateFromServer: async () => {
         if (serverHydrationInFlight) return;
         serverHydrationInFlight = true;
+        if (!get().isServerHydrated) {
+          set({ isHydrating: true });
+        }
         try {
-          const data = await getCrmContainer().overviewRepository.getSettings();
+          const container = getCrmContainer();
+          const [data, relationalPipelines] = await Promise.all([
+            container.overviewRepository.getSettings(),
+            typeof container.opportunityRepository?.getPipelines === "function"
+              ? container.opportunityRepository.getPipelines().catch(() => [])
+              : Promise.resolve([]),
+          ]);
           const t = data.tenantSettings, u = data.userPreferences;
-          let parsedFields = get().crmCustomFields;
-          if (t.customFieldsConfigJson) {
-            try {
-              const raw = JSON.parse(t.customFieldsConfigJson);
-              if (Array.isArray(raw) && raw.length > 0) parsedFields = raw;
-              else if (raw && typeof raw === "object") {
-                if (Array.isArray(raw.customFields) && raw.customFields.length > 0) parsedFields = raw.customFields;
-                if (Array.isArray(raw.workflows) && raw.workflows.length > 0) useCrmWorkflowsStore.getState().hydrateFromServerPayload(raw);
-              }
-            } catch { /* keep */ }
+          const parsed = parseCustomGovernanceConfigJson(t.customFieldsConfigJson, get());
+          if (Array.isArray(relationalPipelines) && relationalPipelines.length > 0) {
+            useCrmWorkflowsStore.getState().hydrateFromBackendPipelines(relationalPipelines);
           }
           set({
             baseCurrency: (data.effectiveBaseCurrencyCode || "SAR").toUpperCase(), tenantBaseCurrency: (t.baseCurrencyCode || "SAR").toUpperCase(),
@@ -207,14 +380,25 @@ export const useCrmSettingsStore = create<CrmModuleSettingsState>()(
             autoCreateWorkItemsOnStageMove: t.autoCreateWorkItemsOnStageMove, defaultCommunicationChannel: t.defaultCommunicationChannel,
             autoSyncPartyKernelOnConvert: t.autoSyncPartyKernelOnConvert, defaultDealViewMode: u.defaultDealViewMode,
             defaultPipelineCode: u.defaultPipelineCode, cardDensity: u.cardDensity, dailyDigestEnabled: u.dailyDigestEnabled,
-            stageMoveNotificationsEnabled: u.stageMoveNotificationsEnabled, crmCustomFields: parsedFields, isServerHydrated: true,
+            stageMoveNotificationsEnabled: u.stageMoveNotificationsEnabled,
+            crmCustomFields: parsed.customFields,
+            crmRoles: parsed.crmRoles,
+            buyingCommitteeRoles: parsed.buyingCommitteeRoles,
+            configuredLossReasons: parsed.configuredLossReasons,
+            configuredActivityTypes: parsed.configuredActivityTypes,
+            dealCommercialPackages: parsed.dealCommercialPackages,
+            isHydrating: false,
+            isServerHydrated: true,
           });
         } catch { /* fallback to local state */ }
-        finally { serverHydrationInFlight = false; }
+        finally {
+          set({ isHydrating: false });
+          serverHydrationInFlight = false;
+        }
       },
       resetDefaults: () => {
         useCrmWorkflowsStore.getState().resetDefaults();
-        set({ ...DEFAULT_SETTINGS, isServerHydrated: true, updatedAtIso: new Date().toISOString() });
+        set({ ...DEFAULT_SETTINGS, isHydrating: false, isServerHydrated: true, updatedAtIso: new Date().toISOString() });
       },
     }),
     { name: "scripe-crm-settings" }

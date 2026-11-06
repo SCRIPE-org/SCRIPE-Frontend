@@ -53,8 +53,10 @@ export const CRM_PERMISSIONS = {
   PIPELINES_READ: "crm.pipelines.read",
   PIPELINES_MANAGE: "crm.pipelines.manage",
 
-  // ── Settings (1) ───────────────────────────────────────────────
+  // ── Settings & Decoupled Pipeline/Workflow Roles (3) ───────────
   SETTINGS_MANAGE: "crm.settings.manage",
+  WORKFLOW_ROLES_MANAGE: "crm.workflow_roles.manage",
+  ROLES_MANAGE_SCOPED: "crm.roles.manage_scoped",
 
   // ── Reports (2) ────────────────────────────────────────────────
   REPORTS_READ: "crm.reports.read",

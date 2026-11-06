@@ -11,7 +11,7 @@ export const en = {
       contacts: "Contacts",
       activities: "Activities",
       pipelines: "Pipelines",
-      reports: "Reports & Analytics",
+      reports: "Reports",
       settings: "Settings",
     },
     actions: {

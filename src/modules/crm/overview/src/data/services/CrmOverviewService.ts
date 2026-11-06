@@ -81,12 +81,20 @@ export class CrmOverviewService implements ICrmOverviewService {
   }
 
   async updateTenantSettings(input: Partial<CrmTenantSettingsPayload>): Promise<CrmSettingsResponseData> {
-    const res = await this.api.put<Record<string, any>>(CRM_ENDPOINTS.SETTINGS_TENANT, input);
+    const idempotencyKey = `crm-set-tenant-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`;
+    const res = await this.api.put<Record<string, any>>(CRM_ENDPOINTS.SETTINGS_TENANT, input, undefined, {
+      idempotencyKey,
+      headers: { "Idempotency-Key": idempotencyKey, "X-Idempotency-Key": idempotencyKey },
+    });
     return this.normalizeSettingsResponse(res);
   }
 
   async updateUserPreferences(input: Partial<CrmUserPreferencePayload>): Promise<CrmSettingsResponseData> {
-    const res = await this.api.put<Record<string, any>>(CRM_ENDPOINTS.SETTINGS_USER, input);
+    const idempotencyKey = `crm-set-user-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`;
+    const res = await this.api.put<Record<string, any>>(CRM_ENDPOINTS.SETTINGS_USER, input, undefined, {
+      idempotencyKey,
+      headers: { "Idempotency-Key": idempotencyKey, "X-Idempotency-Key": idempotencyKey },
+    });
     return this.normalizeSettingsResponse(res);
   }
 

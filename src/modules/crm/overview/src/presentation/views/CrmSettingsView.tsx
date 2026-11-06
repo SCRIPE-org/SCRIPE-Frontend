@@ -1,27 +1,46 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useI18n } from "@core/providers/i18n-provider";
 import { Button } from "@core/ui/button";
 import { Alert, AlertDescription } from "@core/ui/alert";
-import { CheckCircle2, RotateCcw, Save, GitBranch } from "lucide-react";
+import {
+  CheckCircle2,
+  RotateCcw,
+  Save,
+  GitBranch,
+} from "lucide-react";
 import { CrmShell } from "../components/CrmShell";
 import { CrmSectionHeader } from "../components/CrmSectionHeader";
+import { CrmSettingsSkeleton } from "../components/CrmSettingsSkeleton";
 import { useCrmSettingsViewModel } from "../viewmodels/useCrmSettingsViewModel";
 import { useCrmWorkflowsStore } from "../viewmodels/useCrmWorkflowsStore";
 import { CrmCurrencySettingsCard } from "../components/settings/CrmCurrencySettingsCard";
 import { CrmGovernanceSettingsCard } from "../components/settings/CrmGovernanceSettingsCard";
 import { CrmCustomFieldsStudioCard } from "../components/settings/CrmCustomFieldsStudioCard";
+import { CrmRolesAndPrincipalsSettingsCard } from "../components/settings/CrmRolesAndPrincipalsSettingsCard";
+import {
+  CrmSettingsSidebarNav,
+  type CrmSettingsTabKey,
+} from "../components/settings/CrmSettingsSidebarNav";
 
-/**
- * CRM Module Settings & Multi-Currency Engine View (/crm/settings).
- * Strictly follows SCRIPE MVVM architecture:
- * CrmSettingsView -> useCrmSettingsViewModel -> CrmOverviewRepository -> CrmOverviewService -> IApiService.
- */
+export type { CrmSettingsTabKey };
+
 export function CrmSettingsView() {
   const router = useRouter();
   const { t, language } = useI18n();
   const isRtl = language === "ar";
+  const [selectedSection, setSelectedSection] = useState<CrmSettingsTabKey>("all");
+  const [navSearch, setNavSearch] = useState("");
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const params = new URLSearchParams(window.location.search);
+      const tab = params.get("tab") as CrmSettingsTabKey | null;
+      if (tab) setSelectedSection(tab);
+    }
+  }, []);
 
   const {
     settings,
@@ -43,9 +62,27 @@ export function CrmSettingsView() {
     await persistTenantAndUserSettings(t("crm.settings.resetToast"));
   };
 
+  const showRolesCard =
+    selectedSection === "all" ||
+    selectedSection === "pipeline-roles" ||
+    selectedSection === "dictionaries" ||
+    selectedSection === "quotes-approvals";
+  const showCurrencyCard =
+    selectedSection === "all" || selectedSection === "currency-fx" || selectedSection === "quotes-approvals";
+  const showGovernanceCard =
+    selectedSection === "all" ||
+    selectedSection === "sla-escalation" ||
+    selectedSection === "field-locking" ||
+    selectedSection === "numbering-handoffs";
+  const showCustomFieldsCard =
+    selectedSection === "all" ||
+    selectedSection === "custom-fields" ||
+    selectedSection === "field-locking" ||
+    selectedSection === "numbering-handoffs";
+
   return (
     <CrmShell activeTab="settings" onTabChange={() => {}}>
-      <div className="space-y-6" dir={isRtl ? "rtl" : "ltr"} data-testid="crm-settings-view">
+      <div className="space-y-5" dir={isRtl ? "rtl" : "ltr"} data-testid="crm-settings-view">
         <CrmSectionHeader
           title={t("crm.settings.title")}
           subtitle={t("crm.settings.subtitle")}
@@ -82,55 +119,68 @@ export function CrmSettingsView() {
                 className="h-8 text-xs font-bold gap-1.5"
               >
                 <Save className="size-3.5" />
-                <span>
-                  {isSaving
-                    ? t("crm.settings.saving")
-                    : t("crm.settings.saveConfiguration")}
-                </span>
+                <span>{isSaving ? t("crm.settings.saving") : t("crm.settings.saveConfiguration")}</span>
               </Button>
             </div>
           }
         />
 
         {saveBanner && (
-          <Alert
-            className="border-success/30 bg-success/10 text-success py-2.5"
-            data-testid="crm-settings-save-banner"
-          >
+          <Alert className="border-success/30 bg-success/10 text-success py-2.5" data-testid="crm-settings-save-banner">
             <CheckCircle2 className="size-4" />
             <AlertDescription className="text-xs font-medium flex items-center justify-between">
               <span>{saveBanner}</span>
-              <Button
-                type="button"
-                variant="ghost"
-                size="sm"
-                onClick={() => setSaveBanner(null)}
-                className="h-6 text-[11px] text-nx-ink-2"
-              >
+              <Button type="button" variant="ghost" size="sm" onClick={() => setSaveBanner(null)} className="h-6 text-[11px] text-nx-ink-2">
                 {t("crm.settings.dismiss")}
               </Button>
             </AlertDescription>
           </Alert>
         )}
 
-        {/* 1. Multi-Currency & Triple-Value FX Engine */}
-        <CrmCurrencySettingsCard
-          settings={settings}
-          baseCurrency={currencyHook.baseCurrency}
-          rates={currencyHook.rates}
-          onRefreshLiveRates={currencyHook.refreshLiveRates}
-          onNotifySaved={(msg) => setSaveBanner(msg)}
-        />
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 items-start" data-testid="crm-settings-2pane-workspace">
+          <CrmSettingsSidebarNav
+            isRtl={isRtl}
+            selectedSection={selectedSection}
+            onSelectSection={setSelectedSection}
+            navSearch={navSearch}
+            onNavSearchChange={setNavSearch}
+          />
 
-        {/* 2. Lead & Deal Governance Policies + 4. User Workspace Personalization */}
-        <CrmGovernanceSettingsCard settings={settings} />
+          <div className="lg:col-span-9 space-y-5" data-testid="crm-settings-right-pane">
+            {settings.isHydrating ? (
+              <CrmSettingsSkeleton />
+            ) : (
+              <>
+                {showRolesCard && (
+                  <CrmRolesAndPrincipalsSettingsCard
+                    settings={settings}
+                    onNotifySaved={(msg) => setSaveBanner(msg)}
+                  />
+                )}
 
-        {/* 3. Cross-Module SCRIPE Sports OS Integrations Hub & Custom Fields Studio */}
-        <CrmCustomFieldsStudioCard
-          settings={settings}
-          onCreateCustomField={createCustomField}
-          onNotifySaved={(msg) => setSaveBanner(msg)}
-        />
+                {showCurrencyCard && (
+                  <CrmCurrencySettingsCard
+                    settings={settings}
+                    baseCurrency={currencyHook.baseCurrency}
+                    rates={currencyHook.rates}
+                    onRefreshLiveRates={currencyHook.refreshLiveRates}
+                    onNotifySaved={(msg) => setSaveBanner(msg)}
+                  />
+                )}
+
+                {showGovernanceCard && <CrmGovernanceSettingsCard settings={settings} />}
+
+                {showCustomFieldsCard && (
+                  <CrmCustomFieldsStudioCard
+                    settings={settings}
+                    onCreateCustomField={createCustomField}
+                    onNotifySaved={(msg) => setSaveBanner(msg)}
+                  />
+                )}
+              </>
+            )}
+          </div>
+        </div>
       </div>
     </CrmShell>
   );

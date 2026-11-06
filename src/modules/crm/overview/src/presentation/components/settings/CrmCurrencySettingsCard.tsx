@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState } from "react";
 import { useI18n } from "@core/providers/i18n-provider";
 import { Button } from "@core/ui/button";
 import { Card } from "@core/ui/card";
@@ -32,7 +32,7 @@ export interface CrmCurrencySettingsCardProps {
 }
 
 /**
- * Domain 1 Card: Multi-Currency & Triple-Value FX Engine.
+ * Domain 1 Card: Multi-Currency & Triple-Value FX Engine (<210 lines).
  * Configures Tenant Base Currency, User Display Override, Live Exchange Rate Simulator, and USD Cross-Rate Table.
  */
 export function CrmCurrencySettingsCard({
@@ -47,12 +47,9 @@ export function CrmCurrencySettingsCard({
   const [simFromCurrency, setSimFromCurrency] = useState("USD");
   const [isRefreshingRates, setIsRefreshingRates] = useState(false);
 
-  const simPreview = useMemo(() => {
-    const numeric = parseFloat(simAmount) || 0;
-    const crossRate = getCrossExchangeRate(simFromCurrency, baseCurrency, rates);
-    const converted = Math.round(numeric * crossRate * 100) / 100;
-    return { numeric, crossRate, converted };
-  }, [simAmount, simFromCurrency, baseCurrency, rates]);
+  const numericSim = parseFloat(simAmount) || 0;
+  const crossRate = getCrossExchangeRate(simFromCurrency, baseCurrency, rates);
+  const convertedSim = Math.round(numericSim * crossRate * 100) / 100;
 
   const handleRefresh = async () => {
     setIsRefreshingRates(true);
@@ -90,60 +87,32 @@ export function CrmCurrencySettingsCard({
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <div className="space-y-1.5">
-          <Label htmlFor="crm-base-currency-select" className="text-xs font-semibold text-nx-ink">
-            {t("crm.settings.currency.baseReportingCurrency")}
-          </Label>
+          <Label htmlFor="crm-base-currency-select" className="text-xs font-semibold text-nx-ink">{t("crm.settings.currency.baseReportingCurrency")}</Label>
           <Select value={baseCurrency} onValueChange={(val) => settings.setBaseCurrency(val)}>
-            <SelectTrigger id="crm-base-currency-select" data-testid="crm-settings-base-currency-select" className="h-9 text-xs bg-nx-ground border-nx-line text-nx-ink font-mono">
-              <SelectValue />
-            </SelectTrigger>
+            <SelectTrigger id="crm-base-currency-select" data-testid="crm-settings-base-currency-select" className="h-9 text-xs bg-nx-ground border-nx-line text-nx-ink font-mono"><SelectValue /></SelectTrigger>
             <SelectContent>
-              {CRM_CURRENCY_OPTIONS.map((c) => (
-                <SelectItem key={c.code} value={c.code}>
-                  {c.code} ({c.symbol}) — {c.nameEn}
-                </SelectItem>
-              ))}
+              {CRM_CURRENCY_OPTIONS.map((c) => <SelectItem key={c.code} value={c.code}>{c.code} ({c.symbol}) — {c.nameEn}</SelectItem>)}
             </SelectContent>
           </Select>
         </div>
 
         <div className="space-y-1.5">
-          <Label htmlFor="crm-user-override-currency-select" className="text-xs font-semibold text-nx-ink">
-            {t("crm.settings.currency.userOverrideCurrency")}
-          </Label>
-          <Select
-            value={settings.userOverrideCurrency || "INHERIT"}
-            disabled={!settings.allowUserCurrencyOverride}
-            onValueChange={(val) => settings.setUserOverrideCurrency(val === "INHERIT" ? null : val)}
-          >
-            <SelectTrigger id="crm-user-override-currency-select" data-testid="crm-settings-user-currency-select" className="h-9 text-xs bg-nx-ground border-nx-line text-nx-ink font-mono">
-              <SelectValue />
-            </SelectTrigger>
+          <Label htmlFor="crm-user-override-currency-select" className="text-xs font-semibold text-nx-ink">{t("crm.settings.currency.userOverrideCurrency")}</Label>
+          <Select value={settings.userOverrideCurrency || "INHERIT"} disabled={!settings.allowUserCurrencyOverride} onValueChange={(val) => settings.setUserOverrideCurrency(val === "INHERIT" ? null : val)}>
+            <SelectTrigger id="crm-user-override-currency-select" data-testid="crm-settings-user-currency-select" className="h-9 text-xs bg-nx-ground border-nx-line text-nx-ink font-mono"><SelectValue /></SelectTrigger>
             <SelectContent>
               <SelectItem value="INHERIT">{t("crm.settings.currency.inheritTenantCurrency")} ({settings.tenantBaseCurrency})</SelectItem>
-              {CRM_CURRENCY_OPTIONS.map((c) => (
-                <SelectItem key={c.code} value={c.code}>
-                  {c.code} ({c.symbol}) — {c.nameEn}
-                </SelectItem>
-              ))}
+              {CRM_CURRENCY_OPTIONS.map((c) => <SelectItem key={c.code} value={c.code}>{c.code} ({c.symbol}) — {c.nameEn}</SelectItem>)}
             </SelectContent>
           </Select>
         </div>
 
         <div className="space-y-1.5">
-          <Label htmlFor="crm-default-deal-currency-select" className="text-xs font-semibold text-nx-ink">
-            {t("crm.settings.currency.defaultDealCurrency")}
-          </Label>
+          <Label htmlFor="crm-default-deal-currency-select" className="text-xs font-semibold text-nx-ink">{t("crm.settings.currency.defaultDealCurrency")}</Label>
           <Select value={settings.defaultDealCurrency} onValueChange={(val) => settings.setDefaultDealCurrency(val)}>
-            <SelectTrigger id="crm-default-deal-currency-select" data-testid="crm-settings-default-deal-currency-select" className="h-9 text-xs bg-nx-ground border-nx-line text-nx-ink font-mono">
-              <SelectValue />
-            </SelectTrigger>
+            <SelectTrigger id="crm-default-deal-currency-select" data-testid="crm-settings-default-deal-currency-select" className="h-9 text-xs bg-nx-ground border-nx-line text-nx-ink font-mono"><SelectValue /></SelectTrigger>
             <SelectContent>
-              {CRM_CURRENCY_OPTIONS.map((c) => (
-                <SelectItem key={c.code} value={c.code}>
-                  {c.code} ({c.symbol}) — {c.nameEn}
-                </SelectItem>
-              ))}
+              {CRM_CURRENCY_OPTIONS.map((c) => <SelectItem key={c.code} value={c.code}>{c.code} ({c.symbol}) — {c.nameEn}</SelectItem>)}
             </SelectContent>
           </Select>
         </div>
@@ -157,7 +126,6 @@ export function CrmCurrencySettingsCard({
             <p className="text-[11px] text-nx-ink-3">{t("crm.settings.currency.autoConvertDesc")}</p>
           </div>
         </div>
-
         <div className="rounded-nx-md border border-nx-line bg-nx-ground p-3.5 flex items-start gap-3">
           <Checkbox id="crm-dual-currency-toggle" data-testid="crm-settings-dual-currency-checkbox" checked={settings.showOriginalCurrencyOnConverted} onCheckedChange={(c) => settings.setShowOriginalCurrencyOnConverted(Boolean(c))} className="mt-0.5" />
           <div className="space-y-0.5">
@@ -165,7 +133,6 @@ export function CrmCurrencySettingsCard({
             <p className="text-[11px] text-nx-ink-3">{t("crm.settings.currency.dualBadgeDesc")}</p>
           </div>
         </div>
-
         <div className="rounded-nx-md border border-nx-line bg-nx-ground p-3.5 flex items-start gap-3">
           <Checkbox id="crm-allow-user-override-toggle" checked={settings.allowUserCurrencyOverride} onCheckedChange={(c) => settings.updateSettings({ allowUserCurrencyOverride: Boolean(c) })} className="mt-0.5" />
           <div className="space-y-0.5">
@@ -173,7 +140,6 @@ export function CrmCurrencySettingsCard({
             <p className="text-[11px] text-nx-ink-3">{t("crm.settings.currency.allowUserOverrideDesc")}</p>
           </div>
         </div>
-
         <div className="rounded-nx-md border border-nx-line bg-nx-ground p-3.5 flex items-start gap-3">
           <Checkbox id="crm-snapshot-fx-toggle" checked={settings.snapshotExchangeRateOnDealCreation} onCheckedChange={(c) => settings.updateSettings({ snapshotExchangeRateOnDealCreation: Boolean(c) })} className="mt-0.5" />
           <div className="space-y-0.5">
@@ -183,7 +149,6 @@ export function CrmCurrencySettingsCard({
         </div>
       </div>
 
-      {/* Live Currency Conversion Simulator */}
       <div className="rounded-nx-md border border-nx-line bg-nx-raised/30 p-4 space-y-3" data-testid="crm-currency-simulator">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
@@ -204,20 +169,16 @@ export function CrmCurrencySettingsCard({
           <div className="space-y-1">
             <Label className="text-[11px] text-nx-ink-3">{t("crm.settings.currency.dealEntryCurrency")}</Label>
             <Select value={simFromCurrency} onValueChange={setSimFromCurrency}>
-              <SelectTrigger data-testid="crm-sim-from-currency" className="h-8 text-xs font-mono bg-nx-ground border-nx-line text-nx-ink">
-                <SelectValue />
-              </SelectTrigger>
+              <SelectTrigger data-testid="crm-sim-from-currency" className="h-8 text-xs font-mono bg-nx-ground border-nx-line text-nx-ink"><SelectValue /></SelectTrigger>
               <SelectContent>
-                {CRM_CURRENCY_OPTIONS.map((c) => (
-                  <SelectItem key={c.code} value={c.code}>{c.code} — {c.nameEn}</SelectItem>
-                ))}
+                {CRM_CURRENCY_OPTIONS.map((c) => <SelectItem key={c.code} value={c.code}>{c.code} — {c.nameEn}</SelectItem>)}
               </SelectContent>
             </Select>
           </div>
           <div className="rounded-nx-md border border-nx-accent/30 bg-nx-accent-wash/15 px-3 py-1.5" data-testid="crm-sim-result-box">
             <span className="text-[10px] text-nx-ink-3 uppercase font-semibold block">{t("crm.settings.currency.convertedOutput")} ({baseCurrency})</span>
-            <span className="text-sm font-bold text-nx-accent font-mono block">{baseCurrency} {simPreview.converted.toLocaleString()}</span>
-            <span className="text-[10px] font-mono text-nx-ink-2">1 {simFromCurrency} = {simPreview.crossRate.toFixed(4)} {baseCurrency}</span>
+            <span className="text-sm font-bold text-nx-accent font-mono block">{baseCurrency} {convertedSim.toLocaleString()}</span>
+            <span className="text-[10px] font-mono text-nx-ink-2">1 {simFromCurrency} = {crossRate.toFixed(4)} {baseCurrency}</span>
           </div>
         </div>
 

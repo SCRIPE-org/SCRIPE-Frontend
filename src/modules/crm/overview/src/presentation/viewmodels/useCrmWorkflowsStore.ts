@@ -7,64 +7,124 @@ import {
   INITIAL_CRM_WORKFLOWS,
   evaluateWorkflowTransition,
   makeWorkflowTransition,
+  resolveDefaultStageColor,
+  type CrmBuyingCommitteeRoleOption,
+  type CrmScopedRoleDefinition,
+  type CrmStageColorToken,
   type CrmWorkflowDefinition,
   type CrmWorkflowEntityType,
   type CrmWorkflowStage,
   type CrmWorkflowTransition,
   type EvaluatedWorkflowTransition,
 } from "../../domain/constants/crmWorkflowDefaults";
-import { useCrmSettingsStore, type CrmCustomFieldDefinition } from "./useCrmSettingsStore";
+import {
+  useCrmSettingsStore,
+  type CrmConfigurableOptionItem,
+  type CrmCustomFieldDefinition,
+} from "./useCrmSettingsStore";
 
 export * from "../../domain/constants/crmWorkflowDefaults";
+export * from "../utils/crmStageColorUtils";
 
-/** Envelope stored inside CrmTenantSettings.CustomFieldsConfigJson to persist both custom fields and workflows in PostgreSQL. */
-export interface CrmTenantCustomConfigEnvelope {
-  customFields: CrmCustomFieldDefinition[];
-  workflows: CrmWorkflowDefinition[];
-  activeDealWorkflowId: string;
-  activeLeadWorkflowId: string;
+/** Commercial quote line item persisted in backend tenant settings per deal. */
+export interface CrmDealQuoteLineItem {
+  id: string;
+  itemName: string;
+  quantity: number;
+  unitPrice: number;
+  discountPct: number;
 }
 
-/** Serializes CRM custom fields and dynamic Deals/Leads workflows into a unified JSON payload for CrmTenantSettings.CustomFieldsConfigJson. */
+/** Server-persisted deal commercial package (quote items + Venue/Academy provisioning state). */
+export interface CrmDealCommercialPackage {
+  quoteItems: CrmDealQuoteLineItem[];
+  venueHoldStatus: "idle" | "reserved";
+  academyCohortStatus: "idle" | "provisioned";
+}
+
+/** Envelope stored inside CrmTenantSettings.CustomFieldsConfigJson to persist custom fields & scoped roles in PostgreSQL. */
+export interface CrmTenantCustomConfigEnvelope {
+  customFields: CrmCustomFieldDefinition[];
+  crmRoles?: CrmScopedRoleDefinition[];
+  buyingCommitteeRoles?: CrmBuyingCommitteeRoleOption[];
+  configuredLossReasons?: CrmConfigurableOptionItem[];
+  configuredActivityTypes?: CrmConfigurableOptionItem[];
+  dealCommercialPackages?: Record<string, CrmDealCommercialPackage>;
+}
+
+/** Serializes CRM custom fields, scoped roles, and deal commercial packages into CrmTenantSettings.CustomFieldsConfigJson (workflows are persisted relationally in crm.crm_pipelines). */
 export function serializeCrmTenantCustomConfig(
   customFields: CrmCustomFieldDefinition[],
-  wfOverride?: { workflows: CrmWorkflowDefinition[]; activeDealWorkflowId: string; activeLeadWorkflowId: string }
+  crmRoles?: CrmScopedRoleDefinition[],
+  buyingCommitteeRoles?: CrmBuyingCommitteeRoleOption[],
+  configuredLossReasons?: CrmConfigurableOptionItem[],
+  configuredActivityTypes?: CrmConfigurableOptionItem[],
+  dealCommercialPackages?: Record<string, CrmDealCommercialPackage>
 ): string {
-  const wf = wfOverride ?? useCrmWorkflowsStore.getState();
+  const settingsState = useCrmSettingsStore.getState();
   return JSON.stringify({
     customFields,
-    workflows: wf.workflows,
-    activeDealWorkflowId: wf.activeDealWorkflowId,
-    activeLeadWorkflowId: wf.activeLeadWorkflowId,
+    crmRoles: crmRoles ?? settingsState.crmRoles,
+    buyingCommitteeRoles: buyingCommitteeRoles ?? settingsState.buyingCommitteeRoles,
+    configuredLossReasons: configuredLossReasons ?? settingsState.configuredLossReasons,
+    configuredActivityTypes: configuredActivityTypes ?? settingsState.configuredActivityTypes,
+    dealCommercialPackages: dealCommercialPackages ?? settingsState.dealCommercialPackages,
   });
 }
 
-/** Synchronizes the current workflows state into CrmTenantSettings.CustomFieldsConfigJson and PUT /api/v1/crm/pipelines/default on PostgreSQL. */
-function syncWorkflowsToBackend(wfState: { workflows: CrmWorkflowDefinition[]; activeDealWorkflowId: string; activeLeadWorkflowId: string }): void {
+const CANONICAL_DEFAULT_STAGE_META: Record<string, { prob: number; sla: number }> = {
+  "default.discovery": { prob: 10, sla: 7 },
+  "default.qualification": { prob: 25, sla: 10 },
+  "default.solution_fit": { prob: 50, sla: 14 },
+  "default.proposal": { prob: 75, sla: 14 },
+  "default.negotiation": { prob: 90, sla: 21 },
+  "default.closed_won": { prob: 100, sla: 0 },
+  "terminal-won": { prob: 100, sla: 0 },
+  "default.closed_lost": { prob: 0, sla: 0 },
+  "terminal-lost": { prob: 0, sla: 0 },
+};
+
+/** Synchronizes the current workflows state into relational /api/v1/crm/pipelines on PostgreSQL. */
+function syncWorkflowsToBackend(
+  wfState: { workflows: CrmWorkflowDefinition[]; activeDealWorkflowId: string; activeLeadWorkflowId: string },
+  targetWf?: CrmWorkflowDefinition
+): void {
   try {
-    const st = useCrmSettingsStore.getState();
-    const base = (st.tenantBaseCurrency || st.baseCurrency || "SAR").toUpperCase();
     const container = getCrmContainer();
-    void container.overviewRepository?.updateTenantSettings?.({
-      baseCurrencyCode: base, defaultDealCurrencyCode: st.defaultDealCurrency || base,
-      autoConvertAmountsToBase: st.autoConvertToBase, showDualCurrencyBadges: st.showOriginalCurrencyOnConverted,
-      allowUserCurrencyOverride: st.allowUserCurrencyOverride, snapshotExchangeRateOnDealCreation: st.snapshotExchangeRateOnDealCreation,
-      stageGateStrictness: st.stageGateStrictness, requireVerifiedPartyOnProposal: st.requirePartyOnProposal,
-      requireCloseNotesOnWin: st.requireCloseNotesOnWin, defaultLeadSource: st.defaultLeadSource,
-      slaLeadResponseHours: st.slaLeadResponseHours, stalledDealThresholdDays: st.stalledDealThresholdDays,
-      duplicateDetectionMode: st.duplicateDetectionMode, leadAutoAssignmentRule: st.leadAutoAssignmentRule,
-      enableCatalogPricingQuoteHandoff: st.enableCatalogPricingQuoteHandoff, enableVenueAcademyCommercialHandoff: st.enableVenueAcademyCommercialHandoff,
-      autoCreateWorkItemsOnStageMove: st.autoCreateWorkItemsOnStageMove, defaultCommunicationChannel: st.defaultCommunicationChannel,
-      autoSyncPartyKernelOnConvert: st.autoSyncPartyKernelOnConvert, defaultDealViewMode: st.defaultDealViewMode,
-      defaultPipelineCode: st.defaultPipelineCode, cardDensity: st.cardDensity,
-      customFieldsConfigJson: serializeCrmTenantCustomConfig(st.crmCustomFields, wfState),
-    })?.catch?.(() => undefined);
     const dealWf = wfState.workflows.find((w) => w.id === wfState.activeDealWorkflowId || w.id === "wf-deal-default");
-    if (dealWf && dealWf.stages.length >= 2) {
+    if (!targetWf && dealWf && dealWf.stages.length >= 2) {
       void container.opportunityRepository?.updateDefaultPipeline?.({
-        nameEn: dealWf.nameEn, nameAr: dealWf.nameAr, transitionsJson: JSON.stringify(dealWf.transitions), expectedRowVersion: "auto",
-        stages: dealWf.stages.map((s, idx) => ({ stageKey: s.stageKey as never, sortOrder: idx + 1, labelEn: s.labelEn, labelAr: s.labelAr, winProbabilityPercent: s.winProbabilityPercent, requiredExitFields: s.requiredExitFields })),
-      })?.catch?.(() => undefined);
+        nameEn: dealWf.nameEn, nameAr: dealWf.nameAr, transitionsJson: JSON.stringify(dealWf.transitions),
+        expectedRowVersion: "auto", allowDynamicStages: true,
+        stages: dealWf.stages.map((s, idx) => ({
+          stageKey: s.stageKey as never, sortOrder: idx + 1, labelEn: s.labelEn, labelAr: s.labelAr,
+          winProbabilityPercent: s.winProbabilityPercent, slaTargetDays: s.slaDays ?? null, requiredExitFields: s.requiredExitFields,
+          triggerDealConversion: Boolean(s.triggerDealConversion || s.triggersDealConversion),
+        })),
+      })?.catch?.((err: unknown) => {
+        if (process.env.NODE_ENV !== "test") console.warn("[CRM Workflows] Default pipeline sync warning:", err);
+      });
+    }
+    if (targetWf && targetWf.stages.length >= 2) {
+      void container.opportunityRepository?.savePipeline?.(targetWf.id, {
+        nameEn: targetWf.nameEn, nameAr: targetWf.nameAr, entityType: targetWf.entityType, isActive: targetWf.isActive,
+        transitionsJson: JSON.stringify(targetWf.transitions), expectedRowVersion: "auto", allowDynamicStages: true,
+        stages: targetWf.stages.map((s, idx) => ({
+          stageKey: s.stageKey as never, sortOrder: idx + 1, labelEn: s.labelEn, labelAr: s.labelAr,
+          statusCategory: s.category,
+          winProbabilityPercent: s.winProbabilityPercent, slaTargetDays: s.slaDays ?? null, requiredExitFields: s.requiredExitFields,
+          triggerDealConversion: Boolean(s.triggerDealConversion || s.triggersDealConversion),
+          propertiesJson: JSON.stringify({
+            ...(s.properties ?? {}),
+            ...(s.color ? { color: s.color } : {}),
+            ...(s.customColorHex ? { customColorHex: s.customColorHex } : {}),
+          }),
+          canvasX: s.position?.x ?? null,
+          canvasY: s.position?.y ?? null,
+        })),
+      })?.catch?.((err: unknown) => {
+        if (process.env.NODE_ENV !== "test") console.warn("[CRM Workflows] Relational pipeline sync warning:", err);
+      });
     }
   } catch { /* fallback to local persisted store when offline or in isolated unit tests */ }
 }
@@ -106,6 +166,7 @@ export interface CrmWorkflowsState {
     stages: Array<{ stageKey: string; labelEn: string; labelAr?: string | null; sortOrder: number; winProbabilityPercent?: number | null; requiredExitFields?: string[]; triggerDealConversion?: boolean }>;
   }) => void;
   hydrateFromServerPayload: (payload: { workflows?: CrmWorkflowDefinition[]; activeDealWorkflowId?: string; activeLeadWorkflowId?: string }) => void;
+  hydrateFromBackendPipelines: (backendPipelines: any[]) => void;
   evaluateTransition: (
     entityType: CrmWorkflowEntityType, fromStageKey: string, toStageKey: string,
     recordContext?: { hasVerifiedParty?: boolean; estimatedAmount?: number | null; targetCloseDate?: string | null }
@@ -138,7 +199,10 @@ export const useCrmWorkflowsStore = create<CrmWorkflowsState>()(
             w.entityType === target.entityType ? { ...w, isActive: w.id === workflowId, updatedAtUtc: new Date().toISOString() } : w
           ),
         }));
-        syncWorkflowsToBackend(get());
+        try {
+          void getCrmContainer().opportunityRepository?.activatePipeline?.(workflowId)?.catch?.(() => undefined);
+        } catch { /* ignore in isolated test */ }
+        syncWorkflowsToBackend(get(), { ...target, isActive: true });
       },
 
       saveWorkflow: (updated) => {
@@ -148,7 +212,7 @@ export const useCrmWorkflowsStore = create<CrmWorkflowsState>()(
           const exists = state.workflows.some((w) => w.id === saved.id);
           return { workflows: exists ? state.workflows.map((w) => (w.id === saved.id ? saved : w)) : [...state.workflows, saved] };
         });
-        syncWorkflowsToBackend(get());
+        syncWorkflowsToBackend(get(), saved);
         return saved;
       },
 
@@ -184,7 +248,7 @@ export const useCrmWorkflowsStore = create<CrmWorkflowsState>()(
           isActive: false, isTemplate: false, version: 1, stages: defaultStages, transitions: defaultTransitions, updatedAtUtc: new Date().toISOString(),
         };
         set((state) => ({ workflows: [...state.workflows, created] }));
-        syncWorkflowsToBackend(get());
+        syncWorkflowsToBackend(get(), created);
         return created;
       },
 
@@ -199,7 +263,7 @@ export const useCrmWorkflowsStore = create<CrmWorkflowsState>()(
           updatedAtUtc: new Date().toISOString(),
         };
         set((state) => ({ workflows: [...state.workflows, cloned] }));
-        syncWorkflowsToBackend(get());
+        syncWorkflowsToBackend(get(), cloned);
         return cloned;
       },
 
@@ -207,6 +271,9 @@ export const useCrmWorkflowsStore = create<CrmWorkflowsState>()(
         const target = get().workflows.find((w) => w.id === workflowId);
         if (!target || target.isActive) return false;
         set((state) => ({ workflows: state.workflows.filter((w) => w.id !== workflowId) }));
+        try {
+          void getCrmContainer().opportunityRepository?.deletePipeline?.(workflowId)?.catch?.(() => undefined);
+        } catch { /* ignore in isolated test */ }
         syncWorkflowsToBackend(get());
         return true;
       },
@@ -243,6 +310,9 @@ export const useCrmWorkflowsStore = create<CrmWorkflowsState>()(
         const wf = get().workflows.find((w) => w.id === workflowId);
         if (!wf || wf.stages.length <= 2 || stageKeyToRemove === replacementStageKey) return false;
         if (!wf.stages.some((s) => s.stageKey === replacementStageKey)) return false;
+        try {
+          void getCrmContainer().opportunityRepository?.replacePipelineStage?.(workflowId, stageKeyToRemove, replacementStageKey)?.catch?.(() => undefined);
+        } catch { /* ignore in isolated test */ }
         const rewiredTransitions = wf.transitions
           .map((t) => {
             const nextFrom = t.fromStageKey === stageKeyToRemove ? replacementStageKey : t.fromStageKey;
@@ -289,12 +359,38 @@ export const useCrmWorkflowsStore = create<CrmWorkflowsState>()(
         set((state) => ({
           workflows: state.workflows.map((w) => {
             if (w.id !== "wf-deal-default") return w;
-            const syncedStages: CrmWorkflowStage[] = backendPipe.stages.slice().sort((a, b) => a.sortOrder - b.sortOrder).map((s, idx) => ({
-              stageKey: s.stageKey, labelEn: s.labelEn, labelAr: s.labelAr || s.labelEn, sortOrder: s.sortOrder || idx + 1,
-              category: idx === 0 ? "todo" : "in_progress", winProbabilityPercent: Number(s.winProbabilityPercent ?? 50),
-              requiredExitFields: s.requiredExitFields ? [...s.requiredExitFields] : [],
-              requiresVerifiedParty: Boolean(s.requiredExitFields?.includes("partyId")), triggerDealConversion: Boolean(s.triggerDealConversion),
-            }));
+            const allUniform50OrNull =
+              backendPipe.stages.length >= 3 &&
+              backendPipe.stages.every(
+                (st: any) => (st.winProbabilityPercent ?? st.probabilityPercent ?? 50) === 50
+              );
+            const syncedStages: CrmWorkflowStage[] = backendPipe.stages
+              .slice()
+              .sort((a, b) => a.sortOrder - b.sortOrder)
+              .map((s: any, idx) => {
+                const prevStage = w.stages.find((ps) => ps.stageKey === s.stageKey);
+                const canonicalMeta = CANONICAL_DEFAULT_STAGE_META[s.stageKey];
+                const rawProb = s.winProbabilityPercent ?? s.probabilityPercent;
+                const resolvedProb =
+                  rawProb == null || allUniform50OrNull
+                    ? Number(prevStage?.winProbabilityPercent ?? canonicalMeta?.prob ?? 50)
+                    : Number(rawProb);
+                const resolvedSla =
+                  s.slaDays ?? s.slaTargetDays ?? prevStage?.slaDays ?? canonicalMeta?.sla;
+                return {
+                  stageKey: s.stageKey,
+                  labelEn: s.labelEn,
+                  labelAr: s.labelAr || s.labelEn,
+                  sortOrder: s.sortOrder || idx + 1,
+                  category: s.statusCategory || prevStage?.category || (idx === 0 ? "todo" : "in_progress"),
+                  color: s.color || prevStage?.color,
+                  winProbabilityPercent: resolvedProb,
+                  slaDays: resolvedSla,
+                  requiredExitFields: s.requiredExitFields ? [...s.requiredExitFields] : [],
+                  requiresVerifiedParty: Boolean(s.requiredExitFields?.includes("partyId")),
+                  triggerDealConversion: Boolean(s.triggerDealConversion),
+                };
+              });
             let syncedTransitions = w.transitions;
             if (backendPipe.transitionsJson) {
               try { const parsed = JSON.parse(backendPipe.transitionsJson); if (Array.isArray(parsed) && parsed.length > 0) syncedTransitions = parsed; } catch { /* keep */ }
@@ -313,6 +409,137 @@ export const useCrmWorkflowsStore = create<CrmWorkflowsState>()(
         }));
       },
 
+      hydrateFromBackendPipelines: (backendPipelines) => {
+        if (!Array.isArray(backendPipelines) || backendPipelines.length === 0) return;
+        const codeToId: Record<string, string> = {
+          default: "wf-deal-default",
+          "deal.fast_track": "wf-deal-fast-track",
+          "deal.sports_sponsorship": "wf-deal-sponsorship",
+          "deal.academy_enrollment": "wf-deal-academy-enrollment",
+          "deal.venue_block_booking": "wf-deal-venue-booking",
+          "lead.default": "wf-lead-default",
+          "lead.two_stage": "wf-lead-2stage-fast",
+          "lead.three_stage_deal": "wf-lead-custom-3stage",
+          "lead.standalone_manual": "wf-lead-standalone-manual",
+        };
+        set((state) => {
+          const nextWorkflows = [...state.workflows];
+          let nextActiveDealId = state.activeDealWorkflowId;
+          let nextActiveLeadId = state.activeLeadWorkflowId;
+          for (const bp of backendPipelines) {
+            if (!Array.isArray(bp.stages) || bp.stages.length < 2) continue;
+            const wfId = codeToId[bp.code || bp.key || ""] || bp.code || bp.key || bp.id || "";
+            if (!wfId) continue;
+            const entityType: CrmWorkflowEntityType =
+              (bp as any).entityType === "lead" || wfId.includes("lead") ? "lead" : "deal";
+            const existingIdx = nextWorkflows.findIndex((w) => w.id === wfId || w.code === (bp.code || bp.key));
+            const curWf = existingIdx >= 0 ? nextWorkflows[existingIdx] : undefined;
+            const allUniform50OrNull =
+              wfId === "wf-deal-default" &&
+              bp.stages.length >= 3 &&
+              bp.stages.every(
+                (st: any) => (st.winProbabilityPercent ?? st.probabilityPercent ?? 50) === 50
+              );
+            const mappedStages: CrmWorkflowStage[] = bp.stages
+              .slice()
+              .sort((a, b) => a.sortOrder - b.sortOrder)
+              .map((s: any, idx: number) => {
+                let parsedProps: Record<string, string> = {};
+                if (s.propertiesJson && typeof s.propertiesJson === "string") {
+                  try {
+                    const p = JSON.parse(s.propertiesJson);
+                    if (p && typeof p === "object") parsedProps = p;
+                  } catch { /* ignore */ }
+                }
+                const prevStage = curWf?.stages.find((ps) => ps.stageKey === s.stageKey);
+                const canonicalMeta = CANONICAL_DEFAULT_STAGE_META[s.stageKey];
+                const category = s.statusCategory || prevStage?.category || (idx === 0 ? "todo" : "in_progress");
+                const color: CrmStageColorToken = resolveDefaultStageColor(
+                  s.stageKey,
+                  category,
+                  s.sortOrder || idx + 1,
+                  parsedProps.color || s.color || prevStage?.color
+                );
+                const customColorHex = parsedProps.customColorHex || s.customColorHex || prevStage?.customColorHex;
+                const rawProb = s.winProbabilityPercent ?? s.probabilityPercent;
+                const resolvedProb =
+                  rawProb == null || allUniform50OrNull
+                    ? Number(canonicalMeta?.prob ?? prevStage?.winProbabilityPercent ?? 50)
+                    : Number(rawProb);
+                const resolvedSla =
+                  s.slaDays ?? s.slaTargetDays ?? prevStage?.slaDays ?? canonicalMeta?.sla;
+                return {
+                  stageKey: s.stageKey,
+                  labelEn: s.labelEn,
+                  labelAr: s.labelAr || s.labelEn,
+                  sortOrder: s.sortOrder || idx + 1,
+                  category,
+                  color,
+                  customColorHex,
+                  winProbabilityPercent: resolvedProb,
+                  slaDays: resolvedSla,
+                  requiredExitFields: s.requiredExitFields ? [...s.requiredExitFields] : [],
+                  requiresVerifiedParty:
+                    category !== "lost" &&
+                    s.stageKey !== "terminal-lost" &&
+                    Boolean(s.requiresVerifiedParty || s.requiredExitFields?.includes("partyId")),
+                  triggerDealConversion: Boolean(s.triggerDealConversion),
+                  triggersDealConversion: Boolean(s.triggerDealConversion),
+                  properties: Object.keys(parsedProps).length > 0 ? parsedProps : prevStage?.properties,
+                  position:
+                    typeof s.canvasX === "number" && typeof s.canvasY === "number"
+                      ? { x: s.canvasX, y: s.canvasY }
+                      : prevStage?.position,
+                };
+              });
+            let mappedTransitions: CrmWorkflowTransition[] = [];
+            if (bp.transitionsJson) {
+              try {
+                const parsed = JSON.parse(bp.transitionsJson);
+                if (Array.isArray(parsed)) mappedTransitions = parsed;
+              } catch { /* ignore */ }
+            }
+            if (bp.isDefault) {
+              if (entityType === "lead") nextActiveLeadId = wfId;
+              else nextActiveDealId = wfId;
+            }
+            if (existingIdx >= 0) {
+              const cur = nextWorkflows[existingIdx];
+              nextWorkflows[existingIdx] = {
+                ...cur,
+                nameEn: bp.nameEn || bp.name || cur.nameEn,
+                nameAr: bp.nameAr || cur.nameAr,
+                isActive: bp.isDefault !== undefined ? Boolean(bp.isDefault) : cur.isActive,
+                version: Math.max(bp.version ?? 1, cur.version ?? 1),
+                stages: mappedStages,
+                transitions: mappedTransitions.length > 0 ? mappedTransitions : cur.transitions,
+              };
+            } else {
+              nextWorkflows.push({
+                id: wfId,
+                code: bp.code || bp.key || wfId,
+                entityType,
+                nameEn: bp.nameEn || bp.name || wfId,
+                nameAr: bp.nameAr || bp.nameEn || wfId,
+                descriptionEn: "Relational CRM Pipeline",
+                descriptionAr: "مسار عمللائحة CRM",
+                isActive: Boolean(bp.isDefault),
+                isTemplate: false,
+                version: bp.version ?? 1,
+                stages: mappedStages,
+                transitions: mappedTransitions,
+                updatedAtUtc: new Date().toISOString(),
+              });
+            }
+          }
+          return {
+            workflows: nextWorkflows,
+            activeDealWorkflowId: nextActiveDealId,
+            activeLeadWorkflowId: nextActiveLeadId,
+          };
+        });
+      },
+
       evaluateTransition: (entityType, fromStageKey, toStageKey, recordContext) =>
         evaluateWorkflowTransition(get().getActiveWorkflow(entityType), fromStageKey, toStageKey, recordContext),
 
@@ -322,3 +549,4 @@ export const useCrmWorkflowsStore = create<CrmWorkflowsState>()(
     { name: "scripe-crm-workflows-v2" }
   )
 );
+
