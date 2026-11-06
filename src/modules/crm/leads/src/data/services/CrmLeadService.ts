@@ -8,6 +8,7 @@ import type {
   LinkPartyToLeadInput,
   ConvertLeadInput,
   ConvertLeadResult,
+  MoveLeadStageInput,
   LeadsFilterParams,
   PagedLeadsResult,
 } from "../../domain/models/crm-lead.types";
@@ -208,5 +209,39 @@ export class CrmLeadService implements ICrmLeadService {
       return response.data;
     }
     return response as ConvertLeadResult;
+  }
+
+  async moveLeadStage(input: MoveLeadStageInput): Promise<CrmLead> {
+    const idempotencyKey =
+      input.idempotencyKey ||
+      `crm-lead-stage-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`;
+
+    const payload = {
+      targetStageKey: input.targetStageKey,
+      reason: input.reason,
+      auditNote: input.auditNote,
+      qualificationNotes: input.qualificationNotes,
+      disqualificationReasonCode: input.disqualificationReasonCode,
+      expectedRowVersion: input.expectedRowVersion ?? "",
+      customFields: input.customFields,
+    };
+
+    const response = await this.api.post<ApiSuccessResponse<CrmLead> | CrmLead>(
+      CRM_LEAD_ENDPOINTS.MOVE_STAGE(input.leadId),
+      payload,
+      undefined,
+      {
+        idempotencyKey,
+        headers: {
+          "Idempotency-Key": idempotencyKey,
+          "X-Idempotency-Key": idempotencyKey,
+        },
+      }
+    );
+
+    if ("data" in response && response.data) {
+      return response.data;
+    }
+    return response as CrmLead;
   }
 }

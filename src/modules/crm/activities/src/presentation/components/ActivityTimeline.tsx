@@ -9,7 +9,6 @@ import { Card } from "@core/ui/card";
 import { Input } from "@core/ui/input";
 import { Textarea } from "@core/ui/textarea";
 import { Label } from "@core/ui/label";
-import { LoadingSpinner } from "@core/ui/loading-spinner";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@core/ui/dialog";
 import { Plus, Clock, Send } from "lucide-react";
 import { CRM_PERMISSIONS } from "@modules/crm";
@@ -17,6 +16,7 @@ import { useCrmActivitiesViewModel } from "../viewmodels/useCrmActivitiesViewMod
 import { CreateActivityModal } from "./CreateActivityModal";
 import { CreateFollowUpModal } from "./CreateFollowUpModal";
 import { ActivityTimelineItemList } from "./ActivityTimelineItemList";
+import { ActivityTimelineSkeleton } from "./ActivityTimelineSkeleton";
 
 interface ActivityTimelineProps {
   readonly leadId?: string;
@@ -151,10 +151,7 @@ export function ActivityTimeline({
       </div>
 
       {state.stage === "loading" && state.items.length === 0 && (
-        <div className="flex flex-col items-center justify-center py-12">
-          <LoadingSpinner size="md" className="text-nx-accent" />
-          <p className="mt-2 text-xs text-nx-ink-3">{t("crmActivities.timeline.loading")}</p>
-        </div>
+        <ActivityTimelineSkeleton />
       )}
 
       {state.stage !== "loading" && state.items.length === 0 && (

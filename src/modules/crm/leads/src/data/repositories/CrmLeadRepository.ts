@@ -8,6 +8,7 @@ import type {
   LinkPartyToLeadInput,
   ConvertLeadInput,
   ConvertLeadResult,
+  MoveLeadStageInput,
   LeadsFilterParams,
   PagedLeadsResult,
 } from "../../domain/models/crm-lead.types";
@@ -41,5 +42,9 @@ export class CrmLeadRepository implements ICrmLeadRepository {
 
   convertLead(input: ConvertLeadInput): Promise<ConvertLeadResult> {
     return this.service.convertLead(input);
+  }
+
+  moveLeadStage(input: MoveLeadStageInput): Promise<CrmLead> {
+    return this.service.moveLeadStage(input);
   }
 }

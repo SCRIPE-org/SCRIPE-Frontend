@@ -249,11 +249,18 @@ export interface PipelineStageConfig {
   labelEn: string;
   labelAr?: string | null;
   sortOrder: number;
+  statusCategory?: string;
+  color?: string;
   winProbabilityPercent?: number | null;
   probabilityPercent?: number | null;
+  slaTargetDays?: number | null;
+  slaDays?: number | null;
   requiredExitFields?: string[];
   requiresVerifiedParty?: boolean;
   triggerDealConversion?: boolean;
+  propertiesJson?: string | null;
+  canvasX?: number | null;
+  canvasY?: number | null;
   rowVersion?: string | null;
 }
 
@@ -264,11 +271,14 @@ export interface PipelineDefinition {
   tenantId?: string;
   key?: string;
   code?: string;
+  entityType?: string;
   name?: string;
   nameEn?: string;
   nameAr?: string | null;
   version: number;
   isDefault?: boolean;
+  isActive?: boolean;
+  propertiesJson?: string | null;
   stages: PipelineStageConfig[];
   transitionsJson?: string | null;
   rowVersion: string;
@@ -280,10 +290,17 @@ export interface UpdatePipelineStageItem {
   labelEn: string;
   labelAr?: string | null;
   sortOrder: number;
+  statusCategory?: string;
+  color?: string;
   winProbabilityPercent?: number | null;
   probabilityPercent?: number | null;
+  slaTargetDays?: number | null;
+  slaDays?: number | null;
   requiredExitFields?: string[];
   triggerDealConversion?: boolean;
+  propertiesJson?: string | null;
+  canvasX?: number | null;
+  canvasY?: number | null;
   expectedRowVersion?: string | null;
 }
 
@@ -294,6 +311,32 @@ export interface UpdateDefaultPipelineInput {
   stages: UpdatePipelineStageItem[];
   transitionsJson?: string | null;
   expectedRowVersion: string;
+  allowDynamicStages?: boolean;
   idempotencyKey?: string;
 }
+
+/** Buying Committee Stakeholder Contact Role on a Deal (`SCRIPE-765`) */
+export interface DealContactRoleDto {
+  id: string;
+  opportunityId: string;
+  contactPartyId: string;
+  contactName: string;
+  contactEmail?: string | null;
+  stakeholderRole: "DecisionMaker" | "Champion" | "Finance" | "Legal" | "Technical";
+  isPrimary: boolean;
+  influenceNotes?: string | null;
+  createdAtUtc: string;
+}
+
+export interface AddDealContactRoleInput {
+  opportunityId: string;
+  contactPartyId?: string;
+  contactName: string;
+  contactEmail?: string;
+  stakeholderRole: "DecisionMaker" | "Champion" | "Finance" | "Legal" | "Technical";
+  isPrimary?: boolean;
+  influenceNotes?: string;
+  idempotencyKey?: string;
+}
+
 

@@ -2,10 +2,18 @@
 
 import React, { useState } from "react";
 import { Badge } from "@core/ui/badge";
-import { ShieldAlert, ShieldCheck, Lock, CheckCircle2 } from "lucide-react";
+import { ShieldAlert, Lock, CheckCircle2 } from "lucide-react";
 import { cn } from "@core/common/utils";
 import { useI18n } from "@core/providers/i18n-provider";
-import { useCrmCurrency, useCrmWorkflowsStore } from "@modules/crm";
+import {
+  STAGE_COLOR_PALETTE,
+  buildCustomHexHarmonicStyles,
+  resolveDefaultStageColor,
+  useCrmCurrency,
+  useCrmWorkflowsStore,
+  type CrmStageColorToken,
+  type CrmWorkflowStageCategory,
+} from "@modules/crm";
 import { KanbanCard } from "./KanbanCard";
 import type { CrmOpportunity } from "../../../domain/entities/OpportunityEntity";
 
@@ -17,6 +25,9 @@ export interface KanbanStageDef {
   sortOrder: number;
   winProbabilityPercent?: number | null;
   requiresParty?: boolean;
+  category?: CrmWorkflowStageCategory;
+  color?: CrmStageColorToken;
+  customColorHex?: string;
 }
 
 export interface KanbanColumnProps {
@@ -25,6 +36,7 @@ export interface KanbanColumnProps {
   stageIndex: number;
   totalStages: number;
   allStages?: KanbanStageDef[];
+  wipLimit?: { min?: number; max?: number };
   draggedOpportunity?: CrmOpportunity | null;
   onCardDragStart?: (opp: CrmOpportunity) => void;
   onCardDragEnd?: () => void;
@@ -38,7 +50,7 @@ export interface KanbanColumnProps {
 /**
  * Single column in the CRM Kanban board representing a pipeline stage.
  * Enforces visual PD-1 party-verification gate indicators on Proposal and subsequent stages,
- * plus Jira-surpassing ambient frosted restriction overlays on forbidden columns.
+ * WIP limits, and Jira-surpassing ambient frosted restriction overlays on forbidden columns.
  */
 export function KanbanColumn({
   stage,
@@ -46,6 +58,7 @@ export function KanbanColumn({
   stageIndex,
   totalStages,
   allStages,
+  wipLimit,
   draggedOpportunity,
   onCardDragStart,
   onCardDragEnd,
@@ -58,6 +71,7 @@ export function KanbanColumn({
   const { t, language } = useI18n();
   const [isDragOver, setIsDragOver] = useState(false);
   const { baseCurrency, autoConvertToBase, convertAmount } = useCrmCurrency();
+  const isWipExceeded = wipLimit?.max !== undefined && opportunities.length > wipLimit.max;
 
   const getStageLabel = (stageDef?: KanbanStageDef, fallbackKey?: string) => {
     if (!stageDef) return fallbackKey || "";
@@ -65,10 +79,12 @@ export function KanbanColumn({
       if (stageDef.labelAr) return stageDef.labelAr;
       const translated = t(stageDef.labelKey, { defaultValue: "" });
       if (translated && translated !== stageDef.labelKey) return translated;
+      return stageDef.defaultLabelEn || stageDef.key;
     }
+    if (stageDef.defaultLabelEn) return stageDef.defaultLabelEn;
     const translated = t(stageDef.labelKey, { defaultValue: "" });
     if (translated && translated !== stageDef.labelKey) return translated;
-    return stageDef.defaultLabelEn || stageDef.key;
+    return stageDef.labelAr || stageDef.key;
   };
 
   // Total deal calculation (respecting FLS masking and PD-5 per-currency discipline)
@@ -90,7 +106,6 @@ export function KanbanColumn({
     const sum = opportunities.reduce((acc, opp) => acc + (Number(opp.estimatedAmount) || 0), 0);
     formattedTotal = `${curr} ${sum.toLocaleString()}`;
   } else {
-    // Multi-currency bucket: group by currency to strictly enforce PD-5 (never cross-sum disparate currencies)
     const sumsByCurr = distinctCurrencies.map((curr) => {
       const sum = opportunities
         .filter((o) => o.currencyCode === curr)
@@ -160,7 +175,6 @@ export function KanbanColumn({
       const fromLabel = getStageLabel(currentStageDef, draggedOpportunity.stageKey);
       const toLabel = getStageLabel(stage, stage.key);
 
-      // Evaluate the workflow transition structurally
       const evalResult = useCrmWorkflowsStore
         .getState()
         .evaluateTransition("deal", draggedOpportunity.stageKey, stage.key);
@@ -254,14 +268,27 @@ export function KanbanColumn({
     }
   };
 
+  const stageColor = resolveDefaultStageColor(
+    stage.key,
+    stage.category,
+    stage.sortOrder,
+    stage.color,
+  );
+  const colorMeta = STAGE_COLOR_PALETTE[stageColor];
+  const customHexStyles = buildCustomHexHarmonicStyles(stage.customColorHex);
+
   return (
     <div
       data-testid={`kanban-column-${stage.key}`}
+      data-stage-color={stageColor}
+      data-custom-color-hex={stage.customColorHex || undefined}
       onDragOver={handleDragOver}
       onDragLeave={handleDragLeave}
       onDrop={handleDrop}
       className={cn(
-        "flex flex-col w-full min-w-0 flex-1 bg-nx-ground border border-nx-line rounded-nx-lg p-3 transition-colors relative overflow-hidden",
+        "flex flex-col w-full min-w-0 flex-1 bg-nx-ground border border-nx-line rounded-nx-lg transition-colors relative overflow-hidden",
+        totalStages >= 6 ? "p-2.5" : "p-3",
+        isWipExceeded && "border-destructive/60 bg-destructive/5",
         isAllowed && !isDragOver && "border-nx-accent/50 bg-nx-accent-wash/15",
         isAllowed && isDragOver && "ring-2 ring-nx-accent bg-nx-accent-wash/30 border-nx-accent",
         !isAllowed && isDragOver && !isBlocked && !isCurrent && "ring-2 ring-nx-accent bg-nx-raised/40 border-nx-accent",
@@ -269,17 +296,20 @@ export function KanbanColumn({
       )}
     >
       {/* Column Header */}
-      <div className="space-y-2 pb-3 mb-2 border-b border-nx-line">
-        <div className="flex items-center justify-between gap-1.5">
-          <div className="flex items-center gap-2 min-w-0">
-            <span className="flex size-5 items-center justify-center rounded-full bg-nx-raised text-[10px] font-mono font-bold text-nx-ink-2 shrink-0 border border-nx-line">
+      <div className="space-y-1.5 pb-2.5 mb-2 border-b border-nx-line">
+        <div className="flex items-center justify-between gap-1">
+          <div className="flex items-center gap-1.5 min-w-0">
+            <span
+              className={cn("flex size-4 items-center justify-center rounded-full text-[10px] font-mono font-bold shrink-0 border", !customHexStyles && colorMeta.badgeClass)}
+              style={customHexStyles?.badgeStyle}
+            >
               {stage.sortOrder}
             </span>
-            <h3 className="text-xs font-bold text-nx-ink uppercase tracking-wider truncate">
-              {getStageLabel(stage)}
-            </h3>
             {stage.winProbabilityPercent !== undefined && stage.winProbabilityPercent !== null && (
-              <span className="text-[10px] font-mono px-1 py-0.5 rounded bg-nx-raised text-nx-ink-2 border border-nx-line shrink-0">
+              <span
+                className={cn("text-[10px] font-mono px-1 py-0 rounded border shrink-0", !customHexStyles && colorMeta.badgeClass)}
+                style={customHexStyles?.badgeStyle}
+              >
                 {stage.winProbabilityPercent}%
               </span>
             )}
@@ -287,11 +317,23 @@ export function KanbanColumn({
 
           <Badge
             variant="secondary"
-            className="text-[11px] font-mono px-1.5 py-0 bg-nx-surface text-nx-ink-2 border-nx-line shrink-0"
+            data-testid={`kanban-wip-badge-${stage.key}`}
+            className={cn(
+              "text-[10px] font-mono px-1.5 py-0 shrink-0",
+              isWipExceeded
+                ? "bg-destructive/15 text-destructive border-destructive/40 font-bold"
+                : "bg-nx-surface text-nx-ink-2 border-nx-line"
+            )}
           >
-            {opportunities.length}
+            {wipLimit?.max !== undefined ? `${opportunities.length}/${wipLimit.max}` : opportunities.length}
           </Badge>
         </div>
+        <h3
+          className="text-[11px] font-bold text-nx-ink uppercase tracking-tight truncate"
+          title={getStageLabel(stage)}
+        >
+          {getStageLabel(stage)}
+        </h3>
 
         {/* Drag State Feedback Pills (Affirmative or Current Stage) */}
         {isAllowed && pillText && (
@@ -342,7 +384,10 @@ export function KanbanColumn({
 
         {/* Column Value Summary — Single Clean Line */}
         <div
-          className="flex items-center justify-between gap-2 text-[11px] font-mono pt-0.5"
+          className={cn(
+            "flex items-center justify-between gap-1 font-mono pt-0.5",
+            totalStages >= 6 ? "text-[10px]" : "text-[11px]",
+          )}
           title={
             convertedBaseSum !== null
               ? `${t("crmOpportunities.kanban.totalValue", { defaultValue: "Breakdown" })}: ${formattedTotal}`
@@ -350,7 +395,7 @@ export function KanbanColumn({
           }
         >
           <span className="text-nx-ink-3 shrink-0">
-            {convertedBaseSum !== null
+            {convertedBaseSum !== null && totalStages < 6
               ? `${t("crmOpportunities.kanban.totalValue", { defaultValue: "Total" })} (${baseCurrency})`
               : t("crmOpportunities.kanban.totalValue", { defaultValue: "Total" })}
           </span>

@@ -96,10 +96,18 @@ export function evaluateOptimisticDealStageMove(
   status: "allowed" | "blocked" | "needs_modal" | "close_won" | "close_lost";
   errorReason?: string;
 } {
-  if (targetStageKey === "default.closed_won" || targetStageKey === "Won") {
+  if (
+    targetStageKey === "default.closed_won" ||
+    targetStageKey === "terminal-won" ||
+    targetStageKey === "Won"
+  ) {
     return { status: "close_won" };
   }
-  if (targetStageKey === "default.closed_lost" || targetStageKey === "Lost") {
+  if (
+    targetStageKey === "default.closed_lost" ||
+    targetStageKey === "terminal-lost" ||
+    targetStageKey === "Lost"
+  ) {
     return { status: "close_lost" };
   }
 
@@ -120,6 +128,14 @@ export function evaluateOptimisticDealStageMove(
   const stages = effectivePipelineStages ?? [];
   const currentStageConfig = stages.find((s) => s.stageKey === opportunity.stageKey);
   const targetStageConfig = stages.find((s) => s.stageKey === targetStageKey);
+  const wfTargetStage = activeWf.stages.find((s) => s.stageKey === targetStageKey);
+
+  if (targetStageConfig?.statusCategory === "done" || wfTargetStage?.category === "done") {
+    return { status: "close_won" };
+  }
+  if (targetStageConfig?.statusCategory === "lost" || wfTargetStage?.category === "lost") {
+    return { status: "close_lost" };
+  }
 
   const currentOrder = currentStageConfig?.sortOrder ?? DEFAULT_STAGE_ORDER[opportunity.stageKey] ?? 1;
   const targetOrder = targetStageConfig?.sortOrder ?? DEFAULT_STAGE_ORDER[targetStageKey] ?? 1;

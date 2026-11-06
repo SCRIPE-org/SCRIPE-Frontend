@@ -25,6 +25,7 @@ import { GenericModal } from "./generic-modal";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@core/ui/dialog";
 import { GenericForm, FieldConfig } from "@core/ui/forms/generic-form";
 import { LoadingSpinner } from "@core/ui/loading-spinner";
+import { Skeleton } from "@core/ui/skeleton";
 import { ErrorMessage } from "@core/ui/error-message";
 import { EmptyState } from "@core/ui/empty-state";
 import { PageHeader } from "@core/ui/page-header";
@@ -1492,7 +1493,26 @@ function GenericCrudViewInner<T>(props: GenericCrudViewProps<T>) {
 
       {activeViewMode === "CardGrid" ? (
         <div className={cn("grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3", config?.cardGridClassName)}>
-          {(viewModel.items || []).length === 0 ? (
+          {viewModel.loading ? (
+            [0, 1, 2, 3, 4, 5].map((i) => (
+              <Card
+                key={`card-skeleton-${i}`}
+                className="flex flex-col justify-between gap-3 rounded-nx-lg border border-nx-line bg-nx-surface p-4"
+              >
+                <div className="space-y-2">
+                  {columns.slice(0, 4).map((col) => (
+                    <div key={col.key} className="flex items-center justify-between gap-2">
+                      <Skeleton className="h-3.5 w-24" />
+                      <Skeleton className="h-4 w-28" />
+                    </div>
+                  ))}
+                </div>
+                <div className="flex justify-end gap-2 border-t border-nx-line pt-3">
+                  <Skeleton className="h-7 w-16 rounded-nx-md" />
+                </div>
+              </Card>
+            ))
+          ) : (viewModel.items || []).length === 0 ? (
             <div className="col-span-full rounded-nx-lg border border-nx-line bg-nx-surface p-8">
               <EmptyState bare icon={Inbox} title={t("common.noData")} />
             </div>
@@ -1755,7 +1775,17 @@ function GenericCrudViewInner<T>(props: GenericCrudViewProps<T>) {
           return (
             <div className="grid grid-cols-1 gap-4 lg:grid-cols-12">
               <div className="space-y-2 rounded-nx-lg border border-nx-line bg-nx-surface p-3 lg:col-span-5">
-                {items.length === 0 ? (
+                {viewModel.loading ? (
+                  [0, 1, 2, 3, 4].map((i) => (
+                    <div
+                      key={`split-skeleton-${i}`}
+                      className="rounded-nx-md border border-nx-line bg-nx-raised p-3 space-y-1.5"
+                    >
+                      <Skeleton className="h-4 w-40" />
+                      <Skeleton className="h-3 w-24" />
+                    </div>
+                  ))
+                ) : items.length === 0 ? (
                   <EmptyState bare icon={Inbox} title={t("common.noData")} />
                 ) : (
                   items.map((row: any, idx: number) => {
@@ -1802,7 +1832,25 @@ function GenericCrudViewInner<T>(props: GenericCrudViewProps<T>) {
                 )}
               </div>
               <div className="rounded-nx-lg border border-nx-line bg-nx-surface p-4 lg:col-span-7">
-                {selectedRow ? (
+                {viewModel.loading ? (
+                  <div className="space-y-4">
+                    <div className="flex items-center justify-between border-b border-nx-line pb-3">
+                      <Skeleton className="h-5 w-48" />
+                      <Skeleton className="h-8 w-24 rounded-nx-md" />
+                    </div>
+                    <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                      {columns.slice(0, 6).map((col) => (
+                        <div
+                          key={col.key}
+                          className="rounded-nx-md border border-nx-line bg-nx-raised p-2.5 space-y-1.5"
+                        >
+                          <Skeleton className="h-3 w-20" />
+                          <Skeleton className="h-4 w-32" />
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                ) : selectedRow ? (
                   config?.renderSplitDetail ? (
                     config.renderSplitDetail(selectedRow, renderRowActionButtons(selectedRow))
                   ) : (

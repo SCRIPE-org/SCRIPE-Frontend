@@ -3,7 +3,6 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useI18n } from "@core/providers/i18n-provider";
 import { usePermission } from "@core/hooks/use-permission";
-import { LoadingSpinner } from "@core/ui/loading-spinner";
 import { Alert, AlertTitle, AlertDescription } from "@core/ui/alert";
 import { Button } from "@core/ui/button";
 import { Badge } from "@core/ui/badge";
@@ -14,6 +13,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, Di
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@core/ui/select";
 import { AlertCircle, User, Building2, Briefcase, ChevronLeft, ChevronRight, Edit2, Mail, Phone, Calendar, ArrowUpRight } from "lucide-react";
 import { CRM_PERMISSIONS, CrmShell, ActivityTimeline } from "@modules/crm";
+import { ContactDetailSkeleton } from "../components/ContactDetailSkeleton";
 import { useContactDetailViewModel } from "../viewmodels/useContactDetailViewModel";
 
 interface ContactDetailViewProps {
@@ -54,10 +54,7 @@ export function ContactDetailView({ contactId }: ContactDetailViewProps) {
   if (state.stage === "loading" && !state.contact) {
     return (
       <CrmShell activeTab="contacts" onTabChange={() => {}}>
-        <div className="flex flex-col items-center justify-center py-24">
-          <LoadingSpinner size="lg" className="text-nx-accent" />
-          <p className="mt-3 text-xs text-nx-ink-3">{t("crmContacts.detail.loading") || "Loading contact context..."}</p>
-        </div>
+        <ContactDetailSkeleton />
       </CrmShell>
     );
   }

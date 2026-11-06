@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback } from "react";
+import { useCallback, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useI18n } from "@core/providers/i18n-provider";
 import { usePermission } from "@core/hooks/use-permission";
@@ -9,9 +9,9 @@ import { Button } from "@core/ui/button";
 import { Input } from "@core/ui/input";
 import { EmptyState } from "@core/ui/empty-state";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@core/ui/select";
-import { AlertCircle, RefreshCw, Plus, Search, Settings, ArrowRight, RotateCcw, CheckCircle, XCircle, ArrowUpRight, UserCheck } from "lucide-react";
+import { AlertCircle, RefreshCw, Plus, Search, SlidersHorizontal, ArrowRight, RotateCcw, CheckCircle, XCircle, ArrowUpRight, UserCheck } from "lucide-react";
 import { cn } from "@core/common/utils";
-import { CRM_PERMISSIONS, CrmShell, CrmSectionHeader, useCrmSettingsStore } from "@modules/crm";
+import { CRM_PERMISSIONS, CrmShell, CrmSectionHeader, useCrmSettingsStore, useCrmWorkflowsStore } from "@modules/crm";
 import { GenericCrudView } from "@core/crud/components/generic-crud-view";
 import type { CrudConfig, CrudViewMode } from "@core/crud/components/generic-crud-view";
 import { buildOpportunityColumns, renderOpportunityCardGridItem, renderOpportunitySplitDetail } from "../components/OpportunitiesTable";
@@ -21,7 +21,7 @@ import { MoveStageDialog } from "../components/MoveStageDialog";
 import { CloseOpportunityDialog } from "../components/CloseOpportunityDialog";
 import { ReopenOpportunityDialog } from "../components/ReopenOpportunityDialog";
 import { AssignOwnerDialog } from "../components/AssignOwnerDialog";
-import { PipelineAdminDialog } from "../components/admin/PipelineAdminDialog";
+import { BoardSettingsDialog, type BoardSettingsConfig } from "../components/BoardSettingsDialog";
 import { useOpportunitiesViewModel } from "../viewmodels/useOpportunitiesViewModel";
 import type { CrmOpportunity, OpportunityStatus } from "../../domain/entities/OpportunityEntity";
 
@@ -33,6 +33,16 @@ export function OpportunitiesView() {
   const canUpdateOpp = usePermission(CRM_PERMISSIONS.OPPORTUNITIES_UPDATE);
   const canManagePipeline = usePermission(CRM_PERMISSIONS.PIPELINES_MANAGE);
   const defaultDealViewMode = useCrmSettingsStore((s) => s.defaultDealViewMode);
+  const workflows = useCrmWorkflowsStore((s) => s.workflows);
+  const activeDealWorkflowId = useCrmWorkflowsStore((s) => s.activeDealWorkflowId);
+  const setActiveWorkflow = useCrmWorkflowsStore((s) => s.setActiveWorkflow);
+  const dealWorkflows = workflows.filter((w) => w.entityType === "deal");
+
+  const [isBoardSettingsOpen, setIsBoardSettingsOpen] = useState(false);
+  const [boardSettings, setBoardSettings] = useState<BoardSettingsConfig>({
+    swimlaneMode: "none",
+    wipLimits: {},
+  });
 
   const viewModel = useOpportunitiesViewModel();
   const {
@@ -42,7 +52,6 @@ export function OpportunitiesView() {
     statusFilter,
     pipeline,
     pipelineStages,
-    isPipelineAdminOpen,
     isCreateOpen,
     isMoveStageOpen,
     isCloseOpen,
@@ -52,8 +61,6 @@ export function OpportunitiesView() {
     closeInitialOutcome,
     isSubmitting,
     submitError,
-    setIsPipelineAdminOpen,
-    handleUpdatePipeline,
     setIsCreateOpen,
     setIsMoveStageOpen,
     setIsCloseOpen,
@@ -163,11 +170,25 @@ export function OpportunitiesView() {
     },
     toolbarContent: (
       <div className="flex flex-wrap items-center gap-2 flex-1" dir={isRtl ? "rtl" : "ltr"}>
-        <div className="relative flex-1 min-w-[220px] max-w-md">
+        <div className="relative flex-1 min-w-[200px] max-w-sm">
           <Search className="absolute start-3 top-1/2 -translate-y-1/2 size-3.5 text-nx-ink-3 pointer-events-none" />
           <Input placeholder={t("crmOpportunities.actions.searchPlaceholder")} value={search} onChange={(e) => handleSearchChange(e.target.value)} className="ps-8 h-8 text-xs border-nx-line bg-nx-surface text-nx-ink" />
         </div>
-        <div className="w-40">
+        <div className="w-48">
+          <Select value={activeDealWorkflowId} onValueChange={(id) => setActiveWorkflow("deal", id)}>
+            <SelectTrigger className="h-8 text-xs" data-testid="deal-pipeline-selector">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              {dealWorkflows.map((wf) => (
+                <SelectItem key={wf.id} value={wf.id} className="text-xs">
+                  {isRtl ? wf.nameAr : wf.nameEn}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+        <div className="w-36">
           <Select value={stageFilter || "all"} onValueChange={(val) => handleStageFilterChange(val === "all" ? undefined : val)}>
             <SelectTrigger className="h-8 text-xs"><SelectValue placeholder={t("crmOpportunities.actions.filterByStage")} /></SelectTrigger>
             <SelectContent>
@@ -175,7 +196,7 @@ export function OpportunitiesView() {
             </SelectContent>
           </Select>
         </div>
-        <div className="w-36">
+        <div className="w-32">
           <Select value={statusFilter || "all"} onValueChange={(val) => handleStatusFilterChange(val === "all" ? undefined : (val as OpportunityStatus))}>
             <SelectTrigger className="h-8 text-xs"><SelectValue placeholder={t("crmOpportunities.actions.filterByStatus")} /></SelectTrigger>
             <SelectContent>
@@ -189,11 +210,14 @@ export function OpportunitiesView() {
       <KanbanBoard
         opportunities={state.items}
         stages={pipelineStages}
+        boardSettings={boardSettings}
         onMoveStage={handleMoveStageOptimistic}
         errorMessage={submitError}
         onClearError={clearSubmitError}
         canUpdateOpportunity={canUpdateOpp}
         canManagePipelines={canManagePipeline}
+        hideOutcomeDropzones
+        isLoading={state.stage === "loading"}
       />
     ),
     renderCardGridItem: (opp, actions) => renderOpportunityCardGridItem(opp, actions, language, handleSelectOpportunity),
@@ -226,12 +250,10 @@ export function OpportunitiesView() {
                 <RefreshCw className={cn("size-3.5", state.stage === "loading" && "animate-spin")} />
                 <span className="hidden sm:inline">{t("crmOpportunities.actions.refresh")}</span>
               </Button>
-              {canManagePipeline && (
-                <Button type="button" variant="outline" size="sm" onClick={() => router.push("/crm/pipelines")} className="h-8 gap-1.5 shrink-0 font-medium text-xs" data-testid="pipeline-settings-button">
-                  <Settings className="size-3.5" />
-                  {t("crmOpportunities.actions.pipelineSettings", { defaultValue: "Pipeline Settings" })}
-                </Button>
-              )}
+              <Button type="button" variant="outline" size="sm" onClick={() => setIsBoardSettingsOpen(true)} className="h-8 gap-1.5 shrink-0 font-medium text-xs" data-testid="board-settings-button">
+                <SlidersHorizontal className="size-3.5" />
+                {isRtl ? "إعدادات اللوحة" : "Board Settings"}
+              </Button>
               {canCreateOpp && (
                 <Button type="button" size="sm" onClick={() => setIsCreateOpen(true)} className="h-8 gap-1.5 shrink-0 text-xs font-bold" data-testid="create-opportunity-button">
                   <Plus className="size-3.5" />
@@ -260,7 +282,13 @@ export function OpportunitiesView() {
         <CloseOpportunityDialog open={isCloseOpen} onOpenChange={setIsCloseOpen} opportunity={activeOpportunity} initialOutcome={closeInitialOutcome} onSubmit={handleCloseOpportunity} isSubmitting={isSubmitting} submitError={submitError} />
         <ReopenOpportunityDialog open={isReopenOpen} onOpenChange={setIsReopenOpen} opportunity={activeOpportunity} onSubmit={handleReopenOpportunity} isSubmitting={isSubmitting} submitError={submitError} />
         <AssignOwnerDialog open={isAssignOwnerOpen} onOpenChange={setIsAssignOwnerOpen} opportunity={activeOpportunity} onSubmit={handleAssignOwner} isSubmitting={isSubmitting} submitError={submitError} />
-        <PipelineAdminDialog open={isPipelineAdminOpen} onOpenChange={setIsPipelineAdminOpen} pipeline={pipeline} onSubmit={handleUpdatePipeline} isSubmitting={isSubmitting} submitError={viewModel.pipelineError} />
+        <BoardSettingsDialog
+          open={isBoardSettingsOpen}
+          onOpenChange={setIsBoardSettingsOpen}
+          stages={(pipelineStages ?? []).map((s) => ({ stageKey: s.stageKey, labelEn: s.labelEn, labelAr: s.labelAr }))}
+          config={boardSettings}
+          onConfigChange={setBoardSettings}
+        />
       </div>
     </CrmShell>
   );

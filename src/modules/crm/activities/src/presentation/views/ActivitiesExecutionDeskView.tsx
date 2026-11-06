@@ -4,11 +4,12 @@ import { useI18n } from "@core/providers/i18n-provider";
 import { CrmShell, CrmSectionHeader } from "@modules/crm";
 import { Card } from "@core/ui/card";
 import { Badge } from "@core/ui/badge";
-import { LoadingSpinner } from "@core/ui/loading-spinner";
+import { Skeleton } from "@core/ui/skeleton";
 import { Building2, CheckCircle2 } from "lucide-react";
 import { cn } from "@core/common/utils";
 import { useActivitiesExecutionDeskViewModel } from "../viewmodels/useActivitiesExecutionDeskViewModel";
 import { ActivityTimeline } from "../components/ActivityTimeline";
+import { ActivityTimelineSkeleton } from "../components/ActivityTimelineSkeleton";
 
 export function ActivitiesExecutionDeskView() {
   const { t, language } = useI18n();
@@ -51,8 +52,16 @@ export function ActivitiesExecutionDeskView() {
             </div>
 
             {isLoadingAccounts ? (
-              <div className="flex items-center justify-center py-8">
-                <LoadingSpinner size="sm" className="text-nx-accent" />
+              <div className="space-y-2" data-testid="activities-accounts-skeleton">
+                {Array.from({ length: 4 }).map((_, i) => (
+                  <Card key={i} className="p-3 border-nx-line bg-nx-surface space-y-2">
+                    <Skeleton className="h-3.5 w-36 rounded" />
+                    <div className="flex items-center gap-1.5">
+                      <Skeleton className="h-3.5 w-14 rounded" />
+                      <Skeleton className="h-3 w-8 rounded" />
+                    </div>
+                  </Card>
+                ))}
               </div>
             ) : accounts.length === 0 ? (
               <Card className="p-4 text-center text-xs text-nx-ink-3 border-nx-line bg-nx-surface">
@@ -111,7 +120,21 @@ export function ActivitiesExecutionDeskView() {
 
           {/* Right: Active Entity Timeline */}
           <div className="lg:col-span-8 space-y-4">
-            {selectedAccountId ? (
+            {isLoadingAccounts ? (
+              <Card className="p-5 bg-nx-surface border-nx-line space-y-4">
+                <div className="flex items-center justify-between gap-2 border-b border-nx-line pb-3">
+                  <div className="space-y-1.5">
+                    <Skeleton className="h-3 w-32 rounded" />
+                    <Skeleton className="h-4 w-48 rounded" />
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Skeleton className="h-4 w-16 rounded" />
+                    <Skeleton className="h-4 w-12 rounded" />
+                  </div>
+                </div>
+                <ActivityTimelineSkeleton />
+              </Card>
+            ) : selectedAccountId ? (
               <Card className="p-5 bg-nx-surface border-nx-line space-y-4">
                 <div className="flex flex-wrap items-center justify-between gap-2 border-b border-nx-line pb-3">
                   <div>

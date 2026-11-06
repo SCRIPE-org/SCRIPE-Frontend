@@ -11,6 +11,7 @@ import type {
   ReopenOpportunityInput,
   AssignOpportunityOwnerInput,
   PipelineDefinition,
+  DealContactRoleDto,
 } from "../../domain/entities/OpportunityEntity";
 import { lookupOpportunityPartyOptions } from "./useOpportunityViewModelHelpers";
 
@@ -32,6 +33,7 @@ export function useOpportunityDetailViewModel(opportunityId: string) {
   const [error, setError] = useState<string | null>(null);
   const [data, setData] = useState<OpportunityDetailResult | null>(null);
   const [pipeline, setPipeline] = useState<PipelineDefinition | null>(null);
+  const [contactRoles, setContactRoles] = useState<DealContactRoleDto[]>([]);
 
   const [isMoveStageOpen, setIsMoveStageOpen] = useState(false);
   const [targetMoveStageKey, setTargetMoveStageKey] = useState<string | undefined>(undefined);
@@ -52,7 +54,7 @@ export function useOpportunityDetailViewModel(opportunityId: string) {
     try {
       const container = getCrmContainer() as any;
       const repo = container.opportunityRepository;
-      const [result, pipelineRes, fulfillmentActivities] = await Promise.all([
+      const [result, pipelineRes, fulfillmentActivities, rolesRes] = await Promise.all([
         repo.getOpportunityById(opportunityId),
         typeof repo.getDefaultPipeline === "function" ? repo.getDefaultPipeline().catch(() => null) : Promise.resolve(null),
         typeof container.activityRepository?.getActivities === "function"
@@ -65,9 +67,11 @@ export function useOpportunityDetailViewModel(opportunityId: string) {
               })
               .catch(() => null)
           : Promise.resolve(null),
+        typeof repo.getContactRoles === "function" ? repo.getContactRoles(opportunityId).catch(() => []) : Promise.resolve([]),
       ]);
       setData(result);
       if (pipelineRes) setPipeline(pipelineRes);
+      if (Array.isArray(rolesRes)) setContactRoles(rolesRes);
       if (
         fulfillmentActivities &&
         ((fulfillmentActivities.items && fulfillmentActivities.items.length > 0) ||
@@ -191,11 +195,64 @@ export function useOpportunityDetailViewModel(opportunityId: string) {
     }
   };
 
+  const handleAddContactRole = async (input: {
+    contactPartyId: string;
+    contactName: string;
+    stakeholderRole: DealContactRoleDto["stakeholderRole"];
+    isPrimary: boolean;
+    influenceNotes?: string;
+  }) => {
+    const opp = data?.opportunity;
+    if (!opp) return;
+    try {
+      const repo = (getCrmContainer() as any).opportunityRepository;
+      if (typeof repo?.addContactRole === "function") {
+        const created = await repo.addContactRole({
+          opportunityId: opp.id,
+          contactPartyId: input.contactPartyId,
+          contactName: input.contactName,
+          stakeholderRole: input.stakeholderRole,
+          isPrimary: input.isPrimary,
+          influenceNotes: input.influenceNotes,
+        });
+        const normalizedRole: DealContactRoleDto = {
+          ...created,
+          id: created?.id || `role-${Date.now()}`,
+          opportunityId: opp.id,
+          contactPartyId: created?.contactPartyId || input.contactPartyId,
+          contactName: created?.contactName || input.contactName,
+          stakeholderRole: (created?.stakeholderRole || input.stakeholderRole) as DealContactRoleDto["stakeholderRole"],
+          isPrimary: created?.isPrimary ?? input.isPrimary,
+          influenceNotes: created?.influenceNotes ?? (created as any)?.notes ?? input.influenceNotes ?? null,
+          createdAtUtc: created?.createdAtUtc ?? (created as any)?.createdAt ?? new Date().toISOString(),
+        };
+        setContactRoles((prev) => [normalizedRole, ...prev.filter((r) => r.id !== normalizedRole.id)]);
+      }
+    } catch {
+      // Keep UI responsive even if offline
+    }
+  };
+
+  const handleRemoveContactRole = async (roleId: string) => {
+    const opp = data?.opportunity;
+    if (!opp) return;
+    try {
+      const repo = (getCrmContainer() as any).opportunityRepository;
+      if (typeof repo?.removeContactRole === "function") {
+        await repo.removeContactRole(opp.id, roleId);
+      }
+      setContactRoles((prev) => prev.filter((r) => r.id !== roleId));
+    } catch {
+      setContactRoles((prev) => prev.filter((r) => r.id !== roleId));
+    }
+  };
+
   return {
     loading,
     error,
     data,
     pipeline,
+    contactRoles,
     loadData,
     lookupPartyOptions: lookupOpportunityPartyOptions,
     isMoveStageOpen,
@@ -221,5 +278,7 @@ export function useOpportunityDetailViewModel(opportunityId: string) {
     handleReopenOpportunity,
     handleAssignOwner,
     handleRequestFulfillment,
+    handleAddContactRole,
+    handleRemoveContactRole,
   };
 }

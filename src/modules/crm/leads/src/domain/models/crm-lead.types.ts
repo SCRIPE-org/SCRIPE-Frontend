@@ -30,8 +30,25 @@ export interface CrmLead {
   convertedOpportunityId?: string;
   ownerUserId?: string;
   ownerTeamId?: string;
+  stageKey?: string;
+  stageLabelEnSnapshot?: string;
+  stageLabelArSnapshot?: string;
+  enteredStageAtUtc?: string;
+  triggerDealConversion?: boolean;
   createdAt: string;
   rowVersion?: string;
+}
+
+export interface MoveLeadStageInput {
+  leadId: string;
+  targetStageKey: string;
+  reason?: string;
+  auditNote?: string;
+  qualificationNotes?: string;
+  disqualificationReasonCode?: string;
+  expectedRowVersion?: string;
+  customFields?: Record<string, string>;
+  idempotencyKey?: string;
 }
 
 export interface CreateLeadInput {

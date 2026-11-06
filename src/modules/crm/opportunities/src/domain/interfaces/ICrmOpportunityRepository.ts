@@ -11,6 +11,8 @@ import type {
   PagedOpportunitiesResult,
   PipelineDefinition,
   UpdateDefaultPipelineInput,
+  DealContactRoleDto,
+  AddDealContactRoleInput,
 } from "../entities/OpportunityEntity";
 
 /**
@@ -27,4 +29,12 @@ export interface ICrmOpportunityRepository {
   reopenOpportunity(input: ReopenOpportunityInput): Promise<CrmOpportunity>;
   getDefaultPipeline(): Promise<PipelineDefinition>;
   updateDefaultPipeline(input: UpdateDefaultPipelineInput): Promise<PipelineDefinition>;
+  getPipelines?(entityType?: string): Promise<PipelineDefinition[]>;
+  savePipeline?(pipelineId: string, input: UpdateDefaultPipelineInput & { entityType?: string; isActive?: boolean }): Promise<PipelineDefinition>;
+  activatePipeline?(pipelineId: string): Promise<PipelineDefinition>;
+  deletePipeline?(pipelineId: string): Promise<boolean>;
+  replacePipelineStage?(pipelineId: string, stageKeyToRemove: string, replacementStageKey: string): Promise<{ migratedRecordCount: number }>;
+  getContactRoles?(opportunityId: string): Promise<DealContactRoleDto[]>;
+  addContactRole?(input: AddDealContactRoleInput): Promise<DealContactRoleDto>;
+  removeContactRole?(opportunityId: string, roleId: string): Promise<boolean>;
 }

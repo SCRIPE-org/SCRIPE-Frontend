@@ -4,7 +4,6 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useI18n } from "@core/providers/i18n-provider";
 import { usePermission } from "@core/hooks/use-permission";
-import { LoadingSpinner } from "@core/ui/loading-spinner";
 import { Alert, AlertTitle, AlertDescription } from "@core/ui/alert";
 import { Button } from "@core/ui/button";
 import { Card } from "@core/ui/card";
@@ -26,6 +25,7 @@ import { QualifyLeadDialog } from "../components/QualifyLeadDialog";
 import { LinkPartyDialog } from "../components/LinkPartyDialog";
 import { ConvertLeadDialog } from "../components/ConvertLeadDialog";
 import { LeadDetailProfileCards } from "../components/LeadDetailProfileCards";
+import { LeadDetailSkeleton } from "../components/LeadDetailSkeleton";
 import { EditLeadDetailDialog } from "../components/EditLeadDetailDialog";
 import { useLeadDetailViewModel } from "../viewmodels/useLeadDetailViewModel";
 import type { LeadStatus } from "../../domain/entities/LeadEntity";
@@ -102,10 +102,7 @@ export function LeadDetailView({ leadId }: LeadDetailViewProps) {
   if (state.stage === "loading" && !state.lead) {
     return (
       <CrmShell activeTab="leads" onTabChange={() => {}}>
-        <div className="flex flex-col items-center justify-center py-24">
-          <LoadingSpinner size="lg" className="text-nx-accent" />
-          <p className="mt-3 text-xs text-nx-ink-3">{t("crmLeads.detail.loadingWorkspace")}</p>
-        </div>
+        <LeadDetailSkeleton />
       </CrmShell>
     );
   }

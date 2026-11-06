@@ -64,6 +64,7 @@ export function MoveStageDialog({
     activeOppId,
   );
   const storeCustomFields = useCrmSettingsStore((s) => s.crmCustomFields);
+  const addCrmCustomField = useCrmSettingsStore((s) => s.addCrmCustomField);
   const oppCustomFieldConfigs = [
     ...rawOppCf,
     ...storeCustomFields
@@ -71,7 +72,7 @@ export function MoveStageDialog({
       .map((f) => ({
         name: encodeCustomFieldName(f.key),
         label: isRtl && f.labelAr ? f.labelAr : f.labelEn,
-        type: (f.valueType === "Number" || f.valueType === "Currency" ? "number" : f.valueType === "Boolean" ? "checkbox" : "text") as any,
+        type: (f.valueType === "Number" || f.valueType === "Currency" ? "number" : f.valueType === "Date" ? "date" : f.valueType === "Boolean" ? "checkbox" : "text") as any,
         required: f.isRequired,
         defaultValue: undefined,
       })),
@@ -171,7 +172,22 @@ export function MoveStageDialog({
   const needsCloseDateInput = exitFields.includes("targetCloseDate");
   const needsContactRoleInput = exitFields.includes("primaryContactRole");
   const needsSolutionFitInput = exitFields.includes("solutionFitConfirmed");
-  const requiredCustomFieldKeys = exitFields.filter((f) => f.startsWith("custom:")).map((f) => f.slice("custom:".length));
+  const requiredCustomFieldKeys = Array.from(
+    new Set([
+      ...exitFields.filter((f) => f.startsWith("custom:")).map((f) => f.slice("custom:".length)),
+      ...storeCustomFields
+        .filter(
+          (f) =>
+            f.entityTypeKey === "crm.opportunity" &&
+            Boolean(f.defaultStageGateKey) &&
+            (f.defaultStageGateKey === opportunity.stageKey || f.defaultStageGateKey === targetStageKey)
+        )
+        .map((f) => f.key),
+    ])
+  );
+  const nonGateCustomFieldConfigs = oppCustomFieldConfigs.filter(
+    (fc) => !requiredCustomFieldKeys.some((k) => fc.name === k || fc.name === encodeCustomFieldName(k))
+  );
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -185,8 +201,19 @@ export function MoveStageDialog({
     if (needsContactRoleInput && !primaryContactRole) return setValidationError("Primary Contact Role is required to exit the current stage.");
     if (needsSolutionFitInput && !solutionFitConfirmed) return setValidationError("Solution Fit Confirmed check is required to exit the current stage.");
     for (const cfKey of requiredCustomFieldKeys) {
+      const def = storeCustomFields.find((f) => f.key === cfKey);
       const val = customFieldValues[encodeCustomFieldName(cfKey)] ?? customFieldValues[cfKey];
-      if (val === undefined || val === null || String(val).trim() === "") return setValidationError(`Required stage gate custom field '${cfKey}' must be completed before advancing.`);
+      if (def?.valueType === "Boolean") {
+        if (val !== true && val !== "true") {
+          return setValidationError(`Required stage gate custom field '${def.labelEn || cfKey}' must be confirmed before advancing.`);
+        }
+      } else if (def?.valueType === "Number" || def?.valueType === "Currency") {
+        if (val === undefined || val === null || String(val).trim() === "" || !Number.isFinite(Number(val))) {
+          return setValidationError(`Required stage gate numeric field '${def.labelEn || cfKey}' must have a valid number before advancing.`);
+        }
+      } else if (val === undefined || val === null || String(val).trim() === "") {
+        return setValidationError(`Required stage gate custom field '${def?.labelEn || cfKey}' must be completed before advancing.`);
+      }
     }
     if (!isAdjacentForward && (!reason.trim() || reason.trim().length < 5)) return setValidationError("A stage transition comment/reason of at least 5 characters is required when moving backward or skipping stages.");
 
@@ -226,6 +253,21 @@ export function MoveStageDialog({
               <AlertDescription>{submitError || validationError}</AlertDescription>
             </Alert>
           )}
+          <div
+            className="rounded-lg border border-nx-line bg-nx-raised/40 px-3 py-2 flex items-center justify-between gap-2 text-xs"
+            data-testid="move-stage-approval-gate-card"
+          >
+            <span className="font-semibold text-nx-ink">
+              {isRtl ? "حوكمة الانتقال وطابور الاعتماد:" : "Pipeline Role Gate & Quorum:"}
+            </span>
+            <span className="font-mono text-[11px] text-nx-ink-2">
+              {evalTransition?.matchedTransition?.rules.requireApproval
+                ? `${evalTransition.matchedTransition.rules.approverRole || "pipe_role:deal_desk"} (${evalTransition.matchedTransition.rules.approvalQuorum || "any"})`
+                : isRtl
+                  ? "مسموح لدور المسار النشط"
+                  : "Authorized via Active Pipeline Role"}
+            </span>
+          </div>
           <MoveStageGateFieldsSection
             t={t}
             isRtl={isRtl}
@@ -255,7 +297,18 @@ export function MoveStageDialog({
             needsSolutionFitInput={needsSolutionFitInput}
             solutionFitConfirmed={solutionFitConfirmed}
             onSolutionFitConfirmedChange={setSolutionFitConfirmed}
-            oppCustomFieldConfigs={oppCustomFieldConfigs}
+            oppCustomFieldConfigs={nonGateCustomFieldConfigs}
+            requiredCustomFieldKeys={requiredCustomFieldKeys}
+            storeCustomFields={storeCustomFields}
+            onAddCrmCustomField={(field) => {
+              addCrmCustomField(field);
+              const wfStage = activeDealWorkflow.stages.find((s) => s.stageKey === opportunity.stageKey);
+              if (wfStage) {
+                useCrmWorkflowsStore.getState().updateStageInWorkflow(activeDealWorkflow.id, wfStage.stageKey, {
+                  requiredExitFields: Array.from(new Set([...(wfStage.requiredExitFields ?? []), `custom:${field.key}`])),
+                });
+              }
+            }}
             isOppCfLoading={isOppCfLoading}
             onRefetchOppCustomFields={() => void refetchOppCf()}
             customFieldValues={customFieldValues}

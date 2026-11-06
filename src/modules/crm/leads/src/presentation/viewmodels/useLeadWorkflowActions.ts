@@ -14,9 +14,19 @@ import type {
 } from "../../domain/models/crm-lead.types";
 
 function toLeadStageKey(statusOrKey: string): string {
+  const wf = useCrmWorkflowsStore.getState().getActiveWorkflow("lead");
+  const matchedStage = wf?.stages?.find(
+    (s) =>
+      s.stageKey.toLowerCase() === statusOrKey.toLowerCase() ||
+      s.labelEn.toLowerCase() === statusOrKey.toLowerCase() ||
+      s.labelAr === statusOrKey
+  );
+  if (matchedStage) return matchedStage.stageKey;
   if (statusOrKey.startsWith("lead.")) return statusOrKey;
   return `lead.${statusOrKey.trim().toLowerCase().replace(/[^a-z0-9]+/g, "_")}`;
 }
+
+const STANDARD_LEAD_STATUSES = new Set(["New", "Working", "Qualified", "Converted", "Disqualified"]);
 
 export function useLeadWorkflowActions(
   items: CrmLead[],
@@ -99,8 +109,8 @@ export function useLeadWorkflowActions(
 
   const handleUpdateLeadStatus = useCallback(
     async (lead: CrmLead, newStatus: string): Promise<boolean> => {
-      if (lead.status === newStatus) return true;
-      const fromKey = toLeadStageKey(lead.status);
+      if (lead.status === newStatus && lead.stageKey === toLeadStageKey(newStatus)) return true;
+      const fromKey = lead.stageKey || toLeadStageKey(lead.status);
       const toKey = toLeadStageKey(newStatus);
       const evalResult = useCrmWorkflowsStore.getState().evaluateTransition("lead", fromKey, toKey, {
         hasVerifiedParty: Boolean(lead.organizationPartyId || lead.personPartyId),
@@ -114,15 +124,11 @@ export function useLeadWorkflowActions(
         setStateError(msg);
         return false;
       }
-      if (evalResult.shouldTriggerDealConversion) {
-        openConvertDialog(lead);
-        return false;
-      }
       if (newStatus === "Disqualified") {
         openQualifyDialog(lead, "Disqualified");
         return false;
       }
-      if (newStatus === "Qualified" && lead.status !== "Converted") {
+      if ((newStatus === "Qualified" || evalResult.promptForComment) && !evalResult.shouldTriggerDealConversion && lead.status !== "Converted") {
         openQualifyDialog(lead, "Qualified");
         return false;
       }
@@ -131,22 +137,43 @@ export function useLeadWorkflowActions(
       setSubmitError(null);
       setStateItemsAndError(
         items.map((item) =>
-          item.id === lead.id ? { ...item, status: newStatus as LeadStatus, statusName: newStatus } : item,
+          item.id === lead.id
+            ? { ...item, status: newStatus as LeadStatus, statusName: newStatus, stageKey: toKey }
+            : item,
         ),
         null,
       );
 
       try {
         const container = getCrmContainer();
-        await container.leadRepository.updateLead({
-          leadId: lead.id,
-          markWorking: newStatus === "Working",
-          targetStatus: newStatus as LeadStatus,
-          expectedRowVersion: lead.rowVersion,
-        });
+        const isCustomStage = !STANDARD_LEAD_STATUSES.has(newStatus);
+        if (typeof container.leadRepository.moveLeadStage === "function" && (isCustomStage || evalResult.shouldTriggerDealConversion || lead.status !== "Converted")) {
+          const moved = await container.leadRepository.moveLeadStage({
+            leadId: lead.id,
+            targetStageKey: toKey,
+            expectedRowVersion: lead.rowVersion,
+          });
+          if (evalResult.shouldTriggerDealConversion || moved?.triggerDealConversion) {
+            openConvertDialog(moved ?? lead);
+          }
+        } else {
+          await container.leadRepository.updateLead({
+            leadId: lead.id,
+            markWorking: newStatus === "Working",
+            targetStatus: (STANDARD_LEAD_STATUSES.has(newStatus) ? newStatus : "Working") as LeadStatus,
+            expectedRowVersion: lead.rowVersion,
+          });
+          if (evalResult.shouldTriggerDealConversion) {
+            openConvertDialog(lead);
+          }
+        }
         await loadLeads(page, search, statusFilter, pageSize);
         return true;
       } catch (err) {
+        if (evalResult.shouldTriggerDealConversion) {
+          openConvertDialog(lead);
+          return false;
+        }
         const errMsg = err instanceof Error ? err.message : "Failed to update lead status";
         setSubmitError(errMsg);
         setStateItemsAndError(previousItems, errMsg);

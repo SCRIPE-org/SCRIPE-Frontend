@@ -79,14 +79,24 @@ export function LeadsKanbanCardItem({
         {lead.title}
       </div>
       {lead.estimatedValue !== undefined && lead.estimatedValue !== null && (
-        <div className="rounded-md bg-nx-surface/80 border border-nx-line/60 px-2.5 py-1.5 flex items-center justify-between gap-2 text-xs font-bold text-nx-ink font-mono">
-          <span>
-            {lead.currency || "SAR"} {lead.estimatedValue.toLocaleString()}
-          </span>
-          {autoConvertToBase && (lead.currency || "SAR").toUpperCase() !== baseCurrency && showOriginalCurrencyBadge && (
-            <span className="text-[10px] font-semibold text-nx-ink-2 shrink-0">
-              ≈ {baseCurrency} {Math.round(convertAmount(lead.estimatedValue, lead.currency || "SAR", baseCurrency)).toLocaleString()}
+        <div
+          data-testid={`lead-card-fx-${lead.id}`}
+          className="rounded-md bg-nx-surface/80 border border-nx-line/60 px-2.5 py-1.5 space-y-0.5 text-xs font-bold text-nx-ink font-mono"
+        >
+          <div className="flex items-center justify-between gap-2">
+            <span>
+              {lead.currency || "SAR"} {lead.estimatedValue.toLocaleString()}
             </span>
+            {autoConvertToBase && (lead.currency || "SAR").toUpperCase() !== baseCurrency && showOriginalCurrencyBadge && (
+              <span className="text-[10px] font-semibold text-nx-ink-2 shrink-0">
+                ≈ {baseCurrency} {Math.round(convertAmount(lead.estimatedValue, lead.currency || "SAR", baseCurrency)).toLocaleString()}
+              </span>
+            )}
+          </div>
+          {(lead.currency || "SAR").toUpperCase() !== "USD" && (
+            <div className="text-[10px] font-normal text-nx-ink-3">
+              Corp: ≈ USD {Math.round(convertAmount(lead.estimatedValue, lead.currency || "SAR", "USD")).toLocaleString()}
+            </div>
           )}
         </div>
       )}

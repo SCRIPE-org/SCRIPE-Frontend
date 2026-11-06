@@ -5,6 +5,8 @@ export * from "./src/data/services/CrmActivityService";
 export * from "./src/data/repositories/CrmActivityRepository";
 export * from "./src/presentation/viewmodels/useCrmActivitiesViewModel";
 export * from "./src/presentation/components/ActivityTimeline";
+export * from "./src/presentation/components/ActivityTimelineSkeleton";
 export * from "./src/presentation/components/CreateActivityModal";
 export * from "./src/presentation/components/CreateFollowUpModal";
 export * from "./src/presentation/views/ActivitiesExecutionDeskView";
+

@@ -147,18 +147,19 @@ export function KanbanCard({
       data-opportunity-id={opportunity.id}
       aria-label={`${opportunity.title}, ${formattedAmount}`}
       className={cn(
-        "group relative p-3.5 space-y-3 cursor-grab active:cursor-grabbing select-none",
+        "group relative cursor-grab active:cursor-grabbing select-none",
+        totalStages >= 6 ? "p-2.5 space-y-2" : "p-3.5 space-y-3",
         "bg-nx-surface border border-nx-line hover:border-nx-line-hi transition-all",
         "rounded-nx-lg focus:outline-none focus:ring-1 focus:ring-nx-accent shadow-none",
         isDragging && "opacity-40 scale-[0.98]"
       )}
     >
       {/* Top Metadata Strip: Deal Kind, SLA Rotting & Customer Verification Status */}
-      <div className="flex items-center justify-between gap-1.5">
+      <div className="flex items-center justify-between gap-1 flex-wrap">
         <div className="flex items-center gap-1 min-w-0">
           <Badge
             variant="outline"
-            className="shrink-0 text-[10px] px-1.5 py-0 font-medium border-nx-line text-nx-ink-2 bg-nx-raised"
+            className="shrink-0 text-[9px] px-1.5 py-0 font-medium border-nx-line text-nx-ink-2 bg-nx-raised truncate max-w-full"
           >
             {t(`crmOpportunities.dealKind.${opportunity.dealKind}`, {
               defaultValue:
@@ -182,20 +183,20 @@ export function KanbanCard({
 
         {hasParty ? (
           <span
-            className="inline-flex items-center gap-1 text-[10px] font-semibold text-success shrink-0"
+            className="inline-flex items-center gap-0.5 text-[9px] font-semibold text-success shrink-0"
             title="Verified Account / Contact Linked"
           >
-            <ShieldCheck className="size-3" />
+            <ShieldCheck className="size-2.5" />
             <span>
               {t("crmOpportunities.kanban.partyVerified", { defaultValue: "Verified" })}
             </span>
           </span>
         ) : (
           <span
-            className="inline-flex items-center gap-1 text-[10px] font-semibold text-warning shrink-0"
+            className="inline-flex items-center gap-0.5 text-[9px] font-semibold text-warning shrink-0"
             title="Account or Contact required before Proposal stage"
           >
-            <ShieldAlert className="size-3" />
+            <ShieldAlert className="size-2.5" />
             <span>
               {t("crmOpportunities.kanban.partyUnlinked", { defaultValue: "Unlinked" })}
             </span>
@@ -212,8 +213,15 @@ export function KanbanCard({
       </h4>
 
       {/* Full-Width Deal Value Bar */}
-      <div className="rounded-md bg-nx-raised/60 border border-nx-line/60 px-2.5 py-1.5 flex items-center justify-between gap-2">
-        <span className="font-bold font-mono text-nx-ink text-xs truncate">
+      <div
+        className={cn(
+          "rounded-md bg-nx-raised/60 border border-nx-line/60 px-2 py-1",
+          totalStages >= 6 && convertedInBase !== null
+            ? "flex flex-col items-start gap-0.5"
+            : "flex items-center justify-between gap-1.5",
+        )}
+      >
+        <span className="font-bold font-mono text-nx-ink text-[11px] truncate max-w-full">
           {formattedAmount}
         </span>
         {convertedInBase !== null && (
@@ -229,13 +237,13 @@ export function KanbanCard({
       {/* Footer: Target Close Date & Accessible Stage Shift Actions */}
       <div className="flex items-center justify-between pt-1 border-t border-nx-line/60 text-[11px] text-nx-ink-3">
         {formattedCloseDate ? (
-          <span className="inline-flex items-center gap-1 font-mono text-[10px]">
-            <Calendar className="size-3" />
+          <span className="inline-flex items-center gap-1 font-mono text-[10px] whitespace-nowrap shrink-0">
+            <Calendar className="size-3 shrink-0" />
             {formattedCloseDate}
           </span>
         ) : (
-          <span className="inline-flex items-center gap-1 text-[10px] text-nx-ink-3/80">
-            <Briefcase className="size-3" />
+          <span className="inline-flex items-center gap-1 text-[10px] text-nx-ink-3/80 truncate">
+            <Briefcase className="size-3 shrink-0" />
             {opportunity.stageLabelEnSnapshot || "Open Deal"}
           </span>
         )}

@@ -7,6 +7,7 @@ import { Alert, AlertTitle, AlertDescription } from "@core/ui/alert";
 import { Button } from "@core/ui/button";
 import { Input } from "@core/ui/input";
 import { EmptyState } from "@core/ui/empty-state";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@core/ui/select";
 import {
   AlertCircle,
   RefreshCw,
@@ -17,7 +18,16 @@ import {
   ArrowUpRight,
 } from "lucide-react";
 import { cn } from "@core/common/utils";
-import { CRM_PERMISSIONS, CrmShell, CrmSectionHeader, useCrmCurrency, useCrmWorkflowsStore, useCrmSettingsStore } from "@modules/crm";
+import {
+  CRM_PERMISSIONS,
+  CrmShell,
+  CrmSectionHeader,
+  STAGE_COLOR_PALETTE,
+  resolveDefaultStageColor,
+  useCrmCurrency,
+  useCrmWorkflowsStore,
+  useCrmSettingsStore,
+} from "@modules/crm";
 import { GenericCrudView } from "@core/crud/components/generic-crud-view";
 import type { CrudConfig, CrudAction, CrudViewMode } from "@core/crud/components/generic-crud-view";
 import { CreateLeadDialog } from "../components/CreateLeadDialog";
@@ -40,6 +50,10 @@ export function LeadsView() {
   const canCreateLead = usePermission(CRM_PERMISSIONS.LEADS_CREATE);
   const { baseCurrency, autoConvertToBase, convertAmount, showOriginalCurrencyBadge } = useCrmCurrency();
   const activeLeadWorkflow = useCrmWorkflowsStore((s) => s.getActiveWorkflow("lead"));
+  const workflows = useCrmWorkflowsStore((s) => s.workflows);
+  const activeLeadWorkflowId = useCrmWorkflowsStore((s) => s.activeLeadWorkflowId);
+  const setActiveWorkflow = useCrmWorkflowsStore((s) => s.setActiveWorkflow);
+  const leadWorkflows = workflows.filter((w) => w.entityType === "lead");
   const defaultDealViewMode = useCrmSettingsStore((s) => s.defaultDealViewMode);
   const viewModel = useLeadsViewModel();
   const {
@@ -121,7 +135,7 @@ export function LeadsView() {
     viewSwitchPosition: "toolbar",
     toolbarContent: (
       <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 flex-1" dir={isRtl ? "rtl" : "ltr"}>
-        <div className="relative flex-1 max-w-md">
+        <div className="relative flex-1 max-w-sm">
           <Search className="absolute start-3 top-2.5 size-3.5 text-nx-ink-3 pointer-events-none" />
           <Input
             value={search}
@@ -129,6 +143,20 @@ export function LeadsView() {
             placeholder={t("crmLeads.actions.searchPlaceholder")}
             className="h-8 ps-8 pe-3 text-xs border-nx-line bg-nx-surface text-nx-ink"
           />
+        </div>
+        <div className="w-48">
+          <Select value={activeLeadWorkflowId} onValueChange={(id) => setActiveWorkflow("lead", id)}>
+            <SelectTrigger className="h-8 text-xs" data-testid="lead-pipeline-selector">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              {leadWorkflows.map((wf) => (
+                <SelectItem key={wf.id} value={wf.id} className="text-xs">
+                  {isRtl ? wf.nameAr : wf.nameEn}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
         </div>
         <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar">
           {statuses.map((item) => {
@@ -163,28 +191,37 @@ export function LeadsView() {
     viewModes: ["Table", "Kanban", "CardGrid", "SplitPane"],
     defaultView: (defaultDealViewMode as CrudViewMode) || "Table",
     kanbanGroupField: "status",
-    kanbanColumns:
-      activeLeadWorkflow.id === "wf-lead-default"
-        ? [
-            { value: "New", label: t("crmLeads.status.new"), colorClass: "border-nx-line bg-nx-surface text-nx-ink", dotClass: "bg-nx-ink-3", summary: (items: CrmLead[]) => <span className="font-semibold text-nx-ink-2 font-mono">{sumLeadsInBaseCurrency(items)}</span> },
-            { value: "Working", label: t("crmLeads.status.working"), colorClass: "border-info/30 bg-info/10 text-info", dotClass: "bg-info", summary: (items: CrmLead[]) => <span className="font-semibold text-info font-mono">{sumLeadsInBaseCurrency(items)}</span> },
-            { value: "Qualified", label: t("crmLeads.status.qualified"), colorClass: "border-nx-accent/30 bg-nx-accent-wash text-nx-accent font-semibold", dotClass: "bg-nx-accent", summary: (items: CrmLead[]) => <span className="font-bold text-nx-accent font-mono">{sumLeadsInBaseCurrency(items)}</span> },
-            { value: "Converted", label: t("crmLeads.status.converted"), colorClass: "border-success/30 bg-success/10 text-success", dotClass: "bg-success", summary: (items: CrmLead[]) => <span className="font-semibold text-success font-mono">{sumLeadsInBaseCurrency(items)}</span> },
-            { value: "Disqualified", label: t("crmLeads.status.disqualified"), colorClass: "border-destructive/30 bg-destructive/10 text-destructive", dotClass: "bg-destructive", summary: (items: CrmLead[]) => <span className="font-semibold text-destructive font-mono">{sumLeadsInBaseCurrency(items)}</span> },
-          ]
-        : [...activeLeadWorkflow.stages]
-            .sort((a, b) => a.sortOrder - b.sortOrder)
-            .map((stg) => {
-              const colValue = stageToLeadStatusValue(stg.stageKey, stg.labelEn);
-              const isDone = stg.category === "done";
-              return {
-                value: colValue,
-                label: isRtl && stg.labelAr ? stg.labelAr : stg.labelEn,
-                colorClass: isDone ? "border-success/30 bg-success/10 text-success" : stg.category === "todo" ? "border-nx-line bg-nx-surface text-nx-ink" : "border-info/30 bg-info/10 text-info",
-                dotClass: isDone ? "bg-success" : stg.category === "todo" ? "bg-nx-ink-3" : "bg-info",
-                summary: (items: CrmLead[]) => <span className="font-semibold text-nx-ink font-mono">{sumLeadsInBaseCurrency(items)}</span>,
-              };
-            }),
+    kanbanColumns: [...activeLeadWorkflow.stages]
+      .sort((a, b) => a.sortOrder - b.sortOrder)
+      .map((stg) => {
+        const colValue = stageToLeadStatusValue(stg.stageKey, stg.labelEn);
+        const colorToken = resolveDefaultStageColor(
+          stg.stageKey,
+          stg.category,
+          stg.sortOrder,
+          stg.color,
+        );
+        const colorMeta = STAGE_COLOR_PALETTE[colorToken];
+        const customHex = stg.customColorHex || stg.properties?.customColorHex;
+        return {
+          value: colValue,
+          label: isRtl && stg.labelAr ? stg.labelAr : stg.labelEn,
+          colorClass: colorMeta.badgeClass,
+          dotClass: colorMeta.swatchClass,
+          summary: (items: CrmLead[]) => (
+            <span className="inline-flex items-center gap-1.5 font-semibold text-nx-ink font-mono">
+              {customHex && (
+                <span
+                  className="inline-block w-2 h-2 rounded-full border"
+                  style={{ backgroundColor: customHex, borderColor: customHex }}
+                  data-testid={`lead-col-custom-hex-${colValue}`}
+                />
+              )}
+              {sumLeadsInBaseCurrency(items)}
+            </span>
+          ),
+        };
+      }),
     onKanbanItemMove: (item: CrmLead, targetColumnValue: string) => {
       handleUpdateLeadStatus(item, targetColumnValue);
     },

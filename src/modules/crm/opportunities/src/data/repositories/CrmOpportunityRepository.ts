@@ -13,6 +13,8 @@ import type {
   PagedOpportunitiesResult,
   PipelineDefinition,
   UpdateDefaultPipelineInput,
+  DealContactRoleDto,
+  AddDealContactRoleInput,
 } from "../../domain/entities/OpportunityEntity";
 
 /**
@@ -59,6 +61,66 @@ export class CrmOpportunityRepository implements ICrmOpportunityRepository {
 
   updateDefaultPipeline(input: UpdateDefaultPipelineInput): Promise<PipelineDefinition> {
     return this.service.updateDefaultPipeline(input);
+  }
+
+  getPipelines(entityType?: string): Promise<PipelineDefinition[]> {
+    return this.service.getPipelines ? this.service.getPipelines(entityType) : Promise.resolve([]);
+  }
+
+  savePipeline(
+    pipelineId: string,
+    input: UpdateDefaultPipelineInput & { entityType?: string; isActive?: boolean }
+  ): Promise<PipelineDefinition> {
+    return this.service.savePipeline
+      ? this.service.savePipeline(pipelineId, input)
+      : this.service.updateDefaultPipeline(input);
+  }
+
+  activatePipeline(pipelineId: string): Promise<PipelineDefinition> {
+    return this.service.activatePipeline
+      ? this.service.activatePipeline(pipelineId)
+      : this.service.getDefaultPipeline();
+  }
+
+  deletePipeline(pipelineId: string): Promise<boolean> {
+    return this.service.deletePipeline ? this.service.deletePipeline(pipelineId) : Promise.resolve(true);
+  }
+
+  replacePipelineStage(
+    pipelineId: string,
+    stageKeyToRemove: string,
+    replacementStageKey: string
+  ): Promise<{ migratedRecordCount: number }> {
+    return this.service.replacePipelineStage
+      ? this.service.replacePipelineStage(pipelineId, stageKeyToRemove, replacementStageKey)
+      : Promise.resolve({ migratedRecordCount: 0 });
+  }
+
+  getContactRoles(opportunityId: string): Promise<DealContactRoleDto[]> {
+    return this.service.getContactRoles ? this.service.getContactRoles(opportunityId) : Promise.resolve([]);
+  }
+
+  addContactRole(input: AddDealContactRoleInput): Promise<DealContactRoleDto> {
+    if (this.service.addContactRole) {
+      return this.service.addContactRole(input);
+    }
+    return Promise.resolve({
+      id: `role-${Date.now()}`,
+      opportunityId: input.opportunityId,
+      contactPartyId: input.contactPartyId || `party-${Date.now()}`,
+      contactName: input.contactName,
+      contactEmail: input.contactEmail,
+      stakeholderRole: input.stakeholderRole,
+      isPrimary: Boolean(input.isPrimary),
+      influenceNotes: input.influenceNotes,
+      createdAtUtc: new Date().toISOString(),
+    });
+  }
+
+  removeContactRole(opportunityId: string, roleId: string): Promise<boolean> {
+    return this.service.removeContactRole
+      ? this.service.removeContactRole(opportunityId, roleId)
+      : Promise.resolve(true);
   }
 }
 

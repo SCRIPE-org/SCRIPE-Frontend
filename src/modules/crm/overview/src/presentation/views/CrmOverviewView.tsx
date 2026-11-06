@@ -1,25 +1,30 @@
 "use client";
 
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useI18n } from "@core/providers/i18n-provider";
-import { LoadingSpinner } from "@core/ui/loading-spinner";
 import { Alert, AlertTitle, AlertDescription } from "@core/ui/alert";
 import { Button } from "@core/ui/button";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@core/ui/select";
 import { AlertCircle, RefreshCw } from "lucide-react";
 
 import { CrmShell } from "../components/CrmShell";
 import { CrmSectionHeader } from "../components/CrmSectionHeader";
 import { CrmKpiStrip } from "../components/CrmKpiStrip";
+import { CrmOverviewSkeleton } from "../components/CrmOverviewSkeleton";
 import { CrmPipelineOverviewStrip } from "../components/CrmPipelineOverviewStrip";
 import { CrmRecentDealsTable } from "../components/CrmRecentDealsTable";
 
 import { useCrmShellViewModel } from "../viewmodels/useCrmShellViewModel";
 import { useCrmOverviewViewModel } from "../viewmodels/useCrmOverviewViewModel";
+import { useCrmWorkflowsStore } from "../viewmodels/useCrmWorkflowsStore";
 
 export function CrmOverviewView() {
   const router = useRouter();
   const { t, language } = useI18n();
   const isRtl = language === "ar";
+  const [selectedPipelineId, setSelectedPipelineId] = useState<string>("all");
+  const workflows = useCrmWorkflowsStore((s) => s.workflows);
 
   const { activeTab, searchQuery, handleTabChange, handleSearchChange } =
     useCrmShellViewModel("overview");
@@ -41,23 +46,38 @@ export function CrmOverviewView() {
         subtitle={t("crm.subtitle")}
         badge={state.data ? `${state.data.pipeline.totalDeals} ${t("crm.pipeline.dealsCount")}` : undefined}
         actions={
-          <Button
-            type="button"
-            variant="outline"
-            size="sm"
-            onClick={refresh}
-            className="h-8 gap-1.5 border-nx-line bg-nx-surface text-xs text-nx-ink hover:bg-nx-raised"
-          >
-            <RefreshCw className="size-3.5 text-nx-ink-2" />
-            <span>{t("crm.actions.refresh")}</span>
-          </Button>
+          <div className="flex items-center gap-2">
+            <Select value={selectedPipelineId} onValueChange={setSelectedPipelineId}>
+              <SelectTrigger className="h-8 w-52 text-xs border-nx-line bg-nx-surface" data-testid="overview-pipeline-switcher">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all" className="text-xs">
+                  {isRtl ? "جميع المسارات التجارية (الكل)" : "All Commercial Pipelines"}
+                </SelectItem>
+                {workflows.map((wf) => (
+                  <SelectItem key={wf.id} value={wf.id} className="text-xs">
+                    {isRtl ? wf.nameAr : wf.nameEn}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              onClick={refresh}
+              className="h-8 gap-1.5 border-nx-line bg-nx-surface text-xs text-nx-ink hover:bg-nx-raised"
+            >
+              <RefreshCw className="size-3.5 text-nx-ink-2" />
+              <span>{t("crm.actions.refresh")}</span>
+            </Button>
+          </div>
         }
       />
 
       {state.stage === "loading" && !state.data && (
-        <div className="flex h-64 items-center justify-center p-8">
-          <LoadingSpinner size="lg" />
-        </div>
+        <CrmOverviewSkeleton />
       )}
 
       {state.stage === "failed" && (

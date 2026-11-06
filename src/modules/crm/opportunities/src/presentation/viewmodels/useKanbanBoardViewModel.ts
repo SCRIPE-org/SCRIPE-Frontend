@@ -1,7 +1,12 @@
 "use client";
 
 import { useMemo, useState, useEffect, useCallback } from "react";
-import { useCrmWorkflowsStore } from "@modules/crm";
+import {
+  resolveDefaultStageColor,
+  useCrmWorkflowsStore,
+  type CrmStageColorToken,
+  type CrmWorkflowStageCategory,
+} from "@modules/crm";
 import type {
   CrmOpportunity,
   PipelineStageConfig,
@@ -15,14 +20,17 @@ export interface KanbanStageDef {
   sortOrder: number;
   winProbabilityPercent?: number | null;
   requiresParty?: boolean;
+  category?: CrmWorkflowStageCategory;
+  color?: CrmStageColorToken;
+  customColorHex?: string;
 }
 
 export const CANONICAL_KANBAN_STAGES: KanbanStageDef[] = [
-  { key: "default.discovery", labelKey: "crmOpportunities.stages.discovery", defaultLabelEn: "Discovery", labelAr: "استكشاف", sortOrder: 1 },
-  { key: "default.qualification", labelKey: "crmOpportunities.stages.qualification", defaultLabelEn: "Qualification", labelAr: "تأهيل", sortOrder: 2 },
-  { key: "default.solution_fit", labelKey: "crmOpportunities.stages.solution_fit", defaultLabelEn: "Solution Fit", labelAr: "ملاءمة الحل", sortOrder: 3 },
-  { key: "default.proposal", labelKey: "crmOpportunities.stages.proposal", defaultLabelEn: "Proposal", labelAr: "عرض تجاري", sortOrder: 4, requiresParty: true },
-  { key: "default.negotiation", labelKey: "crmOpportunities.stages.negotiation", defaultLabelEn: "Negotiation", labelAr: "تفاوض", sortOrder: 5, requiresParty: true },
+  { key: "default.discovery", labelKey: "crmOpportunities.stages.discovery", defaultLabelEn: "Discovery", labelAr: "استكشاف", sortOrder: 1, winProbabilityPercent: 10, category: "todo", color: "blue" },
+  { key: "default.qualification", labelKey: "crmOpportunities.stages.qualification", defaultLabelEn: "Qualification", labelAr: "تأهيل", sortOrder: 2, winProbabilityPercent: 25, category: "in_progress", color: "cyan" },
+  { key: "default.solution_fit", labelKey: "crmOpportunities.stages.solution_fit", defaultLabelEn: "Solution Fit", labelAr: "ملاءمة الحل", sortOrder: 3, winProbabilityPercent: 50, category: "in_progress", color: "indigo" },
+  { key: "default.proposal", labelKey: "crmOpportunities.stages.proposal", defaultLabelEn: "Proposal", labelAr: "عرض تجاري", sortOrder: 4, winProbabilityPercent: 75, requiresParty: true, category: "in_progress", color: "violet" },
+  { key: "default.negotiation", labelKey: "crmOpportunities.stages.negotiation", defaultLabelEn: "Negotiation", labelAr: "تفاوض", sortOrder: 5, winProbabilityPercent: 90, requiresParty: true, category: "in_progress", color: "amber" },
 ];
 
 export interface UseKanbanBoardViewModelProps {
@@ -31,6 +39,7 @@ export interface UseKanbanBoardViewModelProps {
   onMoveStage: (opportunity: CrmOpportunity, targetStageKey: string) => Promise<boolean> | void;
   canUpdateOpportunity?: boolean;
   canManagePipelines?: boolean;
+  includeOutcomeStagesAsColumns?: boolean;
 }
 
 /**
@@ -44,6 +53,7 @@ export function useKanbanBoardViewModel({
   onMoveStage,
   canUpdateOpportunity: propCanUpdate,
   canManagePipelines: propCanManage,
+  includeOutcomeStagesAsColumns = false,
 }: UseKanbanBoardViewModelProps) {
   const canUpdate = propCanUpdate !== undefined ? propCanUpdate : true;
   const canManage = propCanManage !== undefined ? propCanManage : true;
@@ -51,7 +61,6 @@ export function useKanbanBoardViewModel({
   const [dragOverOutcome, setDragOverOutcome] = useState<"won" | "lost" | null>(null);
   const [draggedOpportunity, setDraggedOpportunity] = useState<CrmOpportunity | null>(null);
 
-  // Global window dragend listener ensuring draggedOpportunity resets if drag cancels outside columns
   useEffect(() => {
     const handleWindowDragEnd = () => {
       setDraggedOpportunity(null);
@@ -63,48 +72,124 @@ export function useKanbanBoardViewModel({
     };
   }, []);
 
-  // Dynamically compute effective stages:
-  // 1. Server-provided pipeline stages from props
-  // 2. Active workflow stages from tenant workflow store
   const effectiveStages: KanbanStageDef[] = useMemo(() => {
+    const activeWorkflow = useCrmWorkflowsStore.getState().getActiveWorkflow("deal");
+    const wfStagesByKey = new Map(
+      (activeWorkflow?.stages ?? []).map((ws) => [ws.stageKey, ws]),
+    );
+    const canonicalByKey = new Map(CANONICAL_KANBAN_STAGES.map((cs) => [cs.key, cs]));
+
+    let baseStages: KanbanStageDef[] = [];
+
     if (stages && stages.length > 0) {
       const sorted = [...stages].sort((a, b) => a.sortOrder - b.sortOrder);
-      return sorted.map((s) => ({
-        key: s.stageKey,
-        labelKey: `crmOpportunities.stages.${s.stageKey.replace("default.", "")}`,
-        defaultLabelEn: s.labelEn,
-        labelAr: s.labelAr,
-        sortOrder: s.sortOrder,
-        winProbabilityPercent: s.winProbabilityPercent ?? s.probabilityPercent ?? null,
-        requiresParty: s.requiresVerifiedParty,
-      }));
-    }
-
-    // Dynamic fallback to the tenant's active deal workflow from store
-    const activeWorkflow = useCrmWorkflowsStore.getState().getActiveWorkflow("deal");
-    if (activeWorkflow?.stages && activeWorkflow.stages.length >= 2) {
+      const allUniform50OrNull =
+        sorted.length >= 3 &&
+        sorted.every((st) => (st.winProbabilityPercent ?? st.probabilityPercent ?? 50) === 50);
+      baseStages = sorted.map((s) => {
+        const wfStage = wfStagesByKey.get(s.stageKey);
+        const canonical = canonicalByKey.get(s.stageKey);
+        const category = (s.statusCategory ?? wfStage?.category ?? canonical?.category ?? "in_progress") as CrmWorkflowStageCategory;
+        const color = resolveDefaultStageColor(
+          s.stageKey,
+          category,
+          s.sortOrder,
+          s.color ?? wfStage?.color,
+        );
+        const rawProb = s.winProbabilityPercent ?? s.probabilityPercent;
+        const resolvedProb =
+          rawProb == null || allUniform50OrNull
+            ? (wfStage?.winProbabilityPercent ?? canonical?.winProbabilityPercent ?? rawProb ?? null)
+            : rawProb;
+        return {
+          key: s.stageKey,
+          labelKey: `crmOpportunities.stages.${s.stageKey.replace("default.", "")}`,
+          defaultLabelEn: s.labelEn || wfStage?.labelEn || canonical?.defaultLabelEn || s.stageKey,
+          labelAr: s.labelAr || wfStage?.labelAr || canonical?.labelAr,
+          sortOrder: s.sortOrder,
+          winProbabilityPercent: resolvedProb,
+          requiresParty: s.requiresVerifiedParty,
+          category,
+          color,
+          customColorHex: wfStage?.customColorHex || wfStage?.properties?.customColorHex,
+        };
+      });
+    } else if (activeWorkflow?.stages && activeWorkflow.stages.length >= 2) {
       const sorted = [...activeWorkflow.stages].sort((a, b) => a.sortOrder - b.sortOrder);
-      return sorted.map((s) => ({
-        key: s.stageKey,
-        labelKey: `crmOpportunities.stages.${s.stageKey.replace("default.", "")}`,
-        defaultLabelEn: s.labelEn,
-        labelAr: s.labelAr,
-        sortOrder: s.sortOrder,
-        winProbabilityPercent: s.winProbabilityPercent ?? null,
-        requiresParty: s.requiresVerifiedParty ?? (s.stageKey.includes("proposal") || s.stageKey.includes("negotiation")),
-      }));
+      baseStages = sorted.map((s) => {
+        const category = (s.category ?? "in_progress") as CrmWorkflowStageCategory;
+        const color = resolveDefaultStageColor(s.stageKey, category, s.sortOrder, s.color);
+        return {
+          key: s.stageKey,
+          labelKey: `crmOpportunities.stages.${s.stageKey.replace("default.", "")}`,
+          defaultLabelEn: s.labelEn,
+          labelAr: s.labelAr,
+          sortOrder: s.sortOrder,
+          winProbabilityPercent: s.winProbabilityPercent ?? null,
+          requiresParty: s.requiresVerifiedParty ?? (s.stageKey.includes("proposal") || s.stageKey.includes("negotiation")),
+          category,
+          color,
+          customColorHex: s.customColorHex || s.properties?.customColorHex,
+        };
+      });
+    } else {
+      baseStages = [...CANONICAL_KANBAN_STAGES];
     }
 
-    return CANONICAL_KANBAN_STAGES;
-  }, [stages]);
+    if (includeOutcomeStagesAsColumns) {
+      const hasDone = baseStages.some(
+        (s) => s.category === "done" || s.key.includes("won") || s.winProbabilityPercent === 100,
+      );
+      if (!hasDone) {
+        const wfWon = wfStagesByKey.get("terminal-won") ?? wfStagesByKey.get("default.closed_won");
+        baseStages.push({
+          key: wfWon?.stageKey ?? "default.closed_won",
+          labelKey: "crmOpportunities.dialogs.close.outcomeWon",
+          defaultLabelEn: wfWon?.labelEn ?? "Closed Won",
+          labelAr: wfWon?.labelAr ?? "مغلقة — رابحة",
+          sortOrder: baseStages.length + 1,
+          winProbabilityPercent: 100,
+          requiresParty: Boolean(wfWon?.requiresVerifiedParty || wfWon?.requiredExitFields?.includes("partyId")),
+          category: "done",
+          color: resolveDefaultStageColor("default.closed_won", "done", baseStages.length + 1, wfWon?.color),
+          customColorHex: wfWon?.customColorHex || wfWon?.properties?.customColorHex,
+        });
+      }
+      const hasLost = baseStages.some(
+        (s) => s.category === "lost" || s.key.includes("lost") || s.winProbabilityPercent === 0,
+      );
+      if (!hasLost) {
+        const wfLost = wfStagesByKey.get("terminal-lost") ?? wfStagesByKey.get("default.closed_lost");
+        baseStages.push({
+          key: wfLost?.stageKey ?? "default.closed_lost",
+          labelKey: "crmOpportunities.dialogs.close.outcomeLost",
+          defaultLabelEn: wfLost?.labelEn ?? "Closed Lost",
+          labelAr: wfLost?.labelAr ?? "مغلقة — خاسرة",
+          sortOrder: baseStages.length + 1,
+          winProbabilityPercent: 0,
+          requiresParty: false,
+          category: "lost",
+          color: resolveDefaultStageColor("default.closed_lost", "lost", baseStages.length + 1, wfLost?.color),
+          customColorHex: wfLost?.customColorHex || wfLost?.properties?.customColorHex,
+        });
+      }
+    }
 
-  // Group open opportunities by effective stage key
+    return baseStages;
+  }, [stages, includeOutcomeStagesAsColumns]);
+
   const groupedOpportunities = useMemo(() => {
     const map = new Map<string, CrmOpportunity[]>();
     for (const stage of effectiveStages) {
       map.set(stage.key, []);
     }
     const fallbackKey = effectiveStages[0]?.key;
+    const wonStageKey = effectiveStages.find(
+      (s) => s.category === "done" || s.key.includes("won") || s.winProbabilityPercent === 100,
+    )?.key;
+    const lostStageKey = effectiveStages.find(
+      (s) => s.category === "lost" || s.key.includes("lost") || s.winProbabilityPercent === 0,
+    )?.key;
 
     for (const opp of opportunities) {
       if (opp.status === "Open") {
@@ -113,11 +198,15 @@ export function useKanbanBoardViewModel({
         } else if (fallbackKey && map.has(fallbackKey)) {
           map.get(fallbackKey)!.push(opp);
         }
+      } else if (includeOutcomeStagesAsColumns && opp.status === "Won" && wonStageKey && map.has(wonStageKey)) {
+        map.get(wonStageKey)!.push(opp);
+      } else if (includeOutcomeStagesAsColumns && opp.status === "Lost" && lostStageKey && map.has(lostStageKey)) {
+        map.get(lostStageKey)!.push(opp);
       }
     }
 
     return map;
-  }, [opportunities, effectiveStages]);
+  }, [opportunities, effectiveStages, includeOutcomeStagesAsColumns]);
 
   const wonDealsCount = useMemo(
     () => opportunities.filter((o) => o.status === "Won").length,

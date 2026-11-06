@@ -17,6 +17,7 @@ import { Textarea } from "@core/ui/textarea";
 import { Alert, AlertDescription } from "@core/ui/alert";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@core/ui/select";
 import { AlertCircle, AlertTriangle, CheckCircle, XCircle } from "lucide-react";
+import { useCrmSettingsStore, DEFAULT_CONFIGURED_LOSS_REASONS } from "@modules/crm";
 import type { CrmOpportunity, CloseOpportunityInput, OpportunityStatus, DealKind } from "../../domain/entities/OpportunityEntity";
 
 /**
@@ -46,6 +47,7 @@ export function CloseOpportunityDialog({
 }: CloseOpportunityDialogProps) {
   const { t, language } = useI18n();
   const isRtl = language === "ar";
+  const configuredLossReasons = useCrmSettingsStore((s) => s.configuredLossReasons) ?? DEFAULT_CONFIGURED_LOSS_REASONS;
 
   const [outcome, setOutcome] = useState<OpportunityStatus>(initialOutcome);
   const [closeNotes, setCloseNotes] = useState<string>("");
@@ -213,13 +215,16 @@ export function CloseOpportunityDialog({
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="budget_cut">{t("crmOpportunities.dialogs.close.lossReasons.budget_cut")}</SelectItem>
-                    <SelectItem value="competitor">{t("crmOpportunities.dialogs.close.lossReasons.competitor")}</SelectItem>
-                    <SelectItem value="pricing">{t("crmOpportunities.dialogs.close.lossReasons.pricing")}</SelectItem>
-                    <SelectItem value="timing">{t("crmOpportunities.dialogs.close.lossReasons.timing")}</SelectItem>
-                    <SelectItem value="feature_gap">{t("crmOpportunities.dialogs.close.lossReasons.feature_gap")}</SelectItem>
-                    <SelectItem value="no_decision">{t("crmOpportunities.dialogs.close.lossReasons.no_decision")}</SelectItem>
-                    <SelectItem value="other">{t("crmOpportunities.dialogs.close.lossReasons.other")}</SelectItem>
+                    {configuredLossReasons.map((item) => {
+                      const i18nKey = `crmOpportunities.dialogs.close.lossReasons.${item.code}`;
+                      const translated = t(i18nKey);
+                      const label = translated !== i18nKey ? translated : (isRtl ? item.labelAr : item.labelEn);
+                      return (
+                        <SelectItem key={item.code} value={item.code}>
+                          {label}
+                        </SelectItem>
+                      );
+                    })}
                   </SelectContent>
                 </Select>
               </div>

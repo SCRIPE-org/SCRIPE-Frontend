@@ -3,7 +3,6 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useI18n } from "@core/providers/i18n-provider";
 import { usePermission } from "@core/hooks/use-permission";
-import { LoadingSpinner } from "@core/ui/loading-spinner";
 import { Alert, AlertTitle, AlertDescription } from "@core/ui/alert";
 import { Button } from "@core/ui/button";
 import { Badge } from "@core/ui/badge";
@@ -14,6 +13,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, Di
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@core/ui/select";
 import { AlertCircle, Building2, Users, Briefcase, ChevronLeft, ChevronRight, Edit2, Mail, Phone, Calendar } from "lucide-react";
 import { CRM_PERMISSIONS, CrmShell, ActivityTimeline, useCrmCurrency, CRM_CURRENCY_OPTIONS } from "@modules/crm";
+import { AccountDetailSkeleton } from "../components/AccountDetailSkeleton";
 import { AccountStatusBadge } from "../components/AccountStatusBadge";
 import { useAccountDetailViewModel } from "../viewmodels/useAccountDetailViewModel";
 
@@ -52,10 +52,7 @@ export function AccountDetailView({ accountId }: AccountDetailViewProps) {
   if (state.stage === "loading" && !state.account) {
     return (
       <CrmShell activeTab="accounts" onTabChange={() => {}}>
-        <div className="flex flex-col items-center justify-center py-24">
-          <LoadingSpinner size="lg" className="text-nx-accent" />
-          <p className="mt-3 text-xs text-nx-ink-3">{t("crmAccounts.detail.loading") || "Loading Account 360 profile..."}</p>
-        </div>
+        <AccountDetailSkeleton />
       </CrmShell>
     );
   }

@@ -6,6 +6,7 @@ import type {
   LinkPartyToLeadInput,
   ConvertLeadInput,
   ConvertLeadResult,
+  MoveLeadStageInput,
   LeadsFilterParams,
   PagedLeadsResult,
 } from "../models/crm-lead.types";
@@ -18,4 +19,5 @@ export interface ICrmLeadService {
   qualifyLead(input: QualifyLeadInput): Promise<CrmLead>;
   linkParty(input: LinkPartyToLeadInput): Promise<CrmLead>;
   convertLead(input: ConvertLeadInput): Promise<ConvertLeadResult>;
+  moveLeadStage(input: MoveLeadStageInput): Promise<CrmLead>;
 }

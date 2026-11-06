@@ -6,7 +6,6 @@ import { Alert, AlertTitle, AlertDescription } from "@core/ui/alert";
 import { Badge } from "@core/ui/badge";
 import { Button } from "@core/ui/button";
 import { Card } from "@core/ui/card";
-import { Skeleton } from "@core/ui/skeleton";
 import {
   RefreshCw,
   Download,
@@ -22,6 +21,7 @@ import { CRM_PERMISSIONS } from "../../domain/constants/permission-constants";
 import { CrmShell } from "../components/CrmShell";
 import { CrmSectionHeader } from "../components/CrmSectionHeader";
 import { CrmReportsBreakdownsSection } from "../components/CrmReportsBreakdownsSection";
+import { CrmReportsSkeleton } from "../components/CrmReportsSkeleton";
 import { useCrmReportsViewModel } from "../viewmodels/useCrmReportsViewModel";
 
 export function CrmReportsView() {
@@ -157,15 +157,7 @@ export function CrmReportsView() {
         )}
 
         {state.stage === "loading" && (
-          <div className="space-y-4">
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-              <Skeleton className="h-28 rounded-nx-lg" />
-              <Skeleton className="h-28 rounded-nx-lg" />
-              <Skeleton className="h-28 rounded-nx-lg" />
-              <Skeleton className="h-28 rounded-nx-lg" />
-            </div>
-            <Skeleton className="h-80 rounded-nx-lg" />
-          </div>
+          <CrmReportsSkeleton />
         )}
 
         {state.stage === "failed" && (
