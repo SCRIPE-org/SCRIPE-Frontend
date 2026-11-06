@@ -1,14 +1,15 @@
 "use client";
 
 import React from "react";
-import { ArrowRight, Plus, ShieldCheck, Zap } from "lucide-react";
-import { Button } from "@core/ui/button";
+import { ArrowRight } from "lucide-react";
 import { Badge } from "@core/ui/badge";
 import type { CrmCustomFieldDefinition } from "@modules/crm";
 import type {
   CrmWorkflowStageNode,
   CrmWorkflowTransition,
 } from "./CrmWorkflowCanvas2D";
+
+export { CrmWorkflowTransitionsTableView } from "./CrmWorkflowTransitionsTableView";
 
 export const NODE_WIDTH = 188;
 export const NODE_HEIGHT = 104;
@@ -55,6 +56,9 @@ export function countTransitionRules(tr: CrmWorkflowTransition): number {
   if (tr.requireReason) count += 1;
   if (tr.requireNote) count += 1;
   if (tr.restrictToRoles && tr.restrictToRoles.length > 0) count += 1;
+  if (tr.triggerDealConversion) count += 1;
+  if (tr.autoCreateWorkTask) count += 1;
+  if (tr.catalogRules && tr.catalogRules.length > 0) count += tr.catalogRules.length;
   return count;
 }
 
@@ -77,6 +81,10 @@ export function formatExitFieldLabel(
     solutionFitConfirmed: t("crmOpportunities.pipelinesPage.exitFieldSolutionFitConfirmed"),
     qualificationNotes: t("crmOpportunities.pipelinesPage.exitFieldQualificationNotes"),
     disqualificationReasonCode: t("crmOpportunities.pipelinesPage.exitFieldDisqualificationReasonCode"),
+    leadPhoneOrEmail: t("crmOpportunities.pipelinesPage.exitFieldLeadPhoneOrEmail"),
+    leadSource: t("crmOpportunities.pipelinesPage.exitFieldLeadSource"),
+    leadBantNotes: t("crmOpportunities.pipelinesPage.exitFieldLeadBantNotes"),
+    leadAccountOrContact: t("crmOpportunities.pipelinesPage.exitFieldLeadAccountOrContact"),
   };
   return map[fieldKey] ?? fieldKey;
 }
@@ -147,127 +155,6 @@ export function CrmWorkflowClassicFlowView({
             </React.Fragment>
           );
         })}
-      </div>
-    </div>
-  );
-}
-
-export function CrmWorkflowTransitionsTableView({
-  t,
-  isAr,
-  stages,
-  transitions,
-  selectedTransitionId,
-  crmCustomFields,
-  onSelectTransition,
-  onOpenAddTransition,
-}: {
-  t: (k: string) => string;
-  isAr: boolean;
-  stages: CrmWorkflowStageNode[];
-  transitions: CrmWorkflowTransition[];
-  selectedTransitionId: string | null;
-  crmCustomFields: CrmCustomFieldDefinition[];
-  onSelectTransition: (id: string) => void;
-  onOpenAddTransition: () => void;
-}) {
-  const stageLabel = (key: string) => {
-    if (key === "*") return t("crmOpportunities.pipelinesPage.anyStageGlobal");
-    const found = stages.find((s) => s.stageKey === key);
-    return found ? (isAr ? found.labelAr : found.labelEn) : key;
-  };
-
-  return (
-    <div
-      className="flex-1 overflow-auto bg-nx-ground p-6 space-y-4"
-      data-testid="workflow-text-mode-table"
-    >
-      <div className="flex items-center justify-between">
-        <div>
-          <h3 className="text-sm font-bold text-nx-ink">
-            {t("crmOpportunities.pipelinesPage.transitionsMatrixTitle")}
-          </h3>
-          <p className="text-xs text-nx-ink-2">
-            {t("crmOpportunities.pipelinesPage.transitionsMatrixSubtitle")}
-          </p>
-        </div>
-        <Button size="sm" onClick={onOpenAddTransition}>
-          <Plus className="w-3.5 h-3.5 me-1.5" />
-          {t("crmOpportunities.pipelinesPage.addTransitionBtn")}
-        </Button>
-      </div>
-
-      <div className="rounded-md border border-nx-line bg-nx-surface overflow-hidden">
-        <table className="w-full text-xs">
-          <thead className="bg-nx-raised border-b border-nx-line text-nx-ink-2 uppercase tracking-wider text-[10px]">
-            <tr>
-              <th className="text-start px-3.5 py-2.5">
-                {t("crmOpportunities.pipelinesPage.colTransitionName")}
-              </th>
-              <th className="text-start px-3.5 py-2.5">
-                {t("crmOpportunities.pipelinesPage.colFromStatus")}
-              </th>
-              <th className="text-start px-3.5 py-2.5">
-                {t("crmOpportunities.pipelinesPage.colToStatus")}
-              </th>
-              <th className="text-start px-3.5 py-2.5">
-                {t("crmOpportunities.pipelinesPage.colRulesValidators")}
-              </th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-nx-line">
-            {transitions.map((tr) => {
-              const isSelected = selectedTransitionId === tr.id;
-              return (
-                <tr
-                  key={tr.id}
-                  onClick={() => onSelectTransition(tr.id)}
-                  className={`cursor-pointer transition-colors ${
-                    isSelected ? "bg-nx-raised" : "hover:bg-nx-raised/60"
-                  }`}
-                >
-                  <td className="px-3.5 py-2.5 font-semibold text-nx-ink">
-                    <span className="inline-flex items-center gap-1.5">
-                      <Zap className="w-3.5 h-3.5 text-warning shrink-0" />
-                      {isAr ? tr.nameAr : tr.nameEn}
-                    </span>
-                  </td>
-                  <td className="px-3.5 py-2.5 text-nx-ink-2 font-medium">
-                    {stageLabel(tr.fromStageKey)}
-                  </td>
-                  <td className="px-3.5 py-2.5 text-nx-ink font-semibold">
-                    {stageLabel(tr.toStageKey)}
-                  </td>
-                  <td className="px-3.5 py-2.5">
-                    <div className="flex flex-wrap items-center gap-1.5">
-                      {tr.requireReason && (
-                        <Badge variant="warning" className="text-[10px]">
-                          {t("crmOpportunities.pipelinesPage.badgeModalReason")}
-                        </Badge>
-                      )}
-                      {tr.requireNote && (
-                        <Badge variant="info" className="text-[10px]">
-                          {t("crmOpportunities.pipelinesPage.badgeAuditNote")}
-                        </Badge>
-                      )}
-                      {tr.requiredFields.map((fk) => (
-                        <Badge key={fk} variant="outline" className="text-[10px] text-nx-ink">
-                          <ShieldCheck className="w-2.5 h-2.5 me-1 text-info" />
-                          {formatExitFieldLabel(fk, t, isAr, crmCustomFields)}
-                        </Badge>
-                      ))}
-                      {countTransitionRules(tr) === 0 && (
-                        <span className="text-nx-ink-3">
-                          {t("crmOpportunities.pipelinesPage.badgeUnrestricted")}
-                        </span>
-                      )}
-                    </div>
-                  </td>
-                </tr>
-              );
-            })}
-          </tbody>
-        </table>
       </div>
     </div>
   );

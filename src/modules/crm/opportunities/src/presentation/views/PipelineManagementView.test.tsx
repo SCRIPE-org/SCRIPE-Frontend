@@ -163,6 +163,21 @@ describe("PipelineManagementView — Pipelines Directory & Full-Screen 2D Workfl
     expect(screen.getByTestId("canvas-node-lead.converted")).toBeDefined();
     expect(screen.getByTestId("canvas-node-lead.disqualified")).toBeDefined();
 
+    // Select Qualified stage in Leads workflow and verify Lead Exit Field labels map to translation keys (not raw camelCase)
+    fireEvent.click(screen.getByTestId("canvas-node-lead.qualified"));
+    expect(
+      screen.getByText("crmOpportunities.pipelinesPage.exitFieldLeadPhoneOrEmail")
+    ).toBeDefined();
+    expect(
+      screen.getByText("crmOpportunities.pipelinesPage.exitFieldLeadSource")
+    ).toBeDefined();
+    expect(
+      screen.getByText("crmOpportunities.pipelinesPage.exitFieldLeadBantNotes")
+    ).toBeDefined();
+    expect(
+      screen.getByText("crmOpportunities.pipelinesPage.exitFieldLeadAccountOrContact")
+    ).toBeDefined();
+
     // Add a new custom status dynamically (6th stage)
     fireEvent.click(screen.getByTestId("crm-toolbar-add-status"));
     fireEvent.change(screen.getByTestId("new-status-label-en-input"), {
@@ -174,9 +189,16 @@ describe("PipelineManagementView — Pipelines Directory & Full-Screen 2D Workfl
       expect(screen.getByTestId("canvas-node-lead.deal_handover")).toBeDefined();
     });
 
-    // Clicking + Add Rule selects a transition and opens the 4 rule cards
+    // Clicking + Add Rule selects a transition and opens the 4-Category Rule Catalog Modal directly, and renders Lead exit fields in Transition Inspector
     fireEvent.click(screen.getByTestId("crm-toolbar-add-rule"));
     expect(screen.getByTestId("transition-rule-card-restrict")).toBeDefined();
+    expect(screen.getByTestId("workflow-rule-catalog-modal")).toBeDefined();
+    expect(
+      screen.getByText("crmOpportunities.pipelinesPage.exitFieldLeadPhoneOrEmail")
+    ).toBeDefined();
+    expect(
+      screen.getByText("crmOpportunities.pipelinesPage.exitFieldLeadSource")
+    ).toBeDefined();
 
     // Clicking Discard / Close exits Studio back to the list page
     fireEvent.click(screen.getByTestId("studio-discard-close-btn"));
@@ -235,5 +257,68 @@ describe("PipelineManagementView — Pipelines Directory & Full-Screen 2D Workfl
     expect(useCrmWorkflowsStore.getState().activeLeadWorkflowId).toBe(created.id);
     expect(useCrmWorkflowsStore.getState().workflows.some((w) => w.id === created.id)).toBe(true);
   });
+
+  it("opens the searchable 4-Category Rule Catalog Modal, filters rules, and attaches a rule to a transition", async () => {
+    render(<PipelineManagementView defaultOpenStudio />);
+
+    const transitionPills = screen.getAllByTestId("canvas-transition-default.discovery");
+    fireEvent.click(transitionPills[0]);
+
+    // Click the + button on Restrict card to open the 4-Category Rule Catalog Modal
+    fireEvent.click(screen.getByTestId("open-rule-catalog-restrict"));
+    expect(screen.getByTestId("workflow-rule-catalog-modal")).toBeDefined();
+
+    // Filter rules by search query
+    const searchInput = screen.getByTestId("rule-catalog-search-input");
+    fireEvent.change(searchInput, { target: { value: "Approval" } });
+    expect(screen.getByTestId("rule-catalog-item-restrict.approval_required")).toBeDefined();
+
+    // Click Select on the rule
+    fireEvent.click(screen.getByTestId("select-catalog-rule-restrict.approval_required"));
+
+    await waitFor(() => {
+      expect(screen.queryByTestId("workflow-rule-catalog-modal")).toBeNull();
+    });
+  });
+
+  it("supports multi-source transitions, Domain Event selection, proportional 2D Mini-Map, Tidy Auto-Layout, and Status Replacement Migration Wizard", async () => {
+    render(<PipelineManagementView defaultOpenStudio />);
+
+    // Proportional 2D Mini-Map nodes, viewport box, and 50%-150% zoom slider
+    expect(screen.getByTestId("workflow-minimap")).toBeDefined();
+    expect(screen.getByTestId("workflow-minimap-surface")).toBeDefined();
+    expect(screen.getByTestId("minimap-viewport-box")).toBeDefined();
+    expect(screen.getByTestId("minimap-zoom-slider")).toBeDefined();
+    expect(screen.getByTestId("minimap-node-default.discovery")).toBeDefined();
+
+    // Toggle transition labels and run Tidy Auto-Layout
+    fireEvent.click(screen.getByTestId("canvas-toggle-transition-labels"));
+    fireEvent.click(screen.getByTestId("canvas-tidy-auto-layout-btn"));
+
+    // Select a transition and add a multi-source From status + automated Trigger + verify Domain Event selector
+    const transitionPills = screen.getAllByTestId("canvas-transition-default.proposal");
+    fireEvent.click(transitionPills[0]);
+    fireEvent.click(screen.getByTestId("inspector-toggle-multi-from-btn"));
+    expect(screen.getByTestId("inspector-multi-from-list")).toBeDefined();
+    fireEvent.click(screen.getByTestId("multi-from-checkbox-default.discovery"));
+    expect(screen.getByTestId("inspector-transition-event-select")).toBeDefined();
+
+    fireEvent.click(screen.getByTestId("inspector-transition-add-trigger-btn"));
+    fireEvent.click(screen.getByTestId("add-trigger-quote_accepted"));
+    expect(screen.getByTestId("transition-trigger-badge-quote_accepted")).toBeDefined();
+
+    // Select a stage and replace/migrate it via the Safe Delete & Status Replacement Wizard
+    fireEvent.click(screen.getByTestId("canvas-node-default.solution_fit"));
+    expect(screen.getByTestId("inspector-stage-category-select")).toBeDefined();
+    fireEvent.click(screen.getByTestId("inspector-replace-stage-btn"));
+
+    expect(screen.getByTestId("replace-status-migration-modal")).toBeDefined();
+    fireEvent.click(screen.getByTestId("replace-status-confirm-btn"));
+
+    await waitFor(() => {
+      expect(screen.queryByTestId("canvas-node-default.solution_fit")).toBeNull();
+    });
+  });
 });
+
 

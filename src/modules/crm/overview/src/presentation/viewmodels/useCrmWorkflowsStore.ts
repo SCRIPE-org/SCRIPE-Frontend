@@ -60,9 +60,9 @@ function syncWorkflowsToBackend(wfState: { workflows: CrmWorkflowDefinition[]; a
       customFieldsConfigJson: serializeCrmTenantCustomConfig(st.crmCustomFields, wfState),
     })?.catch?.(() => undefined);
     const dealWf = wfState.workflows.find((w) => w.id === wfState.activeDealWorkflowId || w.id === "wf-deal-default");
-    if (dealWf && dealWf.stages.length === 5) {
+    if (dealWf && dealWf.stages.length >= 2) {
       void container.opportunityRepository?.updateDefaultPipeline?.({
-        nameEn: dealWf.nameEn, nameAr: dealWf.nameAr, transitionsJson: JSON.stringify(dealWf.transitions), expectedRowVersion: "",
+        nameEn: dealWf.nameEn, nameAr: dealWf.nameAr, transitionsJson: JSON.stringify(dealWf.transitions), expectedRowVersion: "auto",
         stages: dealWf.stages.map((s, idx) => ({ stageKey: s.stageKey as never, sortOrder: idx + 1, labelEn: s.labelEn, labelAr: s.labelAr, winProbabilityPercent: s.winProbabilityPercent, requiredExitFields: s.requiredExitFields })),
       })?.catch?.(() => undefined);
     }
@@ -89,12 +89,16 @@ export interface CrmWorkflowsState {
   }) => CrmWorkflowStage;
   updateStageInWorkflow: (workflowId: string, stageKey: string, patch: Partial<CrmWorkflowStage>) => void;
   deleteStageFromWorkflow: (workflowId: string, stageKey: string) => boolean;
+  replaceAndDeleteStageFromWorkflow: (workflowId: string, stageKeyToRemove: string, replacementStageKey: string) => boolean;
   addTransition: (workflowId: string, input: {
-    fromStageKey: string; toStageKey: string; nameEn: string; nameAr?: string; rules?: Partial<CrmWorkflowTransition["rules"]>;
+    fromStageKey: string; fromStageKeys?: string[]; toStageKey: string; nameEn: string; nameAr?: string; rules?: Partial<CrmWorkflowTransition["rules"]>;
   }) => CrmWorkflowTransition;
   updateTransitionRules: (
     workflowId: string, transitionId: string, patch: Partial<CrmWorkflowTransition["rules"]>,
-    metaPatch?: { nameEn?: string; nameAr?: string; fromStageKey?: string; toStageKey?: string }
+    metaPatch?: {
+      nameEn?: string; nameAr?: string; fromStageKey?: string; fromStageKeys?: string[]; toStageKey?: string;
+      domainEventKey?: string; triggers?: string[]; properties?: Record<string, string>; catalogRules?: CrmWorkflowTransition["catalogRules"];
+    }
   ) => void;
   deleteTransition: (workflowId: string, transitionId: string) => void;
   syncBackendDealPipeline: (backendPipe: {
@@ -235,12 +239,37 @@ export const useCrmWorkflowsStore = create<CrmWorkflowsState>()(
         return true;
       },
 
+      replaceAndDeleteStageFromWorkflow: (workflowId, stageKeyToRemove, replacementStageKey) => {
+        const wf = get().workflows.find((w) => w.id === workflowId);
+        if (!wf || wf.stages.length <= 2 || stageKeyToRemove === replacementStageKey) return false;
+        if (!wf.stages.some((s) => s.stageKey === replacementStageKey)) return false;
+        const rewiredTransitions = wf.transitions
+          .map((t) => {
+            const nextFrom = t.fromStageKey === stageKeyToRemove ? replacementStageKey : t.fromStageKey;
+            const nextTo = t.toStageKey === stageKeyToRemove ? replacementStageKey : t.toStageKey;
+            const nextFromKeys = t.fromStageKeys
+              ? Array.from(new Set(t.fromStageKeys.map((k) => (k === stageKeyToRemove ? replacementStageKey : k))))
+              : undefined;
+            return { ...t, fromStageKey: nextFrom, toStageKey: nextTo, fromStageKeys: nextFromKeys };
+          })
+          .filter((t) => t.fromStageKey !== t.toStageKey);
+        get().saveWorkflow({
+          ...wf,
+          stages: wf.stages.filter((s) => s.stageKey !== stageKeyToRemove),
+          transitions: rewiredTransitions,
+        });
+        return true;
+      },
+
       addTransition: (workflowId, input) => {
         const wf = get().workflows.find((w) => w.id === workflowId) ?? get().workflows[0];
         const fromOrd = wf.stages.find((s) => s.stageKey === input.fromStageKey)?.sortOrder ?? 0;
         const toOrd = wf.stages.find((s) => s.stageKey === input.toStageKey)?.sortOrder ?? 0;
         const dir = input.fromStageKey === "*" ? "global" : toOrd < fromOrd ? "backward" : "forward";
-        const tr = makeWorkflowTransition(`tr-${Date.now()}`, input.fromStageKey, input.toStageKey, dir, input.nameEn, input.nameAr || input.nameEn, input.rules);
+        const tr = makeWorkflowTransition(`tr-${Date.now()}`, input.fromStageKey, input.toStageKey, dir, input.nameEn, input.nameAr || input.nameEn, {
+          ...input.rules,
+          fromStageKeys: input.fromStageKeys,
+        });
         get().saveWorkflow({ ...wf, transitions: [...wf.transitions, tr] });
         return tr;
       },

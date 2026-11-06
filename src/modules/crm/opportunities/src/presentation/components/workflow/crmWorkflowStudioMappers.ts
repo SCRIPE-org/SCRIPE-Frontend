@@ -15,10 +15,13 @@ export function buildStageNodesFromWorkflow(
     labelAr: st.labelAr,
     probability: st.winProbabilityPercent ?? 0,
     slaDays:
-      st.category === "done" || st.category === "lost"
+      st.slaDays ??
+      (st.category === "done" || st.category === "lost"
         ? 0
-        : Math.max(2, (idx + 1) * 3),
+        : Math.max(2, (idx + 1) * 3)),
     order: st.sortOrder || idx + 1,
+    category: st.category ?? (idx === 0 ? "todo" : "in_progress"),
+    properties: st.properties ? { ...st.properties } : {},
     isTerminalWon: st.category === "done" && wf.entityType === "deal",
     isTerminalLost: st.category === "lost",
     convertsToDeal: Boolean(
@@ -40,6 +43,7 @@ export function buildStageNodesFromWorkflow(
         probability: 100,
         slaDays: 0,
         order: sorted.length + 1,
+        category: "done",
         isTerminalWon: true,
         isTerminalLost: false,
         requiredExitFields: [],
@@ -55,6 +59,7 @@ export function buildStageNodesFromWorkflow(
         probability: 0,
         slaDays: 0,
         order: sorted.length + 2,
+        category: "lost",
         isTerminalWon: false,
         isTerminalLost: true,
         requiredExitFields: [],
@@ -75,8 +80,13 @@ export function buildTransitionsFromWorkflow(
     nameEn: tr.nameEn,
     nameAr: tr.nameAr,
     fromStageKey: tr.fromStageKey,
+    fromStageKeys: tr.fromStageKeys ? [...tr.fromStageKeys] : [tr.fromStageKey],
     toStageKey: tr.toStageKey,
     direction: tr.direction,
+    domainEventKey: tr.domainEventKey ?? "GenericEvent",
+    triggers: tr.triggers ? [...tr.triggers] : [],
+    properties: tr.properties ? { ...tr.properties } : {},
+    catalogRules: tr.catalogRules ? tr.catalogRules.map((r) => ({ ...r })) : [],
     requiredFields: [...(tr.rules?.requiredFieldKeys ?? [])],
     requireReason: Boolean(tr.rules?.promptForComment),
     requireNote: (tr.rules?.promptFields ?? []).length > 0,
@@ -117,9 +127,12 @@ export function serializeStudioDraftToWorkflow(
         labelAr: s.labelAr,
         sortOrder: s.order,
         category:
+          s.category ??
           prev?.category ??
           (s.convertsToDeal ? "done" : s.order === 1 ? "todo" : "in_progress"),
         winProbabilityPercent: s.probability,
+        slaDays: s.slaDays,
+        properties: s.properties ?? prev?.properties,
         requiredExitFields: s.requiredExitFields,
         requiresVerifiedParty: s.requiredExitFields.includes("partyId"),
         triggerDealConversion: Boolean(s.convertsToDeal),
@@ -142,8 +155,13 @@ export function serializeStudioDraftToWorkflow(
         nameEn: tr.nameEn,
         nameAr: tr.nameAr,
         fromStageKey: tr.fromStageKey,
+        fromStageKeys: tr.fromStageKeys && tr.fromStageKeys.length > 0 ? tr.fromStageKeys : [tr.fromStageKey],
         toStageKey: tr.toStageKey,
         direction: resolvedDirection,
+        domainEventKey: tr.domainEventKey ?? "GenericEvent",
+        triggers: tr.triggers ?? [],
+        properties: tr.properties ?? {},
+        catalogRules: tr.catalogRules ?? [],
         rules: {
           allowRollback: tr.allowRollback ?? true,
           requiredPermission: tr.restrictToRoles?.[0] ?? null,

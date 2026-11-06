@@ -7,9 +7,16 @@ const SCREENSHOT_DIR = path.resolve(
   __dirname,
   "../../SCRIPE-CRM/EXECUTION_REPORTS/CRM-OVERHAUL/screenshots"
 );
+const BRAIN_SCREENSHOT_DIRS = [
+  "C:/Users/seifmoustafa/.gemini/antigravity/brain/8bd25edc-2619-4826-9374-aa66575beafc",
+  "C:/Users/seifmoustafa/.gemini/antigravity/brain/8bd25edc-2619-4826-9374-aa66575beafc/screenshots",
+  "C:/Users/seifmoustafa/.gemini/antigravity/brain/dcf7afe6-e67d-45ce-9ff4-31e89728e9bc/screenshots",
+];
 
-if (!fs.existsSync(SCREENSHOT_DIR)) {
-  fs.mkdirSync(SCREENSHOT_DIR, { recursive: true });
+for (const dir of [SCREENSHOT_DIR, ...BRAIN_SCREENSHOT_DIRS]) {
+  if (!fs.existsSync(dir)) {
+    fs.mkdirSync(dir, { recursive: true });
+  }
 }
 
 async function safeScreenshot(page: Page, targetPath: string) {
@@ -21,6 +28,12 @@ async function safeScreenshot(page: Page, targetPath: string) {
         } catch {}
       }
       await page.screenshot({ path: targetPath, fullPage: true });
+      const fileName = path.basename(targetPath);
+      for (const brainDir of BRAIN_SCREENSHOT_DIRS) {
+        try {
+          fs.copyFileSync(targetPath, path.join(brainDir, fileName));
+        } catch {}
+      }
       return;
     } catch (err) {
       if (attempt === 4) throw err;
@@ -122,6 +135,7 @@ test.describe("CRM Settings Hub & 2D Jira Workflow Studio E2E Verification", () 
     await expect(page.getByTestId("workflow-card-wf-deal-default")).toBeVisible();
     await expect(page.getByTestId("workflow-card-wf-lead-default")).toBeVisible();
     await setThemeAndCapture(page, "02a_crm_pipelines_directory_list");
+    await setThemeAndCapture(page, "02_crm_pipelines_directory");
     await setThemeAndCapture(page, "02_crm_pipelines_page");
 
     // Create a custom workflow and verify PUT /api/v1/crm/settings/tenant persists workflows JSON to PostgreSQL
@@ -236,8 +250,39 @@ test.describe("CRM Settings Hub & 2D Jira Workflow Studio E2E Verification", () 
       page.getByTestId(`inspector-default.proposal-exit-field-custom:${uniqueKey}`)
     ).toBeVisible({ timeout: 5_000 });
 
-    // Frame the 2D workflow canvas cleanly from START at 70% zoom so 360px-pitched stages are completely visible
-    await page.locator('[data-testid="crm-workflow-canvas-card"] button').nth(4).click();
+    // Verify Proportional 2D Spatial Mini-Map, Zoom Slider (50%-150%), Tidy Auto-Layout, and Status Replacement Migration Modal
+    await expect(page.getByTestId("workflow-minimap-surface")).toBeVisible();
+    await expect(page.getByTestId("minimap-viewport-box")).toBeVisible();
+    await expect(page.getByTestId("minimap-zoom-slider")).toBeVisible();
+    await expect(page.getByTestId("minimap-node-default.discovery")).toBeVisible();
+    await page.getByTestId("canvas-tidy-auto-layout-btn").click();
+
+    await page.getByTestId("inspector-replace-stage-btn").click();
+    await expect(page.getByTestId("replace-status-migration-modal")).toBeVisible();
+    await setThemeAndCapture(page, "02g_crm_workflow_replace_status_migration_modal");
+    await page.keyboard.press("Escape");
+    await expect(page.getByTestId("replace-status-migration-modal")).toBeHidden();
+
+    // Select a transition to verify Multi-Source From Statuses, Triggers (+), Domain Event selector, and 4-Category Rule Catalog Modal
+    await page.getByTestId("canvas-transition-default.discovery").first().click();
+    await page.getByTestId("inspector-toggle-multi-from-btn").click();
+    await expect(page.getByTestId("inspector-multi-from-list")).toBeVisible();
+    await expect(page.getByTestId("inspector-transition-add-trigger-btn")).toBeVisible();
+    await page.getByTestId("inspector-transition-add-trigger-btn").click();
+    await page.getByTestId("add-trigger-quote_accepted").click();
+    await expect(page.getByTestId("transition-trigger-badge-quote_accepted")).toBeVisible();
+    await expect(page.getByTestId("inspector-transition-event-select")).toBeVisible();
+    await setThemeAndCapture(page, "02f_crm_workflow_transition_inspector");
+
+    // Click + Add Rule in the top toolbar to directly open the 4-Category Rule Catalog Modal
+    await page.getByTestId("crm-toolbar-add-rule").click();
+    await expect(page.getByTestId("workflow-rule-catalog-modal")).toBeVisible();
+    await setThemeAndCapture(page, "02e_crm_workflow_4category_rule_catalog_modal");
+    await page.getByTestId("select-catalog-rule-restrict.approval_required").click();
+    await expect(page.getByTestId("workflow-rule-catalog-modal")).toBeHidden();
+
+    // Reselect Proposal stage and frame the 2D workflow canvas cleanly from START at 70% zoom
+    await page.getByTestId("canvas-node-default.proposal").click();
     await page.evaluate(() => {
       const surface = document.querySelector('[data-testid="crm-2d-graph-surface"]');
       if (surface) {
@@ -270,6 +315,12 @@ test.describe("CRM Settings Hub & 2D Jira Workflow Studio E2E Verification", () 
     await expect(page.getByTestId("workflow-minimap")).toBeVisible();
 
     await page.getByTestId("canvas-node-lead.qualified").click();
+    await expect(page.getByText("Phone or Email Present")).toBeVisible();
+    await expect(page.getByText("Lead Source Channel")).toBeVisible();
+    await expect(page.getByText("Qualification Summary / BANT")).toBeVisible();
+    await expect(page.getByText("Linked Account or Contact")).toBeVisible();
+    const inspectorText = await page.getByTestId("workflow-inspector-panel").innerText();
+    expect(inspectorText).not.toContain("leadPhoneOrEmail");
     await page.evaluate(() => {
       const surface = document.querySelector('[data-testid="crm-2d-graph-surface"]');
       if (surface) {

@@ -67,6 +67,7 @@ export function PipelineManagementView({
           validationBanner={vm.validationBanner}
           setValidationBanner={vm.setValidationBanner}
           crmCustomFields={vm.crmCustomFields}
+          openRuleCatalogSignal={vm.openRuleCatalogSignal}
           onSelectWorkflow={vm.openStudioForWorkflow}
           onSwitchEntity={vm.handleSwitchEntity}
           onBackToList={() => vm.setIsStudioOpen(false)}
@@ -75,19 +76,12 @@ export function PipelineManagementView({
           onValidateRules={vm.handleValidateRules}
           onOpenAddStage={() => vm.setAddStageModalOpen(true)}
           onOpenAddTransition={vm.openAddTransitionWithPreselect}
-          onOpenRuleForStage={(key) => {
-            if (vm.transitions.length > 0) {
-              vm.setSelectedTransitionId(vm.transitions[0].id);
-              vm.setSelectedStageKey(null);
-            } else {
-              vm.setSelectedStageKey(key);
-              vm.setSelectedTransitionId(null);
-            }
-          }}
+          onOpenRuleForStage={vm.handleOpenRuleForStage}
           onNodeMove={vm.handleNodeMove}
           onStageChange={vm.handleStageChange}
           onMoveOrder={vm.handleMoveStageOrder}
           onRemoveStage={vm.handleRemoveStage}
+          onReplaceStage={vm.handleReplaceStage}
           onTransitionChange={vm.handleTransitionChange}
           onDeleteTransition={vm.handleDeleteTransition}
           onCreateTransition={vm.openAddTransitionWithPreselect}

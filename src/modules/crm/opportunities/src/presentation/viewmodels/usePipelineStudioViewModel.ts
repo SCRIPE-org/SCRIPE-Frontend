@@ -54,10 +54,20 @@ export function usePipelineStudioViewModel(defaultOpenStudio = false) {
   const [transitions, setTransitions] = useState<CrmWorkflowTransition[]>(() =>
     selectedWorkflow ? buildTransitionsFromWorkflow(selectedWorkflow) : [],
   );
-  const [selectedStageKey, setSelectedStageKey] = useState<string | null>(null);
-  const [selectedTransitionId, setSelectedTransitionId] = useState<string | null>(null);
+  const [selectedStageKey, setSelectedStageKeyState] = useState<string | null>(null);
+  const [selectedTransitionId, setSelectedTransitionIdState] = useState<string | null>(null);
+  const [openRuleCatalogSignal, setOpenRuleCatalogSignal] = useState(0);
   const [hasChanges, setHasChanges] = useState(false);
   const [validationBanner, setValidationBanner] = useState<string | null>(null);
+
+  const setSelectedStageKey = (key: string | null) => {
+    setSelectedStageKeyState(key);
+    if (key !== null) setOpenRuleCatalogSignal(0);
+  };
+  const setSelectedTransitionId = (id: string | null) => {
+    setSelectedTransitionIdState(id);
+    setOpenRuleCatalogSignal(0);
+  };
 
   const [addStageModalOpen, setAddStageModalOpen] = useState(false);
   const [newStageNameEn, setNewStageNameEn] = useState("");
@@ -84,8 +94,9 @@ export function usePipelineStudioViewModel(defaultOpenStudio = false) {
     if (!selectedWorkflow) return;
     setStages(buildStageNodesFromWorkflow(selectedWorkflow));
     setTransitions(buildTransitionsFromWorkflow(selectedWorkflow));
-    setSelectedStageKey(null);
-    setSelectedTransitionId(null);
+    setSelectedStageKeyState(null);
+    setSelectedTransitionIdState(null);
+    setOpenRuleCatalogSignal(0);
     setHasChanges(false);
     setValidationBanner(null);
   }, [selectedWorkflow]);
@@ -140,6 +151,28 @@ export function usePipelineStudioViewModel(defaultOpenStudio = false) {
     setSelectedStageKey(null);
     setHasChanges(true);
   };
+  const handleReplaceStage = (stageKeyToRemove: string, replacementStageKey: string) => {
+    if (stages.filter((s) => !s.isTerminalWon && !s.isTerminalLost).length <= 2) {
+      setValidationBanner(t("crmOpportunities.pipelinesPage.minTwoStatusesError"));
+      return;
+    }
+    if (stageKeyToRemove === replacementStageKey) return;
+    setStages((prev) => prev.filter((s) => s.stageKey !== stageKeyToRemove));
+    setTransitions((prev) =>
+      prev
+        .map((tr) => {
+          const nextFrom = tr.fromStageKey === stageKeyToRemove ? replacementStageKey : tr.fromStageKey;
+          const nextTo = tr.toStageKey === stageKeyToRemove ? replacementStageKey : tr.toStageKey;
+          const nextFromKeys = tr.fromStageKeys
+            ? Array.from(new Set(tr.fromStageKeys.map((k) => (k === stageKeyToRemove ? replacementStageKey : k))))
+            : undefined;
+          return { ...tr, fromStageKey: nextFrom, toStageKey: nextTo, fromStageKeys: nextFromKeys };
+        })
+        .filter((tr) => tr.fromStageKey !== tr.toStageKey),
+    );
+    setSelectedStageKey(replacementStageKey);
+    setHasChanges(true);
+  };
   const handleAddStageSubmit = () => {
     if (!newStageNameEn.trim()) return;
     const prefix = activeEntity === "lead" ? "lead" : "default";
@@ -189,6 +222,25 @@ export function usePipelineStudioViewModel(defaultOpenStudio = false) {
     setTransitions((prev) => [...prev, created]);
     setAddTransitionModalOpen(false); setSelectedTransitionId(created.id); setSelectedStageKey(null); setHasChanges(true);
   };
+  const handleOpenRuleForStage = (key: string) => {
+    if (selectedTransitionId) {
+      setSelectedStageKeyState(null);
+      setOpenRuleCatalogSignal((prev) => prev + 1);
+      return;
+    }
+    const matching =
+      transitions.find(
+        (tr) => tr.fromStageKey === key || (tr.fromStageKeys && tr.fromStageKeys.includes(key)),
+      ) ?? transitions[0];
+    if (matching) {
+      setSelectedTransitionIdState(matching.id);
+      setSelectedStageKeyState(null);
+      setOpenRuleCatalogSignal((prev) => prev + 1);
+    } else {
+      setSelectedStageKey(key);
+      setSelectedTransitionId(null);
+    }
+  };
   const handleCreateWorkflowSubmit = () => {
     if (!newWfNameEn.trim()) return;
     const created = createWorkflow({
@@ -219,12 +271,13 @@ export function usePipelineStudioViewModel(defaultOpenStudio = false) {
     isStudioOpen, setIsStudioOpen, directoryFilter, setDirectoryFilter, directorySearch, setDirectorySearch,
     filteredDirectoryWorkflows, activeEntity, viewMode, setViewMode, zoom, setZoom,
     activeStages: stages, transitions, selectedStage, selectedTransition, selectedStageKey, selectedTransitionId,
-    setSelectedStageKey, setSelectedTransitionId, hasChanges, validationBanner, setValidationBanner, crmCustomFields, addCrmCustomField,
+    setSelectedStageKey, setSelectedTransitionId, openRuleCatalogSignal, handleOpenRuleForStage,
+    hasChanges, validationBanner, setValidationBanner, crmCustomFields, addCrmCustomField,
     addStageModalOpen, setAddStageModalOpen, newStageNameEn, setNewStageNameEn, newStageNameAr, setNewStageNameAr,
     newStageProb, setNewStageProb, newStageSla, setNewStageSla, newStageConvertsLead, setNewStageConvertsLead, newStageAutoConnect, setNewStageAutoConnect,
     addTransitionModalOpen, setAddTransitionModalOpen, newTransFrom, setNewTransFrom, newTransTo, setNewTransTo, newTransNameEn, setNewTransNameEn, newTransNameAr, setNewTransNameAr,
     createWorkflowModalOpen, setCreateWorkflowModalOpen, newWfEntityType, setNewWfEntityType, newWfNameEn, setNewWfNameEn, newWfNameAr, setNewWfNameAr, newWfDescEn, setNewWfDescEn, newWfDescAr, setNewWfDescAr,
-    openStudioForWorkflow, handleSwitchEntity, handleNodeMove, handleStageChange, handleMoveStageOrder, handleRemoveStage, handleAddStageSubmit, openAddTransitionWithPreselect, handleAddTransitionSubmit,
+    openStudioForWorkflow, handleSwitchEntity, handleNodeMove, handleStageChange, handleMoveStageOrder, handleRemoveStage, handleReplaceStage, handleAddStageSubmit, openAddTransitionWithPreselect, handleAddTransitionSubmit,
     handleTransitionChange: (u: CrmWorkflowTransition) => { setTransitions((prev) => prev.map((t) => (t.id === u.id ? u : t))); setHasChanges(true); },
     handleDeleteTransition: (id: string) => { setTransitions((prev) => prev.filter((t) => t.id !== id)); setSelectedTransitionId(null); setHasChanges(true); },
     handleCreateWorkflowSubmit, handleCloneWorkflow: (id: string) => openStudioForWorkflow(cloneWorkflow(id).id),

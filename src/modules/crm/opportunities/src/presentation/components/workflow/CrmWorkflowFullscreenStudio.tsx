@@ -20,13 +20,14 @@ export interface CrmWorkflowFullscreenStudioProps {
   selectedStageKey: string | null; selectedTransitionId: string | null;
   setSelectedStageKey: (key: string | null) => void; setSelectedTransitionId: (id: string | null) => void;
   hasChanges: boolean; validationBanner: string | null; setValidationBanner: (msg: string | null) => void;
-  crmCustomFields: CrmCustomFieldDefinition[];
+  crmCustomFields: CrmCustomFieldDefinition[]; openRuleCatalogSignal?: number;
   onSelectWorkflow: (workflowId: string) => void; onSwitchEntity: (entity: CrmWorkflowEntityType) => void;
   onBackToList: () => void; onResetDraft: () => void; onSave: () => void; onValidateRules: () => void;
   onOpenAddStage: () => void; onOpenAddTransition: (fromStageKey?: string, toStageKey?: string) => void;
   onOpenRuleForStage: (stageKey: string) => void; onNodeMove: (stageKey: string, x: number, y: number) => void;
   onStageChange: (updated: CrmWorkflowStageNode) => void; onMoveOrder: (stageKey: string, direction: "up" | "down") => void;
-  onRemoveStage: (stageKey: string) => void; onTransitionChange: (updated: CrmWorkflowTransition) => void;
+  onRemoveStage: (stageKey: string) => void; onReplaceStage?: (stageKeyToRemove: string, replacementStageKey: string) => void;
+  onTransitionChange: (updated: CrmWorkflowTransition) => void;
   onDeleteTransition: (transitionId: string) => void; onCreateTransition: (fromStageKey: string) => void;
   onAddCrmCustomField: (field: Omit<CrmCustomFieldDefinition, "id" | "createdAtIso">) => void;
 }
@@ -37,9 +38,9 @@ export function CrmWorkflowFullscreenStudio(props: CrmWorkflowFullscreenStudioPr
     t, isAr, workflows, selectedWorkflow, selectedWorkflowId, activeEntity, viewMode, setViewMode,
     zoom, setZoom, activeStages, transitions, selectedStage, selectedTransition, selectedStageKey,
     selectedTransitionId, setSelectedStageKey, setSelectedTransitionId, hasChanges, validationBanner,
-    setValidationBanner, crmCustomFields, onSelectWorkflow, onSwitchEntity, onBackToList, onResetDraft,
+    setValidationBanner, crmCustomFields, openRuleCatalogSignal, onSelectWorkflow, onSwitchEntity, onBackToList, onResetDraft,
     onSave, onValidateRules, onOpenAddStage, onOpenAddTransition, onOpenRuleForStage, onNodeMove,
-    onStageChange, onMoveOrder, onRemoveStage, onTransitionChange, onDeleteTransition, onCreateTransition,
+    onStageChange, onMoveOrder, onRemoveStage, onReplaceStage, onTransitionChange, onDeleteTransition, onCreateTransition,
     onAddCrmCustomField,
   } = props;
 
@@ -58,13 +59,13 @@ export function CrmWorkflowFullscreenStudio(props: CrmWorkflowFullscreenStudioPr
           <div className="inline-flex items-center rounded-md border border-nx-line bg-nx-raised p-0.5 gap-0.5 shrink-0">
             <Button
               size="sm" variant="ghost" onClick={() => onSwitchEntity("deal")} data-testid="workflow-switch-deals"
-              className={`h-7 px-2 text-xs ${activeEntity === "deal" ? "bg-nx-surface text-foreground border border-nx-line-hi font-semibold" : "text-nx-ink-2"}`}
+              className={`h-7 px-2 text-xs ${activeEntity === "deal" ? "bg-nx-surface text-nx-ink border border-nx-line-hi font-semibold" : "text-nx-ink-2"}`}
             >
               {t("crmOpportunities.pipelinesPage.dealsPipelineSwitch")}
             </Button>
             <Button
               size="sm" variant="ghost" onClick={() => onSwitchEntity("lead")} data-testid="workflow-switch-leads"
-              className={`h-7 px-2 text-xs ${activeEntity === "lead" ? "bg-nx-surface text-foreground border border-nx-line-hi font-semibold" : "text-nx-ink-2"}`}
+              className={`h-7 px-2 text-xs ${activeEntity === "lead" ? "bg-nx-surface text-nx-ink border border-nx-line-hi font-semibold" : "text-nx-ink-2"}`}
             >
               {t("crmOpportunities.pipelinesPage.leadsPipelineSwitch")}
             </Button>
@@ -100,7 +101,7 @@ export function CrmWorkflowFullscreenStudio(props: CrmWorkflowFullscreenStudioPr
             return (
               <Button
                 key={m.id} size="sm" variant="ghost" onClick={() => setViewMode(m.id)} data-testid={`workflow-mode-${m.id}`}
-                className={`h-7 px-2 text-xs ${isActive ? "bg-nx-surface text-foreground border border-nx-line-hi font-semibold" : "text-nx-ink-2"}`}
+                className={`h-7 px-2 text-xs ${isActive ? "bg-nx-surface text-nx-ink border border-nx-line-hi font-semibold" : "text-nx-ink-2"}`}
               >
                 <Icon className="w-3.5 h-3.5 me-1.5" />
                 {t(m.labelKey)}
@@ -144,7 +145,8 @@ export function CrmWorkflowFullscreenStudio(props: CrmWorkflowFullscreenStudioPr
         <CrmWorkflowInspectorPanel
           activeEntity={activeEntity} stages={activeStages} transitions={transitions}
           selectedStage={selectedStage} selectedTransition={selectedTransition} crmCustomFields={crmCustomFields}
-          onStageChange={onStageChange} onMoveOrder={onMoveOrder} onRemoveStage={onRemoveStage}
+          openRuleCatalogSignal={openRuleCatalogSignal}
+          onStageChange={onStageChange} onMoveOrder={onMoveOrder} onRemoveStage={onRemoveStage} onReplaceStage={onReplaceStage}
           onTransitionChange={onTransitionChange} onDeleteTransition={onDeleteTransition}
           onSelectTransition={setSelectedTransitionId} onCreateTransition={(from) => onOpenAddTransition(from)}
           onAddCrmCustomField={onAddCrmCustomField}

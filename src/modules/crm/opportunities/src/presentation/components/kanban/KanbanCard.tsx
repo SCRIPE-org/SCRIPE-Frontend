@@ -12,16 +12,18 @@ import {
   ChevronRight,
   Calendar,
   Briefcase,
+  Flame,
 } from "lucide-react";
 import { cn } from "@core/common/utils";
 import { useI18n } from "@core/providers/i18n-provider";
-import { useCrmCurrency } from "@modules/crm";
+import { useCrmCurrency, useCrmWorkflowsStore } from "@modules/crm";
 import type { CrmOpportunity } from "../../../domain/entities/OpportunityEntity";
 
 export interface KanbanCardProps {
   opportunity: CrmOpportunity;
   currentStageIndex: number;
   totalStages: number;
+  slaTargetDays?: number;
   onMoveForward?: (opp: CrmOpportunity) => void;
   onMoveBackward?: (opp: CrmOpportunity) => void;
   isDragging?: boolean;
@@ -30,12 +32,13 @@ export interface KanbanCardProps {
 }
 
 /**
- * Accessible Kanban card displaying opportunity summary, party gate status, and stage shift controls.
+ * Accessible Kanban card displaying opportunity summary, party gate status, SLA rotting indicator, and stage shift controls.
  */
 export function KanbanCard({
   opportunity,
   currentStageIndex,
   totalStages,
+  slaTargetDays,
   onMoveForward,
   onMoveBackward,
   isDragging = false,
@@ -46,6 +49,16 @@ export function KanbanCard({
   const { t, language } = useI18n();
   const isRtl = language === "ar";
   const { baseCurrency, autoConvertToBase, convertAmount } = useCrmCurrency();
+  const activeDealWorkflow = useCrmWorkflowsStore((s) => s.getActiveWorkflow("deal"));
+
+  const matchedStage = activeDealWorkflow?.stages.find((st) => st.stageKey === opportunity.stageKey);
+  const effectiveSlaDays = slaTargetDays ?? matchedStage?.slaDays ?? 0;
+  const createdMs = opportunity.createdAt ? new Date(opportunity.createdAt).getTime() : NaN;
+  const ageDays = !isNaN(createdMs)
+    ? Math.max(0, Math.floor((Date.now() - createdMs) / (1000 * 60 * 60 * 24)))
+    : 0;
+  const isRotting =
+    opportunity.status === "Open" && effectiveSlaDays > 0 && ageDays > effectiveSlaDays;
 
   const isMasked = opportunity.maskedFieldKeys?.includes("estimatedAmount");
   const currencyCode = opportunity.currencyCode || "SAR";
@@ -140,19 +153,32 @@ export function KanbanCard({
         isDragging && "opacity-40 scale-[0.98]"
       )}
     >
-      {/* Top Metadata Strip: Deal Kind & Customer Verification Status */}
+      {/* Top Metadata Strip: Deal Kind, SLA Rotting & Customer Verification Status */}
       <div className="flex items-center justify-between gap-1.5">
-        <Badge
-          variant="outline"
-          className="shrink-0 text-[10px] px-1.5 py-0 font-medium border-nx-line text-nx-ink-2 bg-nx-raised"
-        >
-          {t(`crmOpportunities.dealKind.${opportunity.dealKind}`, {
-            defaultValue:
-              opportunity.dealKind === "NewBusiness"
-                ? "New Business"
-                : opportunity.dealKind,
-          })}
-        </Badge>
+        <div className="flex items-center gap-1 min-w-0">
+          <Badge
+            variant="outline"
+            className="shrink-0 text-[10px] px-1.5 py-0 font-medium border-nx-line text-nx-ink-2 bg-nx-raised"
+          >
+            {t(`crmOpportunities.dealKind.${opportunity.dealKind}`, {
+              defaultValue:
+                opportunity.dealKind === "NewBusiness"
+                  ? "New Business"
+                  : opportunity.dealKind,
+            })}
+          </Badge>
+          {isRotting && (
+            <Badge
+              variant="outline"
+              data-testid="kanban-card-rotting-badge"
+              title={`Stagnant deal: ${ageDays}d > ${effectiveSlaDays}d SLA`}
+              className="shrink-0 text-[9px] px-1.5 py-0 font-semibold border-destructive/40 text-destructive bg-destructive/10 inline-flex items-center gap-0.5"
+            >
+              <Flame className="size-2.5" />
+              <span>{ageDays}d</span>
+            </Badge>
+          )}
+        </div>
 
         {hasParty ? (
           <span
