@@ -1,0 +1,201 @@
+/**
+ * Deterministic Mock Data Fixtures for SCRIPE Profile & Security Suite E2E Tests.
+ * Strictly adheres to Identity domain models and API contracts.
+ */
+
+export const MOCK_ADMIN_PROFILE = {
+  id: "00000000-0000-0000-0000-000000000001",
+  username: "superadmin",
+  email: "admin@scripe.com",
+  firstName: "Alex",
+  lastName: "Morgan",
+  phoneNumber: "+201001234567",
+  staffCode: "#SCR-ADM-001",
+  clubAffiliation: "Al-Ahly SC",
+  editionName: "Enterprise Ultra",
+  activeBranchName: "Gezira Central Campus (HQ)",
+  isAvailableForOperations: true,
+  securityScore: 85,
+  isTwoFactorEnabled: true,
+  profileImageUrl: null as string | null,
+  roles: ["Platform Administrator", "Director of Football"],
+  academies: [
+    { id: "acad-01", name: "Gezira Central Campus (HQ)", isPrimary: true },
+    { id: "acad-02", name: "Nasr City Elite Training Ground", isPrimary: false },
+    { id: "acad-03", name: "Sheikh Zayed Development Center", isPrimary: false },
+  ],
+};
+
+export const MOCK_PASSKEYS = [
+  {
+    id: "passkey-01",
+    deviceName: "Executive MacBook Pro (Touch ID)",
+    deviceType: "apple",
+    aaguid: "adce0002-35ac-4a43-a094-012444265000",
+    maskedCredentialId: "cred_8f3a••••••••99b2",
+    createdAt: "2026-10-15T09:30:00Z",
+    lastUsedAt: "2026-11-07T14:22:10Z",
+    signatureCounter: 142,
+    isDiscoverable: true,
+  },
+  {
+    id: "passkey-02",
+    deviceName: "YubiKey 5 NFC (Hardware Key)",
+    deviceType: "hardware",
+    aaguid: "cb69481e-8ff7-4039-93ec-0a2729a10000",
+    maskedCredentialId: "cred_12c4••••••••aa01",
+    createdAt: "2026-09-01T11:00:00Z",
+    lastUsedAt: "2026-11-06T18:45:00Z",
+    signatureCounter: 89,
+    isDiscoverable: false,
+  },
+];
+
+export const MOCK_SESSIONS = [
+  {
+    tokenId: "sess-current",
+    isCurrent: true,
+    isImpersonated: false,
+    deviceName: "Desktop Workstation (Chrome 131 on Windows 11)",
+    deviceInfo: "Desktop Workstation (Chrome 131 on Windows 11)",
+    browser: "Chrome 131.0",
+    operatingSystem: "Windows 11 Enterprise",
+    ipAddress: "197.38.14.88",
+    city: "Cairo",
+    country: "Egypt",
+    createdAt: "2026-11-07T08:00:00Z",
+    lastActiveAt: "2026-11-07T16:45:00Z",
+    expiresAt: "2026-11-08T08:00:00Z",
+  },
+  {
+    tokenId: "sess-mobile-01",
+    isCurrent: false,
+    isImpersonated: false,
+    deviceName: "Coach iPad Pro (Safari 18 on iPadOS)",
+    deviceInfo: "Coach iPad Pro (Safari 18 on iPadOS)",
+    browser: "Mobile Safari 18.1",
+    operatingSystem: "iPadOS 18.1",
+    ipAddress: "197.38.15.102",
+    city: "Giza",
+    country: "Egypt",
+    createdAt: "2026-11-06T14:15:00Z",
+    lastActiveAt: "2026-11-07T12:30:00Z",
+    expiresAt: "2026-11-07T20:00:00Z",
+  },
+  {
+    tokenId: "sess-impersonated-01",
+    isCurrent: false,
+    isImpersonated: true,
+    impersonatorAdminId: "superadmin-00",
+    impersonatorName: "@superadmin",
+    deviceName: "Support Console (Firefox 132 on Ubuntu)",
+    deviceInfo: "Support Console (Firefox 132 on Ubuntu)",
+    browser: "Firefox 132.0",
+    operatingSystem: "Ubuntu 24.04 LTS",
+    ipAddress: "41.238.190.12",
+    city: "Alexandria",
+    country: "Egypt",
+    createdAt: "2026-11-07T15:00:00Z",
+    lastActiveAt: "2026-11-07T15:40:00Z",
+    expiresAt: "2026-11-07T17:00:00Z",
+  },
+];
+
+export const MOCK_AUDIT_LOGS = [
+  {
+    id: "audit-01",
+    eventType: "LoginSuccess",
+    eventDescription: "Biometric Passkey Authentication Verified",
+    isSuccess: true,
+    timestamp: "2026-11-07T14:22:10Z",
+    ipAddress: "197.38.14.88",
+    userAgent: "Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/131.0.0.0",
+    details: "Passkey cred_8f3a••••••••99b2 verified via FIDO2 ES256 assertion.",
+    rawPayload: {
+      authenticator: "Windows Hello",
+      credentialId: "cred_8f3a••••••••99b2",
+      signatureCounter: 142,
+      origin: "https://os.scripe.org",
+      userVerification: "required",
+    },
+  },
+  {
+    id: "audit-02",
+    eventType: "PasswordChanged",
+    eventDescription: "Self-Service Password Rotated",
+    isSuccess: true,
+    timestamp: "2026-11-06T10:15:00Z",
+    ipAddress: "197.38.14.88",
+    userAgent: "Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/131.0.0.0",
+    details: "Admin password successfully updated with 2FA verification step.",
+    rawPayload: {
+      complexityScore: 4,
+      twoFactorVerified: true,
+      expiryEnforcedDays: 90,
+    },
+  },
+  {
+    id: "audit-03",
+    eventType: "LoginFailed",
+    eventDescription: "Invalid Password Attempt",
+    isSuccess: false,
+    timestamp: "2026-11-05T22:40:12Z",
+    ipAddress: "102.184.99.14",
+    userAgent: "Python-Requests/2.31.0",
+    details: "Failed password authentication; IP flagged for anomaly monitoring.",
+    rawPayload: {
+      attemptCount: 1,
+      lockoutRemaining: 4,
+      anomalyReason: "Untrusted User-Agent",
+    },
+  },
+  {
+    id: "audit-04",
+    eventType: "PersonalAccessTokenCreated",
+    eventDescription: "Developer Personal Access Token Issued",
+    isSuccess: true,
+    timestamp: "2026-11-04T16:00:00Z",
+    ipAddress: "197.38.14.88",
+    userAgent: "Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/131.0.0.0",
+    details: "Token 'Pitch-Side Video Analyzer' issued with scopes [tactics:read, pitch:write].",
+    rawPayload: {
+      tokenPrefix: "scr_pat_live_8f3a",
+      scopes: ["tactics:read", "pitch:write"],
+      expiresInDays: 30,
+    },
+  },
+];
+
+export const MOCK_EXTERNAL_LOGINS = [
+  {
+    id: "ext-01",
+    providerName: "google",
+    providerDisplayName: "Google Workspace",
+    providerEmail: "alex.morgan@al-ahly.club",
+    email: "alex.morgan@al-ahly.club",
+    linkedAt: "2026-08-10T12:00:00Z",
+  },
+];
+
+export const MOCK_PERSONAL_TOKENS = [
+  {
+    id: "pat-1",
+    name: "Tactical Pitch Sync Daemon",
+    prefix: "scr_pat_live_8f3a",
+    maskedToken: "scr_pat_live_8f3a••••••••",
+    scopes: ["tactics:read", "pitch:write"],
+    createdAt: "2026-10-24T10:00:00Z",
+    expiresAt: "2027-01-22T10:00:00Z",
+    lastUsedAt: "2026-11-07T09:12:00Z" as string | null,
+  },
+  {
+    id: "pat-2",
+    name: "Academy Roster CLI Tool",
+    prefix: "scr_pat_live_1c4b",
+    maskedToken: "scr_pat_live_1c4b••••••••",
+    scopes: ["academy:read", "athletes:read"],
+    createdAt: "2026-10-08T10:00:00Z",
+    expiresAt: "2027-01-06T10:00:00Z",
+    lastUsedAt: "2026-11-05T09:12:00Z" as string | null,
+  },
+];
