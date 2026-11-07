@@ -30,7 +30,7 @@ export interface ConfigureResourceRentalPriceInput {
   maxDurationMinutes: number | null;
   incrementMinutes: number | null;
   taxCategoryId: string | null;
-  idempotencyKey: string;
+  idempotencyKey?: string;
 }
 
 /**
@@ -67,7 +67,7 @@ export interface CalculatePriceQuoteInput {
   requestedEndUtc: string;
   currencyCode: string;
   expiresAtUtc: string;
-  idempotencyKey: string;
+  idempotencyKey?: string;
 }
 
 /**
@@ -99,7 +99,7 @@ export interface PriceQuote {
 export interface OverridePriceQuoteInput {
   adjustmentAmount: number;
   reason: string;
-  idempotencyKey: string;
+  idempotencyKey?: string;
 }
 
 /**

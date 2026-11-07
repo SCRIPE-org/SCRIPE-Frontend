@@ -29,10 +29,14 @@ export class GuestPortalService implements IGuestPortalService {
       return Promise.reject(new Error("A stable idempotency key is required to cancel a booking."));
     }
 
-    return this.api.postPublic<CancelGuestReservationResponse>(GUEST_PORTAL_ENDPOINTS.CANCEL, {
-      reason: reason.trim() || DEFAULT_CANCEL_REASON,
-      idempotencyKey: key,
-    });
+    return this.api.postPublic<CancelGuestReservationResponse>(
+      GUEST_PORTAL_ENDPOINTS.CANCEL,
+      {
+        reason: reason.trim() || DEFAULT_CANCEL_REASON,
+      },
+      undefined,
+      { idempotencyKey: key }
+    );
   }
 
   async logout(): Promise<void> {

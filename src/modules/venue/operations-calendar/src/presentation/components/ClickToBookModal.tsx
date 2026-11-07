@@ -5,15 +5,17 @@
 import React from "react";
 import { ArrowRight, Timer } from "lucide-react";
 import {
-  Dialog,
-  DialogContent,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogDescription,
-} from "@core/ui/dialog";
+  Sheet,
+  SheetContent,
+  SheetFooter,
+  SheetHeader,
+  SheetTitle,
+  SheetDescription,
+} from "@core/ui/sheet";
 import { Button } from "@core/ui/button";
 import { Alert, AlertDescription } from "@core/ui/alert";
+import { useI18n } from "@core/providers/i18n-provider";
+import { cn } from "@core/common/utils";
 import {
   useClickToBookViewModel,
   type UseClickToBookProps,
@@ -71,25 +73,44 @@ export function ClickToBookModal(props: ClickToBookModalProps) {
   const { open, onOpenChange, resources = [], onFindSlots, onSuccess } = props;
   const vm = useClickToBookViewModel(props);
   const { t } = vm;
+  const { language, direction } = useI18n();
+  const isRtl =
+    direction === "rtl" ||
+    language === "ar" ||
+    (typeof document !== "undefined" && document.documentElement.dir === "rtl");
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="border-nx-border max-w-md rounded-2xl border bg-nx-surface p-6 shadow-xl">
-        <DialogHeader className="sr-only">
-          <DialogTitle>{t("operationsCalendar.clickToBook.title")}</DialogTitle>
-          <DialogDescription>
+    <Sheet open={open} onOpenChange={onOpenChange}>
+      <SheetContent
+        side={isRtl ? "left" : "right"}
+        dir={isRtl ? "rtl" : "ltr"}
+        className={cn(
+          "border-nx-line flex h-full w-full flex-col overflow-y-auto border-s bg-nx-surface p-6 shadow-xl sm:max-w-lg",
+          vm.stage === "confirmed" ? "justify-start space-y-4" : "justify-between"
+        )}
+      >
+        <SheetHeader className="border-nx-line border-b pb-3 pe-8 text-start">
+          <SheetTitle className="text-base font-bold text-nx-ink">
+            {t("operationsCalendar.clickToBook.title", { defaultValue: "New Booking" })}
+          </SheetTitle>
+          <SheetDescription className="text-xs text-nx-ink-2">
             {vm.selectedResource?.name
-              ? `${vm.selectedResource.name} booking`
-              : t("operationsCalendar.clickToBook.dialogDescription")}
-          </DialogDescription>
-        </DialogHeader>
+              ? `${vm.selectedResource.name} • ${vm.selectedResource.facilityName || ""}`
+              : t("operationsCalendar.clickToBook.dialogDescription", {
+                  defaultValue: "Schedule court time, select customer, and confirm booking.",
+                })}
+          </SheetDescription>
+        </SheetHeader>
 
         {/* Stepper Header (Only during normal booking flow) */}
         {vm.stage === "booking" && (
-          <div className="border-nx-border flex items-center justify-between border-b pb-3">
+          <div
+            data-testid="click-to-book-stepper"
+            className="border-nx-line bg-nx-raised/40 flex items-center justify-between rounded-xl border px-3.5 py-2.5"
+          >
             {!vm.isContextual && (
               <>
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-2 shrink-0">
                   <span
                     className={`flex size-5 items-center justify-center rounded-full text-[10px] font-bold ${
                       vm.step >= 0 ? "bg-nx-accent text-nx-on-fill ring-1 ring-nx-accent"
@@ -104,11 +125,11 @@ export function ClickToBookModal(props: ClickToBookModalProps) {
                     {t("operationsCalendar.clickToBook.stepper.courtAndTime")}
                   </span>
                 </div>
-                <div className={`h-px w-6 ${vm.step >= 1 ? "bg-nx-accent" : "bg-nx-line"}`} />
+                <div className={`h-px flex-1 mx-2 sm:mx-3 ${vm.step >= 1 ? "bg-nx-accent" : "bg-nx-line"}`} />
               </>
             )}
 
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 shrink-0">
               <span
                 className={`flex size-5 items-center justify-center rounded-full text-[10px] font-bold ${
                   vm.step >= 1 ? "bg-nx-accent text-nx-on-fill ring-1 ring-nx-accent"
@@ -124,9 +145,9 @@ export function ClickToBookModal(props: ClickToBookModalProps) {
               </span>
             </div>
 
-            <div className={`h-px w-6 ${vm.step >= 2 ? "bg-nx-accent" : "bg-nx-line"}`} />
+            <div className={`h-px flex-1 mx-2 sm:mx-3 ${vm.step >= 2 ? "bg-nx-accent" : "bg-nx-line"}`} />
 
-            <div className="flex items-center gap-2">
+            <div data-testid="click-to-book-step-3" className="flex items-center gap-2 shrink-0">
               <span
                 className={`flex size-5 items-center justify-center rounded-full text-[10px] font-bold ${
                   vm.step >= 2 ? "bg-nx-accent text-nx-on-fill ring-1 ring-nx-accent"
@@ -186,8 +207,8 @@ export function ClickToBookModal(props: ClickToBookModalProps) {
           <div className="space-y-4 py-2">
             {/* Context Summary Card (Shown in Steps 1 & 2) */}
             {vm.step >= 1 && vm.selectedResource && (
-              <div className="border-nx-border bg-nx-raised/40 flex items-center gap-3 rounded-xl border p-3">
-                <div className="border-nx-border relative size-12 shrink-0 overflow-hidden rounded-lg border bg-nx-surface">
+              <div className="border-nx-line bg-nx-raised/40 flex items-center gap-3 rounded-xl border p-3">
+                <div className="border-nx-line relative size-12 shrink-0 overflow-hidden rounded-lg border bg-nx-surface">
                   <img
                     src={getCourtImage(vm.selectedResource.name)}
                     alt={vm.selectedResource.name}
@@ -335,7 +356,7 @@ export function ClickToBookModal(props: ClickToBookModalProps) {
 
         {/* Footer Controls */}
         {vm.stage === "booking" && (
-          <DialogFooter className="border-nx-border flex items-center justify-between border-t pt-3">
+          <SheetFooter className="border-nx-line flex items-center justify-between border-t pt-3">
             {vm.step === 2 && vm.canCreateHold && !vm.holdExpiresAtUtc ? (
               <Button
                 type="button"
@@ -352,7 +373,7 @@ export function ClickToBookModal(props: ClickToBookModalProps) {
               <div />
             )}
 
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 shrink-0">
               <Button
                 type="button"
                 variant="outline"
@@ -422,9 +443,9 @@ export function ClickToBookModal(props: ClickToBookModalProps) {
                 </Button>
               )}
             </div>
-          </DialogFooter>
+          </SheetFooter>
         )}
-      </DialogContent>
-    </Dialog>
+      </SheetContent>
+    </Sheet>
   );
 }

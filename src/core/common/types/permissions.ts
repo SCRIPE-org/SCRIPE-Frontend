@@ -30,6 +30,7 @@ import { WORK_MANAGEMENT_PERMISSIONS } from "@modules/work-management/permission
 import { CUSTOM_FIELDS_PERMISSIONS } from "@modules/custom-fields/permission-constants";
 import { ANALYTICS_EVENTS_PERMISSIONS } from "@modules/analytics/permission-constants";
 import { VENUE_PERMISSIONS } from "@modules/venue/permission-constants";
+import { CRM_PERMISSIONS } from "@modules/crm";
 
 // ── Re-export individual module permissions for direct access ─────────────────
 export {
@@ -50,6 +51,7 @@ export {
   CUSTOM_FIELDS_PERMISSIONS,
   ANALYTICS_EVENTS_PERMISSIONS,
   VENUE_PERMISSIONS,
+  CRM_PERMISSIONS,
 };
 
 // ── Types ─────────────────────────────────────────────────────────────────────
@@ -212,6 +214,7 @@ export const SYSTEM_PERMISSIONS = {
   ...CUSTOM_FIELDS_PERMISSIONS,
   ...ANALYTICS_EVENTS_PERMISSIONS,
   ...VENUE_PERMISSIONS,
+  ...CRM_PERMISSIONS,
 } as const;
 
 // ── Page permission mapping ───────────────────────────────────────────────────
@@ -330,8 +333,6 @@ export const PAGE_PERMISSIONS: Record<string, PermissionCode[]> = {
   // Tenant Payment Gateways (Self-Service)
   "/my-payment-methods": [SYSTEM_PERMISSIONS.TENANT_PAYMENT_GATEWAYS_VIEW],
 
-  // Platform Leads / CRM
-  "/entitlements/leads": [SYSTEM_PERMISSIONS.LEADS_VIEW],
   "/entitlements/onboarding/questions": [SYSTEM_PERMISSIONS.ONBOARDING_QUESTIONS_VIEW],
   "/entitlements/signup-content": [SYSTEM_PERMISSIONS.SIGNUP_CONTENT_VIEW],
 
@@ -433,22 +434,17 @@ export const PAGE_PERMISSIONS: Record<string, PermissionCode[]> = {
   "/venue/settings": [SYSTEM_PERMISSIONS.VENUE_PROFILE_VIEW],
 
   // VenueProfile Feature
-  "/venue/venue-setup": [SYSTEM_PERMISSIONS.VENUE_PROFILE_VIEW],
 
   // Site Feature (OrganizationCore cross-module under Venue workspace)
-  "/venue/sites": [SYSTEM_PERMISSIONS.SITE_VIEW],
 
   // Facility Feature
   "/venue/facilities": [SYSTEM_PERMISSIONS.FACILITY_VIEW],
 
   // Facility Resource Profile Feature
-  "/venue/resource-profiles": [SYSTEM_PERMISSIONS.FACILITY_RESOURCE_PROFILE_VIEW],
 
   // SchedulableResource Feature
-  "/venue/resource-builder": [SYSTEM_PERMISSIONS.SCHEDULABLE_RESOURCE_VIEW],
 
   // Availability Feature
-  "/venue/availability": [SYSTEM_PERMISSIONS.AVAILABILITY_CALENDAR_VIEW],
 
   // Attention Center — individual signals are additionally filtered by their source permissions.
   "/venue/attention": [SYSTEM_PERMISSIONS.VENUE_ATTENTION_VIEW],
@@ -526,6 +522,21 @@ export const PAGE_PERMISSIONS: Record<string, PermissionCode[]> = {
 
   // Studio Customization Preview
   "/studio-preview": [SYSTEM_PERMISSIONS.TENANT_SETTINGS_VIEW],
+
+  // CRM Module
+  "/crm": [CRM_PERMISSIONS.OVERVIEW_READ],
+  "/crm/leads": [CRM_PERMISSIONS.LEADS_READ],
+  "/crm/leads/[id]": [CRM_PERMISSIONS.LEADS_READ],
+  "/crm/opportunities": [CRM_PERMISSIONS.OPPORTUNITIES_READ],
+  "/crm/opportunities/[id]": [CRM_PERMISSIONS.OPPORTUNITIES_READ],
+  "/crm/pipelines": [`${CRM_PERMISSIONS.PIPELINES_READ}|${CRM_PERMISSIONS.OPPORTUNITIES_READ}`],
+  "/crm/accounts": [CRM_PERMISSIONS.ACCOUNTS_READ],
+  "/crm/accounts/[id]": [CRM_PERMISSIONS.ACCOUNTS_READ],
+  "/crm/contacts": [CRM_PERMISSIONS.CONTACTS_READ],
+  "/crm/contacts/[id]": [CRM_PERMISSIONS.CONTACTS_READ],
+  "/crm/activities": [CRM_PERMISSIONS.ACTIVITIES_READ],
+  "/crm/reports": [CRM_PERMISSIONS.REPORTS_READ],
+  "/crm/settings": [`${CRM_PERMISSIONS.SETTINGS_MANAGE}|${CRM_PERMISSIONS.PIPELINES_READ}|${CRM_PERMISSIONS.OVERVIEW_READ}`],
 
   // Public / Hub / Auth endpoints (No permission required, but mapped so RouteGuard bypasses successfully)
   "/activate-workspace": [],

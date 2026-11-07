@@ -54,7 +54,11 @@ export interface Booking360Reservation {
  * these values; Booking 360 never becomes an owner of their source data.
  */
 export interface Booking360CustomerContext {
+  id: string;
   displayName: string;
+  phone?: string;
+  email?: string;
+  type?: string;
 }
 
 /**

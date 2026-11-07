@@ -9,6 +9,25 @@ import type {
   RescheduleReservationInput,
 } from "../entities/Booking";
 
+export interface CustomerReservationSummary {
+  id: string;
+  reservationNumber: string;
+  status: string;
+  resourceId: string;
+  requestedStartUtc: string;
+  requestedEndUtc: string;
+  quantity: number;
+  createdAt: string;
+}
+
+export interface PagedCustomerReservations {
+  items: CustomerReservationSummary[];
+  totalCount: number;
+  pageNumber: number;
+  pageSize: number;
+  totalPages: number;
+}
+
 /**
  * Documentation for module export
  */
@@ -51,4 +70,9 @@ export interface IBookingService {
     input: ChangeReservationResourceInput
   ): Promise<ReservationLifecycleResult>;
   getReservation(reservationId: string): Promise<ReservationDetails>;
+  getCustomerReservations(
+    customerPartyId: string,
+    page?: number,
+    pageSize?: number
+  ): Promise<PagedCustomerReservations>;
 }

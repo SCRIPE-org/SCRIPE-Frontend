@@ -107,6 +107,8 @@ function createMockContainer() {
     schedulableResourceRepository: {
       getById: vi.fn().mockResolvedValue(mockResource),
       update: vi.fn().mockResolvedValue(undefined),
+      delete: vi.fn().mockResolvedValue(undefined),
+      deleteResource: vi.fn().mockResolvedValue(undefined),
     },
     availabilityRepository: {
       getCurrentCalendar: vi.fn().mockResolvedValue(mockCalendar247),
@@ -336,5 +338,21 @@ describe("useResourceDetailViewModel", () => {
       "maintenance",
       blockToDelete as never
     );
+  });
+
+  it("safely deletes the court via schedulableResourceRepository.deleteResource", async () => {
+    const { result } = renderHook(() => useResourceDetailViewModel("res-1"));
+
+    await waitFor(() => {
+      expect(result.current.loading).toBe(false);
+    });
+
+    let success = false;
+    await act(async () => {
+      success = await result.current.deleteCourt();
+    });
+
+    expect(success).toBe(true);
+    expect(mockContainer.schedulableResourceRepository.deleteResource).toHaveBeenCalledWith("res-1");
   });
 });

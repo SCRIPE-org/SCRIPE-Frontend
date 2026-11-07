@@ -58,7 +58,7 @@ export function VenueOverviewHeader({
   t,
 }: Props) {
   const user = useAppStore((s) => s.user);
-  const userName = user?.firstName || user?.username || "Mohamed";
+  const userName = user?.firstName || user?.username || t("common.user", { defaultValue: "User" });
   const formattedDate = formatDisplayDate(localDate, timeZoneId);
 
   return (
@@ -75,9 +75,9 @@ export function VenueOverviewHeader({
           {facilityName && (
             <Badge
               variant="outline"
-              className="border-nx-line/80 bg-nx-surfaceSubtle px-2 py-0.5 text-xs font-semibold"
+              className="border-nx-line/80 bg-nx-raised px-2 py-0.5 text-xs font-semibold"
             >
-              <Building2 className="me-1.5 size-3 text-nx-accent" aria-hidden="true" />
+              <Building2 className="me-1.5 size-3 text-primary" aria-hidden="true" />
               <span>{facilityName}</span>
             </Badge>
           )}
@@ -85,8 +85,8 @@ export function VenueOverviewHeader({
 
         <p className="text-xs text-nx-ink-2">
           {t("venueOverview.greetingSubtext", {
-            facility: facilityName || "Nasr City Club",
-            defaultValue: `Here's what's happening at ${facilityName || "Nasr City Club"} today.`,
+            facility: facilityName || t("venueOverview.allFacilities", { defaultValue: "your venue" }),
+            defaultValue: `Here's what's happening at ${facilityName || "your venue"} today.`,
           })}
         </p>
 

@@ -68,7 +68,7 @@ export function BookingPricingStep({
     <div className="space-y-3">
       {/* Selected Customer Summary */}
       {selectedCustomer && (
-        <div className="border-nx-border bg-nx-raised/30 flex items-center justify-between rounded-xl border p-2.5 text-xs">
+        <div className="border-nx-line bg-nx-raised/30 flex items-center justify-between rounded-xl border p-2.5 text-xs">
           <div className="flex min-w-0 items-center gap-2">
             <div className="bg-nx-accent flex size-7 shrink-0 items-center justify-center rounded-full text-xs font-bold text-nx-on-fill">
               {selectedCustomer.displayName.charAt(0)}
@@ -159,7 +159,7 @@ export function BookingPricingStep({
       )}
 
       {/* Authoritative Pricing Box */}
-      <div className="border-nx-border bg-nx-raised/40 space-y-2 rounded-xl border p-3.5">
+      <div className="border-nx-line bg-nx-raised/40 space-y-2 rounded-xl border p-3.5">
         <div className="flex items-center justify-between">
           <h5 className="text-xs font-bold text-nx-ink">
             {t("operationsCalendar.clickToBook.pricing.title")}
@@ -212,7 +212,7 @@ export function BookingPricingStep({
               </div>
             )}
 
-            <div className="border-nx-border flex items-center justify-between border-t pt-1.5 text-sm font-bold text-nx-ink">
+            <div className="border-nx-line flex items-center justify-between border-t pt-1.5 text-sm font-bold text-nx-ink">
               <span>{t("operationsCalendar.clickToBook.pricing.total")}</span>
               <span>
                 {quote.grandTotal} {quote.currencyCode}
@@ -236,7 +236,7 @@ export function BookingPricingStep({
               {t("operationsCalendar.clickToBook.pricing.override")}
             </Button>
           ) : (
-            <div className="border-nx-border space-y-2 rounded-lg border bg-nx-surface p-2.5 text-xs">
+            <div className="border-nx-line space-y-2 rounded-lg border bg-nx-surface p-2.5 text-xs">
               <Label className="text-xs font-bold text-nx-ink">
                 {t("operationsCalendar.clickToBook.pricing.override")}
               </Label>

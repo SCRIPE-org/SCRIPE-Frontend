@@ -30,6 +30,12 @@ export const en = {
     selectFacility: "Select branch or facility",
     branchesAndVenues: "Branches & Venues",
     noFacilitySelected: "No facility selected",
+    facilities: "Branches & Facilities",
+    findSlot: "Find Available Slot",
+    sites: "Campuses & Branches",
+    financialOverview: "Financial Overview",
+    generalSettings: "General Settings",
+    venueProfile: "Venue Profile",
   },
   venueOverview: {
     title: "Venue Operations",

@@ -43,7 +43,7 @@ describe("GuestPortalService", () => {
     expect(fetch).not.toHaveBeenCalled();
   });
 
-  it("sends the stable cancel key in the backend-supported request body", async () => {
+  it("sends the stable cancel key in the request header options", async () => {
     const result = { reservationNumber: "RES-100", status: "Cancelled" };
     vi.mocked(api.postPublic).mockResolvedValueOnce(result as never);
 
@@ -51,10 +51,14 @@ describe("GuestPortalService", () => {
       result
     );
 
-    expect(api.postPublic).toHaveBeenCalledWith(GUEST_PORTAL_ENDPOINTS.CANCEL, {
-      reason: "Change of plans",
-      idempotencyKey: "stable-key-123",
-    });
+    expect(api.postPublic).toHaveBeenCalledWith(
+      GUEST_PORTAL_ENDPOINTS.CANCEL,
+      {
+        reason: "Change of plans",
+      },
+      undefined,
+      { idempotencyKey: "stable-key-123" }
+    );
     expect(fetch).not.toHaveBeenCalled();
   });
 

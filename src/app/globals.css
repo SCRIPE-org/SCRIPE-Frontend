@@ -4304,6 +4304,39 @@ html[data-tenant-banner] aside.navigation-main-sidebar {
 }
 
 /* ============================================================================
+   LIGHT MODE ACCENT CONTRAST & INK-ON-LIME INVARIANT (WCAG AAA) (D3)
+   ----------------------------------------------------------------------------
+   1. Signal Lime (--nx-accent-fill: #c6ff00) is high-luminance yellow-green in
+      BOTH Dark and Light modes. Per ui-components.md §2.4 ("INK ON LIME ONLY"),
+      surfaces using .bg-nx-accent-fill MUST ALWAYS use dark ink (--nx-on-fill:
+      #0d0d0e) and NEVER white text.
+   2. Dark Olive (--nx-accent: #4c6200 in Light mode) is used only when an
+      element explicitly applies .bg-nx-accent (not -fill / -wash); those
+      specific elements receive white text (#ffffff) in Light mode.
+   ============================================================================ */
+.bg-nx-accent-fill,
+.bg-nx-accent-fill.text-nx-on-fill,
+button.bg-nx-accent-fill,
+a.bg-nx-accent-fill,
+.bg-nx-accent-fill .text-nx-on-fill,
+.bg-nx-accent-fill span,
+.bg-nx-accent-fill svg {
+  --nx-on-fill: var(--scripe-accent-fg, #0d0d0e);
+  color: var(--nx-on-fill);
+}
+:root:not(.dark) .bg-nx-accent:not(.bg-nx-accent-fill):not(.bg-nx-accent-wash).text-nx-on-fill,
+:root:not(.dark) button.bg-nx-accent:not(.bg-nx-accent-fill):not(.bg-nx-accent-wash),
+:root:not(.dark) a.bg-nx-accent:not(.bg-nx-accent-fill):not(.bg-nx-accent-wash) {
+  --nx-on-fill: #ffffff;
+  color: #ffffff !important;
+}
+:root:not(.dark) .bg-nx-accent:not(.bg-nx-accent-fill):not(.bg-nx-accent-wash) .text-nx-on-fill,
+:root:not(.dark) button.bg-nx-accent:not(.bg-nx-accent-fill):not(.bg-nx-accent-wash) span,
+:root:not(.dark) a.bg-nx-accent:not(.bg-nx-accent-fill):not(.bg-nx-accent-wash) span {
+  color: #ffffff !important;
+}
+
+/* ============================================================================
    TABLE STYLES — [data-table-style] (settings-driven)
    ----------------------------------------------------------------------------
    generic-table emits data-table-style on its root; this section is the

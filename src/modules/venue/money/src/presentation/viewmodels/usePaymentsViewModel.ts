@@ -43,7 +43,10 @@ export interface PaymentsViewModelOptions {
   canRecord: boolean;
   canIssueReceipt: boolean;
   canRefund: boolean;
-  initialInvoiceId: string | null;
+  initialInvoiceId?: string | null;
+  initialPaymentId?: string | null;
+  initialReservationId?: string | null;
+  initialAction?: "record" | "refund" | "allocate" | null;
   messages: PaymentsViewModelMessages;
 }
 
@@ -56,6 +59,9 @@ export function usePaymentsViewModel({
   canIssueReceipt,
   canRefund,
   initialInvoiceId,
+  initialPaymentId,
+  initialReservationId,
+  initialAction,
   messages,
 }: PaymentsViewModelOptions) {
   const { moneyRepository } = getVenueContainer();
@@ -81,10 +87,12 @@ export function usePaymentsViewModel({
   const [allocating, setAllocating] = useState(false);
   const [timeline, setTimeline] = useState<MoneyPaymentTimeline | null>(null);
   const [timelineLoading, setTimelineLoading] = useState(false);
+  const [paymentDateFilter, setPaymentDateFilter] = useState<"all" | "today" | "days7">("all");
   const recordIntentKeyRef = useRef<{ fingerprint: string; key: string } | null>(null);
   const allocationIntentKeyRef = useRef<{ fingerprint: string; key: string } | null>(null);
   const receiptIntentKeyRef = useRef<{ fingerprint: string; key: string } | null>(null);
   const refundIntentKeyRef = useRef<{ fingerprint: string; key: string } | null>(null);
+  const autoTriggeredRef = useRef(false);
 
   const load = useCallback(
     async (preserveError = false) => {
@@ -249,14 +257,15 @@ export function usePaymentsViewModel({
   );
 
   const beginRefund = useCallback(
-    (payment: MoneyPayment) => {
+    (payment: MoneyPayment, preferredInvoiceId?: string | null) => {
       setRefundPayment(payment);
       const matchingInvoice = invoices?.find(
         (invoice) =>
-          invoice.reservationId === payment.reservationId &&
-          invoice.currencyCode === payment.currencyCode
+          (preferredInvoiceId && invoice.id === preferredInvoiceId) ||
+          (invoice.reservationId === payment.reservationId &&
+            invoice.currencyCode === payment.currencyCode)
       );
-      setRefundInvoiceId(matchingInvoice?.id ?? "");
+      setRefundInvoiceId(preferredInvoiceId ?? matchingInvoice?.id ?? "");
       setRefundAmount(String(payment.amount));
       setRefundReason("");
       setRefundReference("");
@@ -450,9 +459,53 @@ export function usePaymentsViewModel({
     [messages.fallbackError, moneyRepository]
   );
 
+  const filteredPayments = useMemo(() => {
+    if (!payments) return null;
+    let list = payments;
+    if (initialReservationId) {
+      list = list.filter((p) => p.reservationId === initialReservationId);
+    }
+    if (paymentDateFilter === "all") return list;
+    const now = new Date();
+    if (paymentDateFilter === "today") {
+      const startOfDay = new Date(
+        Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate())
+      ).getTime();
+      return list.filter((p) => new Date(p.recordedAtUtc).getTime() >= startOfDay);
+    }
+    if (paymentDateFilter === "days7") {
+      const startOf7Days = now.getTime() - 7 * 24 * 60 * 60 * 1000;
+      return list.filter((p) => new Date(p.recordedAtUtc).getTime() >= startOf7Days);
+    }
+    return list;
+  }, [payments, paymentDateFilter, initialReservationId]);
+
+  useEffect(() => {
+    if (autoTriggeredRef.current) return;
+    if (!payments || payments.length === 0) return;
+    if (initialAction === "refund" && initialPaymentId) {
+      const targetPayment = payments.find((p) => p.id === initialPaymentId);
+      if (targetPayment && targetPayment.status !== "Refunded") {
+        autoTriggeredRef.current = true;
+        beginRefund(targetPayment, initialInvoiceId);
+      }
+      return;
+    }
+    if (initialPaymentId && (!initialAction || initialAction === "allocate")) {
+      const targetPayment = payments.find((p) => p.id === initialPaymentId);
+      if (targetPayment && targetPayment.unallocatedAmount > 0) {
+        autoTriggeredRef.current = true;
+        beginAllocate(targetPayment);
+      }
+    }
+  }, [initialAction, initialPaymentId, initialInvoiceId, payments, beginRefund, beginAllocate]);
+
   return {
     invoices,
     payments,
+    filteredPayments,
+    paymentDateFilter,
+    setPaymentDateFilter,
     loading: invoices === null || payments === null,
     selectedInvoice,
     selectedInvoiceId,

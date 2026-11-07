@@ -80,12 +80,7 @@ const SYSTEM_PAGES = [
   "/profile/settings",
   "/settings",
   "/overview",
-
-
-
-
-
-
+  "/crm",
 ];
 
 function isSystemPage(pathname: string): boolean {

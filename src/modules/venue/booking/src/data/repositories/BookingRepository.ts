@@ -9,7 +9,10 @@ import type {
   RescheduleReservationInput,
 } from "../../domain/entities/Booking";
 import type { IBookingRepository } from "../../domain/interfaces/IBookingRepository";
-import type { IBookingService } from "../../domain/interfaces/IBookingService";
+import type {
+  IBookingService,
+  PagedCustomerReservations,
+} from "../../domain/interfaces/IBookingService";
 
 /**
  * Repository implementation for managing venue reservation lifecycles and operational workflows.
@@ -155,5 +158,20 @@ export class BookingRepository implements IBookingRepository {
    */
   getReservation(reservationId: string): Promise<ReservationDetails> {
     return this.service.getReservation(reservationId);
+  }
+
+  /**
+   * Retrieves paginated reservations associated with a specific customer party kernel ID.
+   * @param customerPartyId Customer Party Kernel identifier.
+   * @param page Target page number (1-based).
+   * @param pageSize Number of records per page.
+   * @returns Paged customer reservations summary.
+   */
+  getCustomerReservations(
+    customerPartyId: string,
+    page?: number,
+    pageSize?: number
+  ): Promise<PagedCustomerReservations> {
+    return this.service.getCustomerReservations(customerPartyId, page, pageSize);
   }
 }

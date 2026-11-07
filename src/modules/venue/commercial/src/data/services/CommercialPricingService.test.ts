@@ -27,7 +27,6 @@ describe("CommercialPricingService", () => {
         offeringId: "offering-1",
         schedulableResourceId: "resource-1",
         partyId: "party-1",
-        idempotencyKey: "quote-key",
       }),
       undefined,
       { idempotencyKey: "quote-key" }
@@ -51,9 +50,10 @@ describe("CommercialPricingService", () => {
 
     await new CommercialPricingService(api).configureResourcePrice(input);
 
+    const { idempotencyKey: _, ...expectedPayload } = input;
     expect(api.post).toHaveBeenCalledWith(
       "/v1/catalog-pricing/resource-rental-prices",
-      input,
+      expectedPayload,
       undefined,
       { idempotencyKey: "price-config-1" }
     );
@@ -69,9 +69,10 @@ describe("CommercialPricingService", () => {
 
     await new CommercialPricingService(api).overrideQuote("quote-1", input);
 
+    const { idempotencyKey: _, ...expectedPayload } = input;
     expect(api.post).toHaveBeenCalledWith(
       "/v1/catalog-pricing/price-quotes/quote-1/override",
-      input,
+      expectedPayload,
       undefined,
       { idempotencyKey: "override-1" }
     );

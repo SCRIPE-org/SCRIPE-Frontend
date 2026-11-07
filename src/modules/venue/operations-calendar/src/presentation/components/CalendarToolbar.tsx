@@ -1,7 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { ChevronLeft, ChevronRight, Plus, SlidersHorizontal, RefreshCw, Clock } from "lucide-react";
+import { useI18n } from "@core/providers/i18n-provider";
+import { ChevronLeft, ChevronRight, Plus, SlidersHorizontal, RefreshCw, Clock, Search } from "lucide-react";
 import { Button } from "@core/ui/button";
 import { Input } from "@core/ui/input";
 import { Label } from "@core/ui/label";
@@ -28,6 +29,7 @@ interface CalendarToolbarProps {
   onToday: () => void;
   onRefresh: () => void;
   onBlockTime?: () => void;
+  onFindSlots?: () => void;
   onNewBooking?: () => void;
   hasBookingReadyCourts?: boolean;
 }
@@ -41,6 +43,8 @@ function valueOf(value: string | string[]) {
  */
 export function CalendarToolbar(props: CalendarToolbarProps) {
   const { t } = props;
+  const { language, direction } = useI18n();
+  const isRtl = direction === "rtl" || language === "ar";
   const actionsDisabled = props.hasBookingReadyCourts === false || props.resources.length === 0;
 
   const [showFilters, setShowFilters] = useState(true);
@@ -52,7 +56,7 @@ export function CalendarToolbar(props: CalendarToolbarProps) {
       ? new Date(Date.UTC(dateParts[0], dateParts[1] - 1, dateParts[2], 12))
       : null;
   const formattedDisplayDate = dateValue
-    ? new Intl.DateTimeFormat("en-US", {
+    ? new Intl.DateTimeFormat(isRtl ? "ar-EG" : "en-US", {
         weekday: "short",
         day: "numeric",
         month: "short",
@@ -71,7 +75,7 @@ export function CalendarToolbar(props: CalendarToolbarProps) {
         {/* Left: Date stepper & Navigation */}
         <div className="flex items-center gap-2">
           {/* Stepper Pill: < Today > */}
-          <div className="bg-nx-surfaceSubtle flex items-center rounded-lg border border-nx-line p-0.5 text-xs font-semibold">
+          <div className="bg-nx-raised flex items-center rounded-lg border border-nx-line p-0.5 text-xs font-semibold">
             <Button
               variant="ghost"
               size="icon"
@@ -115,14 +119,30 @@ export function CalendarToolbar(props: CalendarToolbarProps) {
             onClick={() => setShowFilters((prev) => !prev)}
             className={`h-8 gap-1.5 border-nx-line text-xs font-semibold transition-colors ${
               showFilters || Boolean(props.resourceId)
-                ? "bg-nx-surfaceSubtle border-nx-ink/20 font-bold text-nx-ink"
-                : "hover:bg-nx-surfaceSubtle text-nx-ink"
+                ? "bg-nx-raised border-nx-ink/20 font-bold text-nx-ink"
+                : "hover:bg-nx-raised text-nx-ink"
             }`}
           >
             <SlidersHorizontal className="size-3.5 text-nx-ink-3" aria-hidden="true" />
             <span>{t("operationsCalendar.toolbar.filter") || "Filter"}</span>
             {props.resourceId ? <span className="size-1.5 rounded-full bg-nx-accent" /> : null}
           </Button>
+
+          {/* Find Available Slot */}
+          {props.onFindSlots && (
+            <Button
+              variant="outline"
+              size="sm"
+              disabled={actionsDisabled}
+              onClick={props.onFindSlots}
+              className="hover:bg-nx-raised h-8 gap-1.5 border-nx-line text-xs font-semibold"
+            >
+              <Search className="size-3.5 text-nx-accent" />
+              <span className="hidden sm:inline">
+                {t("operationsCalendar.toolbar.findSlots") || "Find Slot"}
+              </span>
+            </Button>
+          )}
 
           {/* Block Time Action */}
           {props.onBlockTime && (
@@ -131,7 +151,7 @@ export function CalendarToolbar(props: CalendarToolbarProps) {
               size="sm"
               disabled={actionsDisabled}
               onClick={props.onBlockTime}
-              className="hover:bg-nx-surfaceSubtle h-8 gap-1.5 border-nx-line text-xs font-semibold"
+              className="hover:bg-nx-raised h-8 gap-1.5 border-nx-line text-xs font-semibold"
             >
               <Clock className="size-3.5 text-warning" />
               <span className="hidden sm:inline">

@@ -1,7 +1,8 @@
-﻿"use client";
+"use client";
 
 import React from "react";
-import { RefreshCw } from "lucide-react";
+import Link from "next/link";
+import { RefreshCw, ExternalLink } from "lucide-react";
 import { Badge } from "@core/ui/badge";
 import { Button } from "@core/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@core/ui/card";
@@ -19,9 +20,10 @@ interface PaymentRecentListCardProps {
  */
 export function PaymentRecentListCard({ model, canRecord, canRefund }: PaymentRecentListCardProps) {
   const { t } = useI18n();
+  const displayedPayments = model.filteredPayments ?? model.payments;
 
   return (
-    <Card>
+    <Card className="border-nx-line">
       <CardHeader className="flex-row items-center justify-between">
         <CardTitle>{t("money.payments.recent")}</CardTitle>
         <Button size="sm" variant="outline" onClick={() => void model.load()}>
@@ -29,13 +31,29 @@ export function PaymentRecentListCard({ model, canRecord, canRefund }: PaymentRe
           {t("money.retry")}
         </Button>
       </CardHeader>
+      <div className="flex items-center gap-1.5 px-6 pb-2">
+        {(["all", "today", "days7"] as const).map((filter) => (
+          <Button
+            key={filter}
+            size="sm"
+            variant={model.paymentDateFilter === filter ? "default" : "outline"}
+            className="h-7 text-xs"
+            onClick={() => model.setPaymentDateFilter(filter)}
+            data-testid={`payment-filter-${filter}`}
+          >
+            {t(`money.payments.filters.${filter}`, {
+              defaultValue: filter === "all" ? "All Payments" : filter === "today" ? "Today" : "7 Days",
+            })}
+          </Button>
+        ))}
+      </div>
       <CardContent>
-        {model.payments?.length ? (
+        {displayedPayments?.length ? (
           <ul className="space-y-2">
-            {model.payments.map((payment) => (
+            {displayedPayments.map((payment) => (
               <li
                 key={payment.id}
-                className="hover:bg-nx-surfaceSubtle shadow-xs flex flex-wrap items-center justify-between gap-2 rounded-nx-lg border border-nx-line p-3 transition-colors"
+                className="hover:bg-nx-raised flex flex-wrap items-center justify-between gap-2 rounded-nx-lg border border-nx-line p-3 transition-colors"
               >
                 <div className="flex flex-wrap items-center gap-2">
                   <span className="font-medium" dir="ltr">
@@ -45,14 +63,28 @@ export function PaymentRecentListCard({ model, canRecord, canRefund }: PaymentRe
                     {payment.currencyCode} {payment.amount}
                   </span>
                   <span className="text-sm text-nx-ink-2">{payment.method}</span>
-                  {payment.unallocatedAmount > 0 && (
+                  {payment.status === "Refunded" ? (
+                    <Badge variant="destructive">
+                      {t("money.payments.status.refunded", { defaultValue: "Refunded" })}
+                    </Badge>
+                  ) : payment.unallocatedAmount > 0 ? (
                     <Badge variant="warning">
                       {payment.currencyCode} {payment.unallocatedAmount}
                     </Badge>
+                  ) : null}
+                  {payment.reservationId && (
+                    <Link
+                      href={`/venue/bookings/${encodeURIComponent(payment.reservationId)}`}
+                      className="inline-flex items-center gap-1 text-xs font-medium text-nx-accent hover:underline ms-1"
+                      data-testid={`payment-booking-link-${payment.id}`}
+                    >
+                      <span>{t("money.payments.viewBooking", { defaultValue: "Booking 360" })}</span>
+                      <ExternalLink className="size-3" aria-hidden="true" />
+                    </Link>
                   )}
                 </div>
                 <div className="flex items-center gap-2">
-                  {canRecord && payment.unallocatedAmount > 0 && (
+                  {canRecord && payment.unallocatedAmount > 0 && payment.status !== "Refunded" && (
                     <Button
                       size="sm"
                       variant="default"
@@ -69,8 +101,13 @@ export function PaymentRecentListCard({ model, canRecord, canRefund }: PaymentRe
                   >
                     {t("money.payments.timeline.action")}
                   </Button>
-                  {canRefund && (
-                    <Button size="sm" variant="outline" onClick={() => model.beginRefund(payment)}>
+                  {canRefund && payment.status !== "Refunded" && (
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={() => model.beginRefund(payment)}
+                      data-testid={`refund-btn-${payment.id}`}
+                    >
                       {t("money.payments.refund.action")}
                     </Button>
                   )}

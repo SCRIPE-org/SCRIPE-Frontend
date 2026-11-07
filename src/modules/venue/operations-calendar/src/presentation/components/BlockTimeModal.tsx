@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { useEffect, useState } from "react";
 import { Ban, Wrench } from "lucide-react";
@@ -177,7 +177,7 @@ export function BlockTimeModal({
                 className={`rounded-nx-md border p-2.5 text-left text-xs font-semibold transition-all ${
                   reasonType === "Maintenance"
                     ? "border-warning/40 bg-warning/10 text-warning ring-1 ring-warning/30"
-                    : "hover:bg-nx-surfaceSubtle border-nx-line text-nx-ink-2"
+                    : "hover:bg-nx-raised border-nx-line text-nx-ink-2"
                 }`}
               >
                 <div className="flex items-center gap-1.5">
@@ -196,7 +196,7 @@ export function BlockTimeModal({
                 className={`rounded-nx-md border p-2.5 text-left text-xs font-semibold transition-all ${
                   reasonType === "Unavailable"
                     ? "border-nx-accent bg-nx-accent/10 text-nx-ink ring-1 ring-nx-accent font-bold"
-                    : "hover:bg-nx-surfaceSubtle border-nx-line text-nx-ink-2"
+                    : "hover:bg-nx-raised border-nx-line text-nx-ink-2"
                 }`}
               >
                 <div className="flex items-center gap-1.5">

@@ -53,14 +53,21 @@ export const ResourceBuilderView = React.memo(function ResourceBuilderView() {
   const [deleting, setDeleting] = useState(false);
 
   const handleSubmit = async (data: Record<string, unknown>) => {
-    const payload = {
-      ...data,
-      parentSchedulableResourceId: data.parentSchedulableResourceId || null,
-    };
-    if (editing) await update(editing.id, payload);
-    else await create(payload);
-    setFormOpen(false);
-    setEditing(null);
+    try {
+      const payload = {
+        ...data,
+        parentSchedulableResourceId: data.parentSchedulableResourceId || null,
+      };
+      if (editing) await update(editing.id, payload);
+      else await create(payload);
+      setFormOpen(false);
+      setEditing(null);
+    } catch (err: unknown) {
+      toastError({
+        title: t("common.error"),
+        description: err instanceof Error ? err.message : t("schedulableResource.saveFailed", { defaultValue: "Failed to save resource" }),
+      });
+    }
   };
 
   const openChecklist = async (node: SchedulableResourceTreeNode) => {
@@ -68,6 +75,11 @@ export const ResourceBuilderView = React.memo(function ResourceBuilderView() {
     setChecklistLoading(true);
     try {
       setChecklist(await getPublicationChecklist(node.id));
+    } catch (err: unknown) {
+      toastError({
+        title: t("common.error"),
+        description: err instanceof Error ? err.message : t("schedulableResource.checklistFailed", { defaultValue: "Failed to load publication checklist" }),
+      });
     } finally {
       setChecklistLoading(false);
     }
@@ -79,6 +91,11 @@ export const ResourceBuilderView = React.memo(function ResourceBuilderView() {
     try {
       await publish(checklistTarget.id);
       setChecklistTarget(null);
+    } catch (err: unknown) {
+      toastError({
+        title: t("common.error"),
+        description: err instanceof Error ? err.message : t("schedulableResource.publishFailed", { defaultValue: "Failed to publish resource" }),
+      });
     } finally {
       setPublishing(false);
     }

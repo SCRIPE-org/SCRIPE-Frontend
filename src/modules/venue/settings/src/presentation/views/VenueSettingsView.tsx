@@ -2,6 +2,8 @@
 
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
+import { VenueProfileListView } from "@modules/venue";
 import {
   Settings,
   Building2,
@@ -38,8 +40,20 @@ export function VenueSettingsView() {
   const canViewTeam = usePermission(VENUE_PERMISSIONS.TEAM_VIEW);
   const canViewSettings = usePermission(VENUE_PERMISSIONS.FACILITY_VIEW);
 
-  // Active Tab state
-  const [activeTab, setActiveTab] = useState("branch");
+  const searchParams = useSearchParams();
+  const [activeTab, setActiveTab] = useState(() => {
+    const tab = searchParams?.get("tab");
+    return tab === "profile" || tab === "venue-setup" ? "profile" : tab || "branch";
+  });
+
+  useEffect(() => {
+    const tab = searchParams?.get("tab");
+    if (tab === "profile" || tab === "venue-setup") {
+      setActiveTab("profile");
+    } else if (tab) {
+      setActiveTab(tab);
+    }
+  }, [searchParams]);
 
   const {
     selectedFacility,
@@ -49,7 +63,9 @@ export function VenueSettingsView() {
   } = useVenueSettingsViewModel({ tenantId: user?.tenantId ?? undefined });
 
   const branchName = selectedFacility?.name || t("venueSettings.branch.noSelection");
-  const branchTimezone = t("venueSettings.branch.timezoneUnavailable");
+  const branchTimezone = selectedFacility
+    ? (selectedFacility as any).defaultTimeZoneId || (selectedFacility as any).timeZoneId || "UTC"
+    : t("venueSettings.branch.timezoneUnavailable");
 
   return (
     <div
@@ -82,6 +98,10 @@ export function VenueSettingsView() {
             <Globe2 className="size-3.5" aria-hidden="true" />
             <span>{t("venueSettings.tabs.preferences")}</span>
           </TabsTrigger>
+          <TabsTrigger value="profile" className="gap-1.5 text-xs font-semibold">
+            <Sliders className="size-3.5" aria-hidden="true" />
+            <span>{t("venueSettings.tabs.profile", { defaultValue: "Venue Profile" })}</span>
+          </TabsTrigger>
           <TabsTrigger value="advanced" className="gap-1.5 text-xs font-semibold">
             <Sliders className="size-3.5" aria-hidden="true" />
             <span>{t("venueSettings.tabs.advanced")}</span>
@@ -101,7 +121,7 @@ export function VenueSettingsView() {
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                <div className="bg-nx-surfaceSubtle space-y-1 rounded-nx-lg border border-nx-line p-3.5">
+                <div className="bg-nx-raised space-y-1 rounded-lg border border-nx-line p-3.5">
                   <div className="text-[11px] font-medium text-nx-ink-3">
                     {t("venueSettings.branch.name")}
                   </div>
@@ -116,7 +136,7 @@ export function VenueSettingsView() {
                     {t("venueSettings.branch.timezone")}
                   </div>
                   <div className="flex items-center gap-2 text-sm font-bold text-nx-ink">
-                    <Clock className="size-4 text-nx-accent" />
+                    <Clock className="size-4 text-primary" />
                     <span>{branchTimezone}</span>
                   </div>
                 </div>
@@ -145,7 +165,7 @@ export function VenueSettingsView() {
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="space-y-3">
-                <div className="flex items-start justify-between gap-4 rounded-nx-lg border border-nx-line bg-nx-surface p-3.5">
+                <div className="flex items-start justify-between gap-4 rounded-lg border border-nx-line bg-nx-surface p-3.5">
                   <div className="space-y-1">
                     <div className="text-xs font-bold text-nx-ink">
                       {t("venueSettings.booking.courtRulesTitle")}
@@ -178,9 +198,9 @@ export function VenueSettingsView() {
                   </div>
                   <Badge
                     variant="outline"
-                    className="bg-nx-surfaceSubtle border-nx-line text-xs font-semibold text-nx-ink"
+                    className="bg-nx-raised border-nx-line text-xs font-semibold text-nx-ink"
                   >
-                    {t("venueSettings.booking.windowDays", { count: 14 })}
+                    {t("venueSettings.booking.windowDays", { count: (selectedFacility as any)?.bookingWindowDays || 14 })}
                   </Badge>
                 </div>
               </div>
@@ -309,6 +329,11 @@ export function VenueSettingsView() {
           </Card>
         </TabsContent>
 
+        {/* Venue Profile Configuration (Consolidated from /venue/venue-setup) */}
+        <TabsContent value="profile" className="space-y-6">
+          <VenueProfileListView hideNav={true} hideHeader={true} hidePageHeader={true} />
+        </TabsContent>
+
         {/* 5. Advanced Settings (Progressive Disclosure) */}
         <TabsContent value="advanced" className="space-y-6">
           <Card className="border-nx-line bg-nx-surface">
@@ -351,7 +376,7 @@ export function VenueSettingsView() {
 
                 {/* Operating Hours Matrix */}
                 <Link
-                  href="/venue/availability"
+                  href="/venue/calendar"
                   className="hover:border-nx-accent/50 hover:bg-nx-surfaceSubtle group flex items-start justify-between rounded-nx-lg border border-nx-line p-3.5 transition-colors"
                 >
                   <div className="space-y-1">
@@ -368,7 +393,7 @@ export function VenueSettingsView() {
 
                 {/* Sites & Campuses */}
                 <Link
-                  href="/venue/sites"
+                  href="/venue/facilities?tab=sites"
                   className="hover:border-nx-accent/50 hover:bg-nx-surfaceSubtle group flex items-start justify-between rounded-nx-lg border border-nx-line p-3.5 transition-colors"
                 >
                   <div className="space-y-1">
@@ -402,7 +427,7 @@ export function VenueSettingsView() {
 
                 {/* Resource Builder */}
                 <Link
-                  href="/venue/resource-builder"
+                  href="/venue/resources"
                   className="hover:border-nx-accent/50 hover:bg-nx-surfaceSubtle group flex items-start justify-between rounded-nx-lg border border-nx-line p-3.5 transition-colors"
                 >
                   <div className="space-y-1">
@@ -419,7 +444,7 @@ export function VenueSettingsView() {
 
                 {/* Resource Profiles */}
                 <Link
-                  href="/venue/resource-profiles"
+                  href="/venue/resources"
                   className="hover:border-nx-accent/50 hover:bg-nx-surfaceSubtle group flex items-start justify-between rounded-nx-lg border border-nx-line p-3.5 transition-colors"
                 >
                   <div className="space-y-1">

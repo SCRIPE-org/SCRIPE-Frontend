@@ -16,6 +16,7 @@ export const ar = {
     quantity: "السعة / الحصص",
     customer: "محجوز لصالح",
     instructions: "توجيهات وتعليمات الدخول",
+    cancellationPolicyNote: "الإلغاء متاح وفقاً لسياسة المنشأة.",
     noInstructions: "لا توجد تعليمات خاصة مقدمة من المنشأة.",
     status: {
       Confirmed: "مؤكد",
@@ -49,6 +50,9 @@ export const ar = {
       confirmCancel: "نعم، إلغاء الحجز",
       downloadConfirmation: "حفظ التأكيد",
       backToHome: "رجوع",
+      copied: "تم النسخ",
+      copy: "نسخ",
+      refreshDetails: "تحديث التفاصيل",
     },
     cancelModal: {
       title: "هل تريد إلغاء هذا الحجز؟",
@@ -59,6 +63,7 @@ export const ar = {
       warning: "لا يمكن التراجع عن هذا الإجراء بعد التأكيد.",
     },
     messages: {
+      cancelledBanner: "تم إلغاء هذا الحجز.",
       cancelSuccess: "تم إلغاء حجزك بنجاح.",
       cancelFailed: "تعذر إلغاء الحجز. يرجى التواصل مع المنشأة.",
       cancelNotEligible: "هذا الحجز غير مؤهل للإلغاء الذاتي. يرجى التواصل مع إدارة المنشأة مباشرة.",

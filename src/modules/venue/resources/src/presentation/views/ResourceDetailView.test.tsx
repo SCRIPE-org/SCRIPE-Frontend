@@ -1,10 +1,11 @@
-﻿import { fireEvent, render, screen } from "@testing-library/react";
+import { fireEvent, render, screen } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { ResourceDetailView, resolveResourceDetailTab } from "./ResourceDetailView";
 import { useResourceDetailViewModel } from "../viewmodels/useResourceDetailViewModel";
 
 const mockSearchParams = new URLSearchParams();
 vi.mock("next/navigation", () => ({
+  useRouter: vi.fn().mockReturnValue({ push: vi.fn(), replace: vi.fn() }),
   usePathname: vi.fn().mockReturnValue("/venue/resources/res-1"),
   useSearchParams: vi.fn(() => mockSearchParams),
 }));
@@ -81,6 +82,11 @@ describe("ResourceDetailView", () => {
       maintenanceBlocks: [],
       blackoutBlocks: [],
       isCalendar247: true,
+      courtPhotos: [],
+      activePhoto: "/images/venue/padel-court-indoor.svg",
+      setActivePhoto: vi.fn(),
+      uploadingPhoto: false,
+      uploadCourtPhoto: vi.fn(),
       updateGeneral: vi.fn(),
       updateWorkingHours: vi.fn(),
       updateBookingRules: vi.fn(),
@@ -88,6 +94,12 @@ describe("ResourceDetailView", () => {
       publishCourt: vi.fn(),
       addClosure: vi.fn(),
       deleteClosure: vi.fn(),
+      checklist: null,
+      checklistLoading: false,
+      loadChecklist: vi.fn(),
+      availableParentResources: [],
+      updateAdvanced: vi.fn(),
+      deleteCourt: vi.fn(),
       refresh: vi.fn(),
     });
 
@@ -123,6 +135,11 @@ describe("ResourceDetailView", () => {
       maintenanceBlocks: [],
       blackoutBlocks: [],
       isCalendar247: true,
+      courtPhotos: [],
+      activePhoto: "/images/venue/padel-court-indoor.svg",
+      setActivePhoto: vi.fn(),
+      uploadingPhoto: false,
+      uploadCourtPhoto: vi.fn(),
       updateGeneral: vi.fn(),
       updateWorkingHours: vi.fn(),
       updateBookingRules: vi.fn(),
@@ -130,6 +147,12 @@ describe("ResourceDetailView", () => {
       publishCourt: vi.fn(),
       addClosure: vi.fn(),
       deleteClosure: vi.fn(),
+      checklist: null,
+      checklistLoading: false,
+      loadChecklist: vi.fn(),
+      availableParentResources: [],
+      updateAdvanced: vi.fn(),
+      deleteCourt: vi.fn(),
       refresh: vi.fn(),
     });
 
@@ -167,6 +190,11 @@ describe("ResourceDetailView", () => {
       maintenanceBlocks: [],
       blackoutBlocks: [],
       isCalendar247: true,
+      courtPhotos: [],
+      activePhoto: "/images/venue/padel-court-indoor.svg",
+      setActivePhoto: vi.fn(),
+      uploadingPhoto: false,
+      uploadCourtPhoto: vi.fn(),
       updateGeneral: vi.fn(),
       updateWorkingHours: vi.fn(),
       updateBookingRules: vi.fn(),
@@ -174,6 +202,12 @@ describe("ResourceDetailView", () => {
       publishCourt: vi.fn(),
       addClosure: vi.fn(),
       deleteClosure: vi.fn(),
+      checklist: null,
+      checklistLoading: false,
+      loadChecklist: vi.fn(),
+      availableParentResources: [],
+      updateAdvanced: vi.fn(),
+      deleteCourt: vi.fn(),
       refresh: vi.fn(),
     });
 
@@ -182,6 +216,52 @@ describe("ResourceDetailView", () => {
     expect(screen.getByText("Setup Required")).toBeInTheDocument();
     expect(screen.getByText(/Setup Required: Configure Pricing/i)).toBeInTheDocument();
     expect(screen.getByRole("button", { name: "Configure Pricing" })).toBeInTheDocument();
+  });
+
+  it("renders delete button and opens confirmation dialog", () => {
+    const mockDelete = vi.fn().mockResolvedValue(undefined);
+    vi.mocked(useResourceDetailViewModel).mockReturnValue({
+      loading: false,
+      saving: false,
+      error: null,
+      feedback: null,
+      resource: mockResource as never,
+      profile: mockProfile as never,
+      facility: mockFacility as never,
+      calendar: null,
+      priceConfig: { unitPrice: 800, currencyCode: "EGP" } as never,
+      taxCategories: [],
+      maintenanceBlocks: [],
+      blackoutBlocks: [],
+      isCalendar247: true,
+      courtPhotos: [],
+      activePhoto: "/images/venue/padel-court-indoor.svg",
+      setActivePhoto: vi.fn(),
+      uploadingPhoto: false,
+      uploadCourtPhoto: vi.fn(),
+      updateGeneral: vi.fn(),
+      updateWorkingHours: vi.fn(),
+      updateBookingRules: vi.fn(),
+      updatePricing: vi.fn(),
+      publishCourt: vi.fn(),
+      addClosure: vi.fn(),
+      deleteClosure: vi.fn(),
+      checklist: null,
+      checklistLoading: false,
+      loadChecklist: vi.fn(),
+      availableParentResources: [],
+      updateAdvanced: vi.fn(),
+      deleteCourt: mockDelete,
+      refresh: vi.fn(),
+    });
+
+    render(<ResourceDetailView resourceId="res-1" />);
+
+    const deleteBtn = screen.getByRole("button", { name: /Delete Court/i });
+    expect(deleteBtn).toBeInTheDocument();
+    fireEvent.click(deleteBtn);
+
+    expect(screen.getByText(/Are you sure you want to delete this court/i)).toBeInTheDocument();
   });
 
   describe("resolveResourceDetailTab", () => {

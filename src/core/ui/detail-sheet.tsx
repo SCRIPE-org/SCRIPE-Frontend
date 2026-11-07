@@ -33,8 +33,7 @@
  * edge), the modal shadow step, z-modal, the scrim, the 32px close control,
  * and the 200ms-enter / micro-exit motion pair with its reduced-motion path
  * all live in the Sheet primitive.
- *
- * Reference implementation: LeadDetailDrawer (billing/entitlements/leads).
+ * Reference implementation: CRM LeadDrawer.
  * The remaining direct-Sheet row-detail callers (billing CatalogView,
  * analytics DashboardStudioPanel) migrate onto this container in Wave E.
  */

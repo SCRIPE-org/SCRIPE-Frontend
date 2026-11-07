@@ -85,8 +85,14 @@ export interface IApiService {
    * @param endpoint - API endpoint
    * @param data - Request body
    * @param signal - AbortSignal for cancellation
+   * @param options - Mutation options including idempotency key and custom headers
    */
-  postPublic<T>(endpoint: string, data?: unknown, signal?: AbortSignal): Promise<T>;
+  postPublic<T>(
+    endpoint: string,
+    data?: unknown,
+    signal?: AbortSignal,
+    options?: MutationRequestOptions
+  ): Promise<T>;
 
   /**
    * PUT request (authenticated)

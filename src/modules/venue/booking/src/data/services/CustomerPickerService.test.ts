@@ -224,4 +224,59 @@ describe("CustomerPickerService", () => {
     expect(failureCallback).toHaveBeenCalledWith(expect.any(Error), "party-p-callback");
     expect(result.displayName).toBe("Majid Abdullah");
   });
+
+  it("creates email contact point when options.email is provided", async () => {
+    const postMock = vi.fn().mockImplementation((url: string) => {
+      if (url === "/v1/Parties/people") return Promise.resolve({ id: "party-person-email" });
+      if (url === "/v1/contact-points") return Promise.resolve({ id: "contact-1" });
+      return Promise.resolve({});
+    });
+
+    const mockApi = {
+      get: vi.fn().mockResolvedValue({
+        id: "party-person-email",
+        type: "Person",
+        displayName: "Layla Ahmed",
+      }),
+      post: postMock,
+    } as unknown as IApiService;
+
+    const callerKey = "key-email-test";
+    const result = await new CustomerPickerService(mockApi).create(
+      "Layla Ahmed",
+      "Person",
+      "+201012345678",
+      { idempotencyKey: callerKey, email: "layla@example.com" }
+    );
+
+    expect(postMock).toHaveBeenCalledWith(
+      "/v1/contact-points",
+      {
+        partyId: "party-person-email",
+        type: "Phone",
+        value: "+201012345678",
+        isPrimary: true,
+      },
+      undefined,
+      expect.objectContaining({
+        headers: { "Idempotency-Key": `${callerKey}:phone` },
+      })
+    );
+
+    expect(postMock).toHaveBeenCalledWith(
+      "/v1/contact-points",
+      {
+        partyId: "party-person-email",
+        type: "Email",
+        value: "layla@example.com",
+        isPrimary: true,
+      },
+      undefined,
+      expect.objectContaining({
+        headers: { "Idempotency-Key": `${callerKey}:email` },
+      })
+    );
+
+    expect(result.displayName).toBe("Layla Ahmed");
+  });
 });

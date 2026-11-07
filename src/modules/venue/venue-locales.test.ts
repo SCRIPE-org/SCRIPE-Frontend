@@ -21,6 +21,22 @@ import { en as settingsEn } from "./settings/locales/settings.en";
 import { ar as settingsAr } from "./settings/locales/settings.ar";
 import { en as sharedEn } from "./shared/locales/shared.en";
 import { ar as sharedAr } from "./shared/locales/shared.ar";
+import { en as attentionEn } from "./attention-center/locales/attention.en";
+import { ar as attentionAr } from "./attention-center/locales/attention.ar";
+import { en as booking360En } from "./booking-360/locales/booking-360.en";
+import { ar as booking360Ar } from "./booking-360/locales/booking-360.ar";
+import { en as commercialEn } from "./commercial/locales/pricing.en";
+import { ar as commercialAr } from "./commercial/locales/pricing.ar";
+import { en as facilityEn } from "./facility/locales/facility.en";
+import { ar as facilityAr } from "./facility/locales/facility.ar";
+import { en as moneyEn } from "./money/locales/money.en";
+import { ar as moneyAr } from "./money/locales/money.ar";
+import { en as schedulableResourceEn } from "./schedulable-resource/locales/schedulable-resource.en";
+import { ar as schedulableResourceAr } from "./schedulable-resource/locales/schedulable-resource.ar";
+import { en as siteEn } from "./site/locales/site.en";
+import { ar as siteAr } from "./site/locales/site.ar";
+import { en as venueOverviewEn } from "./venue-overview/locales/venue-overview.en";
+import { ar as venueOverviewAr } from "./venue-overview/locales/venue-overview.ar";
 
 function leafKeys(value: unknown, prefix = ""): string[] {
   if (typeof value !== "object" || value === null) return [prefix];
@@ -74,6 +90,38 @@ describe("Venue operator locales", () => {
     expect(leafKeys(sharedAr).sort()).toEqual(leafKeys(sharedEn).sort());
   });
 
+  it("keeps Attention Center English and Arabic keys in parity", () => {
+    expect(leafKeys(attentionAr).sort()).toEqual(leafKeys(attentionEn).sort());
+  });
+
+  it("keeps Booking-360 English and Arabic keys in parity", () => {
+    expect(leafKeys(booking360Ar).sort()).toEqual(leafKeys(booking360En).sort());
+  });
+
+  it("keeps Commercial Pricing English and Arabic keys in parity", () => {
+    expect(leafKeys(commercialAr).sort()).toEqual(leafKeys(commercialEn).sort());
+  });
+
+  it("keeps Facility English and Arabic keys in parity", () => {
+    expect(leafKeys(facilityAr).sort()).toEqual(leafKeys(facilityEn).sort());
+  });
+
+  it("keeps Money English and Arabic keys in parity", () => {
+    expect(leafKeys(moneyAr).sort()).toEqual(leafKeys(moneyEn).sort());
+  });
+
+  it("keeps Schedulable Resource English and Arabic keys in parity", () => {
+    expect(leafKeys(schedulableResourceAr).sort()).toEqual(leafKeys(schedulableResourceEn).sort());
+  });
+
+  it("keeps Site English and Arabic keys in parity", () => {
+    expect(leafKeys(siteAr).sort()).toEqual(leafKeys(siteEn).sort());
+  });
+
+  it("keeps Venue Overview English and Arabic keys in parity", () => {
+    expect(leafKeys(venueOverviewAr).sort()).toEqual(leafKeys(venueOverviewEn).sort());
+  });
+
   it("ships native Arabic operator copy", () => {
     expect(profileAr.resourceProfile.title).toMatch(/[\u0600-\u06ff]/);
     expect(availabilityAr.availability.title).toMatch(/[\u0600-\u06ff]/);
@@ -88,5 +136,13 @@ describe("Venue operator locales", () => {
     expect(reportsAr.venueReports.title).toMatch(/[\u0600-\u06ff]/);
     expect(settingsAr.venueSettings.title).toMatch(/[\u0600-\u06ff]/);
     expect(sharedAr.venueShared.status.draft).toMatch(/[\u0600-\u06ff]/);
+    expect(attentionAr.attention.title).toMatch(/[\u0600-\u06ff]/);
+    expect(booking360Ar.booking360.eyebrow).toMatch(/[\u0600-\u06ff]/);
+    expect(commercialAr.pricing.title).toMatch(/[\u0600-\u06ff]/);
+    expect(facilityAr.facility.title).toMatch(/[\u0600-\u06ff]/);
+    expect(moneyAr.money.receivables.title).toMatch(/[\u0600-\u06ff]/);
+    expect(schedulableResourceAr.schedulableResource.title).toMatch(/[\u0600-\u06ff]/);
+    expect(siteAr.site.title).toMatch(/[\u0600-\u06ff]/);
+    expect(venueOverviewAr.venueOverview.title).toMatch(/[\u0600-\u06ff]/);
   });
 });
