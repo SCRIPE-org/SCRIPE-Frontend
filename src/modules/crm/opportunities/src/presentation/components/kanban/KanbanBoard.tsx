@@ -1,7 +1,9 @@
 "use client";
 
+import { useState } from "react";
 import { AlertCircle, CheckCircle2, XCircle } from "lucide-react";
 import { Alert, AlertTitle, AlertDescription } from "@core/ui/alert";
+import { Badge } from "@core/ui/badge";
 import { Button } from "@core/ui/button";
 import { Card } from "@core/ui/card";
 import { Skeleton } from "@core/ui/skeleton";
@@ -32,6 +34,7 @@ export function KanbanBoard({
   errorMessage, onClearError, hideOutcomeDropzones = false, isLoading = false,
 }: KanbanBoardProps) {
   const { t } = useI18n();
+  const [selectedLaneKey, setSelectedLaneKey] = useState<string | null>(null);
   const {
     effectiveStages, groupedOpportunities, wonDealsCount, lostDealsCount,
     draggedOpportunity, dragOverOutcome, canUpdate, canManage,
@@ -46,26 +49,40 @@ export function KanbanBoard({
 
   const swimlaneGroups = (() => {
     if (swimlaneMode === "none") return [];
-    const map = new Map<string, { key: string; label: string; deals: CrmOpportunity[] }>();
+    const map = new Map<string, { key: string; label: string; deals: CrmOpportunity[]; dealIds: Set<string> }>();
     for (const opp of opportunities) {
       let key = "default";
-      let label = "General";
+      let label = t("crmOpportunities.kanban.swimlaneGeneral");
       if (swimlaneMode === "assignee") {
         key = opp.ownerUserId || "unassigned";
-        label = opp.ownerUserId ? `Owner: ${opp.ownerUserId.slice(0, 8)}` : "Unassigned";
+        label = opp.ownerUserId
+          ? `${t("crmOpportunities.kanban.swimlaneOwnerPrefix")} ${opp.ownerUserId.slice(0, 8)}`
+          : t("crmOpportunities.kanban.swimlaneUnassigned");
       } else if (swimlaneMode === "account") {
         key = opp.accountId || opp.partyId || "unlinked";
-        label = opp.accountId ? `Account: ${opp.accountId.slice(0, 8)}` : opp.partyId ? `Party: ${opp.partyId.slice(0, 8)}` : "Unlinked Account / Prospect";
+        label = opp.accountId
+          ? `${t("crmOpportunities.kanban.swimlaneAccountPrefix")} ${opp.accountId.slice(0, 8)}`
+          : opp.partyId
+            ? `${t("crmOpportunities.kanban.swimlanePartyPrefix")} ${opp.partyId.slice(0, 8)}`
+            : t("crmOpportunities.kanban.swimlaneUnlinkedAccount");
       } else if (swimlaneMode === "dealType") {
         key = `${opp.dealKind || "NewBusiness"}-${opp.currencyCode || "SAR"}`;
         label = `${opp.dealKind || "NewBusiness"} • ${opp.currencyCode || "SAR"}`;
       }
       const existing = map.get(key);
-      if (existing) existing.deals.push(opp);
-      else map.set(key, { key, label, deals: [opp] });
+      if (existing) {
+        existing.deals.push(opp);
+        existing.dealIds.add(opp.opportunityId);
+      } else {
+        map.set(key, { key, label, deals: [opp], dealIds: new Set([opp.opportunityId]) });
+      }
     }
     return Array.from(map.values());
   })();
+
+  const activeLane = swimlaneMode !== "none" && selectedLaneKey
+    ? swimlaneGroups.find((g) => g.key === selectedLaneKey) ?? null
+    : null;
 
   if (isLoading && opportunities.length === 0) {
     return (
@@ -115,17 +132,34 @@ export function KanbanBoard({
 
       {swimlaneMode !== "none" && (
         <div data-testid="kanban-swimlane-banner" className="rounded-nx-md border border-nx-line bg-nx-raised/40 px-3 py-2 space-y-2 text-xs text-nx-ink-2">
-          <div className="flex items-center justify-between">
-            <span className="font-semibold">Swimlanes Active: <span className="text-nx-accent uppercase font-mono">{swimlaneMode}</span></span>
-            <span className="text-[11px] text-nx-ink-3">{opportunities.length} deals across {swimlaneGroups.length} swimlanes • Density: {cardDensity}</span>
+          <div className="flex flex-wrap items-center justify-between gap-2">
+            <span className="font-semibold">
+              {t("crmOpportunities.kanban.swimlanesActiveLabel")}{" "}
+              <span className="text-nx-accent uppercase font-mono">{swimlaneMode}</span>
+            </span>
+            <span className="text-[11px] text-nx-ink-3">
+              {opportunities.length} {t("crmOpportunities.kanban.swimlaneDealsAcross")} {swimlaneGroups.length} {t("crmOpportunities.kanban.swimlaneCountUnit")} • {t("crmOpportunities.kanban.swimlaneDensityPrefix")} {cardDensity}
+            </span>
           </div>
           {swimlaneGroups.length > 0 && (
             <div className="flex flex-wrap items-center gap-1.5" data-testid="kanban-swimlane-groups">
+              <Button
+                type="button" size="sm" variant={activeLane === null ? "primary" : "outline"}
+                className="h-6 px-2 text-[11px]" onClick={() => setSelectedLaneKey(null)}
+                data-testid="kanban-swimlane-filter-all"
+              >
+                {t("crmOpportunities.kanban.swimlaneAllFilter")} ({opportunities.length})
+              </Button>
               {swimlaneGroups.map((lane) => (
-                <span key={lane.key} data-testid={`kanban-swimlane-group-${lane.key}`} className="inline-flex items-center gap-1.5 rounded border border-nx-line bg-nx-surface px-2 py-0.5 text-[11px] font-medium text-nx-ink">
+                <Button
+                  key={lane.key} type="button" size="sm" variant={activeLane?.key === lane.key ? "primary" : "outline"}
+                  data-testid={`kanban-swimlane-group-${lane.key}`}
+                  onClick={() => setSelectedLaneKey(activeLane?.key === lane.key ? null : lane.key)}
+                  className="h-6 px-2 text-[11px] gap-1"
+                >
                   <span>{lane.label}</span>
-                  <span className="font-mono text-[10px] text-nx-accent font-bold">({lane.deals.length})</span>
-                </span>
+                  <Badge variant="outline" className="font-mono text-[9px] px-1 py-0">({lane.deals.length})</Badge>
+                </Button>
               ))}
             </div>
           )}
@@ -145,26 +179,32 @@ export function KanbanBoard({
                   : undefined,
           }}
         >
-          {effectiveStages.map((stage, index) => (
-            <KanbanColumn
-              key={stage.key}
-              stage={stage}
-              opportunities={groupedOpportunities.get(stage.key) || []}
-              stageIndex={index}
-              totalStages={effectiveStages.length}
-              allStages={effectiveStages}
-              wipLimit={boardSettings?.wipLimits?.[stage.key]}
-              cardDensity={cardDensity}
-              draggedOpportunity={draggedOpportunity}
-              onCardDragStart={handleCardDragStart}
-              onCardDragEnd={handleCardDragEnd}
-              canUpdateOpportunity={canUpdate}
-              canManagePipelines={canManage}
-              onDropOpportunity={handleDropOpportunity}
-              onMoveForward={handleMoveForward}
-              onMoveBackward={handleMoveBackward}
-            />
-          ))}
+          {effectiveStages.map((stage, index) => {
+            const stageOpps = groupedOpportunities.get(stage.key) || [];
+            const filteredStageOpps = activeLane
+              ? stageOpps.filter((o) => activeLane.dealIds.has(o.opportunityId))
+              : stageOpps;
+            return (
+              <KanbanColumn
+                key={stage.key}
+                stage={stage}
+                opportunities={filteredStageOpps}
+                stageIndex={index}
+                totalStages={effectiveStages.length}
+                allStages={effectiveStages}
+                wipLimit={boardSettings?.wipLimits?.[stage.key]}
+                cardDensity={cardDensity}
+                draggedOpportunity={draggedOpportunity}
+                onCardDragStart={handleCardDragStart}
+                onCardDragEnd={handleCardDragEnd}
+                canUpdateOpportunity={canUpdate}
+                canManagePipelines={canManage}
+                onDropOpportunity={handleDropOpportunity}
+                onMoveForward={handleMoveForward}
+                onMoveBackward={handleMoveBackward}
+              />
+            );
+          })}
         </div>
       </div>
 

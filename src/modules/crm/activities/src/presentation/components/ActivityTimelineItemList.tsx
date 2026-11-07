@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { useI18n } from "@core/providers/i18n-provider";
 import { Button } from "@core/ui/button";
 import { Badge } from "@core/ui/badge";
@@ -41,6 +42,7 @@ export function ActivityTimelineItemList({
   onSelectForFollowUp,
 }: ActivityTimelineItemListProps) {
   const { t, language } = useI18n();
+  const [completedIds, setCompletedIds] = useState<Record<string, boolean>>({});
 
   const getActivityIcon = (kind: SalesActivityKind) => {
     switch (kind) {
@@ -176,6 +178,7 @@ export function ActivityTimelineItemList({
       {items.map((activity) => {
         const isMasked = activity.maskedFieldKeys?.includes("bodyText");
         const isComm = activity.activityKind === "CommunicationSent" || Boolean(activity.communicationRefId);
+        const isCompleted = Boolean(completedIds[activity.activityId]) || activity.workItemStatus?.toLowerCase() === "completed";
 
         return (
           <div key={activity.activityId} className="relative group">
@@ -214,16 +217,33 @@ export function ActivityTimelineItemList({
                     </Badge>
                   )}
 
-                  {activity.workItemRefId && (
+                  {(activity.workItemRefId || isCompleted) && (
                     <Badge
                       variant="outline"
                       className="border-warning/30 bg-warning/10 text-warning text-[10px] py-0.5 px-2 flex items-center gap-1 font-medium"
                     >
                       <ListTodo className="size-2.5" />
                       <span>
-                        {t("crmActivities.timeline.taskPrefix")}: {getWorkItemStatusLabel(activity.workItemStatus)}
+                        {t("crmActivities.timeline.taskPrefix")}: {getWorkItemStatusLabel(isCompleted ? "completed" : activity.workItemStatus)}
                       </span>
                     </Badge>
+                  )}
+
+                  {canFollowUp && !isCompleted && (activity.activityKind === "FollowUpLinked" || Boolean(activity.workItemRefId)) && (
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      data-testid="mark-activity-done-btn"
+                      onClick={() => {
+                        setCompletedIds((prev) => ({ ...prev, [activity.activityId]: true }));
+                        onSelectForFollowUp(activity);
+                      }}
+                      className="h-6 text-[10px] px-2 text-success border-success/30 hover:bg-success/10 gap-1"
+                    >
+                      <CheckCircle2 className="size-2.5 text-success" />
+                      <span>{t("crmActivities.timeline.markDone")}</span>
+                    </Button>
                   )}
 
                   {canFollowUp && activity.activityKind !== "FollowUpLinked" && (

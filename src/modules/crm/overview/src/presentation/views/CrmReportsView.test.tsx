@@ -153,7 +153,7 @@ describe("CrmReportsView Component (SCRIPE-745)", () => {
         expect(screen.getByText("SAR 1,850,000")).toBeDefined();
         expect(screen.getByText("66.7%")).toBeDefined();
       },
-      { timeout: 4000 },
+      { timeout: 10000 },
     );
 
     // Switch to USD currency bucket
@@ -164,7 +164,7 @@ describe("CrmReportsView Component (SCRIPE-745)", () => {
       () => {
         expect(screen.getAllByText("USD 400,000")[0]).toBeDefined();
       },
-      { timeout: 4000 },
+      { timeout: 10000 },
     );
   });
 

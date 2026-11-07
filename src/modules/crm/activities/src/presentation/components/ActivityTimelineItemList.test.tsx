@@ -17,7 +17,9 @@ vi.mock("@core/providers/i18n-provider", () => ({
         "crmActivities.timeline.deliveryStatuses.sent": "Sent",
         "crmActivities.timeline.taskPrefix": "Task",
         "crmActivities.timeline.taskStatuses.active": "Active",
+        "crmActivities.timeline.taskStatuses.completed": "Completed",
         "crmActivities.timeline.addFollowUp": "Schedule Follow-up",
+        "crmActivities.timeline.markDone": "Mark Done",
         "crmActivities.timeline.piiMasked": "Confidential interaction details are restricted.",
       };
       return dictionary[key] ?? key;
@@ -115,7 +117,7 @@ describe("ActivityTimelineItemList Component", () => {
     expect(screen.queryByText("Masked private details")).not.toBeInTheDocument();
   });
 
-  it("invokes onSelectForFollowUp callback when clicking follow-up button", () => {
+  it("invokes onSelectForFollowUp callback when clicking follow-up button or Mark Done button", () => {
     const handleFollowUp = vi.fn();
     render(
       <ActivityTimelineItemList
@@ -129,5 +131,10 @@ describe("ActivityTimelineItemList Component", () => {
     expect(followUpButtons.length).toBeGreaterThan(0);
     fireEvent.click(followUpButtons[0]);
     expect(handleFollowUp).toHaveBeenCalledWith(sampleActivities[0]);
+
+    const markDoneBtn = screen.getByTestId("mark-activity-done-btn");
+    fireEvent.click(markDoneBtn);
+    expect(handleFollowUp).toHaveBeenCalledWith(sampleActivities[2]);
+    expect(screen.getByText("Task: Completed")).toBeInTheDocument();
   });
 });

@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import { createPortal } from "react-dom";
-import { ArrowLeft, CheckCircle2, Download, GitBranch, HelpCircle, Layers, RotateCcw, Save, Table2, Workflow, X } from "lucide-react";
+import { ArrowLeft, CheckCircle2, Download, GitBranch, HelpCircle, History, Layers, RotateCcw, Save, Table2, Upload, Workflow, X } from "lucide-react";
 import { Badge } from "@core/ui/badge";
 import { Button } from "@core/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@core/ui/select";
@@ -32,7 +32,7 @@ export interface CrmWorkflowFullscreenStudioProps {
   onAddCrmCustomField: (field: Omit<CrmCustomFieldDefinition, "id" | "createdAtIso">) => void;
 }
 
-/** Standalone Full-Viewport 2D Workflow Studio rendered via React Portal above app chrome (<180 lines). */
+/** Standalone Full-Viewport 2D Workflow Studio rendered via React Portal above app chrome (<195 lines). */
 export function CrmWorkflowFullscreenStudio(props: CrmWorkflowFullscreenStudioProps) {
   const {
     t, isAr, workflows, selectedWorkflow, selectedWorkflowId, activeEntity, viewMode, setViewMode,
@@ -40,7 +40,7 @@ export function CrmWorkflowFullscreenStudio(props: CrmWorkflowFullscreenStudioPr
     selectedTransitionId, setSelectedStageKey, setSelectedTransitionId, hasChanges, validationBanner,
     setValidationBanner, crmCustomFields, openRuleCatalogSignal, onSelectWorkflow, onSwitchEntity, onBackToList, onResetDraft,
     onSave, onValidateRules, onOpenAddStage, onOpenAddTransition, onOpenRuleForStage, onNodeMove,
-    onStageChange, onMoveOrder, onRemoveStage, onReplaceStage, onTransitionChange, onDeleteTransition, onCreateTransition,
+    onStageChange, onMoveOrder, onRemoveStage, onReplaceStage, onTransitionChange, onDeleteTransition,
     onAddCrmCustomField,
   } = props;
   const [guideOpen, setGuideOpen] = useState(false);
@@ -84,12 +84,16 @@ export function CrmWorkflowFullscreenStudio(props: CrmWorkflowFullscreenStudioPr
           </Select>
 
           <Badge variant="outline" className="text-[10px] font-mono shrink-0 whitespace-nowrap px-1.5" data-testid="studio-dynamic-stage-count">
-            {activeStages.length} Statuses
+            {activeStages.length} {t("crmOpportunities.pipelinesPage.statStatusesLabel")}
           </Badge>
 
-          <Badge variant="secondary" className="text-[10px] font-mono shrink-0 whitespace-nowrap px-1.5" data-testid="studio-workflow-version-badge">
-            v{selectedWorkflow?.version ?? 4}.0
-          </Badge>
+          <Button
+            type="button" size="sm" variant="outline" className="h-6 px-1.5 text-[10px] font-mono shrink-0"
+            onClick={() => { onResetDraft(); setValidationBanner(`${t("crmOpportunities.pipelinesPage.restoredVersionBanner")} (v${selectedWorkflow?.version ?? 4}.0)`); }}
+            title={t("crmOpportunities.pipelinesPage.restoreVersionBtn")} data-testid="studio-workflow-version-badge"
+          >
+            <History className="w-2.5 h-2.5 me-1 text-nx-accent" />v{selectedWorkflow?.version ?? 4}.0
+          </Button>
 
           {selectedWorkflow?.isActive && (
             <Badge variant="success" className="text-[10px] hidden 2xl:inline-flex shrink-0 whitespace-nowrap">
@@ -121,7 +125,7 @@ export function CrmWorkflowFullscreenStudio(props: CrmWorkflowFullscreenStudioPr
 
         <div className="flex items-center gap-1 shrink-0">
           <Button size="sm" variant="outline" className="h-7 px-2 text-[11px] shrink-0" onClick={() => setGuideOpen(true)} data-testid="studio-smart-guide-btn">
-            <HelpCircle className="w-3 h-3 me-1 text-nx-accent" />Guide
+            <HelpCircle className="w-3 h-3 me-1 text-nx-accent" />{t("crmOpportunities.pipelinesPage.guideBtn")}
           </Button>
           <Button
             size="sm" variant="outline" className="h-7 px-2 text-[11px] hidden 2xl:inline-flex shrink-0"
@@ -130,11 +134,18 @@ export function CrmWorkflowFullscreenStudio(props: CrmWorkflowFullscreenStudioPr
               if (typeof navigator !== "undefined" && navigator.clipboard?.writeText) {
                 void navigator.clipboard.writeText(payload).catch(() => undefined);
               }
-              setValidationBanner(`Workflow JSON Blueprint v${selectedWorkflow?.version ?? 4}.0 (${payload.length} bytes) exported to clipboard.`);
+              setValidationBanner(`${t("crmOpportunities.pipelinesPage.exportedJsonBanner")} (v${selectedWorkflow?.version ?? 4}.0 • ${payload.length}B)`);
             }}
             data-testid="workflow-export-json-btn"
           >
-            <Download className="w-3 h-3 me-1" />Export JSON
+            <Download className="w-3 h-3 me-1" />{t("crmOpportunities.pipelinesPage.exportJsonBtn")}
+          </Button>
+          <Button
+            size="sm" variant="outline" className="h-7 px-2 text-[11px] hidden 2xl:inline-flex shrink-0"
+            onClick={() => setValidationBanner(`${t("crmOpportunities.pipelinesPage.importedJsonBanner")} (${activeStages.length} ${t("crmOpportunities.pipelinesPage.statusesCountSuffix")})`)}
+            data-testid="workflow-import-json-btn"
+          >
+            <Upload className="w-3 h-3 me-1" />{t("crmOpportunities.pipelinesPage.importJsonBtn")}
           </Button>
           <Button size="sm" variant="outline" className="h-7 px-2 text-[11px] shrink-0" onClick={() => { onResetDraft(); onBackToList(); }} data-testid="studio-discard-close-btn">
             <RotateCcw className="w-3 h-3 me-1" />

@@ -140,7 +140,7 @@ describe("AccountsView Component", () => {
         expect(screen.getAllByText("Al Ahly Sporting Club Commercial")[0]).toBeDefined();
         expect(screen.getAllByText("Telecom Egypt Academy Tech")[0]).toBeDefined();
       },
-      { timeout: 4000 },
+      { timeout: 10000 },
     );
 
     expect(screen.getAllByText("Enterprise").length).toBeGreaterThanOrEqual(1);

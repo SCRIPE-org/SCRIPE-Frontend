@@ -99,7 +99,7 @@ export function CrmRolesAndPrincipalsSettingsCard({
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-3">
         {/* Column 1: Decoupled CRM Pipeline Roles */}
-        <div className="lg:col-span-7 rounded-lg border border-nx-line bg-nx-ground/40 p-2.5 space-y-2">
+        <div className="lg:col-span-6 rounded-lg border border-nx-line bg-nx-ground/40 p-2.5 space-y-2">
           <div className="flex items-center justify-between">
             <span className="text-xs font-bold uppercase tracking-wider text-nx-ink">
               {t("crm.settings.rolesCard.section1Title")}
@@ -108,7 +108,7 @@ export function CrmRolesAndPrincipalsSettingsCard({
               {scopedRoles.length} {t("crm.settings.rolesCard.queuesSuffix")}
             </Badge>
           </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-1.5 max-h-[210px] overflow-y-auto pr-1">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-1.5">
             {scopedRoles.map((role) => (
               <div
                 key={role.key}
@@ -167,7 +167,7 @@ export function CrmRolesAndPrincipalsSettingsCard({
         </div>
 
         {/* Column 2: ABAC Record Principals & Buying Committee Roles */}
-        <div className="lg:col-span-5 space-y-2.5">
+        <div className="lg:col-span-6 space-y-2.5">
           <div className="rounded-lg border border-nx-line bg-nx-ground/40 p-2.5 space-y-1.5">
             <div className="flex items-center gap-1.5">
               <UserCheck className="size-3.5 text-info shrink-0" />

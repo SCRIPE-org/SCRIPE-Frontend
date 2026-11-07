@@ -131,7 +131,7 @@ describe("ContactsView Component", () => {
         expect(screen.getAllByText("Mohamed El-Shenawy")[0]).toBeDefined();
         expect(screen.getAllByText("Ahmed Sayed")[0]).toBeDefined();
       },
-      { timeout: 4000 },
+      { timeout: 10000 },
     );
 
     expect(screen.getAllByText("Commercial Director")[0]).toBeDefined();

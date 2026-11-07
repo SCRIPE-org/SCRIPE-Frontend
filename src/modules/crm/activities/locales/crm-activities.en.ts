@@ -29,6 +29,7 @@ export const en = {
       emptyDesc: "Record notes, phone calls, or meeting summaries to maintain a complete account history.",
       logFirst: "Log First Interaction",
       addFollowUp: "Follow-up",
+      markDone: "Mark Done",
       taskPrefix: "Task",
       deliveryPrefix: "Delivery",
       piiMasked: "Confidential interaction details are restricted to authorized team members.",
