@@ -304,7 +304,11 @@ test.describe("CRM Settings Hub & 2D Jira Workflow Studio E2E Verification", () 
     await expect(page.getByTestId("studio-dynamic-stage-count")).toContainText("Statuses");
     await expect(page.getByTestId("studio-workflow-version-badge")).toBeVisible();
     await expect(page.getByTestId("studio-workflow-version-badge")).toContainText("v");
-    await expect(page.getByTestId("workflow-import-json-btn")).toBeAttached();
+    await expect(page.getByTestId("workflow-export-json-btn")).toBeVisible();
+    await expect(page.getByTestId("workflow-import-json-btn")).toBeVisible();
+    const savePipelineBox = await page.getByTestId("save-pipeline-config-btn").boundingBox();
+    expect(savePipelineBox).not.toBeNull();
+    expect((savePipelineBox?.x ?? 9999) + (savePipelineBox?.width ?? 0)).toBeLessThanOrEqual(1440);
 
     // Verify Closed Won is a first-class configurable, colorable, replaceable stage (SCRIPE-775)
     await page.getByTestId("canvas-node-terminal-won").click();
@@ -633,7 +637,7 @@ test.describe("CRM Settings Hub & 2D Jira Workflow Studio E2E Verification", () 
     await setThemeAndCapture(page, "07_crm_deal_360_buying_committee_and_quotes");
     await setThemeAndCapture(page, "07_crm_deal_360_detail_page");
 
-    // Verify Odoo-style Mark Done next-activity chaining button on /crm/activities
+    // Verify Odoo-style Mark Done next-activity chaining button on /crm/activities and capture 07_crm_activities_execution_desk
     await page.goto("/crm/activities");
     await page.waitForLoadState("networkidle");
     if ((await page.getByTestId("mark-activity-done-btn").count()) === 0) {
@@ -643,6 +647,7 @@ test.describe("CRM Settings Hub & 2D Jira Workflow Studio E2E Verification", () 
       await page.waitForLoadState("networkidle");
     }
     await expect(page.getByTestId("mark-activity-done-btn").first()).toBeVisible({ timeout: 15_000 });
+    await setThemeAndCapture(page, "07_crm_activities_execution_desk");
 
     // 4. Navigate to /crm/leads and verify Leads table, Lead Workflow Selector & dynamic colored Kanban board
     await page.goto("/crm/leads");
@@ -673,6 +678,8 @@ test.describe("CRM Settings Hub & 2D Jira Workflow Studio E2E Verification", () 
     await expect(page.getByTestId("crm-settings-governance-card")).toBeVisible();
     await expect(page.getByTestId("crm-settings-user-workspace-card")).toBeVisible();
     await expect(page.getByTestId("crm-settings-custom-fields-card")).toBeVisible();
+    await expect(page.getByTestId("crm-settings-pipeline-role-pipe_role:deal_desk")).toBeVisible();
+    await expect(page.getByTestId("crm-settings-pipeline-role-pipe_role:academy_director")).toBeVisible();
 
     // Verify Role Creation 2-column form and Add Pipeline Role button fit above the 900px viewport fold on /crm/settings
     const saveRoleBtnBox = await page.getByTestId("crm-settings-save-role-btn").boundingBox();

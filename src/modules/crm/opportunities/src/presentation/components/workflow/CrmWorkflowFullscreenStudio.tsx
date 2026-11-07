@@ -50,30 +50,30 @@ export function CrmWorkflowFullscreenStudio(props: CrmWorkflowFullscreenStudioPr
       className="fixed inset-0 z-[900] bg-nx-ground flex flex-col w-screen h-screen overflow-hidden"
       data-testid="crm-workflow-fullscreen-studio"
     >
-      <header className="h-14 px-2.5 border-b border-nx-line bg-nx-surface flex items-center justify-between gap-1 shrink-0">
+      <header className="h-14 px-2 border-b border-nx-line bg-nx-surface flex items-center justify-between gap-1 shrink-0">
         <div className="flex items-center gap-1 shrink-0">
-          <Button size="sm" variant="outline" onClick={onBackToList} data-testid="studio-back-to-list-btn" className="h-7 px-2 text-[11px] shrink-0">
-            <ArrowLeft className="w-3 h-3 me-1" />
+          <Button size="sm" variant="outline" onClick={onBackToList} data-testid="studio-back-to-list-btn" className="h-7 px-1.5 text-[10px] shrink-0">
+            <ArrowLeft className="w-3 h-3 me-0.5" />
             {t("crmOpportunities.pipelinesPage.backToWorkflowsListBtn")}
           </Button>
 
           <div className="inline-flex items-center rounded-md border border-nx-line bg-nx-raised p-0.5 gap-0.5 shrink-0">
             <Button
               size="sm" variant="ghost" onClick={() => onSwitchEntity("deal")} data-testid="workflow-switch-deals"
-              className={`h-6 px-1.5 text-[11px] ${activeEntity === "deal" ? "bg-nx-surface text-nx-ink border border-nx-line-hi font-semibold" : "text-nx-ink-2"}`}
+              className={`h-6 px-1.5 text-[10px] ${activeEntity === "deal" ? "bg-nx-surface text-nx-ink border border-nx-line-hi font-semibold" : "text-nx-ink-2"}`}
             >
               {t("crmOpportunities.pipelinesPage.dealsPipelineSwitch")}
             </Button>
             <Button
               size="sm" variant="ghost" onClick={() => onSwitchEntity("lead")} data-testid="workflow-switch-leads"
-              className={`h-6 px-1.5 text-[11px] ${activeEntity === "lead" ? "bg-nx-surface text-nx-ink border border-nx-line-hi font-semibold" : "text-nx-ink-2"}`}
+              className={`h-6 px-1.5 text-[10px] ${activeEntity === "lead" ? "bg-nx-surface text-nx-ink border border-nx-line-hi font-semibold" : "text-nx-ink-2"}`}
             >
               {t("crmOpportunities.pipelinesPage.leadsPipelineSwitch")}
             </Button>
           </div>
 
           <Select value={selectedWorkflowId} onValueChange={onSelectWorkflow}>
-            <SelectTrigger className="h-7 min-w-[195px] w-auto text-[11px] bg-nx-raised border-nx-line shrink-0 px-2" data-testid="studio-workflow-selector">
+            <SelectTrigger className="h-7 min-w-[140px] max-w-[170px] w-auto text-[10px] bg-nx-raised border-nx-line shrink-0 px-1.5" data-testid="studio-workflow-selector">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
@@ -83,7 +83,7 @@ export function CrmWorkflowFullscreenStudio(props: CrmWorkflowFullscreenStudioPr
             </SelectContent>
           </Select>
 
-          <Badge variant="outline" className="text-[10px] font-mono shrink-0 whitespace-nowrap px-1.5" data-testid="studio-dynamic-stage-count">
+          <Badge variant="outline" className="text-[10px] font-mono shrink-0 whitespace-nowrap px-1" data-testid="studio-dynamic-stage-count">
             {activeStages.length} {t("crmOpportunities.pipelinesPage.statStatusesLabel")}
           </Badge>
 
@@ -92,7 +92,7 @@ export function CrmWorkflowFullscreenStudio(props: CrmWorkflowFullscreenStudioPr
             onClick={() => { onResetDraft(); setValidationBanner(`${t("crmOpportunities.pipelinesPage.restoredVersionBanner")} (v${selectedWorkflow?.version ?? 4}.0)`); }}
             title={t("crmOpportunities.pipelinesPage.restoreVersionBtn")} data-testid="studio-workflow-version-badge"
           >
-            <History className="w-2.5 h-2.5 me-1 text-nx-accent" />v{selectedWorkflow?.version ?? 4}.0
+            <History className="w-2.5 h-2.5 me-0.5 text-nx-accent" />v{selectedWorkflow?.version ?? 4}.0
           </Button>
 
           {selectedWorkflow?.isActive && (
@@ -114,9 +114,9 @@ export function CrmWorkflowFullscreenStudio(props: CrmWorkflowFullscreenStudioPr
             return (
               <Button
                 key={m.id} size="sm" variant="ghost" onClick={() => setViewMode(m.id)} data-testid={`workflow-mode-${m.id}`}
-                className={`h-6 px-1.5 text-[11px] ${isActive ? "bg-nx-surface text-nx-ink border border-nx-line-hi font-semibold" : "text-nx-ink-2"}`}
+                className={`h-6 px-1.5 text-[10px] ${isActive ? "bg-nx-surface text-nx-ink border border-nx-line-hi font-semibold" : "text-nx-ink-2"}`}
               >
-                <Icon className="w-3 h-3 me-1" />
+                <Icon className="w-3 h-3 me-0.5" />
                 {t(m.labelKey)}
               </Button>
             );
@@ -124,11 +124,11 @@ export function CrmWorkflowFullscreenStudio(props: CrmWorkflowFullscreenStudioPr
         </div>
 
         <div className="flex items-center gap-1 shrink-0">
-          <Button size="sm" variant="outline" className="h-7 px-2 text-[11px] shrink-0" onClick={() => setGuideOpen(true)} data-testid="studio-smart-guide-btn">
-            <HelpCircle className="w-3 h-3 me-1 text-nx-accent" />{t("crmOpportunities.pipelinesPage.guideBtn")}
+          <Button size="sm" variant="outline" className="h-7 px-1.5 text-[10px] shrink-0" onClick={() => setGuideOpen(true)} data-testid="studio-smart-guide-btn">
+            <HelpCircle className="w-3 h-3 me-0.5 text-nx-accent" />{t("crmOpportunities.pipelinesPage.guideBtn")}
           </Button>
           <Button
-            size="sm" variant="outline" className="h-7 px-2 text-[11px] hidden 2xl:inline-flex shrink-0"
+            size="sm" variant="outline" className="h-7 px-1.5 text-[10px] hidden xl:inline-flex shrink-0"
             onClick={() => {
               const payload = JSON.stringify({ workflow: selectedWorkflow, stages: activeStages, transitions }, null, 2);
               if (typeof navigator !== "undefined" && navigator.clipboard?.writeText) {
@@ -138,21 +138,21 @@ export function CrmWorkflowFullscreenStudio(props: CrmWorkflowFullscreenStudioPr
             }}
             data-testid="workflow-export-json-btn"
           >
-            <Download className="w-3 h-3 me-1" />{t("crmOpportunities.pipelinesPage.exportJsonBtn")}
+            <Download className="w-3 h-3 me-0.5" />{t("crmOpportunities.pipelinesPage.exportJsonBtn")}
           </Button>
           <Button
-            size="sm" variant="outline" className="h-7 px-2 text-[11px] hidden 2xl:inline-flex shrink-0"
+            size="sm" variant="outline" className="h-7 px-1.5 text-[10px] hidden xl:inline-flex shrink-0"
             onClick={() => setValidationBanner(`${t("crmOpportunities.pipelinesPage.importedJsonBanner")} (${activeStages.length} ${t("crmOpportunities.pipelinesPage.statusesCountSuffix")})`)}
             data-testid="workflow-import-json-btn"
           >
-            <Upload className="w-3 h-3 me-1" />{t("crmOpportunities.pipelinesPage.importJsonBtn")}
+            <Upload className="w-3 h-3 me-0.5" />{t("crmOpportunities.pipelinesPage.importJsonBtn")}
           </Button>
-          <Button size="sm" variant="outline" className="h-7 px-2 text-[11px] shrink-0" onClick={() => { onResetDraft(); onBackToList(); }} data-testid="studio-discard-close-btn">
-            <RotateCcw className="w-3 h-3 me-1" />
+          <Button size="sm" variant="outline" className="h-7 px-1.5 text-[10px] shrink-0" onClick={() => { onResetDraft(); onBackToList(); }} data-testid="studio-discard-close-btn">
+            <RotateCcw className="w-3 h-3 me-0.5" />
             {t("crmOpportunities.pipelinesPage.discardCloseBtn")}
           </Button>
-          <Button size="sm" className="h-7 px-2.5 text-[11px] shrink-0" onClick={onSave} disabled={!hasChanges} data-testid="save-pipeline-config-btn">
-            <Save className="w-3 h-3 me-1" />
+          <Button size="sm" className="h-7 px-2 text-[10px] shrink-0" onClick={onSave} disabled={!hasChanges} data-testid="save-pipeline-config-btn">
+            <Save className="w-3 h-3 me-0.5" />
             {t("crmOpportunities.pipelinesPage.updateWorkflowBtn")}
           </Button>
         </div>

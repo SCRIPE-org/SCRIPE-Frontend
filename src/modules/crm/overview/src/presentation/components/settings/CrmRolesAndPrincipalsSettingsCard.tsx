@@ -108,29 +108,24 @@ export function CrmRolesAndPrincipalsSettingsCard({
               {scopedRoles.length} {t("crm.settings.rolesCard.queuesSuffix")}
             </Badge>
           </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-1.5 max-h-[210px] overflow-y-auto pr-1">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-1.5">
             {scopedRoles.map((role) => (
               <div
                 key={role.key}
-                className="rounded-md border border-nx-line bg-nx-surface px-2 py-1.5 flex items-start justify-between gap-1.5"
+                className="rounded-md border border-nx-line bg-nx-surface px-2 py-1 flex items-start justify-between gap-1"
                 data-testid={`crm-settings-pipeline-role-${role.key}`}
               >
                 <div className="space-y-0.5 min-w-0 flex-1">
-                  <div className="flex items-center justify-between gap-1 min-w-0">
-                    <span className="text-[11px] font-bold text-nx-ink truncate">{isRtl ? role.nameAr : role.nameEn}</span>
-                    <Badge variant="outline" className="text-[9px] font-mono px-1 py-0 shrink-0 max-w-[110px] truncate">{role.key}</Badge>
+                  <div className="text-[11px] font-bold text-nx-ink truncate" title={isRtl ? role.nameAr : role.nameEn}>
+                    {isRtl ? role.nameAr : role.nameEn}
                   </div>
-                  <p className="text-[10px] text-nx-ink-3 truncate">
-                    {t("crm.settings.rolesCard.membersLabel")}{" "}
-                    {(role.memberNames && role.memberNames.length > 0 ? role.memberNames : [t("crm.settings.rolesCard.assignedQueueDefault")]).join(", ")}
-                  </p>
-                  <div className="flex items-center gap-1 flex-wrap text-[9px] font-mono text-nx-ink-2">
-                    <span>
+                  <div className="flex items-center justify-between gap-1 text-[9px] font-mono text-nx-ink-3 min-w-0">
+                    <span className="text-nx-ink-2 truncate">{role.key}</span>
+                    <span className="shrink-0 text-nx-ink-2">
                       {role.maxApprovalThresholdAmount
-                        ? `Max: $${role.maxApprovalThresholdAmount.toLocaleString()}`
+                        ? `≤$${(role.maxApprovalThresholdAmount / 1000).toFixed(0)}k`
                         : t("crm.settings.rolesCard.unlimitedAuthority")}
                     </span>
-                    {role.backupRoleKey && <span className="truncate">• {t("crm.settings.rolesCard.fallbackPrefix")} {role.backupRoleKey}</span>}
                   </div>
                 </div>
                 {!role.isSystem && canManageRoles && (
@@ -149,7 +144,7 @@ export function CrmRolesAndPrincipalsSettingsCard({
           </div>
 
           {canManageRoles && (
-            <div className="space-y-1.5 pt-1.5 border-t border-nx-line/60" data-testid="crm-settings-role-creation-form">
+            <div className="space-y-1.5 pt-1 border-t border-nx-line/60" data-testid="crm-settings-role-creation-form">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-1.5">
                 <Input value={nameEn} onChange={(e) => setNameEn(e.target.value)} placeholder={t("crm.settings.rolesCard.queueNameEnPlaceholder")} className="h-7 text-xs" data-testid="crm-settings-role-name-en" />
                 <Input dir="rtl" value={nameAr} onChange={(e) => setNameAr(e.target.value)} placeholder={t("crm.settings.rolesCard.queueNameArPlaceholder")} className="h-7 text-xs" data-testid="crm-settings-role-name-ar" />
