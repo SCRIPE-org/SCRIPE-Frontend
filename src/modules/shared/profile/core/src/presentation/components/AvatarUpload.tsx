@@ -127,7 +127,7 @@ export function AvatarUpload({
           aria-label={t("profile.avatar.changePhoto")}
           className="group relative cursor-pointer rounded-full focus-visible:shadow-nx-focus focus-visible:outline-none"
         >
-          <Avatar className="h-24 w-24 border border-nx-line shadow-nx-sm">
+          <Avatar className="h-24 w-24 border border-nx-line">
             {displayUrl && !imageError && (
               <AvatarImage
                 src={displayUrl}

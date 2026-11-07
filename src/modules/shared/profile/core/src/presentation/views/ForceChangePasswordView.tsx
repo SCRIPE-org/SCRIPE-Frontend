@@ -50,7 +50,7 @@ export function ForceChangePasswordView() {
     <div className="flex min-h-screen items-center justify-center bg-nx-ground p-4" dir={direction}>
       <div className="w-full max-w-md space-y-6">
         {/* Header Card */}
-        <Card className="p-8 shadow-nx-modal">
+        <Card className="p-8 border-nx-line bg-nx-surface">
           <div className="mb-6 flex flex-col items-center text-center">
             <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full border-2 border-warning/30 bg-warning/10">
               <ShieldAlert className="h-8 w-8 text-warning" aria-hidden="true" />
@@ -59,7 +59,7 @@ export function ForceChangePasswordView() {
               {t("profile.security.changePassword")}
             </h1>
             <p className="mt-2 max-w-xs text-sm text-nx-ink-2">
-              {t("admin.forceChangePassword.description")}
+              {t("profile.security.forceChangeDescription")}
             </p>
           </div>
 
@@ -78,8 +78,10 @@ export function ForceChangePasswordView() {
                   className="pe-10"
                   autoFocus
                 />
-                <button
+                <Button
                   type="button"
+                  variant="ghost"
+                  size="icon"
                   onClick={() => setShowCurrent(!showCurrent)}
                   aria-label={
                     showCurrent
@@ -87,7 +89,7 @@ export function ForceChangePasswordView() {
                       : t("profile.security.showPassword")
                   }
                   className={cn(
-                    "absolute end-3 top-1/2 -translate-y-1/2 text-nx-ink-3 hover:text-nx-ink",
+                    "absolute end-1 top-1/2 -translate-y-1/2 h-8 w-8 text-nx-ink-3 hover:text-nx-ink",
                     "transition-colors duration-nx-micro ease-nx-enter motion-reduce:transition-none",
                     "focus-visible:shadow-nx-focus focus-visible:outline-none"
                   )}
@@ -97,7 +99,7 @@ export function ForceChangePasswordView() {
                   ) : (
                     <Eye className="h-4 w-4" aria-hidden="true" />
                   )}
-                </button>
+                </Button>
               </div>
             </div>
 
@@ -112,8 +114,10 @@ export function ForceChangePasswordView() {
                   onChange={(e) => setNewPassword(e.target.value)}
                   className="pe-10"
                 />
-                <button
+                <Button
                   type="button"
+                  variant="ghost"
+                  size="icon"
                   onClick={() => setShowNew(!showNew)}
                   aria-label={
                     showNew
@@ -121,7 +125,7 @@ export function ForceChangePasswordView() {
                       : t("profile.security.showPassword")
                   }
                   className={cn(
-                    "absolute end-3 top-1/2 -translate-y-1/2 text-nx-ink-3 hover:text-nx-ink",
+                    "absolute end-1 top-1/2 -translate-y-1/2 h-8 w-8 text-nx-ink-3 hover:text-nx-ink",
                     "transition-colors duration-nx-micro ease-nx-enter motion-reduce:transition-none",
                     "focus-visible:shadow-nx-focus focus-visible:outline-none"
                   )}
@@ -131,7 +135,7 @@ export function ForceChangePasswordView() {
                   ) : (
                     <Eye className="h-4 w-4" aria-hidden="true" />
                   )}
-                </button>
+                </Button>
               </div>
               {newPassword.length > 0 && (
                 <div className="mt-2 flex flex-wrap gap-x-4 gap-y-1">
@@ -175,8 +179,9 @@ export function ForceChangePasswordView() {
 
           {/* Logout option */}
           <div className="mt-6 flex justify-center">
-            <button
+            <Button
               type="button"
+              variant="ghost"
               onClick={handleLogout}
               className={cn(
                 "flex items-center gap-2 text-sm text-nx-ink-3 hover:text-nx-ink",
@@ -185,8 +190,8 @@ export function ForceChangePasswordView() {
               )}
             >
               <LogOut className="h-4 w-4" aria-hidden="true" />
-              {t("common.logout")}
-            </button>
+              {t("profile.common.logout")}
+            </Button>
           </div>
         </Card>
       </div>

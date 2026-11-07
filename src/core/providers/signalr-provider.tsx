@@ -113,7 +113,7 @@ export function SignalRProvider({ hubPath = HUB_PATHS.AUDIT, children }: SignalR
           },
         })
         .configureLogging(
-          process.env.NODE_ENV === "development" ? LogLevel.Information : LogLevel.Warning
+          LogLevel.None
         )
         .build();
 
