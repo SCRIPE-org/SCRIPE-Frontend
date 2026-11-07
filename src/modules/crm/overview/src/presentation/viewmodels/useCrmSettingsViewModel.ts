@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
-import { getCrmContainer } from "../../../../di";
+import { getCrmContainer } from "@modules/crm/di";
 import {
   useCrmSettingsStore,
   useCrmCurrency,

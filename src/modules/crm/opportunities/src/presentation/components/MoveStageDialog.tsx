@@ -8,6 +8,7 @@ import { Alert, AlertDescription } from "@core/ui/alert";
 import { AlertCircle } from "lucide-react";
 import { encodeCustomFieldName, useCustomFieldsFormFields } from "@core/crud/customFieldsExtension";
 import { useCrmSettingsStore, useCrmWorkflowsStore } from "@modules/crm";
+import { CANONICAL_KANBAN_STAGES } from "../../domain/constants/crmCanonicalStages";
 import type { CrmOpportunity, MoveOpportunityStageInput, PipelineDefinition } from "../../domain/entities/OpportunityEntity";
 import { MoveStageGateFieldsSection, type MoveStagePartyOption } from "./MoveStageGateFieldsSection";
 
@@ -25,24 +26,8 @@ export interface MoveStageDialogProps {
   submitError?: string | null;
 }
 
-const CANONICAL_ACTIVE_STAGES = [
-  { key: "default.discovery", order: 1, labelEn: "Discovery", labelAr: "استكشاف" },
-  { key: "default.qualification", order: 2, labelEn: "Qualification", labelAr: "تأهيل" },
-  { key: "default.solution_fit", order: 3, labelEn: "Solution Fit", labelAr: "ملاءمة الحل" },
-  { key: "default.proposal", order: 4, labelEn: "Proposal", labelAr: "عرض السعر", partyRequired: true },
-  { key: "default.negotiation", order: 5, labelEn: "Negotiation", labelAr: "تفاوض", partyRequired: true },
-];
-
 export function MoveStageDialog({
-  open,
-  onOpenChange,
-  opportunity,
-  initialTargetStageKey,
-  pipeline,
-  onSubmit,
-  onLookupParties,
-  isSubmitting = false,
-  submitError,
+  open, onOpenChange, opportunity, initialTargetStageKey, pipeline, onSubmit, onLookupParties, isSubmitting = false, submitError,
 }: MoveStageDialogProps) {
   const { t, language } = useI18n();
   const isRtl = language === "ar";
@@ -114,7 +99,14 @@ export function MoveStageDialog({
             partyRequired: s.requiresVerifiedParty || Boolean(s.requiredExitFields?.includes("partyId")) || s.stageKey === "default.proposal" || s.stageKey === "default.negotiation",
             requiredExitFields: s.requiredExitFields ?? [],
           }))
-      : CANONICAL_ACTIVE_STAGES.map((s) => ({ ...s, requiredExitFields: [] as string[] }));
+      : CANONICAL_KANBAN_STAGES.map((s) => ({
+          key: s.key,
+          order: s.sortOrder,
+          labelEn: s.defaultLabelEn,
+          labelAr: s.labelAr || s.defaultLabelEn,
+          partyRequired: Boolean(s.requiresParty),
+          requiredExitFields: [] as string[],
+        }));
 
   useEffect(() => {
     if (!opportunity || !open) return;
@@ -135,13 +127,9 @@ export function MoveStageDialog({
     if (!open || !onLookupParties) return;
     let cancelled = false;
     onLookupParties()
-      .then((opts) => {
-        if (!cancelled) setPartyOptions(opts);
-      })
+      .then((opts) => { if (!cancelled) setPartyOptions(opts); })
       .catch(() => {});
-    return () => {
-      cancelled = true;
-    };
+    return () => { cancelled = true; };
   }, [open, onLookupParties]);
 
   if (!opportunity) return null;
@@ -176,12 +164,7 @@ export function MoveStageDialog({
     new Set([
       ...exitFields.filter((f) => f.startsWith("custom:")).map((f) => f.slice("custom:".length)),
       ...storeCustomFields
-        .filter(
-          (f) =>
-            f.entityTypeKey === "crm.opportunity" &&
-            Boolean(f.defaultStageGateKey) &&
-            (f.defaultStageGateKey === opportunity.stageKey || f.defaultStageGateKey === targetStageKey)
-        )
+        .filter((f) => f.entityTypeKey === "crm.opportunity" && Boolean(f.defaultStageGateKey) && (f.defaultStageGateKey === opportunity.stageKey || f.defaultStageGateKey === targetStageKey))
         .map((f) => f.key),
     ])
   );
@@ -204,13 +187,9 @@ export function MoveStageDialog({
       const def = storeCustomFields.find((f) => f.key === cfKey);
       const val = customFieldValues[encodeCustomFieldName(cfKey)] ?? customFieldValues[cfKey];
       if (def?.valueType === "Boolean") {
-        if (val !== true && val !== "true") {
-          return setValidationError(`Required stage gate custom field '${def.labelEn || cfKey}' must be confirmed before advancing.`);
-        }
+        if (val !== true && val !== "true") return setValidationError(`Required stage gate custom field '${def.labelEn || cfKey}' must be confirmed before advancing.`);
       } else if (def?.valueType === "Number" || def?.valueType === "Currency") {
-        if (val === undefined || val === null || String(val).trim() === "" || !Number.isFinite(Number(val))) {
-          return setValidationError(`Required stage gate numeric field '${def.labelEn || cfKey}' must have a valid number before advancing.`);
-        }
+        if (val === undefined || val === null || String(val).trim() === "" || !Number.isFinite(Number(val))) return setValidationError(`Required stage gate numeric field '${def.labelEn || cfKey}' must have a valid number before advancing.`);
       } else if (val === undefined || val === null || String(val).trim() === "") {
         return setValidationError(`Required stage gate custom field '${def?.labelEn || cfKey}' must be completed before advancing.`);
       }
@@ -253,53 +232,29 @@ export function MoveStageDialog({
               <AlertDescription>{submitError || validationError}</AlertDescription>
             </Alert>
           )}
-          <div
-            className="rounded-lg border border-nx-line bg-nx-raised/40 px-3 py-2 flex items-center justify-between gap-2 text-xs"
-            data-testid="move-stage-approval-gate-card"
-          >
-            <span className="font-semibold text-nx-ink">
-              {isRtl ? "حوكمة الانتقال وطابور الاعتماد:" : "Pipeline Role Gate & Quorum:"}
-            </span>
+          <div className="rounded-lg border border-nx-line bg-nx-raised/40 px-3 py-2 flex items-center justify-between gap-2 text-xs" data-testid="move-stage-approval-gate-card">
+            <span className="font-semibold text-nx-ink">{t("crmOpportunities.commercialSuite.pipelineRoleGateLabel")}</span>
             <span className="font-mono text-[11px] text-nx-ink-2">
               {evalTransition?.matchedTransition?.rules.requireApproval
                 ? `${evalTransition.matchedTransition.rules.approverRole || "pipe_role:deal_desk"} (${evalTransition.matchedTransition.rules.approvalQuorum || "any"})`
-                : isRtl
-                  ? "مسموح لدور المسار النشط"
-                  : "Authorized via Active Pipeline Role"}
+                : t("crmOpportunities.commercialSuite.authorizedViaActiveRole")}
             </span>
           </div>
           <MoveStageGateFieldsSection
-            t={t}
-            isRtl={isRtl}
-            opportunity={opportunity}
-            effectivePartyId={effectivePartyId}
-            targetStageKey={targetStageKey}
-            onTargetStageKeyChange={setTargetStageKey}
-            effectiveStages={effectiveStages}
-            currencyCode={opportunity.currencyCode}
-            needsPartyInput={needsPartyInput}
-            selectedPartyId={selectedPartyId}
-            partyOptions={partyOptions}
+            t={t} isRtl={isRtl} opportunity={opportunity} effectivePartyId={effectivePartyId}
+            targetStageKey={targetStageKey} onTargetStageKeyChange={setTargetStageKey}
+            effectiveStages={effectiveStages} currencyCode={opportunity.currencyCode}
+            needsPartyInput={needsPartyInput} selectedPartyId={selectedPartyId} partyOptions={partyOptions}
             onPartyChange={(val) => {
               setSelectedPartyId(val);
               setSelectedAccountId(partyOptions.find((o) => o.partyId === val)?.accountId || "");
               setValidationError(null);
             }}
-            needsAmountInput={needsAmountInput}
-            estimatedAmount={estimatedAmount}
-            onEstimatedAmountChange={setEstimatedAmount}
-            needsCloseDateInput={needsCloseDateInput}
-            targetCloseDate={targetCloseDate}
-            onTargetCloseDateChange={setTargetCloseDate}
-            needsContactRoleInput={needsContactRoleInput}
-            primaryContactRole={primaryContactRole}
-            onPrimaryContactRoleChange={setPrimaryContactRole}
-            needsSolutionFitInput={needsSolutionFitInput}
-            solutionFitConfirmed={solutionFitConfirmed}
-            onSolutionFitConfirmedChange={setSolutionFitConfirmed}
-            oppCustomFieldConfigs={nonGateCustomFieldConfigs}
-            requiredCustomFieldKeys={requiredCustomFieldKeys}
-            storeCustomFields={storeCustomFields}
+            needsAmountInput={needsAmountInput} estimatedAmount={estimatedAmount} onEstimatedAmountChange={setEstimatedAmount}
+            needsCloseDateInput={needsCloseDateInput} targetCloseDate={targetCloseDate} onTargetCloseDateChange={setTargetCloseDate}
+            needsContactRoleInput={needsContactRoleInput} primaryContactRole={primaryContactRole} onPrimaryContactRoleChange={setPrimaryContactRole}
+            needsSolutionFitInput={needsSolutionFitInput} solutionFitConfirmed={solutionFitConfirmed} onSolutionFitConfirmedChange={setSolutionFitConfirmed}
+            oppCustomFieldConfigs={nonGateCustomFieldConfigs} requiredCustomFieldKeys={requiredCustomFieldKeys} storeCustomFields={storeCustomFields}
             onAddCrmCustomField={(field) => {
               addCrmCustomField(field);
               const wfStage = activeDealWorkflow.stages.find((s) => s.stageKey === opportunity.stageKey);
@@ -309,19 +264,12 @@ export function MoveStageDialog({
                 });
               }
             }}
-            isOppCfLoading={isOppCfLoading}
-            onRefetchOppCustomFields={() => void refetchOppCf()}
-            customFieldValues={customFieldValues}
-            onCustomFieldChange={(key, val) => setCustomFieldValues((prev) => ({ ...prev, [key]: val }))}
-            isAdjacentForward={isAdjacentForward}
-            reason={reason}
-            onReasonChange={setReason}
-            isSubmitting={isSubmitting}
+            isOppCfLoading={isOppCfLoading} onRefetchOppCustomFields={() => void refetchOppCf()}
+            customFieldValues={customFieldValues} onCustomFieldChange={(key, val) => setCustomFieldValues((prev) => ({ ...prev, [key]: val }))}
+            isAdjacentForward={isAdjacentForward} reason={reason} onReasonChange={setReason} isSubmitting={isSubmitting}
           />
           <DialogFooter className="pt-2">
-            <Button type="button" variant="outline" onClick={() => onOpenChange(false)} disabled={isSubmitting}>
-              {t("crmOpportunities.actions.cancel")}
-            </Button>
+            <Button type="button" variant="outline" onClick={() => onOpenChange(false)} disabled={isSubmitting}>{t("crmOpportunities.actions.cancel")}</Button>
             <Button type="submit" disabled={isSubmitting || (lacksParty && partyOptions.length === 0)}>
               {isSubmitting ? t("crmOpportunities.actions.saving") : t("crmOpportunities.dialogs.stage.submit")}
             </Button>

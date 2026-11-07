@@ -1,11 +1,12 @@
 "use client";
 
 import { Card } from "@core/ui/card";
-import { ShieldCheck, ShieldAlert } from "lucide-react";
+import { Badge } from "@core/ui/badge";
+import { Lock, ShieldCheck, ShieldAlert } from "lucide-react";
 import { useI18n } from "@core/providers/i18n-provider";
 import { OpportunityStatusBadge } from "./OpportunityStatusBadge";
 import { OpportunityStageBadge } from "./OpportunityStageBadge";
-import { useCrmCurrency } from "@modules/crm";
+import { useCrmCurrency, useCrmWorkflowsStore } from "@modules/crm";
 import type { CrmOpportunity } from "../../domain/entities/OpportunityEntity";
 
 /**
@@ -22,6 +23,13 @@ export function OpportunityOverviewCard({ opp }: OpportunityOverviewCardProps) {
   const { t, language } = useI18n();
   const isOpen = opp.status === "Open";
   const { baseCurrency, autoConvertToBase, convertAmount, getRate } = useCrmCurrency();
+  const activeDealWorkflow = useCrmWorkflowsStore((s) => s.getActiveWorkflow("deal"));
+  const activeStage = activeDealWorkflow?.stages.find((s) => s.stageKey === opp.stageKey);
+  const rawLockedFields =
+    (activeStage as { properties?: Record<string, string> })?.properties?.lockedFields ??
+    (opp.stageKey.includes("negotiation") || opp.status === "Won" ? "estimatedAmount,currencyCode" : "");
+  const lockedFields = rawLockedFields ? rawLockedFields.split(",").map((s) => s.trim()).filter(Boolean) : [];
+  const isAmountLocked = lockedFields.includes("estimatedAmount") || lockedFields.includes("currencyCode");
   const isMasked = opp.maskedFieldKeys?.includes("estimatedAmount");
   const nativeCurr = (opp.currencyCode || "SAR").toUpperCase();
   const isForeignCurr =
@@ -54,8 +62,14 @@ export function OpportunityOverviewCard({ opp }: OpportunityOverviewCardProps) {
 
         <div className="flex items-center gap-4">
           <div className="text-end">
-            <span className="text-xs text-nx-ink-3 block">
+            <span className="text-xs text-nx-ink-3 flex items-center justify-end gap-1">
               {t("crmOpportunities.detail.estimatedAmount")}
+              {isAmountLocked && (
+                <Badge variant="outline" className="text-[9px] h-4 px-1.5 gap-0.5 text-warning border-warning/40 bg-warning/10" data-testid="opp-overview-amount-locked-badge">
+                  <Lock className="size-2.5" />
+                  {t("crmOpportunities.ruleConfig.lockedReadOnlyBadge")}
+                </Badge>
+              )}
             </span>
             <span className="text-xl font-bold text-nx-ink">
               {isMasked

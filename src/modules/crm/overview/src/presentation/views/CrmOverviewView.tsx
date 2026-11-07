@@ -53,7 +53,7 @@ export function CrmOverviewView() {
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="all" className="text-xs">
-                  {isRtl ? "جميع المسارات التجارية (الكل)" : "All Commercial Pipelines"}
+                  {t("crm.pipeline.allPipelinesOption")}
                 </SelectItem>
                 {workflows.map((wf) => (
                   <SelectItem key={wf.id} value={wf.id} className="text-xs">

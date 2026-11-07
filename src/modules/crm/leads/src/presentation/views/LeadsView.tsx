@@ -8,15 +8,7 @@ import { Button } from "@core/ui/button";
 import { Input } from "@core/ui/input";
 import { EmptyState } from "@core/ui/empty-state";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@core/ui/select";
-import {
-  AlertCircle,
-  RefreshCw,
-  Plus,
-  Search,
-  CheckCircle2,
-  Link as LinkIcon,
-  ArrowUpRight,
-} from "lucide-react";
+import { AlertCircle, RefreshCw, Plus, Search, CheckCircle2, Link as LinkIcon, ArrowUpRight } from "lucide-react";
 import { cn } from "@core/common/utils";
 import {
   CRM_PERMISSIONS,
@@ -35,11 +27,7 @@ import { QualifyLeadDialog } from "../components/QualifyLeadDialog";
 import { LinkPartyDialog } from "../components/LinkPartyDialog";
 import { ConvertLeadDialog } from "../components/ConvertLeadDialog";
 import { LeadsKanbanCardItem, stageToLeadStatusValue } from "../components/LeadsKanbanCardItem";
-import {
-  buildLeadsTableColumns,
-  renderLeadsCardGridItemCard,
-  renderLeadsSplitDetailCard,
-} from "../components/LeadsTableColumns";
+import { buildLeadsTableColumns, renderLeadsCardGridItemCard, renderLeadsSplitDetailCard } from "../components/LeadsTableColumns";
 import { useLeadsViewModel } from "../viewmodels/useLeadsViewModel";
 import type { CrmLead, LeadStatus } from "../../domain/entities/LeadEntity";
 
@@ -57,31 +45,10 @@ export function LeadsView() {
   const defaultDealViewMode = useCrmSettingsStore((s) => s.defaultDealViewMode);
   const viewModel = useLeadsViewModel();
   const {
-    state,
-    search,
-    statusFilter,
-    isCreateOpen,
-    isQualifyOpen,
-    isLinkPartyOpen,
-    isConvertOpen,
-    activeLead,
-    isSubmitting,
-    submitError,
-    setIsCreateOpen,
-    setIsQualifyOpen,
-    setIsLinkPartyOpen,
-    setIsConvertOpen,
-    handleSearchChange,
-    handleStatusFilterChange,
-    handleCreateLead,
-    handleQualifyLead,
-    handleLinkParty,
-    handleConvertLead,
-    openQualifyDialog,
-    openLinkPartyDialog,
-    openConvertDialog,
-    handleUpdateLeadStatus,
-    refresh,
+    state, search, statusFilter, isCreateOpen, isQualifyOpen, isLinkPartyOpen, isConvertOpen,
+    activeLead, isSubmitting, submitError, setIsCreateOpen, setIsQualifyOpen, setIsLinkPartyOpen, setIsConvertOpen,
+    handleSearchChange, handleStatusFilterChange, handleCreateLead, handleQualifyLead, handleLinkParty,
+    handleConvertLead, openQualifyDialog, openLinkPartyDialog, openConvertDialog, handleUpdateLeadStatus, refresh,
   } = viewModel;
 
   const sumLeadsInBaseCurrency = (items: CrmLead[]) => {
@@ -106,20 +73,15 @@ export function LeadsView() {
       : [
           { key: undefined, label: t("crmLeads.actions.allStatuses") },
           ...[...activeLeadWorkflow.stages]
-              .sort((a, b) => a.sortOrder - b.sortOrder)
-              .map((stg) => ({
-                key: stageToLeadStatusValue(stg.stageKey, stg.labelEn),
-                label: isRtl && stg.labelAr ? stg.labelAr : stg.labelEn,
-              })),
+            .sort((a, b) => a.sortOrder - b.sortOrder)
+            .map((stg) => ({
+              key: stageToLeadStatusValue(stg.stageKey, stg.labelEn),
+              label: isRtl && stg.labelAr ? stg.labelAr : stg.labelEn,
+            })),
         ];
 
   const columns = buildLeadsTableColumns({
-    t,
-    language,
-    baseCurrency,
-    autoConvertToBase,
-    showOriginalCurrencyBadge,
-    convertAmount,
+    t, language, baseCurrency, autoConvertToBase, showOriginalCurrencyBadge, convertAmount,
     onNavigateLead: (id) => router.push(`/crm/leads/${id}`),
   });
 
@@ -137,23 +99,14 @@ export function LeadsView() {
       <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 flex-1" dir={isRtl ? "rtl" : "ltr"}>
         <div className="relative flex-1 max-w-sm">
           <Search className="absolute start-3 top-2.5 size-3.5 text-nx-ink-3 pointer-events-none" />
-          <Input
-            value={search}
-            onChange={(e) => handleSearchChange(e.target.value)}
-            placeholder={t("crmLeads.actions.searchPlaceholder")}
-            className="h-8 ps-8 pe-3 text-xs border-nx-line bg-nx-surface text-nx-ink"
-          />
+          <Input value={search} onChange={(e) => handleSearchChange(e.target.value)} placeholder={t("crmLeads.actions.searchPlaceholder")} className="h-8 ps-8 pe-3 text-xs border-nx-line bg-nx-surface text-nx-ink" />
         </div>
         <div className="w-48">
           <Select value={activeLeadWorkflowId} onValueChange={(id) => setActiveWorkflow("lead", id)}>
-            <SelectTrigger className="h-8 text-xs" data-testid="lead-pipeline-selector">
-              <SelectValue />
-            </SelectTrigger>
+            <SelectTrigger className="h-8 text-xs" data-testid="lead-pipeline-selector"><SelectValue /></SelectTrigger>
             <SelectContent>
               {leadWorkflows.map((wf) => (
-                <SelectItem key={wf.id} value={wf.id} className="text-xs">
-                  {isRtl ? wf.nameAr : wf.nameEn}
-                </SelectItem>
+                <SelectItem key={wf.id} value={wf.id} className="text-xs">{isRtl ? wf.nameAr : wf.nameEn}</SelectItem>
               ))}
             </SelectContent>
           </Select>
@@ -195,12 +148,7 @@ export function LeadsView() {
       .sort((a, b) => a.sortOrder - b.sortOrder)
       .map((stg) => {
         const colValue = stageToLeadStatusValue(stg.stageKey, stg.labelEn);
-        const colorToken = resolveDefaultStageColor(
-          stg.stageKey,
-          stg.category,
-          stg.sortOrder,
-          stg.color,
-        );
+        const colorToken = resolveDefaultStageColor(stg.stageKey, stg.category, stg.sortOrder, stg.color);
         const colorMeta = STAGE_COLOR_PALETTE[colorToken];
         const customHex = stg.customColorHex || stg.properties?.customColorHex;
         return {
@@ -211,20 +159,14 @@ export function LeadsView() {
           summary: (items: CrmLead[]) => (
             <span className="inline-flex items-center gap-1.5 font-semibold text-nx-ink font-mono">
               {customHex && (
-                <span
-                  className="inline-block w-2 h-2 rounded-full border"
-                  style={{ backgroundColor: customHex, borderColor: customHex }}
-                  data-testid={`lead-col-custom-hex-${colValue}`}
-                />
+                <span className="inline-block w-2 h-2 rounded-full border" style={{ backgroundColor: customHex, borderColor: customHex }} data-testid={`lead-col-custom-hex-${colValue}`} />
               )}
               {sumLeadsInBaseCurrency(items)}
             </span>
           ),
         };
       }),
-    onKanbanItemMove: (item: CrmLead, targetColumnValue: string) => {
-      handleUpdateLeadStatus(item, targetColumnValue);
-    },
+    onKanbanItemMove: (item: CrmLead, targetColumnValue: string) => handleUpdateLeadStatus(item, targetColumnValue),
     renderKanbanCard: (lead: CrmLead) => (
       <LeadsKanbanCardItem
         lead={lead}
@@ -239,15 +181,7 @@ export function LeadsView() {
       />
     ),
     renderCardGridItem: (lead: CrmLead, actions: React.ReactNode) =>
-      renderLeadsCardGridItemCard(
-        lead,
-        actions,
-        baseCurrency,
-        autoConvertToBase,
-        showOriginalCurrencyBadge,
-        convertAmount,
-        (id) => router.push(`/crm/leads/${id}`),
-      ),
+      renderLeadsCardGridItemCard(lead, actions, baseCurrency, autoConvertToBase, showOriginalCurrencyBadge, convertAmount, (id) => router.push(`/crm/leads/${id}`)),
     renderSplitDetail: (lead: CrmLead, actions: React.ReactNode) => renderLeadsSplitDetailCard(lead, actions, t),
     columns,
     getActions: (): CrudAction<CrmLead>[] => [

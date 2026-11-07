@@ -24,50 +24,18 @@ import {
 import { AlertCircle, UserCheck } from "lucide-react";
 import type { CrmOpportunity, AssignOpportunityOwnerInput } from "../../domain/entities/OpportunityEntity";
 
-const COMMERCIAL_REPRESENTATIVES: Array<{ id: string; labelEn: string; labelAr: string }> = [
-  {
-    id: "11111111-1111-1111-1111-111111111111",
-    labelEn: "Ahmed El-Shenawy — Commercial Director",
-    labelAr: "أحمد الشناوي — المدير التجاري",
-  },
-  {
-    id: "22222222-2222-2222-2222-222222222222",
-    labelEn: "Tariq Al-Dosari — Senior Account Executive",
-    labelAr: "طارق الدوسري — مسؤول حسابات أول",
-  },
-  {
-    id: "33333333-3333-3333-3333-333333333333",
-    labelEn: "Sara Al-Mansour — Enterprise Sponsorship Lead",
-    labelAr: "سارة المنصور — قائد رعايات المؤسسات",
-  },
-  {
-    id: "44444444-4444-4444-4444-444444444444",
-    labelEn: "Khaled Al-Harbi — Sports Partnerships Manager",
-    labelAr: "خالد الحربي — مدير الشراكات الرياضية",
-  },
+const COMMERCIAL_REPRESENTATIVES: Array<{ id: string; key: string }> = [
+  { id: "11111111-1111-1111-1111-111111111111", key: "rep1" },
+  { id: "22222222-2222-2222-2222-222222222222", key: "rep2" },
+  { id: "33333333-3333-3333-3333-333333333333", key: "rep3" },
+  { id: "44444444-4444-4444-4444-444444444444", key: "rep4" },
 ];
 
-const COMMERCIAL_TEAMS: Array<{ id: string; labelEn: string; labelAr: string }> = [
-  {
-    id: "aaaa1111-1111-1111-1111-111111111111",
-    labelEn: "Enterprise Sponsorships & Naming Rights",
-    labelAr: "رعايات المؤسسات وحقوق التسمية",
-  },
-  {
-    id: "bbbb2222-2222-2222-2222-222222222222",
-    labelEn: "Club & Academy Commercial Desk",
-    labelAr: "المكتب التجاري للأندية والأكاديميات",
-  },
-  {
-    id: "cccc3333-3333-3333-3333-333333333333",
-    labelEn: "Venue & Tournament Partnerships",
-    labelAr: "شراكات المنشآت والبطولات",
-  },
-  {
-    id: "dddd4444-4444-4444-4444-444444444444",
-    labelEn: "Regional Key Accounts",
-    labelAr: "الحسابات الإقليمية الرئيسية",
-  },
+const COMMERCIAL_TEAMS: Array<{ id: string; key: string }> = [
+  { id: "aaaa1111-1111-1111-1111-111111111111", key: "team1" },
+  { id: "bbbb2222-2222-2222-2222-222222222222", key: "team2" },
+  { id: "cccc3333-3333-3333-3333-333333333333", key: "team3" },
+  { id: "dddd4444-4444-4444-4444-444444444444", key: "team4" },
 ];
 
 /**
@@ -100,6 +68,8 @@ export function AssignOwnerDialog({
   const [ownerTeamId, setOwnerTeamId] = useState<string>("__none__");
   const [assignmentReason, setAssignmentReason] = useState<string>("");
   const [validationError, setValidationError] = useState<string | null>(null);
+  const currentOwnerUserId = opportunity?.ownerUserId;
+  const currentOwnerTeamId = opportunity?.ownerTeamId;
 
   useEffect(() => {
     if (opportunity) {
@@ -113,30 +83,30 @@ export function AssignOwnerDialog({
   const repOptions = useMemo(() => {
     const base = COMMERCIAL_REPRESENTATIVES.map((r) => ({
       id: r.id,
-      label: isRtl ? r.labelAr : r.labelEn,
+      label: t(`crmOpportunities.dialogs.assign.reps.${r.key}`),
     }));
-    if (opportunity?.ownerUserId && !base.some((b) => b.id === opportunity.ownerUserId)) {
+    if (currentOwnerUserId && !base.some((b) => b.id === currentOwnerUserId)) {
       base.unshift({
-        id: opportunity.ownerUserId,
+        id: currentOwnerUserId,
         label: t("crmOpportunities.dialogs.assign.currentOwnerOption"),
       });
     }
     return base;
-  }, [isRtl, opportunity?.ownerUserId, t]);
+  }, [currentOwnerUserId, t]);
 
   const teamOptions = useMemo(() => {
     const base = COMMERCIAL_TEAMS.map((tm) => ({
       id: tm.id,
-      label: isRtl ? tm.labelAr : tm.labelEn,
+      label: t(`crmOpportunities.dialogs.assign.teams.${tm.key}`),
     }));
-    if (opportunity?.ownerTeamId && !base.some((b) => b.id === opportunity.ownerTeamId)) {
+    if (currentOwnerTeamId && !base.some((b) => b.id === currentOwnerTeamId)) {
       base.unshift({
-        id: opportunity.ownerTeamId,
+        id: currentOwnerTeamId,
         label: t("crmOpportunities.dialogs.assign.currentTeamOption"),
       });
     }
     return base;
-  }, [isRtl, opportunity?.ownerTeamId, t]);
+  }, [currentOwnerTeamId, t]);
 
   if (!opportunity) return null;
 

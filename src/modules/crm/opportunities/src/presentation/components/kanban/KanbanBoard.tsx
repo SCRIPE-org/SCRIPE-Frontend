@@ -8,20 +8,11 @@ import { Skeleton } from "@core/ui/skeleton";
 import { cn } from "@core/common/utils";
 import { useI18n } from "@core/providers/i18n-provider";
 import { KanbanColumn } from "./KanbanColumn";
-import {
-  useKanbanBoardViewModel,
-} from "../../viewmodels/useKanbanBoardViewModel";
-import type {
-  CrmOpportunity,
-  PipelineStageConfig,
-} from "../../../domain/entities/OpportunityEntity";
-
+import { useKanbanBoardViewModel } from "../../viewmodels/useKanbanBoardViewModel";
+import type { CrmOpportunity, PipelineStageConfig } from "../../../domain/entities/OpportunityEntity";
 import type { BoardSettingsConfig } from "../BoardSettingsDialog";
 
-export {
-  type KanbanStageDef,
-  CANONICAL_KANBAN_STAGES,
-} from "../../viewmodels/useKanbanBoardViewModel";
+export { type KanbanStageDef, CANONICAL_KANBAN_STAGES } from "../../viewmodels/useKanbanBoardViewModel";
 
 export interface KanbanBoardProps {
   opportunities: CrmOpportunity[];
@@ -36,72 +27,52 @@ export interface KanbanBoardProps {
   isLoading?: boolean;
 }
 
-/**
- * Presentation View for the CRM Opportunity Kanban Board.
- * Adheres strictly to MVVM architecture: delegates all state, adjacency logic,
- * drag-and-drop state, and permissions to `useKanbanBoardViewModel`.
- */
 export function KanbanBoard({
-  opportunities,
-  stages,
-  boardSettings,
-  onMoveStage,
-  canUpdateOpportunity,
-  canManagePipelines,
-  errorMessage,
-  onClearError,
-  hideOutcomeDropzones = false,
-  isLoading = false,
+  opportunities, stages, boardSettings, onMoveStage, canUpdateOpportunity, canManagePipelines,
+  errorMessage, onClearError, hideOutcomeDropzones = false, isLoading = false,
 }: KanbanBoardProps) {
   const { t } = useI18n();
-
   const {
-    effectiveStages,
-    groupedOpportunities,
-    wonDealsCount,
-    lostDealsCount,
-    draggedOpportunity,
-    dragOverOutcome,
-    canUpdate,
-    canManage,
-    handleCardDragStart,
-    handleCardDragEnd,
-    handleDropOpportunity,
-    handleMoveForward,
-    handleMoveBackward,
-    handleDragOverOutcome,
-    handleDragLeaveOutcome,
-    handleDropOutcome,
+    effectiveStages, groupedOpportunities, wonDealsCount, lostDealsCount,
+    draggedOpportunity, dragOverOutcome, canUpdate, canManage,
+    handleCardDragStart, handleCardDragEnd, handleDropOpportunity,
+    handleMoveForward, handleMoveBackward, handleDragOverOutcome, handleDragLeaveOutcome, handleDropOutcome,
   } = useKanbanBoardViewModel({
-    opportunities,
-    stages,
-    onMoveStage,
-    canUpdateOpportunity,
-    canManagePipelines,
-    includeOutcomeStagesAsColumns: hideOutcomeDropzones,
+    opportunities, stages, onMoveStage, canUpdateOpportunity, canManagePipelines, includeOutcomeStagesAsColumns: hideOutcomeDropzones,
   });
 
   const swimlaneMode = boardSettings?.swimlaneMode ?? "none";
+  const cardDensity = boardSettings?.cardDensity ?? "Standard";
+
+  const swimlaneGroups = (() => {
+    if (swimlaneMode === "none") return [];
+    const map = new Map<string, { key: string; label: string; deals: CrmOpportunity[] }>();
+    for (const opp of opportunities) {
+      let key = "default";
+      let label = "General";
+      if (swimlaneMode === "assignee") {
+        key = opp.ownerUserId || "unassigned";
+        label = opp.ownerUserId ? `Owner: ${opp.ownerUserId.slice(0, 8)}` : "Unassigned";
+      } else if (swimlaneMode === "account") {
+        key = opp.accountId || opp.partyId || "unlinked";
+        label = opp.accountId ? `Account: ${opp.accountId.slice(0, 8)}` : opp.partyId ? `Party: ${opp.partyId.slice(0, 8)}` : "Unlinked Account / Prospect";
+      } else if (swimlaneMode === "dealType") {
+        key = `${opp.dealKind || "NewBusiness"}-${opp.currencyCode || "SAR"}`;
+        label = `${opp.dealKind || "NewBusiness"} • ${opp.currencyCode || "SAR"}`;
+      }
+      const existing = map.get(key);
+      if (existing) existing.deals.push(opp);
+      else map.set(key, { key, label, deals: [opp] });
+    }
+    return Array.from(map.values());
+  })();
 
   if (isLoading && opportunities.length === 0) {
     return (
-      <section
-        role="region"
-        aria-label={t("crmOpportunities.kanban.boardRegionLabel", {
-          defaultValue: "Opportunity Kanban Board",
-        })}
-        data-testid="kanban-board-skeleton"
-        className="w-full overflow-x-auto no-scrollbar pb-2"
-      >
-        <div
-          className="grid gap-1.5 pb-2 pt-1 min-h-[520px] w-full"
-          style={{ gridTemplateColumns: "repeat(7, minmax(136px, 1fr))" }}
-        >
+      <section role="region" aria-label={t("crmOpportunities.kanban.boardRegionLabel")} data-testid="kanban-board-skeleton" className="w-full overflow-x-auto no-scrollbar pb-2">
+        <div className="grid gap-1.5 pb-2 pt-1 min-h-[520px] w-full" style={{ gridTemplateColumns: "repeat(7, minmax(136px, 1fr))" }}>
           {Array.from({ length: 7 }).map((_, colIdx) => (
-            <div
-              key={colIdx}
-              className="rounded-xl border border-nx-line bg-nx-surface p-2.5 space-y-2.5"
-            >
+            <div key={colIdx} className="rounded-xl border border-nx-line bg-nx-surface p-2.5 space-y-2.5">
               <div className="flex items-center justify-between border-b border-nx-line pb-2">
                 <Skeleton className="h-3.5 w-20 rounded" />
                 <Skeleton className="h-4 w-6 rounded-full" />
@@ -124,39 +95,18 @@ export function KanbanBoard({
   }
 
   return (
-    <section
-      role="region"
-      aria-label={t("crmOpportunities.kanban.boardRegionLabel", {
-        defaultValue: "Opportunity Kanban Board",
-      })}
-      className="space-y-3"
-    >
-      {/* Dynamic Error / Rollback Notice */}
+    <section role="region" aria-label={t("crmOpportunities.kanban.boardRegionLabel")} className="space-y-3">
       {errorMessage && (
-        <Alert
-          variant="destructive"
-          data-testid="kanban-error-banner"
-          className="border-destructive/40 bg-destructive/10 text-destructive text-xs py-2 px-3 flex items-center justify-between"
-        >
+        <Alert variant="destructive" data-testid="kanban-error-banner" className="border-destructive/40 bg-destructive/10 text-destructive text-xs py-2 px-3 flex items-center justify-between">
           <div className="flex items-center gap-2">
             <AlertCircle className="size-4 shrink-0" />
             <div>
-              <AlertTitle className="text-xs font-semibold">
-                {t("crmOpportunities.kanban.moveRejectedTitle", { defaultValue: "Stage Transition Rejected" })}
-              </AlertTitle>
-              <AlertDescription className="text-[11px] leading-tight">
-                {errorMessage}
-              </AlertDescription>
+              <AlertTitle className="text-xs font-semibold">{t("crmOpportunities.kanban.moveRejectedTitle", { defaultValue: "Stage Transition Rejected" })}</AlertTitle>
+              <AlertDescription className="text-[11px] leading-tight">{errorMessage}</AlertDescription>
             </div>
           </div>
           {onClearError && (
-            <Button
-              type="button"
-              variant="ghost"
-              size="sm"
-              onClick={onClearError}
-              className="h-6 px-2 text-xs text-destructive hover:bg-destructive/20"
-            >
+            <Button type="button" variant="ghost" size="sm" onClick={onClearError} className="h-6 px-2 text-xs text-destructive hover:bg-destructive/20">
               {t("common.dismiss", { defaultValue: "Dismiss" })}
             </Button>
           )}
@@ -164,25 +114,28 @@ export function KanbanBoard({
       )}
 
       {swimlaneMode !== "none" && (
-        <div
-          data-testid="kanban-swimlane-banner"
-          className="rounded-nx-md border border-nx-line bg-nx-raised/40 px-3 py-1.5 flex items-center justify-between text-xs text-nx-ink-2"
-        >
-          <span className="font-semibold">
-            Swimlanes Active: <span className="text-nx-accent uppercase font-mono">{swimlaneMode}</span>
-          </span>
-          <span className="text-[11px] text-nx-ink-3">{opportunities.length} deals grouped</span>
+        <div data-testid="kanban-swimlane-banner" className="rounded-nx-md border border-nx-line bg-nx-raised/40 px-3 py-2 space-y-2 text-xs text-nx-ink-2">
+          <div className="flex items-center justify-between">
+            <span className="font-semibold">Swimlanes Active: <span className="text-nx-accent uppercase font-mono">{swimlaneMode}</span></span>
+            <span className="text-[11px] text-nx-ink-3">{opportunities.length} deals across {swimlaneGroups.length} swimlanes • Density: {cardDensity}</span>
+          </div>
+          {swimlaneGroups.length > 0 && (
+            <div className="flex flex-wrap items-center gap-1.5" data-testid="kanban-swimlane-groups">
+              {swimlaneGroups.map((lane) => (
+                <span key={lane.key} data-testid={`kanban-swimlane-group-${lane.key}`} className="inline-flex items-center gap-1.5 rounded border border-nx-line bg-nx-surface px-2 py-0.5 text-[11px] font-medium text-nx-ink">
+                  <span>{lane.label}</span>
+                  <span className="font-mono text-[10px] text-nx-accent font-bold">({lane.deals.length})</span>
+                </span>
+              ))}
+            </div>
+          )}
         </div>
       )}
 
-      {/* Horizontal Scrollable Kanban Columns Container */}
       <div className="w-full overflow-x-auto no-scrollbar pb-2">
         <div
           data-testid="kanban-columns-container"
-          className={cn(
-            "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 pb-2 pt-1 min-h-[520px] w-full",
-            effectiveStages.length >= 6 ? "gap-1.5" : "gap-2.5"
-          )}
+          className={cn("grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 pb-2 pt-1 min-h-[520px] w-full", effectiveStages.length >= 6 ? "gap-1.5" : "gap-2.5")}
           style={{
             gridTemplateColumns:
               effectiveStages.length >= 6
@@ -192,32 +145,29 @@ export function KanbanBoard({
                   : undefined,
           }}
         >
-          {effectiveStages.map((stage, index) => {
-            const colOpps = groupedOpportunities.get(stage.key) || [];
-            return (
-              <KanbanColumn
-                key={stage.key}
-                stage={stage}
-                opportunities={colOpps}
-                stageIndex={index}
-                totalStages={effectiveStages.length}
-                allStages={effectiveStages}
-                wipLimit={boardSettings?.wipLimits?.[stage.key]}
-                draggedOpportunity={draggedOpportunity}
-                onCardDragStart={handleCardDragStart}
-                onCardDragEnd={handleCardDragEnd}
-                canUpdateOpportunity={canUpdate}
-                canManagePipelines={canManage}
-                onDropOpportunity={handleDropOpportunity}
-                onMoveForward={handleMoveForward}
-                onMoveBackward={handleMoveBackward}
-              />
-            );
-          })}
+          {effectiveStages.map((stage, index) => (
+            <KanbanColumn
+              key={stage.key}
+              stage={stage}
+              opportunities={groupedOpportunities.get(stage.key) || []}
+              stageIndex={index}
+              totalStages={effectiveStages.length}
+              allStages={effectiveStages}
+              wipLimit={boardSettings?.wipLimits?.[stage.key]}
+              cardDensity={cardDensity}
+              draggedOpportunity={draggedOpportunity}
+              onCardDragStart={handleCardDragStart}
+              onCardDragEnd={handleCardDragEnd}
+              canUpdateOpportunity={canUpdate}
+              canManagePipelines={canManage}
+              onDropOpportunity={handleDropOpportunity}
+              onMoveForward={handleMoveForward}
+              onMoveBackward={handleMoveBackward}
+            />
+          ))}
         </div>
       </div>
 
-      {/* Legacy Outcome Drop Zones (only rendered when hideOutcomeDropzones is false) */}
       {!hideOutcomeDropzones && (
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
           <div
@@ -236,19 +186,11 @@ export function KanbanBoard({
             <div className="flex items-center gap-2.5">
               <CheckCircle2 className="size-4 text-success shrink-0" />
               <div>
-                <div className="text-xs font-bold text-success uppercase tracking-wider">
-                  {t("crmOpportunities.dialogs.close.outcomeWon", { defaultValue: "Closed Won" })}
-                </div>
-                <div className="text-[11px] text-nx-ink-3">
-                  {t("crmOpportunities.kanban.dropWonHint", {
-                    defaultValue: "Drag an open deal here to verify Account/Contact & record Close Won notes",
-                  })}
-                </div>
+                <div className="text-xs font-bold text-success uppercase tracking-wider">{t("crmOpportunities.dialogs.close.outcomeWon")}</div>
+                <div className="text-[11px] text-nx-ink-3">{t("crmOpportunities.kanban.dropWonHint")}</div>
               </div>
             </div>
-            <span className="text-xs font-mono font-bold text-success bg-success/10 border border-success/30 rounded px-2 py-0.5">
-              {wonDealsCount}
-            </span>
+            <span className="text-xs font-mono font-bold text-success bg-success/10 border border-success/30 rounded px-2 py-0.5">{wonDealsCount}</span>
           </div>
 
           <div
@@ -267,19 +209,11 @@ export function KanbanBoard({
             <div className="flex items-center gap-2.5">
               <XCircle className="size-4 text-destructive shrink-0" />
               <div>
-                <div className="text-xs font-bold text-destructive uppercase tracking-wider">
-                  {t("crmOpportunities.dialogs.close.outcomeLost", { defaultValue: "Closed Lost" })}
-                </div>
-                <div className="text-[11px] text-nx-ink-3">
-                  {t("crmOpportunities.kanban.dropLostHint", {
-                    defaultValue: "Drag an open deal here to capture loss competitor and root-cause reasons",
-                  })}
-                </div>
+                <div className="text-xs font-bold text-destructive uppercase tracking-wider">{t("crmOpportunities.dialogs.close.outcomeLost")}</div>
+                <div className="text-[11px] text-nx-ink-3">{t("crmOpportunities.kanban.dropLostHint")}</div>
               </div>
             </div>
-            <span className="text-xs font-mono font-bold text-destructive bg-destructive/10 border border-destructive/30 rounded px-2 py-0.5">
-              {lostDealsCount}
-            </span>
+            <span className="text-xs font-mono font-bold text-destructive bg-destructive/10 border border-destructive/30 rounded px-2 py-0.5">{lostDealsCount}</span>
           </div>
         </div>
       )}

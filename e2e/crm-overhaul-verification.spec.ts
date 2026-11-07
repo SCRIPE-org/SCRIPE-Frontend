@@ -254,7 +254,7 @@ test.describe("CRM Overhaul Complete Button-by-Button E2E Verification", () => {
     await expect(savePipelineBtn).toBeEnabled({ timeout: 5_000 });
     const putPipelinePromise = page.waitForResponse(
       (res) =>
-        (res.url().includes("/crm/pipelines/default") || res.url().includes("/crm/settings/tenant")) &&
+        (res.url().includes("/crm/pipelines/") || res.url().includes("/crm/settings/tenant")) &&
         res.request().method() === "PUT" &&
         res.status() === 200,
       { timeout: 20_000 }

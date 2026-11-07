@@ -2,7 +2,8 @@
 
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
-import { BookOpen, CheckCircle2, Compass, GitBranch, Layers, ShieldCheck, Sparkles, Users } from "lucide-react";
+import { BookOpen, CheckCircle2, Compass, GitBranch, ShieldCheck, Sparkles, Users } from "lucide-react";
+import { useI18n } from "@core/providers/i18n-provider";
 import { Badge } from "@core/ui/badge";
 import { Button } from "@core/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@core/ui/dialog";
@@ -17,67 +18,53 @@ const USER_JOURNEYS = [
   {
     id: "pipeline-roles",
     icon: ShieldCheck,
-    badge: "Governance & Queues",
-    titleEn: "1. Decoupled Pipeline Roles vs. Identity RBAC",
-    titleAr: "1. فصل أدوار خطوط البيع عن أدوار الهوية (Identity RBAC)",
-    summaryEn:
-      "All commercial reps share Identity role 'CRM Sales Rep', while functional approval authority inside pipelines is governed by decoupled CRM Pipeline Roles (pipe_role:deal_desk, pipe_role:commercial_director, pipe_role:finance_gatekeeper) with monetary limits and backup delegation.",
-    summaryAr:
-      "يشترك مندوبو المبيعات في دور الهوية القياسي، بينما تُدار صلاحيات الاعتماد داخل المراحل عبر أدوار خطوط البيع المستقلة مع حدود مالية وتفويض بديل تلقائي.",
-    stepsEn: [
-      "Layer 1 — Platform Identity RBAC: Controls module access &crm.workflow_roles.manage.",
-      "Layer 2 — CRM Pipeline Roles (pipe_role:*): Functional approval queues with members, monetary caps & backup role.",
-      "Layer 3 — Record-Relative Principals (ABAC): Record Owner, Creator, Line Manager & Four-Eyes.",
-      "Layer 4 — Buying Committee Roles: Customer stakeholders (Decision Maker, CFO, Legal).",
+    badgeKey: "crm.smartGuide.j1Badge",
+    titleKey: "crm.smartGuide.j1Title",
+    summaryKey: "crm.smartGuide.j1Summary",
+    stepKeys: [
+      "crm.smartGuide.j1Step1",
+      "crm.smartGuide.j1Step2",
+      "crm.smartGuide.j1Step3",
+      "crm.smartGuide.j1Step4",
     ],
-    ctaLabelEn: "Open Pipeline Roles Settings",
-    ctaLabelAr: "فتح إعدادات أدوار خطوط البيع",
+    ctaKey: "crm.smartGuide.j1Cta",
     ctaHref: "/crm/settings?tab=pipeline-roles",
   },
   {
     id: "workflow-studio",
     icon: GitBranch,
-    badge: "2D Studio v4",
-    titleEn: "2. 2D Workflow Studio, Harmonic Colors & Live Simulator",
-    titleAr: "2. استوديو مسارات العمل ثنائي الأبعاد والمحاكي الفوري",
-    summaryEn:
-      "Design Deal & Lead pipelines visually with 18 Nexus color tokens + Custom Hex (#RRGGBB) auto-harmonized via CSS color-mix(), SAP-style Stage Field-Locking, Stage Playbook Auto-Tasks, and the Live Simulation Sandbox.",
-    summaryAr:
-      "صمّم مسارات الصفقات والعملاء المحتملين بصرياً مع 18 لوناً قياسياً وألوان Hex مخصصة متناغمة تلقائياً، وقفل الحقول في المراحل، ومهام الدليل التلقائية، ومحاكي المسارات.",
-    stepsEn: [
-      "Click any Stage Node to pick from 18 semantic swatches or any Custom Hex (#RRGGBB).",
-      "Configure Stage Playbook mandatory tasks and SAP-style Read-Only Field Locks per stage.",
-      "Open the 4-Category Rule Catalog to configure Multi-Tier Approval Matrices (Any/All Quorum).",
-      "Click 'Simulate Workflow' on the 2D Canvas toolbar to test Allowed (Emerald) vs Blocked (Rose) transitions live.",
+    badgeKey: "crm.smartGuide.j2Badge",
+    titleKey: "crm.smartGuide.j2Title",
+    summaryKey: "crm.smartGuide.j2Summary",
+    stepKeys: [
+      "crm.smartGuide.j2Step1",
+      "crm.smartGuide.j2Step2",
+      "crm.smartGuide.j2Step3",
+      "crm.smartGuide.j2Step4",
     ],
-    ctaLabelEn: "Launch 2D Workflow Studio",
-    ctaLabelAr: "تشغيل استوديو مسارات العمل",
+    ctaKey: "crm.smartGuide.j2Cta",
     ctaHref: "/crm/pipelines",
   },
   {
     id: "deal-360",
     icon: Users,
-    badge: "Deal 360 & Sports OS",
-    titleEn: "3. Deal 360 Buying Committee, Quotes & Audit Ledger",
-    titleAr: "3. نظرة شاملة للصفقة ولجنة الشراء وسجل الاعتمادات",
-    summaryEn:
-      "Manage customer Buying Committee stakeholders, build multi-item commercial quotes with automatic >15% discount approval gates, complete Stage Playbook checklists, and trigger native Venue & Academy B2B provisioning.",
-    summaryAr:
-      "أدر أصحاب المصلحة في لجنة الشراء، وأنشئ عروض الأسعار مع بوابة اعتماد الخصومات (>15%)، وتابع سجل انتقالات المراحل والتكامل المباشر مع المنشآت والأكاديمية.",
-    stepsEn: [
-      "Assign customer contacts to Buying Committee roles or add new stakeholder roles inline.",
-      "Verify Stage Dwell-Time SLA status and check off Stage Playbook tasks.",
-      "Inspect the Bidirectional Stage Transition & Approval Audit Ledger.",
-      "Place Venue Block-Booking Holds or provision Academy B2B Scholarship Cohorts in 1 click.",
+    badgeKey: "crm.smartGuide.j3Badge",
+    titleKey: "crm.smartGuide.j3Title",
+    summaryKey: "crm.smartGuide.j3Summary",
+    stepKeys: [
+      "crm.smartGuide.j3Step1",
+      "crm.smartGuide.j3Step2",
+      "crm.smartGuide.j3Step3",
+      "crm.smartGuide.j3Step4",
     ],
-    ctaLabelEn: "Explore Opportunities Kanban",
-    ctaLabelAr: "استعراض لوحة الفرص البيعية",
+    ctaKey: "crm.smartGuide.j3Cta",
     ctaHref: "/crm/opportunities",
   },
 ] as const;
 
 export function CrmSmartGuideModal({ open, onOpenChange, isRtl = false }: CrmSmartGuideModalProps) {
   const router = useRouter();
+  const { t } = useI18n();
   const [activeId, setActiveId] = useState<string>(USER_JOURNEYS[0].id);
   const current = USER_JOURNEYS.find((j) => j.id === activeId) ?? USER_JOURNEYS[0];
 
@@ -87,18 +74,16 @@ export function CrmSmartGuideModal({ open, onOpenChange, isRtl = false }: CrmSma
         <DialogHeader>
           <div className="flex items-center justify-between gap-2">
             <Badge variant="default" className="text-[10px] font-mono gap-1">
-              <Sparkles className="w-3 h-3" />SCRIPE CRM v4 INTERACTIVE COACH
+              <Sparkles className="w-3 h-3" />{t("crm.smartGuide.coachBadge")}
             </Badge>
-            <Badge variant="outline" className="text-[10px] font-mono">3 Guided Journeys</Badge>
+            <Badge variant="outline" className="text-[10px] font-mono">{t("crm.smartGuide.journeysCountBadge")}</Badge>
           </div>
           <DialogTitle className="text-base font-bold text-nx-ink flex items-center gap-2 pt-1">
             <BookOpen className="w-4 h-4 text-nx-accent" />
-            {isRtl ? "الدليل الذكي ومسارات الاستخدام التفاعلية لنظام CRM" : "CRM Smart Guide & Interactive User Journeys"}
+            {t("crm.smartGuide.modalTitle")}
           </DialogTitle>
           <DialogDescription className="text-xs text-nx-ink-2">
-            {isRtl
-              ? "استكشف المعمارية الرباعية للأدوار، واستوديو مسارات العمل ثنائي الأبعاد، وإعدادات الحوكمة المتقدمة."
-              : "Master the 4-layer role architecture, 2D Workflow Studio v4, SAP-style stage field locks, and Deal 360 execution."}
+            {t("crm.smartGuide.modalSubtitle")}
           </DialogDescription>
         </DialogHeader>
 
@@ -119,10 +104,10 @@ export function CrmSmartGuideModal({ open, onOpenChange, isRtl = false }: CrmSma
                   <div className="flex items-start gap-2 w-full min-w-0">
                     <Icon className="w-3.5 h-3.5 text-nx-accent shrink-0 mt-0.5" />
                     <span className="text-xs font-bold text-nx-ink line-clamp-2 break-words text-start leading-snug whitespace-normal">
-                      {isRtl ? j.titleAr : j.titleEn}
+                      {t(j.titleKey)}
                     </span>
                   </div>
-                  <Badge variant="outline" className="text-[9px] font-mono shrink-0">{j.badge}</Badge>
+                  <Badge variant="outline" className="text-[9px] font-mono shrink-0">{t(j.badgeKey)}</Badge>
                 </Button>
               );
             })}
@@ -130,14 +115,14 @@ export function CrmSmartGuideModal({ open, onOpenChange, isRtl = false }: CrmSma
 
           <div className="md:col-span-7 rounded-md border border-nx-line bg-nx-raised/40 p-4 space-y-3" data-testid={`smart-guide-panel-${current.id}`}>
             <div className="space-y-1">
-              <h4 className="text-sm font-bold text-nx-ink">{isRtl ? current.titleAr : current.titleEn}</h4>
-              <p className="text-xs text-nx-ink-2 leading-relaxed">{isRtl ? current.summaryAr : current.summaryEn}</p>
+              <h4 className="text-sm font-bold text-nx-ink">{t(current.titleKey)}</h4>
+              <p className="text-xs text-nx-ink-2 leading-relaxed">{t(current.summaryKey)}</p>
             </div>
             <div className="space-y-1.5 pt-1">
-              {current.stepsEn.map((step, idx) => (
-                <div key={idx} className="flex items-start gap-2 rounded border border-nx-line bg-nx-surface px-2.5 py-1.5 text-xs">
+              {current.stepKeys.map((stepKey) => (
+                <div key={stepKey} className="flex items-start gap-2 rounded border border-nx-line bg-nx-surface px-2.5 py-1.5 text-xs">
                   <CheckCircle2 className="w-3.5 h-3.5 text-success shrink-0 mt-0.5" />
-                  <span className="text-nx-ink">{step}</span>
+                  <span className="text-nx-ink">{t(stepKey)}</span>
                 </div>
               ))}
             </div>
@@ -153,7 +138,7 @@ export function CrmSmartGuideModal({ open, onOpenChange, isRtl = false }: CrmSma
                 }}
               >
                 <Compass className="w-3.5 h-3.5" />
-                {isRtl ? current.ctaLabelAr : current.ctaLabelEn}
+                {t(current.ctaKey)}
               </Button>
             </div>
           </div>
@@ -161,7 +146,7 @@ export function CrmSmartGuideModal({ open, onOpenChange, isRtl = false }: CrmSma
 
         <DialogFooter>
           <Button type="button" variant="outline" onClick={() => onOpenChange(false)} data-testid="close-smart-guide-btn">
-            {isRtl ? "إغلاق الدليل" : "Close Guide"}
+            {t("crm.smartGuide.closeBtn")}
           </Button>
         </DialogFooter>
       </DialogContent>

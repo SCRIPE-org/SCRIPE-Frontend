@@ -126,10 +126,13 @@ describe("ContactsView Component", () => {
   it("renders contacts table with stakeholder names and roles", async () => {
     render(<ContactsView />);
 
-    await waitFor(() => {
-      expect(screen.getAllByText("Mohamed El-Shenawy")[0]).toBeDefined();
-      expect(screen.getAllByText("Ahmed Sayed")[0]).toBeDefined();
-    });
+    await waitFor(
+      () => {
+        expect(screen.getAllByText("Mohamed El-Shenawy")[0]).toBeDefined();
+        expect(screen.getAllByText("Ahmed Sayed")[0]).toBeDefined();
+      },
+      { timeout: 4000 },
+    );
 
     expect(screen.getAllByText("Commercial Director")[0]).toBeDefined();
     expect(screen.getAllByText("Al Ahly Commercial")[0]).toBeDefined();

@@ -4,8 +4,8 @@ import { useRouter } from "next/navigation";
 import { useI18n } from "@core/providers/i18n-provider";
 import { User, Building2, Mail, Phone, Eye, Calendar, ArrowUpRight } from "lucide-react";
 import { Button } from "@core/ui/button";
-import { Badge } from "@core/ui/badge";
 import { EmptyState } from "@core/ui/empty-state";
+import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from "@core/ui/table";
 import { cn } from "@core/common/utils";
 import type { CrmContact } from "../../domain/entities/ContactEntity";
 
@@ -23,11 +23,8 @@ export function ContactsTable({ contacts, className }: ContactsTableProps) {
     return (
       <div className="rounded-nx-lg border border-nx-line bg-nx-surface p-8 text-center">
         <EmptyState
-          title={t("crmContacts.table.emptyTitle") || "No Contacts Found"}
-          description={
-            t("crmContacts.table.emptyDescription") ||
-            "No commercial contacts match the current filter or search criteria."
-          }
+          title={t("crmContacts.table.emptyTitle")}
+          description={t("crmContacts.table.emptyDescription")}
         />
       </div>
     );
@@ -42,18 +39,18 @@ export function ContactsTable({ contacts, className }: ContactsTableProps) {
       dir={isRtl ? "rtl" : "ltr"}
     >
       <div className="overflow-x-auto no-scrollbar">
-        <table className="w-full text-left text-xs border-collapse" dir={isRtl ? "rtl" : "ltr"}>
-          <thead>
-            <tr className="border-b border-nx-line bg-nx-raised/50 text-nx-ink-2 font-semibold">
-              <th className="px-4 py-3 text-start">{t("crmContacts.table.contact") || "Contact Name"}</th>
-              <th className="px-4 py-3 text-start">{t("crmContacts.table.account") || "Primary Account"}</th>
-              <th className="px-4 py-3 text-start">{t("crmContacts.table.role") || "Job Title & Dept"}</th>
-              <th className="px-4 py-3 text-start">{t("crmContacts.table.communication") || "Direct Contact"}</th>
-              <th className="px-4 py-3 text-start">{t("crmContacts.table.createdAt") || "Created"}</th>
-              <th className="px-4 py-3 text-end">{t("crmContacts.table.actions") || "Actions"}</th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-nx-line">
+        <Table className="w-full text-left text-xs border-collapse" dir={isRtl ? "rtl" : "ltr"}>
+          <TableHeader>
+            <TableRow className="border-b border-nx-line bg-nx-raised/50 text-nx-ink-2 font-semibold">
+              <TableHead className="px-4 py-3 text-start">{t("crmContacts.table.contact")}</TableHead>
+              <TableHead className="px-4 py-3 text-start">{t("crmContacts.table.account")}</TableHead>
+              <TableHead className="px-4 py-3 text-start">{t("crmContacts.table.role")}</TableHead>
+              <TableHead className="px-4 py-3 text-start">{t("crmContacts.table.communication")}</TableHead>
+              <TableHead className="px-4 py-3 text-start">{t("crmContacts.table.createdAt")}</TableHead>
+              <TableHead className="px-4 py-3 text-end">{t("crmContacts.table.actions")}</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody className="divide-y divide-nx-line">
             {contacts.map((contact) => {
               const formattedDate = contact.createdAt
                 ? new Date(contact.createdAt).toLocaleDateString(language === "ar" ? "ar-SA" : "en-US", {
@@ -64,12 +61,12 @@ export function ContactsTable({ contacts, className }: ContactsTableProps) {
                 : "—";
 
               return (
-                <tr
+                <TableRow
                   key={contact.id}
                   className="hover:bg-nx-raised/40 transition-colors group cursor-pointer"
                   onClick={() => router.push(`/crm/contacts/${contact.id}`)}
                 >
-                  <td className="px-4 py-3.5">
+                  <TableCell className="px-4 py-3.5">
                     <div className="flex items-center gap-2.5">
                       <div className="size-7 rounded-full bg-nx-raised border border-nx-line flex items-center justify-center shrink-0">
                         <User className="size-3.5 text-nx-accent" />
@@ -92,9 +89,9 @@ export function ContactsTable({ contacts, className }: ContactsTableProps) {
                         )}
                       </div>
                     </div>
-                  </td>
+                  </TableCell>
 
-                  <td className="px-4 py-3.5">
+                  <TableCell className="px-4 py-3.5">
                     {contact.primaryAccountId ? (
                       <div
                         className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-nx-sm bg-nx-raised border border-nx-line hover:border-nx-accent transition-colors text-nx-ink"
@@ -107,18 +104,18 @@ export function ContactsTable({ contacts, className }: ContactsTableProps) {
                         <span className="font-medium text-xs">
                           {language === "ar" && contact.primaryAccountNameAr
                             ? contact.primaryAccountNameAr
-                            : contact.primaryAccountNameEn || "Account"}
+                            : contact.primaryAccountNameEn || t("crmContacts.detail.defaultAccountLabel")}
                         </span>
                         <ArrowUpRight className="size-2.5 text-nx-ink-3" />
                       </div>
                     ) : (
                       <span className="text-nx-ink-3 text-[11px] italic">
-                        {t("crmContacts.table.noAccount") || "Unassigned"}
+                        {t("crmContacts.table.noAccount")}
                       </span>
                     )}
-                  </td>
+                  </TableCell>
 
-                  <td className="px-4 py-3.5 whitespace-nowrap">
+                  <TableCell className="px-4 py-3.5 whitespace-nowrap">
                     <span className="font-medium text-nx-ink block">
                       {contact.jobTitleSnapshot || "—"}
                     </span>
@@ -127,9 +124,9 @@ export function ContactsTable({ contacts, className }: ContactsTableProps) {
                         {contact.departmentName}
                       </span>
                     )}
-                  </td>
+                  </TableCell>
 
-                  <td className="px-4 py-3.5 whitespace-nowrap text-[11px] text-nx-ink-2 space-y-0.5">
+                  <TableCell className="px-4 py-3.5 whitespace-nowrap text-[11px] text-nx-ink-2 space-y-0.5">
                     {contact.email && (
                       <div className="flex items-center gap-1.5">
                         <Mail className="size-3 text-nx-ink-3" />
@@ -143,16 +140,16 @@ export function ContactsTable({ contacts, className }: ContactsTableProps) {
                       </div>
                     )}
                     {!contact.email && !contact.phone && <span className="text-nx-ink-3">—</span>}
-                  </td>
+                  </TableCell>
 
-                  <td className="px-4 py-3.5 whitespace-nowrap text-nx-ink-3 text-[11px]">
+                  <TableCell className="px-4 py-3.5 whitespace-nowrap text-nx-ink-3 text-[11px]">
                     <div className="flex items-center gap-1">
                       <Calendar className="size-3 text-nx-ink-3" />
                       {formattedDate}
                     </div>
-                  </td>
+                  </TableCell>
 
-                  <td className="px-4 py-3.5 whitespace-nowrap text-end" onClick={(e) => e.stopPropagation()}>
+                  <TableCell className="px-4 py-3.5 whitespace-nowrap text-end" onClick={(e) => e.stopPropagation()}>
                     <Button
                       type="button"
                       variant="ghost"
@@ -161,14 +158,14 @@ export function ContactsTable({ contacts, className }: ContactsTableProps) {
                       className="h-7 px-2.5 text-xs gap-1 border border-nx-line bg-nx-surface hover:bg-nx-raised text-nx-ink"
                     >
                       <Eye className="size-3 text-nx-accent" />
-                      <span>{t("crmContacts.actions.viewContext") || "View Context"}</span>
+                      <span>{t("crmContacts.actions.viewContext")}</span>
                     </Button>
-                  </td>
-                </tr>
+                  </TableCell>
+                </TableRow>
               );
             })}
-          </tbody>
-        </table>
+          </TableBody>
+        </Table>
       </div>
     </div>
   );

@@ -5,6 +5,7 @@ import { useI18n } from "@core/providers/i18n-provider";
 import { User, Mail, Phone, Calendar, ArrowUpRight } from "lucide-react";
 import { Button } from "@core/ui/button";
 import { EmptyState } from "@core/ui/empty-state";
+import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from "@core/ui/table";
 import { cn } from "@core/common/utils";
 import type { CrmLead } from "../../domain/entities/LeadEntity";
 import { LeadStatusBadge } from "./LeadStatusBadge";
@@ -39,20 +40,20 @@ export function LeadsTable({ leads, className }: LeadsTableProps) {
       dir={isRtl ? "rtl" : "ltr"}
     >
       <div className="overflow-x-auto no-scrollbar">
-        <table className="w-full text-left text-xs border-collapse" dir={isRtl ? "rtl" : "ltr"}>
-          <thead>
-            <tr className="border-b border-nx-line bg-nx-raised/50 text-nx-ink-2 font-semibold">
-              <th className="px-4 py-3 text-start">{t("crmLeads.table.title")}</th>
-              <th className="px-4 py-3 text-start">{t("crmLeads.table.contact")}</th>
-              <th className="px-4 py-3 text-start">{t("crmLeads.table.company")}</th>
-              <th className="px-4 py-3 text-start">{t("crmLeads.table.status")}</th>
-              <th className="px-4 py-3 text-start">{t("crmLeads.table.estimatedValue")}</th>
-              <th className="px-4 py-3 text-start">{t("crmLeads.table.source")}</th>
-              <th className="px-4 py-3 text-start">{t("crmLeads.table.date")}</th>
-              <th className="px-4 py-3 text-end">{t("crmLeads.table.actions")}</th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-nx-line">
+        <Table className="w-full text-left text-xs border-collapse" dir={isRtl ? "rtl" : "ltr"}>
+          <TableHeader>
+            <TableRow className="border-b border-nx-line bg-nx-raised/50 text-nx-ink-2 font-semibold">
+              <TableHead className="px-4 py-3 text-start">{t("crmLeads.table.title")}</TableHead>
+              <TableHead className="px-4 py-3 text-start">{t("crmLeads.table.contact")}</TableHead>
+              <TableHead className="px-4 py-3 text-start">{t("crmLeads.table.company")}</TableHead>
+              <TableHead className="px-4 py-3 text-start">{t("crmLeads.table.status")}</TableHead>
+              <TableHead className="px-4 py-3 text-start">{t("crmLeads.table.estimatedValue")}</TableHead>
+              <TableHead className="px-4 py-3 text-start">{t("crmLeads.table.source")}</TableHead>
+              <TableHead className="px-4 py-3 text-start">{t("crmLeads.table.date")}</TableHead>
+              <TableHead className="px-4 py-3 text-end">{t("crmLeads.table.actions")}</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody className="divide-y divide-nx-line">
             {leads.map((lead) => {
               const formattedDate = lead.createdAt
                 ? new Date(lead.createdAt).toLocaleDateString(language === "ar" ? "ar-SA" : "en-US", {
@@ -63,13 +64,13 @@ export function LeadsTable({ leads, className }: LeadsTableProps) {
                 : "—";
 
               return (
-                <tr
+                <TableRow
                   key={lead.id}
                   onClick={() => router.push(`/crm/leads/${lead.id}`)}
                   className="group hover:bg-nx-raised/40 transition-colors duration-nx-micro cursor-pointer"
                 >
                   {/* Title */}
-                  <td className="px-4 py-3 max-w-xs">
+                  <TableCell className="px-4 py-3 max-w-xs">
                     <span className="font-semibold text-nx-ink group-hover:text-nx-accent transition-colors line-clamp-1 block">
                       {lead.title}
                     </span>
@@ -78,10 +79,10 @@ export function LeadsTable({ leads, className }: LeadsTableProps) {
                         {lead.notes}
                       </span>
                     )}
-                  </td>
+                  </TableCell>
 
                   {/* Contact */}
-                  <td className="px-4 py-3">
+                  <TableCell className="px-4 py-3">
                     <div className="flex items-center gap-1.5">
                       <div className="size-5 rounded-full bg-nx-raised border border-nx-line flex items-center justify-center shrink-0">
                         <User className="size-3 text-nx-ink-3" />
@@ -96,10 +97,10 @@ export function LeadsTable({ leads, className }: LeadsTableProps) {
                         )}
                       </div>
                     </div>
-                  </td>
+                  </TableCell>
 
                   {/* Company */}
-                  <td className="px-4 py-3">
+                  <TableCell className="px-4 py-3">
                     <span className="font-medium text-nx-ink-2 truncate max-w-[160px] block">
                       {lead.companyName || "—"}
                     </span>
@@ -109,37 +110,37 @@ export function LeadsTable({ leads, className }: LeadsTableProps) {
                         {lead.phone}
                       </span>
                     )}
-                  </td>
+                  </TableCell>
 
                   {/* Status */}
-                  <td className="px-4 py-3">
+                  <TableCell className="px-4 py-3">
                     <LeadStatusBadge status={lead.status} />
-                  </td>
+                  </TableCell>
 
                   {/* Estimated Value */}
-                  <td className="px-4 py-3 font-bold text-nx-ink">
+                  <TableCell className="px-4 py-3 font-bold text-nx-ink">
                     {lead.estimatedValue !== undefined && lead.estimatedValue !== null
                       ? `${lead.currency} ${lead.estimatedValue.toLocaleString()}`
                       : "—"}
-                  </td>
+                  </TableCell>
 
                   {/* Source */}
-                  <td className="px-4 py-3">
+                  <TableCell className="px-4 py-3">
                     <span className="inline-flex items-center px-2 py-0.5 rounded-nx-xs bg-nx-raised border border-nx-line text-[11px] text-nx-ink-2">
-                      {lead.source || "Direct"}
+                      {lead.source || t("crmLeads.detail.directSource")}
                     </span>
-                  </td>
+                  </TableCell>
 
                   {/* Date */}
-                  <td className="px-4 py-3 text-nx-ink-3">
+                  <TableCell className="px-4 py-3 text-nx-ink-3">
                     <span className="inline-flex items-center gap-1">
                       <Calendar className="size-2.5" />
                       {formattedDate}
                     </span>
-                  </td>
+                  </TableCell>
 
                   {/* Actions */}
-                  <td className="px-4 py-3 text-end">
+                  <TableCell className="px-4 py-3 text-end">
                     <Button
                       variant="ghost"
                       size="sm"
@@ -152,12 +153,12 @@ export function LeadsTable({ leads, className }: LeadsTableProps) {
                       <span>{t("crmLeads.actions.viewDetails")}</span>
                       <ArrowUpRight className="size-3" />
                     </Button>
-                  </td>
-                </tr>
+                  </TableCell>
+                </TableRow>
               );
             })}
-          </tbody>
-        </table>
+          </TableBody>
+        </Table>
       </div>
     </div>
   );

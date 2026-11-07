@@ -5,15 +5,7 @@ import { useRouter } from "next/navigation";
 import { Card } from "@core/ui/card";
 import { Badge } from "@core/ui/badge";
 import { Button } from "@core/ui/button";
-import {
-  ShieldCheck,
-  ShieldAlert,
-  ChevronLeft,
-  ChevronRight,
-  Calendar,
-  Briefcase,
-  Flame,
-} from "lucide-react";
+import { ShieldCheck, ShieldAlert, ChevronLeft, ChevronRight, Calendar, Briefcase, Flame } from "lucide-react";
 import { cn } from "@core/common/utils";
 import { useI18n } from "@core/providers/i18n-provider";
 import { useCrmCurrency, useCrmWorkflowsStore } from "@modules/crm";
@@ -24,6 +16,7 @@ export interface KanbanCardProps {
   currentStageIndex: number;
   totalStages: number;
   slaTargetDays?: number;
+  cardDensity?: "Compact" | "Standard" | "Executive";
   onMoveForward?: (opp: CrmOpportunity) => void;
   onMoveBackward?: (opp: CrmOpportunity) => void;
   isDragging?: boolean;
@@ -31,19 +24,9 @@ export interface KanbanCardProps {
   onDragEnd?: () => void;
 }
 
-/**
- * Accessible Kanban card displaying opportunity summary, party gate status, SLA rotting indicator, and stage shift controls.
- */
 export function KanbanCard({
-  opportunity,
-  currentStageIndex,
-  totalStages,
-  slaTargetDays,
-  onMoveForward,
-  onMoveBackward,
-  isDragging = false,
-  onDragStart,
-  onDragEnd,
+  opportunity, currentStageIndex, totalStages, slaTargetDays, cardDensity = "Standard",
+  onMoveForward, onMoveBackward, isDragging = false, onDragStart, onDragEnd,
 }: KanbanCardProps) {
   const router = useRouter();
   const { t, language } = useI18n();
@@ -53,40 +36,26 @@ export function KanbanCard({
 
   const matchedStage = activeDealWorkflow?.stages.find((st) => st.stageKey === opportunity.stageKey);
   const effectiveSlaDays = slaTargetDays ?? matchedStage?.slaDays ?? 0;
-  const createdMs = opportunity.createdAt ? new Date(opportunity.createdAt).getTime() : NaN;
-  const ageDays = !isNaN(createdMs)
-    ? Math.max(0, Math.floor((Date.now() - createdMs) / (1000 * 60 * 60 * 24)))
-    : 0;
-  const isRotting =
-    opportunity.status === "Open" && effectiveSlaDays > 0 && ageDays > effectiveSlaDays;
+  const stageTimestamp = opportunity.enteredStageAtUtc || opportunity.createdAt;
+  const createdMs = stageTimestamp ? new Date(stageTimestamp).getTime() : NaN;
+  const ageDays = !isNaN(createdMs) ? Math.max(0, Math.floor((Date.now() - createdMs) / (1000 * 60 * 60 * 24))) : 0;
+  const isRotting = opportunity.status === "Open" && effectiveSlaDays > 0 && ageDays > effectiveSlaDays;
 
   const isMasked = opportunity.maskedFieldKeys?.includes("estimatedAmount");
   const currencyCode = opportunity.currencyCode || "SAR";
   const formattedAmount = isMasked
     ? "••••••"
     : opportunity.estimatedAmount != null
-    ? `${currencyCode} ${Number(opportunity.estimatedAmount).toLocaleString()}`
-    : "—";
+      ? `${currencyCode} ${Number(opportunity.estimatedAmount).toLocaleString()}`
+      : "—";
 
-  const showConvertedBadge =
-    !isMasked &&
-    autoConvertToBase &&
-    opportunity.estimatedAmount != null &&
-    currencyCode.toUpperCase() !== baseCurrency.toUpperCase();
-  const convertedInBase = showConvertedBadge
-    ? Math.round(
-        convertAmount(Number(opportunity.estimatedAmount), currencyCode, baseCurrency)
-      )
-    : null;
+  const showConvertedBadge = !isMasked && autoConvertToBase && opportunity.estimatedAmount != null && currencyCode.toUpperCase() !== baseCurrency.toUpperCase();
+  const convertedInBase = showConvertedBadge ? Math.round(convertAmount(Number(opportunity.estimatedAmount), currencyCode, baseCurrency)) : null;
 
   const closeDateObj = opportunity.targetCloseDate ? new Date(opportunity.targetCloseDate) : null;
-  const formattedCloseDate =
-    closeDateObj && !isNaN(closeDateObj.getTime())
-      ? closeDateObj.toLocaleDateString(isRtl ? "ar-SA" : "en-US", {
-          month: "short",
-          day: "numeric",
-        })
-      : null;
+  const formattedCloseDate = closeDateObj && !isNaN(closeDateObj.getTime())
+    ? closeDateObj.toLocaleDateString(isRtl ? "ar-SA" : "en-US", { month: "short", day: "numeric" })
+    : null;
 
   const hasParty = Boolean(opportunity.partyId);
   const canMoveBackward = currentStageIndex > 0;
@@ -99,38 +68,21 @@ export function KanbanCard({
     onDragStart?.(opportunity);
   };
 
-  const handleDragEnd = (_e: React.DragEvent<HTMLDivElement>) => {
-    onDragEnd?.();
-  };
-
-  const handleCardClick = () => {
-    router.push(`/crm/opportunities/${opportunity.id}`);
-  };
+  const handleCardClick = () => router.push(`/crm/opportunities/${opportunity.id}`);
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
-    // Only handle keyboard navigation when the card container itself has focus.
-    // Prevents Space/Enter on child action buttons from unexpectedly triggering router.push.
-    if (e.target !== e.currentTarget) {
-      return;
-    }
-
+    if (e.target !== e.currentTarget) return;
     if (e.key === "Enter" || e.key === " ") {
       e.preventDefault();
       handleCardClick();
     } else if (e.key === "ArrowRight") {
       e.preventDefault();
-      if (isRtl) {
-        if (canMoveBackward) onMoveBackward?.(opportunity);
-      } else {
-        if (canMoveForward) onMoveForward?.(opportunity);
-      }
+      if (isRtl) { if (canMoveBackward) onMoveBackward?.(opportunity); }
+      else { if (canMoveForward) onMoveForward?.(opportunity); }
     } else if (e.key === "ArrowLeft") {
       e.preventDefault();
-      if (isRtl) {
-        if (canMoveForward) onMoveForward?.(opportunity);
-      } else {
-        if (canMoveBackward) onMoveBackward?.(opportunity);
-      }
+      if (isRtl) { if (canMoveForward) onMoveForward?.(opportunity); }
+      else { if (canMoveBackward) onMoveBackward?.(opportunity); }
     }
   };
 
@@ -138,41 +90,41 @@ export function KanbanCard({
     <Card
       draggable
       onDragStart={handleDragStart}
-      onDragEnd={handleDragEnd}
+      onDragEnd={() => onDragEnd?.()}
       onClick={handleCardClick}
       onKeyDown={handleKeyDown}
       tabIndex={0}
       role="article"
       data-testid="kanban-card"
       data-opportunity-id={opportunity.id}
+      data-card-density={cardDensity}
       aria-label={`${opportunity.title}, ${formattedAmount}`}
       className={cn(
         "group relative cursor-grab active:cursor-grabbing select-none",
-        totalStages >= 6 ? "p-2.5 space-y-2" : "p-3.5 space-y-3",
+        cardDensity === "Compact"
+          ? "p-2 space-y-1.5"
+          : cardDensity === "Executive"
+            ? "p-3.5 space-y-2.5"
+            : totalStages >= 6
+              ? "p-2.5 space-y-2"
+              : "p-3.5 space-y-3",
         "bg-nx-surface border border-nx-line hover:border-nx-line-hi transition-all",
         "rounded-nx-lg focus:outline-none focus:ring-1 focus:ring-nx-accent shadow-none",
         isDragging && "opacity-40 scale-[0.98]"
       )}
     >
-      {/* Top Metadata Strip: Deal Kind, SLA Rotting & Customer Verification Status */}
       <div className="flex items-center justify-between gap-1 flex-wrap">
         <div className="flex items-center gap-1 min-w-0">
-          <Badge
-            variant="outline"
-            className="shrink-0 text-[9px] px-1.5 py-0 font-medium border-nx-line text-nx-ink-2 bg-nx-raised truncate max-w-full"
-          >
+          <Badge variant="outline" className="shrink-0 text-[9px] px-1.5 py-0 font-medium border-nx-line text-nx-ink-2 bg-nx-raised truncate max-w-full">
             {t(`crmOpportunities.dealKind.${opportunity.dealKind}`, {
-              defaultValue:
-                opportunity.dealKind === "NewBusiness"
-                  ? "New Business"
-                  : opportunity.dealKind,
+              defaultValue: opportunity.dealKind === "NewBusiness" ? "New Business" : opportunity.dealKind,
             })}
           </Badge>
           {isRotting && (
             <Badge
               variant="outline"
               data-testid="kanban-card-rotting-badge"
-              title={`Stagnant deal: ${ageDays}d > ${effectiveSlaDays}d SLA`}
+              title={t("crmOpportunities.kanban.rottingTooltip", { ageDays, slaDays: effectiveSlaDays })}
               className="shrink-0 text-[9px] px-1.5 py-0 font-semibold border-destructive/40 text-destructive bg-destructive/10 inline-flex items-center gap-0.5"
             >
               <Flame className="size-2.5" />
@@ -182,59 +134,45 @@ export function KanbanCard({
         </div>
 
         {hasParty ? (
-          <span
-            className="inline-flex items-center gap-0.5 text-[9px] font-semibold text-success shrink-0"
-            title="Verified Account / Contact Linked"
-          >
+          <span className="inline-flex items-center gap-0.5 text-[9px] font-semibold text-success shrink-0" title={t("crmOpportunities.kanban.partyVerified", { defaultValue: "Verified" })}>
             <ShieldCheck className="size-2.5" />
-            <span>
-              {t("crmOpportunities.kanban.partyVerified", { defaultValue: "Verified" })}
-            </span>
+            <span>{t("crmOpportunities.kanban.partyVerified", { defaultValue: "Verified" })}</span>
           </span>
         ) : (
-          <span
-            className="inline-flex items-center gap-0.5 text-[9px] font-semibold text-warning shrink-0"
-            title="Account or Contact required before Proposal stage"
-          >
+          <span className="inline-flex items-center gap-0.5 text-[9px] font-semibold text-warning shrink-0" title={t("crmOpportunities.kanban.partyUnlinked", { defaultValue: "Unlinked" })}>
             <ShieldAlert className="size-2.5" />
-            <span>
-              {t("crmOpportunities.kanban.partyUnlinked", { defaultValue: "Unlinked" })}
-            </span>
+            <span>{t("crmOpportunities.kanban.partyUnlinked", { defaultValue: "Unlinked" })}</span>
           </span>
         )}
       </div>
 
-      {/* Full-Width Deal Title (Never squished by badges) */}
-      <h4
-        className="text-xs font-bold text-nx-ink group-hover:text-nx-accent transition-colors line-clamp-2 text-start leading-snug"
-        title={opportunity.title}
-      >
+      <h4 className="text-xs font-bold text-nx-ink group-hover:text-nx-accent transition-colors line-clamp-2 text-start leading-snug" title={opportunity.title}>
         {opportunity.title}
       </h4>
 
-      {/* Full-Width Deal Value Bar */}
       <div
         className={cn(
           "rounded-md bg-nx-raised/60 border border-nx-line/60 px-2 py-1",
-          totalStages >= 6 && convertedInBase !== null
-            ? "flex flex-col items-start gap-0.5"
-            : "flex items-center justify-between gap-1.5",
+          totalStages >= 6 && convertedInBase !== null ? "flex flex-col items-start gap-0.5" : "flex items-center justify-between gap-1.5",
         )}
       >
-        <span className="font-bold font-mono text-nx-ink text-[11px] truncate max-w-full">
-          {formattedAmount}
-        </span>
+        <span className="font-bold font-mono text-nx-ink text-[11px] truncate max-w-full">{formattedAmount}</span>
         {convertedInBase !== null && (
-          <span
-            data-testid="kanban-card-converted-amount"
-            className="text-[10px] font-mono font-semibold text-nx-ink-2 shrink-0"
-          >
+          <span data-testid="kanban-card-converted-amount" className="text-[10px] font-mono font-semibold text-nx-ink-2 shrink-0">
             ≈ {baseCurrency} {convertedInBase.toLocaleString()}
           </span>
         )}
       </div>
 
-      {/* Footer: Target Close Date & Accessible Stage Shift Actions */}
+      {cardDensity === "Executive" && (
+        <div data-testid="kanban-card-executive-strip" className="flex items-center justify-between gap-1 text-[10px] font-mono text-nx-ink-3 px-1">
+          <span>{t("crmOpportunities.kanban.slaPrefix", { defaultValue: "SLA" })}: {ageDays}d{effectiveSlaDays > 0 ? ` / ${effectiveSlaDays}d` : ""}</span>
+          {matchedStage?.probabilityPercent !== undefined && (
+            <span className="text-nx-accent font-semibold">{matchedStage.probabilityPercent}% {t("crmOpportunities.kanban.winSuffix", { defaultValue: "win" })}</span>
+          )}
+        </div>
+      )}
+
       <div className="flex items-center justify-between pt-1 border-t border-nx-line/60 text-[11px] text-nx-ink-3">
         {formattedCloseDate ? (
           <span className="inline-flex items-center gap-1 font-mono text-[10px] whitespace-nowrap shrink-0">
@@ -244,15 +182,11 @@ export function KanbanCard({
         ) : (
           <span className="inline-flex items-center gap-1 text-[10px] text-nx-ink-3/80 truncate">
             <Briefcase className="size-3 shrink-0" />
-            {opportunity.stageLabelEnSnapshot || "Open Deal"}
+            {(isRtl && opportunity.stageLabelArSnapshot ? opportunity.stageLabelArSnapshot : opportunity.stageLabelEnSnapshot) || t("crmOpportunities.status.open", { defaultValue: "Open" })}
           </span>
         )}
 
-        {/* Keyboard-accessible movement buttons */}
-        <div
-          className="flex items-center gap-1"
-          onClick={(e) => e.stopPropagation()}
-        >
+        <div className="flex items-center gap-1" onClick={(e) => e.stopPropagation()}>
           <Button
             type="button"
             variant="ghost"
@@ -264,7 +198,6 @@ export function KanbanCard({
           >
             {isRtl ? <ChevronRight className="size-3.5" /> : <ChevronLeft className="size-3.5" />}
           </Button>
-
           <Button
             type="button"
             variant="ghost"

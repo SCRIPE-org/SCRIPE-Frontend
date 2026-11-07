@@ -4,34 +4,19 @@ import { useMemo, useState, useEffect, useCallback } from "react";
 import {
   resolveDefaultStageColor,
   useCrmWorkflowsStore,
-  type CrmStageColorToken,
   type CrmWorkflowStageCategory,
 } from "@modules/crm";
+import {
+  CANONICAL_KANBAN_STAGES,
+  CANONICAL_TERMINAL_LABELS,
+  type KanbanStageDef,
+} from "../../domain/constants/crmCanonicalStages";
 import type {
   CrmOpportunity,
   PipelineStageConfig,
 } from "../../domain/entities/OpportunityEntity";
 
-export interface KanbanStageDef {
-  key: string;
-  labelKey: string;
-  defaultLabelEn: string;
-  labelAr?: string | null;
-  sortOrder: number;
-  winProbabilityPercent?: number | null;
-  requiresParty?: boolean;
-  category?: CrmWorkflowStageCategory;
-  color?: CrmStageColorToken;
-  customColorHex?: string;
-}
-
-export const CANONICAL_KANBAN_STAGES: KanbanStageDef[] = [
-  { key: "default.discovery", labelKey: "crmOpportunities.stages.discovery", defaultLabelEn: "Discovery", labelAr: "استكشاف", sortOrder: 1, winProbabilityPercent: 10, category: "todo", color: "blue" },
-  { key: "default.qualification", labelKey: "crmOpportunities.stages.qualification", defaultLabelEn: "Qualification", labelAr: "تأهيل", sortOrder: 2, winProbabilityPercent: 25, category: "in_progress", color: "cyan" },
-  { key: "default.solution_fit", labelKey: "crmOpportunities.stages.solution_fit", defaultLabelEn: "Solution Fit", labelAr: "ملاءمة الحل", sortOrder: 3, winProbabilityPercent: 50, category: "in_progress", color: "indigo" },
-  { key: "default.proposal", labelKey: "crmOpportunities.stages.proposal", defaultLabelEn: "Proposal", labelAr: "عرض تجاري", sortOrder: 4, winProbabilityPercent: 75, requiresParty: true, category: "in_progress", color: "violet" },
-  { key: "default.negotiation", labelKey: "crmOpportunities.stages.negotiation", defaultLabelEn: "Negotiation", labelAr: "تفاوض", sortOrder: 5, winProbabilityPercent: 90, requiresParty: true, category: "in_progress", color: "amber" },
-];
+export { CANONICAL_KANBAN_STAGES, type KanbanStageDef };
 
 export interface UseKanbanBoardViewModelProps {
   opportunities: CrmOpportunity[];
@@ -145,8 +130,8 @@ export function useKanbanBoardViewModel({
         baseStages.push({
           key: wfWon?.stageKey ?? "default.closed_won",
           labelKey: "crmOpportunities.dialogs.close.outcomeWon",
-          defaultLabelEn: wfWon?.labelEn ?? "Closed Won",
-          labelAr: wfWon?.labelAr ?? "مغلقة — رابحة",
+          defaultLabelEn: wfWon?.labelEn ?? CANONICAL_TERMINAL_LABELS.wonStageEn,
+          labelAr: wfWon?.labelAr ?? CANONICAL_TERMINAL_LABELS.wonColumnAr,
           sortOrder: baseStages.length + 1,
           winProbabilityPercent: 100,
           requiresParty: Boolean(wfWon?.requiresVerifiedParty || wfWon?.requiredExitFields?.includes("partyId")),
@@ -163,8 +148,8 @@ export function useKanbanBoardViewModel({
         baseStages.push({
           key: wfLost?.stageKey ?? "default.closed_lost",
           labelKey: "crmOpportunities.dialogs.close.outcomeLost",
-          defaultLabelEn: wfLost?.labelEn ?? "Closed Lost",
-          labelAr: wfLost?.labelAr ?? "مغلقة — خاسرة",
+          defaultLabelEn: wfLost?.labelEn ?? CANONICAL_TERMINAL_LABELS.lostStageEn,
+          labelAr: wfLost?.labelAr ?? CANONICAL_TERMINAL_LABELS.lostColumnAr,
           sortOrder: baseStages.length + 1,
           winProbabilityPercent: 0,
           requiresParty: false,

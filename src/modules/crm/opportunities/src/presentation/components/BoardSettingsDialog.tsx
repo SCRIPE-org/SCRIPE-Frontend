@@ -10,6 +10,7 @@ import { Label } from "@core/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@core/ui/select";
 
 export type KanbanSwimlaneMode = "none" | "assignee" | "account" | "dealType";
+export type KanbanCardDensity = "Compact" | "Standard" | "Executive";
 
 export interface StageWipLimit {
   min?: number;
@@ -18,6 +19,7 @@ export interface StageWipLimit {
 
 export interface BoardSettingsConfig {
   swimlaneMode: KanbanSwimlaneMode;
+  cardDensity?: KanbanCardDensity;
   wipLimits: Record<string, StageWipLimit>;
 }
 
@@ -31,7 +33,7 @@ export interface BoardSettingsDialogProps {
 
 /**
  * Jira-Grade Board Settings v2 Dialog (SCRIPE-756):
- * Configures Swimlanes (None, By Assignee, By Account, By Deal Type) and per-column Min/Max WIP Limits.
+ * Configures Swimlanes (None, By Assignee, By Account, By Deal Type), Card Density, and per-column Min/Max WIP Limits.
  */
 export function BoardSettingsDialog({
   open,
@@ -40,13 +42,20 @@ export function BoardSettingsDialog({
   config,
   onConfigChange,
 }: BoardSettingsDialogProps) {
-  const { language } = useI18n();
+  const { t, language } = useI18n();
   const isAr = language === "ar";
 
   const handleSwimlaneChange = (mode: KanbanSwimlaneMode) => {
     onConfigChange({
       ...config,
       swimlaneMode: mode,
+    });
+  };
+
+  const handleCardDensityChange = (density: KanbanCardDensity) => {
+    onConfigChange({
+      ...config,
+      cardDensity: density,
     });
   };
 
@@ -71,46 +80,65 @@ export function BoardSettingsDialog({
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2 text-sm font-bold text-nx-ink">
             <SlidersHorizontal className="w-4 h-4 text-nx-accent" />
-            {isAr ? "إعدادات لوحة كانبان (WIP وخطوط التقسيم)" : "Board Settings — Columns, WIP Limits & Swimlanes"}
+            {t("crmOpportunities.boardSettings.title")}
           </DialogTitle>
           <DialogDescription className="text-xs text-nx-ink-3">
-            {isAr
-              ? "حدد حدود العمل الجاري (Min / Max) لكل عمود، واختر طريقة تجميع الصفقات في خطوط تقسيم أفقية."
-              : "Configure per-column Work-In-Progress (Min / Max) thresholds and horizontal swimlane grouping."}
+            {t("crmOpportunities.boardSettings.description")}
           </DialogDescription>
         </DialogHeader>
 
         <div className="space-y-4 py-2">
-          <div className="space-y-1.5">
-            <Label className="text-xs font-semibold text-nx-ink">
-              {isAr ? "تجميع خطوط التقسيم (Swimlanes)" : "Swimlanes Grouping"}
-            </Label>
-            <Select value={config.swimlaneMode} onValueChange={(v) => handleSwimlaneChange(v as KanbanSwimlaneMode)}>
-              <SelectTrigger className="h-8 text-xs" data-testid="board-swimlane-select">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent className="z-[10002]">
-                <SelectItem value="none" className="text-xs">{isAr ? "بدون تقسيم" : "None (Standard Columns)"}</SelectItem>
-                <SelectItem value="assignee" className="text-xs">{isAr ? "حسب المسؤول" : "By Assignee"}</SelectItem>
-                <SelectItem value="account" className="text-xs">{isAr ? "حسب الحساب / الشريك" : "By Account"}</SelectItem>
-                <SelectItem value="dealType" className="text-xs">{isAr ? "حسب نوع الصفقة" : "By Deal Type / Currency"}</SelectItem>
-              </SelectContent>
-            </Select>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div className="space-y-1.5">
+              <Label className="text-xs font-semibold text-nx-ink">
+                {t("crmOpportunities.boardSettings.swimlanesLabel")}
+              </Label>
+              <Select value={config.swimlaneMode} onValueChange={(v) => handleSwimlaneChange(v as KanbanSwimlaneMode)}>
+                <SelectTrigger className="h-8 text-xs" data-testid="board-swimlane-select">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent className="z-[10002]">
+                  <SelectItem value="none" className="text-xs">{t("crmOpportunities.boardSettings.swimlaneNone")}</SelectItem>
+                  <SelectItem value="assignee" className="text-xs">{t("crmOpportunities.boardSettings.swimlaneAssignee")}</SelectItem>
+                  <SelectItem value="account" className="text-xs">{t("crmOpportunities.boardSettings.swimlaneAccount")}</SelectItem>
+                  <SelectItem value="dealType" className="text-xs">{t("crmOpportunities.boardSettings.swimlaneDealType")}</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div className="space-y-1.5">
+              <Label className="text-xs font-semibold text-nx-ink">
+                {t("crmOpportunities.boardSettings.cardDensityLabel")}
+              </Label>
+              <Select
+                value={config.cardDensity ?? "Standard"}
+                onValueChange={(v) => handleCardDensityChange(v as KanbanCardDensity)}
+              >
+                <SelectTrigger className="h-8 text-xs" data-testid="board-card-density-select">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent className="z-[10002]">
+                  <SelectItem value="Compact" className="text-xs">{t("crmOpportunities.boardSettings.densityCompact")}</SelectItem>
+                  <SelectItem value="Standard" className="text-xs">{t("crmOpportunities.boardSettings.densityStandard")}</SelectItem>
+                  <SelectItem value="Executive" className="text-xs">{t("crmOpportunities.boardSettings.densityExecutive")}</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
           </div>
 
           <div className="space-y-2">
             <Label className="text-xs font-semibold text-nx-ink block">
-              {isAr ? "تعيين الحالات للأعمدة وحدود العمل الجاري (WIP Limits)" : "Status-to-Column Mapping & WIP Limits (Min / Max)"}
+              {t("crmOpportunities.boardSettings.wipMappingLabel")}
             </Label>
             <div className="space-y-1.5 max-h-[360px] overflow-y-auto pr-1">
               {[
                 ...stages,
                 ...(stages.some((s) => s.stageKey === "terminal-won" || s.stageKey.includes("won"))
                   ? []
-                  : [{ stageKey: "terminal-won", labelEn: "Closed Won", labelAr: "مغلق ناجح" }]),
+                  : [{ stageKey: "terminal-won", labelEn: t("crmOpportunities.stages.closed_won"), labelAr: t("crmOpportunities.stages.closed_won") }]),
                 ...(stages.some((s) => s.stageKey === "terminal-lost" || s.stageKey.includes("lost"))
                   ? []
-                  : [{ stageKey: "terminal-lost", labelEn: "Closed Lost", labelAr: "مغلق خاسر" }]),
+                  : [{ stageKey: "terminal-lost", labelEn: t("crmOpportunities.stages.closed_lost"), labelAr: t("crmOpportunities.stages.closed_lost") }]),
               ].map((st, idx) => {
                 const limit = config.wipLimits[st.stageKey] ?? {};
                 return (
@@ -167,7 +195,7 @@ export function BoardSettingsDialog({
 
         <DialogFooter>
           <Button size="sm" onClick={() => onOpenChange(false)} data-testid="board-settings-done-btn">
-            {isAr ? "تم" : "Done"}
+            {t("crmOpportunities.boardSettings.doneBtn")}
           </Button>
         </DialogFooter>
       </DialogContent>

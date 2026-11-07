@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import { Plus, ShieldCheck } from "lucide-react";
+import { useI18n } from "@core/providers/i18n-provider";
 import { Badge } from "@core/ui/badge";
 import { Button } from "@core/ui/button";
 import { Input } from "@core/ui/input";
@@ -28,6 +29,7 @@ export function CrmInlineScopedRoleCreator({
   isAr,
   onRoleCreated,
 }: CrmInlineScopedRoleCreatorProps) {
+  const { t } = useI18n();
   const crmRoles = useCrmSettingsStore((s) => s.crmRoles ?? DEFAULT_CRM_SCOPED_ROLES);
   const addCrmScopedRole = useCrmSettingsStore((s) => s.addCrmScopedRole);
   const [open, setOpen] = useState(false);
@@ -71,7 +73,7 @@ export function CrmInlineScopedRoleCreator({
           data-testid="inline-create-pipeline-role-btn"
         >
           <Plus className="w-3 h-3" />
-          {isAr ? "إنشاء دور اعتماد في خط البيع (Pipeline Role)" : "Create Pipeline Role Inline (Approval Queue)"}
+          {t("crmOpportunities.ruleConfig.inlineCreateRoleBtn")}
         </Button>
       </div>
     );
@@ -85,37 +87,37 @@ export function CrmInlineScopedRoleCreator({
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-1.5 text-xs font-bold text-nx-ink">
           <ShieldCheck className="w-3.5 h-3.5 text-primary" />
-          <span>{isAr ? "إنشاء دور خط بيع ومصفوفة اعتماد مستقل" : "New Decoupled CRM Pipeline Role (Approval Queue)"}</span>
+          <span>{t("crmOpportunities.ruleConfig.newDecoupledRoleTitle")}</span>
         </div>
         <Badge variant="outline" className="text-[10px] font-mono">crm.workflow_roles.manage</Badge>
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
         <div className="space-y-1">
-          <Label className="text-[10px] text-nx-ink-2">{isAr ? "اسم دور خط البيع (EN)" : "Pipeline Role Name (EN)"}</Label>
-          <Input value={nameEn} onChange={(e) => setNameEn(e.target.value)} placeholder="e.g. Regional Sponsorship Desk" className="h-7 text-xs" data-testid="inline-crm-role-name-en" />
+          <Label className="text-[10px] text-nx-ink-2">{t("crmOpportunities.ruleConfig.roleNameEnLabel")}</Label>
+          <Input value={nameEn} onChange={(e) => setNameEn(e.target.value)} placeholder={t("crmOpportunities.ruleConfig.roleNameEnPlaceholder")} className="h-7 text-xs" data-testid="inline-crm-role-name-en" />
         </div>
         <div className="space-y-1">
-          <Label className="text-[10px] text-nx-ink-2">{isAr ? "اسم دور خط البيع (AR)" : "Pipeline Role Name (AR)"}</Label>
-          <Input dir="rtl" value={nameAr} onChange={(e) => setNameAr(e.target.value)} placeholder="مثال: مكتب الرعايات الإقليمي" className="h-7 text-xs" data-testid="inline-crm-role-name-ar" />
+          <Label className="text-[10px] text-nx-ink-2">{t("crmOpportunities.ruleConfig.roleNameArLabel")}</Label>
+          <Input dir="rtl" value={nameAr} onChange={(e) => setNameAr(e.target.value)} placeholder={t("crmOpportunities.ruleConfig.roleNameArPlaceholder")} className="h-7 text-xs" data-testid="inline-crm-role-name-ar" />
         </div>
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
         <div className="space-y-1">
-          <Label className="text-[10px] text-nx-ink-2">{isAr ? "الأعضاء المعينون" : "Queue Members (CSV)"}</Label>
+          <Label className="text-[10px] text-nx-ink-2">{t("crmOpportunities.ruleConfig.queueMembersLabel")}</Label>
           <Input value={membersCsv} onChange={(e) => setMembersCsv(e.target.value)} className="h-7 text-xs" data-testid="inline-pipeline-role-members" />
         </div>
         <div className="space-y-1">
-          <Label className="text-[10px] text-nx-ink-2">{isAr ? "حد الصلاحية المالية" : "Max Authority Limit"}</Label>
+          <Label className="text-[10px] text-nx-ink-2">{t("crmOpportunities.ruleConfig.maxAuthorityLimitLabel")}</Label>
           <Input type="number" value={maxLimit} onChange={(e) => setMaxLimit(e.target.value)} className="h-7 text-xs font-mono" data-testid="inline-pipeline-role-limit" />
         </div>
         <div className="space-y-1">
-          <Label className="text-[10px] text-nx-ink-2">{isAr ? "الدور البديل للتفويض" : "Backup / Escalation Role"}</Label>
+          <Label className="text-[10px] text-nx-ink-2">{t("crmOpportunities.ruleConfig.backupRoleLabel")}</Label>
           <Select value={backupRoleKey} onValueChange={setBackupRoleKey}>
             <SelectTrigger className="h-7 text-xs" data-testid="inline-pipeline-role-backup"><SelectValue /></SelectTrigger>
             <SelectContent className="z-[10006]">
-              <SelectItem value="none" className="text-xs">None</SelectItem>
+              <SelectItem value="none" className="text-xs">{t("crmOpportunities.ruleConfig.noneOption")}</SelectItem>
               {crmRoles.map((r) => <SelectItem key={r.key} value={r.key} className="text-xs">{isAr ? r.nameAr : r.nameEn}</SelectItem>)}
             </SelectContent>
           </Select>
@@ -123,9 +125,9 @@ export function CrmInlineScopedRoleCreator({
       </div>
 
       <div className="flex items-center justify-end gap-2 pt-1">
-        <Button type="button" size="sm" variant="ghost" className="h-7 text-xs" onClick={() => setOpen(false)}>{isAr ? "إلغاء" : "Cancel"}</Button>
+        <Button type="button" size="sm" variant="ghost" className="h-7 text-xs" onClick={() => setOpen(false)}>{t("crmOpportunities.actions.cancel")}</Button>
         <Button type="button" size="sm" disabled={!nameEn.trim()} onClick={handleSave} className="h-7 text-xs" data-testid="inline-crm-role-save-btn">
-          {isAr ? "حفظ وربط دور خط البيع" : "Create & Bind Pipeline Role"}
+          {t("crmOpportunities.ruleConfig.createAndBindRoleBtn")}
         </Button>
       </div>
     </div>

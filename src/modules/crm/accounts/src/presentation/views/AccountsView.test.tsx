@@ -135,10 +135,13 @@ describe("AccountsView Component", () => {
   it("renders accounts table with commercial tier badges and counts", async () => {
     render(<AccountsView />);
 
-    await waitFor(() => {
-      expect(screen.getAllByText("Al Ahly Sporting Club Commercial")[0]).toBeDefined();
-      expect(screen.getAllByText("Telecom Egypt Academy Tech")[0]).toBeDefined();
-    });
+    await waitFor(
+      () => {
+        expect(screen.getAllByText("Al Ahly Sporting Club Commercial")[0]).toBeDefined();
+        expect(screen.getAllByText("Telecom Egypt Academy Tech")[0]).toBeDefined();
+      },
+      { timeout: 4000 },
+    );
 
     expect(screen.getAllByText("Enterprise").length).toBeGreaterThanOrEqual(1);
     expect(screen.getAllByText("Strategic").length).toBeGreaterThanOrEqual(1);

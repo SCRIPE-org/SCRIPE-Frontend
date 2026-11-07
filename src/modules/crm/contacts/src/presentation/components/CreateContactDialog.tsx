@@ -179,43 +179,43 @@ export function CreateContactDialog({
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div className="space-y-1.5">
                   <Label className="text-xs font-medium text-nx-ink">
-                    {t("crmContacts.create.fullNameEn") || "Full Name (English)"} <span className="text-destructive">*</span>
+                    {t("crmContacts.create.fullNameEn")} <span className="text-destructive">*</span>
                   </Label>
-                  <Input value={fullNameEn} onChange={(e) => setFullNameEn(e.target.value)} placeholder="e.g. Tariq Al-Dosari" disabled={isSubmitting} className="h-9 text-xs bg-nx-surface border-nx-line" />
+                  <Input value={fullNameEn} onChange={(e) => setFullNameEn(e.target.value)} placeholder={t("crmContacts.create.fullNameEnPlaceholder")} disabled={isSubmitting} className="h-9 text-xs bg-nx-surface border-nx-line" />
                 </div>
                 <div className="space-y-1.5">
-                  <Label className="text-xs font-medium text-nx-ink">{t("crmContacts.create.fullNameAr") || "Full Name (Arabic)"}</Label>
-                  <Input value={fullNameAr} onChange={(e) => setFullNameAr(e.target.value)} placeholder="مثال: طارق الدوسري" disabled={isSubmitting} dir="rtl" className="h-9 text-xs bg-nx-surface border-nx-line" />
+                  <Label className="text-xs font-medium text-nx-ink">{t("crmContacts.create.fullNameAr")}</Label>
+                  <Input value={fullNameAr} onChange={(e) => setFullNameAr(e.target.value)} placeholder={t("crmContacts.create.fullNameArPlaceholder")} disabled={isSubmitting} dir="rtl" className="h-9 text-xs bg-nx-surface border-nx-line" />
                 </div>
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div className="space-y-1.5">
-                  <Label className="text-xs font-medium text-nx-ink">{t("crmContacts.create.email") || "Direct Email"}</Label>
-                  <Input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="tariq@organization.sa" disabled={isSubmitting} className="h-9 text-xs bg-nx-surface border-nx-line" />
+                  <Label className="text-xs font-medium text-nx-ink">{t("crmContacts.create.email")}</Label>
+                  <Input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder={t("crmContacts.create.emailPlaceholder")} disabled={isSubmitting} className="h-9 text-xs bg-nx-surface border-nx-line" />
                 </div>
                 <div className="space-y-1.5">
-                  <Label className="text-xs font-medium text-nx-ink">{t("crmContacts.create.phone") || "Mobile / Direct Phone"}</Label>
-                  <PhoneInput value={phone} onChange={(val) => setPhone(val)} defaultCountry="SA" disabled={isSubmitting} placeholder="5X XXX XXXX" />
+                  <Label className="text-xs font-medium text-nx-ink">{t("crmContacts.create.phone")}</Label>
+                  <PhoneInput value={phone} onChange={(val) => setPhone(val)} defaultCountry="SA" disabled={isSubmitting} placeholder={t("crmContacts.create.phonePlaceholder")} />
                 </div>
               </div>
             </div>
           ) : (
             <div className="space-y-2.5 rounded-nx-md border border-nx-line bg-nx-ground/40 p-3.5">
               <Label className="text-xs font-medium text-nx-ink">
-                {t("crmContacts.create.selectPerson") || "Select Person from Directory"} <span className="text-destructive">*</span>
+                {t("crmContacts.create.selectPerson")} <span className="text-destructive">*</span>
               </Label>
               <div className="relative">
                 <Search className="absolute start-2.5 top-1/2 -translate-y-1/2 size-3.5 text-nx-ink-3 pointer-events-none" />
-                <Input value={personSearch} onChange={(e) => setPersonSearch(e.target.value)} placeholder={t("crmContacts.create.searchPeople") || "Filter people by name..."} disabled={isSubmitting} className="h-8 ps-8 text-xs bg-nx-surface border-nx-line mb-2" />
+                <Input value={personSearch} onChange={(e) => setPersonSearch(e.target.value)} placeholder={t("crmContacts.create.searchPeople")} disabled={isSubmitting} className="h-8 ps-8 text-xs bg-nx-surface border-nx-line mb-2" />
               </div>
               <Select value={personPartyId} onValueChange={setPersonPartyId} disabled={isSubmitting}>
                 <SelectTrigger className="h-9 text-xs bg-nx-surface border-nx-line">
-                  <SelectValue placeholder={t("crmContacts.create.choosePerson") || "Choose a person from directory..."} />
+                  <SelectValue placeholder={t("crmContacts.create.choosePerson")} />
                 </SelectTrigger>
                 <SelectContent>
                   {candidatePeople.length === 0 ? (
-                    <SelectItem value="__empty" disabled>{t("crmContacts.create.noPeopleFound") || "No matching people found — switch to 'New Contact Person'"}</SelectItem>
+                    <SelectItem value="__empty" disabled>{t("crmContacts.create.noPeopleFound")}</SelectItem>
                   ) : (
                     candidatePeople.map((person) => (
                       <SelectItem key={person.partyId} value={person.partyId}>
@@ -231,14 +231,14 @@ export function CreateContactDialog({
           <div className="space-y-1.5">
             <Label htmlFor="contact-account-id" className="text-xs font-medium text-nx-ink flex items-center gap-1.5">
               <Building2 className="size-3.5 text-nx-accent" />
-              <span>{t("crmContacts.create.primaryAccountId") || "Primary Commercial Account (Optional)"}</span>
+              <span>{t("crmContacts.create.primaryAccountId")}</span>
             </Label>
             <Select value={primaryAccountId} onValueChange={setPrimaryAccountId} disabled={isSubmitting}>
               <SelectTrigger id="contact-account-id" className="h-9 text-xs bg-nx-surface border-nx-line">
-                <SelectValue placeholder={t("crmContacts.create.selectPrimaryAccount") || "Select an account organization..."} />
+                <SelectValue placeholder={t("crmContacts.create.selectPrimaryAccount")} />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="__none">{t("crmContacts.table.noAccount") || "Unassigned / Independent Contact"}</SelectItem>
+                <SelectItem value="__none">{t("crmContacts.table.noAccount")}</SelectItem>
                 {accounts.map((acc) => (
                   <SelectItem key={acc.id} value={acc.id}>
                     {language === "ar" && acc.partyLegalNameAr ? acc.partyLegalNameAr : acc.partyLegalNameEn}
@@ -250,19 +250,19 @@ export function CreateContactDialog({
 
           <div className="grid grid-cols-2 gap-3">
             <div className="space-y-1.5">
-              <Label htmlFor="contact-job-title" className="text-xs font-medium text-nx-ink">{t("crmContacts.create.jobTitle") || "Job Title"}</Label>
-              <Input id="contact-job-title" value={jobTitleSnapshot} onChange={(e) => setJobTitleSnapshot(e.target.value)} placeholder="e.g. Academy Director" disabled={isSubmitting} className="h-9 text-xs bg-nx-surface border-nx-line" />
+              <Label htmlFor="contact-job-title" className="text-xs font-medium text-nx-ink">{t("crmContacts.create.jobTitle")}</Label>
+              <Input id="contact-job-title" value={jobTitleSnapshot} onChange={(e) => setJobTitleSnapshot(e.target.value)} placeholder={t("crmContacts.create.jobTitlePlaceholder")} disabled={isSubmitting} className="h-9 text-xs bg-nx-surface border-nx-line" />
             </div>
 
             <div className="space-y-1.5">
-              <Label htmlFor="contact-department" className="text-xs font-medium text-nx-ink">{t("crmContacts.create.department") || "Department"}</Label>
-              <Input id="contact-department" value={departmentName} onChange={(e) => setDepartmentName(e.target.value)} placeholder="e.g. Sports Operations" disabled={isSubmitting} className="h-9 text-xs bg-nx-surface border-nx-line" />
+              <Label htmlFor="contact-department" className="text-xs font-medium text-nx-ink">{t("crmContacts.create.department")}</Label>
+              <Input id="contact-department" value={departmentName} onChange={(e) => setDepartmentName(e.target.value)} placeholder={t("crmContacts.create.departmentPlaceholder")} disabled={isSubmitting} className="h-9 text-xs bg-nx-surface border-nx-line" />
             </div>
           </div>
 
           <div className="space-y-1.5">
-            <Label htmlFor="contact-notes" className="text-xs font-medium text-nx-ink">{t("crmContacts.create.notes") || "Commercial Context & Notes"}</Label>
-            <Textarea id="contact-notes" rows={3} value={commercialNotes} onChange={(e) => setCommercialNotes(e.target.value)} placeholder={t("crmContacts.create.notesPlaceholder") || "Key decision maker for sponsorships, preferred communication hours..."} disabled={isSubmitting} className="text-xs bg-nx-surface border-nx-line resize-none" />
+            <Label htmlFor="contact-notes" className="text-xs font-medium text-nx-ink">{t("crmContacts.create.notes")}</Label>
+            <Textarea id="contact-notes" rows={3} value={commercialNotes} onChange={(e) => setCommercialNotes(e.target.value)} placeholder={t("crmContacts.create.notesPlaceholder")} disabled={isSubmitting} className="text-xs bg-nx-surface border-nx-line resize-none" />
           </div>
 
           <CustomFieldsSection

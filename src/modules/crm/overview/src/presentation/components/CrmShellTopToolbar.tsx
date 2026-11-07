@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { Coins, HelpCircle, Plus, Search, Sparkles, X } from "lucide-react";
+import { Coins, HelpCircle, Plus, Search } from "lucide-react";
 import { Button } from "@core/ui/button";
 import { Input } from "@core/ui/input";
 import {
@@ -29,7 +29,6 @@ export interface CrmShellTopToolbarProps {
 
 export function CrmShellTopToolbar({
   t,
-  isRtl,
   baseCurrency,
   onBaseCurrencyChange,
   onOpenSmartGuide,
@@ -50,7 +49,7 @@ export function CrmShellTopToolbar({
       >
         <Coins className="size-3 text-nx-accent shrink-0" />
         <span className="text-[10px] font-bold uppercase tracking-wider text-nx-ink-3 hidden 2xl:inline">
-          {isRtl ? "العملة:" : "Currency:"}
+          {t("crm.toolbar.currencyLabel")}
         </span>
         <Select value={baseCurrency} onValueChange={onBaseCurrencyChange}>
           <SelectTrigger
@@ -74,17 +73,17 @@ export function CrmShellTopToolbar({
           data-testid="crm-header-settings-quickjump"
           className="h-7 w-auto min-w-[116px] px-2 text-[11px] bg-nx-surface border-nx-line hidden xl:inline-flex"
         >
-          <SelectValue placeholder={isRtl ? "انتقال سريع للإعدادات" : "Quick Settings"} />
+          <SelectValue placeholder={t("crm.toolbar.quickSettingsPlaceholder")} />
         </SelectTrigger>
         <SelectContent>
-          <SelectItem value="pipeline-roles" className="text-xs">1. Pipeline & Workflow Roles</SelectItem>
-          <SelectItem value="sla-escalation" className="text-xs">2. Stage SLA & Escalation</SelectItem>
-          <SelectItem value="field-locking" className="text-xs">3. SAP Field-Locking & Playbooks</SelectItem>
-          <SelectItem value="custom-fields" className="text-xs">4. Custom Fields Studio</SelectItem>
-          <SelectItem value="dictionaries" className="text-xs">5. Commercial Dictionaries</SelectItem>
-          <SelectItem value="currency-fx" className="text-xs">6. Multi-Currency & FX Engine</SelectItem>
-          <SelectItem value="quotes-approvals" className="text-xs">7. Quotes & Approval Matrix</SelectItem>
-          <SelectItem value="numbering-handoffs" className="text-xs">8. Numbering & Sports OS Handoffs</SelectItem>
+          <SelectItem value="pipeline-roles" className="text-xs">1. {t("crm.settings.sidebar.tabPipelineRoles")}</SelectItem>
+          <SelectItem value="sla-escalation" className="text-xs">2. {t("crm.settings.sidebar.tabSlaEscalation")}</SelectItem>
+          <SelectItem value="field-locking" className="text-xs">3. {t("crm.settings.sidebar.tabFieldLocking")}</SelectItem>
+          <SelectItem value="custom-fields" className="text-xs">4. {t("crm.settings.sidebar.tabCustomFields")}</SelectItem>
+          <SelectItem value="dictionaries" className="text-xs">5. {t("crm.settings.sidebar.tabDictionaries")}</SelectItem>
+          <SelectItem value="currency-fx" className="text-xs">6. {t("crm.settings.sidebar.tabCurrencyFx")}</SelectItem>
+          <SelectItem value="quotes-approvals" className="text-xs">7. {t("crm.settings.sidebar.tabQuotesApprovals")}</SelectItem>
+          <SelectItem value="numbering-handoffs" className="text-xs">8. {t("crm.settings.sidebar.tabNumberingHandoffs")}</SelectItem>
         </SelectContent>
       </Select>
 
@@ -97,11 +96,11 @@ export function CrmShellTopToolbar({
         className="h-7 px-2 text-[11px] gap-1 border-nx-line bg-nx-surface text-nx-ink hover:bg-nx-raised shrink-0"
       >
         <HelpCircle className="size-3 text-nx-accent" />
-        <span className="hidden lg:inline">{isRtl ? "الدليل الذكي" : "Smart Guide"}</span>
+        <span className="hidden lg:inline">{t("crm.toolbar.smartGuideBtn")}</span>
       </Button>
 
       {onSearchChange && (
-        <div className="relative w-full sm:w-44">
+        <div className="relative w-full sm:w-56">
           <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 size-3.5 text-nx-ink-3" />
           <Input
             type="text"
@@ -137,40 +136,6 @@ export function CrmShellTopToolbar({
           <span>{t("crm.actions.createLead")}</span>
         </Button>
       )}
-    </div>
-  );
-}
-
-export function CrmSmartTipRibbon({
-  isRtl,
-  onOpenGuide,
-  onDismiss,
-}: {
-  isRtl: boolean;
-  onOpenGuide: () => void;
-  onDismiss: () => void;
-}) {
-  return (
-    <div
-      className="rounded-nx-md border border-nx-line bg-nx-surface px-3 py-1.5 flex items-center justify-between gap-2 text-xs"
-      data-testid="crm-smart-tip-ribbon"
-    >
-      <div className="flex items-center gap-2 min-w-0">
-        <Sparkles className="size-3.5 text-nx-accent shrink-0" />
-        <span className="text-nx-ink-2 truncate">
-          {isRtl
-            ? "نصيحة ذكية: أدوار خطوط البيع (Pipeline Roles) مستقلة تماماً عن أدوار الهوية (Identity RBAC) وتدعم حدود الصلاحية المالية والتفويض البديل."
-            : "Smart Tip: Decoupled CRM Pipeline Roles (pipe_role:*) govern stage approvals & monetary thresholds independently from Identity RBAC roles."}
-        </span>
-      </div>
-      <div className="flex items-center gap-1.5 shrink-0">
-        <Button type="button" variant="ghost" size="sm" className="h-6 px-2 text-[11px] text-nx-accent" onClick={onOpenGuide}>
-          {isRtl ? "عرض الجولات" : "Interactive Tour"}
-        </Button>
-        <Button type="button" variant="ghost" size="icon" className="h-5 w-5 text-nx-ink-3" onClick={onDismiss}>
-          <X className="size-3" />
-        </Button>
-      </div>
     </div>
   );
 }

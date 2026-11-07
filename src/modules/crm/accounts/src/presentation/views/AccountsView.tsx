@@ -30,9 +30,12 @@ export function AccountsView() { const router = useRouter();
     handleCreateAccount, refresh,
   } = viewModel;
   const tiers = [
-      { key: undefined, label: t("crmAccounts.filters.allTiers") || "All Tiers" }, { key: "Enterprise", label: "Enterprise" },
-      { key: "KeyAccount", label: "Key Account" }, { key: "Strategic", label: "Strategic" },
-      { key: "Standard", label: "Standard" }, ];
+    { key: undefined, label: t("crmAccounts.filters.allTiers") },
+    { key: "Enterprise", label: t("crmAccounts.tiers.Enterprise") },
+    { key: "KeyAccount", label: t("crmAccounts.tiers.KeyAccount") },
+    { key: "Strategic", label: t("crmAccounts.tiers.Strategic") },
+    { key: "Standard", label: t("crmAccounts.tiers.Standard") },
+  ];
   const columns: CrudColumn<CrmAccount>[] = [
       { key: "partyLegalNameEn",
         label: t("crmAccounts.table.account") || "Account / Organization", sortable: true,
@@ -242,7 +245,7 @@ export function AccountsView() { const router = useRouter();
               data-testid="customer-dir-companies-tab"
               className="h-7 px-3 rounded-md text-xs font-bold bg-nx-surface text-foreground border border-nx-line-hi"
             >
-              {isRtl ? "الشركات والمؤسسات (الحسابات)" : "Companies & Organizations (Accounts)"}
+              {t("crmAccounts.header.companiesTab")}
             </Button>
             <Button
               type="button"
@@ -252,13 +255,11 @@ export function AccountsView() { const router = useRouter();
               onClick={() => router.push("/crm/contacts")}
               className="h-7 px-3 rounded-md text-xs font-semibold text-nx-ink-2 hover:text-nx-ink"
             >
-              {isRtl ? "الأفراد وصناع القرار (جهات الاتصال)" : "People & Stakeholders (Contacts)"}
+              {t("crmAccounts.header.peopleTab")}
             </Button>
           </div>
           <span className="text-[11px] text-nx-ink-3">
-            {isRtl
-              ? "الحسابات تمثل الشركات والأندية والجهات الراعية؛ وجهات الاتصال تمثل الأفراد المرتبطين بها."
-              : "Accounts represent B2B Organizations, Clubs & Sponsors; Contacts represent Individual Stakeholders linked to them."}
+            {t("crmAccounts.header.directoryHint")}
           </span>
         </div>
         {/* Content Area */}

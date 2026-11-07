@@ -155,23 +155,23 @@ export function CreateAccountDialog({
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div className="space-y-1.5">
                   <Label className="text-xs font-medium text-nx-ink">
-                    {t("crmAccounts.create.organizationNameEn") || "Organization Name (English)"} <span className="text-destructive">*</span>
+                    {t("crmAccounts.create.organizationNameEn")} <span className="text-destructive">*</span>
                   </Label>
-                  <Input value={organizationNameEn} onChange={(e) => setOrganizationNameEn(e.target.value)} placeholder="e.g. Al-Hilal Sports Club" disabled={isSubmitting} className="h-9 text-xs bg-nx-surface border-nx-line" />
+                  <Input value={organizationNameEn} onChange={(e) => setOrganizationNameEn(e.target.value)} placeholder={t("crmAccounts.create.organizationNameEnPlaceholder")} disabled={isSubmitting} className="h-9 text-xs bg-nx-surface border-nx-line" />
                 </div>
                 <div className="space-y-1.5">
-                  <Label className="text-xs font-medium text-nx-ink">{t("crmAccounts.create.organizationNameAr") || "Organization Name (Arabic)"}</Label>
-                  <Input value={organizationNameAr} onChange={(e) => setOrganizationNameAr(e.target.value)} placeholder="مثال: نادي الهلال الرياضي" disabled={isSubmitting} dir="rtl" className="h-9 text-xs bg-nx-surface border-nx-line" />
+                  <Label className="text-xs font-medium text-nx-ink">{t("crmAccounts.create.organizationNameAr")}</Label>
+                  <Input value={organizationNameAr} onChange={(e) => setOrganizationNameAr(e.target.value)} placeholder={t("crmAccounts.create.organizationNameArPlaceholder")} disabled={isSubmitting} dir="rtl" className="h-9 text-xs bg-nx-surface border-nx-line" />
                 </div>
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div className="space-y-1.5">
-                  <Label className="text-xs font-medium text-nx-ink">{t("crmAccounts.create.email") || "Official Email"}</Label>
+                  <Label className="text-xs font-medium text-nx-ink">{t("crmAccounts.create.email")}</Label>
                   <Input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="partnerships@club.sa" disabled={isSubmitting} className="h-9 text-xs bg-nx-surface border-nx-line" />
                 </div>
                 <div className="space-y-1.5">
-                  <Label className="text-xs font-medium text-nx-ink">{t("crmAccounts.create.phone") || "Primary Phone"}</Label>
+                  <Label className="text-xs font-medium text-nx-ink">{t("crmAccounts.create.phone")}</Label>
                   <PhoneInput value={phone} onChange={(val) => setPhone(val)} defaultCountry="SA" disabled={isSubmitting} placeholder="5X XXX XXXX" />
                 </div>
               </div>
@@ -179,19 +179,19 @@ export function CreateAccountDialog({
           ) : (
             <div className="space-y-2.5 rounded-nx-md border border-nx-line bg-nx-ground/40 p-3.5">
               <Label className="text-xs font-medium text-nx-ink">
-                {t("crmAccounts.create.selectOrganization") || "Select Organization"} <span className="text-destructive">*</span>
+                {t("crmAccounts.create.selectOrganization")} <span className="text-destructive">*</span>
               </Label>
               <div className="relative">
                 <Search className="absolute start-2.5 top-1/2 -translate-y-1/2 size-3.5 text-nx-ink-3 pointer-events-none" />
-                <Input value={orgSearch} onChange={(e) => setOrgSearch(e.target.value)} placeholder={t("crmAccounts.create.searchOrganizations") || "Filter organizations by name..."} disabled={isSubmitting} className="h-8 ps-8 text-xs bg-nx-surface border-nx-line mb-2" />
+                <Input value={orgSearch} onChange={(e) => setOrgSearch(e.target.value)} placeholder={t("crmAccounts.create.searchOrganizations")} disabled={isSubmitting} className="h-8 ps-8 text-xs bg-nx-surface border-nx-line mb-2" />
               </div>
               <Select value={partyId} onValueChange={setPartyId} disabled={isSubmitting}>
                 <SelectTrigger className="h-9 text-xs bg-nx-surface border-nx-line">
-                  <SelectValue placeholder={isLoadingOrgs ? t("common.loading") || "Loading organizations..." : t("crmAccounts.create.chooseOrganization") || "Choose an organization from directory..."} />
+                  <SelectValue placeholder={isLoadingOrgs ? t("common.loading") : t("crmAccounts.create.chooseOrganization")} />
                 </SelectTrigger>
                 <SelectContent>
                   {candidateOrgs.length === 0 ? (
-                    <SelectItem value="__empty" disabled>{t("crmAccounts.create.noOrganizationsFound") || "No matching organizations found — switch to 'New Organization'"}</SelectItem>
+                    <SelectItem value="__empty" disabled>{t("crmAccounts.create.noOrganizationsFound")}</SelectItem>
                   ) : (
                     candidateOrgs.map((org) => (
                       <SelectItem key={org.partyId} value={org.partyId}>
@@ -206,28 +206,28 @@ export function CreateAccountDialog({
 
           <div className="grid grid-cols-2 gap-3">
             <div className="space-y-1.5">
-              <Label htmlFor="account-tier" className="text-xs font-medium text-nx-ink">{t("crmAccounts.create.tier") || "Commercial Tier"}</Label>
+              <Label htmlFor="account-tier" className="text-xs font-medium text-nx-ink">{t("crmAccounts.create.tier")}</Label>
               <Select value={commercialTierCode} onValueChange={setCommercialTierCode} disabled={isSubmitting}>
                 <SelectTrigger id="account-tier" className="h-9 text-xs bg-nx-surface border-nx-line"><SelectValue /></SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="Standard">Standard</SelectItem>
-                  <SelectItem value="Strategic">Strategic</SelectItem>
-                  <SelectItem value="KeyAccount">Key Account</SelectItem>
-                  <SelectItem value="Enterprise">Enterprise</SelectItem>
+                  <SelectItem value="Standard">{t("crmAccounts.tiers.Standard")}</SelectItem>
+                  <SelectItem value="Strategic">{t("crmAccounts.tiers.Strategic")}</SelectItem>
+                  <SelectItem value="KeyAccount">{t("crmAccounts.tiers.KeyAccount")}</SelectItem>
+                  <SelectItem value="Enterprise">{t("crmAccounts.tiers.Enterprise")}</SelectItem>
                 </SelectContent>
               </Select>
             </div>
 
             <div className="space-y-1.5">
-              <Label htmlFor="account-currency" className="text-xs font-medium text-nx-ink">{t("crmAccounts.create.currency") || "Preferred Currency"}</Label>
+              <Label htmlFor="account-currency" className="text-xs font-medium text-nx-ink">{t("crmAccounts.create.currency")}</Label>
               <Select value={preferredCurrencyCode} onValueChange={setPreferredCurrencyCode} disabled={isSubmitting}>
                 <SelectTrigger id="account-currency" className="h-9 text-xs bg-nx-surface border-nx-line"><SelectValue /></SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="SAR">SAR — Saudi Riyal</SelectItem>
-                  <SelectItem value="AED">AED — UAE Dirham</SelectItem>
-                  <SelectItem value="USD">USD — US Dollar</SelectItem>
-                  <SelectItem value="EUR">EUR — Euro</SelectItem>
-                  <SelectItem value="EGP">EGP — Egyptian Pound</SelectItem>
+                  <SelectItem value="SAR">{t("crmAccounts.currencies.SAR")}</SelectItem>
+                  <SelectItem value="AED">{t("crmAccounts.currencies.AED")}</SelectItem>
+                  <SelectItem value="USD">{t("crmAccounts.currencies.USD")}</SelectItem>
+                  <SelectItem value="EUR">{t("crmAccounts.currencies.EUR")}</SelectItem>
+                  <SelectItem value="EGP">{t("crmAccounts.currencies.EGP")}</SelectItem>
                 </SelectContent>
               </Select>
             </div>

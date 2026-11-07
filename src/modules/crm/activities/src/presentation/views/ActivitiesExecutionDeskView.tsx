@@ -94,7 +94,7 @@ export function ActivitiesExecutionDeskView() {
                           </span>
                           <div className="flex items-center gap-1.5 text-[10px] text-nx-ink-3">
                             <Badge variant="outline" className="border-nx-line bg-nx-raised py-0 px-1 text-[9px]">
-                              {acc.commercialTierCode || "Standard"}
+                              {acc.commercialTierCode || t("crmActivities.executionDesk.standardTier")}
                             </Badge>
                             {acc.preferredCurrencyCode && (
                               <>
@@ -139,7 +139,7 @@ export function ActivitiesExecutionDeskView() {
                 <div className="flex flex-wrap items-center justify-between gap-2 border-b border-nx-line pb-3">
                   <div>
                     <span className={cn("text-[10px] text-nx-ink-3 font-medium", !isRtl && "font-mono uppercase")}>
-                      {t("crmActivities.executionDesk.activeAccount") || "Selected Target Account"}
+                      {t("crmActivities.executionDesk.activeAccount")}
                     </span>
                     <h3 className="text-sm font-bold text-nx-ink font-heading">
                       {selectedAccountName}
@@ -148,7 +148,7 @@ export function ActivitiesExecutionDeskView() {
                   {selectedAccount && (
                     <div className="flex items-center gap-2">
                       <Badge variant="outline" className="border-nx-line bg-nx-raised text-nx-ink-2 text-[10px]">
-                        {selectedAccount.commercialTierCode || "Standard"}
+                        {selectedAccount.commercialTierCode || t("crmActivities.executionDesk.standardTier")}
                       </Badge>
                       {selectedAccount.preferredCurrencyCode && (
                         <Badge variant="outline" className="border-nx-line bg-nx-raised text-nx-ink-2 text-[10px] font-mono">
@@ -166,7 +166,7 @@ export function ActivitiesExecutionDeskView() {
               </Card>
             ) : (
               <Card className="p-8 text-center bg-nx-surface border-nx-line text-xs text-nx-ink-3">
-                Select an account from the left to view and record timeline interactions.
+                {t("crmActivities.executionDesk.selectAccountPrompt")}
               </Card>
             )}
           </div>

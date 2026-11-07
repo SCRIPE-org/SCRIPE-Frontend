@@ -88,7 +88,7 @@ export function CrmWorkflowFullscreenStudio(props: CrmWorkflowFullscreenStudioPr
           </Badge>
 
           <Badge variant="secondary" className="text-[10px] font-mono shrink-0 whitespace-nowrap px-1.5" data-testid="studio-workflow-version-badge">
-            v4.0
+            v{selectedWorkflow?.version ?? 4}.0
           </Badge>
 
           {selectedWorkflow?.isActive && (
@@ -123,7 +123,17 @@ export function CrmWorkflowFullscreenStudio(props: CrmWorkflowFullscreenStudioPr
           <Button size="sm" variant="outline" className="h-7 px-2 text-[11px] shrink-0" onClick={() => setGuideOpen(true)} data-testid="studio-smart-guide-btn">
             <HelpCircle className="w-3 h-3 me-1 text-nx-accent" />Guide
           </Button>
-          <Button size="sm" variant="outline" className="h-7 px-2 text-[11px] hidden 2xl:inline-flex shrink-0" onClick={() => setValidationBanner("Workflow JSON Blueprint v4.0 exported to clipboard.")} data-testid="workflow-export-json-btn">
+          <Button
+            size="sm" variant="outline" className="h-7 px-2 text-[11px] hidden 2xl:inline-flex shrink-0"
+            onClick={() => {
+              const payload = JSON.stringify({ workflow: selectedWorkflow, stages: activeStages, transitions }, null, 2);
+              if (typeof navigator !== "undefined" && navigator.clipboard?.writeText) {
+                void navigator.clipboard.writeText(payload).catch(() => undefined);
+              }
+              setValidationBanner(`Workflow JSON Blueprint v${selectedWorkflow?.version ?? 4}.0 (${payload.length} bytes) exported to clipboard.`);
+            }}
+            data-testid="workflow-export-json-btn"
+          >
             <Download className="w-3 h-3 me-1" />Export JSON
           </Button>
           <Button size="sm" variant="outline" className="h-7 px-2 text-[11px] shrink-0" onClick={() => { onResetDraft(); onBackToList(); }} data-testid="studio-discard-close-btn">

@@ -2,6 +2,14 @@
 
 import { useI18n } from "@core/providers/i18n-provider";
 import { Card } from "@core/ui/card";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@core/ui/table";
 import { History } from "lucide-react";
 import { OpportunityStageBadge } from "./OpportunityStageBadge";
 import type { CrmOpportunityStageHistory } from "../../domain/entities/OpportunityEntity";
@@ -34,24 +42,24 @@ export function OpportunityAuditTimeline({ stageHistory, isRtl }: OpportunityAud
           {t("crmOpportunities.detail.noHistory")}
         </p>
       ) : (
-        <div className="overflow-x-auto no-scrollbar">
-          <table className="w-full text-left text-xs border-collapse" dir={isRtl ? "rtl" : "ltr"}>
-            <thead>
-              <tr className="border-b border-nx-line bg-nx-raised/50 text-nx-ink-2 font-semibold">
-                <th className="px-4 py-2.5 text-start">{t("crmOpportunities.detail.occurredAt")}</th>
-                <th className="px-4 py-2.5 text-start">{t("crmOpportunities.detail.fromStage")}</th>
-                <th className="px-4 py-2.5 text-start">{t("crmOpportunities.detail.toStage")}</th>
-                <th className="px-4 py-2.5 text-start">{t("crmOpportunities.detail.transitionType")}</th>
-                <th className="px-4 py-2.5 text-start">{t("crmOpportunities.detail.reason")}</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-nx-line">
+        <div className="overflow-x-auto no-scrollbar" dir={isRtl ? "rtl" : "ltr"}>
+          <Table className="w-full text-left text-xs border-collapse">
+            <TableHeader>
+              <TableRow className="border-b border-nx-line bg-nx-raised/50 text-nx-ink-2 font-semibold">
+                <TableHead className="px-4 py-2.5 text-start">{t("crmOpportunities.detail.occurredAt")}</TableHead>
+                <TableHead className="px-4 py-2.5 text-start">{t("crmOpportunities.detail.fromStage")}</TableHead>
+                <TableHead className="px-4 py-2.5 text-start">{t("crmOpportunities.detail.toStage")}</TableHead>
+                <TableHead className="px-4 py-2.5 text-start">{t("crmOpportunities.detail.transitionType")}</TableHead>
+                <TableHead className="px-4 py-2.5 text-start">{t("crmOpportunities.detail.reason")}</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody className="divide-y divide-nx-line">
               {stageHistory.map((hist) => (
-                <tr key={hist.id} className="hover:bg-nx-raised/30">
-                  <td className="px-4 py-2.5 text-nx-ink-3 whitespace-nowrap">
+                <TableRow key={hist.id} className="hover:bg-nx-raised/30">
+                  <TableCell className="px-4 py-2.5 text-nx-ink-3 whitespace-nowrap">
                     {new Date(hist.occurredAtUtc).toLocaleString()}
-                  </td>
-                  <td className="px-4 py-2.5">
+                  </TableCell>
+                  <TableCell className="px-4 py-2.5">
                     {hist.fromStageKey ? (
                       <OpportunityStageBadge
                         stageKey={hist.fromStageKey}
@@ -60,27 +68,29 @@ export function OpportunityAuditTimeline({ stageHistory, isRtl }: OpportunityAud
                     ) : (
                       <span className="text-nx-ink-3">—</span>
                     )}
-                  </td>
-                  <td className="px-4 py-2.5">
+                  </TableCell>
+                  <TableCell className="px-4 py-2.5">
                     <OpportunityStageBadge
                       stageKey={hist.toStageKey}
                       label={hist.toStageLabelEnSnapshot || hist.toStageKey}
                     />
-                  </td>
-                  <td className="px-4 py-2.5 font-medium">
+                  </TableCell>
+                  <TableCell className="px-4 py-2.5 font-medium">
                     {hist.usedStageOverride ? (
-                      <span className="text-warning font-semibold">Stage Override</span>
+                      <span className="text-warning font-semibold">
+                        {t("crmOpportunities.detail.transitionType", { defaultValue: "Stage Override" })}
+                      </span>
                     ) : (
                       <span className="text-nx-ink-2">{hist.transitionKind}</span>
                     )}
-                  </td>
-                  <td className="px-4 py-2.5 text-nx-ink-2 max-w-sm truncate">
+                  </TableCell>
+                  <TableCell className="px-4 py-2.5 text-nx-ink-2 max-w-sm truncate">
                     {hist.reason || "—"}
-                  </td>
-                </tr>
+                  </TableCell>
+                </TableRow>
               ))}
-            </tbody>
-          </table>
+            </TableBody>
+          </Table>
         </div>
       )}
     </Card>

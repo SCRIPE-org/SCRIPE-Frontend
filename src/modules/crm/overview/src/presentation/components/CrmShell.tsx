@@ -20,7 +20,8 @@ import { Button } from "@core/ui/button";
 import { cn } from "@core/common/utils";
 import { useCrmCurrency } from "../viewmodels/useCrmSettingsStore";
 import { CrmSmartGuideModal } from "./CrmSmartGuideModal";
-import { CrmShellTopToolbar, CrmSmartTipRibbon } from "./CrmShellTopToolbar";
+import { CrmShellTopToolbar } from "./CrmShellTopToolbar";
+import { CrmSmartTipRibbon } from "./CrmSmartTipRibbon";
 
 export type CrmTabId =
   | "overview"
@@ -177,7 +178,8 @@ export function CrmShell({
 
       {showTipRibbon && (
         <CrmSmartTipRibbon
-          isRtl={isRtl}
+          t={t}
+          activeTab={activeTab}
           onOpenGuide={() => setSmartGuideOpen(true)}
           onDismiss={() => setShowTipRibbon(false)}
         />

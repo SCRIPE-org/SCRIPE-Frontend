@@ -61,15 +61,15 @@ export function ContactsView() { const router = useRouter();
               <span className="font-medium text-xs">
                 {language === "ar" && contact.primaryAccountNameAr
                   ? contact.primaryAccountNameAr
-                  : contact.primaryAccountNameEn || "Account"}
+                  : contact.primaryAccountNameEn || t("crmContacts.detail.defaultAccountLabel")}
               </span>
               <ArrowUpRight className="size-2.5 text-nx-ink-3" />
             </div> ) : (
             <span className="text-nx-ink-3 text-[11px] italic">
-              {t("crmContacts.table.noAccount") || "Unassigned"}
+              {t("crmContacts.table.noAccount")}
             </span> ),
       }, {
-        key: "jobTitleSnapshot", label: t("crmContacts.table.role") || "Job Title & Dept",
+        key: "jobTitleSnapshot", label: t("crmContacts.table.role"),
         render: (_val, contact: CrmContact) => ( <div>
             <span className="font-medium text-nx-ink block">
               {contact.jobTitleSnapshot || "—"}
@@ -78,7 +78,7 @@ export function ContactsView() { const router = useRouter();
             )}
           </div> ),
       }, {
-        key: "email", label: t("crmContacts.table.communication") || "Direct Contact",
+        key: "email", label: t("crmContacts.table.communication"),
         render: (_val, contact: CrmContact) => ( <div className="text-[11px] text-nx-ink-2 space-y-0.5">
             {contact.email && ( <div className="flex items-center gap-1.5">
                 <Mail className="size-3 text-nx-ink-3" />
@@ -91,7 +91,7 @@ export function ContactsView() { const router = useRouter();
             {!contact.email && !contact.phone && <span className="text-nx-ink-3">—</span>}
           </div> ),
       }, {
-        key: "createdAt", label: t("crmContacts.table.createdAt") || "Created",
+        key: "createdAt", label: t("crmContacts.table.createdAt"),
         sortable: true, render: (_val, contact: CrmContact) => {
           const formattedDate = contact.createdAt
             ? new Date(contact.createdAt).toLocaleDateString( language === "ar" ? "ar-SA" : "en-US",
@@ -119,8 +119,7 @@ export function ContactsView() { const router = useRouter();
           <div className="relative w-full sm:w-80">
             <Search className="absolute start-2.5 top-1/2 -translate-y-1/2 size-3.5 text-nx-ink-3 pointer-events-none" />
             <Input type="text"
-              placeholder={ t("crmContacts.searchPlaceholder") ||
-                "Search contacts by name, title, or department..." }
+              placeholder={t("crmContacts.searchPlaceholder")}
               value={search}
               onChange={(e) => handleSearchChange(e.target.value)}
               className="h-8 ps-8 pe-3 text-xs bg-nx-surface border-nx-line text-nx-ink" />
@@ -134,7 +133,7 @@ export function ContactsView() { const router = useRouter();
           className="h-7 px-2.5 text-xs gap-1 border border-nx-line bg-nx-surface hover:bg-nx-raised text-nx-ink"
         >
           <Eye className="size-3 text-nx-accent" />
-          <span>{t("crmContacts.actions.viewContext") || "View Context"}</span>
+          <span>{t("crmContacts.actions.viewContext")}</span>
         </Button> ),
       renderCardGridItem: (contact: CrmContact, actions: React.ReactNode) => (
         <Card className="flex flex-col justify-between gap-3 rounded-nx-lg border border-nx-line bg-nx-surface p-4 hover:border-nx-line-hi transition-all">
@@ -156,7 +155,7 @@ export function ContactsView() { const router = useRouter();
           </div>
           <div className="border-t border-nx-line pt-3 flex items-center justify-between">
             <span className="text-xs text-nx-ink-2">
-              {contact.primaryAccountNameEn || t("crmContacts.table.noAccount") || "Unassigned"}
+              {(language === "ar" && contact.primaryAccountNameAr ? contact.primaryAccountNameAr : contact.primaryAccountNameEn) || t("crmContacts.table.noAccount")}
             </span>
             {actions}
           </div>
@@ -230,7 +229,7 @@ export function ContactsView() { const router = useRouter();
               onClick={() => router.push("/crm/accounts")}
               className="h-7 px-3 rounded-md text-xs font-semibold text-nx-ink-2 hover:text-nx-ink"
             >
-              {isRtl ? "الشركات والمؤسسات (الحسابات)" : "Companies & Organizations (Accounts)"}
+              {t("crmContacts.header.companiesTab")}
             </Button>
             <Button
               type="button"
@@ -239,13 +238,11 @@ export function ContactsView() { const router = useRouter();
               data-testid="customer-dir-people-tab"
               className="h-7 px-3 rounded-md text-xs font-bold bg-nx-surface text-foreground border border-nx-line-hi"
             >
-              {isRtl ? "الأفراد وصناع القرار (جهات الاتصال)" : "People & Stakeholders (Contacts)"}
+              {t("crmContacts.header.peopleTab")}
             </Button>
           </div>
           <span className="text-[11px] text-nx-ink-3">
-            {isRtl
-              ? "جهات الاتصال تمثل الأفراد وصناع القرار المرتبطين بحسابات الشركات والأندية."
-              : "Contacts represent Individual Decision-Makers & Stakeholders linked to B2B Company Accounts."}
+            {t("crmContacts.header.directoryHint")}
           </span>
         </div>
         {/* Content Area */}

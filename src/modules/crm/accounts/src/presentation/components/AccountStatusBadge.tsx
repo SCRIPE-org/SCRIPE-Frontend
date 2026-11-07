@@ -1,6 +1,7 @@
 "use client";
 
 import { Badge } from "@core/ui/badge";
+import { useI18n } from "@core/providers/i18n-provider";
 import { cn } from "@core/common/utils";
 
 interface AccountStatusBadgeProps {
@@ -9,7 +10,9 @@ interface AccountStatusBadgeProps {
 }
 
 export function AccountStatusBadge({ tierCode, className }: AccountStatusBadgeProps) {
-  const tier = (tierCode || "Standard").toUpperCase();
+  const { t } = useI18n();
+  const rawTier = tierCode || "Standard";
+  const tier = rawTier.toUpperCase();
 
   let variantClass = "bg-nx-raised text-nx-ink-2 border-nx-line";
 
@@ -30,7 +33,7 @@ export function AccountStatusBadge({ tierCode, className }: AccountStatusBadgePr
         className
       )}
     >
-      {tierCode || "Standard"}
+      {t(`crmAccounts.tiers.${rawTier}`, { defaultValue: rawTier })}
     </Badge>
   );
 }

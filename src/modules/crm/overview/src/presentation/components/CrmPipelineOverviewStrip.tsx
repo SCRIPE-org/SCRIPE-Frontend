@@ -6,6 +6,7 @@ import { Button } from "@core/ui/button";
 import { Card } from "@core/ui/card";
 import { cn } from "@core/common/utils";
 import type { CrmPipelineOverview, CrmStageKey } from "../../domain/entities/OverviewEntity";
+import { STAGE_COLOR_PALETTE, resolveDefaultStageColor } from "../../domain/constants/crmWorkflowDefaults";
 import { useCrmCurrency } from "../viewmodels/useCrmSettingsStore";
 
 interface CrmPipelineOverviewStripProps {
@@ -81,23 +82,28 @@ export function CrmPipelineOverviewStrip({
         ).map((stage, idx) => {
           const isSelected = activeFilterStage === stage.key;
           const isProposalOrAfter = stage.requiresVerifiedParty;
+          const stageColor = resolveDefaultStageColor(stage.key, undefined, stage.sortOrder);
+          const colorMeta = STAGE_COLOR_PALETTE[stageColor] ?? STAGE_COLOR_PALETTE.blue;
 
           return (
             <Button
               key={stage.key}
               type="button"
               variant="ghost"
+              data-stage-color={stageColor}
               onClick={() => onSelectStage?.(stage.key)}
               className={cn(
                 "group relative flex h-auto flex-col items-stretch justify-between p-3.5 rounded-nx-md border text-left transition-all duration-nx-micro select-none whitespace-normal",
+                colorMeta.headerBorderClass,
                 isSelected
                   ? "border-nx-accent bg-nx-raised ring-1 ring-nx-accent"
-                  : "border-nx-line bg-nx-surface hover:border-nx-line-hi hover:bg-nx-raised/40"
+                  : cn("hover:border-nx-line-hi hover:bg-nx-raised/40", colorMeta.cardClass)
               )}
             >
               <div className="flex items-center justify-between w-full">
-                <span className="text-[11px] font-bold uppercase tracking-wider text-nx-ink-2 group-hover:text-nx-ink">
-                  {stage.name}
+                <span className="inline-flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-wider text-nx-ink-2 group-hover:text-nx-ink">
+                  <span className={cn("w-2 h-2 rounded-full shrink-0", colorMeta.dotClass)} />
+                  <span>{stage.name}</span>
                 </span>
                 {isProposalOrAfter ? (
                   <span
@@ -107,7 +113,7 @@ export function CrmPipelineOverviewStrip({
                     <Lock className="size-3 text-warning" aria-hidden="true" />
                   </span>
                 ) : (
-                  <span className="text-[10px] text-nx-ink-3">#{idx + 1}</span>
+                  <span className={cn("text-[10px] font-mono px-1.5 py-0.5 rounded border", colorMeta.badgeClass)}>#{idx + 1}</span>
                 )}
               </div>
 

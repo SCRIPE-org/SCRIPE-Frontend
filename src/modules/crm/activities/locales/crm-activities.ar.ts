@@ -72,6 +72,12 @@ export const ar = {
       scheduleBtn: "جدولة المتابعة",
       defaultTitlePrefix: "متابعة",
       currentActorLabel: "ممثل المبيعات الحالي (أنت)",
+      assignees: {
+        rep1: "أحمد الشناوي — المدير التجاري",
+        rep2: "طارق الدوسري — مسؤول حسابات أول",
+        rep3: "سارة المنصور — قائد رعايات المؤسسات",
+        rep4: "خالد الحربي — مدير الشراكات الرياضية",
+      },
     },
     communication: {
       sendBtn: "إرسال مراسلة",
@@ -101,6 +107,8 @@ export const ar = {
       selectAccount: "الحسابات التجارية",
       activeAccount: "الحساب التجاري المحدد",
       noAccounts: "لا توجد حسابات متاحة",
+      selectAccountPrompt: "اختر حساباً تجارياً من القائمة لعرض وتسجيل سجل التفاعلات.",
+      standardTier: "قياسي",
     },
   },
 };

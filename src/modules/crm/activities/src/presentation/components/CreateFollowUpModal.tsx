@@ -25,26 +25,22 @@ import {
 import { AlertCircle, CalendarClock } from "lucide-react";
 import type { CrmActivity } from "../../domain/entities/CrmActivityEntity";
 
-const COMMERCIAL_ASSIGNEES: Array<{ id: string; labelEn: string; labelAr: string }> = [
+const COMMERCIAL_ASSIGNEES: Array<{ id: string; labelKey: string }> = [
   {
     id: "11111111-1111-1111-1111-111111111111",
-    labelEn: "Ahmed El-Shenawy — Commercial Director",
-    labelAr: "أحمد الشناوي — المدير التجاري",
+    labelKey: "crmActivities.followup.assignees.rep1",
   },
   {
     id: "22222222-2222-2222-2222-222222222222",
-    labelEn: "Tariq Al-Dosari — Senior Account Executive",
-    labelAr: "طارق الدوسري — مسؤول حسابات أول",
+    labelKey: "crmActivities.followup.assignees.rep2",
   },
   {
     id: "33333333-3333-3333-3333-333333333333",
-    labelEn: "Sara Al-Mansour — Enterprise Sponsorship Lead",
-    labelAr: "سارة المنصور — قائد رعايات المؤسسات",
+    labelKey: "crmActivities.followup.assignees.rep3",
   },
   {
     id: "44444444-4444-4444-4444-444444444444",
-    labelEn: "Khaled Al-Harbi — Sports Partnerships Manager",
-    labelAr: "خالد الحربي — مدير الشراكات الرياضية",
+    labelKey: "crmActivities.followup.assignees.rep4",
   },
 ];
 
@@ -73,6 +69,8 @@ export function CreateFollowUpModal({
 }: CreateFollowUpModalProps) {
   const { t, language } = useI18n();
   const isRtl = language === "ar";
+  const actorUserId = activity?.actorUserId ?? "";
+  const actorDisplaySnapshot = activity?.actorDisplaySnapshot ?? "";
 
   const [title, setTitle] = useState(
     activity
@@ -84,22 +82,22 @@ export function CreateFollowUpModal({
     new Date(Date.now() + 2 * 24 * 60 * 60 * 1000).toISOString().split("T")[0]
   );
   const [assigneeId, setAssigneeId] = useState(
-    activity?.actorUserId || COMMERCIAL_ASSIGNEES[0].id
+    actorUserId || COMMERCIAL_ASSIGNEES[0].id
   );
 
   const assigneeOptions = useMemo(() => {
     const base = COMMERCIAL_ASSIGNEES.map((a) => ({
       id: a.id,
-      label: isRtl ? a.labelAr : a.labelEn,
+      label: t(a.labelKey),
     }));
-    if (activity?.actorUserId && !base.some((b) => b.id === activity.actorUserId)) {
+    if (actorUserId && !base.some((b) => b.id === actorUserId)) {
       base.unshift({
-        id: activity.actorUserId,
-        label: activity.actorDisplaySnapshot || t("crmActivities.followup.currentActorLabel"),
+        id: actorUserId,
+        label: actorDisplaySnapshot || t("crmActivities.followup.currentActorLabel"),
       });
     }
     return base;
-  }, [activity?.actorDisplaySnapshot, activity?.actorUserId, isRtl, t]);
+  }, [actorDisplaySnapshot, actorUserId, t]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

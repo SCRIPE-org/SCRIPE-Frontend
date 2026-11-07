@@ -16,14 +16,6 @@ export const PERMITTED_EXIT_FIELDS = [
   "solutionFitConfirmed",
 ] as const;
 
-export const EXIT_FIELD_LABELS: Record<string, { en: string; ar: string }> = {
-  estimatedAmount: { en: "Estimated Deal Value", ar: "القيمة التقديرية للصفقة" },
-  targetCloseDate: { en: "Target Close Date", ar: "تاريخ الإغلاق المستهدف" },
-  partyId: { en: "Linked Account / Contact", ar: "ربط الحساب أو جهة الاتصال" },
-  primaryContactRole: { en: "Primary Contact Role", ar: "دور جهة الاتصال الرئيسية" },
-  solutionFitConfirmed: { en: "Solution Fit Confirmed", ar: "تأكيد ملاءمة الحل" },
-};
-
 export interface StageDraftState {
   stageKey: string;
   labelEn: string;
@@ -73,7 +65,7 @@ export function PipelineAdminStageRow({
           {isProposalOrLater && (
             <Badge variant="outline" className="text-[10px] gap-1 text-nx-accent border-nx-accent/30">
               <ShieldCheck className="size-3" />
-              {t("crmOpportunities.kanban.proposalGateBadge", { defaultValue: "Account / Contact Required" })}
+              {t("crmOpportunities.kanban.proposalGateBadge")}
             </Badge>
           )}
         </div>
@@ -106,13 +98,13 @@ export function PipelineAdminStageRow({
       <div className="grid grid-cols-1 sm:grid-cols-4 gap-2.5">
         <div className="space-y-1 sm:col-span-2">
           <Label className="text-[11px] font-medium text-nx-ink-2">
-            {t("crmOpportunities.dialogs.pipelineAdmin.labelEn", { defaultValue: "Stage Name (English)" })}
+            {t("crmOpportunities.dialogs.pipelineAdmin.labelEn")}
           </Label>
           <Input
             type="text"
             value={stage.labelEn}
             onChange={(e) => onFieldChange(idx, "labelEn", e.target.value)}
-            placeholder="Stage label (EN)"
+            placeholder={t("crmOpportunities.dialogs.pipelineAdmin.labelEnPlaceholder")}
             className="h-8 text-xs"
             required
           />
@@ -120,13 +112,13 @@ export function PipelineAdminStageRow({
 
         <div className="space-y-1 sm:col-span-2">
           <Label className="text-[11px] font-medium text-nx-ink-2">
-            {t("crmOpportunities.dialogs.pipelineAdmin.labelAr", { defaultValue: "Stage Name (Arabic)" })}
+            {t("crmOpportunities.dialogs.pipelineAdmin.labelAr")}
           </Label>
           <Input
             type="text"
             value={stage.labelAr}
             onChange={(e) => onFieldChange(idx, "labelAr", e.target.value)}
-            placeholder="مسمى المرحلة (عربي)"
+            placeholder={t("crmOpportunities.dialogs.pipelineAdmin.labelArPlaceholder")}
             dir="rtl"
             className="h-8 text-xs"
           />
@@ -169,7 +161,7 @@ export function PipelineAdminStageRow({
           <div className="flex flex-wrap gap-2.5 pt-1">
             {PERMITTED_EXIT_FIELDS.map((fieldKey) => {
               const isChecked = stage.requiredExitFields.includes(fieldKey);
-              const friendlyLabel = EXIT_FIELD_LABELS[fieldKey]?.[isRtl ? "ar" : "en"] || fieldKey;
+              const friendlyLabel = t(`crmOpportunities.dialogs.pipelineAdmin.exitFields.${fieldKey}`);
               return (
                 <Label key={fieldKey} className="flex items-center gap-1.5 text-[11px] cursor-pointer select-none">
                   <Checkbox checked={isChecked} onCheckedChange={() => onToggleExitField(idx, fieldKey)} />

@@ -4,6 +4,14 @@ import React from "react";
 import { Plus, ShieldCheck, Zap } from "lucide-react";
 import { Button } from "@core/ui/button";
 import { Badge } from "@core/ui/badge";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@core/ui/table";
 import type { CrmCustomFieldDefinition } from "@modules/crm";
 import type { CrmWorkflowStageNode, CrmWorkflowTransition } from "./CrmWorkflowCanvas2D";
 import { countTransitionRules, formatExitFieldLabel } from "./CrmWorkflowCanvasSubViews";
@@ -56,31 +64,31 @@ export function CrmWorkflowTransitionsTableView({
       </div>
 
       <div className="rounded-md border border-nx-line bg-nx-surface overflow-hidden">
-        <table className="w-full text-xs">
-          <thead className="bg-nx-raised border-b border-nx-line text-nx-ink-2 uppercase tracking-wider text-[10px]">
-            <tr>
-              <th className="text-start px-3.5 py-2.5">{t("crmOpportunities.pipelinesPage.colTransitionName")}</th>
-              <th className="text-start px-3.5 py-2.5">{t("crmOpportunities.pipelinesPage.colFromStatus")}</th>
-              <th className="text-start px-3.5 py-2.5">{t("crmOpportunities.pipelinesPage.colToStatus")}</th>
-              <th className="text-start px-3.5 py-2.5">{t("crmOpportunities.pipelinesPage.colRulesValidators")}</th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-nx-line">
+        <Table className="w-full text-xs">
+          <TableHeader className="bg-nx-raised border-b border-nx-line text-nx-ink-2 uppercase tracking-wider text-[10px]">
+            <TableRow>
+              <TableHead className="text-start px-3.5 py-2.5">{t("crmOpportunities.pipelinesPage.colTransitionName")}</TableHead>
+              <TableHead className="text-start px-3.5 py-2.5">{t("crmOpportunities.pipelinesPage.colFromStatus")}</TableHead>
+              <TableHead className="text-start px-3.5 py-2.5">{t("crmOpportunities.pipelinesPage.colToStatus")}</TableHead>
+              <TableHead className="text-start px-3.5 py-2.5">{t("crmOpportunities.pipelinesPage.colRulesValidators")}</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody className="divide-y divide-nx-line">
             {transitions.map((tr) => {
               const isSelected = selectedTransitionId === tr.id;
               return (
-                <tr
+                <TableRow
                   key={tr.id}
                   onClick={() => onSelectTransition(tr.id)}
                   className={`cursor-pointer transition-colors ${isSelected ? "bg-nx-raised" : "hover:bg-nx-raised/60"}`}
                 >
-                  <td className="px-3.5 py-2.5 font-semibold text-nx-ink">
+                  <TableCell className="px-3.5 py-2.5 font-semibold text-nx-ink">
                     <span className="inline-flex items-center gap-1.5">
                       <Zap className="w-3.5 h-3.5 text-warning shrink-0" />
                       {isAr ? tr.nameAr : tr.nameEn}
                     </span>
-                  </td>
-                  <td className="px-3.5 py-2.5 text-nx-ink-2 font-medium">
+                  </TableCell>
+                  <TableCell className="px-3.5 py-2.5 text-nx-ink-2 font-medium">
                     {tr.fromStageKeys && tr.fromStageKeys.length > 1 ? (
                       <div className="flex flex-wrap gap-1">
                         {tr.fromStageKeys.map((fk) => (
@@ -92,9 +100,9 @@ export function CrmWorkflowTransitionsTableView({
                     ) : (
                       stageLabel(tr.fromStageKey)
                     )}
-                  </td>
-                  <td className="px-3.5 py-2.5 text-nx-ink font-semibold">{stageLabel(tr.toStageKey)}</td>
-                  <td className="px-3.5 py-2.5">
+                  </TableCell>
+                  <TableCell className="px-3.5 py-2.5 text-nx-ink font-semibold">{stageLabel(tr.toStageKey)}</TableCell>
+                  <TableCell className="px-3.5 py-2.5">
                     <div className="flex flex-wrap items-center gap-1.5">
                       {tr.requireReason && (
                         <Badge variant="warning" className="text-[10px]">
@@ -124,12 +132,12 @@ export function CrmWorkflowTransitionsTableView({
                         </span>
                       )}
                     </div>
-                  </td>
-                </tr>
+                  </TableCell>
+                </TableRow>
               );
             })}
-          </tbody>
-        </table>
+          </TableBody>
+        </Table>
       </div>
     </div>
   );

@@ -2,15 +2,9 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { useI18n } from "@core/providers/i18n-provider";
-import {
-  useCrmSettingsStore,
-  useCrmWorkflowsStore,
-  type CrmWorkflowEntityType,
-} from "@modules/crm";
-import type {
-  CrmWorkflowStageNode,
-  CrmWorkflowTransition,
-} from "../components/workflow/CrmWorkflowCanvas2D";
+import { useCrmSettingsStore, useCrmWorkflowsStore, type CrmWorkflowEntityType } from "@modules/crm";
+import { CANONICAL_TERMINAL_LABELS } from "../../domain/constants/crmCanonicalStages";
+import type { CrmWorkflowStageNode, CrmWorkflowTransition } from "../components/workflow/CrmWorkflowCanvas2D";
 import {
   buildStageNodesFromWorkflow,
   buildTransitionsFromWorkflow,
@@ -200,7 +194,15 @@ export function usePipelineStudioViewModel(defaultOpenStudio = false) {
       const lastStage = [...nonTerm].sort((a, b) => a.order - b.order)[nonTerm.length - 1];
       setTransitions((prev) => [
         ...prev,
-        { id: `tr-auto-${Date.now()}`, nameEn: `Move to ${newNode.labelEn}`, nameAr: `الانتقال إلى ${newNode.labelAr}`, fromStageKey: lastStage.stageKey, toStageKey: stageKey, direction: "forward", requiredFields: [] },
+        {
+          id: `tr-auto-${Date.now()}`,
+          nameEn: `${CANONICAL_TERMINAL_LABELS.moveToPrefixEn} ${newNode.labelEn}`,
+          nameAr: `${CANONICAL_TERMINAL_LABELS.moveToPrefixAr} ${newNode.labelAr}`,
+          fromStageKey: lastStage.stageKey,
+          toStageKey: stageKey,
+          direction: "forward",
+          requiredFields: [],
+        },
       ]);
     }
     setNewStageNameEn(""); setNewStageNameAr(""); setAddStageModalOpen(false); setSelectedStageKey(stageKey); setHasChanges(true);

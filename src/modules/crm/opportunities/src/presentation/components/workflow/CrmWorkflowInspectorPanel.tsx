@@ -47,10 +47,12 @@ export function CrmWorkflowInspectorPanel({
   const isAr = propIsAr ?? i18n.language === "ar";
   const handleMove = onMoveOrder ?? onMoveStage ?? (() => undefined);
   const panelRef = useRef<HTMLDivElement>(null);
+  const selectedStageKey = selectedStage?.stageKey;
+  const selectedTransitionId = selectedTransition?.id;
 
   useEffect(() => {
     if (panelRef.current) panelRef.current.scrollTop = 0;
-  }, [selectedStage?.stageKey, selectedTransition?.id]);
+  }, [selectedStageKey, selectedTransitionId]);
 
   const vm = useStageInspectorViewModel({
     activeEntity, stages, transitions, selectedStage, onStageChange, onRemoveStage, onReplaceStage, onAddCrmCustomField,

@@ -72,6 +72,12 @@ export const en = {
       scheduleBtn: "Schedule Follow-up",
       defaultTitlePrefix: "Follow-up",
       currentActorLabel: "Current Sales Rep (You)",
+      assignees: {
+        rep1: "Ahmed El-Shenawy — Commercial Director",
+        rep2: "Tariq Al-Dosari — Senior Account Executive",
+        rep3: "Sara Al-Mansour — Enterprise Sponsorship Lead",
+        rep4: "Khaled Al-Harbi — Sports Partnerships Manager",
+      },
     },
     communication: {
       sendBtn: "Send Communication",
@@ -101,6 +107,8 @@ export const en = {
       selectAccount: "Commercial Accounts",
       activeAccount: "Selected Target Account",
       noAccounts: "No accounts available",
+      selectAccountPrompt: "Select an account from the left to view and record timeline interactions.",
+      standardTier: "Standard",
     },
   },
 };

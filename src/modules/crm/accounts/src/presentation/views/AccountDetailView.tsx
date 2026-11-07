@@ -238,10 +238,10 @@ export function AccountDetailView({ accountId }: AccountDetailViewProps) {
                     <Select value={editTier || "Standard"} onValueChange={setEditTier}>
                       <SelectTrigger id="edit-account-tier" className="h-8 text-xs bg-nx-ground border-nx-line text-nx-ink"><SelectValue /></SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="Enterprise">Enterprise</SelectItem>
-                        <SelectItem value="MidMarket">Mid-Market</SelectItem>
-                        <SelectItem value="Standard">Standard</SelectItem>
-                        <SelectItem value="Trial">Trial</SelectItem>
+                        <SelectItem value="Enterprise">{t("crmAccounts.tiers.Enterprise")}</SelectItem>
+                        <SelectItem value="MidMarket">{t("crmAccounts.tiers.MidMarket")}</SelectItem>
+                        <SelectItem value="Standard">{t("crmAccounts.tiers.Standard")}</SelectItem>
+                        <SelectItem value="Trial">{t("crmAccounts.tiers.Trial")}</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>

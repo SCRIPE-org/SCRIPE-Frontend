@@ -11,6 +11,7 @@ import {
   Trophy,
   LayoutGrid,
 } from "lucide-react";
+import { useI18n } from "@core/providers/i18n-provider";
 import { Badge } from "@core/ui/badge";
 import { Button } from "@core/ui/button";
 import { Input } from "@core/ui/input";
@@ -27,34 +28,30 @@ export type CrmSettingsTabKey =
   | "numbering-handoffs";
 
 const SETTINGS_NAV_GROUPS: Array<{
-  groupEn: string;
-  groupAr: string;
-  items: Array<{ key: CrmSettingsTabKey; labelEn: string; labelAr: string; icon: typeof ShieldCheck }>;
+  groupKey: string;
+  items: Array<{ key: CrmSettingsTabKey; labelKey: string; icon: typeof ShieldCheck }>;
 }> = [
   {
-    groupEn: "1. Workflow & Governance",
-    groupAr: "1. سير العمل والحوكمة",
+    groupKey: "crm.settings.sidebar.group1",
     items: [
-      { key: "pipeline-roles", labelEn: "Pipeline & Workflow Roles", labelAr: "أدوار المسارات والاعتماد", icon: ShieldCheck },
-      { key: "sla-escalation", labelEn: "Stage SLA & Escalation", labelAr: "اتفاقية SLA والتصعيد", icon: Clock },
-      { key: "field-locking", labelEn: "Field-Locking & Playbooks", labelAr: "قفل الحقول ودليل المراحل", icon: Lock },
+      { key: "pipeline-roles", labelKey: "crm.settings.sidebar.tabPipelineRoles", icon: ShieldCheck },
+      { key: "sla-escalation", labelKey: "crm.settings.sidebar.tabSlaEscalation", icon: Clock },
+      { key: "field-locking", labelKey: "crm.settings.sidebar.tabFieldLocking", icon: Lock },
     ],
   },
   {
-    groupEn: "2. Data & Schemas",
-    groupAr: "2. البيانات والنماذج",
+    groupKey: "crm.settings.sidebar.group2",
     items: [
-      { key: "custom-fields", labelEn: "Custom Fields & Schemas", labelAr: "الحقول المخصصة والنماذج", icon: Database },
-      { key: "dictionaries", labelEn: "Commercial Dictionaries", labelAr: "القواميس التجارية", icon: BookOpen },
+      { key: "custom-fields", labelKey: "crm.settings.sidebar.tabCustomFields", icon: Database },
+      { key: "dictionaries", labelKey: "crm.settings.sidebar.tabDictionaries", icon: BookOpen },
     ],
   },
   {
-    groupEn: "3. Commercial & Finance",
-    groupAr: "3. التجارة والمالية",
+    groupKey: "crm.settings.sidebar.group3",
     items: [
-      { key: "currency-fx", labelEn: "Multi-Currency & FX Table", labelAr: "العملات وأسعار الصرف", icon: Coins },
-      { key: "quotes-approvals", labelEn: "Quote Rules & Approvals", labelAr: "قواعد عروض الأسعار", icon: FileCheck2 },
-      { key: "numbering-handoffs", labelEn: "Numbering & Sports OS", labelAr: "الترقيم وتكامل Sports OS", icon: Trophy },
+      { key: "currency-fx", labelKey: "crm.settings.sidebar.tabCurrencyFx", icon: Coins },
+      { key: "quotes-approvals", labelKey: "crm.settings.sidebar.tabQuotesApprovals", icon: FileCheck2 },
+      { key: "numbering-handoffs", labelKey: "crm.settings.sidebar.tabNumberingHandoffs", icon: Trophy },
     ],
   },
 ];
@@ -68,24 +65,25 @@ export interface CrmSettingsSidebarNavProps {
 }
 
 export function CrmSettingsSidebarNav({
-  isRtl,
   selectedSection,
   onSelectSection,
   navSearch,
   onNavSearchChange,
 }: CrmSettingsSidebarNavProps) {
+  const { t } = useI18n();
+
   return (
     <aside className="lg:col-span-3 rounded-xl border border-nx-line bg-nx-surface p-3 space-y-3 lg:sticky lg:top-4" data-testid="crm-settings-left-sidebar">
       <div className="flex items-center justify-between px-1">
         <span className="text-[11px] font-bold uppercase tracking-wider text-nx-ink-2">
-          {isRtl ? "أقسام إعدادات CRM" : "CRM Control Center"}
+          {t("crm.settings.sidebar.controlCenterTitle")}
         </span>
-        <Badge variant="outline" className="text-[9px] font-mono">8 Modules</Badge>
+        <Badge variant="outline" className="text-[9px] font-mono">{t("crm.settings.sidebar.modulesBadge")}</Badge>
       </div>
       <Input
         value={navSearch}
         onChange={(e) => onNavSearchChange(e.target.value)}
-        placeholder={isRtl ? "بحث في الإعدادات..." : "Filter settings domains..."}
+        placeholder={t("crm.settings.sidebar.searchPlaceholder")}
         className="h-7 text-xs"
         data-testid="crm-settings-nav-search"
       />
@@ -98,21 +96,21 @@ export function CrmSettingsSidebarNav({
         className="w-full justify-start h-8 text-xs gap-2"
       >
         <LayoutGrid className="size-3.5" />
-        <span>{isRtl ? "عرض جميع الإعدادات (الكل)" : "All Settings Overview"}</span>
+        <span>{t("crm.settings.sidebar.allOverviewBtn")}</span>
       </Button>
 
       {SETTINGS_NAV_GROUPS.map((group) => {
         const filtered = group.items.filter(
           (i) =>
             !navSearch.trim() ||
-            i.labelEn.toLowerCase().includes(navSearch.toLowerCase()) ||
-            i.labelAr.includes(navSearch)
+            t(i.labelKey).toLowerCase().includes(navSearch.toLowerCase()) ||
+            i.key.toLowerCase().includes(navSearch.toLowerCase())
         );
         if (filtered.length === 0) return null;
         return (
-          <div key={group.groupEn} className="space-y-1 pt-1 border-t border-nx-line/60">
+          <div key={group.groupKey} className="space-y-1 pt-1 border-t border-nx-line/60">
             <div className="px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-nx-ink-3">
-              {isRtl ? group.groupAr : group.groupEn}
+              {t(group.groupKey)}
             </div>
             {filtered.map((item) => {
               const Icon = item.icon;
@@ -128,7 +126,7 @@ export function CrmSettingsSidebarNav({
                   className="w-full justify-start h-8 text-xs gap-2"
                 >
                   <Icon className="size-3.5 shrink-0" />
-                  <span className="truncate">{isRtl ? item.labelAr : item.labelEn}</span>
+                  <span className="truncate">{t(item.labelKey)}</span>
                 </Button>
               );
             })}

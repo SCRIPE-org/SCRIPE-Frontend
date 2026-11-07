@@ -6,6 +6,7 @@ import { Building2, Users, Briefcase, Eye, Calendar } from "lucide-react";
 import { Button } from "@core/ui/button";
 import { Badge } from "@core/ui/badge";
 import { EmptyState } from "@core/ui/empty-state";
+import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from "@core/ui/table";
 import { cn } from "@core/common/utils";
 import type { CrmAccount } from "../../domain/entities/AccountEntity";
 import { AccountStatusBadge } from "./AccountStatusBadge";
@@ -24,11 +25,8 @@ export function AccountsTable({ accounts, className }: AccountsTableProps) {
     return (
       <div className="rounded-nx-lg border border-nx-line bg-nx-surface p-8 text-center">
         <EmptyState
-          title={t("crmAccounts.table.emptyTitle") || "No Accounts Found"}
-          description={
-            t("crmAccounts.table.emptyDescription") ||
-            "No commercial accounts match the current filter or search criteria."
-          }
+          title={t("crmAccounts.table.emptyTitle")}
+          description={t("crmAccounts.table.emptyDescription")}
         />
       </div>
     );
@@ -43,19 +41,19 @@ export function AccountsTable({ accounts, className }: AccountsTableProps) {
       dir={isRtl ? "rtl" : "ltr"}
     >
       <div className="overflow-x-auto no-scrollbar">
-        <table className="w-full text-left text-xs border-collapse" dir={isRtl ? "rtl" : "ltr"}>
-          <thead>
-            <tr className="border-b border-nx-line bg-nx-raised/50 text-nx-ink-2 font-semibold">
-              <th className="px-4 py-3 text-start">{t("crmAccounts.table.account") || "Account / Organization"}</th>
-              <th className="px-4 py-3 text-start">{t("crmAccounts.table.tier") || "Commercial Tier"}</th>
-              <th className="px-4 py-3 text-start">{t("crmAccounts.table.currency") || "Currency"}</th>
-              <th className="px-4 py-3 text-start">{t("crmAccounts.table.contacts") || "Contacts"}</th>
-              <th className="px-4 py-3 text-start">{t("crmAccounts.table.opportunities") || "Deals"}</th>
-              <th className="px-4 py-3 text-start">{t("crmAccounts.table.createdAt") || "Created"}</th>
-              <th className="px-4 py-3 text-end">{t("crmAccounts.table.actions") || "Actions"}</th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-nx-line">
+        <Table className="w-full text-left text-xs border-collapse" dir={isRtl ? "rtl" : "ltr"}>
+          <TableHeader>
+            <TableRow className="border-b border-nx-line bg-nx-raised/50 text-nx-ink-2 font-semibold">
+              <TableHead className="px-4 py-3 text-start">{t("crmAccounts.table.account")}</TableHead>
+              <TableHead className="px-4 py-3 text-start">{t("crmAccounts.table.tier")}</TableHead>
+              <TableHead className="px-4 py-3 text-start">{t("crmAccounts.table.currency")}</TableHead>
+              <TableHead className="px-4 py-3 text-start">{t("crmAccounts.table.contacts")}</TableHead>
+              <TableHead className="px-4 py-3 text-start">{t("crmAccounts.table.opportunities")}</TableHead>
+              <TableHead className="px-4 py-3 text-start">{t("crmAccounts.table.createdAt")}</TableHead>
+              <TableHead className="px-4 py-3 text-end">{t("crmAccounts.table.actions")}</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody className="divide-y divide-nx-line">
             {accounts.map((account) => {
               const formattedDate = account.createdAt
                 ? new Date(account.createdAt).toLocaleDateString(language === "ar" ? "ar-SA" : "en-US", {
@@ -66,12 +64,12 @@ export function AccountsTable({ accounts, className }: AccountsTableProps) {
                 : "—";
 
               return (
-                <tr
+                <TableRow
                   key={account.id}
                   className="hover:bg-nx-raised/40 transition-colors group cursor-pointer"
                   onClick={() => router.push(`/crm/accounts/${account.id}`)}
                 >
-                  <td className="px-4 py-3.5">
+                  <TableCell className="px-4 py-3.5">
                     <div className="flex items-center gap-2.5">
                       <div className="size-7 rounded-nx-md bg-nx-raised border border-nx-line flex items-center justify-center shrink-0">
                         <Building2 className="size-3.5 text-nx-accent" />
@@ -94,14 +92,14 @@ export function AccountsTable({ accounts, className }: AccountsTableProps) {
                         )}
                       </div>
                     </div>
-                  </td>
-                  <td className="px-4 py-3.5 whitespace-nowrap">
+                  </TableCell>
+                  <TableCell className="px-4 py-3.5 whitespace-nowrap">
                     <AccountStatusBadge tierCode={account.commercialTierCode} />
-                  </td>
-                  <td className="px-4 py-3.5 whitespace-nowrap text-nx-ink font-mono font-medium">
+                  </TableCell>
+                  <TableCell className="px-4 py-3.5 whitespace-nowrap text-nx-ink font-mono font-medium">
                     {account.preferredCurrencyCode || "SAR"}
-                  </td>
-                  <td className="px-4 py-3.5 whitespace-nowrap">
+                  </TableCell>
+                  <TableCell className="px-4 py-3.5 whitespace-nowrap">
                     <Badge
                       variant="outline"
                       className="border-nx-line bg-nx-raised/60 text-nx-ink-2 gap-1 font-mono text-[11px]"
@@ -109,8 +107,8 @@ export function AccountsTable({ accounts, className }: AccountsTableProps) {
                       <Users className="size-3 text-nx-ink-3" />
                       {account.linkedContactsCount}
                     </Badge>
-                  </td>
-                  <td className="px-4 py-3.5 whitespace-nowrap">
+                  </TableCell>
+                  <TableCell className="px-4 py-3.5 whitespace-nowrap">
                     <Badge
                       variant="outline"
                       className="border-nx-line bg-nx-raised/60 text-nx-ink-2 gap-1 font-mono text-[11px]"
@@ -118,14 +116,14 @@ export function AccountsTable({ accounts, className }: AccountsTableProps) {
                       <Briefcase className="size-3 text-nx-ink-3" />
                       {account.activeOpportunitiesCount}
                     </Badge>
-                  </td>
-                  <td className="px-4 py-3.5 whitespace-nowrap text-nx-ink-3 text-[11px]">
+                  </TableCell>
+                  <TableCell className="px-4 py-3.5 whitespace-nowrap text-nx-ink-3 text-[11px]">
                     <div className="flex items-center gap-1">
                       <Calendar className="size-3 text-nx-ink-3" />
                       {formattedDate}
                     </div>
-                  </td>
-                  <td className="px-4 py-3.5 whitespace-nowrap text-end" onClick={(e) => e.stopPropagation()}>
+                  </TableCell>
+                  <TableCell className="px-4 py-3.5 whitespace-nowrap text-end" onClick={(e) => e.stopPropagation()}>
                     <Button
                       type="button"
                       variant="ghost"
@@ -134,14 +132,14 @@ export function AccountsTable({ accounts, className }: AccountsTableProps) {
                       className="h-7 px-2.5 text-xs gap-1 border border-nx-line bg-nx-surface hover:bg-nx-raised text-nx-ink"
                     >
                       <Eye className="size-3 text-nx-accent" />
-                      <span>{t("crmAccounts.actions.view360") || "View 360"}</span>
+                      <span>{t("crmAccounts.actions.view360")}</span>
                     </Button>
-                  </td>
-                </tr>
+                  </TableCell>
+                </TableRow>
               );
             })}
-          </tbody>
-        </table>
+          </TableBody>
+        </Table>
       </div>
     </div>
   );

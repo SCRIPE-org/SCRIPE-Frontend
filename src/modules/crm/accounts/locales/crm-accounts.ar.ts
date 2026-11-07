@@ -5,6 +5,9 @@ export const ar = {
       title: "الحسابات التجارية الشاملة 360",
       subtitle: "المصدر الموثوق الموحد للحسابات التجارية، والصفقات الجارية، وجهات الاتصال الفاعلة.",
       accountsBadge: "حسابات",
+      companiesTab: "الشركات والمؤسسات (الحسابات)",
+      peopleTab: "الأفراد وصناع القرار (جهات الاتصال)",
+      directoryHint: "الحسابات تمثل الشركات والأندية والجهات الراعية؛ وجهات الاتصال تمثل الأفراد المرتبطين بها.",
     },
     actions: {
       newAccount: "حساب جديد",
@@ -14,6 +17,21 @@ export const ar = {
     searchPlaceholder: "البحث في الحسابات بالاسم أو الفئة...",
     filters: {
       allTiers: "كافة الفئات",
+    },
+    tiers: {
+      Enterprise: "مؤسسات كبرى (Enterprise)",
+      KeyAccount: "حساب رئيسي (Key Account)",
+      Strategic: "شريك استراتيجي (Strategic)",
+      MidMarket: "شركات متوسطة (Mid-Market)",
+      Standard: "قياسي (Standard)",
+      Trial: "تجريبي (Trial)",
+    },
+    currencies: {
+      SAR: "SAR — ريال سعودي",
+      AED: "AED — درهم إماراتي",
+      USD: "USD — دولار أمريكي",
+      EUR: "EUR — يورو",
+      EGP: "EGP — جنيه مصري",
     },
     loading: "جارٍ تحميل الحسابات التجارية...",
     table: {

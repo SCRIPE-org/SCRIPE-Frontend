@@ -93,7 +93,7 @@ export function CrmWorkflowRuleCatalogModal({
                   </p>
                 </div>
                 <Button size="sm" variant="outline" className="h-7 px-2.5 text-xs shrink-0" onClick={() => setSelectedTpl(null)} data-testid="change-catalog-rule-btn">
-                  <ArrowLeft className="w-3 h-3 me-1" />{isAr ? "تغيير القاعدة" : "Change rule"}
+                  <ArrowLeft className="w-3 h-3 me-1" />{t("crmOpportunities.ruleConfig.changeRuleBtn")}
                 </Button>
               </div>
             </div>
@@ -101,7 +101,7 @@ export function CrmWorkflowRuleCatalogModal({
             {transitionSummary && (
               <div className="space-y-1" data-testid="rule-catalog-transition-label">
                 <div className="flex items-center justify-between">
-                  <Label className="text-xs font-semibold text-nx-ink-2">{isAr ? "الانتقال المستهدف" : "For transition"}</Label>
+                  <Label className="text-xs font-semibold text-nx-ink-2">{t("crmOpportunities.ruleConfig.forTransitionLabel")}</Label>
                   <Badge variant="outline" className="text-[10px]">{selectedTpl.category}</Badge>
                 </div>
                 <Select value="active">

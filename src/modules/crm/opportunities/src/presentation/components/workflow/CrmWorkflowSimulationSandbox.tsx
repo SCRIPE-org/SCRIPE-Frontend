@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import { CheckCircle2, Play, ShieldAlert, X } from "lucide-react";
+import { useI18n } from "@core/providers/i18n-provider";
 import { Badge } from "@core/ui/badge";
 import { Button } from "@core/ui/button";
 import { Checkbox } from "@core/ui/checkbox";
@@ -21,7 +22,7 @@ export interface CrmWorkflowSimulationSandboxProps {
 }
 
 /**
- * 2D Canvas Live Simulation Sandbox (`SCRIPE-780`) (<155 lines).
+ * 2D Canvas Live Simulation Sandbox (`SCRIPE-780`) (<185 lines).
  * Simulates deal/lead state against active transitions and highlights Allowed (Emerald) vs Blocked (Rose) paths.
  */
 export function CrmWorkflowSimulationSandbox({
@@ -32,6 +33,7 @@ export function CrmWorkflowSimulationSandbox({
   onSelectTransition,
   onClose,
 }: CrmWorkflowSimulationSandboxProps) {
+  const { t } = useI18n();
   const crmRoles = useCrmSettingsStore((s) => s.crmRoles ?? DEFAULT_CRM_SCOPED_ROLES);
   const [fromStageKey, setFromStageKey] = useState(selectedStageKey || stages[0]?.stageKey || "default.discovery");
   const [amount, setAmount] = useState("320000");
@@ -49,6 +51,17 @@ export function CrmWorkflowSimulationSandbox({
   const activeRole = crmRoles.find((r) => r.key === activeRoleKey);
   const roleLimit = activeRole?.maxApprovalThresholdAmount ?? null;
 
+  const evalFieldCond = (fKey: string, op: string, valStr: string): boolean => {
+    const actual = fKey === "discountPercent" ? numDiscount : numAmount;
+    const expected = Number(valStr) || 0;
+    if (op === "greater_or_equal") return actual >= expected;
+    if (op === "greater_than") return actual > expected;
+    if (op === "less_or_equal") return actual <= expected;
+    if (op === "less_than") return actual < expected;
+    if (op === "not_empty") return actual > 0;
+    return String(actual) === valStr;
+  };
+
   const evaluateSimulatedTransition = (tr: CrmWorkflowTransition) => {
     const targetStage = stages.find((s) => s.stageKey === tr.toStageKey);
     const reasons: string[] = [];
@@ -65,11 +78,38 @@ export function CrmWorkflowSimulationSandbox({
       reasons.push("Discount > 15% requires Commercial Director or Finance Gatekeeper");
     }
     for (const rule of tr.catalogRules ?? []) {
-      if (rule.ruleTypeKey === "restrict.approval_required" || rule.ruleTypeKey === "restrict.roles_permissions") {
-        const allowed = (rule.config?.approverRoles || rule.config?.allowedPrincipals || "").split(",").map((s) => s.trim()).filter(Boolean);
-        if (allowed.length > 0 && !allowed.includes(activeRoleKey)) {
-          reasons.push(`Requires ${allowed.join(" / ")}`);
+      const rk = rule.ruleTypeKey;
+      const cfg = rule.config ?? {};
+      if (rk === "restrict.approval_required" || rk === "restrict.roles_permissions") {
+        const allowed = (cfg.approverRoles || cfg.allowedPrincipals || "").split(",").map((s) => s.trim()).filter(Boolean);
+        if (allowed.length > 0 && !allowed.includes(activeRoleKey)) reasons.push(`Requires ${allowed.join(" / ")}`);
+      } else if (rk === "restrict.approval_matrix") {
+        const t2Min = Number(cfg.tier2MinAmount || 500000);
+        const t1Min = Number(cfg.tier1MinAmount || 100000);
+        const reqRoles = (numAmount >= t2Min ? cfg.tier2Roles : numAmount >= t1Min ? cfg.tier1Roles : "")?.split(",").map((s) => s.trim()).filter(Boolean) ?? [];
+        if (reqRoles.length > 0 && !reqRoles.includes(activeRoleKey)) reasons.push(`Matrix tier requires ${reqRoles.join(" + ")}`);
+      } else if (rk === "restrict.field_value" || rk === "validate.multi_condition") {
+        let passed = true;
+        if (cfg.conditionsJson) {
+          try {
+            const conds = JSON.parse(cfg.conditionsJson) as Array<{ fieldKey: string; operator: string; value: string }>;
+            if (Array.isArray(conds) && conds.length > 0) {
+              const join = (cfg.conditionJoin || "AND").toUpperCase();
+              passed = join === "OR"
+                ? conds.some((c) => evalFieldCond(c.fieldKey, c.operator, c.value))
+                : conds.every((c) => evalFieldCond(c.fieldKey, c.operator, c.value));
+            }
+          } catch { /* fallback */ }
+        } else if (cfg.fieldKey) {
+          passed = evalFieldCond(cfg.fieldKey, cfg.operator || "greater_or_equal", cfg.expectedValue || cfg.value || "0");
         }
+        if (!passed) reasons.push(`Condition failed (${cfg.fieldKey || "multi-condition"})`);
+      } else if (rk === "validate.stage_playbook_completed" && !playbookDone) {
+        reasons.push("Stage Playbook Tasks Incomplete");
+      } else if (rk === "validate.verified_party" && !verifiedParty) {
+        reasons.push("Missing Verified Account/Contact");
+      } else if (rk === "validate.financial_forecast" && numAmount <= 0) {
+        reasons.push("Estimated Amount must be > 0");
       }
     }
     return {
@@ -90,7 +130,7 @@ export function CrmWorkflowSimulationSandbox({
             <Play className="w-2.5 h-2.5" />LIVE SANDBOX
           </Badge>
           <span className="text-xs font-bold text-nx-ink">
-            {isAr ? "محاكاة قواعد ومسارات الانتقال الفورية" : "Interactive Workflow Transition Simulator"}
+            {t("crmOpportunities.workflowSandbox.title")}
           </span>
         </div>
         <Button type="button" size="icon" variant="ghost" className="h-6 w-6" onClick={onClose} data-testid="close-simulation-sandbox-btn">
@@ -100,7 +140,7 @@ export function CrmWorkflowSimulationSandbox({
 
       <div className="grid grid-cols-2 sm:grid-cols-6 gap-2 items-end">
         <div className="space-y-0.5">
-          <Label className="text-[10px] text-nx-ink-2">{isAr ? "من المرحلة" : "From Stage"}</Label>
+          <Label className="text-[10px] text-nx-ink-2">{t("crmOpportunities.workflowSandbox.fromStageLabel")}</Label>
           <Select value={fromStageKey} onValueChange={setFromStageKey}>
             <SelectTrigger className="h-7 text-xs bg-nx-surface" data-testid="sim-from-stage-select"><SelectValue /></SelectTrigger>
             <SelectContent className="z-[10005]">
@@ -109,15 +149,15 @@ export function CrmWorkflowSimulationSandbox({
           </Select>
         </div>
         <div className="space-y-0.5">
-          <Label className="text-[10px] text-nx-ink-2">{isAr ? "قيمة الصفقة" : "Deal Amount"}</Label>
+          <Label className="text-[10px] text-nx-ink-2">{t("crmOpportunities.workflowSandbox.dealAmountLabel")}</Label>
           <Input type="number" value={amount} onChange={(e) => setAmount(e.target.value)} className="h-7 text-xs font-mono bg-nx-surface" data-testid="sim-deal-amount-input" />
         </div>
         <div className="space-y-0.5">
-          <Label className="text-[10px] text-nx-ink-2">{isAr ? "نسبة الخصم %" : "Discount %"}</Label>
+          <Label className="text-[10px] text-nx-ink-2">{t("crmOpportunities.workflowSandbox.discountPctLabel")}</Label>
           <Input type="number" value={discountPct} onChange={(e) => setDiscountPct(e.target.value)} className="h-7 text-xs font-mono bg-nx-surface" data-testid="sim-discount-input" />
         </div>
         <div className="space-y-0.5">
-          <Label className="text-[10px] text-nx-ink-2">{isAr ? "دور خط البيع النشط" : "Active Pipeline Role"}</Label>
+          <Label className="text-[10px] text-nx-ink-2">{t("crmOpportunities.workflowSandbox.activePipelineRoleLabel")}</Label>
           <Select value={activeRoleKey} onValueChange={setActiveRoleKey}>
             <SelectTrigger className="h-7 text-xs bg-nx-surface" data-testid="sim-pipeline-role-select"><SelectValue /></SelectTrigger>
             <SelectContent className="z-[10005]">
@@ -127,11 +167,11 @@ export function CrmWorkflowSimulationSandbox({
         </div>
         <label className="flex items-center gap-1.5 h-7 px-2 rounded border border-nx-line bg-nx-surface text-xs cursor-pointer">
           <Checkbox checked={verifiedParty} onCheckedChange={(v) => setVerifiedParty(Boolean(v))} data-testid="sim-verified-party-checkbox" />
-          <span className="truncate">{isAr ? "عميل موثق" : "Verified Party"}</span>
+          <span className="truncate">{t("crmOpportunities.workflowSandbox.verifiedPartyLabel")}</span>
         </label>
         <label className="flex items-center gap-1.5 h-7 px-2 rounded border border-nx-line bg-nx-surface text-xs cursor-pointer">
           <Checkbox checked={playbookDone} onCheckedChange={(v) => setPlaybookDone(Boolean(v))} data-testid="sim-playbook-completed-checkbox" />
-          <span className="truncate">{isAr ? "اكتمال المهام" : "Playbook Done"}</span>
+          <span className="truncate">{t("crmOpportunities.workflowSandbox.playbookDoneLabel")}</span>
         </label>
       </div>
 
@@ -139,19 +179,7 @@ export function CrmWorkflowSimulationSandbox({
         {candidateTransitions.map((tr) => {
           const res = evaluateSimulatedTransition(tr);
           return (
-            <Button
-              key={tr.id}
-              type="button"
-              size="sm"
-              variant="outline"
-              onClick={() => onSelectTransition(tr.id)}
-              data-testid={res.allowed ? `sim-transition-allowed-${tr.id}` : `sim-transition-blocked-${tr.id}`}
-              className={`h-7 px-2.5 text-[11px] gap-1.5 ${
-                res.allowed
-                  ? "border-emerald-500/50 bg-emerald-500/15 text-emerald-700 dark:text-emerald-300"
-                  : "border-rose-500/50 bg-rose-500/15 text-rose-700 dark:text-rose-300"
-              }`}
-            >
+            <Button key={tr.id} type="button" size="sm" variant="outline" onClick={() => onSelectTransition(tr.id)} data-testid={res.allowed ? `sim-transition-allowed-${tr.id}` : `sim-transition-blocked-${tr.id}`} className={`h-7 px-2.5 text-[11px] gap-1.5 ${res.allowed ? "border-emerald-500/50 bg-emerald-500/15 text-emerald-700 dark:text-emerald-300" : "border-rose-500/50 bg-rose-500/15 text-rose-700 dark:text-rose-300"}`}>
               {res.allowed ? <CheckCircle2 className="w-3 h-3 shrink-0" /> : <ShieldAlert className="w-3 h-3 shrink-0" />}
               <span className="font-bold">{isAr ? tr.nameAr : tr.nameEn} → {res.targetLabel}</span>
               {!res.allowed && <span className="text-[10px] opacity-90">({res.reasons[0]})</span>}

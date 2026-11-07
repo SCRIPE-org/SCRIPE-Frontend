@@ -5,6 +5,9 @@ export const en = {
       title: "Commercial Accounts 360",
       subtitle: "Single source of truth for commercial organizations, active opportunities, and stakeholder contacts.",
       accountsBadge: "Accounts",
+      companiesTab: "Companies & Organizations (Accounts)",
+      peopleTab: "People & Stakeholders (Contacts)",
+      directoryHint: "Accounts represent B2B Organizations, Clubs & Sponsors; Contacts represent Individual Stakeholders linked to them.",
     },
     actions: {
       newAccount: "New Account",
@@ -14,6 +17,21 @@ export const en = {
     searchPlaceholder: "Search accounts by name or tier...",
     filters: {
       allTiers: "All Tiers",
+    },
+    tiers: {
+      Enterprise: "Enterprise",
+      KeyAccount: "Key Account",
+      Strategic: "Strategic",
+      MidMarket: "Mid-Market",
+      Standard: "Standard",
+      Trial: "Trial",
+    },
+    currencies: {
+      SAR: "SAR — Saudi Riyal",
+      AED: "AED — UAE Dirham",
+      USD: "USD — US Dollar",
+      EUR: "EUR — Euro",
+      EGP: "EGP — Egyptian Pound",
     },
     loading: "Loading commercial accounts...",
     table: {
@@ -35,7 +53,7 @@ export const en = {
       modeCreateNew: "Create New Organization",
       modeSelectExisting: "Select Existing Organization",
       organizationNameEn: "Organization Name (English)",
-      organizationNameEnPlaceholder: "e.g., Al-Ahly Sporting Club",
+      organizationNameEnPlaceholder: "e.g., Al-Hilal Commercial Club",
       organizationNameAr: "Organization Name (Arabic)",
       organizationNameArPlaceholder: "مثال: النادي الأهلي الرياضي",
       organizationNameRequired: "Organization name is required.",

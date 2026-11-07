@@ -33,54 +33,30 @@ export function OpportunitiesView() {
   const canUpdateOpp = usePermission(CRM_PERMISSIONS.OPPORTUNITIES_UPDATE);
   const canManagePipeline = usePermission(CRM_PERMISSIONS.PIPELINES_MANAGE);
   const defaultDealViewMode = useCrmSettingsStore((s) => s.defaultDealViewMode);
+  const persistedBoardSettings = useCrmSettingsStore((s) => s.boardSettings);
+  const setPersistedBoardSettings = useCrmSettingsStore((s) => s.setBoardSettings);
   const workflows = useCrmWorkflowsStore((s) => s.workflows);
   const activeDealWorkflowId = useCrmWorkflowsStore((s) => s.activeDealWorkflowId);
   const setActiveWorkflow = useCrmWorkflowsStore((s) => s.setActiveWorkflow);
   const dealWorkflows = workflows.filter((w) => w.entityType === "deal");
 
   const [isBoardSettingsOpen, setIsBoardSettingsOpen] = useState(false);
-  const [boardSettings, setBoardSettings] = useState<BoardSettingsConfig>({
+  const boardSettings: BoardSettingsConfig = persistedBoardSettings ?? {
     swimlaneMode: "none",
+    cardDensity: "Standard",
     wipLimits: {},
-  });
+  };
 
   const viewModel = useOpportunitiesViewModel();
   const {
-    state,
-    search,
-    stageFilter,
-    statusFilter,
-    pipeline,
-    pipelineStages,
-    isCreateOpen,
-    isMoveStageOpen,
-    isCloseOpen,
-    isReopenOpen,
-    isAssignOwnerOpen,
-    activeOpportunity,
-    closeInitialOutcome,
-    isSubmitting,
-    submitError,
-    setIsCreateOpen,
-    setIsMoveStageOpen,
-    setIsCloseOpen,
-    setIsReopenOpen,
-    setIsAssignOwnerOpen,
-    handleSearchChange,
-    handleStageFilterChange,
-    handleStatusFilterChange,
-    handleCreateOpportunity,
-    handleMoveStage,
-    handleMoveStageOptimistic,
-    handleCloseOpportunity,
-    handleReopenOpportunity,
-    handleAssignOwner,
-    openMoveStageDialog,
-    openCloseDialog,
-    openReopenDialog,
-    openAssignOwnerDialog,
-    clearSubmitError,
-    refresh,
+    state, search, stageFilter, statusFilter, pipeline, pipelineStages,
+    isCreateOpen, isMoveStageOpen, isCloseOpen, isReopenOpen, isAssignOwnerOpen,
+    activeOpportunity, closeInitialOutcome, isSubmitting, submitError,
+    setIsCreateOpen, setIsMoveStageOpen, setIsCloseOpen, setIsReopenOpen, setIsAssignOwnerOpen,
+    handleSearchChange, handleStageFilterChange, handleStatusFilterChange,
+    handleCreateOpportunity, handleMoveStage, handleMoveStageOptimistic,
+    handleCloseOpportunity, handleReopenOpportunity, handleAssignOwner,
+    openMoveStageDialog, openCloseDialog, openReopenDialog, openAssignOwnerDialog, clearSubmitError, refresh,
   } = viewModel;
 
   const stages = [
@@ -88,10 +64,7 @@ export function OpportunitiesView() {
     ...(pipelineStages && pipelineStages.length >= 2
       ? [...pipelineStages]
           .sort((a, b) => a.sortOrder - b.sortOrder)
-          .map((stg) => ({
-            key: stg.stageKey,
-            label: isRtl && stg.labelAr ? stg.labelAr : stg.labelEn,
-          }))
+          .map((stg) => ({ key: stg.stageKey, label: isRtl && stg.labelAr ? stg.labelAr : stg.labelEn }))
       : [
           { key: "default.discovery", label: t("crmOpportunities.stages.discovery") },
           { key: "default.qualification", label: t("crmOpportunities.stages.qualification") },
@@ -176,15 +149,9 @@ export function OpportunitiesView() {
         </div>
         <div className="w-48">
           <Select value={activeDealWorkflowId} onValueChange={(id) => setActiveWorkflow("deal", id)}>
-            <SelectTrigger className="h-8 text-xs" data-testid="deal-pipeline-selector">
-              <SelectValue />
-            </SelectTrigger>
+            <SelectTrigger className="h-8 text-xs" data-testid="deal-pipeline-selector"><SelectValue /></SelectTrigger>
             <SelectContent>
-              {dealWorkflows.map((wf) => (
-                <SelectItem key={wf.id} value={wf.id} className="text-xs">
-                  {isRtl ? wf.nameAr : wf.nameEn}
-                </SelectItem>
-              ))}
+              {dealWorkflows.map((wf) => <SelectItem key={wf.id} value={wf.id} className="text-xs">{isRtl ? wf.nameAr : wf.nameEn}</SelectItem>)}
             </SelectContent>
           </Select>
         </div>
@@ -252,7 +219,7 @@ export function OpportunitiesView() {
               </Button>
               <Button type="button" variant="outline" size="sm" onClick={() => setIsBoardSettingsOpen(true)} className="h-8 gap-1.5 shrink-0 font-medium text-xs" data-testid="board-settings-button">
                 <SlidersHorizontal className="size-3.5" />
-                {isRtl ? "إعدادات اللوحة" : "Board Settings"}
+                {t("crmOpportunities.boardSettings.buttonLabel")}
               </Button>
               {canCreateOpp && (
                 <Button type="button" size="sm" onClick={() => setIsCreateOpen(true)} className="h-8 gap-1.5 shrink-0 text-xs font-bold" data-testid="create-opportunity-button">
@@ -287,7 +254,7 @@ export function OpportunitiesView() {
           onOpenChange={setIsBoardSettingsOpen}
           stages={(pipelineStages ?? []).map((s) => ({ stageKey: s.stageKey, labelEn: s.labelEn, labelAr: s.labelAr }))}
           config={boardSettings}
-          onConfigChange={setBoardSettings}
+          onConfigChange={setPersistedBoardSettings}
         />
       </div>
     </CrmShell>

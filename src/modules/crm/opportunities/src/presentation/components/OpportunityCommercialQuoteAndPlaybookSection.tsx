@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import { Building2, FileSpreadsheet, Plus, ShieldAlert, Trophy } from "lucide-react";
+import { useI18n } from "@core/providers/i18n-provider";
 import { Badge } from "@core/ui/badge";
 import { Button } from "@core/ui/button";
 import { Card } from "@core/ui/card";
@@ -11,7 +12,7 @@ import {
   type CrmDealCommercialPackage,
   type CrmDealQuoteLineItem,
 } from "@modules/crm";
-import type { CrmOpportunity } from "../../domain/entities/OpportunityEntity";
+import type { CrmOpportunity, CrmOpportunityStageHistory } from "../../domain/entities/OpportunityEntity";
 
 export type QuoteLineItem = CrmDealQuoteLineItem;
 
@@ -25,11 +26,13 @@ function buildDefaultQuoteItems(estimatedAmount: number | string | null | undefi
 
 export function OpportunityCommercialQuoteAndPlaybookSection({
   opp,
-  isRtl,
+  stageHistory = [],
 }: {
   opp: CrmOpportunity;
   isRtl: boolean;
+  stageHistory?: CrmOpportunityStageHistory[];
 }) {
+  const { t } = useI18n();
   const persistedPkg = useCrmSettingsStore((s) => s.dealCommercialPackages?.[opp.id]);
   const setDealCommercialPackage = useCrmSettingsStore((s) => s.setDealCommercialPackage);
 
@@ -82,7 +85,7 @@ export function OpportunityCommercialQuoteAndPlaybookSection({
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <FileSpreadsheet className="size-4 text-info" />
-            <h3 className="text-xs font-bold uppercase tracking-wider text-nx-ink">{isRtl ? "عرض السعر والبنود التجارية" : "Commercial Quote & Line Items"}</h3>
+            <h3 className="text-xs font-bold uppercase tracking-wider text-nx-ink">{t("crmOpportunities.commercialSuite.quoteTitle")}</h3>
           </div>
           <span className="text-xs font-mono font-bold text-nx-ink">{opp.currencyCode} {Math.round(netQuoteTotal).toLocaleString()}</span>
         </div>
@@ -90,7 +93,7 @@ export function OpportunityCommercialQuoteAndPlaybookSection({
         {requiresDiscountApproval && (
           <div className="rounded-md border border-warning/40 bg-warning/10 px-2.5 py-1.5 flex items-center gap-2 text-[11px] text-warning font-semibold" data-testid="quote-discount-approval-gate">
             <ShieldAlert className="size-3.5 shrink-0" />
-            <span>{isRtl ? "يتطلب موافقة الإدارة التجارية (خصم أكبر من 15%)" : "Commercial Director Approval Required (Discount > 15%)"}</span>
+            <span>{t("crmOpportunities.commercialSuite.discountApprovalWarning")}</span>
           </div>
         )}
 
@@ -110,7 +113,7 @@ export function OpportunityCommercialQuoteAndPlaybookSection({
           <Input value={newItemName} onChange={(e) => setNewItemName(e.target.value)} placeholder="Line item..." className="h-7 text-xs" data-testid="quote-item-name-input" />
           <Input type="number" value={newItemDiscount} onChange={(e) => setNewItemDiscount(e.target.value)} placeholder="Disc %" className="h-7 text-xs font-mono" data-testid="quote-item-discount-input" />
           <Button size="sm" variant="outline" className="h-7 text-xs" onClick={handleAddQuoteItem} data-testid="quote-add-item-btn">
-            <Plus className="size-3 me-1" />{isRtl ? "إضافة بند" : "Add Item"}
+            <Plus className="size-3 me-1" />{t("crmOpportunities.commercialSuite.addItemBtn")}
           </Button>
         </div>
       </Card>
@@ -119,17 +122,17 @@ export function OpportunityCommercialQuoteAndPlaybookSection({
         <Card className="p-4 border-nx-line bg-nx-surface space-y-2.5" data-testid="deal-stage-playbook-card">
           <div className="flex items-center justify-between">
             <span className="text-xs font-bold uppercase tracking-wider text-nx-ink">
-              {isRtl ? "قائمة مهام المرحلة الإلزامية (Stage Playbook)" : "Stage Playbook & Mandatory Auto-Tasks"}
+              {t("crmOpportunities.commercialSuite.stagePlaybookTitle")}
             </span>
             <Badge variant="outline" className="text-[10px] font-mono border-nx-accent/40 text-nx-accent">2/2 Verified</Badge>
           </div>
           <div className="space-y-1.5 text-xs">
             <div className="rounded border border-nx-line bg-nx-raised/40 px-2.5 py-1.5 flex items-center justify-between">
-              <span className="text-nx-ink font-medium">{isRtl ? "التحقق من توفر المخزون والجدول الزمني" : "Verify Commercial Inventory & Delivery Schedule"}</span>
+              <span className="text-nx-ink font-medium">{t("crmOpportunities.commercialSuite.playbookTaskInventory")}</span>
               <Badge variant="outline" className="text-[9px] font-mono border-success/40 text-success">Completed</Badge>
             </div>
             <div className="rounded border border-nx-line bg-nx-raised/40 px-2.5 py-1.5 flex items-center justify-between">
-              <span className="text-nx-ink font-medium">{isRtl ? "مراجعة المسودة القانونية وشروط الدفع" : "Complete Legal Redline & Payment Terms Check"}</span>
+              <span className="text-nx-ink font-medium">{t("crmOpportunities.commercialSuite.playbookTaskLegal")}</span>
               <Badge variant="outline" className="text-[9px] font-mono border-success/40 text-success">Completed</Badge>
             </div>
           </div>
@@ -138,19 +141,34 @@ export function OpportunityCommercialQuoteAndPlaybookSection({
         <Card className="p-4 border-nx-line bg-nx-surface space-y-2.5" data-testid="deal-transition-audit-ledger">
           <div className="flex items-center justify-between">
             <span className="text-xs font-bold uppercase tracking-wider text-nx-ink">
-              {isRtl ? "سجل تدقيق انتقال المراحل والاعتمادات" : "Stage Transition & Approval Audit Ledger"}
+              {t("crmOpportunities.commercialSuite.auditLedgerTitle")}
             </span>
             <Badge variant="outline" className="text-[10px] font-mono">Immutable Trail</Badge>
           </div>
           <div className="space-y-1.5 text-[11px]">
-            <div className="rounded border border-nx-line bg-nx-raised/40 px-2.5 py-1.5 flex items-center justify-between gap-2">
-              <span className="font-semibold text-nx-ink truncate">Qualification → {opp.stageKey}</span>
-              <span className="font-mono text-[10px] text-nx-ink-3 shrink-0">pipe_role:deal_desk • Quorum Passed</span>
-            </div>
-            <div className="rounded border border-nx-line bg-nx-raised/40 px-2.5 py-1.5 flex items-center justify-between gap-2">
-              <span className="font-semibold text-nx-ink truncate">Discovery → Qualification</span>
-              <span className="font-mono text-[10px] text-nx-ink-3 shrink-0">principal:record.owner • SLA 1.2d</span>
-            </div>
+            {stageHistory.length > 0 ? (
+              stageHistory.slice(0, 3).map((hist) => (
+                <div key={hist.id} className="rounded border border-nx-line bg-nx-raised/40 px-2.5 py-1.5 flex items-center justify-between gap-2">
+                  <span className="font-semibold text-nx-ink truncate">
+                    {hist.fromStageLabelEnSnapshot || hist.fromStageKey || "Initial"} → {hist.toStageLabelEnSnapshot || hist.toStageKey}
+                  </span>
+                  <span className="font-mono text-[10px] text-nx-ink-3 shrink-0">
+                    {hist.usedStageOverride ? "pipe_role:commercial_director • Override" : `${hist.transitionKind} • Quorum Passed`}
+                  </span>
+                </div>
+              ))
+            ) : (
+              <>
+                <div className="rounded border border-nx-line bg-nx-raised/40 px-2.5 py-1.5 flex items-center justify-between gap-2">
+                  <span className="font-semibold text-nx-ink truncate">Qualification → {opp.stageKey}</span>
+                  <span className="font-mono text-[10px] text-nx-ink-3 shrink-0">pipe_role:deal_desk • Quorum Passed</span>
+                </div>
+                <div className="rounded border border-nx-line bg-nx-raised/40 px-2.5 py-1.5 flex items-center justify-between gap-2">
+                  <span className="font-semibold text-nx-ink truncate">Discovery → Qualification</span>
+                  <span className="font-mono text-[10px] text-nx-ink-3 shrink-0">principal:record.owner • SLA 1.2d</span>
+                </div>
+              </>
+            )}
           </div>
         </Card>
       </div>
@@ -158,16 +176,16 @@ export function OpportunityCommercialQuoteAndPlaybookSection({
       <Card className="lg:col-span-2 p-4 border-nx-line bg-nx-surface flex flex-wrap items-center justify-between gap-3" data-testid="deal-sports-os-handoff-card">
         <div className="flex items-center gap-2 text-xs">
           <Trophy className="size-4 text-nx-accent" />
-          <span className="font-bold text-nx-ink">{isRtl ? "التكامل المباشر مع المنشآت والأكاديمية (Sports OS):" : "Sports OS Native Provisioning (Venue & Academy):"}</span>
+          <span className="font-bold text-nx-ink">{t("crmOpportunities.commercialSuite.sportsOsHandoffLabel")}</span>
         </div>
         <div className="flex flex-wrap items-center gap-2">
           <Button size="sm" variant="outline" className="h-7 text-xs" onClick={handleVenueHold} data-testid="venue-block-booking-hold-btn">
             <Building2 className="size-3.5 me-1.5 text-info" />
-            {venueHoldStatus === "reserved" ? "Venue Block Hold Active" : "Place Venue Block-Booking Hold"}
+            {venueHoldStatus === "reserved" ? t("crmOpportunities.commercialSuite.venueHoldActive") : t("crmOpportunities.commercialSuite.venueHoldAction")}
           </Button>
           <Button size="sm" variant="outline" className="h-7 text-xs" onClick={handleAcademyCohort} data-testid="academy-b2b-sponsorship-btn">
             <Trophy className="size-3.5 me-1.5 text-success" />
-            {academyCohortStatus === "provisioned" ? "Academy B2B Seats Provisioned" : "Provision Academy B2B Cohort"}
+            {academyCohortStatus === "provisioned" ? t("crmOpportunities.commercialSuite.academyProvisioned") : t("crmOpportunities.commercialSuite.academyProvisionAction")}
           </Button>
         </div>
       </Card>

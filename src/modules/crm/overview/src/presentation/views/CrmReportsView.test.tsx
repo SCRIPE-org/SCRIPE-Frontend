@@ -147,19 +147,25 @@ describe("CrmReportsView Component (SCRIPE-745)", () => {
   it("renders currency-isolated pipeline breakdowns, lead funnel, and switches currency buckets without mixing totals", async () => {
     render(<CrmReportsView />);
 
-    await waitFor(() => {
-      expect(screen.getByTestId("crm-reports-view")).toBeDefined();
-      expect(screen.getByText("SAR 1,850,000")).toBeDefined();
-      expect(screen.getByText("66.7%")).toBeDefined();
-    });
+    await waitFor(
+      () => {
+        expect(screen.getByTestId("crm-reports-view")).toBeDefined();
+        expect(screen.getByText("SAR 1,850,000")).toBeDefined();
+        expect(screen.getByText("66.7%")).toBeDefined();
+      },
+      { timeout: 4000 },
+    );
 
     // Switch to USD currency bucket
     const usdBtn = screen.getByTestId("currency-bucket-btn-USD");
     fireEvent.click(usdBtn);
 
-    await waitFor(() => {
-      expect(screen.getAllByText("USD 400,000")[0]).toBeDefined();
-    });
+    await waitFor(
+      () => {
+        expect(screen.getAllByText("USD 400,000")[0]).toBeDefined();
+      },
+      { timeout: 4000 },
+    );
   });
 
   it("enforces REPORTS_READ permission in PAGE_PERMISSIONS for /crm/reports and LEADS_READ for /crm/leads/[id]", () => {

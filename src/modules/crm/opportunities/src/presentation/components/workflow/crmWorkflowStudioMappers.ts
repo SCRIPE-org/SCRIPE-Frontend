@@ -1,29 +1,17 @@
-import {
-  resolveDefaultStageColor,
-  type CrmWorkflowDefinition,
-} from "@modules/crm";
-import type {
-  CrmWorkflowStageNode,
-  CrmWorkflowTransition,
-} from "./CrmWorkflowCanvas2D";
+import { resolveDefaultStageColor, type CrmWorkflowDefinition } from "@modules/crm";
+import { CANONICAL_TERMINAL_LABELS } from "../../../domain/constants/crmCanonicalStages";
+import type { CrmWorkflowStageNode, CrmWorkflowTransition } from "./CrmWorkflowCanvas2D";
 
 /** Computes a generous 2-row 2D topological position (Row 1 y=64, Row 2 y=340, dx=300) so transition pills have a 172px vertical corridor with zero collisions. */
 export function computeBalanced2DStagePosition(idx: number): { x: number; y: number } {
-  if (idx < 3) {
-    return { x: 110 + idx * 300, y: 64 };
-  }
+  if (idx < 3) return { x: 110 + idx * 300, y: 64 };
   const row = Math.floor(idx / 3);
   const col = idx % 3;
-  return {
-    x: 160 + col * 300,
-    y: 64 + row * 276,
-  };
+  return { x: 160 + col * 300, y: 64 + row * 276 };
 }
 
 /** Builds 2D Studio stage nodes from a persisted CrmWorkflowDefinition. */
-export function buildStageNodesFromWorkflow(
-  wf: CrmWorkflowDefinition,
-): CrmWorkflowStageNode[] {
+export function buildStageNodesFromWorkflow(wf: CrmWorkflowDefinition): CrmWorkflowStageNode[] {
   const sorted = [...wf.stages].sort((a, b) => a.sortOrder - b.sortOrder);
   let nonTermIdx = 0;
   const nodes: CrmWorkflowStageNode[] = sorted.map((st, idx) => {
@@ -44,22 +32,13 @@ export function buildStageNodesFromWorkflow(
       st.position.y !== 96 &&
       st.position.y !== 260;
     const category = st.category ?? (idx === 0 ? "todo" : "in_progress");
-    const color = resolveDefaultStageColor(
-      st.stageKey,
-      category,
-      st.sortOrder || idx + 1,
-      st.color || st.properties?.color,
-    );
+    const color = resolveDefaultStageColor(st.stageKey, category, st.sortOrder || idx + 1, st.color || st.properties?.color);
     return {
       stageKey: st.stageKey,
       labelEn: st.labelEn,
       labelAr: st.labelAr,
       probability: st.winProbabilityPercent ?? 0,
-      slaDays:
-        st.slaDays ??
-        (category === "done" || category === "lost"
-          ? 0
-          : Math.max(2, (idx + 1) * 3)),
+      slaDays: st.slaDays ?? (category === "done" || category === "lost" ? 0 : Math.max(2, (idx + 1) * 3)),
       order: st.sortOrder || idx + 1,
       category,
       color,
@@ -67,9 +46,7 @@ export function buildStageNodesFromWorkflow(
       properties: st.properties ? { ...st.properties } : {},
       isTerminalWon: isDealWon,
       isTerminalLost: isDealLost,
-      convertsToDeal: Boolean(
-        st.triggerDealConversion || st.triggersDealConversion,
-      ),
+      convertsToDeal: Boolean(st.triggerDealConversion || st.triggersDealConversion),
       requiredExitFields: [...(st.requiredExitFields ?? [])],
       x: hasCustomPos ? st.position!.x : defPos.x,
       y: hasCustomPos ? st.position!.y : defPos.y,
@@ -80,8 +57,8 @@ export function buildStageNodesFromWorkflow(
     if (!nodes.some((n) => n.stageKey === "terminal-won" || n.isTerminalWon)) {
       nodes.push({
         stageKey: "terminal-won",
-        labelEn: "Closed Won",
-        labelAr: "مغلق ناجح",
+        labelEn: CANONICAL_TERMINAL_LABELS.wonStageEn,
+        labelAr: CANONICAL_TERMINAL_LABELS.wonStageAr,
         probability: 100,
         slaDays: 0,
         order: sorted.length + 1,
@@ -97,8 +74,8 @@ export function buildStageNodesFromWorkflow(
     if (!nodes.some((n) => n.stageKey === "terminal-lost" || n.isTerminalLost)) {
       nodes.push({
         stageKey: "terminal-lost",
-        labelEn: "Closed Lost",
-        labelAr: "مغلق خاسر",
+        labelEn: CANONICAL_TERMINAL_LABELS.lostStageEn,
+        labelAr: CANONICAL_TERMINAL_LABELS.lostStageAr,
         probability: 0,
         slaDays: 0,
         order: sorted.length + 2,
@@ -116,9 +93,7 @@ export function buildStageNodesFromWorkflow(
 }
 
 /** Builds 2D Studio transitions from a persisted CrmWorkflowDefinition, connecting Closed Won and Closed Lost as first-class stages. */
-export function buildTransitionsFromWorkflow(
-  wf: CrmWorkflowDefinition,
-): CrmWorkflowTransition[] {
+export function buildTransitionsFromWorkflow(wf: CrmWorkflowDefinition): CrmWorkflowTransition[] {
   const mapped: CrmWorkflowTransition[] = wf.transitions.map((tr) => ({
     id: tr.id,
     nameEn: tr.nameEn,
@@ -137,17 +112,11 @@ export function buildTransitionsFromWorkflow(
     allowRollback: tr.rules?.allowRollback ?? true,
     blockIfLinkedDealProgressed: Boolean(tr.rules?.blockIfLinkedDealProgressed),
     requireVerifiedParty: Boolean(tr.rules?.requireVerifiedParty),
-    requireEstimatedAmountPositive: Boolean(
-      tr.rules?.requireEstimatedAmountPositive,
-    ),
+    requireEstimatedAmountPositive: Boolean(tr.rules?.requireEstimatedAmountPositive),
     triggerDealConversion: Boolean(tr.rules?.triggerDealConversion),
     autoCreateWorkTask: Boolean(tr.rules?.autoCreateWorkTask),
-    restrictToRoles: tr.rules?.requiredPermission
-      ? [tr.rules.requiredPermission]
-      : [],
-    triggerWebhook: tr.rules?.autoCreateWorkTask
-      ? "crm.transition.work_item"
-      : "",
+    restrictToRoles: tr.rules?.requiredPermission ? [tr.rules.requiredPermission] : [],
+    triggerWebhook: tr.rules?.autoCreateWorkTask ? "crm.transition.work_item" : "",
   }));
 
   if (wf.entityType === "deal" && wf.properties?.customTerminalStages !== "true") {
@@ -157,8 +126,8 @@ export function buildTransitionsFromWorkflow(
     if (lastActive && !mapped.some((t) => t.toStageKey === "terminal-won")) {
       mapped.push({
         id: "tr-deal-close-won",
-        nameEn: "Close as Won",
-        nameAr: "إغلاق كصفقة رابحة",
+        nameEn: CANONICAL_TERMINAL_LABELS.closeWonTransitionEn,
+        nameAr: CANONICAL_TERMINAL_LABELS.closeWonTransitionAr,
         fromStageKey: lastActive.stageKey,
         fromStageKeys: [lastActive.stageKey],
         toStageKey: "terminal-won",
@@ -178,8 +147,8 @@ export function buildTransitionsFromWorkflow(
     if (!mapped.some((t) => t.toStageKey === "terminal-lost")) {
       mapped.push({
         id: "tr-deal-mark-lost",
-        nameEn: "Mark as Lost",
-        nameAr: "تسجيل كصفقة خاسرة",
+        nameEn: CANONICAL_TERMINAL_LABELS.markLostTransitionEn,
+        nameAr: CANONICAL_TERMINAL_LABELS.markLostTransitionAr,
         fromStageKey: "*",
         fromStageKeys: ["*"],
         toStageKey: "terminal-lost",
@@ -197,8 +166,8 @@ export function buildTransitionsFromWorkflow(
     if (firstStage && !mapped.some((t) => t.fromStageKey === "terminal-lost")) {
       mapped.push({
         id: "tr-deal-reopen-lost",
-        nameEn: "Reopen Deal",
-        nameAr: "إعادة فتح الصفقة",
+        nameEn: CANONICAL_TERMINAL_LABELS.reopenLostTransitionEn,
+        nameAr: CANONICAL_TERMINAL_LABELS.reopenLostTransitionAr,
         fromStageKey: "terminal-lost",
         fromStageKeys: ["terminal-lost"],
         toStageKey: firstStage.stageKey,
@@ -228,16 +197,10 @@ export function serializeStudioDraftToWorkflow(
   return {
     ...selectedWorkflow,
     version: (selectedWorkflow.version ?? 1) + 1,
-    properties: {
-      ...(selectedWorkflow.properties ?? {}),
-      customTerminalStages: "true",
-    },
+    properties: { ...(selectedWorkflow.properties ?? {}), customTerminalStages: "true" },
     stages: stages.map((s, idx) => {
       const prev = existingMap.get(s.stageKey);
-      const category =
-        s.category ??
-        prev?.category ??
-        (s.isTerminalWon ? "done" : s.isTerminalLost ? "lost" : s.convertsToDeal ? "done" : s.order === 1 ? "todo" : "in_progress");
+      const category = s.category ?? prev?.category ?? (s.isTerminalWon ? "done" : s.isTerminalLost ? "lost" : s.convertsToDeal ? "done" : s.order === 1 ? "todo" : "in_progress");
       const color = resolveDefaultStageColor(s.stageKey, category, idx + 1, s.color ?? prev?.color);
       const customColorHex = s.customColorHex ?? s.properties?.customColorHex ?? prev?.customColorHex ?? prev?.properties?.customColorHex;
       return {
@@ -250,12 +213,7 @@ export function serializeStudioDraftToWorkflow(
         customColorHex,
         winProbabilityPercent: s.probability,
         slaDays: s.slaDays,
-        properties: {
-          ...(prev?.properties ?? {}),
-          ...(s.properties ?? {}),
-          color,
-          ...(customColorHex ? { customColorHex } : {}),
-        },
+        properties: { ...(prev?.properties ?? {}), ...(s.properties ?? {}), color, ...(customColorHex ? { customColorHex } : {}) },
         requiredExitFields: s.requiredExitFields,
         requiresVerifiedParty: s.requiredExitFields.includes("partyId"),
         triggerDealConversion: Boolean(s.convertsToDeal),
@@ -267,12 +225,7 @@ export function serializeStudioDraftToWorkflow(
     transitions: transitions.map((tr) => {
       const fromOrder = orderMap.get(tr.fromStageKey) ?? 0;
       const toOrder = orderMap.get(tr.toStageKey) ?? 0;
-      const resolvedDirection =
-        tr.fromStageKey === "*"
-          ? "global"
-          : toOrder < fromOrder
-            ? "backward"
-            : tr.direction ?? "forward";
+      const resolvedDirection = tr.fromStageKey === "*" ? "global" : toOrder < fromOrder ? "backward" : tr.direction ?? "forward";
       return {
         id: tr.id,
         nameEn: tr.nameEn,
@@ -291,13 +244,8 @@ export function serializeStudioDraftToWorkflow(
           blockIfLinkedDealProgressed: Boolean(tr.blockIfLinkedDealProgressed),
           promptForComment: Boolean(tr.requireReason),
           promptFields: tr.requireNote ? ["qualificationNotes"] : [],
-          requireVerifiedParty: Boolean(
-            tr.requireVerifiedParty || tr.requiredFields.includes("partyId"),
-          ),
-          requireEstimatedAmountPositive: Boolean(
-            tr.requireEstimatedAmountPositive ||
-              tr.requiredFields.includes("estimatedAmount"),
-          ),
+          requireVerifiedParty: Boolean(tr.requireVerifiedParty || tr.requiredFields.includes("partyId")),
+          requireEstimatedAmountPositive: Boolean(tr.requireEstimatedAmountPositive || tr.requiredFields.includes("estimatedAmount")),
           requireTargetCloseDate: tr.requiredFields.includes("targetCloseDate"),
           requiredFieldKeys: tr.requiredFields,
           triggerDealConversion: Boolean(tr.triggerDealConversion),

@@ -19,6 +19,7 @@ import {
   CalendarCheck,
 } from "lucide-react";
 import { cn } from "@core/common/utils";
+import { STAGE_COLOR_PALETTE, resolveDefaultStageColor } from "../../domain/constants/crmWorkflowDefaults";
 import type { CrmCommercialReport, CrmCurrencyPipelineBreakdown } from "../viewmodels/useCrmReportsViewModel";
 
 interface CrmReportsBreakdownsSectionProps {
@@ -72,21 +73,28 @@ export function CrmReportsBreakdownsSection({
             {activeCurrencyBreakdown.stages.map((stage) => {
               const rawMetric = stage.totalAmount ?? stage.dealCount;
               const widthPct = Math.max(8, Math.min(100, Math.round((rawMetric / maxStageVal) * 100)));
+              const stageColor = resolveDefaultStageColor(stage.stageKey, undefined, stage.sortOrder);
+              const colorMeta = STAGE_COLOR_PALETTE[stageColor] ?? STAGE_COLOR_PALETTE.blue;
               return (
                 <div
                   key={stage.stageKey}
                   data-testid={`report-stage-row-${stage.stageKey}`}
-                  className="rounded-nx-md border border-nx-line bg-nx-raised/40 p-3 space-y-2"
+                  data-stage-color={stageColor}
+                  className={cn(
+                    "rounded-nx-md border p-3 space-y-2",
+                    colorMeta.headerBorderClass,
+                    colorMeta.cardClass
+                  )}
                 >
                   <div className="flex flex-wrap items-center justify-between gap-2">
                     <div className="flex items-center gap-2">
-                      <span className="inline-flex items-center justify-center size-5 rounded-full bg-nx-surface border border-nx-line text-[10px] font-bold text-nx-ink">
+                      <span className={cn("inline-flex items-center justify-center size-5 rounded-full border text-[10px] font-bold", colorMeta.badgeClass)}>
                         {stage.sortOrder}
                       </span>
                       <span className="text-xs font-bold text-nx-ink">
                         {language === "ar" ? stage.labelAr : stage.labelEn}
                       </span>
-                      <Badge variant="outline" className="text-[10px] border-nx-line bg-nx-surface text-nx-ink-2">
+                      <Badge variant="outline" className={cn("text-[10px] border", colorMeta.badgeClass)}>
                         {stage.probabilityPercent}% {t("crm.reports.winProbSuffix")}
                       </Badge>
                       {stage.requiresVerifiedParty && (
@@ -109,7 +117,7 @@ export function CrmReportsBreakdownsSection({
                   </div>
 
                   <div className="w-full h-2 rounded-full bg-nx-surface border border-nx-line overflow-hidden">
-                    <div className="h-full bg-nx-accent transition-all" style={{ width: `${widthPct}%` }} />
+                    <div className={cn("h-full transition-all", colorMeta.dotClass)} style={{ width: `${widthPct}%` }} />
                   </div>
 
                   <div className="flex items-center justify-between text-[11px] text-nx-ink-3">

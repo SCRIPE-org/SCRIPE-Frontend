@@ -25,10 +25,8 @@ import { OpportunityOverviewCard } from "../components/OpportunityOverviewCard";
 import { OpportunityCommercialAndCommitteeSection } from "../components/OpportunityCommercialAndCommitteeSection";
 import { OpportunityAuditTimeline } from "../components/OpportunityAuditTimeline";
 import { OpportunityDetailSkeleton } from "../components/OpportunityDetailSkeleton";
-import {
-  OpportunityStageProgressionCard,
-  OpportunityHqFulfillmentHandoffCard,
-} from "../components/OpportunityStageProgressionAndHandoff";
+import { OpportunityStageProgressionCard } from "../components/OpportunityStageProgressionCard";
+import { OpportunityHqFulfillmentHandoffCard } from "../components/OpportunityHqFulfillmentHandoffCard";
 import { MoveStageDialog } from "../components/MoveStageDialog";
 import { CloseOpportunityDialog } from "../components/CloseOpportunityDialog";
 import { ReopenOpportunityDialog } from "../components/ReopenOpportunityDialog";
@@ -125,10 +123,10 @@ export function OpportunityDetailView({ opportunityId }: OpportunityDetailViewPr
           ...baseStages,
           ...(baseStages.some((s) => s.key === "terminal-won" || s.key.includes("won"))
             ? []
-            : [{ key: "terminal-won", label: isRtl ? "مغلق ناجح" : "Closed Won", order: baseStages.length + 1, color: resolveDefaultStageColor("terminal-won", "done", baseStages.length + 1), customColorHex: undefined, requiresParty: true }]),
+            : [{ key: "terminal-won", label: t("crmOpportunities.stages.closed_won"), order: baseStages.length + 1, color: resolveDefaultStageColor("terminal-won", "done", baseStages.length + 1), customColorHex: undefined, requiresParty: true }]),
           ...(baseStages.some((s) => s.key === "terminal-lost" || s.key.includes("lost"))
             ? []
-            : [{ key: "terminal-lost", label: isRtl ? "مغلق خاسر" : "Closed Lost", order: baseStages.length + 2, color: resolveDefaultStageColor("terminal-lost", "lost", baseStages.length + 2), customColorHex: undefined, requiresParty: false }]),
+            : [{ key: "terminal-lost", label: t("crmOpportunities.stages.closed_lost"), order: baseStages.length + 2, color: resolveDefaultStageColor("terminal-lost", "lost", baseStages.length + 2), customColorHex: undefined, requiresParty: false }]),
         ];
 
   const currentStageObj = stages.find((s) => s.key === opp.stageKey);
@@ -187,7 +185,7 @@ export function OpportunityDetailView({ opportunityId }: OpportunityDetailViewPr
 
         <OpportunityOverviewCard opp={opp} />
 
-        <OpportunityCommercialAndCommitteeSection opp={opp} isRtl={isRtl} contactRoles={contactRoles} onLookupParties={lookupPartyOptions} onAddContactRole={handleAddContactRole} onRemoveContactRole={handleRemoveContactRole} />
+        <OpportunityCommercialAndCommitteeSection opp={opp} isRtl={isRtl} stageHistory={stageHistory} contactRoles={contactRoles} onLookupParties={lookupPartyOptions} onAddContactRole={handleAddContactRole} onRemoveContactRole={handleRemoveContactRole} />
 
         <OpportunityHqFulfillmentHandoffCard t={t} opp={opp} fulfillmentRequested={fulfillmentRequested} isRequestingFulfillment={isRequestingFulfillment} onRequestFulfillmentHandoff={handleRequestFulfillmentHandoff} />
 

@@ -128,7 +128,7 @@ export function useLeadWorkflowActions(
         openQualifyDialog(lead, "Disqualified");
         return false;
       }
-      if ((newStatus === "Qualified" || evalResult.promptForComment) && !evalResult.shouldTriggerDealConversion && lead.status !== "Converted") {
+      if ((newStatus === "Qualified" || (evalResult.promptForComment && newStatus !== "New" && newStatus !== "Working")) && !evalResult.shouldTriggerDealConversion && lead.status !== "Converted") {
         openQualifyDialog(lead, "Qualified");
         return false;
       }
@@ -151,6 +151,7 @@ export function useLeadWorkflowActions(
           const moved = await container.leadRepository.moveLeadStage({
             leadId: lead.id,
             targetStageKey: toKey,
+            reason: "Kanban stage step transition",
             expectedRowVersion: lead.rowVersion,
           });
           if (evalResult.shouldTriggerDealConversion || moved?.triggerDealConversion) {

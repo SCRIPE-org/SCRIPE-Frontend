@@ -36,11 +36,22 @@ export function CrmSettingsView() {
 
   useEffect(() => {
     if (typeof window !== "undefined") {
-      const params = new URLSearchParams(window.location.search);
-      const tab = params.get("tab") as CrmSettingsTabKey | null;
-      if (tab) setSelectedSection(tab);
+      const syncFromUrl = () => {
+        const params = new URLSearchParams(window.location.search);
+        const tab = params.get("tab") as CrmSettingsTabKey | null;
+        if (tab) setSelectedSection(tab);
+      };
+      syncFromUrl();
+      window.addEventListener("popstate", syncFromUrl);
+      return () => window.removeEventListener("popstate", syncFromUrl);
     }
   }, []);
+
+  const handleSelectSection = (tab: CrmSettingsTabKey) => {
+    setSelectedSection(tab);
+    const nextUrl = tab === "all" ? "/crm/settings" : `/crm/settings?tab=${tab}`;
+    router.replace(nextUrl, { scroll: false });
+  };
 
   const {
     settings,
@@ -141,7 +152,7 @@ export function CrmSettingsView() {
           <CrmSettingsSidebarNav
             isRtl={isRtl}
             selectedSection={selectedSection}
-            onSelectSection={setSelectedSection}
+            onSelectSection={handleSelectSection}
             navSearch={navSearch}
             onNavSearchChange={setNavSearch}
           />

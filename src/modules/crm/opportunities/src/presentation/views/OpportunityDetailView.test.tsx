@@ -9,11 +9,18 @@ import {
   OpportunityStageTransitionKind,
 } from "../../domain/models/crm-opportunity.types";
 
+import { crmOpportunitiesEn } from "../../../locales/crm-opportunities.en";
+
 vi.mock("@core/providers/i18n-provider", () => ({
   useI18n: () => ({
     t: (key: string, params?: Record<string, string | number>) => {
       if (params?.defaultValue) return String(params.defaultValue);
-      return key;
+      const parts = key.split(".");
+      let cur: any = crmOpportunitiesEn;
+      for (const p of parts) {
+        cur = cur?.[p];
+      }
+      return typeof cur === "string" ? cur : key;
     },
     language: "en",
   }),

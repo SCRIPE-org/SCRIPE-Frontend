@@ -122,7 +122,7 @@ export function CrmWorkflowCanvas2D({
             {showTransitionLabels ? <Eye className="w-3.5 h-3.5 me-1.5 text-primary" /> : <EyeOff className="w-3.5 h-3.5 me-1.5 text-nx-ink-3" />}{t("crmOpportunities.pipelinesPage.showTransitionLabelsCheck")}
           </Button>
           <Button size="sm" variant={simModeOpen ? "secondary" : "outline"} onClick={() => setSimModeOpen((v) => !v)} data-testid="canvas-simulate-workflow-btn">
-            <Play className="w-3.5 h-3.5 me-1.5 text-success" />{isAr ? "محاكاة المسار" : "Simulate Workflow"}
+            <Play className="w-3.5 h-3.5 me-1.5 text-success" />{t("crmOpportunities.workflowSandbox.simulateBtn")}
           </Button>
           {onValidateRules && <Button size="sm" variant="outline" onClick={onValidateRules} data-testid="canvas-validate-rules"><CheckCircle2 className="w-3.5 h-3.5 me-1.5 text-success" />{t("crmOpportunities.pipelinesPage.validateWorkflowRulesBtn")}</Button>}
         </div>

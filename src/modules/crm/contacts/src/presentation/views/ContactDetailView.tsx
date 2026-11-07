@@ -152,31 +152,44 @@ export function ContactDetailView({ contactId }: ContactDetailViewProps) {
                   </div>
                   <div>
                     <span className="text-xs font-bold text-nx-ink block hover:text-nx-accent">
-                      {language === "ar" && contact.primaryAccountNameAr ? contact.primaryAccountNameAr : contact.primaryAccountNameEn || "Commercial Account"}
+                      {language === "ar" && contact.primaryAccountNameAr ? contact.primaryAccountNameAr : contact.primaryAccountNameEn || t("crmContacts.detail.defaultAccountLabel")}
                     </span>
-                    <span className="text-[11px] text-nx-ink-3">{t("crmContacts.detail.linkedOrganization", { defaultValue: "Primary Organization Account" })}</span>
+                    <span className="text-[11px] text-nx-ink-3">{t("crmContacts.detail.linkedOrganization")}</span>
                   </div>
                 </div>
                 <Button type="button" variant="ghost" size="sm" className="h-7 px-2 text-xs gap-1 text-nx-ink">
-                  <span>{t("crmAccounts.actions.view360") || "View 360"}</span>
+                  <span>{t("crmAccounts.actions.view360")}</span>
                   <ArrowUpRight className="size-3" />
                 </Button>
               </div>
             ) : (
-              <p className="text-xs text-nx-ink-3 py-6 text-center italic">{t("crmContacts.detail.noPrimaryAccount") || "This contact is not currently assigned to a primary commercial account."}</p>
+              <p className="text-xs text-nx-ink-3 py-6 text-center italic">{t("crmContacts.detail.noPrimaryAccount")}</p>
             )}
           </Card>
 
-          <Card className="rounded-nx-lg border border-nx-line bg-nx-surface p-4 space-y-3">
+          <Card className="rounded-nx-lg border border-nx-line bg-nx-surface p-4 space-y-3" data-testid="contact-buying-committee-rollup-card">
             <div className="flex items-center justify-between border-b border-nx-line pb-3">
               <div className="flex items-center gap-2">
                 <Briefcase className="size-4 text-nx-accent" />
-                <h2 className="text-sm font-bold text-nx-ink">{t("crmContacts.detail.dealsTitle") || "Associated Deals"}</h2>
+                <h2 className="text-sm font-bold text-nx-ink">{t("crmContacts.detail.dealsTitle")}</h2>
               </div>
               <Badge variant="outline" className="border-nx-line text-nx-ink-3 font-mono text-[11px]">{contact.opportunities?.length ?? 0}</Badge>
             </div>
+            <div className="rounded-nx-md border border-nx-line bg-nx-raised/40 px-3 py-2 flex flex-wrap items-center justify-between gap-2 text-xs" data-testid="contact-buying-committee-summary">
+              <div className="flex items-center gap-2">
+                <span className="text-nx-ink-3">{t("crmContacts.detail.buyingCommitteeRoleLabel")}:</span>
+                <Badge variant="outline" className="text-[10px] font-mono bg-nx-surface">
+                  {contact.jobTitleSnapshot || t("crmContacts.detail.defaultBuyingRole")}
+                </Badge>
+              </div>
+              <div className="font-mono text-xs font-bold text-nx-ink">
+                {t("crmContacts.detail.influencedPipelineValueLabel")}:{" "}
+                {(contact.opportunities ?? []).reduce((sum, o) => sum + (Number(o.estimatedAmount) || 0), 0).toLocaleString()}{" "}
+                {contact.opportunities?.[0]?.currencyCode || "SAR"}
+              </div>
+            </div>
             {contact.opportunities?.length === 0 ? (
-              <p className="text-xs text-nx-ink-3 py-6 text-center">{t("crmContacts.detail.noDeals") || "No pipeline deals currently linked to this contact."}</p>
+              <p className="text-xs text-nx-ink-3 py-6 text-center">{t("crmContacts.detail.noDeals")}</p>
             ) : (
               <div className="divide-y divide-nx-line">
                 {contact.opportunities?.map((opp) => (

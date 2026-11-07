@@ -1,20 +1,7 @@
-/**
- * CRM Opportunity Domain Entity & Invariant Types
- *
- * Rich domain entity and types for Opportunity lifecycle state transitions,
- * PD-1 pipeline gate enforcement, and stage progression.
- */
-
-/** Lifecycle status of a CRM opportunity */
 export type OpportunityStatus = "Open" | "Won" | "Lost";
-
-/** Business deal category for revenue classification */
 export type DealKind = "NewBusiness" | "Expansion" | "Renewal" | "Services";
-
-/** High-level HQ commercial outcome classification */
 export type HqOutcomeKind = "CustomerContract" | "InternalTransfer" | "SubsidiaryAllocation";
 
-/** Stage transition categorization for audit & compliance */
 export enum OpportunityStageTransitionKind {
   Created = 0,
   AdjacentForward = 1,
@@ -25,7 +12,6 @@ export enum OpportunityStageTransitionKind {
   Reopened = 6,
 }
 
-/** Pure domain representation of a CRM Opportunity */
 export interface CrmOpportunity {
   id: string;
   title: string;
@@ -60,13 +46,13 @@ export interface CrmOpportunity {
   exitChecklistJson?: string | null;
   primaryContactRole?: string | null;
   solutionFitConfirmed?: boolean;
+  enteredStageAtUtc?: string | null;
   createdAt: string;
   rowVersion: string;
   maskedFieldKeys: string[];
   isReplay?: boolean;
 }
 
-/** Audit log entry for stage progressions and overrides */
 export interface CrmOpportunityStageHistory {
   id: string;
   opportunityId: string;
@@ -87,13 +73,11 @@ export interface CrmOpportunityStageHistory {
   occurredAtUtc: string;
 }
 
-/** Detail payload containing opportunity and historical progression */
 export interface OpportunityDetailResult {
   opportunity: CrmOpportunity;
   stageHistory: CrmOpportunityStageHistory[];
 }
 
-/** Input contract for creating an opportunity */
 export interface CreateOpportunityInput {
   title: string;
   estimatedAmount: number;
@@ -112,7 +96,6 @@ export interface CreateOpportunityInput {
   customFieldValues?: Record<string, unknown>;
 }
 
-/** Input contract for updating opportunity metadata */
 export interface UpdateOpportunityInput {
   opportunityId: string;
   title: string;
@@ -126,7 +109,6 @@ export interface UpdateOpportunityInput {
   idempotencyKey?: string;
 }
 
-/** Input contract for assigning opportunity ownership */
 export interface AssignOpportunityOwnerInput {
   opportunityId: string;
   ownerUserId: string;
@@ -136,7 +118,6 @@ export interface AssignOpportunityOwnerInput {
   idempotencyKey?: string;
 }
 
-/** Input contract for stage progression or override */
 export interface MoveOpportunityStageInput {
   opportunityId: string;
   targetStageKey: string;
@@ -153,7 +134,6 @@ export interface MoveOpportunityStageInput {
   customFieldValues?: Record<string, unknown>;
 }
 
-/** Input contract for closing an opportunity (Won or Lost) */
 export interface CloseOpportunityInput {
   opportunityId: string;
   outcome: OpportunityStatus;
@@ -168,7 +148,6 @@ export interface CloseOpportunityInput {
   idempotencyKey?: string;
 }
 
-/** Input contract for reopening a closed deal */
 export interface ReopenOpportunityInput {
   opportunityId: string;
   reason: string;
@@ -176,7 +155,6 @@ export interface ReopenOpportunityInput {
   idempotencyKey?: string;
 }
 
-/** Filter and pagination parameters for opportunities listing */
 export interface OpportunitiesFilterParams {
   page?: number;
   pageSize?: number;
@@ -185,7 +163,6 @@ export interface OpportunitiesFilterParams {
   status?: OpportunityStatus;
 }
 
-/** Paged list result envelope */
 export interface PagedOpportunitiesResult {
   items: CrmOpportunity[];
   pageNumber: number;
@@ -197,52 +174,24 @@ export interface PagedOpportunitiesResult {
   pageSize?: number;
 }
 
-/**
- * Rich domain entity wrapping CrmOpportunity data with business invariants and computed properties.
- */
 export class OpportunityEntity {
   constructor(public readonly data: CrmOpportunity) {}
-
-  get id(): string {
-    return this.data.id;
-  }
-  get title(): string {
-    return this.data.title;
-  }
-  get stageKey(): string {
-    return this.data.stageKey;
-  }
-  get status(): OpportunityStatus {
-    return this.data.status;
-  }
-  get estimatedAmount(): number | null | undefined {
-    return this.data.estimatedAmount;
-  }
-  get currencyCode(): string {
-    return this.data.currencyCode;
-  }
-  get dealKind(): DealKind {
-    return this.data.dealKind;
-  }
-  get isOpen(): boolean {
-    return this.data.status === "Open";
-  }
-  get isWon(): boolean {
-    return this.data.status === "Won";
-  }
-  get isLost(): boolean {
-    return this.data.status === "Lost";
-  }
+  get id(): string { return this.data.id; }
+  get title(): string { return this.data.title; }
+  get stageKey(): string { return this.data.stageKey; }
+  get status(): OpportunityStatus { return this.data.status; }
+  get estimatedAmount(): number | null | undefined { return this.data.estimatedAmount; }
+  get currencyCode(): string { return this.data.currencyCode; }
+  get dealKind(): DealKind { return this.data.dealKind; }
+  get isOpen(): boolean { return this.data.status === "Open"; }
+  get isWon(): boolean { return this.data.status === "Won"; }
+  get isLost(): boolean { return this.data.status === "Lost"; }
 
   copyWith(updates: Partial<CrmOpportunity>): OpportunityEntity {
-    return new OpportunityEntity({
-      ...this.data,
-      ...updates,
-    });
+    return new OpportunityEntity({ ...this.data, ...updates });
   }
 }
 
-/** Configuration of a pipeline stage in the default pipeline */
 export interface PipelineStageConfig {
   stageId?: string;
   stageKey: string;
@@ -264,7 +213,6 @@ export interface PipelineStageConfig {
   rowVersion?: string | null;
 }
 
-/** Complete definition of tenant's default pipeline */
 export interface PipelineDefinition {
   id?: string;
   pipelineId?: string;
@@ -284,7 +232,6 @@ export interface PipelineDefinition {
   rowVersion: string;
 }
 
-/** Item payload for updating a pipeline stage */
 export interface UpdatePipelineStageItem {
   stageKey: string;
   labelEn: string;
@@ -304,7 +251,6 @@ export interface UpdatePipelineStageItem {
   expectedRowVersion?: string | null;
 }
 
-/** Input contract for updating tenant default pipeline */
 export interface UpdateDefaultPipelineInput {
   nameEn?: string;
   nameAr?: string | null;
@@ -315,7 +261,6 @@ export interface UpdateDefaultPipelineInput {
   idempotencyKey?: string;
 }
 
-/** Buying Committee Stakeholder Contact Role on a Deal (`SCRIPE-765`) */
 export interface DealContactRoleDto {
   id: string;
   opportunityId: string;
@@ -338,5 +283,3 @@ export interface AddDealContactRoleInput {
   influenceNotes?: string;
   idempotencyKey?: string;
 }
-
-

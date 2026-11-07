@@ -132,15 +132,15 @@ export function CrmCustomFieldsStudioCard({ settings, onCreateCustomField, onNot
           </div>
           <div className="space-y-1">
             <Label className="text-[11px] font-semibold text-nx-ink">{t("crm.settings.integrations.fieldKeyLabel")}</Label>
-            <Input value={cfKey} onChange={(e) => setCfKey(e.target.value)} placeholder="e.g. technical_architect_signoff" data-testid="crm-cf-key-input" required className="h-8 text-xs font-mono bg-nx-ground border-nx-line text-nx-ink" />
+            <Input value={cfKey} onChange={(e) => setCfKey(e.target.value)} placeholder={t("crm.settings.integrations.fieldKeyPlaceholder")} data-testid="crm-cf-key-input" required className="h-8 text-xs font-mono bg-nx-ground border-nx-line text-nx-ink" />
           </div>
           <div className="space-y-1">
             <Label className="text-[11px] font-semibold text-nx-ink">{t("crm.settings.integrations.labelEnLabel")}</Label>
-            <Input value={cfLabelEn} onChange={(e) => setCfLabelEn(e.target.value)} placeholder="e.g. Technical Architect Sign-Off" data-testid="crm-cf-label-en-input" required className="h-8 text-xs bg-nx-ground border-nx-line text-nx-ink" />
+            <Input value={cfLabelEn} onChange={(e) => setCfLabelEn(e.target.value)} placeholder={t("crm.settings.integrations.labelEnPlaceholder")} data-testid="crm-cf-label-en-input" required className="h-8 text-xs bg-nx-ground border-nx-line text-nx-ink" />
           </div>
           <div className="space-y-1">
             <Label className="text-[11px] font-semibold text-nx-ink">{t("crm.settings.integrations.labelArLabel")}</Label>
-            <Input value={cfLabelAr} onChange={(e) => setCfLabelAr(e.target.value)} placeholder="اعتماد المهندس التقني" data-testid="crm-cf-label-ar-input" className="h-8 text-xs bg-nx-ground border-nx-line text-nx-ink" />
+            <Input value={cfLabelAr} onChange={(e) => setCfLabelAr(e.target.value)} placeholder={t("crm.settings.integrations.labelArPlaceholder")} data-testid="crm-cf-label-ar-input" className="h-8 text-xs bg-nx-ground border-nx-line text-nx-ink" />
           </div>
         </div>
 

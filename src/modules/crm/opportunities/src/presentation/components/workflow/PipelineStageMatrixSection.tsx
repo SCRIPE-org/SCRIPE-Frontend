@@ -12,7 +12,6 @@ import { ArrowDown, ArrowUp, Layers, Save, ShieldCheck } from "lucide-react";
 import { decodeCustomFieldName } from "@core/crud/customFieldsExtension";
 import {
   PERMITTED_EXIT_FIELDS,
-  EXIT_FIELD_LABELS,
   type StageDraftState,
 } from "../admin/PipelineAdminStageRow";
 import type { CrmCustomFieldDefinition } from "@modules/crm";
@@ -124,7 +123,7 @@ export function PipelineStageMatrixSection({
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-1">
                     {PERMITTED_EXIT_FIELDS.map((fieldKey) => {
                       const isChecked = stage.requiredExitFields.includes(fieldKey);
-                      const friendlyLabel = EXIT_FIELD_LABELS[fieldKey]?.[isRtl ? "ar" : "en"] || fieldKey;
+                      const friendlyLabel = t(`crmOpportunities.dialogs.pipelineAdmin.exitFields.${fieldKey}`);
                       return (
                         <Label key={fieldKey} className="flex items-center gap-2 text-xs cursor-pointer select-none rounded-nx-sm border border-nx-line bg-nx-ground px-2.5 py-1.5 hover:border-nx-line-hi">
                           <Checkbox data-testid={`stage-${stage.stageKey}-exit-field-${fieldKey}`} checked={isChecked} disabled={!canManagePipeline} onCheckedChange={() => onToggleExitField(idx, fieldKey)} />
