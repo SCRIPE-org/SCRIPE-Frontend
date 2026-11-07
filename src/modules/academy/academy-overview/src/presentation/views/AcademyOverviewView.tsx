@@ -95,38 +95,31 @@ export function AcademyOverviewView() {
     },
     {
       title: t("academyOverview.quickActions.intakeAthlete") || "Athletes & Families",
-      desc: t("academyOverview.quickActions.intakeAthleteDesc") || "Search-before-create with PartyKernel deduplication.",
+      desc: t("academyOverview.quickActions.intakeAthleteDesc") || "Register and manage youth and adult athletes and their guardians.",
       icon: Users,
       href: "/academy/athletes",
-      permission: ACADEMY_PERMISSIONS.ACADEMY_ENROLLMENTS_VIEW,
+      permission: ACADEMY_PERMISSIONS.ACADEMY_ATHLETES_VIEW,
     },
     {
       title: t("academyOverview.quickActions.scheduleTrial") || "Trials & Evaluations",
-      desc: t("academyOverview.quickActions.scheduleTrialDesc") || "Technical assessment before group placement.",
+      desc: t("academyOverview.quickActions.scheduleTrialDesc") || "Assess prospective athletes and manage skill trials.",
       icon: ClipboardCheck,
       href: "/academy/trials",
       permission: ACADEMY_PERMISSIONS.ACADEMY_TRIALS_VIEW,
     },
     {
+      title: t("academyOverview.quickActions.manageEnrollments") || "Student Enrollments",
+      desc: t("academyOverview.quickActions.manageEnrollmentsDesc") || "Review registrations, active terms, and billing handoffs.",
+      icon: CheckSquare,
+      href: "/academy/enrollments",
+      permission: ACADEMY_PERMISSIONS.ACADEMY_ENROLLMENTS_VIEW,
+    },
+    {
       title: t("academyOverview.quickActions.manageGroups") || "Training Groups & Rosters",
-      desc: t("academyOverview.quickActions.manageGroupsDesc") || "Cohort capacity and coach assignment rules.",
+      desc: t("academyOverview.quickActions.manageGroupsDesc") || "Organize athletes into cohorts with coach assignments.",
       icon: Users,
       href: "/academy/groups",
       permission: ACADEMY_PERMISSIONS.ACADEMY_GROUPS_VIEW,
-    },
-    {
-      title: t("academyOverview.quickActions.viewSessions") || "Schedule & Sessions",
-      desc: t("academyOverview.quickActions.viewSessionsDesc") || "Weekly sessions at external or internal venues.",
-      icon: CalendarDays,
-      href: "/academy/sessions",
-      permission: ACADEMY_PERMISSIONS.ACADEMY_SESSIONS_VIEW,
-    },
-    {
-      title: t("academyOverview.quickActions.attendance") || "Attendance Register",
-      desc: t("academyOverview.quickActions.attendanceDesc") || "Coach attendance capture with audit history.",
-      icon: CheckSquare,
-      href: "/academy/attendance",
-      permission: ACADEMY_PERMISSIONS.ACADEMY_ATTENDANCE_VIEW,
     },
   ];
 
@@ -153,7 +146,7 @@ export function AcademyOverviewView() {
         <div className="flex items-center gap-3">
           <Badge variant="outline" className="gap-1.5 border-nx-line text-xs font-medium">
             <ShieldCheck className="size-3.5 text-nx-accent-fill" />
-            {t("academyOverview.status.sprintNotice") || "Sprint 0 Architecture Baseline Verified"}
+            {t("academyOverview.status.activeBadge") || "Multi-Sport Operations"}
           </Badge>
           <Button
             variant="outline"
@@ -178,7 +171,7 @@ export function AcademyOverviewView() {
             {state.activeProgramsCount}
           </p>
           <p className="mt-1 text-[11px] text-nx-ink-3">
-            {t("academyOverview.status.noPrograms") || "0 configured"}
+            {t("academyOverview.status.noPrograms") || "Configured programs"}
           </p>
         </Card>
         <Card className="border border-nx-line bg-nx-surface p-4">
@@ -188,7 +181,7 @@ export function AcademyOverviewView() {
           <p className="mt-2 text-2xl font-bold tracking-tight text-nx-ink">
             {state.activeOfferingsCount}
           </p>
-          <p className="mt-1 text-[11px] text-nx-ink-3">S1 schedule delivery</p>
+          <p className="mt-1 text-[11px] text-nx-ink-3">Seasonal term registrations</p>
         </Card>
         <Card className="border border-nx-line bg-nx-surface p-4">
           <p className="text-xs font-medium text-nx-ink-2">
@@ -197,7 +190,7 @@ export function AcademyOverviewView() {
           <p className="mt-2 text-2xl font-bold tracking-tight text-nx-ink">
             {state.activeEnrollmentsCount}
           </p>
-          <p className="mt-1 text-[11px] text-nx-ink-3">S2 athlete intake</p>
+          <p className="mt-1 text-[11px] text-nx-ink-3">Active enrolled students</p>
         </Card>
         <Card className="border border-nx-line bg-nx-surface p-4">
           <p className="text-xs font-medium text-nx-ink-2">
@@ -206,7 +199,7 @@ export function AcademyOverviewView() {
           <p className="mt-2 text-2xl font-bold tracking-tight text-nx-ink">
             {state.pendingTrialsCount}
           </p>
-          <p className="mt-1 text-[11px] text-nx-ink-3">S3 technical evaluation</p>
+          <p className="mt-1 text-[11px] text-nx-ink-3">Pending skill evaluations</p>
         </Card>
       </div>
 
@@ -219,7 +212,7 @@ export function AcademyOverviewView() {
               title={t("academyOverview.empty.title") || "Welcome to SCRIPE Academy"}
               description={
                 t("academyOverview.empty.description") ||
-                "Your academy foundation is active and verified. Programs, offerings, and athlete intake will unlock in Sprints 1–3."
+                "Your academy is active. Begin by configuring your multi-sport programs, seasonal offerings, and intake rosters."
               }
             />
           </CardContent>

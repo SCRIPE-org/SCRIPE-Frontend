@@ -21,11 +21,13 @@ import {
   ArrowLeft,
   CheckCircle2,
   Sparkles,
+  AlertTriangle,
 } from "lucide-react";
 
 export function AcademyProgramsView() {
   const { t, language } = useI18n();
   const dir = language === "ar" ? "rtl" : "ltr";
+  const isAr = language === "ar";
   const canView = usePermission(ACADEMY_PERMISSIONS.ACADEMY_PROGRAMS_VIEW);
   const canCreate = usePermission(ACADEMY_PERMISSIONS.ACADEMY_PROGRAMS_CREATE);
   const canPublish = usePermission(ACADEMY_PERMISSIONS.ACADEMY_PROGRAMS_UPDATE);
@@ -52,6 +54,8 @@ export function AcademyProgramsView() {
   const [maxAge, setMaxAge] = useState(16);
   const [level, setLevel] = useState<ProgramLevel>("Beginner");
   const [genderCriteria, setGenderCriteria] = useState<GenderCriteria>("Mixed");
+
+  const isFormValid = Boolean(sportId && code.trim() && nameEn.trim() && nameAr.trim());
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -260,29 +264,61 @@ export function AcademyProgramsView() {
       {/* Creation Modal */}
       {state.isCreateOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-          <div className="w-full max-w-lg rounded-lg border border-nx-line bg-nx-surface p-6 shadow-xl space-y-4 max-h-[90vh] overflow-y-auto">
+          <div className="w-full max-w-lg rounded-lg border border-nx-line bg-nx-surface p-6 shadow-xl space-y-4 max-h-[90vh] overflow-y-auto" dir={dir}>
             <div className="flex items-center justify-between border-b border-nx-line pb-3">
-              <h2 className="text-base font-bold text-nx-ink">Create New Program</h2>
+              <h2 className="text-base font-bold text-nx-ink">
+                {isAr ? "إنشاء برنامج رياضي جديد" : "Create New Program"}
+              </h2>
               <button
                 onClick={closeCreateDialog}
                 className="text-nx-ink-3 hover:text-nx-ink text-sm font-semibold"
+                aria-label="Close"
               >
                 ✕
               </button>
             </div>
-            <form onSubmit={handleSubmit} className="space-y-4">
+
+            {/* Actionable Dependency Warning if Sports Taxonomy is empty or failed */}
+            {state.sports.length === 0 && (
+              <div className="rounded-md bg-amber-500/10 border border-amber-500/30 p-3 text-xs text-amber-700 dark:text-amber-300 space-y-2">
+                <div className="font-semibold flex items-center gap-1.5">
+                  <AlertTriangle className="size-4 shrink-0" />
+                  {isAr ? "تصنيف الرياضات غير متوفر حالياً" : "Sports Taxonomy Unavailable"}
+                </div>
+                <p>
+                  {isAr
+                    ? "لا توجد رياضات معتمدة متوفرة من SportsCore. لا يمكن إنشاء برامج بدون اختيار رياضة معتمدة."
+                    : "No canonical sports were retrieved from SportsCore. Programs require a valid canonical sport."}
+                </p>
+                <Button
+                  type="button"
+                  size="sm"
+                  variant="outline"
+                  className="mt-1 text-[11px] h-7"
+                  onClick={reload}
+                >
+                  {isAr ? "إعادة تحميل الرياضات" : "Retry Loading Sports"}
+                </Button>
+              </div>
+            )}
+
+            <form onSubmit={handleSubmit} className="space-y-4" noValidate>
               <div className="space-y-1">
-                <label className="text-xs font-semibold text-nx-ink">Sport Taxonomy *</label>
+                <label className="text-xs font-semibold text-nx-ink">
+                  {isAr ? "تصنيف الرياضة الأساسية *" : "Sport Taxonomy *"}
+                </label>
                 <select
-                  required
-                  className="w-full h-9 rounded-md border border-nx-line bg-nx-surface px-3 text-xs text-nx-ink"
+                  disabled={state.sports.length === 0}
+                  className="w-full h-9 rounded-md border border-nx-line bg-nx-surface px-3 text-xs text-nx-ink disabled:opacity-50"
                   value={sportId}
                   onChange={(e) => setSportId(e.target.value)}
                 >
-                  <option value="">Select canonical sport...</option>
+                  <option value="">
+                    {isAr ? "-- اختر الرياضة المعتمدة --" : "-- Select canonical sport --"}
+                  </option>
                   {state.sports.map((s) => (
                     <option key={s.id} value={s.id}>
-                      {language === "ar" ? s.nameAr : s.nameEn} ({s.code})
+                      {isAr ? s.nameAr : s.nameEn} ({s.code})
                     </option>
                   ))}
                 </select>
@@ -290,9 +326,10 @@ export function AcademyProgramsView() {
 
               <div className="grid grid-cols-2 gap-3">
                 <div className="space-y-1">
-                  <label className="text-xs font-semibold text-nx-ink">Program Code *</label>
+                  <label className="text-xs font-semibold text-nx-ink">
+                    {isAr ? "رمز البرنامج *" : "Program Code *"}
+                  </label>
                   <input
-                    required
                     type="text"
                     placeholder="e.g. PROG-FB-JR"
                     className="w-full h-9 rounded-md border border-nx-line bg-nx-surface px-3 text-xs text-nx-ink"
@@ -301,25 +338,28 @@ export function AcademyProgramsView() {
                   />
                 </div>
                 <div className="space-y-1">
-                  <label className="text-xs font-semibold text-nx-ink">Level *</label>
+                  <label className="text-xs font-semibold text-nx-ink">
+                    {isAr ? "مستوى البرنامج *" : "Level *"}
+                  </label>
                   <select
                     className="w-full h-9 rounded-md border border-nx-line bg-nx-surface px-3 text-xs text-nx-ink"
                     value={level}
                     onChange={(e) => setLevel(e.target.value as ProgramLevel)}
                   >
-                    <option value="Beginner">Beginner</option>
-                    <option value="Intermediate">Intermediate</option>
-                    <option value="Advanced">Advanced</option>
-                    <option value="Elite">Elite</option>
+                    <option value="Beginner">{isAr ? "مبتدئ (Beginner)" : "Beginner"}</option>
+                    <option value="Intermediate">{isAr ? "متوسط (Intermediate)" : "Intermediate"}</option>
+                    <option value="Advanced">{isAr ? "متقدم (Advanced)" : "Advanced"}</option>
+                    <option value="Elite">{isAr ? "نخبة (Elite)" : "Elite"}</option>
                   </select>
                 </div>
               </div>
 
               <div className="grid grid-cols-2 gap-3">
                 <div className="space-y-1">
-                  <label className="text-xs font-semibold text-nx-ink">Name (English) *</label>
+                  <label className="text-xs font-semibold text-nx-ink">
+                    {isAr ? "الاسم (إنجليزي) *" : "Name (English) *"}
+                  </label>
                   <input
-                    required
                     type="text"
                     placeholder="Junior Football Development"
                     className="w-full h-9 rounded-md border border-nx-line bg-nx-surface px-3 text-xs text-nx-ink"
@@ -328,9 +368,10 @@ export function AcademyProgramsView() {
                   />
                 </div>
                 <div className="space-y-1">
-                  <label className="text-xs font-semibold text-nx-ink">Name (Arabic) *</label>
+                  <label className="text-xs font-semibold text-nx-ink">
+                    {isAr ? "الاسم (عربي) *" : "Name (Arabic) *"}
+                  </label>
                   <input
-                    required
                     type="text"
                     placeholder="برنامج تطوير كرة القدم"
                     dir="rtl"
@@ -343,7 +384,9 @@ export function AcademyProgramsView() {
 
               <div className="grid grid-cols-3 gap-3">
                 <div className="space-y-1">
-                  <label className="text-xs font-semibold text-nx-ink">Min Age *</label>
+                  <label className="text-xs font-semibold text-nx-ink">
+                    {isAr ? "الحد الأدنى للعمر *" : "Min Age *"}
+                  </label>
                   <input
                     type="number"
                     min={3}
@@ -354,7 +397,9 @@ export function AcademyProgramsView() {
                   />
                 </div>
                 <div className="space-y-1">
-                  <label className="text-xs font-semibold text-nx-ink">Max Age *</label>
+                  <label className="text-xs font-semibold text-nx-ink">
+                    {isAr ? "الحد الأقصى للعمر *" : "Max Age *"}
+                  </label>
                   <input
                     type="number"
                     min={3}
@@ -365,21 +410,25 @@ export function AcademyProgramsView() {
                   />
                 </div>
                 <div className="space-y-1">
-                  <label className="text-xs font-semibold text-nx-ink">Gender Criteria *</label>
+                  <label className="text-xs font-semibold text-nx-ink">
+                    {isAr ? "فئة الجنس *" : "Gender Criteria *"}
+                  </label>
                   <select
                     className="w-full h-9 rounded-md border border-nx-line bg-nx-surface px-3 text-xs text-nx-ink"
                     value={genderCriteria}
                     onChange={(e) => setGenderCriteria(e.target.value as GenderCriteria)}
                   >
-                    <option value="Mixed">Mixed</option>
-                    <option value="BoysOnly">Boys Only</option>
-                    <option value="GirlsOnly">Girls Only</option>
+                    <option value="Mixed">{isAr ? "مختلط (Mixed)" : "Mixed"}</option>
+                    <option value="BoysOnly">{isAr ? "بنين فقط (Boys Only)" : "Boys Only"}</option>
+                    <option value="GirlsOnly">{isAr ? "بنات فقط (Girls Only)" : "Girls Only"}</option>
                   </select>
                 </div>
               </div>
 
               <div className="space-y-1">
-                <label className="text-xs font-semibold text-nx-ink">Description (English)</label>
+                <label className="text-xs font-semibold text-nx-ink">
+                  {isAr ? "الوصف (إنجليزي)" : "Description (English)"}
+                </label>
                 <textarea
                   rows={2}
                   className="w-full rounded-md border border-nx-line bg-nx-surface p-2 text-xs text-nx-ink"
@@ -387,6 +436,15 @@ export function AcademyProgramsView() {
                   onChange={(e) => setDescriptionEn(e.target.value)}
                 />
               </div>
+
+              {/* Actionable inline validation helper */}
+              {!isFormValid && (
+                <div className="text-[11px] text-amber-700 dark:text-amber-400 bg-amber-500/10 p-2 rounded border border-amber-500/20">
+                  {isAr
+                    ? "يرجى تعبئة الحقول الإلزامية: الرياضة، رمز البرنامج، والاسم باللغتين الإنجليزية والعربية."
+                    : "Please fill all required fields: Sport taxonomy, Program Code, and English & Arabic names."}
+                </div>
+              )}
 
               <div className="flex justify-end gap-3 pt-3 border-t border-nx-line">
                 <Button
@@ -397,10 +455,17 @@ export function AcademyProgramsView() {
                   disabled={state.submitting}
                   className="text-xs"
                 >
-                  Cancel
+                  {isAr ? "إلغاء" : "Cancel"}
                 </Button>
-                <Button type="submit" size="sm" disabled={state.submitting} className="text-xs">
-                  {state.submitting ? "Saving..." : "Save Program"}
+                <Button
+                  type="submit"
+                  size="sm"
+                  disabled={state.submitting || !isFormValid || state.sports.length === 0}
+                  className="text-xs"
+                >
+                  {state.submitting
+                    ? (isAr ? "جاري الحفظ..." : "Saving...")
+                    : (isAr ? "حفظ البرنامج" : "Save Program")}
                 </Button>
               </div>
             </form>

@@ -308,6 +308,38 @@ import {
   en as academyOverviewEn,
   ar as academyOverviewAr,
 } from "@modules/academy/academy-overview/locales";
+import {
+  en as academyProgramsEn,
+  ar as academyProgramsAr,
+} from "@modules/academy/programs/locales";
+import {
+  en as academyAthletesEn,
+  ar as academyAthletesAr,
+} from "@modules/academy/athletes/locales";
+import {
+  en as academyTrialsEn,
+  ar as academyTrialsAr,
+} from "@modules/academy/trials/locales";
+import {
+  en as academyEnrollmentsEn,
+  ar as academyEnrollmentsAr,
+} from "@modules/academy/enrollments/locales";
+import {
+  en as academyGroupsEn,
+  ar as academyGroupsAr,
+} from "@modules/academy/groups/locales";
+import {
+  en as academyOfferingsEn,
+  ar as academyOfferingsAr,
+} from "@modules/academy/offerings/locales";
+import {
+  en as academyLocationsEn,
+  ar as academyLocationsAr,
+} from "@modules/academy/locations/locales";
+import {
+  en as academySeasonsEn,
+  ar as academySeasonsAr,
+} from "@modules/academy/seasons/locales";
 
 // ─── Merged Dictionaries ───────────────────────────────
 export const allModulesEn: Record<string, unknown> = deepMerge(
@@ -431,7 +463,15 @@ export const allModulesEn: Record<string, unknown> = deepMerge(
   venueSharedEn,
   guestPortalEn,
   // Academy
-  academyOverviewEn
+  academyOverviewEn,
+  academyProgramsEn,
+  academyAthletesEn,
+  academyTrialsEn,
+  academyEnrollmentsEn,
+  academyGroupsEn,
+  academyOfferingsEn,
+  academyLocationsEn,
+  academySeasonsEn
 );
 
 export const allModulesAr: Record<string, unknown> = deepMerge(
@@ -555,5 +595,13 @@ export const allModulesAr: Record<string, unknown> = deepMerge(
   venueSharedAr,
   guestPortalAr,
   // Academy
-  academyOverviewAr
+  academyOverviewAr,
+  academyProgramsAr,
+  academyAthletesAr,
+  academyTrialsAr,
+  academyEnrollmentsAr,
+  academyGroupsAr,
+  academyOfferingsAr,
+  academyLocationsAr,
+  academySeasonsAr
 );

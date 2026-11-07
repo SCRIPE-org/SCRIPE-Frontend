@@ -1,9 +1,10 @@
 import type { NextConfig } from "next";
+import path from "path";
 
 const nextConfig: NextConfig = {
   // Silence the "multiple lockfiles" warning in the SCRIPE monorepo
   turbopack: {
-    root: process.env.TURBOPACK_ROOT || __dirname,
+    root: process.env.TURBOPACK_ROOT || path.resolve(__dirname, ".."),
   },
   experimental: {
     // Tree-shake heavy libraries — only bundle what's actually imported

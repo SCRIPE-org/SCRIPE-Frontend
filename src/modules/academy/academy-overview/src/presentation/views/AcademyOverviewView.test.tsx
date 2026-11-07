@@ -97,24 +97,24 @@ describe("AcademyOverviewView", () => {
     render(<AcademyOverviewView />);
 
     expect(screen.getByText("Academy Operations Command Center")).toBeInTheDocument();
-    expect(screen.getByText("Configure First Program")).toBeInTheDocument();
-    expect(screen.getByText("Register / Match Athlete")).toBeInTheDocument();
-    expect(screen.getByText("Schedule Evaluation Trial")).toBeInTheDocument();
+    expect(screen.getByText("Configure Programs & Offerings")).toBeInTheDocument();
+    expect(screen.getByText("Athletes & Families")).toBeInTheDocument();
+    expect(screen.getByText("Trials & Evaluations")).toBeInTheDocument();
 
     // Verify workflows are wrapped in clickable Next.js links with correct hrefs
-    const programLink = screen.getByRole("link", { name: /Configure First Program/i });
+    const programLink = screen.getByRole("link", { name: /Configure Programs & Offerings/i });
     expect(programLink).toHaveAttribute("href", "/academy/programs");
 
-    const athleteLink = screen.getByRole("link", { name: /Register \/ Match Athlete/i });
+    const athleteLink = screen.getByRole("link", { name: /Athletes & Families/i });
     expect(athleteLink).toHaveAttribute("href", "/academy/athletes");
   });
 
   it("filters workflows based on user PBAC permissions", () => {
     mockUsePermission.mockReturnValue(true);
     mockHasPermission.mockImplementation((perm: string) => {
-      // Coach has sessions and attendance view, but denied programs and enrollments view
-      return perm === ACADEMY_PERMISSIONS.ACADEMY_SESSIONS_VIEW ||
-             perm === ACADEMY_PERMISSIONS.ACADEMY_ATTENDANCE_VIEW;
+      // User has groups and trials view, but denied programs and athletes view
+      return perm === ACADEMY_PERMISSIONS.ACADEMY_GROUPS_VIEW ||
+             perm === ACADEMY_PERMISSIONS.ACADEMY_TRIALS_VIEW;
     });
 
     mockUseAcademyOverviewViewModel.mockReturnValue({
@@ -139,13 +139,13 @@ describe("AcademyOverviewView", () => {
 
     render(<AcademyOverviewView />);
 
-    // Sessions and Attendance should be visible
-    expect(screen.getByText("Training Sessions & Schedule")).toBeInTheDocument();
-    expect(screen.getByText("Attendance Register")).toBeInTheDocument();
+    // Groups and Trials should be visible
+    expect(screen.getByText("Training Groups & Rosters")).toBeInTheDocument();
+    expect(screen.getByText("Trials & Evaluations")).toBeInTheDocument();
 
     // Programs and Athletes should be hidden
-    expect(screen.queryByText("Configure First Program")).not.toBeInTheDocument();
-    expect(screen.queryByText("Register / Match Athlete")).not.toBeInTheDocument();
+    expect(screen.queryByText("Configure Programs & Offerings")).not.toBeInTheDocument();
+    expect(screen.queryByText("Athletes & Families")).not.toBeInTheDocument();
   });
 
   it("renders error state with retry button when error occurs", () => {

@@ -8,6 +8,7 @@ export interface AcademyProgramsViewModelState {
   stage: "loading" | "ready" | "error";
   programs: AcademyProgram[];
   sports: SportTaxonomyItem[];
+  sportsError: string | null;
   selectedSportId?: string;
   isCreateOpen: boolean;
   submitting: boolean;
@@ -19,6 +20,7 @@ export function useAcademyProgramsViewModel(repository: IAcademyProgramsReposito
     stage: "loading",
     programs: [],
     sports: [],
+    sportsError: null,
     selectedSportId: undefined,
     isCreateOpen: false,
     submitting: false,
@@ -28,16 +30,41 @@ export function useAcademyProgramsViewModel(repository: IAcademyProgramsReposito
   const loadData = useCallback(async (sportId?: string) => {
     setState((prev) => ({ ...prev, stage: "loading", errorMessage: null }));
     try {
-      const [programs, sports] = await Promise.all([
+      const [programsResult, sportsResult] = await Promise.allSettled([
         repository.fetchPrograms(sportId),
         repository.fetchSports(),
       ]);
+
+      let programs: AcademyProgram[] = [];
+      let sports: SportTaxonomyItem[] = [];
+      let error: string | null = null;
+
+      if (programsResult.status === "fulfilled") {
+        programs = programsResult.value;
+      } else {
+        error = programsResult.reason instanceof Error
+          ? programsResult.reason.message
+          : "Failed to load programs.";
+      }
+
+      let sportsError: string | null = null;
+      if (sportsResult.status === "fulfilled") {
+        sports = sportsResult.value;
+      } else {
+        sportsError = sportsResult.reason instanceof Error
+          ? sportsResult.reason.message
+          : "Sports taxonomy could not be loaded.";
+        console.warn("Sports taxonomy could not be loaded:", sportsResult.reason);
+      }
+
       setState((prev) => ({
         ...prev,
-        stage: "ready",
+        stage: error ? "error" : "ready",
         programs,
         sports,
+        sportsError,
         selectedSportId: sportId,
+        errorMessage: error,
       }));
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : "Failed to load Academy programs.";

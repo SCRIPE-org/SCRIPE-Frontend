@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import Link from "next/link";
 import { useI18n } from "@core/providers/i18n-provider";
 import { usePermission } from "@core/hooks/use-permission";
@@ -54,7 +54,7 @@ export function AcademyAthletesView() {
   const [lastNameEn, setLastNameEn] = useState("");
   const [firstNameAr, setFirstNameAr] = useState("");
   const [lastNameAr, setLastNameAr] = useState("");
-  const [dateOfBirth, setDateOfBirth] = useState("2015-06-15");
+  const [dateOfBirth, setDateOfBirth] = useState("");
   const [gender, setGender] = useState("Male");
   const [nationalId, setNationalId] = useState("");
   const [guardianName, setGuardianName] = useState("");
@@ -77,6 +77,41 @@ export function AcademyAthletesView() {
   const [newSportId, setNewSportId] = useState("");
   const [newSportLevel, setNewSportLevel] = useState("Beginner");
 
+  // Server-aligned age calculation from Date of Birth
+  const calculatedAge = useMemo(() => {
+    if (!dateOfBirth) return null;
+    const dob = new Date(dateOfBirth);
+    if (isNaN(dob.getTime())) return null;
+    const today = new Date();
+    let age = today.getFullYear() - dob.getFullYear();
+    const m = today.getMonth() - dob.getMonth();
+    if (m < 0 || (m === 0 && today.getDate() < dob.getDate())) {
+      age--;
+    }
+    return age;
+  }, [dateOfBirth]);
+
+  const isAgeConsistent = useMemo(() => {
+    if (calculatedAge === null) return true;
+    if (isAdult && calculatedAge < 18) return false;
+    if (!isAdult && calculatedAge >= 18) return false;
+    return true;
+  }, [calculatedAge, isAdult]);
+
+  // Missing fields tracking for Step 3
+  const missingStep3Fields = useMemo(() => {
+    const missing: string[] = [];
+    if (!firstNameEn.trim()) missing.push(isAr ? "الاسم الأول (En)" : "First Name (En)");
+    if (!lastNameEn.trim()) missing.push(isAr ? "اسم العائلة (En)" : "Last Name (En)");
+    if (!firstNameAr.trim()) missing.push(isAr ? "الاسم الأول (Ar)" : "First Name (Ar)");
+    if (!lastNameAr.trim()) missing.push(isAr ? "اسم العائلة (Ar)" : "Last Name (Ar)");
+    if (!isAdult) {
+      if (!guardianName.trim()) missing.push(isAr ? "اسم ولي الأمر" : "Guardian Name");
+      if (!guardianPhone.trim()) missing.push(isAr ? "هاتف ولي الأمر" : "Guardian Phone");
+    }
+    return missing;
+  }, [firstNameEn, lastNameEn, firstNameAr, lastNameAr, isAdult, guardianName, guardianPhone, isAr]);
+
   const resetForm = () => {
     setWizardStep(1);
     setIsAdult(false);
@@ -85,7 +120,7 @@ export function AcademyAthletesView() {
     setLastNameEn("");
     setFirstNameAr("");
     setLastNameAr("");
-    setDateOfBirth("2015-06-15");
+    setDateOfBirth("");
     setGender("Male");
     setNationalId("");
     setGuardianName("");
@@ -462,8 +497,115 @@ export function AcademyAthletesView() {
               </Button>
             </div>
 
-            {/* Step 1: Pre-search Family / Guardian */}
+            {/* Step 1: Category & Age Determination */}
             {wizardStep === 1 && (
+              <div className="space-y-4 py-4">
+                <span className="text-sm font-semibold">{isAr ? "اختر فئة الرياضي وتاريخ الميلاد:" : "Select Athlete Category & Date of Birth:"}</span>
+                
+                <div className="grid grid-cols-2 gap-4">
+                  <div
+                    onClick={() => setIsAdult(false)}
+                    className={`p-4 rounded-lg border-2 text-center cursor-pointer transition-all ${
+                      !isAdult ? "border-primary bg-primary/5 shadow-sm" : "border-muted hover:border-muted-foreground/30"
+                    }`}
+                  >
+                    <Users className="mx-auto h-8 w-8 text-primary mb-2" />
+                    <h4 className="font-bold text-sm">{isAr ? "طفل قاصر (تحت 18)" : "Minor Child (<18)"}</h4>
+                    <p className="text-xs text-muted-foreground mt-1">
+                      {isAr ? "يتطلب ولي أمر، حماية بيانات القُصّر، وموافقة معتمدة." : "Requires legal guardian, safeguarding protection, and signed consent."}
+                    </p>
+                  </div>
+
+                  <div
+                    onClick={() => setIsAdult(true)}
+                    className={`p-4 rounded-lg border-2 text-center cursor-pointer transition-all ${
+                      isAdult ? "border-primary bg-primary/5 shadow-sm" : "border-muted hover:border-muted-foreground/30"
+                    }`}
+                  >
+                    <UserCheck className="mx-auto h-8 w-8 text-primary mb-2" />
+                    <h4 className="font-bold text-sm">{isAr ? "رياضي بالغ (18+)" : "Adult Athlete (18+)"}</h4>
+                    <p className="text-xs text-muted-foreground mt-1">
+                      {isAr ? "سداد ذاتي، مستقل، لا يتطلب ولي أمر قانوني." : "Independent individual, direct billing, no guardian required."}
+                    </p>
+                  </div>
+                </div>
+
+                <div className="rounded-md border p-4 space-y-2 bg-muted/20">
+                  <label className="text-xs font-semibold block">
+                    {isAr ? "تاريخ الميلاد (مطلوب لتحديد الفئة العمرية):" : "Date of Birth (Required to determine age category):"}
+                  </label>
+                  <input
+                    type="date"
+                    value={dateOfBirth}
+                    onChange={(e) => setDateOfBirth(e.target.value)}
+                    max={new Date().toISOString().split("T")[0]}
+                    className="w-full rounded-md border px-3 py-2 text-sm bg-background"
+                  />
+                  {calculatedAge !== null && (
+                    <div className="text-xs font-medium pt-1">
+                      {isAr ? `العمر المحسوب: ${calculatedAge} سنة` : `Calculated Age: ${calculatedAge} years old`}
+                    </div>
+                  )}
+                </div>
+
+                {/* Age Consistency Feedback */}
+                {!isAgeConsistent && calculatedAge !== null && (
+                  <div className="rounded-md bg-amber-50 p-3 text-xs text-amber-900 border border-amber-200 dark:bg-amber-950/20 dark:text-amber-300">
+                    <p className="font-semibold mb-1">
+                      {isAr ? "تنبيه مطابقة الفئة العمرية" : "Age Category Mismatch"}
+                    </p>
+                    {isAdult && calculatedAge < 18 ? (
+                      <p>
+                        {isAr
+                          ? `الرياضي يبلغ من العمر ${calculatedAge} سنة (أقل من 18). يجب تسجيل القُصّر كطفل مع ولي أمر قانوني.`
+                          : `Athlete is ${calculatedAge} years old (<18). Minors must be registered as a Minor Child with a legal guardian.`}
+                      </p>
+                    ) : (
+                      <p>
+                        {isAr
+                          ? `الرياضي يبلغ من العمر ${calculatedAge} سنة (18 فأكثر). يرجى اختيار فئة الرياضي البالغ.`
+                          : `Athlete is ${calculatedAge} years old (18+). Please select Adult Athlete category.`}
+                      </p>
+                    )}
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      className="mt-2 text-xs"
+                      onClick={() => setIsAdult(calculatedAge >= 18)}
+                    >
+                      {isAr ? "تعديل الفئة تلقائياً لتطابق العمر" : "Auto-adjust category to match age"}
+                    </Button>
+                  </div>
+                )}
+
+                <div className="pt-4 flex justify-between border-t">
+                  <Button variant="ghost" onClick={() => setShowIntakeWizard(false)}>
+                    {isAr ? "إلغاء" : "Cancel"}
+                  </Button>
+                  <Button
+                    onClick={() => {
+                      if (!isAdult) {
+                        setWizardStep(2); // Minor: proceed to family search
+                      } else {
+                        setWizardStep(3); // Adult: jump directly to personal details
+                      }
+                    }}
+                    disabled={!dateOfBirth || !isAgeConsistent}
+                  >
+                    {!dateOfBirth
+                      ? (isAr ? "أدخل تاريخ الميلاد للمتابعة" : "Enter Date of Birth")
+                      : !isAgeConsistent
+                      ? (isAr ? "صحح الفئة العمرية للمتابعة" : "Resolve Age Mismatch")
+                      : !isAdult
+                      ? (isAr ? "التالي: فحص العائلة وولي الأمر" : "Next: Family & Guardian Verification")
+                      : (isAr ? "التالي: البيانات الشخصية" : "Next: Personal Details")}
+                  </Button>
+                </div>
+              </div>
+            )}
+
+            {/* Step 2: Pre-search Family / Guardian (Minors only) */}
+            {wizardStep === 2 && (
               <div className="space-y-4 py-4">
                 <div className="rounded-md bg-blue-50/50 p-3 text-xs text-blue-900 border border-blue-200 dark:bg-blue-950/20 dark:text-blue-300">
                   <p className="font-semibold mb-1">
@@ -529,59 +671,16 @@ export function AcademyAthletesView() {
                 )}
 
                 <div className="pt-4 flex justify-between border-t">
-                  <Button variant="ghost" onClick={() => setShowIntakeWizard(false)}>
-                    {isAr ? "إلغاء" : "Cancel"}
+                  <Button variant="outline" onClick={() => setWizardStep(1)}>
+                    {isAr ? "رجوع" : "Back"}
                   </Button>
                   <Button
                     onClick={() => {
                       setSelectedGuardianPartyId(null);
-                      setWizardStep(2);
+                      setWizardStep(3);
                     }}
                   >
                     {isAr ? "عائلة جديدة / متابعة" : "New Family / Continue"}
-                  </Button>
-                </div>
-              </div>
-            )}
-
-            {/* Step 2: Intake Type (Child vs Adult) */}
-            {wizardStep === 2 && (
-              <div className="space-y-4 py-4">
-                <span className="text-sm font-semibold">{isAr ? "اختر فئة الرياضي:" : "Select Athlete Category:"}</span>
-                <div className="grid grid-cols-2 gap-4">
-                  <div
-                    onClick={() => setIsAdult(false)}
-                    className={`p-4 rounded-lg border-2 text-center cursor-pointer transition-all ${
-                      !isAdult ? "border-primary bg-primary/5" : "border-muted hover:border-muted-foreground/30"
-                    }`}
-                  >
-                    <Users className="mx-auto h-8 w-8 text-primary mb-2" />
-                    <h4 className="font-bold text-sm">{isAr ? "طفل قاصر (تحت 18)" : "Minor Child (<18)"}</h4>
-                    <p className="text-xs text-muted-foreground mt-1">
-                      {isAr ? "يتطلب ولي أمر، حماية بيانات القُصّر، وموافقة معتمدة." : "Requires guardian, safeguarding protection, and signed consent."}
-                    </p>
-                  </div>
-
-                  <div
-                    onClick={() => setIsAdult(true)}
-                    className={`p-4 rounded-lg border-2 text-center cursor-pointer transition-all ${
-                      isAdult ? "border-primary bg-primary/5" : "border-muted hover:border-muted-foreground/30"
-                    }`}
-                  >
-                    <UserCheck className="mx-auto h-8 w-8 text-primary mb-2" />
-                    <h4 className="font-bold text-sm">{isAr ? "رياضي بالغ (مستقل)" : "Adult Athlete"}</h4>
-                    <p className="text-xs text-muted-foreground mt-1">
-                      {isAr ? "سداد ذاتي، لا يتطلب ولي أمر قانوني." : "Self-paying individual, sovereign profile, no guardian required."}
-                    </p>
-                  </div>
-                </div>
-
-                <div className="pt-4 flex justify-between border-t">
-                  <Button variant="outline" onClick={() => setWizardStep(1)}>
-                    {isAr ? "رجوع" : "Back"}
-                  </Button>
-                  <Button onClick={() => setWizardStep(3)}>
-                    {isAr ? "التالي: البيانات الشخصية" : "Next: Demographics"}
                   </Button>
                 </div>
               </div>
@@ -592,7 +691,7 @@ export function AcademyAthletesView() {
               <div className="space-y-4 py-4">
                 <div className="grid grid-cols-2 gap-3">
                   <div>
-                    <label className="text-xs font-semibold">{isAr ? "الاسم الأول (إنجليزي):" : "First Name (En):"}</label>
+                    <label className="text-xs font-semibold">{isAr ? "الاسم الأول (إنجليزي)*:" : "First Name (En)*:"}</label>
                     <input
                       type="text"
                       value={firstNameEn}
@@ -602,7 +701,7 @@ export function AcademyAthletesView() {
                     />
                   </div>
                   <div>
-                    <label className="text-xs font-semibold">{isAr ? "اسم العائلة (إنجليزي):" : "Last Name (En):"}</label>
+                    <label className="text-xs font-semibold">{isAr ? "اسم العائلة (إنجليزي)*:" : "Last Name (En)*:"}</label>
                     <input
                       type="text"
                       value={lastNameEn}
@@ -612,7 +711,7 @@ export function AcademyAthletesView() {
                     />
                   </div>
                   <div>
-                    <label className="text-xs font-semibold">{isAr ? "الاسم الأول (عربي):" : "First Name (Ar):"}</label>
+                    <label className="text-xs font-semibold">{isAr ? "الاسم الأول (عربي)*:" : "First Name (Ar)*:"}</label>
                     <input
                       type="text"
                       value={firstNameAr}
@@ -622,7 +721,7 @@ export function AcademyAthletesView() {
                     />
                   </div>
                   <div>
-                    <label className="text-xs font-semibold">{isAr ? "اسم العائلة (عربي):" : "Last Name (Ar):"}</label>
+                    <label className="text-xs font-semibold">{isAr ? "اسم العائلة (عربي)*:" : "Last Name (Ar)*:"}</label>
                     <input
                       type="text"
                       value={lastNameAr}
@@ -636,8 +735,8 @@ export function AcademyAthletesView() {
                     <input
                       type="date"
                       value={dateOfBirth}
-                      onChange={(e) => setDateOfBirth(e.target.value)}
-                      className="w-full rounded-md border px-3 py-1.5 text-sm"
+                      disabled
+                      className="w-full rounded-md border px-3 py-1.5 text-sm bg-muted/40 cursor-not-allowed"
                     />
                   </div>
                   <div>
@@ -667,11 +766,11 @@ export function AcademyAthletesView() {
                 {!isAdult && (
                   <div className="pt-2 border-t space-y-3">
                     <span className="text-xs font-bold text-primary block">
-                      {isAr ? "بيانات ولي الأمر القانوني:" : "Legal Guardian Information:"}
+                      {isAr ? "بيانات ولي الأمر القانوني (مطلوبة للقُصّر)*:" : "Legal Guardian Information (Required for minors)*:"}
                     </span>
                     <div className="grid grid-cols-2 gap-3">
                       <div>
-                        <label className="text-xs font-semibold">{isAr ? "اسم ولي الأمر:" : "Guardian Name:"}</label>
+                        <label className="text-xs font-semibold">{isAr ? "اسم ولي الأمر*:" : "Guardian Name*:"}</label>
                         <input
                           type="text"
                           value={guardianName}
@@ -681,7 +780,7 @@ export function AcademyAthletesView() {
                         />
                       </div>
                       <div>
-                        <label className="text-xs font-semibold">{isAr ? "رقم هاتف ولي الأمر:" : "Guardian Phone:"}</label>
+                        <label className="text-xs font-semibold">{isAr ? "رقم هاتف ولي الأمر*:" : "Guardian Phone*:"}</label>
                         <input
                           type="text"
                           value={guardianPhone}
@@ -708,7 +807,7 @@ export function AcademyAthletesView() {
 
                 <div className="pt-2 border-t space-y-3">
                   <span className="text-xs font-bold text-muted-foreground block">
-                    {isAr ? "جهة الاتصال في حالات الطوارئ:" : "Emergency Contact:"}
+                    {isAr ? "جهة الاتصال في حالات الطوارئ (اختياري):" : "Emergency Contact (Optional):"}
                   </span>
                   <div className="grid grid-cols-2 gap-3">
                     <div>
@@ -734,13 +833,21 @@ export function AcademyAthletesView() {
                   </div>
                 </div>
 
+                {/* Clear Inline Validation Message explaining why Next is disabled */}
+                {missingStep3Fields.length > 0 && (
+                  <div className="rounded-md bg-amber-50 p-2.5 text-xs text-amber-800 border border-amber-200 dark:bg-amber-950/20 dark:text-amber-300">
+                    <span className="font-semibold">{isAr ? "يرجى تعبئة الحقول المطلوبة للمتابعة: " : "Please fill required fields to continue: "}</span>
+                    <span>{missingStep3Fields.join(", ")}</span>
+                  </div>
+                )}
+
                 <div className="pt-4 flex justify-between border-t">
-                  <Button variant="outline" onClick={() => setWizardStep(2)}>
+                  <Button variant="outline" onClick={() => setWizardStep(isAdult ? 1 : 2)}>
                     {isAr ? "رجوع" : "Back"}
                   </Button>
                   <Button
                     onClick={() => setWizardStep(4)}
-                    disabled={!firstNameEn || !lastNameEn || (!isAdult && (!guardianName || !guardianPhone))}
+                    disabled={missingStep3Fields.length > 0}
                   >
                     {isAr ? "التالي: اختيار الرياضة" : "Next: Sports Selection"}
                   </Button>
@@ -751,14 +858,14 @@ export function AcademyAthletesView() {
             {/* Step 4: Multi-Sport & Discipline Selection */}
             {wizardStep === 4 && (
               <div className="space-y-4 py-4">
-                <div className="rounded-md bg-purple-50/50 p-3 text-xs text-purple-900 border border-purple-200 dark:bg-purple-950/20 dark:text-purple-300">
+                <div className="rounded-md bg-primary/5 p-3 text-xs text-foreground border border-primary/20">
                   <p className="font-semibold mb-1">
-                    {isAr ? "تصنيف الرياضة الأساسية من SportsCore" : "SportsCore Sovereign Taxonomy Integration"}
+                    {isAr ? "الرياضة الأساسية ومستوى المهارة" : "Primary Sport & Skill Level"}
                   </p>
-                  <p>
+                  <p className="text-muted-foreground">
                     {isAr
-                      ? "سيتم إنشاء ملف رياضي سيادي في SportsCore وربط الرياضة المبدئية ومستوى المهارة."
-                      : "A sovereign SportsCore AthleteProfile will be linked with initial sport participation."}
+                      ? "اختر الرياضة الأولية ومستوى المهارة المبدئي للرياضي."
+                      : "Select the initial sport and starting skill level for the athlete."}
                   </p>
                 </div>
 
@@ -799,7 +906,7 @@ export function AcademyAthletesView() {
                     {isAr ? "رجوع" : "Back"}
                   </Button>
                   <Button onClick={() => setWizardStep(5)}>
-                    {isAr ? "التالي: الحماية والموافقات" : "Next: Safeguarding & Consents"}
+                    {isAr ? "التالي: الفحص الطبي والموافقات" : "Next: Medical & Consents"}
                   </Button>
                 </div>
               </div>
@@ -810,12 +917,12 @@ export function AcademyAthletesView() {
               <div className="space-y-4 py-4">
                 <div className="rounded-md bg-amber-50/50 p-3 text-xs text-amber-900 border border-amber-200 dark:bg-amber-950/20 dark:text-amber-300">
                   <p className="font-semibold mb-1">
-                    {isAr ? "حماية القُصّر والسرية الطبية" : "Youth Safeguarding & Medical Privacy Mandate"}
+                    {isAr ? "الفحص الطبي والموافقات الرسمية" : "Medical Clearance & Consents"}
                   </p>
                   <p>
                     {isAr
-                      ? "تخضع الملاحظات الطبية لسياسة الحماية الميدانية FLS، ولا يمكن للمدربين الاطلاع عليها إلا أثناء الحصص النشطة."
-                      : "Medical notes are governed under purpose-bound FLS and restricted from unauthorized inspection."}
+                      ? "تخضع الملاحظات الطبية لسياسة الحماية والسرية، ولا يمكن للمدربين الاطلاع عليها إلا أثناء الحصص النشطة."
+                      : "Medical notes are governed under purpose-bound safeguarding policies and restricted from unauthorized inspection."}
                   </p>
                 </div>
 

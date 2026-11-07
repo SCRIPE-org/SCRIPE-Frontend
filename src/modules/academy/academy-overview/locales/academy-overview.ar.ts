@@ -4,7 +4,8 @@ export const ar = {
     description: "تشغيل الأكاديميات متعددة الرياضات، تسجيل الرياضيين، مجموعات التدريب، الحصص، والحضور.",
     status: {
       active: "البنية الأساسية مفعلة",
-      sprintNotice: "تم التحقق من المعمارية المعتمدة لـ Sprint 0",
+      activeBadge: "عمليات متعددة الرياضات",
+      sprintNotice: "عمليات متعددة الرياضات",
       noPrograms: "لم يتم إعداد أي برامج تشغيلية بعد.",
     },
     kpi: {
@@ -17,10 +18,12 @@ export const ar = {
       title: "مسارات العمل في الأكاديمية",
       setupProgram: "إعداد البرنامج الأول",
       setupProgramDesc: "تحديد الرياضات والفئات العمرية ومعايير المستويات.",
-      intakeAthlete: "تسجيل / مطابقة رياضي",
+      intakeAthlete: "الرياضيون والعائلات",
       intakeAthleteDesc: "البحث قبل الإنشاء لمنع التكرار عبر PartyKernel.",
       scheduleTrial: "جدولة حصة تجريبية",
       scheduleTrialDesc: "تقييم فني من المدرب قبل التسكين في المجموعات.",
+      manageEnrollments: "التسجيلات والاشتراكات",
+      manageEnrollmentsDesc: "متابعة تسجيلات الرياضيين وحالات الاشتراك.",
       manageGroups: "المجموعات والقوائم",
       manageGroupsDesc: "السعة الاستيعابية للمجموعات وقواعد تعيين المدربين.",
       viewSessions: "جدول الحصص التدريبية",

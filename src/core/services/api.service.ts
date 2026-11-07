@@ -213,6 +213,14 @@ export class ApiService implements IApiService {
           }
         }
 
+        // Defensive URL normalization: prevent double /api prefix when baseURL already ends with /api
+        if (config.url?.startsWith("/api/")) {
+          const currentBase = (config.baseURL || this.axiosInstance.defaults.baseURL || "").replace(/\/+$/, "");
+          if (currentBase.endsWith("/api")) {
+            config.url = config.url.replace(/^\/api/, "");
+          }
+        }
+
         // Fix for 415 Unsupported Media Type with FormData
         if (config.data instanceof FormData) {
           // Let browser set Content-Type with boundary
@@ -421,6 +429,14 @@ export class ApiService implements IApiService {
 
     // Public instance - log requests and add Accept-Language
     this.axiosPublic.interceptors.request.use((config: InternalAxiosRequestConfig) => {
+      // Defensive URL normalization: prevent double /api prefix when baseURL already ends with /api
+      if (config.url?.startsWith("/api/")) {
+        const currentBase = (config.baseURL || this.axiosPublic.defaults.baseURL || "").replace(/\/+$/, "");
+        if (currentBase.endsWith("/api")) {
+          config.url = config.url.replace(/^\/api/, "");
+        }
+      }
+
       // P1.5: Use cached language instead of reading localStorage per request
       config.headers["Accept-Language"] = cachedLanguage;
 

@@ -4,7 +4,8 @@ export const en = {
     description: "Multi-Sport academy operations, athlete enrollment, training groups, sessions, and attendance.",
     status: {
       active: "Foundation Active",
-      sprintNotice: "Sprint 0 Architecture Baseline Verified",
+      activeBadge: "Multi-Sport Operations",
+      sprintNotice: "Multi-Sport Operations",
       noPrograms: "No operational programs configured yet.",
     },
     kpi: {
@@ -15,12 +16,14 @@ export const en = {
     },
     quickActions: {
       title: "Academy Workflows",
-      setupProgram: "Configure First Program",
+      setupProgram: "Configure Programs & Offerings",
       setupProgramDesc: "Define sports, age criteria, and curriculum levels.",
-      intakeAthlete: "Register / Match Athlete",
-      intakeAthleteDesc: "Search-before-create with PartyKernel deduplication.",
-      scheduleTrial: "Schedule Evaluation Trial",
+      intakeAthlete: "Athletes & Families",
+      intakeAthleteDesc: "Register and manage youth and adult athletes and their guardians.",
+      scheduleTrial: "Trials & Evaluations",
       scheduleTrialDesc: "Technical assessment before group placement.",
+      manageEnrollments: "Enrollments & Subscriptions",
+      manageEnrollmentsDesc: "Track athlete term enrollment and status.",
       manageGroups: "Training Groups & Rosters",
       manageGroupsDesc: "Cohort capacity and coach assignment rules.",
       viewSessions: "Training Sessions & Schedule",
