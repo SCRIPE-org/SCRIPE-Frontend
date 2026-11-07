@@ -3,6 +3,11 @@
 import { useState, useCallback, useEffect } from "react";
 import { useI18n } from "@core/providers/i18n-provider";
 import { authContainer } from "@modules/auth/di";
+import {
+  assertPasskey,
+  isWebAuthnAvailable,
+  bufferToBase64Url,
+} from "@core/services/webauthn.service";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -19,31 +24,6 @@ export interface UsePasskeyLoginViewModelReturn {
   authenticateWithPasskey: () => Promise<void>;
 }
 
-// ─── Helpers ──────────────────────────────────────────────────────────────────
-
-/** Decode base64url string to ArrayBuffer */
-function base64urlToBuffer(base64url: string): ArrayBuffer {
-  const base64 = base64url.replace(/-/g, "+").replace(/_/g, "/");
-  const pad = (4 - (base64.length % 4)) % 4;
-  const padded = base64 + "=".repeat(pad);
-  const binary = atob(padded);
-  const bytes = new Uint8Array(binary.length);
-  for (let i = 0; i < binary.length; i++) {
-    bytes[i] = binary.charCodeAt(i);
-  }
-  return bytes.buffer;
-}
-
-/** Encode ArrayBuffer to base64url string */
-function bufferToBase64url(buffer: ArrayBuffer): string {
-  const bytes = new Uint8Array(buffer);
-  let binary = "";
-  for (let i = 0; i < bytes.length; i++) {
-    binary += String.fromCharCode(bytes[i]);
-  }
-  return btoa(binary).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
-}
-
 // ─── ViewModel ────────────────────────────────────────────────────────────────
 
 /**
@@ -54,11 +34,11 @@ function bufferToBase64url(buffer: ArrayBuffer): string {
  *
  * Per auth-methods.md §2 Passkey / WebAuthn:
  * 1. Calls GET /passkeys/authentication/begin to get challenge
- * 2. Invokes navigator.credentials.get() for biometric/security key
+ * 2. Invokes assertPasskey() from @core/services/webauthn.service
  * 3. Posts assertion to /passkeys/authentication/verify
  *
  * Browser Support:
- * - Checks window.PublicKeyCredential availability
+ * - Checks WebAuthn availability via isWebAuthnAvailable()
  * - Falls back to "not supported" message on unsupported browsers
  * - Handles AbortError, NotAllowedError, SecurityError gracefully
  */
@@ -73,13 +53,11 @@ export function usePasskeyLoginViewModel(
   const [error, setError] = useState("");
   const [isSupported, setIsSupported] = useState(true);
 
-  // Check browser support
+  // Check browser support via webauthn service
   useEffect(() => {
-    if (typeof window !== "undefined" && !window.PublicKeyCredential) {
-      queueMicrotask(() => {
-        setIsSupported(false);
-      });
-    }
+    isWebAuthnAvailable().then((supported) => {
+      setIsSupported(supported);
+    });
   }, []);
 
   // ── Passkey authenticate flow ──
@@ -92,45 +70,37 @@ export function usePasskeyLoginViewModel(
       // Step 1: Begin authentication — get challenge from server
       const beginResponse = await authRepository.beginPasskeyAuth();
 
-      // Step 2: Call WebAuthn browser API
+      // Step 2: Call WebAuthn browser API via webauthn service
       const publicKeyOptions = beginResponse.options;
 
-      // Convert challenge from base64url to ArrayBuffer
-      if (typeof publicKeyOptions.challenge === "string") {
-        publicKeyOptions.challenge = base64urlToBuffer(
-          publicKeyOptions.challenge as unknown as string
-        );
-      }
+      const challengeStr =
+        typeof publicKeyOptions.challenge === "string"
+          ? publicKeyOptions.challenge
+          : bufferToBase64Url(publicKeyOptions.challenge as ArrayBuffer);
 
-      // Convert allowCredentials ids from base64url to ArrayBuffer
-      if (publicKeyOptions.allowCredentials) {
-        for (const cred of publicKeyOptions.allowCredentials) {
-          if (typeof cred.id === "string") {
-            cred.id = base64urlToBuffer(cred.id as unknown as string);
-          }
-        }
-      }
+      const allowCreds = publicKeyOptions.allowCredentials?.map((cred: any) => ({
+        id: typeof cred.id === "string" ? cred.id : bufferToBase64Url(cred.id),
+        type: (cred.type || "public-key") as "public-key",
+        transports: cred.transports,
+      }));
 
-      const credential = (await navigator.credentials.get({
-        publicKey: publicKeyOptions,
-      })) as PublicKeyCredential | null;
-
-      if (!credential) {
-        setError(t("auth.passkey.cancelled") || "Authentication was cancelled.");
-        return;
-      }
-
-      const response = credential.response as AuthenticatorAssertionResponse;
+      const assertion = await assertPasskey({
+        challenge: challengeStr,
+        rpId: publicKeyOptions.rpId,
+        timeout: publicKeyOptions.timeout,
+        allowCredentials: allowCreds,
+        userVerification: publicKeyOptions.userVerification,
+      });
 
       // Step 3: Send assertion to server for verification
       const verifyResult = await authRepository.verifyPasskeyAuth({
         challengeId: beginResponse.challengeId,
-        credentialId: credential.id,
-        rawId: bufferToBase64url(credential.rawId),
-        clientDataJSON: bufferToBase64url(response.clientDataJSON),
-        authenticatorData: bufferToBase64url(response.authenticatorData),
-        signature: bufferToBase64url(response.signature),
-        userHandle: response.userHandle ? bufferToBase64url(response.userHandle) : null,
+        credentialId: assertion.credentialIdBase64,
+        rawId: assertion.credentialIdBase64,
+        clientDataJSON: assertion.clientDataJsonBase64,
+        authenticatorData: assertion.authenticatorDataBase64,
+        signature: assertion.signatureBase64,
+        userHandle: assertion.userHandleBase64,
         tenantId,
       });
 

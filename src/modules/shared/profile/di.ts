@@ -7,10 +7,13 @@
  */
 import { getModuleApiService } from "@core/services/api-factory";
 import { ProfileRepository } from "./core/src/data/repositories/ProfileRepository";
+import { SecurityRepository } from "./core/src/data/repositories/SecurityRepository";
 import type { IProfileRepository } from "./core/src/domain/interfaces/IProfileRepository";
+import type { ISecurityRepository } from "./core/src/domain/interfaces/ISecurityRepository";
 
 interface ProfileContainer {
   profileRepository: IProfileRepository;
+  securityRepository: ISecurityRepository;
 }
 
 let _instance: ProfileContainer | null = null;
@@ -24,10 +27,13 @@ function createContainer(): ProfileContainer {
     });
     return {
       profileRepository: dummyProxy,
+      securityRepository: dummyProxy,
     };
   }
-  const profileRepository = new ProfileRepository(getModuleApiService("IDENTITY"));
-  return { profileRepository };
+  const api = getModuleApiService("IDENTITY");
+  const profileRepository = new ProfileRepository(api);
+  const securityRepository = new SecurityRepository(api);
+  return { profileRepository, securityRepository };
 }
 
 export const container: ProfileContainer = new Proxy({} as ProfileContainer, {

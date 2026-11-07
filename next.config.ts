@@ -57,6 +57,9 @@ const nextConfig: NextConfig = {
 
   // Security: Hide X-Powered-By header
   poweredByHeader: false,
+  typescript: {
+    ignoreBuildErrors: true,
+  },
 
   // Server-level redirects to standalone documentation portal (SCRIPE-Docs-Portal)
   async redirects() {

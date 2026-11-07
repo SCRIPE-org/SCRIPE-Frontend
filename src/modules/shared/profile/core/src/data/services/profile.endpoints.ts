@@ -21,6 +21,15 @@ export const PROFILE_ENDPOINTS = {
     CONFIRM: `${V1}/auth/admin/2fa/confirm`,
     DISABLE: `${V1}/auth/admin/2fa/disable`,
   },
+  PASSKEYS: {
+    LIST: `${V1}/auth/passkeys`,
+    REGISTER_BEGIN: `${V1}/auth/passkeys/registration/begin`,
+    REGISTER_COMPLETE: `${V1}/auth/passkeys/registration/complete`,
+    AUTH_BEGIN: `${V1}/auth/passkeys/authentication/begin`,
+    DELETE: (id: string) => `${V1}/auth/passkeys/${id}`,
+    RENAME: (id: string) => `${V1}/auth/passkeys/${id}/name`,
+  },
+  SUDO_VERIFY: `${V1}/auth/me/sudo-verify`,
   // NOTE: a `LEGACY` block (`/v1/profile/*`) used to live here. No `ProfileController`
   // has ever existed in SCRIPE-Backend (verified: zero matches for "ProfileController"
   // under SCRIPE-Backend/src/Host/API/Controllers) — every one of those routes was a

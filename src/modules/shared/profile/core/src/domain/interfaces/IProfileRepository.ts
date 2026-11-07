@@ -16,7 +16,13 @@ import type { LinkExternalLoginDto } from "../types/ProfileTypes";
 export interface UpdateProfileRequest {
   firstName: string;
   lastName: string;
-  phoneNumber: string;
+  phoneNumber?: string;
+  bio?: string;
+  isAvailableForOperations?: boolean;
+  activeBranchName?: string;
+  coachingLicensesJson?: string;
+  tacticalPhilosophyJson?: string;
+  adminSettingsJson?: string;
 }
 
 /**
