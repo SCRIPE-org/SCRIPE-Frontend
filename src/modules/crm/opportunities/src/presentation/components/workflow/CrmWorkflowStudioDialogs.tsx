@@ -8,46 +8,51 @@ import { Input } from "@core/ui/input";
 import { Label } from "@core/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@core/ui/select";
 import type { CrmWorkflowEntityType } from "@modules/crm";
+import { CANONICAL_TERMINAL_LABELS } from "../../../domain/constants/crmCanonicalStages";
 import type { CrmWorkflowStageNode } from "./CrmWorkflowCanvas2D";
 
 export interface CrmWorkflowStudioDialogsProps {
   t: (k: string) => string; isAr: boolean; activeEntity: CrmWorkflowEntityType; activeStages: CrmWorkflowStageNode[];
   addStageModalOpen: boolean; setAddStageModalOpen: (open: boolean) => void;
-  newStageNameEn: string; setNewStageNameEn: (val: string) => void;
-  newStageNameAr: string; setNewStageNameAr: (val: string) => void;
-  newStageProb: number; setNewStageProb: (val: number) => void;
-  newStageSla: number; setNewStageSla: (val: number) => void;
+  newStageNameEn: string; setNewStageNameEn: (val: string) => void; newStageNameAr: string; setNewStageNameAr: (val: string) => void;
+  newStageProb: number; setNewStageProb: (val: number) => void; newStageSla: number; setNewStageSla: (val: number) => void;
   newStageConvertsLead: boolean; setNewStageConvertsLead: (val: boolean) => void;
   newStageAutoConnect: boolean; setNewStageAutoConnect: (val: boolean) => void;
+  newStageAllowFromAny?: boolean; setNewStageAllowFromAny?: (val: boolean) => void;
   onAddStageSubmit: () => void;
   addTransitionModalOpen: boolean; setAddTransitionModalOpen: (open: boolean) => void;
-  newTransFrom: string; setNewTransFrom: (val: string) => void;
-  newTransTo: string; setNewTransTo: (val: string) => void;
-  newTransNameEn: string; setNewTransNameEn: (val: string) => void;
-  newTransNameAr: string; setNewTransNameAr: (val: string) => void;
+  newTransFrom: string; setNewTransFrom: (val: string) => void; newTransTo: string; setNewTransTo: (val: string) => void;
+  newTransNameEn: string; setNewTransNameEn: (val: string) => void; newTransNameAr: string; setNewTransNameAr: (val: string) => void;
   onAddTransitionSubmit: () => void;
   createWorkflowModalOpen: boolean; setCreateWorkflowModalOpen: (open: boolean) => void;
   newWfEntityType: CrmWorkflowEntityType; setNewWfEntityType: (val: CrmWorkflowEntityType) => void;
-  newWfNameEn: string; setNewWfNameEn: (val: string) => void;
-  newWfNameAr: string; setNewWfNameAr: (val: string) => void;
-  newWfDescEn: string; setNewWfDescEn: (val: string) => void;
-  newWfDescAr: string; setNewWfDescAr: (val: string) => void;
+  newWfNameEn: string; setNewWfNameEn: (val: string) => void; newWfNameAr: string; setNewWfNameAr: (val: string) => void;
+  newWfDescEn: string; setNewWfDescEn: (val: string) => void; newWfDescAr: string; setNewWfDescAr: (val: string) => void;
   onCreateWorkflowSubmit: () => void;
 }
 
-/** Modal dialogs for creating workflows, adding statuses, and adding transitions in the Studio. */
+/** Modal dialogs for creating workflows, adding statuses, and adding transitions in the Studio (<195 lines). */
 export function CrmWorkflowStudioDialogs(props: CrmWorkflowStudioDialogsProps) {
   const {
     t, isAr, activeEntity, activeStages,
     addStageModalOpen, setAddStageModalOpen, newStageNameEn, setNewStageNameEn, newStageNameAr, setNewStageNameAr,
     newStageProb, setNewStageProb, newStageSla, setNewStageSla, newStageConvertsLead, setNewStageConvertsLead,
-    newStageAutoConnect, setNewStageAutoConnect, onAddStageSubmit,
+    newStageAutoConnect, setNewStageAutoConnect, newStageAllowFromAny = true, setNewStageAllowFromAny, onAddStageSubmit,
     addTransitionModalOpen, setAddTransitionModalOpen, newTransFrom, setNewTransFrom, newTransTo, setNewTransTo,
     newTransNameEn, setNewTransNameEn, newTransNameAr, setNewTransNameAr, onAddTransitionSubmit,
     createWorkflowModalOpen, setCreateWorkflowModalOpen, newWfEntityType, setNewWfEntityType,
     newWfNameEn, setNewWfNameEn, newWfNameAr, setNewWfNameAr, newWfDescEn, setNewWfDescEn, newWfDescAr, setNewWfDescAr,
     onCreateWorkflowSubmit,
   } = props;
+
+  const handleToStatusChange = (nextToKey: string) => {
+    setNewTransTo(nextToKey);
+    const targetStage = activeStages.find((s) => s.stageKey === nextToKey);
+    if (targetStage && (!newTransNameEn.trim() || newTransNameEn.startsWith(CANONICAL_TERMINAL_LABELS.moveToPrefixEn))) {
+      setNewTransNameEn(`${CANONICAL_TERMINAL_LABELS.moveToPrefixEn} ${targetStage.labelEn}`);
+      setNewTransNameAr(`${CANONICAL_TERMINAL_LABELS.moveToPrefixAr} ${targetStage.labelAr}`);
+    }
+  };
 
   return (
     <>
@@ -77,6 +82,10 @@ export function CrmWorkflowStudioDialogs(props: CrmWorkflowStudioDialogsProps) {
                 <Label className="text-xs">{t("crmOpportunities.pipelinesPage.slaDaysLabel")}</Label>
                 <Input type="number" min={0} value={newStageSla} onChange={(e) => setNewStageSla(Number(e.target.value) || 0)} />
               </div>
+            </div>
+            <div className="flex items-center gap-2 pt-1">
+              <Checkbox id="new-stage-allow-from-any" checked={newStageAllowFromAny} onCheckedChange={(v) => setNewStageAllowFromAny?.(Boolean(v))} data-testid="new-stage-allow-from-any" />
+              <Label htmlFor="new-stage-allow-from-any" className="text-xs cursor-pointer font-medium text-nx-ink">{t("crmOpportunities.pipelinesPage.allowTransitionsFromAnyStatusLabel")}</Label>
             </div>
             {activeEntity === "lead" && (
               <div className="flex items-center gap-2 pt-1">
@@ -116,11 +125,9 @@ export function CrmWorkflowStudioDialogs(props: CrmWorkflowStudioDialogsProps) {
               </div>
               <div className="space-y-1">
                 <Label className="text-xs">{t("crmOpportunities.pipelinesPage.toStatusLabel")}</Label>
-                <Select value={newTransTo} onValueChange={setNewTransTo}>
+                <Select value={newTransTo} onValueChange={handleToStatusChange}>
                   <SelectTrigger className="h-9 text-xs" data-testid="new-transition-to-select"><SelectValue /></SelectTrigger>
-                  <SelectContent className="z-[10001]">
-                    {activeStages.map((s) => (<SelectItem key={s.stageKey} value={s.stageKey}>{isAr ? s.labelAr : s.labelEn}</SelectItem>))}
-                  </SelectContent>
+                  <SelectContent className="z-[10001]">{activeStages.map((s) => (<SelectItem key={s.stageKey} value={s.stageKey}>{isAr ? s.labelAr : s.labelEn}</SelectItem>))}</SelectContent>
                 </Select>
               </div>
             </div>
@@ -153,31 +160,16 @@ export function CrmWorkflowStudioDialogs(props: CrmWorkflowStudioDialogsProps) {
               <Label className="text-xs">{t("crmOpportunities.pipelinesPage.entityTypeLabel")}</Label>
               <Select value={newWfEntityType} onValueChange={(v) => setNewWfEntityType(v as CrmWorkflowEntityType)}>
                 <SelectTrigger className="h-9 text-xs" data-testid="create-wf-entity-select"><SelectValue /></SelectTrigger>
-                <SelectContent className="z-[10001]">
-                  <SelectItem value="deal">{t("crmOpportunities.pipelinesPage.entityOptionDeal")}</SelectItem>
-                  <SelectItem value="lead">{t("crmOpportunities.pipelinesPage.entityOptionLead")}</SelectItem>
-                </SelectContent>
+                <SelectContent className="z-[10001]"><SelectItem value="deal">{t("crmOpportunities.pipelinesPage.entityOptionDeal")}</SelectItem><SelectItem value="lead">{t("crmOpportunities.pipelinesPage.entityOptionLead")}</SelectItem></SelectContent>
               </Select>
             </div>
             <div className="grid grid-cols-2 gap-3">
-              <div className="space-y-1">
-                <Label className="text-xs">{t("crmOpportunities.pipelinesPage.workflowNameEnLabel")}</Label>
-                <Input value={newWfNameEn} onChange={(e) => setNewWfNameEn(e.target.value)} placeholder={t("crmOpportunities.pipelinesPage.workflowNameEnPlaceholder")} data-testid="create-wf-name-en-input" />
-              </div>
-              <div className="space-y-1">
-                <Label className="text-xs">{t("crmOpportunities.pipelinesPage.workflowNameArLabel")}</Label>
-                <Input dir="rtl" value={newWfNameAr} onChange={(e) => setNewWfNameAr(e.target.value)} placeholder={t("crmOpportunities.pipelinesPage.workflowNameArPlaceholder")} data-testid="create-wf-name-ar-input" />
-              </div>
+              <div className="space-y-1"><Label className="text-xs">{t("crmOpportunities.pipelinesPage.workflowNameEnLabel")}</Label><Input value={newWfNameEn} onChange={(e) => setNewWfNameEn(e.target.value)} placeholder={t("crmOpportunities.pipelinesPage.workflowNameEnPlaceholder")} data-testid="create-wf-name-en-input" /></div>
+              <div className="space-y-1"><Label className="text-xs">{t("crmOpportunities.pipelinesPage.workflowNameArLabel")}</Label><Input dir="rtl" value={newWfNameAr} onChange={(e) => setNewWfNameAr(e.target.value)} placeholder={t("crmOpportunities.pipelinesPage.workflowNameArPlaceholder")} data-testid="create-wf-name-ar-input" /></div>
             </div>
             <div className="grid grid-cols-2 gap-3">
-              <div className="space-y-1">
-                <Label className="text-xs">{t("crmOpportunities.pipelinesPage.descriptionEnLabel")}</Label>
-                <Input value={newWfDescEn} onChange={(e) => setNewWfDescEn(e.target.value)} placeholder={t("crmOpportunities.pipelinesPage.descriptionEnPlaceholder")} />
-              </div>
-              <div className="space-y-1">
-                <Label className="text-xs">{t("crmOpportunities.pipelinesPage.descriptionArLabel")}</Label>
-                <Input dir="rtl" value={newWfDescAr} onChange={(e) => setNewWfDescAr(e.target.value)} placeholder={t("crmOpportunities.pipelinesPage.descriptionArPlaceholder")} />
-              </div>
+              <div className="space-y-1"><Label className="text-xs">{t("crmOpportunities.pipelinesPage.descriptionEnLabel")}</Label><Input value={newWfDescEn} onChange={(e) => setNewWfDescEn(e.target.value)} placeholder={t("crmOpportunities.pipelinesPage.descriptionEnPlaceholder")} /></div>
+              <div className="space-y-1"><Label className="text-xs">{t("crmOpportunities.pipelinesPage.descriptionArLabel")}</Label><Input dir="rtl" value={newWfDescAr} onChange={(e) => setNewWfDescAr(e.target.value)} placeholder={t("crmOpportunities.pipelinesPage.descriptionArPlaceholder")} /></div>
             </div>
           </div>
           <DialogFooter>

@@ -120,8 +120,8 @@ export const INITIAL_CRM_WORKFLOWS: CrmWorkflowDefinition[] = [
   {
     id: "wf-deal-default", code: "default", entityType: "deal",
     nameEn: "Standard Commercial Pipeline", nameAr: "مسار المبيعات التجاري القياسي",
-    descriptionEn: "5-stage B2B sports commercial pipeline with forward & backward transitions and Customer Verification gates.",
-    descriptionAr: "مسار مبيعات تجاري من 5 مراحل مع انتقالات أمامية وعكسية وبوابة التحقق من الحساب.",
+    descriptionEn: "5-stage B2B sports commercial pipeline with multi-stage directed transitions and Customer Verification gates.",
+    descriptionAr: "مسار مبيعات تجاري من 5 مراحل مع انتقالات موجهة متعددة وبوابة التحقق من الحساب.",
     isActive: true, isTemplate: false, industryCategory: "B2B Commercial", version: 2, updatedAtUtc: "2026-01-01T00:00:00.000Z",
     stages: [
       { stageKey: "default.discovery", labelEn: "Discovery", labelAr: "استكشاف", sortOrder: 1, category: "todo", color: "blue", winProbabilityPercent: 10, slaDays: 7, requiredExitFields: [] },

@@ -88,6 +88,7 @@ export function PipelineManagementView({
           onOpenRuleForStage={vm.handleOpenRuleForStage}
           onNodeMove={vm.handleNodeMove}
           onStageChange={vm.handleStageChange}
+          onToggleAllowAnyTransition={vm.handleToggleAllowAnyTransition}
           onMoveOrder={vm.handleMoveStageOrder}
           onRemoveStage={vm.handleRemoveStage}
           onReplaceStage={vm.handleReplaceStage}
@@ -117,6 +118,8 @@ export function PipelineManagementView({
         setNewStageConvertsLead={vm.setNewStageConvertsLead}
         newStageAutoConnect={vm.newStageAutoConnect}
         setNewStageAutoConnect={vm.setNewStageAutoConnect}
+        newStageAllowFromAny={vm.newStageAllowFromAny}
+        setNewStageAllowFromAny={vm.setNewStageAllowFromAny}
         onAddStageSubmit={vm.handleAddStageSubmit}
         addTransitionModalOpen={vm.addTransitionModalOpen}
         setAddTransitionModalOpen={vm.setAddTransitionModalOpen}

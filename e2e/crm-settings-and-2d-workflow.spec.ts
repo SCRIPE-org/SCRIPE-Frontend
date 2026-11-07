@@ -8,6 +8,7 @@ const SCREENSHOT_DIR = path.resolve(
   "../../SCRIPE-CRM/EXECUTION_REPORTS/CRM-OVERHAUL/screenshots"
 );
 const BRAIN_SCREENSHOT_DIRS = [
+  path.resolve(__dirname, "../../SCRIPE-CRM/EXECUTION_REPORTS/SCRIPE-750-785/screenshots"),
   "C:/Users/seifmoustafa/.gemini/antigravity/brain/0bb57db6-4f63-4111-b08e-0c9081a63bf0",
   "C:/Users/seifmoustafa/.gemini/antigravity/brain/0bb57db6-4f63-4111-b08e-0c9081a63bf0/screenshots",
   "C:/Users/seifmoustafa/.gemini/antigravity/brain/8bd25edc-2619-4826-9374-aa66575beafc",
@@ -292,6 +293,7 @@ test.describe("CRM Settings Hub & 2D Jira Workflow Studio E2E Verification", () 
     // Open Default Deal Workflow in Studio
     await page.getByTestId("workflow-edit-studio-wf-deal-default").click();
     await expect(studioRoot).toBeVisible({ timeout: 10_000 });
+    await page.getByTestId("canvas-tidy-auto-layout-btn").click();
 
     await expect(page.getByTestId("crm-2d-graph-surface")).toBeVisible();
     await expect(page.getByTestId("crm-2d-svg-edges")).toBeVisible();
@@ -315,24 +317,47 @@ test.describe("CRM Settings Hub & 2D Jira Workflow Studio E2E Verification", () 
     await expect(page.getByTestId("status-inspector-color-picker")).toBeVisible();
     await expect(page.getByTestId("inspector-replace-stage-btn")).toBeVisible();
 
-    // Click Discovery stage node to reveal all 8 connection ports (2 per side) and drag-to-connect to Proposal
+    // Verify "Add a status" dialog with [x] Allow transitions from any status checkbox (Jira Screenshot 1)
+    await page.getByTestId("crm-toolbar-add-status").click();
+    await expect(page.getByTestId("add-status-modal")).toBeVisible({ timeout: 5_000 });
+    await expect(page.getByTestId("new-stage-allow-from-any")).toBeVisible();
+    await setThemeAndCapture(page, "02k_crm_workflow_add_status_allow_any_modal");
+    await page.keyboard.press("Escape");
+    await expect(page.getByTestId("add-status-modal")).toBeHidden();
+
+    // Verify Closed Lost node with 8 Jira perimeter ports (3 top, 3 bottom, 1 left, 1 right), floating Any pill + L-arrow, and Incoming/Outgoing (+) inspector (Jira Screenshot 2)
+    await page.getByTestId("canvas-node-terminal-lost").click();
+    await expect(page.getByTestId("canvas-transition-global-terminal-lost")).toBeVisible();
+    await expect(page.getByTestId("canvas-any-elbow-terminal-lost")).toBeVisible();
+    await expect(page.getByTestId("inspector-allow-any-inbound-checkbox")).toBeVisible();
+    await expect(page.getByTestId("inspector-add-incoming-transition-btn")).toBeVisible();
+    await expect(page.getByTestId("inspector-add-outgoing-transition-btn")).toBeVisible();
+    await setThemeAndCapture(page, "02l_crm_workflow_status_ports_and_any_arrow");
+
+    // Click the floating "Any" pill on the canvas to select the global transition and open Transition Inspector (Jira Screenshot 3 & 4)
+    await page.getByTestId("canvas-transition-global-terminal-lost").click();
+    await expect(page.getByTestId("inspector-transition-from-tags")).toBeVisible();
+    await expect(page.getByTestId("inspector-to-stage-select")).toBeVisible();
+    await setThemeAndCapture(page, "02m_crm_workflow_any_global_transition_inspector");
+
+    // Click Discovery stage node to reveal all 8 Jira connection ports (3 top, 1 right, 3 bottom, 1 left) and drag-to-connect to Proposal & Solution Fit (Step 1 -> Step 2, 3, 4)
     await page.getByTestId("canvas-node-default.discovery").click();
     for (const portId of [
       "top-1",
       "top-2",
+      "top-3",
       "right-1",
-      "right-2",
       "bottom-1",
       "bottom-2",
+      "bottom-3",
       "left-1",
-      "left-2",
     ]) {
       await expect(
         page.getByTestId(`node-port-default.discovery-${portId}`)
       ).toHaveClass(/opacity-100/);
     }
 
-    const sourcePort = page.getByTestId("node-port-default.discovery-right-1");
+    const sourcePort = page.getByTestId("node-port-default.discovery-bottom-2");
     const targetNode = page.getByTestId("canvas-node-default.proposal");
     await sourcePort.dragTo(targetNode);
     await expect(page.getByTestId("add-transition-modal")).toBeVisible({ timeout: 5_000 });
@@ -340,17 +365,24 @@ test.describe("CRM Settings Hub & 2D Jira Workflow Studio E2E Verification", () 
     await page.getByTestId("new-transition-submit-btn").click();
     await expect(page.getByTestId("add-transition-modal")).toBeHidden();
 
-    // Add a second cross-stage skip transition (Qualification -> Negotiation) and verify staggered vertical lanes
-    await page.getByTestId("canvas-node-default.qualification").click();
-    const secondSourcePort = page.getByTestId("node-port-default.qualification-right-1");
-    const secondTargetNode = page.getByTestId("canvas-node-default.negotiation");
+    // Add a 3rd outgoing transition from Discovery -> Solution Fit so Step 1 connects to Step 2, Step 3, and Step 4
+    await page.getByTestId("canvas-node-default.discovery").click();
+    const secondSourcePort = page.getByTestId("node-port-default.discovery-top-2");
+    const secondTargetNode = page.getByTestId("canvas-node-default.solution_fit");
     await secondSourcePort.dragTo(secondTargetNode);
     await expect(page.getByTestId("add-transition-modal")).toBeVisible({ timeout: 5_000 });
-    await page.getByTestId("new-transition-name-en-input").fill("Skip to Negotiation");
+    await page.getByTestId("new-transition-name-en-input").fill("Direct to Solution Fit");
     await page.getByTestId("new-transition-submit-btn").click();
     await expect(page.getByTestId("add-transition-modal")).toBeHidden();
 
     await assertZeroOverlappingTransitionPills();
+    const discoveryPillsDistinctLanes = await page.evaluate(() => {
+      const pills = Array.from(document.querySelectorAll('[data-testid="canvas-transition-default.discovery"]')) as HTMLElement[];
+      const qualify = pills.find((p) => p.innerText.includes("Qualify Deal"))?.getBoundingClientRect();
+      const direct = pills.find((p) => p.innerText.includes("Direct to Solution Fit"))?.getBoundingClientRect();
+      return qualify && direct ? Math.abs(qualify.top - direct.top) : 0;
+    });
+    expect(discoveryPillsDistinctLanes).toBeGreaterThanOrEqual(16);
 
     // Test Per-Stage Color Picker & inline Custom Field creation on Proposal stage
     await page.getByTestId("canvas-node-default.proposal").click();

@@ -9,6 +9,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { CrmSmartGuideModal, type CrmCustomFieldDefinition, type CrmWorkflowDefinition, type CrmWorkflowEntityType } from "@modules/crm";
 import type { StudioViewMode } from "../../viewmodels/usePipelineStudioViewModel";
 import { CrmWorkflowCanvas2D, CrmWorkflowStageNode, CrmWorkflowTransition } from "./CrmWorkflowCanvas2D";
+import type { StagePortId } from "./CrmWorkflowCanvasSubViews";
 import { CrmWorkflowInspectorPanel } from "./CrmWorkflowInspectorPanel";
 
 export interface CrmWorkflowFullscreenStudioProps {
@@ -23,12 +24,16 @@ export interface CrmWorkflowFullscreenStudioProps {
   crmCustomFields: CrmCustomFieldDefinition[]; openRuleCatalogSignal?: number;
   onSelectWorkflow: (workflowId: string) => void; onSwitchEntity: (entity: CrmWorkflowEntityType) => void;
   onBackToList: () => void; onResetDraft: () => void; onSave: () => void; onValidateRules: () => void;
-  onOpenAddStage: () => void; onOpenAddTransition: (fromStageKey?: string, toStageKey?: string) => void;
+  onOpenAddStage: () => void;
+  onOpenAddTransition: (fromStageKey?: string, toStageKey?: string, sourcePort?: StagePortId, targetPort?: StagePortId) => void;
   onOpenRuleForStage: (stageKey: string) => void; onNodeMove: (stageKey: string, x: number, y: number) => void;
-  onStageChange: (updated: CrmWorkflowStageNode) => void; onMoveOrder: (stageKey: string, direction: "up" | "down") => void;
+  onStageChange: (updated: CrmWorkflowStageNode) => void;
+  onToggleAllowAnyTransition?: (stageKey: string, allowed: boolean) => void;
+  onMoveOrder: (stageKey: string, direction: "up" | "down") => void;
   onRemoveStage: (stageKey: string) => void; onReplaceStage?: (stageKeyToRemove: string, replacementStageKey: string) => void;
   onTransitionChange: (updated: CrmWorkflowTransition) => void;
-  onDeleteTransition: (transitionId: string) => void; onCreateTransition: (fromStageKey: string) => void;
+  onDeleteTransition: (transitionId: string) => void;
+  onCreateTransition: (fromStageKey?: string, toStageKey?: string) => void;
   onAddCrmCustomField: (field: Omit<CrmCustomFieldDefinition, "id" | "createdAtIso">) => void;
 }
 
@@ -40,53 +45,33 @@ export function CrmWorkflowFullscreenStudio(props: CrmWorkflowFullscreenStudioPr
     selectedTransitionId, setSelectedStageKey, setSelectedTransitionId, hasChanges, validationBanner,
     setValidationBanner, crmCustomFields, openRuleCatalogSignal, onSelectWorkflow, onSwitchEntity, onBackToList, onResetDraft,
     onSave, onValidateRules, onOpenAddStage, onOpenAddTransition, onOpenRuleForStage, onNodeMove,
-    onStageChange, onMoveOrder, onRemoveStage, onReplaceStage, onTransitionChange, onDeleteTransition,
+    onStageChange, onToggleAllowAnyTransition, onMoveOrder, onRemoveStage, onReplaceStage, onTransitionChange, onDeleteTransition,
     onAddCrmCustomField,
   } = props;
   const [guideOpen, setGuideOpen] = useState(false);
 
   const studioElement = (
-    <div
-      className="fixed inset-0 z-[900] bg-nx-ground flex flex-col w-screen h-screen overflow-hidden"
-      data-testid="crm-workflow-fullscreen-studio"
-    >
+    <div className="fixed inset-0 z-[900] bg-nx-ground flex flex-col w-screen h-screen overflow-hidden" data-testid="crm-workflow-fullscreen-studio">
       <header className="h-14 px-2 border-b border-nx-line bg-nx-surface flex items-center justify-between gap-1 shrink-0">
         <div className="flex items-center gap-1 shrink-0">
           <Button size="sm" variant="outline" onClick={onBackToList} data-testid="studio-back-to-list-btn" className="h-7 px-1.5 text-[10px] shrink-0">
-            <ArrowLeft className="w-3 h-3 me-0.5" />
-            {t("crmOpportunities.pipelinesPage.backToWorkflowsListBtn")}
+            <ArrowLeft className="w-3 h-3 me-0.5" />{t("crmOpportunities.pipelinesPage.backToWorkflowsListBtn")}
           </Button>
-
           <div className="inline-flex items-center rounded-md border border-nx-line bg-nx-raised p-0.5 gap-0.5 shrink-0">
-            <Button
-              size="sm" variant="ghost" onClick={() => onSwitchEntity("deal")} data-testid="workflow-switch-deals"
-              className={`h-6 px-1.5 text-[10px] ${activeEntity === "deal" ? "bg-nx-surface text-nx-ink border border-nx-line-hi font-semibold" : "text-nx-ink-2"}`}
-            >
+            <Button size="sm" variant="ghost" onClick={() => onSwitchEntity("deal")} data-testid="workflow-switch-deals" className={`h-6 px-1.5 text-[10px] ${activeEntity === "deal" ? "bg-nx-surface text-nx-ink border border-nx-line-hi font-semibold" : "text-nx-ink-2"}`}>
               {t("crmOpportunities.pipelinesPage.dealsPipelineSwitch")}
             </Button>
-            <Button
-              size="sm" variant="ghost" onClick={() => onSwitchEntity("lead")} data-testid="workflow-switch-leads"
-              className={`h-6 px-1.5 text-[10px] ${activeEntity === "lead" ? "bg-nx-surface text-nx-ink border border-nx-line-hi font-semibold" : "text-nx-ink-2"}`}
-            >
+            <Button size="sm" variant="ghost" onClick={() => onSwitchEntity("lead")} data-testid="workflow-switch-leads" className={`h-6 px-1.5 text-[10px] ${activeEntity === "lead" ? "bg-nx-surface text-nx-ink border border-nx-line-hi font-semibold" : "text-nx-ink-2"}`}>
               {t("crmOpportunities.pipelinesPage.leadsPipelineSwitch")}
             </Button>
           </div>
-
           <Select value={selectedWorkflowId} onValueChange={onSelectWorkflow}>
-            <SelectTrigger className="h-7 min-w-[140px] max-w-[170px] w-auto text-[10px] bg-nx-raised border-nx-line shrink-0 px-1.5" data-testid="studio-workflow-selector">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              {workflows.map((wf) => (
-                <SelectItem key={wf.id} value={wf.id} className="text-xs">{isAr ? wf.nameAr : wf.nameEn}</SelectItem>
-              ))}
-            </SelectContent>
+            <SelectTrigger className="h-7 min-w-[140px] max-w-[170px] w-auto text-[10px] bg-nx-raised border-nx-line shrink-0 px-1.5" data-testid="studio-workflow-selector"><SelectValue /></SelectTrigger>
+            <SelectContent>{workflows.map((wf) => (<SelectItem key={wf.id} value={wf.id} className="text-xs">{isAr ? wf.nameAr : wf.nameEn}</SelectItem>))}</SelectContent>
           </Select>
-
           <Badge variant="outline" className="text-[10px] font-mono shrink-0 whitespace-nowrap px-1" data-testid="studio-dynamic-stage-count">
             {activeStages.length} {t("crmOpportunities.pipelinesPage.statStatusesLabel")}
           </Badge>
-
           <Button
             type="button" size="sm" variant="outline" className="h-6 px-1.5 text-[10px] font-mono shrink-0"
             onClick={() => { onResetDraft(); setValidationBanner(`${t("crmOpportunities.pipelinesPage.restoredVersionBanner")} (v${selectedWorkflow?.version ?? 4}.0)`); }}
@@ -94,11 +79,9 @@ export function CrmWorkflowFullscreenStudio(props: CrmWorkflowFullscreenStudioPr
           >
             <History className="w-2.5 h-2.5 me-0.5 text-nx-accent" />v{selectedWorkflow?.version ?? 4}.0
           </Button>
-
           {selectedWorkflow?.isActive && (
             <Badge variant="success" className="text-[10px] hidden 2xl:inline-flex shrink-0 whitespace-nowrap">
-              <CheckCircle2 className="w-2.5 h-2.5 me-1" />
-              {t("crmOpportunities.pipelinesPage.activeInKanbanBadge")}
+              <CheckCircle2 className="w-2.5 h-2.5 me-1" />{t("crmOpportunities.pipelinesPage.activeInKanbanBadge")}
             </Badge>
           )}
         </div>
@@ -112,12 +95,8 @@ export function CrmWorkflowFullscreenStudio(props: CrmWorkflowFullscreenStudioPr
             const Icon = m.icon;
             const isActive = viewMode === m.id;
             return (
-              <Button
-                key={m.id} size="sm" variant="ghost" onClick={() => setViewMode(m.id)} data-testid={`workflow-mode-${m.id}`}
-                className={`h-6 px-1.5 text-[10px] ${isActive ? "bg-nx-surface text-nx-ink border border-nx-line-hi font-semibold" : "text-nx-ink-2"}`}
-              >
-                <Icon className="w-3 h-3 me-0.5" />
-                {t(m.labelKey)}
+              <Button key={m.id} size="sm" variant="ghost" onClick={() => setViewMode(m.id)} data-testid={`workflow-mode-${m.id}`} className={`h-6 px-1.5 text-[10px] ${isActive ? "bg-nx-surface text-nx-ink border border-nx-line-hi font-semibold" : "text-nx-ink-2"}`}>
+                <Icon className="w-3 h-3 me-0.5" />{t(m.labelKey)}
               </Button>
             );
           })}
@@ -131,9 +110,7 @@ export function CrmWorkflowFullscreenStudio(props: CrmWorkflowFullscreenStudioPr
             size="sm" variant="outline" className="h-7 px-1.5 text-[10px] hidden xl:inline-flex shrink-0"
             onClick={() => {
               const payload = JSON.stringify({ workflow: selectedWorkflow, stages: activeStages, transitions }, null, 2);
-              if (typeof navigator !== "undefined" && navigator.clipboard?.writeText) {
-                void navigator.clipboard.writeText(payload).catch(() => undefined);
-              }
+              if (typeof navigator !== "undefined" && navigator.clipboard?.writeText) void navigator.clipboard.writeText(payload).catch(() => undefined);
               setValidationBanner(`${t("crmOpportunities.pipelinesPage.exportedJsonBanner")} (v${selectedWorkflow?.version ?? 4}.0 • ${payload.length}B)`);
             }}
             data-testid="workflow-export-json-btn"
@@ -148,25 +125,18 @@ export function CrmWorkflowFullscreenStudio(props: CrmWorkflowFullscreenStudioPr
             <Upload className="w-3 h-3 me-0.5" />{t("crmOpportunities.pipelinesPage.importJsonBtn")}
           </Button>
           <Button size="sm" variant="outline" className="h-7 px-1.5 text-[10px] shrink-0" onClick={() => { onResetDraft(); onBackToList(); }} data-testid="studio-discard-close-btn">
-            <RotateCcw className="w-3 h-3 me-0.5" />
-            {t("crmOpportunities.pipelinesPage.discardCloseBtn")}
+            <RotateCcw className="w-3 h-3 me-0.5" />{t("crmOpportunities.pipelinesPage.discardCloseBtn")}
           </Button>
           <Button size="sm" className="h-7 px-2 text-[10px] shrink-0" onClick={onSave} disabled={!hasChanges} data-testid="save-pipeline-config-btn">
-            <Save className="w-3 h-3 me-0.5" />
-            {t("crmOpportunities.pipelinesPage.updateWorkflowBtn")}
+            <Save className="w-3 h-3 me-0.5" />{t("crmOpportunities.pipelinesPage.updateWorkflowBtn")}
           </Button>
         </div>
       </header>
 
       {validationBanner && (
         <div className="px-4 py-2 bg-nx-raised border-b border-nx-line flex items-center justify-between text-xs text-nx-ink">
-          <span className="inline-flex items-center gap-2 font-medium">
-            <GitBranch className="w-3.5 h-3.5 text-success" />
-            {validationBanner}
-          </span>
-          <Button size="icon" variant="ghost" className="h-6 w-6" onClick={() => setValidationBanner(null)}>
-            <X className="w-3.5 h-3.5" />
-          </Button>
+          <span className="inline-flex items-center gap-2 font-medium"><GitBranch className="w-3.5 h-3.5 text-success" />{validationBanner}</span>
+          <Button size="icon" variant="ghost" className="h-6 w-6" onClick={() => setValidationBanner(null)}><X className="w-3.5 h-3.5" /></Button>
         </div>
       )}
 
@@ -182,9 +152,10 @@ export function CrmWorkflowFullscreenStudio(props: CrmWorkflowFullscreenStudioPr
           activeEntity={activeEntity} stages={activeStages} transitions={transitions}
           selectedStage={selectedStage} selectedTransition={selectedTransition} crmCustomFields={crmCustomFields}
           openRuleCatalogSignal={openRuleCatalogSignal}
-          onStageChange={onStageChange} onMoveOrder={onMoveOrder} onRemoveStage={onRemoveStage} onReplaceStage={onReplaceStage}
+          onStageChange={onStageChange} onToggleAllowAnyTransition={onToggleAllowAnyTransition}
+          onMoveOrder={onMoveOrder} onRemoveStage={onRemoveStage} onReplaceStage={onReplaceStage}
           onTransitionChange={onTransitionChange} onDeleteTransition={onDeleteTransition}
-          onSelectTransition={setSelectedTransitionId} onCreateTransition={(from) => onOpenAddTransition(from)}
+          onSelectTransition={setSelectedTransitionId} onCreateTransition={(from, to) => onOpenAddTransition(from, to)}
           onAddCrmCustomField={onAddCrmCustomField}
         />
       </div>

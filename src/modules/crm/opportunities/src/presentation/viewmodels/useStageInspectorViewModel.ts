@@ -67,15 +67,20 @@ export function useStageInspectorViewModel({
   const outgoing = selectedStage
     ? transitions.filter(
         (tr) =>
-          tr.fromStageKey === selectedStage.stageKey ||
-          (tr.fromStageKeys && tr.fromStageKeys.includes(selectedStage.stageKey)) ||
-          tr.fromStageKey === "*"
+          tr.fromStageKey !== "*" &&
+          (tr.fromStageKey === selectedStage.stageKey ||
+            Boolean(tr.fromStageKeys && tr.fromStageKeys.includes(selectedStage.stageKey))),
       )
     : [];
 
   const incoming = selectedStage
     ? transitions.filter((tr) => tr.toStageKey === selectedStage.stageKey)
     : [];
+
+  const allowInboundFromAny = Boolean(
+    selectedStage &&
+      incoming.some((tr) => tr.fromStageKey === "*" || tr.fromStageKeys?.includes("*")),
+  );
 
   const coreFieldKeys = activeEntity === "lead" ? LEAD_EXIT_FIELD_KEYS : DEAL_EXIT_FIELD_KEYS;
   const stageProps = selectedStage?.properties ?? {};
@@ -169,6 +174,7 @@ export function useStageInspectorViewModel({
     candidateReplacementStages,
     outgoing,
     incoming,
+    allowInboundFromAny,
     coreFieldKeys,
     stageProps,
     toggleExitField,

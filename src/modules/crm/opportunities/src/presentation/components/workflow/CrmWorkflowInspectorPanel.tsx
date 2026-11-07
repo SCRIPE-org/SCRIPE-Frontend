@@ -25,13 +25,14 @@ export interface CrmWorkflowInspectorPanelProps {
   selectedStage: CrmWorkflowStageNode | null; selectedTransition: CrmWorkflowTransition | null;
   crmCustomFields: CrmCustomFieldDefinition[]; openRuleCatalogSignal?: number;
   onStageChange: (updated: CrmWorkflowStageNode) => void;
+  onToggleAllowAnyTransition?: (stageKey: string, allowed: boolean) => void;
   onMoveOrder?: (stageKey: string, dir: "up" | "down") => void;
   onMoveStage?: (stageKey: string, dir: "up" | "down") => void;
   onRemoveStage: (stageKey: string) => void;
   onReplaceStage?: (oldStageKey: string, replacementStageKey: string) => void;
   onTransitionChange: (updated: CrmWorkflowTransition) => void;
   onDeleteTransition: (transitionId: string) => void;
-  onCreateTransition: (fromStageKey: string) => void;
+  onCreateTransition: (fromStageKey?: string, toStageKey?: string) => void;
   onSelectTransition: (transitionId: string) => void;
   onAddCrmCustomField?: (field: Omit<CrmCustomFieldDefinition, "id" | "createdAtIso">) => void;
 }
@@ -39,7 +40,7 @@ export interface CrmWorkflowInspectorPanelProps {
 /** Pure declarative Workflow Inspector Panel consuming useStageInspectorViewModel (<180 lines). */
 export function CrmWorkflowInspectorPanel({
   t: propT, isAr: propIsAr, activeEntity, stages, transitions, selectedStage, selectedTransition,
-  crmCustomFields, openRuleCatalogSignal, onStageChange, onMoveOrder, onMoveStage, onRemoveStage, onReplaceStage,
+  crmCustomFields, openRuleCatalogSignal, onStageChange, onToggleAllowAnyTransition, onMoveOrder, onMoveStage, onRemoveStage, onReplaceStage,
   onTransitionChange, onDeleteTransition, onCreateTransition, onSelectTransition, onAddCrmCustomField,
 }: CrmWorkflowInspectorPanelProps) {
   const i18n = useI18n();
@@ -127,13 +128,13 @@ export function CrmWorkflowInspectorPanel({
 
       <div className="space-y-2 rounded-md border border-nx-line bg-nx-raised/30 p-2.5" data-testid="status-inspector-color-picker">
         <div className="flex items-center justify-between">
-          <Label className="text-[11px] inline-flex items-center gap-1.5"><Palette className="w-3 h-3 text-nx-ink-2" />Stage Color ({customHexValue || STAGE_COLOR_PALETTE[activeColor]?.labelEn || activeColor})</Label>
-          {customHexValue && <Button type="button" size="sm" variant="ghost" className="h-5 px-1.5 text-[10px]" onClick={() => applyCustomHex("")}>Reset Hex</Button>}
+          <Label className="text-[11px] inline-flex items-center gap-1.5"><Palette className="w-3 h-3 text-nx-ink-2" />{t("crmOpportunities.pipelinesPage.stageColorLabel")} ({customHexValue || (isAr ? STAGE_COLOR_PALETTE[activeColor]?.labelAr : STAGE_COLOR_PALETTE[activeColor]?.labelEn) || activeColor})</Label>
+          {customHexValue && <Button type="button" size="sm" variant="ghost" className="h-5 px-1.5 text-[10px]" onClick={() => applyCustomHex("")}>{t("crmOpportunities.pipelinesPage.resetHexBtn")}</Button>}
         </div>
         <div className="flex items-center gap-1.5 flex-wrap">
           {CRM_STAGE_COLOR_TOKENS.map((c: CrmStageColorToken) => (
             <Button
-              key={c} type="button" size="icon" variant="outline" data-testid={`status-color-swatch-${c}`} title={STAGE_COLOR_PALETTE[c].labelEn}
+              key={c} type="button" size="icon" variant="outline" data-testid={`status-color-swatch-${c}`} title={isAr ? STAGE_COLOR_PALETTE[c].labelAr : STAGE_COLOR_PALETTE[c].labelEn}
               onClick={() => { const nextProps = { ...(selectedStage.properties ?? {}), color: c }; delete nextProps.customColorHex; onStageChange({ ...selectedStage, color: c, customColorHex: undefined, properties: nextProps }); }}
               className={`h-5 w-5 rounded-full p-0 border ${STAGE_COLOR_PALETTE[c].swatchClass} ${!customHexValue && activeColor === c ? "ring-2 ring-primary ring-offset-1 ring-offset-nx-surface scale-110" : "opacity-75 hover:opacity-100"}`}
             />
@@ -141,7 +142,7 @@ export function CrmWorkflowInspectorPanel({
         </div>
         <div className="flex items-center gap-2 pt-1 border-t border-nx-line">
           <Input type="color" value={/^#[0-9A-Fa-f]{6}$/.test(customHexValue) ? customHexValue : "#14B8A6"} onChange={(e) => applyCustomHex(e.target.value.toUpperCase())} className="h-7 w-9 p-0.5 cursor-pointer bg-nx-surface border-nx-line shrink-0" data-testid="status-custom-hex-picker" />
-          <Input value={customHexValue} placeholder="#RRGGBB (Custom Harmonic Hex)" onChange={(e) => applyCustomHex(e.target.value)} className="h-7 text-[11px] font-mono" data-testid="status-custom-hex-input" />
+          <Input value={customHexValue} placeholder="#RRGGBB" onChange={(e) => applyCustomHex(e.target.value)} className="h-7 text-[11px] font-mono" data-testid="status-custom-hex-input" />
         </div>
       </div>
 
@@ -160,6 +161,7 @@ export function CrmWorkflowInspectorPanel({
       <CrmWorkflowStageExitGatesSection
         t={t} isAr={isAr} stages={stages} selectedStage={selectedStage} crmCustomFields={crmCustomFields}
         coreFieldKeys={vm.coreFieldKeys} incoming={vm.incoming} outgoing={vm.outgoing}
+        allowInboundFromAny={vm.allowInboundFromAny} onToggleAllowAnyTransition={onToggleAllowAnyTransition}
         showCfForm={vm.showCfForm} onToggleCfForm={() => vm.setShowCfForm((v) => !v)}
         newCfKey={vm.newCfKey} onNewCfKeyChange={vm.setNewCfKey} newCfNameEn={vm.newCfNameEn} onNewCfNameEnChange={vm.setNewCfNameEn}
         newCfNameAr={vm.newCfNameAr} onNewCfNameArChange={vm.setNewCfNameAr} newCfType={vm.newCfType} onNewCfTypeChange={vm.setNewCfType}

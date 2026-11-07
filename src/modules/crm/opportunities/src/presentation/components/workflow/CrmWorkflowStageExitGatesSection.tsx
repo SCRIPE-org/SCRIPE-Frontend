@@ -26,6 +26,8 @@ export interface CrmWorkflowStageExitGatesSectionProps {
   coreFieldKeys: string[];
   incoming: CrmWorkflowTransition[];
   outgoing: CrmWorkflowTransition[];
+  allowInboundFromAny?: boolean;
+  onToggleAllowAnyTransition?: (stageKey: string, allowed: boolean) => void;
   showCfForm: boolean;
   onToggleCfForm: () => void;
   newCfKey: string;
@@ -39,25 +41,39 @@ export interface CrmWorkflowStageExitGatesSectionProps {
   onCreateCustomField: () => void;
   onToggleExitField: (fieldKey: string, checked: boolean) => void;
   onSelectTransition: (transitionId: string) => void;
-  onCreateTransition: (fromStageKey: string) => void;
+  onCreateTransition: (fromStageKey?: string, toStageKey?: string) => void;
   onStageChange?: (updated: CrmWorkflowStageNode) => void;
   canCreateCustomField: boolean;
 }
 
 /**
- * Pure declarative Stage Exit Validators, Playbooks, Field-Locking, and Transitions section (<185 lines).
+ * Pure declarative Stage Exit Validators, Playbooks, Field-Locking, and Transitions section (<195 lines).
  */
 export function CrmWorkflowStageExitGatesSection({
   t, isAr, stages, selectedStage, crmCustomFields, coreFieldKeys, incoming, outgoing,
+  allowInboundFromAny, onToggleAllowAnyTransition,
   showCfForm, onToggleCfForm, newCfKey, onNewCfKeyChange, newCfNameEn, onNewCfNameEnChange,
   newCfNameAr, onNewCfNameArChange, newCfType = "Text", onNewCfTypeChange,
   onCreateCustomField, onToggleExitField, onSelectTransition, onCreateTransition, onStageChange, canCreateCustomField,
 }: CrmWorkflowStageExitGatesSectionProps) {
   const [incomingOpen, setIncomingOpen] = useState(true);
   const [outgoingOpen, setOutgoingOpen] = useState(true);
+  const isAnyAllowed = allowInboundFromAny ?? Boolean(selectedStage.allowInboundFromAny || incoming.some((tr) => tr.fromStageKey === "*" || tr.fromStageKeys?.includes("*")));
 
   return (
     <>
+      <div className="rounded-md border border-nx-line bg-nx-raised/40 p-2.5 flex items-center gap-2.5">
+        <Checkbox
+          id={`stage-allow-any-${selectedStage.stageKey}`}
+          checked={isAnyAllowed}
+          onCheckedChange={(v) => onToggleAllowAnyTransition?.(selectedStage.stageKey, Boolean(v))}
+          data-testid="inspector-allow-any-inbound-checkbox"
+        />
+        <Label htmlFor={`stage-allow-any-${selectedStage.stageKey}`} className="text-xs cursor-pointer font-semibold text-nx-ink">
+          {t("crmOpportunities.pipelinesPage.allowTransitionsFromAnyStatusLabel")}
+        </Label>
+      </div>
+
       <div className="rounded-md border border-nx-line bg-nx-raised/30 p-3 space-y-2.5">
         <div className="flex items-center justify-between">
           <span className="text-xs font-bold text-nx-ink inline-flex items-center gap-1.5">
@@ -122,15 +138,22 @@ export function CrmWorkflowStageExitGatesSection({
             {incomingOpen ? <ChevronDown className="w-3.5 h-3.5 text-nx-ink-3" /> : <ChevronRight className="w-3.5 h-3.5 text-nx-ink-3" />}
             {t("crmOpportunities.pipelinesPage.incomingTransitionsHeader")} ({incoming.length})
           </Button>
+          <Button size="sm" variant="outline" className="h-6 px-2 text-[11px]" onClick={() => onCreateTransition(undefined, selectedStage.stageKey)} data-testid="inspector-add-incoming-transition-btn">
+            <Plus className="w-3 h-3 me-1" />{t("crmOpportunities.pipelinesPage.addBtn")}
+          </Button>
         </div>
         {incomingOpen && (
           <div className="space-y-1">
-            {incoming.map((tr) => (
-              <div key={tr.id} onClick={() => onSelectTransition(tr.id)} className="rounded-md border border-nx-line bg-nx-raised/40 px-2.5 py-1.5 flex items-center justify-between text-xs cursor-pointer hover:border-nx-line-hi">
-                <span className="inline-flex items-center gap-1.5 font-medium text-nx-ink truncate"><Zap className="w-3 h-3 text-info shrink-0" />{isAr ? tr.nameAr : tr.nameEn}</span>
-                <Badge variant="outline" className="text-[10px]">{tr.fromStageKey}</Badge>
-              </div>
-            ))}
+            {incoming.map((tr) => {
+              const sourceStage = stages.find((s) => s.stageKey === tr.fromStageKey);
+              const sourceLabel = tr.fromStageKey === "*" ? t("crmOpportunities.pipelinesPage.anyStageGlobal") : sourceStage ? (isAr ? sourceStage.labelAr : sourceStage.labelEn) : tr.fromStageKey;
+              return (
+                <div key={tr.id} onClick={() => onSelectTransition(tr.id)} className="rounded-md border border-nx-line bg-nx-raised/40 px-2.5 py-1.5 flex items-center justify-between text-xs cursor-pointer hover:border-nx-line-hi" data-testid={`inspector-incoming-tr-${tr.id}`}>
+                  <span className="inline-flex items-center gap-1.5 font-medium text-nx-ink truncate"><Zap className="w-3 h-3 text-info shrink-0" />{isAr ? tr.nameAr : tr.nameEn}</span>
+                  <Badge variant="outline" className="text-[10px]">{sourceLabel}</Badge>
+                </div>
+              );
+            })}
           </div>
         )}
       </div>
@@ -141,7 +164,7 @@ export function CrmWorkflowStageExitGatesSection({
             {outgoingOpen ? <ChevronDown className="w-3.5 h-3.5 text-nx-ink-3" /> : <ChevronRight className="w-3.5 h-3.5 text-nx-ink-3" />}
             {t("crmOpportunities.pipelinesPage.transitionsFromStatusHeader")} ({outgoing.length})
           </Button>
-          <Button size="sm" variant="outline" className="h-6 px-2 text-[11px]" onClick={() => onCreateTransition(selectedStage.stageKey)}>
+          <Button size="sm" variant="outline" className="h-6 px-2 text-[11px]" onClick={() => onCreateTransition(selectedStage.stageKey, undefined)} data-testid="inspector-add-outgoing-transition-btn">
             <Plus className="w-3 h-3 me-1" />{t("crmOpportunities.pipelinesPage.addBtn")}
           </Button>
         </div>
@@ -151,7 +174,7 @@ export function CrmWorkflowStageExitGatesSection({
               const targetStage = stages.find((s) => s.stageKey === tr.toStageKey);
               const targetLabel = targetStage ? (isAr ? targetStage.labelAr : targetStage.labelEn) : tr.toStageKey;
               return (
-                <div key={tr.id} onClick={() => onSelectTransition(tr.id)} className="rounded-md border border-nx-line bg-nx-raised/50 px-2.5 py-1.5 flex items-center justify-between text-xs cursor-pointer hover:border-nx-line-hi">
+                <div key={tr.id} onClick={() => onSelectTransition(tr.id)} className="rounded-md border border-nx-line bg-nx-raised/50 px-2.5 py-1.5 flex items-center justify-between text-xs cursor-pointer hover:border-nx-line-hi" data-testid={`inspector-outgoing-tr-${tr.id}`}>
                   <span className="inline-flex items-center gap-1.5 font-semibold text-nx-ink truncate"><Zap className="w-3 h-3 text-warning shrink-0" />{isAr ? tr.nameAr : tr.nameEn}</span>
                   <Badge variant="outline" className="text-[10px]">{targetLabel}</Badge>
                 </div>

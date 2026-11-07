@@ -75,6 +75,17 @@ export function CrmWorkflowTransitionInspector({
         </div>
         {vm.showMultiFromSelector && (
           <div className="pt-1.5 space-y-1 border-t border-nx-line" data-testid="inspector-multi-from-list">
+            <div className="flex items-center gap-2">
+              <Checkbox
+                id="multi-from-any"
+                checked={vm.currentFromKeys.includes("*")}
+                onCheckedChange={() => vm.toggleFromStageKey("*")}
+                data-testid="multi-from-checkbox-any"
+              />
+              <Label htmlFor="multi-from-any" className="text-[11px] cursor-pointer font-semibold text-nx-ink">
+                {t("crmOpportunities.pipelinesPage.anyStageGlobal")}
+              </Label>
+            </div>
             {stages
               .filter((s) => s.stageKey !== selectedTransition.toStageKey)
               .map((st) => (

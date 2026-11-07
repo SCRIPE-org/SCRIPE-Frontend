@@ -386,6 +386,89 @@ describe("PipelineManagementView — Pipelines Directory & Full-Screen 2D Workfl
     fireEvent.click(screen.getByTestId("workflow-create-custom-field-btn"));
     expect(screen.getByTestId("workflow-cf-type-select")).toBeDefined();
   });
+
+  it("supports Jira 8-port perimeter drag-and-drop targeting, unlimited multi-target transitions, Allow transitions from any status, and interactive Any pill + L-arrow", async () => {
+    render(<PipelineManagementView defaultOpenStudio />);
+
+    // 1. Verify all 8 Jira perimeter ports on selected stage node (3 top, 3 bottom, 1 left, 1 right)
+    fireEvent.click(screen.getByTestId("canvas-node-default.discovery"));
+    for (const portId of ["top-1", "top-2", "top-3", "right-1", "bottom-1", "bottom-2", "bottom-3", "left-1"]) {
+      expect(screen.getByTestId(`node-port-default.discovery-${portId}`)).toBeDefined();
+    }
+
+    // 2. Drag wire from Discovery top-3 and drop on empty canvas space -> should NOT open Add Transition modal
+    fireEvent.pointerDown(screen.getByTestId("node-port-default.discovery-top-3"), { clientX: 251, clientY: 64 });
+    fireEvent.pointerMove(screen.getByTestId("crm-2d-graph-surface"), { clientX: 20, clientY: 520 });
+    fireEvent.pointerUp(screen.getByTestId("crm-2d-graph-surface"), { clientX: 20, clientY: 520 });
+    expect(screen.queryByTestId("add-transition-modal")).toBeNull();
+
+    // 3. Drag wire from Discovery top-3 and drop directly onto Solution Fit node body -> opens Add Transition pre-filled with Move to Solution Fit
+    fireEvent.pointerDown(screen.getByTestId("node-port-default.discovery-top-3"), { clientX: 251, clientY: 64 });
+    fireEvent.pointerUp(screen.getByTestId("canvas-node-default.solution_fit"));
+    expect(screen.getByTestId("add-transition-modal")).toBeDefined();
+    fireEvent.click(screen.getByTestId("new-transition-submit-btn"));
+    await waitFor(() => {
+      expect(screen.queryByTestId("add-transition-modal")).toBeNull();
+    });
+
+    // 4. Drag wire from Discovery right-1 and drop onto Proposal top-1 port -> creates another outgoing transition from Discovery
+    fireEvent.pointerDown(screen.getByTestId("node-port-default.discovery-right-1"), { clientX: 298, clientY: 116 });
+    fireEvent.pointerUp(screen.getByTestId("node-port-default.proposal-top-1"));
+    expect(screen.getByTestId("add-transition-modal")).toBeDefined();
+    fireEvent.click(screen.getByTestId("new-transition-submit-btn"));
+    await waitFor(() => {
+      expect(screen.queryByTestId("add-transition-modal")).toBeNull();
+    });
+
+    // 5. Select Discovery and verify Outgoing Transitions shows 3 outgoing transitions (Qualification, Solution Fit, Proposal) and does NOT include global "*" transitions
+    fireEvent.click(screen.getByTestId("canvas-node-default.discovery"));
+    expect(screen.getByTestId("toggle-outgoing-transitions-btn").textContent).toContain("(3)");
+    expect(screen.getByTestId("inspector-add-incoming-transition-btn")).toBeDefined();
+    expect(screen.getByTestId("inspector-add-outgoing-transition-btn")).toBeDefined();
+
+    // 6. Open Add Status modal, verify [x] Allow transitions from any status checkbox is checked by default, and create a new status
+    fireEvent.click(screen.getByTestId("crm-toolbar-add-status"));
+    expect(screen.getByTestId("new-stage-allow-from-any")).toBeDefined();
+    fireEvent.change(screen.getByTestId("new-status-label-en-input"), { target: { value: "Legal Review" } });
+    fireEvent.click(screen.getByTestId("new-status-submit-btn"));
+
+    // 7. Verify floating Any pill + L-shaped orthogonal elbow SVG arrow render on the new status and clicking Any opens Transition Inspector
+    const anyPill = screen.getByTestId("canvas-transition-global-default.legal_review");
+    const anyElbow = screen.getByTestId("canvas-any-elbow-default.legal_review");
+    expect(anyPill).toBeDefined();
+    expect(anyElbow).toBeDefined();
+    fireEvent.click(anyPill);
+    expect(screen.getByTestId("inspector-transition-name-en")).toBeDefined();
+
+    // 8. Dragging from the floating Any pill onto another stage node opens Add Transition modal with From = Any status (*)
+    fireEvent.pointerDown(anyPill, { clientX: 928, clientY: 378 });
+    fireEvent.pointerUp(screen.getByTestId("canvas-node-default.negotiation"), { clientX: 500, clientY: 390 });
+    expect(screen.getByTestId("add-transition-modal")).toBeDefined();
+    fireEvent.click(screen.getByTestId("new-transition-submit-btn"));
+
+    // 9. Verify computeJiraOrthogonalEdges separates overlapping horizontal lanes (1->2 vs 1->3) and detours around intermediate Row 2 obstacles on 3-row (y=636) graphs
+    const { computeJiraOrthogonalEdges } = await import("../components/workflow/crmWorkflowEdgeRouting");
+    const nodeMap = new Map([
+      ["s1", { stageKey: "s1", labelEn: "S1", labelAr: "S1", probability: 10, slaDays: 5, order: 1, isTerminalWon: false, isTerminalLost: false, requiredExitFields: [], x: 110, y: 84 }],
+      ["s2", { stageKey: "s2", labelEn: "S2", labelAr: "S2", probability: 25, slaDays: 5, order: 2, isTerminalWon: false, isTerminalLost: false, requiredExitFields: [], x: 410, y: 84 }],
+      ["s3", { stageKey: "s3", labelEn: "S3", labelAr: "S3", probability: 50, slaDays: 5, order: 3, isTerminalWon: false, isTerminalLost: false, requiredExitFields: [], x: 710, y: 84 }],
+      ["s4", { stageKey: "s4", labelEn: "S4", labelAr: "S4", probability: 75, slaDays: 5, order: 4, isTerminalWon: false, isTerminalLost: false, requiredExitFields: [], x: 110, y: 360 }],
+      ["s7", { stageKey: "s7", labelEn: "S7", labelAr: "S7", probability: 90, slaDays: 5, order: 7, isTerminalWon: false, isTerminalLost: false, requiredExitFields: [], x: 110, y: 636 }],
+    ]);
+    const routed = computeJiraOrthogonalEdges(
+      [
+        { id: "e12", nameEn: "1 to 2", nameAr: "1-2", fromStageKey: "s1", toStageKey: "s2", requiredFields: [] },
+        { id: "e13", nameEn: "1 to 3", nameAr: "1-3", fromStageKey: "s1", toStageKey: "s3", sourcePort: "top-2", requiredFields: [] },
+        { id: "e17", nameEn: "1 to 7", nameAr: "1-7", fromStageKey: "s1", toStageKey: "s7", sourcePort: "bottom-2", targetPort: "top-2", requiredFields: [] },
+      ],
+      nodeMap,
+      null,
+      true,
+    );
+    expect(Math.abs(routed[0].labelY - routed[1].labelY)).toBeGreaterThanOrEqual(22);
+    // e17 must detour around s4 (x=110..298, y=360..464) using a detour X outside [100, 308]
+    expect(routed[2].path).toContain("L 86 ");
+  });
 });
 
 

@@ -10,46 +10,15 @@ import type {
 } from "./CrmWorkflowCanvas2D";
 
 export { CrmWorkflowTransitionsTableView } from "./CrmWorkflowTransitionsTableView";
-
-export const NODE_WIDTH = 188;
-export const NODE_HEIGHT = 104;
-
-export type StagePortSide = "top" | "right" | "bottom" | "left";
-export type StagePortId =
-  | "top-1"
-  | "top-2"
-  | "right-1"
-  | "right-2"
-  | "bottom-1"
-  | "bottom-2"
-  | "left-1"
-  | "left-2";
-
-export interface StagePortSpec {
-  id: StagePortId;
-  side: StagePortSide;
-  rx: number;
-  ry: number;
-}
-
-export const STAGE_PORTS: StagePortSpec[] = [
-  { id: "top-1", side: "top", rx: 0.34, ry: 0 },
-  { id: "top-2", side: "top", rx: 0.66, ry: 0 },
-  { id: "right-1", side: "right", rx: 1, ry: 0.34 },
-  { id: "right-2", side: "right", rx: 1, ry: 0.66 },
-  { id: "bottom-1", side: "bottom", rx: 0.34, ry: 1 },
-  { id: "bottom-2", side: "bottom", rx: 0.66, ry: 1 },
-  { id: "left-1", side: "left", rx: 0, ry: 0.34 },
-  { id: "left-2", side: "left", rx: 0, ry: 0.66 },
-];
-
-export function getPortCoords(node: CrmWorkflowStageNode, portId: StagePortId) {
-  const spec = STAGE_PORTS.find((p) => p.id === portId) ?? STAGE_PORTS[2];
-  return {
-    x: node.x + NODE_WIDTH * spec.rx,
-    y: node.y + NODE_HEIGHT * spec.ry,
-  };
-}
+export {
+  NODE_HEIGHT,
+  NODE_WIDTH,
+  STAGE_PORTS,
+  getPortCoords,
+  type StagePortId,
+  type StagePortSide,
+  type StagePortSpec,
+} from "./crmWorkflowEdgeRouting";
 
 export function countTransitionRules(tr: CrmWorkflowTransition): number {
   let count = tr.requiredFields.length;

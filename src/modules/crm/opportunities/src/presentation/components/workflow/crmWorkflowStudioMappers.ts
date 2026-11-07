@@ -1,13 +1,14 @@
 import { resolveDefaultStageColor, type CrmWorkflowDefinition } from "@modules/crm";
 import { CANONICAL_TERMINAL_LABELS } from "../../../domain/constants/crmCanonicalStages";
 import type { CrmWorkflowStageNode, CrmWorkflowTransition } from "./CrmWorkflowCanvas2D";
+import type { StagePortId } from "./CrmWorkflowCanvasSubViews";
 
-/** Computes a generous 2-row 2D topological position (Row 1 y=64, Row 2 y=340, dx=300) so transition pills have a 172px vertical corridor with zero collisions. */
+/** Computes a generous 2-row 2D topological position (Row 1 y=84, Row 2 y=360, dx=300) so top & mid corridors fit multiple parallel lanes with zero collisions. */
 export function computeBalanced2DStagePosition(idx: number): { x: number; y: number } {
-  if (idx < 3) return { x: 110 + idx * 300, y: 64 };
+  if (idx < 3) return { x: 110 + idx * 300, y: 84 };
   const row = Math.floor(idx / 3);
   const col = idx % 3;
-  return { x: 160 + col * 300, y: 64 + row * 276 };
+  return { x: 160 + col * 300, y: 84 + row * 276 };
 }
 
 /** Builds 2D Studio stage nodes from a persisted CrmWorkflowDefinition. */
@@ -18,21 +19,26 @@ export function buildStageNodesFromWorkflow(wf: CrmWorkflowDefinition): CrmWorkf
     const isDealWon = wf.entityType === "deal" && (st.stageKey === "terminal-won" || st.category === "done");
     const isDealLost = wf.entityType === "deal" && (st.stageKey === "terminal-lost" || st.category === "lost");
     const defPos = isDealWon
-      ? { x: 1010, y: 64 }
+      ? { x: 1010, y: 84 }
       : isDealLost
-        ? { x: 1010, y: 340 }
+        ? { x: 1010, y: 360 }
         : computeBalanced2DStagePosition(nonTermIdx++);
     const hasCustomPos =
       st.position &&
       typeof st.position.x === "number" &&
       typeof st.position.y === "number" &&
       st.position.x <= 1100 &&
+      st.position.y !== 64 &&
+      st.position.y !== 340 &&
       st.position.y !== 72 &&
       st.position.y !== 272 &&
       st.position.y !== 96 &&
       st.position.y !== 260;
     const category = st.category ?? (idx === 0 ? "todo" : "in_progress");
     const color = resolveDefaultStageColor(st.stageKey, category, st.sortOrder || idx + 1, st.color || st.properties?.color);
+    const hasGlobalInbound = wf.transitions.some(
+      (tr) => (tr.fromStageKey === "*" || tr.fromStageKeys?.includes("*")) && tr.toStageKey === st.stageKey,
+    );
     return {
       stageKey: st.stageKey,
       labelEn: st.labelEn,
@@ -44,6 +50,7 @@ export function buildStageNodesFromWorkflow(wf: CrmWorkflowDefinition): CrmWorkf
       color,
       customColorHex: st.customColorHex || st.properties?.customColorHex,
       properties: st.properties ? { ...st.properties } : {},
+      allowInboundFromAny: Boolean(st.allowInboundFromAny || hasGlobalInbound),
       isTerminalWon: isDealWon,
       isTerminalLost: isDealLost,
       convertsToDeal: Boolean(st.triggerDealConversion || st.triggersDealConversion),
@@ -64,11 +71,12 @@ export function buildStageNodesFromWorkflow(wf: CrmWorkflowDefinition): CrmWorkf
         order: sorted.length + 1,
         category: "done",
         color: "emerald",
+        allowInboundFromAny: false,
         isTerminalWon: true,
         isTerminalLost: false,
         requiredExitFields: [],
         x: 1010,
-        y: 64,
+        y: 84,
       });
     }
     if (!nodes.some((n) => n.stageKey === "terminal-lost" || n.isTerminalLost)) {
@@ -81,11 +89,12 @@ export function buildStageNodesFromWorkflow(wf: CrmWorkflowDefinition): CrmWorkf
         order: sorted.length + 2,
         category: "lost",
         color: "rose",
+        allowInboundFromAny: true,
         isTerminalWon: false,
         isTerminalLost: true,
         requiredExitFields: [],
         x: 1010,
-        y: 340,
+        y: 360,
       });
     }
   }
@@ -102,6 +111,8 @@ export function buildTransitionsFromWorkflow(wf: CrmWorkflowDefinition): CrmWork
     fromStageKeys: tr.fromStageKeys ? [...tr.fromStageKeys] : [tr.fromStageKey],
     toStageKey: tr.toStageKey,
     direction: tr.direction,
+    sourcePort: (tr.properties?.sourcePort as StagePortId | undefined) ?? undefined,
+    targetPort: (tr.properties?.targetPort as StagePortId | undefined) ?? undefined,
     domainEventKey: tr.domainEventKey ?? "GenericEvent",
     triggers: tr.triggers ? [...tr.triggers] : [],
     properties: tr.properties ? { ...tr.properties } : {},
@@ -218,7 +229,9 @@ export function serializeStudioDraftToWorkflow(
         requiresVerifiedParty: s.requiredExitFields.includes("partyId"),
         triggerDealConversion: Boolean(s.convertsToDeal),
         triggersDealConversion: Boolean(s.convertsToDeal),
-        allowInboundFromAny: prev?.allowInboundFromAny ?? s.isTerminalLost,
+        allowInboundFromAny: transitions.some(
+          (tr) => (tr.fromStageKey === "*" || tr.fromStageKeys?.includes("*")) && tr.toStageKey === s.stageKey,
+        ),
         position: { x: s.x, y: s.y },
       };
     }),
@@ -226,6 +239,9 @@ export function serializeStudioDraftToWorkflow(
       const fromOrder = orderMap.get(tr.fromStageKey) ?? 0;
       const toOrder = orderMap.get(tr.toStageKey) ?? 0;
       const resolvedDirection = tr.fromStageKey === "*" ? "global" : toOrder < fromOrder ? "backward" : tr.direction ?? "forward";
+      const nextProps: Record<string, string> = { ...(tr.properties ?? {}) };
+      if (tr.sourcePort) nextProps.sourcePort = tr.sourcePort;
+      if (tr.targetPort) nextProps.targetPort = tr.targetPort;
       return {
         id: tr.id,
         nameEn: tr.nameEn,
@@ -236,7 +252,7 @@ export function serializeStudioDraftToWorkflow(
         direction: resolvedDirection,
         domainEventKey: tr.domainEventKey ?? "GenericEvent",
         triggers: tr.triggers ?? [],
-        properties: tr.properties ?? {},
+        properties: nextProps,
         catalogRules: tr.catalogRules ?? [],
         rules: {
           allowRollback: tr.allowRollback ?? true,
