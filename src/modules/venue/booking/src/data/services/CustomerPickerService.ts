@@ -4,6 +4,7 @@ import type { CustomerSummary } from "../../domain/entities/Booking";
 import type {
   ICustomerPickerService,
   CustomerCreateOptions,
+  PagedCustomerResult,
 } from "../../domain/interfaces/ICustomerPickerService";
 import { BOOKING_ENDPOINTS } from "./booking.endpoints";
 
@@ -29,14 +30,99 @@ export class CustomerPickerService implements ICustomerPickerService {
   constructor(private readonly api: IApiService) {}
 
   async search(query: string): Promise<CustomerSummary[]> {
-    const result = await this.api.get<PartyPage>(
-      buildUrl(BOOKING_ENDPOINTS.PARTIES, {
-        page: 1,
-        pageSize: 20,
-        search: query.trim() || undefined,
-      })
-    );
-    return result.items;
+    try {
+      const result = await this.api.get<PartyPage>(
+        buildUrl(BOOKING_ENDPOINTS.PARTIES, {
+          page: 1,
+          pageSize: 20,
+          search: query.trim() || undefined,
+        })
+      );
+      const items = Array.isArray(result?.items)
+        ? result.items
+        : Array.isArray(result)
+        ? result
+        : [];
+      return items.map((item: any) => {
+        const phone = item.phone ?? item.primaryPhone;
+        const email = item.email ?? item.primaryEmail;
+        return {
+          ...item,
+          ...(phone !== undefined && { phone }),
+          ...(email !== undefined && { email }),
+        };
+      });
+    } catch {
+      return [];
+    }
+  }
+
+  async searchPaged(
+    query?: string,
+    page: number = 1,
+    pageSize: number = 20
+  ): Promise<PagedCustomerResult> {
+    try {
+      const result = await this.api.get<any>(
+        buildUrl(BOOKING_ENDPOINTS.PARTIES, {
+          page: Math.max(1, page),
+          pageSize: Math.max(1, Math.min(pageSize, 100)),
+          search: query?.trim() || undefined,
+        })
+      );
+
+      const rawItems = Array.isArray(result?.items)
+        ? result.items
+        : Array.isArray(result)
+        ? result
+        : [];
+
+      const items: CustomerSummary[] = rawItems.map((item: any) => {
+        const phone = item.phone ?? item.primaryPhone;
+        const email = item.email ?? item.primaryEmail;
+        return {
+          ...item,
+          ...(phone !== undefined && { phone }),
+          ...(email !== undefined && { email }),
+        };
+      });
+
+      const totalCount = typeof result?.totalCount === "number" ? result.totalCount : items.length;
+      const pageNumber = typeof result?.pageNumber === "number" ? result.pageNumber : page;
+      const effectivePageSize = typeof result?.pageSize === "number" ? result.pageSize : pageSize;
+      const totalPages =
+        typeof result?.totalPages === "number"
+          ? result.totalPages
+          : Math.ceil(totalCount / effectivePageSize) || 1;
+      const hasPreviousPage =
+        typeof result?.hasPreviousPage === "boolean"
+          ? result.hasPreviousPage
+          : pageNumber > 1;
+      const hasNextPage =
+        typeof result?.hasNextPage === "boolean"
+          ? result.hasNextPage
+          : pageNumber < totalPages;
+
+      return {
+        items,
+        totalCount,
+        pageNumber,
+        pageSize: effectivePageSize,
+        totalPages,
+        hasPreviousPage,
+        hasNextPage,
+      };
+    } catch {
+      return {
+        items: [],
+        totalCount: 0,
+        pageNumber: page,
+        pageSize,
+        totalPages: 0,
+        hasPreviousPage: false,
+        hasNextPage: false,
+      };
+    }
   }
 
   getById(id: string): Promise<CustomerSummary> {
@@ -120,6 +206,36 @@ export class CustomerPickerService implements ICustomerPickerService {
         } else {
           throw new PartialCustomerSaveError(
             `Customer was created with ID ${partyId}, but saving the phone number failed.`,
+            partyId,
+            err
+          );
+        }
+      }
+    }
+
+    if (options?.email && options.email.trim()) {
+      const emailHeaders: Record<string, string> = {};
+      if (idempotencyKey) {
+        emailHeaders["Idempotency-Key"] = `${idempotencyKey}:email`;
+      }
+      try {
+        await this.api.post(
+          BOOKING_ENDPOINTS.CONTACT_POINTS,
+          {
+            partyId,
+            type: "Email",
+            value: options.email.trim(),
+            isPrimary: true,
+          },
+          undefined,
+          Object.keys(emailHeaders).length > 0 ? { headers: emailHeaders } : undefined
+        );
+      } catch (err) {
+        if (options?.onContactPointFailure) {
+          options.onContactPointFailure(err, partyId);
+        } else {
+          throw new PartialCustomerSaveError(
+            `Customer was created with ID ${partyId}, but saving the email address failed.`,
             partyId,
             err
           );

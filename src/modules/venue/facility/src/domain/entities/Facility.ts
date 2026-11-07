@@ -10,6 +10,7 @@ export interface FacilityData {
   createdAt: string;
   modifiedAt?: string;
   venueProfileName?: string;
+  rowVersion?: string;
 }
 
 /**
@@ -48,6 +49,10 @@ export class Facility {
 
   get modifiedAt(): string | undefined {
     return this.data.modifiedAt;
+  }
+
+  get rowVersion(): string | undefined {
+    return this.data.rowVersion;
   }
 
   /**

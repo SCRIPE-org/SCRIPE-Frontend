@@ -17,6 +17,14 @@ export const ar = {
       Expired: "منتهي",
       NoShow: "عدم حضور",
       terminal: "نهائي",
+      lifecycleLabel: "دورة الحياة",
+      financialLabel: "الدفعة",
+    },
+    paymentStatus: {
+      Paid: "مدفوع",
+      Partial: "مدفوع جزئيًا",
+      Unpaid: "غير مدفوع",
+      PendingSync: "قيد المزامنة",
     },
     schedule: {
       title: "الجدول",
@@ -43,6 +51,11 @@ export const ar = {
       restricted: "تتطلب تفاصيل العميل إذن الوصول إلى الأطراف.",
       unspecified: "عميل غير محدد",
       viewCustomer: "عرض العميل",
+      typePerson: "فرد",
+      typeOrganization: "منشأة",
+      noPhone: "لا يوجد هاتف مسجل",
+      noEmail: "لا يوجد بريد إلكتروني مسجل",
+      partyKernelId: "معرّف سجل الأطراف",
     },
     hold: {
       title: "الحجز المؤقت والتأكيد",
@@ -71,7 +84,14 @@ export const ar = {
       restricted: "تتطلب التفاصيل التجارية إذن الوصول إلى المستحقات.",
       unavailable: "تفاصيل التمويل غير متاحة مؤقتًا.",
       viewReceivables: "عرض في المستحقات",
+      viewPayments: "عرض في المدفوعات",
       recordPayment: "تسجيل دفعة",
+      refundRequiredTitle: "مطلوب إجراء استرداد مالي",
+      refundRequiredDescription:
+        "تم إلغاء هذا الحجز ولديه دفعات مسجلة بمبلغ {{amount}}. يرجى تسجيل استرداد في المالية.",
+      issueRefundCta: "إصدار استرداد",
+      refundRequiredBadge: "مطلوب استرداد",
+      refundedBadge: "مستردة",
     },
     transition: {
       T01: "تم إنشاء المسودة",
@@ -160,6 +180,9 @@ export const ar = {
       reasonTooLong: "يجب ألا يتجاوز السبب {{max}} حرفًا.",
       keep: "إبقاء الحجز",
       confirm: "تأكيد الإلغاء",
+      paidWarningTitle: "تم تسجيل دفعات",
+      paidWarningDescription:
+        "يتضمن هذا الحجز دفعات مسجلة بقيمة {{amount}}. لن يؤدي الإلغاء إلى استرداد المبالغ تلقائيًا. يجب معالجة استرداد الأموال عبر المالية.",
     },
     reschedule: {
       title: "إعادة جدولة الحجز",
@@ -221,6 +244,17 @@ export const ar = {
       title: "تعذر تحميل الحجز",
       description: "تعذر استرداد أحدث حالة للحجز.",
       retry: "إعادة المحاولة",
+    },
+    guestAccess: {
+      title: "وصول الضيف بدون تطبيق",
+      linkTitle: "رابط الخدمة الذاتية الآمن للضيف",
+      pinLabel: "رمز PIN للبوابة / الكشك",
+      copyPin: "نسخ الرمز",
+      pinCopied: "تم النسخ",
+      copyLink: "نسخ الرابط",
+      linkCopied: "تم النسخ",
+      qrLabel: "بطاقة مرور QR",
+      scanPrompt: "امسح بالكاميرا للوصول إلى الخدمة الذاتية للضيف",
     },
   },
 };

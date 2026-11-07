@@ -13,6 +13,7 @@ export const ar = {
       allResources: "جميع الملاعب والمساحات",
       refresh: "تحديث",
       dayView: "عرض اليوم",
+      findSlots: "البحث عن موعد",
       blockTime: "+ حظر وقت",
       newBooking: "+ حجز جديد",
       filter: "تصفية",
@@ -55,6 +56,17 @@ export const ar = {
       maintenance: "صيانة",
       free: "متاح",
     },
+    maintenanceDrawer: {
+      title: "تفاصيل الصيانة والإغلاق",
+      description: "هذا الملعب أو المساحة غير متاح حالياً للحجوزات بسبب الصيانة أو الإغلاق الإداري.",
+      court: "الملعب / المساحة",
+      status: "الحالة",
+      reference: "المرجع",
+      reason: "السبب",
+      start: "وقت البدء",
+      end: "وقت الانتهاء",
+      timeWindow: "الفترة الزمنية",
+    },
     utility: {
       previousMonth: "الشهر السابق",
       nextMonth: "الشهر التالي",
@@ -87,6 +99,9 @@ export const ar = {
       title: "أضف أول ملعب أو مساحة",
       description: "ابدأ بإضافة ملاعب أو مساحات إلى هذا الفرع لبدء استقبال الحجوزات.",
       action: "إضافة ملعب / مساحة",
+      branchEmptyTitle: "لا توجد ملاعب في هذه المنشأة",
+      branchEmptyDescription:
+        "اختر منشأة أخرى من عامل التصفية بالأعلى، أو أضف ملاعب ومساحات جديدة لهذه المنشأة.",
     },
     permission: {
       title: "يلزم إذن الوصول إلى التقويم",
@@ -161,7 +176,10 @@ export const ar = {
         creating: "جارٍ إنشاء العميل...",
         createAndSelect: "إنشاء واختيار",
         change: "تغيير",
+        searching: "جارٍ البحث...",
         noResults: "لم يتم العثور على عملاء",
+        noResultsFound: "لم يتم العثور على عملاء",
+        noResultsHint: "جرب بحثاً آخر أو أضف عميلاً جديداً.",
         duplicateWarning: "يوجد عميل مسجل ببيانات مشابهة",
         searchError: "فشل البحث عن العميل. يرجى إعادة المحاولة.",
       },
@@ -248,6 +266,15 @@ export const ar = {
         openBooking: "فتح تفاصيل الحجز",
         close: "إغلاق",
       },
+    },
+  },
+  resources: {
+    blockTimeModal: {
+      endDate: "تاريخ الانتهاء",
+      endTime: "وقت الانتهاء",
+      reason: "السبب / ملاحظات",
+      reasonPlaceholder: "مثال: إصلاح الشبكة وتنظيف الأرضية",
+      cancel: "إلغاء",
     },
   },
 };

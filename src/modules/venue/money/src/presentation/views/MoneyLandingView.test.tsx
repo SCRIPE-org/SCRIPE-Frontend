@@ -1,4 +1,4 @@
-import { render, screen, waitFor } from "@testing-library/react";
+import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { useRouter } from "next/navigation";
 import { usePermission } from "@core/hooks/use-permission";
@@ -71,21 +71,37 @@ describe("MoneyLandingView", () => {
           invoiceNumber: "INV-001",
           effectiveTotalAmount: 1000,
           outstandingAmount: 500,
+          paidAmount: 500,
           currencyCode: "EGP",
+          status: "Issued",
+          reservationId: "res-001",
         },
         {
           id: "inv-2",
           invoiceNumber: "INV-002",
           effectiveTotalAmount: 800,
           outstandingAmount: 0,
+          paidAmount: 800,
           currencyCode: "EGP",
+          status: "Paid",
         },
       ],
       totalCount: 2,
     };
 
     const mockPayments = {
-      items: [{ id: "pay-1", paymentNumber: "PAY-001", amount: 500, currencyCode: "EGP" }],
+      items: [
+        {
+          id: "pay-1",
+          paymentNumber: "PAY-001",
+          amount: 500,
+          currencyCode: "EGP",
+          reservationId: "res-001",
+          status: "Refunded",
+          recordedAtUtc: "2026-10-01T12:00:00Z",
+          unallocatedAmount: 0,
+        },
+      ],
       totalCount: 1,
     };
 
@@ -183,6 +199,27 @@ describe("MoneyLandingView", () => {
     expect(screen.getByText("View Receivables")).toBeInTheDocument();
     expect(screen.getByText("View Payments")).toBeInTheDocument();
     expect(screen.getAllByText("Record Payment").length).toBeGreaterThanOrEqual(1);
+
+    // Switch to Today filter to activate Today's Operational Shift Summary card
+    fireEvent.click(screen.getByRole("button", { name: "Today" }));
+
+    await waitFor(() => {
+      expect(screen.getByTestId("today-shift-summary-card")).toBeInTheDocument();
+      expect(screen.getByTestId("receivable-booking-link-inv-1")).toHaveAttribute(
+        "href",
+        "/venue/bookings/res-001"
+      );
+      expect(screen.getByTestId("payment-booking-link-pay-1")).toHaveAttribute(
+        "href",
+        "/venue/bookings/res-001"
+      );
+    });
+    expect(screen.getByText("Amount Due (Invoiced)")).toBeInTheDocument();
+    expect(screen.getByText("Amount Collected")).toBeInTheDocument();
+    expect(screen.getByText("Collected Today")).toBeInTheDocument();
+    expect(screen.getByText("Outstanding Balance")).toBeInTheDocument();
+    expect(screen.getByText("Refund Status")).toBeInTheDocument();
+    expect(screen.getByText("Net Collected")).toBeInTheDocument();
     expect(replaceMock).not.toHaveBeenCalled();
   });
 

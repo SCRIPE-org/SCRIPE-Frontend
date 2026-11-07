@@ -416,20 +416,14 @@ function GenericTableInner<T extends Record<string, any>>({
     return undefined;
   };
 
-  if (loading) {
-    // The shared placeholder primitive, in the row silhouette — the region
-    // announces the load, so the blocks themselves stay decorative.
-    return (
-      <div className="space-y-3" role="status" aria-busy="true" aria-label={t("common.loading")}>
-        {[...Array(5)].map((_, i) => (
-          <Skeleton key={i} className="h-16" />
-        ))}
-      </div>
-    );
-  }
-
   return (
-    <div className="space-y-4" data-table-style={tableStyle}>
+    <div
+      className="space-y-4"
+      data-table-style={tableStyle}
+      role={loading ? "status" : undefined}
+      aria-busy={loading || undefined}
+      aria-label={loading ? t("common.loading") : undefined}
+    >
       {/* Search Bar - Only show if search functionality is enabled */}
       {onSearch !== undefined && (
         <div className="relative">
@@ -450,7 +444,23 @@ function GenericTableInner<T extends Record<string, any>>({
 
       {/* Mobile Cards View */}
       <div className="block space-y-4 md:hidden">
-        {sortedData.length === 0 ? (
+        {loading ? (
+          [0, 1, 2].map((i) => (
+            <div key={i} className={getCardClasses()}>
+              {columns
+                .filter((column) => !column.hideOnMobile)
+                .map((column) => (
+                  <div
+                    key={String(column.key)}
+                    className="flex items-center justify-between gap-2"
+                  >
+                    <Skeleton className="h-3.5 w-24" />
+                    <Skeleton className="h-4 w-32" />
+                  </div>
+                ))}
+            </div>
+          ))
+        ) : sortedData.length === 0 ? (
           <div className="py-12 text-center text-nx-ink-3">{empty}</div>
         ) : (
           sortedData.map((row, index) => {
@@ -656,7 +666,32 @@ function GenericTableInner<T extends Record<string, any>>({
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {sortedData.length === 0 ? (
+                {loading ? (
+                  [0, 1, 2, 3, 4].map((rowIndex) => (
+                    <TableRow key={`skeleton-${rowIndex}`} className={getRowClasses()}>
+                      {selectable && (
+                        <TableCell className="w-12">
+                          <Skeleton className="h-4 w-4 rounded-nx-sm" />
+                        </TableCell>
+                      )}
+                      {columns.map((column) => (
+                        <TableCell
+                          key={String(column.key)}
+                          className={cn(column.className, getPinClasses(column.pin))}
+                        >
+                          <Skeleton className="h-4 w-full max-w-[160px]" />
+                        </TableCell>
+                      ))}
+                      {((actions && actions.length > 0) || renderActions) && (
+                        <TableCell className={cn(stickyActions && stickyActionsClasses)}>
+                          <div className="flex items-center justify-center">
+                            <Skeleton className="h-7 w-7 rounded-nx-sm" />
+                          </div>
+                        </TableCell>
+                      )}
+                    </TableRow>
+                  ))
+                ) : sortedData.length === 0 ? (
                   <TableRow>
                     <TableCell
                       colSpan={

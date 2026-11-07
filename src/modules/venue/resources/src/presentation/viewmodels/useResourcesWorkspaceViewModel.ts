@@ -17,6 +17,7 @@ import {
   type ResourceWorkspaceItem,
 } from "../../domain/entities/ResourceWorkspaceItem";
 import { mapVenueError, getSavedFacilityId, saveFacilityId } from "@modules/venue";
+import { extractCourtPhotos } from "../../domain/court-photos";
 
 const PAGE_SIZE = 100;
 
@@ -83,8 +84,7 @@ export function useResourcesWorkspaceViewModel() {
         });
       }
 
-      // Fetch pricing and availability calendars for non-composite resources
-      const nonComposite = resourcePage.items.filter((r) => !r.isComposite);
+      // Fetch pricing and availability calendars for all resources
       const priceMap = new Map<
         string,
         { unitPrice: number; currencyCode: string; effectiveFromUtc?: string | null }
@@ -92,7 +92,7 @@ export function useResourcesWorkspaceViewModel() {
       const calendarMap = new Map<string, AvailabilityCalendar | null>();
 
       await Promise.all(
-        nonComposite.map(async (r) => {
+        resourcePage.items.map(async (r) => {
           try {
             const config = await commercialPricingRepository.getResourceConfiguration(r.id);
             if (config && config.unitPrice != null) {
@@ -145,7 +145,6 @@ export function useResourcesWorkspaceViewModel() {
 
   const items: ResourceWorkspaceItem[] = useMemo(() => {
     return resources
-      .filter((r) => !r.isComposite)
       .map((r) => {
         const profile = profileMap.get(r.facilityResourceProfileId);
         const facility = profile ? facilityMap.get(profile.facilityId) : undefined;
@@ -225,7 +224,10 @@ export function useResourcesWorkspaceViewModel() {
           currencyCode: price?.currencyCode ?? "EGP",
           priceEffectiveFromUtc: price?.effectiveFromUtc ?? null,
           isPublished: r.isPublished,
+          isComposite: Boolean(r.isComposite),
           timeZoneId,
+          description: r.description ?? null,
+          imageUrl: (r.imageUrl || extractCourtPhotos(r.photoMetadata, r.description)[0]) ?? null,
           readinessState: readiness.state,
           readiness,
         };
@@ -469,7 +471,7 @@ export function useResourcesWorkspaceViewModel() {
                   : weekDays.map((dayOfWeek) => ({
                       dayOfWeek,
                       startLocal: input.customWorkingHours?.opensAt ?? "08:00",
-                      endLocal: input.customWorkingHours?.closesAt ?? "00:00",
+                      endLocal: input.customWorkingHours?.closesAt === "00:00" ? "23:59:59" : (input.customWorkingHours?.closesAt ?? "23:59:59"),
                       capacityOverride: null,
                     }));
 
@@ -539,7 +541,7 @@ export function useResourcesWorkspaceViewModel() {
                   displayName: `${trimmedName} Standard Rate`,
                   currencyCode: input.currencyCode || "EGP",
                   unitPrice: input.pricePerSlot,
-                  effectiveFromUtc: new Date(Date.now() + 15_000).toISOString(),
+                  effectiveFromUtc: new Date().toISOString(),
                   minDurationMinutes: input.slotDurationMinutes,
                   maxDurationMinutes: null,
                   incrementMinutes: input.startIncrementMinutes,
@@ -613,6 +615,29 @@ export function useResourcesWorkspaceViewModel() {
     ]
   );
 
+  const deleteResource = useCallback(
+    async (id: string) => {
+      setLoading(true);
+      setError(null);
+      try {
+        if (typeof (schedulableResourceRepository as any).deleteResource === "function") {
+          await (schedulableResourceRepository as any).deleteResource(id);
+        } else {
+          await schedulableResourceRepository.delete(id);
+        }
+        await loadData();
+        return true;
+      } catch (err) {
+        const safe = mapVenueError(err);
+        setError(safe.message);
+        return false;
+      } finally {
+        setLoading(false);
+      }
+    },
+    [loadData, schedulableResourceRepository]
+  );
+
   return {
     loading,
     error,
@@ -629,6 +654,7 @@ export function useResourcesWorkspaceViewModel() {
     lastSetupResults,
     metrics,
     executeFirstTimeSetup,
+    deleteResource,
     refresh: loadData,
   };
 }

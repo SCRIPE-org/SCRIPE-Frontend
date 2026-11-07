@@ -61,8 +61,8 @@ export function HoldCountdownBadge({
       className={cn(
         "gap-1.5 border px-2.5 py-1 font-mono text-xs transition-colors",
         isCritical
-          ? "animate-pulse border-red-500/50 bg-red-500/10 text-red-400"
-          : "border-warning/30 bg-warning/10 text-warning",
+          ? "animate-pulse border-nx-destructive/50 bg-nx-destructive/10 text-nx-destructive"
+          : "border-nx-warning/30 bg-nx-warning/10 text-nx-warning",
         className
       )}
     >

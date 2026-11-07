@@ -768,8 +768,17 @@ export class ApiService implements IApiService {
     return this.unwrap<T>(response.data);
   }
 
-  async postPublic<T>(endpoint: string, data?: unknown, signal?: AbortSignal): Promise<T> {
-    const response = await this.axiosPublic.post(endpoint, data, this.buildConfig(signal));
+  async postPublic<T>(
+    endpoint: string,
+    data?: unknown,
+    signal?: AbortSignal,
+    options?: MutationRequestOptions
+  ): Promise<T> {
+    const response = await this.axiosPublic.post(
+      endpoint,
+      data,
+      this.buildConfig(signal, undefined, options)
+    );
     return this.unwrap<T>(response.data);
   }
 

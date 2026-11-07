@@ -1,9 +1,10 @@
+import path from "path";
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   // Silence the "multiple lockfiles" warning in the SCRIPE monorepo
   turbopack: {
-    root: __dirname,
+    root: path.resolve(__dirname, ".."),
   },
   experimental: {
     // Tree-shake heavy libraries — only bundle what's actually imported
@@ -81,6 +82,12 @@ const nextConfig: NextConfig = {
         destination: `${docsUrl}/commercial/:path*`,
         permanent: false,
       },
+      // Venue Phase 2 Consolidation Redirects
+      { source: "/venue/resource-builder", destination: "/venue/resources", permanent: true },
+      { source: "/venue/resource-profiles", destination: "/venue/resources", permanent: true },
+      { source: "/venue/sites", destination: "/venue/facilities?tab=sites", permanent: true },
+      { source: "/venue/venue-setup", destination: "/venue/settings?tab=profile", permanent: true },
+      { source: "/venue/availability", destination: "/venue/resources", permanent: true },
     ];
   },
 };

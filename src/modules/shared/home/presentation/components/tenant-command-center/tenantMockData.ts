@@ -169,7 +169,7 @@ export const TENANT_MOCK_DATA: TenantOverviewData = {
       title: "Finish site configuration",
       description: "Main site is missing location details",
       severity: "warning",
-      href: "/venue/sites",
+      href: "/venue/facilities?tab=sites",
     },
     {
       id: "alt-2",
@@ -208,7 +208,7 @@ export const TENANT_MOCK_DATA: TenantOverviewData = {
       description: "Configure physical location",
       icon: "🏢",
       color: "var(--info)",
-      href: "/venue/sites",
+      href: "/venue/facilities?tab=sites",
     },
     {
       id: "qa-3",

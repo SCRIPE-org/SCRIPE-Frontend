@@ -74,6 +74,8 @@ module.exports = {
         nx: {
           ground: "var(--nx-ground, hsl(var(--background)))",
           surface: "var(--nx-surface, hsl(var(--card)))",
+          surfaceSubtle: "var(--nx-raised, hsl(var(--muted)))",
+          "surface-subtle": "var(--nx-raised, hsl(var(--muted)))",
           raised: "var(--nx-raised, hsl(var(--muted)))",
           "raised-2": "var(--nx-raised-2, hsl(var(--accent)))",
           line: "var(--nx-line, hsl(var(--border)))",

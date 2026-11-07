@@ -30,6 +30,22 @@ interface SportBadgeInfo {
   gradient: string;
 }
 
+function formatUtcToLocalTime(utcIso: string | undefined | null, timeZoneId?: string): string {
+  if (!utcIso) return "";
+  try {
+    const date = new Date(utcIso);
+    if (isNaN(date.getTime())) return utcIso.slice(11, 16);
+    return new Intl.DateTimeFormat("default", {
+      hour: "2-digit",
+      minute: "2-digit",
+      hour12: false,
+      timeZone: timeZoneId || "UTC",
+    }).format(date);
+  } catch {
+    return utcIso.slice(11, 16);
+  }
+}
+
 function resolveSportBadge(name: string): SportBadgeInfo {
   const n = name.toLowerCase();
   if (n.includes("padel")) {
@@ -160,7 +176,7 @@ export function VenueOverviewLiveCourts({ items, overview, t }: VenueOverviewLiv
             let statusText = t("venueOverview.liveCourts.idle", {
               defaultValue: "No Current Booking",
             });
-            let statusBadge = "bg-nx-surfaceSubtle text-nx-ink-2 border-nx-line";
+            let statusBadge = "bg-nx-raised text-nx-ink-2 border-nx-line";
             let timeText = t("venueOverview.resourceActivity.status.noActiveBooking", {
               defaultValue: "No Active Booking",
             });
@@ -168,7 +184,7 @@ export function VenueOverviewLiveCourts({ items, overview, t }: VenueOverviewLiv
             if (isCheckedIn && court.currentOrNextEndUtc) {
               statusText = t("venueOverview.liveCourts.inUse", { defaultValue: "In Use" });
               statusBadge = "bg-success/10 text-success border-success/20";
-              const time = court.currentOrNextEndUtc.slice(11, 16);
+              const time = formatUtcToLocalTime(court.currentOrNextEndUtc, overview?.timeZoneId);
               timeText = t("venueOverview.liveCourts.until", {
                 time,
                 defaultValue: `Until ${time}`,
@@ -176,7 +192,7 @@ export function VenueOverviewLiveCourts({ items, overview, t }: VenueOverviewLiv
             } else if (isNext && court.currentOrNextStartUtc) {
               statusText = t("venueOverview.liveCourts.booked", { defaultValue: "Booked" });
               statusBadge = "bg-info/10 text-info border-info/20";
-              const time = court.currentOrNextStartUtc.slice(11, 16);
+              const time = formatUtcToLocalTime(court.currentOrNextStartUtc, overview?.timeZoneId);
               timeText = t("venueOverview.liveCourts.next", {
                 time,
                 defaultValue: `Next: ${time}`,

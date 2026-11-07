@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
 import {
   CalendarDays,
@@ -13,6 +14,7 @@ import {
   DollarSign,
   Wrench,
   Calendar,
+  Trash2,
 } from "lucide-react";
 import { Button } from "@core/ui/button";
 import { Card } from "@core/ui/card";
@@ -24,7 +26,9 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@core/ui/dropdown-menu";
+import { ConfirmationDialog } from "@core/ui/confirmation-dialog";
 import { useI18n } from "@core/providers/i18n-provider";
+
 import {
   type ResourceWorkspaceItem,
   evaluateCourtReadiness,
@@ -32,52 +36,27 @@ import {
 
 interface Props {
   item: ResourceWorkspaceItem;
+  onDelete?: (id: string) => Promise<boolean | void>;
+  onDeleted?: () => void;
 }
 
 function getCourtImage(sportType?: string, name?: string): string {
   const s = (sportType || "").toLowerCase();
   const n = (name || "").toLowerCase();
-  if (s.includes("5-a-side") || n.includes("5-a-side") || n.includes("5a")) {
-    return "https://images.unsplash.com/photo-1575361204480-aadea25e6e68?auto=format&fit=crop&w=1200&q=80";
-  }
-  if (s.includes("foot") || n.includes("foot") || n.includes("pitch") || s.includes("soccer")) {
-    return "https://images.unsplash.com/photo-1529900748604-07564a03e7a6?auto=format&fit=crop&w=1200&q=80";
-  }
-  if (s.includes("tennis") || n.includes("tennis") || n.includes("clay") || n.includes("hardcourt")) {
-    return "https://images.unsplash.com/photo-1595435934249-5df7ed86e1c0?auto=format&fit=crop&w=1200&q=80";
-  }
-  if (s.includes("swim") || n.includes("swim") || n.includes("pool") || n.includes("lane") || s.includes("aqua")) {
-    return "https://images.unsplash.com/photo-1576013551627-0cc20b96c2a7?auto=format&fit=crop&w=1200&q=80";
-  }
-  if (s.includes("squash") || n.includes("squash")) {
-    return "https://images.unsplash.com/photo-1534438327276-14e5300c3a48?auto=format&fit=crop&w=1200&q=80";
-  }
-  if (s.includes("basket") || n.includes("basket") || n.includes("fieldhouse")) {
-    return "https://images.unsplash.com/photo-1519861531473-9200262188bf?auto=format&fit=crop&w=1200&q=80";
-  }
-  if (s.includes("badmin") || n.includes("badmin")) {
-    return "https://images.unsplash.com/photo-1626224583764-f87db24ac4ea?auto=format&fit=crop&w=1200&q=80";
-  }
-  if (s.includes("volley") || n.includes("volley") || n.includes("beach")) {
-    return "https://images.unsplash.com/photo-1612872087720-bb876e2e67d1?auto=format&fit=crop&w=1200&q=80";
-  }
-  if (s.includes("gym") || s.includes("crossfit") || s.includes("fit") || n.includes("gym") || n.includes("crossfit")) {
-    return "https://images.unsplash.com/photo-1517838277536-f5f99be501cd?auto=format&fit=crop&w=1200&q=80";
-  }
-  if (s.includes("run") || s.includes("track") || s.includes("athletic") || n.includes("track")) {
-    return "https://images.unsplash.com/photo-1461896836934-ffe607ba8211?auto=format&fit=crop&w=1200&q=80";
+  if (s.includes("foot") || n.includes("foot") || n.includes("pitch") || s.includes("soccer") || s.includes("turf")) {
+    return "/images/venue/football-turf-night.svg";
   }
   if (n.includes("outdoor") || s.includes("outdoor") || n.includes("panoramic")) {
-    return "https://images.unsplash.com/photo-1599474924187-334a4ae5bd3c?auto=format&fit=crop&w=1200&q=80";
-  }
-  if (s.includes("padel") || n.includes("padel")) {
-    return "https://images.unsplash.com/photo-1626248801379-51a0748a5f96?auto=format&fit=crop&w=1200&q=80";
+    return "/images/venue/padel-court-outdoor.svg";
   }
   return "/images/venue/padel-court-indoor.svg";
 }
 
-export function ResourceCard({ item }: Props) {
+export function ResourceCard({ item, onDelete, onDeleted }: Props) {
   const { t } = useI18n();
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [deleteError, setDeleteError] = useState<string | null>(null);
 
   const readiness = evaluateCourtReadiness({
     isPublished: item.isPublished,
@@ -96,25 +75,34 @@ export function ResourceCard({ item }: Props) {
   const isUnavailable = readiness.state === "Unavailable";
 
   return (
-    <Card className="group flex flex-col justify-between overflow-hidden rounded-2xl border border-nx-line bg-nx-surface transition-all hover:border-nx-line-hi">
-      {/* Top Section: Court Photo Thumbnail Banner with Overlays */}
-      <div className="relative h-44 w-full shrink-0 overflow-hidden bg-nx-raised">
-        <img
-          src={getCourtImage(item.sportType, item.name)}
-          alt={item.name}
-          className="size-full object-cover transition-transform duration-500 group-hover:scale-105"
-        />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
+    <>
+      <Card className="group flex flex-col justify-between overflow-hidden rounded-2xl border border-nx-line bg-nx-surface transition-all hover:border-nx-line-hi">
+        {/* Top Section: Court Photo Thumbnail Banner with Overlays */}
+        <div className="relative h-44 w-full shrink-0 overflow-hidden bg-nx-raised">
+          <img
+            src={item.imageUrl || getCourtImage(item.sportType, item.name)}
+            alt={item.name}
+            className="size-full object-cover transition-transform duration-500 group-hover:scale-105"
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
 
-        {/* Top-Left: Sport Type Badge */}
-        <div className="absolute left-3 top-3 z-10 max-w-[65%]">
-          <span
-            className="block truncate rounded-md border border-white/20 bg-black/60 px-2.5 py-1 text-[11px] font-extrabold uppercase tracking-wider text-white backdrop-blur-xs"
-            title={item.sportType || undefined}
-          >
-            {item.sportType || t("resources.card.court", { defaultValue: "Court" })}
-          </span>
-        </div>
+          {/* Top-Left: Sport Type Badge and Composite Badge */}
+          <div className="absolute left-3 top-3 z-10 flex max-w-[75%] flex-wrap items-center gap-1.5">
+            <span
+              className="block truncate rounded-md border border-white/20 bg-black/60 px-2.5 py-1 text-[11px] font-extrabold uppercase tracking-wider text-white backdrop-blur-xs"
+              title={item.sportType || undefined}
+            >
+              {item.sportType || t("resources.card.court", { defaultValue: "Court" })}
+            </span>
+            {item.isComposite && (
+              <span
+                className="inline-flex items-center gap-1 rounded-md border border-nx-accent/40 bg-nx-accent/20 px-2 py-0.5 text-[10px] font-extrabold uppercase tracking-wider text-nx-accent backdrop-blur-xs"
+                title={t("resources.card.compositeBadge", { defaultValue: "Composite Resource" })}
+              >
+                {t("resources.card.compositeBadge", { defaultValue: "Composite" })}
+              </span>
+            )}
+          </div>
 
         {/* Top-Right: Readiness Status Pill */}
         <div className="absolute right-3 top-3 z-10">
@@ -260,6 +248,17 @@ export function ResourceCard({ item }: Props) {
                     </span>
                   </Link>
                 </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem
+                  onClick={() => {
+                    setDeleteError(null);
+                    setDeleteDialogOpen(true);
+                  }}
+                  className="cursor-pointer gap-2 text-destructive focus:bg-destructive/10 focus:text-destructive"
+                >
+                  <Trash2 className="size-3.5" />
+                  <span>{t("resources.card.delete", { defaultValue: "Delete Court" })}</span>
+                </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
           </div>
@@ -376,5 +375,49 @@ export function ResourceCard({ item }: Props) {
         </div>
       </div>
     </Card>
+
+    <ConfirmationDialog
+      open={deleteDialogOpen}
+      onOpenChange={setDeleteDialogOpen}
+      variant="destructive"
+      isLoading={isDeleting}
+      title={t("resources.card.deleteConfirmTitle", {
+        defaultValue: "Delete Court",
+      })}
+      description={t("resources.card.deleteConfirmDescription", {
+        defaultValue:
+          "Are you sure you want to delete this court? This action permanently removes the resource and cannot be undone. Please ensure no active reservations exist before proceeding.",
+      })}
+      confirmText={t("common.delete", { defaultValue: "Delete" })}
+      cancelText={t("common.cancel", { defaultValue: "Cancel" })}
+      onConfirm={async () => {
+        setIsDeleting(true);
+        setDeleteError(null);
+        try {
+          if (onDelete) {
+            await onDelete(item.id);
+          }
+          setDeleteDialogOpen(false);
+          onDeleted?.();
+        } catch (err) {
+          setDeleteError(
+            err instanceof Error
+              ? err.message
+              : t("resources.card.deleteError", {
+                  defaultValue: "Failed to delete court. Please verify no active reservations exist.",
+                })
+          );
+        } finally {
+          setIsDeleting(false);
+        }
+      }}
+    >
+      {deleteError && (
+        <div className="mt-2 rounded-lg border border-destructive/20 bg-destructive/10 p-2.5 text-xs text-destructive">
+          {deleteError}
+        </div>
+      )}
+    </ConfirmationDialog>
+  </>
   );
 }

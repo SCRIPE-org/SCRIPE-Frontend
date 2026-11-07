@@ -1,4 +1,4 @@
-﻿import {
+import {
   SchedulableResource,
   type SchedulableResourceData,
 } from "../../domain/entities/SchedulableResource";
@@ -26,6 +26,8 @@ export class SchedulableResourceMapper {
       commercialReadinessNote: model.commercialReadinessNote,
       createdAt: model.createdAt,
       modifiedAt: model.modifiedAt,
+      imageUrl: model.imageUrl,
+      photoMetadata: model.photoMetadata,
     };
     return new SchedulableResource(data);
   }

@@ -9,7 +9,11 @@ import type { MoneyInvoice } from "../../domain/entities/Money";
  */
 export type ReceivablesStatusFilter = "all" | "outstanding" | "paid" | "partiallyPaid";
 
-export function useReceivablesViewModel(canView: boolean, fallbackError: string) {
+export function useReceivablesViewModel(
+  canView: boolean,
+  fallbackError: string,
+  initialReservationId?: string | null
+) {
   const { moneyRepository } = getVenueContainer();
   const [items, setItems] = useState<MoneyInvoice[] | null>(null);
   const [totalCount, setTotalCount] = useState<number>(0);
@@ -61,6 +65,9 @@ export function useReceivablesViewModel(canView: boolean, fallbackError: string)
 
   const filteredItems = useMemo(() => {
     let list = items ?? [];
+    if (initialReservationId) {
+      list = list.filter((i) => i.reservationId === initialReservationId);
+    }
     if (statusFilter === "outstanding") {
       list = list.filter((i) => i.outstandingAmount > 0);
     } else if (statusFilter === "paid") {
@@ -83,7 +90,7 @@ export function useReceivablesViewModel(canView: boolean, fallbackError: string)
       );
     }
     return list;
-  }, [items, searchQuery, statusFilter]);
+  }, [items, searchQuery, statusFilter, initialReservationId]);
 
   const totalOutstandingCount = useMemo(() => {
     return (items ?? []).filter((i) => i.outstandingAmount > 0).length;

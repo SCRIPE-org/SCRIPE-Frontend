@@ -4,6 +4,17 @@ import { useState, useCallback, useEffect } from "react";
 import { getVenueContainer } from "@modules/venue/di";
 import type { GuestAccessStatus } from "../../domain/entities/Booking360";
 
+export function deriveAccessPin(seed: string): string {
+  if (!seed) return "100000";
+  let hash = 0;
+  for (let i = 0; i < seed.length; i++) {
+    hash = (hash << 5) - hash + seed.charCodeAt(i);
+    hash |= 0;
+  }
+  const pinNum = (Math.abs(hash) % 900000) + 100000;
+  return String(pinNum);
+}
+
 export interface UseBookingGuestAccessViewModelProps {
   reservationId: string;
   customerEmail?: string | null;
@@ -19,6 +30,7 @@ export function useBookingGuestAccessViewModel({
   const [status, setStatus] = useState<GuestAccessStatus | null>(null);
   const [activeLink, setActiveLink] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
+  const [copiedPin, setCopiedPin] = useState(false);
   const [generating, setGenerating] = useState(false);
   const [sending, setSending] = useState(false);
   const [revoking, setRevoking] = useState(false);
@@ -69,11 +81,28 @@ export function useBookingGuestAccessViewModel({
     }
   };
 
+  const tokenMatch = activeLink
+    ? activeLink.match(/#([^&]+)/) || activeLink.match(/\/guest\/booking\/([^/?#]+)/)
+    : null;
+  const token = tokenMatch ? tokenMatch[1] : (activeLink?.split("#")[1] ?? activeLink?.split("/").pop() ?? "");
+  const pin = deriveAccessPin(token || reservationId);
+  const guestPortalUrl = token
+    ? `/guest/booking/${token}`
+    : activeLink || `/guest/booking/${reservationId}`;
+
   const handleCopyLink = () => {
-    if (!activeLink) return;
-    navigator.clipboard.writeText(activeLink);
+    const textToCopy = guestPortalUrl || activeLink;
+    if (!textToCopy) return;
+    navigator.clipboard.writeText(textToCopy);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
+  };
+
+  const handleCopyPin = () => {
+    if (!pin) return;
+    navigator.clipboard.writeText(pin);
+    setCopiedPin(true);
+    setTimeout(() => setCopiedPin(false), 2000);
   };
 
   const handleSendLink = async () => {
@@ -128,7 +157,10 @@ export function useBookingGuestAccessViewModel({
     loading,
     status,
     activeLink,
+    guestPortalUrl,
+    pin,
     copied,
+    copiedPin,
     generating,
     sending,
     revoking,
@@ -136,6 +168,7 @@ export function useBookingGuestAccessViewModel({
     feedbackError,
     handleGenerateLink,
     handleCopyLink,
+    handleCopyPin,
     handleSendLink,
     handleRevokeLink,
   };

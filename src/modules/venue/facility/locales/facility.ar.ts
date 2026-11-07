@@ -22,5 +22,13 @@ export const ar = {
       name: "مثال: المبنى أ",
       description: "وصف اختياري",
     },
+    tabs: {
+      facilities: "المرافق والمجمعات",
+      sites: "الفروع والمقرات",
+    },
+    actions: {
+      viewCourts: "الملاعب والمساحات",
+      viewCalendar: "التقويم",
+    },
   },
 };

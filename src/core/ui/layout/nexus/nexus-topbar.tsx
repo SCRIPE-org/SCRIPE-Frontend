@@ -93,7 +93,9 @@ export function NexusTopbar({
   const formatParentSegmentAsTitle = (parentSegment: string): string => {
     if (!parentSegment) return t("common.details");
     let word = parentSegment.replace(/[-_]/g, " ");
-    if (word.toLowerCase().endsWith("s") && word.length > 1) {
+    if (word.toLowerCase().endsWith("ies") && word.length > 3) {
+      word = `${word.slice(0, -3)}y`;
+    } else if (word.toLowerCase().endsWith("s") && word.length > 1) {
       word = word.slice(0, -1);
     }
     const capitalized = word.replace(/\b\w/g, (c) => c.toUpperCase());

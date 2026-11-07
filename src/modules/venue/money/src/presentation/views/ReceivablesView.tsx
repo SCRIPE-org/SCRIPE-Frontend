@@ -2,6 +2,7 @@
 
 import React from "react";
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 import {
   AlertCircle,
   ReceiptText,
@@ -47,7 +48,12 @@ export function ReceivablesView() {
   const canCreatePayment = usePermission(VENUE_PERMISSIONS.FINANCE_PAYMENTS_CREATE);
   const canUpdateAllocations = usePermission(VENUE_PERMISSIONS.FINANCE_PAYMENT_ALLOCATIONS_UPDATE);
   const canRecordPayment = canCreatePayment && canUpdateAllocations;
-  const model = useReceivablesViewModel(canView, t("money.error.description"));
+  const searchParams = useSearchParams();
+  const model = useReceivablesViewModel(
+    canView,
+    t("money.error.description"),
+    searchParams.get("reservationId")
+  );
 
   if (!canView) {
     return (
@@ -154,7 +160,7 @@ export function ReceivablesView() {
               return (
                 <Card
                   key={curr}
-                  className={`border-nx-line/80 rounded-nx-xl shadow-xs space-y-2.5 bg-nx-surface p-4 ${
+                  className={`border-nx-line/80 rounded-nx-xl space-y-2.5 bg-nx-surface p-4 ${
                     isUnspecified ? "border-warning/30 bg-warning/5" : ""
                   }`}
                 >
@@ -212,7 +218,7 @@ export function ReceivablesView() {
       )}
 
       {/* Filter and Search Bar */}
-      <Card className="border-nx-line/80 rounded-nx-xl shadow-xs bg-nx-surface p-3.5">
+      <Card className="border-nx-line/80 rounded-nx-xl bg-nx-surface p-3.5">
         <div className="flex flex-col items-stretch justify-between gap-3 sm:flex-row sm:items-center">
           {/* Status Tabs */}
           <div className="bg-nx-surfaceSubtle flex items-center rounded-nx-md border border-nx-line p-0.5 text-xs">
@@ -238,7 +244,7 @@ export function ReceivablesView() {
                 onClick={() => model.setStatusFilter(key as ReceivablesStatusFilter)}
                 className={`h-7 rounded-nx-sm px-3 py-1 font-medium transition-colors ${
                   model.statusFilter === key
-                    ? "shadow-xs bg-nx-accent font-semibold text-nx-on-fill hover:bg-nx-accent/90"
+                    ? "bg-nx-accent font-semibold text-nx-on-fill hover:bg-nx-accent/90"
                     : "text-nx-ink-2 hover:bg-nx-hover hover:text-nx-ink"
                 }`}
               >
@@ -249,7 +255,7 @@ export function ReceivablesView() {
 
           {/* Search Field */}
           <div className="relative w-full sm:w-72">
-            <Search className="absolute left-2.5 top-1/2 size-3.5 -translate-y-1/2 text-nx-ink-3 rtl:left-auto rtl:right-2.5" />
+            <Search className="absolute start-2.5 top-1/2 size-3.5 -translate-y-1/2 text-nx-ink-3" />
             <Input
               type="text"
               placeholder={t("money.receivables.searchPlaceholder", {
@@ -257,7 +263,7 @@ export function ReceivablesView() {
               })}
               value={model.searchQuery}
               onChange={(e) => model.setSearchQuery(e.target.value)}
-              className="bg-nx-surfaceSubtle h-8 border-nx-line pl-8 text-xs rtl:pl-3 rtl:pr-8"
+              className="bg-nx-surfaceSubtle h-8 border-nx-line ps-8 text-xs"
             />
           </div>
         </div>
@@ -300,7 +306,7 @@ export function ReceivablesView() {
             return (
               <Card
                 key={invoice.id}
-                className="border-nx-line/80 rounded-nx-xl shadow-xs overflow-hidden bg-nx-surface transition-colors hover:border-nx-line"
+                className="border-nx-line/80 rounded-nx-xl overflow-hidden bg-nx-surface transition-colors hover:border-nx-line-hi"
               >
                 <CardHeader className="border-nx-line/40 bg-nx-surfaceSubtle/30 flex-row items-start justify-between gap-3 space-y-0 border-b pb-3">
                   <div className="space-y-1">
@@ -378,7 +384,7 @@ export function ReceivablesView() {
                     {invoice.creditAmount > 0 && (
                       <div>
                         <dt className="text-[11px] text-nx-ink-3">Credit</dt>
-                        <dd className="font-mono font-semibold text-blue-500">
+                        <dd className="font-mono font-semibold text-info">
                           {money(invoice.creditAmount, invoice.currencyCode, language)}
                         </dd>
                       </div>

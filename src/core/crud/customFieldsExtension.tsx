@@ -327,6 +327,11 @@ export interface CustomFieldsSectionProps {
   className?: string;
 }
 
+export type HostCustomFieldsSectionProps = Omit<CustomFieldsSectionProps, "configs"> & {
+  configs?: readonly FieldConfig[];
+  disabled?: boolean;
+};
+
 let registeredApi: CustomFieldsExtensionApi | null = null;
 
 export function registerCustomFieldsExtension(api: CustomFieldsExtensionApi): void {
@@ -335,6 +340,34 @@ export function registerCustomFieldsExtension(api: CustomFieldsExtensionApi): vo
 
 export function getCustomFieldsExtension(): CustomFieldsExtensionApi | null {
   return registeredApi;
+}
+
+export function CustomFieldsSection(props: HostCustomFieldsSectionProps) {
+  const { fieldConfigs, isLoading, refetch } = useCustomFieldsFormFields(
+    props.configs ? undefined : props.entityTypeKey,
+    undefined
+  );
+  const resolvedConfigs = props.configs ?? fieldConfigs;
+  const resolvedLoading = props.isLoading ?? isLoading;
+  const api = getCustomFieldsExtension();
+  const Section = api?.Section;
+
+  if (!Section) {
+    if (resolvedConfigs.length === 0 && !resolvedLoading && props.emptyMessage) {
+      return <p className="text-sm text-nx-ink-2">{props.emptyMessage}</p>;
+    }
+    return null;
+  }
+
+  return (
+    <Section
+      {...props}
+      configs={resolvedConfigs}
+      isLoading={resolvedLoading}
+      isViewMode={props.isViewMode ?? props.disabled}
+      onFieldCreated={props.onFieldCreated ?? (() => void refetch())}
+    />
+  );
 }
 
 /**
@@ -354,6 +387,24 @@ export function decodeCustomFieldName(name: string): string | null {
   return name.startsWith(CUSTOM_FIELD_NAME_PREFIX)
     ? name.slice(CUSTOM_FIELD_NAME_PREFIX.length)
     : null;
+}
+
+/**
+ * Normalizes a form custom-field values dictionary (which may use encoded `__cf__<key>`
+ * names from `<CustomFieldsSection>` or plain field keys) into a plain-keyed dictionary
+ * suitable for `CustomFieldsExtensionApi.saveValues`.
+ */
+export function normalizeCustomFieldValuesForSave(
+  values: Record<string, unknown> | undefined | null
+): Record<string, unknown> {
+  if (!values) return {};
+  const normalized: Record<string, unknown> = {};
+  for (const [rawKey, rawVal] of Object.entries(values)) {
+    const key = decodeCustomFieldName(rawKey) ?? rawKey;
+    if (!key || rawVal === undefined) continue;
+    normalized[key] = rawVal === "" ? null : rawVal;
+  }
+  return normalized;
 }
 
 /**

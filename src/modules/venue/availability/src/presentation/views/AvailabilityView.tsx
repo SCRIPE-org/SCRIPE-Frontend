@@ -1,162 +1,110 @@
-﻿"use client";
+"use client";
 
-import React, { useState } from "react";
-import { AlertCircle, CalendarClock } from "lucide-react";
-import { Alert, AlertDescription, AlertTitle } from "@core/ui/alert";
+import React from "react";
+import Link from "next/link";
+import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@core/ui/card";
 import { Button } from "@core/ui/button";
-import { EmptyState } from "@core/ui/empty-state";
-import { Label } from "@core/ui/label";
-import { PageHeader } from "@core/ui/page-header";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@core/ui/tabs";
-import { GenericSelect } from "@core/crud/components/generic-select";
-import { useModuleLocales } from "@core/hooks/use-module-locales";
-import { usePermission } from "@core/hooks/use-permission";
+import { Badge } from "@core/ui/badge";
+import { Calendar, Clock, AlertTriangle, ArrowRight } from "lucide-react";
 import { useI18n } from "@core/providers/i18n-provider";
-import { VENUE_PERMISSIONS } from "@modules/venue/permission-constants";
 import { useAvailabilityViewModel } from "../viewmodels/useAvailabilityViewModel";
-import { ResourceBlocksPanel } from "../components/ResourceBlocksPanel";
-import { WeeklyWindowsEditorCard } from "../components/WeeklyWindowsEditorCard";
-import { AvailabilitySearchCard } from "../components/AvailabilitySearchCard";
-import { VenueResourceNav } from "@modules/venue";
+
+interface AvailabilityViewProps {
+  resourceId?: string;
+  resourceName?: string;
+}
 
 /**
- * Documentation for module export
+ * Presentation view component for inspecting court and resource availability schedules.
+ *
+ * Provides a dedicated interface for reviewing operational blocks, operating hours,
+ * and seamless deep-links into the unified Operations Calendar.
  */
-export const AvailabilityView = React.memo(function AvailabilityView() {
-  useModuleLocales(() => import("../../../locales"), "venue.availability");
+export function AvailabilityView({
+  resourceId,
+  resourceName,
+}: AvailabilityViewProps): React.JSX.Element {
   const { t } = useI18n();
-  const vm = useAvailabilityViewModel();
-  const canView = usePermission(VENUE_PERMISSIONS.AVAILABILITY_CALENDAR_VIEW);
-  const canCreate = usePermission(VENUE_PERMISSIONS.AVAILABILITY_CALENDAR_CREATE);
-  const canUpdate = usePermission(VENUE_PERMISSIONS.AVAILABILITY_CALENDAR_UPDATE);
-  const canSearch = usePermission(VENUE_PERMISSIONS.AVAILABILITY_SEARCH_VIEW);
-
-  const [timeZoneId, setTimeZoneId] = useState("UTC");
-
-  const [prevCalendar, setPrevCalendar] = useState(vm.calendar);
-  if (prevCalendar !== vm.calendar) {
-    setPrevCalendar(vm.calendar);
-    if (vm.calendar?.timeZoneId && vm.calendar.timeZoneId !== timeZoneId) {
-      setTimeZoneId(vm.calendar.timeZoneId);
-    }
-  }
-
-  const resourceOptions = vm.resources.map((resource) => ({
-    value: resource.id,
-    label: resource.name,
-  }));
-
-  const canSave = vm.calendar ? canUpdate : canCreate;
-
-  if (!canView) {
-    return (
-      <EmptyState
-        icon={CalendarClock}
-        title={t("notAuthorized.title")}
-        description={t("notAuthorized.description")}
-      />
-    );
-  }
+  const { loading, error } = useAvailabilityViewModel();
 
   return (
     <div className="space-y-6">
-      <VenueResourceNav />
-      <PageHeader
-        icon={CalendarClock}
-        title={t("availability.title")}
-        description={t("availability.description")}
-      />
-
-      <div className="max-w-xl space-y-2">
-        <Label id="availability-resource-label" htmlFor="availability-resource-select">
-          {t("availability.resource")}
-        </Label>
-        <GenericSelect
-          id="availability-resource-select"
-          aria-labelledby="availability-resource-label"
-          type="searchable"
-          searchType="client"
-          allowClear={false}
-          options={resourceOptions}
-          value={vm.selectedResourceId}
-          onValueChange={(value: string | string[]) =>
-            vm.setSelectedResourceId(Array.isArray(value) ? (value[0] ?? "") : value)
-          }
-          placeholder={t("availability.selectResource")}
-        />
-      </div>
-
-      {vm.error && (
-        <EmptyState
-          icon={AlertCircle}
-          title={t("common.error")}
-          description={vm.error.message}
-          action={
-            <Button variant="outline" onClick={() => void vm.refresh()}>
-              {t("common.retry")}
-            </Button>
-          }
-        />
-      )}
-
-      {!vm.error && vm.resources.length === 0 && (
-        <EmptyState
-          icon={CalendarClock}
-          title={t("availability.noResources")}
-          description={t("availability.noResourcesDescription")}
-        />
-      )}
-
-      {vm.selectedResource && (
-        <>
-          {!vm.selectedResource.isPublished && (
-            <Alert variant="warning">
-              <AlertCircle />
-              <AlertTitle>{t("availability.draftTitle")}</AlertTitle>
-              <AlertDescription>{t("availability.draftDescription")}</AlertDescription>
-            </Alert>
+      <Card className="border border-nx-line bg-nx-surface">
+        <CardHeader className="pb-3">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <Calendar className="size-5 text-nx-accent" />
+              <CardTitle className="text-base font-semibold text-nx-ink">
+                {resourceName
+                  ? t("venue.availability.courtTitle", {
+                      name: resourceName,
+                      defaultValue: `Availability & Schedule: ${resourceName}`,
+                    })
+                  : t("venue.availability.title", {
+                      defaultValue: "Court Availability & Operating Hours",
+                    })}
+              </CardTitle>
+            </div>
+            <Badge variant="outline" className="border-nx-line bg-nx-raised text-nx-ink-2">
+              {t("venue.availability.consolidatedBadge", {
+                defaultValue: "Operations Integrated",
+              })}
+            </Badge>
+          </div>
+          <CardDescription className="text-xs text-nx-ink-2">
+            {t("venue.availability.description", {
+              defaultValue:
+                "Real-time court availability, maintenance blocks, and booking schedules are managed directly in the Operations Calendar.",
+            })}
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          {error && (
+            <div className="flex items-center gap-2 rounded-lg border border-destructive/20 bg-destructive/10 p-3 text-xs text-destructive">
+              <AlertTriangle className="size-4 shrink-0" />
+              <span>{error}</span>
+            </div>
           )}
 
-          <Tabs defaultValue="find-slots" className="w-full">
-            <TabsList className="mb-4">
-              <TabsTrigger value="find-slots">
-                {t("availability.tabs.findSlots", { defaultValue: "Find Available Slots" })}
-              </TabsTrigger>
-              <TabsTrigger value="operating-windows">
-                {t("availability.tabs.operatingWindows", {
-                  defaultValue: "Operating Windows & Rules",
-                })}
-              </TabsTrigger>
-            </TabsList>
-
-            <TabsContent value="find-slots" className="space-y-4">
-              <div className="max-w-xl">
-                <AvailabilitySearchCard vm={vm} timeZoneId={timeZoneId} canSearch={canSearch} />
+          <div className="rounded-xl border border-nx-line bg-nx-raised/40 p-4">
+            <div className="flex items-start gap-3">
+              <Clock className="mt-0.5 size-4 text-nx-accent" />
+              <div className="space-y-1">
+                <p className="text-sm font-medium text-nx-ink">
+                  {t("venue.availability.unifiedCalloutTitle", {
+                    defaultValue: "Looking to check slots or block time?",
+                  })}
+                </p>
+                <p className="text-xs text-nx-ink-2">
+                  {t("venue.availability.unifiedCalloutBody", {
+                    defaultValue:
+                      "Use the interactive 30-minute Operations Calendar to view live lane occupancy, identify conflict-free windows, or apply emergency maintenance closures.",
+                  })}
+                </p>
               </div>
-            </TabsContent>
+            </div>
 
-            <TabsContent value="operating-windows" className="space-y-6">
-              <WeeklyWindowsEditorCard
-                key={vm.calendar?.id ?? vm.selectedResourceId}
-                vm={vm}
-                canSave={canSave}
-                timeZoneId={timeZoneId}
-                onTimeZoneChange={setTimeZoneId}
-              />
-
-              <ResourceBlocksPanel
-                resourceId={vm.selectedResourceId}
-                timeZoneId={timeZoneId}
-                blackouts={vm.blackouts}
-                maintenanceBlocks={vm.maintenanceBlocks}
-                saving={vm.saving}
-                onSave={vm.saveBlock}
-                onDelete={vm.deleteBlock}
-              />
-            </TabsContent>
-          </Tabs>
-        </>
-      )}
+            <div className="mt-4 flex items-center justify-end">
+              <Link
+                href={
+                  resourceId
+                    ? `/venue/calendar?courtId=${encodeURIComponent(resourceId)}`
+                    : "/venue/calendar"
+                }
+              >
+                <Button size="sm" className="gap-2">
+                  <span>
+                    {t("venue.availability.goToCalendar", {
+                      defaultValue: "Open Operations Calendar",
+                    })}
+                  </span>
+                  <ArrowRight className="size-3.5" />
+                </Button>
+              </Link>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
     </div>
   );
-});
+}

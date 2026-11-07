@@ -26,13 +26,19 @@ describe("MoneyService", () => {
     expect(api.get).toHaveBeenCalledWith("/v1/finance/recorded-payments?page=1&pageSize=50");
     expect(api.post).toHaveBeenCalledWith(
       "/v1/finance/recorded-payments",
-      expect.objectContaining({ payerPartyId: "payer-1", amount: 100 })
+      expect.objectContaining({ payerPartyId: "payer-1", amount: 100 }),
+      undefined,
+      { idempotencyKey: "payment-1" }
     );
-    expect(api.post).toHaveBeenCalledWith("/v1/finance/recorded-payments/payment-1/allocations", {
-      invoiceId: "invoice-1",
-      amount: 100,
-      idempotencyKey: "allocation-1",
-    });
+    expect(api.post).toHaveBeenCalledWith(
+      "/v1/finance/recorded-payments/payment-1/allocations",
+      {
+        invoiceId: "invoice-1",
+        amount: 100,
+      },
+      undefined,
+      { idempotencyKey: "allocation-1" }
+    );
   });
 
   it("uses Finance's reservation filter for a booking-level commercial summary", async () => {
@@ -58,13 +64,17 @@ describe("MoneyService", () => {
       externalReference: "REF-1",
     });
 
-    expect(api.post).toHaveBeenCalledWith("/v1/finance/recorded-payments/payment-1/refunds", {
-      invoiceId: "invoice-1",
-      amount: 25,
-      idempotencyKey: "refund-1",
-      reason: "duplicate desk entry",
-      externalReference: "REF-1",
-    });
+    expect(api.post).toHaveBeenCalledWith(
+      "/v1/finance/recorded-payments/payment-1/refunds",
+      {
+        invoiceId: "invoice-1",
+        amount: 25,
+        reason: "duplicate desk entry",
+        externalReference: "REF-1",
+      },
+      undefined,
+      { idempotencyKey: "refund-1" }
+    );
   });
 
   it("reads an append-only Finance timeline for payment recovery", async () => {

@@ -18,7 +18,7 @@ export function VenueOverviewEditorialBanner({
 }: Props) {
   return (
     <div
-      className="rounded-nx-xl border-nx-line/60 relative overflow-hidden border bg-gradient-to-br from-nx-surface via-nx-ground to-black p-5 text-white"
+      className="rounded-nx-xl border-nx-line/60 relative overflow-hidden border bg-gradient-to-br from-neutral-900 via-neutral-950 to-black p-5 text-white shadow-nx-sm"
       data-testid="venue-overview-editorial-banner"
     >
       {/* Background Court Lighting Motif */}

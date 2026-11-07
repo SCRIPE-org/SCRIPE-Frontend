@@ -1,0 +1,16 @@
+/* ============================================================================
+   SCRIPE VENUE — RESPONSIVE LAYOUT & MOBILE SIDEBAR COLLAPSE (D1)
+   ----------------------------------------------------------------------------
+   On mobile and tablet viewports (< 1024px, including 390px, 768px), the
+   desktop secondary rail must collapse cleanly (display: none !important) so
+   that the venue workspace content occupies the full available width rather
+   than being crushed into a 110px column.
+   The topbar hamburger toggle opens the mobile drawer overlay as intended.
+   ============================================================================ */
+
+@media (max-width: 1023px) {
+  /* Hide the static desktop secondary rail on viewports < 1024px */
+  aside.relative.z-raised {
+    display: none !important;
+  }
+}

@@ -69,7 +69,7 @@ export interface RecordManualPaymentInput {
   method: MoneyPayment["method"];
   currencyCode: string;
   amount: number;
-  idempotencyKey: string;
+  idempotencyKey?: string;
   externalReference: string | null;
   reason: string | null;
 }
@@ -80,7 +80,7 @@ export interface RecordManualPaymentInput {
 export interface RefundPaymentInput {
   invoiceId: string;
   amount: number;
-  idempotencyKey: string;
+  idempotencyKey?: string;
   reason: string;
   externalReference: string | null;
 }

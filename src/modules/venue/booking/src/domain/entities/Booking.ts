@@ -65,7 +65,7 @@ export interface CreateBookingDraftInput {
   requestedStartUtc: string;
   requestedEndUtc: string;
   quantity: number;
-  idempotencyKey: string;
+  idempotencyKey?: string;
 }
 
 /** Stable request keys scoped to one booking intent across draft, hold, and confirmation. */
@@ -127,7 +127,7 @@ export interface RescheduleReservationInput {
   resourceId: string;
   requestedStartUtc: string;
   requestedEndUtc: string;
-  idempotencyKey: string;
+  idempotencyKey?: string;
   priceQuoteId?: string;
 }
 
@@ -138,7 +138,7 @@ export interface ChangeReservationResourceInput {
   targetResourceId: string;
   requestedStartUtc: string;
   requestedEndUtc: string;
-  idempotencyKey: string;
+  idempotencyKey?: string;
   priceQuoteId?: string;
 }
 

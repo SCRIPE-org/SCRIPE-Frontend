@@ -24,9 +24,10 @@ describe("BookingService", () => {
     };
     const result = await new BookingService(api).createDraft(input);
 
+    const { idempotencyKey: _draftKey, ...expectedDraftPayload } = input;
     expect(api.postWithRetry).toHaveBeenCalledWith(
       "/v1/Reservations",
-      { ...input, bookerPartyId: null, payerPartyId: null },
+      { ...expectedDraftPayload, bookerPartyId: null, payerPartyId: null },
       undefined,
       { idempotencyKey: "draft-key" }
     );
@@ -44,7 +45,7 @@ describe("BookingService", () => {
 
     expect(api.postWithRetry).toHaveBeenCalledWith(
       "/v1/booking-holds",
-      { reservationId: "reservation-1", idempotencyKey: "hold-key" },
+      { reservationId: "reservation-1" },
       undefined,
       { idempotencyKey: "hold-key" }
     );
@@ -60,7 +61,7 @@ describe("BookingService", () => {
 
     expect(api.postWithRetry).toHaveBeenCalledWith(
       "/v1/Reservations/reservation-1/confirm",
-      { idempotencyKey: "confirm-key", priceQuoteId: "price-quote-1" },
+      { priceQuoteId: "price-quote-1" },
       undefined,
       { idempotencyKey: "confirm-key" }
     );
@@ -76,7 +77,7 @@ describe("BookingService", () => {
 
     expect(api.postWithRetry).toHaveBeenCalledWith(
       "/v1/Reservations/reservation-1/check-in",
-      { idempotencyKey: "check-in-key" },
+      {},
       undefined,
       { idempotencyKey: "check-in-key" }
     );
@@ -92,7 +93,7 @@ describe("BookingService", () => {
 
     expect(api.postWithRetry).toHaveBeenCalledWith(
       "/v1/Reservations/reservation-1/complete",
-      { idempotencyKey: "complete-key" },
+      {},
       undefined,
       { idempotencyKey: "complete-key" }
     );
@@ -108,7 +109,7 @@ describe("BookingService", () => {
 
     expect(api.postWithRetry).toHaveBeenCalledWith(
       "/v1/Reservations/reservation-1/no-show",
-      { idempotencyKey: "no-show-key", reason: "Did not arrive" },
+      { reason: "Did not arrive" },
       undefined,
       { idempotencyKey: "no-show-key" }
     );
@@ -128,7 +129,7 @@ describe("BookingService", () => {
 
     expect(api.postWithRetry).toHaveBeenCalledWith(
       "/v1/Reservations/reservation-1/cancel",
-      { idempotencyKey: "cancel-key", reason: "Customer requested cancellation" },
+      { reason: "Customer requested cancellation" },
       undefined,
       { idempotencyKey: "cancel-key" }
     );
@@ -148,9 +149,10 @@ describe("BookingService", () => {
 
     await new BookingService(api).reschedule("reservation-1", input);
 
+    const { idempotencyKey: _reschedKey, ...expectedReschedulePayload } = input;
     expect(api.postWithRetry).toHaveBeenCalledWith(
       "/v1/Reservations/reservation-1/reschedule",
-      input,
+      expectedReschedulePayload,
       undefined,
       { idempotencyKey: "reschedule-key" }
     );
@@ -170,9 +172,10 @@ describe("BookingService", () => {
 
     await new BookingService(api).changeResource("reservation-1", input);
 
+    const { idempotencyKey: _changeKey, ...expectedChangePayload } = input;
     expect(api.postWithRetry).toHaveBeenCalledWith(
       "/v1/Reservations/reservation-1/change-resource",
-      input,
+      expectedChangePayload,
       undefined,
       { idempotencyKey: "resource-key" }
     );

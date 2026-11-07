@@ -90,7 +90,6 @@ import {
   en as revenueAnalyticsEn,
   ar as revenueAnalyticsAr,
 } from "@modules/entitlements/analytics/locales";
-import { en as leadsEn, ar as leadsAr } from "@modules/entitlements/leads/locales";
 import {
   en as signupContentEn,
   ar as signupContentAr,
@@ -303,6 +302,16 @@ import { en as venueSettingsEn, ar as venueSettingsAr } from "@modules/venue/set
 import { en as venueSharedEn, ar as venueSharedAr } from "@modules/venue/shared/locales";
 import { en as guestPortalEn, ar as guestPortalAr } from "@modules/venue/guest-portal/locales";
 
+// ─── CRM ───────────────────────────────────────────────
+import { en as crmOverviewEn, ar as crmOverviewAr } from "@modules/crm/overview/locales";
+import { en as crmLeadsEn, ar as crmLeadsAr } from "@modules/crm/leads/locales";
+import { en as crmOpportunitiesEn, ar as crmOpportunitiesAr } from "@modules/crm/opportunities/locales";
+import { en as crmAccountsEn, ar as crmAccountsAr } from "@modules/crm/accounts/locales";
+import { en as crmContactsEn, ar as crmContactsAr } from "@modules/crm/contacts/locales";
+import { en as crmActivitiesEn, ar as crmActivitiesAr } from "@modules/crm/activities/locales";
+
+
+
 // ─── Merged Dictionaries ───────────────────────────────
 export const allModulesEn: Record<string, unknown> = deepMerge(
   {},
@@ -343,7 +352,6 @@ export const allModulesEn: Record<string, unknown> = deepMerge(
   stripeConnectEn,
   platformStripeEn,
   revenueAnalyticsEn,
-  leadsEn,
   signupContentEn,
   activateWorkspaceEn,
   // Communication, Integrations & Media
@@ -423,7 +431,14 @@ export const allModulesEn: Record<string, unknown> = deepMerge(
   venueReportsEn,
   venueSettingsEn,
   venueSharedEn,
-  guestPortalEn
+  guestPortalEn,
+  // CRM
+  crmOverviewEn,
+  crmLeadsEn,
+  crmOpportunitiesEn,
+  crmAccountsEn,
+  crmContactsEn,
+  crmActivitiesEn,
 );
 
 export const allModulesAr: Record<string, unknown> = deepMerge(
@@ -465,7 +480,6 @@ export const allModulesAr: Record<string, unknown> = deepMerge(
   stripeConnectAr,
   platformStripeAr,
   revenueAnalyticsAr,
-  leadsAr,
   signupContentAr,
   activateWorkspaceAr,
   // Communication, Integrations & Media
@@ -545,5 +559,12 @@ export const allModulesAr: Record<string, unknown> = deepMerge(
   venueReportsAr,
   venueSettingsAr,
   venueSharedAr,
-  guestPortalAr
+  guestPortalAr,
+  // CRM
+  crmOverviewAr,
+  crmLeadsAr,
+  crmOpportunitiesAr,
+  crmAccountsAr,
+  crmContactsAr,
+  crmActivitiesAr,
 );

@@ -1,4 +1,4 @@
-﻿import { Facility, type FacilityData } from "../../domain/entities/Facility";
+import { Facility, type FacilityData } from "../../domain/entities/Facility";
 import { FacilityModel, type FacilityJson } from "../models/FacilityModel";
 
 /**
@@ -15,6 +15,7 @@ export class FacilityMapper {
       createdAt: model.createdAt,
       modifiedAt: model.modifiedAt,
       venueProfileName: model.venueProfileName,
+      rowVersion: model.rowVersion,
     };
     return new Facility(data);
   }

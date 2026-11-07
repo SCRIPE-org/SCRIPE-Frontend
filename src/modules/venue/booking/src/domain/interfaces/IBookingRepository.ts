@@ -9,9 +9,12 @@ import type {
   RescheduleReservationInput,
 } from "../entities/Booking";
 
+export type { CustomerReservationSummary, PagedCustomerReservations } from "./IBookingService";
+import type { CustomerReservationSummary, PagedCustomerReservations } from "./IBookingService";
+
 /**
- * Documentation for module export
- */
+  * Documentation for module export
+  */
 export interface IBookingRepository {
   getOrCreateBusinessIntent(
     fingerprint: string,
@@ -51,4 +54,9 @@ export interface IBookingRepository {
     input: ChangeReservationResourceInput
   ): Promise<ReservationLifecycleResult>;
   getReservation(reservationId: string): Promise<ReservationDetails>;
+  getCustomerReservations(
+    customerPartyId: string,
+    page?: number,
+    pageSize?: number
+  ): Promise<PagedCustomerReservations>;
 }
