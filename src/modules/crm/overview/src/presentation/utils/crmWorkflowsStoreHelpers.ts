@@ -16,7 +16,7 @@ import {
   type CrmWorkflowStage,
   type CrmWorkflowTransition,
 } from "../../domain/constants/crmWorkflowDefaults";
-import { useCrmSettingsStore } from "../viewmodels/useCrmSettingsStore";
+import { useCrmSettingsStore } from "../stores/useCrmSettingsStore";
 
 export type { CrmDealCommercialPackage, CrmDealQuoteLineItem };
 

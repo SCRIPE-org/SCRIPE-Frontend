@@ -17,7 +17,7 @@ import { CrmRecentDealsTable } from "../components/CrmRecentDealsTable";
 
 import { useCrmShellViewModel } from "../viewmodels/useCrmShellViewModel";
 import { useCrmOverviewViewModel } from "../viewmodels/useCrmOverviewViewModel";
-import { useCrmWorkflowsStore } from "../viewmodels/useCrmWorkflowsStore";
+import { useCrmWorkflowsStore } from "../stores/useCrmWorkflowsStore";
 
 export function CrmOverviewView() {
   const router = useRouter();

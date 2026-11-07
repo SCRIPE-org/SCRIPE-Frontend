@@ -16,7 +16,7 @@ import {
 import { cn } from "@core/common/utils";
 import type { CrmRecentDeal } from "../../domain/entities/OverviewEntity";
 import { CrmStatusBadge } from "./CrmStatusBadge";
-import { useCrmCurrency } from "../viewmodels/useCrmSettingsStore";
+import { useCrmCurrency } from "../viewmodels/useCrmCurrency";
 
 interface CrmRecentDealsTableProps {
   deals: CrmRecentDeal[];

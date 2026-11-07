@@ -7,7 +7,7 @@ import { Card } from "@core/ui/card";
 import { cn } from "@core/common/utils";
 import type { CrmPipelineOverview, CrmStageKey } from "../../domain/entities/OverviewEntity";
 import { STAGE_COLOR_PALETTE, resolveDefaultStageColor } from "../../domain/constants/crmWorkflowDefaults";
-import { useCrmCurrency } from "../viewmodels/useCrmSettingsStore";
+import { useCrmCurrency } from "../viewmodels/useCrmCurrency";
 
 interface CrmPipelineOverviewStripProps {
   pipeline: CrmPipelineOverview;

@@ -125,4 +125,14 @@ describe("CRM Frontend Localization & Architecture Gate", () => {
 
     expect(multiComponentFiles).toEqual([]);
   });
+
+  it("keeps Zustand stores in presentation/stores without re-export shims in presentation/viewmodels", () => {
+    const viewmodelStoreShims = presentationFiles.filter(
+      (p) =>
+        p.includes(`${path.sep}viewmodels${path.sep}`) &&
+        p.endsWith("Store.ts"),
+    );
+    expect(viewmodelStoreShims).toEqual([]);
+  });
 });
+

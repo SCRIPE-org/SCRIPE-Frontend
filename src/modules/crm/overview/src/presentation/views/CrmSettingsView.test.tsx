@@ -6,7 +6,7 @@ import {
   convertCrmCurrencyAmount,
   getCrossExchangeRate,
   parseCustomGovernanceConfigJson,
-} from "../viewmodels/useCrmSettingsStore";
+} from "../stores/useCrmSettingsStore";
 import { setCrmContainer, type CrmContainer } from "@modules/crm/di";
 
 vi.mock("@core/providers/i18n-provider", () => ({

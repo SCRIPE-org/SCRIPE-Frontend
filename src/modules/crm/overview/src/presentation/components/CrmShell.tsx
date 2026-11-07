@@ -18,7 +18,7 @@ import {
 } from "lucide-react";
 import { Button } from "@core/ui/button";
 import { cn } from "@core/common/utils";
-import { useCrmCurrency } from "../viewmodels/useCrmSettingsStore";
+import { useCrmCurrency } from "../viewmodels/useCrmCurrency";
 import { CrmSmartGuideModal } from "./CrmSmartGuideModal";
 import { CrmShellTopToolbar } from "./CrmShellTopToolbar";
 import { CrmSmartTipRibbon } from "./CrmSmartTipRibbon";

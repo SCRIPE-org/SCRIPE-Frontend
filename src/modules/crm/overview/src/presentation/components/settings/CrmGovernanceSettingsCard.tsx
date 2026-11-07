@@ -16,7 +16,7 @@ import { ShieldCheck, Sliders } from "lucide-react";
 import type {
   CrmModuleSettingsState,
   CrmStageGateStrictness,
-} from "../../viewmodels/useCrmSettingsStore";
+} from "../../stores/useCrmSettingsStore";
 
 /** Props for CrmGovernanceSettingsCard. */
 export interface CrmGovernanceSettingsCardProps {

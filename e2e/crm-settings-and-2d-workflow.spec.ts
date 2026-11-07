@@ -302,6 +302,9 @@ test.describe("CRM Settings Hub & 2D Jira Workflow Studio E2E Verification", () 
     await expect(page.getByTestId("canvas-node-terminal-lost")).toBeVisible();
     await expect(page.getByTestId("workflow-minimap")).toBeVisible();
     await expect(page.getByTestId("studio-dynamic-stage-count")).toContainText("Statuses");
+    await expect(page.getByTestId("studio-workflow-version-badge")).toBeVisible();
+    await expect(page.getByTestId("studio-workflow-version-badge")).toContainText("v");
+    await expect(page.getByTestId("workflow-import-json-btn")).toBeAttached();
 
     // Verify Closed Won is a first-class configurable, colorable, replaceable stage (SCRIPE-775)
     await page.getByTestId("canvas-node-terminal-won").click();
@@ -561,6 +564,17 @@ test.describe("CRM Settings Hub & 2D Jira Workflow Studio E2E Verification", () 
     await expect(page.getByTestId("board-wip-row-terminal-lost")).toBeVisible();
     await setThemeAndCapture(page, "06c_crm_opportunities_board_settings_modal");
     await setThemeAndCapture(page, "06c_crm_opportunities_board_settings_v2");
+    await page.getByTestId("board-swimlane-select").click();
+    await page.getByRole("option").nth(1).click();
+    await page.keyboard.press("Escape");
+    await expect(page.getByTestId("board-settings-dialog")).toBeHidden();
+    await expect(page.getByTestId("kanban-swimlane-banner")).toBeVisible();
+    await expect(page.getByTestId("kanban-swimlane-filter-all")).toBeVisible();
+    await page.getByTestId("kanban-swimlane-filter-all").click();
+    await page.getByTestId("board-settings-button").click();
+    await expect(page.getByTestId("board-settings-dialog")).toBeVisible({ timeout: 5_000 });
+    await page.getByTestId("board-swimlane-select").click();
+    await page.getByRole("option").first().click();
     await page.keyboard.press("Escape");
     await expect(page.getByTestId("board-settings-dialog")).toBeHidden();
 
@@ -618,6 +632,17 @@ test.describe("CRM Settings Hub & 2D Jira Workflow Studio E2E Verification", () 
     await page.waitForLoadState("networkidle");
     await setThemeAndCapture(page, "07_crm_deal_360_buying_committee_and_quotes");
     await setThemeAndCapture(page, "07_crm_deal_360_detail_page");
+
+    // Verify Odoo-style Mark Done next-activity chaining button on /crm/activities
+    await page.goto("/crm/activities");
+    await page.waitForLoadState("networkidle");
+    if ((await page.getByTestId("mark-activity-done-btn").count()) === 0) {
+      await expect(page.getByTestId("follow-up-activity-btn").first()).toBeVisible({ timeout: 15_000 });
+      await page.getByTestId("follow-up-activity-btn").first().click();
+      await page.locator("[role='dialog'] button[type='submit']").click();
+      await page.waitForLoadState("networkidle");
+    }
+    await expect(page.getByTestId("mark-activity-done-btn").first()).toBeVisible({ timeout: 15_000 });
 
     // 4. Navigate to /crm/leads and verify Leads table, Lead Workflow Selector & dynamic colored Kanban board
     await page.goto("/crm/leads");

@@ -7,7 +7,7 @@ import type {
   CrmPipelineReport,
   CrmStageReportBucket,
 } from "../../domain/models/crm-overview.types";
-import { useCrmCurrency } from "./useCrmSettingsStore";
+import { useCrmCurrency } from "./useCrmCurrency";
 
 export type { CrmCurrencyPipelineBreakdown, CrmPipelineReport as CrmCommercialReport };
 

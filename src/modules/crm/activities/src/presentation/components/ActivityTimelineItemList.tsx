@@ -251,6 +251,7 @@ export function ActivityTimelineItemList({
                       type="button"
                       variant="ghost"
                       size="sm"
+                      data-testid="follow-up-activity-btn"
                       onClick={() => onSelectForFollowUp(activity)}
                       className="h-6 text-[10px] px-2 text-nx-ink-3 hover:text-nx-ink hover:bg-nx-raised gap-1 opacity-80 group-hover:opacity-100"
                     >

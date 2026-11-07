@@ -4,10 +4,10 @@ import { useState, useEffect, useCallback } from "react";
 import { getCrmContainer } from "@modules/crm/di";
 import {
   useCrmSettingsStore,
-  useCrmCurrency,
   type CrmEntityTypeKey,
-} from "./useCrmSettingsStore";
-import { serializeCrmTenantCustomConfig } from "./useCrmWorkflowsStore";
+} from "../stores/useCrmSettingsStore";
+import { serializeCrmTenantCustomConfig } from "../stores/useCrmWorkflowsStore";
+import { useCrmCurrency } from "./useCrmCurrency";
 
 /**
  * ViewModel hook for the CRM Settings View (/crm/settings).

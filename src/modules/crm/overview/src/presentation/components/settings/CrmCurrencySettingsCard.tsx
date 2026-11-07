@@ -20,7 +20,7 @@ import {
   CRM_CURRENCY_OPTIONS,
   getCrossExchangeRate,
   type CrmModuleSettingsState,
-} from "../../viewmodels/useCrmSettingsStore";
+} from "../../stores/useCrmSettingsStore";
 
 /** Props for CrmCurrencySettingsCard. */
 export interface CrmCurrencySettingsCardProps {

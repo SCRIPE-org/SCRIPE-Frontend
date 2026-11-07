@@ -15,7 +15,7 @@ import { CrmShell } from "../components/CrmShell";
 import { CrmSectionHeader } from "../components/CrmSectionHeader";
 import { CrmSettingsSkeleton } from "../components/CrmSettingsSkeleton";
 import { useCrmSettingsViewModel } from "../viewmodels/useCrmSettingsViewModel";
-import { useCrmWorkflowsStore } from "../viewmodels/useCrmWorkflowsStore";
+import { useCrmWorkflowsStore } from "../stores/useCrmWorkflowsStore";
 import { CrmCurrencySettingsCard } from "../components/settings/CrmCurrencySettingsCard";
 import { CrmGovernanceSettingsCard } from "../components/settings/CrmGovernanceSettingsCard";
 import { CrmCustomFieldsStudioCard } from "../components/settings/CrmCustomFieldsStudioCard";

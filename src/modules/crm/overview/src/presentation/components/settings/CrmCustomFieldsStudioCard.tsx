@@ -10,7 +10,7 @@ import { Label } from "@core/ui/label";
 import { Checkbox } from "@core/ui/checkbox";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@core/ui/select";
 import { Layers, Plus, Trash2, CheckCircle2 } from "lucide-react";
-import type { CrmEntityTypeKey, CrmModuleSettingsState, CrmCustomFieldDefinition } from "../../viewmodels/useCrmSettingsStore";
+import type { CrmEntityTypeKey, CrmModuleSettingsState, CrmCustomFieldDefinition } from "../../stores/useCrmSettingsStore";
 
 /** Props for CrmCustomFieldsStudioCard. */
 export interface CrmCustomFieldsStudioCardProps {

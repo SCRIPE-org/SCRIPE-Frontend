@@ -4,7 +4,7 @@ import { TrendingUp, TrendingDown, Minus } from "lucide-react";
 import { Card } from "@core/ui/card";
 import { cn } from "@core/common/utils";
 import type { CrmKpiStat } from "../../domain/entities/OverviewEntity";
-import { useCrmCurrency } from "../viewmodels/useCrmSettingsStore";
+import { useCrmCurrency } from "../viewmodels/useCrmCurrency";
 
 interface CrmKpiStripProps {
   stats: CrmKpiStat[];

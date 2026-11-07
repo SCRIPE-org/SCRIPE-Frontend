@@ -11,7 +11,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@core/ui/select";
-import { CRM_CURRENCY_OPTIONS } from "../viewmodels/useCrmSettingsStore";
+import { CRM_CURRENCY_OPTIONS } from "../stores/useCrmSettingsStore";
 
 export interface CrmShellTopToolbarProps {
   t: (key: string) => string;

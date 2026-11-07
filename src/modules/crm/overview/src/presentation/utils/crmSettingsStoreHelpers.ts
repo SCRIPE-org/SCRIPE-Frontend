@@ -20,7 +20,7 @@ import {
   DEFAULT_BUYING_COMMITTEE_ROLES,
   type CrmScopedRoleDefinition,
   type CrmBuyingCommitteeRoleOption,
-} from "../viewmodels/useCrmWorkflowsStore";
+} from "../stores/useCrmWorkflowsStore";
 
 export {
   CRM_FALLBACK_USD_RATES,
