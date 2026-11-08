@@ -41,9 +41,9 @@ export const PAGE_REGISTRY: PageDefinition[] = [
     category: "general",
   },
   {
-    href: "/profile",
-    labelEn: "Profile",
-    labelAr: "الملف الشخصي",
+    href: "/account/dossier",
+    labelEn: "Sovereign Account",
+    labelAr: "الحساب السيادي",
     icon: "User",
     category: "general",
   },

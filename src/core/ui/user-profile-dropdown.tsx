@@ -132,7 +132,7 @@ export function UserProfileDropdown({
   const showEmailLine = emailLine.length > 0 && emailLine !== displayName;
 
   const handleProfileClick = () => {
-    router.push("/profile");
+    router.push("/account/dossier");
     setIsOpen(false);
   };
 

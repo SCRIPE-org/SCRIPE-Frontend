@@ -227,10 +227,22 @@ export const PAGE_PERMISSIONS: Record<string, PermissionCode[]> = {
   "/": [], // Public (authenticated)
   "/login": [], // Public
   "/settings": [],
-  "/profile": [],
-  "/profile/security": [],
-  "/profile/activity": [],
-  "/profile/sessions": [],
+  "/account": [],
+  "/account/dossier": [],
+  "/account/credentials": [],
+  "/account/security": [],
+  "/account/sessions": [],
+  "/account/devices": [],
+  "/account/governance": [],
+  "/account/activity": [],
+  "/account/privacy": [],
+  "/account/preferences": [],
+  "/account/accessibility": [],
+  "/account/ai-copilot": [],
+  "/account/notifications": [],
+  "/account/plan": [],
+  "/account/billing": [],
+  "/account/integrations": [],
 
   // Identity & Access
   "/admins": [SYSTEM_PERMISSIONS.ADMINS_VIEW],

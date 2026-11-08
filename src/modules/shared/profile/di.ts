@@ -8,12 +8,15 @@
 import { getModuleApiService } from "@core/services/api-factory";
 import { ProfileRepository } from "./core/src/data/repositories/ProfileRepository";
 import { SecurityRepository } from "./core/src/data/repositories/SecurityRepository";
+import { SovereignAccountRepository } from "./core/src/data/repositories/SovereignAccountRepository";
 import type { IProfileRepository } from "./core/src/domain/interfaces/IProfileRepository";
 import type { ISecurityRepository } from "./core/src/domain/interfaces/ISecurityRepository";
+import type { ISovereignAccountRepository } from "./core/src/domain/interfaces/ISovereignAccountRepository";
 
 interface ProfileContainer {
   profileRepository: IProfileRepository;
   securityRepository: ISecurityRepository;
+  sovereignAccountRepository: ISovereignAccountRepository;
 }
 
 let _instance: ProfileContainer | null = null;
@@ -28,12 +31,14 @@ function createContainer(): ProfileContainer {
     return {
       profileRepository: dummyProxy,
       securityRepository: dummyProxy,
+      sovereignAccountRepository: dummyProxy,
     };
   }
   const api = getModuleApiService("IDENTITY");
   const profileRepository = new ProfileRepository(api);
   const securityRepository = new SecurityRepository(api);
-  return { profileRepository, securityRepository };
+  const sovereignAccountRepository = new SovereignAccountRepository(api);
+  return { profileRepository, securityRepository, sovereignAccountRepository };
 }
 
 export const container: ProfileContainer = new Proxy({} as ProfileContainer, {

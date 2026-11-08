@@ -114,10 +114,10 @@ export function HubTopBar({ onSearchClick, onAppLauncherClick }: HubTopBarProps)
       {/* Divider */}
       <div aria-hidden="true" className="h-[22px] w-px bg-nx-line" />
 
-      {/* Avatar pill → navigate to /profile */}
+      {/* Avatar pill → navigate to /account/dossier */}
       <button
         type="button"
-        onClick={() => router.push("/profile")}
+        onClick={() => router.push("/account/dossier")}
         className="inline-flex h-9 cursor-pointer items-center gap-2 rounded-full border border-nx-line py-1 pe-2.5 ps-1 transition-colors duration-nx-micro ease-nx-enter hover:bg-nx-hover focus-visible:shadow-nx-focus focus-visible:outline-none motion-reduce:transition-none"
       >
         <div

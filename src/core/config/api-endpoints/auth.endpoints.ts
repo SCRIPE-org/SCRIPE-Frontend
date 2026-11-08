@@ -5,7 +5,7 @@ export const AUTH_ENDPOINTS = {
     LOGIN: `${V1}/auth/admin/login`,
     LOGOUT: `${V1}/auth/admin/logout`,
     REFRESH: `${V1}/auth/admin/refresh`,
-    ME: `${V1}/Admins/me`,
+    ME: `${V1}/account/dossier`,
     IMPERSONATE: (id: string) => `${V1}/auth/admin/impersonate/${id}`,
     STOP_IMPERSONATION: `${V1}/auth/admin/stop-impersonation`,
     // ── Admin Password Reset (targets Admins table, not Users) ──
@@ -108,9 +108,9 @@ export const AUTH_ENDPOINTS = {
   },
 
   PROFILE: {
-    ME: `${V1}/Admins/me`,
-    UPDATE_ME: `${V1}/Admins/me`,
-    AVATAR: `${V1}/Admins/me/avatar`,
+    ME: `${V1}/account/dossier`,
+    UPDATE_ME: `${V1}/account/dossier`,
+    AVATAR: `${V1}/account/dossier/avatar`,
     CHANGE_PASSWORD: (id: string) => `${V1}/Admins/${id}/change-password`,
     SESSIONS: `${V1}/auth/admin/sessions`,
     REVOKE_SESSION: (tokenId: string) => `${V1}/auth/admin/sessions/${tokenId}`,

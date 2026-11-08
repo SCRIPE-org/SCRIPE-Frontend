@@ -1,32 +1,38 @@
 "use client";
 
 /**
- * Profile Suite Persistent Shell
+ * Sovereign Account World v3.0 Persistent Shell (/account/*)
  *
- * Hosts the top operational executive telemetry banner (ProfileTelemetryHud)
- * and sticky left navigation console (ProfileRailLayout) across all /profile/* routes.
- * Shares the single ['profile', 'me'] query cache with child views to eliminate N+1 requests.
+ * Hosts the top operational executive telemetry banner (ProfileTelemetryHud),
+ * the 6-category sticky left navigation console (ProfileRailLayout), and the
+ * Biometric Sudo Gate across all 15 /account/* routes.
  */
+import { useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { useProfileDossierViewModel } from "@modules/profile/core/src/presentation/viewmodels/useProfileDossierViewModel";
 import { sessionsFleetKeys } from "@modules/profile/core/src/presentation/viewmodels/useSessionsFleetViewModel";
 import { ProfileTelemetryHud } from "@modules/profile/core/src/presentation/components/ProfileTelemetryHud";
 import { ProfileRailLayout } from "@modules/profile/core/src/presentation/components/ProfileRailLayout";
+import { SovereignSudoGate } from "@modules/profile/core/src/presentation/components/SovereignSudoGate";
 import { ModuleErrorBoundary } from "@core/ui/module-error-boundary";
 
-export default function ProfileLayout({ children }: { children: React.ReactNode }) {
+export default function SovereignAccountSectionLayout({ children }: { children: React.ReactNode }) {
   const { profile, toggleAvailability, switchAcademy, selectedAcademyId } = useProfileDossierViewModel();
   const queryClient = useQueryClient();
   const cachedSessions = queryClient.getQueryData<unknown[]>(sessionsFleetKeys.list());
   const activeSessionCount = Array.isArray(cachedSessions) && cachedSessions.length > 0 ? cachedSessions.length : 3;
+  const [sudoGateOpen, setSudoGateOpen] = useState(false);
+  const [sudoActive, setSudoActive] = useState(true);
 
   return (
     <ModuleErrorBoundary moduleName="profile.title">
-      <div className="w-full max-w-7xl mx-auto py-4 sm:py-6 px-3 sm:px-6">
+      <div className="w-full max-w-7xl mx-auto py-2 sm:py-4">
         <ProfileTelemetryHud
           profile={profile}
           activeSessionCount={activeSessionCount}
           onToggleAvailability={toggleAvailability}
+          onOpenSudoGate={() => setSudoGateOpen(true)}
+          sudoActive={sudoActive}
         />
         <ProfileRailLayout
           profile={profile}
@@ -35,6 +41,11 @@ export default function ProfileLayout({ children }: { children: React.ReactNode 
         >
           {children}
         </ProfileRailLayout>
+        <SovereignSudoGate
+          open={sudoGateOpen}
+          onOpenChange={setSudoGateOpen}
+          onVerified={() => setSudoActive(true)}
+        />
       </div>
     </ModuleErrorBoundary>
   );

@@ -26,7 +26,7 @@ export function MinimalWelcome() {
       size="lg"
       action={
         <Button variant="outline" size="sm" asChild>
-          <Link href="/profile">
+          <Link href="/account/dossier">
             <User className="me-1.5 h-4 w-4" />
             {t("overview.minimal.profile")}
           </Link>

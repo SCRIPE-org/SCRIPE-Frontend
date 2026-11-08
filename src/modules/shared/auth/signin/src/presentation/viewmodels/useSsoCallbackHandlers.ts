@@ -142,7 +142,7 @@ async function tryLinkExternalLogin(
     displayName: params.displayName ?? undefined,
   });
   deps.operationSuccess(deps.t("sso.accountLinkedSuccess"));
-  setters.redirectTo("/profile");
+  setters.redirectTo("/account/integrations");
   return true;
 }
 

@@ -65,29 +65,31 @@ function mockApiService(overrides: Partial<IApiService> = {}): IApiService {
   } as unknown as IApiService;
 }
 
-describe("ProfileService — no call site targets the dead /v1/profile/* LEGACY family", () => {
-  it("getProfile() GETs /v1/admins/me, not /v1/profile", async () => {
+describe("ProfileService — no call site targets the dead /v1/profile/* or legacy /Admins/me family", () => {
+  it("getProfile() GETs /v1/account/dossier, not /v1/profile or /v1/Admins/me", async () => {
     const api = mockApiService();
     await new ProfileService(api).getProfile();
     expect(api.get).toHaveBeenCalledWith(PROFILE_ENDPOINTS.ME);
-    expect(PROFILE_ENDPOINTS.ME).toBe("/v1/Admins/me");
+    expect(PROFILE_ENDPOINTS.ME).toBe("/v1/account/dossier");
   });
 
-  it("updateProfile() PUTs /v1/admins/me, not /v1/profile", async () => {
+  it("updateProfile() PUTs /v1/account/dossier, not /v1/profile", async () => {
     const api = mockApiService();
     const data = { firstName: "A", lastName: "B", phoneNumber: "1" };
     await new ProfileService(api).updateProfile(data);
     expect(api.put).toHaveBeenCalledWith(PROFILE_ENDPOINTS.UPDATE_ME, data);
+    expect(PROFILE_ENDPOINTS.UPDATE_ME).toBe("/v1/account/dossier");
   });
 
-  it("uploadAvatar() POSTs /v1/admins/me/avatar, not /v1/profile/avatar", async () => {
+  it("uploadAvatar() POSTs /v1/account/dossier/avatar, not /v1/profile/avatar", async () => {
     const api = mockApiService();
     const file = new File(["x"], "a.png");
     await new ProfileService(api).uploadAvatar(file);
     expect((api.post as ReturnType<typeof vi.fn>).mock.calls[0][0]).toBe(PROFILE_ENDPOINTS.AVATAR);
+    expect(PROFILE_ENDPOINTS.AVATAR).toBe("/v1/account/dossier/avatar");
   });
 
-  it("removeAvatar() DELETEs /v1/admins/me/avatar, not /v1/profile/avatar", async () => {
+  it("removeAvatar() DELETEs /v1/account/dossier/avatar, not /v1/profile/avatar", async () => {
     const api = mockApiService();
     await new ProfileService(api).removeAvatar();
     expect(api.delete).toHaveBeenCalledWith(PROFILE_ENDPOINTS.AVATAR);

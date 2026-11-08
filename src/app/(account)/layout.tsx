@@ -3,12 +3,12 @@
 /**
  * Sovereign Account Console Layout
  *
- * Standalone, focused account & security layout modeled after GitHub Settings / Atlassian Account / MMC.
+ * Standalone, focused account & security layout for SCRIPE Sovereign Account World v3.0.
  * Completely decoupled from the operational dashboard: NO sidebars, NO workspace rails, and NO module navigation.
- * Provides a dedicated top identity bar, back-to-workspace return link, theme/language controls,
- * and hosts the persistent account console viewport.
+ * Hosts the global ⌘K / Ctrl+K <SovereignCommandBar>, Alt+P Broadcast Privacy Mode toggle,
+ * back-to-workspace return link, theme/language controls, and the persistent account console viewport.
  */
-import React from "react";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useI18n } from "@core/providers/i18n-provider";
@@ -17,6 +17,7 @@ import { LanguageSwitcher } from "@core/ui/layout/common/language-switcher";
 import { ThemeSwitcher } from "@core/ui/layout/common/theme-switcher";
 import { Avatar, AvatarFallback, AvatarImage } from "@core/ui/avatar";
 import { Button } from "@core/ui/button";
+import { Badge } from "@core/ui/badge";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -25,16 +26,39 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@core/ui/dropdown-menu";
-import { ArrowLeft, ArrowRight, LayoutDashboard, LogOut, ShieldCheck } from "lucide-react";
+import {
+  ArrowLeft,
+  ArrowRight,
+  LayoutDashboard,
+  LogOut,
+  ShieldCheck,
+  Search,
+  EyeOff,
+  Eye,
+} from "lucide-react";
+import { SovereignCommandBar } from "@modules/profile/core/src/presentation/components/SovereignCommandBar";
 
 export default function AccountLayout({ children }: { children: React.ReactNode }) {
   const router = useRouter();
   const { t, direction } = useI18n();
   const user = useAppStore((s) => s.user);
   const logout = useAppStore((s) => s.logout);
+  const [commandBarOpen, setCommandBarOpen] = useState(false);
+  const [privacyBlur, setPrivacyBlur] = useState(false);
 
   const isRtl = direction === "rtl";
   const BackArrow = isRtl ? ArrowRight : ArrowLeft;
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.altKey && e.key.toLowerCase() === "p") {
+        e.preventDefault();
+        setPrivacyBlur((prev) => !prev);
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, []);
 
   const handleSignOut = () => {
     logout();
@@ -45,19 +69,22 @@ export default function AccountLayout({ children }: { children: React.ReactNode 
 
   const displayName = user
     ? `${user.firstName ?? ""} ${user.lastName ?? ""}`.trim() || user.username
-    : "Administrator";
+    : "Capt. Seif El-Din Kamel";
 
   const userInitials = user
-    ? `${(user.firstName?.[0] ?? "").toUpperCase()}${(user.lastName?.[0] ?? "").toUpperCase()}` || "AD"
-    : "AD";
+    ? `${(user.firstName?.[0] ?? "").toUpperCase()}${(user.lastName?.[0] ?? "").toUpperCase()}` || "SK"
+    : "SK";
 
   return (
-    <div className="min-h-screen flex flex-col bg-nx-ground text-nx-ink selection:bg-nx-accent/20 selection:text-nx-accent">
+    <div
+      data-sovereign-privacy-blur={privacyBlur ? "true" : "false"}
+      className="min-h-screen flex flex-col bg-nx-ground text-nx-ink selection:bg-nx-accent/20 selection:text-nx-accent"
+    >
       {/* ── Top Standalone Sovereign Header ───────────────────────────────── */}
       <header className="sticky top-0 z-40 w-full border-b border-nx-line bg-nx-surface/95 backdrop-blur-md">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-3">
           {/* Leading: Return to Dashboard Action + Brand Identity */}
-          <div className="flex items-center gap-3.5">
+          <div className="flex items-center gap-3">
             <Button
               variant="ghost"
               size="sm"
@@ -107,8 +134,41 @@ export default function AccountLayout({ children }: { children: React.ReactNode 
             </Link>
           </div>
 
-          {/* Trailing: Theme Switcher, Language Switcher, User Dropdown */}
+          {/* Center / Trailing: ⌘K Command Bar, Alt+P Privacy Blur, Theme, Language, User Menu */}
           <div className="flex items-center gap-2">
+            {/* ⌘K Sovereign Command Bar Trigger */}
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setCommandBarOpen(true)}
+              className="h-8 gap-2 border-nx-line bg-nx-raised text-nx-ink-2 hover:text-nx-ink text-xs px-2.5"
+              data-testid="sovereign-command-bar-trigger"
+            >
+              <Search className="h-3.5 w-3.5 text-nx-accent" />
+              <span className="hidden md:inline">{t("profile.commandBar.triggerLabel")}</span>
+              <Badge variant="outline" className="text-[10px] font-mono border-nx-line text-nx-ink-3 px-1 py-0">
+                ⌘K
+              </Badge>
+            </Button>
+
+            {/* Alt+P Broadcast Privacy Mode Toggle */}
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setPrivacyBlur((prev) => !prev)}
+              className={
+                privacyBlur
+                  ? "h-8 gap-1.5 border-nx-accent bg-nx-accent-wash text-nx-accent text-xs px-2.5 font-semibold"
+                  : "h-8 gap-1.5 border-nx-line bg-nx-raised text-nx-ink-2 hover:text-nx-ink text-xs px-2.5"
+              }
+              data-testid="sovereign-privacy-blur-toggle"
+            >
+              {privacyBlur ? <EyeOff className="h-3.5 w-3.5" /> : <Eye className="h-3.5 w-3.5" />}
+              <span className="hidden lg:inline">
+                {privacyBlur ? t("profile.privacyBlur.active") : t("profile.privacyBlur.toggle")}
+              </span>
+            </Button>
+
             <ThemeSwitcher />
             <LanguageSwitcher />
 
@@ -141,12 +201,15 @@ export default function AccountLayout({ children }: { children: React.ReactNode 
                       {displayName}
                     </p>
                     <p className="text-xs leading-none text-nx-ink-3 font-mono truncate">
-                      @{user?.username ?? "admin"}
+                      @{user?.username ?? "seif.kamel"}
                     </p>
                   </div>
                 </DropdownMenuLabel>
                 <DropdownMenuSeparator className="bg-nx-line" />
-                <DropdownMenuItem onClick={() => router.push("/overview")} className="text-nx-ink hover:bg-nx-raised cursor-pointer">
+                <DropdownMenuItem
+                  onClick={() => router.push("/overview")}
+                  className="text-nx-ink hover:bg-nx-raised cursor-pointer"
+                >
                   <LayoutDashboard className="me-2 h-4 w-4 text-nx-ink-3" />
                   <span>{t("profile.accountPortal.mainDashboard")}</span>
                 </DropdownMenuItem>
@@ -164,8 +227,21 @@ export default function AccountLayout({ children }: { children: React.ReactNode 
         </div>
       </header>
 
+      {/* Broadcast Privacy Blur Active Banner */}
+      {privacyBlur && (
+        <div className="w-full border-b border-nx-accent/30 bg-nx-accent-wash px-4 py-1.5 text-center text-xs font-medium text-nx-accent">
+          {t("profile.privacyBlur.bannerNotice")}
+        </div>
+      )}
+
       {/* ── Main Sovereign Viewport (NO sidebars, clean width) ─────────────── */}
-      <main className="flex-1 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 md:py-8">
+      <main
+        className={
+          privacyBlur
+            ? "flex-1 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 md:py-8 [&_code]:blur-xs [&_.font-mono]:blur-[3px]"
+            : "flex-1 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 md:py-8"
+        }
+      >
         {children}
       </main>
 
@@ -174,15 +250,19 @@ export default function AccountLayout({ children }: { children: React.ReactNode 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-3">
           <div className="flex items-center gap-1.5 font-medium text-nx-ink-2">
             <ShieldCheck className="h-4 w-4 text-nx-accent shrink-0" />
-            <span>
-              {t("profile.accountPortal.footerOrg")}
-            </span>
+            <span>{t("profile.accountPortal.footerOrg")}</span>
           </div>
           <div className="text-[11px] text-nx-ink-3 font-mono">
             {t("profile.accountPortal.cryptoStandard")}
           </div>
         </div>
       </footer>
+
+      <SovereignCommandBar
+        open={commandBarOpen}
+        onOpenChange={setCommandBarOpen}
+        onTogglePrivacyBlur={() => setPrivacyBlur((prev) => !prev)}
+      />
     </div>
   );
 }

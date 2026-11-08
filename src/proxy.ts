@@ -23,7 +23,7 @@ const PUBLIC_PATHS = ["/login", "/forgot-password", "/authorize"];
 
 // Routes that explicitly require authentication
 // Everything under (modules) is protected by the layout, but this adds server-level guard
-const PROTECTED_PREFIXES = ["/admin", "/profile", "/settings", "/recycle-bin"];
+const PROTECTED_PREFIXES = ["/admin", "/account", "/settings", "/recycle-bin"];
 
 const AUTH_STATE_COOKIE = STORAGE_KEYS.scr_auth_state;
 

@@ -4,9 +4,9 @@ import { V1 } from "@/core/config/api-endpoints/_shared";
  * Documentation for module export
  */
 export const PROFILE_ENDPOINTS = {
-  ME: `${V1}/Admins/me`,
-  UPDATE_ME: `${V1}/Admins/me`,
-  AVATAR: `${V1}/Admins/me/avatar`,
+  ME: `${V1}/account/dossier`,
+  UPDATE_ME: `${V1}/account/dossier`,
+  AVATAR: `${V1}/account/dossier/avatar`,
   CHANGE_PASSWORD: (id: string) => `${V1}/Admins/${id}/change-password`,
   SESSIONS: `${V1}/auth/admin/sessions`,
   REVOKE_SESSION: (tokenId: string) => `${V1}/auth/admin/sessions/${tokenId}`,
@@ -30,13 +30,32 @@ export const PROFILE_ENDPOINTS = {
     RENAME: (id: string) => `${V1}/auth/passkeys/${id}/name`,
   },
   SUDO_VERIFY: `${V1}/auth/me/sudo-verify`,
-  // NOTE: a `LEGACY` block (`/v1/profile/*`) used to live here. No `ProfileController`
-  // has ever existed in SCRIPE-Backend (verified: zero matches for "ProfileController"
-  // under SCRIPE-Backend/src/Host/API/Controllers) — every one of those routes was a
-  // 404. ProfileService.ts's 13 call sites all used LEGACY.*, making the entire Profile
-  // Settings page (profile/page.tsx) 404 on every operation. Removed 2026-08-02 in favor
-  // of the already-correct, already-implemented endpoints above (ME/UPDATE_ME/AVATAR/
-  // CHANGE_PASSWORD/SESSIONS/REVOKE_SESSION/REVOKE_ALL_SESSIONS/
-  // BACKUP_CODES_REGENERATE/SECURITY_LOG/EXTERNAL_LOGINS/LINK_EXTERNAL_LOGIN/
-  // UNLINK_EXTERNAL_LOGIN) — see ProfileService.test.ts for the call-site contract.
+  ACCOUNT: {
+    CONTEXT: `${V1}/account/context`,
+    DOSSIER: `${V1}/account/dossier`,
+    CREDENTIALS: `${V1}/account/credentials`,
+     CREDENTIAL_BY_ID: (id: string) => `${V1}/account/credentials/${id}`,
+    SECURITY: `${V1}/account/security`,
+    SESSIONS: `${V1}/account/sessions`,
+    PING_SESSION: (sessionId: string) => `${V1}/account/sessions/${sessionId}/ping`,
+    DEVICES: `${V1}/account/devices`,
+    REVOKE_DEVICE: (deviceId: string) => `${V1}/account/devices/${deviceId}`,
+    GOVERNANCE: `${V1}/account/governance`,
+    DELEGATIONS: `${V1}/account/governance/delegations`,
+    REVOKE_DELEGATION: (id: string) => `${V1}/account/governance/delegations/${id}`,
+    ACTIVITY: `${V1}/account/activity`,
+    INSPECTOR_PASS: `${V1}/account/activity/inspector-pass`,
+    PRIVACY: `${V1}/account/privacy`,
+    PRIVACY_EXPORT: `${V1}/account/privacy/export`,
+    PREFERENCES: `${V1}/account/preferences`,
+    ACCESSIBILITY: `${V1}/account/accessibility`,
+    AI_COPILOT: `${V1}/account/ai-copilot`,
+    NOTIFICATIONS: `${V1}/account/notifications`,
+    PLAN: `${V1}/account/plan`,
+    PLAN_REQUEST: `${V1}/account/plan/request`,
+    BILLING: `${V1}/account/billing`,
+    BILLING_EXPENSES: `${V1}/account/billing/expenses`,
+    INTEGRATIONS: `${V1}/account/integrations`,
+    INTEGRATION_BY_ID: (kind: string, id: string) => `${V1}/account/integrations/${kind}/${id}`,
+  },
 } as const;
