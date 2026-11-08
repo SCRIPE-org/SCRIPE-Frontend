@@ -21,13 +21,13 @@ import { Upload, Trash2, Camera } from "lucide-react";
 interface AvatarUploadProps {
   currentImageUrl: string | null;
   initials: string;
-  previewUrl: string | null;
-  onFileSelect: (file: File) => File;
+  previewUrl?: string | null;
+  onFileSelect?: (file: File) => File;
   onUpload: (file: File) => Promise<unknown>;
   onRemove: () => Promise<unknown>;
   isUploading: boolean;
   isRemoving: boolean;
-  error: string | null;
+  error?: string | null;
 }
 
 /**
@@ -37,13 +37,13 @@ interface AvatarUploadProps {
 export function AvatarUpload({
   currentImageUrl,
   initials,
-  previewUrl,
+  previewUrl = null,
   onFileSelect,
   onUpload,
   onRemove,
   isUploading,
   isRemoving,
-  error,
+  error = null,
 }: AvatarUploadProps) {
   const { t } = useI18n();
   const inputRef = useRef<HTMLInputElement>(null);
@@ -65,7 +65,7 @@ export function AvatarUpload({
     (file: File) => {
       try {
         setLocalError(null);
-        const validated = onFileSelect(file);
+        const validated = onFileSelect ? onFileSelect(file) : file;
         setSelectedFile(validated);
       } catch (err: unknown) {
         setLocalError(err instanceof Error ? err.message : t("profile.avatar.unknownError"));
@@ -172,30 +172,43 @@ export function AvatarUpload({
         <p className="flex items-center gap-1.5 text-xs text-destructive">{displayError}</p>
       )}
 
-      <div className="flex items-center gap-3">
+      <div className="flex flex-wrap items-center gap-3">
         <Button
+          type="button"
           size="sm"
-          onClick={handleUpload}
+          data-testid="upload-avatar-btn"
+          onClick={() => {
+            if (selectedFile) {
+              void handleUpload();
+            } else {
+              inputRef.current?.click();
+            }
+          }}
           loading={isUploading}
-          disabled={!selectedFile}
           className="min-w-[120px]"
         >
           {!isUploading && <Upload className="me-2 h-4 w-4" aria-hidden="true" />}
           {t("profile.avatar.upload")}
         </Button>
 
-        {currentImageUrl && (
-          <Button
-            size="sm"
-            variant="outline"
-            onClick={() => onRemove()}
-            loading={isRemoving}
-            className="text-destructive hover:text-destructive"
-          >
-            {!isRemoving && <Trash2 className="me-2 h-4 w-4" aria-hidden="true" />}
-            {t("profile.avatar.remove")}
-          </Button>
-        )}
+        <Button
+          type="button"
+          size="sm"
+          variant="outline"
+          data-testid="remove-avatar-btn"
+          disabled={!currentImageUrl && !selectedFile && !previewUrl}
+          onClick={() => {
+            setSelectedFile(null);
+            if (currentImageUrl) {
+              void onRemove();
+            }
+          }}
+          loading={isRemoving}
+          className="text-destructive border-destructive/30 hover:bg-destructive/10 hover:text-destructive"
+        >
+          {!isRemoving && <Trash2 className="me-2 h-4 w-4" aria-hidden="true" />}
+          {t("profile.avatar.remove")}
+        </Button>
       </div>
     </div>
   );

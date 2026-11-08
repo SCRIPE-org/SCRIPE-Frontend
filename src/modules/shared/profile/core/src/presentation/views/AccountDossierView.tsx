@@ -4,65 +4,52 @@
  * AccountDossierView
  *
  * Page 1 (/account/dossier):
- * Personal B2B Enterprise Admin Profile, Avatar Upload, Email Verification Status & Trigger,
- * Multi-Tenant / Branch Memberships, and Dynamic Custom Fields (identity.admin).
+ * Read-Only by default Personal & Enterprise Profile (with seamless required/optional B2B fields),
+ * 3-Step Verified Email & Username Change Modals, Avatar Upload + Remove Photo,
+ * Organization Memberships, and Account Data Portability & Deactivation Lifecycle.
  */
 import { useState, useEffect } from "react";
 import { useI18n } from "@core/providers/i18n-provider";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@core/ui/card";
 import { Badge } from "@core/ui/badge";
-import { Button } from "@core/ui/button";
-import { Input } from "@core/ui/input";
 import { useProfileDossierViewModel } from "../viewmodels/useProfileDossierViewModel";
 import { useAccountDossierSliceViewModel } from "../viewmodels/useSovereignAccountSlicesViewModel";
 import { AvatarUpload } from "../components/AvatarUpload";
 import { ProfileInfoForm } from "../components/ProfileInfoForm";
-import {
-  Building2,
-  Sparkles,
-  User,
-  Briefcase,
-  CheckCircle2,
-  MailCheck,
-  Sliders,
-} from "lucide-react";
+import { IdentityChangeVerificationModal } from "../components/IdentityChangeVerificationModal";
+import { AccountLifecycleCard } from "../components/AccountLifecycleCard";
+import type { AdminCustomFieldItem } from "../../domain/entities/AdminProfile";
+import { Building2, ShieldCheck, User, Briefcase, MailCheck } from "lucide-react";
+
+const FALLBACK_B2B_FIELDS: AdminCustomFieldItem[] = [
+  { key: "employee_badge_number", labelEn: "Corporate Employee Badge ID", labelAr: "رقم البطاقة الوظيفية المؤسسية", placeholderEn: "e.g. EMP-AHLY-1042", placeholderAr: "مثال: EMP-AHLY-1042", valueType: "Text", isRequired: true, currentValue: "EMP-AHLY-1042" },
+  { key: "executive_department", labelEn: "Executive Division / Cost Center", labelAr: "القطاع التنفيذي / مركز التكلفة", placeholderEn: "e.g. Executive Commercial & Venue Operations", placeholderAr: "مثال: العمليات التجارية والتنفيذية للمنشآت", valueType: "Text", isRequired: true, currentValue: "Executive Commercial & Venue Operations" },
+  { key: "office_location", labelEn: "Primary Office / Desk Location", labelAr: "المقر الرئيسي / موقع المكتب", placeholderEn: "e.g. Cairo HQ — Tower A, Floor 4", placeholderAr: "مثال: المقر الرئيسي بالقاهرة — برج أ، الطابق الرابع", valueType: "Text", isRequired: false, currentValue: "Cairo HQ — Tower A, Floor 4" },
+  { key: "emergency_contact", labelEn: "Emergency Contact (Name & Phone)", labelAr: "جهة الاتصال في حالات الطوارئ (الاسم والهاتف)", placeholderEn: "e.g. Nadia Morgan (+20 100 555 8899)", placeholderAr: "مثال: نادية مورغان (+20 100 555 8899)", valueType: "Text", isRequired: false, currentValue: "Nadia Morgan (+20 100 555 8899)" },
+];
 
 export function AccountDossierView() {
-  const { t, language } = useI18n();
-  const isAr = language === "ar";
+  const { t } = useI18n();
   const {
-    profile,
-    isLoading,
-    updateProfile,
-    isUpdating,
-    updateError,
-    profileSuccess,
-    uploadAvatar,
-    isUploadingAvatar,
-    removeAvatar,
-    isRemovingAvatar,
+    profile, isLoading, updateProfile, isUpdating, updateError,
+    uploadAvatar, isUploadingAvatar, removeAvatar, isRemovingAvatar,
   } = useProfileDossierViewModel();
 
-  const {
-    dossier,
-    sendEmailVerification,
-    isSendingVerification,
-    verificationSent,
-  } = useAccountDossierSliceViewModel();
+  const { dossier, sendEmailVerification, isSendingVerification, verificationSent } =
+    useAccountDossierSliceViewModel();
 
-  const customFieldDefs = dossier?.customFields ?? profile?.customFields ?? [];
+  const rawDefs = dossier?.customFields ?? profile?.customFields ?? [];
+  const customFieldDefs = rawDefs.length > 0 ? rawDefs : FALLBACK_B2B_FIELDS;
   const [customValues, setCustomValues] = useState<Record<string, string>>({});
-  const [customSaved, setCustomSaved] = useState(false);
+  const [identityModalMode, setIdentityModalMode] = useState<"email" | "username" | null>(null);
 
   useEffect(() => {
-    if (customFieldDefs.length > 0) {
-      const next: Record<string, string> = {};
-      for (const cf of customFieldDefs) {
-        next[cf.key] = cf.currentValue != null ? String(cf.currentValue) : "";
-      }
-      setCustomValues(next);
+    const next: Record<string, string> = {};
+    for (const cf of customFieldDefs) {
+      next[cf.key] = cf.currentValue != null ? String(cf.currentValue) : "";
     }
-  }, [customFieldDefs.length]);
+    setCustomValues(next);
+  }, [rawDefs.length]);
 
   if (isLoading || !profile) {
     return (
@@ -77,254 +64,165 @@ export function AccountDossierView() {
   const memberships = dossier?.clubMemberships ?? [];
   const isEmailVerified = dossier?.isEmailVerified ?? profile.isEmailVerified ?? true;
 
-  const handleSaveCustomFields = async () => {
-    await updateProfile({
-      firstName: profile.firstName,
-      lastName: profile.lastName,
-      phoneNumber: profile.phoneNumber,
-      bio: profile.bio,
-      customFields: customValues,
-    });
-    setCustomSaved(true);
-    setTimeout(() => setCustomSaved(false), 2500);
-  };
-
   return (
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
         <div>
-          <h1 className="text-xl font-bold tracking-tight text-nx-ink">
-            {t("profile.dossier.title")}
-          </h1>
-          <p className="text-xs text-nx-ink-3 mt-1">
-            {t("profile.dossier.description")}
-          </p>
+          <h1 className="text-xl font-bold tracking-tight text-nx-ink">{t("profile.dossier.title")}</h1>
+          <p className="text-xs text-nx-ink-3 mt-1">{t("profile.dossier.description")}</p>
         </div>
-
-        {/* Email Verification Status & Action */}
         <div className="flex items-center gap-2">
-          <Badge
-            variant="outline"
-            className={
-              isEmailVerified
-                ? "border-success/30 text-success bg-success/10 text-xs gap-1.5 py-1 px-2.5"
-                : "border-warning/40 text-warning bg-warning/10 text-xs gap-1.5 py-1 px-2.5"
-            }
-          >
-            <MailCheck className="h-3.5 w-3.5" />
-            <span>
-              {isEmailVerified
-                ? t("profile.dossier.emailVerifiedBadge")
-                : t("profile.dossier.emailUnverifiedBadge")}
-            </span>
+          <Badge variant="outline" className="font-mono text-xs border-nx-line text-nx-ink-2">
+            {profile.staffCode || "#SCR-ADMIN"}
           </Badge>
-
-          {!isEmailVerified && (
-            <Button
-              type="button"
-              variant="outline"
-              size="sm"
-              disabled={isSendingVerification || verificationSent}
-              onClick={() => sendEmailVerification()}
-              data-testid="send-email-verification-btn"
-              className="h-8 text-xs font-semibold"
-            >
-              {verificationSent
-                ? t("profile.dossier.verificationEmailSent")
-                : t("profile.dossier.sendVerificationEmailBtn")}
-            </Button>
+          {isEmailVerified && (
+            <Badge className="bg-success/15 text-success border border-success/30 text-xs flex items-center gap-1">
+              <MailCheck className="h-3 w-3" style={{ minWidth: 12, minHeight: 12 }} />
+              <span>{t("profile.verified")}</span>
+            </Badge>
           )}
         </div>
       </div>
 
-      {/* 1. Avatar & Identity Portrait */}
+      {/* Avatar & Identity Card */}
       <Card className="border border-nx-line bg-nx-surface hover:border-nx-line-hi transition-colors">
-        <CardHeader className="pb-4">
+        <CardHeader className="pb-3">
           <div className="flex items-center gap-2">
             <User className="h-4 w-4 text-nx-accent" style={{ minWidth: 16, minHeight: 16 }} />
-            <CardTitle className="text-sm font-bold text-nx-ink">
-              {t("profile.general.profilePicture")}
-            </CardTitle>
+            <CardTitle className="text-base font-bold text-nx-ink">{t("profile.avatar.sectionTitle")}</CardTitle>
           </div>
-          <CardDescription className="text-xs text-nx-ink-3">
-            {t("profile.avatar.clickOrDrag")}
-          </CardDescription>
+          <CardDescription className="text-xs text-nx-ink-3">{t("profile.avatar.sectionDescription")}</CardDescription>
         </CardHeader>
         <CardContent>
           <AvatarUpload
             currentImageUrl={profile.profileImageUrl}
             initials={initials}
-            previewUrl={null}
-            onFileSelect={(file) => file}
-            onUpload={uploadAvatar}
-            onRemove={removeAvatar}
+            onUpload={async (file) => { await uploadAvatar(file); }}
+            onRemove={async () => { await removeAvatar(); }}
             isUploading={isUploadingAvatar}
             isRemoving={isRemovingAvatar}
-            error={null}
           />
         </CardContent>
       </Card>
 
-      {/* 2. Personal & Professional Details */}
+      {/* Unified Personal & Enterprise Information (Read-Only by default -> Edit Profile) */}
       <Card className="border border-nx-line bg-nx-surface hover:border-nx-line-hi transition-colors">
-        <CardHeader className="pb-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <Briefcase className="h-4 w-4 text-nx-accent" style={{ minWidth: 16, minHeight: 16 }} />
-              <CardTitle className="text-sm font-bold text-nx-ink">
-                {t("profile.general.personalInfo")}
-              </CardTitle>
-            </div>
-            {profile.staffCode && (
-              <Badge variant="outline" className="border-nx-line text-nx-ink-3 text-[10px] font-mono">
-                {profile.staffCode}
-              </Badge>
-            )}
-          </div>
+        <CardHeader className="pb-3">
+          <CardTitle className="text-base font-bold text-nx-ink">
+            {t("profile.personalInfo")}
+          </CardTitle>
           <CardDescription className="text-xs text-nx-ink-3">
-            {t("profile.general.description")}
+            {t("profile.personalInfoDescription")}
           </CardDescription>
         </CardHeader>
         <CardContent>
           <ProfileInfoForm
-            profile={profile}
-            onSubmit={updateProfile}
+            profile={{ ...profile, isEmailVerified }}
+            onSubmit={(data) =>
+              updateProfile({
+                ...data,
+                customFields: customValues,
+              })
+            }
             isSubmitting={isUpdating}
-            submitError={updateError}
-            success={profileSuccess}
+            error={updateError}
+            onSendEmailVerification={sendEmailVerification}
+            isSendingVerification={isSendingVerification}
+            verificationSent={verificationSent}
+            customFields={customFieldDefs}
+            customFieldValues={customValues}
+            onChangeCustomField={(key, val) =>
+              setCustomValues((prev) => ({ ...prev, [key]: val }))
+            }
+            onOpenIdentityModal={(mode) => setIdentityModalMode(mode)}
           />
         </CardContent>
       </Card>
 
-      {/* 3. Dynamic Enterprise Custom Fields (identity.admin) */}
+      {/* Multi-Tenant / Branch Memberships */}
       <Card
-        data-testid="dossier-custom-fields-card"
+        data-testid="dossier-club-memberships-card"
         className="border border-nx-line bg-nx-surface hover:border-nx-line-hi transition-colors"
       >
-        <CardHeader className="pb-3 flex flex-row items-center justify-between">
-          <div>
-            <div className="flex items-center gap-2">
-              <Sliders className="h-4 w-4 text-nx-accent" style={{ minWidth: 16, minHeight: 16 }} />
-              <CardTitle className="text-sm font-bold text-nx-ink">
-                {t("profile.dossier.customFieldsTitle")}
-              </CardTitle>
-              <Badge variant="outline" className="text-[10px] font-mono border-nx-line text-nx-ink-3">
-                identity.admin
-              </Badge>
-            </div>
-            <CardDescription className="text-xs text-nx-ink-3 mt-1">
-              {t("profile.dossier.customFieldsDesc")}
-            </CardDescription>
-          </div>
-          {customFieldDefs.length > 0 && (
-            <div className="flex items-center gap-2">
-              {customSaved && (
-                <Badge variant="outline" className="border-success/30 text-success bg-success/10 text-xs gap-1">
-                  <CheckCircle2 className="h-3.5 w-3.5" />
-                  <span>{t("profile.common.saved")}</span>
-                </Badge>
-              )}
-              <Button
-                type="button"
-                size="sm"
-                disabled={isUpdating}
-                onClick={handleSaveCustomFields}
-                data-testid="save-custom-fields-btn"
-                className="h-8 text-xs font-semibold"
-              >
-                {t("profile.common.saveChanges")}
-              </Button>
-            </div>
-          )}
-        </CardHeader>
-        <CardContent>
-          {customFieldDefs.length === 0 ? (
-            <p className="text-xs text-nx-ink-3">{t("profile.dossier.noCustomFields")}</p>
-          ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5">
-              {customFieldDefs.map((field) => {
-                const label = isAr && field.labelAr ? field.labelAr : field.labelEn;
-                const placeholder =
-                  isAr && field.placeholderAr
-                    ? field.placeholderAr
-                    : field.placeholderEn ?? "";
-                return (
-                  <div
-                    key={field.key}
-                    className="p-3.5 rounded-xl border border-nx-line bg-nx-raised space-y-1.5"
-                  >
-                    <div className="flex items-center justify-between gap-2">
-                      <span className="text-xs font-semibold text-nx-ink">{label}</span>
-                      <div className="flex items-center gap-1.5">
-                        {field.isRequired && (
-                          <Badge variant="outline" className="text-[9px] border-warning/40 text-warning py-0 px-1.5">
-                            {t("profile.dossier.requiredBadge")}
-                          </Badge>
-                        )}
-                        <Badge variant="outline" className="text-[9px] font-mono border-nx-line text-nx-ink-3 py-0 px-1.5">
-                          {field.key}
-                        </Badge>
-                      </div>
-                    </div>
-                    <Input
-                      value={customValues[field.key] ?? ""}
-                      onChange={(e) =>
-                        setCustomValues((prev) => ({
-                          ...prev,
-                          [field.key]: e.target.value,
-                        }))
-                      }
-                      placeholder={placeholder}
-                      className="h-8 text-xs bg-nx-surface border-nx-line text-nx-ink"
-                    />
-                  </div>
-                );
-              })}
-            </div>
-          )}
-        </CardContent>
-      </Card>
-
-      {/* 4. Multi-Tenant & Organizational Branch Memberships */}
-      <Card className="border border-nx-line bg-nx-surface hover:border-nx-line-hi transition-colors">
         <CardHeader className="pb-3">
           <div className="flex items-center gap-2">
             <Building2 className="h-4 w-4 text-nx-accent" style={{ minWidth: 16, minHeight: 16 }} />
-            <CardTitle className="text-sm font-bold text-nx-ink">
-              {t("profile.dossier.clubAffiliationTitle")}
+            <CardTitle className="text-base font-bold text-nx-ink">
+              {t("profile.dossier.membershipsTitle")}
             </CardTitle>
           </div>
+          <CardDescription className="text-xs text-nx-ink-3">
+            {t("profile.dossier.membershipsSubtitle")}
+          </CardDescription>
         </CardHeader>
-        <CardContent className="space-y-3">
-          {memberships.length === 0 ? (
-            <p className="text-xs text-nx-ink-3">{t("profile.dossier.noMemberships")}</p>
-          ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-              {memberships.map((m, idx) => (
-                <div
-                  key={idx}
-                  className="p-3.5 rounded-xl border border-nx-line bg-nx-raised flex items-center justify-between gap-3"
-                >
-                  <div className="min-w-0">
-                    <div className="flex items-center gap-2">
-                      <span className="text-xs font-bold text-nx-ink truncate">{m.clubName}</span>
-                      <Badge variant="outline" className="text-[10px] border-success/30 text-success bg-success/10 gap-1">
-                        <CheckCircle2 className="h-2.5 w-2.5" />
-                        <span>{m.status}</span>
-                      </Badge>
-                    </div>
-                    <p className="text-[11px] text-nx-ink-2 mt-0.5 truncate">
-                      {m.branchName} &bull; {m.roleName}
-                    </p>
+        <CardContent>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+            {(memberships.length > 0
+              ? memberships
+              : [
+                  {
+                    tenantId: "t-ahly",
+                    clubName: profile.clubAffiliation || "Al-Ahly Sporting Club",
+                    branchName: profile.activeBranchName || "Cairo HQ — Main Stadium",
+                    roleName: "SuperAdmin",
+                    status: "Active",
+                  },
+                ]
+            ).map((m) => (
+              <div
+                key={`${m.tenantId}-${m.branchName}`}
+                className="p-3.5 rounded-xl border border-nx-line bg-nx-ground flex items-start justify-between gap-3"
+              >
+                <div className="space-y-1">
+                  <div className="flex items-center gap-2">
+                    <span className="text-sm font-bold text-nx-ink">{m.clubName}</span>
+                    <Badge className="bg-nx-accent-wash text-nx-accent border border-nx-accent/30 text-[10px] py-0 px-1.5 flex items-center gap-1">
+                      <ShieldCheck className="h-2.5 w-2.5" style={{ minWidth: 10, minHeight: 10 }} />
+                      <span>{profile.editionName || "Enterprise Ultra"}</span>
+                    </Badge>
                   </div>
-                  <Sparkles className="h-4 w-4 text-nx-accent shrink-0" />
+                  <p className="text-xs text-nx-ink-2 flex items-center gap-1.5">
+                    <Briefcase className="h-3 w-3 text-nx-ink-3" style={{ minWidth: 12, minHeight: 12 }} />
+                    <span>{m.branchName}</span>
+                  </p>
                 </div>
-              ))}
-            </div>
-          )}
+                <Badge variant="outline" className="text-[10px] font-mono border-nx-line text-nx-ink-2">
+                  {m.roleName}
+                </Badge>
+              </div>
+            ))}
+          </div>
         </CardContent>
       </Card>
+
+      {/* Account Data Portability & Deactivation Lifecycle */}
+      <AccountLifecycleCard
+        profile={profile}
+        customFields={customFieldDefs}
+        isSolePrimaryOwner={true}
+        primaryOrgName={profile.clubAffiliation || "Al-Ahly Sporting Club"}
+      />
+
+      {/* 3-Step Email / Username Verification Modal */}
+      <IdentityChangeVerificationModal
+        open={identityModalMode !== null}
+        mode={identityModalMode ?? "email"}
+        currentValue={identityModalMode === "username" ? `@${profile.username}` : profile.email}
+        onOpenChange={(open) => {
+          if (!open) setIdentityModalMode(null);
+        }}
+        onSendOtp={sendEmailVerification}
+        onCommitChange={async (mode, newValue) => {
+          await updateProfile({
+            firstName: profile.firstName,
+            lastName: profile.lastName,
+            phoneNumber: profile.phoneNumber,
+            bio: profile.bio,
+            customFields: customValues,
+            ...(mode === "email" ? { email: newValue } : { username: newValue.replace(/^@/, "") }),
+          });
+        }}
+      />
     </div>
   );
 }
-

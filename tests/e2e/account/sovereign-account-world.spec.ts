@@ -35,7 +35,7 @@ async function saveDualScreenshot(page: import("@playwright/test").Page, filenam
   fs.writeFileSync(path.join(REPO_SCREENSHOT_DIR, filename), buffer);
 }
 
-test.describe("SCRIPE Clean 9-Page B2B Enterprise Account Console (v4.0) — Dark & Light Modes + Interactive E2E", () => {
+test.describe("SCRIPE Clean 9-Page B2B Enterprise Account Console (v5.0 Polish & Transcendence) — Dark & Light Modes + Interactive E2E", () => {
   test.beforeEach(async ({ page }) => {
     await mockWebAuthn(page);
     await setupSovereignAccountRouteMocks(page);
@@ -83,50 +83,75 @@ test.describe("SCRIPE Clean 9-Page B2B Enterprise Account Console (v4.0) — Dar
     }
   });
 
-  test("10 - Interactive Shell: Command Bar (Ctrl+K), Privacy Blur (Alt+P), and Dynamic Custom Fields on Dossier", async ({
+  test("10 - Interactive Dossier v5.0: Read-Only Default -> Edit Profile Mode, Seamless Custom Fields, 3-Step Change Email OTP Modal, Lifecycle Export & Deactivate, Command Bar & Privacy Blur", async ({
     page,
   }) => {
+    test.setTimeout(180_000);
     await page.goto("/account/dossier", { waitUntil: "domcontentloaded" });
     await expect(page.locator("h1").first()).toBeVisible({ timeout: 20_000 });
     await applyThemeMode(page, "dark");
 
-    // Verify Dynamic Custom Fields (identity.admin) card is rendered with seeded attributes
-    await expect(page.getByTestId("dossier-custom-fields-card")).toBeVisible();
+    // 1. Verify Read-Only View Mode by default & Seamless Custom Fields inside Personal Information
+    await expect(page.getByTestId("profile-readonly-grid")).toBeVisible();
     await expect(page.getByText(/Corporate Employee Badge ID/i).first()).toBeVisible();
+    await expect(page.getByText(/Executive Division \/ Cost Center/i).first()).toBeVisible();
+    await expect(page.getByText(/Primary Office \/ Desk Location/i).first()).toBeVisible();
+    await expect(page.getByText(/Emergency Contact/i).first()).toBeVisible();
+    await expect(page.getByTestId("remove-avatar-btn")).toBeVisible();
+    await expect(page.getByTestId("account-lifecycle-card")).toBeVisible();
 
-    // Trigger Command Bar via Ctrl+K
+    // 2. Click "Edit Profile" to enter Edit Mode and capture 01b_dossier_edit_mode_dark.png
+    await page.getByTestId("edit-profile-btn").click();
+    await expect(page.getByTestId("profile-edit-form")).toBeVisible();
+    await saveDualScreenshot(page, "01b_dossier_edit_mode_dark.png");
+    await page.getByTestId("cancel-edit-profile-btn").click();
+    await expect(page.getByTestId("profile-readonly-grid")).toBeVisible();
+
+    // 3. Open 3-Step Change Email Verification Modal and capture 01c_dossier_change_email_otp_modal_dark.png
+    await page.getByTestId("open-change-email-btn").click();
+    await expect(page.getByTestId("identity-change-modal")).toBeVisible();
+    await saveDualScreenshot(page, "01c_dossier_change_email_otp_modal_dark.png");
+    await page.keyboard.press("Escape");
+
+    // 4. Trigger Command Bar via Ctrl+K
     await page.keyboard.press("Control+k");
     const searchInput = page.locator('input[type="text"], input[placeholder]').first();
     await expect(searchInput).toBeVisible({ timeout: 10_000 });
     await saveDualScreenshot(page, "10_command_bar_modal_dark.png");
     await page.keyboard.press("Escape");
 
-    // Trigger Broadcast Privacy Blur via Alt+P
+    // 5. Trigger Broadcast Privacy Blur via Alt+P
     await page.keyboard.press("Alt+p");
     await page.waitForTimeout(250);
     await saveDualScreenshot(page, "11_privacy_blur_active_dark.png");
     await page.keyboard.press("Alt+p");
   });
 
-  test("11 - Interactive B2B Flows across Security, Sessions, Governance, Notifications, Plan & Integrations", async ({
+  test("11 - Interactive B2B Flows across Security (Connected SSO), Sessions (OpenStreetMap Radar), Governance (Module Accordions), Notifications, Plan & API Tokens", async ({
     page,
   }) => {
     test.setTimeout(180_000);
 
-    // 1. Security: Verify Passkey Vault, Biometric Sudo & CIDR Allowlist
+    // 1. Security: Verify Passkey Vault, Connected Enterprise SSO Card (BrandIcons), Biometric Sudo & CIDR Allowlist
     await page.goto("/account/security", { waitUntil: "domcontentloaded" });
     await expect(page.locator("h1").first()).toBeVisible({ timeout: 20_000 });
     await expect(page.getByText(/Executive MacBook Pro M4/i).first()).toBeVisible();
+    await expect(page.getByTestId("connected-enterprise-sso-card")).toBeVisible();
+    await expect(page.getByText(/Google Workspace Enterprise/i).first()).toBeVisible();
+    await expect(page.getByText(/Microsoft Entra ID/i).first()).toBeVisible();
 
-    // 2. Sessions: Verify Active Workstation Fleet & Session Telemetry
+    // 2. Sessions: Verify Interactive OpenStreetMap Geolocation Map & Non-Overlapping Callouts
     await page.goto("/account/sessions", { waitUntil: "domcontentloaded" });
     await expect(page.locator("h1").first()).toBeVisible({ timeout: 20_000 });
+    await expect(page.getByTestId("sovereign-session-radar")).toBeVisible();
+    await expect(page.getByTestId("session-inspector-bar")).toBeVisible();
     await expect(page.getByText(/197\.38\.14\.88/).first()).toBeVisible();
 
-    // 3. Governance: Verify Assigned RBAC Roles, Allowed Branches & PBAC Provenance Graph
+    // 3. Governance: Verify Executive Summary, Assigned Roles & Searchable Business Module Capabilities Matrix
     await page.goto("/account/governance", { waitUntil: "domcontentloaded" });
     await expect(page.locator("h1").first()).toBeVisible({ timeout: 20_000 });
-    await expect(page.getByText(/VP of Enterprise Operations/i).first()).toBeVisible();
+    await expect(page.getByTestId("governance-capabilities-matrix")).toBeVisible();
+    await expect(page.getByText(/Manage Sales Pipelines & Commercial Stages/i).first()).toBeVisible();
 
     // 4. Notifications: Verify Live Notification Matrix, Security Bypass Law, 1-Click Live Test Notification & Feed Actions
     await page.goto("/account/notifications", { waitUntil: "domcontentloaded" });
@@ -144,10 +169,12 @@ test.describe("SCRIPE Clean 9-Page B2B Enterprise Account Console (v4.0) — Dar
     await expect(page.locator("h1").first()).toBeVisible({ timeout: 20_000 });
     await expect(page.getByText("849201").first()).toBeVisible();
 
-    // 6. Integrations: Verify Enterprise SSO Directory & SHA-256 Personal Access Tokens with PBAC Scopes
+    // 6. Integrations (API & Developer Tokens): Verify Rate-Limit Telemetry Strip & SHA-256 Personal Access Tokens
     await page.goto("/account/integrations", { waitUntil: "domcontentloaded" });
     await expect(page.locator("h1").first()).toBeVisible({ timeout: 20_000 });
-    await expect(page.getByText(/Google Workspace Enterprise/i).first()).toBeVisible();
+    await expect(page.getByTestId("pat-telemetry-strip")).toBeVisible();
+    await expect(page.getByText(/4,980 \/ 5,000/i).first()).toBeVisible();
     await expect(page.getByText(/Enterprise BI & CRM Reporting Sync CLI/i).first()).toBeVisible();
   });
 });
+

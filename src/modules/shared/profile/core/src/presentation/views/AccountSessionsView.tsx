@@ -111,8 +111,13 @@ export function AccountSessionsView() {
         </div>
       </div>
 
-      {/* 1. Live Adaptive SVG Geo-Radar & Impossible Travel Guard */}
-      <SovereignSessionRadar nodes={radarNodes} impossibleTravelDetected={false} />
+      {/* 1. Open-Source Interactive Geolocation Map & Session Inspector */}
+      <SovereignSessionRadar
+        nodes={radarNodes}
+        impossibleTravelDetected={false}
+        onRevokeAllOther={() => void revokeAllOtherSessions()}
+        onKillNode={(nodeId) => void revokeSession(nodeId)}
+      />
 
       {/* 2. Current Pinned Workstation */}
       {currentSession && (

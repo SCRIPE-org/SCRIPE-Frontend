@@ -14,15 +14,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@core
 import { Button } from "@core/ui/button";
 import { Badge } from "@core/ui/badge";
 import { useAccountPlanSliceViewModel } from "../viewmodels/useSovereignAccountSlicesViewModel";
-import {
-  Crown,
-  CheckCircle2,
-  Lock,
-  ShieldCheck,
-  Gauge,
-  KeyRound,
-  Calendar,
-} from "lucide-react";
+import { Crown, CheckCircle2, Lock, ShieldCheck, Gauge, KeyRound, Calendar } from "lucide-react";
 
 export function AccountPlanView() {
   const { t } = useI18n();
@@ -33,10 +25,7 @@ export function AccountPlanView() {
   const quotas = plan?.quotas ?? [];
 
   const handleRequestUpgrade = async (featureCode: string, requestType: string) => {
-    await submitPlanRequest({
-      type: requestType,
-      code: featureCode,
-    });
+    await submitPlanRequest({ type: requestType, code: featureCode });
     setRequestNotice(true);
     setTimeout(() => setRequestNotice(false), 2500);
   };
@@ -45,14 +34,9 @@ export function AccountPlanView() {
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
         <div>
-          <h1 className="text-xl font-bold tracking-tight text-nx-ink">
-            {t("profile.plan.title")}
-          </h1>
-          <p className="text-xs text-nx-ink-3 mt-1">
-            {t("profile.plan.description")}
-          </p>
+          <h1 className="text-xl font-bold tracking-tight text-nx-ink">{t("profile.plan.title")}</h1>
+          <p className="text-xs text-nx-ink-3 mt-1">{t("profile.plan.description")}</p>
         </div>
-
         {requestNotice && (
           <Badge variant="outline" className="border-success/30 text-success bg-success/10 text-xs gap-1">
             <CheckCircle2 className="h-3.5 w-3.5" />

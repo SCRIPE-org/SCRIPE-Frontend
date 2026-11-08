@@ -9,7 +9,7 @@
 import { useI18n } from "@core/providers/i18n-provider";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@core/ui/card";
 import { Badge } from "@core/ui/badge";
-import { Sparkles, EyeOff, Eye, Layers } from "lucide-react";
+import { EyeOff, Eye, Layers } from "lucide-react";
 
 interface ErgonomicsLiveStageProps {
   theme: string;
@@ -75,7 +75,7 @@ export function ErgonomicsLiveStage({
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               <div className="h-7 w-7 rounded-lg bg-nx-accent-fill text-nx-on-fill flex items-center justify-center font-bold text-xs">
-                <Sparkles className="h-3.5 w-3.5" />
+                <Layers className="h-3.5 w-3.5" />
               </div>
               <div>
                 <span className="text-xs font-bold text-nx-ink block">

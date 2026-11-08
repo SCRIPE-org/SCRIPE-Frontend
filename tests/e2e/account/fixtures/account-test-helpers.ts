@@ -188,6 +188,43 @@ export async function setupSovereignAccountRouteMocks(page: Page) {
     }
   });
 
+  await page.route("**/api/v1/account/dossier/change-identity", async (route) => {
+    const body = route.request().postDataJSON() || {};
+    if (body.targetType === "email" && body.newValue) {
+      dossier.email = body.newValue;
+    } else if (body.targetType === "username" && body.newValue) {
+      dossier.username = body.newValue;
+    }
+    await route.fulfill({
+      status: 200,
+      contentType: "application/json",
+      body: JSON.stringify(dossier),
+    });
+  });
+
+  await page.route("**/api/v1/account/dossier/export", async (route) => {
+    await route.fulfill({
+      status: 200,
+      contentType: "application/json",
+      body: JSON.stringify({
+        exportedAtUtc: new Date().toISOString(),
+        schemaVersion: "SCRIPE-B2B-ACCOUNT-EXPORT-v5.0",
+        profile: dossier,
+      }),
+    });
+  });
+
+  await page.route("**/api/v1/account/dossier/deactivate", async (route) => {
+    await route.fulfill({
+      status: 409,
+      contentType: "application/json",
+      body: JSON.stringify({
+        code: "Identity.SoleOrganizationOwnerGuardrail",
+        message: "You are the primary Super Administrator. Transfer ownership first.",
+      }),
+    });
+  });
+
   await page.route("**/api/v1/account/dossier", async (route) => {
     if (route.request().method() === "GET") {
       await route.fulfill({

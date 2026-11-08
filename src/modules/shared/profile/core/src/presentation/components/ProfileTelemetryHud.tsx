@@ -26,7 +26,6 @@ import {
   ShieldCheck,
   Monitor,
   Building2,
-  Sparkles,
   CheckCircle2,
   Circle,
   Fingerprint,
@@ -83,7 +82,7 @@ export function ProfileTelemetryHud({
                   variant="outline"
                   className="border-nx-accent/30 text-nx-accent text-[10px] font-medium py-0 px-1.5 flex items-center gap-1"
                 >
-                  <Sparkles className="h-3 w-3" style={{ minWidth: 12, minHeight: 12 }} />
+                  <ShieldCheck className="h-3 w-3" style={{ minWidth: 12, minHeight: 12 }} />
                   <span>{profile?.editionName || t("profile.hud.defaultEdition")}</span>
                 </Badge>
               </div>
