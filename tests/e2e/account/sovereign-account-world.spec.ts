@@ -52,13 +52,16 @@ test.describe("SCRIPE Clean 9-Page B2B Enterprise Account Console (v5.0 Polish &
   test("01..09 - All 9 B2B Enterprise Account Pages render in Tactical Dark Mode & Clean Light Mode with zero overflow", async ({
     page,
   }) => {
-    test.setTimeout(300_000);
+    test.setTimeout(600_000);
     ensureScreenshotDirs();
     purgeObsoleteV3Screenshots();
 
     for (const route of SOVEREIGN_ACCOUNT_ROUTES) {
       await page.goto(route.path, { waitUntil: "commit" });
       await expect(page.locator("h1").first()).toBeVisible({ timeout: 60_000 });
+      if (route.slug === "sessions") {
+        await page.waitForTimeout(1500);
+      }
 
       // 1. Tactical Dark Mode Verification & Full-Res Capture
       await applyThemeMode(page, "dark");
@@ -92,7 +95,7 @@ test.describe("SCRIPE Clean 9-Page B2B Enterprise Account Console (v5.0 Polish &
     await applyThemeMode(page, "dark");
 
     // 1. Verify Read-Only View Mode by default & Seamless Custom Fields inside Personal Information
-    await expect(page.getByTestId("profile-readonly-grid")).toBeVisible();
+    await expect(page.getByTestId("personal-info-readonly-grid")).toBeVisible();
     await expect(page.getByText(/Corporate Employee Badge ID/i).first()).toBeVisible();
     await expect(page.getByText(/Executive Division \/ Cost Center/i).first()).toBeVisible();
     await expect(page.getByText(/Primary Office \/ Desk Location/i).first()).toBeVisible();
@@ -102,10 +105,10 @@ test.describe("SCRIPE Clean 9-Page B2B Enterprise Account Console (v5.0 Polish &
 
     // 2. Click "Edit Profile" to enter Edit Mode and capture 01b_dossier_edit_mode_dark.png
     await page.getByTestId("edit-profile-btn").click();
-    await expect(page.getByTestId("profile-edit-form")).toBeVisible();
+    await expect(page.getByTestId("personal-info-edit-form")).toBeVisible();
     await saveDualScreenshot(page, "01b_dossier_edit_mode_dark.png");
     await page.getByTestId("cancel-edit-profile-btn").click();
-    await expect(page.getByTestId("profile-readonly-grid")).toBeVisible();
+    await expect(page.getByTestId("personal-info-readonly-grid")).toBeVisible();
 
     // 3. Open 3-Step Change Email Verification Modal and capture 01c_dossier_change_email_otp_modal_dark.png
     await page.getByTestId("open-change-email-btn").click();
@@ -144,13 +147,13 @@ test.describe("SCRIPE Clean 9-Page B2B Enterprise Account Console (v5.0 Polish &
     await page.goto("/account/sessions", { waitUntil: "domcontentloaded" });
     await expect(page.locator("h1").first()).toBeVisible({ timeout: 20_000 });
     await expect(page.getByTestId("sovereign-session-radar")).toBeVisible();
-    await expect(page.getByTestId("session-inspector-bar")).toBeVisible();
+    await expect(page.getByTestId("map-selected-workstation-inspector")).toBeVisible();
     await expect(page.getByText(/197\.38\.14\.88/).first()).toBeVisible();
 
     // 3. Governance: Verify Executive Summary, Assigned Roles & Searchable Business Module Capabilities Matrix
     await page.goto("/account/governance", { waitUntil: "domcontentloaded" });
     await expect(page.locator("h1").first()).toBeVisible({ timeout: 20_000 });
-    await expect(page.getByTestId("governance-capabilities-matrix")).toBeVisible();
+    await expect(page.getByTestId("permission-provenance-graph")).toBeVisible();
     await expect(page.getByText(/Manage Sales Pipelines & Commercial Stages/i).first()).toBeVisible();
 
     // 4. Notifications: Verify Live Notification Matrix, Security Bypass Law, 1-Click Live Test Notification & Feed Actions

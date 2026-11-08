@@ -33,6 +33,7 @@ interface RouteGuardProps {
 
 // ── Public pages (auth not required) ──────────────────────────────────────
 const PUBLIC_PAGES = [
+  "/sileo-playground",
   "/login",
   "/forgot-password",
   "/reset-password",

@@ -3,6 +3,100 @@
    ======================================== */
 @import "./fonts.css";
 @import "./tenant-dashboard-widgets.css";
+@import "sileo/styles.css";
+
+/* ============================================================================
+   SILEO TOAST SYSTEM — NEXUS DESIGN SYSTEM INTEGRATION & OVERRIDES
+   ============================================================================ */
+:root {
+  /* Wire Sileo state colors to SCRIPE Nexus status tokens */
+  --sileo-state-success: var(--nx-success);
+  --sileo-state-error: var(--nx-danger);
+  --sileo-state-warning: var(--nx-warning);
+  --sileo-state-info: var(--nx-info);
+  --sileo-state-action: var(--nx-accent);
+  --sileo-state-loading: var(--nx-ink-3);
+  --sileo-width: 360px;
+}
+
+/* Elevate above modals (z-modal is 1000, so 1100 ensures toasts sit above) */
+[data-sileo-viewport] {
+  z-index: 1100 !important;
+  font-family: inherit;
+}
+
+/* Ensure toast elevation shadow matches Nexus popover depth with organic gooey hairline */
+[data-sileo-toast] {
+  filter: drop-shadow(0 0 1px rgba(0, 0, 0, 0.2)) drop-shadow(0 8px 24px rgba(0, 0, 0, 0.1)) drop-shadow(0 2px 6px rgba(0, 0, 0, 0.04));
+  transition: filter var(--nx-t-micro, 140ms) ease;
+}
+
+[data-sileo-toast]:hover {
+  filter: drop-shadow(0 0 1px rgba(0, 0, 0, 0.3)) drop-shadow(0 14px 32px rgba(0, 0, 0, 0.16)) drop-shadow(0 4px 10px rgba(0, 0, 0, 0.08));
+}
+
+.dark [data-sileo-toast] {
+  filter: drop-shadow(0 0 1px rgba(255, 255, 255, 0.16)) drop-shadow(0 12px 32px rgba(0, 0, 0, 0.8)) drop-shadow(0 2px 6px rgba(0, 0, 0, 0.5));
+}
+
+.dark [data-sileo-toast]:hover {
+  filter: drop-shadow(0 0 1px rgba(255, 255, 255, 0.28)) drop-shadow(0 16px 40px rgba(0, 0, 0, 0.9)) drop-shadow(0 4px 12px rgba(0, 0, 0, 0.6));
+}
+
+/* Text hierarchy & Contrast Invariants: SCRIPE Nexus Design System */
+[data-sileo-viewport] [data-sileo-title] {
+  font-family: inherit;
+  font-size: 13.5px;
+  font-weight: 600;
+  letter-spacing: -0.015em;
+}
+
+[data-sileo-viewport] [data-sileo-description],
+[data-sileo-viewport][data-theme=dark] [data-sileo-description],
+[data-sileo-viewport][data-theme=light] [data-sileo-description] {
+  font-family: inherit;
+  font-size: 12.5px;
+  line-height: 1.45;
+  color: var(--nx-ink-2) !important;
+}
+/* Button styling aligned with Nexus control specs */
+[data-sileo-viewport] [data-sileo-button] {
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 500;
+  border-radius: var(--nx-radius-control, 8px);
+  border: 1px solid var(--nx-line-hi);
+  background-color: var(--nx-raised);
+  color: var(--nx-ink);
+  transition: all var(--nx-t-micro, 140ms) var(--nx-ease-enter, ease);
+}
+
+[data-sileo-viewport] [data-sileo-button]:hover {
+  background-color: var(--nx-hover);
+  border-color: var(--nx-ink-3);
+}
+
+/* RTL / Bilingual Support */
+[dir="rtl"] [data-sileo-viewport] {
+  direction: rtl;
+}
+
+[dir="rtl"] [data-sileo-description] {
+  text-align: right;
+  direction: rtl;
+}
+
+[dir="rtl"] [data-sileo-header] {
+  direction: rtl;
+}
+
+[dir="rtl"] [data-sileo-header-inner] {
+  flex-direction: row-reverse;
+}
+
+[dir="rtl"] [data-sileo-button] {
+  margin-inline-start: auto;
+}
 @tailwind base;
 @tailwind components;
 @tailwind utilities;

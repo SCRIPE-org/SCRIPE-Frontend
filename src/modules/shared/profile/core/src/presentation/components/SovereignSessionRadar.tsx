@@ -77,13 +77,19 @@ export function SovereignSessionRadar({
   const [zoom, setZoom] = useState<number>(1.35);
   const [selectedId, setSelectedId] = useState<string>(nodes[0]?.id ?? "ws-current");
 
-  // Equirectangular projection centered on EMEA (lon -25..65, lat 5..62)
+  // Exact Web Mercator projection matching z=5 OpenStreetMap 4x2 tile viewport (x: 17..20, y: 12..13)
   const projectPoint = (lat: number, lon: number) => {
-    const x = ((lon + 30) / 110) * 800;
-    const y = ((65 - lat) / 65) * 340;
+    const z = 5;
+    const n = Math.pow(2, z);
+    const tileX = ((lon + 180) / 360) * n;
+    const latRad = (lat * Math.PI) / 180;
+    const tileY =
+      ((1 - Math.log(Math.tan(latRad) + 1 / Math.cos(latRad)) / Math.PI) / 2) * n;
+    const x = (tileX - 17) * 200;
+    const y = (tileY - 12) * 170;
     return {
-      x: Math.max(55, Math.min(745, x)),
-      y: Math.max(40, Math.min(300, y)),
+      x: Math.max(60, Math.min(740, x)),
+      y: Math.max(45, Math.min(295, y)),
     };
   };
 
@@ -99,20 +105,20 @@ export function SovereignSessionRadar({
     const isGiza = lower.includes("giza");
     const isCairo = lower.includes("cairo");
 
-    let labelOffsetX = 16;
-    let labelOffsetY = -20;
+    let labelOffsetX = 18;
+    let labelOffsetY = -22;
     let pinJitterX = 0;
     let pinJitterY = 0;
 
     if (isCairo) {
-      pinJitterX = 8;
-      pinJitterY = -6;
+      pinJitterX = 7;
+      pinJitterY = -5;
       labelOffsetX = 24;
       labelOffsetY = -26;
     } else if (isGiza) {
-      pinJitterX = -10;
-      pinJitterY = 10;
-      labelOffsetX = -152;
+      pinJitterX = -9;
+      pinJitterY = 9;
+      labelOffsetX = -148;
       labelOffsetY = 22;
     } else if (idx % 2 === 1) {
       labelOffsetX = 18;
@@ -134,7 +140,6 @@ export function SovereignSessionRadar({
   });
 
   const activeNode = positionedNodes.find((n) => n.id === selectedId) ?? positionedNodes[0];
-  const tileStyle = isLight ? "light_all" : "dark_all";
 
   return (
     <Card
@@ -149,7 +154,7 @@ export function SovereignSessionRadar({
               {t("profile.sessions.radarTitle")}
             </CardTitle>
             <Badge variant="outline" className="border-nx-line text-nx-ink-2 text-[10px] font-mono">
-              OpenStreetMap • CARTO
+              OpenStreetMap • Web Mercator
             </Badge>
           </div>
           <CardDescription className="text-xs text-nx-ink-2 mt-1">
@@ -186,41 +191,51 @@ export function SovereignSessionRadar({
             isLight ? "bg-[#eef2f6]" : "bg-[#0b121e]"
           }`}
         >
-          {/* OpenStreetMap / CartoDB Raster Tile Layer */}
+          {/* Open-Source OpenStreetMap Tile Matrix (z=5, x=17..20, y=12..13) */}
           <div
-            className="absolute inset-0 grid grid-cols-4 grid-rows-2 opacity-45 pointer-events-none transition-transform duration-300"
-            style={{ transform: `scale(${zoom})`, transformOrigin: "55% 52%" }}
+            className="absolute inset-0 grid grid-cols-4 grid-rows-2 pointer-events-none transition-transform duration-300"
+            style={{
+              transform: `scale(${zoom})`,
+              transformOrigin: "45% 58%",
+              filter: isLight
+                ? "saturate(0.75) contrast(1.02) brightness(1.02)"
+                : "invert(92%) hue-rotate(185deg) brightness(86%) contrast(108%) saturate(65%)",
+            }}
           >
             {[
-              [4, 9, 5],
-              [4, 10, 5],
-              [4, 9, 6],
-              [4, 10, 6],
+              [5, 17, 12],
+              [5, 18, 12],
+              [5, 19, 12],
+              [5, 20, 12],
+              [5, 17, 13],
+              [5, 18, 13],
+              [5, 19, 13],
+              [5, 20, 13],
             ].map(([z, x, y], idx) => (
               <div
                 key={idx}
                 className="w-full h-full bg-cover bg-center"
                 style={{
-                  backgroundImage: `url(https://a.basemaps.cartocdn.com/${tileStyle}/${z}/${x}/${y}.png)`,
+                  backgroundImage: `url(https://tile.openstreetmap.org/${z}/${x}/${y}.png)`,
                 }}
               />
             ))}
           </div>
 
-          {/* High-Precision GeoJSON Vector Continent & Graticule Layer */}
+          {/* Vector Telemetry Graticule & Non-Overlapping Workstation Callout Layer */}
           <svg
             viewBox="0 0 800 340"
             className="relative z-10 w-full h-full transition-transform duration-300"
-            style={{ transform: `scale(${zoom})`, transformOrigin: "55% 52%" }}
+            style={{ transform: `scale(${zoom})`, transformOrigin: "45% 58%" }}
             role="img"
             aria-label={t("profile.sessions.radarAriaLabel")}
           >
             <defs>
-              <pattern id="osmGrid" width="40" height="40" patternUnits="userSpaceOnUse">
+              <pattern id="osmGrid" width="50" height="50" patternUnits="userSpaceOnUse">
                 <path
-                  d="M 40 0 L 0 0 0 40"
+                  d="M 50 0 L 0 0 0 50"
                   fill="none"
-                  stroke={isLight ? "rgba(15, 23, 42, 0.07)" : "rgba(148, 163, 184, 0.08)"}
+                  stroke={isLight ? "rgba(15, 23, 42, 0.06)" : "rgba(196, 240, 66, 0.07)"}
                   strokeWidth="0.75"
                 />
               </pattern>
@@ -228,42 +243,29 @@ export function SovereignSessionRadar({
 
             <rect width="800" height="340" fill="url(#osmGrid)" />
 
-            {/* Europe Continent Polygon */}
-            <path
-              d="M 195 145 L 188 118 L 210 92 L 245 78 L 265 50 L 315 36 L 365 44 L 410 68 L 445 95 L 430 128 L 395 142 L 365 156 L 342 145 L 315 155 L 285 138 L 255 152 L 222 150 Z"
-              fill={isLight ? "rgba(203, 213, 225, 0.78)" : "rgba(30, 41, 59, 0.86)"}
-              stroke={isLight ? "rgba(100, 116, 139, 0.45)" : "rgba(148, 163, 184, 0.34)"}
-              strokeWidth="1.2"
-            />
-            {/* UK & Ireland Polygon */}
-            <path
-              d="M 195 82 L 214 75 L 222 96 L 204 106 L 190 98 Z"
-              fill={isLight ? "rgba(203, 213, 225, 0.8)" : "rgba(30, 41, 59, 0.9)"}
-              stroke={isLight ? "rgba(100, 116, 139, 0.45)" : "rgba(148, 163, 184, 0.35)"}
-              strokeWidth="1.2"
-            />
-            {/* Africa & Nile Delta Polygon */}
-            <path
-              d="M 195 162 L 258 158 L 315 168 L 372 166 L 420 176 L 448 215 L 485 245 L 455 295 L 410 328 L 345 328 L 310 285 L 275 245 L 215 232 L 178 198 Z"
-              fill={isLight ? "rgba(203, 213, 225, 0.78)" : "rgba(30, 41, 59, 0.88)"}
-              stroke={isLight ? "rgba(100, 116, 139, 0.45)" : "rgba(148, 163, 184, 0.35)"}
-              strokeWidth="1.2"
-            />
-            {/* Arabian Peninsula & Levant Polygon */}
-            <path
-              d="M 380 148 L 445 140 L 520 148 L 590 165 L 650 185 L 615 238 L 535 245 L 492 232 L 452 208 L 428 172 Z"
-              fill={isLight ? "rgba(203, 213, 225, 0.75)" : "rgba(30, 41, 59, 0.85)"}
-              stroke={isLight ? "rgba(100, 116, 139, 0.45)" : "rgba(148, 163, 184, 0.32)"}
-              strokeWidth="1.2"
-            />
-            {/* Nile River Vector Accent */}
-            <path
-              d="M 418 172 Q 416 205 422 242"
-              fill="none"
-              stroke="rgba(56, 189, 248, 0.38)"
-              strokeWidth="1.4"
-              strokeDasharray="2 2"
-            />
+            {/* Subtle Radar Range Rings around Primary Workstation */}
+            {positionedNodes[0] && (
+              <g pointerEvents="none">
+                <circle
+                  cx={positionedNodes[0].cx}
+                  cy={positionedNodes[0].cy}
+                  r="34"
+                  fill="none"
+                  stroke={isLight ? "rgba(15, 23, 42, 0.14)" : "rgba(196, 240, 66, 0.18)"}
+                  strokeWidth="1"
+                  strokeDasharray="3 3"
+                />
+                <circle
+                  cx={positionedNodes[0].cx}
+                  cy={positionedNodes[0].cy}
+                  r="68"
+                  fill="none"
+                  stroke={isLight ? "rgba(15, 23, 42, 0.08)" : "rgba(196, 240, 66, 0.1)"}
+                  strokeWidth="1"
+                  strokeDasharray="4 4"
+                />
+              </g>
+            )}
 
             {/* Encrypted Session Mesh Arcs */}
             {positionedNodes.length > 1 &&
