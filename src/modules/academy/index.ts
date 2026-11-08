@@ -9,3 +9,5 @@ export * from "./athletes";
 export * from "./trials";
 export * from "./enrollments";
 export * from "./groups";
+export * from "./fees-receivables";
+export * from "./analytics-reports";

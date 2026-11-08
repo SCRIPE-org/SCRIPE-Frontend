@@ -44,6 +44,14 @@ import { TrainingGroupsService } from "./groups/src/data/services/TrainingGroups
 import { TrainingGroupsRepository } from "./groups/src/data/repositories/TrainingGroupsRepository";
 import type { ITrainingGroupsRepository } from "./groups/src/domain/interfaces/ITrainingGroupsRepository";
 
+import { AcademyFinanceService } from "./fees-receivables/src/data/services/AcademyFinanceService";
+import { AcademyFinanceRepository } from "./fees-receivables/src/data/repositories/AcademyFinanceRepository";
+import type { IAcademyFinanceRepository } from "./fees-receivables/src/domain/interfaces/IAcademyFinanceRepository";
+
+import { AcademyAnalyticsService } from "./analytics-reports/src/data/services/AcademyAnalyticsService";
+import { AcademyAnalyticsRepository } from "./analytics-reports/src/data/repositories/AcademyAnalyticsRepository";
+import type { IAcademyAnalyticsRepository } from "./analytics-reports/src/domain/interfaces/IAcademyAnalyticsRepository";
+
 export interface IAcademyServiceLocator {
   overviewRepository: IAcademyOverviewRepository;
   programsRepository: IAcademyProgramsRepository;
@@ -54,6 +62,8 @@ export interface IAcademyServiceLocator {
   trialsRepository: IAcademyTrialsRepository;
   enrollmentsRepository: IAcademyEnrollmentsRepository;
   groupsRepository: ITrainingGroupsRepository;
+  feesReceivablesRepository: IAcademyFinanceRepository;
+  analyticsRepository: IAcademyAnalyticsRepository;
 }
 
 class AcademyContainer implements IAcademyServiceLocator {
@@ -66,6 +76,8 @@ class AcademyContainer implements IAcademyServiceLocator {
   private _trialsRepository?: IAcademyTrialsRepository;
   private _enrollmentsRepository?: IAcademyEnrollmentsRepository;
   private _groupsRepository?: ITrainingGroupsRepository;
+  private _feesReceivablesRepository?: IAcademyFinanceRepository;
+  private _analyticsRepository?: IAcademyAnalyticsRepository;
 
   get overviewRepository(): IAcademyOverviewRepository {
     if (!this._overviewRepository) {
@@ -146,6 +158,24 @@ class AcademyContainer implements IAcademyServiceLocator {
       this._groupsRepository = new TrainingGroupsRepository(service);
     }
     return this._groupsRepository;
+  }
+
+  get feesReceivablesRepository(): IAcademyFinanceRepository {
+    if (!this._feesReceivablesRepository) {
+      const api = getModuleApiService("ACADEMY");
+      const service = new AcademyFinanceService(api);
+      this._feesReceivablesRepository = new AcademyFinanceRepository(service);
+    }
+    return this._feesReceivablesRepository;
+  }
+
+  get analyticsRepository(): IAcademyAnalyticsRepository {
+    if (!this._analyticsRepository) {
+      const api = getModuleApiService("ACADEMY");
+      const service = new AcademyAnalyticsService(api);
+      this._analyticsRepository = new AcademyAnalyticsRepository(service);
+    }
+    return this._analyticsRepository;
   }
 }
 
