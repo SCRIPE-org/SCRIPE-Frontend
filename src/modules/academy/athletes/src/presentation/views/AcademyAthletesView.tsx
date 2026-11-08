@@ -386,7 +386,13 @@ export function AcademyAthletesView() {
                   </div>
                   <div>
                     <span className="text-muted-foreground block">{isAr ? "الجنس:" : "Gender:"}</span>
-                    <span className="font-medium">{athlete.gender}</span>
+                    <span className="font-medium">
+                      {athlete.gender?.toLowerCase() === "male"
+                        ? (isAr ? "ذكر" : "Male")
+                        : athlete.gender?.toLowerCase() === "female"
+                        ? (isAr ? "أنثى" : "Female")
+                        : (isAr ? "مختلط" : (athlete.gender || "Mixed"))}
+                    </span>
                   </div>
                 </div>
 
@@ -433,10 +439,15 @@ export function AcademyAthletesView() {
                       <ShieldAlert className="h-3.5 w-3.5" />
                       {isAr ? "تنبيه صحي" : "Medical Alert"}
                     </span>
-                  ) : (
-                    <span className="flex items-center gap-1 text-green-600 dark:text-green-400">
+                  ) : athlete.medicalClearanceSigned ? (
+                    <span className="flex items-center gap-1 text-green-600 dark:text-green-400 font-medium">
                       <Shield className="h-3.5 w-3.5" />
-                      {isAr ? "سليم صحياً" : "Cleared"}
+                      {isAr ? "معتمد صحياً" : "Cleared"}
+                    </span>
+                  ) : (
+                    <span className="flex items-center gap-1 text-amber-600 dark:text-amber-400 font-medium">
+                      <ShieldAlert className="h-3.5 w-3.5" />
+                      {isAr ? "بانتظار الفحص الطبي" : "Pending Clearance"}
                     </span>
                   )}
                   {athlete.guardianConsentSigned && (
@@ -1052,6 +1063,35 @@ export function AcademyAthletesView() {
             {/* Medical & Safeguarding */}
             <div className="space-y-2 border-t pt-3">
               <h4 className="text-xs font-bold text-muted-foreground">{isAr ? "الحماية والبيانات الطبية:" : "Safeguarding & Medical:"}</h4>
+              <div className="grid grid-cols-2 gap-2 text-xs mb-2">
+                <div className="p-2 rounded bg-muted/40">
+                  <span className="text-muted-foreground block">{isAr ? "حالة الفحص الطبي:" : "Medical Clearance:"}</span>
+                  {vm.selectedAthlete.medicalClearanceSigned ? (
+                    <span className="font-semibold text-green-600 dark:text-green-400 flex items-center gap-1">
+                      <Shield className="h-3.5 w-3.5" />
+                      {isAr ? "معتمد صحياً" : "Cleared"}
+                    </span>
+                  ) : (
+                    <span className="font-semibold text-amber-600 dark:text-amber-400 flex items-center gap-1">
+                      <ShieldAlert className="h-3.5 w-3.5" />
+                      {isAr ? "بانتظار الفحص الطبي" : "Pending Clearance"}
+                    </span>
+                  )}
+                </div>
+                <div className="p-2 rounded bg-muted/40">
+                  <span className="text-muted-foreground block">{isAr ? "موافقة ولي الأمر:" : "Guardian Consent:"}</span>
+                  {vm.selectedAthlete.guardianConsentSigned ? (
+                    <span className="font-semibold text-blue-600 dark:text-blue-400 flex items-center gap-1">
+                      <FileCheck className="h-3.5 w-3.5" />
+                      {isAr ? "موافقة معتمدة" : "Consent Signed"}
+                    </span>
+                  ) : (
+                    <span className="font-semibold text-muted-foreground">
+                      {isAr ? "غير موقعة" : "Pending Signature"}
+                    </span>
+                  )}
+                </div>
+              </div>
               <div className="bg-amber-50/50 dark:bg-amber-950/20 p-2.5 rounded border border-amber-200 text-xs">
                 <span className="font-semibold block mb-1 text-amber-800 dark:text-amber-300">
                   {isAr ? "الملاحظات الطبية المصونة:" : "Protected Medical Alerts:"}

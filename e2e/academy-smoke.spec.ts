@@ -6,7 +6,7 @@ test.describe("SCRIPE Academy S0-S4 Real Browser Smoke Acceptance", () => {
   test.describe.configure({ mode: "serial", timeout: 180_000 });
 
   const adminEmail = "uat.tenantadmin@hilal.local";
-  const adminPassword = "P@ssw0rd";
+  const adminPassword = process.env.UAT_PASSWORD || "P@ssw0rd";
 
   test("1. Health Check: Backend API is live and responds 200 OK", async ({ request }) => {
     const res = await request.get("http://localhost:5035/health/live");
@@ -18,6 +18,13 @@ test.describe("SCRIPE Academy S0-S4 Real Browser Smoke Acceptance", () => {
   test("2. Security Guard: UAT diagnostic endpoint rejects unauthenticated access with 401", async ({ request }) => {
     const res = await request.get("http://localhost:5035/api/v1/academy/admin/uat/status");
     expect(res.status()).toBe(401);
+
+    // Operational endpoints deny unauthenticated requests fail-closed
+    const enrollmentsRes = await request.get("http://localhost:5035/api/v1/academy/enrollments");
+    expect(enrollmentsRes.status()).toBe(401);
+
+    const athletesRes = await request.get("http://localhost:5035/api/v1/academy/athletes");
+    expect(athletesRes.status()).toBe(401);
   });
 
   test("3. Authenticated Journey: Login as uat.tenantadmin and verify Academy pages", async ({ page }) => {
@@ -66,6 +73,12 @@ test.describe("SCRIPE Academy S0-S4 Real Browser Smoke Acceptance", () => {
     expect(page.url()).toContain("/academy/athletes");
     expect(await page.locator("text=Request failed with status code 404").count()).toBe(0);
 
+    // Verify athlete safeguarding: Minor child badges and medical clearance status
+    const minorBadges = page.locator(':text("Minor Child"), :text("قاصر / طفل")');
+    await expect(minorBadges.first()).toBeVisible({ timeout: 10_000 });
+    expect(await page.locator(':text("Cleared"), :text("معتمد صحياً")').count()).toBeGreaterThanOrEqual(1);
+    expect(await page.locator(':text("Pending Clearance"), :text("بانتظار الفحص الطبي")').count()).toBeGreaterThanOrEqual(1);
+
     const addAthleteBtn = page.locator("button:has-text('New Athlete'), button:has-text('تسجيل رياضي جديد')").first();
     if (await addAthleteBtn.isVisible()) {
       await addAthleteBtn.click();
@@ -96,10 +109,14 @@ test.describe("SCRIPE Academy S0-S4 Real Browser Smoke Acceptance", () => {
     await page.goto("/academy/enrollments", { waitUntil: "domcontentloaded" });
     expect(page.url()).toContain("/academy/enrollments");
     expect(await page.locator("text=Request failed with status code 404").count()).toBe(0);
+    // Verify enrollments are rendered in main content
+    await expect(page.locator("main").locator(':text("Tariq"), :text("طارق")').first()).toBeVisible({ timeout: 10_000 });
 
     // 3i. Navigate to Training Groups
     await page.goto("/academy/groups", { waitUntil: "domcontentloaded" });
     expect(page.url()).toContain("/academy/groups");
     expect(await page.locator("text=Request failed with status code 404").count()).toBe(0);
+    // Verify training groups are rendered in main content
+    await expect(page.locator("main").locator(':text("Falcons"), :text("صقور")').first()).toBeVisible({ timeout: 10_000 });
   });
 });

@@ -161,6 +161,8 @@ export function AcademyEnrollmentsView() {
 
   const getBillingBadge = (bStatus: BillingStatus) => {
     switch (bStatus) {
+      case "Waived":
+        return <Badge variant="outline" className="text-purple-600 border-purple-300 bg-purple-50/50">{isAr ? "معفي / منحة" : "Waived"}</Badge>;
       case "Invoiced":
         return <Badge variant="outline" className="text-blue-600 border-blue-300 bg-blue-50/50">{isAr ? "تم إصدار فاتورة" : "Invoiced"}</Badge>;
       case "Paid":
@@ -252,6 +254,7 @@ export function AcademyEnrollmentsView() {
                   <option value="Invoiced">{isAr ? "مفوتر" : "Invoiced"}</option>
                   <option value="Paid">{isAr ? "مدفوع" : "Paid"}</option>
                   <option value="Overdue">{isAr ? "متأخر" : "Overdue"}</option>
+                  <option value="Waived">{isAr ? "معفي / منحة" : "Waived"}</option>
                 </select>
               </div>
             </div>

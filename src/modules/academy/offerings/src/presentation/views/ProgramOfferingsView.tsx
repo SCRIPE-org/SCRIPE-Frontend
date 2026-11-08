@@ -7,6 +7,7 @@ import { useI18n } from "@core/providers/i18n-provider";
 import { usePermission } from "@core/hooks/use-permission";
 import { ACADEMY_PERMISSIONS } from "@modules/academy/shared";
 import { useAcademyServiceLocator } from "@modules/academy/di";
+import { getModuleApiService } from "@/core/services/api-factory";
 import { useProgramOfferingsViewModel } from "../viewmodels/useProgramOfferingsViewModel";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@core/ui/card";
 import { Button } from "@core/ui/button";
@@ -53,22 +54,20 @@ export function ProgramOfferingsView() {
   const [programOptions, setProgramOptions] = useState<GenericSelectOption[]>([]);
   const [seasonOptions, setSeasonOptions] = useState<GenericSelectOption[]>([]);
   const [locationOptions, setLocationOptions] = useState<GenericSelectOption[]>([]);
+  const [branchOptions, setBranchOptions] = useState<GenericSelectOption[]>([]);
   const [loadingSelectors, setLoadingSelectors] = useState(false);
-
-  const branchOptions: GenericSelectOption[] = [
-    { value: "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa", label: language === "ar" ? "فرع الرياض الرئيسي" : "Riyadh Main Branch (Riyadh)" },
-    { value: "bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb", label: language === "ar" ? "فرع جدة الساحلي" : "Jeddah Coastal Branch (Jeddah)" },
-  ];
 
   useEffect(() => {
     let mounted = true;
     async function loadSelectOptions() {
       setLoadingSelectors(true);
       try {
-        const [progs, seasons, locs] = await Promise.all([
+        const orgApi = getModuleApiService("ORGANIZATIONCORE");
+        const [progs, seasons, locs, branchesRes] = await Promise.all([
           locator.programsRepository.fetchPrograms().catch(() => []),
           locator.seasonsRepository.fetchSeasons().catch(() => []),
           locator.locationsRepository.fetchLocations().catch(() => []),
+          orgApi.get<any>("/v1/Branches?pageSize=100").catch(() => null),
         ]);
         if (!mounted) return;
         setProgramOptions(
@@ -90,6 +89,24 @@ export function ProgramOfferingsView() {
             label: language === "ar" && l.nameAr ? `${l.nameAr} - ${l.city}` : `${l.nameEn} - ${l.city}`,
           })),
         ]);
+
+        const rawBranches = branchesRes?.items || (Array.isArray(branchesRes) ? branchesRes : []);
+        if (rawBranches.length > 0) {
+          const opts = rawBranches.map((b: any) => ({
+            value: b.id,
+            label: language === "ar" && b.nameAr ? b.nameAr : (b.name || b.nameEn || b.id),
+          }));
+          setBranchOptions(opts);
+          if (!branchId && opts.length > 0) {
+            setBranchId(opts[0].value);
+          }
+        } else {
+          // Graceful fallback scoped to organization branches
+          setBranchOptions([
+            { value: "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa", label: language === "ar" ? "فرع الرياض الرئيسي" : "Riyadh Main Branch (Riyadh)" },
+            { value: "bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb", label: language === "ar" ? "فرع جدة الساحلي" : "Jeddah Coastal Branch (Jeddah)" },
+          ]);
+        }
       } finally {
         if (mounted) setLoadingSelectors(false);
       }
@@ -219,38 +236,48 @@ export function ProgramOfferingsView() {
       {/* Offerings Grid */}
       {state.stage === "ready" && state.offerings.length > 0 && (
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {state.offerings.map((offering) => (
-            <Card key={offering.id} className="border border-nx-line bg-nx-surface">
-              <CardHeader className="pb-3">
-                <div className="flex items-center justify-between">
-                  <Badge variant="outline" className="text-[10px] border-nx-line">
-                    {offering.status}
-                  </Badge>
-                  <span className="text-[11px] text-nx-ink-3 font-mono">
-                    {offering.startDate} → {offering.endDate}
-                  </span>
-                </div>
-                <CardTitle className="text-base font-bold text-nx-ink mt-2">
-                  {language === "ar" ? offering.nameAr : offering.nameEn}
-                </CardTitle>
-                <CardDescription className="text-xs text-nx-ink-2 flex items-center gap-1.5">
-                  <MapPin className="size-3" />
-                  Branch: {offering.branchId.slice(0, 8)}...
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-3 pt-0">
-                <div className="flex items-center justify-between bg-nx-raised p-2.5 rounded border border-nx-line text-xs">
-                  <div className="flex items-center gap-1.5 text-nx-ink-2">
-                    <Users className="size-3.5" />
-                    <span>Enrolled / Capacity:</span>
+          {state.offerings.map((offering) => {
+            const branchLabel =
+              branchOptions.find((b) => b.value === offering.branchId)?.label ||
+              (offering.branchId?.toLowerCase().includes("aaaa")
+                ? (language === "ar" ? "فرع الرياض الرئيسي" : "Riyadh Main Campus")
+                : offering.branchId?.toLowerCase().includes("bbbb")
+                ? (language === "ar" ? "فرع جدة الساحلي" : "Jeddah Satellite Branch")
+                : `Branch: ${offering.branchId.slice(0, 8)}...`);
+
+            return (
+              <Card key={offering.id} className="border border-nx-line bg-nx-surface">
+                <CardHeader className="pb-3">
+                  <div className="flex items-center justify-between">
+                    <Badge variant="outline" className="text-[10px] border-nx-line">
+                      {offering.status}
+                    </Badge>
+                    <span className="text-[11px] text-nx-ink-3 font-mono">
+                      {offering.startDate} → {offering.endDate}
+                    </span>
                   </div>
-                  <span className="font-semibold text-nx-ink">
-                    {offering.enrolledCount} / {offering.maxCapacity}
-                  </span>
-                </div>
-              </CardContent>
-            </Card>
-          ))}
+                  <CardTitle className="text-base font-bold text-nx-ink mt-2">
+                    {language === "ar" ? offering.nameAr : offering.nameEn}
+                  </CardTitle>
+                  <CardDescription className="text-xs text-nx-ink-2 flex items-center gap-1.5">
+                    <MapPin className="size-3" />
+                    {branchLabel}
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-3 pt-0">
+                  <div className="flex items-center justify-between bg-nx-raised p-2.5 rounded border border-nx-line text-xs">
+                    <div className="flex items-center gap-1.5 text-nx-ink-2">
+                      <Users className="size-3.5" />
+                      <span>Enrolled / Capacity:</span>
+                    </div>
+                    <span className="font-semibold text-nx-ink">
+                      {offering.enrolledCount} / {offering.maxCapacity}
+                    </span>
+                  </div>
+                </CardContent>
+              </Card>
+            );
+          })}
         </div>
       )}
 
