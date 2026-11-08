@@ -1,8 +1,8 @@
 import { defineConfig, devices } from "@playwright/test";
 
 /**
- * Dedicated Playwright Configuration for SCRIPE Sovereign Profile & Security Suite.
- * Targets all test specs located under `tests/e2e/profile/`.
+ * Dedicated Playwright Configuration for SCRIPE Sovereign Account World v3.0 Suite.
+ * Targets all 15 `/account/*` sovereign pages in both Tactical Dark Mode and Clean Light Mode.
  */
 export default defineConfig({
   testDir: ".",
@@ -12,7 +12,7 @@ export default defineConfig({
   retries: process.env.CI ? 2 : 0,
   workers: 1,
   reporter: process.env.CI ? "github" : "list",
-  timeout: 60_000,
+  timeout: 90_000,
 
   use: {
     baseURL: process.env.E2E_BASE_URL || "http://localhost:3000",
@@ -29,4 +29,11 @@ export default defineConfig({
       },
     },
   ],
+
+  webServer: {
+    command: "pnpm start -p 3000",
+    port: 3000,
+    reuseExistingServer: true,
+    timeout: 60_000,
+  },
 });

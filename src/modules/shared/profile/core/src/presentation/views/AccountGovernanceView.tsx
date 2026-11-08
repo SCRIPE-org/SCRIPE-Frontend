@@ -72,7 +72,7 @@ export function AccountGovernanceView() {
         editionName={profile?.editionName || ""}
         activeBranchName={profile?.activeBranchName || ""}
         roles={profile?.roles?.map((r) => r.roleName) || []}
-        effectivePermissions={effectivePermissions}
+        effectivePermissions={effectivePermissions.map((p) => p.permission)}
       />
 
       {/* 2. Acting-As / Vacation Authority Delegation Engine */}

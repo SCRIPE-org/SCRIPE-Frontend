@@ -592,6 +592,7 @@ export const en = {
       userAccountMenu: "User Account Menu",
     },
     commandBar: {
+      triggerLabel: "Command Palette",
       title: "Sovereign Command Palette",
       subtitle: "Jump to any of the 15 Sovereign Account slices or execute quick security actions.",
       searchPlaceholder: "Search slices, security controls, or actions…",
@@ -609,6 +610,11 @@ export const en = {
       togglePrivacyBlurSub: "Mask sensitive PII, salaries, and tokens for screen sharing",
       switchLanguage: "Switch Interface Language (EN / AR)",
       switchLanguageSub: "Toggle between English (LTR) and Arabic (RTL)",
+    },
+    privacyBlur: {
+      toggle: "Privacy Blur",
+      active: "Privacy Blur ON",
+      bannerNotice: "Broadcast Privacy Blur is active (Alt+P) — Sensitive PII, salaries, and tokens are masked for screen sharing.",
     },
     sudoGate: {
       title: "Biometric Sudo Step-Up Verification",
