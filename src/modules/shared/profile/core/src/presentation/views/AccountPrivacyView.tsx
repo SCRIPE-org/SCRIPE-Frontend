@@ -38,9 +38,7 @@ export function AccountPrivacyView() {
   } = useAccountPrivacySliceViewModel();
 
   const [passphrase, setPassphrase] = useState("");
-  const [scratchpadText, setScratchpadText] = useState(
-    "Confidential transfer window scouting shortlist & contract release clauses — Encrypted client-side via AES-256-GCM."
-  );
+  const [scratchpadText, setScratchpadText] = useState("");
   const [vaultSaved, setVaultSaved] = useState(false);
   const [archiveReady, setArchiveReady] = useState(false);
   const [recoveryKitReady, setRecoveryKitReady] = useState(false);
@@ -50,7 +48,7 @@ export function AccountPrivacyView() {
     const encodedCipher = typeof window !== "undefined" ? window.btoa(unescape(encodeURIComponent(scratchpadText))) : scratchpadText;
     await saveScratchpad({
       ciphertextBase64: encodedCipher,
-      ivBase64: "AES256GCM-IV-9941",
+      ivBase64: "AES256GCM-IV",
     });
     setVaultSaved(true);
     setTimeout(() => setVaultSaved(false), 2500);
@@ -88,7 +86,7 @@ export function AccountPrivacyView() {
                 {t("profile.privacy.scratchpadTitle")}
               </CardTitle>
               <Badge variant="outline" className="font-mono text-[10px] border-nx-accent/40 text-nx-accent bg-nx-accent-wash">
-                AES-256-GCM ZERO-KNOWLEDGE
+                {t("profile.privacy.aesZeroKnowledgeBadge")}
               </Badge>
             </div>
             <CardDescription className="text-xs text-nx-ink-3 mt-1">
@@ -107,13 +105,14 @@ export function AccountPrivacyView() {
               className="h-8 text-xs font-mono bg-nx-raised border-nx-line text-nx-ink max-w-xs"
             />
             <Badge variant="outline" className="text-[10px] border-nx-line bg-nx-raised text-nx-ink-3 font-mono self-center">
-              PBKDF2-SHA256 (310,000 Iterations)
+              {t("profile.privacy.pbkdf2IterationsBadge")}
             </Badge>
           </div>
 
           <Textarea
             value={scratchpadText}
             onChange={(e) => setScratchpadText(e.target.value)}
+            placeholder={t("profile.privacy.scratchpadPlaceholder")}
             rows={4}
             className="text-xs font-mono bg-nx-raised border-nx-line text-nx-ink"
           />

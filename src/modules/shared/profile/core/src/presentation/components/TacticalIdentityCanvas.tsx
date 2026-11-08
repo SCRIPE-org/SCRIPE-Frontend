@@ -5,7 +5,7 @@
  *
  * Interactive SVG Mini-Pitch Formation & Pressing Line Visualizer for the Executive Dossier.
  * Supports live formation switching (4-3-3, 4-2-3-1, 3-5-2), pressing line height,
- * build-up style selection, and tactical manifesto persistence.
+ * build-up style selection, and tactical manifesto persistence via /api/v1/account/dossier.
  */
 import { useState } from "react";
 import { useI18n } from "@core/providers/i18n-provider";
@@ -84,11 +84,17 @@ export function TacticalIdentityCanvas({
   const [formation, setFormation] = useState(
     FORMATION_COORDS[preferredFormation] ? preferredFormation : "4-3-3"
   );
-  const [pressing, setPressing] = useState(pressingIntensity || "High-Press Gegenpressing");
+  const [pressing, setPressing] = useState(pressingIntensity || "High-Press");
   const [savedToast, setSavedToast] = useState(false);
 
   const nodes = FORMATION_COORDS[formation] ?? FORMATION_COORDS["4-3-3"];
   const pressingLineY = pressing.includes("High") ? 28 : pressing.includes("Mid") ? 46 : 62;
+
+  const pressingModes = [
+    { id: "High-Press", label: t("profile.philosophy.pressingHigh") },
+    { id: "Mid-Block", label: t("profile.philosophy.pressingMid") },
+    { id: "Low-Block", label: t("profile.philosophy.pressingLow") },
+  ];
 
   const handleSelectFormation = async (nextFormation: string) => {
     setFormation(nextFormation);
@@ -170,14 +176,12 @@ export function TacticalIdentityCanvas({
               role="img"
               aria-label={t("profile.philosophy.formation")}
             >
-              {/* Pitch markings */}
               <rect x="4" y="4" width="92" height="92" fill="none" stroke="currentColor" className="text-nx-line" strokeWidth="0.8" />
               <line x1="4" y1="50" x2="96" y2="50" stroke="currentColor" className="text-nx-line" strokeWidth="0.6" />
               <circle cx="50" cy="50" r="11" fill="none" stroke="currentColor" className="text-nx-line" strokeWidth="0.6" />
               <rect x="26" y="4" width="48" height="14" fill="none" stroke="currentColor" className="text-nx-line" strokeWidth="0.6" />
               <rect x="26" y="82" width="48" height="14" fill="none" stroke="currentColor" className="text-nx-line" strokeWidth="0.6" />
 
-              {/* Dynamic Pressing Line */}
               <line
                 x1="6"
                 y1={pressingLineY}
@@ -189,7 +193,6 @@ export function TacticalIdentityCanvas({
                 strokeDasharray="2.5 2"
               />
 
-              {/* Formation Nodes */}
               {nodes.map((node, idx) => (
                 <g key={idx} transform={`translate(${node.x}, ${node.y})`}>
                   <circle r="4.5" className="fill-nx-accent-fill stroke-nx-surface" strokeWidth="1" />
@@ -228,55 +231,52 @@ export function TacticalIdentityCanvas({
               </div>
             </div>
 
-            {/* Pressing Line Selector */}
             <div className="flex items-center gap-1.5 flex-wrap">
-              {[
-                "High-Press Gegenpressing",
-                "Mid-Block Compact",
-                "Low-Block Counter",
-              ].map((pMode) => (
+              {pressingModes.map((pMode) => (
                 <Button
-                  key={pMode}
+                  key={pMode.id}
                   type="button"
                   size="sm"
                   variant="outline"
-                  onClick={() => handleTogglePressing(pMode)}
+                  onClick={() => handleTogglePressing(pMode.id)}
                   className={
-                    pressing === pMode
+                    pressing === pMode.id
                       ? "h-7 text-[10px] border-nx-accent text-nx-accent bg-nx-accent-wash font-semibold"
                       : "h-7 text-[10px] border-nx-line bg-nx-raised text-nx-ink-3"
                   }
                 >
                   <Sparkles className="h-3 w-3 me-1" />
-                  {pMode}
+                  {pMode.label}
                 </Button>
               ))}
             </div>
 
-            {/* Tactical Manifesto */}
-            <div className="p-3.5 rounded-lg border border-nx-line bg-nx-raised text-xs space-y-1 border-s-2 border-s-nx-accent">
-              <span className="text-[10px] font-semibold text-nx-accent uppercase tracking-wider">
-                {t("profile.philosophy.manifesto")}
-              </span>
-              <p className="text-nx-ink-2 italic leading-relaxed">
-                &ldquo;{manifesto}&rdquo;
-              </p>
-            </div>
+            {manifesto && (
+              <div className="p-3.5 rounded-lg border border-nx-line bg-nx-raised text-xs space-y-1 border-s-2 border-s-nx-accent">
+                <span className="text-[10px] font-semibold text-nx-accent uppercase tracking-wider">
+                  {t("profile.philosophy.manifesto")}
+                </span>
+                <p className="text-nx-ink-2 italic leading-relaxed">
+                  &ldquo;{manifesto}&rdquo;
+                </p>
+              </div>
+            )}
 
-            {/* Assigned Squad Portfolios */}
-            <div className="flex items-center justify-between gap-2 flex-wrap pt-1">
-              <div className="flex items-center gap-1.5 text-xs text-nx-ink font-semibold">
-                <Layers className="h-3.5 w-3.5 text-nx-accent" />
-                <span>{t("profile.philosophy.squads")}</span>
+            {assignedSquads.length > 0 && (
+              <div className="flex items-center justify-between gap-2 flex-wrap pt-1">
+                <div className="flex items-center gap-1.5 text-xs text-nx-ink font-semibold">
+                  <Layers className="h-3.5 w-3.5 text-nx-accent" />
+                  <span>{t("profile.philosophy.squads")}</span>
+                </div>
+                <div className="flex items-center gap-1.5 flex-wrap">
+                  {assignedSquads.map((squad, i) => (
+                    <Badge key={i} variant="outline" className="text-[10px] border-nx-line bg-nx-surface text-nx-ink-2">
+                      {squad}
+                    </Badge>
+                  ))}
+                </div>
               </div>
-              <div className="flex items-center gap-1.5 flex-wrap">
-                {assignedSquads.map((squad, i) => (
-                  <Badge key={i} variant="outline" className="text-[10px] border-nx-line bg-nx-surface text-nx-ink-2">
-                    {squad}
-                  </Badge>
-                ))}
-              </div>
-            </div>
+            )}
           </div>
         </div>
       </CardContent>

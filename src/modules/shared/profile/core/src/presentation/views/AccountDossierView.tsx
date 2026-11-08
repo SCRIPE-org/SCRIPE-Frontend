@@ -51,46 +51,10 @@ export function AccountDossierView() {
     );
   }
 
-  const initials = `${profile.firstName?.[0] || ""}${profile.lastName?.[0] || ""}`.toUpperCase() || "SC";
-  const tactical = profile.tacticalPhilosophy ?? {
-    preferredFormation: "4-3-3",
-    pressingIntensity: "High-Press Gegenpressing",
-    buildUpStyle: "Positional Verticality",
-    manifesto:
-      "Dominate central half-spaces through synchronized counter-pressing and rapid vertical transitions.",
-    assignedAgeGroups: ["First Team Senior", "U-21 Elite Reserve", "U-19 Youth Champions"],
-  };
-
-  const memberships = dossier?.clubMemberships?.length
-    ? dossier.clubMemberships
-    : [
-        {
-          tenantId: profile.tenantId || "ahly-sc",
-          clubName: profile.clubAffiliation || "Al-Ahly Sporting Club",
-          branchName: profile.activeBranchName || "Main Stadium HQ — Gezira",
-          roleName: profile.roles?.[0]?.roleName || "Sporting Director",
-          status: "ACTIVE",
-        },
-        {
-          tenantId: "caf-tech",
-          clubName: "CAF Technical Advisory Board",
-          branchName: "Cairo Regional Hub",
-          roleName: "Elite Tactical Instructor",
-          status: "VERIFIED",
-        },
-      ];
-
-  const linkedAthletes = dossier?.linkedAthleteProfiles?.length
-    ? dossier.linkedAthleteProfiles
-    : [
-        {
-          athleteId: "ath-u16-01",
-          fullName: "Youssef El-Masry",
-          ageGroup: "U-16 Elite Academy",
-          position: "Attacking Midfielder (#10)",
-          medicalClearance: "CLEARED",
-        },
-      ];
+  const initials = `${profile.firstName?.[0] || ""}${profile.lastName?.[0] || ""}`.toUpperCase();
+  const tactical = profile.tacticalPhilosophy ?? dossier?.tacticalPhilosophy;
+  const memberships = dossier?.clubMemberships ?? [];
+  const linkedAthletes = dossier?.linkedAthleteProfiles ?? [];
 
   return (
     <div className="space-y-6">
@@ -141,9 +105,11 @@ export function AccountDossierView() {
                 {t("profile.general.personalInfo")}
               </CardTitle>
             </div>
-            <Badge variant="outline" className="border-nx-line text-nx-ink-3 text-[10px] font-mono">
-              {profile.staffCode || "#SCR-ADM"}
-            </Badge>
+            {profile.staffCode && (
+              <Badge variant="outline" className="border-nx-line text-nx-ink-3 text-[10px] font-mono">
+                {profile.staffCode}
+              </Badge>
+            )}
           </div>
           <CardDescription className="text-xs text-nx-ink-3">
             {t("profile.general.description")}
@@ -162,11 +128,11 @@ export function AccountDossierView() {
 
       {/* 3. Interactive SVG Tactical Identity Canvas */}
       <TacticalIdentityCanvas
-        preferredFormation={tactical.preferredFormation}
-        pressingIntensity={tactical.pressingIntensity}
-        buildUpStyle={tactical.buildUpStyle}
-        manifesto={tactical.manifesto}
-        assignedSquads={tactical.assignedAgeGroups}
+        preferredFormation={tactical?.preferredFormation}
+        pressingIntensity={tactical?.pressingIntensity}
+        buildUpStyle={tactical?.buildUpStyle}
+        manifesto={tactical?.manifesto}
+        assignedSquads={tactical?.assignedAgeGroups}
       />
 
       {/* 4. Multi-Club Memberships & Federation Affiliations */}
@@ -180,28 +146,32 @@ export function AccountDossierView() {
           </div>
         </CardHeader>
         <CardContent className="space-y-3">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-            {memberships.map((m, idx) => (
-              <div
-                key={idx}
-                className="p-3.5 rounded-xl border border-nx-line bg-nx-raised flex items-center justify-between gap-3"
-              >
-                <div className="min-w-0">
-                  <div className="flex items-center gap-2">
-                    <span className="text-xs font-bold text-nx-ink truncate">{m.clubName}</span>
-                    <Badge variant="outline" className="text-[10px] border-success/30 text-success bg-success/10 gap-1">
-                      <CheckCircle2 className="h-2.5 w-2.5" />
-                      <span>{m.status}</span>
-                    </Badge>
+          {memberships.length === 0 ? (
+            <p className="text-xs text-nx-ink-3">{t("profile.dossier.noMemberships")}</p>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+              {memberships.map((m, idx) => (
+                <div
+                  key={idx}
+                  className="p-3.5 rounded-xl border border-nx-line bg-nx-raised flex items-center justify-between gap-3"
+                >
+                  <div className="min-w-0">
+                    <div className="flex items-center gap-2">
+                      <span className="text-xs font-bold text-nx-ink truncate">{m.clubName}</span>
+                      <Badge variant="outline" className="text-[10px] border-success/30 text-success bg-success/10 gap-1">
+                        <CheckCircle2 className="h-2.5 w-2.5" />
+                        <span>{m.status}</span>
+                      </Badge>
+                    </div>
+                    <p className="text-[11px] text-nx-ink-2 mt-0.5 truncate">
+                      {m.branchName} &bull; {m.roleName}
+                    </p>
                   </div>
-                  <p className="text-[11px] text-nx-ink-2 mt-0.5 truncate">
-                    {m.branchName} &bull; {m.roleName}
-                  </p>
+                  <Sparkles className="h-4 w-4 text-nx-accent shrink-0" />
                 </div>
-                <Sparkles className="h-4 w-4 text-nx-accent shrink-0" />
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          )}
         </CardContent>
       </Card>
 
@@ -219,25 +189,29 @@ export function AccountDossierView() {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-            {linkedAthletes.map((ath) => (
-              <div
-                key={ath.athleteId}
-                className="p-3.5 rounded-xl border border-nx-line bg-nx-raised flex items-center justify-between gap-3"
-              >
-                <div>
-                  <span className="text-xs font-bold text-nx-ink block">{ath.fullName}</span>
-                  <span className="text-[11px] text-nx-ink-3">
-                    {ath.ageGroup} &bull; {ath.position}
-                  </span>
+          {linkedAthletes.length === 0 ? (
+            <p className="text-xs text-nx-ink-3">{t("profile.dossier.noLinkedAthletes")}</p>
+          ) : (
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              {linkedAthletes.map((ath) => (
+                <div
+                  key={ath.athleteId}
+                  className="p-3.5 rounded-xl border border-nx-line bg-nx-raised flex items-center justify-between gap-3"
+                >
+                  <div>
+                    <span className="text-xs font-bold text-nx-ink block">{ath.fullName}</span>
+                    <span className="text-[11px] text-nx-ink-3">
+                      {ath.ageGroup} &bull; {ath.position}
+                    </span>
+                  </div>
+                  <Badge variant="outline" className="text-[10px] border-success/30 text-success bg-success/10 gap-1">
+                    <ShieldCheck className="h-3 w-3" />
+                    <span>{ath.medicalClearance}</span>
+                  </Badge>
                 </div>
-                <Badge variant="outline" className="text-[10px] border-success/30 text-success bg-success/10 gap-1">
-                  <ShieldCheck className="h-3 w-3" />
-                  <span>{ath.medicalClearance}</span>
-                </Badge>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          )}
         </CardContent>
       </Card>
     </div>

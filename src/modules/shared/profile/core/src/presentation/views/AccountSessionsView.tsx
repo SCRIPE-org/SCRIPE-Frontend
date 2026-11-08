@@ -47,7 +47,7 @@ export function AccountSessionsView() {
           {
             id: currentSession.id,
             label: `${currentSession.browser} (${currentSession.os})`,
-            location: currentSession.location || "Cairo, EG — Main Stadium HQ",
+            location: currentSession.location || "",
             ipAddress: currentSession.ipAddress,
             x: 56,
             y: 42,
@@ -58,7 +58,7 @@ export function AccountSessionsView() {
     ...otherSessions.map((s, idx) => ({
       id: s.id,
       label: `${s.browser} (${s.os})`,
-      location: s.location || "Cairo, EG — Pitch Tunnel",
+      location: s.location || "",
       ipAddress: s.ipAddress,
       x: 62 + idx * 6,
       y: 48 - idx * 4,

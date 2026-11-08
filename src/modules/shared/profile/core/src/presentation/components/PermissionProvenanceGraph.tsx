@@ -4,7 +4,7 @@
  * PermissionProvenanceGraph
  *
  * Interactive PBAC Effective Permission Matrix & Provenance Graph ("Why do I have access?")
- * plus "View Platform As..." Persona Simulator for /account/governance.
+ * plus "View Platform As..." Persona Simulator driven by /api/v1/account/governance.
  */
 import { useState } from "react";
 import { useI18n } from "@core/providers/i18n-provider";
@@ -22,11 +22,19 @@ import {
   UserCheck,
 } from "lucide-react";
 
+interface PersonaOption {
+  personaId: string;
+  roleTitle: string;
+  scopeSummary: string;
+  grantedPermissions: string[];
+}
+
 interface PermissionProvenanceGraphProps {
   editionName: string;
   activeBranchName: string;
   roles: string[];
   effectivePermissions: string[];
+  personas?: PersonaOption[];
 }
 
 export function PermissionProvenanceGraph({
@@ -34,33 +42,18 @@ export function PermissionProvenanceGraph({
   activeBranchName,
   roles,
   effectivePermissions,
+  personas = [],
 }: PermissionProvenanceGraphProps) {
   const { t } = useI18n();
   const [selectedPermission, setSelectedPermission] = useState<string>(
-    effectivePermissions[0] || "Football.Tactics.Manage"
+    effectivePermissions[0] || ""
   );
-  const [simulatedPersona, setSimulatedPersona] = useState<string>("DEFAULT_EXECUTIVE");
+  const [simulatedPersona, setSimulatedPersona] = useState<string>(
+    personas[0]?.personaId || roles[0] || ""
+  );
 
-  const displayPermissions =
-    effectivePermissions.length > 0
-      ? effectivePermissions.slice(0, 12)
-      : [
-          "Football.Tactics.Manage",
-          "Venue.Bookings.Approve",
-          "Academy.Rosters.Certify",
-          "Identity.Roles.Delegate",
-          "Analytics.Medical.Inspect",
-          "Commercial.Contracts.Sign",
-        ];
-
-  const primaryRole = roles[0] || "Sporting Director";
-
-  const personas = [
-    { id: "DEFAULT_EXECUTIVE", label: primaryRole },
-    { id: "ACADEMY_COACH", label: "U-19 Academy Head Coach" },
-    { id: "MEDICAL_OFFICER", label: "Chief Medical Officer" },
-    { id: "FIFA_AUDITOR", label: "FIFA Read-Only Inspector" },
-  ];
+  const activePermission = selectedPermission || effectivePermissions[0] || "";
+  const primaryRole = roles[0] || personas[0]?.roleTitle || "";
 
   return (
     <div className="space-y-4">
@@ -78,28 +71,30 @@ export function PermissionProvenanceGraph({
               {t("profile.governance.personaSimulatorDesc")}
             </CardDescription>
           </div>
-          <Badge variant="outline" className="font-mono text-[10px] border-nx-accent/40 text-nx-accent bg-nx-accent-wash">
-            {simulatedPersona}
-          </Badge>
+          {simulatedPersona && (
+            <Badge variant="outline" className="font-mono text-[10px] border-nx-accent/40 text-nx-accent bg-nx-accent-wash">
+              {simulatedPersona}
+            </Badge>
+          )}
         </CardHeader>
         <CardContent>
           <div className="flex items-center gap-2 flex-wrap">
             {personas.map((p) => (
               <Button
-                key={p.id}
+                key={p.personaId}
                 type="button"
                 size="sm"
-                variant={simulatedPersona === p.id ? "default" : "outline"}
-                onClick={() => setSimulatedPersona(p.id)}
-                data-testid={`persona-sim-${p.id}`}
+                variant={simulatedPersona === p.personaId ? "default" : "outline"}
+                onClick={() => setSimulatedPersona(p.personaId)}
+                data-testid={`persona-sim-${p.personaId}`}
                 className={
-                  simulatedPersona === p.id
+                  simulatedPersona === p.personaId
                     ? "h-8 text-xs font-semibold bg-nx-accent-fill text-nx-on-fill"
                     : "h-8 text-xs border-nx-line bg-nx-raised text-nx-ink-2"
                 }
               >
                 <UserCheck className="h-3.5 w-3.5 me-1.5" />
-                {p.label}
+                {p.roleTitle}
               </Button>
             ))}
           </div>
@@ -121,10 +116,9 @@ export function PermissionProvenanceGraph({
         </CardHeader>
 
         <CardContent className="space-y-4">
-          {/* Interactive Permission Pills */}
           <div className="flex items-center gap-2 flex-wrap">
-            {displayPermissions.map((perm) => {
-              const active = selectedPermission === perm;
+            {effectivePermissions.slice(0, 16).map((perm) => {
+              const active = activePermission === perm;
               return (
                 <Button
                   key={perm}
@@ -145,14 +139,13 @@ export function PermissionProvenanceGraph({
             })}
           </div>
 
-          {/* Provenance Lineage Chain: Edition -> Branch -> Role -> Permission */}
           <div
             data-testid="permission-provenance-chain"
             className="p-4 rounded-xl border border-nx-line bg-nx-raised space-y-2.5"
           >
             <div className="text-[10px] font-mono uppercase tracking-wider text-nx-ink-3">
               {t("profile.governance.whyDoIHaveAccess")}:{" "}
-              <span className="text-nx-accent font-bold">{selectedPermission}</span>
+              <span className="text-nx-accent font-bold">{activePermission}</span>
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-4 gap-2.5 items-center text-xs">
@@ -161,7 +154,7 @@ export function PermissionProvenanceGraph({
                   <span className="text-[10px] text-nx-ink-3 block">1. {t("profile.dossier.platformTier")}</span>
                   <span className="font-bold text-nx-ink flex items-center gap-1 mt-0.5">
                     <Sparkles className="h-3 w-3 text-nx-accent" />
-                    {editionName || "Sports Enterprise"}
+                    {editionName}
                   </span>
                 </div>
                 <ArrowRight className="h-3.5 w-3.5 text-nx-ink-3 hidden sm:block" />
@@ -172,7 +165,7 @@ export function PermissionProvenanceGraph({
                   <span className="text-[10px] text-nx-ink-3 block">2. {t("profile.dossier.activeBranch")}</span>
                   <span className="font-bold text-nx-ink flex items-center gap-1 mt-0.5">
                     <Building2 className="h-3 w-3 text-nx-accent" />
-                    {activeBranchName || "Main Stadium HQ"}
+                    {activeBranchName}
                   </span>
                 </div>
                 <ArrowRight className="h-3.5 w-3.5 text-nx-ink-3 hidden sm:block" />
@@ -194,7 +187,7 @@ export function PermissionProvenanceGraph({
                   4. {t("profile.governance.effectiveGrant")}
                 </span>
                 <span className="font-mono font-bold text-nx-ink text-[11px] truncate block mt-0.5">
-                  {selectedPermission}
+                  {activePermission}
                 </span>
               </div>
             </div>

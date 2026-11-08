@@ -41,29 +41,6 @@ export const integrationsKeys = {
   tokens: () => [...integrationsKeys.all, "tokens"] as const,
 };
 
-const DEFAULT_SEEDED_TOKENS: PersonalAccessToken[] = [
-  {
-    id: "pat-1",
-    name: "Tactical Pitch Sync Daemon",
-    prefix: "scr_pat_live_8f3a",
-    scopes: ["tactics:read", "pitch:write"],
-    createdAt: new Date(Date.now() - 14 * 86400000),
-    expiresAt: new Date(Date.now() + 76 * 86400000),
-    lastUsedAt: new Date(Date.now() - 3600000),
-    tokenHash: "sha256:8f3a99b2c011e4aa7712b389d01a4f88c21e0944112233445566778899aabbcc",
-  },
-  {
-    id: "pat-2",
-    name: "Academy Roster CLI Tool",
-    prefix: "scr_pat_live_1c4b",
-    scopes: ["academy:read", "athletes:read"],
-    createdAt: new Date(Date.now() - 30 * 86400000),
-    expiresAt: new Date(Date.now() + 60 * 86400000),
-    lastUsedAt: new Date(Date.now() - 86400000 * 2),
-    tokenHash: "sha256:1c4b88e1f022a9cc4401d772e19b3a77d10f08332211445566778899aabbccdd",
-  },
-];
-
 async function computeSha256Hex(input: string): Promise<string> {
   if (typeof window !== "undefined" && window.crypto?.subtle) {
     const encoded = new TextEncoder().encode(input);
@@ -88,7 +65,7 @@ export function useIntegrationsFederationViewModel() {
   const [createdTokenSecret, setCreatedTokenSecret] = useState<string | null>(null);
 
   // PAT list hydrated from backend `adminSettingsJson`
-  const [personalTokens, setPersonalTokens] = useState<PersonalAccessToken[]>(DEFAULT_SEEDED_TOKENS);
+  const [personalTokens, setPersonalTokens] = useState<PersonalAccessToken[]>([]);
 
   useEffect(() => {
     if (!profile?.adminSettingsJson || hasHydratedTokensRef.current) return;

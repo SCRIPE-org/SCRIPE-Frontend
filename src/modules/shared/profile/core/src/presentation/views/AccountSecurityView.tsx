@@ -231,8 +231,8 @@ export function AccountSecurityView() {
       {/* 4. Travel Shield, CIDR Policy, Duress Canary & Lockdown */}
       <SecurityAdvancedShieldSection
         awayMatchTravelShieldEnabled={security?.awayMatchTravelShieldEnabled ?? false}
-        trustedCidrs={security?.trustedCidrs ?? ["197.55.12.0/24", "10.24.0.0/16"]}
-        hasDuressPinConfigured={security?.hasDuressPinConfigured ?? true}
+        trustedCidrs={security?.trustedCidrs ?? []}
+        hasDuressPinConfigured={security?.hasDuressPinConfigured ?? false}
         onUpdatePolicy={updateSecurityPolicy}
         isUpdatingPolicy={isUpdatingPolicy}
         onOpenLockdown={() => setIsLockdownOpen(true)}
@@ -240,13 +240,7 @@ export function AccountSecurityView() {
 
       <EnrollPasskeyModal isOpen={isEnrollModalOpen} onClose={() => setIsEnrollModalOpen(false)} onEnroll={enrollPasskey} isEnrolling={isEnrollingPasskey} enrollError={enrollError} />
       <TwoFactorWizardModal isOpen={!!twoFaSetupData} onClose={clearTwoFaSetup} setupData={twoFaSetupData} onConfirm={confirm2Fa} isConfirming={isConfirming2Fa} />
-      <BiometricSudoModal
-        isOpen={isSudoModalOpen}
-        onClose={() => setIsSudoModalOpen(false)}
-        onVerify={async () => { await verifySudo(); setIsSudoModalOpen(false); }}
-        isVerifying={isVerifyingSudo}
-        error={sudoError}
-      />
+      <BiometricSudoModal isOpen={isSudoModalOpen} onClose={() => setIsSudoModalOpen(false)} onVerify={async () => { await verifySudo(); setIsSudoModalOpen(false); }} isVerifying={isVerifyingSudo} error={sudoError} />
       <EmergencyLockdownDialog isOpen={isLockdownOpen} onClose={() => setIsLockdownOpen(false)} onConfirmLockdown={emergencyLockdown} isLockingDown={isLockingDown} />
     </div>
   );

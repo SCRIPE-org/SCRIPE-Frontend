@@ -43,32 +43,7 @@ export function AccountCredentialsView() {
   const [signingPin, setSigningPin] = useState("");
   const [pinSaved, setPinSaved] = useState(false);
 
-  const items = credentials?.credentials?.length
-    ? credentials.credentials
-    : [
-        {
-          id: "cred-uefa-pro",
-          credentialType: "COACHING_LICENSE",
-          issuingBody: "UEFA",
-          licenseTitle: "UEFA Pro Coaching License",
-          licenseNumber: "UEFA-PRO-2026-9941",
-          issuedAtUtc: "2023-06-01T00:00:00Z",
-          expiresAtUtc: "2028-06-01T00:00:00Z",
-          verificationStatus: "VERIFIED",
-          stadiumZones: ["ZONE 1: PITCH", "ZONE 2: TUNNEL", "ZONE 3: VAR"],
-        },
-        {
-          id: "cred-safesport",
-          credentialType: "SAFEGUARDING",
-          issuingBody: "FIFA / SafeSport",
-          licenseTitle: "Enhanced DBS & Youth Safeguarding Clearance",
-          licenseNumber: "DBS-FIFA-88210",
-          issuedAtUtc: "2025-01-15T00:00:00Z",
-          expiresAtUtc: "2027-01-15T00:00:00Z",
-          verificationStatus: "VERIFIED",
-          stadiumZones: ["ACADEMY CAMPUS", "MEDICAL BAY"],
-        },
-      ];
+  const items = credentials?.credentials ?? [];
 
   const handleAddCredential = async () => {
     if (!newTitle.trim() || !newLicenseCode.trim()) return;
@@ -105,12 +80,13 @@ export function AccountCredentialsView() {
 
       {/* 1. Interactive 180-Degree Flipping Sovereign Identity Pass */}
       <SovereignIdentityPass
-        fullName={profile?.fullName || "Coach Executive"}
-        jobTitle={profile?.jobTitle || "Sporting Director"}
-        clubAffiliation={profile?.clubAffiliation || "Al-Ahly Sporting Club"}
-        staffCode={profile?.staffCode || "#SCR-ADM-01"}
-        primaryLicense="UEFA Pro License"
-        nfcTokenId={credentials?.nfcPassTokenId || "#SCR-NFC-2026-884A"}
+        fullName={profile?.fullName || ""}
+        jobTitle={profile?.jobTitle || ""}
+        clubAffiliation={profile?.clubAffiliation || ""}
+        staffCode={profile?.staffCode || ""}
+        primaryLicense={items[0]?.licenseTitle}
+        nfcTokenId={credentials?.nfcPassTokenId}
+        bloodType={profile?.bloodType}
       />
 
       {/* 2. UEFA / CAF / FIFA Coaching License & Safeguarding Vault */}
@@ -128,64 +104,68 @@ export function AccountCredentialsView() {
         </CardHeader>
 
         <CardContent className="space-y-4">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-            {items.map((lic: any) => (
-              <div
-                key={lic.id}
-                className="p-3.5 rounded-xl border border-nx-line bg-nx-raised flex flex-col justify-between gap-3 hover:border-nx-line-hi transition-colors"
-              >
-                <div className="flex items-start justify-between gap-2">
-                  <div className="space-y-1 min-w-0">
-                    <div className="flex items-center gap-2 flex-wrap">
-                      <Badge variant="outline" className="text-[10px] font-bold border-nx-accent/40 text-nx-accent bg-nx-accent-wash">
-                        {lic.issuingBody}
-                      </Badge>
-                      <span className="font-semibold text-xs text-nx-ink truncate">
-                        {lic.licenseTitle}
-                      </span>
+          {items.length === 0 ? (
+            <p className="text-xs text-nx-ink-3">{t("profile.credentials.noCredentials")}</p>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+              {items.map((lic) => (
+                <div
+                  key={lic.id}
+                  className="p-3.5 rounded-xl border border-nx-line bg-nx-raised flex flex-col justify-between gap-3 hover:border-nx-line-hi transition-colors"
+                >
+                  <div className="flex items-start justify-between gap-2">
+                    <div className="space-y-1 min-w-0">
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <Badge variant="outline" className="text-[10px] font-bold border-nx-accent/40 text-nx-accent bg-nx-accent-wash">
+                          {lic.issuingBody}
+                        </Badge>
+                        <span className="font-semibold text-xs text-nx-ink truncate">
+                          {lic.licenseTitle}
+                        </span>
+                      </div>
+                      <p className="text-[11px] font-mono text-nx-ink-3">
+                        {t("profile.coaching.certificate")}: {lic.licenseNumber}
+                      </p>
                     </div>
-                    <p className="text-[11px] font-mono text-nx-ink-3">
-                      {t("profile.coaching.certificate")}: {lic.licenseNumber}
-                    </p>
+
+                    <div className="flex items-center gap-1.5 shrink-0">
+                      <Badge variant="outline" className="border-success/30 text-success bg-success/10 gap-1 text-[10px]">
+                        <CheckCircle2 className="h-3 w-3" />
+                        <span>{t("profile.coaching.verifiedBadge")}</span>
+                      </Badge>
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="sm"
+                        disabled={isRemovingCredential}
+                        onClick={() => removeCredential(lic.id)}
+                        className="h-7 w-7 p-0 text-nx-ink-3 hover:text-destructive"
+                        aria-label={t("profile.common.delete")}
+                      >
+                        <Trash2 className="h-3.5 w-3.5" />
+                      </Button>
+                    </div>
                   </div>
 
-                  <div className="flex items-center gap-1.5 shrink-0">
-                    <Badge variant="outline" className="border-success/30 text-success bg-success/10 gap-1 text-[10px]">
-                      <CheckCircle2 className="h-3 w-3" />
-                      <span>{t("profile.coaching.verifiedBadge")}</span>
-                    </Badge>
-                    <Button
-                      type="button"
-                      variant="ghost"
-                      size="sm"
-                      disabled={isRemovingCredential}
-                      onClick={() => removeCredential(lic.id)}
-                      className="h-7 w-7 p-0 text-nx-ink-3 hover:text-destructive"
-                      aria-label={t("profile.common.delete")}
-                    >
-                      <Trash2 className="h-3.5 w-3.5" />
-                    </Button>
+                  <div className="flex items-center justify-between text-[10px] text-nx-ink-3 border-t border-nx-line pt-2">
+                    <span className="flex items-center gap-1">
+                      <Calendar className="h-3 w-3 text-nx-accent" />
+                      {t("profile.coaching.validUntil")}:{" "}
+                      {lic.expiresAtUtc ? new Date(lic.expiresAtUtc).toLocaleDateString() : ""}
+                    </span>
+                    <ShieldCheck className="h-3.5 w-3.5 text-success" />
                   </div>
                 </div>
-
-                <div className="flex items-center justify-between text-[10px] text-nx-ink-3 border-t border-nx-line pt-2">
-                  <span className="flex items-center gap-1">
-                    <Calendar className="h-3 w-3 text-nx-accent" />
-                    {t("profile.coaching.validUntil")}:{" "}
-                    {lic.expiresAtUtc ? new Date(lic.expiresAtUtc).toLocaleDateString() : "2028-06-01"}
-                  </span>
-                  <ShieldCheck className="h-3.5 w-3.5 text-success" />
-                </div>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          )}
 
           {/* Add New Credential Inline Bar */}
           <div className="p-3.5 rounded-xl border border-nx-line bg-nx-raised grid grid-cols-1 sm:grid-cols-4 gap-2.5 items-center">
             <Input
               value={newOrg}
               onChange={(e) => setNewOrg(e.target.value)}
-              placeholder="UEFA / CAF / FIFA"
+              placeholder={t("profile.credentials.issuingBodyPlaceholder")}
               className="h-8 text-xs bg-nx-surface border-nx-line text-nx-ink"
             />
             <Input

@@ -1,17 +1,27 @@
 /**
- * Profile Module Core Exports
+ * Profile & Sovereign Account Module Core Exports
  *
- * Public barrel export for all presentation views, viewmodels, components, and hooks.
+ * Public barrel export for all 15 Sovereign Account World v3.0 presentation views,
+ * viewmodels, signature components, and hooks.
  */
 
-// Presentation Views
+// Presentation Views (15 Sovereign Account Slices + ForceChangePasswordView)
 export { ForceChangePasswordView } from "./src/presentation/views/ForceChangePasswordView";
-export { ProfileDossierView } from "./src/presentation/views/ProfileDossierView";
-export { ProfileSecurityView } from "./src/presentation/views/ProfileSecurityView";
-export { ProfileSessionsView } from "./src/presentation/views/ProfileSessionsView";
-export { ProfileActivityView } from "./src/presentation/views/ProfileActivityView";
-export { ProfilePreferencesView } from "./src/presentation/views/ProfilePreferencesView";
-export { ProfileIntegrationsView } from "./src/presentation/views/ProfileIntegrationsView";
+export { AccountDossierView } from "./src/presentation/views/AccountDossierView";
+export { AccountCredentialsView } from "./src/presentation/views/AccountCredentialsView";
+export { AccountSecurityView } from "./src/presentation/views/AccountSecurityView";
+export { AccountSessionsView } from "./src/presentation/views/AccountSessionsView";
+export { AccountDevicesView } from "./src/presentation/views/AccountDevicesView";
+export { AccountGovernanceView } from "./src/presentation/views/AccountGovernanceView";
+export { AccountActivityView } from "./src/presentation/views/AccountActivityView";
+export { AccountPrivacyView } from "./src/presentation/views/AccountPrivacyView";
+export { AccountPreferencesView } from "./src/presentation/views/AccountPreferencesView";
+export { AccountAccessibilityView } from "./src/presentation/views/AccountAccessibilityView";
+export { AccountAiCopilotView } from "./src/presentation/views/AccountAiCopilotView";
+export { AccountNotificationsView } from "./src/presentation/views/AccountNotificationsView";
+export { AccountPlanView } from "./src/presentation/views/AccountPlanView";
+export { AccountBillingView } from "./src/presentation/views/AccountBillingView";
+export { AccountIntegrationsView } from "./src/presentation/views/AccountIntegrationsView";
 
 // ViewModels
 export { useProfileDossierViewModel } from "./src/presentation/viewmodels/useProfileDossierViewModel";
@@ -23,10 +33,18 @@ export { useIntegrationsFederationViewModel } from "./src/presentation/viewmodel
 export { useProfilePageViewModel } from "./src/presentation/viewmodels/useProfilePageViewModel";
 export { useAvatarViewModel } from "./src/presentation/viewmodels/useAvatarViewModel";
 export { useForceChangePasswordViewModel } from "./src/presentation/viewmodels/useForceChangePasswordViewModel";
+export * from "./src/presentation/viewmodels/useSovereignAccountSlicesViewModel";
 
 // Components
 export { ProfileTelemetryHud } from "./src/presentation/components/ProfileTelemetryHud";
 export { ProfileRailLayout } from "./src/presentation/components/ProfileRailLayout";
+export { SovereignCommandBar } from "./src/presentation/components/SovereignCommandBar";
+export { SovereignSudoGate } from "./src/presentation/components/SovereignSudoGate";
+export { TacticalIdentityCanvas } from "./src/presentation/components/TacticalIdentityCanvas";
+export { SovereignIdentityPass } from "./src/presentation/components/SovereignIdentityPass";
+export { SovereignSessionRadar } from "./src/presentation/components/SovereignSessionRadar";
+export { PermissionProvenanceGraph } from "./src/presentation/components/PermissionProvenanceGraph";
+export { ErgonomicsLiveStage } from "./src/presentation/components/ErgonomicsLiveStage";
 export { EnrollPasskeyModal } from "./src/presentation/components/EnrollPasskeyModal";
 export { TwoFactorWizardModal } from "./src/presentation/components/TwoFactorWizardModal";
 export { ForensicPayloadDrawer } from "./src/presentation/components/ForensicPayloadDrawer";

@@ -45,7 +45,7 @@ export function SecurityAdvancedShieldSection({
 }: SecurityAdvancedShieldSectionProps) {
   const { t } = useI18n();
   const [cidrInput, setCidrInput] = useState(
-    trustedCidrs.length > 0 ? trustedCidrs.join(", ") : "197.55.12.0/24, 10.24.0.0/16"
+    trustedCidrs.length > 0 ? trustedCidrs.join(", ") : ""
   );
   const [duressPin, setDuressPin] = useState("");
   const [savedNotice, setSavedNotice] = useState(false);

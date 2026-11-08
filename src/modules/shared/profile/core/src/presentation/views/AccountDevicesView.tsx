@@ -37,43 +37,22 @@ export function AccountDevicesView() {
   } = useAccountDevicesSliceViewModel();
 
   const [deviceName, setDeviceName] = useState("");
-  const [osPlatform, setOsPlatform] = useState("iPadOS 18.2 (M4)");
+  const [osPlatform, setOsPlatform] = useState("");
   const [syncNotice, setSyncNotice] = useState(false);
 
-  const hardwareList = devices?.devices?.length
-    ? devices.devices
-    : [
-        {
-          id: "dev-ipad-pitch-1",
-          deviceName: "iPad Pro 13\" — Touchline Bench #1",
-          deviceCategory: "PITCH_TABLET",
-          osPlatform: "iPadOS 18.2 (Secure Enclave)",
-          postureScore: 98,
-          isCompliant: true,
-          offlineVaultSyncedAtUtc: "2026-11-08T08:30:00Z",
-          telemetryBridgeType: "Catapult Vector S7 Receiver",
-        },
-        {
-          id: "dev-ipad-medical",
-          deviceName: "iPad Air M2 — Medical & Concussion Assessment",
-          deviceCategory: "MEDICAL_TABLET",
-          osPlatform: "iPadOS 18.1 (Biometric Locked)",
-          postureScore: 95,
-          isCompliant: true,
-          offlineVaultSyncedAtUtc: "2026-11-08T07:45:00Z",
-          telemetryBridgeType: "STATSports Apex Pro Bridge",
-        },
-      ];
+  const hardwareList = devices?.devices ?? [];
+  const wearableBridges = devices?.wearableBridges ?? [];
 
   const handleRegister = async () => {
     if (!deviceName.trim()) return;
     await registerDevice({
       deviceName: deviceName.trim(),
       deviceCategory: "PITCH_TABLET",
-      osPlatform,
-      telemetryBridgeType: "Catapult Vector S7 Receiver",
+      osPlatform: osPlatform.trim(),
+      telemetryBridgeType: wearableBridges[0]?.bridgeType || "",
     });
     setDeviceName("");
+    setOsPlatform("");
   };
 
   const handleRotateOfflineKeys = () => {
@@ -107,42 +86,47 @@ export function AccountDevicesView() {
         </CardHeader>
 
         <CardContent className="space-y-4">
-          <div className="space-y-3">
-            {hardwareList.map((dev: any) => (
-              <div
-                key={dev.id}
-                className="p-3.5 rounded-xl border border-nx-line bg-nx-raised flex flex-col sm:flex-row sm:items-center justify-between gap-3 hover:border-nx-line-hi transition-colors"
-              >
-                <div className="space-y-1 min-w-0">
-                  <div className="flex items-center gap-2 flex-wrap">
-                    <span className="text-xs font-bold text-nx-ink truncate">{dev.deviceName}</span>
-                    <Badge variant="outline" className="text-[10px] font-mono border-nx-accent/40 text-nx-accent bg-nx-accent-wash">
-                      OS Posture: {dev.postureScore}%
-                    </Badge>
-                    <Badge variant="outline" className="text-[10px] border-success/30 text-success bg-success/10 gap-1">
-                      <ShieldCheck className="h-3 w-3" />
-                      <span>{t("profile.devices.compliant")}</span>
-                    </Badge>
-                  </div>
-                  <p className="text-[11px] text-nx-ink-3 font-mono">
-                    {dev.osPlatform} &bull; {dev.telemetryBridgeType || "UWB Telemetry Ready"}
-                  </p>
-                </div>
-
-                <Button
-                  type="button"
-                  variant="outline"
-                  size="sm"
-                  disabled={isRevokingDevice}
-                  onClick={() => revokeDevice(dev.id)}
-                  className="h-8 text-xs text-destructive border-destructive/30 hover:bg-destructive/10 gap-1.5 shrink-0"
+          {hardwareList.length === 0 ? (
+            <p className="text-xs text-nx-ink-3">{t("profile.devices.noDevices")}</p>
+          ) : (
+            <div className="space-y-3">
+              {hardwareList.map((dev) => (
+                <div
+                  key={dev.id}
+                  className="p-3.5 rounded-xl border border-nx-line bg-nx-raised flex flex-col sm:flex-row sm:items-center justify-between gap-3 hover:border-nx-line-hi transition-colors"
                 >
-                  <Trash2 className="h-3.5 w-3.5" />
-                  <span>{t("profile.devices.wipeOfflineVaultBtn")}</span>
-                </Button>
-              </div>
-            ))}
-          </div>
+                  <div className="space-y-1 min-w-0">
+                    <div className="flex items-center gap-2 flex-wrap">
+                      <span className="text-xs font-bold text-nx-ink truncate">{dev.deviceName}</span>
+                      <Badge variant="outline" className="text-[10px] font-mono border-nx-accent/40 text-nx-accent bg-nx-accent-wash">
+                        {t("profile.devices.osPosture")}: {dev.postureScore}%
+                      </Badge>
+                      <Badge variant="outline" className="text-[10px] border-success/30 text-success bg-success/10 gap-1">
+                        <ShieldCheck className="h-3 w-3" />
+                        <span>{t("profile.devices.compliant")}</span>
+                      </Badge>
+                    </div>
+                    <p className="text-[11px] text-nx-ink-3 font-mono">
+                      {dev.osPlatform}
+                      {dev.telemetryBridgeType ? ` • ${dev.telemetryBridgeType}` : ""}
+                    </p>
+                  </div>
+
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    disabled={isRevokingDevice}
+                    onClick={() => revokeDevice(dev.id)}
+                    className="h-8 text-xs text-destructive border-destructive/30 hover:bg-destructive/10 gap-1.5 shrink-0"
+                  >
+                    <Trash2 className="h-3.5 w-3.5" />
+                    <span>{t("profile.devices.wipeOfflineVaultBtn")}</span>
+                  </Button>
+                </div>
+              ))}
+            </div>
+          )}
 
           {/* Enroll New Field Hardware */}
           <div className="p-3.5 rounded-xl border border-nx-line bg-nx-raised grid grid-cols-1 sm:grid-cols-3 gap-2.5 items-center">
@@ -155,7 +139,7 @@ export function AccountDevicesView() {
             <Input
               value={osPlatform}
               onChange={(e) => setOsPlatform(e.target.value)}
-              placeholder="iPadOS 18.2 / Android 15"
+              placeholder={t("profile.devices.osPlatformPlaceholder")}
               className="h-8 text-xs font-mono bg-nx-surface border-nx-line text-nx-ink"
             />
             <Button
@@ -187,24 +171,26 @@ export function AccountDevicesView() {
           </CardDescription>
         </CardHeader>
         <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs">
-          <div className="p-3.5 rounded-xl border border-nx-line bg-nx-raised flex items-center justify-between">
-            <div>
-              <span className="font-bold text-nx-ink block">Catapult Vector S7 UWB Receiver</span>
-              <span className="text-[11px] text-nx-ink-3 font-mono">100Hz Live Heart-Rate & HSR Stream</span>
-            </div>
-            <Badge variant="outline" className="border-success/30 text-success bg-success/10 text-[10px]">
-              PAIRED
-            </Badge>
-          </div>
-          <div className="p-3.5 rounded-xl border border-nx-line bg-nx-raised flex items-center justify-between">
-            <div>
-              <span className="font-bold text-nx-ink block">STATSports Apex Pro Beacon</span>
-              <span className="text-[11px] text-nx-ink-3 font-mono">FIFA IMS Certified Pitch Telemetry</span>
-            </div>
-            <Badge variant="outline" className="border-nx-accent/40 text-nx-accent bg-nx-accent-wash text-[10px]">
-              STANDBY
-            </Badge>
-          </div>
+          {wearableBridges.length === 0 ? (
+            <p className="text-xs text-nx-ink-3 col-span-2">{t("profile.devices.noWearableBridges")}</p>
+          ) : (
+            wearableBridges.map((bridge, idx) => (
+              <div
+                key={idx}
+                className="p-3.5 rounded-xl border border-nx-line bg-nx-raised flex items-center justify-between"
+              >
+                <div>
+                  <span className="font-bold text-nx-ink block">{bridge.bridgeType}</span>
+                  <span className="text-[11px] text-nx-ink-3 font-mono">
+                    {bridge.lastSyncedAtUtc ? new Date(bridge.lastSyncedAtUtc).toLocaleString() : ""}
+                  </span>
+                </div>
+                <Badge variant="outline" className="border-success/30 text-success bg-success/10 text-[10px]">
+                  {bridge.status}
+                </Badge>
+              </div>
+            ))
+          )}
         </CardContent>
       </Card>
 

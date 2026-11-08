@@ -1,7 +1,7 @@
 import { V1 } from "@/core/config/api-endpoints/_shared";
 
 /**
- * Documentation for module export
+ * Sovereign Account World v3.0 API Endpoints
  */
 export const PROFILE_ENDPOINTS = {
   ME: `${V1}/account/dossier`,
@@ -34,27 +34,27 @@ export const PROFILE_ENDPOINTS = {
     CONTEXT: `${V1}/account/context`,
     DOSSIER: `${V1}/account/dossier`,
     CREDENTIALS: `${V1}/account/credentials`,
-     CREDENTIAL_BY_ID: (id: string) => `${V1}/account/credentials/${id}`,
+    CREDENTIAL_BY_ID: (id: string) => `${V1}/account/credentials/${id}`,
     SECURITY: `${V1}/account/security`,
     SESSIONS: `${V1}/account/sessions`,
     PING_SESSION: (sessionId: string) => `${V1}/account/sessions/${sessionId}/ping`,
     DEVICES: `${V1}/account/devices`,
     REVOKE_DEVICE: (deviceId: string) => `${V1}/account/devices/${deviceId}`,
     GOVERNANCE: `${V1}/account/governance`,
-    DELEGATIONS: `${V1}/account/governance/delegations`,
-    REVOKE_DELEGATION: (id: string) => `${V1}/account/governance/delegations/${id}`,
+    DELEGATIONS: `${V1}/account/governance`,
+    REVOKE_DELEGATION: (id: string) => `${V1}/account/governance/${id}`,
     ACTIVITY: `${V1}/account/activity`,
-    INSPECTOR_PASS: `${V1}/account/activity/inspector-pass`,
+    INSPECTOR_PASS: `${V1}/account/activity`,
     PRIVACY: `${V1}/account/privacy`,
-    PRIVACY_EXPORT: `${V1}/account/privacy/export`,
+    PRIVACY_EXPORT: `${V1}/account/privacy`,
     PREFERENCES: `${V1}/account/preferences`,
     ACCESSIBILITY: `${V1}/account/accessibility`,
     AI_COPILOT: `${V1}/account/ai-copilot`,
     NOTIFICATIONS: `${V1}/account/notifications`,
     PLAN: `${V1}/account/plan`,
-    PLAN_REQUEST: `${V1}/account/plan/request`,
+    PLAN_REQUEST: `${V1}/account/plan`,
     BILLING: `${V1}/account/billing`,
-    BILLING_EXPENSES: `${V1}/account/billing/expenses`,
+    BILLING_EXPENSES: `${V1}/account/billing`,
     INTEGRATIONS: `${V1}/account/integrations`,
     INTEGRATION_BY_ID: (kind: string, id: string) => `${V1}/account/integrations/${kind}/${id}`,
   },

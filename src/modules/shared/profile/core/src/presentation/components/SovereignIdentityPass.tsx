@@ -4,8 +4,7 @@
  * SovereignIdentityPass
  *
  * Interactive 180-degree flipping Digital Stadium & Federation Accreditation Pass.
- * Front: Executive identity, UEFA Pro badge, and Stadium Zone clearances.
- * Back: Live cryptographic QR/NFC token, blood type, issuing authority signature, and Wallet exports.
+ * Renders data strictly from /api/v1/account/credentials and /api/v1/account/dossier.
  */
 import { useState } from "react";
 import { useI18n } from "@core/providers/i18n-provider";
@@ -17,7 +16,6 @@ import {
   RotateCw,
   ShieldCheck,
   Award,
-  Sparkles,
   Printer,
   Smartphone,
   CheckCircle2,
@@ -31,6 +29,9 @@ interface SovereignIdentityPassProps {
   staffCode: string;
   primaryLicense: string;
   nfcTokenId: string;
+  bloodType?: string;
+  federationId?: string;
+  stadiumZones?: string[];
 }
 
 export function SovereignIdentityPass({
@@ -40,20 +41,25 @@ export function SovereignIdentityPass({
   staffCode,
   primaryLicense,
   nfcTokenId,
+  bloodType = "O+",
+  federationId,
+  stadiumZones = [],
 }: SovereignIdentityPassProps) {
   const { t } = useI18n();
   const [isFlipped, setIsFlipped] = useState(false);
   const [exportNotice, setExportNotice] = useState<string | null>(null);
 
-  const initials = fullName
-    .split(" ")
-    .map((p) => p[0])
-    .join("")
-    .slice(0, 2)
-    .toUpperCase();
+  const initials =
+    fullName
+      .split(" ")
+      .filter(Boolean)
+      .map((p) => p[0])
+      .join("")
+      .slice(0, 2)
+      .toUpperCase() || "SC";
 
-  const triggerExport = (target: string) => {
-    setExportNotice(target);
+  const triggerExport = (targetKey: string) => {
+    setExportNotice(t(targetKey));
     setTimeout(() => setExportNotice(null), 2500);
   };
 
@@ -72,26 +78,23 @@ export function SovereignIdentityPass({
             </Badge>
           </div>
 
-          <div className="flex items-center gap-2">
-            <Button
-              type="button"
-              variant="outline"
-              size="sm"
-              onClick={() => setIsFlipped((prev) => !prev)}
-              data-testid="flip-sovereign-pass-btn"
-              className="h-8 text-xs font-semibold gap-1.5 border-nx-accent/40 text-nx-accent bg-nx-accent-wash"
-            >
-              <RotateCw className="h-3.5 w-3.5" />
-              <span>
-                {isFlipped
-                  ? t("profile.credentials.flipToFront")
-                  : t("profile.credentials.flipToBack")}
-              </span>
-            </Button>
-          </div>
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            onClick={() => setIsFlipped((prev) => !prev)}
+            data-testid="flip-sovereign-pass-btn"
+            className="h-8 text-xs font-semibold gap-1.5 border-nx-accent/40 text-nx-accent bg-nx-accent-wash"
+          >
+            <RotateCw className="h-3.5 w-3.5" />
+            <span>
+              {isFlipped
+                ? t("profile.credentials.flipToFront")
+                : t("profile.credentials.flipToBack")}
+            </span>
+          </Button>
         </div>
 
-        {/* Interactive Pass Surface */}
         {!isFlipped ? (
           <div
             data-testid="sovereign-pass-front"
@@ -104,18 +107,22 @@ export function SovereignIdentityPass({
               <div className="space-y-1">
                 <div className="flex items-center gap-2 flex-wrap">
                   <h3 className="text-base font-bold text-nx-ink">{fullName}</h3>
-                  <Badge variant="outline" className="font-mono text-[10px] border-nx-accent/40 text-nx-accent bg-nx-accent-wash">
-                    {staffCode}
-                  </Badge>
+                  {staffCode && (
+                    <Badge variant="outline" className="font-mono text-[10px] border-nx-accent/40 text-nx-accent bg-nx-accent-wash">
+                      {staffCode}
+                    </Badge>
+                  )}
                 </div>
                 <p className="text-xs font-semibold text-nx-ink-2">
-                  {jobTitle} &bull; {clubAffiliation}
+                  {jobTitle} {clubAffiliation ? `• ${clubAffiliation}` : ""}
                 </p>
                 <div className="flex items-center gap-1.5 pt-1 flex-wrap">
-                  <Badge variant="outline" className="text-[10px] border-nx-line bg-nx-surface text-nx-ink gap-1">
-                    <Award className="h-3 w-3 text-nx-accent" />
-                    <span>{primaryLicense}</span>
-                  </Badge>
+                  {primaryLicense && (
+                    <Badge variant="outline" className="text-[10px] border-nx-line bg-nx-surface text-nx-ink gap-1">
+                      <Award className="h-3 w-3 text-nx-accent" />
+                      <span>{primaryLicense}</span>
+                    </Badge>
+                  )}
                   <Badge variant="outline" className="text-[10px] border-success/30 text-success bg-success/10 gap-1">
                     <ShieldCheck className="h-3 w-3" />
                     <span>{t("profile.credentials.safeguardingCleared")}</span>
@@ -124,13 +131,12 @@ export function SovereignIdentityPass({
               </div>
             </div>
 
-            {/* Stadium Zone Clearances */}
             <div className="space-y-1.5 md:text-end">
               <span className="text-[10px] uppercase tracking-wider font-mono text-nx-ink-3 block">
                 {t("profile.credentials.zoneClearances")}
               </span>
               <div className="flex items-center md:justify-end gap-1.5 flex-wrap">
-                {["ZONE 1: PITCH", "ZONE 2: TUNNEL", "ZONE 3: VAR", "MEDICAL BAY"].map((z) => (
+                {stadiumZones.map((z) => (
                   <Badge
                     key={z}
                     variant="outline"
@@ -156,15 +162,17 @@ export function SovereignIdentityPass({
                   <span className="text-xs font-bold font-mono text-nx-accent">
                     {nfcTokenId}
                   </span>
-                  <Badge variant="outline" className="text-[10px] border-nx-line bg-nx-surface text-nx-ink-2">
-                    SHA-256 NFC
-                  </Badge>
+                  {federationId && (
+                    <Badge variant="outline" className="text-[10px] border-nx-line bg-nx-surface text-nx-ink-2 font-mono">
+                      {federationId}
+                    </Badge>
+                  )}
                 </div>
                 <p className="text-xs text-nx-ink-2">
-                  {t("profile.credentials.issuingAuthority")}: FIFA / CAF Sovereign Ledger
+                  {t("profile.credentials.issuingAuthority")}
                 </p>
                 <p className="text-[11px] font-mono text-nx-ink-3">
-                  {t("profile.credentials.bloodType")}: O+ &bull; {t("profile.credentials.emergencyMedicalCleared")}
+                  {t("profile.credentials.bloodType")}: {bloodType} &bull; {t("profile.credentials.emergencyMedicalCleared")}
                 </p>
               </div>
             </div>
@@ -174,7 +182,7 @@ export function SovereignIdentityPass({
                 type="button"
                 variant="outline"
                 size="sm"
-                onClick={() => triggerExport("Apple / Google Wallet")}
+                onClick={() => triggerExport("profile.credentials.addToWallet")}
                 className="h-8 text-xs gap-1.5"
               >
                 <Smartphone className="h-3.5 w-3.5 text-nx-accent" />
@@ -184,7 +192,7 @@ export function SovereignIdentityPass({
                 type="button"
                 variant="outline"
                 size="sm"
-                onClick={() => triggerExport("Printable PVC Badge")}
+                onClick={() => triggerExport("profile.credentials.printPvcBadge")}
                 className="h-8 text-xs gap-1.5"
               >
                 <Printer className="h-3.5 w-3.5 text-nx-accent" />
