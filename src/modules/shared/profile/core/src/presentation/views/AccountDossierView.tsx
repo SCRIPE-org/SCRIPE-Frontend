@@ -35,8 +35,10 @@ export function AccountDossierView() {
     uploadAvatar, isUploadingAvatar, removeAvatar, isRemovingAvatar,
   } = useProfileDossierViewModel();
 
-  const { dossier, sendEmailVerification, isSendingVerification, verificationSent } =
-    useAccountDossierSliceViewModel();
+  const {
+    dossier, sendEmailVerification, isSendingVerification, verificationSent,
+    exportAccountData, deactivateAccount,
+  } = useAccountDossierSliceViewModel();
 
   const rawDefs = dossier?.customFields ?? profile?.customFields ?? [];
   const customFieldDefs = rawDefs.length > 0 ? rawDefs : FALLBACK_B2B_FIELDS;
@@ -63,6 +65,7 @@ export function AccountDossierView() {
   const initials = `${profile.firstName?.[0] || ""}${profile.lastName?.[0] || ""}`.toUpperCase();
   const memberships = dossier?.clubMemberships ?? [];
   const isEmailVerified = dossier?.isEmailVerified ?? profile.isEmailVerified ?? true;
+  const isSolePrimaryOwner = memberships.length > 0 ? memberships.some((m) => m.isPrimary) : true;
 
   return (
     <div className="space-y-6">
@@ -199,8 +202,10 @@ export function AccountDossierView() {
       <AccountLifecycleCard
         profile={profile}
         customFields={customFieldDefs}
-        isSolePrimaryOwner={true}
+        isSolePrimaryOwner={isSolePrimaryOwner}
         primaryOrgName={profile.clubAffiliation || "Al-Ahly Sporting Club"}
+        onExportData={exportAccountData}
+        onDeactivateAccount={deactivateAccount}
       />
 
       {/* 3-Step Email / Username Verification Modal */}

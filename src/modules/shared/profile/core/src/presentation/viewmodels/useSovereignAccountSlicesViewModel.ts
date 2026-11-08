@@ -35,11 +35,19 @@ export function useSovereignDossierSlice() {
     mutationFn: () => container.sovereignAccountRepository.sendEmailVerification(),
     onSuccess: () => qc.invalidateQueries({ queryKey: sovereignAccountKeys.dossier() }),
   });
-  return { ...query, sendVerificationMutation };
+  const exportDataMutation = useMutation({
+    mutationFn: () => container.sovereignAccountRepository.exportAccountData(),
+  });
+  const deactivateMutation = useMutation({
+    mutationFn: () => container.sovereignAccountRepository.deactivateAccount(),
+    onSuccess: () => qc.invalidateQueries({ queryKey: sovereignAccountKeys.dossier() }),
+  });
+  return { ...query, sendVerificationMutation, exportDataMutation, deactivateMutation };
 }
 
 export function useAccountDossierSliceViewModel() {
-  const { data, sendVerificationMutation } = useSovereignDossierSlice();
+  const { data, sendVerificationMutation, exportDataMutation, deactivateMutation } =
+    useSovereignDossierSlice();
   return {
     dossier: data
       ? {
@@ -50,6 +58,7 @@ export function useAccountDossierSliceViewModel() {
             branchName: m.branchName,
             roleName: m.roleTitle,
             status: m.status,
+            isPrimary: Boolean(m.isPrimary),
           })),
           customFields: data.customFields,
         }
@@ -57,6 +66,10 @@ export function useAccountDossierSliceViewModel() {
     sendEmailVerification: () => sendVerificationMutation.mutateAsync(),
     isSendingVerification: sendVerificationMutation.isPending,
     verificationSent: sendVerificationMutation.isSuccess,
+    exportAccountData: () => exportDataMutation.mutateAsync(),
+    isExportingData: exportDataMutation.isPending,
+    deactivateAccount: () => deactivateMutation.mutateAsync(),
+    isDeactivatingAccount: deactivateMutation.isPending,
   };
 }
 

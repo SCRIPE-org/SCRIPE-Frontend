@@ -112,6 +112,7 @@ describe("SovereignAccountRepository — Clean 9-Page B2B Enterprise Account Con
       density: "compact",
       numeralSystem: "latn",
       operatingTimezone: "Africa/Cairo",
+      toastPosition: "bottom-center",
     });
     expect(api.put).toHaveBeenCalledWith(
       PROFILE_ENDPOINTS.ACCOUNT.PREFERENCES,
@@ -120,6 +121,7 @@ describe("SovereignAccountRepository — Clean 9-Page B2B Enterprise Account Con
         interfaceDensity: "compact",
         numeralSystem: "latn",
         operatingTimezone: "Africa/Cairo",
+        toastPosition: "bottom-center",
       })
     );
 

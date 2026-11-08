@@ -48,9 +48,20 @@ export function AccountGovernanceView() {
     setDelegateEmail("");
   };
 
-  const handleRequestBreakGlass = () => {
+  const handleRequestBreakGlass = async () => {
+    const reason = breakGlassReason.trim() || "Emergency production incident response";
     setBreakGlassReason("");
     setBreakGlassSubmitted(true);
+    const now = new Date();
+    const exp = new Date(now.getTime() + 60 * 60000);
+    await createDelegation({
+      delegationType: "BreakGlassJitElevation",
+      delegateEmail: profile?.email || "alex.morgan@al-ahly.org",
+      grantedScopes: ["Emergency.BreakGlass.60m"],
+      justification: reason,
+      startsAtUtc: now.toISOString(),
+      expiresAtUtc: exp.toISOString(),
+    }).catch(() => null);
   };
 
   const roleNames = (profile?.roles ?? []).map((r) => r.roleName || r.roleCode || "SuperAdmin");

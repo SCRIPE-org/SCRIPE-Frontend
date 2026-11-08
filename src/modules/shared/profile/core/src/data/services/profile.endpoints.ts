@@ -34,6 +34,8 @@ export const PROFILE_ENDPOINTS = {
     CONTEXT: `${V1}/account/context`,
     DOSSIER: `${V1}/account/dossier`,
     SEND_EMAIL_VERIFICATION: `${V1}/account/dossier/send-verification`,
+    EXPORT_DOSSIER: `${V1}/account/dossier/export`,
+    DEACTIVATE_ACCOUNT: `${V1}/account/dossier/deactivate`,
     SECURITY: `${V1}/account/security`,
     SESSIONS: `${V1}/account/sessions`,
     REVOKE_SESSION: (sessionId: string) => `${V1}/account/sessions/${sessionId}`,

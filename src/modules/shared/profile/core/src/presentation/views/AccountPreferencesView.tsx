@@ -10,17 +10,29 @@ import {
   useWorkstationPreferencesViewModel,
   type AccentHue,
   type UiDensity,
+  type ToastPosition,
 } from "../viewmodels/useWorkstationPreferencesViewModel";
 import { useAccountPreferencesSliceViewModel } from "../viewmodels/useSovereignAccountSlicesViewModel";
 import { ErgonomicsLiveStage } from "../components/ErgonomicsLiveStage";
+import { toast } from "@core/ui/sileo-toast";
 import {
-  Sun, Moon, Monitor, Palette, LayoutGrid, EyeOff, Keyboard, Check, CheckCircle2, Globe, Clock, Hash,
+  Sun, Moon, Monitor, Palette, LayoutGrid, EyeOff, Keyboard, Check, CheckCircle2, Globe, Clock, Hash, Bell, Play,
 } from "lucide-react";
 
 export function AccountPreferencesView() {
-  const { t, language, setLanguage } = useI18n();
-  const { theme, setTheme, accent, setAccent, availableAccents, density, setDensity } =
-    useWorkstationPreferencesViewModel();
+  const { t, language, setLanguage, direction } = useI18n();
+  const isRtl = direction === "rtl";
+  const {
+    theme,
+    setTheme,
+    accent,
+    setAccent,
+    availableAccents,
+    density,
+    setDensity,
+    toastPosition,
+    setToastPosition,
+  } = useWorkstationPreferencesViewModel();
   const { preferences, updatePreferences, isUpdatingPreferences } =
     useAccountPreferencesSliceViewModel();
 
@@ -50,9 +62,36 @@ export function AccountPreferencesView() {
       operatingTimezone,
       languageCode: language,
       reducedMotionEnabled: reducedMotion,
+      toastPosition,
     });
     setSavedNotice(true);
     setTimeout(() => setSavedNotice(false), 2500);
+  };
+
+  const handleTriggerSmartTestToast = (targetPosition?: ToastPosition) => {
+    const pos = targetPosition ?? toastPosition;
+    toast.rich({
+      position: pos as any,
+      title: t("profile.preferences.testToastTitle"),
+      description: (
+        <div className="space-y-1">
+          <p>{t("profile.preferences.testToastDesc")}</p>
+          <div className="flex items-center gap-1.5 text-[10px] text-nx-ink-3 font-mono">
+            <span className="inline-block h-1.5 w-1.5 rounded-full bg-nx-accent" />
+            <span>{t("profile.preferences.testToastRichTag")}</span>
+            <span>&bull;</span>
+            <span>{pos}</span>
+          </div>
+        </div>
+      ),
+      button: {
+        title: t("profile.preferences.testToastAction"),
+        onClick: () => {
+          toast.success(t("profile.preferences.testToastActionDone"));
+        },
+      },
+      duration: 5000,
+    });
   };
 
   return (
@@ -175,6 +214,91 @@ export function AccountPreferencesView() {
           </CardContent>
         </Card>
       </div>
+
+      {/* Toast Viewport & Smart Notification Position */}
+      <Card className="border border-nx-line bg-nx-surface hover:border-nx-line-hi transition-colors">
+        <CardHeader className="pb-3">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+            <div>
+              <div className="flex items-center gap-2">
+                <Bell className="h-4 w-4 text-nx-accent" style={{ minWidth: 16, minHeight: 16 }} />
+                <CardTitle className="text-sm font-bold text-nx-ink">
+                  {t("profile.preferences.toastPositionTitle")}
+                </CardTitle>
+              </div>
+              <CardDescription className="text-xs text-nx-ink-3 mt-1">
+                {t("profile.preferences.toastPositionDesc")}
+              </CardDescription>
+            </div>
+            <Badge
+              variant="outline"
+              className="text-[11px] font-medium border-nx-line bg-nx-raised text-nx-ink-2 self-start sm:self-auto"
+            >
+              {isRtl
+                ? t("profile.preferences.toastMirrorBadgeRtl")
+                : t("profile.preferences.toastMirrorBadgeLtr")}
+            </Badge>
+          </div>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          {/* 3x2 Interactive Mini-Viewport Grid */}
+          <div className="p-3 rounded-lg border border-nx-line bg-nx-ground/60 space-y-3">
+            <div className="grid grid-cols-3 gap-2.5">
+              {[
+                { id: "top-left", labelKey: "profile.preferences.toastPositionTopLeft" },
+                { id: "top-center", labelKey: "profile.preferences.toastPositionTopCenter" },
+                { id: "top-right", labelKey: "profile.preferences.toastPositionTopRight" },
+                { id: "bottom-left", labelKey: "profile.preferences.toastPositionBottomLeft" },
+                { id: "bottom-center", labelKey: "profile.preferences.toastPositionBottomCenter" },
+                { id: "bottom-right", labelKey: "profile.preferences.toastPositionBottomRight" },
+              ].map((pos) => {
+                const isSelected = toastPosition === pos.id;
+                return (
+                  <Button
+                    key={pos.id}
+                    type="button"
+                    variant={isSelected ? "default" : "outline"}
+                    size="sm"
+                    onClick={() => {
+                      setToastPosition(pos.id as ToastPosition);
+                      handleTriggerSmartTestToast(pos.id as ToastPosition);
+                    }}
+                    data-testid={`toast-position-${pos.id}`}
+                    className={`h-12 flex flex-col items-center justify-center gap-1 text-xs font-semibold ${
+                      isSelected
+                        ? "border-nx-accent bg-nx-accent text-nx-on-fill font-bold shadow-xs"
+                        : "bg-nx-surface hover:bg-nx-hover text-nx-ink"
+                    }`}
+                  >
+                    <span>{t(pos.labelKey)}</span>
+                    <span className="text-[10px] opacity-75 font-mono">
+                      {pos.id}
+                    </span>
+                  </Button>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* Trigger Smart Test Button */}
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-1">
+            <p className="text-xs text-nx-ink-3">
+              {t("profile.preferences.triggerSmartTestDesc")}
+            </p>
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              onClick={() => handleTriggerSmartTestToast()}
+              data-testid="trigger-smart-test-toast-btn"
+              className="gap-1.5 text-xs font-semibold border-nx-line-hi bg-nx-raised hover:bg-nx-hover shrink-0 self-start sm:self-auto"
+            >
+              <Play className="h-3.5 w-3.5 text-nx-accent" />
+              <span>{t("profile.preferences.triggerSmartTest")}</span>
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
 
       {/* Regional & Localization Formatting */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">

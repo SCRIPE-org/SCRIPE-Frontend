@@ -123,6 +123,20 @@ export class SovereignAccountRepository implements ISovereignAccountRepository {
     return this.api.post(PROFILE_ENDPOINTS.ACCOUNT.SEND_EMAIL_VERIFICATION, {});
   }
 
+  async exportAccountData(): Promise<Record<string, unknown>> {
+    return this.api.post<Record<string, unknown>>(
+      PROFILE_ENDPOINTS.ACCOUNT.EXPORT_DOSSIER,
+      {}
+    );
+  }
+
+  async deactivateAccount(): Promise<{ deactivated?: boolean; message?: string }> {
+    return this.api.post<{ deactivated?: boolean; message?: string }>(
+      PROFILE_ENDPOINTS.ACCOUNT.DEACTIVATE_ACCOUNT,
+      {}
+    );
+  }
+
   async getSecurity(): Promise<SovereignSecuritySlice> {
     const raw = await this.api.get<any>(PROFILE_ENDPOINTS.ACCOUNT.SECURITY);
     const passkeysCount = Array.isArray(raw.passkeys)
@@ -289,7 +303,7 @@ export class SovereignAccountRepository implements ISovereignAccountRepository {
     data: Parameters<ISovereignAccountRepository["createDelegation"]>[0]
   ): Promise<AdminDelegationItem> {
     const res = await this.api.post<any>(PROFILE_ENDPOINTS.ACCOUNT.DELEGATIONS, {
-      actionType: "CreateDelegation",
+      actionType: data.delegationType === "BreakGlassJitElevation" ? "BreakGlassJitElevation" : "CreateDelegation",
       targetDelegateEmailOrId: data.delegateDisplayName || data.delegateAdminId,
       permissions: data.grantedScopes,
       startsAtUtc: data.startsAtUtc,
@@ -378,6 +392,7 @@ export class SovereignAccountRepository implements ISovereignAccountRepository {
       numeralSystem: raw.numeralSystem ?? "latn",
       calendarSystem: raw.calendarSystem ?? "gregory",
       firstDayOfWeek: raw.firstDayOfWeek ?? "monday",
+      toastPosition: raw.toastPosition ?? "top-right",
       customHotkeysJson:
         raw.launchpadHotkeysJson ??
         raw.customHotkeysJson ??
@@ -404,6 +419,7 @@ export class SovereignAccountRepository implements ISovereignAccountRepository {
       numeralSystem: data.numeralSystem,
       calendarSystem: data.calendarSystem,
       firstDayOfWeek: data.firstDayOfWeek,
+      toastPosition: data.toastPosition,
     });
     return this.getPreferences();
   }
@@ -648,15 +664,16 @@ export class SovereignAccountRepository implements ISovereignAccountRepository {
   async createIntegrationItem(
     data: Parameters<ISovereignAccountRepository["createIntegrationItem"]>[0]
   ) {
+    const isSso = data.itemKind === "sso";
     const res = await this.api.post<any>(PROFILE_ENDPOINTS.ACCOUNT.INTEGRATIONS, {
-      itemType: "PAT",
+      itemType: isSso ? "SSO" : "PAT",
       name: data.name,
       scopes: data.scopesOrEvents,
       expiresInDays: data.expiresInDays ?? 90,
     });
     return {
       id: String(res?.id ?? ""),
-      itemKind: "pat",
+      itemKind: data.itemKind,
       plainTextSecretOnce: res?.oneTimePlaintextSecret ?? null,
       fingerprintOrPrefix: res?.previewOrFingerprint ?? "",
     };

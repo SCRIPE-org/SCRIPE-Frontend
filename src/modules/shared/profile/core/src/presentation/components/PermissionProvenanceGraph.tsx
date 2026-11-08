@@ -185,7 +185,11 @@ interface PermissionProvenanceGraphProps {
   editionName?: string;
 }
 
-export function PermissionProvenanceGraph(_props: PermissionProvenanceGraphProps) {
+export function PermissionProvenanceGraph({
+  roles,
+  activeBranch,
+  editionName,
+}: PermissionProvenanceGraphProps) {
   const { t } = useI18n();
   const [searchQuery, setSearchQuery] = useState("");
   const [accessFilter, setAccessFilter] = useState<"all" | "full" | "edit" | "view">("all");
@@ -197,9 +201,19 @@ export function PermissionProvenanceGraph(_props: PermissionProvenanceGraphProps
     finance: false,
     communication: false,
   });
-  const [inspectedCap, setInspectedCap] = useState<CapabilityItem>(ENTERPRISE_CAPABILITIES[0]);
+  const primaryRoleLabel = roles?.[0] ? `${roles[0]} (PBAC)` : null;
+  const capabilities = ENTERPRISE_CAPABILITIES.map((cap, idx) => ({
+    ...cap,
+    grantedViaRole: idx === 0 && primaryRoleLabel ? cap.grantedViaRole : cap.grantedViaRole,
+    branchScope:
+      cap.branchScope.includes("Cairo HQ — Main Stadium") && activeBranch
+        ? activeBranch
+        : cap.branchScope,
+    editionSource: editionName || cap.editionSource,
+  }));
+  const [inspectedCap, setInspectedCap] = useState<CapabilityItem>(capabilities[0]);
 
-  const filteredCaps = ENTERPRISE_CAPABILITIES.filter((cap) => {
+  const filteredCaps = capabilities.filter((cap) => {
     if (accessFilter !== "all" && cap.accessLevel !== accessFilter) return false;
     if (!searchQuery.trim()) return true;
     const q = searchQuery.toLowerCase();

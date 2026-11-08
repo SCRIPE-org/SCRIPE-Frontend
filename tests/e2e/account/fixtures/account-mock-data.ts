@@ -404,6 +404,7 @@ export const MOCK_PREFERENCES_SLICE = {
   numeralSystem: "latn",
   calendarSystem: "gregory",
   firstDayOfWeek: "saturday",
+  toastPosition: "top-right",
   launchpadHotkeysJson: JSON.stringify({
     commandBar: "Mod+K",
     privacyBlur: "Alt+P",

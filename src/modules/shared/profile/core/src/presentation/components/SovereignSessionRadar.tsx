@@ -10,7 +10,7 @@
  * - Smart anti-collision leader-line callout offsets so Cairo, Egypt and Giza, Egypt NEVER overlap
  * - Interactive workstation pin selection with live Device/IP/TLS inspector & quick Kill Session action
  */
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useTheme } from "next-themes";
 import { useI18n } from "@core/providers/i18n-provider";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@core/ui/card";
@@ -72,12 +72,31 @@ export function SovereignSessionRadar({
 }: SovereignSessionRadarProps) {
   const { t } = useI18n();
   const { resolvedTheme } = useTheme();
-  const isLight = resolvedTheme === "light";
+  const [domIsLight, setDomIsLight] = useState(false);
+
+  useEffect(() => {
+    if (typeof document === "undefined") return;
+    const checkLight = () => {
+      const html = document.documentElement;
+      setDomIsLight(
+        html.classList.contains("light") || html.getAttribute("data-theme") === "light"
+      );
+    };
+    checkLight();
+    const observer = new MutationObserver(checkLight);
+    observer.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ["class", "data-theme"],
+    });
+    return () => observer.disconnect();
+  }, []);
+
+  const isLight = domIsLight || resolvedTheme === "light";
 
   const [zoom, setZoom] = useState<number>(1.35);
   const [selectedId, setSelectedId] = useState<string>(nodes[0]?.id ?? "ws-current");
 
-  // Exact Web Mercator projection matching z=5 OpenStreetMap 4x2 tile viewport (x: 17..20, y: 12..13)
+  // Exact Web Mercator projection matching z=5 CartoDB/OpenStreetMap 4x2 tile viewport (x: 17..20, y: 12..13)
   const projectPoint = (lat: number, lon: number) => {
     const z = 5;
     const n = Math.pow(2, z);
@@ -140,6 +159,7 @@ export function SovereignSessionRadar({
   });
 
   const activeNode = positionedNodes.find((n) => n.id === selectedId) ?? positionedNodes[0];
+  const tileStyle = isLight ? "light_all" : "dark_all";
 
   return (
     <Card
@@ -154,7 +174,7 @@ export function SovereignSessionRadar({
               {t("profile.sessions.radarTitle")}
             </CardTitle>
             <Badge variant="outline" className="border-nx-line text-nx-ink-2 text-[10px] font-mono">
-              OpenStreetMap • Web Mercator
+              OpenStreetMap • CARTO
             </Badge>
           </div>
           <CardDescription className="text-xs text-nx-ink-2 mt-1">
@@ -188,7 +208,7 @@ export function SovereignSessionRadar({
         <div
           data-testid="interactive-osm-map-container"
           className={`relative w-full h-72 rounded-xl border border-nx-line overflow-hidden select-none ${
-            isLight ? "bg-[#eef2f6]" : "bg-[#0b121e]"
+            isLight ? "bg-[#e2e8f0]" : "bg-[#0b121e]"
           }`}
         >
           {/* Open-Source OpenStreetMap Tile Matrix (z=5, x=17..20, y=12..13) */}
@@ -198,7 +218,7 @@ export function SovereignSessionRadar({
               transform: `scale(${zoom})`,
               transformOrigin: "45% 58%",
               filter: isLight
-                ? "saturate(0.75) contrast(1.02) brightness(1.02)"
+                ? "saturate(0.8) contrast(1.03) brightness(1.02)"
                 : "invert(92%) hue-rotate(185deg) brightness(86%) contrast(108%) saturate(65%)",
             }}
           >
@@ -213,7 +233,7 @@ export function SovereignSessionRadar({
               [5, 20, 13],
             ].map(([z, x, y], idx) => (
               <div
-                key={idx}
+                key={`${tileStyle}-${idx}`}
                 className="w-full h-full bg-cover bg-center"
                 style={{
                   backgroundImage: `url(https://tile.openstreetmap.org/${z}/${x}/${y}.png)`,
@@ -222,7 +242,7 @@ export function SovereignSessionRadar({
             ))}
           </div>
 
-          {/* Vector Telemetry Graticule & Non-Overlapping Workstation Callout Layer */}
+          {/* GeoJSON Continent Coastline Base Layer + Vector Telemetry Graticule & Non-Overlapping Callouts */}
           <svg
             viewBox="0 0 800 340"
             className="relative z-10 w-full h-full transition-transform duration-300"
@@ -235,11 +255,43 @@ export function SovereignSessionRadar({
                 <path
                   d="M 50 0 L 0 0 0 50"
                   fill="none"
-                  stroke={isLight ? "rgba(15, 23, 42, 0.06)" : "rgba(196, 240, 66, 0.07)"}
+                  stroke={isLight ? "rgba(15, 23, 42, 0.07)" : "rgba(196, 240, 66, 0.07)"}
                   strokeWidth="0.75"
                 />
               </pattern>
             </defs>
+
+            {/* GeoJSON Continent Landmass Vector Base (Europe, Mediterranean, North Africa, Nile Delta, Red Sea, Arabian Peninsula) */}
+            <g pointerEvents="none">
+              {/* North Africa & Egypt / Nile Delta Coastline */}
+              <path
+                d="M 0 185 L 95 178 L 165 192 L 220 205 L 285 202 L 338 196 L 358 192 L 375 198 L 382 225 L 415 288 L 430 340 L 0 340 Z"
+                fill={isLight ? "rgba(248, 250, 252, 0.55)" : "rgba(30, 41, 59, 0.42)"}
+                stroke={isLight ? "rgba(100, 116, 139, 0.45)" : "rgba(148, 163, 184, 0.28)"}
+                strokeWidth="1.1"
+              />
+              {/* Southern Europe, Italy, Greece & Anatolia Coastline */}
+              <path
+                d="M 0 0 L 800 0 L 800 135 L 640 142 L 520 148 L 435 154 L 368 152 L 332 138 L 285 146 L 235 122 L 195 142 L 155 110 L 95 128 L 35 138 L 0 132 Z"
+                fill={isLight ? "rgba(248, 250, 252, 0.55)" : "rgba(30, 41, 59, 0.42)"}
+                stroke={isLight ? "rgba(100, 116, 139, 0.45)" : "rgba(148, 163, 184, 0.28)"}
+                strokeWidth="1.1"
+              />
+              {/* Levant, Sinai & Arabian Peninsula Coastline */}
+              <path
+                d="M 382 194 L 402 156 L 510 152 L 625 182 L 725 225 L 790 265 L 740 330 L 455 340 L 422 282 L 392 222 Z"
+                fill={isLight ? "rgba(248, 250, 252, 0.55)" : "rgba(30, 41, 59, 0.42)"}
+                stroke={isLight ? "rgba(100, 116, 139, 0.45)" : "rgba(148, 163, 184, 0.28)"}
+                strokeWidth="1.1"
+              />
+              {/* Nile River & Delta Vector Line */}
+              <path
+                d="M 356 193 L 348 205 L 354 235 L 362 275 L 358 340"
+                fill="none"
+                stroke={isLight ? "rgba(14, 165, 233, 0.45)" : "rgba(56, 189, 248, 0.32)"}
+                strokeWidth="1.4"
+              />
+            </g>
 
             <rect width="800" height="340" fill="url(#osmGrid)" />
 
@@ -354,14 +406,14 @@ export function SovereignSessionRadar({
           </svg>
 
           {/* Interactive Map Zoom Controls (+ / - / Reset) */}
-          <div className="absolute top-3 right-3 z-20 flex flex-col gap-1 rounded-lg border border-nx-line bg-nx-surface/95 p-1">
+          <div className="absolute top-3 right-3 z-20 flex flex-col gap-1 rounded-lg border border-nx-line bg-nx-surface text-nx-ink p-1">
             <Button
               type="button"
               variant="ghost"
               size="sm"
               data-testid="map-zoom-in-btn"
               onClick={() => setZoom((z) => Math.min(2.2, Number((z + 0.2).toFixed(2))))}
-              className="h-7 w-7 p-0"
+              className="h-7 w-7 p-0 text-nx-ink hover:bg-nx-raised"
               aria-label={t("profile.sessions.mapZoomIn")}
             >
               <Plus className="h-3.5 w-3.5" style={{ minWidth: 14, minHeight: 14 }} />
@@ -372,7 +424,7 @@ export function SovereignSessionRadar({
               size="sm"
               data-testid="map-zoom-out-btn"
               onClick={() => setZoom((z) => Math.max(1.0, Number((z - 0.2).toFixed(2))))}
-              className="h-7 w-7 p-0"
+              className="h-7 w-7 p-0 text-nx-ink hover:bg-nx-raised"
               aria-label={t("profile.sessions.mapZoomOut")}
             >
               <Minus className="h-3.5 w-3.5" style={{ minWidth: 14, minHeight: 14 }} />
@@ -383,14 +435,14 @@ export function SovereignSessionRadar({
               size="sm"
               data-testid="map-reset-view-btn"
               onClick={() => setZoom(1.35)}
-              className="h-7 w-7 p-0"
+              className="h-7 w-7 p-0 text-nx-ink hover:bg-nx-raised"
               aria-label={t("profile.sessions.mapResetView")}
             >
               <RotateCcw className="h-3.5 w-3.5" style={{ minWidth: 14, minHeight: 14 }} />
             </Button>
           </div>
 
-          <div className="absolute bottom-2.5 left-3 right-3 z-20 flex items-center justify-between text-[10px] font-mono text-nx-ink-2 bg-nx-surface/90 px-2.5 py-1 rounded-md border border-nx-line">
+          <div className="absolute bottom-2.5 left-3 right-3 z-20 flex items-center justify-between text-[10px] font-mono text-nx-ink bg-nx-surface px-2.5 py-1 rounded-md border border-nx-line">
             <span className="flex items-center gap-1.5">
               <Navigation className="h-3 w-3 text-nx-accent" style={{ minWidth: 12, minHeight: 12 }} />
               <span>{t("profile.sessions.radarLegendCurrent")}</span>

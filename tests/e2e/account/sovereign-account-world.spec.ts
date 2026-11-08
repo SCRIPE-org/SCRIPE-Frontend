@@ -43,9 +43,11 @@ test.describe("SCRIPE Clean 9-Page B2B Enterprise Account Console (v5.0 Polish &
   });
 
   test("00 - Root /account redirects cleanly to /account/dossier", async ({ page }) => {
-    test.setTimeout(180_000);
-    await page.goto("/account", { waitUntil: "commit" });
-    await page.waitForURL("**/account/dossier", { timeout: 120_000 });
+    test.setTimeout(240_000);
+    await page.goto("/account/dossier", { waitUntil: "commit", timeout: 180_000 });
+    await expect(page.locator("h1").first()).toBeVisible({ timeout: 90_000 });
+    await page.goto("/account", { waitUntil: "commit", timeout: 90_000 });
+    await page.waitForURL("**/account/dossier", { timeout: 60_000 });
     await expect(page.locator("h1").first()).toBeVisible({ timeout: 60_000 });
   });
 

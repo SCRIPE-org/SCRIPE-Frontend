@@ -17,6 +17,22 @@ import { useAccountPreferencesSliceViewModel } from "./useSovereignAccountSlices
 
 export type AccentHue = "signal-lime" | "electric-emerald" | "ocean-blue" | "amber-gold";
 export type UiDensity = "comfortable" | "compact";
+export type ToastPosition =
+  | "top-right"
+  | "top-left"
+  | "top-center"
+  | "bottom-right"
+  | "bottom-left"
+  | "bottom-center";
+
+export const VALID_TOAST_POSITIONS: ToastPosition[] = [
+  "top-right",
+  "top-left",
+  "top-center",
+  "bottom-right",
+  "bottom-left",
+  "bottom-center",
+];
 
 export const ACCENT_PALETTES: Array<{ id: AccentHue; label: string; hex: string }> = [
   { id: "signal-lime", label: "Signal Lime (Standard)", hex: "#84cc16" },
@@ -64,13 +80,22 @@ export function useWorkstationPreferencesViewModel() {
     return "Africa/Cairo";
   });
 
+  const [toastPosition, setToastPositionState] = useState<ToastPosition>(() => {
+    if (typeof window !== "undefined") {
+      const stored = localStorage.getItem("scr_pref_toast_position") as ToastPosition | null;
+      if (stored && VALID_TOAST_POSITIONS.includes(stored)) return stored;
+    }
+    return "top-right";
+  });
+
   const dbAccentHue = preferences?.clubAccentHue;
   const dbUiDensity = preferences?.density;
   const dbTimezone = preferences?.operatingTimezone;
+  const dbToastPosition = preferences?.toastPosition;
 
   // Hydrate Zustand & DOM from DB `identity.admin_preferences` when preferences load
   useEffect(() => {
-    if (!dbAccentHue && !dbUiDensity && !dbTimezone) return;
+    if (!dbAccentHue && !dbUiDensity && !dbTimezone && !dbToastPosition) return;
     if (hasHydratedFromDbRef.current) return;
     hasHydratedFromDbRef.current = true;
 
@@ -100,7 +125,16 @@ export function useWorkstationPreferencesViewModel() {
         localStorage.setItem("scr_pref_timezone", dbTimezone);
       }
     }
-  }, [dbAccentHue, dbUiDensity, dbTimezone, setAppStoreDensity]);
+    if (dbToastPosition && VALID_TOAST_POSITIONS.includes(dbToastPosition as ToastPosition)) {
+      setToastPositionState(dbToastPosition as ToastPosition);
+      if (typeof window !== "undefined") {
+        localStorage.setItem("scr_pref_toast_position", dbToastPosition);
+        window.dispatchEvent(
+          new CustomEvent("scripe:toast-position-changed", { detail: dbToastPosition })
+        );
+      }
+    }
+  }, [dbAccentHue, dbUiDensity, dbTimezone, dbToastPosition, setAppStoreDensity]);
 
   const persistSettingsToBackend = useCallback(
     (patch: {
@@ -109,6 +143,7 @@ export function useWorkstationPreferencesViewModel() {
       density?: string;
       languageCode?: string;
       operatingTimezone?: string;
+      toastPosition?: string;
     }) => {
       updatePreferences(patch).catch(() => {
         // Optimistic local + Zustand update still succeeds if offline
@@ -158,6 +193,17 @@ export function useWorkstationPreferencesViewModel() {
     persistSettingsToBackend({ operatingTimezone: newTz });
   };
 
+  const setToastPosition = (newPosition: ToastPosition) => {
+    setToastPositionState(newPosition);
+    if (typeof window !== "undefined") {
+      localStorage.setItem("scr_pref_toast_position", newPosition);
+      window.dispatchEvent(
+        new CustomEvent("scripe:toast-position-changed", { detail: newPosition })
+      );
+    }
+    persistSettingsToBackend({ toastPosition: newPosition });
+  };
+
   return {
     // Theme
     theme: theme || "system",
@@ -181,5 +227,9 @@ export function useWorkstationPreferencesViewModel() {
     // Timezone
     timezone,
     setTimezone,
+
+    // Toast Viewport Position
+    toastPosition,
+    setToastPosition,
   };
 }

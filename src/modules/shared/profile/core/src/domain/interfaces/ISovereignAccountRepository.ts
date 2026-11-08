@@ -16,6 +16,8 @@ export interface ISovereignAccountRepository {
   getContext(): Promise<SovereignAccountContext>;
   getDossier(): Promise<SovereignDossierSlice>;
   sendEmailVerification(): Promise<{ message?: string; expiresInSeconds?: number }>;
+  exportAccountData(): Promise<Record<string, unknown>>;
+  deactivateAccount(): Promise<{ deactivated?: boolean; message?: string }>;
   getSecurity(): Promise<SovereignSecuritySlice>;
   updateSecurityPosture(data: {
     trustedCidrs?: string[];
@@ -49,7 +51,7 @@ export interface ISovereignAccountRepository {
   submitPlanRequest(requestType: string, targetCode: string, notes?: string): Promise<void>;
   getIntegrations(): Promise<SovereignIntegrationsSlice>;
   createIntegrationItem(data: {
-    itemKind: "pat";
+    itemKind: "pat" | "sso";
     name: string;
     publicKeyOrTargetUrl?: string;
     scopesOrEvents: string[];

@@ -18,6 +18,7 @@ export interface SovereignPreferencesSlice {
   numeralSystem?: string;
   calendarSystem?: string;
   firstDayOfWeek?: string;
+  toastPosition?: string;
   customHotkeysJson: string;
   savedFilterPresetsJson: string;
   rowVersion?: string;

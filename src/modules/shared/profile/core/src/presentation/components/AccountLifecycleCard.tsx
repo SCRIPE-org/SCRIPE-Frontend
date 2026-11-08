@@ -23,6 +23,8 @@ interface AccountLifecycleCardProps {
   customFields?: AdminCustomFieldItem[];
   isSolePrimaryOwner?: boolean;
   primaryOrgName?: string;
+  onExportData?: () => Promise<Record<string, unknown>>;
+  onDeactivateAccount?: () => Promise<unknown>;
 }
 
 export function AccountLifecycleCard({
@@ -30,6 +32,8 @@ export function AccountLifecycleCard({
   customFields = [],
   isSolePrimaryOwner = true,
   primaryOrgName = "Al-Ahly Sporting Club",
+  onExportData,
+  onDeactivateAccount,
 }: AccountLifecycleCardProps) {
   const { t } = useI18n();
   const [exportStatus, setExportStatus] = useState<"idle" | "exporting" | "done">("idle");
@@ -40,9 +44,11 @@ export function AccountLifecycleCard({
   const handleExportData = async () => {
     setExportStatus("exporting");
     try {
+      const apiArchive = onExportData ? await onExportData().catch(() => null) : null;
       const payload = {
         schemaVersion: "5.0",
         exportedAtUtc: new Date().toISOString(),
+        ...(apiArchive ?? {}),
         accountProfile: {
           id: profile.id,
           username: profile.username,
@@ -84,6 +90,15 @@ export function AccountLifecycleCard({
       setExportStatus("done");
     } catch {
       setExportStatus("done");
+    }
+  };
+
+  const handleConfirmDeactivate = async () => {
+    if (isSolePrimaryOwner || confirmUsername !== profile.username || sudoCode.length < 6) return;
+    try {
+      await onDeactivateAccount?.();
+    } finally {
+      setDeactivateOpen(false);
     }
   };
 
@@ -265,6 +280,7 @@ export function AccountLifecycleCard({
               size="sm"
               data-testid="confirm-deactivate-account-btn"
               disabled={isSolePrimaryOwner || confirmUsername !== profile.username || sudoCode.length < 6}
+              onClick={() => void handleConfirmDeactivate()}
               className="bg-destructive text-nx-on-fill font-semibold"
             >
               {isSolePrimaryOwner

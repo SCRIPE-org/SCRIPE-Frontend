@@ -14,6 +14,7 @@ import { Badge } from "@core/ui/badge";
 import { Button } from "@core/ui/button";
 import { BrandIcon } from "@core/ui/brand-icons";
 import { useAccountIntegrationsSliceViewModel } from "../viewmodels/useSovereignAccountSlicesViewModel";
+import type { ExternalIdpLinkItem } from "../../domain/entities/SovereignAccountEntities";
 import { Link2, Unlink, CheckCircle2, ShieldCheck } from "lucide-react";
 
 interface SsoProviderCatalogItem {
@@ -72,35 +73,39 @@ const ENTERPRISE_IDP_CATALOG: SsoProviderCatalogItem[] = [
 
 export function ConnectedEnterpriseSsoCard() {
   const { t } = useI18n();
-  const { integrations, deleteIntegrationItem } =
+  const { integrations, createIntegrationItem, deleteIntegrationItem } =
     useAccountIntegrationsSliceViewModel();
 
-  const [linkedMap, setLinkedMap] = useState<Record<string, boolean>>({
-    google: true,
-    microsoft: false,
-    okta: false,
-    github: false,
-  });
+  const [linkedMap, setLinkedMap] = useState<Record<string, boolean>>({});
 
-  const apiProviders = integrations?.identityProviders ?? [];
+  const apiProviders: ExternalIdpLinkItem[] = integrations?.externalIdpLinks ?? [];
 
   const isProviderConnected = (item: SsoProviderCatalogItem): boolean => {
     if (item.key in linkedMap) {
-      return linkedMap[item.key];
+      return Boolean(linkedMap[item.key]);
     }
-    const found = apiProviders.find((f) =>
+    const found = apiProviders.find((f: ExternalIdpLinkItem) =>
       f.providerName.toLowerCase().includes(item.key)
     );
-    return found ? found.isConnected : item.defaultConnected;
+    return found ? Boolean(found.isConnected) : item.defaultConnected;
   };
 
-  const handleConnect = (item: SsoProviderCatalogItem) => {
+  const handleConnect = async (item: SsoProviderCatalogItem) => {
     setLinkedMap((prev) => ({ ...prev, [item.key]: true }));
+    try {
+      await createIntegrationItem({
+        itemKind: "sso",
+        name: item.name,
+        scopesOrEvents: [item.protocol],
+      });
+    } catch {
+      // Optimistic state kept
+    }
   };
 
   const handleDisconnect = async (item: SsoProviderCatalogItem) => {
     setLinkedMap((prev) => ({ ...prev, [item.key]: false }));
-    const found = apiProviders.find((f) =>
+    const found = apiProviders.find((f: ExternalIdpLinkItem) =>
       f.providerName.toLowerCase().includes(item.key)
     );
     if (found) {
