@@ -128,13 +128,16 @@ test.describe("SCRIPE Clean 9-Page B2B Enterprise Account Console (v4.0) — Dar
     await expect(page.locator("h1").first()).toBeVisible({ timeout: 20_000 });
     await expect(page.getByText(/VP of Enterprise Operations/i).first()).toBeVisible();
 
-    // 4. Notifications: Verify Live Notification Matrix, Security Bypass Law & 1-Click Live Test Notification
+    // 4. Notifications: Verify Live Notification Matrix, Security Bypass Law, 1-Click Live Test Notification & Feed Actions
     await page.goto("/account/notifications", { waitUntil: "domcontentloaded" });
     await expect(page.locator("h1").first()).toBeVisible({ timeout: 20_000 });
     const sendTestBtn = page.getByTestId("send-test-notification-btn");
     await expect(sendTestBtn).toBeVisible();
     await sendTestBtn.click();
     await expect(page.getByText(/Live B2B Test Notification/i).first()).toBeVisible();
+    const markAllReadBtn = page.getByTestId("mark-all-notifications-read-btn");
+    await expect(markAllReadBtn).toBeVisible();
+    await markAllReadBtn.click();
 
     // 5. Plan: Verify Edition, Support PIN & 3-State Features Matrix
     await page.goto("/account/plan", { waitUntil: "domcontentloaded" });
