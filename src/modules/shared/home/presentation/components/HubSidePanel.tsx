@@ -49,7 +49,7 @@ export function HubSidePanel({
       : t("workspaceHub.today.modules_other", { count: moduleCount });
 
   return (
-    <aside className="flex w-80 shrink-0 flex-col gap-4">
+    <aside className="flex w-full xl:w-80 shrink-0 flex-col gap-4">
       {/* Today activity — rising activity is good news, so no invertTrend. */}
       <StatCard
         label={t("workspaceHub.today.title")}

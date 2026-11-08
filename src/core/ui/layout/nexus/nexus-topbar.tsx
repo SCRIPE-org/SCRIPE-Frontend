@@ -188,7 +188,12 @@ export function NexusTopbar({
     >
       {/* Mobile hamburger / Desktop Panel Toggle */}
       {(() => {
-        const hasSubmenu = Boolean(activeRootItem?.children && activeRootItem.children.length > 0);
+        const isVenueWorkspace = activeWorkspace?.workspaceKey === "venue";
+        const isAcademyWorkspace = activeWorkspace?.workspaceKey === "academy";
+        const hasSubmenu =
+          isVenueWorkspace ||
+          isAcademyWorkspace ||
+          Boolean(activeRootItem?.children && activeRootItem.children.length > 0);
         return (
           <TopbarPanelToggle
             isRTL={isRTL}

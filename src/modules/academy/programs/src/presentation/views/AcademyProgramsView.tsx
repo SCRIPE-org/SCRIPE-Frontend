@@ -132,12 +132,12 @@ export function AcademyProgramsView() {
             className="gap-2 text-xs border-nx-line"
           >
             <RefreshCw className={`size-3.5 ${state.stage === "loading" ? "animate-spin" : ""}`} />
-            Refresh
+            {isAr ? "تحديث" : "Refresh"}
           </Button>
           {canCreate && (
             <Button size="sm" onClick={openCreateDialog} className="gap-2 text-xs">
               <Plus className="size-3.5" />
-              Create Program
+              {isAr ? "إنشاء برنامج" : "Create Program"}
             </Button>
           )}
         </div>
@@ -152,13 +152,15 @@ export function AcademyProgramsView() {
 
       {/* Filters */}
       <div className="flex items-center gap-3">
-        <label className="text-xs font-medium text-nx-ink-2">Sport Filter:</label>
+        <label className="text-xs font-medium text-nx-ink-2">
+          {isAr ? "تصفية حسب الرياضة:" : "Sport Filter:"}
+        </label>
         <select
           className="h-8 rounded-md border border-nx-line bg-nx-surface px-2.5 text-xs text-nx-ink"
           value={state.selectedSportId || ""}
           onChange={(e) => setFilterSport(e.target.value || undefined)}
         >
-          <option value="">All Sports</option>
+          <option value="">{isAr ? "جميع الرياضات" : "All Sports"}</option>
           {state.sports.map((s) => (
             <option key={s.id} value={s.id}>
               {language === "ar" ? s.nameAr : s.nameEn} ({s.code})
@@ -178,15 +180,17 @@ export function AcademyProgramsView() {
       {state.stage === "ready" && state.programs.length === 0 && (
         <Card className="border border-dashed border-nx-line p-8 text-center">
           <Layers className="mx-auto size-10 text-nx-ink-3" />
-          <h3 className="mt-3 text-sm font-semibold text-nx-ink">No Programs Configured</h3>
+          <h3 className="mt-3 text-sm font-semibold text-nx-ink">
+            {isAr ? "لا توجد برامج مسجلة" : "No Programs Configured"}
+          </h3>
           <p className="mt-1 text-xs text-nx-ink-2">
-            Establish your multi-sport academy catalog by adding training programs.
+            {isAr ? "أنشئ برنامجك التدريبي الأول لربطه بالرياضات والفصول التدريبية." : "Establish your multi-sport academy catalog by adding training programs."}
           </p>
           {canCreate && (
             <div className="mt-4">
               <Button size="sm" onClick={openCreateDialog} className="gap-2 text-xs">
                 <Plus className="size-3.5" />
-                Add First Program
+                {isAr ? "إضافة أول برنامج" : "Add First Program"}
               </Button>
             </div>
           )}
@@ -215,31 +219,38 @@ export function AcademyProgramsView() {
                       variant={program.status === "Published" ? "default" : "secondary"}
                       className="text-[10px]"
                     >
-                      {program.status}
+                      {program.status === "Published" ? (isAr ? "منشور" : "Published") : (isAr ? "مسودة" : "Draft")}
                     </Badge>
                   </div>
                   <CardTitle className="text-base font-bold text-nx-ink mt-2">
                     {language === "ar" ? program.nameAr : program.nameEn}
                   </CardTitle>
                   <CardDescription className="text-xs text-nx-ink-2">
-                    Code: {program.code} • v{program.version}
+                    {isAr ? "الرمز:" : "Code:"} {program.code} • v{program.version}
                   </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-3 pt-0">
                   <p className="text-xs text-nx-ink-2 line-clamp-2">
                     {language === "ar"
-                      ? program.descriptionAr || "لا يوجد وصف"
+                      ? program.descriptionAr || "لا يوجد وصف مدخل"
                       : program.descriptionEn || "No description provided"}
                   </p>
                   <div className="grid grid-cols-2 gap-2 text-[11px] bg-nx-raised p-2 rounded border border-nx-line text-nx-ink-2">
                     <div>
-                      <span className="font-semibold text-nx-ink">Ages:</span> {program.minAge} - {program.maxAge} yrs
+                      <span className="font-semibold text-nx-ink">{isAr ? "الأعمار:" : "Ages:"}</span> {program.minAge} - {program.maxAge} {isAr ? "سنة" : "yrs"}
                     </div>
                     <div>
-                      <span className="font-semibold text-nx-ink">Level:</span> {program.level}
+                      <span className="font-semibold text-nx-ink">{isAr ? "المستوى:" : "Level:"}</span> {
+                        program.level === "Beginner" ? (isAr ? "مبتدئ" : "Beginner") :
+                        program.level === "Intermediate" ? (isAr ? "متوسط" : "Intermediate") :
+                        program.level === "Advanced" ? (isAr ? "متقدم" : "Advanced") : (isAr ? "نخبة" : "Elite")
+                      }
                     </div>
                     <div>
-                      <span className="font-semibold text-nx-ink">Gender:</span> {program.genderCriteria}
+                      <span className="font-semibold text-nx-ink">{isAr ? "فئة الجنس:" : "Gender:"}</span> {
+                        program.genderCriteria === "Mixed" ? (isAr ? "مختلط" : "Mixed") :
+                        program.genderCriteria === "BoysOnly" ? (isAr ? "بنين فقط" : "Boys Only") : (isAr ? "بنات فقط" : "Girls Only")
+                      }
                     </div>
                   </div>
                   {program.status === "Draft" && canPublish && (
@@ -251,7 +262,7 @@ export function AcademyProgramsView() {
                       className="w-full gap-2 text-xs border-nx-line hover:border-nx-accent-fill"
                     >
                       <Sparkles className="size-3.5 text-nx-accent-fill" />
-                      Publish Program
+                      {isAr ? "نشر البرنامج" : "Publish Program"}
                     </Button>
                   )}
                 </CardContent>

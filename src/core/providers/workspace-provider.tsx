@@ -67,8 +67,7 @@ export function WorkspaceProvider({ children }: { children: React.ReactNode }) {
 
   // ── Root menu items for active workspace ──
   const rootMenuItems = useMemo<MenuItem[]>(() => {
-    const key = activeWorkspaceKey ?? "__default__";
-    const data = workspacesMap.get(key) ?? defaultWorkspace;
+    const data = activeWorkspaceKey ? workspacesMap.get(activeWorkspaceKey) : defaultWorkspace;
     return data?.menuItems ?? [];
   }, [activeWorkspaceKey, workspacesMap, defaultWorkspace]);
 

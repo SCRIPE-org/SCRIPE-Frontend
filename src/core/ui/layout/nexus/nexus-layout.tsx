@@ -96,8 +96,9 @@ export function NexusLayout({ children }: NexusLayoutProps) {
   }, [collapsibleSidebar]);
   const { activeRootItem, activeWorkspace } = useWorkspace();
   const isVenueWorkspace = activeWorkspace?.workspaceKey === "venue";
+  const isAcademyWorkspace = activeWorkspace?.workspaceKey === "academy";
   const hasSubmenu =
-    isVenueWorkspace || Boolean(activeRootItem?.children && activeRootItem.children.length > 0);
+    isVenueWorkspace || isAcademyWorkspace || Boolean(activeRootItem?.children && activeRootItem.children.length > 0);
   const effectivePanelCollapsed = (collapsibleSidebar && isPanelCollapsed) || !hasSubmenu;
 
   // Workspace transition (loader + navigation)

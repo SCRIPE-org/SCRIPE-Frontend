@@ -215,7 +215,7 @@ export function WorkspaceHubView() {
     filteredLocked.length > 0;
 
   return (
-    <main className="relative mx-auto max-w-7xl px-10 pb-14 text-nx-ink">
+    <main className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-10 pb-14 text-nx-ink">
       <HubHero />
 
       <div className="h-2" />
@@ -223,7 +223,7 @@ export function WorkspaceHubView() {
       <div className="h-8" />
 
       {/* Main content + side panel */}
-      <div className="flex items-start gap-10">
+      <div className="flex flex-col xl:flex-row items-start gap-8 xl:gap-10">
         {/* Left column — grids */}
         <div className="min-w-0 flex-1">
           {/* Pinned strip */}
@@ -299,7 +299,7 @@ export function WorkspaceHubView() {
               <div
                 style={{
                   display: "grid",
-                  gridTemplateColumns: "repeat(auto-fill, 158px)",
+                  gridTemplateColumns: "repeat(auto-fill, minmax(140px, 1fr))",
                   gap: 16,
                   maxWidth: 870,
                 }}
@@ -356,7 +356,7 @@ export function WorkspaceHubView() {
               <div
                 style={{
                   display: "grid",
-                  gridTemplateColumns: "repeat(auto-fill, 158px)",
+                  gridTemplateColumns: "repeat(auto-fill, minmax(140px, 1fr))",
                   gap: 16,
                   maxWidth: 870,
                 }}

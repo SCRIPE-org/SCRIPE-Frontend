@@ -83,7 +83,7 @@ export function NexusSecondaryRail({
     // rail on every content scroll behind it.
     background: "var(--nx-surface, hsl(var(--card)))",
     borderInlineEnd: effectiveCollapsed ? "none" : "1px solid var(--nx-line, hsl(var(--border)))",
-    display: "flex",
+    display: effectiveCollapsed ? "none" : undefined,
     flexDirection: "column",
     flexShrink: 0,
     overflow: "hidden",
@@ -128,7 +128,7 @@ export function NexusSecondaryRail({
       </aside>
 
       {/* Mobile overlay */}
-      {mobileOpen && hasSubmenu && !effectiveCollapsed && (
+      {mobileOpen && hasSubmenu && (
         <>
           {/* The scrim pushes the page back by taking light away — that is the
               whole mechanism, so it carries no blur. */}
@@ -139,17 +139,16 @@ export function NexusSecondaryRail({
             aria-hidden
           />
           <aside
-            className="fixed inset-y-0 z-modal flex flex-col lg:hidden"
+            className="fixed inset-y-0 z-modal flex flex-col lg:hidden start-0 md:start-16"
             style={{
-              insetInlineStart: 64, // Logical property matching primary rail mobile width
-              width: 260,
+              width: 280,
               // Floating panel → the popover surface, opaque. It read as glass
               // only because it was 92% of a surface behind a 24px blur.
               background: "var(--nx-popover, hsl(var(--card)))",
               borderInlineEnd: "1px solid var(--nx-line, hsl(var(--border)))", // Logical property
             }}
           >
-            <div style={{ width: 260, height: "100%", display: "flex", flexDirection: "column" }}>
+            <div style={{ width: "100%", height: "100%", display: "flex", flexDirection: "column" }}>
               <RailHeader contextLabel={contextLabel} title={title} />
               <RailContent
                 menuItems={menuItems}

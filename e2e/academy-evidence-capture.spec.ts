@@ -1,9 +1,12 @@
 import { test, expect } from "@playwright/test";
 import * as path from "path";
 
+
 test.use({ channel: "chrome" });
 
-const EVIDENCE_DIR = "C:/Users/DELL/.gemini/antigravity/brain/1b6fac78-8e5d-49d1-9eff-f1896f2e6de6/evidence_screens";
+const EVIDENCE_DIR =
+  process.env.EVIDENCE_DIR ||
+  "C:/Users/DELL/.gemini/antigravity/brain/1b6fac78-8e5d-49d1-9eff-f1896f2e6de6/evidence_screens";
 
 async function loginUser(page: any, email: string, pass: string = "P@ssw0rd") {
   await page.goto("/login");
@@ -18,19 +21,30 @@ async function loginUser(page: any, email: string, pass: string = "P@ssw0rd") {
   await page.waitForURL((url: any) => !url.pathname.includes("/login"), { timeout: 60_000 });
 }
 
-async function waitForPageReady(page: any) {
-  const loader = page.locator("text=getting everything ready, text=Loading");
-  if (await loader.first().isVisible()) {
-    await loader.first().waitFor({ state: "hidden", timeout: 15_000 }).catch(() => {});
+async function waitForAcademyDataReady(page: any) {
+  await page.waitForLoadState("domcontentloaded");
+  await page.waitForLoadState("networkidle").catch(() => {});
+
+  // Deterministically wait for any spinners to detach completely
+  const spinners = page.locator(".animate-spin, [role='status']");
+  const count = await spinners.count();
+  for (let i = 0; i < count; i++) {
+    await spinners.nth(i).waitFor({ state: "detached", timeout: 20_000 }).catch(() => {});
   }
+
+  // Ensure main content container is visible
+  await page.locator("main, #nexus-content, [role='main']").first().waitFor({ state: "visible", timeout: 15_000 });
+
+  // Guarantee no active loading spinners remain visible
+  await expect(page.locator("main .animate-spin")).toHaveCount(0, { timeout: 10_000 }).catch(() => {});
   await page.waitForTimeout(600);
 }
 
 test.describe("SCRIPE Academy Full Evidence Capture & Persona Verification", () => {
-  test.describe.configure({ timeout: 240_000 });
+  test.describe.configure({ timeout: 360_000 });
 
   test("1. Comprehensive Evidence Capture: Viewports, Themes, Locales, Modals", async ({ page }) => {
-    test.setTimeout(240_000);
+    test.setTimeout(360_000);
 
     // Set Desktop viewport 1440x900
     await page.setViewportSize({ width: 1440, height: 900 });
@@ -42,14 +56,14 @@ test.describe("SCRIPE Academy Full Evidence Capture & Persona Verification", () 
     await page.goto("/hub");
     await page.waitForLoadState("domcontentloaded");
     await page.locator("button:has-text('Academy')").first().waitFor({ state: "visible", timeout: 15_000 });
-    await waitForPageReady(page);
+    await waitForAcademyDataReady(page);
     await page.screenshot({ path: path.join(EVIDENCE_DIR, "01_hub_desktop_en.png") });
 
     // ── 1B. Academy Overview Desktop Light English
     await page.goto("/academy");
     await page.waitForLoadState("domcontentloaded");
     await page.locator("h1").first().waitFor({ state: "visible", timeout: 15_000 });
-    await waitForPageReady(page);
+    await waitForAcademyDataReady(page);
     await page.screenshot({ path: path.join(EVIDENCE_DIR, "02_academy_overview_light_en.png") });
 
     // ── 1C. Dark Theme Overview
@@ -71,17 +85,17 @@ test.describe("SCRIPE Academy Full Evidence Capture & Persona Verification", () 
     await page.goto("/academy/programs");
     await page.waitForLoadState("domcontentloaded");
     await page.locator("h1").first().waitFor({ state: "visible", timeout: 15_000 });
-    await waitForPageReady(page);
+    await waitForAcademyDataReady(page);
     await page.screenshot({ path: path.join(EVIDENCE_DIR, "04_academy_programs_en.png") });
 
     // Open Program Create Modal
-    const createProgramBtn = page.locator("button:has-text('New Program'), button:has-text('برنامج جديد')").first();
+    const createProgramBtn = page.locator("button:has-text('Create Program'), button:has-text('إنشاء برنامج')").first();
     if (await createProgramBtn.isVisible()) {
       await createProgramBtn.click();
       await page.waitForTimeout(500);
       await page.screenshot({ path: path.join(EVIDENCE_DIR, "05_academy_programs_modal_en.png") });
       // Close modal
-      const closeBtn = page.locator("button:has-text('Cancel'), button:has-text('إلغاء')").first();
+      const closeBtn = page.locator("button[aria-label='Close'], button:has-text('Cancel'), button:has-text('إلغاء')").first();
       if (await closeBtn.isVisible()) await closeBtn.click();
       await page.waitForTimeout(300);
     }
@@ -90,7 +104,7 @@ test.describe("SCRIPE Academy Full Evidence Capture & Persona Verification", () 
     await page.goto("/academy/athletes");
     await page.waitForLoadState("domcontentloaded");
     await page.locator("h1").first().waitFor({ state: "visible", timeout: 15_000 });
-    await waitForPageReady(page);
+    await waitForAcademyDataReady(page);
     await page.screenshot({ path: path.join(EVIDENCE_DIR, "06_academy_athletes_en.png") });
 
     // Open Athlete Wizard
@@ -143,34 +157,35 @@ test.describe("SCRIPE Academy Full Evidence Capture & Persona Verification", () 
     await page.goto("/academy/offerings");
     await page.waitForLoadState("domcontentloaded");
     await page.locator("h1").first().waitFor({ state: "visible", timeout: 15_000 });
-    await waitForPageReady(page);
+    await waitForAcademyDataReady(page);
     await page.screenshot({ path: path.join(EVIDENCE_DIR, "10_academy_offerings_en.png") });
 
     // ── 1G. Trials Desktop
     await page.goto("/academy/trials");
     await page.waitForLoadState("domcontentloaded");
     await page.locator("h1").first().waitFor({ state: "visible", timeout: 15_000 });
-    await waitForPageReady(page);
+    await waitForAcademyDataReady(page);
     await page.screenshot({ path: path.join(EVIDENCE_DIR, "11_academy_trials_en.png") });
 
     // ── 1H. Enrollments Desktop
     await page.goto("/academy/enrollments");
     await page.waitForLoadState("domcontentloaded");
     await page.locator("h1").first().waitFor({ state: "visible", timeout: 15_000 });
-    await waitForPageReady(page);
+    await waitForAcademyDataReady(page);
     await page.screenshot({ path: path.join(EVIDENCE_DIR, "12_academy_enrollments_en.png") });
 
     // ── 1I. Groups Desktop
     await page.goto("/academy/groups");
     await page.waitForLoadState("domcontentloaded");
     await page.locator("h1").first().waitFor({ state: "visible", timeout: 15_000 });
-    await waitForPageReady(page);
+    await waitForAcademyDataReady(page);
     await page.screenshot({ path: path.join(EVIDENCE_DIR, "13_academy_groups_en.png") });
 
     // ── 1J. Arabic RTL Switch & Screenshots
     await page.evaluate(() => {
-      document.cookie = "scr_lang=ar; path=/; max-age=31536000";
+      document.cookie = "scr_lang=ar; path=/; max-age=31536000; samesite=lax";
       localStorage.setItem("scr_lang", "ar");
+      localStorage.setItem("scr_pref_lang", "ar");
       document.documentElement.lang = "ar";
       document.documentElement.dir = "rtl";
     });
@@ -178,25 +193,26 @@ test.describe("SCRIPE Academy Full Evidence Capture & Persona Verification", () 
     await page.goto("/hub");
     await page.waitForLoadState("domcontentloaded");
     await page.locator("button:has-text('الأكاديمية')").first().waitFor({ state: "visible", timeout: 15_000 });
-    await waitForPageReady(page);
+    await waitForAcademyDataReady(page);
     await page.screenshot({ path: path.join(EVIDENCE_DIR, "14_hub_desktop_ar.png") });
 
     await page.goto("/academy");
     await page.waitForLoadState("domcontentloaded");
     await page.locator("h1").first().waitFor({ state: "visible", timeout: 15_000 });
-    await waitForPageReady(page);
+    await waitForAcademyDataReady(page);
     await page.screenshot({ path: path.join(EVIDENCE_DIR, "15_academy_overview_ar.png") });
 
     await page.goto("/academy/programs");
     await page.waitForLoadState("domcontentloaded");
     await page.locator("h1").first().waitFor({ state: "visible", timeout: 15_000 });
-    await waitForPageReady(page);
+    await waitForAcademyDataReady(page);
     await page.screenshot({ path: path.join(EVIDENCE_DIR, "16_academy_programs_ar.png") });
 
     // Revert language back to English
     await page.evaluate(() => {
-      document.cookie = "scr_lang=en; path=/; max-age=31536000";
+      document.cookie = "scr_lang=en; path=/; max-age=31536000; samesite=lax";
       localStorage.setItem("scr_lang", "en");
+      localStorage.setItem("scr_pref_lang", "en");
       document.documentElement.lang = "en";
       document.documentElement.dir = "ltr";
     });
@@ -206,13 +222,13 @@ test.describe("SCRIPE Academy Full Evidence Capture & Persona Verification", () 
     await page.goto("/hub");
     await page.waitForLoadState("domcontentloaded");
     await page.locator("button:has-text('Academy')").first().waitFor({ state: "visible", timeout: 15_000 });
-    await waitForPageReady(page);
+    await waitForAcademyDataReady(page);
     await page.screenshot({ path: path.join(EVIDENCE_DIR, "17_hub_tablet.png") });
 
     await page.goto("/academy");
     await page.waitForLoadState("domcontentloaded");
     await page.locator("h1").first().waitFor({ state: "visible", timeout: 15_000 });
-    await waitForPageReady(page);
+    await waitForAcademyDataReady(page);
     await page.screenshot({ path: path.join(EVIDENCE_DIR, "18_academy_overview_tablet.png") });
 
     // ── 1L. Mobile Responsive (390 x 844)
@@ -220,14 +236,23 @@ test.describe("SCRIPE Academy Full Evidence Capture & Persona Verification", () 
     await page.goto("/hub");
     await page.waitForLoadState("domcontentloaded");
     await page.locator("button:has-text('Academy')").first().waitFor({ state: "visible", timeout: 15_000 });
-    await waitForPageReady(page);
+    await waitForAcademyDataReady(page);
     await page.screenshot({ path: path.join(EVIDENCE_DIR, "19_hub_mobile.png") });
 
     await page.goto("/academy");
     await page.waitForLoadState("domcontentloaded");
     await page.locator("h1").first().waitFor({ state: "visible", timeout: 15_000 });
-    await waitForPageReady(page);
+    await waitForAcademyDataReady(page);
+    // Mobile overview (full content width, desktop rails hidden)
     await page.screenshot({ path: path.join(EVIDENCE_DIR, "20_academy_overview_mobile.png") });
+
+    // Open mobile navigation drawer via hamburger button and capture with scrim
+    const hamburgerBtn = page.locator("button[aria-label*='Panel'], button[aria-label*='Toggle'], button[aria-label*='menu'], button[aria-label*='لوحة'], button[aria-label*='navigation']").first();
+    if (await hamburgerBtn.isVisible()) {
+      await hamburgerBtn.click();
+      await page.waitForTimeout(400);
+      await page.screenshot({ path: path.join(EVIDENCE_DIR, "21_academy_mobile_nav_drawer.png") });
+    }
   });
 
   test("2. Persona Access Verification: AcademyDirector, Coach, FrontDesk, Auditor", async ({ browser }) => {

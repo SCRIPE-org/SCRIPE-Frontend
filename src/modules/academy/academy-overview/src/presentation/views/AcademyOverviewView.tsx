@@ -156,13 +156,13 @@ export function AcademyOverviewView() {
             className="gap-2 text-xs border-nx-line"
           >
             <RefreshCw className={`size-3.5 ${refreshing ? "animate-spin" : ""}`} aria-hidden="true" />
-            {t("academyOverview.errors.retry") || "Refresh"}
+            {t("academyOverview.actions.refresh") || "Refresh"}
           </Button>
         </div>
       </div>
 
-      {/* KPI Cards Strip — Live numbers from backend, no fake mock values */}
-      <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
+      {/* KPI Cards Strip — Responsive 1-col on mobile, 2-col on tablet, 4-col on desktop */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
         <Card className="border border-nx-line bg-nx-surface p-4">
           <p className="text-xs font-medium text-nx-ink-2">
             {t("academyOverview.kpi.programs") || "Active Programs"}
@@ -171,7 +171,7 @@ export function AcademyOverviewView() {
             {state.activeProgramsCount}
           </p>
           <p className="mt-1 text-[11px] text-nx-ink-3">
-            {t("academyOverview.status.noPrograms") || "Configured programs"}
+            {t("academyOverview.kpi.programsSubtitle") || "Configured sports curriculums"}
           </p>
         </Card>
         <Card className="border border-nx-line bg-nx-surface p-4">
@@ -181,7 +181,9 @@ export function AcademyOverviewView() {
           <p className="mt-2 text-2xl font-bold tracking-tight text-nx-ink">
             {state.activeOfferingsCount}
           </p>
-          <p className="mt-1 text-[11px] text-nx-ink-3">Seasonal term registrations</p>
+          <p className="mt-1 text-[11px] text-nx-ink-3">
+            {t("academyOverview.kpi.offeringsSubtitle") || "Seasonal term registrations"}
+          </p>
         </Card>
         <Card className="border border-nx-line bg-nx-surface p-4">
           <p className="text-xs font-medium text-nx-ink-2">
@@ -190,7 +192,9 @@ export function AcademyOverviewView() {
           <p className="mt-2 text-2xl font-bold tracking-tight text-nx-ink">
             {state.activeEnrollmentsCount}
           </p>
-          <p className="mt-1 text-[11px] text-nx-ink-3">Active enrolled students</p>
+          <p className="mt-1 text-[11px] text-nx-ink-3">
+            {t("academyOverview.kpi.enrollmentsSubtitle") || "Active enrolled students"}
+          </p>
         </Card>
         <Card className="border border-nx-line bg-nx-surface p-4">
           <p className="text-xs font-medium text-nx-ink-2">
@@ -199,7 +203,9 @@ export function AcademyOverviewView() {
           <p className="mt-2 text-2xl font-bold tracking-tight text-nx-ink">
             {state.pendingTrialsCount}
           </p>
-          <p className="mt-1 text-[11px] text-nx-ink-3">Pending skill evaluations</p>
+          <p className="mt-1 text-[11px] text-nx-ink-3">
+            {t("academyOverview.kpi.trialsSubtitle") || "Pending skill evaluations"}
+          </p>
         </Card>
       </div>
 

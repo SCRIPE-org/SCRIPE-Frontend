@@ -97,12 +97,12 @@ describe("AcademyOverviewView", () => {
     render(<AcademyOverviewView />);
 
     expect(screen.getByText("Academy Operations Command Center")).toBeInTheDocument();
-    expect(screen.getByText("Configure Programs & Offerings")).toBeInTheDocument();
+    expect(screen.getByText("Programs & Offerings")).toBeInTheDocument();
     expect(screen.getByText("Athletes & Families")).toBeInTheDocument();
     expect(screen.getByText("Trials & Evaluations")).toBeInTheDocument();
 
     // Verify workflows are wrapped in clickable Next.js links with correct hrefs
-    const programLink = screen.getByRole("link", { name: /Configure Programs & Offerings/i });
+    const programLink = screen.getByRole("link", { name: /Programs & Offerings/i });
     expect(programLink).toHaveAttribute("href", "/academy/programs");
 
     const athleteLink = screen.getByRole("link", { name: /Athletes & Families/i });
@@ -144,7 +144,7 @@ describe("AcademyOverviewView", () => {
     expect(screen.getByText("Trials & Evaluations")).toBeInTheDocument();
 
     // Programs and Athletes should be hidden
-    expect(screen.queryByText("Configure Programs & Offerings")).not.toBeInTheDocument();
+    expect(screen.queryByText("Programs & Offerings")).not.toBeInTheDocument();
     expect(screen.queryByText("Athletes & Families")).not.toBeInTheDocument();
   });
 
