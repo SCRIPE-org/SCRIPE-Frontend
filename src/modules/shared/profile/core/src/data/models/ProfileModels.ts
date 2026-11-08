@@ -136,11 +136,11 @@ export interface UpdateProfileRequestDto {
   lastName: string;
   phoneNumber?: string;
   bio?: string;
+  staffCode?: string;
+  clubAffiliation?: string;
   isAvailableForOperations?: boolean;
   activeBranchName?: string;
-  coachingLicensesJson?: string;
-  tacticalPhilosophyJson?: string;
-  adminSettingsJson?: string;
+  customFields?: Record<string, unknown>;
 }
 
 /**

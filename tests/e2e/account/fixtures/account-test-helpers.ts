@@ -442,6 +442,35 @@ export async function setupSovereignAccountRouteMocks(page: Page) {
     }
   });
 
+  await page.route("**/api/v1/account/notifications/*/read", async (route) => {
+    if (route.request().method() === "PATCH") {
+      const parts = route.request().url().split("/");
+      const id = parts[parts.length - 2];
+      notificationsSlice.recentNotifications = notificationsSlice.recentNotifications.map((n) =>
+        n.id === id ? { ...n, isRead: true } : n
+      );
+      notificationsSlice.unreadNotificationsCount = notificationsSlice.recentNotifications.filter(
+        (n) => !n.isRead
+      ).length;
+      await route.fulfill({ status: 200, contentType: "application/json", body: JSON.stringify({}) });
+    } else {
+      await route.continue();
+    }
+  });
+
+  await page.route("**/api/v1/account/notifications/read-all", async (route) => {
+    if (route.request().method() === "PATCH") {
+      notificationsSlice.recentNotifications = notificationsSlice.recentNotifications.map((n) => ({
+        ...n,
+        isRead: true,
+      }));
+      notificationsSlice.unreadNotificationsCount = 0;
+      await route.fulfill({ status: 200, contentType: "application/json", body: JSON.stringify({}) });
+    } else {
+      await route.continue();
+    }
+  });
+
   await page.route("**/api/v1/account/integrations", async (route) => {
     if (route.request().method() === "GET") {
       await route.fulfill({
@@ -462,14 +491,18 @@ export async function setupSovereignAccountRouteMocks(page: Page) {
         createdAtUtc: new Date().toISOString(),
         expiresAt: new Date(Date.now() + 86400000 * 30).toISOString(),
         expiresAtUtc: new Date(Date.now() + 86400000 * 30).toISOString(),
-        lastUsedAt: null,
-        lastUsedAtUtc: null,
+        lastUsedAt: "",
+        lastUsedAtUtc: "",
       };
       integrationsSlice.personalAccessTokens.push(newToken);
       await route.fulfill({
         status: 200,
         contentType: "application/json",
-        body: JSON.stringify(newToken),
+        body: JSON.stringify({
+          ...newToken,
+          oneTimePlaintextSecret: "scr_pat_live_99aa_full_plaintext_secret_token_key_12345",
+          previewOrFingerprint: "scr_pat_live_99aa••••",
+        }),
       });
     } else {
       await route.continue();
@@ -504,8 +537,8 @@ export async function setupSovereignAccountRouteMocks(page: Page) {
         createdAtUtc: new Date().toISOString(),
         expiresAt: new Date(Date.now() + 86400000 * 30).toISOString(),
         expiresAtUtc: new Date(Date.now() + 86400000 * 30).toISOString(),
-        lastUsedAt: null,
-        lastUsedAtUtc: null,
+        lastUsedAt: "",
+        lastUsedAtUtc: "",
       };
       integrationsSlice.personalAccessTokens.push(newToken);
       await route.fulfill({

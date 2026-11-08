@@ -282,6 +282,9 @@ export const en = {
       recentFeedTitle: "Personal Notification Feed",
       unreadLabel: "Unread",
       noRecentAlerts: "No recent notifications in your personal feed.",
+      markAllReadBtn: "Mark All Read",
+      markReadBtn: "Mark Read",
+      deleteAlertAria: "Delete notification",
     },
     hud: {
       activeStatus: "Active • In Session",

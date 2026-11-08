@@ -131,6 +131,8 @@ export function useAccountGovernanceSliceViewModel() {
   return {
     governance: data
       ? {
+          activeTenantName: data.activeTenantName,
+          activeBranchName: data.activeBranchName,
           isDelegationFeatureEnabled: data.isDelegationFeatureEnabled,
           allowedBranches: data.allowedBranches,
           assignedRoles: data.assignedRoles,
@@ -144,28 +146,41 @@ export function useAccountGovernanceSliceViewModel() {
           })),
           delegations: data.delegations.map((d) => ({
             id: d.id,
+            delegateAdminId: d.delegateAdminId,
+            delegateDisplayName: d.delegateDisplayName,
             delegateEmail: d.delegateDisplayName,
+            delegationType: d.delegationType,
+            grantedScopes: d.grantedScopes,
             delegatedPermissions: d.grantedScopes,
             startsAtUtc: d.startsAtUtc,
             expiresAtUtc: d.expiresAtUtc,
+            justification: d.justification,
             reason: d.justification,
             status: d.status,
           })),
         }
       : undefined,
     createDelegation: (payload: {
-      delegateEmail: string;
-      delegatedPermissions: string[];
+      delegateAdminId?: string;
+      delegateDisplayName?: string;
+      delegateEmail?: string;
+      delegationType?: string;
+      grantedScopes?: string[];
+      delegatedPermissions?: string[];
       startsAtUtc: string;
       expiresAtUtc: string;
-      reason: string;
+      justification?: string;
+      reason?: string;
     }) =>
       createDelegationMutation.mutateAsync({
-        delegateAdminId: "00000000-0000-0000-0000-000000000000",
-        delegateDisplayName: payload.delegateEmail,
-        delegationType: "ACTING_AS",
-        grantedScopes: payload.delegatedPermissions,
-        justification: payload.reason,
+        delegateAdminId:
+          payload.delegateAdminId ?? "00000000-0000-0000-0000-000000000000",
+        delegateDisplayName:
+          payload.delegateDisplayName ?? payload.delegateEmail ?? "",
+        delegationType: payload.delegationType ?? "ACTING_AS",
+        grantedScopes:
+          payload.grantedScopes ?? payload.delegatedPermissions ?? [],
+        justification: payload.justification ?? payload.reason ?? "",
         startsAtUtc: payload.startsAtUtc,
         expiresAtUtc: payload.expiresAtUtc,
       }),
@@ -222,11 +237,40 @@ export function useSovereignNotificationsSlice() {
       container.sovereignAccountRepository.sendTestNotification(category),
     onSuccess: () => qc.invalidateQueries({ queryKey: sovereignAccountKeys.notifications() }),
   });
-  return { ...query, updateMutation, sendTestMutation };
+  const markReadMutation = useMutation({
+    mutationFn: (id: string) =>
+      container.sovereignAccountRepository.markNotificationAsRead(id),
+    onSuccess: () => qc.invalidateQueries({ queryKey: sovereignAccountKeys.notifications() }),
+  });
+  const markAllReadMutation = useMutation({
+    mutationFn: () =>
+      container.sovereignAccountRepository.markAllNotificationsAsRead(),
+    onSuccess: () => qc.invalidateQueries({ queryKey: sovereignAccountKeys.notifications() }),
+  });
+  const deleteMutation = useMutation({
+    mutationFn: (id: string) =>
+      container.sovereignAccountRepository.deleteNotification(id),
+    onSuccess: () => qc.invalidateQueries({ queryKey: sovereignAccountKeys.notifications() }),
+  });
+  return {
+    ...query,
+    updateMutation,
+    sendTestMutation,
+    markReadMutation,
+    markAllReadMutation,
+    deleteMutation,
+  };
 }
 
 export function useAccountNotificationsSliceViewModel() {
-  const { data, updateMutation, sendTestMutation } = useSovereignNotificationsSlice();
+  const {
+    data,
+    updateMutation,
+    sendTestMutation,
+    markReadMutation,
+    markAllReadMutation,
+    deleteMutation,
+  } = useSovereignNotificationsSlice();
   return {
     notifications: data,
     updateNotifications: (data: Partial<SovereignNotificationsSlice>) =>
@@ -236,6 +280,9 @@ export function useAccountNotificationsSliceViewModel() {
       sendTestMutation.mutateAsync(category),
     isSendingTestNotification: sendTestMutation.isPending,
     testNotificationSent: sendTestMutation.isSuccess,
+    markNotificationAsRead: (id: string) => markReadMutation.mutateAsync(id),
+    markAllNotificationsAsRead: () => markAllReadMutation.mutateAsync(),
+    deleteNotification: (id: string) => deleteMutation.mutateAsync(id),
   };
 }
 

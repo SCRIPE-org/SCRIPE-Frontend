@@ -3,10 +3,9 @@
 /**
  * AccountSessionsView
  *
- * Sovereign Slice 4 (/account/sessions):
+ * Page 3 (/account/sessions):
  * Live SVG SovereignSessionRadar (Impossible Travel Velocity Guard & 1-click Ping),
- * Active Workstation Fleet (current pinned + remote cards with 50ms kill & Revoke All),
- * and SCRIPE Coach App QR Instant Pairing & Mobile Biometric Sudo Bridge.
+ * and Active Workstation Fleet (current pinned + remote cards with single & cluster Revoke All).
  */
 import { useState } from "react";
 import { useI18n } from "@core/providers/i18n-provider";
@@ -47,7 +46,9 @@ export function AccountSessionsView() {
           {
             id: currentSession.id,
             label: `${currentSession.browser} (${currentSession.os})`,
-            location: currentSession.location || "",
+            location: [currentSession.city, currentSession.country]
+              .filter(Boolean)
+              .join(", "),
             ipAddress: currentSession.ipAddress,
             x: 56,
             y: 42,
@@ -58,7 +59,7 @@ export function AccountSessionsView() {
     ...otherSessions.map((s, idx) => ({
       id: s.id,
       label: `${s.browser} (${s.os})`,
-      location: s.location || "",
+      location: [s.city, s.country].filter(Boolean).join(", "),
       ipAddress: s.ipAddress,
       x: 62 + idx * 6,
       y: 48 - idx * 4,

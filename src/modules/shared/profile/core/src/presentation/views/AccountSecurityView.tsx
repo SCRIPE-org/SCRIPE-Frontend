@@ -3,11 +3,10 @@
 /**
  * AccountSecurityView
  *
- * Sovereign Slice 3 (/account/security):
- * W3C WebAuthn L3 Passkey Vault, FIDO2 AAGUID Hardware Attestation Registry,
+ * Page 2 (/account/security):
+ * W3C WebAuthn L3 Passkey Vault, FIDO2 Hardware Attestation Registry,
  * 3-Step TOTP 2FA & Backup Codes, Biometric Sudo Mode (15-min TTL),
- * Zero-Trust Away-Match Travel Shield, Trusted Geo-Fence CIDR Policy,
- * Duress / Panic PIN Canary, Password Rotation, and Emergency Account Lockdown.
+ * Trusted IP CIDR Allowlist Policy, Password Rotation, and Emergency Account Lockdown.
  */
 import { useState } from "react";
 import { useI18n } from "@core/providers/i18n-provider";

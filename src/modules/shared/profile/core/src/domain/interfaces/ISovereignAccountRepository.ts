@@ -42,6 +42,9 @@ export interface ISovereignAccountRepository {
   getNotifications(): Promise<SovereignNotificationsSlice>;
   updateNotifications(data: Partial<SovereignNotificationsSlice>): Promise<SovereignNotificationsSlice>;
   sendTestNotification(category?: string): Promise<SovereignNotificationsSlice>;
+  markNotificationAsRead(id: string): Promise<void>;
+  markAllNotificationsAsRead(): Promise<void>;
+  deleteNotification(id: string): Promise<void>;
   getPlan(): Promise<SovereignPlanSlice>;
   submitPlanRequest(requestType: string, targetCode: string, notes?: string): Promise<void>;
   getIntegrations(): Promise<SovereignIntegrationsSlice>;

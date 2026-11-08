@@ -26,6 +26,8 @@ import {
   Monitor,
   Lock,
   Inbox,
+  CheckCheck,
+  Trash2,
 } from "lucide-react";
 
 const DEFAULT_RULES: NotificationCategoryRuleItem[] = [
@@ -80,6 +82,9 @@ export function AccountNotificationsView() {
     sendTestNotification,
     isSendingTestNotification,
     testNotificationSent,
+    markNotificationAsRead,
+    markAllNotificationsAsRead,
+    deleteNotification,
   } = useAccountNotificationsSliceViewModel();
 
   const [rules, setRules] = useState<NotificationCategoryRuleItem[]>(DEFAULT_RULES);
@@ -343,7 +348,7 @@ export function AccountNotificationsView() {
         data-testid="recent-notifications-feed-card"
         className="border border-nx-line bg-nx-surface hover:border-nx-line-hi transition-colors"
       >
-        <CardHeader className="pb-3 flex flex-row items-center justify-between">
+        <CardHeader className="pb-3 flex flex-row items-center justify-between gap-2">
           <div className="flex items-center gap-2">
             <Inbox className="h-4 w-4 text-nx-accent" style={{ minWidth: 16, minHeight: 16 }} />
             <CardTitle className="text-sm font-bold text-nx-ink">
@@ -353,6 +358,19 @@ export function AccountNotificationsView() {
               {notifications?.unreadNotificationsCount ?? 0} {t("profile.notifications.unreadLabel")}
             </Badge>
           </div>
+          {recentAlerts.some((a) => !a.isRead) && (
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              onClick={() => void markAllNotificationsAsRead()}
+              data-testid="mark-all-notifications-read-btn"
+              className="h-7 px-2.5 text-[11px] font-semibold gap-1.5 border-nx-line bg-nx-raised text-nx-ink-2 hover:text-nx-ink"
+            >
+              <CheckCheck className="h-3.5 w-3.5" />
+              <span>{t("profile.notifications.markAllReadBtn")}</span>
+            </Button>
+          )}
         </CardHeader>
         <CardContent className="space-y-2">
           {recentAlerts.length === 0 ? (
@@ -363,8 +381,8 @@ export function AccountNotificationsView() {
                 key={alert.id}
                 className="p-3 rounded-xl border border-nx-line bg-nx-raised flex flex-col sm:flex-row sm:items-center justify-between gap-2"
               >
-                <div className="space-y-0.5">
-                  <div className="flex items-center gap-2">
+                <div className="space-y-0.5 min-w-0">
+                  <div className="flex items-center gap-2 flex-wrap">
                     <span className="text-xs font-bold text-nx-ink">{alert.title}</span>
                     <Badge variant="outline" className="text-[10px] font-mono border-nx-line text-nx-ink-3">
                       {alert.category}
@@ -372,9 +390,34 @@ export function AccountNotificationsView() {
                   </div>
                   <p className="text-xs text-nx-ink-2">{alert.message}</p>
                 </div>
-                <span className="text-[10px] font-mono text-nx-ink-3 shrink-0">
-                  {new Date(alert.createdAt).toLocaleString()}
-                </span>
+                <div className="flex items-center gap-2 shrink-0">
+                  <span className="text-[10px] font-mono text-nx-ink-3">
+                    {new Date(alert.createdAt).toLocaleString()}
+                  </span>
+                  {!alert.isRead && (
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => void markNotificationAsRead(alert.id)}
+                      data-testid={`mark-notification-read-${alert.id}`}
+                      className="h-7 px-2 text-[10px] font-semibold text-nx-accent hover:text-nx-ink"
+                    >
+                      {t("profile.notifications.markReadBtn")}
+                    </Button>
+                  )}
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => void deleteNotification(alert.id)}
+                    data-testid={`delete-notification-${alert.id}`}
+                    aria-label={t("profile.notifications.deleteAlertAria")}
+                    className="h-7 w-7 p-0 text-nx-ink-3 hover:text-destructive"
+                  >
+                    <Trash2 className="h-3.5 w-3.5" />
+                  </Button>
+                </div>
               </div>
             ))
           )}

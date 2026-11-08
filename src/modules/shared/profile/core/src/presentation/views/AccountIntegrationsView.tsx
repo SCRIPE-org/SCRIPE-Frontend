@@ -28,11 +28,6 @@ import {
 export function AccountIntegrationsView() {
   const { t } = useI18n();
   const {
-    externalLogins,
-    isLoadingLogins,
-    loginsError,
-    unlinkExternalLogin,
-    isUnlinking,
     createdTokenSecret,
     clearCreatedTokenSecret,
     generateToken,
@@ -62,13 +57,7 @@ export function AccountIntegrationsView() {
       </div>
 
       {/* 1. Dynamic Connected Enterprise SSO Providers */}
-      <ExternalLoginsSection
-        logins={externalLogins}
-        isLoading={isLoadingLogins}
-        error={loginsError}
-        onUnlink={unlinkExternalLogin}
-        isUnlinking={isUnlinking}
-      />
+      <ExternalLoginsSection />
 
       {idpLinks.length > 0 && (
         <Card

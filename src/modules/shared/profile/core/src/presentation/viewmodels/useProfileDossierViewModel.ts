@@ -22,7 +22,7 @@ export function useProfileDossierViewModel() {
   const profileRepo = container.profileRepository;
   const queryClient = useQueryClient();
   const [profileSuccess, setProfileSuccess] = useState(false);
-  const [selectedAcademyId, setSelectedAcademyId] = useState<string>("default-ahly");
+  const [selectedAcademyId, setSelectedAcademyId] = useState<string>("default-hq");
   const [, startTransition] = useTransition();
 
   // Fetch admin profile (single shared query across ProfileLayout and all child views)
@@ -35,35 +35,29 @@ export function useProfileDossierViewModel() {
     queryKey: dossierKeys.profile(),
     queryFn: async () => {
       const data = await profileRepo.getProfile();
-      // Enrich with defaults if not present
       if (!data.staffCode) {
         data.staffCode = `#SCR-${data.id.slice(0, 6).toUpperCase()}`;
       }
       if (!data.clubAffiliation) {
-        data.clubAffiliation = "Al-Ahly SC • Football Intelligence Hub";
+        data.clubAffiliation = "";
       }
       if (!data.activeBranchName) {
-        data.activeBranchName = "Gezira Main Campus (HQ)";
+        data.activeBranchName = "";
       }
       if (!data.editionName) {
-        data.editionName = "Sports Enterprise Ultra";
+        data.editionName = "";
       }
       if (data.isAvailableForOperations === undefined) {
         data.isAvailableForOperations = true;
       }
       if (!data.securityScore) {
-        // Compute security posture score based on 2FA and password status
         let score = 50;
         if (data.isTwoFactorEnabled) score += 30;
         if (!data.isPasswordExpired) score += 20;
         data.securityScore = score;
       }
-      if (!data.availableAcademies || data.availableAcademies.length === 0) {
-        data.availableAcademies = [
-          { id: "default-ahly", name: "Al-Ahly SC — Gezira HQ", isCurrent: true },
-          { id: "ahly-nasr", name: "Al-Ahly SC — Nasr City Campus", isCurrent: false },
-          { id: "ahly-sheikh-zayed", name: "Al-Ahly SC — Sheikh Zayed Complex", isCurrent: false },
-        ];
+      if (!data.availableAcademies) {
+        data.availableAcademies = [];
       }
       return data;
     },
@@ -128,18 +122,17 @@ export function useProfileDossierViewModel() {
     });
     if (current) {
       updateMutation.mutate({
-        firstName: current.firstName || "Alex",
-        lastName: current.lastName || "Morgan",
+        firstName: current.firstName || "",
+        lastName: current.lastName || "",
         phoneNumber: current.phoneNumber || "",
         bio: current.bio,
         activeBranchName: current.activeBranchName,
         isAvailableForOperations: available,
-        adminSettingsJson: current.adminSettingsJson ?? undefined,
       });
     }
   };
 
-  // Switch active academy & persist to DB
+  // Switch active branch/workspace & persist to DB
   const switchAcademy = (academyId: string) => {
     const current = queryClient.getQueryData<any>(dossierKeys.profile()) ?? profile;
     const academies = (current?.availableAcademies || []).map((a: any) => ({
@@ -163,13 +156,12 @@ export function useProfileDossierViewModel() {
 
     if (current && nextBranchName) {
       updateMutation.mutate({
-        firstName: current.firstName || "Alex",
-        lastName: current.lastName || "Morgan",
+        firstName: current.firstName || "",
+        lastName: current.lastName || "",
         phoneNumber: current.phoneNumber || "",
         bio: current.bio,
         activeBranchName: nextBranchName,
         isAvailableForOperations: current.isAvailableForOperations,
-        adminSettingsJson: current.adminSettingsJson ?? undefined,
       });
     }
   };

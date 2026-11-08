@@ -96,7 +96,7 @@ describe("SovereignAccountRepository — Clean 9-Page B2B Enterprise Account Con
     expect(api.delete).toHaveBeenCalledWith(PROFILE_ENDPOINTS.ACCOUNT.REVOKE_DELEGATION("del-1"));
 
     const activity = await repo.getActivity(20);
-    expect(api.get).toHaveBeenCalledWith(`${PROFILE_ENDPOINTS.ACCOUNT.ACTIVITY}?count=20`);
+    expect(api.get).toHaveBeenCalledWith(`${PROFILE_ENDPOINTS.ACCOUNT.ACTIVITY}?pageSize=20`);
     expect(activity.entries).toEqual([]);
   });
 
@@ -129,9 +129,26 @@ describe("SovereignAccountRepository — Clean 9-Page B2B Enterprise Account Con
     expect(notifs.recentNotifications).toEqual([]);
 
     await repo.sendTestNotification("Security");
-    expect(api.post).toHaveBeenCalledWith(PROFILE_ENDPOINTS.ACCOUNT.NOTIFICATIONS_TEST, {
+    expect(api.post).toHaveBeenCalledWith(PROFILE_ENDPOINTS.ACCOUNT.SEND_TEST_NOTIFICATION, {
       category: "Security",
     });
+
+    await repo.markNotificationAsRead("notif-1");
+    expect(api.patch).toHaveBeenCalledWith(
+      PROFILE_ENDPOINTS.ACCOUNT.MARK_NOTIFICATION_READ("notif-1"),
+      {}
+    );
+
+    await repo.markAllNotificationsAsRead();
+    expect(api.patch).toHaveBeenCalledWith(
+      PROFILE_ENDPOINTS.ACCOUNT.MARK_ALL_NOTIFICATIONS_READ,
+      {}
+    );
+
+    await repo.deleteNotification("notif-1");
+    expect(api.delete).toHaveBeenCalledWith(
+      PROFILE_ENDPOINTS.ACCOUNT.DELETE_NOTIFICATION("notif-1")
+    );
   });
 
   it("getPlan(), submitPlanRequest(), getIntegrations(), createIntegrationItem(), and deleteIntegrationItem() target /v1/account/plan & /v1/account/integrations*", async () => {

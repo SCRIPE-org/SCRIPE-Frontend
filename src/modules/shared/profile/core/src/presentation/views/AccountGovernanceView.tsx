@@ -47,10 +47,11 @@ export function AccountGovernanceView() {
     typeof p === "string" ? p : String(p?.permission ?? p?.code ?? "")
   );
 
-  const roleNames =
+  const roleNames: string[] = (
     assignedRoles.length > 0
       ? assignedRoles.map((r) => r.name)
-      : profile?.roles?.map((r) => r.roleName) || [];
+      : profile?.roles?.map((r) => r.roleName) || []
+  ).filter((r): r is string => Boolean(r));
 
   const handleCreateDelegation = async () => {
     if (!delegateEmail.trim()) return;

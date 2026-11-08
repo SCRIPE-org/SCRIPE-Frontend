@@ -503,6 +503,7 @@ export class SovereignAccountRepository implements ISovereignAccountRepository {
       categoryRules: updatedRules,
       quietHoursStart: merged.quietHoursStartUtc,
       quietHoursEnd: merged.quietHoursEndUtc,
+      quietHoursEnabled: merged.quietHoursEnabled,
     });
     return this.getNotifications();
   }
@@ -514,6 +515,18 @@ export class SovereignAccountRepository implements ISovereignAccountRepository {
       category,
     });
     return this.getNotifications();
+  }
+
+  async markNotificationAsRead(id: string): Promise<void> {
+    await this.api.patch(PROFILE_ENDPOINTS.ACCOUNT.MARK_NOTIFICATION_READ(id), {});
+  }
+
+  async markAllNotificationsAsRead(): Promise<void> {
+    await this.api.patch(PROFILE_ENDPOINTS.ACCOUNT.MARK_ALL_NOTIFICATIONS_READ, {});
+  }
+
+  async deleteNotification(id: string): Promise<void> {
+    await this.api.delete(PROFILE_ENDPOINTS.ACCOUNT.DELETE_NOTIFICATION(id));
   }
 
   async getPlan(): Promise<SovereignPlanSlice> {

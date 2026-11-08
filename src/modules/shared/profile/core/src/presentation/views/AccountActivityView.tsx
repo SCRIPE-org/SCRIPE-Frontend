@@ -3,9 +3,9 @@
 /**
  * AccountActivityView
  *
- * Sovereign Slice 7 (/account/activity):
- * SOC2 Tamper-Evident Hash-Chained Audit Ledger (previousHash -> entryHash),
- * Slide-Out Forensic Payload Drawer, CSV Export, and External FIFA/League Inspector Pass.
+ * Page 4 (/account/activity):
+ * Personal SOC2 Tamper-Evident Audit Ledger,
+ * Slide-Out Forensic Payload Drawer, and CSV Export.
  */
 import { useState } from "react";
 import { useI18n } from "@core/providers/i18n-provider";

@@ -281,6 +281,9 @@ export const ar = {
       recentFeedTitle: "خلاصة الإشعارات الشخصية",
       unreadLabel: "غير مقروء",
       noRecentAlerts: "لا توجد إشعارات حديثة في خلاصتك الشخصية.",
+      markAllReadBtn: "تحديد الكل كمقروء",
+      markReadBtn: "تحديد كمقروء",
+      deleteAlertAria: "حذف الإشعار",
     },
     hud: {
       activeStatus: "نشط • في الجلسة",
