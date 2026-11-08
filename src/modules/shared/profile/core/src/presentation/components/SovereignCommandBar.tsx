@@ -21,19 +21,13 @@ import { Button } from "@core/ui/button";
 import { Badge } from "@core/ui/badge";
 import {
   User,
-  BadgeCheck,
   ShieldCheck,
   Radar,
-  TabletSmartphone,
   Scale,
   Activity,
-  Lock,
   Sliders,
-  Accessibility,
-  Sparkles,
   Bell,
   Crown,
-  Wallet,
   Network,
   Search,
   CornerDownLeft,
@@ -67,21 +61,16 @@ export function SovereignCommandBar({
 
   const commands = [
     { id: "dossier", href: "/account/dossier", label: t("profile.rail.dossier"), desc: t("profile.rail.dossierDesc"), category: t("profile.rail.catIdentity"), icon: User },
-    { id: "credentials", href: "/account/credentials", label: t("profile.rail.credentials"), desc: t("profile.rail.credentialsDesc"), category: t("profile.rail.catIdentity"), icon: BadgeCheck },
     { id: "security", href: "/account/security", label: t("profile.rail.security"), desc: t("profile.rail.securityDesc"), category: t("profile.rail.catSecurity"), icon: ShieldCheck },
     { id: "sessions", href: "/account/sessions", label: t("profile.rail.sessions"), desc: t("profile.rail.sessionsDesc"), category: t("profile.rail.catSecurity"), icon: Radar },
-    { id: "devices", href: "/account/devices", label: t("profile.rail.devices"), desc: t("profile.rail.devicesDesc"), category: t("profile.rail.catSecurity"), icon: TabletSmartphone },
     { id: "governance", href: "/account/governance", label: t("profile.rail.governance"), desc: t("profile.rail.governanceDesc"), category: t("profile.rail.catGovernance"), icon: Scale },
     { id: "activity", href: "/account/activity", label: t("profile.rail.activity"), desc: t("profile.rail.activityDesc"), category: t("profile.rail.catGovernance"), icon: Activity },
-    { id: "privacy", href: "/account/privacy", label: t("profile.rail.privacy"), desc: t("profile.rail.privacyDesc"), category: t("profile.rail.catGovernance"), icon: Lock },
     { id: "preferences", href: "/account/preferences", label: t("profile.rail.preferences"), desc: t("profile.rail.preferencesDesc"), category: t("profile.rail.catWorkstation"), icon: Sliders },
-    { id: "accessibility", href: "/account/accessibility", label: t("profile.rail.accessibility"), desc: t("profile.rail.accessibilityDesc"), category: t("profile.rail.catWorkstation"), icon: Accessibility },
-    { id: "ai-copilot", href: "/account/ai-copilot", label: t("profile.rail.aiCopilot"), desc: t("profile.rail.aiCopilotDesc"), category: t("profile.rail.catWorkstation"), icon: Sparkles },
     { id: "notifications", href: "/account/notifications", label: t("profile.rail.notifications"), desc: t("profile.rail.notificationsDesc"), category: t("profile.rail.catWorkstation"), icon: Bell },
     { id: "plan", href: "/account/plan", label: t("profile.rail.plan"), desc: t("profile.rail.planDesc"), category: t("profile.rail.catCommercial"), icon: Crown },
-    { id: "billing", href: "/account/billing", label: t("profile.rail.billing"), desc: t("profile.rail.billingDesc"), category: t("profile.rail.catCommercial"), icon: Wallet },
     { id: "integrations", href: "/account/integrations", label: t("profile.rail.integrations"), desc: t("profile.rail.integrationsDesc"), category: t("profile.rail.catEcosystem"), icon: Network },
   ];
+
 
   const normalizedQuery = query.trim().toLowerCase();
   const filtered = normalizedQuery

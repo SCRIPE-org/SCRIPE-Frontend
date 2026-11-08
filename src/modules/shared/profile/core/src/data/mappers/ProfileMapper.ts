@@ -20,47 +20,30 @@ import type {
  */
 export const ProfileMapper = {
   toAdminProfile(dto: AdminProfileDto): AdminProfile {
-    let parsedLicenses = dto.coachingLicenses;
-    if (!parsedLicenses && dto.coachingLicensesJson) {
-      try {
-        parsedLicenses = JSON.parse(dto.coachingLicensesJson);
-      } catch {
-        parsedLicenses = undefined;
-      }
-    }
-
-    let parsedPhilosophy = dto.tacticalPhilosophy;
-    if (!parsedPhilosophy && dto.tacticalPhilosophyJson) {
-      try {
-        parsedPhilosophy = JSON.parse(dto.tacticalPhilosophyJson);
-      } catch {
-        parsedPhilosophy = undefined;
-      }
-    }
-
     return {
-      id: dto.id,
-      username: dto.username,
+      id: dto.id ?? dto.adminId ?? "",
+      username: dto.username ?? "",
       firstName: dto.firstName ?? "",
       lastName: dto.lastName ?? "",
       phoneNumber: dto.phoneNumber ?? "",
       email: dto.email ?? "",
+      isEmailVerified: dto.isEmailVerified ?? true,
       adminTypeName: dto.adminTypeName ?? "",
-      profileImageUrl: dto.profileImageUrl,
+      profileImageUrl: dto.profileImageUrl ?? null,
       roles: dto.roles ?? [],
       permissions: dto.permissions ?? [],
       isTwoFactorEnabled: dto.isTwoFactorEnabled ?? false,
-      backupCodesRemaining: dto.backupCodesRemaining,
+      backupCodesRemaining: dto.backupCodesRemaining ?? null,
       isPasswordExpired: dto.isPasswordExpired ?? false,
-      daysUntilPasswordExpiry: dto.daysUntilPasswordExpiry,
+      daysUntilPasswordExpiry: dto.daysUntilPasswordExpiry ?? null,
       passwordLastChanged: dto.passwordLastChanged ? new Date(dto.passwordLastChanged) : null,
       staffCode: dto.staffCode ?? "#SCR-ADM-001",
       bio:
         dto.bio ??
-        "Director of Football Operations and Technical Lead. Overseeing multi-age squad development, sports science telemetry, and matchday tactical systems.",
-      clubAffiliation: dto.clubAffiliation ?? "Al-Ahly SC",
-      activeBranchName: dto.activeBranchName ?? "Gezira Central Campus (HQ)",
-      editionName: dto.editionName ?? "Enterprise Ultra",
+        "Enterprise Operations Administrator overseeing multi-branch governance, organizational security, and platform workflows.",
+      clubAffiliation: dto.clubAffiliation ?? "Enterprise Organization",
+      activeBranchName: dto.activeBranchName ?? "Corporate Headquarters (HQ)",
+      editionName: dto.editionName ?? "Enterprise Edition",
       isAvailableForOperations: dto.isAvailableForOperations ?? true,
       securityScore: dto.securityScore ?? 85,
       availableAcademies:
@@ -71,46 +54,21 @@ export const ProfileMapper = {
               name: a.name,
               isCurrent: a.isPrimary ?? false,
             }))
+          : dto.clubMemberships && dto.clubMemberships.length > 0
+          ? dto.clubMemberships.map((m) => ({
+              id: m.tenantId,
+              name: m.tenantName ?? m.clubName ?? m.tenantId,
+              isCurrent: Boolean(m.isPrimary),
+            }))
           : [
-              { id: "acad-01", name: "Gezira Central Campus (HQ)", isCurrent: true },
-              { id: "acad-02", name: "Nasr City Elite Training Ground", isCurrent: false },
-              { id: "acad-03", name: "Sheikh Zayed Development Center", isCurrent: false },
+              { id: "hq-01", name: "Corporate Headquarters (HQ)", isCurrent: true },
+              { id: "branch-02", name: "Nasr City Regional Branch", isCurrent: false },
+              { id: "branch-03", name: "Sheikh Zayed Operations Hub", isCurrent: false },
             ]),
-      coachingLicenses: parsedLicenses ?? [
-        {
-          id: "lic-01",
-          organization: "UEFA",
-          licenseLevel: "UEFA Pro License",
-          certificateNumber: "UEFA-PRO-2024-8841",
-          issuedAt: "2024-05-15T00:00:00Z",
-          expiresAt: "2027-05-15T00:00:00Z",
-          verificationStatus: "Verified",
-        },
-        {
-          id: "lic-02",
-          organization: "CAF",
-          licenseLevel: "CAF Elite Youth Instructor",
-          certificateNumber: "CAF-EYI-2023-0192",
-          issuedAt: "2023-08-20T00:00:00Z",
-          expiresAt: "2026-08-20T00:00:00Z",
-          verificationStatus: "Verified",
-        },
-      ],
-      tacticalPhilosophy: parsedPhilosophy ?? {
-        preferredFormation: "4-3-3 Attacking (Fluid Triangular Rotations)",
-        pressingIntensity: "High Gegenpress (PPDA < 7.5)",
-        buildUpStyle: "Positional Play from Deep (Third-Man Runs)",
-        manifesto:
-          "Dominate spatial progression through structured overloads, instantaneous vertical counter-pressing upon turnover, and youth athlete cognitive empowerment.",
-        assignedAgeGroups: [
-          "U17 Premier League Squad",
-          "U19 Academy Elite",
-          "First Team Technical Analyst",
-        ],
-      },
-      adminSettingsJson: dto.adminSettingsJson ?? null,
+      customFields: dto.customFields ?? [],
     };
   },
+
 
   toActiveSession(dto: ActiveSessionDto): ActiveSession {
     return {

@@ -31,10 +31,13 @@ import {
   Keyboard,
   Check,
   CheckCircle2,
+  Globe,
+  Clock,
+  Hash,
 } from "lucide-react";
 
 export function AccountPreferencesView() {
-  const { t } = useI18n();
+  const { t, language, setLanguage } = useI18n();
   const {
     theme,
     setTheme,
@@ -50,6 +53,15 @@ export function AccountPreferencesView() {
 
   const [privacyBlur, setPrivacyBlur] = useState(
     preferences?.broadcastPrivacyBlurDefault ?? false
+  );
+  const [numeralSystem, setNumeralSystem] = useState(
+    preferences?.numeralSystem ?? "latn"
+  );
+  const [operatingTimezone, setOperatingTimezone] = useState(
+    preferences?.operatingTimezone ?? "Africa/Cairo"
+  );
+  const [reducedMotion, setReducedMotion] = useState(
+    preferences?.reducedMotionEnabled ?? false
   );
   const [savedNotice, setSavedNotice] = useState(false);
 
@@ -69,6 +81,10 @@ export function AccountPreferencesView() {
       clubAccentHue: accent,
       density,
       broadcastPrivacyBlurDefault: privacyBlur,
+      numeralSystem,
+      operatingTimezone,
+      languageCode: language,
+      reducedMotionEnabled: reducedMotion,
     });
     setSavedNotice(true);
     setTimeout(() => setSavedNotice(false), 2500);
@@ -113,7 +129,7 @@ export function AccountPreferencesView() {
         privacyBlur={privacyBlur}
       />
 
-      {/* 2. Theme Mode & Club Accent Hue */}
+      {/* 2. Theme Mode & Brand Accent Hue */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <Card className="border border-nx-line bg-nx-surface hover:border-nx-line-hi transition-colors">
           <CardHeader className="pb-3">
@@ -252,6 +268,96 @@ export function AccountPreferencesView() {
               <Keyboard className="h-3 w-3 text-nx-accent" />
               <span>Alt + P &bull; ⌘K {t("profile.preferences.commandPaletteReady")}</span>
             </Badge>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* 4. Regional & Localization Formatting (Language, Timezone, Numerals) */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <Card className="border border-nx-line bg-nx-surface hover:border-nx-line-hi transition-colors">
+          <CardHeader className="pb-3">
+            <div className="flex items-center gap-2">
+              <Globe className="h-4 w-4 text-nx-accent" style={{ minWidth: 16, minHeight: 16 }} />
+              <CardTitle className="text-sm font-bold text-nx-ink">
+                {t("profile.preferences.languageTitle")}
+              </CardTitle>
+            </div>
+          </CardHeader>
+          <CardContent className="grid grid-cols-2 gap-2">
+            {(["en", "ar"] as const).map((lang) => (
+              <Button
+                key={lang}
+                type="button"
+                variant={language === lang ? "default" : "outline"}
+                size="sm"
+                onClick={() => setLanguage(lang)}
+                data-testid={`language-${lang}`}
+                className="h-9 text-xs font-semibold"
+              >
+                {lang === "en"
+                  ? t("profile.preferences.langEnglish")
+                  : t("profile.preferences.langArabic")}
+              </Button>
+            ))}
+          </CardContent>
+        </Card>
+
+        <Card className="border border-nx-line bg-nx-surface hover:border-nx-line-hi transition-colors">
+          <CardHeader className="pb-3">
+            <div className="flex items-center gap-2">
+              <Hash className="h-4 w-4 text-nx-accent" style={{ minWidth: 16, minHeight: 16 }} />
+              <CardTitle className="text-sm font-bold text-nx-ink">
+                {t("profile.preferences.numeralSystemTitle")}
+              </CardTitle>
+            </div>
+          </CardHeader>
+          <CardContent className="grid grid-cols-2 gap-2">
+            {(["latn", "arab"] as const).map((sys) => (
+              <Button
+                key={sys}
+                type="button"
+                variant={numeralSystem === sys ? "default" : "outline"}
+                size="sm"
+                onClick={() => setNumeralSystem(sys)}
+                data-testid={`numeral-${sys}`}
+                className="h-9 text-xs font-mono"
+              >
+                {sys === "latn" ? "123 (Western)" : "١٢٣ (Eastern)"}
+              </Button>
+            ))}
+          </CardContent>
+        </Card>
+
+        <Card className="border border-nx-line bg-nx-surface hover:border-nx-line-hi transition-colors">
+          <CardHeader className="pb-3">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <Clock className="h-4 w-4 text-nx-accent" style={{ minWidth: 16, minHeight: 16 }} />
+                <CardTitle className="text-sm font-bold text-nx-ink">
+                  {t("profile.preferences.timezoneTitle")}
+                </CardTitle>
+              </div>
+              <Switch
+                checked={reducedMotion}
+                onCheckedChange={setReducedMotion}
+                aria-label={t("profile.preferences.reducedMotionLabel")}
+              />
+            </div>
+          </CardHeader>
+          <CardContent className="grid grid-cols-2 gap-2">
+            {["Africa/Cairo", "UTC"].map((tz) => (
+              <Button
+                key={tz}
+                type="button"
+                variant={operatingTimezone === tz ? "default" : "outline"}
+                size="sm"
+                onClick={() => setOperatingTimezone(tz)}
+                data-testid={`timezone-${tz}`}
+                className="h-9 text-xs font-mono"
+              >
+                {tz}
+              </Button>
+            ))}
           </CardContent>
         </Card>
       </div>

@@ -18,12 +18,13 @@ export interface UpdateProfileRequest {
   lastName: string;
   phoneNumber?: string;
   bio?: string;
+  staffCode?: string;
+  clubAffiliation?: string;
   isAvailableForOperations?: boolean;
   activeBranchName?: string;
-  coachingLicensesJson?: string;
-  tacticalPhilosophyJson?: string;
-  adminSettingsJson?: string;
+  customFields?: Record<string, unknown>;
 }
+
 
 /**
  * Interface defining property specifications, keys types, and structural contract rules for change password request.

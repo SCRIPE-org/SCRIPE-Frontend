@@ -1,27 +1,24 @@
 /**
- * Admin Profile Entity & Sports Credentials Domain Models
+ * Admin Profile Entity
  *
- * Domain entity representing the current admin's profile data, sports accreditations,
- * coaching licenses, and tactical philosophy.
+ * Domain entity representing the current B2B enterprise administrator's profile data,
+ * multi-tenant memberships, and dynamic custom fields.
  * Mapped from API DTO via ProfileMapper.
  */
 
-export interface CoachingLicense {
-  id: string;
-  organization: "UEFA" | "CAF" | "USSF" | "AFC" | "FIFA" | string;
-  licenseLevel: string;
-  certificateNumber: string;
-  issuedAt: string;
-  expiresAt: string;
-  verificationStatus: "Verified" | "Pending" | "Expired" | "Revoked";
-}
-
-export interface TacticalPhilosophy {
-  preferredFormation: string;
-  pressingIntensity: string;
-  buildUpStyle: string;
-  manifesto: string;
-  assignedAgeGroups: string[];
+export interface AdminCustomFieldItem {
+  key: string;
+  labelEn: string;
+  labelAr?: string | null;
+  placeholderEn?: string | null;
+  placeholderAr?: string | null;
+  valueType: string;
+  isRequired: boolean;
+  sensitivity?: number;
+  options?: string | null;
+  optionsAr?: string | null;
+  sortOrder?: number;
+  currentValue?: unknown;
 }
 
 export interface AdminProfile {
@@ -31,6 +28,7 @@ export interface AdminProfile {
   lastName: string;
   phoneNumber: string;
   email: string;
+  isEmailVerified?: boolean;
   adminTypeName: string;
   profileImageUrl: string | null;
   roles: Array<{ roleCode?: string; roleName?: string }>;
@@ -45,7 +43,7 @@ export interface AdminProfile {
   daysUntilPasswordExpiry: number | null;
   passwordLastChanged: Date | null;
 
-  // Transcendence Fields
+  // Enterprise B2B Profile Fields
   staffCode?: string;
   bio?: string;
   clubAffiliation?: string;
@@ -54,11 +52,6 @@ export interface AdminProfile {
   isAvailableForOperations?: boolean;
   securityScore?: number;
   availableAcademies?: Array<{ id: string; name: string; isCurrent: boolean }>;
-
-  // Sports Credentials & Tactical Vault
-  coachingLicenses?: CoachingLicense[];
-  tacticalPhilosophy?: TacticalPhilosophy;
-
-  // Persisted Workstation Settings & PAT Metadata JSON
-  adminSettingsJson?: string | null;
+  customFields?: AdminCustomFieldItem[];
 }
+

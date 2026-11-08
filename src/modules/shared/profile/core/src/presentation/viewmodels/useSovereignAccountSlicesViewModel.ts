@@ -1,16 +1,13 @@
-// FILE-EXCEPTION: file length
 /**
  * useSovereignAccountSlicesViewModel
  *
- * MVVM ViewModel hooks for all 15 SCRIPE Sovereign Account World v3.0 slices.
+ * MVVM ViewModel hooks for the Clean 9-Page B2B Enterprise Account Console (v4.0).
  * Strictly delegates all data access through container.sovereignAccountRepository.
  */
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { container } from "@modules/profile/di";
 import type {
   SovereignPreferencesSlice,
-  SovereignAccessibilitySlice,
-  SovereignAiCopilotSlice,
   SovereignNotificationsSlice,
 } from "../../domain/entities/SovereignAccountEntities";
 
@@ -18,58 +15,35 @@ export const sovereignAccountKeys = {
   all: ["sovereign-account"] as const,
   context: () => [...sovereignAccountKeys.all, "context"] as const,
   dossier: () => [...sovereignAccountKeys.all, "dossier"] as const,
-  credentials: () => [...sovereignAccountKeys.all, "credentials"] as const,
   security: () => [...sovereignAccountKeys.all, "security"] as const,
   sessions: () => [...sovereignAccountKeys.all, "sessions"] as const,
-  devices: () => [...sovereignAccountKeys.all, "devices"] as const,
   governance: () => [...sovereignAccountKeys.all, "governance"] as const,
   activity: () => [...sovereignAccountKeys.all, "activity"] as const,
-  privacy: () => [...sovereignAccountKeys.all, "privacy"] as const,
   preferences: () => [...sovereignAccountKeys.all, "preferences"] as const,
-  accessibility: () => [...sovereignAccountKeys.all, "accessibility"] as const,
-  aiCopilot: () => [...sovereignAccountKeys.all, "ai-copilot"] as const,
   notifications: () => [...sovereignAccountKeys.all, "notifications"] as const,
   plan: () => [...sovereignAccountKeys.all, "plan"] as const,
-  billing: () => [...sovereignAccountKeys.all, "billing"] as const,
   integrations: () => [...sovereignAccountKeys.all, "integrations"] as const,
 };
 
 export function useSovereignDossierSlice() {
-  return useQuery({
+  const qc = useQueryClient();
+  const query = useQuery({
     queryKey: sovereignAccountKeys.dossier(),
     queryFn: () => container.sovereignAccountRepository.getDossier(),
   });
+  const sendVerificationMutation = useMutation({
+    mutationFn: () => container.sovereignAccountRepository.sendEmailVerification(),
+    onSuccess: () => qc.invalidateQueries({ queryKey: sovereignAccountKeys.dossier() }),
+  });
+  return { ...query, sendVerificationMutation };
 }
 
 export function useAccountDossierSliceViewModel() {
-  const { data } = useSovereignDossierSlice();
-  let tacticalPhilosophy:
-    | {
-        preferredFormation: string;
-        pressingIntensity: string;
-        buildUpStyle: string;
-        manifesto: string;
-        assignedAgeGroups: string[];
-      }
-    | undefined;
-  if (data?.tacticalIdentityJson) {
-    try {
-      const p = JSON.parse(data.tacticalIdentityJson);
-      tacticalPhilosophy = {
-        preferredFormation: p.preferredFormation ?? "4-3-3",
-        pressingIntensity: p.pressingIntensity ?? "",
-        buildUpStyle: p.buildUpStyle ?? "",
-        manifesto: p.manifesto ?? "",
-        assignedAgeGroups: p.assignedAgeGroups ?? [],
-      };
-    } catch {
-      tacticalPhilosophy = undefined;
-    }
-  }
+  const { data, sendVerificationMutation } = useSovereignDossierSlice();
   return {
     dossier: data
       ? {
-          tacticalPhilosophy,
+          isEmailVerified: data.isEmailVerified,
           clubMemberships: data.clubMemberships.map((m) => ({
             tenantId: m.tenantId,
             clubName: m.clubName,
@@ -77,78 +51,12 @@ export function useAccountDossierSliceViewModel() {
             roleName: m.roleTitle,
             status: m.status,
           })),
-          linkedAthleteProfiles: data.linkedAthletes.map((a) => ({
-            athleteId: a.athleteId,
-            fullName: a.fullName,
-            ageGroup: a.squadName,
-            position: a.shirtNumber,
-            medicalClearance: a.medicalClearanceStatus,
-          })),
+          customFields: data.customFields,
         }
       : undefined,
-  };
-}
-
-export function useSovereignCredentialsSlice() {
-  const qc = useQueryClient();
-  const query = useQuery({
-    queryKey: sovereignAccountKeys.credentials(),
-    queryFn: () => container.sovereignAccountRepository.getCredentials(),
-  });
-  const upsertMutation = useMutation({
-    mutationFn: (
-      data: Parameters<typeof container.sovereignAccountRepository.upsertCredential>[0]
-    ) => container.sovereignAccountRepository.upsertCredential(data),
-    onSuccess: () => qc.invalidateQueries({ queryKey: sovereignAccountKeys.credentials() }),
-  });
-  const deleteMutation = useMutation({
-    mutationFn: (id: string) =>
-      container.sovereignAccountRepository.deleteCredential(id),
-    onSuccess: () => qc.invalidateQueries({ queryKey: sovereignAccountKeys.credentials() }),
-  });
-  return { ...query, upsertMutation, deleteMutation };
-}
-
-export function useAccountCredentialsSliceViewModel() {
-  const { data, upsertMutation, deleteMutation } = useSovereignCredentialsSlice();
-  return {
-    credentials: data
-      ? {
-          nfcPassTokenId: data.passSerialNumber || data.federationBadgeCode,
-          credentials: data.credentials.map((c) => ({
-            id: c.id,
-            credentialType: c.category,
-            issuingBody: c.governingBody,
-            licenseTitle: c.title,
-            licenseNumber: c.licenseNumber,
-            issuedAtUtc: c.issuedAtUtc,
-            expiresAtUtc: c.expiresAtUtc ?? "",
-            verificationStatus: c.verificationStatus,
-            stadiumZones: data.stadiumZoneClearances,
-          })),
-        }
-      : undefined,
-    addCredential: (payload: {
-      credentialType: string;
-      issuingBody: string;
-      licenseTitle: string;
-      licenseNumber: string;
-      issuedAtUtc: string;
-      expiresAtUtc: string;
-      stadiumZones: string[];
-    }) =>
-      upsertMutation.mutateAsync({
-        category: payload.credentialType,
-        governingBody: payload.issuingBody,
-        title: payload.licenseTitle,
-        licenseNumber: payload.licenseNumber,
-        issuedAtUtc: payload.issuedAtUtc,
-        expiresAtUtc: payload.expiresAtUtc,
-        stadiumZoneClearances: payload.stadiumZones,
-      }),
-    isAddingCredential: upsertMutation.isPending,
-    removeCredential: (id: string) => deleteMutation.mutateAsync(id),
-    isRemovingCredential: deleteMutation.isPending,
+    sendEmailVerification: () => sendVerificationMutation.mutateAsync(),
+    isSendingVerification: sendVerificationMutation.isPending,
+    verificationSent: sendVerificationMutation.isSuccess,
   };
 }
 
@@ -172,20 +80,14 @@ export function useAccountSecuritySliceViewModel() {
   return {
     security: data
       ? {
-          awayMatchTravelShieldEnabled: data.travelShieldEnabled,
           trustedCidrs: data.trustedCidrs,
-          hasDuressPinConfigured: data.hasDuressPin,
+          currentClientIp: data.currentClientIp,
+          isCurrentIpAllowed: data.isCurrentIpAllowed,
         }
       : undefined,
-    updateSecurityPolicy: (payload: {
-      awayMatchTravelShieldEnabled?: boolean;
-      trustedCidrs?: string[];
-      duressPin?: string;
-    }) =>
+    updateSecurityPolicy: (payload: { trustedCidrs?: string[] }) =>
       updateMutation.mutateAsync({
-        travelShieldEnabled: payload.awayMatchTravelShieldEnabled,
         trustedCidrs: payload.trustedCidrs,
-        duressPin: payload.duressPin,
       }),
     isUpdatingPolicy: updateMutation.isPending,
   };
@@ -201,73 +103,6 @@ export function useSovereignSessionsSlice() {
       container.sovereignAccountRepository.pingSession(sessionId),
   });
   return { ...query, pingMutation };
-}
-
-export function useSovereignDevicesSlice() {
-  const qc = useQueryClient();
-  const query = useQuery({
-    queryKey: sovereignAccountKeys.devices(),
-    queryFn: () => container.sovereignAccountRepository.getDevices(),
-  });
-  const upsertMutation = useMutation({
-    mutationFn: (
-      data: Parameters<typeof container.sovereignAccountRepository.upsertDevice>[0]
-    ) => container.sovereignAccountRepository.upsertDevice(data),
-    onSuccess: () => qc.invalidateQueries({ queryKey: sovereignAccountKeys.devices() }),
-  });
-  const revokeMutation = useMutation({
-    mutationFn: (id: string) =>
-      container.sovereignAccountRepository.revokeDevice(id, true),
-    onSuccess: () => qc.invalidateQueries({ queryKey: sovereignAccountKeys.devices() }),
-  });
-  return { ...query, upsertMutation, revokeMutation };
-}
-
-export function useAccountDevicesSliceViewModel() {
-  const { data, upsertMutation, revokeMutation } = useSovereignDevicesSlice();
-  return {
-    devices: data
-      ? {
-          devices: data.devices.map((d) => ({
-            id: d.id,
-            deviceName: d.deviceName,
-            deviceCategory: d.deviceCategory,
-            osPlatform: d.platformOs,
-            postureScore: d.postureScore,
-            isCompliant: d.isTrusted,
-            offlineVaultSyncedAtUtc: d.lastActiveAtUtc,
-            telemetryBridgeType: d.telemetryBridgeProvider ?? "",
-          })),
-          wearableBridges: data.devices
-            .filter((d) => d.deviceCategory === "WEARABLE_BRIDGE" || d.telemetryBridgeProvider)
-            .map((d) => ({
-              bridgeType: d.telemetryBridgeProvider || d.deviceName,
-              lastSyncedAtUtc: d.lastActiveAtUtc,
-              status: d.isTrusted ? "PAIRED" : "STANDBY",
-            })),
-        }
-      : undefined,
-    registerDevice: (payload: {
-      deviceName: string;
-      deviceCategory: string;
-      osPlatform: string;
-      telemetryBridgeType: string;
-    }) =>
-      upsertMutation.mutateAsync({
-        deviceId: payload.telemetryBridgeType || payload.deviceName,
-        deviceName: payload.deviceName,
-        deviceCategory: payload.deviceCategory,
-        platformOs: payload.osPlatform,
-        appVersion: "4.8.0",
-        isTrusted: true,
-        isBiometricEnrolled: true,
-        offlineVaultQuotaMb: 2048,
-        telemetryBridgeProvider: payload.telemetryBridgeType,
-      }),
-    isRegisteringDevice: upsertMutation.isPending,
-    revokeDevice: (id: string) => revokeMutation.mutateAsync(id),
-    isRevokingDevice: revokeMutation.isPending,
-  };
 }
 
 export function useSovereignGovernanceSlice() {
@@ -296,8 +131,12 @@ export function useAccountGovernanceSliceViewModel() {
   return {
     governance: data
       ? {
+          isDelegationFeatureEnabled: data.isDelegationFeatureEnabled,
+          allowedBranches: data.allowedBranches,
+          assignedRoles: data.assignedRoles,
           effectivePermissions: data.provenanceGraph.map((p) => ({
             permission: p.permissionCode,
+            domain: p.domain,
             sourceEdition: p.editionSource,
             sourceBranch: p.branchScope,
             sourceRole: p.grantingRole,
@@ -337,49 +176,10 @@ export function useAccountGovernanceSliceViewModel() {
 }
 
 export function useSovereignActivitySlice() {
-  const qc = useQueryClient();
-  const query = useQuery({
+  return useQuery({
     queryKey: sovereignAccountKeys.activity(),
     queryFn: () => container.sovereignAccountRepository.getActivity(30),
   });
-  const inspectorPassMutation = useMutation({
-    mutationFn: ({ org, hours }: { org: string; hours: number }) =>
-      container.sovereignAccountRepository.generateInspectorPass(org, hours),
-    onSuccess: () => qc.invalidateQueries({ queryKey: sovereignAccountKeys.activity() }),
-  });
-  return { ...query, inspectorPassMutation };
-}
-
-export function useSovereignPrivacySlice() {
-  const qc = useQueryClient();
-  const query = useQuery({
-    queryKey: sovereignAccountKeys.privacy(),
-    queryFn: () => container.sovereignAccountRepository.getPrivacy(),
-  });
-  const updateMutation = useMutation({
-    mutationFn: (
-      data: Parameters<typeof container.sovereignAccountRepository.updatePrivacy>[0]
-    ) => container.sovereignAccountRepository.updatePrivacy(data),
-    onSuccess: () => qc.invalidateQueries({ queryKey: sovereignAccountKeys.privacy() }),
-  });
-  const exportMutation = useMutation({
-    mutationFn: () => container.sovereignAccountRepository.requestPrivacyExport(),
-  });
-  return { ...query, updateMutation, exportMutation };
-}
-
-export function useAccountPrivacySliceViewModel() {
-  const { data, updateMutation, exportMutation } = useSovereignPrivacySlice();
-  return {
-    privacy: data,
-    saveScratchpad: (payload: { ciphertextBase64: string; ivBase64: string }) =>
-      updateMutation.mutateAsync({
-        encryptedScratchpadCiphertext: `${payload.ivBase64}:${payload.ciphertextBase64}`,
-      }),
-    isSavingScratchpad: updateMutation.isPending,
-    exportDataArchive: () => exportMutation.mutateAsync(),
-    isExportingArchive: exportMutation.isPending,
-  };
 }
 
 export function useSovereignPreferencesSlice() {
@@ -406,54 +206,6 @@ export function useAccountPreferencesSliceViewModel() {
   };
 }
 
-export function useSovereignAccessibilitySlice() {
-  const qc = useQueryClient();
-  const query = useQuery({
-    queryKey: sovereignAccountKeys.accessibility(),
-    queryFn: () => container.sovereignAccountRepository.getAccessibility(),
-  });
-  const updateMutation = useMutation({
-    mutationFn: (data: Partial<SovereignAccessibilitySlice>) =>
-      container.sovereignAccountRepository.updateAccessibility(data),
-    onSuccess: () => qc.invalidateQueries({ queryKey: sovereignAccountKeys.accessibility() }),
-  });
-  return { ...query, updateMutation };
-}
-
-export function useAccountAccessibilitySliceViewModel() {
-  const { data, updateMutation } = useSovereignAccessibilitySlice();
-  return {
-    accessibility: data,
-    updateAccessibility: (data: Partial<SovereignAccessibilitySlice>) =>
-      updateMutation.mutateAsync(data),
-    isUpdatingAccessibility: updateMutation.isPending,
-  };
-}
-
-export function useSovereignAiCopilotSlice() {
-  const qc = useQueryClient();
-  const query = useQuery({
-    queryKey: sovereignAccountKeys.aiCopilot(),
-    queryFn: () => container.sovereignAccountRepository.getAiCopilot(),
-  });
-  const updateMutation = useMutation({
-    mutationFn: (data: Partial<SovereignAiCopilotSlice>) =>
-      container.sovereignAccountRepository.updateAiCopilot(data),
-    onSuccess: () => qc.invalidateQueries({ queryKey: sovereignAccountKeys.aiCopilot() }),
-  });
-  return { ...query, updateMutation };
-}
-
-export function useAccountAiCopilotSliceViewModel() {
-  const { data, updateMutation } = useSovereignAiCopilotSlice();
-  return {
-    aiCopilot: data,
-    updateAiCopilot: (data: Partial<SovereignAiCopilotSlice>) =>
-      updateMutation.mutateAsync(data),
-    isUpdatingAiCopilot: updateMutation.isPending,
-  };
-}
-
 export function useSovereignNotificationsSlice() {
   const qc = useQueryClient();
   const query = useQuery({
@@ -465,20 +217,30 @@ export function useSovereignNotificationsSlice() {
       container.sovereignAccountRepository.updateNotifications(data),
     onSuccess: () => qc.invalidateQueries({ queryKey: sovereignAccountKeys.notifications() }),
   });
-  return { ...query, updateMutation };
+  const sendTestMutation = useMutation({
+    mutationFn: (category?: string) =>
+      container.sovereignAccountRepository.sendTestNotification(category),
+    onSuccess: () => qc.invalidateQueries({ queryKey: sovereignAccountKeys.notifications() }),
+  });
+  return { ...query, updateMutation, sendTestMutation };
 }
 
 export function useAccountNotificationsSliceViewModel() {
-  const { data, updateMutation } = useSovereignNotificationsSlice();
+  const { data, updateMutation, sendTestMutation } = useSovereignNotificationsSlice();
   return {
     notifications: data,
     updateNotifications: (data: Partial<SovereignNotificationsSlice>) =>
       updateMutation.mutateAsync(data),
     isUpdatingNotifications: updateMutation.isPending,
+    sendTestNotification: (category?: string) =>
+      sendTestMutation.mutateAsync(category),
+    isSendingTestNotification: sendTestMutation.isPending,
+    testNotificationSent: sendTestMutation.isSuccess,
   };
 }
 
 export function useSovereignPlanSlice() {
+  const qc = useQueryClient();
   const query = useQuery({
     queryKey: sovereignAccountKeys.plan(),
     queryFn: () => container.sovereignAccountRepository.getPlan(),
@@ -486,6 +248,7 @@ export function useSovereignPlanSlice() {
   const requestMutation = useMutation({
     mutationFn: ({ type, code, notes }: { type: string; code: string; notes?: string }) =>
       container.sovereignAccountRepository.submitPlanRequest(type, code, notes),
+    onSuccess: () => qc.invalidateQueries({ queryKey: sovereignAccountKeys.plan() }),
   });
   return { ...query, requestMutation };
 }
@@ -497,32 +260,6 @@ export function useAccountPlanSliceViewModel() {
     submitPlanRequest: (payload: { type: string; code: string; notes?: string }) =>
       requestMutation.mutateAsync(payload),
     isSubmittingRequest: requestMutation.isPending,
-  };
-}
-
-export function useSovereignBillingSlice() {
-  const qc = useQueryClient();
-  const query = useQuery({
-    queryKey: sovereignAccountKeys.billing(),
-    queryFn: () => container.sovereignAccountRepository.getBilling(),
-  });
-  const submitExpenseMutation = useMutation({
-    mutationFn: (
-      data: Parameters<typeof container.sovereignAccountRepository.submitExpenseClaim>[0]
-    ) => container.sovereignAccountRepository.submitExpenseClaim(data),
-    onSuccess: () => qc.invalidateQueries({ queryKey: sovereignAccountKeys.billing() }),
-  });
-  return { ...query, submitExpenseMutation };
-}
-
-export function useAccountBillingSliceViewModel() {
-  const { data, submitExpenseMutation } = useSovereignBillingSlice();
-  return {
-    billing: data,
-    submitExpenseClaim: (
-      payload: Parameters<typeof container.sovereignAccountRepository.submitExpenseClaim>[0]
-    ) => submitExpenseMutation.mutateAsync(payload),
-    isSubmittingExpense: submitExpenseMutation.isPending,
   };
 }
 
@@ -559,3 +296,4 @@ export function useAccountIntegrationsSliceViewModel() {
     isDeletingItem: deleteMutation.isPending,
   };
 }
+

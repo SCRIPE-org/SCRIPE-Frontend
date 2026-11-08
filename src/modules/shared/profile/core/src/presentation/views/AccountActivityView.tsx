@@ -16,7 +16,7 @@ import { Badge } from "@core/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@core/ui/select";
 import { useComplianceAuditViewModel } from "../viewmodels/useComplianceAuditViewModel";
 import { ForensicPayloadDrawer } from "../components/ForensicPayloadDrawer";
-import { FileText, Search, Download, RefreshCw, Clock, Globe, ChevronRight, Code, ShieldCheck, KeyRound, CheckCircle2 } from "lucide-react";
+import { FileText, Search, Download, RefreshCw, Clock, Globe, ChevronRight, Code, ShieldCheck } from "lucide-react";
 
 export function AccountActivityView() {
   const { t } = useI18n();
@@ -25,12 +25,6 @@ export function AccountActivityView() {
     eventTypeFilter, setEventTypeFilter, outcomeFilter, setOutcomeFilter,
     uniqueEventTypes, selectedEntry, isDrawerOpen, openDrawer, closeDrawer, exportCsv,
   } = useComplianceAuditViewModel();
-
-  const [inspectorPassToken, setInspectorPassToken] = useState<string | null>(null);
-
-  const handleGenerateInspectorPass = () => {
-    setInspectorPassToken("FIFA-INSP-2026-READONLY-992A");
-  };
 
   return (
     <div className="space-y-6">
@@ -45,18 +39,6 @@ export function AccountActivityView() {
         </div>
 
         <div className="flex items-center gap-2 flex-wrap">
-          <Button
-            type="button"
-            variant="outline"
-            size="sm"
-            onClick={handleGenerateInspectorPass}
-            data-testid="generate-inspector-pass-btn"
-            className="text-xs h-8 gap-1.5 border-nx-accent/40 text-nx-accent bg-nx-accent-wash"
-          >
-            <KeyRound className="h-3.5 w-3.5" />
-            <span>{t("profile.activity.inspectorPassBtn")}</span>
-          </Button>
-
           <Button
             variant="outline"
             size="sm"
@@ -81,22 +63,6 @@ export function AccountActivityView() {
         </div>
       </div>
 
-      {inspectorPassToken && (
-        <Card className="border border-success/40 bg-success/10">
-          <CardContent className="p-3.5 flex items-center justify-between gap-2 text-xs">
-            <div className="flex items-center gap-2 text-success font-semibold">
-              <CheckCircle2 className="h-4 w-4 shrink-0" />
-              <span>{t("profile.activity.inspectorPassGenerated")}:</span>
-              <code className="font-mono font-bold text-nx-ink bg-nx-surface px-2 py-0.5 rounded border border-nx-line">
-                {inspectorPassToken}
-              </code>
-            </div>
-            <Badge variant="outline" className="font-mono text-[10px] border-nx-line bg-nx-surface text-nx-ink-2">
-              TTL: 24H READ-ONLY
-            </Badge>
-          </CardContent>
-        </Card>
-      )}
 
       {/* Filter Bar */}
       <Card className="border border-nx-line bg-nx-surface p-4">

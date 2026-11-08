@@ -22,19 +22,13 @@ import {
 } from "@core/ui/select";
 import {
   User,
-  BadgeCheck,
   ShieldCheck,
   Radar,
-  TabletSmartphone,
   Scale,
   Activity,
-  Lock,
   Sliders,
-  Accessibility,
-  Sparkles,
   Bell,
   Crown,
-  Wallet,
   Network,
   Building2,
 } from "lucide-react";
@@ -58,7 +52,7 @@ export function ProfileRailLayout({
 
   const fullName = profile
     ? `${profile.firstName} ${profile.lastName}`.trim() || profile.username
-    : "Capt. Seif El-Din Kamel";
+    : "Seif El-Din Kamel";
 
   const initials = profile
     ? `${profile.firstName?.[0] || ""}${profile.lastName?.[0] || ""}`.toUpperCase() || "SK"
@@ -70,7 +64,6 @@ export function ProfileRailLayout({
       title: t("profile.rail.catIdentity"),
       items: [
         { href: "/account/dossier", label: t("profile.rail.dossier"), description: t("profile.rail.dossierDesc"), icon: User },
-        { href: "/account/credentials", label: t("profile.rail.credentials"), description: t("profile.rail.credentialsDesc"), icon: BadgeCheck },
       ],
     },
     {
@@ -79,7 +72,6 @@ export function ProfileRailLayout({
       items: [
         { href: "/account/security", label: t("profile.rail.security"), description: t("profile.rail.securityDesc"), icon: ShieldCheck },
         { href: "/account/sessions", label: t("profile.rail.sessions"), description: t("profile.rail.sessionsDesc"), icon: Radar },
-        { href: "/account/devices", label: t("profile.rail.devices"), description: t("profile.rail.devicesDesc"), icon: TabletSmartphone },
       ],
     },
     {
@@ -88,7 +80,6 @@ export function ProfileRailLayout({
       items: [
         { href: "/account/governance", label: t("profile.rail.governance"), description: t("profile.rail.governanceDesc"), icon: Scale },
         { href: "/account/activity", label: t("profile.rail.activity"), description: t("profile.rail.activityDesc"), icon: Activity },
-        { href: "/account/privacy", label: t("profile.rail.privacy"), description: t("profile.rail.privacyDesc"), icon: Lock },
       ],
     },
     {
@@ -96,8 +87,6 @@ export function ProfileRailLayout({
       title: t("profile.rail.catWorkstation"),
       items: [
         { href: "/account/preferences", label: t("profile.rail.preferences"), description: t("profile.rail.preferencesDesc"), icon: Sliders },
-        { href: "/account/accessibility", label: t("profile.rail.accessibility"), description: t("profile.rail.accessibilityDesc"), icon: Accessibility },
-        { href: "/account/ai-copilot", label: t("profile.rail.aiCopilot"), description: t("profile.rail.aiCopilotDesc"), icon: Sparkles },
         { href: "/account/notifications", label: t("profile.rail.notifications"), description: t("profile.rail.notificationsDesc"), icon: Bell },
       ],
     },
@@ -106,7 +95,6 @@ export function ProfileRailLayout({
       title: t("profile.rail.catCommercial"),
       items: [
         { href: "/account/plan", label: t("profile.rail.plan"), description: t("profile.rail.planDesc"), icon: Crown },
-        { href: "/account/billing", label: t("profile.rail.billing"), description: t("profile.rail.billingDesc"), icon: Wallet },
       ],
     },
     {
@@ -122,15 +110,16 @@ export function ProfileRailLayout({
     pathname === itemHref || pathname.startsWith(`${itemHref}/`);
 
   const academies = profile?.availableAcademies || [
-    { id: "default-ahly", name: "Al-Ahly SC — Gezira HQ", isCurrent: true },
-    { id: "ahly-nasr", name: "Al-Ahly SC — Nasr City Campus", isCurrent: false },
-    { id: "ahly-sheikh-zayed", name: "Al-Ahly SC — Sheikh Zayed Complex", isCurrent: false },
+    { id: "default-hq", name: "Corporate Headquarters (HQ)", isCurrent: true },
+    { id: "branch-nasr", name: "Nasr City Regional Branch", isCurrent: false },
+    { id: "branch-zayed", name: "Sheikh Zayed Operations Hub", isCurrent: false },
   ];
 
   const activeAcademy =
     academies.find((a) => a.id === selectedAcademyId) ||
     academies.find((a) => a.isCurrent) ||
     academies[0];
+
 
   return (
     <div className="flex flex-col lg:flex-row gap-6 items-start">

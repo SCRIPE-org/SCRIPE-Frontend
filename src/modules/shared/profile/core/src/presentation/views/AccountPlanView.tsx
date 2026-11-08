@@ -62,7 +62,10 @@ export function AccountPlanView() {
       </div>
 
       {/* 1. Active Edition & Contract Countdown Banner */}
-      <Card className="border border-nx-line bg-nx-surface hover:border-nx-line-hi transition-colors">
+      <Card
+        data-testid="account-plan-edition-banner"
+        className="border border-nx-line bg-nx-surface hover:border-nx-line-hi transition-colors"
+      >
         <CardContent className="p-5 flex flex-col lg:flex-row lg:items-center justify-between gap-4">
           <div className="space-y-1.5">
             <div className="flex items-center gap-2 flex-wrap">
@@ -70,6 +73,11 @@ export function AccountPlanView() {
               <span className="text-sm font-bold text-nx-ink">
                 {plan?.editionName || ""}
               </span>
+              {plan?.isPlatformSovereign && (
+                <Badge variant="outline" className="border-nx-accent/40 text-nx-accent bg-nx-accent-wash text-[10px] font-mono">
+                  {t("profile.plan.platformSovereignBadge")}
+                </Badge>
+              )}
               {plan?.subscriptionStatus && (
                 <Badge className="bg-nx-accent-fill text-nx-on-fill text-[10px] font-bold">
                   {plan.subscriptionStatus}
@@ -81,6 +89,11 @@ export function AccountPlanView() {
                 </Badge>
               )}
             </div>
+            {plan?.tierTagline && (
+              <p className="text-xs font-medium text-nx-ink">
+                {plan.tierTagline}
+              </p>
+            )}
             <p className="text-xs text-nx-ink-2">
               {plan?.assignedSeatRole || ""} &bull; {plan?.supportSlaTier || ""}
             </p>
@@ -94,7 +107,9 @@ export function AccountPlanView() {
                   {t("profile.plan.contractRemaining")}
                 </span>
                 <span className="text-xs font-bold font-mono text-nx-ink">
-                  {plan?.daysRemaining ?? 0} {t("profile.plan.daysUnit")}
+                  {plan?.isPlatformSovereign
+                    ? t("profile.plan.unlimited")
+                    : `${plan?.daysRemaining ?? 0} ${t("profile.plan.daysUnit")}`}
                 </span>
               </div>
             </div>

@@ -3,8 +3,8 @@
 /**
  * SovereignSessionRadar
  *
- * Adaptive SVG World & Campus Session Radar with Impossible Travel Velocity Guard,
- * 1-click workstation ping telemetry, and SCRIPE Coach App QR instant pairing.
+ * Enterprise Workstation Session Geo-Radar with Impossible Travel Velocity Guard
+ * and 1-click workstation ping telemetry.
  * Renders active session nodes strictly from /api/v1/account/sessions.
  */
 import { useState } from "react";
@@ -16,9 +16,7 @@ import {
   Globe,
   ShieldCheck,
   Radio,
-  QrCode,
   Activity,
-  Smartphone,
 } from "lucide-react";
 
 interface RadarNode {
@@ -34,17 +32,14 @@ interface RadarNode {
 interface SovereignSessionRadarProps {
   nodes: RadarNode[];
   impossibleTravelDetected?: boolean;
-  coachAppPairingPayload?: string;
 }
 
 export function SovereignSessionRadar({
   nodes,
   impossibleTravelDetected = false,
-  coachAppPairingPayload,
 }: SovereignSessionRadarProps) {
   const { t } = useI18n();
   const [pingLatencyMs, setPingLatencyMs] = useState<number | null>(null);
-  const [showQrModal, setShowQrModal] = useState(false);
 
   const handlePingFleet = () => {
     setPingLatencyMs(12);
@@ -96,18 +91,6 @@ export function SovereignSessionRadar({
                 {pingLatencyMs}ms
               </Badge>
             )}
-          </Button>
-
-          <Button
-            type="button"
-            variant="outline"
-            size="sm"
-            onClick={() => setShowQrModal((prev) => !prev)}
-            data-testid="pair-coach-app-qr-btn"
-            className="h-8 text-xs gap-1.5 border-nx-accent/40 text-nx-accent bg-nx-accent-wash"
-          >
-            <QrCode className="h-3.5 w-3.5" />
-            <span>{t("profile.sessions.pairCoachAppBtn")}</span>
           </Button>
         </div>
       </CardHeader>
@@ -167,36 +150,10 @@ export function SovereignSessionRadar({
                 </Badge>
               </div>
             ))}
-
-            {showQrModal && (
-              <div
-                data-testid="coach-app-qr-bridge-panel"
-                className="p-3.5 rounded-xl border border-nx-accent/40 bg-nx-raised flex items-center gap-3"
-              >
-                <div className="p-2.5 rounded-lg bg-nx-surface border border-nx-line shrink-0">
-                  <QrCode className="h-8 w-8 text-nx-accent" />
-                </div>
-                <div className="min-w-0">
-                  <div className="flex items-center gap-1.5">
-                    <Smartphone className="h-3.5 w-3.5 text-nx-accent" />
-                    <span className="text-xs font-bold text-nx-ink">
-                      {t("profile.sessions.coachAppBridgeTitle")}
-                    </span>
-                  </div>
-                  <p className="text-[11px] text-nx-ink-3 mt-0.5">
-                    {t("profile.sessions.coachAppBridgeDesc")}
-                  </p>
-                  {coachAppPairingPayload && (
-                    <p className="text-[10px] font-mono text-nx-accent truncate mt-1">
-                      {coachAppPairingPayload}
-                    </p>
-                  )}
-                </div>
-              </div>
-            )}
           </div>
         </div>
       </CardContent>
     </Card>
   );
 }
+

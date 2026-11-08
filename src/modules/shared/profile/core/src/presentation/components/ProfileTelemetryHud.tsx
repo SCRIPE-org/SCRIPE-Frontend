@@ -30,7 +30,6 @@ import {
   CheckCircle2,
   Circle,
   Fingerprint,
-  Plane,
 } from "lucide-react";
 import type { AdminProfile } from "../../domain/entities/AdminProfile";
 
@@ -40,7 +39,6 @@ interface ProfileTelemetryHudProps {
   onToggleAvailability?: (available: boolean) => void;
   onOpenSudoGate?: () => void;
   sudoActive?: boolean;
-  travelShieldActive?: boolean;
 }
 
 export function ProfileTelemetryHud({
@@ -49,7 +47,6 @@ export function ProfileTelemetryHud({
   onToggleAvailability,
   onOpenSudoGate,
   sudoActive = true,
-  travelShieldActive = false,
 }: ProfileTelemetryHudProps) {
   const { t } = useI18n();
   const router = useRouter();
@@ -62,12 +59,10 @@ export function ProfileTelemetryHud({
   const strokeDashoffset = circumference - (Math.min(100, Math.max(0, securityScore)) / 100) * circumference;
 
   const checklistItems = [
-    { key: "passkey", label: t("profile.posture.passkey"), weight: "+30%", done: true, href: "/account/security" },
-    { key: "totp", label: t("profile.posture.totp"), weight: "+25%", done: true, href: "/account/security" },
-    { key: "hardwareKey", label: t("profile.posture.hardwareKey"), weight: "+15%", done: true, href: "/account/security" },
-    { key: "duressPin", label: t("profile.posture.duressPin"), weight: "+12%", done: true, href: "/account/security" },
-    { key: "trustedCidr", label: t("profile.posture.trustedCidr"), weight: "+10%", done: true, href: "/account/security" },
-    { key: "signingSeal", label: t("profile.posture.signingSeal"), weight: "+8%", done: securityScore >= 98, href: "/account/credentials" },
+    { key: "passkey", label: t("profile.posture.passkey"), weight: "+35%", done: true, href: "/account/security" },
+    { key: "totp", label: t("profile.posture.totp"), weight: "+30%", done: true, href: "/account/security" },
+    { key: "hardwareKey", label: t("profile.posture.hardwareKey"), weight: "+20%", done: true, href: "/account/security" },
+    { key: "trustedCidr", label: t("profile.posture.trustedCidr"), weight: "+15%", done: securityScore >= 85, href: "/account/security" },
   ];
 
   return (
@@ -91,18 +86,13 @@ export function ProfileTelemetryHud({
                   <Sparkles className="h-3 w-3" style={{ minWidth: 12, minHeight: 12 }} />
                   <span>{profile?.editionName || t("profile.hud.defaultEdition")}</span>
                 </Badge>
-                {travelShieldActive && (
-                  <Badge variant="outline" className="border-warning/40 text-warning text-[10px] py-0 px-1.5 flex items-center gap-1">
-                    <Plane className="h-3 w-3" />
-                    <span>{t("profile.hud.travelShieldActive")}</span>
-                  </Badge>
-                )}
               </div>
               <p className="text-xs text-nx-ink-3 mt-0.5 font-mono">
-                {profile?.activeBranchName || t("profile.hud.defaultBranch")} • {profile?.staffCode || "#SCR-AHLY-001"}
+                {profile?.activeBranchName || t("profile.hud.defaultBranch")} • {profile?.staffCode || "#SCR-ADM-001"}
               </p>
             </div>
           </div>
+
 
           {/* Right: Operational Controls & Telemetry Gauges */}
           <div className="flex items-center gap-2.5 sm:gap-3 flex-wrap">

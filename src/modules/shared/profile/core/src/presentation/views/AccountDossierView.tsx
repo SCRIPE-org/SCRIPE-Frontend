@@ -3,30 +3,33 @@
 /**
  * AccountDossierView
  *
- * Sovereign Slice 1 (/account/dossier):
- * Executive Dossier, Avatar Upload, Personal Profile Form, Interactive SVG Tactical Identity Canvas,
- * Multi-Club Memberships & Pending Invitations, and B2B2C Guardian/Family Linked Athlete Profiles.
+ * Page 1 (/account/dossier):
+ * Personal B2B Enterprise Admin Profile, Avatar Upload, Email Verification Status & Trigger,
+ * Multi-Tenant / Branch Memberships, and Dynamic Custom Fields (identity.admin).
  */
+import { useState, useEffect } from "react";
 import { useI18n } from "@core/providers/i18n-provider";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@core/ui/card";
 import { Badge } from "@core/ui/badge";
+import { Button } from "@core/ui/button";
+import { Input } from "@core/ui/input";
 import { useProfileDossierViewModel } from "../viewmodels/useProfileDossierViewModel";
 import { useAccountDossierSliceViewModel } from "../viewmodels/useSovereignAccountSlicesViewModel";
 import { AvatarUpload } from "../components/AvatarUpload";
 import { ProfileInfoForm } from "../components/ProfileInfoForm";
-import { TacticalIdentityCanvas } from "../components/TacticalIdentityCanvas";
 import {
   Building2,
   Sparkles,
   User,
   Briefcase,
-  Users,
   CheckCircle2,
-  ShieldCheck,
+  MailCheck,
+  Sliders,
 } from "lucide-react";
 
 export function AccountDossierView() {
-  const { t } = useI18n();
+  const { t, language } = useI18n();
+  const isAr = language === "ar";
   const {
     profile,
     isLoading,
@@ -40,7 +43,26 @@ export function AccountDossierView() {
     isRemovingAvatar,
   } = useProfileDossierViewModel();
 
-  const { dossier } = useAccountDossierSliceViewModel();
+  const {
+    dossier,
+    sendEmailVerification,
+    isSendingVerification,
+    verificationSent,
+  } = useAccountDossierSliceViewModel();
+
+  const customFieldDefs = dossier?.customFields ?? profile?.customFields ?? [];
+  const [customValues, setCustomValues] = useState<Record<string, string>>({});
+  const [customSaved, setCustomSaved] = useState(false);
+
+  useEffect(() => {
+    if (customFieldDefs.length > 0) {
+      const next: Record<string, string> = {};
+      for (const cf of customFieldDefs) {
+        next[cf.key] = cf.currentValue != null ? String(cf.currentValue) : "";
+      }
+      setCustomValues(next);
+    }
+  }, [customFieldDefs.length]);
 
   if (isLoading || !profile) {
     return (
@@ -52,19 +74,67 @@ export function AccountDossierView() {
   }
 
   const initials = `${profile.firstName?.[0] || ""}${profile.lastName?.[0] || ""}`.toUpperCase();
-  const tactical = profile.tacticalPhilosophy ?? dossier?.tacticalPhilosophy;
   const memberships = dossier?.clubMemberships ?? [];
-  const linkedAthletes = dossier?.linkedAthleteProfiles ?? [];
+  const isEmailVerified = dossier?.isEmailVerified ?? profile.isEmailVerified ?? true;
+
+  const handleSaveCustomFields = async () => {
+    await updateProfile({
+      firstName: profile.firstName,
+      lastName: profile.lastName,
+      phoneNumber: profile.phoneNumber,
+      bio: profile.bio,
+      customFields: customValues,
+    });
+    setCustomSaved(true);
+    setTimeout(() => setCustomSaved(false), 2500);
+  };
 
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-xl font-bold tracking-tight text-nx-ink">
-          {t("profile.dossier.title")}
-        </h1>
-        <p className="text-xs text-nx-ink-3 mt-1">
-          {t("profile.dossier.description")}
-        </p>
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+        <div>
+          <h1 className="text-xl font-bold tracking-tight text-nx-ink">
+            {t("profile.dossier.title")}
+          </h1>
+          <p className="text-xs text-nx-ink-3 mt-1">
+            {t("profile.dossier.description")}
+          </p>
+        </div>
+
+        {/* Email Verification Status & Action */}
+        <div className="flex items-center gap-2">
+          <Badge
+            variant="outline"
+            className={
+              isEmailVerified
+                ? "border-success/30 text-success bg-success/10 text-xs gap-1.5 py-1 px-2.5"
+                : "border-warning/40 text-warning bg-warning/10 text-xs gap-1.5 py-1 px-2.5"
+            }
+          >
+            <MailCheck className="h-3.5 w-3.5" />
+            <span>
+              {isEmailVerified
+                ? t("profile.dossier.emailVerifiedBadge")
+                : t("profile.dossier.emailUnverifiedBadge")}
+            </span>
+          </Badge>
+
+          {!isEmailVerified && (
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              disabled={isSendingVerification || verificationSent}
+              onClick={() => sendEmailVerification()}
+              data-testid="send-email-verification-btn"
+              className="h-8 text-xs font-semibold"
+            >
+              {verificationSent
+                ? t("profile.dossier.verificationEmailSent")
+                : t("profile.dossier.sendVerificationEmailBtn")}
+            </Button>
+          )}
+        </div>
       </div>
 
       {/* 1. Avatar & Identity Portrait */}
@@ -126,16 +196,96 @@ export function AccountDossierView() {
         </CardContent>
       </Card>
 
-      {/* 3. Interactive SVG Tactical Identity Canvas */}
-      <TacticalIdentityCanvas
-        preferredFormation={tactical?.preferredFormation}
-        pressingIntensity={tactical?.pressingIntensity}
-        buildUpStyle={tactical?.buildUpStyle}
-        manifesto={tactical?.manifesto}
-        assignedSquads={tactical?.assignedAgeGroups}
-      />
+      {/* 3. Dynamic Enterprise Custom Fields (identity.admin) */}
+      <Card
+        data-testid="dossier-custom-fields-card"
+        className="border border-nx-line bg-nx-surface hover:border-nx-line-hi transition-colors"
+      >
+        <CardHeader className="pb-3 flex flex-row items-center justify-between">
+          <div>
+            <div className="flex items-center gap-2">
+              <Sliders className="h-4 w-4 text-nx-accent" style={{ minWidth: 16, minHeight: 16 }} />
+              <CardTitle className="text-sm font-bold text-nx-ink">
+                {t("profile.dossier.customFieldsTitle")}
+              </CardTitle>
+              <Badge variant="outline" className="text-[10px] font-mono border-nx-line text-nx-ink-3">
+                identity.admin
+              </Badge>
+            </div>
+            <CardDescription className="text-xs text-nx-ink-3 mt-1">
+              {t("profile.dossier.customFieldsDesc")}
+            </CardDescription>
+          </div>
+          {customFieldDefs.length > 0 && (
+            <div className="flex items-center gap-2">
+              {customSaved && (
+                <Badge variant="outline" className="border-success/30 text-success bg-success/10 text-xs gap-1">
+                  <CheckCircle2 className="h-3.5 w-3.5" />
+                  <span>{t("profile.common.saved")}</span>
+                </Badge>
+              )}
+              <Button
+                type="button"
+                size="sm"
+                disabled={isUpdating}
+                onClick={handleSaveCustomFields}
+                data-testid="save-custom-fields-btn"
+                className="h-8 text-xs font-semibold"
+              >
+                {t("profile.common.saveChanges")}
+              </Button>
+            </div>
+          )}
+        </CardHeader>
+        <CardContent>
+          {customFieldDefs.length === 0 ? (
+            <p className="text-xs text-nx-ink-3">{t("profile.dossier.noCustomFields")}</p>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5">
+              {customFieldDefs.map((field) => {
+                const label = isAr && field.labelAr ? field.labelAr : field.labelEn;
+                const placeholder =
+                  isAr && field.placeholderAr
+                    ? field.placeholderAr
+                    : field.placeholderEn ?? "";
+                return (
+                  <div
+                    key={field.key}
+                    className="p-3.5 rounded-xl border border-nx-line bg-nx-raised space-y-1.5"
+                  >
+                    <div className="flex items-center justify-between gap-2">
+                      <span className="text-xs font-semibold text-nx-ink">{label}</span>
+                      <div className="flex items-center gap-1.5">
+                        {field.isRequired && (
+                          <Badge variant="outline" className="text-[9px] border-warning/40 text-warning py-0 px-1.5">
+                            {t("profile.dossier.requiredBadge")}
+                          </Badge>
+                        )}
+                        <Badge variant="outline" className="text-[9px] font-mono border-nx-line text-nx-ink-3 py-0 px-1.5">
+                          {field.key}
+                        </Badge>
+                      </div>
+                    </div>
+                    <Input
+                      value={customValues[field.key] ?? ""}
+                      onChange={(e) =>
+                        setCustomValues((prev) => ({
+                          ...prev,
+                          [field.key]: e.target.value,
+                        }))
+                      }
+                      placeholder={placeholder}
+                      className="h-8 text-xs bg-nx-surface border-nx-line text-nx-ink"
+                    />
+                  </div>
+                );
+              })}
+            </div>
+          )}
+        </CardContent>
+      </Card>
 
-      {/* 4. Multi-Club Memberships & Federation Affiliations */}
+      {/* 4. Multi-Tenant & Organizational Branch Memberships */}
       <Card className="border border-nx-line bg-nx-surface hover:border-nx-line-hi transition-colors">
         <CardHeader className="pb-3">
           <div className="flex items-center gap-2">
@@ -174,46 +324,7 @@ export function AccountDossierView() {
           )}
         </CardContent>
       </Card>
-
-      {/* 5. B2B2C Guardian & Family Linked Athlete Profiles */}
-      <Card className="border border-nx-line bg-nx-surface hover:border-nx-line-hi transition-colors">
-        <CardHeader className="pb-3">
-          <div className="flex items-center gap-2">
-            <Users className="h-4 w-4 text-nx-accent" style={{ minWidth: 16, minHeight: 16 }} />
-            <CardTitle className="text-sm font-bold text-nx-ink">
-              {t("profile.dossier.linkedAthletesTitle")}
-            </CardTitle>
-          </div>
-          <CardDescription className="text-xs text-nx-ink-3">
-            {t("profile.dossier.linkedAthletesDesc")}
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          {linkedAthletes.length === 0 ? (
-            <p className="text-xs text-nx-ink-3">{t("profile.dossier.noLinkedAthletes")}</p>
-          ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-              {linkedAthletes.map((ath) => (
-                <div
-                  key={ath.athleteId}
-                  className="p-3.5 rounded-xl border border-nx-line bg-nx-raised flex items-center justify-between gap-3"
-                >
-                  <div>
-                    <span className="text-xs font-bold text-nx-ink block">{ath.fullName}</span>
-                    <span className="text-[11px] text-nx-ink-3">
-                      {ath.ageGroup} &bull; {ath.position}
-                    </span>
-                  </div>
-                  <Badge variant="outline" className="text-[10px] border-success/30 text-success bg-success/10 gap-1">
-                    <ShieldCheck className="h-3 w-3" />
-                    <span>{ath.medicalClearance}</span>
-                  </Badge>
-                </div>
-              ))}
-            </div>
-          )}
-        </CardContent>
-      </Card>
     </div>
   );
 }
+

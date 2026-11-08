@@ -1,8 +1,7 @@
 /**
- * Sovereign Account World v3.0 Workstation, Plan, Billing & Ecosystem Domain Entities
+ * Clean 9-Page B2B Enterprise Account Console (v4.0) Workstation, Plan & Integrations Domain Entities
  *
- * Categories 4, 5, and 6 domain models for /account/preferences, /account/accessibility,
- * /account/ai-copilot, /account/notifications, /account/plan, /account/billing, and /account/integrations.
+ * Domain models for /account/preferences, /account/notifications, /account/plan, and /account/integrations.
  */
 
 export interface SovereignPreferencesSlice {
@@ -12,45 +11,47 @@ export interface SovereignPreferencesSlice {
   defaultLandingRoute: string;
   sidebarCollapsedByDefault: boolean;
   broadcastPrivacyBlurDefault: boolean;
+  reducedMotionEnabled?: boolean;
+  typographyScale?: number;
+  languageCode?: string;
+  operatingTimezone?: string;
+  numeralSystem?: string;
+  calendarSystem?: string;
+  firstDayOfWeek?: string;
   customHotkeysJson: string;
   savedFilterPresetsJson: string;
   rowVersion?: string;
 }
 
-export interface SovereignAccessibilitySlice {
-  sunlightContrastMode: boolean;
-  colorBlindPalette: string;
-  reducedMotion: boolean;
-  screenReaderVerbosity: string;
-  fontScalePercent: number;
-  operatingTimezone: string;
-  preferredLanguage: string;
-  numeralSystem: string;
-  calendarMode: string;
-  firstDayOfWeek: string;
-  speedUnit: string;
-  weightUnit: string;
-  temperatureUnit: string;
-  rowVersion?: string;
+export interface NotificationCategoryRuleItem {
+  category: string;
+  displayName: string;
+  description: string;
+  inAppEnabled: boolean;
+  emailEnabled: boolean;
+  smsEnabled: boolean;
+  pushEnabled: boolean;
+  isCriticalLocked: boolean;
 }
 
-export interface SovereignAiCopilotSlice {
-  copilotPersona: string;
-  tacticalVocabularyStyle: string;
-  scoutingMetricWeightsJson: string;
-  morningBriefingEnabled: boolean;
-  morningBriefingUtcHour: number;
-  memoryEntriesJson: string;
-  rowVersion?: string;
+export interface RecentNotificationAlertItem {
+  id: string;
+  title: string;
+  message: string;
+  category: string;
+  createdAt: string;
+  isRead: boolean;
 }
 
 export interface SovereignNotificationsSlice {
+  categoryRules: NotificationCategoryRuleItem[];
   routingMatrixJson: string;
   quietHoursEnabled: boolean;
   quietHoursStartUtc: string;
   quietHoursEndUtc: string;
-  matchDayFocusAutoEnable: boolean;
-  vipOverrideRoles: string[];
+  securityAlertsBypassQuietHours: boolean;
+  unreadNotificationsCount: number;
+  recentNotifications: RecentNotificationAlertItem[];
   rowVersion?: string;
 }
 
@@ -72,8 +73,10 @@ export interface SovereignQuotaGaugeItem {
 }
 
 export interface SovereignPlanSlice {
+  isPlatformSovereign?: boolean;
   editionCode: string;
   editionName: string;
+  tierTagline?: string;
   subscriptionStatus: string;
   billingCadence: string;
   contractStartedAtUtc: string;
@@ -87,35 +90,6 @@ export interface SovereignPlanSlice {
   quotas: SovereignQuotaGaugeItem[];
 }
 
-export interface ExpenseClaimItem {
-  id: string;
-  title: string;
-  category: string;
-  amount: number;
-  currency: string;
-  incurredAtUtc: string;
-  status: string;
-}
-
-export interface InvoiceLedgerItem {
-  invoiceNumber: string;
-  description: string;
-  amount: number;
-  currency: string;
-  issuedAtUtc: string;
-  status: string;
-}
-
-export interface SovereignBillingSlice {
-  reimbursementIbanMasked: string;
-  defaultCurrency: string;
-  pendingReimbursementTotal: number;
-  settledReimbursementTotal: number;
-  facilityBookingCreditsBalance: number;
-  expenses: ExpenseClaimItem[];
-  invoices: InvoiceLedgerItem[];
-}
-
 export interface PersonalAccessTokenSummary {
   id: string;
   name: string;
@@ -126,29 +100,11 @@ export interface PersonalAccessTokenSummary {
   lastUsedAtUtc?: string | null;
 }
 
-export interface AdminSshKeyItem {
-  id: string;
-  title: string;
-  keyType: string;
-  fingerprintSha256: string;
-  createdAtUtc: string;
-  lastUsedAtUtc?: string | null;
-}
-
-export interface AdminWebhookItem {
-  id: string;
-  name: string;
-  targetUrl: string;
-  secretPrefix: string;
-  subscribedEvents: string[];
-  isActive: boolean;
-  failureCount: number;
-  lastDeliveredAtUtc?: string | null;
-}
-
 export interface ExternalIdpLinkItem {
   id: string;
   providerName: string;
+  protocolType?: string;
+  isConnected?: boolean;
   externalEmail: string;
   linkedAtUtc: string;
 }
@@ -156,7 +112,6 @@ export interface ExternalIdpLinkItem {
 export interface SovereignIntegrationsSlice {
   externalIdpLinks: ExternalIdpLinkItem[];
   personalAccessTokens: PersonalAccessTokenSummary[];
-  sshKeys: AdminSshKeyItem[];
-  webhooks: AdminWebhookItem[];
-  privateIcalFeedUrl: string;
+  availableScopes: string[];
 }
+

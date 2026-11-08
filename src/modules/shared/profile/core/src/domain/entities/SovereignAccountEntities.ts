@@ -1,9 +1,11 @@
 /**
- * Sovereign Account World v3.0 Domain Entities
+ * Clean 9-Page B2B Enterprise Account Console (v4.0) Domain Entities
  *
- * Typed domain models for all 15 Sovereign Account slices (/account/*) and
+ * Typed domain models for the B2B Account Console (/account/*) and
  * the consolidated Telemetry HUD & Security Posture Ring context.
  */
+import type { AdminCustomFieldItem } from "./AdminProfile";
+
 export * from "./SovereignAccountWorkstationEntities";
 
 export interface SecurityPostureCheckItem {
@@ -28,11 +30,9 @@ export interface SovereignAccountContext {
   securityPostureScore: number;
   postureChecklist: SecurityPostureCheckItem[];
   activeSessionsCount: number;
-  pairedDevicesCount: number;
-  travelShieldEnabled: boolean;
-  travelShieldExpiresAtUtc?: string | null;
   sudoActive: boolean;
   sudoExpiresAtUtc?: string | null;
+  supportVerificationPin?: string;
 }
 
 export interface ClubMembershipSummary {
@@ -44,21 +44,13 @@ export interface ClubMembershipSummary {
   isPrimary: boolean;
 }
 
-export interface LinkedAthleteSummary {
-  athleteId: string;
-  fullName: string;
-  squadName: string;
-  shirtNumber: string;
-  relationship: string;
-  medicalClearanceStatus: string;
-}
-
 export interface SovereignDossierSlice {
   id: string;
   username: string;
   firstName: string;
   lastName: string;
   email?: string | null;
+  isEmailVerified: boolean;
   phoneNumber?: string | null;
   profileImageUrl?: string | null;
   staffCode?: string | null;
@@ -68,34 +60,8 @@ export interface SovereignDossierSlice {
   editionName?: string | null;
   isAvailableForOperations: boolean;
   securityScore: number;
-  tacticalIdentityJson: string;
   clubMemberships: ClubMembershipSummary[];
-  linkedAthletes: LinkedAthleteSummary[];
-}
-
-export interface AdminCredentialItem {
-  id: string;
-  category: string;
-  governingBody: string;
-  title: string;
-  licenseNumber: string;
-  issuedAtUtc: string;
-  expiresAtUtc?: string | null;
-  verificationStatus: string;
-  documentUrl?: string | null;
-  authorityNotes?: string | null;
-}
-
-export interface SovereignCredentialsSlice {
-  passSerialNumber: string;
-  federationBadgeCode: string;
-  bloodType: string;
-  stadiumZoneClearances: string[];
-  qrVerificationToken: string;
-  hasDigitalSignatureSeal: boolean;
-  digitalSignatureSealPreview?: string | null;
-  hasSigningPin: boolean;
-  credentials: AdminCredentialItem[];
+  customFields: AdminCustomFieldItem[];
 }
 
 export interface SovereignSecuritySlice {
@@ -105,12 +71,11 @@ export interface SovereignSecuritySlice {
   hardwareKeyCount: number;
   securityPostureScore: number;
   postureChecklist: SecurityPostureCheckItem[];
-  travelShieldEnabled: boolean;
-  travelShieldExpiresAtUtc?: string | null;
   trustedCidrs: string[];
-  hasDuressPin: boolean;
   sudoActive: boolean;
   sudoExpiresAtUtc?: string | null;
+  currentClientIp?: string | null;
+  isCurrentIpAllowed: boolean;
 }
 
 export interface AccountSessionNode {
@@ -131,33 +96,7 @@ export interface AccountSessionNode {
 
 export interface SovereignSessionsSlice {
   sessions: AccountSessionNode[];
-  coachAppPairingToken: string;
-  coachAppPairingExpiresAtUtc: string;
   impossibleTravelDetected?: boolean;
-}
-
-export interface AdminDeviceItem {
-  id: string;
-  deviceId: string;
-  deviceName: string;
-  deviceCategory: string;
-  platformOs: string;
-  appVersion: string;
-  postureScore: number;
-  isTrusted: boolean;
-  isBiometricEnrolled: boolean;
-  offlineVaultQuotaMb: number;
-  offlinePendingSyncCount: number;
-  telemetryBridgeProvider?: string | null;
-  lastSeenIp?: string | null;
-  lastSeenGeo?: string | null;
-  lastActiveAtUtc: string;
-}
-
-export interface SovereignDevicesSlice {
-  devices: AdminDeviceItem[];
-  totalOfflineVaultMb: number;
-  totalPendingSyncPackages: number;
 }
 
 export interface PermissionProvenanceNode {
@@ -192,6 +131,13 @@ export interface GovernancePersonaOption {
 }
 
 export interface SovereignGovernanceSlice {
+  isSuperAdmin?: boolean;
+  isProtected?: boolean;
+  isDelegationFeatureEnabled: boolean;
+  activeTenantName?: string | null;
+  activeBranchName?: string | null;
+  allowedBranches: string[];
+  assignedRoles: Array<{ id?: string; name: string; description?: string | null; isSystemRole?: boolean }>;
   effectivePermissions: string[];
   provenanceGraph: PermissionProvenanceNode[];
   delegations: AdminDelegationItem[];
@@ -203,6 +149,8 @@ export interface SovereignGovernanceSlice {
 export interface SovereignAuditEntry {
   id: string;
   eventType: string;
+  category?: string;
+  outcome?: string;
   severity: string;
   timestampUtc: string;
   ipAddress: string;
@@ -215,14 +163,6 @@ export interface SovereignAuditEntry {
 export interface SovereignActivitySlice {
   entries: SovereignAuditEntry[];
   chainIntegrityStatus: string;
-  activeInspectorPassToken?: string | null;
-  inspectorPassExpiresAtUtc?: string | null;
+  totalEntries?: number;
 }
 
-export interface SovereignPrivacySlice {
-  encryptedScratchpadCiphertext?: string | null;
-  aiTelemetryConsent: boolean;
-  anonymizedBenchmarkConsent: boolean;
-  lastPortabilityExportAtUtc?: string | null;
-  recoveryKitSerial: string;
-}

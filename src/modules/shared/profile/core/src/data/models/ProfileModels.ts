@@ -11,21 +11,23 @@
  * Interface defining property specifications, keys types, and structural contract rules for admin profile dto.
  */
 export interface AdminProfileDto {
-  id: string;
+  id?: string;
+  adminId?: string;
   username: string;
   firstName: string;
   lastName: string;
   phoneNumber: string;
   email: string;
-  adminTypeName: string;
+  isEmailVerified?: boolean;
+  adminTypeName?: string;
   profileImageUrl: string | null;
   roles?: Array<{ roleCode?: string; roleName?: string }>;
   permissions?: string[];
-  isTwoFactorEnabled: boolean;
-  backupCodesRemaining: number | null;
-  isPasswordExpired: boolean;
-  daysUntilPasswordExpiry: number | null;
-  passwordLastChanged: string | null;
+  isTwoFactorEnabled?: boolean;
+  backupCodesRemaining?: number | null;
+  isPasswordExpired?: boolean;
+  daysUntilPasswordExpiry?: number | null;
+  passwordLastChanged?: string | null;
   staffCode?: string;
   bio?: string;
   clubAffiliation?: string;
@@ -35,26 +37,31 @@ export interface AdminProfileDto {
   securityScore?: number;
   availableAcademies?: Array<{ id: string; name: string; isCurrent: boolean }>;
   academies?: Array<{ id: string; name: string; isPrimary?: boolean; isCurrent?: boolean }>;
-  coachingLicenses?: Array<{
-    id: string;
-    organization: string;
-    licenseLevel: string;
-    certificateNumber: string;
-    issuedAt: string;
-    expiresAt: string;
-    verificationStatus: "Verified" | "Pending" | "Expired" | "Revoked";
+  clubMemberships?: Array<{
+    membershipId?: string;
+    tenantId: string;
+    tenantName?: string;
+    clubName?: string;
+    editionName?: string;
+    roleTitle?: string;
+    isPrimary?: boolean;
   }>;
-  tacticalPhilosophy?: {
-    preferredFormation: string;
-    pressingIntensity: string;
-    buildUpStyle: string;
-    manifesto: string;
-    assignedAgeGroups: string[];
-  };
-  coachingLicensesJson?: string | null;
-  tacticalPhilosophyJson?: string | null;
-  adminSettingsJson?: string | null;
+  customFields?: Array<{
+    key: string;
+    labelEn: string;
+    labelAr?: string | null;
+    placeholderEn?: string | null;
+    placeholderAr?: string | null;
+    valueType: string;
+    isRequired: boolean;
+    sensitivity?: number;
+    options?: string | null;
+    optionsAr?: string | null;
+    sortOrder?: number;
+    currentValue?: unknown;
+  }>;
 }
+
 
 /**
  * Interface defining property specifications, keys types, and structural contract rules for active session dto.

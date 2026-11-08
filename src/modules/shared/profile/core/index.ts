@@ -1,26 +1,20 @@
 /**
- * Profile & Sovereign Account Module Core Exports
+ * Profile & Enterprise Account Module Core Exports
  *
- * Public barrel export for all 15 Sovereign Account World v3.0 presentation views,
- * viewmodels, signature components, and hooks.
+ * Public barrel export for the 9 Clean B2B Enterprise Account Console (/account/*)
+ * presentation views, viewmodels, components, and hooks.
  */
 
-// Presentation Views (15 Sovereign Account Slices + ForceChangePasswordView)
+// Presentation Views (9 B2B Enterprise Account Views + ForceChangePasswordView)
 export { ForceChangePasswordView } from "./src/presentation/views/ForceChangePasswordView";
 export { AccountDossierView } from "./src/presentation/views/AccountDossierView";
-export { AccountCredentialsView } from "./src/presentation/views/AccountCredentialsView";
 export { AccountSecurityView } from "./src/presentation/views/AccountSecurityView";
 export { AccountSessionsView } from "./src/presentation/views/AccountSessionsView";
-export { AccountDevicesView } from "./src/presentation/views/AccountDevicesView";
 export { AccountGovernanceView } from "./src/presentation/views/AccountGovernanceView";
 export { AccountActivityView } from "./src/presentation/views/AccountActivityView";
-export { AccountPrivacyView } from "./src/presentation/views/AccountPrivacyView";
 export { AccountPreferencesView } from "./src/presentation/views/AccountPreferencesView";
-export { AccountAccessibilityView } from "./src/presentation/views/AccountAccessibilityView";
-export { AccountAiCopilotView } from "./src/presentation/views/AccountAiCopilotView";
 export { AccountNotificationsView } from "./src/presentation/views/AccountNotificationsView";
 export { AccountPlanView } from "./src/presentation/views/AccountPlanView";
-export { AccountBillingView } from "./src/presentation/views/AccountBillingView";
 export { AccountIntegrationsView } from "./src/presentation/views/AccountIntegrationsView";
 
 // ViewModels
@@ -40,8 +34,6 @@ export { ProfileTelemetryHud } from "./src/presentation/components/ProfileTeleme
 export { ProfileRailLayout } from "./src/presentation/components/ProfileRailLayout";
 export { SovereignCommandBar } from "./src/presentation/components/SovereignCommandBar";
 export { SovereignSudoGate } from "./src/presentation/components/SovereignSudoGate";
-export { TacticalIdentityCanvas } from "./src/presentation/components/TacticalIdentityCanvas";
-export { SovereignIdentityPass } from "./src/presentation/components/SovereignIdentityPass";
 export { SovereignSessionRadar } from "./src/presentation/components/SovereignSessionRadar";
 export { PermissionProvenanceGraph } from "./src/presentation/components/PermissionProvenanceGraph";
 export { ErgonomicsLiveStage } from "./src/presentation/components/ErgonomicsLiveStage";
@@ -58,3 +50,4 @@ export { PasswordChangeForm } from "./src/presentation/components/PasswordChange
 export { ActivityTimeline } from "./src/presentation/components/ActivityTimeline";
 export { ExternalLoginsSection } from "./src/presentation/components/ExternalLoginsSection";
 export { TwoFactorStatus } from "./src/presentation/components/TwoFactorStatus";
+
