@@ -1,8 +1,8 @@
 import { defineConfig, devices } from "@playwright/test";
 
 /**
- * Dedicated Playwright Configuration for SCRIPE Sovereign Account World v3.0 Suite.
- * Targets all 15 `/account/*` sovereign pages in both Tactical Dark Mode and Clean Light Mode.
+ * Dedicated Playwright Configuration for SCRIPE Sovereign Account Console v4.0 Suite.
+ * Targets all 9 `/account/*` B2B enterprise pages in both Tactical Dark Mode and Clean Light Mode.
  */
 export default defineConfig({
   testDir: ".",
@@ -31,9 +31,9 @@ export default defineConfig({
   ],
 
   webServer: {
-    command: "pnpm start -p 3000",
+    command: "pnpm dev -p 3000",
     port: 3000,
     reuseExistingServer: true,
-    timeout: 60_000,
+    timeout: 90_000,
   },
 });

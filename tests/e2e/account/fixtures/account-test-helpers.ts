@@ -1,38 +1,27 @@
 import { Page } from "@playwright/test";
 import {
+  MOCK_ACCOUNT_CONTEXT,
   MOCK_ACCOUNT_DOSSIER,
-  MOCK_CREDENTIALS_SLICE,
   MOCK_SECURITY_SLICE,
   MOCK_SESSIONS_SLICE,
-  MOCK_DEVICES_SLICE,
   MOCK_GOVERNANCE_SLICE,
   MOCK_ACTIVITY_SLICE,
-  MOCK_PRIVACY_SLICE,
   MOCK_PREFERENCES_SLICE,
-  MOCK_ACCESSIBILITY_SLICE,
-  MOCK_AI_COPILOT_SLICE,
   MOCK_NOTIFICATIONS_SLICE,
   MOCK_PLAN_SLICE,
-  MOCK_BILLING_SLICE,
   MOCK_INTEGRATIONS_SLICE,
 } from "./account-mock-data";
 
 export const SOVEREIGN_ACCOUNT_ROUTES = [
   { slug: "dossier", path: "/account/dossier", index: "01" },
-  { slug: "credentials", path: "/account/credentials", index: "02" },
-  { slug: "security", path: "/account/security", index: "03" },
-  { slug: "sessions", path: "/account/sessions", index: "04" },
-  { slug: "devices", path: "/account/devices", index: "05" },
-  { slug: "governance", path: "/account/governance", index: "06" },
-  { slug: "activity", path: "/account/activity", index: "07" },
-  { slug: "privacy", path: "/account/privacy", index: "08" },
-  { slug: "preferences", path: "/account/preferences", index: "09" },
-  { slug: "accessibility", path: "/account/accessibility", index: "10" },
-  { slug: "ai-copilot", path: "/account/ai-copilot", index: "11" },
-  { slug: "notifications", path: "/account/notifications", index: "12" },
-  { slug: "plan", path: "/account/plan", index: "13" },
-  { slug: "billing", path: "/account/billing", index: "14" },
-  { slug: "integrations", path: "/account/integrations", index: "15" },
+  { slug: "security", path: "/account/security", index: "02" },
+  { slug: "sessions", path: "/account/sessions", index: "03" },
+  { slug: "governance", path: "/account/governance", index: "04" },
+  { slug: "activity", path: "/account/activity", index: "05" },
+  { slug: "preferences", path: "/account/preferences", index: "06" },
+  { slug: "notifications", path: "/account/notifications", index: "07" },
+  { slug: "plan", path: "/account/plan", index: "08" },
+  { slug: "integrations", path: "/account/integrations", index: "09" },
 ] as const;
 
 export async function mockWebAuthn(page: Page) {
@@ -90,21 +79,16 @@ export async function applyThemeMode(page: Page, mode: "dark" | "light") {
 }
 
 export async function setupSovereignAccountRouteMocks(page: Page) {
+  const contextData = structuredClone(MOCK_ACCOUNT_CONTEXT);
   let dossier = structuredClone(MOCK_ACCOUNT_DOSSIER);
-  let credentialsSlice = structuredClone(MOCK_CREDENTIALS_SLICE);
   let securitySlice = structuredClone(MOCK_SECURITY_SLICE);
-  let sessionsSlice = structuredClone(MOCK_SESSIONS_SLICE);
-  let devicesSlice = structuredClone(MOCK_DEVICES_SLICE);
-  let governanceSlice = structuredClone(MOCK_GOVERNANCE_SLICE);
+  const sessionsSlice = structuredClone(MOCK_SESSIONS_SLICE);
+  const governanceSlice = structuredClone(MOCK_GOVERNANCE_SLICE);
   const activitySlice = structuredClone(MOCK_ACTIVITY_SLICE);
-  let privacySlice = structuredClone(MOCK_PRIVACY_SLICE);
   let preferencesSlice = structuredClone(MOCK_PREFERENCES_SLICE);
-  let accessibilitySlice = structuredClone(MOCK_ACCESSIBILITY_SLICE);
-  let aiCopilotSlice = structuredClone(MOCK_AI_COPILOT_SLICE);
   let notificationsSlice = structuredClone(MOCK_NOTIFICATIONS_SLICE);
   const planSlice = structuredClone(MOCK_PLAN_SLICE);
-  let billingSlice = structuredClone(MOCK_BILLING_SLICE);
-  let integrationsSlice = structuredClone(MOCK_INTEGRATIONS_SLICE);
+  const integrationsSlice = structuredClone(MOCK_INTEGRATIONS_SLICE);
 
   await page.context().addCookies([
     {
@@ -134,7 +118,7 @@ export async function setupSovereignAccountRouteMocks(page: Page) {
             email: "admin@scripe.com",
             firstName: "Alex",
             lastName: "Morgan",
-            roles: ["Platform Administrator", "Director of Football"],
+            roles: ["Platform Administrator", "VP of Enterprise Operations"],
           },
           permissions: ["*"],
           _hasHydrated: true,
@@ -178,6 +162,15 @@ export async function setupSovereignAccountRouteMocks(page: Page) {
     });
   });
 
+  // 0. Context
+  await page.route("**/api/v1/account/context", async (route) => {
+    await route.fulfill({
+      status: 200,
+      contentType: "application/json",
+      body: JSON.stringify(contextData),
+    });
+  });
+
   // 1. Dossier & Avatar
   await page.route("**/api/v1/account/dossier/avatar", async (route) => {
     if (route.request().method() === "POST") {
@@ -204,13 +197,7 @@ export async function setupSovereignAccountRouteMocks(page: Page) {
       });
     } else if (route.request().method() === "PUT") {
       const payload = route.request().postDataJSON() || {};
-      dossier = {
-        ...dossier,
-        ...payload,
-        tacticalIdentity: payload.tacticalIdentity
-          ? { ...dossier.tacticalIdentity, ...payload.tacticalIdentity }
-          : dossier.tacticalIdentity,
-      };
+      dossier = { ...dossier, ...payload };
       await route.fulfill({
         status: 200,
         contentType: "application/json",
@@ -221,111 +208,28 @@ export async function setupSovereignAccountRouteMocks(page: Page) {
     }
   });
 
-  // 2. Credentials
-  await page.route("**/api/v1/account/credentials/seal", async (route) => {
-    const body = route.request().postDataJSON() || {};
-    credentialsSlice = {
-      ...credentialsSlice,
-      digitalSealSvg: body.digitalSealSvg || credentialsSlice.digitalSealSvg,
-      signingKeyPublicPem: body.signingKeyPublicPem || credentialsSlice.signingKeyPublicPem,
-    };
-    await route.fulfill({
-      status: 200,
-      contentType: "application/json",
-      body: JSON.stringify(credentialsSlice),
-    });
-  });
-
-  await page.route("**/api/v1/account/credentials/*", async (route) => {
-    if (route.request().method() === "DELETE") {
-      const id = route.request().url().split("/").pop();
-      credentialsSlice.credentials = credentialsSlice.credentials.filter((c) => c.id !== id);
-      await route.fulfill({ status: 200, contentType: "application/json", body: JSON.stringify({}) });
-    } else {
-      await route.continue();
-    }
-  });
-
-  await page.route("**/api/v1/account/credentials", async (route) => {
+  // 2. Security & Passkeys & 2FA
+  await page.route("**/api/v1/account/security", async (route) => {
     if (route.request().method() === "GET") {
       await route.fulfill({
         status: 200,
         contentType: "application/json",
-        body: JSON.stringify(credentialsSlice),
+        body: JSON.stringify(securitySlice),
       });
-    } else if (route.request().method() === "POST") {
+    } else if (route.request().method() === "PUT") {
       const body = route.request().postDataJSON() || {};
-      const added = {
-        id: `cred-${Date.now()}`,
-        category: body.category || "CoachingLicense",
-        issuingBody: body.issuingBody || "UEFA",
-        credentialTitle: body.credentialTitle || "UEFA A Coaching License",
-        certificateNumber: body.certificateNumber || "UEFA-A-7712",
-        issuedAtUtc: body.issuedAtUtc || new Date().toISOString(),
-        expiresAtUtc: body.expiresAtUtc || new Date(Date.now() + 31536000000).toISOString(),
-        verificationStatus: "Verified",
-        stadiumZones: body.stadiumZones || ["Pitch-Side", "Technical Area"],
+      securitySlice = {
+        ...securitySlice,
+        allowedCidrs: Array.isArray(body.allowedCidrs) ? body.allowedCidrs : securitySlice.allowedCidrs,
       };
-      credentialsSlice.credentials.push(added);
       await route.fulfill({
         status: 200,
         contentType: "application/json",
-        body: JSON.stringify(added),
+        body: JSON.stringify(securitySlice),
       });
     } else {
       await route.continue();
     }
-  });
-
-  // 3. Security & Passkeys & 2FA
-  await page.route("**/api/v1/account/security/policy", async (route) => {
-    const body = route.request().postDataJSON() || {};
-    securitySlice = {
-      ...securitySlice,
-      travelShieldEnabled:
-        typeof body.travelShieldEnabled === "boolean"
-          ? body.travelShieldEnabled
-          : securitySlice.travelShieldEnabled,
-      allowedCidrs: Array.isArray(body.allowedCidrs) ? body.allowedCidrs : securitySlice.allowedCidrs,
-      hasDuressPinConfigured: body.duressPin ? true : securitySlice.hasDuressPinConfigured,
-    };
-    await route.fulfill({
-      status: 200,
-      contentType: "application/json",
-      body: JSON.stringify(securitySlice),
-    });
-  });
-
-  await page.route("**/api/v1/account/security/support-pin", async (route) => {
-    securitySlice = {
-      ...securitySlice,
-      supportVerificationPin: "910428",
-      supportPinExpiresAtUtc: new Date(Date.now() + 900_000).toISOString(),
-    };
-    await route.fulfill({
-      status: 200,
-      contentType: "application/json",
-      body: JSON.stringify({
-        supportVerificationPin: securitySlice.supportVerificationPin,
-        expiresAtUtc: securitySlice.supportPinExpiresAtUtc,
-      }),
-    });
-  });
-
-  await page.route("**/api/v1/account/security/lockdown", async (route) => {
-    await route.fulfill({
-      status: 200,
-      contentType: "application/json",
-      body: JSON.stringify({ lockedDown: true, revokedSessions: 2 }),
-    });
-  });
-
-  await page.route("**/api/v1/account/security", async (route) => {
-    await route.fulfill({
-      status: 200,
-      contentType: "application/json",
-      body: JSON.stringify(securitySlice),
-    });
   });
 
   await page.route("**/api/v1/auth/passkeys", async (route) => {
@@ -347,7 +251,7 @@ export async function setupSovereignAccountRouteMocks(page: Page) {
     });
   });
 
-  // 4. Sessions
+  // 3. Sessions
   await page.route("**/api/v1/account/sessions/*/ping", async (route) => {
     await route.fulfill({
       status: 200,
@@ -390,49 +294,7 @@ export async function setupSovereignAccountRouteMocks(page: Page) {
     });
   });
 
-  // 5. Devices
-  await page.route("**/api/v1/account/devices/*", async (route) => {
-    if (route.request().method() === "DELETE") {
-      const id = route.request().url().split("/").pop();
-      devicesSlice.devices = devicesSlice.devices.filter((d) => d.id !== id);
-      await route.fulfill({ status: 200, contentType: "application/json", body: JSON.stringify({}) });
-    } else {
-      await route.continue();
-    }
-  });
-
-  await page.route("**/api/v1/account/devices", async (route) => {
-    if (route.request().method() === "GET") {
-      await route.fulfill({
-        status: 200,
-        contentType: "application/json",
-        body: JSON.stringify(devicesSlice),
-      });
-    } else if (route.request().method() === "POST") {
-      const body = route.request().postDataJSON() || {};
-      const added = {
-        id: `dev-${Date.now()}`,
-        deviceName: body.deviceName || "Pitch-Side iPad Mini 7",
-        deviceCategory: body.deviceCategory || "PitchTablet",
-        platformOs: body.platformOs || "iPadOS 18.3",
-        hardwareFingerprint: body.hardwareFingerprint || "IPADMINI-9921",
-        postureScore: 97,
-        isTrusted: true,
-        lastOfflineSyncAtUtc: new Date().toISOString(),
-        offlinePackages: body.offlinePackages || ["SquadRosters"],
-      };
-      devicesSlice.devices.push(added);
-      await route.fulfill({
-        status: 200,
-        contentType: "application/json",
-        body: JSON.stringify(added),
-      });
-    } else {
-      await route.continue();
-    }
-  });
-
-  // 6. Governance
+  // 4. Governance
   await page.route("**/api/v1/account/governance/delegations/*", async (route) => {
     if (route.request().method() === "DELETE") {
       const id = route.request().url().split("/").pop();
@@ -447,35 +309,16 @@ export async function setupSovereignAccountRouteMocks(page: Page) {
     const body = route.request().postDataJSON() || {};
     const added = {
       id: `del-${Date.now()}`,
+      principalAdminId: dossier.id,
       delegateAdminId: body.delegateAdminId || "00000000-0000-0000-0000-000000000002",
-      delegateDisplayName: body.delegateDisplayName || "Assistant Technical Director",
+      delegateDisplayName: body.delegateDisplayName || "Deputy Operations Director",
       delegationType: body.delegationType || "VacationActingAs",
-      grantedScopes: body.grantedScopes || ["football.tactics.view"],
-      justification: body.justification || "Matchday tactical delegation",
+      grantedScopes: body.grantedScopes || ["CRM.Pipelines.View"],
+      justification: body.justification || "Annual Leave Delegation",
       startsAtUtc: new Date().toISOString(),
       expiresAtUtc: body.expiresAtUtc || new Date(Date.now() + 86400000 * 3).toISOString(),
       revokedAtUtc: null,
-    };
-    governanceSlice.delegations.push(added);
-    await route.fulfill({
-      status: 200,
-      contentType: "application/json",
-      body: JSON.stringify(added),
-    });
-  });
-
-  await page.route("**/api/v1/account/governance/break-glass", async (route) => {
-    const body = route.request().postDataJSON() || {};
-    const added = {
-      id: `bg-${Date.now()}`,
-      delegateAdminId: dossier.id,
-      delegateDisplayName: `${dossier.firstName} ${dossier.lastName} (Break-Glass)`,
-      delegationType: "BreakGlass",
-      grantedScopes: body.requestedScopes || ["*"],
-      justification: body.justification || "Emergency Matchday Roster Clearance",
-      startsAtUtc: new Date().toISOString(),
-      expiresAtUtc: new Date(Date.now() + 1800_000).toISOString(),
-      revokedAtUtc: null,
+      status: "ACTIVE",
     };
     governanceSlice.delegations.push(added);
     await route.fulfill({
@@ -493,7 +336,7 @@ export async function setupSovereignAccountRouteMocks(page: Page) {
     });
   });
 
-  // 7. Activity & Security Log
+  // 5. Activity & Security Log
   await page.route("**/api/v1/account/activity*", async (route) => {
     await route.fulfill({
       status: 200,
@@ -510,40 +353,7 @@ export async function setupSovereignAccountRouteMocks(page: Page) {
     });
   });
 
-  // 8. Privacy
-  await page.route("**/api/v1/account/privacy/export-dsar", async (route) => {
-    await route.fulfill({
-      status: 200,
-      contentType: "application/json",
-      body: JSON.stringify({
-        archiveId: "dsar-bundle-2026-sov-001",
-        generatedAtUtc: new Date().toISOString(),
-        sha256Signature: "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-      }),
-    });
-  });
-
-  await page.route("**/api/v1/account/privacy", async (route) => {
-    if (route.request().method() === "GET") {
-      await route.fulfill({
-        status: 200,
-        contentType: "application/json",
-        body: JSON.stringify(privacySlice),
-      });
-    } else if (route.request().method() === "PUT") {
-      const body = route.request().postDataJSON() || {};
-      privacySlice = { ...privacySlice, ...body };
-      await route.fulfill({
-        status: 200,
-        contentType: "application/json",
-        body: JSON.stringify(privacySlice),
-      });
-    } else {
-      await route.continue();
-    }
-  });
-
-  // 9. Preferences
+  // 6. Preferences
   await page.route("**/api/v1/account/preferences", async (route) => {
     if (route.request().method() === "GET") {
       await route.fulfill({
@@ -564,49 +374,24 @@ export async function setupSovereignAccountRouteMocks(page: Page) {
     }
   });
 
-  // 10. Accessibility
-  await page.route("**/api/v1/account/accessibility", async (route) => {
-    if (route.request().method() === "GET") {
-      await route.fulfill({
-        status: 200,
-        contentType: "application/json",
-        body: JSON.stringify(accessibilitySlice),
-      });
-    } else if (route.request().method() === "PUT") {
-      const body = route.request().postDataJSON() || {};
-      accessibilitySlice = { ...accessibilitySlice, ...body };
-      await route.fulfill({
-        status: 200,
-        contentType: "application/json",
-        body: JSON.stringify(accessibilitySlice),
-      });
-    } else {
-      await route.continue();
-    }
+  // 7. Notifications
+  await page.route("**/api/v1/account/notifications/test", async (route) => {
+    notificationsSlice.recentNotifications.unshift({
+      id: `notif-${Date.now()}`,
+      title: "Live B2B Test Notification",
+      message: "SignalR push & HTML Email Queue verified.",
+      category: "Security",
+      createdAt: new Date().toISOString(),
+      isRead: false,
+    });
+    notificationsSlice.unreadNotificationsCount += 1;
+    await route.fulfill({
+      status: 200,
+      contentType: "application/json",
+      body: JSON.stringify({ sent: true }),
+    });
   });
 
-  // 11. AI Copilot
-  await page.route("**/api/v1/account/ai-copilot", async (route) => {
-    if (route.request().method() === "GET") {
-      await route.fulfill({
-        status: 200,
-        contentType: "application/json",
-        body: JSON.stringify(aiCopilotSlice),
-      });
-    } else if (route.request().method() === "PUT") {
-      const body = route.request().postDataJSON() || {};
-      aiCopilotSlice = { ...aiCopilotSlice, ...body };
-      await route.fulfill({
-        status: 200,
-        contentType: "application/json",
-        body: JSON.stringify(aiCopilotSlice),
-      });
-    } else {
-      await route.continue();
-    }
-  });
-
-  // 12. Notifications
   await page.route("**/api/v1/account/notifications", async (route) => {
     if (route.request().method() === "GET") {
       await route.fulfill({
@@ -627,7 +412,15 @@ export async function setupSovereignAccountRouteMocks(page: Page) {
     }
   });
 
-  // 13. Plan & Quotas
+  // 8. Plan & Quotas
+  await page.route("**/api/v1/account/plan/request", async (route) => {
+    await route.fulfill({
+      status: 200,
+      contentType: "application/json",
+      body: JSON.stringify({ submitted: true }),
+    });
+  });
+
   await page.route("**/api/v1/account/plan", async (route) => {
     await route.fulfill({
       status: 200,
@@ -636,98 +429,51 @@ export async function setupSovereignAccountRouteMocks(page: Page) {
     });
   });
 
-  // 14. Billing & Expenses
-  await page.route("**/api/v1/account/billing/expenses", async (route) => {
-    const body = route.request().postDataJSON() || {};
-    const added = {
-      id: `exp-${Date.now()}`,
-      category: body.category || "Matchday Operations",
-      description: body.description || "CAF Tactical Video Feed License",
-      amount: Number(body.amount || 450),
-      currency: body.currency || "USD",
-      status: "Pending Approval",
-      occurredAtUtc: new Date().toISOString(),
-      receiptCode: `RCP-${Date.now().toString().slice(-4)}`,
-    };
-    billingSlice.expenses.unshift(added);
-    await route.fulfill({
-      status: 200,
-      contentType: "application/json",
-      body: JSON.stringify(added),
-    });
-  });
-
-  await page.route("**/api/v1/account/billing", async (route) => {
-    await route.fulfill({
-      status: 200,
-      contentType: "application/json",
-      body: JSON.stringify(billingSlice),
-    });
-  });
-
-  // 15. Integrations, PATs, SSH Keys, Webhooks
-  await page.route("**/api/v1/account/integrations/ssh-keys/*", async (route) => {
+  // 9. Integrations (SSO & PATs)
+  await page.route("**/api/v1/account/integrations/*/*", async (route) => {
     if (route.request().method() === "DELETE") {
       const id = route.request().url().split("/").pop();
-      integrationsSlice.sshKeys = integrationsSlice.sshKeys.filter((k) => k.id !== id);
+      integrationsSlice.personalAccessTokens = integrationsSlice.personalAccessTokens.filter(
+        (t) => t.id !== id
+      );
       await route.fulfill({ status: 200, contentType: "application/json", body: JSON.stringify({}) });
     } else {
       await route.continue();
     }
-  });
-
-  await page.route("**/api/v1/account/integrations/ssh-keys", async (route) => {
-    const body = route.request().postDataJSON() || {};
-    const added = {
-      id: `ssh-${Date.now()}`,
-      title: body.title || "Notebook Signing Key",
-      keyType: body.keyType || "ssh-ed25519",
-      fingerprintSha256: "SHA256:77c199b2a4f01122",
-      createdAtUtc: new Date().toISOString(),
-      lastUsedAtUtc: null,
-    };
-    integrationsSlice.sshKeys.push(added);
-    await route.fulfill({
-      status: 200,
-      contentType: "application/json",
-      body: JSON.stringify(added),
-    });
-  });
-
-  await page.route("**/api/v1/account/integrations/webhooks/*", async (route) => {
-    if (route.request().method() === "DELETE") {
-      const id = route.request().url().split("/").pop();
-      integrationsSlice.webhooks = integrationsSlice.webhooks.filter((w) => w.id !== id);
-      await route.fulfill({ status: 200, contentType: "application/json", body: JSON.stringify({}) });
-    } else {
-      await route.continue();
-    }
-  });
-
-  await page.route("**/api/v1/account/integrations/webhooks", async (route) => {
-    const body = route.request().postDataJSON() || {};
-    const added = {
-      id: `wh-${Date.now()}`,
-      name: body.name || "Matchday Webhook",
-      targetUrl: body.targetUrl || "https://hooks.scripe.org/matchday",
-      subscribedEvents: body.subscribedEvents || ["tactics.formation.updated"],
-      lastDeliveryAtUtc: new Date().toISOString(),
-      lastDeliveryStatusCode: 200,
-    };
-    integrationsSlice.webhooks.push(added);
-    await route.fulfill({
-      status: 200,
-      contentType: "application/json",
-      body: JSON.stringify(added),
-    });
   });
 
   await page.route("**/api/v1/account/integrations", async (route) => {
-    await route.fulfill({
-      status: 200,
-      contentType: "application/json",
-      body: JSON.stringify(integrationsSlice),
-    });
+    if (route.request().method() === "GET") {
+      await route.fulfill({
+        status: 200,
+        contentType: "application/json",
+        body: JSON.stringify(integrationsSlice),
+      });
+    } else if (route.request().method() === "POST") {
+      const body = route.request().postDataJSON() || {};
+      const newToken = {
+        id: `pat-${Date.now()}`,
+        name: body.name || "Enterprise Automation Token",
+        prefix: "scr_pat_live_99aa",
+        tokenPrefix: "scr_pat_live_99aa",
+        maskedToken: "scr_pat_live_99aa••••••••",
+        scopes: body.scopes || ["CRM.Read"],
+        createdAt: new Date().toISOString(),
+        createdAtUtc: new Date().toISOString(),
+        expiresAt: new Date(Date.now() + 86400000 * 30).toISOString(),
+        expiresAtUtc: new Date(Date.now() + 86400000 * 30).toISOString(),
+        lastUsedAt: null,
+        lastUsedAtUtc: null,
+      };
+      integrationsSlice.personalAccessTokens.push(newToken);
+      await route.fulfill({
+        status: 200,
+        contentType: "application/json",
+        body: JSON.stringify(newToken),
+      });
+    } else {
+      await route.continue();
+    }
   });
 
   await page.route("**/api/v1/auth/admin/external-logins", async (route) => {
@@ -751,11 +497,15 @@ export async function setupSovereignAccountRouteMocks(page: Page) {
         id: `pat-${Date.now()}`,
         name: body.name || "Custom Automation Token",
         prefix: "scr_pat_live_99aa",
+        tokenPrefix: "scr_pat_live_99aa",
         maskedToken: "scr_pat_live_99aa••••••••ff12",
-        scopes: body.scopes || ["tactics:read"],
+        scopes: body.scopes || ["CRM.Read"],
         createdAt: new Date().toISOString(),
+        createdAtUtc: new Date().toISOString(),
         expiresAt: new Date(Date.now() + 86400000 * 30).toISOString(),
+        expiresAtUtc: new Date(Date.now() + 86400000 * 30).toISOString(),
         lastUsedAt: null,
+        lastUsedAtUtc: null,
       };
       integrationsSlice.personalAccessTokens.push(newToken);
       await route.fulfill({

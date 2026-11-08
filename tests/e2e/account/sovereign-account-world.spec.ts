@@ -17,6 +17,17 @@ function ensureScreenshotDirs() {
   fs.mkdirSync(REPO_SCREENSHOT_DIR, { recursive: true });
 }
 
+function purgeObsoleteV3Screenshots() {
+  for (const dir of [BRAIN_SCREENSHOT_DIR, REPO_SCREENSHOT_DIR]) {
+    if (!fs.existsSync(dir)) continue;
+    for (const file of fs.readdirSync(dir)) {
+      if (file.endsWith(".png")) {
+        fs.unlinkSync(path.join(dir, file));
+      }
+    }
+  }
+}
+
 async function saveDualScreenshot(page: import("@playwright/test").Page, filename: string) {
   ensureScreenshotDirs();
   const buffer = await page.screenshot({ fullPage: true });
@@ -24,7 +35,7 @@ async function saveDualScreenshot(page: import("@playwright/test").Page, filenam
   fs.writeFileSync(path.join(REPO_SCREENSHOT_DIR, filename), buffer);
 }
 
-test.describe("SCRIPE Sovereign Account World v3.0 — 15 Pages (Dark & Light Modes + Interactive E2E)", () => {
+test.describe("SCRIPE Clean 9-Page B2B Enterprise Account Console (v4.0) — Dark & Light Modes + Interactive E2E", () => {
   test.beforeEach(async ({ page }) => {
     await mockWebAuthn(page);
     await setupSovereignAccountRouteMocks(page);
@@ -32,19 +43,22 @@ test.describe("SCRIPE Sovereign Account World v3.0 — 15 Pages (Dark & Light Mo
   });
 
   test("00 - Root /account redirects cleanly to /account/dossier", async ({ page }) => {
-    await page.goto("/account");
-    await page.waitForURL("**/account/dossier", { timeout: 20_000 });
-    await expect(page.locator("h1").first()).toBeVisible({ timeout: 15_000 });
+    test.setTimeout(180_000);
+    await page.goto("/account", { waitUntil: "commit" });
+    await page.waitForURL("**/account/dossier", { timeout: 120_000 });
+    await expect(page.locator("h1").first()).toBeVisible({ timeout: 60_000 });
   });
 
-  test("01..15 - All 15 Sovereign Account Pages render in Tactical Dark Mode & Clean Light Mode with zero overflow", async ({
+  test("01..09 - All 9 B2B Enterprise Account Pages render in Tactical Dark Mode & Clean Light Mode with zero overflow", async ({
     page,
   }) => {
     test.setTimeout(300_000);
+    ensureScreenshotDirs();
+    purgeObsoleteV3Screenshots();
 
     for (const route of SOVEREIGN_ACCOUNT_ROUTES) {
-      await page.goto(route.path, { waitUntil: "domcontentloaded" });
-      await expect(page.locator("h1").first()).toBeVisible({ timeout: 20_000 });
+      await page.goto(route.path, { waitUntil: "commit" });
+      await expect(page.locator("h1").first()).toBeVisible({ timeout: 60_000 });
 
       // 1. Tactical Dark Mode Verification & Full-Res Capture
       await applyThemeMode(page, "dark");
@@ -69,74 +83,68 @@ test.describe("SCRIPE Sovereign Account World v3.0 — 15 Pages (Dark & Light Mo
     }
   });
 
-  test("16 - Interactive Shell: Command Bar (Ctrl+K), Privacy Blur (Alt+P), and 180° Pass Flip", async ({
+  test("10 - Interactive Shell: Command Bar (Ctrl+K), Privacy Blur (Alt+P), and Dynamic Custom Fields on Dossier", async ({
     page,
   }) => {
     await page.goto("/account/dossier", { waitUntil: "domcontentloaded" });
     await expect(page.locator("h1").first()).toBeVisible({ timeout: 20_000 });
     await applyThemeMode(page, "dark");
 
+    // Verify Dynamic Custom Fields (identity.admin) card is rendered with seeded attributes
+    await expect(page.getByTestId("dossier-custom-fields-card")).toBeVisible();
+    await expect(page.getByText(/Corporate Employee Badge ID/i).first()).toBeVisible();
+
     // Trigger Command Bar via Ctrl+K
     await page.keyboard.press("Control+k");
     const searchInput = page.locator('input[type="text"], input[placeholder]').first();
     await expect(searchInput).toBeVisible({ timeout: 10_000 });
-    await saveDualScreenshot(page, "16_command_bar_modal_dark.png");
+    await saveDualScreenshot(page, "10_command_bar_modal_dark.png");
     await page.keyboard.press("Escape");
 
-    // Trigger Press-Conference Privacy Blur via Alt+P
+    // Trigger Broadcast Privacy Blur via Alt+P
     await page.keyboard.press("Alt+p");
     await page.waitForTimeout(250);
-    await saveDualScreenshot(page, "18_privacy_blur_active_dark.png");
+    await saveDualScreenshot(page, "11_privacy_blur_active_dark.png");
     await page.keyboard.press("Alt+p");
-
-    // Navigate to /account/credentials and flip the 180° Sovereign Identity Pass
-    await page.goto("/account/credentials", { waitUntil: "domcontentloaded" });
-    await expect(page.locator("h1").first()).toBeVisible({ timeout: 20_000 });
-    const flipButton = page.getByTestId("flip-sovereign-pass-btn");
-    await expect(flipButton).toBeVisible({ timeout: 10_000 });
-    await flipButton.click();
-    await expect(page.getByTestId("sovereign-pass-back")).toBeVisible({ timeout: 5_000 });
-    await saveDualScreenshot(page, "17_identity_pass_back_dark.png");
   });
 
-  test("17 - Interactive Mutations across Security, Sessions, Governance, Privacy, Plan, Billing & Integrations", async ({
+  test("11 - Interactive B2B Flows across Security, Sessions, Governance, Notifications, Plan & Integrations", async ({
     page,
   }) => {
     test.setTimeout(180_000);
 
-    // 1. Security: Verify Passkey Vault, Biometric Sudo & Away-Match Travel Shield
+    // 1. Security: Verify Passkey Vault, Biometric Sudo & CIDR Allowlist
     await page.goto("/account/security", { waitUntil: "domcontentloaded" });
     await expect(page.locator("h1").first()).toBeVisible({ timeout: 20_000 });
     await expect(page.getByText(/Executive MacBook Pro M4/i).first()).toBeVisible();
 
-    // 2. Sessions: Verify Active Workstation Fleet & Session Radar
+    // 2. Sessions: Verify Active Workstation Fleet & Session Telemetry
     await page.goto("/account/sessions", { waitUntil: "domcontentloaded" });
     await expect(page.locator("h1").first()).toBeVisible({ timeout: 20_000 });
     await expect(page.getByText(/197\.38\.14\.88/).first()).toBeVisible();
 
-    // 3. Governance: Verify Permission Provenance Graph & Delegations
+    // 3. Governance: Verify Assigned RBAC Roles, Allowed Branches & PBAC Provenance Graph
     await page.goto("/account/governance", { waitUntil: "domcontentloaded" });
     await expect(page.locator("h1").first()).toBeVisible({ timeout: 20_000 });
-    await expect(page.getByText(/Platform Operations/i).first()).toBeVisible();
+    await expect(page.getByText(/VP of Enterprise Operations/i).first()).toBeVisible();
 
-    // 4. Privacy: Verify Zero-Knowledge Scratchpad & DSAR Export
-    await page.goto("/account/privacy", { waitUntil: "domcontentloaded" });
+    // 4. Notifications: Verify Live Notification Matrix, Security Bypass Law & 1-Click Live Test Notification
+    await page.goto("/account/notifications", { waitUntil: "domcontentloaded" });
     await expect(page.locator("h1").first()).toBeVisible({ timeout: 20_000 });
-    await expect(page.getByText(/AES-256-GCM/i).first()).toBeVisible();
+    const sendTestBtn = page.getByTestId("send-test-notification-btn");
+    await expect(sendTestBtn).toBeVisible();
+    await sendTestBtn.click();
+    await expect(page.getByText(/Live B2B Test Notification/i).first()).toBeVisible();
 
     // 5. Plan: Verify Edition, Support PIN & 3-State Features Matrix
     await page.goto("/account/plan", { waitUntil: "domcontentloaded" });
     await expect(page.locator("h1").first()).toBeVisible({ timeout: 20_000 });
     await expect(page.getByText("849201").first()).toBeVisible();
 
-    // 6. Billing: Verify Corporate Card & Expense Ledger
-    await page.goto("/account/billing", { waitUntil: "domcontentloaded" });
-    await expect(page.locator("h1").first()).toBeVisible({ timeout: 20_000 });
-    await expect(page.getByText(/8842/).first()).toBeVisible();
-
-    // 7. Integrations: Verify PATs, Ed25519 SSH Keys & Personal Webhooks
+    // 6. Integrations: Verify Enterprise SSO Directory & SHA-256 Personal Access Tokens with PBAC Scopes
     await page.goto("/account/integrations", { waitUntil: "domcontentloaded" });
     await expect(page.locator("h1").first()).toBeVisible({ timeout: 20_000 });
-    await expect(page.getByText(/SHA256:9f8a000000000001e41c/i).first()).toBeVisible();
+    await expect(page.getByText(/Google Workspace Enterprise/i).first()).toBeVisible();
+    await expect(page.getByText(/Enterprise BI & CRM Reporting Sync CLI/i).first()).toBeVisible();
   });
 });
