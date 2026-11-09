@@ -1,4 +1,4 @@
-import type { AcademyFeesSummaryByCurrency } from "../../fees-receivables/src/domain/entities/AcademyReceivable";
+import type { AcademyFeesSummaryByCurrency } from "@/modules/academy/fees-receivables/src/domain/entities/AcademyReceivable";
 
 export interface SportEnrollmentMetric {
   sportId: string;

@@ -1,13 +1,13 @@
 "use client";
 
 import React, { useState } from "react";
-import { useAcademyServiceLocator } from "../../../di";
+import { useAcademyServiceLocator } from "@/modules/academy/di";
 import { useAcademyFeesReceivablesViewModel } from "../viewmodels/useAcademyFeesReceivablesViewModel";
 import { FeesSummaryCards } from "../components/FeesSummaryCards";
 import { FeesFilterBar } from "../components/FeesFilterBar";
 import { FeesReceivablesTable } from "../components/FeesReceivablesTable";
 import { InvoiceDetailSheet } from "../components/InvoiceDetailSheet";
-import { feesReceivablesEn, feesReceivablesAr } from "../../../fees-receivables/locales";
+import { feesReceivablesEn, feesReceivablesAr } from "@/modules/academy/fees-receivables/locales";
 
 interface AcademyFeesReceivablesViewProps {
   locale?: string;

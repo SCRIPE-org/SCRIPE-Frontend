@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import type { AcademyFeesSummaryByCurrency } from "../../fees-receivables/src/domain/entities/AcademyReceivable";
+import type { AcademyFeesSummaryByCurrency } from "@/modules/academy/fees-receivables/src/domain/entities/AcademyReceivable";
 
 interface ReceivablesSnapshotCardProps {
   financialReceivables?: {
@@ -46,7 +46,7 @@ export function ReceivablesSnapshotCard({ financialReceivables, t }: Receivables
                     {s.currencyCode}
                   </span>
                   <span className="text-[11px] text-nx-ink-3">
-                    {s.totalReceivablesCount} records
+                    {s.invoicedCount + s.unbilledCount} records
                   </span>
                 </div>
 
@@ -54,25 +54,25 @@ export function ReceivablesSnapshotCard({ financialReceivables, t }: Receivables
                   <div>
                     <span className="text-nx-ink-3 block text-[11px]">{t("finance.invoiced")}</span>
                     <span className="font-mono font-semibold text-nx-ink">
-                      {s.totalInvoicedAmount.toLocaleString(undefined, { minimumFractionDigits: 2 })}
+                      {s.totalInvoiced.toLocaleString(undefined, { minimumFractionDigits: 2 })}
                     </span>
                   </div>
                   <div>
                     <span className="text-nx-ink-3 block text-[11px]">{t("finance.paid")}</span>
                     <span className="font-mono font-semibold text-emerald-500">
-                      {s.totalPaidAmount.toLocaleString(undefined, { minimumFractionDigits: 2 })}
+                      {s.totalPaid.toLocaleString(undefined, { minimumFractionDigits: 2 })}
                     </span>
                   </div>
                   <div>
                     <span className="text-nx-ink-3 block text-[11px]">{t("finance.outstanding")}</span>
                     <span className="font-mono font-semibold text-nx-accent">
-                      {s.totalOutstandingAmount.toLocaleString(undefined, { minimumFractionDigits: 2 })}
+                      {s.totalOutstanding.toLocaleString(undefined, { minimumFractionDigits: 2 })}
                     </span>
                   </div>
                   <div>
                     <span className="text-nx-ink-3 block text-[11px]">{t("finance.overdue")}</span>
-                    <span className={`font-mono font-semibold ${s.totalOverdueAmount > 0 ? "text-rose-500" : "text-nx-ink-3"}`}>
-                      {s.totalOverdueAmount.toLocaleString(undefined, { minimumFractionDigits: 2 })}
+                    <span className={`font-mono font-semibold ${s.totalOverdue > 0 ? "text-rose-500" : "text-nx-ink-3"}`}>
+                      {s.totalOverdue.toLocaleString(undefined, { minimumFractionDigits: 2 })}
                     </span>
                   </div>
                 </div>

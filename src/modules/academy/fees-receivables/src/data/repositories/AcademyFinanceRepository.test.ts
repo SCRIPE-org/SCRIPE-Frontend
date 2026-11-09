@@ -57,7 +57,7 @@ describe("AcademyFinanceRepository", () => {
     expect(mockService.getFeesReceivables).toHaveBeenCalled();
     expect(result.items.length).toBe(1);
     expect(result.items[0].enrollmentId).toBe("en-101");
-    expect(result.items[0].outstandingBalance).toBe(1000);
+    expect(result.items[0].outstandingAmount).toBe(1000);
     expect(result.items[0].isOverdue).toBe(true);
     expect(result.summaries[0].currencyCode).toBe("SAR");
     expect(result.blockedCapabilities).toContain("INSTALLMENTS_SCHEDULE");

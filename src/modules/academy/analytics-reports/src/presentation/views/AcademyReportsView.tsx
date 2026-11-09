@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { useAcademyServiceLocator } from "../../../di";
+import { useAcademyServiceLocator } from "@/modules/academy/di";
 import { useAcademyReportsViewModel } from "../viewmodels/useAcademyReportsViewModel";
 import { AnalyticsKpiCards } from "../components/AnalyticsKpiCards";
 import { GroupCapacityTable } from "../components/GroupCapacityTable";
@@ -9,7 +9,7 @@ import { TrialFunnelCard } from "../components/TrialFunnelCard";
 import { ReceivablesSnapshotCard } from "../components/ReceivablesSnapshotCard";
 import { DeferredMetricsNotice } from "../components/DeferredMetricsNotice";
 import { ExportDialog } from "../components/ExportDialog";
-import { reportsEn, reportsAr } from "../../../analytics-reports/locales";
+import { reportsEn, reportsAr } from "@/modules/academy/analytics-reports/locales";
 
 interface AcademyReportsViewProps {
   locale?: string;
