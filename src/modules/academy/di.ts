@@ -44,7 +44,16 @@ import { TrainingGroupsService } from "./groups/src/data/services/TrainingGroups
 import { TrainingGroupsRepository } from "./groups/src/data/repositories/TrainingGroupsRepository";
 import type { ITrainingGroupsRepository } from "./groups/src/domain/interfaces/ITrainingGroupsRepository";
 
+import { SessionsService } from "./sessions/src/data/services/SessionsService";
+import { SessionsRepository } from "./sessions/src/data/repositories/SessionsRepository";
+import type { ISessionsRepository } from "./sessions/src/domain/interfaces/ISessionsRepository";
+import { AttendanceRepository } from "./attendance/src/data/repositories/AttendanceRepository";
+import { AttendanceService } from "./attendance/src/data/services/AttendanceService";
+import type { IAttendanceRepository } from "./attendance/src/domain/interfaces/IAttendanceRepository";
+
 export interface IAcademyServiceLocator {
+  attendanceRepository: IAttendanceRepository;
+  sessionsRepository: ISessionsRepository;
   overviewRepository: IAcademyOverviewRepository;
   programsRepository: IAcademyProgramsRepository;
   offeringsRepository: IProgramOfferingsRepository;
@@ -57,6 +66,8 @@ export interface IAcademyServiceLocator {
 }
 
 class AcademyContainer implements IAcademyServiceLocator {
+  private _attendanceRepository?: IAttendanceRepository;
+  private _sessionsRepository?: ISessionsRepository;
   private _overviewRepository?: IAcademyOverviewRepository;
   private _programsRepository?: IAcademyProgramsRepository;
   private _offeringsRepository?: IProgramOfferingsRepository;
@@ -137,6 +148,20 @@ class AcademyContainer implements IAcademyServiceLocator {
       this._enrollmentsRepository = new AcademyEnrollmentsRepository(service);
     }
     return this._enrollmentsRepository;
+  }
+
+  get sessionsRepository(): ISessionsRepository {
+    if (!this._sessionsRepository) {
+      this._sessionsRepository = new SessionsRepository(new SessionsService(getModuleApiService("ACADEMY")));
+    }
+    return this._sessionsRepository;
+  }
+
+  get attendanceRepository(): IAttendanceRepository {
+    if (!this._attendanceRepository) {
+      this._attendanceRepository = new AttendanceRepository(new AttendanceService(getModuleApiService("ACADEMY")));
+    }
+    return this._attendanceRepository;
   }
 
   get groupsRepository(): ITrainingGroupsRepository {
