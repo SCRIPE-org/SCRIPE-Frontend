@@ -26,23 +26,28 @@ describe("AcademyFinanceRepository", () => {
           athleteNameEn: "Tariq Salem",
           programNameEn: "Swimming Elite",
           billingStatus: "PartiallyPaid",
-          currencyCode: "SAR",
-          enrollmentPriceAmount: 2000,
-          invoicedAmount: 2000,
+          priceCurrency: "SAR",
+          quoteAmount: 2000,
+          totalInvoicedAmount: 2000,
           paidAmount: 1000,
-          outstandingBalance: 1000,
+          outstandingAmount: 1000,
           isOverdue: true,
-          overdueDays: 14
+          daysOverdue: 14
         }
       ],
       summaries: [
         {
           currencyCode: "SAR",
-          totalReceivablesCount: 1,
-          totalInvoicedAmount: 2000,
-          totalPaidAmount: 1000,
-          totalOutstandingAmount: 1000,
-          totalOverdueAmount: 1000
+          invoicedCount: 1,
+          paidCount: 0,
+          outstandingCount: 1,
+          overdueCount: 1,
+          waivedCount: 0,
+          unbilledCount: 0,
+          totalInvoiced: 2000,
+          totalPaid: 1000,
+          totalOutstanding: 1000,
+          totalOverdue: 1000
         }
       ],
       totalCount: 1,
