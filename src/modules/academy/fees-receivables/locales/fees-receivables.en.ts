@@ -5,6 +5,7 @@ export const feesReceivablesEn = {
   sourceFinanceNotice: "Financial truth is owned exclusively by SCRIPE Finance. Academy operational states do not infer payment.",
   exportCsv: "Export CSV",
   refresh: "Refresh",
+  loading: "Loading authoritative fees & receivables...",
   filters: {
     allBranches: "All Branches",
     allPrograms: "All Programs",
@@ -45,7 +46,8 @@ export const feesReceivablesEn = {
     balance: "Balance Due",
     dueDate: "Due Date",
     actions: "Actions",
-    viewDetails: "View Reconciliation"
+    viewDetails: "View Reconciliation",
+    daysOverdue: "{days}d overdue"
   },
   details: {
     title: "Financial Reconciliation Details",
@@ -60,7 +62,8 @@ export const feesReceivablesEn = {
     receiptNumber: "Receipt #",
     allocatedAt: "Allocated Date",
     waiverProvenance: "Commercial Waiver Provenance",
-    waiverNotice: "Governed operational exception. Fee obligations cleared with authorized approval."
+    waiverNotice: "Governed operational exception. Fee obligations cleared with authorized approval.",
+    close: "Close"
   },
   blocked: {
     title: "Documented Contract Gap Disclosures",

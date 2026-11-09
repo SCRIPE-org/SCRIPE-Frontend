@@ -5,6 +5,7 @@ export const feesReceivablesAr = {
   sourceFinanceNotice: "الحقيقة المالية مملوكة حصرياً لنظام المالية (Finance). الحالات التشغيلية في الأكاديمية لا تفترض السداد تلقائياً.",
   exportCsv: "تصدير CSV",
   refresh: "تحديث",
+  loading: "جاري تحميل الرسوم والمستحقات المعتمدة...",
   filters: {
     allBranches: "جميع الفروع",
     allPrograms: "جميع البرامج",
@@ -45,7 +46,8 @@ export const feesReceivablesAr = {
     balance: "المتبقي المستحق",
     dueDate: "تاريخ الاستحقاق",
     actions: "الإجراءات",
-    viewDetails: "عرض تفاصيل المطابقة"
+    viewDetails: "عرض تفاصيل المطابقة",
+    daysOverdue: "متأخرة {days} يوماً"
   },
   details: {
     title: "تفاصيل المطابقة المالية",
@@ -60,7 +62,8 @@ export const feesReceivablesAr = {
     receiptNumber: "رقم الإيصال",
     allocatedAt: "تاريخ التخصيص",
     waiverProvenance: "توثيق الإعفاء التجاري",
-    waiverNotice: "استثناء تشغيلي معتمد. تم إسقاط الالتزام المالي بموافقة رسمية موثقة."
+    waiverNotice: "استثناء تشغيلي معتمد. تم إسقاط الالتزام المالي بموافقة رسمية موثقة.",
+    close: "إغلاق"
   },
   blocked: {
     title: "إفصاحات الفجوات التعاقدية الموثقة",

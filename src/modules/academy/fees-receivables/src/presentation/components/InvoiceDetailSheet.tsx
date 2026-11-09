@@ -14,6 +14,9 @@ interface InvoiceDetailSheetProps {
 export function InvoiceDetailSheet({ item, onClose, t }: InvoiceDetailSheetProps) {
   if (!item) return null;
 
+  const statusKey = item.billingStatus.toLowerCase();
+  const localizedStatus = t(`status.${statusKey}`) || item.billingStatus;
+
   return (
     <div className="fixed inset-0 z-50 flex justify-end bg-black/40 backdrop-blur-xs">
       <div className="flex h-full w-full max-w-lg flex-col border-s border-nx-line bg-nx-surface p-6 shadow-2xl overflow-y-auto">
@@ -43,7 +46,7 @@ export function InvoiceDetailSheet({ item, onClose, t }: InvoiceDetailSheetProps
           <div className="grid grid-cols-2 gap-4 rounded-md border border-nx-line bg-nx-ground p-4 text-xs">
             <div>
               <span className="block text-nx-ink-3">{t("table.invoiceNumber")}</span>
-              <span className="font-semibold text-nx-ink">
+              <span className="font-semibold text-nx-ink font-mono text-[11px]">
                 {item.financeInvoiceReference || t("status.unbilled")}
               </span>
             </div>
@@ -61,36 +64,36 @@ export function InvoiceDetailSheet({ item, onClose, t }: InvoiceDetailSheetProps
                 }
                 className="mt-0.5 text-[11px]"
               >
-                {item.billingStatus}
+                {localizedStatus}
               </Badge>
             </div>
             <div>
               <span className="block text-nx-ink-3">{t("details.issuedAt")}</span>
-              <span className="text-nx-ink">
+              <span className="text-nx-ink font-mono text-[11px]">
                 {item.issuedAtUtc ? new Date(item.issuedAtUtc).toLocaleDateString() : "—"}
               </span>
             </div>
             <div>
               <span className="block text-nx-ink-3">{t("details.dueAt")}</span>
-              <span className="text-nx-ink">
+              <span className="text-nx-ink font-mono text-[11px]">
                 {item.dueAtUtc ? new Date(item.dueAtUtc).toLocaleDateString() : "—"}
               </span>
             </div>
             <div>
               <span className="block text-nx-ink-3">{t("table.invoiced")}</span>
-              <span className="font-bold text-nx-ink">
+              <span className="font-bold text-nx-ink font-mono">
                 {item.totalInvoicedAmount.toLocaleString(undefined, { minimumFractionDigits: 2 })} {item.priceCurrency}
               </span>
             </div>
             <div>
               <span className="block text-nx-ink-3">{t("table.paid")}</span>
-              <span className="font-bold text-emerald-500">
+              <span className="font-bold text-emerald-500 font-mono">
                 {item.paidAmount.toLocaleString(undefined, { minimumFractionDigits: 2 })} {item.priceCurrency}
               </span>
             </div>
             <div className="col-span-2 border-t border-nx-line pt-2">
               <span className="block text-nx-ink-3">{t("table.balance")}</span>
-              <span className="text-sm font-bold text-amber-500">
+              <span className="text-sm font-bold text-amber-500 font-mono">
                 {item.outstandingAmount.toLocaleString(undefined, { minimumFractionDigits: 2 })} {item.priceCurrency}
               </span>
             </div>
@@ -121,17 +124,17 @@ export function InvoiceDetailSheet({ item, onClose, t }: InvoiceDetailSheetProps
                 {item.allocations.map((alloc) => (
                   <div key={alloc.paymentId} className="flex items-center justify-between p-3 text-xs">
                     <div>
-                      <span className="block font-medium text-nx-ink">{alloc.paymentNumber}</span>
-                      <span className="block text-[11px] text-nx-ink-3">
+                      <span className="block font-medium text-nx-ink font-mono">{alloc.paymentNumber}</span>
+                      <span className="block text-[11px] text-nx-ink-3 font-mono">
                         {new Date(alloc.allocatedAtUtc).toLocaleDateString()}
                       </span>
                     </div>
                     <div className="text-end">
-                      <span className="block font-semibold text-emerald-500">
+                      <span className="block font-semibold text-emerald-500 font-mono">
                         {alloc.amount.toLocaleString(undefined, { minimumFractionDigits: 2 })} {alloc.currencyCode}
                       </span>
                       {alloc.receiptNumber && (
-                        <span className="block text-[11px] text-nx-ink-3">
+                        <span className="block text-[11px] text-nx-ink-3 font-mono">
                           {alloc.receiptNumber}
                         </span>
                       )}
@@ -156,7 +159,7 @@ export function InvoiceDetailSheet({ item, onClose, t }: InvoiceDetailSheetProps
         {/* Footer */}
         <div className="mt-6 border-t border-nx-line pt-4">
           <Button type="button" variant="outline" onClick={onClose} className="w-full text-xs">
-            Close
+            {t("details.close")}
           </Button>
         </div>
       </div>

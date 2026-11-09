@@ -24,7 +24,7 @@ export function GroupCapacityTable({ groups, locale = "en", t }: GroupCapacityTa
           </p>
         </div>
         <span className="text-xs font-mono text-nx-ink-3">
-          {groups.length} {isAr ? "مجموعة" : "groups"}
+          {groups.length} {isAr ? "مجموعات" : "groups"}
         </span>
       </div>
 
@@ -52,6 +52,13 @@ export function GroupCapacityTable({ groups, locale = "en", t }: GroupCapacityTa
                 const name = isAr && group.groupNameAr ? group.groupNameAr : group.groupNameEn;
                 const offering = isAr && group.offeringNameEn ? group.offeringNameEn : group.offeringNameEn;
                 const isZeroMax = group.maxCapacity === 0;
+                const isAtCapacity = group.maxCapacity > 0 && group.activeMembers >= group.maxCapacity;
+
+                const statusLabel = isZeroMax
+                  ? t("groupTable.statusUncapped")
+                  : isAtCapacity
+                  ? t("groupTable.statusFull")
+                  : t("groupTable.statusActive");
 
                 return (
                   <tr key={group.groupId} className="hover:bg-nx-raised/40 transition-colors">
@@ -62,7 +69,9 @@ export function GroupCapacityTable({ groups, locale = "en", t }: GroupCapacityTa
                       {offering}
                     </td>
                     <td className="py-3 px-4 font-mono text-nx-ink-2">
-                      {group.minCapacity} / {group.maxCapacity}
+                      {isZeroMax
+                        ? t("groupTable.zeroCapacityWarning")
+                        : t("groupTable.minMaxFormat", { min: group.minCapacity, max: group.maxCapacity })}
                     </td>
                     <td className="py-3 px-4 font-mono font-semibold text-nx-ink">
                       {group.activeMembers}
@@ -93,8 +102,16 @@ export function GroupCapacityTable({ groups, locale = "en", t }: GroupCapacityTa
                       )}
                     </td>
                     <td className="py-3 px-4">
-                      <span className="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-medium bg-nx-raised text-nx-ink-2 border border-nx-line">
-                        {group.status}
+                      <span
+                        className={`inline-flex items-center px-2 py-0.5 rounded text-[11px] font-medium border ${
+                          isAtCapacity
+                            ? "bg-rose-500/10 text-rose-500 border-rose-500/20"
+                            : isZeroMax
+                            ? "bg-amber-500/10 text-amber-500 border-amber-500/20"
+                            : "bg-nx-raised text-nx-ink-2 border-nx-line"
+                        }`}
+                      >
+                        {statusLabel}
                       </span>
                     </td>
                   </tr>

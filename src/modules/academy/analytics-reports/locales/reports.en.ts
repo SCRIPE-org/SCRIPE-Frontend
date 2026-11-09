@@ -40,12 +40,16 @@ export const reportsEn = {
     groupName: "Group Name",
     offering: "Program / Offering",
     branch: "Branch",
-    capacity: "Capacity (Min / Max)",
+    capacity: "Capacity (Min • Max)",
+    minMaxFormat: "Min {min} • Max {max}",
     activeMembers: "Active Members",
     fillRate: "Fill Rate",
     status: "Status",
+    statusActive: "Active (Open)",
+    statusFull: "Active (At Capacity)",
+    statusUncapped: "Open (Uncapped)",
     empty: "No training groups found for current filter.",
-    zeroCapacityWarning: "Zero max capacity (0.0% fill rate)"
+    zeroCapacityWarning: "Capacity Not Set (0.0%)"
   },
 
   // Trial Funnel

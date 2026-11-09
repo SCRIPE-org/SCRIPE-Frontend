@@ -40,12 +40,16 @@ export const reportsAr = {
     groupName: "اسم المجموعة",
     offering: "البرنامج / العرض التدريبي",
     branch: "الفرع",
-    capacity: "السعة (الأدنى / الأقصى)",
+    capacity: "السعة (الأدنى • الأقصى)",
+    minMaxFormat: "الأدنى: {min} • الأقصى: {max}",
     activeMembers: "الأعضاء النشطون",
     fillRate: "نسبة الإشغال",
     status: "الحالة",
+    statusActive: "نشطة (متاحة)",
+    statusFull: "نشطة (مكتملة)",
+    statusUncapped: "مفتوحة (دون حد)",
     empty: "لا توجد مجموعات تدريب مطابقة للتصفية المحددة.",
-    zeroCapacityWarning: "السعة القصوى صفر (نسبة الإشغال 0.0%)"
+    zeroCapacityWarning: "غير محدد السعة (0.0%)"
   },
 
   // Trial Funnel
