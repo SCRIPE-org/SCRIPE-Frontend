@@ -14,7 +14,7 @@ import {
 } from "../viewmodels/useWorkstationPreferencesViewModel";
 import { useAccountPreferencesSliceViewModel } from "../viewmodels/useSovereignAccountSlicesViewModel";
 import { ErgonomicsLiveStage } from "../components/ErgonomicsLiveStage";
-import { toast } from "@core/ui/sileo-toast";
+import { toast, resolveRtlPosition, type SileoPosition } from "@core/ui/sileo-toast";
 import {
   Sun, Moon, Monitor, Palette, LayoutGrid, EyeOff, Keyboard, Check, CheckCircle2, Globe, Clock, Hash, Bell, Play,
 } from "lucide-react";
@@ -68,19 +68,41 @@ export function AccountPreferencesView() {
     setTimeout(() => setSavedNotice(false), 2500);
   };
 
-  const handleTriggerSmartTestToast = (targetPosition?: ToastPosition) => {
-    const pos = targetPosition ?? toastPosition;
+  const currentLogicalPosition: "top-end" | "top-center" | "bottom-end" | "bottom-center" = (() => {
+    const p = (toastPosition || "top-end").toLowerCase().trim();
+    if (p === "top-center") return "top-center";
+    if (p === "bottom-center") return "bottom-center";
+    if (p === "bottom-end" || p === "bottom-right" || p === "bottom-left" || p === "bottom-start") return "bottom-end";
+    return "top-end";
+  })();
+
+  const currentScreenPosition: SileoPosition = resolveRtlPosition(
+    currentLogicalPosition,
+    isRtl ? "rtl" : "ltr",
+    true
+  );
+
+  const handleSelectLogicalPosition = (posId: "top-end" | "top-center" | "bottom-end" | "bottom-center") => {
+    setToastPosition(posId);
+    const screenPos = resolveRtlPosition(posId, isRtl ? "rtl" : "ltr", true);
+    handleTriggerSmartTestToast(screenPos);
+  };
+
+  const handleTriggerSmartTestToast = (targetScreenPos?: SileoPosition) => {
+    const pos = targetScreenPos ?? currentScreenPosition;
     toast.rich({
-      position: pos as any,
+      position: pos,
       title: t("profile.preferences.testToastTitle"),
       description: (
         <div className="space-y-1">
           <p>{t("profile.preferences.testToastDesc")}</p>
-          <div className="flex items-center gap-1.5 text-[10px] text-nx-ink-3 font-mono">
+          <div className="flex items-center gap-1.5 text-[10px] text-nx-ink-2 font-mono">
             <span className="inline-block h-1.5 w-1.5 rounded-full bg-nx-accent" />
             <span>{t("profile.preferences.testToastRichTag")}</span>
             <span>&bull;</span>
-            <span>{pos}</span>
+            <span className="font-semibold">{pos}</span>
+            <span>&bull;</span>
+            <span>{isRtl ? "RTL (عربي)" : "LTR (English)"}</span>
           </div>
         </div>
       ),
@@ -232,6 +254,7 @@ export function AccountPreferencesView() {
             </div>
             <Badge
               variant="outline"
+              data-testid="toast-mirror-badge"
               className="text-[11px] font-medium border-nx-line bg-nx-raised text-nx-ink-2 self-start sm:self-auto"
             >
               {isRtl
@@ -241,38 +264,53 @@ export function AccountPreferencesView() {
           </div>
         </CardHeader>
         <CardContent className="space-y-4">
-          {/* 3x2 Interactive Mini-Viewport Grid */}
+          {/* 2x2 Interactive Mini-Viewport Grid */}
           <div className="p-3 rounded-lg border border-nx-line bg-nx-ground/60 space-y-3">
-            <div className="grid grid-cols-3 gap-2.5">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
               {[
-                { id: "top-left", labelKey: "profile.preferences.toastPositionTopLeft" },
-                { id: "top-center", labelKey: "profile.preferences.toastPositionTopCenter" },
-                { id: "top-right", labelKey: "profile.preferences.toastPositionTopRight" },
-                { id: "bottom-left", labelKey: "profile.preferences.toastPositionBottomLeft" },
-                { id: "bottom-center", labelKey: "profile.preferences.toastPositionBottomCenter" },
-                { id: "bottom-right", labelKey: "profile.preferences.toastPositionBottomRight" },
+                {
+                  id: "top-end" as const,
+                  labelKey: "profile.preferences.toastPositionTopEnd",
+                  subKey: "profile.preferences.toastPositionTopEndSub",
+                },
+                {
+                  id: "top-center" as const,
+                  labelKey: "profile.preferences.toastPositionTopCenter",
+                  subKey: "profile.preferences.toastPositionTopCenterSub",
+                },
+                {
+                  id: "bottom-end" as const,
+                  labelKey: "profile.preferences.toastPositionBottomEnd",
+                  subKey: "profile.preferences.toastPositionBottomEndSub",
+                },
+                {
+                  id: "bottom-center" as const,
+                  labelKey: "profile.preferences.toastPositionBottomCenter",
+                  subKey: "profile.preferences.toastPositionBottomCenterSub",
+                },
               ].map((pos) => {
-                const isSelected = toastPosition === pos.id;
+                const isSelected = currentLogicalPosition === pos.id;
                 return (
                   <Button
                     key={pos.id}
                     type="button"
                     variant={isSelected ? "default" : "outline"}
                     size="sm"
-                    onClick={() => {
-                      setToastPosition(pos.id as ToastPosition);
-                      handleTriggerSmartTestToast(pos.id as ToastPosition);
-                    }}
+                    onClick={() => handleSelectLogicalPosition(pos.id)}
                     data-testid={`toast-position-${pos.id}`}
-                    className={`h-12 flex flex-col items-center justify-center gap-1 text-xs font-semibold ${
+                    className={`h-14 flex flex-col items-center justify-center gap-1 text-xs font-semibold ${
                       isSelected
                         ? "border-nx-accent bg-nx-accent text-nx-on-fill font-bold shadow-xs"
                         : "bg-nx-surface hover:bg-nx-hover text-nx-ink"
                     }`}
                   >
                     <span>{t(pos.labelKey)}</span>
-                    <span className="text-[10px] opacity-75 font-mono">
-                      {pos.id}
+                    <span
+                      className={`text-[10px] truncate max-w-full px-1 ${
+                        isSelected ? "text-nx-on-fill opacity-90 font-medium" : "text-nx-ink-3"
+                      }`}
+                    >
+                      {t(pos.subKey)}
                     </span>
                   </Button>
                 );

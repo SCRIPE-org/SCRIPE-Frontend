@@ -9,6 +9,7 @@ export const ar = {
     code: "الرمز",
     descriptionField: "الوصف",
     priority: "الأولوية",
+    activeUsers: "المستخدمون النشطون",
     roleDetails: "تفاصيل الدور",
     selectedPermissions: "الصلاحيات المحددة",
     permissions: "صلاحية",

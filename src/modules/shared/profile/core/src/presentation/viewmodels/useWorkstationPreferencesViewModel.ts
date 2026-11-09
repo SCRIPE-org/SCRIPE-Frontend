@@ -23,7 +23,11 @@ export type ToastPosition =
   | "top-center"
   | "bottom-right"
   | "bottom-left"
-  | "bottom-center";
+  | "bottom-center"
+  | "top-end"
+  | "top-start"
+  | "bottom-end"
+  | "bottom-start";
 
 export const VALID_TOAST_POSITIONS: ToastPosition[] = [
   "top-right",
@@ -32,6 +36,10 @@ export const VALID_TOAST_POSITIONS: ToastPosition[] = [
   "bottom-right",
   "bottom-left",
   "bottom-center",
+  "top-end",
+  "top-start",
+  "bottom-end",
+  "bottom-start",
 ];
 
 export const ACCENT_PALETTES: Array<{ id: AccentHue; label: string; hex: string }> = [

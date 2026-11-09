@@ -272,6 +272,8 @@ export const en = {
       errorWithItem: "Failed to {operationLower} {item}.",
       errorGeneric: "Operation failed.",
     },
+    default: "Default",
+    unknownError: "An unexpected error occurred",
     included: "Included",
     notIncluded: "Not included",
     welcomeBack: "Welcome back, {{name}}",

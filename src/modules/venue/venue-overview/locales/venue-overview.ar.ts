@@ -41,10 +41,14 @@ export const ar = {
     title: "عمليات الموقع الرياضي",
     subtitle: "لوحة التحكم الرياضية · النشاط المباشر والنبض التشغيلي للموقع.",
     greetingSubtext: "إليك ما يحدث في {{facility}} اليوم.",
+    allFacilities: "جميع المرافق",
     todaySchedule: {
       title: "جدول اليوم",
       viewAll: "عرض الكل",
       empty: "لا توجد مباريات مجدولة اليوم",
+      emptyTitle: "لا توجد حجوزات مجدولة اليوم",
+      emptyHint: "أدر إشغال الملاعب وأنشئ حجوزات جديدة من خلال التقويم.",
+      goToCalendar: "فتح التقويم",
     },
     header: {
       today: "اليوم",
@@ -84,6 +88,11 @@ export const ar = {
       reserved: "محجوز",
       until: "حتى {{time}}",
       next: "التالي: {{time}}",
+      options: "خيارات لـ {{name}}",
+      viewBooking: "عرض الحجز 360",
+      viewCalendar: "عرض في التقويم",
+      bookNow: "حجز هذا الملعب",
+      courtDetails: "إعدادات الملعب",
     },
     heroTimeline: {
       title: "النشاط التشغيلي لليوم",
@@ -170,6 +179,9 @@ export const ar = {
       description:
         "متابعة مستحقات العملاء غير المسددة، والدفعات اليدوية، وتوزيع المبالغ، والإيصالات، والتسويات.",
       openWorkspace: "فتح مساحة العمل المالية",
+      collectedToday: "المحصّل اليوم",
+      outstanding: "المستحقات المعلقة",
+      unallocated: "غير مخصص",
     },
     attention: {
       activeTitle: "{{count}} إشارة تشغيلية تتطلب الاهتمام",

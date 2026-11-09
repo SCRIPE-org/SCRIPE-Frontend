@@ -239,4 +239,64 @@ describe("Sileo Toast System — Core Controller", () => {
       expect.objectContaining({ title: "Danger", description: "Severe warning" })
     );
   });
+
+  it("supports toast.rich() with full options, rich description, and action button", () => {
+    const onClick = vi.fn();
+    const handle = toast.rich({
+      title: "Rich Notification",
+      description: "Detailed system event with action button",
+      button: {
+        title: "Action",
+        onClick,
+      },
+      duration: 5000,
+    });
+
+    expect(handle.id).toBeTruthy();
+    expect(sileo.show).toHaveBeenCalledWith(
+      expect.objectContaining({
+        title: "Rich Notification",
+        description: "Detailed system event with action button",
+        button: expect.objectContaining({
+          title: "Action",
+        }),
+        duration: 5000,
+      })
+    );
+  });
+
+  it("supports button with 'label' property fallback and custom alias", () => {
+    const onClick = vi.fn();
+    const handle = toast.custom({
+      title: "Custom Notification",
+      button: {
+        label: "Retry",
+        onClick,
+      } as any,
+    });
+
+    expect(handle.id).toBeTruthy();
+    expect(sileo.show).toHaveBeenCalledWith(
+      expect.objectContaining({
+        title: "Custom Notification",
+        button: expect.objectContaining({
+          title: "Retry",
+        }),
+      })
+    );
+  });
+
+  it("resolves logical positions (top-end, bottom-end) in toast options", () => {
+    toast.rich({
+      title: "Logical End Notification",
+      position: "top-end",
+    });
+
+    expect(sileo.show).toHaveBeenCalledWith(
+      expect.objectContaining({
+        title: "Logical End Notification",
+        position: "top-right", // LTR document default
+      })
+    );
+  });
 });

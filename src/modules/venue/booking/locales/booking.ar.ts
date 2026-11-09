@@ -23,6 +23,8 @@ export const ar = {
       contactLimitation: "تفاصيل الاتصال غير متاحة في عرض الحجز الحالي.",
       existingOnly: "أنشئ عميلًا جديدًا أو حدد طرفًا موجودًا.",
       quickCreate: "إنشاء سريع للعميل",
+      customerLinked: "تم ربط العميل بحجز هذا الملعب.",
+      helperTip: "ابحث باسم العميل أو استخدم الإنشاء السريع لتسجيل عميل جديد.",
       quickCreateDescription: "أضف عميلًا جديدًا دون مغادرة سير عمل الحجز.",
       nameLabel: "اسم العميل",
       namePlaceholder: "مثل: شركة النجوم أو محمد أحمد",

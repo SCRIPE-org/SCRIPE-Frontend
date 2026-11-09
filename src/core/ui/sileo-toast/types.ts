@@ -12,6 +12,17 @@ export type SileoPosition =
   | "bottom-right";
 
 /**
+ * Direction-agnostic logical positions auto-resolved to physical coordinates via layout direction.
+ */
+export type SileoLogicalPosition =
+  | "top-end"
+  | "top-start"
+  | "bottom-end"
+  | "bottom-start";
+
+export type SileoAnyPosition = SileoPosition | SileoLogicalPosition;
+
+/**
  * Standard semantic toast variants mapped to SCRIPE design system tokens.
  */
 export type SileoToastVariant =
@@ -27,7 +38,8 @@ export type SileoToastVariant =
  * Action button configuration for interactive toasts.
  */
 export interface SileoButton {
-  title: string;
+  title?: string;
+  label?: string;
   onClick: () => void;
   className?: string;
 }
@@ -54,7 +66,7 @@ export interface SileoOptions {
   /** Toast body content, supports plain string or rich JSX / ReactNode */
   description?: React.ReactNode | string;
   /** Viewport position override for this toast */
-  position?: SileoPosition;
+  position?: SileoAnyPosition;
   /** Auto-dismiss duration in milliseconds. Pass null for sticky toasts. Default: 4000ms */
   duration?: number | null;
   /** Custom icon React node to display inside the badge circle, or null to hide */
@@ -109,7 +121,7 @@ export interface SileoPromiseOptions<T = unknown> {
   success: SileoOptions | string | ((data: T) => SileoOptions | string);
   error: SileoOptions | string | ((err: unknown) => SileoOptions | string);
   action?: SileoOptions | string | ((data: T) => SileoOptions | string);
-  position?: SileoPosition;
+  position?: SileoAnyPosition;
 }
 
 /**
@@ -132,7 +144,7 @@ export type ToastInput =
  */
 export interface SileoToasterProps {
   /** Default position for all toasts (default: "top-right" in LTR, mirrors in RTL) */
-  position?: SileoPosition;
+  position?: SileoAnyPosition;
   /** Viewport distance offset from window edges */
   offset?:
     | number

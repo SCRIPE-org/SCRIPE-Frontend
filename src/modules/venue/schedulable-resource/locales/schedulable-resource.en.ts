@@ -18,6 +18,9 @@ export const en = {
     checklistTitle: "Publication Checklist",
     checklistAllClear: "Every prerequisite is met — this resource is ready to publish.",
     compositeHint: "Composite resource — capacity comes from its child resources.",
+    saveFailed: "Failed to save resource",
+    checklistFailed: "Failed to load publication checklist",
+    publishFailed: "Failed to publish resource",
     status: {
       draft: "Draft",
       published: "Published",

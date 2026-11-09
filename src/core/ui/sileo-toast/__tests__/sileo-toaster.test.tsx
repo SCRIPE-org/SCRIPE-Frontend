@@ -31,10 +31,10 @@ describe("SileoToaster — Component Viewport", () => {
     expect(mockToaster).toHaveBeenCalledWith(
       expect.objectContaining({
         position: "top-right",
-        theme: "dark",
         options: expect.objectContaining({
-          fill: "#151719",
+          fill: "#0d0d0e",
           roundness: 16,
+          autopilot: true,
         }),
       })
     );
@@ -48,9 +48,10 @@ describe("SileoToaster — Component Viewport", () => {
     expect(mockToaster).toHaveBeenCalledWith(
       expect.objectContaining({
         position: "top-left",
-        theme: "light",
         options: expect.objectContaining({
           fill: "#ffffff",
+          roundness: 16,
+          autopilot: true,
         }),
       })
     );
@@ -58,13 +59,56 @@ describe("SileoToaster — Component Viewport", () => {
 
   it("allows overriding theme and position explicitly", () => {
     mockDirection = "ltr";
-    render(<SileoToaster position="bottom-center" theme="light" />);
+    render(<SileoToaster position="bottom-center" options={{ fill: "#222222" }} />);
 
     expect(mockToaster).toHaveBeenCalledWith(
       expect.objectContaining({
         position: "bottom-center",
-        theme: "light",
+        options: expect.objectContaining({
+          fill: "#222222",
+        }),
       })
     );
+  });
+
+  describe("resolveRtlPosition()", () => {
+    it("preserves positions in LTR mode", async () => {
+      const { resolveRtlPosition } = await import("../sileo-toaster");
+      expect(resolveRtlPosition("top-right", "ltr", true)).toBe("top-right");
+      expect(resolveRtlPosition("top-left", "ltr", true)).toBe("top-left");
+      expect(resolveRtlPosition("top-center", "ltr", true)).toBe("top-center");
+      expect(resolveRtlPosition("bottom-right", "ltr", true)).toBe("bottom-right");
+      expect(resolveRtlPosition("bottom-left", "ltr", true)).toBe("bottom-left");
+      expect(resolveRtlPosition("bottom-center", "ltr", true)).toBe("bottom-center");
+    });
+
+    it("mirrors horizontal positions in RTL mode", async () => {
+      const { resolveRtlPosition } = await import("../sileo-toaster");
+      expect(resolveRtlPosition("top-right", "rtl", true)).toBe("top-left");
+      expect(resolveRtlPosition("top-left", "rtl", true)).toBe("top-right");
+      expect(resolveRtlPosition("bottom-right", "rtl", true)).toBe("bottom-left");
+      expect(resolveRtlPosition("bottom-left", "rtl", true)).toBe("bottom-right");
+      expect(resolveRtlPosition("top-center", "rtl", true)).toBe("top-center");
+      expect(resolveRtlPosition("bottom-center", "rtl", true)).toBe("bottom-center");
+    });
+
+    it("resolves logical positions (top-end, top-start, bottom-end, bottom-start)", async () => {
+      const { resolveRtlPosition } = await import("../sileo-toaster");
+      // Top-End: top-right in LTR, top-left in RTL
+      expect(resolveRtlPosition("top-end", "ltr", true)).toBe("top-right");
+      expect(resolveRtlPosition("top-end", "rtl", true)).toBe("top-left");
+
+      // Top-Start: top-left in LTR, top-right in RTL
+      expect(resolveRtlPosition("top-start", "ltr", true)).toBe("top-left");
+      expect(resolveRtlPosition("top-start", "rtl", true)).toBe("top-right");
+
+      // Bottom-End: bottom-right in LTR, bottom-left in RTL
+      expect(resolveRtlPosition("bottom-end", "ltr", true)).toBe("bottom-right");
+      expect(resolveRtlPosition("bottom-end", "rtl", true)).toBe("bottom-left");
+
+      // Bottom-Start: bottom-left in LTR, bottom-right in RTL
+      expect(resolveRtlPosition("bottom-start", "ltr", true)).toBe("bottom-left");
+      expect(resolveRtlPosition("bottom-start", "rtl", true)).toBe("bottom-right");
+    });
   });
 });

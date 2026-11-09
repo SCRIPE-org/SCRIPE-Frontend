@@ -1236,6 +1236,8 @@ export const ar = {
       errorWithItem: "فشل {operationLower} {item}.",
       errorGeneric: "فشلت العملية.",
     },
+    default: "افتراضي",
+    unknownError: "حدث خطأ غير متوقع",
     included: "مُضمَّن",
     notIncluded: "غير مُضمَّن",
     welcomeBack: "مرحباً بعودتك، {{name}}",

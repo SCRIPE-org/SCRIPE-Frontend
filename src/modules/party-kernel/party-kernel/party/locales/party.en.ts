@@ -84,8 +84,10 @@ export const en = {
         "Corporate affiliation and authorized signatory contracts are currently pending in the PartyKernel backend. Guardian and Emergency Contact relations are not repurposed for corporate representation.",
       addRepresentativeDisabledTooltip:
         "Representative affiliation persistence contract pending backend delivery in V1.",
+      planned: "Upcoming",
       tabHistory: "History & Duplicates",
       immutableType: "Immutable Identity Type",
+      immutableBadge: "Protected",
       canonicalId: "Canonical Contact ID",
       createdOn: "Created On",
       lastUpdated: "Last Updated",

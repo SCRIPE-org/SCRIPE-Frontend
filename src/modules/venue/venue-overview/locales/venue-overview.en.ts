@@ -41,10 +41,14 @@ export const en = {
     title: "Venue Operations",
     subtitle: "Sports Operations Console · Live venue activity and pulse.",
     greetingSubtext: "Here's what's happening at {{facility}} today.",
+    allFacilities: "All Facilities",
     todaySchedule: {
       title: "Today's Schedule",
       viewAll: "View All",
       empty: "No scheduled matches today",
+      emptyTitle: "No bookings scheduled for today",
+      emptyHint: "Manage court occupancy and create new reservations from the calendar.",
+      goToCalendar: "Open Calendar",
     },
     header: {
       today: "Today",
@@ -84,6 +88,11 @@ export const en = {
       reserved: "Reserved",
       until: "Until {{time}}",
       next: "Next: {{time}}",
+      options: "Options for {{name}}",
+      viewBooking: "Booking 360",
+      viewCalendar: "View on Calendar",
+      bookNow: "Book This Court",
+      courtDetails: "Court Settings",
     },
     heroTimeline: {
       title: "Today’s Venue Activity",
@@ -172,6 +181,9 @@ export const en = {
       description:
         "Track customer outstanding balances, manual payments, payment allocations, receipts, and refund reconciliation.",
       openWorkspace: "Open Money Workspace",
+      collectedToday: "Collected Today",
+      outstanding: "Outstanding",
+      unallocated: "unallocated",
     },
     attention: {
       activeTitle: "{{count}} operational signal(s) require attention",

@@ -7,20 +7,46 @@ import {
   setupSovereignAccountRouteMocks,
 } from "./fixtures/account-test-helpers";
 
-const BRAIN_SCREENSHOT_DIR =
-  "C:/Users/seif/.gemini/antigravity/brain/85911dec-5598-43ed-8cc4-47e444517b35/screenshots";
+const PRIMARY_BRAIN_DIR =
+  "C:/Users/seif/.gemini/antigravity/brain/8725e4d2-d0d0-40de-81f9-0ff23647d3c5";
+const PRIMARY_BRAIN_SCREENSHOTS_DIR =
+  "C:/Users/seif/.gemini/antigravity/brain/8725e4d2-d0d0-40de-81f9-0ff23647d3c5/screenshots";
 const REPO_SCREENSHOT_DIR = path.resolve(process.cwd(), "screenshots/toast-preferences");
 
 function ensureScreenshotDirs() {
-  fs.mkdirSync(BRAIN_SCREENSHOT_DIR, { recursive: true });
+  fs.mkdirSync(PRIMARY_BRAIN_DIR, { recursive: true });
+  fs.mkdirSync(PRIMARY_BRAIN_SCREENSHOTS_DIR, { recursive: true });
   fs.mkdirSync(REPO_SCREENSHOT_DIR, { recursive: true });
 }
 
 async function saveDualScreenshot(page: import("@playwright/test").Page, filename: string) {
   ensureScreenshotDirs();
-  const buffer = await page.screenshot({ fullPage: true });
-  fs.writeFileSync(path.join(BRAIN_SCREENSHOT_DIR, filename), buffer);
+
+  // Scroll to the top so sticky/fixed elements reset to their natural positions
+  await page.evaluate(() => window.scrollTo(0, 0));
+  await page.waitForTimeout(300);
+
+  // Measure the total scrollable height of the document
+  const fullHeight = await page.evaluate(() =>
+    Math.max(document.body.scrollHeight, document.documentElement.scrollHeight, 1200)
+  );
+
+  // Expand the viewport to encompass the entire document height.
+  // This completely eliminates Playwright's tile-stitching bug where sticky headers
+  // get duplicated and stamped across the middle of the cards.
+  await page.setViewportSize({ width: 1440, height: fullHeight });
+  await page.waitForTimeout(400);
+
+  // Capture single-frame, high-resolution full page screenshot
+  const buffer = await page.screenshot({ fullPage: false });
+
+  // Save to current brain root, brain screenshots folder, and repo folder
+  fs.writeFileSync(path.join(PRIMARY_BRAIN_DIR, filename), buffer);
+  fs.writeFileSync(path.join(PRIMARY_BRAIN_SCREENSHOTS_DIR, filename), buffer);
   fs.writeFileSync(path.join(REPO_SCREENSHOT_DIR, filename), buffer);
+
+  // Restore normal viewport size
+  await page.setViewportSize({ width: 1440, height: 900 });
 }
 
 test.describe("SCRIPE Toast Viewport & Smart Notification Position — E2E Acceptance", () => {
@@ -34,7 +60,7 @@ test.describe("SCRIPE Toast Viewport & Smart Notification Position — E2E Accep
     page,
   }) => {
     test.setTimeout(120_000);
-    await page.goto("/account/preferences", { waitUntil: "commit", timeout: 60_000 });
+    await page.goto("/account/preferences", { waitUntil: "commit", timeout: 90_000 });
 
     // Verify Toast Viewport Card is visible
     const cardTitle = page.getByRole("heading", { name: /Toast Viewport|موقع إشعارات/i });
@@ -43,10 +69,10 @@ test.describe("SCRIPE Toast Viewport & Smart Notification Position — E2E Accep
     // Ensure Dark Mode
     await applyThemeMode(page, "dark");
 
-    // Click Top-Right position button
-    const topRightBtn = page.locator('[data-testid="toast-position-top-right"]');
-    await expect(topRightBtn).toBeVisible();
-    await topRightBtn.click();
+    // Click Top-End position button (Top-Right in English LTR)
+    const topEndBtn = page.locator('[data-testid="toast-position-top-end"]');
+    await expect(topEndBtn).toBeVisible();
+    await topEndBtn.click();
 
     // Trigger Smart Test Toast explicitly if not already triggered
     const triggerBtn = page.locator('[data-testid="trigger-smart-test-toast-btn"]');
@@ -54,7 +80,8 @@ test.describe("SCRIPE Toast Viewport & Smart Notification Position — E2E Accep
     await triggerBtn.click();
 
     // Wait for the toast to appear with rich title
-    await page.waitForTimeout(600);
+    const toastTitle = page.locator("text=Tactical Telemetry Synced").first();
+    await expect(toastTitle).toBeVisible({ timeout: 15_000 });
 
     // Capture Tactical Dark Mode screenshot with live toast
     await saveDualScreenshot(page, "01-toast-preferences-dark-top-right.png");
@@ -86,30 +113,28 @@ test.describe("SCRIPE Toast Viewport & Smart Notification Position — E2E Accep
     test.setTimeout(120_000);
     await page.goto("/account/preferences", { waitUntil: "commit", timeout: 60_000 });
 
-    // Switch to Arabic language
+    // Switch to Arabic language by scrolling to and clicking the Arabic toggle
     const arabicBtn = page.locator('[data-testid="language-ar"]');
-    if (await arabicBtn.isVisible()) {
-      await arabicBtn.click();
-    } else {
-      await page.evaluate(() => {
-        document.documentElement.setAttribute("dir", "rtl");
-        document.documentElement.setAttribute("lang", "ar");
-        window.localStorage.setItem("language", "ar");
-      });
-    }
+    await arabicBtn.scrollIntoViewIfNeeded();
+    await arabicBtn.click();
 
     await page.waitForTimeout(600);
 
-    // Verify RTL mirroring badge
-    const badge = page.locator("text=نمط RTL نشط").or(page.locator("text=RTL Mode Active"));
-    await expect(badge.first()).toBeVisible({ timeout: 10_000 });
+    // Verify RTL mirroring badge is visible with RTL detection
+    const badge = page.locator('[data-testid="toast-mirror-badge"]');
+    await expect(badge).toBeVisible({ timeout: 10_000 });
+    await expect(badge).toContainText("RTL");
 
-    // Click Top-Left in Arabic (which represents Top-End in RTL)
-    const topLeftBtn = page.locator('[data-testid="toast-position-top-left"]');
-    await expect(topLeftBtn).toBeVisible();
-    await topLeftBtn.click();
+    // Click Top-End position button in Arabic (which represents Top-Left in RTL)
+    const topEndBtn = page.locator('[data-testid="toast-position-top-end"]');
+    await topEndBtn.scrollIntoViewIfNeeded();
+    await expect(topEndBtn).toBeVisible();
+    await expect(topEndBtn).toContainText("أعلى اليسار");
+    await topEndBtn.click();
 
-    await page.waitForTimeout(600);
+    // Verify Arabic smart test toast is visible
+    const arabicToast = page.locator("text=تمت مزامنة القياسات التكتيكية").first();
+    await expect(arabicToast).toBeVisible({ timeout: 15_000 });
 
     // Capture Arabic RTL Mode screenshot with live toast
     await saveDualScreenshot(page, "03-toast-preferences-arabic-rtl.png");

@@ -220,6 +220,7 @@ export const en = {
       cancel: "Cancel",
     },
     detail: {
+      notFound: "Court not found",
       back: "Back to Courts & Spaces",
     },
     wizard: {

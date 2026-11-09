@@ -27,6 +27,7 @@ export const en = {
       sites: "Campuses & Branches",
     },
     actions: {
+      addFacility: "Add Facility",
       viewCourts: "Courts & Spaces",
       viewCalendar: "Calendar",
     },

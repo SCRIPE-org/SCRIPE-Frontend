@@ -34,7 +34,7 @@ export default defineConfig({
   ],
 
   webServer: {
-    command: `pnpm dev -p ${resolvedPort}`,
+    command: `pnpm start -p ${resolvedPort}`,
     port: resolvedPort,
     reuseExistingServer: true,
     timeout: 90_000,

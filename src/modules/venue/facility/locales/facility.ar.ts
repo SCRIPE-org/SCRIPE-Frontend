@@ -27,6 +27,7 @@ export const ar = {
       sites: "الفروع والمقرات",
     },
     actions: {
+      addFacility: "إضافة مرفق",
       viewCourts: "الملاعب والمساحات",
       viewCalendar: "التقويم",
     },

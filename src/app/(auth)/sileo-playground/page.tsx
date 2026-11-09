@@ -20,6 +20,13 @@ export default function SileoPlaygroundPage() {
     const isAr = dir === "rtl";
 
     switch (type) {
+      case "pill":
+        toast.success({
+          title: isAr ? "تم حفظ التغييرات بنجاح" : "Changes Saved Successfully",
+          duration: 6000,
+        });
+        break;
+
       case "success":
         toast.success({
           title: isAr ? "تم تأكيد حجز الملعب بنجاح" : "Court Booking Confirmed",
@@ -192,6 +199,15 @@ export default function SileoPlaygroundPage() {
 
         {/* Trigger Buttons Grid */}
         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: "12px", marginBottom: "24px" }}>
+          <button
+            id="trigger-pill"
+            onClick={() => triggerToast("pill")}
+            style={{ padding: "14px", borderRadius: "12px", border: "1px solid rgba(48, 164, 108, 0.4)", background: "rgba(48, 164, 108, 0.12)", color: "#30a46c", textAlign: "left", fontWeight: 600, fontSize: "13px", cursor: "pointer", display: "flex", flexDirection: "column", gap: "4px" }}
+          >
+            <span>▶ Compact 40px Pill</span>
+            <span style={{ fontSize: "11px", fontWeight: 400, color: isDark ? "#9ba1a6" : "#687076" }}>Resting Pill State</span>
+          </button>
+
           <button
             id="trigger-success"
             onClick={() => triggerToast("success")}

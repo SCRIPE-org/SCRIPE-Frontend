@@ -218,6 +218,7 @@ export const ar = {
       cancel: "إلغاء",
     },
     detail: {
+      notFound: "الملعب غير موجود",
       back: "العودة إلى الملاعب والمساحات",
     },
     wizard: {

@@ -8,6 +8,7 @@ export const en = {
     code: "Code",
     descriptionField: "Description",
     priority: "Priority",
+    activeUsers: "Active Users",
     roleDetails: "Role Details",
     selectedPermissions: "Selected Permissions",
     permissions: "permissions",

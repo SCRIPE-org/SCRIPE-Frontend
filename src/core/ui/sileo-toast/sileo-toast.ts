@@ -3,6 +3,7 @@
 import * as React from "react";
 import { sileo as baseSileo, type SileoOptions as RawSileoOptions } from "sileo";
 import { translateCore } from "@core/common/i18n-outside-react";
+import { resolveRtlPosition } from "./sileo-toaster";
 import type {
   ActiveToastDescriptor,
   SileoButton,
@@ -26,7 +27,7 @@ const DEFAULT_TOAST_DURATION = 4000;
  * state semantic tones from Sileo CSS custom properties.
  */
 const NEXUS_SILEO_STYLES = {
-  title: "font-sans font-semibold tracking-tight text-[13px]",
+  title: "font-sans font-semibold tracking-tight text-[13px] text-nx-ink",
   description: "font-sans text-[12px] leading-relaxed text-nx-ink-2! mt-0.5",
   button:
     "rounded-nx-control border border-nx-line-hi bg-nx-raised text-nx-ink font-medium text-xs px-2.5 py-1 hover:bg-nx-hover transition-colors!",
@@ -34,12 +35,20 @@ const NEXUS_SILEO_STYLES = {
 };
 
 function getResolvedThemeFill(): string {
-  if (typeof document === "undefined") return "#151719";
+  if (typeof document === "undefined") return "#0d0d0e";
   const isDark =
     document.documentElement.classList.contains("dark") ||
     document.body.classList.contains("dark") ||
     window.matchMedia("(prefers-color-scheme: dark)").matches;
-  return isDark ? "#151719" : "#ffffff";
+  return isDark ? "#0d0d0e" : "#ffffff";
+}
+
+function getDocumentDirection(): "ltr" | "rtl" {
+  if (typeof document === "undefined") return "ltr";
+  const dir =
+    document.documentElement.getAttribute("dir") ||
+    document.body.getAttribute("dir");
+  return dir === "rtl" ? "rtl" : "ltr";
 }
 
 let counter = 0;
@@ -148,8 +157,15 @@ function normalizeOptions(
     typeof input === "string" ? { title: input } : { ...input };
 
   // Resolve button from native button or legacy action prop
-  let button: SileoButton | undefined = base.button;
-  if (!button && "action" in base && base.action) {
+  let button: SileoButton | undefined = undefined;
+  const rawButton = extraOptions?.button ?? base.button;
+  if (rawButton) {
+    button = {
+      title: rawButton.title || (rawButton as any).label || "Action",
+      onClick: rawButton.onClick || (() => {}),
+      className: rawButton.className,
+    };
+  } else if ("action" in base && base.action) {
     const act = base.action as any;
     if (React.isValidElement(act)) {
       const props = (act as React.ReactElement<any>).props || {};
@@ -187,12 +203,17 @@ function normalizeOptions(
 
   const resolvedId = extraOptions?.id ?? base.id ?? generateToastId();
 
+  const rawPosition = extraOptions?.position ?? base.position;
+  const resolvedPosition = rawPosition
+    ? resolveRtlPosition(rawPosition, getDocumentDirection(), true)
+    : undefined;
+
   return {
     id: resolvedId,
     title: base.title ?? "",
     description: base.description,
     type: finalType as any,
-    position: extraOptions?.position ?? base.position,
+    position: resolvedPosition,
     duration:
       extraOptions?.duration !== undefined
         ? extraOptions.duration
@@ -204,7 +225,7 @@ function normalizeOptions(
     styles: mergedStyles,
     roundness: extraOptions?.roundness ?? base.roundness ?? 16,
     autopilot: extraOptions?.autopilot ?? base.autopilot ?? true,
-    button: extraOptions?.button ?? button,
+    button: button ? { title: button.title ?? "Action", onClick: button.onClick } : undefined,
   };
 }
 
@@ -453,6 +474,24 @@ function baseToastFn(input: ToastInput, extraOptions?: Partial<SileoOptions>): T
   }
 }
 
+/**
+ * Displays a rich toast with full options: ReactNode description, icon, custom styles, action button.
+ */
+function rich(options: SileoOptions): ToastResponse {
+  const opts = normalizeOptions(
+    options,
+    (options as any).variant || (options.button ? "action" : "info")
+  );
+  baseSileo.show(opts);
+  registerActiveToast(
+    opts.id,
+    options,
+    (options as any).variant || (options.button ? "action" : "info"),
+    opts.duration
+  );
+  return makeToastHandle(opts.id);
+}
+
 export const toast = Object.assign(baseToastFn, {
   success,
   error,
@@ -460,6 +499,8 @@ export const toast = Object.assign(baseToastFn, {
   info,
   action,
   show,
+  rich,
+  custom: rich,
   loading,
   sticky,
   promise,
