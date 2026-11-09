@@ -340,6 +340,22 @@ import {
   en as academySeasonsEn,
   ar as academySeasonsAr,
 } from "@modules/academy/seasons/locales";
+import {
+  en as academySessionsEn,
+  ar as academySessionsAr,
+} from "@modules/academy/sessions/locales";
+import {
+  en as academyAttendanceEn,
+  ar as academyAttendanceAr,
+} from "@modules/academy/attendance/locales";
+import {
+  feesReceivablesEn as academyFeesReceivablesEn,
+  feesReceivablesAr as academyFeesReceivablesAr,
+} from "@modules/academy/fees-receivables/locales";
+import {
+  reportsEn as academyReportsEn,
+  reportsAr as academyReportsAr,
+} from "@modules/academy/analytics-reports/locales";
 
 // ─── Merged Dictionaries ───────────────────────────────
 export const allModulesEn: Record<string, unknown> = deepMerge(
@@ -471,7 +487,11 @@ export const allModulesEn: Record<string, unknown> = deepMerge(
   academyGroupsEn,
   academyOfferingsEn,
   academyLocationsEn,
-  academySeasonsEn
+  academySeasonsEn,
+  academySessionsEn,
+  academyAttendanceEn,
+  { academy: { feesReceivables: academyFeesReceivablesEn } },
+  { academy: { reports: academyReportsEn } }
 );
 
 export const allModulesAr: Record<string, unknown> = deepMerge(
@@ -603,5 +623,9 @@ export const allModulesAr: Record<string, unknown> = deepMerge(
   academyGroupsAr,
   academyOfferingsAr,
   academyLocationsAr,
-  academySeasonsAr
+  academySeasonsAr,
+  academySessionsAr,
+  academyAttendanceAr,
+  { academy: { feesReceivables: academyFeesReceivablesAr } },
+  { academy: { reports: academyReportsAr } }
 );

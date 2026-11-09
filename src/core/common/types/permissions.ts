@@ -482,6 +482,12 @@ export const PAGE_PERMISSIONS: Record<string, PermissionCode[]> = {
   "/academy/enrollments": [ACADEMY_PERMISSIONS.ACADEMY_ENROLLMENTS_VIEW],
   "/academy/groups": [ACADEMY_PERMISSIONS.ACADEMY_GROUPS_VIEW],
   "/academy/groups/[id]": [ACADEMY_PERMISSIONS.ACADEMY_GROUPS_VIEW],
+  "/academy/sessions": [ACADEMY_PERMISSIONS.ACADEMY_SESSIONS_VIEW],
+  "/academy/sessions/[id]": [ACADEMY_PERMISSIONS.ACADEMY_SESSIONS_VIEW],
+  "/academy/attendance": [ACADEMY_PERMISSIONS.ACADEMY_ATTENDANCE_VIEW],
+  "/academy/attendance/[sessionId]": [ACADEMY_PERMISSIONS.ACADEMY_ATTENDANCE_VIEW],
+  "/academy/fees-receivables": [ACADEMY_PERMISSIONS.ACADEMY_ENROLLMENTS_VIEW],
+  "/academy/reports": [ACADEMY_PERMISSIONS.ACADEMY_OVERVIEW_VIEW],
 
   // Work Items Module
   "/work-items": [SYSTEM_PERMISSIONS.WORK_ITEM_VIEW],
