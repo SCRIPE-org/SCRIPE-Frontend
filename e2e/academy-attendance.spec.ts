@@ -1,5 +1,7 @@
 import { expect, test, type Page } from "@playwright/test";
 
+test.use({ channel: "chrome" });
+
 // Use a disposable Academy fixture with at least two unmarked eligible athletes.
 const fixture = {
   coach: process.env.ACADEMY_ATTENDANCE_COACH,

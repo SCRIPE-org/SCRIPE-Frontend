@@ -247,6 +247,7 @@ export function NexusLayout({ children }: NexusLayoutProps) {
               style={{
                 display: "flex",
                 flex: 1,
+                minWidth: 0,
                 flexDirection: "column",
                 overflow: "hidden",
                 background: "var(--nx-ground, hsl(var(--background)))",
@@ -260,6 +261,7 @@ export function NexusLayout({ children }: NexusLayoutProps) {
                   display: "flex",
                   flex: 1,
                   minHeight: 0,
+                  minWidth: 0,
                   flexDirection: "column",
                   overflowY: "auto",
                   overflowX: "hidden",
@@ -279,6 +281,8 @@ export function NexusLayout({ children }: NexusLayoutProps) {
                     // Grow to fill short pages so the footer sits on the bottom
                     // edge; never shrink, so long pages scroll past it.
                     flex: "1 0 auto",
+                    width: "100%",
+                    minWidth: 0,
                     padding: "16px 20px",
                     background: "var(--nx-ground, hsl(var(--background)))",
                     // Routing dim — opacity only. A blur() here repaints the whole
@@ -288,7 +292,7 @@ export function NexusLayout({ children }: NexusLayoutProps) {
                       "opacity var(--nx-t-micro, 140ms) var(--nx-ease-enter, cubic-bezier(0.23, 1, 0.32, 1))",
                   }}
                 >
-                  <div className="duration-nx-standard animate-in fade-in">{children}</div>
+                  <div className="w-full min-w-0 duration-nx-standard animate-in fade-in">{children}</div>
                 </main>
                 {showFooter && <NexusFooter />}
               </div>
