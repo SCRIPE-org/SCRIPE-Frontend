@@ -136,6 +136,12 @@ function renderA7Html({ isDark = false, isAr = false, isMobile = false, showShee
   </head>
   <body class="p-4 sm:p-6 lg:p-8">
     <div class="space-y-6" style="max-width: 1400px; margin: 0 auto;">
+      <!-- SYNTHETIC VISUALIZATION NOTICE -->
+      <div style="background: ${isDark ? "#1e293b" : "#f1f5f9"}; border: 1px dashed ${isDark ? "#475569" : "#cbd5e1"}; border-radius: 6px; padding: 6px 12px; font-size: 11px; font-weight: 600; color: ${isDark ? "#94a3b8" : "#475569"}; display: flex; align-items: center; justify-content: space-between;">
+        <span>[SYNTHETIC VISUALIZATION MOCKUP — LAYOUT &amp; DESIGN REFERENCE ONLY]</span>
+        <span style="font-family: monospace; font-size: 10px;">Playwright Synthetic • Host DB Runtime: BLOCKED</span>
+      </div>
+
       <!-- Header -->
       <div class="flex items-center justify-between border-b border-nx-line pb-4" style="flex-wrap: wrap; gap: 1rem;">
         <div>
@@ -485,6 +491,12 @@ function renderA8Html({ isDark = false, isAr = false, isMobile = false, showExpo
   </head>
   <body class="p-4 sm:p-6 lg:p-8">
     <div class="space-y-6" style="max-width: 1400px; margin: 0 auto;">
+      <!-- SYNTHETIC VISUALIZATION NOTICE -->
+      <div style="background: ${isDark ? "#1e293b" : "#f1f5f9"}; border: 1px dashed ${isDark ? "#475569" : "#cbd5e1"}; border-radius: 6px; padding: 6px 12px; font-size: 11px; font-weight: 600; color: ${isDark ? "#94a3b8" : "#475569"}; display: flex; align-items: center; justify-content: space-between;">
+        <span>[SYNTHETIC VISUALIZATION MOCKUP — LAYOUT &amp; DESIGN REFERENCE ONLY]</span>
+        <span style="font-family: monospace; font-size: 10px;">Playwright Synthetic • Host DB Runtime: BLOCKED</span>
+      </div>
+
       <!-- Header -->
       <div class="flex items-center justify-between border-b border-nx-line pb-4" style="flex-wrap: wrap; gap: 1rem;">
         <div>
@@ -509,37 +521,37 @@ function renderA8Html({ isDark = false, isAr = false, isMobile = false, showExpo
           : "Authoritative SCRIPE Academy operational metrics. Financial figures are projected exclusively from SCRIPE Finance. S5/S6 attendance metrics are frozen under contract."}
       </div>
 
-      <!-- Top Reconciled Operational KPI Summary (5 Registered, 4 Unique with Enrollments, 5 Active Enrollments, 1 Multi-Sport, 90.0% Avg Capacity, 66.7% Trial Conversion) -->
+      <!-- Top Reconciled Operational KPI Summary (25 Registered, 20 Unique Active, 22 Active Enrollments, 2 Multi-Sport, 88.0% Weighted Capacity, 66.7% Trial Admission) -->
       <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
         <div class="rounded-lg border border-nx-line bg-nx-surface p-4">
           <span class="text-xs font-medium text-nx-ink-3 uppercase">${isAr ? "الرياضيون الفريدون" : "Unique Athletes"}</span>
-          <div class="text-2xl font-bold font-mono text-nx-ink" style="margin-top: 0.5rem;">4</div>
-          <p class="text-[11px] text-nx-ink-3" style="margin-top: 0.25rem;">${isAr ? "إزالة التكرار للرياضات المتعددة" : "Deduplicated multi-sport"}</p>
+          <div class="text-2xl font-bold font-mono text-nx-ink" style="margin-top: 0.5rem;">20</div>
+          <p class="text-[11px] text-nx-ink-3" style="margin-top: 0.25rem;">${isAr ? "إزالة التكرار للرياضات المتعددة" : "Deduplicated active"}</p>
         </div>
         <div class="rounded-lg border border-nx-line bg-nx-surface p-4">
           <span class="text-xs font-medium text-nx-ink-3 uppercase">${isAr ? "إجمالي المسجلين" : "Registered Athletes"}</span>
-          <div class="text-2xl font-bold font-mono text-nx-ink" style="margin-top: 0.5rem;">5</div>
-          <p class="text-[11px] text-nx-ink-3" style="margin-top: 0.25rem;">${isAr ? "4 بتسجيلات نشطة" : "4 with active enrollments"}</p>
+          <div class="text-2xl font-bold font-mono text-nx-ink" style="margin-top: 0.5rem;">25</div>
+          <p class="text-[11px] text-nx-ink-3" style="margin-top: 0.25rem;">${isAr ? "نطاق الفرع المصرح" : "Authorized branch scope"}</p>
         </div>
         <div class="rounded-lg border border-nx-line bg-nx-surface p-4">
           <span class="text-xs font-medium text-nx-ink-3 uppercase">${isAr ? "التسجيلات النشطة" : "Active Enrollments"}</span>
-          <div class="text-2xl font-bold font-mono text-nx-ink" style="margin-top: 0.5rem;">5 <span class="text-xs text-nx-ink-3 font-normal">/ 5</span></div>
+          <div class="text-2xl font-bold font-mono text-nx-ink" style="margin-top: 0.5rem;">22</div>
           <p class="text-[11px] text-nx-ink-3" style="margin-top: 0.25rem;">${isAr ? "إجمالي المقاعد النشطة" : "Active program seats"}</p>
         </div>
         <div class="rounded-lg border border-nx-line bg-nx-surface p-4">
           <span class="text-xs font-medium text-nx-ink-3 uppercase">${isAr ? "متعددو الرياضات" : "Multi-Sport Athletes"}</span>
-          <div class="text-2xl font-bold font-mono text-nx-ink" style="margin-top: 0.5rem;">1</div>
-          <p class="text-[11px] text-nx-ink-3" style="margin-top: 0.25rem;">${isAr ? "25.0% نشطون في رياضتين" : "25.0% in >= 2 distinct sports"}</p>
+          <div class="text-2xl font-bold font-mono text-nx-ink" style="margin-top: 0.5rem;">2</div>
+          <p class="text-[11px] text-nx-ink-3" style="margin-top: 0.25rem;">${isAr ? "نشطون في رياضتين أو أكثر" : "Active in >= 2 distinct sports"}</p>
         </div>
         <div class="rounded-lg border border-nx-line bg-nx-surface p-4">
-          <span class="text-xs font-medium text-nx-ink-3 uppercase">${isAr ? "متوسط إشغال المجموعات" : "Avg Group Fill Rate"}</span>
-          <div class="text-2xl font-bold font-mono text-emerald-600" style="margin-top: 0.5rem;">90.0%</div>
-          <p class="text-[11px] text-nx-ink-3" style="margin-top: 0.25rem;">${isAr ? "القائمة بالتاريخ الفعلي" : "Effective-dated active roster"}</p>
+          <span class="text-xs font-medium text-nx-ink-3 uppercase">${isAr ? "متوسط إشغال المجموعات (المرجح)" : "Avg Group Fill Rate (Weighted)"}</span>
+          <div class="text-2xl font-bold font-mono text-emerald-600" style="margin-top: 0.5rem;">88.0%</div>
+          <p class="text-[11px] text-nx-ink-3" style="margin-top: 0.25rem;">${isAr ? "القائمة المرجحة بالسعة القصوى" : "Capacity-weighted active roster"}</p>
         </div>
         <div class="rounded-lg border border-nx-line bg-nx-surface p-4">
-          <span class="text-xs font-medium text-nx-ink-3 uppercase">${isAr ? "تحويل التجارب" : "Trial Conversion"}</span>
+          <span class="text-xs font-medium text-nx-ink-3 uppercase">${isAr ? "تحويل القبول للتجارب" : "Trial Admission Rate"}</span>
           <div class="text-2xl font-bold font-mono text-emerald-600" style="margin-top: 0.5rem;">66.7%</div>
-          <p class="text-[11px] text-nx-ink-3" style="margin-top: 0.25rem;">${isAr ? "2 مقبولة من 3 مقيمة" : "2 accepted of 3 evaluated"}</p>
+          <p class="text-[11px] text-nx-ink-3" style="margin-top: 0.25rem;">${isAr ? "2 مقبولة من 3 قرارات" : "2 accepted of 3 decided"}</p>
         </div>
       </div>
 

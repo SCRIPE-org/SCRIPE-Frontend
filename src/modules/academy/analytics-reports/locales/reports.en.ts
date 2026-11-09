@@ -28,10 +28,10 @@ export const reportsEn = {
     activeEnrollmentsSub: "Current active program seats",
     multiSport: "Multi-Sport Athletes",
     multiSportSub: "Athletes active in >= 2 sports",
-    groupCapacity: "Avg Group Fill Rate",
-    groupCapacitySub: "Effective active roster vs max capacity",
+    groupCapacity: "Avg Group Fill Rate (Weighted)",
+    groupCapacitySub: "Capacity-weighted active roster vs max capacity",
     trialConversion: "Trial Conversion Rate",
-    trialConversionSub: "Accepted trials vs evaluated"
+    trialConversionSub: "Accepted trials vs decided (Accepted + Rejected)"
   },
 
   // Group Capacity Table
@@ -61,8 +61,8 @@ export const reportsEn = {
     attendedEvaluated: "Attended / Evaluated",
     accepted: "Accepted",
     rejected: "Rejected",
-    conversionRate: "Conversion Rate",
-    conversionNote: "Calculated as Accepted / Attended. Unattended trials excluded from denominator."
+    conversionRate: "Admission Conversion Rate",
+    conversionNote: "Calculated as Accepted / (Accepted + Rejected). In-progress trials awaiting decision are excluded from denominator."
   },
 
   // Financial Snapshot

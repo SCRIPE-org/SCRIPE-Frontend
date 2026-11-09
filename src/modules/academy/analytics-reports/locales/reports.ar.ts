@@ -28,10 +28,10 @@ export const reportsAr = {
     activeEnrollmentsSub: "المقاعد النشطة حالياً في البرامج",
     multiSport: "رياضيون متعددو الرياضات",
     multiSportSub: "رياضيون نشطون في رياضتين أو أكثر",
-    groupCapacity: "متوسط إشغال المجموعات",
-    groupCapacitySub: "القائمة النشطة بالتاريخ الفعلي مقابل السعة القصوى",
+    groupCapacity: "متوسط إشغال المجموعات (المرجح)",
+    groupCapacitySub: "القائمة النشطة المرجحة بالسعة القصوى",
     trialConversion: "معدل تحويل التجارب",
-    trialConversionSub: "التجارب المقبولة مقارنة بالمقيمة"
+    trialConversionSub: "المقبولون مقابل القرارات الصادرة (قبول + رفض)"
   },
 
   // Group Capacity Table
@@ -61,8 +61,8 @@ export const reportsAr = {
     attendedEvaluated: "الحاضرة / المقيمة",
     accepted: "المقبولة",
     rejected: "المرفوضة",
-    conversionRate: "معدل التحويل",
-    conversionNote: "المحسوب: المقبولة / الحاضرة. لا تحتسب التجارب غير المحضورة في المقام."
+    conversionRate: "معدل تحويل القبول",
+    conversionNote: "المحسوب: المقبولون / (المقبولون + المرفوضون). تُستبعد التجارب قيد الإجراء بانتظار القرار من المقام."
   },
 
   // Financial Snapshot
