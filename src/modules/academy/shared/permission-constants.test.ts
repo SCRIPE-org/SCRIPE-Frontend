@@ -16,6 +16,7 @@ describe("ACADEMY_PERMISSIONS", () => {
     expect(ACADEMY_PERMISSIONS.ACADEMY_SESSIONS_VIEW).toBe("academy-sessions.view");
     expect(ACADEMY_PERMISSIONS.ACADEMY_ATTENDANCE_VIEW).toBe("academy-attendance.view");
     expect(ACADEMY_PERMISSIONS.ACADEMY_ATTENDANCE_RECORD).toBe("academy-attendance.record");
+    expect(ACADEMY_PERMISSIONS.ACADEMY_ATTENDANCE_OVERRIDE).toBe("academy-attendance.override");
     expect(ACADEMY_PERMISSIONS.ACADEMY_LOCATIONS_VIEW).toBe("academy-locations.view");
     expect(ACADEMY_PERMISSIONS.ACADEMY_ASSESSMENTS_VIEW).toBe("academy-assessments.view");
   });

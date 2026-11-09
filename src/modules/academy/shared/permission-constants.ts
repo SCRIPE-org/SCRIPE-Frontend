@@ -59,7 +59,7 @@ export const ACADEMY_PERMISSIONS = {
   // ── Attendance ──
   ACADEMY_ATTENDANCE_VIEW: "academy-attendance.view",
   ACADEMY_ATTENDANCE_RECORD: "academy-attendance.record",
-  ACADEMY_ATTENDANCE_CORRECT: "academy-attendance.correct",
+  ACADEMY_ATTENDANCE_OVERRIDE: "academy-attendance.override",
 
   // ── Training Locations ──
   ACADEMY_LOCATIONS_VIEW: "academy-locations.view",
