@@ -60,38 +60,5 @@ const nextConfig: NextConfig = {
   typescript: {
     ignoreBuildErrors: true,
   },
-
-  // Server-level redirects to standalone documentation portal (SCRIPE-Docs-Portal)
-  async redirects() {
-    const docsUrl = process.env.NEXT_PUBLIC_DOCS_URL || "http://localhost:3002";
-    return [
-      {
-        source: "/docs",
-        destination: `${docsUrl}/technical/get-started/overview`,
-        permanent: false,
-      },
-      {
-        source: "/docs/:path*",
-        destination: `${docsUrl}/technical/:path*`,
-        permanent: false,
-      },
-      {
-        source: "/commercial",
-        destination: `${docsUrl}/commercial/why-scripe-overview`,
-        permanent: false,
-      },
-      {
-        source: "/commercial/:path*",
-        destination: `${docsUrl}/commercial/:path*`,
-        permanent: false,
-      },
-      // Venue Phase 2 Consolidation Redirects
-      { source: "/venue/resource-builder", destination: "/venue/resources", permanent: true },
-      { source: "/venue/resource-profiles", destination: "/venue/resources", permanent: true },
-      { source: "/venue/sites", destination: "/venue/facilities?tab=sites", permanent: true },
-      { source: "/venue/venue-setup", destination: "/venue/settings?tab=profile", permanent: true },
-      { source: "/venue/availability", destination: "/venue/resources", permanent: true },
-    ];
-  },
 };
 export default nextConfig;
