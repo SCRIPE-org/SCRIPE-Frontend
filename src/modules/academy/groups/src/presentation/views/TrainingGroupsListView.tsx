@@ -22,8 +22,11 @@ import {
   UserCheck,
   Archive,
   ChevronRight,
-  User
+  User,
+  Pencil
 } from "lucide-react";
+import { WeeklyScheduleControl, type WeeklyScheduleValue } from "../components/WeeklyScheduleControl";
+import { EditTrainingGroupModal } from "../components/EditTrainingGroupModal";
 import type { TrainingGroup } from "../../domain/entities/TrainingGroup";
 import type { ProgramOffering } from "@modules/academy/offerings/src/domain/entities/ProgramOffering";
 import { GenericSelect, type GenericSelectOption } from "@core/crud/components/generic-select";
@@ -64,8 +67,16 @@ export function TrainingGroupsListView({ onSelectGroup, offeringId }: TrainingGr
   const [code, setCode] = useState("");
   const [minCapacity, setMinCapacity] = useState(5);
   const [maxCapacity, setMaxCapacity] = useState(15);
-  const [scheduleEn, setScheduleEn] = useState("");
-  const [scheduleAr, setScheduleAr] = useState("");
+  const [createScheduleVal, setCreateScheduleVal] = useState<WeeklyScheduleValue>({
+    daysOfWeek: [],
+    startTime: "",
+    endTime: "",
+    timeZoneId: "Asia/Riyadh",
+    descriptionEn: "",
+    descriptionAr: "",
+    isValid: true
+  });
+  const [editingGroup, setEditingGroup] = useState<TrainingGroup | null>(null);
 
   const [archiveTargetId, setArchiveTargetId] = useState<string | null>(null);
 
@@ -101,6 +112,8 @@ export function TrainingGroupsListView({ onSelectGroup, offeringId }: TrainingGr
     if (!targetOfferingId || !nameEn || !nameAr) return;
 
     try {
+      if (!createScheduleVal.isValid) return;
+
       await createGroup({
         offeringId: targetOfferingId,
         nameEn,
@@ -108,15 +121,17 @@ export function TrainingGroupsListView({ onSelectGroup, offeringId }: TrainingGr
         code: code || null,
         minCapacity: Number(minCapacity),
         maxCapacity: Number(maxCapacity),
-        scheduleDescriptionEn: scheduleEn || null,
-        scheduleDescriptionAr: scheduleAr || null
+        scheduleDescriptionEn: createScheduleVal.descriptionEn || null,
+        scheduleDescriptionAr: createScheduleVal.descriptionAr || null,
+        scheduleDaysOfWeek: createScheduleVal.daysOfWeek.length > 0 ? createScheduleVal.daysOfWeek : null,
+        scheduleStartTime: createScheduleVal.startTime || null,
+        scheduleEndTime: createScheduleVal.endTime || null,
+        scheduleTimeZoneId: createScheduleVal.timeZoneId || null
       });
       setShowCreateModal(false);
       setNameEn("");
       setNameAr("");
       setCode("");
-      setScheduleEn("");
-      setScheduleAr("");
     } catch {
       // Handled in viewmodel
     }
@@ -347,6 +362,17 @@ export function TrainingGroupsListView({ onSelectGroup, offeringId }: TrainingGr
 
                 <div className="border-t border-nx-line p-3 bg-nx-raised/40 flex items-center justify-between">
                   <div className="flex items-center gap-2">
+                    {canManage && group.status !== "Archived" && (
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => setEditingGroup(group)}
+                        className="text-xs text-nx-ink-2 hover:text-nx-ink"
+                      >
+                        <Pencil className="mr-1 size-3.5" />
+                        {language === "ar" ? "تعديل" : "Edit"}
+                      </Button>
+                    )}
                     {canDelete && group.status !== "Archived" && group.activeMemberCount === 0 && (
                       <Button
                         variant="ghost"
@@ -471,31 +497,11 @@ export function TrainingGroupsListView({ onSelectGroup, offeringId }: TrainingGr
                 </div>
               </div>
 
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="text-xs font-semibold text-nx-ink-2 block mb-1">
-                    {language === "ar" ? "الجدول الزمني (EN)" : "Schedule Description (EN)"}
-                  </label>
-                  <input
-                    type="text"
-                    value={scheduleEn}
-                    onChange={e => setScheduleEn(e.target.value)}
-                    placeholder="e.g. Mon/Wed 17:00-18:30"
-                    className="w-full h-9 px-3 rounded-md border border-nx-line bg-nx-canvas text-sm text-nx-ink"
-                  />
-                </div>
-                <div>
-                  <label className="text-xs font-semibold text-nx-ink-2 block mb-1">
-                    {language === "ar" ? "الجدول الزمني (AR)" : "Schedule Description (AR)"}
-                  </label>
-                  <input
-                    type="text"
-                    value={scheduleAr}
-                    onChange={e => setScheduleAr(e.target.value)}
-                    placeholder="e.g. الإثنين/الأربعاء 17:00"
-                    className="w-full h-9 px-3 rounded-md border border-nx-line bg-nx-canvas text-sm text-nx-ink"
-                  />
-                </div>
+              <div>
+                <WeeklyScheduleControl
+                  language={language}
+                  onChange={setCreateScheduleVal}
+                />
               </div>
 
               <div className="flex justify-end gap-3 pt-3 border-t border-nx-line">
@@ -507,7 +513,7 @@ export function TrainingGroupsListView({ onSelectGroup, offeringId }: TrainingGr
                 >
                   {language === "ar" ? "إلغاء" : "Cancel"}
                 </Button>
-                <Button type="submit" disabled={loading} className="bg-nx-accent text-nx-surface">
+                <Button type="submit" disabled={loading || !createScheduleVal.isValid} className="bg-nx-accent text-nx-surface">
                   {loading && <LoadingSpinner className="mr-2 size-4" />}
                   {language === "ar" ? "إنشاء المجموعة" : "Create Group"}
                 </Button>
@@ -515,6 +521,19 @@ export function TrainingGroupsListView({ onSelectGroup, offeringId }: TrainingGr
             </form>
           </div>
         </div>
+      )}
+
+      {/* Edit Group Modal */}
+      {editingGroup && (
+        <EditTrainingGroupModal
+          group={editingGroup}
+          isOpen={!!editingGroup}
+          onClose={() => setEditingGroup(null)}
+          onSuccess={() => {
+            fetchGroups(offeringId || selectedOfferingId || undefined, undefined, statusFilter || undefined);
+          }}
+          language={language}
+        />
       )}
 
       {/* Archive Confirmation Modal */}

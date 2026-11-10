@@ -39,6 +39,10 @@ export interface TrainingGroup {
   status: TrainingGroupStatus | string;
   scheduleDescriptionEn?: string | null;
   scheduleDescriptionAr?: string | null;
+  scheduleDaysOfWeek?: number[] | null;
+  scheduleStartTime?: string | null;
+  scheduleEndTime?: string | null;
+  scheduleTimeZoneId?: string | null;
   coaches?: GroupCoach[];
 }
 
@@ -81,6 +85,10 @@ export interface CreateTrainingGroupPayload {
   minCapacity?: number;
   scheduleDescriptionEn?: string | null;
   scheduleDescriptionAr?: string | null;
+  scheduleDaysOfWeek?: number[] | null;
+  scheduleStartTime?: string | null;
+  scheduleEndTime?: string | null;
+  scheduleTimeZoneId?: string | null;
 }
 
 export interface UpdateTrainingGroupPayload {
@@ -92,6 +100,10 @@ export interface UpdateTrainingGroupPayload {
   status: TrainingGroupStatus;
   scheduleDescriptionEn?: string | null;
   scheduleDescriptionAr?: string | null;
+  scheduleDaysOfWeek?: number[] | null;
+  scheduleStartTime?: string | null;
+  scheduleEndTime?: string | null;
+  scheduleTimeZoneId?: string | null;
 }
 
 export interface AssignAthletePayload {

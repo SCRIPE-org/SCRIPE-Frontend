@@ -23,8 +23,10 @@ import {
   Calendar,
   Phone,
   ShieldCheck,
-  Award
+  Award,
+  Pencil
 } from "lucide-react";
+import { EditTrainingGroupModal } from "../components/EditTrainingGroupModal";
 import type { GroupRosterItem, GroupCoachRole, AvailableCoach, TrainingGroup } from "../../domain/entities/TrainingGroup";
 import type { AcademyEnrollment } from "@modules/academy/enrollments/src/domain/entities/AcademyEnrollment";
 import { GenericSelect, type GenericSelectOption } from "@core/crud/components/generic-select";
@@ -60,6 +62,7 @@ export function TrainingGroupDetailView({ groupId, onBack }: TrainingGroupDetail
   } = useTrainingGroupDetailViewModel(locator.groupsRepository);
 
   const [activeTab, setActiveTab] = useState<"roster" | "coaches">("roster");
+  const [showEditModal, setShowEditModal] = useState(false);
 
   // Modals
   const [showAssignAthleteModal, setShowAssignAthleteModal] = useState(false);
@@ -279,12 +282,33 @@ export function TrainingGroupDetailView({ groupId, onBack }: TrainingGroupDetail
               <p className="text-xs text-nx-ink-2 mt-0.5">
                 {language === "ar" ? group.offeringNameAr : group.offeringNameEn}
               </p>
+              {(group.scheduleDescriptionEn || group.scheduleDescriptionAr) && (
+                <div className="flex items-center gap-1.5 text-xs text-nx-ink-2 mt-1">
+                  <Calendar className="size-3.5 text-nx-accent" />
+                  <span>
+                    {language === "ar"
+                      ? group.scheduleDescriptionAr || group.scheduleDescriptionEn
+                      : group.scheduleDescriptionEn || group.scheduleDescriptionAr}
+                  </span>
+                </div>
+              )}
             </div>
           </div>
         </div>
 
         {/* Capacity Indicator Pill */}
         <div className="flex items-center gap-3">
+          {canManage && group.status !== "Archived" && (
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setShowEditModal(true)}
+              className="border-nx-line text-xs text-nx-ink flex items-center gap-1.5"
+            >
+              <Pencil className="size-3.5" />
+              {language === "ar" ? "تعديل المجموعة" : "Edit Group"}
+            </Button>
+          )}
           <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg border border-nx-line bg-nx-surface">
             <Users className="size-4 text-nx-accent" />
             <span className="text-xs text-nx-ink-2">{language === "ar" ? "السعة:" : "Capacity:"}</span>
@@ -813,6 +837,19 @@ export function TrainingGroupDetailView({ groupId, onBack }: TrainingGroupDetail
             </form>
           </div>
         </div>
+      )}
+
+      {/* Edit Group Modal */}
+      {showEditModal && group && (
+        <EditTrainingGroupModal
+          group={group}
+          isOpen={showEditModal}
+          onClose={() => setShowEditModal(false)}
+          onSuccess={() => {
+            loadGroupDetails(groupId);
+          }}
+          language={language}
+        />
       )}
     </div>
   );
