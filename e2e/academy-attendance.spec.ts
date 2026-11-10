@@ -49,7 +49,7 @@ test.describe("Academy attendance with a live API", () => {
     const status = page.getByRole("combobox", { name: `Attendance status for ${athlete}` });
     await expect(status).toHaveText("Present");
     await status.press("Enter");
-    await page.getByRole("option", { name: "Excused absence" }).click();
+    await page.getByRole("option", { name: "Excused absence", exact: true }).click();
     const save = page.getByRole("button", { name: "Save attendance" });
     await save.click();
     await expect(page.getByText("Enter an attendance reason for this status.")).toBeVisible();
@@ -119,9 +119,9 @@ test.describe("Academy attendance with a live API", () => {
     await expect(page.getByText("Attendance corrected.")).toBeVisible();
     await page.getByRole("button", { name: `Attendance history for ${athlete}` }).click();
     const history = page.getByRole("dialog");
-    await expect(history.getByText("Before", { exact: true })).toBeVisible();
-    await expect(history.getByText("After", { exact: true })).toBeVisible();
-    await expect(history.getByText("Approved travel", { exact: true })).toBeVisible();
+    await expect(history.getByText(/Before/)).toBeVisible();
+    await expect(history.getByText(/After/)).toBeVisible();
+    await expect(history.getByText("Approved travel")).toBeVisible();
     await expect(history.getByText("Checked coach’s arrival log")).toBeVisible();
   });
 

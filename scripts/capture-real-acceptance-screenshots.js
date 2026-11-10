@@ -419,6 +419,9 @@ const mockOperationalMetrics = {
 async function setupPage(context, isDark = false, lang = "en") {
   const page = await context.newPage();
 
+  // Abort external fonts to avoid hanging in offline environments
+  await page.route(/fonts\.(googleapis|gstatic)\.com/, (route) => route.abort());
+
   // Intercept all API routes with consistent mock contracts
   await page.route("**/api/**", async (route) => {
     const url = route.request().url();
@@ -557,7 +560,7 @@ async function setupPage(context, isDark = false, lang = "en") {
 
 async function captureScreen(page, url, outputPath, isDark = false, isAr = false) {
   console.log(`Capturing: ${url} -> ${path.basename(outputPath)}`);
-  await page.goto(url, { waitUntil: "domcontentloaded", timeout: 15000 });
+  await page.goto(url, { waitUntil: "domcontentloaded", timeout: 60000 });
   await page.waitForTimeout(2000);
 
   if (isDark) {
@@ -575,7 +578,7 @@ async function captureScreen(page, url, outputPath, isDark = false, isAr = false
     await page.waitForTimeout(300);
   }
 
-  await page.screenshot({ path: outputPath, fullPage: false });
+  await page.screenshot({ path: outputPath, fullPage: false, timeout: 10000 });
   console.log(`Saved screenshot: ${path.basename(outputPath)}`);
 }
 
