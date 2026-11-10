@@ -29,6 +29,7 @@ import {
   FileCheck,
   X
 } from "lucide-react";
+import { AthleteCard } from "../components/AthleteCard";
 
 export function AcademyAthletesView() {
   const { t, language } = useI18n();
@@ -57,6 +58,8 @@ export function AcademyAthletesView() {
   const [dateOfBirth, setDateOfBirth] = useState("");
   const [gender, setGender] = useState("Male");
   const [nationalId, setNationalId] = useState("");
+  const [phoneNumber, setPhoneNumber] = useState("");
+  const [registeredAthletePass, setRegisteredAthletePass] = useState<AcademyAthlete | null>(null);
   const [guardianName, setGuardianName] = useState("");
   const [guardianPhone, setGuardianPhone] = useState("");
   const [guardianRelationship, setGuardianRelationship] = useState("Father");
@@ -105,7 +108,11 @@ export function AcademyAthletesView() {
     if (!lastNameEn.trim()) missing.push(isAr ? "اسم العائلة (En)" : "Last Name (En)");
     if (!firstNameAr.trim()) missing.push(isAr ? "الاسم الأول (Ar)" : "First Name (Ar)");
     if (!lastNameAr.trim()) missing.push(isAr ? "اسم العائلة (Ar)" : "Last Name (Ar)");
-    if (!isAdult) {
+    if (isAdult) {
+      if (!phoneNumber.trim() || phoneNumber.trim().length < 7) {
+        missing.push(isAr ? "رقم الهاتف الشخصي (مطلوب للبالغين)" : "Contact Phone (Required for adults)");
+      }
+    } else {
       if (!guardianName.trim()) missing.push(isAr ? "اسم ولي الأمر" : "Guardian Name");
       if (!guardianPhone.trim()) missing.push(isAr ? "هاتف ولي الأمر" : "Guardian Phone");
     }
@@ -123,6 +130,7 @@ export function AcademyAthletesView() {
     setDateOfBirth("");
     setGender("Male");
     setNationalId("");
+    setPhoneNumber("");
     setGuardianName("");
     setGuardianPhone("");
     setGuardianRelationship("Father");
@@ -138,8 +146,9 @@ export function AcademyAthletesView() {
 
   const handleIntakeSubmit = async () => {
     try {
+      let created: AcademyAthlete | null = null;
       if (isAdult) {
-        await vm.registerAdult({
+        created = await vm.registerAdult({
           firstNameEn,
           lastNameEn,
           firstNameAr,
@@ -147,6 +156,7 @@ export function AcademyAthletesView() {
           dateOfBirth,
           gender,
           nationalId: nationalId || null,
+          phoneNumber: phoneNumber.trim(),
           emergencyContactName: emergencyContactName || null,
           emergencyContactPhone: emergencyContactPhone || null,
           medicalClearanceSigned,
@@ -155,8 +165,7 @@ export function AcademyAthletesView() {
           initialSkillLevel: skillLevel
         });
       } else if (selectedGuardianPartyId) {
-        // Link sibling
-        await vm.linkSibling({
+        created = await vm.linkSibling({
           guardianPartyId: selectedGuardianPartyId,
           firstNameEn,
           lastNameEn,
@@ -177,8 +186,7 @@ export function AcademyAthletesView() {
           initialSkillLevel: skillLevel
         });
       } else {
-        // Register new child
-        await vm.registerChild({
+        created = await vm.registerChild({
           firstNameEn,
           lastNameEn,
           firstNameAr,
@@ -200,6 +208,9 @@ export function AcademyAthletesView() {
       }
       setShowIntakeWizard(false);
       resetForm();
+      if (created) {
+        setRegisteredAthletePass(created);
+      }
     } catch {
       // Handled in viewmodel
     }
@@ -774,6 +785,29 @@ export function AcademyAthletesView() {
                   />
                 </div>
 
+                {isAdult && (
+                  <div className="pt-2 border-t space-y-3">
+                    <span className="text-xs font-bold text-primary block">
+                      {isAr ? "بيانات الاتصال للرياضي (مطلوبة للبالغين)*:" : "Athlete Contact Information (Required for adults)*:"}
+                    </span>
+                    <div>
+                      <label className="text-xs font-semibold">{isAr ? "رقم الهاتف الشخصي*:" : "Contact Phone Number*:"}</label>
+                      <input
+                        type="tel"
+                        value={phoneNumber}
+                        onChange={(e) => setPhoneNumber(e.target.value)}
+                        placeholder="+966500000000"
+                        className="w-full rounded-md border px-3 py-1.5 text-sm"
+                      />
+                      <p className="text-[11px] text-muted-foreground mt-1">
+                        {isAr
+                          ? "يُستخدم لمشاركة البطاقة الرقمية وتأكيد العضوية والتواصل المباشر."
+                          : "Used for digital card sharing, membership confirmation, and direct contact."}
+                      </p>
+                    </div>
+                  </div>
+                )}
+
                 {!isAdult && (
                   <div className="pt-2 border-t space-y-3">
                     <span className="text-xs font-bold text-primary block">
@@ -1017,6 +1051,9 @@ export function AcademyAthletesView() {
               </Button>
             </div>
 
+            {/* Athlete Card & Pass */}
+            <AthleteCard athlete={vm.selectedAthlete} showActions={true} />
+
             {/* Demographics */}
             <div className="grid grid-cols-2 gap-3 text-xs bg-muted/30 p-3 rounded-md">
               <div>
@@ -1137,6 +1174,37 @@ export function AcademyAthletesView() {
 
             <div className="pt-3 border-t flex justify-end">
               <Button onClick={vm.clearSelectedAthlete}>{isAr ? "إغلاق" : "Close"}</Button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Registration Success & Athlete Pass Modal */}
+      {registeredAthletePass && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 backdrop-blur-sm">
+          <div className="w-full max-w-xl rounded-lg bg-background p-6 shadow-xl border max-h-[90vh] overflow-y-auto space-y-4">
+            <div className="flex items-center justify-between pb-3 border-b">
+              <div className="flex items-center gap-2">
+                <CheckCircle2 className="h-5 w-5 text-emerald-600 dark:text-emerald-400" />
+                <h3 className="font-bold text-lg text-emerald-600 dark:text-emerald-400">
+                  {isAr ? "تم تسجيل الرياضي بنجاح" : "Athlete Successfully Registered"}
+                </h3>
+              </div>
+              <Button size="icon" variant="ghost" onClick={() => setRegisteredAthletePass(null)} aria-label="Close dialog">
+                <X className="h-4 w-4" />
+              </Button>
+            </div>
+
+            <p className="text-xs text-muted-foreground">
+              {isAr
+                ? "تم إصدار رقم العضوية والبطاقة الرقمية المشفرة بنجاح. يمكنك مشاركتها فوراً عبر واتساب أو طباعتها."
+                : "Membership ID and encrypted digital pass have been generated. You can share immediately via WhatsApp or print."}
+            </p>
+
+            <AthleteCard athlete={registeredAthletePass} showActions={true} />
+
+            <div className="pt-3 border-t flex justify-end">
+              <Button onClick={() => setRegisteredAthletePass(null)}>{isAr ? "تم" : "Done"}</Button>
             </div>
           </div>
         </div>

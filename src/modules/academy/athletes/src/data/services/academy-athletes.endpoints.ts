@@ -10,10 +10,12 @@ export const ACADEMY_ATHLETES_ENDPOINTS = {
     return `${V1}/academy/athletes${query ? `?${query}` : ""}`;
   },
   GET_BY_ID: (id: string) => `${V1}/academy/athletes/${id}`,
+  GET_QR: (id: string) => `${V1}/academy/athletes/${id}/qr`,
+  GET_CARD: (cardToken: string) => `${V1}/academy/athletes/card/${cardToken}`,
   GUARDIANS: (query?: string) => `${V1}/academy/athletes/guardians${query ? `?query=${encodeURIComponent(query)}` : ""}`,
   REGISTER_CHILD: () => `${V1}/academy/athletes/child`,
   REGISTER_ADULT: () => `${V1}/academy/athletes/adult`,
   LINK_SIBLING: () => `${V1}/academy/athletes/sibling`,
   ADD_PARTICIPATION: (id: string) => `${V1}/academy/athletes/${id}/participations`,
-  SPORTS: () => `${V1}/sports`
+  SPORTS: () => `${V1}/academy/sports`
 };

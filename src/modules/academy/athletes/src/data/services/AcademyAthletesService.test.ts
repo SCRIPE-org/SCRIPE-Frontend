@@ -51,7 +51,7 @@ describe("AcademyAthletesService", () => {
       guardianRelationship: "Father",
       medicalClearanceSigned: true,
       guardianConsentSigned: true,
-      initialSportId: "sport-fb",
+      initialSportId: "7ef8a28e-9adf-4135-a27f-354720ba0bdc",
       initialSkillLevel: "Beginner"
     };
 
@@ -76,8 +76,9 @@ describe("AcademyAthletesService", () => {
       lastNameAr: "رونالدو",
       dateOfBirth: "1995-02-05",
       gender: "Male",
+      phoneNumber: "+966500000002",
       medicalClearanceSigned: true,
-      initialSportId: "sport-fb",
+      initialSportId: "7ef8a28e-9adf-4135-a27f-354720ba0bdc",
       initialSkillLevel: "Elite"
     };
 
@@ -133,5 +134,47 @@ describe("AcademyAthletesService", () => {
       expect.stringContaining("/academy/athletes/guardians?query=Messi")
     );
     expect(res).toEqual(mockGuardians);
+  });
+
+  it("fetches athlete QR via GET /{id}/qr", async () => {
+    const mockQr = {
+      membershipNumber: "ATH-00001",
+      cardToken: "token-123",
+      cardUrl: "/academy/card/token-123",
+      qrCodeDataUri: "data:image/png;base64,abc"
+    };
+    mockApi.get.mockResolvedValue(mockQr);
+
+    const res = await service.getAthleteQr("ath-1");
+
+    expect(mockApi.get).toHaveBeenCalledWith(
+      expect.stringContaining("/academy/athletes/ath-1/qr")
+    );
+    expect(res).toEqual(mockQr);
+  });
+
+  it("fetches public athlete card via GET /card/{token}", async () => {
+    const mockCard = {
+      athleteId: "ath-1",
+      membershipNumber: "ATH-00001",
+      firstNameEn: "Leo",
+      lastNameEn: "Messi",
+      firstNameAr: "ليو",
+      lastNameAr: "ميسي",
+      academyName: "Al-Hilal Academy",
+      primaryBranchName: "Main Branch",
+      sports: ["Football"],
+      status: "Active",
+      intakeDate: "2026-11-10",
+      cardToken: "token-123"
+    };
+    mockApi.get.mockResolvedValue(mockCard);
+
+    const res = await service.getAthleteCard("token-123");
+
+    expect(mockApi.get).toHaveBeenCalledWith(
+      expect.stringContaining("/academy/athletes/card/token-123")
+    );
+    expect(res).toEqual(mockCard);
   });
 });

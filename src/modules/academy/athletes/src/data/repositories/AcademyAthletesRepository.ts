@@ -2,6 +2,8 @@ import type { IAcademyAthletesRepository } from "../../domain/interfaces/IAcadem
 import type { IAcademyAthletesService } from "../../domain/interfaces/IAcademyAthletesService";
 import type {
   AcademyAthlete,
+  AthleteCard,
+  AthleteQr,
   GuardianSummary,
   RegisterChildAthletePayload,
   RegisterAdultAthletePayload,
@@ -20,6 +22,14 @@ export class AcademyAthletesRepository implements IAcademyAthletesRepository {
 
   async getAthleteById(id: string): Promise<AcademyAthlete> {
     return await this.service.getAthleteById(id);
+  }
+
+  async getAthleteQr(athleteId: string): Promise<AthleteQr> {
+    return await this.service.getAthleteQr(athleteId);
+  }
+
+  async getAthleteCard(cardToken: string): Promise<AthleteCard> {
+    return await this.service.getAthleteCard(cardToken);
   }
 
   async searchGuardians(query?: string): Promise<GuardianSummary[]> {

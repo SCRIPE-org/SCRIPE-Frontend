@@ -4,6 +4,8 @@ import { useState, useCallback, useEffect } from "react";
 import type { IAcademyAthletesRepository } from "../../domain/interfaces/IAcademyAthletesRepository";
 import type {
   AcademyAthlete,
+  AthleteCard,
+  AthleteQr,
   GuardianSummary,
   RegisterChildAthletePayload,
   RegisterAdultAthletePayload,
@@ -29,14 +31,10 @@ export function useAcademyAthletesViewModel(repository: IAcademyAthletesReposito
     try {
       const items = await repository.getSports();
       setSports(items);
-    } catch {
-      // Fallback sports
-      setSports([
-        { id: "sport-fb", code: "FB", nameEn: "Football", nameAr: "كرة القدم", isActive: true },
-        { id: "sport-sw", code: "SW", nameEn: "Swimming", nameAr: "السباحة", isActive: true },
-        { id: "sport-bk", code: "BK", nameEn: "Basketball", nameAr: "كرة السلة", isActive: true },
-        { id: "sport-tn", code: "TN", nameEn: "Tennis", nameAr: "التنس", isActive: true }
-      ]);
+    } catch (err) {
+      setSports([]);
+      const msg = err instanceof Error ? err.message : "Failed to load sports catalog";
+      setError(`Failed to load sports catalog: ${msg}. Please ensure backend sports setup is active.`);
     }
   }, [repository]);
 
@@ -154,6 +152,14 @@ export function useAcademyAthletesViewModel(repository: IAcademyAthletesReposito
     }
   }, [repository, selectedAthlete]);
 
+  const getAthleteQr = useCallback(async (athleteId: string): Promise<AthleteQr> => {
+    return await repository.getAthleteQr(athleteId);
+  }, [repository]);
+
+  const getAthleteCard = useCallback(async (cardToken: string): Promise<AthleteCard> => {
+    return await repository.getAthleteCard(cardToken);
+  }, [repository]);
+
   useEffect(() => {
     fetchSports();
     fetchAthletes(undefined, selectedSportId, searchQuery);
@@ -178,6 +184,10 @@ export function useAcademyAthletesViewModel(repository: IAcademyAthletesReposito
     registerChild,
     registerAdult,
     linkSibling,
-    addSportParticipation
+    addSportParticipation,
+    getAthleteQr,
+    getAthleteCard,
+    setError,
+    setSuccessMessage
   };
 }

@@ -2,6 +2,8 @@ import type { IApiService } from "@core/interfaces/api.interface";
 import type { IAcademyAthletesService } from "../../domain/interfaces/IAcademyAthletesService";
 import type {
   AcademyAthlete,
+  AthleteCard,
+  AthleteQr,
   GuardianSummary,
   RegisterChildAthletePayload,
   RegisterAdultAthletePayload,
@@ -23,6 +25,16 @@ export class AcademyAthletesService implements IAcademyAthletesService {
   async getAthleteById(id: string): Promise<AcademyAthlete> {
     const url = ACADEMY_ATHLETES_ENDPOINTS.GET_BY_ID(id);
     return await this.api.get<AcademyAthlete>(url);
+  }
+
+  async getAthleteQr(id: string): Promise<AthleteQr> {
+    const url = ACADEMY_ATHLETES_ENDPOINTS.GET_QR(id);
+    return await this.api.get<AthleteQr>(url);
+  }
+
+  async getAthleteCard(cardToken: string): Promise<AthleteCard> {
+    const url = ACADEMY_ATHLETES_ENDPOINTS.GET_CARD(cardToken);
+    return await this.api.get<AthleteCard>(url);
   }
 
   async searchGuardians(query?: string): Promise<GuardianSummary[]> {

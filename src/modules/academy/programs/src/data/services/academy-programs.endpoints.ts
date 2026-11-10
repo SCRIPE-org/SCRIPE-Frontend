@@ -11,5 +11,5 @@ export const ACADEMY_PROGRAMS_ENDPOINTS = {
   GET_BY_ID: (id: string) => `${V1}/academy/programs/${id}`,
   CREATE: () => `${V1}/academy/programs`,
   PUBLISH: (id: string) => `${V1}/academy/programs/${id}/publish`,
-  SPORTS: () => `${V1}/sports`,
+  SPORTS: () => `${V1}/academy/sports`,
 } as const;

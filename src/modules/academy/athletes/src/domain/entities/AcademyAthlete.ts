@@ -28,6 +28,9 @@ export interface AcademyAthlete {
   athleteProfileId: string;
   guardianPartyId?: string | null;
   primaryBranchId?: string | null;
+  membershipNumber: string;
+  phoneNumber?: string | null;
+  qrCodeToken?: string | null;
   firstNameEn: string;
   lastNameEn: string;
   firstNameAr: string;
@@ -47,6 +50,28 @@ export interface AcademyAthlete {
   intakeDate: string;
   status: string;
   participations: AthleteSportParticipation[];
+}
+
+export interface AthleteCard {
+  athleteId: string;
+  membershipNumber: string;
+  firstNameEn: string;
+  lastNameEn: string;
+  firstNameAr: string;
+  lastNameAr: string;
+  academyName?: string | null;
+  primaryBranchName?: string | null;
+  sports: string[];
+  status: string;
+  intakeDate: string;
+  cardToken: string;
+}
+
+export interface AthleteQr {
+  membershipNumber: string;
+  cardToken: string;
+  cardUrl: string;
+  qrCodeDataUri: string;
 }
 
 export interface GuardianSummary {
@@ -88,6 +113,7 @@ export interface RegisterAdultAthletePayload {
   dateOfBirth: string;
   gender: string;
   nationalId?: string | null;
+  phoneNumber: string;
   emergencyContactName?: string | null;
   emergencyContactPhone?: string | null;
   medicalClearanceSigned: boolean;

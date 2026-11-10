@@ -24,6 +24,7 @@ import {
   ShieldAlert,
   ArrowRight,
   ShieldCheck,
+  Activity,
 } from "lucide-react";
 
 export function AcademyOverviewView() {
@@ -120,6 +121,13 @@ export function AcademyOverviewView() {
       icon: Users,
       href: "/academy/groups",
       permission: ACADEMY_PERMISSIONS.ACADEMY_GROUPS_VIEW,
+    },
+    {
+      title: t("academyOverview.quickActions.sportsSetup") || "Academy Sports Setup",
+      desc: t("academyOverview.quickActions.sportsSetupDesc") || "Activate canonical sports and manage disciplines for your academy.",
+      icon: Activity,
+      href: "/academy/setup/sports",
+      permission: ACADEMY_PERMISSIONS.ACADEMY_PROGRAMS_VIEW,
     },
   ];
 
