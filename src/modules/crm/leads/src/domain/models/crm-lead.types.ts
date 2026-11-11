@@ -42,13 +42,23 @@ export interface CrmLead {
 export interface MoveLeadStageInput {
   leadId: string;
   targetStageKey: string;
+  transitionId?: string;
   reason?: string;
   auditNote?: string;
   qualificationNotes?: string;
+  closeNotes?: string;
   disqualificationReasonCode?: string;
   expectedRowVersion?: string;
   customFields?: Record<string, string>;
   idempotencyKey?: string;
+  partyId?: string;
+  accountId?: string;
+  estimatedValue?: number;
+  currency?: string;
+  convertDealTitle?: string;
+  targetDealPipelineId?: string;
+  dealKind?: DealKind;
+  reopenReason?: string;
 }
 
 export interface CreateLeadInput {

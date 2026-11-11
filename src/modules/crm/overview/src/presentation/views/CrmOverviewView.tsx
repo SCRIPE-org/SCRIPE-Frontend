@@ -1,6 +1,5 @@
 "use client";
 
-import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useI18n } from "@core/providers/i18n-provider";
 import { Alert, AlertTitle, AlertDescription } from "@core/ui/alert";
@@ -23,14 +22,23 @@ export function CrmOverviewView() {
   const router = useRouter();
   const { t, language } = useI18n();
   const isRtl = language === "ar";
-  const [selectedPipelineId, setSelectedPipelineId] = useState<string>("all");
   const workflows = useCrmWorkflowsStore((s) => s.workflows);
 
   const { activeTab, searchQuery, handleTabChange, handleSearchChange } =
     useCrmShellViewModel("overview");
 
-  const { state, selectedStage, filteredDeals, refresh, selectStage } =
-    useCrmOverviewViewModel(searchQuery);
+  const {
+    state,
+    selectedPipelineId,
+    setSelectedPipelineId,
+    effectivePipeline,
+    selectedStage,
+    filteredDeals,
+    refresh,
+    selectStage,
+  } = useCrmOverviewViewModel(searchQuery, "all", isRtl);
+
+  const activePipeline = effectivePipeline || state.data?.pipeline;
 
   return (
     <CrmShell
@@ -44,7 +52,7 @@ export function CrmOverviewView() {
       <CrmSectionHeader
         title={t("crm.title")}
         subtitle={t("crm.subtitle")}
-        badge={state.data ? `${state.data.pipeline.totalDeals} ${t("crm.pipeline.dealsCount")}` : undefined}
+        badge={activePipeline ? `${activePipeline.totalDeals} ${t("crm.pipeline.dealsCount")}` : undefined}
         actions={
           <div className="flex items-center gap-2">
             <Select value={selectedPipelineId} onValueChange={setSelectedPipelineId}>
@@ -93,14 +101,14 @@ export function CrmOverviewView() {
         </Alert>
       )}
 
-      {state.data && (
+      {state.data && activePipeline && (
         <div className="space-y-6">
           {/* 4 Primary KPI Stat Cards */}
           <CrmKpiStrip stats={state.data.stats} />
 
           {/* Pipeline velocity strip with Party Verification Gate indicators */}
           <CrmPipelineOverviewStrip
-            pipeline={state.data.pipeline}
+            pipeline={activePipeline}
             activeFilterStage={selectedStage}
             onSelectStage={selectStage}
           />

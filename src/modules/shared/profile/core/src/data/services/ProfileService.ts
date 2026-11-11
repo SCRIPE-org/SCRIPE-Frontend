@@ -5,11 +5,11 @@ import type { AdminProfile } from "../../domain/entities/AdminProfile";
 import type { ActiveSession } from "../../domain/entities/ActiveSession";
 import type { SecurityLogEntry } from "../../domain/entities/SecurityLogEntry";
 import type { ExternalLogin } from "../../domain/entities/ExternalLogin";
-import type { LinkExternalLoginDto } from "../../domain/types/ProfileTypes";
 import type {
   UpdateProfileRequest,
   ChangePasswordRequest,
   Enable2FAResult,
+  LinkExternalLoginRequest,
 } from "../../domain/interfaces/IProfileRepository";
 import { PROFILE_ENDPOINTS } from "./profile.endpoints";
 
@@ -90,7 +90,7 @@ export class ProfileService implements IProfileService {
     return this.api.get<ExternalLogin[]>(PROFILE_ENDPOINTS.EXTERNAL_LOGINS);
   }
 
-  async linkExternalLogin(data: LinkExternalLoginDto): Promise<ExternalLogin> {
+  async linkExternalLogin(data: LinkExternalLoginRequest): Promise<ExternalLogin> {
     return this.api.post<ExternalLogin>(PROFILE_ENDPOINTS.LINK_EXTERNAL_LOGIN, data);
   }
 

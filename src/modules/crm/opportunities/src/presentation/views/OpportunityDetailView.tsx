@@ -20,6 +20,9 @@ import {
   ActivityTimeline,
   resolveDefaultStageColor,
   useCrmWorkflowsStore,
+  CrmWorkflowTransitionDialog,
+  type CrmWorkflowTransitionSubmitPayload,
+  type EvaluatedWorkflowTransition,
 } from "@modules/crm";
 import { OpportunityOverviewCard } from "../components/OpportunityOverviewCard";
 import { OpportunityCommercialAndCommitteeSection } from "../components/OpportunityCommercialAndCommitteeSection";
@@ -62,10 +65,74 @@ export function OpportunityDetailView({ opportunityId }: OpportunityDetailViewPr
   } = useOpportunityDetailViewModel(opportunityId);
 
   const [isRequestingFulfillment, setIsRequestingFulfillment] = useState(false);
+  const [transitionDialogOpen, setTransitionDialogOpen] = useState(false);
+  const [transitionFromKey, setTransitionFromKey] = useState("");
+  const [transitionToKey, setTransitionToKey] = useState("");
+  const [transitionEvalResult, setTransitionEvalResult] = useState<EvaluatedWorkflowTransition | null>(null);
+
+  const handleStageTransition = async (targetStageKey: string) => {
+    if (!data?.opportunity) return;
+    const oppRecord = data.opportunity;
+    const fromKey = oppRecord.status === "Won"
+      ? "default.closed_won"
+      : oppRecord.status === "Lost"
+        ? "default.closed_lost"
+        : (oppRecord.stageKey || "default.discovery");
+    const toKey = targetStageKey === "terminal-won" ? "default.closed_won" : targetStageKey === "terminal-lost" ? "default.closed_lost" : targetStageKey;
+
+    const evalResult = useCrmWorkflowsStore.getState().evaluateTransition("deal", fromKey, toKey, {
+      hasVerifiedParty: Boolean(oppRecord.partyId),
+      estimatedAmount: oppRecord.estimatedAmount ?? null,
+      targetCloseDate: oppRecord.targetCloseDate ?? null,
+    });
+
+    if (evalResult.status === "blocked") {
+      setSubmitError(evalResult.reason || t("crmOpportunities.kanban.stageMoveFailed"));
+      return;
+    }
+
+    if (evalResult.status === "allowed_screen_required") {
+      setTransitionFromKey(fromKey);
+      setTransitionToKey(toKey);
+      setTransitionEvalResult(evalResult);
+      setTransitionDialogOpen(true);
+      return;
+    }
+
+    await handleMoveStage({
+      opportunityId: oppRecord.id,
+      targetStageKey: toKey,
+      expectedRowVersion: oppRecord.rowVersion,
+    });
+  };
+
+  const handleTransitionSubmit = async (payload: CrmWorkflowTransitionSubmitPayload) => {
+    return handleMoveStage({
+      opportunityId: payload.entityId,
+      targetStageKey: payload.targetStageKey,
+      transitionId: payload.transitionId,
+      expectedRowVersion: payload.expectedRowVersion || data?.opportunity?.rowVersion,
+      partyId: payload.partyId,
+      accountId: payload.accountId,
+      estimatedAmount: payload.estimatedAmount,
+      targetCloseDate: payload.targetCloseDate,
+      lossReasonCode: payload.lossReasonCode,
+      competitorName: payload.competitorName,
+      closeNotes: payload.closeNotes,
+      reopenReason: payload.reopenReason,
+      reason: payload.reason,
+      auditNote: payload.auditNote,
+      customFields: payload.customFields,
+    });
+  };
+
+  const onTabNav = (tab: string) => {
+    if (tab !== "deals") router.push(tab === "overview" ? "/crm" : tab === "deals" ? "/crm/opportunities" : `/crm/${tab}`);
+  };
 
   if (loading) {
     return (
-      <CrmShell activeTab="deals" onTabChange={() => {}}>
+      <CrmShell activeTab="deals" onTabChange={onTabNav}>
         <OpportunityDetailSkeleton />
       </CrmShell>
     );
@@ -73,12 +140,12 @@ export function OpportunityDetailView({ opportunityId }: OpportunityDetailViewPr
 
   if (error || !data) {
     return (
-      <CrmShell activeTab="deals" onTabChange={() => {}}>
+      <CrmShell activeTab="deals" onTabChange={onTabNav}>
         <div className="space-y-4">
           <Button variant="ghost" onClick={() => router.push("/crm/opportunities")} className="gap-2">
             <ArrowLeft className="size-4" />{t("crmOpportunities.detail.backToList")}
           </Button>
-          <Alert variant="destructive"><AlertDescription>{error || "Opportunity not found"}</AlertDescription></Alert>
+          <Alert variant="destructive"><AlertDescription>{error || t("crmOpportunities.overview.errorTitle", { defaultValue: "Opportunity not found" })}</AlertDescription></Alert>
         </div>
       </CrmShell>
     );
@@ -139,7 +206,7 @@ export function OpportunityDetailView({ opportunityId }: OpportunityDetailViewPr
   };
 
   return (
-    <CrmShell activeTab="deals" onTabChange={() => {}}>
+    <CrmShell activeTab="deals" onTabChange={onTabNav}>
       <div className="space-y-6" dir={isRtl ? "rtl" : "ltr"} data-testid="opportunity-detail-view">
         <div className="flex flex-wrap items-center justify-between gap-2">
           <Button type="button" variant="ghost" onClick={() => router.push("/crm/opportunities")} className="gap-2 text-xs">
@@ -152,10 +219,10 @@ export function OpportunityDetailView({ opportunityId }: OpportunityDetailViewPr
                 <Button type="button" variant="outline" size="sm" data-testid="deal-detail-move-stage-btn" className="gap-1.5 text-xs" onClick={() => { setTargetMoveStageKey(undefined); setSubmitError(null); setIsMoveStageOpen(true); }}>
                   <ArrowRight className="size-3.5" />{t("crmOpportunities.actions.moveStage")}
                 </Button>
-                <Button type="button" size="sm" variant="ghost" data-testid="deal-detail-close-won-btn" className="gap-1.5 text-xs text-success hover:bg-success/10" onClick={() => { setCloseInitialOutcome("Won"); setSubmitError(null); setIsCloseOpen(true); }}>
+                <Button type="button" size="sm" variant="ghost" data-testid="deal-detail-close-won-btn" className="gap-1.5 text-xs text-success hover:bg-success/10" onClick={() => handleStageTransition("default.closed_won")}>
                   <CheckCircle className="size-3.5" />{t("crmOpportunities.actions.closeWon")}
                 </Button>
-                <Button type="button" size="sm" variant="ghost" data-testid="deal-detail-close-lost-btn" className="gap-1.5 text-xs text-destructive hover:bg-destructive/10" onClick={() => { setCloseInitialOutcome("Lost"); setSubmitError(null); setIsCloseOpen(true); }}>
+                <Button type="button" size="sm" variant="ghost" data-testid="deal-detail-close-lost-btn" className="gap-1.5 text-xs text-destructive hover:bg-destructive/10" onClick={() => handleStageTransition("default.closed_lost")}>
                   <XCircle className="size-3.5" />{t("crmOpportunities.actions.closeLost")}
                 </Button>
                 <Button type="button" variant="ghost" size="sm" data-testid="deal-detail-assign-owner-btn" className="gap-1.5 text-xs text-nx-ink-3 hover:text-nx-ink" onClick={() => { setSubmitError(null); setIsAssignOwnerOpen(true); }}>
@@ -163,7 +230,7 @@ export function OpportunityDetailView({ opportunityId }: OpportunityDetailViewPr
                 </Button>
               </>
             ) : (
-              <Button type="button" variant="outline" size="sm" data-testid="deal-detail-reopen-btn" className="gap-1.5 text-xs text-nx-accent border-nx-line hover:border-nx-accent" onClick={() => { setSubmitError(null); setIsReopenOpen(true); }}>
+              <Button type="button" variant="outline" size="sm" data-testid="deal-detail-reopen-btn" className="gap-1.5 text-xs text-nx-accent border-nx-line hover:border-nx-accent" onClick={() => handleStageTransition("default.discovery")}>
                 <RotateCcw className="size-3.5" />{t("crmOpportunities.actions.reopen")}
               </Button>
             )}
@@ -176,11 +243,7 @@ export function OpportunityDetailView({ opportunityId }: OpportunityDetailViewPr
           isOpen={isOpen}
           stages={stages}
           currentSortOrder={currentSortOrder}
-          onSelectStageStep={(stageKey) => {
-            setTargetMoveStageKey(stageKey !== opp.stageKey ? stageKey : undefined);
-            setSubmitError(null);
-            setIsMoveStageOpen(true);
-          }}
+          onSelectStageStep={(stageKey) => handleStageTransition(stageKey)}
         />
 
         <OpportunityOverviewCard opp={opp} />
@@ -199,6 +262,34 @@ export function OpportunityDetailView({ opportunityId }: OpportunityDetailViewPr
         <CloseOpportunityDialog open={isCloseOpen} onOpenChange={setIsCloseOpen} opportunity={opp} initialOutcome={closeInitialOutcome} onSubmit={handleCloseOpportunity} isSubmitting={isSubmitting} submitError={submitError} />
         <ReopenOpportunityDialog open={isReopenOpen} onOpenChange={setIsReopenOpen} opportunity={opp} onSubmit={handleReopenOpportunity} isSubmitting={isSubmitting} submitError={submitError} />
         <AssignOwnerDialog open={isAssignOwnerOpen} onOpenChange={setIsAssignOwnerOpen} opportunity={opp} onSubmit={handleAssignOwner} isSubmitting={isSubmitting} submitError={submitError} />
+
+        {(() => {
+          const fromStage = activeDealWorkflow?.stages.find((s) => s.stageKey === transitionFromKey);
+          const toStage = activeDealWorkflow?.stages.find((s) => s.stageKey === transitionToKey);
+          return (
+            <CrmWorkflowTransitionDialog
+              open={transitionDialogOpen}
+              onOpenChange={setTransitionDialogOpen}
+              entityType="deal"
+              record={opp ? {
+                id: opp.id,
+                title: opp.title,
+                partyId: opp.partyId || opp.accountId,
+                estimatedValue: opp.estimatedAmount,
+                currency: opp.currencyCode,
+                targetCloseDate: opp.targetCloseDate,
+                rowVersion: opp.rowVersion,
+              } : null}
+              fromStageKey={transitionFromKey}
+              toStageKey={transitionToKey}
+              fromStageLabel={fromStage ? (isRtl && fromStage.labelAr ? fromStage.labelAr : fromStage.labelEn) : undefined}
+              toStageLabel={toStage ? (isRtl && toStage.labelAr ? toStage.labelAr : toStage.labelEn) : undefined}
+              evalResult={transitionEvalResult}
+              onSubmit={handleTransitionSubmit}
+              isSubmitting={isSubmitting}
+            />
+          );
+        })()}
       </div>
     </CrmShell>
   );

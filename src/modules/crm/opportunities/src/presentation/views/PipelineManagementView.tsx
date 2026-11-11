@@ -1,7 +1,9 @@
 "use client";
 
 import React from "react";
+import { useRouter } from "next/navigation";
 import { useI18n } from "@core/providers/i18n-provider";
+import { CrmShell, CRM_TAB_ROUTES, type CrmTabId } from "@modules/crm";
 import { usePipelineStudioViewModel } from "../viewmodels/usePipelineStudioViewModel";
 import { CrmWorkflowsDirectorySection } from "../components/workflow/CrmWorkflowsDirectorySection";
 import { CrmWorkflowFullscreenStudio } from "../components/workflow/CrmWorkflowFullscreenStudio";
@@ -15,44 +17,52 @@ export interface PipelineManagementViewProps {
 export function PipelineManagementView({
   defaultOpenStudio = false,
 }: PipelineManagementViewProps = {}) {
+  const router = useRouter();
   const { t, language } = useI18n();
   const isAr = language === "ar";
   const vm = usePipelineStudioViewModel(defaultOpenStudio);
 
+  const handleTabChange = (tab: CrmTabId) => {
+    const route = CRM_TAB_ROUTES[tab];
+    if (route) router.push(route);
+  };
+
   if (vm.isHydrating) {
     return (
-      <div className="space-y-6 pb-8" data-testid="pipeline-management-page">
-        <PipelineStudioSkeleton />
-      </div>
+      <CrmShell activeTab="pipelines" onTabChange={handleTabChange}>
+        <div className="space-y-6 pb-8" data-testid="pipeline-management-page">
+          <PipelineStudioSkeleton />
+        </div>
+      </CrmShell>
     );
   }
 
   return (
     <div className="space-y-6 pb-8" data-testid="pipeline-management-page">
-      {!vm.isStudioOpen && (
-        <CrmWorkflowsDirectorySection
-          t={t}
-          isAr={isAr}
-          workflows={vm.workflows}
-          activeDealWorkflowId={vm.activeDealWorkflowId}
-          activeLeadWorkflowId={vm.activeLeadWorkflowId}
-          directoryFilter={vm.directoryFilter}
-          setDirectoryFilter={vm.setDirectoryFilter}
-          directorySearch={vm.directorySearch}
-          setDirectorySearch={vm.setDirectorySearch}
-          filteredDirectoryWorkflows={vm.filteredDirectoryWorkflows}
-          onOpenCreateWorkflow={(type) => {
-            vm.setNewWfEntityType(type);
-            vm.setCreateWorkflowModalOpen(true);
-          }}
-          onOpenStudioForWorkflow={vm.openStudioForWorkflow}
-          onCloneWorkflow={vm.handleCloneWorkflow}
-          onActivateWorkflow={vm.handleActivateWorkflow}
-          onDeleteWorkflow={vm.handleDeleteWorkflow}
-        />
-      )}
-
-      {vm.isStudioOpen && (
+      {!vm.isStudioOpen ? (
+        <CrmShell activeTab="pipelines" onTabChange={handleTabChange}>
+          <CrmWorkflowsDirectorySection
+            t={t}
+            isAr={isAr}
+            workflows={vm.workflows}
+            activeDealWorkflowId={vm.activeDealWorkflowId}
+            activeLeadWorkflowId={vm.activeLeadWorkflowId}
+            directoryFilter={vm.directoryFilter}
+            setDirectoryFilter={vm.setDirectoryFilter}
+            directorySearch={vm.directorySearch}
+            setDirectorySearch={vm.setDirectorySearch}
+            filteredDirectoryWorkflows={vm.filteredDirectoryWorkflows}
+            onOpenCreateWorkflow={(type) => {
+              vm.setNewWfEntityType(type);
+              vm.setCreateWorkflowModalOpen(true);
+            }}
+            onOpenStudioForWorkflow={vm.openStudioForWorkflow}
+            onCloneWorkflow={vm.handleCloneWorkflow}
+            onActivateWorkflow={vm.handleActivateWorkflow}
+            onDeleteWorkflow={vm.handleDeleteWorkflow}
+          />
+        </CrmShell>
+      ) : (
         <CrmWorkflowFullscreenStudio
           t={t}
           isAr={isAr}
@@ -96,6 +106,11 @@ export function PipelineManagementView({
           onDeleteTransition={vm.handleDeleteTransition}
           onCreateTransition={vm.openAddTransitionWithPreselect}
           onAddCrmCustomField={vm.addCrmCustomField}
+          onApplyLayoutPositions={vm.handleApplyLayoutPositions}
+          canUndo={vm.canUndo}
+          canRedo={vm.canRedo}
+          onUndo={vm.handleUndo}
+          onRedo={vm.handleRedo}
         />
       )}
 

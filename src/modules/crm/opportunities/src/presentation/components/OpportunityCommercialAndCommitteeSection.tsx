@@ -34,7 +34,7 @@ export function OpportunityCommercialAndCommitteeSection({
   isRtl: boolean;
   stageHistory?: CrmOpportunityStageHistory[];
   contactRoles?: DealContactRoleDto[];
-  onLookupParties?: (q: string) => Promise<Array<{ id: string; displayName: string }>>;
+  onLookupParties?: (q?: string) => Promise<Array<any>>;
   onAddContactRole?: (input: {
     contactPartyId: string;
     contactName: string;
@@ -66,7 +66,7 @@ export function OpportunityCommercialAndCommitteeSection({
   useEffect(() => {
     if (onLookupParties) {
       onLookupParties("").then((opts) => {
-        setPartyOptions(opts || []);
+        setPartyOptions((opts || []).map((o: any) => ({ id: o.id || o.partyId, displayName: o.displayName || o.label })));
       }).catch(() => undefined);
     }
   }, [opp.id, onLookupParties]);
@@ -79,7 +79,7 @@ export function OpportunityCommercialAndCommitteeSection({
   const handleAddContactRole = async () => {
     const targetPartyId = contactId.trim() || opp.partyId || "22222222-2222-2222-2222-222222222211";
     const matchedParty = partyOptions.find((p) => p.id === targetPartyId);
-    const contactName = matchedParty?.displayName || opp.partyDisplayName || t("crmOpportunities.commercialSuite.primaryAccountStakeholder");
+    const contactName = matchedParty?.displayName || (opp as any).partyDisplayName || t("crmOpportunities.commercialSuite.primaryAccountStakeholder");
     if (onAddContactRole) {
       await onAddContactRole({
         contactPartyId: targetPartyId,
@@ -135,7 +135,7 @@ export function OpportunityCommercialAndCommitteeSection({
                 </SelectItem>
                 {opp.partyId && !partyOptions.some((p) => p.id === opp.partyId) && (
                   <SelectItem value={opp.partyId} className="text-xs">
-                    {opp.partyDisplayName || t("crmOpportunities.commercialSuite.primaryAccountStakeholder")}
+                    {(opp as any).partyDisplayName || t("crmOpportunities.commercialSuite.primaryAccountStakeholder")}
                   </SelectItem>
                 )}
                 {partyOptions.filter((p) => p.id && p.id !== opp.partyId).map((p, idx) => (
@@ -194,7 +194,7 @@ export function OpportunityCommercialAndCommitteeSection({
           <div className="space-y-1.5">
             {contactRoles.map((r, idx) => {
               const roleLabel = r.stakeholderRole || (r as any).role || "DecisionMaker";
-              const displayLabel = r.contactName || (r as any).contactDisplayName || opp.partyDisplayName || t("crmOpportunities.commercialSuite.primaryAccountStakeholder");
+              const displayLabel = r.contactName || (r as any).contactDisplayName || (opp as any).partyDisplayName || t("crmOpportunities.commercialSuite.primaryAccountStakeholder");
               const rowKey = r.id || `${r.contactPartyId || "contact"}-${roleLabel}-${idx}`;
               return (
                 <div key={rowKey} className="rounded-md border border-nx-line bg-nx-raised/40 px-3 py-1.5 flex items-center justify-between text-xs" data-testid={`committee-role-row-${roleLabel}`}>

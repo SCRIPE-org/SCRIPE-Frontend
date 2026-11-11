@@ -78,7 +78,7 @@ export function CrmWorkflowsDirectorySection({
             data-testid="create-lead-workflow-btn"
           >
             <Plus className="w-3.5 h-3.5 me-1.5" />
-            {t("crmOpportunities.pipelinesPage.newLeadWorkflowBtn")}
+            {t("crmOpportunities.pipelinesPage.newLeadWorkflowBtn").replace(/^\+\s*/, "")}
           </Button>
           <Button
             size="sm"
@@ -86,7 +86,7 @@ export function CrmWorkflowsDirectorySection({
             data-testid="create-workflow-btn"
           >
             <Plus className="w-3.5 h-3.5 me-1.5" />
-            {t("crmOpportunities.pipelinesPage.newDealPipelineBtn")}
+            {t("crmOpportunities.pipelinesPage.newDealPipelineBtn").replace(/^\+\s*/, "")}
           </Button>
         </div>
       </div>
@@ -108,10 +108,10 @@ export function CrmWorkflowsDirectorySection({
                 variant="ghost"
                 onClick={() => setDirectoryFilter(tab)}
                 data-testid={`directory-filter-${tab}`}
-                className={`h-7 px-3 text-xs ${
+                className={`h-7 px-2.5 text-xs ${
                   isActive
                     ? "bg-nx-surface text-nx-ink border border-nx-line-hi font-semibold"
-                    : "text-nx-ink-2 hover:text-nx-ink"
+                    : "text-nx-ink-2"
                 }`}
               >
                 {label}
@@ -121,29 +121,26 @@ export function CrmWorkflowsDirectorySection({
         </div>
 
         <div className="relative w-full sm:w-72">
-          <Search className="w-3.5 h-3.5 text-nx-ink-3 absolute start-3 top-1/2 -translate-y-1/2" />
+          <Search className="w-3.5 h-3.5 absolute start-2.5 top-1/2 -translate-y-1/2 text-nx-ink-3 pointer-events-none" />
           <Input
             value={directorySearch}
             onChange={(e) => setDirectorySearch(e.target.value)}
             placeholder={t("crmOpportunities.pipelinesPage.searchPlaceholder")}
-            className="h-8 ps-8 text-xs"
-            data-testid="directory-search-input"
+            className="ps-8 h-8 text-xs bg-nx-surface border-nx-line"
+            data-testid="workflows-directory-search-input"
           />
         </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4" data-testid="workflows-directory-grid">
         {filteredDirectoryWorkflows.map((wf) => (
           <CrmWorkflowDirectoryCard
             key={wf.id}
+            wf={wf}
             t={t}
             isAr={isAr}
-            wf={wf}
-            isActive={
-              wf.entityType === "deal"
-                ? wf.id === activeDealWorkflowId
-                : wf.id === activeLeadWorkflowId
-            }
+            activeDealWorkflowId={activeDealWorkflowId}
+            activeLeadWorkflowId={activeLeadWorkflowId}
             onOpenStudioForWorkflow={onOpenStudioForWorkflow}
             onCloneWorkflow={onCloneWorkflow}
             onActivateWorkflow={onActivateWorkflow}

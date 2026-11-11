@@ -12,6 +12,7 @@ import type {
   IProfileRepository,
   UpdateProfileRequest,
   ChangePasswordRequest,
+  LinkExternalLoginRequest,
 } from "../../domain/interfaces/IProfileRepository";
 import type { AdminProfile } from "../../domain/entities/AdminProfile";
 import type { ActiveSession } from "../../domain/entities/ActiveSession";
@@ -135,7 +136,7 @@ export class ProfileRepository implements IProfileRepository {
     return ProfileMapper.toExternalLogins(dtos);
   }
 
-  async linkExternalLogin(data: LinkExternalLoginDto): Promise<ExternalLogin> {
+  async linkExternalLogin(data: LinkExternalLoginRequest): Promise<ExternalLogin> {
     const dto = await this.api.post<ExternalLoginDto>(PROFILE_ENDPOINTS.LINK_EXTERNAL_LOGIN, data);
     return ProfileMapper.toExternalLogin(dto);
   }

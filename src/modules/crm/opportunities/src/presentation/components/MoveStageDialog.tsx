@@ -235,8 +235,8 @@ export function MoveStageDialog({
           <div className="rounded-lg border border-nx-line bg-nx-raised/40 px-3 py-2 flex items-center justify-between gap-2 text-xs" data-testid="move-stage-approval-gate-card">
             <span className="font-semibold text-nx-ink">{t("crmOpportunities.commercialSuite.pipelineRoleGateLabel")}</span>
             <span className="font-mono text-[11px] text-nx-ink-2">
-              {evalTransition?.matchedTransition?.rules.requireApproval
-                ? `${evalTransition.matchedTransition.rules.approverRole || "pipe_role:deal_desk"} (${evalTransition.matchedTransition.rules.approvalQuorum || "any"})`
+              {evalTransition?.approvalRequirement?.required
+                ? `${evalTransition.approvalRequirement.roles.join(", ")} (${evalTransition.approvalRequirement.quorum})`
                 : t("crmOpportunities.commercialSuite.authorizedViaActiveRole")}
             </span>
           </div>

@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback, useTransition } from "react";
 import { getCrmContainer } from "@modules/crm/di";
+import type { CrmWorkflowTransitionSubmitPayload } from "@modules/crm";
 import type { CrmLead, CreateLeadInput, LeadStatus } from "../../domain/models/crm-lead.types";
 import { useLeadWorkflowActions } from "./useLeadWorkflowActions";
 
@@ -149,6 +150,41 @@ export function useLeadsViewModel(initialSearch?: string) {
     setSubmitError,
   );
 
+  const handleTransitionSubmit = useCallback(
+    async (payload: CrmWorkflowTransitionSubmitPayload): Promise<boolean> => {
+      setIsSubmitting(true);
+      setSubmitError(null);
+      try {
+        const container = getCrmContainer();
+        await container.leadRepository.moveLeadStage({
+          leadId: payload.entityId,
+          targetStageKey: payload.targetStageKey,
+          transitionId: payload.transitionId,
+          expectedRowVersion: payload.expectedRowVersion,
+          partyId: payload.partyId,
+          accountId: payload.accountId,
+          estimatedValue: payload.estimatedAmount,
+          closeNotes: payload.closeNotes,
+          disqualificationReasonCode: payload.disqualificationReasonCode,
+          reopenReason: payload.reopenReason,
+          reason: payload.reason,
+          auditNote: payload.auditNote,
+          convertDealTitle: payload.convertDealTitle,
+          targetDealPipelineId: payload.targetDealPipelineId,
+        });
+        setIsSubmitting(false);
+        refresh();
+        return true;
+      } catch (err) {
+        setIsSubmitting(false);
+        const msg = err instanceof Error ? err.message : "Failed to move stage";
+        setSubmitError(msg);
+        return false;
+      }
+    },
+    [refresh],
+  );
+
   const clearError = useCallback(() => {
     setSubmitError(null);
     setState((prev) => ({ ...prev, error: null }));
@@ -184,6 +220,7 @@ export function useLeadsViewModel(initialSearch?: string) {
     openLinkPartyDialog: wfActions.openLinkPartyDialog,
     openConvertDialog: wfActions.openConvertDialog,
     handleUpdateLeadStatus: wfActions.handleUpdateLeadStatus,
+    handleTransitionSubmit,
     lookupCandidateParties: wfActions.lookupCandidateParties,
     refresh,
     items: state.items,

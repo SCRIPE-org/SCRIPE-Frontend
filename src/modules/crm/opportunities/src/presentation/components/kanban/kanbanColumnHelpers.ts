@@ -20,7 +20,7 @@ export interface KanbanStageDef {
 
 export function resolveKanbanStageLabel(
   language: string,
-  t: (key: string, params?: Record<string, unknown>) => string,
+  t: (key: string, params?: any) => string,
   stageDef?: KanbanStageDef,
   fallbackKey?: string,
 ): string {
@@ -107,7 +107,7 @@ export function evaluateKanbanColumnDragState(params: {
   canUpdateOpportunity?: boolean;
   canManagePipelines?: boolean;
   language: string;
-  t: (key: string, opts?: Record<string, unknown>) => string;
+  t: (key: string, opts?: any) => string;
 }) {
   const {
     stage,

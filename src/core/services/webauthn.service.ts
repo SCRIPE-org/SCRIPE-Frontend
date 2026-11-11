@@ -90,40 +90,143 @@ export async function isPlatformAuthenticatorAvailable(): Promise<boolean> {
   }
 }
 
+export interface ClientDeviceDetection {
+  os: string;
+  browser: string;
+  deviceLabel: string;
+  isPlatformAvailable: boolean;
+}
+
 /**
- * Checks if conditional UI (autofill) is supported by the client.
+ * Auto-detect the current operating system, browser, and platform authenticator.
  */
-export async function isConditionalMediationAvailable(): Promise<boolean> {
-  if (!(await isWebAuthnAvailable())) return false;
-  if (typeof PublicKeyCredential.isConditionalMediationAvailable !== "function") {
-    return false;
+export async function detectClientDevice(): Promise<ClientDeviceDetection> {
+  if (typeof window === "undefined" || typeof navigator === "undefined") {
+    return {
+      os: "Station Terminal",
+      browser: "Browser",
+      deviceLabel: "Command Station",
+      isPlatformAvailable: false,
+    };
   }
-  try {
-    return await PublicKeyCredential.isConditionalMediationAvailable();
-  } catch {
-    return false;
+
+  const ua = navigator.userAgent;
+  let os = "Desktop";
+  let browser = "Browser";
+
+  // Operating System detection
+  if (/Windows NT 10.0/i.test(ua)) {
+    os = "Windows 11";
+  } else if (/Windows NT/i.test(ua)) {
+    os = "Windows";
+  } else if (/Macintosh|Mac OS X/i.test(ua)) {
+    os = "macOS";
+  } else if (/iPhone|iPad|iPod/i.test(ua)) {
+    os = "iOS";
+  } else if (/Android/i.test(ua)) {
+    os = "Android";
+  } else if (/Linux/i.test(ua)) {
+    os = "Linux";
   }
+
+  // Browser detection
+  if (/Edg\//i.test(ua)) {
+    browser = "Edge";
+  } else if (/Chrome\//i.test(ua) && !/Edg\//i.test(ua)) {
+    browser = "Chrome";
+  } else if (/Safari\//i.test(ua) && !/Chrome\//i.test(ua)) {
+    browser = "Safari";
+  } else if (/Firefox\//i.test(ua)) {
+    browser = "Firefox";
+  } else if (/OPR\//i.test(ua)) {
+    browser = "Opera";
+  }
+
+  const isPlatformAvailable = await isPlatformAuthenticatorAvailable();
+  const platformFeature =
+    os === "Windows 11" || os === "Windows"
+      ? "Windows Hello"
+      : os === "macOS" || os === "iOS"
+      ? "Touch ID / Face ID"
+      : "Screen Lock";
+
+  const deviceLabel = isPlatformAvailable
+    ? `${platformFeature} • ${os}`
+    : `${os} (${browser})`;
+
+  return {
+    os,
+    browser,
+    deviceLabel,
+    isPlatformAvailable,
+  };
+}
+
+/**
+ * Translates WebAuthn browser DOMExceptions into clear, actionable, user-friendly messages.
+ */
+export function translateError(err: unknown): string {
+  if (err instanceof DOMException) {
+    switch (err.name) {
+      case "NotAllowedError":
+        return "The passkey prompt timed out or was dismissed. Please click retry when ready.";
+      case "InvalidStateError":
+        return "This authenticator or passkey is already enrolled for this account.";
+      case "NotSupportedError":
+        return "Passkeys or platform biometrics are not supported on this device/browser configuration.";
+      case "SecurityError":
+        return "Origin security verification failed. Domain does not match relying party.";
+      case "AbortError":
+        return "The passkey operation was cancelled.";
+      case "ConstraintError":
+        return "The requested authenticator constraint could not be satisfied.";
+      default:
+        return err.message || "Passkey operation failed.";
+    }
+  }
+  if (err instanceof Error) {
+    if (
+      err.message.includes("timed out") ||
+      err.message.includes("not allowed") ||
+      err.message.includes("dismissed")
+    ) {
+      return "The passkey prompt timed out or was dismissed. Please click retry when ready.";
+    }
+    return err.message;
+  }
+  return "An unknown error occurred during passkey ceremony.";
+}
+
+/**
+ * Registration options supporting both W3C L3 nested objects and flat DTO properties.
+ */
+export interface WebAuthnRegisterOptionsPayload {
+  challenge: string;
+  rp?: { id?: string; name?: string };
+  rpId?: string;
+  rpName?: string;
+  user?: { id?: string; name?: string; displayName?: string };
+  userId?: string;
+  userName?: string;
+  userDisplayName?: string;
+  pubKeyCredParams?: Array<{ type: "public-key"; alg: number }>;
+  timeout?: number;
+  excludeCredentials?: Array<{ id: string; type: "public-key"; transports?: string[] }>;
+  authenticatorSelection?: {
+    authenticatorAttachment?: AuthenticatorAttachment;
+    residentKey?: ResidentKeyRequirement;
+    requireResidentKey?: boolean;
+    userVerification?: UserVerificationRequirement;
+  };
+  attestation?: AttestationConveyancePreference;
+  hints?: ("client-device" | "hybrid" | "security-key")[];
 }
 
 /**
  * Executes passkey registration ceremony (navigator.credentials.create).
  */
 export async function registerPasskey(
-  rawOptions: {
-    challenge: string;
-    rp: { id?: string; name: string };
-    user: { id: string; name: string; displayName: string };
-    pubKeyCredParams: Array<{ type: "public-key"; alg: number }>;
-    timeout?: number;
-    excludeCredentials?: Array<{ id: string; type: "public-key"; transports?: string[] }>;
-    authenticatorSelection?: {
-      authenticatorAttachment?: AuthenticatorAttachment;
-      residentKey?: ResidentKeyRequirement;
-      requireResidentKey?: boolean;
-      userVerification?: UserVerificationRequirement;
-    };
-    attestation?: AttestationConveyancePreference;
-  },
+  rawOptions: WebAuthnRegisterOptionsPayload,
   mode: AuthenticatorMode = "platform"
 ): Promise<PasskeyAttestationResult> {
   if (!(await isWebAuthnAvailable())) {
@@ -133,12 +236,35 @@ export async function registerPasskey(
   // Parse challenge
   const challengeBuffer = base64UrlToBuffer(rawOptions.challenge);
 
-  // Parse user.id
+  // Safe RP resolution
+  const resolvedRpId =
+    rawOptions.rp?.id ||
+    rawOptions.rpId ||
+    (typeof window !== "undefined" ? window.location.hostname : "localhost");
+  const resolvedRpName =
+    rawOptions.rp?.name ||
+    rawOptions.rpName ||
+    "SCRIPE Enterprise OS";
+
+  // Safe User resolution
+  const rawUserId =
+    rawOptions.user?.id ||
+    rawOptions.userId ||
+    "scripe-user";
+  const resolvedUserName =
+    rawOptions.user?.name ||
+    rawOptions.userName ||
+    "admin@scripe.org";
+  const resolvedUserDisplayName =
+    rawOptions.user?.displayName ||
+    rawOptions.userDisplayName ||
+    resolvedUserName;
+
   let userIdBuffer: ArrayBuffer;
   try {
-    userIdBuffer = base64UrlToBuffer(rawOptions.user.id);
+    userIdBuffer = base64UrlToBuffer(rawUserId);
   } catch {
-    userIdBuffer = new TextEncoder().encode(rawOptions.user.id).buffer;
+    userIdBuffer = new TextEncoder().encode(rawUserId).buffer;
   }
 
   // Convert excludeCredentials
@@ -149,32 +275,47 @@ export async function registerPasskey(
       transports: cred.transports as AuthenticatorTransport[] | undefined,
     }));
 
-  // Resolve authenticator selection per requested mode
+  // Resolve authenticator selection and hints per requested mode
   let authenticatorAttachment: AuthenticatorAttachment | undefined =
     rawOptions.authenticatorSelection?.authenticatorAttachment;
+  let modeHints: ("client-device" | "hybrid" | "security-key")[] | undefined =
+    rawOptions.hints;
 
   if (mode === "platform") {
-    authenticatorAttachment = "platform";
-  } else if (mode === "security-key" || mode === "hybrid") {
+    // Current workstation passkey (Windows Hello, Touch ID, or browser vault)
+    // Leaving attachment unconstrained with ["client-device"] allows both Windows Hello
+    // and browser credential vaults without forcing a USB prompt.
+    authenticatorAttachment = undefined;
+    modeHints = ["client-device"];
+  } else if (mode === "hybrid") {
+    // Phone / Tablet QR Code (FIDO Hybrid / CaBLE)
+    authenticatorAttachment = undefined;
+    modeHints = ["hybrid"];
+  } else if (mode === "security-key") {
+    // Explicit physical USB / NFC hardware security key
     authenticatorAttachment = "cross-platform";
+    modeHints = ["security-key"];
   }
 
   const creationOptions: PublicKeyCredentialCreationOptions = {
     challenge: challengeBuffer,
     rp: {
-      id: rawOptions.rp.id || window.location.hostname,
-      name: rawOptions.rp.name || "SCRIPE Sports OS",
+      id: resolvedRpId,
+      name: resolvedRpName,
     },
     user: {
       id: userIdBuffer,
-      name: rawOptions.user.name,
-      displayName: rawOptions.user.displayName || rawOptions.user.name,
+      name: resolvedUserName,
+      displayName: resolvedUserDisplayName,
     },
-    pubKeyCredParams: rawOptions.pubKeyCredParams || [
-      { type: "public-key", alg: -7 }, // ES256
-      { type: "public-key", alg: -257 }, // RS256
-      { type: "public-key", alg: -8 }, // Ed25519
-    ],
+    pubKeyCredParams: rawOptions.pubKeyCredParams && rawOptions.pubKeyCredParams.length > 0
+      ? rawOptions.pubKeyCredParams
+      : [
+          { type: "public-key", alg: -7 }, // ES256
+          { type: "public-key", alg: -257 }, // RS256
+          { type: "public-key", alg: -37 }, // PS256
+          { type: "public-key", alg: -8 }, // Ed25519
+        ],
     timeout: rawOptions.timeout || 60000,
     excludeCredentials,
     authenticatorSelection: {
@@ -186,34 +327,43 @@ export async function registerPasskey(
     attestation: rawOptions.attestation || "none",
   };
 
-  const credential = (await navigator.credentials.create({
-    publicKey: creationOptions,
-  })) as PublicKeyCredential | null;
-
-  if (!credential) {
-    throw new Error("Passkey registration ceremony was cancelled or produced no credential.");
+  if (modeHints && modeHints.length > 0) {
+    (creationOptions as unknown as { hints?: string[] }).hints = modeHints;
   }
 
-  const response = credential.response as AuthenticatorAttestationResponse;
+  try {
+    const credential = (await navigator.credentials.create({
+      publicKey: creationOptions,
+    })) as PublicKeyCredential | null;
 
-  let transports: string[] | undefined;
-  if (typeof response.getTransports === "function") {
-    transports = response.getTransports();
+    if (!credential) {
+      throw new Error("Passkey registration ceremony was cancelled or produced no credential.");
+    }
+
+    const response = credential.response as AuthenticatorAttestationResponse;
+
+    let transports: string[] | undefined;
+    if (typeof response.getTransports === "function") {
+      transports = response.getTransports();
+    }
+
+    const clientExtensionResults = credential.getClientExtensionResults
+      ? (credential.getClientExtensionResults() as Record<string, unknown>)
+      : undefined;
+
+    return {
+      id: credential.id,
+      rawId: bufferToBase64Url(credential.rawId),
+      type: credential.type,
+      attestationObjectBase64: bufferToBase64Url(response.attestationObject),
+      clientDataJsonBase64: bufferToBase64Url(response.clientDataJSON),
+      transports,
+      clientExtensionResults,
+    };
+  } catch (err: unknown) {
+    const translated = translateError(err);
+    throw new Error(translated);
   }
-
-  const clientExtensionResults = credential.getClientExtensionResults
-    ? (credential.getClientExtensionResults() as Record<string, unknown>)
-    : undefined;
-
-  return {
-    id: credential.id,
-    rawId: bufferToBase64Url(credential.rawId),
-    type: credential.type,
-    attestationObjectBase64: bufferToBase64Url(response.attestationObject),
-    clientDataJsonBase64: bufferToBase64Url(response.clientDataJSON),
-    transports,
-    clientExtensionResults,
-  };
 }
 
 /**
@@ -244,35 +394,42 @@ export async function assertPasskey(
 
   const requestOptions: PublicKeyCredentialRequestOptions = {
     challenge: challengeBuffer,
-    rpId: rawOptions.rpId || window.location.hostname,
+    rpId:
+      rawOptions.rpId ||
+      (typeof window !== "undefined" ? window.location.hostname : "localhost"),
     timeout: rawOptions.timeout || 60000,
     allowCredentials,
     userVerification: rawOptions.userVerification || "preferred",
   };
 
-  const credential = (await navigator.credentials.get({
-    publicKey: requestOptions,
-    mediation: useMediation ? "conditional" : undefined,
-  })) as PublicKeyCredential | null;
+  try {
+    const credential = (await navigator.credentials.get({
+      publicKey: requestOptions,
+      mediation: useMediation ? "conditional" : undefined,
+    })) as PublicKeyCredential | null;
 
-  if (!credential) {
-    throw new Error("Passkey assertion ceremony was cancelled or produced no credential.");
+    if (!credential) {
+      throw new Error("Passkey assertion ceremony was cancelled or produced no credential.");
+    }
+
+    const response = credential.response as AuthenticatorAssertionResponse;
+
+    const clientExtensionResults = credential.getClientExtensionResults
+      ? (credential.getClientExtensionResults() as Record<string, unknown>)
+      : undefined;
+
+    return {
+      credentialIdBase64: bufferToBase64Url(credential.rawId),
+      authenticatorDataBase64: bufferToBase64Url(response.authenticatorData),
+      clientDataJsonBase64: bufferToBase64Url(response.clientDataJSON),
+      signatureBase64: bufferToBase64Url(response.signature),
+      userHandleBase64: response.userHandle ? bufferToBase64Url(response.userHandle) : null,
+      clientExtensionResults,
+    };
+  } catch (err: unknown) {
+    const translated = translateError(err);
+    throw new Error(translated);
   }
-
-  const response = credential.response as AuthenticatorAssertionResponse;
-
-  const clientExtensionResults = credential.getClientExtensionResults
-    ? (credential.getClientExtensionResults() as Record<string, unknown>)
-    : undefined;
-
-  return {
-    credentialIdBase64: bufferToBase64Url(credential.rawId),
-    authenticatorDataBase64: bufferToBase64Url(response.authenticatorData),
-    clientDataJsonBase64: bufferToBase64Url(response.clientDataJSON),
-    signatureBase64: bufferToBase64Url(response.signature),
-    userHandleBase64: response.userHandle ? bufferToBase64Url(response.userHandle) : null,
-    clientExtensionResults,
-  };
 }
 
 /**

@@ -105,11 +105,11 @@ export function CrmShell({
     { id: "leads", label: t("crm.tabs.leads"), icon: Users, visible: canReadLeads },
     { id: "deals", label: t("crm.tabs.deals"), icon: Briefcase, visible: canReadOpportunities },
     { id: "accounts", label: t("crm.tabs.accounts"), icon: Building2, visible: canReadAccounts },
-    { id: "contacts", label: t("crm.tabs.contacts") || "Contacts", icon: Contact, visible: canReadContacts },
-    { id: "activities", label: t("crm.tabs.activities") || "Activities", icon: Clock, visible: canReadActivities },
+    { id: "contacts", label: t("crm.tabs.contacts"), icon: Contact, visible: canReadContacts },
+    { id: "activities", label: t("crm.tabs.activities"), icon: Clock, visible: canReadActivities },
     { id: "pipelines", label: t("crm.tabs.pipelines"), icon: GitFork, visible: canReadPipelines },
-    { id: "reports", label: t("crm.tabs.reports") || "Reports", icon: BarChart3, visible: canReadReports },
-    { id: "settings", label: t("crm.tabs.settings") || "Settings", icon: Settings, visible: canManageSettings || canReadPipelines },
+    { id: "reports", label: t("crm.tabs.reports"), icon: BarChart3, visible: canReadReports },
+    { id: "settings", label: t("crm.tabs.settings"), icon: Settings, visible: canManageSettings || canReadPipelines },
   ];
 
   return (

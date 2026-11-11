@@ -150,7 +150,7 @@ export function LeadsKanbanCardItem({
                 variant="ghost"
                 size="icon"
                 className="size-6 text-nx-ink-3 hover:text-nx-ink hover:bg-nx-surface"
-                title={`Move back to ${prevStage}`}
+                title={t("crmLeads.actions.moveBackTo", { stage: prevStage, defaultValue: `Move back to ${prevStage}` })}
                 onClick={(e) => {
                   e.stopPropagation();
                   onUpdateLeadStatus(lead, prevStage);
@@ -165,10 +165,14 @@ export function LeadsKanbanCardItem({
                 variant="ghost"
                 size="icon"
                 className="size-6 text-nx-ink-3 hover:text-nx-ink hover:bg-nx-surface"
-                title={`Advance to ${nextStage}`}
+                title={t("crmLeads.actions.advanceTo", { stage: nextStage, defaultValue: `Advance to ${nextStage}` })}
                 onClick={(e) => {
                   e.stopPropagation();
-                  onUpdateLeadStatus(lead, nextStage);
+                  if (nextStage === "Converted") {
+                    onOpenConvert(lead);
+                  } else {
+                    onUpdateLeadStatus(lead, nextStage);
+                  }
                 }}
               >
                 <ChevronRight className={cn("size-3.5", isRtl && "rotate-180")} />

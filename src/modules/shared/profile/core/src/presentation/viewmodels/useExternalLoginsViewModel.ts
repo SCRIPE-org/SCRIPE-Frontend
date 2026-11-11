@@ -5,6 +5,7 @@ import { container } from "@modules/profile/di";
 import { useI18n } from "@core/providers/i18n-provider";
 import { useCoreSsoProviders } from "@core/hooks/use-auth-bridge";
 import { useEnhancedToast } from "@core/hooks/use-enhanced-toast";
+import type { LinkExternalLoginRequest } from "../../domain/interfaces/IProfileRepository";
 
 /**
  * Exported constant defining parameters and fields for external login keys configurations.
@@ -56,12 +57,32 @@ export function useExternalLoginsViewModel() {
     },
   });
 
-  // 3. Link Action
+  // 3. Link Action via IdP redirect
   // We use special session storage state to tell the callback it's a "Link" flow
   const handleLink = (providerId: string, protocol: string) => {
     sessionStorage.setItem("sso_linking", "true");
     initiateSsoLogin(providerId, protocol);
   };
+
+  // 4. Direct Link Account Mutation (Verified corporate email / token)
+  const { mutateAsync: linkAccount, isPending: isLinking } = useMutation({
+    mutationFn: (data: LinkExternalLoginRequest) => repo.linkExternalLogin(data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: externalLoginKeys.all });
+      toast({
+        title: t("common.success"),
+        description: t("profile.security.ssoAccountLinkedNotice") || "Corporate SSO account linked successfully.",
+        variant: "default",
+      });
+    },
+    onError: (err: Error) => {
+      toast({
+        title: t("common.error"),
+        description: err.message || t("profile.security.ssoAccountLinkError") || "Failed to link corporate account.",
+        variant: "destructive",
+      });
+    },
+  });
 
   return {
     externalLogins: externalLogins ?? [],
@@ -70,5 +91,7 @@ export function useExternalLoginsViewModel() {
     isUnlinking,
     unlink,
     handleLink,
+    linkAccount,
+    isLinking,
   };
 }

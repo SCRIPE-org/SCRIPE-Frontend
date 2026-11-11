@@ -20,5 +20,7 @@ export * from "./src/presentation/utils/crmStageColorUtils";
 export * from "./src/presentation/views/CrmOverviewView";
 export * from "./src/presentation/views/CrmReportsView";
 export * from "./src/presentation/views/CrmSettingsView";
+export * from "./src/presentation/components/CrmWorkflowTransitionDialog";
+export * from "./src/presentation/components/crmTransitionTypes";
 
 

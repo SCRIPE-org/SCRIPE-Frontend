@@ -19,6 +19,11 @@ import {
   mergeBackendPipelinesIntoState,
   syncWorkflowsToBackend,
 } from "../utils/crmWorkflowsStoreHelpers";
+import {
+  buildClonedWorkflowDef,
+  buildNewWorkflowDef,
+  rewireTransitionsOnStageReplace,
+} from "../utils/crmWorkflowsActionHelpers";
 
 export * from "../../domain/constants/crmWorkflowDefaults";
 export * from "../utils/crmStageColorUtils";
@@ -60,6 +65,7 @@ export interface CrmWorkflowsState {
     nameEn: string; nameAr?: string | null; version?: number; transitionsJson?: string | null;
     stages: Array<{ stageKey: string; labelEn: string; labelAr?: string | null; sortOrder: number; winProbabilityPercent?: number | null; requiredExitFields?: string[]; triggerDealConversion?: boolean }>;
   }) => void;
+  fetchPipelinesFromBackend: () => Promise<void>;
   hydrateFromServerPayload: (payload: { workflows?: CrmWorkflowDefinition[]; activeDealWorkflowId?: string; activeLeadWorkflowId?: string }) => void;
   hydrateFromBackendPipelines: (backendPipelines: any[]) => void;
   evaluateTransition: (
@@ -109,37 +115,8 @@ export const useCrmWorkflowsStore = create<CrmWorkflowsState>()(
         return saved;
       },
 
-      createWorkflow: ({ entityType, nameEn, nameAr, descriptionEn, descriptionAr, templateId, cloneFromId }) => {
-        const resolvedTemplateId = templateId || cloneFromId;
-        const template = resolvedTemplateId ? get().workflows.find((w) => w.id === resolvedTemplateId) : undefined;
-        const id = `wf-${entityType}-${Date.now()}`;
-        const defaultStages: CrmWorkflowStage[] = template
-          ? template.stages.map((s) => ({ ...s, requiredExitFields: [...s.requiredExitFields] }))
-          : entityType === "lead"
-            ? [
-                { stageKey: "lead.new", labelEn: DEFAULT_NEW_WORKFLOW_META.leadNewEn, labelAr: DEFAULT_NEW_WORKFLOW_META.leadNewAr, sortOrder: 1, category: "todo", winProbabilityPercent: 20, requiredExitFields: [] },
-                { stageKey: "lead.converted", labelEn: DEFAULT_NEW_WORKFLOW_META.leadConvertedEn, labelAr: DEFAULT_NEW_WORKFLOW_META.leadConvertedAr, sortOrder: 2, category: "done", winProbabilityPercent: 100, requiredExitFields: [], triggerDealConversion: true, triggersDealConversion: true },
-              ]
-            : [
-                { stageKey: "default.discovery", labelEn: DEFAULT_NEW_WORKFLOW_META.dealDiscoveryEn, labelAr: DEFAULT_NEW_WORKFLOW_META.dealDiscoveryAr, sortOrder: 1, category: "todo", winProbabilityPercent: 25, requiredExitFields: [] },
-                { stageKey: "default.proposal", labelEn: DEFAULT_NEW_WORKFLOW_META.dealProposalClosingEn, labelAr: DEFAULT_NEW_WORKFLOW_META.dealProposalClosingAr, sortOrder: 2, category: "in_progress", winProbabilityPercent: 80, requiredExitFields: ["partyId"], requiresVerifiedParty: true },
-              ];
-        const defaultTransitions: CrmWorkflowTransition[] = template
-          ? template.transitions.map((t, idx) => ({ ...t, id: `tr-${Date.now()}-${idx}`, rules: { ...t.rules } }))
-          : [
-              makeWorkflowTransition(`tr-${Date.now()}-1`, defaultStages[0].stageKey, defaultStages[1].stageKey, "forward", `${DEFAULT_NEW_WORKFLOW_META.advanceToPrefixEn} ${defaultStages[1].labelEn}`, `${DEFAULT_NEW_WORKFLOW_META.advanceToPrefixAr} ${defaultStages[1].labelAr}`, {
-                triggerDealConversion: Boolean(defaultStages[1].triggerDealConversion),
-                requireVerifiedParty: Boolean(defaultStages[1].requiresVerifiedParty),
-              }),
-              makeWorkflowTransition(`tr-${Date.now()}-2`, defaultStages[1].stageKey, defaultStages[0].stageKey, "backward", `${DEFAULT_NEW_WORKFLOW_META.returnToPrefixEn} ${defaultStages[0].labelEn}`, `${DEFAULT_NEW_WORKFLOW_META.returnToPrefixAr} ${defaultStages[0].labelAr}`),
-            ];
-        const created: CrmWorkflowDefinition = {
-          id, code: `${entityType}.custom_${Date.now()}`, entityType,
-          nameEn: nameEn.trim() || DEFAULT_NEW_WORKFLOW_META.customWfNameEn, nameAr: nameAr?.trim() || nameEn.trim() || DEFAULT_NEW_WORKFLOW_META.customWfNameAr,
-          descriptionEn: descriptionEn || DEFAULT_NEW_WORKFLOW_META.customWfDescEn,
-          descriptionAr: descriptionAr || DEFAULT_NEW_WORKFLOW_META.customWfDescAr,
-          isActive: false, isTemplate: false, version: 1, stages: defaultStages, transitions: defaultTransitions, updatedAtUtc: new Date().toISOString(),
-        };
+      createWorkflow: (input) => {
+        const created = buildNewWorkflowDef(get().workflows, input);
         set((state) => ({ workflows: [...state.workflows, created] }));
         syncWorkflowsToBackend(get(), created);
         return created;
@@ -147,14 +124,7 @@ export const useCrmWorkflowsStore = create<CrmWorkflowsState>()(
 
       cloneWorkflow: (workflowId, customNameEn, customNameAr) => {
         const src = get().workflows.find((w) => w.id === workflowId) ?? INITIAL_CRM_WORKFLOWS[0];
-        const cloned: CrmWorkflowDefinition = {
-          ...src, id: `wf-${src.entityType}-clone-${Date.now()}`, code: `${src.code}_copy_${Date.now()}`,
-          nameEn: customNameEn || `${src.nameEn} ${DEFAULT_NEW_WORKFLOW_META.copySuffixEn}`, nameAr: customNameAr || `${src.nameAr} ${DEFAULT_NEW_WORKFLOW_META.copySuffixAr}`,
-          isActive: false, isTemplate: false, version: 1,
-          stages: src.stages.map((s) => ({ ...s, requiredExitFields: [...s.requiredExitFields] })),
-          transitions: src.transitions.map((t, i) => ({ ...t, id: `tr-clone-${Date.now()}-${i}`, rules: { ...t.rules } })),
-          updatedAtUtc: new Date().toISOString(),
-        };
+        const cloned = buildClonedWorkflowDef(src, customNameEn, customNameAr);
         set((state) => ({ workflows: [...state.workflows, cloned] }));
         syncWorkflowsToBackend(get(), cloned);
         return cloned;
@@ -201,15 +171,8 @@ export const useCrmWorkflowsStore = create<CrmWorkflowsState>()(
         const wf = get().workflows.find((w) => w.id === workflowId);
         if (!wf || wf.stages.length <= 2 || stageKeyToRemove === replacementStageKey || !wf.stages.some((s) => s.stageKey === replacementStageKey)) return false;
         try { void getCrmContainer().opportunityRepository?.replacePipelineStage?.(workflowId, stageKeyToRemove, replacementStageKey)?.catch?.(() => undefined); } catch { /* noop */ }
-        const rewiredTransitions = wf.transitions
-          .map((t) => ({
-            ...t,
-            fromStageKey: t.fromStageKey === stageKeyToRemove ? replacementStageKey : t.fromStageKey,
-            toStageKey: t.toStageKey === stageKeyToRemove ? replacementStageKey : t.toStageKey,
-            fromStageKeys: t.fromStageKeys ? Array.from(new Set(t.fromStageKeys.map((k) => (k === stageKeyToRemove ? replacementStageKey : k)))) : undefined,
-          }))
-          .filter((t) => t.fromStageKey !== t.toStageKey);
-        get().saveWorkflow({ ...wf, stages: wf.stages.filter((s) => s.stageKey !== stageKeyToRemove), transitions: rewiredTransitions });
+        const rewired = rewireTransitionsOnStageReplace(wf.transitions, stageKeyToRemove, replacementStageKey);
+        get().saveWorkflow({ ...wf, stages: wf.stages.filter((s) => s.stageKey !== stageKeyToRemove), transitions: rewired });
         return true;
       },
 
@@ -271,6 +234,18 @@ export const useCrmWorkflowsStore = create<CrmWorkflowsState>()(
         }));
       },
 
+      fetchPipelinesFromBackend: async () => {
+        try {
+          const container = getCrmContainer();
+          if (container.opportunityRepository?.getPipelines) {
+            const pipes = await container.opportunityRepository.getPipelines();
+            if (Array.isArray(pipes) && pipes.length > 0) {
+              set((state) => mergeBackendPipelinesIntoState(state, pipes));
+            }
+          }
+        } catch { /* graceful fallback when offline */ }
+      },
+
       hydrateFromServerPayload: (payload) => {
         if (!Array.isArray(payload.workflows) || payload.workflows.length === 0) return;
         set((state) => ({
@@ -291,6 +266,24 @@ export const useCrmWorkflowsStore = create<CrmWorkflowsState>()(
       resetDefaults: () => set({ workflows: INITIAL_CRM_WORKFLOWS, activeDealWorkflowId: "wf-deal-default", activeLeadWorkflowId: "wf-lead-default" }),
       resetWorkflows: () => set({ workflows: INITIAL_CRM_WORKFLOWS, activeDealWorkflowId: "wf-deal-default", activeLeadWorkflowId: "wf-lead-default" }),
     }),
-    { name: "scripe-crm-workflows-v2" }
+    {
+      name: "scripe-crm-workflows-v3",
+      version: 3,
+      migrate: (persistedState: any, version: number) => {
+        if (!persistedState || version < 3) {
+          return {
+            workflows: INITIAL_CRM_WORKFLOWS,
+            activeDealWorkflowId: "wf-deal-default",
+            activeLeadWorkflowId: "wf-lead-default",
+          };
+        }
+        return persistedState;
+      },
+      onRehydrateStorage: () => (state) => {
+        if (typeof window !== "undefined") {
+          void state?.fetchPipelinesFromBackend?.();
+        }
+      },
+    }
   )
 );

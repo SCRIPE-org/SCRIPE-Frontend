@@ -1,31 +1,33 @@
 import type { CrmWorkflowStageNode, CrmWorkflowTransition } from "./CrmWorkflowCanvas2D";
 
-export const NODE_WIDTH = 188;
-export const NODE_HEIGHT = 104;
+export const NODE_WIDTH = 248;
+export const NODE_HEIGHT = 140;
 
 export type StagePortSide = "top" | "right" | "bottom" | "left";
-export type StagePortId = "top-1" | "top-2" | "top-3" | "right-1" | "bottom-1" | "bottom-2" | "bottom-3" | "left-1";
+export type StagePortId =
+  | "top-1" | "top-2" | "top-3"
+  | "right-1" | "right-2" | "right-3"
+  | "bottom-1" | "bottom-2" | "bottom-3"
+  | "left-1" | "left-2" | "left-3";
 
 export interface StagePortSpec { id: StagePortId; side: StagePortSide; rx: number; ry: number; }
 
-/** Jira-exact 8 perimeter connection ports: 3 top, 3 bottom, 1 left, 1 right. */
+/** Jira-exact 12 perimeter connection ports: 3 top, 3 right, 3 bottom, 3 left. */
 export const STAGE_PORTS: StagePortSpec[] = [
   { id: "top-1", side: "top", rx: 0.25, ry: 0 }, { id: "top-2", side: "top", rx: 0.5, ry: 0 }, { id: "top-3", side: "top", rx: 0.75, ry: 0 },
-  { id: "right-1", side: "right", rx: 1, ry: 0.5 },
+  { id: "right-1", side: "right", rx: 1, ry: 0.25 }, { id: "right-2", side: "right", rx: 1, ry: 0.5 }, { id: "right-3", side: "right", rx: 1, ry: 0.75 },
   { id: "bottom-1", side: "bottom", rx: 0.25, ry: 1 }, { id: "bottom-2", side: "bottom", rx: 0.5, ry: 1 }, { id: "bottom-3", side: "bottom", rx: 0.75, ry: 1 },
-  { id: "left-1", side: "left", rx: 0, ry: 0.5 },
+  { id: "left-1", side: "left", rx: 0, ry: 0.25 }, { id: "left-2", side: "left", rx: 0, ry: 0.5 }, { id: "left-3", side: "left", rx: 0, ry: 0.75 },
 ];
 
 export function normalizePortId(portId?: string | null): StagePortId | undefined {
   if (!portId) return undefined;
-  if (portId === "right-2") return "right-1";
-  if (portId === "left-2") return "left-1";
   return STAGE_PORTS.find((p) => p.id === portId)?.id;
 }
 
 export function getPortSpec(portId: StagePortId | string): StagePortSpec {
-  const norm = normalizePortId(portId) ?? "right-1";
-  return STAGE_PORTS.find((p) => p.id === norm) ?? STAGE_PORTS[3];
+  const norm = normalizePortId(portId) ?? "right-2";
+  return STAGE_PORTS.find((p) => p.id === norm) ?? STAGE_PORTS[4];
 }
 
 export function getPortCoords(node: CrmWorkflowStageNode, portId: StagePortId | string, fanOffset = 0): { x: number; y: number; side: StagePortSide } {
@@ -82,7 +84,7 @@ export function chooseBestTargetPort(
   if (Math.abs(dy) >= 80) return dy > 0 ? (dx < -25 ? "top-3" : dx > 25 ? "top-1" : "top-2") : (dx < -25 ? "bottom-3" : dx > 25 ? "bottom-1" : "bottom-2");
   if (fromPortId?.startsWith("top")) return dx >= 0 ? "top-1" : "top-3";
   if (fromPortId?.startsWith("bottom")) return dx >= 0 ? "bottom-1" : "bottom-3";
-  return dx >= 0 ? "left-1" : "right-1";
+  return dx >= 0 ? "left-2" : "right-2";
 }
 
 /** Converts orthogonal waypoints into a smooth rounded-corner SVG path (r = 8px). */

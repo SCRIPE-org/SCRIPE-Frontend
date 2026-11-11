@@ -199,11 +199,16 @@ export function mergeBackendPipelinesIntoState(
         const parsed = JSON.parse(bp.transitionsJson);
         if (Array.isArray(parsed)) {
           const qualHasSolFit = mappedStages.find((s) => s.stageKey === "default.qualification")?.requiredExitFields.includes("solutionFitConfirmed");
-          mappedTransitions = parsed.map((tr: CrmWorkflowTransition) =>
-            tr.fromStageKey === "default.qualification" && tr.toStageKey === "default.solution_fit" && !qualHasSolFit && tr.rules?.requiredFieldKeys?.includes("solutionFitConfirmed")
-              ? { ...tr, rules: { ...tr.rules, requiredFieldKeys: tr.rules.requiredFieldKeys.filter((k) => k !== "solutionFitConfirmed") } }
-              : tr
-          );
+          mappedTransitions = parsed.map((tr: CrmWorkflowTransition) => {
+            let res = tr;
+            if (tr.fromStageKey === "default.qualification" && tr.toStageKey === "default.solution_fit" && !qualHasSolFit && tr.rules?.requiredFieldKeys?.includes("solutionFitConfirmed")) {
+              res = { ...res, rules: { ...res.rules, requiredFieldKeys: res.rules.requiredFieldKeys.filter((k) => k !== "solutionFitConfirmed") } };
+            }
+            if ((res.id === "tr-deal-5-won" || res.id === "tr-deal-neg-won") && (!res.fromStageKeys || res.fromStageKeys.length <= 1)) {
+              res = { ...res, fromStageKeys: ["default.solution_fit", "default.proposal", "default.negotiation"] };
+            }
+            return res;
+          });
         }
       } catch { /* ignore */ }
     }

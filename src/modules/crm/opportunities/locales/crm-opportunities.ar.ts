@@ -2,6 +2,10 @@ export const ar = {
   crmOpportunities: {
     title: "الفرص والصفقات البيعية",
     subtitle: "متابعة وإدارة وإغلاق الصفقات التجارية عبر مراحل مسار المبيعات الرياضية",
+    overview: {
+      dealsBadge: "{count} صفقات",
+      errorTitle: "خطأ في تحميل الصفقات",
+    },
     actions: {
       newDeal: "فرصة جديدة",
       searchPlaceholder: "البحث عن الصفقات بالعنوان أو العملة أو المرحلة...",
@@ -637,6 +641,24 @@ export const ar = {
           solutionFitConfirmed: "تأكيد ملاءمة الحل",
         },
       },
+      tidyLayout: "تنظيم المخطط",
+      elkLayeredLayout: "توزيع طبقي ذكي (ELK)",
+      dagreHorizontalLayout: "توزيع أفقي (Dagre LR)",
+      dagreVerticalLayout: "توزيع رأسي (Dagre TB)",
+      exportPng: "تصدير صورة PNG",
+      exportingPng: "جارِ التصدير...",
+      exportPngSuccess: "تم تصدير مخطط مسار العمل كصورة PNG بنجاح",
+      exportPngError: "فشل تصدير المخطط كصورة PNG",
+      showGlobalWires: "إظهار المسارات العامة (*)",
+      hideGlobalWires: "إخفاء المسارات العامة (*)",
+      globalAnyPillLabel: "* من أي حالة",
+      globalInboundTooltip: "انتقال عام وارد: يسمح بالانتقال إلى هذه المرحلة من أي حالة",
+      transitionScreenRequired: "شاشة الإدخال مطلوبة",
+      transitionNoRollback: "التراجع غير مسموح",
+      transitionRulesCount: "قواعد",
+      autoConvertsToDeal: "تحويل إلى صفقة",
+      terminalWonBadge: "صفقة رابحة",
+      terminalLostBadge: "صفقة خاسرة",
     },
     detail: {
       backToList: "العودة إلى الفرص",
@@ -789,6 +811,11 @@ export const ar = {
       sapFieldLockingTitle: "قفل الحقول في المرحلة (SAP Field-Locking)",
       lockedReadOnlyBadge: "مقفل (للقراءة فقط)",
       editableBadge: "قابل للتعديل",
+    },
+    workflowStudio: {
+      undo: "تراجع",
+      redo: "إعادة",
+      keyboardShortcutsHint: "اختصارات لوحة المفاتيح: Ctrl+Z تراجع · Ctrl+Y إعادة · Del حذف · Esc مسح التحديد",
     },
   },
 };

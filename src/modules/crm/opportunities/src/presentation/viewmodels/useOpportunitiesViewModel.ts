@@ -131,11 +131,9 @@ export function useOpportunitiesViewModel(initialSearch?: string) {
 
   const activeDealWorkflow = useCrmWorkflowsStore((s) => s.getActiveWorkflow("deal"));
   const effectivePipelineStages =
-    lifecycle.pipeline?.stages &&
-    lifecycle.pipeline.stages.length >= 2 &&
-    activeDealWorkflow.id === "wf-deal-default"
-      ? lifecycle.pipeline.stages
-      : activeDealWorkflow.stages;
+    activeDealWorkflow?.stages && activeDealWorkflow.stages.length >= 2
+      ? activeDealWorkflow.stages
+      : lifecycle.pipeline?.stages ?? [];
 
   const updateItemStageOptimistic = useCallback(
     (oppId: string, newStageKey: string, fullItem?: CrmOpportunity) => {
@@ -180,6 +178,7 @@ export function useOpportunitiesViewModel(initialSearch?: string) {
     closeInitialOutcome: lifecycle.closeInitialOutcome,
     isSubmitting,
     submitError,
+    setSubmitError,
     pipelineError: lifecycle.pipelineError,
     setIsPipelineAdminOpen: lifecycle.setIsPipelineAdminOpen,
     openPipelineAdminDialog: () => {

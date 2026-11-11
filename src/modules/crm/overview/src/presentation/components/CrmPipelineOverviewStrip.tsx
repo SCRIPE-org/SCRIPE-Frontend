@@ -97,7 +97,7 @@ export function CrmPipelineOverviewStrip({
                 colorMeta.headerBorderClass,
                 isSelected
                   ? "border-nx-accent bg-nx-raised ring-1 ring-nx-accent"
-                  : cn("hover:border-nx-line-hi hover:bg-nx-raised/40", colorMeta.cardClass)
+                  : cn("hover:border-nx-line-hi hover:bg-nx-raised/40", colorMeta.borderClass)
               )}
             >
               <div className="flex items-center justify-between w-full">

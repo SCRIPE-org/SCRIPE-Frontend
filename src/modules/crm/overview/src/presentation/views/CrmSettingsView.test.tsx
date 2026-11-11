@@ -163,7 +163,7 @@ describe("CrmSettingsView & Multi-Currency FX Engine", () => {
 
   it("respects empty arrays from server in parseCustomGovernanceConfigJson, keeps memberNames empty by default, and renders CrmSettingsSkeleton while hydrating", () => {
     const state = useCrmSettingsStore.getState();
-    expect(state.crmRoles.every((r) => r.memberNames.length === 0)).toBe(true);
+    expect(state.crmRoles.every((r) => (r.memberNames ?? []).length === 0)).toBe(true);
 
     // Server returns explicit empty arrays -> must be respected without falling back to non-empty defaults
     const parsed = parseCustomGovernanceConfigJson(

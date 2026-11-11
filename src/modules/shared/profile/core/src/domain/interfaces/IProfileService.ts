@@ -2,11 +2,11 @@ import type { AdminProfile } from "../entities/AdminProfile";
 import type { ActiveSession } from "../entities/ActiveSession";
 import type { SecurityLogEntry } from "../entities/SecurityLogEntry";
 import type { ExternalLogin } from "../entities/ExternalLogin";
-import type { LinkExternalLoginDto } from "../types/ProfileTypes";
 import type {
   UpdateProfileRequest,
   ChangePasswordRequest,
   Enable2FAResult,
+  LinkExternalLoginRequest,
 } from "./IProfileRepository";
 
 /**
@@ -28,6 +28,6 @@ export interface IProfileService {
   regenerateBackupCodes(twoFactorCode: string): Promise<string[]>;
   getSecurityLog(page?: number, pageSize?: number): Promise<SecurityLogEntry[]>;
   getExternalLogins(): Promise<ExternalLogin[]>;
-  linkExternalLogin(data: LinkExternalLoginDto): Promise<ExternalLogin>;
+  linkExternalLogin(data: LinkExternalLoginRequest): Promise<ExternalLogin>;
   unlinkExternalLogin(externalLoginId: string): Promise<void>;
 }

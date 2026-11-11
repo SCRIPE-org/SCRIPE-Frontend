@@ -38,7 +38,7 @@ export function useKanbanBoardViewModel({
   onMoveStage,
   canUpdateOpportunity: propCanUpdate,
   canManagePipelines: propCanManage,
-  includeOutcomeStagesAsColumns = false,
+  includeOutcomeStagesAsColumns = true,
 }: UseKanbanBoardViewModelProps) {
   const canUpdate = propCanUpdate !== undefined ? propCanUpdate : true;
   const canManage = propCanManage !== undefined ? propCanManage : true;
@@ -59,9 +59,7 @@ export function useKanbanBoardViewModel({
 
   const effectiveStages: KanbanStageDef[] = useMemo(() => {
     const activeWorkflow = useCrmWorkflowsStore.getState().getActiveWorkflow("deal");
-    const wfStagesByKey = new Map(
-      (activeWorkflow?.stages ?? []).map((ws) => [ws.stageKey, ws]),
-    );
+    const wfStagesByKey = new Map((activeWorkflow?.stages ?? []).map((ws) => [ws.stageKey, ws]));
     const canonicalByKey = new Map(CANONICAL_KANBAN_STAGES.map((cs) => [cs.key, cs]));
 
     let baseStages: KanbanStageDef[] = [];
@@ -100,7 +98,10 @@ export function useKanbanBoardViewModel({
         };
       });
     } else if (activeWorkflow?.stages && activeWorkflow.stages.length >= 2) {
-      const sorted = [...activeWorkflow.stages].sort((a, b) => a.sortOrder - b.sortOrder);
+      const raw = includeOutcomeStagesAsColumns
+        ? activeWorkflow.stages
+        : activeWorkflow.stages.filter((s) => s.category !== "done" && s.category !== "lost");
+      const sorted = [...raw].sort((a, b) => a.sortOrder - b.sortOrder);
       baseStages = sorted.map((s) => {
         const category = (s.category ?? "in_progress") as CrmWorkflowStageCategory;
         const color = resolveDefaultStageColor(s.stageKey, category, s.sortOrder, s.color);

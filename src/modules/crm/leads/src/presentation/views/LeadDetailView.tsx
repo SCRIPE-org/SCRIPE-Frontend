@@ -19,7 +19,19 @@ import {
 } from "lucide-react";
 import { cn } from "@core/common/utils";
 import { useCustomFieldsFormFields } from "@core/crud/customFieldsExtension";
-import { CRM_PERMISSIONS, CrmShell, ActivityTimeline, useCrmCurrency } from "@modules/crm";
+import {
+  CRM_PERMISSIONS,
+  CrmShell,
+  ActivityTimeline,
+  useCrmCurrency,
+  useCrmWorkflowsStore,
+  resolveDefaultStageColor,
+  STAGE_COLOR_PALETTE,
+  buildCustomHexHarmonicStyles,
+  CrmWorkflowTransitionDialog,
+  type CrmWorkflowTransitionSubmitPayload,
+  type EvaluatedWorkflowTransition,
+} from "@modules/crm";
 import { LeadStatusBadge } from "../components/LeadStatusBadge";
 import { QualifyLeadDialog } from "../components/QualifyLeadDialog";
 import { LinkPartyDialog } from "../components/LinkPartyDialog";
@@ -27,19 +39,12 @@ import { ConvertLeadDialog } from "../components/ConvertLeadDialog";
 import { LeadDetailProfileCards } from "../components/LeadDetailProfileCards";
 import { LeadDetailSkeleton } from "../components/LeadDetailSkeleton";
 import { EditLeadDetailDialog } from "../components/EditLeadDetailDialog";
+import { stageToLeadStatusValue } from "../components/LeadsKanbanCardItem";
 import { useLeadDetailViewModel } from "../viewmodels/useLeadDetailViewModel";
-import type { LeadStatus } from "../../domain/entities/LeadEntity";
 
 export interface LeadDetailViewProps {
   leadId: string;
 }
-
-const LEAD_PROGRESSION_STEPS: LeadStatus[] = [
-  "New",
-  "Working",
-  "Qualified",
-  "Converted",
-];
 
 export function LeadDetailView({ leadId }: LeadDetailViewProps) {
   const router = useRouter();
@@ -68,11 +73,66 @@ export function LeadDetailView({ leadId }: LeadDetailViewProps) {
     setSubmitError,
     handleUpdateLead,
     handleStatusProgression,
+    handleTransitionSubmit,
     handleQualifyLead,
     handleLinkParty,
     handleConvertLead,
     lookupCandidateParties,
   } = useLeadDetailViewModel(leadId);
+
+  const activeLeadWorkflow = useCrmWorkflowsStore((s) => s.getActiveWorkflow("lead"));
+  const [transitionDialogOpen, setTransitionDialogOpen] = useState(false);
+  const [transitionFromKey, setTransitionFromKey] = useState("");
+  const [transitionToKey, setTransitionToKey] = useState("");
+  const [transitionEvalResult, setTransitionEvalResult] = useState<EvaluatedWorkflowTransition | null>(null);
+
+  const onTabNav = (tab: string) => {
+    if (tab !== "leads") router.push(tab === "overview" ? "/crm" : tab === "deals" ? "/crm/opportunities" : `/crm/${tab}`);
+  };
+
+  const handleStageTransition = async (targetStageKeyOrStatus: string) => {
+    if (!state.lead) return;
+    const currentLead = state.lead;
+    const fromKey = currentLead.stageKey || `lead.${currentLead.status.toLowerCase()}`;
+    const targetStage = activeLeadWorkflow?.stages.find(
+      (s) => s.stageKey === targetStageKeyOrStatus || s.labelEn.toLowerCase() === targetStageKeyOrStatus.toLowerCase()
+    );
+    const toKey = targetStage ? targetStage.stageKey : targetStageKeyOrStatus.startsWith("lead.") ? targetStageKeyOrStatus : `lead.${targetStageKeyOrStatus.toLowerCase()}`;
+
+    if (toKey === fromKey) return;
+
+    if (targetStage?.triggerDealConversion || targetStage?.category === "done" || toKey.includes("converted")) {
+      setSubmitError(null);
+      setIsConvertOpen(true);
+      return;
+    }
+
+    const evalResult = useCrmWorkflowsStore.getState().evaluateTransition("lead", fromKey, toKey, {
+      hasVerifiedParty: Boolean(currentLead.organizationPartyId || currentLead.personPartyId || currentLead.verifiedPartyId),
+      estimatedAmount: currentLead.estimatedValue ?? null,
+      targetCloseDate: null,
+    });
+
+    if (evalResult.status === "blocked") {
+      setSubmitError(evalResult.reason || t("crmLeads.detail.transitionBlockedTitle", { defaultValue: "Status Transition Blocked" }));
+      return;
+    }
+
+    if (evalResult.status === "allowed_screen_required") {
+      setTransitionFromKey(fromKey);
+      setTransitionToKey(toKey);
+      setTransitionEvalResult(evalResult);
+      setTransitionDialogOpen(true);
+      return;
+    }
+
+    await handleTransitionSubmit({
+      entityId: currentLead.id,
+      fromStageKey: fromKey,
+      targetStageKey: toKey,
+      expectedRowVersion: currentLead.rowVersion,
+    });
+  };
 
   const {
     fieldConfigs: leadCustomFieldConfigs,
@@ -101,7 +161,7 @@ export function LeadDetailView({ leadId }: LeadDetailViewProps) {
 
   if (state.stage === "loading" && !state.lead) {
     return (
-      <CrmShell activeTab="leads" onTabChange={() => {}}>
+      <CrmShell activeTab="leads" onTabChange={onTabNav}>
         <LeadDetailSkeleton />
       </CrmShell>
     );
@@ -109,7 +169,7 @@ export function LeadDetailView({ leadId }: LeadDetailViewProps) {
 
   if (state.stage === "failed" || !state.lead) {
     return (
-      <CrmShell activeTab="leads" onTabChange={() => {}}>
+      <CrmShell activeTab="leads" onTabChange={onTabNav}>
         <div className="space-y-4">
           <Button type="button" variant="ghost" size="sm" onClick={() => router.push("/crm/leads")} className="h-8 text-xs text-nx-ink-2 gap-1">
             {isRtl ? <ChevronRight className="size-4" /> : <ChevronLeft className="size-4" />}
@@ -129,7 +189,7 @@ export function LeadDetailView({ leadId }: LeadDetailViewProps) {
   const isTerminal = lead.status === "Converted" || lead.status === "Disqualified";
 
   return (
-    <CrmShell activeTab="leads" onTabChange={() => {}}>
+    <CrmShell activeTab="leads" onTabChange={onTabNav}>
       <div className="space-y-6" dir={isRtl ? "rtl" : "ltr"} data-testid="lead-detail-view">
         <div className="flex flex-wrap items-center justify-between gap-2">
           <Button type="button" variant="ghost" size="sm" onClick={() => router.push("/crm/leads")} className="h-8 text-xs text-nx-ink-2 gap-1 border border-nx-line bg-nx-surface hover:bg-nx-raised">
@@ -187,79 +247,110 @@ export function LeadDetailView({ leadId }: LeadDetailViewProps) {
             <span className="font-bold uppercase tracking-wider text-nx-ink-2">{t("crmLeads.detail.progressionTitle")}</span>
             <LeadStatusBadge status={lead.status} />
           </div>
-          <div className="grid grid-cols-1 sm:grid-cols-4 gap-2">
-            {LEAD_PROGRESSION_STEPS.map((statusKey) => {
-              const isCurrent = lead.status === statusKey;
-              return (
-                <Button
-                  key={statusKey}
-                  type="button"
-                  variant="ghost"
-                  disabled={isSubmitting}
-                  data-testid={`lead-step-${statusKey}`}
-                  onClick={() => handleStatusProgression(statusKey)}
-                  className={cn(
-                    "h-auto flex items-center justify-between rounded-nx-md border px-3 py-2 text-start text-xs transition-all",
-                    isCurrent
-                      ? "border-nx-accent bg-nx-accent-wash/30 text-nx-accent font-bold"
-                      : "border-nx-line bg-nx-ground text-nx-ink-2 hover:border-nx-line-hi",
-                  )}
-                >
-                  <span>{t(`crmLeads.detail.steps.${statusKey}`)}</span>
-                  {isCurrent && <CheckCircle2 className="size-3.5 shrink-0" />}
-                </Button>
-              );
-            })}
+          <div
+            className="grid grid-cols-1 gap-1.5"
+            style={{
+              gridTemplateColumns:
+                activeLeadWorkflow?.stages && activeLeadWorkflow.stages.length >= 2
+                  ? `repeat(${activeLeadWorkflow.stages.length}, minmax(0, 1fr))`
+                  : undefined,
+            }}
+          >
+            {[...(activeLeadWorkflow?.stages ?? [])]
+              .sort((a, b) => a.sortOrder - b.sortOrder)
+              .map((stg) => {
+                const stageStatus = stageToLeadStatusValue(stg.stageKey, stg.labelEn);
+                const isCurrent = (lead.stageKey && lead.stageKey === stg.stageKey) || lead.status === stageStatus;
+                const colorToken = resolveDefaultStageColor(stg.stageKey, stg.category, stg.sortOrder, stg.color);
+                const colorMeta = STAGE_COLOR_PALETTE[colorToken] ?? STAGE_COLOR_PALETTE.blue;
+                const raw = stg as any;
+                const customHexStyles = buildCustomHexHarmonicStyles(stg.customColorHex || raw.properties?.customColorHex);
+                return (
+                  <Button
+                    key={stg.stageKey}
+                    type="button"
+                    variant="ghost"
+                    disabled={isSubmitting || isCurrent}
+                    data-testid={`lead-step-${stg.stageKey}`}
+                    data-stage-status={stageStatus}
+                    onClick={() => handleStageTransition(stg.stageKey)}
+                    style={customHexStyles.isValidHex ? customHexStyles.cardStyle : undefined}
+                    className={cn(
+                      "h-auto flex items-center justify-between gap-1 rounded-nx-md border px-2.5 py-2 text-start text-xs transition-all min-w-0",
+                      isCurrent
+                        ? cn(
+                            "ring-2 ring-nx-accent font-bold",
+                            !customHexStyles.isValidHex ? colorMeta.badgeClass : "border-nx-accent bg-nx-accent-wash/30 text-nx-accent"
+                          )
+                        : cn(
+                            "hover:border-nx-line-hi",
+                            !customHexStyles.isValidHex ? colorMeta.borderClass : "border-nx-line bg-nx-ground text-nx-ink-2"
+                          )
+                    )}
+                  >
+                    <div className="flex items-center gap-1.5 min-w-0">
+                      <span
+                        className={cn("w-2 h-2 rounded-full shrink-0", !customHexStyles.isValidHex && colorMeta.dotClass)}
+                        style={customHexStyles.isValidHex ? customHexStyles.dotStyle : undefined}
+                      />
+                      <span className="truncate">{isRtl && stg.labelAr ? stg.labelAr : stg.labelEn}</span>
+                    </div>
+                    {isCurrent && <CheckCircle2 className="size-3.5 shrink-0" />}
+                  </Button>
+                );
+              })}
           </div>
         </Card>
 
         <LeadDetailProfileCards
-          lead={lead}
-          baseCurrency={baseCurrency}
-          autoConvertToBase={autoConvertToBase}
-          convertAmount={convertAmount}
-          leadCustomFieldConfigs={leadCustomFieldConfigs}
-          isLeadCfLoading={isLeadCfLoading}
-          refetchLeadCustomFields={refetchLeadCustomFields}
-          editCustomFields={editCustomFields}
-          onCustomFieldChange={(key, value) => setEditCustomFields((prev) => ({ ...prev, [key]: value }))}
-          canQualifyLead={canQualifyLead}
-          canCreateOpp={canCreateOpp}
-          onOpenConvert={() => {
-            setSubmitError(null);
-            setIsConvertOpen(true);
-          }}
+          lead={lead} baseCurrency={baseCurrency} autoConvertToBase={autoConvertToBase} convertAmount={convertAmount}
+          leadCustomFieldConfigs={leadCustomFieldConfigs} isLeadCfLoading={isLeadCfLoading} refetchLeadCustomFields={refetchLeadCustomFields}
+          editCustomFields={editCustomFields} onCustomFieldChange={(key, value) => setEditCustomFields((prev) => ({ ...prev, [key]: value }))}
+          canQualifyLead={canQualifyLead} canCreateOpp={canCreateOpp} onOpenConvert={() => { setSubmitError(null); setIsConvertOpen(true); }}
         />
 
         <Card className="p-5 border-nx-line bg-nx-surface">
-          <ActivityTimeline
-            key={`${lead.id}-${lead.rowVersion || ""}-${lead.status}`}
-            leadId={lead.id}
-            targetLabel={lead.title}
-            defaultRecipientEmail={lead.email}
-          />
+          <ActivityTimeline key={`${lead.id}-${lead.rowVersion || ""}-${lead.status}`} leadId={lead.id} targetLabel={lead.title} defaultRecipientEmail={lead.email} />
         </Card>
 
         <EditLeadDetailDialog
-          t={t}
-          isRtl={isRtl}
-          lead={lead}
-          defaultDealCurrency={defaultDealCurrency}
-          isEditOpen={isEditOpen}
-          onOpenChange={setIsEditOpen}
-          onSaveLead={onSaveLead}
-          submitError={submitError}
-          leadCustomFieldConfigs={leadCustomFieldConfigs}
-          isLeadCfLoading={isLeadCfLoading}
-          refetchLeadCustomFields={refetchLeadCustomFields}
-          editCustomFields={editCustomFields}
-          onCustomFieldChange={(key, value) => setEditCustomFields((prev) => ({ ...prev, [key]: value }))}
+          t={t} isRtl={isRtl} lead={lead} defaultDealCurrency={defaultDealCurrency}
+          isEditOpen={isEditOpen} onOpenChange={setIsEditOpen} onSaveLead={onSaveLead} submitError={submitError}
+          leadCustomFieldConfigs={leadCustomFieldConfigs} isLeadCfLoading={isLeadCfLoading} refetchLeadCustomFields={refetchLeadCustomFields}
+          editCustomFields={editCustomFields} onCustomFieldChange={(key, value) => setEditCustomFields((prev) => ({ ...prev, [key]: value }))}
           isSubmitting={isSubmitting}
         />
 
         <QualifyLeadDialog open={isQualifyOpen} onOpenChange={setIsQualifyOpen} lead={lead} initialDecision={qualifyDefaultDecision} onSubmit={handleQualifyLead} isSubmitting={isSubmitting} submitError={submitError} />
         <LinkPartyDialog open={isLinkPartyOpen} onOpenChange={setIsLinkPartyOpen} lead={lead} onSubmit={handleLinkParty} onLookupParties={lookupCandidateParties} isSubmitting={isSubmitting} submitError={submitError} />
         <ConvertLeadDialog open={isConvertOpen} onOpenChange={setIsConvertOpen} lead={lead} onSubmit={handleConvertLead} isSubmitting={isSubmitting} submitError={submitError} />
+
+        {(() => {
+          const fromStage = activeLeadWorkflow?.stages.find((s) => s.stageKey === transitionFromKey);
+          const toStage = activeLeadWorkflow?.stages.find((s) => s.stageKey === transitionToKey);
+          return (
+            <CrmWorkflowTransitionDialog
+              open={transitionDialogOpen}
+              onOpenChange={setTransitionDialogOpen}
+              entityType="lead"
+              record={lead ? {
+                id: lead.id,
+                title: lead.title,
+                partyId: lead.verifiedPartyId || lead.organizationPartyId || lead.personPartyId,
+                estimatedValue: lead.estimatedValue,
+                currency: lead.currency,
+                rowVersion: lead.rowVersion,
+              } : null}
+              fromStageKey={transitionFromKey}
+              toStageKey={transitionToKey}
+              fromStageLabel={fromStage ? (isRtl && fromStage.labelAr ? fromStage.labelAr : fromStage.labelEn) : undefined}
+              toStageLabel={toStage ? (isRtl && toStage.labelAr ? toStage.labelAr : toStage.labelEn) : undefined}
+              evalResult={transitionEvalResult}
+              onSubmit={handleTransitionSubmit}
+              isSubmitting={isSubmitting}
+            />
+          );
+        })()}
       </div>
     </CrmShell>
   );

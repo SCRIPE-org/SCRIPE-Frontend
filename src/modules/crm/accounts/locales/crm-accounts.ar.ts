@@ -13,6 +13,11 @@ export const ar = {
       newAccount: "حساب جديد",
       edit: "تعديل الشروط التجارية",
       view360: "عرض 360",
+      refresh: "تحديث",
+      cancel: "إلغاء",
+      saving: "جارٍ الحفظ...",
+      saveChanges: "حفظ التغييرات",
+      error: "خطأ",
     },
     searchPlaceholder: "البحث في الحسابات بالاسم أو الفئة...",
     filters: {

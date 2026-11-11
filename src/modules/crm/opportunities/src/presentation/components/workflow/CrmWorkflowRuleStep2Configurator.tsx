@@ -13,7 +13,7 @@ import {
   CRM_RECORD_RELATIVE_PRINCIPALS, CRM_SCOPED_PERMISSION_OPTIONS,
   CRM_WORKFLOW_SYSTEM_FIELDS, DEFAULT_BUYING_COMMITTEE_ROLES, DEFAULT_CRM_SCOPED_ROLES,
   STAGE_COLOR_PALETTE, resolveDefaultStageColor, useCrmSettingsStore,
-  type CrmCustomFieldDefinition, type CrmRuleCatalogDefinition,
+  type CrmCustomFieldDefinition, type CrmWorkflowRuleCatalogTemplate as CrmRuleCatalogDefinition,
 } from "@modules/crm";
 import type { CrmWorkflowStageNode } from "./CrmWorkflowCanvas2D";
 import { CrmInlineScopedRoleCreator } from "./CrmInlineScopedRoleCreator";

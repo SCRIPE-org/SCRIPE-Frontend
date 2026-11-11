@@ -83,7 +83,7 @@ export function CrmReportsBreakdownsSection({
                   className={cn(
                     "rounded-nx-md border p-3 space-y-2",
                     colorMeta.headerBorderClass,
-                    colorMeta.cardClass
+                    colorMeta.borderClass
                   )}
                 >
                   <div className="flex flex-wrap items-center justify-between gap-2">

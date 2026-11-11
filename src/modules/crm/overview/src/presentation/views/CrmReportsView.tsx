@@ -1,5 +1,6 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import { useI18n } from "@core/providers/i18n-provider";
 import { usePermission } from "@core/hooks/use-permission";
 import { Alert, AlertTitle, AlertDescription } from "@core/ui/alert";
@@ -18,16 +19,23 @@ import {
 } from "lucide-react";
 import { cn } from "@core/common/utils";
 import { CRM_PERMISSIONS } from "../../domain/constants/permission-constants";
-import { CrmShell } from "../components/CrmShell";
+import { CrmShell, type CrmTabId } from "../components/CrmShell";
+import { CRM_TAB_ROUTES } from "../viewmodels/useCrmShellViewModel";
 import { CrmSectionHeader } from "../components/CrmSectionHeader";
 import { CrmReportsBreakdownsSection } from "../components/CrmReportsBreakdownsSection";
 import { CrmReportsSkeleton } from "../components/CrmReportsSkeleton";
 import { useCrmReportsViewModel } from "../viewmodels/useCrmReportsViewModel";
 
 export function CrmReportsView() {
+  const router = useRouter();
   const { t, language } = useI18n();
   const isRtl = language === "ar";
   const canExport = usePermission(CRM_PERMISSIONS.REPORTS_EXPORT);
+
+  const handleTabChange = (tab: CrmTabId) => {
+    const route = CRM_TAB_ROUTES[tab];
+    if (route) router.push(route);
+  };
 
   const {
     state,
@@ -48,7 +56,7 @@ export function CrmReportsView() {
     : 1;
 
   return (
-    <CrmShell activeTab="reports" onTabChange={() => {}}>
+    <CrmShell activeTab="reports" onTabChange={handleTabChange}>
       <div className="space-y-5" dir={isRtl ? "rtl" : "ltr"} data-testid="crm-reports-view">
         <CrmSectionHeader
           title={t("crm.reports.title")}

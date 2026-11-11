@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback } from "react";
 import { getCrmContainer } from "@modules/crm/di";
+import type { CrmWorkflowTransitionSubmitPayload } from "@modules/crm";
 import type {
   CrmLead,
   UpdateLeadInput,
@@ -150,6 +151,41 @@ export function useLeadDetailViewModel(leadId: string) {
     [state.lead]
   );
 
+  const handleTransitionSubmit = useCallback(
+    async (payload: CrmWorkflowTransitionSubmitPayload): Promise<boolean> => {
+      if (!state.lead) return false;
+      setIsSubmitting(true);
+      setSubmitError(null);
+      try {
+        const container = getCrmContainer();
+        const updated = await container.leadRepository.moveLeadStage({
+          leadId: payload.entityId,
+          targetStageKey: payload.targetStageKey,
+          transitionId: payload.transitionId,
+          expectedRowVersion: payload.expectedRowVersion || state.lead.rowVersion,
+          partyId: payload.partyId,
+          accountId: payload.accountId,
+          estimatedValue: payload.estimatedAmount,
+          closeNotes: payload.closeNotes,
+          disqualificationReasonCode: payload.disqualificationReasonCode,
+          reopenReason: payload.reopenReason,
+          reason: payload.reason,
+          auditNote: payload.auditNote,
+          convertDealTitle: payload.convertDealTitle,
+          targetDealPipelineId: payload.targetDealPipelineId,
+        });
+        setState({ stage: "success", lead: updated, error: null });
+        setIsSubmitting(false);
+        return true;
+      } catch (err) {
+        setIsSubmitting(false);
+        setSubmitError(err instanceof Error ? err.message : "Failed to move stage");
+        return false;
+      }
+    },
+    [state.lead]
+  );
+
   const handleQualifyLead = useCallback(
     async (input: QualifyLeadInput): Promise<boolean> => {
       setIsSubmitting(true);
@@ -235,6 +271,7 @@ export function useLeadDetailViewModel(leadId: string) {
     setSubmitError,
     handleUpdateLead,
     handleStatusProgression,
+    handleTransitionSubmit,
     handleQualifyLead,
     handleLinkParty,
     handleConvertLead,

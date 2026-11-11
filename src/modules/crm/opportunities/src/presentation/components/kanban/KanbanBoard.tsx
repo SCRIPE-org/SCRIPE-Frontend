@@ -72,9 +72,9 @@ export function KanbanBoard({
       const existing = map.get(key);
       if (existing) {
         existing.deals.push(opp);
-        existing.dealIds.add(opp.opportunityId);
+        existing.dealIds.add(opp.id);
       } else {
-        map.set(key, { key, label, deals: [opp], dealIds: new Set([opp.opportunityId]) });
+        map.set(key, { key, label, deals: [opp], dealIds: new Set([opp.id]) });
       }
     }
     return Array.from(map.values());
@@ -144,7 +144,7 @@ export function KanbanBoard({
           {swimlaneGroups.length > 0 && (
             <div className="flex flex-wrap items-center gap-1.5" data-testid="kanban-swimlane-groups">
               <Button
-                type="button" size="sm" variant={activeLane === null ? "primary" : "outline"}
+                type="button" size="sm" variant={activeLane === null ? "default" : "outline"}
                 className="h-6 px-2 text-[11px]" onClick={() => setSelectedLaneKey(null)}
                 data-testid="kanban-swimlane-filter-all"
               >
@@ -152,7 +152,7 @@ export function KanbanBoard({
               </Button>
               {swimlaneGroups.map((lane) => (
                 <Button
-                  key={lane.key} type="button" size="sm" variant={activeLane?.key === lane.key ? "primary" : "outline"}
+                  key={lane.key} type="button" size="sm" variant={activeLane?.key === lane.key ? "default" : "outline"}
                   data-testid={`kanban-swimlane-group-${lane.key}`}
                   onClick={() => setSelectedLaneKey(activeLane?.key === lane.key ? null : lane.key)}
                   className="h-6 px-2 text-[11px] gap-1"
@@ -182,7 +182,7 @@ export function KanbanBoard({
           {effectiveStages.map((stage, index) => {
             const stageOpps = groupedOpportunities.get(stage.key) || [];
             const filteredStageOpps = activeLane
-              ? stageOpps.filter((o) => activeLane.dealIds.has(o.opportunityId))
+              ? stageOpps.filter((o) => activeLane.dealIds.has(o.id))
               : stageOpps;
             return (
               <KanbanColumn

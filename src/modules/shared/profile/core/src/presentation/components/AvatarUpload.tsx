@@ -13,6 +13,7 @@
 import { useRef, useState, useCallback } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@core/ui/avatar";
 import { Button } from "@core/ui/button";
+import { Input } from "@core/ui/input";
 import { useI18n } from "@core/providers/i18n-provider";
 import { cn } from "@core/common/utils";
 import { useResolvedFileUrl } from "@core/hooks/use-resolved-file-url";
@@ -157,7 +158,7 @@ export function AvatarUpload({
         </div>
       </div>
 
-      <input
+      <Input
         ref={inputRef}
         type="file"
         accept="image/jpeg,image/png,image/webp"

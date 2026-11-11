@@ -2,6 +2,10 @@ export const en = {
   crmOpportunities: {
     title: "Opportunities & Deals",
     subtitle: "Track, manage, and close commercial sports deals across pipeline stages",
+    overview: {
+      dealsBadge: "{count} deals",
+      errorTitle: "Error Loading Opportunities",
+    },
     actions: {
       newDeal: "New Opportunity",
       searchPlaceholder: "Search deals by title, currency, or stage...",
@@ -637,6 +641,24 @@ export const en = {
           solutionFitConfirmed: "Solution Fit Confirmed",
         },
       },
+      tidyLayout: "Tidy Layout",
+      elkLayeredLayout: "ELK Layered Layout",
+      dagreHorizontalLayout: "Dagre Horizontal (LR)",
+      dagreVerticalLayout: "Dagre Vertical (TB)",
+      exportPng: "Export PNG",
+      exportingPng: "Exporting...",
+      exportPngSuccess: "Workflow diagram exported as PNG",
+      exportPngError: "Failed to export diagram as PNG",
+      showGlobalWires: "Show Global (*) Wires",
+      hideGlobalWires: "Hide Global (*) Wires",
+      globalAnyPillLabel: "* From Any",
+      globalInboundTooltip: "Global inbound transition: allows moving here from any status",
+      transitionScreenRequired: "Screen Required",
+      transitionNoRollback: "No Rollback",
+      transitionRulesCount: "rules",
+      autoConvertsToDeal: "Converts to Deal",
+      terminalWonBadge: "Closed Won",
+      terminalLostBadge: "Closed Lost",
     },
     detail: {
       backToList: "Back to Opportunities",
@@ -789,6 +811,11 @@ export const en = {
       sapFieldLockingTitle: "SAP Stage Field-Locking Matrix",
       lockedReadOnlyBadge: "Locked (Read-Only)",
       editableBadge: "Editable",
+    },
+    workflowStudio: {
+      undo: "Undo",
+      redo: "Redo",
+      keyboardShortcutsHint: "Shortcuts: Ctrl+Z Undo · Ctrl+Y Redo · Del Remove · Esc Clear",
     },
   },
 };

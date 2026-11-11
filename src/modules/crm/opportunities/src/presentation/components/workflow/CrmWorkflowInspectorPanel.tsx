@@ -128,14 +128,14 @@ export function CrmWorkflowInspectorPanel({
 
       <div className="space-y-2 rounded-md border border-nx-line bg-nx-raised/30 p-2.5" data-testid="status-inspector-color-picker">
         <div className="flex items-center justify-between">
-          <Label className="text-[11px] inline-flex items-center gap-1.5"><Palette className="w-3 h-3 text-nx-ink-2" />{t("crmOpportunities.pipelinesPage.stageColorLabel")} ({customHexValue || (isAr ? STAGE_COLOR_PALETTE[activeColor]?.labelAr : STAGE_COLOR_PALETTE[activeColor]?.labelEn) || activeColor})</Label>
+          <Label className="text-[11px] inline-flex items-center gap-1.5"><Palette className="w-3 h-3 text-nx-ink-2" />{t("crmOpportunities.pipelinesPage.stageColorLabel")} ({customHexValue || STAGE_COLOR_PALETTE[activeColor]?.labelEn || activeColor})</Label>
           {customHexValue && <Button type="button" size="sm" variant="ghost" className="h-5 px-1.5 text-[10px]" onClick={() => applyCustomHex("")}>{t("crmOpportunities.pipelinesPage.resetHexBtn")}</Button>}
         </div>
         <div className="flex items-center gap-1.5 flex-wrap">
           {CRM_STAGE_COLOR_TOKENS.map((c: CrmStageColorToken) => (
             <Button
-              key={c} type="button" size="icon" variant="outline" data-testid={`status-color-swatch-${c}`} title={isAr ? STAGE_COLOR_PALETTE[c].labelAr : STAGE_COLOR_PALETTE[c].labelEn}
-              onClick={() => { const nextProps = { ...(selectedStage.properties ?? {}), color: c }; delete nextProps.customColorHex; onStageChange({ ...selectedStage, color: c, customColorHex: undefined, properties: nextProps }); }}
+              key={c} type="button" size="icon" variant="outline" data-testid={`status-color-swatch-${c}`} title={STAGE_COLOR_PALETTE[c]?.labelEn || c}
+              onClick={() => { const nextProps: Record<string, string> = { ...(selectedStage.properties ?? {}), color: c }; delete nextProps.customColorHex; onStageChange({ ...selectedStage, color: c, customColorHex: undefined, properties: nextProps }); }}
               className={`h-5 w-5 rounded-full p-0 border ${STAGE_COLOR_PALETTE[c].swatchClass} ${!customHexValue && activeColor === c ? "ring-2 ring-primary ring-offset-1 ring-offset-nx-surface scale-110" : "opacity-75 hover:opacity-100"}`}
             />
           ))}

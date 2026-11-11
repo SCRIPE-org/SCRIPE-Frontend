@@ -19,6 +19,22 @@ interface ApiSuccessResponse<T> {
   data: T;
 }
 
+const STATUS_TO_STAGE_KEY: Record<string, string> = {
+  New: "lead.new",
+  Working: "lead.working",
+  Qualified: "lead.qualified",
+  Converted: "lead.converted",
+  Disqualified: "lead.disqualified",
+};
+
+function normalizeLead(lead: CrmLead): CrmLead {
+  if (!lead) return lead;
+  const stageKey = lead.stageKey && lead.stageKey.trim() !== ""
+    ? lead.stageKey
+    : (STATUS_TO_STAGE_KEY[lead.status] ?? "lead.new");
+  return { ...lead, stageKey };
+}
+
 export class CrmLeadService implements ICrmLeadService {
   constructor(private readonly api: IApiService) {}
 
@@ -40,10 +56,11 @@ export class CrmLeadService implements ICrmLeadService {
       ApiSuccessResponse<PagedLeadsResult> | PagedLeadsResult
     >(CRM_LEAD_ENDPOINTS.LEADS, queryParams);
 
-    if ("data" in response && response.data) {
-      return response.data;
-    }
-    return response as PagedLeadsResult;
+    const resData: PagedLeadsResult = ("data" in response && response.data) ? response.data : (response as PagedLeadsResult);
+    return {
+      ...resData,
+      items: (resData.items || []).map(normalizeLead),
+    };
   }
 
   async getLeadById(id: string): Promise<CrmLead> {
@@ -51,10 +68,8 @@ export class CrmLeadService implements ICrmLeadService {
       CRM_LEAD_ENDPOINTS.LEAD_BY_ID(id)
     );
 
-    if ("data" in response && response.data) {
-      return response.data;
-    }
-    return response as CrmLead;
+    const data = ("data" in response && response.data) ? response.data : (response as CrmLead);
+    return normalizeLead(data);
   }
 
   async createLead(input: CreateLeadInput): Promise<CrmLead> {
@@ -218,12 +233,21 @@ export class CrmLeadService implements ICrmLeadService {
 
     const payload = {
       targetStageKey: input.targetStageKey,
+      transitionId: input.transitionId,
       reason: input.reason,
       auditNote: input.auditNote,
       qualificationNotes: input.qualificationNotes,
       disqualificationReasonCode: input.disqualificationReasonCode,
       expectedRowVersion: input.expectedRowVersion ?? "",
       customFields: input.customFields,
+      partyId: input.partyId,
+      accountId: input.accountId,
+      estimatedValue: input.estimatedValue,
+      currency: input.currency,
+      convertDealTitle: input.convertDealTitle,
+      targetDealPipelineId: input.targetDealPipelineId,
+      dealKind: input.dealKind,
+      reopenReason: input.reopenReason,
     };
 
     const response = await this.api.post<ApiSuccessResponse<CrmLead> | CrmLead>(
@@ -239,9 +263,7 @@ export class CrmLeadService implements ICrmLeadService {
       }
     );
 
-    if ("data" in response && response.data) {
-      return response.data;
-    }
-    return response as CrmLead;
+    const data = ("data" in response && response.data) ? response.data : (response as CrmLead);
+    return normalizeLead(data);
   }
 }

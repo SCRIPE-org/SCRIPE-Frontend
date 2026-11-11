@@ -8,7 +8,7 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { Input } from "@core/ui/input";
 import { Label } from "@core/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@core/ui/select";
-import type { CrmCustomFieldDefinition, CrmRuleCatalogDefinition, CrmWorkflowRuleCategory } from "@modules/crm";
+import type { CrmCustomFieldDefinition, CrmWorkflowRuleCatalogTemplate as CrmRuleCatalogDefinition, CrmWorkflowRuleCategory } from "@modules/crm";
 import type { CrmWorkflowStageNode } from "./CrmWorkflowCanvas2D";
 import { CrmWorkflowRuleStep2Configurator } from "./CrmWorkflowRuleStep2Configurator";
 

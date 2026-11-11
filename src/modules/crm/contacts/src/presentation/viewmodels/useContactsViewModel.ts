@@ -167,9 +167,16 @@ export function useContactsViewModel(initialSearch?: string, initialAccountId?: 
   }, []);
 
   const lookupAccounts = useCallback(async () => {
-    const container = getCrmContainer();
-    const res = await container.accountRepository.getAccounts({ page: 1, pageSize: 100 });
-    return res.items ?? [];
+    try {
+      const container = getCrmContainer();
+      if (!container.accountRepository || typeof container.accountRepository.getAccounts !== "function") {
+        return [];
+      }
+      const res = await container.accountRepository.getAccounts({ page: 1, pageSize: 100 });
+      return res?.items ?? [];
+    } catch {
+      return [];
+    }
   }, []);
 
   return {

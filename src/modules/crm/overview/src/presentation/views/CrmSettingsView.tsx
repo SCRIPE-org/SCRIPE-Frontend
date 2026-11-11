@@ -11,7 +11,8 @@ import {
   Save,
   GitBranch,
 } from "lucide-react";
-import { CrmShell } from "../components/CrmShell";
+import { CrmShell, type CrmTabId } from "../components/CrmShell";
+import { CRM_TAB_ROUTES } from "../viewmodels/useCrmShellViewModel";
 import { CrmSectionHeader } from "../components/CrmSectionHeader";
 import { CrmSettingsSkeleton } from "../components/CrmSettingsSkeleton";
 import { useCrmSettingsViewModel } from "../viewmodels/useCrmSettingsViewModel";
@@ -91,8 +92,13 @@ export function CrmSettingsView() {
     selectedSection === "field-locking" ||
     selectedSection === "numbering-handoffs";
 
+  const handleTabChange = (tab: CrmTabId) => {
+    const route = CRM_TAB_ROUTES[tab];
+    if (route) router.push(route);
+  };
+
   return (
-    <CrmShell activeTab="settings" onTabChange={() => {}}>
+    <CrmShell activeTab="settings" onTabChange={handleTabChange}>
       <div className="space-y-5" dir={isRtl ? "rtl" : "ltr"} data-testid="crm-settings-view">
         <CrmSectionHeader
           title={t("crm.settings.title")}

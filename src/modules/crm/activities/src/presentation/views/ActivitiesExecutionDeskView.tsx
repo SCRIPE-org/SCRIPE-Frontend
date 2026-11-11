@@ -1,176 +1,296 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import { useI18n } from "@core/providers/i18n-provider";
-import { CrmShell, CrmSectionHeader } from "@modules/crm";
-import { Card } from "@core/ui/card";
-import { Badge } from "@core/ui/badge";
-import { Skeleton } from "@core/ui/skeleton";
-import { Building2, CheckCircle2 } from "lucide-react";
+import { CrmShell, CrmSectionHeader, CRM_TAB_ROUTES } from "@modules/crm";
+import type { CrmTabId } from "@modules/crm";
+import { GenericCrudView } from "@core/crud/components/generic-crud-view";
+import type { CrudConfig } from "@core/crud/components/generic-crud-view";
+import { Button } from "@core/ui/button";
+import { Input } from "@core/ui/input";
+import { EmptyState } from "@core/ui/empty-state";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@core/ui/select";
+import {
+  RefreshCw,
+  Plus,
+  Search,
+  Activity,
+  CalendarClock,
+  Eye,
+  Building2,
+} from "lucide-react";
 import { cn } from "@core/common/utils";
 import { useActivitiesExecutionDeskViewModel } from "../viewmodels/useActivitiesExecutionDeskViewModel";
-import { ActivityTimeline } from "../components/ActivityTimeline";
-import { ActivityTimelineSkeleton } from "../components/ActivityTimelineSkeleton";
+import { useActivitiesCrudColumns } from "../viewmodels/useActivitiesCrudColumns";
+import { ActivityCardGridItem } from "../components/ActivityCardGridItem";
+import { ActivitySplitDetail } from "../components/ActivitySplitDetail";
+import { CreateActivityModal } from "../components/CreateActivityModal";
+import { CreateFollowUpModal } from "../components/CreateFollowUpModal";
+import type { CrmActivity, SalesActivityKind } from "../../domain/entities/CrmActivityEntity";
+
+const ACTIVITY_KIND_OPTIONS: Array<{ key: SalesActivityKind | "ALL"; labelKey: string }> = [
+  { key: "ALL", labelKey: "crmActivities.filters.allKinds" },
+  { key: "Note", labelKey: "crmActivities.kinds.Note" },
+  { key: "CallLog", labelKey: "crmActivities.kinds.CallLog" },
+  { key: "MeetingLog", labelKey: "crmActivities.kinds.MeetingLog" },
+  { key: "FollowUpLinked", labelKey: "crmActivities.kinds.FollowUpLinked" },
+  { key: "CommunicationSent", labelKey: "crmActivities.kinds.CommunicationSent" },
+];
 
 export function ActivitiesExecutionDeskView() {
+  const router = useRouter();
   const { t, language } = useI18n();
   const isRtl = language === "ar";
+  const viewModel = useActivitiesExecutionDeskViewModel(language);
 
   const {
     accounts,
+    accountsMap,
     selectedAccountId,
     selectedAccountName,
-    isLoadingAccounts,
-    selectAccount,
-  } = useActivitiesExecutionDeskViewModel(language);
+    selectAccountId,
+    search,
+    activityKindFilter,
+    handleSearchChange,
+    handleActivityKindFilterChange,
+    isCreateOpen,
+    setIsCreateOpen,
+    isFollowUpOpen,
+    setIsFollowUpOpen,
+    selectedActivityForFollowUp,
+    openFollowUpForActivity,
+    openHeaderFollowUp,
+    isSubmitting,
+    submitError,
+    handleCreateActivity,
+    handleCreateFollowUp,
+    refresh,
+  } = viewModel;
 
-  const selectedAccount = accounts.find((acc) => acc.id === selectedAccountId);
+  const handleTabChange = (tab: CrmTabId) => {
+    const route = CRM_TAB_ROUTES[tab];
+    if (route) router.push(route);
+  };
+
+  const columns = useActivitiesCrudColumns(language, t, accountsMap);
+
+  const crudConfig: CrudConfig<CrmActivity> = {
+    titleKey: "crmActivities.executionDesk.title",
+    subtitleKey: "crmActivities.executionDesk.description",
+    resource: "crm.activities",
+    entityTypeKey: "crm.activity",
+    hidePageHeader: true,
+    hideActionButtons: true,
+    stickyActions: true,
+    searchConfig: { enabled: false },
+    viewSwitchPosition: "toolbar",
+    viewModes: ["Table", "CardGrid", "SplitPane"],
+    defaultView: "Table",
+    permissions: {
+      canView: true,
+      canCreate: true,
+      canUpdate: false,
+      canDelete: false,
+    },
+    toolbarContent: (
+      <div className="flex flex-col lg:flex-row lg:items-center gap-3 flex-1" dir={isRtl ? "rtl" : "ltr"}>
+        <div className="flex items-center gap-2 flex-1 flex-wrap sm:flex-nowrap">
+          <div className="relative w-full sm:w-64">
+            <Search className="absolute start-2.5 top-1/2 -translate-y-1/2 size-3.5 text-nx-ink-3 pointer-events-none" />
+            <Input
+              type="text"
+              placeholder={t("crmActivities.executionDesk.searchPlaceholder")}
+              value={search}
+              onChange={(e) => handleSearchChange(e.target.value)}
+              className="h-8 ps-8 pe-3 text-xs bg-nx-surface border-nx-line text-nx-ink"
+            />
+          </div>
+
+          <div className="w-full sm:w-60">
+            <Select value={selectedAccountId} onValueChange={selectAccountId}>
+              <SelectTrigger className="h-8 text-xs bg-nx-surface border-nx-line text-nx-ink">
+                <Building2 className="size-3.5 text-nx-accent shrink-0 me-1.5" />
+                <SelectValue placeholder={t("crmActivities.executionDesk.selectAccount")} />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">{t("crmActivities.filters.allAccounts")}</SelectItem>
+                {accounts.map((acc) => (
+                  <SelectItem key={acc.id} value={acc.id}>
+                    {isRtl && acc.nameAr ? acc.nameAr : acc.nameEn}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+        </div>
+
+        <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar">
+          {ACTIVITY_KIND_OPTIONS.map((opt) => {
+            const isSelected = activityKindFilter === opt.key;
+            return (
+              <Button
+                key={opt.key}
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={() => handleActivityKindFilterChange(opt.key)}
+                className={cn(
+                  "h-7 px-2.5 text-xs rounded-nx-md shrink-0 transition-all",
+                  isSelected
+                    ? "border-nx-accent/40 bg-nx-accent-wash text-nx-accent font-semibold"
+                    : "border-nx-line bg-nx-surface text-nx-ink-2 hover:bg-nx-raised hover:text-nx-ink"
+                )}
+              >
+                {t(opt.labelKey)}
+              </Button>
+            );
+          })}
+        </div>
+      </div>
+    ),
+    columns,
+    renderActions: (activity: CrmActivity) => (
+      <div className="flex items-center gap-1.5">
+        {!activity.workItemStatus && (
+          <Button
+            type="button"
+            variant="ghost"
+            size="sm"
+            onClick={() => openFollowUpForActivity(activity)}
+            className="h-7 px-2 text-xs gap-1 border border-nx-line bg-nx-surface hover:bg-nx-raised text-nx-ink"
+          >
+            <CalendarClock className="size-3 text-nx-accent" />
+            <span className="hidden sm:inline">{t("crmActivities.actions.scheduleFollowUp")}</span>
+          </Button>
+        )}
+        {activity.accountId && (
+          <Button
+            type="button"
+            variant="ghost"
+            size="sm"
+            onClick={() => router.push(`/crm/accounts/${activity.accountId}`)}
+            className="h-7 px-2 text-xs gap-1 border border-nx-line bg-nx-surface hover:bg-nx-raised text-nx-ink"
+          >
+            <Eye className="size-3 text-nx-accent" />
+            <span className="hidden sm:inline">{t("crmActivities.actions.viewAccount360")}</span>
+          </Button>
+        )}
+      </div>
+    ),
+    renderCardGridItem: (activity: CrmActivity, actions: React.ReactNode) => (
+      <ActivityCardGridItem
+        activity={activity}
+        actions={actions}
+        language={language}
+        accountsMap={accountsMap}
+        onSelectAccount={(accId) => router.push(`/crm/accounts/${accId}`)}
+        onScheduleFollowUp={openFollowUpForActivity}
+        t={t}
+      />
+    ),
+    renderSplitDetail: (activity: CrmActivity, actions: React.ReactNode) => (
+      <ActivitySplitDetail
+        activity={activity}
+        actions={actions}
+        language={language}
+        accountsMap={accountsMap}
+        onSelectAccount={(accId) => router.push(`/crm/accounts/${accId}`)}
+        onScheduleFollowUp={openFollowUpForActivity}
+        t={t}
+      />
+    ),
+  };
 
   return (
-    <CrmShell activeTab="activities" onTabChange={() => {}}>
-      <div className="space-y-5" dir={isRtl ? "rtl" : "ltr"}>
-        {/* Header */}
+    <CrmShell activeTab="activities" onTabChange={handleTabChange}>
+      <div className="space-y-4" dir={isRtl ? "rtl" : "ltr"}>
         <CrmSectionHeader
-          title={t("crmActivities.executionDesk.title") || "Sales Execution Desk"}
-          subtitle={
-            t("crmActivities.executionDesk.description") ||
-            "Record commercial notes, phone calls, meeting summaries, and schedule follow-up tasks across customer accounts."
+          title={t("crmActivities.executionDesk.title")}
+          subtitle={t("crmActivities.executionDesk.description")}
+          action={
+            <div className="flex items-center gap-2">
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={refresh}
+                className="h-8 px-2.5 text-xs border border-nx-line bg-nx-surface hover:bg-nx-raised text-nx-ink gap-1.5"
+              >
+                <RefreshCw className="size-3.5 text-nx-ink-3" />
+                <span>{t("crmActivities.actions.refresh")}</span>
+              </Button>
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={openHeaderFollowUp}
+                className="h-8 px-3 text-xs border border-nx-line bg-nx-surface hover:bg-nx-raised text-nx-ink gap-1.5"
+              >
+                <CalendarClock className="size-3.5 text-nx-accent" />
+                <span>{t("crmActivities.actions.scheduleFollowUp")}</span>
+              </Button>
+              <Button
+                type="button"
+                variant="default"
+                size="sm"
+                onClick={() => setIsCreateOpen(true)}
+                className="h-8 px-3 text-xs bg-nx-accent text-nx-on-fill font-medium hover:bg-nx-accent/90 gap-1.5"
+              >
+                <Plus className="size-3.5" />
+                <span>{t("crmActivities.actions.logActivity")}</span>
+              </Button>
+            </div>
           }
         />
 
-        {/* Master-Detail Layout */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-5">
-          {/* Left: Accounts Navigation Selector */}
-          <div className="lg:col-span-4 space-y-3">
-            <div className="flex items-center justify-between pb-1 border-b border-nx-line">
-              <span className={cn("text-xs font-bold text-nx-ink flex items-center gap-1.5", !isRtl && "font-mono uppercase")}>
-                <Building2 className="size-3.5 text-nx-accent" />
-                {t("crmActivities.executionDesk.selectAccount") || "Commercial Accounts"}
-              </span>
-              <Badge variant="secondary" className="bg-nx-surface border-nx-line text-[10px] font-mono text-nx-ink-3">
-                {accounts.length}
-              </Badge>
-            </div>
+        <GenericCrudView<CrmActivity>
+          config={crudConfig}
+          columns={columns}
+          viewModel={viewModel}
+          pagination={viewModel.pagination}
+          emptyState={
+            <EmptyState
+              icon={Activity}
+              title={t("crmActivities.empty.title")}
+              description={t("crmActivities.empty.description")}
+              action={
+                <Button
+                  type="button"
+                  variant="default"
+                  size="sm"
+                  onClick={() => setIsCreateOpen(true)}
+                  className="h-8 px-3 text-xs bg-nx-accent text-nx-on-fill font-medium hover:bg-nx-accent/90 gap-1.5"
+                >
+                  <Plus className="size-3.5" />
+                  <span>{t("crmActivities.actions.logActivity")}</span>
+                </Button>
+              }
+            />
+          }
+        />
 
-            {isLoadingAccounts ? (
-              <div className="space-y-2" data-testid="activities-accounts-skeleton">
-                {Array.from({ length: 4 }).map((_, i) => (
-                  <Card key={i} className="p-3 border-nx-line bg-nx-surface space-y-2">
-                    <Skeleton className="h-3.5 w-36 rounded" />
-                    <div className="flex items-center gap-1.5">
-                      <Skeleton className="h-3.5 w-14 rounded" />
-                      <Skeleton className="h-3 w-8 rounded" />
-                    </div>
-                  </Card>
-                ))}
-              </div>
-            ) : accounts.length === 0 ? (
-              <Card className="p-4 text-center text-xs text-nx-ink-3 border-nx-line bg-nx-surface">
-                {t("crmActivities.executionDesk.noAccounts") || "No accounts available"}
-              </Card>
-            ) : (
-              <div className="space-y-1.5">
-                {accounts.map((acc) => {
-                  const isSelected = acc.id === selectedAccountId;
-                  const name =
-                    language === "ar" && acc.nameAr
-                      ? acc.nameAr
-                      : acc.nameEn;
+        <CreateActivityModal
+          isOpen={isCreateOpen}
+          onOpenChange={setIsCreateOpen}
+          onSubmit={handleCreateActivity}
+          isSubmitting={isSubmitting}
+          error={submitError}
+          targetLabel={selectedAccountName}
+        />
 
-                  return (
-                    <Card
-                      key={acc.id}
-                      onClick={() => selectAccount(acc)}
-                      className={cn(
-                        "p-3 border transition-all cursor-pointer",
-                        isSelected
-                          ? "bg-nx-surface border-nx-accent text-nx-ink"
-                          : "bg-nx-surface border-nx-line hover:border-nx-line-hi text-nx-ink-2"
-                      )}
-                    >
-                      <div className="flex items-start justify-between gap-2">
-                        <div className="space-y-0.5">
-                          <span className="text-xs font-bold text-nx-ink block hover:text-nx-accent">
-                            {name}
-                          </span>
-                          <div className="flex items-center gap-1.5 text-[10px] text-nx-ink-3">
-                            <Badge variant="outline" className="border-nx-line bg-nx-raised py-0 px-1 text-[9px]">
-                              {acc.commercialTierCode || t("crmActivities.executionDesk.standardTier")}
-                            </Badge>
-                            {acc.preferredCurrencyCode && (
-                              <>
-                                <span>•</span>
-                                <span className="font-mono">{acc.preferredCurrencyCode}</span>
-                              </>
-                            )}
-                          </div>
-                        </div>
-
-                        {isSelected && (
-                          <div className="flex items-center justify-center size-5 rounded-full border border-nx-accent/30 bg-nx-accent-wash text-nx-accent shrink-0">
-                            <CheckCircle2 className="size-3.5" />
-                          </div>
-                        )}
-                      </div>
-                    </Card>
-                  );
-                })}
-              </div>
-            )}
-          </div>
-
-          {/* Right: Active Entity Timeline */}
-          <div className="lg:col-span-8 space-y-4">
-            {isLoadingAccounts ? (
-              <Card className="p-5 bg-nx-surface border-nx-line space-y-4">
-                <div className="flex items-center justify-between gap-2 border-b border-nx-line pb-3">
-                  <div className="space-y-1.5">
-                    <Skeleton className="h-3 w-32 rounded" />
-                    <Skeleton className="h-4 w-48 rounded" />
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <Skeleton className="h-4 w-16 rounded" />
-                    <Skeleton className="h-4 w-12 rounded" />
-                  </div>
-                </div>
-                <ActivityTimelineSkeleton />
-              </Card>
-            ) : selectedAccountId ? (
-              <Card className="p-5 bg-nx-surface border-nx-line space-y-4">
-                <div className="flex flex-wrap items-center justify-between gap-2 border-b border-nx-line pb-3">
-                  <div>
-                    <span className={cn("text-[10px] text-nx-ink-3 font-medium", !isRtl && "font-mono uppercase")}>
-                      {t("crmActivities.executionDesk.activeAccount")}
-                    </span>
-                    <h3 className="text-sm font-bold text-nx-ink font-heading">
-                      {selectedAccountName}
-                    </h3>
-                  </div>
-                  {selectedAccount && (
-                    <div className="flex items-center gap-2">
-                      <Badge variant="outline" className="border-nx-line bg-nx-raised text-nx-ink-2 text-[10px]">
-                        {selectedAccount.commercialTierCode || t("crmActivities.executionDesk.standardTier")}
-                      </Badge>
-                      {selectedAccount.preferredCurrencyCode && (
-                        <Badge variant="outline" className="border-nx-line bg-nx-raised text-nx-ink-2 text-[10px] font-mono">
-                          {selectedAccount.preferredCurrencyCode}
-                        </Badge>
-                      )}
-                    </div>
-                  )}
-                </div>
-
-                <ActivityTimeline
-                  accountId={selectedAccountId}
-                  targetLabel={selectedAccountName}
-                />
-              </Card>
-            ) : (
-              <Card className="p-8 text-center bg-nx-surface border-nx-line text-xs text-nx-ink-3">
-                {t("crmActivities.executionDesk.selectAccountPrompt")}
-              </Card>
-            )}
-          </div>
-        </div>
+        <CreateFollowUpModal
+          activity={selectedActivityForFollowUp}
+          onClose={() => setIsFollowUpOpen(false)}
+          onSubmit={handleCreateFollowUp}
+          isSubmitting={isSubmitting}
+          error={submitError}
+        />
       </div>
     </CrmShell>
   );

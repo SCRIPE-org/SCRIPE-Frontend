@@ -8,7 +8,6 @@ import type { AdminProfile } from "../entities/AdminProfile";
 import type { ActiveSession } from "../entities/ActiveSession";
 import type { SecurityLogEntry } from "../entities/SecurityLogEntry";
 import type { ExternalLogin } from "../entities/ExternalLogin";
-import type { LinkExternalLoginDto } from "../types/ProfileTypes";
 
 /**
  * Interface defining property specifications, keys types, and structural contract rules for update profile request.
@@ -47,6 +46,19 @@ export interface Enable2FAResult {
 }
 
 /**
+ * Interface defining property specifications and payload contract rules for linking external login accounts.
+ */
+export interface LinkExternalLoginRequest {
+  provider?: string;
+  idToken?: string;
+  identityProviderId?: string;
+  providerName?: string;
+  providerKey?: string;
+  email?: string | null;
+  displayName?: string | null;
+}
+
+/**
  * Repository layer implementing client request queries for i profile.
  * Calls base API service routines and resolves DTO objects mapping to domain entities.
  */
@@ -78,6 +90,6 @@ export interface IProfileRepository {
 
   // External Logins
   getExternalLogins(): Promise<ExternalLogin[]>;
-  linkExternalLogin(data: LinkExternalLoginDto): Promise<ExternalLogin>;
+  linkExternalLogin(data: LinkExternalLoginRequest): Promise<ExternalLogin>;
   unlinkExternalLogin(externalLoginId: string): Promise<void>;
 }

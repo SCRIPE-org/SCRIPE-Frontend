@@ -167,8 +167,8 @@ export function KanbanCard({
       {cardDensity === "Executive" && (
         <div data-testid="kanban-card-executive-strip" className="flex items-center justify-between gap-1 text-[10px] font-mono text-nx-ink-3 px-1">
           <span>{t("crmOpportunities.kanban.slaPrefix", { defaultValue: "SLA" })}: {ageDays}d{effectiveSlaDays > 0 ? ` / ${effectiveSlaDays}d` : ""}</span>
-          {matchedStage?.probabilityPercent !== undefined && (
-            <span className="text-nx-accent font-semibold">{matchedStage.probabilityPercent}% {t("crmOpportunities.kanban.winSuffix", { defaultValue: "win" })}</span>
+          {matchedStage?.winProbabilityPercent !== undefined && (
+            <span className="text-nx-accent font-semibold">{matchedStage.winProbabilityPercent}% {t("crmOpportunities.kanban.winSuffix", { defaultValue: "win" })}</span>
           )}
         </div>
       )}

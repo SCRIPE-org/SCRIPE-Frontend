@@ -67,6 +67,37 @@ import {
   decodeCustomFieldName,
   getCustomFieldsExtension,
 } from "@core/crud/customFieldsExtension";
+import {
+  GenericWorkflowKanban,
+  type WorkflowKanbanConfig,
+  type WorkflowKanbanStageConfig,
+  type DropEvaluationResult,
+  type DropState,
+  type CardDensity,
+  type SwimlaneMode,
+} from "../kanban";
+import {
+  CrudCardGridSection,
+  CrudSplitPaneSection,
+  CrudCalendarSection,
+} from "../views";
+import { TanStackCrudTable } from "../table";
+
+export type {
+  WorkflowKanbanConfig,
+  WorkflowKanbanStageConfig,
+  DropEvaluationResult,
+  DropState,
+  CardDensity,
+  SwimlaneMode,
+};
+export {
+  GenericWorkflowKanban,
+  TanStackCrudTable,
+  CrudCardGridSection,
+  CrudSplitPaneSection,
+  CrudCalendarSection,
+};
 
 /* ========================================
  * TYPE DEFINITIONS & INTERFACES
@@ -343,6 +374,11 @@ export interface CrudConfig<TItem = any> {
   defaultView?: CrudViewMode;
   /** Form presentation surface for Create/Edit dialogs */
   formSurface?: CrudFormSurface;
+  /**
+   * Enterprise Workflow Kanban configuration (powered by @dnd-kit + @tanstack/react-virtual).
+   * Supports dynamic 2..N stages, swimlanes, and Smart 3-State Jira Drop Evaluation.
+   */
+  workflowKanbanConfig?: WorkflowKanbanConfig<TItem>;
   /** Field key used to group records into columns in Kanban view */
   kanbanGroupField?: string;
   /** Explicit ordered columns for Kanban view with labels, colors, indicators, and summaries */
@@ -1492,401 +1528,104 @@ function GenericCrudViewInner<T>(props: GenericCrudViewProps<T>) {
       {config?.customHeaderContent && <div className="mb-6">{config.customHeaderContent}</div>}
 
       {activeViewMode === "CardGrid" ? (
-        <div className={cn("grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3", config?.cardGridClassName)}>
-          {viewModel.loading ? (
-            [0, 1, 2, 3, 4, 5].map((i) => (
-              <Card
-                key={`card-skeleton-${i}`}
-                className="flex flex-col justify-between gap-3 rounded-nx-lg border border-nx-line bg-nx-surface p-4"
-              >
-                <div className="space-y-2">
-                  {columns.slice(0, 4).map((col) => (
-                    <div key={col.key} className="flex items-center justify-between gap-2">
-                      <Skeleton className="h-3.5 w-24" />
-                      <Skeleton className="h-4 w-28" />
-                    </div>
-                  ))}
-                </div>
-                <div className="flex justify-end gap-2 border-t border-nx-line pt-3">
-                  <Skeleton className="h-7 w-16 rounded-nx-md" />
-                </div>
-              </Card>
-            ))
-          ) : (viewModel.items || []).length === 0 ? (
-            <div className="col-span-full rounded-nx-lg border border-nx-line bg-nx-surface p-8">
-              <EmptyState bare icon={Inbox} title={t("common.noData")} />
-            </div>
-          ) : (
-            (viewModel.items || []).map((row: any, idx: number) => {
-              const actionButtons = renderRowActionButtons(row);
-              if (config?.renderCardGridItem) {
-                return (
-                  <div key={row.id || idx}>
-                    {config.renderCardGridItem(row, actionButtons, idx)}
-                  </div>
-                );
-              }
-              return (
-                <Card
-                  key={row.id || idx}
-                  className={cn(
-                    "flex flex-col justify-between gap-3 rounded-nx-lg border border-nx-line bg-nx-surface p-4 hover:border-nx-line-hi transition-colors",
-                    config?.getCardClassName?.(row)
-                  )}
-                >
-                  <div className="space-y-2">
-                    {columns.map((col) => (
-                      <div key={col.key} className="flex items-center justify-between gap-2 text-sm">
-                        <span className="font-medium text-nx-ink-2">{col.label}</span>
-                        <span className="text-nx-ink">
-                          {col.render
-                            ? col.render(row[col.key], row, idx)
-                            : String(row[col.key] ?? "—")}
-                        </span>
-                      </div>
-                    ))}
-                  </div>
-                  <div className="border-t border-nx-line pt-3">{actionButtons}</div>
-                </Card>
-              );
-            })
-          )}
-        </div>
+        <CrudCardGridSection
+          items={viewModel.items || []}
+          columns={columns}
+          loading={viewModel.loading}
+          renderCardGridItem={config?.renderCardGridItem as any}
+          renderRowActionButtons={renderRowActionButtons}
+          cardGridClassName={config?.cardGridClassName}
+          getCardClassName={config?.getCardClassName as any}
+          emptyLabel={t("common.noData")}
+        />
       ) : activeViewMode === "Kanban" ? (
-        (() => {
-          if (config?.customKanbanContent) {
-            return <>{config.customKanbanContent}</>;
-          }
-          const groupKey =
-            config?.kanbanGroupField ||
-            columns.find((c) => /status|state|stage|phase|category|type/i.test(c.key))?.key ||
-            columns[0]?.key ||
-            "status";
-          const groups = new Map<string, any[]>();
+        config?.customKanbanContent ? (
+          <>{config.customKanbanContent}</>
+        ) : config?.workflowKanbanConfig ? (
+          <GenericWorkflowKanban
+            config={config.workflowKanbanConfig as any}
+            items={viewModel.items || []}
+            renderRowActionButtons={renderRowActionButtons}
+            columns={columns}
+            emptyLabel={t("common.noData")}
+          />
+        ) : (
+          (() => {
+            const groupKey =
+              config?.kanbanGroupField ||
+              columns.find((c) => /status|state|stage|phase|category|type/i.test(c.key))?.key ||
+              columns[0]?.key ||
+              "status";
 
-          if (config?.kanbanColumns && config.kanbanColumns.length > 0) {
-            for (const col of config.kanbanColumns) {
-              groups.set(col.value, []);
-            }
-          }
+            const legacyStages: WorkflowKanbanStageConfig[] =
+              config?.kanbanColumns && config.kanbanColumns.length > 0
+                ? config.kanbanColumns.map((col) => ({
+                    stageKey: col.value,
+                    label: col.label,
+                    colorClass: col.colorClass,
+                    swatchClass: col.dotClass,
+                    headerClass: col.headerClass,
+                    columnClass: col.columnClass,
+                    icon: col.icon,
+                    headerSummary: col.summary as any,
+                  }))
+                : Array.from(
+                    new Set(
+                      (viewModel.items || []).map((item: any) => {
+                        const raw = item?.[groupKey];
+                        return raw === null || raw === undefined || raw === "" ? "Unassigned" : String(raw);
+                      })
+                    )
+                  ).map((key) => ({
+                    stageKey: String(key),
+                    label: String(key),
+                  }));
 
-          for (const item of viewModel.items || []) {
-            const rawVal = item?.[groupKey];
-            const bucket =
-              rawVal === null || rawVal === undefined || rawVal === "" ? "Unassigned" : String(rawVal);
-            const list = groups.get(bucket) ?? [];
-            list.push(item);
-            groups.set(bucket, list);
-          }
-          if (groups.size === 0) {
-            groups.set("All", []);
-          }
-          return (
-            <div
-              className={cn(
-                "grid grid-cols-1 gap-4",
-                groups.size <= 3
-                  ? "md:grid-cols-3"
-                  : groups.size === 4
-                  ? "md:grid-cols-2 xl:grid-cols-4"
-                  : "md:grid-cols-3 xl:grid-cols-5"
-              )}
-            >
-              {Array.from(groups.entries()).map(([bucket, bucketItems]) => {
-                const colDef = config?.kanbanColumns?.find((c) => c.value === bucket);
-                const displayLabel = colDef?.label || bucket;
-                return (
-                  <div
-                    key={bucket}
-                    onDragOver={(e) => {
-                      if (config?.onKanbanItemMove) {
-                        e.preventDefault();
-                        e.dataTransfer.dropEffect = "move";
-                      }
-                    }}
-                    onDrop={(e) => {
-                      if (config?.onKanbanItemMove) {
-                        e.preventDefault();
-                        const itemId = e.dataTransfer.getData("text/plain");
-                        const item = (viewModel.items || []).find((i: any) => String(i.id) === itemId);
-                        if (item && String(item[groupKey]) !== bucket) {
-                          config.onKanbanItemMove(item, bucket);
-                        }
-                      }
-                    }}
-                    className={cn(
-                      "flex flex-col gap-3 rounded-nx-lg border border-nx-line bg-nx-surface p-3 min-h-[220px]",
-                      colDef?.columnClass
-                    )}
-                  >
-                    <div className={cn("flex flex-col gap-1 border-b border-nx-line pb-2.5", colDef?.headerClass)}>
-                      <div className="flex items-center justify-between gap-2">
-                        <div className="flex items-center gap-2 min-w-0">
-                          {colDef?.dotClass && (
-                            <span className={cn("size-2 rounded-full shrink-0", colDef.dotClass)} />
-                          )}
-                          {colDef?.icon && <span className="text-nx-ink-3 shrink-0">{colDef.icon}</span>}
-                          <span className="text-sm font-semibold text-nx-ink truncate">{displayLabel}</span>
-                        </div>
-                        <Badge
-                          variant="secondary"
-                          className={cn(
-                            "rounded-full px-2 py-0.5 text-xs font-semibold tabular-nums shrink-0",
-                            colDef?.colorClass
-                          )}
-                        >
-                          {bucketItems.length}
-                        </Badge>
-                      </div>
-                      {colDef?.summary && (
-                        <div className="text-xs text-nx-ink-3">
-                          {colDef.summary(bucketItems)}
-                        </div>
-                      )}
-                    </div>
-                    <div className="space-y-2.5 flex-1">
-                      {bucketItems.length === 0 ? (
-                        <div className="py-8 text-center text-xs text-nx-ink-3 border border-dashed border-nx-line/60 rounded-nx-md">
-                          {t("common.noData") || "No items"}
-                        </div>
-                      ) : (
-                        bucketItems.map((row: any, idx: number) => {
-                          const actionButtons = renderRowActionButtons(row);
-                          return (
-                            <div
-                              key={row.id || idx}
-                              draggable={!!config?.onKanbanItemMove}
-                              onDragStart={(e) => {
-                                if (config?.onKanbanItemMove) {
-                                  e.dataTransfer.setData("text/plain", String(row.id));
-                                  e.dataTransfer.effectAllowed = "move";
-                                }
-                              }}
-                              className={cn(config?.onKanbanItemMove ? "cursor-grab active:cursor-grabbing" : "")}
-                            >
-                              {config?.renderKanbanCard ? (
-                                config.renderKanbanCard(row, actionButtons, idx)
-                              ) : (
-                                <Card className="space-y-2 rounded-nx-md border border-nx-line bg-nx-raised p-3 hover:border-nx-line-hi transition-colors">
-                                  {columns.slice(0, 4).map((col) => (
-                                    <div
-                                      key={col.key}
-                                      className="flex items-center justify-between gap-2 text-xs"
-                                    >
-                                      <span className="text-nx-ink-3">{col.label}</span>
-                                      <span className="font-medium text-nx-ink">
-                                        {col.render
-                                          ? col.render(row[col.key], row, idx)
-                                          : String(row[col.key] ?? "—")}
-                                      </span>
-                                    </div>
-                                  ))}
-                                  {actionButtons && <div className="pt-1">{actionButtons}</div>}
-                                </Card>
-                              )}
-                            </div>
-                          );
-                        })
-                      )}
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-          );
-        })()
-      ) : activeViewMode === "Calendar" ? (
-        (() => {
-          const dateKey =
-            config?.calendarDateField ||
-            columns.find((c) => /date|time|at|day|due|start/i.test(c.key))?.key ||
-            "createdAt";
-          const groups = new Map<string, any[]>();
-          for (const item of viewModel.items || []) {
-            const rawVal = item?.[dateKey];
-            const dateLabel = config?.calendarGroupFormatter
-              ? config.calendarGroupFormatter(rawVal, item)
-              : rawVal
-                ? String(rawVal).slice(0, 10)
-                : "Unscheduled";
-            const list = groups.get(dateLabel) ?? [];
-            list.push(item);
-            groups.set(dateLabel, list);
-          }
-          return (
-            <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
-              {groups.size === 0 ? (
-                <div className="col-span-full rounded-nx-lg border border-nx-line bg-nx-surface p-8">
-                  <EmptyState bare icon={Inbox} title={t("common.noData")} />
-                </div>
-              ) : (
-                Array.from(groups.entries()).map(([dateLabel, dateItems]) => (
-                  <Card
-                    key={dateLabel}
-                    className="space-y-3 rounded-nx-lg border border-nx-line bg-nx-surface p-4"
-                  >
-                    <div className="flex items-center justify-between border-b border-nx-line pb-2">
-                      <span className="text-sm font-semibold text-nx-ink">{dateLabel}</span>
-                      <Badge variant="outline" className="text-xs text-nx-ink-3 font-normal">
-                        {dateItems.length} items
-                      </Badge>
-                    </div>
-                    <div className="space-y-2">
-                      {dateItems.map((row: any, idx: number) => {
-                        const actionButtons = renderRowActionButtons(row);
-                        if (config?.renderCalendarItem) {
-                          return (
-                            <div key={row.id || idx}>
-                              {config.renderCalendarItem(row, actionButtons, idx)}
-                            </div>
-                          );
-                        }
-                        return (
-                          <div
-                            key={row.id || idx}
-                            className="space-y-1.5 rounded-nx-md border border-nx-line p-2.5 text-xs bg-nx-raised"
-                          >
-                            {columns.slice(0, 3).map((col) => (
-                              <div key={col.key} className="flex items-center justify-between gap-2">
-                                <span className="text-nx-ink-3">{col.label}</span>
-                                <span className="font-medium text-nx-ink">
-                                  {col.render
-                                    ? col.render(row[col.key], row, idx)
-                                    : String(row[col.key] ?? "—")}
-                                </span>
-                              </div>
-                            ))}
-                            {actionButtons && <div className="pt-1">{actionButtons}</div>}
-                          </div>
-                        );
-                      })}
-                    </div>
-                  </Card>
-                ))
-              )}
-            </div>
-          );
-        })()
-      ) : activeViewMode === "SplitPane" ? (
-        (() => {
-          const items: any[] = viewModel.items || [];
-          const selectedRow =
-            items.find((r) => String(r.id) === String(splitSelectedId)) || items[0] || null;
-          return (
-            <div className="grid grid-cols-1 gap-4 lg:grid-cols-12">
-              <div className="space-y-2 rounded-nx-lg border border-nx-line bg-nx-surface p-3 lg:col-span-5">
-                {viewModel.loading ? (
-                  [0, 1, 2, 3, 4].map((i) => (
-                    <div
-                      key={`split-skeleton-${i}`}
-                      className="rounded-nx-md border border-nx-line bg-nx-raised p-3 space-y-1.5"
-                    >
-                      <Skeleton className="h-4 w-40" />
-                      <Skeleton className="h-3 w-24" />
-                    </div>
-                  ))
-                ) : items.length === 0 ? (
-                  <EmptyState bare icon={Inbox} title={t("common.noData")} />
-                ) : (
-                  items.map((row: any, idx: number) => {
-                    const isCurrent = selectedRow && row.id === selectedRow.id;
-                    if (config?.renderSplitListItem) {
-                      return (
-                        <div
-                          key={row.id || idx}
-                          onClick={() => setSplitSelectedId(String(row.id))}
-                          className="cursor-pointer"
-                        >
-                          {config.renderSplitListItem(row, isCurrent, idx)}
-                        </div>
-                      );
+            return (
+              <GenericWorkflowKanban
+                config={{
+                  stages: legacyStages.length > 0 ? legacyStages : [{ stageKey: "All", label: "All" }],
+                  stageField: groupKey,
+                  onMoveItem: (item: any, targetStageKey: string) => {
+                    if (config?.onKanbanItemMove) {
+                      config.onKanbanItemMove(item, targetStageKey);
                     }
-                    const primaryCol = columns[0];
-                    const secondaryCol = columns[1];
-                    return (
-                      <Button
-                        key={row.id || idx}
-                        type="button"
-                        variant="ghost"
-                        onClick={() => setSplitSelectedId(String(row.id))}
-                        className={cn(
-                          "w-full h-auto rounded-nx-md border p-3 text-start justify-start flex flex-col items-start transition-colors",
-                          isCurrent
-                            ? "border-nx-accent bg-nx-accent-wash"
-                            : "border-nx-line hover:border-nx-line-hi hover:bg-nx-raised"
-                        )}
-                      >
-                        <div className="text-sm font-medium text-nx-ink">
-                          {primaryCol
-                            ? String(row[primaryCol.key] ?? row.id ?? `#${idx + 1}`)
-                            : String(row.id ?? `#${idx + 1}`)}
-                        </div>
-                        {secondaryCol && (
-                          <div className="mt-0.5 text-xs text-nx-ink-3">
-                            {String(row[secondaryCol.key] ?? "")}
-                          </div>
-                        )}
-                      </Button>
-                    );
-                  })
-                )}
-              </div>
-              <div className="rounded-nx-lg border border-nx-line bg-nx-surface p-4 lg:col-span-7">
-                {viewModel.loading ? (
-                  <div className="space-y-4">
-                    <div className="flex items-center justify-between border-b border-nx-line pb-3">
-                      <Skeleton className="h-5 w-48" />
-                      <Skeleton className="h-8 w-24 rounded-nx-md" />
-                    </div>
-                    <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-                      {columns.slice(0, 6).map((col) => (
-                        <div
-                          key={col.key}
-                          className="rounded-nx-md border border-nx-line bg-nx-raised p-2.5 space-y-1.5"
-                        >
-                          <Skeleton className="h-3 w-20" />
-                          <Skeleton className="h-4 w-32" />
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                ) : selectedRow ? (
-                  config?.renderSplitDetail ? (
-                    config.renderSplitDetail(selectedRow, renderRowActionButtons(selectedRow))
-                  ) : (
-                    <div className="space-y-4">
-                      <div className="flex items-center justify-between border-b border-nx-line pb-3">
-                        <h3 className="text-base font-semibold text-nx-ink">
-                          {config?.getItemDisplayName
-                            ? config.getItemDisplayName(selectedRow)
-                            : String(selectedRow.name || selectedRow.id || title)}
-                        </h3>
-                        {renderRowActionButtons(selectedRow)}
-                      </div>
-                      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-                        {columns.map((col, idx) => (
-                          <div
-                            key={col.key}
-                            className="rounded-nx-md border border-nx-line bg-nx-raised p-2.5 text-sm"
-                          >
-                            <div className="text-xs text-nx-ink-3">{col.label}</div>
-                            <div className="mt-1 font-medium text-nx-ink">
-                              {col.render
-                                ? col.render(selectedRow[col.key], selectedRow, idx)
-                                : String(selectedRow[col.key] ?? "—")}
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  )
-                ) : (
-                  <EmptyState bare icon={Inbox} title={t("common.noData")} />
-                )}
-              </div>
-            </div>
-          );
-        })()
+                  },
+                  renderCard: config?.renderKanbanCard as any,
+                  getItemDisplayName: config?.getItemDisplayName as any,
+                }}
+                items={viewModel.items || []}
+                renderRowActionButtons={renderRowActionButtons}
+                columns={columns}
+                emptyLabel={t("common.noData")}
+              />
+            );
+          })()
+        )
+      ) : activeViewMode === "Calendar" ? (
+        <CrudCalendarSection
+          items={viewModel.items || []}
+          columns={columns}
+          calendarDateField={config?.calendarDateField}
+          calendarGroupFormatter={config?.calendarGroupFormatter as any}
+          renderCalendarItem={config?.renderCalendarItem as any}
+          renderRowActionButtons={renderRowActionButtons}
+          emptyLabel={t("common.noData")}
+        />
+      ) : activeViewMode === "SplitPane" ? (
+        <CrudSplitPaneSection
+          items={viewModel.items || []}
+          columns={columns}
+          selectedId={splitSelectedId}
+          onSelectId={setSplitSelectedId}
+          loading={viewModel.loading}
+          renderSplitListItem={config?.renderSplitListItem as any}
+          renderSplitDetail={config?.renderSplitDetail as any}
+          renderRowActionButtons={renderRowActionButtons}
+          getItemDisplayName={config?.getItemDisplayName as any}
+          defaultTitle={title}
+          emptyLabel={t("common.noData")}
+        />
       ) : (
         <GenericTable
           data={viewModel.items}

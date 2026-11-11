@@ -68,10 +68,8 @@ export function OpportunityStageProgressionCard({
               data-testid={`stage-step-${st.key}`}
               data-stage-color={st.color}
               data-custom-color-hex={st.customColorHex || undefined}
-              disabled={!isOpen}
-              onClick={() => {
-                if (isOpen) onSelectStageStep(st.key);
-              }}
+              disabled={isCurrent}
+              onClick={() => onSelectStageStep(st.key)}
               style={customHexStyles.isValidHex ? customHexStyles.cardStyle : undefined}
               className={cn(
                 "h-auto flex items-center justify-between gap-1 rounded-nx-md border px-2 py-1.5 text-start text-[11px] transition-all min-w-0",
@@ -87,7 +85,7 @@ export function OpportunityStageProgressionCard({
                     : cn(
                         "hover:border-nx-line-hi",
                         !customHexStyles.isValidHex
-                          ? colorMeta.cardClass
+                          ? colorMeta.borderClass
                           : "border-nx-line bg-nx-ground text-nx-ink-2",
                       ),
               )}

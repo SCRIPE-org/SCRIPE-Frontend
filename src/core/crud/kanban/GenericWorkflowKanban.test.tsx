@@ -1,0 +1,144 @@
+import React from "react";
+import { describe, it, expect, vi } from "vitest";
+import { render, screen, fireEvent } from "@testing-library/react";
+import { GenericWorkflowKanban } from "./GenericWorkflowKanban";
+import type { WorkflowKanbanConfig, WorkflowKanbanStageConfig } from "./types";
+
+interface TestItem {
+  id: string;
+  title: string;
+  stageKey: string;
+  amount?: number;
+}
+
+const mockStages: WorkflowKanbanStageConfig<TestItem>[] = [
+  {
+    stageKey: "discovery",
+    label: "Discovery",
+    category: "todo",
+  },
+  {
+    stageKey: "qualification",
+    label: "Qualification",
+    category: "in_progress",
+    wipLimit: 5,
+  },
+  {
+    stageKey: "closed_won",
+    label: "Closed Won",
+    category: "done",
+  },
+  {
+    stageKey: "closed_lost",
+    label: "Closed Lost",
+    category: "lost",
+  },
+];
+
+const mockItems: TestItem[] = [
+  { id: "deal-1", title: "Deal One", stageKey: "discovery", amount: 10000 },
+  { id: "deal-2", title: "Deal Two", stageKey: "qualification", amount: 25000 },
+  { id: "deal-3", title: "Deal Three", stageKey: "closed_won", amount: 50000 },
+];
+
+describe("GenericWorkflowKanban", () => {
+  it("renders all configured stages and cards", () => {
+    const config: WorkflowKanbanConfig<TestItem> = {
+      stages: mockStages,
+      stageField: "stageKey",
+    };
+
+    render(<GenericWorkflowKanban config={config} items={mockItems} />);
+
+    expect(screen.getByText("Discovery")).toBeInTheDocument();
+    expect(screen.getByText("Qualification")).toBeInTheDocument();
+    expect(screen.getByText("Closed Won")).toBeInTheDocument();
+    expect(screen.getByText("Closed Lost")).toBeInTheDocument();
+
+    expect(screen.getByText("Deal One")).toBeInTheDocument();
+    expect(screen.getByText("Deal Two")).toBeInTheDocument();
+    expect(screen.getByText("Deal Three")).toBeInTheDocument();
+  });
+
+  it("renders WIP limit indicator in column header", () => {
+    const config: WorkflowKanbanConfig<TestItem> = {
+      stages: mockStages,
+      stageField: "stageKey",
+    };
+
+    render(<GenericWorkflowKanban config={config} items={mockItems} />);
+
+    // Qualification column has wipLimit 5 and 1 item -> displays "1 / 5"
+    expect(screen.getByText("1 / 5")).toBeInTheDocument();
+  });
+
+  it("handles density changes via toolbar buttons", () => {
+    const config: WorkflowKanbanConfig<TestItem> = {
+      stages: mockStages,
+      stageField: "stageKey",
+      cardDensity: "standard",
+    };
+
+    render(<GenericWorkflowKanban config={config} items={mockItems} />);
+
+    const compactBtn = screen.getByRole("button", { name: /^compact$/i });
+    expect(compactBtn).toBeInTheDocument();
+    fireEvent.click(compactBtn);
+  });
+
+  it("renders and dismisses error messages cleanly", () => {
+    const onDismiss = vi.fn();
+    const config: WorkflowKanbanConfig<TestItem> = {
+      stages: mockStages,
+      stageField: "stageKey",
+      errorMessage: "Transition rejected by Four-Eyes separation of duties.",
+      onDismissError: onDismiss,
+    };
+
+    render(<GenericWorkflowKanban config={config} items={mockItems} />);
+
+    expect(
+      screen.getByText("Transition rejected by Four-Eyes separation of duties.")
+    ).toBeInTheDocument();
+
+    const dismissBtn = screen.getByRole("button", { name: /dismiss error/i });
+    fireEvent.click(dismissBtn);
+    expect(onDismiss).toHaveBeenCalledTimes(1);
+  });
+
+  it("supports smart 3-state Jira Drop Evaluation callback definition", () => {
+    const evaluateDropTarget = vi.fn((item: TestItem, targetStageKey: string) => {
+      if (targetStageKey === "closed_lost") {
+        return {
+          state: "allowed_screen_required" as const,
+          badgeText: "Requires Loss Reason",
+        };
+      }
+      if (targetStageKey === "closed_won" && item.id === "deal-1") {
+        return {
+          state: "blocked" as const,
+          reason: "Cannot jump directly to Closed Won without Qualification",
+        };
+      }
+      return {
+        state: "allowed_instant" as const,
+        badgeText: "Instant Move",
+      };
+    });
+
+    const onMoveItem = vi.fn();
+
+    const config: WorkflowKanbanConfig<TestItem> = {
+      stages: mockStages,
+      stageField: "stageKey",
+      evaluateDropTarget,
+      onMoveItem,
+    };
+
+    render(<GenericWorkflowKanban config={config} items={mockItems} />);
+
+    // Board renders without crashing
+    expect(screen.getByText("4 Stages")).toBeInTheDocument();
+    expect(screen.getByText("3 Cards")).toBeInTheDocument();
+  });
+});

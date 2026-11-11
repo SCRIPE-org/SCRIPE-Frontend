@@ -9,7 +9,7 @@ import {
   OpportunityStageTransitionKind,
 } from "../../domain/models/crm-opportunity.types";
 
-import { crmOpportunitiesEn } from "../../../locales/crm-opportunities.en";
+import { en as crmOpportunitiesEn } from "../../../locales/crm-opportunities.en";
 
 vi.mock("@core/providers/i18n-provider", () => ({
   useI18n: () => ({

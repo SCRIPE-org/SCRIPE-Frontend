@@ -35,6 +35,8 @@ export interface CrmWorkflowFullscreenStudioProps {
   onDeleteTransition: (transitionId: string) => void;
   onCreateTransition: (fromStageKey?: string, toStageKey?: string) => void;
   onAddCrmCustomField: (field: Omit<CrmCustomFieldDefinition, "id" | "createdAtIso">) => void;
+  onApplyLayoutPositions?: (positions: Map<string, { x: number; y: number }> | Record<string, { x: number; y: number }>) => void;
+  canUndo?: boolean; canRedo?: boolean; onUndo?: () => void; onRedo?: () => void;
 }
 
 /** Standalone Full-Viewport 2D Workflow Studio rendered via React Portal above app chrome (<195 lines). */
@@ -46,7 +48,7 @@ export function CrmWorkflowFullscreenStudio(props: CrmWorkflowFullscreenStudioPr
     setValidationBanner, crmCustomFields, openRuleCatalogSignal, onSelectWorkflow, onSwitchEntity, onBackToList, onResetDraft,
     onSave, onValidateRules, onOpenAddStage, onOpenAddTransition, onOpenRuleForStage, onNodeMove,
     onStageChange, onToggleAllowAnyTransition, onMoveOrder, onRemoveStage, onReplaceStage, onTransitionChange, onDeleteTransition,
-    onAddCrmCustomField,
+    onAddCrmCustomField, onApplyLayoutPositions, canUndo, canRedo, onUndo, onRedo,
   } = props;
   const [guideOpen, setGuideOpen] = useState(false);
 
@@ -145,8 +147,11 @@ export function CrmWorkflowFullscreenStudio(props: CrmWorkflowFullscreenStudioPr
           stages={activeStages} transitions={transitions} selectedStageKey={selectedStageKey}
           selectedTransitionId={selectedTransitionId} viewMode={viewMode} zoom={zoom}
           crmCustomFields={crmCustomFields} onZoomChange={setZoom} onSelectStage={setSelectedStageKey}
-          onSelectTransition={setSelectedTransitionId} onNodeMove={onNodeMove} onOpenAddStage={onOpenAddStage}
+          onSelectTransition={setSelectedTransitionId} onNodeMove={onNodeMove}
+          onTransitionChange={onTransitionChange} onOpenAddStage={onOpenAddStage}
           onOpenAddTransition={onOpenAddTransition} onOpenRuleForStage={onOpenRuleForStage} onValidateRules={onValidateRules}
+          onApplyLayoutPositions={onApplyLayoutPositions}
+          canUndo={canUndo} canRedo={canRedo} onUndo={onUndo} onRedo={onRedo}
         />
         <CrmWorkflowInspectorPanel
           activeEntity={activeEntity} stages={activeStages} transitions={transitions}

@@ -80,10 +80,24 @@ export class CrmOpportunityService implements ICrmOpportunityService {
 
   async moveStage(input: MoveOpportunityStageInput): Promise<CrmOpportunity> {
     const payload = {
-      targetStageKey: input.targetStageKey, reason: input.reason, expectedRowVersion: input.expectedRowVersion ?? "",
-      partyId: input.partyId, accountId: input.accountId, estimatedAmount: input.estimatedAmount,
-      targetCloseDate: input.targetCloseDate, primaryContactRole: input.primaryContactRole,
-      solutionFitConfirmed: input.solutionFitConfirmed, stageTransitionNote: input.stageTransitionNote,
+      targetStageKey: input.targetStageKey,
+      transitionId: input.transitionId,
+      reason: input.reason,
+      expectedRowVersion: input.expectedRowVersion ?? "",
+      partyId: input.partyId,
+      accountId: input.accountId,
+      estimatedAmount: input.estimatedAmount,
+      actualAmount: input.actualAmount,
+      targetCloseDate: input.targetCloseDate,
+      primaryContactRole: input.primaryContactRole,
+      solutionFitConfirmed: input.solutionFitConfirmed,
+      stageTransitionNote: input.stageTransitionNote,
+      closeNotes: input.closeNotes,
+      lossReasonCode: input.lossReasonCode,
+      competitorName: input.competitorName,
+      winReasonCode: input.winReasonCode,
+      reopenReason: input.reopenReason,
+      customFields: input.customFieldValues,
     };
     const response = await this.api.post<ApiSuccessResponse<CrmOpportunity> | CrmOpportunity>(
       CRM_OPPORTUNITY_ENDPOINTS.STAGE(input.opportunityId), payload, undefined, this.withIdempotency("crm-opp-stg", input.idempotencyKey)

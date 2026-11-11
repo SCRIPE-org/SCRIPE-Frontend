@@ -13,6 +13,11 @@ export const en = {
       newAccount: "New Account",
       edit: "Edit Commercial Terms",
       view360: "View 360",
+      refresh: "Refresh",
+      cancel: "Cancel",
+      saving: "Saving...",
+      saveChanges: "Save Changes",
+      error: "Error",
     },
     searchPlaceholder: "Search accounts by name or tier...",
     filters: {

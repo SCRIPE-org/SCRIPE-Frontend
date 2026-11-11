@@ -121,16 +121,23 @@ export interface AssignOpportunityOwnerInput {
 export interface MoveOpportunityStageInput {
   opportunityId: string;
   targetStageKey: string;
+  transitionId?: string;
   reason?: string;
   expectedRowVersion?: string;
   idempotencyKey?: string;
   partyId?: string;
   accountId?: string;
   estimatedAmount?: number;
+  actualAmount?: number;
   targetCloseDate?: string;
   primaryContactRole?: string;
   solutionFitConfirmed?: boolean;
   stageTransitionNote?: string;
+  closeNotes?: string;
+  lossReasonCode?: string;
+  competitorName?: string;
+  winReasonCode?: string;
+  reopenReason?: string;
   customFieldValues?: Record<string, unknown>;
 }
 
