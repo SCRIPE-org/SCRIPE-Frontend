@@ -74,7 +74,7 @@ export function ContactDealsCard({
                   <Badge variant="outline" className="border-nx-line bg-nx-raised text-[10px] py-0 px-1.5 text-nx-ink-2">
                     {isAr && opp.stageLabelAr ? opp.stageLabelAr : opp.stageLabelEn}
                   </Badge>
-                  <span className="text-[10px] text-nx-ink-3 uppercase font-medium">{opp.status}</span>
+                  <span className="text-[10px] text-nx-ink-3 uppercase font-medium">{t(`crmContacts.statuses.${opp.status}`)}</span>
                 </div>
               </div>
               <div className="text-end">

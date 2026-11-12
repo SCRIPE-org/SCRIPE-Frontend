@@ -133,20 +133,25 @@ export function CrmWorkflowsDirectorySection({
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4" data-testid="workflows-directory-grid">
-        {filteredDirectoryWorkflows.map((wf) => (
-          <CrmWorkflowDirectoryCard
-            key={wf.id}
-            wf={wf}
-            t={t}
-            isAr={isAr}
-            activeDealWorkflowId={activeDealWorkflowId}
-            activeLeadWorkflowId={activeLeadWorkflowId}
-            onOpenStudioForWorkflow={onOpenStudioForWorkflow}
-            onCloneWorkflow={onCloneWorkflow}
-            onActivateWorkflow={onActivateWorkflow}
-            onDeleteWorkflow={onDeleteWorkflow}
-          />
-        ))}
+        {filteredDirectoryWorkflows.map((wf) => {
+          const isActive =
+            wf.entityType === "deal"
+              ? wf.id === activeDealWorkflowId
+              : wf.id === activeLeadWorkflowId;
+          return (
+            <CrmWorkflowDirectoryCard
+              key={wf.id}
+              wf={wf}
+              t={t}
+              isAr={isAr}
+              isActive={isActive}
+              onOpenStudioForWorkflow={onOpenStudioForWorkflow}
+              onCloneWorkflow={onCloneWorkflow}
+              onActivateWorkflow={onActivateWorkflow}
+              onDeleteWorkflow={onDeleteWorkflow}
+            />
+          );
+        })}
       </div>
     </div>
   );

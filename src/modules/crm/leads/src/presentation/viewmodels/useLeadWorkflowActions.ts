@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useCallback } from "react";
+import { useI18n } from "@core/providers/i18n-provider";
 import { getCrmContainer } from "@modules/crm/di";
 import { useCrmWorkflowsStore } from "@modules/crm";
 import type {
@@ -40,6 +41,7 @@ export function useLeadWorkflowActions(
   setIsSubmitting: (val: boolean) => void,
   setSubmitError: (val: string | null) => void,
 ) {
+  const { t } = useI18n();
   const [isQualifyOpen, setIsQualifyOpen] = useState(false);
   const [qualifyDefaultDecision, setQualifyDefaultDecision] = useState<QualificationDecision>("Qualified");
   const [isLinkPartyOpen, setIsLinkPartyOpen] = useState(false);
@@ -119,7 +121,7 @@ export function useLeadWorkflowActions(
       });
 
       if (!evalResult.allowed) {
-        const msg = evalResult.reason || "Status transition blocked by active Lead workflow.";
+        const msg = evalResult.reason || t("crmLeads.detail.transitionBlockedTitle");
         setSubmitError(msg);
         setStateError(msg);
         return false;

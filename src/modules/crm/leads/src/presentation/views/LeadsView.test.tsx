@@ -264,7 +264,7 @@ describe("LeadsView Component", () => {
     });
 
     // Switch to CardGrid mode
-    const cardGridButton = screen.getByText("CardGrid");
+    const cardGridButton = screen.getByText(/Card\s*Grid/i);
     fireEvent.click(cardGridButton);
 
     await waitFor(() => {
@@ -272,7 +272,7 @@ describe("LeadsView Component", () => {
     });
 
     // Switch to SplitPane mode
-    const splitPaneButton = screen.getByText("SplitPane");
+    const splitPaneButton = screen.getByText(/Split\s*Pane/i);
     fireEvent.click(splitPaneButton);
 
     await waitFor(() => {
@@ -297,7 +297,7 @@ describe("LeadsView Component", () => {
     });
 
     // Switch to CardGrid mode where action buttons are rendered
-    const cardGridButton = screen.getByText("CardGrid");
+    const cardGridButton = screen.getByText(/Card\s*Grid/i);
     fireEvent.click(cardGridButton);
 
     await waitFor(() => {
@@ -339,7 +339,7 @@ describe("LeadsView Component", () => {
       expect(screen.getAllByText("Al-Hilal Season Ticket Partnership")[0]).toBeDefined();
     });
 
-    const cardGridButton = screen.getByText("CardGrid");
+    const cardGridButton = screen.getByText(/Card\s*Grid/i);
     fireEvent.click(cardGridButton);
 
     await waitFor(() => {
@@ -376,7 +376,7 @@ describe("LeadsView Component", () => {
       expect(screen.getAllByText("Al-Hilal Season Ticket Partnership")[0]).toBeDefined();
     });
 
-    const cardGridButton = screen.getByText("CardGrid");
+    const cardGridButton = screen.getByText(/Card\s*Grid/i);
     fireEvent.click(cardGridButton);
 
     await waitFor(() => {

@@ -18,6 +18,7 @@ import { Card } from "@core/ui/card";
 import { Badge } from "@core/ui/badge";
 import { Button } from "@core/ui/button";
 import { Alert, AlertDescription } from "@core/ui/alert";
+import { useCrudI18n } from "../hooks/useCrudI18n";
 import { cn } from "@core/common/utils";
 import { AlertCircle, X, SlidersHorizontal } from "lucide-react";
 import { KanbanStageColumn } from "./KanbanStageColumn";
@@ -44,8 +45,10 @@ export function GenericWorkflowKanban<TItem = any>({
   renderRowActionButtons,
   columns,
   className,
-  emptyLabel = "No items",
+  emptyLabel,
 }: GenericWorkflowKanbanProps<TItem>) {
+  const { t } = useCrudI18n();
+  const resolvedEmptyLabel = emptyLabel || t("crud.kanban.noItems", { defaultValue: "No items" });
   const {
     stages,
     stageField = "stageKey",
@@ -200,7 +203,10 @@ export function GenericWorkflowKanban<TItem = any>({
         if (evalResult.state === "blocked") {
           // Reject drop
           setLocalError(
-            evalResult.reason || "Transition is not permitted by workflow rules."
+            evalResult.reason ||
+              t("crud.kanban.transitionBlocked", {
+                defaultValue: "Transition is not permitted by workflow rules.",
+              })
           );
         } else {
           // allowed_instant OR allowed_screen_required
@@ -215,7 +221,7 @@ export function GenericWorkflowKanban<TItem = any>({
       setActiveItem(null);
       setActiveStageKey(null);
     },
-    [stages, getStageKey, evaluateDropTarget, onMoveItem]
+    [stages, getStageKey, evaluateDropTarget, onMoveItem, t]
   );
 
   const activeError = errorMessage || localError;
@@ -249,17 +255,25 @@ export function GenericWorkflowKanban<TItem = any>({
       <div className="flex items-center justify-between text-xs text-nx-ink-3 px-1 select-none">
         <div className="flex items-center gap-2">
           <span>
-            {stages.length} {stages.length === 1 ? "Stage" : "Stages"}
+            {stages.length}{" "}
+            {stages.length === 1
+              ? t("crud.kanban.stage", { defaultValue: "Stage" })
+              : t("crud.kanban.stages", { defaultValue: "Stages" })}
           </span>
           <span>•</span>
           <span>
-            {items.length} {items.length === 1 ? "Card" : "Cards"}
+            {items.length}{" "}
+            {items.length === 1
+              ? t("crud.kanban.card", { defaultValue: "Card" })
+              : t("crud.kanban.cards", { defaultValue: "Cards" })}
           </span>
         </div>
 
         <div className="flex items-center gap-1.5">
           <SlidersHorizontal className="size-3.5 text-nx-ink-3" />
-          <span className="text-[11px] font-medium text-nx-ink-3">Density:</span>
+          <span className="text-[11px] font-medium text-nx-ink-3">
+            {t("crud.kanban.density", { defaultValue: "Density:" })}
+          </span>
           {(["compact", "standard", "comfortable"] as CardDensity[]).map((d) => (
             <Button
               key={d}
@@ -272,7 +286,7 @@ export function GenericWorkflowKanban<TItem = any>({
               )}
               onClick={() => setCurrentDensity(d)}
             >
-              {d}
+              {t(`crud.kanban.density_${d}`, { defaultValue: d })}
             </Button>
           ))}
         </div>
@@ -310,7 +324,7 @@ export function GenericWorkflowKanban<TItem = any>({
                   renderStageHeaderExtra={renderStageHeaderExtra}
                   columns={columns}
                   getItemDisplayName={getItemDisplayName}
-                  emptyLabel={emptyLabel}
+                  emptyLabel={resolvedEmptyLabel}
                 />
               );
             })}
@@ -333,7 +347,7 @@ export function GenericWorkflowKanban<TItem = any>({
                 renderStageHeaderExtra={renderStageHeaderExtra}
                 columns={columns}
                 getItemDisplayName={getItemDisplayName}
-                emptyLabel={emptyLabel}
+                emptyLabel={resolvedEmptyLabel}
               />
             ))}
           </div>

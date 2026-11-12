@@ -114,6 +114,7 @@ export function CrmShell({
 
   return (
     <div
+      data-testid="crm-shell"
       className={cn("flex flex-col space-y-3.5 p-4 sm:px-6 sm:py-4 w-full max-w-none", className)}
       dir={isRtl ? "rtl" : "ltr"}
     >

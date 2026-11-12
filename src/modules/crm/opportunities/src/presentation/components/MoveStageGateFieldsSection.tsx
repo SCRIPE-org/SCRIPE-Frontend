@@ -124,7 +124,7 @@ export function MoveStageGateFieldsSection({
           <SelectContent>
             {effectiveStages.map((s) => (
               <SelectItem key={s.key} value={s.key}>
-                {isRtl && s.labelAr ? s.labelAr : s.labelEn} {s.partyRequired ? "• (Account/Contact Required)" : ""}
+                {isRtl && s.labelAr ? s.labelAr : s.labelEn} {s.partyRequired ? `• (${t("crmOpportunities.dialogs.stage.accountContactRequired")})` : ""}
               </SelectItem>
             ))}
           </SelectContent>
@@ -171,11 +171,11 @@ export function MoveStageGateFieldsSection({
                   <SelectValue placeholder={t("crmOpportunities.dialogs.stage.selectStakeholderRole")} />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="Decision Maker">Decision Maker</SelectItem>
-                  <SelectItem value="Executive Sponsor">Executive Sponsor</SelectItem>
-                  <SelectItem value="Technical Evaluator">Technical Evaluator</SelectItem>
-                  <SelectItem value="Procurement / Commercial">Procurement / Commercial</SelectItem>
-                  <SelectItem value="Champion">Champion</SelectItem>
+                  <SelectItem value="Decision Maker">{t("crmOpportunities.dialogs.stage.roles.decisionMaker")}</SelectItem>
+                  <SelectItem value="Executive Sponsor">{t("crmOpportunities.dialogs.stage.roles.executiveSponsor")}</SelectItem>
+                  <SelectItem value="Technical Evaluator">{t("crmOpportunities.dialogs.stage.roles.technicalEvaluator")}</SelectItem>
+                  <SelectItem value="Procurement / Commercial">{t("crmOpportunities.dialogs.stage.roles.procurementCommercial")}</SelectItem>
+                  <SelectItem value="Champion">{t("crmOpportunities.dialogs.stage.roles.champion")}</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -222,15 +222,15 @@ export function MoveStageGateFieldsSection({
       {onAddCrmCustomField && (
         <div className="rounded-nx-md border border-nx-line bg-nx-surface/60 p-2.5 space-y-2">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-semibold text-nx-ink-2">Stage Custom Fields</span>
+            <span className="text-xs font-semibold text-nx-ink-2">{t("crmOpportunities.dialogs.stage.stageCustomFieldsTitle")}</span>
             <Button type="button" size="sm" variant="ghost" className="h-6 px-2 text-[11px]" onClick={() => setShowAddCf((v) => !v)} data-testid="move-stage-add-cf-toggle-btn">
-              <Plus className="w-3 h-3 me-1" />Add Field
+              <Plus className="w-3 h-3 me-1" />{t("crmOpportunities.dialogs.stage.addFieldBtn")}
             </Button>
           </div>
           {showAddCf && (
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-1.5 pt-1 border-t border-nx-line">
-              <Input value={newCfNameEn} onChange={(e) => setNewCfNameEn(e.target.value)} placeholder="Field Label" className="h-7 text-xs" data-testid="move-stage-cf-label-input" />
-              <Input value={newCfKey} onChange={(e) => setNewCfKey(e.target.value)} placeholder="field_key (optional)" className="h-7 text-xs font-mono" data-testid="move-stage-cf-key-input" />
+              <Input value={newCfNameEn} onChange={(e) => setNewCfNameEn(e.target.value)} placeholder={t("crmOpportunities.dialogs.stage.fieldLabelPlaceholder")} className="h-7 text-xs" data-testid="move-stage-cf-label-input" />
+              <Input value={newCfKey} onChange={(e) => setNewCfKey(e.target.value)} placeholder={t("crmOpportunities.dialogs.stage.fieldKeyOptionalPlaceholder")} className="h-7 text-xs font-mono" data-testid="move-stage-cf-key-input" />
               <div className="flex items-center gap-1.5">
                 <Select value={newCfType} onValueChange={(v) => setNewCfType(v as CrmCustomFieldDefinition["valueType"])}>
                   <SelectTrigger className="h-7 text-xs bg-nx-surface flex-1" data-testid="move-stage-cf-type-select"><SelectValue /></SelectTrigger>
@@ -238,7 +238,7 @@ export function MoveStageGateFieldsSection({
                     {CUSTOM_FIELD_VALUE_TYPES.map((vt) => <SelectItem key={vt} value={vt} className="text-xs">{vt}</SelectItem>)}
                   </SelectContent>
                 </Select>
-                <Button type="button" size="sm" variant="outline" className="h-7 px-2.5 text-xs shrink-0" onClick={handleAddStageCf} data-testid="move-stage-cf-save-btn">Add</Button>
+                <Button type="button" size="sm" variant="outline" className="h-7 px-2.5 text-xs shrink-0" onClick={handleAddStageCf} data-testid="move-stage-cf-save-btn">{t("crmOpportunities.dialogs.stage.addBtn")}</Button>
               </div>
             </div>
           )}

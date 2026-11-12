@@ -35,7 +35,7 @@ import { useEnhancedToast } from "@core/hooks/use-enhanced-toast";
 import { useSettings } from "@core/providers/settings-provider";
 import { cn } from "@core/common/utils";
 import type { PaginationInfo } from "@core/common/pagination";
-import { useI18n } from "@core/providers/i18n-provider";
+import { useCrudI18n } from "../hooks/useCrudI18n";
 import { useCallback, useMemo, memo, useEffect, useState, useRef } from "react";
 import {
   Users,
@@ -496,6 +496,9 @@ interface GenericCrudViewProps<T> {
 
   // Callback when create button is clicked
   onCreateClick?: () => void | Promise<void>;
+
+  /** Optional custom empty state node */
+  emptyState?: React.ReactNode;
 }
 
 function GenericCrudViewInner<T>(props: GenericCrudViewProps<T>) {
@@ -511,14 +514,35 @@ function GenericCrudViewInner<T>(props: GenericCrudViewProps<T>) {
     search: propSearch,
     config,
     onCreateClick,
+    emptyState,
   } = props;
   const settings = useSettings();
-  const { t } = useI18n();
+  const { t } = useCrudI18n();
   const { hasPermission } = usePermissions();
 
   // Enhanced delete system for professional confirmation dialogs
   const deleteSystem = useEnhancedDelete();
   const { operationSuccess, operationError } = useEnhancedToast();
+
+  const getViewModeLabel = useCallback(
+    (mode: CrudViewMode): string => {
+      switch (mode) {
+        case "Table":
+          return t("crud.views.table", { defaultValue: "Table" });
+        case "Kanban":
+          return t("crud.views.kanban", { defaultValue: "Kanban" });
+        case "CardGrid":
+          return t("crud.views.cardGrid", { defaultValue: "Card Grid" });
+        case "Calendar":
+          return t("crud.views.calendar", { defaultValue: "Calendar" });
+        case "SplitPane":
+          return t("crud.views.splitPane", { defaultValue: "Split Pane" });
+        default:
+          return mode;
+      }
+    },
+    [t]
+  );
 
   // Enhanced delete handler with professional confirmation dialog
   const handleDelete = useCallback(
@@ -1339,7 +1363,7 @@ function GenericCrudViewInner<T>(props: GenericCrudViewProps<T>) {
                       )}
                     >
                       <Icon className="me-1.5 h-3.5 w-3.5" aria-hidden="true" />
-                      {mode}
+                      {getViewModeLabel(mode)}
                     </Button>
                   );
                 })}
@@ -1354,7 +1378,7 @@ function GenericCrudViewInner<T>(props: GenericCrudViewProps<T>) {
                 className="flex-1 sm:flex-none"
               >
                 <Download className="me-2 h-4 w-4" aria-hidden="true" />
-                CSV
+                {t("common.exportCsv", { defaultValue: "CSV" })}
               </Button>
             )}
             {config?.bulkOptions?.enableCsvImport && effectivePermissions.canCreate && (
@@ -1366,7 +1390,7 @@ function GenericCrudViewInner<T>(props: GenericCrudViewProps<T>) {
                 className="flex-1 sm:flex-none"
               >
                 <Upload className="me-2 h-4 w-4" aria-hidden="true" />
-                Import CSV
+                {t("common.importCsv", { defaultValue: "Import CSV" })}
               </Button>
             )}
             {config?.bulkOptions?.enablePdfPrint && (
@@ -1378,7 +1402,7 @@ function GenericCrudViewInner<T>(props: GenericCrudViewProps<T>) {
                 className="flex-1 sm:flex-none"
               >
                 <Printer className="me-2 h-4 w-4" aria-hidden="true" />
-                Print / PDF
+                {t("common.printPdf", { defaultValue: "Print / PDF" })}
               </Button>
             )}
             {config?.customActions
@@ -1515,7 +1539,7 @@ function GenericCrudViewInner<T>(props: GenericCrudViewProps<T>) {
                     )}
                   >
                     <Icon className="me-1.5 h-3.5 w-3.5" aria-hidden="true" />
-                    {mode}
+                    {getViewModeLabel(mode)}
                   </Button>
                 );
               })}
@@ -1650,7 +1674,7 @@ function GenericCrudViewInner<T>(props: GenericCrudViewProps<T>) {
           // list inherits the nexus empty anatomy. `bare` because the table
           // container already draws the surface; customTableProps can still
           // override the node below.
-          emptyMessage={<EmptyState bare icon={Inbox} title={t("common.noData")} />}
+          emptyMessage={emptyState || <EmptyState bare icon={Inbox} title={t("common.noData")} />}
           stickyActions={config?.stickyActions}
           renderActions={
             config?.renderActions ? (row) => config.renderActions?.(row as T) : undefined
@@ -1678,9 +1702,16 @@ function GenericCrudViewInner<T>(props: GenericCrudViewProps<T>) {
       >
         {config?.formSurface === "Wizard" && (
           <div className="mb-4 flex items-center gap-2 rounded-nx-md border border-nx-line bg-nx-hover px-3 py-2 text-xs text-nx-ink-2">
-            <span className="font-semibold text-nx-accent">Step-by-Step Wizard</span>
+            <span className="font-semibold text-nx-accent">
+              {t("crud.wizard.stepByStep", { defaultValue: "Step-by-Step Wizard" })}
+            </span>
             <span>•</span>
-            <span>Complete all required sections below to create {entity}</span>
+            <span>
+              {t("crud.wizard.createInstruction", {
+                entity,
+                defaultValue: `Complete all required sections below to create ${entity}`,
+              })}
+            </span>
           </div>
         )}
         <GenericForm
@@ -1772,9 +1803,16 @@ function GenericCrudViewInner<T>(props: GenericCrudViewProps<T>) {
       >
         {config?.formSurface === "Wizard" && (
           <div className="mb-4 flex items-center gap-2 rounded-nx-md border border-nx-line bg-nx-hover px-3 py-2 text-xs text-nx-ink-2">
-            <span className="font-semibold text-nx-accent">Step-by-Step Wizard</span>
+            <span className="font-semibold text-nx-accent">
+              {t("crud.wizard.stepByStep", { defaultValue: "Step-by-Step Wizard" })}
+            </span>
             <span>•</span>
-            <span>Review and update {entity} sections below</span>
+            <span>
+              {t("crud.wizard.editInstruction", {
+                entity,
+                defaultValue: `Review and update ${entity} sections below`,
+              })}
+            </span>
           </div>
         )}
         <GenericForm

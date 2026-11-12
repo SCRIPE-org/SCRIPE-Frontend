@@ -7,7 +7,6 @@ import {
   Undo2, Zap, ZoomIn, ZoomOut,
 } from "lucide-react";
 import { Button } from "@core/ui/button";
-import { getWorkflowStudioText } from "../../../locales";
 import type { LayoutAlgorithm } from "./crmFlowLayoutEngine";
 
 export interface CrmWorkflowCanvasToolbarProps {
@@ -51,82 +50,82 @@ export function CrmWorkflowCanvasToolbar({
   return (
     <div
       data-testid="crm-workflow-canvas-toolbar"
-      className="h-12 flex items-center justify-between px-2.5 border-b border-nx-line bg-nx-surface z-20 overflow-x-auto no-scrollbar gap-1.5 select-none shrink-0"
+      className="h-12 flex items-center justify-between px-2 border-b border-nx-line bg-nx-surface z-20 overflow-x-auto no-scrollbar gap-1 select-none shrink-0"
     >
       <div className="flex items-center gap-1 shrink-0">
         {/* Creation Tools */}
-        <Button size="sm" variant="outline" className="h-7 px-2 text-[11px]" onClick={onOpenAddStage} data-testid="crm-toolbar-add-status" title={t("crmOpportunities.pipelinesPage.addStatusBtn")}>
-          <Plus className="w-3 h-3 me-1 text-success shrink-0" />
-          {t("crmOpportunities.pipelinesPage.addStatusBtn").replace(/^\+\s*/, "")}
+        <Button size="sm" variant="outline" className="h-7 px-1.5 text-[10.5px]" onClick={onOpenAddStage} data-testid="crm-toolbar-add-status" title={t("crmOpportunities.pipelinesPage.addStatusBtn")}>
+          <Plus className="w-3 h-3 me-0.5 text-success shrink-0" />
+          <span>{t("crmOpportunities.pipelinesPage.addStatusBtn").replace(/^\+\s*/, "")}</span>
         </Button>
-        <Button size="sm" variant="outline" className="h-7 px-2 text-[11px]" onClick={onOpenAddTransition} data-testid="crm-toolbar-add-transition" title={t("crmOpportunities.pipelinesPage.addTransitionBtn")}>
-          <Zap className="w-3 h-3 me-1 text-warning shrink-0" />
-          {t("crmOpportunities.pipelinesPage.addTransitionBtn").replace(/^\+\s*/, "")}
+        <Button size="sm" variant="outline" className="h-7 px-1.5 text-[10.5px]" onClick={onOpenAddTransition} data-testid="crm-toolbar-add-transition" title={t("crmOpportunities.pipelinesPage.addTransitionBtn")}>
+          <Zap className="w-3 h-3 me-0.5 text-warning shrink-0" />
+          <span>{t("crmOpportunities.pipelinesPage.addTransitionBtn").replace(/^\+\s*/, "")}</span>
         </Button>
         <Button
-          size="sm" variant="outline" className="h-7 px-2 text-[11px]" data-testid="crm-toolbar-add-rule"
+          size="sm" variant="outline" className="h-7 px-1.5 text-[10.5px]" data-testid="crm-toolbar-add-rule"
           title={t("crmOpportunities.pipelinesPage.addRuleBtn")}
           onClick={() => { const target = selectedStageKey ?? firstStageKey; if (target) onOpenRuleForStage(target); }}
         >
-          <ShieldCheck className="w-3 h-3 me-1 text-info shrink-0" />
-          {t("crmOpportunities.pipelinesPage.addRuleBtn").replace(/^\+\s*/, "")}
+          <ShieldCheck className="w-3 h-3 me-0.5 text-info shrink-0" />
+          <span>{t("crmOpportunities.pipelinesPage.addRuleBtn").replace(/^\+\s*/, "")}</span>
         </Button>
 
-        <div className="h-5 w-px bg-nx-line shrink-0 mx-0.5" />
+        <div className="h-5 w-px bg-nx-line shrink-0 mx-0" />
 
         {/* Auto-Layout Engines */}
-        <Button size="sm" variant="outline" className="h-7 px-2 text-[11px]" onClick={() => onExecuteAutoLayout("elk")} data-testid="canvas-tidy-auto-layout-btn" title={getWorkflowStudioText("elkLayeredLayout", isAr)}>
-          <LayoutGrid className="w-3 h-3 me-1 text-primary shrink-0" />
-          {getWorkflowStudioText("compactTidy", isAr)}
+        <Button size="sm" variant="outline" className="h-7 px-1.5 text-[10.5px]" onClick={() => onExecuteAutoLayout("elk")} data-testid="canvas-tidy-auto-layout-btn" title={t("crmOpportunities.workflowStudio.elkLayeredLayout")}>
+          <LayoutGrid className="w-3 h-3 text-primary shrink-0" />
+          <span className="hidden 2xl:inline ms-1">{t("crmOpportunities.workflowStudio.compactTidy")}</span>
         </Button>
-        <Button size="sm" variant="outline" className="h-7 px-2 text-[11px]" onClick={() => onExecuteAutoLayout("dagre_lr")} data-testid="canvas-dagre-lr-layout-btn" title={getWorkflowStudioText("dagreHorizontalLayout", isAr)}>
-          <Columns3 className="w-3 h-3 me-1 text-info shrink-0" />
-          {getWorkflowStudioText("compactDagreLr", isAr)}
+        <Button size="sm" variant="outline" className="h-7 px-1.5 text-[10.5px]" onClick={() => onExecuteAutoLayout("dagre_lr")} data-testid="canvas-dagre-lr-layout-btn" title={t("crmOpportunities.workflowStudio.dagreHorizontalLayout")}>
+          <Columns3 className="w-3 h-3 text-info shrink-0" />
+          <span className="hidden 2xl:inline ms-1">{t("crmOpportunities.workflowStudio.compactDagreLr")}</span>
         </Button>
-        <Button size="sm" variant="outline" className="h-7 px-2 text-[11px]" onClick={() => onExecuteAutoLayout("dagre_tb")} data-testid="canvas-dagre-tb-layout-btn" title={getWorkflowStudioText("dagreVerticalLayout", isAr)}>
-          <Rows3 className="w-3 h-3 me-1 text-info shrink-0" />
-          {getWorkflowStudioText("compactDagreTb", isAr)}
+        <Button size="sm" variant="outline" className="h-7 px-1.5 text-[10.5px]" onClick={() => onExecuteAutoLayout("dagre_tb")} data-testid="canvas-dagre-tb-layout-btn" title={t("crmOpportunities.workflowStudio.dagreVerticalLayout")}>
+          <Rows3 className="w-3 h-3 text-info shrink-0" />
+          <span className="hidden 2xl:inline ms-1">{t("crmOpportunities.workflowStudio.compactDagreTb")}</span>
         </Button>
 
-        <div className="h-5 w-px bg-nx-line shrink-0 mx-0.5" />
+        <div className="h-5 w-px bg-nx-line shrink-0 mx-0" />
 
         {/* View Toggles */}
         <Button
-          size="sm" variant={showGlobalWires ? "secondary" : "outline"} className="h-7 px-2 text-[11px]"
+          size="sm" variant={showGlobalWires ? "secondary" : "outline"} className="h-7 px-1.5 text-[10.5px]"
           onClick={onToggleGlobalWires} data-testid="canvas-toggle-global-wires-btn"
-          title={showGlobalWires ? getWorkflowStudioText("hideGlobalWires", isAr) : getWorkflowStudioText("showGlobalWires", isAr)}
+          title={showGlobalWires ? t("crmOpportunities.workflowStudio.hideGlobalWires") : t("crmOpportunities.workflowStudio.showGlobalWires")}
         >
-          <GitFork className="w-3 h-3 me-1 text-nx-accent shrink-0" />
-          {getWorkflowStudioText("compactGlobalWires", isAr)}
+          <GitFork className="w-3 h-3 me-0.5 text-nx-accent shrink-0" />
+          <span>{t("crmOpportunities.workflowStudio.compactGlobalWires")}</span>
         </Button>
 
-        <Button size="sm" variant={showTransitionLabels ? "secondary" : "outline"} className="h-7 px-2 text-[11px]" onClick={onToggleTransitionLabels} data-testid="canvas-toggle-transition-labels" title={t("crmOpportunities.pipelinesPage.showTransitionLabelsCheck")}>
-          {showTransitionLabels ? <Eye className="w-3 h-3 me-1 text-primary shrink-0" /> : <EyeOff className="w-3 h-3 me-1 text-nx-ink-3 shrink-0" />}
-          {getWorkflowStudioText("compactLabels", isAr)}
+        <Button size="sm" variant={showTransitionLabels ? "secondary" : "outline"} className="h-7 px-1.5 text-[10.5px]" onClick={onToggleTransitionLabels} data-testid="canvas-toggle-transition-labels" title={t("crmOpportunities.pipelinesPage.showTransitionLabelsCheck")}>
+          {showTransitionLabels ? <Eye className="w-3 h-3 me-0.5 text-primary shrink-0" /> : <EyeOff className="w-3 h-3 me-0.5 text-nx-ink-3 shrink-0" />}
+          <span>{t("crmOpportunities.workflowStudio.compactLabels")}</span>
         </Button>
 
-        <Button size="sm" variant={showMiniMap ? "secondary" : "outline"} className="h-7 px-2 text-[11px]" onClick={onToggleMiniMap} data-testid="canvas-toggle-minimap-btn" title="Toggle MiniMap">
-          <MapIcon className="w-3 h-3 me-1 text-info shrink-0" />
-          {getWorkflowStudioText("compactMiniMap", isAr)}
+        <Button size="sm" variant={showMiniMap ? "secondary" : "outline"} className="h-7 px-1.5 text-[10.5px]" onClick={onToggleMiniMap} data-testid="canvas-toggle-minimap-btn" title={t("crmOpportunities.workflowStudio.toggleMiniMap")}>
+          <MapIcon className="w-3 h-3 text-info shrink-0" />
+          <span className="hidden 2xl:inline ms-1">{t("crmOpportunities.workflowStudio.compactMiniMap")}</span>
         </Button>
 
-        <Button size="sm" variant={simModeOpen ? "secondary" : "outline"} className="h-7 px-2 text-[11px]" onClick={onToggleSimMode} data-testid="canvas-simulate-workflow-btn" title={t("crmOpportunities.workflowSandbox.simulateBtn")}>
-          <Play className="w-3 h-3 me-1 text-success shrink-0" />
-          {getWorkflowStudioText("compactSimulate", isAr)}
+        <Button size="sm" variant={simModeOpen ? "secondary" : "outline"} className="h-7 px-1.5 text-[10.5px]" onClick={onToggleSimMode} data-testid="canvas-simulate-workflow-btn" title={t("crmOpportunities.workflowSandbox.simulateBtn")}>
+          <Play className="w-3 h-3 me-0.5 text-success shrink-0" />
+          <span>{t("crmOpportunities.workflowStudio.compactSimulate")}</span>
         </Button>
 
-        <div className="h-5 w-px bg-nx-line shrink-0 mx-0.5" />
+        <div className="h-5 w-px bg-nx-line shrink-0 mx-0" />
 
         {/* Export & Validation */}
-        <Button size="sm" variant="outline" className="h-7 px-2 text-[11px]" onClick={onExportPng} disabled={isExportingPng} data-testid="canvas-export-png-btn" title={getWorkflowStudioText("exportPng", isAr)}>
-          <Download className="w-3 h-3 me-1 text-info shrink-0" />
-          {isExportingPng ? getWorkflowStudioText("exportingPng", isAr) : getWorkflowStudioText("compactExportPng", isAr)}
+        <Button size="sm" variant="outline" className="h-7 px-1.5 text-[10.5px]" onClick={onExportPng} disabled={isExportingPng} data-testid="canvas-export-png-btn" title={t("crmOpportunities.workflowStudio.exportPng")}>
+          <Download className="w-3 h-3 text-info shrink-0" />
+          <span className="hidden 2xl:inline ms-1">{isExportingPng ? t("crmOpportunities.workflowStudio.exportingPng") : t("crmOpportunities.workflowStudio.compactExportPng")}</span>
         </Button>
 
         {onValidateRules && (
-          <Button size="sm" variant="outline" className="h-7 px-2 text-[11px]" onClick={onValidateRules} data-testid="canvas-validate-rules" title={t("crmOpportunities.pipelinesPage.validateWorkflowRulesBtn")}>
-            <CheckCircle2 className="w-3 h-3 me-1 text-success shrink-0" />
-            {getWorkflowStudioText("compactValidate", isAr)}
+          <Button size="sm" variant="outline" className="h-7 px-1.5 text-[10.5px]" onClick={onValidateRules} data-testid="canvas-validate-rules" title={t("crmOpportunities.pipelinesPage.validateWorkflowRulesBtn")}>
+            <CheckCircle2 className="w-3 h-3 text-success shrink-0" />
+            <span className="hidden 2xl:inline ms-1">{t("crmOpportunities.workflowStudio.compactValidate")}</span>
           </Button>
         )}
       </div>
@@ -135,27 +134,27 @@ export function CrmWorkflowCanvasToolbar({
       <div className="flex items-center gap-1 shrink-0">
         <Button
           size="icon" variant="outline" className="h-7 w-7 p-0 shrink-0" onClick={onUndo}
-          disabled={!canUndo} data-testid="canvas-undo-btn" title={getWorkflowStudioText("undo", isAr)}
+          disabled={!canUndo} data-testid="canvas-undo-btn" title={t("crmOpportunities.workflowStudio.undo")}
         >
           <Undo2 className="w-3.5 h-3.5" />
         </Button>
         <Button
           size="icon" variant="outline" className="h-7 w-7 p-0 shrink-0" onClick={onRedo}
-          disabled={!canRedo} data-testid="canvas-redo-btn" title={getWorkflowStudioText("redo", isAr)}
+          disabled={!canRedo} data-testid="canvas-redo-btn" title={t("crmOpportunities.workflowStudio.redo")}
         >
           <Redo2 className="w-3.5 h-3.5" />
         </Button>
-        <div className="h-5 w-px bg-nx-line shrink-0 mx-0.5" />
-        <Button size="icon" variant="outline" className="h-7 w-7" onClick={onZoomOut} data-testid="canvas-zoom-out-btn" title="Zoom Out">
+        <div className="h-5 w-px bg-nx-line shrink-0 mx-0" />
+        <Button size="icon" variant="outline" className="h-7 w-7 p-0 shrink-0" onClick={onZoomOut} data-testid="canvas-zoom-out-btn" title={t("crmOpportunities.workflowStudio.zoomOut")}>
           <ZoomOut className="w-3.5 h-3.5" />
         </Button>
-        <span className="text-[11px] font-mono px-0.5 min-w-[32px] text-center text-nx-ink-2" data-testid="canvas-zoom-indicator">
+        <span className="text-[10.5px] font-mono px-0.5 min-w-[28px] text-center text-nx-ink-2" data-testid="canvas-zoom-indicator">
           {zoom}%
         </span>
-        <Button size="icon" variant="outline" className="h-7 w-7" onClick={onZoomIn} data-testid="canvas-zoom-in-btn" title="Zoom In">
+        <Button size="icon" variant="outline" className="h-7 w-7 p-0 shrink-0" onClick={onZoomIn} data-testid="canvas-zoom-in-btn" title={t("crmOpportunities.workflowStudio.zoomIn")}>
           <ZoomIn className="w-3.5 h-3.5" />
         </Button>
-        <Button size="icon" variant="ghost" className="h-7 w-7" onClick={onResetZoom} data-testid="canvas-reset-zoom-btn" title="Reset Zoom">
+        <Button size="icon" variant="ghost" className="h-7 w-7 p-0 shrink-0" onClick={onResetZoom} data-testid="canvas-reset-zoom-btn" title={t("crmOpportunities.workflowStudio.resetZoom")}>
           <RotateCcw className="w-3.5 h-3.5" />
         </Button>
       </div>

@@ -7,6 +7,7 @@ import { useVirtualizer } from "@tanstack/react-virtual";
 import { Badge } from "@core/ui/badge";
 import { Button } from "@core/ui/button";
 import { cn } from "@core/common/utils";
+import { useCrudI18n } from "../hooks/useCrudI18n";
 import { ChevronDown, ChevronRight, Lock, Sparkles, AlertCircle } from "lucide-react";
 import { KanbanSortableCard } from "./KanbanSortableCard";
 import type {
@@ -47,8 +48,10 @@ export const KanbanStageColumn = memo(function KanbanStageColumn({
   renderStageHeaderExtra,
   columns,
   getItemDisplayName,
-  emptyLabel = "No items",
+  emptyLabel,
 }: KanbanStageColumnProps) {
+  const { t } = useCrudI18n();
+  const resolvedEmptyLabel = emptyLabel || t("crud.kanban.noItems", { defaultValue: "No items" });
   const [isCollapsed, setIsCollapsed] = useState(stage.isCollapsed ?? false);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
 
@@ -67,13 +70,19 @@ export const KanbanStageColumn = memo(function KanbanStageColumn({
   const evalResult = useMemo<DropEvaluationResult | null>(() => {
     if (!activeItem) return null;
     if (activeStageKey === stage.stageKey) {
-      return { state: "allowed_instant", badgeText: "Current Stage" };
+      return {
+        state: "allowed_instant",
+        badgeText: t("crud.kanban.currentStage", { defaultValue: "Current Stage" }),
+      };
     }
     if (evaluateDropTarget) {
       return evaluateDropTarget(activeItem, stage.stageKey);
     }
-    return { state: "allowed_instant", badgeText: "Move Here" };
-  }, [activeItem, activeStageKey, stage.stageKey, evaluateDropTarget]);
+    return {
+      state: "allowed_instant",
+      badgeText: t("crud.kanban.moveHere", { defaultValue: "Move Here" }),
+    };
+  }, [activeItem, activeStageKey, stage.stageKey, evaluateDropTarget, t]);
 
   // Virtualization for heavy lists (> threshold)
   const isVirtual = items.length > virtualizationThreshold;
@@ -208,10 +217,16 @@ export const KanbanStageColumn = memo(function KanbanStageColumn({
               <Badge
                 variant="destructive"
                 className="w-full justify-start text-[11px] font-medium gap-1 px-1.5 py-0.5 truncate"
-                title={evalResult.reason || "Transition blocked"}
+                title={
+                  evalResult.reason ||
+                  t("crud.kanban.transitionBlocked", { defaultValue: "Transition blocked" })
+                }
               >
                 <Lock className="size-3 shrink-0" />
-                <span className="truncate">{evalResult.reason || "Transition blocked"}</span>
+                <span className="truncate">
+                  {evalResult.reason ||
+                    t("crud.kanban.transitionBlocked", { defaultValue: "Transition blocked" })}
+                </span>
               </Badge>
             ) : evalResult.state === "allowed_screen_required" ? (
               <Badge
@@ -223,8 +238,13 @@ export const KanbanStageColumn = memo(function KanbanStageColumn({
                   {evalResult.badgeText ||
                     evalResult.actionLabel ||
                     (evalResult.transitions && evalResult.transitions.length > 1
-                      ? `${evalResult.transitions.length} Paths Available`
-                      : "Transition Screen")}
+                      ? t("crud.kanban.pathsAvailable", {
+                          count: evalResult.transitions.length,
+                          defaultValue: `${evalResult.transitions.length} Paths Available`,
+                        })
+                      : t("crud.kanban.transitionScreen", {
+                          defaultValue: "Transition Screen",
+                        }))}
                 </span>
               </Badge>
             ) : (
@@ -237,8 +257,11 @@ export const KanbanStageColumn = memo(function KanbanStageColumn({
                   {evalResult.badgeText ||
                     evalResult.actionLabel ||
                     (evalResult.transitions && evalResult.transitions.length > 1
-                      ? `${evalResult.transitions.length} Paths Available`
-                      : "Instant Move")}
+                      ? t("crud.kanban.pathsAvailable", {
+                          count: evalResult.transitions.length,
+                          defaultValue: `${evalResult.transitions.length} Paths Available`,
+                        })
+                      : t("crud.kanban.instantMove", { defaultValue: "Instant Move" }))}
                 </span>
               </Badge>
             )}
@@ -270,7 +293,7 @@ export const KanbanStageColumn = memo(function KanbanStageColumn({
                   "border border-dashed border-nx-line/60 rounded-nx-md min-h-[140px]"
                 )}
               >
-                <span>{emptyLabel}</span>
+                <span>{resolvedEmptyLabel}</span>
               </div>
             ) : isVirtual ? (
               <div

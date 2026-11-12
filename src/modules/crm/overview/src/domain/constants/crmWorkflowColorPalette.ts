@@ -26,25 +26,8 @@ export type CrmStageColorToken =
 
 /** Ordered list of 19 semantic stage color tokens for the Status Inspector swatch picker. */
 export const CRM_STAGE_COLOR_TOKENS: CrmStageColorToken[] = [
-  "slate",
-  "zinc",
-  "blue",
-  "sky",
-  "cyan",
-  "teal",
-  "emerald",
-  "green",
-  "lime",
-  "amber",
-  "orange",
-  "coral",
-  "rose",
-  "crimson",
-  "pink",
-  "fuchsia",
-  "purple",
-  "violet",
-  "indigo",
+  "slate", "zinc", "blue", "sky", "cyan", "teal", "emerald", "green", "lime", "amber",
+  "orange", "coral", "rose", "crimson", "pink", "fuchsia", "purple", "violet", "indigo",
 ];
 
 /** Semantic styling classes for each of the 19 stage color tokens (Dark & Light safe). */
@@ -52,6 +35,7 @@ export const STAGE_COLOR_PALETTE: Record<
   CrmStageColorToken,
   {
     labelEn: string;
+    labelAr: string;
     swatchClass: string;
     borderClass: string;
     badgeClass: string;
@@ -63,6 +47,7 @@ export const STAGE_COLOR_PALETTE: Record<
 > = {
   slate: {
     labelEn: "Slate",
+    labelAr: "أردوازي",
     swatchClass: "bg-slate-500",
     borderClass: "border-nx-line bg-nx-surface hover:border-nx-line-hi",
     badgeClass: "border-nx-line bg-nx-raised text-nx-ink-2",
@@ -73,6 +58,7 @@ export const STAGE_COLOR_PALETTE: Record<
   },
   zinc: {
     labelEn: "Zinc",
+    labelAr: "زنك",
     swatchClass: "bg-zinc-500",
     borderClass: "border-zinc-500/45 bg-zinc-500/[0.04] hover:border-zinc-500/70",
     badgeClass: "border-zinc-500/40 bg-zinc-500/15 text-zinc-400",
@@ -83,6 +69,7 @@ export const STAGE_COLOR_PALETTE: Record<
   },
   blue: {
     labelEn: "Blue",
+    labelAr: "أزرق",
     swatchClass: "bg-blue-500",
     borderClass: "border-blue-500/45 bg-blue-500/[0.04] hover:border-blue-500/70",
     badgeClass: "border-blue-500/40 bg-blue-500/15 text-blue-400",
@@ -93,6 +80,7 @@ export const STAGE_COLOR_PALETTE: Record<
   },
   sky: {
     labelEn: "Sky",
+    labelAr: "سماوي",
     swatchClass: "bg-sky-500",
     borderClass: "border-sky-500/45 bg-sky-500/[0.04] hover:border-sky-500/70",
     badgeClass: "border-sky-500/40 bg-sky-500/15 text-sky-400",
@@ -103,6 +91,7 @@ export const STAGE_COLOR_PALETTE: Record<
   },
   cyan: {
     labelEn: "Cyan",
+    labelAr: "فيروزي",
     swatchClass: "bg-cyan-500",
     borderClass: "border-cyan-500/45 bg-cyan-500/[0.04] hover:border-cyan-500/70",
     badgeClass: "border-cyan-500/40 bg-cyan-500/15 text-cyan-400",
@@ -113,6 +102,7 @@ export const STAGE_COLOR_PALETTE: Record<
   },
   teal: {
     labelEn: "Teal",
+    labelAr: "تركواز",
     swatchClass: "bg-teal-500",
     borderClass: "border-teal-500/45 bg-teal-500/[0.04] hover:border-teal-500/70",
     badgeClass: "border-teal-500/40 bg-teal-500/15 text-teal-400",
@@ -123,6 +113,7 @@ export const STAGE_COLOR_PALETTE: Record<
   },
   emerald: {
     labelEn: "Emerald",
+    labelAr: "زمردي",
     swatchClass: "bg-emerald-500",
     borderClass: "border-success/50 bg-success/[0.05] hover:border-success/80",
     badgeClass: "border-success/40 bg-success/15 text-success",
@@ -133,6 +124,7 @@ export const STAGE_COLOR_PALETTE: Record<
   },
   green: {
     labelEn: "Green",
+    labelAr: "أخضر",
     swatchClass: "bg-green-500",
     borderClass: "border-green-500/45 bg-green-500/[0.04] hover:border-green-500/70",
     badgeClass: "border-green-500/40 bg-green-500/15 text-green-400",
@@ -143,6 +135,7 @@ export const STAGE_COLOR_PALETTE: Record<
   },
   lime: {
     labelEn: "Lime",
+    labelAr: "ليموني",
     swatchClass: "bg-lime-500",
     borderClass: "border-lime-500/45 bg-lime-500/[0.04] hover:border-lime-500/70",
     badgeClass: "border-lime-500/40 bg-lime-500/15 text-lime-400",
@@ -153,6 +146,7 @@ export const STAGE_COLOR_PALETTE: Record<
   },
   amber: {
     labelEn: "Amber",
+    labelAr: "كهرماني",
     swatchClass: "bg-amber-500",
     borderClass: "border-warning/50 bg-warning/[0.05] hover:border-warning/80",
     badgeClass: "border-warning/40 bg-warning/15 text-warning",
@@ -163,6 +157,7 @@ export const STAGE_COLOR_PALETTE: Record<
   },
   orange: {
     labelEn: "Orange",
+    labelAr: "برتقالي",
     swatchClass: "bg-orange-500",
     borderClass: "border-orange-500/45 bg-orange-500/[0.04] hover:border-orange-500/70",
     badgeClass: "border-orange-500/40 bg-orange-500/15 text-orange-400",
@@ -173,6 +168,7 @@ export const STAGE_COLOR_PALETTE: Record<
   },
   coral: {
     labelEn: "Coral",
+    labelAr: "مرجاني",
     swatchClass: "bg-red-400",
     borderClass: "border-red-400/45 bg-red-400/[0.04] hover:border-red-400/70",
     badgeClass: "border-red-400/40 bg-red-400/15 text-red-400",
@@ -183,6 +179,7 @@ export const STAGE_COLOR_PALETTE: Record<
   },
   rose: {
     labelEn: "Rose",
+    labelAr: "وردي",
     swatchClass: "bg-rose-500",
     borderClass: "border-destructive/50 bg-destructive/[0.05] hover:border-destructive/80",
     badgeClass: "border-destructive/40 bg-destructive/15 text-destructive",
@@ -193,6 +190,7 @@ export const STAGE_COLOR_PALETTE: Record<
   },
   crimson: {
     labelEn: "Crimson",
+    labelAr: "قرمزي",
     swatchClass: "bg-red-600",
     borderClass: "border-red-600/45 bg-red-600/[0.04] hover:border-red-600/70",
     badgeClass: "border-red-600/40 bg-red-600/15 text-red-500",
@@ -203,6 +201,7 @@ export const STAGE_COLOR_PALETTE: Record<
   },
   pink: {
     labelEn: "Pink",
+    labelAr: "زهري",
     swatchClass: "bg-pink-500",
     borderClass: "border-pink-500/45 bg-pink-500/[0.04] hover:border-pink-500/70",
     badgeClass: "border-pink-500/40 bg-pink-500/15 text-pink-400",
@@ -213,6 +212,7 @@ export const STAGE_COLOR_PALETTE: Record<
   },
   fuchsia: {
     labelEn: "Fuchsia",
+    labelAr: "فوشيا",
     swatchClass: "bg-fuchsia-500",
     borderClass: "border-fuchsia-500/45 bg-fuchsia-500/[0.04] hover:border-fuchsia-500/70",
     badgeClass: "border-fuchsia-500/40 bg-fuchsia-500/15 text-fuchsia-400",
@@ -223,6 +223,7 @@ export const STAGE_COLOR_PALETTE: Record<
   },
   purple: {
     labelEn: "Purple",
+    labelAr: "أرجواني",
     swatchClass: "bg-purple-500",
     borderClass: "border-purple-500/45 bg-purple-500/[0.04] hover:border-purple-500/70",
     badgeClass: "border-purple-500/40 bg-purple-500/15 text-purple-400",
@@ -233,6 +234,7 @@ export const STAGE_COLOR_PALETTE: Record<
   },
   violet: {
     labelEn: "Violet",
+    labelAr: "بنفسجي",
     swatchClass: "bg-violet-500",
     borderClass: "border-violet-500/45 bg-violet-500/[0.04] hover:border-violet-500/70",
     badgeClass: "border-violet-500/40 bg-violet-500/15 text-violet-400",
@@ -243,6 +245,7 @@ export const STAGE_COLOR_PALETTE: Record<
   },
   indigo: {
     labelEn: "Indigo",
+    labelAr: "نيلي",
     swatchClass: "bg-indigo-500",
     borderClass: "border-indigo-500/45 bg-indigo-500/[0.04] hover:border-indigo-500/70",
     badgeClass: "border-indigo-500/40 bg-indigo-500/15 text-indigo-400",

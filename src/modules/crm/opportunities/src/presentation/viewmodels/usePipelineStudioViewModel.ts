@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { useI18n } from "@core/providers/i18n-provider";
-import { useCrmSettingsStore, useCrmWorkflowsStore, type CrmWorkflowEntityType } from "@modules/crm";
+import { useCrmSettingsStore, useCrmWorkflowsStore, type CrmStageColorToken, type CrmWorkflowEntityType } from "@modules/crm";
 import { CANONICAL_TERMINAL_LABELS } from "../../domain/constants/crmCanonicalStages";
 import type { CrmWorkflowStageNode, CrmWorkflowTransition } from "../components/workflow/CrmWorkflowCanvas2D";
 import type { StagePortId } from "../components/workflow/CrmWorkflowCanvasSubViews";
@@ -54,6 +54,8 @@ export function usePipelineStudioViewModel(defaultOpenStudio = false) {
   const [addStageModalOpen, setAddStageModalOpen] = useState(false);
   const [newStageNameEn, setNewStageNameEn] = useState(""); const [newStageNameAr, setNewStageNameAr] = useState("");
   const [newStageProb, setNewStageProb] = useState(50); const [newStageSla, setNewStageSla] = useState(5);
+  const [newStageColorToken, setNewStageColorToken] = useState<CrmStageColorToken>("blue");
+  const [newStageCustomHex, setNewStageCustomHex] = useState("");
   const [newStageConvertsLead, setNewStageConvertsLead] = useState(false);
   const [newStageAutoConnect, setNewStageAutoConnect] = useState(true);
   const [newStageAllowFromAny, setNewStageAllowFromAny] = useState(true);
@@ -188,9 +190,12 @@ export function usePipelineStudioViewModel(defaultOpenStudio = false) {
     const nonTerm = stages.filter((s) => !s.isTerminalWon && !s.isTerminalLost);
     const nextOrder = nonTerm.length + 1;
     const pos = computeBalanced2DStagePosition(nextOrder - 1);
+    const customHexClean = newStageCustomHex.trim() || undefined;
     const newNode: CrmWorkflowStageNode = {
       stageKey, labelEn: newStageNameEn.trim(), labelAr: newStageNameAr.trim() || newStageNameEn.trim(),
       probability: newStageProb, slaDays: newStageSla, order: nextOrder, allowInboundFromAny: newStageAllowFromAny,
+      color: newStageColorToken, customColorHex: customHexClean,
+      properties: customHexClean ? { customColorHex: customHexClean } : { color: newStageColorToken },
       isTerminalWon: false, isTerminalLost: false, convertsToDeal: activeEntity === "lead" ? newStageConvertsLead : false,
       requiredExitFields: [], x: pos.x, y: pos.y,
     };
@@ -204,7 +209,7 @@ export function usePipelineStudioViewModel(defaultOpenStudio = false) {
       addedTr.push({ id: `tr-any-${stageKey}-${Date.now() + 1}`, nameEn: newNode.labelEn, nameAr: newNode.labelAr, fromStageKey: "*", fromStageKeys: ["*"], toStageKey: stageKey, direction: "global", requiredFields: [] });
     }
     commitDraft(nextStages, addedTr.length > 0 ? [...transitions, ...addedTr] : transitions);
-    setNewStageNameEn(""); setNewStageNameAr(""); setAddStageModalOpen(false); setSelectedStageKey(stageKey);
+    setNewStageNameEn(""); setNewStageNameAr(""); setNewStageColorToken("blue"); setNewStageCustomHex(""); setAddStageModalOpen(false); setSelectedStageKey(stageKey);
   };
 
   const openAddTransitionWithPreselect = (fromKey?: string, toKey?: string, sourcePort?: StagePortId, targetPort?: StagePortId) => {
@@ -263,7 +268,9 @@ export function usePipelineStudioViewModel(defaultOpenStudio = false) {
     setSelectedStageKey, setSelectedTransitionId, openRuleCatalogSignal, handleOpenRuleForStage,
     hasChanges, validationBanner, setValidationBanner, crmCustomFields, addCrmCustomField,
     addStageModalOpen, setAddStageModalOpen, newStageNameEn, setNewStageNameEn, newStageNameAr, setNewStageNameAr,
-    newStageProb, setNewStageProb, newStageSla, setNewStageSla, newStageConvertsLead, setNewStageConvertsLead,
+    newStageProb, setNewStageProb, newStageSla, setNewStageSla,
+    newStageColorToken, setNewStageColorToken, newStageCustomHex, setNewStageCustomHex,
+    newStageConvertsLead, setNewStageConvertsLead,
     newStageAutoConnect, setNewStageAutoConnect, newStageAllowFromAny, setNewStageAllowFromAny,
     addTransitionModalOpen, setAddTransitionModalOpen, newTransFrom, setNewTransFrom, newTransTo, setNewTransTo,
     newTransNameEn, setNewTransNameEn, newTransNameAr, setNewTransNameAr,

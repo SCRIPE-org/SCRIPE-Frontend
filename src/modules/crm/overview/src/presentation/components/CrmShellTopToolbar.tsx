@@ -45,7 +45,7 @@ export function CrmShellTopToolbar({
     <div className="flex flex-wrap items-center gap-1 shrink-0 ms-auto">
       <div
         className="flex items-center gap-1 rounded-nx-md border border-nx-line bg-nx-surface px-1.5 py-0.5 shrink-0 w-auto min-w-[140px]"
-        title="CRM Base Reporting Currency (Live Exchange Rate Conversion)"
+        title={t("crm.toolbar.currencyTooltip")}
       >
         <Coins className="size-3 text-nx-accent shrink-0" />
         <span className="text-[10px] font-bold uppercase tracking-wider text-nx-ink-3 hidden 2xl:inline">

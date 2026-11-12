@@ -150,11 +150,11 @@ export function CrmWorkflowFieldAndMultiConditionSection({
         <div className="flex items-center gap-2 pt-1">
           {showCfCreator ? (
             <>
-              <Input value={newCfLabel} onChange={(e) => setNewCfLabel(e.target.value)} placeholder="New Custom Field Label..." className="h-7 text-xs" />
-              <Button type="button" size="sm" className="h-7 text-xs" onClick={() => { if (!newCfLabel.trim()) return; const key = newCfLabel.trim().toLowerCase().replace(/[^a-z0-9]+/g, "_"); onAddCrmCustomField({ id: `cf-${Date.now()}`, entityTypeKey: activeEntity === "lead" ? "crm.lead" : "crm.opportunity", key, labelEn: newCfLabel.trim(), labelAr: newCfLabel.trim(), valueType: "Text", isRequired: false, createdAtIso: new Date().toISOString() }); setNewCfLabel(""); setShowCfCreator(false); }}>Create Field</Button>
+              <Input value={newCfLabel} onChange={(e) => setNewCfLabel(e.target.value)} placeholder={t("crmOpportunities.ruleConfig.newCustomFieldPlaceholder")} className="h-7 text-xs" />
+              <Button type="button" size="sm" className="h-7 text-xs" onClick={() => { if (!newCfLabel.trim()) return; const key = newCfLabel.trim().toLowerCase().replace(/[^a-z0-9]+/g, "_"); onAddCrmCustomField({ id: `cf-${Date.now()}`, entityTypeKey: activeEntity === "lead" ? "crm.lead" : "crm.opportunity", key, labelEn: newCfLabel.trim(), labelAr: newCfLabel.trim(), valueType: "Text", isRequired: false, createdAtIso: new Date().toISOString() }); setNewCfLabel(""); setShowCfCreator(false); }}>{t("crmOpportunities.ruleConfig.createField")}</Button>
             </>
           ) : (
-            <Button type="button" size="sm" variant="outline" className="h-7 text-[11px]" onClick={() => setShowCfCreator(true)}><Plus className="w-3 h-3 me-1" />Create Custom Field Inline</Button>
+            <Button type="button" size="sm" variant="outline" className="h-7 text-[11px]" onClick={() => setShowCfCreator(true)}><Plus className="w-3 h-3 me-1" />{t("crmOpportunities.ruleConfig.createCustomFieldInline")}</Button>
           )}
         </div>
       )}

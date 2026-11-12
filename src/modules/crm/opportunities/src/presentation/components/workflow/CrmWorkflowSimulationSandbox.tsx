@@ -66,16 +66,16 @@ export function CrmWorkflowSimulationSandbox({
     const targetStage = stages.find((s) => s.stageKey === tr.toStageKey);
     const reasons: string[] = [];
     if ((tr.requireVerifiedParty || tr.requiredFields.includes("partyId")) && !verifiedParty) {
-      reasons.push("Missing Verified Account/Contact");
+      reasons.push(t("crmOpportunities.workflowSandbox.reasonMissingParty"));
     }
     if (!playbookDone) {
-      reasons.push("Stage Playbook Tasks Incomplete");
+      reasons.push(t("crmOpportunities.workflowSandbox.reasonPlaybookIncomplete"));
     }
     if (roleLimit !== null && numAmount > roleLimit && (tr.toStageKey.includes("proposal") || tr.toStageKey.includes("negotiation") || tr.toStageKey.includes("won"))) {
       reasons.push(`Exceeds ${activeRole?.nameEn} limit (${roleLimit.toLocaleString()}) -> Escalates to ${activeRole?.backupRoleKey || "pipe_role:commercial_director"}`);
     }
     if (numDiscount > 15 && activeRoleKey === "pipe_role:deal_desk" && tr.toStageKey.includes("negotiation")) {
-      reasons.push("Discount > 15% requires Commercial Director or Finance Gatekeeper");
+      reasons.push(t("crmOpportunities.workflowSandbox.reasonDiscountGate"));
     }
     for (const rule of tr.catalogRules ?? []) {
       const rk = rule.ruleTypeKey;
@@ -103,13 +103,13 @@ export function CrmWorkflowSimulationSandbox({
         } else if (cfg.fieldKey) {
           passed = evalFieldCond(cfg.fieldKey, cfg.operator || "greater_or_equal", cfg.expectedValue || cfg.value || "0");
         }
-        if (!passed) reasons.push(`Condition failed (${cfg.fieldKey || "multi-condition"})`);
+        if (!passed) reasons.push(`${t("crmOpportunities.workflowSandbox.reasonConditionFailed")} (${cfg.fieldKey || "multi-condition"})`);
       } else if (rk === "validate.stage_playbook_completed" && !playbookDone) {
-        reasons.push("Stage Playbook Tasks Incomplete");
+        reasons.push(t("crmOpportunities.workflowSandbox.reasonPlaybookIncomplete"));
       } else if (rk === "validate.verified_party" && !verifiedParty) {
-        reasons.push("Missing Verified Account/Contact");
+        reasons.push(t("crmOpportunities.workflowSandbox.reasonMissingParty"));
       } else if (rk === "validate.financial_forecast" && numAmount <= 0) {
-        reasons.push("Estimated Amount must be > 0");
+        reasons.push(t("crmOpportunities.workflowSandbox.reasonAmountPositive"));
       }
     }
     return {
@@ -127,7 +127,7 @@ export function CrmWorkflowSimulationSandbox({
       <div className="flex flex-wrap items-center justify-between gap-2">
         <div className="flex items-center gap-2">
           <Badge variant="default" className="text-[10px] font-mono gap-1">
-            <Play className="w-2.5 h-2.5" />LIVE SANDBOX
+            <Play className="w-2.5 h-2.5" />{t("crmOpportunities.workflowSandbox.liveBadge")}
           </Badge>
           <span className="text-xs font-bold text-nx-ink">
             {t("crmOpportunities.workflowSandbox.title")}

@@ -81,7 +81,7 @@ export function CrmWorkflowRuleCatalogModal({
         {selectedTpl ? (
           <div className="space-y-3 py-1" data-testid="rule-catalog-step2-config">
             <div className="space-y-1">
-              <Label className="text-xs font-semibold text-nx-ink-2">Rule</Label>
+              <Label className="text-xs font-semibold text-nx-ink-2">{t("crmOpportunities.ruleConfig.ruleLabel")}</Label>
               <div className="rounded-md border border-nx-line bg-nx-raised/60 p-2.5 flex items-center justify-between gap-3">
                 <div className="min-w-0">
                   <p className="text-xs font-bold text-nx-ink flex items-center gap-1.5">

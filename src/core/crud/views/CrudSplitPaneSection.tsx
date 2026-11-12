@@ -71,13 +71,19 @@ export const CrudSplitPaneSection = memo(function CrudSplitPaneSection<TItem = a
             const primaryCol = columns[0];
             const secondaryCol = columns[1];
             return (
-              <Button
+              <div
                 key={row?.id || idx}
-                type="button"
-                variant="ghost"
+                role="button"
+                tabIndex={0}
                 onClick={() => onSelectId(String(row?.id))}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" || e.key === " ") {
+                    e.preventDefault();
+                    onSelectId(String(row?.id));
+                  }
+                }}
                 className={cn(
-                  "w-full h-auto rounded-nx-md border p-3 text-start justify-start flex flex-col items-start transition-colors",
+                  "w-full h-auto rounded-nx-md border p-3 text-start justify-start flex flex-col items-start transition-colors cursor-pointer",
                   isCurrent
                     ? "border-nx-accent bg-nx-accent-wash"
                     : "border-nx-line hover:border-nx-line-hi hover:bg-nx-raised"
@@ -97,7 +103,7 @@ export const CrudSplitPaneSection = memo(function CrudSplitPaneSection<TItem = a
                       : String(row[secondaryCol.key] ?? "")}
                   </div>
                 )}
-              </Button>
+              </div>
             );
           })
         )}

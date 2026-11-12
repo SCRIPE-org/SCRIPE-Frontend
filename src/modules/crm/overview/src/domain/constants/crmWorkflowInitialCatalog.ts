@@ -160,3 +160,74 @@ export const INITIAL_CRM_WORKFLOWS: CrmWorkflowDefinition[] = [
     ],
   },
 ];
+
+/** Canonical fallback Arabic labels for standard pipeline and workflow stages. */
+export const CANONICAL_STAGE_AR_MAP: Record<string, string> = {
+  "default.discovery": "الاستكشاف",
+  "default.qualification": "التأهيل",
+  "default.solution_fit": "ملاءمة الحل",
+  "default.proposal": "عرض السعر",
+  "default.negotiation": "التفاوض",
+  "default.closed_won": "صفقة رابحة",
+  "default.closed_lost": "صفقة خاسرة",
+  "lead.new": "عميل جديد",
+  "lead.working": "قيد المتابعة",
+  "lead.qualified": "مؤهل",
+  "lead.converted": "تم التحويل لصفقة",
+  "lead.disqualified": "مستبعد",
+  "discovery": "الاستكشاف",
+  "qualification": "التأهيل",
+  "solution_fit": "ملاءمة الحل",
+  "proposal": "عرض السعر",
+  "negotiation": "التفاوض",
+  "closed_won": "صفقة رابحة",
+  "closed_lost": "صفقة خاسرة",
+  "new": "عميل جديد",
+  "working": "قيد المتابعة",
+  "qualified": "مؤهل",
+  "converted": "تم التحويل",
+  "disqualified": "مستبعد",
+};
+
+/** Resolves a robust Arabic stage label fallback so backend hydration never overwrites Arabic with English. */
+export function getCanonicalStageArFallback(stageKey?: string, labelEn?: string): string {
+  const normKey = (stageKey || "").toLowerCase();
+  if (CANONICAL_STAGE_AR_MAP[normKey]) return CANONICAL_STAGE_AR_MAP[normKey];
+  for (const [k, v] of Object.entries(CANONICAL_STAGE_AR_MAP)) {
+    if (normKey.includes(k) || (labelEn && labelEn.toLowerCase().includes(k))) return v;
+  }
+  const normLabel = (labelEn || "").toLowerCase();
+  if (normLabel.includes("discovery") || normLabel.includes("pitch")) return "الاستكشاف";
+  if (normLabel.includes("qualification")) return "التأهيل";
+  if (normLabel.includes("solution")) return "ملاءمة الحل";
+  if (normLabel.includes("proposal") || normLabel.includes("quote")) return "عرض السعر";
+  if (normLabel.includes("negotiation")) return "التفاوض";
+  if (normLabel.includes("won") || normLabel.includes("closing")) return "صفقة رابحة";
+  if (normLabel.includes("lost")) return "صفقة خاسرة";
+  if (normLabel.includes("new")) return "عميل جديد";
+  if (normLabel.includes("work")) return "قيد المتابعة";
+  if (normLabel.includes("convert")) return "تم التحويل";
+  return labelEn || stageKey || "";
+}
+
+/** Canonical fallback Arabic names for standard CRM pipelines. */
+export const CANONICAL_PIPELINE_AR_MAP: Record<string, string> = {
+  "default": "مسار المبيعات التجاري القياسي",
+  "standard commercial pipeline": "مسار المبيعات التجاري القياسي",
+  "standard lead qualification pipeline": "مسار تأهيل العملاء القياسي",
+  "deal.fast_track": "مسار الصفقات السريع",
+  "deal.sports_sponsorship": "مسار الرعايات الرياضية وحقوق التسمية",
+};
+
+/** Resolves a robust Arabic pipeline name fallback. */
+export function getCanonicalPipelineNameAr(code?: string, nameEn?: string): string {
+  const normCode = (code || "").toLowerCase();
+  const normName = (nameEn || "").toLowerCase();
+  if (CANONICAL_PIPELINE_AR_MAP[normCode]) return CANONICAL_PIPELINE_AR_MAP[normCode];
+  if (CANONICAL_PIPELINE_AR_MAP[normName]) return CANONICAL_PIPELINE_AR_MAP[normName];
+  if (normName.includes("lead")) return "مسار تأهيل العملاء القياسي";
+  if (normName.includes("sponsorship")) return "مسار الرعايات الرياضية";
+  if (normName.includes("fast")) return "مسار الصفقات السريع";
+  if (normName.includes("commercial") || normName.includes("pipeline") || normName.includes("deal")) return "مسار المبيعات التجاري القياسي";
+  return nameEn || "";
+}

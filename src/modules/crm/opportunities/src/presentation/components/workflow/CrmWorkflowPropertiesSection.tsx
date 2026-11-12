@@ -38,7 +38,7 @@ export function CrmWorkflowPropertiesSection({
   testIdPrefix,
 }: CrmWorkflowPropertiesSectionProps) {
   const entries = Object.entries(properties);
-  const modalTitle = testIdPrefix === "transition" ? "Transition properties" : "Status properties";
+  const modalTitle = testIdPrefix === "transition" ? t("crmOpportunities.pipelinesPage.transitionPropertiesModalTitle") : t("crmOpportunities.pipelinesPage.statusPropertiesModalTitle");
 
   return (
     <div className="space-y-1.5">
@@ -75,7 +75,7 @@ export function CrmWorkflowPropertiesSection({
           <DialogHeader>
             <DialogTitle className="text-sm font-bold">{modalTitle}</DialogTitle>
             <DialogDescription className="text-xs">
-              Properties are custom key-value pairs that customize workflow behavior, permissions, and integrations.
+              {t("crmOpportunities.pipelinesPage.propertiesModalDesc")}
             </DialogDescription>
           </DialogHeader>
 
@@ -95,10 +95,10 @@ export function CrmWorkflowPropertiesSection({
             )}
 
             <div className="space-y-2 pt-1">
-              <h4 className="text-xs font-semibold text-nx-ink">Add new property</h4>
+              <h4 className="text-xs font-semibold text-nx-ink">{t("crmOpportunities.pipelinesPage.addNewProperty")}</h4>
               <div className="grid grid-cols-2 gap-2">
                 <div className="space-y-1">
-                  <Label className="text-[11px] font-semibold">Key *</Label>
+                  <Label className="text-[11px] font-semibold">{t("crmOpportunities.pipelinesPage.propertyKeyLabel")}</Label>
                 <Input
                   value={propKey}
                   onChange={(e) => onPropKeyChange(e.target.value)}
@@ -108,7 +108,7 @@ export function CrmWorkflowPropertiesSection({
                 />
               </div>
               <div className="space-y-1">
-                <Label className="text-[11px] font-semibold">Value</Label>
+                <Label className="text-[11px] font-semibold">{t("crmOpportunities.pipelinesPage.propertyValLabel")}</Label>
                 <Input
                   value={propVal}
                   onChange={(e) => onPropValChange(e.target.value)}
@@ -122,13 +122,13 @@ export function CrmWorkflowPropertiesSection({
           </div>
 
           <DialogFooter className="gap-2">
-            <Button size="sm" variant="outline" onClick={onToggleForm}>Discard</Button>
+            <Button size="sm" variant="outline" onClick={onToggleForm}>{t("crmOpportunities.pipelinesPage.discardBtn")}</Button>
             <Button
               size="sm"
               data-testid={`${testIdPrefix}-prop-save-btn`}
               onClick={onSaveProperty}
             >
-              Save
+              {t("crmOpportunities.pipelinesPage.savePropertyBtn")}
             </Button>
           </DialogFooter>
         </DialogContent>

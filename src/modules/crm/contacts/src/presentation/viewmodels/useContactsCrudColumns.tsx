@@ -22,6 +22,7 @@ export function useContactsCrudColumns(
         render: (_val, contact: CrmContact) => (
           <div
             className="flex items-center gap-2.5 cursor-pointer"
+            data-testid={`contact-row-link-${contact.id}`}
             onClick={() => router.push(`/crm/contacts/${contact.id}`)}
           >
             <div className="size-7 rounded-full bg-nx-raised border border-nx-line flex items-center justify-center shrink-0">
@@ -81,18 +82,18 @@ export function useContactsCrudColumns(
         key: "jobTitleSnapshot",
         label: t("crmContacts.table.role"),
         render: (_val, contact: CrmContact) => {
-          const roleSubtitle = [contact.jobTitleSnapshot, contact.departmentName]
-            .filter(Boolean)
-            .join(" • ");
-          return roleSubtitle ? (
+          if (!contact.jobTitleSnapshot && !contact.departmentName) {
+            return <span className="text-nx-ink-3 text-xs">—</span>;
+          }
+          return (
             <Badge
               variant="outline"
               className="border-nx-line bg-nx-raised/60 text-nx-ink-2 text-[11px]"
             >
-              {roleSubtitle}
+              {contact.jobTitleSnapshot && <span>{contact.jobTitleSnapshot}</span>}
+              {contact.jobTitleSnapshot && contact.departmentName && <span> • </span>}
+              {contact.departmentName && <span>{contact.departmentName}</span>}
             </Badge>
-          ) : (
-            <span className="text-nx-ink-3 text-xs">—</span>
           );
         },
       },

@@ -71,17 +71,17 @@ export function CreateActivityModal({
   const activityOptions: { kind: SalesActivityKind; label: string; icon: React.ReactNode }[] = [
     {
       kind: "Note",
-      label: t("crmActivities.kinds.note") || "Quick Note",
+      label: t("crmActivities.kinds.note"),
       icon: <FileText className="size-3.5" />,
     },
     {
       kind: "CallLog",
-      label: t("crmActivities.kinds.call") || "Phone Call",
+      label: t("crmActivities.kinds.call"),
       icon: <Phone className="size-3.5" />,
     },
     {
       kind: "MeetingLog",
-      label: t("crmActivities.kinds.meeting") || "Meeting Log",
+      label: t("crmActivities.kinds.meeting"),
       icon: <Users className="size-3.5" />,
     },
   ];
@@ -95,13 +95,12 @@ export function CreateActivityModal({
         <form onSubmit={handleSubmit}>
           <DialogHeader>
             <DialogTitle className="text-base font-bold text-nx-ink font-heading">
-              {t("crmActivities.modal.title") || "Log Sales Activity"}
+              {t("crmActivities.modal.title")}
             </DialogTitle>
             <DialogDescription className="text-xs text-nx-ink-2">
               {targetLabel
-                ? `${t("crmActivities.modal.targetDesc") || "Record a commercial interaction for"} ${targetLabel}.`
-                : t("crmActivities.modal.description") ||
-                  "Record a commercial note, phone call summary, or meeting outcome."}
+                ? `${t("crmActivities.modal.targetDesc")} ${targetLabel}.`
+                : t("crmActivities.modal.description")}
             </DialogDescription>
           </DialogHeader>
 
@@ -119,7 +118,7 @@ export function CreateActivityModal({
             {/* Kind Selector */}
             <div className="space-y-1.5">
               <Label className="text-nx-ink font-semibold">
-                {t("crmActivities.form.activityType") || "Activity Type"}
+                {t("crmActivities.form.activityType")}
               </Label>
               <div className="grid grid-cols-3 gap-2">
                 {activityOptions.map((opt) => (
@@ -145,7 +144,7 @@ export function CreateActivityModal({
             {/* Summary */}
             <div className="space-y-1.5">
               <Label htmlFor="activity-summary" className="text-nx-ink font-semibold">
-                {t("crmActivities.form.summary") || "Summary / Headline"} *
+                {t("crmActivities.form.summary")} *
               </Label>
               <Input
                 id="activity-summary"
@@ -166,16 +165,13 @@ export function CreateActivityModal({
             {/* Detailed Body Text */}
             <div className="space-y-1.5">
               <Label htmlFor="activity-body" className="text-nx-ink font-semibold">
-                {t("crmActivities.form.details") || "Discussion Details & Notes"}
+                {t("crmActivities.form.details")}
               </Label>
               <Textarea
                 id="activity-body"
                 value={bodyText}
                 onChange={(e) => setBodyText(e.target.value)}
-                placeholder={
-                  t("crmActivities.form.detailsPlaceholder") ||
-                  "Record key talking points, agreed action items, or customer objections..."
-                }
+                placeholder={t("crmActivities.form.detailsPlaceholder")}
                 rows={4}
                 className="text-xs bg-nx-ground border-nx-line text-nx-ink resize-none"
               />
@@ -191,11 +187,10 @@ export function CreateActivityModal({
               <div className="flex-1 cursor-pointer" onClick={() => setContainsPii(!containsPii)}>
                 <Label htmlFor="activity-pii" className="text-xs font-semibold text-nx-ink cursor-pointer flex items-center gap-1">
                   <ShieldAlert className="size-3 text-warning" />
-                  {t("crmActivities.form.containsPii") || "Contains Confidential / Sensitive Details"}
+                  {t("crmActivities.form.containsPii")}
                 </Label>
                 <p className="text-[10px] text-nx-ink-3">
-                  {t("crmActivities.form.piiDesc") ||
-                    "Limits note details to team members with sensitive-data viewing access."}
+                  {t("crmActivities.form.piiDesc")}
                 </p>
               </div>
             </div>
@@ -210,7 +205,7 @@ export function CreateActivityModal({
               disabled={isSubmitting}
               className="h-8 text-xs border-nx-line text-nx-ink-2"
             >
-              {t("common.cancel") || "Cancel"}
+              {t("crmActivities.actions.cancel")}
             </Button>
             <Button
               type="submit"
@@ -219,8 +214,8 @@ export function CreateActivityModal({
               className="h-8 text-xs font-bold"
             >
               {isSubmitting
-                ? t("common.saving") || "Saving..."
-                : t("crmActivities.modal.saveBtn") || "Log Activity"}
+                ? t("crmActivities.actions.saving")
+                : t("crmActivities.modal.saveBtn")}
             </Button>
           </DialogFooter>
         </form>

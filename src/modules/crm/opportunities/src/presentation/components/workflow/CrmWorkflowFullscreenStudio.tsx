@@ -143,16 +143,18 @@ export function CrmWorkflowFullscreenStudio(props: CrmWorkflowFullscreenStudioPr
       )}
 
       <div className="flex-1 flex min-h-0 overflow-hidden">
-        <CrmWorkflowCanvas2D
-          stages={activeStages} transitions={transitions} selectedStageKey={selectedStageKey}
-          selectedTransitionId={selectedTransitionId} viewMode={viewMode} zoom={zoom}
-          crmCustomFields={crmCustomFields} onZoomChange={setZoom} onSelectStage={setSelectedStageKey}
-          onSelectTransition={setSelectedTransitionId} onNodeMove={onNodeMove}
-          onTransitionChange={onTransitionChange} onOpenAddStage={onOpenAddStage}
-          onOpenAddTransition={onOpenAddTransition} onOpenRuleForStage={onOpenRuleForStage} onValidateRules={onValidateRules}
-          onApplyLayoutPositions={onApplyLayoutPositions}
-          canUndo={canUndo} canRedo={canRedo} onUndo={onUndo} onRedo={onRedo}
-        />
+        <div className="flex-1 min-w-0 flex flex-col overflow-hidden">
+          <CrmWorkflowCanvas2D
+            stages={activeStages} transitions={transitions} selectedStageKey={selectedStageKey}
+            selectedTransitionId={selectedTransitionId} viewMode={viewMode} zoom={zoom}
+            crmCustomFields={crmCustomFields} onZoomChange={setZoom} onSelectStage={setSelectedStageKey}
+            onSelectTransition={setSelectedTransitionId} onNodeMove={onNodeMove}
+            onTransitionChange={onTransitionChange} onOpenAddStage={onOpenAddStage}
+            onOpenAddTransition={onOpenAddTransition} onOpenRuleForStage={onOpenRuleForStage} onValidateRules={onValidateRules}
+            onApplyLayoutPositions={onApplyLayoutPositions}
+            canUndo={canUndo} canRedo={canRedo} onUndo={onUndo} onRedo={onRedo}
+          />
+        </div>
         <CrmWorkflowInspectorPanel
           activeEntity={activeEntity} stages={activeStages} transitions={transitions}
           selectedStage={selectedStage} selectedTransition={selectedTransition} crmCustomFields={crmCustomFields}

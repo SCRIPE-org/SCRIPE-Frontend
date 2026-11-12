@@ -10,7 +10,7 @@ import {
 } from "@xyflow/react";
 import { FileText, Lock, Shield, Sparkles } from "lucide-react";
 import { Badge } from "@core/ui/badge";
-import { getWorkflowStudioText } from "../../../locales";
+import { useI18n } from "@core/providers/i18n-provider";
 import type { CrmWorkflowTransition } from "./CrmWorkflowCanvas2D";
 import { countTransitionRules } from "./CrmWorkflowCanvasSubViews";
 
@@ -24,6 +24,8 @@ export interface TransitionEdgeData extends Record<string, unknown> {
   parallelIndex?: number;
   parallelCount?: number;
   offset?: number;
+  labelStaggerX?: number;
+  labelStaggerY?: number;
   stageBoxes?: Array<{ x: number; y: number; w: number; h: number }>;
 }
 
@@ -42,6 +44,7 @@ function CrmTransitionFlowEdgeComponent({
   data,
   selected,
 }: EdgeProps<TransitionFlowEdge>) {
+  const { t } = useI18n();
   const isSelected = selected || data?.isSelected;
   const transition = data?.transition;
   const isAr = Boolean(data?.isAr);
@@ -81,8 +84,8 @@ function CrmTransitionFlowEdgeComponent({
 
   // Shift label perpendicular so parallel labels never stack on top of each other
   const labelShiftY = parallelCount > 1 ? (parallelIndex - (parallelCount - 1) / 2) * 26 : 0;
-  let computedLabelX = labelX;
-  let computedLabelY = labelY + labelShiftY;
+  let computedLabelX = labelX + (data?.labelStaggerX ?? 0);
+  let computedLabelY = labelY + labelShiftY + (data?.labelStaggerY ?? 0);
 
   // Obstacle avoidance: nudge label pill if it collides with any stage card
   const stageBoxes = data?.stageBoxes ?? [];
@@ -151,19 +154,19 @@ function CrmTransitionFlowEdgeComponent({
               </span>
 
               {hasScreen && (
-                <span title={getWorkflowStudioText("transitionScreenRequired", isAr)} className="inline-flex shrink-0">
+                <span title={t("crmOpportunities.workflowStudio.transitionScreenRequired")} className="inline-flex shrink-0">
                   <FileText className="w-2.5 h-2.5 text-info" />
                 </span>
               )}
 
               {noRollback && (
-                <span title={getWorkflowStudioText("transitionNoRollback", isAr)} className="inline-flex shrink-0">
+                <span title={t("crmOpportunities.workflowStudio.transitionNoRollback")} className="inline-flex shrink-0">
                   <Lock className="w-2.5 h-2.5 text-warning" />
                 </span>
               )}
 
               {transition.triggerDealConversion && (
-                <span title={getWorkflowStudioText("autoConvertsToDeal", isAr)} className="inline-flex shrink-0">
+                <span title={t("crmOpportunities.workflowStudio.autoConvertsToDeal")} className="inline-flex shrink-0">
                   <Sparkles className="w-2.5 h-2.5 text-success" />
                 </span>
               )}

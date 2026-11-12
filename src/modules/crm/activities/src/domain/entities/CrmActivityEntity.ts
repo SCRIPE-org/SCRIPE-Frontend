@@ -106,6 +106,7 @@ export interface CrmActivitiesQueryFilter {
   readonly activityKind?: SalesActivityKind;
   readonly page?: number;
   readonly pageSize?: number;
+  readonly includeAllVisible?: boolean;
 }
 
 export interface PagedActivitiesResult {

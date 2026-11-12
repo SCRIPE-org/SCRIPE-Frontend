@@ -8,8 +8,9 @@ import {
 import "@xyflow/react/dist/style.css";
 import { useI18n } from "@core/providers/i18n-provider";
 import { Button } from "@core/ui/button";
-import type {
-  CrmCustomFieldDefinition, CrmStageColorToken, CrmWorkflowCatalogRule, CrmWorkflowStageCategory,
+import {
+  buildCustomHexHarmonicStyles, resolveDefaultStageColor,
+  type CrmCustomFieldDefinition, type CrmStageColorToken, type CrmWorkflowCatalogRule, type CrmWorkflowStageCategory,
 } from "@modules/crm";
 import {
   CrmWorkflowClassicFlowView, CrmWorkflowTransitionsTableView, type StagePortId,
@@ -66,6 +67,13 @@ const nodeTypes: NodeTypes = {
 };
 const edgeTypes: EdgeTypes = { transitionEdge: CrmTransitionFlowEdge };
 
+const TOKEN_COLOR_HEX_MAP: Record<CrmStageColorToken, string> = {
+  slate: "#64748b", zinc: "#71717a", blue: "#3b82f6", sky: "#0ea5e9", cyan: "#06b6d4",
+  teal: "#14b8a6", emerald: "#10b981", green: "#22c55e", lime: "#84cc16", amber: "#f59e0b",
+  orange: "#f97316", coral: "#fb7185", rose: "#f43f5e", crimson: "#dc2626", pink: "#ec4899",
+  fuchsia: "#d946ef", purple: "#a855f7", violet: "#8b5cf6", indigo: "#6366f1",
+};
+
 function ManagedReactFlowCanvas(props: CrmWorkflowCanvas2DProps) {
   const {
     stages, transitions, selectedStageKey, zoom, onZoomChange, onSelectTransition, onSelectStage,
@@ -77,7 +85,7 @@ function ManagedReactFlowCanvas(props: CrmWorkflowCanvas2DProps) {
   const graph = useCrmWorkflowCanvasGraph({ ...props, isAr });
 
   return (
-    <div ref={graph.flowContainerRef} className="relative flex-1 flex flex-col bg-nx-ground overflow-hidden select-none" data-testid="crm-workflow-canvas-card">
+    <div ref={graph.flowContainerRef} className="relative flex-1 flex flex-col bg-nx-ground overflow-hidden select-none min-w-0" data-testid="crm-workflow-canvas-card">
       <CrmWorkflowCanvasToolbar
         t={t} isAr={isAr} selectedStageKey={selectedStageKey} firstStageKey={graph.firstStage?.stageKey}
         onOpenAddStage={props.onOpenAddStage} onOpenAddTransition={() => props.onOpenAddTransition()}
@@ -110,9 +118,16 @@ function ManagedReactFlowCanvas(props: CrmWorkflowCanvas2DProps) {
                   style={{ width: 148, height: 92 }} nodeStrokeColor="var(--nx-line-hi, #3f3f46)"
                   nodeColor={(n) => {
                     const st = stages.find((s) => s.stageKey === n.id);
-                    if (st?.category === "done" || st?.isTerminalWon) return "rgba(34, 197, 94, 0.7)";
-                    if (st?.category === "lost" || st?.isTerminalLost) return "rgba(239, 68, 68, 0.7)";
-                    if (st?.category === "in_progress") return "rgba(59, 130, 246, 0.7)";
+                    if (!st) return "rgba(161, 161, 170, 0.5)";
+                    if (st.customColorHex) {
+                      const custom = buildCustomHexHarmonicStyles(st.customColorHex);
+                      if (custom.isValidHex && custom.minimapStroke) return custom.minimapStroke;
+                    }
+                    const token = resolveDefaultStageColor(st.stageKey, st.category, st.order, st.color || st.properties?.color);
+                    if (token && TOKEN_COLOR_HEX_MAP[token]) return TOKEN_COLOR_HEX_MAP[token];
+                    if (st.category === "done" || st.isTerminalWon) return "rgba(34, 197, 94, 0.85)";
+                    if (st.category === "lost" || st.isTerminalLost) return "rgba(239, 68, 68, 0.85)";
+                    if (st.category === "in_progress") return "rgba(59, 130, 246, 0.85)";
                     return "rgba(161, 161, 170, 0.5)";
                   }}
                   nodeBorderRadius={3} maskColor="rgba(120, 120, 130, 0.18)"

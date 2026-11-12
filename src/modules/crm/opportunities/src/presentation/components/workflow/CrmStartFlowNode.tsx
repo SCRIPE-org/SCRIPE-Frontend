@@ -2,7 +2,7 @@
 
 import React, { memo } from "react";
 import { Handle, Position, type Node, type NodeProps } from "@xyflow/react";
-import { getWorkflowStudioText } from "../../../locales";
+import { useI18n } from "@core/providers/i18n-provider";
 
 export interface StartNodeData extends Record<string, unknown> {
   isAr?: boolean;
@@ -13,8 +13,8 @@ export interface StartNodeData extends Record<string, unknown> {
 export type StartFlowNode = Node<StartNodeData, "startNode">;
 
 function CrmStartFlowNodeComponent({ id, data, selected }: NodeProps<StartFlowNode>) {
-  const isAr = Boolean(data?.isAr);
-  const label = data?.label || getWorkflowStudioText("startNode", isAr);
+  const { t } = useI18n();
+  const label = data?.label || t("crmOpportunities.workflowStudio.startNode");
 
   return (
     <div

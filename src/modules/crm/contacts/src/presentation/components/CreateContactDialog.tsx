@@ -114,11 +114,11 @@ export function CreateContactDialog({
     e.preventDefault();
     setValidationError(null);
     if (mode === "select" && !personPartyId.trim()) {
-      setValidationError(t("crmContacts.create.personSelectRequired") || "Please select an existing contact person from the directory.");
+      setValidationError(t("crmContacts.create.personSelectRequired"));
       return;
     }
     if (mode === "create" && !fullNameEn.trim()) {
-      setValidationError(t("crmContacts.create.fullNameRequired") || "Contact full name is required.");
+      setValidationError(t("crmContacts.create.fullNameRequired"));
       return;
     }
     const resolvedAccountId = primaryAccountId && primaryAccountId !== "__none" ? primaryAccountId.trim() : undefined;
@@ -147,17 +147,17 @@ export function CreateContactDialog({
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2 text-base font-bold text-nx-ink">
             <User className="size-4 text-nx-accent" />
-            <span>{t("crmContacts.create.title") || "Register Commercial Contact"}</span>
+            <span>{t("crmContacts.create.title")}</span>
           </DialogTitle>
           <DialogDescription className="text-xs text-nx-ink-2">
-            {t("crmContacts.create.description") || "Create a new contact stakeholder or link an existing person and assign their commercial account."}
+            {t("crmContacts.create.description")}
           </DialogDescription>
         </DialogHeader>
 
         {activeError && (
           <Alert variant="destructive" className="py-2.5 border-destructive/20 bg-destructive/10">
             <AlertCircle className="size-4" />
-            <AlertTitle className="text-xs font-semibold">{t("common.error") || "Validation Error"}</AlertTitle>
+            <AlertTitle className="text-xs font-semibold">{t("crmContacts.actions.error")}</AlertTitle>
             <AlertDescription className="text-xs">{activeError}</AlertDescription>
           </Alert>
         )}
@@ -166,11 +166,11 @@ export function CreateContactDialog({
           <div className="grid grid-cols-2 gap-2 p-1 rounded-nx-md bg-nx-raised border border-nx-line">
             <Button type="button" variant={mode === "create" ? "default" : "ghost"} size="sm" onClick={() => { setMode("create"); setValidationError(null); }} className="h-8 text-xs font-semibold gap-1.5">
               <PlusCircle className="size-3.5" />
-              <span>{t("crmContacts.create.modeCreateNew") || "New Contact Person"}</span>
+              <span>{t("crmContacts.create.modeCreateNew")}</span>
             </Button>
             <Button type="button" variant={mode === "select" ? "default" : "ghost"} size="sm" onClick={() => { setMode("select"); setValidationError(null); }} className="h-8 text-xs font-semibold gap-1.5">
               <User className="size-3.5" />
-              <span>{t("crmContacts.create.modeSelectExisting") || "Existing Person"}</span>
+              <span>{t("crmContacts.create.modeSelectExisting")}</span>
             </Button>
           </div>
 
@@ -267,7 +267,7 @@ export function CreateContactDialog({
 
           <CustomFieldsSection
             entityTypeKey="crm.contact"
-            entityDisplayName={t("crmContacts.title") || "Commercial Contact"}
+            entityDisplayName={t("crmContacts.title")}
             values={customFields}
             onChange={(key, value) => setCustomFields((prev) => ({ ...prev, [key]: value }))}
             disabled={isSubmitting}
@@ -275,10 +275,10 @@ export function CreateContactDialog({
 
           <DialogFooter className="pt-2">
             <Button type="button" variant="outline" size="sm" onClick={() => handleOpenChange(false)} disabled={isSubmitting} className="text-xs border-nx-line bg-nx-surface text-nx-ink">
-              {t("common.cancel") || "Cancel"}
+              {t("crmContacts.actions.cancel")}
             </Button>
             <Button type="submit" size="sm" disabled={isSubmitting} className="text-xs font-bold">
-              {isSubmitting ? t("common.saving") || "Saving..." : t("crmContacts.create.submit") || "Create Contact"}
+              {isSubmitting ? t("crmContacts.actions.saving") : t("crmContacts.create.submit")}
             </Button>
           </DialogFooter>
         </form>

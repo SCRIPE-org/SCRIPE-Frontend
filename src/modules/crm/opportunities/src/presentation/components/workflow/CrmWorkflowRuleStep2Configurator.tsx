@@ -81,7 +81,7 @@ export function CrmWorkflowRuleStep2Configurator({
             {filteredRoles.map((role) => (
               <label key={role.key} className="flex items-center justify-between gap-1.5 rounded border border-nx-line bg-nx-ground px-2 py-1 text-xs cursor-pointer" data-testid={`principal-option-${role.key}`}>
                 <span className="inline-flex items-center gap-1.5 truncate"><Checkbox checked={selectedPrincipals.includes(role.key)} onCheckedChange={() => updatePrincipals(toggleCsv(selectedPrincipals.join(","), role.key))} /><span className="font-semibold text-nx-ink truncate">{isAr ? role.nameAr : role.nameEn}</span></span>
-                <Badge variant="outline" className="text-[9px] font-mono shrink-0">{(role.memberNames?.length ?? 1)} mbr</Badge>
+                <Badge variant="outline" className="text-[9px] font-mono shrink-0">{(role.memberNames?.length ?? 1)} {t("crmOpportunities.ruleConfig.membersSuffix")}</Badge>
               </label>
             ))}
           </div>

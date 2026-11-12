@@ -16,6 +16,18 @@ export interface BuildLeadsTableColumnsParams {
   onNavigateLead: (leadId: string) => void;
 }
 
+function formatLeadSource(src: string | undefined | null, t: (k: string) => string): string {
+  if (!src) return t("crmLeads.sources.direct");
+  const norm = src.toLowerCase().replace(/[\s\-_]/g, "");
+  if (norm === "inbound") return t("crmLeads.sources.inbound");
+  if (norm === "website") return t("crmLeads.sources.website");
+  if (norm === "referral") return t("crmLeads.sources.referral");
+  if (norm === "directoutreach") return t("crmLeads.sources.directOutreach");
+  if (norm === "event" || norm === "conference") return t("crmLeads.sources.event");
+  if (norm === "direct") return t("crmLeads.sources.direct");
+  return src;
+}
+
 export function buildLeadsTableColumns({
   t,
   language,
@@ -141,7 +153,7 @@ export function buildLeadsTableColumns({
       label: t("crmLeads.table.source"),
       render: (_val, lead: CrmLead) => (
         <span className="inline-flex items-center px-2 py-0.5 rounded-nx-xs bg-nx-raised border border-nx-line text-[11px] text-nx-ink-2">
-          {lead.source || "Direct"}
+          {formatLeadSource(lead.source, t)}
         </span>
       ),
     },
@@ -176,6 +188,7 @@ export function renderLeadsCardGridItemCard(
   showOriginalCurrencyBadge: boolean,
   convertAmount: (amount: number, from: string, to: string) => number,
   onNavigateLead: (id: string) => void,
+  t: (key: string, params?: Record<string, any>) => string,
 ) {
   return (
     <div
@@ -209,7 +222,7 @@ export function renderLeadsCardGridItemCard(
         )}
       </div>
       <div className="border-t border-nx-line pt-3 flex flex-wrap items-center justify-between gap-2" onClick={(e) => e.stopPropagation()}>
-        <span className="text-[11px] text-nx-ink-3 shrink-0">{lead.source || "Direct"}</span>
+        <span className="text-[11px] text-nx-ink-3 shrink-0">{formatLeadSource(lead.source, t)}</span>
         <div className="flex flex-wrap items-center gap-1.5 [&_div]:flex [&_div]:flex-wrap [&_div]:gap-1.5">{actions}</div>
       </div>
     </div>
@@ -246,7 +259,7 @@ export function renderLeadsSplitDetailCard(
         </div>
         <div className="space-y-1">
           <span className="text-nx-ink-3">{t("crmLeads.table.source")}</span>
-          <div className="font-medium text-nx-ink">{lead.source || "Direct"}</div>
+          <div className="font-medium text-nx-ink">{formatLeadSource(lead.source, t)}</div>
         </div>
         <div className="space-y-1">
           <span className="text-nx-ink-3">{t("crmLeads.dialog.emailLabel")}</span>

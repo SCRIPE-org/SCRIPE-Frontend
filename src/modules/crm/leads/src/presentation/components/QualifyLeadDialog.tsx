@@ -62,7 +62,7 @@ export function QualifyLeadDialog({
     if (!lead) return;
 
     if (decision === "Disqualified" && !reason.trim()) {
-      setValidationError(t("crmLeads.qualification.reasonRequired") || "Disqualification reason is required");
+      setValidationError(t("crmLeads.qualification.reasonRequired"));
       return;
     }
 

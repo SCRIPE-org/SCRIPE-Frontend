@@ -29,12 +29,12 @@ export interface CrmCustomFieldsStudioCardProps {
 }
 
 const STAGE_OPTIONS = [
-  { key: "none", label: "No automatic stage gate" },
-  { key: "default.discovery", label: "Discovery Exit Gate" },
-  { key: "default.qualification", label: "Qualification Exit Gate" },
-  { key: "default.solution_fit", label: "Solution Fit Exit Gate" },
-  { key: "default.proposal", label: "Proposal Exit Gate" },
-  { key: "default.negotiation", label: "Negotiation Exit Gate" },
+  { key: "none", labelKey: "crm.settings.integrations.stageOptionNone" },
+  { key: "default.discovery", labelKey: "crm.settings.integrations.stageOptionDiscovery" },
+  { key: "default.qualification", labelKey: "crm.settings.integrations.stageOptionQualification" },
+  { key: "default.solution_fit", labelKey: "crm.settings.integrations.stageOptionSolutionFit" },
+  { key: "default.proposal", labelKey: "crm.settings.integrations.stageOptionProposal" },
+  { key: "default.negotiation", labelKey: "crm.settings.integrations.stageOptionNegotiation" },
 ];
 
 /** Domain 3 Card: Cross-Module SCRIPE Sports OS Integrations Hub & Custom Fields Studio. */
@@ -150,12 +150,12 @@ export function CrmCustomFieldsStudioCard({ settings, onCreateCustomField, onNot
             <Select value={cfValueType} onValueChange={(v) => setCfValueType(v as typeof cfValueType)}>
               <SelectTrigger data-testid="crm-cf-type-select" className="h-8 text-xs bg-nx-ground border-nx-line text-nx-ink"><SelectValue /></SelectTrigger>
               <SelectContent>
-                <SelectItem value="Text">Text</SelectItem>
-                <SelectItem value="Number">Number</SelectItem>
-                <SelectItem value="Currency">Currency</SelectItem>
-                <SelectItem value="Date">Date</SelectItem>
-                <SelectItem value="Select">Select</SelectItem>
-                <SelectItem value="Boolean">Boolean</SelectItem>
+                <SelectItem value="Text">{t("crm.settings.integrations.typeText")}</SelectItem>
+                <SelectItem value="Number">{t("crm.settings.integrations.typeNumber")}</SelectItem>
+                <SelectItem value="Currency">{t("crm.settings.integrations.typeCurrency")}</SelectItem>
+                <SelectItem value="Date">{t("crm.settings.integrations.typeDate")}</SelectItem>
+                <SelectItem value="Select">{t("crm.settings.integrations.typeSelect")}</SelectItem>
+                <SelectItem value="Boolean">{t("crm.settings.integrations.typeBoolean")}</SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -166,7 +166,7 @@ export function CrmCustomFieldsStudioCard({ settings, onCreateCustomField, onNot
               <Select value={cfStageGate} onValueChange={setCfStageGate}>
                 <SelectTrigger data-testid="crm-cf-stage-gate-select" className="h-8 text-xs bg-nx-ground border-nx-line text-nx-ink"><SelectValue /></SelectTrigger>
                 <SelectContent>
-                  {STAGE_OPTIONS.map((st) => (<SelectItem key={st.key} value={st.key}>{st.label}</SelectItem>))}
+                  {STAGE_OPTIONS.map((st) => (<SelectItem key={st.key} value={st.key}>{t(st.labelKey)}</SelectItem>))}
                 </SelectContent>
               </Select>
             </div>

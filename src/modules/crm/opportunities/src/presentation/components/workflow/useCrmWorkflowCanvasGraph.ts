@@ -2,14 +2,8 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
-  MarkerType,
-  useEdgesState,
-  useNodesState,
-  useReactFlow,
-  type Connection,
-  type Node,
-  type OnConnect,
-  type OnReconnect,
+  MarkerType, useEdgesState, useNodesState, useReactFlow,
+  type Connection, type Node, type OnConnect, type OnReconnect,
 } from "@xyflow/react";
 import { toPng } from "html-to-image";
 import type { CrmCustomFieldDefinition } from "@modules/crm";
@@ -49,14 +43,8 @@ export function useCrmWorkflowCanvasGraph(params: UseCrmWorkflowCanvasGraphParam
   const [simModeOpen, setSimModeOpen] = useState(false);
   const [wireDraftSource, setWireDraftSource] = useState<{ fromStageKey: string; fromPortId?: StagePortId } | null>(null);
 
-  const wildcardTransitions = useMemo(
-    () => transitions.filter((tr) => tr.fromStageKey === "*" || tr.fromStageKeys?.includes("*")),
-    [transitions],
-  );
-  const directTransitions = useMemo(
-    () => transitions.filter((tr) => tr.fromStageKey !== "*" && !tr.fromStageKeys?.includes("*")),
-    [transitions],
-  );
+  const wildcardTransitions = useMemo(() => transitions.filter((tr) => tr.fromStageKey === "*" || tr.fromStageKeys?.includes("*")), [transitions]);
+  const directTransitions = useMemo(() => transitions.filter((tr) => tr.fromStageKey !== "*" && !tr.fromStageKeys?.includes("*")), [transitions]);
   const firstStage = useMemo(() => [...stages].sort((a, b) => a.order - b.order)[0], [stages]);
 
   const initialNodes: Node[] = useMemo(() => {
@@ -78,9 +66,11 @@ export function useCrmWorkflowCanvasGraph(params: UseCrmWorkflowCanvasGraphParam
     }));
 
     if (firstStage) {
+      const startFlowsRight = stages.length <= 1 || stages.every((s) => s.x >= firstStage.x - 20);
+      const startX = startFlowsRight ? firstStage.x - 156 : firstStage.x + 300;
       stageNodes.unshift({
         id: "__start__", type: "startNode",
-        position: { x: isAr ? firstStage.x + 300 : firstStage.x - 156, y: firstStage.y + 46 },
+        position: { x: startX, y: firstStage.y + 46 },
         data: { isAr }, selectable: false, draggable: false,
       });
     }
@@ -111,16 +101,19 @@ export function useCrmWorkflowCanvasGraph(params: UseCrmWorkflowCanvasGraphParam
     });
     const stageMap = new Map(stages.map((s) => [s.stageKey, s]));
 
+    let defaultSrcPort: StagePortId = "right-2";
+    let defaultDstPort: StagePortId = "left-2";
+    if (isAr) {
+      defaultSrcPort = "left-2";
+      defaultDstPort = "right-2";
+    }
+
     if (firstStage) {
-      let sourceHandle: StagePortId = "right-2";
-      let targetHandle: StagePortId = "left-2";
-      if (isAr) {
-        sourceHandle = "left-2";
-        targetHandle = "right-2";
-      }
+      const startFlowsRight = stages.length <= 1 || stages.every((s) => s.x >= firstStage.x - 20);
       resultEdges.push({
         id: "edge-start-to-first", source: "__start__", target: firstStage.stageKey,
-        sourceHandle, targetHandle,
+        sourceHandle: startFlowsRight ? "right-2" : "left-2",
+        targetHandle: startFlowsRight ? "left-2" : "right-2",
         type: "smoothstep", animated: true, selectable: false,
         style: { stroke: "#10b981", strokeWidth: 2 },
         markerEnd: { type: MarkerType.ArrowClosed, width: 14, height: 14, color: "#10b981" },
@@ -139,6 +132,7 @@ export function useCrmWorkflowCanvasGraph(params: UseCrmWorkflowCanvasGraphParam
     });
 
     let backwardCount = 0;
+    let crossLaneCount = 0;
     activeTransitions.forEach((tr) => {
       const isWildcard = tr.fromStageKey === "*" || tr.fromStageKeys?.includes("*");
       const resolvedSource = isWildcard ? (showGlobalWires ? "__global_all__" : firstStage?.stageKey ?? stages[0]?.stageKey ?? "") : tr.fromStageKey;
@@ -147,6 +141,18 @@ export function useCrmWorkflowCanvasGraph(params: UseCrmWorkflowCanvasGraphParam
       const fromOrd = fromNode?.order ?? 0;
       const toOrd = toNode?.order ?? 0;
       const isBackward = !isWildcard && (tr.direction === "backward" || (fromOrd > 0 && toOrd > 0 && toOrd < fromOrd));
+      const isCrossRow = Math.abs((fromNode?.y ?? 0) - (toNode?.y ?? 0)) > 60;
+      const isSpecialCross = isBackward || isCrossRow;
+
+      let edgeOffset = 24;
+      let labelStaggerX = 0;
+      let labelStaggerY = 0;
+      if (isSpecialCross) {
+        crossLaneCount++;
+        edgeOffset = 28 + (crossLaneCount % 4) * 20;
+        labelStaggerX = (crossLaneCount % 3) * 52 - 26;
+        labelStaggerY = crossLaneCount % 2 === 0 ? -20 : 20;
+      }
 
       let sourceHandle: StagePortId;
       let targetHandle: StagePortId;
@@ -169,15 +175,18 @@ export function useCrmWorkflowCanvasGraph(params: UseCrmWorkflowCanvasGraphParam
       } else if (isWildcard) {
         sourceHandle = tr.sourcePort ?? "bottom-3";
         targetHandle = tr.targetPort ?? "top-1";
+      } else if (
+        !tr.sourcePort &&
+        !tr.targetPort &&
+        fromNode &&
+        toNode &&
+        Math.abs(fromNode.x - toNode.x) > 40
+      ) {
+        sourceHandle = fromNode.x < toNode.x ? "right-2" : "left-2";
+        targetHandle = fromNode.x < toNode.x ? "left-2" : "right-2";
       } else {
-        let defSrc: StagePortId = "right-2";
-        let defDst: StagePortId = "left-2";
-        if (isAr) {
-          defSrc = "left-2";
-          defDst = "right-2";
-        }
-        sourceHandle = tr.sourcePort ?? defSrc;
-        targetHandle = tr.targetPort ?? defDst;
+        sourceHandle = tr.sourcePort ?? defaultSrcPort;
+        targetHandle = tr.targetPort ?? defaultDstPort;
       }
 
       const key = `${resolvedSource}->${tr.toStageKey}`;
@@ -194,7 +203,7 @@ export function useCrmWorkflowCanvasGraph(params: UseCrmWorkflowCanvasGraphParam
         markerEnd: { type: MarkerType.ArrowClosed, width: 14, height: 14, color: edgeColor },
         data: {
           transition: tr, isAr, isSelected, showLabels: showTransitionLabels, isGlobalWildcard: isWildcard,
-          parallelIndex, parallelCount, stageBoxes,
+          parallelIndex, parallelCount, offset: edgeOffset, labelStaggerX, labelStaggerY, stageBoxes,
           onSelectTransition: (id: string) => { onSelectTransition(id); onSelectStage(null); },
         },
       });
@@ -208,11 +217,7 @@ export function useCrmWorkflowCanvasGraph(params: UseCrmWorkflowCanvasGraphParam
             targetHandle: (fIdx % 2 === 0 ? "bottom-1" : "top-1") as StagePortId,
             type: "transitionEdge", selected: isSelected,
             markerEnd: { type: MarkerType.ArrowClosed, width: 14, height: 14, color: "var(--nx-ink-3, #71717a)" },
-            data: {
-              transition: { ...tr, fromStageKey: srcStage.stageKey },
-              isAr, isSelected, showLabels: false, isGlobalWildcard: true, stageBoxes,
-              onSelectTransition: (id: string) => { onSelectTransition(id); onSelectStage(null); },
-            },
+            data: { transition: { ...tr, fromStageKey: srcStage.stageKey }, isAr, isSelected, showLabels: false, isGlobalWildcard: true, stageBoxes, onSelectTransition: (id: string) => { onSelectTransition(id); onSelectStage(null); } },
           });
         });
       }

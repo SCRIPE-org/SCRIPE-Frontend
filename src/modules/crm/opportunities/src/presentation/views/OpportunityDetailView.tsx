@@ -41,11 +41,11 @@ export interface OpportunityDetailViewProps {
 }
 
 const DEFAULT_STAGE_STEPS = [
-  { key: "default.discovery", label: "Discovery", order: 1, requiresParty: false },
-  { key: "default.qualification", label: "Qualification", order: 2, requiresParty: false },
-  { key: "default.solution_fit", label: "Solution Fit", order: 3, requiresParty: false },
-  { key: "default.proposal", label: "Proposal", order: 4, requiresParty: true },
-  { key: "default.negotiation", label: "Negotiation", order: 5, requiresParty: true },
+  { key: "default.discovery", labelKey: "crmOpportunities.stages.discovery", order: 1, requiresParty: false },
+  { key: "default.qualification", labelKey: "crmOpportunities.stages.qualification", order: 2, requiresParty: false },
+  { key: "default.solution_fit", labelKey: "crmOpportunities.stages.solutionFit", order: 3, requiresParty: false },
+  { key: "default.proposal", labelKey: "crmOpportunities.stages.proposal", order: 4, requiresParty: true },
+  { key: "default.negotiation", labelKey: "crmOpportunities.stages.negotiation", order: 5, requiresParty: true },
 ];
 
 export function OpportunityDetailView({ opportunityId }: OpportunityDetailViewProps) {
@@ -121,8 +121,8 @@ export function OpportunityDetailView({ opportunityId }: OpportunityDetailViewPr
       closeNotes: payload.closeNotes,
       reopenReason: payload.reopenReason,
       reason: payload.reason,
-      auditNote: payload.auditNote,
-      customFields: payload.customFields,
+      stageTransitionNote: payload.auditNote,
+      customFieldValues: payload.customFields,
     });
   };
 
@@ -179,6 +179,7 @@ export function OpportunityDetailView({ opportunityId }: OpportunityDetailViewPr
           })
       : DEFAULT_STAGE_STEPS.map((st) => ({
           ...st,
+          label: t(st.labelKey),
           color: resolveDefaultStageColor(st.key, "in_progress", st.order),
           customColorHex: undefined as string | undefined,
         }));

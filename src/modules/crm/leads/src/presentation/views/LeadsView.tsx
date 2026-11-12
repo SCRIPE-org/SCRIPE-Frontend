@@ -128,8 +128,12 @@ export function LeadsView() {
     handleLeadStageTransition, handleUpdateLeadStatus, openQualifyDialog, openLinkPartyDialog, openConvertDialog, setIsCreateOpen,
   });
 
+  const onTabNav = (tab: string) => {
+    if (tab !== "leads") router.push(tab === "overview" ? "/crm" : tab === "deals" ? "/crm/opportunities" : `/crm/${tab}`);
+  };
+
   return (
-    <CrmShell activeTab="leads" onTabChange={() => {}}>
+    <CrmShell activeTab="leads" onTabChange={onTabNav}>
       <CrmSectionHeader
         title={t("crmLeads.title")}
         subtitle={t("crmLeads.subtitle")}

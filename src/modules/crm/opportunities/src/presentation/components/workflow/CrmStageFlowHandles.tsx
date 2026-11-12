@@ -36,7 +36,7 @@ const PORT_DEFINITIONS: readonly PortDef[] = [
   { id: "top-2", type: "source", position: Position.Top, style: { left: "50%" } },
   { id: "top-3", type: "source", position: Position.Top, style: { left: "75%" } },
 
-  // Right Face (3 ports: 3 OUT)
+  // Right Face (3 bidirectional ports: source + target for LTR & RTL flows)
   { id: "right-1", type: "source", position: Position.Right, style: { top: "25%" } },
   { id: "right-2", type: "source", position: Position.Right, style: { top: "50%" } },
   { id: "right-3", type: "source", position: Position.Right, style: { top: "75%" } },
@@ -46,10 +46,19 @@ const PORT_DEFINITIONS: readonly PortDef[] = [
   { id: "bottom-2", type: "target", position: Position.Bottom, style: { left: "50%" } },
   { id: "bottom-3", type: "source", position: Position.Bottom, style: { left: "75%" } },
 
-  // Left Face (3 ports: 3 IN)
+  // Left Face (3 bidirectional ports: target + source for LTR & RTL flows)
   { id: "left-1", type: "target", position: Position.Left, style: { top: "25%" } },
   { id: "left-2", type: "target", position: Position.Left, style: { top: "50%" } },
   { id: "left-3", type: "target", position: Position.Left, style: { top: "75%" } },
+];
+
+const BIDIRECTIONAL_COMPANION_HANDLES: readonly PortDef[] = [
+  { id: "right-1", type: "target", position: Position.Right, style: { top: "25%", pointerEvents: "none", opacity: 0 } },
+  { id: "right-2", type: "target", position: Position.Right, style: { top: "50%", pointerEvents: "none", opacity: 0 } },
+  { id: "right-3", type: "target", position: Position.Right, style: { top: "75%", pointerEvents: "none", opacity: 0 } },
+  { id: "left-1", type: "source", position: Position.Left, style: { top: "25%", pointerEvents: "none", opacity: 0 } },
+  { id: "left-2", type: "source", position: Position.Left, style: { top: "50%", pointerEvents: "none", opacity: 0 } },
+  { id: "left-3", type: "source", position: Position.Left, style: { top: "75%", pointerEvents: "none", opacity: 0 } },
 ];
 
 const HANDLE_CLASS =
@@ -83,6 +92,16 @@ function CrmStageFlowHandlesComponent({
             onFinishWireDraft?.(stageKey, port.id);
           }}
           className={HANDLE_CLASS}
+        />
+      ))}
+      {BIDIRECTIONAL_COMPANION_HANDLES.map((port) => (
+        <Handle
+          key={`${port.type}-${port.id}`}
+          type={port.type}
+          position={port.position}
+          id={port.id}
+          style={port.style}
+          isConnectable={false}
         />
       ))}
     </>

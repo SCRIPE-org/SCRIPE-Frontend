@@ -92,11 +92,11 @@ export function CreateAccountDialog({
     e.preventDefault();
     setValidationError(null);
     if (mode === "select" && !partyId.trim()) {
-      setValidationError(t("crmAccounts.create.organizationSelectRequired") || "Please select an existing organization from the list.");
+      setValidationError(t("crmAccounts.create.organizationSelectRequired"));
       return;
     }
     if (mode === "create" && !organizationNameEn.trim()) {
-      setValidationError(t("crmAccounts.create.organizationNameRequired") || "Organization name is required.");
+      setValidationError(t("crmAccounts.create.organizationNameRequired"));
       return;
     }
     const ok = await onSubmit(
@@ -123,17 +123,17 @@ export function CreateAccountDialog({
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2 text-base font-bold text-nx-ink">
             <Building2 className="size-4 text-nx-accent" />
-            <span>{t("crmAccounts.create.title") || "Register Commercial Account"}</span>
+            <span>{t("crmAccounts.create.title")}</span>
           </DialogTitle>
           <DialogDescription className="text-xs text-nx-ink-2">
-            {t("crmAccounts.create.description") || "Create a new commercial organization or link an existing organization from your directory."}
+            {t("crmAccounts.create.description")}
           </DialogDescription>
         </DialogHeader>
 
         {activeError && (
           <Alert variant="destructive" className="py-2.5 border-destructive/20 bg-destructive/10">
             <AlertCircle className="size-4" />
-            <AlertTitle className="text-xs font-semibold">{t("common.error") || "Validation Error"}</AlertTitle>
+            <AlertTitle className="text-xs font-semibold">{t("crmAccounts.actions.error")}</AlertTitle>
             <AlertDescription className="text-xs">{activeError}</AlertDescription>
           </Alert>
         )}
@@ -142,11 +142,11 @@ export function CreateAccountDialog({
           <div className="grid grid-cols-2 gap-2 p-1 rounded-nx-md bg-nx-raised border border-nx-line">
             <Button type="button" variant={mode === "create" ? "default" : "ghost"} size="sm" onClick={() => { setMode("create"); setValidationError(null); }} className="h-8 text-xs font-semibold gap-1.5">
               <PlusCircle className="size-3.5" />
-              <span>{t("crmAccounts.create.modeCreateNew") || "New Organization"}</span>
+              <span>{t("crmAccounts.create.modeCreateNew")}</span>
             </Button>
             <Button type="button" variant={mode === "select" ? "default" : "ghost"} size="sm" onClick={() => { setMode("select"); setValidationError(null); }} className="h-8 text-xs font-semibold gap-1.5">
               <Building2 className="size-3.5" />
-              <span>{t("crmAccounts.create.modeSelectExisting") || "Existing Organization"}</span>
+              <span>{t("crmAccounts.create.modeSelectExisting")}</span>
             </Button>
           </div>
 
@@ -234,13 +234,13 @@ export function CreateAccountDialog({
           </div>
 
           <div className="space-y-1.5">
-            <Label htmlFor="account-notes" className="text-xs font-medium text-nx-ink">{t("crmAccounts.create.notes") || "Commercial Account Notes"}</Label>
-            <Textarea id="account-notes" rows={3} value={commercialNotes} onChange={(e) => setCommercialNotes(e.target.value)} placeholder={t("crmAccounts.create.notesPlaceholder") || "Key strategic partnership notes, contract preferences, or facility scope..."} disabled={isSubmitting} className="text-xs bg-nx-surface border-nx-line resize-none" />
+            <Label htmlFor="account-notes" className="text-xs font-medium text-nx-ink">{t("crmAccounts.create.notes")}</Label>
+            <Textarea id="account-notes" rows={3} value={commercialNotes} onChange={(e) => setCommercialNotes(e.target.value)} placeholder={t("crmAccounts.create.notesPlaceholder")} disabled={isSubmitting} className="text-xs bg-nx-surface border-nx-line resize-none" />
           </div>
 
           <CustomFieldsSection
             entityTypeKey="crm.account"
-            entityDisplayName={t("crmAccounts.title") || "Commercial Account"}
+            entityDisplayName={t("crmAccounts.title")}
             values={customFields}
             onChange={(key, value) => setCustomFields((prev) => ({ ...prev, [key]: value }))}
             disabled={isSubmitting}
@@ -248,10 +248,10 @@ export function CreateAccountDialog({
 
           <DialogFooter className="pt-2">
             <Button type="button" variant="outline" size="sm" onClick={() => handleOpenChange(false)} disabled={isSubmitting} className="text-xs border-nx-line bg-nx-surface text-nx-ink">
-              {t("common.cancel") || "Cancel"}
+              {t("crmAccounts.actions.cancel")}
             </Button>
             <Button type="submit" size="sm" disabled={isSubmitting} className="text-xs font-bold">
-              {isSubmitting ? t("common.saving") || "Saving..." : t("crmAccounts.create.submit") || "Create Account"}
+              {isSubmitting ? t("crmAccounts.actions.saving") : t("crmAccounts.create.submit")}
             </Button>
           </DialogFooter>
         </form>

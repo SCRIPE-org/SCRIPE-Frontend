@@ -7,6 +7,8 @@ import {
   type CrmCustomFieldDefinition,
 } from "../../domain/constants/crmSettingsDefaults";
 import {
+  getCanonicalPipelineNameAr,
+  getCanonicalStageArFallback,
   resolveDefaultStageColor,
   type CrmBuyingCommitteeRoleOption,
   type CrmScopedRoleDefinition,
@@ -169,10 +171,18 @@ export function mergeBackendPipelinesIntoState(
             : Number(rawProb);
         const resolvedSla =
           s.slaDays ?? s.slaTargetDays ?? prevStage?.slaDays ?? canonicalMeta?.sla;
+        const rawLabelAr = s.labelAr?.trim();
+        const rawLabelEn = s.labelEn?.trim();
+        const resolvedLabelAr = rawLabelAr && rawLabelAr !== rawLabelEn
+          ? rawLabelAr
+          : prevStage?.labelAr && prevStage.labelAr !== rawLabelEn
+            ? prevStage.labelAr
+            : getCanonicalStageArFallback(s.stageKey, rawLabelEn);
+
         return {
           stageKey: s.stageKey,
           labelEn: s.labelEn,
-          labelAr: s.labelAr || s.labelEn,
+          labelAr: resolvedLabelAr,
           sortOrder: s.sortOrder || idx + 1,
           category,
           color,
@@ -201,6 +211,11 @@ export function mergeBackendPipelinesIntoState(
           const qualHasSolFit = mappedStages.find((s) => s.stageKey === "default.qualification")?.requiredExitFields.includes("solutionFitConfirmed");
           mappedTransitions = parsed.map((tr: CrmWorkflowTransition) => {
             let res = tr;
+            const curTr = existingIdx >= 0 ? nextWorkflows[existingIdx]?.transitions?.find((t) => t.id === tr.id) : undefined;
+            const resolvedTransNameAr = tr.nameAr && tr.nameAr !== tr.nameEn
+              ? tr.nameAr
+              : curTr?.nameAr || tr.nameAr || tr.nameEn;
+            res = { ...res, nameAr: resolvedTransNameAr };
             if (tr.fromStageKey === "default.qualification" && tr.toStageKey === "default.solution_fit" && !qualHasSolFit && tr.rules?.requiredFieldKeys?.includes("solutionFitConfirmed")) {
               res = { ...res, rules: { ...res.rules, requiredFieldKeys: res.rules.requiredFieldKeys.filter((k) => k !== "solutionFitConfirmed") } };
             }
@@ -218,22 +233,28 @@ export function mergeBackendPipelinesIntoState(
     }
     if (existingIdx >= 0) {
       const cur = nextWorkflows[existingIdx];
+      const resolvedPipelineNameAr = bp.nameAr && bp.nameAr !== bp.nameEn
+        ? bp.nameAr
+        : cur?.nameAr || bp.nameAr || getCanonicalPipelineNameAr(bp.code || bp.key, bp.nameEn || cur?.nameEn);
       nextWorkflows[existingIdx] = {
         ...cur,
         nameEn: bp.nameEn || bp.name || cur.nameEn,
-        nameAr: bp.nameAr || cur.nameAr,
+        nameAr: resolvedPipelineNameAr,
         isActive: bp.isDefault !== undefined ? Boolean(bp.isDefault) : cur.isActive,
         version: Math.max(bp.version ?? 1, cur.version ?? 1),
         stages: mappedStages,
         transitions: mappedTransitions.length > 0 ? mappedTransitions : cur.transitions,
       };
     } else {
+      const resolvedNewPipelineNameAr = bp.nameAr && bp.nameAr !== bp.nameEn
+        ? bp.nameAr
+        : getCanonicalPipelineNameAr(bp.code || bp.key, bp.nameEn) || wfId;
       nextWorkflows.push({
         id: wfId,
         code: bp.code || bp.key || wfId,
         entityType,
         nameEn: bp.nameEn || bp.name || wfId,
-        nameAr: bp.nameAr || bp.nameEn || wfId,
+        nameAr: resolvedNewPipelineNameAr,
         descriptionEn: DEFAULT_NEW_WORKFLOW_META.relationalPipelineDescEn,
         descriptionAr: DEFAULT_NEW_WORKFLOW_META.relationalPipelineDescAr,
         isActive: Boolean(bp.isDefault),

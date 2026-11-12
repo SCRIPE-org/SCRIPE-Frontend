@@ -11,6 +11,7 @@ export const ar = {
     },
     actions: {
       newAccount: "حساب جديد",
+      create: "حساب جديد",
       edit: "تعديل الشروط التجارية",
       view360: "عرض 360",
       refresh: "تحديث",
@@ -23,6 +24,10 @@ export const ar = {
     filters: {
       allTiers: "كافة الفئات",
     },
+    empty: {
+      title: "لم يتم العثور على حسابات",
+      description: "لا توجد حسابات تجارية تطابق معايير التصفية أو البحث الحالية.",
+    },
     tiers: {
       Enterprise: "مؤسسات كبرى (Enterprise)",
       KeyAccount: "حساب رئيسي (Key Account)",
@@ -31,12 +36,30 @@ export const ar = {
       Standard: "قياسي (Standard)",
       Trial: "تجريبي (Trial)",
     },
+    statuses: {
+      Open: "مفتوحة",
+      Won: "رابحة",
+      Lost: "خاسرة",
+      open: "مفتوحة",
+      won: "رابحة",
+      lost: "خاسرة",
+    },
     currencies: {
       SAR: "SAR — ريال سعودي",
       AED: "AED — درهم إماراتي",
       USD: "USD — دولار أمريكي",
       EUR: "EUR — يورو",
       EGP: "EGP — جنيه مصري",
+      GBP: "GBP — جنيه إسترليني",
+      KWD: "KWD — دينار كويتي",
+      QAR: "QAR — ريال قطري",
+      BHD: "BHD — دينار بحريني",
+      OMR: "OMR — ريال عماني",
+      TRY: "TRY — ليرة تركية",
+      INR: "INR — روبية هندية",
+      JPY: "JPY — ين ياباني",
+      CNY: "CNY — يوان صيني",
+      BRL: "BRL — ريال برازيلي",
     },
     loading: "جارٍ تحميل الحسابات التجارية...",
     table: {
@@ -86,6 +109,7 @@ export const ar = {
       loading: "جارٍ تحميل الملف الشامل للحساب...",
       back: "العودة إلى الحسابات",
       notes: "استراتيجية وملاحظات الحساب التجاري",
+      commercialNotes: "ملاحظات تجارية",
       contactsTitle: "أصحاب المصلحة وجهات الاتصال الرئيسية",
       noContacts: "لا توجد جهات اتصال مرتبطة بهذا الحساب حالياً.",
       dealsTitle: "الصفقات الجارية في مسار المبيعات",

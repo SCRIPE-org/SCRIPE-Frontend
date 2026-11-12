@@ -147,7 +147,7 @@ export function AccountsView() {
         <CrmSectionHeader
           title={t("crmAccounts.header.title")}
           subtitle={t("crmAccounts.header.subtitle")}
-          action={
+          actions={
             <div className="flex items-center gap-2">
               <Button
                 type="button"

@@ -11,6 +11,7 @@ export const en = {
     },
     actions: {
       newAccount: "New Account",
+      create: "New Account",
       edit: "Edit Commercial Terms",
       view360: "View 360",
       refresh: "Refresh",
@@ -23,6 +24,10 @@ export const en = {
     filters: {
       allTiers: "All Tiers",
     },
+    empty: {
+      title: "No Accounts Found",
+      description: "No commercial accounts match the current filter or search criteria.",
+    },
     tiers: {
       Enterprise: "Enterprise",
       KeyAccount: "Key Account",
@@ -31,12 +36,30 @@ export const en = {
       Standard: "Standard",
       Trial: "Trial",
     },
+    statuses: {
+      Open: "Open",
+      Won: "Closed Won",
+      Lost: "Closed Lost",
+      open: "Open",
+      won: "Closed Won",
+      lost: "Closed Lost",
+    },
     currencies: {
       SAR: "SAR — Saudi Riyal",
       AED: "AED — UAE Dirham",
       USD: "USD — US Dollar",
       EUR: "EUR — Euro",
       EGP: "EGP — Egyptian Pound",
+      GBP: "GBP — British Pound",
+      KWD: "KWD — Kuwaiti Dinar",
+      QAR: "QAR — Qatari Riyal",
+      BHD: "BHD — Bahraini Dinar",
+      OMR: "OMR — Omani Rial",
+      TRY: "TRY — Turkish Lira",
+      INR: "INR — Indian Rupee",
+      JPY: "JPY — Japanese Yen",
+      CNY: "CNY — Chinese Yuan",
+      BRL: "BRL — Brazilian Real",
     },
     loading: "Loading commercial accounts...",
     table: {
@@ -86,6 +109,7 @@ export const en = {
       loading: "Loading Account 360 profile...",
       back: "Back to Accounts",
       notes: "Commercial Strategy & Notes",
+      commercialNotes: "Commercial Notes",
       contactsTitle: "Key Stakeholders & Contacts",
       noContacts: "No linked contacts found for this account.",
       dealsTitle: "Active Pipeline Deals",

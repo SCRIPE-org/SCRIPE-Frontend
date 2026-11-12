@@ -129,6 +129,10 @@ export function PipelineManagementView({
         setNewStageProb={vm.setNewStageProb}
         newStageSla={vm.newStageSla}
         setNewStageSla={vm.setNewStageSla}
+        newStageColorToken={vm.newStageColorToken}
+        setNewStageColorToken={vm.setNewStageColorToken}
+        newStageCustomHex={vm.newStageCustomHex}
+        setNewStageCustomHex={vm.setNewStageCustomHex}
         newStageConvertsLead={vm.newStageConvertsLead}
         setNewStageConvertsLead={vm.setNewStageConvertsLead}
         newStageAutoConnect={vm.newStageAutoConnect}

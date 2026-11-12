@@ -28,6 +28,7 @@ export class CrmActivityService implements ICrmActivityService {
     if (filter.accountId) queryParams.accountId = filter.accountId;
     if (filter.opportunityId) queryParams.opportunityId = filter.opportunityId;
     if (filter.activityKind) queryParams.activityKind = filter.activityKind;
+    if (filter.includeAllVisible) queryParams.includeAllVisible = filter.includeAllVisible;
 
     const response = await this.api.get<
       ApiSuccessResponse<PagedActivitiesResult> | PagedActivitiesResult

@@ -125,7 +125,7 @@ export function AccountEditDialog({
                   <SelectContent>
                     {CRM_CURRENCY_OPTIONS.map((c) => (
                       <SelectItem key={c.code} value={c.code}>
-                        {c.code} — {c.nameEn}
+                        {t(`crmAccounts.currencies.${c.code}`)}
                       </SelectItem>
                     ))}
                   </SelectContent>

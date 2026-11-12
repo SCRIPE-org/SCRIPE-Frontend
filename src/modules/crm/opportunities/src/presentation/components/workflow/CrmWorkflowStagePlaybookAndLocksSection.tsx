@@ -23,12 +23,27 @@ const LOCKABLE_STAGE_FIELDS = [
   { key: "dealType", labelKey: "crmOpportunities.ruleConfig.lockableFields.dealType" },
 ];
 
-const DEFAULT_PLAYBOOK_BY_STAGE: Record<string, string[]> = {
-  "default.discovery": ["Confirm BANT Budget & Sponsor Objectives", "Identify Primary Decision Maker"],
-  "default.qualification": ["Validate Commercial Credit & KYC", "Schedule Technical Pitch / Tour"],
-  "default.solution_fit": ["Verify Stadium LED & Hospitality Inventory", "Confirm Academy B2B Cohort Capacity"],
-  "default.proposal": ["Generate Multi-Currency Commercial Quote", "Attach Sponsorship Deliverables Deck"],
-  "default.negotiation": ["Obtain Legal Redline Sign-off", "Confirm Finance Payment Schedule"],
+const DEFAULT_PLAYBOOK_KEYS_BY_STAGE: Record<string, string[]> = {
+  "default.discovery": [
+    "crmOpportunities.ruleConfig.defaultPlaybook.discoveryBant",
+    "crmOpportunities.ruleConfig.defaultPlaybook.discoveryDecisionMaker",
+  ],
+  "default.qualification": [
+    "crmOpportunities.ruleConfig.defaultPlaybook.qualificationKyc",
+    "crmOpportunities.ruleConfig.defaultPlaybook.qualificationPitch",
+  ],
+  "default.solution_fit": [
+    "crmOpportunities.ruleConfig.defaultPlaybook.solutionFitInventory",
+    "crmOpportunities.ruleConfig.defaultPlaybook.solutionFitCapacity",
+  ],
+  "default.proposal": [
+    "crmOpportunities.ruleConfig.defaultPlaybook.proposalQuote",
+    "crmOpportunities.ruleConfig.defaultPlaybook.proposalDeck",
+  ],
+  "default.negotiation": [
+    "crmOpportunities.ruleConfig.defaultPlaybook.negotiationLegal",
+    "crmOpportunities.ruleConfig.defaultPlaybook.negotiationFinance",
+  ],
 };
 
 /**
@@ -45,7 +60,7 @@ export function CrmWorkflowStagePlaybookAndLocksSection({
   const rawTasks = selectedStage.properties?.playbookTasks;
   const tasks = rawTasks !== undefined
     ? rawTasks.split(";").map((s) => s.trim()).filter(Boolean)
-    : (DEFAULT_PLAYBOOK_BY_STAGE[selectedStage.stageKey] ?? ["Verify Stage Gate Readiness"]);
+    : (DEFAULT_PLAYBOOK_KEYS_BY_STAGE[selectedStage.stageKey] ?? ["crmOpportunities.ruleConfig.defaultPlaybook.defaultReadiness"]).map((k) => t(k));
 
   const rawLocks = selectedStage.properties?.lockedFields;
   const lockedFields = rawLocks !== undefined
@@ -88,7 +103,7 @@ export function CrmWorkflowStagePlaybookAndLocksSection({
             <CheckSquare className="w-3.5 h-3.5 text-success" />
             {t("crmOpportunities.ruleConfig.stagePlaybookAutoTasksTitle")}
           </span>
-          <Badge variant="outline" className="text-[9px] font-mono">{tasks.length} tasks</Badge>
+          <Badge variant="outline" className="text-[9px] font-mono">{tasks.length} {t("crmOpportunities.ruleConfig.tasksSuffix")}</Badge>
         </div>
         <div className="space-y-1">
           {tasks.map((task) => (

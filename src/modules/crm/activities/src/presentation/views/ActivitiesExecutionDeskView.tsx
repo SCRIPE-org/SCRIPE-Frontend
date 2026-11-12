@@ -130,7 +130,7 @@ export function ActivitiesExecutionDeskView() {
           </div>
         </div>
 
-        <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar">
+        <div className="flex items-center gap-1.5 flex-wrap">
           {ACTIVITY_KIND_OPTIONS.map((opt) => {
             const isSelected = activityKindFilter === opt.key;
             return (
@@ -213,7 +213,7 @@ export function ActivitiesExecutionDeskView() {
         <CrmSectionHeader
           title={t("crmActivities.executionDesk.title")}
           subtitle={t("crmActivities.executionDesk.description")}
-          action={
+          actions={
             <div className="flex items-center gap-2">
               <Button
                 type="button"

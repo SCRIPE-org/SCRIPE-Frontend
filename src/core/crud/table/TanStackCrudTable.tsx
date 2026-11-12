@@ -30,6 +30,7 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
 } from "@core/ui/dropdown-menu";
+import { useCrudI18n } from "../hooks/useCrudI18n";
 import { cn } from "@core/common/utils";
 import {
   ArrowUpDown,
@@ -75,8 +76,10 @@ export function TanStackCrudTable<TItem extends Record<string, any>>({
   emptyState,
   className,
   enableColumnVisibility = true,
-  emptyLabel = "No records found",
+  emptyLabel,
 }: TanStackCrudTableProps<TItem>) {
+  const { t } = useCrudI18n();
+  const resolvedEmptyLabel = emptyLabel || t("common.noRecords", { defaultValue: "No records found" });
   // Convert CrudColumn<TItem>[] to TanStack ColumnDef<TItem>[]
   const tableColumns = useMemo<ColumnDef<TItem>[]>(() => {
     return columns.map((col) => ({
@@ -164,12 +167,12 @@ export function TanStackCrudTable<TItem extends Record<string, any>>({
                 className="h-8 gap-1.5 text-xs border-nx-line text-nx-ink hover:bg-nx-raised"
               >
                 <Columns3 className="size-3.5 text-nx-ink-3" />
-                <span>Columns</span>
+                <span>{t("common.columns", { defaultValue: "Columns" })}</span>
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-48 bg-nx-surface border-nx-line">
               <DropdownMenuLabel className="text-xs font-semibold text-nx-ink-2">
-                Toggle Columns
+                {t("crud.toggleColumns", { defaultValue: "Toggle Columns" })}
               </DropdownMenuLabel>
               <DropdownMenuSeparator className="bg-nx-line" />
               {table.getAllLeafColumns().map((column) => {
@@ -268,7 +271,7 @@ export function TanStackCrudTable<TItem extends Record<string, any>>({
                         "sticky end-0 bg-nx-surface z-10 border-s border-nx-line"
                     )}
                   >
-                    Actions
+                    {t("common.actions", { defaultValue: "Actions" })}
                   </TableHead>
                 )}
               </TableRow>
@@ -315,8 +318,10 @@ export function TanStackCrudTable<TItem extends Record<string, any>>({
                     <EmptyState
                       bare
                       icon={Inbox}
-                      title={emptyLabel}
-                      description="No records to display at this time."
+                      title={resolvedEmptyLabel}
+                      description={t("common.noRecordsDescription", {
+                        defaultValue: "No records to display at this time.",
+                      })}
                     />
                   )}
                 </TableCell>

@@ -71,7 +71,7 @@ export function CrmWorkflowInspectorPanel({
 
   if (!selectedStage) {
     return (
-      <div className="w-80 lg:w-96 border-s border-nx-line bg-nx-surface flex flex-col justify-between p-4 shrink-0" data-testid="workflow-inspector-panel">
+      <div className="w-80 xl:w-[352px] border-s border-nx-line bg-nx-surface flex flex-col justify-between p-4 shrink-0" data-testid="workflow-inspector-panel">
         <div className="space-y-3">
           <h3 className="text-xs font-bold uppercase tracking-wider text-nx-ink-2">{t("crmOpportunities.pipelinesPage.inspectorEmptyTitle")}</h3>
           <p className="text-xs text-nx-ink-3 leading-relaxed">{t("crmOpportunities.pipelinesPage.inspectorEmptyDesc")}</p>
@@ -94,7 +94,7 @@ export function CrmWorkflowInspectorPanel({
   };
 
   return (
-    <div ref={panelRef} className="w-80 lg:w-96 border-s border-nx-line bg-nx-surface flex flex-col overflow-y-auto p-4 space-y-3.5 shrink-0" data-testid="workflow-inspector-panel">
+    <div ref={panelRef} className="w-80 xl:w-[352px] border-s border-nx-line bg-nx-surface flex flex-col overflow-y-auto p-4 space-y-3.5 shrink-0" data-testid="workflow-inspector-panel">
       <div className="flex items-center justify-between pb-2.5 border-b border-nx-line">
         <div>
           <span className="text-[10px] font-mono uppercase tracking-wider text-nx-ink-3 block">{t("crmOpportunities.pipelinesPage.statusInspectorEyebrow")}</span>
@@ -128,13 +128,13 @@ export function CrmWorkflowInspectorPanel({
 
       <div className="space-y-2 rounded-md border border-nx-line bg-nx-raised/30 p-2.5" data-testid="status-inspector-color-picker">
         <div className="flex items-center justify-between">
-          <Label className="text-[11px] inline-flex items-center gap-1.5"><Palette className="w-3 h-3 text-nx-ink-2" />{t("crmOpportunities.pipelinesPage.stageColorLabel")} ({customHexValue || STAGE_COLOR_PALETTE[activeColor]?.labelEn || activeColor})</Label>
+          <Label className="text-[11px] inline-flex items-center gap-1.5"><Palette className="w-3 h-3 text-nx-ink-2" />{t("crmOpportunities.pipelinesPage.stageColorLabel")} ({customHexValue || (isAr ? STAGE_COLOR_PALETTE[activeColor]?.labelAr : STAGE_COLOR_PALETTE[activeColor]?.labelEn) || activeColor})</Label>
           {customHexValue && <Button type="button" size="sm" variant="ghost" className="h-5 px-1.5 text-[10px]" onClick={() => applyCustomHex("")}>{t("crmOpportunities.pipelinesPage.resetHexBtn")}</Button>}
         </div>
         <div className="flex items-center gap-1.5 flex-wrap">
           {CRM_STAGE_COLOR_TOKENS.map((c: CrmStageColorToken) => (
             <Button
-              key={c} type="button" size="icon" variant="outline" data-testid={`status-color-swatch-${c}`} title={STAGE_COLOR_PALETTE[c]?.labelEn || c}
+              key={c} type="button" size="icon" variant="outline" data-testid={`status-color-swatch-${c}`} title={(isAr ? STAGE_COLOR_PALETTE[c]?.labelAr : STAGE_COLOR_PALETTE[c]?.labelEn) || c}
               onClick={() => { const nextProps: Record<string, string> = { ...(selectedStage.properties ?? {}), color: c }; delete nextProps.customColorHex; onStageChange({ ...selectedStage, color: c, customColorHex: undefined, properties: nextProps }); }}
               className={`h-5 w-5 rounded-full p-0 border ${STAGE_COLOR_PALETTE[c].swatchClass} ${!customHexValue && activeColor === c ? "ring-2 ring-primary ring-offset-1 ring-offset-nx-surface scale-110" : "opacity-75 hover:opacity-100"}`}
             />

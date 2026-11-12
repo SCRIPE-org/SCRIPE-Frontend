@@ -143,11 +143,10 @@ export function LinkPartyDialog({
         <form onSubmit={handleSubmit} className="space-y-4">
           <DialogHeader>
             <DialogTitle className="text-base font-bold text-nx-ink font-heading">
-              {t("crmLeads.partyLink.dialogTitle") || "Link Contact & Organization"}
+              {t("crmLeads.partyLink.dialogTitle")}
             </DialogTitle>
             <DialogDescription className="text-xs text-nx-ink-2">
-              {t("crmLeads.partyLink.dialogDescription") ||
-                "Link this lead to an existing Account Organization or Contact Person, or automatically create them from the lead's details."}
+              {t("crmLeads.partyLink.dialogDescription")}
             </DialogDescription>
           </DialogHeader>
 
@@ -177,14 +176,14 @@ export function LinkPartyDialog({
             {/* Organization Select */}
             <div className="space-y-1.5">
               <Label className="text-xs font-semibold text-nx-ink">
-                {t("crmLeads.partyLink.organizationPartyIdLabel") || "Organization / Account"}
+                {t("crmLeads.partyLink.organizationPartyIdLabel")}
               </Label>
               <div className="relative">
                 <Search className="absolute start-2.5 top-1/2 -translate-y-1/2 size-3 text-nx-ink-3 pointer-events-none" />
                 <Input
                   value={orgSearch}
                   onChange={(e) => setOrgSearch(e.target.value)}
-                  placeholder="Filter organizations..."
+                  placeholder={t("crmLeads.partyLink.filterOrganizations")}
                   className="h-7 ps-7 text-xs border-nx-line bg-nx-ground text-nx-ink mb-1"
                 />
               </div>
@@ -196,8 +195,7 @@ export function LinkPartyDialog({
                   <SelectItem value="__auto">
                     {lead?.companyName
                       ? `Auto-create or match "${lead.companyName}"`
-                      : t("crmLeads.partyLink.organizationPartyIdHint") ||
-                        "Auto-create from company name"}
+                      : t("crmLeads.partyLink.organizationPartyIdHint")}
                   </SelectItem>
                   {candidateOrgs.map((org) => (
                     <SelectItem key={org.partyId} value={org.partyId}>
@@ -212,14 +210,14 @@ export function LinkPartyDialog({
             {/* Contact Person Select */}
             <div className="space-y-1.5">
               <Label className="text-xs font-semibold text-nx-ink">
-                {t("crmLeads.partyLink.personPartyIdLabel") || "Contact Person"}
+                {t("crmLeads.partyLink.personPartyIdLabel")}
               </Label>
               <div className="relative">
                 <Search className="absolute start-2.5 top-1/2 -translate-y-1/2 size-3 text-nx-ink-3 pointer-events-none" />
                 <Input
                   value={personSearch}
                   onChange={(e) => setPersonSearch(e.target.value)}
-                  placeholder="Filter contacts..."
+                  placeholder={t("crmLeads.partyLink.filterContacts")}
                   className="h-7 ps-7 text-xs border-nx-line bg-nx-ground text-nx-ink mb-1"
                 />
               </div>
@@ -231,8 +229,7 @@ export function LinkPartyDialog({
                   <SelectItem value="__auto">
                     {lead?.fullName
                       ? `Auto-create or match "${lead.fullName}"`
-                      : t("crmLeads.partyLink.personPartyIdHint") ||
-                        "Auto-create from contact name"}
+                      : t("crmLeads.partyLink.personPartyIdHint")}
                   </SelectItem>
                   {candidatePeople.map((person) => (
                     <SelectItem key={person.partyId} value={person.partyId}>
@@ -249,8 +246,7 @@ export function LinkPartyDialog({
                 htmlFor="auto-create-switch"
                 className="text-xs font-medium text-nx-ink cursor-pointer"
               >
-                {t("crmLeads.partyLink.autoCreateMissing") ||
-                  "Auto-create missing Organization & Contact from Lead details"}
+                {t("crmLeads.partyLink.autoCreateMissing")}
               </Label>
               <Switch
                 id="auto-create-switch"

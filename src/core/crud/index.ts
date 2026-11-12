@@ -9,5 +9,6 @@ export * from "./components/generic-select";
 export * from "./components/generic-tree-view";
 export * from "./customFieldsExtension";
 export * from "./hooks/useCrudViewModel";
+export * from "./hooks/useCrudI18n";
 export * from "./hooks/useGenericMutations";
 export * from "./hooks/useGenericQuery";

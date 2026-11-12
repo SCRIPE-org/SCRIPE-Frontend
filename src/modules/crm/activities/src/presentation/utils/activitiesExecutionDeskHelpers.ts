@@ -26,6 +26,31 @@ export async function fetchAggregatedActivities(
   pageToLoad: number,
   sizeToLoad: number
 ): Promise<{ items: CrmActivity[]; totalCount: number }> {
+  // First attempt backend workspace-wide feed via includeAllVisible
+  try {
+    const res = await repository.getActivities({
+      includeAllVisible: true,
+      activityKind: activeKind,
+      page: pageToLoad,
+      pageSize: sizeToLoad,
+    });
+    if (res?.items && Array.isArray(res.items) && res.items.length > 0) {
+      let items = [...res.items];
+      if (searchTerm.trim()) {
+        const term = searchTerm.toLowerCase();
+        items = items.filter(
+          (a) =>
+            a.summary.toLowerCase().includes(term) ||
+            (a.bodyText && a.bodyText.toLowerCase().includes(term)) ||
+            a.actorDisplaySnapshot.toLowerCase().includes(term)
+        );
+      }
+      return { items, totalCount: searchTerm.trim() ? items.length : (res.totalCount ?? items.length) };
+    }
+  } catch {
+    // Graceful fallback to client fan-out across accounts
+  }
+
   if (accounts.length === 0) {
     return { items: [], totalCount: 0 };
   }

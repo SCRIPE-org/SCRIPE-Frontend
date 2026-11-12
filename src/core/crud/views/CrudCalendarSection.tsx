@@ -4,6 +4,7 @@ import React, { memo } from "react";
 import { Card } from "@core/ui/card";
 import { Badge } from "@core/ui/badge";
 import { EmptyState } from "@core/ui/empty-state";
+import { useCrudI18n } from "../hooks/useCrudI18n";
 import { Inbox } from "lucide-react";
 import type { CrudColumn } from "../components/generic-crud-view";
 
@@ -24,8 +25,10 @@ export const CrudCalendarSection = memo(function CrudCalendarSection<TItem = any
   calendarGroupFormatter,
   renderCalendarItem,
   renderRowActionButtons,
-  emptyLabel = "No items",
+  emptyLabel,
 }: CrudCalendarSectionProps<TItem>) {
+  const { t } = useCrudI18n();
+  const resolvedEmptyLabel = emptyLabel || t("crud.kanban.noItems", { defaultValue: "No items" });
   const dateKey =
     calendarDateField ||
     columns.find((c) => /date|time|at|day|due|start/i.test(c.key))?.key ||
@@ -39,19 +42,19 @@ export const CrudCalendarSection = memo(function CrudCalendarSection<TItem = any
         ? calendarGroupFormatter(rawVal, item)
         : rawVal
         ? String(rawVal).slice(0, 10)
-        : "Unscheduled";
+        : t("crud.calendar.unscheduled", { defaultValue: "Unscheduled" });
       const list = map.get(dateLabel) ?? [];
       list.push(item);
       map.set(dateLabel, list);
     }
     return map;
-  }, [items, dateKey, calendarGroupFormatter]);
+  }, [items, dateKey, calendarGroupFormatter, t]);
 
   return (
     <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
       {groups.size === 0 ? (
         <div className="col-span-full rounded-nx-lg border border-nx-line bg-nx-surface p-8">
-          <EmptyState bare icon={Inbox} title={emptyLabel} />
+          <EmptyState bare icon={Inbox} title={resolvedEmptyLabel} />
         </div>
       ) : (
         Array.from(groups.entries()).map(([dateLabel, dateItems]) => (
@@ -62,7 +65,10 @@ export const CrudCalendarSection = memo(function CrudCalendarSection<TItem = any
             <div className="flex items-center justify-between border-b border-nx-line pb-2">
               <span className="text-sm font-semibold text-nx-ink">{dateLabel}</span>
               <Badge variant="outline" className="text-xs text-nx-ink-3 font-normal">
-                {dateItems.length} items
+                {t("crud.calendar.itemsCount", {
+                  count: dateItems.length,
+                  defaultValue: `${dateItems.length} items`,
+                })}
               </Badge>
             </div>
             <div className="space-y-2">

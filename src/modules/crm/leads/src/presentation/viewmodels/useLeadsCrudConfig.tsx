@@ -238,11 +238,11 @@ export function useLeadsCrudConfig(params: UseLeadsCrudConfigParams) {
       />
     ),
     renderCardGridItem: (lead: CrmLead, actions: React.ReactNode) =>
-      renderLeadsCardGridItemCard(lead, actions, baseCurrency, autoConvertToBase, showOriginalCurrencyBadge, convertAmount, (id) => router.push(`/crm/leads/${id}`)),
+      renderLeadsCardGridItemCard(lead, actions, baseCurrency, autoConvertToBase, showOriginalCurrencyBadge, convertAmount, (id) => router.push(`/crm/leads/${id}`), t),
     renderSplitDetail: (lead: CrmLead, actions: React.ReactNode) => renderLeadsSplitDetailCard(lead, actions, t),
     columns,
     getActions: (): CrudAction<CrmLead>[] => [
-      { label: t("crmLeads.actions.viewDetails") || "Lead 360", icon: <ArrowUpRight className="size-3.5" />, onClick: (lead: CrmLead) => router.push(`/crm/leads/${lead.id}`) },
+      { label: t("crmLeads.actions.viewDetails"), icon: <ArrowUpRight className="size-3.5" />, onClick: (lead: CrmLead) => router.push(`/crm/leads/${lead.id}`) },
       {
         label: t("crmLeads.actions.qualify"),
         icon: <CheckCircle2 className="size-3.5" />,

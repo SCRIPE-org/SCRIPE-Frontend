@@ -469,6 +469,45 @@ describe("PipelineManagementView — Pipelines Directory & Full-Screen 2D Workfl
     // e17 must detour around s4 (x=110..298, y=360..464) using a detour X outside [100, 308]
     expect(routed[2].path).toContain("L 86 ");
   });
+
+  it("supports Studio v3.0 Undo and Redo buttons, keyboard shortcuts, and state restoration", async () => {
+    render(<PipelineManagementView defaultOpenStudio />);
+
+    const undoBtn = screen.getByTestId("canvas-undo-btn");
+    const redoBtn = screen.getByTestId("canvas-redo-btn");
+
+    expect(undoBtn).toBeDefined();
+    expect(redoBtn).toBeDefined();
+    expect(undoBtn.hasAttribute("disabled")).toBe(true);
+    expect(redoBtn.hasAttribute("disabled")).toBe(true);
+
+    // Add a new stage
+    fireEvent.click(screen.getByTestId("crm-toolbar-add-status"));
+    fireEvent.change(screen.getByTestId("new-status-label-en-input"), {
+      target: { value: "Security Review" },
+    });
+    fireEvent.click(screen.getByTestId("new-status-submit-btn"));
+
+    // Stage added -> undo must become enabled
+    expect(undoBtn.hasAttribute("disabled")).toBe(false);
+    expect(screen.getByTestId("canvas-node-default.security_review")).toBeDefined();
+
+    // Click Undo
+    fireEvent.click(undoBtn);
+
+    // Undone: Security Review is removed, undo is disabled, redo is enabled
+    expect(screen.queryByTestId("canvas-node-default.security_review")).toBeNull();
+    expect(undoBtn.hasAttribute("disabled")).toBe(true);
+    expect(redoBtn.hasAttribute("disabled")).toBe(false);
+
+    // Click Redo
+    fireEvent.click(redoBtn);
+
+    // Redone: Security Review is restored!
+    expect(screen.getByTestId("canvas-node-default.security_review")).toBeDefined();
+    expect(undoBtn.hasAttribute("disabled")).toBe(false);
+    expect(redoBtn.hasAttribute("disabled")).toBe(true);
+  });
 });
 
 

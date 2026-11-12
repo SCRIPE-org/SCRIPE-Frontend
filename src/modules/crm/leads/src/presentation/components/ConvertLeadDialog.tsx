@@ -86,10 +86,10 @@ export function ConvertLeadDialog({
 
   const conversionPreview = getConversionPreview(amount, currency);
   const dealKinds: { key: DealKind; label: string }[] = [
-    { key: "NewBusiness", label: t("crmLeads.conversion.dealKinds.newBusiness") || "New Business" },
-    { key: "Expansion", label: t("crmLeads.conversion.dealKinds.expansion") || "Expansion" },
-    { key: "Renewal", label: t("crmLeads.conversion.dealKinds.renewal") || "Renewal" },
-    { key: "Services", label: t("crmLeads.conversion.dealKinds.services") || "Services" },
+    { key: "NewBusiness", label: t("crmLeads.conversion.dealKinds.newBusiness") },
+    { key: "Expansion", label: t("crmLeads.conversion.dealKinds.expansion") },
+    { key: "Renewal", label: t("crmLeads.conversion.dealKinds.renewal") },
+    { key: "Services", label: t("crmLeads.conversion.dealKinds.services") },
   ];
 
   const hasVerifiedOrAutoParty = Boolean(
@@ -108,17 +108,13 @@ export function ConvertLeadDialog({
     e.preventDefault();
     if (!lead) return;
     if (!title.trim()) {
-      return setValidationError(t("crmLeads.conversion.titleRequired") || "Opportunity title is required");
+      return setValidationError(t("crmLeads.conversion.titleRequired"));
     }
     if (!Number.isFinite(amount) || amount <= 0) {
-      return setValidationError(
-        t("crmLeads.conversion.amountRequired") || "Estimated commercial amount must be greater than zero",
-      );
+      return setValidationError(t("crmLeads.conversion.amountRequired"));
     }
     if (lacksPartyForTargetStage) {
-      return setValidationError(
-        "A verified Account or Contact (or company/contact name on the lead) is required before converting directly into this stage.",
-      );
+      return setValidationError(t("crmLeads.conversion.partyRequiredForStage"));
     }
     setValidationError(null);
 

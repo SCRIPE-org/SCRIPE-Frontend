@@ -113,7 +113,7 @@ export function CrmWorkflowClassicFlowView({
                   {isAr ? stage.labelAr : stage.labelEn}
                 </p>
                 <p className="text-[11px] text-nx-ink-2 mt-1">
-                  {t("crmOpportunities.pipelinesPage.nodeSlaTarget")}: {stage.slaDays}d ·{" "}
+                  {t("crmOpportunities.pipelinesPage.nodeSlaTarget")}: {stage.slaDays}{t("crmOpportunities.workflowStudio.daysShort")} ·{" "}
                   {stage.requiredExitFields.length}{" "}
                   {t("crmOpportunities.pipelinesPage.nodeGuardsCount")}
                 </p>

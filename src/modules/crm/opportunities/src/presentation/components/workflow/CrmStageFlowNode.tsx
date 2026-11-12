@@ -2,12 +2,12 @@
 
 import React, { memo } from "react";
 import type { Node, NodeProps } from "@xyflow/react";
-import { CheckCircle2, Clock, GripVertical, Lock, Sparkles, XCircle } from "lucide-react";
+import { CheckCircle2, Clock, GripVertical, Lock, Palette, Sparkles, XCircle } from "lucide-react";
 import { Badge } from "@core/ui/badge";
 import { Button } from "@core/ui/button";
 import { Card } from "@core/ui/card";
+import { useI18n } from "@core/providers/i18n-provider";
 import { STAGE_COLOR_PALETTE, buildCustomHexHarmonicStyles, resolveDefaultStageColor, type CrmCustomFieldDefinition } from "@modules/crm";
-import { getWorkflowStudioText } from "../../../locales";
 import type { CrmWorkflowStageNode, CrmWorkflowTransition } from "./CrmWorkflowCanvas2D";
 import { formatExitFieldLabel } from "./CrmWorkflowCanvasSubViews";
 import { CrmStageFlowHandles, type StagePortId } from "./CrmStageFlowHandles";
@@ -31,6 +31,7 @@ export interface StageNodeData extends Record<string, unknown> {
 export type StageFlowNode = Node<StageNodeData, "stageNode">;
 
 function CrmStageFlowNodeComponent({ data, selected }: NodeProps<StageFlowNode>) {
+  const { t } = useI18n();
   const { stage, isAr, crmCustomFields, globalIncoming, onSelectStage, onSelectGlobalTransition, selectedTransitionId, onStartWireDraft, onFinishWireDraft, onAddTransition } = data;
   const isSelected = selected || data.isSelected;
   const colorToken = resolveDefaultStageColor(stage.stageKey, stage.category, stage.order, stage.color || stage.properties?.color);
@@ -38,7 +39,7 @@ function CrmStageFlowNodeComponent({ data, selected }: NodeProps<StageFlowNode>)
   const customHex = buildCustomHexHarmonicStyles(stage.customColorHex || stage.properties?.customColorHex);
   const hasGlobalIncoming = Boolean(stage.allowInboundFromAny || (globalIncoming && globalIncoming.length > 0));
   const matchedGlobalTransition = globalIncoming?.[0];
-  const globalLabel = data.globalTransitionLabel || (isAr ? matchedGlobalTransition?.nameAr : matchedGlobalTransition?.nameEn) || getWorkflowStudioText("globalAnyPillLabel", isAr);
+  const globalLabel = data.globalTransitionLabel || (isAr ? matchedGlobalTransition?.nameAr : matchedGlobalTransition?.nameEn) || t("crmOpportunities.workflowStudio.globalAnyPillLabel");
 
   return (
     <Card
@@ -48,8 +49,12 @@ function CrmStageFlowNodeComponent({ data, selected }: NodeProps<StageFlowNode>)
       onClick={(e) => { e.stopPropagation(); onSelectStage?.(stage.stageKey); }}
       onPointerUp={() => { onFinishWireDraft?.(stage.stageKey); }}
       style={{ width: 248, minHeight: 140, ...(customHex.isValidHex && !isSelected ? customHex.nodeCardStyle : {}) }}
-      className={`group relative rounded-md border bg-nx-surface p-2.5 flex flex-col justify-between transition-colors shadow-none cursor-pointer ${
-        isSelected ? "border-nx-accent ring-2 ring-nx-accent/50" : "border-nx-line hover:border-nx-line-hi"
+      className={`group relative rounded-md border p-2.5 flex flex-col justify-between transition-colors shadow-none cursor-pointer ${
+        isSelected
+          ? `border-nx-accent ring-2 ring-nx-accent/60 bg-nx-surface ${palette.headerBorderClass}`
+          : customHex.isValidHex
+            ? "bg-nx-surface hover:border-nx-line-hi"
+            : `${palette.borderClass} ${palette.headerBorderClass}`
       }`}
     >
       {/* Testid alias elements for canonical terminal stages in tests */}
@@ -73,13 +78,13 @@ function CrmStageFlowNodeComponent({ data, selected }: NodeProps<StageFlowNode>)
               if (matchedGlobalTransition) onSelectGlobalTransition?.(matchedGlobalTransition.id);
               else onSelectStage?.(stage.stageKey);
             }}
-            title={getWorkflowStudioText("globalInboundTooltip", isAr)}
+            title={t("crmOpportunities.workflowStudio.globalInboundTooltip")}
             className={`h-6 px-2 text-[10px] font-semibold tracking-wide border shadow-none bg-nx-raised text-nx-ink hover:border-nx-accent transition-colors flex items-center gap-1 ${
               matchedGlobalTransition && selectedTransitionId === matchedGlobalTransition.id ? "border-nx-accent ring-1 ring-nx-accent/50 text-nx-accent" : "border-sky-500/50 hover:border-sky-400"
             }`}
           >
             <span className="text-amber-400 font-bold">⚡</span>
-            <span>* ALL</span>
+            <span>{t("crmOpportunities.workflowStudio.globalAllBadge")}</span>
             {globalLabel && <span className="text-nx-ink-2 truncate max-w-[84px]">· {globalLabel}</span>}
           </Button>
           <svg data-testid={`canvas-any-elbow-${stage.stageKey}`} className="w-8 h-8 -ml-1 text-sky-400 pointer-events-none overflow-visible" viewBox="0 0 32 32" fill="none" aria-hidden="true">
@@ -100,20 +105,20 @@ function CrmStageFlowNodeComponent({ data, selected }: NodeProps<StageFlowNode>)
           {stage.isTerminalWon ? (
             <span className="inline-flex items-center gap-1 text-success">
               <CheckCircle2 className="w-3 h-3" />
-              {getWorkflowStudioText("terminalWonBadge", isAr)}
+              {t("crmOpportunities.workflowStudio.terminalWonBadge")}
             </span>
           ) : stage.isTerminalLost ? (
             <span className="inline-flex items-center gap-1 text-destructive">
               <XCircle className="w-3 h-3" />
-              {getWorkflowStudioText("terminalLostBadge", isAr)}
+              {t("crmOpportunities.workflowStudio.terminalLostBadge")}
             </span>
           ) : stage.convertsToDeal ? (
             <span className="inline-flex items-center gap-1 text-info">
               <Sparkles className="w-3 h-3" />
-              {getWorkflowStudioText("autoConvertsToDeal", isAr)}
+              {t("crmOpportunities.workflowStudio.autoConvertsToDeal")}
             </span>
           ) : (
-            `${getWorkflowStudioText("stepPrefix", isAr)} ${stage.order}`
+            `${t("crmOpportunities.workflowStudio.stepPrefix")} ${stage.order}`
           )}
         </span>
         <Badge variant="outline" style={customHex.isValidHex ? customHex.badgeStyle : undefined} className={`text-[10px] font-mono px-1.5 py-0 ${palette.badgeClass}`}>
@@ -136,18 +141,18 @@ function CrmStageFlowNodeComponent({ data, selected }: NodeProps<StageFlowNode>)
         <div className="flex items-center gap-2">
           <span className="inline-flex items-center gap-1">
             <Clock className="w-2.5 h-2.5" />
-            {stage.slaDays > 0 ? `${stage.slaDays}d` : "—"}
+            {stage.slaDays > 0 ? `${stage.slaDays}${t("crmOpportunities.workflowStudio.daysShort")}` : "—"}
           </span>
           {stage.requiredExitFields && stage.requiredExitFields.length > 0 ? (
             <span
               className="inline-flex items-center gap-1 text-nx-ink font-semibold"
-              title={stage.requiredExitFields.map((f) => formatExitFieldLabel(f, (k) => k, isAr, crmCustomFields || [])).join(", ")}
+              title={stage.requiredExitFields.map((f) => formatExitFieldLabel(f, t, isAr, crmCustomFields || [])).join(", ")}
             >
               <Lock className="w-2.5 h-2.5 text-warning" />
-              {stage.requiredExitFields.length} {getWorkflowStudioText("guardsCount", isAr)}
+              {stage.requiredExitFields.length} {t("crmOpportunities.workflowStudio.guardsCount")}
             </span>
           ) : (
-            <span className="text-nx-ink-3">{getWorkflowStudioText("openGate", isAr)}</span>
+            <span className="text-nx-ink-3">{t("crmOpportunities.workflowStudio.openGate")}</span>
           )}
         </div>
 
@@ -158,11 +163,23 @@ function CrmStageFlowNodeComponent({ data, selected }: NodeProps<StageFlowNode>)
             className="h-4 px-1 text-[8px] text-nx-ink-3 hover:text-nx-accent"
             onClick={(e) => {
               e.stopPropagation();
+              onSelectStage?.(stage.stageKey);
+            }}
+            title={t("crmOpportunities.workflowStudio.colorPaletteTitle")}
+          >
+            <Palette className="w-2.5 h-2.5" />
+          </Button>
+          <Button
+            variant="ghost"
+            size="sm"
+            className="h-4 px-1 text-[8px] text-nx-ink-3 hover:text-nx-accent"
+            onClick={(e) => {
+              e.stopPropagation();
               if (onAddTransition) onAddTransition(stage.stageKey);
               else onStartWireDraft?.(stage.stageKey, "right-1");
             }}
           >
-            + Trans
+            {t("crmOpportunities.workflowStudio.quickAddTransitionBtn")}
           </Button>
         </div>
       </div>

@@ -93,7 +93,7 @@ export function ConvertLeadFormFields({
             step="any"
             value={amount || ""}
             onChange={(e) => onAmountChange(Number(e.target.value))}
-            placeholder="10000"
+            placeholder={t("crmLeads.conversion.amountPlaceholder")}
             className="h-9 text-xs border-nx-line bg-nx-ground text-nx-ink flex-1 font-mono"
             required
           />

@@ -23,6 +23,7 @@ export function useAccountsCrudColumns(
         render: (_val, account: CrmAccount) => (
           <div
             className="flex items-center gap-2.5 cursor-pointer"
+            data-testid={`account-row-link-${account.id}`}
             onClick={() => router.push(`/crm/accounts/${account.id}`)}
           >
             <div className="size-7 rounded-nx-md bg-nx-raised border border-nx-line flex items-center justify-center shrink-0">

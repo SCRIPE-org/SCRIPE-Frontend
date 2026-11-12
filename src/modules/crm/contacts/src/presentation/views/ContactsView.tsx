@@ -10,7 +10,7 @@ import { Input } from "@core/ui/input";
 import { AlertCircle, RefreshCw, Plus, Search, Eye } from "lucide-react";
 import { cn } from "@core/common/utils";
 import { CRM_PERMISSIONS, CrmShell, CrmSectionHeader, CRM_TAB_ROUTES } from "@modules/crm";
-import type { CrmTabId } from "@modules/crm";
+import type { CrmTabId, CrmAccount } from "@modules/crm";
 import { GenericCrudView } from "@core/crud/components/generic-crud-view";
 import type { CrudConfig } from "@core/crud/components/generic-crud-view";
 import { CreateContactDialog } from "../components/CreateContactDialog";
@@ -19,7 +19,6 @@ import { ContactSplitDetail } from "../components/ContactSplitDetail";
 import { useContactsViewModel } from "../viewmodels/useContactsViewModel";
 import { useContactsCrudColumns } from "../viewmodels/useContactsCrudColumns";
 import type { CrmContact } from "../../domain/entities/ContactEntity";
-import type { CrmAccount } from "@modules/crm/accounts/src/domain/entities/AccountEntity";
 
 export function ContactsView() {
   const router = useRouter();
@@ -167,7 +166,7 @@ export function ContactsView() {
         <CrmSectionHeader
           title={t("crmContacts.header.title")}
           subtitle={t("crmContacts.header.subtitle")}
-          action={
+          actions={
             <div className="flex items-center gap-2">
               <Button
                 type="button"

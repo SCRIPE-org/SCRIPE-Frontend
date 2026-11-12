@@ -171,8 +171,7 @@ export function OpportunitiesView() {
     <CrmShell
       activeTab="deals"
       onTabChange={(tab) => {
-        if (tab === "overview") router.push("/crm");
-        else if (tab === "leads") router.push("/crm/leads");
+        if (tab !== "deals") router.push(tab === "overview" ? "/crm" : `/crm/${tab}`);
       }}
     >
       <div className="space-y-5" dir={isRtl ? "rtl" : "ltr"}>

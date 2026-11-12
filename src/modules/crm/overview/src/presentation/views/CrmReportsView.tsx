@@ -221,7 +221,7 @@ export function CrmReportsView() {
                 <div className="text-xl font-bold text-nx-ink">{report.winLoss.winRatePercent}%</div>
                 <div className="text-[11px] text-nx-ink-2 flex items-center justify-between">
                   <span>{report.winLoss.wonCount} {t("crm.reports.wonLabel")} / {report.winLoss.lostCount} {t("crm.reports.lostLabel")}</span>
-                  <span className="text-nx-ink-3">{t("crm.reports.avgCyclePrefix")}: {report.winLoss.avgCycleDays}d</span>
+                  <span className="text-nx-ink-3">{t("crm.reports.avgCyclePrefix")}: {report.winLoss.avgCycleDays}{t("crm.reports.daysShort")}</span>
                 </div>
               </Card>
 

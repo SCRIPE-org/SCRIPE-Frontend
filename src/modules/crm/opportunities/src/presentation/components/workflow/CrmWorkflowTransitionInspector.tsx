@@ -46,7 +46,7 @@ export function CrmWorkflowTransitionInspector({
   }, [selectedTransition.id]);
 
   return (
-    <div ref={panelRef} className="w-80 lg:w-96 border-s border-nx-line bg-nx-surface flex flex-col overflow-y-auto p-3 space-y-2.5 shrink-0" data-testid="workflow-inspector-panel">
+    <div ref={panelRef} className="w-80 xl:w-[352px] border-s border-nx-line bg-nx-surface flex flex-col overflow-y-auto p-3 space-y-2.5 shrink-0" data-testid="workflow-inspector-panel">
       <div className="flex items-center justify-between pb-2 border-b border-nx-line">
         <div>
           <span className="text-[10px] font-mono uppercase tracking-wider text-nx-ink-3 block">{t("crmOpportunities.pipelinesPage.transitionInspectorEyebrow")}</span>

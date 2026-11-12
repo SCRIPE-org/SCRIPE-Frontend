@@ -7,6 +7,7 @@ import { Card } from "@core/ui/card";
 import { cn } from "@core/common/utils";
 import type { CrmPipelineOverview, CrmStageKey } from "../../domain/entities/OverviewEntity";
 import { STAGE_COLOR_PALETTE, resolveDefaultStageColor } from "../../domain/constants/crmWorkflowDefaults";
+import { useCrmWorkflowsStore } from "../stores/useCrmWorkflowsStore";
 import { useCrmCurrency } from "../viewmodels/useCrmCurrency";
 
 interface CrmPipelineOverviewStripProps {
@@ -24,6 +25,7 @@ export function CrmPipelineOverviewStrip({
 }: CrmPipelineOverviewStripProps) {
   const { t, language } = useI18n();
   const isRtl = language === "ar";
+  const workflows = useCrmWorkflowsStore((s) => s.workflows);
   const { baseCurrency, autoConvertToBase, convertAmount } = useCrmCurrency();
   const sourceCurrency = pipeline?.currency ?? "SAR";
   const displayCurrency = autoConvertToBase ? baseCurrency : sourceCurrency;
@@ -32,6 +34,45 @@ export function CrmPipelineOverviewStrip({
     sourceCurrency,
     displayCurrency
   );
+
+  const getStageDisplayName = (stageKey: string, fallbackName: string) => {
+    if (!isRtl) return fallbackName;
+    for (const wf of workflows) {
+      const match = wf.stages?.find((s) => s.stageKey === stageKey);
+      if (match?.labelAr) return match.labelAr;
+    }
+    const suffix = stageKey.split(".").pop() || "";
+    switch (suffix) {
+      case "discovery":
+        return t("crm.pipeline.stages.discovery");
+      case "qualification":
+        return t("crm.pipeline.stages.qualification");
+      case "solution_fit":
+        return t("crm.pipeline.stages.solution_fit");
+      case "proposal":
+        return t("crm.pipeline.stages.proposal");
+      case "negotiation":
+        return t("crm.pipeline.stages.negotiation");
+      case "won":
+      case "closed_won":
+        return t("crm.pipeline.stages.won");
+      case "lost":
+      case "closed_lost":
+        return t("crm.pipeline.stages.lost");
+      default:
+        return fallbackName;
+    }
+  };
+
+  const getPipelineDisplayName = () => {
+    if (!isRtl) return pipeline.name;
+    const match = workflows.find(
+      (wf) =>
+        wf.id === (pipeline as { id?: string }).id ||
+        wf.nameEn?.toLowerCase() === pipeline.name?.toLowerCase()
+    );
+    return match?.nameAr || pipeline.name;
+  };
 
   return (
     <Card
@@ -46,7 +87,7 @@ export function CrmPipelineOverviewStrip({
           <h2 className="text-sm font-bold text-nx-ink flex items-center gap-2">
             <span>{t("crm.pipeline.title")}</span>
             <span className="text-[11px] font-semibold text-nx-ink-3">
-              ({pipeline.name})
+              ({getPipelineDisplayName()})
             </span>
           </h2>
           <p className="text-xs text-nx-ink-2">
@@ -103,7 +144,7 @@ export function CrmPipelineOverviewStrip({
               <div className="flex items-center justify-between w-full">
                 <span className="inline-flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-wider text-nx-ink-2 group-hover:text-nx-ink">
                   <span className={cn("w-2 h-2 rounded-full shrink-0", colorMeta.dotClass)} />
-                  <span>{stage.name}</span>
+                  <span>{getStageDisplayName(stage.key, stage.name)}</span>
                 </span>
                 {isProposalOrAfter ? (
                   <span

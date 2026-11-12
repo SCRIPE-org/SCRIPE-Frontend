@@ -27,6 +27,7 @@ export function buildOpportunityColumns(
           <Button
             type="button"
             variant="link"
+            data-testid={`deal-row-link-${opp.id}`}
             onClick={() => onSelectOpportunity(opp)}
             title={opp.title}
             className="p-0 h-auto max-w-full font-semibold text-nx-ink hover:text-nx-accent transition-colors truncate block text-start"
@@ -155,6 +156,7 @@ export function renderOpportunityCardGridItem(
           <Button
             type="button"
             variant="link"
+            data-testid={`deal-row-link-${opp.id}`}
             onClick={() => onSelectOpportunity(opp)}
             title={opp.title}
             className="p-0 h-auto max-w-full font-bold text-sm text-nx-ink hover:text-nx-accent truncate block text-start"
