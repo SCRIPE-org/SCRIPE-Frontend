@@ -114,15 +114,16 @@ export function buildTransitionsFromWorkflow(wf: CrmWorkflowDefinition): CrmWork
       fromStageKeys,
       toStageKey,
       direction: tr.direction,
-      sourcePort: (tr.properties?.sourcePort as StagePortId | undefined) ?? undefined,
-      targetPort: (tr.properties?.targetPort as StagePortId | undefined) ?? undefined,
+      sourcePort: ((tr as any).sourcePort ?? tr.properties?.sourcePort) as StagePortId | undefined,
+      targetPort: ((tr as any).targetPort ?? tr.properties?.targetPort) as StagePortId | undefined,
       domainEventKey: tr.domainEventKey ?? "GenericEvent",
       triggers: tr.triggers ? [...tr.triggers] : [],
       properties: tr.properties ? { ...tr.properties } : {},
       catalogRules: tr.catalogRules ? tr.catalogRules.map((r) => ({ ...r })) : [],
       requiredFields: [...(tr.rules?.requiredFieldKeys ?? [])],
+      promptFields: [...(tr.rules?.promptFields ?? [])],
       requireReason: Boolean(tr.rules?.promptForComment),
-      requireNote: (tr.rules?.promptFields ?? []).length > 0,
+      requireNote: (tr.rules?.promptFields ?? []).some((f) => f === "qualificationNotes" || f === "closeNotes"),
       allowRollback: tr.rules?.allowRollback ?? true,
       blockIfLinkedDealProgressed: Boolean(tr.rules?.blockIfLinkedDealProgressed),
       requireVerifiedParty: Boolean(tr.rules?.requireVerifiedParty),
@@ -221,34 +222,41 @@ export function serializeStudioDraftToWorkflow(
       const category = s.category ?? prev?.category ?? (s.isTerminalWon ? "done" : s.isTerminalLost ? "lost" : s.convertsToDeal ? "done" : s.order === 1 ? "todo" : "in_progress");
       const color = resolveDefaultStageColor(s.stageKey, category, idx + 1, s.color ?? prev?.color);
       const customColorHex = s.customColorHex ?? s.properties?.customColorHex ?? prev?.customColorHex ?? prev?.properties?.customColorHex;
+      const allowInboundFromAny = Boolean(
+        s.allowInboundFromAny ||
+          transitions.some((tr) => (tr.fromStageKey === "*" || tr.fromStageKeys?.includes("*")) && tr.toStageKey === s.stageKey),
+      );
       return {
-        stageKey: s.stageKey,
-        labelEn: s.labelEn,
-        labelAr: s.labelAr,
-        sortOrder: idx + 1,
-        category,
-        color,
-        customColorHex,
-        winProbabilityPercent: s.probability,
-        slaDays: s.slaDays,
-        properties: { ...(prev?.properties ?? {}), ...(s.properties ?? {}), color, ...(customColorHex ? { customColorHex } : {}) },
+        stageKey: s.stageKey, labelEn: s.labelEn, labelAr: s.labelAr, sortOrder: idx + 1, category, color, customColorHex,
+        winProbabilityPercent: s.probability, slaDays: s.slaDays,
+        properties: {
+          ...(prev?.properties ?? {}),
+          ...(s.properties ?? {}),
+          color,
+          allowInboundFromAny: String(allowInboundFromAny),
+          ...(customColorHex ? { customColorHex } : {}),
+        },
         requiredExitFields: s.requiredExitFields,
         requiresVerifiedParty: s.requiredExitFields.includes("partyId"),
-        triggerDealConversion: Boolean(s.convertsToDeal),
-        triggersDealConversion: Boolean(s.convertsToDeal),
-        allowInboundFromAny: transitions.some(
-          (tr) => (tr.fromStageKey === "*" || tr.fromStageKeys?.includes("*")) && tr.toStageKey === s.stageKey,
-        ),
+        triggerDealConversion: Boolean(s.convertsToDeal), triggersDealConversion: Boolean(s.convertsToDeal),
+        allowInboundFromAny,
         position: { x: s.x, y: s.y },
       };
     }),
     transitions: transitions.map((tr) => {
       const fromOrder = orderMap.get(tr.fromStageKey) ?? 0;
       const toOrder = orderMap.get(tr.toStageKey) ?? 0;
-      const resolvedDirection = tr.fromStageKey === "*" ? "global" : toOrder < fromOrder ? "backward" : tr.direction ?? "forward";
+      const isGlobal = tr.fromStageKey === "*" || tr.fromStageKeys?.includes("*");
+      const resolvedDirection = isGlobal ? "global" : toOrder < fromOrder ? "backward" : tr.direction ?? "forward";
       const nextProps: Record<string, string> = { ...(tr.properties ?? {}) };
       if (tr.sourcePort) nextProps.sourcePort = tr.sourcePort;
       if (tr.targetPort) nextProps.targetPort = tr.targetPort;
+      const noteFieldKey = selectedWorkflow.entityType === "lead" ? "qualificationNotes" : "closeNotes";
+      const basePromptFields = [...(tr.promptFields ?? [])];
+      const hasNoteField = basePromptFields.some((f) => f === "qualificationNotes" || f === "closeNotes");
+      const nextPromptFields = tr.requireNote
+        ? (hasNoteField ? basePromptFields : [...basePromptFields, noteFieldKey])
+        : basePromptFields.filter((f) => f !== "qualificationNotes" && f !== "closeNotes");
       return {
         id: tr.id,
         nameEn: tr.nameEn,
@@ -266,7 +274,7 @@ export function serializeStudioDraftToWorkflow(
           requiredPermission: tr.restrictToRoles?.[0] ?? null,
           blockIfLinkedDealProgressed: Boolean(tr.blockIfLinkedDealProgressed),
           promptForComment: Boolean(tr.requireReason),
-          promptFields: tr.requireNote ? ["qualificationNotes"] : [],
+          promptFields: nextPromptFields,
           requireVerifiedParty: Boolean(tr.requireVerifiedParty || tr.requiredFields.includes("partyId")),
           requireEstimatedAmountPositive: Boolean(tr.requireEstimatedAmountPositive || tr.requiredFields.includes("estimatedAmount")),
           requireTargetCloseDate: tr.requiredFields.includes("targetCloseDate"),

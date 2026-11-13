@@ -9,6 +9,7 @@ import { Button } from "@core/ui/button";
 import { Badge } from "@core/ui/badge";
 import { Card } from "@core/ui/card";
 import {
+  Activity,
   AlertCircle,
   Building2,
   Users,
@@ -30,6 +31,7 @@ import { AccountDetailSkeleton } from "../components/AccountDetailSkeleton";
 import { AccountStatusBadge } from "../components/AccountStatusBadge";
 import { AccountEditDialog } from "../components/AccountEditDialog";
 import { AccountDealsCard } from "../components/AccountDealsCard";
+import { AccountContactsCard } from "../components/AccountContactsCard";
 import { useAccountDetailViewModel } from "../viewmodels/useAccountDetailViewModel";
 
 interface AccountDetailViewProps {
@@ -124,18 +126,30 @@ export function AccountDetailView({ accountId }: AccountDetailViewProps) {
             {isRtl ? <ChevronRight className="size-3.5" /> : <ChevronLeft className="size-3.5" />}
             <span>{t("crmAccounts.detail.back")}</span>
           </Button>
-          {canUpdateAccount && (
+          <div className="flex items-center gap-2">
+            {canUpdateAccount && (
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={openEditModal}
+                className="h-8 text-xs gap-1.5 border-nx-line bg-nx-surface text-nx-ink hover:bg-nx-raised"
+              >
+                <Edit2 className="size-3.5 text-nx-accent" />
+                <span>{t("crmAccounts.actions.edit")}</span>
+              </Button>
+            )}
             <Button
               type="button"
               variant="outline"
               size="sm"
-              onClick={openEditModal}
+              onClick={() => router.push(`/crm/activities?account=${accountId}`)}
               className="h-8 text-xs gap-1.5 border-nx-line bg-nx-surface text-nx-ink hover:bg-nx-raised"
             >
-              <Edit2 className="size-3.5 text-nx-accent" />
-              <span>{t("crmAccounts.actions.edit")}</span>
+              <Activity className="size-3.5 text-nx-accent" />
+              <span>{t("crmAccounts.detail.logActivityBtn")}</span>
             </Button>
-          )}
+          </div>
         </div>
 
         <Card className="rounded-nx-lg border border-nx-line bg-nx-surface p-5 space-y-4">
@@ -167,7 +181,7 @@ export function AccountDetailView({ accountId }: AccountDetailViewProps) {
                   {t("crmAccounts.table.contacts")}
                 </span>
                 <span className="text-base font-bold text-nx-ink font-mono">
-                  {account.contacts?.length ?? account.linkedContactsCount}
+                  {Number(account.contacts?.length ?? account.linkedContactsCount ?? 0).toLocaleString(isRtl ? "ar-SA" : "en-US")}
                 </span>
               </div>
               <div className="rounded-nx-md border border-nx-line bg-nx-raised/50 px-3 py-1.5 text-center">
@@ -175,7 +189,7 @@ export function AccountDetailView({ accountId }: AccountDetailViewProps) {
                   {t("crmAccounts.table.opportunities")}
                 </span>
                 <span className="text-base font-bold text-nx-ink font-mono">
-                  {account.opportunities?.length ?? account.activeOpportunitiesCount}
+                  {Number(account.opportunities?.length ?? account.activeOpportunitiesCount ?? 0).toLocaleString(isRtl ? "ar-SA" : "en-US")}
                 </span>
               </div>
             </div>
@@ -193,60 +207,14 @@ export function AccountDetailView({ accountId }: AccountDetailViewProps) {
         </Card>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <Card className="rounded-nx-lg border border-nx-line bg-nx-surface overflow-hidden space-y-3 p-4">
-            <div className="flex items-center justify-between border-b border-nx-line pb-3">
-              <div className="flex items-center gap-2">
-                <Users className="size-4 text-nx-accent" />
-                <h2 className="text-sm font-bold text-nx-ink">{t("crmAccounts.detail.contactsTitle")}</h2>
-              </div>
-              <Badge variant="outline" className="border-nx-line text-nx-ink-3 font-mono text-[11px]">
-                {account.contacts?.length ?? 0}
-              </Badge>
-            </div>
-            {account.contacts?.length === 0 ? (
-              <p className="text-xs text-nx-ink-3 py-6 text-center">{t("crmAccounts.detail.noContacts")}</p>
-            ) : (
-              <div className="divide-y divide-nx-line">
-                {account.contacts?.map((c) => (
-                  <div
-                    key={c.id}
-                    className="py-2.5 flex items-center justify-between gap-2 hover:bg-nx-raised/30 px-1 rounded-nx-md cursor-pointer transition-colors"
-                    onClick={() => router.push(`/crm/contacts/${c.id}`)}
-                  >
-                    <div className="flex items-center gap-2.5">
-                      <div className="size-7 rounded-full bg-nx-raised border border-nx-line flex items-center justify-center shrink-0">
-                        <Users className="size-3 text-nx-ink-3" />
-                      </div>
-                      <div>
-                        <span className="text-xs font-semibold text-nx-ink block hover:text-nx-accent">
-                          {language === "ar" && c.fullNameAr ? c.fullNameAr : c.fullNameEn}
-                        </span>
-                        {(c.jobTitle || c.department) && (
-                          <span className="text-[11px] text-nx-ink-3 block">
-                            {[c.jobTitle, c.department].filter(Boolean).join(" • ")}
-                          </span>
-                        )}
-                      </div>
-                    </div>
-                    <div className="text-end text-[11px] text-nx-ink-3 space-y-0.5">
-                      {c.email && (
-                        <div className="flex items-center gap-1 justify-end">
-                          <Mail className="size-2.5" />
-                          <span>{c.email}</span>
-                        </div>
-                      )}
-                      {c.phone && (
-                        <div className="flex items-center gap-1 justify-end font-mono">
-                          <Phone className="size-2.5" />
-                          <span>{c.phone}</span>
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                ))}
-              </div>
-            )}
-          </Card>
+          <AccountContactsCard
+            contacts={account.contacts}
+            language={language}
+            isRtl={isRtl}
+            t={t}
+            onSelectContact={(id) => router.push(`/crm/contacts/${id}`)}
+            onViewAllContacts={() => router.push("/crm/contacts")}
+          />
 
           <AccountDealsCard
             opportunities={account.opportunities}
@@ -255,7 +223,8 @@ export function AccountDetailView({ accountId }: AccountDetailViewProps) {
             convertAmount={convertAmount}
             language={language}
             t={t}
-            onSelectOpportunity={(id) => router.push(`/crm/opportunities/${id}`)}
+            onSelectOpportunity={(id) => router.push(id ? `/crm/opportunities/${id}` : "/crm/opportunities")}
+            onViewAllOpportunities={() => router.push("/crm/opportunities")}
           />
         </div>
 

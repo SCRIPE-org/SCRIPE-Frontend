@@ -61,8 +61,8 @@ export class AuthService implements IAuthService {
     return LoginResponseModel.fromJson(json);
   }
 
-  async getMe<T>(): Promise<T> {
-    return this.api.get<T>(AUTH_CORE_ENDPOINTS.ME);
+  async getCurrentPrincipal<T>(): Promise<T> {
+    return this.api.get<T>(AUTH_CORE_ENDPOINTS.PRINCIPAL);
   }
 
   async discoverWorkspaces(email: string): Promise<DiscoverWorkspacesResponseDto> {

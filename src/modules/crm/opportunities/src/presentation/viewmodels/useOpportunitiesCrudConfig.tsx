@@ -107,7 +107,12 @@ export function useOpportunitiesCrudConfig(params: UseOpportunitiesCrudConfigPar
         </div>
       );
     },
-    [handleSelectOpportunity, openAssignOwnerDialog, openCloseDialog, openMoveStageDialog, openReopenDialog, t]
+    [handleSelectOpportunity, openAssignOwnerDialog, handleOpportunityStageTransition, openMoveStageDialog, t]
+  );
+
+  const sortedPipelineStages = useMemo(
+    () => [...(pipelineStages ?? [])].sort((a, b) => a.sortOrder - b.sortOrder),
+    [pipelineStages]
   );
 
   const columns = useMemo(
@@ -167,7 +172,7 @@ export function useOpportunitiesCrudConfig(params: UseOpportunitiesCrudConfigPar
     ),
     kanbanGroupField: "stageKey",
     workflowKanbanConfig: {
-      stages: [...(pipelineStages ?? [])].sort((a, b) => a.sortOrder - b.sortOrder).map((stg) => {
+      stages: sortedPipelineStages.map((stg) => {
         const colorToken = resolveDefaultStageColor(stg.stageKey, stg.statusCategory as any, stg.sortOrder, stg.color);
         const colorMeta = STAGE_COLOR_PALETTE[colorToken];
         const raw = stg as any;
@@ -184,44 +189,57 @@ export function useOpportunitiesCrudConfig(params: UseOpportunitiesCrudConfigPar
       }),
       stageField: "stageKey",
       evaluateDropTarget: (opp: CrmOpportunity, targetStageKey: string) => {
+        const isRtl = language === "ar";
+        const oppExtras = opp as unknown as {
+          solutionFitConfirmed?: boolean;
+          primaryContactRole?: string | null;
+          customFields?: Record<string, unknown>;
+        };
         const evalResult = useCrmWorkflowsStore.getState().evaluateTransition("deal", opp.stageKey, targetStageKey, {
           hasVerifiedParty: Boolean(opp.partyId || opp.accountId),
+          partyId: opp.partyId || opp.accountId || null,
           estimatedAmount: opp.estimatedAmount ?? null,
           targetCloseDate: opp.targetCloseDate ?? null,
+          lossReasonCode: opp.lossReasonCode ?? null,
+          solutionFitConfirmed: Boolean(oppExtras.solutionFitConfirmed),
+          primaryContactRole: oppExtras.primaryContactRole ?? null,
+          contactRoles: oppExtras.primaryContactRole ? [oppExtras.primaryContactRole] : undefined,
+          fields: oppExtras.customFields,
+          locale: isRtl ? "ar" : "en",
         });
         const parallelCount = evalResult.matchedTransitions?.length ?? 1;
         return {
           state: evalResult.status,
-          actionLabel: evalResult.matchedTransition?.nameEn,
+          actionLabel: evalResult.actionLabel || evalResult.matchedTransition?.nameEn,
           transitionId: evalResult.matchedTransition?.id,
           transitions: evalResult.matchedTransitions,
           badgeText:
             evalResult.status === "blocked"
-              ? evalResult.reason || t("crm.kanban.blocked", { defaultValue: "Transition Blocked" })
+              ? evalResult.reason || t("crmOpportunities.kanban.blocked", { defaultValue: "Transition Blocked" })
               : parallelCount > 1
-                ? t("crm.kanban.pathsAvailable", { count: parallelCount, defaultValue: `${parallelCount} Paths Available` })
+                ? t("crmOpportunities.kanban.pathsAvailable", { count: parallelCount, defaultValue: `${parallelCount} Paths Available` })
                 : evalResult.status === "allowed_screen_required"
-                  ? t("crm.kanban.opensTransitionScreen", { defaultValue: "Opens Transition Screen" })
-                  : t("crm.kanban.instantMove", { defaultValue: "Instant Move" }),
+                  ? t("crmOpportunities.kanban.opensTransitionScreen", { defaultValue: "Opens Transition Screen" })
+                  : t("crmOpportunities.kanban.instantMove", { defaultValue: "Instant Move" }),
           reason: evalResult.reason,
         };
       },
       renderCard: (opp: CrmOpportunity) => {
-        const currentStageIndex = (pipelineStages ?? []).findIndex((s) => s.stageKey === opp.stageKey);
+        const currentStageIndex = sortedPipelineStages.findIndex((s) => s.stageKey === opp.stageKey);
         return (
           <KanbanCard
             opportunity={opp}
             currentStageIndex={currentStageIndex >= 0 ? currentStageIndex : 0}
-            totalStages={pipelineStages?.length || 5}
+            totalStages={sortedPipelineStages.length || 5}
             cardDensity={boardSettings.cardDensity}
             onMoveForward={(deal) => {
-              const currentIdx = (pipelineStages ?? []).findIndex((s) => s.stageKey === deal.stageKey);
-              const nextStage = pipelineStages?.[currentIdx + 1]?.stageKey;
+              const currentIdx = sortedPipelineStages.findIndex((s) => s.stageKey === deal.stageKey);
+              const nextStage = sortedPipelineStages[currentIdx + 1]?.stageKey;
               if (nextStage) handleOpportunityStageTransition(deal, nextStage);
             }}
             onMoveBackward={(deal) => {
-              const currentIdx = (pipelineStages ?? []).findIndex((s) => s.stageKey === deal.stageKey);
-              const prevStage = pipelineStages?.[currentIdx - 1]?.stageKey;
+              const currentIdx = sortedPipelineStages.findIndex((s) => s.stageKey === deal.stageKey);
+              const prevStage = sortedPipelineStages[currentIdx - 1]?.stageKey;
               if (prevStage) handleOpportunityStageTransition(deal, prevStage);
             }}
           />

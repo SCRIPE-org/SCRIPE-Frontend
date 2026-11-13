@@ -5,6 +5,7 @@ import { Badge } from "@core/ui/badge";
 import { Button } from "@core/ui/button";
 import { cn } from "@core/common/utils";
 import { ChevronDown, ChevronRight, Layers } from "lucide-react";
+import { useCrudI18n } from "../hooks/useCrudI18n";
 import { KanbanStageColumn } from "./KanbanStageColumn";
 import type {
   WorkflowKanbanStageConfig,
@@ -21,6 +22,8 @@ export interface KanbanSwimlaneSectionProps<TItem = any> {
   getStageKey: (item: any) => string;
   activeItem: any | null;
   activeStageKey: string | null;
+  overStageKey?: string | null;
+  overSwimlaneKey?: string | null;
   evaluateDropTarget?: (item: any, targetStageKey: string) => DropEvaluationResult;
   cardDensity?: CardDensity;
   virtualizationThreshold?: number;
@@ -40,6 +43,8 @@ export const KanbanSwimlaneSection = memo(function KanbanSwimlaneSection({
   getStageKey,
   activeItem,
   activeStageKey,
+  overStageKey,
+  overSwimlaneKey,
   evaluateDropTarget,
   cardDensity,
   virtualizationThreshold,
@@ -51,7 +56,9 @@ export const KanbanSwimlaneSection = memo(function KanbanSwimlaneSection({
   getItemDisplayName,
   emptyLabel,
 }: KanbanSwimlaneSectionProps) {
+  const { t } = useCrudI18n();
   const [isExpanded, setIsExpanded] = useState(true);
+  const swimlaneKey = swimlane.key || swimlane.id;
 
   // Group items by stage inside this swimlane
   const stageItemsMap = React.useMemo(() => {
@@ -85,9 +92,23 @@ export const KanbanSwimlaneSection = memo(function KanbanSwimlaneSection({
             size="icon"
             className="size-6 p-0 text-nx-ink-3 hover:text-nx-ink"
             onClick={() => setIsExpanded((prev) => !prev)}
-            aria-label={isExpanded ? `Collapse swimlane ${swimlane.label}` : `Expand swimlane ${swimlane.label}`}
+            aria-label={
+              isExpanded
+                ? t("crud.kanban.collapseSwimlane", {
+                    label: swimlane.label,
+                    defaultValue: `Collapse ${swimlane.label}`,
+                  })
+                : t("crud.kanban.expandSwimlane", {
+                    label: swimlane.label,
+                    defaultValue: `Expand ${swimlane.label}`,
+                  })
+            }
           >
-            {isExpanded ? <ChevronDown className="size-4" /> : <ChevronRight className="size-4" />}
+            {isExpanded ? (
+              <ChevronDown className="size-4" />
+            ) : (
+              <ChevronRight className="size-4 rtl:rotate-180" />
+            )}
           </Button>
           <Layers className="size-4 text-nx-ink-3" />
           <span className="font-semibold text-nx-ink text-sm">{swimlane.label}</span>
@@ -100,25 +121,38 @@ export const KanbanSwimlaneSection = memo(function KanbanSwimlaneSection({
       {/* Swimlane Stage Columns */}
       {isExpanded && (
         <div className="flex items-start gap-3 overflow-x-auto pb-2 pt-1">
-          {stages.map((stage) => (
-            <KanbanStageColumn
-              key={stage.stageKey}
-              stage={stage}
-              items={stageItemsMap.get(stage.stageKey) || []}
-              activeItem={activeItem}
-              activeStageKey={activeStageKey}
-              evaluateDropTarget={evaluateDropTarget}
-              cardDensity={cardDensity}
-              virtualizationThreshold={virtualizationThreshold}
-              disabled={disabled}
-              renderCard={renderCard}
-              renderActionButtons={renderActionButtons}
-              renderStageHeaderExtra={renderStageHeaderExtra}
-              columns={columns}
-              getItemDisplayName={getItemDisplayName}
-              emptyLabel={emptyLabel}
-            />
-          ))}
+          {stages.map((stage) => {
+            const isOverStage =
+              overStageKey === stage.stageKey &&
+              (!overSwimlaneKey || overSwimlaneKey === swimlaneKey);
+
+            return (
+              <KanbanStageColumn
+                key={stage.stageKey}
+                stage={stage}
+                droppableId={`swimlane::${swimlaneKey}::${stage.stageKey}`}
+                droppableData={{
+                  type: "stage",
+                  stageKey: stage.stageKey,
+                  swimlaneKey,
+                }}
+                isOverStage={isOverStage}
+                items={stageItemsMap.get(stage.stageKey) || []}
+                activeItem={activeItem}
+                activeStageKey={activeStageKey}
+                evaluateDropTarget={evaluateDropTarget}
+                cardDensity={cardDensity}
+                virtualizationThreshold={virtualizationThreshold}
+                disabled={disabled}
+                renderCard={renderCard}
+                renderActionButtons={renderActionButtons}
+                renderStageHeaderExtra={renderStageHeaderExtra}
+                columns={columns}
+                getItemDisplayName={getItemDisplayName}
+                emptyLabel={emptyLabel}
+              />
+            );
+          })}
         </div>
       )}
     </div>

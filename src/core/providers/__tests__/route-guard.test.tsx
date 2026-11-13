@@ -10,11 +10,11 @@ const {
   mockUseAppStore,
   mockUseNavigationStore,
   mockHasToken,
-  mockGetMe,
+  mockGetCurrentPrincipal,
 } = vi.hoisted(() => {
   const mockRouterReplace = vi.fn();
   const mockRouterPush = vi.fn();
-  const mockGetMe = vi.fn();
+  const mockGetCurrentPrincipal = vi.fn();
 
   const mockAppState = {
     isAuthenticated: true,
@@ -56,7 +56,7 @@ const {
     mockUseAppStore,
     mockUseNavigationStore,
     mockHasToken,
-    mockGetMe,
+    mockGetCurrentPrincipal,
   };
 });
 
@@ -89,7 +89,7 @@ vi.mock("@core/common/secure-token-service", () => ({
 vi.mock("@core/providers/service-provider", () => ({
   useServices: () => ({
     authRepository: {
-      getMe: mockGetMe,
+      getCurrentPrincipal: mockGetCurrentPrincipal,
       refreshToken: vi.fn(),
     },
   }),

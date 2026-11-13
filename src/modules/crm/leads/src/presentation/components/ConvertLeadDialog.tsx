@@ -26,12 +26,12 @@ interface ConvertLeadDialogProps {
   submitError?: string | null;
 }
 
-const DEFAULT_CONVERSION_STAGE_OPTIONS = [
-  { key: "default.discovery", label: "1. Discovery (Initial Stage)", requiresParty: false },
-  { key: "default.qualification", label: "2. Qualification", requiresParty: false },
-  { key: "default.solution_fit", label: "3. Solution Fit", requiresParty: false },
-  { key: "default.proposal", label: "4. Proposal (Account/Contact Required)", requiresParty: true },
-  { key: "default.negotiation", label: "5. Negotiation (Account/Contact Required)", requiresParty: true },
+const DEFAULT_CONVERSION_STAGE_DEFS = [
+  { key: "default.discovery", labelKey: "crmLeads.conversion.defaultStages.discovery", requiresParty: false },
+  { key: "default.qualification", labelKey: "crmLeads.conversion.defaultStages.qualification", requiresParty: false },
+  { key: "default.solution_fit", labelKey: "crmLeads.conversion.defaultStages.solutionFit", requiresParty: false },
+  { key: "default.proposal", labelKey: "crmLeads.conversion.defaultStages.proposal", requiresParty: true },
+  { key: "default.negotiation", labelKey: "crmLeads.conversion.defaultStages.negotiation", requiresParty: true },
 ];
 
 export function ConvertLeadDialog({
@@ -47,6 +47,9 @@ export function ConvertLeadDialog({
   const { baseCurrency, defaultDealCurrency, getConversionPreview } = useCrmCurrency();
   const activeDealWorkflow = useCrmWorkflowsStore((s) => s.getActiveWorkflow("deal"));
 
+  const partyReqSuffix = t("crmLeads.conversion.partyRequiredSuffix");
+  const initialSuffix = t("crmLeads.conversion.initialStageSuffix");
+
   const conversionStageOptions =
     activeDealWorkflow?.stages && activeDealWorkflow.stages.length >= 2
       ? [...activeDealWorkflow.stages]
@@ -54,13 +57,21 @@ export function ConvertLeadDialog({
           .map((s, idx) => {
             const requiresParty = Boolean(s.requiresVerifiedParty || s.requiredExitFields?.includes("partyId"));
             const baseLabel = isRtl && s.labelAr ? s.labelAr : s.labelEn;
+            const suffix = requiresParty ? partyReqSuffix : idx === 0 ? initialSuffix : "";
             return {
               key: s.stageKey,
-              label: `${idx + 1}. ${baseLabel}${requiresParty ? " (Account/Contact Required)" : idx === 0 ? " (Initial Stage)" : ""}`,
+              label: `${idx + 1}. ${baseLabel}${suffix ? ` (${suffix})` : ""}`,
               requiresParty,
             };
           })
-      : DEFAULT_CONVERSION_STAGE_OPTIONS;
+      : DEFAULT_CONVERSION_STAGE_DEFS.map((s, idx) => {
+          const suffix = s.requiresParty ? partyReqSuffix : idx === 0 ? initialSuffix : "";
+          return {
+            key: s.key,
+            label: `${idx + 1}. ${t(s.labelKey)}${suffix ? ` (${suffix})` : ""}`,
+            requiresParty: s.requiresParty,
+          };
+        });
 
   const [title, setTitle] = useState("");
   const [amount, setAmount] = useState(0);

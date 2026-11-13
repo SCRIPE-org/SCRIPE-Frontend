@@ -90,7 +90,7 @@ export async function completeAdminLogin(
   setters: SsoCallbackSetters
 ) {
   secureTokenService.setAccessToken(accessToken);
-  const user = await deps.authRepository.getMe();
+  const user = await deps.authRepository.getCurrentPrincipal();
   deps.setAuth(user, (user.permissions || []) as PermissionCode[], [], true);
   deps.setSubscriptionInfo(
     subscription.status ?? null,
@@ -111,7 +111,7 @@ async function completeUserLogin(
   setters: SsoCallbackSetters
 ) {
   secureTokenService.setAccessToken(accessToken);
-  const user = await deps.authRepository.getMe();
+  const user = await deps.authRepository.getCurrentPrincipal();
   deps.setAuth(user, (user.permissions || []) as PermissionCode[], [], true);
   deps.operationSuccess(deps.t("auth.welcomeBack"));
 

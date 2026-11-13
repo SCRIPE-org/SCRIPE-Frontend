@@ -13,6 +13,7 @@ import {
   type CrmWorkflowStage,
   type CrmWorkflowTransition,
   type EvaluatedWorkflowTransition,
+  type RecordTransitionContext,
 } from "../../domain/constants/crmWorkflowDefaults";
 import {
   CANONICAL_DEFAULT_STAGE_META,
@@ -70,7 +71,7 @@ export interface CrmWorkflowsState {
   hydrateFromBackendPipelines: (backendPipelines: any[]) => void;
   evaluateTransition: (
     entityType: CrmWorkflowEntityType, fromStageKey: string, toStageKey: string,
-    recordContext?: { hasVerifiedParty?: boolean; estimatedAmount?: number | null; targetCloseDate?: string | null }
+    recordContext?: RecordTransitionContext
   ) => EvaluatedWorkflowTransition;
   resetDefaults: () => void;
   resetWorkflows: () => void;
@@ -219,13 +220,8 @@ export const useCrmWorkflowsStore = create<CrmWorkflowsState>()(
             if (backendPipe.transitionsJson) {
               try {
                 const parsed = JSON.parse(backendPipe.transitionsJson);
-                if (Array.isArray(parsed) && parsed.length > 0) {
-                  const qualHasSolFit = syncedStages.find((s) => s.stageKey === "default.qualification")?.requiredExitFields.includes("solutionFitConfirmed");
-                  syncedTransitions = parsed.map((tr: CrmWorkflowTransition) =>
-                    tr.fromStageKey === "default.qualification" && tr.toStageKey === "default.solution_fit" && !qualHasSolFit && tr.rules?.requiredFieldKeys?.includes("solutionFitConfirmed")
-                      ? { ...tr, rules: { ...tr.rules, requiredFieldKeys: tr.rules.requiredFieldKeys.filter((k) => k !== "solutionFitConfirmed") } }
-                      : tr
-                  );
+                if (Array.isArray(parsed)) {
+                  syncedTransitions = parsed as CrmWorkflowTransition[];
                 }
               } catch { /* keep */ }
             }

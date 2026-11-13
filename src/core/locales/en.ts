@@ -2189,6 +2189,10 @@ export const en = {
       pathsAvailable: "{count} Paths Available",
       currentStage: "Current Stage",
       moveHere: "Move Here",
+      collapseSwimlane: "Collapse swimlane",
+      expandSwimlane: "Expand swimlane",
+      dropToMove: "Drop to Move",
+      dropHere: "Drop here",
     },
     calendar: {
       unscheduled: "Unscheduled",

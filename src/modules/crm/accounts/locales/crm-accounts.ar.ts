@@ -114,6 +114,9 @@ export const ar = {
       noContacts: "لا توجد جهات اتصال مرتبطة بهذا الحساب حالياً.",
       dealsTitle: "الصفقات الجارية في مسار المبيعات",
       noDeals: "لا توجد صفقات جارية مرتبطة بهذا الحساب حالياً.",
+      viewContactsBtn: "عرض جهات الاتصال",
+      viewOpportunitiesBtn: "عرض الصفقات",
+      logActivityBtn: "تسجيل نشاط",
     },
   },
 };

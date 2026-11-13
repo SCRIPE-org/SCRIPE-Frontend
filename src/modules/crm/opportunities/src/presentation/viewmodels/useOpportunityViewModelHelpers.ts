@@ -2,14 +2,6 @@ import { getCrmContainer } from "@modules/crm/di";
 import { useCrmWorkflowsStore } from "@modules/crm";
 import type { CrmOpportunity } from "../../domain/entities/OpportunityEntity";
 
-const DEFAULT_STAGE_ORDER: Record<string, number> = {
-  "default.discovery": 1,
-  "default.qualification": 2,
-  "default.solution_fit": 3,
-  "default.proposal": 4,
-  "default.negotiation": 5,
-};
-
 export async function lookupOpportunityPartyOptions(searchQuery?: string): Promise<
   Array<{
     partyId: string;
@@ -87,37 +79,39 @@ export async function lookupOpportunityPartyOptions(searchQuery?: string): Promi
   }
 }
 
+/**
+ * Evaluates whether an optimistic Kanban card move can proceed instantly, is blocked,
+ * or requires opening the dynamic workflow transition screen.
+ */
 export function evaluateOptimisticDealStageMove(
   opportunity: CrmOpportunity,
   targetStageKey: string,
   effectivePipelineStages: any[],
-  overrideReason?: string,
+  _overrideReason?: string,
 ): {
   status: "allowed" | "blocked" | "needs_modal" | "close_won" | "close_lost";
   errorReason?: string;
 } {
-  if (
-    targetStageKey === "default.closed_won" ||
-    targetStageKey === "terminal-won" ||
-    targetStageKey === "Won"
-  ) {
-    return { status: "close_won" };
-  }
-  if (
-    targetStageKey === "default.closed_lost" ||
-    targetStageKey === "terminal-lost" ||
-    targetStageKey === "Lost"
-  ) {
-    return { status: "close_lost" };
-  }
-
+  void effectivePipelineStages;
   const wfStore = useCrmWorkflowsStore.getState();
-  const activeWf = wfStore.getActiveWorkflow("deal");
-  const fromInWf = activeWf.stages.some((s) => s.stageKey === opportunity.stageKey);
-  const toInWf = activeWf.stages.some((s) => s.stageKey === targetStageKey);
-  const evalResult = wfStore.evaluateTransition("deal", opportunity.stageKey, targetStageKey);
+  const oppExtras = opportunity as unknown as {
+    solutionFitConfirmed?: boolean;
+    primaryContactRole?: string | null;
+    customFields?: Record<string, unknown>;
+  };
+  const evalResult = wfStore.evaluateTransition("deal", opportunity.stageKey, targetStageKey, {
+    hasVerifiedParty: Boolean(opportunity.partyId || opportunity.accountId),
+    partyId: opportunity.partyId || opportunity.accountId || null,
+    estimatedAmount: opportunity.estimatedAmount ?? null,
+    targetCloseDate: opportunity.targetCloseDate ?? null,
+    lossReasonCode: opportunity.lossReasonCode ?? null,
+    solutionFitConfirmed: Boolean(oppExtras.solutionFitConfirmed),
+    primaryContactRole: oppExtras.primaryContactRole ?? null,
+    contactRoles: oppExtras.primaryContactRole ? [oppExtras.primaryContactRole] : undefined,
+    fields: oppExtras.customFields,
+  });
 
-  if (fromInWf && toInWf && !evalResult.allowed) {
+  if (!evalResult.allowed) {
     return {
       status: "blocked",
       errorReason:
@@ -125,70 +119,11 @@ export function evaluateOptimisticDealStageMove(
     };
   }
 
-  const stages = effectivePipelineStages ?? [];
-  const currentStageConfig = stages.find((s) => s.stageKey === opportunity.stageKey);
-  const targetStageConfig = stages.find((s) => s.stageKey === targetStageKey);
-  const wfTargetStage = activeWf.stages.find((s) => s.stageKey === targetStageKey);
-
-  if (targetStageConfig?.statusCategory === "done" || wfTargetStage?.category === "done") {
-    return { status: "close_won" };
-  }
-  if (targetStageConfig?.statusCategory === "lost" || wfTargetStage?.category === "lost") {
-    return { status: "close_lost" };
+  if (evalResult.status === "allowed_instant") {
+    return { status: "allowed" };
   }
 
-  const currentOrder = currentStageConfig?.sortOrder ?? DEFAULT_STAGE_ORDER[opportunity.stageKey] ?? 1;
-  const targetOrder = targetStageConfig?.sortOrder ?? DEFAULT_STAGE_ORDER[targetStageKey] ?? 1;
-
-  const isAdjacentForward = targetOrder === currentOrder + 1;
-  const requiresParty = Boolean(
-    targetStageConfig?.requiresVerifiedParty ||
-      evalResult.matchedTransition?.rules.requireVerifiedParty ||
-      targetStageKey === "default.proposal" ||
-      targetStageKey === "default.negotiation",
-  );
-
-  const traversedExitFields =
-    targetOrder > currentOrder
-      ? Array.from(
-          new Set(
-            stages
-              .filter((s) => s.sortOrder >= currentOrder && s.sortOrder < targetOrder)
-              .flatMap((s) => s.requiredExitFields ?? []),
-          ),
-        )
-      : [];
-  const baseExitFields =
-    traversedExitFields.length > 0 ? traversedExitFields : currentStageConfig?.requiredExitFields ?? [];
-  const exitFields = Array.from(new Set([...baseExitFields, ...(evalResult.requiredFields ?? [])]));
-
-  const missingParty = (requiresParty || exitFields.includes("partyId")) && !opportunity.partyId;
-  const missingAmount =
-    exitFields.includes("estimatedAmount") &&
-    (opportunity.estimatedAmount == null || Number(opportunity.estimatedAmount) <= 0);
-  const missingCloseDate = exitFields.includes("targetCloseDate") && !opportunity.targetCloseDate;
-  const missingPrimaryContactRole =
-    exitFields.includes("primaryContactRole") && !opportunity.primaryContactRole?.trim();
-  const missingSolutionFit =
-    exitFields.includes("solutionFitConfirmed") && !opportunity.solutionFitConfirmed;
-  const hasCustomFieldExitGate = exitFields.some((f) => f.startsWith("custom:"));
-  const hasPromptFields =
-    (evalResult.matchedTransition?.rules.promptFields?.length ?? 0) > 0 ||
-    Boolean(evalResult.promptForComment);
-  const requiresInteractiveConfirmation =
-    missingPrimaryContactRole || missingSolutionFit || hasCustomFieldExitGate || hasPromptFields;
-
-  if (
-    (!isAdjacentForward && !overrideReason) ||
-    missingParty ||
-    missingAmount ||
-    missingCloseDate ||
-    requiresInteractiveConfirmation
-  ) {
-    return { status: "needs_modal" };
-  }
-
-  return { status: "allowed" };
+  return { status: "needs_modal" };
 }
 
 export function useOpportunityViewModelHelpers() {

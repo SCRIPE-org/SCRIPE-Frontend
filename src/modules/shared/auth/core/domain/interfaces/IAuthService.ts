@@ -18,7 +18,7 @@ export interface IAuthService {
   verify2FA(request: Verify2FARequestModel): Promise<Verify2FAResponseModel>;
   logout(): Promise<void>;
   refreshToken(): Promise<LoginResponseModel>;
-  getMe<T>(): Promise<T>;
+  getCurrentPrincipal<T>(): Promise<T>;
   discoverWorkspaces(email: string): Promise<DiscoverWorkspacesResponseDto>;
   impersonate(adminId: string): Promise<LoginResponseModel>;
   stopImpersonation(): Promise<LoginResponseModel>;

@@ -16,7 +16,7 @@ export class ConsentService implements IConsentService {
   constructor(private readonly api: IApiService) {}
 
   getMyConsent(): Promise<ConsentStatusModel[]> {
-    return this.api.get<ConsentStatusModel[]>(CONSENT_ENDPOINTS.MY_CONSENT);
+    return this.api.get<ConsentStatusModel[]>(CONSENT_ENDPOINTS.CURRENT_CONSENT);
   }
 
   recordConsent(data: RecordConsentRequest): Promise<void> {

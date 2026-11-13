@@ -20,6 +20,10 @@ import { useAccountsViewModel } from "../viewmodels/useAccountsViewModel";
 import { useAccountsCrudColumns } from "../viewmodels/useAccountsCrudColumns";
 import type { CrmAccount } from "../../domain/entities/AccountEntity";
 
+/**
+ * CRM Accounts directory view providing tier filtering, quick search,
+ * multi-layout rendering (Table, CardGrid, SplitPane), and account creation.
+ */
 export function AccountsView() {
   const router = useRouter();
   const { t, language } = useI18n();
@@ -212,12 +216,12 @@ export function AccountsView() {
         />
 
         <CreateAccountDialog
-          isOpen={isCreateOpen}
+          open={isCreateOpen}
           isSubmitting={isSubmitting}
           error={submitError}
           onOpenChange={setIsCreateOpen}
           onSubmit={handleCreateAccount}
-          candidatePartiesFetcher={viewModel.lookupCandidateParties}
+          onLookupOrganizations={viewModel.lookupCandidateOrganizations}
         />
       </div>
     </CrmShell>

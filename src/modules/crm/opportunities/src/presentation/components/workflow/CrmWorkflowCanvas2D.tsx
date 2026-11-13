@@ -36,7 +36,7 @@ export interface CrmWorkflowTransition {
   id: string; nameEn: string; nameAr: string; fromStageKey: string; fromStageKeys?: string[]; toStageKey: string;
   direction?: "forward" | "backward" | "global"; requiredFields: string[];
   sourcePort?: StagePortId; targetPort?: StagePortId;
-  requireReason?: boolean; requireNote?: boolean; allowRollback?: boolean;
+  requireReason?: boolean; requireNote?: boolean; promptFields?: string[]; allowRollback?: boolean;
   blockIfLinkedDealProgressed?: boolean; requireVerifiedParty?: boolean;
   requireEstimatedAmountPositive?: boolean; triggerDealConversion?: boolean;
   autoCreateWorkTask?: boolean; restrictToRoles?: string[];
@@ -101,10 +101,10 @@ function ManagedReactFlowCanvas(props: CrmWorkflowCanvas2DProps) {
         onResetZoom={() => { onZoomChange(80); }}
         canUndo={canUndo} canRedo={canRedo} onUndo={onUndo} onRedo={onRedo}
       />
-      <div className="flex-1 w-full h-full relative" data-testid="crm-2d-graph-surface">
+      <div className="flex-1 w-full h-full relative" data-testid="crm-2d-graph-surface" onPointerUp={graph.clearIdleWireDraft}>
         <ReactFlow
           nodes={graph.nodes} edges={graph.edges} onNodesChange={graph.onNodesChange} onEdgesChange={graph.onEdgesChange}
-          onNodeDragStop={graph.onNodeDragStop} onConnect={graph.onConnect} onReconnect={graph.onReconnect}
+          onNodeDragStop={graph.onNodeDragStop} onConnectStart={graph.onConnectStart} onConnect={graph.onConnect} onConnectEnd={graph.onConnectEnd} onReconnect={graph.onReconnect}
           nodeTypes={nodeTypes} edgeTypes={edgeTypes} fitView minZoom={0.2} maxZoom={2.5}
           fitViewOptions={{ padding: 0.16, maxZoom: 0.95 }} connectionMode={ConnectionMode.Loose}
           proOptions={{ hideAttribution: true }} className="bg-nx-ground"

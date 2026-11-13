@@ -1,6 +1,6 @@
 // FILE-EXCEPTION: file length
 /**
- * MySubscriptionView — Tenant admin self-service subscription portal.
+ * CurrentTenantSubscriptionView — Tenant admin self-service subscription portal.
  *
  * Displays the tenant's active Tier 1 (TenantSubscription) data:
  * - Edition name, status, type with premium badges
@@ -11,7 +11,7 @@
  */
 "use client";
 
-import { useMySubscriptionViewModel } from "../viewmodels/useMySubscriptionViewModel";
+import { useCurrentTenantSubscriptionViewModel } from "../viewmodels/useCurrentTenantSubscriptionViewModel";
 import { useI18n } from "@core/providers/i18n-provider";
 import { useModuleLocales } from "@core/hooks/use-module-locales";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@core/ui/card";
@@ -111,12 +111,12 @@ function formatCurrency(amount?: number, currency?: string): string {
 }
 
 /**
- * Presentation UI component rendering the my subscription view.
+ * Presentation UI component rendering the current tenant subscription view.
  * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
  */
-export function MySubscriptionView() {
+export function CurrentTenantSubscriptionView() {
   useModuleLocales(() => import("../../../locales"), "user-subscriptions");
-  const vm = useMySubscriptionViewModel();
+  const vm = useCurrentTenantSubscriptionViewModel();
   const { t, language } = useI18n();
 
   if (vm.isLoading) {

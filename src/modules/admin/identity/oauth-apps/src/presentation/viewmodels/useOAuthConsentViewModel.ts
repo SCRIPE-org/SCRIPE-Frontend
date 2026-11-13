@@ -85,7 +85,7 @@ export function useOAuthConsentViewModel(): OAuthConsentViewModelResult {
       const result = await authRepository.refreshToken();
       if (result.kind === "err") throw result.error;
 
-      const me = await authRepository.getMe();
+      const me = await authRepository.getCurrentPrincipal();
       if (!me) throw new Error("Could not fetch user profile");
 
       return me;

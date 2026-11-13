@@ -18,6 +18,7 @@ import {
   Mail,
   Phone,
   ArrowUpRight,
+  Activity,
 } from "lucide-react";
 import {
   CRM_PERMISSIONS,
@@ -67,15 +68,6 @@ export function ContactDetailView({ contactId }: ContactDetailViewProps) {
     setEditDepartment(state.contact.departmentName || "");
     setEditNotes(state.contact.commercialNotes || "");
     setIsEditOpen(true);
-  };
-
-  const onSaveEdit = async (data: {
-    primaryAccountId?: string;
-    jobTitleSnapshot?: string;
-    departmentName?: string;
-    commercialNotes?: string;
-  }) => {
-    await handleUpdateContact(data);
   };
 
   if (state.stage === "loading" && !state.contact) {
@@ -128,18 +120,30 @@ export function ContactDetailView({ contactId }: ContactDetailViewProps) {
             {isRtl ? <ChevronRight className="size-3.5" /> : <ChevronLeft className="size-3.5" />}
             <span>{t("crmContacts.detail.back")}</span>
           </Button>
-          {canUpdateContact && (
+          <div className="flex items-center gap-2">
             <Button
               type="button"
               variant="outline"
               size="sm"
-              onClick={openEditModal}
+              onClick={() => router.push(`/crm/activities?contact=${contactId}`)}
               className="h-8 text-xs gap-1.5 border-nx-line bg-nx-surface text-nx-ink hover:bg-nx-raised"
             >
-              <Edit2 className="size-3.5 text-nx-accent" />
-              <span>{t("crmContacts.actions.edit")}</span>
+              <Activity className="size-3.5 text-nx-accent" />
+              <span>{t("crmContacts.detail.logActivityBtn")}</span>
             </Button>
-          )}
+            {canUpdateContact && (
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={openEditModal}
+                className="h-8 text-xs gap-1.5 border-nx-line bg-nx-surface text-nx-ink hover:bg-nx-raised"
+              >
+                <Edit2 className="size-3.5 text-nx-accent" />
+                <span>{t("crmContacts.actions.edit")}</span>
+              </Button>
+            )}
+          </div>
         </div>
 
         <Card className="rounded-nx-lg border border-nx-line bg-nx-surface p-5 space-y-4">
@@ -168,7 +172,7 @@ export function ContactDetailView({ contactId }: ContactDetailViewProps) {
                   {t("crmContacts.detail.dealsTitle")}
                 </span>
                 <span className="text-base font-bold text-nx-ink font-mono">
-                  {contact.opportunities?.length ?? 0}
+                  {Number(contact.opportunities?.length ?? 0).toLocaleString(isRtl ? "ar-SA" : "en-US")}
                 </span>
               </div>
             </div>
@@ -233,7 +237,19 @@ export function ContactDetailView({ contactId }: ContactDetailViewProps) {
                 </Button>
               </div>
             ) : (
-              <p className="text-xs text-nx-ink-3 py-6 text-center italic">{t("crmContacts.detail.noPrimaryAccount")}</p>
+              <div className="py-6 text-center space-y-2.5">
+                <p className="text-xs text-nx-ink-3 italic">{t("crmContacts.detail.noPrimaryAccount")}</p>
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={() => router.push("/crm/accounts")}
+                  className="h-7 text-xs gap-1.5 border-nx-line hover:border-nx-accent"
+                >
+                  <Building2 className="size-3 text-nx-accent" />
+                  <span>{t("crmContacts.detail.viewAccountsBtn")}</span>
+                </Button>
+              </div>
             )}
           </Card>
 
@@ -242,18 +258,18 @@ export function ContactDetailView({ contactId }: ContactDetailViewProps) {
             jobTitleSnapshot={contact.jobTitleSnapshot}
             language={language}
             t={t}
-            onSelectOpportunity={(id) => router.push(`/crm/opportunities/${id}`)}
+            onSelectOpportunity={(id) => router.push(id ? `/crm/opportunities/${id}` : "/crm/opportunities")}
+            onViewAllOpportunities={() => router.push("/crm/opportunities")}
           />
         </div>
 
-        {contact.primaryAccountId && (
-          <Card className="p-5 bg-nx-surface border-nx-line">
-            <ActivityTimeline
-              accountId={contact.primaryAccountId}
-              targetLabel={language === "ar" && contact.personLegalNameAr ? contact.personLegalNameAr : contact.personLegalNameEn}
-            />
-          </Card>
-        )}
+        <Card className="p-5 bg-nx-surface border-nx-line">
+          <ActivityTimeline
+            accountId={contact.primaryAccountId || undefined}
+            targetLabel={language === "ar" && contact.personLegalNameAr ? contact.personLegalNameAr : contact.personLegalNameEn}
+            defaultRecipientEmail={contact.email}
+          />
+        </Card>
 
         <ContactEditDialog
           isOpen={isEditOpen}
@@ -265,7 +281,9 @@ export function ContactDetailView({ contactId }: ContactDetailViewProps) {
           initialDepartment={editDepartment}
           initialNotes={editNotes}
           onOpenChange={setIsEditOpen}
-          onSave={onSaveEdit}
+          onSave={async (data) => {
+            await handleUpdateContact(data);
+          }}
           isRtl={isRtl}
           t={t}
         />

@@ -3,6 +3,10 @@
 import { Sparkles, X } from "lucide-react";
 import { Button } from "@core/ui/button";
 
+/**
+ * Contextual CRM Smart Tip ribbon rendered inside CrmShell with interactive tour launch
+ * and persistent dismissal controls.
+ */
 export function CrmSmartTipRibbon({
   t,
   activeTab = "settings",
@@ -46,6 +50,8 @@ export function CrmSmartTipRibbon({
           type="button"
           variant="ghost"
           size="icon"
+          aria-label={t("crm.settings.dismiss")}
+          data-testid="crm-smart-tip-dismiss"
           className="h-5 w-5 text-nx-ink-3"
           onClick={onDismiss}
         >

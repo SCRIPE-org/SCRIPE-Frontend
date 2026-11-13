@@ -108,7 +108,7 @@ export class AuthRepository implements IAuthRepository {
       if (mappedUser) {
         user = mappedUser;
       } else {
-        user = await this.getMe();
+        user = await this.getCurrentPrincipal();
       }
 
       return {
@@ -146,7 +146,7 @@ export class AuthRepository implements IAuthRepository {
       if (mappedUser) {
         user = mappedUser;
       } else {
-        user = await this.getMe();
+        user = await this.getCurrentPrincipal();
       }
 
       return {
@@ -172,9 +172,9 @@ export class AuthRepository implements IAuthRepository {
     }
   }
 
-  async getMe(): Promise<User> {
+  async getCurrentPrincipal(): Promise<User> {
     try {
-      const response = await this.service.getMe<UserProfileJson | string>();
+      const response = await this.service.getCurrentPrincipal<UserProfileJson | string>();
       return AuthMapper.userFromJson(response);
     } catch (error) {
       appLogger.error("Failed to get current user:", error);
@@ -403,7 +403,7 @@ export class AuthRepository implements IAuthRepository {
       if (mappedUser) {
         user = mappedUser;
       } else {
-        user = await this.getMe();
+        user = await this.getCurrentPrincipal();
       }
 
       return {

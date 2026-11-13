@@ -156,6 +156,13 @@ export function useLeadsViewModel(initialSearch?: string) {
       setSubmitError(null);
       try {
         const container = getCrmContainer();
+        const serializedCustomFields = payload.customFields
+          ? Object.fromEntries(
+              Object.entries(payload.customFields)
+                .filter(([, val]) => val !== undefined && val !== null && val !== "")
+                .map(([key, val]) => [key, String(val)]),
+            )
+          : undefined;
         await container.leadRepository.moveLeadStage({
           leadId: payload.entityId,
           targetStageKey: payload.targetStageKey,
@@ -165,12 +172,17 @@ export function useLeadsViewModel(initialSearch?: string) {
           accountId: payload.accountId,
           estimatedValue: payload.estimatedAmount,
           closeNotes: payload.closeNotes,
+          qualificationNotes: payload.qualificationNotes,
           disqualificationReasonCode: payload.disqualificationReasonCode,
           reopenReason: payload.reopenReason,
           reason: payload.reason,
           auditNote: payload.auditNote,
           convertDealTitle: payload.convertDealTitle,
           targetDealPipelineId: payload.targetDealPipelineId,
+          customFields:
+            serializedCustomFields && Object.keys(serializedCustomFields).length > 0
+              ? serializedCustomFields
+              : undefined,
         });
         setIsSubmitting(false);
         refresh();

@@ -18,7 +18,7 @@ export interface INavigationRepository {
    * This seeds the allRoutes Set in useNavigationStore, guaranteeing that the
    * RouteGuard never gets a false "not-authorized" while menu trees are loading.
    *
-   * Backend: GET /Menus/my/routes
+   * Backend: GET /menus/navigation/routes
    */
   fetchRoutes(): Promise<{
     routes: string[];
@@ -31,7 +31,7 @@ export interface INavigationRepository {
    * Fetches the default (admin) workspace menu tree + workspace group metadata.
    * No workspace stubs are fetched separately — groups come in this response.
    *
-   * Backend: GET /Menus/my  (no workspace param)
+   * Backend: GET /menus/navigation  (no workspace param)
    */
   fetchDefaultWorkspace(): Promise<NavigationData>;
 
@@ -41,14 +41,14 @@ export interface INavigationRepository {
    * Fetches (and in-memory caches) the full menu tree for a specific workspace.
    * Returns the cached copy instantly if already loaded.
    *
-   * Backend: GET /Menus/my?workspace={key}
+   * Backend: GET /menus/navigation?workspace={key}
    */
   fetchWorkspaceMenu(workspaceKey: string): Promise<NavigationData>;
 
   /**
    * Toggle pin state for a workspace.
    *
-   * Backend: POST /Menus/my/workspaces/{key}/pin
+   * Backend: POST /menus/navigation/workspaces/{key}/pin
    * Returns both the new isPinned state AND the backend-authoritative pinSortOrder.
    * Never compute pinSortOrder client-side — always use the value returned here.
    */
@@ -62,7 +62,7 @@ export interface INavigationRepository {
    * Fetches lightweight workspace stubs so the provider can discover
    * which module workspaces are available. Never called at startup.
    *
-   * Backend: GET /Menus/my/workspaces
+   * Backend: GET /menus/navigation/workspaces
    */
   fetchWorkspaceStubs(): Promise<WorkspaceGroupData[]>;
 

@@ -395,9 +395,15 @@ export function RouteGuard({ children }: RouteGuardProps) {
             );
             useAppStore.getState().setMustChangePassword(refreshData.mustChangePassword ?? false);
 
-            const user = await authRepository.getMe();
-            if (user) {
-              setAuth(user, user.permissions || [], []);
+            const user = await authRepository.getCurrentPrincipal();
+            if (user && user.id) {
+              const state = useAppStore.getState();
+              const resolvedRoles = user.roles && user.roles.length > 0 ? user.roles : state.roles;
+              const resolvedPermissions =
+                user.permissions && user.permissions.length > 0
+                  ? (user.permissions as any[])
+                  : state.permissions;
+              setAuth(user, resolvedPermissions, resolvedRoles);
               isRefreshing.current = false;
               setIsRestoringSession(false);
               setCheckTrigger((prev) => prev + 1);
@@ -460,10 +466,16 @@ export function RouteGuard({ children }: RouteGuardProps) {
         appLogger.debug("[RouteGuard] Token exists, store empty → restoring session");
 
         try {
-          const user = await authRepository.getMe();
-          if (user) {
+          const user = await authRepository.getCurrentPrincipal();
+          if (user && user.id) {
             appLogger.debug("[RouteGuard] Session restored");
-            setAuth(user, user.permissions || [], []);
+            const state = useAppStore.getState();
+            const resolvedRoles = user.roles && user.roles.length > 0 ? user.roles : state.roles;
+            const resolvedPermissions =
+              user.permissions && user.permissions.length > 0
+                ? (user.permissions as any[])
+                : state.permissions;
+            setAuth(user, resolvedPermissions, resolvedRoles);
             return;
           }
         } catch (error) {

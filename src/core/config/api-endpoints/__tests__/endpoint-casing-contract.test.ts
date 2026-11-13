@@ -67,7 +67,7 @@ function staticSegments(template: string): string[] {
 /**
  * A segment violates the convention when an uppercase letter follows a
  * lowercase letter or digit — i.e. it is multi-word PascalCase/camelCase
- * ("UserGroups", "myTenantGroups").
+ * ("UserGroups", "TenantSettings").
  */
 const MULTIWORD_NOT_KEBAB = /[a-z0-9][A-Z]/;
 
@@ -101,12 +101,10 @@ describe("API endpoint constants match the backend kebab-case route convention",
    * SCRIPE-Backend/src/Host/API/Controllers), so every segment after the
    * first is a literal string from `[HttpGet("...")]`/etc., which ASP.NET
    * already matches case-insensitively regardless of hyphenation. Checking
-   * those literal segments produced false positives: e.g. `myTenantGroups`
-   * in `/user-groups/myTenantGroups` genuinely resolves, because the
-   * backend's own `[HttpGet("myTenantGroups")]` is matched
-   * case-insensitively too — verified live in
-   * reports/system-recovery/manifests/backend-api-routes.json
-   * ("GET api/v1/user-groups/mytenantgroups" exists).
+   * those literal segments produced false positives: e.g. `byTenant`
+   * in `/user-groups/byTenant/${tenantId}` genuinely resolves, because the
+   * backend's own `[HttpGet("byTenant/{tenantId}")]` is matched
+   * case-insensitively too.
    */
   it("has a kebab-case (or single-word) [controller] segment (else it 404s)", () => {
     const violations: string[] = [];
@@ -134,6 +132,27 @@ describe("API endpoint constants match the backend kebab-case route convention",
       `Endpoint constants use a multi-word [controller] segment the backend does not serve.\n` +
         `The backend slugifies [controller] tokens (the first route segment) to kebab-case,\n` +
         `and ASP.NET route matching is not hyphen-insensitive, so each of these is a 404:\n\n` +
+        violations.join("\n")
+    ).toEqual([]);
+  });
+
+  it("forbids colloquial first-person me/my route segments in all *.endpoints.ts templates", () => {
+    const colloquialPattern =
+      /\/me\b|\/my\b|myTenant|createForMyTenant|myChildren|myTenantAndChildren|my-tenant/;
+    const violations: string[] = [];
+
+    for (const file of files) {
+      const text = fs.readFileSync(file, "utf8");
+      for (const { raw, line } of extractTemplates(text)) {
+        if (colloquialPattern.test(raw)) {
+          violations.push(`${path.relative(SRC, file).replace(/\\/g, "/")}:${line}  "${raw}"`);
+        }
+      }
+    }
+
+    expect(
+      violations,
+      `Endpoint constants must use sovereign third-person REST domain naming instead of colloquial me/my segments:\n\n` +
         violations.join("\n")
     ).toEqual([]);
   });

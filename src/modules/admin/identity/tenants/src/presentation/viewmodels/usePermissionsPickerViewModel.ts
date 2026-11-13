@@ -12,10 +12,10 @@ export function usePermissionsPickerViewModel() {
   const { t, language } = useI18n();
   const { permissionRepository } = identityContainer;
 
-  // Fetch creator's permissions via Repository
+  // Fetch creator's effective permissions via Repository
   const { data: permissions, isLoading } = useQuery({
-    queryKey: ["permissions", "my"],
-    queryFn: () => permissionRepository.getMyPermissions(),
+    queryKey: ["permissions", "effective"],
+    queryFn: () => permissionRepository.getEffectivePermissions(),
     staleTime: 5 * 60 * 1000, // 5 minutes
   });
 

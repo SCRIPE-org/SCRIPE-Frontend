@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useI18n } from "@core/providers/i18n-provider";
 import { usePermission } from "@core/hooks/use-permission";
@@ -56,20 +56,36 @@ export function LeadsView() {
   const [transitionToKey, setTransitionToKey] = useState("");
   const [transitionEvalResult, setTransitionEvalResult] = useState<EvaluatedWorkflowTransition | null>(null);
 
+  useEffect(() => {
+    void useCrmWorkflowsStore.getState().fetchPipelinesFromBackend();
+  }, []);
+
   const handleLeadStageTransition = useCallback(
     async (lead: CrmLead, targetStageOrStatus: string, _dropEval?: DropEvaluationResult) => {
-      if (lead.status === "Converted" && (targetStageOrStatus === "Qualified" || targetStageOrStatus === "lead.qualified")) {
-        return handleUpdateLeadStatus(lead, targetStageOrStatus);
-      }
       const fromKey = lead.stageKey || `lead.${lead.status.toLowerCase()}`;
-      const toKey = targetStageOrStatus.startsWith("lead.")
-        ? targetStageOrStatus
-        : (activeLeadWorkflow.stages.find((s) => s.labelEn.toLowerCase() === targetStageOrStatus.toLowerCase() || s.stageKey.toLowerCase().endsWith(targetStageOrStatus.toLowerCase()))?.stageKey || `lead.${targetStageOrStatus.toLowerCase()}`);
+      const matchedTarget = activeLeadWorkflow.stages.find(
+        (s) =>
+          s.stageKey.toLowerCase() === targetStageOrStatus.toLowerCase() ||
+          s.labelEn.toLowerCase() === targetStageOrStatus.toLowerCase() ||
+          s.labelAr === targetStageOrStatus ||
+          s.stageKey.toLowerCase().endsWith(`.${targetStageOrStatus.toLowerCase()}`)
+      );
+      const toKey = matchedTarget?.stageKey || (targetStageOrStatus.startsWith("lead.") ? targetStageOrStatus : `lead.${targetStageOrStatus.toLowerCase()}`);
 
+      const leadExtras = lead as unknown as {
+        qualificationNotes?: string;
+        customFields?: Record<string, unknown>;
+      };
       const evalResult = useCrmWorkflowsStore.getState().evaluateTransition("lead", fromKey, toKey, {
         hasVerifiedParty: Boolean(lead.organizationPartyId || lead.personPartyId || lead.verifiedPartyId),
+        partyId: lead.verifiedPartyId || lead.organizationPartyId || lead.personPartyId || null,
         estimatedAmount: lead.estimatedValue ?? null,
+        estimatedValue: lead.estimatedValue ?? null,
         targetCloseDate: null,
+        disqualificationReason: lead.disqualificationReason ?? null,
+        qualificationNotes: leadExtras.qualificationNotes ?? null,
+        fields: leadExtras.customFields,
+        locale: isRtl ? "ar" : "en",
       });
 
       if (evalResult.status === "blocked") {
@@ -89,7 +105,7 @@ export function LeadsView() {
 
       return handleUpdateLeadStatus(lead, targetStageOrStatus);
     },
-    [activeLeadWorkflow, handleUpdateLeadStatus, viewModel, t]
+    [activeLeadWorkflow, handleUpdateLeadStatus, viewModel, t, isRtl]
   );
 
   const sumLeadsInBaseCurrency = useCallback((items: CrmLead[]) => {
@@ -196,6 +212,8 @@ export function LeadsView() {
               estimatedValue: transitionLead.estimatedValue,
               currency: transitionLead.currency,
               rowVersion: transitionLead.rowVersion,
+              qualificationNotes: (transitionLead as unknown as { qualificationNotes?: string }).qualificationNotes,
+              customFields: (transitionLead as unknown as { customFields?: Record<string, unknown> }).customFields,
             } : null}
             fromStageKey={transitionFromKey}
             toStageKey={transitionToKey}

@@ -4,7 +4,8 @@ export const AUTH_CORE_ENDPOINTS = {
   LOGIN: `${V1}/auth/admin/login`,
   LOGOUT: `${V1}/auth/admin/logout`,
   REFRESH: `${V1}/auth/admin/refresh`,
-  ME: `${V1}/account/dossier`,
+  PRINCIPAL: `${V1}/auth/admin/principal`,
+  DOSSIER: `${V1}/account/dossier`,
   IMPERSONATE: (id: string) => `${V1}/auth/admin/impersonate/${id}`,
   STOP_IMPERSONATION: `${V1}/auth/admin/stop-impersonation`,
   // ── Admin Password Reset (targets Admins table, not Users) ──

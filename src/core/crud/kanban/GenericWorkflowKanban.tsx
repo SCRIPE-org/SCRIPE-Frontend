@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useMemo, useCallback } from "react";
+import { createPortal } from "react-dom";
 import {
   DndContext,
   DragOverlay,
@@ -8,12 +9,15 @@ import {
   KeyboardSensor,
   useSensor,
   useSensors,
+  pointerWithin,
+  closestCorners,
+  type CollisionDetection,
   type DragStartEvent,
+  type DragOverEvent,
   type DragEndEvent,
   type DragCancelEvent,
 } from "@dnd-kit/core";
 import { sortableKeyboardCoordinates } from "@dnd-kit/sortable";
-import { restrictToWindowEdges } from "@dnd-kit/modifiers";
 import { Card } from "@core/ui/card";
 import { Badge } from "@core/ui/badge";
 import { Button } from "@core/ui/button";
@@ -69,6 +73,8 @@ export function GenericWorkflowKanban<TItem = any>({
 
   const [activeItem, setActiveItem] = useState<TItem | null>(null);
   const [activeStageKey, setActiveStageKey] = useState<string | null>(null);
+  const [overStageKey, setOverStageKey] = useState<string | null>(null);
+  const [overSwimlaneKey, setOverSwimlaneKey] = useState<string | null>(null);
   const [localError, setLocalError] = useState<string | null>(null);
   const [currentDensity, setCurrentDensity] = useState<CardDensity>(initialDensity);
 
@@ -83,6 +89,13 @@ export function GenericWorkflowKanban<TItem = any>({
       coordinateGetter: sortableKeyboardCoordinates,
     })
   );
+
+  // Custom Collision Detection: pointerWithin first, fallback to closestCorners
+  const kanbanCollisionDetection: CollisionDetection = useCallback((args) => {
+    const pointerCollisions = pointerWithin(args);
+    if (pointerCollisions.length > 0) return pointerCollisions;
+    return closestCorners(args);
+  }, []);
 
   // Helper to extract stage key from item
   const getStageKey = useCallback(
@@ -156,20 +169,52 @@ export function GenericWorkflowKanban<TItem = any>({
       if (data && data.item) {
         setActiveItem(data.item as TItem);
         setActiveStageKey(data.stageKey || getStageKey(data.item as TItem));
+        setOverStageKey(null);
+        setOverSwimlaneKey(null);
         setLocalError(null);
       }
     },
     [isReadOnly, getStageKey]
   );
 
+  const handleDragOver = useCallback((event: DragOverEvent) => {
+    const { over } = event;
+    if (!over) {
+      setOverStageKey(null);
+      setOverSwimlaneKey(null);
+      return;
+    }
+    const current = over.data.current;
+    let stageKey: string | null = current?.stageKey ? String(current.stageKey) : null;
+    const swimlaneKey: string | null = current?.swimlaneKey ? String(current.swimlaneKey) : null;
+
+    if (!stageKey) {
+      const overIdStr = String(over.id);
+      if (overIdStr.startsWith("swimlane::")) {
+        const parts = overIdStr.split("::");
+        if (parts.length >= 3) {
+          stageKey = parts[2];
+        }
+      }
+    }
+
+    setOverStageKey(stageKey);
+    setOverSwimlaneKey(swimlaneKey);
+  }, []);
+
   const handleDragCancel = useCallback((_event: DragCancelEvent) => {
     setActiveItem(null);
     setActiveStageKey(null);
+    setOverStageKey(null);
+    setOverSwimlaneKey(null);
   }, []);
 
   const handleDragEnd = useCallback(
     (event: DragEndEvent) => {
       const { active, over } = event;
+      setOverStageKey(null);
+      setOverSwimlaneKey(null);
+
       if (!over || !active) {
         setActiveItem(null);
         setActiveStageKey(null);
@@ -180,17 +225,23 @@ export function GenericWorkflowKanban<TItem = any>({
       const sourceStageKey =
         active.data.current?.stageKey || (draggedItem ? getStageKey(draggedItem) : null);
 
-      // Target stage resolution
+      // Target stage resolution across column, card, and scoped swimlane droppables
       let targetStageKey: string | null = null;
-      if (over.data.current?.type === "column") {
-        targetStageKey = over.data.current.stageKey;
-      } else if (over.data.current?.type === "card") {
-        targetStageKey = over.data.current.stageKey;
+      if (over.data.current?.stageKey) {
+        targetStageKey = String(over.data.current.stageKey);
       } else {
-        // Fallback: match stage whose stageKey equals over.id
-        const matched = stages.find((s) => s.stageKey === String(over.id));
-        if (matched) {
-          targetStageKey = matched.stageKey;
+        const overIdStr = String(over.id);
+        if (overIdStr.startsWith("swimlane::")) {
+          const parts = overIdStr.split("::");
+          if (parts.length >= 3) {
+            targetStageKey = parts[2];
+          }
+        } else {
+          // Fallback: match stage whose stageKey equals over.id
+          const matched = stages.find((s) => s.stageKey === overIdStr);
+          if (matched) {
+            targetStageKey = matched.stageKey;
+          }
         }
       }
 
@@ -295,8 +346,9 @@ export function GenericWorkflowKanban<TItem = any>({
       {/* Dnd Board Area */}
       <DndContext
         sensors={sensors}
-        modifiers={[restrictToWindowEdges]}
+        collisionDetection={kanbanCollisionDetection}
         onDragStart={handleDragStart}
+        onDragOver={handleDragOver}
         onDragEnd={handleDragEnd}
         onDragCancel={handleDragCancel}
       >
@@ -315,6 +367,8 @@ export function GenericWorkflowKanban<TItem = any>({
                   getStageKey={getStageKey}
                   activeItem={activeItem}
                   activeStageKey={activeStageKey}
+                  overStageKey={overStageKey}
+                  overSwimlaneKey={overSwimlaneKey}
                   evaluateDropTarget={evaluateDropTarget}
                   cardDensity={currentDensity}
                   virtualizationThreshold={virtualizationThreshold}
@@ -338,6 +392,7 @@ export function GenericWorkflowKanban<TItem = any>({
                 items={stageItemsMap.get(stage.stageKey) || []}
                 activeItem={activeItem}
                 activeStageKey={activeStageKey}
+                isOverStage={overStageKey === stage.stageKey}
                 evaluateDropTarget={evaluateDropTarget}
                 cardDensity={currentDensity}
                 virtualizationThreshold={virtualizationThreshold}
@@ -353,46 +408,54 @@ export function GenericWorkflowKanban<TItem = any>({
           </div>
         )}
 
-        {/* Drag Overlay — Tactical Ghost Preview ONLY while dragging */}
-        <DragOverlay dropAnimation={null}>
-          {activeItem ? (
-            <div className="w-80 select-none">
-              {renderCard ? (
-                <div className="rounded-nx-md border border-nx-accent bg-nx-surface p-3 shadow-xl ring-1 ring-nx-accent/40 rotate-[1.5deg] scale-[1.02] cursor-grabbing opacity-95">
-                  {renderCard(activeItem, null, 0)}
-                </div>
-              ) : (
-                <Card className="flex flex-col justify-between rounded-nx-md border border-nx-accent bg-nx-surface p-3 shadow-xl ring-1 ring-nx-accent/40 rotate-[1.5deg] scale-[1.02] cursor-grabbing opacity-95">
-                  <div className="space-y-1.5">
-                    <span className="font-semibold text-nx-ink text-sm truncate">
-                      {getItemDisplayName?.(activeItem) ||
-                        (activeItem as any)?.title ||
-                        (activeItem as any)?.name ||
-                        (activeItem as any)?.id}
-                    </span>
-                    {columns && columns.length > 0 && (
-                      <div className="space-y-1 pt-1">
-                        {columns.slice(0, 2).map((col) => (
-                          <div
-                            key={col.key}
-                            className="flex items-center justify-between gap-2 text-xs"
-                          >
-                            <span className="text-nx-ink-3 truncate">{col.label}</span>
-                            <span className="font-medium text-nx-ink truncate">
-                              {col.render
-                                ? col.render((activeItem as any)[col.key], activeItem, 0)
-                                : String((activeItem as any)[col.key] ?? "—")}
-                            </span>
-                          </div>
-                        ))}
+        {/* Drag Overlay — Tactical Ghost Preview ONLY while dragging (portaled to document.body to avoid ancestor transform offsets) */}
+        {typeof document !== "undefined"
+          ? createPortal(
+              <DragOverlay zIndex={9999} dropAnimation={null}>
+                {activeItem ? (
+                  <div
+                    data-testid="kanban-drag-overlay"
+                    className="pointer-events-none w-[288px] cursor-grabbing opacity-95 ring-2 ring-nx-accent rounded-xl select-none"
+                  >
+                    {renderCard ? (
+                      <div className="rounded-nx-md border border-nx-accent bg-nx-surface p-3 shadow-xl ring-1 ring-nx-accent/40 rotate-[1.5deg] scale-[1.02]">
+                        {renderCard(activeItem, null, 0)}
                       </div>
+                    ) : (
+                      <Card className="flex flex-col justify-between rounded-nx-md border border-nx-accent bg-nx-surface p-3 shadow-xl ring-1 ring-nx-accent/40 rotate-[1.5deg] scale-[1.02]">
+                        <div className="space-y-1.5">
+                          <span className="font-semibold text-nx-ink text-sm truncate">
+                            {getItemDisplayName?.(activeItem) ||
+                              (activeItem as any)?.title ||
+                              (activeItem as any)?.name ||
+                              (activeItem as any)?.id}
+                          </span>
+                          {columns && columns.length > 0 && (
+                            <div className="space-y-1 pt-1">
+                              {columns.slice(0, 2).map((col) => (
+                                <div
+                                  key={col.key}
+                                  className="flex items-center justify-between gap-2 text-xs"
+                                >
+                                  <span className="text-nx-ink-3 truncate">{col.label}</span>
+                                  <span className="font-medium text-nx-ink truncate">
+                                    {col.render
+                                      ? col.render((activeItem as any)[col.key], activeItem, 0)
+                                      : String((activeItem as any)[col.key] ?? "—")}
+                                  </span>
+                                </div>
+                              ))}
+                            </div>
+                          )}
+                        </div>
+                      </Card>
                     )}
                   </div>
-                </Card>
-              )}
-            </div>
-          ) : null}
-        </DragOverlay>
+                ) : null}
+              </DragOverlay>,
+              document.body
+            )
+          : null}
       </DndContext>
     </div>
   );

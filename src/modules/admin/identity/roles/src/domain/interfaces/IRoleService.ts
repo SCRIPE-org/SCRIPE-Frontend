@@ -14,7 +14,7 @@ import type {
   AssignPermissionsJson,
 } from "../types/RoleModelTypes";
 import type { PermissionModel, PermissionModuleGroupJson } from "@modules/identity/core";
-import type { MyTenantRoleListParams } from "./IRoleRepository";
+import type { CurrentTenantRoleListParams } from "./IRoleRepository";
 
 /**
  * Interface defining property specifications, keys types, and structural contract rules for service role list params.
@@ -31,7 +31,7 @@ export interface ServiceRoleListParams {
 /**
  * Exported type in the identity/roles module.
  */
-export type { MyTenantRoleListParams };
+export type { CurrentTenantRoleListParams };
 
 /**
  * Interface defining property specifications, keys types, and structural contract rules for role list result.
@@ -52,12 +52,14 @@ export interface RoleListResult {
  */
 export interface IRoleService {
   getAll(params: ServiceRoleListParams): Promise<RoleListResult>;
-  getMyTenantRoles(params: MyTenantRoleListParams): Promise<RoleListResult>;
-  getMyTenantAvailablePermissions(category?: string): Promise<PermissionModel[]>;
-  getMyTenantAvailablePermissionsGrouped(search?: string): Promise<PermissionModuleGroupJson[]>;
+  getCurrentTenantRoles(params: CurrentTenantRoleListParams): Promise<RoleListResult>;
+  getCurrentTenantAvailablePermissions(category?: string): Promise<PermissionModel[]>;
+  getCurrentTenantAvailablePermissionsGrouped(
+    search?: string
+  ): Promise<PermissionModuleGroupJson[]>;
   getById(id: string): Promise<RoleModel>;
   create(json: CreateRoleJson): Promise<{ id: string }>;
-  createForMyTenant(json: Omit<CreateRoleJson, "tenantId">): Promise<{ id: string }>;
+  createInCurrentTenant(json: Omit<CreateRoleJson, "tenantId">): Promise<{ id: string }>;
   update(id: string, json: UpdateRoleJson): Promise<void>;
   delete(id: string): Promise<void>;
   assignPermissions(roleId: string, json: AssignPermissionsJson): Promise<void>;
@@ -69,8 +71,6 @@ export interface IRoleService {
     tenantId: string,
     search?: string
   ): Promise<PermissionModuleGroupJson[]>;
-  /** GET /roles/my-tenant/available-permissions/grouped — grouped for current tenant role assignment */
-  getMyTenantAvailablePermissionsGrouped(search?: string): Promise<PermissionModuleGroupJson[]>;
 
   getAdminCount(roleId: string): Promise<number>;
   clone(

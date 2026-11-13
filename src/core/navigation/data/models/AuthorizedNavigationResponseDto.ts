@@ -1,7 +1,7 @@
 /**
- * MyMenuResponseDto — Raw API Envelope
+ * AuthorizedNavigationResponseDto — Raw API Envelope
  *
- * Exact shape returned by GET /Menus/my (with or without ?workspace= param).
+ * Exact shape returned by GET /menus/navigation (with or without ?workspace= param).
  *
  * Backend wraps every response in:
  * { statusCode, message, data: { menuItems, routes, workspaceGroups? }, errors }
@@ -9,7 +9,7 @@
 import type { MenuItemDto } from "./MenuItemDto";
 import type { WorkspaceGroupDto } from "./WorkspaceGroupDto";
 
-export interface MyMenuDataDto {
+export interface AuthorizedNavigationDataDto {
   /** Root-level menu items for the current / requested workspace */
   menuItems?: MenuItemDto[];
   /** Flat list of allowed route paths */
@@ -21,9 +21,9 @@ export interface MyMenuDataDto {
   workspaceGroups?: WorkspaceGroupDto[];
 }
 
-export interface MyMenuResponseDto {
+export interface AuthorizedNavigationResponseDto {
   statusCode: number;
   message: string;
-  data: MyMenuDataDto;
+  data: AuthorizedNavigationDataDto;
   errors: unknown;
 }

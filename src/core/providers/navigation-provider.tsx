@@ -4,9 +4,9 @@
  * NavigationProvider — Thin TanStack Query Orchestrator (v2)
  *
  * Responsibilities (v2 — dramatically simplified):
- *  1. On login: fire GET /Menus/my/routes → seeds useNavigationStore.allRoutes (eager)
- *  2. On login: fire GET /Menus/my → seeds useNavigationStore.defaultWorkspace + groups
- *  3. Expose fetchWorkspaceMenu(key) → fires GET /Menus/my?workspace={key} (JIT)
+ *  1. On login: fire GET /menus/navigation/routes → seeds useNavigationStore.allRoutes (eager)
+ *  2. On login: fire GET /menus/navigation → seeds useNavigationStore.defaultWorkspace + groups
+ *  3. Expose fetchWorkspaceMenu(key) → fires GET /menus/navigation?workspace={key} (JIT)
  *  4. Listen for impersonation/tenant changes → store.reset() + queryClient.invalidate
  *
  * What this provider does NOT do (v2):
@@ -102,7 +102,7 @@ export function NavigationProvider({ children }: { children: React.ReactNode }) 
   // ── Context key — identifies this user+tenant combination ─────────────────
   // MUST be username, not user.id: id is IIdEncryptionService.Encrypt(guid),
   // which is randomized-IV AEAD ciphertext — a fresh, different string on
-  // every /Admins/me response for the SAME underlying admin. Keying the nav
+  // every /auth/admin/principal response for the SAME underlying admin. Keying the nav
   // queries (and the store's own persisted contextKey guard above) off a
   // value that never repeats for "the same user" means the eager routes/
   // default-workspace queries restart under a brand new cache key on every

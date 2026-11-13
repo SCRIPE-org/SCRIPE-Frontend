@@ -52,7 +52,7 @@ export interface WorkspaceGroupData {
   platformHomeRoute: string | null;
   /**
    * Whether this workspace is pinned by the current admin.
-   * Backend-authoritative — set via POST /Menus/my/workspaces/{key}/pin.
+   * Backend-authoritative — set via POST /menus/navigation/workspaces/{key}/pin.
    */
   isPinned: boolean;
   /**

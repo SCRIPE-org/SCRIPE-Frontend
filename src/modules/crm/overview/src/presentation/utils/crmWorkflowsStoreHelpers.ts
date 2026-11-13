@@ -196,6 +196,7 @@ export function mergeBackendPipelinesIntoState(
             Boolean(s.requiresVerifiedParty || s.requiredExitFields?.includes("partyId")),
           triggerDealConversion: Boolean(s.triggerDealConversion),
           triggersDealConversion: Boolean(s.triggerDealConversion),
+          allowInboundFromAny: Boolean(parsedProps.allowInboundFromAny === "true" || (s as { allowInboundFromAny?: boolean }).allowInboundFromAny || prevStage?.allowInboundFromAny),
           properties: Object.keys(parsedProps).length > 0 ? parsedProps : prevStage?.properties,
           position:
             typeof s.canvasX === "number" && typeof s.canvasY === "number"
@@ -204,25 +205,18 @@ export function mergeBackendPipelinesIntoState(
         };
       });
     let mappedTransitions: CrmWorkflowTransition[] = [];
+    let hasParsedTransitionsArray = false;
     if (bp.transitionsJson) {
       try {
         const parsed = JSON.parse(bp.transitionsJson);
         if (Array.isArray(parsed)) {
-          const qualHasSolFit = mappedStages.find((s) => s.stageKey === "default.qualification")?.requiredExitFields.includes("solutionFitConfirmed");
+          hasParsedTransitionsArray = true;
           mappedTransitions = parsed.map((tr: CrmWorkflowTransition) => {
-            let res = tr;
             const curTr = existingIdx >= 0 ? nextWorkflows[existingIdx]?.transitions?.find((t) => t.id === tr.id) : undefined;
             const resolvedTransNameAr = tr.nameAr && tr.nameAr !== tr.nameEn
               ? tr.nameAr
               : curTr?.nameAr || tr.nameAr || tr.nameEn;
-            res = { ...res, nameAr: resolvedTransNameAr };
-            if (tr.fromStageKey === "default.qualification" && tr.toStageKey === "default.solution_fit" && !qualHasSolFit && tr.rules?.requiredFieldKeys?.includes("solutionFitConfirmed")) {
-              res = { ...res, rules: { ...res.rules, requiredFieldKeys: res.rules.requiredFieldKeys.filter((k) => k !== "solutionFitConfirmed") } };
-            }
-            if ((res.id === "tr-deal-5-won" || res.id === "tr-deal-neg-won") && (!res.fromStageKeys || res.fromStageKeys.length <= 1)) {
-              res = { ...res, fromStageKeys: ["default.solution_fit", "default.proposal", "default.negotiation"] };
-            }
-            return res;
+            return { ...tr, nameAr: resolvedTransNameAr };
           });
         }
       } catch { /* ignore */ }
@@ -243,7 +237,7 @@ export function mergeBackendPipelinesIntoState(
         isActive: bp.isDefault !== undefined ? Boolean(bp.isDefault) : cur.isActive,
         version: Math.max(bp.version ?? 1, cur.version ?? 1),
         stages: mappedStages,
-        transitions: mappedTransitions.length > 0 ? mappedTransitions : cur.transitions,
+        transitions: hasParsedTransitionsArray ? mappedTransitions : cur.transitions,
       };
     } else {
       const resolvedNewPipelineNameAr = bp.nameAr && bp.nameAr !== bp.nameEn

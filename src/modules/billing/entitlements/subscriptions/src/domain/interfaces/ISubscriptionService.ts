@@ -19,7 +19,7 @@ export interface ISubscriptionService {
   getAll(): Promise<GlobalSubscriptionModel[]>;
   getByTenant(tenantId: string): Promise<SubscriptionListModel[]>;
   getById(id: string): Promise<SubscriptionModel>;
-  getMyTenantSubscription(): Promise<SubscriptionModel | null>;
+  getCurrentTenantSubscription(): Promise<SubscriptionModel | null>;
 
   // ── Lifecycle Actions ──
   assign(

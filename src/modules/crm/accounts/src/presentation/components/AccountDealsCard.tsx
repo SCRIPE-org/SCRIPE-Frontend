@@ -2,17 +2,19 @@
 
 import { Card } from "@core/ui/card";
 import { Badge } from "@core/ui/badge";
+import { Button } from "@core/ui/button";
 import { Briefcase, Calendar } from "lucide-react";
-import type { CrmAccountOpportunity } from "../../domain/entities/AccountEntity";
+import type { CrmAccountOpportunityItem } from "../../domain/entities/AccountEntity";
 
 interface AccountDealsCardProps {
-  readonly opportunities?: CrmAccountOpportunity[];
+  readonly opportunities?: CrmAccountOpportunityItem[];
   readonly autoConvertToBase: boolean;
   readonly baseCurrency: string;
   readonly convertAmount: (amount: number, from: string, to: string) => number;
   readonly language: string;
   readonly t: (key: string) => string;
   readonly onSelectOpportunity: (id: string) => void;
+  readonly onViewAllOpportunities?: () => void;
 }
 
 export function AccountDealsCard({
@@ -23,6 +25,7 @@ export function AccountDealsCard({
   language,
   t,
   onSelectOpportunity,
+  onViewAllOpportunities,
 }: AccountDealsCardProps) {
   const isAr = language === "ar";
 
@@ -34,12 +37,24 @@ export function AccountDealsCard({
           <h2 className="text-sm font-bold text-nx-ink">{t("crmAccounts.detail.dealsTitle")}</h2>
         </div>
         <Badge variant="outline" className="border-nx-line text-nx-ink-3 font-mono text-[11px]">
-          {opportunities.length}
+          {Number(opportunities.length).toLocaleString(isAr ? "ar-SA" : "en-US")}
         </Badge>
       </div>
 
       {opportunities.length === 0 ? (
-        <p className="text-xs text-nx-ink-3 py-6 text-center">{t("crmAccounts.detail.noDeals")}</p>
+        <div className="py-6 text-center space-y-2.5">
+          <p className="text-xs text-nx-ink-3">{t("crmAccounts.detail.noDeals")}</p>
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            onClick={() => (onViewAllOpportunities ? onViewAllOpportunities() : onSelectOpportunity(""))}
+            className="h-7 text-xs gap-1.5 border-nx-line hover:border-nx-accent"
+          >
+            <Briefcase className="size-3 text-nx-accent" />
+            <span>{t("crmAccounts.detail.viewOpportunitiesBtn")}</span>
+          </Button>
+        </div>
       ) : (
         <div className="divide-y divide-nx-line">
           {opportunities.map((opp) => (
@@ -60,14 +75,14 @@ export function AccountDealsCard({
               <div className="text-end">
                 <span className="text-xs font-bold text-nx-ink font-mono block">
                   {opp.estimatedAmount != null
-                    ? `${opp.estimatedAmount.toLocaleString()} ${opp.currencyCode}`
+                    ? `${opp.estimatedAmount.toLocaleString(isAr ? "ar-SA" : "en-US")} ${opp.currencyCode}`
                     : "••••••"}
                 </span>
                 {autoConvertToBase &&
                   opp.estimatedAmount != null &&
                   opp.currencyCode.toUpperCase() !== baseCurrency.toUpperCase() && (
                     <span className="text-[10px] font-mono text-nx-accent block">
-                      ≈ {baseCurrency} {convertAmount(opp.estimatedAmount, opp.currencyCode, baseCurrency).toLocaleString()}
+                      ≈ {baseCurrency} {convertAmount(opp.estimatedAmount, opp.currencyCode, baseCurrency).toLocaleString(isAr ? "ar-SA" : "en-US")}
                     </span>
                   )}
                 {opp.targetCloseDate && (

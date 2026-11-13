@@ -18,6 +18,10 @@ import { useCrmShellViewModel } from "../viewmodels/useCrmShellViewModel";
 import { useCrmOverviewViewModel } from "../viewmodels/useCrmOverviewViewModel";
 import { useCrmWorkflowsStore } from "../stores/useCrmWorkflowsStore";
 
+/**
+ * CRM Overview executive operational cockpit view displaying primary KPI strips,
+ * multi-pipeline velocity progression, and recent deal stage activity.
+ */
 export function CrmOverviewView() {
   const router = useRouter();
   const { t, language } = useI18n();

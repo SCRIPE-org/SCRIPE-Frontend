@@ -57,7 +57,7 @@ export function ActivitySplitDetail({
   const isAr = language === "ar";
   const Icon = getActivityKindIcon(activity.activityKind);
   const kindLabel = t(`crmActivities.kinds.${activity.activityKind}`);
-  const account = accountsMap.get(activity.accountId);
+  const account = activity.accountId ? accountsMap.get(activity.accountId) : undefined;
   const accountName = account
     ? isAr && account.nameAr
       ? account.nameAr
@@ -66,7 +66,7 @@ export function ActivitySplitDetail({
     ? t("crmActivities.table.accountRef")
     : t("crmActivities.table.noAccount");
 
-  const dateStr = activity.occurredAtUtc || activity.createdAt;
+  const dateStr = activity.occurredAtUtc;
   const formattedDate = dateStr
     ? new Date(dateStr).toLocaleDateString(isAr ? "ar-SA" : "en-US", {
         month: "short",
@@ -104,7 +104,9 @@ export function ActivitySplitDetail({
       {activity.accountId && (
         <div
           className="p-3 rounded-nx-md border border-nx-line bg-nx-raised/40 hover:border-nx-accent transition-all cursor-pointer flex items-center justify-between"
-          onClick={() => onSelectAccount(activity.accountId)}
+          onClick={() => {
+            if (activity.accountId) onSelectAccount(activity.accountId);
+          }}
         >
           <div className="flex items-center gap-2.5">
             <Building2 className="size-4 text-nx-accent" />
@@ -146,19 +148,6 @@ export function ActivitySplitDetail({
             </span>
           )}
         </div>
-
-        {activity.workItemDueAtUtc && (
-          <div className="text-[11px] text-nx-ink-3 flex items-center gap-1 font-mono">
-            <Calendar className="size-3" />
-            <span>
-              {new Date(activity.workItemDueAtUtc).toLocaleDateString(isAr ? "ar-SA" : "en-US", {
-                month: "short",
-                day: "numeric",
-                year: "numeric",
-              })}
-            </span>
-          </div>
-        )}
 
         {!activity.workItemStatus && (
           <Button

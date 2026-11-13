@@ -105,6 +105,9 @@ export const ar = {
       buyingCommitteeRollupTitle: "ملخص أدوار لجنة الشراء وتأثير الصفقات",
       buyingCommitteeRoleLabel: "دور صاحب المصلحة النشط",
       influencedPipelineValueLabel: "إجمالي قيمة الصفقات المرتبطة",
+      viewDealsBtn: "عرض الصفقات",
+      viewAccountsBtn: "عرض الحسابات",
+      logActivityBtn: "تسجيل نشاط",
     },
   },
 };

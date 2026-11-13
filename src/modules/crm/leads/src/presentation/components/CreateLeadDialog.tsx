@@ -173,7 +173,7 @@ export function CreateLeadDialog({
 
             {conversionPreview.isDifferent && Number(estimatedValue) > 0 && (
               <div data-testid="create-lead-conversion-preview" className="text-[11px] font-mono text-nx-accent bg-nx-accent-wash/30 border border-nx-accent/30 rounded-nx-sm px-2.5 py-1.5">
-                ≈ {conversionPreview.formattedConverted} (Base {baseCurrency})
+                ≈ {conversionPreview.formattedConverted} ({t("crmLeads.conversion.baseCurrencyLabel")} {baseCurrency})
               </div>
             )}
 

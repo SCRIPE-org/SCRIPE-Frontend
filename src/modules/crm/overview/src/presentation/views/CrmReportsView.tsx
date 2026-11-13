@@ -26,6 +26,10 @@ import { CrmReportsBreakdownsSection } from "../components/CrmReportsBreakdownsS
 import { CrmReportsSkeleton } from "../components/CrmReportsSkeleton";
 import { useCrmReportsViewModel } from "../viewmodels/useCrmReportsViewModel";
 
+/**
+ * CRM Reports view providing multi-currency analytics, pipeline stage breakdown,
+ * win/loss metrics, lead conversion funnel, and CSV exports.
+ */
 export function CrmReportsView() {
   const router = useRouter();
   const { t, language } = useI18n();

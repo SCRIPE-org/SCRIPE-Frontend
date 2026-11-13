@@ -24,11 +24,11 @@ export class CustomizationService implements ICustomizationService {
   // ── Tenant Branding (My Tenant) ──
 
   async getMyBranding(): Promise<BrandingResponseJson> {
-    return this.apiService.get<BrandingResponseJson>(BRANDING_ENDPOINTS.TENANTS.MY_BRANDING);
+    return this.apiService.get<BrandingResponseJson>(BRANDING_ENDPOINTS.TENANTS.CURRENT_BRANDING);
   }
 
   async updateMySettings(data: Record<string, unknown>): Promise<void> {
-    await this.apiService.put(BRANDING_ENDPOINTS.TENANTS.MY_SETTINGS, data);
+    await this.apiService.put(BRANDING_ENDPOINTS.TENANTS.CURRENT_SETTINGS, data);
   }
 
   async publishBranding(request: { expectedVersion: number }): Promise<void> {
@@ -50,7 +50,7 @@ export class CustomizationService implements ICustomizationService {
   // ── Tenant Display Prefs (DashboardThemeJson) ──
 
   async saveTenantDisplayPrefs(dashboardThemeJson: string): Promise<void> {
-    await this.apiService.put(BRANDING_ENDPOINTS.TENANTS.MY_SETTINGS, {
+    await this.apiService.put(BRANDING_ENDPOINTS.TENANTS.CURRENT_SETTINGS, {
       dashboardThemeJson,
     });
   }

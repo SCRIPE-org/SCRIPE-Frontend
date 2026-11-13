@@ -57,6 +57,7 @@ export interface WorkflowKanbanStageConfig<TItem = any> {
 
 export interface WorkflowKanbanSwimlane<TItem = any> {
   id: string;
+  key?: string;
   label: string;
   count?: number;
   filter?: (item: TItem) => boolean;

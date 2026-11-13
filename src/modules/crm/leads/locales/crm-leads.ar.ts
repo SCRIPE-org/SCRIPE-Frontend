@@ -133,6 +133,16 @@ export const ar = {
       partyRequiredForStage: "يلزم ربط منظمة أو جهة اتصال معتمدة (أو تسجيل اسم المنشأة/الشخص) قبل التحويل المباشر إلى هذه المرحلة.",
       closeDateLabel: "تاريخ الإغلاق المتوقع",
       initialStageLabel: "مرحلة المسار الأولية",
+      partyRequiredSuffix: "يتطلب حساب أو جهة اتصال",
+      initialStageSuffix: "المرحلة الأولية",
+      baseCurrencyLabel: "العملة الأساسية",
+      defaultStages: {
+        discovery: "الاستكشاف",
+        qualification: "التأهيل",
+        solutionFit: "ملاءمة الحل",
+        proposal: "عرض السعر",
+        negotiation: "التفاوض",
+      },
       dealKindLabel: "نوع الصفقة",
       dealKinds: {
         newBusiness: "أعمال جديدة",
@@ -196,10 +206,23 @@ export const ar = {
         saving: "جارٍ الحفظ...",
       },
     },
+    tabs: {
+      profile: "ملف العميل المحتمل والملاحظات",
+      linkage: "ربط الحساب والتحويل",
+      activities: "سجل الأنشطة والاتصالات",
+    },
     messages: {
       createSuccess: "تم إنشاء العميل المحتمل بنجاح",
       createFailed: "فشل إنشاء العميل المحتمل",
       loadFailed: "فشل تحميل قائمة العملاء المحتملين",
+    },
+    kanban: {
+      instantMove: "نقل فوري",
+      opensTransitionScreen: "يتطلب شاشة الانتقال",
+      blocked: "الانتقال محظور",
+      pathsAvailable: "{count} مسارات متاحة",
+      dropToMove: "أفلت للنقل",
+      dropHere: "أفلت هنا",
     },
   },
 };

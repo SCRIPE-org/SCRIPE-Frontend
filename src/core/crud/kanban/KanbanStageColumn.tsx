@@ -22,6 +22,9 @@ export interface KanbanStageColumnProps<TItem = any> {
   items: TItem[];
   activeItem: any | null;
   activeStageKey: string | null;
+  isOverStage?: boolean;
+  droppableId?: string;
+  droppableData?: Record<string, any>;
   evaluateDropTarget?: (item: any, targetStageKey: string) => DropEvaluationResult;
   cardDensity?: CardDensity;
   virtualizationThreshold?: number;
@@ -39,6 +42,9 @@ export const KanbanStageColumn = memo(function KanbanStageColumn({
   items,
   activeItem,
   activeStageKey,
+  isOverStage = false,
+  droppableId,
+  droppableData,
   evaluateDropTarget,
   cardDensity = "standard",
   virtualizationThreshold = 25,
@@ -56,13 +62,16 @@ export const KanbanStageColumn = memo(function KanbanStageColumn({
   const scrollContainerRef = useRef<HTMLDivElement>(null);
 
   const { setNodeRef, isOver } = useDroppable({
-    id: stage.stageKey,
-    data: {
+    id: droppableId || stage.stageKey,
+    data: droppableData || {
       type: "column",
       stageKey: stage.stageKey,
     },
     disabled,
   });
+
+  const isActiveSourceStage = activeStageKey === stage.stageKey;
+  const isColumnHovered = (isOver || Boolean(isOverStage)) && !isActiveSourceStage;
 
   const itemIds = useMemo(() => items.map((i: any) => String(i?.id)), [items]);
 
@@ -117,24 +126,24 @@ export const KanbanStageColumn = memo(function KanbanStageColumn({
 
   // Dynamic drop styling based on 3-State evaluation
   const dropStateClasses = useMemo(() => {
-    if (!activeItem) {
+    if (!activeItem || isActiveSourceStage) {
       return "border-nx-line bg-nx-surface";
     }
     if (evalResult?.state === "blocked") {
-      return isOver
-        ? "border-destructive/80 ring-1 ring-destructive/40 bg-destructive/10"
+      return isColumnHovered
+        ? "border-destructive/80 ring-2 ring-destructive/40 bg-destructive/10"
         : "border-nx-line/50 opacity-60 bg-nx-surface";
     }
     if (evalResult?.state === "allowed_screen_required") {
-      return isOver
+      return isColumnHovered
         ? "border-warning ring-2 ring-warning/30 bg-warning/10"
         : "border-warning/40 bg-warning/5";
     }
     // allowed_instant
-    return isOver
+    return isColumnHovered
       ? "border-nx-accent ring-2 ring-nx-accent/30 bg-nx-accent-wash/40"
       : "border-nx-line hover:border-nx-line-hi bg-nx-surface";
-  }, [activeItem, evalResult, isOver]);
+  }, [activeItem, isActiveSourceStage, evalResult, isColumnHovered]);
 
   // WIP Limit calculation
   const isOverWipLimit = stage.wipLimit !== undefined && items.length > stage.wipLimit;
@@ -142,6 +151,10 @@ export const KanbanStageColumn = memo(function KanbanStageColumn({
   return (
     <div
       ref={setNodeRef}
+      data-testid={`kanban-column-${stage.stageKey}`}
+      data-stage-key={stage.stageKey}
+      data-over-stage={isColumnHovered ? "true" : "false"}
+      data-drop-status={evalResult?.state ?? "idle"}
       className={cn(
         "flex flex-col rounded-nx-lg border transition-all duration-150 shrink-0",
         isCollapsed ? "w-14 min-h-[300px]" : "w-80 min-h-[420px]",
@@ -285,6 +298,31 @@ export const KanbanStageColumn = memo(function KanbanStageColumn({
           ref={scrollContainerRef}
           className="flex-1 overflow-y-auto p-2 space-y-2 min-h-[320px] max-h-[calc(100vh-280px)]"
         >
+          {isColumnHovered && activeItem && (
+            <div
+              data-testid={`kanban-drop-slot-${stage.stageKey}`}
+              className={cn(
+                "w-full rounded-nx-md border-2 border-dashed p-3 text-center text-xs font-semibold transition-all select-none mb-1",
+                evalResult?.state === "blocked"
+                  ? "border-destructive/60 bg-destructive/10 text-destructive"
+                  : evalResult?.state === "allowed_screen_required"
+                  ? "border-warning/60 bg-warning/10 text-warning"
+                  : "border-nx-accent bg-nx-accent-wash text-nx-accent"
+              )}
+            >
+              <span>
+                {evalResult?.badgeText ||
+                  evalResult?.reason ||
+                  evalResult?.actionLabel ||
+                  (evalResult?.state === "blocked"
+                    ? t("crud.kanban.transitionBlocked", { defaultValue: "Transition blocked" })
+                    : evalResult?.state === "allowed_screen_required"
+                    ? t("crud.kanban.transitionScreen", { defaultValue: "Transition Screen" })
+                    : t("crud.kanban.instantMove", { defaultValue: "Instant Move" }))}
+              </span>
+            </div>
+          )}
+
           <SortableContext items={itemIds} strategy={verticalListSortingStrategy}>
             {items.length === 0 ? (
               <div

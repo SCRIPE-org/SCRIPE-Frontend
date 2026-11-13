@@ -119,7 +119,7 @@ vi.mock("@core/providers/i18n-provider", () => ({
 vi.mock("@modules/entitlements/di", () => ({
   entitlementsContainer: {
     subscriptionRepository: {
-      getMyTenantSubscription: mockGetMyTenantSubscription,
+      getCurrentTenantSubscription: mockGetMyTenantSubscription,
       change: mockChangeSubscription,
     },
     billingRepository: {

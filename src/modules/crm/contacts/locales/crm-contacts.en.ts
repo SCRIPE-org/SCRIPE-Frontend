@@ -105,6 +105,9 @@ export const en = {
       buyingCommitteeRollupTitle: "Buying Committee & Deal Influence Rollup",
       buyingCommitteeRoleLabel: "Active Stakeholder Authority",
       influencedPipelineValueLabel: "Influenced Deal Pipeline",
+      viewDealsBtn: "View Deals",
+      viewAccountsBtn: "View Accounts",
+      logActivityBtn: "Log Activity",
     },
   },
 };

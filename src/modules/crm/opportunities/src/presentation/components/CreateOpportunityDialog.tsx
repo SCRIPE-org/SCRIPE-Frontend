@@ -78,15 +78,15 @@ export function CreateOpportunityDialog({
 
   const validate = (): boolean => {
     const errs: Record<string, string> = {};
-    if (!formData.title?.trim()) errs.title = "Deal title is required";
+    if (!formData.title?.trim()) errs.title = t("crmOpportunities.dialogs.create.titleRequired");
     if (formData.estimatedAmount == null || isNaN(formData.estimatedAmount) || formData.estimatedAmount < 0) {
-      errs.estimatedAmount = "Valid estimated amount is required (>= 0)";
+      errs.estimatedAmount = t("crmOpportunities.dialogs.create.amountRequired");
     }
     if (
       (formData.targetStageKey === "default.proposal" || formData.targetStageKey === "default.negotiation") &&
       !formData.partyId?.trim()
     ) {
-      errs.partyId = "A linked Account or Contact is required when creating a deal in Proposal or Negotiation stage.";
+      errs.partyId = t("crmOpportunities.dialogs.create.partyRequiredError");
     }
     setErrors(errs);
     return Object.keys(errs).length === 0;
@@ -221,9 +221,7 @@ export function CreateOpportunityDialog({
               <div className="flex items-center gap-2 text-nx-ink-2">
                 <ArrowRightLeft className="size-3.5 text-nx-accent shrink-0" />
                 <span>
-                  {t("crmOpportunities.dialogs.create.autoConvertedToBase", {
-                    defaultValue: "Auto-Converted to CRM Base",
-                  })}{" "}
+                  {t("crmOpportunities.dialogs.create.autoConvertedToBase")}{" "}
                   (<strong>{preview.baseCurrency}</strong>):
                 </span>
               </div>

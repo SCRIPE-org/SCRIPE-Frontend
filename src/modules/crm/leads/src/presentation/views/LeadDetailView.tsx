@@ -7,6 +7,7 @@ import { usePermission } from "@core/hooks/use-permission";
 import { Alert, AlertTitle, AlertDescription } from "@core/ui/alert";
 import { Button } from "@core/ui/button";
 import { Card } from "@core/ui/card";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@core/ui/tabs";
 import {
   AlertCircle, ArrowUpRight, CheckCircle2, ChevronLeft, ChevronRight, Edit2, Link as LinkIcon, XCircle,
 } from "lucide-react";
@@ -164,25 +165,25 @@ export function LeadDetailView({ leadId }: LeadDetailViewProps) {
               </Button>
             )}
             {canQualifyLead && !isTerminal && (
-              <Button type="button" variant="outline" size="sm" data-testid="lead-detail-link-party-btn" onClick={() => { setSubmitError(null); setIsLinkPartyOpen(true); }} className="h-8 text-xs gap-1.5 border-nx-line bg-nx-surface text-nx-ink hover:bg-nx-raised">
-                <LinkIcon className="size-3.5 text-nx-accent" />
+              <Button type="button" variant="ghost" size="sm" data-testid="lead-detail-link-party-btn" onClick={() => { setSubmitError(null); setIsLinkPartyOpen(true); }} className="h-8 text-xs gap-1.5 text-nx-ink-2 hover:text-nx-ink">
+                <LinkIcon className="size-3.5" />
                 <span>{t("crmLeads.detail.linkPartyBtn")}</span>
               </Button>
             )}
             {canQualifyLead && lead.status !== "Converted" && (
               <>
-                <Button type="button" variant="outline" size="sm" data-testid="lead-detail-qualify-btn" onClick={() => { setQualifyDefaultDecision("Qualified"); setSubmitError(null); setIsQualifyOpen(true); }} className="h-8 text-xs gap-1.5 border-success/40 bg-success/10 text-success hover:bg-success/20">
+                <Button type="button" variant={lead.status !== "Qualified" ? "default" : "outline"} size="sm" data-testid="lead-detail-qualify-btn" onClick={() => { setQualifyDefaultDecision("Qualified"); setSubmitError(null); setIsQualifyOpen(true); }} className="h-8 text-xs gap-1.5">
                   <CheckCircle2 className="size-3.5" />
                   <span>{t("crmLeads.detail.qualifyLeadBtn")}</span>
                 </Button>
-                <Button type="button" variant="outline" size="sm" data-testid="lead-detail-disqualify-btn" onClick={() => { setQualifyDefaultDecision("Disqualified"); setSubmitError(null); setIsQualifyOpen(true); }} className="h-8 text-xs gap-1.5 border-destructive/40 bg-destructive/10 text-destructive hover:bg-destructive/20">
+                <Button type="button" variant="ghost" size="sm" data-testid="lead-detail-disqualify-btn" onClick={() => { setQualifyDefaultDecision("Disqualified"); setSubmitError(null); setIsQualifyOpen(true); }} className="h-8 text-xs gap-1.5 text-destructive hover:bg-destructive/10">
                   <XCircle className="size-3.5" />
                   <span>{t("crmLeads.detail.disqualifyBtn")}</span>
                 </Button>
               </>
             )}
             {canQualifyLead && canCreateOpp && !lead.convertedOpportunityId && (
-              <Button type="button" size="sm" data-testid="lead-detail-convert-btn" onClick={() => { setSubmitError(null); setIsConvertOpen(true); }} className="h-8 text-xs font-bold gap-1.5">
+              <Button type="button" size="sm" variant={lead.status === "Qualified" ? "default" : "outline"} data-testid="lead-detail-convert-btn" onClick={() => { setSubmitError(null); setIsConvertOpen(true); }} className="h-8 text-xs font-bold gap-1.5">
                 <ArrowUpRight className="size-3.5" />
                 <span>{t("crmLeads.detail.convertBtn")}</span>
               </Button>
@@ -210,16 +211,45 @@ export function LeadDetailView({ leadId }: LeadDetailViewProps) {
           t={t}
         />
 
-        <LeadDetailProfileCards
-          lead={lead} baseCurrency={baseCurrency} autoConvertToBase={autoConvertToBase} convertAmount={convertAmount}
-          leadCustomFieldConfigs={leadCustomFieldConfigs} isLeadCfLoading={isLeadCfLoading} refetchLeadCustomFields={refetchLeadCustomFields}
-          editCustomFields={editCustomFields} onCustomFieldChange={(key, value) => setEditCustomFields((prev) => ({ ...prev, [key]: value }))}
-          canQualifyLead={canQualifyLead} canCreateOpp={canCreateOpp} onOpenConvert={() => { setSubmitError(null); setIsConvertOpen(true); }}
-        />
+        <Tabs defaultValue="profile" className="space-y-4">
+          <TabsList className="bg-nx-surface border border-nx-line p-1">
+            <TabsTrigger value="profile" className="text-xs data-[state=active]:bg-nx-accent-wash data-[state=active]:text-nx-accent font-semibold">
+              {t("crmLeads.tabs.profile")}
+            </TabsTrigger>
+            <TabsTrigger value="linkage" className="text-xs data-[state=active]:bg-nx-accent-wash data-[state=active]:text-nx-accent font-semibold">
+              {t("crmLeads.tabs.linkage")}
+            </TabsTrigger>
+            <TabsTrigger value="activities" className="text-xs data-[state=active]:bg-nx-accent-wash data-[state=active]:text-nx-accent font-semibold">
+              {t("crmLeads.tabs.activities")}
+            </TabsTrigger>
+          </TabsList>
 
-        <Card className="p-5 border-nx-line bg-nx-surface">
-          <ActivityTimeline key={`${lead.id}-${lead.rowVersion || ""}-${lead.status}`} leadId={lead.id} targetLabel={lead.title} defaultRecipientEmail={lead.email} />
-        </Card>
+          <TabsContent value="profile" className="space-y-4">
+            <LeadDetailProfileCards
+              lead={lead} baseCurrency={baseCurrency} autoConvertToBase={autoConvertToBase} convertAmount={convertAmount}
+              leadCustomFieldConfigs={leadCustomFieldConfigs} isLeadCfLoading={isLeadCfLoading} refetchLeadCustomFields={refetchLeadCustomFields}
+              editCustomFields={editCustomFields} onCustomFieldChange={(key, value) => setEditCustomFields((prev) => ({ ...prev, [key]: value }))}
+              canQualifyLead={canQualifyLead} canCreateOpp={canCreateOpp} onOpenConvert={() => { setSubmitError(null); setIsConvertOpen(true); }}
+              mode="profile"
+            />
+          </TabsContent>
+
+          <TabsContent value="linkage" className="space-y-4">
+            <LeadDetailProfileCards
+              lead={lead} baseCurrency={baseCurrency} autoConvertToBase={autoConvertToBase} convertAmount={convertAmount}
+              leadCustomFieldConfigs={leadCustomFieldConfigs} isLeadCfLoading={isLeadCfLoading} refetchLeadCustomFields={refetchLeadCustomFields}
+              editCustomFields={editCustomFields} onCustomFieldChange={(key, value) => setEditCustomFields((prev) => ({ ...prev, [key]: value }))}
+              canQualifyLead={canQualifyLead} canCreateOpp={canCreateOpp} onOpenConvert={() => { setSubmitError(null); setIsConvertOpen(true); }}
+              mode="linkage"
+            />
+          </TabsContent>
+
+          <TabsContent value="activities" className="space-y-4">
+            <Card className="p-5 border-nx-line bg-nx-surface">
+              <ActivityTimeline key={`${lead.id}-${lead.rowVersion || ""}-${lead.status}`} leadId={lead.id} targetLabel={lead.title} defaultRecipientEmail={lead.email} />
+            </Card>
+          </TabsContent>
+        </Tabs>
 
         <EditLeadDetailDialog
           t={t} isRtl={isRtl} lead={lead} defaultDealCurrency={defaultDealCurrency}

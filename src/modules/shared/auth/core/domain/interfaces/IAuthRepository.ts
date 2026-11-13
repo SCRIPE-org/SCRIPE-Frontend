@@ -24,7 +24,7 @@ export interface IAuthRepository {
     tenantId?: string
   ): Promise<LoginResult>;
   logout(): Promise<void>;
-  getMe(): Promise<User>;
+  getCurrentPrincipal(): Promise<User>;
   hasToken(): boolean;
   refreshToken(): Promise<Result<LoginResponse, Error>>;
   clearTokens(): void;

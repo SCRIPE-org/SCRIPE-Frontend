@@ -183,16 +183,16 @@ export function createChildrenTreeService(
 }
 
 /**
- * Adapter that wraps ITenantRepository for MY CHILDREN view.
- * Uses getMyChildren() to show only MY direct children (for /tenants page).
+ * Adapter that wraps ITenantRepository for current-tenant direct children view.
+ * Uses getCurrentTenantChildren() to show only direct children (for /tenants page).
  */
-export function createMyChildrenTreeService(
+export function createCurrentTenantChildrenTreeService(
   repository: ITenantRepository
 ): TreeService<TenantTreeNode, CreateTenantRequest, UpdateTenantRequest> {
   return {
     getWithChildren: async (params) => {
-      // Fetch my children WITH pagination and search
-      const result = await repository.getMyChildren({
+      // Fetch direct children WITH pagination and search
+      const result = await repository.getCurrentTenantChildren({
         page: params.page,
         pageSize: params.pageSize,
         search: params.PageSearch,

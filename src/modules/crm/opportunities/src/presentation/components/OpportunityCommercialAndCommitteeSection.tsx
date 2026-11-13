@@ -98,7 +98,9 @@ export function OpportunityCommercialAndCommitteeSection({
         <div className="flex flex-wrap items-center gap-2.5 text-xs">
           <Clock className="size-4 text-info" />
           <span className="font-bold text-nx-ink">{t("crmOpportunities.commercialSuite.dwellTimeLabel")}</span>
-          <span className="font-mono font-semibold text-nx-ink">{dwellDays}d / {slaDays}d SLA</span>
+          <span className="font-mono font-semibold text-nx-ink">
+            {dwellDays}{t("crmOpportunities.commercialSuite.daysUnit")} / {slaDays}{t("crmOpportunities.commercialSuite.daysUnit")} {t("crmOpportunities.commercialSuite.slaLabel")}
+          </span>
           {lockedFields.length > 0 && (
             <span className="inline-flex items-center gap-1 rounded border border-warning/40 bg-warning/10 px-2 py-0.5 text-[10px] font-mono text-warning" data-testid="deal-stage-locked-fields-badge">
               <Lock className="size-3" />
@@ -118,7 +120,9 @@ export function OpportunityCommercialAndCommitteeSection({
               <Users className="size-4 text-nx-accent" />
               <h3 className="text-xs font-bold uppercase tracking-wider text-nx-ink">{t("crmOpportunities.commercialSuite.buyingCommitteeTitle")}</h3>
             </div>
-            <Badge variant="outline" className="text-[10px] font-mono">{contactRoles.length} stakeholders</Badge>
+            <Badge variant="outline" className="text-[10px] font-mono">
+              {contactRoles.length} {t("crmOpportunities.commercialSuite.stakeholdersCount")}
+            </Badge>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
@@ -212,7 +216,7 @@ export function OpportunityCommercialAndCommitteeSection({
           </div>
         </Card>
 
-        <OpportunityCommercialQuoteAndPlaybookSection opp={opp} isRtl={isRtl} stageHistory={stageHistory} />
+        <OpportunityCommercialQuoteAndPlaybookSection opp={opp} isRtl={isRtl} stageHistory={stageHistory} mode="quote" />
       </div>
     </div>
   );

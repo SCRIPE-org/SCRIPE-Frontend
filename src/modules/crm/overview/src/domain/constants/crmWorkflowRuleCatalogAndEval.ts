@@ -109,6 +109,7 @@ export interface EvaluatedWorkflowTransition {
   status: "allowed_instant" | "allowed_screen_required" | "blocked";
   reason?: string;
   reasonIfBlocked?: string;
+  actionLabel?: string;
   matchedTransition?: CrmWorkflowTransition;
   matchedTransitions?: CrmWorkflowTransition[];
   targetStage?: CrmWorkflowStage;

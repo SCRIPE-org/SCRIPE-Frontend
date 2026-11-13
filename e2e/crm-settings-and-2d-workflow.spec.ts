@@ -1,4 +1,4 @@
-import { test, expect, Page } from "@playwright/test";
+import { test, expect, Page, Route } from "@playwright/test";
 import * as path from "path";
 import * as fs from "fs";
 import { getDevAdminPassword } from "./helpers/auth-credentials";
@@ -764,7 +764,7 @@ test.describe("CRM Settings Hub & 2D Jira Workflow Studio E2E Verification", () 
     // Capture 11_crm_skeleton_loading_state by holding CRM overview endpoints open while capturing light & dark screenshots
     const overviewRoutePattern = /\/v1\/crm\/(pipelines\/default|opportunities|reports\/pipeline)/;
     const releaseResolvers: Array<() => void> = [];
-    await page.route(overviewRoutePattern, async (route) => {
+    const overviewRouteHandler = async (route: Route) => {
       await new Promise<void>((resolve) => {
         releaseResolvers.push(resolve);
         setTimeout(resolve, 30_000);
@@ -774,11 +774,12 @@ test.describe("CRM Settings Hub & 2D Jira Workflow Studio E2E Verification", () 
       } catch {
         // Ignore if unroute already handled the request
       }
-    });
+    };
+    await page.route(overviewRoutePattern, overviewRouteHandler);
     await page.goto("/crm", { waitUntil: "domcontentloaded" });
     await expect(page.getByTestId("crm-overview-skeleton")).toBeVisible({ timeout: 10_000 });
     await setThemeAndCapture(page, "11_crm_skeleton_loading_state");
-    await page.unroute(overviewRoutePattern, { behavior: "ignoreErrors" });
+    await page.unroute(overviewRoutePattern, overviewRouteHandler);
     releaseResolvers.forEach((fn) => fn());
     await page.waitForLoadState("networkidle");
 

@@ -88,7 +88,7 @@ export function useActivitiesExecutionDeskViewModel(currentLanguage: string) {
             page: pageToLoad,
             pageSize: sizeToLoad,
           });
-          let items = res.items ?? [];
+          let items = [...(res.items ?? [])];
           if (searchTerm.trim()) {
             const term = searchTerm.toLowerCase();
             items = items.filter(
@@ -166,6 +166,9 @@ export function useActivitiesExecutionDeskViewModel(currentLanguage: string) {
       setSubmitError(null);
       try {
         const container = getCrmContainer();
+        if (!container.activityRepository) {
+          throw new Error("Activities repository not configured");
+        }
         const targetAccId =
           data.accountId || (selectedAccountId !== "all" ? selectedAccountId : accounts[0]?.id);
         await container.activityRepository.createActivity({
@@ -203,6 +206,9 @@ export function useActivitiesExecutionDeskViewModel(currentLanguage: string) {
       setSubmitError(null);
       try {
         const container = getCrmContainer();
+        if (!container.activityRepository) {
+          throw new Error("Activities repository not configured");
+        }
         await container.activityRepository.createFollowUp(activityId, data);
         setIsFollowUpOpen(false);
         setSelectedActivityForFollowUp(null);

@@ -2,15 +2,17 @@
 
 import { Card } from "@core/ui/card";
 import { Badge } from "@core/ui/badge";
+import { Button } from "@core/ui/button";
 import { Briefcase, Calendar } from "lucide-react";
-import type { CrmContactOpportunity } from "../../domain/entities/ContactEntity";
+import type { CrmContactOpportunityItem } from "../../domain/entities/ContactEntity";
 
 interface ContactDealsCardProps {
-  readonly opportunities?: CrmContactOpportunity[];
+  readonly opportunities?: CrmContactOpportunityItem[];
   readonly jobTitleSnapshot?: string;
   readonly language: string;
   readonly t: (key: string) => string;
   readonly onSelectOpportunity: (id: string) => void;
+  readonly onViewAllOpportunities?: () => void;
 }
 
 export function ContactDealsCard({
@@ -19,6 +21,7 @@ export function ContactDealsCard({
   language,
   t,
   onSelectOpportunity,
+  onViewAllOpportunities,
 }: ContactDealsCardProps) {
   const isAr = language === "ar";
   const influencedTotal = opportunities.reduce(
@@ -38,7 +41,7 @@ export function ContactDealsCard({
           <h2 className="text-sm font-bold text-nx-ink">{t("crmContacts.detail.dealsTitle")}</h2>
         </div>
         <Badge variant="outline" className="border-nx-line text-nx-ink-3 font-mono text-[11px]">
-          {opportunities.length}
+          {Number(opportunities.length).toLocaleString(isAr ? "ar-SA" : "en-US")}
         </Badge>
       </div>
 
@@ -54,12 +57,24 @@ export function ContactDealsCard({
         </div>
         <div className="font-mono text-xs font-bold text-nx-ink">
           {t("crmContacts.detail.influencedPipelineValueLabel")}:{" "}
-          {influencedTotal.toLocaleString()} {currency}
+          {influencedTotal.toLocaleString(isAr ? "ar-SA" : "en-US")} {currency}
         </div>
       </div>
 
       {opportunities.length === 0 ? (
-        <p className="text-xs text-nx-ink-3 py-6 text-center">{t("crmContacts.detail.noDeals")}</p>
+        <div className="py-6 text-center space-y-2.5">
+          <p className="text-xs text-nx-ink-3">{t("crmContacts.detail.noDeals")}</p>
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            onClick={() => (onViewAllOpportunities ? onViewAllOpportunities() : onSelectOpportunity(""))}
+            className="h-7 text-xs gap-1.5 border-nx-line hover:border-nx-accent"
+          >
+            <Briefcase className="size-3 text-nx-accent" />
+            <span>{t("crmContacts.detail.viewDealsBtn")}</span>
+          </Button>
+        </div>
       ) : (
         <div className="divide-y divide-nx-line">
           {opportunities.map((opp) => (
@@ -80,7 +95,7 @@ export function ContactDealsCard({
               <div className="text-end">
                 <span className="text-xs font-bold text-nx-ink font-mono block">
                   {opp.estimatedAmount != null
-                    ? `${opp.estimatedAmount.toLocaleString()} ${opp.currencyCode}`
+                    ? `${opp.estimatedAmount.toLocaleString(isAr ? "ar-SA" : "en-US")} ${opp.currencyCode}`
                     : "••••••"}
                 </span>
                 {opp.targetCloseDate && (

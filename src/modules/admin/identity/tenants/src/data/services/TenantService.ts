@@ -74,8 +74,8 @@ export class TenantService implements ITenantService {
     return jsonList.map((json) => TenantTreeNodeModel.fromJson(json));
   }
 
-  async getMyChildren(params?: ServiceTenantListParams): Promise<TenantTreeListResult> {
-    const url = buildUrl(TENANTS_ENDPOINTS.MY_CHILDREN, {
+  async getCurrentTenantChildren(params?: ServiceTenantListParams): Promise<TenantTreeListResult> {
+    const url = buildUrl(TENANTS_ENDPOINTS.CURRENT_TENANT_CHILDREN, {
       page: params?.page,
       pageSize: params?.pageSize,
       search: params?.search,
@@ -97,8 +97,8 @@ export class TenantService implements ITenantService {
    * For Admin Transfer dialog - returns own tenant + all descendants
    * System admins get a "System" pseudo-tenant (null ID)
    */
-  async getMyTenantAndChildren(search?: string): Promise<TenantTreeNodeModel[]> {
-    const url = buildUrl(TENANTS_ENDPOINTS.MY_TENANT_AND_CHILDREN, { search });
+  async getCurrentTenantHierarchy(search?: string): Promise<TenantTreeNodeModel[]> {
+    const url = buildUrl(TENANTS_ENDPOINTS.CURRENT_TENANT_HIERARCHY, { search });
     const jsonList = await this.api.get<TenantTreeNodeJson[]>(url);
     return jsonList.map((json) => TenantTreeNodeModel.fromJson(json));
   }

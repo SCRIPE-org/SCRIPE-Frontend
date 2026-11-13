@@ -114,6 +114,9 @@ export const en = {
       noContacts: "No linked contacts found for this account.",
       dealsTitle: "Active Pipeline Deals",
       noDeals: "No active opportunities linked to this account.",
+      viewContactsBtn: "View Contacts",
+      viewOpportunitiesBtn: "View Deals",
+      logActivityBtn: "Log Activity",
     },
   },
 };

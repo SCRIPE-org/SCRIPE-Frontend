@@ -61,13 +61,6 @@ export function KanbanCard({
   const canMoveBackward = currentStageIndex > 0;
   const canMoveForward = currentStageIndex < totalStages - 1;
 
-  const handleDragStart = (e: React.DragEvent<HTMLDivElement>) => {
-    e.dataTransfer.setData("application/json", JSON.stringify(opportunity));
-    e.dataTransfer.setData("text/plain", opportunity.id);
-    e.dataTransfer.effectAllowed = "move";
-    onDragStart?.(opportunity);
-  };
-
   const handleCardClick = () => router.push(`/crm/opportunities/${opportunity.id}`);
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
@@ -88,11 +81,10 @@ export function KanbanCard({
 
   return (
     <Card
-      draggable
-      onDragStart={handleDragStart}
-      onDragEnd={() => onDragEnd?.()}
       onClick={handleCardClick}
       onKeyDown={handleKeyDown}
+      onDragStart={() => onDragStart?.(opportunity)}
+      onDragEnd={() => onDragEnd?.()}
       tabIndex={0}
       role="article"
       data-testid="kanban-card"
@@ -186,13 +178,18 @@ export function KanbanCard({
           </span>
         )}
 
-        <div className="flex items-center gap-1" onClick={(e) => e.stopPropagation()}>
+        <div
+          className="flex items-center gap-1"
+          onClick={(e) => e.stopPropagation()}
+          onPointerDown={(e) => e.stopPropagation()}
+        >
           <Button
             type="button"
             variant="ghost"
             size="icon"
             disabled={!canMoveBackward}
             onClick={() => onMoveBackward?.(opportunity)}
+            onPointerDown={(e) => e.stopPropagation()}
             aria-label={t("crmOpportunities.kanban.moveBackward", { defaultValue: "Move backward" })}
             className="size-6 p-0 text-nx-ink-3 hover:text-nx-ink hover:bg-nx-raised rounded disabled:opacity-30"
           >
@@ -204,6 +201,7 @@ export function KanbanCard({
             size="icon"
             disabled={!canMoveForward}
             onClick={() => onMoveForward?.(opportunity)}
+            onPointerDown={(e) => e.stopPropagation()}
             aria-label={t("crmOpportunities.kanban.moveForward", { defaultValue: "Move forward" })}
             className="size-6 p-0 text-nx-ink-3 hover:text-nx-ink hover:bg-nx-raised rounded disabled:opacity-30"
           >

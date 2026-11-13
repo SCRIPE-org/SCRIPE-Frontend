@@ -96,15 +96,27 @@ export function OpportunitiesView() {
   const handleOpportunityStageTransition = useCallback(
     async (opp: CrmOpportunity, targetStageKey: string, dropEval?: DropEvaluationResult): Promise<boolean> => {
       if (opp.stageKey === targetStageKey) return true;
+      const oppExtras = opp as unknown as {
+        solutionFitConfirmed?: boolean;
+        primaryContactRole?: string | null;
+        customFields?: Record<string, unknown>;
+      };
       const evalResult = useCrmWorkflowsStore.getState().evaluateTransition("deal", opp.stageKey, targetStageKey, {
         hasVerifiedParty: Boolean(opp.partyId || opp.accountId),
+        partyId: opp.partyId || opp.accountId || null,
         estimatedAmount: opp.estimatedAmount ?? null,
         targetCloseDate: opp.targetCloseDate ?? null,
+        lossReasonCode: opp.lossReasonCode ?? null,
+        solutionFitConfirmed: Boolean(oppExtras.solutionFitConfirmed),
+        primaryContactRole: oppExtras.primaryContactRole ?? null,
+        contactRoles: oppExtras.primaryContactRole ? [oppExtras.primaryContactRole] : undefined,
+        fields: oppExtras.customFields,
+        locale: isRtl ? "ar" : "en",
       });
 
       if (evalResult.status === "blocked") {
         viewModel.setSubmitError(
-          evalResult.reason || "Transition is restricted or locked in active workflow."
+          evalResult.reason || t("crmOpportunities.kanban.blocked", { defaultValue: "Transition Blocked" })
         );
         return false;
       }
@@ -121,7 +133,7 @@ export function OpportunitiesView() {
 
       return await handleMoveStageOptimistic(opp, targetStageKey);
     },
-    [handleMoveStageOptimistic, viewModel]
+    [handleMoveStageOptimistic, viewModel, isRtl, t]
   );
 
   const handleTransitionDialogSubmit = useCallback(
@@ -141,6 +153,9 @@ export function OpportunitiesView() {
         lossReasonCode: payload.lossReasonCode,
         competitorName: payload.competitorName,
         reopenReason: payload.reopenReason,
+        solutionFitConfirmed: payload.solutionFitConfirmed,
+        primaryContactRole: payload.primaryContactRole,
+        customFieldValues: payload.customFields,
         expectedRowVersion: payload.expectedRowVersion,
       });
       if (success !== false) {

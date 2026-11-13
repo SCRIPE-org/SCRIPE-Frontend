@@ -133,6 +133,16 @@ export const en = {
       partyRequiredForStage: "A verified Account or Contact (or company/contact name on the lead) is required before converting directly into this stage.",
       closeDateLabel: "Target Close Date",
       initialStageLabel: "Initial Pipeline Stage",
+      partyRequiredSuffix: "Account/Contact Required",
+      initialStageSuffix: "Initial Stage",
+      baseCurrencyLabel: "Base",
+      defaultStages: {
+        discovery: "Discovery",
+        qualification: "Qualification",
+        solutionFit: "Solution Fit",
+        proposal: "Proposal",
+        negotiation: "Negotiation",
+      },
       dealKindLabel: "Deal Kind",
       dealKinds: {
         newBusiness: "New Business",
@@ -196,10 +206,23 @@ export const en = {
         saving: "Saving...",
       },
     },
+    tabs: {
+      profile: "Lead Profile & Notes",
+      linkage: "Account & Conversion",
+      activities: "Activity Timeline",
+    },
     messages: {
       createSuccess: "Lead created successfully",
       createFailed: "Failed to create lead",
       loadFailed: "Failed to load leads",
+    },
+    kanban: {
+      instantMove: "Instant Move",
+      opensTransitionScreen: "Opens Transition Screen",
+      blocked: "Transition Blocked",
+      pathsAvailable: "{count} Paths Available",
+      dropToMove: "Drop to Move",
+      dropHere: "Drop here",
     },
   },
 };

@@ -28,6 +28,10 @@ import {
 
 export type { CrmSettingsTabKey };
 
+/**
+ * CRM Settings administration workspace providing currency/FX management,
+ * custom fields studio, SLA escalation rules, and pipeline role definitions.
+ */
 export function CrmSettingsView() {
   const router = useRouter();
   const { t, language } = useI18n();

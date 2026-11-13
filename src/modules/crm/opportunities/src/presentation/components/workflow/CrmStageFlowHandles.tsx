@@ -31,35 +31,34 @@ interface PortDef {
 }
 
 const PORT_DEFINITIONS: readonly PortDef[] = [
-  // Top Face (3 ports: 1 IN + 2 OUT)
-  { id: "top-1", type: "target", position: Position.Top, style: { left: "25%" } },
+  // Top Face (3 source ports — Direction preserved by ConnectionMode.Loose + connectOriginRef)
+  { id: "top-1", type: "source", position: Position.Top, style: { left: "25%" } },
   { id: "top-2", type: "source", position: Position.Top, style: { left: "50%" } },
   { id: "top-3", type: "source", position: Position.Top, style: { left: "75%" } },
 
-  // Right Face (3 bidirectional ports: source + target for LTR & RTL flows)
+  // Right Face (3 source ports)
   { id: "right-1", type: "source", position: Position.Right, style: { top: "25%" } },
   { id: "right-2", type: "source", position: Position.Right, style: { top: "50%" } },
   { id: "right-3", type: "source", position: Position.Right, style: { top: "75%" } },
 
-  // Bottom Face (3 ports: 2 IN + 1 OUT)
-  { id: "bottom-1", type: "target", position: Position.Bottom, style: { left: "25%" } },
-  { id: "bottom-2", type: "target", position: Position.Bottom, style: { left: "50%" } },
+  // Bottom Face (3 source ports)
+  { id: "bottom-1", type: "source", position: Position.Bottom, style: { left: "25%" } },
+  { id: "bottom-2", type: "source", position: Position.Bottom, style: { left: "50%" } },
   { id: "bottom-3", type: "source", position: Position.Bottom, style: { left: "75%" } },
 
-  // Left Face (3 bidirectional ports: target + source for LTR & RTL flows)
-  { id: "left-1", type: "target", position: Position.Left, style: { top: "25%" } },
-  { id: "left-2", type: "target", position: Position.Left, style: { top: "50%" } },
-  { id: "left-3", type: "target", position: Position.Left, style: { top: "75%" } },
+  // Left Face (3 source ports)
+  { id: "left-1", type: "source", position: Position.Left, style: { top: "25%" } },
+  { id: "left-2", type: "source", position: Position.Left, style: { top: "50%" } },
+  { id: "left-3", type: "source", position: Position.Left, style: { top: "75%" } },
 ];
 
-const BIDIRECTIONAL_COMPANION_HANDLES: readonly PortDef[] = [
-  { id: "right-1", type: "target", position: Position.Right, style: { top: "25%", pointerEvents: "none", opacity: 0 } },
-  { id: "right-2", type: "target", position: Position.Right, style: { top: "50%", pointerEvents: "none", opacity: 0 } },
-  { id: "right-3", type: "target", position: Position.Right, style: { top: "75%", pointerEvents: "none", opacity: 0 } },
-  { id: "left-1", type: "source", position: Position.Left, style: { top: "25%", pointerEvents: "none", opacity: 0 } },
-  { id: "left-2", type: "source", position: Position.Left, style: { top: "50%", pointerEvents: "none", opacity: 0 } },
-  { id: "left-3", type: "source", position: Position.Left, style: { top: "75%", pointerEvents: "none", opacity: 0 } },
-];
+/** Non-interactive target companions across all 12 ports so existing targetHandle edges resolve cleanly. */
+const BIDIRECTIONAL_COMPANION_HANDLES: readonly PortDef[] = PORT_DEFINITIONS.map((port) => ({
+  id: port.id,
+  type: "target",
+  position: port.position,
+  style: { ...port.style, pointerEvents: "none", opacity: 0 },
+}));
 
 const HANDLE_CLASS =
   "!w-[7px] !h-[7px] !rounded-full !bg-nx-raised !border !border-nx-line-hi opacity-55 " +

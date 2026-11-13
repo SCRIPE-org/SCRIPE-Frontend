@@ -11,7 +11,6 @@ import {
   Mail,
   Building2,
   Calendar,
-  Clock,
   CalendarClock,
 } from "lucide-react";
 import type { CrmActivity, SalesActivityKind } from "../../domain/entities/CrmActivityEntity";
@@ -55,7 +54,7 @@ export function ActivityCardGridItem({
   const isAr = language === "ar";
   const Icon = getActivityKindIcon(activity.activityKind);
   const kindLabel = t(`crmActivities.kinds.${activity.activityKind}`);
-  const account = accountsMap.get(activity.accountId);
+  const account = activity.accountId ? accountsMap.get(activity.accountId) : undefined;
   const accountName = account
     ? isAr && account.nameAr
       ? account.nameAr
@@ -64,7 +63,7 @@ export function ActivityCardGridItem({
     ? t("crmActivities.table.accountRef")
     : t("crmActivities.table.noAccount");
 
-  const dateStr = activity.occurredAtUtc || activity.createdAt;
+  const dateStr = activity.occurredAtUtc;
   const formattedDate = dateStr
     ? new Date(dateStr).toLocaleDateString(isAr ? "ar-SA" : "en-US", {
         month: "short",
@@ -101,7 +100,9 @@ export function ActivityCardGridItem({
         {activity.accountId && (
           <div
             className="flex items-center gap-1.5 text-xs text-nx-ink-2 hover:text-nx-accent cursor-pointer transition-colors"
-            onClick={() => onSelectAccount(activity.accountId)}
+            onClick={() => {
+              if (activity.accountId) onSelectAccount(activity.accountId);
+            }}
           >
             <Building2 className="size-3 text-nx-accent shrink-0" />
             <span className="truncate max-w-[200px] font-medium">{accountName}</span>
@@ -119,15 +120,6 @@ export function ActivityCardGridItem({
             <Badge variant="outline" className="border-nx-line bg-nx-raised/60 py-0 px-1 font-mono">
               {activity.workItemStatus}
             </Badge>
-            {activity.workItemDueAtUtc && (
-              <span className="font-mono flex items-center gap-0.5">
-                <Clock className="size-2.5" />
-                {new Date(activity.workItemDueAtUtc).toLocaleDateString(isAr ? "ar-SA" : "en-US", {
-                  month: "short",
-                  day: "numeric",
-                })}
-              </span>
-            )}
           </div>
         ) : (
           <div className="pt-1">

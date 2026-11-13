@@ -10,7 +10,7 @@
 import type {
   IRoleRepository,
   RoleListParams,
-  MyTenantRoleListParams,
+  CurrentTenantRoleListParams,
 } from "../../domain/interfaces/IRoleRepository";
 import { Role } from "../../domain/entities/Role";
 import type {
@@ -52,8 +52,8 @@ export class RoleRepository implements IRoleRepository {
     };
   }
 
-  async getMyTenantRoles(params: MyTenantRoleListParams): Promise<PagedResult<Role>> {
-    const result = await this.service.getMyTenantRoles(params);
+  async getCurrentTenantRoles(params: CurrentTenantRoleListParams): Promise<PagedResult<Role>> {
+    const result = await this.service.getCurrentTenantRoles(params);
 
     return {
       items: RoleMapper.toEntityList(result.items),
@@ -82,9 +82,9 @@ export class RoleRepository implements IRoleRepository {
     return response.id;
   }
 
-  async createForMyTenant(request: Omit<CreateRoleRequest, "tenantId">): Promise<string> {
+  async createInCurrentTenant(request: Omit<CreateRoleRequest, "tenantId">): Promise<string> {
     const model = RoleMapper.toCreateModel(request as CreateRoleRequest);
-    const response = await this.service.createForMyTenant(model.toJson());
+    const response = await this.service.createInCurrentTenant(model.toJson());
     return response.id;
   }
 
@@ -116,13 +116,15 @@ export class RoleRepository implements IRoleRepository {
     return result ?? [];
   }
 
-  async getMyTenantAvailablePermissions(category?: string): Promise<Permission[]> {
-    const models = await this.service.getMyTenantAvailablePermissions(category);
+  async getCurrentTenantAvailablePermissions(category?: string): Promise<Permission[]> {
+    const models = await this.service.getCurrentTenantAvailablePermissions(category);
     return PermissionMapper.toEntityList(models);
   }
 
-  async getMyTenantAvailablePermissionsGrouped(search?: string): Promise<PermissionModuleGroup[]> {
-    const json = await this.service.getMyTenantAvailablePermissionsGrouped(search);
+  async getCurrentTenantAvailablePermissionsGrouped(
+    search?: string
+  ): Promise<PermissionModuleGroup[]> {
+    const json = await this.service.getCurrentTenantAvailablePermissionsGrouped(search);
     return PermissionMapper.toEntityGrouped(json);
   }
 

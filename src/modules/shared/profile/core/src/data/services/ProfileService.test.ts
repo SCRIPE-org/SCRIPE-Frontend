@@ -14,23 +14,22 @@
 // useAvatarViewModel/useExternalLoginsViewModel -> ProfileRepository ->
 // ProfileService.
 //
-// The SAME file already defined the CORRECT, live, already-implemented
-// endpoints under the non-legacy top-level keys (ME, UPDATE_ME, AVATAR,
-// CHANGE_PASSWORD, SESSIONS, REVOKE_SESSION, REVOKE_ALL_SESSIONS,
-// BACKUP_CODES_REGENERATE, SECURITY_LOG, EXTERNAL_LOGINS,
+// The SAME file defines the sovereign endpoints under top-level keys
+// (DOSSIER, UPDATE_DOSSIER, AVATAR, CHANGE_PASSWORD, SESSIONS, REVOKE_SESSION,
+// REVOKE_ALL_SESSIONS, BACKUP_CODES_REGENERATE, SECURITY_LOG, EXTERNAL_LOGINS,
 // LINK_EXTERNAL_LOGIN, UNLINK_EXTERNAL_LOGIN) — each backed by a real
 // controller action:
-//   GET/PUT   /v1/admins/me                          AdminsController.GetMe / UpdateMyProfile
-//   POST/DEL  /v1/admins/me/avatar                    AdminsController.UploadAvatar / RemoveAvatar
-//   POST      /v1/admins/{id}/change-password         AdminsController.ChangePassword
-//   GET       /v1/auth/admin/sessions                 AdminAuthController.GetSessions
+//   GET/PUT   /v1/account/dossier                      AccountController.GetDossier / UpdateDossier
+//   POST/DEL  /v1/account/dossier/avatar               AccountController.UploadAvatar / RemoveAvatar
+//   POST      /v1/admins/{id}/change-password          AdminsController.ChangePassword
+//   GET       /v1/auth/admin/sessions                  AdminAuthController.GetSessions
 //   DELETE    /v1/auth/admin/sessions/{tokenId}        AdminAuthController.RevokeSession
 //   POST      /v1/auth/admin/sessions/revoke-all       AdminAuthController.RevokeAllSessions
 //   POST      /v1/auth/admin/2fa/backup-codes/regenerate AdminAuthController.RegenerateBackupCodes
 //   GET       /v1/auth/admin/security-log              AdminAuthController.GetSecurityLog
 //   GET       /v1/auth/admin/external-logins           AdminAuthController.GetExternalLogins
-//   POST      /v1/auth/admin/external-logins/link       AdminAuthController.LinkExternalAccount
-//   DELETE    /v1/auth/admin/external-logins/{id}       AdminAuthController.UnlinkExternalAccount
+//   POST      /v1/auth/admin/external-logins/link      AdminAuthController.LinkExternalAccount
+//   DELETE    /v1/auth/admin/external-logins/{id}      AdminAuthController.UnlinkExternalAccount
 //
 // This test pins ProfileService to call those real endpoints (with the
 // correct HTTP verb) instead of the dead `/v1/profile/*` family, so the
@@ -38,7 +37,7 @@
 //
 // `changePassword` needs the current admin's id to hit
 // `/v1/admins/{id}/change-password` — ProfileService resolves it via a
-// GET to PROFILE_ENDPOINTS.ME first (that response DTO already carries
+// GET to PROFILE_ENDPOINTS.DOSSIER first (that response DTO already carries
 // `id` — see AdminProfileDto in ../models/ProfileModels.ts).
 //
 // `revokeAllSessions` posts an empty body: AdminAuthController's
@@ -65,20 +64,20 @@ function mockApiService(overrides: Partial<IApiService> = {}): IApiService {
   } as unknown as IApiService;
 }
 
-describe("ProfileService — no call site targets the dead /v1/profile/* or legacy /Admins/me family", () => {
-  it("getProfile() GETs /v1/account/dossier, not /v1/profile or /v1/Admins/me", async () => {
+describe("ProfileService — no call site targets the dead /v1/profile/* or legacy /admins/me family", () => {
+  it("getProfile() GETs /v1/account/dossier, not /v1/profile or /v1/admins/me", async () => {
     const api = mockApiService();
     await new ProfileService(api).getProfile();
-    expect(api.get).toHaveBeenCalledWith(PROFILE_ENDPOINTS.ME);
-    expect(PROFILE_ENDPOINTS.ME).toBe("/v1/account/dossier");
+    expect(api.get).toHaveBeenCalledWith(PROFILE_ENDPOINTS.DOSSIER);
+    expect(PROFILE_ENDPOINTS.DOSSIER).toBe("/v1/account/dossier");
   });
 
   it("updateProfile() PUTs /v1/account/dossier, not /v1/profile", async () => {
     const api = mockApiService();
     const data = { firstName: "A", lastName: "B", phoneNumber: "1" };
     await new ProfileService(api).updateProfile(data);
-    expect(api.put).toHaveBeenCalledWith(PROFILE_ENDPOINTS.UPDATE_ME, data);
-    expect(PROFILE_ENDPOINTS.UPDATE_ME).toBe("/v1/account/dossier");
+    expect(api.put).toHaveBeenCalledWith(PROFILE_ENDPOINTS.UPDATE_DOSSIER, data);
+    expect(PROFILE_ENDPOINTS.UPDATE_DOSSIER).toBe("/v1/account/dossier");
   });
 
   it("uploadAvatar() POSTs /v1/account/dossier/avatar, not /v1/profile/avatar", async () => {
@@ -95,11 +94,11 @@ describe("ProfileService — no call site targets the dead /v1/profile/* or lega
     expect(api.delete).toHaveBeenCalledWith(PROFILE_ENDPOINTS.AVATAR);
   });
 
-  it("changePassword() resolves the current admin id via ME then POSTs /v1/admins/{id}/change-password", async () => {
+  it("changePassword() resolves the current admin id via DOSSIER then POSTs /v1/admins/{id}/change-password", async () => {
     const api = mockApiService({ get: vi.fn().mockResolvedValue({ id: "admin-123" }) });
     const data = { currentPassword: "old", newPassword: "new" };
     await new ProfileService(api).changePassword(data);
-    expect(api.get).toHaveBeenCalledWith(PROFILE_ENDPOINTS.ME);
+    expect(api.get).toHaveBeenCalledWith(PROFILE_ENDPOINTS.DOSSIER);
     expect(api.post).toHaveBeenCalledWith(PROFILE_ENDPOINTS.CHANGE_PASSWORD("admin-123"), data);
   });
 

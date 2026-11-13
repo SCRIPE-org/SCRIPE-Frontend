@@ -57,6 +57,10 @@ const TAB_ROUTES: Record<CrmTabId, string> = {
   settings: "/crm/settings",
 };
 
+/**
+ * Shared operational shell for all CRM module routes providing module navigation,
+ * global reporting currency selector, smart guide launcher, and persistent smart tip ribbon.
+ */
 export function CrmShell({
   activeTab,
   onTabChange,
@@ -72,7 +76,30 @@ export function CrmShell({
   const isRtl = language === "ar";
   const { baseCurrency, setBaseCurrency } = useCrmCurrency();
   const [smartGuideOpen, setSmartGuideOpen] = useState(false);
-  const [showTipRibbon, setShowTipRibbon] = useState(true);
+  const [showTipRibbon, setShowTipRibbon] = useState(false);
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      try {
+        if (localStorage.getItem("scripe_crm_tip_dismissed") !== "1") {
+          setShowTipRibbon(true);
+        }
+      } catch {
+        setShowTipRibbon(true);
+      }
+    }
+  }, []);
+
+  const handleDismissTip = () => {
+    setShowTipRibbon(false);
+    if (typeof window !== "undefined") {
+      try {
+        localStorage.setItem("scripe_crm_tip_dismissed", "1");
+      } catch {
+        // ignore localStorage access issues
+      }
+    }
+  };
 
   useEffect(() => {
     if (typeof window !== "undefined") {
@@ -182,7 +209,7 @@ export function CrmShell({
           t={t}
           activeTab={activeTab}
           onOpenGuide={() => setSmartGuideOpen(true)}
-          onDismiss={() => setShowTipRibbon(false)}
+          onDismiss={handleDismissTip}
         />
       )}
 

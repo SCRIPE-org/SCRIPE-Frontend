@@ -2,40 +2,40 @@ import { V1 } from "./_shared";
 
 export const NAVIGATION_ENDPOINTS = {
   MENUS: {
-    /** GET /Menus/my — returns default workspace menu + WorkspaceGroups for all workspaces */
-    MY: `${V1}/Menus/my`,
-    /** GET /Menus/my?workspace={key} — JIT load full menu tree for a specific workspace */
-    MY_WORKSPACE: (workspaceKey: string) =>
-      `${V1}/Menus/my?workspace=${encodeURIComponent(workspaceKey)}`,
-    /** GET /Menus/my/workspaces — lightweight workspace stubs (no menu items) */
-    MY_WORKSPACES: `${V1}/Menus/my/workspaces`,
-    /** POST /Menus/my/workspaces/{key}/pin — toggle pin state for current admin */
-    TOGGLE_PIN: (workspaceKey: string) =>
-      `${V1}/Menus/my/workspaces/${encodeURIComponent(workspaceKey)}/pin`,
+    /** GET /menus/navigation — returns default workspace menu + WorkspaceGroups for all workspaces */
+    NAVIGATION: `${V1}/menus/navigation`,
+    /** GET /menus/navigation?workspace={key} — JIT load full menu tree for a specific workspace */
+    WORKSPACE_NAVIGATION: (workspaceKey: string) =>
+      `${V1}/menus/navigation?workspace=${encodeURIComponent(workspaceKey)}`,
+    /** GET /menus/navigation/workspaces — lightweight workspace stubs (no menu items) */
+    AUTHORIZED_WORKSPACES: `${V1}/menus/navigation/workspaces`,
+    /** POST /menus/navigation/workspaces/{key}/pin — toggle pin state for current admin */
+    TOGGLE_WORKSPACE_PIN: (workspaceKey: string) =>
+      `${V1}/menus/navigation/workspaces/${encodeURIComponent(workspaceKey)}/pin`,
     /**
-     * GET /Menus/my/routes — EAGER routes load (Option B).
+     * GET /menus/navigation/routes — EAGER routes load (Option B).
      * Returns flat array of ALL accessible routes across ALL workspaces.
      * Called ONCE on login to populate useNavigationStore.allRoutes.
      * Eliminates route-guard race conditions during JIT workspace fetches.
      */
-    MY_ROUTES: `${V1}/Menus/my/routes`,
-    MY_OVERRIDES: `${V1}/Menus/overrides/my`,
-    LIST: `${V1}/Menus`,
-    BY_ID: (id: string) => `${V1}/Menus/${id}`,
-    CREATE: `${V1}/Menus`,
-    UPDATE: (id: string) => `${V1}/Menus/${id}`,
-    DELETE: (id: string) => `${V1}/Menus/${id}`,
-    REORDER: `${V1}/Menus/reorder`,
-    ROLE_VISIBILITY: `${V1}/Menus/role-visibility`,
-    OVERRIDES: `${V1}/Menus/overrides`,
-    DELETE_OVERRIDE: (id: string) => `${V1}/Menus/overrides/${id}`,
+    AUTHORIZED_ROUTES: `${V1}/menus/navigation/routes`,
+    ACTIVE_OVERRIDES: `${V1}/menus/navigation/overrides`,
+    LIST: `${V1}/menus`,
+    BY_ID: (id: string) => `${V1}/menus/${id}`,
+    CREATE: `${V1}/menus`,
+    UPDATE: (id: string) => `${V1}/menus/${id}`,
+    DELETE: (id: string) => `${V1}/menus/${id}`,
+    REORDER: `${V1}/menus/reorder`,
+    ROLE_VISIBILITY: `${V1}/menus/role-visibility`,
+    OVERRIDES: `${V1}/menus/overrides`,
+    DELETE_OVERRIDE: (id: string) => `${V1}/menus/overrides/${id}`,
   },
 
   WORKSPACES: {
-    LIST: `${V1}/Workspaces`,
-    CREATE: `${V1}/Workspaces`,
-    UPDATE: (id: string) => `${V1}/Workspaces/${id}`,
-    DELETE: (id: string) => `${V1}/Workspaces/${id}`,
-    REORDER: `${V1}/Workspaces/reorder`,
+    LIST: `${V1}/workspaces`,
+    CREATE: `${V1}/workspaces`,
+    UPDATE: (id: string) => `${V1}/workspaces/${id}`,
+    DELETE: (id: string) => `${V1}/workspaces/${id}`,
+    REORDER: `${V1}/workspaces/reorder`,
   },
 };

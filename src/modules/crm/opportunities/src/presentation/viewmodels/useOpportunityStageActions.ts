@@ -118,7 +118,6 @@ export function useOpportunityStageActions(
         return true;
       } catch (err: any) {
         updateItemStageOptimistic(opportunity.id, opportunity.stageKey);
-        openMoveStageDialog(opportunity, targetStageKey);
         setSubmitError(err.message || "Failed to move opportunity stage");
         return false;
       }

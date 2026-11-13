@@ -21,11 +21,11 @@ export class ProfileService implements IProfileService {
   constructor(private readonly api: IApiService) {}
 
   async getProfile(): Promise<AdminProfile> {
-    return this.api.get<AdminProfile>(PROFILE_ENDPOINTS.ME);
+    return this.api.get<AdminProfile>(PROFILE_ENDPOINTS.DOSSIER);
   }
 
   async updateProfile(data: UpdateProfileRequest): Promise<AdminProfile> {
-    return this.api.put<AdminProfile>(PROFILE_ENDPOINTS.UPDATE_ME, data);
+    return this.api.put<AdminProfile>(PROFILE_ENDPOINTS.UPDATE_DOSSIER, data);
   }
 
   async uploadAvatar(file: File): Promise<{ profileImageUrl: string }> {
@@ -41,10 +41,10 @@ export class ProfileService implements IProfileService {
   /**
    * AdminsController.ChangePassword is `POST /v1/admins/{id}/change-password` — it needs
    * the current admin's own id, which this service doesn't otherwise hold. Resolve it via
-   * GET /v1/admins/me (AdminProfileDto always carries `id`) before posting.
+   * GET /v1/account/dossier (AdminProfileDto always carries `id`) before posting.
    */
   async changePassword(data: ChangePasswordRequest): Promise<void> {
-    const me = await this.api.get<{ id: string }>(PROFILE_ENDPOINTS.ME);
+    const me = await this.api.get<{ id: string }>(PROFILE_ENDPOINTS.DOSSIER);
     return this.api.post<void>(PROFILE_ENDPOINTS.CHANGE_PASSWORD(me.id), data);
   }
 

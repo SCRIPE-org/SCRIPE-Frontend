@@ -22,11 +22,11 @@ export interface IUserSubscriptionRepository {
     params: PaginationParams & { planId?: string; status?: string }
   ): Promise<PagedResult<UserSubscription>>;
   getById(id: string): Promise<UserSubscription>;
-  getMySubscription(): Promise<UserSubscription | null>;
+  getCurrentSubscription(): Promise<UserSubscription | null>;
   create(request: CreateUserSubscriptionRequest): Promise<string>;
   cancel(id: string): Promise<void>;
   /** End-user self-service cancel of the caller's own subscription. */
-  cancelMine(): Promise<void>;
+  cancelCurrent(): Promise<void>;
   renew(id: string): Promise<void>;
   changePlan(
     id: string,

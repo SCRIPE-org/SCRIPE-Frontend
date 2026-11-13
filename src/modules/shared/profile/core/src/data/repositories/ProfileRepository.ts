@@ -38,12 +38,12 @@ export class ProfileRepository implements IProfileRepository {
   // ── Profile ──────────────────────────────────────────
 
   async getProfile(): Promise<AdminProfile> {
-    const dto = await this.api.get<AdminProfileDto>(PROFILE_ENDPOINTS.ME);
+    const dto = await this.api.get<AdminProfileDto>(PROFILE_ENDPOINTS.DOSSIER);
     return ProfileMapper.toAdminProfile(dto);
   }
 
   async updateProfile(data: UpdateProfileRequest): Promise<AdminProfile> {
-    const dto = await this.api.put<AdminProfileDto>(PROFILE_ENDPOINTS.UPDATE_ME, data);
+    const dto = await this.api.put<AdminProfileDto>(PROFILE_ENDPOINTS.UPDATE_DOSSIER, data);
     return ProfileMapper.toAdminProfile(dto);
   }
 
@@ -64,7 +64,7 @@ export class ProfileRepository implements IProfileRepository {
 
   async changePassword(data: ChangePasswordRequest): Promise<void> {
     // Get the current admin's ID from the store — the backend endpoint requires it.
-    // POST /v1/Admins/{id}/change-password is the correct route.
+    // POST /v1/admins/{id}/change-password is the correct route.
     const adminId = useAppStore.getState().user?.id;
     if (!adminId) throw new Error("User not authenticated");
 

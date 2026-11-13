@@ -63,10 +63,10 @@ export interface ITenantRepository {
   getTree(): Promise<TenantTreeNode[]>;
 
   /**
-   * Get MY children tenants (for /tenants page)
+   * Get current tenant's direct children tenants (for /tenants page)
    * Admin sees only their direct children, not their own tenant
    */
-  getMyChildren(params?: TenantListParams): Promise<PagedResult<TenantTreeNode>>;
+  getCurrentTenantChildren(params?: TenantListParams): Promise<PagedResult<TenantTreeNode>>;
 
   /**
    * Get children of a specific tenant (for tenant detail children tab)
@@ -79,7 +79,7 @@ export interface ITenantRepository {
    * For Admin Transfer dialog - returns own tenant + all descendants
    * System admins get a "System" pseudo-tenant (null ID)
    */
-  getMyTenantAndChildren(search?: string): Promise<TenantTreeNode[]>;
+  getCurrentTenantHierarchy(search?: string): Promise<TenantTreeNode[]>;
 
   /**
    * Get tenant by ID

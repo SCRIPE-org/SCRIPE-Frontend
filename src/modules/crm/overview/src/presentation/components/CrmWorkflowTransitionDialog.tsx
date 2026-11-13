@@ -14,6 +14,8 @@ import { Textarea } from "@core/ui/textarea";
 import { Alert, AlertDescription } from "@core/ui/alert";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@core/ui/select";
 import { AlertCircle, ArrowRight, ShieldCheck } from "lucide-react";
+import { CrmWorkflowTransitionDynamicFields } from "./CrmWorkflowTransitionDynamicFields";
+import { deriveTransitionDialogFlags } from "./crmTransitionTypes";
 import {
   type CrmWorkflowTransitionDialogProps,
   type CrmWorkflowTransitionSubmitPayload,
@@ -57,34 +59,14 @@ export function CrmWorkflowTransitionDialog({
     }
   }, [open, evalResult, availableTransitions]);
 
-  const isDone = evalResult?.targetStage?.category === "done";
-  const isLost = evalResult?.targetStage?.category === "lost";
-  const isReopen = Boolean(evalResult?.requiresReopenReason);
-  const requiresParty = Boolean(
-    evalResult?.requiresVerifiedParty &&
-      !record?.partyId &&
-      !record?.organizationPartyId &&
-      !record?.personPartyId
-  );
-  const requiresFinance = Boolean(evalResult?.requiresFinancialForecast);
-  const isLeadConvert = Boolean(
-    entityType === "lead" &&
-      (evalResult?.shouldTriggerDealConversion || evalResult?.triggerDealConversion || isDone)
+  const flags = useMemo(
+    () => deriveTransitionDialogFlags(evalResult, record, entityType),
+    [evalResult, record, entityType]
   );
 
   const schema: z.ZodType<CrmWorkflowTransitionFormData> = useMemo(() => {
-    return buildTransitionSchema({
-      requiresParty,
-      requiresFinance,
-      isDone,
-      isLost,
-      isReopen,
-      isLeadConvert,
-      entityType,
-      evalResult,
-      t,
-    });
-  }, [requiresParty, requiresFinance, isDone, isLost, isReopen, isLeadConvert, entityType, evalResult, t]);
+    return buildTransitionSchema({ flags, entityType, t });
+  }, [flags, entityType, t]);
 
   const defaultValues: Partial<CrmWorkflowTransitionFormData> = useMemo(
     () => getDefaultTransitionValues(record),
@@ -108,6 +90,9 @@ export function CrmWorkflowTransitionDialog({
       disqualificationReasonCode: data.disqualificationReasonCode || undefined, reopenReason: data.reopenReason || undefined,
       reason: data.reason || data.reopenReason || undefined, auditNote: data.auditNote || undefined,
       convertDealTitle: data.convertDealTitle || undefined,
+      solutionFitConfirmed: flags.needsSolutionFit ? Boolean(data.solutionFitConfirmed) : undefined,
+      primaryContactRole: flags.needsPrimaryContactRole && data.primaryContactRole ? data.primaryContactRole : undefined,
+      qualificationNotes: data.qualificationNotes || undefined,
     };
     const success = await onSubmit(payload);
     if (success !== false) {
@@ -169,7 +154,7 @@ export function CrmWorkflowTransitionDialog({
             </div>
           )}
 
-          {requiresParty && (
+          {flags.requiresParty && (
             <div className="space-y-1.5">
               <Label className="text-xs font-semibold text-nx-ink">{t("crm.transitionDialog.partyLabel")} <span className="text-destructive">*</span></Label>
               {partyOptions && partyOptions.length > 0 ? (
@@ -186,7 +171,7 @@ export function CrmWorkflowTransitionDialog({
             </div>
           )}
 
-          {requiresFinance && (
+          {flags.requiresFinance && (
             <div className="grid grid-cols-2 gap-3">
               <div className="space-y-1.5">
                 <Label className="text-xs font-semibold text-nx-ink">{t("crm.transitionDialog.estimatedAmountLabel")}</Label>
@@ -200,7 +185,7 @@ export function CrmWorkflowTransitionDialog({
             </div>
           )}
 
-          {isLeadConvert && (
+          {flags.isLeadConvert && (
             <div className="space-y-1.5">
               <Label className="text-xs font-semibold text-nx-ink">{t("crm.transitionDialog.convertDealTitleLabel")}</Label>
               <Input {...register("convertDealTitle")} placeholder={t("crm.transitionDialog.convertDealTitlePlaceholder")} className="h-8 text-xs border-nx-line bg-nx-surface" />
@@ -208,14 +193,22 @@ export function CrmWorkflowTransitionDialog({
             </div>
           )}
 
-          {isDone && entityType === "deal" && (
+          <CrmWorkflowTransitionDynamicFields
+            flags={flags}
+            control={control}
+            register={register}
+            errors={errors}
+            t={t}
+          />
+
+          {flags.isDone && entityType === "deal" && (
             <div className="space-y-1.5">
               <Label className="text-xs font-semibold text-nx-ink">{t("crm.transitionDialog.actualAmountLabel")}</Label>
               <Input type="number" step="any" {...register("actualAmount")} className="h-8 text-xs border-nx-line bg-nx-surface" />
             </div>
           )}
 
-          {isLost && entityType === "deal" && (
+          {flags.requiresLossReason && entityType === "deal" && (
             <>
               <div className="space-y-1.5">
                 <Label className="text-xs font-semibold text-nx-ink">{t("crm.transitionDialog.lossReasonLabel")}</Label>
@@ -236,7 +229,7 @@ export function CrmWorkflowTransitionDialog({
             </>
           )}
 
-          {isLost && entityType === "lead" && (
+          {flags.requiresLossReason && entityType === "lead" && (
             <div className="space-y-1.5">
               <Label className="text-xs font-semibold text-nx-ink">{t("crm.transitionDialog.disqualificationReasonLabel")}</Label>
               <Controller control={control} name="disqualificationReasonCode" render={({ field }) => (
@@ -248,7 +241,7 @@ export function CrmWorkflowTransitionDialog({
             </div>
           )}
 
-          {(isDone || isLost) && (
+          {flags.requiresCloseNotes && (
             <div className="space-y-1.5">
               <Label className="text-xs font-semibold text-nx-ink">{t("crm.transitionDialog.closeNotesLabel")}</Label>
               <Textarea {...register("closeNotes")} placeholder={t("crm.transitionDialog.closeNotesPlaceholder")} className="min-h-[70px] text-xs border-nx-line bg-nx-surface resize-none" />
@@ -256,7 +249,7 @@ export function CrmWorkflowTransitionDialog({
             </div>
           )}
 
-          {isReopen && (
+          {flags.requiresReopenReason && (
             <div className="space-y-1.5">
               <Label className="text-xs font-semibold text-nx-ink">{t("crm.transitionDialog.reopenReasonLabel")}</Label>
               <Textarea {...register("reopenReason")} placeholder={t("crm.transitionDialog.reopenReasonPlaceholder")} className="min-h-[70px] text-xs border-nx-line bg-nx-surface resize-none" />
@@ -264,7 +257,7 @@ export function CrmWorkflowTransitionDialog({
             </div>
           )}
 
-          {evalResult?.promptForComment && !isReopen && !isLost && !isDone && (
+          {flags.requiresReasonPrompt && (
             <div className="space-y-1.5">
               <Label className="text-xs font-semibold text-nx-ink">{t("crm.transitionDialog.reasonLabel")}</Label>
               <Textarea {...register("reason")} placeholder={t("crm.transitionDialog.reasonPlaceholder")} className="min-h-[60px] text-xs border-nx-line bg-nx-surface resize-none" />

@@ -8,9 +8,9 @@
  *  - NO localStorage read/write (Zustand persist handles this)
  *
  * Call sequence (v2 — Option B / Eager Routes):
- *   1. fetchRoutes()           → GET /Menus/my/routes    (login, eager)
- *   2. fetchDefaultWorkspace() → GET /Menus/my           (login, eager)
- *   3. fetchWorkspaceMenu(key) → GET /Menus/my?workspace={key} (JIT on switch)
+ *   1. fetchRoutes()           → GET /menus/navigation/routes    (login, eager)
+ *   2. fetchDefaultWorkspace() → GET /menus/navigation           (login, eager)
+ *   3. fetchWorkspaceMenu(key) → GET /menus/navigation?workspace={key} (JIT on switch)
  */
 
 import type { IApiService } from "@core/interfaces/api.interface";
@@ -46,7 +46,9 @@ export class NavigationRepository implements INavigationRepository {
   }> {
     appLogger.debug("[NavigationRepository] Fetching all routes (eager)…");
 
-    const raw = await this.apiService.get<RoutesApiResponse>(NAVIGATION_ENDPOINTS.MENUS.MY_ROUTES);
+    const raw = await this.apiService.get<RoutesApiResponse>(
+      NAVIGATION_ENDPOINTS.MENUS.AUTHORIZED_ROUTES
+    );
     const payload = (raw as RoutesApiResponse)?.data ?? raw ?? {};
 
     const routes = Array.isArray((payload as RoutesApiResponse).routes)
@@ -84,8 +86,8 @@ export class NavigationRepository implements INavigationRepository {
 
     const endpoint =
       workspaceKey && workspaceKey !== "admin"
-        ? NAVIGATION_ENDPOINTS.MENUS.MY_WORKSPACE(workspaceKey)
-        : NAVIGATION_ENDPOINTS.MENUS.MY;
+        ? NAVIGATION_ENDPOINTS.MENUS.WORKSPACE_NAVIGATION(workspaceKey)
+        : NAVIGATION_ENDPOINTS.MENUS.NAVIGATION;
 
     const raw = await this.apiService.get<unknown>(endpoint);
 
@@ -126,7 +128,9 @@ export class NavigationRepository implements INavigationRepository {
    */
   async fetchWorkspaceStubs(): Promise<WorkspaceGroupData[]> {
     appLogger.debug("[NavigationRepository] Fetching workspace stubs...");
-    const raw = await this.apiService.get<unknown>(NAVIGATION_ENDPOINTS.MENUS.MY_WORKSPACES);
+    const raw = await this.apiService.get<unknown>(
+      NAVIGATION_ENDPOINTS.MENUS.AUTHORIZED_WORKSPACES
+    );
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const payload = ((raw as any)?.data ?? raw ?? []) as Record<string, unknown>[];
@@ -145,7 +149,7 @@ export class NavigationRepository implements INavigationRepository {
     appLogger.debug(`[NavigationRepository] Toggling pin for workspace "${workspaceKey}"…`);
 
     const raw = await this.apiService.post<unknown>(
-      NAVIGATION_ENDPOINTS.MENUS.TOGGLE_PIN(workspaceKey),
+      NAVIGATION_ENDPOINTS.MENUS.TOGGLE_WORKSPACE_PIN(workspaceKey),
       {}
     );
 

@@ -140,5 +140,35 @@ describe("GenericWorkflowKanban", () => {
     // Board renders without crashing
     expect(screen.getByText("4 Stages")).toBeInTheDocument();
     expect(screen.getByText("3 Cards")).toBeInTheDocument();
+
+    // Verify data-testid and data-stage-key attributes on all columns
+    expect(screen.getByTestId("kanban-column-discovery")).toHaveAttribute("data-stage-key", "discovery");
+    expect(screen.getByTestId("kanban-column-qualification")).toHaveAttribute("data-stage-key", "qualification");
+    expect(screen.getByTestId("kanban-column-closed_won")).toHaveAttribute("data-stage-key", "closed_won");
+    expect(screen.getByTestId("kanban-column-closed_lost")).toHaveAttribute("data-stage-key", "closed_lost");
+  });
+
+  it("renders swimlanes with scoped collapse/expand buttons and stage columns", () => {
+    const config: WorkflowKanbanConfig<TestItem> = {
+      stages: mockStages,
+      stageField: "stageKey",
+      swimlaneMode: "custom",
+      swimlanes: [
+        { id: "enterprise", label: "Enterprise Deals", filter: (i) => (i.amount ?? 0) >= 20000 },
+        { id: "smb", label: "SMB Deals", filter: (i) => (i.amount ?? 0) < 20000 },
+      ],
+    };
+
+    render(<GenericWorkflowKanban config={config} items={mockItems} />);
+
+    expect(screen.getByText("Enterprise Deals")).toBeInTheDocument();
+    expect(screen.getByText("SMB Deals")).toBeInTheDocument();
+
+    const collapseEnterpriseBtn = screen.getByRole("button", { name: /collapse enterprise deals/i });
+    expect(collapseEnterpriseBtn).toBeInTheDocument();
+    fireEvent.click(collapseEnterpriseBtn);
+
+    const collapseSmbBtn = screen.getByRole("button", { name: /collapse smb deals/i });
+    expect(collapseSmbBtn).toBeInTheDocument();
   });
 });

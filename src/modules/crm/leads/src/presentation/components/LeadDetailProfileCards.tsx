@@ -31,6 +31,7 @@ interface LeadDetailProfileCardsProps {
   canQualifyLead: boolean;
   canCreateOpp: boolean;
   onOpenConvert: () => void;
+  mode?: "all" | "profile" | "linkage";
 }
 
 export function LeadDetailProfileCards({
@@ -46,13 +47,18 @@ export function LeadDetailProfileCards({
   canQualifyLead,
   canCreateOpp,
   onOpenConvert,
+  mode = "all",
 }: LeadDetailProfileCardsProps) {
   const router = useRouter();
   const { t } = useI18n();
 
+  const showProfile = mode === "all" || mode === "profile";
+  const showLinkage = mode === "all" || mode === "linkage";
+
   return (
     <>
-      <Card className="p-5 border-nx-line bg-nx-surface space-y-4">
+      {showProfile && (
+        <Card className="p-5 border-nx-line bg-nx-surface space-y-4">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-nx-line pb-4">
           <div className="space-y-1">
             <div className="flex items-center gap-2.5 flex-wrap">
@@ -146,7 +152,9 @@ export function LeadDetailProfileCards({
           />
         </div>
       </Card>
+      )}
 
+      {showLinkage && (
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <Card className="p-4 border-nx-line bg-nx-surface space-y-3" data-testid="lead-party-link-card">
           <div className="flex items-center justify-between border-b border-nx-line pb-3">
@@ -219,16 +227,14 @@ export function LeadDetailProfileCards({
                 <span className="text-xs font-semibold text-nx-ink block">{t("crmLeads.detail.readyForConversionTitle")}</span>
                 <span className="text-[11px] text-nx-ink-3">{t("crmLeads.detail.readyForConversionDesc")}</span>
               </div>
-              {canQualifyLead && canCreateOpp && (
-                <Button type="button" size="sm" onClick={onOpenConvert} className="h-8 text-xs font-bold gap-1 shrink-0">
-                  <ArrowUpRight className="size-3.5" />
-                  <span>{t("crmLeads.detail.convertNowBtn")}</span>
-                </Button>
-              )}
+              <Badge variant="outline" className="text-[10px] font-mono border-nx-line shrink-0">
+                {lead.status === "Qualified" ? t("crmLeads.status.qualified") : t("crmLeads.status.new")}
+              </Badge>
             </div>
           )}
         </Card>
       </div>
+      )}
     </>
   );
 }

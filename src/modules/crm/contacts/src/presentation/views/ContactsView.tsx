@@ -20,6 +20,10 @@ import { useContactsViewModel } from "../viewmodels/useContactsViewModel";
 import { useContactsCrudColumns } from "../viewmodels/useContactsCrudColumns";
 import type { CrmContact } from "../../domain/entities/ContactEntity";
 
+/**
+ * CRM Contacts directory view providing account-scoped filtering, quick search,
+ * multi-layout rendering (Table, CardGrid, SplitPane), and contact creation.
+ */
 export function ContactsView() {
   const router = useRouter();
   const { t, language } = useI18n();
@@ -194,7 +198,7 @@ export function ContactsView() {
           }
         />
 
-        <div className="flex items-center justify-between border-b border-nx-line pb-3">
+        <div className="flex flex-wrap items-center justify-between gap-2 border-b border-nx-line pb-3">
           <div className="flex items-center gap-2">
             <Button
               type="button"
@@ -237,13 +241,13 @@ export function ContactsView() {
         )}
 
         <CreateContactDialog
-          isOpen={isCreateOpen}
+          open={isCreateOpen}
           isSubmitting={isSubmitting}
           error={submitError}
           onOpenChange={setIsCreateOpen}
           onSubmit={handleCreateContact}
-          candidatePartiesFetcher={viewModel.lookupCandidateParties}
-          accountLookup={viewModel.lookupAccounts}
+          onLookupPeople={viewModel.lookupCandidatePeople}
+          onLookupAccounts={viewModel.lookupAccounts}
         />
       </div>
     </CrmShell>

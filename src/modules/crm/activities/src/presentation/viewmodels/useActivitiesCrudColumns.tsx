@@ -11,7 +11,6 @@ import {
   Mail,
   Building2,
   Calendar,
-  Clock,
 } from "lucide-react";
 import type { CrudColumn } from "@core/crud/components/generic-crud-view";
 import type { CrmActivity, SalesActivityKind } from "../../domain/entities/CrmActivityEntity";
@@ -82,7 +81,7 @@ export function useActivitiesCrudColumns(
         key: "accountId",
         label: t("crmActivities.table.account"),
         render: (_val, activity: CrmActivity) => {
-          const account = accountsMap.get(activity.accountId);
+          const account = activity.accountId ? accountsMap.get(activity.accountId) : undefined;
           const accountName = account
             ? isAr && account.nameAr
               ? account.nameAr
@@ -137,15 +136,6 @@ export function useActivitiesCrudColumns(
               >
                 {activity.workItemStatus}
               </Badge>
-              {activity.workItemDueAtUtc && (
-                <span className="text-[10px] text-nx-ink-3 font-mono flex items-center gap-0.5">
-                  <Clock className="size-2.5" />
-                  {new Date(activity.workItemDueAtUtc).toLocaleDateString(
-                    isAr ? "ar-SA" : "en-US",
-                    { month: "short", day: "numeric" }
-                  )}
-                </span>
-              )}
             </div>
           );
         },
@@ -155,7 +145,7 @@ export function useActivitiesCrudColumns(
         label: t("crmActivities.table.occurredAt"),
         sortable: true,
         render: (_val, activity: CrmActivity) => {
-          const dateStr = activity.occurredAtUtc || activity.createdAt;
+          const dateStr = activity.occurredAtUtc;
           const formatted = dateStr
             ? new Date(dateStr).toLocaleDateString(isAr ? "ar-SA" : "en-US", {
                 month: "short",

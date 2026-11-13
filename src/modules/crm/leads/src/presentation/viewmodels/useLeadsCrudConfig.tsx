@@ -178,25 +178,32 @@ export function useLeadsCrudConfig(params: UseLeadsCrudConfigParams) {
       stageField: "stageKey",
       evaluateDropTarget: (lead: CrmLead, targetStageKey: string) => {
         const fromKey = lead.stageKey || `lead.${lead.status.toLowerCase()}`;
+        const isRtl = language === "ar";
         const evalResult = useCrmWorkflowsStore.getState().evaluateTransition("lead", fromKey, targetStageKey, {
           hasVerifiedParty: Boolean(lead.organizationPartyId || lead.personPartyId || lead.verifiedPartyId),
+          partyId: lead.verifiedPartyId || lead.organizationPartyId || lead.personPartyId || null,
           estimatedAmount: lead.estimatedValue ?? null,
+          estimatedValue: lead.estimatedValue ?? null,
           targetCloseDate: null,
+          disqualificationReason: lead.disqualificationReason ?? null,
+          qualificationNotes: (lead as unknown as { qualificationNotes?: string }).qualificationNotes ?? null,
+          fields: (lead as unknown as { customFields?: Record<string, unknown> }).customFields,
+          locale: isRtl ? "ar" : "en",
         });
         const parallelCount = evalResult.matchedTransitions?.length ?? 1;
         return {
           state: evalResult.status,
-          actionLabel: evalResult.matchedTransition?.nameEn,
+          actionLabel: evalResult.actionLabel || evalResult.matchedTransition?.nameEn,
           transitionId: evalResult.matchedTransition?.id,
           transitions: evalResult.matchedTransitions,
           badgeText:
             evalResult.status === "blocked"
-              ? evalResult.reason || t("crm.kanban.blocked", { defaultValue: "Transition Blocked" })
+              ? evalResult.reason || t("crmLeads.kanban.blocked", { defaultValue: "Transition Blocked" })
               : parallelCount > 1
-                ? t("crm.kanban.pathsAvailable", { count: parallelCount, defaultValue: `${parallelCount} Paths Available` })
+                ? t("crmLeads.kanban.pathsAvailable", { count: parallelCount, defaultValue: `${parallelCount} Paths Available` })
                 : evalResult.status === "allowed_screen_required"
-                  ? t("crm.kanban.opensTransitionScreen", { defaultValue: "Opens Transition Screen" })
-                  : t("crm.kanban.instantMove", { defaultValue: "Instant Move" }),
+                  ? t("crmLeads.kanban.opensTransitionScreen", { defaultValue: "Opens Transition Screen" })
+                  : t("crmLeads.kanban.instantMove", { defaultValue: "Instant Move" }),
           reason: evalResult.reason,
         };
       },

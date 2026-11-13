@@ -9,22 +9,8 @@ import type { CrudConfig } from "@core/crud/components/generic-crud-view";
 import { Button } from "@core/ui/button";
 import { Input } from "@core/ui/input";
 import { EmptyState } from "@core/ui/empty-state";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@core/ui/select";
-import {
-  RefreshCw,
-  Plus,
-  Search,
-  Activity,
-  CalendarClock,
-  Eye,
-  Building2,
-} from "lucide-react";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@core/ui/select";
+import { RefreshCw, Plus, Search, Activity, CalendarClock, Eye, Building2 } from "lucide-react";
 import { cn } from "@core/common/utils";
 import { useActivitiesExecutionDeskViewModel } from "../viewmodels/useActivitiesExecutionDeskViewModel";
 import { useActivitiesCrudColumns } from "../viewmodels/useActivitiesCrudColumns";
@@ -43,6 +29,10 @@ const ACTIVITY_KIND_OPTIONS: Array<{ key: SalesActivityKind | "ALL"; labelKey: s
   { key: "CommunicationSent", labelKey: "crmActivities.kinds.CommunicationSent" },
 ];
 
+/**
+ * CRM Activities Execution Desk view for logging sales engagements,
+ * scheduling linked follow-up tasks, and reviewing account timelines.
+ */
 export function ActivitiesExecutionDeskView() {
   const router = useRouter();
   const { t, language } = useI18n();

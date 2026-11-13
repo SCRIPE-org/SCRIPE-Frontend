@@ -2173,6 +2173,10 @@ export const ar = {
       pathsAvailable: "{count} مسارات متاحة",
       currentStage: "المرحلة الحالية",
       moveHere: "انقل هنا",
+      collapseSwimlane: "طي خط التقسيم",
+      expandSwimlane: "توسيع خط التقسيم",
+      dropToMove: "أفلت للنقل",
+      dropHere: "أفلت هنا",
     },
     calendar: {
       unscheduled: "غير مجدول",

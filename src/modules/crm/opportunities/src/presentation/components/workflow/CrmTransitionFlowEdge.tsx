@@ -70,6 +70,7 @@ function CrmTransitionFlowEdgeComponent({
   const hasScreen = Boolean(
     transition.requireReason ||
       transition.requireNote ||
+      (transition.promptFields && transition.promptFields.length > 0) ||
       (transition.requiredFields && transition.requiredFields.length > 0) ||
       transition.requireVerifiedParty ||
       transition.requireEstimatedAmountPositive,

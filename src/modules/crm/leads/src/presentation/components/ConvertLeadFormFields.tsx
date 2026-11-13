@@ -103,7 +103,7 @@ export function ConvertLeadFormFields({
             data-testid="convert-lead-conversion-preview"
             className="text-[11px] font-mono text-nx-accent bg-nx-accent-wash/30 border border-nx-accent/30 rounded-nx-sm px-2 py-1"
           >
-            ≈ {conversionPreview.formattedConverted} (Base {baseCurrency})
+            ≈ {conversionPreview.formattedConverted} ({t("crmLeads.conversion.baseCurrencyLabel")} {baseCurrency})
           </div>
         )}
       </div>
@@ -123,7 +123,7 @@ export function ConvertLeadFormFields({
 
       <div className="sm:col-span-2 space-y-1.5">
         <Label htmlFor="opp-target-stage" className="text-xs font-semibold text-nx-ink">
-          {t("crmLeads.conversion.initialStageLabel", { defaultValue: "Initial Pipeline Stage" })}
+          {t("crmLeads.conversion.initialStageLabel")}
         </Label>
         <Select value={targetStageKey} onValueChange={onTargetStageKeyChange}>
           <SelectTrigger id="opp-target-stage" className="h-9 text-xs border-nx-line bg-nx-ground text-nx-ink">

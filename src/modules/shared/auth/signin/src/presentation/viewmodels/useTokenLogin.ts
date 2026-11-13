@@ -37,9 +37,9 @@ export function useTokenLogin() {
         // 1. Persist the access token
         secureTokenService.setAccessToken(result.accessToken);
 
-        // 2. Fetch user profile from /me — this returns permissions, roles, etc.
+        // 2. Fetch user profile from /auth/admin/principal — this returns permissions, roles, etc.
         const { authRepository } = authContainer;
-        const user = await authRepository.getMe();
+        const user = await authRepository.getCurrentPrincipal();
 
         // 3. Set the user in the Zustand auth store
         setAuth(user, user.permissions || [], [], true);

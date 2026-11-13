@@ -4,10 +4,10 @@ import { V1 } from "@/core/config/api-endpoints/_shared";
  * Sovereign Account World v3.0 API Endpoints
  */
 export const PROFILE_ENDPOINTS = {
-  ME: `${V1}/account/dossier`,
-  UPDATE_ME: `${V1}/account/dossier`,
+  DOSSIER: `${V1}/account/dossier`,
+  UPDATE_DOSSIER: `${V1}/account/dossier`,
   AVATAR: `${V1}/account/dossier/avatar`,
-  CHANGE_PASSWORD: (id: string) => `${V1}/Admins/${id}/change-password`,
+  CHANGE_PASSWORD: (id: string) => `${V1}/admins/${id}/change-password`,
   SESSIONS: `${V1}/auth/admin/sessions`,
   REVOKE_SESSION: (tokenId: string) => `${V1}/auth/admin/sessions/${tokenId}`,
   REVOKE_ALL_SESSIONS: `${V1}/auth/admin/sessions/revoke-all`,
@@ -29,7 +29,7 @@ export const PROFILE_ENDPOINTS = {
     DELETE: (id: string) => `${V1}/auth/passkeys/${id}`,
     RENAME: (id: string) => `${V1}/auth/passkeys/${id}/name`,
   },
-  SUDO_VERIFY: `${V1}/auth/me/sudo-verify`,
+  SUDO_VERIFY: `${V1}/auth/passkeys/sudo-verify`,
   ACCOUNT: {
     CONTEXT: `${V1}/account/context`,
     DOSSIER: `${V1}/account/dossier`,

@@ -43,6 +43,7 @@ export function useOpportunityLifecycleActions(
     } catch {
       // Fallback to default canonical stages
     }
+    void useCrmWorkflowsStore.getState().fetchPipelinesFromBackend();
   }, []);
 
   const handleUpdatePipeline = useCallback(

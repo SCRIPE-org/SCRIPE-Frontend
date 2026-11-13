@@ -58,8 +58,8 @@ export class TenantRepository implements ITenantRepository {
     return TenantMapper.toTreeNodeList(models);
   }
 
-  async getMyChildren(params?: TenantListParams): Promise<PagedResult<TenantTreeNode>> {
-    const result = await this.service.getMyChildren(params);
+  async getCurrentTenantChildren(params?: TenantListParams): Promise<PagedResult<TenantTreeNode>> {
+    const result = await this.service.getCurrentTenantChildren(params);
     return {
       items: TenantMapper.toTreeNodeList(result.items),
       totalCount: result.totalCount,
@@ -76,8 +76,8 @@ export class TenantRepository implements ITenantRepository {
     return TenantMapper.toTreeNodeList(models);
   }
 
-  async getMyTenantAndChildren(search?: string): Promise<TenantTreeNode[]> {
-    const models = await this.service.getMyTenantAndChildren(search);
+  async getCurrentTenantHierarchy(search?: string): Promise<TenantTreeNode[]> {
+    const models = await this.service.getCurrentTenantHierarchy(search);
     return TenantMapper.toTreeNodeList(models);
   }
 

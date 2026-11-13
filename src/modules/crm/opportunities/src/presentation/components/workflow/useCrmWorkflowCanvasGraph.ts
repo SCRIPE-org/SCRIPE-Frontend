@@ -2,30 +2,52 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
-  MarkerType, useEdgesState, useNodesState, useReactFlow,
-  type Connection, type Node, type OnConnect, type OnReconnect,
+  useEdgesState,
+  useNodesState,
+  useReactFlow,
+  type Connection,
+  type Node,
+  type OnConnect,
+  type OnConnectEnd,
+  type OnConnectStart,
+  type OnReconnect,
 } from "@xyflow/react";
 import { toPng } from "html-to-image";
 import type { CrmCustomFieldDefinition } from "@modules/crm";
 import type { CrmWorkflowStageNode, CrmWorkflowTransition } from "./CrmWorkflowCanvas2D";
 import type { TransitionFlowEdge } from "./CrmTransitionFlowEdge";
-import type { StagePortId } from "./CrmWorkflowCanvasSubViews";
+import { chooseBestTargetPort, normalizePortId, type StagePortId } from "./crmWorkflowEdgeRouting";
 import { calculateWorkflowAutoLayout, type LayoutAlgorithm } from "./crmFlowLayoutEngine";
+import {
+  normalizeConnectNodeId,
+  resolveConnectEndTarget,
+  resolveDirectedConnection,
+  type ConnectOrigin,
+} from "./crmWorkflowConnectHelpers";
+import { buildWorkflowCanvasEdges } from "./crmWorkflowEdgeBuilder";
 
 export interface UseCrmWorkflowCanvasGraphParams {
-  stages: CrmWorkflowStageNode[]; transitions: CrmWorkflowTransition[];
-  selectedStageKey: string | null; selectedTransitionId: string | null;
-  isAr: boolean; crmCustomFields?: CrmCustomFieldDefinition[];
+  stages: CrmWorkflowStageNode[];
+  transitions: CrmWorkflowTransition[];
+  selectedStageKey: string | null;
+  selectedTransitionId: string | null;
+  isAr: boolean;
+  crmCustomFields?: CrmCustomFieldDefinition[];
   onSelectStage: (stageKey: string | null) => void;
   onSelectTransition: (transitionId: string | null) => void;
   onNodeMove: (stageKey: string, x: number, y: number) => void;
   onAutoLayout?: (algorithm?: LayoutAlgorithm) => void;
   onApplyLayoutPositions?: (positions: Map<string, { x: number; y: number }>) => void;
   onTransitionChange?: (updated: CrmWorkflowTransition) => void;
-  onOpenAddTransition: (fromStageKey?: string, toStageKey?: string, sourcePort?: StagePortId, targetPort?: StagePortId) => void;
+  onOpenAddTransition: (
+    fromStageKey?: string,
+    toStageKey?: string,
+    sourcePort?: StagePortId,
+    targetPort?: StagePortId,
+  ) => void;
 }
 
-/** ReactFlow state management and layout hook for 2D Workflow Canvas (<280 lines). */
+/** ReactFlow state management and layout hook for 2D Workflow Canvas (<220 lines). */
 export function useCrmWorkflowCanvasGraph(params: UseCrmWorkflowCanvasGraphParams) {
   const {
     stages, transitions, selectedStageKey, selectedTransitionId, isAr, crmCustomFields = [],
@@ -33,7 +55,7 @@ export function useCrmWorkflowCanvasGraph(params: UseCrmWorkflowCanvasGraphParam
     onTransitionChange, onOpenAddTransition,
   } = params;
 
-  const { fitView } = useReactFlow();
+  const { fitView, screenToFlowPosition } = useReactFlow();
   const flowContainerRef = useRef<HTMLDivElement>(null);
 
   const [showTransitionLabels, setShowTransitionLabels] = useState(true);
@@ -41,27 +63,66 @@ export function useCrmWorkflowCanvasGraph(params: UseCrmWorkflowCanvasGraphParam
   const [showMiniMap, setShowMiniMap] = useState(true);
   const [isExportingPng, setIsExportingPng] = useState(false);
   const [simModeOpen, setSimModeOpen] = useState(false);
-  const [wireDraftSource, setWireDraftSource] = useState<{ fromStageKey: string; fromPortId?: StagePortId } | null>(null);
 
-  const wildcardTransitions = useMemo(() => transitions.filter((tr) => tr.fromStageKey === "*" || tr.fromStageKeys?.includes("*")), [transitions]);
-  const directTransitions = useMemo(() => transitions.filter((tr) => tr.fromStageKey !== "*" && !tr.fromStageKeys?.includes("*")), [transitions]);
+  const connectOriginRef = useRef<ConnectOrigin | null>(null);
+  const didConnectInGestureRef = useRef(false);
+  const reactFlowConnectingRef = useRef(false);
+
+  const wildcardTransitions = useMemo(
+    () => transitions.filter((tr) => tr.fromStageKey === "*" || tr.fromStageKeys?.includes("*")),
+    [transitions],
+  );
+  const directTransitions = useMemo(
+    () => transitions.filter((tr) => tr.fromStageKey !== "*" && !tr.fromStageKeys?.includes("*")),
+    [transitions],
+  );
   const firstStage = useMemo(() => [...stages].sort((a, b) => a.order - b.order)[0], [stages]);
+
+  const onStartWireDraft = useCallback((fromStageKey: string, fromPortId: StagePortId) => {
+    connectOriginRef.current = { nodeId: fromStageKey, handleId: fromPortId };
+    didConnectInGestureRef.current = false;
+    reactFlowConnectingRef.current = false;
+  }, []);
+
+  const onFinishWireDraft = useCallback((targetStageKey: string, targetPortId?: StagePortId) => {
+    // Active React Flow drags resolve via onConnect / onConnectEnd right after pointerup
+    if (reactFlowConnectingRef.current) return;
+    const origin = connectOriginRef.current;
+    connectOriginRef.current = null;
+    didConnectInGestureRef.current = false;
+    if (!origin || targetStageKey === "__start__" || origin.nodeId === targetStageKey) return;
+
+    const fromNode = stages.find((s) => s.stageKey === origin.nodeId);
+    const toNode = stages.find((s) => s.stageKey === targetStageKey);
+    const resolvedTargetPort: StagePortId | undefined =
+      targetPortId ??
+      (fromNode && toNode ? chooseBestTargetPort(fromNode, toNode, null, origin.handleId) : undefined);
+    onOpenAddTransition(origin.nodeId, targetStageKey, origin.handleId, resolvedTargetPort);
+  }, [stages, onOpenAddTransition]);
+
+  const clearIdleWireDraft = useCallback(() => {
+    if (!reactFlowConnectingRef.current) {
+      connectOriginRef.current = null;
+      didConnectInGestureRef.current = false;
+    }
+  }, []);
 
   const initialNodes: Node[] = useMemo(() => {
     const stageNodes: Node[] = stages.map((st) => ({
-      id: st.stageKey, type: "stageNode", position: { x: st.x, y: st.y },
+      id: st.stageKey,
+      type: "stageNode",
+      position: { x: st.x, y: st.y },
       data: {
-        stage: st, isSelected: selectedStageKey === st.stageKey, selectedTransitionId, isAr, crmCustomFields,
+        stage: st,
+        isSelected: selectedStageKey === st.stageKey,
+        selectedTransitionId,
+        isAr,
+        crmCustomFields,
         globalIncoming: wildcardTransitions.filter((w) => w.toStageKey === st.stageKey),
         onSelectStage: (key: string) => { onSelectStage(key); onSelectTransition(null); },
         onSelectGlobalTransition: (id: string) => { onSelectTransition(id); onSelectStage(null); },
-        onStartWireDraft: (fromStageKey: string, fromPortId: StagePortId) => setWireDraftSource({ fromStageKey, fromPortId }),
-        onFinishWireDraft: (targetStageKey: string, targetPortId?: StagePortId) => {
-          if (wireDraftSource && wireDraftSource.fromStageKey !== targetStageKey) {
-            onOpenAddTransition(wireDraftSource.fromStageKey, targetStageKey, wireDraftSource.fromPortId, targetPortId);
-          }
-          setWireDraftSource(null);
-        },
+        onStartWireDraft,
+        onFinishWireDraft,
       },
     }));
 
@@ -69,15 +130,19 @@ export function useCrmWorkflowCanvasGraph(params: UseCrmWorkflowCanvasGraphParam
       const startFlowsRight = stages.length <= 1 || stages.every((s) => s.x >= firstStage.x - 20);
       const startX = startFlowsRight ? firstStage.x - 156 : firstStage.x + 300;
       stageNodes.unshift({
-        id: "__start__", type: "startNode",
+        id: "__start__",
+        type: "startNode",
         position: { x: startX, y: firstStage.y + 46 },
-        data: { isAr }, selectable: false, draggable: false,
+        data: { isAr },
+        selectable: false,
+        draggable: false,
       });
     }
 
     if (showGlobalWires && wildcardTransitions.length > 0 && firstStage) {
       stageNodes.unshift({
-        id: "__global_all__", type: "globalAllNode",
+        id: "__global_all__",
+        type: "globalAllNode",
         position: { x: firstStage.x, y: firstStage.y - 96 },
         data: {
           isAr,
@@ -86,145 +151,24 @@ export function useCrmWorkflowCanvasGraph(params: UseCrmWorkflowCanvasGraphParam
             if (firstW) { onSelectTransition(firstW.id); onSelectStage(null); }
           },
         },
-        selectable: true, draggable: true,
+        selectable: true,
+        draggable: true,
       });
     }
 
     return stageNodes;
-  }, [stages, selectedStageKey, selectedTransitionId, isAr, crmCustomFields, wildcardTransitions, onSelectStage, onSelectTransition, wireDraftSource, onOpenAddTransition, firstStage, showGlobalWires]);
+  }, [
+    stages, selectedStageKey, selectedTransitionId, isAr, crmCustomFields, wildcardTransitions,
+    onSelectStage, onSelectTransition, onStartWireDraft, onFinishWireDraft, firstStage, showGlobalWires,
+  ]);
 
-  const initialEdges: TransitionFlowEdge[] = useMemo(() => {
-    const resultEdges: TransitionFlowEdge[] = [];
-    const stageBoxes = stages.map((s) => {
-      const hasGlobalSatellite = s.allowInboundFromAny || wildcardTransitions.some((w) => w.toStageKey === s.stageKey);
-      return { x: s.x, y: hasGlobalSatellite ? s.y - 40 : s.y, w: 248, h: hasGlobalSatellite ? 180 : 140 };
-    });
-    const stageMap = new Map(stages.map((s) => [s.stageKey, s]));
-
-    let defaultSrcPort: StagePortId = "right-2";
-    let defaultDstPort: StagePortId = "left-2";
-    if (isAr) {
-      defaultSrcPort = "left-2";
-      defaultDstPort = "right-2";
-    }
-
-    if (firstStage) {
-      const startFlowsRight = stages.length <= 1 || stages.every((s) => s.x >= firstStage.x - 20);
-      resultEdges.push({
-        id: "edge-start-to-first", source: "__start__", target: firstStage.stageKey,
-        sourceHandle: startFlowsRight ? "right-2" : "left-2",
-        targetHandle: startFlowsRight ? "left-2" : "right-2",
-        type: "smoothstep", animated: true, selectable: false,
-        style: { stroke: "#10b981", strokeWidth: 2 },
-        markerEnd: { type: MarkerType.ArrowClosed, width: 14, height: 14, color: "#10b981" },
-      } as unknown as TransitionFlowEdge);
-    }
-
-    const activeTransitions = showGlobalWires ? transitions : directTransitions;
-    const pairCounts = new Map<string, number>();
-    const pairIndices = new Map<string, number>();
-
-    activeTransitions.forEach((tr) => {
-      const isWildcard = tr.fromStageKey === "*" || tr.fromStageKeys?.includes("*");
-      const src = isWildcard ? (showGlobalWires ? "__global_all__" : firstStage?.stageKey ?? "") : tr.fromStageKey;
-      const key = `${src}->${tr.toStageKey}`;
-      pairCounts.set(key, (pairCounts.get(key) ?? 0) + 1);
-    });
-
-    let backwardCount = 0;
-    let crossLaneCount = 0;
-    activeTransitions.forEach((tr) => {
-      const isWildcard = tr.fromStageKey === "*" || tr.fromStageKeys?.includes("*");
-      const resolvedSource = isWildcard ? (showGlobalWires ? "__global_all__" : firstStage?.stageKey ?? stages[0]?.stageKey ?? "") : tr.fromStageKey;
-      const fromNode = stageMap.get(resolvedSource);
-      const toNode = stageMap.get(tr.toStageKey);
-      const fromOrd = fromNode?.order ?? 0;
-      const toOrd = toNode?.order ?? 0;
-      const isBackward = !isWildcard && (tr.direction === "backward" || (fromOrd > 0 && toOrd > 0 && toOrd < fromOrd));
-      const isCrossRow = Math.abs((fromNode?.y ?? 0) - (toNode?.y ?? 0)) > 60;
-      const isSpecialCross = isBackward || isCrossRow;
-
-      let edgeOffset = 24;
-      let labelStaggerX = 0;
-      let labelStaggerY = 0;
-      if (isSpecialCross) {
-        crossLaneCount++;
-        edgeOffset = 28 + (crossLaneCount % 4) * 20;
-        labelStaggerX = (crossLaneCount % 3) * 52 - 26;
-        labelStaggerY = crossLaneCount % 2 === 0 ? -20 : 20;
-      }
-
-      let sourceHandle: StagePortId;
-      let targetHandle: StagePortId;
-      if (isBackward) {
-        const isSpecialLostOrAny = Boolean(
-          fromNode?.isTerminalLost ||
-          fromNode?.allowInboundFromAny ||
-          (fromNode?.y ?? 0) > 200 ||
-          wildcardTransitions.some((w) => w.toStageKey === fromNode?.stageKey),
-        );
-        if (isSpecialLostOrAny) {
-          sourceHandle = tr.sourcePort ?? "bottom-3";
-          targetHandle = tr.targetPort ?? "bottom-2";
-        } else {
-          backwardCount++;
-          const useTop = backwardCount % 2 === 1;
-          sourceHandle = tr.sourcePort ?? (useTop ? "top-2" : "bottom-3");
-          targetHandle = tr.targetPort ?? (useTop ? "top-1" : "bottom-1");
-        }
-      } else if (isWildcard) {
-        sourceHandle = tr.sourcePort ?? "bottom-3";
-        targetHandle = tr.targetPort ?? "top-1";
-      } else if (
-        !tr.sourcePort &&
-        !tr.targetPort &&
-        fromNode &&
-        toNode &&
-        Math.abs(fromNode.x - toNode.x) > 40
-      ) {
-        sourceHandle = fromNode.x < toNode.x ? "right-2" : "left-2";
-        targetHandle = fromNode.x < toNode.x ? "left-2" : "right-2";
-      } else {
-        sourceHandle = tr.sourcePort ?? defaultSrcPort;
-        targetHandle = tr.targetPort ?? defaultDstPort;
-      }
-
-      const key = `${resolvedSource}->${tr.toStageKey}`;
-      const parallelIndex = pairIndices.get(key) ?? 0;
-      pairIndices.set(key, parallelIndex + 1);
-      const parallelCount = pairCounts.get(key) ?? 1;
-      const isSelected = selectedTransitionId === tr.id;
-      const edgeColor = isSelected ? "var(--nx-accent, #c6ff00)" : isWildcard ? "var(--nx-ink-3, #71717a)" : "var(--nx-line-hi, #71717a)";
-
-      resultEdges.push({
-        id: tr.id, source: resolvedSource, target: tr.toStageKey,
-        sourceHandle, targetHandle,
-        type: "transitionEdge", selected: isSelected,
-        markerEnd: { type: MarkerType.ArrowClosed, width: 14, height: 14, color: edgeColor },
-        data: {
-          transition: tr, isAr, isSelected, showLabels: showTransitionLabels, isGlobalWildcard: isWildcard,
-          parallelIndex, parallelCount, offset: edgeOffset, labelStaggerX, labelStaggerY, stageBoxes,
-          onSelectTransition: (id: string) => { onSelectTransition(id); onSelectStage(null); },
-        },
-      });
-
-      if (showGlobalWires && isWildcard) {
-        stages.filter((s) => s.stageKey !== tr.toStageKey).forEach((srcStage, fIdx) => {
-          resultEdges.push({
-            id: `${tr.id}__fanout__${srcStage.stageKey}`,
-            source: srcStage.stageKey, target: tr.toStageKey,
-            sourceHandle: (fIdx % 2 === 0 ? "bottom-3" : "top-3") as StagePortId,
-            targetHandle: (fIdx % 2 === 0 ? "bottom-1" : "top-1") as StagePortId,
-            type: "transitionEdge", selected: isSelected,
-            markerEnd: { type: MarkerType.ArrowClosed, width: 14, height: 14, color: "var(--nx-ink-3, #71717a)" },
-            data: { transition: { ...tr, fromStageKey: srcStage.stageKey }, isAr, isSelected, showLabels: false, isGlobalWildcard: true, stageBoxes, onSelectTransition: (id: string) => { onSelectTransition(id); onSelectStage(null); } },
-          });
-        });
-      }
-    });
-
-    return resultEdges;
-  }, [transitions, directTransitions, showGlobalWires, firstStage, stages, selectedTransitionId, isAr, showTransitionLabels, onSelectTransition, onSelectStage]);
+  const initialEdges: TransitionFlowEdge[] = useMemo(() => buildWorkflowCanvasEdges({
+    stages, transitions, directTransitions, wildcardTransitions, firstStage,
+    selectedTransitionId, isAr, showGlobalWires, showTransitionLabels, onSelectTransition, onSelectStage,
+  }), [
+    stages, transitions, directTransitions, wildcardTransitions, firstStage,
+    selectedTransitionId, isAr, showGlobalWires, showTransitionLabels, onSelectTransition, onSelectStage,
+  ]);
 
   const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
   const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
@@ -237,11 +181,43 @@ export function useCrmWorkflowCanvasGraph(params: UseCrmWorkflowCanvasGraphParam
     onNodeMove(node.id, Math.round(node.position.x), Math.round(node.position.y));
   }, [onNodeMove]);
 
-  const onConnect: OnConnect = useCallback((params: Connection) => {
-    if (params.source && params.target && params.source !== params.target) {
-      onOpenAddTransition(params.source, params.target, (params.sourceHandle as StagePortId) ?? undefined, (params.targetHandle as StagePortId) ?? undefined);
+  const onConnectStart: OnConnectStart = useCallback((_, { nodeId, handleId }) => {
+    reactFlowConnectingRef.current = true;
+    didConnectInGestureRef.current = false;
+    const normalized = normalizeConnectNodeId(nodeId);
+    if (!normalized) return;
+    connectOriginRef.current = { nodeId: normalized, handleId: normalizePortId(handleId) ?? undefined };
+  }, []);
+
+  const onConnect: OnConnect = useCallback((connection: Connection) => {
+    didConnectInGestureRef.current = true;
+    const resolved = resolveDirectedConnection(connection, connectOriginRef.current);
+    connectOriginRef.current = null;
+    reactFlowConnectingRef.current = false;
+    if (resolved) {
+      onOpenAddTransition(resolved.fromStageKey, resolved.toStageKey, resolved.sourcePort, resolved.targetPort);
     }
   }, [onOpenAddTransition]);
+
+  const onConnectEnd: OnConnectEnd = useCallback((event, connectionState) => {
+    const origin = connectOriginRef.current;
+    const alreadyConnected = didConnectInGestureRef.current;
+    connectOriginRef.current = null;
+    didConnectInGestureRef.current = false;
+    reactFlowConnectingRef.current = false;
+    if (alreadyConnected || !origin) return;
+
+    const resolved = resolveConnectEndTarget(
+      event,
+      connectionState,
+      origin,
+      stages,
+      screenToFlowPosition ?? ((pt) => pt),
+    );
+    if (resolved) {
+      onOpenAddTransition(resolved.fromStageKey, resolved.toStageKey, resolved.sourcePort, resolved.targetPort);
+    }
+  }, [stages, screenToFlowPosition, onOpenAddTransition]);
 
   const onReconnect: OnReconnect = useCallback((oldEdge, newConnection) => {
     const existing = transitions.find((t) => t.id === oldEdge.id);
@@ -252,7 +228,9 @@ export function useCrmWorkflowCanvasGraph(params: UseCrmWorkflowCanvasGraphParam
       const updated: CrmWorkflowTransition = {
         ...existing,
         fromStageKey: newConnection.source, fromStageKeys: [newConnection.source], toStageKey: newConnection.target,
-        direction: dir, sourcePort: (newConnection.sourceHandle as StagePortId) ?? undefined, targetPort: (newConnection.targetHandle as StagePortId) ?? undefined,
+        direction: dir,
+        sourcePort: (newConnection.sourceHandle as StagePortId) ?? undefined,
+        targetPort: (newConnection.targetHandle as StagePortId) ?? undefined,
       };
       onTransitionChange?.(updated);
     }
@@ -261,11 +239,8 @@ export function useCrmWorkflowCanvasGraph(params: UseCrmWorkflowCanvasGraphParam
   const handleExecuteAutoLayout = useCallback(async (algo: LayoutAlgorithm = "elk") => {
     onAutoLayout?.(algo);
     const positionMap = await calculateWorkflowAutoLayout(stages, transitions, algo, { isAr });
-    if (onApplyLayoutPositions) {
-      onApplyLayoutPositions(positionMap);
-    } else {
-      positionMap.forEach((pos, key) => onNodeMove(key, pos.x, pos.y));
-    }
+    if (onApplyLayoutPositions) onApplyLayoutPositions(positionMap);
+    else positionMap.forEach((pos, key) => onNodeMove(key, pos.x, pos.y));
     setTimeout(() => void fitView({ padding: 0.16, duration: 300 }), 50);
   }, [onAutoLayout, stages, transitions, isAr, onApplyLayoutPositions, onNodeMove, fitView]);
 
@@ -289,8 +264,9 @@ export function useCrmWorkflowCanvasGraph(params: UseCrmWorkflowCanvasGraphParam
 
   return {
     flowContainerRef, firstStage, nodes, edges, onNodesChange, onEdgesChange,
-    onNodeDragStop, onConnect, onReconnect, showTransitionLabels, setShowTransitionLabels,
-    showGlobalWires, setShowGlobalWires, showMiniMap, setShowMiniMap,
-    isExportingPng, simModeOpen, setSimModeOpen, handleExecuteAutoLayout, handleExportPng,
+    onNodeDragStop, onConnectStart, onConnect, onConnectEnd, onReconnect, clearIdleWireDraft,
+    showTransitionLabels, setShowTransitionLabels, showGlobalWires, setShowGlobalWires,
+    showMiniMap, setShowMiniMap, isExportingPng, simModeOpen, setSimModeOpen,
+    handleExecuteAutoLayout, handleExportPng,
   };
 }
