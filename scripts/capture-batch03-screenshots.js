@@ -87,22 +87,31 @@ const variants = [
 
 async function run() {
   console.log("Authenticating against real backend API...");
-  const loginRes = await fetch("http://127.0.0.1:5136/api/v1/auth/admin/login", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      "X-Request-Timestamp": String(Date.now()),
-      "X-Request-Nonce": "nonce-" + Date.now()
-    },
-    body: JSON.stringify({
-      identifier: "uat.tenantadmin@hilal.local",
-      password: "P@ssw0rd"
-    })
-  });
+  const uatUsername = process.env.SCRIPE_UAT_USERNAME || "uat.tenantadmin@hilal.local";
+  const uatPassword = process.env.SCRIPE_UAT_PASSWORD || "";
+  let validJwt = "";
+  let userProfile = null;
 
-  const loginData = await loginRes.json();
-  const validJwt = loginData.accessToken;
-  const userProfile = loginData.userProfile;
+  if (uatPassword) {
+    const loginRes = await fetch("http://127.0.0.1:5136/api/v1/auth/admin/login", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "X-Request-Timestamp": String(Date.now()),
+        "X-Request-Nonce": "nonce-" + Date.now()
+      },
+      body: JSON.stringify({
+        identifier: uatUsername,
+        password: uatPassword
+      })
+    });
+
+    const loginData = await loginRes.json();
+    validJwt = loginData.accessToken;
+    userProfile = loginData.userProfile;
+  } else {
+    console.warn("SCRIPE_UAT_PASSWORD not provided in environment; live login skipped.");
+  }
   console.log("Authenticated successfully as:", userProfile?.username, "| Tenant:", userProfile?.tenantName);
 
   console.log("Starting Batch 03 Playwright Evidence Capture with Chrome...");

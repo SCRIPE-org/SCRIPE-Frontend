@@ -47,6 +47,7 @@ export function AcademySportsSetupView() {
   const [error, setError] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
+  const [isAddSportOpen, setIsAddSportOpen] = useState(false);
 
   const api = useMemo(() => getModuleApiService("ACADEMY"), []);
 
@@ -135,25 +136,6 @@ export function AcademySportsSetupView() {
     () => sports.reduce((acc, s) => acc + (s.activeProgramsCount || 0), 0),
     [sports]
   );
-
-  const getSportEmoji = (code: string) => {
-    switch (code.toUpperCase()) {
-      case "FOOTBALL":
-        return "⚽";
-      case "SWIMMING":
-        return "≋";
-      case "PADEL":
-        return "◉";
-      case "BASKETBALL":
-        return "◈";
-      case "MARTIAL_ARTS":
-        return "♧";
-      case "TENNIS":
-        return "🎾";
-      default:
-        return "◈";
-    }
-  };
 
   const getDisciplinesForSport = (code: string) => {
     switch (code.toUpperCase()) {
@@ -256,7 +238,8 @@ export function AcademySportsSetupView() {
           </button>
           <button
             type="button"
-            className="rounded-lg bg-[#c8ff05] border border-[#c8ff05] px-4 py-2 text-xs font-bold text-[#131600] shadow-[0_0_24px_rgba(199,255,0,0.18)] hover:brightness-105 transition-all flex items-center gap-1.5"
+            onClick={() => setIsAddSportOpen(true)}
+            className="rounded-lg bg-[#c8ff05] border border-[#c8ff05] px-4 py-2 text-xs font-bold text-[#131600] shadow-[0_0_24px_rgba(199,255,0,0.18)] hover:brightness-105 transition-all flex items-center gap-1.5 cursor-pointer"
           >
             <Plus className="h-4 w-4" />
             <span>{isAr ? "إضافة رياضة" : "Add Sport"}</span>
@@ -377,7 +360,9 @@ export function AcademySportsSetupView() {
                       }`}
                     >
                       <div className="flex items-center gap-3.5">
-                        <span className="text-2xl text-[#c8ff05]">{getSportEmoji(sport.code)}</span>
+                        <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-[#1a2307] text-[#c8ff05] border border-[#5a7800] shrink-0">
+                          <SportIcon code={sport.code} className="h-5 w-5" />
+                        </div>
                         <div>
                           <div className="text-sm font-bold text-nx-ink">
                             {isAr ? sport.nameAr : sport.nameEn}
@@ -495,8 +480,10 @@ export function AcademySportsSetupView() {
                     <div className="text-[10px] font-bold text-nx-ink-3 uppercase tracking-wider">
                       {isAr ? "الرياضة المحددة" : "Selected Sport"}
                     </div>
-                    <h2 className="text-2xl font-black text-nx-ink mt-1 flex items-center gap-2">
-                      <span>{getSportEmoji(selectedSport.code)}</span>
+                    <h2 className="text-2xl font-black text-nx-ink mt-1 flex items-center gap-2.5">
+                      <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-[#1a2307] text-[#c8ff05] border border-[#5a7800] shrink-0">
+                        <SportIcon code={selectedSport.code} className="h-5 w-5" />
+                      </div>
                       <span>{isAr ? selectedSport.nameAr : selectedSport.nameEn}</span>
                     </h2>
                     <div className="text-xs text-nx-ink-3 mt-1 font-sans">
@@ -581,6 +568,254 @@ export function AcademySportsSetupView() {
               </div>
             )}
           </div>
+        </div>
+      </div>
+
+      {/* Add Sport Dialog (ACAD-UX-01) */}
+      <AddSportDialog
+        isOpen={isAddSportOpen}
+        onClose={() => setIsAddSportOpen(false)}
+        sports={sports}
+        onEnableSport={handleToggleSport}
+        actionInProgressId={actionInProgressId}
+        isAr={isAr}
+      />
+    </div>
+  );
+}
+
+// ---------------------------------------------------------------------------
+// Sport-Specific Consistent Icons (ACAD-UX-02)
+// ---------------------------------------------------------------------------
+function SportIcon({ code, className = "h-5 w-5" }: { code: string; className?: string }) {
+  switch (code.toUpperCase()) {
+    case "FOOTBALL":
+      return (
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+          <circle cx="12" cy="12" r="10" />
+          <path d="m4.93 4.93 4.24 4.24" />
+          <path d="m14.83 9.17 4.24-4.24" />
+          <path d="m14.83 14.83 4.24 4.24" />
+          <path d="m9.17 14.83-4.24 4.24" />
+          <circle cx="12" cy="12" r="4" />
+        </svg>
+      );
+    case "BASKETBALL":
+      return (
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+          <circle cx="12" cy="12" r="10" />
+          <path d="M2.1 10.5a18.3 18.3 0 0 0 19.8 0" />
+          <path d="M2.1 13.5a18.3 18.3 0 0 1 19.8 0" />
+          <path d="M12 2v20" />
+        </svg>
+      );
+    case "TENNIS":
+    case "PADEL":
+      return (
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+          <circle cx="12" cy="12" r="10" />
+          <path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20" />
+          <path d="M2 12h20" />
+        </svg>
+      );
+    case "SWIMMING":
+      return (
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+          <path d="M2 6c.6.5 1.2 1 2.5 1C7 7 7 5 9.5 5c2.6 0 2.4 2 5 2 2.5 0 2.5-2 5-2 1.3 0 1.9.5 2.5 1" />
+          <path d="M2 12c.6.5 1.2 1 2.5 1 2.5 0 2.5-2 5-2 2.6 0 2.4 2 5 2 2.5 0 2.5-2 5-2 1.3 0 1.9.5 2.5 1" />
+          <path d="M2 18c.6.5 1.2 1 2.5 1 2.5 0 2.5-2 5-2 2.6 0 2.4 2 5 2 2.5 0 2.5-2 5-2 1.3 0 1.9.5 2.5 1" />
+        </svg>
+      );
+    case "MARTIAL_ARTS":
+      return (
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+          <path d="m14.5 17.5 3 3 3-3-3-3z" />
+          <path d="m4 20 5-5" />
+          <path d="m9 9 5 5" />
+          <path d="m15 3 6 6-4 4-6-6z" />
+        </svg>
+      );
+    default:
+      return (
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+          <circle cx="12" cy="12" r="9" />
+          <path d="M12 7v5l3 3" />
+        </svg>
+      );
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Add & Enable Canonical Sport Dialog (ACAD-UX-01)
+// ---------------------------------------------------------------------------
+function AddSportDialog({
+  isOpen,
+  onClose,
+  sports,
+  onEnableSport,
+  actionInProgressId,
+  isAr,
+}: {
+  isOpen: boolean;
+  onClose: () => void;
+  sports: AcademySetupSport[];
+  onEnableSport: (sport: AcademySetupSport) => Promise<void>;
+  actionInProgressId: string | null;
+  isAr: boolean;
+}) {
+  const [filterQuery, setFilterQuery] = useState("");
+
+  if (!isOpen) return null;
+
+  const filtered = sports.filter((s) => {
+    if (!filterQuery.trim()) return true;
+    const q = filterQuery.toLowerCase();
+    return (
+      s.code.toLowerCase().includes(q) ||
+      s.nameEn.toLowerCase().includes(q) ||
+      s.nameAr.toLowerCase().includes(q)
+    );
+  });
+
+  const availableToEnable = filtered.filter((s) => !s.isEnabled);
+  const alreadyEnabled = filtered.filter((s) => s.isEnabled);
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/75 backdrop-blur-sm p-4">
+      <div className="w-full max-w-xl rounded-2xl border border-[#32393c] bg-[#101214] p-6 shadow-2xl space-y-4 max-h-[90vh] overflow-y-auto">
+        <div className="flex items-center justify-between border-b border-[#2a3033] pb-3">
+          <div className="flex items-center gap-2.5">
+            <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-[#1a2307] text-[#c8ff05] border border-[#5a7800]">
+              <Plus className="h-5 w-5" />
+            </div>
+            <div>
+              <h2 className="text-base font-bold text-nx-ink">
+                {isAr ? "إضافة وتفعيل رياضة معتمدة" : "Add & Enable Sport"}
+              </h2>
+              <p className="text-[11px] text-nx-ink-3">
+                {isAr
+                  ? "البحث والتفعيل المباشر من كتالوج الرياضات السيادي SportsCore دون تكرار."
+                  : "Search and enable canonical sports from SportsCore registry."}
+              </p>
+            </div>
+          </div>
+          <button
+            onClick={onClose}
+            className="text-nx-ink-3 hover:text-nx-ink text-sm font-semibold p-1.5 rounded-lg hover:bg-[#1a1e21] cursor-pointer"
+          >
+            ✕
+          </button>
+        </div>
+
+        {/* Search Input */}
+        <div className="relative">
+          <Search className="absolute left-3 top-2.5 h-4 w-4 text-nx-ink-3" />
+          <input
+            type="text"
+            placeholder={isAr ? "بحث في الرياضات المعتمدة..." : "Search canonical sports..."}
+            value={filterQuery}
+            onChange={(e) => setFilterQuery(e.target.value)}
+            className="w-full rounded-lg border border-[#343b3e] bg-[#0b0e10] pl-9 pr-3 py-2 text-xs text-nx-ink placeholder:text-nx-ink-3 focus:border-[#c8ff05] focus:outline-none"
+          />
+        </div>
+
+        {/* List of Sports */}
+        <div className="space-y-4 max-h-96 overflow-y-auto pr-1">
+          {/* Section 1: Available to Enable */}
+          <div className="space-y-2">
+            <div className="text-[11px] font-bold text-[#c8ff05] uppercase tracking-wider">
+              {isAr ? `الرياضات المتاحة للتفعيل (${availableToEnable.length})` : `Available to Enable (${availableToEnable.length})`}
+            </div>
+            {availableToEnable.length === 0 ? (
+              <div className="p-3 text-center text-xs text-nx-ink-3 border border-dashed border-[#2a3033] rounded-xl">
+                {isAr ? "لا توجد رياضات غير مفعلة مطابقة." : "All matching canonical sports are already enabled."}
+              </div>
+            ) : (
+              availableToEnable.map((sport) => {
+                const sId = sport.id || sport.sportId;
+                const isBusy = actionInProgressId === sId;
+                return (
+                  <div
+                    key={sId}
+                    className="flex items-center justify-between p-3 rounded-xl border border-[#2a3033] bg-[#14171a] hover:border-[#5a7800] transition-colors"
+                  >
+                    <div className="flex items-center gap-3">
+                      <div className="h-9 w-9 rounded-lg bg-[#1a2307] text-[#c8ff05] border border-[#5a7800] flex items-center justify-center">
+                        <SportIcon code={sport.code} className="h-5 w-5" />
+                      </div>
+                      <div>
+                        <div className="text-xs font-bold text-white">
+                          {isAr ? sport.nameAr : sport.nameEn}
+                        </div>
+                        <div className="text-[10px] text-nx-ink-3 font-mono">
+                          Code: {sport.code}
+                        </div>
+                      </div>
+                    </div>
+
+                    <button
+                      type="button"
+                      disabled={isBusy}
+                      onClick={() => onEnableSport(sport)}
+                      className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#c8ff05] text-[#131600] text-xs font-bold shadow-[0_0_12px_rgba(200,255,5,0.15)] hover:brightness-105 disabled:opacity-50 cursor-pointer"
+                    >
+                      {isBusy ? (
+                        <RefreshCw className="h-3.5 w-3.5 animate-spin" />
+                      ) : (
+                        <Plus className="h-3.5 w-3.5" />
+                      )}
+                      <span>{isAr ? "تفعيل" : "Enable"}</span>
+                    </button>
+                  </div>
+                );
+              })
+            )}
+          </div>
+
+          {/* Section 2: Already Enabled */}
+          <div className="space-y-2 pt-2 border-t border-[#222629]">
+            <div className="text-[11px] font-bold text-nx-ink-3 uppercase tracking-wider">
+              {isAr ? `الرياضات المفعلة مسبقاً (${alreadyEnabled.length})` : `Already Enabled (${alreadyEnabled.length})`}
+            </div>
+            {alreadyEnabled.map((sport) => {
+              const sId = sport.id || sport.sportId;
+              return (
+                <div
+                  key={sId}
+                  className="flex items-center justify-between p-2.5 rounded-xl border border-[#222629] bg-[#0c1012] opacity-75"
+                >
+                  <div className="flex items-center gap-3">
+                    <div className="h-8 w-8 rounded-lg bg-[#14181a] text-[#8e9598] border border-[#2a3033] flex items-center justify-center">
+                      <SportIcon code={sport.code} className="h-4 w-4" />
+                    </div>
+                    <div>
+                      <div className="text-xs font-bold text-[#d0d6d8]">
+                        {isAr ? sport.nameAr : sport.nameEn}
+                      </div>
+                      <div className="text-[10px] text-nx-ink-3 font-mono">
+                        Code: {sport.code}
+                      </div>
+                    </div>
+                  </div>
+
+                  <span className="flex items-center gap-1 text-[10px] font-bold px-2.5 py-1 rounded-full border border-[#5a7800] bg-[#1c2707] text-[#c8ff05]">
+                    <Check className="h-3 w-3" />
+                    <span>{isAr ? "مفعلة" : "Active"}</span>
+                  </span>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+
+        <div className="pt-3 border-t border-[#2a3033] flex justify-end">
+          <button
+            type="button"
+            onClick={onClose}
+            className="px-4 py-2 rounded-lg border border-[#353d3c] bg-[#14171a] text-xs font-bold text-white hover:bg-[#1a1e21] cursor-pointer"
+          >
+            {isAr ? "إغلاق" : "Close"}
+          </button>
         </div>
       </div>
     </div>

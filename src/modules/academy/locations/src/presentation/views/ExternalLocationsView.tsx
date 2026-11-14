@@ -26,7 +26,8 @@ import {
   AlertTriangle,
   Clock,
   Sparkles,
-  MoreVertical
+  MoreVertical,
+  Navigation
 } from "lucide-react";
 
 export function ExternalLocationsView() {
@@ -661,6 +662,34 @@ export function ExternalLocationsView() {
                     <Plus className="h-4 w-4" />
                     <span>{isAr ? "إنشاء حصة تدريبية" : "Create Session"}</span>
                   </button>
+
+                  {/* UAT-06 UX: Get Directions Action */}
+                  {(() => {
+                    const rawAddr = (selectedLoc as any).address || (selectedLoc as any).raw?.address;
+                    const dest = rawAddr || `${selectedLoc.nameEn}, ${selectedLoc.cityEn || ""}`.trim();
+                    const canNavigate = Boolean(dest && dest.length > 2);
+                    return (
+                      <button
+                        type="button"
+                        disabled={!canNavigate}
+                        onClick={() => {
+                          if (canNavigate) {
+                            const url = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(dest)}`;
+                            window.open(url, "_blank", "noopener,noreferrer");
+                          }
+                        }}
+                        title={canNavigate ? (isAr ? "فتح الموقع على خرائط Google" : "Open directions in Google Maps") : (isAr ? "لا يوجد عنوان متاح" : "No destination address available")}
+                        className={`rounded-lg border px-3.5 py-2 text-xs font-bold transition-all flex items-center gap-1.5 ${
+                          canNavigate
+                            ? "border-[#5a7800] bg-[#1a2307] text-[#c8ff05] hover:bg-[#c8ff05] hover:text-[#080a0b] cursor-pointer shadow-[0_0_12px_rgba(200,255,5,0.12)]"
+                            : "border-[#353d3c] bg-[#111416] text-[#9aa1a6] opacity-50 cursor-not-allowed"
+                        }`}
+                      >
+                        <Navigation className="h-3.5 w-3.5 rtl:-scale-x-100" />
+                        <span>{isAr ? "الاتجاهات عبر الخريطة" : "Get Directions"}</span>
+                      </button>
+                    );
+                  })()}
 
                   <button
                     type="button"

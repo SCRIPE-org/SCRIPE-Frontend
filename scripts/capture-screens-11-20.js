@@ -147,24 +147,31 @@ async function run() {
     permissions: ["*"]
   };
 
+  const uatUsername = process.env.SCRIPE_UAT_USERNAME || "uat.tenantadmin@hilal.local";
+  const uatPassword = process.env.SCRIPE_UAT_PASSWORD || "";
+
   try {
-    const loginRes = await fetch("http://127.0.0.1:5200/api/v1/auth/admin/login", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "X-Request-Timestamp": String(Date.now()),
-        "X-Request-Nonce": "nonce-" + Date.now()
-      },
-      body: JSON.stringify({
-        identifier: "uat.tenantadmin@hilal.local",
-        password: "P@ssw0rd"
-      })
-    });
-    const loginData = await loginRes.json();
-    if (loginData.accessToken) {
-      validJwt = loginData.accessToken;
-      if (loginData.userProfile) userProfile = loginData.userProfile;
-      console.log("Authenticated successfully as:", userProfile?.username, "| Tenant:", userProfile?.tenantName);
+    if (!uatPassword) {
+      console.warn("SCRIPE_UAT_PASSWORD not set in environment. Skipping live API login request.");
+    } else {
+      const loginRes = await fetch("http://127.0.0.1:5200/api/v1/auth/admin/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "X-Request-Timestamp": String(Date.now()),
+          "X-Request-Nonce": "nonce-" + Date.now()
+        },
+        body: JSON.stringify({
+          identifier: uatUsername,
+          password: uatPassword
+        })
+      });
+      const loginData = await loginRes.json();
+      if (loginData.accessToken) {
+        validJwt = loginData.accessToken;
+        if (loginData.userProfile) userProfile = loginData.userProfile;
+        console.log("Authenticated successfully as:", userProfile?.username, "| Tenant:", userProfile?.tenantName);
+      }
     }
   } catch (err) {
     console.warn("Login request error, using fallback profile:", err.message);
