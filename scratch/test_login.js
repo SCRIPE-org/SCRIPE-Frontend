@@ -29,7 +29,7 @@ const { chromium } = require("@playwright/test");
   await page.click("#identifier");
   await page.fill("#identifier", "superadmin");
   await page.press("#identifier", "Tab");
-  await page.fill('input[type="password"]', "P@ssw0rd");
+  await page.fill('input[type="password"]', process.env.SCRIPE_UAT_PASSWORD || "");
   await page.waitForTimeout(1000);
 
   console.log("Submitting...");

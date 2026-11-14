@@ -81,7 +81,7 @@ export function InvoiceDetailSheet({
   const content = (
     <div className="space-y-5">
       {/* ── Header ── */}
-      <div className="flex items-start justify-between border-b border-[#2a3033] pb-3">
+      <div className="flex items-start justify-between border-b border-nx-line pb-3">
         <div>
           <div className="flex items-center gap-2">
             <h2 className="text-lg font-bold font-mono tracking-tight text-white">{invNumber}</h2>
@@ -101,22 +101,22 @@ export function InvoiceDetailSheet({
           type="button"
           onClick={onClose}
           aria-label="Close"
-          className="flex h-7 w-7 items-center justify-center rounded-lg text-zinc-400 hover:bg-[#191d20] hover:text-white"
+          className="flex h-7 w-7 items-center justify-center rounded-lg text-zinc-400 hover:bg-nx-raised hover:text-nx-ink"
         >
           <X className="h-4 w-4" />
         </button>
       </div>
 
       {/* ── Athlete & Guardian Information Card ── */}
-      <div className="rounded-xl border border-[#2a3033] bg-[#14171a] p-3.5">
+      <div className="rounded-xl border border-nx-line bg-nx-raised p-3.5">
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           {/* Athlete Info */}
           <div className="flex items-center gap-2.5">
-            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#1e2327] border border-[#2a3033] text-sm font-bold text-white">
+            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-nx-raised border border-nx-line text-sm font-bold text-nx-ink">
               {athleteName.charAt(0)}
             </div>
             <div>
-              <span className="block font-semibold text-white text-xs">{athleteName}</span>
+              <span className="block font-semibold text-nx-ink text-xs">{athleteName}</span>
               <span className="block text-[11px] font-mono text-zinc-400">
                 ATH-001245 • 8 yrs
               </span>
@@ -124,7 +124,7 @@ export function InvoiceDetailSheet({
           </div>
 
           {/* Guardian Info */}
-          <div className="space-y-1 text-xs text-zinc-400 sm:border-s sm:border-[#2a3033] sm:ps-3">
+          <div className="space-y-1 text-xs text-zinc-400 sm:border-s sm:border-nx-line sm:ps-3">
             <div className="flex items-center gap-1.5 text-zinc-200">
               <User className="h-3.5 w-3.5 text-zinc-500" />
               <span className="font-medium">Essam Ahmed (Guardian)</span>
@@ -146,10 +146,10 @@ export function InvoiceDetailSheet({
         <h3 className="text-xs font-semibold uppercase tracking-wider text-zinc-400">
           Payment Timeline
         </h3>
-        <div className="rounded-xl border border-[#2a3033] bg-[#14171a] p-4">
+        <div className="rounded-xl border border-nx-line bg-nx-raised p-4">
           <div className="relative flex items-center justify-between">
             {/* Horizontal Track Line */}
-            <div className="absolute left-6 right-6 top-3 h-0.5 bg-[#2a3033]" />
+            <div className="absolute left-6 right-6 top-3 h-0.5 bg-nx-raised" />
             <div
               className="absolute left-6 top-3 h-0.5 bg-emerald-500 transition-all"
               style={{ width: item.billingStatus === "Paid" ? "100%" : "50%" }}
@@ -160,7 +160,7 @@ export function InvoiceDetailSheet({
               <div className="flex h-6 w-6 items-center justify-center rounded-full bg-emerald-500 text-black">
                 <Check className="h-3.5 w-3.5 stroke-[3]" />
               </div>
-              <span className="mt-1.5 text-[11px] font-medium text-white">Invoice Issued</span>
+              <span className="mt-1.5 text-[11px] font-medium text-nx-ink">Invoice Issued</span>
               <span className="font-mono text-[10px] text-zinc-500">{issuedDate}</span>
             </div>
 
@@ -169,7 +169,7 @@ export function InvoiceDetailSheet({
               <div className="flex h-6 w-6 items-center justify-center rounded-full bg-emerald-500 text-black">
                 <Check className="h-3.5 w-3.5 stroke-[3]" />
               </div>
-              <span className="mt-1.5 text-[11px] font-medium text-white">Payment Received</span>
+              <span className="mt-1.5 text-[11px] font-medium text-nx-ink">Payment Received</span>
               <span className="font-mono text-[10px] text-emerald-400 font-semibold">
                 {currency} {item.paidAmount > 0 ? item.paidAmount.toLocaleString() : "6,000"}
               </span>
@@ -177,16 +177,16 @@ export function InvoiceDetailSheet({
 
             {/* Step 3: Due Date */}
             <div className="relative z-10 flex flex-col items-center text-center">
-              <div className="flex h-6 w-6 items-center justify-center rounded-full border-2 border-amber-400 bg-[#101214]">
+              <div className="flex h-6 w-6 items-center justify-center rounded-full border-2 border-amber-400 bg-nx-surface">
                 <div className="h-2 w-2 rounded-full bg-amber-400" />
               </div>
-              <span className="mt-1.5 text-[11px] font-medium text-white">Due Date</span>
+              <span className="mt-1.5 text-[11px] font-medium text-nx-ink">Due Date</span>
               <span className="font-mono text-[10px] text-rose-400 font-medium">Overdue</span>
             </div>
 
             {/* Step 4: Fully Paid */}
             <div className="relative z-10 flex flex-col items-center text-center">
-              <div className="flex h-6 w-6 items-center justify-center rounded-full border border-zinc-600 bg-[#101214]">
+              <div className="flex h-6 w-6 items-center justify-center rounded-full border border-zinc-600 bg-nx-surface">
                 <div className="h-2 w-2 rounded-full bg-zinc-600" />
               </div>
               <span className="mt-1.5 text-[11px] font-medium text-zinc-500">Fully Paid</span>
@@ -201,17 +201,17 @@ export function InvoiceDetailSheet({
         <h3 className="text-xs font-semibold uppercase tracking-wider text-zinc-400">
           Billing Items
         </h3>
-        <div className="overflow-hidden rounded-xl border border-[#2a3033] bg-[#14171a]">
+        <div className="overflow-hidden rounded-xl border border-nx-line bg-nx-raised">
           <table className="w-full text-start text-xs">
             <thead>
-              <tr className="border-b border-[#2a3033] bg-[#191d20] text-zinc-400">
+              <tr className="border-b border-nx-line bg-nx-raised text-zinc-400">
                 <th className="px-3 py-2 text-start font-medium">Item</th>
                 <th className="px-3 py-2 text-center font-medium">Qty</th>
                 <th className="px-3 py-2 text-end font-medium">Unit Price</th>
                 <th className="px-3 py-2 text-end font-medium">Amount</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-[#22272b]">
+            <tbody className="divide-y divide-nx-line">
               <tr>
                 <td className="px-3 py-2 text-zinc-200">
                   {item.programNameEn || "U12 Football"} – Term Fee (Season 2026)
@@ -220,7 +220,7 @@ export function InvoiceDetailSheet({
                 <td className="px-3 py-2 text-end font-mono text-zinc-300">
                   {currency} 15,000
                 </td>
-                <td className="px-3 py-2 text-end font-mono font-medium text-white">
+                <td className="px-3 py-2 text-end font-mono font-medium text-nx-ink">
                   {currency} 15,000
                 </td>
               </tr>
@@ -230,17 +230,17 @@ export function InvoiceDetailSheet({
                 <td className="px-3 py-2 text-end font-mono text-zinc-300">
                   {currency} 3,000
                 </td>
-                <td className="px-3 py-2 text-end font-mono font-medium text-white">
+                <td className="px-3 py-2 text-end font-mono font-medium text-nx-ink">
                   {currency} 3,000
                 </td>
               </tr>
             </tbody>
             <tfoot>
-              <tr className="border-t border-[#2a3033] bg-[#191d20]">
-                <td colSpan={3} className="px-3 py-2.5 font-semibold text-white">
+              <tr className="border-t border-nx-line bg-nx-raised">
+                <td colSpan={3} className="px-3 py-2.5 font-semibold text-nx-ink">
                   Total Amount
                 </td>
-                <td className="px-3 py-2.5 text-end font-mono font-bold text-white">
+                <td className="px-3 py-2.5 text-end font-mono font-bold text-nx-ink">
                   {currency} {item.totalInvoicedAmount > 0 ? item.totalInvoicedAmount.toLocaleString() : "18,000"}
                 </td>
               </tr>
@@ -259,7 +259,7 @@ export function InvoiceDetailSheet({
           <button
             type="button"
             onClick={handleSendReminder}
-            className="w-full sm:flex-1 inline-flex items-center justify-center gap-2 rounded-xl bg-[#c8ff05] px-4 py-2.5 text-xs font-bold text-black hover:bg-[#b0e600] transition-colors shadow-[0_0_15px_rgba(200,255,5,0.2)]"
+            className="w-full sm:flex-1 inline-flex items-center justify-center gap-2 rounded-xl bg-nx-accent-fill px-4 py-2.5 text-xs font-bold text-black hover:bg-nx-accent-fill transition-colors shadow-[0_0_15px_rgba(200,255,5,0.2)]"
           >
             <Send className="h-3.5 w-3.5" />
             {reminderSent ? "Reminder Sent!" : "Send Reminder"}
@@ -269,7 +269,7 @@ export function InvoiceDetailSheet({
           <button
             type="button"
             onClick={() => alert("Payment processing is governed exclusively by SCRIPE Finance (ADR-ACAD-A7-01).")}
-            className="w-full sm:flex-1 inline-flex items-center justify-center gap-2 rounded-xl border border-[#2a3033] bg-[#14171a] px-3.5 py-2.5 text-xs font-medium text-white hover:border-zinc-700 hover:bg-[#191d20] transition-colors"
+            className="w-full sm:flex-1 inline-flex items-center justify-center gap-2 rounded-xl border border-nx-line bg-nx-raised px-3.5 py-2.5 text-xs font-medium text-nx-ink hover:border-zinc-700 hover:bg-nx-raised transition-colors"
           >
             <CreditCard className="h-3.5 w-3.5 text-zinc-400" />
             Record Payment
@@ -279,7 +279,7 @@ export function InvoiceDetailSheet({
           <button
             type="button"
             onClick={() => alert("Finance receipt viewer opened.")}
-            className="w-full sm:flex-1 inline-flex items-center justify-center gap-2 rounded-xl border border-[#2a3033] bg-[#14171a] px-3.5 py-2.5 text-xs font-medium text-white hover:border-zinc-700 hover:bg-[#191d20] transition-colors"
+            className="w-full sm:flex-1 inline-flex items-center justify-center gap-2 rounded-xl border border-nx-line bg-nx-raised px-3.5 py-2.5 text-xs font-medium text-nx-ink hover:border-zinc-700 hover:bg-nx-raised transition-colors"
           >
             <Receipt className="h-3.5 w-3.5 text-zinc-400" />
             View Receipt
@@ -292,7 +292,7 @@ export function InvoiceDetailSheet({
   // If inline, render in a contained card
   if (isInline) {
     return (
-      <div className="rounded-xl border border-[#2a3033] bg-[#101214] p-5 shadow-xl">
+      <div className="rounded-xl border border-nx-line bg-nx-surface p-5 shadow-xl">
         {content}
       </div>
     );
@@ -301,7 +301,7 @@ export function InvoiceDetailSheet({
   // Otherwise, slide-over / drawer overlay
   return (
     <div className="fixed inset-0 z-50 flex justify-end bg-black/60 backdrop-blur-xs">
-      <div className="flex h-full w-full max-w-lg flex-col border-s border-[#2a3033] bg-[#101214] p-6 shadow-2xl overflow-y-auto">
+      <div className="flex h-full w-full max-w-lg flex-col border-s border-nx-line bg-nx-surface p-6 shadow-2xl overflow-y-auto">
         {content}
       </div>
     </div>

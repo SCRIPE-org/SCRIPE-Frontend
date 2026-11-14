@@ -97,7 +97,7 @@ export function ExportDialog({ isOpen, onClose, onDownload, t }: ExportDialogPro
           <button
             type="button"
             onClick={() => onDownload(dataset)}
-            className="rounded-md bg-nx-accent px-4 py-2 text-xs font-semibold text-white transition-opacity hover:opacity-90 shadow-sm"
+            className="rounded-md bg-nx-accent px-4 py-2 text-xs font-semibold text-nx-ink transition-opacity hover:opacity-90 shadow-sm"
           >
             {t("exportDialog.download")}
           </button>

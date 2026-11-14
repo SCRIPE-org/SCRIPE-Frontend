@@ -61,10 +61,10 @@ function getAthleteInitials(nameEn?: string | null, nameAr?: string | null): str
 
 function getInitialsColor(name: string): string {
   const colors = [
-    "from-lime-500/20 to-emerald-500/20 text-[#c8ff05] border-[#c8ff05]/40",
-    "from-blue-500/20 to-cyan-500/20 text-[#38bdf8] border-[#38bdf8]/40",
-    "from-amber-500/20 to-orange-500/20 text-[#fbbf24] border-[#fbbf24]/40",
-    "from-purple-500/20 to-indigo-500/20 text-[#c084fc] border-[#c084fc]/40"
+    "from-lime-500/20 to-emerald-500/20 text-nx-accent border-nx-accent-fill/40",
+    "from-blue-500/20 to-cyan-500/20 text-info border-info/40",
+    "from-amber-500/20 to-orange-500/20 text-warning border-warning/40",
+    "from-purple-500/20 to-indigo-500/20 text-purple-400 border-purple-400/40"
   ];
   let hash = 0;
   for (let i = 0; i < name.length; i++) hash = name.charCodeAt(i) + ((hash << 5) - hash);
@@ -75,63 +75,63 @@ function getEnrollmentStatusBadge(status: EnrollmentStatus, isAr: boolean) {
   switch (status) {
     case "Active":
       return (
-        <span className="inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-[11px] font-semibold bg-[#122815] text-[#4ade80] border border-[#22c55e]/30">
+        <span className="inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-[11px] font-semibold bg-nx-accent-fill/15 text-success border border-success/30">
           <CheckCircle2 className="h-3 w-3 stroke-[2.5]" />
           {isAr ? "نشط" : "Active"}
         </span>
       );
     case "Draft":
       return (
-        <span className="inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-[11px] font-semibold bg-[#1a1e21] text-[#9aa1a6] border border-[#343b3e]">
+        <span className="inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-[11px] font-semibold bg-nx-raised text-nx-ink-2 border border-nx-line">
           {isAr ? "مسودة" : "Draft"}
         </span>
       );
     case "Review":
       return (
-        <span className="inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-[11px] font-semibold bg-[#2a1d08] text-[#fbbf24] border border-[#f59e0b]/40">
+        <span className="inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-[11px] font-semibold bg-warning/15 text-warning border border-warning/40">
           <ClipboardCheck className="h-3 w-3" />
           {isAr ? "قيد المراجعة" : "Review"}
         </span>
       );
     case "PendingFinance":
       return (
-        <span className="inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-[11px] font-semibold bg-[#2a1d08] text-[#fbbf24] border border-[#f59e0b]/40">
+        <span className="inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-[11px] font-semibold bg-warning/15 text-warning border border-warning/40">
           {isAr ? "بانتظار المالية" : "Pending Finance"}
         </span>
       );
     case "Paused":
       return (
-        <span className="inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-[11px] font-semibold bg-[#2a1d08] text-[#fbbf24] border border-[#f59e0b]/40">
+        <span className="inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-[11px] font-semibold bg-warning/15 text-warning border border-warning/40">
           {isAr ? "موقوف مؤقتاً" : "Paused"}
         </span>
       );
     case "Transferred":
       return (
-        <span className="inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-[11px] font-semibold bg-[#141b22] text-[#93c5fd] border border-[#3b82f6]/30">
+        <span className="inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-[11px] font-semibold bg-nx-raised text-info border border-info/30">
           {isAr ? "محول" : "Transferred"}
         </span>
       );
     case "Completed":
       return (
-        <span className="inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-[11px] font-semibold bg-[#141b22] text-[#93c5fd] border border-[#3b82f6]/30">
+        <span className="inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-[11px] font-semibold bg-nx-raised text-info border border-info/30">
           {isAr ? "مكتمل" : "Completed"}
         </span>
       );
     case "Withdrawn":
       return (
-        <span className="inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-[11px] font-semibold bg-[#2b1114] text-[#ff8290] border border-[#f43f5e]/30">
+        <span className="inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-[11px] font-semibold bg-destructive/15 text-destructive border border-destructive/30">
           {isAr ? "منسحب" : "Withdrawn"}
         </span>
       );
     case "Cancelled":
       return (
-        <span className="inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-[11px] font-semibold bg-[#1a1e21] text-[#6b7280] border border-[#374151]">
+        <span className="inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-[11px] font-semibold bg-nx-raised text-nx-ink-2 border border-nx-line-hi">
           {isAr ? "ملغي" : "Cancelled"}
         </span>
       );
     default:
       return (
-        <span className="inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-[11px] font-semibold bg-[#14171a] text-white border border-[#2a3033]">
+        <span className="inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-[11px] font-semibold bg-nx-raised text-white border border-nx-line">
           {status}
         </span>
       );
@@ -142,39 +142,39 @@ function getBillingBadge(billingStatus: BillingStatus, isAr: boolean) {
   switch (billingStatus) {
     case "Invoiced":
       return (
-        <span className="inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-[10px] font-semibold bg-[#122815] text-[#4ade80] border border-[#22c55e]/30">
+        <span className="inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-[10px] font-semibold bg-nx-accent-fill/15 text-success border border-success/30">
           <Check className="h-3 w-3 stroke-[2.5]" />
           {isAr ? "مفوتر" : "Invoiced"}
         </span>
       );
     case "Paid":
       return (
-        <span className="inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-[10px] font-semibold bg-[#122815] text-[#4ade80] border border-[#22c55e]/30">
+        <span className="inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-[10px] font-semibold bg-nx-accent-fill/15 text-success border border-success/30">
           <Check className="h-3 w-3 stroke-[2.5]" />
           {isAr ? "مدفوع" : "Paid"}
         </span>
       );
     case "Waived":
       return (
-        <span className="inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-[10px] font-semibold bg-[#141b22] text-[#93c5fd] border border-[#3b82f6]/30">
+        <span className="inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-[10px] font-semibold bg-nx-raised text-info border border-info/30">
           {isAr ? "منحة / معفى" : "Waived"}
         </span>
       );
     case "Unbilled":
       return (
-        <span className="inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-[10px] font-semibold bg-[#2a1d08] text-[#fbbf24] border border-[#f59e0b]/40">
+        <span className="inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-[10px] font-semibold bg-warning/15 text-warning border border-warning/40">
           {isAr ? "غير مفوتر" : "Unbilled"}
         </span>
       );
     case "Overdue":
       return (
-        <span className="inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-[10px] font-semibold bg-[#2b1114] text-[#ff8290] border border-[#f43f5e]/30">
+        <span className="inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-[10px] font-semibold bg-destructive/15 text-destructive border border-destructive/30">
           {isAr ? "متأخر" : "Overdue"}
         </span>
       );
     default:
       return (
-        <span className="inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-[10px] font-semibold bg-[#14171a] text-[#9aa1a6] border border-[#2a3033]">
+        <span className="inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-[10px] font-semibold bg-nx-raised text-nx-ink-2 border border-nx-line">
           {billingStatus}
         </span>
       );
@@ -358,34 +358,30 @@ export function AcademyEnrollmentsView() {
 
   return (
     <div
-      className="min-h-screen text-[#f5f7f8] p-5 sm:p-7 space-y-4"
+      className="min-h-screen text-nx-ink p-5 sm:p-7 space-y-4 academy-bg"
       dir={dir}
-      style={{
-        backgroundColor: "#07090a",
-        backgroundImage: "radial-gradient(ellipse 900px 320px at 85% 0%, rgba(200, 255, 5, 0.055), transparent 75%)"
-      }}
     >
       {/* 1. Breadcrumbs */}
-      <div className="flex items-center gap-2 text-xs font-medium text-[#9aa1a6]">
-        <Link href="/academy" className="hover:text-white transition-colors flex items-center gap-1">
+      <div className="flex items-center gap-2 text-xs font-medium text-nx-ink-2">
+        <Link href="/academy" className="hover:text-nx-ink transition-colors flex items-center gap-1">
           <ArrowLeft className="h-3 w-3 rtl:rotate-180" />
           <span>{isAr ? "لوحة الأكاديمية" : "Academy Overview"}</span>
         </Link>
         <span>/</span>
-        <span className="text-white font-semibold">{isAr ? "التسجيلات والقيد" : "Enrollments"}</span>
+        <span className="text-nx-ink font-semibold">{isAr ? "التسجيلات والقيد" : "Enrollments"}</span>
       </div>
 
       {/* 2. Page Header Bar */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div className="flex items-center gap-3.5">
-          <div className="flex h-12 w-12 items-center justify-center rounded-xl border border-[#c8ff05]/40 bg-[#14171a] text-[#c8ff05] shadow-[0_0_16px_rgba(200,255,5,0.15)] shrink-0">
-            <Layers className="h-6 w-6 text-[#c8ff05]" />
+          <div className="flex h-12 w-12 items-center justify-center rounded-xl border border-nx-accent-fill/40 bg-nx-raised text-nx-accent shadow-nx-glow shrink-0">
+            <Layers className="h-6 w-6 text-nx-accent" />
           </div>
           <div>
             <h1 className="text-2xl font-black tracking-tight text-white leading-tight">
               {isAr ? "التسجيلات والقيد الأكاديمي" : "Enrollments"}
             </h1>
-            <p className="text-xs text-[#9aa1a6] mt-0.5">
+            <p className="text-xs text-nx-ink-2 mt-0.5">
               {isAr
                 ? "قوائم الطلاب المسجلين، وجداول الفوترة، والتسكين في المجموعات التدريبية."
                 : "Active student enrollments, billing schedules, and roster assignments."}
@@ -405,16 +401,16 @@ export function AcademyEnrollmentsView() {
               link.click();
               document.body.removeChild(link);
             }}
-            className="flex items-center gap-1.5 rounded-lg border border-[#2a3033] bg-[#14171a] hover:bg-[#1c2024] px-3.5 py-2 text-xs font-semibold text-white transition-colors cursor-pointer"
+            className="flex items-center gap-1.5 rounded-lg border border-nx-line bg-nx-raised hover:bg-nx-raised px-3.5 py-2 text-xs font-semibold text-nx-ink transition-colors cursor-pointer"
           >
-            <Download className="h-3.5 w-3.5 text-[#9aa1a6]" />
+            <Download className="h-3.5 w-3.5 text-nx-ink-2" />
             <span>{isAr ? "تصدير CSV" : "Export CSV"}</span>
           </button>
 
           {canCreate && (
             <Button
               onClick={() => setShowCreateModal(true)}
-              className="h-9 px-4 rounded-lg bg-[#c8ff05] hover:bg-[#b2e600] text-black font-bold text-xs flex items-center gap-1.5 shadow-md shadow-[#c8ff05]/20 cursor-pointer border-none"
+              className="h-9 px-4 rounded-lg bg-nx-accent-fill hover:bg-nx-accent-fill text-black font-bold text-xs flex items-center gap-1.5 shadow-md shadow-[#c6ff00]/20 cursor-pointer border-none"
             >
               <Plus className="h-3.5 w-3.5 text-black stroke-[3]" />
               <span>{isAr ? "إنشاء تسجيل جديد" : "New Enrollment"}</span>
@@ -426,130 +422,130 @@ export function AcademyEnrollmentsView() {
       {/* 3. 5 Real KPI Metric Cards with Honest Operational Context (No Fabricated Sparklines) */}
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3.5">
         {/* Card 1: Active Enrollments (Glowing Signal Lime Highlight) */}
-        <div className="relative rounded-2xl border-2 border-[#c8ff05] bg-[#12160d] p-4 shadow-[0_0_20px_rgba(200,255,5,0.14)] overflow-hidden flex flex-col justify-between">
+        <div className="relative rounded-2xl border-2 border-nx-accent-fill bg-nx-accent-fill/15 p-4 shadow-[0_0_20px_rgba(200,255,5,0.14)] overflow-hidden flex flex-col justify-between">
           <div>
             <div className="flex items-start justify-between">
-              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#202b09] border border-[#5a7800] text-[#c8ff05]">
+              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-nx-accent-fill/15 border border-nx-accent-fill/40 text-nx-accent">
                 <Users className="h-5 w-5" />
               </div>
-              <span className="flex items-center gap-1 text-[11px] font-bold text-[#c8ff05] bg-[#222e00] px-2 py-0.5 rounded-full border border-[#5a7800]">
+              <span className="flex items-center gap-1 text-[11px] font-bold text-nx-accent bg-nx-accent-fill/15 px-2 py-0.5 rounded-full border border-nx-accent-fill/40">
                 {isAr ? "نشط" : "Active Roster"}
               </span>
             </div>
             <div className="mt-2.5">
               <div className="text-2xl font-black tracking-tight text-white">{activeCount}</div>
-              <div className="text-xs text-[#aeb5b5] mt-0.5">{isAr ? "التسجيلات النشطة" : "Active Enrollments"}</div>
+              <div className="text-xs text-nx-ink-2 mt-0.5">{isAr ? "التسجيلات النشطة" : "Active Enrollments"}</div>
             </div>
           </div>
-          <div className="flex items-center justify-between text-[11px] text-[#aeb5b5] pt-3 mt-3 border-t border-[#3a4d00]">
+          <div className="flex items-center justify-between text-[11px] text-nx-ink-2 pt-3 mt-3 border-t border-nx-accent-fill/40">
             <span>{isAr ? "نسبة التسجيل الكلي" : "Share of Total"}</span>
-            <span className="font-mono font-bold text-[#c8ff05]">
+            <span className="font-mono font-bold text-nx-accent">
               {vm.enrollments.length > 0 ? `${Math.round((activeCount / vm.enrollments.length) * 100)}%` : "0%"}
             </span>
           </div>
         </div>
 
         {/* Card 2: Pending Review */}
-        <div className="relative rounded-2xl border border-[#2a3033] bg-[#101315] p-4 shadow-lg overflow-hidden flex flex-col justify-between">
+        <div className="relative rounded-2xl border border-nx-line bg-nx-surface p-4 shadow-lg overflow-hidden flex flex-col justify-between">
           <div>
             <div className="flex items-start justify-between">
-              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#1b1e20] border border-[#343b3e] text-[#ffd24d]">
+              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-nx-raised border border-nx-line text-warning">
                 <ClipboardCheck className="h-5 w-5" />
               </div>
-              <span className="flex items-center gap-1 text-[11px] font-bold text-[#ffd24d] bg-[#372b09] px-2 py-0.5 rounded-full border border-[#715a12]">
+              <span className="flex items-center gap-1 text-[11px] font-bold text-warning bg-warning/15 px-2 py-0.5 rounded-full border border-warning/30">
                 {isAr ? "قيد المراجعة" : "Under Review"}
               </span>
             </div>
             <div className="mt-2.5">
               <div className="text-2xl font-black tracking-tight text-white">{pendingReviewCount}</div>
-              <div className="text-xs text-[#aeb5b5] mt-0.5">{isAr ? "قيد المراجعة" : "Pending Review"}</div>
+              <div className="text-xs text-nx-ink-2 mt-0.5">{isAr ? "قيد المراجعة" : "Pending Review"}</div>
             </div>
           </div>
-          <div className="flex items-center justify-between text-[11px] text-[#aeb5b5] pt-3 mt-3 border-t border-[#222629]">
+          <div className="flex items-center justify-between text-[11px] text-nx-ink-2 pt-3 mt-3 border-t border-nx-line">
             <span>{isAr ? "الإجراء المطلوب" : "Required Action"}</span>
-            <span className="text-[#ffd24d] font-semibold">{isAr ? "مراجعة المشرف" : "Staff Review"}</span>
+            <span className="text-warning font-semibold">{isAr ? "مراجعة المشرف" : "Staff Review"}</span>
           </div>
         </div>
 
         {/* Card 3: Pending Payment / Finance */}
-        <div className="relative rounded-2xl border border-[#2a3033] bg-[#101315] p-4 shadow-lg overflow-hidden flex flex-col justify-between">
+        <div className="relative rounded-2xl border border-nx-line bg-nx-surface p-4 shadow-lg overflow-hidden flex flex-col justify-between">
           <div>
             <div className="flex items-start justify-between">
-              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#1b1e20] border border-[#343b3e] text-[#ff8290]">
+              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-nx-raised border border-nx-line text-destructive">
                 <CreditCard className="h-5 w-5" />
               </div>
-              <span className="flex items-center gap-1 text-[11px] font-bold text-[#ff8290] bg-[#3b1c20] px-2 py-0.5 rounded-full border border-[#7a343e]">
+              <span className="flex items-center gap-1 text-[11px] font-bold text-destructive bg-destructive/15 px-2 py-0.5 rounded-full border border-destructive/30">
                 {isAr ? "مستحق الفوترة" : "Receivable"}
               </span>
             </div>
             <div className="mt-2.5">
               <div className="text-2xl font-black tracking-tight text-white">{pendingPaymentCount}</div>
-              <div className="text-xs text-[#aeb5b5] mt-0.5">{isAr ? "في انتظار الفوترة / السداد" : "Pending Payment"}</div>
+              <div className="text-xs text-nx-ink-2 mt-0.5">{isAr ? "في انتظار الفوترة / السداد" : "Pending Payment"}</div>
             </div>
           </div>
-          <div className="flex items-center justify-between text-[11px] text-[#aeb5b5] pt-3 mt-3 border-t border-[#222629]">
+          <div className="flex items-center justify-between text-[11px] text-nx-ink-2 pt-3 mt-3 border-t border-nx-line">
             <span>{isAr ? "حالة الفاتورة" : "Finance Status"}</span>
-            <span className="text-[#ff8290] font-semibold">{isAr ? "غير مفوتر" : "Uninvoiced"}</span>
+            <span className="text-destructive font-semibold">{isAr ? "غير مفوتر" : "Uninvoiced"}</span>
           </div>
         </div>
 
         {/* Card 4: Paused / Transfer */}
-        <div className="relative rounded-2xl border border-[#2a3033] bg-[#101315] p-4 shadow-lg overflow-hidden flex flex-col justify-between">
+        <div className="relative rounded-2xl border border-nx-line bg-nx-surface p-4 shadow-lg overflow-hidden flex flex-col justify-between">
           <div>
             <div className="flex items-start justify-between">
-              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#1b1e20] border border-[#343b3e] text-[#38bdf8]">
+              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-nx-raised border border-nx-line text-info">
                 <ListOrdered className="h-5 w-5" />
               </div>
-              <span className="flex items-center gap-1 text-[11px] font-bold text-[#38bdf8] bg-[#0c2331] px-2 py-0.5 rounded-full border border-[#38bdf8]/40">
+              <span className="flex items-center gap-1 text-[11px] font-bold text-info bg-info/15 px-2 py-0.5 rounded-full border border-info/40">
                 {isAr ? "موقف / محول" : "Paused / Transfer"}
               </span>
             </div>
             <div className="mt-2.5">
               <div className="text-2xl font-black tracking-tight text-white">{pausedOrTransferredCount}</div>
-              <div className="text-xs text-[#aeb5b5] mt-0.5">{isAr ? "تعديلات القيد" : "Paused / Transferred"}</div>
+              <div className="text-xs text-nx-ink-2 mt-0.5">{isAr ? "تعديلات القيد" : "Paused / Transferred"}</div>
             </div>
           </div>
-          <div className="flex items-center justify-between text-[11px] text-[#aeb5b5] pt-3 mt-3 border-t border-[#222629]">
+          <div className="flex items-center justify-between text-[11px] text-nx-ink-2 pt-3 mt-3 border-t border-nx-line">
             <span>{isAr ? "نوع التعديل" : "Adjustment"}</span>
-            <span className="text-[#38bdf8] font-semibold">{isAr ? "تجميد / نقل" : "Cohort Hold"}</span>
+            <span className="text-info font-semibold">{isAr ? "تجميد / نقل" : "Cohort Hold"}</span>
           </div>
         </div>
 
         {/* Card 5: Withdrawn / Completed */}
-        <div className="relative rounded-2xl border border-[#2a3033] bg-[#101315] p-4 shadow-lg overflow-hidden flex flex-col justify-between">
+        <div className="relative rounded-2xl border border-nx-line bg-nx-surface p-4 shadow-lg overflow-hidden flex flex-col justify-between">
           <div>
             <div className="flex items-start justify-between">
-              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#1b1e20] border border-[#343b3e] text-[#9aa1a6]">
+              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-nx-raised border border-nx-line text-nx-ink-2">
                 <LogOut className="h-5 w-5" />
               </div>
-              <span className="flex items-center gap-1 text-[11px] font-bold text-[#9aa1a6] bg-[#14171a] px-2 py-0.5 rounded-full border border-[#2a3033]">
+              <span className="flex items-center gap-1 text-[11px] font-bold text-nx-ink-2 bg-nx-raised px-2 py-0.5 rounded-full border border-nx-line">
                 {isAr ? "منتهي / منسحب" : "Archived"}
               </span>
             </div>
             <div className="mt-2.5">
               <div className="text-2xl font-black tracking-tight text-white">{withdrawnOrCompletedCount}</div>
-              <div className="text-xs text-[#aeb5b5] mt-0.5">{isAr ? "المنسحبون والمكتملون" : "Withdrawn / Completed"}</div>
+              <div className="text-xs text-nx-ink-2 mt-0.5">{isAr ? "المنسحبون والمكتملون" : "Withdrawn / Completed"}</div>
             </div>
           </div>
-          <div className="flex items-center justify-between text-[11px] text-[#aeb5b5] pt-3 mt-3 border-t border-[#222629]">
+          <div className="flex items-center justify-between text-[11px] text-nx-ink-2 pt-3 mt-3 border-t border-nx-line">
             <span>{isAr ? "حالة السجل" : "Record State"}</span>
-            <span className="text-[#9aa1a6] font-semibold">{isAr ? "أرشيف تاريخي" : "Historical"}</span>
+            <span className="text-nx-ink-2 font-semibold">{isAr ? "أرشيف تاريخي" : "Historical"}</span>
           </div>
         </div>
       </div>
 
       {/* 4. Filter Toolbar */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 bg-[#101315] border border-[#222629] p-3 rounded-2xl">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 bg-nx-surface border border-nx-line p-3 rounded-2xl">
         <div className="flex items-center gap-2.5 flex-1 flex-wrap">
           {/* Search */}
           <div className="relative flex-1 min-w-[200px] max-w-sm">
-            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-[#9aa1a6] pointer-events-none rtl:left-auto rtl:right-3.5" />
+            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-nx-ink-2 pointer-events-none rtl:left-auto rtl:right-3.5" />
             <input
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder={isAr ? "البحث بالاسم، المعرّف، أو البرنامج..." : "Search athlete, offering, or invoice..."}
-              className="w-full h-9 pl-9 pr-3.5 text-xs rounded-full bg-[#14171a] border border-[#222629] text-white placeholder-[#9aa1a6] focus:outline-none focus:border-[#c8ff05] transition-colors rtl:pl-3.5 rtl:pr-9"
+              className="w-full h-9 pl-9 pr-3.5 text-xs rounded-full bg-nx-raised border border-nx-line text-white placeholder:text-nx-ink-3 focus:outline-none focus:border-nx-accent transition-colors rtl:pl-3.5 rtl:pr-9"
             />
           </div>
 
@@ -558,7 +554,7 @@ export function AcademyEnrollmentsView() {
             <select
               value={statusFilter}
               onChange={(e) => setStatusFilter(e.target.value)}
-              className="h-9 px-3.5 pr-8 rounded-full bg-[#14171a] border border-[#222629] text-xs text-white appearance-none cursor-pointer focus:outline-none focus:border-[#c8ff05] rtl:pr-3.5 rtl:pl-8"
+              className="h-9 px-3.5 pr-8 rounded-full bg-nx-raised border border-nx-line text-xs text-white appearance-none cursor-pointer focus:outline-none focus:border-nx-accent rtl:pr-3.5 rtl:pl-8"
             >
               <option value="all">{isAr ? "جميع الحالات" : "All Statuses"}</option>
               <option value="Active">{isAr ? "نشط (Active)" : "Active"}</option>
@@ -570,7 +566,7 @@ export function AcademyEnrollmentsView() {
               <option value="Completed">{isAr ? "مكتمل (Completed)" : "Completed"}</option>
               <option value="Withdrawn">{isAr ? "منسحب (Withdrawn)" : "Withdrawn"}</option>
             </select>
-            <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 h-3 w-3 text-[#9aa1a6] pointer-events-none rtl:right-auto rtl:left-3" />
+            <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 h-3 w-3 text-nx-ink-2 pointer-events-none rtl:right-auto rtl:left-3" />
           </div>
 
           {/* Billing Filter */}
@@ -578,7 +574,7 @@ export function AcademyEnrollmentsView() {
             <select
               value={billingFilter}
               onChange={(e) => setBillingFilter(e.target.value)}
-              className="h-9 px-3.5 pr-8 rounded-full bg-[#14171a] border border-[#222629] text-xs text-white appearance-none cursor-pointer focus:outline-none focus:border-[#c8ff05] rtl:pr-3.5 rtl:pl-8"
+              className="h-9 px-3.5 pr-8 rounded-full bg-nx-raised border border-nx-line text-xs text-white appearance-none cursor-pointer focus:outline-none focus:border-nx-accent rtl:pr-3.5 rtl:pl-8"
             >
               <option value="all">{isAr ? "جميع حالات الفوترة" : "All Billing"}</option>
               <option value="Invoiced">{isAr ? "مفوتر (Invoiced)" : "Invoiced"}</option>
@@ -587,7 +583,7 @@ export function AcademyEnrollmentsView() {
               <option value="Waived">{isAr ? "معفى (Waived)" : "Waived"}</option>
               <option value="Overdue">{isAr ? "متأخر (Overdue)" : "Overdue"}</option>
             </select>
-            <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 h-3 w-3 text-[#9aa1a6] pointer-events-none rtl:right-auto rtl:left-3" />
+            <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 h-3 w-3 text-nx-ink-2 pointer-events-none rtl:right-auto rtl:left-3" />
           </div>
         </div>
 
@@ -595,7 +591,7 @@ export function AcademyEnrollmentsView() {
         <div className="flex items-center gap-2 shrink-0">
           <button
             onClick={() => vm.fetchEnrollments()}
-            className="flex h-9 w-9 items-center justify-center rounded-lg border border-[#222629] bg-[#14171a] text-[#9aa1a6] hover:text-white transition-colors cursor-pointer"
+            className="flex h-9 w-9 items-center justify-center rounded-lg border border-nx-line bg-nx-raised text-nx-ink-2 hover:text-nx-ink transition-colors cursor-pointer"
             title={isAr ? "تحديث" : "Refresh"}
           >
             <RefreshCw className={`h-3.5 w-3.5 ${vm.loading ? "animate-spin" : ""}`} />
@@ -606,10 +602,10 @@ export function AcademyEnrollmentsView() {
       {/* 5. 2-Column Operational Workspace matching 04_Enrollments.png */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-4">
         {/* Left Table Panel (8 cols) */}
-        <div className="lg:col-span-8 rounded-2xl border border-[#222629] bg-[#101315] p-4 flex flex-col justify-between min-h-[580px]">
+        <div className="lg:col-span-8 rounded-2xl border border-nx-line bg-nx-surface p-4 flex flex-col justify-between min-h-[580px]">
           <div>
             {/* Table Header Row */}
-            <div className="grid grid-cols-12 py-2 text-[10px] uppercase font-bold text-[#9aa1a6] tracking-wider border-b border-[#222629]">
+            <div className="grid grid-cols-12 py-2 text-[10px] uppercase font-bold text-nx-ink-2 tracking-wider border-b border-nx-line">
               <div className="col-span-5">{isAr ? "الرياضي" : "Athlete"}</div>
               <div className="col-span-3">{isAr ? "عرض البرنامج" : "Program Offering"}</div>
               <div className="col-span-2">{isAr ? "الحالة" : "Status"}</div>
@@ -620,16 +616,16 @@ export function AcademyEnrollmentsView() {
             {vm.loading ? (
               <div className="py-20 text-center">
                 <LoadingSpinner />
-                <p className="text-xs text-[#9aa1a6] mt-2">{isAr ? "جاري تحميل سجلات التسجيل..." : "Loading enrollment records..."}</p>
+                <p className="text-xs text-nx-ink-2 mt-2">{isAr ? "جاري تحميل سجلات التسجيل..." : "Loading enrollment records..."}</p>
               </div>
             ) : filteredRows.length === 0 ? (
               <div className="py-20 px-4 text-center space-y-3">
-                <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-xl border border-[#2a3033] bg-[#14171a] text-[#9aa1a6]">
-                  <Layers className="h-6 w-6 text-[#c8ff05]" />
+                <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-xl border border-nx-line bg-nx-raised text-nx-ink-2">
+                  <Layers className="h-6 w-6 text-nx-accent" />
                 </div>
                 <div>
-                  <h4 className="text-sm font-bold text-white">{isAr ? "لا توجد سجلات تسجيل مطابقة" : "No Enrollment Records"}</h4>
-                  <p className="text-xs text-[#9aa1a6] mt-1 max-w-xs mx-auto">
+                  <h4 className="text-sm font-bold text-nx-ink">{isAr ? "لا توجد سجلات تسجيل مطابقة" : "No Enrollment Records"}</h4>
+                  <p className="text-xs text-nx-ink-2 mt-1 max-w-xs mx-auto">
                     {isAr
                       ? "لم يتم العثور على أي تسجيل يطابق التصفية الحالية. يمكنك إنشاء قيد جديد عبر الزر أدناه."
                       : "No enrollments currently match the filter criteria. Register new enrollments using New Enrollment."}
@@ -638,14 +634,14 @@ export function AcademyEnrollmentsView() {
                 {canCreate && (
                   <Button
                     onClick={() => setShowCreateModal(true)}
-                    className="h-8 px-4 text-xs bg-[#c8ff05] hover:bg-[#b2e600] text-black font-bold"
+                    className="h-8 px-4 text-xs bg-nx-accent-fill hover:bg-nx-accent-fill text-black font-bold"
                   >
                     {isAr ? "+ إنشاء تسجيل جديد" : "+ New Enrollment"}
                   </Button>
                 )}
               </div>
             ) : (
-              <div className="divide-y divide-[#222629]/50">
+              <div className="divide-y divide-nx-line/50">
                 {filteredRows.map((row) => {
                   const isSelected = selectedItem?.id === row.id;
                   const initials = getAthleteInitials(row.athleteNameEn, row.athleteNameAr);
@@ -657,8 +653,8 @@ export function AcademyEnrollmentsView() {
                       onClick={() => setSelectedId(row.id)}
                       className={`grid grid-cols-12 py-3 px-2.5 items-center rounded-xl cursor-pointer transition-all ${
                         isSelected
-                          ? "border border-[#c8ff05] bg-[#1a2307]/40 shadow-[0_0_16px_rgba(200,255,5,0.12)]"
-                          : "hover:bg-[#14171a]/80"
+                          ? "border border-nx-accent-fill bg-nx-accent-fill/15/40 shadow-nx-glow"
+                          : "hover:bg-nx-raised/80"
                       }`}
                     >
                       <div className="col-span-5 flex items-center gap-2.5 min-w-0">
@@ -667,20 +663,20 @@ export function AcademyEnrollmentsView() {
                           {initials}
                         </div>
                         <div className="min-w-0 truncate">
-                          <div className="text-xs font-bold text-white truncate">
+                          <div className="text-xs font-bold text-nx-ink truncate">
                             {isAr ? (row.athleteNameAr || row.athleteNameEn || "رياضي") : (row.athleteNameEn || row.athleteNameAr || "Athlete")}
                           </div>
-                          <div className="text-[10px] text-[#9aa1a6]">
+                          <div className="text-[10px] text-nx-ink-2">
                             ENR-{row.id.slice(0, 6).toUpperCase()}
                           </div>
                         </div>
                       </div>
 
-                      <div className="col-span-3 text-xs text-[#9aa1a6] truncate">
+                      <div className="col-span-3 text-xs text-nx-ink-2 truncate">
                         <div className="text-white text-xs font-medium truncate">
                           {isAr ? (row.offeringNameAr || row.offeringNameEn || "—") : (row.offeringNameEn || row.offeringNameAr || "—")}
                         </div>
-                        <div className="text-[10px] text-[#9aa1a6]">{row.enrollmentDate}</div>
+                        <div className="text-[10px] text-nx-ink-2">{row.enrollmentDate}</div>
                       </div>
 
                       <div className="col-span-2">
@@ -688,7 +684,7 @@ export function AcademyEnrollmentsView() {
                       </div>
 
                       <div className="col-span-2 flex flex-col items-end rtl:items-start">
-                        <span className="text-xs font-black text-white">
+                        <span className="text-xs font-black text-nx-ink">
                           {row.priceAmount} {row.priceCurrency || "SAR"}
                         </span>
                         <span className="mt-0.5">{getBillingBadge(row.billingStatus, isAr)}</span>
@@ -701,22 +697,22 @@ export function AcademyEnrollmentsView() {
           </div>
 
           {/* Table Footer */}
-          <div className="flex items-center justify-between pt-3 border-t border-[#222629] text-xs text-[#9aa1a6] mt-2">
+          <div className="flex items-center justify-between pt-3 border-t border-nx-line text-xs text-nx-ink-2 mt-2">
             <span>
               {isAr
                 ? `عرض ${filteredRows.length} من إجمالي ${vm.enrollments.length} تسجيل`
                 : `Showing ${filteredRows.length} of ${vm.enrollments.length} enrollments`}
             </span>
-            <span className="text-[10px] text-[#73adff]">● Live UAT</span>
+            <span className="text-[10px] text-info">● Live UAT</span>
           </div>
         </div>
 
         {/* Right Detail Panel (4 cols) matching 04_Enrollments.png */}
-        <div className="lg:col-span-4 rounded-2xl border border-[#222629] bg-[#101315] p-4 flex flex-col justify-between min-h-[580px]">
+        <div className="lg:col-span-4 rounded-2xl border border-nx-line bg-nx-surface p-4 flex flex-col justify-between min-h-[580px]">
           {!selectedItem ? (
-            <div className="my-auto text-center text-[#9aa1a6] space-y-3 py-16">
-              <Layers className="h-10 w-10 text-[#5a7800] mx-auto opacity-50" />
-              <h3 className="text-sm font-bold text-white">
+            <div className="my-auto text-center text-nx-ink-2 space-y-3 py-16">
+              <Layers className="h-10 w-10 text-nx-accent mx-auto opacity-50" />
+              <h3 className="text-sm font-bold text-nx-ink">
                 {isAr ? "لم يتم تحديد أي تسجيل" : "No Enrollment Selected"}
               </h3>
               <p className="text-xs max-w-xs mx-auto">
@@ -728,16 +724,16 @@ export function AcademyEnrollmentsView() {
           ) : (
             <div className="space-y-3.5">
               {/* Header with Athlete Initials & Record Navigation */}
-              <div className="flex items-center justify-between pb-3 border-b border-[#222629]">
+              <div className="flex items-center justify-between pb-3 border-b border-nx-line">
                 <div className="flex items-center gap-3 min-w-0">
-                  <div className="h-11 w-11 rounded-xl flex items-center justify-center text-sm font-bold border border-[#c8ff05]/40 bg-[#1a2307] text-[#c8ff05] shadow-[0_0_16px_rgba(200,255,5,0.15)] shrink-0">
+                  <div className="h-11 w-11 rounded-xl flex items-center justify-center text-sm font-bold border border-nx-accent-fill/40 bg-nx-accent-fill/15 text-nx-accent shadow-nx-glow shrink-0">
                     {getAthleteInitials(selectedItem.athleteNameEn, selectedItem.athleteNameAr)}
                   </div>
                   <div className="min-w-0">
-                    <h3 className="text-sm font-bold text-white truncate">
+                    <h3 className="text-sm font-bold text-nx-ink truncate">
                       {isAr ? (selectedItem.athleteNameAr || selectedItem.athleteNameEn) : (selectedItem.athleteNameEn || selectedItem.athleteNameAr || "Athlete")}
                     </h3>
-                    <p className="text-[11px] text-[#9aa1a6] truncate mt-0.5">
+                    <p className="text-[11px] text-nx-ink-2 truncate mt-0.5">
                       {isAr ? (selectedItem.offeringNameAr || selectedItem.offeringNameEn) : (selectedItem.offeringNameEn || selectedItem.offeringNameAr)}
                     </p>
                   </div>
@@ -750,13 +746,13 @@ export function AcademyEnrollmentsView() {
               </div>
 
               {/* 4 Tabs matching Approved Design */}
-              <div className="flex items-center gap-2 border-b border-[#222629] pb-2 text-xs font-semibold">
+              <div className="flex items-center gap-2 border-b border-nx-line pb-2 text-xs font-semibold">
                 <button
                   onClick={() => setActiveTab("overview")}
                   className={`px-3 py-1 rounded-full transition-all cursor-pointer ${
                     activeTab === "overview"
-                      ? "bg-[#c8ff05] text-black font-bold shadow-[0_0_12px_rgba(200,255,5,0.2)]"
-                      : "text-[#9aa1a6] hover:text-white"
+                      ? "bg-nx-accent-fill text-black font-bold shadow-nx-glow"
+                      : "text-nx-ink-2 hover:text-nx-ink"
                   }`}
                 >
                   {isAr ? "نظرة عامة" : "Overview"}
@@ -765,8 +761,8 @@ export function AcademyEnrollmentsView() {
                   onClick={() => setActiveTab("payments")}
                   className={`px-3 py-1 rounded-full transition-all cursor-pointer ${
                     activeTab === "payments"
-                      ? "bg-[#c8ff05] text-black font-bold shadow-[0_0_12px_rgba(200,255,5,0.2)]"
-                      : "text-[#9aa1a6] hover:text-white"
+                      ? "bg-nx-accent-fill text-black font-bold shadow-nx-glow"
+                      : "text-nx-ink-2 hover:text-nx-ink"
                   }`}
                 >
                   {isAr ? "المدفوعات" : "Payments"}
@@ -775,8 +771,8 @@ export function AcademyEnrollmentsView() {
                   onClick={() => setActiveTab("activity")}
                   className={`px-3 py-1 rounded-full transition-all cursor-pointer ${
                     activeTab === "activity"
-                      ? "bg-[#c8ff05] text-black font-bold shadow-[0_0_12px_rgba(200,255,5,0.2)]"
-                      : "text-[#9aa1a6] hover:text-white"
+                      ? "bg-nx-accent-fill text-black font-bold shadow-nx-glow"
+                      : "text-nx-ink-2 hover:text-nx-ink"
                   }`}
                 >
                   {isAr ? "النشاط" : "Activity"}
@@ -785,8 +781,8 @@ export function AcademyEnrollmentsView() {
                   onClick={() => setActiveTab("documents")}
                   className={`px-3 py-1 rounded-full transition-all cursor-pointer ${
                     activeTab === "documents"
-                      ? "bg-[#c8ff05] text-black font-bold shadow-[0_0_12px_rgba(200,255,5,0.2)]"
-                      : "text-[#9aa1a6] hover:text-white"
+                      ? "bg-nx-accent-fill text-black font-bold shadow-nx-glow"
+                      : "text-nx-ink-2 hover:text-nx-ink"
                   }`}
                 >
                   {isAr ? "المستندات" : "Documents"}
@@ -799,50 +795,50 @@ export function AcademyEnrollmentsView() {
                   {/* Row 1: Side-by-side Lifecycle Stepper + Eligibility Cards */}
                   <div className="grid grid-cols-2 gap-2.5">
                     {/* Card A: Lifecycle Stepper */}
-                    <div className="p-3 rounded-xl border border-[#222629] bg-[#14171a] text-xs space-y-2">
-                      <span className="text-[10px] uppercase font-bold tracking-wider text-[#9aa1a6] block">
+                    <div className="p-3 rounded-xl border border-nx-line bg-nx-raised text-xs space-y-2">
+                      <span className="text-[10px] uppercase font-bold tracking-wider text-nx-ink-2 block">
                         {isAr ? "دورة القيد" : "Lifecycle"}
                       </span>
                       <div className="space-y-1.5 text-[11px]">
                         <div className="flex items-center gap-2">
-                          <CheckCircle2 className="h-3.5 w-3.5 text-[#4ade80] stroke-[2.5]" />
+                          <CheckCircle2 className="h-3.5 w-3.5 text-success stroke-[2.5]" />
                           <span className="text-white font-medium">{isAr ? "1. التقديم" : "1. Application"}</span>
                         </div>
                         <div className="flex items-center gap-2">
-                          <CheckCircle2 className="h-3.5 w-3.5 text-[#4ade80] stroke-[2.5]" />
+                          <CheckCircle2 className="h-3.5 w-3.5 text-success stroke-[2.5]" />
                           <span className="text-white font-medium">{isAr ? "2. مسجل" : "2. Enrolled"}</span>
                         </div>
                         <div className="flex items-center gap-2">
-                          <span className="size-3.5 rounded-full bg-[#c8ff05] text-black font-bold text-[9px] flex items-center justify-center">3</span>
-                          <span className="text-[#c8ff05] font-bold">{isAr ? "3. نشط" : "3. Active"}</span>
+                          <span className="size-3.5 rounded-full bg-nx-accent-fill text-black font-bold text-[9px] flex items-center justify-center">3</span>
+                          <span className="text-nx-accent font-bold">{isAr ? "3. نشط" : "3. Active"}</span>
                         </div>
-                        <div className="flex items-center gap-2 text-[#9aa1a6]">
-                          <span className="size-3.5 rounded-full border border-[#343b3e] text-[9px] flex items-center justify-center">4</span>
+                        <div className="flex items-center gap-2 text-nx-ink-2">
+                          <span className="size-3.5 rounded-full border border-nx-line text-[9px] flex items-center justify-center">4</span>
                           <span>{isAr ? "4. مكتمل" : "4. Completed"}</span>
                         </div>
                       </div>
                     </div>
 
                     {/* Card B: Eligibility Checklist */}
-                    <div className="p-3 rounded-xl border border-[#222629] bg-[#14171a] text-xs space-y-2">
-                      <span className="text-[10px] uppercase font-bold tracking-wider text-[#9aa1a6] block">
+                    <div className="p-3 rounded-xl border border-nx-line bg-nx-raised text-xs space-y-2">
+                      <span className="text-[10px] uppercase font-bold tracking-wider text-nx-ink-2 block">
                         {isAr ? "شروط الأهلية" : "Eligibility"}
                       </span>
                       <div className="space-y-1.5 text-[11px]">
                         <div className="flex items-center gap-1.5">
-                          <Check className="h-3.5 w-3.5 text-[#4ade80] stroke-[3]" />
+                          <Check className="h-3.5 w-3.5 text-success stroke-[3]" />
                           <span className="text-white">{isAr ? "مطابقة الفئة العمرية" : "Age Range Met"}</span>
                         </div>
                         <div className="flex items-center gap-1.5">
-                          <Check className="h-3.5 w-3.5 text-[#4ade80] stroke-[3]" />
+                          <Check className="h-3.5 w-3.5 text-success stroke-[3]" />
                           <span className="text-white">{isAr ? "الفحص الطبي سارٍ" : "Medical Clearance"}</span>
                         </div>
                         <div className="flex items-center gap-1.5">
-                          <Check className="h-3.5 w-3.5 text-[#4ade80] stroke-[3]" />
+                          <Check className="h-3.5 w-3.5 text-success stroke-[3]" />
                           <span className="text-white">{isAr ? "موافقة ولي الأمر" : "Guardian Consent"}</span>
                         </div>
                         <div className="flex items-center gap-1.5">
-                          <Check className="h-3.5 w-3.5 text-[#4ade80] stroke-[3]" />
+                          <Check className="h-3.5 w-3.5 text-success stroke-[3]" />
                           <span className="text-white">{isAr ? "اجتياز تجربة الأداء" : "Trial Passed"}</span>
                         </div>
                       </div>
@@ -856,20 +852,20 @@ export function AcademyEnrollmentsView() {
                     const maxCap = matchedOffering?.maxCapacity || 20;
                     const fillPercent = Math.min(100, Math.round((enrolledCount / maxCap) * 100));
                     return (
-                      <div className="p-3 rounded-xl border border-[#222629] bg-[#14171a] text-xs space-y-2">
+                      <div className="p-3 rounded-xl border border-nx-line bg-nx-raised text-xs space-y-2">
                         <div className="flex items-center justify-between">
-                          <span className="text-[#9aa1a6] font-semibold">{isAr ? "طاقة استيعاب المجموعة" : "Group Capacity"}</span>
-                          <span className="text-[#c8ff05] font-bold">
+                          <span className="text-nx-ink-2 font-semibold">{isAr ? "طاقة استيعاب المجموعة" : "Group Capacity"}</span>
+                          <span className="text-nx-accent font-bold">
                             {enrolledCount} / {maxCap} ({fillPercent}%)
                           </span>
                         </div>
-                        <div className="h-2 w-full rounded-full bg-[#1f2428] overflow-hidden">
+                        <div className="h-2 w-full rounded-full bg-nx-raised overflow-hidden">
                           <div
-                            className="h-full rounded-full bg-[#c8ff05] transition-all duration-300"
+                            className="h-full rounded-full bg-nx-accent-fill transition-all duration-300"
                             style={{ width: `${Math.max(5, fillPercent)}%` }}
                           />
                         </div>
-                        <p className="text-[10px] text-[#9aa1a6] pt-1 border-t border-[#222629]/50">
+                        <p className="text-[10px] text-nx-ink-2 pt-1 border-t border-nx-line/50">
                           {matchedOffering
                             ? `${isAr && matchedOffering.nameAr ? matchedOffering.nameAr : matchedOffering.nameEn} • ${isAr ? "السعة الرسمية للدفعة المعينة" : "Verified Active Offering Cohort"}`
                             : (isAr ? "البرنامج التدريبي النشط" : "Verified Active Offering Cohort")}
@@ -879,30 +875,30 @@ export function AcademyEnrollmentsView() {
                   })()}
 
                   {/* Row 3: Pricing & Financial Summary */}
-                  <div className="rounded-xl border border-[#2a3033] bg-[#14171a] p-3.5 space-y-2.5">
+                  <div className="rounded-xl border border-nx-line bg-nx-raised p-3.5 space-y-2.5">
                     <div className="flex items-center justify-between">
-                      <span className="text-xs text-[#9aa1a6]">{isAr ? "رسوم الاشتراك المقررة" : "Enrollment Fee Payable"}</span>
-                      <span className="text-lg font-black text-[#c8ff05]">
+                      <span className="text-xs text-nx-ink-2">{isAr ? "رسوم الاشتراك المقررة" : "Enrollment Fee Payable"}</span>
+                      <span className="text-lg font-black text-nx-accent">
                         {selectedItem.priceAmount} {selectedItem.priceCurrency || "SAR"}
                       </span>
                     </div>
 
-                    <div className="border-t border-[#222629] pt-2 text-xs space-y-1.5">
+                    <div className="border-t border-nx-line pt-2 text-xs space-y-1.5">
                       <div className="flex items-center justify-between">
-                        <span className="text-[#9aa1a6]">{isAr ? "المرجع المالي / الفاتورة" : "Finance Invoice Ref"}</span>
+                        <span className="text-nx-ink-2">{isAr ? "المرجع المالي / الفاتورة" : "Finance Invoice Ref"}</span>
                         <span className="font-mono text-white text-[11px]">
                           {selectedItem.financeInvoiceReference || (isAr ? "غير مفوتر" : "Pending Handoff")}
                         </span>
                       </div>
                       <div className="flex items-center justify-between">
-                        <span className="text-[#9aa1a6]">{isAr ? "تاريخ اعتماد القيد" : "Enrollment Date"}</span>
+                        <span className="text-nx-ink-2">{isAr ? "تاريخ اعتماد القيد" : "Enrollment Date"}</span>
                         <span className="text-white">{selectedItem.enrollmentDate}</span>
                       </div>
                     </div>
                   </div>
 
                   {/* Row 4: Action Buttons */}
-                  <div className="space-y-2 pt-1 border-t border-[#222629]">
+                  <div className="space-y-2 pt-1 border-t border-nx-line">
                     {/* Handoff to Finance */}
                     {selectedItem.billingStatus === "Unbilled" && canUpdate && (
                       <Button
@@ -910,7 +906,7 @@ export function AcademyEnrollmentsView() {
                           setTargetEnrollment(selectedItem);
                           setShowFinanceModal(true);
                         }}
-                        className="w-full h-9 text-xs bg-[#c8ff05] hover:bg-[#b2e600] text-black font-bold flex items-center justify-center gap-1.5 shadow-md shadow-[#c8ff05]/20"
+                        className="w-full h-9 text-xs bg-nx-accent-fill hover:bg-nx-accent-fill text-black font-bold flex items-center justify-center gap-1.5 shadow-md shadow-[#c6ff00]/20"
                       >
                         <Send className="h-3.5 w-3.5" />
                         <span>{isAr ? "إحالة للمالية والفوترة" : "Handoff to Finance"}</span>
@@ -923,7 +919,7 @@ export function AcademyEnrollmentsView() {
                         <Button
                           onClick={() => vm.activateEnrollment(selectedItem.id)}
                           disabled={vm.loading}
-                          className="flex-1 h-8 rounded-lg bg-[#c8ff05] text-black font-bold text-xs hover:bg-[#b2e600] transition-colors"
+                          className="flex-1 h-8 rounded-lg bg-nx-accent-fill text-black font-bold text-xs hover:bg-nx-accent-fill transition-colors"
                         >
                           {isAr ? "تفعيل القيد" : "Activate Enrollment"}
                         </Button>
@@ -931,7 +927,7 @@ export function AcademyEnrollmentsView() {
 
                       <button
                         onClick={() => {}}
-                        className="flex-1 h-8 rounded-lg border border-[#2a3033] bg-[#14171a] hover:bg-[#1f2428] text-xs font-semibold text-white transition-colors"
+                        className="flex-1 h-8 rounded-lg border border-nx-line bg-nx-raised hover:bg-nx-raised text-xs font-semibold text-nx-ink transition-colors"
                       >
                         {isAr ? "تغيير المجموعة" : "Change Group"}
                       </button>
@@ -942,15 +938,15 @@ export function AcademyEnrollmentsView() {
 
               {/* Tab 2: Payments */}
               {activeTab === "payments" && (
-                <div className="p-4 rounded-xl border border-[#222629] bg-[#14171a] text-xs space-y-3">
-                  <div className="flex items-center justify-between pb-2 border-b border-[#222629]">
+                <div className="p-4 rounded-xl border border-nx-line bg-nx-raised text-xs space-y-3">
+                  <div className="flex items-center justify-between pb-2 border-b border-nx-line">
                     <div>
-                      <p className="font-semibold text-white">{selectedItem.priceAmount} {selectedItem.priceCurrency || "SAR"}</p>
-                      <p className="text-[10px] text-[#9aa1a6] mt-0.5">{selectedItem.financeInvoiceReference || "No Invoice Assigned"}</p>
+                      <p className="font-semibold text-nx-ink">{selectedItem.priceAmount} {selectedItem.priceCurrency || "SAR"}</p>
+                      <p className="text-[10px] text-nx-ink-2 mt-0.5">{selectedItem.financeInvoiceReference || "No Invoice Assigned"}</p>
                     </div>
                     {getBillingBadge(selectedItem.billingStatus, isAr)}
                   </div>
-                  <p className="text-[11px] text-[#9aa1a6]">
+                  <p className="text-[11px] text-nx-ink-2">
                     {isAr ? "حالة التسوية المالية مع قسم المحاسبة بالأكاديمية." : "Financial reconciliation state with Academy Accounts Receivable."}
                   </p>
                 </div>
@@ -958,12 +954,12 @@ export function AcademyEnrollmentsView() {
 
               {/* Tab 3: Activity */}
               {activeTab === "activity" && (
-                <div className="p-4 rounded-xl border border-[#222629] bg-[#14171a] text-xs space-y-3">
+                <div className="p-4 rounded-xl border border-nx-line bg-nx-raised text-xs space-y-3">
                   <div className="flex items-start gap-3">
-                    <div className="size-2 rounded-full bg-[#c8ff05] mt-1.5" />
+                    <div className="size-2 rounded-full bg-nx-accent-fill mt-1.5" />
                     <div>
-                      <p className="font-semibold text-white">{isAr ? "تم تسجيل اللاعب في المجموعة" : "Enrolled into group roster"}</p>
-                      <p className="text-[10px] text-[#9aa1a6] mt-0.5">{selectedItem.enrollmentDate}</p>
+                      <p className="font-semibold text-nx-ink">{isAr ? "تم تسجيل اللاعب في المجموعة" : "Enrolled into group roster"}</p>
+                      <p className="text-[10px] text-nx-ink-2 mt-0.5">{selectedItem.enrollmentDate}</p>
                     </div>
                   </div>
                 </div>
@@ -971,13 +967,13 @@ export function AcademyEnrollmentsView() {
 
               {/* Tab 4: Documents */}
               {activeTab === "documents" && (
-                <div className="p-4 rounded-xl border border-[#222629] bg-[#14171a] text-xs space-y-2">
-                  <div className="flex items-center justify-between p-2 rounded-lg bg-[#0e1012] border border-[#222629]">
+                <div className="p-4 rounded-xl border border-nx-line bg-nx-raised text-xs space-y-2">
+                  <div className="flex items-center justify-between p-2 rounded-lg bg-nx-surface border border-nx-line">
                     <div className="flex items-center gap-2">
-                      <FileText className="h-4 w-4 text-[#c8ff05]" />
-                      <span className="font-medium text-white">{isAr ? "استمارة القيد الأكاديمي.pdf" : "Enrollment_Contract.pdf"}</span>
+                      <FileText className="h-4 w-4 text-nx-accent" />
+                      <span className="font-medium text-nx-ink">{isAr ? "استمارة القيد الأكاديمي.pdf" : "Enrollment_Contract.pdf"}</span>
                     </div>
-                    <span className="text-[10px] text-[#9aa1a6]">188 KB</span>
+                    <span className="text-[10px] text-nx-ink-2">188 KB</span>
                   </div>
                 </div>
               )}
@@ -991,18 +987,18 @@ export function AcademyEnrollmentsView() {
       {/* Screen 19: Create Enrollment Wizard High-Fidelity Modal Workspace */}
       {showCreateModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/85 backdrop-blur-md p-4 overflow-y-auto">
-          <div className="w-full max-w-6xl rounded-2xl bg-[#080a0b] border border-[#2a3033] shadow-2xl p-6 text-nx-ink space-y-5 my-8">
+          <div className="w-full max-w-6xl rounded-2xl bg-nx-surface border border-nx-line shadow-2xl p-6 text-nx-ink space-y-5 my-8">
             {/* 1. Headline Banner matching 19_Enrollment_Create_Wizard.png */}
-            <div className="flex items-center justify-between pb-3 border-b border-[#2a3033]">
+            <div className="flex items-center justify-between pb-3 border-b border-nx-line">
               <div className="flex items-center gap-3.5">
-                <div className="flex h-12 w-12 items-center justify-center rounded-xl border border-[#454d41] bg-gradient-to-br from-[#222923] to-[#0d1110] text-[#c8ff05] shadow-[0_7px_20px_rgba(0,0,0,0.4)] text-2xl">
+                <div className="flex h-12 w-12 items-center justify-center rounded-xl border border-nx-accent-fill/40 bg-gradient-to-br from-nx-surface to-nx-surface text-nx-accent shadow-[0_7px_20px_rgba(0,0,0,0.4)] text-2xl">
                   ☷
                 </div>
                 <div>
                   <h1 className="text-xl md:text-2xl font-black tracking-tight text-white">
                     {isAr ? "إنشاء تسجيل أكاديمي جديد" : "Create Enrollment"}
                   </h1>
-                  <p className="text-xs text-[#afb4b7] mt-0.5">
+                  <p className="text-xs text-nx-ink-2 mt-0.5">
                     {isAr
                       ? "تسجيل رياضي مع مراعاة الأهلية، السعة الاستيعابية، المسؤول المالي، والربط المالي المحكم."
                       : "Enroll an athlete with eligibility, capacity, payer and financial handoff controls."}
@@ -1013,14 +1009,14 @@ export function AcademyEnrollmentsView() {
                 <button
                   type="button"
                   onClick={() => setShowCreateModal(false)}
-                  className="px-3.5 py-1.5 rounded-lg border border-[#41474a] bg-[#111416] hover:bg-[#1a1e21] text-xs font-semibold text-white transition-colors cursor-pointer"
+                  className="px-3.5 py-1.5 rounded-lg border border-nx-line-hi bg-nx-surface hover:bg-nx-raised text-xs font-semibold text-nx-ink transition-colors cursor-pointer"
                 >
                   {isAr ? "حفظ كمسودة" : "Save Draft"}
                 </button>
                 <button
                   type="button"
                   onClick={() => setShowCreateModal(false)}
-                  className="px-3 py-1.5 rounded-lg border border-[#41474a] bg-[#111416] hover:bg-[#1a1e21] text-xs font-semibold text-[#9aa1a6] hover:text-white transition-colors cursor-pointer"
+                  className="px-3 py-1.5 rounded-lg border border-nx-line-hi bg-nx-surface hover:bg-nx-raised text-xs font-semibold text-nx-ink-2 hover:text-nx-ink transition-colors cursor-pointer"
                 >
                   {isAr ? "إغلاق ✕" : "Close ✕"}
                 </button>
@@ -1028,41 +1024,41 @@ export function AcademyEnrollmentsView() {
             </div>
 
             {/* 2. Flow Progress Steps matching Screen 19 */}
-            <div className="p-4 rounded-xl border border-[#343b3e] bg-[#101214] flex items-center justify-between gap-3 overflow-x-auto text-xs">
+            <div className="p-4 rounded-xl border border-nx-line bg-nx-surface flex items-center justify-between gap-3 overflow-x-auto text-xs">
               <div className="flex items-center gap-2 text-white font-medium">
-                <span className="w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold bg-[#c8ff05] text-[#0b1000]">
+                <span className="w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold bg-nx-accent-fill text-nx-on-fill">
                   ✓
                 </span>
                 <span>{isAr ? "الرياضي" : "Athlete"}</span>
               </div>
-              <div className="h-px flex-1 max-w-[60px] bg-[#606963]" />
+              <div className="h-px flex-1 max-w-[60px] bg-nx-raised" />
 
               <div className="flex items-center gap-2 text-white font-medium">
-                <span className="w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold bg-[#c8ff05] text-[#0b1000]">
+                <span className="w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold bg-nx-accent-fill text-nx-on-fill">
                   ✓
                 </span>
                 <span>{isAr ? "عرض البرنامج" : "Offering"}</span>
               </div>
-              <div className="h-px flex-1 max-w-[60px] bg-[#606963]" />
+              <div className="h-px flex-1 max-w-[60px] bg-nx-raised" />
 
               <div className="flex items-center gap-2 text-white font-medium">
-                <span className="w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold bg-[#c8ff05] text-[#0b1000]">
+                <span className="w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold bg-nx-accent-fill text-nx-on-fill">
                   ✓
                 </span>
                 <span>{isAr ? "الأهلية والسعة" : "Eligibility"}</span>
               </div>
-              <div className="h-px flex-1 max-w-[60px] bg-[#606963]" />
+              <div className="h-px flex-1 max-w-[60px] bg-nx-raised" />
 
-              <div className="flex items-center gap-2 text-[#c8ff05] font-bold">
-                <span className="w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold bg-[#c8ff05] text-[#0b1000]">
+              <div className="flex items-center gap-2 text-nx-accent font-bold">
+                <span className="w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold bg-nx-accent-fill text-nx-on-fill">
                   4
                 </span>
                 <span>{isAr ? "المسؤول المالي والسعر" : "Payer & Price"}</span>
               </div>
-              <div className="h-px flex-1 max-w-[60px] bg-[#606963]" />
+              <div className="h-px flex-1 max-w-[60px] bg-nx-raised" />
 
-              <div className="flex items-center gap-2 text-[#9fa8a8]">
-                <span className="w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold bg-[#31383b] text-[#c9d1d0]">
+              <div className="flex items-center gap-2 text-nx-ink-2">
+                <span className="w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold bg-nx-raised text-nx-ink-2">
                   5
                 </span>
                 <span>{isAr ? "المراجعة والتفعيل" : "Review"}</span>
@@ -1072,58 +1068,58 @@ export function AcademyEnrollmentsView() {
             {/* 3. 2-Column Content Grid matching Screen 19 */}
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-5">
               {/* Left Column (8 cols): Form Panel */}
-              <div className="lg:col-span-8 rounded-xl border border-[#343b3e] bg-gradient-to-br from-[#15191b] to-[#0e1112] p-5 flex flex-col justify-between min-h-[520px]">
+              <div className="lg:col-span-8 rounded-xl border border-nx-line bg-gradient-to-br from-nx-surface to-nx-surface p-5 flex flex-col justify-between min-h-[520px]">
                 <div className="space-y-4">
-                  <div className="flex items-center justify-between pb-3 border-b border-[#31373a]">
-                    <h3 className="font-bold text-white text-base">
+                  <div className="flex items-center justify-between pb-3 border-b border-nx-line">
+                    <h3 className="font-bold text-nx-ink text-base">
                       {isAr ? "إنشاء تسجيل أكاديمي جديد" : "Create Enrollment"}
                     </h3>
-                    <span className="text-xs font-bold text-[#c8ff05]">
+                    <span className="text-xs font-bold text-nx-accent">
                       {isAr ? "الخطوة 4 / 5" : "Step 4 / 5"}
                     </span>
                   </div>
 
-                  <h4 className="text-xl font-bold text-white">
+                  <h4 className="text-xl font-bold text-nx-ink">
                     {isAr ? "تأكيد المسؤولية المالية والرسوم" : "Confirm commercial responsibility"}
                   </h4>
 
-                  <div className="space-y-2 text-xs divide-y divide-[#2a3031]">
+                  <div className="space-y-2 text-xs divide-y divide-nx-line">
                     <div className="flex items-center justify-between py-2">
-                      <span className="text-[#9aa1a6]">{isAr ? "الرياضي:" : "Athlete"}</span>
+                      <span className="text-nx-ink-2">{isAr ? "الرياضي:" : "Athlete"}</span>
                       <b className="text-white">{athleteOptions.find(o => o.value === athleteId)?.label || "Omar Khaled"}</b>
                     </div>
                     <div className="flex items-center justify-between py-2">
-                      <span className="text-[#9aa1a6]">{isAr ? "عرض البرنامج:" : "Program offering"}</span>
+                      <span className="text-nx-ink-2">{isAr ? "عرض البرنامج:" : "Program offering"}</span>
                       <b className="text-white">{offeringOptions.find(o => o.value === offeringId)?.label || "Football Development U12"}</b>
                     </div>
                     <div className="flex items-center justify-between py-2">
-                      <span className="text-[#9aa1a6]">{isAr ? "السعة عند التفعيل:" : "Capacity at activation"}</span>
+                      <span className="text-nx-ink-2">{isAr ? "السعة عند التفعيل:" : "Capacity at activation"}</span>
                       <b className="text-white">18 of 20</b>
                     </div>
                     <div className="flex items-center justify-between py-2">
-                      <span className="text-[#9aa1a6]">{isAr ? "ولي الأمر:" : "Guardian"}</span>
+                      <span className="text-nx-ink-2">{isAr ? "ولي الأمر:" : "Guardian"}</span>
                       <b className="text-white">Khaled Mostafa</b>
                     </div>
                   </div>
 
-                  <div className="h-px bg-[#303739]" />
+                  <div className="h-px bg-nx-raised" />
 
                   <div className="grid grid-cols-2 gap-3.5">
                     <div>
-                      <label className="text-xs text-[#aab5b5] mb-1.5 block">{isAr ? "المسؤول عن الدفع" : "Responsible payer"}</label>
+                      <label className="text-xs text-nx-ink-2 mb-1.5 block">{isAr ? "المسؤول عن الدفع" : "Responsible payer"}</label>
                       <select
                         defaultValue="Khaled"
-                        className="w-full h-10 px-3 rounded-lg bg-[#0b1012] border border-[#3a4446] text-white text-xs focus:outline-none focus:border-[#c8ff05]"
+                        className="w-full h-10 px-3 rounded-lg bg-nx-surface border border-nx-line-hi text-white text-xs focus:outline-none focus:border-nx-accent"
                       >
                         <option value="Khaled">{isAr ? "خالد مصطفى ▾" : "Khaled Mostafa ▾"}</option>
                         <option value="Direct">{isAr ? "سداد ذاتي" : "Self-pay"}</option>
                       </select>
                     </div>
                     <div>
-                      <label className="text-xs text-[#aab5b5] mb-1.5 block">{isAr ? "الخيار التجاري" : "Commercial option"}</label>
+                      <label className="text-xs text-nx-ink-2 mb-1.5 block">{isAr ? "الخيار التجاري" : "Commercial option"}</label>
                       <select
                         defaultValue="Monthly"
-                        className="w-full h-10 px-3 rounded-lg bg-[#0b1012] border border-[#3a4446] text-white text-xs focus:outline-none focus:border-[#c8ff05]"
+                        className="w-full h-10 px-3 rounded-lg bg-nx-surface border border-nx-line-hi text-white text-xs focus:outline-none focus:border-nx-accent"
                       >
                         <option value="Monthly">{isAr ? "خطة شهرية ▾" : "Monthly plan ▾"}</option>
                         <option value="FullSeason">{isAr ? "موسم كامل" : "Full Season"}</option>
@@ -1131,18 +1127,18 @@ export function AcademyEnrollmentsView() {
                     </div>
                   </div>
 
-                  <div className="p-3.5 rounded-xl border border-[#687e00] bg-gradient-to-r from-[#26360c] to-[#172009] text-xs">
+                  <div className="p-3.5 rounded-xl border border-nx-accent-fill/40 bg-gradient-to-r from-nx-accent-fill/15 to-nx-accent-fill/15 text-xs">
                     <b className="text-white">Resolved quote · EGP 1,500 / month</b>
-                    <p className="text-[#aeb5b5] text-[11px] mt-0.5">Reference from Catalog & Pricing (illustrative; not Academy-owned financial truth).</p>
+                    <p className="text-nx-ink-2 text-[11px] mt-0.5">Reference from Catalog & Pricing (illustrative; not Academy-owned financial truth).</p>
                   </div>
                 </div>
 
                 {/* Footer Buttons */}
-                <div className="pt-4 border-t border-[#31373a] flex items-center justify-between mt-4">
+                <div className="pt-4 border-t border-nx-line flex items-center justify-between mt-4">
                   <button
                     type="button"
                     onClick={() => setShowCreateModal(false)}
-                    className="px-4 py-2 rounded-lg border border-[#41474a] bg-[#111416] text-white font-semibold text-xs hover:bg-[#1a1e21] cursor-pointer"
+                    className="px-4 py-2 rounded-lg border border-nx-line-hi bg-nx-surface text-white font-semibold text-xs hover:bg-nx-raised cursor-pointer"
                   >
                     {isAr ? "← رجوع" : "← Back"}
                   </button>
@@ -1150,7 +1146,7 @@ export function AcademyEnrollmentsView() {
                     type="button"
                     onClick={handleCreateSubmit}
                     disabled={!athleteId || !offeringId}
-                    className="px-6 py-2 rounded-lg bg-[#c8ff05] text-[#131600] font-bold text-xs shadow-[0_0_24px_rgba(199,255,0,0.2)] hover:bg-[#b2e600] disabled:opacity-40 cursor-pointer"
+                    className="px-6 py-2 rounded-lg bg-nx-accent-fill text-nx-on-fill font-bold text-xs shadow-nx-glow hover:bg-nx-accent-fill disabled:opacity-40 cursor-pointer"
                   >
                     {isAr ? "مراجعة القيد والتفعيل →" : "Review Enrollment →"}
                   </button>
@@ -1158,56 +1154,56 @@ export function AcademyEnrollmentsView() {
               </div>
 
               {/* Right Column (4 cols): Pre-Activation Checks */}
-              <div className="lg:col-span-4 rounded-xl border border-[#343b3e] bg-gradient-to-br from-[#15191b] to-[#0e1112] p-5 flex flex-col justify-between min-h-[520px]">
+              <div className="lg:col-span-4 rounded-xl border border-nx-line bg-gradient-to-br from-nx-surface to-nx-surface p-5 flex flex-col justify-between min-h-[520px]">
                 <div className="space-y-4">
-                  <div className="flex items-center justify-between pb-3 border-b border-[#31373a]">
-                    <h3 className="font-bold text-white text-base">
+                  <div className="flex items-center justify-between pb-3 border-b border-nx-line">
+                    <h3 className="font-bold text-nx-ink text-base">
                       {isAr ? "فحوصات ما قبل التفعيل" : "Pre-Activation Checks"}
                     </h3>
-                    <span className="text-xs font-bold text-[#c8ff05]">
+                    <span className="text-xs font-bold text-nx-accent">
                       Backend authoritative
                     </span>
                   </div>
 
-                  <div className="text-xs uppercase font-bold text-[#8f9c9f] tracking-wider">
+                  <div className="text-xs uppercase font-bold text-nx-ink-2 tracking-wider">
                     Enrollment readiness
                   </div>
 
-                  <div className="space-y-2 text-xs divide-y divide-[#2a3031]">
+                  <div className="space-y-2 text-xs divide-y divide-nx-line">
                     <div className="flex items-center justify-between py-2">
-                      <span className="text-[#9aa1a6]">Eligibility</span>
-                      <span className="inline-flex px-2 py-0.5 rounded-full text-[10px] font-bold bg-[#1e2b09] text-[#b9fb30] border border-[#627b00]">
+                      <span className="text-nx-ink-2">Eligibility</span>
+                      <span className="inline-flex px-2 py-0.5 rounded-full text-[10px] font-bold bg-nx-accent-fill/15 text-nx-accent border border-nx-accent-fill/40">
                         Passed
                       </span>
                     </div>
                     <div className="flex items-center justify-between py-2">
-                      <span className="text-[#9aa1a6]">Group capacity</span>
-                      <span className="inline-flex px-2 py-0.5 rounded-full text-[10px] font-bold bg-[#1e2b09] text-[#b9fb30] border border-[#627b00]">
+                      <span className="text-nx-ink-2">Group capacity</span>
+                      <span className="inline-flex px-2 py-0.5 rounded-full text-[10px] font-bold bg-nx-accent-fill/15 text-nx-accent border border-nx-accent-fill/40">
                         Available
                       </span>
                     </div>
                     <div className="flex items-center justify-between py-2">
-                      <span className="text-[#9aa1a6]">Guardian linkage</span>
-                      <span className="inline-flex px-2 py-0.5 rounded-full text-[10px] font-bold bg-[#1e2b09] text-[#b9fb30] border border-[#627b00]">
+                      <span className="text-nx-ink-2">Guardian linkage</span>
+                      <span className="inline-flex px-2 py-0.5 rounded-full text-[10px] font-bold bg-nx-accent-fill/15 text-nx-accent border border-nx-accent-fill/40">
                         Verified
                       </span>
                     </div>
                     <div className="flex items-center justify-between py-2">
-                      <span className="text-[#9aa1a6]">Payer</span>
-                      <span className="inline-flex px-2 py-0.5 rounded-full text-[10px] font-bold bg-[#1e2b09] text-[#b9fb30] border border-[#627b00]">
+                      <span className="text-nx-ink-2">Payer</span>
+                      <span className="inline-flex px-2 py-0.5 rounded-full text-[10px] font-bold bg-nx-accent-fill/15 text-nx-accent border border-nx-accent-fill/40">
                         Explicit
                       </span>
                     </div>
                     <div className="flex items-center justify-between py-2">
-                      <span className="text-[#9aa1a6]">Finance handoff</span>
-                      <span className="inline-flex px-2 py-0.5 rounded-full text-[10px] font-bold bg-[#372b09] text-[#ffd24d] border border-[#715a12]">
+                      <span className="text-nx-ink-2">Finance handoff</span>
+                      <span className="inline-flex px-2 py-0.5 rounded-full text-[10px] font-bold bg-warning/15 text-warning border border-warning/30">
                         Pending
                       </span>
                     </div>
                   </div>
                 </div>
 
-                <div className="mt-4 p-3.5 rounded-xl border border-[#345327] bg-[#0c1510] text-xs text-[#c9dfb4]">
+                <div className="mt-4 p-3.5 rounded-xl border border-nx-accent-fill/40 bg-nx-accent-fill/15 text-xs text-nx-accent">
                   {isAr
                     ? "يخضع تفعيل القيد لسياسات الأكاديمية الحاكمة. تتم معالجة حالة الفاتورة والمدفوعات عبر نظام المالية (Finance) مع ضمان استرداد حالات فشل الإحالة."
                     : "Enrollment activation remains governed by Academy policy. Invoice/payment status is handled through Finance, with recoverable handoff failures."}
@@ -1221,18 +1217,18 @@ export function AcademyEnrollmentsView() {
       {/* Screen 16: Enrollment Details High-Fidelity Modal Workspace */}
       {showDetailWorkspace && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/85 backdrop-blur-md p-4 overflow-y-auto">
-          <div className="w-full max-w-6xl rounded-2xl bg-[#080a0b] border border-[#2a3033] shadow-2xl p-6 text-nx-ink space-y-5 my-8">
+          <div className="w-full max-w-6xl rounded-2xl bg-nx-surface border border-nx-line shadow-2xl p-6 text-nx-ink space-y-5 my-8">
             {/* 1. Headline Banner matching 16_Enrollment_Detail.png */}
-            <div className="flex items-center justify-between pb-3 border-b border-[#2a3033]">
+            <div className="flex items-center justify-between pb-3 border-b border-nx-line">
               <div className="flex items-center gap-3.5">
-                <div className="flex h-12 w-12 items-center justify-center rounded-xl border border-[#454d41] bg-gradient-to-br from-[#222923] to-[#0d1110] text-[#c8ff05] shadow-[0_7px_20px_rgba(0,0,0,0.4)] text-2xl">
+                <div className="flex h-12 w-12 items-center justify-center rounded-xl border border-nx-accent-fill/40 bg-gradient-to-br from-nx-surface to-nx-surface text-nx-accent shadow-[0_7px_20px_rgba(0,0,0,0.4)] text-2xl">
                   ☷
                 </div>
                 <div>
                   <h1 className="text-xl md:text-2xl font-black tracking-tight text-white">
                     {isAr ? "تفاصيل القيد الأكاديمي" : "Enrollment Details"}
                   </h1>
-                  <p className="text-xs text-[#afb4b7] mt-0.5">
+                  <p className="text-xs text-nx-ink-2 mt-0.5">
                     {isAr
                       ? "مراجعة قيد الرياضي، السجل التاريخي، التكليفات، وحالة الارتباط المالي."
                       : "Review an athlete enrollment, history, assignments, and finance-linked status."}
@@ -1243,13 +1239,13 @@ export function AcademyEnrollmentsView() {
                 <button
                   type="button"
                   onClick={() => setShowDetailWorkspace(false)}
-                  className="px-3.5 py-1.5 rounded-lg border border-[#41474a] bg-[#111416] hover:bg-[#1a1e21] text-xs font-semibold text-white transition-colors cursor-pointer"
+                  className="px-3.5 py-1.5 rounded-lg border border-nx-line-hi bg-nx-surface hover:bg-nx-raised text-xs font-semibold text-nx-ink transition-colors cursor-pointer"
                 >
                   {isAr ? "← جميع القيود" : "← All Enrollments"}
                 </button>
                 <button
                   type="button"
-                  className="px-3.5 py-1.5 rounded-lg border border-[#41474a] bg-[#111416] hover:bg-[#1a1e21] text-xs font-semibold text-[#c8ff05] transition-colors cursor-pointer"
+                  className="px-3.5 py-1.5 rounded-lg border border-nx-line-hi bg-nx-surface hover:bg-nx-raised text-xs font-semibold text-nx-accent transition-colors cursor-pointer"
                 >
                   {isAr ? "إجراءات إضافية ▾" : "More Actions ▾"}
                 </button>
@@ -1258,206 +1254,206 @@ export function AcademyEnrollmentsView() {
 
             {/* 2. 4 Top Metrics matching Screen 16 */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5">
-              <div className="rounded-xl border border-[#7ca100] bg-gradient-to-br from-[#191f0f] to-[#101315] p-4 flex flex-col justify-between relative overflow-hidden">
+              <div className="rounded-xl border border-nx-accent-fill/40 bg-gradient-to-br from-nx-surface to-nx-surface p-4 flex flex-col justify-between relative overflow-hidden">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-3">
-                    <div className="flex size-9 items-center justify-center rounded-lg bg-[#202b09] text-[#c8ff05]">
+                    <div className="flex size-9 items-center justify-center rounded-lg bg-nx-accent-fill/15 text-nx-accent">
                       ▤
                     </div>
-                    <span className="text-xs font-medium text-[#aeb5b5]">{isAr ? "مرجع القيد" : "Enrollment Reference"}</span>
+                    <span className="text-xs font-medium text-nx-ink-2">{isAr ? "مرجع القيد" : "Enrollment Reference"}</span>
                   </div>
-                  <span className="text-[11px] font-bold text-[#a6f76b] bg-[#243817] px-2 py-0.5 rounded-full">Active</span>
+                  <span className="text-[11px] font-bold text-nx-accent bg-nx-accent-fill/15 px-2 py-0.5 rounded-full">Active</span>
                 </div>
-                <div className="my-2"><p className="text-xl font-black text-white">ENR-2026-001248</p></div>
-                <p className="text-[11px] text-[#9aa1a6]">Verified registered enrollment</p>
+                <div className="my-2"><p className="text-xl font-black text-nx-ink">ENR-2026-001248</p></div>
+                <p className="text-[11px] text-nx-ink-2">Verified registered enrollment</p>
               </div>
 
-              <div className="rounded-xl border border-[#353d3c] bg-[#101214] p-4 flex flex-col justify-between">
+              <div className="rounded-xl border border-nx-line-hi bg-nx-surface p-4 flex flex-col justify-between">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-3">
-                    <div className="flex size-9 items-center justify-center rounded-lg bg-[#202b09] text-[#c8ff05]">
+                    <div className="flex size-9 items-center justify-center rounded-lg bg-nx-accent-fill/15 text-nx-accent">
                       ◈
                     </div>
-                    <span className="text-xs font-medium text-[#aeb5b5]">{isAr ? "عرض البرنامج" : "Program Offering"}</span>
+                    <span className="text-xs font-medium text-nx-ink-2">{isAr ? "عرض البرنامج" : "Program Offering"}</span>
                   </div>
                 </div>
-                <div className="my-2"><p className="text-xl font-black text-white">U10 Football</p></div>
-                <p className="text-[11px] text-[#9aa1a6]">Season 2026/27</p>
+                <div className="my-2"><p className="text-xl font-black text-nx-ink">U10 Football</p></div>
+                <p className="text-[11px] text-nx-ink-2">Season 2026/27</p>
               </div>
 
-              <div className="rounded-xl border border-[#353d3c] bg-[#101214] p-4 flex flex-col justify-between">
+              <div className="rounded-xl border border-nx-line-hi bg-nx-surface p-4 flex flex-col justify-between">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-3">
-                    <div className="flex size-9 items-center justify-center rounded-lg bg-[#202b09] text-[#c8ff05]">
+                    <div className="flex size-9 items-center justify-center rounded-lg bg-nx-accent-fill/15 text-nx-accent">
                       ☑
                     </div>
-                    <span className="text-xs font-medium text-[#aeb5b5]">{isAr ? "المجموعة المسندة" : "Assigned Group"}</span>
+                    <span className="text-xs font-medium text-nx-ink-2">{isAr ? "المجموعة المسندة" : "Assigned Group"}</span>
                   </div>
                 </div>
-                <div className="my-2"><p className="text-xl font-black text-white">1</p></div>
-                <p className="text-[11px] text-[#9aa1a6]">U10 — Group A</p>
+                <div className="my-2"><p className="text-xl font-black text-nx-ink">1</p></div>
+                <p className="text-[11px] text-nx-ink-2">U10 — Group A</p>
               </div>
 
-              <div className="rounded-xl border border-[#353d3c] bg-[#101214] p-4 flex flex-col justify-between">
+              <div className="rounded-xl border border-nx-line-hi bg-nx-surface p-4 flex flex-col justify-between">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-3">
-                    <div className="flex size-9 items-center justify-center rounded-lg bg-[#202b09] text-[#c8ff05]">
+                    <div className="flex size-9 items-center justify-center rounded-lg bg-nx-accent-fill/15 text-nx-accent">
                       ◷
                     </div>
-                    <span className="text-xs font-medium text-[#aeb5b5]">{isAr ? "الحصص القادمة" : "Upcoming Sessions"}</span>
+                    <span className="text-xs font-medium text-nx-ink-2">{isAr ? "الحصص القادمة" : "Upcoming Sessions"}</span>
                   </div>
                 </div>
-                <div className="my-2"><p className="text-xl font-black text-white">2</p></div>
-                <p className="text-[11px] text-[#9aa1a6]">Next: Friday 04:00 PM</p>
+                <div className="my-2"><p className="text-xl font-black text-nx-ink">2</p></div>
+                <p className="text-[11px] text-nx-ink-2">Next: Friday 04:00 PM</p>
               </div>
             </div>
 
             {/* 3. 2-Column Content Grid matching Screen 16 */}
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-5">
               {/* Left Column (8 cols): Enrollment Overview */}
-              <div className="lg:col-span-8 rounded-xl border border-[#343b3e] bg-gradient-to-br from-[#15191b] to-[#0e1112] p-5 flex flex-col justify-between min-h-[520px]">
+              <div className="lg:col-span-8 rounded-xl border border-nx-line bg-gradient-to-br from-nx-surface to-nx-surface p-5 flex flex-col justify-between min-h-[520px]">
                 <div className="space-y-4">
-                  <div className="flex items-center justify-between pb-3 border-b border-[#31373a]">
-                    <h3 className="font-bold text-white text-base">
+                  <div className="flex items-center justify-between pb-3 border-b border-nx-line">
+                    <h3 className="font-bold text-nx-ink text-base">
                       {isAr ? "نظرة عامة على القيد" : "Enrollment Overview"}
                     </h3>
-                    <span className="text-xs font-bold text-[#c8ff05]">
+                    <span className="text-xs font-bold text-nx-accent">
                       View Audit
                     </span>
                   </div>
 
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-3.5">
-                      <div className="w-16 h-16 rounded-2xl flex items-center justify-center font-black text-2xl border border-[#668000] bg-gradient-to-br from-[#36460e] to-[#101c14] text-[#cfff64]">
+                      <div className="w-16 h-16 rounded-2xl flex items-center justify-center font-black text-2xl border border-nx-accent-fill/40 bg-gradient-to-br from-nx-accent-fill/20 to-nx-surface text-nx-accent">
                         AE
                       </div>
                       <div>
-                        <h4 className="text-xl font-bold text-white">Ahmed Essam</h4>
-                        <p className="text-xs text-[#929da2]">U10 Football · Season 2026/27</p>
+                        <h4 className="text-xl font-bold text-nx-ink">Ahmed Essam</h4>
+                        <p className="text-xs text-nx-ink-2">U10 Football · Season 2026/27</p>
                       </div>
                     </div>
-                    <span className="inline-flex px-3 py-1 rounded-full text-xs font-bold bg-[#1e2b09] text-[#b9fb30] border border-[#627b00]">
+                    <span className="inline-flex px-3 py-1 rounded-full text-xs font-bold bg-nx-accent-fill/15 text-nx-accent border border-nx-accent-fill/40">
                       Active
                     </span>
                   </div>
 
                   {/* Tabs */}
-                  <div className="flex items-center gap-6 border-b border-[#343b3f] text-xs font-bold">
-                    <span className="py-2.5 border-b-2 border-[#c8ff05] text-[#c8ff05]">Overview</span>
-                    <span className="py-2.5 text-[#a9b0b1]">History</span>
-                    <span className="py-2.5 text-[#a9b0b1]">Group Membership</span>
-                    <span className="py-2.5 text-[#a9b0b1]">Payments Summary</span>
+                  <div className="flex items-center gap-6 border-b border-nx-line text-xs font-bold">
+                    <span className="py-2.5 border-b-2 border-nx-accent-fill text-nx-accent">Overview</span>
+                    <span className="py-2.5 text-nx-ink-2">History</span>
+                    <span className="py-2.5 text-nx-ink-2">Group Membership</span>
+                    <span className="py-2.5 text-nx-ink-2">Payments Summary</span>
                   </div>
 
                   {/* Split Minicards */}
                   <div className="grid grid-cols-2 gap-3.5">
-                    <div className="p-3.5 rounded-xl border border-[#323b3d] bg-[#151a1c] text-xs space-y-2">
-                      <div className="text-[10px] uppercase font-bold text-[#8f9c9f] tracking-wider">Enrollment</div>
-                      <div className="flex justify-between"><span className="text-[#9aa1a6]">Created on</span><b className="text-white">15 Sep 2026</b></div>
-                      <div className="flex justify-between"><span className="text-[#9aa1a6]">Offering</span><b className="text-white">Football Development U10</b></div>
-                      <div className="flex justify-between"><span className="text-[#9aa1a6]">Season</span><b className="text-white">2026/27</b></div>
-                      <div className="flex justify-between"><span className="text-[#9aa1a6]">Enrollment state</span><span className="inline-flex px-2 py-0.5 rounded-full text-[10px] font-bold bg-[#1e2b09] text-[#b9fb30] border border-[#627b00]">Active</span></div>
+                    <div className="p-3.5 rounded-xl border border-nx-line bg-nx-raised text-xs space-y-2">
+                      <div className="text-[10px] uppercase font-bold text-nx-ink-2 tracking-wider">Enrollment</div>
+                      <div className="flex justify-between"><span className="text-nx-ink-2">Created on</span><b className="text-white">15 Sep 2026</b></div>
+                      <div className="flex justify-between"><span className="text-nx-ink-2">Offering</span><b className="text-white">Football Development U10</b></div>
+                      <div className="flex justify-between"><span className="text-nx-ink-2">Season</span><b className="text-white">2026/27</b></div>
+                      <div className="flex justify-between"><span className="text-nx-ink-2">Enrollment state</span><span className="inline-flex px-2 py-0.5 rounded-full text-[10px] font-bold bg-nx-accent-fill/15 text-nx-accent border border-nx-accent-fill/40">Active</span></div>
                     </div>
 
-                    <div className="p-3.5 rounded-xl border border-[#323b3d] bg-[#151a1c] text-xs space-y-2">
-                      <div className="text-[10px] uppercase font-bold text-[#8f9c9f] tracking-wider">Assignment</div>
-                      <div className="flex justify-between"><span className="text-[#9aa1a6]">Training Group</span><b className="text-white">U10 — Group A</b></div>
-                      <div className="flex justify-between"><span className="text-[#9aa1a6]">Membership effective</span><b className="text-white">17 Sep 2026</b></div>
-                      <div className="flex justify-between"><span className="text-[#9aa1a6]">Coach</span><b className="text-white">Ahmed Hassan</b></div>
-                      <div className="flex justify-between"><span className="text-[#9aa1a6]">Location</span><b className="text-white">External Pitch 2</b></div>
+                    <div className="p-3.5 rounded-xl border border-nx-line bg-nx-raised text-xs space-y-2">
+                      <div className="text-[10px] uppercase font-bold text-nx-ink-2 tracking-wider">Assignment</div>
+                      <div className="flex justify-between"><span className="text-nx-ink-2">Training Group</span><b className="text-white">U10 — Group A</b></div>
+                      <div className="flex justify-between"><span className="text-nx-ink-2">Membership effective</span><b className="text-white">17 Sep 2026</b></div>
+                      <div className="flex justify-between"><span className="text-nx-ink-2">Coach</span><b className="text-white">Ahmed Hassan</b></div>
+                      <div className="flex justify-between"><span className="text-nx-ink-2">Location</span><b className="text-white">External Pitch 2</b></div>
                     </div>
                   </div>
 
-                  <div className="h-px bg-[#303739]" />
+                  <div className="h-px bg-nx-raised" />
 
-                  <div className="text-xs uppercase font-bold text-[#8f9c9f] tracking-wider">
+                  <div className="text-xs uppercase font-bold text-nx-ink-2 tracking-wider">
                     Lifecycle Timeline
                   </div>
 
                   {/* Timeline Rows */}
-                  <div className="space-y-2 divide-y divide-[#2d3434] text-xs">
+                  <div className="space-y-2 divide-y divide-nx-line text-xs">
                     <div className="flex items-center justify-between py-2">
                       <div className="flex items-center gap-3">
-                        <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-[#1a1e20] text-[#cdd5d6] border border-[#4a5356]">15 SEP</span>
-                        <div><b className="text-white">Enrollment created</b><p className="text-[11px] text-[#929da2]">Initial review completed</p></div>
+                        <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-nx-raised text-nx-ink-2 border border-nx-line-hi">15 SEP</span>
+                        <div><b className="text-white">Enrollment created</b><p className="text-[11px] text-nx-ink-2">Initial review completed</p></div>
                       </div>
-                      <span className="text-[#c8ff05] font-bold">✓</span>
+                      <span className="text-nx-accent font-bold">✓</span>
                     </div>
 
                     <div className="flex items-center justify-between py-2">
                       <div className="flex items-center gap-3">
-                        <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-[#1a1e20] text-[#cdd5d6] border border-[#4a5356]">16 SEP</span>
-                        <div><b className="text-white">Terms accepted</b><p className="text-[11px] text-[#929da2]">Guardian/payer responsibility confirmed</p></div>
+                        <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-nx-raised text-nx-ink-2 border border-nx-line-hi">16 SEP</span>
+                        <div><b className="text-white">Terms accepted</b><p className="text-[11px] text-nx-ink-2">Guardian/payer responsibility confirmed</p></div>
                       </div>
-                      <span className="text-[#c8ff05] font-bold">✓</span>
+                      <span className="text-nx-accent font-bold">✓</span>
                     </div>
 
                     <div className="flex items-center justify-between py-2">
                       <div className="flex items-center gap-3">
-                        <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-[#1a1e20] text-[#cdd5d6] border border-[#4a5356]">17 SEP</span>
-                        <div><b className="text-white">Enrollment activated</b><p className="text-[11px] text-[#929da2]">Business policy checks passed</p></div>
+                        <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-nx-raised text-nx-ink-2 border border-nx-line-hi">17 SEP</span>
+                        <div><b className="text-white">Enrollment activated</b><p className="text-[11px] text-nx-ink-2">Business policy checks passed</p></div>
                       </div>
-                      <span className="text-[#c8ff05] font-bold">✓</span>
+                      <span className="text-nx-accent font-bold">✓</span>
                     </div>
 
                     <div className="flex items-center justify-between py-2">
                       <div className="flex items-center gap-3">
-                        <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-[#1a1e20] text-[#cdd5d6] border border-[#4a5356]">17 SEP</span>
-                        <div><b className="text-white">Assigned to Group A</b><p className="text-[11px] text-[#929da2]">Effective-dated membership created</p></div>
+                        <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-nx-raised text-nx-ink-2 border border-nx-line-hi">17 SEP</span>
+                        <div><b className="text-white">Assigned to Group A</b><p className="text-[11px] text-nx-ink-2">Effective-dated membership created</p></div>
                       </div>
-                      <span className="text-[#c8ff05] font-bold">✓</span>
+                      <span className="text-nx-accent font-bold">✓</span>
                     </div>
                   </div>
                 </div>
               </div>
 
               {/* Right Column (4 cols): Commercial & Next Actions */}
-              <div className="lg:col-span-4 rounded-xl border border-[#343b3e] bg-gradient-to-br from-[#15191b] to-[#0e1112] p-5 flex flex-col justify-between min-h-[520px]">
+              <div className="lg:col-span-4 rounded-xl border border-nx-line bg-gradient-to-br from-nx-surface to-nx-surface p-5 flex flex-col justify-between min-h-[520px]">
                 <div className="space-y-4">
-                  <div className="flex items-center justify-between pb-3 border-b border-[#31373a]">
-                    <h3 className="font-bold text-white text-base">
+                  <div className="flex items-center justify-between pb-3 border-b border-nx-line">
+                    <h3 className="font-bold text-nx-ink text-base">
                       {isAr ? "الوضع المالي والإجراءات" : "Commercial & Next Actions"}
                     </h3>
-                    <span className="text-xs font-bold text-[#c8ff05]">
+                    <span className="text-xs font-bold text-nx-accent">
                       Finance-sourced
                     </span>
                   </div>
 
-                  <div className="text-xs uppercase font-bold text-[#8f9c9f] tracking-wider">
+                  <div className="text-xs uppercase font-bold text-nx-ink-2 tracking-wider">
                     Financial status (read-only projection)
                   </div>
 
                   <div>
-                    <div className="text-3xl font-black text-white">EGP 1,500</div>
-                    <p className="text-xs text-[#9aa1a6]">Monthly plan · illustrative amount</p>
+                    <div className="text-3xl font-black text-nx-ink">EGP 1,500</div>
+                    <p className="text-xs text-nx-ink-2">Monthly plan · illustrative amount</p>
                   </div>
 
-                  <div className="space-y-2 text-xs divide-y divide-[#2a3031]">
+                  <div className="space-y-2 text-xs divide-y divide-nx-line">
                     <div className="flex items-center justify-between py-2">
-                      <span className="text-[#9aa1a6]">Payer</span>
+                      <span className="text-nx-ink-2">Payer</span>
                       <b className="text-white">Essam Mohamed</b>
                     </div>
                     <div className="flex items-center justify-between py-2">
-                      <span className="text-[#9aa1a6]">Invoice status</span>
-                      <span className="inline-flex px-2 py-0.5 rounded-full text-[10px] font-bold bg-[#372b09] text-[#ffd24d] border border-[#715a12]">
+                      <span className="text-nx-ink-2">Invoice status</span>
+                      <span className="inline-flex px-2 py-0.5 rounded-full text-[10px] font-bold bg-warning/15 text-warning border border-warning/30">
                         Partially paid
                       </span>
                     </div>
                     <div className="flex items-center justify-between py-2">
-                      <span className="text-[#9aa1a6]">Paid to date</span>
+                      <span className="text-nx-ink-2">Paid to date</span>
                       <b className="text-white">EGP 1,000</b>
                     </div>
                     <div className="flex items-center justify-between py-2">
-                      <span className="text-[#9aa1a6]">Outstanding</span>
+                      <span className="text-nx-ink-2">Outstanding</span>
                       <b className="text-white">EGP 500</b>
                     </div>
                     <div className="flex items-center justify-between py-2">
-                      <span className="text-[#9aa1a6]">Next due</span>
+                      <span className="text-nx-ink-2">Next due</span>
                       <b className="text-white">15 Nov 2026</b>
                     </div>
                   </div>
 
-                  <div className="p-3.5 rounded-xl border border-[#345327] bg-[#0c1510] text-xs text-[#c9dfb4]">
+                  <div className="p-3.5 rounded-xl border border-nx-accent-fill/40 bg-nx-accent-fill/15 text-xs text-nx-accent">
                     Finance remains the authoritative source for invoices, payments and balances. Enrollment state never proves payment state.
                   </div>
                 </div>
@@ -1467,21 +1463,21 @@ export function AcademyEnrollmentsView() {
                   <button
                     type="button"
                     onClick={() => setShowDetailWorkspace(false)}
-                    className="w-full py-2.5 rounded-lg bg-[#c8ff05] text-[#131600] font-bold text-xs shadow-[0_0_24px_rgba(199,255,0,0.2)] hover:bg-[#b2e600] cursor-pointer"
+                    className="w-full py-2.5 rounded-lg bg-nx-accent-fill text-nx-on-fill font-bold text-xs shadow-nx-glow hover:bg-nx-accent-fill cursor-pointer"
                   >
                     View Athlete Profile
                   </button>
                   <button
                     type="button"
                     onClick={() => setShowDetailWorkspace(false)}
-                    className="w-full py-2 rounded-lg border border-[#41474a] bg-[#111416] text-white font-semibold text-xs hover:bg-[#1a1e21] cursor-pointer"
+                    className="w-full py-2 rounded-lg border border-nx-line-hi bg-nx-surface text-white font-semibold text-xs hover:bg-nx-raised cursor-pointer"
                   >
                     Transfer Training Group
                   </button>
                   <button
                     type="button"
                     onClick={() => setShowDetailWorkspace(false)}
-                    className="w-full py-2 rounded-lg border border-[#41474a] bg-[#111416] text-white font-semibold text-xs hover:bg-[#1a1e21] cursor-pointer"
+                    className="w-full py-2 rounded-lg border border-nx-line-hi bg-nx-surface text-white font-semibold text-xs hover:bg-nx-raised cursor-pointer"
                   >
                     View Finance Record
                   </button>
@@ -1495,53 +1491,53 @@ export function AcademyEnrollmentsView() {
       {/* 2. Handoff to Finance Modal */}
       {showFinanceModal && targetEnrollment && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4">
-          <div className="w-full max-w-md rounded-2xl border border-[#2a3033] bg-[#101214] p-6 shadow-2xl text-xs space-y-4">
-            <div className="flex items-center justify-between pb-3 border-b border-[#222629]">
+          <div className="w-full max-w-md rounded-2xl border border-nx-line bg-nx-surface p-6 shadow-2xl text-xs space-y-4">
+            <div className="flex items-center justify-between pb-3 border-b border-nx-line">
               <div className="flex items-center gap-2">
-                <Send className="h-5 w-5 text-[#c8ff05]" />
-                <h3 className="text-base font-bold text-white">
+                <Send className="h-5 w-5 text-nx-accent" />
+                <h3 className="text-base font-bold text-nx-ink">
                   {isAr ? "إحالة القيد لقسم الفوترة المالية" : "Handoff to Finance"}
                 </h3>
               </div>
-              <button onClick={() => setShowFinanceModal(false)} className="text-[#9aa1a6] hover:text-white">
+              <button onClick={() => setShowFinanceModal(false)} className="text-nx-ink-2 hover:text-nx-ink">
                 <X className="h-5 w-5" />
               </button>
             </div>
 
             <div className="space-y-3">
-              <div className="p-3 rounded-xl bg-[#14171a] border border-[#222629]">
-                <div className="font-bold text-white text-sm">
+              <div className="p-3 rounded-xl bg-nx-raised border border-nx-line">
+                <div className="font-bold text-nx-ink text-sm">
                   {isAr ? (targetEnrollment.athleteNameAr || targetEnrollment.athleteNameEn) : (targetEnrollment.athleteNameEn || targetEnrollment.athleteNameAr || "Athlete")}
                 </div>
-                <div className="text-[#9aa1a6] text-xs">
+                <div className="text-nx-ink-2 text-xs">
                   {isAr ? (targetEnrollment.offeringNameAr || targetEnrollment.offeringNameEn) : (targetEnrollment.offeringNameEn || targetEnrollment.offeringNameAr)} • {targetEnrollment.priceAmount} {targetEnrollment.priceCurrency || "SAR"}
                 </div>
               </div>
 
               <div>
-                <label className="block text-[#9aa1a6] mb-1 font-semibold">{isAr ? "رقم الفاتورة المالية (Invoice Reference)" : "Finance Invoice Reference"}</label>
+                <label className="block text-nx-ink-2 mb-1 font-semibold">{isAr ? "رقم الفاتورة المالية (Invoice Reference)" : "Finance Invoice Reference"}</label>
                 <input
                   type="text"
                   value={invoiceRefInput}
                   onChange={(e) => setInvoiceRefInput(e.target.value)}
                   placeholder="e.g. INV-HILAL-2026-00002"
-                  className="w-full h-9 px-3 rounded-lg bg-[#14171a] border border-[#222629] text-white text-xs font-mono focus:outline-none focus:border-[#c8ff05]"
+                  className="w-full h-9 px-3 rounded-lg bg-nx-raised border border-nx-line text-white text-xs font-mono focus:outline-none focus:border-nx-accent"
                 />
               </div>
             </div>
 
-            <div className="flex items-center justify-end gap-2 pt-3 border-t border-[#222629]">
+            <div className="flex items-center justify-end gap-2 pt-3 border-t border-nx-line">
               <button
                 type="button"
                 onClick={() => setShowFinanceModal(false)}
-                className="h-8 px-4 rounded-lg border border-[#2a3033] bg-[#14171a] text-white font-semibold hover:bg-[#1f2428]"
+                className="h-8 px-4 rounded-lg border border-nx-line bg-nx-raised text-white font-semibold hover:bg-nx-raised"
               >
                 {isAr ? "إلغاء" : "Cancel"}
               </button>
               <Button
                 onClick={handleHandoffToFinance}
                 disabled={!invoiceRefInput.trim()}
-                className="h-8 px-4 bg-[#c8ff05] hover:bg-[#b2e600] text-black font-bold"
+                className="h-8 px-4 bg-nx-accent-fill hover:bg-nx-accent-fill text-black font-bold"
               >
                 {isAr ? "تأكيد الإحالة" : "Confirm Handoff"}
               </Button>

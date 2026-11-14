@@ -4,9 +4,9 @@ test.describe("Enterprise Access Foundation: Real Browser Acceptance", () => {
   test.describe.configure({ mode: "serial", timeout: 120_000 });
 
   const freeTenantEmail = "test.free.1792942264586@scripe-test.org";
-  const freeTenantPassword = "P@ssw0rd123!";
+  const freeTenantPassword = process.env.SCRIPE_TEST_FREE_PASSWORD || "";
   const ahlyAdminEmail = "ahly.booking@scripe-dev.local";
-  const standardPassword = "P@ssw0rd";
+  const standardPassword = process.env.SCRIPE_UAT_PASSWORD || process.env.UAT_PASSWORD || "";
   const superAdminEmail = "admin-seif@scripe.org";
 
   test.beforeEach(async ({ context, page }) => {

@@ -75,18 +75,18 @@ export function AcademyFeesReceivablesView({ locale = "en" }: AcademyFeesReceiva
   return (
     <div
       dir={isRtl ? "rtl" : "ltr"}
-      className="min-h-screen bg-[#080a0b] text-white p-4 sm:p-6 lg:p-8 space-y-6 selection:bg-[#c8ff05] selection:text-black"
+      className="min-h-screen bg-nx-surface text-white p-4 sm:p-6 lg:p-8 space-y-6 selection:bg-nx-accent-fill selection:text-black"
     >
       {/* ── Top Header Banner with Neon Ambient Streaks ── */}
-      <div className="relative overflow-hidden rounded-2xl border border-[#2a3033] bg-[#101214] p-6 shadow-xl">
+      <div className="relative overflow-hidden rounded-2xl border border-nx-line bg-nx-surface p-6 shadow-xl">
         {/* Background diagonal neon streaks */}
-        <div className="pointer-events-none absolute -end-24 -top-24 h-64 w-96 rounded-full bg-[#c8ff05]/10 blur-3xl" />
-        <div className="pointer-events-none absolute end-1/4 -bottom-16 h-32 w-48 rounded-full bg-[#c8ff05]/5 blur-2xl" />
+        <div className="pointer-events-none absolute -end-24 -top-24 h-64 w-96 rounded-full bg-nx-accent-fill/10 blur-3xl" />
+        <div className="pointer-events-none absolute end-1/4 -bottom-16 h-32 w-48 rounded-full bg-nx-accent-fill/5 blur-2xl" />
 
         <div className="relative z-10 flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
           {/* Title & Icon */}
           <div className="flex items-center gap-3.5">
-            <div className="flex h-12 w-12 items-center justify-center rounded-xl border border-[#2a3033] bg-[#14171a] text-[#c8ff05] shadow-[0_0_15px_rgba(200,255,5,0.15)]">
+            <div className="flex h-12 w-12 items-center justify-center rounded-xl border border-nx-line bg-nx-raised text-nx-accent shadow-[0_0_15px_rgba(200,255,5,0.15)]">
               <Coins className="h-6 w-6" />
             </div>
             <div>
@@ -110,7 +110,7 @@ export function AcademyFeesReceivablesView({ locale = "en" }: AcademyFeesReceiva
             <button
               type="button"
               onClick={() => alert("Invoice generation is dispatched to SCRIPE Finance under authoritative billing rules.")}
-              className="inline-flex items-center gap-1.5 rounded-xl bg-[#c8ff05] px-4 py-2 text-xs font-bold text-black hover:bg-[#b0e600] transition-colors shadow-[0_0_15px_rgba(200,255,5,0.25)]"
+              className="inline-flex items-center gap-1.5 rounded-xl bg-nx-accent-fill px-4 py-2 text-xs font-bold text-black hover:bg-nx-accent-fill transition-colors shadow-[0_0_15px_rgba(200,255,5,0.25)]"
             >
               <Plus className="h-4 w-4 stroke-[2.5]" />
               Generate Invoice
@@ -120,7 +120,7 @@ export function AcademyFeesReceivablesView({ locale = "en" }: AcademyFeesReceiva
             <button
               type="button"
               onClick={() => alert("Bank statement & payment batch import is managed through the Finance portal.")}
-              className="inline-flex items-center gap-1.5 rounded-xl border border-[#2a3033] bg-[#14171a] px-3.5 py-2 text-xs font-medium text-white hover:border-zinc-700 hover:bg-[#191d20] transition-colors"
+              className="inline-flex items-center gap-1.5 rounded-xl border border-nx-line bg-nx-raised px-3.5 py-2 text-xs font-medium text-nx-ink hover:border-zinc-700 hover:bg-nx-raised transition-colors"
             >
               <Upload className="h-3.5 w-3.5 text-zinc-400" />
               Import Payments
@@ -131,7 +131,7 @@ export function AcademyFeesReceivablesView({ locale = "en" }: AcademyFeesReceiva
               <button
                 type="button"
                 onClick={vm.handleExportCsv}
-                className="inline-flex items-center gap-1.5 rounded-xl border border-[#2a3033] bg-[#14171a] px-3.5 py-2 text-xs font-medium text-white hover:border-zinc-700 hover:bg-[#191d20] transition-colors"
+                className="inline-flex items-center gap-1.5 rounded-xl border border-nx-line bg-nx-raised px-3.5 py-2 text-xs font-medium text-nx-ink hover:border-zinc-700 hover:bg-nx-raised transition-colors"
               >
                 <Download className="h-3.5 w-3.5 text-zinc-400" />
                 Export
@@ -143,7 +143,7 @@ export function AcademyFeesReceivablesView({ locale = "en" }: AcademyFeesReceiva
             <button
               type="button"
               onClick={() => setCurrentLocale(currentLocale === "en" ? "ar" : "en")}
-              className="rounded-xl border border-[#2a3033] bg-[#14171a] px-3 py-2 text-xs font-mono font-medium text-zinc-300 hover:border-zinc-700 hover:text-white transition-colors"
+              className="rounded-xl border border-nx-line bg-nx-raised px-3 py-2 text-xs font-mono font-medium text-zinc-300 hover:border-zinc-700 hover:text-nx-ink transition-colors"
             >
               {currentLocale === "en" ? "العربية (AR)" : "English (EN)"}
             </button>
@@ -197,7 +197,7 @@ export function AcademyFeesReceivablesView({ locale = "en" }: AcademyFeesReceiva
 
       {/* ── Main Layout: Table + Inspector Split matching Design Pack ── */}
       {vm.loading ? (
-        <div className="rounded-xl border border-[#2a3033] bg-[#101214] p-16 text-center text-xs text-zinc-400">
+        <div className="rounded-xl border border-nx-line bg-nx-surface p-16 text-center text-xs text-zinc-400">
           {t("loading") || "Loading authoritative fees & receivables..."}
         </div>
       ) : vm.selectedItem ? (

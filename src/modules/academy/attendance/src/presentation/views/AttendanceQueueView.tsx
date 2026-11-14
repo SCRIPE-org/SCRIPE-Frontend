@@ -73,25 +73,25 @@ export function AttendanceQueueView() {
   const scheduledCount = useMemo(() => items.filter(s => s.status === "Scheduled").length, [items]);
 
   return (
-    <div dir={direction} className="relative min-h-[calc(100vh-3.5rem)] w-full bg-[#080a0b] text-[#f5f7f8] p-4 md:p-6 space-y-6 overflow-hidden">
+    <div dir={direction} className="relative min-h-[calc(100vh-3.5rem)] w-full bg-nx-surface text-nx-ink p-4 md:p-6 space-y-6 overflow-hidden">
       {/* Background Atmosphere Glows */}
-      <div className="pointer-events-none absolute -top-40 right-1/4 h-96 w-96 rounded-full bg-[#c8ff05]/10 blur-[120px]" />
-      <div className="pointer-events-none absolute top-1/3 -left-40 h-80 w-80 rounded-full bg-[#c8ff05]/5 blur-[100px]" />
+      <div className="pointer-events-none absolute -top-40 right-1/4 h-96 w-96 rounded-full bg-nx-accent-fill/10 blur-[120px]" />
+      <div className="pointer-events-none absolute top-1/3 -left-40 h-80 w-80 rounded-full bg-nx-accent-fill/5 blur-[100px]" />
 
       {/* 1. Header Banner */}
-      <div className="relative overflow-hidden rounded-2xl border border-[#2a3033] bg-gradient-to-r from-[#101214] via-[#14171a] to-[#101214] p-5 shadow-2xl">
+      <div className="relative overflow-hidden rounded-2xl border border-nx-line bg-gradient-to-r from-nx-surface via-nx-raised to-nx-surface p-5 shadow-2xl">
         <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_600px_200px_at_85%_20%,rgba(200,255,5,0.08),transparent_75%)]" />
 
         <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div className="flex items-center gap-3.5">
-            <div className="flex h-12 w-12 items-center justify-center rounded-xl border border-[#5a7800] bg-[#1a2307] text-[#c8ff05] shadow-[0_0_20px_rgba(200,255,5,0.18)]">
+            <div className="flex h-12 w-12 items-center justify-center rounded-xl border border-nx-accent-fill/40 bg-nx-accent-fill/15 text-nx-accent shadow-[0_0_20px_rgba(200,255,5,0.18)]">
               <ClipboardCheck className="h-6 w-6" />
             </div>
             <div>
               <h1 className="text-xl md:text-2xl font-black tracking-tight text-white">
                 {isAr ? "حضور وغياب الحصص" : "Session Attendance"}
               </h1>
-              <p className="text-xs md:text-sm text-[#9aa1a6] mt-0.5 max-w-2xl">
+              <p className="text-xs md:text-sm text-nx-ink-2 mt-0.5 max-w-2xl">
                 {isAr
                   ? "تسجيل ومتابعة حضور الرياضيين للحصص التدريبية وإدارة الاستثناءات والتقارير الميدانية."
                   : "Track, record, and manage athlete attendance for training sessions."}
@@ -106,14 +106,14 @@ export function AttendanceQueueView() {
                 setInitialCorrectionSessionId(firstCompleted || items[0]?.id);
                 setShowCorrectionWorkspace(true);
               }}
-              className="flex items-center gap-1.5 px-3.5 py-2.5 rounded-xl border border-[#5a7800] bg-[#1a2307] text-[#c8ff05] hover:bg-[#c8ff05] hover:text-[#080a0b] text-xs font-semibold transition-all cursor-pointer shadow-[0_0_12px_rgba(200,255,5,0.15)]"
+              className="flex items-center gap-1.5 px-3.5 py-2.5 rounded-xl border border-nx-accent-fill/40 bg-nx-accent-fill/15 text-nx-accent hover:bg-nx-accent-fill hover:text-nx-on-fill text-xs font-semibold transition-all cursor-pointer shadow-nx-glow"
             >
               <CheckSquare className="h-4 w-4" />
               <span>{isAr ? "تصحيحات الحضور والتدقيق" : "Attendance Corrections & Audit"}</span>
             </button>
             <button
               onClick={() => vm.query.refetch()}
-              className="flex items-center gap-1.5 px-3.5 py-2.5 rounded-xl border border-[#2a3033] bg-[#14171a] text-[#9aa1a6] hover:text-white hover:border-[#c8ff05] text-xs font-semibold transition-all cursor-pointer"
+              className="flex items-center gap-1.5 px-3.5 py-2.5 rounded-xl border border-nx-line bg-nx-raised text-nx-ink-2 hover:text-nx-ink hover:border-nx-accent text-xs font-semibold transition-all cursor-pointer"
             >
               <RefreshCw className={`h-4 w-4 ${vm.query.isFetching ? "animate-spin" : ""}`} />
               <span>{isAr ? "تحديث القائمة" : "Refresh"}</span>
@@ -129,64 +129,64 @@ export function AttendanceQueueView() {
           {/* 2. Four Authentic KPI Metric Cards */}
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-3.5">
             {/* Card 1: Today's Sessions (Glow Lime Border) */}
-            <div className="relative rounded-2xl border-2 border-[#c8ff05] bg-[#12160d] p-4 shadow-[0_0_20px_rgba(200,255,5,0.12)] flex flex-col justify-between">
+            <div className="relative rounded-2xl border-2 border-nx-accent-fill bg-nx-accent-fill/15 p-4 shadow-[0_0_20px_rgba(200,255,5,0.12)] flex flex-col justify-between">
               <div className="flex items-start justify-between">
-                <span className="text-xs text-[#aeb5b5] font-semibold">{isAr ? "حصص اليوم" : "Today's Sessions"}</span>
-                <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-[#202b09] text-[#c8ff05]">
+                <span className="text-xs text-nx-ink-2 font-semibold">{isAr ? "حصص اليوم" : "Today's Sessions"}</span>
+                <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-nx-accent-fill/15 text-nx-accent">
                   <Calendar className="h-4 w-4" />
                 </div>
               </div>
               <div className="mt-2">
                 <div className="text-3xl font-black tracking-tight text-white">{totalSessionsCount}</div>
-                <div className="text-[11px] text-[#c8ff05] font-semibold mt-1">
+                <div className="text-[11px] text-nx-accent font-semibold mt-1">
                   {isAr ? "حصص مسجلة بالجدول" : "Active verified schedule"}
                 </div>
               </div>
             </div>
 
             {/* Card 2: Completed Attendance Sheets */}
-            <div className="relative rounded-2xl border border-[#2a3033] bg-[#101315] p-4 shadow-lg flex flex-col justify-between">
+            <div className="relative rounded-2xl border border-nx-line bg-nx-surface p-4 shadow-lg flex flex-col justify-between">
               <div className="flex items-start justify-between">
-                <span className="text-xs text-[#aeb5b5] font-semibold">{isAr ? "سجلات الحضور المكتملة" : "Completed Sheets"}</span>
-                <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-[#1b1e20] text-[#c8ff05]">
+                <span className="text-xs text-nx-ink-2 font-semibold">{isAr ? "سجلات الحضور المكتملة" : "Completed Sheets"}</span>
+                <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-nx-raised text-nx-accent">
                   <CheckCircle2 className="h-4 w-4" />
                 </div>
               </div>
               <div className="mt-2">
-                <div className="text-3xl font-black tracking-tight text-white">{completedCount} <span className="text-sm font-normal text-[#9aa1a6]">/ {totalSessionsCount}</span></div>
-                <div className="text-[11px] text-[#c8ff05] font-semibold mt-1">
+                <div className="text-3xl font-black tracking-tight text-white">{completedCount} <span className="text-sm font-normal text-nx-ink-2">/ {totalSessionsCount}</span></div>
+                <div className="text-[11px] text-nx-accent font-semibold mt-1">
                   {totalSessionsCount > 0 ? `${Math.round((completedCount / totalSessionsCount) * 100)}% attendance closed` : "100% complete"}
                 </div>
               </div>
             </div>
 
             {/* Card 3: Pending / In Progress */}
-            <div className="relative rounded-2xl border border-[#2a3033] bg-[#101315] p-4 shadow-lg flex flex-col justify-between">
+            <div className="relative rounded-2xl border border-nx-line bg-nx-surface p-4 shadow-lg flex flex-col justify-between">
               <div className="flex items-start justify-between">
-                <span className="text-xs text-[#aeb5b5] font-semibold">{isAr ? "حصص قيد التنفيذ أو معلقة" : "Pending Registration"}</span>
-                <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-[#1b1e20] text-[#fbbf24]">
+                <span className="text-xs text-nx-ink-2 font-semibold">{isAr ? "حصص قيد التنفيذ أو معلقة" : "Pending Registration"}</span>
+                <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-nx-raised text-warning">
                   <Clock className="h-4 w-4" />
                 </div>
               </div>
               <div className="mt-2">
                 <div className="text-3xl font-black tracking-tight text-white">{scheduledCount + inProgressCount}</div>
-                <div className="text-[11px] text-[#fbbf24] font-semibold mt-1">
+                <div className="text-[11px] text-warning font-semibold mt-1">
                   {isAr ? "في انتظار رصد الحضور" : "Awaiting attendance entry"}
                 </div>
               </div>
             </div>
 
             {/* Card 4: Registered Squads */}
-            <div className="relative rounded-2xl border border-[#2a3033] bg-[#101315] p-4 shadow-lg flex flex-col justify-between">
+            <div className="relative rounded-2xl border border-nx-line bg-nx-surface p-4 shadow-lg flex flex-col justify-between">
               <div className="flex items-start justify-between">
-                <span className="text-xs text-[#aeb5b5] font-semibold">{isAr ? "المجموعات التدريبية" : "Cohort Readiness"}</span>
-                <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-[#1b1e20] text-[#38bdf8]">
+                <span className="text-xs text-nx-ink-2 font-semibold">{isAr ? "المجموعات التدريبية" : "Cohort Readiness"}</span>
+                <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-nx-raised text-info">
                   <Users className="h-4 w-4" />
                 </div>
               </div>
               <div className="mt-2">
                 <div className="text-3xl font-black tracking-tight text-white">100%</div>
-                <div className="text-[11px] text-[#38bdf8] font-semibold mt-1">
+                <div className="text-[11px] text-info font-semibold mt-1">
                   {isAr ? "قوائم فعالة معتمدة" : "Effective-dated rosters active"}
                 </div>
               </div>
@@ -194,14 +194,14 @@ export function AttendanceQueueView() {
           </div>
 
           {/* 3. Filter Ribbon */}
-          <div className="flex flex-wrap items-center justify-between gap-3 p-4 rounded-2xl border border-[#2a3033] bg-[#101315] shadow-lg text-xs">
+          <div className="flex flex-wrap items-center justify-between gap-3 p-4 rounded-2xl border border-nx-line bg-nx-surface shadow-lg text-xs">
             <div className="flex flex-wrap items-center gap-3">
               <div className="flex items-center gap-2">
-                <span className="text-[#9aa1a6] font-semibold">{copy("sessionFilter")}:</span>
+                <span className="text-nx-ink-2 font-semibold">{copy("sessionFilter")}:</span>
                 <select
                   value={vm.status || ALL}
                   onChange={(e) => vm.filterStatus(e.target.value === ALL ? "" : (e.target.value as SessionStatus))}
-                  className="bg-[#14171a] border border-[#2a3033] text-white rounded-xl px-3 py-1.5 outline-none focus:border-[#c8ff05]"
+                  className="bg-nx-raised border border-nx-line text-white rounded-xl px-3 py-1.5 outline-none focus:border-nx-accent"
                 >
                   <option value={ALL}>{copy("allStatuses")}</option>
                   {SESSION_STATUSES.map((status) => (
@@ -212,7 +212,7 @@ export function AttendanceQueueView() {
             </div>
 
             {result && !vm.query.isError && (
-              <span className="text-[#aeb5b5] font-mono">
+              <span className="text-nx-ink-2 font-mono">
                 {copy("sessionCount", { count: result.totalCount })}
               </span>
             )}
@@ -222,7 +222,7 @@ export function AttendanceQueueView() {
           {vm.query.isPending && (
             <div className="py-24 flex flex-col items-center justify-center text-center">
               <LoadingSpinner size="lg" />
-              <p className="text-xs text-[#9aa1a6] mt-2">Loading attendance queue...</p>
+              <p className="text-xs text-nx-ink-2 mt-2">Loading attendance queue...</p>
             </div>
           )}
 
@@ -247,43 +247,43 @@ export function AttendanceQueueView() {
                     return (
                       <div
                         key={session.id}
-                        className="p-5 rounded-2xl border border-[#2a3033] bg-[#101315] hover:border-[#c8ff05]/60 transition-all space-y-3.5 shadow-xl flex flex-col justify-between"
+                        className="p-5 rounded-2xl border border-nx-line bg-nx-surface hover:border-nx-accent/60 transition-all space-y-3.5 shadow-xl flex flex-col justify-between"
                       >
                         <div className="space-y-2.5">
                           <div className="flex items-start justify-between gap-2">
                             <div className="flex items-center gap-2.5 min-w-0">
-                              <div className="h-10 w-10 rounded-xl border border-[#c8ff05]/40 bg-[#1a2307] text-[#c8ff05] flex items-center justify-center font-bold text-xs shrink-0">
+                              <div className="h-10 w-10 rounded-xl border border-nx-accent-fill/40 bg-nx-accent-fill/15 text-nx-accent flex items-center justify-center font-bold text-xs shrink-0">
                                 <Users className="h-5 w-5" />
                               </div>
                               <div className="min-w-0">
-                                <h3 className="text-sm font-bold text-white truncate">
+                                <h3 className="text-sm font-bold text-nx-ink truncate">
                                   {grpName}
                                 </h3>
-                                <p className="text-xs text-[#9aa1a6] truncate">
+                                <p className="text-xs text-nx-ink-2 truncate">
                                   {offName} • ID: {session.id.slice(0, 8)}
                                 </p>
                               </div>
                             </div>
 
-                            <span className="text-[10px] font-bold px-2 py-0.5 rounded-full border border-[#5a7800] bg-[#1a2307] text-[#c8ff05] shrink-0">
+                            <span className="text-[10px] font-bold px-2 py-0.5 rounded-full border border-nx-accent-fill/40 bg-nx-accent-fill/15 text-nx-accent shrink-0">
                               {session.status}
                             </span>
                           </div>
 
-                          <div className="grid grid-cols-2 gap-2 text-xs pt-1 border-t border-[#222629]">
-                            <div className="flex items-center gap-1.5 text-[#9aa1a6]">
-                              <Clock className="h-3.5 w-3.5 text-[#38bdf8]" />
+                          <div className="grid grid-cols-2 gap-2 text-xs pt-1 border-t border-nx-line">
+                            <div className="flex items-center gap-1.5 text-nx-ink-2">
+                              <Clock className="h-3.5 w-3.5 text-info" />
                               <span className="font-mono text-white">{timeString}</span>
                             </div>
-                            <div className="flex items-center gap-1.5 text-[#9aa1a6]">
-                              <MapPin className="h-3.5 w-3.5 text-[#fbbf24]" />
+                            <div className="flex items-center gap-1.5 text-nx-ink-2">
+                              <MapPin className="h-3.5 w-3.5 text-warning" />
                               <span className="truncate">{locName}</span>
                             </div>
                           </div>
                         </div>
 
-                        <div className="flex items-center justify-between pt-2 border-t border-[#222629]">
-                          <span className="text-[10px] text-[#9aa1a6]">
+                        <div className="flex items-center justify-between pt-2 border-t border-nx-line">
+                          <span className="text-[10px] text-nx-ink-2">
                             {new Date(session.data.startUtc).toLocaleDateString(language, { weekday: "short", month: "short", day: "numeric" })}
                           </span>
 
@@ -294,14 +294,14 @@ export function AttendanceQueueView() {
                                 setInitialCorrectionSessionId(session.id);
                                 setShowCorrectionWorkspace(true);
                               }}
-                              className="flex items-center gap-1 px-2.5 py-1.5 rounded-xl bg-[#14171a] text-[#9aa1a6] border border-[#2a3033] hover:text-[#c8ff05] hover:border-[#c8ff05] text-xs font-semibold transition-all"
+                              className="flex items-center gap-1 px-2.5 py-1.5 rounded-xl bg-nx-raised text-nx-ink-2 border border-nx-line hover:text-nx-accent hover:border-nx-accent text-xs font-semibold transition-all"
                             >
                               <CheckSquare className="h-3 w-3" />
                               <span>{isAr ? "تدقيق" : "Audit"}</span>
                             </button>
                             <Link
                               href={"/academy/attendance/" + encodeURIComponent(session.id)}
-                              className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-[#222e00] text-[#c8ff05] border border-[#5a7800] hover:bg-[#c8ff05] hover:text-[#0b0e11] text-xs font-bold transition-all shadow-[0_0_12px_rgba(200,255,5,0.12)]"
+                              className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-nx-accent-fill/15 text-nx-accent border border-nx-accent-fill/40 hover:bg-nx-accent-fill hover:text-nx-on-fill text-xs font-bold transition-all shadow-nx-glow"
                             >
                               <CheckSquare className="h-3.5 w-3.5" />
                               <span>{copy("openRegister") || "Take Attendance"}</span>
@@ -314,28 +314,28 @@ export function AttendanceQueueView() {
                   })}
                 </div>
               ) : (
-                <div className="p-12 rounded-2xl border border-[#2a3033] bg-[#101315] text-center space-y-2">
-                  <ClipboardCheck className="mx-auto h-8 w-8 text-[#9aa1a6]" />
-                  <h3 className="font-bold text-white text-sm">{copy("queueEmpty") || "No sessions requiring attendance."}</h3>
-                  <p className="text-xs text-[#9aa1a6]">{copy("queueEmptyHint") || "All scheduled sessions have verified attendance records."}</p>
+                <div className="p-12 rounded-2xl border border-nx-line bg-nx-surface text-center space-y-2">
+                  <ClipboardCheck className="mx-auto h-8 w-8 text-nx-ink-2" />
+                  <h3 className="font-bold text-nx-ink text-sm">{copy("queueEmpty") || "No sessions requiring attendance."}</h3>
+                  <p className="text-xs text-nx-ink-2">{copy("queueEmptyHint") || "All scheduled sessions have verified attendance records."}</p>
                 </div>
               )}
 
               {(pages > 1 || vm.page > 1) && (
                 <div className="flex items-center justify-between pt-2 text-xs">
-                  <span className="text-[#9aa1a6]">{copy("page", { page: result.page, pages })}</span>
+                  <span className="text-nx-ink-2">{copy("page", { page: result.page, pages })}</span>
                   <div className="flex gap-2">
                     <button
                       disabled={vm.page <= 1}
                       onClick={() => vm.setPage(vm.page - 1)}
-                      className="px-3 py-1.5 rounded-lg border border-[#2a3033] bg-[#14171a] text-white disabled:opacity-40"
+                      className="px-3 py-1.5 rounded-lg border border-nx-line bg-nx-raised text-white disabled:opacity-40"
                     >
                       {copy("previous") || "Previous"}
                     </button>
                     <button
                       disabled={vm.page >= pages}
                       onClick={() => vm.setPage(vm.page + 1)}
-                      className="px-3 py-1.5 rounded-lg border border-[#2a3033] bg-[#14171a] text-white disabled:opacity-40"
+                      className="px-3 py-1.5 rounded-lg border border-nx-line bg-nx-raised text-white disabled:opacity-40"
                     >
                       {copy("next") || "Next"}
                     </button>
@@ -488,18 +488,18 @@ function AttendanceCorrectionWorkspaceModal({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/85 backdrop-blur-md p-4 overflow-y-auto">
-      <div className="relative w-full max-w-6xl max-h-[92vh] overflow-y-auto rounded-2xl border border-[#2a3033] bg-[#080a0b] p-6 shadow-2xl space-y-5">
+      <div className="relative w-full max-w-6xl max-h-[92vh] overflow-y-auto rounded-2xl border border-nx-line bg-nx-surface p-6 shadow-2xl space-y-5">
         {/* 1. Headline */}
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-4 border-b border-[#222629]">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-4 border-b border-nx-line">
           <div className="flex items-center gap-3.5">
-            <div className="flex h-12 w-12 items-center justify-center rounded-xl border border-[#454d41] bg-gradient-to-br from-[#222923] to-[#0d1110] text-[#c8ff05] shadow-[0_7px_20px_rgba(0,0,0,0.5)] text-xl font-bold">
+            <div className="flex h-12 w-12 items-center justify-center rounded-xl border border-nx-accent-fill/40 bg-gradient-to-br from-nx-surface to-nx-surface text-nx-accent shadow-[0_7px_20px_rgba(0,0,0,0.5)] text-xl font-bold">
               ☑
             </div>
             <div>
               <h2 className="text-xl md:text-2xl font-black tracking-tight text-white">
                 {isAr ? "تصحيحات الحضور والتدقيق" : "Attendance Corrections & Audit"}
               </h2>
-              <p className="text-xs text-[#afb4b7] mt-0.5">
+              <p className="text-xs text-nx-ink-2 mt-0.5">
                 {isAr
                   ? "تصحيحات خاضعة للرقابة بعد الإرسال دون فقدان سجل الحصة أو أهلية القائمة."
                   : "Controlled post-submission corrections without losing session history or roster eligibility."}
@@ -510,15 +510,15 @@ function AttendanceCorrectionWorkspaceModal({
           <div className="flex items-center gap-2.5">
             {/* Session Selector */}
             {sessions.length > 0 && (
-              <div className="flex items-center gap-1.5 bg-[#14171a] border border-[#2a3033] rounded-lg px-2.5 py-1.5 text-xs">
-                <span className="text-[#9aa1a6]">{isAr ? "الحصة:" : "Session:"}</span>
+              <div className="flex items-center gap-1.5 bg-nx-raised border border-nx-line rounded-lg px-2.5 py-1.5 text-xs">
+                <span className="text-nx-ink-2">{isAr ? "الحصة:" : "Session:"}</span>
                 <select
                   value={selectedSessionId}
                   onChange={(e) => setSelectedSessionId(e.target.value)}
                   className="bg-transparent text-white font-medium outline-none cursor-pointer max-w-[200px] truncate"
                 >
                   {sessions.map((s) => (
-                    <option key={s.id} value={s.id} className="bg-[#14171a] text-white">
+                    <option key={s.id} value={s.id} className="bg-nx-raised text-white">
                       {s.groupName(language) || s.data.offeringNameEn} ({s.status})
                     </option>
                   ))}
@@ -529,7 +529,7 @@ function AttendanceCorrectionWorkspaceModal({
             <button
               type="button"
               onClick={onClose}
-              className="flex items-center gap-1.5 px-3.5 py-2 rounded-lg border border-[#41474a] bg-[#111416] text-[#eef2f2] text-xs font-bold hover:bg-[#1a1e21] cursor-pointer"
+              className="flex items-center gap-1.5 px-3.5 py-2 rounded-lg border border-nx-line-hi bg-nx-surface text-nx-ink text-xs font-bold hover:bg-nx-raised cursor-pointer"
             >
               <ArrowLeft className="h-4 w-4 rtl:rotate-180" />
               <span>{isAr ? "← جدول الحصص" : "← Session Attendance"}</span>
@@ -540,51 +540,51 @@ function AttendanceCorrectionWorkspaceModal({
         {/* 2. Four Authentic KPI Metric Cards Derived From Real Register */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3.5">
           {/* Present */}
-          <div className="relative rounded-2xl border border-[#7ca100] bg-[radial-gradient(200px_110px_at_100%_0,rgba(148,255,0,0.13),transparent),linear-gradient(140deg,#191f0f,#101315)] p-4 shadow-lg flex items-center justify-between">
+          <div className="relative rounded-2xl border border-nx-accent-fill/40 card-glass p-4 shadow-lg flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <div className="h-10 w-10 rounded-xl bg-[#202b09] text-[#c8ff05] flex items-center justify-center text-lg font-bold">
+              <div className="h-10 w-10 rounded-xl bg-nx-accent-fill/15 text-nx-accent flex items-center justify-center text-lg font-bold">
                 ▦
               </div>
               <div>
-                <div className="text-2xl font-black tracking-tight text-white">{presentCount}</div>
-                <div className="text-xs text-[#aeb5b5]">{isAr ? "حاضر" : "Present"}</div>
+                <div className="text-2xl font-black tracking-tight text-nx-ink">{presentCount}</div>
+                <div className="text-xs text-nx-ink-2">{isAr ? "حاضر" : "Present"}</div>
               </div>
             </div>
-            <span className="text-[11px] font-bold px-2 py-0.5 rounded-full bg-[#243817] text-[#a6f76b]">
+            <span className="text-[11px] font-bold px-2 py-0.5 rounded-full bg-nx-accent-fill/15 text-nx-accent">
               {presentPercent}%
             </span>
           </div>
 
           {/* Late */}
-          <div className="rounded-2xl border border-[#353d3c] bg-gradient-to-br from-[#171b1b] to-[#101314] p-4 shadow flex items-center gap-3">
-            <div className="h-10 w-10 rounded-xl bg-[#202b09] text-[#fbbf24] flex items-center justify-center text-lg font-bold">
+          <div className="rounded-2xl border border-nx-line-hi bg-gradient-to-br from-nx-surface to-nx-surface p-4 shadow flex items-center gap-3">
+            <div className="h-10 w-10 rounded-xl bg-nx-accent-fill/15 text-warning flex items-center justify-center text-lg font-bold">
               ◷
             </div>
             <div>
               <div className="text-2xl font-black tracking-tight text-white">{lateCount}</div>
-              <div className="text-xs text-[#aeb5b5]">{isAr ? "متأخر" : "Late"}</div>
+              <div className="text-xs text-nx-ink-2">{isAr ? "متأخر" : "Late"}</div>
             </div>
           </div>
 
           {/* Absent */}
-          <div className="rounded-2xl border border-[#353d3c] bg-gradient-to-br from-[#171b1b] to-[#101314] p-4 shadow flex items-center gap-3">
-            <div className="h-10 w-10 rounded-xl bg-[#202b09] text-[#ff8290] flex items-center justify-center text-lg font-bold">
+          <div className="rounded-2xl border border-nx-line-hi bg-gradient-to-br from-nx-surface to-nx-surface p-4 shadow flex items-center gap-3">
+            <div className="h-10 w-10 rounded-xl bg-nx-accent-fill/15 text-destructive flex items-center justify-center text-lg font-bold">
               ×
             </div>
             <div>
               <div className="text-2xl font-black tracking-tight text-white">{absentCount}</div>
-              <div className="text-xs text-[#aeb5b5]">{isAr ? "غائب" : "Absent"}</div>
+              <div className="text-xs text-nx-ink-2">{isAr ? "غائب" : "Absent"}</div>
             </div>
           </div>
 
           {/* Expected */}
-          <div className="rounded-2xl border border-[#353d3c] bg-gradient-to-br from-[#171b1b] to-[#101314] p-4 shadow flex items-center gap-3">
-            <div className="h-10 w-10 rounded-xl bg-[#202b09] text-[#c8ff05] flex items-center justify-center text-lg font-bold">
+          <div className="rounded-2xl border border-nx-line-hi bg-gradient-to-br from-nx-surface to-nx-surface p-4 shadow flex items-center gap-3">
+            <div className="h-10 w-10 rounded-xl bg-nx-accent-fill/15 text-nx-accent flex items-center justify-center text-lg font-bold">
               ☑
             </div>
             <div>
               <div className="text-2xl font-black tracking-tight text-white">{expectedCount}</div>
-              <div className="text-xs text-[#aeb5b5]">{isAr ? "متوقع" : "Expected"}</div>
+              <div className="text-xs text-nx-ink-2">{isAr ? "متوقع" : "Expected"}</div>
             </div>
           </div>
         </div>
@@ -592,15 +592,15 @@ function AttendanceCorrectionWorkspaceModal({
         {/* 3. Two-Column Layout */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-5">
           {/* Left Column: Register Correction Mode */}
-          <div className="lg:col-span-8 rounded-2xl border border-[#343b3e] bg-gradient-to-br from-[#15191b] to-[#0e1112] overflow-hidden flex flex-col justify-between">
+          <div className="lg:col-span-8 rounded-2xl border border-nx-line bg-gradient-to-br from-nx-surface to-nx-surface overflow-hidden flex flex-col justify-between">
             <div className="p-5 space-y-4">
-              <div className="flex items-center justify-between pb-3 border-b border-[#31373a]">
+              <div className="flex items-center justify-between pb-3 border-b border-nx-line">
                 <div className="flex items-center gap-2">
-                  <strong className="text-sm md:text-base font-bold text-white">
+                  <strong className="text-sm md:text-base font-bold text-nx-ink">
                     {isAr ? "سجل الحضور · وضع التصحيح" : "Attendance Register · Correction Mode"}
                   </strong>
                   {register?.session && (
-                    <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-[#1a2307] text-[#c8ff05] border border-[#5a7800]">
+                    <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-nx-accent-fill/15 text-nx-accent border border-nx-accent-fill/40">
                       v{register.session.version.slice(0, 8)}
                     </span>
                   )}
@@ -608,14 +608,14 @@ function AttendanceCorrectionWorkspaceModal({
                 <button
                   type="button"
                   onClick={handleDiscard}
-                  className="text-xs text-[#c8ff05] font-bold hover:underline cursor-pointer"
+                  className="text-xs text-nx-accent font-bold hover:underline cursor-pointer"
                 >
                   {isAr ? "استعادة السجل" : "Restore Record"}
                 </button>
               </div>
 
               {/* Callout */}
-              <div className="p-3.5 rounded-xl border border-[#687e00] bg-gradient-to-r from-[#26360c] to-[#172009] text-xs text-[#c9dfb4]">
+              <div className="p-3.5 rounded-xl border border-nx-accent-fill/40 bg-gradient-to-r from-nx-accent-fill/15 to-nx-accent-fill/15 text-xs text-nx-accent">
                 {isAr
                   ? "ⓘ وضع التصحيح — الحصة مكتملة. يتطلب التعديل إذنًا صريحًا وسببًا وسجل تدقيق."
                   : "ⓘ Correction mode — session completed. Edits require explicit permission, reason, and audit record."}
@@ -623,13 +623,13 @@ function AttendanceCorrectionWorkspaceModal({
 
               {/* Status Alert Messages */}
               {saveSuccess && (
-                <div className="p-3 rounded-xl border border-[#5a7800] bg-[#1a2307] text-[#c8ff05] text-xs flex items-center gap-2">
+                <div className="p-3 rounded-xl border border-nx-accent-fill/40 bg-nx-accent-fill/15 text-nx-accent text-xs flex items-center gap-2">
                   <CheckCircle2 className="h-4 w-4 shrink-0" />
                   <span>{saveSuccess}</span>
                 </div>
               )}
               {saveError && (
-                <div className="p-3 rounded-xl border border-[#ff8290]/40 bg-[#3b1c20]/60 text-[#ff8290] text-xs flex items-center gap-2">
+                <div className="p-3 rounded-xl border border-destructive/40 bg-destructive/15/60 text-destructive text-xs flex items-center gap-2">
                   <AlertCircle className="h-4 w-4 shrink-0" />
                   <span>{saveError}</span>
                 </div>
@@ -639,17 +639,17 @@ function AttendanceCorrectionWorkspaceModal({
               {registerVm.query.isPending ? (
                 <div className="py-12 flex flex-col items-center justify-center">
                   <LoadingSpinner size="md" />
-                  <p className="text-xs text-[#9aa1a6] mt-2">Loading session roster...</p>
+                  <p className="text-xs text-nx-ink-2 mt-2">Loading session roster...</p>
                 </div>
               ) : rows.length === 0 ? (
-                <div className="py-12 text-center text-xs text-[#9aa1a6]">
+                <div className="py-12 text-center text-xs text-nx-ink-2">
                   {isAr ? "لا توجد سجلات رياضيين لهذه الحصة." : "No athlete roster records found for this session."}
                 </div>
               ) : (
                 <div className="overflow-x-auto">
                   <table className="w-full text-xs border-collapse">
                     <thead>
-                      <tr className="h-10 bg-[#1b2022] text-[#b9c0c1] font-bold text-[11px] text-start">
+                      <tr className="h-10 bg-nx-raised text-nx-ink-2 font-bold text-[11px] text-start">
                         <th className="px-3 text-start">{isAr ? "الرياضي" : "Athlete"}</th>
                         <th className="px-3 text-start">{isAr ? "الحالة الحالية" : "Current Status"}</th>
                         <th className="px-3 text-start">{isAr ? "الحالة الجديدة" : "New Status"}</th>
@@ -657,7 +657,7 @@ function AttendanceCorrectionWorkspaceModal({
                         <th className="px-3 text-start">{isAr ? "الإجراء" : "Action"}</th>
                       </tr>
                     </thead>
-                    <tbody className="divide-y divide-[#303638]">
+                    <tbody className="divide-y divide-nx-line">
                       {rows.map((row) => {
                         const isSelected = row.athleteId === selectedAthleteId;
                         const athleteName = isAr ? row.displayNameAr || row.displayNameEn : row.displayNameEn;
@@ -668,23 +668,23 @@ function AttendanceCorrectionWorkspaceModal({
                             key={row.athleteId}
                             className={`h-13 transition-colors ${
                               isSelected
-                                ? "bg-[#253006]/60 border-y border-[#728b00]"
-                                : "hover:bg-[#15191b]"
+                                ? "bg-nx-accent-fill/15 border-y border-nx-accent-fill/40"
+                                : "hover:bg-nx-raised"
                             }`}
                           >
-                            <td className={`px-3 font-bold text-white ${isSelected ? "border-l-2 border-[#c8ff05]" : ""}`}>
+                            <td className={`px-3 font-bold text-nx-ink ${isSelected ? "border-l-2 border-nx-accent-fill" : ""}`}>
                               {athleteName}
                             </td>
                             <td className="px-3">
                               <span
                                 className={`inline-flex px-2.5 py-0.5 rounded-full text-[11px] font-bold border ${
                                   currentStatus === "Present"
-                                    ? "border-[#627b00] bg-[#1e2b09] text-[#b9fb30]"
+                                    ? "border-nx-accent-fill/40 bg-nx-accent-fill/15 text-nx-accent"
                                     : currentStatus === "Late"
-                                    ? "border-[#715a12] bg-[#372b09] text-[#ffd24d]"
+                                    ? "border-warning/30 bg-warning/15 text-warning"
                                     : currentStatus.startsWith("Absent")
-                                    ? "border-[#7a343e] bg-[#3b1c20] text-[#ff8290]"
-                                    : "border-[#41474a] bg-[#14171a] text-[#9aa1a6]"
+                                    ? "border-destructive/30 bg-destructive/15 text-destructive"
+                                    : "border-nx-line-hi bg-nx-raised text-nx-ink-2"
                                 }`}
                               >
                                 {currentStatus}
@@ -695,16 +695,16 @@ function AttendanceCorrectionWorkspaceModal({
                                 <select
                                   value={correctionStatus}
                                   onChange={(e) => setCorrectionStatus(e.target.value as AttendanceStatus)}
-                                  className="h-8 px-2 rounded-lg border border-[#374146] bg-[#0c1217] text-[#c9d0d4] text-xs focus:outline-none focus:border-[#c8ff05]"
+                                  className="h-8 px-2 rounded-lg border border-nx-line-hi bg-nx-surface text-nx-ink-2 text-xs focus:outline-none focus:border-nx-accent"
                                 >
                                   {ATTENDANCE_STATUSES.map((st) => (
-                                    <option key={st} value={st} className="bg-[#0c1217] text-white">
+                                    <option key={st} value={st} className="bg-nx-surface text-white">
                                       {st}
                                     </option>
                                   ))}
                                 </select>
                               ) : (
-                                <span className="text-[#9aa1a6]">—</span>
+                                <span className="text-nx-ink-2">—</span>
                               )}
                             </td>
                             <td className="px-3">
@@ -714,10 +714,10 @@ function AttendanceCorrectionWorkspaceModal({
                                   value={auditReason}
                                   placeholder={isAr ? "سبب إلزامي للتدقيق..." : "Mandatory audit reason..."}
                                   onChange={(e) => setAuditReason(e.target.value)}
-                                  className="h-8 px-2.5 w-full max-w-[200px] rounded-lg border border-[#374146] bg-[#0c1217] text-[#c9d0d4] text-xs focus:outline-none focus:border-[#c8ff05]"
+                                  className="h-8 px-2.5 w-full max-w-[200px] rounded-lg border border-nx-line-hi bg-nx-surface text-nx-ink-2 text-xs focus:outline-none focus:border-nx-accent"
                                 />
                               ) : (
-                                <span className="text-[#9aa1a6]">{row.attendance?.reason || "—"}</span>
+                                <span className="text-nx-ink-2">{row.attendance?.reason || "—"}</span>
                               )}
                             </td>
                             <td className="px-3">
@@ -725,7 +725,7 @@ function AttendanceCorrectionWorkspaceModal({
                                 <button
                                   type="button"
                                   onClick={handleDiscard}
-                                  className="px-2.5 py-1 rounded-lg border border-[#41474a] bg-[#111416] text-[#eef2f2] text-xs font-bold hover:bg-[#1a1e21] cursor-pointer"
+                                  className="px-2.5 py-1 rounded-lg border border-nx-line-hi bg-nx-surface text-nx-ink text-xs font-bold hover:bg-nx-raised cursor-pointer"
                                 >
                                   {isAr ? "تراجع" : "Revert"}
                                 </button>
@@ -733,7 +733,7 @@ function AttendanceCorrectionWorkspaceModal({
                                 <button
                                   type="button"
                                   onClick={() => setSelectedAthleteId(row.athleteId)}
-                                  className="px-2.5 py-1 rounded-lg border border-[#5a7800] bg-[#1a2307] text-[#c8ff05] text-xs font-bold hover:bg-[#263300] cursor-pointer"
+                                  className="px-2.5 py-1 rounded-lg border border-nx-accent-fill/40 bg-nx-accent-fill/15 text-nx-accent text-xs font-bold hover:bg-nx-accent-fill/25 cursor-pointer"
                                 >
                                   {isAr ? "تعديل" : "Edit"}
                                 </button>
@@ -749,7 +749,7 @@ function AttendanceCorrectionWorkspaceModal({
             </div>
 
             {/* Footer Line */}
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-4 border-t border-[#303738] bg-[#101315] text-[11px] text-[#a0aaab]">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-4 border-t border-nx-line bg-nx-surface text-[11px] text-nx-ink-2">
               <span>
                 {selectedRow
                   ? `${isAr ? "الرياضي المحدد:" : "Selected:"} ${
@@ -762,7 +762,7 @@ function AttendanceCorrectionWorkspaceModal({
                   type="button"
                   onClick={handleDiscard}
                   disabled={saving}
-                  className="px-3 py-1.5 rounded-lg border border-[#41474a] bg-[#111416] text-[#eef2f2] text-xs font-bold hover:bg-[#1a1e21] disabled:opacity-40 cursor-pointer"
+                  className="px-3 py-1.5 rounded-lg border border-nx-line-hi bg-nx-surface text-nx-ink text-xs font-bold hover:bg-nx-raised disabled:opacity-40 cursor-pointer"
                 >
                   {isAr ? "إلغاء التغيير" : "Discard Change"}
                 </button>
@@ -770,7 +770,7 @@ function AttendanceCorrectionWorkspaceModal({
                   type="button"
                   onClick={handleSaveCorrection}
                   disabled={saving || !auditReason.trim() || !registerVm.canCorrect || !selectedRow?.attendance}
-                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#c8ff05] text-[#131600] text-xs font-bold shadow-[0_0_24px_rgba(199,255,0,0.13)] hover:bg-[#b2e600] disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer"
+                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-nx-accent-fill text-nx-on-fill text-xs font-bold shadow-nx-glow hover:bg-nx-accent-fill disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer"
                 >
                   {saving && <LoadingSpinner size="sm" />}
                   <span>{saving ? (isAr ? "جاري الحفظ والتدقيق..." : "Saving & Auditing...") : (isAr ? "حفظ التصحيح المدقق" : "Save Audited Correction")}</span>
@@ -780,50 +780,50 @@ function AttendanceCorrectionWorkspaceModal({
           </div>
 
           {/* Right Column: Governed Audit Trail (Bound to Real API History) */}
-          <div className="lg:col-span-4 rounded-2xl border border-[#343b3e] bg-gradient-to-br from-[#15191b] to-[#0e1112] p-5 space-y-4">
-            <div className="flex items-center justify-between pb-3 border-b border-[#31373a]">
-              <strong className="text-sm md:text-base font-bold text-white">
+          <div className="lg:col-span-4 rounded-2xl border border-nx-line bg-gradient-to-br from-nx-surface to-nx-surface p-5 space-y-4">
+            <div className="flex items-center justify-between pb-3 border-b border-nx-line">
+              <strong className="text-sm md:text-base font-bold text-nx-ink">
                 {isAr ? "سجل التدقيق الحاكم" : "Governed Audit Trail"}
               </strong>
-              <span className="text-xs text-[#c8ff05] font-bold">{isAr ? "سجل للقراءة فقط" : "Read-only log"}</span>
+              <span className="text-xs text-nx-accent font-bold">{isAr ? "سجل للقراءة فقط" : "Read-only log"}</span>
             </div>
 
             <div className="space-y-3">
-              <div className="text-[11px] uppercase tracking-wider text-[#8f9c9f] font-bold">
+              <div className="text-[11px] uppercase tracking-wider text-nx-ink-2 font-bold">
                 {isAr ? "معلومات الحصة والرياضي" : "Session & Athlete Info"}
               </div>
-              <div className="h-px bg-[#303739]" />
+              <div className="h-px bg-nx-raised" />
 
               <div className="space-y-2.5 text-xs">
-                <div className="flex justify-between items-center py-1 border-b border-[#2a3031]">
-                  <span className="text-[11px] text-[#a2aaa9]">{isAr ? "الحصة" : "Session"}</span>
+                <div className="flex justify-between items-center py-1 border-b border-nx-line">
+                  <span className="text-[11px] text-nx-ink-2">{isAr ? "الحصة" : "Session"}</span>
                   <b className="text-white truncate max-w-[180px]">
                     {register?.session ? (register.session.groupName(language) || register.session.data.offeringNameEn) : "—"}
                   </b>
                 </div>
-                <div className="flex justify-between items-center py-1 border-b border-[#2a3031]">
-                  <span className="text-[11px] text-[#a2aaa9]">{isAr ? "حالة الحصة" : "Status"}</span>
-                  <span className="inline-flex px-2 py-0.5 rounded-full border border-[#627b00] bg-[#1e2b09] text-[#b9fb30] text-[11px] font-bold">
+                <div className="flex justify-between items-center py-1 border-b border-nx-line">
+                  <span className="text-[11px] text-nx-ink-2">{isAr ? "حالة الحصة" : "Status"}</span>
+                  <span className="inline-flex px-2 py-0.5 rounded-full border border-nx-accent-fill/40 bg-nx-accent-fill/15 text-nx-accent text-[11px] font-bold">
                     {register?.session.status || "Completed"}
                   </span>
                 </div>
-                <div className="flex justify-between items-center py-1 border-b border-[#2a3031]">
-                  <span className="text-[11px] text-[#a2aaa9]">{isAr ? "إصدار السجل" : "Version"}</span>
+                <div className="flex justify-between items-center py-1 border-b border-nx-line">
+                  <span className="text-[11px] text-nx-ink-2">{isAr ? "إصدار السجل" : "Version"}</span>
                   <b className="text-white font-mono">{selectedRow?.attendance?.version ? `v${selectedRow.attendance.version.slice(0, 8)}` : "v1"}</b>
                 </div>
-                <div className="flex justify-between items-center py-1 border-b border-[#2a3031]">
-                  <span className="text-[11px] text-[#a2aaa9]">{isAr ? "الرياضي" : "Athlete"}</span>
+                <div className="flex justify-between items-center py-1 border-b border-nx-line">
+                  <span className="text-[11px] text-nx-ink-2">{isAr ? "الرياضي" : "Athlete"}</span>
                   <b className="text-white truncate max-w-[180px]">
                     {selectedRow ? (isAr ? selectedRow.displayNameAr || selectedRow.displayNameEn : selectedRow.displayNameEn) : "—"}
                   </b>
                 </div>
-                <div className="flex justify-between items-center py-1 border-b border-[#2a3031]">
-                  <span className="text-[11px] text-[#a2aaa9]">{isAr ? "السبب مطلوب" : "Reason required"}</span>
+                <div className="flex justify-between items-center py-1 border-b border-nx-line">
+                  <span className="text-[11px] text-nx-ink-2">{isAr ? "السبب مطلوب" : "Reason required"}</span>
                   <span
                     className={`inline-flex px-2 py-0.5 rounded-full text-[11px] font-bold border ${
                       auditReason.trim()
-                        ? "border-[#627b00] bg-[#1e2b09] text-[#b9fb30]"
-                        : "border-[#715a12] bg-[#372b09] text-[#ffd24d]"
+                        ? "border-nx-accent-fill/40 bg-nx-accent-fill/15 text-nx-accent"
+                        : "border-warning/30 bg-warning/15 text-warning"
                     }`}
                   >
                     {auditReason.trim() ? (isAr ? "مكتمل" : "Provided") : (isAr ? "مطلوب" : "Required")}
@@ -831,8 +831,8 @@ function AttendanceCorrectionWorkspaceModal({
                 </div>
               </div>
 
-              <div className="h-px bg-[#303739]" />
-              <div className="text-[11px] uppercase tracking-wider text-[#8f9c9f] font-bold">
+              <div className="h-px bg-nx-raised" />
+              <div className="text-[11px] uppercase tracking-wider text-nx-ink-2 font-bold">
                 {isAr ? "سجل التدقيق والتصحيحات السابقة" : "Immutable Audit History"}
               </div>
 
@@ -840,35 +840,35 @@ function AttendanceCorrectionWorkspaceModal({
                 {historyQuery.isPending ? (
                   <div className="py-4 text-center">
                     <LoadingSpinner size="sm" />
-                    <span className="text-[11px] text-[#9aa1a6] mt-1 block">Loading audit history...</span>
+                    <span className="text-[11px] text-nx-ink-2 mt-1 block">Loading audit history...</span>
                   </div>
                 ) : historyEntries.length > 0 ? (
                   historyEntries.map((entry, idx) => (
-                    <div key={idx} className="p-3 rounded-xl bg-[#121618] border border-[#2f3839] space-y-1.5">
+                    <div key={idx} className="p-3 rounded-xl bg-nx-surface border border-nx-line space-y-1.5">
                       <div className="flex items-center justify-between text-[11px]">
-                        <span className="font-bold text-[#c8ff05]">
+                        <span className="font-bold text-nx-accent">
                           {entry.before.status} → {entry.after.status}
                         </span>
-                        <span className="text-[#a0a8a7]">
+                        <span className="text-nx-ink-2">
                           {new Date(entry.changedAtUtc).toLocaleDateString([], { month: "short", day: "numeric", hour: "2-digit", minute: "2-digit" })}
                         </span>
                       </div>
                       <div className="text-xs text-white [overflow-wrap:anywhere]">
                         {entry.correctionReason || "Administrative correction"}
                       </div>
-                      <div className="text-[10px] text-[#8f9c9f] font-mono truncate">
+                      <div className="text-[10px] text-nx-ink-2 font-mono truncate">
                         Actor: {entry.actorId.slice(0, 12)}...
                       </div>
                     </div>
                   ))
                 ) : (
-                  <div className="p-3 rounded-xl bg-[#121618] border border-[#2f3839] text-center text-xs text-[#a0a8a7]">
+                  <div className="p-3 rounded-xl bg-nx-surface border border-nx-line text-center text-xs text-nx-ink-2">
                     {isAr ? "لا توجد تعديلات تدقيق سابقة لهذا الرياضي." : "No prior audit corrections recorded for this athlete."}
                   </div>
                 )}
               </div>
 
-              <div className="p-3.5 rounded-xl border border-[#345327] bg-[#0c1510] text-[#c9dfb4] text-xs">
+              <div className="p-3.5 rounded-xl border border-nx-accent-fill/40 bg-nx-accent-fill/15 text-nx-accent text-xs">
                 {isAr
                   ? "لا تستبدل أبداً سجل حضور مرسل دون تسجيل الفاعل، والوقت، والقيم القديمة والجديدة، والسبب وقرار التفويض."
                   : "Never silently overwrite a submitted attendance record. Record actor, time, old/new values, reason and authorization decision."}

@@ -314,11 +314,11 @@ export function ResetPasswordDialog({
   admin,
   onResetPassword,
   isLoading,
-  defaultPassword = "P@ssw0rd",
+  defaultPassword = "",
 }: ResetPasswordDialogProps) {
   const { t } = useI18n();
   const [password, setPassword] = useState("");
-  const [useDefault, setUseDefault] = useState(true);
+  const [useDefault, setUseDefault] = useState(false);
 
   // Reset form when opening
   const [prevOpen, setPrevOpen] = useState(open);
@@ -326,7 +326,7 @@ export function ResetPasswordDialog({
     setPrevOpen(open);
     if (open) {
       setPassword("");
-      setUseDefault(true);
+      setUseDefault(false);
     }
   }
 

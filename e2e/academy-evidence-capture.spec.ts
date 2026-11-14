@@ -7,7 +7,10 @@ const EVIDENCE_DIR =
   process.env.EVIDENCE_DIR ||
   "C:/Users/DELL/.gemini/antigravity/brain/1b6fac78-8e5d-49d1-9eff-f1896f2e6de6/evidence_screens";
 
-async function loginUser(page: any, email: string, pass: string = process.env.UAT_PASSWORD || "P@ssw0rd") {
+async function loginUser(page: any, email: string, pass: string = process.env.UAT_PASSWORD || process.env.SCRIPE_UAT_PASSWORD || "") {
+  if (!pass) {
+    throw new Error("UAT_PASSWORD or SCRIPE_UAT_PASSWORD environment variable is required.");
+  }
   await page.goto("/login");
   await page.waitForLoadState("domcontentloaded");
   const identifierInput = page.locator("#identifier");

@@ -34,11 +34,11 @@ export function FeesReceivablesTable({
 
   if (!items || items.length === 0) {
     return (
-      <div className="rounded-xl border border-[#2a3033] bg-[#101214] p-12 text-center">
-        <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-xl bg-[#191d20] text-zinc-500">
+      <div className="rounded-xl border border-nx-line bg-nx-surface p-12 text-center">
+        <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-xl bg-nx-raised text-zinc-500">
           <ShieldAlert className="h-6 w-6" />
         </div>
-        <h3 className="mt-4 text-sm font-semibold text-white">{t("empty.title") || "No fees or receivables found"}</h3>
+        <h3 className="mt-4 text-sm font-semibold text-nx-ink">{t("empty.title") || "No fees or receivables found"}</h3>
         <p className="mt-1 text-xs text-zinc-400">
           {t("empty.description") || "No enrollment fee obligations match the selected branch, program, or status filters."}
         </p>
@@ -127,17 +127,17 @@ export function FeesReceivablesTable({
   return (
     <div className="space-y-3">
       {/* ── Table Container ── */}
-      <div className="overflow-hidden rounded-xl border border-[#2a3033] bg-[#101214]">
+      <div className="overflow-hidden rounded-xl border border-nx-line bg-nx-surface">
         <div className="overflow-x-auto">
           <table className="w-full border-collapse text-start text-xs">
             <thead>
-              <tr className="border-b border-[#2a3033] bg-[#14171a] text-zinc-400">
+              <tr className="border-b border-nx-line bg-nx-raised text-zinc-400">
                 <th className="w-10 px-3 py-3 text-center">
                   <input
                     type="checkbox"
                     checked={selectedIds.size === items.length && items.length > 0}
                     onChange={toggleSelectAll}
-                    className="h-3.5 w-3.5 rounded border-[#2a3033] bg-[#191d20] text-[#c8ff05] focus:ring-0 focus:ring-offset-0"
+                    className="h-3.5 w-3.5 rounded border-nx-line bg-nx-raised text-nx-accent focus:ring-0 focus:ring-offset-0"
                   />
                 </th>
                 <th className="px-3 py-3 text-start font-medium">{t("table.invoiceNumber") || "Invoice #"}</th>
@@ -152,7 +152,7 @@ export function FeesReceivablesTable({
                 <th className="w-12 px-3 py-3 text-center font-medium">{t("table.actions") || "Actions"}</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-[#1e2327]">
+            <tbody className="divide-y divide-nx-line">
               {pagedItems.map((item, idx) => {
                 const isSelected = selectedItem?.enrollmentId === item.enrollmentId;
                 const isChecked = selectedIds.has(item.enrollmentId);
@@ -165,8 +165,8 @@ export function FeesReceivablesTable({
                     onClick={() => onSelectItem(item)}
                     className={`cursor-pointer transition-colors ${
                       isSelected
-                        ? "border-s-2 border-s-[#c8ff05] bg-[#c8ff05]/10"
-                        : "hover:bg-[#14171a]"
+                        ? "border-s-2 border-s-nx-accent-fill bg-nx-accent-fill/10"
+                        : "hover:bg-nx-raised"
                     }`}
                   >
                     {/* Checkbox */}
@@ -175,13 +175,13 @@ export function FeesReceivablesTable({
                         type="checkbox"
                         checked={isChecked}
                         onChange={() => {}}
-                        className="h-3.5 w-3.5 rounded border-[#2a3033] bg-[#191d20] text-[#c8ff05] focus:ring-0 focus:ring-offset-0"
+                        className="h-3.5 w-3.5 rounded border-nx-line bg-nx-raised text-nx-accent focus:ring-0 focus:ring-offset-0"
                       />
                     </td>
 
                     {/* Invoice # */}
                     <td className="px-3 py-3 font-mono text-[11px] font-semibold text-zinc-300">
-                      <span className={isSelected ? "text-[#c8ff05]" : "text-white"}>
+                      <span className={isSelected ? "text-nx-accent" : "text-white"}>
                         {invNumber}
                       </span>
                     </td>
@@ -189,11 +189,11 @@ export function FeesReceivablesTable({
                     {/* Athlete */}
                     <td className="px-3 py-3">
                       <div className="flex items-center gap-2">
-                        <div className="flex h-7 w-7 items-center justify-center rounded-full bg-[#191d20] border border-[#2a3033] text-xs font-semibold text-zinc-300">
+                        <div className="flex h-7 w-7 items-center justify-center rounded-full bg-nx-raised border border-nx-line text-xs font-semibold text-zinc-300">
                           {getAthleteInitial(item.athleteNameEn)}
                         </div>
                         <div>
-                          <span className="block font-medium text-white">
+                          <span className="block font-medium text-nx-ink">
                             {item.athleteNameEn || "Ahmed Essam"}
                           </span>
                           {item.athleteNameAr && (
@@ -233,7 +233,7 @@ export function FeesReceivablesTable({
                     </td>
 
                     {/* Amount */}
-                    <td className="px-3 py-3 text-end font-mono font-medium text-white">
+                    <td className="px-3 py-3 text-end font-mono font-medium text-nx-ink">
                       {currency} {item.totalInvoicedAmount > 0 ? item.totalInvoicedAmount.toLocaleString() : "18,000"}
                     </td>
 
@@ -264,7 +264,7 @@ export function FeesReceivablesTable({
                       <button
                         type="button"
                         aria-label="Actions"
-                        className="inline-flex h-7 w-7 items-center justify-center rounded-lg text-zinc-400 hover:bg-[#191d20] hover:text-white"
+                        className="inline-flex h-7 w-7 items-center justify-center rounded-lg text-zinc-400 hover:bg-nx-raised hover:text-nx-ink"
                       >
                         <MoreHorizontal className="h-4 w-4" />
                       </button>
@@ -277,11 +277,11 @@ export function FeesReceivablesTable({
         </div>
 
         {/* ── Pagination Footer matching Design Pack ── */}
-        <div className="flex flex-col gap-3 border-t border-[#2a3033] bg-[#14171a] px-4 py-3 sm:flex-row sm:items-center sm:justify-between text-xs text-zinc-400">
+        <div className="flex flex-col gap-3 border-t border-nx-line bg-nx-raised px-4 py-3 sm:flex-row sm:items-center sm:justify-between text-xs text-zinc-400">
           <div>
-            Showing <span className="font-semibold text-white">{startIdx + 1}</span> -{" "}
-            <span className="font-semibold text-white">{Math.min(startIdx + pageSize, total)}</span> of{" "}
-            <span className="font-semibold text-white">{total}</span> invoices
+            Showing <span className="font-semibold text-nx-ink">{startIdx + 1}</span> -{" "}
+            <span className="font-semibold text-nx-ink">{Math.min(startIdx + pageSize, total)}</span> of{" "}
+            <span className="font-semibold text-nx-ink">{total}</span> invoices
           </div>
 
           <div className="flex items-center gap-1">
@@ -290,7 +290,7 @@ export function FeesReceivablesTable({
               disabled={page <= 1}
               onClick={() => setPage((p) => Math.max(p - 1, 1))}
               aria-label="Previous Page"
-              className="flex h-7 w-7 items-center justify-center rounded-lg border border-[#2a3033] bg-[#101214] text-zinc-400 hover:text-white disabled:opacity-40"
+              className="flex h-7 w-7 items-center justify-center rounded-lg border border-nx-line bg-nx-surface text-zinc-400 hover:text-nx-ink disabled:opacity-40"
             >
               <ChevronLeft className="h-4 w-4" />
             </button>
@@ -305,8 +305,8 @@ export function FeesReceivablesTable({
                   onClick={() => setPage(pNum)}
                   className={`flex h-7 min-w-7 items-center justify-center rounded-lg px-2 text-xs font-mono font-medium transition-colors ${
                     isCurr
-                      ? "bg-[#c8ff05] text-black font-bold"
-                      : "border border-[#2a3033] bg-[#101214] text-zinc-400 hover:text-white"
+                      ? "bg-nx-accent-fill text-black font-bold"
+                      : "border border-nx-line bg-nx-surface text-zinc-400 hover:text-nx-ink"
                   }`}
                 >
                   {pNum}
@@ -322,8 +322,8 @@ export function FeesReceivablesTable({
                   onClick={() => setPage(totalPages)}
                   className={`flex h-7 min-w-7 items-center justify-center rounded-lg px-2 text-xs font-mono font-medium ${
                     page === totalPages
-                      ? "bg-[#c8ff05] text-black font-bold"
-                      : "border border-[#2a3033] bg-[#101214] text-zinc-400 hover:text-white"
+                      ? "bg-nx-accent-fill text-black font-bold"
+                      : "border border-nx-line bg-nx-surface text-zinc-400 hover:text-nx-ink"
                   }`}
                 >
                   {totalPages}
@@ -336,7 +336,7 @@ export function FeesReceivablesTable({
               disabled={page >= totalPages}
               onClick={() => setPage((p) => Math.min(p + 1, totalPages))}
               aria-label="Next Page"
-              className="flex h-7 w-7 items-center justify-center rounded-lg border border-[#2a3033] bg-[#101214] text-zinc-400 hover:text-white disabled:opacity-40"
+              className="flex h-7 w-7 items-center justify-center rounded-lg border border-nx-line bg-nx-surface text-zinc-400 hover:text-nx-ink disabled:opacity-40"
             >
               <ChevronRight className="h-4 w-4" />
             </button>
@@ -346,7 +346,7 @@ export function FeesReceivablesTable({
             <span>Rows per page:</span>
             <select
               defaultValue="10"
-              className="rounded-lg border border-[#2a3033] bg-[#101214] px-2 py-1 text-xs text-white focus:outline-none"
+              className="rounded-lg border border-nx-line bg-nx-surface px-2 py-1 text-xs text-white focus:outline-none"
             >
               <option value="10">10</option>
               <option value="25">25</option>

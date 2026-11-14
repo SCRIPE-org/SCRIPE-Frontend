@@ -5,8 +5,8 @@ test.use({ channel: "chrome" });
 test.describe("SCRIPE Academy S0-S4 Real Browser Smoke Acceptance", () => {
   test.describe.configure({ mode: "serial", timeout: 180_000 });
 
-  const adminEmail = "uat.tenantadmin@hilal.local";
-  const adminPassword = process.env.UAT_PASSWORD || "P@ssw0rd";
+  const adminEmail = process.env.UAT_USERNAME || process.env.SCRIPE_UAT_USERNAME || "uat.tenantadmin@hilal.local";
+  const adminPassword = process.env.UAT_PASSWORD || process.env.SCRIPE_UAT_PASSWORD || "";
 
   test("1. Health Check: Backend API is live and responds 200 OK", async ({ request }) => {
     const res = await request.get("http://localhost:5035/health/live");

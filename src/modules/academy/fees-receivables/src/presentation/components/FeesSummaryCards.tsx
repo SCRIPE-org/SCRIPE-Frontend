@@ -31,19 +31,19 @@ export function FeesSummaryCards({ summaries, t }: FeesSummaryCardsProps) {
   return (
     <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3">
       {/* 1. Revenue Collected MTD - Highlighted with Signature Neon Lime Glow */}
-      <div className="relative overflow-hidden rounded-xl border border-[#c8ff05]/80 bg-[#101214] p-4 shadow-[0_0_20px_rgba(200,255,5,0.12)] transition-all">
+      <div className="relative overflow-hidden rounded-xl border border-nx-accent-fill/80 bg-nx-surface p-4 shadow-[0_0_20px_rgba(200,255,5,0.12)] transition-all">
         <div className="flex items-center justify-between">
-          <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-[#c8ff05]/15 text-[#c8ff05]">
+          <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-nx-accent-fill/15 text-nx-accent">
             <Coins className="h-5 w-5" />
           </div>
-          <span className="inline-flex items-center gap-1 rounded border border-[#c8ff05]/40 bg-[#c8ff05]/10 px-1.5 py-0.5 text-[10px] font-mono font-medium text-[#c8ff05]">
+          <span className="inline-flex items-center gap-1 rounded border border-nx-accent-fill/40 bg-nx-accent-fill/10 px-1.5 py-0.5 text-[10px] font-mono font-medium text-nx-accent">
             <TrendingUp className="h-3 w-3" />
             +8.9%
           </span>
         </div>
         <div className="mt-3">
           <div className="flex items-baseline gap-1.5">
-            <span className="text-xs font-semibold text-[#c8ff05]/80">{currency}</span>
+            <span className="text-xs font-semibold text-nx-accent/80">{currency}</span>
             <span className="text-xl font-bold tracking-tight text-white font-mono">
               {totalPaid > 0 ? totalPaid.toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 0 }) : "1,284,500"}
             </span>
@@ -55,7 +55,7 @@ export function FeesSummaryCards({ summaries, t }: FeesSummaryCardsProps) {
       </div>
 
       {/* 2. Outstanding Balance */}
-      <div className="rounded-xl border border-[#2a3033] bg-[#101214] p-4 transition-all hover:border-zinc-700">
+      <div className="rounded-xl border border-nx-line bg-nx-surface p-4 transition-all hover:border-zinc-700">
         <div className="flex items-center justify-between">
           <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-amber-500/15 text-amber-400">
             <Hourglass className="h-5 w-5" />
@@ -75,7 +75,7 @@ export function FeesSummaryCards({ summaries, t }: FeesSummaryCardsProps) {
       </div>
 
       {/* 3. Overdue Invoices */}
-      <div className="rounded-xl border border-[#2a3033] bg-[#101214] p-4 transition-all hover:border-zinc-700">
+      <div className="rounded-xl border border-nx-line bg-nx-surface p-4 transition-all hover:border-zinc-700">
         <div className="flex items-center justify-between">
           <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-rose-500/15 text-rose-400">
             <AlertTriangle className="h-5 w-5" />
@@ -98,7 +98,7 @@ export function FeesSummaryCards({ summaries, t }: FeesSummaryCardsProps) {
       </div>
 
       {/* 4. Active Enrollments */}
-      <div className="rounded-xl border border-[#2a3033] bg-[#101214] p-4 transition-all hover:border-zinc-700">
+      <div className="rounded-xl border border-nx-line bg-nx-surface p-4 transition-all hover:border-zinc-700">
         <div className="flex items-center justify-between">
           <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-emerald-500/15 text-emerald-400">
             <Users className="h-5 w-5" />
@@ -121,7 +121,7 @@ export function FeesSummaryCards({ summaries, t }: FeesSummaryCardsProps) {
       </div>
 
       {/* 5. Collection Rate */}
-      <div className="rounded-xl border border-[#2a3033] bg-[#101214] p-4 transition-all hover:border-zinc-700">
+      <div className="rounded-xl border border-nx-line bg-nx-surface p-4 transition-all hover:border-zinc-700">
         <div className="flex items-center justify-between">
           <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-emerald-500/15 text-emerald-400">
             <CheckCircle2 className="h-5 w-5" />

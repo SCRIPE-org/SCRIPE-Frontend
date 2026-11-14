@@ -210,7 +210,7 @@ export function AcademySportsSetupView() {
             <span className="text-nx-ink font-bold">{isAr ? "إعدادات الرياضات" : "Sports Setup"}</span>
           </div>
           <div className="flex items-center gap-3">
-            <div className="flex size-11 items-center justify-center rounded-xl bg-gradient-to-br from-[#222923] to-[#0d1110] border border-[#454d41] text-[#c8ff05] shadow-lg">
+            <div className="flex size-11 items-center justify-center rounded-xl bg-gradient-to-br from-nx-surface to-nx-surface border border-nx-accent-fill/40 text-nx-accent shadow-lg">
               <span className="text-2xl font-bold">◈</span>
             </div>
             <div>
@@ -231,15 +231,15 @@ export function AcademySportsSetupView() {
             type="button"
             onClick={fetchSports}
             disabled={loading}
-            className="rounded-lg border border-[#353d3c] bg-[#111416] px-3.5 py-2 text-xs font-bold text-nx-ink hover:bg-[#1a1f21] transition-colors flex items-center gap-2"
+            className="rounded-lg border border-nx-line-hi bg-nx-surface px-3.5 py-2 text-xs font-bold text-nx-ink hover:bg-nx-raised transition-colors flex items-center gap-2"
           >
-            <RefreshCw className={`h-3.5 w-3.5 text-[#c8ff05] ${loading ? "animate-spin" : ""}`} />
+            <RefreshCw className={`h-3.5 w-3.5 text-nx-accent ${loading ? "animate-spin" : ""}`} />
             <span>{isAr ? "مزامنة الكتالوج" : "Sync Registry"}</span>
           </button>
           <button
             type="button"
             onClick={() => setIsAddSportOpen(true)}
-            className="rounded-lg bg-[#c8ff05] border border-[#c8ff05] px-4 py-2 text-xs font-bold text-[#131600] shadow-[0_0_24px_rgba(199,255,0,0.18)] hover:brightness-105 transition-all flex items-center gap-1.5 cursor-pointer"
+            className="rounded-lg bg-nx-accent-fill border border-nx-accent-fill px-4 py-2 text-xs font-bold text-nx-on-fill shadow-nx-glow hover:brightness-105 transition-all flex items-center gap-1.5 cursor-pointer"
           >
             <Plus className="h-4 w-4" />
             <span>{isAr ? "إضافة رياضة" : "Add Sport"}</span>
@@ -249,20 +249,20 @@ export function AcademySportsSetupView() {
 
       {/* 4 Top KPI Cards */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3.5">
-        <div className="h-[105px] rounded-xl border border-[#7ca100] bg-gradient-to-br from-[#1c2602] to-[#101314] p-4 flex flex-col justify-between relative overflow-hidden">
+        <div className="h-[105px] rounded-xl border border-nx-accent-fill/40 bg-gradient-to-br from-nx-surface to-nx-surface p-4 flex flex-col justify-between relative overflow-hidden">
           <div className="flex items-center justify-between">
-            <span className="text-[#c8ff05] text-lg font-bold">◈</span>
-            <span className="text-[10px] font-bold text-[#c8ff05] bg-[#c8ff05]/20 px-1.5 py-0.5 rounded border border-[#c8ff05]/30">+1</span>
+            <span className="text-nx-accent text-lg font-bold">◈</span>
+            <span className="text-[10px] font-bold text-nx-accent bg-nx-accent-fill/20 px-1.5 py-0.5 rounded border border-nx-accent-fill/30">+1</span>
           </div>
           <div>
-            <div className="text-2xl font-black text-[#c8ff05] font-mono leading-none">{enabledCount}</div>
+            <div className="text-2xl font-black text-nx-accent font-mono leading-none">{enabledCount}</div>
             <div className="text-xs text-nx-ink-2 mt-1 font-medium">{isAr ? "الرياضات المفعلة" : "Configured Sports"}</div>
           </div>
         </div>
 
-        <div className="h-[105px] rounded-xl border border-[#353d3c] bg-gradient-to-br from-[#171b1b] to-[#101314] p-4 flex flex-col justify-between relative overflow-hidden">
+        <div className="h-[105px] rounded-xl border border-nx-line-hi bg-gradient-to-br from-nx-surface to-nx-surface p-4 flex flex-col justify-between relative overflow-hidden">
           <div className="flex items-center justify-between">
-            <span className="text-[#9aa1a6] text-lg font-bold">▤</span>
+            <span className="text-nx-ink-2 text-lg font-bold">▤</span>
           </div>
           <div>
             <div className="text-2xl font-black text-nx-ink font-mono leading-none">12</div>
@@ -270,9 +270,9 @@ export function AcademySportsSetupView() {
           </div>
         </div>
 
-        <div className="h-[105px] rounded-xl border border-[#353d3c] bg-gradient-to-br from-[#171b1b] to-[#101314] p-4 flex flex-col justify-between relative overflow-hidden">
+        <div className="h-[105px] rounded-xl border border-nx-line-hi bg-gradient-to-br from-nx-surface to-nx-surface p-4 flex flex-col justify-between relative overflow-hidden">
           <div className="flex items-center justify-between">
-            <span className="text-[#9aa1a6] text-lg font-bold">▦</span>
+            <span className="text-nx-ink-2 text-lg font-bold">▦</span>
           </div>
           <div>
             <div className="text-2xl font-black text-nx-ink font-mono leading-none">{activeProgramsTotal || 2}</div>
@@ -280,9 +280,9 @@ export function AcademySportsSetupView() {
           </div>
         </div>
 
-        <div className="h-[105px] rounded-xl border border-[#353d3c] bg-gradient-to-br from-[#171b1b] to-[#101314] p-4 flex flex-col justify-between relative overflow-hidden">
+        <div className="h-[105px] rounded-xl border border-nx-line-hi bg-gradient-to-br from-nx-surface to-nx-surface p-4 flex flex-col justify-between relative overflow-hidden">
           <div className="flex items-center justify-between">
-            <span className="text-[#c8ff05] text-lg font-bold">☑</span>
+            <span className="text-nx-accent text-lg font-bold">☑</span>
           </div>
           <div>
             <div className="text-2xl font-black text-nx-ink font-mono leading-none">100%</div>
@@ -311,8 +311,8 @@ export function AcademySportsSetupView() {
       {/* Two-Column Split Layout */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-5">
         {/* Left Panel: Sport Registry (approx 5 cols) */}
-        <div className="lg:col-span-5 rounded-2xl border border-[#32393c] bg-[#101214] flex flex-col h-[580px] overflow-hidden">
-          <div className="h-12 border-b border-[#2a3033] px-5 flex items-center justify-between bg-[#14171a]">
+        <div className="lg:col-span-5 rounded-2xl border border-nx-line bg-nx-surface flex flex-col h-[580px] overflow-hidden">
+          <div className="h-12 border-b border-nx-line px-5 flex items-center justify-between bg-nx-raised">
             <span className="font-bold text-sm tracking-wide text-nx-ink">
               {isAr ? "سجل الرياضات المعتمد" : "Sport Registry"}
             </span>
@@ -330,7 +330,7 @@ export function AcademySportsSetupView() {
                 placeholder={isAr ? "بحث في الرياضات أو التخصصات..." : "Search sport or discipline..."}
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full rounded-lg border border-[#343b3e] bg-[#0b0e10] pl-9 pr-3 py-2 text-xs text-nx-ink placeholder:text-nx-ink-3 focus:border-[#c8ff05] focus:outline-none"
+                className="w-full rounded-lg border border-nx-line bg-nx-surface pl-9 pr-3 py-2 text-xs text-nx-ink placeholder:text-nx-ink-3 focus:border-nx-accent focus:outline-none"
               />
             </div>
 
@@ -355,12 +355,12 @@ export function AcademySportsSetupView() {
                       onClick={() => setSelectedSportId(sport.id!)}
                       className={`flex items-center justify-between p-3.5 rounded-xl border cursor-pointer transition-all ${
                         isSelected
-                          ? "bg-gradient-to-r from-[#222e00] to-[#121804] border-[#5a7800] shadow-[0_4px_16px_rgba(0,0,0,0.4)]"
-                          : "bg-[#14171a] border-[#2a3033] hover:border-[#424a4e]"
+                          ? "bg-gradient-to-r from-nx-accent-fill/15 to-nx-surface border-nx-accent-fill/40 shadow-[0_4px_16px_rgba(0,0,0,0.4)]"
+                          : "bg-nx-raised border-nx-line hover:border-nx-line-hi"
                       }`}
                     >
                       <div className="flex items-center gap-3.5">
-                        <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-[#1a2307] text-[#c8ff05] border border-[#5a7800] shrink-0">
+                        <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-nx-accent-fill/15 text-nx-accent border border-nx-accent-fill/40 shrink-0">
                           <SportIcon code={sport.code} className="h-5 w-5" />
                         </div>
                         <div>
@@ -376,8 +376,8 @@ export function AcademySportsSetupView() {
                       <span
                         className={`text-[10px] font-bold px-2.5 py-1 rounded-full border ${
                           sport.isEnabled
-                            ? "bg-[#1c2707] text-[#c8ff05] border-[#5a7800]"
-                            : "bg-[#1f2224] text-[#8e9598] border-[#343b3e]"
+                            ? "bg-nx-accent-fill/15 text-nx-accent border-nx-accent-fill/40"
+                            : "bg-nx-raised text-nx-ink-2 border-nx-line"
                         }`}
                       >
                         {sport.isEnabled ? (isAr ? "مفعلة" : "Enabled") : (isAr ? "معطلة" : "Disabled")}
@@ -391,8 +391,8 @@ export function AcademySportsSetupView() {
         </div>
 
         {/* Right Panel: Sport Configuration (approx 7 cols) */}
-        <div className="lg:col-span-7 rounded-2xl border border-[#32393c] bg-[#101214] flex flex-col h-[580px] overflow-hidden">
-          <div className="h-12 border-b border-[#2a3033] px-5 flex items-center justify-between bg-[#14171a]">
+        <div className="lg:col-span-7 rounded-2xl border border-nx-line bg-nx-surface flex flex-col h-[580px] overflow-hidden">
+          <div className="h-12 border-b border-nx-line px-5 flex items-center justify-between bg-nx-raised">
             <span className="font-bold text-sm tracking-wide text-nx-ink">
               {isAr ? "تكوين الرياضة المختارة" : "Sport Configuration"}
             </span>
@@ -404,8 +404,8 @@ export function AcademySportsSetupView() {
                   disabled={actionInProgressId === (selectedSport.id || selectedSport.sportId)}
                   className={`rounded-lg px-3 py-1.5 text-xs font-bold transition-all flex items-center gap-1.5 ${
                     selectedSport.isEnabled
-                      ? "border border-[#80404b] text-[#ff909b] hover:bg-[#80404b]/20"
-                      : "bg-[#c8ff05] text-[#131600] hover:brightness-105"
+                      ? "border border-destructive/30 text-destructive hover:bg-destructive/20"
+                      : "bg-nx-accent-fill text-nx-on-fill hover:brightness-105"
                   }`}
                 >
                   {actionInProgressId === (selectedSport.id || selectedSport.sportId) ? (
@@ -419,9 +419,9 @@ export function AcademySportsSetupView() {
               )}
               <button
                 type="button"
-                className="rounded-lg border border-[#41474a] bg-[#111416] px-3 py-1.5 text-xs font-bold text-nx-ink hover:bg-[#1a1f21] flex items-center gap-1"
+                className="rounded-lg border border-nx-line-hi bg-nx-surface px-3 py-1.5 text-xs font-bold text-nx-ink hover:bg-nx-raised flex items-center gap-1"
               >
-                <Edit2 className="h-3.5 w-3.5 text-[#c8ff05]" />
+                <Edit2 className="h-3.5 w-3.5 text-nx-accent" />
                 <span>{isAr ? "تعديل الإعدادات" : "Edit Sport"}</span>
               </button>
             </div>
@@ -429,12 +429,12 @@ export function AcademySportsSetupView() {
 
           <div className="p-5 flex-1 flex flex-col space-y-4 overflow-y-auto">
             {/* Tabs */}
-            <div className="flex items-center gap-6 border-b border-[#2a3033] pb-2 text-xs font-bold text-nx-ink-3">
+            <div className="flex items-center gap-6 border-b border-nx-line pb-2 text-xs font-bold text-nx-ink-3">
               <span
                 onClick={() => setActiveTab("overview")}
                 className={`cursor-pointer pb-2 transition-all ${
                   activeTab === "overview"
-                    ? "text-[#c8ff05] border-b-2 border-[#c8ff05]"
+                    ? "text-nx-accent border-b-2 border-nx-accent-fill"
                     : "hover:text-nx-ink"
                 }`}
               >
@@ -444,7 +444,7 @@ export function AcademySportsSetupView() {
                 onClick={() => setActiveTab("disciplines")}
                 className={`cursor-pointer pb-2 transition-all ${
                   activeTab === "disciplines"
-                    ? "text-[#c8ff05] border-b-2 border-[#c8ff05]"
+                    ? "text-nx-accent border-b-2 border-nx-accent-fill"
                     : "hover:text-nx-ink"
                 }`}
               >
@@ -454,7 +454,7 @@ export function AcademySportsSetupView() {
                 onClick={() => setActiveTab("programs")}
                 className={`cursor-pointer pb-2 transition-all ${
                   activeTab === "programs"
-                    ? "text-[#c8ff05] border-b-2 border-[#c8ff05]"
+                    ? "text-nx-accent border-b-2 border-nx-accent-fill"
                     : "hover:text-nx-ink"
                 }`}
               >
@@ -464,7 +464,7 @@ export function AcademySportsSetupView() {
                 onClick={() => setActiveTab("settings")}
                 className={`cursor-pointer pb-2 transition-all ${
                   activeTab === "settings"
-                    ? "text-[#c8ff05] border-b-2 border-[#c8ff05]"
+                    ? "text-nx-accent border-b-2 border-nx-accent-fill"
                     : "hover:text-nx-ink"
                 }`}
               >
@@ -481,7 +481,7 @@ export function AcademySportsSetupView() {
                       {isAr ? "الرياضة المحددة" : "Selected Sport"}
                     </div>
                     <h2 className="text-2xl font-black text-nx-ink mt-1 flex items-center gap-2.5">
-                      <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-[#1a2307] text-[#c8ff05] border border-[#5a7800] shrink-0">
+                      <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-nx-accent-fill/15 text-nx-accent border border-nx-accent-fill/40 shrink-0">
                         <SportIcon code={selectedSport.code} className="h-5 w-5" />
                       </div>
                       <span>{isAr ? selectedSport.nameAr : selectedSport.nameEn}</span>
@@ -494,8 +494,8 @@ export function AcademySportsSetupView() {
                   <span
                     className={`text-xs font-bold px-3 py-1 rounded-full border ${
                       selectedSport.isEnabled
-                        ? "bg-[#1c2707] text-[#c8ff05] border-[#5a7800]"
-                        : "bg-[#1f2224] text-[#8e9598] border-[#343b3e]"
+                        ? "bg-nx-accent-fill/15 text-nx-accent border-nx-accent-fill/40"
+                        : "bg-nx-raised text-nx-ink-2 border-nx-line"
                     }`}
                   >
                     {selectedSport.isEnabled ? (isAr ? "مفعلة" : "Enabled") : (isAr ? "غير مفعلة" : "Disabled")}
@@ -504,23 +504,23 @@ export function AcademySportsSetupView() {
 
                 {/* Metric Row */}
                 <div className="grid grid-cols-3 gap-3">
-                  <div className="rounded-xl border border-[#30383a] bg-[#141b1b] p-3 text-center">
+                  <div className="rounded-xl border border-nx-line bg-nx-raised p-3 text-center">
                     <div className="text-[10px] font-bold text-nx-ink-3 uppercase tracking-wider">
                       {isAr ? "التخصصات" : "Disciplines"}
                     </div>
-                    <div className="text-2xl font-black text-[#c8ff05] font-mono mt-0.5">
+                    <div className="text-2xl font-black text-nx-accent font-mono mt-0.5">
                       {getDisciplinesForSport(selectedSport.code).length}
                     </div>
                   </div>
-                  <div className="rounded-xl border border-[#30383a] bg-[#141b1b] p-3 text-center">
+                  <div className="rounded-xl border border-nx-line bg-nx-raised p-3 text-center">
                     <div className="text-[10px] font-bold text-nx-ink-3 uppercase tracking-wider">
                       {isAr ? "البرامج" : "Programs"}
                     </div>
-                    <div className="text-2xl font-black text-[#c8ff05] font-mono mt-0.5">
+                    <div className="text-2xl font-black text-nx-accent font-mono mt-0.5">
                       {selectedSport.activeProgramsCount || 0}
                     </div>
                   </div>
-                  <div className="rounded-xl border border-[#30383a] bg-[#141b1b] p-3 text-center">
+                  <div className="rounded-xl border border-nx-line bg-nx-raised p-3 text-center">
                     <div className="text-[10px] font-bold text-nx-ink-3 uppercase tracking-wider">
                       {isAr ? "المشاركات" : "Participations"}
                     </div>
@@ -530,7 +530,7 @@ export function AcademySportsSetupView() {
                   </div>
                 </div>
 
-                <div className="border-t border-[#2a3033]" />
+                <div className="border-t border-nx-line" />
 
                 {/* Supported Disciplines Grid */}
                 <div>
@@ -539,13 +539,13 @@ export function AcademySportsSetupView() {
                   </div>
                   <div className="grid grid-cols-2 gap-3">
                     {getDisciplinesForSport(selectedSport.code).map((d, i) => (
-                      <div key={i} className="p-3 rounded-xl bg-[#151a1c] border border-[#323b3d]">
+                      <div key={i} className="p-3 rounded-xl bg-nx-raised border border-nx-line">
                         <strong className="text-xs font-bold text-nx-ink block">{d.name}</strong>
-                        <p className="text-[11px] text-[#a3adad] mt-1">{d.sub}</p>
+                        <p className="text-[11px] text-nx-ink-2 mt-1">{d.sub}</p>
                       </div>
                     ))}
-                    <div className="p-3 rounded-xl bg-[#151a1c] border border-dashed border-[#323b3d] flex flex-col justify-center cursor-pointer hover:border-[#c8ff05]/50 transition-colors">
-                      <strong className="text-xs font-bold text-[#c8ff05] block">
+                    <div className="p-3 rounded-xl bg-nx-raised border border-dashed border-nx-line flex flex-col justify-center cursor-pointer hover:border-nx-accent/50 transition-colors">
+                      <strong className="text-xs font-bold text-nx-accent block">
                         {isAr ? "+ إضافة تخصص" : "+ Add discipline"}
                       </strong>
                       <p className="text-[11px] text-nx-ink-3 mt-1">
@@ -556,7 +556,7 @@ export function AcademySportsSetupView() {
                 </div>
 
                 {/* Canonical Note */}
-                <div className="mt-auto rounded-xl bg-[#0c1510] border border-[#345327] p-3 text-xs text-[#c9dfb4] leading-relaxed">
+                <div className="mt-auto rounded-xl bg-nx-accent-fill/15 border border-nx-accent-fill/40 p-3 text-xs text-nx-accent leading-relaxed">
                   ✓ {isAr
                     ? "إعدادات الرياضات تضبط استخدام الرياضات في الأكاديمية. تظل تقييمات كرة القدم التخصصية منفصلة عن النواة العامة."
                     : "Sports Setup configures Academy sport use. Sport-specific football evaluations remain outside the generic Academy core."}
@@ -682,10 +682,10 @@ function AddSportDialog({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/75 backdrop-blur-sm p-4">
-      <div className="w-full max-w-xl rounded-2xl border border-[#32393c] bg-[#101214] p-6 shadow-2xl space-y-4 max-h-[90vh] overflow-y-auto">
-        <div className="flex items-center justify-between border-b border-[#2a3033] pb-3">
+      <div className="w-full max-w-xl rounded-2xl border border-nx-line bg-nx-surface p-6 shadow-2xl space-y-4 max-h-[90vh] overflow-y-auto">
+        <div className="flex items-center justify-between border-b border-nx-line pb-3">
           <div className="flex items-center gap-2.5">
-            <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-[#1a2307] text-[#c8ff05] border border-[#5a7800]">
+            <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-nx-accent-fill/15 text-nx-accent border border-nx-accent-fill/40">
               <Plus className="h-5 w-5" />
             </div>
             <div>
@@ -701,7 +701,7 @@ function AddSportDialog({
           </div>
           <button
             onClick={onClose}
-            className="text-nx-ink-3 hover:text-nx-ink text-sm font-semibold p-1.5 rounded-lg hover:bg-[#1a1e21] cursor-pointer"
+            className="text-nx-ink-3 hover:text-nx-ink text-sm font-semibold p-1.5 rounded-lg hover:bg-nx-raised cursor-pointer"
           >
             ✕
           </button>
@@ -715,7 +715,7 @@ function AddSportDialog({
             placeholder={isAr ? "بحث في الرياضات المعتمدة..." : "Search canonical sports..."}
             value={filterQuery}
             onChange={(e) => setFilterQuery(e.target.value)}
-            className="w-full rounded-lg border border-[#343b3e] bg-[#0b0e10] pl-9 pr-3 py-2 text-xs text-nx-ink placeholder:text-nx-ink-3 focus:border-[#c8ff05] focus:outline-none"
+            className="w-full rounded-lg border border-nx-line bg-nx-surface pl-9 pr-3 py-2 text-xs text-nx-ink placeholder:text-nx-ink-3 focus:border-nx-accent focus:outline-none"
           />
         </div>
 
@@ -723,11 +723,11 @@ function AddSportDialog({
         <div className="space-y-4 max-h-96 overflow-y-auto pr-1">
           {/* Section 1: Available to Enable */}
           <div className="space-y-2">
-            <div className="text-[11px] font-bold text-[#c8ff05] uppercase tracking-wider">
+            <div className="text-[11px] font-bold text-nx-accent uppercase tracking-wider">
               {isAr ? `الرياضات المتاحة للتفعيل (${availableToEnable.length})` : `Available to Enable (${availableToEnable.length})`}
             </div>
             {availableToEnable.length === 0 ? (
-              <div className="p-3 text-center text-xs text-nx-ink-3 border border-dashed border-[#2a3033] rounded-xl">
+              <div className="p-3 text-center text-xs text-nx-ink-3 border border-dashed border-nx-line rounded-xl">
                 {isAr ? "لا توجد رياضات غير مفعلة مطابقة." : "All matching canonical sports are already enabled."}
               </div>
             ) : (
@@ -737,14 +737,14 @@ function AddSportDialog({
                 return (
                   <div
                     key={sId}
-                    className="flex items-center justify-between p-3 rounded-xl border border-[#2a3033] bg-[#14171a] hover:border-[#5a7800] transition-colors"
+                    className="flex items-center justify-between p-3 rounded-xl border border-nx-line bg-nx-raised hover:border-nx-accent/50 transition-colors"
                   >
                     <div className="flex items-center gap-3">
-                      <div className="h-9 w-9 rounded-lg bg-[#1a2307] text-[#c8ff05] border border-[#5a7800] flex items-center justify-center">
+                      <div className="h-9 w-9 rounded-lg bg-nx-accent-fill/15 text-nx-accent border border-nx-accent-fill/40 flex items-center justify-center">
                         <SportIcon code={sport.code} className="h-5 w-5" />
                       </div>
                       <div>
-                        <div className="text-xs font-bold text-white">
+                        <div className="text-xs font-bold text-nx-ink">
                           {isAr ? sport.nameAr : sport.nameEn}
                         </div>
                         <div className="text-[10px] text-nx-ink-3 font-mono">
@@ -757,7 +757,7 @@ function AddSportDialog({
                       type="button"
                       disabled={isBusy}
                       onClick={() => onEnableSport(sport)}
-                      className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#c8ff05] text-[#131600] text-xs font-bold shadow-[0_0_12px_rgba(200,255,5,0.15)] hover:brightness-105 disabled:opacity-50 cursor-pointer"
+                      className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-nx-accent-fill text-nx-on-fill text-xs font-bold shadow-nx-glow hover:brightness-105 disabled:opacity-50 cursor-pointer"
                     >
                       {isBusy ? (
                         <RefreshCw className="h-3.5 w-3.5 animate-spin" />
@@ -773,7 +773,7 @@ function AddSportDialog({
           </div>
 
           {/* Section 2: Already Enabled */}
-          <div className="space-y-2 pt-2 border-t border-[#222629]">
+          <div className="space-y-2 pt-2 border-t border-nx-line">
             <div className="text-[11px] font-bold text-nx-ink-3 uppercase tracking-wider">
               {isAr ? `الرياضات المفعلة مسبقاً (${alreadyEnabled.length})` : `Already Enabled (${alreadyEnabled.length})`}
             </div>
@@ -782,14 +782,14 @@ function AddSportDialog({
               return (
                 <div
                   key={sId}
-                  className="flex items-center justify-between p-2.5 rounded-xl border border-[#222629] bg-[#0c1012] opacity-75"
+                  className="flex items-center justify-between p-2.5 rounded-xl border border-nx-line bg-nx-surface opacity-75"
                 >
                   <div className="flex items-center gap-3">
-                    <div className="h-8 w-8 rounded-lg bg-[#14181a] text-[#8e9598] border border-[#2a3033] flex items-center justify-center">
+                    <div className="h-8 w-8 rounded-lg bg-nx-raised text-nx-ink-2 border border-nx-line flex items-center justify-center">
                       <SportIcon code={sport.code} className="h-4 w-4" />
                     </div>
                     <div>
-                      <div className="text-xs font-bold text-[#d0d6d8]">
+                      <div className="text-xs font-bold text-nx-ink-2">
                         {isAr ? sport.nameAr : sport.nameEn}
                       </div>
                       <div className="text-[10px] text-nx-ink-3 font-mono">
@@ -798,7 +798,7 @@ function AddSportDialog({
                     </div>
                   </div>
 
-                  <span className="flex items-center gap-1 text-[10px] font-bold px-2.5 py-1 rounded-full border border-[#5a7800] bg-[#1c2707] text-[#c8ff05]">
+                  <span className="flex items-center gap-1 text-[10px] font-bold px-2.5 py-1 rounded-full border border-nx-accent-fill/40 bg-nx-accent-fill/15 text-nx-accent">
                     <Check className="h-3 w-3" />
                     <span>{isAr ? "مفعلة" : "Active"}</span>
                   </span>
@@ -808,11 +808,11 @@ function AddSportDialog({
           </div>
         </div>
 
-        <div className="pt-3 border-t border-[#2a3033] flex justify-end">
+        <div className="pt-3 border-t border-nx-line flex justify-end">
           <button
             type="button"
             onClick={onClose}
-            className="px-4 py-2 rounded-lg border border-[#353d3c] bg-[#14171a] text-xs font-bold text-white hover:bg-[#1a1e21] cursor-pointer"
+            className="px-4 py-2 rounded-lg border border-nx-line-hi bg-nx-raised text-xs font-bold text-nx-ink hover:bg-nx-raised cursor-pointer"
           >
             {isAr ? "إغلاق" : "Close"}
           </button>

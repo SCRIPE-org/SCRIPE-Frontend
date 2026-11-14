@@ -17,7 +17,12 @@ async function run() {
   console.log("==================================================================");
 
   const uatUsername = process.env.SCRIPE_UAT_USERNAME || "uat.tenantadmin@hilal.local";
-  const uatPassword = process.env.SCRIPE_UAT_PASSWORD || "P@ssw0rd";
+  const uatPassword = process.env.SCRIPE_UAT_PASSWORD;
+
+  if (!uatPassword) {
+    console.error("FATAL: SCRIPE_UAT_PASSWORD environment variable is required to execute real API tests.");
+    process.exit(1);
+  }
 
   // Step 1: Authenticate as UAT Admin (Tenant: HILAL)
   console.log("\n[1] Authenticating as UAT Admin for Tenant:", UAT_TENANT_ID);

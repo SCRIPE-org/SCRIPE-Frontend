@@ -157,10 +157,10 @@ export function AcademyProgramsView() {
   if (!canView) {
     return (
       <div className="p-8 max-w-xl mx-auto" dir={dir}>
-        <div className="rounded-xl border border-red-500/30 bg-[#160d0e] p-6 text-red-300 space-y-3">
+        <div className="rounded-xl border border-red-500/30 bg-destructive/15 p-6 text-red-300 space-y-3">
           <div className="flex items-center gap-3">
             <ShieldAlert className="h-6 w-6 text-red-400" />
-            <h2 className="text-lg font-bold text-white">{isAr ? "غير مصرح" : "Access Restricted"}</h2>
+            <h2 className="text-lg font-bold text-nx-ink">{isAr ? "غير مصرح" : "Access Restricted"}</h2>
           </div>
           <p className="text-xs text-red-300/80">
             {isAr ? "ليس لديك صلاحية لعرض برامج وعروض الأكاديمية." : "You do not have permission to view Academy Programs."}
@@ -172,16 +172,12 @@ export function AcademyProgramsView() {
 
   return (
     <div
-      className="min-h-screen text-[#f5f7f8] p-5 sm:p-7 space-y-4"
+      className="min-h-screen text-nx-ink p-5 sm:p-7 space-y-4 academy-bg"
       dir={dir}
-      style={{
-        backgroundColor: "#07090a",
-        backgroundImage: "radial-gradient(ellipse 900px 320px at 85% 0%, rgba(200, 255, 5, 0.055), transparent 75%)"
-      }}
     >
       {/* 1. Breadcrumbs */}
-      <div className="flex items-center gap-2 text-xs font-medium text-[#9aa1a6]">
-        <Link href="/academy" className="hover:text-white transition-colors flex items-center gap-1">
+      <div className="flex items-center gap-2 text-xs font-medium text-nx-ink-2">
+        <Link href="/academy" className="hover:text-nx-ink transition-colors flex items-center gap-1">
           <ArrowLeft className="h-3 w-3 rtl:rotate-180" />
           <span>{isAr ? "لوحة الأكاديمية" : "Academy Overview"}</span>
         </Link>
@@ -192,14 +188,14 @@ export function AcademyProgramsView() {
       {/* 2. Page Header Bar */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div className="flex items-center gap-3.5">
-          <div className="flex h-12 w-12 items-center justify-center rounded-xl border border-[#c8ff05]/40 bg-[#14171a] text-[#c8ff05] shadow-[0_0_16px_rgba(200,255,5,0.15)] shrink-0">
-            <Layers className="h-6 w-6 text-[#c8ff05]" />
+          <div className="flex h-12 w-12 items-center justify-center rounded-xl border border-nx-accent-fill/40 bg-nx-raised text-nx-accent shadow-nx-glow shrink-0">
+            <Layers className="h-6 w-6 text-nx-accent" />
           </div>
           <div>
             <h1 className="text-2xl font-black tracking-tight text-white leading-tight">
               {isAr ? "البرامج والمسارات التدريبية" : "Programs & Offerings"}
             </h1>
-            <p className="text-xs text-[#9aa1a6] mt-0.5">
+            <p className="text-xs text-nx-ink-2 mt-0.5">
               {isAr
                 ? "تحديد البرامج الرياضية، تكوين المسارات التدريبية، وإدارة السعة الاستيعابية."
                 : "Curriculum tracks, multi-sport pathways, and age-band developmental programs."}
@@ -219,16 +215,16 @@ export function AcademyProgramsView() {
               link.click();
               document.body.removeChild(link);
             }}
-            className="flex items-center gap-1.5 rounded-lg border border-[#2a3033] bg-[#14171a] hover:bg-[#1c2024] px-3.5 py-2 text-xs font-semibold text-white transition-colors cursor-pointer"
+            className="flex items-center gap-1.5 rounded-lg border border-nx-line bg-nx-raised hover:bg-nx-raised px-3.5 py-2 text-xs font-semibold text-nx-ink transition-colors cursor-pointer"
           >
-            <Download className="h-3.5 w-3.5 text-[#9aa1a6]" />
+            <Download className="h-3.5 w-3.5 text-nx-ink-2" />
             <span>{isAr ? "تصدير CSV" : "Export CSV"}</span>
           </button>
 
           {canCreate && (
             <Button
               onClick={openCreateDialog}
-              className="h-9 px-4 rounded-lg bg-[#c8ff05] hover:bg-[#b2e600] text-black font-bold text-xs flex items-center gap-1.5 shadow-md shadow-[#c8ff05]/20 cursor-pointer border-none"
+              className="h-9 px-4 rounded-lg bg-nx-accent-fill hover:bg-nx-accent-fill text-black font-bold text-xs flex items-center gap-1.5 shadow-md shadow-[#c6ff00]/20 cursor-pointer border-none"
             >
               <Plus className="h-3.5 w-3.5 text-black stroke-[3]" />
               <span>{isAr ? "+ إنشاء برنامج جديد" : "+ New Program"}</span>
@@ -240,65 +236,65 @@ export function AcademyProgramsView() {
       {/* 3. 4 Real KPI Metric Cards */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3.5">
         {/* Card 1: Total Programs */}
-        <div className="rounded-2xl border border-[#2a3033] bg-[#101315] p-4 shadow-lg flex items-center justify-between">
+        <div className="rounded-2xl border border-nx-line bg-nx-surface p-4 shadow-lg flex items-center justify-between">
           <div className="flex items-center gap-3.5">
-            <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-[#202b09] border border-[#5a7800] text-[#c8ff05]">
+            <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-nx-accent-fill/15 border border-nx-accent-fill/40 text-nx-accent">
               <Layers className="h-5 w-5" />
             </div>
             <div>
-              <div className="text-2xl font-black text-white">{totalProgramsCount}</div>
-              <div className="text-xs text-[#aeb5b5] mt-0.5">{isAr ? "إجمالي البرامج" : "Total Programs"}</div>
+              <div className="text-2xl font-black text-nx-ink">{totalProgramsCount}</div>
+              <div className="text-xs text-nx-ink-2 mt-0.5">{isAr ? "إجمالي البرامج" : "Total Programs"}</div>
             </div>
           </div>
-          <span className="text-[11px] font-bold text-[#c8ff05] bg-[#222e00] px-2.5 py-1 rounded-full border border-[#5a7800]">
+          <span className="text-[11px] font-bold text-nx-accent bg-nx-accent-fill/15 px-2.5 py-1 rounded-full border border-nx-accent-fill/40">
             {isAr ? "معتمد" : "Registered"}
           </span>
         </div>
 
         {/* Card 2: Published Programs */}
-        <div className="rounded-2xl border border-[#2a3033] bg-[#101315] p-4 shadow-lg flex items-center justify-between">
+        <div className="rounded-2xl border border-nx-line bg-nx-surface p-4 shadow-lg flex items-center justify-between">
           <div className="flex items-center gap-3.5">
-            <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-[#202b09] border border-[#5a7800] text-[#c8ff05]">
+            <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-nx-accent-fill/15 border border-nx-accent-fill/40 text-nx-accent">
               <CheckCircle2 className="h-5 w-5" />
             </div>
             <div>
-              <div className="text-2xl font-black text-white">{publishedCount}</div>
-              <div className="text-xs text-[#aeb5b5] mt-0.5">{isAr ? "البرامج المنشورة" : "Published Programs"}</div>
+              <div className="text-2xl font-black text-nx-ink">{publishedCount}</div>
+              <div className="text-xs text-nx-ink-2 mt-0.5">{isAr ? "البرامج المنشورة" : "Published Programs"}</div>
             </div>
           </div>
-          <span className="text-[11px] font-bold text-[#4ade80] bg-[#122815] px-2.5 py-1 rounded-full border border-[#22c55e]/30">
+          <span className="text-[11px] font-bold text-success bg-nx-accent-fill/15 px-2.5 py-1 rounded-full border border-success/30">
             {isAr ? "نشط" : "Live"}
           </span>
         </div>
 
         {/* Card 3: Draft Programs */}
-        <div className="rounded-2xl border border-[#2a3033] bg-[#101315] p-4 shadow-lg flex items-center justify-between">
+        <div className="rounded-2xl border border-nx-line bg-nx-surface p-4 shadow-lg flex items-center justify-between">
           <div className="flex items-center gap-3.5">
-            <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-[#1b1e20] border border-[#343b3e] text-[#ffd24d]">
+            <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-nx-raised border border-nx-line text-warning">
               <Activity className="h-5 w-5" />
             </div>
             <div>
-              <div className="text-2xl font-black text-white">{draftCount}</div>
-              <div className="text-xs text-[#aeb5b5] mt-0.5">{isAr ? "قيد الإعداد (مسودة)" : "Draft Programs"}</div>
+              <div className="text-2xl font-black text-nx-ink">{draftCount}</div>
+              <div className="text-xs text-nx-ink-2 mt-0.5">{isAr ? "قيد الإعداد (مسودة)" : "Draft Programs"}</div>
             </div>
           </div>
-          <span className="text-[11px] font-bold text-[#ffd24d] bg-[#372b09] px-2.5 py-1 rounded-full border border-[#715a12]">
+          <span className="text-[11px] font-bold text-warning bg-warning/15 px-2.5 py-1 rounded-full border border-warning/30">
             {isAr ? "مسودة" : "Draft"}
           </span>
         </div>
 
         {/* Card 4: Sports Disciplines */}
-        <div className="rounded-2xl border border-[#2a3033] bg-[#101315] p-4 shadow-lg flex items-center justify-between">
+        <div className="rounded-2xl border border-nx-line bg-nx-surface p-4 shadow-lg flex items-center justify-between">
           <div className="flex items-center gap-3.5">
-            <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-[#202b09] border border-[#5a7800] text-[#c8ff05]">
+            <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-nx-accent-fill/15 border border-nx-accent-fill/40 text-nx-accent">
               <Dumbbell className="h-5 w-5" />
             </div>
             <div>
-              <div className="text-2xl font-black text-white">{activeSportsCount}</div>
-              <div className="text-xs text-[#aeb5b5] mt-0.5">{isAr ? "الرياضات المعتمدة" : "Active Sports"}</div>
+              <div className="text-2xl font-black text-nx-ink">{activeSportsCount}</div>
+              <div className="text-xs text-nx-ink-2 mt-0.5">{isAr ? "الرياضات المعتمدة" : "Active Sports"}</div>
             </div>
           </div>
-          <span className="text-[11px] font-bold text-[#c8ff05] bg-[#222e00] px-2.5 py-1 rounded-full border border-[#5a7800]">
+          <span className="text-[11px] font-bold text-nx-accent bg-nx-accent-fill/15 px-2.5 py-1 rounded-full border border-nx-accent-fill/40">
             {isAr ? "معتمد" : "Accredited"}
           </span>
         </div>
@@ -314,8 +310,8 @@ export function AcademyProgramsView() {
               onClick={() => setSelectedSportTab(tab.id)}
               className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition-all shrink-0 cursor-pointer ${
                 isActive
-                  ? "bg-[#c8ff05] text-[#131600] shadow-[0_0_16px_rgba(200,255,5,0.25)]"
-                  : "bg-[#101315] border border-[#222629] text-[#9aa1a6] hover:text-white hover:border-[#353d42]"
+                  ? "bg-nx-accent-fill text-nx-on-fill shadow-nx-glow"
+                  : "bg-nx-surface border border-nx-line text-nx-ink-2 hover:text-nx-ink hover:border-nx-line-hi"
               }`}
             >
               <span>{tab.label}</span>
@@ -325,16 +321,16 @@ export function AcademyProgramsView() {
       </div>
 
       {/* 5. Search & Filter Toolbar */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 bg-[#101315] border border-[#222629] p-3 rounded-2xl">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 bg-nx-surface border border-nx-line p-3 rounded-2xl">
         <div className="flex items-center gap-2.5 flex-1 flex-wrap">
           <div className="relative flex-1 min-w-[200px] max-w-sm">
-            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-[#9aa1a6] pointer-events-none rtl:left-auto rtl:right-3.5" />
+            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-nx-ink-2 pointer-events-none rtl:left-auto rtl:right-3.5" />
             <input
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder={isAr ? "البحث بالاسم، الرمز، أو الوصف..." : "Search programs by title, code, or description..."}
-              className="w-full h-9 pl-9 pr-3.5 text-xs rounded-full bg-[#14171a] border border-[#222629] text-white placeholder-[#9aa1a6] focus:outline-none focus:border-[#c8ff05] transition-colors rtl:pl-3.5 rtl:pr-9"
+              className="w-full h-9 pl-9 pr-3.5 text-xs rounded-full bg-nx-raised border border-nx-line text-white placeholder:text-nx-ink-3 focus:outline-none focus:border-nx-accent transition-colors rtl:pl-3.5 rtl:pr-9"
             />
           </div>
 
@@ -342,20 +338,20 @@ export function AcademyProgramsView() {
             <select
               value={statusFilter}
               onChange={(e) => setStatusFilter(e.target.value)}
-              className="h-9 px-3.5 pr-8 rounded-full bg-[#14171a] border border-[#222629] text-xs text-white appearance-none cursor-pointer focus:outline-none focus:border-[#c8ff05] rtl:pr-3.5 rtl:pl-8"
+              className="h-9 px-3.5 pr-8 rounded-full bg-nx-raised border border-nx-line text-xs text-white appearance-none cursor-pointer focus:outline-none focus:border-nx-accent rtl:pr-3.5 rtl:pl-8"
             >
               <option value="all">{isAr ? "جميع الحالات" : "All Statuses"}</option>
               <option value="Published">{isAr ? "منشور (Published)" : "Published"}</option>
               <option value="Draft">{isAr ? "مسودة (Draft)" : "Draft"}</option>
             </select>
-            <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 h-3 w-3 text-[#9aa1a6] pointer-events-none rtl:right-auto rtl:left-3" />
+            <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 h-3 w-3 text-nx-ink-2 pointer-events-none rtl:right-auto rtl:left-3" />
           </div>
         </div>
 
         <div className="flex items-center gap-2 shrink-0">
           <button
             onClick={() => reload()}
-            className="flex h-9 w-9 items-center justify-center rounded-lg border border-[#222629] bg-[#14171a] text-[#9aa1a6] hover:text-white transition-colors cursor-pointer"
+            className="flex h-9 w-9 items-center justify-center rounded-lg border border-nx-line bg-nx-raised text-nx-ink-2 hover:text-nx-ink transition-colors cursor-pointer"
             title={isAr ? "تحديث" : "Refresh"}
           >
             <RefreshCw className={`h-3.5 w-3.5 ${state.stage === "loading" ? "animate-spin" : ""}`} />
@@ -367,15 +363,15 @@ export function AcademyProgramsView() {
       {state.stage === "loading" ? (
         <div className="py-20 text-center">
           <LoadingSpinner />
-          <p className="text-xs text-[#9aa1a6] mt-2">{isAr ? "جاري تحميل البرامج والعروض..." : "Loading programs and curriculum tracks..."}</p>
+          <p className="text-xs text-nx-ink-2 mt-2">{isAr ? "جاري تحميل البرامج والعروض..." : "Loading programs and curriculum tracks..."}</p>
         </div>
       ) : filteredPrograms.length === 0 ? (
-        <div className="py-20 text-center rounded-2xl border border-[#222629] bg-[#101315] p-8 space-y-3">
-          <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl border border-[#2a3033] bg-[#14171a] text-[#c8ff05]">
+        <div className="py-20 text-center rounded-2xl border border-nx-line bg-nx-surface p-8 space-y-3">
+          <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl border border-nx-line bg-nx-raised text-nx-accent">
             <Layers className="h-7 w-7" />
           </div>
-          <h3 className="text-base font-bold text-white">{isAr ? "لا توجد برامج مسجلة" : "No Programs Found"}</h3>
-          <p className="text-xs text-[#9aa1a6] max-w-sm mx-auto">
+          <h3 className="text-base font-bold text-nx-ink">{isAr ? "لا توجد برامج مسجلة" : "No Programs Found"}</h3>
+          <p className="text-xs text-nx-ink-2 max-w-sm mx-auto">
             {isAr
               ? "لم يتم العثور على برامج تطابق معايير التصفية المحددة. يمكنك إضافة برنامج رياضي جديد الآن."
               : "No sports curriculum tracks match the active filter criteria. Define a new program to configure offerings."}
@@ -383,7 +379,7 @@ export function AcademyProgramsView() {
           {canCreate && (
             <Button
               onClick={openCreateDialog}
-              className="h-9 px-4 text-xs bg-[#c8ff05] hover:bg-[#b2e600] text-black font-bold"
+              className="h-9 px-4 text-xs bg-nx-accent-fill hover:bg-nx-accent-fill text-black font-bold"
             >
               {isAr ? "+ إنشاء برنامج جديد" : "+ Create Program"}
             </Button>
@@ -399,10 +395,10 @@ export function AcademyProgramsView() {
             return (
               <div
                 key={program.id}
-                className="group relative flex flex-col sm:flex-row rounded-2xl border border-[#222629] bg-[#101315] hover:border-[#c8ff05]/50 transition-all duration-300 shadow-xl overflow-hidden min-h-[200px]"
+                className="group relative flex flex-col sm:flex-row rounded-2xl border border-nx-line bg-nx-surface hover:border-nx-accent/50 transition-all duration-300 shadow-xl overflow-hidden min-h-[200px]"
               >
                 {/* Left Side: Sport Photo with Diagonal Lime Corner Accent Slice */}
-                <div className="w-full sm:w-[190px] h-[160px] sm:h-auto shrink-0 relative overflow-hidden bg-[#14171a]">
+                <div className="w-full sm:w-[190px] h-[160px] sm:h-auto shrink-0 relative overflow-hidden bg-nx-raised">
                   <Image
                     src={bgImage}
                     alt={program.nameEn}
@@ -414,14 +410,14 @@ export function AcademyProgramsView() {
 
                   {/* Sport Code Pill on top left */}
                   <div className="absolute top-3 left-3 rtl:left-auto rtl:right-3">
-                    <span className="font-mono text-[10px] font-bold text-[#c8ff05] bg-black/70 px-2 py-0.5 rounded border border-[#c8ff05]/30">
+                    <span className="font-mono text-[10px] font-bold text-nx-accent bg-black/70 px-2 py-0.5 rounded border border-nx-accent-fill/30">
                       {program.code}
                     </span>
                   </div>
 
                   {/* Authentic Diagonal Signal Lime Corner Accent Streak */}
                   <div
-                    className="absolute bottom-0 right-0 w-12 h-12 bg-[#c8ff05] pointer-events-none"
+                    className="absolute bottom-0 right-0 w-12 h-12 bg-nx-accent-fill pointer-events-none"
                     style={{ clipPath: "polygon(100% 0, 0 100%, 100% 100%)" }}
                   />
                 </div>
@@ -437,8 +433,8 @@ export function AcademyProgramsView() {
                       <span
                         className={`px-2.5 py-0.5 rounded-full text-[10px] font-bold border ${
                           program.status === "Published"
-                            ? "bg-[#122815] text-[#4ade80] border-[#22c55e]/30"
-                            : "bg-[#2a1d08] text-[#fbbf24] border-[#f59e0b]/40"
+                            ? "bg-nx-accent-fill/15 text-success border-success/30"
+                            : "bg-warning/15 text-warning border-warning/40"
                         }`}
                       >
                         {program.status === "Published" ? (isAr ? "● منشور" : "● Published") : (isAr ? "مسودة" : "Draft")}
@@ -446,12 +442,12 @@ export function AcademyProgramsView() {
                     </div>
 
                     {/* Program Title */}
-                    <h3 className="text-base font-black text-white group-hover:text-[#c8ff05] transition-colors leading-snug truncate">
+                    <h3 className="text-base font-black text-nx-ink group-hover:text-nx-accent transition-colors leading-snug truncate">
                       {isAr ? program.nameAr : program.nameEn}
                     </h3>
 
                     {/* Version & Description */}
-                    <p className="text-xs text-[#9aa1a6] line-clamp-2 leading-relaxed mt-1">
+                    <p className="text-xs text-nx-ink-2 line-clamp-2 leading-relaxed mt-1">
                       {isAr
                         ? (program.descriptionAr || program.descriptionEn || "مسار تدريبي معتمد وفق المعايير الأكاديمية.")
                         : (program.descriptionEn || program.descriptionAr || "Accredited developmental curriculum track.")}
@@ -459,7 +455,7 @@ export function AcademyProgramsView() {
                   </div>
 
                   {/* 3 Metrics Row */}
-                  <div className="flex items-center gap-3 text-[11px] text-[#9aa1a6] pt-2 border-t border-[#222629]/60">
+                  <div className="flex items-center gap-3 text-[11px] text-nx-ink-2 pt-2 border-t border-nx-line/60">
                     <span className="flex items-center gap-1">
                       <span>👤</span>
                       <span>{isAr ? "العمر:" : "Age:"} <b className="text-white">{program.minAge}–{program.maxAge}</b></span>
@@ -478,7 +474,7 @@ export function AcademyProgramsView() {
 
                   {/* Bottom Operational Buttons */}
                   <div className="flex items-center justify-between pt-1">
-                    <span className="font-mono text-[10px] text-[#9aa1a6]">
+                    <span className="font-mono text-[10px] text-nx-ink-2">
                       v{program.version || 1} • {program.status}
                     </span>
 
@@ -486,7 +482,7 @@ export function AcademyProgramsView() {
                       {program.status === "Draft" && canPublish && (
                         <Button
                           onClick={() => publishProgram(program.id)}
-                          className="h-7 px-3 text-[11px] bg-[#c8ff05] hover:bg-[#b2e600] text-black font-bold flex items-center gap-1"
+                          className="h-7 px-3 text-[11px] bg-nx-accent-fill hover:bg-nx-accent-fill text-black font-bold flex items-center gap-1"
                         >
                           <Check className="h-3 w-3 stroke-[3]" />
                           <span>{isAr ? "نشر" : "Publish"}</span>
@@ -495,7 +491,7 @@ export function AcademyProgramsView() {
 
                       <Link
                         href="/academy/programs"
-                        className="h-7 px-3.5 rounded-full border border-[#c8ff05] text-[#c8ff05] hover:bg-[#c8ff05] hover:text-black font-bold text-xs flex items-center gap-1 transition-all"
+                        className="h-7 px-3.5 rounded-full border border-nx-accent-fill text-nx-accent hover:bg-nx-accent-fill hover:text-black font-bold text-xs flex items-center gap-1 transition-all"
                       >
                         <span>{isAr ? "إدارة ←" : "Manage →"}</span>
                       </Link>
@@ -511,15 +507,15 @@ export function AcademyProgramsView() {
       {/* Create Program Modal */}
       {state.isCreateOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4">
-          <div className="w-full max-w-lg rounded-2xl border border-[#2a3033] bg-[#101214] p-6 shadow-2xl text-xs space-y-4">
-            <div className="flex items-center justify-between pb-3 border-b border-[#222629]">
+          <div className="w-full max-w-lg rounded-2xl border border-nx-line bg-nx-surface p-6 shadow-2xl text-xs space-y-4">
+            <div className="flex items-center justify-between pb-3 border-b border-nx-line">
               <div className="flex items-center gap-2">
-                <Plus className="h-5 w-5 text-[#c8ff05]" />
-                <h3 className="text-base font-bold text-white">
+                <Plus className="h-5 w-5 text-nx-accent" />
+                <h3 className="text-base font-bold text-nx-ink">
                   {isAr ? "إنشاء برنامج رياضي جديد" : "Create Sports Program"}
                 </h3>
               </div>
-              <button onClick={closeCreateDialog} className="text-[#9aa1a6] hover:text-white">
+              <button onClick={closeCreateDialog} className="text-nx-ink-2 hover:text-nx-ink">
                 <X className="h-5 w-5" />
               </button>
             </div>
@@ -527,11 +523,11 @@ export function AcademyProgramsView() {
             <form onSubmit={handleSubmit} className="space-y-3">
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-[#9aa1a6] mb-1 font-semibold">{isAr ? "الرياضة" : "Sport"}</label>
+                  <label className="block text-nx-ink-2 mb-1 font-semibold">{isAr ? "الرياضة" : "Sport"}</label>
                   <select
                     value={sportId}
                     onChange={(e) => setSportId(e.target.value)}
-                    className="w-full h-9 px-3 rounded-lg bg-[#14171a] border border-[#222629] text-white text-xs focus:outline-none focus:border-[#c8ff05]"
+                    className="w-full h-9 px-3 rounded-lg bg-nx-raised border border-nx-line text-white text-xs focus:outline-none focus:border-nx-accent"
                   >
                     <option value="">{isAr ? "اختر الرياضة..." : "Select sport..."}</option>
                     {state.sports.map((s) => (
@@ -542,47 +538,47 @@ export function AcademyProgramsView() {
                   </select>
                 </div>
                 <div>
-                  <label className="block text-[#9aa1a6] mb-1 font-semibold">{isAr ? "رمز البرنامج" : "Program Code"}</label>
+                  <label className="block text-nx-ink-2 mb-1 font-semibold">{isAr ? "رمز البرنامج" : "Program Code"}</label>
                   <input
                     type="text"
                     value={code}
                     onChange={(e) => setCode(e.target.value.toUpperCase())}
                     placeholder="e.g. YOUTH-FB"
-                    className="w-full h-9 px-3 rounded-lg bg-[#14171a] border border-[#222629] text-white text-xs font-mono uppercase focus:outline-none focus:border-[#c8ff05]"
+                    className="w-full h-9 px-3 rounded-lg bg-nx-raised border border-nx-line text-white text-xs font-mono uppercase focus:outline-none focus:border-nx-accent"
                   />
                 </div>
               </div>
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-[#9aa1a6] mb-1 font-semibold">{isAr ? "الاسم (EN)" : "Name (EN)"}</label>
+                  <label className="block text-nx-ink-2 mb-1 font-semibold">{isAr ? "الاسم (EN)" : "Name (EN)"}</label>
                   <input
                     type="text"
                     value={nameEn}
                     onChange={(e) => setNameEn(e.target.value)}
                     placeholder="e.g. Youth Football"
-                    className="w-full h-9 px-3 rounded-lg bg-[#14171a] border border-[#222629] text-white text-xs focus:outline-none focus:border-[#c8ff05]"
+                    className="w-full h-9 px-3 rounded-lg bg-nx-raised border border-nx-line text-white text-xs focus:outline-none focus:border-nx-accent"
                   />
                 </div>
                 <div>
-                  <label className="block text-[#9aa1a6] mb-1 font-semibold">{isAr ? "الاسم (AR)" : "Name (AR)"}</label>
+                  <label className="block text-nx-ink-2 mb-1 font-semibold">{isAr ? "الاسم (AR)" : "Name (AR)"}</label>
                   <input
                     type="text"
                     value={nameAr}
                     onChange={(e) => setNameAr(e.target.value)}
                     placeholder="مثال: كرة القدم للناشئين"
-                    className="w-full h-9 px-3 rounded-lg bg-[#14171a] border border-[#222629] text-white text-xs focus:outline-none focus:border-[#c8ff05]"
+                    className="w-full h-9 px-3 rounded-lg bg-nx-raised border border-nx-line text-white text-xs focus:outline-none focus:border-nx-accent"
                   />
                 </div>
               </div>
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-[#9aa1a6] mb-1 font-semibold">{isAr ? "المستوى" : "Level"}</label>
+                  <label className="block text-nx-ink-2 mb-1 font-semibold">{isAr ? "المستوى" : "Level"}</label>
                   <select
                     value={level}
                     onChange={(e) => setLevel(e.target.value as ProgramLevel)}
-                    className="w-full h-9 px-3 rounded-lg bg-[#14171a] border border-[#222629] text-white text-xs focus:outline-none focus:border-[#c8ff05]"
+                    className="w-full h-9 px-3 rounded-lg bg-nx-raised border border-nx-line text-white text-xs focus:outline-none focus:border-nx-accent"
                   >
                     <option value="Beginner">Beginner</option>
                     <option value="Foundation">Foundation</option>
@@ -592,11 +588,11 @@ export function AcademyProgramsView() {
                   </select>
                 </div>
                 <div>
-                  <label className="block text-[#9aa1a6] mb-1 font-semibold">{isAr ? "الفئة" : "Gender Criteria"}</label>
+                  <label className="block text-nx-ink-2 mb-1 font-semibold">{isAr ? "الفئة" : "Gender Criteria"}</label>
                   <select
                     value={genderCriteria}
                     onChange={(e) => setGenderCriteria(e.target.value as GenderCriteria)}
-                    className="w-full h-9 px-3 rounded-lg bg-[#14171a] border border-[#222629] text-white text-xs focus:outline-none focus:border-[#c8ff05]"
+                    className="w-full h-9 px-3 rounded-lg bg-nx-raised border border-nx-line text-white text-xs focus:outline-none focus:border-nx-accent"
                   >
                     <option value="Mixed">Mixed</option>
                     <option value="BoysOnly">Boys Only</option>
@@ -607,52 +603,52 @@ export function AcademyProgramsView() {
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-[#9aa1a6] mb-1 font-semibold">{isAr ? "الحد الأدنى للعمر" : "Min Age"}</label>
+                  <label className="block text-nx-ink-2 mb-1 font-semibold">{isAr ? "الحد الأدنى للعمر" : "Min Age"}</label>
                   <input
                     type="number"
                     min="4"
                     max="25"
                     value={minAge}
                     onChange={(e) => setMinAge(Number(e.target.value))}
-                    className="w-full h-9 px-3 rounded-lg bg-[#14171a] border border-[#222629] text-white text-xs focus:outline-none focus:border-[#c8ff05]"
+                    className="w-full h-9 px-3 rounded-lg bg-nx-raised border border-nx-line text-white text-xs focus:outline-none focus:border-nx-accent"
                   />
                 </div>
                 <div>
-                  <label className="block text-[#9aa1a6] mb-1 font-semibold">{isAr ? "الحد الأقصى للعمر" : "Max Age"}</label>
+                  <label className="block text-nx-ink-2 mb-1 font-semibold">{isAr ? "الحد الأقصى للعمر" : "Max Age"}</label>
                   <input
                     type="number"
                     min="4"
                     max="25"
                     value={maxAge}
                     onChange={(e) => setMaxAge(Number(e.target.value))}
-                    className="w-full h-9 px-3 rounded-lg bg-[#14171a] border border-[#222629] text-white text-xs focus:outline-none focus:border-[#c8ff05]"
+                    className="w-full h-9 px-3 rounded-lg bg-nx-raised border border-nx-line text-white text-xs focus:outline-none focus:border-nx-accent"
                   />
                 </div>
               </div>
 
               <div>
-                <label className="block text-[#9aa1a6] mb-1 font-semibold">{isAr ? "الوصف" : "Description"}</label>
+                <label className="block text-nx-ink-2 mb-1 font-semibold">{isAr ? "الوصف" : "Description"}</label>
                 <textarea
                   value={descriptionEn}
                   onChange={(e) => setDescriptionEn(e.target.value)}
                   rows={2}
-                  className="w-full p-2.5 rounded-lg bg-[#14171a] border border-[#222629] text-white text-xs focus:outline-none focus:border-[#c8ff05]"
+                  className="w-full p-2.5 rounded-lg bg-nx-raised border border-nx-line text-white text-xs focus:outline-none focus:border-nx-accent"
                   placeholder="Program overview and training methodology..."
                 />
               </div>
 
-              <div className="flex items-center justify-end gap-2 pt-3 border-t border-[#222629]">
+              <div className="flex items-center justify-end gap-2 pt-3 border-t border-nx-line">
                 <button
                   type="button"
                   onClick={closeCreateDialog}
-                  className="h-8 px-4 rounded-lg border border-[#2a3033] bg-[#14171a] text-white font-semibold hover:bg-[#1f2428]"
+                  className="h-8 px-4 rounded-lg border border-nx-line bg-nx-raised text-white font-semibold hover:bg-nx-raised"
                 >
                   {isAr ? "إلغاء" : "Cancel"}
                 </button>
                 <Button
                   type="submit"
                   disabled={!isFormValid || state.stage === "loading"}
-                  className="h-8 px-4 bg-[#c8ff05] hover:bg-[#b2e600] text-black font-bold"
+                  className="h-8 px-4 bg-nx-accent-fill hover:bg-nx-accent-fill text-black font-bold"
                 >
                   {isAr ? "إنشاء البرنامج" : "Create Program"}
                 </Button>

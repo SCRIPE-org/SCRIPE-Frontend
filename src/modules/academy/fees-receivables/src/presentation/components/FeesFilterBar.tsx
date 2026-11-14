@@ -106,17 +106,17 @@ export function FeesFilterBar({
               onClick={() => onStatusChange(tab.id)}
               className={`inline-flex items-center gap-2 rounded-xl px-4 py-2 text-xs font-semibold transition-all ${
                 isActive
-                  ? "border border-[#c8ff05] bg-[#c8ff05]/10 text-white shadow-[0_0_12px_rgba(200,255,5,0.15)]"
-                  : "border border-[#2a3033] bg-[#101214] text-zinc-400 hover:border-zinc-700 hover:text-white"
+                  ? "border border-nx-accent-fill bg-nx-accent-fill/10 text-white shadow-nx-glow"
+                  : "border border-nx-line bg-nx-surface text-zinc-400 hover:border-zinc-700 hover:text-nx-ink"
               }`}
             >
-              <Icon className={`h-3.5 w-3.5 ${isActive ? "text-[#c8ff05]" : "text-zinc-500"}`} />
+              <Icon className={`h-3.5 w-3.5 ${isActive ? "text-nx-accent" : "text-zinc-500"}`} />
               <span>{tab.label}</span>
               <span
                 className={`rounded-full px-2 py-0.5 text-[10px] font-mono ${
                   isActive
-                    ? "bg-[#c8ff05]/20 text-[#c8ff05]"
-                    : "bg-[#191d20] text-zinc-400"
+                    ? "bg-nx-accent-fill/20 text-nx-accent"
+                    : "bg-nx-raised text-zinc-400"
                 }`}
               >
                 {tab.count}
@@ -136,7 +136,7 @@ export function FeesFilterBar({
             value={searchQuery}
             onChange={(e) => onSearchChange(e.target.value)}
             placeholder={t("filters.searchPlaceholder") || "Search by invoice number, athlete, or program..."}
-            className="h-10 w-full rounded-xl border border-[#2a3033] bg-[#101214] ps-9 pe-4 text-xs text-white placeholder-zinc-500 focus:border-[#c8ff05] focus:outline-none focus:ring-1 focus:ring-[#c8ff05]/30 transition-colors"
+            className="h-10 w-full rounded-xl border border-nx-line bg-nx-surface ps-9 pe-4 text-xs text-white placeholder-zinc-500 focus:border-nx-accent focus:outline-none focus:ring-1 focus:ring-nx-accent/30 transition-colors"
           />
         </div>
 
@@ -146,7 +146,7 @@ export function FeesFilterBar({
           <select
             value={programFilter}
             onChange={(e) => onProgramChange?.(e.target.value)}
-            className="h-10 rounded-xl border border-[#2a3033] bg-[#101214] px-3 text-xs font-medium text-white focus:border-[#c8ff05] focus:outline-none transition-colors"
+            className="h-10 rounded-xl border border-nx-line bg-nx-surface px-3 text-xs font-medium text-nx-ink focus:border-nx-accent focus:outline-none transition-colors"
           >
             <option value="">{t("filters.allPrograms") || "All Programs"}</option>
             {programs.map((p) => (
@@ -160,7 +160,7 @@ export function FeesFilterBar({
           <select
             value={statusFilter}
             onChange={(e) => onStatusChange(e.target.value)}
-            className="h-10 rounded-xl border border-[#2a3033] bg-[#101214] px-3 text-xs font-medium text-white focus:border-[#c8ff05] focus:outline-none transition-colors"
+            className="h-10 rounded-xl border border-nx-line bg-nx-surface px-3 text-xs font-medium text-nx-ink focus:border-nx-accent focus:outline-none transition-colors"
           >
             <option value="">{t("filters.allStatuses") || "All Statuses"}</option>
             <option value="Paid">{t("status.paid") || "Paid"}</option>
@@ -173,7 +173,7 @@ export function FeesFilterBar({
 
           {/* Season Filter */}
           <select
-            className="h-10 rounded-xl border border-[#2a3033] bg-[#101214] px-3 text-xs font-medium text-white focus:border-[#c8ff05] focus:outline-none transition-colors"
+            className="h-10 rounded-xl border border-nx-line bg-nx-surface px-3 text-xs font-medium text-nx-ink focus:border-nx-accent focus:outline-none transition-colors"
           >
             <option value="">All Seasons</option>
             <option value="2026/2027">2026/2027 Season</option>
@@ -186,23 +186,23 @@ export function FeesFilterBar({
             onClick={onRefresh}
             disabled={loading}
             aria-label="Refresh"
-            className="flex h-10 w-10 items-center justify-center rounded-xl border border-[#2a3033] bg-[#101214] text-zinc-400 hover:border-zinc-700 hover:text-white transition-colors"
+            className="flex h-10 w-10 items-center justify-center rounded-xl border border-nx-line bg-nx-surface text-zinc-400 hover:border-zinc-700 hover:text-nx-ink transition-colors"
           >
             <RefreshCw className={`h-4 w-4 ${loading ? "animate-spin" : ""}`} />
           </button>
 
           {/* View Toggle */}
-          <div className="flex items-center rounded-xl border border-[#2a3033] bg-[#101214] p-1">
+          <div className="flex items-center rounded-xl border border-nx-line bg-nx-surface p-1">
             <button
               type="button"
-              className="flex h-8 w-8 items-center justify-center rounded-lg bg-[#191d20] text-[#c8ff05]"
+              className="flex h-8 w-8 items-center justify-center rounded-lg bg-nx-raised text-nx-accent"
               title="Table view"
             >
               <List className="h-4 w-4" />
             </button>
             <button
               type="button"
-              className="flex h-8 w-8 items-center justify-center rounded-lg text-zinc-500 hover:text-white"
+              className="flex h-8 w-8 items-center justify-center rounded-lg text-zinc-500 hover:text-nx-ink"
               title="Card view"
             >
               <Columns className="h-4 w-4" />

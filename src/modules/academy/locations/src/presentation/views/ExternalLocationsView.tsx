@@ -280,7 +280,7 @@ export function ExternalLocationsView() {
           </div>
 
           <div className="flex items-center gap-3">
-            <div className="flex size-11 items-center justify-center rounded-xl bg-gradient-to-br from-[#222923] to-[#0d1110] border border-[#454d41] text-[#c8ff05] shadow-lg">
+            <div className="flex size-11 items-center justify-center rounded-xl bg-gradient-to-br from-nx-surface to-nx-surface border border-nx-accent-fill/40 text-nx-accent shadow-lg">
               <MapPin className="size-6" />
             </div>
             <div>
@@ -301,16 +301,16 @@ export function ExternalLocationsView() {
             type="button"
             onClick={reload}
             disabled={state.stage === "loading"}
-            className="rounded-lg border border-[#353d3c] bg-[#111416] px-3.5 py-2 text-xs font-bold text-nx-ink hover:bg-[#1a1f21] transition-colors flex items-center gap-2"
+            className="rounded-lg border border-nx-line-hi bg-nx-surface px-3.5 py-2 text-xs font-bold text-nx-ink hover:bg-nx-raised transition-colors flex items-center gap-2"
           >
-            <RefreshCw className={`h-3.5 w-3.5 text-[#c8ff05] ${state.stage === "loading" ? "animate-spin" : ""}`} />
+            <RefreshCw className={`h-3.5 w-3.5 text-nx-accent ${state.stage === "loading" ? "animate-spin" : ""}`} />
             <span>{isAr ? "تحديث" : "Refresh"}</span>
           </button>
           {canCreate && (
             <button
               type="button"
               onClick={openCreateDialog}
-              className="rounded-lg bg-[#c8ff05] border border-[#c8ff05] px-4 py-2 text-xs font-bold text-[#131600] shadow-[0_0_24px_rgba(199,255,0,0.18)] hover:brightness-105 transition-all flex items-center gap-1.5"
+              className="rounded-lg bg-nx-accent-fill border border-nx-accent-fill px-4 py-2 text-xs font-bold text-nx-on-fill shadow-nx-glow hover:brightness-105 transition-all flex items-center gap-1.5"
             >
               <Plus className="h-4 w-4" />
               <span>{isAr ? "إضافة موقع" : "Add Location"}</span>
@@ -321,9 +321,9 @@ export function ExternalLocationsView() {
 
       {/* 4 Top Metric Cards */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3.5">
-        <div className="h-[105px] rounded-xl border border-[#353d3c] bg-gradient-to-br from-[#171b1b] to-[#101314] p-4 flex flex-col justify-between relative overflow-hidden">
+        <div className="h-[105px] rounded-xl border border-nx-line-hi bg-gradient-to-br from-nx-surface to-nx-surface p-4 flex flex-col justify-between relative overflow-hidden">
           <div className="flex items-center justify-between">
-            <span className="text-[#c8ff05] text-lg font-bold">◎</span>
+            <span className="text-nx-accent text-lg font-bold">◎</span>
           </div>
           <div>
             <div className="text-2xl font-black text-nx-ink font-mono leading-none">
@@ -333,9 +333,9 @@ export function ExternalLocationsView() {
           </div>
         </div>
 
-        <div className="h-[105px] rounded-xl border border-[#353d3c] bg-gradient-to-br from-[#171b1b] to-[#101314] p-4 flex flex-col justify-between relative overflow-hidden">
+        <div className="h-[105px] rounded-xl border border-nx-line-hi bg-gradient-to-br from-nx-surface to-nx-surface p-4 flex flex-col justify-between relative overflow-hidden">
           <div className="flex items-center justify-between">
-            <span className="text-[#9aa1a6] text-lg font-bold">▦</span>
+            <span className="text-nx-ink-2 text-lg font-bold">▦</span>
           </div>
           <div>
             <div className="text-2xl font-black text-nx-ink font-mono leading-none">4</div>
@@ -343,9 +343,9 @@ export function ExternalLocationsView() {
           </div>
         </div>
 
-        <div className="h-[105px] rounded-xl border border-[#353d3c] bg-gradient-to-br from-[#171b1b] to-[#101314] p-4 flex flex-col justify-between relative overflow-hidden">
+        <div className="h-[105px] rounded-xl border border-nx-line-hi bg-gradient-to-br from-nx-surface to-nx-surface p-4 flex flex-col justify-between relative overflow-hidden">
           <div className="flex items-center justify-between">
-            <span className="text-[#9aa1a6] text-lg font-bold">☷</span>
+            <span className="text-nx-ink-2 text-lg font-bold">☷</span>
           </div>
           <div>
             <div className="text-2xl font-black text-nx-ink font-mono leading-none">2</div>
@@ -353,10 +353,10 @@ export function ExternalLocationsView() {
           </div>
         </div>
 
-        <div className="h-[105px] rounded-xl border border-[#353d3c] bg-gradient-to-br from-[#171b1b] to-[#101314] p-4 flex flex-col justify-between relative overflow-hidden">
+        <div className="h-[105px] rounded-xl border border-nx-line-hi bg-gradient-to-br from-nx-surface to-nx-surface p-4 flex flex-col justify-between relative overflow-hidden">
           <div className="flex items-center justify-between">
-            <span className="text-[#9aa1a6] text-lg font-bold">◷</span>
-            <span className="text-[10px] font-bold text-[#c8ff05] bg-[#c8ff05]/20 px-1.5 py-0.5 rounded border border-[#c8ff05]/30">
+            <span className="text-nx-ink-2 text-lg font-bold">◷</span>
+            <span className="text-[10px] font-bold text-nx-accent bg-nx-accent-fill/20 px-1.5 py-0.5 rounded border border-nx-accent-fill/30">
               +12% {isAr ? "من الفترة السابقة" : "from last term"}
             </span>
           </div>
@@ -380,14 +380,14 @@ export function ExternalLocationsView() {
                 placeholder={isAr ? "بحث بالموقع، العنوان، الرياضة..." : "Search locations, address, sports..."}
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full rounded-xl border border-[#343b3e] bg-[#101214] pl-9 pr-3 py-2 text-xs text-nx-ink placeholder:text-nx-ink-3 focus:border-[#c8ff05] focus:outline-none"
+                className="w-full rounded-xl border border-nx-line bg-nx-surface pl-9 pr-3 py-2 text-xs text-nx-ink placeholder:text-nx-ink-3 focus:border-nx-accent focus:outline-none"
               />
             </div>
 
             <select
               value={typeFilter}
               onChange={(e) => setTypeFilter(e.target.value as any)}
-              className="rounded-xl border border-[#343b3e] bg-[#101214] px-3 py-2 text-xs font-medium text-nx-ink focus:border-[#c8ff05] focus:outline-none cursor-pointer"
+              className="rounded-xl border border-nx-line bg-nx-surface px-3 py-2 text-xs font-medium text-nx-ink focus:border-nx-accent focus:outline-none cursor-pointer"
             >
               <option value="all">{isAr ? "جميع المواقع" : "All Locations"}</option>
               <option value="owned">{isAr ? "مملوكة للأكاديمية" : "Academy Owned"}</option>
@@ -414,12 +414,12 @@ export function ExternalLocationsView() {
                   onClick={() => setSelectedLocationId(loc.id)}
                   className={`flex items-center gap-3.5 p-3 rounded-2xl border cursor-pointer transition-all ${
                     isSelected
-                      ? "bg-gradient-to-r from-[#172102] to-[#101416] border-[#7ca100] shadow-[0_0_20px_rgba(200,255,5,0.12)]"
-                      : "bg-[#101214] border-[#2a3033] hover:border-[#424a4e]"
+                      ? "bg-gradient-to-r from-nx-surface to-nx-surface border-nx-accent-fill/40 shadow-[0_0_20px_rgba(200,255,5,0.12)]"
+                      : "bg-nx-surface border-nx-line hover:border-nx-line-hi"
                   }`}
                 >
                   <div
-                    className="w-16 h-16 rounded-xl bg-cover bg-center shrink-0 border border-[#30383a]"
+                    className="w-16 h-16 rounded-xl bg-cover bg-center shrink-0 border border-nx-line"
                     style={{ backgroundImage: `url(${loc.img})` }}
                   />
 
@@ -431,10 +431,10 @@ export function ExternalLocationsView() {
                       <span
                         className={`text-[9px] font-bold px-2 py-0.5 rounded-full border shrink-0 ${
                           loc.statusType === "green"
-                            ? "bg-[#1c2707] text-[#c8ff05] border-[#5a7800]"
+                            ? "bg-nx-accent-fill/15 text-nx-accent border-nx-accent-fill/40"
                             : loc.statusType === "red"
-                            ? "bg-[#2d1115] text-[#ff6672] border-[#80404b]"
-                            : "bg-[#282105] text-[#e5be42] border-[#735c0b]"
+                            ? "bg-destructive/15 text-destructive border-destructive/30"
+                            : "bg-warning/15 text-warning border-warning/30"
                         }`}
                       >
                         {loc.status}
@@ -465,7 +465,7 @@ export function ExternalLocationsView() {
         {/* Right Column: Selected Location Detail Workspace (approx 7 cols) */}
         <div className="lg:col-span-7">
           {selectedLoc ? (
-            <div className="rounded-2xl border border-[#32393c] bg-[#101214] overflow-hidden flex flex-col">
+            <div className="rounded-2xl border border-nx-line bg-nx-surface overflow-hidden flex flex-col">
               {/* Hero Image & Banner */}
               <div
                 className="h-44 bg-cover bg-center relative p-5 flex flex-col justify-between"
@@ -475,37 +475,37 @@ export function ExternalLocationsView() {
               >
                 <div className="flex items-start justify-between">
                   <div className="flex items-center gap-2">
-                    <span className="text-[10px] font-bold px-2.5 py-1 rounded-full bg-[#1c2707] text-[#c8ff05] border border-[#5a7800]">
+                    <span className="text-[10px] font-bold px-2.5 py-1 rounded-full bg-nx-accent-fill/15 text-nx-accent border border-nx-accent-fill/40">
                       {selectedLoc.ownershipEn}
                     </span>
-                    <span className="text-[10px] font-bold px-2.5 py-1 rounded-full bg-[#101214]/80 text-[#c8ff05] border border-[#353d3c]">
+                    <span className="text-[10px] font-bold px-2.5 py-1 rounded-full bg-nx-surface/80 text-nx-accent border border-nx-line-hi">
                       {selectedLoc.status}
                     </span>
                   </div>
 
-                  <button className="h-8 w-8 rounded-lg bg-[#101214]/80 border border-[#353d3c] text-nx-ink-2 hover:text-white flex items-center justify-center">
+                  <button className="h-8 w-8 rounded-lg bg-nx-surface/80 border border-nx-line-hi text-nx-ink-2 hover:text-nx-ink flex items-center justify-center">
                     <MoreVertical className="h-4 w-4" />
                   </button>
                 </div>
 
                 <div>
-                  <h2 className="text-2xl font-black text-white tracking-tight">
+                  <h2 className="text-2xl font-black text-nx-ink tracking-tight">
                     {isAr ? selectedLoc.nameAr : selectedLoc.nameEn}
                   </h2>
                   <div className="flex items-center gap-2 text-xs text-zinc-300 mt-1">
-                    <MapPin className="h-3.5 w-3.5 text-[#c8ff05]" />
+                    <MapPin className="h-3.5 w-3.5 text-nx-accent" />
                     <span>{isAr ? selectedLoc.cityAr : selectedLoc.cityEn}</span>
                   </div>
                 </div>
               </div>
 
               {/* Navigation Tabs */}
-              <div className="border-b border-[#2a3033] px-5 flex items-center gap-6 text-xs font-bold text-nx-ink-3 bg-[#14171a]">
+              <div className="border-b border-nx-line px-5 flex items-center gap-6 text-xs font-bold text-nx-ink-3 bg-nx-raised">
                 <span
                   onClick={() => setActiveTab("overview")}
                   className={`py-3.5 cursor-pointer transition-all ${
                     activeTab === "overview"
-                      ? "text-[#c8ff05] border-b-2 border-[#c8ff05]"
+                      ? "text-nx-accent border-b-2 border-nx-accent-fill"
                       : "hover:text-nx-ink"
                   }`}
                 >
@@ -515,7 +515,7 @@ export function ExternalLocationsView() {
                   onClick={() => setActiveTab("groups")}
                   className={`py-3.5 cursor-pointer transition-all ${
                     activeTab === "groups"
-                      ? "text-[#c8ff05] border-b-2 border-[#c8ff05]"
+                      ? "text-nx-accent border-b-2 border-nx-accent-fill"
                       : "hover:text-nx-ink"
                   }`}
                 >
@@ -525,7 +525,7 @@ export function ExternalLocationsView() {
                   onClick={() => setActiveTab("sessions")}
                   className={`py-3.5 cursor-pointer transition-all ${
                     activeTab === "sessions"
-                      ? "text-[#c8ff05] border-b-2 border-[#c8ff05]"
+                      ? "text-nx-accent border-b-2 border-nx-accent-fill"
                       : "hover:text-nx-ink"
                   }`}
                 >
@@ -535,7 +535,7 @@ export function ExternalLocationsView() {
                   onClick={() => setActiveTab("settings")}
                   className={`py-3.5 cursor-pointer transition-all ${
                     activeTab === "settings"
-                      ? "text-[#c8ff05] border-b-2 border-[#c8ff05]"
+                      ? "text-nx-accent border-b-2 border-nx-accent-fill"
                       : "hover:text-nx-ink"
                   }`}
                 >
@@ -547,22 +547,22 @@ export function ExternalLocationsView() {
               <div className="p-5 space-y-5">
                 {/* 4 Mini Metrics */}
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-                  <div className="p-3 rounded-xl bg-[#141b1b] border border-[#30383a]">
+                  <div className="p-3 rounded-xl bg-nx-raised border border-nx-line">
                     <div className="text-[10px] font-bold text-nx-ink-3 uppercase">{isAr ? "الرياضات" : "Supported Sports"}</div>
                     <div className="text-xs font-bold text-nx-ink mt-1 truncate">⚽ {selectedLoc.sportEn.split(",")[0]}</div>
                   </div>
 
-                  <div className="p-3 rounded-xl bg-[#141b1b] border border-[#30383a]">
+                  <div className="p-3 rounded-xl bg-nx-raised border border-nx-line">
                     <div className="text-[10px] font-bold text-nx-ink-3 uppercase">{isAr ? "الملاعب" : "Fields"}</div>
-                    <div className="text-xl font-black text-[#c8ff05] font-mono mt-0.5">{selectedLoc.fieldsCount}</div>
+                    <div className="text-xl font-black text-nx-accent font-mono mt-0.5">{selectedLoc.fieldsCount}</div>
                   </div>
 
-                  <div className="p-3 rounded-xl bg-[#141b1b] border border-[#30383a]">
+                  <div className="p-3 rounded-xl bg-nx-raised border border-nx-line">
                     <div className="text-[10px] font-bold text-nx-ink-3 uppercase">{isAr ? "السعة / ملعب" : "Capacity (per field)"}</div>
-                    <div className="text-xl font-black text-[#c8ff05] font-mono mt-0.5">{selectedLoc.capacity}</div>
+                    <div className="text-xl font-black text-nx-accent font-mono mt-0.5">{selectedLoc.capacity}</div>
                   </div>
 
-                  <div className="p-3 rounded-xl bg-[#141b1b] border border-[#30383a]">
+                  <div className="p-3 rounded-xl bg-nx-raised border border-nx-line">
                     <div className="text-[10px] font-bold text-nx-ink-3 uppercase">{isAr ? "الحصص المرتبطة" : "Linked Sessions"}</div>
                     <div className="text-xl font-black text-nx-ink font-mono mt-0.5">{selectedLoc.sessionsCount}</div>
                   </div>
@@ -571,34 +571,34 @@ export function ExternalLocationsView() {
                 {/* Linked Groups & Upcoming Sessions Grid */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   {/* Linked Groups */}
-                  <div className="p-4 rounded-xl border border-[#2a3033] bg-[#14171a] space-y-3">
+                  <div className="p-4 rounded-xl border border-nx-line bg-nx-raised space-y-3">
                     <div className="flex items-center justify-between">
                       <span className="font-bold text-xs text-nx-ink flex items-center gap-1.5">
-                        <Users className="h-3.5 w-3.5 text-[#c8ff05]" />
+                        <Users className="h-3.5 w-3.5 text-nx-accent" />
                         <span>{isAr ? "المجموعات المرتبطة (2)" : "Linked Groups (2)"}</span>
                       </span>
-                      <span className="text-[11px] text-[#c8ff05] hover:underline cursor-pointer">
+                      <span className="text-[11px] text-nx-accent hover:underline cursor-pointer">
                         {isAr ? "إدارة المجموعات ←" : "Manage Groups →"}
                       </span>
                     </div>
 
                     <div className="space-y-2">
-                      <div className="flex items-center justify-between p-2 rounded-lg bg-[#101214] border border-[#2a3033] text-xs">
+                      <div className="flex items-center justify-between p-2 rounded-lg bg-nx-surface border border-nx-line text-xs">
                         <div>
                           <div className="font-bold text-nx-ink">U12 – Alpha</div>
                           <div className="text-[10px] text-nx-ink-3">24 athletes · Coach Ahmed</div>
                         </div>
-                        <span className="text-[9px] font-bold px-2 py-0.5 rounded-full bg-[#1c2707] text-[#c8ff05] border border-[#5a7800]">
+                        <span className="text-[9px] font-bold px-2 py-0.5 rounded-full bg-nx-accent-fill/15 text-nx-accent border border-nx-accent-fill/40">
                           Active
                         </span>
                       </div>
 
-                      <div className="flex items-center justify-between p-2 rounded-lg bg-[#101214] border border-[#2a3033] text-xs">
+                      <div className="flex items-center justify-between p-2 rounded-lg bg-nx-surface border border-nx-line text-xs">
                         <div>
                           <div className="font-bold text-nx-ink">U14 – Beta</div>
                           <div className="text-[10px] text-nx-ink-3">20 athletes · Coach Hassan</div>
                         </div>
-                        <span className="text-[9px] font-bold px-2 py-0.5 rounded-full bg-[#1c2707] text-[#c8ff05] border border-[#5a7800]">
+                        <span className="text-[9px] font-bold px-2 py-0.5 rounded-full bg-nx-accent-fill/15 text-nx-accent border border-nx-accent-fill/40">
                           Active
                         </span>
                       </div>
@@ -606,19 +606,19 @@ export function ExternalLocationsView() {
                   </div>
 
                   {/* Upcoming Sessions */}
-                  <div className="p-4 rounded-xl border border-[#2a3033] bg-[#14171a] space-y-3">
+                  <div className="p-4 rounded-xl border border-nx-line bg-nx-raised space-y-3">
                     <div className="flex items-center justify-between">
                       <span className="font-bold text-xs text-nx-ink flex items-center gap-1.5">
-                        <Calendar className="h-3.5 w-3.5 text-[#c8ff05]" />
+                        <Calendar className="h-3.5 w-3.5 text-nx-accent" />
                         <span>{isAr ? "الحصص القادمة (3)" : "Upcoming Sessions (3)"}</span>
                       </span>
-                      <span className="text-[11px] text-[#c8ff05] hover:underline cursor-pointer">
+                      <span className="text-[11px] text-nx-accent hover:underline cursor-pointer">
                         {isAr ? "عرض الجدول ←" : "View Schedule →"}
                       </span>
                     </div>
 
                     <div className="space-y-2">
-                      <div className="flex items-center justify-between p-2 rounded-lg bg-[#101214] border border-[#2a3033] text-xs">
+                      <div className="flex items-center justify-between p-2 rounded-lg bg-nx-surface border border-nx-line text-xs">
                         <div>
                           <div className="font-bold text-nx-ink">U12 – Alpha Training</div>
                           <div className="text-[10px] text-nx-ink-3">Today · 04:00 PM – 05:00 PM · Field 1</div>
@@ -626,7 +626,7 @@ export function ExternalLocationsView() {
                         <span className="text-[10px] text-zinc-400 font-mono">⚽</span>
                       </div>
 
-                      <div className="flex items-center justify-between p-2 rounded-lg bg-[#101214] border border-[#2a3033] text-xs">
+                      <div className="flex items-center justify-between p-2 rounded-lg bg-nx-surface border border-nx-line text-xs">
                         <div>
                           <div className="font-bold text-nx-ink">U14 – Beta Training</div>
                           <div className="text-[10px] text-nx-ink-3">Today · 05:30 PM – 06:30 PM · Field 2</div>
@@ -638,13 +638,13 @@ export function ExternalLocationsView() {
                 </div>
 
                 {/* Operational Notes */}
-                <div className="p-4 rounded-xl border border-[#2a3033] bg-[#14171a] space-y-1.5">
+                <div className="p-4 rounded-xl border border-nx-line bg-nx-raised space-y-1.5">
                   <div className="flex items-center justify-between">
                     <span className="text-xs font-bold text-nx-ink flex items-center gap-1.5">
-                      <Edit3 className="h-3.5 w-3.5 text-[#c8ff05]" />
+                      <Edit3 className="h-3.5 w-3.5 text-nx-accent" />
                       <span>{isAr ? "ملاحظات تشغيلية" : "Operational Notes"}</span>
                     </span>
-                    <span className="text-[11px] text-[#c8ff05] hover:underline cursor-pointer">
+                    <span className="text-[11px] text-nx-accent hover:underline cursor-pointer">
                       {isAr ? "تعديل الملاحظات" : "Edit Notes"}
                     </span>
                   </div>
@@ -657,7 +657,7 @@ export function ExternalLocationsView() {
                 <div className="pt-2 flex flex-wrap items-center gap-2.5">
                   <button
                     type="button"
-                    className="rounded-lg bg-[#c8ff05] border border-[#c8ff05] px-4 py-2 text-xs font-bold text-[#131600] shadow-[0_0_24px_rgba(199,255,0,0.18)] hover:brightness-105 transition-all flex items-center gap-1.5"
+                    className="rounded-lg bg-nx-accent-fill border border-nx-accent-fill px-4 py-2 text-xs font-bold text-nx-on-fill shadow-nx-glow hover:brightness-105 transition-all flex items-center gap-1.5"
                   >
                     <Plus className="h-4 w-4" />
                     <span>{isAr ? "إنشاء حصة تدريبية" : "Create Session"}</span>
@@ -681,8 +681,8 @@ export function ExternalLocationsView() {
                         title={canNavigate ? (isAr ? "فتح الموقع على خرائط Google" : "Open directions in Google Maps") : (isAr ? "لا يوجد عنوان متاح" : "No destination address available")}
                         className={`rounded-lg border px-3.5 py-2 text-xs font-bold transition-all flex items-center gap-1.5 ${
                           canNavigate
-                            ? "border-[#5a7800] bg-[#1a2307] text-[#c8ff05] hover:bg-[#c8ff05] hover:text-[#080a0b] cursor-pointer shadow-[0_0_12px_rgba(200,255,5,0.12)]"
-                            : "border-[#353d3c] bg-[#111416] text-[#9aa1a6] opacity-50 cursor-not-allowed"
+                            ? "border-nx-accent-fill/40 bg-nx-accent-fill/15 text-nx-accent hover:bg-nx-accent-fill hover:text-nx-on-fill cursor-pointer shadow-nx-glow"
+                            : "border-nx-line-hi bg-nx-surface text-nx-ink-2 opacity-50 cursor-not-allowed"
                         }`}
                       >
                         <Navigation className="h-3.5 w-3.5 rtl:-scale-x-100" />
@@ -693,28 +693,28 @@ export function ExternalLocationsView() {
 
                   <button
                     type="button"
-                    className="rounded-lg border border-[#353d3c] bg-[#111416] px-3.5 py-2 text-xs font-bold text-nx-ink hover:bg-[#1a1f21] transition-colors"
+                    className="rounded-lg border border-nx-line-hi bg-nx-surface px-3.5 py-2 text-xs font-bold text-nx-ink hover:bg-nx-raised transition-colors"
                   >
                     {isAr ? "تعيين المجموعات" : "Assign Groups"}
                   </button>
 
                   <button
                     type="button"
-                    className="rounded-lg border border-[#353d3c] bg-[#111416] px-3.5 py-2 text-xs font-bold text-nx-ink hover:bg-[#1a1f21] transition-colors"
+                    className="rounded-lg border border-nx-line-hi bg-nx-surface px-3.5 py-2 text-xs font-bold text-nx-ink hover:bg-nx-raised transition-colors"
                   >
                     {isAr ? "تحديث التفاصيل" : "Update Details"}
                   </button>
 
                   <button
                     type="button"
-                    className="rounded-lg border border-[#353d3c] bg-[#111416] px-3.5 py-2 text-xs font-bold text-nx-ink hover:bg-[#1a1f21] transition-colors"
+                    className="rounded-lg border border-nx-line-hi bg-nx-surface px-3.5 py-2 text-xs font-bold text-nx-ink hover:bg-nx-raised transition-colors"
                   >
                     {isAr ? "عرض الجدول" : "View Schedule"}
                   </button>
                 </div>
 
                 {/* Decoupling Notice */}
-                <div className="rounded-xl bg-[#0c1510] border border-[#345327] p-3 text-xs text-[#c9dfb4] leading-relaxed">
+                <div className="rounded-xl bg-nx-accent-fill/15 border border-nx-accent-fill/40 p-3 text-xs text-nx-accent leading-relaxed">
                   ⓘ {isAr
                     ? "تسجيل المواقع الخارجية لا يضمن توفر الحجز الآلي دون اشتراك Venue. تعمل الأكاديمية بنظام مستقل."
                     : "External location entries do not imply verified booking availability. Academy works decoupled from Venue."}
@@ -722,7 +722,7 @@ export function ExternalLocationsView() {
               </div>
             </div>
           ) : (
-            <div className="h-64 rounded-2xl border border-dashed border-[#343b3e] flex items-center justify-center text-xs text-nx-ink-3">
+            <div className="h-64 rounded-2xl border border-dashed border-nx-line flex items-center justify-center text-xs text-nx-ink-3">
               {isAr ? "الرجاء اختيار موقع من القائمة." : "Select a location from the list."}
             </div>
           )}
@@ -732,8 +732,8 @@ export function ExternalLocationsView() {
       {/* Create Location Dialog */}
       {state.isCreateOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
-          <div className="w-full max-w-lg rounded-2xl border border-[#32393c] bg-[#101214] p-6 shadow-2xl space-y-4 max-h-[90vh] overflow-y-auto">
-            <div className="flex items-center justify-between border-b border-[#2a3033] pb-3">
+          <div className="w-full max-w-lg rounded-2xl border border-nx-line bg-nx-surface p-6 shadow-2xl space-y-4 max-h-[90vh] overflow-y-auto">
+            <div className="flex items-center justify-between border-b border-nx-line pb-3">
               <h2 className="text-base font-bold text-nx-ink">
                 {isAr ? "إضافة موقع تدريب خارجي جديد" : "Add External Training Location"}
               </h2>
@@ -746,8 +746,8 @@ export function ExternalLocationsView() {
             </div>
 
             <form onSubmit={handleSubmit} className="space-y-4 text-xs">
-              <div className="p-3 bg-[#151a1c] rounded-xl border border-[#30383a] text-nx-ink-2 space-y-1">
-                <span className="font-bold text-[#c8ff05] block">
+              <div className="p-3 bg-nx-raised rounded-xl border border-nx-line text-nx-ink-2 space-y-1">
+                <span className="font-bold text-nx-accent block">
                   {isAr ? "إخلاء مسؤولية الربط مع Venue" : "Decoupled Architecture Seam"}
                 </span>
                 <p>
@@ -768,7 +768,7 @@ export function ExternalLocationsView() {
                     value={nameEn}
                     onChange={(e) => setNameEn(e.target.value)}
                     placeholder="e.g. West Community Pitch"
-                    className="w-full rounded-lg border border-[#343b3e] bg-[#0b0e10] p-2 text-xs text-nx-ink focus:border-[#c8ff05] focus:outline-none"
+                    className="w-full rounded-lg border border-nx-line bg-nx-surface p-2 text-xs text-nx-ink focus:border-nx-accent focus:outline-none"
                   />
                 </div>
                 <div>
@@ -781,7 +781,7 @@ export function ExternalLocationsView() {
                     value={nameAr}
                     onChange={(e) => setNameAr(e.target.value)}
                     placeholder="مثال: ملعب المجتمع الغربي"
-                    className="w-full rounded-lg border border-[#343b3e] bg-[#0b0e10] p-2 text-xs text-nx-ink focus:border-[#c8ff05] focus:outline-none"
+                    className="w-full rounded-lg border border-nx-line bg-nx-surface p-2 text-xs text-nx-ink focus:border-nx-accent focus:outline-none"
                   />
                 </div>
               </div>
@@ -795,7 +795,7 @@ export function ExternalLocationsView() {
                   value={address}
                   onChange={(e) => setAddress(e.target.value)}
                   placeholder="Street, City, Postal Code"
-                  className="w-full rounded-lg border border-[#343b3e] bg-[#0b0e10] p-2 text-xs text-nx-ink focus:border-[#c8ff05] focus:outline-none"
+                  className="w-full rounded-lg border border-nx-line bg-nx-surface p-2 text-xs text-nx-ink focus:border-nx-accent focus:outline-none"
                 />
               </div>
 
@@ -809,7 +809,7 @@ export function ExternalLocationsView() {
                     value={contactName}
                     onChange={(e) => setContactName(e.target.value)}
                     placeholder="Manager name"
-                    className="w-full rounded-lg border border-[#343b3e] bg-[#0b0e10] p-2 text-xs text-nx-ink focus:border-[#c8ff05] focus:outline-none"
+                    className="w-full rounded-lg border border-nx-line bg-nx-surface p-2 text-xs text-nx-ink focus:border-nx-accent focus:outline-none"
                   />
                 </div>
                 <div>
@@ -821,7 +821,7 @@ export function ExternalLocationsView() {
                     value={contactPhone}
                     onChange={(e) => setContactPhone(e.target.value)}
                     placeholder="+966 50 123 4567"
-                    className="w-full rounded-lg border border-[#343b3e] bg-[#0b0e10] p-2 text-xs text-nx-ink focus:border-[#c8ff05] focus:outline-none"
+                    className="w-full rounded-lg border border-nx-line bg-nx-surface p-2 text-xs text-nx-ink focus:border-nx-accent focus:outline-none"
                   />
                 </div>
               </div>
@@ -835,21 +835,21 @@ export function ExternalLocationsView() {
                   onChange={(e) => setNotes(e.target.value)}
                   placeholder="Surface type, lighting, access rules..."
                   rows={3}
-                  className="w-full rounded-lg border border-[#343b3e] bg-[#0b0e10] p-2 text-xs text-nx-ink focus:border-[#c8ff05] focus:outline-none"
+                  className="w-full rounded-lg border border-nx-line bg-nx-surface p-2 text-xs text-nx-ink focus:border-nx-accent focus:outline-none"
                 />
               </div>
 
-              <div className="flex justify-end gap-2 pt-2 border-t border-[#2a3033]">
+              <div className="flex justify-end gap-2 pt-2 border-t border-nx-line">
                 <button
                   type="button"
                   onClick={closeCreateDialog}
-                  className="rounded-lg border border-[#343b3e] px-4 py-2 text-xs font-semibold text-nx-ink hover:bg-[#1a1f21]"
+                  className="rounded-lg border border-nx-line px-4 py-2 text-xs font-semibold text-nx-ink hover:bg-nx-raised"
                 >
                   {isAr ? "إلغاء" : "Cancel"}
                 </button>
                 <button
                   type="submit"
-                  className="rounded-lg bg-[#c8ff05] border border-[#c8ff05] px-4 py-2 text-xs font-bold text-[#131600] shadow-[0_0_24px_rgba(199,255,0,0.18)] hover:brightness-105"
+                  className="rounded-lg bg-nx-accent-fill border border-nx-accent-fill px-4 py-2 text-xs font-bold text-nx-on-fill shadow-nx-glow hover:brightness-105"
                 >
                   {isAr ? "حفظ الموقع" : "Save Location"}
                 </button>
