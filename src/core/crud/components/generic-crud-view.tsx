@@ -22,6 +22,10 @@ import { Card, CardHeader, CardTitle, CardContent } from "@core/ui/card";
 import { Badge } from "@core/ui/badge";
 import { GenericTable } from "./generic-table";
 import { GenericModal } from "./generic-modal";
+import {
+  DataExchangeToolbarActions,
+  type DataExchangeFeatureConfig,
+} from "@core/data-exchange";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@core/ui/dialog";
 import { GenericForm, FieldConfig } from "@core/ui/forms/generic-form";
 import { LoadingSpinner } from "@core/ui/loading-spinner";
@@ -426,6 +430,8 @@ export interface CrudConfig<TItem = any> {
     enableCsvImport?: boolean;
     enablePdfPrint?: boolean;
   };
+  /** Enterprise Data Exchange Studio integration (import mapping studio, templates, formula-safe export) */
+  dataExchange?: DataExchangeFeatureConfig;
 
   /* ========================================
    * PERMISSIONS CONFIGURATION
@@ -1131,6 +1137,7 @@ function GenericCrudViewInner<T>(props: GenericCrudViewProps<T>) {
     }
   }, [config?.defaultView]);
   const [splitSelectedId, setSplitSelectedId] = useState<string | null>(null);
+  const [isDataExchangeOpen, setIsDataExchangeOpen] = useState(false);
   const csvInputRef = useRef<HTMLInputElement | null>(null);
 
   const handleCsvExport = useCallback(() => {
@@ -1268,7 +1275,10 @@ function GenericCrudViewInner<T>(props: GenericCrudViewProps<T>) {
   // pagination rather than rendering a skeleton in place. That is a layout
   // change too large to make safely here and is tracked separately.
   const anyModalOpen =
-    viewModel.isCreateModalOpen || viewModel.isEditModalOpen || viewModel.viewModalOpen;
+    viewModel.isCreateModalOpen ||
+    viewModel.isEditModalOpen ||
+    viewModel.viewModalOpen ||
+    isDataExchangeOpen;
 
   if (viewModel.loading && viewModel.items.length === 0 && !anyModalOpen && !config?.toolbarContent) {
     return <LoadingSpinner showText={false} />;
@@ -1280,6 +1290,10 @@ function GenericCrudViewInner<T>(props: GenericCrudViewProps<T>) {
 
   const availableViewModes: CrudViewMode[] =
     config?.viewModes && config.viewModes.length > 0 ? config.viewModes : ["Table"];
+
+  const effectiveDataExchange =
+    config?.dataExchange ??
+    (config?.entityTypeKey ? { entityKey: config.entityTypeKey } : undefined);
 
   const renderRowActionButtons = (row: any) => {
     if (config?.renderActions) {
@@ -1368,6 +1382,17 @@ function GenericCrudViewInner<T>(props: GenericCrudViewProps<T>) {
                   );
                 })}
               </div>
+            )}
+            {effectiveDataExchange && !effectiveDataExchange.hideToolbarActions && (
+              <DataExchangeToolbarActions
+                entityKey={effectiveDataExchange.entityKey}
+                enableMultiSheetMigration={effectiveDataExchange.enableMultiSheetMigration}
+                multiSheetEntityKeys={effectiveDataExchange.multiSheetEntityKeys}
+                activeSearch={effectiveDataExchange.activeSearch ?? viewModel.searchValue}
+                activeFilters={effectiveDataExchange.activeFilters}
+                onImportComplete={() => viewModel.refresh()}
+                onOverlayOpenChange={setIsDataExchangeOpen}
+              />
             )}
             {config?.bulkOptions?.enableCsvExport && (
               <Button
@@ -1499,17 +1524,34 @@ function GenericCrudViewInner<T>(props: GenericCrudViewProps<T>) {
       )}
 
       {/* View Switcher & Toolbar */}
-      {((config?.hidePageHeader && availableViewModes.length > 1) ||
+      {((config?.hidePageHeader &&
+        (availableViewModes.length > 1 ||
+          (effectiveDataExchange && !effectiveDataExchange.hideToolbarActions))) ||
         config?.toolbarContent ||
         config?.viewSwitchPosition === "toolbar" ||
         config?.viewSwitchPosition === "both") && (
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-3">
+        <div className="flex flex-wrap items-center justify-between gap-2 mb-3">
           <div className="flex items-center gap-2">
             {config?.toolbarContent}
           </div>
+          {config?.hidePageHeader &&
+            effectiveDataExchange &&
+            !effectiveDataExchange.hideToolbarActions && (
+              <div className="flex items-center gap-2 sm:ms-auto">
+                <DataExchangeToolbarActions
+                  entityKey={effectiveDataExchange.entityKey}
+                  enableMultiSheetMigration={effectiveDataExchange.enableMultiSheetMigration}
+                  multiSheetEntityKeys={effectiveDataExchange.multiSheetEntityKeys}
+                  activeSearch={effectiveDataExchange.activeSearch ?? viewModel.searchValue}
+                  activeFilters={effectiveDataExchange.activeFilters}
+                  onImportComplete={() => viewModel.refresh()}
+                  onOverlayOpenChange={setIsDataExchangeOpen}
+                />
+              </div>
+            )}
           {availableViewModes.length > 1 && (
             <div
-              className="inline-flex items-center rounded-nx-md border border-nx-line bg-nx-surface p-0.5 ms-auto"
+              className="inline-flex shrink-0 items-center rounded-nx-md border border-nx-line bg-nx-surface p-0.5 ms-auto"
               role="group"
               aria-label="View mode switcher"
             >

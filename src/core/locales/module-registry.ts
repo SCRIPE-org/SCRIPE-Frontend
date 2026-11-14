@@ -310,6 +310,11 @@ import { en as crmAccountsEn, ar as crmAccountsAr } from "@modules/crm/accounts/
 import { en as crmContactsEn, ar as crmContactsAr } from "@modules/crm/contacts/locales";
 import { en as crmActivitiesEn, ar as crmActivitiesAr } from "@modules/crm/activities/locales";
 
+// ─── Data Transfer (3 sub-modules) ─────────────────────────
+import { en as dataTransferEntitiesEn, ar as dataTransferEntitiesAr } from "@modules/data-transfer/entities/locales";
+import { en as dataTransferJobsEn, ar as dataTransferJobsAr } from "@modules/data-transfer/jobs/locales";
+import { en as dataTransferPresetsEn, ar as dataTransferPresetsAr } from "@modules/data-transfer/presets/locales";
+
 
 
 // ─── Merged Dictionaries ───────────────────────────────
@@ -439,6 +444,10 @@ export const allModulesEn: Record<string, unknown> = deepMerge(
   crmAccountsEn,
   crmContactsEn,
   crmActivitiesEn,
+  // Data Transfer
+  dataTransferEntitiesEn,
+  dataTransferJobsEn,
+  dataTransferPresetsEn,
 );
 
 export const allModulesAr: Record<string, unknown> = deepMerge(
@@ -567,4 +576,8 @@ export const allModulesAr: Record<string, unknown> = deepMerge(
   crmAccountsAr,
   crmContactsAr,
   crmActivitiesAr,
+  // Data Transfer
+  dataTransferEntitiesAr,
+  dataTransferJobsAr,
+  dataTransferPresetsAr,
 );

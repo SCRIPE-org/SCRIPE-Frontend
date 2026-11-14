@@ -379,7 +379,9 @@ function promise<T>(
     success: wrapSuccess as any,
     error: wrapError as any,
     action: wrapAction as any,
-    position: options.position,
+    position: options.position
+      ? resolveRtlPosition(options.position, getDocumentDirection(), true)
+      : undefined,
   });
 }
 

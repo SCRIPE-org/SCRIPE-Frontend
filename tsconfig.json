@@ -35,6 +35,8 @@
       "@modules/custom-fields/*": ["./src/modules/custom-fields/custom-fields/*"],
       "@modules/customization": ["./src/modules/admin/customization"],
       "@modules/customization/*": ["./src/modules/admin/customization/*"],
+      "@modules/data-transfer": ["./src/modules/admin/data-transfer"],
+      "@modules/data-transfer/*": ["./src/modules/admin/data-transfer/*"],
       "@modules/ecosystem": ["./src/modules/admin/ecosystem"],
       "@modules/ecosystem/*": ["./src/modules/admin/ecosystem/*"],
       "@modules/entitlements": ["./src/modules/billing/entitlements"],
@@ -73,5 +75,5 @@
     "**/*.mts",
     ".storybook/**/*.ts"
   ],
-  "exclude": ["node_modules", "vitest.config.ts", "vitest.setup.ts"]
+  "exclude": ["node_modules", "vitest.config.ts", "vitest.setup.ts", "src/core/ui/legacy-toast-backup"]
 }

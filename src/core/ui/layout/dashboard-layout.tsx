@@ -24,6 +24,7 @@ import { useResolvedFileUrl } from "@core/hooks/use-resolved-file-url";
 // every user renders nexus.
 import { NexusLayout } from "@core/ui/layout/nexus/nexus-layout";
 import { useIsFetching } from "@tanstack/react-query";
+import { DataExchangeFloatingDock } from "@core/data-exchange/presentation/components/DataExchangeFloatingDock";
 
 // ── Content gate fallback ───────────────────────────────────────────────────
 // Shown on page refresh while the settings/branding/routes gates settle (see
@@ -305,6 +306,7 @@ function DashboardLayoutContent({
         <GracePeriodBanner />
         {renderLayout()}
       </div>
+      <DataExchangeFloatingDock />
     </>
   );
 }

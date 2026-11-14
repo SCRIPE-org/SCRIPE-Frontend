@@ -381,6 +381,16 @@ const overview = {
   realtime: () => ["overview", "realtime"] as const,
 };
 
+/** Data Transfer — Exchange Entities, Jobs & Presets */
+const dataTransfer = {
+  all: ["data-transfer"] as const,
+  entities: () => ["data-transfer", "entities"] as const,
+  entityDescriptor: (key: string) => ["data-transfer", "entities", key, "descriptor"] as const,
+  jobs: (params?: Record<string, unknown>) => ["data-transfer", "jobs", params ?? {}] as const,
+  job: (id: string) => ["data-transfer", "jobs", id] as const,
+  presets: (entityKey?: string) => ["data-transfer", "presets", entityKey ?? "all"] as const,
+};
+
 // ─── Main Export ──────────────────────────────────────────────────────────────
 
 /**
@@ -463,6 +473,9 @@ export const qk = {
   // Ecosystem
   recycleBin,
   overview,
+
+  // Data Transfer
+  dataTransfer,
 };
 
 // Backwards-compatible named export (used by existing code referencing `queryKeys`)

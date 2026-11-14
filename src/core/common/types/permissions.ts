@@ -196,6 +196,19 @@ export function hasAllPermissions(
  * Use this for backward compatibility. For new code, prefer
  * importing directly from the module (e.g., IDENTITY_PERMISSIONS).
  */
+export const DATA_TRANSFER_PERMISSIONS = {
+  DATATRANSFER_JOBS_VIEW: "datatransfer.jobs.view",
+  DATATRANSFER_JOBS_MANAGE: "datatransfer.jobs.manage",
+  DATATRANSFER_PRESETS_VIEW: "datatransfer.presets.view",
+  DATATRANSFER_PRESETS_MANAGE: "datatransfer.presets.manage",
+  DATATRANSFER_MIGRATIONS_EXECUTE: "datatransfer.migrations.execute",
+  JOBS_VIEW: "datatransfer.jobs.view",
+  JOBS_MANAGE: "datatransfer.jobs.manage",
+  PRESETS_VIEW: "datatransfer.presets.view",
+  PRESETS_MANAGE: "datatransfer.presets.manage",
+  MIGRATIONS_EXECUTE: "datatransfer.migrations.execute",
+} as const;
+
 export const SYSTEM_PERMISSIONS = {
   ...IDENTITY_PERMISSIONS,
   ...ENTITLEMENTS_PERMISSIONS,
@@ -215,6 +228,7 @@ export const SYSTEM_PERMISSIONS = {
   ...ANALYTICS_EVENTS_PERMISSIONS,
   ...VENUE_PERMISSIONS,
   ...CRM_PERMISSIONS,
+  ...DATA_TRANSFER_PERMISSIONS,
 } as const;
 
 // ── Page permission mapping ───────────────────────────────────────────────────
@@ -549,6 +563,9 @@ export const PAGE_PERMISSIONS: Record<string, PermissionCode[]> = {
   "/crm/activities": [CRM_PERMISSIONS.ACTIVITIES_READ],
   "/crm/reports": [CRM_PERMISSIONS.REPORTS_READ],
   "/crm/settings": [`${CRM_PERMISSIONS.SETTINGS_MANAGE}|${CRM_PERMISSIONS.PIPELINES_READ}|${CRM_PERMISSIONS.OVERVIEW_READ}`],
+  "/admin/data-exchange": [DATA_TRANSFER_PERMISSIONS.JOBS_VIEW],
+  "/admin/data-exchange/jobs": [DATA_TRANSFER_PERMISSIONS.JOBS_VIEW],
+  "/admin/data-exchange/presets": [DATA_TRANSFER_PERMISSIONS.PRESETS_VIEW],
 
   // Public / Hub / Auth endpoints (No permission required, but mapped so RouteGuard bypasses successfully)
   "/activate-workspace": [],
