@@ -5,10 +5,6 @@
  * All labels localized via t()
  */
 "use client";
-// UI-EXCEPTION: compact studio layout — native <button> used for pixel-precise
-// compact controls (the device toggle) where @core/ui/button's padding/sizing
-// would break the layout. Command actions (save/discard/publish/reset/refresh)
-// compose the real Button + DropdownMenu primitives.
 
 import Link from "next/link";
 import {
@@ -114,13 +110,14 @@ export function PublishBar({
             <span className="text-[10px] font-medium text-nx-accent">
               {t("studio.previewMode")}
             </span>
-            <button
+            <Button
               type="button"
+              variant="ghost"
               onClick={onExitPreview}
-              className="ms-1 rounded-nx-sm text-[10px] text-nx-accent underline transition-colors duration-nx-micro ease-nx-enter focus-visible:shadow-nx-focus focus-visible:outline-none motion-reduce:transition-none"
+              className="ms-1 h-auto rounded-nx-sm p-0 text-[10px] font-normal text-nx-accent underline transition-colors duration-nx-micro ease-nx-enter hover:bg-transparent focus-visible:shadow-nx-focus focus-visible:outline-none motion-reduce:transition-none"
             >
               {t("studio.exitPreview")}
-            </button>
+            </Button>
           </div>
         )}
 
@@ -148,22 +145,23 @@ export function PublishBar({
           const Icon = device.icon;
           const isActive = deviceSize === device.id;
           return (
-            <button
+            <Button
               key={device.id}
               type="button"
+              variant="ghost"
               onClick={() => setDeviceSize(device.id)}
               aria-label={t(device.labelKey)}
               aria-pressed={isActive}
               className={cn(
                 "flex h-7 items-center gap-1.5 rounded-nx-sm px-2.5 text-xs font-medium transition-colors duration-nx-micro ease-nx-enter focus-visible:shadow-nx-focus focus-visible:outline-none motion-reduce:transition-none",
                 isActive
-                  ? "bg-nx-surface text-nx-ink shadow-[inset_0_0_0_1px_var(--nx-line-hi)]"
-                  : "text-nx-ink-2 hover:text-nx-ink"
+                  ? "bg-nx-surface text-nx-ink shadow-[inset_0_0_0_1px_var(--nx-line-hi)] hover:bg-nx-surface"
+                  : "text-nx-ink-2 hover:bg-transparent hover:text-nx-ink"
               )}
             >
               <Icon className="h-3.5 w-3.5" aria-hidden="true" />
               <span className="hidden sm:inline">{t(device.labelKey)}</span>
-            </button>
+            </Button>
           );
         })}
       </div>

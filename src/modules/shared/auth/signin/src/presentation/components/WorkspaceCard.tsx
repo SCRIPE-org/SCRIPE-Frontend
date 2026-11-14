@@ -1,5 +1,4 @@
 // FILE-EXCEPTION: file length
-// UI-EXCEPTION: compact studio layout
 "use client";
 
 import { useState, useRef } from "react";
@@ -237,17 +236,18 @@ export function WorkspaceCard({
           className="h-9 pe-10 text-sm"
           aria-label={`Password for ${ws.tenantName}`}
         />
-        <button
+        <Button
           type="button"
+          variant="ghost"
           onClick={() => setShowPwd((v) => !v)}
-          className="absolute end-2.5 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+          className="absolute end-2.5 top-1/2 h-auto -translate-y-1/2 p-0 text-muted-foreground hover:bg-transparent hover:text-foreground"
           // Reachable by keyboard: a sighted keyboard user and a screen-reader
           // user both need to verify what they typed before submitting, and
           // this is the only control that lets them (WCAG 2.1.1, Level A).
           aria-label={showPwd ? "Hide password" : "Show password"}
         >
           {showPwd ? <EyeOff className="h-3.5 w-3.5" /> : <Eye className="h-3.5 w-3.5" />}
-        </button>
+        </Button>
       </div>
       <div className="flex gap-2">
         <Button

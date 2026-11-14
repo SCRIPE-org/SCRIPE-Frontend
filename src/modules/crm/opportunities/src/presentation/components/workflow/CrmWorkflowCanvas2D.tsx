@@ -67,11 +67,26 @@ const nodeTypes: NodeTypes = {
 };
 const edgeTypes: EdgeTypes = { transitionEdge: CrmTransitionFlowEdge };
 
-const TOKEN_COLOR_HEX_MAP: Record<CrmStageColorToken, string> = {
-  slate: "#64748b", zinc: "#71717a", blue: "#3b82f6", sky: "#0ea5e9", cyan: "#06b6d4",
-  teal: "#14b8a6", emerald: "#10b981", green: "#22c55e", lime: "#84cc16", amber: "#f59e0b",
-  orange: "#f97316", coral: "#fb7185", rose: "#f43f5e", crimson: "#dc2626", pink: "#ec4899",
-  fuchsia: "#d946ef", purple: "#a855f7", violet: "#8b5cf6", indigo: "#6366f1",
+const TOKEN_COLOR_CSS_MAP: Record<CrmStageColorToken, string> = {
+  slate: "var(--nx-ink-3)",
+  zinc: "color-mix(in srgb, var(--nx-ink-3) 80%, var(--nx-line-hi))",
+  blue: "hsl(var(--chart-1))",
+  sky: "var(--nx-info)",
+  cyan: "color-mix(in srgb, var(--nx-info) 65%, hsl(var(--chart-2)))",
+  teal: "hsl(var(--chart-2))",
+  emerald: "var(--nx-success)",
+  green: "hsl(var(--chart-6))",
+  lime: "var(--nx-accent)",
+  amber: "var(--nx-warning)",
+  orange: "hsl(var(--chart-3))",
+  coral: "color-mix(in srgb, hsl(var(--chart-3)) 55%, var(--nx-danger))",
+  rose: "var(--nx-danger)",
+  crimson: "color-mix(in srgb, var(--nx-danger) 75%, var(--nx-ink))",
+  pink: "hsl(var(--chart-7))",
+  fuchsia: "color-mix(in srgb, hsl(var(--chart-7)) 65%, hsl(var(--chart-4)))",
+  purple: "hsl(var(--chart-4))",
+  violet: "color-mix(in srgb, hsl(var(--chart-4)) 70%, hsl(var(--chart-1)))",
+  indigo: "color-mix(in srgb, hsl(var(--chart-1)) 55%, hsl(var(--chart-4)))",
 };
 
 function ManagedReactFlowCanvas(props: CrmWorkflowCanvas2DProps) {
@@ -110,27 +125,27 @@ function ManagedReactFlowCanvas(props: CrmWorkflowCanvas2DProps) {
           proOptions={{ hideAttribution: true }} className="bg-nx-ground"
         >
           <Controls showInteractive={false} className="!bg-nx-surface !border !border-nx-line !shadow-none !rounded-md overflow-hidden" />
-          <Background variant={BackgroundVariant.Dots} gap={20} size={1.5} color="var(--nx-line, #27272a)" className="opacity-70" />
+          <Background variant={BackgroundVariant.Dots} gap={20} size={1.5} color="var(--nx-line)" className="opacity-70" />
           {graph.showMiniMap && (
             <Panel position="bottom-right" className="m-3">
               <div data-testid="workflow-minimap" className="relative">
                 <MiniMap
-                  style={{ width: 148, height: 92 }} nodeStrokeColor="var(--nx-line-hi, #3f3f46)"
+                  style={{ width: 148, height: 92 }} nodeStrokeColor="var(--nx-line-hi)"
                   nodeColor={(n) => {
                     const st = stages.find((s) => s.stageKey === n.id);
-                    if (!st) return "rgba(161, 161, 170, 0.5)";
+                    if (!st) return "color-mix(in srgb, var(--nx-ink-3) 50%, transparent)";
                     if (st.customColorHex) {
                       const custom = buildCustomHexHarmonicStyles(st.customColorHex);
                       if (custom.isValidHex && custom.minimapStroke) return custom.minimapStroke;
                     }
                     const token = resolveDefaultStageColor(st.stageKey, st.category, st.order, st.color || st.properties?.color);
-                    if (token && TOKEN_COLOR_HEX_MAP[token]) return TOKEN_COLOR_HEX_MAP[token];
-                    if (st.category === "done" || st.isTerminalWon) return "rgba(34, 197, 94, 0.85)";
-                    if (st.category === "lost" || st.isTerminalLost) return "rgba(239, 68, 68, 0.85)";
-                    if (st.category === "in_progress") return "rgba(59, 130, 246, 0.85)";
-                    return "rgba(161, 161, 170, 0.5)";
+                    if (token && TOKEN_COLOR_CSS_MAP[token]) return TOKEN_COLOR_CSS_MAP[token];
+                    if (st.category === "done" || st.isTerminalWon) return "var(--nx-success)";
+                    if (st.category === "lost" || st.isTerminalLost) return "var(--nx-danger)";
+                    if (st.category === "in_progress") return "var(--nx-info)";
+                    return "color-mix(in srgb, var(--nx-ink-3) 50%, transparent)";
                   }}
-                  nodeBorderRadius={3} maskColor="rgba(120, 120, 130, 0.18)"
+                  nodeBorderRadius={3} maskColor="color-mix(in srgb, var(--nx-ink-3) 18%, transparent)"
                   className="!bg-nx-surface !border !border-nx-line !rounded-md overflow-hidden"
                 />
                 <div data-testid="workflow-minimap-surface" className="sr-only" />

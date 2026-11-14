@@ -1,5 +1,4 @@
 /* eslint-disable unused-imports/no-unused-vars */
-// UI-EXCEPTION: compact studio layout
 /**
  * BuilderCanvas — The main DnD canvas for the page builder
  *
@@ -20,6 +19,7 @@
 
 import { useDroppable } from "@dnd-kit/core";
 import { SortableContext, rectSortingStrategy } from "@dnd-kit/sortable";
+import { Button } from "@core/ui/button";
 import { cn } from "@/core/common/utils";
 import { useI18n } from "@core/providers/i18n-provider";
 import { Grid3X3, Move, ZoomIn, ZoomOut, Magnet, AlertTriangle } from "lucide-react";
@@ -108,71 +108,84 @@ export function BuilderCanvas({
       <div className="flex items-center justify-between gap-2 px-1">
         {/* Position mode toggle */}
         <div className="flex items-center gap-1 rounded-nx-control bg-nx-raised p-0.5">
-          {/* UI-EXCEPTION: compact studio layout */}
-          <button
+          <Button
+            type="button"
+            variant="ghost"
             onClick={() => onSetPositionMode("absolute")}
             className={cn(
-              "flex items-center gap-1.5 rounded-nx-sm px-2.5 py-1 text-[11px] font-medium transition-[color,background-color,box-shadow] duration-nx-micro ease-nx-enter focus-visible:shadow-nx-focus focus-visible:outline-none motion-reduce:transition-none",
+              "flex h-auto items-center gap-1.5 rounded-nx-sm px-2.5 py-1 text-[11px] font-medium transition-[color,background-color,box-shadow] duration-nx-micro ease-nx-enter focus-visible:shadow-nx-focus focus-visible:outline-none motion-reduce:transition-none",
               isAbsolute
-                ? "bg-nx-surface text-nx-ink shadow-nx-sm"
-                : "text-nx-ink-3 hover:text-nx-ink-2"
+                ? "bg-nx-surface text-nx-ink shadow-nx-sm hover:bg-nx-surface"
+                : "text-nx-ink-3 hover:bg-transparent hover:text-nx-ink-2"
             )}
             title={t("studio.builder.freeForm")}
           >
             <Move className="h-3 w-3" aria-hidden="true" />
             <span>{t("studio.builder.freeForm")}</span>
-          </button>
-          <button
+          </Button>
+          <Button
+            type="button"
+            variant="ghost"
             onClick={() => onSetPositionMode("grid")}
             className={cn(
-              "flex items-center gap-1.5 rounded-nx-sm px-2.5 py-1 text-[11px] font-medium transition-[color,background-color,box-shadow] duration-nx-micro ease-nx-enter focus-visible:shadow-nx-focus focus-visible:outline-none motion-reduce:transition-none",
+              "flex h-auto items-center gap-1.5 rounded-nx-sm px-2.5 py-1 text-[11px] font-medium transition-[color,background-color,box-shadow] duration-nx-micro ease-nx-enter focus-visible:shadow-nx-focus focus-visible:outline-none motion-reduce:transition-none",
               !isAbsolute
-                ? "bg-nx-surface text-nx-ink shadow-nx-sm"
-                : "text-nx-ink-3 hover:text-nx-ink-2"
+                ? "bg-nx-surface text-nx-ink shadow-nx-sm hover:bg-nx-surface"
+                : "text-nx-ink-3 hover:bg-transparent hover:text-nx-ink-2"
             )}
             title={t("studio.builder.grid")}
           >
             <Grid3X3 className="h-3 w-3" aria-hidden="true" />
             <span>{t("studio.builder.grid")}</span>
-          </button>
+          </Button>
         </div>
 
         {/* Right controls: snap + zoom */}
         <div className="flex items-center gap-2">
           {/* Snap toggle */}
-          <button
+          <Button
+            type="button"
+            variant="ghost"
             onClick={() => onSetSnapToGrid(!snapToGrid)}
             className={cn(
-              "flex items-center gap-1 rounded-nx-sm px-2 py-1 text-[11px] transition-colors duration-nx-micro ease-nx-enter focus-visible:shadow-nx-focus focus-visible:outline-none motion-reduce:transition-none",
-              snapToGrid ? "bg-nx-accent-wash text-nx-accent" : "text-nx-ink-3 hover:text-nx-ink-2"
+              "flex h-auto items-center gap-1 rounded-nx-sm px-2 py-1 text-[11px] font-normal transition-colors duration-nx-micro ease-nx-enter focus-visible:shadow-nx-focus focus-visible:outline-none motion-reduce:transition-none",
+              snapToGrid
+                ? "bg-nx-accent-wash text-nx-accent hover:bg-nx-accent-wash"
+                : "text-nx-ink-3 hover:bg-transparent hover:text-nx-ink-2"
             )}
             title={t("studio.builder.snapToGrid")}
           >
             <Magnet className="h-3 w-3" aria-hidden="true" />
             <span className="hidden tabular-nums sm:inline">{SNAP_GRID_SIZE}px</span>
-          </button>
+          </Button>
 
           {/* Zoom controls */}
           <div className="flex items-center gap-0.5 rounded-nx-sm bg-nx-raised">
-            <button
+            <Button
+              type="button"
+              variant="ghost"
+              size="icon"
               onClick={prevZoom}
               disabled={zoom <= ZOOM_STEPS[0]}
-              className="flex h-6 w-6 items-center justify-center rounded-s-nx-sm transition-colors duration-nx-micro ease-nx-enter hover:bg-nx-hover focus-visible:shadow-nx-focus focus-visible:outline-none disabled:pointer-events-none disabled:text-nx-ink-3 motion-reduce:transition-none"
+              className="flex h-6 w-6 items-center justify-center rounded-s-nx-sm p-0 transition-colors duration-nx-micro ease-nx-enter hover:bg-nx-hover focus-visible:shadow-nx-focus focus-visible:outline-none disabled:pointer-events-none disabled:text-nx-ink-3 motion-reduce:transition-none"
               aria-label={t("studio.builder.zoomOut")}
             >
               <ZoomOut className="h-3 w-3" aria-hidden="true" />
-            </button>
+            </Button>
             <span className="w-8 text-center font-mono text-[10px] tabular-nums text-nx-ink-3">
               {zoom}%
             </span>
-            <button
+            <Button
+              type="button"
+              variant="ghost"
+              size="icon"
               onClick={nextZoom}
               disabled={zoom >= ZOOM_STEPS[ZOOM_STEPS.length - 1]}
-              className="flex h-6 w-6 items-center justify-center rounded-e-nx-sm transition-colors duration-nx-micro ease-nx-enter hover:bg-nx-hover focus-visible:shadow-nx-focus focus-visible:outline-none disabled:pointer-events-none disabled:text-nx-ink-3 motion-reduce:transition-none"
+              className="flex h-6 w-6 items-center justify-center rounded-e-nx-sm p-0 transition-colors duration-nx-micro ease-nx-enter hover:bg-nx-hover focus-visible:shadow-nx-focus focus-visible:outline-none disabled:pointer-events-none disabled:text-nx-ink-3 motion-reduce:transition-none"
               aria-label={t("studio.builder.zoomIn")}
             >
               <ZoomIn className="h-3 w-3" aria-hidden="true" />
-            </button>
+            </Button>
           </div>
         </div>
       </div>

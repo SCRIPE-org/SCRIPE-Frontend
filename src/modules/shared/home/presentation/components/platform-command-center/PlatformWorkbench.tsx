@@ -13,6 +13,7 @@ import {
 import Link from "next/link";
 import { useI18n } from "@core/providers/i18n-provider";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@core/ui/card";
+import { Button } from "@core/ui/button";
 
 export function PlatformWorkbench() {
   const { t } = useI18n();
@@ -73,14 +74,15 @@ export function PlatformWorkbench() {
 
         {/* Quick Actions Dropdown */}
         <div className="relative">
-          <button
+          <Button
             type="button"
+            variant="outline"
             onClick={() => setDropdownOpen((v) => !v)}
-            className="flex items-center gap-2 rounded-lg border border-nx-line bg-nx-raised px-3 py-1.5 text-xs text-nx-ink transition-colors hover:bg-nx-raised-2"
+            className="flex h-auto items-center gap-2 rounded-lg border-nx-line bg-nx-raised px-3 py-1.5 text-xs text-nx-ink transition-colors hover:bg-nx-raised-2"
           >
             <span>{t("platformCommandCenter.workbench.quickActions") || "Quick actions"}</span>
             <ChevronDown className="h-3.5 w-3.5 text-nx-ink-3" />
-          </button>
+          </Button>
 
           {dropdownOpen && (
             <div className="absolute right-0 z-30 mt-1.5 w-40 rounded-lg border border-nx-line bg-nx-surface py-1 shadow-nx-popover">

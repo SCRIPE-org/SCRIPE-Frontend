@@ -29,17 +29,17 @@ export function ActiveKeyCard({
 
   if (!status || !status.isInitialized) {
     return (
-      <Card className="border border-amber-500/30 bg-amber-500/5 shadow-sm">
+      <Card className="border border-warning/30 bg-warning/5">
         <CardHeader>
           <div className="flex items-center gap-3">
-            <div className="rounded-xl bg-amber-500/10 p-2.5 text-amber-600 dark:text-amber-400">
+            <div className="rounded-xl bg-warning/10 p-2.5 text-warning">
               <KeyRound className="h-6 w-6" />
             </div>
             <div>
-              <CardTitle className="text-lg text-amber-700 dark:text-amber-300">
+              <CardTitle className="text-lg text-warning">
                 {t("customFieldsSecurity.uninitializedTitle")}
               </CardTitle>
-              <CardDescription className="text-amber-700/80 dark:text-amber-300/80">
+              <CardDescription className="text-warning/80">
                 {t("customFieldsSecurity.uninitializedDesc")}
               </CardDescription>
             </div>
@@ -49,7 +49,7 @@ export function ActiveKeyCard({
           <Button
             onClick={onInitialize}
             disabled={isInitializing}
-            className="gap-2 bg-amber-600 font-medium text-white shadow-sm hover:bg-amber-700"
+            className="gap-2 bg-warning font-medium text-warning-foreground hover:bg-warning/90"
           >
             <Lock className="h-4 w-4" />
             {isInitializing ? t("common.loading") : t("customFieldsSecurity.initializeButton")}
@@ -62,7 +62,7 @@ export function ActiveKeyCard({
   const isRevoked = status.status === "Revoked";
 
   return (
-    <Card className="border border-border shadow-sm">
+    <Card className="border border-nx-line">
       <CardHeader className="flex flex-row items-center justify-between pb-3">
         <div className="flex items-center gap-3">
           <div className="rounded-xl bg-primary/10 p-2.5 text-primary">

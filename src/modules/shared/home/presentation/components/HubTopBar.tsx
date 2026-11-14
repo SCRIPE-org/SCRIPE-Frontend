@@ -23,6 +23,7 @@ import { useRouter } from "next/navigation";
 import { useI18n } from "@core/providers/i18n-provider";
 import { useAppStore } from "@core/store/useAppStore";
 import { BRAND } from "@core/config/branding";
+import { Button } from "@core/ui/button";
 import { cn } from "@core/common/utils";
 
 interface HubTopBarProps {
@@ -70,8 +71,9 @@ export function HubTopBar({ onSearchClick, onAppLauncherClick }: HubTopBarProps)
       <div className="flex-1" />
 
       {/* Mini search shortcut */}
-      <button
+      <Button
         type="button"
+        variant="ghost"
         onClick={onSearchClick}
         className="inline-flex h-[34px] cursor-pointer items-center gap-2.5 rounded-nx-md border border-nx-line px-3 text-nx-ink-2 transition-colors duration-nx-micro ease-nx-enter hover:bg-nx-hover hover:text-nx-ink focus-visible:shadow-nx-focus focus-visible:outline-none motion-reduce:transition-none"
       >
@@ -83,21 +85,25 @@ export function HubTopBar({ onSearchClick, onAppLauncherClick }: HubTopBarProps)
         <kbd className="rounded-nx-sm border border-nx-line bg-nx-raised px-1.5 py-0.5 text-[11px] font-medium text-nx-ink-2">
           /
         </kbd>
-      </button>
+      </Button>
 
       {/* App switcher → opens NexusAppLauncher */}
-      <button
+      <Button
         type="button"
+        variant="ghost"
+        size="icon"
         aria-label={t("workspaceHub.topbar.appSwitcher")}
         onClick={onAppLauncherClick}
         className={cn("cursor-pointer", ICON_BUTTON)}
       >
         <Grid3x3 size={16} strokeWidth={1.75} aria-hidden="true" />
-      </button>
+      </Button>
 
       {/* Notifications → navigate to /communication/notifications */}
-      <button
+      <Button
         type="button"
+        variant="ghost"
+        size="icon"
         aria-label={t("workspaceHub.topbar.notifications")}
         onClick={() => router.push("/communication/notifications")}
         className={cn("relative cursor-pointer", ICON_BUTTON)}
@@ -109,14 +115,15 @@ export function HubTopBar({ onSearchClick, onAppLauncherClick }: HubTopBarProps)
           aria-hidden="true"
           className="absolute end-1.5 top-1.5 h-2 w-2 rounded-full bg-destructive ring-2 ring-nx-surface"
         />
-      </button>
+      </Button>
 
       {/* Divider */}
       <div aria-hidden="true" className="h-[22px] w-px bg-nx-line" />
 
       {/* Avatar pill → navigate to /account/dossier */}
-      <button
+      <Button
         type="button"
+        variant="ghost"
         onClick={() => router.push("/account/dossier")}
         className="inline-flex h-9 cursor-pointer items-center gap-2 rounded-full border border-nx-line py-1 pe-2.5 ps-1 transition-colors duration-nx-micro ease-nx-enter hover:bg-nx-hover focus-visible:shadow-nx-focus focus-visible:outline-none motion-reduce:transition-none"
       >
@@ -135,7 +142,7 @@ export function HubTopBar({ onSearchClick, onAppLauncherClick }: HubTopBarProps)
           )}
         </div>
         <ChevronDown size={14} strokeWidth={1.75} className="text-nx-ink-3" aria-hidden="true" />
-      </button>
+      </Button>
     </header>
   );
 }

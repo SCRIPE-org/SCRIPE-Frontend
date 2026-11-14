@@ -80,14 +80,14 @@ function CrmStageFlowNodeComponent({ data, selected }: NodeProps<StageFlowNode>)
             }}
             title={t("crmOpportunities.workflowStudio.globalInboundTooltip")}
             className={`h-6 px-2 text-[10px] font-semibold tracking-wide border shadow-none bg-nx-raised text-nx-ink hover:border-nx-accent transition-colors flex items-center gap-1 ${
-              matchedGlobalTransition && selectedTransitionId === matchedGlobalTransition.id ? "border-nx-accent ring-1 ring-nx-accent/50 text-nx-accent" : "border-sky-500/50 hover:border-sky-400"
+              matchedGlobalTransition && selectedTransitionId === matchedGlobalTransition.id ? "border-nx-accent ring-1 ring-nx-accent/50 text-nx-accent" : "border-info/50 hover:border-info"
             }`}
           >
-            <span className="text-amber-400 font-bold">⚡</span>
+            <span className="text-warning font-bold">⚡</span>
             <span>{t("crmOpportunities.workflowStudio.globalAllBadge")}</span>
             {globalLabel && <span className="text-nx-ink-2 truncate max-w-[84px]">· {globalLabel}</span>}
           </Button>
-          <svg data-testid={`canvas-any-elbow-${stage.stageKey}`} className="w-8 h-8 -ml-1 text-sky-400 pointer-events-none overflow-visible" viewBox="0 0 32 32" fill="none" aria-hidden="true">
+          <svg data-testid={`canvas-any-elbow-${stage.stageKey}`} className="w-8 h-8 -ml-1 text-info pointer-events-none overflow-visible" viewBox="0 0 32 32" fill="none" aria-hidden="true">
             <path d="M 2 12 H 14 Q 20 12 20 18 V 28" stroke="currentColor" strokeWidth="1.75" strokeDasharray="3 2" fill="none" />
             <polygon points="16,26 24,26 20,31" fill="currentColor" />
           </svg>

@@ -128,7 +128,7 @@ export function TwoFactorWizardModal({
 
             <div className="py-4 space-y-4">
               {/* QR Image Container */}
-              <div className="flex justify-center p-4 rounded-xl bg-white border border-nx-line w-fit mx-auto">
+              <div className="flex justify-center p-4 rounded-xl bg-[var(--scripe-white)] border border-nx-line w-fit mx-auto">
                 {setupData.qrCodeDataUri ? (
                   <Image
                     src={setupData.qrCodeDataUri}

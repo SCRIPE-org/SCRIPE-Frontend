@@ -52,8 +52,8 @@ export function buildWorkflowCanvasEdges(params: BuildWorkflowEdgesParams): Tran
       type: "smoothstep",
       animated: true,
       selectable: false,
-      style: { stroke: "#10b981", strokeWidth: 2 },
-      markerEnd: { type: MarkerType.ArrowClosed, width: 14, height: 14, color: "#10b981" },
+      style: { stroke: "var(--nx-success)", strokeWidth: 2 },
+      markerEnd: { type: MarkerType.ArrowClosed, width: 14, height: 14, color: "var(--nx-success)" },
     } as unknown as TransitionFlowEdge);
   }
 
@@ -127,7 +127,7 @@ export function buildWorkflowCanvasEdges(params: BuildWorkflowEdgesParams): Tran
     pairIndices.set(key, parallelIndex + 1);
     const parallelCount = pairCounts.get(key) ?? 1;
     const isSelected = selectedTransitionId === tr.id;
-    const edgeColor = isSelected ? "var(--nx-accent, #c6ff00)" : isWildcard ? "var(--nx-ink-3, #71717a)" : "var(--nx-line-hi, #71717a)";
+    const edgeColor = isSelected ? "var(--nx-accent)" : isWildcard ? "var(--nx-ink-3)" : "var(--nx-line-hi)";
 
     resultEdges.push({
       id: tr.id,
@@ -155,7 +155,7 @@ export function buildWorkflowCanvasEdges(params: BuildWorkflowEdgesParams): Tran
           targetHandle: (fIdx % 2 === 0 ? "bottom-1" : "top-1") as StagePortId,
           type: "transitionEdge",
           selected: isSelected,
-          markerEnd: { type: MarkerType.ArrowClosed, width: 14, height: 14, color: "var(--nx-ink-3, #71717a)" },
+          markerEnd: { type: MarkerType.ArrowClosed, width: 14, height: 14, color: "var(--nx-ink-3)" },
           data: {
             transition: { ...tr, fromStageKey: srcStage.stageKey },
             isAr, isSelected, showLabels: false, isGlobalWildcard: true, stageBoxes,

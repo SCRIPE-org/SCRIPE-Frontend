@@ -84,8 +84,8 @@ export function RoleInfoCard({
                     {t("roles.activeUsers") || "Assigned Users"}
                   </p>
                   <Badge
-                    variant="outline"
-                    className="mt-1.5 flex w-fit items-center gap-1.5 border-amber-500/30 bg-amber-500/10 tabular-nums text-amber-600 dark:text-amber-400"
+                    variant="warning"
+                    className="mt-1.5 flex w-fit items-center gap-1.5 tabular-nums"
                   >
                     <Users className="h-3 w-3" aria-hidden="true" />
                     <span>{adminCount}</span>

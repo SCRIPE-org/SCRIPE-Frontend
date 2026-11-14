@@ -70,23 +70,23 @@ export function ResourceGeneralTab({ vm }: Props) {
       {/* Left Column: Court Photo Gallery matching approved reference */}
       <div className="space-y-3 lg:col-span-5">
         {/* Main Large Court Photo */}
-        <div className="border-nx-line group relative flex h-64 w-full flex-col justify-between overflow-hidden rounded-2xl border bg-nx-raised p-4 shadow-sm sm:h-72">
+        <div className="border-nx-line group relative flex h-64 w-full flex-col justify-between overflow-hidden rounded-2xl border bg-nx-raised p-4 sm:h-72">
           <img
             src={vm.activePhoto}
             alt="Court Preview"
             className="absolute inset-0 size-full object-cover transition-transform duration-300 group-hover:scale-105"
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-black/30" />
+          <div className="bg-gradient-to-t from-nx-ground/85 via-nx-ground/35 to-nx-ground/40 absolute inset-0" />
 
           <div className="relative z-10 flex items-center justify-between">
-            <span className="backdrop-blur-xs rounded-md border border-white/20 bg-black/60 px-2.5 py-1 text-xs font-extrabold uppercase tracking-widest text-white">
+            <span className="backdrop-blur-xs rounded-md border border-nx-line bg-nx-surface/90 px-2.5 py-1 text-xs font-extrabold uppercase tracking-widest text-nx-ink">
               Primary Photo
             </span>
           </div>
 
-          <div className="relative z-10 flex items-center justify-between text-white">
+          <div className="relative z-10 flex items-center justify-between text-nx-ink">
             <span className="text-sm font-bold">Court Preview</span>
-            <span className="text-xs opacity-80">Tournament Indoor Padel</span>
+            <span className="text-xs text-nx-ink-2">Tournament Indoor Padel</span>
           </div>
         </div>
 
@@ -108,7 +108,7 @@ export function ResourceGeneralTab({ vm }: Props) {
             </div>
           ))}
           {/* + Add Photo button with real file input */}
-          <input
+          <Input
             type="file"
             ref={fileInputRef}
             className="hidden"

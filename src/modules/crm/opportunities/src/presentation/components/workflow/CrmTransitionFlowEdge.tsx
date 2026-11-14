@@ -78,10 +78,10 @@ function CrmTransitionFlowEdgeComponent({
   const noRollback = transition.allowRollback === false;
 
   const edgeStroke = isSelected
-    ? "var(--nx-accent, #c6ff00)"
+    ? "var(--nx-accent)"
     : isGlobalWildcard
-      ? "var(--nx-ink-3, #71717a)"
-      : "var(--nx-line-hi, #3f3f46)";
+      ? "var(--nx-ink-3)"
+      : "var(--nx-line-hi)";
 
   // Shift label perpendicular so parallel labels never stack on top of each other
   const labelShiftY = parallelCount > 1 ? (parallelIndex - (parallelCount - 1) / 2) * 26 : 0;

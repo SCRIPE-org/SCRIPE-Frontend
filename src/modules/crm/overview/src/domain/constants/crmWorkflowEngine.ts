@@ -1,3 +1,5 @@
+import { en as crmOverviewEn } from "../../../locales/crm-overview.en";
+import { ar as crmOverviewAr } from "../../../locales/crm-overview.ar";
 import {
   type CrmWorkflowDefinition,
   type EvaluatedWorkflowTransition,
@@ -5,6 +7,10 @@ import {
   normalizeStageKeyForMatch,
   transitionMatchesSourceStage,
 } from "./crmWorkflowRuleCatalogAndEval";
+
+function formatEngineText(template: string, vars: Record<string, string>): string {
+  return template.replace(/\{\{(\w+)\}\}/g, (_, k) => vars[k] ?? "");
+}
 
 export interface RecordTransitionContext {
   hasVerifiedParty?: boolean; partyId?: string | null; accountId?: string | null;
@@ -48,6 +54,7 @@ export function evaluateWorkflowTransition(
   const normFrom = normalizeStageKeyForMatch(fromStageKey);
   const normTo = normalizeStageKeyForMatch(toStageKey);
   const isAr = recordContext?.locale === "ar";
+  const wfDict = (isAr ? crmOverviewAr : crmOverviewEn).crm.workflowEngine;
   const fromStage = wf.stages.find((s) => normalizeStageKeyForMatch(s.stageKey) === normFrom);
   const toStage = wf.stages.find((s) => normalizeStageKeyForMatch(s.stageKey) === normTo);
   const isBackward = Boolean(fromStage && toStage && toStage.sortOrder < fromStage.sortOrder);
@@ -78,7 +85,8 @@ export function evaluateWorkflowTransition(
   if (!matched && toStage?.allowInboundFromAny && normFrom !== normTo) {
     matched = makeWorkflowTransition(
       `auto-any-${toStage.stageKey}`, "*", toStage.stageKey, "global",
-      `Move to ${toStage.labelEn}`, `الانتقال إلى ${toStage.labelAr || toStage.labelEn}`,
+      formatEngineText(crmOverviewEn.crm.workflowEngine.moveToStage, { stage: toStage.labelEn }),
+      formatEngineText(crmOverviewAr.crm.workflowEngine.moveToStage, { stage: toStage.labelAr || toStage.labelEn }),
       {
         allowRollback: true,
         requiredFieldKeys: toStage.requiredExitFields ? [...toStage.requiredExitFields] : [],
@@ -95,17 +103,13 @@ export function evaluateWorkflowTransition(
   const block = (
     msg: string, requiredFields: string[] = [], approvalRequirement?: EvaluatedWorkflowTransition["approvalRequirement"]
   ): EvaluatedWorkflowTransition => ({
-    allowed: false, status: "blocked", reason: msg, reasonIfBlocked: msg, actionLabel: isAr ? "محظور" : "Blocked",
+    allowed: false, status: "blocked", reason: msg, reasonIfBlocked: msg, actionLabel: wfDict.blockedLabel,
     matchedTransition: matched, matchedTransitions, targetStage: toStage, shouldTriggerDealConversion: false,
     triggerDealConversion: false, requiredFields, promptForComment: false, isBackward, approvalRequirement, requiresScreen: false,
   });
 
   if (!matched) {
-    return block(
-      isAr
-        ? `لا يوجد انتقال مُعدّ من "${fromLabel}" إلى "${toLabel}" في سير العمل "${wfName}".`
-        : `No transition is configured from "${fromLabel}" to "${toLabel}" in workflow "${wfName}".`
-    );
+    return block(formatEngineText(wfDict.noTransitionConfigured, { from: fromLabel, to: toLabel, workflow: wfName }));
   }
 
   const isExplicitBackward =
@@ -117,7 +121,7 @@ export function evaluateWorkflowTransition(
       toStage?.category !== "lost" &&
       toStage?.category !== "done");
   if (isExplicitBackward && !matched.rules.allowRollback) {
-    return block(isAr ? `التراجع من "${fromLabel}" إلى "${toLabel}" مقيد أو مغلق في سير العمل "${wfName}".` : `Rollback from "${fromLabel}" to "${toLabel}" is restricted or locked in active workflow "${wfName}".`);
+    return block(formatEngineText(wfDict.rollbackRestricted, { from: fromLabel, to: toLabel, workflow: wfName }));
   }
 
   const catalogRules = matched.catalogRules ?? [];
@@ -127,13 +131,13 @@ export function evaluateWorkflowTransition(
 
   for (const cRule of catalogRules) {
     if (cRule.ruleTypeKey === "restrict.api_only") {
-      return block(isAr ? `الانتقال "${trName}" مقصور على أحداث النظام التلقائية.` : `Transition "${trName}" is restricted to automated API/system events only.`);
+      return block(formatEngineText(wfDict.apiOnlyRestricted, { transition: trName }));
     }
     if (cRule.ruleTypeKey === "restrict.approval_required") {
       const roles = (cRule.config?.principals || cRule.config?.approverRole || "role:sales_manager").split(",").map((s) => s.trim()).filter(Boolean);
       approvalRequirement = { required: true, roles, quorum: cRule.config?.quorum === "all" ? "all" : "any" };
       if (recordContext?.hasManagerApproval === false) {
-        return block(isAr ? `الانتقال "${trName}" معلق حتى اعتماد (${roles.join(", ")}).` : `Transition "${trName}" is blocked until Approval (${roles.join(", ")}) is granted.`, [], approvalRequirement);
+        return block(formatEngineText(wfDict.approvalRequired, { transition: trName, roles: roles.join(", ") }), [], approvalRequirement);
       }
     }
     if (cRule.ruleTypeKey === "restrict.approval_matrix") {
@@ -145,19 +149,19 @@ export function evaluateWorkflowTransition(
       if (amt >= t2Min) approvalRequirement = { required: true, roles: t2Roles, quorum: cRule.config?.quorum === "any" ? "any" : "all", matchedTierLabel: `Tier 2 (>= ${t2Min.toLocaleString()})` };
       else if (amt >= t1Min) approvalRequirement = { required: true, roles: t1Roles, quorum: "any", matchedTierLabel: `Tier 1 (>= ${t1Min.toLocaleString()})` };
       if (approvalRequirement?.required && recordContext?.hasManagerApproval === false) {
-        return block(isAr ? `الانتقال "${trName}" يتطلب اعتماد ${approvalRequirement.matchedTierLabel} (${approvalRequirement.roles.join(", ")}).` : `Transition "${trName}" requires ${approvalRequirement.matchedTierLabel} approval (${approvalRequirement.roles.join(", ")}).`, [], approvalRequirement);
+        return block(formatEngineText(wfDict.approvalMatrixRequired, { transition: trName, tier: approvalRequirement.matchedTierLabel ?? "", roles: approvalRequirement.roles.join(", ") }), [], approvalRequirement);
       }
     }
     if (cRule.ruleTypeKey === "restrict.subtasks_completed" && recordContext?.hasOpenSubtasks === true) {
-      return block(isAr ? `الانتقال "${trName}" معلق لوجود مهام فرعية غير مكتملة.` : `Transition "${trName}" is blocked because open subtasks or activities remain incomplete.`);
+      return block(formatEngineText(wfDict.subtasksIncomplete, { transition: trName }));
     }
     if (cRule.ruleTypeKey === "restrict.separation_of_duties" && recordContext?.actorUserId && recordContext?.lastMovedByUserId && recordContext.actorUserId === recordContext.lastMovedByUserId) {
-      return block(isAr ? `مبدأ الرقابة الثنائية: المستخدم الذي نفذ النقل السابق لا يمكنه تنفيذ "${trName}".` : `Four-Eyes Principle: the user who performed the previous stage move cannot execute "${trName}".`);
+      return block(formatEngineText(wfDict.separationOfDuties, { transition: trName }));
     }
     if (cRule.ruleTypeKey === "restrict.prior_status" && cRule.config?.requiredStageKey && recordContext?.visitedStageKeys) {
       const reqNorm = normalizeStageKeyForMatch(cRule.config.requiredStageKey);
       if (!recordContext.visitedStageKeys.some((k) => normalizeStageKeyForMatch(k) === reqNorm)) {
-        return block(isAr ? `الانتقال "${trName}" يتطلب زيارة المرحلة "${cRule.config.requiredStageKey}" مسبقاً.` : `Transition "${trName}" requires the record to have previously visited stage "${cRule.config.requiredStageKey}".`);
+        return block(formatEngineText(wfDict.priorStatusRequired, { transition: trName, stage: cRule.config.requiredStageKey }));
       }
     }
     if (cRule.ruleTypeKey === "input.prompt_fields" && cRule.config?.fields) {
@@ -168,7 +172,7 @@ export function evaluateWorkflowTransition(
       if (recordContext?.contactRoles) {
         const reqRole = (cRule.config?.requiredRoles || cRule.config?.requiredRole || cRule.config?.role || "DecisionMaker").split(",")[0].trim();
         if (!recordContext.contactRoles.includes(reqRole)) {
-          return block(isAr ? `يجب ربط جهة اتصال بلجنة الشراء بالدور "${reqRole}" قبل تنفيذ "${trName}".` : `A Buying Committee Contact with role "${reqRole}" must be linked before executing "${trName}".`, [`contactRole:${reqRole}`]);
+          return block(formatEngineText(wfDict.buyingCommitteeRequired, { role: reqRole, transition: trName }), [`contactRole:${reqRole}`]);
         }
       }
     }
@@ -213,12 +217,8 @@ export function evaluateWorkflowTransition(
   );
 
   const status: "allowed_instant" | "allowed_screen_required" = requiresScreen ? "allowed_screen_required" : "allowed_instant";
-  const actionLabel = status === "allowed_instant"
-    ? (isAr ? "⚡ أفلت للنقل" : "⚡ Drop to Move")
-    : (isAr ? "ⓘ فتح شاشة الانتقال" : "ⓘ Opens Transition Screen");
-  const reason = status === "allowed_instant"
-    ? (isAr ? "الانتقال متاح فوراً." : "Transition is valid and available immediately.")
-    : (isAr ? "يتطلب الانتقال تأكيداً أو استيفاء حقول." : "Transition requires confirmation or input fields.");
+  const actionLabel = status === "allowed_instant" ? wfDict.dropToMove : wfDict.opensTransitionScreen;
+  const reason = status === "allowed_instant" ? wfDict.instantReason : wfDict.screenRequiredReason;
 
   return {
     allowed: true, status, requiresScreen, actionLabel, reason,

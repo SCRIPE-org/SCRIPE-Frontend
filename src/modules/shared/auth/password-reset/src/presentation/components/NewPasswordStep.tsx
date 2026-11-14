@@ -147,7 +147,7 @@ export function NewPasswordStep({ vm, totalSteps }: NewPasswordStepProps) {
           type="submit"
           disabled={!vm.canSubmitNewPassword || vm.isLoading}
           loading={vm.isLoading}
-          className="mt-2 flex h-12 w-full items-center justify-center rounded-xl text-[15px] font-semibold text-white transition-all active:scale-[0.985] disabled:pointer-events-none disabled:opacity-50"
+          className="mt-2 flex h-12 w-full items-center justify-center rounded-xl text-[15px] font-semibold text-nx-on-fill transition-all active:scale-[0.985] disabled:pointer-events-none disabled:opacity-50"
         >
           {t("auth.changePassword")}
         </Button>

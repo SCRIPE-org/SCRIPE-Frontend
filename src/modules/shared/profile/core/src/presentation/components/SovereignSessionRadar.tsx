@@ -207,9 +207,7 @@ export function SovereignSessionRadar({
       <CardContent className="space-y-3">
         <div
           data-testid="interactive-osm-map-container"
-          className={`relative w-full h-72 rounded-xl border border-nx-line overflow-hidden select-none ${
-            isLight ? "bg-[#e2e8f0]" : "bg-[#0b121e]"
-          }`}
+          className="relative w-full h-72 rounded-xl border border-nx-line overflow-hidden select-none bg-nx-raised"
         >
           {/* Open-Source OpenStreetMap Tile Matrix (z=5, x=17..20, y=12..13) */}
           <div
@@ -356,7 +354,7 @@ export function SovereignSessionRadar({
                     y1={node.cy}
                     x2={node.lx + 12}
                     y2={node.ly}
-                    stroke={node.isCurrent ? "#c4f042" : "#38bdf8"}
+                    stroke={node.isCurrent ? "var(--nx-accent)" : "hsl(var(--info))"}
                     strokeWidth="1.2"
                     strokeOpacity="0.75"
                   />
@@ -364,14 +362,18 @@ export function SovereignSessionRadar({
                     cx={node.cx}
                     cy={node.cy}
                     r={isSelected ? "14" : "9"}
-                    fill={node.isCurrent ? "rgba(196, 240, 66, 0.22)" : "rgba(56, 189, 248, 0.18)"}
+                    fill={
+                      node.isCurrent
+                        ? "color-mix(in srgb, var(--nx-accent) 22%, transparent)"
+                        : "color-mix(in srgb, hsl(var(--info)) 18%, transparent)"
+                    }
                   />
                   <circle
                     cx={node.cx}
                     cy={node.cy}
                     r={isSelected ? "5.5" : "4.2"}
-                    fill={node.isCurrent ? "#c4f042" : "#38bdf8"}
-                    stroke={isLight ? "#0f172a" : "#ffffff"}
+                    fill={node.isCurrent ? "var(--nx-accent)" : "hsl(var(--info))"}
+                    stroke="var(--nx-ink)"
                     strokeWidth="1.5"
                   />
                   <rect
@@ -380,20 +382,14 @@ export function SovereignSessionRadar({
                     width={pillWidth}
                     height="20"
                     rx="6"
-                    fill={isLight ? "rgba(255, 255, 255, 0.94)" : "rgba(15, 23, 42, 0.92)"}
-                    stroke={
-                      isSelected
-                        ? "#c4f042"
-                        : isLight
-                          ? "rgba(15, 23, 42, 0.2)"
-                          : "rgba(148, 163, 184, 0.3)"
-                    }
+                    fill="var(--nx-surface)"
+                    stroke={isSelected ? "var(--nx-accent)" : "var(--nx-line-hi)"}
                     strokeWidth={isSelected ? "1.4" : "1"}
                   />
                   <text
                     x={node.lx + 8}
                     y={node.ly + 2.5}
-                    fill={isLight ? "#0f172a" : "#f8fafc"}
+                    fill="var(--nx-ink)"
                     fontSize="9.5"
                     fontFamily="monospace"
                     fontWeight="700"

@@ -1,4 +1,3 @@
-// UI-EXCEPTION: compact studio layout
 "use client";
 
 import { badgeVariants, type BadgeProps } from "@core/ui/badge";
@@ -72,20 +71,22 @@ export function DsrFilterBar({
         {STATUS_OPTIONS.map((opt) => {
           const active = statusFilter === opt.value;
           return (
-            <button
+            <Button
               key={opt.value}
               type="button"
+              variant="ghost"
               id={`dsr-filter-status-${opt.value.toLowerCase()}`}
               aria-pressed={active}
               onClick={() => onStatusChange(active ? "" : opt.value)}
               className={cn(
+                "h-auto",
                 badgeVariants({ variant: opt.variant }),
                 FILTER_PILL_MOTION,
                 active && "shadow-[inset_0_0_0_1px_var(--nx-accent)]"
               )}
             >
               {t(opt.labelKey)}
-            </button>
+            </Button>
           );
         })}
       </div>
@@ -101,20 +102,22 @@ export function DsrFilterBar({
         {TYPE_OPTIONS.map((opt) => {
           const active = typeFilter === opt.value;
           return (
-            <button
+            <Button
               key={opt.value}
               type="button"
+              variant="ghost"
               id={`dsr-filter-type-${opt.value.toLowerCase()}`}
               aria-pressed={active}
               onClick={() => onTypeChange(active ? "" : opt.value)}
               className={cn(
+                "h-auto",
                 badgeVariants({ variant: opt.variant }),
                 FILTER_PILL_MOTION,
                 active && "shadow-[inset_0_0_0_1px_var(--nx-accent)]"
               )}
             >
               {t(opt.labelKey)}
-            </button>
+            </Button>
           );
         })}
       </div>

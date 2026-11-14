@@ -155,7 +155,7 @@ export function SsoProviderButtons({
         >
           <p
             className="text-center text-[13px] font-medium"
-            style={{ color: "var(--sx-error-text, #FCA5A5)" }}
+            style={{ color: "var(--sx-error-text, hsl(var(--destructive)))" }}
           >
             {error.startsWith("auth.") ? t(error as string) : error}
           </p>

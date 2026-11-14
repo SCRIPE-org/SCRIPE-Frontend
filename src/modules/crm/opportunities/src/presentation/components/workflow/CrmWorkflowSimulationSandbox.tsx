@@ -165,21 +165,21 @@ export function CrmWorkflowSimulationSandbox({
             </SelectContent>
           </Select>
         </div>
-        <label className="flex items-center gap-1.5 h-7 px-2 rounded border border-nx-line bg-nx-surface text-xs cursor-pointer">
+        <Label className="flex items-center gap-1.5 h-7 px-2 rounded border border-nx-line bg-nx-surface text-xs cursor-pointer">
           <Checkbox checked={verifiedParty} onCheckedChange={(v) => setVerifiedParty(Boolean(v))} data-testid="sim-verified-party-checkbox" />
-          <span className="truncate">{t("crmOpportunities.workflowSandbox.verifiedPartyLabel")}</span>
-        </label>
-        <label className="flex items-center gap-1.5 h-7 px-2 rounded border border-nx-line bg-nx-surface text-xs cursor-pointer">
+          <span className="truncate text-nx-ink">{t("crmOpportunities.workflowSandbox.verifiedPartyLabel")}</span>
+        </Label>
+        <Label className="flex items-center gap-1.5 h-7 px-2 rounded border border-nx-line bg-nx-surface text-xs cursor-pointer">
           <Checkbox checked={playbookDone} onCheckedChange={(v) => setPlaybookDone(Boolean(v))} data-testid="sim-playbook-completed-checkbox" />
-          <span className="truncate">{t("crmOpportunities.workflowSandbox.playbookDoneLabel")}</span>
-        </label>
+          <span className="truncate text-nx-ink">{t("crmOpportunities.workflowSandbox.playbookDoneLabel")}</span>
+        </Label>
       </div>
 
       <div className="flex flex-wrap items-center gap-2 pt-0.5" data-testid="sim-transition-results">
         {candidateTransitions.map((tr) => {
           const res = evaluateSimulatedTransition(tr);
           return (
-            <Button key={tr.id} type="button" size="sm" variant="outline" onClick={() => onSelectTransition(tr.id)} data-testid={res.allowed ? `sim-transition-allowed-${tr.id}` : `sim-transition-blocked-${tr.id}`} className={`h-7 px-2.5 text-[11px] gap-1.5 ${res.allowed ? "border-emerald-500/50 bg-emerald-500/15 text-emerald-700 dark:text-emerald-300" : "border-rose-500/50 bg-rose-500/15 text-rose-700 dark:text-rose-300"}`}>
+            <Button key={tr.id} type="button" size="sm" variant="outline" onClick={() => onSelectTransition(tr.id)} data-testid={res.allowed ? `sim-transition-allowed-${tr.id}` : `sim-transition-blocked-${tr.id}`} className={`h-7 px-2.5 text-[11px] gap-1.5 ${res.allowed ? "border-success/50 bg-success/15 text-success" : "border-destructive/50 bg-destructive/15 text-destructive"}`}>
               {res.allowed ? <CheckCircle2 className="w-3 h-3 shrink-0" /> : <ShieldAlert className="w-3 h-3 shrink-0" />}
               <span className="font-bold">{isAr ? tr.nameAr : tr.nameEn} → {res.targetLabel}</span>
               {!res.allowed && <span className="text-[10px] opacity-90">({res.reasons[0]})</span>}

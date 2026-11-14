@@ -25,7 +25,7 @@ export function KeyDistributionChart({
   const isHealthy = status.isFullyMigrated;
 
   return (
-    <Card className="border border-border shadow-sm">
+    <Card className="border-nx-line">
       <CardHeader className="flex flex-row items-start justify-between pb-3">
         <div>
           <CardTitle className="text-base font-semibold">
@@ -72,7 +72,7 @@ export function KeyDistributionChart({
                   <div className="h-2 w-full overflow-hidden rounded-full bg-secondary">
                     <div
                       className={`h-full rounded-full transition-all ${
-                        isCurrent ? "bg-primary" : "bg-amber-500/70"
+                        isCurrent ? "bg-primary" : "bg-warning/70"
                       }`}
                       style={{ width: `${Math.max(2, item.percentage)}%` }}
                     />
@@ -85,12 +85,12 @@ export function KeyDistributionChart({
 
         <div className="border-t border-border/50 pt-2">
           {isHealthy ? (
-            <div className="flex items-center gap-2 text-xs text-emerald-600 dark:text-emerald-400">
+            <div className="flex items-center gap-2 text-xs text-success">
               <CheckCircle2 className="h-4 w-4 shrink-0" />
               <span>{t("customFieldsSecurity.healthyNotice")}</span>
             </div>
           ) : (
-            <div className="flex items-center gap-2 text-xs text-amber-600 dark:text-amber-400">
+            <div className="flex items-center gap-2 text-xs text-warning">
               <AlertTriangle className="h-4 w-4 shrink-0" />
               <span>{t("customFieldsSecurity.needsRewrapNotice")}</span>
             </div>

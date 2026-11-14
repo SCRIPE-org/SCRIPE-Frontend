@@ -103,8 +103,8 @@ export function RolePermissionsDialog(props: RolePermissionsDialogProps) {
                 </Badge>
                 {vm.adminCount > 0 && (
                   <Badge
-                    variant="outline"
-                    className="flex shrink-0 items-center gap-1 border-amber-500/30 bg-amber-500/10 text-[11px] text-amber-600 dark:text-amber-400"
+                    variant="warning"
+                    className="flex shrink-0 items-center gap-1 text-[11px]"
                   >
                     <Users className="h-3 w-3" aria-hidden="true" />
                     <span>
@@ -240,18 +240,12 @@ export function RolePermissionsDialog(props: RolePermissionsDialogProps) {
               {vm.isDirty && (
                 <div className="flex items-center gap-1.5 text-xs font-medium">
                   {vm.changesCount.added > 0 && (
-                    <Badge
-                      variant="outline"
-                      className="border-emerald-500/30 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400"
-                    >
+                    <Badge variant="success">
                       +{vm.changesCount.added} {t("common.add") || "added"}
                     </Badge>
                   )}
                   {vm.changesCount.removed > 0 && (
-                    <Badge
-                      variant="outline"
-                      className="border-amber-500/30 bg-amber-500/10 text-amber-600 dark:text-amber-400"
-                    >
+                    <Badge variant="warning">
                       -{vm.changesCount.removed} {t("common.delete") || "removed"}
                     </Badge>
                   )}

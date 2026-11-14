@@ -58,7 +58,7 @@ export function MagicLinkCallbackView() {
           {vm.state === "verifying" && (
             <div className="flex flex-col items-center gap-5">
               <span
-                className="sx-spin1 inline-block h-10 w-10 rounded-full border-[3px] border-white/10 border-t-[var(--sx-accent)]"
+                className="sx-spin1 inline-block h-10 w-10 rounded-full border-[3px] border-nx-line border-t-[var(--sx-accent)]"
                 aria-label={t("auth.magicLink.verifying")}
               />
               <p className="text-[14px]" style={{ color: "var(--sx-text-mute)" }}>
@@ -110,7 +110,7 @@ export function MagicLinkCallbackView() {
               </div>
               <div className="flex w-full flex-col gap-2.5">
                 <Link href="/login">
-                  <Button className="h-12 w-full rounded-xl text-[15px] font-semibold text-white transition-all active:scale-[0.985]">
+                  <Button className="h-12 w-full rounded-xl text-[15px] font-semibold text-nx-on-fill transition-all active:scale-[0.985]">
                     {t("auth.magicLink.requestNew")}
                   </Button>
                 </Link>

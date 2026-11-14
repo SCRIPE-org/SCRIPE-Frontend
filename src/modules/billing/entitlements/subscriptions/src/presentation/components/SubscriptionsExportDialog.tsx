@@ -1,5 +1,4 @@
 // FILE-EXCEPTION: file length
-// UI-EXCEPTION: compact studio layout
 /**
  * SubscriptionsExportDialog
  *
@@ -239,12 +238,13 @@ export function SubscriptionsExportDialog({
         {/* Format Cards */}
         <div className="grid grid-cols-3 gap-3">
           {FORMAT_OPTIONS.map((opt) => (
-            <button
+            <Button
               key={opt.value}
               type="button"
+              variant="ghost"
               onClick={() => setSelectedFormat(opt.value)}
               disabled={isExporting}
-              className={`flex flex-col items-center gap-1.5 rounded-nx-md border-2 p-3 transition-colors duration-nx-micro ease-nx-enter focus-visible:shadow-nx-focus focus-visible:outline-none motion-reduce:transition-none ${
+              className={`flex h-auto flex-col items-center gap-1.5 whitespace-normal rounded-nx-md border-2 p-3 transition-colors duration-nx-micro ease-nx-enter focus-visible:shadow-nx-focus focus-visible:outline-none motion-reduce:transition-none ${
                 selectedFormat === opt.value
                   ? opt.borderActive
                   : "border-nx-line hover:border-nx-line-hi"
@@ -255,7 +255,7 @@ export function SubscriptionsExportDialog({
               <span className="text-center text-[10px] leading-tight text-nx-ink-3">
                 {opt.description}
               </span>
-            </button>
+            </Button>
           ))}
         </div>
 

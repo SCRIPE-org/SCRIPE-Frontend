@@ -6,7 +6,7 @@
  * Downloads/UploadsController, the CanAccessFileQuery/session download chain)
  * and is already exercised today via branding, avatars, and identity-provider
  * uploads. What's missing is a dedicated browse/organize UI here, so
- * `getMediaContainer()` (see ../../../di.ts) still returns an empty container
+ * `getMediaContainer()` (see ../../../../di.ts) still returns an empty container
  * and this view deliberately does NOT pretend a file list, folders, or asset
  * browsing exist. It states plainly that this specific page is coming soon
  * instead of rendering a dead "Upload" button.

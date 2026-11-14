@@ -48,13 +48,13 @@ export const STAGE_COLOR_PALETTE: Record<
   slate: {
     labelEn: "Slate",
     labelAr: "أردوازي",
-    swatchClass: "bg-slate-500",
+    swatchClass: "bg-nx-ink-3",
     borderClass: "border-nx-line bg-nx-surface hover:border-nx-line-hi",
     badgeClass: "border-nx-line bg-nx-raised text-nx-ink-2",
-    headerBorderClass: "border-t-2 border-t-slate-400/70",
-    dotClass: "bg-slate-400",
-    minimapClass: "border-slate-400/60 bg-slate-500/25",
-    accentBarClass: "bg-slate-400/70",
+    headerBorderClass: "border-t-2 border-t-nx-line-hi",
+    dotClass: "bg-nx-ink-3",
+    minimapClass: "border-nx-line-hi bg-nx-raised",
+    accentBarClass: "bg-nx-ink-3",
   },
   zinc: {
     labelEn: "Zinc",
@@ -114,7 +114,7 @@ export const STAGE_COLOR_PALETTE: Record<
   emerald: {
     labelEn: "Emerald",
     labelAr: "زمردي",
-    swatchClass: "bg-emerald-500",
+    swatchClass: "bg-success",
     borderClass: "border-success/50 bg-success/[0.05] hover:border-success/80",
     badgeClass: "border-success/40 bg-success/15 text-success",
     headerBorderClass: "border-t-2 border-t-success",
@@ -147,7 +147,7 @@ export const STAGE_COLOR_PALETTE: Record<
   amber: {
     labelEn: "Amber",
     labelAr: "كهرماني",
-    swatchClass: "bg-amber-500",
+    swatchClass: "bg-warning",
     borderClass: "border-warning/50 bg-warning/[0.05] hover:border-warning/80",
     badgeClass: "border-warning/40 bg-warning/15 text-warning",
     headerBorderClass: "border-t-2 border-t-warning",
@@ -180,7 +180,7 @@ export const STAGE_COLOR_PALETTE: Record<
   rose: {
     labelEn: "Rose",
     labelAr: "وردي",
-    swatchClass: "bg-rose-500",
+    swatchClass: "bg-destructive",
     borderClass: "border-destructive/50 bg-destructive/[0.05] hover:border-destructive/80",
     badgeClass: "border-destructive/40 bg-destructive/15 text-destructive",
     headerBorderClass: "border-t-2 border-t-destructive",

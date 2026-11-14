@@ -75,7 +75,7 @@ export function DesktopSetupSidebar({
         aria-hidden="true"
       />
       <div
-        className="pointer-events-none absolute -bottom-20 -right-20 h-64 w-64 rounded-full bg-sky-500/10 blur-3xl"
+        className="pointer-events-none absolute -bottom-20 -right-20 h-64 w-64 rounded-full bg-info/10 blur-3xl"
         aria-hidden="true"
       />
 
@@ -199,11 +199,11 @@ export function DesktopSetupSidebar({
       {/* Enterprise Security Footnote */}
       <div className="relative mt-6 space-y-2 border-t border-border/40 pt-6">
         <div className="flex items-center gap-2 text-[11px] text-muted-foreground">
-          <ShieldCheck className="h-3.5 w-3.5 shrink-0 text-emerald-500" />
+          <ShieldCheck className="h-3.5 w-3.5 shrink-0 text-success" />
           <span>AES-256-GCM Encrypted & Multi-Tenant Isolated</span>
         </div>
         <div className="flex items-center gap-2 text-[11px] text-muted-foreground">
-          <Lock className="h-3.5 w-3.5 shrink-0 text-sky-500" />
+          <Lock className="h-3.5 w-3.5 shrink-0 text-info" />
           <span>Zero-Knowledge Server Authorization</span>
         </div>
       </div>

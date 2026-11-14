@@ -2,6 +2,7 @@
 
 import * as React from "react";
 import { Input } from "@core/ui/input";
+import { Textarea } from "@core/ui/textarea";
 import { Skeleton } from "@core/ui/skeleton";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@core/ui/select";
 import { useI18n } from "@core/providers/i18n-provider";
@@ -60,7 +61,7 @@ export function FieldVisibilityRuleFormFields({
         <label className="text-xs font-medium text-nx-ink-2">
           {t("customField.visibilityRules.rawJsonPayload")}
         </label>
-        <textarea
+        <Textarea
           className="h-32 w-full rounded-md border border-nx-line bg-background p-2 font-mono text-xs text-nx-ink focus:outline-none focus:ring-1 focus:ring-primary"
           value={rawJsonInput}
           onChange={(e) => onRawJsonChange(e.target.value)}

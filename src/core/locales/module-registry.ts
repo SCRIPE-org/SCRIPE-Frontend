@@ -103,7 +103,7 @@ import {
 import { en as communicationEn, ar as communicationAr } from "@modules/communication/core/locales";
 import { en as webhooksEn, ar as webhooksAr } from "@modules/integrations/webhooks/locales";
 import { en as apikeysEn, ar as apikeysAr } from "@modules/integrations/apikeys/locales";
-import { en as mediaEn, ar as mediaAr } from "@modules/media/locales";
+import { en as mediaEn, ar as mediaAr } from "@modules/media/library/locales";
 
 // ─── Ecosystem ─────────────────────────────────────────
 import { en as recycleBinEn, ar as recycleBinAr } from "@modules/ecosystem/recycle-bin/locales";

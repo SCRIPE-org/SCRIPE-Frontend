@@ -1,5 +1,4 @@
 // FILE-EXCEPTION: file length
-// UI-EXCEPTION: compact studio layout
 "use client";
 
 import Link from "next/link";
@@ -7,6 +6,7 @@ import Image from "next/image";
 import { Check, Clock, LogIn, RefreshCw, RotateCcw, XCircle } from "lucide-react";
 import { useI18n } from "@core/providers/i18n-provider";
 import { useSignupTheme } from "@core/providers/signup-theme";
+import { Button } from "@core/ui/button";
 import { BRAND } from "@core/config/branding";
 import { useFinalizeViewModel } from "../viewmodels/useFinalizeViewModel";
 
@@ -152,15 +152,16 @@ export function SignupFinalizeScreen() {
                 </p>
               </div>
               {vm.phase === "slow" && (
-                <button
+                <Button
                   type="button"
+                  variant="ghost"
                   onClick={vm.changePlan}
                   className={ghostBtnClass}
                   style={{ color: tokens.inkMuted }}
                 >
                   <RefreshCw className="h-3.5 w-3.5" aria-hidden="true" />
                   {t("signup.finalize.changePlan")}
-                </button>
+                </Button>
               )}
             </div>
           )}
@@ -222,14 +223,15 @@ export function SignupFinalizeScreen() {
                   </p>
                 )}
               </div>
-              <button
+              <Button
                 type="button"
+                variant="ghost"
                 onClick={vm.goToLogin}
                 className={primaryBtnClass}
                 style={ctaStyle}
               >
                 {t("auth.backToLogin")}
-              </button>
+              </Button>
             </div>
           )}
 
@@ -265,14 +267,15 @@ export function SignupFinalizeScreen() {
                   </p>
                 )}
               </div>
-              <button
+              <Button
                 type="button"
+                variant="ghost"
                 onClick={vm.goToLogin}
                 className={primaryBtnClass}
                 style={ctaStyle}
               >
                 {t("auth.backToLogin")}
-              </button>
+              </Button>
             </div>
           )}
 
@@ -295,15 +298,16 @@ export function SignupFinalizeScreen() {
                   </p>
                 )}
               </div>
-              <button
+              <Button
                 type="button"
+                variant="ghost"
                 onClick={vm.startNewSignup}
                 className={primaryBtnClass}
                 style={ctaStyle}
               >
                 <RotateCcw className="h-4 w-4" aria-hidden="true" />
                 {t("signup.finalize.startAgain")}
-              </button>
+              </Button>
             </div>
           )}
 
@@ -324,14 +328,15 @@ export function SignupFinalizeScreen() {
                   {t("signup.finalize.consumedSubtitle")}
                 </p>
               </div>
-              <button
+              <Button
                 type="button"
+                variant="ghost"
                 onClick={vm.goToLogin}
                 className={primaryBtnClass}
                 style={ctaStyle}
               >
                 {t("auth.backToLogin")}
-              </button>
+              </Button>
             </div>
           )}
 
@@ -348,22 +353,24 @@ export function SignupFinalizeScreen() {
                 {t("signup.finalize.expired")}
               </h1>
               <div className="flex w-full flex-col gap-2">
-                <button
+                <Button
                   type="button"
+                  variant="ghost"
                   onClick={vm.goToLogin}
                   className={primaryBtnClass}
                   style={ctaStyle}
                 >
                   {t("auth.backToLogin")}
-                </button>
-                <button
+                </Button>
+                <Button
                   type="button"
+                  variant="ghost"
                   onClick={vm.startNewSignup}
                   className={ghostBtnClass}
                   style={{ color: tokens.inkMuted }}
                 >
                   {t("signup.finalize.startAgain")}
-                </button>
+                </Button>
               </div>
             </div>
           )}
@@ -389,23 +396,25 @@ export function SignupFinalizeScreen() {
                 </p>
               </div>
               <div className="flex w-full flex-col gap-2">
-                <button
+                <Button
                   type="button"
+                  variant="ghost"
                   onClick={vm.changePlan}
                   className={primaryBtnClass}
                   style={ctaStyle}
                 >
                   <RefreshCw className="h-4 w-4" aria-hidden="true" />
                   {t("signup.finalize.changePlan")}
-                </button>
-                <button
+                </Button>
+                <Button
                   type="button"
+                  variant="ghost"
                   onClick={vm.goToLogin}
                   className={ghostBtnClass}
                   style={{ color: tokens.inkMuted }}
                 >
                   {t("auth.backToLogin")}
-                </button>
+                </Button>
               </div>
             </div>
           )}

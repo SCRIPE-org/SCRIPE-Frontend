@@ -1,4 +1,3 @@
-// UI-EXCEPTION: compact studio layout
 /**
  * Menu Customize View (Pure UI)
  *
@@ -81,16 +80,17 @@ export function MenuCustomizeView() {
             {vm.availableScopes.length > 1 && (
               <div className="inline-flex items-center gap-0.5 rounded-nx-control border border-nx-line bg-nx-surface p-0.5">
                 {vm.availableScopes.map((s) => (
-                  <button
+                  <Button
                     key={s}
                     type="button"
+                    variant="ghost"
                     onClick={() => vm.setScope(s)}
                     className={cn(
-                      "inline-flex items-center gap-1.5 rounded-nx-sm px-3 py-1.5 text-sm font-medium",
+                      "inline-flex h-auto items-center gap-1.5 rounded-nx-sm px-3 py-1.5 text-sm font-medium",
                       "transition-[color,background-color] duration-nx-standard ease-nx-enter motion-reduce:transition-none",
                       "focus-visible:shadow-nx-focus focus-visible:outline-none",
                       vm.scope === s
-                        ? "bg-nx-accent-fill text-nx-on-fill"
+                        ? "bg-nx-accent-fill text-nx-on-fill hover:bg-nx-accent-fill"
                         : "text-nx-ink-3 hover:bg-nx-hover hover:text-nx-ink"
                     )}
                   >
@@ -102,7 +102,7 @@ export function MenuCustomizeView() {
                     {s === MenuOverrideScope.User
                       ? t("menus.scopePersonal")
                       : t("menus.scopeOrganization")}
-                  </button>
+                  </Button>
                 ))}
               </div>
             )}

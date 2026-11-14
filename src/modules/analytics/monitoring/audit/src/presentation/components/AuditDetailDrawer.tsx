@@ -419,9 +419,10 @@ export function AuditDetailDrawer({
                         <div className="flex items-center gap-2 font-mono text-nx-ink">
                           <span>{data.ipAddress ?? "—"}</span>
                           {data.ipAddress && (
-                            /* UI-EXCEPTION */ <button
+                            <Button
                               type="button"
-                              className="cursor-pointer text-nx-ink-3 hover:text-nx-ink"
+                              variant="ghost"
+                              className="h-auto p-0.5 text-nx-ink-3 hover:bg-transparent hover:text-nx-ink"
                               onClick={() => copyToClipboard(data.ipAddress!, "ip")}
                             >
                               {copiedKey === "ip" ? (
@@ -429,7 +430,7 @@ export function AuditDetailDrawer({
                               ) : (
                                 <Copy className="h-3 w-3" />
                               )}
-                            </button>
+                            </Button>
                           )}
                         </div>
                       </div>

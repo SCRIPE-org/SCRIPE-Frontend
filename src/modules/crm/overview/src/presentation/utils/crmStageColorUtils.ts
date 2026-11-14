@@ -24,8 +24,8 @@ export function buildCustomHexHarmonicStyles(hex?: string | null): CrmCustomHexH
   }
   const cleanHex = hex.trim().toUpperCase();
   const cardStyle: CSSProperties = {
-    borderColor: `color-mix(in srgb, ${cleanHex} 52%, var(--nx-line, #334155))`,
-    backgroundColor: `color-mix(in srgb, ${cleanHex} 12%, var(--nx-surface, #0f172a))`,
+    borderColor: `color-mix(in srgb, ${cleanHex} 52%, var(--nx-line))`,
+    backgroundColor: `color-mix(in srgb, ${cleanHex} 12%, var(--nx-surface))`,
   };
   return {
     isValidHex: true,
@@ -33,13 +33,13 @@ export function buildCustomHexHarmonicStyles(hex?: string | null): CrmCustomHexH
     nodeCardStyle: cardStyle,
     cardStyle,
     headerStyle: {
-      borderColor: `color-mix(in srgb, ${cleanHex} 45%, var(--nx-line, #334155))`,
-      backgroundColor: `color-mix(in srgb, ${cleanHex} 14%, var(--nx-raised, #1e293b))`,
+      borderColor: `color-mix(in srgb, ${cleanHex} 45%, var(--nx-line))`,
+      backgroundColor: `color-mix(in srgb, ${cleanHex} 14%, var(--nx-raised))`,
     },
     badgeStyle: {
       borderColor: `color-mix(in srgb, ${cleanHex} 45%, transparent)`,
-      backgroundColor: `color-mix(in srgb, ${cleanHex} 16%, var(--nx-surface, transparent))`,
-      color: `color-mix(in srgb, ${cleanHex} 78%, var(--nx-ink, #f8fafc))`,
+      backgroundColor: `color-mix(in srgb, ${cleanHex} 16%, var(--nx-surface))`,
+      color: `color-mix(in srgb, ${cleanHex} 78%, var(--nx-ink))`,
     },
     dotStyle: {
       backgroundColor: cleanHex,

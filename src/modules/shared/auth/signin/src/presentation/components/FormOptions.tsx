@@ -46,7 +46,7 @@ export function FormOptions({ staySignedIn, onStaySignedInChange, disabled, t }:
           }}
           className="flex h-5 w-5 shrink-0 items-center justify-center rounded transition-all"
           style={{
-            background: staySignedIn ? "var(--scripe-signal, #C6FF00)" : "transparent",
+            background: staySignedIn ? "var(--scripe-signal)" : "transparent",
             border: staySignedIn
               ? "1px solid transparent"
               : "1px solid var(--sx-field-border, hsl(var(--border)))",
@@ -58,7 +58,7 @@ export function FormOptions({ staySignedIn, onStaySignedInChange, disabled, t }:
             <svg width="13" height="14" viewBox="0 0 10 10" fill="none" aria-hidden="true">
               <path
                 d="M2 5l2 2 5-4"
-                stroke="var(--scripe-ink, #0D0D0E)"
+                stroke="var(--scripe-ink)"
                 strokeWidth="1.8"
                 strokeLinecap="round"
               />

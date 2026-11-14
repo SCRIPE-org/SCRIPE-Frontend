@@ -21,7 +21,7 @@ export function AuditLogTable({ logs, totalCount, isLoading }: AuditLogTableProp
   const { t } = useI18n();
 
   return (
-    <Card className="border border-border shadow-sm">
+    <Card className="border-nx-line">
       <CardHeader className="pb-3">
         <div className="flex items-center gap-2.5">
           <ShieldAlert className="h-5 w-5 text-muted-foreground" />

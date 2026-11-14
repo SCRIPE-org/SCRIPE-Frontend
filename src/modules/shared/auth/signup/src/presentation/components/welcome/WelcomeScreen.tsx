@@ -1,4 +1,3 @@
-// UI-EXCEPTION: compact studio layout
 "use client";
 
 import { useMemo } from "react";
@@ -6,6 +5,7 @@ import { motion } from "framer-motion";
 import { ArrowRight, ArrowLeft } from "lucide-react";
 import { useI18n } from "@core/providers/i18n-provider";
 import { useSignupTheme } from "@core/providers/signup-theme";
+import { Button } from "@core/ui/button";
 import type { WelcomeContent } from "../../../domain/entities/OnboardingEntities";
 import { TrustRow } from "./TrustRow";
 import { LogoMarquee } from "./LogoMarquee";
@@ -127,10 +127,11 @@ export function WelcomeScreen({
 
           <motion.div variants={item} className="flex flex-col gap-3.5 pt-1">
             <div className="flex flex-wrap items-center gap-x-5 gap-y-3">
-              <button
+              <Button
                 type="button"
+                variant="ghost"
                 onClick={onGetStarted}
-                className="group inline-flex items-center gap-2 rounded-xl px-6 py-3.5 text-[15px] font-semibold transition-transform duration-200 hover:-translate-y-0.5 motion-reduce:transform-none"
+                className="group inline-flex h-auto items-center gap-2 rounded-xl px-6 py-3.5 text-[15px] font-semibold transition-transform duration-200 hover:-translate-y-0.5 hover:bg-transparent motion-reduce:transform-none"
                 style={{
                   background: tokens.gradientCta,
                   color: tokens.accentContrast,
@@ -144,20 +145,21 @@ export function WelcomeScreen({
                   className="transition-transform duration-200 group-hover:translate-x-0.5 motion-reduce:transform-none"
                   style={{ transform: direction === "rtl" ? "scaleX(-1)" : undefined }}
                 />
-              </button>
+              </Button>
 
               {/* Inline error recovery — never replaces the whole screen. */}
               {isError && (
                 <span className="inline-flex items-center gap-2 text-[13px]">
                   <span style={{ color: tokens.inkFaint }}>{t("signup.welcome.loadError")}</span>
-                  <button
+                  <Button
                     type="button"
+                    variant="ghost"
                     onClick={onRetry}
-                    className="font-semibold underline-offset-2 hover:underline"
+                    className="h-auto p-0 font-semibold underline-offset-2 hover:bg-transparent hover:underline"
                     style={{ color: tokens.accent }}
                   >
                     {t("signup.welcome.retry")}
-                  </button>
+                  </Button>
                 </span>
               )}
             </div>

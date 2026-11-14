@@ -217,7 +217,7 @@ export function ContactsView() {
               size="sm"
               variant="ghost"
               data-testid="customer-dir-people-tab"
-              className="h-7 px-3 rounded-md text-xs font-bold bg-nx-surface text-foreground border border-nx-line-hi"
+              className="h-7 px-3 rounded-md text-xs font-bold bg-nx-surface text-nx-ink border border-nx-line-hi"
             >
               {t("crmContacts.header.peopleTab")}
             </Button>

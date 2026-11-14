@@ -5,6 +5,15 @@ import React from "react";
 import { RotateCcw, Plus, Minus } from "lucide-react";
 import { useI18n } from "@core/providers/i18n-provider";
 import { Button } from "@core/ui/button";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
+} from "@core/ui/select";
 import { EnrichedCountryData } from "./types";
 import type {
   DashboardSummary,
@@ -63,12 +72,10 @@ export function MapControls({
 
       {/* 2. Top Right: Country Focus & Reset */}
       <div className="absolute right-3 top-3 z-10 flex items-center gap-2">
-        <select
-          aria-label={t("platformCommandCenter.activity.focusCountry") || "Focus country"}
-          value={selectedCountry?.name ?? ""}
-          onChange={(e) => {
-            const val = e.target.value;
-            if (!val) {
+        <Select
+          value={selectedCountry?.name ?? "__global__"}
+          onValueChange={(val) => {
+            if (!val || val === "__global__") {
               onReset();
             } else {
               const found = enrichedCountries.find((c) => c.name === val);
@@ -77,37 +84,46 @@ export function MapControls({
               }
             }
           }}
-          className="h-7 max-w-[150px] rounded-lg border border-nx-line bg-nx-surface/90 px-2 text-[11px] text-nx-ink outline-none backdrop-blur-md transition-colors hover:border-nx-line-hi"
         >
-          <option value="">
-            {t("platformCommandCenter.activity.globalView") || "Global view"}
-          </option>
-          {activeCountries.length > 0 && (
-            <optgroup label={t("platformCommandCenter.activity.activeRegions") || "Active Regions"}>
-              {activeCountries.map((c) => (
-                <option
-                  key={`act-${c.name}`}
-                  value={c.name}
-                  className="bg-popover font-medium text-popover-foreground"
-                >
-                  {c.name}{" "}
-                  {c.isHost ? "· Host" : `· ${c.tenantCount} tenant${c.tenantCount > 1 ? "s" : ""}`}
-                </option>
+          <SelectTrigger
+            aria-label={t("platformCommandCenter.activity.focusCountry") || "Focus country"}
+            className="h-7 max-w-[150px] rounded-lg border-nx-line bg-nx-surface/90 px-2 text-[11px] text-nx-ink backdrop-blur-md hover:border-nx-line-hi"
+          >
+            <SelectValue
+              placeholder={t("platformCommandCenter.activity.globalView") || "Global view"}
+            />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="__global__">
+              {t("platformCommandCenter.activity.globalView") || "Global view"}
+            </SelectItem>
+            {activeCountries.length > 0 && (
+              <SelectGroup>
+                <SelectLabel>
+                  {t("platformCommandCenter.activity.activeRegions") || "Active Regions"}
+                </SelectLabel>
+                {activeCountries.map((c) => (
+                  <SelectItem key={`act-${c.name}`} value={c.name} className="font-medium">
+                    {c.name}{" "}
+                    {c.isHost
+                      ? "· Host"
+                      : `· ${c.tenantCount} tenant${c.tenantCount > 1 ? "s" : ""}`}
+                  </SelectItem>
+                ))}
+              </SelectGroup>
+            )}
+            <SelectGroup>
+              <SelectLabel>
+                {t("platformCommandCenter.activity.allCountries") || "All Countries"}
+              </SelectLabel>
+              {sortedCountries.map((c) => (
+                <SelectItem key={`all-${c.name}`} value={c.name}>
+                  {c.name}
+                </SelectItem>
               ))}
-            </optgroup>
-          )}
-          <optgroup label={t("platformCommandCenter.activity.allCountries") || "All Countries"}>
-            {sortedCountries.map((c) => (
-              <option
-                key={`all-${c.name}`}
-                value={c.name}
-                className="bg-popover text-popover-foreground"
-              >
-                {c.name}
-              </option>
-            ))}
-          </optgroup>
-        </select>
+            </SelectGroup>
+          </SelectContent>
+        </Select>
 
         <Button
           variant="outline"

@@ -1,7 +1,7 @@
-// UI-EXCEPTION: compact studio layout
 "use client";
 
 import * as React from "react";
+import { Button } from "@core/ui/button";
 import { Building2, Check } from "lucide-react";
 import { useResolvedFileUrl } from "@core/hooks/use-resolved-file-url";
 import { useI18n } from "@core/providers/i18n-provider";
@@ -22,10 +22,11 @@ export function WorkspaceCheckCard({ workspace, isSelected, onToggle }: Workspac
   const { t } = useI18n();
   const resolvedLogoUrl = useResolvedFileUrl(workspace.logoUrl);
   return (
-    <button
+    <Button
       type="button"
+      variant="ghost"
       onClick={() => onToggle(workspace)}
-      className="flex w-full items-center gap-3.5 rounded-2xl border p-4 text-start transition-all hover:scale-[1.01] active:scale-[0.99]"
+      className="flex h-auto w-full items-center justify-start gap-3.5 whitespace-normal rounded-2xl border p-4 text-start transition-all hover:scale-[1.01] hover:bg-transparent active:scale-[0.99]"
       style={{
         background: isSelected ? "var(--sx-accent-soft)" : "var(--sx-chip-bg)",
         borderColor: isSelected ? "var(--sx-accent-text)" : "var(--sx-chip-border)",
@@ -34,13 +35,10 @@ export function WorkspaceCheckCard({ workspace, isSelected, onToggle }: Workspac
     >
       {/* Checkbox */}
       <div
-        className="flex h-5 w-5 shrink-0 items-center justify-center rounded-md border-2 transition-all"
-        style={{
-          background: isSelected ? "var(--sx-accent-text)" : "transparent",
-          borderColor: isSelected ? "var(--sx-accent-text)" : "var(--sx-chip-border)",
-        }}
+        className={`flex h-5 w-5 shrink-0 items-center justify-center rounded-md border-2 transition-all ${isSelected ? "border-nx-accent bg-nx-accent" : "bg-transparent"}`}
+        style={isSelected ? undefined : { borderColor: "var(--sx-chip-border)" }}
       >
-        {isSelected && <Check className="h-3 w-3 text-white" aria-hidden="true" />}
+        {isSelected && <Check className="h-3 w-3 text-nx-on-fill" aria-hidden="true" />}
       </div>
 
       {/* Logo / Icon */}
@@ -69,6 +67,6 @@ export function WorkspaceCheckCard({ workspace, isSelected, onToggle }: Workspac
           </p>
         )}
       </div>
-    </button>
+    </Button>
   );
 }

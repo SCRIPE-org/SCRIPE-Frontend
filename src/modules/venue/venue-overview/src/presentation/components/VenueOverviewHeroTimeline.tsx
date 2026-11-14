@@ -174,7 +174,7 @@ export function VenueOverviewHeroTimeline({
           <div>
             <div className="flex items-center gap-2">
               <span
-                className="flex size-2 animate-pulse rounded-full bg-success shadow-[0_0_6px_rgba(34,197,94,0.7)]"
+                className="flex size-2 animate-pulse rounded-full bg-success"
                 aria-hidden="true"
               />
               <CardTitle className="text-sm font-bold text-nx-ink">
@@ -417,7 +417,7 @@ export function VenueOverviewHeroTimeline({
                     {/* Current Time Needle */}
                     {currentPercent != null && (
                       <div
-                        className="pointer-events-none absolute inset-y-0 z-20 w-0.5 bg-destructive shadow-[0_0_4px_rgba(239,68,68,0.6)]"
+                        className="pointer-events-none absolute inset-y-0 z-20 w-0.5 bg-destructive"
                         style={{ left: `${currentPercent}%` }}
                         title={t("operationsCalendar.timeline.currentTime", {
                           defaultValue: "Current Time",

@@ -1,5 +1,4 @@
 // FILE-EXCEPTION: file length
-// UI-EXCEPTION: compact studio layout
 /**
  * Permissions Picker Component
  *
@@ -15,6 +14,7 @@
 
 import { useState, useMemo, useCallback } from "react";
 import { usePermissionsPickerViewModel } from "../viewmodels/usePermissionsPickerViewModel";
+import { Button } from "@core/ui/button";
 import { Checkbox } from "@core/ui/checkbox";
 import { Input } from "@core/ui/input";
 import { Badge } from "@core/ui/badge";
@@ -243,20 +243,22 @@ export function PermissionsPicker({
               className="ps-9"
             />
           </div>
-          <button
+          <Button
             type="button"
+            variant="ghost"
             onClick={selectAll}
-            className="px-2 text-xs text-nx-accent hover:underline"
+            className="h-auto px-2 py-0 text-xs font-normal text-nx-accent hover:bg-transparent hover:underline"
           >
             {t("common.selectAll")}
-          </button>
-          <button
+          </Button>
+          <Button
             type="button"
+            variant="ghost"
             onClick={deselectAll}
-            className="px-2 text-xs text-nx-ink-2 hover:underline"
+            className="h-auto px-2 py-0 text-xs font-normal text-nx-ink-2 hover:bg-transparent hover:underline"
           >
             {t("common.deselectAll")}
-          </button>
+          </Button>
         </div>
 
         {/* Categories List */}

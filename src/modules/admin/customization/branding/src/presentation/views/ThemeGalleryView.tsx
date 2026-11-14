@@ -1,8 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 // FILE-EXCEPTION: file length
-// UI-EXCEPTION: compact studio layout — native <button> used for category filter
-// pills and theme card overlay controls where @core/ui/button's sizing would break
-// the compact card grid layout. Action buttons (Apply, Preview) use <Button>.
 /**
  * Theme Gallery View — Full-Page Theme Browsing Experience
  *
@@ -121,10 +118,11 @@ export function ThemeGalleryView() {
         {vm.featuredThemes.length > 0 && (
           <div className="mt-6 flex items-center justify-center gap-3">
             {vm.featuredThemes.slice(0, 5).map((theme) => (
-              <button
+              <Button
                 type="button"
+                variant="ghost"
                 key={theme.slug}
-                className="group flex flex-col items-center gap-1.5"
+                className="group flex h-auto flex-col items-center gap-1.5 p-0 hover:bg-transparent"
                 onClick={() => vm.setPreviewSlug(theme.slug)}
               >
                 <div
@@ -137,7 +135,7 @@ export function ThemeGalleryView() {
                 <span className="max-w-[60px] truncate text-[10px] font-medium text-nx-ink-2">
                   {theme.name}
                 </span>
-              </button>
+              </Button>
             ))}
           </div>
         )}
@@ -147,16 +145,17 @@ export function ThemeGalleryView() {
       <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
         <div className="flex items-center gap-1 rounded-nx-md border border-nx-line bg-nx-raised p-1">
           {(["browse", "featured", "favorites", "bundles"] as const).map((tab) => (
-            <button
+            <Button
               type="button"
+              variant="ghost"
               key={tab}
               onClick={() => vm.setActiveTab(tab)}
               aria-pressed={vm.activeTab === tab}
               className={cn(
-                "rounded-nx-control px-4 py-2 text-sm font-medium transition-colors duration-nx-micro motion-reduce:transition-none",
+                "h-auto rounded-nx-control px-4 py-2 text-sm font-medium transition-colors duration-nx-micro motion-reduce:transition-none",
                 "focus-visible:shadow-nx-focus focus-visible:outline-none",
                 vm.activeTab === tab
-                  ? "bg-nx-surface text-nx-ink shadow-nx-sm"
+                  ? "bg-nx-surface text-nx-ink shadow-nx-sm hover:bg-nx-surface"
                   : "text-nx-ink-2 hover:text-nx-ink"
               )}
             >
@@ -164,7 +163,7 @@ export function ThemeGalleryView() {
               {tab === "featured" && t(`studio.marketplace.featured`)}
               {tab === "favorites" && t(`studio.marketplace.favorites`)}
               {tab === "bundles" && t(`studio.bundles.title`)}
-            </button>
+            </Button>
           ))}
         </div>
 
@@ -205,21 +204,22 @@ export function ThemeGalleryView() {
           {/* Category chips */}
           <div className="flex flex-wrap items-center gap-1.5">
             {vm.categories.map((cat) => (
-              <button
+              <Button
                 type="button"
+                variant="ghost"
                 key={cat}
                 onClick={() => vm.setFilters({ category: cat })}
                 aria-pressed={vm.filters.category === cat}
                 className={cn(
-                  "rounded-full border px-3 py-1.5 text-xs font-medium transition-colors duration-nx-micro motion-reduce:transition-none",
+                  "h-auto rounded-full border px-3 py-1.5 text-xs font-medium transition-colors duration-nx-micro motion-reduce:transition-none",
                   "focus-visible:shadow-nx-focus focus-visible:outline-none",
                   vm.filters.category === cat
-                    ? "border-nx-accent bg-nx-accent-fill text-nx-on-fill shadow-nx-sm"
+                    ? "border-nx-accent bg-nx-accent-fill text-nx-on-fill shadow-nx-sm hover:bg-nx-accent-fill hover:text-nx-on-fill"
                     : "border-nx-line text-nx-ink-2 hover:border-nx-line-hi hover:text-nx-ink"
                 )}
               >
                 {t(`${G}.categories.${cat}`)}
-              </button>
+              </Button>
             ))}
           </div>
 
@@ -239,14 +239,16 @@ export function ThemeGalleryView() {
               className="h-9 ps-9 text-sm"
             />
             {vm.filters.search && (
-              <button
+              <Button
                 type="button"
+                variant="ghost"
+                size="icon"
                 onClick={() => vm.setFilters({ search: "" })}
                 aria-label={t("common.clear")}
-                className="absolute end-3 top-1/2 -translate-y-1/2 text-nx-ink-3 hover:text-nx-ink"
+                className="absolute end-2 top-1/2 h-6 w-6 -translate-y-1/2 p-0 text-nx-ink-3 hover:bg-transparent hover:text-nx-ink"
               >
                 <X className="h-3.5 w-3.5" aria-hidden="true" />
-              </button>
+              </Button>
             )}
           </div>
 
@@ -264,14 +266,15 @@ export function ThemeGalleryView() {
 
           {/* Clear filters */}
           {vm.hasActiveFilters && (
-            <button
+            <Button
               type="button"
+              variant="ghost"
               onClick={vm.resetFilters}
-              className="flex items-center gap-1 text-xs text-destructive hover:underline"
+              className="flex h-auto items-center gap-1 p-0 text-xs font-normal text-destructive hover:bg-transparent hover:text-destructive hover:underline"
             >
               <RotateCcw className="h-3 w-3" aria-hidden="true" />
               {t(`${G}.clearFilters`)}
-            </button>
+            </Button>
           )}
         </div>
       )}
@@ -287,8 +290,9 @@ export function ThemeGalleryView() {
               { key: "hasContentBlocks", label: t(`${G}.filters.contentBlocks`), icon: Blocks },
             ] as const
           ).map(({ key, label, icon: Icon }) => (
-            <button
+            <Button
               type="button"
+              variant="ghost"
               key={key}
               onClick={() =>
                 vm.setFilters({
@@ -297,16 +301,16 @@ export function ThemeGalleryView() {
               }
               aria-pressed={!!vm.filters[key as keyof typeof vm.filters]}
               className={cn(
-                "flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-xs transition-colors duration-nx-micro motion-reduce:transition-none",
+                "flex h-auto items-center gap-1.5 rounded-full border px-3 py-1.5 text-xs font-normal transition-colors duration-nx-micro motion-reduce:transition-none",
                 "focus-visible:shadow-nx-focus focus-visible:outline-none",
                 vm.filters[key as keyof typeof vm.filters]
-                  ? "border-nx-accent bg-nx-accent-wash font-medium text-nx-accent"
+                  ? "border-nx-accent bg-nx-accent-wash font-medium text-nx-accent hover:bg-nx-accent-wash hover:text-nx-accent"
                   : "border-nx-line text-nx-ink-2 hover:border-nx-line-hi hover:text-nx-ink"
               )}
             >
               <Icon className="h-3.5 w-3.5" aria-hidden="true" />
               {label}
-            </button>
+            </Button>
           ))}
         </div>
       )}
@@ -388,22 +392,24 @@ export function ThemeGalleryView() {
                 pageNum = vm.page - 3 + i;
               }
               return (
-                <button
+                <Button
                   type="button"
+                  variant="ghost"
+                  size="icon"
                   key={pageNum}
                   onClick={() => vm.setPage(pageNum)}
                   aria-current={vm.page === pageNum ? "page" : undefined}
                   aria-label={`${t("table.goToPage")} ${pageNum}`}
                   className={cn(
-                    "h-8 w-8 rounded-nx-control text-xs font-medium transition-colors duration-nx-micro motion-reduce:transition-none",
+                    "h-8 w-8 rounded-nx-control p-0 text-xs font-medium transition-colors duration-nx-micro motion-reduce:transition-none",
                     "focus-visible:shadow-nx-focus focus-visible:outline-none",
                     vm.page === pageNum
-                      ? "bg-nx-accent-fill text-nx-on-fill shadow-nx-sm"
+                      ? "bg-nx-accent-fill text-nx-on-fill shadow-nx-sm hover:bg-nx-accent-fill hover:text-nx-on-fill"
                       : "text-nx-ink-2 hover:bg-nx-hover hover:text-nx-ink"
                   )}
                 >
                   {pageNum}
-                </button>
+                </Button>
               );
             })}
           </div>
@@ -560,8 +566,10 @@ function GalleryThemeCard({
 
         {/* Favorite button — a fixed dark scrim (not the arbitrary accent) so the
             white glyph stays legible no matter how light the theme's accent is. */}
-        <button
+        <Button
           type="button"
+          variant="ghost"
+          size="icon"
           onClick={(e) => {
             e.stopPropagation();
             onToggleFavorite();
@@ -570,32 +578,32 @@ function GalleryThemeCard({
             theme.isFavorited ? t("studio.marketplace.favorited") : t("studio.marketplace.favorite")
           }
           aria-pressed={theme.isFavorited}
-          className="absolute bottom-2 end-2 flex h-7 w-7 items-center justify-center rounded-full bg-black/40 transition-colors duration-nx-micro hover:bg-black/60 motion-reduce:transition-none"
+          className="absolute bottom-2 end-2 flex h-7 w-7 items-center justify-center rounded-full bg-[color:color-mix(in_srgb,var(--scripe-void)_40%,transparent)] p-0 transition-colors duration-nx-micro hover:bg-[color:color-mix(in_srgb,var(--scripe-void)_60%,transparent)] motion-reduce:transition-none"
         >
           <Heart
             className={cn(
               "h-3.5 w-3.5 transition-colors duration-nx-micro motion-reduce:transition-none",
-              theme.isFavorited ? "fill-destructive text-destructive" : "text-white"
+              theme.isFavorited ? "fill-destructive text-destructive" : "text-[var(--scripe-white)]"
             )}
             aria-hidden="true"
           />
-        </button>
+        </Button>
 
         {/* Feature icons */}
         <div className="absolute bottom-2 start-2 flex gap-1.5" aria-hidden="true">
           {theme.hasDarkMode && (
-            <div className="flex h-5 w-5 items-center justify-center rounded-full bg-black/40">
-              <Moon className="h-3 w-3 text-white/80" />
+            <div className="flex h-5 w-5 items-center justify-center rounded-full bg-[color:color-mix(in_srgb,var(--scripe-void)_40%,transparent)]">
+              <Moon className="h-3 w-3 text-[color:color-mix(in_srgb,var(--scripe-white)_80%,transparent)]" />
             </div>
           )}
           {theme.hasAccessibilityPreset && (
-            <div className="flex h-5 w-5 items-center justify-center rounded-full bg-black/40">
-              <ShieldCheck className="h-3 w-3 text-white/80" />
+            <div className="flex h-5 w-5 items-center justify-center rounded-full bg-[color:color-mix(in_srgb,var(--scripe-void)_40%,transparent)]">
+              <ShieldCheck className="h-3 w-3 text-[color:color-mix(in_srgb,var(--scripe-white)_80%,transparent)]" />
             </div>
           )}
           {theme.hasContentBlocks && (
-            <div className="flex h-5 w-5 items-center justify-center rounded-full bg-black/40">
-              <Blocks className="h-3 w-3 text-white/80" />
+            <div className="flex h-5 w-5 items-center justify-center rounded-full bg-[color:color-mix(in_srgb,var(--scripe-void)_40%,transparent)]">
+              <Blocks className="h-3 w-3 text-[color:color-mix(in_srgb,var(--scripe-white)_80%,transparent)]" />
             </div>
           )}
         </div>
@@ -607,16 +615,17 @@ function GalleryThemeCard({
         <div className="flex items-start justify-between gap-2">
           <div className="min-w-0">
             <h3 className="truncate text-sm font-semibold text-nx-ink">
-              <button
+              <Button
                 type="button"
-                className="transition-colors duration-nx-micro hover:text-nx-accent motion-reduce:transition-none"
+                variant="ghost"
+                className="h-auto p-0 text-sm font-semibold transition-colors duration-nx-micro hover:bg-transparent hover:text-nx-accent motion-reduce:transition-none"
                 onClick={(e) => {
                   e.stopPropagation();
                   onOpenDetail();
                 }}
               >
                 {theme.name}
-              </button>
+              </Button>
             </h3>
             {theme.authorName && (
               <p className="mt-0.5 text-[10px] text-nx-ink-3">

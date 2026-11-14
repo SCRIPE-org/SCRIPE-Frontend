@@ -1,6 +1,5 @@
 /* eslint-disable unused-imports/no-unused-vars */
 // FILE-EXCEPTION: file length
-// UI-EXCEPTION: compact studio layout
 /**
  * Menus View (Pure UI) — Admin Management
  *
@@ -419,18 +418,19 @@ function WorkspaceFilterTab({
   onClick,
 }: WorkspaceFilterTabProps) {
   return (
-    <button
+    <Button
       type="button"
+      variant="ghost"
       onClick={onClick}
       className={cn(
-        "flex shrink-0 items-center gap-2 rounded-nx-control px-3 py-2 text-sm font-medium",
+        "flex h-auto shrink-0 items-center gap-2 rounded-nx-control px-3 py-2 text-sm font-medium",
         "border transition-[color,background-color,border-color] duration-nx-micro ease-nx-enter motion-reduce:transition-none",
         "focus-visible:shadow-nx-focus focus-visible:outline-none",
         isActive
           ? accentColor
             ? "border-transparent text-nx-on-fill"
-            : "border-nx-accent-fill bg-nx-accent-fill text-nx-on-fill"
-          : "border-nx-line bg-transparent text-nx-ink-2 hover:border-nx-line-hi hover:text-nx-ink"
+            : "border-nx-accent-fill bg-nx-accent-fill text-nx-on-fill hover:bg-nx-accent-fill"
+          : "border-nx-line bg-transparent text-nx-ink-2 hover:border-nx-line-hi hover:bg-transparent hover:text-nx-ink"
       )}
       style={
         isActive && accentColor ? { background: accentColor, borderColor: accentColor } : undefined
@@ -448,7 +448,7 @@ function WorkspaceFilterTab({
       >
         {count}
       </span>
-    </button>
+    </Button>
   );
 }
 
@@ -491,12 +491,13 @@ function WorkspaceOverviewPanel({
               const name = ws.getLocalizedName(language);
 
               return (
-                <button
+                <Button
                   key={ws.workspaceKey}
                   type="button"
+                  variant="ghost"
                   onClick={() => onFilterSelect(id)}
                   className={cn(
-                    "group flex items-center justify-between rounded-nx-lg border border-nx-line px-4 py-3",
+                    "group flex h-auto items-center justify-between rounded-nx-lg border border-nx-line px-4 py-3 font-normal",
                     "bg-nx-raised text-start transition-[color,background-color,border-color] duration-nx-micro ease-nx-enter motion-reduce:transition-none",
                     "hover:border-nx-line-hi hover:bg-nx-raised-2",
                     "focus-visible:shadow-nx-focus focus-visible:outline-none"
@@ -520,7 +521,7 @@ function WorkspaceOverviewPanel({
                       aria-hidden="true"
                     />
                   </div>
-                </button>
+                </Button>
               );
             })}
 

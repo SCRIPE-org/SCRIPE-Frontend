@@ -134,7 +134,7 @@ export function OverlayDiv() {
     <div
       className="absolute inset-0"
       style={{
-        backgroundColor: "var(--login-overlay-color, #000000)",
+        backgroundColor: "var(--login-overlay-color, var(--scripe-void))",
         opacity: "var(--login-overlay-opacity, 0.5)",
         backdropFilter: "blur(var(--login-overlay-blur, 0px))",
       }}

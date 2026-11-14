@@ -33,23 +33,23 @@ export function PasswordStrengthMeter({ score, entropyBits }: PasswordStrengthMe
       return {
         level: 2,
         label: t("auth.accountSetup.medium") || "Fair",
-        color: "bg-amber-500",
-        text: "text-amber-600 dark:text-amber-400",
+        color: "bg-warning",
+        text: "text-warning",
       };
     }
     if (score < 85) {
       return {
         level: 3,
         label: t("auth.accountSetup.strong") || "Strong",
-        color: "bg-emerald-500",
-        text: "text-emerald-600 dark:text-emerald-400",
+        color: "bg-success",
+        text: "text-success",
       };
     }
     return {
       level: 4,
       label: "Enterprise-Grade",
-      color: "bg-indigo-500 dark:bg-indigo-400",
-      text: "text-indigo-600 dark:text-indigo-400",
+      color: "bg-info",
+      text: "text-info",
     };
   };
 

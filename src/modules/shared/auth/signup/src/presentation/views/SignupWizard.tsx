@@ -181,7 +181,7 @@ function SignupDomainRestrictionView({ platformSignupUrl }: { platformSignupUrl:
             className="inline-flex h-11 items-center justify-center rounded-lg px-6 text-sm font-semibold transition-all hover:opacity-90"
             style={{
               background: tokens.accent,
-              color: tokens.accentContrast || "#ffffff",
+              color: tokens.accentContrast || "var(--scripe-ink)",
               boxShadow: `0 4px 12px ${tokens.accent}33`,
             }}
           >

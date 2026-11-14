@@ -1,4 +1,3 @@
-// UI-EXCEPTION: compact studio layout
 /** Edition Detail View — Thin orchestrator delegating to modular tab components. */
 "use client";
 
@@ -117,18 +116,20 @@ export function EditionDetailView({ editionId }: EditionDetailViewProps) {
       {/* ─────── TAB NAVIGATION ─────── */}
       <div className="flex items-center gap-1 border-b">
         {tabs.map((tab) => (
-          <button
+          <Button
             key={tab.id}
+            type="button"
+            variant="ghost"
             onClick={() => setActiveTab(tab.id)}
-            className={`-mb-px flex items-center gap-1.5 border-b-2 px-4 py-2.5 text-sm font-medium transition-[color,background-color,border-color,box-shadow] duration-nx-micro ease-nx-enter motion-reduce:transition-none ${
+            className={`-mb-px flex h-auto items-center gap-1.5 rounded-none border-b-2 px-4 py-2.5 text-sm font-medium hover:bg-transparent transition-[color,background-color,border-color,box-shadow] duration-nx-micro ease-nx-enter motion-reduce:transition-none ${
               activeTab === tab.id
-                ? "border-nx-accent text-nx-accent"
+                ? "border-nx-accent text-nx-accent hover:text-nx-accent"
                 : "border-transparent text-nx-ink-2 hover:border-nx-line hover:text-nx-ink"
             }`}
           >
             {tab.icon}
             {tab.label}
-          </button>
+          </Button>
         ))}
       </div>
 

@@ -79,18 +79,18 @@ export function CrmWorkflowRuleStep2Configurator({
           <div className="text-[10px] font-mono uppercase text-nx-ink-3">{t("crmOpportunities.ruleConfig.decoupledPipelineRolesGroup")}</div>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-1">
             {filteredRoles.map((role) => (
-              <label key={role.key} className="flex items-center justify-between gap-1.5 rounded border border-nx-line bg-nx-ground px-2 py-1 text-xs cursor-pointer" data-testid={`principal-option-${role.key}`}>
+              <Label key={role.key} className="flex items-center justify-between gap-1.5 rounded border border-nx-line bg-nx-ground px-2 py-1 text-xs cursor-pointer" data-testid={`principal-option-${role.key}`}>
                 <span className="inline-flex items-center gap-1.5 truncate"><Checkbox checked={selectedPrincipals.includes(role.key)} onCheckedChange={() => updatePrincipals(toggleCsv(selectedPrincipals.join(","), role.key))} /><span className="font-semibold text-nx-ink truncate">{isAr ? role.nameAr : role.nameEn}</span></span>
                 <Badge variant="outline" className="text-[9px] font-mono shrink-0">{(role.memberNames?.length ?? 1)} {t("crmOpportunities.ruleConfig.membersSuffix")}</Badge>
-              </label>
+              </Label>
             ))}
           </div>
           <div className="text-[10px] font-mono uppercase text-nx-ink-3 pt-1">{t("crmOpportunities.ruleConfig.recordRelativePrincipalsGroup")}</div>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-1">
             {filteredPrincipals.map((pr) => (
-              <label key={pr.key} className="flex items-center gap-1.5 rounded border border-nx-line bg-nx-ground px-2 py-1 text-xs cursor-pointer" data-testid={`principal-option-${pr.key}`}>
+              <Label key={pr.key} className="flex items-center gap-1.5 rounded border border-nx-line bg-nx-ground px-2 py-1 text-xs cursor-pointer" data-testid={`principal-option-${pr.key}`}>
                 <Checkbox checked={selectedPrincipals.includes(pr.key)} onCheckedChange={() => updatePrincipals(toggleCsv(selectedPrincipals.join(","), pr.key))} /><span className="text-nx-ink truncate">{isAr ? pr.nameAr : pr.nameEn}</span>
-              </label>
+              </Label>
             ))}
           </div>
         </div>
@@ -98,7 +98,7 @@ export function CrmWorkflowRuleStep2Configurator({
         {rk === "restrict.roles_permissions" && (
           <div className="max-h-16 overflow-y-auto rounded border border-nx-line bg-nx-surface p-1.5 grid grid-cols-2 gap-1" data-testid="rule-permission-multi-select">
             {CRM_SCOPED_PERMISSION_OPTIONS.map((perm) => (
-              <label key={perm.key} className="flex items-center gap-1.5 text-[11px] text-nx-ink cursor-pointer"><Checkbox checked={selectedPerms.includes(perm.key)} onCheckedChange={() => setKeys({ permissions: toggleCsv(selectedPerms.join(","), perm.key) })} /><span className="truncate">{isAr ? perm.labelAr : perm.labelEn}</span></label>
+              <Label key={perm.key} className="flex items-center gap-1.5 text-[11px] text-nx-ink cursor-pointer"><Checkbox checked={selectedPerms.includes(perm.key)} onCheckedChange={() => setKeys({ permissions: toggleCsv(selectedPerms.join(","), perm.key) })} /><span className="truncate">{isAr ? perm.labelAr : perm.labelEn}</span></Label>
             ))}
           </div>
         )}
@@ -117,7 +117,7 @@ export function CrmWorkflowRuleStep2Configurator({
         ].map((tier) => (
           <div key={tier.rKey} className="rounded-md border border-nx-line bg-nx-surface p-2 space-y-1.5">
             <div className="flex items-center justify-between"><Badge variant="outline" className="text-[10px] font-mono">{tier.label}</Badge><Input type="number" value={configDraft[tier.amtKey] || tier.defAmt} onChange={(e) => setKeys({ [tier.amtKey]: e.target.value })} className="h-7 w-28 text-xs font-mono" data-testid={tier.testId} /></div>
-            <div className="flex flex-wrap gap-1">{crmRoles.map((r) => <label key={r.key} className="inline-flex items-center gap-1 rounded border border-nx-line px-1.5 py-0.5 text-[11px] cursor-pointer"><Checkbox checked={tier.roles.includes(r.key)} onCheckedChange={() => setKeys({ [tier.rKey]: toggleCsv(tier.roles.join(","), r.key) })} /><span>{isAr ? r.nameAr : r.nameEn}</span></label>)}</div>
+            <div className="flex flex-wrap gap-1">{crmRoles.map((r) => <Label key={r.key} className="inline-flex items-center gap-1 rounded border border-nx-line px-1.5 py-0.5 text-[11px] cursor-pointer"><Checkbox checked={tier.roles.includes(r.key)} onCheckedChange={() => setKeys({ [tier.rKey]: toggleCsv(tier.roles.join(","), r.key) })} /><span>{isAr ? r.nameAr : r.nameEn}</span></Label>)}</div>
           </div>
         ))}
         <CrmInlineScopedRoleCreator isAr={isAr} onRoleCreated={(created) => setKeys({ tier2Roles: toggleCsv(t2Roles.join(","), created.key) })} />
@@ -136,16 +136,16 @@ export function CrmWorkflowRuleStep2Configurator({
         </Label>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-1.5">
           {isPrior ? stages.map((st) => (
-            <label key={st.stageKey} className="flex items-center gap-2 rounded border border-nx-line bg-nx-surface px-2 py-1 text-xs cursor-pointer">
+            <Label key={st.stageKey} className="flex items-center gap-2 rounded border border-nx-line bg-nx-surface px-2 py-1 text-xs cursor-pointer">
               <Checkbox checked={selected.includes(st.stageKey)} onCheckedChange={() => { const next = toggleCsv(selected.join(","), st.stageKey); setKeys({ priorStageKeys: next, requiredStageKey: next }); }} />
-              <span className={`w-2 h-2 rounded-full ${STAGE_COLOR_PALETTE[resolveDefaultStageColor(st.stageKey, st.category, st.order, st.color)]?.dotClass || "bg-blue-500"}`} />
+              <span className={`w-2 h-2 rounded-full ${STAGE_COLOR_PALETTE[resolveDefaultStageColor(st.stageKey, st.category, st.order, st.color)]?.dotClass || "bg-primary"}`} />
               <span className="font-semibold text-nx-ink">{isAr ? st.labelAr : st.labelEn}</span>
-            </label>
+            </Label>
           )) : buyingCommitteeRoles.map((role) => (
-            <label key={role.key} className="flex items-center gap-2 rounded border border-nx-line bg-nx-surface px-2 py-1 text-xs cursor-pointer">
+            <Label key={role.key} className="flex items-center gap-2 rounded border border-nx-line bg-nx-surface px-2 py-1 text-xs cursor-pointer">
               <Checkbox checked={selected.includes(role.key)} onCheckedChange={() => { const next = toggleCsv(selected.join(","), role.key); setKeys({ committeeRoles: next, requiredRole: next }); }} />
               <span className="font-semibold text-nx-ink">{isAr ? role.labelAr : role.labelEn}</span>
-            </label>
+            </Label>
           ))}
         </div>
         {!isPrior && (

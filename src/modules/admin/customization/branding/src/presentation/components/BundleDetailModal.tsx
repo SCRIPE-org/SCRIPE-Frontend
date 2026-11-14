@@ -1,4 +1,3 @@
-// UI-EXCEPTION: compact studio layout
 "use client";
 
 /**
@@ -187,16 +186,17 @@ export function BundleDetailModal({
               aria-label={t("studio.bundles.applyMode.title")}
             >
               {/* Replace option */}
-              <button
+              <Button
                 type="button"
+                variant="ghost"
                 role="radio"
                 aria-checked={applyMode === "replace"}
                 className={cn(
-                  "flex flex-col items-start rounded-nx-md border-2 p-3 text-start transition-colors duration-nx-micro motion-reduce:transition-none",
+                  "flex h-auto flex-col items-start justify-start whitespace-normal rounded-nx-md border-2 p-3 text-start font-normal transition-colors duration-nx-micro motion-reduce:transition-none",
                   "focus-visible:shadow-nx-focus focus-visible:outline-none",
                   applyMode === "replace"
-                    ? "border-nx-accent bg-nx-accent-wash"
-                    : "border-nx-line hover:border-nx-line-hi"
+                    ? "border-nx-accent bg-nx-accent-wash hover:bg-nx-accent-wash"
+                    : "border-nx-line hover:border-nx-line-hi hover:bg-transparent"
                 )}
                 onClick={() => setApplyMode("replace")}
               >
@@ -206,19 +206,20 @@ export function BundleDetailModal({
                 <span className="mt-1 text-[11px] text-nx-ink-2">
                   {t("studio.bundles.applyMode.replaceDesc")}
                 </span>
-              </button>
+              </Button>
 
               {/* Merge option */}
-              <button
+              <Button
                 type="button"
+                variant="ghost"
                 role="radio"
                 aria-checked={applyMode === "merge"}
                 className={cn(
-                  "flex flex-col items-start rounded-nx-md border-2 p-3 text-start transition-colors duration-nx-micro motion-reduce:transition-none",
+                  "flex h-auto flex-col items-start justify-start whitespace-normal rounded-nx-md border-2 p-3 text-start font-normal transition-colors duration-nx-micro motion-reduce:transition-none",
                   "focus-visible:shadow-nx-focus focus-visible:outline-none",
                   applyMode === "merge"
-                    ? "border-nx-accent bg-nx-accent-wash"
-                    : "border-nx-line hover:border-nx-line-hi"
+                    ? "border-nx-accent bg-nx-accent-wash hover:bg-nx-accent-wash"
+                    : "border-nx-line hover:border-nx-line-hi hover:bg-transparent"
                 )}
                 onClick={() => setApplyMode("merge")}
               >
@@ -228,7 +229,7 @@ export function BundleDetailModal({
                 <span className="mt-1 text-[11px] text-nx-ink-2">
                   {t("studio.bundles.applyMode.mergeDesc")}
                 </span>
-              </button>
+              </Button>
             </div>
           </div>
         )}

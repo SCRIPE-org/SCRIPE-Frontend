@@ -50,7 +50,7 @@ export function SetupStep3Attributes({ vm, hasCustomFields }: SetupStep3Attribut
         </div>
       ) : (
         <div className="rounded-xl border border-border/50 bg-muted/10 p-6 text-center text-sm text-muted-foreground">
-          <CheckCircle2 className="mx-auto mb-2 h-6 w-6 text-emerald-500" />
+          <CheckCircle2 className="mx-auto mb-2 h-6 w-6 text-success" />
           {t("auth.accountSetup.noAttributesNeeded")}
         </div>
       )}

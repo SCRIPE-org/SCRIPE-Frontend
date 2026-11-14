@@ -19,7 +19,7 @@ export function PasswordCheck({ label, ok }: PasswordCheckProps) {
   return (
     <div className="flex min-w-0 items-center gap-1.5">
       {ok ? (
-        <Check className="h-3.5 w-3.5 shrink-0 stroke-[2.5] text-emerald-500" aria-hidden="true" />
+        <Check className="h-3.5 w-3.5 shrink-0 stroke-[2.5] text-success" aria-hidden="true" />
       ) : (
         <div
           className="mx-1 h-1.5 w-1.5 shrink-0 rounded-full bg-muted-foreground/40"

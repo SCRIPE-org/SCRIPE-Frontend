@@ -4,10 +4,10 @@
  * Renders the mock user table inside the customizer studio dashboard preview.
  * Displays user avatars, names, roles, statuses, and registration timestamps.
  */
-// UI-EXCEPTION: compact studio layout - mock dashboard canvas preview controls
 "use client";
 
 import { ArrowUpRight } from "lucide-react";
+import { Button } from "@core/ui/button";
 import { useI18n } from "@core/providers/i18n-provider";
 import { cn } from "@core/common/utils";
 
@@ -80,10 +80,14 @@ export function MockRecentUsersTable({ className }: MockRecentUsersTableProps) {
             {t("studio.dashboardPreview.latestRegistrations")}
           </p>
         </div>
-        <button className="flex items-center gap-1 text-xs text-nx-accent">
+        <Button
+          type="button"
+          variant="ghost"
+          className="flex h-auto items-center gap-1 p-0 text-xs font-normal text-nx-accent hover:bg-transparent hover:text-nx-accent"
+        >
           {t("studio.dashboardPreview.viewAll")}{" "}
           <ArrowUpRight className="h-3 w-3" aria-hidden="true" />
-        </button>
+        </Button>
       </div>
       <div className="overflow-x-auto">
         <table className="w-full">

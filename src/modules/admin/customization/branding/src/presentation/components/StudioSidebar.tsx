@@ -4,11 +4,9 @@
  * All labels localized via t()
  */
 "use client";
-// UI-EXCEPTION: compact studio layout -- native <button> used for pixel-precise
-// compact controls (toggle switches, gradient pickers, layout thumbnails, etc.)
-// where @core/ui/button's padding/sizing would break the layout.
 
 import { useMemo } from "react";
+import { Button } from "@core/ui/button";
 import {
   Layout,
   Palette,
@@ -148,16 +146,18 @@ export function StudioSidebar(props: StudioSidebarProps) {
               const Icon = tab.icon;
               const isActive = activePanel === tab.id;
               return (
-                <button
+                <Button
                   key={tab.id}
                   type="button"
+                  variant="ghost"
+                  size="icon"
                   onClick={() => setActivePanel(tab.id)}
                   aria-label={t(tab.labelKey)}
                   aria-pressed={isActive}
                   className={cn(
-                    "group relative flex h-10 w-10 items-center justify-center rounded-nx-control transition-colors duration-nx-micro ease-nx-enter focus-visible:shadow-nx-focus focus-visible:outline-none motion-reduce:transition-none",
+                    "group relative flex h-10 w-10 items-center justify-center rounded-nx-control p-0 transition-colors duration-nx-micro ease-nx-enter focus-visible:shadow-nx-focus focus-visible:outline-none motion-reduce:transition-none",
                     isActive
-                      ? "bg-nx-accent-fill text-nx-on-fill"
+                      ? "bg-nx-accent-fill text-nx-on-fill hover:bg-nx-accent-fill hover:text-nx-on-fill"
                       : "text-nx-ink-2 hover:bg-nx-hover hover:text-nx-ink"
                   )}
                 >
@@ -166,7 +166,7 @@ export function StudioSidebar(props: StudioSidebarProps) {
                   {isActive && (
                     <div className="absolute -end-[5px] top-1/2 h-5 w-[3px] -translate-y-1/2 rounded-full bg-nx-accent" />
                   )}
-                </button>
+                </Button>
               );
             })}
           </div>

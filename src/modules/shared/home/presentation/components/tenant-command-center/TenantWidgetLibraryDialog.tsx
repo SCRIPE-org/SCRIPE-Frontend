@@ -173,24 +173,27 @@ export function TenantWidgetLibraryDialog({
               className="h-9 border-nx-line bg-nx-raised/40 pe-8 ps-9 text-xs text-nx-ink"
             />
             {searchQuery && (
-              <button
+              <Button
                 type="button"
+                variant="ghost"
+                size="icon"
                 onClick={() => setSearchQuery("")}
-                className="absolute end-2.5 top-2.5 cursor-pointer text-nx-ink-3 hover:text-nx-ink"
+                className="absolute end-2.5 top-2.5 h-auto w-auto cursor-pointer p-0 text-nx-ink-3 hover:bg-transparent hover:text-nx-ink"
               >
                 <X className="h-4 w-4" />
-              </button>
+              </Button>
             )}
           </div>
 
           {/* Segmented Status Tabs (All vs Available vs In Dashboard) */}
           <div className="flex items-center gap-1 rounded-xl border border-nx-line bg-nx-raised/40 p-1 text-xs">
-            <button
+            <Button
               type="button"
+              variant="ghost"
               onClick={() => setStatusFilter("all")}
-              className={`flex flex-1 cursor-pointer items-center justify-center gap-1.5 rounded-lg px-3 py-1.5 font-semibold transition-all ${
+              className={`h-auto flex-1 cursor-pointer gap-1.5 rounded-lg px-3 py-1.5 text-xs font-semibold transition-all ${
                 statusFilter === "all"
-                  ? "border border-nx-line bg-nx-surface text-nx-ink"
+                  ? "border border-nx-line bg-nx-surface text-nx-ink hover:bg-nx-surface"
                   : "text-nx-ink-3 hover:bg-nx-raised hover:text-nx-ink"
               }`}
             >
@@ -198,14 +201,15 @@ export function TenantWidgetLibraryDialog({
               <Badge variant="secondary" className="h-4 px-1.5 py-0 text-[10px]">
                 {totalCount}
               </Badge>
-            </button>
+            </Button>
 
-            <button
+            <Button
               type="button"
+              variant="ghost"
               onClick={() => setStatusFilter("available")}
-              className={`flex flex-1 cursor-pointer items-center justify-center gap-1.5 rounded-lg px-3 py-1.5 font-semibold transition-all ${
+              className={`h-auto flex-1 cursor-pointer gap-1.5 rounded-lg px-3 py-1.5 text-xs font-semibold transition-all ${
                 statusFilter === "available"
-                  ? "bg-primary font-bold text-nx-on-fill"
+                  ? "bg-primary font-bold text-nx-on-fill hover:bg-primary"
                   : "text-nx-ink-3 hover:bg-nx-raised hover:text-nx-ink"
               }`}
             >
@@ -220,14 +224,15 @@ export function TenantWidgetLibraryDialog({
               >
                 {availableCount}
               </span>
-            </button>
+            </Button>
 
-            <button
+            <Button
               type="button"
+              variant="ghost"
               onClick={() => setStatusFilter("added")}
-              className={`flex flex-1 cursor-pointer items-center justify-center gap-1.5 rounded-lg px-3 py-1.5 font-semibold transition-all ${
+              className={`h-auto flex-1 cursor-pointer gap-1.5 rounded-lg px-3 py-1.5 text-xs font-semibold transition-all ${
                 statusFilter === "added"
-                  ? "bg-success font-bold text-nx-ground"
+                  ? "bg-success font-bold text-nx-ground hover:bg-success"
                   : "text-nx-ink-3 hover:bg-nx-raised hover:text-nx-ink"
               }`}
             >
@@ -242,24 +247,25 @@ export function TenantWidgetLibraryDialog({
               >
                 {addedCount}
               </span>
-            </button>
+            </Button>
           </div>
 
           {/* Category Filter Pills */}
           <div className="flex flex-wrap items-center gap-1.5 pt-0.5">
             {CATEGORIES.map((cat) => (
-              <button
+              <Button
                 key={cat.id}
                 type="button"
+                variant="ghost"
                 onClick={() => setSelectedCategory(cat.id)}
-                className={`cursor-pointer rounded-full px-2.5 py-0.5 text-[11px] font-medium transition-colors ${
+                className={`h-auto cursor-pointer rounded-full px-2.5 py-0.5 text-[11px] font-medium transition-colors ${
                   selectedCategory === cat.id
-                    ? "border border-primary/30 bg-primary/10 font-semibold text-primary"
+                    ? "border border-primary/30 bg-primary/10 font-semibold text-primary hover:bg-primary/10"
                     : "text-nx-ink-3 hover:bg-nx-raised hover:text-nx-ink"
                 }`}
               >
                 {cat.label}
-              </button>
+              </Button>
             ))}
           </div>
         </div>

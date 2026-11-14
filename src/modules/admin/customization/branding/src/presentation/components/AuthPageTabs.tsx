@@ -6,11 +6,9 @@
  * layout, headline, and subtitle.
  */
 "use client";
-// UI-EXCEPTION: compact studio layout — native <button> used for pixel-precise
-// compact controls (toggle switches, gradient pickers, layout thumbnails, etc.)
-// where @core/ui/button's padding/sizing would break the layout.
 
 import { LogIn, KeyRound, RotateCcw, UserPlus, MailCheck, ShieldCheck } from "lucide-react";
+import { Button } from "@core/ui/button";
 import { cn } from "@/core/common/utils";
 import { AUTH_PAGES, type AuthPageId } from "../../domain/entities/StudioDraft";
 import { useI18n } from "@core/providers/i18n-provider";
@@ -44,21 +42,22 @@ export function AuthPageTabs({ activePageId, onPageChange }: AuthPageTabsProps) 
         const Icon = ICON_MAP[page.icon];
         const isActive = activePageId === page.id;
         return (
-          <button
+          <Button
             key={page.id}
             type="button"
+            variant="ghost"
             onClick={() => onPageChange(page.id)}
             aria-pressed={isActive}
             className={cn(
-              "flex items-center gap-1.5 whitespace-nowrap rounded-nx-control px-3 py-1.5 text-xs font-medium transition-[color,background-color,box-shadow] duration-nx-micro ease-nx-enter motion-reduce:transition-none",
+              "flex h-auto items-center gap-1.5 whitespace-nowrap rounded-nx-control px-3 py-1.5 text-xs font-medium transition-[color,background-color,box-shadow] duration-nx-micro ease-nx-enter motion-reduce:transition-none",
               isActive
-                ? "bg-nx-accent-fill text-nx-on-fill"
+                ? "bg-nx-accent-fill text-nx-on-fill hover:bg-nx-accent-fill hover:text-nx-on-fill"
                 : "text-nx-ink-2 hover:bg-nx-hover hover:text-nx-ink"
             )}
           >
             {Icon && <Icon className="h-3.5 w-3.5" aria-hidden="true" />}
             <span>{t(page.labelKey) || page.id}</span>
-          </button>
+          </Button>
         );
       })}
     </div>

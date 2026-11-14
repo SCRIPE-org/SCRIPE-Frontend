@@ -423,14 +423,15 @@ export function FirstTimeSetupWizard({
                 </Label>
                 <div className="grid grid-cols-1 gap-2.5 sm:grid-cols-2">
                   {facilities.map((fac) => (
-                    <button
+                    <Button
                       type="button"
+                      variant="ghost"
                       key={fac.id}
                       onClick={() => {
                         setSelectedFacilityId(fac.id);
                         setBranchName(fac.name);
                       }}
-                      className={`flex h-auto w-full flex-col items-start gap-1 rounded-xl border p-3 text-left transition-all hover:bg-nx-raised focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary rtl:text-right ${
+                      className={`flex h-auto w-full flex-col items-start justify-start gap-1 whitespace-normal rounded-xl border p-3 text-left font-normal transition-all hover:bg-nx-raised focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary rtl:text-right ${
                         selectedFacilityId === fac.id
                           ? "border-primary bg-primary/10 font-semibold ring-1 ring-primary"
                           : "border-nx-line bg-nx-surface text-nx-ink-2"
@@ -446,7 +447,7 @@ export function FirstTimeSetupWizard({
                             defaultValue: "Standard Facility",
                           })}
                       </span>
-                    </button>
+                    </Button>
                   ))}
                 </div>
               </div>
@@ -492,10 +493,11 @@ export function FirstTimeSetupWizard({
                 })}
               </Label>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
-                <button
+                <Button
                   type="button"
+                  variant="ghost"
                   onClick={() => handleSelectManagementMode("solo")}
-                  className={`flex h-auto w-full flex-col items-start gap-1 rounded-xl border p-3 text-left transition-all hover:bg-nx-raised focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary rtl:text-right ${
+                  className={`flex h-auto w-full flex-col items-start justify-start gap-1 whitespace-normal rounded-xl border p-3 text-left font-normal transition-all hover:bg-nx-raised focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary rtl:text-right ${
                     managementMode === "solo"
                       ? "border-primary bg-primary/10 ring-1 ring-primary"
                       : "border-nx-line bg-nx-surface text-nx-ink-2"
@@ -510,11 +512,12 @@ export function FirstTimeSetupWizard({
                       defaultValue: "Operate everything directly. Simple & fast.",
                     })}
                   </span>
-                </button>
-                <button
+                </Button>
+                <Button
                   type="button"
+                  variant="ghost"
                   onClick={() => handleSelectManagementMode("team")}
-                  className={`flex h-auto w-full flex-col items-start gap-1 rounded-xl border p-3 text-left transition-all hover:bg-nx-raised focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary rtl:text-right ${
+                  className={`flex h-auto w-full flex-col items-start justify-start gap-1 whitespace-normal rounded-xl border p-3 text-left font-normal transition-all hover:bg-nx-raised focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary rtl:text-right ${
                     managementMode === "team"
                       ? "border-primary bg-primary/10 ring-1 ring-primary"
                       : "border-nx-line bg-nx-surface text-nx-ink-2"
@@ -529,7 +532,7 @@ export function FirstTimeSetupWizard({
                       defaultValue: "Invite managers and receptionists in Settings.",
                     })}
                   </span>
-                </button>
+                </Button>
               </div>
             </div>
           </div>

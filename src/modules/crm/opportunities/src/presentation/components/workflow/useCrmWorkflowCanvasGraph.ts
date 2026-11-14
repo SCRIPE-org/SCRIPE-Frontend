@@ -250,7 +250,7 @@ export function useCrmWorkflowCanvasGraph(params: UseCrmWorkflowCanvasGraphParam
     try {
       setIsExportingPng(true);
       const dataUrl = await toPng(viewportEl, {
-        backgroundColor: (typeof document !== "undefined" ? getComputedStyle(document.documentElement).getPropertyValue("--nx-ground").trim() : "") || "#090d16",
+        backgroundColor: (typeof document !== "undefined" ? getComputedStyle(document.documentElement).getPropertyValue("--nx-ground").trim() : "") || "transparent",
         filter: (node) => !(node as HTMLElement).classList?.contains("react-flow__panel"),
       });
       const link = document.createElement("a");

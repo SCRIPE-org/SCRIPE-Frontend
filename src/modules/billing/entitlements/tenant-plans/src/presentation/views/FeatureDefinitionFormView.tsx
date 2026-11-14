@@ -1,5 +1,4 @@
 // FILE-EXCEPTION: file length
-// UI-EXCEPTION: compact studio layout
 /**
  * FeatureDefinitionFormView — Premium Create/Edit Page
  *
@@ -271,20 +270,21 @@ export function FeatureDefinitionFormView({
             </Label>
             <div className="grid grid-cols-1 gap-3 md:grid-cols-3">
               {valueTypeOptions.map((option) => (
-                <button
+                <Button
                   key={option.value}
                   type="button"
+                  variant="ghost"
                   disabled={isViewMode}
                   aria-pressed={form.valueType === option.value}
                   onClick={() => updateField("valueType", option.value)}
                   className={cn(
-                    "relative flex flex-col items-start gap-2 rounded-nx-md border-2 p-4 text-start",
+                    "relative flex h-auto flex-col items-start justify-start gap-2 whitespace-normal rounded-nx-md border-2 p-4 text-start",
                     "transition-[color,background-color,border-color,box-shadow] duration-nx-micro ease-nx-enter motion-reduce:transition-none",
                     "focus-visible:shadow-nx-focus focus-visible:outline-none",
                     "disabled:cursor-not-allowed disabled:opacity-60",
                     !isViewMode && "hover:bg-nx-hover",
                     form.valueType === option.value
-                      ? "border-nx-accent bg-nx-accent-wash"
+                      ? "border-nx-accent bg-nx-accent-wash hover:bg-nx-accent-wash"
                       : "border-nx-line hover:border-nx-line-hi"
                   )}
                 >
@@ -308,7 +308,7 @@ export function FeatureDefinitionFormView({
                       <CheckCircle2 className="h-4 w-4 text-nx-accent" aria-hidden="true" />
                     </div>
                   )}
-                </button>
+                </Button>
               ))}
             </div>
             {errors.valueType && (

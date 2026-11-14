@@ -84,10 +84,7 @@ export function SetupStep2Profile({
           <div className="flex min-w-0 items-center gap-1.5 font-medium text-foreground">
             <Mail className="h-3.5 w-3.5 shrink-0 text-muted-foreground" />
             <span className="min-w-0 truncate">{vm.tokenData?.adminEmail}</span>
-            <Badge
-              variant="outline"
-              className="shrink-0 border-emerald-500/40 px-1 py-0 text-[10px] text-emerald-600 dark:text-emerald-400"
-            >
+            <Badge variant="success" className="shrink-0 px-1 py-0 text-[10px]">
               {t("auth.accountSetup.verified")}
             </Badge>
           </div>

@@ -1,8 +1,8 @@
-// UI-EXCEPTION: compact studio layout
 "use client";
 
 import { useI18n } from "@core/providers/i18n-provider";
 import { useSignupTheme } from "@core/providers/signup-theme";
+import { Button } from "@core/ui/button";
 
 // ═══════════════════════════════════════════════════════════════════════════
 // BillingCycleToggle — Monthly ⇄ Annual segmented control.
@@ -40,12 +40,13 @@ export function BillingCycleToggle({ value, onChange, savingsPercent }: BillingC
       {cycles.map((cycle) => {
         const active = value === cycle;
         return (
-          <button
+          <Button
             key={cycle}
             type="button"
+            variant="ghost"
             aria-pressed={active}
             onClick={() => onChange(cycle)}
-            className="inline-flex items-center gap-2 rounded-full px-5 py-2 text-[0.8125rem] font-semibold transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2"
+            className="inline-flex h-auto items-center gap-2 rounded-full px-5 py-2 text-[0.8125rem] font-semibold transition-colors duration-200 hover:bg-transparent focus-visible:outline-none focus-visible:ring-2"
             style={{
               background: active ? `${tokens.accent}1f` : "transparent",
               color: active ? tokens.accent : tokens.inkFaint,
@@ -65,7 +66,7 @@ export function BillingCycleToggle({ value, onChange, savingsPercent }: BillingC
                 {t("signup.plans.billing.save", { percent: savingsPercent })}
               </span>
             )}
-          </button>
+          </Button>
         );
       })}
     </div>

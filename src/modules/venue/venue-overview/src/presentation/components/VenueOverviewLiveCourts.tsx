@@ -27,7 +27,6 @@ interface VenueOverviewLiveCourtsProps {
 
 interface SportBadgeInfo {
   label: string;
-  gradient: string;
 }
 
 function formatUtcToLocalTime(utcIso: string | undefined | null, timeZoneId?: string): string {
@@ -49,13 +48,13 @@ function formatUtcToLocalTime(utcIso: string | undefined | null, timeZoneId?: st
 function resolveSportBadge(name: string): SportBadgeInfo {
   const n = name.toLowerCase();
   if (n.includes("padel")) {
-    return { label: "Padel", gradient: "linear-gradient(135deg, #1e3a8a 0%, #0284c7 100%)" };
+    return { label: "Padel" };
   }
   if (n.includes("tennis") || n.includes("clay") || n.includes("hardcourt")) {
-    return { label: "Tennis", gradient: "linear-gradient(135deg, #7c2d12 0%, #ea580c 100%)" };
+    return { label: "Tennis" };
   }
   if (n.includes("squash")) {
-    return { label: "Squash", gradient: "linear-gradient(135deg, #4c1d95 0%, #7c3aed 100%)" };
+    return { label: "Squash" };
   }
   if (
     n.includes("pool") ||
@@ -64,13 +63,13 @@ function resolveSportBadge(name: string): SportBadgeInfo {
     n.includes("aquatic") ||
     n.includes("hydro")
   ) {
-    return { label: "Swimming", gradient: "linear-gradient(135deg, #0c4a6e 0%, #0284c7 100%)" };
+    return { label: "Swimming" };
   }
   if (n.includes("basket") || n.includes("hoop") || n.includes("arena")) {
-    return { label: "Basketball", gradient: "linear-gradient(135deg, #9a3412 0%, #f97316 100%)" };
+    return { label: "Basketball" };
   }
   if (n.includes("track") || n.includes("running") || n.includes("athletic")) {
-    return { label: "Athletics", gradient: "linear-gradient(135deg, #831843 0%, #db2777 100%)" };
+    return { label: "Athletics" };
   }
   if (
     n.includes("gym") ||
@@ -78,19 +77,19 @@ function resolveSportBadge(name: string): SportBadgeInfo {
     n.includes("fitness") ||
     n.includes("conditioning")
   ) {
-    return { label: "Fitness & Gym", gradient: "linear-gradient(135deg, #18181b 0%, #3f3f46 100%)" };
+    return { label: "Fitness & Gym" };
   }
   if (n.includes("volley")) {
-    return { label: "Volleyball", gradient: "linear-gradient(135deg, #14532d 0%, #16a34a 100%)" };
+    return { label: "Volleyball" };
   }
   if (n.includes("badminton")) {
-    return { label: "Badminton", gradient: "linear-gradient(135deg, #0f766e 0%, #14b8a6 100%)" };
+    return { label: "Badminton" };
   }
   if (n.includes("table tennis")) {
-    return { label: "Table Tennis", gradient: "linear-gradient(135deg, #047857 0%, #10b981 100%)" };
+    return { label: "Table Tennis" };
   }
   if (n.includes("handball")) {
-    return { label: "Handball", gradient: "linear-gradient(135deg, #1e40af 0%, #3b82f6 100%)" };
+    return { label: "Handball" };
   }
   if (
     n.includes("martial") ||
@@ -98,13 +97,13 @@ function resolveSportBadge(name: string): SportBadgeInfo {
     n.includes("dojo") ||
     n.includes("boxing")
   ) {
-    return { label: "Martial Arts", gradient: "linear-gradient(135deg, #701a75 0%, #a21caf 100%)" };
+    return { label: "Martial Arts" };
   }
   if (n.includes("5-a-side") || n.includes("5a")) {
-    return { label: "5-a-side", gradient: "linear-gradient(135deg, #064e3b 0%, #059669 100%)" };
+    return { label: "5-a-side" };
   }
   if (n.includes("7-a-side") || n.includes("7a")) {
-    return { label: "7-a-side", gradient: "linear-gradient(135deg, #065f46 0%, #10b981 100%)" };
+    return { label: "7-a-side" };
   }
   if (
     n.includes("foot") ||
@@ -112,9 +111,9 @@ function resolveSportBadge(name: string): SportBadgeInfo {
     n.includes("turf") ||
     n.includes("stadium")
   ) {
-    return { label: "Football", gradient: "linear-gradient(135deg, #065f46 0%, #059669 100%)" };
+    return { label: "Football" };
   }
-  return { label: "Court", gradient: "linear-gradient(135deg, #1e293b 0%, #475569 100%)" };
+  return { label: "Court" };
 }
 
 function computeElapsedPercent(startUtc?: string | null, endUtc?: string | null): number {
@@ -244,7 +243,7 @@ export function VenueOverviewLiveCourts({ items, overview, t }: VenueOverviewLiv
                   </span>
                   {isCheckedIn ? (
                     <span className="inline-flex items-center gap-1.5 rounded-full border border-success/20 bg-success/10 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-success">
-                      <span className="size-1.5 rounded-full bg-success shadow-[0_0_6px_rgba(34,197,94,0.7)]" />
+                      <span className="size-1.5 rounded-full bg-success" />
                       LIVE
                     </span>
                   ) : isNext ? (
@@ -343,7 +342,7 @@ export function VenueOverviewLiveCourts({ items, overview, t }: VenueOverviewLiv
                       className={`inline-flex items-center gap-1.5 rounded-md border px-2 py-0.5 text-[10px] font-bold ${statusBadge}`}
                     >
                       {isCheckedIn && (
-                        <span className="size-1.5 rounded-full bg-success shadow-[0_0_6px_rgba(34,197,94,0.7)]" />
+                        <span className="size-1.5 rounded-full bg-success" />
                       )}
                       {statusText}
                     </span>

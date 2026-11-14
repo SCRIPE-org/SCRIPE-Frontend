@@ -160,7 +160,7 @@ export function VaultLayout({
             <div
               className="pointer-events-none absolute left-[20%] right-[20%] top-0 h-px"
               style={{
-                background: `linear-gradient(90deg, transparent, var(--sx-accent, #C6FF00), transparent)`,
+                background: `linear-gradient(90deg, transparent, var(--sx-accent, var(--nx-accent)), transparent)`,
                 opacity: 0.7,
               }}
               aria-hidden="true"

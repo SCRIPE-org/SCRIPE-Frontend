@@ -165,7 +165,7 @@ export function ResetPasswordView() {
                 </p>
               </div>
               <Link href="/forgot-password" className="block w-full">
-                <Button className="h-12 w-full rounded-xl text-[15px] font-semibold text-white transition-all active:scale-[0.985]">
+                <Button className="h-12 w-full rounded-xl text-[15px] font-semibold text-nx-on-fill transition-all active:scale-[0.985]">
                   {t("auth.requestNewLink")}
                 </Button>
               </Link>
@@ -223,7 +223,7 @@ export function ResetPasswordView() {
                 </p>
               </div>
               <Button
-                className="h-12 w-full rounded-xl text-[15px] font-semibold text-white transition-all active:scale-[0.985]"
+                className="h-12 w-full rounded-xl text-[15px] font-semibold text-nx-on-fill transition-all active:scale-[0.985]"
                 onClick={() => router.push("/login")}
               >
                 {t("auth.goToLogin")}

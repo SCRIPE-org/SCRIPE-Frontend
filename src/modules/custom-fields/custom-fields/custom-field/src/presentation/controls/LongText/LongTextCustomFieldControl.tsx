@@ -16,7 +16,7 @@
  * governing pre-plan analysis's §5.1, is to make hitting that cap UNLIKELY
  * and LEGIBLE, not to silently prevent it:
  *
- *   - **No `maxLength` on the `<textarea>`, deliberately.** A hard
+ *   - **No `maxLength` on the Textarea, deliberately.** A hard
  *     `maxLength` silently swallows PASTED content past the cap with no
  *     feedback at all -- the single most-complained-about textarea
  *     behaviour, and GOV.UK's own character-count component explicitly
@@ -57,7 +57,7 @@
  * focus (a static describedby read, not a live one) in addition to the
  * throttled proactive announcements as the user approaches/crosses the cap.
  *
- * A plain `<textarea>` with `<Label htmlFor>` genuinely computes an
+ * A plain Textarea with `<Label htmlFor>` genuinely computes an
  * accessible name here (unlike `GenericSelect`'s `role="combobox"` div --
  * see `MultiSelectCustomFieldControl.tsx`'s header comment for why that one
  * needs `aria-label` instead) -- §5.1 states this explicitly, and this

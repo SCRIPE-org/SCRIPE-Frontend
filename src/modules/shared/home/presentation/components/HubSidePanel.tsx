@@ -14,6 +14,7 @@ import { Activity, History } from "lucide-react";
 import { useI18n } from "@core/providers/i18n-provider";
 import { StatCard } from "@core/ui/stat-card";
 import { Card, CardContent, CardHeader, CardTitle } from "@core/ui/card";
+import { Button } from "@core/ui/button";
 import { EmptyState } from "@core/ui/empty-state";
 import { DynamicIcon } from "@core/ui/layout/nexus/_parts/primary-rail-parts";
 
@@ -95,9 +96,10 @@ function RecentRow({
   accent: string;
 }) {
   return (
-    <button
+    <Button
       type="button"
-      className="flex items-center gap-2.5 rounded-nx-md border border-transparent px-2.5 py-2 text-start transition-colors duration-nx-micro ease-nx-enter hover:border-nx-line hover:bg-nx-hover focus-visible:shadow-nx-focus focus-visible:outline-none motion-reduce:transition-none"
+      variant="ghost"
+      className="flex h-auto items-center justify-start gap-2.5 whitespace-normal rounded-nx-md border border-transparent px-2.5 py-2 text-start transition-colors duration-nx-micro ease-nx-enter hover:border-nx-line hover:bg-nx-hover focus-visible:shadow-nx-focus focus-visible:outline-none motion-reduce:transition-none"
     >
       {/* Event chip keeps its data-driven tint — colour follows the audit
           event category via the shared chart-slot palette (@core/ui/chart),
@@ -115,6 +117,6 @@ function RecentRow({
         <span className="block truncate text-xs font-medium text-nx-ink">{label}</span>
         <span className="text-[11px] text-nx-ink-3">{meta}</span>
       </span>
-    </button>
+    </Button>
   );
 }

@@ -192,17 +192,17 @@ export function useQrSignInViewModel(
               height="16"
               viewBox="0 0 24 24"
               fill="none"
-              stroke="#7DD3FC"
+              stroke="hsl(var(--info))"
               strokeWidth="2"
               strokeLinecap="round"
               strokeLinejoin="round"
             >
               <rect x="5" y="2" width="14" height="20" rx="2" />
-              <circle cx="12" cy="17" r="1" fill="#7DD3FC" stroke="none" />
+              <circle cx="12" cy="17" r="1" fill="hsl(var(--info))" stroke="none" />
             </svg>
           ),
           label: t("auth.qr.scanned") || "QR code scanned! Waiting for approval…",
-          color: "#7DD3FC",
+          color: "hsl(var(--info))",
         };
       case "approved":
         return {
@@ -212,7 +212,7 @@ export function useQrSignInViewModel(
               height="16"
               viewBox="0 0 24 24"
               fill="none"
-              stroke="#10B981"
+              stroke="hsl(var(--success))"
               strokeWidth="2.5"
               strokeLinecap="round"
               strokeLinejoin="round"
@@ -221,7 +221,7 @@ export function useQrSignInViewModel(
             </svg>
           ),
           label: t("auth.qr.approved") || "Approved! Signing you in…",
-          color: "#10B981",
+          color: "hsl(var(--success))",
         };
       case "rejected":
         return {
@@ -231,7 +231,7 @@ export function useQrSignInViewModel(
               height="16"
               viewBox="0 0 24 24"
               fill="none"
-              stroke="#EF4444"
+              stroke="hsl(var(--destructive))"
               strokeWidth="2.5"
               strokeLinecap="round"
             >
@@ -240,7 +240,7 @@ export function useQrSignInViewModel(
             </svg>
           ),
           label: t("auth.qr.rejected") || "Request rejected.",
-          color: "#EF4444",
+          color: "hsl(var(--destructive))",
         };
       case "expired":
         return {
@@ -250,7 +250,7 @@ export function useQrSignInViewModel(
               height="16"
               viewBox="0 0 24 24"
               fill="none"
-              stroke="#F59E0B"
+              stroke="hsl(var(--warning-strong))"
               strokeWidth="2"
               strokeLinecap="round"
             >
@@ -259,7 +259,7 @@ export function useQrSignInViewModel(
             </svg>
           ),
           label: t("auth.qr.expired") || "QR code expired.",
-          color: "#F59E0B",
+          color: "hsl(var(--warning-strong))",
         };
       default:
         return {

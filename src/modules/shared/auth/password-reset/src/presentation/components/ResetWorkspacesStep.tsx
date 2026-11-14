@@ -87,7 +87,7 @@ export function ResetWorkspacesStep({ vm }: ResetWorkspacesStepProps) {
         type="button"
         onClick={vm.confirmWorkspaceSelection}
         disabled={!vm.canConfirmWorkspaces}
-        className="flex h-12 w-full items-center justify-center rounded-xl text-[15px] font-semibold text-white transition-all active:scale-[0.985] disabled:pointer-events-none disabled:opacity-50"
+        className="flex h-12 w-full items-center justify-center rounded-xl text-[15px] font-semibold text-nx-on-fill transition-all active:scale-[0.985] disabled:pointer-events-none disabled:opacity-50"
       >
         {vm.selectedWorkspaces.length === vm.workspaces.length
           ? t("auth.resetAllWorkspaces")

@@ -1,4 +1,3 @@
-// UI-EXCEPTION: compact studio layout
 /**
  * FeatureCatalogPicker — Dialog for adding features from the catalog to a plan.
  *
@@ -11,6 +10,7 @@
 import { useState } from "react";
 import { resolveBilingualLabel } from "@core/common/utils";
 import { Badge } from "@core/ui/badge";
+import { Button } from "@core/ui/button";
 import { Input } from "@core/ui/input";
 import {
   Dialog,
@@ -107,11 +107,12 @@ export function FeatureCatalogPicker({
                 </p>
                 <div className="space-y-1">
                   {definitions.map((feature) => (
-                    <button
+                    <Button
                       key={feature.id}
                       type="button"
+                      variant="ghost"
                       onClick={() => onSelect(feature)}
-                      className="flex w-full items-center justify-between rounded-nx-sm px-3 py-2.5 text-start transition-colors duration-nx-micro ease-nx-enter hover:bg-nx-hover focus-visible:shadow-nx-focus focus-visible:outline-none motion-reduce:transition-none"
+                      className="flex h-auto w-full items-center justify-between rounded-nx-sm px-3 py-2.5 text-start transition-colors duration-nx-micro ease-nx-enter hover:bg-nx-hover focus-visible:shadow-nx-focus focus-visible:outline-none motion-reduce:transition-none"
                     >
                       <div className="min-w-0 flex-1">
                         <div className="flex items-center gap-2">
@@ -129,7 +130,7 @@ export function FeatureCatalogPicker({
                         <p className="font-mono text-xs text-nx-ink-3">{feature.key}</p>
                       </div>
                       <Plus className="h-4 w-4 shrink-0 text-nx-ink-3" aria-hidden="true" />
-                    </button>
+                    </Button>
                   ))}
                 </div>
               </div>

@@ -45,7 +45,7 @@ export function VideoBlockView({ block }: { block: VideoBlock }) {
         Play
       </span>
       {props.overlayText && (
-        <span className="absolute bottom-3 start-3 text-sm font-medium text-white">
+        <span className="absolute bottom-3 start-3 text-sm font-medium text-[var(--scripe-white)]">
           {props.overlayText}
         </span>
       )}

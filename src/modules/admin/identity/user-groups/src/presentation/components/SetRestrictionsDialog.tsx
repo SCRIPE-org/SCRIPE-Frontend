@@ -1,4 +1,3 @@
-// UI-EXCEPTION: compact studio layout
 /**
  * Set Restrictions Dialog
  *
@@ -190,14 +189,16 @@ export function SetRestrictionsDialog({
                   {restriction.restrictedFields.map((field) => (
                     <Badge key={field} variant="secondary" className="gap-1 text-xs">
                       {field}
-                      <button
+                      <Button
                         type="button"
+                        variant="ghost"
+                        size="icon"
                         onClick={() => removeField(rIndex, field)}
-                        className="ms-1 hover:text-destructive"
+                        className="ms-1 h-auto w-auto p-0 hover:bg-transparent hover:text-destructive"
                         aria-label={t("userGroups.restrictionsTab.removeField", { field })}
                       >
                         <X className="h-3 w-3" aria-hidden="true" />
-                      </button>
+                      </Button>
                     </Badge>
                   ))}
                 </div>

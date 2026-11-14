@@ -315,12 +315,12 @@ export const PartyProfileView = React.memo(function PartyProfileView({
 
       {/* ── Duplicate Alert Banner (if engine flagged match) ────────── */}
       {profile.mergeCandidates.length > 0 && (
-        <div className="rounded-xl border border-amber-500/30 bg-amber-500/10 p-4 text-amber-900 dark:text-amber-200">
+        <div className="rounded-xl border border-warning/30 bg-warning/10 p-4 text-nx-ink">
           <div className="flex items-start gap-3">
-            <AlertTriangle className="mt-0.5 h-5 w-5 shrink-0 text-amber-600" />
+            <AlertTriangle className="mt-0.5 h-5 w-5 shrink-0 text-warning" />
             <div className="space-y-1">
               <h4 className="text-sm font-semibold">{t("party.profile.duplicateAlert")}</h4>
-              <p className="text-xs text-amber-800 dark:text-amber-300">
+              <p className="text-xs text-warning">
                 {t("party.profile.duplicateAlertDesc")}{" "}
                 {profile.mergeCandidates.map((m) => m.reason).join(", ")}
               </p>
@@ -374,7 +374,7 @@ export const PartyProfileView = React.memo(function PartyProfileView({
             <ShieldCheck className="h-4 w-4" />
             <span>{t("party.profile.tabAudit")}</span>
             {profile.mergeCandidates.length > 0 && (
-              <span className="rounded-full bg-amber-500/20 px-1.5 py-0.5 text-xs font-bold text-amber-700">
+              <span className="rounded-full bg-warning/20 px-1.5 py-0.5 text-xs font-bold text-warning">
                 {profile.mergeCandidates.length}
               </span>
             )}
@@ -391,7 +391,7 @@ export const PartyProfileView = React.memo(function PartyProfileView({
                   {profile.isPerson ? (
                     <User className="h-4 w-4 text-nx-accent" />
                   ) : (
-                    <Building className="h-4 w-4 text-emerald-600" />
+                    <Building className="h-4 w-4 text-success" />
                   )}
                   <span>
                     {profile.isPerson
@@ -995,7 +995,7 @@ export const PartyProfileView = React.memo(function PartyProfileView({
                       return (
                         <div
                           key={m.id}
-                          className="flex flex-col justify-between gap-3 rounded-lg border border-amber-500/30 bg-amber-500/5 p-3 text-xs sm:flex-row sm:items-center"
+                          className="flex flex-col justify-between gap-3 rounded-lg border border-warning/30 bg-warning/5 p-3 text-xs sm:flex-row sm:items-center"
                         >
                           <div className="space-y-1">
                             <div className="flex items-center gap-2">

@@ -214,7 +214,7 @@ export function ClickToBookModal(props: ClickToBookModalProps) {
                     alt={vm.selectedResource.name}
                     className="size-full object-cover"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent" />
+                  <div className="bg-gradient-to-t from-nx-ground/60 via-transparent to-transparent absolute inset-0" />
                 </div>
                 <div className="min-w-0 flex-1">
                   <div className="flex items-center justify-between">

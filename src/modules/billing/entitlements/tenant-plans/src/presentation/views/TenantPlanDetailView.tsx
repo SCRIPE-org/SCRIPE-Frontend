@@ -1,4 +1,3 @@
-// UI-EXCEPTION: compact studio layout
 /**
  * TenantPlan Detail View — Elevated Tier 2
  *

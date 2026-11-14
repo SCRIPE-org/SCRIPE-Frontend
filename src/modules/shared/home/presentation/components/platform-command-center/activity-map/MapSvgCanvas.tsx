@@ -87,7 +87,7 @@ export function MapSvgCanvas({
         {enrichedCountries.map((p) => {
           const isSelected = selectedCountry?.name === p.name;
           const style = countryStyles.get(p.name);
-          const fill = isSelected ? "var(--primary)" : (style?.fill ?? "#112330");
+          const fill = isSelected ? "var(--nx-accent)" : (style?.fill ?? "var(--nx-raised)");
           const stroke = isSelected
             ? "var(--primary)"
             : (style?.stroke ?? "rgba(100,140,165,0.35)");
@@ -159,7 +159,7 @@ export function MapSvgCanvas({
                   cy={cy}
                   r={isHost ? "7" : "5.5"}
                   fill="none"
-                  stroke={isHost ? "var(--primary)" : "var(--info, #0ea5e9)"}
+                  stroke={isHost ? "var(--nx-accent)" : "hsl(var(--info))"}
                   strokeWidth="1.2"
                   opacity="0.8"
                   className="origin-center animate-ping"
@@ -175,8 +175,8 @@ export function MapSvgCanvas({
                   cx={cx}
                   cy={cy}
                   r={isHost ? "3.2" : "2.6"}
-                  fill={isHost ? "var(--primary)" : "var(--info, #0ea5e9)"}
-                  stroke="var(--nx-ground, #0b1622)"
+                  fill={isHost ? "var(--nx-accent)" : "hsl(var(--info))"}
+                  stroke="var(--nx-ground)"
                   strokeWidth="0.8"
                 />
               </g>

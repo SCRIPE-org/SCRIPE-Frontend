@@ -183,13 +183,14 @@ export const AuditFilterPanel = memo(function AuditFilterPanel({
             className="h-9 pe-8 ps-9 text-xs"
           />
           {filters.search && (
-            /* UI-EXCEPTION */ <button
+            <Button
               type="button"
+              variant="ghost"
               onClick={() => updateFilter("search", "")}
-              className="absolute end-2.5 top-1/2 -translate-y-1/2 cursor-pointer text-nx-ink-3 hover:text-nx-ink"
+              className="absolute end-2.5 top-1/2 h-auto -translate-y-1/2 p-0 text-nx-ink-3 hover:bg-transparent hover:text-nx-ink"
             >
               <X className="h-3.5 w-3.5" />
-            </button>
+            </Button>
           )}
         </div>
 
@@ -335,13 +336,14 @@ export const AuditFilterPanel = memo(function AuditFilterPanel({
             className="h-8 ps-7 text-xs"
           />
           {filters.username && (
-            /* UI-EXCEPTION */ <button
+            <Button
               type="button"
+              variant="ghost"
               onClick={() => updateFilter("username", "")}
-              className="absolute end-1.5 top-1/2 -translate-y-1/2 cursor-pointer text-nx-ink-3 hover:text-nx-ink"
+              className="absolute end-1.5 top-1/2 h-auto -translate-y-1/2 p-0 text-nx-ink-3 hover:bg-transparent hover:text-nx-ink"
             >
               <X className="h-3 w-3" />
-            </button>
+            </Button>
           )}
         </div>
 
@@ -355,13 +357,14 @@ export const AuditFilterPanel = memo(function AuditFilterPanel({
             className="h-8 ps-7 font-mono text-xs"
           />
           {filters.correlationId && (
-            /* UI-EXCEPTION */ <button
+            <Button
               type="button"
+              variant="ghost"
               onClick={() => updateFilter("correlationId", "")}
-              className="absolute end-1.5 top-1/2 -translate-y-1/2 cursor-pointer text-nx-ink-3 hover:text-nx-ink"
+              className="absolute end-1.5 top-1/2 h-auto -translate-y-1/2 p-0 text-nx-ink-3 hover:bg-transparent hover:text-nx-ink"
             >
               <X className="h-3 w-3" />
-            </button>
+            </Button>
           )}
         </div>
 

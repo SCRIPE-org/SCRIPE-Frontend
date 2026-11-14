@@ -1,5 +1,4 @@
 // FILE-EXCEPTION: file length
-// UI-EXCEPTION: compact studio layout
 /**
  * Customize Preview Tree (Effective View)
  *
@@ -13,6 +12,7 @@
 import { useCallback, useRef } from "react";
 import { useI18n } from "@core/providers/i18n-provider";
 import { Badge } from "@core/ui/badge";
+import { Button } from "@core/ui/button";
 import type { MenuTreeNode } from "../../domain/entities/MenuItem";
 import type { EffectiveTreeNode } from "../../domain/utils/computeEffectiveTree";
 import type {
@@ -295,18 +295,20 @@ function PreviewTreeNode({
 
         {/* Expand/Collapse */}
         {hasChildren ? (
-          <button
+          <Button
             type="button"
+            variant="ghost"
+            size="icon"
             onClick={handleExpandClick}
             aria-label={isExpanded ? t("common.collapseAll") : t("common.expandAll")}
-            className="shrink-0 rounded-nx-sm p-0.5 transition-colors duration-nx-micro ease-nx-enter hover:bg-nx-hover focus-visible:shadow-nx-focus focus-visible:outline-none motion-reduce:transition-none"
+            className="h-auto w-auto shrink-0 rounded-nx-sm p-0.5 transition-colors duration-nx-micro ease-nx-enter hover:bg-nx-hover focus-visible:shadow-nx-focus focus-visible:outline-none motion-reduce:transition-none"
           >
             {isExpanded ? (
               <ChevronDown className="h-3 w-3 text-nx-ink-3" aria-hidden="true" />
             ) : (
               <ChevronRight className="h-3 w-3 text-nx-ink-3" aria-hidden="true" />
             )}
-          </button>
+          </Button>
         ) : (
           <div className="w-4 shrink-0" />
         )}

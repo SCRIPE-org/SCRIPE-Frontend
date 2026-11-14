@@ -53,6 +53,8 @@ export const en = {
       copied: "Copied",
       copy: "Copy",
       refreshDetails: "Refresh details",
+      switchLanguageShort: "عربي",
+      switchLanguage: "العربية",
     },
     cancelModal: {
       title: "Cancel this reservation?",

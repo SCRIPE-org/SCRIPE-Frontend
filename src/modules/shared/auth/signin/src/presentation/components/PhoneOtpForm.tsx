@@ -100,13 +100,13 @@ export function PhoneOtpForm({ onSuccess, onBack, isRTL }: PhoneOtpFormProps) {
           className="relative w-full overflow-hidden rounded-lg py-3 text-sm font-semibold"
           style={{
             background: "var(--sx-cta-gradient)",
-            color: "#fff",
+            color: "var(--nx-on-fill)",
             boxShadow: "var(--sx-cta-shadow)",
           }}
         >
           {vm.isLoading ? (
             <span className="flex items-center justify-center gap-2">
-              <span className="sx-spin1 inline-block h-4 w-4 rounded-full border-2 border-white/30 border-t-white" />
+              <span className="sx-spin1 inline-block h-4 w-4 rounded-full border-2 border-nx-on-fill/30 border-t-nx-on-fill" />
               {t("common.loading") || "Sending…"}
             </span>
           ) : (
@@ -192,13 +192,13 @@ export function PhoneOtpForm({ onSuccess, onBack, isRTL }: PhoneOtpFormProps) {
         className="relative w-full overflow-hidden rounded-lg py-3 text-sm font-semibold"
         style={{
           background: "var(--sx-cta-gradient)",
-          color: "#fff",
+          color: "var(--nx-on-fill)",
           boxShadow: "var(--sx-cta-shadow)",
         }}
       >
         {vm.isLoading ? (
           <span className="flex items-center justify-center gap-2">
-            <span className="sx-spin1 inline-block h-4 w-4 rounded-full border-2 border-white/30 border-t-white" />
+            <span className="sx-spin1 inline-block h-4 w-4 rounded-full border-2 border-nx-on-fill/30 border-t-nx-on-fill" />
             {t("common.loading") || "Verifying…"}
           </span>
         ) : (

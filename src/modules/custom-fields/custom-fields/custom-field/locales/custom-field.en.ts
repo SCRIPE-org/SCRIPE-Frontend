@@ -1064,6 +1064,7 @@ export const en = {
     },
     sensitive: {
       permissionRequired: "Requires 'custom-fields.view-sensitive' permission",
+      encryptedConfidential: "Encrypted confidential field",
     },
   },
 };

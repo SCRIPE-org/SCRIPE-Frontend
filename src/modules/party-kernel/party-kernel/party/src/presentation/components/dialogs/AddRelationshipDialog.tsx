@@ -262,14 +262,14 @@ export function AddRelationshipDialog({
                 disabled={isSubmitting}
               >
                 <SelectTrigger id="rel-type-select" className="h-9 text-xs">
-                  <SelectValue placeholder="Choose relationship type (اختيار نوع العلاقة)" />
+                  <SelectValue placeholder={tr("party.dialog.chooseRelType", "Choose relationship type")} />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="Guardian">Guardian (ولي أمر)</SelectItem>
+                  <SelectItem value="Guardian">{tr("party.dialog.relGuardian", "Guardian")}</SelectItem>
                   <SelectItem value="EmergencyContact">
-                    Emergency Contact (جهة اتصال للطوارئ)
+                    {tr("party.dialog.relEmergencyContact", "Emergency Contact")}
                   </SelectItem>
-                  <SelectItem value="custom">Custom / Typed (مخصص)</SelectItem>
+                  <SelectItem value="custom">{tr("party.dialog.relCustomTyped", "Custom / Typed")}</SelectItem>
                 </SelectContent>
               </Select>
 
@@ -285,7 +285,7 @@ export function AddRelationshipDialog({
                   }}
                   className="h-7 rounded-lg px-3 text-xs"
                 >
-                  Guardian (ولي أمر)
+                  {tr("party.dialog.relGuardian", "Guardian")}
                 </Button>
                 <Button
                   type="button"
@@ -297,7 +297,7 @@ export function AddRelationshipDialog({
                   }}
                   className="h-7 rounded-lg px-3 text-xs"
                 >
-                  Emergency Contact (طوارئ)
+                  {tr("party.dialog.relEmergencyContact", "Emergency Contact")}
                 </Button>
               </div>
 

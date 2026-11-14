@@ -3,6 +3,7 @@
 import React, { useRef } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@core/ui/avatar";
 import { Button } from "@core/ui/button";
+import { Input } from "@core/ui/input";
 import { Camera, Upload, Trash2, AlertCircle } from "lucide-react";
 import { useI18n } from "@core/providers/i18n-provider";
 
@@ -61,7 +62,7 @@ export function AvatarUploader({
           variant="ghost"
           type="button"
           onClick={() => fileInputRef.current?.click()}
-          className="absolute inset-0 flex items-center justify-center rounded-full bg-black/40 p-0 text-white opacity-0 transition-opacity hover:bg-black/50 hover:text-white group-hover:opacity-100"
+          className="absolute inset-0 flex items-center justify-center rounded-full bg-[color:color-mix(in_srgb,var(--scripe-void)_40%,transparent)] p-0 text-[var(--scripe-white)] opacity-0 transition-opacity hover:bg-[color:color-mix(in_srgb,var(--scripe-void)_50%,transparent)] hover:text-[var(--scripe-white)] group-hover:opacity-100"
           aria-label={t("auth.accountSetup.photoUpload")}
         >
           <Camera className="h-5 w-5" />
@@ -81,7 +82,7 @@ export function AvatarUploader({
         )}
 
         <div className="flex items-center justify-center gap-2 pt-1.5 sm:justify-start">
-          <input
+          <Input
             ref={fileInputRef}
             type="file"
             accept="image/png,image/jpeg,image/webp"

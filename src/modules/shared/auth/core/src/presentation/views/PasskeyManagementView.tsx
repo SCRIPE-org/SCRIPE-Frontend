@@ -105,7 +105,7 @@ export function PasskeyManagementView() {
               border: "1px solid rgba(198,255,0,0.3)",
             }}
           >
-            <Fingerprint className="h-5 w-5" style={{ color: "var(--sx-accent, #C6FF00)" }} />
+            <Fingerprint className="h-5 w-5" style={{ color: "var(--sx-accent, var(--nx-accent))" }} />
           </div>
           <div>
             <h3
@@ -193,12 +193,12 @@ export function PasskeyManagementView() {
                 disabled={!newDeviceName.trim() || vm.isRegistering}
                 style={{
                   background: "var(--sx-cta-gradient, var(--primary))",
-                  color: "#fff",
+                  color: "var(--nx-on-fill)",
                 }}
               >
                 {vm.isRegistering ? (
                   <span className="flex items-center gap-2">
-                    <span className="sx-spin1 inline-block h-4 w-4 rounded-full border-2 border-white/30 border-t-white" />
+                    <span className="sx-spin1 inline-block h-4 w-4 rounded-full border-2 border-nx-on-fill/30 border-t-nx-on-fill" />
                     {t("auth.passkey.registering") || "Registering…"}
                   </span>
                 ) : (
@@ -215,7 +215,7 @@ export function PasskeyManagementView() {
         <div className="flex items-center justify-center py-8">
           <span
             className="sx-spin1 inline-block h-6 w-6 rounded-full border-2 border-transparent border-t-current"
-            style={{ color: "var(--sx-accent, #C6FF00)" }}
+            style={{ color: "var(--sx-accent, var(--nx-accent))" }}
           />
         </div>
       )}
@@ -251,7 +251,7 @@ export function PasskeyManagementView() {
               border: "1px solid rgba(198,255,0,0.2)",
             }}
           >
-            <Shield className="h-7 w-7" style={{ color: "var(--sx-accent, #C6FF00)" }} />
+            <Shield className="h-7 w-7" style={{ color: "var(--sx-accent, var(--nx-accent))" }} />
           </div>
           <p className="text-sm font-medium" style={{ color: "var(--sx-text, var(--foreground))" }}>
             {t("auth.passkey.emptyTitle") || "No passkeys registered"}
@@ -293,7 +293,7 @@ export function PasskeyManagementView() {
                   style={{
                     color: passkey.isDiscoverable
                       ? "hsl(var(--success))"
-                      : "var(--sx-accent, #C6FF00)",
+                      : "var(--sx-accent, var(--nx-accent))",
                   }}
                 />
               </div>

@@ -53,6 +53,8 @@ export const ar = {
       copied: "تم النسخ",
       copy: "نسخ",
       refreshDetails: "تحديث التفاصيل",
+      switchLanguageShort: "EN",
+      switchLanguage: "English",
     },
     cancelModal: {
       title: "هل تريد إلغاء هذا الحجز؟",

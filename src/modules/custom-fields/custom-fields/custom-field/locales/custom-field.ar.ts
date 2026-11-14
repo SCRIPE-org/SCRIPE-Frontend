@@ -953,6 +953,7 @@ export const ar = {
     },
     sensitive: {
       permissionRequired: "يتطلب إذن 'custom-fields.view-sensitive' لعرض القيمة",
+      encryptedConfidential: "حقل مشفر بحماية أمنية عالية",
     },
   },
 };

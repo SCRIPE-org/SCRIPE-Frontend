@@ -23,6 +23,7 @@
 import React, { useCallback } from "react";
 import { Star, Lock } from "lucide-react";
 import { cn } from "@core/common/utils";
+import { Button } from "@core/ui/button";
 import { useI18n } from "@core/providers/i18n-provider";
 import { DynamicIcon } from "@core/ui/layout/nexus/_parts/primary-rail-parts";
 
@@ -109,13 +110,14 @@ export function HubModuleTile({
   }, [onClick]);
 
   return (
-    <button
+    <Button
       type="button"
+      variant="ghost"
       onClick={handleClick}
       aria-disabled={isLocked}
       className={cn(
-        "group relative flex flex-col justify-between overflow-hidden rounded-nx-lg text-start",
-        "border shadow-nx-sm transition-[border-color] duration-nx-standard ease-nx-enter",
+        "group relative flex h-auto flex-col items-stretch justify-between overflow-hidden rounded-nx-lg text-start font-normal whitespace-normal",
+        "border shadow-nx-sm transition-[border-color] duration-nx-standard ease-nx-enter hover:bg-transparent",
         "outline-none focus-visible:shadow-nx-focus motion-reduce:transition-none",
         isLocked
           ? "cursor-pointer border-[color:color-mix(in_srgb,var(--nx-on-fill)_10%,transparent)] hover:border-[color:color-mix(in_srgb,var(--nx-on-fill)_22%,transparent)]"
@@ -132,36 +134,40 @@ export function HubModuleTile({
     >
       {/* Pin star (top corner, pinned state) */}
       {isPinned && !isLocked && (
-        <button
+        <Button
           type="button"
+          variant="ghost"
+          size="icon"
           onClick={(e) => {
             e.stopPropagation();
             onTogglePin?.(e);
           }}
           disabled={isPinLoading}
           aria-label={t("workspaceHub.pin.unpin")}
-          className="absolute end-3 top-3 z-raised rounded-nx-sm p-0 text-nx-on-fill focus-visible:shadow-nx-focus focus-visible:outline-none"
+          className="absolute end-3 top-3 z-raised h-auto w-auto rounded-nx-sm p-0 text-nx-on-fill hover:bg-transparent focus-visible:shadow-nx-focus focus-visible:outline-none"
           style={{ cursor: isPinLoading ? "wait" : "pointer" }}
         >
           <Star size={13} fill="currentColor" strokeWidth={0} aria-hidden="true" />
-        </button>
+        </Button>
       )}
 
       {/* Unpin star on hover (when not pinned) — keyboard focus reveals it too */}
       {!isPinned && !isLocked && onTogglePin && (
-        <button
+        <Button
           type="button"
+          variant="ghost"
+          size="icon"
           onClick={(e) => {
             e.stopPropagation();
             onTogglePin?.(e);
           }}
           disabled={isPinLoading}
           aria-label={t("workspaceHub.pin.pin")}
-          className="absolute end-3 top-3 z-raised rounded-nx-sm p-0 text-nx-on-fill opacity-0 transition-opacity duration-nx-micro ease-nx-enter focus-visible:opacity-100 focus-visible:shadow-nx-focus focus-visible:outline-none group-hover:opacity-100 motion-reduce:transition-none"
+          className="absolute end-3 top-3 z-raised h-auto w-auto rounded-nx-sm p-0 text-nx-on-fill opacity-0 transition-opacity duration-nx-micro ease-nx-enter hover:bg-transparent focus-visible:opacity-100 focus-visible:shadow-nx-focus focus-visible:outline-none group-hover:opacity-100 motion-reduce:transition-none"
           style={{ cursor: isPinLoading ? "wait" : "pointer" }}
         >
           <Star size={13} strokeWidth={1.75} aria-hidden="true" />
-        </button>
+        </Button>
       )}
 
       {/* Icon chip */}
@@ -219,6 +225,6 @@ export function HubModuleTile({
           </div>
         </div>
       )}
-    </button>
+    </Button>
   );
 }

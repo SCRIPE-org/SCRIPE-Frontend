@@ -1,8 +1,8 @@
 // FILE-EXCEPTION: file length
-// UI-EXCEPTION: compact studio layout
 "use client";
 
 import React, { useMemo } from "react";
+import { Button } from "@core/ui/button";
 import { Input } from "@core/ui/input";
 import { Label } from "@core/ui/label";
 import { Card, CardContent } from "@core/ui/card";
@@ -158,21 +158,22 @@ export function SchedulePicker({ value, onChange, disabled }: SchedulePickerProp
           {modes.map((mode, index) => {
             const checked = value.mode === mode.id;
             return (
-              <button
+              <Button
                 key={mode.id}
                 ref={(node) => {
                   modeRefs.current[index] = node;
                 }}
                 type="button"
+                variant="ghost"
                 role="radio"
                 aria-checked={checked}
                 tabIndex={checked ? 0 : -1}
                 disabled={disabled}
                 className={cn(
-                  "flex flex-col items-center gap-1.5 rounded-nx-md border p-3 text-center transition-[color,background-color,border-color,box-shadow] duration-nx-micro ease-nx-enter focus-visible:shadow-nx-focus focus-visible:outline-none motion-reduce:transition-none",
+                  "flex h-auto flex-col items-center gap-1.5 whitespace-normal rounded-nx-md border p-3 text-center font-normal transition-[color,background-color,border-color,box-shadow] duration-nx-micro ease-nx-enter focus-visible:shadow-nx-focus focus-visible:outline-none motion-reduce:transition-none",
                   checked
-                    ? "border-nx-accent bg-nx-accent-wash shadow-[inset_0_0_0_1px_var(--nx-accent)]"
-                    : "border-nx-line hover:border-nx-line-hi",
+                    ? "border-nx-accent bg-nx-accent-wash shadow-[inset_0_0_0_1px_var(--nx-accent)] hover:bg-nx-accent-wash"
+                    : "border-nx-line hover:border-nx-line-hi hover:bg-transparent",
                   disabled && "cursor-not-allowed opacity-50"
                 )}
                 onClick={() => update({ mode: mode.id })}
@@ -181,7 +182,7 @@ export function SchedulePicker({ value, onChange, disabled }: SchedulePickerProp
                 {mode.icon}
                 <span className="text-sm font-medium text-nx-ink">{mode.label}</span>
                 <span className="text-[10px] text-nx-ink-3">{mode.desc}</span>
-              </button>
+              </Button>
             );
           })}
         </div>

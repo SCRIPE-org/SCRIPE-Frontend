@@ -99,7 +99,7 @@ export function MagicLinkRequestForm({
           className="relative w-full overflow-hidden rounded-lg py-3 text-sm font-semibold"
           style={{
             background: "var(--sx-cta-gradient)",
-            color: "#fff",
+            color: "var(--nx-on-fill)",
             boxShadow: "var(--sx-cta-shadow)",
           }}
         >

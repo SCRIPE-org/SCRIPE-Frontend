@@ -18,9 +18,6 @@
  * - No access to secure token service
  */
 "use client";
-// UI-EXCEPTION: compact studio layout — native <button> used for pixel-precise
-// compact controls (toggle switches, gradient pickers, layout thumbnails, etc.)
-// where @core/ui/button's padding/sizing would break the layout.
 
 import { useEffect, useState, useCallback, useRef } from "react";
 import { useSearchParams } from "next/navigation";
@@ -319,13 +316,14 @@ export function LoginPreviewShell() {
         >
           {t("auth.sendResetLink")}
         </Button>
-        <button
+        <Button
           type="button"
-          className="flex items-center justify-center gap-1.5 text-sm text-[var(--login-primary,hsl(var(--primary)))] hover:underline"
+          variant="ghost"
+          className="flex h-auto items-center justify-center gap-1.5 p-0 text-sm font-normal text-[var(--login-primary,hsl(var(--primary)))] hover:bg-transparent hover:underline"
         >
           <ArrowLeft className="h-3.5 w-3.5" />
           {t("auth.backToLogin")}
-        </button>
+        </Button>
       </form>
       <SlotRenderer slotId="login.form.below" slotConfig={slotConfig} className="mt-6" />
     </div>
@@ -458,13 +456,15 @@ export function LoginPreviewShell() {
                 borderColor: "var(--login-border, hsl(var(--border)))",
               }}
             />
-            <button
+            <Button
               type="button"
+              variant="ghost"
+              size="icon"
               onClick={() => setShowPassword(!showPassword)}
-              className="absolute end-3 top-1/2 -translate-y-1/2 text-[var(--login-text-muted,hsl(var(--muted-foreground)))] hover:text-[var(--login-text,hsl(var(--foreground)))]"
+              className="absolute end-3 top-1/2 h-auto w-auto -translate-y-1/2 p-0 text-[var(--login-text-muted,hsl(var(--muted-foreground)))] hover:bg-transparent hover:text-[var(--login-text,hsl(var(--foreground)))]"
             >
               {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-            </button>
+            </Button>
           </div>
         </div>
 
@@ -956,7 +956,7 @@ export function LoginPreviewShell() {
                 backgroundPosition: "center",
               }}
             >
-              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent" />
+              <div className="absolute inset-0 bg-gradient-to-t from-[color:color-mix(in_srgb,var(--scripe-void)_80%,transparent)] via-[color:color-mix(in_srgb,var(--scripe-void)_40%,transparent)] to-transparent" />
               <div className="relative z-10 max-w-2xl">
                 <h1
                   className="login-heading text-6xl leading-[1.1] tracking-tight text-[var(--login-text,white)]"

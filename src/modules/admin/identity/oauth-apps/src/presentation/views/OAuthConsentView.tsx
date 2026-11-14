@@ -1,8 +1,8 @@
-// UI-EXCEPTION: compact studio layout
 "use client";
 
 import { useI18n } from "@core/providers/i18n-provider";
 import { Button } from "@core/ui/button";
+import { Input } from "@core/ui/input";
 import {
   Card,
   CardContent,
@@ -112,13 +112,14 @@ export function OAuthConsentView() {
               <strong className="font-semibold text-nx-ink">{vm.userDisplayName}</strong>.
               <br />
               {t("oauth.notYou")}{" "}
-              <button
+              <Button
                 type="button"
-                className="font-medium text-nx-accent hover:underline focus-visible:shadow-nx-focus focus-visible:outline-none"
+                variant="ghost"
+                className="h-auto p-0 font-medium text-nx-accent hover:bg-transparent hover:underline focus-visible:shadow-nx-focus focus-visible:outline-none"
                 onClick={vm.handleSwitchAccount}
               >
                 {t("oauth.switchAccount")}
-              </button>
+              </Button>
             </p>
           </div>
         </CardContent>
@@ -154,9 +155,9 @@ export function OAuthConsentView() {
           style={{ display: "none" }}
         >
           {Object.entries(formParams).map(([key, value]) => (
-            <input key={key} type="hidden" name={key} value={value} />
+            <Input key={key} type="hidden" name={key} value={value} />
           ))}
-          <input type="hidden" name="access_token" value={accessToken} />
+          <Input type="hidden" name="access_token" value={accessToken} />
         </form>
       )}
     </div>

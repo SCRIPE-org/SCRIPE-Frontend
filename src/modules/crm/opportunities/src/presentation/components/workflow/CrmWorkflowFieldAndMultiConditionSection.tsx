@@ -6,6 +6,7 @@ import { useI18n } from "@core/providers/i18n-provider";
 import { Button } from "@core/ui/button";
 import { Checkbox } from "@core/ui/checkbox";
 import { Input } from "@core/ui/input";
+import { Label } from "@core/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@core/ui/select";
 import { CRM_RULE_OPERATORS, type CrmCustomFieldDefinition } from "@modules/crm";
 
@@ -80,10 +81,10 @@ export function CrmWorkflowFieldAndMultiConditionSection({
       {rk === "input.prompt_fields" ? (
         <div className="max-h-32 overflow-y-auto rounded border border-nx-line bg-nx-surface p-2 grid grid-cols-2 gap-1">
           {allFields.map((f) => (
-            <label key={f.key} className="flex items-center gap-1.5 text-xs cursor-pointer">
+            <Label key={f.key} className="flex items-center gap-1.5 text-xs cursor-pointer">
               <Checkbox checked={selectedPromptFields.includes(f.key)} onCheckedChange={() => { const next = toggleCsv(selectedPromptFields.join(","), f.key); setKeys({ fieldKeys: next, fields: next }); }} />
               <span className="text-nx-ink truncate">{isAr ? f.labelAr : f.labelEn}</span>
-            </label>
+            </Label>
           ))}
         </div>
       ) : (

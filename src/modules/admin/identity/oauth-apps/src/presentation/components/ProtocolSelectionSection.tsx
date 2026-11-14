@@ -10,9 +10,9 @@ interface ProtocolSelectionSectionProps {
   onChange: (protocol: string) => void;
 }
 
-// A keyboard-operable selectable card that is not a native <button> — the
+// A keyboard-operable selectable card that is not a native button element — the
 // content includes a heading, which is not valid phrasing content inside a
-// <button>. Same recipe as stat-card.tsx's interactive Card: role, tabIndex
+// native button. Same recipe as stat-card.tsx's interactive Card: role, tabIndex
 // and a manual Enter/Space handler stand in for the native activation the
 // element does not get for free.
 function SelectableCard({

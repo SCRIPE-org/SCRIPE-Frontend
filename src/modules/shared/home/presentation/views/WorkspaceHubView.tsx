@@ -31,6 +31,7 @@ import { useWorkspaceTransition } from "@core/ui/layout/nexus/use-workspace-tran
 import { UpgradeDialog } from "@core/ui/layout/nexus/nexus-app-launcher";
 
 import { Star, SearchX, LayoutGrid } from "lucide-react";
+import { Button } from "@core/ui/button";
 import { EmptyState } from "@core/ui/empty-state";
 import { LoadingSpinner } from "@core/ui/loading-spinner";
 import type { WorkspaceGroup } from "@core/navigation/domain/entities/WorkspaceGroup";
@@ -242,12 +243,13 @@ export function WorkspaceHubView() {
                     : t("workspaceHub.pinned.apps_other", { count: filteredPinned.length })
                 }
                 action={
-                  <button
+                  <Button
                     type="button"
-                    className="cursor-pointer rounded-nx-sm border-0 bg-transparent p-0 text-xs font-medium text-nx-ink-3 transition-colors duration-nx-micro ease-nx-enter hover:text-nx-ink focus-visible:shadow-nx-focus focus-visible:outline-none motion-reduce:transition-none"
+                    variant="ghost"
+                    className="h-auto cursor-pointer rounded-nx-sm border-0 bg-transparent p-0 text-xs font-medium text-nx-ink-3 transition-colors duration-nx-micro ease-nx-enter hover:bg-transparent hover:text-nx-ink focus-visible:shadow-nx-focus focus-visible:outline-none motion-reduce:transition-none"
                   >
                     {t("workspaceHub.pinned.manage")}
-                  </button>
+                  </Button>
                 }
               />
               <div className="flex flex-wrap gap-3.5">

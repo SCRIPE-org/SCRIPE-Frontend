@@ -1,5 +1,4 @@
 // FILE-EXCEPTION: file length
-// UI-EXCEPTION: compact studio layout
 "use client";
 
 import { useState } from "react";
@@ -7,6 +6,7 @@ import { ArrowRight, ArrowLeft, Lock, Loader2 } from "lucide-react";
 import { useI18n } from "@core/providers/i18n-provider";
 import { useSignupTheme } from "@core/providers/signup-theme";
 import { Input } from "@core/ui/input";
+import { Button } from "@core/ui/button";
 import { Label } from "@core/ui/label";
 import { Checkbox } from "@core/ui/checkbox";
 import { PasswordInput } from "@core/ui/password-input";
@@ -292,11 +292,12 @@ export function AccountStep({ wizard }: AccountStepProps) {
         )}
 
         {/* ── Primary CTA — the single accent moment ── */}
-        <button
+        <Button
           type="submit"
+          variant="ghost"
           disabled={wizard.isSubmitting}
           aria-busy={wizard.isSubmitting}
-          className="group inline-flex h-12 w-full items-center justify-center gap-2 rounded-xl text-[0.9375rem] font-semibold transition-transform duration-200 hover:-translate-y-0.5 disabled:opacity-60 motion-reduce:transform-none"
+          className="group inline-flex h-12 w-full items-center justify-center gap-2 rounded-xl text-[0.9375rem] font-semibold transition-transform duration-200 hover:-translate-y-0.5 hover:bg-transparent disabled:opacity-60 motion-reduce:transform-none"
           style={{
             background: tokens.gradientCta,
             color: tokens.accentContrast,
@@ -322,7 +323,7 @@ export function AccountStep({ wizard }: AccountStepProps) {
               />
             </>
           )}
-        </button>
+        </Button>
 
         {/* ── Trust cue + back ── */}
         <div className="flex items-center justify-center gap-1.5">
@@ -336,16 +337,17 @@ export function AccountStep({ wizard }: AccountStepProps) {
           </p>
         </div>
 
-        <button
+        <Button
           type="button"
+          variant="ghost"
           onClick={wizard.back}
           disabled={wizard.isSubmitting}
-          className="mx-auto inline-flex items-center gap-1.5 text-[0.8125rem] font-medium transition-opacity duration-200 hover:opacity-80 disabled:opacity-50"
+          className="mx-auto inline-flex h-auto items-center gap-1.5 p-0 text-[0.8125rem] font-medium transition-opacity duration-200 hover:bg-transparent hover:opacity-80 disabled:opacity-50"
           style={{ color: tokens.inkMuted }}
         >
           <ArrowLeft className="h-3.5 w-3.5 rtl:scale-x-[-1]" aria-hidden="true" />
           {t("signup.account.back")}
-        </button>
+        </Button>
       </form>
     </div>
   );

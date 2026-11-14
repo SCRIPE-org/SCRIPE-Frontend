@@ -48,7 +48,7 @@ export function PlatformKeyringCard({
 
   return (
     <div className="space-y-6">
-      <Card className="border border-border shadow-sm">
+      <Card className="border border-nx-line">
         <CardHeader className="flex flex-row items-center justify-between pb-4">
           <div className="flex items-center gap-3">
             <div className="rounded-xl bg-primary/10 p-2.5 text-primary">
@@ -59,10 +59,7 @@ export function PlatformKeyringCard({
                 <CardTitle className="text-lg">
                   {t("customFieldsSecurity.platformKeyringTitle")}
                 </CardTitle>
-                <Badge
-                  variant="default"
-                  className="gap-1 bg-emerald-600 text-xs hover:bg-emerald-700"
-                >
+                <Badge variant="success" className="gap-1 text-xs">
                   <CheckCircle2 className="h-3 w-3" />
                   {t("customFieldsSecurity.operational")}
                 </Badge>
@@ -83,7 +80,7 @@ export function PlatformKeyringCard({
               <ShieldCheck className="h-3.5 w-3.5 text-primary" />
               <span>{t("customFieldsSecurity.masterKeyStatus")}</span>
             </div>
-            <span className="font-semibold text-emerald-600 dark:text-emerald-400">
+            <span className="font-semibold text-success">
               {t("customFieldsSecurity.activeStatus")}
             </span>
           </div>
@@ -114,7 +111,7 @@ export function PlatformKeyringCard({
         </CardContent>
       </Card>
 
-      <Card className="border border-border shadow-sm">
+      <Card className="border-nx-line">
         <CardHeader className="pb-3">
           <div className="flex items-center justify-between">
             <div>
@@ -171,10 +168,7 @@ export function PlatformKeyringCard({
                       </TableCell>
                       <TableCell className="px-4 py-3 text-end">
                         {isActive ? (
-                          <Badge
-                            variant="outline"
-                            className="border-emerald-500/30 bg-emerald-500/10 text-[10px] font-medium text-emerald-600"
-                          >
+                          <Badge variant="success" className="text-[10px] font-medium">
                             {t("customFieldsSecurity.activeStatus")}
                           </Badge>
                         ) : (
@@ -205,12 +199,12 @@ export function PlatformKeyringCard({
         />
       )}
 
-      <div className="space-y-1.5 rounded-xl border border-blue-500/20 bg-blue-500/5 p-4 text-xs text-blue-900 dark:text-blue-200">
+      <div className="space-y-1.5 rounded-xl border border-info/20 bg-info/5 p-4 text-xs text-info">
         <div className="flex items-center gap-2 font-medium">
-          <Layers className="h-4 w-4 text-blue-600 dark:text-blue-400" />
+          <Layers className="h-4 w-4 text-info" />
           <span>{t("customFieldsSecurity.architectureNoteTitle")}</span>
         </div>
-        <p className="leading-relaxed text-muted-foreground dark:text-blue-200/80">
+        <p className="leading-relaxed text-nx-ink-2">
           {t("customFieldsSecurity.architectureNoteBody")}
         </p>
       </div>

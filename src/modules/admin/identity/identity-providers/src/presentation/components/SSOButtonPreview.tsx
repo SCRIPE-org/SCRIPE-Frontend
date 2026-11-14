@@ -20,6 +20,7 @@ import { useI18n } from "@core/providers/i18n-provider";
 import { Label } from "@core/ui/label";
 import { Button } from "@core/ui/button";
 import { IDP_BRAND_MARKS, ProtocolIcon } from "@core/ui/brand-icons";
+import { DARK_THEME, LIGHT_THEME } from "@core/ui/tokens/brand";
 import { Monitor } from "lucide-react";
 import React from "react";
 import Image from "next/image";
@@ -122,8 +123,7 @@ export function SSOButtonPreview({ name, iconUrl, buttonColor, buttonLabel }: Pr
           className="flex min-h-[200px] flex-col items-center justify-center rounded-nx-lg border p-6"
           style={{
             ...LIGHT_SX_VARS,
-            background:
-              "radial-gradient(140% 90% at 25% 25%, #ffffff 0%, #f1ecfb 45%, #e4daf6 80%, #d6c8ef 100%)",
+            background: LIGHT_THEME.gradientPage,
             borderColor: "var(--sx-card-border)",
           }}
         >
@@ -216,8 +216,7 @@ export function SSOButtonPreview({ name, iconUrl, buttonColor, buttonLabel }: Pr
           className="flex min-h-[200px] flex-col items-center justify-center rounded-nx-lg border p-6"
           style={{
             ...DARK_SX_VARS,
-            background:
-              "radial-gradient(140% 90% at 25% 25%, #1a1140 0%, #0a0820 40%, #06060e 80%, #04040a 100%)",
+            background: DARK_THEME.gradientPage,
             borderColor: "var(--sx-card-border)",
           }}
         >

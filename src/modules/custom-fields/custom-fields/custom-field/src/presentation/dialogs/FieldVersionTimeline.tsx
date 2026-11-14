@@ -30,17 +30,14 @@ export function FieldVersionTimeline({
     switch (s) {
       case "published":
         return (
-          <Badge variant="default" className="gap-1 bg-emerald-600 text-white hover:bg-emerald-700">
+          <Badge variant="success" className="gap-1">
             <CheckCircle2 className="h-3 w-3" />
             {t("customField.versions.statusPublished", { defaultValue: "Published" })}
           </Badge>
         );
       case "draft":
         return (
-          <Badge
-            variant="secondary"
-            className="gap-1 border-amber-300 bg-amber-100 text-amber-900 dark:border-amber-800 dark:bg-amber-950 dark:text-amber-200"
-          >
+          <Badge variant="warning" className="gap-1">
             <Clock className="h-3 w-3" />
             {t("customField.versions.statusDraft", { defaultValue: "Draft" })}
           </Badge>
@@ -98,9 +95,9 @@ export function FieldVersionTimeline({
                 <div
                   className={`absolute -left-[27px] top-3.5 h-3.5 w-3.5 rounded-full border-2 bg-background ${
                     isLive
-                      ? "border-emerald-500 bg-emerald-500"
+                      ? "border-success bg-success"
                       : isDraft
-                        ? "border-amber-500 bg-amber-500"
+                        ? "border-warning bg-warning"
                         : "border-muted-foreground"
                   }`}
                 />

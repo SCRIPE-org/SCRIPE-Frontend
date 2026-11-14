@@ -33,7 +33,7 @@ export function usePipelineStudioViewModel(defaultOpenStudio = false) {
   const [viewMode, setViewMode] = useState<StudioViewMode>("diagram");
   const [zoom, setZoom] = useState(80);
 
-  const selectedWorkflow = useMemo(() => workflows.find((w) => w.id === selectedWorkflowId) ?? workflows[0], [workflows, selectedWorkflowId]);
+  const selectedWorkflow = workflows.find((w) => w.id === selectedWorkflowId) ?? workflows[0];
   const activeEntity: CrmWorkflowEntityType = selectedWorkflow?.entityType ?? "deal";
 
   const [stages, setStages] = useState<CrmWorkflowStageNode[]>(() => selectedWorkflow ? buildStageNodesFromWorkflow(selectedWorkflow) : []);
@@ -112,8 +112,8 @@ export function usePipelineStudioViewModel(defaultOpenStudio = false) {
     return workflows.filter((wf) => (directoryFilter === "all" || wf.entityType === directoryFilter) && (!q || wf.nameEn.toLowerCase().includes(q) || wf.nameAr.toLowerCase().includes(q) || wf.code.toLowerCase().includes(q)));
   }, [workflows, directoryFilter, directorySearch]);
 
-  const selectedStage = useMemo(() => stages.find((s) => s.stageKey === selectedStageKey) ?? null, [stages, selectedStageKey]);
-  const selectedTransition = useMemo(() => transitions.find((tr) => tr.id === selectedTransitionId) ?? null, [transitions, selectedTransitionId]);
+  const selectedStage = stages.find((s) => s.stageKey === selectedStageKey) ?? null;
+  const selectedTransition = transitions.find((tr) => tr.id === selectedTransitionId) ?? null;
 
   const openStudioForWorkflow = (wfId: string) => { setSelectedWorkflowId(wfId); setIsStudioOpen(true); };
   const handleSwitchEntity = (entity: CrmWorkflowEntityType) => {

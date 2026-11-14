@@ -4,9 +4,6 @@
  * Small utility component — extracted for reuse in the publish bar.
  */
 "use client";
-// UI-EXCEPTION: compact studio layout — native <button> used for pixel-precise
-// compact controls (toggle switches, gradient pickers, layout thumbnails, etc.)
-// where @core/ui/button's padding/sizing would break the layout.
 
 import { Monitor, Tablet, Smartphone } from "lucide-react";
 import { Button } from "@core/ui/button";

@@ -1,4 +1,3 @@
-// UI-EXCEPTION: compact studio layout
 "use client";
 
 import * as React from "react";
@@ -86,7 +85,7 @@ export function OtpStep({ vm, totalSteps }: OtpStepProps) {
           type="submit"
           disabled={!vm.canSubmitOtp || vm.isLoading}
           loading={vm.isLoading}
-          className="flex h-12 w-full items-center justify-center rounded-xl text-[15px] font-semibold text-white transition-all active:scale-[0.985] disabled:pointer-events-none disabled:opacity-50"
+          className="flex h-12 w-full items-center justify-center rounded-xl text-[15px] font-semibold text-nx-on-fill transition-all active:scale-[0.985] disabled:pointer-events-none disabled:opacity-50"
         >
           {t("auth.verifyCode")}
         </Button>
@@ -94,18 +93,19 @@ export function OtpStep({ vm, totalSteps }: OtpStepProps) {
 
       {/* Resend */}
       <div className="text-center">
-        <button
+        <Button
           type="button"
+          variant="ghost"
           onClick={vm.resendCode}
           disabled={vm.cooldown > 0 || vm.isLoading}
-          className="inline-flex items-center gap-1.5 text-[12px] font-medium transition-all disabled:opacity-40"
+          className="inline-flex h-auto items-center gap-1.5 p-0 text-[12px] font-medium hover:bg-transparent disabled:opacity-40"
           style={{ color: "var(--sx-text-mute)" }}
         >
           <RefreshCw className="h-3.5 w-3.5" />
           {vm.cooldown > 0
             ? t("auth.resendCooldown").replace("{{seconds}}", String(vm.cooldown))
             : t("auth.resendCode")}
-        </button>
+        </Button>
       </div>
     </div>
   );

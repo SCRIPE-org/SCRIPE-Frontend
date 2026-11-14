@@ -1,4 +1,3 @@
-// UI-EXCEPTION: compact studio layout
 "use client";
 
 import { motion } from "framer-motion";
@@ -17,7 +16,7 @@ import { DynamicIcon } from "./DynamicIcon";
 //   • Selected = accent RING + faint accent TINT (no glow box-shadow).
 //   • A single editorial scale, solid ink. No gradient text.
 //   • Disabled when a multi question hit its max and this tile isn't selected.
-//   • aria-pressed on every tile; full keyboard access (native <button>).
+//   • aria-pressed on every tile; full keyboard access (Button primitive).
 //   • Equal-height tiles via grid auto-rows; 2 cols mobile, 3 cols desktop.
 //   • Staggered entrance; reduced-motion → instant + visible.
 //

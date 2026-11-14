@@ -5,11 +5,9 @@
  * maxItems enforcement, block duplication. Labels localized via t()
  */
 "use client";
-// UI-EXCEPTION: compact studio layout — native <button> used for pixel-precise
-// compact controls (toggle switches, gradient pickers, layout thumbnails, etc.)
-// where @core/ui/button's padding/sizing would break the layout.
 
 import { useState, useCallback } from "react";
+import { Button } from "@core/ui/button";
 import {
   Plus,
   Trash2,
@@ -356,11 +354,12 @@ export function BlockPanel({
         const isFull = blocks.length >= slot.maxItems;
         return (
           <div key={slot.id} className="overflow-hidden rounded-nx-md border border-nx-line">
-            <button
+            <Button
               type="button"
+              variant="ghost"
               onClick={() => setExpandedSlot(isExpanded ? null : slot.id)}
               aria-expanded={isExpanded}
-              className="flex w-full items-center justify-between px-3 py-2.5 transition-colors duration-nx-micro ease-nx-enter hover:bg-nx-hover focus-visible:shadow-nx-focus focus-visible:outline-none motion-reduce:transition-none"
+              className="flex h-auto w-full items-center justify-between rounded-none px-3 py-2.5 font-normal transition-colors duration-nx-micro ease-nx-enter hover:bg-nx-hover focus-visible:shadow-nx-focus focus-visible:outline-none motion-reduce:transition-none"
             >
               <div className="flex items-center gap-2">
                 <ChevronRight
@@ -379,7 +378,7 @@ export function BlockPanel({
                   {t("studio.blocks.full")}
                 </span>
               )}
-            </button>
+            </Button>
             {isExpanded && (
               <div className="space-y-1.5 border-t border-nx-line px-3 py-2">
                 <p className="text-[10px] text-nx-ink-3">{t(slot.descKey)}</p>
@@ -409,35 +408,42 @@ export function BlockPanel({
                             className="h-3 w-3 shrink-0 text-nx-ink-3"
                             aria-hidden="true"
                           />
-                          <button
+                          <Button
                             type="button"
+                            variant="ghost"
                             onClick={() =>
                               setEditingBlock(isEditing ? null : { slotId: slot.id, index: i })
                             }
-                            className="flex-1 text-start text-[11px] font-medium text-nx-ink transition-colors duration-nx-micro ease-nx-enter hover:text-nx-accent focus-visible:shadow-nx-focus focus-visible:outline-none motion-reduce:transition-none"
+                            className="h-auto flex-1 justify-start rounded-none p-0 text-start text-[11px] font-medium text-nx-ink transition-colors duration-nx-micro ease-nx-enter hover:bg-transparent hover:text-nx-accent focus-visible:shadow-nx-focus focus-visible:outline-none motion-reduce:transition-none"
                           >
                             {t(`studio.block.${block.type}`)}
-                          </button>
-                          <button
+                          </Button>
+                          <Button
                             type="button"
+                            variant="ghost"
+                            size="icon"
                             onClick={() => moveBlock(slot.id, i, "up")}
                             disabled={i === 0}
                             aria-label={t("studio.blocks.moveUp")}
-                            className="rounded-nx-sm p-0.5 text-nx-ink-3 transition-colors duration-nx-micro ease-nx-enter hover:text-nx-ink focus-visible:shadow-nx-focus focus-visible:outline-none disabled:opacity-20 motion-reduce:transition-none"
+                            className="h-auto w-auto rounded-nx-sm p-0.5 text-nx-ink-3 transition-colors duration-nx-micro ease-nx-enter hover:bg-transparent hover:text-nx-ink focus-visible:shadow-nx-focus focus-visible:outline-none disabled:opacity-20 motion-reduce:transition-none"
                           >
                             <ChevronUp className="h-3 w-3" aria-hidden="true" />
-                          </button>
-                          <button
+                          </Button>
+                          <Button
                             type="button"
+                            variant="ghost"
+                            size="icon"
                             onClick={() => moveBlock(slot.id, i, "down")}
                             disabled={i === blocks.length - 1}
                             aria-label={t("studio.blocks.moveDown")}
-                            className="rounded-nx-sm p-0.5 text-nx-ink-3 transition-colors duration-nx-micro ease-nx-enter hover:text-nx-ink focus-visible:shadow-nx-focus focus-visible:outline-none disabled:opacity-20 motion-reduce:transition-none"
+                            className="h-auto w-auto rounded-nx-sm p-0.5 text-nx-ink-3 transition-colors duration-nx-micro ease-nx-enter hover:bg-transparent hover:text-nx-ink focus-visible:shadow-nx-focus focus-visible:outline-none disabled:opacity-20 motion-reduce:transition-none"
                           >
                             <ChevronDown className="h-3 w-3" aria-hidden="true" />
-                          </button>
-                          <button
+                          </Button>
+                          <Button
                             type="button"
+                            variant="ghost"
+                            size="icon"
                             onClick={() => {
                               addBlock(slot.id, {
                                 ...block,
@@ -446,21 +452,23 @@ export function BlockPanel({
                             }}
                             disabled={isFull}
                             aria-label={t("studio.blocks.duplicate")}
-                            className="rounded-nx-sm p-0.5 text-nx-ink-3 transition-colors duration-nx-micro ease-nx-enter hover:text-nx-ink focus-visible:shadow-nx-focus focus-visible:outline-none disabled:opacity-20 motion-reduce:transition-none"
+                            className="h-auto w-auto rounded-nx-sm p-0.5 text-nx-ink-3 transition-colors duration-nx-micro ease-nx-enter hover:bg-transparent hover:text-nx-ink focus-visible:shadow-nx-focus focus-visible:outline-none disabled:opacity-20 motion-reduce:transition-none"
                           >
                             <Copy className="h-3 w-3" aria-hidden="true" />
-                          </button>
-                          <button
+                          </Button>
+                          <Button
                             type="button"
+                            variant="ghost"
+                            size="icon"
                             onClick={() => {
                               removeBlock(slot.id, i);
                               if (isEditing) setEditingBlock(null);
                             }}
                             aria-label={t("studio.blocks.remove")}
-                            className="rounded-nx-sm p-0.5 text-destructive/70 transition-colors duration-nx-micro ease-nx-enter hover:text-destructive focus-visible:shadow-nx-focus focus-visible:outline-none motion-reduce:transition-none"
+                            className="h-auto w-auto rounded-nx-sm p-0.5 text-destructive/70 transition-colors duration-nx-micro ease-nx-enter hover:bg-transparent hover:text-destructive focus-visible:shadow-nx-focus focus-visible:outline-none motion-reduce:transition-none"
                           >
                             <Trash2 className="h-3 w-3" aria-hidden="true" />
-                          </button>
+                          </Button>
                         </div>
                         {isEditing && (
                           <div className="space-y-2 border-t border-nx-line px-2 py-2">
@@ -479,38 +487,41 @@ export function BlockPanel({
                     {BLOCK_TYPES.map((bt) => {
                       const Icon = bt.icon;
                       return (
-                        <button
+                        <Button
                           key={bt.type}
                           type="button"
+                          variant="ghost"
                           onClick={() => {
                             addBlock(slot.id, createDefaultBlock(bt.type, t));
                             setAddingToSlot(null);
                           }}
-                          className="flex items-center gap-1.5 rounded-nx-control border border-nx-line px-2 py-1.5 text-[11px] text-nx-ink-2 transition-colors duration-nx-micro ease-nx-enter hover:border-nx-line-hi hover:bg-nx-hover hover:text-nx-ink focus-visible:shadow-nx-focus focus-visible:outline-none motion-reduce:transition-none"
+                          className="flex h-auto items-center justify-start gap-1.5 rounded-nx-control border border-nx-line px-2 py-1.5 text-[11px] font-normal text-nx-ink-2 transition-colors duration-nx-micro ease-nx-enter hover:border-nx-line-hi hover:bg-nx-hover hover:text-nx-ink focus-visible:shadow-nx-focus focus-visible:outline-none motion-reduce:transition-none"
                         >
                           <Icon className="h-3 w-3" aria-hidden="true" />
                           {t(bt.labelKey)}
-                        </button>
+                        </Button>
                       );
                     })}
-                    <button
+                    <Button
                       type="button"
+                      variant="ghost"
                       onClick={() => setAddingToSlot(null)}
-                      className="col-span-2 rounded-nx-control border border-dashed border-nx-line px-2 py-1 text-[10px] text-nx-ink-3 transition-colors duration-nx-micro ease-nx-enter hover:text-nx-ink focus-visible:shadow-nx-focus focus-visible:outline-none motion-reduce:transition-none"
+                      className="col-span-2 h-auto rounded-nx-control border border-dashed border-nx-line px-2 py-1 text-[10px] font-normal text-nx-ink-3 transition-colors duration-nx-micro ease-nx-enter hover:bg-transparent hover:text-nx-ink focus-visible:shadow-nx-focus focus-visible:outline-none motion-reduce:transition-none"
                     >
                       {t("common.cancel")}
-                    </button>
+                    </Button>
                   </div>
                 ) : (
-                  <button
+                  <Button
                     type="button"
+                    variant="ghost"
                     onClick={() => setAddingToSlot(slot.id)}
                     disabled={isFull}
-                    className="flex w-full items-center justify-center gap-1 rounded-nx-md border border-dashed border-nx-line py-1.5 text-[11px] text-nx-ink-3 transition-colors duration-nx-micro ease-nx-enter hover:border-nx-line-hi hover:text-nx-ink focus-visible:shadow-nx-focus focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-40 motion-reduce:transition-none"
+                    className="flex h-auto w-full items-center justify-center gap-1 rounded-nx-md border border-dashed border-nx-line py-1.5 text-[11px] font-normal text-nx-ink-3 transition-colors duration-nx-micro ease-nx-enter hover:border-nx-line-hi hover:bg-transparent hover:text-nx-ink focus-visible:shadow-nx-focus focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-40 motion-reduce:transition-none"
                   >
                     <Plus className="h-3 w-3" aria-hidden="true" />
                     {isFull ? t("studio.blocks.slotFull") : t("studio.blocks.addBlock")}
-                  </button>
+                  </Button>
                 )}
               </div>
             )}

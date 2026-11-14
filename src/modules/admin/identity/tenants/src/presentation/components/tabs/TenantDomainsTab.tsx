@@ -34,7 +34,6 @@ import { ErrorMessage } from "@core/ui/error-message";
 import { ConfirmationDialog } from "@core/ui/confirmation-dialog";
 import { Skeleton } from "@core/ui/skeleton";
 import { toast } from "@core/hooks/use-enhanced-toast";
-import { cn } from "@core/common/utils";
 import {
   Globe,
   Plus,
@@ -71,7 +70,6 @@ export interface TenantDomainsTabProps {
  */
 export function TenantDomainsTab({ tenantId, tenantName }: TenantDomainsTabProps) {
   const { t, direction } = useI18n();
-  const isRtl = direction === "rtl";
 
   const [searchQuery, setSearchQuery] = useState("");
   const [showAddModal, setShowAddModal] = useState(false);
@@ -236,17 +234,14 @@ export function TenantDomainsTab({ tenantId, tenantName }: TenantDomainsTabProps
         {/* Search Bar */}
         <div className="relative max-w-md flex-1">
           <Search
-            className={cn(
-              "pointer-events-none absolute top-1/2 h-4 w-4 -translate-y-1/2 text-nx-ink-3",
-              isRtl ? "right-3" : "left-3"
-            )}
+            className="pointer-events-none absolute top-1/2 start-3 h-4 w-4 -translate-y-1/2 text-nx-ink-3"
             aria-hidden="true"
           />
           <Input
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder={t("tenant.domainsSearchPlaceholder")}
-            className={cn("h-9 text-xs", isRtl ? "pr-9" : "pl-9")}
+            className="h-9 ps-9 text-xs"
           />
         </div>
 

@@ -1,4 +1,3 @@
-// UI-EXCEPTION: compact studio layout
 "use client";
 
 import { useMemo } from "react";
@@ -8,6 +7,7 @@ import { Sun, Moon } from "lucide-react";
 import { AnimatePresence, motion } from "framer-motion";
 import { useI18n } from "@core/providers/i18n-provider";
 import { useSignupTheme } from "@core/providers/signup-theme";
+import { Button } from "@core/ui/button";
 import { BRAND } from "@core/config/branding";
 
 // ═══════════════════════════════════════════════════════════════════════════
@@ -137,12 +137,14 @@ export function SignupShell({ children, progressSlot, phaseLabel }: SignupShellP
 
         {/* ── Trailing: theme toggle + sign-in ── */}
         <div className="flex items-center gap-3 sm:gap-4">
-          <button
+          <Button
             type="button"
+            variant="ghost"
+            size="icon"
             onClick={toggleTheme}
             aria-label={themeLabel}
             title={themeLabel}
-            className="rounded-full p-2 transition-all duration-200 hover:opacity-80"
+            className="h-auto w-auto rounded-full p-2 transition-all duration-200 hover:bg-transparent hover:opacity-80"
             style={{
               background: tokens.surfaceRaised,
               border: tokens.borderCard,
@@ -150,7 +152,7 @@ export function SignupShell({ children, progressSlot, phaseLabel }: SignupShellP
             }}
           >
             {isDark ? <Sun size={15} aria-hidden="true" /> : <Moon size={15} aria-hidden="true" />}
-          </button>
+          </Button>
 
           <div className="flex items-center gap-1.5 text-[13px]" style={{ color: tokens.inkFaint }}>
             <span className="hidden sm:inline">{t("signup.header.haveAccount")}</span>

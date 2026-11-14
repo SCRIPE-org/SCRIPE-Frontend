@@ -25,7 +25,7 @@ export function MigrationProgressModal({
   if (!session || session.isTerminal) return null;
 
   return (
-    <Card className="border-primary/40 bg-primary/5 shadow-sm">
+    <Card className="border-primary/40 bg-primary/5">
       <CardHeader className="flex flex-row items-center justify-between pb-2">
         <div className="flex items-center gap-2.5">
           <Loader2 className="h-5 w-5 animate-spin text-primary" />

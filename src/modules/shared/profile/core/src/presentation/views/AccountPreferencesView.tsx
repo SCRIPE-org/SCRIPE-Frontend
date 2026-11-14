@@ -102,7 +102,9 @@ export function AccountPreferencesView() {
             <span>&bull;</span>
             <span className="font-semibold">{pos}</span>
             <span>&bull;</span>
-            <span>{isRtl ? "RTL (عربي)" : "LTR (English)"}</span>
+            <span>
+              {isRtl ? t("profile.preferences.directionRtl") : t("profile.preferences.directionLtr")}
+            </span>
           </div>
         </div>
       ),
@@ -366,7 +368,9 @@ export function AccountPreferencesView() {
           <CardContent className="grid grid-cols-2 gap-2">
             {(["latn", "arab"] as const).map((sys) => (
               <Button key={sys} type="button" variant={numeralSystem === sys ? "default" : "outline"} size="sm" onClick={() => setNumeralSystem(sys)} data-testid={`numeral-${sys}`} className="h-9 text-xs font-mono">
-                {sys === "latn" ? "123 (Western)" : "١٢٣ (Eastern)"}
+                {sys === "latn"
+                  ? t("profile.preferences.numeralLatn")
+                  : t("profile.preferences.numeralArab")}
               </Button>
             ))}
           </CardContent>

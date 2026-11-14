@@ -76,6 +76,11 @@ async function captureSteadyScreenshot(
   if (readyLocator) {
     await expect(readyLocator).toBeVisible({ timeout: 25_000 });
   }
+  await expect(
+    page.getByText(
+      /We are getting everything ready for you|نحن نقوم بتجهيز كل شيء من أجلك/i
+    )
+  ).toHaveCount(0, { timeout: 15_000 });
   await expect(page.locator("[data-slot='skeleton']")).toHaveCount(0, {
     timeout: 15_000,
   });

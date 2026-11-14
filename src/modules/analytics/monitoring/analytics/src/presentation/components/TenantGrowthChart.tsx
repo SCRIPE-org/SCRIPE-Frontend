@@ -95,22 +95,22 @@ export function TenantGrowthChart({ data, isLoading, timeRangeLabel }: TenantGro
                 </defs>
                 <CartesianGrid
                   strokeDasharray="3 3"
-                  stroke="var(--nx-line, #2c3033)"
+                  stroke="var(--nx-line)"
                   opacity={0.4}
                   vertical={false}
                 />
                 <XAxis
                   dataKey="displayDate"
                   tickLine={false}
-                  axisLine={{ stroke: "var(--nx-line, #2c3033)", opacity: 0.5 }}
-                  tick={{ fill: "var(--nx-ink-3, #8c918d)", fontSize: 10 }}
+                  axisLine={{ stroke: "var(--nx-line)", opacity: 0.5 }}
+                  tick={{ fill: "var(--nx-ink-3)", fontSize: 10 }}
                   interval="preserveStartEnd"
                 />
                 <YAxis
                   allowDecimals={false}
                   tickLine={false}
                   axisLine={false}
-                  tick={{ fill: "var(--nx-ink-3, #8c918d)", fontSize: 10 }}
+                  tick={{ fill: "var(--nx-ink-3)", fontSize: 10 }}
                 />
                 <Tooltip
                   content={({ active, payload, label }) => {

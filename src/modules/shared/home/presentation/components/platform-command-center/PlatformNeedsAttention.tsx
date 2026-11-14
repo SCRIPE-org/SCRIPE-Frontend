@@ -5,6 +5,7 @@ import { AlertTriangle, ChevronRight } from "lucide-react";
 import Link from "next/link";
 import { useI18n } from "@core/providers/i18n-provider";
 import { Card } from "@core/ui/card";
+import { Button } from "@core/ui/button";
 import type {
   AttentionAlertItem,
   AlertCategory,
@@ -97,11 +98,12 @@ export function PlatformNeedsAttention({ alerts: propAlerts }: PlatformNeedsAtte
         ).map((tab) => {
           const isActive = activeTab === tab.key;
           return (
-            <button
+            <Button
               key={tab.key}
               type="button"
+              variant="ghost"
               onClick={() => setActiveTab(tab.key)}
-              className={`relative flex cursor-pointer items-center gap-1.5 pb-2 text-[11px] font-medium transition-colors ${
+              className={`relative flex h-auto cursor-pointer items-center gap-1.5 rounded-none px-0 pb-2 pt-0 text-[11px] font-medium transition-colors hover:bg-transparent ${
                 isActive
                   ? "font-semibold text-nx-ink"
                   : "text-nx-ink-3 hover:text-nx-ink"
@@ -120,7 +122,7 @@ export function PlatformNeedsAttention({ alerts: propAlerts }: PlatformNeedsAtte
               {isActive && (
                 <span className="absolute bottom-0 left-0 right-0 h-[2px] rounded-full bg-primary shadow-[0_0_8px_rgba(198,255,0,0.6)]" />
               )}
-            </button>
+            </Button>
           );
         })}
       </div>
