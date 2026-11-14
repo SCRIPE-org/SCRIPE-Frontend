@@ -7,6 +7,7 @@ export const feesReceivablesEn = {
   refresh: "Refresh",
   loading: "Loading authoritative fees & receivables...",
   filters: {
+    all: "All",
     allBranches: "All Branches",
     allPrograms: "All Programs",
     allStatuses: "All Statuses",
@@ -29,8 +30,13 @@ export const feesReceivablesEn = {
   summary: {
     totalInvoiced: "Total Invoiced",
     totalPaid: "Collected / Paid",
+    revenueCollectedMtd: "Revenue Collected MTD",
     totalOutstanding: "Outstanding",
+    outstandingBalance: "Outstanding Balance",
     totalOverdue: "Total Overdue",
+    overdueInvoices: "Overdue Invoices",
+    activeEnrollments: "Active Enrollments",
+    collectionRate: "Collection Rate",
     waivedCount: "Waived Enrollments",
     unbilledCount: "Unbilled Queue"
   },

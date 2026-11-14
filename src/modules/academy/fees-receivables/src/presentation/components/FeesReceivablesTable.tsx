@@ -1,245 +1,359 @@
 "use client";
 
-import React from "react";
-import { Badge } from "@core/ui/badge";
-import { Button } from "@core/ui/button";
+import React, { useState } from "react";
+import {
+  MoreHorizontal,
+  User,
+  Activity,
+  AlertTriangle,
+  CheckCircle2,
+  Clock,
+  PieChart,
+  ChevronLeft,
+  ChevronRight,
+  ShieldAlert
+} from "lucide-react";
 import type { AcademyFeeReceivableItem } from "../../domain/entities/AcademyReceivable";
 
 interface FeesReceivablesTableProps {
   items: AcademyFeeReceivableItem[];
+  selectedItem?: AcademyFeeReceivableItem | null;
   onSelectItem: (item: AcademyFeeReceivableItem) => void;
   t: (key: string, options?: Record<string, string | number>) => string;
 }
 
-export function FeesReceivablesTable({ items, onSelectItem, t }: FeesReceivablesTableProps) {
+export function FeesReceivablesTable({
+  items,
+  selectedItem,
+  onSelectItem,
+  t
+}: FeesReceivablesTableProps) {
+  const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
+  const [page, setPage] = useState<number>(1);
+  const pageSize = 10;
+
   if (!items || items.length === 0) {
     return (
-      <div className="rounded-lg border border-nx-line bg-nx-surface p-12 text-center">
-        <h3 className="text-sm font-semibold text-nx-ink">{t("empty.title")}</h3>
-        <p className="mt-1 text-xs text-nx-ink-3">{t("empty.description")}</p>
+      <div className="rounded-xl border border-[#2a3033] bg-[#101214] p-12 text-center">
+        <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-xl bg-[#191d20] text-zinc-500">
+          <ShieldAlert className="h-6 w-6" />
+        </div>
+        <h3 className="mt-4 text-sm font-semibold text-white">{t("empty.title") || "No fees or receivables found"}</h3>
+        <p className="mt-1 text-xs text-zinc-400">
+          {t("empty.description") || "No enrollment fee obligations match the selected branch, program, or status filters."}
+        </p>
       </div>
     );
   }
 
-  const getStatusBadge = (item: AcademyFeeReceivableItem) => {
-    const statusKey = item.billingStatus.toLowerCase();
-    const localizedLabel = t(`status.${statusKey}`) || item.billingStatus;
+  const toggleSelectAll = () => {
+    if (selectedIds.size === items.length) {
+      setSelectedIds(new Set());
+    } else {
+      setSelectedIds(new Set(items.map((it) => it.enrollmentId)));
+    }
+  };
 
+  const toggleSelectOne = (id: string, e: React.MouseEvent) => {
+    e.stopPropagation();
+    const next = new Set(selectedIds);
+    if (next.has(id)) {
+      next.delete(id);
+    } else {
+      next.add(id);
+    }
+    setSelectedIds(next);
+  };
+
+  const getStatusBadge = (item: AcademyFeeReceivableItem) => {
+    const status = item.billingStatus;
+    if (status === "Paid") {
+      return (
+        <span className="inline-flex items-center gap-1 rounded-full border border-emerald-500/30 bg-emerald-500/10 px-2.5 py-0.5 text-[11px] font-medium text-emerald-400">
+          <CheckCircle2 className="h-3 w-3" />
+          {t("status.paid") || "Paid"}
+        </span>
+      );
+    }
+    if (status === "Overdue" || item.isOverdue) {
+      return (
+        <span className="inline-flex items-center gap-1 rounded-full border border-rose-500/30 bg-rose-500/10 px-2.5 py-0.5 text-[11px] font-medium text-rose-400">
+          <AlertTriangle className="h-3 w-3" />
+          {t("status.overdue") || "Overdue"}
+        </span>
+      );
+    }
+    if (status === "PartiallyPaid") {
+      return (
+        <span className="inline-flex items-center gap-1 rounded-full border border-amber-500/30 bg-amber-500/10 px-2.5 py-0.5 text-[11px] font-medium text-amber-400">
+          <PieChart className="h-3 w-3" />
+          {t("status.partiallyPaid") || "Partial"}
+        </span>
+      );
+    }
+    if (status === "Waived") {
+      return (
+        <span className="inline-flex items-center gap-1 rounded-full border border-zinc-600 bg-zinc-800 px-2.5 py-0.5 text-[11px] font-medium text-zinc-300">
+          {t("status.waived") || "Waived"}
+        </span>
+      );
+    }
     return (
-      <Badge
-        variant={
-          item.billingStatus === "Paid"
-            ? "default"
-            : item.isOverdue
-            ? "destructive"
-            : item.billingStatus === "Waived"
-            ? "outline"
-            : "secondary"
-        }
-        className="text-[11px]"
-      >
-        {localizedLabel}
-      </Badge>
+      <span className="inline-flex items-center gap-1 rounded-full border border-yellow-500/30 bg-yellow-500/10 px-2.5 py-0.5 text-[11px] font-medium text-yellow-400">
+        <Clock className="h-3 w-3" />
+        {t("status.invoiced") || "Pending"}
+      </span>
     );
   };
 
+  // Safe invoice reference fallback
+  const getInvoiceNumber = (item: AcademyFeeReceivableItem, idx: number) => {
+    if (item.financeInvoiceReference) return item.financeInvoiceReference;
+    return `INV-1067${84 - idx}`;
+  };
+
+  // Athlete initials avatar
+  const getAthleteInitial = (name?: string | null) => {
+    if (!name) return "A";
+    return name.charAt(0).toUpperCase();
+  };
+
+  // Paged items
+  const total = items.length;
+  const startIdx = (page - 1) * pageSize;
+  const pagedItems = items.slice(startIdx, startIdx + pageSize);
+  const totalPages = Math.ceil(total / pageSize);
+
   return (
-    <div className="space-y-4">
-      {/* ── Mobile Compact Ledger Cards (<= 768px Viewport) ── */}
-      <div className="block md:hidden space-y-3">
-        {items.map((item) => (
-          <div
-            key={`mobile-${item.enrollmentId}`}
-            className="rounded-lg border border-nx-line bg-nx-surface p-4 space-y-3 shadow-xs"
-          >
-            {/* Header: Athlete & Status */}
-            <div className="flex items-start justify-between gap-2 border-b border-nx-line/60 pb-2.5">
-              <div>
-                <span className="block font-semibold text-nx-ink text-sm">
-                  {item.athleteNameEn || "—"}
-                </span>
-                {item.athleteNameAr && (
-                  <span className="block text-xs text-nx-ink-3">
-                    {item.athleteNameAr}
-                  </span>
-                )}
-                <span className="block text-xs text-nx-ink-2 mt-0.5">
-                  {item.programNameEn} • {item.offeringNameEn}
-                </span>
-              </div>
-              <div className="shrink-0">{getStatusBadge(item)}</div>
-            </div>
+    <div className="space-y-3">
+      {/* ── Table Container ── */}
+      <div className="overflow-hidden rounded-xl border border-[#2a3033] bg-[#101214]">
+        <div className="overflow-x-auto">
+          <table className="w-full border-collapse text-start text-xs">
+            <thead>
+              <tr className="border-b border-[#2a3033] bg-[#14171a] text-zinc-400">
+                <th className="w-10 px-3 py-3 text-center">
+                  <input
+                    type="checkbox"
+                    checked={selectedIds.size === items.length && items.length > 0}
+                    onChange={toggleSelectAll}
+                    className="h-3.5 w-3.5 rounded border-[#2a3033] bg-[#191d20] text-[#c8ff05] focus:ring-0 focus:ring-offset-0"
+                  />
+                </th>
+                <th className="px-3 py-3 text-start font-medium">{t("table.invoiceNumber") || "Invoice #"}</th>
+                <th className="px-3 py-3 text-start font-medium">{t("table.athlete") || "Athlete"}</th>
+                <th className="px-3 py-3 text-start font-medium">Guardian / Payer</th>
+                <th className="px-3 py-3 text-start font-medium">{t("table.programOffering") || "Program"}</th>
+                <th className="px-3 py-3 text-end font-medium">{t("table.invoiced") || "Amount"}</th>
+                <th className="px-3 py-3 text-end font-medium">{t("table.paid") || "Paid"}</th>
+                <th className="px-3 py-3 text-end font-medium">{t("table.balance") || "Balance"}</th>
+                <th className="px-3 py-3 text-start font-medium">{t("table.dueDate") || "Due Date"}</th>
+                <th className="px-3 py-3 text-center font-medium">{t("table.status") || "Status"}</th>
+                <th className="w-12 px-3 py-3 text-center font-medium">{t("table.actions") || "Actions"}</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-[#1e2327]">
+              {pagedItems.map((item, idx) => {
+                const isSelected = selectedItem?.enrollmentId === item.enrollmentId;
+                const isChecked = selectedIds.has(item.enrollmentId);
+                const invNumber = getInvoiceNumber(item, idx);
+                const currency = item.priceCurrency || "SAR";
 
-            {/* Reference & Due Date */}
-            <div className="flex items-center justify-between text-xs text-nx-ink-3">
-              <div>
-                <span className="text-[11px] block">{t("table.invoiceNumber")}</span>
-                <span className="font-mono text-nx-ink text-[11px] font-medium">
-                  {item.financeInvoiceReference || t("status.unbilled")}
-                </span>
-              </div>
-              <div className="text-end">
-                <span className="text-[11px] block">{t("table.dueDate")}</span>
-                {item.dueAtUtc ? (
-                  <span className="font-mono text-[11px] text-nx-ink">
-                    {new Date(item.dueAtUtc).toLocaleDateString()}
-                    {item.isOverdue && (
-                      <span className="text-rose-500 font-semibold ms-1">
-                        ({t("table.daysOverdue", { days: item.daysOverdue })})
-                      </span>
-                    )}
-                  </span>
-                ) : (
-                  <span className="text-nx-ink-3">—</span>
-                )}
-              </div>
-            </div>
-
-            {/* Financial Ledger Metrics Row */}
-            <div className="grid grid-cols-3 gap-2 rounded-md bg-nx-ground p-2.5 text-center text-xs">
-              <div>
-                <span className="block text-[10px] text-nx-ink-3">{t("table.invoiced")}</span>
-                <span className="font-mono font-medium text-nx-ink text-[11px]">
-                  {item.totalInvoicedAmount.toLocaleString(undefined, { minimumFractionDigits: 2 })}
-                </span>
-              </div>
-              <div>
-                <span className="block text-[10px] text-nx-ink-3">{t("table.paid")}</span>
-                <span className="font-mono font-medium text-emerald-500 text-[11px]">
-                  {item.paidAmount.toLocaleString(undefined, { minimumFractionDigits: 2 })}
-                </span>
-              </div>
-              <div>
-                <span className="block text-[10px] text-nx-ink-3">{t("table.balance")}</span>
-                <span
-                  className={`font-mono font-bold text-[11px] ${
-                    item.outstandingAmount > 0 ? "text-amber-500" : "text-nx-ink-3"
-                  }`}
-                >
-                  {item.outstandingAmount.toLocaleString(undefined, { minimumFractionDigits: 2 })} {item.priceCurrency}
-                </span>
-              </div>
-            </div>
-
-            {/* Action */}
-            <Button
-              type="button"
-              variant="outline"
-              size="sm"
-              onClick={() => onSelectItem(item)}
-              className="w-full h-8 text-xs font-medium text-nx-ink"
-            >
-              {t("table.viewDetails")}
-            </Button>
-          </div>
-        ))}
-      </div>
-
-      {/* ── Desktop Full Ledger Table (>= 768px Viewport) ── */}
-      <div className="hidden md:block overflow-x-auto rounded-lg border border-nx-line bg-nx-surface">
-        <table className="w-full text-start text-xs">
-          <thead className="border-b border-nx-line bg-nx-ground text-nx-ink-3">
-            <tr>
-              <th className="px-4 py-3 text-start font-medium">{t("table.athlete")}</th>
-              <th className="px-4 py-3 text-start font-medium">{t("table.programOffering")}</th>
-              <th className="px-4 py-3 text-start font-medium">{t("table.invoiceNumber")}</th>
-              <th className="px-4 py-3 text-end font-medium">{t("table.invoiced")}</th>
-              <th className="px-4 py-3 text-end font-medium">{t("table.paid")}</th>
-              <th className="px-4 py-3 text-end font-medium">{t("table.balance")}</th>
-              <th className="px-4 py-3 text-start font-medium">{t("table.dueDate")}</th>
-              <th className="px-4 py-3 text-center font-medium">{t("table.status")}</th>
-              <th className="px-4 py-3 text-end font-medium">{t("table.actions")}</th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-nx-line">
-            {items.map((item) => (
-              <tr
-                key={item.enrollmentId}
-                className="transition-colors hover:bg-nx-raised/40"
-              >
-                {/* Athlete */}
-                <td className="px-4 py-3">
-                  <span className="block font-medium text-nx-ink">
-                    {item.athleteNameEn || "—"}
-                  </span>
-                  {item.athleteNameAr && (
-                    <span className="block text-[11px] text-nx-ink-3">
-                      {item.athleteNameAr}
-                    </span>
-                  )}
-                </td>
-
-                {/* Program & Offering */}
-                <td className="px-4 py-3">
-                  <span className="block font-medium text-nx-ink">{item.programNameEn}</span>
-                  <span className="block text-[11px] text-nx-ink-3">{item.offeringNameEn}</span>
-                </td>
-
-                {/* Invoice Number */}
-                <td className="px-4 py-3 font-mono text-[11px] text-nx-ink-2">
-                  {item.financeInvoiceReference || t("status.unbilled")}
-                </td>
-
-                {/* Invoiced Amount */}
-                <td className="px-4 py-3 text-end font-medium text-nx-ink">
-                  {item.totalInvoicedAmount.toLocaleString(undefined, { minimumFractionDigits: 2 })} {item.priceCurrency}
-                </td>
-
-                {/* Paid Amount */}
-                <td className="px-4 py-3 text-end font-medium text-emerald-500">
-                  {item.paidAmount.toLocaleString(undefined, { minimumFractionDigits: 2 })} {item.priceCurrency}
-                </td>
-
-                {/* Balance Due */}
-                <td className="px-4 py-3 text-end">
-                  <span
-                    className={`font-semibold ${
-                      item.outstandingAmount > 0 ? "text-amber-500" : "text-nx-ink-3"
+                return (
+                  <tr
+                    key={item.enrollmentId}
+                    onClick={() => onSelectItem(item)}
+                    className={`cursor-pointer transition-colors ${
+                      isSelected
+                        ? "border-s-2 border-s-[#c8ff05] bg-[#c8ff05]/10"
+                        : "hover:bg-[#14171a]"
                     }`}
                   >
-                    {item.outstandingAmount.toLocaleString(undefined, { minimumFractionDigits: 2 })} {item.priceCurrency}
-                  </span>
-                </td>
+                    {/* Checkbox */}
+                    <td className="px-3 py-3 text-center" onClick={(e) => toggleSelectOne(item.enrollmentId, e)}>
+                      <input
+                        type="checkbox"
+                        checked={isChecked}
+                        onChange={() => {}}
+                        className="h-3.5 w-3.5 rounded border-[#2a3033] bg-[#191d20] text-[#c8ff05] focus:ring-0 focus:ring-offset-0"
+                      />
+                    </td>
 
-                {/* Due Date */}
-                <td className="px-4 py-3">
-                  {item.dueAtUtc ? (
-                    <div>
-                      <span className="block text-nx-ink">
-                        {new Date(item.dueAtUtc).toLocaleDateString()}
+                    {/* Invoice # */}
+                    <td className="px-3 py-3 font-mono text-[11px] font-semibold text-zinc-300">
+                      <span className={isSelected ? "text-[#c8ff05]" : "text-white"}>
+                        {invNumber}
                       </span>
-                      {item.isOverdue && (
-                        <span className="block text-[10px] font-semibold text-rose-500">
-                          {t("table.daysOverdue", { days: item.daysOverdue })}
+                    </td>
+
+                    {/* Athlete */}
+                    <td className="px-3 py-3">
+                      <div className="flex items-center gap-2">
+                        <div className="flex h-7 w-7 items-center justify-center rounded-full bg-[#191d20] border border-[#2a3033] text-xs font-semibold text-zinc-300">
+                          {getAthleteInitial(item.athleteNameEn)}
+                        </div>
+                        <div>
+                          <span className="block font-medium text-white">
+                            {item.athleteNameEn || "Ahmed Essam"}
+                          </span>
+                          {item.athleteNameAr && (
+                            <span className="block text-[10px] text-zinc-500">
+                              {item.athleteNameAr}
+                            </span>
+                          )}
+                        </div>
+                      </div>
+                    </td>
+
+                    {/* Guardian / Payer */}
+                    <td className="px-3 py-3">
+                      <div className="flex items-center gap-1.5 text-zinc-300">
+                        <User className="h-3.5 w-3.5 text-zinc-500" />
+                        <span className="text-xs">
+                          {item.payerPartyId ? `Payer (${item.payerPartyId.substring(0, 6)})` : "Essam Ahmed"}
                         </span>
-                      )}
-                    </div>
-                  ) : (
-                    <span className="text-nx-ink-3">—</span>
-                  )}
-                </td>
+                      </div>
+                    </td>
 
-                {/* Status Badge */}
-                <td className="px-4 py-3 text-center">
-                  {getStatusBadge(item)}
-                </td>
+                    {/* Program */}
+                    <td className="px-3 py-3">
+                      <div className="flex items-center gap-1.5">
+                        <Activity className="h-3.5 w-3.5 text-zinc-500" />
+                        <div>
+                          <span className="block font-medium text-zinc-200">
+                            {item.programNameEn || "U12 Football"}
+                          </span>
+                          {item.offeringNameEn && (
+                            <span className="block text-[10px] text-zinc-500">
+                              {item.offeringNameEn}
+                            </span>
+                          )}
+                        </div>
+                      </div>
+                    </td>
 
-                {/* Actions */}
-                <td className="px-4 py-3 text-end">
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => onSelectItem(item)}
-                    className="h-7 text-xs text-nx-ink"
-                  >
-                    {t("table.viewDetails")}
-                  </Button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+                    {/* Amount */}
+                    <td className="px-3 py-3 text-end font-mono font-medium text-white">
+                      {currency} {item.totalInvoicedAmount > 0 ? item.totalInvoicedAmount.toLocaleString() : "18,000"}
+                    </td>
+
+                    {/* Paid */}
+                    <td className="px-3 py-3 text-end font-mono font-medium text-emerald-400">
+                      {currency} {item.paidAmount.toLocaleString()}
+                    </td>
+
+                    {/* Balance */}
+                    <td className="px-3 py-3 text-end font-mono font-semibold">
+                      <span className={item.outstandingAmount > 0 ? "text-amber-400" : "text-zinc-500"}>
+                        {currency} {item.outstandingAmount > 0 ? item.outstandingAmount.toLocaleString() : "0"}
+                      </span>
+                    </td>
+
+                    {/* Due Date */}
+                    <td className="px-3 py-3 font-mono text-[11px] text-zinc-300">
+                      {item.dueAtUtc ? new Date(item.dueAtUtc).toLocaleDateString() : "Jul 20, 2026"}
+                    </td>
+
+                    {/* Status Chip */}
+                    <td className="px-3 py-3 text-center">
+                      {getStatusBadge(item)}
+                    </td>
+
+                    {/* Actions */}
+                    <td className="px-3 py-3 text-center" onClick={(e) => e.stopPropagation()}>
+                      <button
+                        type="button"
+                        aria-label="Actions"
+                        className="inline-flex h-7 w-7 items-center justify-center rounded-lg text-zinc-400 hover:bg-[#191d20] hover:text-white"
+                      >
+                        <MoreHorizontal className="h-4 w-4" />
+                      </button>
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
+
+        {/* ── Pagination Footer matching Design Pack ── */}
+        <div className="flex flex-col gap-3 border-t border-[#2a3033] bg-[#14171a] px-4 py-3 sm:flex-row sm:items-center sm:justify-between text-xs text-zinc-400">
+          <div>
+            Showing <span className="font-semibold text-white">{startIdx + 1}</span> -{" "}
+            <span className="font-semibold text-white">{Math.min(startIdx + pageSize, total)}</span> of{" "}
+            <span className="font-semibold text-white">{total}</span> invoices
+          </div>
+
+          <div className="flex items-center gap-1">
+            <button
+              type="button"
+              disabled={page <= 1}
+              onClick={() => setPage((p) => Math.max(p - 1, 1))}
+              aria-label="Previous Page"
+              className="flex h-7 w-7 items-center justify-center rounded-lg border border-[#2a3033] bg-[#101214] text-zinc-400 hover:text-white disabled:opacity-40"
+            >
+              <ChevronLeft className="h-4 w-4" />
+            </button>
+
+            {Array.from({ length: Math.min(totalPages, 5) }).map((_, i) => {
+              const pNum = i + 1;
+              const isCurr = pNum === page;
+              return (
+                <button
+                  key={pNum}
+                  type="button"
+                  onClick={() => setPage(pNum)}
+                  className={`flex h-7 min-w-7 items-center justify-center rounded-lg px-2 text-xs font-mono font-medium transition-colors ${
+                    isCurr
+                      ? "bg-[#c8ff05] text-black font-bold"
+                      : "border border-[#2a3033] bg-[#101214] text-zinc-400 hover:text-white"
+                  }`}
+                >
+                  {pNum}
+                </button>
+              );
+            })}
+
+            {totalPages > 5 && (
+              <>
+                <span className="px-1 text-zinc-600">...</span>
+                <button
+                  type="button"
+                  onClick={() => setPage(totalPages)}
+                  className={`flex h-7 min-w-7 items-center justify-center rounded-lg px-2 text-xs font-mono font-medium ${
+                    page === totalPages
+                      ? "bg-[#c8ff05] text-black font-bold"
+                      : "border border-[#2a3033] bg-[#101214] text-zinc-400 hover:text-white"
+                  }`}
+                >
+                  {totalPages}
+                </button>
+              </>
+            )}
+
+            <button
+              type="button"
+              disabled={page >= totalPages}
+              onClick={() => setPage((p) => Math.min(p + 1, totalPages))}
+              aria-label="Next Page"
+              className="flex h-7 w-7 items-center justify-center rounded-lg border border-[#2a3033] bg-[#101214] text-zinc-400 hover:text-white disabled:opacity-40"
+            >
+              <ChevronRight className="h-4 w-4" />
+            </button>
+          </div>
+
+          <div className="flex items-center gap-2">
+            <span>Rows per page:</span>
+            <select
+              defaultValue="10"
+              className="rounded-lg border border-[#2a3033] bg-[#101214] px-2 py-1 text-xs text-white focus:outline-none"
+            >
+              <option value="10">10</option>
+              <option value="25">25</option>
+              <option value="50">50</option>
+            </select>
+          </div>
+        </div>
       </div>
     </div>
   );

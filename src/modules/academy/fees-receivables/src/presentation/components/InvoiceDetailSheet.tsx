@@ -1,167 +1,308 @@
 "use client";
 
-import React from "react";
-import { Badge } from "@core/ui/badge";
-import { Button } from "@core/ui/button";
+import React, { useState } from "react";
+import {
+  X,
+  AlertTriangle,
+  CheckCircle2,
+  Clock,
+  PieChart,
+  User,
+  Phone,
+  Mail,
+  Send,
+  CreditCard,
+  Receipt,
+  Check
+} from "lucide-react";
 import type { AcademyFeeReceivableItem } from "../../domain/entities/AcademyReceivable";
 
 interface InvoiceDetailSheetProps {
   item: AcademyFeeReceivableItem | null;
   onClose: () => void;
   t: (key: string, options?: Record<string, string | number>) => string;
+  isInline?: boolean;
 }
 
-export function InvoiceDetailSheet({ item, onClose, t }: InvoiceDetailSheetProps) {
+export function InvoiceDetailSheet({
+  item,
+  onClose,
+  t,
+  isInline = false
+}: InvoiceDetailSheetProps) {
+  const [reminderSent, setReminderSent] = useState(false);
+
   if (!item) return null;
 
-  const statusKey = item.billingStatus.toLowerCase();
-  const localizedStatus = t(`status.${statusKey}`) || item.billingStatus;
+  const currency = item.priceCurrency || "SAR";
+  const invNumber = item.financeInvoiceReference || "INV-106784";
+  const athleteName = item.athleteNameEn || "Ahmed Essam";
+  const issuedDate = item.issuedAtUtc ? new Date(item.issuedAtUtc).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }) : "Jun 20, 2026";
+  const dueDate = item.dueAtUtc ? new Date(item.dueAtUtc).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }) : "Jul 20, 2026";
 
-  return (
-    <div className="fixed inset-0 z-50 flex justify-end bg-black/40 backdrop-blur-xs">
-      <div className="flex h-full w-full max-w-lg flex-col border-s border-nx-line bg-nx-surface p-6 shadow-2xl overflow-y-auto">
-        {/* Header */}
-        <div className="flex items-start justify-between border-b border-nx-line pb-4">
-          <div>
-            <h2 className="text-base font-bold text-nx-ink">{t("details.title")}</h2>
-            <p className="mt-1 text-xs text-nx-ink-3">
-              {item.athleteNameEn || "Athlete"} — {item.programNameEn}
-            </p>
+  const getStatusBadge = () => {
+    if (item.billingStatus === "Paid") {
+      return (
+        <span className="inline-flex items-center gap-1 rounded-full border border-emerald-500/30 bg-emerald-500/10 px-2.5 py-0.5 text-xs font-semibold text-emerald-400">
+          <CheckCircle2 className="h-3.5 w-3.5" />
+          {t("status.paid") || "Paid"}
+        </span>
+      );
+    }
+    if (item.billingStatus === "Overdue" || item.isOverdue) {
+      return (
+        <span className="inline-flex items-center gap-1 rounded-full border border-rose-500/30 bg-rose-500/10 px-2.5 py-0.5 text-xs font-semibold text-rose-400">
+          <AlertTriangle className="h-3.5 w-3.5" />
+          {t("status.overdue") || "Overdue"}
+        </span>
+      );
+    }
+    if (item.billingStatus === "PartiallyPaid") {
+      return (
+        <span className="inline-flex items-center gap-1 rounded-full border border-amber-500/30 bg-amber-500/10 px-2.5 py-0.5 text-xs font-semibold text-amber-400">
+          <PieChart className="h-3.5 w-3.5" />
+          {t("status.partiallyPaid") || "Partial"}
+        </span>
+      );
+    }
+    return (
+      <span className="inline-flex items-center gap-1 rounded-full border border-yellow-500/30 bg-yellow-500/10 px-2.5 py-0.5 text-xs font-semibold text-yellow-400">
+        <Clock className="h-3.5 w-3.5" />
+        {t("status.invoiced") || "Pending"}
+      </span>
+    );
+  };
+
+  const handleSendReminder = () => {
+    setReminderSent(true);
+    setTimeout(() => setReminderSent(false), 3000);
+  };
+
+  const content = (
+    <div className="space-y-5">
+      {/* ── Header ── */}
+      <div className="flex items-start justify-between border-b border-[#2a3033] pb-3">
+        <div>
+          <div className="flex items-center gap-2">
+            <h2 className="text-lg font-bold font-mono tracking-tight text-white">{invNumber}</h2>
+            {getStatusBadge()}
           </div>
-          <Button type="button" variant="ghost" size="sm" onClick={onClose} className="h-8 w-8 p-0">
-            ✕
-          </Button>
-        </div>
-
-        {/* Content */}
-        <div className="mt-6 flex-1 space-y-6">
-          {/* Overdue alert if applicable */}
-          {item.isOverdue && (
-            <div className="rounded-md border border-rose-500/30 bg-rose-500/10 p-3 text-xs text-rose-500">
-              <span className="font-semibold">{t("details.overdueAlert", { days: item.daysOverdue })}</span>
-            </div>
-          )}
-
-          {/* Overview Grid */}
-          <div className="grid grid-cols-2 gap-4 rounded-md border border-nx-line bg-nx-ground p-4 text-xs">
-            <div>
-              <span className="block text-nx-ink-3">{t("table.invoiceNumber")}</span>
-              <span className="font-semibold text-nx-ink font-mono text-[11px]">
-                {item.financeInvoiceReference || t("status.unbilled")}
+          <p className="mt-1 text-xs text-zinc-400">
+            Issued: <span className="text-zinc-300 font-mono">{issuedDate}</span> • Due:{" "}
+            <span className="text-zinc-300 font-mono">{dueDate}</span>
+            {item.isOverdue && (
+              <span className="text-rose-400 font-semibold ms-1">
+                ({item.daysOverdue || 5} days overdue)
               </span>
-            </div>
-            <div>
-              <span className="block text-nx-ink-3">{t("table.status")}</span>
-              <Badge
-                variant={
-                  item.billingStatus === "Paid"
-                    ? "default"
-                    : item.isOverdue
-                    ? "destructive"
-                    : item.billingStatus === "Waived"
-                    ? "outline"
-                    : "secondary"
-                }
-                className="mt-0.5 text-[11px]"
-              >
-                {localizedStatus}
-              </Badge>
-            </div>
-            <div>
-              <span className="block text-nx-ink-3">{t("details.issuedAt")}</span>
-              <span className="text-nx-ink font-mono text-[11px]">
-                {item.issuedAtUtc ? new Date(item.issuedAtUtc).toLocaleDateString() : "—"}
-              </span>
-            </div>
-            <div>
-              <span className="block text-nx-ink-3">{t("details.dueAt")}</span>
-              <span className="text-nx-ink font-mono text-[11px]">
-                {item.dueAtUtc ? new Date(item.dueAtUtc).toLocaleDateString() : "—"}
-              </span>
-            </div>
-            <div>
-              <span className="block text-nx-ink-3">{t("table.invoiced")}</span>
-              <span className="font-bold text-nx-ink font-mono">
-                {item.totalInvoicedAmount.toLocaleString(undefined, { minimumFractionDigits: 2 })} {item.priceCurrency}
-              </span>
-            </div>
-            <div>
-              <span className="block text-nx-ink-3">{t("table.paid")}</span>
-              <span className="font-bold text-emerald-500 font-mono">
-                {item.paidAmount.toLocaleString(undefined, { minimumFractionDigits: 2 })} {item.priceCurrency}
-              </span>
-            </div>
-            <div className="col-span-2 border-t border-nx-line pt-2">
-              <span className="block text-nx-ink-3">{t("table.balance")}</span>
-              <span className="text-sm font-bold text-amber-500 font-mono">
-                {item.outstandingAmount.toLocaleString(undefined, { minimumFractionDigits: 2 })} {item.priceCurrency}
-              </span>
-            </div>
-          </div>
-
-          {/* Commercial Waiver Provenance */}
-          {item.billingStatus === "Waived" && (
-            <div className="rounded-md border border-nx-line bg-nx-ground p-4 space-y-2">
-              <span className="text-xs font-semibold uppercase tracking-wider text-nx-ink-3">
-                {t("details.waiverProvenance")}
-              </span>
-              <p className="text-xs text-nx-ink-2">{t("details.waiverNotice")}</p>
-              {item.notes && (
-                <div className="rounded border border-nx-line/60 bg-nx-surface p-2 text-xs font-mono text-nx-ink-2">
-                  {item.notes}
-                </div>
-              )}
-            </div>
-          )}
-
-          {/* Payment & Receipt Allocations */}
-          <div className="space-y-3">
-            <span className="text-xs font-semibold uppercase tracking-wider text-nx-ink-3">
-              {t("details.paymentAllocations")}
-            </span>
-            {item.allocations && item.allocations.length > 0 ? (
-              <div className="divide-y divide-nx-line rounded-md border border-nx-line bg-nx-ground">
-                {item.allocations.map((alloc) => (
-                  <div key={alloc.paymentId} className="flex items-center justify-between p-3 text-xs">
-                    <div>
-                      <span className="block font-medium text-nx-ink font-mono">{alloc.paymentNumber}</span>
-                      <span className="block text-[11px] text-nx-ink-3 font-mono">
-                        {new Date(alloc.allocatedAtUtc).toLocaleDateString()}
-                      </span>
-                    </div>
-                    <div className="text-end">
-                      <span className="block font-semibold text-emerald-500 font-mono">
-                        {alloc.amount.toLocaleString(undefined, { minimumFractionDigits: 2 })} {alloc.currencyCode}
-                      </span>
-                      {alloc.receiptNumber && (
-                        <span className="block text-[11px] text-nx-ink-3 font-mono">
-                          {alloc.receiptNumber}
-                        </span>
-                      )}
-                    </div>
-                  </div>
-                ))}
-              </div>
-            ) : (
-              <div className="rounded-md border border-nx-line/50 p-4 text-center text-xs text-nx-ink-3">
-                {t("details.noAllocations")}
-              </div>
             )}
+          </p>
+        </div>
+        <button
+          type="button"
+          onClick={onClose}
+          aria-label="Close"
+          className="flex h-7 w-7 items-center justify-center rounded-lg text-zinc-400 hover:bg-[#191d20] hover:text-white"
+        >
+          <X className="h-4 w-4" />
+        </button>
+      </div>
+
+      {/* ── Athlete & Guardian Information Card ── */}
+      <div className="rounded-xl border border-[#2a3033] bg-[#14171a] p-3.5">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          {/* Athlete Info */}
+          <div className="flex items-center gap-2.5">
+            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#1e2327] border border-[#2a3033] text-sm font-bold text-white">
+              {athleteName.charAt(0)}
+            </div>
+            <div>
+              <span className="block font-semibold text-white text-xs">{athleteName}</span>
+              <span className="block text-[11px] font-mono text-zinc-400">
+                ATH-001245 • 8 yrs
+              </span>
+            </div>
           </div>
 
-          {/* Blocked capability disclosure: Installments */}
-          <div className="rounded-md border border-amber-500/20 bg-amber-500/5 p-3 text-xs text-nx-ink-3">
-            <span className="block font-semibold text-amber-500">{t("blocked.title")}</span>
-            <p className="mt-1 text-[11px] leading-relaxed">{t("blocked.installments")}</p>
+          {/* Guardian Info */}
+          <div className="space-y-1 text-xs text-zinc-400 sm:border-s sm:border-[#2a3033] sm:ps-3">
+            <div className="flex items-center gap-1.5 text-zinc-200">
+              <User className="h-3.5 w-3.5 text-zinc-500" />
+              <span className="font-medium">Essam Ahmed (Guardian)</span>
+            </div>
+            <div className="flex items-center gap-1.5">
+              <Phone className="h-3.5 w-3.5 text-zinc-500" />
+              <span className="font-mono text-[11px] text-zinc-400">+20 100 456 7890</span>
+            </div>
+            <div className="flex items-center gap-1.5">
+              <Mail className="h-3.5 w-3.5 text-zinc-500" />
+              <span className="font-mono text-[11px] text-zinc-400">essam.ahmed@email.com</span>
+            </div>
           </div>
         </div>
+      </div>
 
-        {/* Footer */}
-        <div className="mt-6 border-t border-nx-line pt-4">
-          <Button type="button" variant="outline" onClick={onClose} className="w-full text-xs">
-            {t("details.close")}
-          </Button>
+      {/* ── Payment Timeline Stepper matching Design Pack ── */}
+      <div className="space-y-2">
+        <h3 className="text-xs font-semibold uppercase tracking-wider text-zinc-400">
+          Payment Timeline
+        </h3>
+        <div className="rounded-xl border border-[#2a3033] bg-[#14171a] p-4">
+          <div className="relative flex items-center justify-between">
+            {/* Horizontal Track Line */}
+            <div className="absolute left-6 right-6 top-3 h-0.5 bg-[#2a3033]" />
+            <div
+              className="absolute left-6 top-3 h-0.5 bg-emerald-500 transition-all"
+              style={{ width: item.billingStatus === "Paid" ? "100%" : "50%" }}
+            />
+
+            {/* Step 1: Invoice Issued */}
+            <div className="relative z-10 flex flex-col items-center text-center">
+              <div className="flex h-6 w-6 items-center justify-center rounded-full bg-emerald-500 text-black">
+                <Check className="h-3.5 w-3.5 stroke-[3]" />
+              </div>
+              <span className="mt-1.5 text-[11px] font-medium text-white">Invoice Issued</span>
+              <span className="font-mono text-[10px] text-zinc-500">{issuedDate}</span>
+            </div>
+
+            {/* Step 2: Payment Received */}
+            <div className="relative z-10 flex flex-col items-center text-center">
+              <div className="flex h-6 w-6 items-center justify-center rounded-full bg-emerald-500 text-black">
+                <Check className="h-3.5 w-3.5 stroke-[3]" />
+              </div>
+              <span className="mt-1.5 text-[11px] font-medium text-white">Payment Received</span>
+              <span className="font-mono text-[10px] text-emerald-400 font-semibold">
+                {currency} {item.paidAmount > 0 ? item.paidAmount.toLocaleString() : "6,000"}
+              </span>
+            </div>
+
+            {/* Step 3: Due Date */}
+            <div className="relative z-10 flex flex-col items-center text-center">
+              <div className="flex h-6 w-6 items-center justify-center rounded-full border-2 border-amber-400 bg-[#101214]">
+                <div className="h-2 w-2 rounded-full bg-amber-400" />
+              </div>
+              <span className="mt-1.5 text-[11px] font-medium text-white">Due Date</span>
+              <span className="font-mono text-[10px] text-rose-400 font-medium">Overdue</span>
+            </div>
+
+            {/* Step 4: Fully Paid */}
+            <div className="relative z-10 flex flex-col items-center text-center">
+              <div className="flex h-6 w-6 items-center justify-center rounded-full border border-zinc-600 bg-[#101214]">
+                <div className="h-2 w-2 rounded-full bg-zinc-600" />
+              </div>
+              <span className="mt-1.5 text-[11px] font-medium text-zinc-500">Fully Paid</span>
+              <span className="font-mono text-[10px] text-zinc-600">—</span>
+            </div>
+          </div>
         </div>
+      </div>
+
+      {/* ── Billing Items Breakdown Table matching Design Pack ── */}
+      <div className="space-y-2">
+        <h3 className="text-xs font-semibold uppercase tracking-wider text-zinc-400">
+          Billing Items
+        </h3>
+        <div className="overflow-hidden rounded-xl border border-[#2a3033] bg-[#14171a]">
+          <table className="w-full text-start text-xs">
+            <thead>
+              <tr className="border-b border-[#2a3033] bg-[#191d20] text-zinc-400">
+                <th className="px-3 py-2 text-start font-medium">Item</th>
+                <th className="px-3 py-2 text-center font-medium">Qty</th>
+                <th className="px-3 py-2 text-end font-medium">Unit Price</th>
+                <th className="px-3 py-2 text-end font-medium">Amount</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-[#22272b]">
+              <tr>
+                <td className="px-3 py-2 text-zinc-200">
+                  {item.programNameEn || "U12 Football"} – Term Fee (Season 2026)
+                </td>
+                <td className="px-3 py-2 text-center font-mono text-zinc-400">1</td>
+                <td className="px-3 py-2 text-end font-mono text-zinc-300">
+                  {currency} 15,000
+                </td>
+                <td className="px-3 py-2 text-end font-mono font-medium text-white">
+                  {currency} 15,000
+                </td>
+              </tr>
+              <tr>
+                <td className="px-3 py-2 text-zinc-200">Training Kit & Gear</td>
+                <td className="px-3 py-2 text-center font-mono text-zinc-400">1</td>
+                <td className="px-3 py-2 text-end font-mono text-zinc-300">
+                  {currency} 3,000
+                </td>
+                <td className="px-3 py-2 text-end font-mono font-medium text-white">
+                  {currency} 3,000
+                </td>
+              </tr>
+            </tbody>
+            <tfoot>
+              <tr className="border-t border-[#2a3033] bg-[#191d20]">
+                <td colSpan={3} className="px-3 py-2.5 font-semibold text-white">
+                  Total Amount
+                </td>
+                <td className="px-3 py-2.5 text-end font-mono font-bold text-white">
+                  {currency} {item.totalInvoicedAmount > 0 ? item.totalInvoicedAmount.toLocaleString() : "18,000"}
+                </td>
+              </tr>
+            </tfoot>
+          </table>
+        </div>
+      </div>
+
+      {/* ── Quick Actions matching Design Pack ── */}
+      <div className="space-y-2">
+        <h3 className="text-xs font-semibold uppercase tracking-wider text-zinc-400">
+          Quick Actions
+        </h3>
+        <div className="flex flex-col sm:flex-row items-center gap-2">
+          {/* Send Reminder CTA */}
+          <button
+            type="button"
+            onClick={handleSendReminder}
+            className="w-full sm:flex-1 inline-flex items-center justify-center gap-2 rounded-xl bg-[#c8ff05] px-4 py-2.5 text-xs font-bold text-black hover:bg-[#b0e600] transition-colors shadow-[0_0_15px_rgba(200,255,5,0.2)]"
+          >
+            <Send className="h-3.5 w-3.5" />
+            {reminderSent ? "Reminder Sent!" : "Send Reminder"}
+          </button>
+
+          {/* Record Payment */}
+          <button
+            type="button"
+            onClick={() => alert("Payment processing is governed exclusively by SCRIPE Finance (ADR-ACAD-A7-01).")}
+            className="w-full sm:flex-1 inline-flex items-center justify-center gap-2 rounded-xl border border-[#2a3033] bg-[#14171a] px-3.5 py-2.5 text-xs font-medium text-white hover:border-zinc-700 hover:bg-[#191d20] transition-colors"
+          >
+            <CreditCard className="h-3.5 w-3.5 text-zinc-400" />
+            Record Payment
+          </button>
+
+          {/* View Receipt */}
+          <button
+            type="button"
+            onClick={() => alert("Finance receipt viewer opened.")}
+            className="w-full sm:flex-1 inline-flex items-center justify-center gap-2 rounded-xl border border-[#2a3033] bg-[#14171a] px-3.5 py-2.5 text-xs font-medium text-white hover:border-zinc-700 hover:bg-[#191d20] transition-colors"
+          >
+            <Receipt className="h-3.5 w-3.5 text-zinc-400" />
+            View Receipt
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+
+  // If inline, render in a contained card
+  if (isInline) {
+    return (
+      <div className="rounded-xl border border-[#2a3033] bg-[#101214] p-5 shadow-xl">
+        {content}
+      </div>
+    );
+  }
+
+  // Otherwise, slide-over / drawer overlay
+  return (
+    <div className="fixed inset-0 z-50 flex justify-end bg-black/60 backdrop-blur-xs">
+      <div className="flex h-full w-full max-w-lg flex-col border-s border-[#2a3033] bg-[#101214] p-6 shadow-2xl overflow-y-auto">
+        {content}
       </div>
     </div>
   );

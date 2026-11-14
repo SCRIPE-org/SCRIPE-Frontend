@@ -1,4 +1,4 @@
-import { render, screen } from "@testing-library/react";
+import { render, screen, fireEvent } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { ACADEMY_PERMISSIONS } from "@modules/academy/shared";
 import { en } from "../../../locales/academy-overview.en";
@@ -97,15 +97,20 @@ describe("AcademyOverviewView", () => {
     render(<AcademyOverviewView />);
 
     expect(screen.getByText("Academy Operations Command Center")).toBeInTheDocument();
+
+    // Open visible Multi-Sport Operations menu
+    const menuButton = screen.getByRole("button", { name: /Multi-Sport Operations/i });
+    fireEvent.click(menuButton);
+
     expect(screen.getByText("Programs & Offerings")).toBeInTheDocument();
     expect(screen.getByText("Athletes & Families")).toBeInTheDocument();
     expect(screen.getByText("Trials & Evaluations")).toBeInTheDocument();
 
     // Verify workflows are wrapped in clickable Next.js links with correct hrefs
-    const programLink = screen.getByRole("link", { name: /Programs & Offerings/i });
+    const programLink = screen.getByRole("menuitem", { name: /Programs & Offerings/i });
     expect(programLink).toHaveAttribute("href", "/academy/programs");
 
-    const athleteLink = screen.getByRole("link", { name: /Athletes & Families/i });
+    const athleteLink = screen.getByRole("menuitem", { name: /Athletes & Families/i });
     expect(athleteLink).toHaveAttribute("href", "/academy/athletes");
   });
 
@@ -138,6 +143,10 @@ describe("AcademyOverviewView", () => {
     });
 
     render(<AcademyOverviewView />);
+
+    // Open visible Multi-Sport Operations menu
+    const menuButton = screen.getByRole("button", { name: /Multi-Sport Operations/i });
+    fireEvent.click(menuButton);
 
     // Groups and Trials should be visible
     expect(screen.getByText("Training Groups & Rosters")).toBeInTheDocument();

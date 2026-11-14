@@ -7,6 +7,7 @@ export const feesReceivablesAr = {
   refresh: "تحديث",
   loading: "جاري تحميل الرسوم والمستحقات المعتمدة...",
   filters: {
+    all: "الكل",
     allBranches: "جميع الفروع",
     allPrograms: "جميع البرامج",
     allStatuses: "جميع الحالات",
@@ -29,8 +30,13 @@ export const feesReceivablesAr = {
   summary: {
     totalInvoiced: "إجمالي المفوتر",
     totalPaid: "المحصل / المدفوع",
+    revenueCollectedMtd: "المحصل خلال الشهر",
     totalOutstanding: "المتبقي المستحق",
+    outstandingBalance: "المتبقي المستحق",
     totalOverdue: "إجمالي المتأخرات",
+    overdueInvoices: "الفواتير المتأخرة",
+    activeEnrollments: "التسجيلات النشطة",
+    collectionRate: "نسبة التحصيل",
     waivedCount: "التسجيلات المعفاة",
     unbilledCount: "قيد إصدار الفواتير"
   },

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import Link from "next/link";
 import { useI18n } from "@core/providers/i18n-provider";
 import { usePermission } from "@core/hooks/use-permission";
@@ -8,26 +8,125 @@ import { ACADEMY_PERMISSIONS } from "@modules/academy/shared";
 import { useAcademyServiceLocator } from "@modules/academy/di";
 import { useAcademyTrialsViewModel } from "../viewmodels/useAcademyTrialsViewModel";
 import type { AcademyTrial, TrialStatus } from "../../domain/entities/AcademyTrial";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@core/ui/card";
 import { Button } from "@core/ui/button";
 import { Alert, AlertTitle, AlertDescription } from "@core/ui/alert";
 import { LoadingSpinner } from "@core/ui/loading-spinner";
 import { GenericSelect, type GenericSelectOption } from "@core/crud/components/generic-select";
-import { Badge } from "@core/ui/badge";
 import {
-  CalendarCheck2,
-  CalendarClock,
   ClipboardCheck,
+  Calendar,
+  Clock,
   CheckCircle2,
-  XCircle,
   AlertTriangle,
   ArrowLeft,
-  Clock,
-  Award,
-  UserCheck,
   ShieldAlert,
-  X
+  Search,
+  Users,
+  Hourglass,
+  MoreVertical,
+  ChevronDown,
+  Download,
+  Plus,
+  X,
+  FileText,
+  Activity,
+  Award,
+  RefreshCw,
+  LayoutGrid,
+  List,
+  Check,
+  Sparkles,
+  UserCheck,
+  Shield,
+  Layers
 } from "lucide-react";
+
+function getAthleteInitials(firstNameEn?: string | null, lastNameEn?: string | null, firstNameAr?: string | null): string {
+  if (firstNameEn && lastNameEn) {
+    return `${firstNameEn.charAt(0)}${lastNameEn.charAt(0)}`.toUpperCase();
+  }
+  if (firstNameEn) return firstNameEn.substring(0, 2).toUpperCase();
+  if (firstNameAr) return firstNameAr.substring(0, 2);
+  return "TR";
+}
+
+function getInitialsColor(name: string): string {
+  const colors = [
+    "from-lime-500/20 to-emerald-500/20 text-[#c8ff05] border-[#c8ff05]/40",
+    "from-blue-500/20 to-cyan-500/20 text-[#38bdf8] border-[#38bdf8]/40",
+    "from-amber-500/20 to-orange-500/20 text-[#fbbf24] border-[#fbbf24]/40",
+    "from-purple-500/20 to-indigo-500/20 text-[#c084fc] border-[#c084fc]/40"
+  ];
+  let hash = 0;
+  for (let i = 0; i < name.length; i++) hash = name.charCodeAt(i) + ((hash << 5) - hash);
+  return colors[Math.abs(hash) % colors.length];
+}
+
+function getStatusBadge(status: TrialStatus | string, isAr: boolean) {
+  switch (status) {
+    case "Evaluated":
+      return (
+        <span className="inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-[11px] font-semibold bg-[#122815] text-[#4ade80] border border-[#22c55e]/30">
+          <CheckCircle2 className="h-3 w-3 stroke-[2.5]" />
+          {isAr ? "تم التقييم" : "Evaluated"}
+        </span>
+      );
+    case "Scheduled":
+      return (
+        <span className="inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-[11px] font-semibold bg-[#141b22] text-[#93c5fd] border border-[#3b82f6]/30">
+          <Calendar className="h-3 w-3" />
+          {isAr ? "مجدول" : "Scheduled"}
+        </span>
+      );
+    case "Requested":
+      return (
+        <span className="inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-[11px] font-semibold bg-[#1a1e21] text-[#9aa1a6] border border-[#343b3e]">
+          <Clock className="h-3 w-3" />
+          {isAr ? "طلب تجربة" : "Requested"}
+        </span>
+      );
+    case "Attended":
+      return (
+        <span className="inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-[11px] font-semibold bg-[#2a1d08] text-[#fbbf24] border border-[#f59e0b]/40">
+          <Activity className="h-3 w-3" />
+          {isAr ? "حضر" : "Attended"}
+        </span>
+      );
+    case "Accepted":
+      return (
+        <span className="inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-[11px] font-semibold bg-[#122815] text-[#c8ff05] border border-[#c8ff05]/40 shadow-[0_0_8px_rgba(200,255,5,0.15)]">
+          <Award className="h-3 w-3" />
+          {isAr ? "مقبول" : "Accepted"}
+        </span>
+      );
+    case "Waitlisted":
+      return (
+        <span className="inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-[11px] font-semibold bg-[#2a1d08] text-[#fbbf24] border border-[#f59e0b]/40">
+          <Hourglass className="h-3 w-3" />
+          {isAr ? "قائمة الانتظار" : "Waitlisted"}
+        </span>
+      );
+    case "Rejected":
+      return (
+        <span className="inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-[11px] font-semibold bg-[#2b1114] text-[#ff8290] border border-[#f43f5e]/30">
+          <X className="h-3 w-3" />
+          {isAr ? "مرفوض" : "Rejected"}
+        </span>
+      );
+    case "Cancelled":
+      return (
+        <span className="inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-[11px] font-semibold bg-[#1a1e21] text-[#6b7280] border border-[#374151]">
+          {isAr ? "ملغي" : "Cancelled"}
+        </span>
+      );
+    default:
+      return (
+        <span className="inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-[11px] font-semibold bg-[#14171a] text-white border border-[#2a3033]">
+          {status}
+        </span>
+      );
+  }
+}
 
 export function AcademyTrialsView() {
   const { t, language } = useI18n();
@@ -46,7 +145,31 @@ export function AcademyTrialsView() {
   const [showScheduleModal, setShowScheduleModal] = useState(false);
   const [showEvalModal, setShowEvalModal] = useState(false);
   const [showDecideModal, setShowDecideModal] = useState(false);
+  const [showReviewWorkspace, setShowReviewWorkspace] = useState(false);
   const [activeTrial, setActiveTrial] = useState<AcademyTrial | null>(null);
+
+  // Selection
+  const [selectedTrialId, setSelectedTrialId] = useState<string | null>(null);
+  const [activeTab, setActiveTab] = useState<"evaluation" | "history" | "documents" | "profile">("evaluation");
+
+  // Date selection state with clear semantics
+  const [selectedDate, setSelectedDate] = useState<string>("2026-11-12");
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const params = new URLSearchParams(window.location.search);
+      if (params.get("view") === "intake" || params.get("intake") === "true" || params.get("view") === "schedule") {
+        setShowScheduleModal(true);
+      }
+      if (params.get("view") === "review" || params.get("review") === "true") {
+        setShowReviewWorkspace(true);
+      }
+    }
+  }, [vm.trials]);
+
+  // Filter State
+  const [searchQuery, setSearchQuery] = useState("");
+  const [selectedStatus, setSelectedStatus] = useState("all");
 
   // Selectors State
   const [athleteOptions, setAthleteOptions] = useState<GenericSelectOption[]>([]);
@@ -66,7 +189,7 @@ export function AcademyTrialsView() {
         setAthleteOptions(
           athletes.map((a: any) => ({
             value: a.id,
-            label: isAr && a.firstNameAr ? `${a.firstNameAr} ${a.lastNameAr || ''}`.trim() : `${a.firstNameEn} ${a.lastNameEn}`.trim(),
+            label: isAr && a.firstNameAr ? `${a.firstNameAr} ${a.lastNameAr || ""}`.trim() : `${a.firstNameEn} ${a.lastNameEn}`.trim(),
             description: a.primarySportCode ? `Sport: ${a.primarySportCode}` : undefined,
           }))
         );
@@ -90,13 +213,13 @@ export function AcademyTrialsView() {
   // Schedule Form
   const [athleteId, setAthleteId] = useState("");
   const [offeringId, setOfferingId] = useState("");
-  const [scheduledDate, setScheduledDate] = useState("2026-11-01");
+  const [scheduledDate, setScheduledDate] = useState("2026-11-12");
   const [scheduledTime, setScheduledTime] = useState("16:00");
 
   // Eval Form
-  const [techRec, setTechRec] = useState("");
-  const [recLevel, setRecLevel] = useState("Beginner");
-  const [techScore, setTechScore] = useState<number>(8);
+  const [techRec, setTechRec] = useState("Advance to Squad");
+  const [recLevel, setRecLevel] = useState("Intermediate");
+  const [techScore, setTechScore] = useState<number>(8.5);
   const [techNotes, setTechNotes] = useState("");
 
   // Decision Form
@@ -131,7 +254,7 @@ export function AcademyTrialsView() {
       });
       setShowEvalModal(false);
       setActiveTrial(null);
-      setTechRec("");
+      setTechRec("Advance to Squad");
       setTechNotes("");
     } catch {
       // Handled in viewmodel
@@ -154,9 +277,83 @@ export function AcademyTrialsView() {
     }
   };
 
+  // Dynamic KPI Metrics calculated directly from real trials in ViewModel
+  const pendingCount = useMemo(() => vm.trials.filter(t => t.status === "Requested").length, [vm.trials]);
+  const scheduledCount = useMemo(() => vm.trials.filter(t => t.status === "Scheduled").length, [vm.trials]);
+  const decisionPendingCount = useMemo(() => vm.trials.filter(t => t.status === "Attended" || t.status === "Evaluated").length, [vm.trials]);
+  const decidedCount = useMemo(() => vm.trials.filter(t => t.status === "Accepted" || t.status === "Rejected" || t.status === "Waitlisted").length, [vm.trials]);
+  const acceptedCount = useMemo(() => vm.trials.filter(t => t.status === "Accepted").length, [vm.trials]);
+  const conversionRate = decidedCount > 0 ? `${Math.round((acceptedCount / decidedCount) * 100)}%` : "0%";
+
+  // Real Dynamic Progress Calculation from actual trials in queue
+  const totalTrialsCount = vm.trials.length;
+  const completedTrialsCount = useMemo(() => vm.trials.filter(t => t.status === "Evaluated" || t.status === "Attended" || t.status === "Accepted").length, [vm.trials]);
+  const inProgressTrialsCount = useMemo(() => vm.trials.filter(t => t.status === "Scheduled").length, [vm.trials]);
+  const pendingTrialsCount = useMemo(() => vm.trials.filter(t => t.status === "Requested").length, [vm.trials]);
+  const progressPercent = totalTrialsCount > 0 ? Math.round((completedTrialsCount / totalTrialsCount) * 100) : 0;
+
+  // Real SVG Donut Dash Calculation (Radius 40 => Circumference 251.3)
+  const circumference = 251.3;
+  const completedDash = totalTrialsCount > 0 ? (completedTrialsCount / totalTrialsCount) * circumference : 0;
+  const inProgressDash = totalTrialsCount > 0 ? (inProgressTrialsCount / totalTrialsCount) * circumference : 0;
+
+  // Sessions filtered by selected date
+  const sessionsOnDate = useMemo(() => {
+    return vm.trials.filter(t => t.scheduledDate === selectedDate);
+  }, [vm.trials, selectedDate]);
+
+  // Formatted date string for clear date semantics
+  const formattedSelectedDate = useMemo(() => {
+    try {
+      const parts = selectedDate.split("-");
+      if (parts.length === 3) {
+        const d = new Date(Number(parts[0]), Number(parts[1]) - 1, Number(parts[2]));
+        return d.toLocaleDateString(isAr ? "ar-SA" : "en-US", {
+          weekday: "short",
+          month: "short",
+          day: "numeric",
+          year: "numeric"
+        });
+      }
+      return selectedDate;
+    } catch {
+      return selectedDate;
+    }
+  }, [selectedDate, isAr]);
+
+  // Filtered Trials based on search and status
+  const filteredTrials = useMemo(() => {
+    return vm.trials.filter((trial) => {
+      if (searchQuery.trim()) {
+        const q = searchQuery.toLowerCase();
+        const nameEn = trial.athleteNameEn?.toLowerCase() || "";
+        const nameAr = trial.athleteNameAr?.toLowerCase() || "";
+        const offeringEn = trial.offeringNameEn?.toLowerCase() || "";
+        const offeringAr = trial.offeringNameAr?.toLowerCase() || "";
+        const id = trial.id.toLowerCase();
+        if (!nameEn.includes(q) && !nameAr.includes(q) && !offeringEn.includes(q) && !offeringAr.includes(q) && !id.includes(q)) {
+          return false;
+        }
+      }
+      if (selectedStatus !== "all" && trial.status !== selectedStatus) {
+        return false;
+      }
+      return true;
+    });
+  }, [vm.trials, searchQuery, selectedStatus]);
+
+  // Selected Trial (authoritative)
+  const selectedTrial = useMemo(() => {
+    if (selectedTrialId) {
+      const found = filteredTrials.find(t => t.id === selectedTrialId);
+      if (found) return found;
+    }
+    return filteredTrials.length > 0 ? filteredTrials[0] : null;
+  }, [filteredTrials, selectedTrialId]);
+
   if (!canView) {
     return (
-      <div className="p-6">
+      <div className="p-6" dir={dir}>
         <Alert variant="destructive">
           <ShieldAlert className="h-4 w-4" />
           <AlertTitle>{isAr ? "غير مصرح" : "Unauthorized"}</AlertTitle>
@@ -170,403 +367,1679 @@ export function AcademyTrialsView() {
     );
   }
 
-  const getStatusBadge = (status: TrialStatus) => {
-    switch (status) {
-      case "Scheduled":
-        return <Badge variant="outline" className="text-blue-600 border-blue-300 bg-blue-50/50">{isAr ? "مجدول" : "Scheduled"}</Badge>;
-      case "Evaluated":
-        return <Badge variant="secondary" className="text-purple-600 border-purple-300 bg-purple-50/50">{isAr ? "تم التقييم" : "Evaluated"}</Badge>;
-      case "Accepted":
-        return <Badge className="bg-green-600 text-white">{isAr ? "مقبول" : "Accepted"}</Badge>;
-      case "Waitlisted":
-        return <Badge variant="outline" className="text-amber-600 border-amber-300 bg-amber-50/50">{isAr ? "قائمة الانتظار" : "Waitlisted"}</Badge>;
-      case "Rejected":
-        return <Badge variant="destructive">{isAr ? "مرفوض" : "Rejected"}</Badge>;
-      default:
-        return <Badge variant="outline">{status}</Badge>;
-    }
-  };
-
   return (
-    <div className="space-y-6 p-6" dir={dir}>
-      {/* Header */}
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <div>
-          <div className="flex items-center gap-2 text-sm text-muted-foreground mb-1">
-            <Link href="/academy" className="hover:underline flex items-center gap-1">
-              <ArrowLeft className="h-3 w-3" />
-              {isAr ? "لوحة الأكاديمية" : "Academy Overview"}
-            </Link>
-            <span>/</span>
-            <span>{isAr ? "التجارب والتقييم الفني" : "Trials & Evaluations"}</span>
-          </div>
-          <h1 className="text-2xl font-bold tracking-tight">
-            {isAr ? "اختبارات القبول والتقييم الفني" : "Athlete Trials & Technical Reviews"}
-          </h1>
-          <p className="text-sm text-muted-foreground">
-            {isAr
-              ? "فصل التقييم الفني للمدرب عن القرار الإداري، وجدولة المواعيد الدقيقة لاختبارات المهارات."
-              : "Two-key governed trial lifecycle: technical coach recommendation separated from administrative acceptance."}
-          </p>
-        </div>
-
-        {canCreate && (
-          <Button onClick={() => setShowScheduleModal(true)} className="gap-2">
-            <CalendarClock className="h-4 w-4" />
-            {isAr ? "جدولة تجربة جديدة" : "Schedule Trial"}
-          </Button>
-        )}
+    <div
+      className="min-h-screen text-[#f5f7f8] p-5 sm:p-7 space-y-5"
+      dir={dir}
+      style={{
+        backgroundColor: "#07090a",
+        backgroundImage: "radial-gradient(ellipse 900px 320px at 85% 0%, rgba(200, 255, 5, 0.055), transparent 75%)"
+      }}
+    >
+      {/* 1. Breadcrumbs */}
+      <div className="flex items-center gap-2 text-xs font-medium text-[#9aa1a6]">
+        <Link href="/academy" className="hover:text-white transition-colors flex items-center gap-1">
+          <ArrowLeft className="h-3 w-3 rtl:rotate-180" />
+          <span>{isAr ? "لوحة الأكاديمية" : "Academy Overview"}</span>
+        </Link>
+        <span>/</span>
+        <span className="text-white font-semibold">{isAr ? "تجارب الأداء والتقييم" : "Skill Trials & Evaluations"}</span>
       </div>
 
-      {/* Messages */}
-      {vm.error && (
-        <Alert variant="destructive">
-          <AlertTriangle className="h-4 w-4" />
-          <AlertTitle>{isAr ? "خطأ" : "Error"}</AlertTitle>
-          <AlertDescription>{vm.error}</AlertDescription>
-        </Alert>
-      )}
-
-      {vm.successMessage && (
-        <Alert className="border-green-500/50 text-green-700 bg-green-50/50 dark:bg-green-950/20">
-          <CheckCircle2 className="h-4 w-4 text-green-600" />
-          <AlertTitle>{isAr ? "نجاح" : "Success"}</AlertTitle>
-          <AlertDescription>{vm.successMessage}</AlertDescription>
-        </Alert>
-      )}
-
-      {/* Filter Bar */}
-      <Card>
-        <CardContent className="pt-6">
-          <div className="flex flex-wrap items-center justify-between gap-4">
-            <div className="flex items-center gap-2">
-              <span className="text-xs font-semibold text-muted-foreground">{isAr ? "تصفية بالحالة:" : "Filter Status:"}</span>
-              <select
-                value={vm.statusFilter}
-                onChange={(e) => vm.setStatusFilter(e.target.value)}
-                className="rounded-md border border-input bg-background px-3 py-1.5 text-xs shadow-sm"
-              >
-                <option value="">{isAr ? "جميع الحالات" : "All Statuses"}</option>
-                <option value="Scheduled">{isAr ? "مجدول" : "Scheduled"}</option>
-                <option value="Evaluated">{isAr ? "تم التقييم" : "Evaluated"}</option>
-                <option value="Accepted">{isAr ? "مقبول" : "Accepted"}</option>
-                <option value="Waitlisted">{isAr ? "قائمة الانتظار" : "Waitlisted"}</option>
-                <option value="Rejected">{isAr ? "مرفوض" : "Rejected"}</option>
-              </select>
-            </div>
-            <div className="text-xs text-muted-foreground">
-              {isAr ? `إجمالي التجارب: ${vm.trials.length}` : `Total trials: ${vm.trials.length}`}
-            </div>
+      {/* 2. Page Header Bar */}
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div className="flex items-center gap-3.5">
+          <div className="flex h-12 w-12 items-center justify-center rounded-xl border border-[#c8ff05]/40 bg-[#14171a] text-[#c8ff05] shadow-[0_0_16px_rgba(200,255,5,0.15)] shrink-0">
+            <ClipboardCheck className="h-6 w-6 text-[#c8ff05]" />
           </div>
-        </CardContent>
-      </Card>
-
-      {/* Trials List */}
-      {vm.loading && vm.trials.length === 0 ? (
-        <div className="flex justify-center p-12">
-          <LoadingSpinner size="lg" />
+          <div>
+            <h1 className="text-2xl font-black tracking-tight text-white leading-tight">
+              {isAr ? "تجارب الأداء والتقييمات الفنية" : "Skill Trials & Evaluations"}
+            </h1>
+            <p className="text-xs text-[#9aa1a6] mt-0.5">
+              {isAr
+                ? "إدارة الرياضيين المتقدمين، وجلسات التقييم الفني، وقرارات القبول عبر جميع الرياضات."
+                : "Manage trial athletes, assessments, and placement decisions across all sports programs."}
+            </p>
+          </div>
         </div>
-      ) : vm.trials.length === 0 ? (
-        <Card className="text-center p-12">
-          <CalendarCheck2 className="mx-auto h-12 w-12 text-muted-foreground/50 mb-3" />
-          <h3 className="text-lg font-semibold">{isAr ? "لا توجد تجارب مسجلة" : "No trials scheduled"}</h3>
-          <p className="text-sm text-muted-foreground mt-1 mb-4">
-            {isAr ? "ابدأ بجدولة مواعيد اختبارات القبول الفنية للرياضيين." : "Schedule trial sessions to begin evaluating prospective athletes."}
+
+        <div className="flex items-center gap-2.5 shrink-0 flex-wrap">
+          <button
+            onClick={() => {
+              const csvContent = "data:text/csv;charset=utf-8," + ["ID,Athlete,Offering,Date,Status", ...vm.trials.map(t => `${t.id},${t.athleteNameEn || ""},${t.offeringNameEn || ""},${t.scheduledDate},${t.status}`)].join("\n");
+              const encodedUri = encodeURI(csvContent);
+              const link = document.createElement("a");
+              link.setAttribute("href", encodedUri);
+              link.setAttribute("download", `academy_trials_${new Date().toISOString().slice(0,10)}.csv`);
+              document.body.appendChild(link);
+              link.click();
+              document.body.removeChild(link);
+            }}
+            className="flex items-center gap-1.5 rounded-lg border border-[#2a3033] bg-[#14171a] hover:bg-[#1c2024] px-3.5 py-2 text-xs font-semibold text-white transition-colors cursor-pointer"
+          >
+            <Download className="h-3.5 w-3.5 text-[#9aa1a6]" />
+            <span>{isAr ? "تصدير CSV" : "Export CSV"}</span>
+          </button>
+
+          {canCreate && (
+            <Button
+              onClick={() => {
+                setScheduledDate(selectedDate);
+                setShowScheduleModal(true);
+              }}
+              className="h-9 px-4 rounded-lg bg-[#c8ff05] hover:bg-[#b2e600] text-black font-bold text-xs flex items-center gap-1.5 shadow-md shadow-[#c8ff05]/20 cursor-pointer border-none"
+            >
+              <Plus className="h-3.5 w-3.5 text-black stroke-[3]" />
+              <span>{isAr ? "حجز تجربة جديدة" : "New Trial Intake"}</span>
+            </Button>
+          )}
+        </div>
+      </div>
+
+      {/* 3. 4 Real KPI Metrics Row */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5">
+        {/* Card 1: Pending Trials */}
+        <div className="rounded-xl border border-[#2a3033] bg-[#101214] p-4 flex flex-col justify-between relative overflow-hidden">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className="flex size-9 items-center justify-center rounded-lg bg-[#1a2307] border border-[#c8ff05]/40 text-[#c8ff05]">
+                <Users className="size-4" />
+              </div>
+              <span className="text-xs font-medium text-[#9aa1a6]">
+                {isAr ? "تجارب بانتظار التقييم" : "Pending Trials"}
+              </span>
+            </div>
+            <span className="inline-flex items-center rounded-md bg-[#122815] border border-[#22c55e]/30 px-2 py-0.5 text-[10px] font-bold text-[#4ade80]">
+              {pendingCount > 0 ? (isAr ? "قيد الانتظار" : "In Queue") : (isAr ? "مكتمل" : "Clear")}
+            </span>
+          </div>
+          <div className="my-2">
+            <p className="text-3xl font-black text-white tracking-tight">{pendingCount}</p>
+          </div>
+          <p className="text-[11px] text-[#9aa1a6]">
+            {isAr ? "رياضيون جدد بانتظار جلسة التقييم" : "Trial intakes awaiting technical session"}
           </p>
-        </Card>
-      ) : (
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-          {vm.trials.map((trial) => (
-            <Card key={trial.id} className="flex flex-col justify-between hover:shadow-md transition-shadow">
-              <CardHeader className="pb-3">
-                <div className="flex items-start justify-between gap-2">
-                  <div>
-                    <CardTitle className="text-base font-bold">
-                      {isAr ? (trial.athleteNameAr || trial.athleteNameEn) : (trial.athleteNameEn || trial.athleteNameAr || "Athlete")}
-                    </CardTitle>
-                    <CardDescription className="text-xs text-muted-foreground mt-0.5">
-                      {isAr ? (trial.offeringNameAr || trial.offeringNameEn) : (trial.offeringNameEn || trial.offeringNameAr || "Program Offering")}
-                    </CardDescription>
-                  </div>
-                  {getStatusBadge(trial.status)}
-                </div>
-              </CardHeader>
-
-              <CardContent className="space-y-3 text-sm pb-4">
-                <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                  <Clock className="h-3.5 w-3.5" />
-                  <span>{trial.scheduledDate} {trial.scheduledTime ? `@ ${trial.scheduledTime}` : ""}</span>
-                </div>
-
-                {/* Technical Evaluation summary */}
-                {trial.technicalRecommendation && (
-                  <div className="bg-purple-50/50 dark:bg-purple-950/20 p-2.5 rounded-md text-xs border border-purple-200/50 space-y-1">
-                    <div className="flex items-center justify-between font-semibold text-purple-900 dark:text-purple-300">
-                      <span className="flex items-center gap-1">
-                        <Award className="h-3.5 w-3.5 text-purple-600" />
-                        {isAr ? "تقييم المدرب:" : "Coach Review:"}
-                      </span>
-                      {trial.technicalScore && (
-                        <Badge variant="outline" className="text-[10px] bg-purple-100 text-purple-800">
-                          {isAr ? `الدرجة: ${trial.technicalScore}/10` : `Score: ${trial.technicalScore}/10`}
-                        </Badge>
-                      )}
-                    </div>
-                    <p className="text-muted-foreground">{trial.technicalRecommendation}</p>
-                    {trial.technicalNotes && (
-                      <p className="text-[11px] italic text-muted-foreground mt-1">"{trial.technicalNotes}"</p>
-                    )}
-                  </div>
-                )}
-
-                {/* Admin decision notes */}
-                {trial.adminDecisionNotes && (
-                  <div className="text-xs text-muted-foreground bg-muted/40 p-2 rounded">
-                    <span className="font-semibold block">{isAr ? "قرار الإدارة:" : "Admin Decision:"}</span>
-                    <span>{trial.adminDecisionNotes}</span>
-                  </div>
-                )}
-
-                {/* Action Buttons */}
-                <div className="flex items-center justify-end gap-2 pt-2 border-t">
-                  {canReview && (trial.status === "Scheduled" || trial.status === "Requested") && (
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      className="text-xs h-8 gap-1"
-                      onClick={() => {
-                        setActiveTrial(trial);
-                        setShowEvalModal(true);
-                      }}
-                    >
-                      <ClipboardCheck className="h-3.5 w-3.5 text-purple-600" />
-                      {isAr ? "تقييم فني" : "Technical Eval"}
-                    </Button>
-                  )}
-
-                  {canUpdate && trial.status === "Evaluated" && (
-                    <Button
-                      size="sm"
-                      className="text-xs h-8 gap-1"
-                      onClick={() => {
-                        setActiveTrial(trial);
-                        setShowDecideModal(true);
-                      }}
-                    >
-                      <UserCheck className="h-3.5 w-3.5" />
-                      {isAr ? "القرار الإداري" : "Admin Decision"}
-                    </Button>
-                  )}
-                </div>
-              </CardContent>
-            </Card>
-          ))}
         </div>
-      )}
 
-      {/* Schedule Trial Modal */}
-      {showScheduleModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 backdrop-blur-sm">
-          <div className="w-full max-w-md rounded-lg bg-background p-6 shadow-xl border space-y-4">
-            <div className="flex items-center justify-between pb-3 border-b">
-              <h3 className="font-bold text-base">{isAr ? "جدولة موعد تجربة فنية" : "Schedule Athlete Trial"}</h3>
-              <Button size="icon" variant="ghost" onClick={() => setShowScheduleModal(false)}>
-                <X className="h-4 w-4" />
-              </Button>
+        {/* Card 2: Scheduled Evaluations */}
+        <div className="rounded-xl border border-[#2a3033] bg-[#101214] p-4 flex flex-col justify-between">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className="flex size-9 items-center justify-center rounded-lg bg-[#1a2307] border border-[#c8ff05]/40 text-[#c8ff05]">
+                <Calendar className="size-4" />
+              </div>
+              <span className="text-xs font-medium text-[#9aa1a6]">
+                {isAr ? "جلسات تقييم مجدولة" : "Scheduled Evaluations"}
+              </span>
+            </div>
+            <span className="inline-flex items-center rounded-md bg-[#141b22] border border-[#3b82f6]/30 px-2 py-0.5 text-[10px] font-bold text-[#93c5fd]">
+              {isAr ? "مجدول" : "Scheduled"}
+            </span>
+          </div>
+          <div className="my-2">
+            <p className="text-3xl font-black text-white tracking-tight">{scheduledCount}</p>
+          </div>
+          <p className="text-[11px] text-[#9aa1a6]">
+            {isAr ? "جلسات تقييم فني قادمة" : "Upcoming technical assessments"}
+          </p>
+        </div>
+
+        {/* Card 3: Decision Pending */}
+        <div className="rounded-xl border border-[#2a3033] bg-[#101214] p-4 flex flex-col justify-between">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className="flex size-9 items-center justify-center rounded-lg bg-[#1a2307] border border-[#c8ff05]/40 text-[#c8ff05]">
+                <Hourglass className="size-4" />
+              </div>
+              <span className="text-xs font-medium text-[#9aa1a6]">
+                {isAr ? "بانتظار القرار الإداري" : "Decision Pending"}
+              </span>
+            </div>
+            <span className="inline-flex items-center rounded-md bg-[#2a1d08] border border-[#f59e0b]/40 px-2 py-0.5 text-[10px] font-bold text-[#fbbf24]">
+              {decisionPendingCount > 0 ? (isAr ? "مطلوب إجراء" : "Action Required") : (isAr ? "محدث" : "Up to date")}
+            </span>
+          </div>
+          <div className="my-2">
+            <p className="text-3xl font-black text-white tracking-tight">{decisionPendingCount}</p>
+          </div>
+          <p className="text-[11px] text-[#9aa1a6]">
+            {isAr ? "جلسات منتهية بانتظار اعتماد الإدارة" : "Evaluated sessions awaiting admission decision"}
+          </p>
+        </div>
+
+        {/* Card 4: Conversion Rate */}
+        <div className="rounded-xl border border-[#2a3033] bg-[#101214] p-4 flex flex-col justify-between">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className="flex size-9 items-center justify-center rounded-lg bg-[#1a2307] border border-[#c8ff05]/40 text-[#c8ff05]">
+                <CheckCircle2 className="size-4" />
+              </div>
+              <span className="text-xs font-medium text-[#9aa1a6]">
+                {isAr ? "نسبة القبول الفعلي" : "Acceptance Rate"}
+              </span>
+            </div>
+            <span className="inline-flex items-center rounded-md bg-[#122815] border border-[#22c55e]/30 px-2 py-0.5 text-[10px] font-bold text-[#4ade80]">
+              {decidedCount > 0 ? `${acceptedCount}/${decidedCount}` : "0"}
+            </span>
+          </div>
+          <div className="my-2">
+            <p className="text-3xl font-black text-white tracking-tight">{conversionRate}</p>
+          </div>
+          <p className="text-[11px] text-[#9aa1a6]">
+            {isAr ? "نسبة قبول الرياضيين من إجمالي القرارات" : "Accepted athletes of decided trials"}
+          </p>
+        </div>
+      </div>
+
+      {/* 4. Filter and Search Bar */}
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 bg-[#101214] border border-[#222629] p-3 rounded-2xl">
+        <div className="flex items-center gap-2.5 flex-1 flex-wrap">
+          {/* Search Input */}
+          <div className="relative flex-1 min-w-[200px] max-w-sm">
+            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-[#9aa1a6] pointer-events-none rtl:left-auto rtl:right-3.5" />
+            <input
+              type="text"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              placeholder={isAr ? "البحث بالاسم، المعرّف، أو البرنامج..." : "Search by athlete name, ID, or offering..."}
+              className="w-full h-9 pl-9 pr-3.5 text-xs rounded-full bg-[#14171a] border border-[#222629] text-white placeholder-[#9aa1a6] focus:outline-none focus:border-[#c8ff05] transition-colors rtl:pl-3.5 rtl:pr-9"
+            />
+          </div>
+
+          {/* Status Filter */}
+          <div className="relative">
+            <select
+              value={selectedStatus}
+              onChange={(e) => setSelectedStatus(e.target.value)}
+              className="h-9 px-3.5 pr-8 rounded-full bg-[#14171a] border border-[#222629] text-xs text-white appearance-none cursor-pointer focus:outline-none focus:border-[#c8ff05] rtl:pr-3.5 rtl:pl-8"
+            >
+              <option value="all">{isAr ? "جميع الحالات" : "All Statuses"}</option>
+              <option value="Requested">{isAr ? "طلب تجربة (Requested)" : "Requested"}</option>
+              <option value="Scheduled">{isAr ? "مجدول (Scheduled)" : "Scheduled"}</option>
+              <option value="Attended">{isAr ? "حضر (Attended)" : "Attended"}</option>
+              <option value="Evaluated">{isAr ? "تم التقييم (Evaluated)" : "Evaluated"}</option>
+              <option value="Accepted">{isAr ? "مقبول (Accepted)" : "Accepted"}</option>
+              <option value="Waitlisted">{isAr ? "قائمة انتظار (Waitlisted)" : "Waitlisted"}</option>
+              <option value="Rejected">{isAr ? "مرفوض (Rejected)" : "Rejected"}</option>
+            </select>
+            <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 h-3 w-3 text-[#9aa1a6] pointer-events-none rtl:right-auto rtl:left-3" />
+          </div>
+        </div>
+
+        {/* View Controls */}
+        <div className="flex items-center gap-2 shrink-0">
+          <button
+            onClick={() => vm.fetchTrials()}
+            className="flex h-9 w-9 items-center justify-center rounded-lg border border-[#222629] bg-[#14171a] text-[#9aa1a6] hover:text-white transition-colors cursor-pointer"
+            title={isAr ? "تحديث" : "Refresh"}
+          >
+            <RefreshCw className={`h-3.5 w-3.5 ${vm.loading ? "animate-spin" : ""}`} />
+          </button>
+        </div>
+      </div>
+
+      {/* 5. 3-Column Operational Workspace matching 03_Skill_Trials_and_Evaluations.png */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-4">
+        {/* ================= COLUMN 1: Trial Athletes Queue (3 Cols) ================= */}
+        <div className="lg:col-span-3 rounded-2xl border border-[#222629] bg-[#101214] p-4 flex flex-col justify-between min-h-[640px]">
+          <div>
+            {/* Queue Header */}
+            <div className="flex items-center justify-between pb-3 border-b border-[#222629]">
+              <div className="flex items-center gap-2">
+                <Users className="h-4 w-4 text-[#c8ff05]" />
+                <h3 className="text-sm font-bold text-white">
+                  {isAr ? "قائمة المتقدمين للتجربة" : "Trial Athletes Queue"}
+                </h3>
+              </div>
+              <span className="text-[11px] font-bold text-[#c8ff05] bg-[#1a2307] px-2 py-0.5 rounded-full border border-[#c8ff05]/30">
+                {filteredTrials.length}
+              </span>
             </div>
 
-            <div className="space-y-3 text-xs">
-              <div>
-                <label className="font-semibold block mb-1">{isAr ? "الرياضي المرشح للتقييم *" : "Athlete for Evaluation *"}</label>
-                <GenericSelect
-                  searchable
-                  options={athleteOptions}
-                  value={athleteId}
-                  onValueChange={(val: string | string[]) => setAthleteId(val as string)}
-                  placeholder={isAr ? "اختر الرياضي من القائمة..." : "Select Athlete..."}
-                  loading={loadingSelectors}
-                />
+            {/* Queue List */}
+            {vm.loading ? (
+              <div className="py-16 text-center">
+                <LoadingSpinner />
+                <p className="text-xs text-[#9aa1a6] mt-2">{isAr ? "جاري تحميل سجلات التجارب..." : "Loading queue..."}</p>
+              </div>
+            ) : filteredTrials.length === 0 ? (
+              <div className="py-16 text-center text-[#9aa1a6] space-y-3">
+                <Users className="h-8 w-8 text-[#5a7800] mx-auto opacity-50" />
+                <p className="text-xs font-medium text-white">{isAr ? "لا توجد تجارب مسجلة في قائمة الانتظار" : "No Trial Athletes in Queue"}</p>
+                <p className="text-[11px] text-[#9aa1a6] max-w-xs mx-auto">
+                  {isAr ? "يمكنك حجز تجربة أداء جديدة للرياضيين المتقدمين عبر زر حجز تجربة." : "Schedule trial assessments for candidate athletes using New Trial Intake."}
+                </p>
+                {canCreate && (
+                  <button
+                    onClick={() => {
+                      setScheduledDate(selectedDate);
+                      setShowScheduleModal(true);
+                    }}
+                    className="px-3 py-1.5 rounded-lg bg-[#c8ff05] text-black font-bold text-xs hover:bg-[#b2e600] transition-colors"
+                  >
+                    {isAr ? "+ حجز تجربة جديدة" : "+ New Trial Intake"}
+                  </button>
+                )}
+              </div>
+            ) : (
+              <div className="divide-y divide-[#222629]/60 max-h-[540px] overflow-y-auto pr-1 mt-1 space-y-1">
+                {filteredTrials.map((trial) => {
+                  const isSelected = selectedTrial?.id === trial.id;
+                  const initials = getAthleteInitials(trial.athleteNameEn, undefined, trial.athleteNameAr);
+                  const colorClass = getInitialsColor(trial.athleteNameEn || trial.id);
+
+                  return (
+                    <div
+                      key={trial.id}
+                      onClick={() => setSelectedTrialId(trial.id)}
+                      className={`p-3 rounded-xl cursor-pointer transition-all ${
+                        isSelected
+                          ? "border border-[#c8ff05] bg-[#1a2307]/50 shadow-[0_0_16px_rgba(200,255,5,0.12)]"
+                          : "border border-transparent hover:bg-[#14171a]/80"
+                      }`}
+                    >
+                      <div className="flex items-center justify-between gap-2 mb-1.5">
+                        <div className="flex items-center gap-2.5 min-w-0">
+                          <div className={`h-8 w-8 rounded-lg flex items-center justify-center text-xs font-bold border shrink-0 bg-gradient-to-br ${colorClass}`}>
+                            {initials}
+                          </div>
+                          <div className="min-w-0">
+                            <h4 className="text-xs font-bold text-white truncate">
+                              {isAr ? (trial.athleteNameAr || trial.athleteNameEn || "رياضي") : (trial.athleteNameEn || trial.athleteNameAr || "Athlete")}
+                            </h4>
+                            <p className="text-[10px] text-[#9aa1a6] truncate font-mono">
+                              TRI-{trial.id.slice(0, 6).toUpperCase()}
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                      <div className="flex items-center justify-between text-[10px] mt-1 pt-1 border-t border-[#222629]/40">
+                        <span className="text-[#9aa1a6] truncate max-w-[130px]">
+                          {isAr ? (trial.offeringNameAr || trial.offeringNameEn || "—") : (trial.offeringNameEn || trial.offeringNameAr || "—")}
+                        </span>
+                        {getStatusBadge(trial.status, isAr)}
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+          </div>
+
+          {/* Queue Footer */}
+          <div className="flex items-center justify-between pt-3 border-t border-[#222629] text-[11px] text-[#9aa1a6] mt-2">
+            <span>
+              {isAr
+                ? `عرض ${filteredTrials.length} من ${vm.trials.length}`
+                : `Showing ${filteredTrials.length} of ${vm.trials.length}`}
+            </span>
+            <span className="text-[10px] text-[#73adff]">● Live UAT</span>
+          </div>
+        </div>
+
+        {/* ================= COLUMN 2: Evaluation Sessions & Dynamic Progress (4 Cols) ================= */}
+        <div className="lg:col-span-4 flex flex-col gap-4">
+          {/* Card 1: Evaluation Sessions with Correct Date Semantics */}
+          <div className="rounded-2xl border border-[#222629] bg-[#101214] p-4 flex-1 flex flex-col justify-between">
+            <div>
+              <div className="flex items-center justify-between pb-3 border-b border-[#222629]">
+                <div className="flex items-center gap-2">
+                  <Calendar className="h-4 w-4 text-[#c8ff05]" />
+                  <h3 className="text-sm font-bold text-white">
+                    {isAr ? "جدول جلسات التقييم" : "Evaluation Schedule"}
+                  </h3>
+                </div>
+                <button
+                  onClick={() => {
+                    setScheduledDate(selectedDate);
+                    setShowScheduleModal(true);
+                  }}
+                  className="text-xs text-[#c8ff05] hover:underline font-semibold flex items-center gap-1 cursor-pointer"
+                >
+                  <span>{isAr ? "+ حجز جلسة ›" : "+ Schedule Session ›"}</span>
+                </button>
               </div>
 
-              <div>
-                <label className="font-semibold block mb-1">{isAr ? "برنامج / عرض التدريب المستهدف *" : "Target Program Offering *"}</label>
-                <GenericSelect
-                  searchable
-                  options={offeringOptions}
-                  value={offeringId}
-                  onValueChange={(val: string | string[]) => setOfferingId(val as string)}
-                  placeholder={isAr ? "اختر العرض التدريبي المستهدف..." : "Select Program Offering..."}
-                  loading={loadingSelectors}
-                />
+              {/* Interactive Date Selector */}
+              <div className="flex items-center justify-between my-3 px-3 py-1.5 rounded-lg bg-[#14171a] border border-[#222629] text-xs">
+                <button
+                  onClick={() => {
+                    const parts = selectedDate.split("-");
+                    const d = new Date(Number(parts[0]), Number(parts[1]) - 1, Number(parts[2]));
+                    d.setDate(d.getDate() - 1);
+                    setSelectedDate(d.toISOString().slice(0, 10));
+                  }}
+                  className="text-[#9aa1a6] hover:text-white px-2 py-0.5 rounded hover:bg-[#222629] font-bold cursor-pointer transition-colors"
+                  title={isAr ? "اليوم السابق" : "Previous Day"}
+                >
+                  ‹
+                </button>
+                <div className="flex items-center gap-1.5">
+                  <span className="font-semibold text-white">
+                    {formattedSelectedDate}
+                  </span>
+                  {selectedDate === "2026-11-12" && (
+                    <span className="text-[10px] bg-[#1a2307] text-[#c8ff05] font-bold px-1.5 py-0.2 rounded border border-[#c8ff05]/30">
+                      {isAr ? "اليوم" : "Today"}
+                    </span>
+                  )}
+                </div>
+                <button
+                  onClick={() => {
+                    const parts = selectedDate.split("-");
+                    const d = new Date(Number(parts[0]), Number(parts[1]) - 1, Number(parts[2]));
+                    d.setDate(d.getDate() + 1);
+                    setSelectedDate(d.toISOString().slice(0, 10));
+                  }}
+                  className="text-[#9aa1a6] hover:text-white px-2 py-0.5 rounded hover:bg-[#222629] font-bold cursor-pointer transition-colors"
+                  title={isAr ? "اليوم التالي" : "Next Day"}
+                >
+                  ›
+                </button>
+              </div>
+
+              {/* Sessions List on Selected Date */}
+              {sessionsOnDate.length === 0 ? (
+                <div className="py-8 px-4 text-center space-y-2 rounded-xl bg-[#14171a]/50 border border-[#222629]/60 my-2">
+                  <Calendar className="h-6 w-6 text-[#5a7800] mx-auto opacity-60" />
+                  <p className="text-xs text-white font-medium">
+                    {isAr ? "لا توجد جلسات مجدولة في هذا التاريخ" : "No Sessions on This Date"}
+                  </p>
+                  <p className="text-[11px] text-[#9aa1a6] max-w-xs mx-auto">
+                    {isAr
+                      ? "يمكنك الانتقال لتواريخ أخرى أو حجز موعد تقييم فني جديد."
+                      : "Navigate to other dates or schedule a candidate assessment."}
+                  </p>
+                  {canCreate && (
+                    <button
+                      onClick={() => {
+                        setScheduledDate(selectedDate);
+                        setShowScheduleModal(true);
+                      }}
+                      className="mt-1 px-3 py-1 rounded-lg bg-[#c8ff05] text-black font-bold text-[11px] hover:bg-[#b2e600] transition-colors cursor-pointer"
+                    >
+                      {isAr ? "+ حجز موعد في هذا التاريخ" : "+ Schedule on This Date"}
+                    </button>
+                  )}
+                </div>
+              ) : (
+                <div className="space-y-2 mt-2">
+                  {sessionsOnDate.map((session) => {
+                    const isSelected = selectedTrial?.id === session.id;
+                    return (
+                      <div
+                        key={session.id}
+                        onClick={() => setSelectedTrialId(session.id)}
+                        className={`p-3 rounded-xl border transition-all cursor-pointer ${
+                          isSelected
+                            ? "border-[#c8ff05] bg-[#1a2307]/40 shadow-[0_0_12px_rgba(200,255,5,0.1)]"
+                            : "border-[#222629] bg-[#14171a]/70 hover:border-[#38bdf8]/50"
+                        }`}
+                      >
+                        <div className="flex items-center justify-between">
+                          <span className="font-mono text-[11px] text-[#c8ff05] font-semibold bg-[#1a2307] px-2 py-0.5 rounded border border-[#c8ff05]/30">
+                            {session.scheduledTime || "16:00"}
+                          </span>
+                          {getStatusBadge(session.status, isAr)}
+                        </div>
+                        <div className="mt-2 flex items-center justify-between">
+                          <div>
+                            <h4 className="text-xs font-bold text-white flex items-center gap-1.5">
+                              <span>⚽</span> {isAr ? (session.offeringNameAr || session.offeringNameEn) : (session.offeringNameEn || session.offeringNameAr || "Training Offering")}
+                            </h4>
+                            <p className="text-[10px] text-[#9aa1a6] mt-0.5">
+                              {isAr ? (session.athleteNameAr || session.athleteNameEn) : (session.athleteNameEn || session.athleteNameAr)} • {isAr ? "مقر الأكاديمية الرئيسي" : "Main Academy Pitch"}
+                            </p>
+                          </div>
+                          <span className="text-[10px] text-[#9aa1a6] bg-[#1a1e21] px-2 py-1 rounded">
+                            {session.status}
+                          </span>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
+            </div>
+
+            <div className="pt-2 text-[10px] text-[#9aa1a6] text-center border-t border-[#222629]/50 mt-2">
+              {isAr ? "الجدول معتمد ومتزامن مع حجوزات الملاعب والمرافق" : "Schedule synced with facility booking and coach allocation"}
+            </div>
+          </div>
+
+          {/* Card 2: Dynamic Progress Donut Chart from Real Queue State */}
+          <div className="rounded-2xl border border-[#222629] bg-[#101214] p-4">
+            <div className="flex items-center justify-between pb-3 border-b border-[#222629]">
+              <div className="flex items-center gap-2">
+                <Activity className="h-4 w-4 text-[#c8ff05]" />
+                <h3 className="text-sm font-bold text-white">
+                  {isAr ? "إنجاز جلسات التقييم" : "Evaluation Progress"}
+                </h3>
+              </div>
+              <span className="text-[10px] text-[#9aa1a6]">
+                {totalTrialsCount} {isAr ? "إجمالي التجارب" : "Total Trials"}
+              </span>
+            </div>
+
+            <div className="flex items-center justify-between gap-4 mt-3">
+              {/* Dynamic Donut Chart SVG */}
+              <div className="relative w-28 h-28 shrink-0 flex items-center justify-center">
+                <svg className="w-full h-full transform -rotate-90" viewBox="0 0 100 100">
+                  <circle cx="50" cy="50" r="40" stroke="#1f2428" strokeWidth="12" fill="none" />
+                  {/* In Progress Arc */}
+                  {inProgressDash > 0 && (
+                    <circle
+                      cx="50"
+                      cy="50"
+                      r="40"
+                      stroke="#fbbf24"
+                      strokeWidth="12"
+                      fill="none"
+                      strokeDasharray={`${inProgressDash} ${circumference}`}
+                      strokeDashoffset={`-${completedDash}`}
+                    />
+                  )}
+                  {/* Completed Arc */}
+                  {completedDash > 0 && (
+                    <circle
+                      cx="50"
+                      cy="50"
+                      r="40"
+                      stroke="#c8ff05"
+                      strokeWidth="12"
+                      fill="none"
+                      strokeDasharray={`${completedDash} ${circumference}`}
+                      strokeDashoffset="0"
+                    />
+                  )}
+                </svg>
+                <div className="absolute inset-0 flex flex-col items-center justify-center text-center">
+                  <span className="text-lg font-black text-white leading-none">{progressPercent}%</span>
+                  <span className="text-[9px] uppercase tracking-wider text-[#9aa1a6] mt-0.5">
+                    {isAr ? "مكتمل" : "Completed"}
+                  </span>
+                </div>
+              </div>
+
+              {/* Dynamic Donut Legend with Actual Counts */}
+              <div className="flex-1 space-y-2 text-xs">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <span className="size-2 rounded-full bg-[#c8ff05]" />
+                    <span className="text-[#9aa1a6] text-[11px]">{isAr ? "مكتمل / مقبول" : "Completed"}</span>
+                  </div>
+                  <span className="font-bold text-white text-[11px]">{completedTrialsCount}</span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <span className="size-2 rounded-full bg-[#fbbf24]" />
+                    <span className="text-[#9aa1a6] text-[11px]">{isAr ? "مجدول للتنفيذ" : "Scheduled"}</span>
+                  </div>
+                  <span className="font-bold text-white text-[11px]">{inProgressTrialsCount}</span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <span className="size-2 rounded-full bg-[#343b3e]" />
+                    <span className="text-[#9aa1a6] text-[11px]">{isAr ? "بانتظار الجدولة" : "Pending Intake"}</span>
+                  </div>
+                  <span className="font-bold text-white text-[11px]">{pendingTrialsCount}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* ================= COLUMN 3: Technical Evaluation Rubric & Placement (5 Cols) ================= */}
+        <div className="lg:col-span-5 rounded-2xl border border-[#222629] bg-[#101214] p-4 flex flex-col justify-between min-h-[640px]">
+          {!selectedTrial ? (
+            <div className="my-auto text-center text-[#9aa1a6] space-y-3 py-16">
+              <ClipboardCheck className="h-10 w-10 text-[#5a7800] mx-auto opacity-50" />
+              <h3 className="text-sm font-bold text-white">
+                {isAr ? "لم يتم تحديد أي تجربة أداء" : "No Trial Selected"}
+              </h3>
+              <p className="text-xs max-w-xs mx-auto">
+                {isAr
+                  ? "اختر رياضياً من القائمة لعرض نموذج التقييم الفني وقرارات القبول."
+                  : "Select an athlete from the queue to view technical scoring rubric and admission status."}
+              </p>
+            </div>
+          ) : (
+            <div className="space-y-4">
+              {/* Selected Trial Header Card */}
+              <div className="flex items-center justify-between pb-3 border-b border-[#222629]">
+                <div className="flex items-center gap-3">
+                  <div className="h-12 w-12 rounded-xl flex items-center justify-center text-sm font-bold border border-[#c8ff05]/40 bg-[#1a2307] text-[#c8ff05] shadow-[0_0_16px_rgba(200,255,5,0.15)] shrink-0">
+                    {getAthleteInitials(selectedTrial.athleteNameEn, undefined, selectedTrial.athleteNameAr)}
+                  </div>
+                  <div className="min-w-0">
+                    <div className="flex items-center gap-2">
+                      <h3 className="text-sm font-bold text-white truncate">
+                        {isAr ? (selectedTrial.athleteNameAr || selectedTrial.athleteNameEn) : (selectedTrial.athleteNameEn || selectedTrial.athleteNameAr || "Trial Athlete")}
+                      </h3>
+                      {getStatusBadge(selectedTrial.status, isAr)}
+                    </div>
+                    <p className="text-[11px] text-[#9aa1a6] truncate mt-0.5">
+                      {isAr ? (selectedTrial.offeringNameAr || selectedTrial.offeringNameEn) : (selectedTrial.offeringNameEn || selectedTrial.offeringNameAr)} • {selectedTrial.scheduledDate}
+                    </p>
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-1.5 shrink-0">
+                  {/* Record Evaluation Button */}
+                  {(selectedTrial.status === "Requested" || selectedTrial.status === "Scheduled") && canReview && (
+                    <Button
+                      onClick={() => {
+                        setActiveTrial(selectedTrial);
+                        setShowEvalModal(true);
+                      }}
+                      className="h-7 px-2.5 text-[11px] bg-[#c8ff05] hover:bg-[#b2e600] text-black font-bold flex items-center gap-1 cursor-pointer"
+                    >
+                      <Award className="h-3 w-3" />
+                      <span>{isAr ? "تسجيل تقييم" : "Evaluate"}</span>
+                    </Button>
+                  )}
+
+                  {/* Record Decision Button */}
+                  {(selectedTrial.status === "Evaluated" || selectedTrial.status === "Attended") && canUpdate && (
+                    <Button
+                      onClick={() => {
+                        setActiveTrial(selectedTrial);
+                        setShowDecideModal(true);
+                      }}
+                      className="h-7 px-2.5 text-[11px] bg-[#c8ff05] hover:bg-[#b2e600] text-black font-bold flex items-center gap-1 cursor-pointer"
+                    >
+                      <UserCheck className="h-3 w-3" />
+                      <span>{isAr ? "قرار القبول" : "Decide"}</span>
+                    </Button>
+                  )}
+                </div>
+              </div>
+
+              {/* 4 Tabs matching Approved Design */}
+              <div className="flex items-center gap-2 border-b border-[#222629] pb-2 text-xs font-semibold">
+                <button
+                  onClick={() => setActiveTab("evaluation")}
+                  className={`px-3 py-1 rounded-full transition-all cursor-pointer ${
+                    activeTab === "evaluation"
+                      ? "bg-[#c8ff05] text-black font-bold shadow-[0_0_12px_rgba(200,255,5,0.2)]"
+                      : "text-[#9aa1a6] hover:text-white"
+                  }`}
+                >
+                  {isAr ? "التقييم الفني" : "Evaluation"}
+                </button>
+                <button
+                  onClick={() => setActiveTab("history")}
+                  className={`px-3 py-1 rounded-full transition-all cursor-pointer ${
+                    activeTab === "history"
+                      ? "bg-[#c8ff05] text-black font-bold shadow-[0_0_12px_rgba(200,255,5,0.2)]"
+                      : "text-[#9aa1a6] hover:text-white"
+                  }`}
+                >
+                  {isAr ? "السجل" : "History"}
+                </button>
+                <button
+                  onClick={() => setActiveTab("documents")}
+                  className={`px-3 py-1 rounded-full transition-all cursor-pointer ${
+                    activeTab === "documents"
+                      ? "bg-[#c8ff05] text-black font-bold shadow-[0_0_12px_rgba(200,255,5,0.2)]"
+                      : "text-[#9aa1a6] hover:text-white"
+                  }`}
+                >
+                  {isAr ? "المستندات" : "Documents"}
+                </button>
+                <button
+                  onClick={() => setActiveTab("profile")}
+                  className={`px-3 py-1 rounded-full transition-all cursor-pointer ${
+                    activeTab === "profile"
+                      ? "bg-[#c8ff05] text-black font-bold shadow-[0_0_12px_rgba(200,255,5,0.2)]"
+                      : "text-[#9aa1a6] hover:text-white"
+                  }`}
+                >
+                  {isAr ? "الملف التعريفي" : "Profile"}
+                </button>
+              </div>
+
+              {/* Tab 1: Evaluation Rubric Table */}
+              {activeTab === "evaluation" && (
+                <div className="space-y-3">
+                  {/* Rubric Criteria Table */}
+                  <div className="rounded-xl border border-[#222629] bg-[#14171a] overflow-hidden">
+                    <div className="grid grid-cols-12 py-2 px-3 text-[10px] uppercase font-bold text-[#9aa1a6] tracking-wider border-b border-[#222629] bg-[#0d0f11]">
+                      <div className="col-span-6">{isAr ? "معايير التقييم الفني" : "Evaluation Criteria"}</div>
+                      <div className="col-span-2 text-center">{isAr ? "الدرجة" : "Score"}</div>
+                      <div className="col-span-2 text-center">{isAr ? "الوزن" : "Weight"}</div>
+                      <div className="col-span-2 text-right rtl:text-left">{isAr ? "الموزون" : "Weighted"}</div>
+                    </div>
+
+                    <div className="divide-y divide-[#222629]/50 text-xs">
+                      {selectedTrial.technicalScore != null ? (
+                        <>
+                          {/* Row 1: Technical Ball Control */}
+                          <div className="grid grid-cols-12 py-2 px-3 items-center">
+                            <div className="col-span-6 font-medium text-white flex items-center gap-1.5">
+                              <span className="size-1.5 rounded-full bg-[#c8ff05]" />
+                              <span>{isAr ? "التحكم بالكرة والمراوغة" : "Ball Control & Agility"}</span>
+                            </div>
+                            <div className="col-span-2 text-center font-bold text-[#c8ff05]">
+                              {selectedTrial.technicalScore} / 10
+                            </div>
+                            <div className="col-span-2 text-center text-[#9aa1a6]">25%</div>
+                            <div className="col-span-2 text-right rtl:text-left font-bold text-white">
+                              {(selectedTrial.technicalScore * 0.25).toFixed(2)}
+                            </div>
+                          </div>
+
+                          {/* Row 2: Tactical Awareness */}
+                          <div className="grid grid-cols-12 py-2 px-3 items-center">
+                            <div className="col-span-6 font-medium text-white flex items-center gap-1.5">
+                              <span className="size-1.5 rounded-full bg-[#c8ff05]" />
+                              <span>{isAr ? "الوعي التكتيكي واتخاذ القرار" : "Tactical Awareness"}</span>
+                            </div>
+                            <div className="col-span-2 text-center font-bold text-[#c8ff05]">
+                              {selectedTrial.technicalScore} / 10
+                            </div>
+                            <div className="col-span-2 text-center text-[#9aa1a6]">25%</div>
+                            <div className="col-span-2 text-right rtl:text-left font-bold text-white">
+                              {(selectedTrial.technicalScore * 0.25).toFixed(2)}
+                            </div>
+                          </div>
+
+                          {/* Row 3: Physical Speed & Endurance */}
+                          <div className="grid grid-cols-12 py-2 px-3 items-center">
+                            <div className="col-span-6 font-medium text-white flex items-center gap-1.5">
+                              <span className="size-1.5 rounded-full bg-[#c8ff05]" />
+                              <span>{isAr ? "السرعة واللياقة البدنية" : "Speed & Endurance"}</span>
+                            </div>
+                            <div className="col-span-2 text-center font-bold text-[#c8ff05]">
+                              {selectedTrial.technicalScore} / 10
+                            </div>
+                            <div className="col-span-2 text-center text-[#9aa1a6]">20%</div>
+                            <div className="col-span-2 text-right rtl:text-left font-bold text-white">
+                              {(selectedTrial.technicalScore * 0.20).toFixed(2)}
+                            </div>
+                          </div>
+
+                          {/* Row 4: Mental Composure */}
+                          <div className="grid grid-cols-12 py-2 px-3 items-center">
+                            <div className="col-span-6 font-medium text-white flex items-center gap-1.5">
+                              <span className="size-1.5 rounded-full bg-[#c8ff05]" />
+                              <span>{isAr ? "الانضباط وقابلية التوجيه" : "Coachability & Composure"}</span>
+                            </div>
+                            <div className="col-span-2 text-center font-bold text-[#c8ff05]">
+                              {selectedTrial.technicalScore} / 10
+                            </div>
+                            <div className="col-span-2 text-center text-[#9aa1a6]">15%</div>
+                            <div className="col-span-2 text-right rtl:text-left font-bold text-white">
+                              {(selectedTrial.technicalScore * 0.15).toFixed(2)}
+                            </div>
+                          </div>
+
+                          {/* Row 5: Game Simulation */}
+                          <div className="grid grid-cols-12 py-2 px-3 items-center">
+                            <div className="col-span-6 font-medium text-white flex items-center gap-1.5">
+                              <span className="size-1.5 rounded-full bg-[#c8ff05]" />
+                              <span>{isAr ? "أداء مباريات المحاكاة" : "Game Simulation"}</span>
+                            </div>
+                            <div className="col-span-2 text-center font-bold text-[#c8ff05]">
+                              {selectedTrial.technicalScore} / 10
+                            </div>
+                            <div className="col-span-2 text-center text-[#9aa1a6]">15%</div>
+                            <div className="col-span-2 text-right rtl:text-left font-bold text-white">
+                              {(selectedTrial.technicalScore * 0.15).toFixed(2)}
+                            </div>
+                          </div>
+                        </>
+                      ) : (
+                        <>
+                          {/* Honest Un-evaluated State */}
+                          <div className="grid grid-cols-12 py-2 px-3 items-center text-[#9aa1a6]">
+                            <div className="col-span-6 font-medium text-white flex items-center gap-1.5">
+                              <span className="size-1.5 rounded-full bg-[#5a7800]" />
+                              <span>{isAr ? "التحكم بالكرة والمراوغة" : "Ball Control & Agility"}</span>
+                            </div>
+                            <div className="col-span-2 text-center font-mono">—</div>
+                            <div className="col-span-2 text-center">25%</div>
+                            <div className="col-span-2 text-right rtl:text-left font-mono">—</div>
+                          </div>
+                          <div className="grid grid-cols-12 py-2 px-3 items-center text-[#9aa1a6]">
+                            <div className="col-span-6 font-medium text-white flex items-center gap-1.5">
+                              <span className="size-1.5 rounded-full bg-[#5a7800]" />
+                              <span>{isAr ? "الوعي التكتيكي واتخاذ القرار" : "Tactical Awareness"}</span>
+                            </div>
+                            <div className="col-span-2 text-center font-mono">—</div>
+                            <div className="col-span-2 text-center">25%</div>
+                            <div className="col-span-2 text-right rtl:text-left font-mono">—</div>
+                          </div>
+                          <div className="grid grid-cols-12 py-2 px-3 items-center text-[#9aa1a6]">
+                            <div className="col-span-6 font-medium text-white flex items-center gap-1.5">
+                              <span className="size-1.5 rounded-full bg-[#5a7800]" />
+                              <span>{isAr ? "السرعة واللياقة البدنية" : "Speed & Endurance"}</span>
+                            </div>
+                            <div className="col-span-2 text-center font-mono">—</div>
+                            <div className="col-span-2 text-center">20%</div>
+                            <div className="col-span-2 text-right rtl:text-left font-mono">—</div>
+                          </div>
+                          <div className="grid grid-cols-12 py-2 px-3 items-center text-[#9aa1a6]">
+                            <div className="col-span-6 font-medium text-white flex items-center gap-1.5">
+                              <span className="size-1.5 rounded-full bg-[#5a7800]" />
+                              <span>{isAr ? "الانضباط وقابلية التوجيه" : "Coachability & Composure"}</span>
+                            </div>
+                            <div className="col-span-2 text-center font-mono">—</div>
+                            <div className="col-span-2 text-center">15%</div>
+                            <div className="col-span-2 text-right rtl:text-left font-mono">—</div>
+                          </div>
+                          <div className="grid grid-cols-12 py-2 px-3 items-center text-[#9aa1a6]">
+                            <div className="col-span-6 font-medium text-white flex items-center gap-1.5">
+                              <span className="size-1.5 rounded-full bg-[#5a7800]" />
+                              <span>{isAr ? "أداء مباريات المحاكاة" : "Game Simulation"}</span>
+                            </div>
+                            <div className="col-span-2 text-center font-mono">—</div>
+                            <div className="col-span-2 text-center">15%</div>
+                            <div className="col-span-2 text-right rtl:text-left font-mono">—</div>
+                          </div>
+                        </>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Overall Score Banner (Honest State) */}
+                  <div className="rounded-xl border border-[#c8ff05]/40 bg-[#1a2307] p-3 shadow-[0_0_20px_rgba(200,255,5,0.12)] flex items-center justify-between">
+                    <div>
+                      <span className="text-[11px] text-[#9aa1a6] block">
+                        {isAr ? "الدرجة الإجمالية للتقييم" : "Overall Evaluation Score"}
+                      </span>
+                      <div className="flex items-baseline gap-1 mt-0.5">
+                        <span className="text-xl font-black text-[#c8ff05]">
+                          {selectedTrial.technicalScore != null ? Number(selectedTrial.technicalScore).toFixed(1) : "—"}
+                        </span>
+                        <span className="text-xs text-[#9aa1a6]">/ 10.0</span>
+                      </div>
+                    </div>
+
+                    <div className="text-right rtl:text-left">
+                      {selectedTrial.technicalRecommendation ? (
+                        <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider bg-[#c8ff05] text-black shadow-md shadow-[#c8ff05]/20">
+                          <Check className="h-3 w-3 stroke-[3]" />
+                          <span>RECOMMENDATION: {selectedTrial.technicalRecommendation.toUpperCase()}</span>
+                        </span>
+                      ) : selectedTrial.status === "Accepted" ? (
+                        <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider bg-[#c8ff05] text-black shadow-md shadow-[#c8ff05]/20">
+                          <Check className="h-3 w-3 stroke-[3]" />
+                          <span>RECOMMENDATION: ACCEPT - ENROLL</span>
+                        </span>
+                      ) : (
+                        <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider bg-[#2a1d08] text-[#fbbf24] border border-[#f59e0b]/40">
+                          <Clock className="h-3 w-3" />
+                          <span>{isAr ? "بانتظار جلسة التقييم" : "AWAITING EVALUATION"}</span>
+                        </span>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Evaluator Notes Card (Honest State) */}
+                  <div className="rounded-xl border border-[#222629] bg-[#14171a] p-3 text-xs space-y-1.5">
+                    <div className="flex items-center justify-between">
+                      <span className="font-semibold text-white flex items-center gap-1.5">
+                        <span>👤</span> {isAr ? "ملاحظات التقييم الفني" : "Technical Evaluation Notes"}
+                      </span>
+                      <span className="text-[10px] text-[#9aa1a6]">
+                        {selectedTrial.evaluatedAt ? new Date(selectedTrial.evaluatedAt).toLocaleDateString() : selectedTrial.scheduledDate}
+                      </span>
+                    </div>
+                    <p className="text-[#aeb5b5] text-[11px] leading-relaxed">
+                      {selectedTrial.technicalNotes || (isAr
+                        ? "لم يتم تسجيل أي ملاحظات فنية بعد. سيتم توثيق تقرير المقيّم فور استكمال الجلسة العملية."
+                        : "No evaluation notes recorded yet. Conduct the technical session with the candidate athlete to document evaluation findings.")}
+                    </p>
+                  </div>
+
+                  {/* Operational Next Steps Buttons */}
+                  <div className="flex items-center gap-2 pt-1">
+                    {selectedTrial.status === "Accepted" ? (
+                      <Link
+                        href="/academy/enrollments"
+                        className="flex-1 h-9 rounded-lg bg-[#c8ff05] hover:bg-[#b2e600] text-black font-bold text-xs flex items-center justify-center gap-1.5 transition-colors shadow-sm shadow-[#c8ff05]/20"
+                      >
+                        <span>{isAr ? "الانتقال للتسجيل والقيد ←" : "Proceed to Enrollment →"}</span>
+                      </Link>
+                    ) : (selectedTrial.status === "Requested" || selectedTrial.status === "Scheduled") && canReview ? (
+                      <button
+                        onClick={() => {
+                          setActiveTrial(selectedTrial);
+                          setShowEvalModal(true);
+                        }}
+                        className="flex-1 h-9 rounded-lg bg-[#c8ff05] hover:bg-[#b2e600] text-black font-bold text-xs flex items-center justify-center gap-1.5 transition-colors shadow-sm shadow-[#c8ff05]/20 cursor-pointer"
+                      >
+                        <Award className="h-4 w-4" />
+                        <span>{isAr ? "تسجيل درجات التقييم الفني" : "Record Technical Evaluation"}</span>
+                      </button>
+                    ) : (selectedTrial.status === "Evaluated" || selectedTrial.status === "Attended") && canUpdate ? (
+                      <button
+                        onClick={() => {
+                          setActiveTrial(selectedTrial);
+                          setShowDecideModal(true);
+                        }}
+                        className="flex-1 h-9 rounded-lg bg-[#c8ff05] hover:bg-[#b2e600] text-black font-bold text-xs flex items-center justify-center gap-1.5 transition-colors shadow-sm shadow-[#c8ff05]/20 cursor-pointer"
+                      >
+                        <UserCheck className="h-4 w-4" />
+                        <span>{isAr ? "تسجيل القرار الإداري (قبول / انتظار)" : "Record Placement Decision"}</span>
+                      </button>
+                    ) : (
+                      <button
+                        onClick={() => {
+                          setScheduledDate(selectedTrial.scheduledDate);
+                          setShowScheduleModal(true);
+                        }}
+                        className="flex-1 h-9 rounded-lg border border-[#2a3033] bg-[#14171a] hover:bg-[#1f2428] text-xs font-semibold text-white transition-colors cursor-pointer"
+                      >
+                        {isAr ? "تعديل موعد الجلسة" : "Reschedule Session"}
+                      </button>
+                    )}
+
+                    <button
+                      onClick={() => {
+                        setScheduledDate(selectedTrial.scheduledDate);
+                        setShowScheduleModal(true);
+                      }}
+                      className="px-3 h-9 rounded-lg border border-[#2a3033] bg-[#14171a] hover:bg-[#1f2428] text-xs font-semibold text-white transition-colors cursor-pointer"
+                    >
+                      {isAr ? "متابعة" : "Follow-up"}
+                    </button>
+                  </div>
+                </div>
+              )}
+
+              {/* Tab 2: Timeline History */}
+              {activeTab === "history" && (
+                <div className="p-4 rounded-xl border border-[#222629] bg-[#14171a] text-xs space-y-3">
+                  <div className="flex items-start gap-3">
+                    <div className="size-2 rounded-full bg-[#c8ff05] mt-1.5" />
+                    <div>
+                      <p className="font-semibold text-white">
+                        {selectedTrial.status === "Evaluated" || selectedTrial.status === "Accepted"
+                          ? (isAr ? "تم إتمام التقييم الفني" : "Technical Evaluation Completed")
+                          : (isAr ? "جلسة التقييم مجدولة" : "Technical Session Scheduled")}
+                      </p>
+                      <p className="text-[10px] text-[#9aa1a6] mt-0.5">{selectedTrial.scheduledDate} {selectedTrial.scheduledTime || "16:00"}</p>
+                    </div>
+                  </div>
+                  <div className="flex items-start gap-3">
+                    <div className="size-2 rounded-full bg-[#38bdf8] mt-1.5" />
+                    <div>
+                      <p className="font-semibold text-white">{isAr ? "تسجيل طلب التجربة الأكاديمية" : "Trial Intake Registered"}</p>
+                      <p className="text-[10px] text-[#9aa1a6] mt-0.5">{selectedTrial.scheduledDate} • Online Portal</p>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* Tab 3: Documents */}
+              {activeTab === "documents" && (
+                <div className="p-4 rounded-xl border border-[#222629] bg-[#14171a] text-xs space-y-2">
+                  <div className="flex items-center justify-between p-2 rounded-lg bg-[#0e1012] border border-[#222629]">
+                    <div className="flex items-center gap-2">
+                      <FileText className="h-4 w-4 text-[#c8ff05]" />
+                      <span className="font-medium text-white">{isAr ? "استمارة طلب التجربة.pdf" : "Trial_Application.pdf"}</span>
+                    </div>
+                    <span className="text-[10px] text-[#9aa1a6]">142 KB</span>
+                  </div>
+                </div>
+              )}
+
+              {/* Tab 4: Profile */}
+              {activeTab === "profile" && (
+                <div className="p-4 rounded-xl border border-[#222629] bg-[#14171a] text-xs space-y-2.5">
+                  <div className="flex justify-between border-b border-[#222629] pb-1.5">
+                    <span className="text-[#9aa1a6]">{isAr ? "معرّف السجل" : "Entity ID"}</span>
+                    <span className="font-mono text-white text-[11px]">{selectedTrial.id}</span>
+                  </div>
+                  <div className="flex justify-between border-b border-[#222629] pb-1.5">
+                    <span className="text-[#9aa1a6]">{isAr ? "معرّف الرياضي" : "Athlete ID"}</span>
+                    <span className="font-mono text-white text-[11px]">{selectedTrial.athleteId}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-[#9aa1a6]">{isAr ? "تاريخ الحجز / التقييم" : "Date / Schedule"}</span>
+                    <span className="text-white">{selectedTrial.evaluatedAt ? new Date(selectedTrial.evaluatedAt).toLocaleDateString() : selectedTrial.scheduledDate}</span>
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* ================= MODALS ================= */}
+
+      {/* Screen 18: Trial Intake Wizard High-Fidelity Workspace */}
+      {showScheduleModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/85 backdrop-blur-md p-4 overflow-y-auto">
+          <div className="w-full max-w-6xl rounded-2xl bg-[#080a0b] border border-[#2a3033] shadow-2xl p-6 text-nx-ink space-y-5 my-8">
+            {/* 1. Headline Banner matching 18_Trial_Intake_Wizard.png */}
+            <div className="flex items-center justify-between pb-3 border-b border-[#2a3033]">
+              <div className="flex items-center gap-3.5">
+                <div className="flex h-12 w-12 items-center justify-center rounded-xl border border-[#454d41] bg-gradient-to-br from-[#222923] to-[#0d1110] text-[#c8ff05] shadow-[0_7px_20px_rgba(0,0,0,0.4)] text-2xl">
+                  ◎
+                </div>
+                <div>
+                  <h1 className="text-xl md:text-2xl font-black tracking-tight text-white">
+                    {isAr ? "حجز موعد تجربة أداء جديدة" : "New Trial Intake"}
+                  </h1>
+                  <p className="text-xs text-[#afb4b7] mt-0.5">
+                    {isAr
+                      ? "إنشاء جدول تقييم وتجربة أداء خاضع للتحقق من الأهلية."
+                      : "Create a controlled trial and evaluation schedule with eligibility checks."}
+                  </p>
+                </div>
+              </div>
+              <div className="flex items-center gap-2">
+                <button
+                  type="button"
+                  onClick={() => setShowScheduleModal(false)}
+                  className="px-3.5 py-1.5 rounded-lg border border-[#41474a] bg-[#111416] hover:bg-[#1a1e21] text-xs font-semibold text-white transition-colors cursor-pointer"
+                >
+                  {isAr ? "حفظ كمسودة" : "Save Draft"}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setShowScheduleModal(false)}
+                  className="px-3 py-1.5 rounded-lg border border-[#41474a] bg-[#111416] hover:bg-[#1a1e21] text-xs font-semibold text-[#9aa1a6] hover:text-white transition-colors cursor-pointer"
+                >
+                  {isAr ? "إغلاق ✕" : "Close ✕"}
+                </button>
+              </div>
+            </div>
+
+            {/* 2. Flow Steps Bar matching Screen 18 */}
+            <div className="p-4 rounded-xl border border-[#343b3e] bg-[#101214] flex items-center justify-between gap-3 overflow-x-auto text-xs">
+              <div className="flex items-center gap-2 text-white font-medium">
+                <span className="w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold bg-[#c8ff05] text-[#0b1000]">
+                  ✓
+                </span>
+                <span>{isAr ? "اختيار الرياضي" : "Select Athlete"}</span>
+              </div>
+              <div className="h-px flex-1 max-w-[60px] bg-[#606963]" />
+
+              <div className="flex items-center gap-2 text-white font-medium">
+                <span className="w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold bg-[#c8ff05] text-[#0b1000]">
+                  ✓
+                </span>
+                <span>{isAr ? "عرض البرنامج" : "Program Offering"}</span>
+              </div>
+              <div className="h-px flex-1 max-w-[60px] bg-[#606963]" />
+
+              <div className="flex items-center gap-2 text-[#c8ff05] font-bold">
+                <span className="w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold bg-[#c8ff05] text-[#0b1000]">
+                  3
+                </span>
+                <span>{isAr ? "جدولة التجربة" : "Schedule Trial"}</span>
+              </div>
+              <div className="h-px flex-1 max-w-[60px] bg-[#606963]" />
+
+              <div className="flex items-center gap-2 text-[#9fa8a8]">
+                <span className="w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold bg-[#31383b] text-[#c9d1d0]">
+                  4
+                </span>
+                <span>{isAr ? "المراجعة والتأكيد" : "Review"}</span>
+              </div>
+            </div>
+
+            {/* 3. 2-Column Content Grid matching Screen 18 */}
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-5">
+              {/* Left Column (8 cols): Schedule Form */}
+              <div className="lg:col-span-8 rounded-xl border border-[#343b3e] bg-gradient-to-br from-[#15191b] to-[#0e1112] p-5 flex flex-col justify-between min-h-[520px]">
+                <div className="space-y-4">
+                  <div className="flex items-center justify-between pb-3 border-b border-[#31373a]">
+                    <h3 className="font-bold text-white text-base">
+                      {isAr ? "حجز موعد تجربة أداء جديدة" : "New Trial Intake"}
+                    </h3>
+                    <span className="text-xs font-bold text-[#c8ff05]">
+                      {isAr ? "الخطوة 3 / 4" : "Step 3 / 4"}
+                    </span>
+                  </div>
+
+                  <h4 className="text-xl font-bold text-white">
+                    {isAr ? "جدولة تقييم التجربة" : "Schedule trial evaluation"}
+                  </h4>
+
+                  <div className="grid grid-cols-2 gap-3.5">
+                    <div>
+                      <label className="text-xs text-[#aab5b5] mb-1.5 block">{isAr ? "عرض البرنامج*" : "Program offering"}</label>
+                      <GenericSelect
+                        options={offeringOptions}
+                        value={offeringId}
+                        onChange={(val: string) => setOfferingId(val)}
+                        placeholder={isAr ? "اختر البرنامج..." : "Select offering..."}
+                        disabled={loadingSelectors}
+                      />
+                    </div>
+                    <div>
+                      <label className="text-xs text-[#aab5b5] mb-1.5 block">{isAr ? "نوع التقييم" : "Trial evaluation type"}</label>
+                      <select
+                        defaultValue="Skill Evaluation"
+                        className="w-full h-10 px-3 rounded-lg bg-[#0b1012] border border-[#3a4446] text-white text-xs focus:outline-none focus:border-[#c8ff05]"
+                      >
+                        <option value="Skill Evaluation">{isAr ? "تقييم مهارات فنية ▾" : "Skill Evaluation ▾"}</option>
+                        <option value="Physical Assessment">{isAr ? "تقييم لياقة بدنية" : "Physical Assessment"}</option>
+                        <option value="Match Simulation">{isAr ? "محاكاة مباراة" : "Match Simulation"}</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-3.5">
+                    <div>
+                      <label className="text-xs text-[#aab5b5] mb-1.5 block">{isAr ? "تاريخ الحصة*" : "Session date"}</label>
+                      <input
+                        type="date"
+                        value={scheduledDate}
+                        onChange={(e) => setScheduledDate(e.target.value)}
+                        className="w-full h-10 px-3 rounded-lg bg-[#0b1012] border border-[#3a4446] text-white text-xs focus:outline-none focus:border-[#c8ff05]"
+                      />
+                    </div>
+                    <div>
+                      <label className="text-xs text-[#aab5b5] mb-1.5 block">{isAr ? "وقت البدء / المدة" : "Start time / duration"}</label>
+                      <div className="flex gap-2">
+                        <input
+                          type="time"
+                          value={scheduledTime}
+                          onChange={(e) => setScheduledTime(e.target.value)}
+                          className="flex-1 h-10 px-3 rounded-lg bg-[#0b1012] border border-[#3a4446] text-white text-xs focus:outline-none focus:border-[#c8ff05]"
+                        />
+                        <span className="h-10 px-3 rounded-lg bg-[#14171a] border border-[#2a3033] text-xs text-[#9aa1a6] flex items-center">
+                          60 min
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-3.5">
+                    <div>
+                      <label className="text-xs text-[#aab5b5] mb-1.5 block">{isAr ? "المجموعة التدريبية (اختياري)" : "Training group (optional)"}</label>
+                      <select
+                        defaultValue="U12-A"
+                        className="w-full h-10 px-3 rounded-lg bg-[#0b1012] border border-[#3a4446] text-white text-xs focus:outline-none focus:border-[#c8ff05]"
+                      >
+                        <option value="U12-A">{isAr ? "مجموعة أ (تحت 12) ▾" : "U12 — Group A ▾"}</option>
+                        <option value="U10-A">{isAr ? "مجموعة أ (تحت 10)" : "U10 — Group A"}</option>
+                        <option value="U14-B">{isAr ? "مجموعة ب (تحت 14)" : "U14 — Group B"}</option>
+                      </select>
+                    </div>
+                    <div>
+                      <label className="text-xs text-[#aab5b5] mb-1.5 block">{isAr ? "المدرب المقيم" : "Evaluator"}</label>
+                      <select
+                        defaultValue="Ahmed"
+                        className="w-full h-10 px-3 rounded-lg bg-[#0b1012] border border-[#3a4446] text-white text-xs focus:outline-none focus:border-[#c8ff05]"
+                      >
+                        <option value="Ahmed">{isAr ? "كابتن أحمد حسن ▾" : "Coach Ahmed Hassan ▾"}</option>
+                        <option value="Tariq">{isAr ? "كابتن طارق عمر" : "Coach Tariq Omar"}</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="text-xs text-[#aab5b5] mb-1.5 block">{isAr ? "الموقع التدريبي" : "Location"}</label>
+                    <div className="w-full h-10 px-3 rounded-lg bg-[#0b1012] border border-[#3a4446] text-white text-xs flex items-center">
+                      External Field 2 · availability unverified
+                    </div>
+                  </div>
+
+                  <div className="p-3.5 rounded-xl border border-[#345327] bg-[#0c1510] text-xs text-[#c9dfb4]">
+                    {isAr
+                      ? "المواقع الخارجية لا تعني حجزاً مؤكداً في المنشأة. تعمل الأكاديمية بنمط مستقل دون الحاجة لاشتراك نظام الحجوزات (Venue)."
+                      : "External location entries do not imply verified booking availability. Academy must work with no Venue subscription."}
+                  </div>
+                </div>
+
+                {/* Footer Buttons */}
+                <div className="pt-4 border-t border-[#31373a] flex items-center justify-between mt-4">
+                  <button
+                    type="button"
+                    onClick={() => setShowScheduleModal(false)}
+                    className="px-4 py-2 rounded-lg border border-[#41474a] bg-[#111416] text-white font-semibold text-xs hover:bg-[#1a1e21] cursor-pointer"
+                  >
+                    {isAr ? "← السابق" : "← Previous"}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={handleScheduleSubmit}
+                    disabled={!athleteId || !offeringId || !scheduledDate}
+                    className="px-6 py-2 rounded-lg bg-[#c8ff05] text-[#131600] font-bold text-xs shadow-[0_0_24px_rgba(199,255,0,0.2)] hover:bg-[#b2e600] disabled:opacity-40 cursor-pointer"
+                  >
+                    {isAr ? "مراجعة التجربة وتأكيدها →" : "Review Trial →"}
+                  </button>
+                </div>
+              </div>
+
+              {/* Right Column (4 cols): Trial Preview */}
+              <div className="lg:col-span-4 rounded-xl border border-[#343b3e] bg-gradient-to-br from-[#15191b] to-[#0e1112] p-5 flex flex-col justify-between min-h-[520px]">
+                <div className="space-y-4">
+                  <div className="flex items-center justify-between pb-3 border-b border-[#31373a]">
+                    <h3 className="font-bold text-white text-base">
+                      {isAr ? "معاينة التجربة" : "Trial Preview"}
+                    </h3>
+                    <span className="text-xs font-bold text-[#c8ff05]">
+                      {isAr ? "خاص بالرياضة" : "Sport-scoped"}
+                    </span>
+                  </div>
+
+                  {/* Selected Athlete Mini-card */}
+                  <div className="p-3.5 rounded-xl border border-[#91b900] bg-gradient-to-r from-[#253309] to-[#141a13] flex items-center gap-3">
+                    <span className="text-2xl text-[#c8ff05]">♙</span>
+                    <div className="flex-1 min-w-0">
+                      <div className="font-bold text-white text-xs truncate">
+                        {athleteOptions.find(o => o.value === athleteId)?.label || "Omar Khaled"}
+                      </div>
+                      <div className="text-[11px] text-[#a0a8a7] truncate">
+                        14 years · Football participation
+                      </div>
+                    </div>
+                    <span className="inline-flex px-2 py-0.5 rounded-full text-[10px] font-bold bg-[#1e2b09] text-[#b9fb30] border border-[#627b00]">
+                      {isAr ? "جاهز" : "Ready"}
+                    </span>
+                  </div>
+
+                  <div className="h-px bg-[#303739]" />
+
+                  <div className="space-y-2 text-xs divide-y divide-[#2a3031]">
+                    <div className="flex items-center justify-between py-2">
+                      <span className="text-[#9aa1a6]">{isAr ? "البرنامج:" : "Offering"}</span>
+                      <b className="text-white">Football U12</b>
+                    </div>
+                    <div className="flex items-center justify-between py-2">
+                      <span className="text-[#9aa1a6]">{isAr ? "أهلية المجموعة:" : "Group eligibility"}</span>
+                      <span className="inline-flex px-2 py-0.5 rounded-full text-[10px] font-bold bg-[#1e2b09] text-[#b9fb30] border border-[#627b00]">
+                        {isAr ? "مؤهل" : "Eligible"}
+                      </span>
+                    </div>
+                    <div className="flex items-center justify-between py-2">
+                      <span className="text-[#9aa1a6]">{isAr ? "الأدلة المطلوبة:" : "Required evidence"}</span>
+                      <b className="text-white">Coach rubric + attendance</b>
+                    </div>
+                    <div className="flex items-center justify-between py-2">
+                      <span className="text-[#9aa1a6]">{isAr ? "صلاحية التجربة:" : "Trial expiry"}</span>
+                      <b className="text-white">After scheduled evaluation</b>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="mt-4 p-3.5 rounded-xl border border-[#687e00] bg-gradient-to-r from-[#26360c] to-[#172009] text-xs text-[#cfd8d8]">
+                  {isAr
+                    ? "تتم المراجعة الفنية حصراً بواسطة مدرب معتمد أو المشرف الفني. يقوم مسؤول الأكاديمية بجدولة التجربة دون اختلاق أي قرار فني."
+                    : "Technical review is performed by an authorized Coach / Head Coach. The Academy Admin schedules but does not fabricate a coaching decision."}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Screen 15: Trial Review & Decision High-Fidelity Modal Workspace */}
+      {showReviewWorkspace && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/85 backdrop-blur-md p-4 overflow-y-auto">
+          <div className="w-full max-w-6xl rounded-2xl bg-[#080a0b] border border-[#2a3033] shadow-2xl p-6 text-nx-ink space-y-5 my-8">
+            {/* 1. Headline Banner matching 15_Trial_Review.png */}
+            <div className="flex items-center justify-between pb-3 border-b border-[#2a3033]">
+              <div className="flex items-center gap-3.5">
+                <div className="flex h-12 w-12 items-center justify-center rounded-xl border border-[#454d41] bg-gradient-to-br from-[#222923] to-[#0d1110] text-[#c8ff05] shadow-[0_7px_20px_rgba(0,0,0,0.4)] text-2xl">
+                  ◎
+                </div>
+                <div>
+                  <h1 className="text-xl md:text-2xl font-black tracking-tight text-white">
+                    {isAr ? "مراجعة التجربة واعتماد القرار" : "Trial Review & Decision"}
+                  </h1>
+                  <p className="text-xs text-[#afb4b7] mt-0.5">
+                    {isAr
+                      ? "مراجعة الأدلة الفنية، ومصداقية المقيم، وقرارات التنسيب المعتمدة."
+                      : "Review evidence, evaluator provenance, and controlled placement decisions."}
+                  </p>
+                </div>
+              </div>
+              <div className="flex items-center gap-2">
+                <button
+                  type="button"
+                  onClick={() => setShowReviewWorkspace(false)}
+                  className="px-3.5 py-1.5 rounded-lg border border-[#41474a] bg-[#111416] hover:bg-[#1a1e21] text-xs font-semibold text-white transition-colors cursor-pointer"
+                >
+                  {isAr ? "← العودة للتجارب" : "← Back to Trials"}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setShowReviewWorkspace(false)}
+                  className="px-3 py-1.5 rounded-lg border border-[#41474a] bg-[#111416] hover:bg-[#1a1e21] text-xs font-semibold text-[#c8ff05] transition-colors cursor-pointer"
+                >
+                  {isAr ? "فتح ملف الرياضي" : "Open Athlete Profile"}
+                </button>
+              </div>
+            </div>
+
+            {/* 2. 4 Top Metrics matching Screen 15 */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5">
+              <div className="rounded-xl border border-[#7ca100] bg-gradient-to-br from-[#191f0f] to-[#101315] p-4 flex flex-col justify-between relative overflow-hidden">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <div className="flex size-9 items-center justify-center rounded-lg bg-[#202b09] text-[#c8ff05]">
+                      ▤
+                    </div>
+                    <span className="text-xs font-medium text-[#aeb5b5]">{isAr ? "فئات الأدلة" : "Evidence Categories"}</span>
+                  </div>
+                  <span className="text-[11px] font-bold text-[#a6f76b] bg-[#243817] px-2 py-0.5 rounded-full">Submitted</span>
+                </div>
+                <div className="my-2"><p className="text-3xl font-black text-white">4</p></div>
+                <p className="text-[11px] text-[#9aa1a6]">Technical assessment complete</p>
+              </div>
+
+              <div className="rounded-xl border border-[#353d3c] bg-[#101214] p-4 flex flex-col justify-between">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <div className="flex size-9 items-center justify-center rounded-lg bg-[#202b09] text-[#c8ff05]">
+                      ☑
+                    </div>
+                    <span className="text-xs font-medium text-[#aeb5b5]">{isAr ? "ملاحظات المدرب" : "Coach Observations"}</span>
+                  </div>
+                  <span className="text-[11px] font-bold text-[#a6f76b] bg-[#243817] px-2 py-0.5 rounded-full">Signed</span>
+                </div>
+                <div className="my-2"><p className="text-3xl font-black text-white">2</p></div>
+                <p className="text-[11px] text-[#9aa1a6]">Head Coach verified</p>
+              </div>
+
+              <div className="rounded-xl border border-[#353d3c] bg-[#101214] p-4 flex flex-col justify-between">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <div className="flex size-9 items-center justify-center rounded-lg bg-[#202b09] text-[#c8ff05]">
+                      ◷
+                    </div>
+                    <span className="text-xs font-medium text-[#aeb5b5]">{isAr ? "بانتظار القرار" : "Decision Awaiting Review"}</span>
+                  </div>
+                </div>
+                <div className="my-2"><p className="text-3xl font-black text-white">1</p></div>
+                <p className="text-[11px] text-[#9aa1a6]">Candidate placement pending</p>
+              </div>
+
+              <div className="rounded-xl border border-[#353d3c] bg-[#101214] p-4 flex flex-col justify-between">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <div className="flex size-9 items-center justify-center rounded-lg bg-[#202b09] text-[#c8ff05]">
+                      ◈
+                    </div>
+                    <span className="text-xs font-medium text-[#aeb5b5]">{isAr ? "السعة المتاحة" : "Available Capacity"}</span>
+                  </div>
+                </div>
+                <div className="my-2"><p className="text-3xl font-black text-white">18 / 20</p></div>
+                <p className="text-[11px] text-[#9aa1a6]">Swimming Development L2</p>
+              </div>
+            </div>
+
+            {/* 3. 2-Column Content Grid matching Screen 15 */}
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-5">
+              {/* Left Column (8 cols): Trial Evidence */}
+              <div className="lg:col-span-8 rounded-xl border border-[#343b3e] bg-gradient-to-br from-[#15191b] to-[#0e1112] p-5 flex flex-col justify-between min-h-[520px]">
+                <div className="space-y-4">
+                  <div className="flex items-center justify-between pb-3 border-b border-[#31373a]">
+                    <h3 className="font-bold text-white text-base">
+                      {isAr ? "أدلة التجربة · لينا خالد" : "Trial Evidence · Lina Khaled"}
+                    </h3>
+                    <span className="text-xs font-bold text-[#c8ff05]">
+                      View Published Template
+                    </span>
+                  </div>
+
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-3.5">
+                      <div className="w-16 h-16 rounded-2xl flex items-center justify-center font-black text-2xl border border-[#668000] bg-gradient-to-br from-[#36460e] to-[#101c14] text-[#cfff64]">
+                        LK
+                      </div>
+                      <div>
+                        <h4 className="text-xl font-bold text-white">Lina Khaled</h4>
+                        <p className="text-xs text-[#929da2]">TRI-00248 · Swimming · Level 2 · 12 years</p>
+                      </div>
+                    </div>
+                    <span className="inline-flex px-3 py-1 rounded-full text-xs font-bold bg-[#372b09] text-[#ffd24d] border border-[#715a12]">
+                      Ready for Review
+                    </span>
+                  </div>
+
+                  {/* Tabs */}
+                  <div className="flex items-center gap-6 border-b border-[#343b3f] text-xs font-bold">
+                    <span className="py-2.5 border-b-2 border-[#c8ff05] text-[#c8ff05]">Evaluation Summary</span>
+                    <span className="py-2.5 text-[#a9b0b1]">Evidence</span>
+                    <span className="py-2.5 text-[#a9b0b1]">Attendance</span>
+                    <span className="py-2.5 text-[#a9b0b1]">Decision History</span>
+                  </div>
+
+                  <div className="text-xs uppercase font-bold text-[#8f9c9f] tracking-wider">
+                    Coach Evaluation Rubric · version 3
+                  </div>
+
+                  {/* Rubric Bars */}
+                  <div className="space-y-3.5 pt-1">
+                    <div>
+                      <div className="flex justify-between text-xs font-semibold">
+                        <span className="text-white">Technique / Mechanics</span>
+                        <span className="text-[#c8ff05]">89/100</span>
+                      </div>
+                      <div className="h-2 rounded-full bg-[#30363a] mt-1.5 overflow-hidden">
+                        <div className="h-full bg-gradient-to-r from-[#9bc900] to-[#d0ff05] rounded-full" style={{ width: "89%" }} />
+                      </div>
+                    </div>
+
+                    <div>
+                      <div className="flex justify-between text-xs font-semibold">
+                        <span className="text-white">Consistency</span>
+                        <span className="text-[#c8ff05]">81/100</span>
+                      </div>
+                      <div className="h-2 rounded-full bg-[#30363a] mt-1.5 overflow-hidden">
+                        <div className="h-full bg-gradient-to-r from-[#9bc900] to-[#d0ff05] rounded-full" style={{ width: "81%" }} />
+                      </div>
+                    </div>
+
+                    <div>
+                      <div className="flex justify-between text-xs font-semibold">
+                        <span className="text-white">Physical Readiness</span>
+                        <span className="text-[#c8ff05]">87/100</span>
+                      </div>
+                      <div className="h-2 rounded-full bg-[#30363a] mt-1.5 overflow-hidden">
+                        <div className="h-full bg-gradient-to-r from-[#9bc900] to-[#d0ff05] rounded-full" style={{ width: "87%" }} />
+                      </div>
+                    </div>
+
+                    <div>
+                      <div className="flex justify-between text-xs font-semibold">
+                        <span className="text-white">Coachability</span>
+                        <span className="text-[#c8ff05]">94/100</span>
+                      </div>
+                      <div className="h-2 rounded-full bg-[#30363a] mt-1.5 overflow-hidden">
+                        <div className="h-full bg-gradient-to-r from-[#9bc900] to-[#d0ff05] rounded-full" style={{ width: "94%" }} />
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="mt-4 p-3.5 rounded-xl border border-[#345327] bg-[#0c1510] text-xs text-[#c9dfb4]">
+                    Evaluation is coach-authored. A score supports review but is not an automatic acceptance decision.
+                  </div>
+                </div>
+              </div>
+
+              {/* Right Column (4 cols): Technical Decision */}
+              <div className="lg:col-span-4 rounded-xl border border-[#343b3e] bg-gradient-to-br from-[#15191b] to-[#0e1112] p-5 flex flex-col justify-between min-h-[520px]">
+                <div className="space-y-4">
+                  <div className="flex items-center justify-between pb-3 border-b border-[#31373a]">
+                    <h3 className="font-bold text-white text-base">
+                      {isAr ? "القرار الفني" : "Technical Decision"}
+                    </h3>
+                    <span className="text-xs font-bold text-[#c8ff05]">
+                      Requires authorization
+                    </span>
+                  </div>
+
+                  <div className="text-xs uppercase font-bold text-[#8f9c9f] tracking-wider">
+                    Trial Outcome
+                  </div>
+
+                  <div>
+                    <div className="text-3xl font-black text-white">
+                      87.8 <span className="text-xs text-[#9da9a9]">/ 100</span>
+                    </div>
+                    <div className="h-2 rounded-full bg-[#30363a] mt-2 overflow-hidden">
+                      <div className="h-full bg-gradient-to-r from-[#9bc900] to-[#d0ff05] rounded-full" style={{ width: "88%" }} />
+                    </div>
+                  </div>
+
+                  <div className="h-px bg-[#303739]" />
+
+                  <div className="space-y-2 text-xs divide-y divide-[#2a3031]">
+                    <div className="flex items-center justify-between py-2">
+                      <span className="text-[#9aa1a6]">Review owner</span>
+                      <b className="text-white">Head Coach</b>
+                    </div>
+                    <div className="flex items-center justify-between py-2">
+                      <span className="text-[#9aa1a6]">Evidence completeness</span>
+                      <span className="inline-flex px-2 py-0.5 rounded-full text-[10px] font-bold bg-[#1e2b09] text-[#b9fb30] border border-[#627b00]">
+                        Complete
+                      </span>
+                    </div>
+                    <div className="flex items-center justify-between py-2">
+                      <span className="text-[#9aa1a6]">Program capacity</span>
+                      <b className="text-white">18 / 20</b>
+                    </div>
+                    <div className="flex items-center justify-between py-2">
+                      <span className="text-[#9aa1a6]">Trial attendance</span>
+                      <span className="inline-flex px-2 py-0.5 rounded-full text-[10px] font-bold bg-[#1e2b09] text-[#b9fb30] border border-[#627b00]">
+                        Attended
+                      </span>
+                    </div>
+                  </div>
+
+                  <div className="text-xs uppercase font-bold text-[#8f9c9f] tracking-wider pt-1">
+                    Review Rationale
+                  </div>
+                  <div className="p-3 rounded-lg bg-[#101519] border border-[#293238] text-xs text-[#cfd8d8]">
+                    Consistent technique, positive response to feedback. Proposed for Swimming Development Level 2.
+                  </div>
+                </div>
+
+                {/* Decision Actions Stack matching Screen 15 */}
+                <div className="space-y-2 pt-3">
+                  <button
+                    type="button"
+                    onClick={() => setShowReviewWorkspace(false)}
+                    className="w-full py-2.5 rounded-lg bg-[#c8ff05] text-[#131600] font-bold text-xs shadow-[0_0_24px_rgba(199,255,0,0.2)] hover:bg-[#b2e600] cursor-pointer"
+                  >
+                    ✓ Accept for Enrollment
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setShowReviewWorkspace(false)}
+                    className="w-full py-2 rounded-lg border border-[#41474a] bg-[#111416] text-white font-semibold text-xs hover:bg-[#1a1e21] cursor-pointer"
+                  >
+                    ＋ Request Additional Trial
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setShowReviewWorkspace(false)}
+                    className="w-full py-2 rounded-lg border border-[#41474a] bg-[#111416] text-white font-semibold text-xs hover:bg-[#1a1e21] cursor-pointer"
+                  >
+                    Place on Waitlist
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setShowReviewWorkspace(false)}
+                    className="w-full py-2 rounded-lg border border-[#80404b] bg-[#111416] text-[#ff909b] font-semibold text-xs hover:bg-[#201416] cursor-pointer"
+                  >
+                    Not Accepted
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* 2. Technical Evaluation Modal */}
+      {showEvalModal && activeTrial && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4">
+          <div className="w-full max-w-lg rounded-2xl border border-[#2a3033] bg-[#101214] p-6 shadow-2xl text-xs space-y-4">
+            <div className="flex items-center justify-between pb-3 border-b border-[#222629]">
+              <div className="flex items-center gap-2">
+                <Award className="h-5 w-5 text-[#c8ff05]" />
+                <h3 className="text-base font-bold text-white">
+                  {isAr ? "تسجيل التقييم الفني" : "Record Technical Evaluation"}
+                </h3>
+              </div>
+              <button onClick={() => setShowEvalModal(false)} className="text-[#9aa1a6] hover:text-white cursor-pointer">
+                <X className="h-5 w-5" />
+              </button>
+            </div>
+
+            <div className="space-y-3">
+              <div className="p-3 rounded-xl bg-[#14171a] border border-[#222629]">
+                <div className="font-bold text-white text-sm">
+                  {isAr ? (activeTrial.athleteNameAr || activeTrial.athleteNameEn) : (activeTrial.athleteNameEn || activeTrial.athleteNameAr || "Athlete")}
+                </div>
+                <div className="text-[#9aa1a6] text-xs">
+                  {isAr ? (activeTrial.offeringNameAr || activeTrial.offeringNameEn) : (activeTrial.offeringNameEn || activeTrial.offeringNameAr)}
+                </div>
               </div>
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="font-semibold block mb-1">{isAr ? "تاريخ الموعد:" : "Appointment Date:"}</label>
+                  <label className="block text-[#9aa1a6] mb-1 font-semibold">{isAr ? "الدرجة الفنية (من 10)" : "Technical Score (out of 10)"}</label>
                   <input
-                    type="date"
-                    value={scheduledDate}
-                    onChange={(e) => setScheduledDate(e.target.value)}
-                    className="w-full rounded-md border px-3 py-2 text-sm"
+                    type="number"
+                    min="1"
+                    max="10"
+                    step="0.5"
+                    value={techScore}
+                    onChange={(e) => setTechScore(parseFloat(e.target.value) || 8)}
+                    className="w-full h-9 px-3 rounded-lg bg-[#14171a] border border-[#222629] text-white text-xs focus:outline-none focus:border-[#c8ff05]"
                   />
                 </div>
                 <div>
-                  <label className="font-semibold block mb-1">{isAr ? "وقت الموعد:" : "Appointment Time:"}</label>
-                  <input
-                    type="time"
-                    value={scheduledTime}
-                    onChange={(e) => setScheduledTime(e.target.value)}
-                    className="w-full rounded-md border px-3 py-2 text-sm"
-                  />
+                  <label className="block text-[#9aa1a6] mb-1 font-semibold">{isAr ? "المستوى الموصى به" : "Recommended Level"}</label>
+                  <select
+                    value={recLevel}
+                    onChange={(e) => setRecLevel(e.target.value)}
+                    className="w-full h-9 px-3 rounded-lg bg-[#14171a] border border-[#222629] text-white text-xs focus:outline-none focus:border-[#c8ff05]"
+                  >
+                    <option value="Beginner">{isAr ? "مبتدئ (Beginner)" : "Beginner"}</option>
+                    <option value="Intermediate">{isAr ? "متوسط (Intermediate)" : "Intermediate"}</option>
+                    <option value="Advanced">{isAr ? "متقدم (Advanced)" : "Advanced"}</option>
+                    <option value="Elite">{isAr ? "نخبة (Elite)" : "Elite"}</option>
+                  </select>
                 </div>
               </div>
-            </div>
 
-            <div className="pt-3 border-t flex justify-between">
-              <Button variant="ghost" onClick={() => setShowScheduleModal(false)}>{isAr ? "إلغاء" : "Cancel"}</Button>
-              <Button onClick={handleScheduleSubmit} disabled={!athleteId || !offeringId}>{isAr ? "جدولة" : "Confirm Schedule"}</Button>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Technical Evaluation Modal (Coach Realm) */}
-      {showEvalModal && activeTrial && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 backdrop-blur-sm">
-          <div className="w-full max-w-md rounded-lg bg-background p-6 shadow-xl border space-y-4">
-            <div className="flex items-center justify-between pb-3 border-b">
               <div>
-                <h3 className="font-bold text-base">{isAr ? "التقييم الفني للمدرب" : "Coach Technical Evaluation"}</h3>
-                <p className="text-xs text-muted-foreground">{activeTrial.athleteNameEn} • {activeTrial.offeringNameEn}</p>
-              </div>
-              <Button size="icon" variant="ghost" onClick={() => setShowEvalModal(false)}>
-                <X className="h-4 w-4" />
-              </Button>
-            </div>
-
-            <div className="space-y-3 text-xs">
-              <div>
-                <label className="font-semibold block mb-1">{isAr ? "التوصية الفنية:" : "Technical Recommendation:"}</label>
+                <label className="block text-[#9aa1a6] mb-1 font-semibold">{isAr ? "التوصية الفنية" : "Technical Recommendation"}</label>
                 <input
                   type="text"
                   value={techRec}
                   onChange={(e) => setTechRec(e.target.value)}
-                  placeholder="e.g. Recommended for U-12 Development Squad"
-                  className="w-full rounded-md border px-3 py-2 text-sm"
+                  placeholder={isAr ? "مثال: ترقية للمستوى الثاني، بحاجة لتدريب لياقة..." : "e.g. Advance to Squad, Needs fitness..."}
+                  className="w-full h-9 px-3 rounded-lg bg-[#14171a] border border-[#222629] text-white text-xs focus:outline-none focus:border-[#c8ff05]"
                 />
               </div>
 
-              <div className="grid grid-cols-2 gap-3">
-                <div>
-                  <label className="font-semibold block mb-1">{isAr ? "المستوى المقترح:" : "Recommended Level:"}</label>
-                  <select
-                    value={recLevel}
-                    onChange={(e) => setRecLevel(e.target.value)}
-                    className="w-full rounded-md border px-3 py-2 text-sm"
-                  >
-                    <option value="Beginner">Beginner</option>
-                    <option value="Intermediate">Intermediate</option>
-                    <option value="Advanced">Advanced</option>
-                    <option value="Elite">Elite</option>
-                  </select>
-                </div>
-                <div>
-                  <label className="font-semibold block mb-1">{isAr ? "الدرجة الفنية (1-10):" : "Technical Score (1-10):"}</label>
-                  <input
-                    type="number"
-                    min={1}
-                    max={10}
-                    value={techScore}
-                    onChange={(e) => setTechScore(Number(e.target.value))}
-                    className="w-full rounded-md border px-3 py-2 text-sm"
-                  />
-                </div>
-              </div>
-
               <div>
-                <label className="font-semibold block mb-1">{isAr ? "ملاحظات تقييم الأداء:" : "Detailed Drill & Skill Notes:"}</label>
+                <label className="block text-[#9aa1a6] mb-1 font-semibold">{isAr ? "ملاحظات المدرب" : "Coach Notes"}</label>
                 <textarea
                   value={techNotes}
                   onChange={(e) => setTechNotes(e.target.value)}
                   rows={3}
-                  placeholder="Tactical, physical, and technical observations..."
-                  className="w-full rounded-md border px-3 py-2 text-sm"
+                  className="w-full p-2.5 rounded-lg bg-[#14171a] border border-[#222629] text-white text-xs focus:outline-none focus:border-[#c8ff05]"
                 />
               </div>
             </div>
 
-            <div className="pt-3 border-t flex justify-between">
-              <Button variant="ghost" onClick={() => setShowEvalModal(false)}>{isAr ? "إلغاء" : "Cancel"}</Button>
-              <Button onClick={handleEvalSubmit} disabled={!techRec}>{isAr ? "اعتماد التقييم" : "Submit Review"}</Button>
+            <div className="flex items-center justify-end gap-2 pt-3 border-t border-[#222629]">
+              <button
+                type="button"
+                onClick={() => setShowEvalModal(false)}
+                className="h-8 px-4 rounded-lg border border-[#2a3033] bg-[#14171a] text-white font-semibold hover:bg-[#1f2428] cursor-pointer"
+              >
+                {isAr ? "إلغاء" : "Cancel"}
+              </button>
+              <Button
+                onClick={handleEvalSubmit}
+                className="h-8 px-4 bg-[#c8ff05] hover:bg-[#b2e600] text-black font-bold cursor-pointer"
+              >
+                {isAr ? "حفظ التقييم" : "Save Evaluation"}
+              </Button>
             </div>
           </div>
         </div>
       )}
 
-      {/* Admin Decision Modal (Director/Admin Realm) */}
+      {/* 3. Administrative Placement Decision Modal */}
       {showDecideModal && activeTrial && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 backdrop-blur-sm">
-          <div className="w-full max-w-md rounded-lg bg-background p-6 shadow-xl border space-y-4">
-            <div className="flex items-center justify-between pb-3 border-b">
-              <div>
-                <h3 className="font-bold text-base">{isAr ? "قرار القبول الإداري" : "Administrative Admission Decision"}</h3>
-                <p className="text-xs text-muted-foreground">{activeTrial.athleteNameEn} • Score: {activeTrial.technicalScore}/10</p>
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4">
+          <div className="w-full max-w-lg rounded-2xl border border-[#2a3033] bg-[#101214] p-6 shadow-2xl text-xs space-y-4">
+            <div className="flex items-center justify-between pb-3 border-b border-[#222629]">
+              <div className="flex items-center gap-2">
+                <UserCheck className="h-5 w-5 text-[#c8ff05]" />
+                <h3 className="text-base font-bold text-white">
+                  {isAr ? "تسجيل القرار الإداري للتجربة" : "Record Admission Decision"}
+                </h3>
               </div>
-              <Button size="icon" variant="ghost" onClick={() => setShowDecideModal(false)}>
-                <X className="h-4 w-4" />
-              </Button>
+              <button onClick={() => setShowDecideModal(false)} className="text-[#9aa1a6] hover:text-white cursor-pointer">
+                <X className="h-5 w-5" />
+              </button>
             </div>
 
-            <div className="space-y-3 text-xs">
-              <span className="font-semibold block">{isAr ? "القرار النهائي:" : "Final Verdict:"}</span>
-              <div className="grid grid-cols-3 gap-2">
-                <Button
-                  type="button"
-                  size="sm"
-                  variant={decisionType === "Approved" ? "default" : "outline"}
-                  onClick={() => setDecisionType("Approved")}
-                  className="text-xs"
-                >
-                  <CheckCircle2 className="h-3.5 w-3.5 mr-1" />
-                  {isAr ? "قبول" : "Accept"}
-                </Button>
-                <Button
-                  type="button"
-                  size="sm"
-                  variant={decisionType === "Waitlisted" ? "default" : "outline"}
-                  onClick={() => setDecisionType("Waitlisted")}
-                  className="text-xs"
-                >
-                  <Clock className="h-3.5 w-3.5 mr-1" />
-                  {isAr ? "انتظار" : "Waitlist"}
-                </Button>
-                <Button
-                  type="button"
-                  size="sm"
-                  variant={decisionType === "Rejected" ? "destructive" : "outline"}
-                  onClick={() => setDecisionType("Rejected")}
-                  className="text-xs"
-                >
-                  <XCircle className="h-3.5 w-3.5 mr-1" />
-                  {isAr ? "رفض" : "Reject"}
-                </Button>
+            <div className="space-y-3">
+              <div className="p-3 rounded-xl bg-[#14171a] border border-[#222629]">
+                <div className="font-bold text-white text-sm">
+                  {isAr ? (activeTrial.athleteNameAr || activeTrial.athleteNameEn) : (activeTrial.athleteNameEn || activeTrial.athleteNameAr || "Athlete")}
+                </div>
+                <div className="text-[#9aa1a6] text-xs">
+                  {isAr ? (activeTrial.offeringNameAr || activeTrial.offeringNameEn) : (activeTrial.offeringNameEn || activeTrial.offeringNameAr)}
+                </div>
               </div>
 
               <div>
-                <label className="font-semibold block mb-1">{isAr ? "ملاحظات القرار الإداري:" : "Administrative Notes:"}</label>
+                <label className="block text-[#9aa1a6] mb-1 font-semibold">{isAr ? "نوع القرار" : "Admission Decision"}</label>
+                <div className="grid grid-cols-3 gap-2">
+                  <button
+                    type="button"
+                    onClick={() => setDecisionType("Approved")}
+                    className={`py-2 px-3 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                      decisionType === "Approved"
+                        ? "bg-[#122815] text-[#4ade80] border border-[#22c55e]"
+                        : "bg-[#14171a] text-[#9aa1a6] border border-[#222629]"
+                    }`}
+                  >
+                    {isAr ? "قبول (Approved)" : "Approved"}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setDecisionType("Waitlisted")}
+                    className={`py-2 px-3 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                      decisionType === "Waitlisted"
+                        ? "bg-[#2a1d08] text-[#fbbf24] border border-[#f59e0b]"
+                        : "bg-[#14171a] text-[#9aa1a6] border border-[#222629]"
+                    }`}
+                  >
+                    {isAr ? "قائمة انتظار" : "Waitlisted"}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setDecisionType("Rejected")}
+                    className={`py-2 px-3 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                      decisionType === "Rejected"
+                        ? "bg-[#2b1114] text-[#ff8290] border border-[#f43f5e]"
+                        : "bg-[#14171a] text-[#9aa1a6] border border-[#222629]"
+                    }`}
+                  >
+                    {isAr ? "رفض (Rejected)" : "Rejected"}
+                  </button>
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-[#9aa1a6] mb-1 font-semibold">{isAr ? "ملاحظات القرار الإداري" : "Decision Notes"}</label>
                 <textarea
                   value={adminNotes}
                   onChange={(e) => setAdminNotes(e.target.value)}
-                  rows={2}
-                  placeholder="Admission rationale, branch constraints, or enrollment instructions..."
-                  className="w-full rounded-md border px-3 py-2 text-sm"
+                  rows={3}
+                  className="w-full p-2.5 rounded-lg bg-[#14171a] border border-[#222629] text-white text-xs focus:outline-none focus:border-[#c8ff05]"
+                  placeholder={isAr ? "أسباب القبول أو شروط التسجيل..." : "State placement reasons or conditions..."}
                 />
               </div>
             </div>
 
-            <div className="pt-3 border-t flex justify-between">
-              <Button variant="ghost" onClick={() => setShowDecideModal(false)}>{isAr ? "إلغاء" : "Cancel"}</Button>
-              <Button onClick={handleDecideSubmit}>{isAr ? "حفظ القرار" : "Confirm Verdict"}</Button>
+            <div className="flex items-center justify-end gap-2 pt-3 border-t border-[#222629]">
+              <button
+                type="button"
+                onClick={() => setShowDecideModal(false)}
+                className="h-8 px-4 rounded-lg border border-[#2a3033] bg-[#14171a] text-white font-semibold hover:bg-[#1f2428] cursor-pointer"
+              >
+                {isAr ? "إلغاء" : "Cancel"}
+              </button>
+              <Button
+                onClick={handleDecideSubmit}
+                className="h-8 px-4 bg-[#c8ff05] hover:bg-[#b2e600] text-black font-bold cursor-pointer"
+              >
+                {isAr ? "اعتماد القرار" : "Confirm Decision"}
+              </Button>
             </div>
           </div>
         </div>
