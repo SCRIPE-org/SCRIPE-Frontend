@@ -1,17 +1,14 @@
 "use client";
 
-import React, { useMemo } from "react";
-import { SlidersHorizontal, ArrowRight, RotateCcw } from "lucide-react";
-import { Button } from "@core/ui/button";
+import React, { useMemo, useState } from "react";
+import { ArrowRight, RotateCcw, SlidersHorizontal } from "lucide-react";
 import { Badge } from "@core/ui/badge";
-import { Input } from "@core/ui/input";
-import { Label } from "@core/ui/label";
-import { Switch } from "@core/ui/switch";
-import { Popover, PopoverTrigger, PopoverContent } from "@core/ui/popover";
-import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@core/ui/select";
+import { Button } from "@core/ui/button";
+import { Popover, PopoverContent, PopoverTrigger } from "@core/ui/popover";
 import { useI18n } from "@core/providers/i18n-provider";
 import { previewNormalizedSample } from "../../domain/mapping-validation";
-import type { DataExchangeCaseMode, DataExchangeTransformRule } from "../../domain/types";
+import type { DataExchangeTransformRule } from "../../domain/types";
+import { ColumnNormalizationSections } from "./ColumnNormalizationSections";
 
 export interface ColumnNormalizationPopoverProps {
   sourceColumnHeader: string;
@@ -41,12 +38,15 @@ export function countActiveTransforms(rule?: DataExchangeTransformRule | null): 
   if (rule.normalizeEmailAddress) count++;
   if (rule.multiValueDelimiter) count++;
   if (rule.defaultValue) count++;
+  if (rule.dateFormat) count++;
+  if (rule.sourceTimeZoneId) count++;
   return count;
 }
 
 /**
- * Interactive normalization popover with live Raw -> Normalized preview
- * and 17-property MENA & enterprise normalization controls.
+ * Interactive normalization popover with live Raw -> Normalized preview,
+ * sticky header, sticky live transformation simulation, scrollable body,
+ * context-smart presets, and 17-property MENA & enterprise normalization engine.
  */
 export function ColumnNormalizationPopover({
   sourceColumnHeader,
@@ -57,6 +57,7 @@ export function ColumnNormalizationPopover({
   onChange,
 }: ColumnNormalizationPopoverProps) {
   const { t, direction } = useI18n();
+  const [open, setOpen] = useState(false);
 
   const currentRule: DataExchangeTransformRule = useMemo(
     () => ({
@@ -111,7 +112,7 @@ export function ColumnNormalizationPopover({
   };
 
   return (
-    <Popover>
+    <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
         <Button
           type="button"
@@ -133,228 +134,84 @@ export function ColumnNormalizationPopover({
         align="start"
         sideOffset={8}
         collisionPadding={16}
-        className="w-[420px] max-h-[min(520px,78vh)] overflow-y-auto p-4 border border-nx-line bg-nx-surface text-nx-ink"
+        className="w-[440px] max-w-[calc(100vw-2rem)] max-h-[min(600px,82vh)] p-0 flex flex-col overflow-hidden bg-nx-surface border-nx-line text-nx-ink z-[950] shadow-nx-popover"
       >
-        <div className="space-y-4">
-          {/* Header & Reset */}
-          <div className="flex items-center justify-between border-b border-nx-line pb-2">
-            <div>
-              <h4 className="text-xs font-semibold text-nx-ink">
+        {/* Sticky Header */}
+        <div className="shrink-0 flex items-center justify-between border-b border-nx-line bg-nx-surface p-3.5">
+          <div className="min-w-0 flex-1 me-2">
+            <div className="flex items-center gap-1.5">
+              <h4 className="text-xs font-semibold text-nx-ink truncate">
                 {t("dataExchange.normalization.title")}
               </h4>
-              <p className="text-[11px] text-nx-ink-3">
-                {sourceColumnHeader} {targetFieldKey ? `→ ${targetFieldKey}` : ""}
-              </p>
+              {targetDataType && (
+                <Badge variant="outline" className="text-[10px] font-mono shrink-0">
+                  {targetDataType}
+                </Badge>
+              )}
             </div>
-            <Button
-              type="button"
-              variant="ghost"
-              size="sm"
-              onClick={handleReset}
-              className="h-7 gap-1 px-2 text-[11px] text-nx-ink-2 hover:text-nx-ink"
+            <p className="text-[11px] text-nx-ink-3 truncate mt-0.5">
+              {sourceColumnHeader} {targetFieldKey ? `→ ${targetFieldKey}` : ""}
+            </p>
+          </div>
+          <Button
+            type="button"
+            variant="ghost"
+            size="sm"
+            onClick={handleReset}
+            className="h-7 gap-1 px-2 text-[11px] text-nx-ink-2 hover:text-nx-ink shrink-0"
+          >
+            <RotateCcw className="h-3 w-3" />
+            <span>{t("dataExchange.normalization.resetRules")}</span>
+          </Button>
+        </div>
+
+        {/* Sticky Live Transformation Preview */}
+        <div className="shrink-0 bg-nx-raised border-b border-nx-line p-3">
+          <span className="text-[10px] font-medium uppercase tracking-wider text-nx-ink-3">
+            {t("dataExchange.normalization.preview")}
+          </span>
+          <div className="mt-1.5 flex items-center gap-2 text-xs">
+            <span
+              className="flex-1 truncate rounded bg-nx-surface px-2 py-1 text-nx-ink-2 border border-nx-line"
+              title={sampleValue}
             >
-              <RotateCcw className="h-3 w-3" />
-              <span>{t("dataExchange.normalization.resetRules")}</span>
-            </Button>
-          </div>
-
-          {/* Live Preview Box */}
-          <div className="rounded-nx-control border border-nx-line bg-nx-ground p-2.5">
-            <span className="text-[10px] font-medium uppercase tracking-wider text-nx-ink-3">
-              {t("dataExchange.normalization.preview")}
+              {sampleValue || "—"}
             </span>
-            <div className="mt-1.5 flex items-center gap-2 text-xs">
-              <span className="flex-1 truncate rounded bg-nx-surface px-2 py-1 text-nx-ink-2 border border-nx-line">
-                {sampleValue || "—"}
-              </span>
-              <ArrowRight className="h-3.5 w-3.5 shrink-0 text-nx-accent" />
-              <span className="flex-1 truncate rounded bg-nx-surface px-2 py-1 font-mono font-medium text-nx-ink border border-nx-accent">
-                {preview || "—"}
-              </span>
-            </div>
-          </div>
-
-          {/* Group 1: General & Text */}
-          <div className="space-y-2">
-            <span className="text-[11px] font-semibold text-nx-ink-2">
-              {t("dataExchange.normalization.generalGroup")}
+            <ArrowRight className="h-3.5 w-3.5 shrink-0 text-nx-accent" />
+            <span
+              className="flex-1 truncate rounded bg-nx-surface px-2 py-1 font-mono font-medium text-nx-ink border border-nx-accent"
+              title={preview}
+            >
+              {preview || "—"}
             </span>
-            <div className="space-y-2 rounded-nx-control border border-nx-line bg-nx-raised/50 p-2.5">
-              <div className="flex items-center justify-between">
-                <Label htmlFor={`norm-trim-${sourceColumnHeader}`} className="text-xs text-nx-ink">
-                  {t("dataExchange.normalization.trimLabel")}
-                </Label>
-                <Switch
-                  id={`norm-trim-${sourceColumnHeader}`}
-                  checked={currentRule.trim !== false}
-                  onCheckedChange={(checked) => update({ trim: checked })}
-                />
-              </div>
-
-              <div className="flex items-center justify-between">
-                <Label htmlFor={`norm-ws-${sourceColumnHeader}`} className="text-xs text-nx-ink">
-                  {t("dataExchange.normalization.collapseWhitespaceLabel")}
-                </Label>
-                <Switch
-                  id={`norm-ws-${sourceColumnHeader}`}
-                  checked={currentRule.collapseWhitespace !== false}
-                  onCheckedChange={(checked) => update({ collapseWhitespace: checked })}
-                />
-              </div>
-
-              <div className="flex items-center justify-between">
-                <Label htmlFor={`norm-ucomp-${sourceColumnHeader}`} className="text-xs text-nx-ink">
-                  {t("dataExchange.normalization.unicodeCompatLabel")}
-                </Label>
-                <Switch
-                  id={`norm-ucomp-${sourceColumnHeader}`}
-                  checked={currentRule.normalizeUnicodeCompatibility !== false}
-                  onCheckedChange={(checked) => update({ normalizeUnicodeCompatibility: checked })}
-                />
-              </div>
-
-              <div className="flex items-center justify-between gap-2 pt-1">
-                <Label htmlFor={`norm-case-${sourceColumnHeader}`} className="text-xs text-nx-ink">
-                  {t("dataExchange.normalization.caseModeLabel")}
-                </Label>
-                <Select
-                  value={currentRule.caseMode ?? "None"}
-                  onValueChange={(val) => update({ caseMode: val as DataExchangeCaseMode })}
-                >
-                  <SelectTrigger id={`norm-case-${sourceColumnHeader}`} className="h-7 w-32 text-xs">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="None">{t("dataExchange.normalization.caseNone")}</SelectItem>
-                    <SelectItem value="Lower">{t("dataExchange.normalization.caseLower")}</SelectItem>
-                    <SelectItem value="Upper">{t("dataExchange.normalization.caseUpper")}</SelectItem>
-                    <SelectItem value="Title">{t("dataExchange.normalization.caseTitle")}</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-
-              <div className="flex items-center justify-between gap-2 pt-1">
-                <Label htmlFor={`norm-def-${sourceColumnHeader}`} className="text-xs text-nx-ink">
-                  {t("dataExchange.normalization.defaultValueLabel")}
-                </Label>
-                <Input
-                  id={`norm-def-${sourceColumnHeader}`}
-                  value={currentRule.defaultValue ?? ""}
-                  placeholder={t("dataExchange.normalization.defaultValuePlaceholder")}
-                  onChange={(e) => update({ defaultValue: e.target.value || null })}
-                  className="h-7 w-36 text-xs"
-                />
-              </div>
-            </div>
           </div>
+        </div>
 
-          {/* Group 2: Arabic & MENA */}
-          <div className="space-y-2">
-            <span className="text-[11px] font-semibold text-nx-ink-2">
-              {t("dataExchange.normalization.menaArabicGroup")}
-            </span>
-            <div className="space-y-2 rounded-nx-control border border-nx-line bg-nx-raised/50 p-2.5">
-              <div className="flex items-center justify-between">
-                <Label htmlFor={`norm-diacr-${sourceColumnHeader}`} className="text-xs text-nx-ink">
-                  {t("dataExchange.normalization.stripDiacriticsLabel")}
-                </Label>
-                <Switch
-                  id={`norm-diacr-${sourceColumnHeader}`}
-                  checked={currentRule.stripArabicDiacritics !== false}
-                  onCheckedChange={(checked) => update({ stripArabicDiacritics: checked })}
-                />
-              </div>
+        {/* Dedicated Scrollable Body (NEVER no-scrollbar!) */}
+        <div className="flex-1 min-h-0 overflow-y-auto overscroll-contain p-3.5">
+          <ColumnNormalizationSections
+            sourceColumnHeader={sourceColumnHeader}
+            targetFieldKey={targetFieldKey}
+            targetDataType={targetDataType}
+            sampleValue={sampleValue}
+            rule={currentRule}
+            onUpdate={update}
+          />
+        </div>
 
-              <div className="flex items-center justify-between">
-                <Label htmlFor={`norm-arab-ltr-${sourceColumnHeader}`} className="text-xs text-nx-ink">
-                  {t("dataExchange.normalization.normalizeLettersLabel")}
-                </Label>
-                <Switch
-                  id={`norm-arab-ltr-${sourceColumnHeader}`}
-                  checked={Boolean(currentRule.normalizeArabicLetters)}
-                  onCheckedChange={(checked) => update({ normalizeArabicLetters: checked })}
-                />
-              </div>
-
-              <div className="flex items-center justify-between">
-                <Label htmlFor={`norm-null-${sourceColumnHeader}`} className="text-xs text-nx-ink">
-                  {t("dataExchange.normalization.canonicalizeNullLabel")}
-                </Label>
-                <Switch
-                  id={`norm-null-${sourceColumnHeader}`}
-                  checked={currentRule.canonicalizeNullTokens !== false}
-                  onCheckedChange={(checked) => update({ canonicalizeNullTokens: checked })}
-                />
-              </div>
-            </div>
-          </div>
-
-          {/* Group 3: Formats & Types */}
-          <div className="space-y-2">
-            <span className="text-[11px] font-semibold text-nx-ink-2">
-              {t("dataExchange.normalization.formatsGroup")}
-            </span>
-            <div className="space-y-2 rounded-nx-control border border-nx-line bg-nx-raised/50 p-2.5">
-              <div className="flex items-center justify-between">
-                <Label htmlFor={`norm-curr-${sourceColumnHeader}`} className="text-xs text-nx-ink">
-                  {t("dataExchange.normalization.stripCurrencyLabel")}
-                </Label>
-                <Switch
-                  id={`norm-curr-${sourceColumnHeader}`}
-                  checked={currentRule.stripCurrencyAndGrouping !== false}
-                  onCheckedChange={(checked) => update({ stripCurrencyAndGrouping: checked })}
-                />
-              </div>
-
-              <div className="flex items-center justify-between">
-                <Label htmlFor={`norm-acct-${sourceColumnHeader}`} className="text-xs text-nx-ink">
-                  {t("dataExchange.normalization.accountingNegativesLabel")}
-                </Label>
-                <Switch
-                  id={`norm-acct-${sourceColumnHeader}`}
-                  checked={currentRule.convertAccountingNegatives !== false}
-                  onCheckedChange={(checked) => update({ convertAccountingNegatives: checked })}
-                />
-              </div>
-
-              <div className="flex items-center justify-between gap-2 pt-1">
-                <Label htmlFor={`norm-dial-${sourceColumnHeader}`} className="text-xs text-nx-ink">
-                  {t("dataExchange.normalization.defaultCountryCodeLabel")}
-                </Label>
-                <Input
-                  id={`norm-dial-${sourceColumnHeader}`}
-                  value={currentRule.defaultCountryDialCode ?? ""}
-                  placeholder={t("dataExchange.normalization.defaultCountryCodePlaceholder")}
-                  onChange={(e) => update({ defaultCountryDialCode: e.target.value || null })}
-                  className="h-7 w-28 text-xs font-mono"
-                />
-              </div>
-
-              <div className="flex items-center justify-between">
-                <Label htmlFor={`norm-email-${sourceColumnHeader}`} className="text-xs text-nx-ink">
-                  {t("dataExchange.normalization.normalizeEmailLabel")}
-                </Label>
-                <Switch
-                  id={`norm-email-${sourceColumnHeader}`}
-                  checked={Boolean(currentRule.normalizeEmailAddress)}
-                  onCheckedChange={(checked) => update({ normalizeEmailAddress: checked })}
-                />
-              </div>
-
-              <div className="flex items-center justify-between gap-2 pt-1">
-                <Label htmlFor={`norm-delim-${sourceColumnHeader}`} className="text-xs text-nx-ink">
-                  {t("dataExchange.normalization.multiValueDelimiterLabel")}
-                </Label>
-                <Input
-                  id={`norm-delim-${sourceColumnHeader}`}
-                  value={currentRule.multiValueDelimiter ?? ""}
-                  placeholder={t("dataExchange.normalization.multiValueDelimiterPlaceholder")}
-                  onChange={(e) => update({ multiValueDelimiter: e.target.value || null })}
-                  className="h-7 w-20 text-xs font-mono text-center"
-                />
-              </div>
-            </div>
-          </div>
+        {/* Sticky Footer */}
+        <div className="shrink-0 bg-nx-raised border-t border-nx-line p-3 flex items-center justify-between">
+          <Badge variant="secondary" className="text-[10px]">
+            {t("dataExchange.normalization.activeRules", { count: activeCount })}
+          </Badge>
+          <Button
+            type="button"
+            size="sm"
+            onClick={() => setOpen(false)}
+            className="h-7 px-3 text-xs bg-nx-accent text-nx-on-fill hover:opacity-90 font-medium"
+          >
+            {t("dataExchange.normalization.done")}
+          </Button>
         </div>
       </PopoverContent>
     </Popover>

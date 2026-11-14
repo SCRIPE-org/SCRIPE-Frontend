@@ -33,3 +33,9 @@ export { useDataExchangeJobsStore } from "./presentation/store/useDataExchangeJo
 export type { DataExchangeJobsStoreState } from "./presentation/store/useDataExchangeJobsStore";
 
 export { DataExchangeFloatingDock } from "./presentation/components/DataExchangeFloatingDock";
+export {
+  getEntityDisplayName,
+  resolveEntityDisplayName,
+  formatEntityLabel,
+  formatDataExchangeEntityName,
+} from "./presentation/utils/entity-display-names";

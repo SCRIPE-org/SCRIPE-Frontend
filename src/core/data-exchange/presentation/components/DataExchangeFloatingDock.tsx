@@ -4,21 +4,18 @@ import React, { useEffect, useRef, useState, useCallback } from "react";
 import {
   ChevronDown,
   ChevronUp,
-  Download,
   FileSpreadsheet,
-  Loader2,
-  X,
   Trash2,
-  Ban,
 } from "lucide-react";
 import { Card, CardHeader, CardTitle, CardContent } from "@core/ui/card";
 import { Badge } from "@core/ui/badge";
 import { Button } from "@core/ui/button";
-import { Progress } from "@core/ui/progress";
 import { toast } from "@core/ui/sileo-toast";
 import { getCoreContainer } from "@core/di";
 import { useI18n } from "@core/providers/i18n-provider";
 import { useDataExchangeJobsStore } from "../store/useDataExchangeJobsStore";
+import { getEntityDisplayName } from "../utils/entity-display-names";
+import { FloatingDockJobItem } from "./FloatingDockJobItem";
 import type { DataTransferJobStatus } from "../../domain/types";
 
 const TERMINAL_STATUSES = new Set<DataTransferJobStatus>([
@@ -28,8 +25,13 @@ const TERMINAL_STATUSES = new Set<DataTransferJobStatus>([
   "Cancelled",
 ]);
 
+/**
+ * Floating task dock displaying real-time Data Exchange background imports,
+ * exports, and multi-sheet migrations with Sileo morphing status transitions.
+ */
 export function DataExchangeFloatingDock() {
-  const { direction, t } = useI18n();
+  const { direction, language, t } = useI18n();
+  const isAr = language === "ar";
   const repo = getCoreContainer().dataExchangeRepository;
   const {
     jobs,
@@ -54,32 +56,65 @@ export function DataExchangeFloatingDock() {
           const latest = await repo.getJob(job.id);
           upsertJob(latest);
 
-          // Handle single-fire notification upon terminal state
+          // Handle single-fire notification upon terminal state using Sileo ID morphing
           if (TERMINAL_STATUSES.has(latest.status) && !notifiedJobIds.current.has(latest.id)) {
             notifiedJobIds.current.add(latest.id);
+            const entityLabel = getEntityDisplayName(latest.entityKey, t, isAr);
+            const toastId = "dx-job-" + latest.id;
+
             if (latest.status === "Completed") {
               if (latest.kind === "Export") {
-                toast.success(t("dataExchange.dock.toastExportReady", { entity: latest.entityKey }));
+                toast.success({
+                  id: toastId,
+                  title: t("dataExchange.dock.toastTitleExportReady"),
+                  description: t("dataExchange.dock.toastExportReady", { entity: entityLabel }),
+                  button: {
+                    title: t("dataExchange.actions.downloadExport"),
+                    onClick: () => {
+                      repo.downloadArtifactFile(latest.id, "export").catch(() => {});
+                    },
+                  },
+                });
               } else {
-                toast.success(
-                  t("dataExchange.dock.toastImportCompleted", {
-                    entity: latest.entityKey,
+                toast.success({
+                  id: toastId,
+                  title: t("dataExchange.dock.toastTitleImportCompleted"),
+                  description: t("dataExchange.dock.toastImportCompleted", {
+                    entity: entityLabel,
                     count: latest.committedRows,
-                  })
-                );
+                  }),
+                });
               }
             } else if (latest.status === "CompletedWithErrors") {
-              toast.warning(
-                t("dataExchange.dock.toastImportPartial", {
-                  entity: latest.entityKey,
+              toast.warning({
+                id: toastId,
+                title: t("dataExchange.dock.toastTitleImportPartial"),
+                description: t("dataExchange.dock.toastImportPartial", {
+                  entity: entityLabel,
                   committed: latest.committedRows,
                   rejected: latest.rejectedRows,
-                })
-              );
+                }),
+                button: latest.hasRejectedWorkbook
+                  ? {
+                      title: t("dataExchange.actions.downloadRejected"),
+                      onClick: () => {
+                        repo.downloadArtifactFile(latest.id, "rejected").catch(() => {});
+                      },
+                    }
+                  : undefined,
+              });
             } else if (latest.status === "Failed") {
-              toast.error(t("dataExchange.dock.toastJobFailed", { entity: latest.entityKey }));
+              toast.error({
+                id: toastId,
+                title: t("dataExchange.dock.toastTitleJobFailed"),
+                description: t("dataExchange.dock.toastJobFailed", { entity: entityLabel }),
+              });
             } else if (latest.status === "Cancelled") {
-              toast.info(t("dataExchange.dock.toastJobCancelled", { entity: latest.entityKey }));
+              toast.info({
+                id: toastId,
+                title: t("dataExchange.dock.toastTitleJobCancelled"),
+                description: t("dataExchange.dock.toastJobCancelled", { entity: entityLabel }),
+              });
             }
           }
         } catch {
@@ -89,35 +124,49 @@ export function DataExchangeFloatingDock() {
     }, 2000);
 
     return () => clearInterval(interval);
-  }, [jobs, repo, t, upsertJob]);
+  }, [jobs, repo, t, isAr, upsertJob]);
 
   const handleCancelJob = useCallback(
     async (jobId: string) => {
       const targetEntity = jobs.find((j) => j.id === jobId)?.entityKey ?? jobId;
+      const entityLabel = getEntityDisplayName(targetEntity, t, isAr);
       setCancellingJobIds((prev) => ({ ...prev, [jobId]: true }));
       try {
         const updated = await repo.cancelJob(jobId);
         upsertJob(updated);
-        toast.info(t("dataExchange.dock.toastJobCancelled", { entity: updated.entityKey || targetEntity }));
+        toast.info({
+          id: "dx-job-" + jobId,
+          title: t("dataExchange.dock.toastTitleJobCancelled"),
+          description: t("dataExchange.dock.toastJobCancelled", { entity: entityLabel }),
+        });
       } catch {
-        toast.error(t("dataExchange.dock.toastJobFailed", { entity: targetEntity }));
+        toast.error({
+          id: "dx-job-" + jobId,
+          title: t("dataExchange.dock.toastTitleJobFailed"),
+          description: t("dataExchange.dock.toastJobFailed", { entity: entityLabel }),
+        });
       } finally {
         setCancellingJobIds((prev) => ({ ...prev, [jobId]: false }));
       }
     },
-    [jobs, repo, t, upsertJob]
+    [jobs, repo, t, isAr, upsertJob]
   );
 
   const handleDownload = useCallback(
     async (jobId: string, kind: "export" | "rejected") => {
       const targetEntity = jobs.find((j) => j.id === jobId)?.entityKey ?? jobId;
+      const entityLabel = getEntityDisplayName(targetEntity, t, isAr);
       try {
         await repo.downloadArtifactFile(jobId, kind);
       } catch {
-        toast.error(t("dataExchange.dock.toastJobFailed", { entity: targetEntity }));
+        toast.error({
+          id: "dx-job-" + jobId,
+          title: t("dataExchange.dock.toastTitleJobFailed"),
+          description: t("dataExchange.dock.toastJobFailed", { entity: entityLabel }),
+        });
       }
     },
-    [jobs, repo, t]
+    [jobs, repo, t, isAr]
   );
 
   if (jobs.length === 0) {
@@ -125,30 +174,6 @@ export function DataExchangeFloatingDock() {
   }
 
   const activeCount = jobs.filter((j) => !TERMINAL_STATUSES.has(j.status)).length;
-
-  const renderStatusBadge = (status: DataTransferJobStatus) => {
-    switch (status) {
-      case "Queued":
-        return <Badge variant="outline">{t("dataExchange.dock.statusQueued")}</Badge>;
-      case "Running":
-        return (
-          <Badge variant="info" className="gap-1">
-            <Loader2 className="h-3 w-3 animate-spin" />
-            {t("dataExchange.dock.statusRunning")}
-          </Badge>
-        );
-      case "Completed":
-        return <Badge variant="success">{t("dataExchange.dock.statusCompleted")}</Badge>;
-      case "CompletedWithErrors":
-        return <Badge variant="warning">{t("dataExchange.dock.statusCompletedWithErrors")}</Badge>;
-      case "Failed":
-        return <Badge variant="destructive">{t("dataExchange.dock.statusFailed")}</Badge>;
-      case "Cancelled":
-        return <Badge variant="secondary">{t("dataExchange.dock.statusCancelled")}</Badge>;
-      default:
-        return <Badge variant="outline">{status}</Badge>;
-    }
-  };
 
   return (
     <aside
@@ -196,104 +221,19 @@ export function DataExchangeFloatingDock() {
           </div>
         </CardHeader>
 
-        {/* Dock Body */}
+        {/* Dock Body (No no-scrollbar, proper overscroll-contain) */}
         {!isCollapsed && (
-          <CardContent className="p-3 max-h-80 overflow-y-auto space-y-3 no-scrollbar">
-            {jobs.map((job) => {
-              const isActive = !TERMINAL_STATUSES.has(job.status);
-              const progress =
-                job.progressPercent ??
-                (job.totalRows > 0 ? Math.round((job.processedRows / job.totalRows) * 100) : 0);
-              const isCancelling = cancellingJobIds[job.id] || false;
-
-              return (
-                <div
-                  key={job.id}
-                  className="rounded-nx-md border border-nx-line bg-nx-raised p-2.5 space-y-2 text-xs"
-                >
-                  <div className="flex items-start justify-between gap-2">
-                    <div className="min-w-0 flex-1">
-                      <p className="truncate font-medium text-nx-ink">
-                        {job.originalFileName || job.entityKey}
-                      </p>
-                      <p className="text-[11px] text-nx-ink-3">
-                        {t(`dataExchange.hub.kinds.${job.kind}`, { defaultValue: job.kind })} • {job.entityKey}
-                      </p>
-                    </div>
-                    <div className="flex items-center gap-1.5 shrink-0">
-                      {renderStatusBadge(job.status)}
-                      <Button
-                        type="button"
-                        variant="ghost"
-                        size="sm"
-                        className="h-5 w-5 p-0 text-nx-ink-3 hover:text-nx-ink"
-                        onClick={() => dismissJob(job.id)}
-                        title={t("dataExchange.dock.dismiss")}
-                      >
-                        <X className="h-3 w-3" />
-                      </Button>
-                    </div>
-                  </div>
-
-                  {/* Progress for Active Jobs */}
-                  {isActive && (
-                    <div className="space-y-1">
-                      <div className="flex items-center justify-between text-[11px] text-nx-ink-2 font-mono">
-                        <span>
-                          {job.processedRows} / {job.totalRows}
-                        </span>
-                        <span>{progress}%</span>
-                      </div>
-                      <Progress value={progress} className="h-1.5" />
-                    </div>
-                  )}
-
-                  {/* Action Bar */}
-                  <div className="flex items-center justify-end gap-1.5 pt-1">
-                    {isActive ? (
-                      <Button
-                        type="button"
-                        variant="destructive"
-                        size="sm"
-                        className="h-6 px-2 text-[11px]"
-                        loading={isCancelling}
-                        onClick={() => handleCancelJob(job.id)}
-                      >
-                        <Ban className="me-1 h-3 w-3" />
-                        {t("dataExchange.dock.cancel")}
-                      </Button>
-                    ) : (
-                      <>
-                        {job.hasExportWorkbook && (
-                          <Button
-                            type="button"
-                            variant="outline"
-                            size="sm"
-                            className="h-6 px-2 text-[11px]"
-                            onClick={() => handleDownload(job.id, "export")}
-                          >
-                            <Download className="me-1 h-3 w-3 text-nx-accent" />
-                            {t("dataExchange.dock.downloadExport")}
-                          </Button>
-                        )}
-                        {job.hasRejectedWorkbook && (
-                          <Button
-                            type="button"
-                            variant="outline"
-                            size="sm"
-                            className="h-6 px-2 text-[11px] text-destructive hover:text-destructive"
-                            onClick={() => handleDownload(job.id, "rejected")}
-                          >
-                            <Download className="me-1 h-3 w-3" />
-                            {t("dataExchange.dock.downloadRejected")}
-                          </Button>
-                        )}
-                      </>
-                    )}
-                  </div>
-                </div>
-              );
-            })}
+          <CardContent className="p-3 max-h-80 overflow-y-auto overscroll-contain space-y-3">
+            {jobs.map((job) => (
+              <FloatingDockJobItem
+                key={job.id}
+                job={job}
+                isCancelling={cancellingJobIds[job.id] || false}
+                onCancelJob={handleCancelJob}
+                onDownload={handleDownload}
+                onDismiss={dismissJob}
+              />
+            ))}
           </CardContent>
         )}
       </Card>
