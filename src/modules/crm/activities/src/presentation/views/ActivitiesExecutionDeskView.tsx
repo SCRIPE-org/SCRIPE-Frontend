@@ -6,6 +6,7 @@ import { CrmShell, CrmSectionHeader, CRM_TAB_ROUTES } from "@modules/crm";
 import type { CrmTabId } from "@modules/crm";
 import { GenericCrudView } from "@core/crud/components/generic-crud-view";
 import type { CrudConfig } from "@core/crud/components/generic-crud-view";
+import { DataExchangeToolbarActions } from "@core/data-exchange";
 import { Button } from "@core/ui/button";
 import { Input } from "@core/ui/input";
 import { EmptyState } from "@core/ui/empty-state";
@@ -75,6 +76,7 @@ export function ActivitiesExecutionDeskView() {
     subtitleKey: "crmActivities.executionDesk.description",
     resource: "crm.activities",
     entityTypeKey: "crm.activity",
+    dataExchange: { entityKey: "crm.activity", hideToolbarActions: true },
     hidePageHeader: true,
     hideActionButtons: true,
     stickyActions: true,
@@ -205,6 +207,11 @@ export function ActivitiesExecutionDeskView() {
           subtitle={t("crmActivities.executionDesk.description")}
           actions={
             <div className="flex items-center gap-2">
+              <DataExchangeToolbarActions
+                entityKey="crm.activity"
+                activeSearch={search}
+                onImportComplete={refresh}
+              />
               <Button
                 type="button"
                 variant="outline"

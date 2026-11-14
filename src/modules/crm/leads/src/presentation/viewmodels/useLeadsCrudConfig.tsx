@@ -20,6 +20,7 @@ import { LeadsKanbanCardItem } from "../components/LeadsKanbanCardItem";
 import { buildLeadsTableColumns, renderLeadsCardGridItemCard, renderLeadsSplitDetailCard } from "../components/LeadsTableColumns";
 import type { CrmLead, LeadStatus } from "../../domain/entities/LeadEntity";
 
+/** Parameters for useLeadsCrudConfig hook. */
 export interface UseLeadsCrudConfigParams {
   router: AppRouterInstance;
   t: (key: string, params?: Record<string, string | number>) => string;
@@ -47,6 +48,7 @@ export interface UseLeadsCrudConfigParams {
   setIsCreateOpen: (open: boolean) => void;
 }
 
+/** Builds the GenericCrudView configuration and table columns for CRM Leads. */
 export function useLeadsCrudConfig(params: UseLeadsCrudConfigParams) {
   const {
     router, t, language, baseCurrency, autoConvertToBase, convertAmount, showOriginalCurrencyBadge,
@@ -75,6 +77,18 @@ export function useLeadsCrudConfig(params: UseLeadsCrudConfigParams) {
     subtitleKey: "crmLeads.subtitle",
     resource: "crm.leads",
     entityTypeKey: "crm.lead",
+    dataExchange: {
+      entityKey: "crm.lead",
+      enableMultiSheetMigration: true,
+      multiSheetEntityKeys: [
+        "crm.account",
+        "crm.contact",
+        "crm.lead",
+        "crm.opportunity",
+        "crm.activity",
+      ],
+      hideToolbarActions: true,
+    },
     hidePageHeader: true,
     hideActionButtons: true,
     stickyActions: true,
@@ -212,36 +226,20 @@ export function useLeadsCrudConfig(params: UseLeadsCrudConfigParams) {
       },
       renderCard: (lead: CrmLead) => (
         <LeadsKanbanCardItem
-          lead={lead}
-          activeLeadWorkflow={activeLeadWorkflow}
-          baseCurrency={baseCurrency}
-          autoConvertToBase={autoConvertToBase}
-          showOriginalCurrencyBadge={showOriginalCurrencyBadge}
-          convertAmount={convertAmount}
-          onOpenLinkParty={openLinkPartyDialog}
-          onOpenConvert={openConvertDialog}
-          onUpdateLeadStatus={(ld, target) => {
-            void handleLeadStageTransition(ld, target);
-          }}
+          lead={lead} activeLeadWorkflow={activeLeadWorkflow} baseCurrency={baseCurrency}
+          autoConvertToBase={autoConvertToBase} showOriginalCurrencyBadge={showOriginalCurrencyBadge} convertAmount={convertAmount}
+          onOpenLinkParty={openLinkPartyDialog} onOpenConvert={openConvertDialog}
+          onUpdateLeadStatus={(ld, target) => { void handleLeadStageTransition(ld, target); }}
         />
       ),
     },
-    onKanbanItemMove: (item: CrmLead, targetColumnValue: string) => {
-      void handleLeadStageTransition(item, targetColumnValue);
-    },
+    onKanbanItemMove: (item: CrmLead, targetColumnValue: string) => { void handleLeadStageTransition(item, targetColumnValue); },
     renderKanbanCard: (lead: CrmLead) => (
       <LeadsKanbanCardItem
-        lead={lead}
-        activeLeadWorkflow={activeLeadWorkflow}
-        baseCurrency={baseCurrency}
-        autoConvertToBase={autoConvertToBase}
-        showOriginalCurrencyBadge={showOriginalCurrencyBadge}
-        convertAmount={convertAmount}
-        onOpenLinkParty={openLinkPartyDialog}
-        onOpenConvert={openConvertDialog}
-        onUpdateLeadStatus={(ld, target) => {
-          void handleLeadStageTransition(ld, target);
-        }}
+        lead={lead} activeLeadWorkflow={activeLeadWorkflow} baseCurrency={baseCurrency}
+        autoConvertToBase={autoConvertToBase} showOriginalCurrencyBadge={showOriginalCurrencyBadge} convertAmount={convertAmount}
+        onOpenLinkParty={openLinkPartyDialog} onOpenConvert={openConvertDialog}
+        onUpdateLeadStatus={(ld, target) => { void handleLeadStageTransition(ld, target); }}
       />
     ),
     renderCardGridItem: (lead: CrmLead, actions: React.ReactNode) =>

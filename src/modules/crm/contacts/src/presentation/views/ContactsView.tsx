@@ -13,6 +13,7 @@ import { CRM_PERMISSIONS, CrmShell, CrmSectionHeader, CRM_TAB_ROUTES } from "@mo
 import type { CrmTabId, CrmAccount } from "@modules/crm";
 import { GenericCrudView } from "@core/crud/components/generic-crud-view";
 import type { CrudConfig } from "@core/crud/components/generic-crud-view";
+import { DataExchangeToolbarActions } from "@core/data-exchange";
 import { CreateContactDialog } from "../components/CreateContactDialog";
 import { ContactCardGridItem } from "../components/ContactCardGridItem";
 import { ContactSplitDetail } from "../components/ContactSplitDetail";
@@ -65,6 +66,7 @@ export function ContactsView() {
     subtitleKey: "crmContacts.header.subtitle",
     resource: "crm.contacts",
     entityTypeKey: "crm.contact",
+    dataExchange: { entityKey: "crm.contact", hideToolbarActions: true },
     hidePageHeader: true,
     hideActionButtons: true,
     stickyActions: true,
@@ -172,6 +174,11 @@ export function ContactsView() {
           subtitle={t("crmContacts.header.subtitle")}
           actions={
             <div className="flex items-center gap-2">
+              <DataExchangeToolbarActions
+                entityKey="crm.contact"
+                activeSearch={search}
+                onImportComplete={refresh}
+              />
               <Button
                 type="button"
                 variant="outline"

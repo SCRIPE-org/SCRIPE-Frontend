@@ -37,6 +37,7 @@ export const PartyOrganizationListView = React.memo(function PartyOrganizationLi
     subtitleKey: "partyOrganization.description",
     resource: "party-organizations",
     entityTypeKey: "party.organization",
+    dataExchange: { entityKey: "party.organization" },
     columns: [
       {
         key: "partyId",

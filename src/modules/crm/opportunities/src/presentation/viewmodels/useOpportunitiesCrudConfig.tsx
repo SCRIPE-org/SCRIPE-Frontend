@@ -125,6 +125,12 @@ export function useOpportunitiesCrudConfig(params: UseOpportunitiesCrudConfigPar
     subtitleKey: "crmOpportunities.subtitle",
     resource: "crm.opportunities",
     entityTypeKey: "crm.opportunity",
+    dataExchange: {
+      entityKey: "crm.opportunity",
+      enableMultiSheetMigration: true,
+      multiSheetEntityKeys: ["crm.account", "crm.contact", "crm.opportunity"],
+      hideToolbarActions: true,
+    },
     hidePageHeader: true,
     hideActionButtons: true,
     stickyActions: true,

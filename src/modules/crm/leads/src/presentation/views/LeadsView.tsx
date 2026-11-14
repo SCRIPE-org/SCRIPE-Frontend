@@ -20,6 +20,7 @@ import {
 } from "@modules/crm";
 import { GenericCrudView } from "@core/crud/components/generic-crud-view";
 import type { DropEvaluationResult } from "@core/crud/components/generic-crud-view";
+import { DataExchangeToolbarActions } from "@core/data-exchange";
 import { CreateLeadDialog } from "../components/CreateLeadDialog";
 import { QualifyLeadDialog } from "../components/QualifyLeadDialog";
 import { LinkPartyDialog } from "../components/LinkPartyDialog";
@@ -156,6 +157,19 @@ export function LeadsView() {
         badge={`${state.totalCount} ${t("crm.tabs.leads")}`}
         actions={
           <div className="flex items-center gap-2">
+            <DataExchangeToolbarActions
+              entityKey="crm.lead"
+              enableMultiSheetMigration
+              multiSheetEntityKeys={[
+                "crm.account",
+                "crm.contact",
+                "crm.lead",
+                "crm.opportunity",
+                "crm.activity",
+              ]}
+              activeSearch={search}
+              onImportComplete={refresh}
+            />
             <Button type="button" variant="outline" size="sm" onClick={refresh} className="h-8 gap-1.5 border-nx-line bg-nx-surface text-xs text-nx-ink hover:bg-nx-raised">
               <RefreshCw className="size-3.5 text-nx-ink-2" />
               <span>{t("crmLeads.actions.refresh")}</span>

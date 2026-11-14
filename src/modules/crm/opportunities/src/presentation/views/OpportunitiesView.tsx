@@ -20,6 +20,7 @@ import {
 } from "@modules/crm";
 import { GenericCrudView } from "@core/crud/components/generic-crud-view";
 import type { DropEvaluationResult } from "@core/crud/components/generic-crud-view";
+import { DataExchangeToolbarActions } from "@core/data-exchange";
 import { CreateOpportunityDialog } from "../components/CreateOpportunityDialog";
 import { MoveStageDialog } from "../components/MoveStageDialog";
 import { CloseOpportunityDialog } from "../components/CloseOpportunityDialog";
@@ -196,6 +197,13 @@ export function OpportunitiesView() {
           badge={t("crmOpportunities.overview.dealsBadge", { count: state.totalCount, defaultValue: `${state.totalCount} deals` })}
           actions={
             <div className="flex items-center gap-2">
+              <DataExchangeToolbarActions
+                entityKey="crm.opportunity"
+                enableMultiSheetMigration
+                multiSheetEntityKeys={["crm.account", "crm.contact", "crm.opportunity"]}
+                activeSearch={search}
+                onImportComplete={refresh}
+              />
               <Button type="button" variant="outline" size="sm" onClick={refresh} disabled={state.stage === "loading"} className="h-8 gap-1.5 text-xs">
                 <RefreshCw className={cn("size-3.5", state.stage === "loading" && "animate-spin")} />
                 <span className="hidden sm:inline">{t("crmOpportunities.actions.refresh")}</span>

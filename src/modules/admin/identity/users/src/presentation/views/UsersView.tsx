@@ -173,6 +173,7 @@ export function UsersView() {
       ...configBase,
       // No create endpoint — users self-register
       hideAddButton: true,
+      dataExchange: { entityKey: "identity.user" },
     }),
     [t, configBase, bulkActions, handleToggleActive, handleUnlock, isTogglingActive]
   );

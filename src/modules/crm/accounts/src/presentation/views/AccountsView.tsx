@@ -13,6 +13,7 @@ import { CRM_PERMISSIONS, CrmShell, CrmSectionHeader, CRM_TAB_ROUTES } from "@mo
 import type { CrmTabId } from "@modules/crm";
 import { GenericCrudView } from "@core/crud/components/generic-crud-view";
 import type { CrudConfig } from "@core/crud/components/generic-crud-view";
+import { DataExchangeToolbarActions } from "@core/data-exchange";
 import { CreateAccountDialog } from "../components/CreateAccountDialog";
 import { AccountCardGridItem } from "../components/AccountCardGridItem";
 import { AccountSplitDetail } from "../components/AccountSplitDetail";
@@ -64,6 +65,7 @@ export function AccountsView() {
     subtitleKey: "crmAccounts.header.subtitle",
     resource: "crm.accounts",
     entityTypeKey: "crm.account",
+    dataExchange: { entityKey: "crm.account", hideToolbarActions: true },
     hidePageHeader: true,
     hideActionButtons: true,
     stickyActions: true,
@@ -153,6 +155,11 @@ export function AccountsView() {
           subtitle={t("crmAccounts.header.subtitle")}
           actions={
             <div className="flex items-center gap-2">
+              <DataExchangeToolbarActions
+                entityKey="crm.account"
+                activeSearch={search}
+                onImportComplete={refresh}
+              />
               <Button
                 type="button"
                 variant="outline"

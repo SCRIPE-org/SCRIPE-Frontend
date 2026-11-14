@@ -14,6 +14,7 @@ import { useBreadcrumbOverride } from "@core/hooks/use-breadcrumb-override";
 
 // Design System Primitives (@core/ui/*)
 import { Button } from "@core/ui/button";
+import { DataExchangeToolbarActions } from "@core/data-exchange";
 import { Input } from "@core/ui/input";
 import { Badge } from "@core/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@core/ui/card";
@@ -128,6 +129,13 @@ export const PartyDirectoryView = React.memo(function PartyDirectoryView() {
               {t("party.directory.refresh") || "Refresh"}
             </span>
           </Button>
+
+          <DataExchangeToolbarActions
+            entityKey="party.person"
+            enableMultiSheetMigration
+            multiSheetEntityKeys={["party.organization", "party.person", "party.contact-point"]}
+            onImportComplete={() => vm.refetch()}
+          />
 
           {vm.permissions.canCreatePerson && (
             <Button onClick={() => vm.setIsCreatePersonOpen(true)} className="gap-2">
