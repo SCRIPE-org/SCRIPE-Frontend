@@ -829,14 +829,26 @@ function GenericTableInner<T extends Record<string, any>>({
             <div className="flex flex-wrap items-center gap-4">
               <p className="text-sm font-medium text-nx-ink-2">
                 {(() => {
-                  const start = (pagination.currentPage - 1) * pagination.pageSize + 1;
-                  const end = Math.min(
-                    pagination.currentPage * pagination.pageSize,
-                    pagination.itemsCount
-                  );
+                  const itemsCount = Number.isFinite(pagination.itemsCount)
+                    ? Math.max(0, pagination.itemsCount)
+                    : 0;
+                  const currentPage = Number.isFinite(pagination.currentPage)
+                    ? Math.max(1, pagination.currentPage)
+                    : 1;
+                  const pageSize =
+                    Number.isFinite(pagination.pageSize) && pagination.pageSize > 0
+                      ? pagination.pageSize
+                      : 10;
+
+                  if (itemsCount === 0) {
+                    return `${t("table.showing")} 0-0 ${t("table.of")} 0 ${t("table.results")}`;
+                  }
+
+                  const start = (currentPage - 1) * pageSize + 1;
+                  const end = Math.min(currentPage * pageSize, itemsCount);
                   return `${t("table.showing")} ${start}-${end} ${t(
                     "table.of"
-                  )} ${pagination.itemsCount} ${t("table.results")}`;
+                  )} ${itemsCount} ${t("table.results")}`;
                 })()}
               </p>
 

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useMemo, useState } from "react";
+import React, { useState } from "react";
 import { ArrowRight, RotateCcw, SlidersHorizontal } from "lucide-react";
 import { Badge } from "@core/ui/badge";
 import { Button } from "@core/ui/button";
@@ -59,33 +59,26 @@ export function ColumnNormalizationPopover({
   const { t, direction } = useI18n();
   const [open, setOpen] = useState(false);
 
-  const currentRule: DataExchangeTransformRule = useMemo(
-    () => ({
-      trim: rule?.trim ?? true,
-      collapseWhitespace: rule?.collapseWhitespace ?? true,
-      normalizeUnicodeCompatibility: rule?.normalizeUnicodeCompatibility ?? true,
-      stripArabicDiacritics: rule?.stripArabicDiacritics ?? true,
-      normalizeArabicLetters: rule?.normalizeArabicLetters ?? false,
-      canonicalizeNullTokens: rule?.canonicalizeNullTokens ?? true,
-      caseMode: rule?.caseMode ?? "None",
-      stripCurrencyAndGrouping: rule?.stripCurrencyAndGrouping ?? true,
-      convertAccountingNegatives: rule?.convertAccountingNegatives ?? true,
-      defaultCountryDialCode: rule?.defaultCountryDialCode ?? null,
-      normalizeEmailAddress: rule?.normalizeEmailAddress ?? false,
-      multiValueDelimiter: rule?.multiValueDelimiter ?? null,
-      defaultValue: rule?.defaultValue ?? null,
-      dateFormat: rule?.dateFormat ?? null,
-      sourceTimeZoneId: rule?.sourceTimeZoneId ?? null,
-    }),
-    [rule]
-  );
+  const currentRule: DataExchangeTransformRule = {
+    trim: rule?.trim ?? true,
+    collapseWhitespace: rule?.collapseWhitespace ?? true,
+    normalizeUnicodeCompatibility: rule?.normalizeUnicodeCompatibility ?? true,
+    stripArabicDiacritics: rule?.stripArabicDiacritics ?? true,
+    normalizeArabicLetters: rule?.normalizeArabicLetters ?? false,
+    canonicalizeNullTokens: rule?.canonicalizeNullTokens ?? true,
+    caseMode: rule?.caseMode ?? "None",
+    stripCurrencyAndGrouping: rule?.stripCurrencyAndGrouping ?? true,
+    convertAccountingNegatives: rule?.convertAccountingNegatives ?? true,
+    defaultCountryDialCode: rule?.defaultCountryDialCode ?? null,
+    normalizeEmailAddress: rule?.normalizeEmailAddress ?? false,
+    multiValueDelimiter: rule?.multiValueDelimiter ?? null,
+    defaultValue: rule?.defaultValue ?? null,
+    dateFormat: rule?.dateFormat ?? null,
+    sourceTimeZoneId: rule?.sourceTimeZoneId ?? null,
+  };
 
-  const preview = useMemo(
-    () => previewNormalizedSample(sampleValue, currentRule, targetDataType),
-    [sampleValue, currentRule, targetDataType]
-  );
-
-  const activeCount = useMemo(() => countActiveTransforms(currentRule), [currentRule]);
+  const preview = previewNormalizedSample(sampleValue, currentRule, targetDataType);
+  const activeCount = countActiveTransforms(currentRule);
 
   const update = (patch: Partial<DataExchangeTransformRule>) => {
     onChange({ ...currentRule, ...patch });

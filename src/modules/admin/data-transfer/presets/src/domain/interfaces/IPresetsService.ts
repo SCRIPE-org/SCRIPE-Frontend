@@ -27,4 +27,9 @@ export interface IPresetsService {
    * Deletes a preset on the backend.
    */
   removePreset(id: string, signal?: AbortSignal): Promise<void>;
+
+  /**
+   * Sets a preset as default for its entity key.
+   */
+  setDefaultPreset(id: string, signal?: AbortSignal): Promise<void>;
 }

@@ -15,6 +15,7 @@ export const DATA_EXCHANGE_ENDPOINTS = {
   EXPORT_JOBS: `${BASE}/export/jobs`,
   PRESETS: `${BASE}/presets`,
   PRESET_BY_ID: (id: string) => `${BASE}/presets/${encodeURIComponent(id)}`,
+  PRESET_SET_DEFAULT: (id: string) => `${BASE}/presets/${encodeURIComponent(id)}/default`,
   JOBS: `${BASE}/jobs`,
   JOB_BY_ID: (jobId: string) => `${BASE}/jobs/${encodeURIComponent(jobId)}`,
   CANCEL_JOB: (jobId: string) => `${BASE}/jobs/${encodeURIComponent(jobId)}/cancel`,

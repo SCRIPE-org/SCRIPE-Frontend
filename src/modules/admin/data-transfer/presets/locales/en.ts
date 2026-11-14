@@ -37,6 +37,15 @@ export const en = {
       delete: "Delete Preset",
       deletePrompt: "Are you sure you want to delete this preset?",
       refresh: "Refresh Presets",
+      createInStudio: "Create Preset in Studio",
+      useInStudio: "Use Preset in Import Studio",
+      setDefault: "Set as Default",
+    },
+    toast: {
+      setDefaultSuccess: "Mapping preset set as default successfully.",
+      setDefaultError: "Failed to set mapping preset as default.",
+      deleteSuccess: "Mapping preset deleted successfully.",
+      deleteError: "Failed to delete mapping preset.",
     },
     deleteDialog: {
       title: "Delete Mapping Preset",
@@ -49,6 +58,13 @@ export const en = {
     status: {
       isDefaultBadge: "Default",
       customBadge: "Custom",
+    },
+    tenantRequired: {
+      title: "Tenant Workspace Required",
+      description: "Saved column mapping presets belong to an active tenant workspace. Select or impersonate a tenant before managing presets.",
+      switchHint: "Use the Tenant Workspace switcher in the top header bar or open Tenants to switch into a tenant workspace.",
+      goToTenants: "Go to Tenants",
+      retry: "Check Context Again",
     },
   },
 };

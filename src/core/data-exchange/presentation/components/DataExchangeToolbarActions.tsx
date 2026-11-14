@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { ArrowLeftRight, ChevronDown, Download, FileDown, Layers, Upload } from "lucide-react";
 import { Button } from "@core/ui/button";
 import {
@@ -11,10 +11,8 @@ import {
   DropdownMenuSeparator,
   DropdownMenuLabel,
 } from "@core/ui/dropdown-menu";
-import { getCoreContainer } from "@core/di";
 import { useI18n } from "@core/providers/i18n-provider";
-import { usePermissions } from "@core/providers/permission-provider";
-import type { DataExchangeDescriptorResponseDto } from "../../domain/types";
+import { useDataExchangeToolbarViewModel } from "../viewmodels/useDataExchangeToolbarViewModel";
 import { DataExchangeExportDialog } from "./DataExchangeExportDialog";
 import { DataExchangeStudioOverlay } from "./DataExchangeStudioOverlay";
 
@@ -22,6 +20,7 @@ export interface DataExchangeToolbarActionsProps {
   entityKey: string;
   enableMultiSheetMigration?: boolean;
   multiSheetEntityKeys?: string[];
+  initialPresetId?: string;
   activeSearch?: string;
   activeFilters?: Record<string, string>;
   onImportComplete?: () => void;
@@ -30,104 +29,32 @@ export interface DataExchangeToolbarActionsProps {
 }
 
 /**
- * Drop-in toolbar action cluster (Smart Template, Import Studio, Multi-Sheet Migration, Export)
- * automatically governed by tenant feature flags, module/entity permissions, and FLS descriptors.
+ * Pure presentation View rendering the drop-in Data Exchange toolbar dropdown
+ * (Smart Template, Import Studio, Multi-Sheet Migration, Export).
+ * All repository calls and permission gating are delegated to useDataExchangeToolbarViewModel.
  */
 export function DataExchangeToolbarActions({
   entityKey,
-  enableMultiSheetMigration = false,
+  enableMultiSheetMigration = true,
   multiSheetEntityKeys,
+  initialPresetId,
   activeSearch,
   activeFilters,
   onImportComplete,
   onOverlayOpenChange,
   defaultOpen = false,
 }: DataExchangeToolbarActionsProps) {
-  const { language, t } = useI18n();
-  const isAr = language === "ar";
-  const { hasPermission } = usePermissions();
+  const { t } = useI18n();
+  const vm = useDataExchangeToolbarViewModel({
+    entityKey,
+    enableMultiSheetMigration,
+    multiSheetEntityKeys,
+    onOverlayOpenChange,
+  });
 
-  const canViewJobs = hasPermission("datatransfer.jobs.view");
-  const canManageJobs = hasPermission("datatransfer.jobs.manage");
-  const canExecuteMultiSheet =
-    hasPermission("datatransfer.migrations.execute") ||
-    hasPermission("datatransfer.migration.execute");
-
-  const [descriptor, setDescriptor] = useState<DataExchangeDescriptorResponseDto | null>(null);
-  const [studioOpen, setStudioOpen] = useState(false);
-  const [studioMultiSheet, setStudioMultiSheet] = useState(false);
-  const [exportOpen, setExportOpen] = useState(false);
-  const [isDownloadingTemplate, setIsDownloadingTemplate] = useState(false);
-
-  useEffect(() => {
-    if (!entityKey || !canViewJobs) {
-      return;
-    }
-
-    const controller = new AbortController();
-    let cancelled = false;
-
-    getCoreContainer()
-      .dataExchangeRepository.getEntityDescriptor(entityKey, controller.signal)
-      .then((res) => {
-        if (!cancelled) setDescriptor(res);
-      })
-      .catch(() => {
-        if (!cancelled) setDescriptor(null);
-      });
-
-    return () => {
-      cancelled = true;
-      controller.abort();
-    };
-  }, [entityKey, canViewJobs]);
-
-  useEffect(() => {
-    onOverlayOpenChange?.(studioOpen || exportOpen);
-  }, [exportOpen, onOverlayOpenChange, studioOpen]);
-
-  const effectiveDescriptor =
-    canViewJobs &&
-    entityKey &&
-    descriptor &&
-    (!descriptor.descriptor?.entityKey || descriptor.descriptor.entityKey === entityKey)
-      ? descriptor
-      : null;
-
-  if (!effectiveDescriptor) {
+  if (!vm.isVisible || !vm.effectiveDescriptor) {
     return null;
   }
-
-  const showImport =
-    canManageJobs && effectiveDescriptor.canImport && effectiveDescriptor.isImportFeatureEnabled;
-  const showExport =
-    canManageJobs && effectiveDescriptor.canExport && effectiveDescriptor.isExportFeatureEnabled;
-  const showMultiSheet =
-    showImport &&
-    enableMultiSheetMigration &&
-    canExecuteMultiSheet &&
-    Boolean(multiSheetEntityKeys && multiSheetEntityKeys.length > 1);
-  const showTemplate = effectiveDescriptor.canImport || effectiveDescriptor.canExport;
-
-  if (!showImport && !showExport && !showTemplate) {
-    return null;
-  }
-
-  const handleDownloadTemplate = async (format: "xlsx" | "csv" = "xlsx") => {
-    setIsDownloadingTemplate(true);
-    try {
-      await getCoreContainer().dataExchangeRepository.downloadTemplateFile({
-        entityKey,
-        format,
-        locale: isAr ? "ar" : "en",
-        multiSheet: false,
-      });
-    } catch {
-      // Silently ignored if user lacks permission or aborted
-    } finally {
-      setIsDownloadingTemplate(false);
-    }
-  };
 
   return (
     <>
@@ -149,34 +76,31 @@ export function DataExchangeToolbarActions({
           <DropdownMenuLabel>{t("dataExchange.title", { defaultValue: "Data Exchange" })}</DropdownMenuLabel>
           <DropdownMenuSeparator />
 
-          {showTemplate && (
+          {vm.showTemplate && (
             <>
               <DropdownMenuItem
-                onClick={() => handleDownloadTemplate("xlsx")}
-                disabled={isDownloadingTemplate}
+                onClick={() => void vm.downloadTemplate("xlsx")}
+                disabled={vm.isDownloadingTemplate}
                 data-testid={`dx-template-${entityKey}`}
               >
                 <FileDown className="me-2 h-4 w-4 text-nx-ink-2" />
                 <span>{t("dataExchange.actions.template")} (.xlsx)</span>
               </DropdownMenuItem>
               <DropdownMenuItem
-                onClick={() => handleDownloadTemplate("csv")}
-                disabled={isDownloadingTemplate}
+                onClick={() => void vm.downloadTemplate("csv")}
+                disabled={vm.isDownloadingTemplate}
                 data-testid={`dx-template-csv-${entityKey}`}
               >
                 <FileDown className="me-2 h-4 w-4 text-nx-ink-2" />
                 <span>{t("dataExchange.actions.template")} (.csv)</span>
               </DropdownMenuItem>
-              {(showImport || showExport) && <DropdownMenuSeparator />}
+              {(vm.showImport || vm.showExport) && <DropdownMenuSeparator />}
             </>
           )}
 
-          {showImport && (
+          {vm.showImport && (
             <DropdownMenuItem
-              onClick={() => {
-                setStudioMultiSheet(false);
-                setStudioOpen(true);
-              }}
+              onClick={vm.openImportStudio}
               data-testid={`dx-import-${entityKey}`}
             >
               <Upload className="me-2 h-4 w-4 text-nx-accent" />
@@ -184,12 +108,9 @@ export function DataExchangeToolbarActions({
             </DropdownMenuItem>
           )}
 
-          {showMultiSheet && (
+          {vm.showMultiSheet && (
             <DropdownMenuItem
-              onClick={() => {
-                setStudioMultiSheet(true);
-                setStudioOpen(true);
-              }}
+              onClick={vm.openMultiSheetStudio}
               data-testid={`dx-multisheet-${entityKey}`}
             >
               <Layers className="me-2 h-4 w-4 text-nx-accent" />
@@ -197,11 +118,11 @@ export function DataExchangeToolbarActions({
             </DropdownMenuItem>
           )}
 
-          {showExport && (
+          {vm.showExport && (
             <>
-              {showImport && <DropdownMenuSeparator />}
+              {vm.showImport && <DropdownMenuSeparator />}
               <DropdownMenuItem
-                onClick={() => setExportOpen(true)}
+                onClick={vm.openExportDialog}
                 data-testid={`dx-export-${entityKey}`}
               >
                 <Download className="me-2 h-4 w-4 text-nx-ink-2" />
@@ -213,19 +134,20 @@ export function DataExchangeToolbarActions({
       </DropdownMenu>
 
       <DataExchangeStudioOverlay
-        open={studioOpen}
-        onOpenChange={setStudioOpen}
+        open={vm.studioOpen}
+        onOpenChange={vm.setStudioOpen}
         entityKey={entityKey}
-        initialMultiSheet={studioMultiSheet}
-        multiSheetEntityKeys={multiSheetEntityKeys}
+        initialMultiSheet={vm.studioMultiSheet}
+        multiSheetEntityKeys={vm.resolvedMultiSheetKeys}
+        initialPresetId={initialPresetId}
         onImportComplete={onImportComplete}
       />
 
       <DataExchangeExportDialog
-        open={exportOpen}
-        onOpenChange={setExportOpen}
+        open={vm.exportOpen}
+        onOpenChange={vm.setExportOpen}
         entityKey={entityKey}
-        descriptor={effectiveDescriptor}
+        descriptor={vm.effectiveDescriptor}
         activeSearch={activeSearch}
         activeFilters={activeFilters}
       />

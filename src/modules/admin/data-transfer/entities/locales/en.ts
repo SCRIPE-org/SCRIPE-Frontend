@@ -38,11 +38,19 @@ export const en = {
       downloadingTemplate: "Downloading...",
       launchStudio: "Launch Import Studio",
       quickExport: "Export Data",
+      multiSheetMigration: "Multi-Sheet Migration",
       viewDescriptor: "View Schema",
     },
     empty: {
       title: "No Exchange Entities Found",
       description: "No entities match the active search and module filters.",
+    },
+    tenantRequired: {
+      title: "Tenant Workspace Required",
+      description: "Data Exchange entity descriptors, quotas, and templates are scoped to an active tenant workspace. Select a tenant before running imports or exports.",
+      switchHint: "Use the Tenant Workspace switcher in the top header bar or open Tenants to enter and manage a club workspace.",
+      goToTenants: "Go to Tenants",
+      retry: "Check Context Again",
     },
   },
 };

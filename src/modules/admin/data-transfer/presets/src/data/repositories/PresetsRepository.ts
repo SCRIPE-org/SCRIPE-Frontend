@@ -38,4 +38,11 @@ export class PresetsRepository implements IPresetsRepository {
   async deletePreset(id: string, signal?: AbortSignal): Promise<void> {
     await this.service.removePreset(id, signal);
   }
+
+  /**
+   * Sets a preset as default for its entity key.
+   */
+  async setDefaultPreset(id: string, signal?: AbortSignal): Promise<void> {
+    await this.service.setDefaultPreset(id, signal);
+  }
 }

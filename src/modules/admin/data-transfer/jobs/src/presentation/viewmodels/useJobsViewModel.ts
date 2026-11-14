@@ -1,10 +1,11 @@
 "use client";
 
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "@core/ui/sileo-toast";
 import { useI18n } from "@core/providers/i18n-provider";
-import { getEntityDisplayName } from "@core/data-exchange";
+import { useAppStore } from "@core/store/useAppStore";
+import { getEntityDisplayName, isTenantRequiredError } from "@core/data-exchange";
 import type { DataExchangeArtifactKind } from "@core/data-exchange/domain/types";
 import { getDataTransferContainer } from "../../../../di";
 import type { DataTransferJob } from "../../domain/entities/DataTransferJob";
@@ -15,19 +16,37 @@ import type { DataTransferJob } from "../../domain/entities/DataTransferJob";
 export interface UseJobsViewModelReturn {
   jobs: DataTransferJob[];
   totalCount: number;
+  pagesCount: number;
+  totalPages: number;
   isLoading: boolean;
   isError: boolean;
+  error: unknown;
+  isTenantRequired: boolean;
   page: number;
+  pageNumber: number;
   pageSize: number;
   search: string;
   statusFilter: string;
   kindFilter: string;
   setPage: (page: number) => void;
+  setPageNumber: (page: number) => void;
   setPageSize: (pageSize: number) => void;
+  pagination: {
+    page: number;
+    pageNumber: number;
+    pageSize: number;
+    itemsCount: number;
+    totalCount: number;
+    pagesCount: number;
+    totalPages: number;
+  };
   setSearch: (search: string) => void;
   setStatusFilter: (status: string) => void;
   setKindFilter: (kind: string) => void;
   refetch: () => Promise<unknown>;
+  // Studio CTA
+  isStudioOpen: boolean;
+  setIsStudioOpen: (open: boolean) => void;
   // Cancel job workflow
   jobToCancel: DataTransferJob | null;
   isCancelDialogOpen: boolean;
@@ -53,24 +72,44 @@ export interface UseJobsViewModelReturn {
 export function useJobsViewModel(): UseJobsViewModelReturn {
   const { t, language } = useI18n();
   const isAr = language === "ar";
+  const tenantCode = useAppStore((s) => s.tenantCode);
   const queryClient = useQueryClient();
   const repo = getDataTransferContainer().jobsRepository;
 
   const [page, setPage] = useState<number>(1);
-  const [pageSize, setPageSize] = useState<number>(20);
-  const [search, setSearch] = useState<string>("");
-  const [statusFilter, setStatusFilter] = useState<string>("all");
+  const [pageSize, setPageSizeState] = useState<number>(20);
+  const [search, setSearchState] = useState<string>("");
+  const [statusFilter, setStatusFilterState] = useState<string>("all");
   const [kindFilter, setKindFilter] = useState<string>("all");
+  const [isStudioOpen, setIsStudioOpen] = useState<boolean>(false);
   const [jobToCancel, setJobToCancel] = useState<DataTransferJob | null>(null);
   const [isCancelDialogOpen, setIsCancelDialogOpen] = useState<boolean>(false);
   const [isDownloading, setIsDownloading] = useState<boolean>(false);
 
-  const queryKey = useMemo(
-    () => ["data-transfer", "jobs", { page, pageSize, status: statusFilter, kind: kindFilter }],
-    [page, pageSize, statusFilter, kindFilter]
-  );
+  const setSearch = useCallback((val: string) => {
+    setSearchState(val);
+    setPage(1);
+  }, []);
 
-  const { data, isLoading, isError, refetch } = useQuery({
+  const setStatusFilter = useCallback((val: string) => {
+    setStatusFilterState(val);
+    setPage(1);
+  }, []);
+
+  const setPageSize = useCallback((nextSize: number) => {
+    const valid = Number.isFinite(nextSize) && nextSize > 0 ? Math.floor(nextSize) : 20;
+    setPageSizeState(valid);
+    setPage(1);
+  }, []);
+
+  const queryKey = [
+    "data-transfer",
+    "jobs",
+    tenantCode ?? "platform",
+    { page, pageSize, status: statusFilter, kind: kindFilter, search },
+  ];
+
+  const { data, isLoading, isError, error, refetch } = useQuery({
     queryKey,
     queryFn: async ({ signal }) => {
       return repo.getJobs(
@@ -78,35 +117,33 @@ export function useJobsViewModel(): UseJobsViewModelReturn {
           page,
           pageSize,
           status: statusFilter !== "all" ? statusFilter : undefined,
+          search: search.trim() ? search.trim() : undefined,
         },
         signal
       );
     },
-    refetchInterval: (query) => {
-      const items: DataTransferJob[] = query.state.data?.items ?? [];
+    retry: (failureCount, err) => !isTenantRequiredError(err) && failureCount < 2,
+    refetchInterval: (q) => {
+      const items: DataTransferJob[] = q.state.data?.items ?? [];
       const hasActive = items.some((j: DataTransferJob) => j.isActive);
       return hasActive ? 2000 : false;
     },
   });
 
-  const rawJobs = useMemo(() => data?.items ?? [], [data]);
+  const rawJobs = data?.items ?? [];
+  const filteredJobs =
+    kindFilter !== "all" ? rawJobs.filter((j: DataTransferJob) => j.kind === kindFilter) : rawJobs;
 
-  const filteredJobs = useMemo(() => {
-    let result = rawJobs;
-    if (kindFilter !== "all") {
-      result = result.filter((j: DataTransferJob) => j.kind === kindFilter);
-    }
-    if (search.trim()) {
-      const q = search.trim().toLowerCase();
-      result = result.filter(
-        (j: DataTransferJob) =>
-          j.jobId.toLowerCase().includes(q) ||
-          j.entityKey.toLowerCase().includes(q) ||
-          (j.originalFileName && j.originalFileName.toLowerCase().includes(q))
-      );
-    }
-    return result;
-  }, [rawJobs, kindFilter, search]);
+  const safePageSize = Math.max(1, Number.isFinite(pageSize) ? pageSize : 20);
+  const rawTotal = data?.totalCount;
+  const totalCount =
+    typeof rawTotal === "number" && Number.isFinite(rawTotal) && rawTotal >= 0
+      ? rawTotal
+      : filteredJobs.length;
+  const pagesCount = Math.max(1, Math.ceil(totalCount / safePageSize));
+  const safePage = Math.min(Math.max(1, Number.isFinite(page) ? page : 1), pagesCount);
+
+  const isTenantRequired = isTenantRequiredError(error);
 
   const cancelMutation = useMutation({
     mutationFn: async (jobId: string) => {
@@ -198,40 +235,54 @@ export function useJobsViewModel(): UseJobsViewModelReturn {
     [repo, t, isAr]
   );
 
-  const kpis = useMemo(() => {
-    const total = data?.totalCount ?? rawJobs.length;
-    let active = 0;
-    let completed = 0;
-    let failed = 0;
-    for (const j of rawJobs) {
-      if (j.isActive) active++;
-      else if (j.status === "Completed") completed++;
-      else if (j.status === "Failed" || j.status === "Cancelled") failed++;
-    }
-    return {
-      totalJobs: total,
-      activeJobs: active,
-      completedJobs: completed,
-      failedJobs: failed,
-    };
-  }, [data, rawJobs]);
+  let active = 0;
+  let completed = 0;
+  let failed = 0;
+  for (const j of rawJobs) {
+    if (j.isActive) active++;
+    else if (j.status === "Completed") completed++;
+    else if (j.status === "Failed" || j.status === "Cancelled") failed++;
+  }
+  const kpis = {
+    totalJobs: totalCount,
+    activeJobs: active,
+    completedJobs: completed,
+    failedJobs: failed,
+  };
 
   return {
     jobs: filteredJobs,
-    totalCount: data?.totalCount ?? filteredJobs.length,
+    totalCount,
+    pagesCount,
+    totalPages: pagesCount,
     isLoading,
     isError,
-    page,
-    pageSize,
+    error,
+    isTenantRequired,
+    page: safePage,
+    pageNumber: safePage,
+    pageSize: safePageSize,
     search,
     statusFilter,
     kindFilter,
     setPage,
+    setPageNumber: setPage,
     setPageSize,
+    pagination: {
+      page: safePage,
+      pageNumber: safePage,
+      pageSize: safePageSize,
+      itemsCount: totalCount,
+      totalCount,
+      pagesCount,
+      totalPages: pagesCount,
+    },
     setSearch,
     setStatusFilter,
     setKindFilter,
     refetch,
+    isStudioOpen,
+    setIsStudioOpen,
     jobToCancel,
     isCancelDialogOpen,
     isCancelling: cancelMutation.isPending,

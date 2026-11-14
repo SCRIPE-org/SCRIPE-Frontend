@@ -1,10 +1,11 @@
-import { render, screen, waitFor } from "@testing-library/react";
+import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { DataExchangeToolbarActions } from "../DataExchangeToolbarActions";
 import type { DataExchangeDescriptorResponseDto } from "../../../domain/types";
 
 const mockHasPermission = vi.fn<(perm: string) => boolean>();
 const mockGetEntityDescriptor = vi.fn();
+const mockDownloadTemplateFile = vi.fn().mockResolvedValue(undefined);
 
 vi.mock("@core/providers/i18n-provider", () => ({
   useI18n: () => ({
@@ -29,7 +30,7 @@ vi.mock("@core/di", () => ({
   getCoreContainer: () => ({
     dataExchangeRepository: {
       getEntityDescriptor: mockGetEntityDescriptor,
-      downloadTemplateFile: vi.fn(),
+      downloadTemplateFile: mockDownloadTemplateFile,
     },
   }),
 }));
@@ -82,6 +83,7 @@ window.HTMLElement.prototype.scrollIntoView = () => {};
 describe("DataExchangeToolbarActions", () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    mockDownloadTemplateFile.mockResolvedValue(undefined);
   });
 
   it("renders nothing when feature gates and permissions disallow import/export", async () => {
@@ -137,5 +139,138 @@ describe("DataExchangeToolbarActions", () => {
     expect(screen.getByTestId("dx-template-crm.lead")).toBeTruthy();
     expect(screen.getByTestId("dx-multisheet-crm.lead")).toBeTruthy();
     expect(screen.getByTestId("dx-export-crm.lead")).toBeTruthy();
+  });
+
+  it("automatically discovers backend-driven relatedMultiSheetEntityKeys when multiSheetEntityKeys prop is omitted", async () => {
+    mockHasPermission.mockReturnValue(true);
+    mockGetEntityDescriptor.mockResolvedValueOnce(
+      buildDescriptor({
+        canImport: true,
+        canExport: true,
+        isImportFeatureEnabled: true,
+        isExportFeatureEnabled: true,
+        descriptor: {
+          ...buildDescriptor().descriptor,
+          relatedMultiSheetEntityKeys: ["crm.account", "crm.contact", "crm.lead"],
+        },
+      })
+    );
+
+    render(
+      <DataExchangeToolbarActions
+        entityKey="crm.lead"
+        defaultOpen
+      />
+    );
+
+    await waitFor(() => {
+      expect(screen.getByTestId("dx-trigger-crm.lead")).toBeTruthy();
+    });
+
+    await waitFor(() => {
+      expect(screen.getByTestId("dx-import-crm.lead")).toBeTruthy();
+    });
+
+    // Multi-sheet migration should be automatically visible because backend registered DAG has >1 keys
+    expect(screen.getByTestId("dx-multisheet-crm.lead")).toBeTruthy();
+  });
+
+  it("respects enableMultiSheetMigration={false} as an explicit opt-out", async () => {
+    mockHasPermission.mockReturnValue(true);
+    mockGetEntityDescriptor.mockResolvedValueOnce(
+      buildDescriptor({
+        canImport: true,
+        canExport: true,
+        isImportFeatureEnabled: true,
+        isExportFeatureEnabled: true,
+        descriptor: {
+          ...buildDescriptor().descriptor,
+          relatedMultiSheetEntityKeys: ["crm.account", "crm.lead"],
+        },
+      })
+    );
+
+    render(
+      <DataExchangeToolbarActions
+        entityKey="crm.lead"
+        enableMultiSheetMigration={false}
+        defaultOpen
+      />
+    );
+
+    await waitFor(() => {
+      expect(screen.getByTestId("dx-trigger-crm.lead")).toBeTruthy();
+    });
+
+    await waitFor(() => {
+      expect(screen.getByTestId("dx-import-crm.lead")).toBeTruthy();
+    });
+
+    // Multi-sheet migration must be hidden when explicitly disabled
+    expect(screen.queryByTestId("dx-multisheet-crm.lead")).toBeNull();
+  });
+
+  it("does not show multi-sheet migration if descriptor has single or no related keys", async () => {
+    mockHasPermission.mockReturnValue(true);
+    mockGetEntityDescriptor.mockResolvedValueOnce(
+      buildDescriptor({
+        canImport: true,
+        canExport: true,
+        isImportFeatureEnabled: true,
+        isExportFeatureEnabled: true,
+        descriptor: {
+          ...buildDescriptor().descriptor,
+          relatedMultiSheetEntityKeys: ["crm.lead"],
+        },
+      })
+    );
+
+    render(
+      <DataExchangeToolbarActions
+        entityKey="crm.lead"
+        defaultOpen
+      />
+    );
+
+    await waitFor(() => {
+      expect(screen.getByTestId("dx-trigger-crm.lead")).toBeTruthy();
+    });
+
+    await waitFor(() => {
+      expect(screen.getByTestId("dx-import-crm.lead")).toBeTruthy();
+    });
+
+    expect(screen.queryByTestId("dx-multisheet-crm.lead")).toBeNull();
+  });
+
+  it("downloads the xlsx template through useDataExchangeToolbarViewModel when clicked", async () => {
+    mockHasPermission.mockReturnValue(true);
+    mockGetEntityDescriptor.mockResolvedValueOnce(
+      buildDescriptor({
+        canImport: true,
+        canExport: true,
+        isImportFeatureEnabled: true,
+        isExportFeatureEnabled: true,
+      })
+    );
+
+    render(
+      <DataExchangeToolbarActions
+        entityKey="crm.lead"
+        defaultOpen
+      />
+    );
+
+    const templateBtn = await waitFor(() => screen.getByTestId("dx-template-crm.lead"));
+    fireEvent.click(templateBtn);
+
+    await waitFor(() => {
+      expect(mockDownloadTemplateFile).toHaveBeenCalledWith({
+        entityKey: "crm.lead",
+        format: "xlsx",
+        locale: "en",
+        multiSheet: false,
+      });
+    });
   });
 });

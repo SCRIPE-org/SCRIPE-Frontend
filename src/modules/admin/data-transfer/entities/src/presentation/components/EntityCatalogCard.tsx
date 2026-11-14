@@ -28,6 +28,8 @@ export interface EntityCatalogCardProps {
   isDownloadingTemplate: boolean;
   /** Callback to launch the interactive Import Studio */
   onLaunchStudio: (entityKey: string) => void;
+  /** Callback to launch multi-sheet migration studio */
+  onMultiSheetMigration?: (entity: DataExchangeEntity) => void;
   /** Callback to launch quick export dialog */
   onQuickExport: (entityKey: string) => void;
   /** Optional custom class name */
@@ -43,6 +45,7 @@ export const EntityCatalogCard = memo(function EntityCatalogCard({
   onDownloadTemplate,
   isDownloadingTemplate,
   onLaunchStudio,
+  onMultiSheetMigration,
   onQuickExport,
   className,
 }: EntityCatalogCardProps) {
@@ -113,6 +116,19 @@ export const EntityCatalogCard = memo(function EntityCatalogCard({
                 <span>{t("dataTransferEntities.actions.launchStudio")}</span>
               </DropdownMenuItem>
             )}
+
+            {entity.canImport &&
+              entity.isImportFeatureEnabled &&
+              entity.relatedMultiSheetEntityKeys &&
+              entity.relatedMultiSheetEntityKeys.length > 1 && (
+                <DropdownMenuItem
+                  onClick={() => onMultiSheetMigration?.(entity)}
+                  className="cursor-pointer gap-2"
+                >
+                  <Layers className="h-4 w-4 text-nx-accent" aria-hidden="true" />
+                  <span>{t("dataTransferEntities.actions.multiSheetMigration")}</span>
+                </DropdownMenuItem>
+              )}
 
             {entity.canExport && entity.isExportFeatureEnabled && (
               <>

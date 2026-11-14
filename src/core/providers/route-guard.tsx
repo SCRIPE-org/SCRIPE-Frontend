@@ -98,6 +98,20 @@ function isSystemPage(pathname: string): boolean {
   return SYSTEM_PAGES.some((p) => pathname === p || pathname.startsWith(p + "/"));
 }
 
+/**
+ * Tenant-scoped pages that enforce `canAccessPage(pathname)` (PBAC) first,
+ * and render an inline tenant-context guidance card (`DataExchangeTenantRequiredCard`)
+ * when a Platform Super Admin accesses them directly without an active tenant context
+ * (where `RequiresTenantContext: true` omits them from the sidebar menu store).
+ */
+const TENANT_SCOPED_GUIDANCE_PAGES = ["/admin/data-exchange"];
+
+function isTenantScopedGuidancePage(pathname: string): boolean {
+  return TENANT_SCOPED_GUIDANCE_PAGES.some(
+    (p) => pathname === p || pathname.startsWith(p + "/")
+  );
+}
+
 function isPublicPage(pathname: string): boolean {
   if (PUBLIC_PAGES.includes(pathname)) return true;
   return PUBLIC_PREFIXES.some((prefix) => pathname.startsWith(prefix + "/"));
@@ -310,8 +324,9 @@ export function RouteGuard({ children }: RouteGuardProps) {
           return;
         }
 
-        // ── v2: system pages bypass nav store RBAC (always allowed when authenticated) ──
-        if (isSystemPage(pathname)) {
+        // ── v2: system pages and tenant-scoped inline guidance pages bypass nav store RBAC
+        //        (after canAccessPage(pathname) has already verified PBAC permissions above) ──
+        if (isSystemPage(pathname) || isTenantScopedGuidancePage(pathname)) {
           setIsChecking(false);
           return;
         }

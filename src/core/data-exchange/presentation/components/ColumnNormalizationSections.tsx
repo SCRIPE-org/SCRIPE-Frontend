@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useMemo } from "react";
+import React from "react";
 import { Sparkles } from "lucide-react";
 import { Button } from "@core/ui/button";
 import { Input } from "@core/ui/input";
@@ -66,10 +66,7 @@ export function ColumnNormalizationSections({
 }: ColumnNormalizationSectionsProps) {
   const { t } = useI18n();
 
-  const smartPreset = useMemo(
-    () => detectSmartPreset(targetDataType, targetFieldKey, sampleValue),
-    [targetDataType, targetFieldKey, sampleValue]
-  );
+  const smartPreset = detectSmartPreset(targetDataType, targetFieldKey, sampleValue);
 
   const applyPreset = () => {
     if (!smartPreset) return;

@@ -1154,7 +1154,7 @@ test.describe.serial("Data Exchange Studio — Live Unmocked 26-Screenshot Found
     await expect(deletePresetMenuItem).toBeVisible({ timeout: 10_000 });
     await deletePresetMenuItem.click();
 
-    const deletePresetDialog = page.getByRole("dialog");
+    const deletePresetDialog = page.getByTestId("delete-preset-dialog");
     await expect(deletePresetDialog).toBeVisible({ timeout: 10_000 });
 
     await captureSteadyScreenshot(
@@ -1780,5 +1780,475 @@ test.describe.serial("Data Exchange Studio — Live Unmocked 26-Screenshot Found
       "11-studio-hard-quota-block-enforcement.png",
       quotaAlert
     );
+  });
+
+  test("Verifies Platform Super Admin No-Tenant Guard, Admin Pagination (0-0 of 0), Preset Default/Studio Flows, Crimson Destructive ConfirmationDialogs (Light & Dark), Auto Multi-Sheet Discovery & 4 Live Docs Portal Pages (Screenshots 35-44)", async ({
+    page,
+  }) => {
+    test.setTimeout(300_000);
+    fs.mkdirSync(SCREENSHOT_DIR, { recursive: true });
+    await page.setViewportSize({ width: 1440, height: 900 });
+    await page.emulateMedia({ colorScheme: "light" });
+
+    const pageErrors: string[] = [];
+    const server5xxErrors: string[] = [];
+    page.on("pageerror", (err) => {
+      pageErrors.push(err.message);
+    });
+    page.on("response", (res) => {
+      if (res.url().includes("/api/v1/") && res.status() >= 500) {
+        server5xxErrors.push(`${res.status()} ${res.request().method()} ${res.url()}`);
+      }
+    });
+
+    const uniqueSuffix = `${Date.now().toString(36).slice(-5)}`;
+
+    // -------------------------------------------------------------------------
+    // Flow 1: Platform Super Admin Mode (No Tenant Context)
+    //         Sidebar hides Data Exchange; direct URLs show tenant-required guidance
+    //         Screenshot 35
+    // -------------------------------------------------------------------------
+    await loginRealSession(page, "/tenants", "superadmin");
+    await page.evaluate(() => {
+      window.localStorage.setItem("theme", "light");
+      window.localStorage.setItem("scr_pref_theme", "light");
+      window.localStorage.setItem("scr_lang", "en");
+      window.localStorage.setItem("scr_pref_lang", "en");
+      document.documentElement.classList.remove("dark");
+      document.documentElement.classList.add("light");
+    });
+
+    // Verify sidebar navigation hides Data Exchange links when TenantId == null
+    const sidebarDxLinks = page.locator(
+      'aside a[href*="/admin/data-exchange"], nav a[href*="/admin/data-exchange"]'
+    );
+    await expect(sidebarDxLinks).toHaveCount(0);
+
+    for (const adminRoute of [
+      "/admin/data-exchange",
+      "/admin/data-exchange/jobs",
+      "/admin/data-exchange/presets",
+    ]) {
+      await page.goto(adminRoute);
+      const guidanceCard = page.getByTestId("tenant-required-guidance").first();
+      await expect(guidanceCard).toBeVisible({ timeout: 25_000 });
+      await expect(
+        page.getByTestId("tenant-required-go-tenants").first()
+      ).toBeVisible({ timeout: 10_000 });
+    }
+
+    await captureSteadyScreenshot(
+      page,
+      "35-platform-superadmin-no-tenant-guard.png",
+      page.getByTestId("tenant-required-guidance").first()
+    );
+
+    // Clear cookies & storage so we can log in cleanly as Al-Ahly SC Tenant Admin
+    await page.context().clearCookies();
+    await page.evaluate(() => {
+      window.localStorage.clear();
+      window.sessionStorage.clear();
+    });
+
+    // -------------------------------------------------------------------------
+    // Flow 2: Tenant Mode (Al-Ahly SC) — Admin Data Exchange Pages, Pagination
+    //         ("Showing 1-...", "Showing 0-0 of 0 results"), Launch Studio,
+    //         Create Preset in Studio, Use Preset in Import Studio & Set as Default
+    //         Screenshots 36 & 37
+    // -------------------------------------------------------------------------
+    await loginRealSession(
+      page,
+      "/admin/data-exchange",
+      "ahly.admin@scripe-dev.local"
+    );
+    if (!page.url().includes("/admin/data-exchange")) {
+      await page.goto("/admin/data-exchange");
+    }
+
+    // 2a. Verify /admin/data-exchange pagination has real numbers (zero NaN/undefined)
+    await expect(page.locator("table tbody tr").first()).toBeVisible({
+      timeout: 25_000,
+    });
+    const entitiesShowingText = page
+      .getByText(/Showing\s+\d+-\d+\s+of\s+\d+\s+results/i)
+      .first();
+    await expect(entitiesShowingText).toBeVisible({ timeout: 15_000 });
+    const entitiesShowingStr = (await entitiesShowingText.textContent()) ?? "";
+    expect(entitiesShowingStr).not.toMatch(/NaN|undefined/i);
+
+    // 2b. Verify /admin/data-exchange/jobs pagination + empty search "Showing 0-0 of 0 results" + Launch Studio
+    await page.goto("/admin/data-exchange/jobs");
+    await expect(page.locator("table tbody tr").first()).toBeVisible({
+      timeout: 25_000,
+    });
+    const jobsShowingText = page
+      .getByText(/Showing\s+\d+-\d+\s+of\s+\d+\s+results/i)
+      .first();
+    await expect(jobsShowingText).toBeVisible({ timeout: 15_000 });
+    const jobsShowingStr = (await jobsShowingText.textContent()) ?? "";
+    expect(jobsShowingStr).not.toMatch(/NaN|undefined/i);
+
+    const jobsSearchInput = page
+      .locator('input[type="search"], input[placeholder*="Search" i]')
+      .last();
+    await expect(jobsSearchInput).toBeVisible({ timeout: 10_000 });
+    await jobsSearchInput.fill(`__no_match_uat_${uniqueSuffix}__`);
+    const zeroResultsText = page
+      .getByText(/Showing\s+0-0\s+of\s+0\s+results/i)
+      .first();
+    await expect(zeroResultsText).toBeVisible({ timeout: 15_000 });
+
+    await captureSteadyScreenshot(
+      page,
+      "36-admin-pagination-and-zero-search-guard.png",
+      zeroResultsText
+    );
+
+    await jobsSearchInput.fill("");
+    await expect(page.locator("table tbody tr").first()).toBeVisible({
+      timeout: 20_000,
+    });
+
+    // Verify "Launch Studio" header CTA on /admin/data-exchange/jobs
+    const launchStudioHeaderBtn = page
+      .getByRole("button", { name: /Launch Studio|فتح الاستوديو/i })
+      .first();
+    await expect(launchStudioHeaderBtn).toBeVisible({ timeout: 10_000 });
+    await launchStudioHeaderBtn.click();
+    const jobsStudioOverlay = page
+      .getByTestId("data-exchange-studio-overlay")
+      .first();
+    await expect(jobsStudioOverlay).toBeVisible({ timeout: 15_000 });
+    await closeStudioWithConfirmIfNeeded(page, jobsStudioOverlay);
+
+    // 2c. Verify /admin/data-exchange/presets pagination, Create Preset in Studio, Set as Default, and Use Preset in Import Studio
+    await page.goto("/admin/data-exchange/presets");
+    await expect(page.locator("table tbody tr").first()).toBeVisible({
+      timeout: 25_000,
+    });
+    const presetsShowingText = page
+      .getByText(/Showing\s+\d+-\d+\s+of\s+\d+\s+results/i)
+      .first();
+    await expect(presetsShowingText).toBeVisible({ timeout: 15_000 });
+    const presetsShowingStr = (await presetsShowingText.textContent()) ?? "";
+    expect(presetsShowingStr).not.toMatch(/NaN|undefined/i);
+
+    // Verify "Create Preset in Studio" header CTA
+    const createPresetHeaderBtn = page
+      .getByRole("button", {
+        name: /Create Preset in Studio|إنشاء قالب في الاستوديو/i,
+      })
+      .first();
+    await expect(createPresetHeaderBtn).toBeVisible({ timeout: 10_000 });
+    await createPresetHeaderBtn.click();
+    const createPresetOverlay = page
+      .getByTestId("data-exchange-studio-overlay")
+      .first();
+    await expect(createPresetOverlay).toBeVisible({ timeout: 15_000 });
+
+    // Upload a tiny 1-row CSV inside Studio to trigger StudioConfirmExitDialog in Light & Dark themes
+    // AND save a temporary preset if needed so we can test Set as Default & Use Preset in Import Studio
+    const miniCsv = [
+      "Title,Email,FirstName,LastName,EstimatedAmount",
+      `"Preset Flow Lead ${uniqueSuffix}","preset.flow.${uniqueSuffix}@ahly-uat.local","Hossam","Ghaly","50000"`,
+    ].join("\n");
+    const miniInspectWait = page.waitForResponse(
+      (res) =>
+        res.url().includes("/data-transfer/inspect") &&
+        res.request().method() === "POST" &&
+        res.status() === 200,
+      { timeout: 30_000 }
+    );
+    await page.locator("#dx-file-upload-input").setInputFiles({
+      name: `preset-flow-${uniqueSuffix}.csv`,
+      mimeType: "text/csv",
+      buffer: Buffer.from(miniCsv, "utf-8"),
+    });
+    await miniInspectWait;
+
+    // -------------------------------------------------------------------------
+    // Flow 3a: Standardized ConfirmationDialog — StudioConfirmExitDialog (Light Theme)
+    //          Verify crimson destructive button has ZERO Signal Lime collision
+    // -------------------------------------------------------------------------
+    await createPresetOverlay.getByTestId("studio-footer-cancel-btn").click();
+    const confirmExitLight = page.getByTestId("studio-confirm-exit-dialog");
+    await expect(confirmExitLight).toBeVisible({ timeout: 10_000 });
+    const exitConfirmBtn = confirmExitLight.getByTestId("studio-exit-confirm-btn");
+    const exitConfirmClasses = (await exitConfirmBtn.getAttribute("class")) ?? "";
+    expect(exitConfirmClasses).toContain("bg-destructive");
+    expect(exitConfirmClasses).not.toContain("bg-nx-accent-fill");
+    expect(exitConfirmClasses).not.toContain("border-nx-accent-fill");
+    expect(exitConfirmClasses).not.toContain("text-nx-on-fill");
+
+    await captureSteadyScreenshot(
+      page,
+      "27-studio-confirm-exit-dialog.png",
+      confirmExitLight
+    );
+    await confirmExitLight.getByTestId("studio-exit-cancel-btn").click();
+    await expect(confirmExitLight).toBeHidden({ timeout: 10_000 });
+
+    // Save a second preset so we can test "Set as Default" and "Use Preset in Import Studio"
+    const tempPresetInput = createPresetOverlay
+      .getByPlaceholder(/Preset name|اسم التعيين/i)
+      .first();
+    const tempPresetName = `Al-Ahly Secondary Preset ${uniqueSuffix}`;
+    await tempPresetInput.fill(tempPresetName);
+    const saveTempPresetWait = page.waitForResponse(
+      (res) =>
+        res.url().includes("/data-transfer/presets") &&
+        res.request().method() === "POST" &&
+        res.ok(),
+      { timeout: 20_000 }
+    );
+    await createPresetOverlay
+      .getByRole("button", { name: /Save Preset|حفظ القالب/i })
+      .first()
+      .click();
+    await saveTempPresetWait;
+
+    await closeStudioWithConfirmIfNeeded(page, createPresetOverlay);
+
+    // Refresh /admin/data-exchange/presets and test "Set as Default" + "Use Preset in Import Studio"
+    await page.goto("/admin/data-exchange/presets");
+    const targetPresetRow = page
+      .locator("table tbody tr")
+      .filter({ hasText: tempPresetName })
+      .first();
+    await expect(targetPresetRow).toBeVisible({ timeout: 20_000 });
+
+    const targetRowMenuBtn = targetPresetRow
+      .locator('button[aria-haspopup="menu"]')
+      .first();
+    await targetRowMenuBtn.click();
+
+    const setDefaultItem = page
+      .getByRole("menuitem", { name: /Set as Default|تعيين كافتراضي/i })
+      .first();
+    if (await setDefaultItem.isVisible().catch(() => false)) {
+      const setDefaultWait = page.waitForResponse(
+        (res) =>
+          res.url().includes("/default") &&
+          res.request().method() === "POST" &&
+          res.ok(),
+        { timeout: 20_000 }
+      );
+      await setDefaultItem.click();
+      await setDefaultWait;
+      await expect(
+        targetPresetRow.getByText(/Default|افتراضي/i).first()
+      ).toBeVisible({ timeout: 15_000 });
+    } else {
+      await page.keyboard.press("Escape");
+    }
+
+    // Open row menu again to capture Screenshot 37 and click "Use Preset in Import Studio"
+    await targetRowMenuBtn.click();
+    const useInStudioItem = page
+      .getByRole("menuitem", {
+        name: /Use Preset in Import Studio|استخدام القالب في استوديو الاستيراد/i,
+      })
+      .first();
+    await expect(useInStudioItem).toBeVisible({ timeout: 10_000 });
+
+    await captureSteadyScreenshot(
+      page,
+      "37-admin-presets-use-in-studio-and-set-default.png",
+      useInStudioItem
+    );
+
+    await useInStudioItem.click();
+    const presetStudioOverlay = page
+      .getByTestId("data-exchange-studio-overlay")
+      .first();
+    await expect(presetStudioOverlay).toBeVisible({ timeout: 15_000 });
+    await closeStudioWithConfirmIfNeeded(page, presetStudioOverlay);
+
+    // -------------------------------------------------------------------------
+    // Flow 3b: Standardized ConfirmationDialog — DeletePresetDialog (Light & Dark Themes)
+    //          Screenshots 38 & 39 (plus refreshed 19)
+    // -------------------------------------------------------------------------
+    await targetRowMenuBtn.click();
+    const deletePresetItem = page
+      .getByRole("menuitem", { name: /Delete|حذف/i })
+      .first();
+    await expect(deletePresetItem).toBeVisible({ timeout: 10_000 });
+    await deletePresetItem.click();
+
+    const deleteDialogLight = page.getByTestId("delete-preset-dialog");
+    await expect(deleteDialogLight).toBeVisible({ timeout: 10_000 });
+    const deleteConfirmBtnLight = deleteDialogLight.getByTestId(
+      "delete-preset-confirm-btn"
+    );
+    const deleteLightClasses =
+      (await deleteConfirmBtnLight.getAttribute("class")) ?? "";
+    expect(deleteLightClasses).toContain("bg-destructive");
+    expect(deleteLightClasses).not.toContain("bg-nx-accent-fill");
+    expect(deleteLightClasses).not.toContain("border-nx-accent-fill");
+    expect(deleteLightClasses).not.toContain("text-nx-on-fill");
+
+    await captureSteadyScreenshot(
+      page,
+      "38-confirmation-dialogs-light-destructive-crimson.png",
+      deleteDialogLight
+    );
+    await captureSteadyScreenshot(
+      page,
+      "19-admin-data-exchange-presets-dialog-detail.png",
+      deleteDialogLight
+    );
+
+    await deleteDialogLight.getByTestId("delete-preset-cancel-btn").click();
+    await expect(deleteDialogLight).toBeHidden({ timeout: 10_000 });
+
+    // Switch to Dark Theme and verify DeletePresetDialog crimson styling in Dark Theme (Screenshot 39)
+    await page.emulateMedia({ colorScheme: "dark" });
+    await page.evaluate(() => {
+      window.localStorage.setItem("theme", "dark");
+      window.localStorage.setItem("scr_pref_theme", "dark");
+      document.documentElement.classList.remove("light");
+      document.documentElement.classList.add("dark");
+    });
+    await expect(page.locator("html")).toHaveClass(/dark/, { timeout: 10_000 });
+
+    await targetRowMenuBtn.click();
+    await page
+      .getByRole("menuitem", { name: /Delete|حذف/i })
+      .first()
+      .click();
+    const deleteDialogDark = page.getByTestId("delete-preset-dialog");
+    await expect(deleteDialogDark).toBeVisible({ timeout: 10_000 });
+    const deleteConfirmBtnDark = deleteDialogDark.getByTestId(
+      "delete-preset-confirm-btn"
+    );
+    const deleteDarkClasses =
+      (await deleteConfirmBtnDark.getAttribute("class")) ?? "";
+    expect(deleteDarkClasses).toContain("bg-destructive");
+    expect(deleteDarkClasses).not.toContain("bg-nx-accent-fill");
+    expect(deleteDarkClasses).not.toContain("border-nx-accent-fill");
+    expect(deleteDarkClasses).not.toContain("text-nx-on-fill");
+
+    await captureSteadyScreenshot(
+      page,
+      "39-confirmation-dialogs-dark-destructive-crimson.png",
+      deleteDialogDark
+    );
+
+    // Cleanly delete the temporary secondary preset so seeded state remains clean
+    const deleteWait = page.waitForResponse(
+      (res) =>
+        res.url().includes("/data-transfer/presets/") &&
+        res.request().method() === "DELETE" &&
+        res.ok(),
+      { timeout: 20_000 }
+    );
+    await deleteConfirmBtnDark.click();
+    await deleteWait;
+    await expect(deleteDialogDark).toBeHidden({ timeout: 10_000 });
+
+    // Restore Light Theme
+    await page.emulateMedia({ colorScheme: "light" });
+    await page.evaluate(() => {
+      window.localStorage.setItem("theme", "light");
+      window.localStorage.setItem("scr_pref_theme", "light");
+      document.documentElement.classList.remove("dark");
+      document.documentElement.classList.add("light");
+    });
+    await expect(page.locator("html")).toHaveClass(/light/, { timeout: 10_000 });
+
+    // -------------------------------------------------------------------------
+    // Flow 4: Automatic Backend-Driven Multi-Sheet Migration Discovery
+    //         (/crm/leads 5-sheet, /party-kernel/parties 3-sheet, /admin/data-exchange row action)
+    //         Screenshots 40 & 41
+    // -------------------------------------------------------------------------
+    await page.goto("/party-kernel/parties");
+    const partyDxTrigger = page
+      .locator('[data-testid^="dx-trigger-"]')
+      .first();
+    await expect(partyDxTrigger).toBeVisible({ timeout: 25_000 });
+    await partyDxTrigger.click();
+    const partyMultiSheetItem = page
+      .locator('[data-testid^="dx-multisheet-"]')
+      .first();
+    await expect(partyMultiSheetItem).toBeVisible({ timeout: 15_000 });
+
+    await captureSteadyScreenshot(
+      page,
+      "40-party-kernel-auto-multisheet-dropdown.png",
+      partyMultiSheetItem
+    );
+    await page.keyboard.press("Escape");
+
+    await page.goto("/admin/data-exchange");
+    const crmLeadEntityRow = page
+      .locator("table tbody tr")
+      .filter({ hasText: "crm.lead" })
+      .first();
+    await expect(crmLeadEntityRow).toBeVisible({ timeout: 25_000 });
+    const crmLeadMenuBtn = crmLeadEntityRow
+      .locator('button[aria-haspopup="menu"]')
+      .first();
+    await crmLeadMenuBtn.click();
+    const adminMultiSheetMenuItem = page
+      .getByRole("menuitem", {
+        name: /Multi-Sheet Migration|ترحيل متعدد الأوراق/i,
+      })
+      .first();
+    await expect(adminMultiSheetMenuItem).toBeVisible({ timeout: 10_000 });
+
+    await captureSteadyScreenshot(
+      page,
+      "41-admin-entities-row-actions-multisheet-migration.png",
+      adminMultiSheetMenuItem
+    );
+    await page.keyboard.press("Escape");
+
+    // -------------------------------------------------------------------------
+    // Flow 5: Live SCRIPE-Docs-Portal (http://localhost:3002)
+    //         /technical/modules/data-transfer-overview
+    //         /technical/api-reference/data-transfer-api
+    //         /commercial/data-exchange-studio
+    //         /archify
+    //         Screenshots 42, 43, 44 & 26
+    // -------------------------------------------------------------------------
+    await page.goto(`${DOCS_BASE_URL}/technical/modules/data-transfer-overview`);
+    const techOverviewHeading = page.locator("h1").first();
+    await expect(techOverviewHeading).toBeVisible({ timeout: 25_000 });
+    await captureSteadyScreenshot(
+      page,
+      "42-docs-portal-technical-data-transfer-overview.png",
+      techOverviewHeading
+    );
+
+    await page.goto(`${DOCS_BASE_URL}/technical/api-reference/data-transfer-api`);
+    const techApiHeading = page.locator("h1").first();
+    await expect(techApiHeading).toBeVisible({ timeout: 25_000 });
+    await captureSteadyScreenshot(
+      page,
+      "43-docs-portal-technical-data-transfer-api.png",
+      techApiHeading
+    );
+
+    await page.goto(`${DOCS_BASE_URL}/commercial/data-exchange-studio`);
+    const commercialHeading = page.locator("h1").first();
+    await expect(commercialHeading).toBeVisible({ timeout: 25_000 });
+    await captureSteadyScreenshot(
+      page,
+      "44-docs-portal-commercial-data-exchange-studio.png",
+      commercialHeading
+    );
+
+    await page.goto(`${DOCS_BASE_URL}/archify`);
+    const archifyCard = page.getByText(/Data Exchange Studio/i).first();
+    await expect(archifyCard).toBeVisible({ timeout: 25_000 });
+    await archifyCard.click();
+    await captureSteadyScreenshot(
+      page,
+      "26-docs-portal-archify-data-exchange-ssot.png",
+      archifyCard
+    );
+
+    expect(pageErrors).toEqual([]);
+    expect(server5xxErrors).toEqual([]);
   });
 });

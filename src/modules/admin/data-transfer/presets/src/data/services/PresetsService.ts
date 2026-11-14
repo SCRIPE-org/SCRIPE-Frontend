@@ -50,4 +50,15 @@ export class PresetsService implements IPresetsService {
       signal
     );
   }
+
+  /**
+   * Sets a preset as default for its entity key.
+   */
+  async setDefaultPreset(id: string, signal?: AbortSignal): Promise<void> {
+    await this.apiService.post<void>(
+      DATA_EXCHANGE_ENDPOINTS.PRESET_SET_DEFAULT(id),
+      undefined,
+      signal
+    );
+  }
 }

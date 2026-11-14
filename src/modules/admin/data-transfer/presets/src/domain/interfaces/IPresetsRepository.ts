@@ -22,4 +22,9 @@ export interface IPresetsRepository {
    * Deletes a preset by its unique identifier.
    */
   deletePreset(id: string, signal?: AbortSignal): Promise<void>;
+
+  /**
+   * Sets a preset as default for its entity key.
+   */
+  setDefaultPreset(id: string, signal?: AbortSignal): Promise<void>;
 }

@@ -32,6 +32,11 @@ export interface ConfirmationDialogProps {
   children?: React.ReactNode;
   /** Disable confirm button externally (e.g., validation not met) */
   disableConfirm?: boolean;
+  className?: string;
+  dir?: "ltr" | "rtl";
+  confirmButtonProps?: Partial<React.ComponentProps<typeof Button>> & { "data-testid"?: string; [key: `data-${string}`]: unknown };
+  cancelButtonProps?: Partial<React.ComponentProps<typeof Button>> & { "data-testid"?: string; [key: `data-${string}`]: unknown };
+  "data-testid"?: string;
 }
 
 // The chip tint pairs the nx status alias for the glyph with a slash-alpha
@@ -73,21 +78,26 @@ const variantConfig = {
   },
 };
 
-export function ConfirmationDialog({
-  open,
-  onOpenChange,
-  title,
-  description,
-  confirmText = "Confirm",
-  cancelText = "Cancel",
-  onConfirm,
-  onCancel,
-  variant = "default",
-  icon,
-  isLoading = false,
-  children,
-  disableConfirm = false,
-}: ConfirmationDialogProps) {
+export function ConfirmationDialog(props: ConfirmationDialogProps) {
+  const {
+    open,
+    onOpenChange,
+    title,
+    description,
+    confirmText = "Confirm",
+    cancelText = "Cancel",
+    onConfirm,
+    onCancel,
+    variant = "default",
+    icon,
+    isLoading = false,
+    children,
+    disableConfirm = false,
+    className,
+    dir,
+    confirmButtonProps,
+    cancelButtonProps,
+  } = props;
   const config = variantConfig[variant];
   const IconComponent = config.icon;
 
@@ -107,8 +117,10 @@ export function ConfirmationDialog({
   return (
     <AlertDialog open={open} onOpenChange={onOpenChange}>
       <AlertDialogContent
-        className="sm:max-w-md"
+        dir={dir}
+        className={cn("sm:max-w-md", className)}
         aria-busy={isLoading || undefined}
+        data-testid={props["data-testid"]}
         // The loading state is a real state, not a spinner bolted onto the
         // happy path: while the confirmed action is in flight the panel stops
         // being dismissable, so Escape can no longer orphan a half-finished
@@ -150,19 +162,26 @@ export function ConfirmationDialog({
             inline-end edge at >= sm and on top of the stack below it. */}
         <AlertDialogFooter>
           <AlertDialogCancel asChild>
-            <Button variant="outline" onClick={handleCancel} disabled={isLoading}>
+            <Button
+              {...cancelButtonProps}
+              variant="outline"
+              onClick={handleCancel}
+              disabled={isLoading}
+              className={cancelButtonProps?.className}
+            >
               {cancelText}
             </Button>
           </AlertDialogCancel>
           <AlertDialogAction asChild>
             <Button
+              {...confirmButtonProps}
               variant={config.confirmVariant}
               onClick={handleConfirm}
               loading={isLoading}
               disabled={disableConfirm}
               // Holds the button's width steady when the label swaps for a
               // spinner, so the footer does not reflow mid-request.
-              className="min-w-20"
+              className={cn("min-w-20", confirmButtonProps?.className)}
             >
               {confirmText}
             </Button>

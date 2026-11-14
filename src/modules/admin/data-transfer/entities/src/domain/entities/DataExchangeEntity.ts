@@ -36,6 +36,8 @@ export class DataExchangeEntity {
   readonly canImport: boolean;
   /** Whether the current caller holds PBAC permission to export. */
   readonly canExport: boolean;
+  /** Keys of sibling/dependent entities forming a multi-sheet migration DAG. */
+  readonly relatedMultiSheetEntityKeys: string[];
 
   constructor(params: {
     entityKey: string;
@@ -54,6 +56,7 @@ export class DataExchangeEntity {
     isExportFeatureEnabled: boolean;
     canImport: boolean;
     canExport: boolean;
+    relatedMultiSheetEntityKeys?: string[];
   }) {
     this.entityKey = params.entityKey;
     this.owningModule = params.owningModule;
@@ -71,6 +74,7 @@ export class DataExchangeEntity {
     this.isExportFeatureEnabled = params.isExportFeatureEnabled;
     this.canImport = params.canImport;
     this.canExport = params.canExport;
+    this.relatedMultiSheetEntityKeys = params.relatedMultiSheetEntityKeys ?? [];
   }
 
   /** Primary unique identifier required by GenericCrudView. */
@@ -107,6 +111,8 @@ export class DataExchangeEntity {
         changes.isExportFeatureEnabled ?? this.isExportFeatureEnabled,
       canImport: changes.canImport ?? this.canImport,
       canExport: changes.canExport ?? this.canExport,
+      relatedMultiSheetEntityKeys:
+        changes.relatedMultiSheetEntityKeys ?? this.relatedMultiSheetEntityKeys,
     });
   }
 }

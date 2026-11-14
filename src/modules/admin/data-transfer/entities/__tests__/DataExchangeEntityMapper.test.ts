@@ -20,6 +20,7 @@ describe("DataExchangeEntityMapper", () => {
     isExportFeatureEnabled: true,
     canImport: true,
     canExport: true,
+    relatedMultiSheetEntityKeys: ["CrmAccount", "CrmContact"],
   };
 
   it("maps API model to domain entity with full fidelity", () => {
@@ -37,6 +38,7 @@ describe("DataExchangeEntityMapper", () => {
     expect(entity.quotaMaxLimit).toBe(1000);
     expect(entity.canImport).toBe(true);
     expect(entity.canExport).toBe(true);
+    expect(entity.relatedMultiSheetEntityKeys).toEqual(["CrmAccount", "CrmContact"]);
   });
 
   it("maps domain entity back to API model", () => {

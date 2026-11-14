@@ -26,6 +26,7 @@ export class DataExchangeEntityMapper {
       isExportFeatureEnabled: model.isExportFeatureEnabled,
       canImport: model.canImport,
       canExport: model.canExport,
+      relatedMultiSheetEntityKeys: model.relatedMultiSheetEntityKeys ?? [],
     });
   }
 
@@ -50,6 +51,7 @@ export class DataExchangeEntityMapper {
       isExportFeatureEnabled: entity.isExportFeatureEnabled,
       canImport: entity.canImport,
       canExport: entity.canExport,
+      relatedMultiSheetEntityKeys: entity.relatedMultiSheetEntityKeys,
     };
   }
 }

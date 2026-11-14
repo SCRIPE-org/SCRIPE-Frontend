@@ -1,16 +1,7 @@
 "use client";
 
 import React from "react";
-import { Button } from "@core/ui/button";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "@core/ui/dialog";
-import { Loader2 } from "lucide-react";
+import { ConfirmationDialog } from "@core/ui/confirmation-dialog";
 import { useI18n } from "@core/providers/i18n-provider";
 import type { DataTransferJob } from "../../domain/entities/DataTransferJob";
 
@@ -27,6 +18,7 @@ export interface CancelJobDialogProps {
 
 /**
  * Confirmation dialog for cancelling an active data transfer job.
+ * Standardized on @core/ui/confirmation-dialog.
  */
 export function CancelJobDialog({
   open,
@@ -35,39 +27,35 @@ export function CancelJobDialog({
   onClose,
   onConfirm,
 }: CancelJobDialogProps): React.ReactElement {
-  const { t } = useI18n();
+  const { direction, t } = useI18n();
 
   return (
-    <Dialog open={open} onOpenChange={onClose}>
-      <DialogContent>
-        <DialogHeader>
-          <DialogTitle>{t("adminDataTransferJobs.cancelDialog.title")}</DialogTitle>
-          <DialogDescription>
-            {t("adminDataTransferJobs.cancelDialog.description", {
-              jobId: job?.jobId.slice(0, 8) ?? "",
-            })}
-          </DialogDescription>
-        </DialogHeader>
-        <DialogFooter className="gap-2">
-          <Button variant="outline" onClick={onClose} disabled={isCancelling}>
-            {t("common.cancel", { defaultValue: "Cancel" })}
-          </Button>
-          <Button
-            variant="destructive"
-            onClick={onConfirm}
-            disabled={isCancelling}
-          >
-            {isCancelling ? (
-              <>
-                <Loader2 className="h-3.5 w-3.5 animate-spin ltr:mr-1.5 rtl:ml-1.5" />
-                {t("adminDataTransferJobs.cancelDialog.cancelling")}
-              </>
-            ) : (
-              t("adminDataTransferJobs.cancelDialog.confirm")
-            )}
-          </Button>
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
+    <ConfirmationDialog
+      open={open}
+      onOpenChange={(isOpen) => (!isOpen ? onClose() : null)}
+      onConfirm={onConfirm}
+      onCancel={onClose}
+      variant="destructive"
+      isLoading={isCancelling}
+      title={t("adminDataTransferJobs.cancelDialog.title")}
+      description={t("adminDataTransferJobs.cancelDialog.description", {
+        jobId: job?.jobId.slice(0, 8) ?? "",
+      })}
+      cancelText={t("common.cancel", { defaultValue: "Cancel" })}
+      confirmText={
+        isCancelling
+          ? t("adminDataTransferJobs.cancelDialog.cancelling")
+          : t("adminDataTransferJobs.cancelDialog.confirm")
+      }
+      dir={direction}
+      className="max-w-md border border-nx-line bg-nx-surface text-nx-ink shadow-nx-modal"
+      data-testid="cancel-job-dialog"
+      cancelButtonProps={{
+        "data-testid": "cancel-job-cancel-btn",
+      }}
+      confirmButtonProps={{
+        "data-testid": "cancel-job-confirm-btn",
+      }}
+    />
   );
 }

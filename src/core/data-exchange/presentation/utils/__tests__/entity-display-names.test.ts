@@ -1,6 +1,9 @@
 import { describe, expect, it } from "vitest";
 import { getEntityDisplayName } from "../entity-display-names";
-import type { DataExchangeDescriptorResponseDto } from "../../../domain/types";
+import type {
+  DataExchangeDescriptorResponseDto,
+  DataExchangeEntitySummaryDto,
+} from "../../../domain/types";
 
 describe("getEntityDisplayName", () => {
   const mockT = (key: string) => {
@@ -56,6 +59,31 @@ describe("getEntityDisplayName", () => {
 
     expect(getEntityDisplayName("crm.lead", mockT, false, descriptor)).toBe("Custom Lead Name");
     expect(getEntityDisplayName("crm.lead", mockT, true, descriptor)).toBe("اسم العميل المخصص");
+  });
+
+  it("prefers entitySummary dynamic display names when passed directly", () => {
+    const summary: DataExchangeEntitySummaryDto = {
+      entityKey: "crm.account",
+      owningModule: "CRM",
+      displayNameEn: "Enterprise Accounts",
+      displayNameAr: "حسابات المؤسسات",
+      descriptionEn: "Corporate accounts",
+      descriptionAr: "حسابات الشركات الكبرى",
+      supportsBulkAutoCreateLookup: true,
+      supportsIdentityOnboardingModes: false,
+      supportedModes: ["Insert", "Upsert"],
+      parentEntityKeys: [],
+      isImportFeatureEnabled: true,
+      isExportFeatureEnabled: true,
+      canImport: true,
+      canExport: true,
+    };
+
+    // Both (entityKey, summary, isAr) and (entityKey, mockT, isAr, summary)
+    expect(getEntityDisplayName("crm.account", summary, false)).toBe("Enterprise Accounts");
+    expect(getEntityDisplayName("crm.account", summary, true)).toBe("حسابات المؤسسات");
+    expect(getEntityDisplayName("crm.account", mockT, false, summary)).toBe("Enterprise Accounts");
+    expect(getEntityDisplayName("crm.account", mockT, true, summary)).toBe("حسابات المؤسسات");
   });
 
   it("falls back to localized translation or known entity mapping when descriptor is absent", () => {

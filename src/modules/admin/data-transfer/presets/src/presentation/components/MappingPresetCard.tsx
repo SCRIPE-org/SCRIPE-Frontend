@@ -1,7 +1,7 @@
 "use client";
 
 import React, { memo } from "react";
-import { Calendar, MoreHorizontal, Sliders, Trash2 } from "lucide-react";
+import { Calendar, CheckCircle2, MoreHorizontal, Sliders, Sparkles, Trash2 } from "lucide-react";
 import { Card } from "@core/ui/card";
 import { Badge } from "@core/ui/badge";
 import { Button } from "@core/ui/button";
@@ -24,8 +24,14 @@ export interface MappingPresetCardProps {
   preset: DataExchangePreset;
   /** Callback to delete the mapping preset */
   onDeletePreset: (preset: DataExchangePreset) => void;
+  /** Callback to open preset in Import Studio */
+  onUseInStudio?: (preset: DataExchangePreset) => void;
+  /** Callback to designate preset as default */
+  onSetDefault?: (preset: DataExchangePreset) => void;
   /** Whether preset deletion is in flight */
   isDeleting?: boolean;
+  /** Whether setting default is in flight */
+  isSettingDefault?: boolean;
   /** Optional custom class name */
   className?: string;
 }
@@ -37,7 +43,10 @@ export interface MappingPresetCardProps {
 export const MappingPresetCard = memo(function MappingPresetCard({
   preset,
   onDeletePreset,
+  onUseInStudio,
+  onSetDefault,
   isDeleting = false,
+  isSettingDefault = false,
   className,
 }: MappingPresetCardProps) {
   const { language, t } = useI18n();
@@ -87,7 +96,26 @@ export const MappingPresetCard = memo(function MappingPresetCard({
               <MoreHorizontal className="h-4 w-4" aria-hidden="true" />
             </Button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent align={isAr ? "start" : "end"} className="w-52">
+          <DropdownMenuContent align={isAr ? "start" : "end"} className="w-56">
+            {onUseInStudio && (
+              <DropdownMenuItem
+                onClick={() => onUseInStudio(preset)}
+                className="cursor-pointer gap-2"
+              >
+                <Sparkles className="h-4 w-4 text-nx-accent" aria-hidden="true" />
+                <span>{t("adminDataTransferPresets.actions.useInStudio")}</span>
+              </DropdownMenuItem>
+            )}
+            {onSetDefault && !preset.isDefault && (
+              <DropdownMenuItem
+                onClick={() => onSetDefault(preset)}
+                disabled={isSettingDefault}
+                className="cursor-pointer gap-2"
+              >
+                <CheckCircle2 className="h-4 w-4 text-nx-ink-2" aria-hidden="true" />
+                <span>{t("adminDataTransferPresets.actions.setDefault")}</span>
+              </DropdownMenuItem>
+            )}
             <DropdownMenuItem
               onClick={() => onDeletePreset(preset)}
               disabled={isDeleting}
@@ -121,7 +149,7 @@ export const MappingPresetCard = memo(function MappingPresetCard({
         </div>
       </div>
 
-      {/* Footer: Creation Date & Quick Delete Action */}
+      {/* Footer: Creation Date & Quick Actions */}
       <div className="flex items-center justify-between gap-2 pt-2 border-t border-nx-line text-xs">
         <div className="flex items-center gap-1.5 text-[11px] text-nx-ink-3 font-mono">
           <Calendar className="h-3 w-3 shrink-0" aria-hidden="true" />
@@ -134,16 +162,29 @@ export const MappingPresetCard = memo(function MappingPresetCard({
           </span>
         </div>
 
-        <Button
-          variant="ghost"
-          size="sm"
-          onClick={() => onDeletePreset(preset)}
-          disabled={isDeleting}
-          className="h-7 px-2 text-xs text-nx-destructive hover:bg-destructive/10"
-        >
-          <Trash2 className="h-3 w-3 ltr:mr-1 rtl:ml-1" />
-          {t("adminDataTransferPresets.actions.delete")}
-        </Button>
+        <div className="flex items-center gap-1.5">
+          {onUseInStudio && (
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => onUseInStudio(preset)}
+              className="h-7 px-2 text-xs border-nx-line hover:border-nx-accent hover:text-nx-accent"
+            >
+              <Sparkles className="h-3 w-3 ltr:mr-1 rtl:ml-1 text-nx-accent" />
+              {t("adminDataTransferPresets.actions.useInStudio")}
+            </Button>
+          )}
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => onDeletePreset(preset)}
+            disabled={isDeleting}
+            className="h-7 px-2 text-xs text-nx-destructive hover:bg-destructive/10"
+          >
+            <Trash2 className="h-3 w-3 ltr:mr-1 rtl:ml-1" />
+            {t("adminDataTransferPresets.actions.delete")}
+          </Button>
+        </div>
       </div>
     </Card>
   );

@@ -47,7 +47,15 @@ export const en = {
       cancelPrompt: "Cancel this job execution?",
       downloadRejected: "Download Rejections",
       downloadExport: "Download Export",
+      launchStudio: "Launch Studio",
       refresh: "Refresh Telemetry",
+    },
+    tenantRequired: {
+      title: "Tenant Context Required",
+      description: "Data transfer background jobs and executions are scoped to a tenant. Please switch to an active tenant context to view and execute jobs.",
+      switchHint: "Use the Tenant Workspace switcher in the top header bar or open Tenants to impersonate a tenant workspace.",
+      goToTenants: "Go to Tenants",
+      retry: "Check Context Again",
     },
     cancelDialog: {
       title: "Cancel Transfer Job",

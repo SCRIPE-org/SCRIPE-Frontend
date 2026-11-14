@@ -1,16 +1,7 @@
 "use client";
 
 import React from "react";
-import { Button } from "@core/ui/button";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "@core/ui/dialog";
-import { Loader2 } from "lucide-react";
+import { ConfirmationDialog } from "@core/ui/confirmation-dialog";
 import { useI18n } from "@core/providers/i18n-provider";
 import type { DataExchangePreset } from "../../domain/entities/DataExchangePreset";
 
@@ -27,6 +18,7 @@ export interface DeletePresetDialogProps {
 
 /**
  * Confirmation dialog for permanently deleting a mapping preset.
+ * Standardized on @core/ui/confirmation-dialog.
  */
 export function DeletePresetDialog({
   open,
@@ -35,40 +27,36 @@ export function DeletePresetDialog({
   onClose,
   onConfirm,
 }: DeletePresetDialogProps): React.ReactElement {
-  const { t } = useI18n();
+  const { direction, t } = useI18n();
 
   return (
-    <Dialog open={open} onOpenChange={onClose}>
-      <DialogContent>
-        <DialogHeader>
-          <DialogTitle>{t("adminDataTransferPresets.deleteDialog.title")}</DialogTitle>
-          <DialogDescription>
-            {t("adminDataTransferPresets.deleteDialog.description", {
-              name: preset?.name ?? "",
-              entityKey: preset?.entityKey ?? "",
-            })}
-          </DialogDescription>
-        </DialogHeader>
-        <DialogFooter className="gap-2">
-          <Button variant="outline" onClick={onClose} disabled={isDeleting}>
-            {t("common.cancel", { defaultValue: "Cancel" })}
-          </Button>
-          <Button
-            variant="destructive"
-            onClick={onConfirm}
-            disabled={isDeleting}
-          >
-            {isDeleting ? (
-              <>
-                <Loader2 className="h-3.5 w-3.5 animate-spin ltr:mr-1.5 rtl:ml-1.5" />
-                {t("adminDataTransferPresets.deleteDialog.deleting")}
-              </>
-            ) : (
-              t("adminDataTransferPresets.deleteDialog.confirm")
-            )}
-          </Button>
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
+    <ConfirmationDialog
+      open={open}
+      onOpenChange={(isOpen) => (!isOpen ? onClose() : null)}
+      onConfirm={onConfirm}
+      onCancel={onClose}
+      variant="destructive"
+      isLoading={isDeleting}
+      title={t("adminDataTransferPresets.deleteDialog.title")}
+      description={t("adminDataTransferPresets.deleteDialog.description", {
+        name: preset?.name ?? "",
+        entityKey: preset?.entityKey ?? "",
+      })}
+      cancelText={t("common.cancel", { defaultValue: "Cancel" })}
+      confirmText={
+        isDeleting
+          ? t("adminDataTransferPresets.deleteDialog.deleting")
+          : t("adminDataTransferPresets.deleteDialog.confirm")
+      }
+      dir={direction}
+      className="max-w-md border border-nx-line bg-nx-surface text-nx-ink shadow-nx-modal"
+      data-testid="delete-preset-dialog"
+      cancelButtonProps={{
+        "data-testid": "delete-preset-cancel-btn",
+      }}
+      confirmButtonProps={{
+        "data-testid": "delete-preset-confirm-btn",
+      }}
+    />
   );
 }

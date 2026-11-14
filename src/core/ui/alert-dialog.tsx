@@ -103,22 +103,28 @@ AlertDialogDescription.displayName = AlertDialogPrimitive.Description.displayNam
 const AlertDialogAction = React.forwardRef<
   React.ElementRef<typeof AlertDialogPrimitive.Action>,
   React.ComponentPropsWithoutRef<typeof AlertDialogPrimitive.Action>
->(({ className, ...props }, ref) => (
-  <AlertDialogPrimitive.Action ref={ref} className={cn(buttonVariants(), className)} {...props} />
+>(({ className, asChild, ...props }, ref) => (
+  <AlertDialogPrimitive.Action
+    ref={ref}
+    asChild={asChild}
+    className={asChild ? className : cn(buttonVariants(), className)}
+    {...props}
+  />
 ));
 AlertDialogAction.displayName = AlertDialogPrimitive.Action.displayName;
 
 const AlertDialogCancel = React.forwardRef<
   React.ElementRef<typeof AlertDialogPrimitive.Cancel>,
   React.ComponentPropsWithoutRef<typeof AlertDialogPrimitive.Cancel>
->(({ className, ...props }, ref) => (
+>(({ className, asChild, ...props }, ref) => (
   <AlertDialogPrimitive.Cancel
     ref={ref}
+    asChild={asChild}
     // The `mt-2 sm:mt-0` that used to live here dates from a footer that
     // spaced its children with margins. The footer has owned a `gap-2` for a
     // while now, so the margin was pure double-spacing: 16px between the two
     // buttons on mobile against 8px everywhere else in the system.
-    className={cn(buttonVariants({ variant: "outline" }), className)}
+    className={asChild ? className : cn(buttonVariants({ variant: "outline" }), className)}
     {...props}
   />
 ));

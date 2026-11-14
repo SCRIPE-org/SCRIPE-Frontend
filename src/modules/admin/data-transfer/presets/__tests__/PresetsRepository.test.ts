@@ -18,6 +18,7 @@ describe("PresetsRepository", () => {
     fetchPresets: vi.fn().mockResolvedValue([samplePresetModel]),
     persistPreset: vi.fn().mockResolvedValue(samplePresetModel),
     removePreset: vi.fn().mockResolvedValue(undefined),
+    setDefaultPreset: vi.fn().mockResolvedValue(undefined),
   };
 
   it("fetches presets and maps to domain entities", async () => {
@@ -48,5 +49,12 @@ describe("PresetsRepository", () => {
     await repo.deletePreset("preset-abc");
 
     expect(mockService.removePreset).toHaveBeenCalledWith("preset-abc", undefined);
+  });
+
+  it("sets a preset as default by id", async () => {
+    const repo = new PresetsRepository(mockService);
+    await repo.setDefaultPreset("preset-abc");
+
+    expect(mockService.setDefaultPreset).toHaveBeenCalledWith("preset-abc", undefined);
   });
 });

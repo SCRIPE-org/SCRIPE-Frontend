@@ -1,7 +1,11 @@
 "use client";
 
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { toast } from "@core/ui/sileo-toast";
+import { useI18n } from "@core/providers/i18n-provider";
+import { useAppStore } from "@core/store/useAppStore";
+import { getEntityDisplayName, isTenantRequiredError } from "@core/data-exchange";
 import { getDataTransferContainer } from "../../../../di";
 import type { DataExchangePreset } from "../../domain/entities/DataExchangePreset";
 
@@ -10,13 +14,42 @@ import type { DataExchangePreset } from "../../domain/entities/DataExchangePrese
  */
 export interface UsePresetsViewModelReturn {
   presets: DataExchangePreset[];
+  allFilteredPresets: DataExchangePreset[];
+  totalCount: number;
+  pagesCount: number;
+  totalPages: number;
+  page: number;
+  pageNumber: number;
+  pageSize: number;
+  setPage: (page: number) => void;
+  setPageNumber: (page: number) => void;
+  setPageSize: (size: number) => void;
+  pagination: {
+    page: number;
+    pageNumber: number;
+    pageSize: number;
+    itemsCount: number;
+    totalCount: number;
+    pagesCount: number;
+    totalPages: number;
+  };
   isLoading: boolean;
   isError: boolean;
+  error: unknown;
+  isTenantRequired: boolean;
   search: string;
   entityFilter: string;
   setSearch: (search: string) => void;
   setEntityFilter: (entity: string) => void;
   refetch: () => Promise<unknown>;
+  // Studio interaction
+  activeStudioPreset: DataExchangePreset | null;
+  setActiveStudioPreset: (preset: DataExchangePreset | null) => void;
+  isCreateStudioOpen: boolean;
+  setIsCreateStudioOpen: (open: boolean) => void;
+  // Default workflow
+  setDefaultPreset: (preset: DataExchangePreset) => Promise<void>;
+  isSettingDefault: boolean;
   // Delete workflow
   presetToDelete: DataExchangePreset | null;
   isDeleteDialogOpen: boolean;
@@ -37,48 +70,128 @@ export interface UsePresetsViewModelReturn {
  * Presentation ViewModel hook managing saved column mapping presets.
  */
 export function usePresetsViewModel(): UsePresetsViewModelReturn {
+  const { t, language } = useI18n();
+  const isAr = language === "ar";
+  const tenantCode = useAppStore((s) => s.tenantCode);
   const queryClient = useQueryClient();
   const repo = getDataTransferContainer().presetsRepository;
 
-  const [search, setSearch] = useState<string>("");
-  const [entityFilter, setEntityFilter] = useState<string>("all");
+  const [page, setPage] = useState<number>(1);
+  const [pageSize, setPageSizeState] = useState<number>(10);
+  const [search, setSearchState] = useState<string>("");
+  const [entityFilter, setEntityFilterState] = useState<string>("all");
   const [presetToDelete, setPresetToDelete] = useState<DataExchangePreset | null>(null);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState<boolean>(false);
+  const [activeStudioPreset, setActiveStudioPreset] = useState<DataExchangePreset | null>(null);
+  const [isCreateStudioOpen, setIsCreateStudioOpen] = useState<boolean>(false);
 
-  const queryKey = useMemo(
-    () => ["data-transfer", "presets", { entityKey: entityFilter }],
-    [entityFilter]
-  );
+  const setSearch = useCallback((val: string) => {
+    setSearchState(val);
+    setPage(1);
+  }, []);
 
-  const { data: rawPresets = [], isLoading, isError, refetch } = useQuery({
+  const setEntityFilter = useCallback((val: string) => {
+    setEntityFilterState(val);
+    setPage(1);
+  }, []);
+
+  const setPageSize = useCallback((nextSize: number) => {
+    const valid = Number.isFinite(nextSize) && nextSize > 0 ? Math.floor(nextSize) : 10;
+    setPageSizeState(valid);
+    setPage(1);
+  }, []);
+
+  const queryKey = ["data-transfer", "presets", tenantCode ?? "platform", { entityKey: entityFilter }];
+
+  const {
+    data: rawPresets = [],
+    isLoading,
+    isError,
+    error,
+    refetch,
+  } = useQuery({
     queryKey,
     queryFn: async ({ signal }) => {
       return repo.getPresets(entityFilter !== "all" ? entityFilter : undefined, signal);
     },
+    retry: (failureCount, err) => !isTenantRequiredError(err) && failureCount < 2,
   });
 
-  const filteredPresets = useMemo(() => {
-    let result = rawPresets;
-    if (search.trim()) {
-      const q = search.trim().toLowerCase();
-      result = result.filter(
+  const isTenantRequired = isTenantRequiredError(error);
+
+  const trimmedSearch = search.trim().toLowerCase();
+  const filteredPresets = trimmedSearch
+    ? rawPresets.filter(
         (p: DataExchangePreset) =>
-          p.name.toLowerCase().includes(q) ||
-          p.entityKey.toLowerCase().includes(q) ||
-          p.importMode.toLowerCase().includes(q)
-      );
-    }
-    return result;
-  }, [rawPresets, search]);
+          p.name.toLowerCase().includes(trimmedSearch) ||
+          p.entityKey.toLowerCase().includes(trimmedSearch) ||
+          p.importMode.toLowerCase().includes(trimmedSearch)
+      )
+    : rawPresets;
+
+  const safePageSize = Math.max(1, Number.isFinite(pageSize) ? pageSize : 10);
+  const totalCount = filteredPresets.length;
+  const pagesCount = Math.max(1, Math.ceil(totalCount / safePageSize));
+  const safePage = Math.min(Math.max(1, Number.isFinite(page) ? page : 1), pagesCount);
+
+  const start = (safePage - 1) * safePageSize;
+  const pagedPresets = filteredPresets.slice(start, start + safePageSize);
+
+  const setDefaultMutation = useMutation({
+    mutationFn: async (preset: DataExchangePreset) => {
+      return repo.setDefaultPreset(preset.id);
+    },
+    onSuccess: (_data, preset) => {
+      const localizedEntity = getEntityDisplayName(preset.entityKey, t, isAr);
+      toast.success({
+        id: `dx-preset-default-${preset.id}`,
+        title: preset.name,
+        description: t("adminDataTransferPresets.toast.setDefaultSuccess", {
+          defaultValue: `${preset.name} is now the default mapping preset for ${localizedEntity}.`,
+        }),
+      });
+      void queryClient.invalidateQueries({ queryKey: ["data-transfer", "presets"] });
+    },
+    onError: (_err, preset) => {
+      toast.error({
+        id: `dx-preset-default-${preset.id}`,
+        title: preset.name,
+        description: t("adminDataTransferPresets.toast.setDefaultError", {
+          defaultValue: "Failed to set mapping preset as default.",
+        }),
+      });
+    },
+  });
+
+  const setDefaultPreset = useCallback(
+    async (preset: DataExchangePreset) => {
+      await setDefaultMutation.mutateAsync(preset);
+    },
+    [setDefaultMutation]
+  );
 
   const deleteMutation = useMutation({
     mutationFn: async (id: string) => {
       return repo.deletePreset(id);
     },
     onSuccess: () => {
+      toast.success({
+        title: t("adminDataTransferPresets.deleteDialog.title"),
+        description: t("adminDataTransferPresets.toast.deleteSuccess", {
+          defaultValue: "Mapping preset deleted successfully.",
+        }),
+      });
       setIsDeleteDialogOpen(false);
       setPresetToDelete(null);
       void queryClient.invalidateQueries({ queryKey: ["data-transfer", "presets"] });
+    },
+    onError: () => {
+      toast.error({
+        title: t("adminDataTransferPresets.deleteDialog.title"),
+        description: t("adminDataTransferPresets.toast.deleteError", {
+          defaultValue: "Failed to delete mapping preset.",
+        }),
+      });
     },
   });
 
@@ -99,35 +212,59 @@ export function usePresetsViewModel(): UsePresetsViewModelReturn {
     await deleteMutation.mutateAsync(presetToDelete.id);
   }, [presetToDelete, deleteMutation]);
 
-  const kpis = useMemo(() => {
-    const total = rawPresets.length;
-    let defaults = 0;
-    const entitySet = new Set<string>();
-    let totalMappings = 0;
+  let defaults = 0;
+  const entitySet = new Set<string>();
+  let totalMappings = 0;
 
-    for (const p of rawPresets) {
-      if (p.isDefault) defaults++;
-      entitySet.add(p.entityKey);
-      totalMappings += p.mappings.length;
-    }
+  for (const p of rawPresets) {
+    if (p.isDefault) defaults++;
+    entitySet.add(p.entityKey);
+    totalMappings += p.mappings.length;
+  }
 
-    return {
-      totalPresets: total,
-      defaultPresets: defaults,
-      entitiesCovered: entitySet.size,
-      totalMappings,
-    };
-  }, [rawPresets]);
+  const kpis = {
+    totalPresets: rawPresets.length,
+    defaultPresets: defaults,
+    entitiesCovered: entitySet.size,
+    totalMappings,
+  };
 
   return {
-    presets: filteredPresets,
+    presets: pagedPresets,
+    allFilteredPresets: filteredPresets,
+    totalCount,
+    pagesCount,
+    totalPages: pagesCount,
+    page: safePage,
+    pageNumber: safePage,
+    pageSize: safePageSize,
+    setPage,
+    setPageNumber: setPage,
+    setPageSize,
+    pagination: {
+      page: safePage,
+      pageNumber: safePage,
+      pageSize: safePageSize,
+      itemsCount: totalCount,
+      totalCount,
+      pagesCount,
+      totalPages: pagesCount,
+    },
     isLoading,
     isError,
+    error,
+    isTenantRequired,
     search,
     entityFilter,
     setSearch,
     setEntityFilter,
     refetch,
+    activeStudioPreset,
+    setActiveStudioPreset,
+    isCreateStudioOpen,
+    setIsCreateStudioOpen,
+    setDefaultPreset,
+    isSettingDefault: setDefaultMutation.isPending,
     presetToDelete,
     isDeleteDialogOpen,
     isDeleting: deleteMutation.isPending,

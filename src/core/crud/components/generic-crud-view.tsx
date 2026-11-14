@@ -916,15 +916,44 @@ function GenericCrudViewInner<T>(props: GenericCrudViewProps<T>) {
   }-${JSON.stringify(editFieldsOwn?.map((f) => f.name).sort())}-${config?.formKey || 0}`;
 
   // Auto-generate pagination and search for config-based usage
-  const pagination =
+  const rawPagination =
     propPagination ||
-    (config
+    (config && viewModel.pagination && Number.isFinite(viewModel.pagination.page)
       ? {
           ...viewModel.pagination,
           onPageChange: viewModel.changePage,
           onPageSizeChange: viewModel.changePageSize,
         }
       : undefined);
+
+  const itemsLength = viewModel.items ? viewModel.items.length : 0;
+  const pagination = rawPagination
+    ? (() => {
+        const itemsCount = Number.isFinite(rawPagination.itemsCount)
+          ? Math.max(0, rawPagination.itemsCount)
+          : itemsLength;
+        const pageSize =
+          Number.isFinite(rawPagination.pageSize) && rawPagination.pageSize > 0
+            ? rawPagination.pageSize
+            : Math.max(itemsCount, 10);
+        const page =
+          Number.isFinite(rawPagination.page) && rawPagination.page > 0
+            ? rawPagination.page
+            : 1;
+        const pagesCount =
+          Number.isFinite(rawPagination.pagesCount) && rawPagination.pagesCount > 0
+            ? rawPagination.pagesCount
+            : Math.max(1, Math.ceil(itemsCount / pageSize));
+
+        return {
+          ...rawPagination,
+          page,
+          itemsCount,
+          pageSize,
+          pagesCount,
+        };
+      })()
+    : undefined;
 
   const search =
     propSearch ||
@@ -1702,7 +1731,7 @@ function GenericCrudViewInner<T>(props: GenericCrudViewProps<T>) {
           selectedItems={viewModel.selectedItems}
           onSelectionChange={viewModel.setSelectedItems}
           pagination={
-            pagination
+            pagination && Number.isFinite(pagination.page) && Number.isFinite(pagination.pageSize)
               ? {
                   ...pagination,
                   currentPage: pagination.page, // Map page to currentPage for GenericTable

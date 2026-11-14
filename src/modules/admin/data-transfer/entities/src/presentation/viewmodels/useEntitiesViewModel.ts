@@ -1,65 +1,91 @@
 "use client";
 
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useI18n } from "@core/providers/i18n-provider";
+import { useAppStore } from "@core/store/useAppStore";
+import { isTenantRequiredError } from "@core/data-exchange";
 import { getDataTransferContainer } from "../../../../di";
 import type { DataExchangeEntity } from "../../domain/entities/DataExchangeEntity";
 
 /**
  * ViewModel hook for the Data Transfer Entities catalog view.
+ * Supports filtering, searching, client-side pagination, and action dispatch.
  */
 export function useEntitiesViewModel() {
   const { language, t } = useI18n();
+  const tenantCode = useAppStore((s) => s.tenantCode);
   const repo = getDataTransferContainer().entitiesRepository;
 
-  const [search, setSearch] = useState("");
-  const [selectedModule, setSelectedModule] = useState<string>("all");
+  const [search, setSearchState] = useState("");
+  const [selectedModule, setSelectedModuleState] = useState<string>("all");
+  const [page, setPage] = useState(1);
+  const [pageSize, setPageSizeState] = useState(10);
   const [activeStudioEntity, setActiveStudioEntity] = useState<string | null>(null);
   const [activeExportEntity, setActiveExportEntity] = useState<string | null>(null);
+  const [activeMultiSheetKeys, setActiveMultiSheetKeys] = useState<string[] | null>(null);
   const [downloadingTemplateEntity, setDownloadingTemplateEntity] = useState<string | null>(null);
 
+  const setSearch = useCallback((val: string) => {
+    setSearchState(val);
+    setPage(1);
+  }, []);
+
+  const setSelectedModule = useCallback((val: string) => {
+    setSelectedModuleState(val);
+    setPage(1);
+  }, []);
+
+  const setPageSize = useCallback((nextSize: number) => {
+    const valid = Number.isFinite(nextSize) && nextSize > 0 ? Math.floor(nextSize) : 10;
+    setPageSizeState(valid);
+    setPage(1);
+  }, []);
+
   const query = useQuery({
-    queryKey: ["data-transfer", "entities"],
+    queryKey: ["data-transfer", "entities", tenantCode ?? "platform"],
     queryFn: ({ signal }) => repo.getAll(signal),
     staleTime: 60_000,
+    retry: (failureCount, err) => !isTenantRequiredError(err) && failureCount < 2,
   });
 
-  const entities = useMemo(() => query.data ?? [], [query.data]);
+  const entities = query.data ?? [];
+  const isTenantRequired = isTenantRequiredError(query.error);
 
-  const availableModules = useMemo(() => {
-    const set = new Set<string>();
-    for (const e of entities) {
-      if (e.owningModule) set.add(e.owningModule);
+  const moduleSet = new Set<string>();
+  for (const e of entities) {
+    if (e.owningModule) moduleSet.add(e.owningModule);
+  }
+  const availableModules = Array.from(moduleSet).sort();
+
+  const q = search.trim().toLowerCase();
+  const filteredEntities = entities.filter((e) => {
+    if (selectedModule !== "all" && e.owningModule !== selectedModule) {
+      return false;
     }
-    return Array.from(set).sort();
-  }, [entities]);
+    if (!q) return true;
+    const name = language === "ar" ? e.displayNameAr : e.displayNameEn;
+    return (
+      e.entityKey.toLowerCase().includes(q) ||
+      name.toLowerCase().includes(q) ||
+      e.owningModule.toLowerCase().includes(q)
+    );
+  });
 
-  const filteredEntities = useMemo(() => {
-    const q = search.trim().toLowerCase();
-    return entities.filter((e) => {
-      if (selectedModule !== "all" && e.owningModule !== selectedModule) {
-        return false;
-      }
-      if (!q) return true;
-      const name = language === "ar" ? e.displayNameAr : e.displayNameEn;
-      return (
-        e.entityKey.toLowerCase().includes(q) ||
-        name.toLowerCase().includes(q) ||
-        e.owningModule.toLowerCase().includes(q)
-      );
-    });
-  }, [entities, search, selectedModule, language]);
+  const safePageSize = Math.max(1, Number.isFinite(pageSize) ? pageSize : 10);
+  const totalCount = filteredEntities.length;
+  const pagesCount = Math.max(1, Math.ceil(totalCount / safePageSize));
+  const safePage = Math.min(Math.max(1, Number.isFinite(page) ? page : 1), pagesCount);
 
-  const kpis = useMemo(() => {
-    const total = entities.length;
-    const importable = entities.filter((e) => e.canImport && e.isImportFeatureEnabled).length;
-    const exportable = entities.filter((e) => e.canExport && e.isExportFeatureEnabled).length;
-    const quotaConstrained = entities.filter(
-      (e) => typeof e.remainingQuotaSlots === "number"
-    ).length;
-    return { total, importable, exportable, quotaConstrained };
-  }, [entities]);
+  const start = (safePage - 1) * safePageSize;
+  const pagedEntities = filteredEntities.slice(start, start + safePageSize);
+
+  const kpis = {
+    total: entities.length,
+    importable: entities.filter((e) => e.canImport && e.isImportFeatureEnabled).length,
+    exportable: entities.filter((e) => e.canExport && e.isExportFeatureEnabled).length,
+    quotaConstrained: entities.filter((e) => typeof e.remainingQuotaSlots === "number").length,
+  };
 
   const downloadTemplate = useCallback(
     async (entity: DataExchangeEntity) => {
@@ -79,7 +105,7 @@ export function useEntitiesViewModel() {
         a.remove();
         URL.revokeObjectURL(url);
       } catch {
-        // Silently handled or surface via caller
+        // Handled silently
       } finally {
         setDownloadingTemplateEntity(null);
       }
@@ -93,12 +119,32 @@ export function useEntitiesViewModel() {
     isLoading: query.isLoading,
     isError: query.isError,
     error: query.error,
-    entities: filteredEntities,
+    isTenantRequired,
+    entities: pagedEntities,
+    allFilteredEntities: filteredEntities,
     availableModules,
     search,
     setSearch,
     selectedModule,
     setSelectedModule,
+    page: safePage,
+    pageNumber: safePage,
+    setPage,
+    setPageNumber: setPage,
+    pageSize: safePageSize,
+    setPageSize,
+    totalCount,
+    pagesCount,
+    totalPages: pagesCount,
+    pagination: {
+      page: safePage,
+      pageNumber: safePage,
+      pageSize: safePageSize,
+      itemsCount: totalCount,
+      totalCount,
+      pagesCount,
+      totalPages: pagesCount,
+    },
     kpis,
     downloadTemplate,
     downloadingTemplateEntity,
@@ -106,6 +152,8 @@ export function useEntitiesViewModel() {
     setActiveStudioEntity,
     activeExportEntity,
     setActiveExportEntity,
+    activeMultiSheetKeys,
+    setActiveMultiSheetKeys,
     refetch: query.refetch,
   };
 }

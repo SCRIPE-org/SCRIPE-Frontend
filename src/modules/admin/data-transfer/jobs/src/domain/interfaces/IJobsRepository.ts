@@ -10,6 +10,7 @@ export interface JobsQueryParams {
   pageSize?: number;
   entityKey?: string;
   status?: string;
+  search?: string;
 }
 
 /**

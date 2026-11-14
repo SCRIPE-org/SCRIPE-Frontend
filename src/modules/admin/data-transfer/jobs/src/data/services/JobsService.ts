@@ -26,6 +26,7 @@ export class JobsService implements IJobsService {
     if (params?.pageSize) query.pageSize = params.pageSize;
     if (params?.entityKey) query.entityKey = params.entityKey;
     if (params?.status) query.status = params.status;
+    if (params?.search) query.search = params.search;
 
     return this.apiService.get<PagedResult<DataTransferJobModel>>(
       DATA_EXCHANGE_ENDPOINTS.JOBS,

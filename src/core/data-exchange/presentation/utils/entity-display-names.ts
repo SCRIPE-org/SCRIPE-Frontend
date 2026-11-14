@@ -1,9 +1,29 @@
-import type { DataExchangeDescriptorResponseDto } from "../../domain/types";
+import type {
+  DataExchangeDescriptorResponseDto,
+  DataExchangeEntityDescriptor,
+  DataExchangeEntitySummaryDto,
+} from "../../domain/types";
 
 export type EntityTranslateFn = (
   key: string,
   params?: Record<string, string | number>
 ) => string;
+
+/** Any dynamic backend descriptor or entity summary providing localized display names. */
+export type EntityNameSource =
+  | DataExchangeDescriptorResponseDto
+  | DataExchangeEntityDescriptor
+  | DataExchangeEntitySummaryDto
+  | {
+      displayNameEn?: string | null;
+      displayNameAr?: string | null;
+      descriptor?: {
+        displayNameEn?: string | null;
+        displayNameAr?: string | null;
+      } | null;
+    }
+  | null
+  | undefined;
 
 const KNOWN_ENTITY_NAMES_EN: Record<string, string> = {
   "crm.lead": "CRM Leads",
@@ -35,13 +55,15 @@ const KNOWN_ENTITY_NAMES_AR: Record<string, string> = {
 
 /**
  * Resolves a human-friendly localized entity name for Data Exchange UI, toasts, and summaries.
- * Supports both `(entityKey, descriptor, isAr, t)` and `(entityKey, t, isAr, descriptor)` signatures.
+ * Accepts optional dynamic backend descriptor or entitySummary (displayNameEn/displayNameAr)
+ * as the primary source of truth, falling back to t(...) keys and KNOWN_ENTITY_NAMES.
+ * Supports both `(entityKey, descriptor/summary, isAr, t)` and `(entityKey, t, isAr, descriptor/summary)` signatures.
  */
 export function getEntityDisplayName(
   entityKey: string,
-  arg2?: DataExchangeDescriptorResponseDto | EntityTranslateFn | null,
+  arg2?: EntityNameSource | EntityTranslateFn | null,
   arg3: boolean = false,
-  arg4?: EntityTranslateFn | DataExchangeDescriptorResponseDto | null
+  arg4?: EntityTranslateFn | EntityNameSource | null
 ): string {
   if (!entityKey) return "";
 
@@ -52,21 +74,30 @@ export function getEntityDisplayName(
         ? (arg4 as EntityTranslateFn)
         : undefined;
 
-  const descriptor: DataExchangeDescriptorResponseDto | null | undefined =
+  const source: EntityNameSource =
     arg2 && typeof arg2 === "object"
-      ? (arg2 as DataExchangeDescriptorResponseDto)
+      ? (arg2 as EntityNameSource)
       : arg4 && typeof arg4 === "object"
-        ? (arg4 as DataExchangeDescriptorResponseDto)
+        ? (arg4 as EntityNameSource)
         : null;
 
   const isAr = Boolean(arg3);
 
-  if (descriptor?.descriptor) {
-    const descName = isAr
-      ? descriptor.descriptor.displayNameAr
-      : descriptor.descriptor.displayNameEn;
-    if (descName && descName.trim().length > 0) {
-      return descName.trim();
+  if (source && typeof source === "object") {
+    let nameEn: string | null | undefined;
+    let nameAr: string | null | undefined;
+
+    if ("descriptor" in source && source.descriptor) {
+      nameEn = source.descriptor.displayNameEn;
+      nameAr = source.descriptor.displayNameAr;
+    } else if ("displayNameEn" in source || "displayNameAr" in source) {
+      nameEn = (source as { displayNameEn?: string | null }).displayNameEn;
+      nameAr = (source as { displayNameAr?: string | null }).displayNameAr;
+    }
+
+    const dynamicName = isAr ? nameAr : nameEn;
+    if (typeof dynamicName === "string" && dynamicName.trim().length > 0) {
+      return dynamicName.trim();
     }
   }
 
