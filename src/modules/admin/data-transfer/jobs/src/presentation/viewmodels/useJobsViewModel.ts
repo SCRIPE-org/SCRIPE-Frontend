@@ -4,6 +4,7 @@ import { useCallback, useMemo, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "@core/ui/sileo-toast";
 import { useI18n } from "@core/providers/i18n-provider";
+import { getEntityDisplayName } from "@core/data-exchange";
 import type { DataExchangeArtifactKind } from "@core/data-exchange/domain/types";
 import { getDataTransferContainer } from "../../../../di";
 import type { DataTransferJob } from "../../domain/entities/DataTransferJob";
@@ -50,7 +51,8 @@ export interface UseJobsViewModelReturn {
  * Presentation ViewModel hook managing data transfer background jobs.
  */
 export function useJobsViewModel(): UseJobsViewModelReturn {
-  const { t } = useI18n();
+  const { t, language } = useI18n();
+  const isAr = language === "ar";
   const queryClient = useQueryClient();
   const repo = getDataTransferContainer().jobsRepository;
 
@@ -111,21 +113,27 @@ export function useJobsViewModel(): UseJobsViewModelReturn {
       return repo.cancelJob(jobId);
     },
     onSuccess: () => {
-      toast.success(
-        t("adminDataTransferJobs.cancelDialog.success", {
+      const localizedEntity = jobToCancel ? getEntityDisplayName(jobToCancel.entityKey, t, isAr) : "";
+      toast.success({
+        id: jobToCancel ? `dx-job-${jobToCancel.jobId}` : undefined,
+        title: localizedEntity || t("adminDataTransferJobs.title"),
+        description: t("adminDataTransferJobs.cancelDialog.success", {
           defaultValue: "Cancellation requested successfully.",
-        })
-      );
+        }),
+      });
       setIsCancelDialogOpen(false);
       setJobToCancel(null);
       void queryClient.invalidateQueries({ queryKey: ["data-transfer", "jobs"] });
     },
     onError: () => {
-      toast.error(
-        t("adminDataTransferJobs.cancelDialog.error", {
+      const localizedEntity = jobToCancel ? getEntityDisplayName(jobToCancel.entityKey, t, isAr) : "";
+      toast.error({
+        id: jobToCancel ? `dx-job-${jobToCancel.jobId}` : undefined,
+        title: localizedEntity || t("adminDataTransferJobs.title"),
+        description: t("adminDataTransferJobs.cancelDialog.error", {
           defaultValue: "Failed to cancel job.",
-        })
-      );
+        }),
+      });
     },
   });
 
@@ -148,13 +156,16 @@ export function useJobsViewModel(): UseJobsViewModelReturn {
 
   const downloadArtifact = useCallback(
     async (job: DataTransferJob, kind: DataExchangeArtifactKind) => {
+      const localizedEntity = getEntityDisplayName(job.entityKey, t, isAr);
       try {
         setIsDownloading(true);
-        toast.info(
-          t("adminDataTransferJobs.download.starting", {
+        toast.info({
+          id: `dx-job-${job.jobId}`,
+          title: localizedEntity,
+          description: t("adminDataTransferJobs.download.starting", {
             defaultValue: "Preparing download...",
-          })
-        );
+          }),
+        });
         const blob = await repo.downloadArtifact(job.jobId, kind);
         const url = URL.createObjectURL(blob);
         const a = document.createElement("a");
@@ -165,22 +176,26 @@ export function useJobsViewModel(): UseJobsViewModelReturn {
         a.click();
         document.body.removeChild(a);
         URL.revokeObjectURL(url);
-        toast.success(
-          t("adminDataTransferJobs.download.success", {
+        toast.success({
+          id: `dx-job-${job.jobId}`,
+          title: localizedEntity,
+          description: t("adminDataTransferJobs.download.success", {
             defaultValue: "Artifact downloaded successfully.",
-          })
-        );
+          }),
+        });
       } catch {
-        toast.error(
-          t("adminDataTransferJobs.download.failed", {
+        toast.error({
+          id: `dx-job-${job.jobId}`,
+          title: localizedEntity,
+          description: t("adminDataTransferJobs.download.failed", {
             defaultValue: "Failed to download artifact workbook.",
-          })
-        );
+          }),
+        });
       } finally {
         setIsDownloading(false);
       }
     },
-    [repo, t]
+    [repo, t, isAr]
   );
 
   const kpis = useMemo(() => {

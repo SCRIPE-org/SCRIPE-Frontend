@@ -33,9 +33,11 @@ export const ar = {
       Migration: "ترحيل",
     },
     statuses: {
+      Queued: "في الانتظار",
       Pending: "قيد الانتظار",
       Running: "جارٍ التنفيذ",
       Completed: "مكتمل",
+      CompletedWithErrors: "مكتمل مع أخطاء",
       Failed: "فشل",
       Cancelled: "ملغي",
       Expired: "منتهي الصلاحية",

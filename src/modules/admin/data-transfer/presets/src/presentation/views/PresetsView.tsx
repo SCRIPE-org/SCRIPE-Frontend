@@ -1,22 +1,24 @@
 "use client";
 
 import React, { useMemo } from "react";
-import type { CrudColumn, CrudConfig } from "@core/crud";
+import type { CrudColumn, CrudConfig, CrudAction } from "@core/crud";
 import { GenericCrudView } from "@core/crud";
 import { Badge } from "@core/ui/badge";
-import { Button } from "@core/ui/button";
 import { Trash2 } from "lucide-react";
 import { useI18n } from "@core/providers/i18n-provider";
+import { getEntityDisplayName } from "@core/data-exchange";
 import type { DataExchangePreset } from "../../domain/entities/DataExchangePreset";
 import { usePresetsViewModel } from "../viewmodels/usePresetsViewModel";
 import { PresetsKpiHeader } from "../components/PresetsKpiHeader";
 import { DeletePresetDialog } from "../components/DeletePresetDialog";
+import { MappingPresetCard } from "../components/MappingPresetCard";
 
 /**
  * Primary admin view for inspecting and managing saved column mapping presets.
  */
 export function PresetsView(): React.ReactElement {
-  const { t } = useI18n();
+  const { t, language } = useI18n();
+  const isAr = language === "ar";
   const vm = usePresetsViewModel();
 
   const columns = useMemo<CrudColumn<DataExchangePreset>[]>(
@@ -40,9 +42,15 @@ export function PresetsView(): React.ReactElement {
         key: "entityKey",
         label: t("adminDataTransferPresets.columns.entityKey"),
         sortable: true,
-        render: (value: unknown) => (
-          <span className="font-mono text-xs text-nx-ink-2">{String(value ?? "")}</span>
-        ),
+        render: (_value: unknown, preset: DataExchangePreset) => {
+          const displayName = getEntityDisplayName(preset.entityKey, t, isAr);
+          return (
+            <div className="flex flex-col gap-0.5">
+              <span className="font-semibold text-xs text-nx-ink">{displayName}</span>
+              <span className="font-mono text-[11px] text-nx-ink-3">{preset.entityKey}</span>
+            </div>
+          );
+        },
       },
       {
         key: "importMode",
@@ -73,28 +81,13 @@ export function PresetsView(): React.ReactElement {
           const date = new Date(String(value));
           return (
             <span className="text-xs text-nx-ink-3 whitespace-nowrap">
-              {date.toLocaleDateString()} {date.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
+              {date.toLocaleDateString(isAr ? "ar-EG" : "en-US")} {date.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
             </span>
           );
         },
       },
-      {
-        key: "actions",
-        label: t("adminDataTransferPresets.columns.actions"),
-        render: (_value: unknown, preset: DataExchangePreset) => (
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => vm.promptDeletePreset(preset)}
-            className="h-7 px-2 text-xs text-nx-destructive hover:bg-destructive/10"
-          >
-            <Trash2 className="h-3 w-3 ltr:mr-1 rtl:ml-1" />
-            {t("adminDataTransferPresets.actions.delete")}
-          </Button>
-        ),
-      },
     ],
-    [t, vm]
+    [t, isAr]
   );
 
   const kpiHeader = useMemo(
@@ -112,8 +105,24 @@ export function PresetsView(): React.ReactElement {
       stickyActions: true,
       hideAddButton: true,
       customHeaderContent: kpiHeader,
+      getActions: (_v, tFn): CrudAction<DataExchangePreset>[] => [
+        {
+          label: tFn("adminDataTransferPresets.actions.delete") || "Delete Preset",
+          icon: <Trash2 className="h-4 w-4 text-nx-destructive" />,
+          variant: "destructive" as const,
+          disabled: () => vm.isDeleting,
+          onClick: (preset: DataExchangePreset) => vm.promptDeletePreset(preset),
+        },
+      ],
+      renderCardGridItem: (preset: DataExchangePreset) => (
+        <MappingPresetCard
+          preset={preset}
+          onDeletePreset={vm.promptDeletePreset}
+          isDeleting={vm.isDeleting}
+        />
+      ),
     }),
-    [columns, kpiHeader]
+    [columns, kpiHeader, vm]
   );
 
   const crudViewModel = useMemo(
@@ -137,13 +146,12 @@ export function PresetsView(): React.ReactElement {
           onChange: vm.setSearch,
         }}
       />
-
       <DeletePresetDialog
-        open={vm.isDeleteDialogOpen}
         preset={vm.presetToDelete}
-        isDeleting={vm.isDeleting}
+        open={vm.isDeleteDialogOpen}
         onClose={vm.closeDeleteDialog}
         onConfirm={vm.confirmDeletePreset}
+        isDeleting={vm.isDeleting}
       />
     </>
   );

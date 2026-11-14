@@ -28,6 +28,11 @@ export const ar = {
       Update: "تحديث",
       Upsert: "إدراج وتحديث",
     },
+    capabilities: {
+      importAndExport: "استيراد وتصدير",
+      importOnly: "استيراد فقط",
+      exportOnly: "تصدير فقط",
+    },
     actions: {
       downloadTemplate: "تنزيل النموذج",
       downloadingTemplate: "جارٍ التنزيل...",

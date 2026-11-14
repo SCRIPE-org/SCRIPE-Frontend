@@ -12,7 +12,7 @@ import { cn } from "@core/common/utils";
 import { CRM_PERMISSIONS, CrmShell, CrmSectionHeader, CRM_TAB_ROUTES } from "@modules/crm";
 import type { CrmTabId } from "@modules/crm";
 import { GenericCrudView } from "@core/crud/components/generic-crud-view";
-import type { CrudConfig } from "@core/crud/components/generic-crud-view";
+import type { CrudConfig, CrudAction } from "@core/crud/components/generic-crud-view";
 import { DataExchangeToolbarActions } from "@core/data-exchange";
 import { CreateAccountDialog } from "../components/CreateAccountDialog";
 import { AccountCardGridItem } from "../components/AccountCardGridItem";
@@ -116,18 +116,13 @@ export function AccountsView() {
       </div>
     ),
     columns,
-    renderActions: (account: CrmAccount) => (
-      <Button
-        type="button"
-        variant="ghost"
-        size="sm"
-        onClick={() => router.push(`/crm/accounts/${account.id}`)}
-        className="h-7 px-2.5 text-xs gap-1 border border-nx-line bg-nx-surface hover:bg-nx-raised text-nx-ink"
-      >
-        <Eye className="size-3 text-nx-accent" />
-        <span>{t("crmAccounts.actions.view360")}</span>
-      </Button>
-    ),
+    getActions: (_vm, tFn): CrudAction<CrmAccount>[] => [
+      {
+        label: tFn("crmAccounts.actions.view360") || "View 360",
+        icon: <Eye className="size-3.5" />,
+        onClick: (a: CrmAccount) => router.push(`/crm/accounts/${a.id}`),
+      },
+    ],
     renderCardGridItem: (account: CrmAccount, actions: React.ReactNode) => (
       <AccountCardGridItem
         account={account}

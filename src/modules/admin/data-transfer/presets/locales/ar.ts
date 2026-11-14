@@ -25,9 +25,12 @@ export const ar = {
       createdAt: "تاريخ الإنشاء",
       actions: "الإجراءات",
     },
+    columnsCount: "{count} أعمدة",
     modes: {
+      Insert: "إدراج",
+      Update: "تحديث",
+      Upsert: "إدراج وتحديث",
       AppendOnly: "إضافة فقط",
-      Upsert: "إضافة وتحديث",
       UpdateOnly: "تحديث فقط",
     },
     actions: {

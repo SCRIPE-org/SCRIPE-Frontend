@@ -33,9 +33,11 @@ export const en = {
       Migration: "Migration",
     },
     statuses: {
+      Queued: "Queued",
       Pending: "Pending",
       Running: "Executing",
       Completed: "Completed",
+      CompletedWithErrors: "Completed with Errors",
       Failed: "Failed",
       Cancelled: "Cancelled",
       Expired: "Expired",

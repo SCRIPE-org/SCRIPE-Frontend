@@ -14,7 +14,7 @@ import {
   useCrmWorkflowsStore,
   type CrmWorkflowDefinition,
 } from "@modules/crm";
-import type { CrudConfig, CrudViewMode, DropEvaluationResult } from "@core/crud/components/generic-crud-view";
+import type { CrudConfig, CrudAction, CrudViewMode, DropEvaluationResult } from "@core/crud/components/generic-crud-view";
 import { buildOpportunityColumns, renderOpportunityCardGridItem, renderOpportunitySplitDetail } from "../components/OpportunitiesTable";
 import { KanbanCard } from "../components/kanban/KanbanCard";
 import type { BoardSettingsConfig } from "../components/BoardSettingsDialog";
@@ -70,44 +70,6 @@ export function useOpportunitiesCrudConfig(params: UseOpportunitiesCrudConfigPar
   const handleSelectOpportunity = useCallback(
     (opp: CrmOpportunity) => router.push(`/crm/opportunities/${opp.id}`),
     [router]
-  );
-
-  const renderOpportunityActions = useCallback(
-    (opp: CrmOpportunity) => {
-      const isOpen = opp.status === "Open";
-      return (
-        <div className="inline-flex items-center justify-end gap-1 whitespace-nowrap">
-          {isOpen ? (
-            <>
-              <Button type="button" size="sm" variant="outline" className="h-7 px-2 text-xs whitespace-nowrap" onClick={() => openMoveStageDialog(opp)}>
-                <ArrowRight className="size-3.5 me-1" />
-                {t("crmOpportunities.actions.moveStage")}
-              </Button>
-              <Button type="button" size="sm" variant="ghost" aria-label={t("crmOpportunities.actions.closeWon")} title={t("crmOpportunities.actions.closeWon")} className="h-7 px-1.5 text-xs text-success hover:bg-success/10" onClick={() => handleOpportunityStageTransition(opp, "default.closed_won")}>
-                <CheckCircle className="size-3.5" />
-                <span className="sr-only">{t("crmOpportunities.actions.closeWon")}</span>
-              </Button>
-              <Button type="button" size="sm" variant="ghost" aria-label={t("crmOpportunities.actions.closeLost")} title={t("crmOpportunities.actions.closeLost")} className="h-7 px-1.5 text-xs text-destructive hover:bg-destructive/10" onClick={() => handleOpportunityStageTransition(opp, "default.closed_lost")}>
-                <XCircle className="size-3.5" />
-                <span className="sr-only">{t("crmOpportunities.actions.closeLost")}</span>
-              </Button>
-              <Button type="button" size="sm" variant="ghost" aria-label={t("crmOpportunities.actions.assignOwner")} title={t("crmOpportunities.actions.assignOwner")} className="h-7 px-1.5 text-nx-ink-3 hover:text-nx-ink" onClick={() => openAssignOwnerDialog(opp)}>
-                <UserCheck className="size-3.5" />
-              </Button>
-            </>
-          ) : (
-            <Button type="button" size="sm" variant="outline" className="h-7 px-2 text-xs text-nx-accent border-nx-line hover:border-nx-accent whitespace-nowrap" onClick={() => handleOpportunityStageTransition(opp, "default.discovery")}>
-              <RotateCcw className="size-3.5 me-1" />
-              {t("crmOpportunities.actions.reopen")}
-            </Button>
-          )}
-          <Button type="button" size="sm" variant="ghost" aria-label={t("crmOpportunities.actions.viewDetails")} title={t("crmOpportunities.actions.viewDetails")} className="h-7 px-1.5 text-nx-ink-3 hover:text-nx-ink" onClick={() => handleSelectOpportunity(opp)}>
-            <ArrowUpRight className="size-3.5" />
-          </Button>
-        </div>
-      );
-    },
-    [handleSelectOpportunity, openAssignOwnerDialog, handleOpportunityStageTransition, openMoveStageDialog, t]
   );
 
   const sortedPipelineStages = useMemo(
@@ -278,7 +240,44 @@ export function useOpportunitiesCrudConfig(params: UseOpportunitiesCrudConfigPar
     renderCardGridItem: (opp, actions) => renderOpportunityCardGridItem(opp, actions, language, handleSelectOpportunity),
     renderSplitDetail: (opp, actions) => renderOpportunitySplitDetail(opp, actions, language, t),
     columns,
-    renderActions: renderOpportunityActions,
+    getActions: (_vm, tFn): CrudAction<CrmOpportunity>[] => [
+      {
+        label: tFn("crmOpportunities.actions.viewDetails") || "View Details",
+        icon: <ArrowUpRight className="size-3.5" />,
+        onClick: (opp: CrmOpportunity) => handleSelectOpportunity(opp),
+      },
+      {
+        label: tFn("crmOpportunities.actions.moveStage") || "Move Stage",
+        icon: <ArrowRight className="size-3.5" />,
+        show: (opp: CrmOpportunity) => opp.status === "Open",
+        onClick: (opp: CrmOpportunity) => openMoveStageDialog(opp),
+      },
+      {
+        label: tFn("crmOpportunities.actions.closeWon") || "Close Won",
+        icon: <CheckCircle className="size-3.5 text-success" />,
+        show: (opp: CrmOpportunity) => opp.status === "Open",
+        onClick: (opp: CrmOpportunity) => { void handleOpportunityStageTransition(opp, "default.closed_won"); },
+      },
+      {
+        label: tFn("crmOpportunities.actions.closeLost") || "Close Lost",
+        icon: <XCircle className="size-3.5 text-destructive" />,
+        variant: "destructive" as const,
+        show: (opp: CrmOpportunity) => opp.status === "Open",
+        onClick: (opp: CrmOpportunity) => { void handleOpportunityStageTransition(opp, "default.closed_lost"); },
+      },
+      {
+        label: tFn("crmOpportunities.actions.assignOwner") || "Assign Owner",
+        icon: <UserCheck className="size-3.5" />,
+        show: (opp: CrmOpportunity) => opp.status === "Open",
+        onClick: (opp: CrmOpportunity) => openAssignOwnerDialog(opp),
+      },
+      {
+        label: tFn("crmOpportunities.actions.reopen") || "Reopen",
+        icon: <RotateCcw className="size-3.5 text-nx-accent" />,
+        show: (opp: CrmOpportunity) => opp.status !== "Open",
+        onClick: (opp: CrmOpportunity) => { void handleOpportunityStageTransition(opp, "default.discovery"); },
+      },
+    ],
     customTableProps: {
       onSearch: undefined,
       emptyMessage: <EmptyState title={t("crmOpportunities.table.emptyTitle")} description={t("crmOpportunities.table.emptyDescription")} />,
@@ -288,8 +287,9 @@ export function useOpportunitiesCrudConfig(params: UseOpportunitiesCrudConfigPar
     defaultDealViewMode, isRtl, search, activeDealWorkflowId, dealWorkflows, stageFilter, stages,
     statusFilter, statuses, pipelineStages, state.items, state.stage, boardSettings,
     handleOpportunityStageTransition, submitError, clearSubmitError, canUpdateOpp, canManagePipeline,
-    language, handleSelectOpportunity, columns, renderOpportunityActions, t, handleSearchChange,
+    language, handleSelectOpportunity, columns, t, handleSearchChange,
     setActiveWorkflow, handleStageFilterChange, handleStatusFilterChange, setIsCreateOpen,
+    openMoveStageDialog, openAssignOwnerDialog,
   ]);
 
   return { crudConfig, columns };

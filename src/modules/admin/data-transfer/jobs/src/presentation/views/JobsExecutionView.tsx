@@ -1,24 +1,30 @@
 "use client";
 
 import React, { useMemo } from "react";
-import type { CrudColumn, CrudConfig } from "@core/crud";
+import type { CrudColumn, CrudConfig, CrudAction } from "@core/crud";
 import { GenericCrudView } from "@core/crud";
 import { Badge } from "@core/ui/badge";
-import { Button } from "@core/ui/button";
 import { Progress } from "@core/ui/progress";
-import { Ban, Download, FileDown } from "lucide-react";
+import {
+  FileDown,
+  FileWarning,
+  XCircle,
+} from "lucide-react";
 import { useI18n } from "@core/providers/i18n-provider";
+import { getEntityDisplayName } from "@core/data-exchange";
 import type { DataTransferJob } from "../../domain/entities/DataTransferJob";
 import { useJobsViewModel } from "../viewmodels/useJobsViewModel";
 import { JobStatusBadge } from "../components/JobStatusBadge";
 import { JobsKpiHeader } from "../components/JobsKpiHeader";
 import { CancelJobDialog } from "../components/CancelJobDialog";
+import { JobExecutionCard } from "../components/JobExecutionCard";
 
 /**
  * Primary admin view for inspecting and controlling background data transfer executions.
  */
 export function JobsExecutionView(): React.ReactElement {
-  const { t } = useI18n();
+  const { t, language } = useI18n();
+  const isAr = language === "ar";
   const vm = useJobsViewModel();
 
   const columns = useMemo<CrudColumn<DataTransferJob>[]>(
@@ -33,7 +39,7 @@ export function JobsExecutionView(): React.ReactElement {
               {job.jobId.slice(0, 8)}...
             </span>
             {job.originalFileName && (
-              <span className="text-[11px] text-nx-ink-3 truncate max-w-[110px]">
+              <span className="text-[11px] text-nx-ink-3 truncate max-w-[110px]" title={job.originalFileName}>
                 {job.originalFileName}
               </span>
             )}
@@ -44,14 +50,22 @@ export function JobsExecutionView(): React.ReactElement {
         key: "entityKey",
         label: t("adminDataTransferJobs.columns.entityKey"),
         sortable: true,
-        render: (_value: unknown, job: DataTransferJob) => (
-          <div className="flex items-center gap-1.5 whitespace-nowrap">
-            <span className="font-semibold text-xs text-nx-ink">{job.entityKey}</span>
-            <Badge variant="outline" className="text-[10px] px-1.5 py-0 font-medium">
-              {t(`adminDataTransferJobs.kinds.${job.kind}`, { defaultValue: job.kind })}
-            </Badge>
-          </div>
-        ),
+        render: (_value: unknown, job: DataTransferJob) => {
+          const displayName = getEntityDisplayName(job.entityKey, t, isAr);
+          return (
+            <div className="flex flex-col gap-0.5">
+              <div className="flex items-center gap-1.5 whitespace-nowrap">
+                <span className="font-semibold text-xs text-nx-ink">{displayName}</span>
+                <Badge variant="outline" className="text-[10px] px-1.5 py-0 font-medium uppercase">
+                  {t(`adminDataTransferJobs.kinds.${job.kind}`, { defaultValue: job.kind })}
+                </Badge>
+              </div>
+              <span className="font-mono text-[11px] text-nx-ink-3">
+                {job.entityKey}
+              </span>
+            </div>
+          );
+        },
       },
       {
         key: "status",
@@ -99,7 +113,7 @@ export function JobsExecutionView(): React.ReactElement {
           const date = new Date(String(value));
           return (
             <div className="flex flex-col text-[11px] text-nx-ink-3 leading-tight whitespace-nowrap tabular-nums">
-              <span>{date.toLocaleDateString()}</span>
+              <span>{date.toLocaleDateString(isAr ? "ar-EG" : "en-US")}</span>
               <span>
                 {date.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
               </span>
@@ -107,51 +121,8 @@ export function JobsExecutionView(): React.ReactElement {
           );
         },
       },
-      {
-        key: "actions",
-        label: t("adminDataTransferJobs.columns.actions"),
-        render: (_value: unknown, job: DataTransferJob) => (
-          <div className="flex flex-wrap items-center gap-1">
-            {job.isActive && (
-              <Button
-                variant="destructive"
-                size="sm"
-                onClick={() => vm.promptCancelJob(job)}
-                className="h-7 px-2 text-xs"
-              >
-                <Ban className="h-3 w-3 ltr:mr-1 rtl:ml-1" />
-                {t("adminDataTransferJobs.actions.cancel")}
-              </Button>
-            )}
-            {job.hasRejectedWorkbook && (
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => vm.downloadArtifact(job, "rejected")}
-                disabled={vm.isDownloading}
-                className="h-7 px-2 text-xs"
-              >
-                <Download className="h-3 w-3 ltr:mr-1 rtl:ml-1 text-nx-destructive" />
-                {t("adminDataTransferJobs.actions.downloadRejected")}
-              </Button>
-            )}
-            {job.hasExportWorkbook && (
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => vm.downloadArtifact(job, "export")}
-                disabled={vm.isDownloading}
-                className="h-7 px-2 text-xs"
-              >
-                <FileDown className="h-3 w-3 ltr:mr-1 rtl:ml-1 text-nx-success" />
-                {t("adminDataTransferJobs.actions.downloadExport")}
-              </Button>
-            )}
-          </div>
-        ),
-      },
     ],
-    [t, vm]
+    [t, isAr]
   );
 
   const kpiHeader = useMemo(
@@ -169,8 +140,41 @@ export function JobsExecutionView(): React.ReactElement {
       stickyActions: true,
       hideAddButton: true,
       customHeaderContent: kpiHeader,
+      getActions: (_v, tFn): CrudAction<DataTransferJob>[] => [
+        {
+          label: tFn("adminDataTransferJobs.actions.downloadExport") || "Download Export",
+          icon: <FileDown className="h-4 w-4 text-nx-success" />,
+          show: (job: DataTransferJob) => Boolean(job.hasExportWorkbook),
+          disabled: () => vm.isDownloading,
+          onClick: (job: DataTransferJob) => vm.downloadArtifact(job, "export"),
+        },
+        {
+          label: tFn("adminDataTransferJobs.actions.downloadRejected") || "Download Rejected",
+          icon: <FileWarning className="h-4 w-4 text-nx-destructive" />,
+          show: (job: DataTransferJob) => Boolean(job.hasRejectedWorkbook),
+          disabled: () => vm.isDownloading,
+          onClick: (job: DataTransferJob) => vm.downloadArtifact(job, "rejected"),
+        },
+        {
+          label: tFn("adminDataTransferJobs.actions.cancel") || "Cancel Job",
+          icon: <XCircle className="h-4 w-4 text-nx-destructive" />,
+          variant: "destructive" as const,
+          show: (job: DataTransferJob) => job.status === "Queued" || job.status === "Running",
+          disabled: () => vm.isCancelling,
+          onClick: (job: DataTransferJob) => vm.promptCancelJob(job),
+        },
+      ],
+      renderCardGridItem: (job: DataTransferJob) => (
+        <JobExecutionCard
+          job={job}
+          onCancelJob={vm.promptCancelJob}
+          isCancelling={vm.isCancelling}
+          onDownloadArtifact={vm.downloadArtifact}
+          isDownloading={vm.isDownloading}
+        />
+      ),
     }),
-    [columns, kpiHeader]
+    [columns, kpiHeader, vm]
   );
 
   const crudViewModel = useMemo(
@@ -194,13 +198,12 @@ export function JobsExecutionView(): React.ReactElement {
           onChange: vm.setSearch,
         }}
       />
-
       <CancelJobDialog
-        open={vm.isCancelDialogOpen}
         job={vm.jobToCancel}
-        isCancelling={vm.isCancelling}
+        open={vm.isCancelDialogOpen}
         onClose={vm.closeCancelDialog}
         onConfirm={vm.confirmCancelJob}
+        isCancelling={vm.isCancelling}
       />
     </>
   );

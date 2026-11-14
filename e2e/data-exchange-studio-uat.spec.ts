@@ -2,6 +2,7 @@ import { test, expect, type Page, type Locator } from "@playwright/test";
 import * as fs from "fs";
 import * as path from "path";
 import { getDevAdminPassword } from "./helpers/auth-credentials";
+import { buildMultiSheetXlsxBuffer } from "./helpers/xlsx-builder";
 
 const SCREENSHOT_DIR = path.resolve(
   __dirname,
@@ -125,6 +126,47 @@ async function openDxDropdownAndClick(
   }
   await expect(item).toBeVisible({ timeout: 10_000 });
   await item.click();
+}
+
+/**
+ * Closes the full-viewport Studio overlay cleanly, confirming `StudioConfirmExitDialog`
+ * whenever unsaved Step 2/3 progress is active.
+ */
+async function closeStudioWithConfirmIfNeeded(
+  page: Page,
+  studioDialog: Locator
+): Promise<void> {
+  await page.keyboard.press("Escape");
+  const confirmDialog = page.getByTestId("studio-confirm-exit-dialog");
+  if (await confirmDialog.isVisible().catch(() => false)) {
+    await confirmDialog.getByTestId("studio-exit-confirm-btn").click();
+  }
+  await expect(studioDialog).toBeHidden({ timeout: 10_000 });
+}
+
+/**
+ * Asserts that a table's first row exposes the compact `⋯` dropdown trigger (`button[aria-haspopup="menu"]`)
+ * and has zero sticky action column overlap against the preceding data cell.
+ */
+async function assertTableRowHasCompactDropdownAndZeroOverlap(
+  page: Page
+): Promise<Locator> {
+  const firstRow = page.locator("table tbody tr").first();
+  await expect(firstRow).toBeVisible({ timeout: 25_000 });
+  const menuBtn = firstRow.locator('button[aria-haspopup="menu"]').first();
+  await expect(menuBtn).toBeVisible({ timeout: 10_000 });
+  const overlapPx = await firstRow.evaluate((tr) => {
+    const cells = Array.from(tr.querySelectorAll("td"));
+    if (cells.length < 2) return 0;
+    const actionCell = cells[cells.length - 1];
+    const prevCell = cells[cells.length - 2];
+    const aRect = actionCell.getBoundingClientRect();
+    const pRect = prevCell.getBoundingClientRect();
+    const isRtl = document.documentElement.dir === "rtl";
+    return isRtl ? aRect.right - pRect.left : pRect.right - aRect.left;
+  });
+  expect(overlapPx).toBeLessThanOrEqual(4);
+  return menuBtn;
 }
 
 /**
@@ -338,8 +380,14 @@ test.describe.serial("Data Exchange Studio — Live Unmocked 26-Screenshot Found
     // 4. Studio Step 1 — Upload & Sheet Detection (Screenshot 07)
     // -------------------------------------------------------------------------
     await openDxDropdownAndClick(page, "crm.lead", "dx-import-crm.lead");
-    const studioDialog = page.getByRole("dialog");
+    const studioDialog = page.getByTestId("data-exchange-studio-overlay").first();
     await expect(studioDialog).toBeVisible({ timeout: 15_000 });
+    const studioBox = await studioDialog.boundingBox();
+    expect(studioBox).not.toBeNull();
+    expect(studioBox!.x).toBeLessThanOrEqual(1);
+    expect(studioBox!.y).toBeLessThanOrEqual(1);
+    expect(studioBox!.width).toBeGreaterThanOrEqual(1438);
+    expect(studioBox!.height).toBeGreaterThanOrEqual(898);
     await expect(
       studioDialog.getByText(/1\. Upload & Inspect|1\. الرفع والفحص/i).first()
     ).toBeVisible({ timeout: 15_000 });
@@ -508,13 +556,63 @@ test.describe.serial("Data Exchange Studio — Live Unmocked 26-Screenshot Found
       studioDialog
     );
 
+    // Hover incompatible row SelectTrigger to verify Tooltip & Disabled Dry-Run Blocker Tooltip (Screenshot 28)
+    const invalidSelectTrigger = studioDialog
+      .locator('[aria-invalid="true"]')
+      .first();
+    await expect(invalidSelectTrigger).toBeVisible({ timeout: 10_000 });
+    await invalidSelectTrigger.scrollIntoViewIfNeeded();
+    await invalidSelectTrigger.hover();
+    const errorTooltip = page.locator('[role="tooltip"]').first();
+    await expect(errorTooltip).toBeVisible({ timeout: 10_000 });
+    await expect(
+      page
+        .getByText(
+          /Incompatible Column Mapping|cannot map to numeric column|NOT-A-DECIMAL/i
+        )
+        .first()
+    ).toBeVisible({ timeout: 10_000 });
+
+    await captureSteadyScreenshot(
+      page,
+      "28-studio-step2-error-tooltip-and-disabled-dryrun.png",
+      errorTooltip
+    );
+
+    // Also hover disabled Dry-Run footer button wrapper to verify blocker summary tooltip
+    const disabledDryRunWrapper = studioDialog
+      .getByTestId("studio-dryrun-btn")
+      .locator("..");
+    await disabledDryRunWrapper.hover();
+    await expect(page.locator('[role="tooltip"]').first()).toBeVisible({
+      timeout: 10_000,
+    });
+
+    // Verify Unsaved-Progress Exit Confirmation Dialog (Screenshot 27 — Keep Editing preserves Step 2 state)
+    const studioCloseBtn = studioDialog.getByTestId("studio-close-btn").first();
+    await expect(studioCloseBtn).toBeVisible({ timeout: 10_000 });
+    await studioCloseBtn.click();
+    const confirmExitDialog = page.getByTestId("studio-confirm-exit-dialog");
+    await expect(confirmExitDialog).toBeVisible({ timeout: 10_000 });
+    await captureSteadyScreenshot(
+      page,
+      "27-studio-confirm-exit-dialog.png",
+      confirmExitDialog
+    );
+    await confirmExitDialog.getByTestId("studio-exit-cancel-btn").click();
+    await expect(confirmExitDialog).toBeHidden({ timeout: 10_000 });
+    await expect(studioDialog).toBeVisible();
+
     // -------------------------------------------------------------------------
-    // 6. Step 2 — ColumnNormalizationPopover MENA Live Preview (Screenshot 09)
+    // 6. Step 2 — ColumnNormalizationPopover MENA Live Preview & Scrollable 17-Rule Body (Screenshots 09 & 29)
     // -------------------------------------------------------------------------
     const changeFileBtn = studioDialog
-      .getByRole("button", { name: /Replace File|استبدال الملف/i })
+      .getByTestId("studio-replace-file-btn")
       .first();
     await changeFileBtn.click();
+    await expect(confirmExitDialog).toBeVisible({ timeout: 10_000 });
+    await confirmExitDialog.getByTestId("studio-exit-confirm-btn").click();
+    await expect(confirmExitDialog).toBeHidden({ timeout: 10_000 });
 
     const row3DomainInvalid = mappableCols
       .map((c) => `"${buildRowValue(c, 3, "domainInvalidEmail")}"`)
@@ -549,15 +647,6 @@ test.describe.serial("Data Exchange Studio — Live Unmocked 26-Screenshot Found
     const dialCodeInput = page.locator(`[id="norm-dial-${normHeader}"]`);
     await expect(dialCodeInput).toBeVisible({ timeout: 10_000 });
     await dialCodeInput.fill("+20");
-    await dialCodeInput.evaluate((el) => {
-      const wrapper = el.closest("[data-radix-popper-content-wrapper]") as HTMLElement | null;
-      const pop = (wrapper?.firstElementChild ?? el.closest(".overflow-y-auto")) as HTMLElement | null;
-      if (pop) {
-        pop.style.maxHeight = "420px";
-        pop.scrollTop = 0;
-      }
-      window.dispatchEvent(new Event("resize"));
-    });
     const livePreviewText = page.getByText(/\+201011223344/).first();
     await expect(livePreviewText).toBeVisible({ timeout: 10_000 });
 
@@ -566,7 +655,33 @@ test.describe.serial("Data Exchange Studio — Live Unmocked 26-Screenshot Found
       "09-column-normalization-popover-mena-live-preview.png",
       livePreviewText
     );
-    await page.keyboard.press("Escape");
+
+    // Scroll the real scrollable body inside ColumnNormalizationPopover to bottom (Screenshot 29)
+    const normScrollBody = dialCodeInput
+      .locator("xpath=ancestor::div[contains(@class, 'overflow-y-auto')][1]");
+    const hasNoScrollbar = await normScrollBody.evaluate((el) =>
+      el.classList.contains("no-scrollbar")
+    );
+    expect(hasNoScrollbar).toBe(false);
+    await normScrollBody.evaluate((el) => {
+      el.scrollTop = el.scrollHeight;
+    });
+    const dateFmtInput = page.locator(`[id="norm-datefmt-${normHeader}"]`);
+    const tzInput = page.locator(`[id="norm-tz-${normHeader}"]`);
+    const normDoneBtn = page
+      .getByRole("button", { name: /^Done$|^تم$/i })
+      .first();
+    await expect(dateFmtInput).toBeVisible({ timeout: 10_000 });
+    await expect(tzInput).toBeVisible({ timeout: 10_000 });
+    await expect(normDoneBtn).toBeVisible({ timeout: 10_000 });
+
+    await captureSteadyScreenshot(
+      page,
+      "29-column-normalization-popover-scrolled-bottom.png",
+      normDoneBtn
+    );
+
+    await normDoneBtn.click();
     await expect(dialCodeInput).toBeHidden({ timeout: 10_000 });
     await normTrigger.evaluate((el) => {
       const scroller = el.closest(".overflow-y-auto");
@@ -896,6 +1011,9 @@ test.describe.serial("Data Exchange Studio — Live Unmocked 26-Screenshot Found
 
     await expect(floatingDock).toBeVisible({ timeout: 10_000 });
     await expect(
+      floatingDock.getByText(/CRM Leads|Commercial Leads|العملاء المحتملون/i).first()
+    ).toBeVisible({ timeout: 10_000 });
+    await expect(
       floatingDock.getByText(/Import\s*•\s*crm\.lead/i).first()
     ).toBeVisible({ timeout: 10_000 });
 
@@ -911,7 +1029,7 @@ test.describe.serial("Data Exchange Studio — Live Unmocked 26-Screenshot Found
 
     // -------------------------------------------------------------------------
     // 10. 3-Route Admin Data Exchange Module (/admin/data-exchange, /jobs, /presets)
-    //     Screenshots 14, 15, 16, 17, 18, 19
+    //     Screenshots 14, 15, 16, 17, 32, 18, 19
     // -------------------------------------------------------------------------
     // 10a. /admin/data-exchange — Entities Table + KPIs (Screenshot 14)
     await page.goto("/admin/data-exchange");
@@ -935,6 +1053,7 @@ test.describe.serial("Data Exchange Studio — Live Unmocked 26-Screenshot Found
     await expect(
       page.locator("table").getByText("crm.lead").first()
     ).toBeVisible({ timeout: 15_000 });
+    await assertTableRowHasCompactDropdownAndZeroOverlap(page);
     await assertZeroHorizontalOverflow(page);
 
     await captureSteadyScreenshot(
@@ -965,6 +1084,7 @@ test.describe.serial("Data Exchange Studio — Live Unmocked 26-Screenshot Found
     await expect(
       page.locator("table").getByText("crm.lead").first()
     ).toBeVisible({ timeout: 15_000 });
+    await assertTableRowHasCompactDropdownAndZeroOverlap(page);
     await assertZeroHorizontalOverflow(page);
 
     await captureSteadyScreenshot(
@@ -985,6 +1105,23 @@ test.describe.serial("Data Exchange Studio — Live Unmocked 26-Screenshot Found
       jobsSplitToggle
     );
 
+    // 10d-2. /admin/data-exchange/jobs — Bespoke Nexus CardGrid (Screenshot 32)
+    const jobsCardGridToggle = page.getByTestId("toggle-cardgrid-view").first();
+    await expect(jobsCardGridToggle).toBeVisible({ timeout: 10_000 });
+    await jobsCardGridToggle.click();
+    await expect(page.getByText("crm.lead").first()).toBeVisible({ timeout: 15_000 });
+    const shadowCardsCount = await page.evaluate(() => {
+      const cards = Array.from(document.querySelectorAll('[class*="rounded-nx-lg"]'));
+      return cards.filter((c) => /\bshadow-(xs|sm|md|lg|xl)\b/.test(c.className)).length;
+    });
+    expect(shadowCardsCount).toBe(0);
+
+    await captureSteadyScreenshot(
+      page,
+      "32-admin-jobs-and-presets-cardgrid-nexus.png",
+      jobsCardGridToggle
+    );
+
     // 10e. /admin/data-exchange/presets — Presets Table + KPIs (Screenshot 18)
     await page.goto("/admin/data-exchange/presets");
     await expect(page).toHaveURL(/\/admin\/data-exchange\/presets/, {
@@ -995,6 +1132,7 @@ test.describe.serial("Data Exchange Studio — Live Unmocked 26-Screenshot Found
     await expect(
       page.locator("table").getByText(presetName).first()
     ).toBeVisible({ timeout: 15_000 });
+    await assertTableRowHasCompactDropdownAndZeroOverlap(page);
     await assertZeroHorizontalOverflow(page);
 
     await captureSteadyScreenshot(
@@ -1004,11 +1142,17 @@ test.describe.serial("Data Exchange Studio — Live Unmocked 26-Screenshot Found
     );
 
     // 10f. /admin/data-exchange/presets — Delete Preset Confirmation Dialog & Detail (Screenshot 19)
-    const deletePresetBtn = firstPresetRow
-      .getByRole("button", { name: /Delete|حذف/i })
+    const presetActionsMenuBtn = firstPresetRow
+      .locator('button[aria-haspopup="menu"]')
       .first();
-    await expect(deletePresetBtn).toBeVisible({ timeout: 10_000 });
-    await deletePresetBtn.click();
+    await expect(presetActionsMenuBtn).toBeVisible({ timeout: 10_000 });
+    await presetActionsMenuBtn.click();
+
+    const deletePresetMenuItem = page
+      .getByRole("menuitem", { name: /Delete|حذف/i })
+      .first();
+    await expect(deletePresetMenuItem).toBeVisible({ timeout: 10_000 });
+    await deletePresetMenuItem.click();
 
     const deletePresetDialog = page.getByRole("dialog");
     await expect(deletePresetDialog).toBeVisible({ timeout: 10_000 });
@@ -1023,6 +1167,228 @@ test.describe.serial("Data Exchange Studio — Live Unmocked 26-Screenshot Found
       .first()
       .click();
     await expect(deletePresetDialog).toBeHidden({ timeout: 10_000 });
+
+    // 10g. Unified `⋯` Dropdown Actions Across CRM Tables & Party Directory (Screenshots 30 & 31)
+    await page.goto("/crm/activities");
+    const activitiesMenuBtn = await assertTableRowHasCompactDropdownAndZeroOverlap(page);
+    await activitiesMenuBtn.click();
+    const openMenuContent = page.locator('[role="menu"]').first();
+    await expect(openMenuContent).toBeVisible({ timeout: 10_000 });
+    await captureSteadyScreenshot(
+      page,
+      "30-crm-tables-unified-actions-dropdown-open.png",
+      openMenuContent
+    );
+    await page.keyboard.press("Escape");
+
+    await page.goto("/party-kernel/parties");
+    const partyMenuBtn = await assertTableRowHasCompactDropdownAndZeroOverlap(page);
+    await partyMenuBtn.click();
+    const partyMenuContent = page.locator('[role="menu"]').first();
+    await expect(partyMenuContent).toBeVisible({ timeout: 10_000 });
+    await captureSteadyScreenshot(
+      page,
+      "31-party-directory-unified-dropdown-actions.png",
+      partyMenuContent
+    );
+    await page.keyboard.press("Escape");
+
+    // 10h. End-to-End 5-Sheet CRM Workbook Migration (Accounts -> Contacts -> Leads -> Opportunities -> Activities)
+    //      Screenshots 33 & 34
+    await page.goto("/crm/leads");
+    await openDxDropdownAndClick(page, "crm.lead", "dx-multisheet-crm.lead");
+    const msDialog = page.getByTestId("data-exchange-studio-overlay").first();
+    await expect(msDialog).toBeVisible({ timeout: 15_000 });
+
+    const fiveSheetXlsx = buildMultiSheetXlsxBuffer([
+      {
+        name: "Activities",
+        headers: ["ExternalKey", "ActivityKind", "Summary", "Account", "Lead", "Opportunity"],
+        rows: [
+          [
+            `ACT-MS-1-${uniqueSuffix}`,
+            "CallLog",
+            `MultiSheet Discovery Call ${uniqueSuffix}`,
+            `ACC-MS-1-${uniqueSuffix}`,
+            `LEAD-MS-1-${uniqueSuffix}`,
+            `MultiSheet Stadium Deal ${uniqueSuffix}`,
+          ],
+          [
+            `ACT-MS-BAD-${uniqueSuffix}`,
+            "Note",
+            `Cascade Deferred Activity ${uniqueSuffix}`,
+            "",
+            `Broken MultiSheet Lead ${uniqueSuffix}`,
+            "",
+          ],
+        ],
+      },
+      {
+        name: "Opportunities",
+        headers: ["ExternalKey", "Title", "Account", "Lead", "DealKind", "EstimatedAmount"],
+        rows: [
+          [
+            `OPP-MS-1-${uniqueSuffix}`,
+            `MultiSheet Stadium Deal ${uniqueSuffix}`,
+            `ACC-MS-1-${uniqueSuffix}`,
+            `LEAD-MS-1-${uniqueSuffix}`,
+            "NewBusiness",
+            "185000",
+          ],
+          [
+            `OPP-MS-BAD-${uniqueSuffix}`,
+            `Cascade Deferred Deal ${uniqueSuffix}`,
+            "",
+            "invalid-parent-lead-email",
+            "Expansion",
+            "60000",
+          ],
+        ],
+      },
+      {
+        name: "Contacts",
+        headers: ["ExternalKey", "FullNameEn", "FullNameAr", "Email", "PrimaryAccount", "IsActive"],
+        rows: [
+          [
+            `CON-MS-1-${uniqueSuffix}`,
+            `Nadia Al-Mansour ${uniqueSuffix}`,
+            `نادية المنصور ${uniqueSuffix}`,
+            `ms.contact.${uniqueSuffix}@ahly-uat.local`,
+            `ACC-MS-1-${uniqueSuffix}`,
+            "true",
+          ],
+        ],
+      },
+      {
+        name: "Accounts",
+        headers: ["ExternalKey", "OrganizationNameEn", "OrganizationNameAr", "Email", "CommercialTierCode", "IsActive"],
+        rows: [
+          [
+            `ACC-MS-1-${uniqueSuffix}`,
+            `Al-Ahly MultiSheet Holding ${uniqueSuffix}`,
+            `شركة الأهلي القابضة ${uniqueSuffix}`,
+            `ms.account.${uniqueSuffix}@ahly-uat.local`,
+            "Gold",
+            "true",
+          ],
+        ],
+      },
+      {
+        name: "Leads",
+        headers: ["ExternalKey", "Title", "Email", "CompanyName", "Status"],
+        rows: [
+          [
+            `LEAD-MS-1-${uniqueSuffix}`,
+            `MultiSheet Expansion Lead ${uniqueSuffix}`,
+            `ms.lead.${uniqueSuffix}@ahly-uat.local`,
+            `Al-Ahly MS Group ${uniqueSuffix}`,
+            "New",
+          ],
+          [
+            `LEAD-MS-BAD-${uniqueSuffix}`,
+            `Broken MultiSheet Lead ${uniqueSuffix}`,
+            "invalid-parent-lead-email",
+            `Broken Co ${uniqueSuffix}`,
+            "New",
+          ],
+        ],
+      },
+    ]);
+
+    const msInspectWait = page.waitForResponse(
+      (res) =>
+        res.url().includes("/data-transfer/inspect") &&
+        res.request().method() === "POST" &&
+        res.status() === 200,
+      { timeout: 30_000 }
+    );
+    await page.locator("#dx-file-upload-input").setInputFiles({
+      name: `crm-5sheet-dag-${uniqueSuffix}.xlsx`,
+      mimeType:
+        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+      buffer: fiveSheetXlsx,
+    });
+    await msInspectWait;
+
+    // Verify all 5 sheet tabs with Step 1..Step 5 badges are visible in Step 2
+    await expect(msDialog.getByText(/\(Activities\)/i).first()).toBeVisible({
+      timeout: 15_000,
+    });
+    await expect(msDialog.getByText(/\(Accounts\)/i).first()).toBeVisible({
+      timeout: 15_000,
+    });
+
+    const msDryRunBtn = msDialog.getByTestId("studio-dryrun-btn").first();
+    await expect(msDryRunBtn).toBeEnabled({ timeout: 15_000 });
+    const msDryRunWait = page.waitForResponse(
+      (res) =>
+        res.url().includes("/data-transfer/dry-run") &&
+        res.request().method() === "POST" &&
+        res.ok(),
+      { timeout: 30_000 }
+    );
+    await msDryRunBtn.click();
+    const msDryRunRes = await msDryRunWait;
+    const msDryRunJson = await msDryRunRes.json();
+    const msDryRunData = msDryRunJson?.data ?? msDryRunJson?.value ?? msDryRunJson;
+    expect(msDryRunData.sheetSummaries?.length).toBe(5);
+    expect(
+      msDryRunData.sheetSummaries?.map((s: { entityKey: string }) => s.entityKey)
+    ).toEqual([
+      "crm.account",
+      "crm.contact",
+      "crm.lead",
+      "crm.opportunity",
+      "crm.activity",
+    ]);
+
+    const msCommitBtn = msDialog.getByTestId("studio-commit-btn").first();
+    await expect(msCommitBtn).toBeEnabled({ timeout: 15_000 });
+    await expect(
+      msDialog.getByText(/Per-Sheet Dry-Run Breakdown|تفصيل الفحص التجريبي لكل ورقة/i).first()
+    ).toBeVisible({ timeout: 10_000 });
+
+    await captureSteadyScreenshot(
+      page,
+      "33-studio-multisheet-5sheet-crm-dag-and-sileo-toast.png",
+      msCommitBtn
+    );
+
+    const msExecuteWait = page.waitForResponse(
+      (res) =>
+        res.url().includes("/data-transfer/import") &&
+        res.request().method() === "POST" &&
+        res.ok(),
+      { timeout: 30_000 }
+    );
+    await msCommitBtn.click();
+    const msExecRes = await msExecuteWait;
+    const msExecJson = await msExecRes.json();
+    const msExecData = msExecJson?.data ?? msExecJson?.value ?? msExecJson;
+    expect(msExecData.committedRows).toBe(5);
+    expect(msExecData.rejectedRows).toBe(3);
+    expect(msExecData.cascadeDeferredRows).toBe(2);
+    expect(msExecData.hasRejectedWorkbook).toBe(true);
+
+    const msDownloadRejectedBtn = msDialog
+      .getByRole("button", {
+        name: /Download Rejected Rows|تنزيل الصفوف المرفوضة/i,
+      })
+      .first();
+    await expect(msDownloadRejectedBtn).toBeVisible({ timeout: 15_000 });
+
+    await captureSteadyScreenshot(
+      page,
+      "34-studio-multisheet-partial-commit-and-rejected-recovery.png",
+      msDownloadRejectedBtn
+    );
+
+    const msCloseBtn = msDialog
+      .locator("footer button")
+      .filter({ hasText: /Close Studio|إغلاق الاستوديو/i })
+      .first();
+    await msCloseBtn.click();
+    await expect(msDialog).toBeHidden({ timeout: 10_000 });
 
     // -------------------------------------------------------------------------
     // 11. Zero-Config Contact Points Auto-Discovery (/party-kernel/contact-points)
@@ -1040,7 +1406,7 @@ test.describe.serial("Data Exchange Studio — Live Unmocked 26-Screenshot Found
       "dx-import-party.contact-point"
     );
 
-    const cpDialog = page.getByRole("dialog");
+    const cpDialog = page.getByTestId("data-exchange-studio-overlay").first();
     await expect(cpDialog).toBeVisible({ timeout: 15_000 });
 
     const cpCsv = [
@@ -1072,8 +1438,7 @@ test.describe.serial("Data Exchange Studio — Live Unmocked 26-Screenshot Found
       "20-party-kernel-contact-points-data-exchange.png",
       cpMappingRow
     );
-    await page.keyboard.press("Escape");
-    await expect(cpDialog).toBeHidden({ timeout: 10_000 });
+    await closeStudioWithConfirmIfNeeded(page, cpDialog);
 
     // -------------------------------------------------------------------------
     // 12. Sovereign Tenant Guard (/admin/tenants) & Identity Onboarding Mode (/users)
@@ -1093,7 +1458,7 @@ test.describe.serial("Data Exchange Studio — Live Unmocked 26-Screenshot Found
       "dx-import-identity.user"
     );
 
-    const userDialog = page.getByRole("dialog");
+    const userDialog = page.getByTestId("data-exchange-studio-overlay").first();
     await expect(userDialog).toBeVisible({ timeout: 15_000 });
 
     const userInspectWait = page.waitForResponse(
@@ -1124,8 +1489,7 @@ test.describe.serial("Data Exchange Studio — Live Unmocked 26-Screenshot Found
       "21-identity-onboarding-and-sovereign-guard.png",
       onboardingLabel
     );
-    await page.keyboard.press("Escape");
-    await expect(userDialog).toBeHidden({ timeout: 10_000 });
+    await closeStudioWithConfirmIfNeeded(page, userDialog);
 
     // -------------------------------------------------------------------------
     // 13. Dark Theme Verification (/crm/leads + Studio & /admin/data-exchange/jobs)
@@ -1142,7 +1506,7 @@ test.describe.serial("Data Exchange Studio — Live Unmocked 26-Screenshot Found
     await page.goto("/crm/leads");
     await expect(page.locator("html")).toHaveClass(/dark/, { timeout: 15_000 });
     await openDxDropdownAndClick(page, "crm.lead", "dx-import-crm.lead");
-    const darkDialog = page.getByRole("dialog");
+    const darkDialog = page.getByTestId("data-exchange-studio-overlay").first();
     await expect(darkDialog).toBeVisible({ timeout: 15_000 });
 
     const darkInspectWait = page.waitForResponse(
@@ -1166,8 +1530,7 @@ test.describe.serial("Data Exchange Studio — Live Unmocked 26-Screenshot Found
       "22-dark-theme-crm-leads-data-exchange.png",
       darkRow
     );
-    await page.keyboard.press("Escape");
-    await expect(darkDialog).toBeHidden({ timeout: 10_000 });
+    await closeStudioWithConfirmIfNeeded(page, darkDialog);
 
     await page.goto("/admin/data-exchange/jobs");
     await expect(page.locator("html")).toHaveClass(/dark/, { timeout: 15_000 });
@@ -1204,7 +1567,7 @@ test.describe.serial("Data Exchange Studio — Live Unmocked 26-Screenshot Found
     });
 
     await openDxDropdownAndClick(page, "crm.lead", "dx-import-crm.lead");
-    const rtlDialog = page.getByRole("dialog");
+    const rtlDialog = page.getByTestId("data-exchange-studio-overlay").first();
     await expect(rtlDialog).toBeVisible({ timeout: 15_000 });
     await expect(rtlDialog).toHaveAttribute("dir", "rtl");
 
@@ -1237,8 +1600,7 @@ test.describe.serial("Data Exchange Studio — Live Unmocked 26-Screenshot Found
       "24-rtl-arabic-crm-and-studio.png",
       rtlRow
     );
-    await page.keyboard.press("Escape");
-    await expect(rtlDialog).toBeHidden({ timeout: 10_000 });
+    await closeStudioWithConfirmIfNeeded(page, rtlDialog);
 
     await page.goto("/admin/data-exchange");
     await expect(page.locator("html")).toHaveAttribute("dir", "rtl", {
@@ -1318,7 +1680,7 @@ test.describe.serial("Data Exchange Studio — Live Unmocked 26-Screenshot Found
       "dx-import-identity.admin"
     );
 
-    const studioDialog = page.getByRole("dialog");
+    const studioDialog = page.getByTestId("data-exchange-studio-overlay").first();
     await expect(studioDialog).toBeVisible({ timeout: 15_000 });
 
     const mappableCols = getMappableColumns(adminState.descriptorPayload);

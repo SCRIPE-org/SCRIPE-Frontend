@@ -28,6 +28,11 @@ export const en = {
       Update: "Update",
       Upsert: "Upsert",
     },
+    capabilities: {
+      importAndExport: "Import & Export",
+      importOnly: "Import Only",
+      exportOnly: "Export Only",
+    },
     actions: {
       downloadTemplate: "Download Template",
       downloadingTemplate: "Downloading...",

@@ -12,7 +12,7 @@ import { cn } from "@core/common/utils";
 import { CRM_PERMISSIONS, CrmShell, CrmSectionHeader, CRM_TAB_ROUTES } from "@modules/crm";
 import type { CrmTabId, CrmAccount } from "@modules/crm";
 import { GenericCrudView } from "@core/crud/components/generic-crud-view";
-import type { CrudConfig } from "@core/crud/components/generic-crud-view";
+import type { CrudConfig, CrudAction } from "@core/crud/components/generic-crud-view";
 import { DataExchangeToolbarActions } from "@core/data-exchange";
 import { CreateContactDialog } from "../components/CreateContactDialog";
 import { ContactCardGridItem } from "../components/ContactCardGridItem";
@@ -133,18 +133,13 @@ export function ContactsView() {
       </div>
     ),
     columns,
-    renderActions: (contact: CrmContact) => (
-      <Button
-        type="button"
-        variant="ghost"
-        size="sm"
-        onClick={() => router.push(`/crm/contacts/${contact.id}`)}
-        className="h-7 px-2.5 text-xs gap-1 border border-nx-line bg-nx-surface hover:bg-nx-raised text-nx-ink"
-      >
-        <Eye className="size-3 text-nx-accent" />
-        <span>{t("crmContacts.actions.viewContext")}</span>
-      </Button>
-    ),
+    getActions: (_vm, tFn): CrudAction<CrmContact>[] => [
+      {
+        label: tFn("crmContacts.actions.viewContext") || "View Context",
+        icon: <Eye className="size-3.5" />,
+        onClick: (c: CrmContact) => router.push(`/crm/contacts/${c.id}`),
+      },
+    ],
     renderCardGridItem: (contact: CrmContact, actions: React.ReactNode) => (
       <ContactCardGridItem
         contact={contact}

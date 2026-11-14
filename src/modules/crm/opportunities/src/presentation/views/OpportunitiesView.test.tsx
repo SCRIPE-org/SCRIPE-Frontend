@@ -200,8 +200,12 @@ describe("OpportunitiesView Component", () => {
       expect(screen.getAllByText("Al-Nassr Pitch Licensing Contract")[0]).toBeDefined();
     });
 
-    const moveStageBtns = screen.getAllByText("crmOpportunities.actions.moveStage");
-    fireEvent.click(moveStageBtns[0]);
+    const actionBtns = screen.getAllByLabelText("table.actions");
+    fireEvent.pointerDown(actionBtns[0], { button: 0, pointerType: "mouse" });
+    fireEvent.click(actionBtns[0]);
+
+    const moveStageBtn = await screen.findByText("crmOpportunities.actions.moveStage");
+    fireEvent.click(moveStageBtn);
 
     await waitFor(() => {
       expect(screen.getByText("crmOpportunities.dialogs.stage.title")).toBeDefined();
@@ -222,8 +226,12 @@ describe("OpportunitiesView Component", () => {
       expect(screen.getAllByText("Al-Nassr Pitch Licensing Contract")[0]).toBeDefined();
     });
 
-    const closeWonBtns = screen.getAllByText("crmOpportunities.actions.closeWon");
-    fireEvent.click(closeWonBtns[0]);
+    const actionBtns = screen.getAllByLabelText("table.actions");
+    fireEvent.pointerDown(actionBtns[0], { button: 0, pointerType: "mouse" });
+    fireEvent.click(actionBtns[0]);
+
+    const closeWonBtn = await screen.findByText("crmOpportunities.actions.closeWon");
+    fireEvent.click(closeWonBtn);
 
     await waitFor(() => {
       expect(
@@ -340,8 +348,12 @@ describe("OpportunitiesView Component", () => {
       expect(screen.getAllByText("Al-Nassr Pitch Licensing Contract")[0]).toBeDefined();
     });
 
-    const moveStageBtns = screen.getAllByText("crmOpportunities.actions.moveStage");
-    fireEvent.click(moveStageBtns[0]);
+    const actionBtns = screen.getAllByLabelText("table.actions");
+    fireEvent.pointerDown(actionBtns[0], { button: 0, pointerType: "mouse" });
+    fireEvent.click(actionBtns[0]);
+
+    const moveStageBtn = await screen.findByText("crmOpportunities.actions.moveStage");
+    fireEvent.click(moveStageBtn);
 
     await waitFor(() => {
       expect(screen.getByTestId("move-stage-gate-cf-board_compliance_check")).toBeDefined();

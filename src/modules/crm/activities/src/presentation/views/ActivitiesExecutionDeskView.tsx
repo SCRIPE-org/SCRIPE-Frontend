@@ -5,7 +5,7 @@ import { useI18n } from "@core/providers/i18n-provider";
 import { CrmShell, CrmSectionHeader, CRM_TAB_ROUTES } from "@modules/crm";
 import type { CrmTabId } from "@modules/crm";
 import { GenericCrudView } from "@core/crud/components/generic-crud-view";
-import type { CrudConfig } from "@core/crud/components/generic-crud-view";
+import type { CrudConfig, CrudAction } from "@core/crud/components/generic-crud-view";
 import { DataExchangeToolbarActions } from "@core/data-exchange";
 import { Button } from "@core/ui/button";
 import { Input } from "@core/ui/input";
@@ -147,34 +147,20 @@ export function ActivitiesExecutionDeskView() {
       </div>
     ),
     columns,
-    renderActions: (activity: CrmActivity) => (
-      <div className="flex items-center gap-1.5">
-        {!activity.workItemStatus && (
-          <Button
-            type="button"
-            variant="ghost"
-            size="sm"
-            onClick={() => openFollowUpForActivity(activity)}
-            className="h-7 px-2 text-xs gap-1 border border-nx-line bg-nx-surface hover:bg-nx-raised text-nx-ink"
-          >
-            <CalendarClock className="size-3 text-nx-accent" />
-            <span className="hidden sm:inline">{t("crmActivities.actions.scheduleFollowUp")}</span>
-          </Button>
-        )}
-        {activity.accountId && (
-          <Button
-            type="button"
-            variant="ghost"
-            size="sm"
-            onClick={() => router.push(`/crm/accounts/${activity.accountId}`)}
-            className="h-7 px-2 text-xs gap-1 border border-nx-line bg-nx-surface hover:bg-nx-raised text-nx-ink"
-          >
-            <Eye className="size-3 text-nx-accent" />
-            <span className="hidden sm:inline">{t("crmActivities.actions.viewAccount360")}</span>
-          </Button>
-        )}
-      </div>
-    ),
+    getActions: (_vm, tFn): CrudAction<CrmActivity>[] => [
+      {
+        label: tFn("crmActivities.actions.scheduleFollowUp") || "Schedule Follow-Up",
+        icon: <CalendarClock className="size-3.5" />,
+        show: (a: CrmActivity) => !a.workItemStatus,
+        onClick: (a: CrmActivity) => openFollowUpForActivity(a),
+      },
+      {
+        label: tFn("crmActivities.actions.viewAccount360") || "View Account 360",
+        icon: <Eye className="size-3.5" />,
+        show: (a: CrmActivity) => Boolean(a.accountId),
+        onClick: (a: CrmActivity) => router.push(`/crm/accounts/${a.accountId}`),
+      },
+    ],
     renderCardGridItem: (activity: CrmActivity, actions: React.ReactNode) => (
       <ActivityCardGridItem
         activity={activity}

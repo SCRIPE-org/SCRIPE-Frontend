@@ -25,9 +25,12 @@ export const en = {
       createdAt: "Created",
       actions: "Actions",
     },
+    columnsCount: "{count} columns",
     modes: {
+      Insert: "Insert",
+      Update: "Update",
+      Upsert: "Upsert",
       AppendOnly: "Append Only",
-      Upsert: "Upsert (Insert & Update)",
       UpdateOnly: "Update Only",
     },
     actions: {

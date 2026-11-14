@@ -3,15 +3,22 @@
 import { useMemo } from "react";
 import { GenericCrudView, type CrudConfig, type CrudColumn } from "@core/crud/components/generic-crud-view";
 import { Badge } from "@core/ui/badge";
-import { Button } from "@core/ui/button";
 import { Card } from "@core/ui/card";
-import { Download, Upload, FileSpreadsheet, Layers, ShieldCheck } from "lucide-react";
+import {
+  Download,
+  Upload,
+  FileSpreadsheet,
+  Layers,
+  ShieldCheck,
+  Sparkles,
+} from "lucide-react";
 import {
   DataExchangeStudioOverlay,
   DataExchangeExportDialog,
 } from "@core/data-exchange";
 import { useEntitiesViewModel } from "../viewmodels/useEntitiesViewModel";
 import type { DataExchangeEntity } from "../../domain/entities/DataExchangeEntity";
+import { EntityCatalogCard } from "../components/EntityCatalogCard";
 
 /**
  * First-class Admin view rendering the exchange-capable entities catalog.
@@ -89,53 +96,8 @@ export function EntitiesCatalogView() {
           );
         },
       },
-      {
-        key: "actions",
-        label: t("dataTransferEntities.columns.actions"),
-        render: (_value: unknown, entity: DataExchangeEntity) => {
-          const isDownloading = vm.downloadingTemplateEntity === entity.entityKey;
-          return (
-            <div className="flex flex-wrap items-center gap-1.5">
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => vm.downloadTemplate(entity)}
-                disabled={isDownloading}
-                className="h-7 px-2 text-xs"
-              >
-                <Download className="h-3.5 w-3.5 ltr:mr-1 rtl:ml-1" />
-                {isDownloading
-                  ? t("dataTransferEntities.actions.downloadingTemplate")
-                  : t("dataTransferEntities.actions.downloadTemplate")}
-              </Button>
-              {entity.canImport && entity.isImportFeatureEnabled && (
-                <Button
-                  variant="default"
-                  size="sm"
-                  onClick={() => vm.setActiveStudioEntity(entity.entityKey)}
-                  className="h-7 px-2 text-xs"
-                >
-                  <Upload className="h-3.5 w-3.5 ltr:mr-1 rtl:ml-1" />
-                  {t("dataTransferEntities.actions.launchStudio")}
-                </Button>
-              )}
-              {entity.canExport && entity.isExportFeatureEnabled && (
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => vm.setActiveExportEntity(entity.entityKey)}
-                  className="h-7 px-2 text-xs text-nx-ink-2 hover:text-nx-ink"
-                >
-                  <FileSpreadsheet className="h-3.5 w-3.5 ltr:mr-1 rtl:ml-1" />
-                  {t("dataTransferEntities.actions.quickExport")}
-                </Button>
-              )}
-            </div>
-          );
-        },
-      },
     ],
-    [t, isAr, vm]
+    [t, isAr]
   );
 
   const kpiHeader = useMemo(
@@ -184,8 +146,37 @@ export function EntitiesCatalogView() {
       stickyActions: true,
       hideAddButton: true,
       customHeaderContent: kpiHeader,
+      getActions: (_v, tFn) => [
+        {
+          label: tFn("dataTransferEntities.actions.downloadTemplate") || "Download Smart Template",
+          icon: <Download className="h-4 w-4 text-nx-success" />,
+          disabled: (entity) => vm.downloadingTemplateEntity === entity.entityKey,
+          onClick: (entity) => vm.downloadTemplate(entity),
+        },
+        {
+          label: tFn("dataTransferEntities.actions.launchStudio") || "Launch Import Studio",
+          icon: <Sparkles className="h-4 w-4 text-nx-accent" />,
+          show: (entity) => Boolean(entity.canImport && entity.isImportFeatureEnabled),
+          onClick: (entity) => vm.setActiveStudioEntity(entity.entityKey),
+        },
+        {
+          label: tFn("dataTransferEntities.actions.quickExport") || "Export Data",
+          icon: <FileSpreadsheet className="h-4 w-4 text-nx-info" />,
+          show: (entity) => Boolean(entity.canExport && entity.isExportFeatureEnabled),
+          onClick: (entity) => vm.setActiveExportEntity(entity.entityKey),
+        },
+      ],
+      renderCardGridItem: (entity: DataExchangeEntity) => (
+        <EntityCatalogCard
+          entity={entity}
+          onDownloadTemplate={vm.downloadTemplate}
+          isDownloadingTemplate={vm.downloadingTemplateEntity === entity.entityKey}
+          onLaunchStudio={vm.setActiveStudioEntity}
+          onQuickExport={vm.setActiveExportEntity}
+        />
+      ),
     }),
-    [columns, kpiHeader]
+    [columns, kpiHeader, vm]
   );
 
   const crudViewModel = useMemo(
