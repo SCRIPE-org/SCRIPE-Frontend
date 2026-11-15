@@ -11,22 +11,50 @@
  * navigate to a caller-supplied path after authentication.
  */
 
+const ENCODED_BACKSLASH_PATTERN = /%5c/i;
+
+function hasControlChar(value: string): boolean {
+  for (let i = 0; i < value.length; i += 1) {
+    const code = value.charCodeAt(i);
+    if (code <= 0x1f || code === 0x7f) return true;
+  }
+  return false;
+}
+
 /**
- * Returns true when `path` is safe to navigate to: either a relative
- * in-app path, or an absolute URL whose origin matches the current page's
- * origin. Rejects cross-origin absolute URLs, protocol-relative URLs
- * ("//evil.com"), and backslash tricks browsers normalize to
- * protocol-relative ("/\evil.com").
+ * Returns true when `path` is safe to navigate to: either a strict same-app
+ * relative path starting with a single "/", or an absolute HTTP(S) URL whose
+ * origin matches the current page's origin. Rejects cross-origin URLs,
+ * protocol-relative URLs ("//evil.com"), backslash / encoded-backslash tricks
+ * ("/\evil.com", "/%5cevil.com", "foo\bar"), and ASCII control characters.
  */
 export function isSafeRedirectTarget(path: string | null | undefined): boolean {
   if (!path) return false;
   const trimmed = path.trim();
-  if (!trimmed) return false;
+  if (!trimmed || hasControlChar(trimmed)) return false;
 
-  // A single leading slash NOT followed by another slash or a backslash is
-  // a safe same-app relative path. "//evil.com" and "/\evil.com" are both
-  // browser-normalized to protocol-relative (i.e. off-origin) URLs.
-  if (trimmed.startsWith("/") && !trimmed.startsWith("//") && !trimmed.startsWith("/\\")) {
+  // Never allow backslashes or encoded backslashes anywhere in a redirect target.
+  if (trimmed.includes("\\") || ENCODED_BACKSLASH_PATTERN.test(trimmed)) {
+    return false;
+  }
+
+  // Decode once to catch %2f%2f or %5c obfuscation attempts when checking leading sequence.
+  let decoded = trimmed;
+  try {
+    decoded = decodeURIComponent(trimmed);
+  } catch {
+    return false;
+  }
+  if (
+    hasControlChar(decoded) ||
+    decoded.includes("\\") ||
+    decoded.startsWith("//") ||
+    decoded.startsWith("/\\")
+  ) {
+    return false;
+  }
+
+  if (trimmed.startsWith("/") && !trimmed.startsWith("//")) {
     return true;
   }
 
@@ -34,6 +62,9 @@ export function isSafeRedirectTarget(path: string | null | undefined): boolean {
 
   try {
     const target = new URL(trimmed, window.location.origin);
+    if (target.protocol !== "http:" && target.protocol !== "https:") {
+      return false;
+    }
     return target.origin === window.location.origin;
   } catch {
     return false;

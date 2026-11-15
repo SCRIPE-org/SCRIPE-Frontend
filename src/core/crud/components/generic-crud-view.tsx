@@ -499,6 +499,7 @@ interface GenericCrudViewProps<T> {
   pagination?: PaginationInfo & {
     onPageChange: (page: number) => void;
     onPageSizeChange?: (size: number) => void;
+    pageSizeOptions?: number[];
   };
   search?: {
     value: string;

@@ -67,13 +67,13 @@ export function ProfileTelemetryHud({
   return (
     <>
       <Card className="w-full rounded-xl border border-nx-line bg-nx-surface p-4 sm:p-5 mb-6 hover:border-nx-line-hi transition-colors">
-        <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+        <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 min-w-0">
           {/* Left: Organization & Edition context */}
-          <div className="flex items-center gap-3.5">
+          <div className="flex items-center gap-3.5 min-w-0">
             <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-lg border border-nx-line bg-nx-accent-wash text-nx-accent">
               <Building2 className="h-5 w-5" style={{ minWidth: 20, minHeight: 20 }} />
             </div>
-            <div>
+            <div className="min-w-0">
               <div className="flex items-center gap-2 flex-wrap">
                 <h2 className="text-sm font-semibold tracking-tight text-nx-ink">
                   {profile?.clubAffiliation || t("profile.hud.defaultClub")}
@@ -94,7 +94,7 @@ export function ProfileTelemetryHud({
 
 
           {/* Right: Operational Controls & Telemetry Gauges */}
-          <div className="flex items-center gap-2.5 sm:gap-3 flex-wrap">
+          <div className="flex items-center gap-2.5 sm:gap-3 flex-wrap min-w-0">
             {/* Operational Availability Toggle */}
             <div className="flex items-center gap-2.5 px-3 py-1.5 rounded-lg border border-nx-line bg-nx-raised">
               <Switch

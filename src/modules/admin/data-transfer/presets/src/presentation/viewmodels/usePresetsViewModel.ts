@@ -4,7 +4,7 @@ import { useCallback, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "@core/ui/sileo-toast";
 import { useI18n } from "@core/providers/i18n-provider";
-import { useAppStore } from "@core/store/useAppStore";
+import { useAdminContext } from "@core/hooks/useAdminContext";
 import { isTenantRequiredError } from "@core/data-exchange/domain/tenant-errors";
 import { getDataTransferContainer } from "../../../../di";
 import type { DataExchangePreset } from "../../domain/entities/DataExchangePreset";
@@ -25,7 +25,7 @@ export type { PresetsPaginationState, UsePresetsViewModelReturn };
  */
 export function usePresetsViewModel(): UsePresetsViewModelReturn {
   const { t, language } = useI18n();
-  const tenantCode = useAppStore((s) => s.tenantCode);
+  const { activeTenantId } = useAdminContext();
   const queryClient = useQueryClient();
   const repo = getDataTransferContainer().presetsRepository;
   const catalog = usePresetsEntityCatalog();
@@ -79,7 +79,7 @@ export function usePresetsViewModel(): UsePresetsViewModelReturn {
     }
   }, []);
 
-  const queryKey = ["data-transfer", "presets", tenantCode ?? "platform"];
+  const queryKey = ["data-transfer", "presets", activeTenantId ?? "no-tenant"];
 
   const {
     data: rawPresets = [],
@@ -89,6 +89,7 @@ export function usePresetsViewModel(): UsePresetsViewModelReturn {
     refetch,
   } = useQuery({
     queryKey,
+    enabled: Boolean(activeTenantId),
     queryFn: async ({ signal }) => {
       return repo.getPresets(undefined, signal);
     },

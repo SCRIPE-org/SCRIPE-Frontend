@@ -3,7 +3,7 @@
 import { useCallback, useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useI18n } from "@core/providers/i18n-provider";
-import { useAppStore } from "@core/store/useAppStore";
+import { useAdminContext } from "@core/hooks/useAdminContext";
 import { isTenantRequiredError } from "@core/data-exchange/domain/tenant-errors";
 import { getEntityDisplayName } from "@core/data-exchange/presentation/utils/entity-display-names";
 import type { DataExchangeEntitySummary } from "@core/data-exchange";
@@ -16,7 +16,7 @@ import { getDataTransferContainer } from "../../../../di";
 export function useJobsEntityCatalog() {
   const { t, language } = useI18n();
   const isAr = language === "ar";
-  const tenantCode = useAppStore((s) => s.tenantCode);
+  const { activeTenantId } = useAdminContext();
   const container = getDataTransferContainer();
   const dataExchangeRepo = container.dataExchangeRepository;
   const entitiesRepo = container.entitiesRepository;
@@ -24,7 +24,8 @@ export function useJobsEntityCatalog() {
   const { data: catalogEntities = [], isLoading: isCatalogLoading } = useQuery<
     DataExchangeEntitySummary[]
   >({
-    queryKey: ["data-transfer", "entity-catalog", tenantCode ?? "platform"],
+    queryKey: ["data-transfer", "entity-catalog", activeTenantId ?? "no-tenant"],
+    enabled: Boolean(activeTenantId),
     queryFn: async ({ signal }) => {
       if (dataExchangeRepo) {
         return dataExchangeRepo.listEntities(signal);

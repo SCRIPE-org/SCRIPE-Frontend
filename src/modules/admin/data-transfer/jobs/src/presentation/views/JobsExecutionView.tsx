@@ -52,6 +52,14 @@ export function JobsExecutionView(): React.ReactElement {
     <div className="mb-4 space-y-3">
       <JobsKpiHeader kpis={vm.kpis} />
       {errorMessage && <JobsErrorBanner message={errorMessage} onRetry={handleRetry} />}
+      <JobsFilterToolbar
+        statusFilter={vm.statusFilter}
+        kindFilter={vm.kindFilter}
+        onStatusFilterChange={vm.setStatusFilter}
+        onKindFilterChange={vm.setKindFilter}
+        hasActiveFilters={vm.hasActiveFilters}
+        onResetFilters={vm.resetFilters}
+      />
     </div>
   );
 
@@ -64,16 +72,6 @@ export function JobsExecutionView(): React.ReactElement {
     stickyActions: true,
     hideAddButton: true,
     customHeaderContent: headerContent,
-    toolbarContent: vm.isTenantRequired ? undefined : (
-      <JobsFilterToolbar
-        statusFilter={vm.statusFilter}
-        kindFilter={vm.kindFilter}
-        onStatusFilterChange={vm.setStatusFilter}
-        onKindFilterChange={vm.setKindFilter}
-        hasActiveFilters={vm.hasActiveFilters}
-        onResetFilters={vm.resetFilters}
-      />
-    ),
     customActions: vm.isTenantRequired
       ? []
       : [
@@ -146,7 +144,12 @@ export function JobsExecutionView(): React.ReactElement {
             onResetFilters={vm.resetFilters}
           />
         }
-        pagination={{ ...vm.pagination, onPageChange: vm.setPage, onPageSizeChange: vm.setPageSize }}
+        pagination={{
+          ...vm.pagination,
+          pageSizeOptions: [10, 20, 25, 50, 100],
+          onPageChange: vm.setPage,
+          onPageSizeChange: vm.setPageSize,
+        }}
         search={{ value: vm.search, onChange: vm.setSearch }}
       />
       <CancelJobDialog

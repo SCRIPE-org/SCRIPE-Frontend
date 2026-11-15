@@ -47,6 +47,9 @@ export const en = {
       headlineL2Accent: "pros.",
       subtitle:
         "Sessions, squads, pitches and player development — one operating system for the people who run the game.",
+      pillarVenue: "Venue",
+      pillarAcademy: "Academy",
+      pillarFootball: "Football Intelligence",
       featureSecurity: "Enterprise Security",
       featureSecurityDesc: "Your athletes' data, protected end to end",
       featureMultiTenant: "Every Branch",

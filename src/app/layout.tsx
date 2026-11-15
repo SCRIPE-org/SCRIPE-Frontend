@@ -4,6 +4,9 @@ import Script from "next/script";
 import { cookies } from "next/headers";
 import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
+
+const enableVercelAnalytics =
+  process.env.NEXT_PUBLIC_ENABLE_VERCEL_ANALYTICS === "true" || process.env.VERCEL === "1";
 import "./globals.css";
 import { AppProvider } from "@core/providers/app-provider";
 import { STORAGE_KEYS } from "@core/config/storage-keys";
@@ -297,8 +300,12 @@ export default async function RootLayout({ children }: { children: React.ReactNo
             `,
           }}
         />
-        <Analytics />
-        <SpeedInsights />
+        {enableVercelAnalytics && (
+          <>
+            <Analytics />
+            <SpeedInsights />
+          </>
+        )}
       </body>
     </html>
   );

@@ -89,21 +89,22 @@ export const useAppStore = create<AppState>()(
             /* ignore */
           }
         }
-        set((state) => {
+        set(() => {
           const resolvedRoles =
             roles && roles.length > 0
               ? roles
-              : (user.roles && user.roles.length > 0 ? user.roles : state.roles);
-          const resolvedPermissions =
-            permissions && permissions.length > 0
-              ? permissions
-              : (user.permissions && user.permissions.length > 0
-                  ? (user.permissions as PermissionCode[])
-                  : state.permissions);
+              : Array.isArray(user.roles)
+                ? user.roles
+                : [];
+          const resolvedPermissions = Array.isArray(permissions)
+            ? permissions
+            : Array.isArray(user.permissions)
+              ? (user.permissions as PermissionCode[])
+              : [];
           const resolvedRestrictedFields =
             user.restrictedFields && !Array.isArray(user.restrictedFields)
               ? (user.restrictedFields as Record<string, string[]>)
-              : (state.restrictedFields ?? {});
+              : {};
 
           return {
             user,

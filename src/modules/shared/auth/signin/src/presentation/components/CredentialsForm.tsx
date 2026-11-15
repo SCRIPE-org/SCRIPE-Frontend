@@ -162,12 +162,22 @@ export function CredentialsForm({
       <Button
         type="submit"
         disabled={!isFormValid || isLoading}
-        className="relative mt-1 flex h-[var(--login-input-height,48px)] w-full items-center justify-center gap-2 overflow-hidden rounded-xl text-[15px] font-semibold text-nx-on-fill shadow-none transition-all active:scale-[0.98] disabled:opacity-50"
-        style={{
-          background: "var(--sx-cta-gradient, hsl(var(--primary)))",
-          boxShadow: "var(--sx-cta-shadow, none)",
-          border: 0,
-        }}
+        className="relative mt-1 flex h-[var(--login-input-height,48px)] w-full items-center justify-center gap-2 overflow-hidden rounded-xl text-[15px] font-semibold shadow-none transition-all active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-100"
+        style={
+          !isFormValid || isLoading
+            ? {
+                background: "var(--nx-raised)",
+                color: "var(--nx-ink-2)",
+                border: "1px solid var(--nx-line-hi)",
+                boxShadow: "none",
+              }
+            : {
+                background: "var(--sx-cta-gradient, hsl(var(--primary)))",
+                color: "var(--nx-on-fill)",
+                boxShadow: "var(--sx-cta-shadow, none)",
+                border: 0,
+              }
+        }
       >
         {/* Inner shine overlay */}
         <span

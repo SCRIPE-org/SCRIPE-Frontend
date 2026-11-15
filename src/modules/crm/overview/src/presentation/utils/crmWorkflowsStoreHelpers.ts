@@ -1,4 +1,6 @@
 import { getCrmContainer } from "@modules/crm/di";
+import { secureTokenService } from "@core/common/secure-token-service";
+import { useAppStore } from "@core/store/useAppStore";
 import {
   DEFAULT_NEW_WORKFLOW_META,
   type CrmDealCommercialPackage,
@@ -265,4 +267,28 @@ export function mergeBackendPipelinesIntoState(
     activeDealWorkflowId: nextActiveDealId,
     activeLeadWorkflowId: nextActiveLeadId,
   };
+}
+
+const PUBLIC_CRM_SKIP_ROUTES = [
+  "/login", "/signup", "/forgot-password", "/reset-password", "/not-authorized",
+  "/magic-link", "/qr-approve", "/sso", "/oauth", "/authorize", "/setup-account",
+  "/terms", "/privacy", "/docs", "/commercial", "/bookings/guest", "/403", "/404", "/500",
+];
+
+/** Returns true only when on a protected route with an active authenticated session or token. */
+export function hasAuthenticatedCrmSession(): boolean {
+  if (typeof window === "undefined") return false;
+  const pathname = window.location?.pathname || "";
+  if (PUBLIC_CRM_SKIP_ROUTES.some((prefix) => pathname === prefix || pathname.startsWith(`${prefix}/`))) {
+    return false;
+  }
+  if (secureTokenService.hasToken() || useAppStore.getState().isAuthenticated) return true;
+  try {
+    const raw = window.localStorage?.getItem("app-storage");
+    if (!raw) return false;
+    const parsed = JSON.parse(raw) as { state?: { isAuthenticated?: boolean; user?: unknown } };
+    return Boolean(parsed?.state?.isAuthenticated && parsed?.state?.user);
+  } catch {
+    return false;
+  }
 }

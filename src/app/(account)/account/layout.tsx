@@ -26,7 +26,7 @@ export default function SovereignAccountSectionLayout({ children }: { children: 
 
   return (
     <ModuleErrorBoundary moduleName="profile.title">
-      <div className="w-full max-w-7xl mx-auto py-2 sm:py-4">
+      <div className="w-full min-w-0 max-w-7xl mx-auto py-2 sm:py-4 overflow-x-clip">
         <ProfileTelemetryHud
           profile={profile}
           activeSessionCount={activeSessionCount}

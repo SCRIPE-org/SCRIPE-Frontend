@@ -10,20 +10,36 @@
 import type { NavigationData } from "../entities/NavigationData";
 import type { WorkspaceGroupData } from "../entities/WorkspaceGroup";
 
+export type RouteAccessState =
+  | "authorized"
+  | "tenant_context_required"
+  | "platform_context_required"
+  | "feature_disabled";
+
+export interface AuthorizedRouteDescriptor {
+  route: string;
+  accessState: RouteAccessState;
+  workspaceKey?: string | null;
+  requiredFeature?: string | null;
+  requiresTenantContext: boolean;
+}
+
+export interface AuthorizedRoutesResult {
+  routes: string[];
+  workspaceRouteMap: Record<string, string[]>;
+  routeDescriptors: AuthorizedRouteDescriptor[];
+}
+
 export interface INavigationRepository {
   /**
-   * Phase 0 — Eager routes load (called ONCE on login, before any menu trees).
+   * Phase 0 — Eager routes load (called ONCE on login/context switch, before any menu trees).
    *
-   * Fetches ALL accessible routes across ALL workspaces in a single lightweight call.
-   * This seeds the allRoutes Set in useNavigationStore, guaranteeing that the
-   * RouteGuard never gets a false "not-authorized" while menu trees are loading.
+   * Fetches ALL accessible routes and unified context/feature route descriptors across ALL workspaces
+   * in a single lightweight call.
    *
    * Backend: GET /menus/navigation/routes
    */
-  fetchRoutes(): Promise<{
-    routes: string[];
-    workspaceRouteMap: Record<string, string[]>;
-  }>;
+  fetchRoutes(): Promise<AuthorizedRoutesResult>;
 
   /**
    * Phase 1 — Default workspace load (login / hard reload).

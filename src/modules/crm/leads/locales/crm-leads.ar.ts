@@ -7,6 +7,8 @@ export const ar = {
       searchPlaceholder: "البحث بالعنوان، الاسم، المنشأة، أو البريد الإلكتروني...",
       filterByStatus: "تصفية حسب الحالة",
       allStatuses: "كافة الحالات",
+      filterPipelineLabel: "تصفية حسب المسار",
+      allPipelines: "كافة المسارات",
       refresh: "تحديث",
       viewDetails: "عرض التفاصيل",
       qualify: "تأهيل",

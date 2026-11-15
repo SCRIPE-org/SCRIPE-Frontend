@@ -20,9 +20,20 @@ import { usePermission } from "@core/hooks/use-permission";
 import { CUSTOM_FIELDS_PERMISSIONS } from "../../../../../permission-constants";
 import { useTenantContext } from "@core/providers/tenant-context-provider";
 import { Button } from "@core/ui/button";
+import { PageHeader } from "@core/ui/page-header";
+import { LoadingSpinner } from "@core/ui/loading-spinner";
 import { ErrorMessage } from "@core/ui/error-message";
 import { Alert, AlertTitle, AlertDescription } from "@core/ui/alert";
-import { Boxes, FolderTree, Globe2, Layers, ListTree, ShieldCheck } from "lucide-react";
+import {
+  AlertCircle,
+  Boxes,
+  FolderTree,
+  Globe2,
+  Layers,
+  ListTree,
+  RefreshCw,
+  ShieldCheck,
+} from "lucide-react";
 import {
   VALUE_TYPE_CATALOG,
   ALL_VALUE_TYPES,
@@ -96,6 +107,32 @@ export function resolveRegistryTypeName(
 /**
  * Documentation for module export
  */
+function CustomFieldListLoadErrorAlert({
+  title,
+  description,
+  retryLabel,
+  onRetry,
+}: {
+  title: string;
+  description: string;
+  retryLabel: string;
+  onRetry: () => void;
+}) {
+  return (
+    <Alert variant="destructive">
+      <AlertCircle aria-hidden="true" />
+      <AlertTitle>{title}</AlertTitle>
+      <AlertDescription className="mt-2 flex flex-wrap items-center justify-between gap-3">
+        <span>{description}</span>
+        <Button type="button" variant="outline" size="sm" onClick={onRetry}>
+          <RefreshCw className="me-1.5 h-3.5 w-3.5" aria-hidden="true" />
+          {retryLabel}
+        </Button>
+      </AlertDescription>
+    </Alert>
+  );
+}
+
 export const CustomFieldListView = React.memo(function CustomFieldListView() {
   useModuleLocales(() => import("../../../../locales"), "customFields");
   useModuleLocales(() => import("../../../../../option-set/locales"), "customFieldOptionSets");
@@ -355,6 +392,14 @@ export const CustomFieldListView = React.memo(function CustomFieldListView() {
               <AlertDescription>{t("customField.platformContext.description")}</AlertDescription>
             </Alert>
           ) : null}
+          {vm.error !== null && vm.error !== undefined && (vm.items?.length ?? 0) > 0 ? (
+            <CustomFieldListLoadErrorAlert
+              title={t("customField.loadFailedTitle")}
+              description={t("customField.loadFailedDescription")}
+              retryLabel={t("customField.retry")}
+              onRetry={() => void vm.refresh()}
+            />
+          ) : null}
         </div>
       ),
       columns,
@@ -554,6 +599,9 @@ export const CustomFieldListView = React.memo(function CustomFieldListView() {
       refetchEntityTypes,
       classificationFields,
       isPlatformContext,
+      vm.error,
+      vm.items,
+      vm.refresh,
     ]
   );
 
@@ -567,22 +615,69 @@ export const CustomFieldListView = React.memo(function CustomFieldListView() {
     [items]
   );
 
+  const itemCount = items?.length ?? 0;
+  const hasListError = vm.error !== null && vm.error !== undefined;
+  const crudViewModel = hasListError ? { ...vm, error: null } : vm;
+
+  const dialogs = (
+    <CustomFieldDialogsContainer
+      detailFieldId={subFeatures.detailFieldId}
+      closeDetail={subFeatures.closeDetail}
+      insightFieldLabel={insightFieldLabel}
+      canUpdate={canUpdate}
+      isPlatformContext={isPlatformContext}
+      vm={vm}
+      insight={subFeatures.insight}
+      optionSetBinding={subFeatures.optionSetBinding}
+      visibilityRules={subFeatures.visibilityRules}
+      convertValueType={subFeatures.convertValueType}
+      fieldVersions={subFeatures.fieldVersions}
+    />
+  );
+
+  if (hasListError && itemCount === 0) {
+    return (
+      <>
+        <div className="space-y-6">
+          <PageHeader
+            title={t("customField.title")}
+            description={t("customField.description")}
+          />
+          {config.customHeaderContent}
+          <CustomFieldListLoadErrorAlert
+            title={t("customField.loadFailedTitle")}
+            description={t("customField.loadFailedDescription")}
+            retryLabel={t("customField.retry")}
+            onRetry={() => void vm.refresh()}
+          />
+        </div>
+        {dialogs}
+      </>
+    );
+  }
+
+  if (vm.loading && itemCount === 0) {
+    return (
+      <>
+        <div className="space-y-6">
+          <PageHeader
+            title={t("customField.title")}
+            description={t("customField.description")}
+          />
+          {config.customHeaderContent}
+          <div className="flex min-h-[16rem] items-center justify-center rounded-nx-lg border border-nx-line bg-nx-surface p-8">
+            <LoadingSpinner showText={true} />
+          </div>
+        </div>
+        {dialogs}
+      </>
+    );
+  }
+
   return (
     <>
-      <GenericCrudView viewModel={vm} config={config} />
-      <CustomFieldDialogsContainer
-        detailFieldId={subFeatures.detailFieldId}
-        closeDetail={subFeatures.closeDetail}
-        insightFieldLabel={insightFieldLabel}
-        canUpdate={canUpdate}
-        isPlatformContext={isPlatformContext}
-        vm={vm}
-        insight={subFeatures.insight}
-        optionSetBinding={subFeatures.optionSetBinding}
-        visibilityRules={subFeatures.visibilityRules}
-        convertValueType={subFeatures.convertValueType}
-        fieldVersions={subFeatures.fieldVersions}
-      />
+      <GenericCrudView viewModel={crudViewModel} config={config} />
+      {dialogs}
     </>
   );
 });

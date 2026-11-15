@@ -72,16 +72,15 @@ export function useLeadsCrudConfig(params: UseLeadsCrudConfigParams) {
     return isRtl && stg.labelAr ? stg.labelAr : stg.labelEn;
   }, [isRtl, t]);
 
-  const crudConfig = useMemo<CrudConfig<CrmLead>>(() => ({
+  const crudConfig = useMemo<CrudConfig<CrmLead>>(() => {
+    const matchedLeadWorkflow = leadWorkflows.find((wf) => wf.id === activeLeadWorkflowId || wf.code === activeLeadWorkflowId);
+    const selectedLeadPipelineLabel = matchedLeadWorkflow ? (isRtl ? matchedLeadWorkflow.nameAr || matchedLeadWorkflow.nameEn : matchedLeadWorkflow.nameEn || matchedLeadWorkflow.nameAr) : "";
+    return {
     titleKey: "crmLeads.title",
     subtitleKey: "crmLeads.subtitle",
     resource: "crm.leads",
     entityTypeKey: "crm.lead",
-    dataExchange: {
-      entityKey: "crm.lead",
-      enableMultiSheetMigration: true,
-      hideToolbarActions: true,
-    },
+    dataExchange: { entityKey: "crm.lead", enableMultiSheetMigration: true, hideToolbarActions: true },
     hidePageHeader: true,
     hideActionButtons: true,
     stickyActions: true,
@@ -93,12 +92,14 @@ export function useLeadsCrudConfig(params: UseLeadsCrudConfigParams) {
           <Search className="absolute start-3 top-2.5 size-3.5 text-nx-ink-3 pointer-events-none" />
           <Input value={search} onChange={(e) => handleSearchChange(e.target.value)} placeholder={t("crmLeads.actions.searchPlaceholder")} className="h-8 ps-8 pe-3 text-xs border-nx-line bg-nx-surface text-nx-ink" />
         </div>
-        <div className="w-48">
-          <Select value={activeLeadWorkflowId} onValueChange={(id) => setActiveWorkflow("lead", id)}>
-            <SelectTrigger className="h-8 text-xs" data-testid="lead-pipeline-selector"><SelectValue /></SelectTrigger>
+        <div className="w-auto min-w-[12.5rem] max-w-[17rem] shrink-0">
+          <Select value={matchedLeadWorkflow?.id ?? ""} onValueChange={(id) => { if (id) setActiveWorkflow("lead", id); }}>
+            <SelectTrigger className="h-8 w-full min-w-[12.5rem] gap-2 border-nx-line bg-nx-surface text-xs text-nx-ink" data-testid="lead-pipeline-selector" aria-label={t("crmLeads.actions.filterPipelineLabel")}>
+              <SelectValue placeholder={t("crmLeads.actions.allPipelines")}>{selectedLeadPipelineLabel || undefined}</SelectValue>
+            </SelectTrigger>
             <SelectContent>
               {leadWorkflows.map((wf) => (
-                <SelectItem key={wf.id} value={wf.id} className="text-xs">{isRtl ? wf.nameAr : wf.nameEn}</SelectItem>
+                <SelectItem key={wf.id} value={wf.id} className="text-xs">{isRtl ? wf.nameAr || wf.nameEn : wf.nameEn || wf.nameAr}</SelectItem>
               ))}
             </SelectContent>
           </Select>
@@ -277,7 +278,7 @@ export function useLeadsCrudConfig(params: UseLeadsCrudConfigParams) {
       emptyMessage: <EmptyState title={t("crmLeads.table.emptyTitle")} description={t("crmLeads.table.emptyDescription")} />,
     },
     onCreateClick: () => setIsCreateOpen(true),
-  }), [
+  }; }, [
     router, t, language, baseCurrency, autoConvertToBase, convertAmount, showOriginalCurrencyBadge,
     activeLeadWorkflow, leadWorkflows, activeLeadWorkflowId, setActiveWorkflow, defaultDealViewMode,
     search, handleSearchChange, statusFilter, handleStatusFilterChange, statuses, sumLeadsInBaseCurrency,

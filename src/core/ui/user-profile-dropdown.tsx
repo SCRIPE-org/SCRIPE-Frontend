@@ -204,7 +204,6 @@ export function UserProfileDropdown({
           <Avatar className={cn(getAvatarSize(), "shadow-nx-sm")}>
             {avatarUrl && <AvatarImage src={avatarUrl} alt={displayName} />}
             <AvatarFallback
-              delayMs={600}
               style={{ background: AVATAR_MARK }}
               className="text-sm font-semibold text-nx-on-fill"
             >
@@ -247,7 +246,6 @@ export function UserProfileDropdown({
           <Avatar className="h-10 w-10 shrink-0 shadow-nx-sm">
             {avatarUrl && <AvatarImage src={avatarUrl} alt={displayName} />}
             <AvatarFallback
-              delayMs={600}
               style={{ background: AVATAR_MARK }}
               className="text-sm font-semibold text-nx-on-fill"
             >

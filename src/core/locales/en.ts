@@ -31,6 +31,7 @@ export const en = {
     skipToContent: "Skip to content",
     backTo: "Back to",
     search: "Search or jump…",
+    overview: "Overview",
     dashboard: "Dashboard",
     demo: "Demo",
     tree: "Tree",
@@ -2150,6 +2151,8 @@ export const en = {
       stopImpersonation: "Stop impersonating",
       tenantContext: "Tenant context",
       exitTenantContext: "Exit tenant context",
+      switchTenant: "Switch tenant",
+      currentTenant: "Current tenant",
     },
     backToAdmin: "Back to Admin",
     goToHome: "Go to Home",
@@ -2965,6 +2968,74 @@ export const en = {
       promiseError: "Roster Sync Failed",
       defaultTitle: "Sileo Notification",
       defaultDescription: "General system status message.",
+    },
+  },
+  contextGates: {
+    common: {
+      returnToHub: "Go to Workspace Hub",
+      goBack: "Go Back",
+      signOut: "Sign Out",
+      retry: "Try Again",
+      routeLabel: "Route",
+      close: "Close",
+    },
+    switcher: {
+      dialogTitle: "Switch Tenant Context",
+      dialogDescription: "Choose an organization to switch into directly on this page.",
+      searchPlaceholder: "Search organizations by name or code...",
+      loading: "Loading available organizations...",
+      emptyTitle: "No switchable organizations available",
+      emptyDescription:
+        "Your account does not currently have active access grants or memberships for any tenant.",
+      noSearchResults: "No organizations match \"{query}\".",
+      loadError: "Unable to load switchable organizations right now.",
+      switchError: "Could not switch into the selected organization. Please try again.",
+      switchAction: "Switch Here",
+      switchingAction: "Switching...",
+      activeBadge: "Active",
+      drillDownSource: "Hierarchy",
+      membershipSource: "Membership",
+      exitToPlatform: "Return to Platform Context",
+      openSwitcher: "Switch Tenant",
+    },
+    tenantRequired: {
+      badge: "Tenant Context Required",
+      title: "Select an Organization to Continue",
+      description:
+        "This operational view belongs to a specific organization. Select an active tenant below to continue right here without losing your place.",
+      noPermissionTitle: "Tenant Context Required",
+      noPermissionDescription:
+        "This view is scoped to an organization, and your current account does not have permissions or tenant assignments to switch context.",
+    },
+    platformRequired: {
+      badge: "Platform Context Required",
+      title: "Platform-Level Route Active",
+      description:
+        "You are currently operating inside tenant context ({tenant}). Exit to the platform root to access global platform infrastructure controls.",
+      fallbackTenant: "selected organization",
+      returnToPlatform: "Return to Platform Context",
+      returning: "Returning...",
+    },
+    featureUnavailable: {
+      badge: "Feature Unavailable",
+      title: "Capability Not Enabled on This Plan",
+      description:
+        "Access to this feature is disabled by your current organization edition or subscription entitlements.",
+      featureLabel: "Feature key",
+      upgradeAction: "View Plans & Upgrade",
+    },
+    navigationError: {
+      badge: "Navigation Sync Failed",
+      title: "Unable to Verify Workspace Access",
+      description:
+        "We could not load your authorized workspace routes from the server. Access is paused safely until route permissions are verified.",
+      technicalDetails: "Details",
+    },
+    forbidden: {
+      badge: "Access Restricted",
+      title: "You Do Not Have Permission",
+      description:
+        "Your active role does not grant access to this page. Return to Workspace Hub or go back to a permitted section.",
     },
   },
 };

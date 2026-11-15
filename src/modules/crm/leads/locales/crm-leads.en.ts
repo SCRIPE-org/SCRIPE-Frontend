@@ -7,6 +7,8 @@ export const en = {
       searchPlaceholder: "Search by title, name, company, or email...",
       filterByStatus: "Filter by Status",
       allStatuses: "All Statuses",
+      filterPipelineLabel: "Filter by Pipeline",
+      allPipelines: "All Pipelines",
       refresh: "Refresh",
       viewDetails: "View Details",
       qualify: "Qualify",

@@ -3,7 +3,7 @@
 import { useCallback, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useI18n } from "@core/providers/i18n-provider";
-import { useAppStore } from "@core/store/useAppStore";
+import { useAdminContext } from "@core/hooks/useAdminContext";
 import { isTenantRequiredError } from "@core/data-exchange/domain/tenant-errors";
 import { getDataTransferContainer } from "../../../../di";
 import type { DataExchangeEntity } from "../../domain/entities/DataExchangeEntity";
@@ -14,7 +14,7 @@ import type { DataExchangeEntity } from "../../domain/entities/DataExchangeEntit
  */
 export function useEntitiesViewModel() {
   const { language, t } = useI18n();
-  const tenantCode = useAppStore((s) => s.tenantCode);
+  const { activeTenantId } = useAdminContext();
   const repo = getDataTransferContainer().entitiesRepository;
 
   const [search, setSearchState] = useState("");
@@ -48,8 +48,9 @@ export function useEntitiesViewModel() {
   }, []);
 
   const query = useQuery({
-    queryKey: ["data-transfer", "entities", tenantCode ?? "platform"],
+    queryKey: ["data-transfer", "entities", activeTenantId ?? "no-tenant"],
     queryFn: ({ signal }) => repo.getAll(signal),
+    enabled: Boolean(activeTenantId),
     staleTime: 60_000,
     retry: (failureCount, err) => !isTenantRequiredError(err) && failureCount < 2,
   });

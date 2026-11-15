@@ -31,6 +31,7 @@ export const ar = {
     skipToContent: "تخطٍّ إلى المحتوى",
     backTo: "العودة إلى",
     search: "ابحث أو انتقل…",
+    overview: "نظرة عامة",
     dashboard: "لوحة التحكم",
     demo: "تجريبي",
     tree: "شجرة",
@@ -2134,6 +2135,8 @@ export const ar = {
       stopImpersonation: "ايقاف انتحال الشخصية",
       tenantContext: "سياق المستأجر",
       exitTenantContext: "خروج من سياق المستأجر",
+      switchTenant: "تبديل المستأجر",
+      currentTenant: "المستأجر الحالي",
     },
     backToAdmin: "العودة للإدارة",
     goToHome: "الصفحة الرئيسية",
@@ -2947,6 +2950,74 @@ export const ar = {
       promiseError: "فشلت مزامنة القوائم",
       defaultTitle: "إشعار Sileo",
       defaultDescription: "رسالة حالة عامة للنظام.",
+    },
+  },
+  contextGates: {
+    common: {
+      returnToHub: "الانتقال إلى مركز مساحات العمل",
+      goBack: "رجوع",
+      signOut: "تسجيل الخروج",
+      retry: "إعادة المحاولة",
+      routeLabel: "المسار",
+      close: "إغلاق",
+    },
+    switcher: {
+      dialogTitle: "تبديل سياق المستأجر",
+      dialogDescription: "اختر مؤسسة للانتقال إلى سياقها مباشرةً في هذه الصفحة.",
+      searchPlaceholder: "ابحث عن مؤسسة بالاسم أو الرمز...",
+      loading: "جاري تحميل المؤسسات المتاحة...",
+      emptyTitle: "لا توجد مؤسسات متاحة للتبديل",
+      emptyDescription:
+        "لا يملك حسابك حالياً صلاحيات وصول نشطة أو عضويات لأي مستأجر.",
+      noSearchResults: "لا توجد مؤسسات تطابق \"{query}\".",
+      loadError: "تعذر تحميل المؤسسات المتاحة للتبديل حالياً.",
+      switchError: "تعذر التبديل إلى المؤسسة المحددة. يرجى المحاولة مرة أخرى.",
+      switchAction: "التبديل هنا",
+      switchingAction: "جاري التبديل...",
+      activeBadge: "نشط",
+      drillDownSource: "التسلسل الهرمي",
+      membershipSource: "عضوية",
+      exitToPlatform: "العودة إلى سياق المنصة",
+      openSwitcher: "تبديل المستأجر",
+    },
+    tenantRequired: {
+      badge: "مطلوب سياق مستأجر",
+      title: "اختر مؤسسة للمتابعة",
+      description:
+        "تنتمي هذه الواجهة التشغيلية إلى مؤسسة محددة. اختر مستأجراً نشطاً أدناه للمتابعة هنا مباشرةً دون فقدان مسارك.",
+      noPermissionTitle: "مطلوب سياق مستأجر",
+      noPermissionDescription:
+        "هذه الصفحة مخصصة لنطاق مؤسسة، ولا يملك حسابك الحالي صلاحيات أو ارتباطات مستأجر للتبديل.",
+    },
+    platformRequired: {
+      badge: "مطلوب سياق المنصة",
+      title: "مسار مخصص لمستوى المنصة",
+      description:
+        "أنت تعمل حالياً داخل سياق المستأجر ({tenant}). اخرج إلى جذر المنصة للوصول إلى أدوات البنية التحتية العامة للمنصة.",
+      fallbackTenant: "المؤسسة المحددة",
+      returnToPlatform: "العودة إلى سياق المنصة",
+      returning: "جاري العودة...",
+    },
+    featureUnavailable: {
+      badge: "الميزة غير متاحة",
+      title: "هذه الميزة غير مفعّلة في باقتك الحالية",
+      description:
+        "الوصول إلى هذه الميزة معطّل وفق إصدار المؤسسة الحالي أو صلاحيات الاشتراك.",
+      featureLabel: "مفتاح الميزة",
+      upgradeAction: "عرض الباقات والترقية",
+    },
+    navigationError: {
+      badge: "تعذر مزامنة التنقل",
+      title: "تعذر التحقق من صلاحيات الوصول",
+      description:
+        "تعذر تحميل المسارات المصرح بها من الخادم. تم إيقاف الوصول مؤقتاً لحين التحقق الآمن من الصلاحيات.",
+      technicalDetails: "التفاصيل",
+    },
+    forbidden: {
+      badge: "وصول مقيّد",
+      title: "ليست لديك صلاحية الوصول",
+      description:
+        "لا يمنحك دورك الحالي صلاحية فتح هذه الصفحة. يمكنك العودة إلى مركز مساحات العمل أو الرجوع للصفحة السابقة.",
     },
   },
 };

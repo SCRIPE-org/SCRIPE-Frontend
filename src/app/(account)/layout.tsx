@@ -79,7 +79,7 @@ export default function AccountLayout({ children }: { children: React.ReactNode 
   return (
     <div
       data-sovereign-privacy-blur={privacyBlur ? "true" : "false"}
-      className="min-h-[100dvh] flex flex-col bg-nx-ground text-nx-ink selection:bg-nx-accent-wash selection:text-nx-accent"
+      className="min-h-[100dvh] w-full max-w-full overflow-x-clip flex flex-col bg-nx-ground text-nx-ink selection:bg-nx-accent-wash selection:text-nx-accent"
     >
       <a
         href="#account-content"
@@ -90,24 +90,25 @@ export default function AccountLayout({ children }: { children: React.ReactNode 
 
       {/* ── Top Standalone Sovereign Header ───────────────────────────────── */}
       <header className="sticky top-0 z-header w-full border-b border-nx-line bg-nx-surface">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-14 flex items-center justify-between gap-3">
+        <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 h-14 flex items-center justify-between gap-1.5 sm:gap-3 min-w-0">
           {/* Leading: Return to Dashboard Action + Brand Identity */}
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2 sm:gap-3 min-w-0">
             <Button
               variant="ghost"
               size="sm"
               onClick={() => router.push("/overview")}
-              className="gap-2 text-xs sm:text-sm font-medium text-nx-ink-2 hover:text-nx-ink hover:bg-nx-raised transition-colors"
+              aria-label={t("profile.accountPortal.backToDashboard")}
+              className="gap-2 px-2 sm:px-3 text-xs sm:text-sm font-medium text-nx-ink-2 hover:text-nx-ink hover:bg-nx-raised transition-colors shrink-0"
             >
               <ArrowLeft className="h-4 w-4 shrink-0 rtl:rotate-180" aria-hidden="true" />
-              <span>{t("profile.accountPortal.backToDashboard")}</span>
+              <span className="hidden sm:inline">{t("profile.accountPortal.backToDashboard")}</span>
             </Button>
 
-            <div className="h-5 w-px bg-nx-line hidden sm:block" />
+            <div className="h-5 w-px bg-nx-line hidden md:block" />
 
             <Link
               href="/overview"
-              className="hidden sm:flex items-center gap-2.5 group rounded-nx-sm text-nx-ink focus-visible:outline-none focus-visible:shadow-nx-focus"
+              className="hidden md:flex items-center gap-2.5 min-w-0 group rounded-nx-sm text-nx-ink focus-visible:outline-none focus-visible:shadow-nx-focus"
             >
               <div className="relative h-8 w-8 rounded-lg overflow-hidden border border-nx-line bg-nx-raised text-nx-ink flex items-center justify-center p-1.5 shrink-0">
                 <Image
@@ -118,11 +119,11 @@ export default function AccountLayout({ children }: { children: React.ReactNode 
                   aria-hidden="true"
                 />
               </div>
-              <div className="flex flex-col">
-                <span className="text-xs sm:text-sm font-semibold tracking-tight text-nx-ink group-hover:text-nx-accent transition-colors leading-tight">
+              <div className="flex flex-col min-w-0">
+                <span className="text-xs sm:text-sm font-semibold tracking-tight text-nx-ink group-hover:text-nx-accent transition-colors leading-tight truncate">
                   {t("profile.accountPortal.brandTitle")}
                 </span>
-                <span className="text-[11px] font-medium text-nx-ink-2 font-mono leading-tight mt-0.5">
+                <span className="text-[11px] font-medium text-nx-ink-2 font-mono leading-tight mt-0.5 truncate">
                   {t("profile.accountPortal.brandSubtitle")}
                 </span>
               </div>
@@ -130,18 +131,19 @@ export default function AccountLayout({ children }: { children: React.ReactNode 
           </div>
 
           {/* Center / Trailing: ⌘K Command Bar, Alt+P Privacy Blur, Theme, Language, User Menu */}
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1 sm:gap-2 shrink-0">
             {/* ⌘K Sovereign Command Bar Trigger */}
             <Button
               variant="outline"
               size="sm"
               onClick={() => setCommandBarOpen(true)}
-              className="h-8 gap-2 border-nx-line bg-nx-raised text-nx-ink-2 hover:text-nx-ink text-xs px-2.5"
+              aria-label={t("profile.commandBar.triggerLabel")}
+              className="h-8 gap-1.5 sm:gap-2 border-nx-line bg-nx-raised text-nx-ink-2 hover:text-nx-ink text-xs px-2 sm:px-2.5"
               data-testid="sovereign-command-bar-trigger"
             >
-              <Search className="h-3.5 w-3.5 text-nx-accent" aria-hidden="true" />
+              <Search className="h-3.5 w-3.5 text-nx-accent shrink-0" aria-hidden="true" />
               <span className="hidden md:inline">{t("profile.commandBar.triggerLabel")}</span>
-              <Badge variant="outline" className="text-[10px] font-mono border-nx-line text-nx-ink-3 px-1 py-0">
+              <Badge variant="outline" className="hidden sm:inline-flex text-[10px] font-mono border-nx-line text-nx-ink-3 px-1 py-0">
                 ⌘K
               </Badge>
             </Button>
@@ -152,17 +154,20 @@ export default function AccountLayout({ children }: { children: React.ReactNode 
               size="sm"
               onClick={() => setPrivacyBlur((prev) => !prev)}
               aria-pressed={privacyBlur}
+              aria-label={
+                privacyBlur ? t("profile.privacyBlur.active") : t("profile.privacyBlur.toggle")
+              }
               className={
                 privacyBlur
-                  ? "h-8 gap-1.5 border-nx-accent bg-nx-accent-wash text-nx-accent text-xs px-2.5 font-semibold"
-                  : "h-8 gap-1.5 border-nx-line bg-nx-raised text-nx-ink-2 hover:text-nx-ink text-xs px-2.5"
+                  ? "h-8 gap-1.5 border-nx-accent bg-nx-accent-wash text-nx-accent text-xs px-2 sm:px-2.5 font-semibold"
+                  : "h-8 gap-1.5 border-nx-line bg-nx-raised text-nx-ink-2 hover:text-nx-ink text-xs px-2 sm:px-2.5"
               }
               data-testid="sovereign-privacy-blur-toggle"
             >
               {privacyBlur ? (
-                <EyeOff className="h-3.5 w-3.5" aria-hidden="true" />
+                <EyeOff className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
               ) : (
-                <Eye className="h-3.5 w-3.5" aria-hidden="true" />
+                <Eye className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
               )}
               <span className="hidden lg:inline">
                 {privacyBlur ? t("profile.privacyBlur.active") : t("profile.privacyBlur.toggle")}
@@ -170,9 +175,9 @@ export default function AccountLayout({ children }: { children: React.ReactNode 
             </Button>
 
             <NxThemeSwitcher variant="ghost" />
-            <LanguageSwitcher />
+            <LanguageSwitcher buttonClassName="px-2 sm:px-2.5 text-xs" />
 
-            <div className="h-5 w-px bg-nx-line mx-1" aria-hidden="true" />
+            <div className="hidden sm:block h-5 w-px bg-nx-line mx-0.5 sm:mx-1" aria-hidden="true" />
 
             {/* User Account Menu */}
             <DropdownMenu>
@@ -242,8 +247,8 @@ export default function AccountLayout({ children }: { children: React.ReactNode 
         tabIndex={-1}
         className={
           privacyBlur
-            ? "flex-1 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 md:py-8 outline-none [&_code]:blur-xs [&_.font-mono]:blur-[3px]"
-            : "flex-1 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 md:py-8 outline-none"
+            ? "flex-1 w-full min-w-0 overflow-x-clip max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-4 sm:py-6 md:py-8 outline-none [&_code]:blur-xs [&_.font-mono]:blur-[3px]"
+            : "flex-1 w-full min-w-0 overflow-x-clip max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-4 sm:py-6 md:py-8 outline-none"
         }
       >
         {children}

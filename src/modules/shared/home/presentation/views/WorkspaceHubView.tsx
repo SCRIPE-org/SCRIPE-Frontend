@@ -24,7 +24,8 @@
 import React, { useEffect, useMemo, useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { useWorkspace } from "@core/providers/workspace-provider";
-import { useTenantContext } from "@core/providers/tenant-context-provider";
+import { useAdminContext } from "@core/hooks/useAdminContext";
+import { TenantContextSwitcherDialog } from "@core/components/tenant-context";
 import { useI18n } from "@core/providers/i18n-provider";
 import { useNavigationStore } from "@core/navigation/store/useNavigationStore";
 import { useWorkspaceTransition } from "@core/ui/layout/nexus/use-workspace-transition";
@@ -46,14 +47,15 @@ import { useHubActivity } from "../hooks/useHubActivity";
 
 export function WorkspaceHubView() {
   const router = useRouter();
-  const { currentTenant } = useTenantContext();
-  const hasTenantContext = currentTenant !== null;
+  const { activeTenantId } = useAdminContext();
+  const hasTenantContext = Boolean(activeTenantId);
   const { workspaceGroups, isLoading, togglePin } = useWorkspace();
   const { switchWorkspace } = useWorkspaceTransition();
   const { language, t } = useI18n();
   const [searchQuery, setSearchQuery] = useState("");
   const [pinLoadingKeys, setPinLoadingKeys] = useState<Set<string>>(new Set());
   const [upgradeTarget, setUpgradeTarget] = useState<string | null>(null);
+  const [switcherOpen, setSwitcherOpen] = useState(false);
   const hubActivity = useHubActivity();
 
   // ── Hub identity: no workspace is active on the Hub page ──────────────────
@@ -434,12 +436,16 @@ export function WorkspaceHubView() {
           onUpgrade={() => {
             setUpgradeTarget(null);
             if (!hasTenantContext && upgradeWs?.isModuleWorkspace) {
-              router.push("/tenants");
+              setSwitcherOpen(true);
             } else {
               router.push("/entitlements/editions/compare");
             }
           }}
         />
+      )}
+
+      {switcherOpen && (
+        <TenantContextSwitcherDialog open={switcherOpen} onOpenChange={setSwitcherOpen} />
       )}
     </main>
   );

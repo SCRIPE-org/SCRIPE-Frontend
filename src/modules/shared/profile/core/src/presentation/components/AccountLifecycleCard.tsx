@@ -125,11 +125,11 @@ export function AccountLifecycleCard({
           </Badge>
         </CardHeader>
 
-        <CardContent className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+        <CardContent className="grid grid-cols-1 xl:grid-cols-2 gap-4 min-w-0">
           {/* Left: Export Account Data Archive */}
-          <div className="rounded-xl border border-nx-line bg-nx-ground p-4 flex flex-col justify-between gap-3">
-            <div className="space-y-1.5">
-              <div className="flex items-center justify-between gap-2">
+          <div className="rounded-xl border border-nx-line bg-nx-ground p-4 flex flex-col justify-between gap-3 min-w-0">
+            <div className="space-y-1.5 min-w-0">
+              <div className="flex items-center justify-between gap-2 flex-wrap">
                 <span className="text-xs font-bold text-nx-ink">
                   {t("profile.lifecycle.exportTitle")}
                 </span>
@@ -142,7 +142,7 @@ export function AccountLifecycleCard({
               </p>
             </div>
 
-            <div className="flex items-center justify-between gap-2 pt-1">
+            <div className="flex flex-wrap items-center justify-between gap-2 pt-1 min-w-0">
               {exportStatus === "done" ? (
                 <span
                   data-testid="export-account-data-success"
@@ -173,11 +173,11 @@ export function AccountLifecycleCard({
           </div>
 
           {/* Right: Deactivate / Delete Account with Sole Owner Guardrail */}
-          <div className="rounded-xl border border-destructive/30 bg-destructive/5 p-4 flex flex-col justify-between gap-3">
-            <div className="space-y-1.5">
-              <div className="flex items-center justify-between gap-2">
+          <div className="rounded-xl border border-destructive/30 bg-destructive/5 p-4 flex flex-col justify-between gap-3 min-w-0">
+            <div className="space-y-1.5 min-w-0">
+              <div className="flex items-center justify-between gap-2 flex-wrap">
                 <span className="text-xs font-bold text-nx-ink flex items-center gap-1.5">
-                  <AlertTriangle className="h-3.5 w-3.5 text-destructive" style={{ minWidth: 14, minHeight: 14 }} />
+                  <AlertTriangle className="h-3.5 w-3.5 text-destructive shrink-0" style={{ minWidth: 14, minHeight: 14 }} />
                   <span>{t("profile.lifecycle.deactivateTitle")}</span>
                 </span>
                 <Badge variant="outline" className="border-destructive/40 text-destructive text-[10px]">
@@ -189,7 +189,7 @@ export function AccountLifecycleCard({
               </p>
             </div>
 
-            <div className="flex items-center justify-between gap-2 pt-1">
+            <div className="flex flex-wrap items-center justify-between gap-2 pt-1 min-w-0">
               <span className="text-[11px] text-nx-ink-3">
                 {t("profile.lifecycle.soleOwnerGuardrailShort")}
               </span>

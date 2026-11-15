@@ -3,7 +3,6 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import { getCrmContainer } from "@modules/crm/di";
-import { DEFAULT_NEW_WORKFLOW_META } from "../../domain/constants/crmSettingsDefaults";
 import {
   INITIAL_CRM_WORKFLOWS,
   evaluateWorkflowTransition,
@@ -17,6 +16,7 @@ import {
 } from "../../domain/constants/crmWorkflowDefaults";
 import {
   CANONICAL_DEFAULT_STAGE_META,
+  hasAuthenticatedCrmSession,
   mergeBackendPipelinesIntoState,
   syncWorkflowsToBackend,
 } from "../utils/crmWorkflowsStoreHelpers";
@@ -231,6 +231,7 @@ export const useCrmWorkflowsStore = create<CrmWorkflowsState>()(
       },
 
       fetchPipelinesFromBackend: async () => {
+        if (!hasAuthenticatedCrmSession()) return;
         try {
           const container = getCrmContainer();
           if (container.opportunityRepository?.getPipelines) {
@@ -276,7 +277,7 @@ export const useCrmWorkflowsStore = create<CrmWorkflowsState>()(
         return persistedState;
       },
       onRehydrateStorage: () => (state) => {
-        if (typeof window !== "undefined") {
+        if (hasAuthenticatedCrmSession()) {
           void state?.fetchPipelinesFromBackend?.();
         }
       },

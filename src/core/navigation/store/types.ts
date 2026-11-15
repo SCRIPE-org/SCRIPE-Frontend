@@ -1,21 +1,37 @@
 import type { NavigationData } from "@core/navigation/domain/entities/NavigationData";
 import type { WorkspaceGroup } from "@core/navigation/domain/entities/WorkspaceGroup";
 import type { MenuItem, MenuItemActions } from "@core/navigation/domain/entities/MenuItem";
+import type {
+  AuthorizedRouteDescriptor,
+  RouteAccessState,
+} from "@core/navigation/domain/interfaces/INavigationRepository";
 
+export type { AuthorizedRouteDescriptor, RouteAccessState };
 export type WorkspaceRouteMap = Record<string, string[]>;
+
+export interface SetRouteDataInput {
+  routes: string[];
+  workspaceRouteMap: WorkspaceRouteMap;
+  routeDescriptors: AuthorizedRouteDescriptor[];
+  contextKey: string;
+}
 
 export interface RouteSlice {
   allRoutes: Set<string>;
   allRoutesSorted: string[];
   workspaceRouteMap: WorkspaceRouteMap;
+  routeDescriptors: Map<string, AuthorizedRouteDescriptor>;
+  routesLoaded: boolean;
+  routesContextKey: string | null;
+  routesError: string | null;
   routesLoadedAt: number | null;
   contextKey: string;
 
-  initializeRoutes: (
-    routes: string[],
-    workspaceRouteMap: WorkspaceRouteMap,
-    contextKey: string
-  ) => void;
+  setRouteData: (input: SetRouteDataInput) => void;
+  setRoutesError: (message: string, contextKey?: string | null) => void;
+  clearRouteData: () => void;
+  isNavSyncedForContext: (expectedContextKey?: string | null) => boolean;
+  getRouteDescriptor: (pathname: string) => AuthorizedRouteDescriptor | null;
   hasRouteAccess: (pathname: string) => boolean;
 }
 

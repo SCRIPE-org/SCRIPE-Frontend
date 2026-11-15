@@ -40,7 +40,8 @@
 import React, { useState, useMemo, useCallback, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { useWorkspace } from "@core/providers/workspace-provider";
-import { useTenantContext } from "@core/providers/tenant-context-provider";
+import { useAdminContext } from "@core/hooks/useAdminContext";
+import { TenantContextSwitcherDialog } from "@core/components/tenant-context";
 import { useI18n } from "@core/providers/i18n-provider";
 import { toast } from "@core/hooks/use-enhanced-toast";
 import { startRoutingProgress } from "@core/ui/routing-progress-bar";
@@ -288,8 +289,9 @@ export function NexusAppLauncher({ open, onOpenChange }: NexusAppLauncherProps) 
     [filteredWorkspaces, sortByPinThenCatalog, activeWorkspaceKey]
   );
 
-  const { currentTenant } = useTenantContext();
-  const hasTenantContext = !!currentTenant;
+  const { activeTenantId } = useAdminContext();
+  const hasTenantContext = Boolean(activeTenantId);
+  const [switcherOpen, setSwitcherOpen] = useState(false);
 
   // Handle card click — locked → show upgrade/context dialog, else switch
   const handleSelect = useCallback(
@@ -551,13 +553,19 @@ export function NexusAppLauncher({ open, onOpenChange }: NexusAppLauncherProps) 
           onClose={() => setUpgradeTarget(null)}
           onUpgrade={() => {
             setUpgradeTarget(null);
+            if (!hasTenantContext) {
+              setSwitcherOpen(true);
+              return;
+            }
             onOpenChange(false);
-            // If the user has no tenant context, navigate to the tenants list
-            // so they can drill into one. Otherwise go to billing/subscription.
             startRoutingProgress();
-            router.push(hasTenantContext ? "/my-subscription" : "/tenants");
+            router.push("/my-subscription");
           }}
         />
+      )}
+
+      {switcherOpen && (
+        <TenantContextSwitcherDialog open={switcherOpen} onOpenChange={setSwitcherOpen} />
       )}
     </>
   );

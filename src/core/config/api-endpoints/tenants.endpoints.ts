@@ -4,6 +4,7 @@ export const TENANTS_ENDPOINTS = {
   TENANTS: {
     LIST: `${V1}/tenants`,
     TREE: `${V1}/tenants/tree`,
+    SWITCHABLE: `${V1}/tenants/switchable`,
     RESOLVE: `${V1}/customization/resolve`,
     CURRENT_TENANT_CHILDREN: `${V1}/tenants/current-tenant/children`,
     CURRENT_TENANT_HIERARCHY: `${V1}/tenants/current-tenant/hierarchy`,

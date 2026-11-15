@@ -70,7 +70,7 @@ export function usePlanPicker({
     queryKey: ["signup-pricing-context"],
     queryFn: () => authContainer.signupRepository.getPricingContext(),
     staleTime: 30 * 60 * 1000, // currency is country-locked per session
-    retry: 1,
+    retry: false,
   });
 
   // Dev-only: append ?__currency=EGP (or SAR, EUR, USD) to override geo-detected currency.
@@ -95,7 +95,7 @@ export function usePlanPicker({
         language
       ),
     staleTime: 10 * 60 * 1000,
-    retry: 1,
+    retry: false,
     enabled: !!initialCurrency || isPricingContextFetched,
   });
 
@@ -130,7 +130,7 @@ export function usePlanPicker({
         language
       ),
     staleTime: 5 * 60 * 1000,
-    retry: 1,
+    retry: false,
     enabled: !!initialCurrency || isPricingContextFetched,
   });
 

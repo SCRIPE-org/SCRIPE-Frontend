@@ -151,10 +151,10 @@ export function ProfileInfoForm({
       </div>
 
       {/* Verified Identity Identifiers Bar (Email & Username with 3-Step Change Modals) */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5">
-        <div className="rounded-xl border border-nx-line bg-nx-ground p-3.5 flex items-center justify-between gap-3">
-          <div className="min-w-0 space-y-1">
-            <div className="flex items-center gap-2">
+      <div className="grid grid-cols-1 xl:grid-cols-2 gap-3.5 min-w-0">
+        <div className="rounded-xl border border-nx-line bg-nx-ground p-3.5 flex flex-wrap items-center justify-between gap-3 min-w-0">
+          <div className="min-w-0 flex-1 space-y-1">
+            <div className="flex items-center gap-2 flex-wrap">
               <Mail className="h-3.5 w-3.5 text-nx-accent shrink-0" style={{ minWidth: 14, minHeight: 14 }} />
               <span className="text-xs font-medium text-nx-ink-2">{t("profile.email")}</span>
               {profile.isEmailVerified ? (
@@ -171,7 +171,7 @@ export function ProfileInfoForm({
               {profile.email}
             </p>
           </div>
-          <div className="flex items-center gap-1.5 shrink-0">
+          <div className="flex flex-wrap items-center gap-1.5 shrink-0 max-w-full">
             {!profile.isEmailVerified && onSendEmailVerification && (
               <Button
                 type="button"
@@ -199,9 +199,9 @@ export function ProfileInfoForm({
           </div>
         </div>
 
-        <div className="rounded-xl border border-nx-line bg-nx-ground p-3.5 flex items-center justify-between gap-3">
-          <div className="min-w-0 space-y-1">
-            <div className="flex items-center gap-2">
+        <div className="rounded-xl border border-nx-line bg-nx-ground p-3.5 flex flex-wrap items-center justify-between gap-3 min-w-0">
+          <div className="min-w-0 flex-1 space-y-1">
+            <div className="flex items-center gap-2 flex-wrap">
               <AtSign className="h-3.5 w-3.5 text-nx-accent shrink-0" style={{ minWidth: 14, minHeight: 14 }} />
               <span className="text-xs font-medium text-nx-ink-2">{t("profile.username")}</span>
               <Badge variant="outline" className="border-nx-line text-nx-ink-3 text-[10px] py-0 px-1.5">

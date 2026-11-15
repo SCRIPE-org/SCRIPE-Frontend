@@ -1,6 +1,8 @@
 "use client";
 
 import Link from "next/link";
+import { Checkbox } from "@core/ui/checkbox";
+import { Label } from "@core/ui/label";
 
 interface FormOptionsProps {
   staySignedIn: boolean;
@@ -14,59 +16,31 @@ interface FormOptionsProps {
  * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
  */
 export function FormOptions({ staySignedIn, onStaySignedInChange, disabled, t }: FormOptionsProps) {
+  const staySignedInId = "stay-signed-in";
+
   return (
     <div
       className="flex items-center justify-between text-[12px]"
       style={{ color: "var(--sx-text-mute, hsl(var(--muted-foreground)))" }}
     >
-      <label
-        className="flex cursor-pointer select-none items-center gap-2"
-        onClick={() => {
-          // The checkbox is a `div[role="checkbox"]`, not a native input, so
-          // it isn't natively associated with this <label> — without this
-          // handler, clicks on the label text wouldn't toggle it. The
-          // checkbox div's own onClick calls stopPropagation, so this only
-          // fires for clicks that land on the label/text, never double-firing.
-          if (!disabled) onStaySignedInChange(!staySignedIn);
-        }}
-      >
-        <div
-          role="checkbox"
-          aria-checked={staySignedIn}
-          tabIndex={0}
-          onClick={(e) => {
-            e.stopPropagation();
-            if (!disabled) onStaySignedInChange(!staySignedIn);
+      <div className="flex items-center gap-2">
+        <Checkbox
+          id={staySignedInId}
+          checked={staySignedIn}
+          onCheckedChange={(checked) => {
+            if (!disabled) onStaySignedInChange(checked === true);
           }}
-          onKeyDown={(e) => {
-            if (e.key === " " || e.key === "Enter") {
-              e.preventDefault();
-              if (!disabled) onStaySignedInChange(!staySignedIn);
-            }
-          }}
-          className="flex h-5 w-5 shrink-0 items-center justify-center rounded transition-all"
-          style={{
-            background: staySignedIn ? "var(--scripe-signal)" : "transparent",
-            border: staySignedIn
-              ? "1px solid transparent"
-              : "1px solid var(--sx-field-border, hsl(var(--border)))",
-            cursor: disabled ? "default" : "pointer",
-            opacity: disabled ? 0.5 : 1,
-          }}
+          disabled={disabled}
+          aria-label={t("auth.staySignedIn")}
+          className="h-5 w-5 border-nx-line-hi data-[state=checked]:border-nx-accent-fill data-[state=checked]:bg-nx-accent-fill data-[state=checked]:text-nx-on-fill"
+        />
+        <Label
+          htmlFor={staySignedInId}
+          className="cursor-pointer select-none text-[12px] font-normal text-inherit"
         >
-          {staySignedIn && (
-            <svg width="13" height="14" viewBox="0 0 10 10" fill="none" aria-hidden="true">
-              <path
-                d="M2 5l2 2 5-4"
-                stroke="var(--scripe-ink)"
-                strokeWidth="1.8"
-                strokeLinecap="round"
-              />
-            </svg>
-          )}
-        </div>
-        <span>{t("auth.staySignedIn")}</span>
-      </label>
+          {t("auth.staySignedIn")}
+        </Label>
+      </div>
       <Link
         href="/forgot-password"
         className="text-[12px] font-medium transition-colors hover:opacity-80"

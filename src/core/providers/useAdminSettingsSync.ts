@@ -40,6 +40,40 @@ const DEBOUNCE_MS = 2000;
 const MAX_PAYLOAD_BYTES = 8000; // 8KB soft limit (column is 10KB)
 const SAVE_ENDPOINT = TENANTS_ENDPOINTS.TENANTS.ADMIN_PREFERENCES;
 
+/**
+ * Resolve the identity API base URL cleanly for keepalive beforeunload beacons,
+ * mirroring api-factory.ts (`NEXT_PUBLIC_IDENTITY_API_URL` -> `NEXT_PUBLIC_API_URL` -> `/api`)
+ * and refusing stringified `"undefined"` / `"null"` URLs.
+ */
+function resolveAdminSettingsSaveUrl(): string | null {
+  const candidates = [
+    process.env.NEXT_PUBLIC_IDENTITY_API_URL,
+    process.env.NEXT_PUBLIC_API_URL,
+    "/api",
+  ];
+  const rawBase = candidates
+    .map((candidate) => candidate?.trim() ?? "")
+    .find((candidate) => {
+      if (!candidate) return false;
+      const normalized = candidate.toLowerCase();
+      return normalized !== "undefined" && normalized !== "null";
+    });
+  if (!rawBase) return null;
+
+  const base = rawBase.replace(/\/+$/, "");
+  const endpoint = SAVE_ENDPOINT.startsWith("/") ? SAVE_ENDPOINT : `/${SAVE_ENDPOINT}`;
+  const resolved = `${base}${endpoint}`;
+  if (
+    resolved.includes("/undefined/") ||
+    resolved.startsWith("undefined") ||
+    resolved.includes("/null/") ||
+    resolved.startsWith("null")
+  ) {
+    return null;
+  }
+  return resolved;
+}
+
 // ── Types ──
 interface AdminSettingsPayload {
   adminSettingsJson: string;
@@ -364,7 +398,15 @@ export function useAdminSettingsSync() {
       const payloadBody = JSON.stringify({
         adminSettingsJson: latestPayload.current,
       } satisfies AdminSettingsPayload);
-      const url = `${process.env.NEXT_PUBLIC_IDENTITY_API_URL}${SAVE_ENDPOINT}`;
+      const url = resolveAdminSettingsSaveUrl();
+      if (!url) {
+        try {
+          localStorage.setItem(STORAGE_KEYS.PENDING_SETTINGS_FLUSH, latestPayload.current);
+        } catch {
+          // Non-fatal: storage quota or private mode
+        }
+        return;
+      }
 
       // Check if we still have a valid JWT
       const token = secureTokenService.getAccessToken();

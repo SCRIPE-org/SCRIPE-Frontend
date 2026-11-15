@@ -26,28 +26,30 @@ import { Button } from "@core/ui/button";
 import { useI18n } from "@core/providers/i18n-provider";
 import { DynamicIcon } from "@core/ui/layout/nexus/_parts/primary-rail-parts";
 
-// ── Gradient helper ────────────────────────────────────────────────────────
+// ── Accent helpers ───────────────────────────────────────────────────────────
 
-/** Derive a 3-stop tile gradient from an OKLCH hue + chroma. Used for both a
- *  workspace's custom colour and the muted admin/default tone below, so the
- *  tile never needs a second, hardcoded gradient. */
-function deriveGradient(hue: number, chroma: number): string {
-  const c = Math.min(chroma, 0.35);
-  return `linear-gradient(135deg, oklch(0.72 ${c} ${hue}) 0%, oklch(0.55 ${c} ${hue}) 55%, oklch(0.38 ${c} ${hue}) 100%)`;
+/** Derive subtle Nexus-safe icon chip tint and accent marker from an OKLCH hue + chroma.
+ *  Keeps tile slabs 100% flat matte (`--nx-surface`) with `--nx-ink` / `--nx-ink-2`
+ *  foregrounds while preserving workspace color identity in both Dark & Light modes. */
+function deriveAccentTone(hue: number, chroma: number): {
+  chipSurface: string;
+  chipBorder: string;
+  dotColor: string;
+} {
+  const c = Math.min(chroma, 0.28);
+  const accent = `oklch(0.66 ${c} ${hue})`;
+  return {
+    chipSurface: `color-mix(in srgb, var(--nx-raised) 82%, ${accent})`,
+    chipBorder: `color-mix(in srgb, var(--nx-line-hi) 62%, ${accent})`,
+    dotColor: accent,
+  };
 }
 
-/** Muted tone for workspaces without a custom colour — same formula, just a
- *  near-neutral hue/chroma pair instead of the workspace's own. */
+/** Muted tone for workspaces without a custom colour. */
 const ADMIN_TONES: Record<string, { hue: number; chroma: number }> = {
-  admin: { hue: 265, chroma: 0.03 },
-  _default: { hue: 262, chroma: 0.05 },
+  admin: { hue: 265, chroma: 0.04 },
+  _default: { hue: 262, chroma: 0.06 },
 };
-
-// The icon chip and locked glyph sit on top of a dynamic, data-owned
-// gradient of unknown lightness, so their fill/border tint the one ink token
-// legal atop a filled surface (--nx-on-fill) rather than a literal white.
-const CHIP_FILL = "color-mix(in srgb, var(--nx-on-fill) 15%, transparent)";
-const CHIP_BORDER = "color-mix(in srgb, var(--nx-on-fill) 22%, transparent)";
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
@@ -75,8 +77,8 @@ const DIMS = {
 } as const;
 
 const TILE_SIZE_CLASSES = {
-  lg: "w-full min-h-[144px] sm:h-[158px] p-4 sm:p-[18px]",
-  md: "h-[124px] w-[124px] p-3.5",
+  lg: "w-full min-w-0 min-h-[144px] sm:h-[158px] p-4 sm:p-[18px]",
+  md: "h-[124px] w-[124px] shrink-0 p-3.5",
 } as const;
 
 // ── Component ─────────────────────────────────────────────────────────────────
@@ -102,38 +104,33 @@ export function HubModuleTile({
   const metaId = `${baseId}-meta`;
   const dims = DIMS[size];
 
-  // Derive the gradient from workspace colour data — the same formula
-  // whether the hue is real (a customised workspace) or the muted fallback.
   const hasCustomColor = colorHue !== null;
   const chroma = colorChroma ?? 0.18;
   const hue = colorHue ?? 270;
   const adminTone = ADMIN_TONES[name.toLowerCase()] ?? ADMIN_TONES._default;
-  const gradient = hasCustomColor
-    ? deriveGradient(hue, chroma)
-    : deriveGradient(adminTone.hue, adminTone.chroma);
+  const accentTone = hasCustomColor
+    ? deriveAccentTone(hue, chroma)
+    : deriveAccentTone(adminTone.hue, adminTone.chroma);
 
   const handleClick = useCallback(() => {
     onClick?.();
   }, [onClick]);
 
-  const pinOverlayClass =
-    "absolute end-2.5 top-2.5 z-20 h-7 w-7 rounded-nx-sm p-0 text-nx-on-fill hover:bg-[color:color-mix(in_srgb,var(--nx-on-fill)_15%,transparent)] focus-visible:shadow-nx-focus focus-visible:outline-none";
+  const pinOverlayClass = cn(
+    "absolute end-2.5 top-2.5 z-20 h-7 w-7 rounded-nx-sm p-0 transition-colors focus-visible:shadow-nx-focus focus-visible:outline-none hover:bg-nx-hover",
+    isPinned ? "text-nx-accent" : "text-nx-ink-3 hover:text-nx-ink"
+  );
 
   return (
     <div
       className={cn(
         "group relative flex flex-col justify-between rounded-nx-lg text-start",
-        "border transition-[border-color] duration-nx-standard ease-nx-enter motion-reduce:transition-none",
+        "border bg-nx-surface text-nx-ink transition-[border-color] duration-nx-standard ease-nx-enter motion-reduce:transition-none",
         TILE_SIZE_CLASSES[size],
         isLocked
-          ? "border-[color:color-mix(in_srgb,var(--nx-on-fill)_10%,transparent)] hover:border-[color:color-mix(in_srgb,var(--nx-on-fill)_22%,transparent)]"
-          : "border-[color:color-mix(in_srgb,var(--nx-on-fill)_14%,transparent)] hover:border-[color:color-mix(in_srgb,var(--nx-on-fill)_28%,transparent)]"
+          ? "border-nx-line opacity-90 hover:border-nx-line-hi"
+          : "border-nx-line hover:border-nx-line-hi"
       )}
-      style={{
-        background: gradient,
-        color: "var(--nx-on-fill)",
-        filter: isLocked ? "saturate(0.25) brightness(0.85)" : "none",
-      }}
     >
       {/* Stretched primary trigger — sibling to pin control (zero nested buttons) */}
       <Button
@@ -187,26 +184,33 @@ export function HubModuleTile({
         </Button>
       )}
 
-      {/* Icon chip */}
-      <div className="pointer-events-none relative z-10 flex items-start">
+      {/* Icon chip + subtle category marker */}
+      <div className="pointer-events-none relative z-10 flex items-start justify-between gap-2">
         <div
-          className="inline-flex items-center justify-center rounded-nx-md text-nx-on-fill"
+          className="inline-flex items-center justify-center rounded-nx-md text-nx-ink"
           style={{
             width: dims.iconChip,
             height: dims.iconChip,
-            background: CHIP_FILL,
-            border: `1px solid ${CHIP_BORDER}`,
+            background: accentTone.chipSurface,
+            border: `1px solid ${accentTone.chipBorder}`,
           }}
         >
           <DynamicIcon name={icon || "Layers"} size={dims.iconSize} />
         </div>
+        {!isLocked && !onTogglePin && (
+          <span
+            className="mt-1 h-2 w-2 rounded-full shrink-0"
+            style={{ backgroundColor: accentTone.dotColor }}
+            aria-hidden="true"
+          />
+        )}
       </div>
 
       {/* Name + item count */}
-      <div className="pointer-events-none relative z-10 flex flex-col gap-0.5">
+      <div className="pointer-events-none relative z-10 flex min-w-0 flex-col gap-0.5">
         <span
           id={titleId}
-          className="font-semibold leading-tight tracking-tight text-nx-on-fill"
+          className="line-clamp-2 font-semibold leading-tight tracking-tight text-nx-ink"
           style={{ fontSize: dims.nameSize }}
         >
           {name}
@@ -214,29 +218,18 @@ export function HubModuleTile({
         {accessibleItemCount > 0 && !isLocked && (
           <span
             id={metaId}
-            className="font-medium tabular-nums"
-            style={{
-              fontSize: dims.countSize,
-              color: "color-mix(in srgb, var(--nx-on-fill) 74%, transparent)",
-            }}
+            className="truncate font-medium tabular-nums text-nx-ink-2"
+            style={{ fontSize: dims.countSize }}
           >
             {itemLabel}
           </span>
         )}
       </div>
 
-      {/* Locked overlay — the shared scrim, clipped by the tile's own rounding */}
+      {/* Locked overlay — high-contrast Nexus matte veil */}
       {isLocked && (
-        <div className="pointer-events-none absolute inset-0 z-10 flex flex-col items-center justify-center gap-2 rounded-nx-lg bg-scrim text-nx-on-fill">
-          <div
-            className="flex items-center justify-center rounded-full"
-            style={{
-              width: 38,
-              height: 38,
-              background: CHIP_FILL,
-              border: `1px solid ${CHIP_BORDER}`,
-            }}
-          >
+        <div className="pointer-events-none absolute inset-0 z-10 flex flex-col items-center justify-center gap-2 rounded-nx-lg bg-nx-surface/85 backdrop-blur-[2px] text-nx-ink">
+          <div className="flex h-[38px] w-[38px] items-center justify-center rounded-full border border-nx-line-hi bg-nx-raised text-nx-ink">
             <Lock size={18} strokeWidth={1.75} aria-hidden="true" />
           </div>
           <div className="rounded-full bg-warning px-2.5 py-1 text-[10.5px] font-semibold tracking-wide text-warning-foreground">

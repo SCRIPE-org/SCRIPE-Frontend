@@ -3,7 +3,8 @@
 import React from "react";
 import { Search, Home, ChevronDown, Lock } from "lucide-react";
 import { startRoutingProgress } from "@core/ui/routing-progress-bar";
-import { useAppStore } from "@core/store/useAppStore";
+import { useAdminContext } from "@core/hooks/useAdminContext";
+import { Button } from "@core/ui/button";
 import {
   PanelMenuIcon,
   PanelMenuIconRTL,
@@ -119,7 +120,7 @@ export function TopbarBreadcrumbs({
   const { language, t } = useI18n();
   const { canAccessPage } = usePermissions();
   const router = useRouter();
-  const tenantCode = useAppStore((s) => s.tenantCode);
+  const { isPlatform: isPlatformContext } = useAdminContext();
 
   const sortedWorkspaces = React.useMemo(() => {
     return [...workspaceGroups].sort((a, b) => a.workspaceSortOrder - b.workspaceSortOrder);
@@ -171,7 +172,6 @@ export function TopbarBreadcrumbs({
             type="button"
             aria-current={isWorkspaceCurrent ? "page" : undefined}
             onClick={() => {
-              const isPlatformContext = tenantCode === null;
               const homeRoute = activeWorkspace
                 ? isPlatformContext
                   ? (activeWorkspace.platformHomeRoute ?? activeWorkspace.homeRoute ?? "/")
@@ -476,48 +476,59 @@ export function TopbarPanelToggle({
 export interface TopbarContextPillProps {
   isModuleMode: boolean;
   tenantName: string;
+  canSwitchContext?: boolean;
+  switchAriaLabel?: string;
+  onOpenSwitcher?: () => void;
 }
 
-export function TopbarContextPill({ isModuleMode, tenantName }: TopbarContextPillProps) {
+export function TopbarContextPill({
+  isModuleMode,
+  tenantName,
+  canSwitchContext = false,
+  switchAriaLabel,
+  onOpenSwitcher,
+}: TopbarContextPillProps) {
+  const pillClasses = cn(
+    "hidden items-center gap-1.5 rounded-full border px-3 py-1 text-[11px] font-semibold tracking-wide whitespace-nowrap shrink-0 sm:inline-flex",
+    CONTROL_MOTION,
+    isModuleMode
+      ? "border-[color:color-mix(in_srgb,var(--nx-accent)_30%,transparent)] bg-nx-accent-wash text-nx-accent"
+      : "border-nx-line bg-transparent text-nx-ink-2"
+  );
+
+  const dot = (
+    <span
+      aria-hidden="true"
+      className="h-1.5 w-1.5 shrink-0 rounded-full bg-info"
+    />
+  );
+
+  if (canSwitchContext && onOpenSwitcher) {
+    return (
+      <Button
+        type="button"
+        variant="ghost"
+        size="sm"
+        onClick={onOpenSwitcher}
+        aria-label={switchAriaLabel ?? tenantName}
+        data-testid="topbar-tenant-switcher-trigger"
+        className={cn(
+          pillClasses,
+          "h-7 cursor-pointer hover:border-nx-line-hi hover:bg-nx-raised hover:text-nx-ink"
+        )}
+      >
+        {dot}
+        <span>{tenantName}</span>
+        <ChevronDown className="h-3 w-3 opacity-75" aria-hidden="true" />
+      </Button>
+    );
+  }
+
   return (
-    <div
-      className={cn(
-        "hidden items-center rounded-full duration-nx-standard sm:flex",
-        CONTROL_MOTION
-      )}
-      style={{
-        gap: 6,
-        padding: "4px 12px",
-        background: isModuleMode
-          ? "var(--nx-accent-wash, hsl(var(--primary) / 0.1))"
-          : "transparent",
-        border: `1px solid ${
-          isModuleMode
-            ? "color-mix(in oklch, var(--nx-accent, hsl(var(--primary))) 30%, transparent)"
-            : "var(--nx-line, hsl(var(--border)))"
-        }`,
-        fontSize: 11,
-        fontWeight: 600,
-        color: isModuleMode
-          ? "var(--nx-accent, hsl(var(--primary)))"
-          : "var(--nx-ink-2, hsl(var(--muted-foreground)))",
-        cursor: "default",
-        flexShrink: 0,
-        letterSpacing: "0.4px",
-        whiteSpace: "nowrap",
-      }}
-    >
+    <div className={pillClasses} data-testid="topbar-context-pill">
       {/* Live-context dot — the logo's cyan ("now"), no glow: the primary
           rail's active root item owns the one glow on this screen */}
-      <div
-        style={{
-          width: 6,
-          height: 6,
-          borderRadius: "50%",
-          background: "var(--nx-secondary, hsl(var(--info)))",
-          flexShrink: 0,
-        }}
-      />
+      {dot}
       <span>{tenantName}</span>
     </div>
   );

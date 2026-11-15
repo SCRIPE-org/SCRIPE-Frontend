@@ -120,9 +120,9 @@ export function ProfileRailLayout({
     academies[0];
 
   return (
-    <div className="flex flex-col lg:flex-row gap-6 items-start">
+    <div className="flex flex-col lg:flex-row gap-6 items-start min-w-0 w-full">
       {/* Sticky Start Rail */}
-      <aside className="w-full lg:w-72 shrink-0 space-y-4 lg:sticky lg:top-18">
+      <aside className="w-full lg:w-64 xl:w-72 shrink-0 space-y-4 lg:sticky lg:top-18 min-w-0">
         {/* Executive Identity Card */}
         <Card className="rounded-xl border border-nx-line bg-nx-surface p-4 hover:border-nx-line-hi transition-colors">
           <div className="flex items-center gap-3.5">

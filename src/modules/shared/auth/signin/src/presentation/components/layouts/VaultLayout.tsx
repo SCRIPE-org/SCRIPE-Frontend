@@ -13,7 +13,11 @@ import type { LoginLayoutProps } from "./layout-types";
 import { VaultBackground } from "./VaultBackground";
 import { VaultMonument } from "./VaultMonument";
 
-const PRODUCT_FAMILY = ["Venue", "Academy", "Football Intelligence"];
+const PRODUCT_FAMILY_KEYS = [
+  "auth.branding.pillarVenue",
+  "auth.branding.pillarAcademy",
+  "auth.branding.pillarFootball",
+] as const;
 
 /**
  * Renders the showroom split layout for sign-in and authentication workflows.
@@ -127,10 +131,10 @@ export function VaultLayout({
               className="flex flex-wrap items-center gap-3 text-[11px] font-medium uppercase tracking-[0.16em]"
               style={{ ...monoStyle, color: "var(--sx-text-mute)" }}
             >
-              {PRODUCT_FAMILY.map((name, i) => (
-                <span key={name} className="flex items-center gap-3">
+              {PRODUCT_FAMILY_KEYS.map((key, i) => (
+                <span key={key} className="flex items-center gap-3">
                   {i > 0 && <span style={{ color: "var(--sx-accent-text)" }}>·</span>}
-                  {name}
+                  {t(key)}
                 </span>
               ))}
             </div>

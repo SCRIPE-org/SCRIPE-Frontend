@@ -59,7 +59,6 @@ interface WelcomeScreenProps {
  */
 export function WelcomeScreen({
   content,
-  isLoading,
   isError,
   onRetry,
   onGetStarted,
@@ -70,7 +69,7 @@ export function WelcomeScreen({
   const { container, item } = getWelcomeVariants(shouldReduceMotion);
 
   // Resolve copy: live content first, localized fallbacks so the screen never
-  // blanks out and the empty state is still a confident headline.
+  // blanks out or stalls behind a skeleton when the content endpoint is slow/offline.
   const headline = content?.headline?.trim() || t("signup.welcome.headlineFallback");
   const subcopy = content?.subcopy?.trim() || t("signup.welcome.subcopyFallback");
   const ctaLabel = content?.ctaLabel?.trim() || t("signup.welcome.ctaFallback");
@@ -80,10 +79,6 @@ export function WelcomeScreen({
     ((content.trustMarks?.length ?? 0) > 0 ||
       (content.customerLogos?.length ?? 0) > 0 ||
       (content.trustedByCount > 0 && content.trustedByLabel.trim() !== ""));
-
-  if (isLoading) {
-    return <WelcomeSkeleton />;
-  }
 
   return (
     <div className="mx-auto w-full max-w-6xl flex-1 px-5 py-14 sm:px-8 sm:py-20 lg:py-24">
@@ -195,55 +190,6 @@ export function WelcomeScreen({
           </motion.aside>
         )}
       </motion.div>
-    </div>
-  );
-}
-
-// ─── Skeleton — calm loading state (not a spinner) ──────────────────────────
-
-function WelcomeSkeleton() {
-  const { tokens } = useSignupTheme();
-  const block = (cls: string, opacity = 1) => (
-    <div
-      className={`animate-pulse rounded-lg motion-reduce:animate-none ${cls}`}
-      style={{ background: tokens.surfaceRaised, opacity }}
-    />
-  );
-
-  return (
-    <div className="mx-auto w-full max-w-6xl flex-1 px-5 py-14 sm:px-8 sm:py-20 lg:py-24">
-      <div className="grid items-center gap-12 lg:grid-cols-[minmax(0,1.15fr)_minmax(0,0.85fr)] lg:gap-16">
-        <div className="flex flex-col gap-7">
-          <div className="space-y-3">
-            {block("h-10 w-11/12")}
-            {block("h-10 w-3/4")}
-          </div>
-          <div className="space-y-2.5">
-            {block("h-4 w-full", 0.6)}
-            {block("h-4 w-5/6", 0.6)}
-          </div>
-          {block("h-12 w-44", 0.8)}
-        </div>
-        <div
-          className="flex flex-col gap-6 rounded-2xl p-7 sm:p-8"
-          style={{ background: tokens.surfaceCard, border: tokens.borderCard }}
-        >
-          {block("h-4 w-2/3", 0.5)}
-          <div className="flex flex-wrap gap-4">
-            {block("h-4 w-24", 0.45)}
-            {block("h-4 w-20", 0.45)}
-            {block("h-4 w-16", 0.45)}
-          </div>
-          <div
-            className="flex flex-wrap gap-6 border-t pt-6"
-            style={{ borderColor: tokens.border }}
-          >
-            {block("h-5 w-20", 0.4)}
-            {block("h-5 w-24", 0.4)}
-            {block("h-5 w-16", 0.4)}
-          </div>
-        </div>
-      </div>
     </div>
   );
 }

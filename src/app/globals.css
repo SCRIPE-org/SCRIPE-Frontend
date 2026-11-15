@@ -8,15 +8,18 @@
 /* ============================================================================
    SILEO TOAST SYSTEM — NEXUS DESIGN SYSTEM INTEGRATION & OVERRIDES
    ============================================================================ */
-:root {
-  /* Wire Sileo state colors to SCRIPE Nexus status tokens */
+/* Override Sileo runtime __insertCSS :root defaults via html:root & viewport specificity */
+html:root,
+[data-sileo-viewport] {
+  /* Wire Sileo state colors to SCRIPE Nexus status tokens (WCAG AA/AAA per surface) */
   --sileo-state-success: var(--nx-success);
   --sileo-state-error: var(--nx-danger);
   --sileo-state-warning: var(--nx-warning);
   --sileo-state-info: var(--nx-info);
   --sileo-state-action: var(--nx-accent);
   --sileo-state-loading: var(--nx-ink-3);
-  --sileo-width: 360px;
+  --sileo-width: 350px;
+  --sileo-duration: 600ms;
 }
 
 /* Elevate above modals (z-modal is 1000, so 1100 ensures toasts sit above) */
@@ -25,73 +28,149 @@
   font-family: inherit;
 }
 
-/* Ensure toast elevation shadow matches Nexus popover depth with organic gooey hairline */
+/* Crisp matte slab boundary + elevation depth tracking active polarity & high contrast */
 [data-sileo-toast] {
-  filter: drop-shadow(0 0 1px rgba(0, 0, 0, 0.2)) drop-shadow(0 8px 24px rgba(0, 0, 0, 0.1)) drop-shadow(0 2px 6px rgba(0, 0, 0, 0.04));
-  transition: filter var(--nx-t-micro, 140ms) ease;
+  filter: drop-shadow(0 0 1px rgba(13, 13, 14, 0.24))
+    drop-shadow(0 8px 24px rgba(13, 13, 14, 0.1))
+    drop-shadow(0 2px 6px rgba(13, 13, 14, 0.05));
 }
 
 [data-sileo-toast]:hover {
-  filter: drop-shadow(0 0 1px rgba(0, 0, 0, 0.3)) drop-shadow(0 14px 32px rgba(0, 0, 0, 0.16)) drop-shadow(0 4px 10px rgba(0, 0, 0, 0.08));
+  filter: drop-shadow(0 0 1px rgba(13, 13, 14, 0.34))
+    drop-shadow(0 14px 32px rgba(13, 13, 14, 0.14))
+    drop-shadow(0 4px 10px rgba(13, 13, 14, 0.08));
 }
 
 .dark [data-sileo-toast] {
-  filter: drop-shadow(0 0 1px rgba(255, 255, 255, 0.16)) drop-shadow(0 12px 32px rgba(0, 0, 0, 0.8)) drop-shadow(0 2px 6px rgba(0, 0, 0, 0.5));
+  filter: drop-shadow(0 0 1px rgba(255, 255, 255, 0.18))
+    drop-shadow(0 12px 32px rgba(0, 0, 0, 0.78))
+    drop-shadow(0 2px 6px rgba(0, 0, 0, 0.5));
 }
 
 .dark [data-sileo-toast]:hover {
-  filter: drop-shadow(0 0 1px rgba(255, 255, 255, 0.28)) drop-shadow(0 16px 40px rgba(0, 0, 0, 0.9)) drop-shadow(0 4px 12px rgba(0, 0, 0, 0.6));
+  filter: drop-shadow(0 0 1px rgba(255, 255, 255, 0.28))
+    drop-shadow(0 16px 40px rgba(0, 0, 0, 0.88))
+    drop-shadow(0 4px 12px rgba(0, 0, 0, 0.6));
+}
+
+html:root[data-high-contrast="true"] [data-sileo-toast] {
+  filter: drop-shadow(0 0 1.25px var(--nx-line-hi))
+    drop-shadow(0 10px 28px rgba(0, 0, 0, 0.25));
+}
+
+/* Header pill spacing & truncation guard (keep innerRef unconstrained so Sileo measures full intrinsic pill width) */
+[data-sileo-viewport] [data-sileo-header] {
+  padding: 0.5rem 0.75rem;
+}
+
+/* Badge semantic ring — blends cleanly with state hue instead of neutral gray border */
+[data-sileo-viewport] [data-sileo-badge][data-state] {
+  box-shadow: inset 0 0 0 1px color-mix(in oklch, var(--_c) 26%, transparent);
 }
 
 /* Text hierarchy & Contrast Invariants: SCRIPE Nexus Design System */
-[data-sileo-viewport] [data-sileo-title] {
-  font-family: inherit;
-  font-size: 13.5px;
-  font-weight: 600;
-  letter-spacing: -0.015em;
+:where([data-sileo-viewport]) {
+  color: var(--nx-ink);
 }
 
-[data-sileo-viewport] [data-sileo-description],
-[data-sileo-viewport][data-theme=dark] [data-sileo-description],
-[data-sileo-viewport][data-theme=light] [data-sileo-description] {
+:where([data-sileo-viewport] [data-sileo-title]) {
+  color: var(--sileo-tone, var(--nx-ink));
+}
+
+[data-sileo-viewport] [data-sileo-title] {
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: -0.015em;
+  padding-inline-end: 0.25rem;
+  max-width: calc(var(--sileo-width, 350px) - 4.25rem);
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Zero-specificity color default allows caller custom `styles.description` to override cleanly */
+:where([data-sileo-viewport] [data-sileo-description]),
+:where([data-sileo-viewport][data-theme="dark"] [data-sileo-description]),
+:where([data-sileo-viewport][data-theme="light"] [data-sileo-description]) {
+  color: var(--nx-ink-2);
+}
+
+[data-sileo-viewport] [data-sileo-description] {
   font-family: inherit;
   font-size: 12.5px;
   line-height: 1.45;
-  color: var(--nx-ink-2) !important;
+  text-align: start;
+  overflow-wrap: anywhere;
+  word-break: break-word;
 }
-/* Button styling aligned with Nexus control specs */
+
+/* Button styling aligned with Sileo semantic tint + Nexus control geometry & borders */
+:where([data-sileo-viewport] [data-sileo-button]) {
+  border: 1px solid var(--nx-line-hi);
+  background-color: var(--sileo-btn-bg, var(--nx-raised));
+  color: var(--sileo-btn-color, var(--nx-ink));
+}
+
+:where([data-sileo-viewport] [data-sileo-button][data-state]) {
+  border-color: color-mix(in oklch, var(--_c) 28%, transparent);
+}
+
 [data-sileo-viewport] [data-sileo-button] {
   font-family: inherit;
   font-size: 12px;
   font-weight: 500;
+  height: auto;
+  min-height: 1.875rem;
+  padding: 0.3125rem 0.75rem;
+  margin-top: 0.625rem;
+  text-decoration: none;
   border-radius: var(--nx-radius-control, 8px);
-  border: 1px solid var(--nx-line-hi);
-  background-color: var(--nx-raised);
-  color: var(--nx-ink);
-  transition: all var(--nx-t-micro, 140ms) var(--nx-ease-enter, ease);
+  transition: background-color var(--nx-t-micro, 140ms) var(--nx-ease-enter, ease),
+    border-color var(--nx-t-micro, 140ms) var(--nx-ease-enter, ease);
 }
 
-[data-sileo-viewport] [data-sileo-button]:hover {
-  background-color: var(--nx-hover);
+:where([data-sileo-viewport] [data-sileo-button]:hover) {
+  background-color: var(--sileo-btn-bg-hover, color-mix(in srgb, var(--nx-raised) 88%, var(--nx-ink)));
   border-color: var(--nx-ink-3);
 }
 
-/* RTL / Bilingual Support */
+:where([data-sileo-viewport] [data-sileo-button][data-state]:hover) {
+  border-color: color-mix(in oklch, var(--_c) 45%, transparent);
+}
+
+/* Pre-expansion & Mid-Collapse Clip Lock — guarantees content never paints outside SVG card */
+[data-sileo-viewport] [data-sileo-content] {
+  overflow: hidden;
+  opacity: 0;
+  pointer-events: none;
+}
+
+[data-sileo-viewport] [data-sileo-content][data-edge="bottom"]:not([data-visible="true"]) {
+  clip-path: inset(0 0 100% 0);
+}
+
+[data-sileo-viewport] [data-sileo-content][data-edge="top"]:not([data-visible="true"]) {
+  clip-path: inset(100% 0 0 0);
+}
+
+[data-sileo-viewport] [data-sileo-content][data-visible="true"] {
+  opacity: 1;
+  clip-path: inset(0 0 0 0);
+  pointer-events: auto;
+}
+
+/* RTL / Bilingual Support (direction: rtl flows flex naturally without row-reverse double-flip) */
 [dir="rtl"] [data-sileo-viewport] {
   direction: rtl;
 }
 
 [dir="rtl"] [data-sileo-description] {
-  text-align: right;
+  text-align: start;
   direction: rtl;
 }
 
 [dir="rtl"] [data-sileo-header] {
   direction: rtl;
-}
-
-[dir="rtl"] [data-sileo-header-inner] {
-  flex-direction: row-reverse;
 }
 
 [dir="rtl"] [data-sileo-button] {
@@ -2947,6 +3026,138 @@ html[data-reduced-motion="true"][data-animation="high"] * {
   transition: none !important;
 }
 
+/* ============================================================================
+   SILEO MOTION & GOOEY-FILTER SYNCHRONIZATION (MUST FOLLOW [data-animation] / REDUCED-MOTION)
+   ----------------------------------------------------------------------------
+   Global `:root[data-animation="minimal|moderate|high"] *` rules force a
+   uniform transition-duration on descendants, which breaks Sileo's synced
+   600ms CSS/Framer-Motion spring and slows the 60ms collapse fade so body
+   content stays floating after the SVG gooey card shrinks. Restore synced
+   timings here when motion is active, and snap SVG rect geometry cleanly when
+   reduced-motion or data-animation="none" is enabled.
+   ============================================================================ */
+@media (prefers-reduced-motion: no-preference) {
+  html:not([data-reduced-motion="true"]):not([data-animation="none"])
+    [data-sileo-viewport]
+    :is(
+      [data-sileo-svg],
+      [data-sileo-pill],
+      [data-sileo-body],
+      [data-sileo-canvas],
+      [data-sileo-header-stack],
+      [data-sileo-header-inner],
+      [data-sileo-description]
+    ) {
+    transition-property: none !important;
+    transition-duration: 0ms !important;
+    transition-delay: 0ms !important;
+  }
+
+  html:not([data-reduced-motion="true"]):not([data-animation="none"])
+    [data-sileo-viewport]
+    [data-sileo-toast][data-ready="true"] {
+    transition-property: transform, opacity, margin-bottom, margin-top, height, filter !important;
+    transition-duration:
+      calc(var(--sileo-duration, 600ms) * 0.66),
+      calc(var(--sileo-duration, 600ms) * 0.66),
+      calc(var(--sileo-duration, 600ms) * 0.66),
+      calc(var(--sileo-duration, 600ms) * 0.66),
+      var(--sileo-duration, 600ms),
+      var(--nx-t-micro, 140ms) !important;
+    transition-timing-function:
+      var(--sileo-spring-easing),
+      var(--sileo-spring-easing),
+      var(--sileo-spring-easing),
+      var(--sileo-spring-easing),
+      var(--sileo-spring-easing),
+      ease !important;
+    transition-delay: 0ms !important;
+  }
+
+  html:not([data-reduced-motion="true"]):not([data-animation="none"])
+    [data-sileo-viewport]
+    [data-sileo-toast][data-ready="true"]
+    [data-sileo-header] {
+    transition-property: transform, left, max-width !important;
+    transition-duration: var(--sileo-duration, 600ms) !important;
+    transition-timing-function: var(--sileo-spring-easing) !important;
+    transition-delay: 0ms !important;
+  }
+
+  html:not([data-reduced-motion="true"]):not([data-animation="none"])
+    [data-sileo-viewport]
+    [data-sileo-toast][data-ready="true"]
+    [data-sileo-content] {
+    transition-property: opacity, clip-path !important;
+    transition-duration: 55ms, 80ms !important;
+    transition-timing-function: ease-out, ease-out !important;
+    transition-delay: 0ms, 0ms !important;
+  }
+
+  html:not([data-reduced-motion="true"]):not([data-animation="none"])
+    [data-sileo-viewport]
+    [data-sileo-toast][data-ready="true"]
+    [data-sileo-content][data-visible="true"] {
+    transition-property: opacity, clip-path !important;
+    transition-duration: 240ms, 300ms !important;
+    transition-timing-function: cubic-bezier(0.22, 1, 0.36, 1), cubic-bezier(0.22, 1, 0.36, 1) !important;
+    transition-delay: 250ms, 220ms !important;
+  }
+
+  html:not([data-reduced-motion="true"]):not([data-animation="none"])
+    [data-sileo-viewport]
+    [data-sileo-button] {
+    transition-property: background-color, border-color, color !important;
+    transition-duration: var(--nx-t-micro, 140ms) !important;
+    transition-timing-function: var(--nx-ease-enter, ease) !important;
+    transition-delay: 0ms !important;
+  }
+}
+
+:is(html[data-reduced-motion="true"], html[data-animation="none"])
+  [data-sileo-viewport]
+  [data-sileo-toast][data-expanded="true"]
+  [data-sileo-body] {
+  height: calc(100% - var(--sileo-height, 40px)) !important;
+  opacity: 1 !important;
+}
+
+:is(html[data-reduced-motion="true"], html[data-animation="none"])
+  [data-sileo-viewport]
+  [data-sileo-toast][data-expanded="false"]
+  [data-sileo-body] {
+  height: 0px !important;
+  opacity: 0 !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  [data-sileo-viewport],
+  [data-sileo-viewport] *,
+  [data-sileo-viewport] *::before,
+  [data-sileo-viewport] *::after,
+  html [data-sileo-viewport] [data-sileo-toast][data-ready="true"],
+  html [data-sileo-viewport] [data-sileo-toast][data-ready="true"] [data-sileo-header],
+  html [data-sileo-viewport] [data-sileo-toast][data-ready="true"] [data-sileo-content],
+  html [data-sileo-viewport] [data-sileo-toast][data-ready="true"] [data-sileo-content][data-visible="true"],
+  html [data-sileo-viewport] [data-sileo-button] {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    animation-delay: 0ms !important;
+    transition-duration: 0.01ms !important;
+    transition-delay: 0ms !important;
+  }
+
+  [data-sileo-viewport] [data-sileo-toast][data-expanded="true"] [data-sileo-body] {
+    height: calc(100% - var(--sileo-height, 40px)) !important;
+    opacity: 1 !important;
+  }
+
+  [data-sileo-viewport] [data-sileo-toast][data-expanded="false"] [data-sileo-body] {
+    height: 0px !important;
+    opacity: 0 !important;
+  }
+}
+
 /* High contrast — token-level overrides ensuring >= 7:1 primary/secondary ink
    and >= 4.5:1–6.5:1 structural borders across both Dark and Light modes.
    Selector specificity >= (0,3,1) guarantees High Contrast always beats
@@ -3590,10 +3801,21 @@ html[data-tenant-banner] aside.navigation-main-sidebar {
   background: var(--sx-cta-shine);
   pointer-events: none;
 }
-.vault-cta button[type="submit"]:disabled {
-  opacity: 0.55;
-  transform: none;
-  box-shadow: none;
+.vault-cta button[type="submit"]:disabled,
+.vault-cta .sx-cta-btn:disabled {
+  background: var(--nx-raised) !important;
+  color: var(--nx-ink-2) !important;
+  border: 1px solid var(--nx-line-hi) !important;
+  opacity: 1 !important;
+  transform: none !important;
+  box-shadow: none !important;
+  cursor: not-allowed !important;
+}
+.vault-stage .vault-cta button[type="submit"]:disabled::before,
+.vault-stage .vault-cta .sx-cta-btn:disabled::before,
+.vault-cta button[type="submit"]:disabled::before,
+.vault-cta .sx-cta-btn:disabled::before {
+  display: none;
 }
 
 /* ═══ AUTH RESPONSIVE — 320px–1440px ═══ */
@@ -3891,13 +4113,33 @@ html[data-tenant-banner] aside.navigation-main-sidebar {
 
 /* Disabled button state overrides for auth components */
 .vault-stage button:disabled,
-.login-page button:disabled {
-  background: var(--sx-divider, rgba(255, 255, 255, 0.08)) !important;
-  color: var(--sx-text-faint, rgba(255, 255, 255, 0.4)) !important;
+.vault-stage .vault-cta button[type="submit"]:disabled,
+.vault-stage .vault-cta .sx-cta-btn:disabled,
+.login-page button:disabled,
+.login-page .login-button:disabled {
+  background: var(--nx-raised) !important;
+  color: var(--nx-ink-2) !important;
+  border: 1px solid var(--nx-line-hi) !important;
   box-shadow: none !important;
-  opacity: 0.6 !important;
+  opacity: 1 !important;
   cursor: not-allowed !important;
   transform: none !important;
+}
+.vault-stage button:disabled span,
+.vault-stage button:disabled svg,
+.vault-stage .vault-cta button[type="submit"]:disabled span,
+.vault-stage .vault-cta button[type="submit"]:disabled svg,
+.vault-stage .vault-cta .sx-cta-btn:disabled span,
+.vault-stage .vault-cta .sx-cta-btn:disabled svg,
+.vault-cta button[type="submit"]:disabled span,
+.vault-cta button[type="submit"]:disabled svg,
+.vault-cta .sx-cta-btn:disabled span,
+.vault-cta .sx-cta-btn:disabled svg,
+.login-page button:disabled span,
+.login-page button:disabled svg,
+.login-page .login-button:disabled span,
+.login-page .login-button:disabled svg {
+  color: var(--nx-ink-2) !important;
 }
 
 /* ========================================
@@ -4438,27 +4680,27 @@ html[data-tenant-banner] aside.navigation-main-sidebar {
       element explicitly applies .bg-nx-accent (not -fill / -wash); those
       specific elements receive white text (#ffffff) in Light mode.
    ============================================================================ */
-.bg-nx-accent-fill,
-.bg-nx-accent-fill.text-nx-on-fill,
-button.bg-nx-accent-fill,
-a.bg-nx-accent-fill,
-.bg-nx-accent-fill .text-nx-on-fill,
-.bg-nx-accent-fill span,
-.bg-nx-accent-fill svg {
+.bg-nx-accent-fill:not(:disabled):not([aria-disabled="true"]),
+.bg-nx-accent-fill:not(:disabled):not([aria-disabled="true"]).text-nx-on-fill,
+button.bg-nx-accent-fill:not(:disabled):not([aria-disabled="true"]),
+a.bg-nx-accent-fill:not([aria-disabled="true"]),
+.bg-nx-accent-fill:not(:disabled):not([aria-disabled="true"]) .text-nx-on-fill,
+.bg-nx-accent-fill:not(:disabled):not([aria-disabled="true"]) span,
+.bg-nx-accent-fill:not(:disabled):not([aria-disabled="true"]) svg {
   --nx-on-fill: var(--scripe-accent-fg, #0b0d10);
   color: var(--nx-on-fill);
 }
-:root:not(.dark) .bg-nx-accent:not(.bg-nx-accent-fill):not(.bg-nx-accent-wash).text-nx-on-fill,
-:root:not(.dark) button.bg-nx-accent:not(.bg-nx-accent-fill):not(.bg-nx-accent-wash),
-:root:not(.dark) a.bg-nx-accent:not(.bg-nx-accent-fill):not(.bg-nx-accent-wash) {
+:root:not(.dark) .bg-nx-accent:not(.bg-nx-accent-fill):not(.bg-nx-accent-wash):not(:disabled):not([aria-disabled="true"]).text-nx-on-fill,
+:root:not(.dark) button.bg-nx-accent:not(.bg-nx-accent-fill):not(.bg-nx-accent-wash):not(:disabled):not([aria-disabled="true"]),
+:root:not(.dark) a.bg-nx-accent:not(.bg-nx-accent-fill):not(.bg-nx-accent-wash):not([aria-disabled="true"]) {
   --nx-on-fill: #ffffff;
   color: #ffffff !important;
 }
-:root:not(.dark) .bg-nx-accent:not(.bg-nx-accent-fill):not(.bg-nx-accent-wash) .text-nx-on-fill,
-:root:not(.dark) button.bg-nx-accent:not(.bg-nx-accent-fill):not(.bg-nx-accent-wash) span,
-:root:not(.dark) button.bg-nx-accent:not(.bg-nx-accent-fill):not(.bg-nx-accent-wash) svg,
-:root:not(.dark) a.bg-nx-accent:not(.bg-nx-accent-fill):not(.bg-nx-accent-wash) span,
-:root:not(.dark) a.bg-nx-accent:not(.bg-nx-accent-fill):not(.bg-nx-accent-wash) svg {
+:root:not(.dark) .bg-nx-accent:not(.bg-nx-accent-fill):not(.bg-nx-accent-wash):not(:disabled):not([aria-disabled="true"]) .text-nx-on-fill,
+:root:not(.dark) button.bg-nx-accent:not(.bg-nx-accent-fill):not(.bg-nx-accent-wash):not(:disabled):not([aria-disabled="true"]) span,
+:root:not(.dark) button.bg-nx-accent:not(.bg-nx-accent-fill):not(.bg-nx-accent-wash):not(:disabled):not([aria-disabled="true"]) svg,
+:root:not(.dark) a.bg-nx-accent:not(.bg-nx-accent-fill):not(.bg-nx-accent-wash):not([aria-disabled="true"]) span,
+:root:not(.dark) a.bg-nx-accent:not(.bg-nx-accent-fill):not(.bg-nx-accent-wash):not([aria-disabled="true"]) svg {
   color: #ffffff !important;
 }
 

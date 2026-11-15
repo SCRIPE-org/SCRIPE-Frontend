@@ -29,6 +29,7 @@ export interface CrmShellTopToolbarProps {
 
 export function CrmShellTopToolbar({
   t,
+  isRtl,
   baseCurrency,
   onBaseCurrencyChange,
   onOpenSmartGuide,
@@ -40,28 +41,47 @@ export function CrmShellTopToolbar({
   onCreateLead,
 }: CrmShellTopToolbarProps) {
   const router = useRouter();
+  const selectedCurrency = CRM_CURRENCY_OPTIONS.find((curr) => curr.code === baseCurrency);
 
   return (
-    <div className="flex flex-wrap items-center gap-1 shrink-0 ms-auto">
+    <div
+      className="flex flex-wrap items-center gap-1.5 shrink-0 ms-auto max-w-full"
+      dir={isRtl ? "rtl" : "ltr"}
+    >
       <div
-        className="flex items-center gap-1 rounded-nx-md border border-nx-line bg-nx-surface px-1.5 py-0.5 shrink-0 w-auto min-w-[140px]"
+        className="flex items-center gap-1.5 rounded-nx-md border border-nx-line bg-nx-surface px-2.5 py-0.5 shrink-0 w-auto min-w-[8.5rem]"
         title={t("crm.toolbar.currencyTooltip")}
       >
         <Coins className="size-3 text-nx-accent shrink-0" />
-        <span className="text-[10px] font-bold uppercase tracking-wider text-nx-ink-3 hidden 2xl:inline">
+        <span className="text-[10px] font-bold uppercase tracking-wider text-nx-ink-3 hidden 2xl:inline whitespace-nowrap">
           {t("crm.toolbar.currencyLabel")}
         </span>
-        <Select value={baseCurrency} onValueChange={onBaseCurrencyChange}>
+        <Select dir={isRtl ? "rtl" : "ltr"} value={baseCurrency} onValueChange={onBaseCurrencyChange}>
           <SelectTrigger
             data-testid="crm-global-currency-select"
-            className="h-6 min-w-[82px] w-auto border-0 bg-transparent px-1 text-[11px] font-mono font-bold text-nx-ink shadow-none focus:ring-0"
+            aria-label={t("crm.toolbar.currencyTooltip")}
+            className="h-6 w-auto min-w-[7.25rem] shrink-0 gap-2 border-0 bg-transparent px-1.5 text-[11px] font-mono font-bold text-nx-ink shadow-none focus:ring-0 [&>span]:line-clamp-none [&>span]:overflow-visible [&>span]:whitespace-nowrap"
           >
-            <SelectValue />
+            <SelectValue placeholder={baseCurrency}>
+              <span dir="ltr" className="inline-flex items-center gap-1 whitespace-nowrap">
+                <span>{selectedCurrency?.code ?? baseCurrency}</span>
+                {selectedCurrency?.symbol ? (
+                  <span className="font-sans text-nx-ink-2">
+                    (<span dir="auto">{selectedCurrency.symbol}</span>)
+                  </span>
+                ) : null}
+              </span>
+            </SelectValue>
           </SelectTrigger>
           <SelectContent>
             {CRM_CURRENCY_OPTIONS.map((curr) => (
               <SelectItem key={curr.code} value={curr.code}>
-                {curr.code} ({curr.symbol})
+                <span dir="ltr" className="inline-flex items-center gap-1 whitespace-nowrap font-mono">
+                  <span>{curr.code}</span>
+                  <span className="font-sans text-nx-ink-2">
+                    (<span dir="auto">{curr.symbol}</span>)
+                  </span>
+                </span>
               </SelectItem>
             ))}
           </SelectContent>

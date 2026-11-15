@@ -21,10 +21,14 @@
  * placeholder needed.
  */
 
-import React from "react";
+import React, { useState } from "react";
 import { useI18n } from "@core/providers/i18n-provider";
 import { useWorkspace } from "@core/providers/workspace-provider";
 import { useSettings } from "@core/providers/settings-provider";
+import { usePermissions } from "@core/providers/permission-provider";
+import { useAdminContext } from "@core/hooks/useAdminContext";
+import { SYSTEM_PERMISSIONS } from "@core/common/types/permissions";
+import { TenantContextSwitcherDialog } from "@core/components/tenant-context";
 import { LanguageSwitcher, NxThemeSwitcher } from "@core/ui/layout/common";
 import { usePathname, useRouter } from "next/navigation";
 import { useAppStore } from "@core/store/useAppStore";
@@ -64,7 +68,14 @@ export function NexusTopbar({
   const pathname = usePathname();
   const router = useRouter();
   const user = useAppStore((s) => s.user);
-  const tenantCode = useAppStore((s) => s.tenantCode);
+  const { activeTenantName, isPlatform: isPlatformContext } = useAdminContext();
+  const { hasPermission } = usePermissions();
+  const [switcherOpen, setSwitcherOpen] = useState(false);
+
+  const canSwitchContext =
+    typeof hasPermission === "function" &&
+    (hasPermission(SYSTEM_PERMISSIONS.TENANTS_DRILL_DOWN) ||
+      hasPermission(SYSTEM_PERMISSIONS.IDENTITY_CONTEXT_SWITCH));
 
   const isRTL = direction === "rtl";
 
@@ -178,6 +189,7 @@ export function NexusTopbar({
 
   // ── Context pill text ────────────────────────────────────────────────────
   const tenantName =
+    activeTenantName ??
     (user as any)?.tenantName ??
     (user?.firstName
       ? `${user.firstName} ${user?.lastName ?? ""}`.trim()
@@ -205,7 +217,6 @@ export function NexusTopbar({
   // ── Home route — context-aware, backend-authoritative per workspace ───────────
   // Platform context (no tenant): use platformHomeRoute > homeRoute > "/"
   // Tenant context: use homeRoute > "/"
-  const isPlatformContext = tenantCode === null;
   const workspaceHomeRoute = isPlatformContext
     ? (activeWorkspace?.platformHomeRoute ?? activeWorkspace?.homeRoute ?? "/")
     : (activeWorkspace?.homeRoute ?? "/");
@@ -261,7 +272,13 @@ export function NexusTopbar({
 
       {/* Right-side controls */}
       <div className="flex shrink-0 items-center gap-1.5 sm:gap-2">
-        <TopbarContextPill isModuleMode={isModuleMode} tenantName={tenantName} />
+        <TopbarContextPill
+          isModuleMode={isModuleMode}
+          tenantName={tenantName}
+          canSwitchContext={canSwitchContext}
+          switchAriaLabel={t("contextGates.switcher.openSwitcher")}
+          onOpenSwitcher={() => setSwitcherOpen(true)}
+        />
 
         <TopbarSearchButton
           onOpenSearch={onOpenSearch}
@@ -283,6 +300,9 @@ export function NexusTopbar({
           <LanguageSwitcher buttonClassName="h-9 min-w-[36px] px-2 text-nx-ink-2 hover:text-nx-ink hover:bg-nx-raised rounded-nx-control transition-[color,background-color,border-color,box-shadow] duration-nx-micro motion-reduce:transition-none" />
         </div>
       </div>
+      {canSwitchContext && (
+        <TenantContextSwitcherDialog open={switcherOpen} onOpenChange={setSwitcherOpen} />
+      )}
     </header>
   );
 }

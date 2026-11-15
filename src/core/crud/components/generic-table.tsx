@@ -135,6 +135,23 @@ export interface Pagination {
   onPageChange: (page: number) => void;
   /** Optional callback when page size changes */
   onPageSizeChange?: (size: number) => void;
+  /** Optional selectable page sizes (defaults to [10, 25, 50, 100], always includes active pageSize) */
+  pageSizeOptions?: number[];
+}
+
+/**
+ * Resolves valid selectable page-size options while guaranteeing the active
+ * `pageSize` (for example `20` on Data Exchange Jobs) is always represented so
+ * the `<Select>` never falls back to a raw placeholder.
+ */
+function resolvePageSizeOptions(configuredOptions?: number[], activePageSize?: number): number[] {
+  const base =
+    configuredOptions && configuredOptions.length > 0 ? configuredOptions : [10, 25, 50, 100];
+  const merged = new Set(base.filter((size) => Number.isFinite(size) && size > 0));
+  if (typeof activePageSize === "number" && Number.isFinite(activePageSize) && activePageSize > 0) {
+    merged.add(activePageSize);
+  }
+  return Array.from(merged).sort((a, b) => a - b);
 }
 
 /**
@@ -931,7 +948,10 @@ function GenericTableInner<T extends Record<string, any>>({
                   <GenericSelect
                     type="single"
                     aria-label={t("table.perPage", { defaultValue: "Rows per page" })}
-                    options={[10, 25, 50, 100].map((size) => ({
+                    options={resolvePageSizeOptions(
+                      pagination.pageSizeOptions,
+                      pagination.pageSize
+                    ).map((size) => ({
                       value: String(size),
                       label: String(size),
                     }))}

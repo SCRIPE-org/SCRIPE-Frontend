@@ -203,7 +203,9 @@ export function MapRegionalSidebar({ summary, regionNodes = [] }: MapRegionalSid
               <span className="h-1.5 w-1.5 rounded-full bg-success" />
               <span>{t("platformCommandCenter.activity.apiRequests") || "API Requests"}</span>
             </span>
-            <span className="font-mono font-semibold text-nx-ink">{apiRequests}</span>
+            <span className="font-mono font-semibold text-nx-ink">
+              <span dir="ltr">{apiRequests}</span>
+            </span>
           </div>
 
           <div className="flex items-center justify-between">
@@ -227,7 +229,9 @@ export function MapRegionalSidebar({ summary, regionNodes = [] }: MapRegionalSid
               <span className="h-1.5 w-1.5 rounded-full bg-warning" />
               <span>{t("platformCommandCenter.activity.dataSyncRate") || "Data Sync Rate"}</span>
             </span>
-            <span className="font-mono font-semibold text-nx-ink">{dataSyncRate}</span>
+            <span className="font-mono font-semibold text-nx-ink">
+              <span dir="ltr">{dataSyncRate}</span>
+            </span>
           </div>
         </div>
       </div>

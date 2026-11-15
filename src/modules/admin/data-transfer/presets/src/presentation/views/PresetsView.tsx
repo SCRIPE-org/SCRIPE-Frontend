@@ -42,7 +42,14 @@ export function PresetsView(): React.ReactElement {
       onRetry={() => void vm.refetch()}
     />
   ) : (
-    <PresetsKpiHeader kpis={vm.kpis} />
+    <div className="mb-4 space-y-3">
+      <PresetsKpiHeader kpis={vm.kpis} />
+      <PresetsFilterToolbar
+        entityFilter={vm.entityFilter}
+        options={vm.entityFilterOptions}
+        onEntityFilterChange={vm.setEntityFilter}
+      />
+    </div>
   );
 
   const config: CrudConfig<DataExchangePreset> = {
@@ -69,13 +76,6 @@ export function PresetsView(): React.ReactElement {
             },
           },
         ],
-    toolbarContent: vm.isTenantRequired ? undefined : (
-      <PresetsFilterToolbar
-        entityFilter={vm.entityFilter}
-        options={vm.entityFilterOptions}
-        onEntityFilterChange={vm.setEntityFilter}
-      />
-    ),
     customHeaderContent: headerContent,
     getItemDisplayName: (preset: DataExchangePreset) => preset.name,
     getActions: (_v, tFn) =>

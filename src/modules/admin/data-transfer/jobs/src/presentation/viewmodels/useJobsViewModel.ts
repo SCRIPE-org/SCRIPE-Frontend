@@ -4,7 +4,7 @@ import { useCallback, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "@core/ui/sileo-toast";
 import { useI18n } from "@core/providers/i18n-provider";
-import { useAppStore } from "@core/store/useAppStore";
+import { useAdminContext } from "@core/hooks/useAdminContext";
 import { isTenantRequiredError } from "@core/data-exchange/domain/tenant-errors";
 import type { DataExchangeArtifactKind } from "@core/data-exchange/domain/types";
 import { getDataTransferContainer } from "../../../../di";
@@ -22,7 +22,7 @@ export type { JobsPaginationState, UseJobsViewModelReturn };
 /** Presentation ViewModel hook managing data transfer background jobs. */
 export function useJobsViewModel(): UseJobsViewModelReturn {
   const { t } = useI18n();
-  const tenantCode = useAppStore((s) => s.tenantCode);
+  const { activeTenantId } = useAdminContext();
   const queryClient = useQueryClient();
   const repo = getDataTransferContainer().jobsRepository;
   const catalog = useJobsEntityCatalog();
@@ -92,12 +92,13 @@ export function useJobsViewModel(): UseJobsViewModelReturn {
   const queryKey = [
     "data-transfer",
     "jobs",
-    tenantCode ?? "platform",
+    activeTenantId ?? "no-tenant",
     { page, pageSize, status: statusFilter, kind: kindFilter, search },
   ];
 
   const { data, isLoading, isError, error, refetch } = useQuery({
     queryKey,
+    enabled: Boolean(activeTenantId),
     queryFn: async ({ signal }) => {
       return repo.getJobs(
         {

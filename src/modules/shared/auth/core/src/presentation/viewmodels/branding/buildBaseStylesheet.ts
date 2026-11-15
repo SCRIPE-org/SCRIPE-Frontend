@@ -42,6 +42,14 @@ export function buildBaseStylesheet(): string {
   font-size: 0.875rem;
   transition: all 0.2s ease;
 }
+
+.login-page .login-button:disabled {
+  background-color: var(--nx-raised) !important;
+  color: var(--nx-ink-2) !important;
+  border: 1px solid var(--nx-line-hi) !important;
+  opacity: 1 !important;
+  cursor: not-allowed !important;
+}
 .login-page .login-button:hover {
   opacity: 0.9;
   filter: brightness(1.05);

@@ -32,10 +32,10 @@ export function ErgonomicsLiveStage({
       data-testid="ergonomics-live-stage"
       className="border border-nx-line bg-nx-surface hover:border-nx-line-hi transition-colors"
     >
-      <CardHeader className="pb-3 flex flex-row items-center justify-between">
-        <div>
+      <CardHeader className="pb-3 flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 min-w-0">
+        <div className="min-w-0">
           <div className="flex items-center gap-2">
-            <Layers className="h-4 w-4 text-nx-accent" style={{ minWidth: 16, minHeight: 16 }} />
+            <Layers className="h-4 w-4 text-nx-accent shrink-0" style={{ minWidth: 16, minHeight: 16 }} />
             <CardTitle className="text-sm font-bold text-nx-ink">
               {t("profile.preferences.liveStageTitle")}
             </CardTitle>
@@ -44,7 +44,7 @@ export function ErgonomicsLiveStage({
             {t("profile.preferences.liveStageDesc")}
           </CardDescription>
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2 min-w-0">
           <Badge variant="outline" className="text-[10px] font-mono border-nx-line bg-nx-raised text-nx-ink-2">
             {theme.toUpperCase()} &bull; {accentHue.toUpperCase()}
           </Badge>
@@ -72,7 +72,7 @@ export function ErgonomicsLiveStage({
             isCompact ? "p-3 space-y-2" : "p-5 space-y-3.5"
           }`}
         >
-          <div className="flex items-center justify-between">
+          <div className="flex flex-wrap items-center justify-between gap-2 min-w-0">
             <div className="flex items-center gap-2">
               <div className="h-7 w-7 rounded-lg bg-nx-accent-fill text-nx-on-fill flex items-center justify-center font-bold text-xs">
                 <Layers className="h-3.5 w-3.5" />

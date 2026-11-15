@@ -10,6 +10,9 @@ export const ar = {
     searchPlaceholder: "ابحث في الحقول المخصصة...",
     entityTypesLoadFailed: "تعذّر تحميل أنواع الكيانات. قد يكون حقل نوع الكيان غير متاح.",
     editLoadFailed: "تعذّر تحميل هذا الحقل المخصص للتعديل. يُرجى المحاولة مرة أخرى.",
+    loadFailedTitle: "تعذّر تحميل الحقول المخصصة",
+    loadFailedDescription: "تعذّر تحميل تعريفات الحقول المخصصة حالياً. يُرجى المحاولة مرة أخرى.",
+    retry: "إعادة المحاولة",
 
     // Field labels — shared between the table columns and the create/edit forms
     columns: {

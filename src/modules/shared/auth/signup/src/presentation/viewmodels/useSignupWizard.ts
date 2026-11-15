@@ -360,6 +360,7 @@ export function useSignupWizard(args?: UseSignupWizardArgs): SignupWizardViewMod
     queryKey: ["signup-welcome-content", language],
     queryFn: () => authContainer.signupRepository.getWelcomeContent(language),
     staleTime: 10 * 60 * 1000, // 10 min — welcome content is stable per session
+    retry: false,
   });
 
   // ── Pricing context — load early to lock the currency ──────────────────────
@@ -367,7 +368,7 @@ export function useSignupWizard(args?: UseSignupWizardArgs): SignupWizardViewMod
     queryKey: ["signup-pricing-context"],
     queryFn: () => authContainer.signupRepository.getPricingContext(),
     staleTime: 30 * 60 * 1000, // currency is country-locked per session
-    retry: 1,
+    retry: false,
   });
 
   useEffect(() => {

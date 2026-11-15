@@ -2,79 +2,27 @@
 
 import * as React from "react";
 import { Toaster as SileoBaseToaster } from "sileo";
-import { useTheme } from "next-themes";
+import { twMerge } from "tailwind-merge";
 import { useI18n } from "@core/providers/i18n-provider";
-import type { SileoAnyPosition, SileoPosition, SileoToasterProps } from "./types";
+import {
+  LOCKED_DARK_SILEO_STYLES,
+  LOCKED_LIGHT_SILEO_STYLES,
+  NEXUS_SILEO_STYLES,
+  resolveRtlPosition,
+  setActiveToasterOptions,
+} from "./sileo-config";
+import type { SileoAnyPosition, SileoToasterProps } from "./types";
 
-/**
- * Mirror position for right-to-left layout when auto-mirroring is enabled.
- * Supports physical ("top-right", "top-left", etc.) and logical ("top-end", "top-start", etc.) positions.
- */
-export function resolveRtlPosition(
-  position: SileoPosition | "top-end" | "top-start" | "bottom-end" | "bottom-start" | string,
-  direction: "ltr" | "rtl",
-  autoMirror: boolean = true
-): SileoPosition {
-  const norm = (position || "top-right").toLowerCase().trim();
-
-  // Logical position mappings
-  if (norm === "top-end") {
-    return direction === "rtl" ? "top-left" : "top-right";
-  }
-  if (norm === "top-start") {
-    return direction === "rtl" ? "top-right" : "top-left";
-  }
-  if (norm === "bottom-end") {
-    return direction === "rtl" ? "bottom-left" : "bottom-right";
-  }
-  if (norm === "bottom-start") {
-    return direction === "rtl" ? "bottom-right" : "bottom-left";
-  }
-
-  // Center positions remain constant in both LTR and RTL
-  if (norm === "top-center") return "top-center";
-  if (norm === "bottom-center") return "bottom-center";
-
-  // If autoMirror is disabled or in LTR, return physical position
-  if (!autoMirror || direction !== "rtl") {
-    if (
-      norm === "top-left" ||
-      norm === "top-right" ||
-      norm === "bottom-left" ||
-      norm === "bottom-right"
-    ) {
-      return norm as SileoPosition;
-    }
-    return "top-right";
-  }
-
-  // In RTL mode with autoMirror enabled:
-  // "top-right" (the standard LTR end) auto-mirrors to "top-left" (the Arabic RTL end)
-  // "top-left" (the standard LTR start) auto-mirrors to "top-right" (the Arabic RTL start)
-  // "bottom-right" auto-mirrors to "bottom-left"
-  // "bottom-left" auto-mirrors to "bottom-right"
-  switch (norm) {
-    case "top-right":
-      return "top-left";
-    case "top-left":
-      return "top-right";
-    case "bottom-right":
-      return "bottom-left";
-    case "bottom-left":
-      return "bottom-right";
-    default:
-      return "top-left";
-  }
-}
+export { resolveRtlPosition } from "./sileo-config";
 
 /**
  * SileoToaster — The premier physics-based toast viewport for SCRIPE.
  *
  * Automatically binds to:
- * - Next-Themes: dynamic light/dark/system theme synchronization
+ * - Nexus Theme System: live CSS variable surface fills (`var(--nx-surface)`) and High Contrast parity
  * - I18n: direction-aware positioning (LTR: top-right, RTL: top-left)
  * - User Preferences: reactive synchronization with Profile Workstation preferences
- * - Nexus Design System: status tokens, elevated surface fills, and typography
+ * - Explicit Theme Lock: contrast-matched surfaces when `theme="light"` or `theme="dark"` is forced
  */
 export function SileoToaster({
   position: propPosition,
@@ -84,7 +32,6 @@ export function SileoToaster({
   rtlAutoMirror = true,
   children,
 }: SileoToasterProps) {
-  const { resolvedTheme } = useTheme();
   const { direction } = useI18n();
 
   // Preferred position state hydrated from localStorage / CustomEvent
@@ -139,16 +86,79 @@ export function SileoToaster({
     };
   }, [propPosition]);
 
-  const isDark =
-    themeProp === "dark" || (!themeProp && (resolvedTheme === "dark" || resolvedTheme === undefined));
-
   const effectivePosition = propPosition ?? preferredPosition;
   const activePosition = resolveRtlPosition(effectivePosition, direction, rtlAutoMirror);
-  const defaultFill = isDark ? "#15181c" : "#ffffff";
+  const defaultFill =
+    themeProp === "dark"
+      ? "#15181c"
+      : themeProp === "light"
+        ? "#ffffff"
+        : "var(--nx-surface)";
 
   type BaseToasterOptions = NonNullable<React.ComponentProps<typeof SileoBaseToaster>["options"]>;
 
-  const { id: _id, position: rawOptionPosition, button: rawOptionButton, ...restOptions } = options ?? {};
+  const {
+    id: _id,
+    position: rawOptionPosition,
+    button: rawOptionButton,
+    styles: rawOptionStyles,
+    ...restOptions
+  } = options ?? {};
+
+  const resolvedFill = options?.fill ?? defaultFill;
+  const lockedStyles =
+    options?.fill !== undefined
+      ? undefined
+      : themeProp === "dark"
+        ? LOCKED_DARK_SILEO_STYLES
+        : themeProp === "light"
+          ? LOCKED_LIGHT_SILEO_STYLES
+          : undefined;
+
+  const inheritedTitleStyle =
+    lockedStyles?.title || rawOptionStyles?.title
+      ? twMerge(lockedStyles?.title, rawOptionStyles?.title)
+      : undefined;
+  const inheritedDescriptionStyle =
+    lockedStyles?.description || rawOptionStyles?.description
+      ? twMerge(lockedStyles?.description, rawOptionStyles?.description)
+      : undefined;
+  const inheritedButtonStyle =
+    rawOptionButton?.className || lockedStyles?.button || rawOptionStyles?.button
+      ? twMerge(lockedStyles?.button, rawOptionStyles?.button, rawOptionButton?.className)
+      : undefined;
+  const inheritedBadgeStyle =
+    lockedStyles?.badge || rawOptionStyles?.badge
+      ? twMerge(lockedStyles?.badge, rawOptionStyles?.badge)
+      : undefined;
+
+  const mergedStyles = {
+    title: twMerge(NEXUS_SILEO_STYLES.title, inheritedTitleStyle),
+    description: twMerge(NEXUS_SILEO_STYLES.description, inheritedDescriptionStyle),
+    button: twMerge(NEXUS_SILEO_STYLES.button, inheritedButtonStyle),
+    badge: twMerge(NEXUS_SILEO_STYLES.badge, inheritedBadgeStyle),
+  };
+
+  React.useEffect(() => {
+    setActiveToasterOptions({
+      fill: resolvedFill,
+      styles: {
+        ...(inheritedTitleStyle ? { title: inheritedTitleStyle } : {}),
+        ...(inheritedDescriptionStyle ? { description: inheritedDescriptionStyle } : {}),
+        ...(inheritedButtonStyle ? { button: inheritedButtonStyle } : {}),
+        ...(inheritedBadgeStyle ? { badge: inheritedBadgeStyle } : {}),
+      },
+    });
+    return () => {
+      setActiveToasterOptions(undefined);
+    };
+  }, [
+    resolvedFill,
+    inheritedTitleStyle,
+    inheritedDescriptionStyle,
+    inheritedButtonStyle,
+    inheritedBadgeStyle,
+  ]);
 
   const normalizedOptionPosition = rawOptionPosition
     ? resolveRtlPosition(rawOptionPosition, direction, rtlAutoMirror)
@@ -162,10 +172,11 @@ export function SileoToaster({
     : undefined;
 
   const mergedOptions: BaseToasterOptions = {
-    fill: options?.fill ?? defaultFill,
+    fill: resolvedFill,
     roundness: options?.roundness ?? 16,
     autopilot: options?.autopilot ?? true,
     ...restOptions,
+    styles: mergedStyles,
     ...(normalizedOptionPosition ? { position: normalizedOptionPosition } : {}),
     ...(normalizedOptionButton ? { button: normalizedOptionButton } : {}),
   };

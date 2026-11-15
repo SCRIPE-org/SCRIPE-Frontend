@@ -100,4 +100,10 @@ export const IDENTITY_ENDPOINTS = {
       DELETE_ALL: `${V1}/users/bulk/delete-all`,
     },
   },
+
+  IDENTITY_CONTEXT: {
+    MEMBERSHIPS: `${V1}/identity-context/memberships`,
+    SWITCH: `${V1}/identity-context/switch`,
+    ACTORS: `${V1}/identity-context/actors`,
+  },
 };

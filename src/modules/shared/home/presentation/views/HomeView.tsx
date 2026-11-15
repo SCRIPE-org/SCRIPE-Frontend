@@ -9,10 +9,14 @@
  * - Tenant Context: TenantOverviewView (Tenant Organization Control Center)
  */
 import { useAdminContext } from "@core/hooks/useAdminContext";
+import { useI18n } from "@core/providers/i18n-provider";
+import { useBreadcrumbOverride } from "@core/hooks/use-breadcrumb-override";
 import { PlatformOverviewView } from "./PlatformOverviewView";
 import { TenantOverviewView } from "./TenantOverviewView";
 
 export function HomeView() {
+  const { t } = useI18n();
+  useBreadcrumbOverride(t("nav.overview"));
   const { isPlatform, isHydrated } = useAdminContext();
 
   if (!isHydrated) {

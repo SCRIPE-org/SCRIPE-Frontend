@@ -2,8 +2,15 @@
 
 import * as React from "react";
 import { sileo as baseSileo, type SileoOptions as RawSileoOptions } from "sileo";
+import { twMerge } from "tailwind-merge";
 import { translateCore } from "@core/common/i18n-outside-react";
-import { resolveRtlPosition } from "./sileo-toaster";
+import {
+  NEXUS_SILEO_STYLES,
+  getActiveToasterOptions,
+  resolveRtlPosition,
+  setActiveToasterFill,
+  setActiveToasterOptions,
+} from "./sileo-config";
 import type {
   ActiveToastDescriptor,
   SileoButton,
@@ -21,26 +28,27 @@ import type {
  */
 const DEFAULT_TOAST_DURATION = 4000;
 
-/**
- * Nexus design system default style classes for Sileo toast sub-elements.
- * Uses Tailwind ! modifier for high-specificity overrides while honoring
- * state semantic tones from Sileo CSS custom properties.
- */
-const NEXUS_SILEO_STYLES = {
-  title: "font-sans font-semibold tracking-tight text-[13px] text-nx-ink",
-  description: "font-sans text-[12px] leading-relaxed !text-nx-ink-2 mt-0.5",
-  button:
-    "rounded-nx-control border border-nx-line-hi bg-nx-raised text-nx-ink font-medium text-xs px-2.5 py-1 hover:bg-nx-hover focus-visible:outline-none focus-visible:shadow-nx-focus !transition-colors motion-reduce:!transition-none",
-  badge: "border border-nx-line-hi shrink-0",
-};
+export { NEXUS_SILEO_STYLES, setActiveToasterOptions, setActiveToasterFill };
 
-function getResolvedThemeFill(): string {
+/**
+ * Resolves explicit theme class on `<html>` / `<body>` before consulting OS
+ * `prefers-color-scheme`, ensuring Light app mode is never overridden by Dark OS.
+ */
+export function getResolvedThemeFill(): string {
   if (typeof document === "undefined") return "#15181c";
-  const isDark =
-    document.documentElement.classList.contains("dark") ||
-    document.body.classList.contains("dark") ||
+  const root = document.documentElement;
+  const body = document.body;
+  if (root.classList.contains("dark") || body?.classList.contains("dark")) {
+    return "#15181c";
+  }
+  if (root.classList.contains("light") || body?.classList.contains("light")) {
+    return "#ffffff";
+  }
+  const isOsDark =
+    typeof window !== "undefined" &&
+    typeof window.matchMedia === "function" &&
     window.matchMedia("(prefers-color-scheme: dark)").matches;
-  return isDark ? "#15181c" : "#ffffff";
+  return isOsDark ? "#15181c" : "#ffffff";
 }
 
 /**
@@ -102,11 +110,20 @@ function generateToastId(): string {
 
 // ── Reactive Active Toast State Store ──────────────────────────────────────────
 const activeToastListeners = new Set<(toasts: ActiveToastDescriptor[]) => void>();
+const activeToastTimers = new Map<string, ReturnType<typeof setTimeout>>();
 let activeToasts: ActiveToastDescriptor[] = [];
 
 function notifyListeners() {
   const snapshot = [...activeToasts];
   activeToastListeners.forEach((listener) => listener(snapshot));
+}
+
+function clearToastTimer(id: string) {
+  const existingTimer = activeToastTimers.get(id);
+  if (existingTimer !== undefined) {
+    clearTimeout(existingTimer);
+    activeToastTimers.delete(id);
+  }
 }
 
 function registerActiveToast(
@@ -115,19 +132,27 @@ function registerActiveToast(
   variant?: SileoToastVariant,
   duration?: number | null
 ) {
+  clearToastTimer(id);
+
   const title = typeof input === "string" ? input : input.title;
   const description = typeof input === "string" ? undefined : input.description;
   const resolvedDuration = duration !== undefined ? duration : DEFAULT_TOAST_DURATION;
+
+  const existingIndex = activeToasts.findIndex((t) => t.id === id);
+  const existingVariant = existingIndex >= 0 ? activeToasts[existingIndex].variant : undefined;
 
   const descriptor: ActiveToastDescriptor = {
     id,
     title,
     description,
-    variant: variant || (typeof input === "object" ? input.variant : undefined) || "success",
+    variant:
+      variant ||
+      (typeof input === "object" && input !== null ? input.variant : undefined) ||
+      existingVariant ||
+      "success",
     duration: resolvedDuration,
   };
 
-  const existingIndex = activeToasts.findIndex((t) => t.id === id);
   if (existingIndex >= 0) {
     activeToasts[existingIndex] = { ...activeToasts[existingIndex], ...descriptor };
   } else {
@@ -136,17 +161,22 @@ function registerActiveToast(
   notifyListeners();
 
   if (resolvedDuration !== null && resolvedDuration !== undefined && resolvedDuration > 0) {
-    setTimeout(() => {
+    const timer = setTimeout(() => {
+      activeToastTimers.delete(id);
       activeToasts = activeToasts.filter((t) => t.id !== id);
       notifyListeners();
     }, resolvedDuration);
+    activeToastTimers.set(id, timer);
   }
 }
 
 function removeActiveToast(id?: string) {
   if (id) {
+    clearToastTimer(id);
     activeToasts = activeToasts.filter((t) => t.id !== id);
   } else {
+    activeToastTimers.forEach((timer) => clearTimeout(timer));
+    activeToastTimers.clear();
     activeToasts = [];
   }
   notifyListeners();
@@ -232,10 +262,35 @@ function normalizeOptions(
     }
   }
 
+  const toasterDefaults = getActiveToasterOptions();
+  const toasterStyles = toasterDefaults?.styles;
+
   const mergedStyles = {
-    ...NEXUS_SILEO_STYLES,
-    ...base.styles,
-    ...extraOptions?.styles,
+    title: twMerge(
+      NEXUS_SILEO_STYLES.title,
+      toasterStyles?.title,
+      base.styles?.title,
+      extraOptions?.styles?.title
+    ),
+    description: twMerge(
+      NEXUS_SILEO_STYLES.description,
+      toasterStyles?.description,
+      base.styles?.description,
+      extraOptions?.styles?.description
+    ),
+    button: twMerge(
+      NEXUS_SILEO_STYLES.button,
+      toasterStyles?.button,
+      base.styles?.button,
+      extraOptions?.styles?.button,
+      button?.className
+    ),
+    badge: twMerge(
+      NEXUS_SILEO_STYLES.badge,
+      toasterStyles?.badge,
+      base.styles?.badge,
+      extraOptions?.styles?.badge
+    ),
   };
 
   const finalType =
@@ -265,7 +320,7 @@ function normalizeOptions(
           ? base.duration
           : DEFAULT_TOAST_DURATION,
     icon: extraOptions?.icon !== undefined ? extraOptions.icon : base.icon,
-    fill: extraOptions?.fill ?? base.fill ?? getResolvedThemeFill(),
+    fill: extraOptions?.fill ?? base.fill ?? toasterDefaults?.fill ?? "var(--nx-surface)",
     styles: mergedStyles,
     roundness: extraOptions?.roundness ?? base.roundness ?? 16,
     autopilot: extraOptions?.autopilot ?? base.autopilot ?? true,
@@ -365,9 +420,16 @@ function update(
 ): ToastResponse {
   const id =
     typeof target === "object" && target !== null && "id" in target ? target.id : String(target);
-  const opts = normalizeOptions(options, undefined, { id });
+  const existing = activeToasts.find((t) => t.id === id);
+  const requestedVariant =
+    typeof options === "object" && options !== null
+      ? ((options as any).variant as SileoToastVariant | undefined) ??
+        ((options as any).type as SileoToastVariant | undefined)
+      : undefined;
+  const resolvedVariant = requestedVariant ?? existing?.variant;
+  const opts = normalizeOptions(options, resolvedVariant, { id });
   baseSileo.show(opts);
-  registerActiveToast(id, options, opts.type as any, opts.duration);
+  registerActiveToast(id, options, resolvedVariant, opts.duration);
   return makeToastHandle(id);
 }
 
@@ -508,12 +570,16 @@ function baseToastFn(input: ToastInput, extraOptions?: Partial<SileoOptions>): T
       return info(input, extraOptions);
     case "loading":
       return loading(input, extraOptions);
-    case "action":
+    case "action": {
       const normalizedOpts = normalizeOptions(input, "action", extraOptions);
       if (normalizedOpts.button) {
-        return action({ ...normalizedOpts, button: normalizedOpts.button });
+        baseSileo.action(normalizedOpts as RawSileoOptions & { button: { title: string; onClick: () => void } });
+      } else {
+        baseSileo.show(normalizedOpts);
       }
-      return show(normalizedOpts);
+      registerActiveToast(normalizedOpts.id, input, "action", normalizedOpts.duration);
+      return makeToastHandle(normalizedOpts.id);
+    }
     case "success":
     default:
       return success(input, extraOptions);
