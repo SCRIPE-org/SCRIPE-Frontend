@@ -96,7 +96,11 @@ describe("TrainingGroupsService", () => {
   });
 
   it("assigns athlete to group via POST", async () => {
-    const payload: AssignAthletePayload = { enrollmentId: "enr-1" };
+    const payload: AssignAthletePayload = {
+      enrollmentId: "enr-1",
+      startDate: "2026-11-15",
+      ageOverrideJustification: "Exceptional technical proficiency approved by Technical Director"
+    };
     const mockMembership = { id: "mem-1", groupId: "grp-1", enrollmentId: "enr-1" };
     vi.mocked(mockApi.post).mockResolvedValue(mockMembership);
 
@@ -106,10 +110,12 @@ describe("TrainingGroupsService", () => {
     expect(result).toEqual(mockMembership);
   });
 
-  it("transfers athlete to another group via POST", async () => {
+  it("transfers athlete to another group via POST with override justification", async () => {
     const payload: TransferAthletePayload = {
       targetGroupId: "grp-2",
-      reason: "Performance advancement"
+      reason: "Performance advancement",
+      effectiveDate: "2026-11-15",
+      ageOverrideJustification: "Playing up based on evaluation"
     };
     const mockNewMembership = { id: "mem-2", groupId: "grp-2" };
     vi.mocked(mockApi.post).mockResolvedValue(mockNewMembership);

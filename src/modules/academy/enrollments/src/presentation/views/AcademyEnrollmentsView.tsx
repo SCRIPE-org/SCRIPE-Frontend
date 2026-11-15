@@ -4,7 +4,7 @@ import React, { useState, useEffect, useMemo } from "react";
 import Link from "next/link";
 import { useI18n } from "@core/providers/i18n-provider";
 import { usePermission } from "@core/hooks/use-permission";
-import { ACADEMY_PERMISSIONS } from "@modules/academy/shared";
+import { ACADEMY_PERMISSIONS, checkGroupAgeEligibility } from "@modules/academy/shared";
 import { useAcademyServiceLocator } from "@modules/academy/di";
 import { useAcademyEnrollmentsViewModel } from "../viewmodels/useAcademyEnrollmentsViewModel";
 import type { AcademyEnrollment, EnrollmentStatus, BillingStatus } from "../../domain/entities/AcademyEnrollment";
@@ -189,6 +189,7 @@ export function AcademyEnrollmentsView() {
   const canView = usePermission(ACADEMY_PERMISSIONS.ACADEMY_ENROLLMENTS_VIEW);
   const canCreate = usePermission(ACADEMY_PERMISSIONS.ACADEMY_ENROLLMENTS_CREATE);
   const canUpdate = usePermission(ACADEMY_PERMISSIONS.ACADEMY_ENROLLMENTS_UPDATE);
+  const canOverrideAge = usePermission(ACADEMY_PERMISSIONS.ACADEMY_ENROLLMENTS_OVERRIDE);
 
   const locator = useAcademyServiceLocator();
   const vm = useAcademyEnrollmentsViewModel(locator.enrollmentsRepository);
@@ -224,7 +225,9 @@ export function AcademyEnrollmentsView() {
   // Selectors State for creation
   const [athleteOptions, setAthleteOptions] = useState<GenericSelectOption[]>([]);
   const [offeringOptions, setOfferingOptions] = useState<GenericSelectOption[]>([]);
+  const [athletesList, setAthletesList] = useState<any[]>([]);
   const [offeringsList, setOfferingsList] = useState<any[]>([]);
+  const [programsList, setProgramsList] = useState<any[]>([]);
   const [loadingSelectors, setLoadingSelectors] = useState(false);
 
   // Create Form State
@@ -233,18 +236,22 @@ export function AcademyEnrollmentsView() {
   const [priceAmount, setPriceAmount] = useState<number>(500);
   const [priceCurrency, setPriceCurrency] = useState("SAR");
   const [notes, setNotes] = useState("");
+  const [ageOverrideJustification, setAgeOverrideJustification] = useState("");
 
   useEffect(() => {
     let mounted = true;
     async function loadSelectors() {
       setLoadingSelectors(true);
       try {
-        const [athletes, offerings] = await Promise.all([
+        const [athletes, offerings, programs] = await Promise.all([
           locator.athletesRepository.getAthletes().catch(() => []),
           locator.offeringsRepository.fetchOfferings().catch(() => []),
+          locator.programsRepository.getPrograms().catch(() => []),
         ]);
         if (!mounted) return;
+        setAthletesList(athletes || []);
         setOfferingsList(offerings || []);
+        setProgramsList(programs || []);
         setAthleteOptions(
           athletes.map((a: any) => ({
             value: a.id,
@@ -269,20 +276,37 @@ export function AcademyEnrollmentsView() {
     };
   }, [locator, isAr]);
 
+  const selectedAthlete = athletesList.find(a => a.id === athleteId);
+  const selectedOffering = offeringsList.find(o => o.id === offeringId);
+  const selectedProgram = programsList.find(p => p.id === selectedOffering?.programId);
+  const seasonRefYear = selectedOffering?.startDate ? new Date(selectedOffering.startDate).getFullYear() : undefined;
+
+  const enrollmentAgeCheck = checkGroupAgeEligibility(
+    selectedAthlete?.dateOfBirth,
+    selectedProgram?.minAge ?? selectedOffering?.minAge,
+    selectedProgram?.maxAge ?? selectedOffering?.maxAge,
+    seasonRefYear
+  );
+
   const handleCreateSubmit = async () => {
     if (!athleteId || !offeringId) return;
+    if (enrollmentAgeCheck.isOverAge) return;
+    if (enrollmentAgeCheck.isUnderAge && (!canOverrideAge || !ageOverrideJustification.trim())) return;
+
     try {
       await vm.createEnrollment({
         athleteId,
         offeringId,
         priceAmount,
         priceCurrency,
-        notes: notes.trim() || undefined
+        notes: notes.trim() || undefined,
+        ageOverrideJustification: enrollmentAgeCheck.isUnderAge ? ageOverrideJustification.trim() : null
       });
       setShowCreateModal(false);
       setAthleteId("");
       setOfferingId("");
       setNotes("");
+      setAgeOverrideJustification("");
     } catch {
       // Handled in viewmodel
     }
@@ -1083,18 +1107,89 @@ export function AcademyEnrollmentsView() {
                     {isAr ? "تأكيد المسؤولية المالية والرسوم" : "Confirm commercial responsibility"}
                   </h4>
 
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <label className="text-xs text-nx-ink-2 mb-1.5 block font-semibold">
+                        {isAr ? "الرياضي *" : "Athlete *"}
+                      </label>
+                      <GenericSelect
+                        searchable
+                        options={athleteOptions}
+                        value={athleteId}
+                        onValueChange={v => setAthleteId(v as string)}
+                        placeholder={isAr ? "اختر الرياضي..." : "Select Athlete..."}
+                        loading={loadingSelectors}
+                      />
+                    </div>
+                    <div>
+                      <label className="text-xs text-nx-ink-2 mb-1.5 block font-semibold">
+                        {isAr ? "عرض البرنامج *" : "Program Offering *"}
+                      </label>
+                      <GenericSelect
+                        searchable
+                        options={offeringOptions}
+                        value={offeringId}
+                        onValueChange={v => setOfferingId(v as string)}
+                        placeholder={isAr ? "اختر عرض البرنامج..." : "Select Program Offering..."}
+                        loading={loadingSelectors}
+                      />
+                    </div>
+                  </div>
+
+                  {/* Age Eligibility Feedback */}
+                  {athleteId && offeringId && (
+                    <div className="space-y-3 pt-2">
+                      {enrollmentAgeCheck.isOverAge && (
+                        <div className="p-3 rounded-lg border border-destructive/40 bg-destructive/10 text-xs text-destructive font-medium">
+                          {isAr ? enrollmentAgeCheck.reasonAr : enrollmentAgeCheck.reasonEn}
+                        </div>
+                      )}
+
+                      {enrollmentAgeCheck.isUnderAge && canOverrideAge && (
+                        <div className="space-y-2">
+                          <div className="p-3 rounded-lg border border-warning/40 bg-warning/10 text-xs text-warning font-medium">
+                            {isAr ? enrollmentAgeCheck.reasonAr : enrollmentAgeCheck.reasonEn}
+                          </div>
+                          <div>
+                            <label className="text-xs font-semibold text-nx-ink-2 block mb-1">
+                              {isAr ? "مبرر استثناء تصعيد الفئة (إلزامي للرقابة) *" : "Playing-Up Override Justification (Mandatory) *"}
+                            </label>
+                            <textarea
+                              required
+                              rows={2}
+                              value={ageOverrideJustification}
+                              onChange={e => setAgeOverrideJustification(e.target.value)}
+                              placeholder={isAr ? "أدخل المبرر الفني للتصعيد..." : "Enter technical justification for playing up..."}
+                              className="w-full p-2.5 rounded-lg border border-nx-line-hi bg-nx-surface text-xs text-white focus:outline-none"
+                            />
+                          </div>
+                        </div>
+                      )}
+
+                      {enrollmentAgeCheck.isUnderAge && !canOverrideAge && (
+                        <div className="p-3 rounded-lg border border-destructive/40 bg-destructive/10 text-xs text-destructive font-medium">
+                          {isAr
+                            ? "اللاعب أصغر سنًا من الفئة المحددة للبرنامج ويتطلب صلاحية استثناء تصعيد الفئة."
+                            : "Athlete is under-age and requires playing-up override permission."}
+                        </div>
+                      )}
+                    </div>
+                  )}
+
                   <div className="space-y-2 text-xs divide-y divide-nx-line">
                     <div className="flex items-center justify-between py-2">
-                      <span className="text-nx-ink-2">{isAr ? "الرياضي:" : "Athlete"}</span>
-                      <b className="text-white">{athleteOptions.find(o => o.value === athleteId)?.label || "Omar Khaled"}</b>
+                      <span className="text-nx-ink-2">{isAr ? "الرياضي المحدد:" : "Selected Athlete:"}</span>
+                      <b className="text-white">{athleteOptions.find(o => o.value === athleteId)?.label || "—"}</b>
                     </div>
                     <div className="flex items-center justify-between py-2">
-                      <span className="text-nx-ink-2">{isAr ? "عرض البرنامج:" : "Program offering"}</span>
-                      <b className="text-white">{offeringOptions.find(o => o.value === offeringId)?.label || "Football Development U12"}</b>
+                      <span className="text-nx-ink-2">{isAr ? "عرض البرنامج:" : "Program Offering:"}</span>
+                      <b className="text-white">{offeringOptions.find(o => o.value === offeringId)?.label || "—"}</b>
                     </div>
                     <div className="flex items-center justify-between py-2">
-                      <span className="text-nx-ink-2">{isAr ? "السعة عند التفعيل:" : "Capacity at activation"}</span>
-                      <b className="text-white">18 of 20</b>
+                      <span className="text-nx-ink-2">{isAr ? "السعة عند التفعيل:" : "Capacity at activation:"}</span>
+                      <b className="text-white">
+                        {selectedOffering ? `${selectedOffering.enrolledCount ?? 0} / ${selectedOffering.maxCapacity ?? 20}` : "—"}
+                      </b>
                     </div>
                     <div className="flex items-center justify-between py-2">
                       <span className="text-nx-ink-2">{isAr ? "ولي الأمر:" : "Guardian"}</span>
@@ -1145,7 +1240,12 @@ export function AcademyEnrollmentsView() {
                   <button
                     type="button"
                     onClick={handleCreateSubmit}
-                    disabled={!athleteId || !offeringId}
+                    disabled={
+                      !athleteId ||
+                      !offeringId ||
+                      enrollmentAgeCheck.isOverAge ||
+                      (enrollmentAgeCheck.isUnderAge && (!canOverrideAge || !ageOverrideJustification.trim()))
+                    }
                     className="px-6 py-2 rounded-lg bg-nx-accent-fill text-nx-on-fill font-bold text-xs shadow-nx-glow hover:bg-nx-accent-fill disabled:opacity-40 cursor-pointer"
                   >
                     {isAr ? "مراجعة القيد والتفعيل →" : "Review Enrollment →"}
@@ -1171,10 +1271,39 @@ export function AcademyEnrollmentsView() {
 
                   <div className="space-y-2 text-xs divide-y divide-nx-line">
                     <div className="flex items-center justify-between py-2">
-                      <span className="text-nx-ink-2">Eligibility</span>
-                      <span className="inline-flex px-2 py-0.5 rounded-full text-[10px] font-bold bg-nx-accent-fill/15 text-nx-accent border border-nx-accent-fill/40">
-                        Passed
-                      </span>
+                      <span className="text-nx-ink-2">{isAr ? "الأهلية العمرية" : "Eligibility"}</span>
+                      {!athleteId || !offeringId ? (
+                        <span className="inline-flex px-2 py-0.5 rounded-full text-[10px] font-bold bg-nx-raised text-nx-ink-2 border border-nx-line">
+                          {isAr ? "في انتظار الاختيار" : "Pending Selection"}
+                        </span>
+                      ) : enrollmentAgeCheck.isOverAge ? (
+                        <span
+                          className="inline-flex px-2 py-0.5 rounded-full text-[10px] font-bold bg-destructive/15 text-destructive border border-destructive/40"
+                          title={isAr ? enrollmentAgeCheck.reasonAr || "" : enrollmentAgeCheck.reasonEn || ""}
+                        >
+                          {isAr ? "غير مؤهل (أكبر سنًا)" : "Blocked (Over-age)"}
+                        </span>
+                      ) : enrollmentAgeCheck.isUnderAge ? (
+                        canOverrideAge ? (
+                          <span
+                            className="inline-flex px-2 py-0.5 rounded-full text-[10px] font-bold bg-warning/15 text-warning border border-warning/30"
+                            title={isAr ? enrollmentAgeCheck.reasonAr || "" : enrollmentAgeCheck.reasonEn || ""}
+                          >
+                            {isAr ? "يتطلب استثناء" : "Override Required"}
+                          </span>
+                        ) : (
+                          <span
+                            className="inline-flex px-2 py-0.5 rounded-full text-[10px] font-bold bg-destructive/15 text-destructive border border-destructive/40"
+                            title={isAr ? enrollmentAgeCheck.reasonAr || "" : enrollmentAgeCheck.reasonEn || ""}
+                          >
+                            {isAr ? "غير مؤهل (أصغر سنًا)" : "Blocked (Under-age)"}
+                          </span>
+                        )
+                      ) : (
+                        <span className="inline-flex px-2 py-0.5 rounded-full text-[10px] font-bold bg-nx-accent-fill/15 text-nx-accent border border-nx-accent-fill/40">
+                          {isAr ? "مؤهل" : "Passed"}
+                        </span>
+                      )}
                     </div>
                     <div className="flex items-center justify-between py-2">
                       <span className="text-nx-ink-2">Group capacity</span>

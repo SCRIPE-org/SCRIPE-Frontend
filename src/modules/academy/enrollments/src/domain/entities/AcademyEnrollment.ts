@@ -29,6 +29,9 @@ export interface AcademyEnrollment {
   billingStatus: BillingStatus;
   financeInvoiceReference?: string | null;
   notes?: string | null;
+  athleteDateOfBirth?: string | null;
+  athleteExactAge?: number | null;
+  athleteCompetitionAge?: number | null;
 }
 
 export interface CreateEnrollmentPayload {
@@ -39,6 +42,7 @@ export interface CreateEnrollmentPayload {
   priceAmount: number;
   priceCurrency?: string;
   notes?: string | null;
+  ageOverrideJustification?: string | null;
 }
 
 export interface FinanceHandoffPayload {

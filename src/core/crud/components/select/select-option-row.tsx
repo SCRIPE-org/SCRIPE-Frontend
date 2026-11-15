@@ -51,6 +51,7 @@ export function SelectOptionRow({
       // cmdk matches on `value`; the label is what the user actually types.
       value={`${option.label} ${option.value}`}
       disabled={option.disabled}
+      title={option.disabled ? option.description || option.label : undefined}
       onSelect={() => {
         if (option.disabled) return;
         onSelect(option);

@@ -36,6 +36,9 @@ export interface TrainingGroup {
   minCapacity: number;
   maxCapacity: number;
   activeMemberCount: number;
+  minAge?: number | null;
+  maxAge?: number | null;
+  seasonReferenceYear?: number | null;
   status: TrainingGroupStatus | string;
   scheduleDescriptionEn?: string | null;
   scheduleDescriptionAr?: string | null;
@@ -109,12 +112,14 @@ export interface UpdateTrainingGroupPayload {
 export interface AssignAthletePayload {
   enrollmentId: string;
   startDate?: string | null;
+  ageOverrideJustification?: string | null;
 }
 
 export interface TransferAthletePayload {
   targetGroupId: string;
   reason: string;
   effectiveDate?: string | null;
+  ageOverrideJustification?: string | null;
 }
 
 export interface AssignCoachPayload {

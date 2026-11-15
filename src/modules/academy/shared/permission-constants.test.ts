@@ -12,6 +12,7 @@ describe("ACADEMY_PERMISSIONS", () => {
     expect(ACADEMY_PERMISSIONS.ACADEMY_TRIALS_VIEW).toBe("academy-trials.view");
     expect(ACADEMY_PERMISSIONS.ACADEMY_TRIALS_REVIEW).toBe("academy-trials.review");
     expect(ACADEMY_PERMISSIONS.ACADEMY_ENROLLMENTS_VIEW).toBe("academy-enrollments.view");
+    expect(ACADEMY_PERMISSIONS.ACADEMY_ENROLLMENTS_OVERRIDE).toBe("academy-enrollments.override");
     expect(ACADEMY_PERMISSIONS.ACADEMY_GROUPS_VIEW).toBe("academy-groups.view");
     expect(ACADEMY_PERMISSIONS.ACADEMY_SESSIONS_VIEW).toBe("academy-sessions.view");
     expect(ACADEMY_PERMISSIONS.ACADEMY_ATTENDANCE_VIEW).toBe("academy-attendance.view");

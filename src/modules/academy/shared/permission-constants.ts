@@ -43,6 +43,7 @@ export const ACADEMY_PERMISSIONS = {
   ACADEMY_ENROLLMENTS_CANCEL: "academy-enrollments.cancel",
   ACADEMY_ENROLLMENTS_TRANSFER: "academy-enrollments.transfer",
   ACADEMY_ENROLLMENTS_COMMERCIAL_OVERRIDE: "academy-enrollments.commercial-override",
+  ACADEMY_ENROLLMENTS_OVERRIDE: "academy-enrollments.override",
 
   // ── Training Groups ──
   ACADEMY_GROUPS_VIEW: "academy-groups.view",

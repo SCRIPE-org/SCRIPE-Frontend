@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useI18n } from "@core/providers/i18n-provider";
 import { usePermission } from "@core/hooks/use-permission";
-import { ACADEMY_PERMISSIONS } from "@modules/academy/shared";
+import { ACADEMY_PERMISSIONS, checkGroupAgeEligibility } from "@modules/academy/shared";
 import { useAcademyServiceLocator } from "@modules/academy/di";
 import { useTrainingGroupDetailViewModel } from "../viewmodels/useTrainingGroupDetailViewModel";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@core/ui/card";
@@ -44,6 +44,7 @@ export function TrainingGroupDetailView({ groupId, onBack }: TrainingGroupDetail
 
   const canView = usePermission(ACADEMY_PERMISSIONS.ACADEMY_GROUPS_VIEW);
   const canManage = usePermission(ACADEMY_PERMISSIONS.ACADEMY_GROUPS_UPDATE);
+  const canOverrideAge = usePermission(ACADEMY_PERMISSIONS.ACADEMY_ENROLLMENTS_OVERRIDE);
 
   const locator = useAcademyServiceLocator();
   const {
@@ -68,11 +69,13 @@ export function TrainingGroupDetailView({ groupId, onBack }: TrainingGroupDetail
   const [showAssignAthleteModal, setShowAssignAthleteModal] = useState(false);
   const [enrollmentIdInput, setEnrollmentIdInput] = useState("");
   const [assignStartDate, setAssignStartDate] = useState(new Date().toISOString().split("T")[0]);
+  const [assignAgeOverrideJustification, setAssignAgeOverrideJustification] = useState("");
 
   const [transferTargetItem, setTransferTargetItem] = useState<GroupRosterItem | null>(null);
   const [targetGroupIdInput, setTargetGroupIdInput] = useState("");
   const [transferReasonInput, setTransferReasonInput] = useState("");
   const [transferEffectiveDate, setTransferEffectiveDate] = useState(new Date().toISOString().split("T")[0]);
+  const [transferAgeOverrideJustification, setTransferAgeOverrideJustification] = useState("");
 
   const [removeTargetItem, setRemoveTargetItem] = useState<GroupRosterItem | null>(null);
   const [removeReasonInput, setRemoveReasonInput] = useState("");
@@ -130,17 +133,65 @@ export function TrainingGroupDetailView({ groupId, onBack }: TrainingGroupDetail
     }
   }, [showAssignCoachModal, coaches, locator.groupsRepository]);
 
-  const enrollmentOptions: GenericSelectOption[] = availableEnrollments.map(e => ({
-    value: e.id,
-    label: (language === "ar" && e.athleteNameAr) ? e.athleteNameAr : (e.athleteNameEn || e.athleteId),
-    description: `${language === "ar" ? "الحالة:" : "Status:"} ${e.status} | ${language === "ar" ? "الفوترة:" : "Billing:"} ${e.billingStatus}`
-  }));
+  const selectedAssignEnrollment = availableEnrollments.find(e => e.id === enrollmentIdInput);
+  const assignAgeCheck = checkGroupAgeEligibility(
+    selectedAssignEnrollment?.athleteDateOfBirth,
+    group?.minAge,
+    group?.maxAge,
+    group?.seasonReferenceYear
+  );
 
-  const groupOptions: GenericSelectOption[] = otherGroups.map(g => ({
-    value: g.id,
-    label: (language === "ar" && g.nameAr) ? g.nameAr : g.nameEn,
-    description: `${language === "ar" ? "السعة:" : "Capacity:"} ${g.activeMemberCount}/${g.maxCapacity}${g.code ? ` (${g.code})` : ""}`
-  }));
+  const selectedTargetGroup = otherGroups.find(g => g.id === targetGroupIdInput);
+  const transferAgeCheck = checkGroupAgeEligibility(
+    transferTargetItem?.dateOfBirth,
+    selectedTargetGroup?.minAge,
+    selectedTargetGroup?.maxAge,
+    selectedTargetGroup?.seasonReferenceYear
+  );
+
+  const enrollmentOptions: GenericSelectOption[] = availableEnrollments.map(e => {
+    const ageCheck = checkGroupAgeEligibility(
+      e.athleteDateOfBirth,
+      group?.minAge,
+      group?.maxAge,
+      group?.seasonReferenceYear
+    );
+    const disabled = ageCheck.isOverAge || (ageCheck.isUnderAge && !canOverrideAge);
+    const ageTag = ageCheck.isOverAge
+      ? ` | ⛔ ${language === "ar" ? "أكبر سنًا (ممنوع)" : "Over-age (Prohibited)"}`
+      : ageCheck.isUnderAge
+      ? ` | ⚠️ ${language === "ar" ? "أصغر سنًا (يتطلب استثناء)" : "Under-age (Override Required)"}`
+      : "";
+
+    return {
+      value: e.id,
+      label: (language === "ar" && e.athleteNameAr) ? e.athleteNameAr : (e.athleteNameEn || e.athleteId),
+      disabled,
+      description: `${language === "ar" ? "الحالة:" : "Status:"} ${e.status} | ${language === "ar" ? "الفوترة:" : "Billing:"} ${e.billingStatus}${ageTag}${ageCheck.reasonEn ? ` — ${language === "ar" ? ageCheck.reasonAr : ageCheck.reasonEn}` : ""}`
+    };
+  });
+
+  const groupOptions: GenericSelectOption[] = otherGroups.map(g => {
+    const ageCheck = checkGroupAgeEligibility(
+      transferTargetItem?.dateOfBirth,
+      g.minAge,
+      g.maxAge,
+      g.seasonReferenceYear
+    );
+    const disabled = ageCheck.isOverAge || (ageCheck.isUnderAge && !canOverrideAge);
+    const ageTag = ageCheck.isOverAge
+      ? ` | ⛔ ${language === "ar" ? "أكبر سنًا (ممنوع)" : "Over-age (Prohibited)"}`
+      : ageCheck.isUnderAge
+      ? ` | ⚠️ ${language === "ar" ? "أصغر سنًا (يتطلب استثناء)" : "Under-age (Override Required)"}`
+      : "";
+
+    return {
+      value: g.id,
+      label: (language === "ar" && g.nameAr) ? g.nameAr : g.nameEn,
+      disabled,
+      description: `${language === "ar" ? "السعة:" : "Capacity:"} ${g.activeMemberCount}/${g.maxCapacity}${g.code ? ` (${g.code})` : ""}${ageTag}${ageCheck.reasonEn ? ` — ${language === "ar" ? ageCheck.reasonAr : ageCheck.reasonEn}` : ""}`
+    };
+  });
 
   const coachOptions: GenericSelectOption[] = availableCoaches.map(c => ({
     value: c.staffMemberId,
@@ -155,13 +206,18 @@ export function TrainingGroupDetailView({ groupId, onBack }: TrainingGroupDetail
   const handleAssignAthleteSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!enrollmentIdInput) return;
+    if (assignAgeCheck.isOverAge) return;
+    if (assignAgeCheck.isUnderAge && (!canOverrideAge || !assignAgeOverrideJustification.trim())) return;
+
     try {
       await assignAthlete(groupId, {
         enrollmentId: enrollmentIdInput.trim(),
-        startDate: assignStartDate
+        startDate: assignStartDate,
+        ageOverrideJustification: assignAgeCheck.isUnderAge ? assignAgeOverrideJustification.trim() : null
       });
       setShowAssignAthleteModal(false);
       setEnrollmentIdInput("");
+      setAssignAgeOverrideJustification("");
     } catch {
       // viewmodel handles error
     }
@@ -170,15 +226,20 @@ export function TrainingGroupDetailView({ groupId, onBack }: TrainingGroupDetail
   const handleTransferSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!transferTargetItem || !targetGroupIdInput || !transferReasonInput) return;
+    if (transferAgeCheck.isOverAge) return;
+    if (transferAgeCheck.isUnderAge && (!canOverrideAge || !transferAgeOverrideJustification.trim())) return;
+
     try {
       await transferAthlete(groupId, transferTargetItem.membershipId, {
         targetGroupId: targetGroupIdInput.trim(),
         reason: transferReasonInput.trim(),
-        effectiveDate: transferEffectiveDate
+        effectiveDate: transferEffectiveDate,
+        ageOverrideJustification: transferAgeCheck.isUnderAge ? transferAgeOverrideJustification.trim() : null
       });
       setTransferTargetItem(null);
       setTargetGroupIdInput("");
       setTransferReasonInput("");
+      setTransferAgeOverrideJustification("");
     } catch {
       // viewmodel handles error
     }
@@ -309,6 +370,17 @@ export function TrainingGroupDetailView({ groupId, onBack }: TrainingGroupDetail
               {language === "ar" ? "تعديل المجموعة" : "Edit Group"}
             </Button>
           )}
+          {/* Age Bracket Indicator Pill */}
+          {((group.minAge !== undefined && group.minAge !== null) || (group.maxAge !== undefined && group.maxAge !== null)) && (
+            <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg border border-nx-line bg-nx-surface">
+              <Award className="size-4 text-nx-accent" />
+              <span className="text-xs text-nx-ink-2">{language === "ar" ? "الفئة العمرية:" : "Age Bracket:"}</span>
+              <span className="text-xs font-bold text-nx-ink">
+                U{group.maxAge ?? 18} ({group.minAge ?? 0}–{group.maxAge ?? "∞"} {language === "ar" ? "سنة" : "yrs"})
+              </span>
+            </div>
+          )}
+
           <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg border border-nx-line bg-nx-surface">
             <Users className="size-4 text-nx-accent" />
             <span className="text-xs text-nx-ink-2">{language === "ar" ? "السعة:" : "Capacity:"}</span>
@@ -616,6 +688,46 @@ export function TrainingGroupDetailView({ groupId, onBack }: TrainingGroupDetail
                 />
               </div>
 
+              {/* Age Eligibility Feedback */}
+              {enrollmentIdInput && (
+                <>
+                  {assignAgeCheck.isOverAge && (
+                    <div className="p-3 rounded-lg border border-red-500/40 bg-red-500/10 text-xs text-red-500 font-medium">
+                      {language === "ar" ? assignAgeCheck.reasonAr : assignAgeCheck.reasonEn}
+                    </div>
+                  )}
+
+                  {assignAgeCheck.isUnderAge && canOverrideAge && (
+                    <div className="space-y-2">
+                      <div className="p-3 rounded-lg border border-amber-500/40 bg-amber-500/10 text-xs text-amber-500 font-medium">
+                        {language === "ar" ? assignAgeCheck.reasonAr : assignAgeCheck.reasonEn}
+                      </div>
+                      <div>
+                        <label className="text-xs font-semibold text-nx-ink-2 block mb-1">
+                          {language === "ar" ? "مبرر استثناء تصعيد الفئة (إلزامي للرقابة) *" : "Playing-Up Override Justification (Mandatory) *"}
+                        </label>
+                        <textarea
+                          required
+                          rows={2}
+                          value={assignAgeOverrideJustification}
+                          onChange={e => setAssignAgeOverrideJustification(e.target.value)}
+                          placeholder={language === "ar" ? "أدخل المبرر الفني للتصعيد..." : "Enter technical justification for playing up..."}
+                          className="w-full p-2.5 rounded-md border border-nx-line bg-nx-canvas text-sm text-nx-ink focus:outline-none"
+                        />
+                      </div>
+                    </div>
+                  )}
+
+                  {assignAgeCheck.isUnderAge && !canOverrideAge && (
+                    <div className="p-3 rounded-lg border border-red-500/40 bg-red-500/10 text-xs text-red-500 font-medium">
+                      {language === "ar"
+                        ? "اللاعب أصغر سنًا من الفئة المحددة للمجموعة ويتطلب صلاحية استثناء تصعيد الفئة."
+                        : "Athlete is under-age and requires playing-up override permission."}
+                    </div>
+                  )}
+                </>
+              )}
+
               <div className="flex justify-end gap-3 pt-3 border-t border-nx-line">
                 <Button
                   type="button"
@@ -625,7 +737,16 @@ export function TrainingGroupDetailView({ groupId, onBack }: TrainingGroupDetail
                 >
                   {language === "ar" ? "إلغاء" : "Cancel"}
                 </Button>
-                <Button type="submit" disabled={loading} className="bg-nx-accent text-nx-surface">
+                <Button
+                  type="submit"
+                  disabled={
+                    loading ||
+                    !enrollmentIdInput ||
+                    assignAgeCheck.isOverAge ||
+                    (assignAgeCheck.isUnderAge && (!canOverrideAge || !assignAgeOverrideJustification.trim()))
+                  }
+                  className="bg-nx-accent text-nx-surface disabled:opacity-50"
+                >
                   {loading && <LoadingSpinner className="mr-2 size-4" />}
                   {language === "ar" ? "تأكيد الإلحاق" : "Assign Athlete"}
                 </Button>
@@ -703,6 +824,46 @@ export function TrainingGroupDetailView({ groupId, onBack }: TrainingGroupDetail
                 />
               </div>
 
+              {/* Target Group Age Eligibility Feedback */}
+              {targetGroupIdInput && (
+                <>
+                  {transferAgeCheck.isOverAge && (
+                    <div className="p-3 rounded-lg border border-red-500/40 bg-red-500/10 text-xs text-red-500 font-medium">
+                      {language === "ar" ? transferAgeCheck.reasonAr : transferAgeCheck.reasonEn}
+                    </div>
+                  )}
+
+                  {transferAgeCheck.isUnderAge && canOverrideAge && (
+                    <div className="space-y-2">
+                      <div className="p-3 rounded-lg border border-amber-500/40 bg-amber-500/10 text-xs text-amber-500 font-medium">
+                        {language === "ar" ? transferAgeCheck.reasonAr : transferAgeCheck.reasonEn}
+                      </div>
+                      <div>
+                        <label className="text-xs font-semibold text-nx-ink-2 block mb-1">
+                          {language === "ar" ? "مبرر استثناء تصعيد الفئة (إلزامي للرقابة) *" : "Playing-Up Override Justification (Mandatory) *"}
+                        </label>
+                        <textarea
+                          required
+                          rows={2}
+                          value={transferAgeOverrideJustification}
+                          onChange={e => setTransferAgeOverrideJustification(e.target.value)}
+                          placeholder={language === "ar" ? "أدخل المبرر الفني للتصعيد..." : "Enter technical justification for playing up..."}
+                          className="w-full p-2.5 rounded-md border border-nx-line bg-nx-canvas text-sm text-nx-ink focus:outline-none"
+                        />
+                      </div>
+                    </div>
+                  )}
+
+                  {transferAgeCheck.isUnderAge && !canOverrideAge && (
+                    <div className="p-3 rounded-lg border border-red-500/40 bg-red-500/10 text-xs text-red-500 font-medium">
+                      {language === "ar"
+                        ? "اللاعب أصغر سنًا من الفئة المحددة للمجموعة المستهدفة ويتطلب صلاحية استثناء تصعيد الفئة."
+                        : "Athlete is under-age for target group and requires playing-up override permission."}
+                    </div>
+                  )}
+                </>
+              )}
+
               <div className="flex justify-end gap-3 pt-3 border-t border-nx-line">
                 <Button
                   type="button"
@@ -712,7 +873,17 @@ export function TrainingGroupDetailView({ groupId, onBack }: TrainingGroupDetail
                 >
                   {language === "ar" ? "إلغاء" : "Cancel"}
                 </Button>
-                <Button type="submit" disabled={loading} className="bg-nx-accent text-nx-surface">
+                <Button
+                  type="submit"
+                  disabled={
+                    loading ||
+                    !targetGroupIdInput ||
+                    !transferReasonInput.trim() ||
+                    transferAgeCheck.isOverAge ||
+                    (transferAgeCheck.isUnderAge && (!canOverrideAge || !transferAgeOverrideJustification.trim()))
+                  }
+                  className="bg-nx-accent text-nx-surface disabled:opacity-50"
+                >
                   {loading && <LoadingSpinner className="mr-2 size-4" />}
                   {language === "ar" ? "تنفيذ النقل الحاكم" : "Execute Governed Transfer"}
                 </Button>
