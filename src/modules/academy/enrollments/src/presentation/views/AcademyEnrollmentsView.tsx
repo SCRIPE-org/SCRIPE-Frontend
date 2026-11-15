@@ -357,8 +357,9 @@ export function AcademyEnrollmentsView() {
     return filteredRows.length > 0 ? filteredRows[0] : null;
   }, [filteredRows, selectedId]);
 
-  // Dynamic KPI Metrics calculated from real enrollments in ViewModel
-  const activeCount = useMemo(() => vm.enrollments.filter(e => e.status === "Active").length, [vm.enrollments]);
+  // Dynamic KPI Metrics calculated from real enrollments in ViewModel (DEF-008: distinct active enrolled athletes)
+  const activeEnrolledAthletesCount = useMemo(() => new Set(vm.enrollments.filter(e => e.status === "Active").map(e => e.athleteId)).size, [vm.enrollments]);
+  const totalDistinctAthletesCount = useMemo(() => new Set(vm.enrollments.map(e => e.athleteId)).size, [vm.enrollments]);
   const pendingReviewCount = useMemo(() => vm.enrollments.filter(e => e.status === "Review" || e.status === "Draft" || e.status === "PendingFinance").length, [vm.enrollments]);
   const pendingPaymentCount = useMemo(() => vm.enrollments.filter(e => e.billingStatus === "Unbilled" || e.billingStatus === "Overdue").length, [vm.enrollments]);
   const pausedOrTransferredCount = useMemo(() => vm.enrollments.filter(e => e.status === "Paused" || e.status === "Transferred").length, [vm.enrollments]);
@@ -445,7 +446,7 @@ export function AcademyEnrollmentsView() {
 
       {/* 3. 5 Real KPI Metric Cards with Honest Operational Context (No Fabricated Sparklines) */}
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3.5">
-        {/* Card 1: Active Enrollments (Glowing Signal Lime Highlight) */}
+        {/* Card 1: Active Enrolled Athletes (Glowing Signal Lime Highlight - DEF-008) */}
         <div className="relative rounded-2xl border-2 border-nx-accent-fill bg-nx-accent-fill/15 p-4 shadow-[0_0_20px_rgba(200,255,5,0.14)] overflow-hidden flex flex-col justify-between">
           <div>
             <div className="flex items-start justify-between">
@@ -453,18 +454,18 @@ export function AcademyEnrollmentsView() {
                 <Users className="h-5 w-5" />
               </div>
               <span className="flex items-center gap-1 text-[11px] font-bold text-nx-accent bg-nx-accent-fill/15 px-2 py-0.5 rounded-full border border-nx-accent-fill/40">
-                {isAr ? "نشط" : "Active Roster"}
+                {isAr ? "نشط (فريد)" : "Active (Distinct)"}
               </span>
             </div>
             <div className="mt-2.5">
-              <div className="text-2xl font-black tracking-tight text-white">{activeCount}</div>
-              <div className="text-xs text-nx-ink-2 mt-0.5">{isAr ? "التسجيلات النشطة" : "Active Enrollments"}</div>
+              <div className="text-2xl font-black tracking-tight text-nx-ink">{activeEnrolledAthletesCount}</div>
+              <div className="text-xs text-nx-ink-2 mt-0.5">{isAr ? "الرياضيون المسجلون النشطون" : "Active Enrolled Athletes"}</div>
             </div>
           </div>
           <div className="flex items-center justify-between text-[11px] text-nx-ink-2 pt-3 mt-3 border-t border-nx-accent-fill/40">
-            <span>{isAr ? "نسبة التسجيل الكلي" : "Share of Total"}</span>
+            <span>{isAr ? "نسبة الرياضيين النشطين" : "Share of Distinct"}</span>
             <span className="font-mono font-bold text-nx-accent">
-              {vm.enrollments.length > 0 ? `${Math.round((activeCount / vm.enrollments.length) * 100)}%` : "0%"}
+              {totalDistinctAthletesCount > 0 ? `${Math.round((activeEnrolledAthletesCount / totalDistinctAthletesCount) * 100)}%` : "0%"}
             </span>
           </div>
         </div>

@@ -144,28 +144,28 @@ export function AcademyOverviewView() {
 
   const enrollmentBreakdown = [
     {
-      label: t("academyOverview.enrollmentCapacity.activeEnrollments") || "Active Enrollments",
-      value: state.activeEnrollmentsCount ?? 284,
+      label: isAr ? "الرياضيون المسجلون النشطون" : "Active Enrolled Athletes",
+      value: state.activeEnrollmentsCount ?? 0,
       icon: Users,
     },
     {
-      label: t("academyOverview.enrollmentCapacity.trialEnrollments") || "Trial Enrollments",
-      value: state.pendingTrialsCount ?? 17,
+      label: t("academyOverview.enrollmentCapacity.trialEnrollments") || (isAr ? "تسجيلات التجارب" : "Trial Enrollments"),
+      value: state.pendingTrialsCount ?? 0,
       icon: ClipboardCheck,
     },
     {
-      label: t("academyOverview.enrollmentCapacity.pendingPayment") || "Pending Payment",
-      value: 11,
+      label: t("academyOverview.enrollmentCapacity.pendingPayment") || (isAr ? "في انتظار السداد" : "Pending Payment"),
+      value: 0,
       icon: CreditCard,
     },
     {
-      label: t("academyOverview.enrollmentCapacity.waitlist") || "Waitlist",
-      value: 9,
+      label: t("academyOverview.enrollmentCapacity.waitlist") || (isAr ? "قائمة الانتظار" : "Waitlist"),
+      value: 0,
       icon: ListOrdered,
     },
     {
-      label: t("academyOverview.enrollmentCapacity.groupsNearFull") || "Groups Near Full (≥ 90%)",
-      value: 2,
+      label: t("academyOverview.enrollmentCapacity.groupsNearFull") || (isAr ? "مجموعات قاربت الامتلاء (≥ 90%)" : "Groups Near Full (≥ 90%)"),
+      value: 0,
       icon: Gauge,
     },
   ];
@@ -309,11 +309,11 @@ export function AcademyOverviewView() {
           </p>
         </div>
 
-        {/* Card 2: Active Enrollments */}
+        {/* Card 2: Active Enrolled Athletes (DEF-008) */}
         <div className="card-glass p-4 flex flex-col justify-between">
           <div className="flex items-center justify-between">
             <span className="text-xs font-medium text-nx-ink-2">
-              {t("academyOverview.kpi.enrollments") || "Active Enrollments"}
+              {isAr ? "الرياضيون المسجلون النشطون" : "Active Enrolled Athletes"}
             </span>
             <div className="flex size-7 items-center justify-center rounded-nx-sm bg-nx-raised border border-nx-line text-nx-ink-2">
               <Users className="size-3.5" />
@@ -321,11 +321,11 @@ export function AcademyOverviewView() {
           </div>
           <div className="my-2">
             <p className="text-3xl font-black text-nx-ink tracking-tight">
-              {state.activeEnrollmentsCount ?? 284}
+              {state.activeEnrollmentsCount ?? 0}
             </p>
           </div>
           <p className="text-xs font-semibold text-nx-accent flex items-center gap-1">
-            ↑ +6% from last term
+            {isAr ? "الرياضيون ذوو القيد النشط" : "Distinct active roster"}
           </p>
         </div>
 

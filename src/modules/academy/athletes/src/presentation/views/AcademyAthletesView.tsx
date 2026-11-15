@@ -423,9 +423,9 @@ export function AcademyAthletesView() {
           </div>
         </div>
 
-        {/* Total Count */}
+        {/* Total Count (DEF-008: clarifies Physical Registered Athletes in Directory) */}
         <div className="text-sm text-nx-ink-2 font-medium shrink-0">
-          {isAr ? "إجمالي الرياضيين: " : "Total athletes: "}
+          {isAr ? "الرياضيون المسجلون (الدليل العام): " : "Physical Registered Athletes (Directory): "}
           <span className="font-bold text-nx-ink text-base ml-1 rtl:ml-0 rtl:mr-1">{filteredAthletes.length}</span>
         </div>
       </div>
