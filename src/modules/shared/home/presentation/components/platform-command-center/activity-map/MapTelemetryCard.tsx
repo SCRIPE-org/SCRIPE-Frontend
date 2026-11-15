@@ -23,7 +23,7 @@ export function MapTelemetryCard({
   const { t } = useI18n();
 
   return (
-    <div className="absolute right-3 top-12 z-10 hidden w-[170px] overflow-hidden rounded-lg border border-nx-line bg-nx-surface/95 backdrop-blur-md sm:grid">
+    <div className="absolute end-3 top-12 z-10 hidden w-[170px] overflow-hidden rounded-lg border border-nx-line bg-nx-surface sm:grid">
       <div className="flex min-h-[44px] items-center justify-between border-b border-nx-line p-2">
         <div>
           <b className="font-mono text-xs font-bold text-nx-ink">
@@ -89,7 +89,7 @@ export function MapTelemetryCard({
               ? "bg-warning/10 text-warning"
               : healthVm?.health?.status === "Outage"
                 ? "bg-destructive/10 text-destructive"
-                : "bg-primary/10 text-primary"
+                : "bg-nx-accent-wash text-nx-accent"
           }`}
         >
           {healthVm?.health?.status === "Degraded" ? "Degraded" : "Nominal"}

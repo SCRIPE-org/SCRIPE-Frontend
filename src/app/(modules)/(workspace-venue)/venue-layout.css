@@ -1,16 +1,8 @@
 /* ============================================================================
-   SCRIPE VENUE — RESPONSIVE LAYOUT & MOBILE SIDEBAR COLLAPSE (D1)
+   SCRIPE VENUE — RESPONSIVE LAYOUT
    ----------------------------------------------------------------------------
-   On mobile and tablet viewports (< 1024px, including 390px, 768px), the
-   desktop secondary rail must collapse cleanly (display: none !important) so
-   that the venue workspace content occupies the full available width rather
-   than being crushed into a 110px column.
-   The topbar hamburger toggle opens the mobile drawer overlay as intended.
+   Mobile/tablet (< 1024px) desktop-rail hiding is handled directly by
+   NexusSecondaryRail (`hidden lg:flex lg:flex-col` without inline `display`),
+   so no global `!important` media override on `aside.relative.z-raised` is
+   required here. Keep this module stylesheet valid for `(workspace-venue)/layout.tsx`.
    ============================================================================ */
-
-@media (max-width: 1023px) {
-  /* Hide the static desktop secondary rail on viewports < 1024px */
-  aside.relative.z-raised {
-    display: none !important;
-  }
-}

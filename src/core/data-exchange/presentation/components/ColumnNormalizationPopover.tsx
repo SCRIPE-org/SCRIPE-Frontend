@@ -123,11 +123,11 @@ export function ColumnNormalizationPopover({
       </PopoverTrigger>
       <PopoverContent
         dir={direction}
-        side="left"
+        side={direction === "rtl" ? "right" : "left"}
         align="start"
         sideOffset={8}
         collisionPadding={16}
-        className="w-[440px] max-w-[calc(100vw-2rem)] max-h-[min(600px,82vh)] p-0 flex flex-col overflow-hidden bg-nx-surface border-nx-line text-nx-ink z-[950] shadow-nx-popover"
+        className="w-[440px] max-w-[calc(100vw-2rem)] max-h-[min(600px,82vh)] p-0 flex flex-col overflow-hidden bg-nx-surface border-nx-line text-nx-ink"
       >
         {/* Sticky Header */}
         <div className="shrink-0 flex items-center justify-between border-b border-nx-line bg-nx-surface p-3.5">
@@ -170,7 +170,7 @@ export function ColumnNormalizationPopover({
             >
               {sampleValue || "—"}
             </span>
-            <ArrowRight className="h-3.5 w-3.5 shrink-0 text-nx-accent" />
+            <ArrowRight className="h-3.5 w-3.5 shrink-0 text-nx-accent rtl:rotate-180" />
             <span
               className="flex-1 truncate rounded bg-nx-surface px-2 py-1 font-mono font-medium text-nx-ink border border-nx-accent"
               title={preview}
@@ -201,7 +201,7 @@ export function ColumnNormalizationPopover({
             type="button"
             size="sm"
             onClick={() => setOpen(false)}
-            className="h-7 px-3 text-xs bg-nx-accent text-nx-on-fill hover:opacity-90 font-medium"
+            className="h-7 px-3 text-xs bg-nx-accent-fill text-nx-on-fill hover:opacity-90 font-medium"
           >
             {t("dataExchange.normalization.done")}
           </Button>

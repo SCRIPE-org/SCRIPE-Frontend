@@ -19,9 +19,9 @@ export const defaultSettings: Settings = {
   // --workspace-chroma (the tenant's own brand accent) untouched until the
   // user actively picks a swatch in Appearance settings.
   colorThemeCustomized: false,
-  secondaryColorTheme: "indigo",
+  secondaryColorTheme: "lime",
   lightBackgroundTheme: "default",
-  darkBackgroundTheme: "slate",
+  darkBackgroundTheme: "default",
   shadowIntensity: "moderate",
   gradientDirection: "to-br",
   lightGradientTheme: "none",
@@ -141,7 +141,7 @@ export interface ColorThemeSwatch {
  * appearance picker consumes this list directly. Do not rename either field.
  */
 export const COLOR_THEME_SWATCHES: ColorThemeSwatch[] = [
-  { id: "scripe", hue: 293, chroma: 0.245 },
+  { id: "scripe", hue: 128, chroma: 0.21 },
   // "purple" is the one id with no `:root[data-theme]` rule of its own, so it
   // has no --primary to convert; the pair below is the colour the picker has
   // always drawn for it. See the escalation on the missing CSS block.

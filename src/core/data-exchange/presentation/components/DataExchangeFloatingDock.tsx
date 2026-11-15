@@ -32,7 +32,7 @@ export function DataExchangeFloatingDock() {
       dir={vm.direction}
       className="fixed bottom-4 end-4 z-40 w-96 max-w-[calc(100vw-2rem)] select-none"
     >
-      <Card className="border border-nx-line bg-nx-surface text-nx-ink shadow-nx-dropdown transition-all">
+      <Card className="border border-nx-line bg-nx-surface text-nx-ink">
         <CardHeader className="flex flex-row items-center justify-between p-3 border-b border-nx-line">
           <div className="flex items-center gap-2">
             <FileSpreadsheet className="h-4 w-4 text-nx-accent" />
@@ -54,6 +54,7 @@ export function DataExchangeFloatingDock() {
                 className="h-6 px-1.5 text-[11px] text-nx-ink-2 hover:text-nx-ink"
                 onClick={vm.clearFinished}
                 title={t("dataExchange.dock.clearCompleted")}
+                aria-label={t("dataExchange.dock.clearCompleted")}
               >
                 <Trash2 className="h-3.5 w-3.5" />
               </Button>
@@ -64,6 +65,10 @@ export function DataExchangeFloatingDock() {
               size="sm"
               className="h-6 w-6 p-0 text-nx-ink-2 hover:text-nx-ink"
               onClick={vm.toggleCollapsed}
+              aria-expanded={!vm.isCollapsed}
+              aria-label={
+                vm.isCollapsed ? t("dataExchange.dock.expand") : t("dataExchange.dock.collapse")
+              }
               title={
                 vm.isCollapsed ? t("dataExchange.dock.expand") : t("dataExchange.dock.collapse")
               }

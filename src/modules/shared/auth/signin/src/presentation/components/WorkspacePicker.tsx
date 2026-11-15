@@ -68,7 +68,7 @@ export function WorkspacePicker({
     <div className={`flex flex-col gap-3 ${className}`}>
       {/* Email input row */}
       <div className="flex flex-col gap-1.5">
-        <Label htmlFor="workspace-email" className="text-xs text-muted-foreground">
+        <Label htmlFor="workspace-email" className="text-xs text-nx-ink-2">
           {t("auth.workspacePicker.emailLabel") || "Your email address"}
         </Label>
         <div className="flex gap-2">
@@ -97,9 +97,9 @@ export function WorkspacePicker({
             className="h-9 shrink-0 gap-1.5"
           >
             {isLoading ? (
-              <Loader2 size={14} className="animate-spin" aria-label="Searching…" />
+              <Loader2 size={14} className="animate-spin motion-reduce:animate-none" aria-label="Searching…" />
             ) : (
-              <ArrowRight size={14} aria-hidden />
+              <ArrowRight size={14} className="rtl:rotate-180" aria-hidden />
             )}
             <span className="hidden sm:inline">
               {isLoading
@@ -119,7 +119,7 @@ export function WorkspacePicker({
         >
           {hasWorkspaces ? (
             <div className="flex flex-col gap-1.5">
-              <p className="text-xs text-muted-foreground">
+              <p className="text-xs text-nx-ink-2">
                 {t("auth.workspacePicker.selectWorkspace") || "Select a workspace to continue:"}
               </p>
               <ul className="flex flex-col gap-1.5" role="list">
@@ -138,8 +138,8 @@ export function WorkspacePicker({
                       <span
                         className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-md ${
                           ws.isPlatformAdmin
-                            ? "bg-primary/10 text-nx-accent"
-                            : "bg-muted text-muted-foreground"
+                            ? "bg-nx-accent-wash text-nx-accent"
+                            : "bg-nx-raised text-nx-ink-2"
                         }`}
                         aria-hidden
                       >
@@ -153,12 +153,12 @@ export function WorkspacePicker({
                         </span>
                         <div className="flex items-center gap-1.5">
                           {ws.isPlatformAdmin && (
-                            <span className="rounded bg-primary/10 px-1.5 py-0.5 text-[10px] font-medium text-nx-accent">
+                            <span className="rounded bg-nx-accent-wash px-1.5 py-0.5 text-[10px] font-medium text-nx-accent">
                               {t("auth.workspacePicker.platformAdmin") || "Platform"}
                             </span>
                           )}
                           {!ws.isActivated && (
-                            <span className="flex items-center gap-1 rounded bg-warning/10 px-1.5 py-0.5 text-[10px] font-medium text-warning">
+                            <span className="flex items-center gap-1 rounded bg-warning/10 px-1.5 py-0.5 text-[10px] font-medium text-nx-warning-strong">
                               <Clock size={10} aria-hidden />
                               {t("auth.workspacePicker.setupPending") || "Setup pending"}
                             </span>
@@ -169,7 +169,7 @@ export function WorkspacePicker({
                       {ws.isActivated && (
                         <ArrowRight
                           size={14}
-                          className="shrink-0 text-muted-foreground"
+                          className="shrink-0 text-nx-ink-2 rtl:rotate-180"
                           aria-hidden
                         />
                       )}
@@ -180,7 +180,7 @@ export function WorkspacePicker({
             </div>
           ) : (
             <div
-              className="flex items-start gap-2 rounded-md border border-border/60 bg-muted/30 px-3 py-2.5 text-sm text-muted-foreground"
+              className="flex items-start gap-2 rounded-md border border-nx-line bg-nx-raised px-3 py-2.5 text-sm text-nx-ink-2"
               role="status"
             >
               <AlertCircle size={15} className="mt-0.5 shrink-0" aria-hidden />

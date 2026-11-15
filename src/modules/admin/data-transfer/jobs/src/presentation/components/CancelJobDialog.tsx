@@ -48,7 +48,7 @@ export function CancelJobDialog({
           : t("adminDataTransferJobs.cancelDialog.confirm")
       }
       dir={direction}
-      className="max-w-md border border-nx-line bg-nx-surface text-nx-ink shadow-nx-modal"
+      className="max-w-md border border-nx-line bg-nx-surface text-nx-ink"
       data-testid="cancel-job-dialog"
       cancelButtonProps={{
         "data-testid": "cancel-job-cancel-btn",
@@ -56,6 +56,23 @@ export function CancelJobDialog({
       confirmButtonProps={{
         "data-testid": "cancel-job-confirm-btn",
       }}
-    />
+    >
+      {job && (
+        <div className="flex flex-wrap items-center gap-2 pt-1">
+          <code
+            dir="ltr"
+            className="rounded-sm border border-nx-line bg-nx-raised px-1.5 py-0.5 font-mono text-[11px] text-nx-ink"
+          >
+            {job.jobId.slice(0, 8)}...
+          </code>
+          <code
+            dir="ltr"
+            className="rounded-sm border border-nx-line bg-nx-raised px-1.5 py-0.5 font-mono text-[11px] text-nx-ink-2"
+          >
+            {job.entityKey}
+          </code>
+        </div>
+      )}
+    </ConfirmationDialog>
   );
 }

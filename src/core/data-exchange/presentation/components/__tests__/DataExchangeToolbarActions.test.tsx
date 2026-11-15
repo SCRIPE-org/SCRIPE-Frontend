@@ -5,6 +5,7 @@ import type { DataExchangeDescriptorResponseDto } from "../../../domain/types";
 
 const mockHasPermission = vi.fn<(perm: string) => boolean>();
 const mockGetEntityDescriptor = vi.fn();
+const mockListEntities = vi.fn();
 const mockDownloadTemplateFile = vi.fn().mockResolvedValue(undefined);
 
 vi.mock("@core/providers/i18n-provider", () => ({
@@ -30,6 +31,8 @@ vi.mock("@core/di", () => ({
   getCoreContainer: () => ({
     dataExchangeRepository: {
       getEntityDescriptor: mockGetEntityDescriptor,
+      listEntities: mockListEntities,
+      listPresets: vi.fn().mockResolvedValue([]),
       downloadTemplateFile: mockDownloadTemplateFile,
     },
   }),
@@ -84,6 +87,10 @@ describe("DataExchangeToolbarActions", () => {
   beforeEach(() => {
     vi.clearAllMocks();
     mockDownloadTemplateFile.mockResolvedValue(undefined);
+    mockListEntities.mockResolvedValue([
+      { entityKey: "crm.lead" },
+      { entityKey: "crm.opportunity" },
+    ]);
   });
 
   it("renders nothing when feature gates and permissions disallow import/export", async () => {
@@ -272,5 +279,26 @@ describe("DataExchangeToolbarActions", () => {
         multiSheet: false,
       });
     });
+  });
+
+  it("eliminates catalog-unbacked descriptor 404s when entityKey is not in catalog", async () => {
+    mockHasPermission.mockReturnValue(true);
+    // Entity catalog only contains crm.lead
+    mockListEntities.mockResolvedValueOnce([{ entityKey: "crm.lead" }]);
+
+    const { container } = render(
+      <DataExchangeToolbarActions
+        entityKey="unbacked.entity"
+        defaultOpen
+      />
+    );
+
+    await waitFor(() => {
+      expect(mockListEntities).toHaveBeenCalled();
+    });
+
+    // Should NOT call getEntityDescriptor for unbacked entity!
+    expect(mockGetEntityDescriptor).not.toHaveBeenCalledWith("unbacked.entity", expect.any(AbortSignal));
+    expect(container.firstChild).toBeNull();
   });
 });

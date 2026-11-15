@@ -113,6 +113,7 @@ export class SovereignAccountRepository implements ISovereignAccountRepository {
         sortOrder: Number(cf.sortOrder ?? 0),
         currentValue: cf.currentValue ?? null,
       })),
+      rowVersion: raw.rowVersion ?? undefined,
     };
   }
 
@@ -169,6 +170,7 @@ export class SovereignAccountRepository implements ISovereignAccountRepository {
       isCurrentIpAllowed: Boolean(
         raw.isClientIpAllowed ?? raw.isCurrentIpAllowed ?? true
       ),
+      rowVersion: raw.rowVersion ?? undefined,
     };
   }
 
@@ -181,6 +183,7 @@ export class SovereignAccountRepository implements ISovereignAccountRepository {
       stepUpVerificationCode: data.verifySudoPinOrPasskeyToken,
       triggerEmergencyLockdown: Boolean(data.lockdownConfirmation),
       lockdownConfirmationPhrase: data.lockdownConfirmation,
+      ...(data.rowVersion !== undefined ? { rowVersion: data.rowVersion } : {}),
     });
   }
 
@@ -401,6 +404,7 @@ export class SovereignAccountRepository implements ISovereignAccountRepository {
         raw.savedPresetsJson ??
         raw.savedFilterPresetsJson ??
         (Array.isArray(raw.savedPresets) ? JSON.stringify(raw.savedPresets) : "[]"),
+      rowVersion: raw.rowVersion ?? undefined,
     };
   }
 
@@ -420,6 +424,7 @@ export class SovereignAccountRepository implements ISovereignAccountRepository {
       calendarSystem: data.calendarSystem,
       firstDayOfWeek: data.firstDayOfWeek,
       toastPosition: data.toastPosition,
+      ...(data.rowVersion !== undefined ? { rowVersion: data.rowVersion } : {}),
     });
     return this.getPreferences();
   }
@@ -483,6 +488,7 @@ export class SovereignAccountRepository implements ISovereignAccountRepository {
         createdAt: n.createdAt ?? new Date().toISOString(),
         isRead: Boolean(n.isRead),
       })),
+      rowVersion: raw.rowVersion ?? undefined,
     };
   }
 
@@ -490,6 +496,7 @@ export class SovereignAccountRepository implements ISovereignAccountRepository {
     data: Partial<SovereignNotificationsSlice>
   ): Promise<SovereignNotificationsSlice> {
     const current = await this.getNotifications();
+    const resolvedRowVersion = data.rowVersion ?? current.rowVersion;
     const merged = { ...current, ...data };
     let updatedRules = merged.categoryRules;
 
@@ -520,6 +527,7 @@ export class SovereignAccountRepository implements ISovereignAccountRepository {
       quietHoursStart: merged.quietHoursStartUtc,
       quietHoursEnd: merged.quietHoursEndUtc,
       quietHoursEnabled: merged.quietHoursEnabled,
+      ...(resolvedRowVersion !== undefined ? { rowVersion: resolvedRowVersion } : {}),
     });
     return this.getNotifications();
   }

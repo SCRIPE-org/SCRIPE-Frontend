@@ -34,6 +34,7 @@ export const PartyPersonListView = React.memo(function PartyPersonListView() {
   const { t, language } = useI18n();
 
   const config: CrudConfig<PartyPerson> = {
+    stickyActions: true,
     titleKey: "partyPerson.title",
     subtitleKey: "partyPerson.description",
     resource: "party-people",

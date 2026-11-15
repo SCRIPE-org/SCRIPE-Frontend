@@ -75,6 +75,7 @@ export function CommissionInvoicesView() {
           titleKey: "",
           subtitleKey: "",
           columns: invoiceColumnsWithActions,
+          stickyActions: true,
           hideAddButton: true,
         }}
       />

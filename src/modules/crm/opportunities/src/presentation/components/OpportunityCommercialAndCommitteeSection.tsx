@@ -102,7 +102,7 @@ export function OpportunityCommercialAndCommitteeSection({
             {dwellDays}{t("crmOpportunities.commercialSuite.daysUnit")} / {slaDays}{t("crmOpportunities.commercialSuite.daysUnit")} {t("crmOpportunities.commercialSuite.slaLabel")}
           </span>
           {lockedFields.length > 0 && (
-            <span className="inline-flex items-center gap-1 rounded border border-warning/40 bg-warning/10 px-2 py-0.5 text-[10px] font-mono text-warning" data-testid="deal-stage-locked-fields-badge">
+            <span className="inline-flex items-center gap-1 rounded border border-warning-strong/40 bg-warning/10 px-2 py-0.5 text-[10px] font-mono text-nx-warning-strong" data-testid="deal-stage-locked-fields-badge">
               <Lock className="size-3" />
               {t("crmOpportunities.commercialSuite.lockedFieldsLabel")} {lockedFields.join(", ")}
             </span>
@@ -207,7 +207,7 @@ export function OpportunityCommercialAndCommitteeSection({
                     <Badge variant="outline" className="text-[10px] font-mono">{roleLabel}</Badge>
                     {r.isPrimary && <Badge variant="secondary" className="text-[10px]">{t("crmOpportunities.commercialSuite.primaryBadge")}</Badge>}
                   </div>
-                  <Button size="icon" variant="ghost" className="h-6 w-6 text-destructive" onClick={() => void onRemoveContactRole?.(r.id)}>
+                  <Button type="button" size="icon" variant="ghost" className="h-6 w-6 text-destructive" onClick={() => void onRemoveContactRole?.(r.id)} aria-label={t("crmOpportunities.commercialSuite.removeStakeholderRoleLabel")}>
                     <Trash2 className="size-3" />
                   </Button>
                 </div>

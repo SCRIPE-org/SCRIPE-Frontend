@@ -3,7 +3,6 @@
 import React, { memo, useState } from "react";
 import { Badge } from "@core/ui/badge";
 import { Button } from "@core/ui/button";
-import { cn } from "@core/common/utils";
 import { ChevronDown, ChevronRight, Layers } from "lucide-react";
 import { useCrudI18n } from "../hooks/useCrudI18n";
 import { KanbanStageColumn } from "./KanbanStageColumn";
@@ -71,11 +70,10 @@ export const KanbanSwimlaneSection = memo(function KanbanSwimlaneSection({
       const list = map.get(key);
       if (list) {
         list.push(item);
-      } else {
-        // Fallback for unmapped custom stage key
-        const unmappedList = map.get("other") || [];
-        unmappedList.push(item);
-        map.set("other", unmappedList);
+      } else if (stages[0]) {
+        // Fallback for unmapped custom stage key -> first configured stage
+        const firstList = map.get(stages[0].stageKey);
+        if (firstList) firstList.push(item);
       }
     }
     return map;
@@ -90,7 +88,8 @@ export const KanbanSwimlaneSection = memo(function KanbanSwimlaneSection({
             type="button"
             variant="ghost"
             size="icon"
-            className="size-6 p-0 text-nx-ink-3 hover:text-nx-ink"
+            aria-expanded={isExpanded}
+            className="h-8 w-8 p-0 text-nx-ink-3 hover:text-nx-ink"
             onClick={() => setIsExpanded((prev) => !prev)}
             aria-label={
               isExpanded
@@ -105,12 +104,12 @@ export const KanbanSwimlaneSection = memo(function KanbanSwimlaneSection({
             }
           >
             {isExpanded ? (
-              <ChevronDown className="size-4" />
+              <ChevronDown className="size-4" aria-hidden="true" />
             ) : (
-              <ChevronRight className="size-4 rtl:rotate-180" />
+              <ChevronRight className="size-4 rtl:rotate-180" aria-hidden="true" />
             )}
           </Button>
-          <Layers className="size-4 text-nx-ink-3" />
+          <Layers className="size-4 text-nx-ink-3" aria-hidden="true" />
           <span className="font-semibold text-nx-ink text-sm">{swimlane.label}</span>
           <Badge variant="secondary" className="rounded-full px-2 py-0 text-xs tabular-nums">
             {items.length}

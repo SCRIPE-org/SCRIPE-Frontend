@@ -2,19 +2,24 @@
  * buildA11yFocusCss — Focus, skip-link, cursor, and target-size generators.
  * Extracted from buildA11yCss (#1, #2, #10, #17, #23).
  */
+import { sanitizeCssLength, sanitizeCssLineStyle, sanitizeCssValue } from "./sanitizeBrandingCss";
+
 export function buildA11yFocusCss(
   tokens: Record<string, string | undefined>,
   focusColor: string,
   focusWidth: string,
   focusStyle: string
 ): string[] {
+  const safeFocusColor = sanitizeCssValue(focusColor) || "hsl(var(--primary))";
+  const safeFocusWidth = sanitizeCssLength(focusWidth, "3px");
+  const safeFocusStyle = sanitizeCssLineStyle(focusStyle, "solid");
   const css: string[] = [];
 
   // 1. Focus Ring
   if (tokens["a11y.focusRing.enabled"] !== "false") {
     css.push(`/* ═══ Accessibility: Focus Ring ═══ */
 .login-page :focus-visible {
-  outline: ${focusWidth} ${focusStyle} ${focusColor} !important;
+  outline: ${safeFocusWidth} ${safeFocusStyle} ${safeFocusColor} !important;
   outline-offset: 2px !important;
   box-shadow: 0 0 0 1px rgba(255,255,255,0.4) !important;
 }
@@ -23,7 +28,7 @@ export function buildA11yFocusCss(
 .login-page a:focus-visible,
 .login-page select:focus-visible,
 .login-page [tabindex]:focus-visible {
-  outline: ${focusWidth} ${focusStyle} ${focusColor} !important;
+  outline: ${safeFocusWidth} ${safeFocusStyle} ${safeFocusColor} !important;
   outline-offset: 2px !important;
 }`);
   } else {
@@ -35,20 +40,20 @@ export function buildA11yFocusCss(
     css.push(`/* ═══ Accessibility: Skip Link ═══ */
 .login-skip-link {
   position: absolute; top: -100px; left: 16px; z-index: 9999;
-  padding: 12px 24px; background: ${focusColor}; color: #fff;
+  padding: 12px 24px; background: ${safeFocusColor}; color: hsl(var(--primary-foreground));
   font-size: 14px; font-weight: 600; border-radius: 0 0 8px 8px;
   text-decoration: none; transition: top 0.15s ease-in-out;
   box-shadow: 0 4px 12px rgba(0,0,0,0.2);
 }
-.login-skip-link:focus { top: 0 !important; outline: 2px solid #fff; outline-offset: 2px; }
+.login-skip-link:focus { top: 0 !important; outline: 2px solid currentColor; outline-offset: 2px; }
 [dir="rtl"] .login-skip-link { left: auto; right: 16px; }`);
   }
 
   // 10. Highlight Focus/Hover
   if (tokens["a11y.highlightFocus"] === "true") {
     css.push(`/* ═══ Accessibility: Highlight Focus/Hover ═══ */
-.login-page *:hover { outline: 2px dashed ${focusColor} !important; outline-offset: 2px !important; }
-.login-page *:focus-within { background-color: color-mix(in srgb, ${focusColor} 8%, transparent) !important; }`);
+.login-page *:hover { outline: 2px dashed ${safeFocusColor} !important; outline-offset: 2px !important; }
+.login-page *:focus-within { background-color: color-mix(in srgb, ${safeFocusColor} 8%, transparent) !important; }`);
   }
 
   // 17. Big Cursor

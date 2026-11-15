@@ -5,6 +5,7 @@ import { Card } from "@core/ui/card";
 import { Badge } from "@core/ui/badge";
 import { EmptyState } from "@core/ui/empty-state";
 import { useCrudI18n } from "../hooks/useCrudI18n";
+import { cn } from "@core/common/utils";
 import { Inbox } from "lucide-react";
 import type { CrudColumn } from "../components/generic-crud-view";
 
@@ -15,6 +16,7 @@ export interface CrudCalendarSectionProps<TItem = any> {
   calendarGroupFormatter?: (rawValue: any, item: TItem) => string;
   renderCalendarItem?: (item: TItem, actions: React.ReactNode, index: number) => React.ReactNode;
   renderRowActionButtons?: (item: TItem) => React.ReactNode;
+  emptyState?: React.ReactNode;
   emptyLabel?: string;
 }
 
@@ -25,9 +27,10 @@ export const CrudCalendarSection = memo(function CrudCalendarSection<TItem = any
   calendarGroupFormatter,
   renderCalendarItem,
   renderRowActionButtons,
+  emptyState,
   emptyLabel,
 }: CrudCalendarSectionProps<TItem>) {
-  const { t } = useCrudI18n();
+  const { t, direction } = useCrudI18n();
   const resolvedEmptyLabel = emptyLabel || t("crud.kanban.noItems", { defaultValue: "No items" });
   const dateKey =
     calendarDateField ||
@@ -40,9 +43,13 @@ export const CrudCalendarSection = memo(function CrudCalendarSection<TItem = any
       const rawVal = (item as any)?.[dateKey];
       const dateLabel = calendarGroupFormatter
         ? calendarGroupFormatter(rawVal, item)
-        : rawVal
-        ? String(rawVal).slice(0, 10)
-        : t("crud.calendar.unscheduled", { defaultValue: "Unscheduled" });
+        : rawVal instanceof Date
+          ? Number.isNaN(rawVal.getTime())
+            ? t("crud.calendar.unscheduled", { defaultValue: "Unscheduled" })
+            : rawVal.toISOString().slice(0, 10)
+          : rawVal
+            ? String(rawVal).slice(0, 10)
+            : t("crud.calendar.unscheduled", { defaultValue: "Unscheduled" });
       const list = map.get(dateLabel) ?? [];
       list.push(item);
       map.set(dateLabel, list);
@@ -51,10 +58,10 @@ export const CrudCalendarSection = memo(function CrudCalendarSection<TItem = any
   }, [items, dateKey, calendarGroupFormatter, t]);
 
   return (
-    <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
+    <div dir={direction} className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
       {groups.size === 0 ? (
         <div className="col-span-full rounded-nx-lg border border-nx-line bg-nx-surface p-8">
-          <EmptyState bare icon={Inbox} title={resolvedEmptyLabel} />
+          {emptyState || <EmptyState bare icon={Inbox} title={resolvedEmptyLabel} />}
         </div>
       ) : (
         Array.from(groups.entries()).map(([dateLabel, dateItems]) => (
@@ -63,8 +70,8 @@ export const CrudCalendarSection = memo(function CrudCalendarSection<TItem = any
             className="space-y-3 rounded-nx-lg border border-nx-line bg-nx-surface p-4"
           >
             <div className="flex items-center justify-between border-b border-nx-line pb-2">
-              <span className="text-sm font-semibold text-nx-ink">{dateLabel}</span>
-              <Badge variant="outline" className="text-xs text-nx-ink-3 font-normal">
+              <span className="text-sm font-semibold text-nx-ink tabular-nums">{dateLabel}</span>
+              <Badge variant="outline" className="text-xs text-nx-ink-3 font-normal tabular-nums">
                 {t("crud.calendar.itemsCount", {
                   count: dateItems.length,
                   defaultValue: `${dateItems.length} items`,
@@ -73,29 +80,38 @@ export const CrudCalendarSection = memo(function CrudCalendarSection<TItem = any
             </div>
             <div className="space-y-2">
               {dateItems.map((row: any, idx) => {
+                const rowKey = String(row?.id ?? idx);
                 const actionButtons = renderRowActionButtons ? renderRowActionButtons(row) : null;
                 if (renderCalendarItem) {
                   return (
-                    <div key={row?.id || idx}>
+                    <div key={rowKey}>
                       {renderCalendarItem(row, actionButtons, idx)}
                     </div>
                   );
                 }
                 return (
                   <div
-                    key={row?.id || idx}
+                    key={rowKey}
                     className="space-y-1.5 rounded-nx-md border border-nx-line p-2.5 text-xs bg-nx-raised"
                   >
-                    {columns.slice(0, 3).map((col) => (
-                      <div key={col.key} className="flex items-center justify-between gap-2">
-                        <span className="text-nx-ink-3">{col.label}</span>
-                        <span className="font-medium text-nx-ink">
-                          {col.render
-                            ? col.render(row[col.key], row, idx)
-                            : String(row[col.key] ?? "—")}
-                        </span>
-                      </div>
-                    ))}
+                    {columns.slice(0, 3).map((col) => {
+                      const rawVal = row[col.key];
+                      return (
+                        <div key={col.key} className="flex items-center justify-between gap-2">
+                          <span className="text-nx-ink-3">{col.label}</span>
+                          <span
+                            className={cn(
+                              "font-medium text-nx-ink",
+                              typeof rawVal === "number" && "tabular-nums"
+                            )}
+                          >
+                            {col.render
+                              ? col.render(rawVal, row, idx)
+                              : String(rawVal ?? "—")}
+                          </span>
+                        </div>
+                      );
+                    })}
                     {actionButtons && <div className="pt-1">{actionButtons}</div>}
                   </div>
                 );

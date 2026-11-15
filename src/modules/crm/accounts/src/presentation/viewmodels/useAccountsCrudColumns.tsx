@@ -73,7 +73,7 @@ export function useAccountsCrudColumns(
         render: (_val, account: CrmAccount) => (
           <Badge
             variant="outline"
-            className="border-nx-line bg-nx-raised/60 text-nx-ink-2 gap-1 font-mono text-[11px]"
+            className="border-nx-line bg-nx-raised/60 text-nx-ink-2 gap-1 font-mono tabular-nums text-[11px]"
           >
             <Users className="size-3 text-nx-ink-3" />
             {account.linkedContactsCount}
@@ -87,7 +87,7 @@ export function useAccountsCrudColumns(
         render: (_val, account: CrmAccount) => (
           <Badge
             variant="outline"
-            className="border-nx-line bg-nx-raised/60 text-nx-ink-2 gap-1 font-mono text-[11px]"
+            className="border-nx-line bg-nx-raised/60 text-nx-ink-2 gap-1 font-mono tabular-nums text-[11px]"
           >
             <Briefcase className="size-3 text-nx-ink-3" />
             {account.activeOpportunitiesCount}

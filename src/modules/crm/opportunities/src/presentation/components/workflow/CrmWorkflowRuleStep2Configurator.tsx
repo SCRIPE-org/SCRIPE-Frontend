@@ -65,7 +65,7 @@ export function CrmWorkflowRuleStep2Configurator({
           <Label className="text-xs font-bold text-nx-ink inline-flex items-center gap-1.5"><ShieldCheck className="w-3.5 h-3.5 text-primary" />{t("crmOpportunities.ruleConfig.pipelineRolesHeader")}</Label>
           <Select value={quorum} onValueChange={(v) => setKeys({ quorum: v })}>
             <SelectTrigger className="h-7 w-48 text-[11px]" data-testid="rule-quorum-select"><SelectValue /></SelectTrigger>
-            <SelectContent className="z-[10006]">
+            <SelectContent>
               <SelectItem value="any" className="text-xs">{t("crmOpportunities.ruleConfig.quorumAny")}</SelectItem>
               <SelectItem value="all" className="text-xs">{t("crmOpportunities.ruleConfig.quorumAll")}</SelectItem>
             </SelectContent>

@@ -2,7 +2,6 @@
 
 import React from "react";
 import Link from "next/link";
-import { Sparkles, Shield } from "lucide-react";
 import { useSettings } from "@core/providers/settings-provider";
 import { useTenantBranding } from "@core/providers/tenant-branding-provider";
 import { cn } from "@core/common/utils";
@@ -90,23 +89,32 @@ export function Logo({
   const scale = size ?? resolveScale(settings.logoSize);
   const iconClass = SIZE_CLASSES[scale];
 
+  const renderBrandMark = () => (
+    <span className={cn("relative inline-flex shrink-0 items-center justify-center", iconClass)}>
+      <Image
+        src="/brand/app-logo.svg"
+        alt={settings.logoText || "SCRIPE"}
+        width={40}
+        height={40}
+        priority
+        className="h-full w-full object-contain"
+      />
+    </span>
+  );
+
   const renderIcon = () => {
     switch (settings.logoType) {
-      case "shield":
-        return <Shield className={iconClass} aria-hidden="true" />;
       case "image":
-        if (imageFailed) {
-          return <Sparkles className={iconClass} aria-hidden="true" />;
+        if (!tenantLogoUrl || imageFailed) {
+          return renderBrandMark();
         }
         return (
-          <span className={cn("relative block", iconClass)}>
-            {/* Native element on purpose: tenant logos live on dynamic external
-                domains, which next/image cannot be configured for ahead of time.
-                src is a real runtime URL from the tenant branding provider, and
-                a failed load falls through to the sparkles mark above. */}
+          <span className={cn("relative block shrink-0", iconClass)}>
+            {/* Native unoptimized image: tenant logos live on dynamic external
+                domains, and a failed load falls back cleanly to /brand/app-logo.svg. */}
             <Image
               src={tenantLogoUrl}
-              alt={settings.logoText || "Logo"}
+              alt={settings.logoText || "SCRIPE"}
               width={40}
               height={40}
               priority
@@ -118,9 +126,10 @@ export function Logo({
         );
       case "custom":
         return null;
+      case "shield":
       case "sparkles":
       default:
-        return <Sparkles className={iconClass} aria-hidden="true" />;
+        return renderBrandMark();
     }
   };
 

@@ -16,11 +16,11 @@ interface HubSectionHeaderProps {
 
 export function HubSectionHeader({ icon, title, subtitle, action }: HubSectionHeaderProps) {
   return (
-    <div className="mb-4 flex items-center justify-between">
-      <div className="flex items-baseline gap-2.5">
+    <div className="mb-4 flex flex-wrap items-center justify-between gap-2">
+      <div className="flex flex-wrap items-baseline gap-2.5">
         {icon}
         <h2 className="text-xs font-semibold uppercase tracking-[0.08em] text-nx-ink-2">{title}</h2>
-        {subtitle && <span className="text-xs text-nx-ink-3">{subtitle}</span>}
+        {subtitle && <span className="text-xs text-nx-ink-3 tabular-nums">{subtitle}</span>}
       </div>
       {action}
     </div>

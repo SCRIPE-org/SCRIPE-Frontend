@@ -57,7 +57,7 @@ export function ResourcesWorkspaceView() {
       }
       return true;
     });
-  }, [vm.items, selectedCategory, selectedStatus, allCategoriesLabel]);
+  }, [vm.items, selectedCategory, selectedStatus]);
 
   useEffect(() => {
     if (searchParams.get("setup") === "new") {
@@ -95,7 +95,7 @@ export function ResourcesWorkspaceView() {
           <Button
             size="sm"
             onClick={() => setSetupWizardOpen(true)}
-            className="gap-1.5 rounded-xl bg-nx-accent text-xs font-bold text-nx-on-fill shadow-sm hover:bg-nx-accent/90"
+            className="gap-1.5 rounded-xl bg-nx-accent-fill text-xs font-bold text-nx-on-fill hover:bg-nx-accent-fill/90"
           >
             <Plus className="size-4" aria-hidden="true" />
             <span>{t("resources.addCourt", { defaultValue: "+ Add Court / Space" })}</span>
@@ -136,11 +136,11 @@ export function ResourcesWorkspaceView() {
               {t("resources.metrics.setupRequired", { defaultValue: "Setup Required" })}
             </p>
             <div className="mt-0.5 flex items-center gap-1.5">
-              <p className="text-xl font-bold text-warning">
+              <p className="text-xl font-bold text-nx-warning-strong">
                 {vm.metrics.setupRequired}
               </p>
               {vm.metrics.setupRequired > 0 && (
-                <span className="rounded-full bg-warning/10 px-1.5 py-0.5 text-[10px] font-bold text-warning">
+                <span className="rounded-full bg-warning/10 px-1.5 py-0.5 text-[10px] font-bold text-nx-warning-strong">
                   {t("resources.metrics.actionNeeded", { defaultValue: "Action needed" })}
                 </span>
               )}
@@ -164,14 +164,14 @@ export function ResourcesWorkspaceView() {
           {/* Search Input */}
           <div className="relative w-full">
             <Search
-              className="absolute left-2.5 top-2.5 size-3.5 text-nx-ink-3 rtl:left-auto rtl:right-2.5"
+              className="absolute start-2.5 top-2.5 size-3.5 text-nx-ink-3"
               aria-hidden="true"
             />
             <Input
               value={vm.searchQuery}
               onChange={(e) => vm.setSearchQuery(e.target.value)}
               placeholder={t("resources.search", { defaultValue: "Search courts & spaces..." })}
-              className="h-9 rounded-lg pl-8 text-xs rtl:pl-3 rtl:pr-8"
+              className="h-9 rounded-lg ps-8 pe-3 text-xs"
             />
           </div>
 
@@ -318,7 +318,7 @@ export function ResourcesWorkspaceView() {
                 vm.setSelectedFacilityId("");
                 vm.setSearchQuery("");
               }}
-              className="h-6 px-2 text-[10px] text-nx-ink-3 hover:text-nx-ink ml-auto"
+              className="h-6 px-2 text-[10px] text-nx-ink-3 hover:text-nx-ink ms-auto"
             >
               {t("resources.filters.resetAll", { defaultValue: "Reset All" })}
             </Button>
@@ -343,7 +343,7 @@ export function ResourcesWorkspaceView() {
           action={
             <Button
               onClick={() => setSetupWizardOpen(true)}
-              className="gap-2 bg-nx-accent font-bold text-nx-on-fill hover:bg-nx-accent/90"
+              className="gap-2 bg-nx-accent-fill font-bold text-nx-on-fill hover:bg-nx-accent-fill/90"
             >
               <Sparkles className="size-4" aria-hidden="true" />
               <span>{t("resources.empty.action", { defaultValue: "Start Setup Journey" })}</span>

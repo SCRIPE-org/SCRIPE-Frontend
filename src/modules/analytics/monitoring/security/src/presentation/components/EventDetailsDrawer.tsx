@@ -41,7 +41,7 @@ export function EventDetailsDrawer({ event, open, onOpenChange }: EventDetailsDr
 
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
-      <SheetContent side="right" className="w-full space-y-6 overflow-y-auto p-6 sm:max-w-md">
+      <SheetContent side="end" className="w-full space-y-6 overflow-y-auto p-6 sm:max-w-md">
         <SheetHeader className="space-y-2">
           <div className="flex items-center gap-2">
             <Badge

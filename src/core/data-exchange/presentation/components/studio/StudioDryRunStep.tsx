@@ -34,25 +34,25 @@ export function StudioDryRunStep({ dryRunResult }: StudioDryRunStepProps) {
     <div className="space-y-5">
       {/* Quota / Readiness Alert */}
       {!dryRunResult.quotaPassed ? (
-        <Alert variant="destructive" className="border-destructive/30 bg-destructive/10">
-          <XCircle className="h-4 w-4 text-destructive shrink-0" />
-          <AlertTitle className="text-sm font-semibold">{t("dataExchange.dryRun.quotaBlockedTitle")}</AlertTitle>
+        <Alert variant="destructive" className="border-nx-danger/35 bg-nx-danger/10 text-nx-danger">
+          <XCircle className="h-4 w-4 text-nx-danger shrink-0" />
+          <AlertTitle className="text-sm font-semibold text-nx-ink">{t("dataExchange.dryRun.quotaBlockedTitle")}</AlertTitle>
           <AlertDescription className="text-xs text-nx-ink-2 mt-1">
             {dryRunResult.quotaDenialReason || t("dataExchange.dryRun.quotaBlockedDesc")}
           </AlertDescription>
         </Alert>
       ) : dryRunResult.validRows === 0 ? (
-        <Alert variant="destructive" className="border-destructive/30 bg-destructive/10">
-          <XCircle className="h-4 w-4 text-destructive shrink-0" />
-          <AlertTitle className="text-sm font-semibold">{t("dataExchange.dryRun.zeroValidTitle")}</AlertTitle>
+        <Alert variant="destructive" className="border-nx-danger/35 bg-nx-danger/10 text-nx-danger">
+          <XCircle className="h-4 w-4 text-nx-danger shrink-0" />
+          <AlertTitle className="text-sm font-semibold text-nx-ink">{t("dataExchange.dryRun.zeroValidTitle")}</AlertTitle>
           <AlertDescription className="text-xs text-nx-ink-2 mt-1">
             {t("dataExchange.dryRun.zeroValidDesc")}
           </AlertDescription>
         </Alert>
       ) : dryRunResult.invalidRows > 0 ? (
-        <Alert variant="warning" className="border-warning/30 bg-warning/10">
-          <AlertTriangle className="h-4 w-4 text-warning shrink-0" />
-          <AlertTitle className="text-sm font-semibold">{t("dataExchange.dryRun.partialReadyTitle")}</AlertTitle>
+        <Alert variant="warning" className="border-nx-warning-strong/35 bg-nx-warning/10 text-nx-warning-strong">
+          <AlertTriangle className="h-4 w-4 text-nx-warning-strong shrink-0" />
+          <AlertTitle className="text-sm font-semibold text-nx-ink">{t("dataExchange.dryRun.partialReadyTitle")}</AlertTitle>
           <AlertDescription className="text-xs text-nx-ink mt-1">
             {t("dataExchange.dryRun.partialReadyDesc", {
               valid: dryRunResult.validRows,
@@ -78,7 +78,7 @@ export function StudioDryRunStep({ dryRunResult }: StudioDryRunStepProps) {
           {
             label: t("dataExchange.dryRun.invalidRows"),
             value: dryRunResult.invalidRows,
-            tone: dryRunResult.invalidRows > 0 ? "text-destructive" : "text-nx-ink-2",
+            tone: dryRunResult.invalidRows > 0 ? "text-nx-danger" : "text-nx-ink-2",
           },
           { label: t("dataExchange.dryRun.estimatedInserts"), value: dryRunResult.estimatedNewInserts, tone: "text-nx-accent" },
           { label: t("dataExchange.dryRun.estimatedUpdates"), value: dryRunResult.estimatedUpdates, tone: "text-info" },
@@ -125,7 +125,7 @@ export function StudioDryRunStep({ dryRunResult }: StudioDryRunStepProps) {
                   <TableCell className="font-mono tabular-nums text-success font-medium">
                     {s.validRows}
                   </TableCell>
-                  <TableCell className="font-mono tabular-nums text-destructive font-medium">
+                  <TableCell className="font-mono tabular-nums text-nx-danger font-medium">
                     {s.invalidRows}
                   </TableCell>
                   <TableCell>

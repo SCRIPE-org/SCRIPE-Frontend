@@ -114,7 +114,7 @@ export function CrmWorkflowStageExitGatesSection({
               <Input value={newCfKey} onChange={(e) => onNewCfKeyChange(e.target.value)} placeholder="field_key" className="h-7 text-xs font-mono" data-testid="workflow-cf-key-input" />
               <Select value={newCfType} onValueChange={(v) => onNewCfTypeChange?.(v as CrmCustomFieldDefinition["valueType"])}>
                 <SelectTrigger className="h-7 text-xs bg-nx-surface" data-testid="workflow-cf-type-select"><SelectValue /></SelectTrigger>
-                <SelectContent className="z-[10002]">
+                <SelectContent>
                   {CUSTOM_FIELD_VALUE_TYPES.map((vt) => <SelectItem key={vt} value={vt} className="text-xs">{vt}</SelectItem>)}
                 </SelectContent>
               </Select>
@@ -148,10 +148,10 @@ export function CrmWorkflowStageExitGatesSection({
               const sourceStage = stages.find((s) => s.stageKey === tr.fromStageKey);
               const sourceLabel = tr.fromStageKey === "*" ? t("crmOpportunities.pipelinesPage.anyStageGlobal") : sourceStage ? (isAr ? sourceStage.labelAr : sourceStage.labelEn) : tr.fromStageKey;
               return (
-                <div key={tr.id} onClick={() => onSelectTransition(tr.id)} className="rounded-md border border-nx-line bg-nx-raised/40 px-2.5 py-1.5 flex items-center justify-between text-xs cursor-pointer hover:border-nx-line-hi" data-testid={`inspector-incoming-tr-${tr.id}`}>
+                <Button type="button" variant="ghost" key={tr.id} onClick={() => onSelectTransition(tr.id)} className="w-full h-auto rounded-md border border-nx-line bg-nx-raised/40 px-2.5 py-1.5 justify-between text-xs hover:border-nx-line-hi hover:bg-nx-raised/60" data-testid={`inspector-incoming-tr-${tr.id}`}>
                   <span className="inline-flex items-center gap-1.5 font-medium text-nx-ink truncate"><Zap className="w-3 h-3 text-info shrink-0" />{isAr ? tr.nameAr : tr.nameEn}</span>
                   <Badge variant="outline" className="text-[10px]">{sourceLabel}</Badge>
-                </div>
+                </Button>
               );
             })}
           </div>
@@ -174,10 +174,10 @@ export function CrmWorkflowStageExitGatesSection({
               const targetStage = stages.find((s) => s.stageKey === tr.toStageKey);
               const targetLabel = targetStage ? (isAr ? targetStage.labelAr : targetStage.labelEn) : tr.toStageKey;
               return (
-                <div key={tr.id} onClick={() => onSelectTransition(tr.id)} className="rounded-md border border-nx-line bg-nx-raised/50 px-2.5 py-1.5 flex items-center justify-between text-xs cursor-pointer hover:border-nx-line-hi" data-testid={`inspector-outgoing-tr-${tr.id}`}>
-                  <span className="inline-flex items-center gap-1.5 font-semibold text-nx-ink truncate"><Zap className="w-3 h-3 text-warning shrink-0" />{isAr ? tr.nameAr : tr.nameEn}</span>
+                <Button type="button" variant="ghost" key={tr.id} onClick={() => onSelectTransition(tr.id)} className="w-full h-auto rounded-md border border-nx-line bg-nx-raised/50 px-2.5 py-1.5 justify-between text-xs hover:border-nx-line-hi hover:bg-nx-raised/70" data-testid={`inspector-outgoing-tr-${tr.id}`}>
+                  <span className="inline-flex items-center gap-1.5 font-semibold text-nx-ink truncate"><Zap className="w-3 h-3 text-nx-warning-strong shrink-0" />{isAr ? tr.nameAr : tr.nameEn}</span>
                   <Badge variant="outline" className="text-[10px]">{targetLabel}</Badge>
-                </div>
+                </Button>
               );
             })}
           </div>

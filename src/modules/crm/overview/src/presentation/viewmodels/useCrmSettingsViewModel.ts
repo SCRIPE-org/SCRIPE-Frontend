@@ -15,6 +15,7 @@ import { useCrmCurrency } from "./useCrmCurrency";
  */
 export function useCrmSettingsViewModel() {
   const settings = useCrmSettingsStore();
+  const hydrateFromServer = useCrmSettingsStore((s) => s.hydrateFromServer);
   const currencyHook = useCrmCurrency();
 
   const [isSaving, setIsSaving] = useState(false);
@@ -22,8 +23,8 @@ export function useCrmSettingsViewModel() {
   const [errorBanner, setErrorBanner] = useState<string | null>(null);
 
   useEffect(() => {
-    void settings.hydrateFromServer();
-  }, []);
+    void hydrateFromServer();
+  }, [hydrateFromServer]);
 
   const persistTenantAndUserSettings = useCallback(async (bannerText?: string) => {
     setIsSaving(true);

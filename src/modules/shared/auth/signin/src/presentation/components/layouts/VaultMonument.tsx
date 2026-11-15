@@ -115,7 +115,7 @@ export function VaultMonument() {
         {/* Floor reflection */}
         <div
           aria-hidden="true"
-          className="pointer-events-none absolute left-0 top-full w-full"
+          className="pointer-events-none absolute inset-x-0 top-full w-full"
           style={{
             transform: "scaleY(-1)",
             marginTop: "-4%",

@@ -60,6 +60,7 @@ export interface AdminProfileDto {
     sortOrder?: number;
     currentValue?: unknown;
   }>;
+  rowVersion?: string | null;
 }
 
 
@@ -141,6 +142,7 @@ export interface UpdateProfileRequestDto {
   isAvailableForOperations?: boolean;
   activeBranchName?: string;
   customFields?: Record<string, unknown>;
+  rowVersion?: string;
 }
 
 /**

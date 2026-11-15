@@ -21,6 +21,7 @@
  * placeholder needed.
  */
 
+import React from "react";
 import { useI18n } from "@core/providers/i18n-provider";
 import { useWorkspace } from "@core/providers/workspace-provider";
 import { useSettings } from "@core/providers/settings-provider";
@@ -33,10 +34,10 @@ import {
   TopbarBreadcrumbs,
   TopbarContextPill,
   TopbarHomeButton,
-  TopbarMobileControls,
   TopbarPanelToggle,
   TopbarSearchButton,
 } from "./_parts/topbar-parts";
+import { hasSecondarySubmenu } from "./_parts/nexus-layout-constants";
 import { useNavigationStore } from "@/core/navigation/store/useNavigationStore";
 import { startRoutingProgress } from "@core/ui/routing-progress-bar";
 
@@ -45,6 +46,8 @@ interface NexusTopbarProps {
   onTogglePanel?: () => void;
   onOpenSearch?: () => void;
   isPanelCollapsed?: boolean;
+  isMobileMenuOpen?: boolean;
+  toggleButtonRef?: React.Ref<HTMLButtonElement>;
 }
 
 export function NexusTopbar({
@@ -52,11 +55,12 @@ export function NexusTopbar({
   onTogglePanel,
   onOpenSearch,
   isPanelCollapsed,
+  isMobileMenuOpen = false,
+  toggleButtonRef,
 }: NexusTopbarProps) {
   const { direction, language, t } = useI18n();
-  const { activeWorkspace, activeRootItem, isModuleMode } = useWorkspace();
-  const { cardStyle, showBreadcrumbs, showNotifications, stickyHeader, collapsibleSidebar } =
-    useSettings();
+  const { activeWorkspace, activeRootItem, rootMenuItems, isModuleMode } = useWorkspace();
+  const { cardStyle, showBreadcrumbs, stickyHeader, collapsibleSidebar } = useSettings();
   const pathname = usePathname();
   const router = useRouter();
   const user = useAppStore((s) => s.user);
@@ -103,33 +107,74 @@ export function NexusTopbar({
   };
 
   let displayPageName = formattedPage;
-  if (breadcrumbOverride) {
-    displayPageName = breadcrumbOverride;
-  } else if (isIdString(pageName)) {
-    displayPageName = formatParentSegmentAsTitle(parentName);
-  } else if (activeRootItem && activeRootItem.children) {
-    let bestMatch: any = null;
+  const intermediateSegments: string[] = [];
+  const searchPool = activeRootItem?.children?.length ? activeRootItem.children : rootMenuItems;
+
+  let bestMatch: any = null;
+  let bestTrail: any[] = [];
+  if (searchPool && searchPool.length > 0) {
     let maxLen = 0;
-    const search = (nodes: any[]) => {
+    const search = (nodes: any[], trail: any[]) => {
       for (const item of nodes) {
         if (item.href && (pathname === item.href || pathname.startsWith(item.href + "/"))) {
           if (item.href.length > maxLen) {
             maxLen = item.href.length;
             bestMatch = item;
+            bestTrail = trail;
           }
         }
-        if (item.children) search(item.children);
+        if (item.children?.length) {
+          search(item.children, [...trail, item]);
+        }
       }
     };
-    search(activeRootItem.children);
-    if (bestMatch) {
-      displayPageName = resolveBilingualLabel(
-        bestMatch.nameEn || bestMatch.nameAr || formattedPage,
-        bestMatch.nameAr || bestMatch.nameEn || formattedPage,
-        language
-      );
+    search(searchPool, []);
+  }
+
+  for (const ancestor of bestTrail) {
+    const ancestorLabel = resolveBilingualLabel(
+      ancestor.nameEn || ancestor.nameAr,
+      ancestor.nameAr || ancestor.nameEn,
+      language
+    );
+    if (ancestorLabel) {
+      intermediateSegments.push(ancestorLabel);
     }
   }
+
+  if (breadcrumbOverride) {
+    if (bestMatch) {
+      const matchLabel = resolveBilingualLabel(
+        bestMatch.nameEn || bestMatch.nameAr,
+        bestMatch.nameAr || bestMatch.nameEn,
+        language
+      );
+      if (matchLabel) intermediateSegments.push(matchLabel);
+    }
+    displayPageName = breadcrumbOverride;
+  } else if (isIdString(pageName)) {
+    if (bestMatch) {
+      const matchLabel = resolveBilingualLabel(
+        bestMatch.nameEn || bestMatch.nameAr,
+        bestMatch.nameAr || bestMatch.nameEn,
+        language
+      );
+      if (matchLabel) intermediateSegments.push(matchLabel);
+    }
+    displayPageName = formatParentSegmentAsTitle(parentName);
+  } else if (bestMatch) {
+    displayPageName = resolveBilingualLabel(
+      bestMatch.nameEn || bestMatch.nameAr || formattedPage,
+      bestMatch.nameAr || bestMatch.nameEn || formattedPage,
+      language
+    );
+  }
+
+  const hasSubmenu = hasSecondarySubmenu(
+    activeWorkspace?.workspaceKey,
+    activeRootItem,
+    rootMenuItems
+  );
 
   // ── Context pill text ────────────────────────────────────────────────────
   const tenantName =
@@ -173,40 +218,32 @@ export function NexusTopbar({
       // Sticky pins the bar to the scroll region's top edge; z-sticky keeps
       // passing content (z-raised and below) under the glass. Non-sticky just
       // flows — it scrolls away with the page.
-      className={cn(stickyHeader ? "sticky top-0 z-sticky" : "relative z-raised")}
+      className={cn(
+        stickyHeader ? "sticky top-0 z-sticky" : "relative z-raised",
+        "flex h-14 min-h-[56px] shrink-0 items-center gap-2 border-b border-nx-line px-3 sm:gap-3 lg:pe-3 lg:ps-5"
+      )}
       style={{
-        height: 56,
-        minHeight: 56,
-        flexShrink: 0,
-        borderBottom: "1px solid var(--nx-line, hsl(var(--border)))",
-        display: "flex",
-        alignItems: "center",
-        paddingInlineStart: 20,
-        paddingInlineEnd: 12,
-        gap: 12,
         direction: isRTL ? "rtl" : "ltr",
         ...bgStyle,
       }}
     >
-      {/* Mobile hamburger / Desktop Panel Toggle */}
-      {(() => {
-        const hasSubmenu = Boolean(activeRootItem?.children && activeRootItem.children.length > 0);
-        return (
-          <TopbarPanelToggle
-            isRTL={isRTL}
-            isPanelCollapsed={isPanelCollapsed}
-            collapsible={collapsibleSidebar && hasSubmenu}
-            ariaLabel={t("navigation.togglePanel")}
-            onToggle={() => {
-              if (typeof window !== "undefined" && window.innerWidth < 1024) {
-                onMobileMenuOpen();
-              } else if (onTogglePanel) {
-                onTogglePanel();
-              }
-            }}
-          />
-        );
-      })()}
+      {/* Mobile drawer toggle (<1024px) / Desktop Panel Toggle (>=1024px) */}
+      <TopbarPanelToggle
+        isRTL={isRTL}
+        isPanelCollapsed={isPanelCollapsed}
+        collapsible={collapsibleSidebar && hasSubmenu}
+        hasSubmenu={hasSubmenu}
+        isMobileMenuOpen={isMobileMenuOpen}
+        toggleRef={toggleButtonRef}
+        ariaLabel={t("navigation.togglePanel")}
+        onToggle={() => {
+          if (typeof window !== "undefined" && window.innerWidth < 1024) {
+            onMobileMenuOpen();
+          } else if (onTogglePanel) {
+            onTogglePanel();
+          }
+        }}
+      />
 
       {/* Breadcrumbs — the spacer keeps the right-side controls parked at the
           inline end when the trail is switched off */}
@@ -215,6 +252,7 @@ export function NexusTopbar({
           isRTL={isRTL}
           workspaceName={workspaceName}
           activeRootName={activeRootName}
+          intermediateSegments={intermediateSegments}
           displayPageName={displayPageName}
         />
       ) : (
@@ -222,14 +260,7 @@ export function NexusTopbar({
       )}
 
       {/* Right-side controls */}
-      <div
-        style={{
-          display: "flex",
-          alignItems: "center",
-          gap: 8,
-          flexShrink: 0,
-        }}
-      >
+      <div className="flex shrink-0 items-center gap-1.5 sm:gap-2">
         <TopbarContextPill isModuleMode={isModuleMode} tenantName={tenantName} />
 
         <TopbarSearchButton
@@ -247,12 +278,10 @@ export function NexusTopbar({
           />
         )}
 
-        <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
-          <NxThemeSwitcher buttonClassName="h-[33px] w-[33px] text-nx-ink-3 hover:text-nx-ink hover:bg-nx-raised rounded-nx-control transition-[color,background-color,border-color,box-shadow] duration-nx-micro motion-reduce:transition-none" />
-          <LanguageSwitcher buttonClassName="h-[33px] w-[46px] text-nx-ink-3 hover:text-nx-ink hover:bg-nx-raised rounded-nx-control transition-[color,background-color,border-color,box-shadow] duration-nx-micro motion-reduce:transition-none" />
+        <div className="flex items-center gap-1.5 sm:gap-2">
+          <NxThemeSwitcher buttonClassName="h-9 w-9 text-nx-ink-2 hover:text-nx-ink hover:bg-nx-raised rounded-nx-control transition-[color,background-color,border-color,box-shadow] duration-nx-micro motion-reduce:transition-none" />
+          <LanguageSwitcher buttonClassName="h-9 min-w-[36px] px-2 text-nx-ink-2 hover:text-nx-ink hover:bg-nx-raised rounded-nx-control transition-[color,background-color,border-color,box-shadow] duration-nx-micro motion-reduce:transition-none" />
         </div>
-
-        <TopbarMobileControls showNotifications={showNotifications} />
       </div>
     </header>
   );

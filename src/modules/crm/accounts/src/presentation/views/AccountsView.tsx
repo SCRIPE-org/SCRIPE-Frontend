@@ -171,7 +171,7 @@ export function AccountsView() {
                   variant="default"
                   size="sm"
                   onClick={() => setIsCreateOpen(true)}
-                  className="h-8 px-3 text-xs bg-nx-accent text-nx-on-fill font-medium hover:bg-nx-accent/90 gap-1.5"
+                  className="h-8 px-3 text-xs bg-nx-accent-fill text-nx-on-fill font-semibold hover:brightness-95 gap-1.5"
                 >
                   <Plus className="size-3.5" />
                   <span>{t("crmAccounts.actions.create")}</span>
@@ -206,7 +206,7 @@ export function AccountsView() {
                     variant="default"
                     size="sm"
                     onClick={() => setIsCreateOpen(true)}
-                    className="h-8 px-3 text-xs bg-nx-accent text-nx-on-fill font-medium hover:bg-nx-accent/90 gap-1.5"
+                    className="h-8 px-3 text-xs bg-nx-accent-fill text-nx-on-fill font-semibold hover:brightness-95 gap-1.5"
                   >
                     <Plus className="size-3.5" />
                     <span>{t("crmAccounts.actions.create")}</span>

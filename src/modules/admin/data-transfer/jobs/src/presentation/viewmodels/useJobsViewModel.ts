@@ -5,101 +5,88 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "@core/ui/sileo-toast";
 import { useI18n } from "@core/providers/i18n-provider";
 import { useAppStore } from "@core/store/useAppStore";
-import { getEntityDisplayName, isTenantRequiredError } from "@core/data-exchange";
+import { isTenantRequiredError } from "@core/data-exchange/domain/tenant-errors";
 import type { DataExchangeArtifactKind } from "@core/data-exchange/domain/types";
 import { getDataTransferContainer } from "../../../../di";
 import type { DataTransferJob } from "../../domain/entities/DataTransferJob";
+import { useJobsEntityCatalog } from "../hooks/useJobsEntityCatalog";
+import { triggerJobArtifactDownload } from "../utils/download-job-artifact";
+import type {
+  JobsPaginationState,
+  UseJobsViewModelReturn,
+} from "../types/jobs-viewmodel.types";
 
-/**
- * Return type of the jobs sub-module viewmodel hook.
- */
-export interface UseJobsViewModelReturn {
-  jobs: DataTransferJob[];
-  totalCount: number;
-  pagesCount: number;
-  totalPages: number;
-  isLoading: boolean;
-  isError: boolean;
-  error: unknown;
-  isTenantRequired: boolean;
-  page: number;
-  pageNumber: number;
-  pageSize: number;
-  search: string;
-  statusFilter: string;
-  kindFilter: string;
-  setPage: (page: number) => void;
-  setPageNumber: (page: number) => void;
-  setPageSize: (pageSize: number) => void;
-  pagination: {
-    page: number;
-    pageNumber: number;
-    pageSize: number;
-    itemsCount: number;
-    totalCount: number;
-    pagesCount: number;
-    totalPages: number;
-  };
-  setSearch: (search: string) => void;
-  setStatusFilter: (status: string) => void;
-  setKindFilter: (kind: string) => void;
-  refetch: () => Promise<unknown>;
-  // Studio CTA
-  isStudioOpen: boolean;
-  setIsStudioOpen: (open: boolean) => void;
-  // Cancel job workflow
-  jobToCancel: DataTransferJob | null;
-  isCancelDialogOpen: boolean;
-  isCancelling: boolean;
-  promptCancelJob: (job: DataTransferJob) => void;
-  closeCancelDialog: () => void;
-  confirmCancelJob: () => Promise<void>;
-  // Download artifact
-  downloadArtifact: (job: DataTransferJob, kind: DataExchangeArtifactKind) => Promise<void>;
-  isDownloading: boolean;
-  // KPIs
-  kpis: {
-    totalJobs: number;
-    activeJobs: number;
-    completedJobs: number;
-    failedJobs: number;
-  };
-}
+/** Re-exported jobs ViewModel state and pagination types. */
+export type { JobsPaginationState, UseJobsViewModelReturn };
 
-/**
- * Presentation ViewModel hook managing data transfer background jobs.
- */
+/** Presentation ViewModel hook managing data transfer background jobs. */
 export function useJobsViewModel(): UseJobsViewModelReturn {
-  const { t, language } = useI18n();
-  const isAr = language === "ar";
+  const { t } = useI18n();
   const tenantCode = useAppStore((s) => s.tenantCode);
   const queryClient = useQueryClient();
   const repo = getDataTransferContainer().jobsRepository;
+  const catalog = useJobsEntityCatalog();
 
-  const [page, setPage] = useState<number>(1);
+  const [page, setPageState] = useState<number>(1);
   const [pageSize, setPageSizeState] = useState<number>(20);
   const [search, setSearchState] = useState<string>("");
   const [statusFilter, setStatusFilterState] = useState<string>("all");
-  const [kindFilter, setKindFilter] = useState<string>("all");
-  const [isStudioOpen, setIsStudioOpen] = useState<boolean>(false);
+  const [kindFilter, setKindFilterState] = useState<string>("all");
+  const [isStudioPickerOpen, setIsStudioPickerOpen] = useState<boolean>(false);
+  const [activeStudioEntityKey, setActiveStudioEntityKey] = useState<string | null>(null);
   const [jobToCancel, setJobToCancel] = useState<DataTransferJob | null>(null);
   const [isCancelDialogOpen, setIsCancelDialogOpen] = useState<boolean>(false);
   const [isDownloading, setIsDownloading] = useState<boolean>(false);
 
+  const setPage = useCallback((nextPage: number) => {
+    const valid = Number.isFinite(nextPage) && nextPage >= 1 ? Math.floor(nextPage) : 1;
+    setPageState(valid);
+  }, []);
+
   const setSearch = useCallback((val: string) => {
     setSearchState(val);
-    setPage(1);
+    setPageState(1);
   }, []);
 
   const setStatusFilter = useCallback((val: string) => {
     setStatusFilterState(val);
-    setPage(1);
+    setPageState(1);
+  }, []);
+
+  const setKindFilter = useCallback((val: string) => {
+    setKindFilterState(val);
+    setPageState(1);
+  }, []);
+
+  const resetFilters = useCallback(() => {
+    setSearchState("");
+    setStatusFilterState("all");
+    setKindFilterState("all");
+    setPageState(1);
   }, []);
 
   const setPageSize = useCallback((nextSize: number) => {
     const valid = Number.isFinite(nextSize) && nextSize > 0 ? Math.floor(nextSize) : 20;
     setPageSizeState(valid);
-    setPage(1);
+    setPageState(1);
+  }, []);
+
+  const openStudioPicker = useCallback(() => {
+    setIsStudioPickerOpen(true);
+  }, []);
+
+  const launchStudioForEntity = useCallback((entityKey: string) => {
+    if (!entityKey) return;
+    setIsStudioPickerOpen(false);
+    setActiveStudioEntityKey(entityKey);
+  }, []);
+
+  const setIsStudioOpen = useCallback((open: boolean) => {
+    if (!open) {
+      setActiveStudioEntityKey(null);
+    } else {
+      setIsStudioPickerOpen(true);
+    }
   }, []);
 
   const queryKey = [
@@ -134,14 +121,14 @@ export function useJobsViewModel(): UseJobsViewModelReturn {
   const filteredJobs =
     kindFilter !== "all" ? rawJobs.filter((j: DataTransferJob) => j.kind === kindFilter) : rawJobs;
 
-  const safePageSize = Math.max(1, Number.isFinite(pageSize) ? pageSize : 20);
+  const safePageSize = Math.max(1, Number.isFinite(pageSize) ? Math.floor(pageSize) : 20);
   const rawTotal = data?.totalCount;
   const totalCount =
     typeof rawTotal === "number" && Number.isFinite(rawTotal) && rawTotal >= 0
-      ? rawTotal
+      ? Math.floor(rawTotal)
       : filteredJobs.length;
   const pagesCount = Math.max(1, Math.ceil(totalCount / safePageSize));
-  const safePage = Math.min(Math.max(1, Number.isFinite(page) ? page : 1), pagesCount);
+  const safePage = Math.min(Math.max(1, Number.isFinite(page) ? Math.floor(page) : 1), pagesCount);
 
   const isTenantRequired = isTenantRequiredError(error);
 
@@ -150,7 +137,7 @@ export function useJobsViewModel(): UseJobsViewModelReturn {
       return repo.cancelJob(jobId);
     },
     onSuccess: () => {
-      const localizedEntity = jobToCancel ? getEntityDisplayName(jobToCancel.entityKey, t, isAr) : "";
+      const localizedEntity = jobToCancel ? catalog.resolveEntityName(jobToCancel.entityKey) : "";
       toast.success({
         id: jobToCancel ? `dx-job-${jobToCancel.jobId}` : undefined,
         title: localizedEntity || t("adminDataTransferJobs.title"),
@@ -163,7 +150,7 @@ export function useJobsViewModel(): UseJobsViewModelReturn {
       void queryClient.invalidateQueries({ queryKey: ["data-transfer", "jobs"] });
     },
     onError: () => {
-      const localizedEntity = jobToCancel ? getEntityDisplayName(jobToCancel.entityKey, t, isAr) : "";
+      const localizedEntity = jobToCancel ? catalog.resolveEntityName(jobToCancel.entityKey) : "";
       toast.error({
         id: jobToCancel ? `dx-job-${jobToCancel.jobId}` : undefined,
         title: localizedEntity || t("adminDataTransferJobs.title"),
@@ -174,26 +161,28 @@ export function useJobsViewModel(): UseJobsViewModelReturn {
     },
   });
 
+  const { mutateAsync: cancelMutateAsync, isPending: isCancelling } = cancelMutation;
+
   const promptCancelJob = useCallback((job: DataTransferJob) => {
     setJobToCancel(job);
     setIsCancelDialogOpen(true);
   }, []);
 
   const closeCancelDialog = useCallback(() => {
-    if (!cancelMutation.isPending) {
+    if (!isCancelling) {
       setIsCancelDialogOpen(false);
       setJobToCancel(null);
     }
-  }, [cancelMutation.isPending]);
+  }, [isCancelling]);
 
   const confirmCancelJob = useCallback(async () => {
     if (!jobToCancel) return;
-    await cancelMutation.mutateAsync(jobToCancel.jobId);
-  }, [jobToCancel, cancelMutation]);
+    await cancelMutateAsync(jobToCancel.jobId);
+  }, [jobToCancel, cancelMutateAsync]);
 
   const downloadArtifact = useCallback(
     async (job: DataTransferJob, kind: DataExchangeArtifactKind) => {
-      const localizedEntity = getEntityDisplayName(job.entityKey, t, isAr);
+      const localizedEntity = catalog.resolveEntityName(job.entityKey);
       try {
         setIsDownloading(true);
         toast.info({
@@ -204,15 +193,7 @@ export function useJobsViewModel(): UseJobsViewModelReturn {
           }),
         });
         const blob = await repo.downloadArtifact(job.jobId, kind);
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement("a");
-        a.href = url;
-        const ext = job.fileFormat?.toLowerCase() === "csv" ? "csv" : "xlsx";
-        a.download = `${job.entityKey}-${job.kind.toLowerCase()}-${kind.toLowerCase()}-${job.jobId.slice(0, 8)}.${ext}`;
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-        URL.revokeObjectURL(url);
+        triggerJobArtifactDownload(blob, job, kind);
         toast.success({
           id: `dx-job-${job.jobId}`,
           title: localizedEntity,
@@ -232,7 +213,7 @@ export function useJobsViewModel(): UseJobsViewModelReturn {
         setIsDownloading(false);
       }
     },
-    [repo, t, isAr]
+    [repo, t, catalog]
   );
 
   let active = 0;
@@ -249,6 +230,9 @@ export function useJobsViewModel(): UseJobsViewModelReturn {
     completedJobs: completed,
     failedJobs: failed,
   };
+
+  const hasActiveFilters =
+    Boolean(search.trim()) || statusFilter !== "all" || kindFilter !== "all";
 
   return {
     jobs: filteredJobs,
@@ -270,6 +254,7 @@ export function useJobsViewModel(): UseJobsViewModelReturn {
     setPageSize,
     pagination: {
       page: safePage,
+      currentPage: safePage,
       pageNumber: safePage,
       pageSize: safePageSize,
       itemsCount: totalCount,
@@ -280,12 +265,24 @@ export function useJobsViewModel(): UseJobsViewModelReturn {
     setSearch,
     setStatusFilter,
     setKindFilter,
+    hasActiveFilters,
+    resetFilters,
     refetch,
-    isStudioOpen,
+    importableEntities: catalog.importableEntities,
+    isCatalogLoading: catalog.isCatalogLoading,
+    isStudioPickerOpen,
+    setIsStudioPickerOpen,
+    activeStudioEntityKey,
+    setActiveStudioEntityKey,
+    openStudioPicker,
+    launchStudioForEntity,
+    getCatalogEntry: catalog.getCatalogEntry,
+    resolveEntityName: catalog.resolveEntityName,
+    isStudioOpen: Boolean(activeStudioEntityKey),
     setIsStudioOpen,
     jobToCancel,
     isCancelDialogOpen,
-    isCancelling: cancelMutation.isPending,
+    isCancelling,
     promptCancelJob,
     closeCancelDialog,
     confirmCancelJob,

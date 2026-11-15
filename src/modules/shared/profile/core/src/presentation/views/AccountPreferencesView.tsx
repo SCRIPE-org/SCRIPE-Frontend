@@ -14,7 +14,12 @@ import {
 } from "../viewmodels/useWorkstationPreferencesViewModel";
 import { useAccountPreferencesSliceViewModel } from "../viewmodels/useSovereignAccountSlicesViewModel";
 import { ErgonomicsLiveStage } from "../components/ErgonomicsLiveStage";
+import { Alert, AlertDescription } from "@core/ui/alert";
 import { toast, resolveRtlPosition, type SileoPosition } from "@core/ui/sileo-toast";
+import {
+  isConcurrencyConflictError,
+  resolveProfileSaveErrorMessage,
+} from "../utils/concurrency";
 import {
   Sun, Moon, Monitor, Palette, LayoutGrid, EyeOff, Keyboard, Check, CheckCircle2, Globe, Clock, Hash, Bell, Play,
 } from "lucide-react";
@@ -32,6 +37,7 @@ export function AccountPreferencesView() {
     setDensity,
     toastPosition,
     setToastPosition,
+    persistError,
   } = useWorkstationPreferencesViewModel();
   const { preferences, updatePreferences, isUpdatingPreferences } =
     useAccountPreferencesSliceViewModel();
@@ -41,31 +47,62 @@ export function AccountPreferencesView() {
   const [operatingTimezone, setOperatingTimezone] = useState(preferences?.operatingTimezone ?? "Africa/Cairo");
   const [reducedMotion, setReducedMotion] = useState(preferences?.reducedMotionEnabled ?? false);
   const [savedNotice, setSavedNotice] = useState(false);
+  const [saveError, setSaveError] = useState<string | null>(null);
 
   const handleTogglePrivacyBlur = async (checked: boolean) => {
+    setSaveError(null);
     setPrivacyBlur(checked);
     if (typeof document !== "undefined") {
       document.documentElement.toggleAttribute("data-privacy-blur", checked);
     }
-    await updatePreferences({ broadcastPrivacyBlurDefault: checked });
-    setSavedNotice(true);
-    setTimeout(() => setSavedNotice(false), 2500);
+    try {
+      await updatePreferences({
+        broadcastPrivacyBlurDefault: checked,
+        rowVersion: preferences?.rowVersion,
+      });
+      setSavedNotice(true);
+      setTimeout(() => setSavedNotice(false), 2500);
+    } catch (error: unknown) {
+      setPrivacyBlur(!checked);
+      if (typeof document !== "undefined") {
+        document.documentElement.toggleAttribute("data-privacy-blur", !checked);
+      }
+      const message = resolveProfileSaveErrorMessage(error, t);
+      setSaveError(message);
+      if (isConcurrencyConflictError(error)) {
+        toast.warning(message);
+      } else {
+        toast.error(message);
+      }
+    }
   };
 
   const handleSaveWorkstation = async () => {
-    await updatePreferences({
-      themeMode: theme,
-      clubAccentHue: accent,
-      density,
-      broadcastPrivacyBlurDefault: privacyBlur,
-      numeralSystem,
-      operatingTimezone,
-      languageCode: language,
-      reducedMotionEnabled: reducedMotion,
-      toastPosition,
-    });
-    setSavedNotice(true);
-    setTimeout(() => setSavedNotice(false), 2500);
+    setSaveError(null);
+    try {
+      await updatePreferences({
+        themeMode: theme,
+        clubAccentHue: accent,
+        density,
+        broadcastPrivacyBlurDefault: privacyBlur,
+        numeralSystem,
+        operatingTimezone,
+        languageCode: language,
+        reducedMotionEnabled: reducedMotion,
+        toastPosition,
+        rowVersion: preferences?.rowVersion,
+      });
+      setSavedNotice(true);
+      setTimeout(() => setSavedNotice(false), 2500);
+    } catch (error: unknown) {
+      const message = resolveProfileSaveErrorMessage(error, t);
+      setSaveError(message);
+      if (isConcurrencyConflictError(error)) {
+        toast.warning(message);
+      } else {
+        toast.error(message);
+      }
+    }
   };
 
   const currentLogicalPosition: "top-end" | "top-center" | "bottom-end" | "bottom-center" = (() => {
@@ -144,6 +181,14 @@ export function AccountPreferencesView() {
           </Button>
         </div>
       </div>
+
+      {(saveError || persistError) && (
+        <Alert variant="destructive" data-testid="preferences-save-error-alert">
+          <AlertDescription className="text-xs font-medium">
+            {saveError || persistError}
+          </AlertDescription>
+        </Alert>
+      )}
 
       <ErgonomicsLiveStage theme={theme} accentHue={accent} density={density} privacyBlur={privacyBlur} />
 

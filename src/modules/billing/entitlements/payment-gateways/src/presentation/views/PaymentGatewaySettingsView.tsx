@@ -133,7 +133,7 @@ function GatewayCard({
                 {isDefault && (
                   <Badge
                     variant="secondary"
-                    className="gap-1 border-warning/30 bg-warning/10 text-xs text-warning"
+                    className="gap-1 border-warning/30 bg-warning/10 text-xs text-nx-warning-strong"
                   >
                     <Crown className="h-3 w-3" />
                     {t("billing.gateways.default")}
@@ -310,7 +310,7 @@ export function PaymentGatewaySettingsView() {
       {!vm.isLoading && (
         <div className="flex items-center gap-4">
           <Badge variant="outline" className="gap-1.5 px-3 py-1.5 text-sm">
-            <Crown className="h-3.5 w-3.5 text-warning" />
+            <Crown className="h-3.5 w-3.5 text-nx-warning-strong" />
             {t("billing.gateways.defaultGateway")}: <strong>{vm.defaultGateway}</strong>
           </Badge>
           <Badge variant="outline" className="gap-1.5 px-3 py-1.5 text-sm">

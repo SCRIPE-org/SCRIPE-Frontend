@@ -10,6 +10,7 @@ import type {
   SovereignPreferencesSlice,
   SovereignNotificationsSlice,
 } from "../../domain/entities/SovereignAccountEntities";
+import { invalidateOnConcurrencyConflict } from "../utils/concurrency";
 
 export const sovereignAccountKeys = {
   all: ["sovereign-account"] as const,
@@ -61,6 +62,7 @@ export function useAccountDossierSliceViewModel() {
             isPrimary: Boolean(m.isPrimary),
           })),
           customFields: data.customFields,
+          rowVersion: data.rowVersion,
         }
       : undefined,
     sendEmailVerification: () => sendVerificationMutation.mutateAsync(),
@@ -84,6 +86,9 @@ export function useSovereignSecuritySlice() {
       data: Parameters<typeof container.sovereignAccountRepository.updateSecurityPosture>[0]
     ) => container.sovereignAccountRepository.updateSecurityPosture(data),
     onSuccess: () => qc.invalidateQueries({ queryKey: sovereignAccountKeys.security() }),
+    onError: (err) => {
+      invalidateOnConcurrencyConflict(qc, sovereignAccountKeys.security(), err);
+    },
   });
   return { ...query, updateMutation };
 }
@@ -96,13 +101,16 @@ export function useAccountSecuritySliceViewModel() {
           trustedCidrs: data.trustedCidrs,
           currentClientIp: data.currentClientIp,
           isCurrentIpAllowed: data.isCurrentIpAllowed,
+          rowVersion: data.rowVersion,
         }
       : undefined,
-    updateSecurityPolicy: (payload: { trustedCidrs?: string[] }) =>
+    updateSecurityPolicy: (payload: { trustedCidrs?: string[]; rowVersion?: string }) =>
       updateMutation.mutateAsync({
         trustedCidrs: payload.trustedCidrs,
+        rowVersion: payload.rowVersion ?? data?.rowVersion,
       }),
     isUpdatingPolicy: updateMutation.isPending,
+    updatePolicyError: updateMutation.error,
   };
 }
 
@@ -220,6 +228,9 @@ export function useSovereignPreferencesSlice() {
     mutationFn: (data: Partial<SovereignPreferencesSlice>) =>
       container.sovereignAccountRepository.updatePreferences(data),
     onSuccess: () => qc.invalidateQueries({ queryKey: sovereignAccountKeys.preferences() }),
+    onError: (err) => {
+      invalidateOnConcurrencyConflict(qc, sovereignAccountKeys.preferences(), err);
+    },
   });
   return { ...query, updateMutation };
 }
@@ -228,9 +239,13 @@ export function useAccountPreferencesSliceViewModel() {
   const { data, updateMutation } = useSovereignPreferencesSlice();
   return {
     preferences: data,
-    updatePreferences: (data: Partial<SovereignPreferencesSlice>) =>
-      updateMutation.mutateAsync(data),
+    updatePreferences: (patch: Partial<SovereignPreferencesSlice>) =>
+      updateMutation.mutateAsync({
+        ...patch,
+        rowVersion: patch.rowVersion ?? data?.rowVersion,
+      }),
     isUpdatingPreferences: updateMutation.isPending,
+    updatePreferencesError: updateMutation.error,
   };
 }
 
@@ -244,6 +259,9 @@ export function useSovereignNotificationsSlice() {
     mutationFn: (data: Partial<SovereignNotificationsSlice>) =>
       container.sovereignAccountRepository.updateNotifications(data),
     onSuccess: () => qc.invalidateQueries({ queryKey: sovereignAccountKeys.notifications() }),
+    onError: (err) => {
+      invalidateOnConcurrencyConflict(qc, sovereignAccountKeys.notifications(), err);
+    },
   });
   const sendTestMutation = useMutation({
     mutationFn: (category?: string) =>
@@ -286,9 +304,13 @@ export function useAccountNotificationsSliceViewModel() {
   } = useSovereignNotificationsSlice();
   return {
     notifications: data,
-    updateNotifications: (data: Partial<SovereignNotificationsSlice>) =>
-      updateMutation.mutateAsync(data),
+    updateNotifications: (patch: Partial<SovereignNotificationsSlice>) =>
+      updateMutation.mutateAsync({
+        ...patch,
+        rowVersion: patch.rowVersion ?? data?.rowVersion,
+      }),
     isUpdatingNotifications: updateMutation.isPending,
+    updateNotificationsError: updateMutation.error,
     sendTestNotification: (category?: string) =>
       sendTestMutation.mutateAsync(category),
     isSendingTestNotification: sendTestMutation.isPending,

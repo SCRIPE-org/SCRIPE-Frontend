@@ -45,7 +45,7 @@ export function SetupStep2Profile({
       <div className="grid gap-4 sm:grid-cols-2">
         <div className="space-y-2">
           <Label htmlFor="admin-first-name" className="text-xs font-medium">
-            {t("auth.accountSetup.firstName")} <span className="text-destructive">*</span>
+            {t("auth.accountSetup.firstName")} <span className="text-nx-danger">*</span>
           </Label>
           <Input
             id="admin-first-name"
@@ -78,11 +78,11 @@ export function SetupStep2Profile({
       </div>
 
       {/* Account Identity Credentials (Verified / Locked) */}
-      <div className="grid min-w-0 gap-3 rounded-xl border border-border/50 bg-muted/20 p-3 text-xs sm:grid-cols-2">
+      <div className="grid min-w-0 gap-3 rounded-xl border border-nx-line bg-nx-raised p-3 text-xs sm:grid-cols-2">
         <div className="min-w-0 space-y-1">
-          <span className="text-muted-foreground">{t("auth.accountSetup.emailAddress")}</span>
-          <div className="flex min-w-0 items-center gap-1.5 font-medium text-foreground">
-            <Mail className="h-3.5 w-3.5 shrink-0 text-muted-foreground" />
+          <span className="text-nx-ink-2">{t("auth.accountSetup.emailAddress")}</span>
+          <div className="flex min-w-0 items-center gap-1.5 font-medium text-nx-ink">
+            <Mail className="h-3.5 w-3.5 shrink-0 text-nx-ink-2" />
             <span className="min-w-0 truncate">{vm.tokenData?.adminEmail}</span>
             <Badge variant="success" className="shrink-0 px-1 py-0 text-[10px]">
               {t("auth.accountSetup.verified")}
@@ -91,9 +91,9 @@ export function SetupStep2Profile({
         </div>
 
         <div className="min-w-0 space-y-1">
-          <span className="text-muted-foreground">{t("auth.accountSetup.username")}</span>
-          <div className="flex min-w-0 items-center gap-1.5 font-medium text-foreground">
-            <User className="h-3.5 w-3.5 shrink-0 text-muted-foreground" />
+          <span className="text-nx-ink-2">{t("auth.accountSetup.username")}</span>
+          <div className="flex min-w-0 items-center gap-1.5 font-medium text-nx-ink">
+            <User className="h-3.5 w-3.5 shrink-0 text-nx-ink-2" />
             <span className="min-w-0 truncate font-mono">@{vm.tokenData?.adminUsername}</span>
           </div>
         </div>
@@ -108,7 +108,7 @@ export function SetupStep2Profile({
           className="flex-1 gap-1.5"
           onClick={vm.goToPrevStep}
         >
-          <ArrowLeft className="h-4 w-4" />
+          <ArrowLeft className="h-4 w-4 rtl:rotate-180" />
           <span>{t("auth.accountSetup.back")}</span>
         </Button>
 
@@ -123,7 +123,7 @@ export function SetupStep2Profile({
           <span>
             {hasCustomFields ? t("auth.accountSetup.next") : t("auth.accountSetup.completeSetup")}
           </span>
-          {hasCustomFields ? <ArrowRight className="h-4 w-4" /> : <Sparkles className="h-4 w-4" />}
+          {hasCustomFields ? <ArrowRight className="h-4 w-4 rtl:rotate-180" /> : <Sparkles className="h-4 w-4" />}
         </Button>
       </div>
     </div>

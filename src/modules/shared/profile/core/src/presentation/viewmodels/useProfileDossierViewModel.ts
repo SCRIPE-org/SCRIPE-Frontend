@@ -11,7 +11,13 @@ import { useState, useTransition } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { container } from "@modules/profile/di";
 import { useAppStore } from "@core/store/useAppStore";
+import { useI18n } from "@core/providers/i18n-provider";
+import { toast } from "@core/ui/sileo-toast";
 import type { UpdateProfileRequest } from "../../domain/interfaces/IProfileRepository";
+import {
+  invalidateOnConcurrencyConflict,
+  resolveProfileSaveErrorMessage,
+} from "../utils/concurrency";
 
 export const dossierKeys = {
   all: ["profile"] as const,
@@ -21,6 +27,7 @@ export const dossierKeys = {
 export function useProfileDossierViewModel() {
   const profileRepo = container.profileRepository;
   const queryClient = useQueryClient();
+  const { t } = useI18n();
   const [profileSuccess, setProfileSuccess] = useState(false);
   const [selectedAcademyId, setSelectedAcademyId] = useState<string>("default-hq");
   const [, startTransition] = useTransition();
@@ -66,7 +73,11 @@ export function useProfileDossierViewModel() {
 
   // Update profile mutation
   const updateMutation = useMutation({
-    mutationFn: (data: UpdateProfileRequest) => profileRepo.updateProfile(data),
+    mutationFn: (data: UpdateProfileRequest) =>
+      profileRepo.updateProfile({
+        ...data,
+        rowVersion: data.rowVersion ?? profile?.rowVersion,
+      }),
     onSuccess: (updated) => {
       queryClient.setQueryData(dossierKeys.profile(), (prev: any) => ({
         ...prev,
@@ -88,6 +99,11 @@ export function useProfileDossierViewModel() {
       }
       setProfileSuccess(true);
       setTimeout(() => setProfileSuccess(false), 3000);
+    },
+    onError: (err) => {
+      if (invalidateOnConcurrencyConflict(queryClient, dossierKeys.profile(), err)) {
+        toast.warning(resolveProfileSaveErrorMessage(err, t));
+      }
     },
   });
 
@@ -128,6 +144,7 @@ export function useProfileDossierViewModel() {
         bio: current.bio,
         activeBranchName: current.activeBranchName,
         isAvailableForOperations: available,
+        rowVersion: current.rowVersion,
       });
     }
   };
@@ -162,6 +179,7 @@ export function useProfileDossierViewModel() {
         bio: current.bio,
         activeBranchName: nextBranchName,
         isAvailableForOperations: current.isAvailableForOperations,
+        rowVersion: current.rowVersion,
       });
     }
   };
@@ -175,7 +193,9 @@ export function useProfileDossierViewModel() {
     // Profile updates
     updateProfile: updateMutation.mutateAsync,
     isUpdating: updateMutation.isPending,
-    updateError: updateMutation.error?.message ?? null,
+    updateError: updateMutation.error
+      ? resolveProfileSaveErrorMessage(updateMutation.error, t)
+      : null,
     profileSuccess,
 
     // Avatar

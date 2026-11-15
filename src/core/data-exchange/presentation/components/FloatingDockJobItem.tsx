@@ -92,6 +92,7 @@ export function FloatingDockJobItem({
             className="h-5 w-5 p-0 text-nx-ink-3 hover:text-nx-ink"
             onClick={() => onDismiss(job.id)}
             title={t("dataExchange.dock.dismiss")}
+            aria-label={t("dataExchange.dock.dismiss")}
           >
             <X className="h-3 w-3" />
           </Button>
@@ -101,7 +102,7 @@ export function FloatingDockJobItem({
       {/* Progress for Active Jobs */}
       {isActive && (
         <div className="space-y-1">
-          <div className="flex items-center justify-between text-[11px] text-nx-ink-2 font-mono">
+          <div className="flex items-center justify-between text-[11px] text-nx-ink-2 font-mono tabular-nums">
             <span>
               {job.processedRows} / {job.totalRows}
             </span>
@@ -144,7 +145,7 @@ export function FloatingDockJobItem({
                 type="button"
                 variant="outline"
                 size="sm"
-                className="h-6 px-2 text-[11px] text-destructive hover:text-destructive"
+                className="h-6 px-2 text-[11px] text-nx-danger hover:text-nx-danger"
                 onClick={() => onDownload(job.id, "rejected")}
               >
                 <Download className="me-1 h-3 w-3" />

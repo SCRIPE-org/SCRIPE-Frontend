@@ -145,7 +145,7 @@ export function CrmReportsView() {
                   size="sm"
                   data-testid="export-reports-csv-btn"
                   onClick={exportCsvSummary}
-                  className="h-8 gap-1.5 text-xs font-bold bg-nx-accent text-nx-on-fill hover:bg-nx-accent-ink"
+                  className="h-8 gap-1.5 text-xs font-bold bg-nx-accent-fill text-nx-on-fill hover:brightness-95"
                 >
                   <Download className="size-3.5" />
                   <span>{t("crm.reports.exportCsvBtn")}</span>
@@ -244,7 +244,7 @@ export function CrmReportsView() {
               <Card className="rounded-nx-lg border border-nx-line bg-nx-surface p-4 space-y-1.5" data-testid="report-kpi-activities">
                 <div className="flex items-center justify-between text-xs text-nx-ink-3">
                   <span className="font-semibold uppercase tracking-wider text-[10px]">{t("crm.reports.executionFollowupsLabel")}</span>
-                  <Activity className="size-4 text-warning" />
+                  <Activity className="size-4 text-nx-warning-strong" />
                 </div>
                 <div className="text-xl font-bold text-nx-ink">{report.activities.totalActivitiesCount}</div>
                 <div className="text-[11px] text-nx-ink-2 flex items-center justify-between">

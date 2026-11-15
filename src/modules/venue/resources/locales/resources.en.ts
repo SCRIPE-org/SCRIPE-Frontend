@@ -103,6 +103,7 @@ export const en = {
       canPublish: "All publication criteria satisfied. Court is ready for live bookings.",
       hasBlockers: "Publication blockers found:",
       publishNow: "Publish Court",
+      publishing: "Publishing...",
       allocationMode: "Allocation Mode",
       allocationExclusive: "Single Unit (Exclusive booking)",
       allocationPooled: "Pooled Units (Shared / Multi-occupant)",

@@ -35,22 +35,22 @@ export function CountdownBlockView({ block }: { block: CountdownBlock }) {
   }, [targetDate]);
 
   if (parts.expired)
-    return <p className="text-center text-sm text-muted-foreground">{props.expiredText || ""}</p>;
+    return <p className="text-center text-sm text-nx-ink-2">{props.expiredText || ""}</p>;
 
   return (
     <div className="text-center">
-      {props.label && <p className="mb-2 text-sm font-medium">{props.label}</p>}
+      {props.label && <p className="mb-2 text-sm font-medium text-nx-ink">{props.label}</p>}
       <div className="flex justify-center gap-2">
         {entries.map(([label, value]) => (
           <div
             key={label}
             className={
-              props.style === "minimal" ? "px-1" : "rounded-lg border bg-background px-3 py-2"
+              props.style === "minimal" ? "px-1" : "rounded-lg border border-nx-line bg-nx-surface px-3 py-2"
             }
           >
-            <div className="text-lg font-bold tabular-nums">{String(value).padStart(2, "0")}</div>
+            <div className="text-lg font-bold tabular-nums text-nx-ink">{String(value).padStart(2, "0")}</div>
             {props.showLabels !== false && (
-              <div className="text-[10px] uppercase text-muted-foreground">{label}</div>
+              <div className="text-[10px] uppercase text-nx-ink-2">{label}</div>
             )}
           </div>
         ))}

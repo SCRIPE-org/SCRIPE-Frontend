@@ -130,7 +130,7 @@ export function CrmWorkflowStudioDialogs(props: CrmWorkflowStudioDialogsProps) {
                 <Label className="text-xs">{t("crmOpportunities.pipelinesPage.fromStatusLabel")}</Label>
                 <Select value={newTransFrom} onValueChange={setNewTransFrom}>
                   <SelectTrigger className="h-9 text-xs" data-testid="new-transition-from-select"><SelectValue /></SelectTrigger>
-                  <SelectContent className="z-[10001]">
+                  <SelectContent>
                     <SelectItem value="*">{t("crmOpportunities.pipelinesPage.anyStatusGlobalOption")}</SelectItem>
                     {activeStages.map((s) => (<SelectItem key={s.stageKey} value={s.stageKey}>{isAr ? s.labelAr : s.labelEn}</SelectItem>))}
                   </SelectContent>
@@ -140,7 +140,7 @@ export function CrmWorkflowStudioDialogs(props: CrmWorkflowStudioDialogsProps) {
                 <Label className="text-xs">{t("crmOpportunities.pipelinesPage.toStatusLabel")}</Label>
                 <Select value={newTransTo} onValueChange={handleToStatusChange}>
                   <SelectTrigger className="h-9 text-xs" data-testid="new-transition-to-select"><SelectValue /></SelectTrigger>
-                  <SelectContent className="z-[10001]">{activeStages.map((s) => (<SelectItem key={s.stageKey} value={s.stageKey}>{isAr ? s.labelAr : s.labelEn}</SelectItem>))}</SelectContent>
+                  <SelectContent>{activeStages.map((s) => (<SelectItem key={s.stageKey} value={s.stageKey}>{isAr ? s.labelAr : s.labelEn}</SelectItem>))}</SelectContent>
                 </Select>
               </div>
             </div>
@@ -167,7 +167,7 @@ export function CrmWorkflowStudioDialogs(props: CrmWorkflowStudioDialogsProps) {
               <Label className="text-xs">{t("crmOpportunities.pipelinesPage.entityTypeLabel")}</Label>
               <Select value={newWfEntityType} onValueChange={(v) => setNewWfEntityType(v as CrmWorkflowEntityType)}>
                 <SelectTrigger className="h-9 text-xs" data-testid="create-wf-entity-select"><SelectValue /></SelectTrigger>
-                <SelectContent className="z-[10001]"><SelectItem value="deal">{t("crmOpportunities.pipelinesPage.entityOptionDeal")}</SelectItem><SelectItem value="lead">{t("crmOpportunities.pipelinesPage.entityOptionLead")}</SelectItem></SelectContent>
+                <SelectContent><SelectItem value="deal">{t("crmOpportunities.pipelinesPage.entityOptionDeal")}</SelectItem><SelectItem value="lead">{t("crmOpportunities.pipelinesPage.entityOptionLead")}</SelectItem></SelectContent>
               </Select>
             </div>
             <div className="grid grid-cols-2 gap-3">

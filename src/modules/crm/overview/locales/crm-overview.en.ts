@@ -153,6 +153,7 @@ export const en = {
         membersPlaceholder: "Members (comma-separated)",
         maxLimitPlaceholder: "Max Threshold ($)",
         addPipelineRoleBtn: "Add Pipeline Role",
+        removePipelineRoleLabel: "Remove pipeline role",
         createdRoleToast: "Created CRM Pipeline Role:",
         section2Title: "2. Record-Relative Principals (ABAC)",
         section3Title: "3. Buying Committee Roles",

@@ -66,5 +66,25 @@ export const en = {
       goToTenants: "Go to Tenants",
       retry: "Check Context Again",
     },
+    filters: {
+      allEntities: "All Entities",
+      entityLabel: "Entity",
+      placeholder: "Filter by entity...",
+    },
+    studioPicker: {
+      title: "Select Target Entity for New Preset",
+      description: "Choose which tenant-enabled entity you want to configure a saved column mapping preset for in Import Studio.",
+      entityLabel: "Target Entity",
+      entityPlaceholder: "Choose an importable entity...",
+      confirm: "Open Import Studio",
+      loadingCatalog: "Loading tenant entity catalog...",
+      emptyTitle: "No Importable Entities Available",
+      emptyDescription: "No entities currently permit importing for your active tenant edition or permission role.",
+      noImportableActionTooltip: "No importable entities are available for this tenant or role.",
+    },
+    detail: {
+      sourceColumn: "Source Column",
+      targetField: "Target Field",
+    },
   },
 };

@@ -345,7 +345,6 @@ export function ContactSalesStep({ wizard }: ContactSalesStepProps) {
           style={{
             background: tokens.gradientCta,
             color: tokens.accentContrast,
-            boxShadow: tokens.shadowCard,
           }}
         >
           {wizard.isSubmitting ? (

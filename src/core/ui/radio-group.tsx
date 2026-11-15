@@ -85,12 +85,14 @@ const RadioGroupItem = React.forwardRef<
       ref={ref}
       className={cn(
         // explicit centring so the dot sits dead centre in every engine
-        "inline-flex aspect-square h-4 w-4 shrink-0 items-center justify-center rounded-full",
+        "inline-flex aspect-square h-4 w-4 shrink-0 cursor-pointer items-center justify-center rounded-full",
         CONTROL_HIT_TARGET,
         CONTROL_SURFACE[effectiveDesign],
         // colour-only transition at micro speed; motion-reduce drops it
         "transition-[border-color,background-color,box-shadow] duration-nx-micro ease-nx-enter motion-reduce:transition-none",
         "focus-visible:border-nx-accent focus-visible:shadow-nx-focus focus-visible:outline-none",
+        "data-[state=checked]:focus-visible:border-nx-on-fill data-[state=checked]:focus-visible:shadow-[inset_0_0_0_1px_var(--nx-on-fill),0_0_0_2px_var(--nx-ground),0_0_0_4px_var(--nx-accent)]",
+        "aria-[invalid=true]:border-nx-danger disabled:aria-[invalid=true]:border-nx-line",
         CONTROL_DISABLED,
         className
       )}

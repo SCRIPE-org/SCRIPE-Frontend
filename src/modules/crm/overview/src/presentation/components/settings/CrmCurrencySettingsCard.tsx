@@ -74,7 +74,7 @@ export function CrmCurrencySettingsCard({
           </div>
         </div>
         <div className="flex items-center gap-2">
-          <Badge variant="outline" className="border-nx-accent/40 bg-nx-accent-wash/20 text-nx-accent font-mono text-xs px-2.5 py-1">
+          <Badge variant="outline" className="border-nx-accent/40 bg-nx-accent-wash text-nx-accent font-mono text-xs px-2.5 py-1">
             {baseCurrency}
           </Badge>
           {settings.userOverrideCurrency && (
@@ -175,9 +175,9 @@ export function CrmCurrencySettingsCard({
               </SelectContent>
             </Select>
           </div>
-          <div className="rounded-nx-md border border-nx-accent/30 bg-nx-accent-wash/15 px-3 py-1.5" data-testid="crm-sim-result-box">
+          <div className="rounded-nx-md border border-nx-accent/30 bg-nx-accent-wash px-3 py-1.5" data-testid="crm-sim-result-box">
             <span className="text-[10px] text-nx-ink-3 uppercase font-semibold block">{t("crm.settings.currency.convertedOutput")} ({baseCurrency})</span>
-            <span className="text-sm font-bold text-nx-accent font-mono block">{baseCurrency} {convertedSim.toLocaleString()}</span>
+            <span className="text-sm font-bold text-nx-accent font-mono tabular-nums block">{baseCurrency} {convertedSim.toLocaleString()}</span>
             <span className="text-[10px] font-mono text-nx-ink-2">1 {simFromCurrency} = {crossRate.toFixed(4)} {baseCurrency}</span>
           </div>
         </div>

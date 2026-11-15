@@ -1,22 +1,26 @@
 "use client";
 
 import React from "react";
-import type { CrudColumn, CrudConfig, CrudAction } from "@core/crud";
+import type { CrudConfig } from "@core/crud";
 import { GenericCrudView } from "@core/crud";
-import { Badge } from "@core/ui/badge";
 import { EmptyState } from "@core/ui/empty-state";
-import { Building2, CheckCircle2, Layers, Sparkles, Trash2 } from "lucide-react";
+import { Building2, Layers, Sparkles } from "lucide-react";
 import { useI18n } from "@core/providers/i18n-provider";
-import {
-  getEntityDisplayName,
-  DataExchangeStudioOverlay,
-  DataExchangeTenantRequiredCard,
-} from "@core/data-exchange";
+import { DataExchangeTenantRequiredCard } from "@core/data-exchange";
 import type { DataExchangePreset } from "../../domain/entities/DataExchangePreset";
 import { usePresetsViewModel } from "../viewmodels/usePresetsViewModel";
 import { PresetsKpiHeader } from "../components/PresetsKpiHeader";
-import { DeletePresetDialog } from "../components/DeletePresetDialog";
 import { MappingPresetCard } from "../components/MappingPresetCard";
+import { PresetsFilterToolbar } from "../components/PresetsFilterToolbar";
+import { PresetsWorkspaceDialogs } from "../components/PresetsWorkspaceDialogs";
+import {
+  createPresetsActions,
+  createPresetsColumns,
+} from "../components/PresetsColumns";
+import {
+  PresetsSplitDetail,
+  PresetsSplitListItem,
+} from "../components/PresetsSplitDetail";
 
 /**
  * Primary admin view for inspecting and managing saved column mapping presets.
@@ -26,72 +30,7 @@ export function PresetsView(): React.ReactElement {
   const isAr = language === "ar";
   const vm = usePresetsViewModel();
 
-  const columns: CrudColumn<DataExchangePreset>[] = [
-    {
-      key: "name",
-      label: t("adminDataTransferPresets.columns.name"),
-      sortable: true,
-      render: (_value: unknown, preset: DataExchangePreset) => (
-        <div className="flex items-center gap-2">
-          <span className="font-semibold text-sm text-nx-ink">{preset.name}</span>
-          {preset.isDefault && (
-            <Badge variant="success" className="text-[10px] px-1.5 py-0.5">
-              {t("adminDataTransferPresets.status.isDefaultBadge")}
-            </Badge>
-          )}
-        </div>
-      ),
-    },
-    {
-      key: "entityKey",
-      label: t("adminDataTransferPresets.columns.entityKey"),
-      sortable: true,
-      render: (_value: unknown, preset: DataExchangePreset) => {
-        const displayName = getEntityDisplayName(preset.entityKey, t, isAr);
-        return (
-          <div className="flex flex-col gap-0.5">
-            <span className="font-semibold text-xs text-nx-ink">{displayName}</span>
-            <span className="font-mono text-[11px] text-nx-ink-3">{preset.entityKey}</span>
-          </div>
-        );
-      },
-    },
-    {
-      key: "importMode",
-      label: t("adminDataTransferPresets.columns.importMode"),
-      sortable: true,
-      render: (_value: unknown, preset: DataExchangePreset) => (
-        <Badge variant="outline" className="text-xs font-medium">
-          {t(`adminDataTransferPresets.modes.${preset.importMode}`, {
-            defaultValue: preset.importMode,
-          })}
-        </Badge>
-      ),
-    },
-    {
-      key: "mappingsCount",
-      label: t("adminDataTransferPresets.columns.mappingsCount"),
-      render: (_value: unknown, preset: DataExchangePreset) => (
-        <Badge variant="secondary" className="font-mono text-xs">
-          {preset.mappingCount}
-        </Badge>
-      ),
-    },
-    {
-      key: "createdAt",
-      label: t("adminDataTransferPresets.columns.createdAt"),
-      render: (value: unknown) => {
-        if (!value) return null;
-        const date = new Date(String(value));
-        return (
-          <span className="text-xs text-nx-ink-3 whitespace-nowrap">
-            {date.toLocaleDateString(isAr ? "ar-EG" : "en-US")}{" "}
-            {date.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
-          </span>
-        );
-      },
-    },
-  ];
+  const columns = createPresetsColumns({ t, isAr, resolveEntityName: vm.resolveEntityName });
 
   const headerContent = vm.isTenantRequired ? (
     <DataExchangeTenantRequiredCard
@@ -100,9 +39,7 @@ export function PresetsView(): React.ReactElement {
       switchHint={t("adminDataTransferPresets.tenantRequired.switchHint")}
       goToTenantsLabel={t("adminDataTransferPresets.tenantRequired.goToTenants")}
       retryLabel={t("adminDataTransferPresets.tenantRequired.retry")}
-      onRetry={() => {
-        void vm.refetch();
-      }}
+      onRetry={() => void vm.refetch()}
     />
   ) : (
     <PresetsKpiHeader kpis={vm.kpis} />
@@ -121,42 +58,57 @@ export function PresetsView(): React.ReactElement {
       : [
           {
             label: t("adminDataTransferPresets.actions.createInStudio"),
-            icon: <Sparkles className="h-4 w-4 text-nx-accent" />,
+            icon: <Sparkles className="h-4 w-4" />,
+            disabled: !vm.isCatalogLoading && vm.importableEntities.length === 0,
+            tooltip:
+              !vm.isCatalogLoading && vm.importableEntities.length === 0
+                ? t("adminDataTransferPresets.studioPicker.noImportableActionTooltip")
+                : undefined,
             onClick: async () => {
-              vm.setIsCreateStudioOpen(true);
+              vm.openCreateStudioPicker();
             },
           },
         ],
+    toolbarContent: vm.isTenantRequired ? undefined : (
+      <PresetsFilterToolbar
+        entityFilter={vm.entityFilter}
+        options={vm.entityFilterOptions}
+        onEntityFilterChange={vm.setEntityFilter}
+      />
+    ),
     customHeaderContent: headerContent,
-    getActions: (_v, tFn): CrudAction<DataExchangePreset>[] => [
-      {
-        label: tFn("adminDataTransferPresets.actions.useInStudio"),
-        icon: <Sparkles className="h-4 w-4 text-nx-accent" />,
-        onClick: (preset: DataExchangePreset) => vm.setActiveStudioPreset(preset),
-      },
-      {
-        label: tFn("adminDataTransferPresets.actions.setDefault"),
-        icon: <CheckCircle2 className="h-4 w-4 text-nx-ink-2" />,
-        disabled: (preset: DataExchangePreset) => preset.isDefault || vm.isSettingDefault,
-        show: (preset: DataExchangePreset) => !preset.isDefault,
-        onClick: (preset: DataExchangePreset) => vm.setDefaultPreset(preset),
-      },
-      {
-        label: tFn("adminDataTransferPresets.actions.delete"),
-        icon: <Trash2 className="h-4 w-4 text-nx-destructive" />,
-        variant: "destructive" as const,
-        disabled: () => vm.isDeleting,
-        onClick: (preset: DataExchangePreset) => vm.promptDeletePreset(preset),
-      },
-    ],
+    getItemDisplayName: (preset: DataExchangePreset) => preset.name,
+    getActions: (_v, tFn) =>
+      createPresetsActions({
+        tFn,
+        isSettingDefault: vm.isSettingDefault,
+        isDeleting: vm.isDeleting,
+        onUseInStudio: (preset) => vm.setActiveStudioPreset(preset),
+        onSetDefault: (preset) => vm.setDefaultPreset(preset),
+        onDeletePreset: vm.promptDeletePreset,
+      }),
     renderCardGridItem: (preset: DataExchangePreset) => (
       <MappingPresetCard
         preset={preset}
+        entitySummary={vm.getCatalogEntry(preset.entityKey)}
         onDeletePreset={vm.promptDeletePreset}
         onUseInStudio={(p) => vm.setActiveStudioPreset(p)}
         onSetDefault={(p) => vm.setDefaultPreset(p)}
         isDeleting={vm.isDeleting}
         isSettingDefault={vm.isSettingDefault}
+      />
+    ),
+    renderSplitListItem: (preset: DataExchangePreset) => (
+      <PresetsSplitListItem
+        preset={preset}
+        entityDisplayName={vm.resolveEntityName(preset.entityKey)}
+      />
+    ),
+    renderSplitDetail: (preset: DataExchangePreset, actions: React.ReactNode) => (
+      <PresetsSplitDetail
+        preset={preset}
+        entityDisplayName={vm.resolveEntityName(preset.entityKey)}
+        actions={actions}
       />
     ),
   };
@@ -176,19 +128,20 @@ export function PresetsView(): React.ReactElement {
     changePageSize: vm.setPageSize,
   };
 
-  const emptyStateNode = vm.isTenantRequired ? (
+  const emptyStateNode = (
     <EmptyState
       bare
-      icon={Building2}
-      title={t("adminDataTransferPresets.tenantRequired.title")}
-      description={t("adminDataTransferPresets.tenantRequired.switchHint")}
-    />
-  ) : (
-    <EmptyState
-      bare
-      icon={Layers}
-      title={t("adminDataTransferPresets.empty.title")}
-      description={t("adminDataTransferPresets.empty.description")}
+      icon={vm.isTenantRequired ? Building2 : Layers}
+      title={t(
+        vm.isTenantRequired
+          ? "adminDataTransferPresets.tenantRequired.title"
+          : "adminDataTransferPresets.empty.title"
+      )}
+      description={t(
+        vm.isTenantRequired
+          ? "adminDataTransferPresets.tenantRequired.switchHint"
+          : "adminDataTransferPresets.empty.description"
+      )}
     />
   );
 
@@ -199,44 +152,31 @@ export function PresetsView(): React.ReactElement {
         viewModel={crudViewModel}
         emptyState={emptyStateNode}
         pagination={{
-          page: vm.page,
-          pageSize: vm.pageSize,
-          itemsCount: vm.totalCount,
-          pagesCount: vm.pagesCount,
+          ...vm.pagination,
           onPageChange: vm.setPage,
           onPageSizeChange: vm.setPageSize,
         }}
-        search={{
-          value: vm.search,
-          onChange: vm.setSearch,
-        }}
+        search={{ value: vm.search, onChange: vm.setSearch }}
       />
-      <DeletePresetDialog
-        preset={vm.presetToDelete}
-        open={vm.isDeleteDialogOpen}
-        onClose={vm.closeDeleteDialog}
-        onConfirm={vm.confirmDeletePreset}
+      <PresetsWorkspaceDialogs
+        presetToDelete={vm.presetToDelete}
+        resolveEntityName={vm.resolveEntityName}
+        isDeleteDialogOpen={vm.isDeleteDialogOpen}
+        closeDeleteDialog={vm.closeDeleteDialog}
+        confirmDeletePreset={vm.confirmDeletePreset}
         isDeleting={vm.isDeleting}
+        isCreatePickerOpen={vm.isCreatePickerOpen}
+        setIsCreatePickerOpen={vm.setIsCreatePickerOpen}
+        importableEntities={vm.importableEntities}
+        isCatalogLoading={vm.isCatalogLoading}
+        entityFilter={vm.entityFilter}
+        launchCreateStudio={vm.launchCreateStudio}
+        activeStudioPreset={vm.activeStudioPreset}
+        setActiveStudioPreset={vm.setActiveStudioPreset}
+        createStudioEntityKey={vm.createStudioEntityKey}
+        setCreateStudioEntityKey={vm.setCreateStudioEntityKey}
+        onRefresh={vm.refetch}
       />
-      {vm.activeStudioPreset && (
-        <DataExchangeStudioOverlay
-          entityKey={vm.activeStudioPreset.entityKey}
-          initialPresetId={vm.activeStudioPreset.id}
-          open={Boolean(vm.activeStudioPreset)}
-          onOpenChange={(open) => {
-            if (!open) vm.setActiveStudioPreset(null);
-          }}
-          onImportComplete={() => vm.refetch()}
-        />
-      )}
-      {vm.isCreateStudioOpen && (
-        <DataExchangeStudioOverlay
-          entityKey="crm.lead"
-          open={vm.isCreateStudioOpen}
-          onOpenChange={vm.setIsCreateStudioOpen}
-          onImportComplete={() => vm.refetch()}
-        />
-      )}
     </>
   );
 }

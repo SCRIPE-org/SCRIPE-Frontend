@@ -14,7 +14,6 @@ import { Activity, History } from "lucide-react";
 import { useI18n } from "@core/providers/i18n-provider";
 import { StatCard } from "@core/ui/stat-card";
 import { Card, CardContent, CardHeader, CardTitle } from "@core/ui/card";
-import { Button } from "@core/ui/button";
 import { EmptyState } from "@core/ui/empty-state";
 import { DynamicIcon } from "@core/ui/layout/nexus/_parts/primary-rail-parts";
 
@@ -50,7 +49,7 @@ export function HubSidePanel({
       : t("workspaceHub.today.modules_other", { count: moduleCount });
 
   return (
-    <aside className="flex w-80 shrink-0 flex-col gap-4">
+    <aside className="flex w-full shrink-0 flex-col gap-4 lg:w-80">
       {/* Today activity — rising activity is good news, so no invertTrend. */}
       <StatCard
         label={t("workspaceHub.today.title")}
@@ -73,9 +72,13 @@ export function HubSidePanel({
           {recentItems.length === 0 && !isLoading && (
             <EmptyState size="sm" bare icon={History} title={t("workspaceHub.recent.empty")} />
           )}
-          {recentItems.map((item, i) => (
-            <RecentRow key={i} {...item} />
-          ))}
+          {recentItems.length > 0 && (
+            <ul className="flex flex-col gap-1">
+              {recentItems.map((item, i) => (
+                <RecentRow key={`${item.icon}-${item.label}-${item.meta}-${i}`} {...item} />
+              ))}
+            </ul>
+          )}
         </CardContent>
       </Card>
     </aside>
@@ -96,15 +99,12 @@ function RecentRow({
   accent: string;
 }) {
   return (
-    <Button
-      type="button"
-      variant="ghost"
-      className="flex h-auto items-center justify-start gap-2.5 whitespace-normal rounded-nx-md border border-transparent px-2.5 py-2 text-start transition-colors duration-nx-micro ease-nx-enter hover:border-nx-line hover:bg-nx-hover focus-visible:shadow-nx-focus focus-visible:outline-none motion-reduce:transition-none"
-    >
+    <li className="flex items-center gap-2.5 rounded-nx-md border border-transparent px-2.5 py-2 text-start">
       {/* Event chip keeps its data-driven tint — colour follows the audit
           event category via the shared chart-slot palette (@core/ui/chart),
           same wash+ink idiom as StatCard's tone tile. */}
       <span
+        aria-hidden="true"
         className="inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-nx-sm"
         style={{
           backgroundColor: `color-mix(in srgb, ${accent} 12%, transparent)`,
@@ -117,6 +117,6 @@ function RecentRow({
         <span className="block truncate text-xs font-medium text-nx-ink">{label}</span>
         <span className="text-[11px] text-nx-ink-3">{meta}</span>
       </span>
-    </Button>
+    </li>
   );
 }

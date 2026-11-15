@@ -179,10 +179,10 @@ export function FeatureComparison({
         >
           <div className="overflow-x-auto rounded-2xl lg:overflow-visible lg:rounded-none">
             <table className="w-full border-collapse text-start">
-              <thead className="sticky top-14 z-20">
+              <thead className="sticky top-14 z-10">
                 <tr style={{ background: tokens.surfaceRaised }}>
                   <th
-                    className="sticky start-0 top-14 z-30 py-4 pe-4 ps-4 text-start text-[0.6875rem] font-semibold uppercase tracking-wider transition-colors duration-200 sm:ps-6"
+                    className="sticky start-0 top-14 z-20 py-4 pe-4 ps-4 text-start text-[0.6875rem] font-semibold uppercase tracking-wider transition-colors duration-200 sm:ps-6"
                     style={{
                       color: activeCategory ? tokens.accent : tokens.inkFaint,
                       background: tokens.surfaceRaised,
@@ -194,7 +194,7 @@ export function FeatureComparison({
                   {editions.map((edition) => (
                     <th
                       key={edition.id}
-                      className="sticky top-14 z-20 px-4 py-4 text-center align-bottom"
+                      className="sticky top-14 z-10 px-4 py-4 text-center align-bottom"
                       style={{
                         minWidth: 120,
                         background: edition.isRecommended

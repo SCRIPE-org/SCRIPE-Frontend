@@ -9,6 +9,8 @@ import { Label } from "@core/ui/label";
 import { Switch } from "@core/ui/switch";
 import { cn } from "@core/common/utils";
 import { useI18n } from "@core/providers/i18n-provider";
+import { SchemaWarningsBanner } from "./SchemaWarningsBanner";
+import type { DataExchangeSchemaWarning } from "../../../domain/types";
 
 export interface StudioUploadStepProps {
   isMultiSheet: boolean;
@@ -19,6 +21,7 @@ export interface StudioUploadStepProps {
   onFileChosen: (files: FileList | null) => void;
   onDownloadTemplate: (format: "xlsx" | "csv", isMultiSheet?: boolean) => void;
   multiSheetEntityKeys?: string[];
+  schemaWarnings?: DataExchangeSchemaWarning[] | null;
 }
 
 /**
@@ -34,6 +37,7 @@ export function StudioUploadStep({
   onFileChosen,
   onDownloadTemplate,
   multiSheetEntityKeys,
+  schemaWarnings,
 }: StudioUploadStepProps) {
   const { t } = useI18n();
   const [isDragging, setIsDragging] = useState(false);
@@ -41,17 +45,7 @@ export function StudioUploadStep({
   return (
     <div className="mx-auto grid max-w-5xl grid-cols-1 gap-6 lg:grid-cols-3">
       <div className="space-y-4 lg:col-span-2">
-        {/* oxlint-disable-next-line jsx-a11y/prefer-tag-over-role */}
         <div
-          role="button"
-          tabIndex={0}
-          aria-label={t("dataExchange.upload.dropTitle")}
-          onKeyDown={(e) => {
-            if (e.key === "Enter" || e.key === " ") {
-              e.preventDefault();
-              fileInputRef.current?.click();
-            }
-          }}
           onDragOver={(e) => {
             e.preventDefault();
             setIsDragging(true);
@@ -63,34 +57,46 @@ export function StudioUploadStep({
             onFileChosen(e.dataTransfer.files);
           }}
           className={cn(
-            "flex flex-col items-center justify-center rounded-nx-lg border border-dashed p-10 text-center transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-nx-accent",
+            "relative flex flex-col items-center justify-center rounded-nx-lg border border-dashed p-10 text-center transition-colors",
             isDragging
               ? "border-nx-accent bg-nx-accent-wash"
               : "border-nx-line-hi bg-nx-surface hover:border-nx-accent"
           )}
         >
-          <UploadCloud className="mb-3 h-10 w-10 text-nx-accent" />
-          <h3 className="text-base font-semibold text-nx-ink">
-            {t("dataExchange.upload.dropTitle")}
-          </h3>
-          <p className="mt-1 max-w-md text-xs text-nx-ink-2">
-            {t("dataExchange.upload.dropHint")}
-          </p>
+          <Button
+            type="button"
+            variant="ghost"
+            aria-label={t("dataExchange.upload.dropTitle")}
+            disabled={isInspecting}
+            onClick={() => fileInputRef.current?.click()}
+            data-testid="studio-dropzone-trigger"
+            className="absolute inset-0 z-0 h-full w-full rounded-nx-lg bg-transparent hover:bg-transparent"
+          />
 
-          {isInspecting && (
-            <div className="mt-3 flex items-center gap-2 text-xs text-nx-accent">
-              <Loader2 className="h-4 w-4 animate-spin" />
-              <span>{t("dataExchange.upload.inspecting")}</span>
-            </div>
-          )}
+          <div className="pointer-events-none relative z-raised flex flex-col items-center">
+            <UploadCloud className="mb-3 h-10 w-10 text-nx-accent" />
+            <h3 className="text-base font-semibold text-nx-ink">
+              {t("dataExchange.upload.dropTitle")}
+            </h3>
+            <p className="mt-1 max-w-md text-xs text-nx-ink-2">
+              {t("dataExchange.upload.dropHint")}
+            </p>
 
-          <div className="mt-5 flex flex-wrap items-center justify-center gap-3">
+            {isInspecting && (
+              <div className="mt-3 flex items-center gap-2 text-xs text-nx-accent">
+                <Loader2 className="h-4 w-4 animate-spin" />
+                <span>{t("dataExchange.upload.inspecting")}</span>
+              </div>
+            )}
+          </div>
+
+          <div className="relative z-raised mt-5 flex flex-wrap items-center justify-center gap-3">
             <Button
               type="button"
               variant="default"
               loading={isInspecting}
               onClick={() => fileInputRef.current?.click()}
-              className="bg-nx-accent text-nx-on-fill hover:opacity-90 font-medium"
+              className="bg-nx-accent-fill text-nx-on-fill hover:opacity-90 font-medium"
               data-testid="studio-choose-file-btn"
             >
               <UploadCloud className="me-2 h-4 w-4" />
@@ -114,6 +120,8 @@ export function StudioUploadStep({
             )}
           </div>
         </div>
+
+        <SchemaWarningsBanner warnings={schemaWarnings} />
 
         <Alert variant="info" className="border-nx-line bg-nx-raised text-nx-ink">
           <ShieldCheck className="h-4 w-4 text-nx-accent shrink-0" />

@@ -86,7 +86,7 @@ export function KanbanBoard({
 
   if (isLoading && opportunities.length === 0) {
     return (
-      <section role="region" aria-label={t("crmOpportunities.kanban.boardRegionLabel")} data-testid="kanban-board-skeleton" className="w-full overflow-x-auto no-scrollbar pb-2">
+      <section aria-label={t("crmOpportunities.kanban.boardRegionLabel")} data-testid="kanban-board-skeleton" className="w-full overflow-x-auto no-scrollbar pb-2">
         <div className="grid gap-1.5 pb-2 pt-1 min-h-[520px] w-full" style={{ gridTemplateColumns: "repeat(7, minmax(136px, 1fr))" }}>
           {Array.from({ length: 7 }).map((_, colIdx) => (
             <div key={colIdx} className="rounded-xl border border-nx-line bg-nx-surface p-2.5 space-y-2.5">
@@ -112,7 +112,7 @@ export function KanbanBoard({
   }
 
   return (
-    <section role="region" aria-label={t("crmOpportunities.kanban.boardRegionLabel")} className="space-y-3">
+    <section aria-label={t("crmOpportunities.kanban.boardRegionLabel")} className="space-y-3">
       {errorMessage && (
         <Alert variant="destructive" data-testid="kanban-error-banner" className="border-destructive/40 bg-destructive/10 text-destructive text-xs py-2 px-3 flex items-center justify-between">
           <div className="flex items-center gap-2">

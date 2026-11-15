@@ -199,7 +199,7 @@ export function CrmCustomFieldsStudioCard({ settings, onCreateCustomField, onNot
               <Badge variant="outline" className="text-[10px] border-nx-line text-nx-ink-3">{field.entityTypeKey}</Badge>
               <Badge variant="outline" className="text-[10px] border-nx-line text-nx-ink-3">{field.valueType}</Badge>
               {field.defaultStageGateKey && (
-                <Badge variant="outline" className="border-nx-accent/40 bg-nx-accent-wash/20 text-nx-accent text-[10px] gap-1">
+                <Badge variant="outline" className="border-nx-accent/40 bg-nx-accent-wash text-nx-accent text-[10px] gap-1">
                   <CheckCircle2 className="size-2.5" /> {t("crm.settings.integrations.gatePrefix")}: {field.defaultStageGateKey}
                 </Badge>
               )}

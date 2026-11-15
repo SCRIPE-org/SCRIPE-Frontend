@@ -11,6 +11,7 @@ import {
 } from "@core/ui/dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@core/ui/select";
 import { Button } from "@core/ui/button";
+import { Label } from "@core/ui/label";
 import { LoadingSpinner } from "@core/ui/loading-spinner";
 import { AlertCircle } from "lucide-react";
 
@@ -69,9 +70,9 @@ export function ChangePlanDialog({
         ) : (
           <div className="space-y-4 py-4">
             <div className="space-y-2">
-              <label className="text-sm font-medium text-nx-ink-2">
+              <Label htmlFor="change-plan-select" className="text-sm font-medium text-nx-ink-2">
                 {t("entitlements.activateWorkspace.changePlanDialog.planLabel")}
-              </label>
+              </Label>
               <Select
                 onValueChange={(val) => {
                   setSelectedPlanId(val);
@@ -83,7 +84,7 @@ export function ChangePlanDialog({
                   }
                 }}
               >
-                <SelectTrigger>
+                <SelectTrigger id="change-plan-select">
                   <SelectValue
                     placeholder={t(
                       "entitlements.activateWorkspace.changePlanDialog.planPlaceholder"
@@ -107,14 +108,14 @@ export function ChangePlanDialog({
 
             {selectedPlanId && !isConfirmingFree && (
               <div className="space-y-2">
-                <label className="text-sm font-medium text-nx-ink-2">
+                <Label htmlFor="change-plan-cycle" className="text-sm font-medium text-nx-ink-2">
                   {t("entitlements.activateWorkspace.changePlanDialog.billingCycleLabel")}
-                </label>
+                </Label>
                 <Select
                   value={selectedCycle}
                   onValueChange={(val) => setSelectedCycle(val as "Monthly" | "Yearly")}
                 >
-                  <SelectTrigger>
+                  <SelectTrigger id="change-plan-cycle">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
@@ -130,7 +131,7 @@ export function ChangePlanDialog({
             )}
 
             {isConfirmingFree && (
-              <div className="flex items-start gap-2 rounded-nx-md border border-warning/30 bg-warning/10 p-3 text-sm text-warning">
+              <div className="flex items-start gap-2 rounded-nx-md border border-warning/30 bg-warning/10 p-3 text-sm text-nx-warning-strong">
                 <AlertCircle className="mt-0.5 h-5 w-5 shrink-0" aria-hidden="true" />
                 <div>
                   <p className="font-semibold">

@@ -55,6 +55,7 @@ export function InvoiceListView() {
       titleKey: "billing.title",
       subtitleKey: "billing.description",
       resource: "invoices",
+      stickyActions: true,
       hideAddButton: true,
       searchable: false,
       customActions: [

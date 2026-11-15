@@ -109,7 +109,7 @@ export function InfrastructureHealthSection({
             </div>
             <span
               className={`inline-flex items-center gap-1.5 text-xs font-semibold ${
-                redisHealthy ? "text-success" : "text-warning"
+                redisHealthy ? "text-success" : "text-nx-warning-strong"
               }`}
             >
               <span
@@ -136,7 +136,7 @@ export function InfrastructureHealthSection({
 
           <div className="flex items-center justify-between border-t border-nx-line pt-2 text-[11px] text-nx-ink-3">
             <span>Latency: {isLoading ? "..." : `${redis?.latencyMs ?? 1} ms`}</span>
-            <span className={`font-semibold ${redis?.isConnected ? "text-success" : "text-warning"}`}>
+            <span className={`font-semibold ${redis?.isConnected ? "text-success" : "text-nx-warning-strong"}`}>
               {redis?.isConnected ? "Active" : "In-Memory Fallback"}
             </span>
           </div>
@@ -145,7 +145,7 @@ export function InfrastructureHealthSection({
         {/* 3. Object Storage (Blob / S3 / R2) */}
         <div className="flex flex-col justify-between gap-3 rounded-lg border border-nx-line bg-nx-surface p-3.5 transition-colors hover:border-nx-line-hi hover:bg-nx-raised/40">
           <div className="flex items-center justify-between">
-            <div className="flex h-8 w-8 items-center justify-center rounded-md border border-warning/20 bg-warning/10 text-warning">
+            <div className="flex h-8 w-8 items-center justify-center rounded-md border border-warning/20 bg-warning/10 text-nx-warning-strong">
               <HardDrive className="h-4 w-4" />
             </div>
             <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-success">

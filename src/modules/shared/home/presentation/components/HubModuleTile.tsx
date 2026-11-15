@@ -9,18 +9,17 @@
  * low-chroma neutral tone through the SAME formula, so the file carries one
  * gradient function, not a second hardcoded map.
  *
- * Motion: a calm hairline brighten (rest → hover) plus the tile's own
- * shadow-nx-sm lift — the design bar's whole glow budget is ONE element per
- * screen, and a 20-tile grid cannot each carry its own coloured glow, so
- * there is no glow and no scale here at all.
- * Focus: the shared nx lit-edge ring (:focus-visible only — hover stays a
- * pointer affordance, keyboard gets the ring).
+ * Motion: a calm hairline brighten (rest → hover) with a flat matte card slab —
+ * zero resting box shadows or colored glows.
+ * Accessibility: uses a non-interactive card wrapper + stretched primary trigger
+ * button + sibling pin button at higher z-index (zero nested interactive controls).
+ * Focus: the shared nx lit-edge ring (:focus-visible only).
  * Pin star: filled star top-end when pinned; a hover/focus-revealed outline
  * star otherwise.
  * Locked: the shared --nx-scrim overlay + lock glyph + a warning "Upgrade" pill.
  */
 
-import React, { useCallback } from "react";
+import React, { useCallback, useId } from "react";
 import { Star, Lock } from "lucide-react";
 import { cn } from "@core/common/utils";
 import { Button } from "@core/ui/button";
@@ -71,8 +70,13 @@ export interface HubModuleTileProps {
 // ── Tile dimensions per size ──────────────────────────────────────────────────
 
 const DIMS = {
-  lg: { w: 158, h: 158, iconSize: 30, nameSize: 14, countSize: 11.5, pad: 18, iconChip: 42 },
-  md: { w: 124, h: 124, iconSize: 24, nameSize: 12.5, countSize: 10.5, pad: 14, iconChip: 36 },
+  lg: { iconSize: 30, nameSize: 14, countSize: 11.5, iconChip: 42 },
+  md: { iconSize: 24, nameSize: 12.5, countSize: 10.5, iconChip: 36 },
+} as const;
+
+const TILE_SIZE_CLASSES = {
+  lg: "w-full min-h-[144px] sm:h-[158px] p-4 sm:p-[18px]",
+  md: "h-[124px] w-[124px] p-3.5",
 } as const;
 
 // ── Component ─────────────────────────────────────────────────────────────────
@@ -93,6 +97,9 @@ export function HubModuleTile({
   upgradeBadgeText,
 }: HubModuleTileProps) {
   const { t } = useI18n();
+  const baseId = useId();
+  const titleId = `${baseId}-title`;
+  const metaId = `${baseId}-meta`;
   const dims = DIMS[size];
 
   // Derive the gradient from workspace colour data — the same formula
@@ -109,42 +116,49 @@ export function HubModuleTile({
     onClick?.();
   }, [onClick]);
 
+  const pinOverlayClass =
+    "absolute end-2.5 top-2.5 z-20 h-7 w-7 rounded-nx-sm p-0 text-nx-on-fill hover:bg-[color:color-mix(in_srgb,var(--nx-on-fill)_15%,transparent)] focus-visible:shadow-nx-focus focus-visible:outline-none";
+
   return (
-    <Button
-      type="button"
-      variant="ghost"
-      onClick={handleClick}
-      aria-disabled={isLocked}
+    <div
       className={cn(
-        "group relative flex h-auto flex-col items-stretch justify-between overflow-hidden rounded-nx-lg text-start font-normal whitespace-normal",
-        "border shadow-nx-sm transition-[border-color] duration-nx-standard ease-nx-enter hover:bg-transparent",
-        "outline-none focus-visible:shadow-nx-focus motion-reduce:transition-none",
+        "group relative flex flex-col justify-between rounded-nx-lg text-start",
+        "border transition-[border-color] duration-nx-standard ease-nx-enter motion-reduce:transition-none",
+        TILE_SIZE_CLASSES[size],
         isLocked
-          ? "cursor-pointer border-[color:color-mix(in_srgb,var(--nx-on-fill)_10%,transparent)] hover:border-[color:color-mix(in_srgb,var(--nx-on-fill)_22%,transparent)]"
-          : "cursor-pointer border-[color:color-mix(in_srgb,var(--nx-on-fill)_14%,transparent)] hover:border-[color:color-mix(in_srgb,var(--nx-on-fill)_28%,transparent)]"
+          ? "border-[color:color-mix(in_srgb,var(--nx-on-fill)_10%,transparent)] hover:border-[color:color-mix(in_srgb,var(--nx-on-fill)_22%,transparent)]"
+          : "border-[color:color-mix(in_srgb,var(--nx-on-fill)_14%,transparent)] hover:border-[color:color-mix(in_srgb,var(--nx-on-fill)_28%,transparent)]"
       )}
       style={{
-        width: dims.w,
-        height: dims.h,
-        padding: dims.pad,
         background: gradient,
         color: "var(--nx-on-fill)",
         filter: isLocked ? "saturate(0.25) brightness(0.85)" : "none",
       }}
     >
+      {/* Stretched primary trigger — sibling to pin control (zero nested buttons) */}
+      <Button
+        type="button"
+        variant="ghost"
+        onClick={handleClick}
+        aria-disabled={isLocked}
+        aria-labelledby={titleId}
+        aria-describedby={accessibleItemCount > 0 && !isLocked ? metaId : undefined}
+        className="absolute inset-0 z-0 h-full w-full cursor-pointer rounded-nx-lg border-0 bg-transparent p-0 hover:bg-transparent focus-visible:shadow-nx-focus focus-visible:outline-none"
+      />
+
       {/* Pin star (top corner, pinned state) */}
-      {isPinned && !isLocked && (
+      {isPinned && !isLocked && onTogglePin && (
         <Button
           type="button"
           variant="ghost"
           size="icon"
           onClick={(e) => {
             e.stopPropagation();
-            onTogglePin?.(e);
+            onTogglePin(e);
           }}
           disabled={isPinLoading}
           aria-label={t("workspaceHub.pin.unpin")}
-          className="absolute end-3 top-3 z-raised h-auto w-auto rounded-nx-sm p-0 text-nx-on-fill hover:bg-transparent focus-visible:shadow-nx-focus focus-visible:outline-none"
+          className={pinOverlayClass}
           style={{ cursor: isPinLoading ? "wait" : "pointer" }}
         >
           <Star size={13} fill="currentColor" strokeWidth={0} aria-hidden="true" />
@@ -159,11 +173,14 @@ export function HubModuleTile({
           size="icon"
           onClick={(e) => {
             e.stopPropagation();
-            onTogglePin?.(e);
+            onTogglePin(e);
           }}
           disabled={isPinLoading}
           aria-label={t("workspaceHub.pin.pin")}
-          className="absolute end-3 top-3 z-raised h-auto w-auto rounded-nx-sm p-0 text-nx-on-fill opacity-0 transition-opacity duration-nx-micro ease-nx-enter hover:bg-transparent focus-visible:opacity-100 focus-visible:shadow-nx-focus focus-visible:outline-none group-hover:opacity-100 motion-reduce:transition-none"
+          className={cn(
+            pinOverlayClass,
+            "opacity-0 transition-opacity duration-nx-micro ease-nx-enter focus-visible:opacity-100 group-hover:opacity-100 motion-reduce:transition-none"
+          )}
           style={{ cursor: isPinLoading ? "wait" : "pointer" }}
         >
           <Star size={13} strokeWidth={1.75} aria-hidden="true" />
@@ -171,7 +188,7 @@ export function HubModuleTile({
       )}
 
       {/* Icon chip */}
-      <div className="relative flex items-start">
+      <div className="pointer-events-none relative z-10 flex items-start">
         <div
           className="inline-flex items-center justify-center rounded-nx-md text-nx-on-fill"
           style={{
@@ -186,8 +203,9 @@ export function HubModuleTile({
       </div>
 
       {/* Name + item count */}
-      <div className="relative flex flex-col gap-0.5">
+      <div className="pointer-events-none relative z-10 flex flex-col gap-0.5">
         <span
+          id={titleId}
           className="font-semibold leading-tight tracking-tight text-nx-on-fill"
           style={{ fontSize: dims.nameSize }}
         >
@@ -195,7 +213,8 @@ export function HubModuleTile({
         </span>
         {accessibleItemCount > 0 && !isLocked && (
           <span
-            className="font-medium"
+            id={metaId}
+            className="font-medium tabular-nums"
             style={{
               fontSize: dims.countSize,
               color: "color-mix(in srgb, var(--nx-on-fill) 74%, transparent)",
@@ -208,7 +227,7 @@ export function HubModuleTile({
 
       {/* Locked overlay — the shared scrim, clipped by the tile's own rounding */}
       {isLocked && (
-        <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 bg-scrim text-nx-on-fill">
+        <div className="pointer-events-none absolute inset-0 z-10 flex flex-col items-center justify-center gap-2 rounded-nx-lg bg-scrim text-nx-on-fill">
           <div
             className="flex items-center justify-center rounded-full"
             style={{
@@ -225,6 +244,6 @@ export function HubModuleTile({
           </div>
         </div>
       )}
-    </Button>
+    </div>
   );
 }

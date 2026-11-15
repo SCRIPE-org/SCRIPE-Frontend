@@ -23,7 +23,7 @@ export function CornerCardLayout({
 }: LoginLayoutProps) {
   return (
     <div
-      className={`relative flex min-h-screen w-full ${BG_STYLE} login-page selection:bg-primary/20`}
+      className={`relative flex min-h-[100dvh] w-full ${BG_STYLE} login-page`}
       dir={direction}
       style={WRAPPER_STYLE}
     >
@@ -31,32 +31,32 @@ export function CornerCardLayout({
       {topActions}
       {/* Hero branding area */}
       <div className="relative z-10 hidden flex-1 flex-col justify-center px-16 lg:flex xl:px-24">
-        <h1 className="login-heading text-6xl font-black tracking-tighter text-[var(--login-text,hsl(var(--foreground)))]">
+        <h1 className="login-heading text-6xl font-black tracking-tighter text-[var(--login-text,var(--nx-ink))]">
           {branding?.loginHeadline || companyName}
         </h1>
-        <p className="mt-4 max-w-lg text-lg text-[var(--login-text-muted,hsl(var(--muted-foreground)))]">
+        <p className="mt-4 max-w-lg text-lg text-[var(--login-text-muted,var(--nx-ink-2))]">
           {branding?.loginSubtitle || t("auth.branding.subtitle")}
         </p>
         <SlotRenderer slotId="login.sidebar.content" slotConfig={slotConfig} className="mt-8" />
       </div>
       {/* Corner card */}
-      <div className="relative z-10 flex w-full items-end justify-center p-6 lg:w-auto lg:items-end lg:justify-end lg:p-10">
+      <main className="relative z-10 flex w-full items-end justify-center p-6 lg:w-auto lg:items-end lg:justify-end lg:p-10">
         <div
-          className="w-full border border-[var(--login-accent,hsl(var(--border)))]"
+          className="w-full border border-[var(--login-accent,var(--nx-line))]"
           style={cardStyle("400px")}
         >
           <div className="mb-6 flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center overflow-hidden rounded-lg border border-border bg-background">
+            <div className="flex h-10 w-10 items-center justify-center overflow-hidden rounded-lg border border-nx-line bg-nx-surface">
               <LogoImg logoSrc={logoSrc} logoAlt={logoAlt} />
             </div>
-            <span className="text-sm font-semibold text-[var(--login-text,hsl(var(--foreground)))]">
+            <span className="text-sm font-semibold text-[var(--login-text,var(--nx-ink))]">
               {companyName}
             </span>
           </div>
           {formContent}
           {footerSlot}
         </div>
-      </div>
+      </main>
     </div>
   );
 }

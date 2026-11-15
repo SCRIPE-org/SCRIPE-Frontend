@@ -200,7 +200,7 @@ describe("OpportunitiesView Component", () => {
       expect(screen.getAllByText("Al-Nassr Pitch Licensing Contract")[0]).toBeDefined();
     });
 
-    const actionBtns = screen.getAllByLabelText("table.actions");
+    const actionBtns = screen.getAllByLabelText(/^(Actions|table\.actions)$/);
     fireEvent.pointerDown(actionBtns[0], { button: 0, pointerType: "mouse" });
     fireEvent.click(actionBtns[0]);
 
@@ -226,7 +226,7 @@ describe("OpportunitiesView Component", () => {
       expect(screen.getAllByText("Al-Nassr Pitch Licensing Contract")[0]).toBeDefined();
     });
 
-    const actionBtns = screen.getAllByLabelText("table.actions");
+    const actionBtns = screen.getAllByLabelText(/^(Actions|table\.actions)$/);
     fireEvent.pointerDown(actionBtns[0], { button: 0, pointerType: "mouse" });
     fireEvent.click(actionBtns[0]);
 
@@ -348,7 +348,7 @@ describe("OpportunitiesView Component", () => {
       expect(screen.getAllByText("Al-Nassr Pitch Licensing Contract")[0]).toBeDefined();
     });
 
-    const actionBtns = screen.getAllByLabelText("table.actions");
+    const actionBtns = screen.getAllByLabelText(/^(Actions|table\.actions)$/);
     fireEvent.pointerDown(actionBtns[0], { button: 0, pointerType: "mouse" });
     fireEvent.click(actionBtns[0]);
 

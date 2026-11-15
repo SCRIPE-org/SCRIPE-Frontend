@@ -80,11 +80,12 @@ export function useOpportunitiesViewModel(initialSearch?: string) {
     setIsSubmitting,
     setSubmitError,
   );
+  const { fetchPipeline } = lifecycle;
 
   useEffect(() => {
     fetchOpportunities(1);
-    lifecycle.fetchPipeline();
-  }, [fetchOpportunities, lifecycle.fetchPipeline]);
+    fetchPipeline();
+  }, [fetchOpportunities, fetchPipeline]);
 
   const handleSearchChange = useCallback(
     (value: string) => {

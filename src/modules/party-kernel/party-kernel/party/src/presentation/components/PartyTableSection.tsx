@@ -82,7 +82,7 @@ export const PartyTableSection = memo(function PartyTableSection({
               >
                 <TableCell>
                   <div className="flex items-center gap-3">
-                    <div className="bg-nx-accent/10 flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-xs font-semibold text-nx-accent">
+                    <div className="bg-nx-accent-wash flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-xs font-semibold text-nx-accent">
                       {party.initials}
                     </div>
                     <div className="min-w-0">

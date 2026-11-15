@@ -31,7 +31,7 @@ const buttonVariants = cva(
   [
     "relative inline-flex select-none items-center justify-center whitespace-nowrap",
     "border border-transparent text-sm font-medium tabular-nums",
-    "transition-[color,background-color,border-color,box-shadow] duration-nx-micro ease-nx-enter motion-reduce:transition-none",
+    "transition-[color,background-color,border-color,box-shadow,filter] duration-nx-micro ease-nx-enter motion-reduce:transition-none",
     "focus-visible:outline-none focus-visible:shadow-nx-focus focus-visible:z-raised",
     "active:shadow-[inset_0_0_0_1px_var(--nx-accent),inset_0_1px_2px_0_var(--nx-scrim)]",
     // Disabled is a dedicated surface + ink pair, never opacity math — a 50%
@@ -54,19 +54,19 @@ const buttonVariants = cva(
         // filled surface read as a surface, and hover closes a full accent edge
         // around it while lifting that highlight.
         default:
-          "border-nx-accent-fill bg-nx-accent-fill text-nx-on-fill shadow-[inset_0_1px_0_0_color-mix(in_srgb,var(--nx-on-fill)_22%,transparent)] hover:shadow-[inset_0_0_0_1px_var(--nx-accent),inset_0_1px_0_0_color-mix(in_srgb,var(--nx-on-fill)_35%,transparent)] aria-disabled:border-nx-line aria-disabled:bg-nx-raised aria-disabled:shadow-none",
+          "border-nx-accent-fill bg-nx-accent-fill text-nx-on-fill shadow-[inset_0_1px_0_0_color-mix(in_srgb,var(--nx-on-fill)_22%,transparent)] hover:brightness-95 hover:shadow-[inset_0_0_0_1px_color-mix(in_srgb,var(--nx-on-fill)_38%,transparent),inset_0_1px_0_0_color-mix(in_srgb,var(--nx-on-fill)_35%,transparent)] active:shadow-[inset_0_0_0_1px_var(--nx-on-fill),inset_0_1px_2px_0_var(--nx-scrim)] aria-disabled:border-nx-line aria-disabled:bg-nx-raised aria-disabled:shadow-none aria-disabled:hover:brightness-100",
         // Same weight as primary, its own hue all the way down. Destructive
         // presses in its own colour — the shared accent inset would light a
         // violet edge on a red button, exactly the wrong signal on a delete.
         destructive:
           "border-destructive bg-destructive text-destructive-foreground shadow-[inset_0_1px_0_0_hsl(var(--destructive-foreground)/0.22)] hover:bg-destructive/90 hover:shadow-[inset_0_1px_0_0_hsl(var(--destructive-foreground)/0.38)] active:shadow-[inset_0_0_0_1px_hsl(var(--destructive-foreground)/0.45),inset_0_1px_2px_0_var(--nx-scrim)] aria-disabled:border-nx-line aria-disabled:bg-nx-raised aria-disabled:shadow-none",
         outline:
-          "border-nx-line-hi bg-transparent text-nx-ink hover:bg-nx-hover disabled:border-nx-line disabled:bg-transparent aria-disabled:bg-transparent",
+          "border-nx-line-hi bg-transparent text-nx-ink hover:border-nx-ink-3 hover:bg-nx-hover disabled:border-nx-line disabled:bg-transparent aria-disabled:border-nx-line aria-disabled:bg-transparent",
         // The old `default`: a real fill, one step of ground, deliberately
         // neutral. Hover steps UP the ladder in both themes (raised → raised-2
         // is lighter in dark and darker in light — "more" either way).
         secondary:
-          "border-nx-line bg-nx-raised text-nx-ink hover:border-nx-line-hi hover:bg-nx-raised-2",
+          "border-nx-line bg-nx-raised text-nx-ink hover:border-nx-line-hi hover:bg-nx-raised-2 aria-disabled:border-nx-line aria-disabled:bg-nx-raised",
         // Quietest interactive rung: nothing at rest, ink promotes on hover so
         // a toolbar reads as one calm row until you reach for it.
         ghost:
@@ -94,16 +94,45 @@ export interface ButtonProps
   asChild?: boolean;
   /** When true, shows an animated spinner inside the button and disables interaction */
   loading?: boolean;
+  /** Alias for `loading` supported cleanly without leaking to DOM attributes */
+  isLoading?: boolean;
 }
 
 const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
   (
-    { className, variant, size, asChild = false, loading = false, disabled, children, ...props },
+    {
+      className,
+      variant,
+      size,
+      asChild = false,
+      loading = false,
+      isLoading = false,
+      disabled,
+      onClick,
+      children,
+      ...props
+    },
     ref
   ) => {
     const settings = useSettings();
-    const Comp = asChild ? Slot : "button";
-    const isInert = disabled || loading;
+    const effectiveLoading = Boolean(loading || isLoading);
+    const isInert = Boolean(disabled || effectiveLoading);
+    const canUseSlot =
+      asChild &&
+      React.isValidElement(children) &&
+      children.type !== React.Fragment &&
+      React.Children.count(children) === 1;
+    const isNativeButtonChild = canUseSlot && children.type === "button";
+    const Comp = canUseSlot ? Slot : "button";
+
+    const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+      if (isInert) {
+        event.preventDefault();
+        event.stopPropagation();
+        return;
+      }
+      onClick?.(event);
+    };
 
     const getButtonClasses = () => {
       let radiusClasses = "";
@@ -163,19 +192,19 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
       return cn(radiusClasses, animationClasses);
     };
 
-    // For asChild mode, we can't inject spinner children — just pass through.
-    // aria-disabled/aria-busy carry the state to assistive tech AND to the
-    // aria-disabled: style arm, which is what actually stops a disabled link
-    // from navigating; consumer-supplied aria wins via the later spread.
-    if (asChild) {
+    // For asChild mode, never inject sibling nodes (like LoadingSpinner) into
+    // Radix Slot — Slot enforces React.Children.only. When children isn't a
+    // single valid element, fall back safely to native <button>.
+    if (canUseSlot) {
       return (
         <Comp
           className={cn(buttonVariants({ variant, size }), getButtonClasses(), className)}
           ref={ref}
-          disabled={isInert}
+          disabled={isNativeButtonChild ? isInert : undefined}
           aria-disabled={isInert || undefined}
-          aria-busy={loading || undefined}
-          data-loading={loading || undefined}
+          aria-busy={effectiveLoading || undefined}
+          data-loading={effectiveLoading || undefined}
+          onClick={handleClick}
           {...props}
         >
           {children}
@@ -188,11 +217,12 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
         className={cn(buttonVariants({ variant, size }), getButtonClasses(), className)}
         ref={ref}
         disabled={isInert}
-        aria-busy={loading || undefined}
-        data-loading={loading || undefined}
+        aria-busy={effectiveLoading || undefined}
+        data-loading={effectiveLoading || undefined}
+        onClick={handleClick}
         {...props}
       >
-        {loading && (
+        {effectiveLoading && (
           <LoadingSpinner
             size="inline"
             showText={false}

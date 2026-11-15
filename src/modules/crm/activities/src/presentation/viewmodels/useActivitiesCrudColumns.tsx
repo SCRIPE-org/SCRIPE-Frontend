@@ -163,6 +163,6 @@ export function useActivitiesCrudColumns(
         },
       },
     ],
-    [language, t, accountsMap, router, isAr]
+    [t, accountsMap, router, isAr]
   );
 }

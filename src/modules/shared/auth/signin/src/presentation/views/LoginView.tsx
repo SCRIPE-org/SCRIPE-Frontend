@@ -67,8 +67,8 @@ export function LoginView() {
 
   const resolvedLogoSrc = useResolvedFileUrl(branding?.logoUrl);
   const logoSrc = branding?.logoUrl
-    ? resolvedLogoSrc || "/brand/app-logo-1024.png"
-    : "/brand/app-logo-1024.png";
+    ? resolvedLogoSrc || "/brand/app-logo.svg"
+    : "/brand/app-logo.svg";
   const logoAlt = branding?.companyName ?? branding?.name ?? BRAND.name;
   const companyName = branding?.companyName ?? branding?.name ?? BRAND.name;
 
@@ -107,13 +107,13 @@ export function LoginView() {
   // ── Loading gate ──────────────────────────────────────────────────────────
   if (!isPreviewMode && (!vm.hasHydrated || vm.isRedirecting || isTenantLoading)) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-background">
+      <div className="flex min-h-[100dvh] items-center justify-center bg-nx-ground">
         <div className="flex flex-col items-center gap-6">
           <div className="flex items-center gap-2">
             {[0, 150, 300].map((delay) => (
               <div
                 key={delay}
-                className="h-2 w-2 animate-pulse rounded-full bg-muted-foreground/40"
+                className="h-2 w-2 animate-pulse rounded-full bg-nx-ink-3 motion-reduce:animate-none"
                 style={{ animationDelay: `${delay}ms` }}
               />
             ))}
@@ -166,7 +166,7 @@ export function LoginView() {
 
   const footer = (
     <div className="mt-12 text-center lg:hidden">
-      <p className="text-[11px] font-medium text-muted-foreground/50">
+      <p className="text-[11px] font-medium text-nx-ink-3">
         © {new Date().getFullYear()} {companyName} — {t("auth.branding.copyright")}
       </p>
     </div>

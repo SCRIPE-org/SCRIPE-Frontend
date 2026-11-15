@@ -43,7 +43,7 @@ export function OpportunityAuditTimeline({ stageHistory, isRtl }: OpportunityAud
         </p>
       ) : (
         <div className="overflow-x-auto no-scrollbar" dir={isRtl ? "rtl" : "ltr"}>
-          <Table className="w-full text-left text-xs border-collapse">
+          <Table className="w-full text-start text-xs border-collapse">
             <TableHeader>
               <TableRow className="border-b border-nx-line bg-nx-raised/50 text-nx-ink-2 font-semibold">
                 <TableHead className="px-4 py-2.5 text-start">{t("crmOpportunities.detail.occurredAt")}</TableHead>
@@ -77,7 +77,7 @@ export function OpportunityAuditTimeline({ stageHistory, isRtl }: OpportunityAud
                   </TableCell>
                   <TableCell className="px-4 py-2.5 font-medium">
                     {hist.usedStageOverride ? (
-                      <span className="text-warning font-semibold">
+                      <span className="text-nx-warning-strong font-semibold">
                         {t("crmOpportunities.detail.transitionType", { defaultValue: "Stage Override" })}
                       </span>
                     ) : (

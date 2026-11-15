@@ -12,7 +12,7 @@ import { blockColor, clamp } from "./block-style-utils";
 export function TextBlockView({ block }: { block: TextBlock }) {
   const props = block.props;
   const style: CSSProperties = {
-    color: blockColor(props.color, "var(--login-text-muted, hsl(var(--muted-foreground)))"),
+    color: blockColor(props.color, "var(--login-text-muted, var(--nx-ink-2))"),
     maxWidth: props.maxWidth,
     textTransform: props.textTransform,
   };
@@ -30,7 +30,7 @@ export function TextBlockView({ block }: { block: TextBlock }) {
         ALIGN_MAP[props.alignment || "left"],
         FONT_SIZE_MAP[props.fontSize || "base"],
         FONT_WEIGHT_MAP[props.fontWeight || "normal"],
-        props.highlight ? "rounded-md bg-primary/10 px-3 py-2" : "",
+        props.highlight ? "rounded-md bg-nx-accent-wash px-3 py-2" : "",
       ].join(" ")}
       style={style}
     >

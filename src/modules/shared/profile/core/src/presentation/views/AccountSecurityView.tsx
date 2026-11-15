@@ -38,7 +38,8 @@ export function AccountSecurityView() {
     isVerifyingSudo, sudoError, emergencyLockdown, isLockingDown,
   } = useSecurityVaultViewModel();
 
-  const { security, updateSecurityPolicy, isUpdatingPolicy } = useAccountSecuritySliceViewModel();
+  const { security, updateSecurityPolicy, isUpdatingPolicy, updatePolicyError } =
+    useAccountSecuritySliceViewModel();
 
   const [isEnrollModalOpen, setIsEnrollModalOpen] = useState(false);
   const [isSudoModalOpen, setIsSudoModalOpen] = useState(false);
@@ -181,8 +182,10 @@ export function AccountSecurityView() {
       {/* 5. Trusted IP CIDR Allowlist & Emergency Account Lockdown */}
       <SecurityAdvancedShieldSection
         trustedCidrs={security?.trustedCidrs ?? []}
+        rowVersion={security?.rowVersion}
         onUpdatePolicy={updateSecurityPolicy}
         isUpdatingPolicy={isUpdatingPolicy}
+        policyError={updatePolicyError}
         onOpenLockdown={() => setIsLockdownOpen(true)}
       />
 

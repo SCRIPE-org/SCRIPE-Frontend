@@ -7,11 +7,24 @@
  * Pure function — returns CSS string, no DOM side-effects.
  */
 
+function normalizeHex(hex: string): string | null {
+  if (!hex || typeof hex !== "string" || !hex.startsWith("#")) return null;
+  const raw = hex.slice(1).trim();
+  if (/^[0-9a-fA-F]{3}$/.test(raw)) {
+    return `#${raw[0]}${raw[0]}${raw[1]}${raw[1]}${raw[2]}${raw[2]}`;
+  }
+  if (/^[0-9a-fA-F]{6}$/.test(raw)) {
+    return `#${raw}`;
+  }
+  return null;
+}
+
 function hexToHslValues(hex: string): string | null {
-  if (!hex || !hex.startsWith("#")) return null;
-  const r = parseInt(hex.slice(1, 3), 16) / 255;
-  const g = parseInt(hex.slice(3, 5), 16) / 255;
-  const b = parseInt(hex.slice(5, 7), 16) / 255;
+  const normalized = normalizeHex(hex);
+  if (!normalized) return null;
+  const r = parseInt(normalized.slice(1, 3), 16) / 255;
+  const g = parseInt(normalized.slice(3, 5), 16) / 255;
+  const b = parseInt(normalized.slice(5, 7), 16) / 255;
   const max = Math.max(r, g, b),
     min = Math.min(r, g, b);
   const l = (max + min) / 2;
@@ -23,6 +36,22 @@ function hexToHslValues(hex: string): string | null {
   else if (max === g) h = ((b - r) / d + 2) * 60;
   else h = ((r - g) / d + 4) * 60;
   return `${Math.round(h)} ${Math.round(s * 100)}% ${Math.round(l * 100)}%`;
+}
+
+/**
+ * Selects high-contrast ink (`#0B0D10`) or white (`#FFFFFF`) foreground HSL
+ * channels based on WCAG 2.1 relative luminance of a hex background color.
+ */
+function getContrastForegroundHsl(hex: string): string | null {
+  const normalized = normalizeHex(hex);
+  if (!normalized) return null;
+  const toLinear = (channel: number) =>
+    channel <= 0.03928 ? channel / 12.92 : ((channel + 0.055) / 1.055) ** 2.4;
+  const r = toLinear(parseInt(normalized.slice(1, 3), 16) / 255);
+  const g = toLinear(parseInt(normalized.slice(3, 5), 16) / 255);
+  const b = toLinear(parseInt(normalized.slice(5, 7), 16) / 255);
+  const luminance = 0.2126 * r + 0.7152 * g + 0.0722 * b;
+  return luminance > 0.179 ? "216 19% 5%" : "0 0% 100%";
 }
 
 export function buildBridgeCss(tokens: Record<string, string | undefined>): string {
@@ -45,7 +74,10 @@ export function buildBridgeCss(tokens: Record<string, string | undefined>): stri
   push(bridgeRules, "--destructive", tokens["color.error"]);
   push(bridgeRules, "--accent", tokens["color.accent"]);
   push(bridgeRules, "--ring", tokens["color.primary"]);
-  if (tokens["color.primary"]) bridgeRules.push(`  --primary-foreground: 0 0% 100%;`);
+  const lightPrimaryFg = tokens["color.primary"]
+    ? getContrastForegroundHsl(tokens["color.primary"])
+    : null;
+  if (lightPrimaryFg) bridgeRules.push(`  --primary-foreground: ${lightPrimaryFg};`);
 
   const darkBridgeRules: string[] = [];
   push(darkBridgeRules, "--primary", tokens["dark.color.primary"]);
@@ -59,7 +91,10 @@ export function buildBridgeCss(tokens: Record<string, string | undefined>): stri
   push(darkBridgeRules, "--input", tokens["dark.color.border"]);
   push(darkBridgeRules, "--destructive", tokens["dark.color.error"]);
   push(darkBridgeRules, "--ring", tokens["dark.color.primary"]);
-  if (tokens["dark.color.primary"]) darkBridgeRules.push(`  --primary-foreground: 0 0% 100%;`);
+  const darkPrimaryFg = tokens["dark.color.primary"]
+    ? getContrastForegroundHsl(tokens["dark.color.primary"])
+    : null;
+  if (darkPrimaryFg) darkBridgeRules.push(`  --primary-foreground: ${darkPrimaryFg};`);
 
   const blocks: string[] = [];
   if (bridgeRules.length) blocks.push(`.login-page {\n${bridgeRules.join("\n")}\n}`);

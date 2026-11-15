@@ -4,20 +4,20 @@
 export default function AuthLoading() {
   return (
     <div
-      className="scripe-auth-stage flex min-h-screen w-full items-center justify-center"
+      className="scripe-auth-stage flex min-h-[100dvh] w-full items-center justify-center"
       aria-hidden="true"
     >
       <div className="flex gap-1.5">
         <span
-          className="h-2 w-2 animate-pulse rounded-full"
+          className="h-2 w-2 animate-pulse motion-reduce:animate-none rounded-full"
           style={{ background: "var(--scripe-signal, #C6FF00)", animationDelay: "0ms" }}
         />
         <span
-          className="h-2 w-2 animate-pulse rounded-full"
+          className="h-2 w-2 animate-pulse motion-reduce:animate-none rounded-full"
           style={{ background: "var(--scripe-signal, #C6FF00)", animationDelay: "150ms" }}
         />
         <span
-          className="h-2 w-2 animate-pulse rounded-full"
+          className="h-2 w-2 animate-pulse motion-reduce:animate-none rounded-full"
           style={{ background: "var(--scripe-signal, #C6FF00)", animationDelay: "300ms" }}
         />
       </div>

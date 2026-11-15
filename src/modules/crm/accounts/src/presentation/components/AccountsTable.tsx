@@ -41,7 +41,7 @@ export function AccountsTable({ accounts, className }: AccountsTableProps) {
       dir={isRtl ? "rtl" : "ltr"}
     >
       <div className="overflow-x-auto no-scrollbar">
-        <Table className="w-full text-left text-xs border-collapse" dir={isRtl ? "rtl" : "ltr"}>
+        <Table className="w-full text-start text-xs border-collapse" dir={isRtl ? "rtl" : "ltr"}>
           <TableHeader>
             <TableRow className="border-b border-nx-line bg-nx-raised/50 text-nx-ink-2 font-semibold">
               <TableHead className="px-4 py-3 text-start">{t("crmAccounts.table.account")}</TableHead>
@@ -102,7 +102,7 @@ export function AccountsTable({ accounts, className }: AccountsTableProps) {
                   <TableCell className="px-4 py-3.5 whitespace-nowrap">
                     <Badge
                       variant="outline"
-                      className="border-nx-line bg-nx-raised/60 text-nx-ink-2 gap-1 font-mono text-[11px]"
+                      className="border-nx-line bg-nx-raised/60 text-nx-ink-2 gap-1 font-mono tabular-nums text-[11px]"
                     >
                       <Users className="size-3 text-nx-ink-3" />
                       {account.linkedContactsCount}
@@ -111,7 +111,7 @@ export function AccountsTable({ accounts, className }: AccountsTableProps) {
                   <TableCell className="px-4 py-3.5 whitespace-nowrap">
                     <Badge
                       variant="outline"
-                      className="border-nx-line bg-nx-raised/60 text-nx-ink-2 gap-1 font-mono text-[11px]"
+                      className="border-nx-line bg-nx-raised/60 text-nx-ink-2 gap-1 font-mono tabular-nums text-[11px]"
                     >
                       <Briefcase className="size-3 text-nx-ink-3" />
                       {account.activeOpportunitiesCount}

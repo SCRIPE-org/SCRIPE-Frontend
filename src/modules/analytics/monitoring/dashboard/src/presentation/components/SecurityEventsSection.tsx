@@ -23,9 +23,9 @@ interface Props {
 
 const eventConfig: Record<string, { icon: typeof AlertTriangle; color: string; bgColor: string }> =
   {
-    LoginFailed: { icon: AlertTriangle, color: "text-warning", bgColor: "bg-warning/10" },
+    LoginFailed: { icon: AlertTriangle, color: "text-nx-warning-strong", bgColor: "bg-warning/10" },
     AccountLocked: { icon: Lock, color: "text-destructive", bgColor: "bg-destructive/10" },
-    AccessDenied: { icon: Ban, color: "text-warning", bgColor: "bg-warning/10" },
+    AccessDenied: { icon: Ban, color: "text-nx-warning-strong", bgColor: "bg-warning/10" },
     PrivilegeEscalationAttempt: {
       icon: ShieldX,
       color: "text-destructive",

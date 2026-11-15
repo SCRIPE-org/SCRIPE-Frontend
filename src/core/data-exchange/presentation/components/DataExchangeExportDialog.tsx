@@ -105,7 +105,7 @@ export function DataExchangeExportDialog({
               <SelectTrigger id="dx-export-format" className="h-8 text-xs border-nx-line">
                 <SelectValue />
               </SelectTrigger>
-              <SelectContent className="z-[960]">
+              <SelectContent>
                 <SelectItem value="xlsx">{t("dataExchange.exportDialog.formatXlsx")}</SelectItem>
                 <SelectItem value="csv">{t("dataExchange.exportDialog.formatCsv")}</SelectItem>
                 <SelectItem value="tsv">{t("dataExchange.exportDialog.formatTsv")}</SelectItem>
@@ -211,7 +211,7 @@ export function DataExchangeExportDialog({
                 vm.selectedColumns.length === 0 || vm.isExporting || vm.isEnqueuingBackground
               }
               onClick={vm.handleExport}
-              className="bg-nx-accent text-nx-on-fill hover:opacity-90 font-medium text-xs h-8"
+              className="bg-nx-accent-fill text-nx-on-fill hover:opacity-90 font-medium text-xs h-8"
             >
               <Download className="me-2 h-4 w-4" />
               {t("dataExchange.actions.downloadExport")}

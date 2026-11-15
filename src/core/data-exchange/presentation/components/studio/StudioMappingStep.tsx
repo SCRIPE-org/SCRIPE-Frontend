@@ -13,6 +13,7 @@ import {
   TableRow,
 } from "@core/ui/table";
 import { useI18n } from "@core/providers/i18n-provider";
+import { SchemaWarningsBanner } from "./SchemaWarningsBanner";
 import { StudioMappingControlsBar } from "./StudioMappingControlsBar";
 import { StudioMappingRow } from "./StudioMappingRow";
 import type { DataExchangeColumnDescriptor } from "../../../domain/types";
@@ -58,12 +59,14 @@ export function StudioMappingStep({
     <div className="space-y-5">
       <StudioMappingControlsBar vm={vm} onPromptReplaceFile={onPromptReplaceFile} />
 
+      <SchemaWarningsBanner warnings={activeSheet.schemaWarnings} />
+
       {/* Jump-to-Row Validation Error Banners */}
       {(activeMissingRequired.length > 0 || activeCompatibilityIssues.length > 0) && (
         <div className="space-y-2">
           {activeMissingRequired.length > 0 && (
-            <Alert variant="warning" className="border-warning/30 bg-warning/10">
-              <AlertTriangle className="h-4 w-4 text-warning shrink-0" />
+            <Alert variant="warning" className="border-nx-warning-strong/35 bg-nx-warning/10 text-nx-warning-strong">
+              <AlertTriangle className="h-4 w-4 text-nx-warning-strong shrink-0" />
               <AlertDescription className="flex flex-wrap items-center gap-1.5 text-xs text-nx-ink">
                 <span>{t("dataExchange.mapping.requiredMissing")}</span>
                 {activeMissingRequired.map((col) => (
@@ -73,7 +76,7 @@ export function StudioMappingStep({
                     variant="outline"
                     size="sm"
                     onClick={() => scrollToRow(col.key)}
-                    className="h-5 px-1.5 text-[10px] border-warning/40 text-warning hover:bg-warning/20"
+                    className="h-5 px-1.5 text-[10px] border-nx-warning-strong/35 text-nx-warning-strong hover:bg-nx-warning/20"
                     title={t("dataExchange.tooltips.jumpToField", {
                       field: isAr ? col.displayNameAr : col.displayNameEn,
                     })}
@@ -86,9 +89,9 @@ export function StudioMappingStep({
           )}
 
           {activeCompatibilityIssues.length > 0 && (
-            <Alert variant="destructive" className="border-destructive/30 bg-destructive/10">
-              <XCircle className="h-4 w-4 text-destructive shrink-0" />
-              <AlertDescription className="flex flex-wrap items-center gap-1.5 text-xs">
+            <Alert variant="destructive" className="border-nx-danger/35 bg-nx-danger/10 text-nx-danger">
+              <XCircle className="h-4 w-4 text-nx-danger shrink-0" />
+              <AlertDescription className="flex flex-wrap items-center gap-1.5 text-xs text-nx-ink">
                 <span>
                   {t("dataExchange.mapping.compatibilityBlocked", {
                     count: activeCompatibilityIssues.length,
@@ -101,7 +104,7 @@ export function StudioMappingStep({
                     variant="outline"
                     size="sm"
                     onClick={() => scrollToRow(issue.sourceColumnHeader)}
-                    className="h-5 px-1.5 text-[10px] border-destructive/40 text-destructive hover:bg-destructive/20 font-mono"
+                    className="h-5 px-1.5 text-[10px] border-nx-danger/35 text-nx-danger hover:bg-nx-danger/20 font-mono"
                     title={t("dataExchange.tooltips.jumpToField", {
                       field: issue.sourceColumnHeader,
                     })}

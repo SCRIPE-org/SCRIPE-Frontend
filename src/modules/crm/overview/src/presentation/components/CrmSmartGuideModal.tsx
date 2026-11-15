@@ -70,7 +70,7 @@ export function CrmSmartGuideModal({ open, onOpenChange, isRtl = false }: CrmSma
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-3xl z-[10010]" dir={isRtl ? "rtl" : "ltr"} data-testid="crm-smart-guide-modal">
+      <DialogContent className="max-w-3xl" dir={isRtl ? "rtl" : "ltr"} data-testid="crm-smart-guide-modal">
         <DialogHeader>
           <div className="flex items-center justify-between gap-2">
             <Badge variant="default" className="text-[10px] font-mono gap-1">

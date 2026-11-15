@@ -15,9 +15,11 @@ export type EntityNameSource =
   | DataExchangeEntityDescriptor
   | DataExchangeEntitySummaryDto
   | {
+      entityKey?: string | null;
       displayNameEn?: string | null;
       displayNameAr?: string | null;
       descriptor?: {
+        entityKey?: string | null;
         displayNameEn?: string | null;
         displayNameAr?: string | null;
       } | null;
@@ -25,38 +27,78 @@ export type EntityNameSource =
   | null
   | undefined;
 
-const KNOWN_ENTITY_NAMES_EN: Record<string, string> = {
-  "crm.lead": "CRM Leads",
-  "crm.opportunity": "CRM Opportunities & Deals",
-  "crm.account": "CRM Accounts",
-  "crm.contact": "CRM Contacts",
-  "crm.activity": "CRM Activities",
-  "party.person": "Party Persons",
-  "party.organization": "Party Organizations",
-  "party.relationship": "Party Relationships",
-  "party.contact-point": "Contact Points",
-  "identity.user": "Identity Users",
-  "identity.admin": "Platform Admins",
-};
+export interface CachedEntityName {
+  displayNameEn: string;
+  displayNameAr: string;
+}
 
-const KNOWN_ENTITY_NAMES_AR: Record<string, string> = {
-  "crm.lead": "العملاء المحتملون (CRM)",
-  "crm.opportunity": "الفرص والصفقات (CRM)",
-  "crm.account": "حسابات الشركات (CRM)",
-  "crm.contact": "جهات الاتصال (CRM)",
-  "crm.activity": "الأنشطة والمهام (CRM)",
-  "party.person": "الأفراد (سجل الأطراف)",
-  "party.organization": "المؤسسات والمنظمات (سجل الأطراف)",
-  "party.relationship": "العلاقات (سجل الأطراف)",
-  "party.contact-point": "نقاط الاتصال",
-  "identity.user": "مستخدمو الهوية",
-  "identity.admin": "مسؤولو المنصة",
-};
+const entityDisplayNameRegistry = new Map<string, CachedEntityName>();
+
+/** Registers a single entity's localized display names in the runtime catalog cache. */
+export function registerEntityDisplayName(
+  entityKeyOrSource: string | EntityNameSource,
+  displayNameEn?: string | null,
+  displayNameAr?: string | null
+): void {
+  if (!entityKeyOrSource) return;
+
+  if (typeof entityKeyOrSource === "string") {
+    const key = entityKeyOrSource.trim().toLowerCase();
+    if (!key) return;
+    entityDisplayNameRegistry.set(key, {
+      displayNameEn: displayNameEn?.trim() || key,
+      displayNameAr: displayNameAr?.trim() || displayNameEn?.trim() || key,
+    });
+    return;
+  }
+
+  const rawObj = entityKeyOrSource as Record<string, unknown>;
+  const descriptorObj =
+    rawObj.descriptor && typeof rawObj.descriptor === "object"
+      ? (rawObj.descriptor as Record<string, unknown>)
+      : undefined;
+  const key =
+    (typeof descriptorObj?.entityKey === "string" ? descriptorObj.entityKey : undefined) ||
+    (typeof rawObj.entityKey === "string" ? rawObj.entityKey : undefined);
+
+  if (typeof key === "string" && key.trim().length > 0) {
+    const targetObj = descriptorObj ?? rawObj;
+    const enName = typeof targetObj.displayNameEn === "string" ? targetObj.displayNameEn.trim() : undefined;
+    const arName = typeof targetObj.displayNameAr === "string" ? targetObj.displayNameAr.trim() : undefined;
+    if (enName || arName) {
+      entityDisplayNameRegistry.set(key.trim().toLowerCase(), {
+        displayNameEn: enName || arName || key,
+        displayNameAr: arName || enName || key,
+      });
+    }
+  }
+}
+
+/** Registers an array of entity summaries or descriptors in the runtime catalog cache. */
+export function registerEntityDisplayNames(
+  entities: Array<
+    | DataExchangeEntitySummaryDto
+    | DataExchangeEntityDescriptor
+    | DataExchangeDescriptorResponseDto
+    | { entityKey: string; displayNameEn?: string | null; displayNameAr?: string | null }
+  >
+): void {
+  if (!Array.isArray(entities)) return;
+  for (const entity of entities) {
+    registerEntityDisplayName(entity);
+  }
+}
+
+/** Clears all registered runtime entity display names (e.g., during tenant switch or tests). */
+export function clearEntityDisplayNameCache(): void {
+  entityDisplayNameRegistry.clear();
+}
 
 /**
  * Resolves a human-friendly localized entity name for Data Exchange UI, toasts, and summaries.
  * Accepts optional dynamic backend descriptor or entitySummary (displayNameEn/displayNameAr)
- * as the primary source of truth, falling back to t(...) keys and KNOWN_ENTITY_NAMES.
+ * as the primary source of truth, consulting runtime catalog cache, falling back to t(...) keys,
+ * and finally humanized entityKey formatting.
  * Supports both `(entityKey, descriptor/summary, isAr, t)` and `(entityKey, t, isAr, descriptor/summary)` signatures.
  */
 export function getEntityDisplayName(
@@ -97,7 +139,17 @@ export function getEntityDisplayName(
 
     const dynamicName = isAr ? nameAr : nameEn;
     if (typeof dynamicName === "string" && dynamicName.trim().length > 0) {
+      registerEntityDisplayName(entityKey, nameEn, nameAr);
       return dynamicName.trim();
+    }
+  }
+
+  // Check runtime catalog metadata registry
+  const cached = entityDisplayNameRegistry.get(entityKey.trim().toLowerCase());
+  if (cached) {
+    const cachedName = isAr ? cached.displayNameAr : cached.displayNameEn;
+    if (typeof cachedName === "string" && cachedName.trim().length > 0) {
+      return cachedName.trim();
     }
   }
 
@@ -113,11 +165,6 @@ export function getEntityDisplayName(
     if (underscoreTranslated && underscoreTranslated !== underscoreKey) {
       return underscoreTranslated;
     }
-  }
-
-  const fallbackMap = isAr ? KNOWN_ENTITY_NAMES_AR : KNOWN_ENTITY_NAMES_EN;
-  if (fallbackMap[entityKey]) {
-    return fallbackMap[entityKey];
   }
 
   const parts = entityKey.split(".");

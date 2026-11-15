@@ -95,6 +95,7 @@ export const en = {
       noPending: "No pending subscription. Assign an edition first.",
       priceNotFound: "No pricing configured for this edition/currency/billing cycle.",
       noAdminEmail: "No admin email found for this tenant. Cannot send payment link.",
+      invalidPortalUrl: "Received an invalid billing portal URL.",
     },
     dashboard: {
       title: "Revenue Dashboard",

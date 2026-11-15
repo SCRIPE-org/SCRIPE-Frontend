@@ -68,47 +68,37 @@ export function DesktopSetupSidebar({
   ];
 
   return (
-    <div className="relative hidden h-full flex-col justify-between overflow-hidden rounded-3xl border border-border/60 bg-card/60 p-8 shadow-sm backdrop-blur-md lg:flex">
-      {/* Ambient Tenant Glow Accent */}
-      <div
-        className="pointer-events-none absolute -left-20 -top-20 h-64 w-64 rounded-full bg-primary/10 blur-3xl"
-        aria-hidden="true"
-      />
-      <div
-        className="pointer-events-none absolute -bottom-20 -right-20 h-64 w-64 rounded-full bg-info/10 blur-3xl"
-        aria-hidden="true"
-      />
-
+    <div className="relative hidden h-full flex-col justify-between overflow-hidden rounded-3xl border border-nx-line bg-nx-surface p-8 lg:flex">
       <div className="relative space-y-6">
         {/* Brand & Workspace Header */}
         <div className="space-y-3">
           <div className="flex items-center gap-2.5">
-            <div className="shadow-xs flex h-10 w-10 items-center justify-center rounded-xl border border-primary/20 bg-primary/10 text-primary">
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl border border-nx-line-hi bg-nx-accent-wash text-nx-accent">
               <Building2 className="h-5 w-5" />
             </div>
             <div className="min-w-0">
               <div className="flex items-center gap-1.5">
-                <span className="truncate text-sm font-bold text-foreground">
+                <span className="truncate text-sm font-bold text-nx-ink">
                   {tenantName || BRAND.name}
                 </span>
                 {tenantCode && (
                   <Badge
                     variant="outline"
-                    className="border-primary/30 px-1.5 py-0 font-mono text-[10px] text-primary"
+                    className="border-nx-line-hi px-1.5 py-0 font-mono text-[10px] text-nx-accent"
                   >
                     {tenantCode}
                   </Badge>
                 )}
               </div>
-              <p className="text-[11px] font-medium uppercase tracking-wider text-muted-foreground">
+              <p className="text-[11px] font-medium uppercase tracking-wider text-nx-ink-2">
                 Sports Operations OS
               </p>
             </div>
           </div>
 
           <div className="pt-2">
-            <h2 className="text-xl font-bold tracking-tight text-foreground">Account Activation</h2>
-            <p className="mt-1 text-xs leading-relaxed text-muted-foreground">
+            <h2 className="text-xl font-bold tracking-tight text-nx-ink">Account Activation</h2>
+            <p className="mt-1 text-xs leading-relaxed text-nx-ink-2">
               Complete your administrative onboarding to take command of venue scheduling, academy
               rosters, and coach intelligence.
             </p>
@@ -117,16 +107,16 @@ export function DesktopSetupSidebar({
 
         {/* Administrator Context Pill */}
         {(adminEmail || adminUsername) && (
-          <div className="min-w-0 space-y-1.5 rounded-2xl border border-border/50 bg-muted/20 p-3.5">
-            <div className="flex items-center justify-between text-[11px] text-muted-foreground">
+          <div className="min-w-0 space-y-1.5 rounded-2xl border border-nx-line bg-nx-raised p-3.5">
+            <div className="flex items-center justify-between text-[11px] text-nx-ink-2">
               <span>Setup Operator</span>
               <Badge variant="secondary" className="px-1.5 py-0 text-[9px] font-medium">
                 Admin
               </Badge>
             </div>
-            <div className="truncate text-xs font-semibold text-foreground">{adminEmail}</div>
+            <div className="truncate text-xs font-semibold text-nx-ink">{adminEmail}</div>
             {adminUsername && (
-              <div className="truncate font-mono text-[11px] text-muted-foreground">
+              <div className="truncate font-mono text-[11px] text-nx-ink-3">
                 @{adminUsername}
               </div>
             )}
@@ -135,10 +125,10 @@ export function DesktopSetupSidebar({
 
         {/* Vertical Timeline Stepper */}
         <div className="space-y-2 pt-2">
-          <span className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
+          <span className="text-[10px] font-semibold uppercase tracking-wider text-nx-ink-2">
             Onboarding Stages
           </span>
-          <nav aria-label="Desktop setup steps" className="relative pl-1">
+          <nav aria-label="Desktop setup steps" className="relative ps-1">
             <div className="space-y-4">
               {steps.map((step) => {
                 const isDone = currentStep > step.id || currentStep === 4;
@@ -154,12 +144,12 @@ export function DesktopSetupSidebar({
                       aria-current={isCurrent ? "step" : undefined}
                       aria-label={`Step ${step.id}: ${step.title}`}
                       className={cn(
-                        "shadow-xs relative z-10 flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border text-xs font-semibold transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary",
+                        "relative z-10 flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border text-xs font-semibold transition-colors focus-visible:outline-none focus-visible:shadow-nx-focus",
                         isDone && !isCurrent
-                          ? "border-primary bg-primary text-primary-foreground"
+                          ? "border-nx-accent-fill bg-nx-accent-fill text-nx-on-fill hover:bg-nx-accent-fill"
                           : isCurrent
-                            ? "border-primary bg-primary/10 text-primary ring-2 ring-primary/25"
-                            : "cursor-not-allowed border-border/60 bg-card/60 text-muted-foreground opacity-50"
+                            ? "border-nx-accent bg-nx-accent-wash text-nx-accent hover:bg-nx-accent-wash"
+                            : "cursor-not-allowed border-nx-line bg-nx-raised text-nx-ink-3 opacity-60"
                       )}
                     >
                       {isDone && !isCurrent ? (
@@ -174,17 +164,17 @@ export function DesktopSetupSidebar({
                           className={cn(
                             "text-xs font-semibold transition-colors",
                             isCurrent
-                              ? "text-foreground"
+                              ? "text-nx-ink"
                               : isDone
-                                ? "text-foreground/80"
-                                : "text-muted-foreground/60"
+                                ? "text-nx-ink-2"
+                                : "text-nx-ink-3"
                           )}
                         >
                           {step.title}
                         </span>
-                        {isCurrent && <span className="flex h-1.5 w-1.5 rounded-full bg-primary" />}
+                        {isCurrent && <span className="flex h-1.5 w-1.5 rounded-full bg-nx-accent" />}
                       </div>
-                      <p className="mt-0.5 text-[11px] leading-snug text-muted-foreground/70">
+                      <p className="mt-0.5 text-[11px] leading-snug text-nx-ink-2">
                         {step.desc}
                       </p>
                     </div>
@@ -197,13 +187,13 @@ export function DesktopSetupSidebar({
       </div>
 
       {/* Enterprise Security Footnote */}
-      <div className="relative mt-6 space-y-2 border-t border-border/40 pt-6">
-        <div className="flex items-center gap-2 text-[11px] text-muted-foreground">
-          <ShieldCheck className="h-3.5 w-3.5 shrink-0 text-success" />
+      <div className="relative mt-6 space-y-2 border-t border-nx-line pt-6">
+        <div className="flex items-center gap-2 text-[11px] text-nx-ink-2">
+          <ShieldCheck className="h-3.5 w-3.5 shrink-0 text-nx-success" />
           <span>AES-256-GCM Encrypted & Multi-Tenant Isolated</span>
         </div>
-        <div className="flex items-center gap-2 text-[11px] text-muted-foreground">
-          <Lock className="h-3.5 w-3.5 shrink-0 text-info" />
+        <div className="flex items-center gap-2 text-[11px] text-nx-ink-2">
+          <Lock className="h-3.5 w-3.5 shrink-0 text-nx-info" />
           <span>Zero-Knowledge Server Authorization</span>
         </div>
       </div>

@@ -34,8 +34,20 @@ export function StudioStepRouter({
 }: StudioStepRouterProps) {
   const { t } = useI18n();
 
+  const deduplicatedSchemaWarnings = React.useMemo(() => {
+    const all = vm.inspectResult?.sheets.flatMap((s) => s.schemaWarnings ?? []) ?? [];
+    if (all.length === 0) return [];
+    const seen = new Set<string>();
+    return all.filter((w) => {
+      const key = `${w.code}|${w.sheetName ?? ""}|${w.presetName ?? ""}|${w.entityKey ?? ""}|${(w.items ?? []).join(",")}`;
+      if (seen.has(key)) return false;
+      seen.add(key);
+      return true;
+    });
+  }, [vm.inspectResult]);
+
   return (
-    <main className="flex-1 min-h-0 overflow-y-auto overscroll-contain px-6 py-5">
+    <div className="flex-1 min-h-0 overflow-y-auto overscroll-contain px-6 py-5">
       {vm.isLoadingMeta && (
         <div className="flex h-64 items-center justify-center gap-2 text-sm text-nx-ink-2">
           <Loader2 className="h-5 w-5 animate-spin text-nx-accent" />
@@ -56,6 +68,7 @@ export function StudioStepRouter({
           }}
           onDownloadTemplate={(fmt, multi) => vm.downloadTemplate(fmt, multi)}
           multiSheetEntityKeys={multiSheetEntityKeys}
+          schemaWarnings={deduplicatedSchemaWarnings}
         />
       )}
 
@@ -90,6 +103,6 @@ export function StudioStepRouter({
           onDismissCredentials={() => vm.setCredentialsDismissed(true)}
         />
       )}
-    </main>
+    </div>
   );
 }

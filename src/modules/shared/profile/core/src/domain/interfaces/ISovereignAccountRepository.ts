@@ -23,6 +23,7 @@ export interface ISovereignAccountRepository {
     trustedCidrs?: string[];
     verifySudoPinOrPasskeyToken?: string | null;
     lockdownConfirmation?: string | null;
+    rowVersion?: string;
   }): Promise<void>;
   getSessions(): Promise<SovereignSessionsSlice>;
   pingSession(sessionId: string): Promise<{ sessionId: string; rttMilliseconds: number; status: string }>;

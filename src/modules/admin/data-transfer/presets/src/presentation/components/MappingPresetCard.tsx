@@ -13,7 +13,7 @@ import {
 } from "@core/ui/dropdown-menu";
 import { useI18n } from "@core/providers/i18n-provider";
 import { cn } from "@core/common/utils";
-import { getEntityDisplayName } from "@core/data-exchange";
+import { getEntityDisplayName, type EntityNameSource } from "@core/data-exchange/presentation/utils/entity-display-names";
 import type { DataExchangePreset } from "../../domain/entities/DataExchangePreset";
 
 /**
@@ -22,6 +22,8 @@ import type { DataExchangePreset } from "../../domain/entities/DataExchangePrese
 export interface MappingPresetCardProps {
   /** The saved column mapping preset */
   preset: DataExchangePreset;
+  /** Optional live catalog entry for resolving dynamic localized entity display names */
+  entitySummary?: EntityNameSource;
   /** Callback to delete the mapping preset */
   onDeletePreset: (preset: DataExchangePreset) => void;
   /** Callback to open preset in Import Studio */
@@ -42,6 +44,7 @@ export interface MappingPresetCardProps {
  */
 export const MappingPresetCard = memo(function MappingPresetCard({
   preset,
+  entitySummary,
   onDeletePreset,
   onUseInStudio,
   onSetDefault,
@@ -51,7 +54,7 @@ export const MappingPresetCard = memo(function MappingPresetCard({
 }: MappingPresetCardProps) {
   const { language, t } = useI18n();
   const isAr = language === "ar";
-  const localizedEntityName = getEntityDisplayName(preset.entityKey, t, isAr);
+  const localizedEntityName = getEntityDisplayName(preset.entityKey, t, isAr, entitySummary);
 
   return (
     <Card
@@ -78,7 +81,10 @@ export const MappingPresetCard = memo(function MappingPresetCard({
             <span className="text-xs font-medium text-nx-ink-2 truncate" title={localizedEntityName}>
               {localizedEntityName}
             </span>
-            <code className="text-[11px] font-mono text-nx-ink-3 bg-nx-raised/60 px-1.5 py-0.5 rounded-nx-xs border border-nx-line w-fit">
+            <code
+              dir="ltr"
+              className="text-[11px] font-mono text-nx-ink-3 bg-nx-raised/60 px-1.5 py-0.5 rounded-sm border border-nx-line w-fit"
+            >
               {preset.entityKey}
             </code>
           </div>
@@ -119,9 +125,9 @@ export const MappingPresetCard = memo(function MappingPresetCard({
             <DropdownMenuItem
               onClick={() => onDeletePreset(preset)}
               disabled={isDeleting}
-              className="cursor-pointer gap-2 text-nx-destructive focus:text-nx-destructive"
+              className="cursor-pointer gap-2 text-nx-danger focus:text-nx-danger"
             >
-              <Trash2 className="h-4 w-4 text-nx-destructive" aria-hidden="true" />
+              <Trash2 className="h-4 w-4 text-nx-danger" aria-hidden="true" />
               <span>{t("adminDataTransferPresets.actions.delete")}</span>
             </DropdownMenuItem>
           </DropdownMenuContent>
@@ -143,7 +149,7 @@ export const MappingPresetCard = memo(function MappingPresetCard({
           <span className="text-[11px] font-medium text-nx-ink-3">
             {t("adminDataTransferPresets.columns.mappingsCount")}
           </span>
-          <span className="font-mono font-semibold text-nx-ink">
+          <span className="font-mono font-semibold text-nx-ink tabular-nums">
             {t("adminDataTransferPresets.columnsCount", { count: String(preset.mappingCount) })}
           </span>
         </div>
@@ -151,7 +157,7 @@ export const MappingPresetCard = memo(function MappingPresetCard({
 
       {/* Footer: Creation Date & Quick Actions */}
       <div className="flex items-center justify-between gap-2 pt-2 border-t border-nx-line text-xs">
-        <div className="flex items-center gap-1.5 text-[11px] text-nx-ink-3 font-mono">
+        <div className="flex items-center gap-1.5 text-[11px] text-nx-ink-3 font-mono tabular-nums">
           <Calendar className="h-3 w-3 shrink-0" aria-hidden="true" />
           <span>
             {new Date(preset.createdAt).toLocaleString(isAr ? "ar-EG" : "en-US", {
@@ -170,7 +176,7 @@ export const MappingPresetCard = memo(function MappingPresetCard({
               onClick={() => onUseInStudio(preset)}
               className="h-7 px-2 text-xs border-nx-line hover:border-nx-accent hover:text-nx-accent"
             >
-              <Sparkles className="h-3 w-3 ltr:mr-1 rtl:ml-1 text-nx-accent" />
+              <Sparkles className="h-3 w-3 me-1 text-nx-accent" aria-hidden="true" />
               {t("adminDataTransferPresets.actions.useInStudio")}
             </Button>
           )}
@@ -179,9 +185,9 @@ export const MappingPresetCard = memo(function MappingPresetCard({
             size="sm"
             onClick={() => onDeletePreset(preset)}
             disabled={isDeleting}
-            className="h-7 px-2 text-xs text-nx-destructive hover:bg-destructive/10"
+            className="h-7 px-2 text-xs text-nx-danger hover:bg-nx-danger/10"
           >
-            <Trash2 className="h-3 w-3 ltr:mr-1 rtl:ml-1" />
+            <Trash2 className="h-3 w-3 me-1" aria-hidden="true" />
             {t("adminDataTransferPresets.actions.delete")}
           </Button>
         </div>

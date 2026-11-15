@@ -105,12 +105,14 @@ export function CrmWorkflowDirectoryCard({
             {t("crmOpportunities.pipelinesPage.openFullScreenStudioBtn")}
           </Button>
           <Button
+            type="button"
             size="sm"
             variant="outline"
             className="h-7 px-2 text-xs"
             onClick={() => onCloneWorkflow(wf.id)}
             data-testid={`workflow-clone-${wf.id}`}
             title={t("crmOpportunities.pipelinesPage.cloneBtn")}
+            aria-label={t("crmOpportunities.pipelinesPage.cloneBtn")}
           >
             <Copy className="w-3 h-3" />
           </Button>
@@ -126,6 +128,7 @@ export function CrmWorkflowDirectoryCard({
             </Button>
           )}
           <Button
+            type="button"
             size="icon"
             variant="ghost"
             className="h-7 w-7 text-destructive"
@@ -133,6 +136,11 @@ export function CrmWorkflowDirectoryCard({
             onClick={() => onDeleteWorkflow(wf.id)}
             data-testid={`workflow-delete-${wf.id}`}
             title={
+              isActive
+                ? t("crmOpportunities.pipelinesPage.cannotDeleteActiveTitle")
+                : t("crmOpportunities.pipelinesPage.deleteWorkflowTitle")
+            }
+            aria-label={
               isActive
                 ? t("crmOpportunities.pipelinesPage.cannotDeleteActiveTitle")
                 : t("crmOpportunities.pipelinesPage.deleteWorkflowTitle")

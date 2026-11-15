@@ -81,9 +81,9 @@ export function CredentialsPasswordInput({
           aria-label={showPassword ? t("auth.hidePassword") : t("auth.showPassword")}
         >
           {showPassword ? (
-            <EyeOff className="h-4 w-4 text-muted-foreground" aria-hidden="true" />
+            <EyeOff className="h-4 w-4 text-nx-ink-2" aria-hidden="true" />
           ) : (
-            <Eye className="h-4 w-4 text-muted-foreground" aria-hidden="true" />
+            <Eye className="h-4 w-4 text-nx-ink-2" aria-hidden="true" />
           )}
         </Button>
       </div>

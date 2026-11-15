@@ -2,10 +2,13 @@
  * buildA11yTypographyCss — Typography, contrast, and readability generators.
  * Extracted from buildA11yCss (#3–9, #11–16, #18–19, #21–22).
  */
+import { parseClampedNumber, sanitizeCssTextAlign, sanitizeCssValue } from "./sanitizeBrandingCss";
+
 export function buildA11yTypographyCss(
   tokens: Record<string, string | undefined>,
   focusColor: string
 ): string[] {
+  const safeFocusColor = sanitizeCssValue(focusColor) || "hsl(var(--primary))";
   const css: string[] = [];
 
   // 3. High Contrast
@@ -18,7 +21,7 @@ export function buildA11yTypographyCss(
   }
 
   // 4. Min Font Size
-  const minFontSize = parseInt(tokens["a11y.minFontSize"] || "14");
+  const minFontSize = parseClampedNumber(tokens["a11y.minFontSize"], 14, 10, 48, true);
   if (minFontSize > 12) {
     css.push(`/* ═══ Accessibility: Min Font Size (${minFontSize}px) ═══ */
 .login-page { font-size: max(${minFontSize}px, 1rem) !important; }
@@ -56,7 +59,7 @@ export function buildA11yTypographyCss(
   }
 
   // 8. Saturation
-  const saturation = parseInt(tokens["a11y.saturation"] || "100");
+  const saturation = parseClampedNumber(tokens["a11y.saturation"], 100, 0, 300, true);
   if (saturation !== 100) {
     css.push(`.login-page { filter: saturate(${saturation / 100}) !important; }`);
   }
@@ -68,7 +71,7 @@ export function buildA11yTypographyCss(
   }
 
   // 11. Content Scaling
-  const contentScaling = parseInt(tokens["a11y.contentScaling"] || "100");
+  const contentScaling = parseClampedNumber(tokens["a11y.contentScaling"], 100, 50, 200, true);
   if (contentScaling !== 100) {
     const scale = contentScaling / 100;
     css.push(
@@ -77,19 +80,19 @@ export function buildA11yTypographyCss(
   }
 
   // 12. Line Height
-  const lineHeight = parseFloat(tokens["a11y.lineHeight"] || "0");
+  const lineHeight = parseClampedNumber(tokens["a11y.lineHeight"], 0, 0, 4, false);
   if (lineHeight > 0) {
     css.push(`.login-page, .login-page * { line-height: ${lineHeight} !important; }`);
   }
 
   // 13. Letter Spacing
-  const letterSpacing = parseFloat(tokens["a11y.letterSpacing"] || "0");
+  const letterSpacing = parseClampedNumber(tokens["a11y.letterSpacing"], 0, 0, 20, false);
   if (letterSpacing > 0) {
     css.push(`.login-page, .login-page * { letter-spacing: ${letterSpacing}px !important; }`);
   }
 
   // 14. Word Spacing
-  const wordSpacing = parseFloat(tokens["a11y.wordSpacing"] || "0");
+  const wordSpacing = parseClampedNumber(tokens["a11y.wordSpacing"], 0, 0, 40, false);
   if (wordSpacing > 0) {
     css.push(`.login-page, .login-page * { word-spacing: ${wordSpacing}px !important; }`);
   }
@@ -103,7 +106,7 @@ export function buildA11yTypographyCss(
   }
 
   // 16. Text Align
-  const textAlign = tokens["a11y.textAlign"] || "inherit";
+  const textAlign = sanitizeCssTextAlign(tokens["a11y.textAlign"]);
   if (textAlign !== "inherit") {
     css.push(
       `.login-page p, .login-page label, .login-page span, .login-page .login-heading, .login-page .login-subtitle, .login-page .login-footer { text-align: ${textAlign} !important; }`
@@ -114,7 +117,7 @@ export function buildA11yTypographyCss(
   if (tokens["a11y.readingGuide"] === "true") {
     css.push(`/* ═══ Accessibility: Reading Guide ═══ */
 .login-a11y-reading-guide { position: fixed; left: 0; right: 0; height: 12px;
-  background: linear-gradient(to bottom, transparent 0%, ${focusColor}40 40%, ${focusColor}80 50%, ${focusColor}40 60%, transparent 100%);
+  background: linear-gradient(to bottom, transparent 0%, color-mix(in srgb, ${safeFocusColor} 25%, transparent) 40%, color-mix(in srgb, ${safeFocusColor} 50%, transparent) 50%, color-mix(in srgb, ${safeFocusColor} 25%, transparent) 60%, transparent 100%);
   pointer-events: none; z-index: 99999; transition: top 0.05s linear; }`);
   }
 

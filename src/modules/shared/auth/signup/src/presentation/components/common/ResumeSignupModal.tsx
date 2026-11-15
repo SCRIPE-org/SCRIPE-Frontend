@@ -59,11 +59,10 @@ export function ResumeSignupModal({
         style={{ background: "transparent", border: "none", color: tokens.ink }}
       >
         <div
-          className="rounded-2xl p-8"
+          className="rounded-2xl p-8 shadow-nx-modal"
           style={{
             background: tokens.surfaceCard,
             border: tokens.borderCard,
-            boxShadow: tokens.shadowCard,
           }}
         >
           {/* Icon */}
@@ -119,7 +118,6 @@ export function ResumeSignupModal({
               style={{
                 background: tokens.gradientCta,
                 color: tokens.accentContrast,
-                boxShadow: tokens.shadowCard,
               }}
             >
               <Play className="h-4 w-4 rtl:scale-x-[-1]" aria-hidden="true" />

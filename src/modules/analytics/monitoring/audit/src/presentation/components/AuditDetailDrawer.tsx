@@ -193,7 +193,7 @@ export function AuditDetailDrawer({
                   severity === "critical"
                     ? "border-destructive/50 bg-destructive/10 text-destructive"
                     : severity === "warning"
-                      ? "border-warning/50 bg-warning/10 text-warning"
+                      ? "border-warning/50 bg-warning/10 text-nx-warning-strong"
                       : "border-info/50 bg-info/10 text-info"
                 }`}
               >
@@ -464,7 +464,7 @@ export function AuditDetailDrawer({
 
               {parsedDiff && parsedDiff.length > 0 ? (
                 <div className="overflow-hidden rounded-lg border border-nx-line">
-                  <table className="w-full text-left text-xs">
+                  <table className="w-full text-start text-xs">
                     <thead className="border-b border-nx-line bg-nx-raised/50">
                       <tr>
                         <th className="w-1/4 px-3 py-2 font-semibold text-nx-ink-3">

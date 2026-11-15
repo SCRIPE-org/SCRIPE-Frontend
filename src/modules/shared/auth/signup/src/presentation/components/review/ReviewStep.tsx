@@ -301,7 +301,6 @@ export function ReviewStep({ wizard }: ReviewStepProps) {
           style={{
             background: tokens.gradientCta,
             color: tokens.accentContrast,
-            boxShadow: tokens.shadowCard,
           }}
         >
           {wizard.isSubmitting ? (

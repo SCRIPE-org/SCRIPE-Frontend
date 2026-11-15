@@ -15,6 +15,7 @@ import { Button } from "@core/ui/button";
 import { Trash2, AlertTriangle, Info, HelpCircle } from "lucide-react";
 import { cn } from "@core/common/utils";
 import { appLogger } from "@core/common/logger";
+import { useI18n } from "@core/providers/i18n-provider";
 
 export interface ConfirmationDialogProps {
   open: boolean;
@@ -50,31 +51,39 @@ export interface ConfirmationDialogProps {
 const variantConfig = {
   destructive: {
     icon: Trash2,
-    chipClass: "bg-destructive/10 text-nx-danger",
+    chipClass: "border border-destructive/30 bg-destructive/10 text-nx-danger",
     confirmVariant: "destructive" as const,
-    title: "Delete Item",
-    description: "Are you sure you want to delete this item? This action cannot be undone.",
+    titleKey: "common.confirmDelete",
+    defaultTitle: "Confirm Delete",
+    descriptionKey: "common.confirmDeleteDescription",
+    defaultDescription: "Are you sure you want to delete this item? This action cannot be undone.",
   },
   warning: {
     icon: AlertTriangle,
-    chipClass: "bg-warning/10 text-nx-warning",
+    chipClass: "border border-warning-strong/30 bg-warning/15 text-nx-warning-strong",
     confirmVariant: "default" as const,
-    title: "Warning",
-    description: "Please confirm this action.",
+    titleKey: "common.warning",
+    defaultTitle: "Warning",
+    descriptionKey: "common.pleaseConfirmAction",
+    defaultDescription: "Please confirm this action.",
   },
   info: {
     icon: Info,
-    chipClass: "bg-info/10 text-nx-info",
+    chipClass: "border border-info/30 bg-info/10 text-nx-info",
     confirmVariant: "default" as const,
-    title: "Information",
-    description: "Please confirm this action.",
+    titleKey: "common.info",
+    defaultTitle: "Information",
+    descriptionKey: "common.pleaseConfirmAction",
+    defaultDescription: "Please confirm this action.",
   },
   default: {
     icon: HelpCircle,
     chipClass: "border border-nx-line bg-nx-raised-2 text-nx-ink-2",
     confirmVariant: "default" as const,
-    title: "Confirm Action",
-    description: "Are you sure you want to proceed?",
+    titleKey: "common.confirmAction",
+    defaultTitle: "Confirm Action",
+    descriptionKey: "common.confirmProceed",
+    defaultDescription: "Are you sure you want to proceed?",
   },
 };
 
@@ -84,8 +93,8 @@ export function ConfirmationDialog(props: ConfirmationDialogProps) {
     onOpenChange,
     title,
     description,
-    confirmText = "Confirm",
-    cancelText = "Cancel",
+    confirmText,
+    cancelText,
     onConfirm,
     onCancel,
     variant = "default",
@@ -98,8 +107,17 @@ export function ConfirmationDialog(props: ConfirmationDialogProps) {
     confirmButtonProps,
     cancelButtonProps,
   } = props;
+  const { t } = useI18n();
+  const tr = (key: string, defaultValue: string) => {
+    const resolved = t(key, { defaultValue });
+    return resolved === key ? defaultValue : resolved;
+  };
   const config = variantConfig[variant];
   const IconComponent = config.icon;
+  const resolvedTitle = title || tr(config.titleKey, config.defaultTitle);
+  const resolvedDescription = description || tr(config.descriptionKey, config.defaultDescription);
+  const resolvedConfirmText = confirmText ?? tr("common.confirm", "Confirm");
+  const resolvedCancelText = cancelText ?? tr("common.cancel", "Cancel");
 
   const handleConfirm = async () => {
     try {
@@ -147,8 +165,8 @@ export function ConfirmationDialog(props: ConfirmationDialogProps) {
               </div>
             )}
             <div className="flex min-w-0 flex-1 flex-col gap-1.5">
-              <AlertDialogTitle>{title || config.title}</AlertDialogTitle>
-              <AlertDialogDescription>{description || config.description}</AlertDialogDescription>
+              <AlertDialogTitle>{resolvedTitle}</AlertDialogTitle>
+              <AlertDialogDescription>{resolvedDescription}</AlertDialogDescription>
             </div>
           </div>
         </AlertDialogHeader>
@@ -169,7 +187,7 @@ export function ConfirmationDialog(props: ConfirmationDialogProps) {
               disabled={isLoading}
               className={cancelButtonProps?.className}
             >
-              {cancelText}
+              {resolvedCancelText}
             </Button>
           </AlertDialogCancel>
           <AlertDialogAction asChild>
@@ -183,7 +201,7 @@ export function ConfirmationDialog(props: ConfirmationDialogProps) {
               // spinner, so the footer does not reflow mid-request.
               className={cn("min-w-20", confirmButtonProps?.className)}
             >
-              {confirmText}
+              {resolvedConfirmText}
             </Button>
           </AlertDialogAction>
         </AlertDialogFooter>

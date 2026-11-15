@@ -1,5 +1,6 @@
 "use client";
-import { ThemeProvider as NextThemesProvider } from "next-themes";
+import { useEffect, useRef } from "react";
+import { ThemeProvider as NextThemesProvider, useTheme } from "next-themes";
 import type { ThemeProviderProps } from "next-themes";
 import { STORAGE_KEYS } from "@core/config/storage-keys";
 
@@ -8,57 +9,67 @@ import { STORAGE_KEYS } from "@core/config/storage-keys";
  *
  * Priority (highest → lowest):
  *   1. localStorage.theme  — manual user override (set by header toggle)
- *   2. scr_pref_theme   — tenant admin pref (set by admin in Settings → Prefs)
+ *   2. scr_pref_theme      — tenant admin pref (set by admin in Settings → Prefs)
  *   3. "system"            — platform default
  *
- * next-themes keeps theme in React state and ALWAYS re-writes to localStorage on render.
- * This means deleting the "theme" key at runtime is impossible — next-themes restores it.
- * The user MUST refresh the page after clearing localStorage for the fallback to take effect.
+ * Pre-paint hydration note:
+ *   RootLayout (<head>) executes the synchronous preseed + .dark/.light script
+ *   before body paints and before next-themes's own inline script runs. That
+ *   guarantees localStorage.theme is preseeded from scr_pref_theme prior to
+ *   first paint while keeping NextThemesProvider's SSR/CSR props identical.
  *
- * On refresh:
- *   1. preseedTheme() runs synchronously at module load (BEFORE NextThemesProvider renders)
- *   2. If "theme" key is missing → copies scr_pref_theme into "theme"
- *   3. NextThemesProvider reads "theme" → uses the tenant default
- *
- * Also clean up the legacy scr_admin_prefs_version key from old implementation.
+ *   TenantThemePreseed runs once on mount as an idempotent fallback for
+ *   environments rendered outside RootLayout (e.g. Storybook or unit tests).
  */
-function preseedTheme() {
-  if (typeof window === "undefined") return;
+function preseedTheme(): string | null {
+  if (typeof window === "undefined") return null;
 
-  // Clean up legacy key from previous implementation
-  localStorage.removeItem("scr_admin_prefs_version");
+  try {
+    // Clean up legacy key from previous implementation
+    localStorage.removeItem("scr_admin_prefs_version");
 
-  const currentTheme = localStorage.getItem("theme");
-  if (!currentTheme) {
+    const currentTheme = localStorage.getItem("theme");
+    if (currentTheme) return null;
+
     const tenantPrefTheme = localStorage.getItem(STORAGE_KEYS.PREF_THEME);
-    if (tenantPrefTheme) {
+    if (tenantPrefTheme === "light" || tenantPrefTheme === "dark" || tenantPrefTheme === "system") {
       localStorage.setItem("theme", tenantPrefTheme);
+      return tenantPrefTheme;
     }
+  } catch {
+    // Ignore storage access failures in restricted browsing contexts
   }
+
+  return null;
 }
 
-// Run synchronously BEFORE React mounts — guaranteed before NextThemesProvider
-preseedTheme();
+function TenantThemePreseed() {
+  const { setTheme } = useTheme();
+  const hasCheckedRef = useRef(false);
 
-/**
- * Read tenant pref theme for defaultTheme prop.
- * When next-themes has NO stored value, it uses defaultTheme.
- * By setting this to the tenant pref, even if preseed fails,
- * next-themes falls back to the tenant default.
- */
-function getTenantDefaultTheme(): string {
-  if (typeof window === "undefined") return "system";
-  return localStorage.getItem(STORAGE_KEYS.PREF_THEME) || "system";
+  useEffect(() => {
+    if (hasCheckedRef.current) return;
+    hasCheckedRef.current = true;
+
+    const seeded = preseedTheme();
+    if (seeded) {
+      setTheme(seeded);
+    }
+  }, [setTheme]);
+
+  return null;
 }
 
 export function ThemeProvider({ children, ...props }: ThemeProviderProps) {
   return (
     <NextThemesProvider
       attribute="class"
-      defaultTheme={getTenantDefaultTheme()}
+      defaultTheme="system"
       enableSystem
+      disableTransitionOnChange
       {...props}
     >
+      <TenantThemePreseed />
       {children}
     </NextThemesProvider>
   );

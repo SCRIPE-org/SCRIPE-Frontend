@@ -98,7 +98,7 @@ export function CrmReportsBreakdownsSection({
                         {stage.probabilityPercent}% {t("crm.reports.winProbSuffix")}
                       </Badge>
                       {stage.requiresVerifiedParty && (
-                        <Badge variant="outline" className="text-[10px] border-warning/40 bg-warning/10 text-warning gap-1">
+                        <Badge variant="outline" className="text-[10px] border-warning-strong/40 bg-warning/10 text-nx-warning-strong gap-1">
                           <ShieldCheck className="size-2.5" />
                           <span>{t("crm.reports.customerVerificationGateBadge")}</span>
                         </Badge>
@@ -217,7 +217,7 @@ export function CrmReportsBreakdownsSection({
         <Card className="rounded-nx-lg border border-nx-line bg-nx-surface p-5 space-y-4" data-testid="report-activity-execution-card">
           <div className="flex items-center justify-between border-b border-nx-line pb-3">
             <div className="flex items-center gap-2">
-              <Clock className="size-4 text-warning" />
+              <Clock className="size-4 text-nx-warning-strong" />
               <h3 className="text-sm font-bold text-nx-ink">{t("crm.reports.touchpointsTitle")}</h3>
             </div>
             <Button
@@ -257,7 +257,7 @@ export function CrmReportsBreakdownsSection({
             <div className="rounded-nx-md border border-nx-line bg-nx-raised p-3 space-y-1">
               <div className="flex items-center justify-between text-nx-ink-3">
                 <span>{t("crm.reports.followUpTasksLabel")}</span>
-                <CalendarCheck className="size-3.5 text-warning" />
+                <CalendarCheck className="size-3.5 text-nx-warning-strong" />
               </div>
               <div className="text-lg font-bold text-nx-ink">{report.activities.followUpsCreatedCount}</div>
             </div>

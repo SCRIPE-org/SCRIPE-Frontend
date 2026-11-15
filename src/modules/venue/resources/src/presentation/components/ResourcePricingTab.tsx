@@ -57,10 +57,10 @@ export function ResourcePricingTab({ vm }: Props) {
                   step={10}
                   value={unitPrice}
                   onChange={(e) => setUnitPrice(Number(e.target.value) || 0)}
-                  className="pr-12 text-sm font-semibold rtl:pl-12 rtl:pr-3"
+                  className="pe-12 text-sm font-semibold"
                   required
                 />
-                <span className="absolute right-3 top-2 text-xs font-bold text-nx-ink-3 rtl:left-3 rtl:right-auto">
+                <span className="absolute end-3 top-2 text-xs font-bold text-nx-ink-3">
                   {currencyCode}
                 </span>
               </div>

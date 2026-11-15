@@ -86,6 +86,41 @@ describe("DataExchangeRepository", () => {
     });
   });
 
+  describe("listEntities TTL cache", () => {
+    it("caches entity catalog for 30 seconds and registers display names", async () => {
+      const mockEntities = [
+        {
+          entityKey: "crm.lead",
+          owningModule: "CRM",
+          displayNameEn: "Leads",
+          displayNameAr: "العملاء المحتملون",
+          descriptionEn: "Lead entity",
+          descriptionAr: "كيان العملاء المحتملين",
+          supportsBulkAutoCreateLookup: true,
+          supportsIdentityOnboardingModes: false,
+          supportedModes: ["Insert" as const, "Update" as const],
+          parentEntityKeys: [],
+          isImportFeatureEnabled: true,
+          isExportFeatureEnabled: true,
+          canImport: true,
+          canExport: true,
+        },
+      ];
+
+      vi.mocked(service.listEntities).mockResolvedValue(mockEntities);
+
+      // First call fetches from service
+      const first = await repository.listEntities();
+      expect(first).toEqual(mockEntities);
+      expect(service.listEntities).toHaveBeenCalledTimes(1);
+
+      // Second immediate call hits 30s cache
+      const second = await repository.listEntities();
+      expect(second).toEqual(mockEntities);
+      expect(service.listEntities).toHaveBeenCalledTimes(1);
+    });
+  });
+
   describe("enqueueExport", () => {
     it("delegates enqueueExport call to service", async () => {
       const exportReq: DataExchangeExportRequestDto = {
@@ -157,6 +192,85 @@ describe("DataExchangeRepository", () => {
       const result = await repository.cancelJob("job-cancel-1");
       expect(result).toEqual(mockCancelledJob);
       expect(service.cancelJob).toHaveBeenCalledWith("job-cancel-1", undefined);
+    });
+  });
+
+  describe("tenant/user context isolation & cache clearing", () => {
+    it("does not leak or reuse cache across tenant or user context changes", async () => {
+      let currentContext = "tenant-a:user-1";
+      const customRepo = new DataExchangeRepository(service, () => currentContext);
+
+      const mockEntitiesA = [
+        {
+          entityKey: "crm.lead",
+          owningModule: "CRM",
+          displayNameEn: "Leads A",
+          displayNameAr: "العملاء A",
+          supportsBulkAutoCreateLookup: true,
+          supportsIdentityOnboardingModes: false,
+          supportedModes: ["Insert" as const],
+          parentEntityKeys: [],
+          isImportFeatureEnabled: true,
+          isExportFeatureEnabled: true,
+          canImport: true,
+          canExport: true,
+        },
+      ];
+
+      const mockEntitiesB = [
+        {
+          entityKey: "crm.lead",
+          owningModule: "CRM",
+          displayNameEn: "Leads B",
+          displayNameAr: "العملاء B",
+          supportsBulkAutoCreateLookup: true,
+          supportsIdentityOnboardingModes: false,
+          supportedModes: ["Insert" as const],
+          parentEntityKeys: [],
+          isImportFeatureEnabled: false,
+          isExportFeatureEnabled: false,
+          canImport: false,
+          canExport: false,
+        },
+      ];
+
+      vi.mocked(service.listEntities)
+        .mockResolvedValueOnce(mockEntitiesA as any)
+        .mockResolvedValueOnce(mockEntitiesB as any);
+
+      // Call in Tenant A context
+      const resA = await customRepo.listEntities();
+      expect(resA[0].displayNameEn).toBe("Leads A");
+      expect(service.listEntities).toHaveBeenCalledTimes(1);
+
+      // Repeated call in Tenant A hits cache
+      const resA2 = await customRepo.listEntities();
+      expect(resA2[0].displayNameEn).toBe("Leads A");
+      expect(service.listEntities).toHaveBeenCalledTimes(1);
+
+      // Context changes to Tenant B (e.g. switch tenant or login as different user)
+      currentContext = "tenant-b:user-2";
+
+      // Call in Tenant B context must bypass Tenant A's cache and hit service
+      const resB = await customRepo.listEntities();
+      expect(resB[0].displayNameEn).toBe("Leads B");
+      expect(service.listEntities).toHaveBeenCalledTimes(2);
+    });
+
+    it("invalidates descriptor cache when clearCache is called", async () => {
+      const mockDescriptor: any = {
+        descriptor: { entityKey: "crm.lead" },
+        remainingQuotaSlots: 50,
+      };
+      vi.mocked(service.getEntityDescriptor).mockResolvedValue(mockDescriptor);
+
+      await repository.getEntityDescriptor("crm.lead");
+      expect(service.getEntityDescriptor).toHaveBeenCalledTimes(1);
+
+      repository.clearCache("crm.lead");
+
+      await repository.getEntityDescriptor("crm.lead");
+      expect(service.getEntityDescriptor).toHaveBeenCalledTimes(2);
     });
   });
 });

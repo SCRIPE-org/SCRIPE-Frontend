@@ -33,7 +33,7 @@ export function TransactionsCard({ transactions, paymentsLink }: TransactionsCar
     refund: { label: t("entitlements.platformStripe.txRefund"), ink: "text-destructive" },
     transfer: { label: t("entitlements.platformStripe.txTransfer"), ink: "text-info" },
     payout: { label: t("entitlements.platformStripe.txPayout"), ink: "text-nx-accent" },
-    adjustment: { label: t("entitlements.platformStripe.txAdjustment"), ink: "text-warning" },
+    adjustment: { label: t("entitlements.platformStripe.txAdjustment"), ink: "text-nx-warning-strong" },
     stripe_fee: { label: t("entitlements.platformStripe.txStripeFee"), ink: "text-nx-ink-2" },
     application_fee: { label: t("entitlements.platformStripe.txAppFee"), ink: "text-info" },
   };

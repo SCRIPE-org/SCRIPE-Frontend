@@ -90,7 +90,7 @@ export function KeyDistributionChart({
               <span>{t("customFieldsSecurity.healthyNotice")}</span>
             </div>
           ) : (
-            <div className="flex items-center gap-2 text-xs text-warning">
+            <div className="flex items-center gap-2 text-xs text-nx-warning-strong">
               <AlertTriangle className="h-4 w-4 shrink-0" />
               <span>{t("customFieldsSecurity.needsRewrapNotice")}</span>
             </div>

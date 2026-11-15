@@ -1,6 +1,7 @@
 import React from "react";
 import { describe, it, expect, vi } from "vitest";
 import { render, screen, fireEvent } from "@testing-library/react";
+import "@testing-library/jest-dom/vitest";
 import { GenericWorkflowKanban } from "./GenericWorkflowKanban";
 import type { WorkflowKanbanConfig, WorkflowKanbanStageConfig } from "./types";
 
@@ -170,5 +171,79 @@ describe("GenericWorkflowKanban", () => {
 
     const collapseSmbBtn = screen.getByRole("button", { name: /collapse smb deals/i });
     expect(collapseSmbBtn).toBeInTheDocument();
+  });
+
+  it("separates card drag handle from row action buttons without nested controls", () => {
+    const onDelete = vi.fn();
+    const config: WorkflowKanbanConfig<TestItem> = {
+      stages: mockStages,
+      stageField: "stageKey",
+    };
+
+    render(
+      <GenericWorkflowKanban
+        config={config}
+        items={mockItems}
+        renderRowActionButtons={(item) => (
+          <button type="button" onClick={() => onDelete(item.id)}>
+            Delete {item.title}
+          </button>
+        )}
+      />
+    );
+
+    const dragHandle = screen.getByRole("button", { name: "Drag Deal One" });
+    const actionBtn = screen.getByRole("button", { name: "Delete Deal One" });
+    expect(dragHandle.contains(actionBtn)).toBe(false);
+    expect(actionBtn.closest("[role='button']")).toBeNull();
+    expect(actionBtn.closest("button")).toBe(actionBtn);
+
+    fireEvent.click(actionBtn);
+    expect(onDelete).toHaveBeenCalledWith("deal-1");
+
+    const compactBtn = screen.getByRole("button", { name: /^compact$/i });
+    const standardBtn = screen.getByRole("button", { name: /^standard$/i });
+    expect(standardBtn).toHaveAttribute("aria-pressed", "true");
+    fireEvent.click(compactBtn);
+    expect(compactBtn).toHaveAttribute("aria-pressed", "true");
+    expect(standardBtn).toHaveAttribute("aria-pressed", "false");
+  });
+
+  it("renders custom emptyState and stage aria-expanded state cleanly", () => {
+    const config: WorkflowKanbanConfig<TestItem> = {
+      stages: mockStages,
+      stageField: "stageKey",
+    };
+
+    render(
+      <GenericWorkflowKanban
+        config={config}
+        items={[]}
+        emptyState={<div data-testid="kanban-custom-empty">No matching deals</div>}
+      />
+    );
+
+    expect(screen.getByTestId("kanban-custom-empty")).toBeInTheDocument();
+    const collapseCol = screen.getByRole("button", { name: "Collapse Discovery" });
+    expect(collapseCol).toHaveAttribute("aria-expanded", "true");
+    fireEvent.click(collapseCol);
+    expect(screen.getByRole("button", { name: "Expand Discovery" })).toHaveAttribute(
+      "aria-expanded",
+      "false"
+    );
+  });
+
+  it("renders @core/ui Button drag handle with >= 32px hit target", () => {
+    const config: WorkflowKanbanConfig<TestItem> = {
+      stages: mockStages,
+      stageField: "stageKey",
+    };
+
+    render(<GenericWorkflowKanban config={config} items={mockItems} />);
+
+    const dragHandle = screen.getByRole("button", { name: "Drag Deal One" });
+    expect(dragHandle.className).toContain("h-8");
+    expect(dragHandle.className).toContain("w-8");
+    expect(dragHandle.className).not.toContain("h-7");
   });
 });

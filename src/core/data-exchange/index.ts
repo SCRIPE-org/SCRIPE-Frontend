@@ -55,4 +55,7 @@ export {
   resolveEntityDisplayName,
   formatEntityLabel,
   formatDataExchangeEntityName,
+  registerEntityDisplayName,
+  registerEntityDisplayNames,
+  clearEntityDisplayNameCache,
 } from "./presentation/utils/entity-display-names";

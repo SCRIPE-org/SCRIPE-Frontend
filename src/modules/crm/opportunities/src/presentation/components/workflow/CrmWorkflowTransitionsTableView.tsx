@@ -84,7 +84,7 @@ export function CrmWorkflowTransitionsTableView({
                 >
                   <TableCell className="px-3.5 py-2.5 font-semibold text-nx-ink">
                     <span className="inline-flex items-center gap-1.5">
-                      <Zap className="w-3.5 h-3.5 text-warning shrink-0" />
+                      <Zap className="w-3.5 h-3.5 text-nx-warning-strong shrink-0" />
                       {isAr ? tr.nameAr : tr.nameEn}
                     </span>
                   </TableCell>

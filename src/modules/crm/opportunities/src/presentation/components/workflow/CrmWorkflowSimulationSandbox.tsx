@@ -133,7 +133,7 @@ export function CrmWorkflowSimulationSandbox({
             {t("crmOpportunities.workflowSandbox.title")}
           </span>
         </div>
-        <Button type="button" size="icon" variant="ghost" className="h-6 w-6" onClick={onClose} data-testid="close-simulation-sandbox-btn">
+        <Button type="button" size="icon" variant="ghost" className="h-6 w-6" onClick={onClose} data-testid="close-simulation-sandbox-btn" aria-label={t("crmOpportunities.workflowSandbox.closeSimulatorLabel")}>
           <X className="w-3.5 h-3.5" />
         </Button>
       </div>
@@ -143,7 +143,7 @@ export function CrmWorkflowSimulationSandbox({
           <Label className="text-[10px] text-nx-ink-2">{t("crmOpportunities.workflowSandbox.fromStageLabel")}</Label>
           <Select value={fromStageKey} onValueChange={setFromStageKey}>
             <SelectTrigger className="h-7 text-xs bg-nx-surface" data-testid="sim-from-stage-select"><SelectValue /></SelectTrigger>
-            <SelectContent className="z-[10005]">
+            <SelectContent>
               {stages.map((s) => <SelectItem key={s.stageKey} value={s.stageKey} className="text-xs">{isAr ? s.labelAr : s.labelEn}</SelectItem>)}
             </SelectContent>
           </Select>
@@ -160,7 +160,7 @@ export function CrmWorkflowSimulationSandbox({
           <Label className="text-[10px] text-nx-ink-2">{t("crmOpportunities.workflowSandbox.activePipelineRoleLabel")}</Label>
           <Select value={activeRoleKey} onValueChange={setActiveRoleKey}>
             <SelectTrigger className="h-7 text-xs bg-nx-surface" data-testid="sim-pipeline-role-select"><SelectValue /></SelectTrigger>
-            <SelectContent className="z-[10005]">
+            <SelectContent>
               {crmRoles.map((r) => <SelectItem key={r.key} value={r.key} className="text-xs">{isAr ? r.nameAr : r.nameEn}</SelectItem>)}
             </SelectContent>
           </Select>

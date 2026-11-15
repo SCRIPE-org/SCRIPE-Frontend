@@ -64,7 +64,7 @@ export function PaymentWallDialog() {
       >
         <DialogHeader className="items-center text-center">
           <div
-            className="mx-auto mb-2 grid h-16 w-16 place-items-center rounded-nx-md border border-warning/30 bg-warning/10 text-warning"
+            className="mx-auto mb-2 grid h-16 w-16 place-items-center rounded-nx-md border border-warning-strong/30 bg-warning/15 text-nx-warning-strong"
             aria-hidden="true"
           >
             <ShieldAlert className="h-8 w-8" />
@@ -81,7 +81,10 @@ export function PaymentWallDialog() {
 
         <div className="flex flex-col gap-3 rounded-nx-md border border-nx-line bg-nx-raised p-4 text-sm text-nx-ink-2">
           <div className="flex items-start gap-2">
-            <CreditCard className="mt-0.5 h-4 w-4 shrink-0 text-warning" aria-hidden="true" />
+            <CreditCard
+              className="mt-0.5 h-4 w-4 shrink-0 text-nx-warning-strong"
+              aria-hidden="true"
+            />
             <span>{t("subscription.paymentWall.contactAdmin")}</span>
           </div>
         </div>

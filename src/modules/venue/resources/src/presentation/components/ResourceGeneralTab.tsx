@@ -102,7 +102,7 @@ export function ResourceGeneralTab({ vm }: Props) {
             >
               <img
                 src={photo}
-                alt={`Court photo ${idx + 1}`}
+                alt={`Court #${idx + 1}`}
                 className="size-full object-cover transition-transform group-hover:scale-110"
               />
             </div>
@@ -180,7 +180,7 @@ export function ResourceGeneralTab({ vm }: Props) {
                 className={`h-9 rounded-lg text-xs font-bold ${
                   vm.resource?.isPublished && vm.priceConfig?.unitPrice != null
                     ? "border-success/20 bg-success/10 text-success"
-                    : "border-warning/20 bg-warning/10 text-warning"
+                    : "border-warning/20 bg-warning/10 text-nx-warning-strong"
                 }`}
               />
             </div>
@@ -267,7 +267,7 @@ export function ResourceGeneralTab({ vm }: Props) {
               size="sm"
               disabled={vm.saving}
               loading={vm.saving}
-              className="bg-primary text-nx-on-fill rounded-lg px-4 text-xs font-bold hover:bg-primary/90"
+              className="bg-nx-accent-fill text-nx-on-fill rounded-lg px-4 text-xs font-bold hover:bg-nx-accent-fill/90"
             >
               {t("resources.general.save", { defaultValue: "Save Changes" })}
             </Button>

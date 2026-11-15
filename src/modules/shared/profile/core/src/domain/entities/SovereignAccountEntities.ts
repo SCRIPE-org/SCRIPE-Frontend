@@ -62,6 +62,7 @@ export interface SovereignDossierSlice {
   securityScore: number;
   clubMemberships: ClubMembershipSummary[];
   customFields: AdminCustomFieldItem[];
+  rowVersion?: string;
 }
 
 export interface SovereignSecuritySlice {
@@ -76,6 +77,7 @@ export interface SovereignSecuritySlice {
   sudoExpiresAtUtc?: string | null;
   currentClientIp?: string | null;
   isCurrentIpAllowed: boolean;
+  rowVersion?: string;
 }
 
 export interface AccountSessionNode {

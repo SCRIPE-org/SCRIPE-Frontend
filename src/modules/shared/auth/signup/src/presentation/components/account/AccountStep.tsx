@@ -2,7 +2,7 @@
 "use client";
 
 import { useState } from "react";
-import { ArrowRight, ArrowLeft, Lock, Loader2 } from "lucide-react";
+import { ArrowLeft, ArrowRight, Lock, Loader2 } from "lucide-react";
 import { useI18n } from "@core/providers/i18n-provider";
 import { useSignupTheme } from "@core/providers/signup-theme";
 import { Input } from "@core/ui/input";
@@ -42,7 +42,6 @@ export function AccountStep({ wizard }: AccountStepProps) {
   const { tokens } = useSignupTheme();
 
   const { wizardData, updateField, updatePassword, passwordStrength, selectedPlan } = wizard;
-  const ArrowIcon = direction === "rtl" ? ArrowLeft : ArrowRight;
 
   // Per-field validation messages (i18n keys from the schema). Cleared on edit.
   const [fieldErrors, setFieldErrors] = useState<Partial<Record<FieldKey, string>>>({});
@@ -301,7 +300,6 @@ export function AccountStep({ wizard }: AccountStepProps) {
           style={{
             background: tokens.gradientCta,
             color: tokens.accentContrast,
-            boxShadow: tokens.shadowCard,
           }}
         >
           {wizard.isSubmitting ? (
@@ -315,11 +313,10 @@ export function AccountStep({ wizard }: AccountStepProps) {
           ) : (
             <>
               {ctaLabel}
-              <ArrowIcon
+              <ArrowRight
                 size={18}
                 aria-hidden="true"
-                className="transition-transform duration-200 group-hover:translate-x-0.5 motion-reduce:transform-none"
-                style={{ transform: direction === "rtl" ? "scaleX(-1)" : undefined }}
+                className="transition-transform duration-200 group-hover:translate-x-0.5 motion-reduce:transform-none rtl:rotate-180 rtl:group-hover:-translate-x-0.5"
               />
             </>
           )}
@@ -345,7 +342,7 @@ export function AccountStep({ wizard }: AccountStepProps) {
           className="mx-auto inline-flex h-auto items-center gap-1.5 p-0 text-[0.8125rem] font-medium transition-opacity duration-200 hover:bg-transparent hover:opacity-80 disabled:opacity-50"
           style={{ color: tokens.inkMuted }}
         >
-          <ArrowLeft className="h-3.5 w-3.5 rtl:scale-x-[-1]" aria-hidden="true" />
+          <ArrowLeft className="h-3.5 w-3.5 rtl:rotate-180" aria-hidden="true" />
           {t("signup.account.back")}
         </Button>
       </form>

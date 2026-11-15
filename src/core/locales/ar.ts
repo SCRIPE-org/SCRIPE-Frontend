@@ -1486,6 +1486,13 @@ export const ar = {
     },
     icon: "الأيقونة",
     sortOrder: "ترتيب الفرز",
+    confirmAction: "تأكيد الإجراء",
+    pleaseConfirmAction: "يرجى تأكيد هذا الإجراء.",
+    confirmProceed: "هل أنت متأكد من رغبتك في المتابعة؟",
+    confirmDeleteDescription:
+      "هل أنت متأكد من رغبتك في حذف هذا العنصر؟ لا يمكن التراجع عن هذا الإجراء.",
+    expand: "توسيع",
+    collapse: "طي",
   },
   table: {
     select: "تحديد",
@@ -1503,6 +1510,8 @@ export const ar = {
     previousPage: "الصفحة السابقة",
     nextPage: "الصفحة التالية",
     goToPage: "الذهاب للصفحة",
+    selectAll: "تحديد جميع الصفوف",
+    selectRow: "تحديد الصف {id}",
   },
   components: {
     phoneInput: {
@@ -1681,6 +1690,21 @@ export const ar = {
         destinationSite: "Destination Site",
         selectDestinationSite: "Select destination site...",
       },
+    },
+    creatableCombobox: {
+      placeholder: "اختر أو اكتب...",
+      customEntry: "إدخال مخصص",
+      createOption: 'استخدام "{value}"',
+    },
+    timezonePicker: {
+      label: "المنطقة الزمنية",
+      placeholder: "اختر المنطقة الزمنية...",
+      searchPlaceholder: "ابحث عن المنطقة الزمنية أو المدينة...",
+    },
+    bilingualOptions: {
+      count: "{count} خيارات",
+      scrollToViewAll: "مرر لعرض الكل",
+      addOption: "إضافة خيار",
     },
   },
   errors: {
@@ -2135,6 +2159,7 @@ export const ar = {
       editDescription: "حدّث الحقول أدناه لتعديل {entity}.",
       viewTitle: "عرض {entity}",
       formDescription: "أكمل الحقول أدناه.",
+      viewDescription: "عرض تفاصيل {entity}",
     },
     confirm: {
       deleteItem: "هل أنت متأكد من حذف {name}؟",
@@ -2151,6 +2176,7 @@ export const ar = {
       cardGrid: "شبكة البطاقات",
       calendar: "التقويم",
       splitPane: "لوح منقسم",
+      switcherLabel: "مبدّل وضع العرض",
     },
     wizard: {
       stepByStep: "معالج خطوة بخطوة",
@@ -2177,6 +2203,10 @@ export const ar = {
       expandSwimlane: "توسيع خط التقسيم",
       dropToMove: "أفلت للنقل",
       dropHere: "أفلت هنا",
+      dismissError: "تجاهل الخطأ",
+      dragCard: "سحب {name}",
+      collapseStage: "طي {label}",
+      expandStage: "توسيع {label}",
     },
     calendar: {
       unscheduled: "غير مجدول",
@@ -2598,8 +2628,23 @@ export const ar = {
       inspecting: "جارٍ فحص بنية الملف، التحقق من التوقيع الرقمي، وتحليل عينات القيم...",
       fileSummary: "{name} · {size} · {sheets} ورقة عمل",
       securityNote: "حماية OWASP: التحقق من البصمة السحرية للملف، حظر الماكرو، وحدود فك الضغط مفعّلة.",
+      schemaDriftDetected: "تم اكتشاف انحراف في بنية ملف البيانات المرفوع",
+      schemaWarningsDesc: "تم اكتشاف تغييرات هيكلية أو فروقات في الإصدار بين ورقة العمل والمخطط الحالي للكيان.",
+    },
+    schemaWarnings: {
+      title: "تحذيرات انحراف البنية وتعيينات الأعمدة",
+      TEMPLATE_FINGERPRINT_DRIFT:
+        "تم إنشاء القالب المرفوع بناءً على مخطط قديم أو معدل للكيان {entity}. قد تكون الأعمدة المستهدفة قد تغيرت.",
+      PRESET_INVALID_JSON:
+        "الإعداد المسبق المحفوظ '{preset}' يحتوي على قواعد ربط غير صالحة.",
+      PRESET_STALE_TARGET_FIELDS:
+        "الإعداد المسبق '{preset}' يستهدف حقولاً لم تعد موجودة في المخطط الحالي:",
+      PRESET_MISSING_HEADERS:
+        "الإعداد المسبق '{preset}' يتوقع أعمدة مفقودة في ورقة العمل '{sheet}':",
+      UNKNOWN: "تم اكتشاف تحذير في بنية الكيان {entity}.",
     },
     mapping: {
+      schemaDriftDetected: "تحذير انحراف البنية: تم اكتشاف اختلافات بين أعمدة الملف ومخطط الكيان المستهدف.",
       sourceColumn: "عمود الملف",
       samplePreview: "عينات حية من القيم",
       targetField: "حقل SCRIPE المستهدف",
@@ -2818,6 +2863,90 @@ export const ar = {
       CompletedWithErrors: "مكتمل مع أخطاء",
       Failed: "فشل",
       Cancelled: "ملغى",
+    },
+  },
+  profile: {
+    rail: {
+      navigationLabel: "تنقل الحساب",
+      contentLabel: "محتوى قسم الحساب",
+    },
+  },
+  sileoPlayground: {
+    badge: "نظام SCRIPE السيادي • بيئة اختبار فيزياء Sileo الأصلية",
+    title: "القائمة المنسدلة النابضية وتحوّل التمرير في Sileo",
+    subtitle:
+      "تحقق من مرشحات SVG المرنة، وتوسّع الكبسولة إلى قائمة نابضية، وثبات التمرير، وألوان سمة Nexus.",
+    controls: {
+      theme: "السمة:",
+      dir: "الاتجاه:",
+    },
+    statusLabel: "الحالة:",
+    statusReady: "جاهز",
+    statusTriggeredPrefix: "تم تشغيل",
+    statusClickedPrefix: "تم النقر على",
+    engineLabel: "المحرك: sileo أصلي مع مرشح SVG المرن",
+    triggers: {
+      pillTitle: "كبسولة مدمجة 40px",
+      pillDesc: "حالة الكبسولة المستقرة",
+      successTitle: "إشعار نجاح",
+      successDesc: "كبسولة ← قائمة منبثقة نابضية",
+      errorTitle: "إشعار خطأ",
+      errorDesc: "يتضمن إجراء إعادة المحاولة",
+      warningTitle: "إشعار تحذير",
+      warningDesc: "إشعار حد الحصة",
+      infoTitle: "إشعار معلومات",
+      infoDesc: "صيانة النظام",
+      actionTitle: "إجراء تفاعلي",
+      actionDesc: "زر مراجعة وإرسال",
+      loadingTitle: "مؤشر التحميل",
+      loadingDesc: "حساب خريطة الحرارة المكانية",
+      promiseTitle: "تحول الوعد البرمجي",
+      promiseDesc: "تحول من التحميل إلى النجاح",
+      clearTitle: "مسح الكل",
+      clearDesc: "إغلاق جميع الإشعارات النشطة",
+    },
+    specs: {
+      title: "مواصفات سلوك Sileo الأصلية المعتمدة:",
+      arrivalLabel: "الوصول الأولي:",
+      arrivalBody: "يظهر الإشعار ككبسولة مدمجة مع أيقونة وعنوان باستخدام فيزياء النابض.",
+      autopilotLabel: "التشغيل التلقائي / القائمة المنسدلة عند التمرير:",
+      autopilotBody:
+        "عند 150 مللي ثانية (أو عند تمرير المؤشر)، ينسدل المحتوى عبر مرشح SVG المرن، متحولاً إلى البطاقة الكاملة وكاشفاً الوصف وأزرار الإجراءات.",
+      persistenceLabel: "ثبات التمرير:",
+      persistenceBody:
+        "تمرير المؤشر فوق الإشعار الموسّع يجمّد المؤقت ويبقي القائمة المنسدلة مفتوحة للتفاعل.",
+      collapseLabel: "الطي النابضي:",
+      collapseBody:
+        "مغادرة المؤشر تطلق طياً نابضياً سلساً يعود بالكبسولة إلى وضع الاستقرار قبل الاختفاء.",
+    },
+    toasts: {
+      pillTitle: "تم حفظ التغييرات بنجاح",
+      successTitle: "تم تأكيد حجز الملعب",
+      successDescription:
+        "تم حجز الملعب 3 للفريق الأول بالنادي الأهلي يوم الجمعة الساعة 18:00 UTC. تم إرسال التأكيد.",
+      errorTitle: "فشل تفويض الدفع",
+      errorDescription:
+        "تم رفض معاملة Stripe: الرصيد غير كافٍ في بطاقة التاجر. ستتم إعادة المحاولة تلقائياً خلال 15 دقيقة.",
+      errorAction: "إعادة محاولة الدفع",
+      warningTitle: "تم تجاوز حصة الموارد (92%)",
+      warningDescription:
+        "تم بلوغ الحد الشهري للرياضيين النشطين لفئة Sports-Enterprise. يتبقى 48 مقعداً قبل الإغلاق.",
+      warningAction: "ترقية الباقة",
+      infoTitle: "إشعار صيانة المنصة",
+      infoDescription:
+        "تمت جدولة ترحيل مخطط قاعدة البيانات ومزامنة الكتلة الليلة الساعة 02:00 UTC (توقف لمدة 10 دقائق).",
+      actionTitle: "تم إعداد مسودة الفاتورة #INV-2026-089",
+      actionDescription:
+        "تمت مراجعة باقة الرعاية المؤسسية ($45,000) واعتمادها مقابل دفتر الأستاذ المالي.",
+      actionButton: "مراجعة وإرسال",
+      loadingTitle: "جاري إنشاء خريطة الحرارة المكانية...",
+      loadingDescription:
+        "جاري حساب التمركز المكاني، ومتجهات التسارع، وبيانات تقدم الكرة على مدار 90 دقيقة.",
+      promiseLoading: "جاري مزامنة قوائم الأكاديمية...",
+      promiseSuccess: "تمت مزامنة 140 قائمة للناشئين!",
+      promiseError: "فشلت مزامنة القوائم",
+      defaultTitle: "إشعار Sileo",
+      defaultDescription: "رسالة حالة عامة للنظام.",
     },
   },
 };

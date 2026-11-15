@@ -522,6 +522,13 @@ export const en = {
     },
     icon: "Icon",
     sortOrder: "Sort Order",
+    confirmAction: "Confirm Action",
+    pleaseConfirmAction: "Please confirm this action.",
+    confirmProceed: "Are you sure you want to proceed?",
+    confirmDeleteDescription:
+      "Are you sure you want to delete this item? This action cannot be undone.",
+    expand: "Expand",
+    collapse: "Collapse",
   },
   toast: {
     title: "Toast Notifications",
@@ -672,6 +679,8 @@ export const en = {
     previousPage: "Previous page",
     nextPage: "Next page",
     goToPage: "Go to page",
+    selectAll: "Select all rows",
+    selectRow: "Select row {id}",
   },
   components: {
     phoneInput: {
@@ -859,6 +868,21 @@ export const en = {
         multi: "Multi Select",
         searchable: "Searchable",
       },
+    },
+    creatableCombobox: {
+      placeholder: "Select or type...",
+      customEntry: "Custom entry",
+      createOption: 'Use "{value}"',
+    },
+    timezonePicker: {
+      label: "Time zone",
+      placeholder: "Select time zone...",
+      searchPlaceholder: "Search time zone or city...",
+    },
+    bilingualOptions: {
+      count: "{count} options",
+      scrollToViewAll: "Scroll to view all",
+      addOption: "Add option",
     },
   },
   errors: {
@@ -2151,6 +2175,7 @@ export const en = {
       editDescription: "Update the fields below to change this {entity}.",
       viewTitle: "View {entity}",
       formDescription: "Complete the fields below.",
+      viewDescription: "View {entity} details",
     },
     confirm: {
       deleteItem: "Are you sure you want to delete {name}?",
@@ -2167,6 +2192,7 @@ export const en = {
       cardGrid: "Card Grid",
       calendar: "Calendar",
       splitPane: "Split Pane",
+      switcherLabel: "View mode switcher",
     },
     wizard: {
       stepByStep: "Step-by-Step Wizard",
@@ -2193,6 +2219,10 @@ export const en = {
       expandSwimlane: "Expand swimlane",
       dropToMove: "Drop to Move",
       dropHere: "Drop here",
+      dismissError: "Dismiss error",
+      dragCard: "Drag {name}",
+      collapseStage: "Collapse {label}",
+      expandStage: "Expand {label}",
     },
     calendar: {
       unscheduled: "Unscheduled",
@@ -2616,8 +2646,23 @@ export const en = {
       inspecting: "Scanning file structure, verifying signatures, and profiling sample values...",
       fileSummary: "{name} · {size} · {sheets} sheet(s)",
       securityNote: "OWASP Protected: magic-byte verification, macro stripping, and zip-bomb bounds enforced.",
+      schemaDriftDetected: "Schema Drift Detected in Uploaded Workbook",
+      schemaWarningsDesc: "Detected structural changes or version differences between the workbook and the current entity schema.",
+    },
+    schemaWarnings: {
+      title: "Schema Drift & Preset Warnings",
+      TEMPLATE_FINGERPRINT_DRIFT:
+        "The uploaded template was generated from an older or modified schema for {entity}. Target columns may have changed.",
+      PRESET_INVALID_JSON:
+        "The saved preset '{preset}' contains unparseable mapping rules.",
+      PRESET_STALE_TARGET_FIELDS:
+        "The preset '{preset}' targets fields that no longer exist in the current schema:",
+      PRESET_MISSING_HEADERS:
+        "The preset '{preset}' expects worksheet column headers that are missing in sheet '{sheet}':",
+      UNKNOWN: "Schema warning detected for entity {entity}.",
     },
     mapping: {
+      schemaDriftDetected: "Schema Drift Warning: Detected changes between workbook columns and target entity schema.",
       sourceColumn: "Spreadsheet Column",
       samplePreview: "Live Sample Values",
       targetField: "SCRIPE Target Field",
@@ -2836,6 +2881,90 @@ export const en = {
       CompletedWithErrors: "Completed with Errors",
       Failed: "Failed",
       Cancelled: "Cancelled",
+    },
+  },
+  profile: {
+    rail: {
+      navigationLabel: "Account navigation",
+      contentLabel: "Account section content",
+    },
+  },
+  sileoPlayground: {
+    badge: "SCRIPE Sovereign OS • Native Sileo Physics Playground",
+    title: "Sileo Spring Dropdown & Hover Morphing",
+    subtitle:
+      "Verify SVG gooey filters, spring pill-to-dropdown expansion, hover persistence, and Nexus theme colors.",
+    controls: {
+      theme: "Theme:",
+      dir: "Dir:",
+    },
+    statusLabel: "Status:",
+    statusReady: "Ready",
+    statusTriggeredPrefix: "Triggered",
+    statusClickedPrefix: "Clicked",
+    engineLabel: "Engine: sileo native with SVG gooey filter",
+    triggers: {
+      pillTitle: "Compact 40px Pill",
+      pillDesc: "Resting Pill State",
+      successTitle: "Success Toast",
+      successDesc: "Pill -> Spring Dropdown",
+      errorTitle: "Error Toast",
+      errorDesc: "Includes Retry action",
+      warningTitle: "Warning Toast",
+      warningDesc: "Quota threshold notice",
+      infoTitle: "Info Toast",
+      infoDesc: "System maintenance",
+      actionTitle: "Interactive Action",
+      actionDesc: "Review & Send button",
+      loadingTitle: "Loading Spinner",
+      loadingDesc: "Spatial heatmap calc",
+      promiseTitle: "Promise Morphing",
+      promiseDesc: "Loading -> Success morph",
+      clearTitle: "Clear All",
+      clearDesc: "Dismiss all active toasts",
+    },
+    specs: {
+      title: "Sileo Native Behavior Specifications Verified:",
+      arrivalLabel: "Initial Arrival:",
+      arrivalBody: "Toast pops in as a compact pill with icon and title using spring physics.",
+      autopilotLabel: "Autopilot / Hover Dropdown:",
+      autopilotBody:
+        "At 150ms (or upon mouse hover), the body drops down via SVG gooey filter, morphing into the full card and revealing description and action buttons.",
+      persistenceLabel: "Hover Persistence:",
+      persistenceBody:
+        "Hovering cursor over the expanded toast freezes the timer and keeps the dropdown open for interaction.",
+      collapseLabel: "Spring Collapse:",
+      collapseBody:
+        "Mouse exit triggers smooth spring collapse back to resting pill before exiting.",
+    },
+    toasts: {
+      pillTitle: "Changes Saved Successfully",
+      successTitle: "Court Booking Confirmed",
+      successDescription:
+        "Court 3 reserved for Al-Ahly First Team on Friday at 18:00 UTC. Confirmation dispatched.",
+      errorTitle: "Payment Authorization Failed",
+      errorDescription:
+        "Stripe transaction declined: Insufficient funds on merchant card. Automatic retry in 15m.",
+      errorAction: "Retry Payment",
+      warningTitle: "Resource Quota Exceeded (92%)",
+      warningDescription:
+        "Monthly active athlete limit reached for Sports-Enterprise tier. 48 slots remaining before lock.",
+      warningAction: "Upgrade Tier",
+      infoTitle: "Platform Maintenance Notice",
+      infoDescription:
+        "Database schema migration and cluster sync scheduled for tonight at 02:00 UTC (10m downtime).",
+      actionTitle: "Invoice #INV-2026-089 Drafted",
+      actionDescription:
+        "Corporate sponsorship package ($45,000) finalized and validated against financial ledger.",
+      actionButton: "Review & Send",
+      loadingTitle: "Generating Spatial Heatmap...",
+      loadingDescription:
+        "Computing spatial positioning, acceleration vectors, and ball progression telemetry across 90 minutes.",
+      promiseLoading: "Synchronizing Academy Rosters...",
+      promiseSuccess: "140 Youth Rosters Synchronized!",
+      promiseError: "Roster Sync Failed",
+      defaultTitle: "Sileo Notification",
+      defaultDescription: "General system status message.",
     },
   },
 };

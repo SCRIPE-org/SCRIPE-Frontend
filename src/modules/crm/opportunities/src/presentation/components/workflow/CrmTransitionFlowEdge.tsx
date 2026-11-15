@@ -162,7 +162,7 @@ function CrmTransitionFlowEdgeComponent({
 
               {noRollback && (
                 <span title={t("crmOpportunities.workflowStudio.transitionNoRollback")} className="inline-flex shrink-0">
-                  <Lock className="w-2.5 h-2.5 text-warning" />
+                  <Lock className="w-2.5 h-2.5 text-nx-warning-strong" />
                 </span>
               )}
 

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useMemo, useCallback, useEffect } from "react";
+import React, { useState, useMemo, useCallback, useEffect, useRef } from "react";
 import {
   useReactTable,
   getCoreRowModel,
@@ -78,8 +78,11 @@ export function TanStackCrudTable<TItem extends Record<string, any>>({
   enableColumnVisibility = true,
   emptyLabel,
 }: TanStackCrudTableProps<TItem>) {
-  const { t } = useCrudI18n();
+  const { t, direction } = useCrudI18n();
   const resolvedEmptyLabel = emptyLabel || t("common.noRecords", { defaultValue: "No records found" });
+  const tableContainerRef = useRef<HTMLDivElement>(null);
+  const [showStartShadow, setShowStartShadow] = useState(false);
+  const [showEndShadow, setShowEndShadow] = useState(false);
   // Convert CrudColumn<TItem>[] to TanStack ColumnDef<TItem>[]
   const tableColumns = useMemo<ColumnDef<TItem>[]>(() => {
     return columns.map((col) => ({
@@ -133,6 +136,7 @@ export function TanStackCrudTable<TItem extends Record<string, any>>({
   const table = useReactTable({
     data,
     columns: tableColumns,
+    getRowId: (row, index) => String(row.id ?? index),
     state: {
       sorting,
       columnVisibility,
@@ -142,6 +146,52 @@ export function TanStackCrudTable<TItem extends Record<string, any>>({
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: getSortedRowModel(),
   });
+
+  // Track horizontal scroll overflow across LTR and RTL scrollLeft models
+  useEffect(() => {
+    const container = tableContainerRef.current;
+    if (!container) return;
+
+    const scrollable = container.querySelector(".overflow-auto") as HTMLElement | null;
+    if (!scrollable) return;
+
+    const updateShadows = () => {
+      const { scrollLeft, scrollWidth, clientWidth } = scrollable;
+      const maxScroll = Math.max(0, scrollWidth - clientWidth);
+      if (maxScroll <= 1) {
+        setShowStartShadow(false);
+        setShowEndShadow(false);
+        return;
+      }
+      const scrolledFromStart =
+        direction === "rtl"
+          ? scrollLeft <= 0
+            ? Math.abs(scrollLeft)
+            : maxScroll - scrollLeft
+          : scrollLeft;
+      setShowStartShadow(scrolledFromStart > 1);
+      setShowEndShadow(scrolledFromStart < maxScroll - 1);
+    };
+
+    updateShadows();
+    scrollable.addEventListener("scroll", updateShadows);
+    window.addEventListener("resize", updateShadows);
+
+    let resizeObserver: ResizeObserver | undefined;
+    if (typeof ResizeObserver !== "undefined") {
+      resizeObserver = new ResizeObserver(updateShadows);
+      resizeObserver.observe(scrollable);
+      if (scrollable.firstElementChild) {
+        resizeObserver.observe(scrollable.firstElementChild);
+      }
+    }
+
+    return () => {
+      scrollable.removeEventListener("scroll", updateShadows);
+      window.removeEventListener("resize", updateShadows);
+      resizeObserver?.disconnect();
+    };
+  }, [direction, data, columns, stickyActions]);
 
   // Selection calculations
   const allSelected =
@@ -164,13 +214,16 @@ export function TanStackCrudTable<TItem extends Record<string, any>>({
               <Button
                 variant="outline"
                 size="sm"
-                className="h-8 gap-1.5 text-xs border-nx-line text-nx-ink hover:bg-nx-raised"
+                className="h-9 gap-1.5 text-xs border-nx-line text-nx-ink hover:bg-nx-raised"
               >
-                <Columns3 className="size-3.5 text-nx-ink-3" />
+                <Columns3 className="size-3.5 text-nx-ink-3" aria-hidden="true" />
                 <span>{t("common.columns", { defaultValue: "Columns" })}</span>
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-48 bg-nx-surface border-nx-line">
+            <DropdownMenuContent
+              align={direction === "rtl" ? "start" : "end"}
+              className="w-48 bg-nx-popover border-nx-line"
+            >
               <DropdownMenuLabel className="text-xs font-semibold text-nx-ink-2">
                 {t("crud.toggleColumns", { defaultValue: "Toggle Columns" })}
               </DropdownMenuLabel>
@@ -195,20 +248,44 @@ export function TanStackCrudTable<TItem extends Record<string, any>>({
       )}
 
       {/* TanStack Table Container */}
-      <div className="rounded-nx-lg border border-nx-line bg-nx-surface overflow-hidden">
-        <Table className="relative">
-          <TableHeader sticky className="bg-nx-surface border-b border-nx-line">
+      <div
+        ref={tableContainerRef}
+        className="relative rounded-nx-lg border border-nx-line bg-nx-surface overflow-clip [&>div]:max-h-[70dvh]"
+      >
+        {showStartShadow && (
+          <div
+            aria-hidden="true"
+            className={cn(
+              "pointer-events-none absolute inset-y-0 start-0 z-20 w-4 from-nx-surface to-transparent",
+              direction === "rtl" ? "bg-gradient-to-l" : "bg-gradient-to-r"
+            )}
+          />
+        )}
+        {showEndShadow && (
+          <div
+            aria-hidden="true"
+            className={cn(
+              "pointer-events-none absolute inset-y-0 end-0 z-20 w-4 from-nx-surface to-transparent",
+              direction === "rtl" ? "bg-gradient-to-r" : "bg-gradient-to-l"
+            )}
+          />
+        )}
+        <Table dir={direction} className="relative">
+          <TableHeader
+            sticky
+            className="sticky top-0 z-10 bg-nx-raised border-b border-nx-line-hi [&_th]:bg-nx-raised"
+          >
             {table.getHeaderGroups().map((headerGroup) => (
-              <TableRow key={headerGroup.id} className="border-b border-nx-line hover:bg-transparent">
+              <TableRow key={headerGroup.id} className="border-b border-nx-line-hi bg-nx-raised hover:bg-nx-raised">
                 {/* Checkbox Column */}
                 {hasSelection && (
-                  <TableHead className="w-10 px-3 text-center">
+                  <TableHead className="w-10 px-3 text-center text-xs font-semibold text-nx-ink-2">
                     <Checkbox
                       checked={allSelected ? true : isIndeterminate ? "indeterminate" : false}
                       onCheckedChange={(checked) => {
                         onSelectAll?.(Boolean(checked));
                       }}
-                      aria-label="Select all rows"
+                      aria-label={t("table.selectAll", { defaultValue: "Select all rows" })}
                     />
                   </TableHead>
                 )}
@@ -216,14 +293,27 @@ export function TanStackCrudTable<TItem extends Record<string, any>>({
                 {/* Data Columns */}
                 {headerGroup.headers.map((header) => {
                   const canSort = header.column.getCanSort();
-                  const isSorted = header.column.getIsSorted();
+                  const isSorted =
+                    sortColumn !== undefined
+                      ? sortColumn === header.column.id
+                        ? (sortDirection ?? "asc")
+                        : false
+                      : header.column.getIsSorted();
                   const metaClass = (header.column.columnDef.meta as any)?.className;
+                  const ariaSortValue = canSort
+                    ? isSorted === "asc"
+                      ? "ascending"
+                      : isSorted === "desc"
+                        ? "descending"
+                        : "none"
+                    : undefined;
 
                   return (
                     <TableHead
                       key={header.id}
+                      aria-sort={ariaSortValue}
                       className={cn(
-                        "text-xs font-semibold text-nx-ink select-none",
+                        "text-xs font-semibold text-nx-ink-2 select-none",
                         metaClass
                       )}
                     >
@@ -238,19 +328,19 @@ export function TanStackCrudTable<TItem extends Record<string, any>>({
                             }
                             header.column.getToggleSortingHandler()?.(e);
                           }}
-                          className="-ms-2 h-7 gap-1 px-2 text-xs font-semibold text-nx-ink hover:text-nx-ink hover:bg-nx-raised/60"
+                          className="-ms-2 h-9 gap-1 px-2 text-xs font-semibold text-nx-ink-2 hover:text-nx-ink hover:bg-nx-hover"
                         >
                           <span>
                             {flexRender(header.column.columnDef.header, header.getContext())}
                           </span>
                           {isSorted ? (
                             isSorted === "asc" ? (
-                              <ArrowUp className="size-3 text-nx-accent" />
+                              <ArrowUp className="size-3 text-nx-accent" aria-hidden="true" />
                             ) : (
-                              <ArrowDown className="size-3 text-nx-accent" />
+                              <ArrowDown className="size-3 text-nx-accent" aria-hidden="true" />
                             )
                           ) : (
-                            <ArrowUpDown className="size-3 text-nx-ink-3 opacity-60" />
+                            <ArrowUpDown className="size-3 text-nx-ink-3 opacity-60" aria-hidden="true" />
                           )}
                         </Button>
                       ) : (
@@ -266,9 +356,9 @@ export function TanStackCrudTable<TItem extends Record<string, any>>({
                 {hasActions && (
                   <TableHead
                     className={cn(
-                      "text-end text-xs font-semibold text-nx-ink w-32 px-4",
+                      "text-end text-xs font-semibold text-nx-ink-2 w-32 px-4",
                       stickyActions &&
-                        "sticky end-0 bg-nx-surface z-10 border-s border-nx-line"
+                        "sticky end-0 bg-nx-raised z-20 border-s border-nx-line-hi"
                     )}
                   >
                     {t("common.actions", { defaultValue: "Actions" })}
@@ -281,15 +371,15 @@ export function TanStackCrudTable<TItem extends Record<string, any>>({
           <TableBody>
             {loading ? (
               Array.from({ length: 5 }).map((_, rIdx) => (
-                <TableRow key={rIdx} className="border-b border-nx-line/60">
+                <TableRow key={`skeleton-${rIdx}`} className="border-b border-nx-line/60">
                   {hasSelection && (
                     <TableCell className="px-3 text-center">
-                      <Skeleton className="size-4 rounded-nx-xs mx-auto" />
+                      <Skeleton className="size-4 rounded-nx-sm mx-auto" />
                     </TableCell>
                   )}
                   {table.getVisibleLeafColumns().map((col) => (
                     <TableCell key={col.id} className="py-3 px-4">
-                      <Skeleton className="h-4 w-24 rounded-nx-xs" />
+                      <Skeleton className="h-4 w-24 rounded-nx-sm" />
                     </TableCell>
                   ))}
                   {hasActions && (
@@ -329,7 +419,7 @@ export function TanStackCrudTable<TItem extends Record<string, any>>({
             ) : (
               table.getRowModel().rows.map((row) => {
                 const rowItem = row.original;
-                const rowId = String(rowItem.id || row.id);
+                const rowId = String(rowItem.id ?? row.id);
                 const isSelected = selectedIds.includes(rowId);
                 const actionButtons = renderRowActionButtons ? renderRowActionButtons(rowItem) : null;
 
@@ -337,8 +427,8 @@ export function TanStackCrudTable<TItem extends Record<string, any>>({
                   <TableRow
                     key={row.id}
                     className={cn(
-                      "border-b border-nx-line/60 transition-colors hover:bg-nx-raised/40",
-                      isSelected && "bg-nx-accent-wash/20"
+                      "border-b border-nx-line/60 transition-colors hover:bg-nx-hover",
+                      isSelected && "bg-nx-accent-wash"
                     )}
                   >
                     {/* Checkbox */}
@@ -349,7 +439,10 @@ export function TanStackCrudTable<TItem extends Record<string, any>>({
                           onCheckedChange={(checked) => {
                             onSelectItem?.(rowId, Boolean(checked));
                           }}
-                          aria-label={`Select row ${rowId}`}
+                          aria-label={t("table.selectRow", {
+                            id: rowId,
+                            defaultValue: `Select row ${rowId}`,
+                          })}
                         />
                       </TableCell>
                     )}
@@ -357,10 +450,15 @@ export function TanStackCrudTable<TItem extends Record<string, any>>({
                     {/* Data Cells via TanStack flexRender */}
                     {row.getVisibleCells().map((cell) => {
                       const metaClass = (cell.column.columnDef.meta as any)?.className;
+                      const rawValue = cell.getValue();
                       return (
                         <TableCell
                           key={cell.id}
-                          className={cn("py-3 px-4 text-sm text-nx-ink", metaClass)}
+                          className={cn(
+                            "py-3 px-4 text-sm text-nx-ink",
+                            typeof rawValue === "number" && "tabular-nums",
+                            metaClass
+                          )}
                         >
                           {flexRender(cell.column.columnDef.cell, cell.getContext())}
                         </TableCell>

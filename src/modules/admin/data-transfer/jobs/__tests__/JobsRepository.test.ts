@@ -79,4 +79,27 @@ describe("JobsRepository", () => {
     expect(mockService.fetchArtifactBlob).toHaveBeenCalledWith("job-100", "export", undefined);
     expect(blob).toBeInstanceOf(Blob);
   });
+
+  it("normalizes undefined pagination totals and data envelopes safely to finite numbers", async () => {
+    const wrappedService: IJobsService = {
+      ...mockService,
+      fetchJobs: vi.fn().mockResolvedValue({
+        data: {
+          items: [sampleJobModel],
+          totalCount: undefined,
+          pageNumber: Number.NaN,
+          pageSize: undefined,
+          totalPages: undefined,
+        },
+      }),
+    };
+    const repo = new JobsRepository(wrappedService);
+    const result = await repo.getJobs({ page: 1, pageSize: 20 });
+
+    expect(result.items).toHaveLength(1);
+    expect(result.totalCount).toBe(1);
+    expect(result.pageNumber).toBe(1);
+    expect(result.pageSize).toBe(20);
+    expect(result.totalPages).toBe(1);
+  });
 });

@@ -2,7 +2,8 @@
 export const en = {
   dataTransferEntities: {
     title: "Data Exchange Entities",
-    subtitle: "Enterprise spreadsheet import/export capabilities, template generation, and quota limits",
+    subtitle: "Read-only tenant catalog discovered dynamically from module providers, custom fields, and active edition quotas — launch Import Studio, Multi-Sheet Migrations, Templates, or Exports.",
+    catalogInfo: "Entities and quotas are auto-discovered from registered backend providers, tenant Custom Fields, and Edition entitlements.",
     searchPlaceholder: "Search entities by key, name, or module...",
     filterModule: "All Modules",
     kpi: {
@@ -51,6 +52,14 @@ export const en = {
       switchHint: "Use the Tenant Workspace switcher in the top header bar or open Tenants to enter and manage a club workspace.",
       goToTenants: "Go to Tenants",
       retry: "Check Context Again",
+    },
+    detail: {
+      parentEntities: "Parent Dependencies",
+      multiSheetGroup: "Multi-Sheet Bundle",
+      autoCreateLookups: "Auto-Create Lookups",
+      identityOnboarding: "Identity Onboarding",
+      importEntitlement: "Import Feature",
+      exportEntitlement: "Export Feature",
     },
   },
 };

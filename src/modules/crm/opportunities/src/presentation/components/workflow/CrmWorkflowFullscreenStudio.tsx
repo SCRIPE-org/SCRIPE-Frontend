@@ -138,7 +138,7 @@ export function CrmWorkflowFullscreenStudio(props: CrmWorkflowFullscreenStudioPr
       {validationBanner && (
         <div className="px-4 py-2 bg-nx-raised border-b border-nx-line flex items-center justify-between text-xs text-nx-ink">
           <span className="inline-flex items-center gap-2 font-medium"><GitBranch className="w-3.5 h-3.5 text-success" />{validationBanner}</span>
-          <Button size="icon" variant="ghost" className="h-6 w-6" onClick={() => setValidationBanner(null)}><X className="w-3.5 h-3.5" /></Button>
+          <Button type="button" size="icon" variant="ghost" className="h-6 w-6" onClick={() => setValidationBanner(null)} aria-label={t("crmOpportunities.pipelinesPage.dismissBannerLabel")}><X className="w-3.5 h-3.5" /></Button>
         </div>
       )}
 

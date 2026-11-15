@@ -9,6 +9,13 @@ export const ar = {
     empty: {
       title: "لا توجد مهام نقل",
       description: "لم يتم العثور على أي مهام نقل تطابق معايير التصفية المحددة.",
+      unfilteredTitle: "لا توجد مهام نقل بعد",
+      unfilteredDescription:
+        "شغّل استوديو الاستيراد أو صدّر البيانات من أحد الكيانات لجدولة أول مهمة نقل خلفية.",
+    },
+    error: {
+      title: "تعذر تحميل مهام النقل",
+      description: "حدث خطأ غير متوقع أثناء جلب بيانات مراقبة المهام الخلفية.",
     },
     kpis: {
       totalJobs: "إجمالي المهام",
@@ -31,6 +38,7 @@ export const ar = {
       Import: "استيراد",
       Export: "تصدير",
       Migration: "ترحيل",
+      MultiSheetMigration: "ترحيل متعدد الجداول",
     },
     statuses: {
       Queued: "في الانتظار",
@@ -73,6 +81,30 @@ export const ar = {
     filters: {
       allStatuses: "كافة الحالات",
       allKinds: "كافة الأنواع",
+    },
+    detail: {
+      fileName: "ملف المصدر",
+      importMode: "نمط الاستيراد",
+      onboardingMode: "نمط التأهيل",
+      fileFormat: "صيغة الملف",
+      startedAt: "بدأت في",
+      completedAt: "اكتملت في",
+      expiresAt: "تنتهي الصلاحية",
+      errorSummary: "ملخص الخطأ",
+      validRows: "الصفوف الصالحة",
+      createdUpdatedRows: "المُنشأ / المُحدّث",
+    },
+    studioPicker: {
+      title: "اختيار الكيان المستهدف لاستوديو الاستيراد",
+      description: "اختر الكيان المفعّل للمستأجر الذي تريد الاستيراد إليه. يتم عرض الكيانات المتاحة حسب الباقة النشطة وصلاحيات الاستيراد.",
+      entityLabel: "الكيان المستهدف",
+      entityPlaceholder: "اختر كياناً قابلاً للاستيراد...",
+      confirm: "فتح استوديو الاستيراد",
+      loadingCatalog: "جارٍ تحميل فهرس كيانات المستأجر...",
+      emptyTitle: "لا توجد كيانات قابلة للاستيراد",
+      emptyDescription: "لا توجد كيانات تسمح باستيراد الجداول حالياً وفقاً لباقة المستأجر أو صلاحيات دورك.",
+      noImportableActionTooltip: "لا توجد كيانات قابلة للاستيراد لهذا المستأجر أو الدور.",
+      multiSheetTag: "متعدد الجداول",
     },
   },
 };

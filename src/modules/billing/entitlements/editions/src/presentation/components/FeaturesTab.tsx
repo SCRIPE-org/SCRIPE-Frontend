@@ -116,7 +116,7 @@ export function FeaturesTab({
               {overflowPolicyChanged && (
                 <Badge
                   variant="outline"
-                  className="h-4 border-warning/30 bg-warning/5 text-[10px] text-warning"
+                  className="h-4 border-warning/30 bg-warning/5 text-[10px] text-nx-warning-strong"
                 >
                   {t("common.modified")}
                 </Badge>
@@ -400,8 +400,8 @@ export function FeaturesTab({
                                     {/* ── Highlight ── */}
                                     <div className="mt-3 border-t border-info/30 pt-3">
                                       <div className="mb-2 flex items-center gap-1.5">
-                                        <Star className="h-3.5 w-3.5 text-warning" />
-                                        <span className="text-xs font-semibold uppercase tracking-wider text-warning">
+                                        <Star className="h-3.5 w-3.5 text-nx-warning-strong" />
+                                        <span className="text-xs font-semibold uppercase tracking-wider text-nx-warning-strong">
                                           Plan Card Highlight
                                         </span>
                                         {isHighlightModified && (

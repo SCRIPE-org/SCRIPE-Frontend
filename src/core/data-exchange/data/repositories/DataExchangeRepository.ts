@@ -1,4 +1,10 @@
 import type { PagedResult } from "@core/interfaces/common.interface";
+import { useAppStore } from "@core/store/useAppStore";
+import {
+  clearEntityDisplayNameCache,
+  registerEntityDisplayName,
+  registerEntityDisplayNames,
+} from "../../presentation/utils/entity-display-names";
 import type { IDataExchangeRepository } from "../../domain/interfaces/IDataExchangeRepository";
 import type { IDataExchangeService } from "../../domain/interfaces/IDataExchangeService";
 import type {
@@ -33,6 +39,8 @@ function triggerBrowserDownload(blob: Blob, fileName: string): void {
   setTimeout(() => URL.revokeObjectURL(objectUrl), 1000);
 }
 
+export type ContextKeyProvider = () => string;
+
 /**
  * Repository implementation of {@link IDataExchangeRepository} coordinating DataExchangeService calls
  * and browser file downloads.
@@ -42,25 +50,75 @@ export class DataExchangeRepository implements IDataExchangeRepository {
     string,
     { data: DataExchangeDescriptorResponseDto; expiresAt: number }
   >();
+  private readonly entitiesCache = new Map<
+    string,
+    { data: DataExchangeEntitySummaryDto[]; expiresAt: number }
+  >();
 
-  constructor(private readonly service: IDataExchangeService) {}
+  constructor(
+    private readonly service: IDataExchangeService,
+    private readonly contextKeyProvider?: ContextKeyProvider
+  ) {}
+
+  private getContextKey(): string {
+    if (this.contextKeyProvider) {
+      try {
+        const key = this.contextKeyProvider();
+        if (key) return key;
+      } catch {
+        // Fall back cleanly
+      }
+    }
+    try {
+      const state = useAppStore?.getState?.();
+      const tenant = state?.user?.tenantId ?? state?.tenantCode ?? "platform";
+      const user = state?.user?.id ?? "anon";
+      return `${tenant}:${user}`;
+    } catch {
+      return "default";
+    }
+  }
+
+  clearCache(entityKey?: string): void {
+    if (entityKey) {
+      const cacheKey = `${this.getContextKey()}:${entityKey.toLowerCase()}`;
+      this.descriptorCache.delete(cacheKey);
+    } else {
+      this.descriptorCache.clear();
+      this.entitiesCache.clear();
+      clearEntityDisplayNameCache();
+    }
+  }
 
   async listEntities(signal?: AbortSignal): Promise<DataExchangeEntitySummaryDto[]> {
-    return this.service.listEntities(signal);
+    const contextKey = this.getContextKey();
+    const now = Date.now();
+    const cached = this.entitiesCache.get(contextKey);
+    if (cached && cached.expiresAt > now) {
+      return cached.data;
+    }
+
+    const data = await this.service.listEntities(signal);
+    this.entitiesCache.set(contextKey, { data, expiresAt: now + 30_000 });
+    registerEntityDisplayNames(data);
+    return data;
   }
 
   async getEntityDescriptor(
     entityKey: string,
     signal?: AbortSignal
   ): Promise<DataExchangeDescriptorResponseDto> {
+    const contextKey = this.getContextKey();
+    const cacheKey = `${contextKey}:${entityKey.toLowerCase()}`;
     const now = Date.now();
-    const cached = this.descriptorCache.get(entityKey);
+    const cached = this.descriptorCache.get(cacheKey);
     if (cached && cached.expiresAt > now) {
       return cached.data;
     }
 
     const data = await this.service.getEntityDescriptor(entityKey, signal);
-    this.descriptorCache.set(entityKey, { data, expiresAt: now + 30_000 });
+    this.descriptorCache.set(cacheKey, { data, expiresAt: now + 30_000 });
+    registerEntityDisplayName(data);
     return data;
   }
 
@@ -92,7 +150,17 @@ export class DataExchangeRepository implements IDataExchangeRepository {
     request: DataExchangeExecuteImportRequestDto,
     signal?: AbortSignal
   ): Promise<DataExchangeExecuteImportResponseDto> {
-    return this.service.executeImport(request, signal);
+    const res = await this.service.executeImport(request, signal);
+    // Invalidate descriptor cache so that updated quota and remaining slots are immediately refreshed
+    this.clearCache(request.entityKey);
+    if (request.sheetMappings && request.sheetMappings.length > 0) {
+      for (const sm of request.sheetMappings) {
+        if (sm.entityKey) {
+          this.clearCache(sm.entityKey);
+        }
+      }
+    }
+    return res;
   }
 
   async exportToFile(request: DataExchangeExportRequestDto, signal?: AbortSignal): Promise<void> {

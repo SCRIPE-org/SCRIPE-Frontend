@@ -48,7 +48,7 @@ export function CrmWorkflowReplaceStageModal({
 }: CrmWorkflowReplaceStageModalProps) {
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-md z-[10002]" data-testid="replace-status-migration-modal">
+      <DialogContent className="max-w-md" data-testid="replace-status-migration-modal">
         <DialogHeader>
           <DialogTitle>
             {t("crmOpportunities.pipelinesPage.replaceModalTitle")}
@@ -74,7 +74,7 @@ export function CrmWorkflowReplaceStageModal({
               <SelectTrigger className="h-9 text-xs" data-testid="replace-status-target-select">
                 <SelectValue />
               </SelectTrigger>
-              <SelectContent className="z-[10003]">
+              <SelectContent>
                 {candidateStages.map((s) => (
                   <SelectItem key={s.stageKey} value={s.stageKey} className="text-xs">
                     {isAr ? s.labelAr : s.labelEn}

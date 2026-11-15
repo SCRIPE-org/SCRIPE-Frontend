@@ -4,6 +4,9 @@ import React, { memo } from "react";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { Card } from "@core/ui/card";
+import { Button } from "@core/ui/button";
+import { GripVertical } from "lucide-react";
+import { useCrudI18n } from "../hooks/useCrudI18n";
 import { cn } from "@core/common/utils";
 import type { CardDensity } from "./types";
 import type { CrudColumn } from "../components/generic-crud-view";
@@ -33,10 +36,12 @@ export const KanbanSortableCard = memo(function KanbanSortableCard({
   columns,
   displayName,
 }: KanbanSortableCardProps) {
+  const { t } = useCrudI18n();
   const {
     attributes,
     listeners,
     setNodeRef,
+    setActivatorNodeRef,
     transform,
     transition,
     isDragging,
@@ -80,20 +85,41 @@ export const KanbanSortableCard = memo(function KanbanSortableCard({
   }
 
   const rawItem = item as any;
+  const resolvedTitle =
+    displayName || rawItem?.title || rawItem?.name || rawItem?.id || `Item #${index + 1}`;
 
-  return (
-    <div
-      ref={setNodeRef}
-      style={style}
+  const dragHandle = (
+    <Button
+      type="button"
+      variant="ghost"
+      size="icon"
+      ref={setActivatorNodeRef}
       {...attributes}
       {...(!disabled ? listeners : {})}
+      disabled={disabled}
+      aria-label={t("crud.kanban.dragCard", {
+        name: String(resolvedTitle),
+        defaultValue: `Drag ${String(resolvedTitle)}`,
+      })}
       className={cn(
-        "group relative select-none",
-        !disabled ? "cursor-grab active:cursor-grabbing" : "cursor-default"
+        "h-8 w-8 shrink-0 p-0 text-nx-ink-3 select-none",
+        "focus-visible:outline-none focus-visible:shadow-nx-focus",
+        disabled
+          ? "cursor-default opacity-50"
+          : "cursor-grab hover:bg-nx-hover hover:text-nx-ink active:cursor-grabbing"
       )}
     >
+      <GripVertical className="size-4" aria-hidden="true" />
+    </Button>
+  );
+
+  return (
+    <div ref={setNodeRef} style={style} className="group relative">
       {renderCard ? (
-        renderCard(item, actionButtons, index)
+        <div className="flex items-start gap-1.5 rounded-nx-md border border-nx-line bg-nx-surface p-1.5 hover:border-nx-line-hi transition-colors">
+          {!disabled && <div className="pt-1 shrink-0">{dragHandle}</div>}
+          <div className="min-w-0 flex-1">{renderCard(item, actionButtons, index)}</div>
+        </div>
       ) : (
         <Card
           className={cn(
@@ -102,23 +128,30 @@ export const KanbanSortableCard = memo(function KanbanSortableCard({
           )}
         >
           <div className="space-y-1.5">
-            <div className="flex items-center justify-between gap-2">
-              <span className="font-semibold text-nx-ink truncate">
-                {displayName || rawItem?.title || rawItem?.name || rawItem?.id || `Item #${index + 1}`}
-              </span>
+            <div className="flex items-center gap-1.5">
+              {dragHandle}
+              <span className="font-semibold text-nx-ink truncate flex-1">{resolvedTitle}</span>
             </div>
             {columns && columns.length > 0 && (
               <div className="space-y-1 pt-1">
-                {columns.slice(0, 3).map((col) => (
-                  <div key={col.key} className="flex items-center justify-between gap-2 text-xs">
-                    <span className="text-nx-ink-3 truncate">{col.label}</span>
-                    <span className="font-medium text-nx-ink-2 truncate">
-                      {col.render
-                        ? col.render(rawItem?.[col.key], item, index)
-                        : String(rawItem?.[col.key] ?? "—")}
-                    </span>
-                  </div>
-                ))}
+                {columns.slice(0, 3).map((col) => {
+                  const rawVal = rawItem?.[col.key];
+                  return (
+                    <div key={col.key} className="flex items-center justify-between gap-2 text-xs">
+                      <span className="text-nx-ink-3 truncate">{col.label}</span>
+                      <span
+                        className={cn(
+                          "font-medium text-nx-ink-2 truncate",
+                          typeof rawVal === "number" && "tabular-nums"
+                        )}
+                      >
+                        {col.render
+                          ? col.render(rawVal, item, index)
+                          : String(rawVal ?? "—")}
+                      </span>
+                    </div>
+                  );
+                })}
               </div>
             )}
           </div>

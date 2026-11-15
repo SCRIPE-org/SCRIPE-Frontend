@@ -91,10 +91,13 @@ export function StudioMappingPresetBar({
               if (p) onSelectPreset(p);
             }}
           >
-            <SelectTrigger className="w-48 h-8 text-xs border-nx-line">
+            <SelectTrigger
+              aria-label={t("dataExchange.actions.loadPresets")}
+              className="w-48 h-8 text-xs border-nx-line"
+            >
               <SelectValue placeholder={t("dataExchange.actions.loadPresets")} />
             </SelectTrigger>
-            <SelectContent className="z-[960]">
+            <SelectContent>
               {presets.map((preset) => (
                 <SelectItem key={preset.id} value={preset.id}>
                   {preset.name}
@@ -107,6 +110,7 @@ export function StudioMappingPresetBar({
           value={presetNameInput}
           onChange={(e) => onPresetNameChange(e.target.value)}
           placeholder={t("dataExchange.mapping.presetNamePlaceholder")}
+          aria-label={t("dataExchange.mapping.presetNamePlaceholder")}
           className="w-44 h-8 text-xs font-mono"
         />
         <Button

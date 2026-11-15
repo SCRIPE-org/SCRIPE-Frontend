@@ -124,7 +124,7 @@ export function CreateFollowUpModal({
         <form onSubmit={handleSubmit}>
           <DialogHeader>
             <DialogTitle className="text-base font-bold text-nx-ink font-heading flex items-center gap-2">
-              <CalendarClock className="size-4 text-warning" />
+              <CalendarClock className="size-4 text-nx-warning-strong" />
               {t("crmActivities.followup.title")}
             </DialogTitle>
             <DialogDescription className="text-xs text-nx-ink-2">

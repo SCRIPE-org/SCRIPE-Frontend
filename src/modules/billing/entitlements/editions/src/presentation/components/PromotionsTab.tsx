@@ -438,7 +438,7 @@ function PromotionCard({
                 </Badge>
               )}
               {promo.hasReachedLimit && (
-                <Badge variant="outline" className="border-warning/30 text-[10px] text-warning">
+                <Badge variant="outline" className="border-warning/30 text-[10px] text-nx-warning-strong">
                   {t("entitlements.promotions.limitReached")}
                 </Badge>
               )}
@@ -519,9 +519,20 @@ function PromotionCard({
 
           {/* Right: Actions */}
           <div className="flex shrink-0 items-center gap-1.5">
-            <Switch checked={promo.isActive} onCheckedChange={onToggle} busy={isToggling} />
-            <Button variant="ghost" size="icon" className="h-8 w-8" onClick={onEdit}>
-              <Pencil className="h-3.5 w-3.5" />
+            <Switch
+              checked={promo.isActive}
+              onCheckedChange={onToggle}
+              busy={isToggling}
+              aria-label={`${promo.name} ${t("common.active")}`}
+            />
+            <Button
+              variant="ghost"
+              size="icon"
+              className="h-8 w-8"
+              onClick={onEdit}
+              aria-label={`${t("common.edit")} ${promo.name}`}
+            >
+              <Pencil className="h-3.5 w-3.5" aria-hidden="true" />
             </Button>
             <Button
               variant="ghost"
@@ -529,8 +540,9 @@ function PromotionCard({
               className="h-8 w-8 text-destructive hover:text-destructive/80"
               onClick={onDelete}
               disabled={isDeleting}
+              aria-label={`${t("common.delete")} ${promo.name}`}
             >
-              <Trash2 className="h-3.5 w-3.5" />
+              <Trash2 className="h-3.5 w-3.5" aria-hidden="true" />
             </Button>
           </div>
         </div>

@@ -164,4 +164,42 @@ describe("ProfileService — no call site targets the dead /v1/profile/* or lega
   it("PROFILE_ENDPOINTS no longer exposes a LEGACY family (removed — dead, no backend ProfileController)", () => {
     expect((PROFILE_ENDPOINTS as Record<string, unknown>).LEGACY).toBeUndefined();
   });
+
+  it("getProfile() and updateProfile() preserve rowVersion across AdminProfileDto -> AdminProfile round-trips", async () => {
+    const api = mockApiService();
+    (api.get as ReturnType<typeof vi.fn>).mockResolvedValueOnce({
+      id: "u1",
+      firstName: "A",
+      lastName: "B",
+      email: "a@b.com",
+      username: "ab",
+      phoneNumber: "1",
+      rowVersion: "rv-profile-get",
+    });
+    (api.put as ReturnType<typeof vi.fn>).mockResolvedValueOnce({
+      id: "u1",
+      firstName: "A",
+      lastName: "B",
+      email: "a@b.com",
+      username: "ab",
+      phoneNumber: "1",
+      rowVersion: "rv-profile-put",
+    });
+
+    const service = new ProfileService(api);
+    const loaded = await service.getProfile();
+    expect(loaded.rowVersion).toBe("rv-profile-get");
+
+    const updated = await service.updateProfile({
+      firstName: "A",
+      lastName: "B",
+      phoneNumber: "1",
+      rowVersion: loaded.rowVersion,
+    });
+    expect(api.put).toHaveBeenCalledWith(
+      PROFILE_ENDPOINTS.UPDATE_DOSSIER,
+      expect.objectContaining({ rowVersion: "rv-profile-get" })
+    );
+    expect(updated.rowVersion).toBe("rv-profile-put");
+  });
 });

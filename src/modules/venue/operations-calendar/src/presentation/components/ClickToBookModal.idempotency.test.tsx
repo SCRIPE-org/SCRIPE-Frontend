@@ -188,7 +188,7 @@ describe("ClickToBookModal quote intent retry", () => {
       />
     );
 
-    fireEvent.click(screen.getByRole("button", { name: "+ New Customer" }));
+    fireEvent.click(screen.getByRole("button", { name: "New Customer" }));
     fireEvent.change(screen.getByPlaceholderText("Customer Name (e.g. Ahmed Salah)"), {
       target: { value: "Synthetic Customer" },
     });
@@ -238,9 +238,9 @@ describe("ClickToBookModal quote intent retry", () => {
       timeZoneId: "UTC",
       onSuccess: vi.fn(),
     };
-    const view = render(<ClickToBookModal {...props} />);
+    render(<ClickToBookModal {...props} />);
 
-    fireEvent.click(screen.getByRole("button", { name: "+ New Customer" }));
+    fireEvent.click(screen.getByRole("button", { name: "New Customer" }));
     fireEvent.change(screen.getByPlaceholderText("Customer Name (e.g. Ahmed Salah)"), {
       target: { value: "Synthetic Customer" },
     });
@@ -293,7 +293,7 @@ describe("ClickToBookModal quote intent retry", () => {
       />
     );
 
-    fireEvent.click(screen.getByRole("button", { name: "+ New Customer" }));
+    fireEvent.click(screen.getByRole("button", { name: "New Customer" }));
     fireEvent.change(screen.getByPlaceholderText("Customer Name (e.g. Ahmed Salah)"), {
       target: { value: "Synthetic Customer" },
     });
@@ -350,7 +350,7 @@ describe("ClickToBookModal quote intent retry", () => {
     };
     const view = render(<ClickToBookModal {...props} />);
 
-    fireEvent.click(screen.getByRole("button", { name: "+ New Customer" }));
+    fireEvent.click(screen.getByRole("button", { name: "New Customer" }));
     fireEvent.change(screen.getByPlaceholderText("Customer Name (e.g. Ahmed Salah)"), {
       target: { value: "Synthetic Customer" },
     });
@@ -384,7 +384,7 @@ describe("ClickToBookModal quote intent retry", () => {
 
     view.rerender(<ClickToBookModal {...props} open={false} />);
     view.rerender(<ClickToBookModal {...props} open />);
-    fireEvent.click(screen.getByRole("button", { name: "+ New Customer" }));
+    fireEvent.click(screen.getByRole("button", { name: "New Customer" }));
     fireEvent.change(screen.getByPlaceholderText("Customer Name (e.g. Ahmed Salah)"), {
       target: { value: "Synthetic Customer" },
     });
@@ -445,7 +445,7 @@ describe("ClickToBookModal quote intent retry", () => {
     };
     const view = render(<ClickToBookModal {...props} />);
 
-    fireEvent.click(screen.getByRole("button", { name: "+ New Customer" }));
+    fireEvent.click(screen.getByRole("button", { name: "New Customer" }));
     fireEvent.change(screen.getByPlaceholderText("Customer Name (e.g. Ahmed Salah)"), {
       target: { value: "Synthetic Customer" },
     });

@@ -56,11 +56,11 @@ export function StepProgressIndicator({
       {/* Mobile view (< sm): Step counter and clean progress bar */}
       <div className="space-y-2 sm:hidden">
         <div className="flex items-center justify-between text-xs">
-          <span className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
+          <span className="text-[11px] font-semibold uppercase tracking-wider text-nx-ink-2">
             {t("common.stepOfTotal", { current: currentStep, total: steps.length }) ||
               `Step ${currentStep} of ${steps.length}`}
           </span>
-          <span className="font-semibold text-foreground">{currentStepObj.title}</span>
+          <span className="font-semibold text-nx-ink">{currentStepObj.title}</span>
         </div>
         <div
           role="progressbar"
@@ -68,10 +68,10 @@ export function StepProgressIndicator({
           aria-valuemin={0}
           aria-valuemax={100}
           aria-label="Account setup progress"
-          className="h-1.5 w-full overflow-hidden rounded-full bg-muted"
+          className="h-1.5 w-full overflow-hidden rounded-full bg-nx-raised"
         >
           <div
-            className="h-full rounded-full bg-primary transition-all duration-300"
+            className="h-full rounded-full bg-nx-accent-fill transition-all duration-300"
             style={{ width: `${(currentStep / steps.length) * 100}%` }}
           />
         </div>
@@ -95,18 +95,18 @@ export function StepProgressIndicator({
                   aria-current={isCurrent ? "step" : undefined}
                   aria-label={`Step ${step.id}: ${step.title}`}
                   className={cn(
-                    "group flex h-auto w-full flex-col items-center gap-1.5 rounded-lg p-1.5 text-center transition-colors hover:bg-transparent focus-visible:ring-2 focus-visible:ring-primary",
+                    "group flex h-auto w-full flex-col items-center gap-1.5 rounded-lg p-1.5 text-center transition-colors hover:bg-transparent focus-visible:shadow-nx-focus",
                     step.id > currentStep ? "cursor-not-allowed opacity-40" : "cursor-pointer"
                   )}
                 >
                   <div
                     className={cn(
-                      "shadow-xs flex h-8 w-8 items-center justify-center rounded-full border text-xs font-semibold transition-all",
+                      "flex h-8 w-8 items-center justify-center rounded-full border text-xs font-semibold transition-colors",
                       isDone && !isCurrent
-                        ? "border-primary bg-primary text-primary-foreground"
+                        ? "border-nx-accent-fill bg-nx-accent-fill text-nx-on-fill"
                         : isCurrent
-                          ? "border-primary bg-primary/10 text-primary ring-2 ring-primary/20"
-                          : "border-border bg-muted/30 text-muted-foreground"
+                          ? "border-nx-accent bg-nx-accent-wash text-nx-accent"
+                          : "border-nx-line bg-nx-raised text-nx-ink-3"
                     )}
                   >
                     {isDone && !isCurrent ? (
@@ -119,10 +119,10 @@ export function StepProgressIndicator({
                     className={cn(
                       "text-xs transition-colors",
                       isCurrent
-                        ? "font-semibold text-foreground"
+                        ? "font-semibold text-nx-ink"
                         : isDone
-                          ? "font-medium text-muted-foreground"
-                          : "text-muted-foreground/60"
+                          ? "font-medium text-nx-ink-2"
+                          : "text-nx-ink-3"
                     )}
                   >
                     {step.title}
@@ -130,12 +130,12 @@ export function StepProgressIndicator({
                 </Button>
               </li>
               {idx < steps.length - 1 && (
-                <div
+                <li
                   className={cn(
                     "mb-5 h-0.5 flex-1 rounded-full transition-colors",
                     currentStep > steps[idx + 1].id || (currentStep > step.id && currentStep !== 1)
-                      ? "bg-primary"
-                      : "bg-border/60"
+                      ? "bg-nx-accent-fill"
+                      : "bg-nx-line"
                   )}
                   aria-hidden="true"
                 />

@@ -82,7 +82,7 @@ export function LeadStageProgressionCard({
                         "ring-2 ring-nx-accent font-bold",
                         !customHexStyles.isValidHex
                           ? colorMeta.badgeClass
-                          : "border-nx-accent bg-nx-accent-wash/30 text-nx-accent"
+                          : "border-nx-accent bg-nx-accent-wash text-nx-accent"
                       )
                     : cn(
                         "hover:border-nx-line-hi",

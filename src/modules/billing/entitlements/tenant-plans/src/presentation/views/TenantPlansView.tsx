@@ -61,6 +61,7 @@ export function TenantPlansView() {
       titleKey: "entitlements.tenantPlans.title",
       subtitleKey: "entitlements.tenantPlans.description",
       resource: "tenant_plans",
+      stickyActions: true,
       entityTypeKey: "entitlements.tenant-plan",
       customActions: [
         {
@@ -210,7 +211,7 @@ export function TenantPlansView() {
           label: tFn("entitlements.tenantPlans.archive"),
           onClick: (item: TenantPlan) => setConfirmAction({ type: "archive", plan: item }),
           variant: "ghost" as const,
-          className: "text-warning hover:text-warning/80",
+          className: "text-nx-warning-strong hover:text-nx-warning-strong/80",
           icon: <Archive className="h-4 w-4" />,
           show: (item: TenantPlan) => item.isPublished,
         },
@@ -244,7 +245,7 @@ export function TenantPlansView() {
                 </>
               ) : (
                 <>
-                  <Archive className="h-4 w-4 text-warning" />{" "}
+                  <Archive className="h-4 w-4 text-nx-warning-strong" />{" "}
                   {t("entitlements.tenantPlans.archive")}
                 </>
               )}
@@ -258,7 +259,7 @@ export function TenantPlansView() {
           </DialogHeader>
           <DialogFooter>
             <Button variant="ghost" onClick={() => setConfirmAction(null)}>
-              Cancel
+              {t("common.cancel")}
             </Button>
             <Button
               onClick={handleConfirmAction}

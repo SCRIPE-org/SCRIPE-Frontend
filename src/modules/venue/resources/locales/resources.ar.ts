@@ -102,6 +102,7 @@ export const ar = {
       canPublish: "تم استيفاء جميع معايير النشر. الملعب جاهز للحجوزات الحية.",
       hasBlockers: "تم العثور على موانع نشر:",
       publishNow: "نشر الملعب",
+      publishing: "جارٍ النشر...",
       allocationMode: "نمط التخصيص",
       allocationExclusive: "وحدة فردية (حجز حصري)",
       allocationPooled: "وحدات مجمعة (مشترك / متعدد الإشغال)",

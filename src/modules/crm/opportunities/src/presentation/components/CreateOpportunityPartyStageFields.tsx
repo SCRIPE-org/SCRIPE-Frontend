@@ -119,7 +119,7 @@ export function CreateOpportunityPartyStageFields({
         </Select>
         {errors.partyId && <p className="text-xs text-destructive">{errors.partyId}</p>}
         {isProposalOrLater && !formData.partyId && (
-          <p className="text-xs text-warning flex items-center gap-1 mt-1">
+          <p className="text-xs text-nx-warning-strong flex items-center gap-1 mt-1">
             <AlertTriangle className="size-3" />
             {t("crmOpportunities.dialogs.create.partyRequiredHint", {
               defaultValue: "Advancing to Proposal or Negotiation requires a linked Account or Contact.",

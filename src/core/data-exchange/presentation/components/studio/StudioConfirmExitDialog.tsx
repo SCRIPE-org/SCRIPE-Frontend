@@ -38,7 +38,7 @@ export function StudioConfirmExitDialog({
       confirmText={t("dataExchange.confirmExit.discardAndExit")}
       cancelText={t("dataExchange.confirmExit.keepEditing")}
       dir={direction}
-      className="z-[960] max-w-md border border-nx-line bg-nx-surface text-nx-ink shadow-nx-modal"
+      className="max-w-md border border-nx-line bg-nx-surface text-nx-ink"
       data-testid="studio-confirm-exit-dialog"
       cancelButtonProps={{
         "data-testid": "studio-exit-cancel-btn",

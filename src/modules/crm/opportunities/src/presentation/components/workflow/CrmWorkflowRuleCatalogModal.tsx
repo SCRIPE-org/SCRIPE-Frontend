@@ -72,7 +72,7 @@ export function CrmWorkflowRuleCatalogModal({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-2xl z-[10002] max-h-[90vh] overflow-y-auto" data-testid="workflow-rule-catalog-modal">
+      <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto" data-testid="workflow-rule-catalog-modal">
         <DialogHeader>
           <DialogTitle>{t("crmOpportunities.pipelinesPage.ruleCatalogModalTitle")}</DialogTitle>
           <DialogDescription>{t("crmOpportunities.pipelinesPage.ruleCatalogModalDesc")}</DialogDescription>
@@ -108,7 +108,7 @@ export function CrmWorkflowRuleCatalogModal({
                   <SelectTrigger className="h-8 text-xs font-mono" data-testid="rule-catalog-transition-select">
                     <SelectValue>{transitionSummary}</SelectValue>
                   </SelectTrigger>
-                  <SelectContent className="z-[10005]">
+                  <SelectContent>
                     <SelectItem value="active" className="text-xs font-mono">{transitionSummary}</SelectItem>
                   </SelectContent>
                 </Select>

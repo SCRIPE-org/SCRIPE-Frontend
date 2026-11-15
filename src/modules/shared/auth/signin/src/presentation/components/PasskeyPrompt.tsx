@@ -26,13 +26,13 @@ export function PasskeyPrompt({ onSuccess, onBack, isRTL, tenantId }: PasskeyPro
   if (!vm.isSupported) {
     return (
       <div className="w-full space-y-5 text-center" dir={isRTL ? "rtl" : "ltr"}>
-        <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-destructive/10 border border-destructive/20 text-destructive">
+        <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-destructive/10 border border-destructive/20 text-nx-danger">
           <ShieldX className="h-7 w-7" style={{ minWidth: 28, minHeight: 28 }} />
         </div>
-        <h2 className="text-base font-bold text-foreground">
+        <h2 className="text-base font-bold text-nx-ink">
           {t("auth.passkey.notSupportedTitle") || "Passkeys not supported"}
         </h2>
-        <p className="text-xs text-muted-foreground max-w-xs mx-auto">
+        <p className="text-xs text-nx-ink-2 max-w-xs mx-auto">
           {t("auth.passkey.notSupportedDesc") ||
             "Your browser doesn't support passkeys. Please use a different sign-in method."}
         </p>
@@ -40,9 +40,9 @@ export function PasskeyPrompt({ onSuccess, onBack, isRTL, tenantId }: PasskeyPro
           variant="ghost"
           size="sm"
           onClick={onBack}
-          className="mx-auto text-xs text-primary hover:underline gap-1.5"
+          className="mx-auto text-xs text-nx-accent hover:underline gap-1.5"
         >
-          <ArrowLeft className="h-3.5 w-3.5" />
+          <ArrowLeft className="h-3.5 w-3.5 rtl:rotate-180" />
           <span>{t("signup.common.back") || "Back to sign in"}</span>
         </Button>
       </div>
@@ -55,11 +55,11 @@ export function PasskeyPrompt({ onSuccess, onBack, isRTL, tenantId }: PasskeyPro
       {/* Fingerprint icon container */}
       <div className="relative mx-auto flex h-20 w-20 items-center justify-center">
         {vm.isLoading && (
-          <div className="absolute inset-0 rounded-2xl border-2 border-primary/40 animate-ping" />
+          <div className="absolute inset-0 rounded-2xl border-2 border-nx-accent animate-ping motion-reduce:animate-none" />
         )}
-        <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-primary/10 border border-primary/25 text-primary shadow-xs">
+        <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-nx-accent-wash border border-nx-line-hi text-nx-accent">
           {vm.isLoading ? (
-            <Loader2 className="h-8 w-8 animate-spin" />
+            <Loader2 className="h-8 w-8 animate-spin motion-reduce:animate-none" />
           ) : (
             <Fingerprint className="h-8 w-8" style={{ minWidth: 32, minHeight: 32 }} />
           )}
@@ -68,10 +68,10 @@ export function PasskeyPrompt({ onSuccess, onBack, isRTL, tenantId }: PasskeyPro
 
       {/* Title & subtitle */}
       <div>
-        <h2 className="text-base font-bold text-foreground">
+        <h2 className="text-base font-bold text-nx-ink">
           {t("auth.passkey.title") || "Sign in with passkey"}
         </h2>
-        <p className="mt-1 text-xs text-muted-foreground">
+        <p className="mt-1 text-xs text-nx-ink-2">
           {vm.isLoading
             ? t("auth.passkey.waiting") || "Waiting for your biometric sensor or key…"
             : t("auth.passkey.subtitle") ||
@@ -82,7 +82,7 @@ export function PasskeyPrompt({ onSuccess, onBack, isRTL, tenantId }: PasskeyPro
       {/* Error Announcement */}
       {vm.error && (
         <div
-          className="rounded-xl border border-destructive/30 bg-destructive/10 p-3 text-start flex items-center gap-2 text-xs text-destructive"
+          className="rounded-xl border border-destructive/30 bg-destructive/10 p-3 text-start flex items-center gap-2 text-xs text-nx-danger"
           role="alert"
         >
           <AlertCircle className="h-4 w-4 shrink-0" style={{ minWidth: 16, minHeight: 16 }} />
@@ -100,7 +100,7 @@ export function PasskeyPrompt({ onSuccess, onBack, isRTL, tenantId }: PasskeyPro
         >
           {vm.isLoading ? (
             <>
-              <Loader2 className="h-3.5 w-3.5 animate-spin" />
+              <Loader2 className="h-3.5 w-3.5 animate-spin motion-reduce:animate-none" />
               <span>{t("auth.passkey.authenticating") || "Authenticating…"}</span>
             </>
           ) : (
@@ -115,7 +115,7 @@ export function PasskeyPrompt({ onSuccess, onBack, isRTL, tenantId }: PasskeyPro
           variant="ghost"
           size="sm"
           onClick={onBack}
-          className="mx-auto block text-xs text-muted-foreground hover:text-foreground hover:underline"
+          className="mx-auto block text-xs text-nx-ink-2 hover:text-nx-ink hover:underline"
         >
           {t("auth.passkey.otherMethods") || "Use another sign-in method"}
         </Button>

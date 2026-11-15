@@ -26,10 +26,10 @@ interface StateViewProps {
 export function SetupLoadingView() {
   const { t } = useI18n();
   return (
-    <Card className="w-full max-w-md border-border/50 shadow-xl">
+    <Card className="w-full max-w-md border-nx-line bg-nx-surface">
       <CardContent className="flex flex-col items-center justify-center gap-4 py-16">
-        <Loader2 className="h-10 w-10 animate-spin text-primary" />
-        <p className="text-sm text-muted-foreground">{t("auth.accountSetup.validating")}</p>
+        <Loader2 className="h-10 w-10 animate-spin text-nx-accent motion-reduce:animate-none" />
+        <p className="text-sm text-nx-ink-2">{t("auth.accountSetup.validating")}</p>
       </CardContent>
     </Card>
   );
@@ -45,15 +45,15 @@ export function SetupInvalidView({ errorMessage }: StateViewProps) {
   const { t } = useI18n();
   const router = useRouter();
   return (
-    <Card className="w-full max-w-md border-destructive/30 shadow-xl">
+    <Card className="w-full max-w-md border-destructive/40 bg-nx-surface">
       <CardContent className="flex flex-col items-center justify-center gap-4 py-12">
         <div className="rounded-full bg-destructive/10 p-4">
-          <XCircle className="h-10 w-10 text-destructive" />
+          <XCircle className="h-10 w-10 text-nx-danger" />
         </div>
-        <h2 className="text-xl font-semibold text-foreground">
+        <h2 className="text-xl font-semibold text-nx-ink">
           {t("auth.accountSetup.invalidTitle")}
         </h2>
-        <p className="max-w-xs text-center text-sm text-muted-foreground">{errorMessage}</p>
+        <p className="max-w-xs text-center text-sm text-nx-ink-2">{errorMessage}</p>
         <Button variant="outline" className="mt-4" onClick={() => router.push("/login")}>
           {t("auth.goToLogin")}
         </Button>
@@ -72,19 +72,19 @@ export function SetupSuccessView({ tokenData }: StateViewProps) {
   const { t } = useI18n();
   const router = useRouter();
   return (
-    <Card className="w-full max-w-md border-success/30 shadow-xl">
+    <Card className="w-full max-w-md border-success/40 bg-nx-surface">
       <CardContent className="flex flex-col items-center justify-center gap-4 py-12">
         <div className="rounded-full bg-success/10 p-4">
-          <CheckCircle2 className="h-10 w-10 text-success" />
+          <CheckCircle2 className="h-10 w-10 text-nx-success" />
         </div>
-        <h2 className="text-xl font-semibold text-foreground">
+        <h2 className="text-xl font-semibold text-nx-ink">
           {t("auth.accountSetup.successTitle")}
         </h2>
-        <p className="max-w-xs text-center text-sm text-muted-foreground">
+        <p className="max-w-xs text-center text-sm text-nx-ink-2">
           {t("auth.accountSetup.successDescription")}
         </p>
-        <div className="mt-2 rounded-lg bg-muted/50 px-4 py-2 text-sm text-muted-foreground">
-          <span className="font-medium text-foreground">{tokenData?.adminUsername}</span>
+        <div className="mt-2 rounded-lg border border-nx-line bg-nx-raised px-4 py-2 text-sm text-nx-ink-2">
+          <span className="font-medium text-nx-ink">{tokenData?.adminUsername}</span>
         </div>
         <Button className="mt-4 w-full max-w-[200px]" onClick={() => router.push("/login")}>
           {t("auth.loginButton")}
@@ -104,15 +104,15 @@ export function SetupSuccessView({ tokenData }: StateViewProps) {
 export function SetupErrorView({ errorMessage, onRetry }: StateViewProps) {
   const { t } = useI18n();
   return (
-    <Card className="w-full max-w-md border-destructive/30 shadow-xl">
+    <Card className="w-full max-w-md border-destructive/40 bg-nx-surface">
       <CardContent className="flex flex-col items-center justify-center gap-4 py-12">
         <div className="rounded-full bg-destructive/10 p-4">
-          <AlertTriangle className="h-10 w-10 text-destructive" />
+          <AlertTriangle className="h-10 w-10 text-nx-danger" />
         </div>
-        <h2 className="text-xl font-semibold text-foreground">
+        <h2 className="text-xl font-semibold text-nx-ink">
           {t("auth.accountSetup.activationFailedTitle")}
         </h2>
-        <p className="max-w-xs text-center text-sm text-muted-foreground">{errorMessage}</p>
+        <p className="max-w-xs text-center text-sm text-nx-ink-2">{errorMessage}</p>
         <Button variant="outline" className="mt-4" onClick={onRetry}>
           {t("auth.accountSetup.tryAgain")}
         </Button>
@@ -130,11 +130,11 @@ export function SetupErrorView({ errorMessage, onRetry }: StateViewProps) {
  */
 export function PasswordCheck({ label, ok }: { label: string; ok: boolean }) {
   return (
-    <div className={`flex items-center gap-1.5 ${ok ? "text-success" : "text-muted-foreground"}`}>
+    <div className={`flex items-center gap-1.5 ${ok ? "text-nx-success" : "text-nx-ink-2"}`}>
       {ok ? (
         <CheckCircle2 className="h-3 w-3" />
       ) : (
-        <div className="h-3 w-3 rounded-full border border-muted-foreground/30" />
+        <div className="h-3 w-3 rounded-full border border-nx-line-hi" />
       )}
       {label}
     </div>

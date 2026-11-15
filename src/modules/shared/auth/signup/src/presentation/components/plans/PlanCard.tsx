@@ -150,10 +150,6 @@ export function PlanCard({
           : hovered
             ? `1px solid ${tokens.accent}40`
             : tokens.borderCard,
-        // No resting-state glow, per the "accent only via ring + faint tint,
-        // never glow" rule above — the recommended card reads from its tinted
-        // background and border alone until it's actually hovered.
-        boxShadow: hovered ? tokens.shadowCard : "none",
       }}
     >
       {/* ── Row 1: reserved badge slot (fixed line; renders ≤ 1 badge) ── */}
@@ -293,7 +289,6 @@ export function PlanCard({
                 ? {
                     background: tokens.gradientCta,
                     color: tokens.accentContrast,
-                    boxShadow: tokens.shadowCard,
                   }
                 : {
                     background: tokens.surfaceRaised,

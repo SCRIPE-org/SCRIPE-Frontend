@@ -55,14 +55,14 @@ const STATUS_CONFIG: Record<
   Suspended: { icon: XCircle, badgeVariant: "destructive", iconClass: "text-destructive" },
   Canceled: { icon: XCircle, badgeVariant: "destructive", iconClass: "text-destructive" },
   Expired: { icon: Clock, badgeVariant: "inactive", iconClass: "text-nx-ink-3" },
-  PastDue: { icon: AlertCircle, badgeVariant: "warning", iconClass: "text-warning" },
+  PastDue: { icon: AlertCircle, badgeVariant: "warning", iconClass: "text-nx-warning-strong" },
 };
 
 // ── Plan-type icon tile tone — same tint recipe as StatCard's tone tiles ──
 const TYPE_CONFIG: Record<string, { icon: LucideIcon; toneClass: string; labelKey: string }> = {
   Lifetime: {
     icon: Crown,
-    toneClass: "border-warning/30 bg-warning/10 text-warning",
+    toneClass: "border-warning/30 bg-warning/10 text-nx-warning-strong",
     labelKey: "entitlements.mySubscription.typeLifetime",
   },
   Monthly: {

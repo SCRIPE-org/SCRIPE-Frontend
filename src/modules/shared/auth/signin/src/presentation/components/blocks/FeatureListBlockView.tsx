@@ -24,16 +24,16 @@ export function FeatureListBlockView({ block }: { block: FeatureListBlock }) {
           <div
             className={`${ICON_SIZE[props.iconSize || "md"]} leading-none`}
             style={{
-              color: blockColor(props.iconColor, "var(--login-primary, hsl(var(--primary)))"),
+              color: blockColor(props.iconColor, "var(--login-primary, var(--nx-accent))"),
             }}
           >
             {props.numberedMode ? index + 1 : item.icon}
           </div>
           <div>
-            <h3 className="text-sm font-semibold" style={{ color: blockColor(props.titleColor) }}>
+            <h3 className="text-sm font-semibold text-nx-ink" style={{ color: blockColor(props.titleColor) }}>
               {item.title}
             </h3>
-            <p className="mt-1 text-sm text-muted-foreground">{item.description}</p>
+            <p className="mt-1 text-sm text-nx-ink-2">{item.description}</p>
           </div>
         </div>
       ))}

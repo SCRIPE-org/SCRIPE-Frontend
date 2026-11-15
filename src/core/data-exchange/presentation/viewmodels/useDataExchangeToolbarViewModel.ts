@@ -65,15 +65,31 @@ export function useDataExchangeToolbarViewModel({
 
     const controller = new AbortController();
     let cancelled = false;
+    const repo = getCoreContainer().dataExchangeRepository;
 
-    getCoreContainer()
-      .dataExchangeRepository.getEntityDescriptor(entityKey, controller.signal)
-      .then((res) => {
+    async function loadDescriptor() {
+      try {
+        // Consult cached tenant entity catalog first to eliminate catalog-unbacked 404s
+        const entities = await repo.listEntities(controller.signal);
+        if (cancelled) return;
+
+        const exists = (entities ?? []).some(
+          (e) => e.entityKey.toLowerCase() === entityKey.toLowerCase()
+        );
+        if (!exists) {
+          setDescriptor(null);
+          return;
+        }
+
+        const res = await repo.getEntityDescriptor(entityKey, controller.signal);
         if (!cancelled) setDescriptor(res);
-      })
-      .catch(() => {
+      } catch {
+        // Handles 422 tenant-required, 403 forbidden, or network failures gracefully
         if (!cancelled) setDescriptor(null);
-      });
+      }
+    }
+
+    void loadDescriptor();
 
     return () => {
       cancelled = true;

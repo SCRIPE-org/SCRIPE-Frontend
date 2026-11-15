@@ -55,7 +55,7 @@ export function ComingSoonView({
       />
 
       <Card>
-        <CardContent>
+        <CardContent className="pt-2">
           {/* No description: the page header already carries that sentence, and
               md rather than lg keeps this block grouped with the feature list
               below, which is what actually explains what is coming. */}

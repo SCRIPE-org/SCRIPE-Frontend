@@ -79,7 +79,7 @@ export function AddRoleDialog({ open, onOpenChange, onSubmit }: AddRoleDialogPro
         <form onSubmit={handleSubmit}>
           <DialogHeader>
             <div className="flex items-center gap-2">
-              <div className="bg-nx-accent/10 flex h-9 w-9 items-center justify-center rounded-lg text-nx-accent">
+              <div className="bg-nx-accent-wash flex h-9 w-9 items-center justify-center rounded-lg text-nx-accent">
                 <Briefcase className="h-5 w-5" />
               </div>
               <DialogTitle>{t("party.dialog.addRoleTitle")}</DialogTitle>
@@ -164,7 +164,6 @@ export function AddRoleDialog({ open, onOpenChange, onSubmit }: AddRoleDialogPro
                 }}
                 placeholder={t("party.dialog.rolePlaceholder") || "e.g. Coach, Player, Vendor"}
                 disabled={isSubmitting}
-                autoFocus
                 required
               />
               <p className="text-[11px] text-nx-ink-3">
@@ -208,7 +207,7 @@ export function AddRoleDialog({ open, onOpenChange, onSubmit }: AddRoleDialogPro
             <Button type="submit" disabled={isSubmitting || !roleType.trim()}>
               {isSubmitting ? (
                 <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  <Loader2 className="me-2 h-4 w-4 animate-spin" />
                   {t("party.dialog.save")}...
                 </>
               ) : (

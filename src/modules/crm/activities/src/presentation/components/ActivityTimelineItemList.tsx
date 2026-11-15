@@ -53,7 +53,7 @@ export function ActivityTimelineItemList({
       case "MeetingLog":
         return <Users className="size-3.5 text-nx-ink" />;
       case "FollowUpLinked":
-        return <CalendarClock className="size-3.5 text-warning" />;
+        return <CalendarClock className="size-3.5 text-nx-warning-strong" />;
       case "CommunicationSent":
         return <Mail className="size-3.5 text-info" />;
       case "FulfillmentRequested":
@@ -90,7 +90,7 @@ export function ActivityTimelineItemList({
         );
       case "FollowUpLinked":
         return (
-          <Badge variant="outline" className="border-warning/30 bg-warning/10 text-warning text-[10px] py-0 px-1.5 font-medium">
+          <Badge variant="outline" className="border-warning-strong/30 bg-warning/10 text-nx-warning-strong text-[10px] py-0 px-1.5 font-medium">
             {t("crmActivities.kinds.followup")}
           </Badge>
         );
@@ -220,7 +220,7 @@ export function ActivityTimelineItemList({
                   {(activity.workItemRefId || isCompleted) && (
                     <Badge
                       variant="outline"
-                      className="border-warning/30 bg-warning/10 text-warning text-[10px] py-0.5 px-2 flex items-center gap-1 font-medium"
+                      className="border-warning-strong/30 bg-warning/10 text-nx-warning-strong text-[10px] py-0.5 px-2 flex items-center gap-1 font-medium"
                     >
                       <ListTodo className="size-2.5" />
                       <span>
@@ -255,7 +255,7 @@ export function ActivityTimelineItemList({
                       onClick={() => onSelectForFollowUp(activity)}
                       className="h-6 text-[10px] px-2 text-nx-ink-3 hover:text-nx-ink hover:bg-nx-raised gap-1 opacity-80 group-hover:opacity-100"
                     >
-                      <CalendarClock className="size-2.5 text-warning" />
+                      <CalendarClock className="size-2.5 text-nx-warning-strong" />
                       <span>{t("crmActivities.timeline.addFollowUp")}</span>
                     </Button>
                   )}
@@ -264,7 +264,7 @@ export function ActivityTimelineItemList({
 
               {isMasked ? (
                 <div className="flex items-center gap-1.5 p-2 rounded bg-nx-raised border border-nx-line text-[11px] text-nx-ink-3 italic">
-                  <ShieldAlert className="size-3 text-warning shrink-0" />
+                  <ShieldAlert className="size-3 text-nx-warning-strong shrink-0" />
                   <span>{t("crmActivities.timeline.piiMasked")}</span>
                 </div>
               ) : activity.bodyText ? (

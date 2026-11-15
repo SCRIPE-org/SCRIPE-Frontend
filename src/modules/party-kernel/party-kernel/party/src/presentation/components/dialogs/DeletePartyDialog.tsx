@@ -101,7 +101,7 @@ export function DeletePartyDialog({
           <Button type="button" variant="destructive" onClick={handleConfirm} disabled={isDeleting}>
             {isDeleting ? (
               <>
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                <Loader2 className="me-2 h-4 w-4 animate-spin" />
                 {t("party.dialog.deleteConfirmBtn")}...
               </>
             ) : (

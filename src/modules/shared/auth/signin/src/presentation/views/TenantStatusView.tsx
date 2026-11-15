@@ -32,17 +32,17 @@ export function TenantSuspendedView({ branding }: TenantSuspendedViewProps) {
   const companyName = branding.companyName ?? branding.name ?? BRAND.name;
   const resolvedLogoSrc = useResolvedFileUrl(branding.logoUrl);
   const logoSrc = branding.logoUrl
-    ? resolvedLogoSrc || "/brand/app-logo-1024.png"
-    : "/brand/app-logo-1024.png";
+    ? resolvedLogoSrc || "/brand/app-logo.svg"
+    : "/brand/app-logo.svg";
 
   return (
-    <div
-      className="flex min-h-screen items-center justify-center bg-background px-4"
+    <main
+      className="flex min-h-[100dvh] items-center justify-center bg-nx-ground px-4 text-nx-ink"
       dir={direction}
     >
       <div className="mx-auto w-full max-w-md text-center">
         {/* Tenant Logo */}
-        <div className="mx-auto mb-8 flex h-20 w-20 items-center justify-center overflow-hidden rounded-2xl border border-border bg-card shadow-sm">
+        <div className="mx-auto mb-8 flex h-20 w-20 items-center justify-center overflow-hidden rounded-2xl border border-nx-line bg-nx-surface">
           <Image
             src={logoSrc}
             alt={companyName}
@@ -60,21 +60,21 @@ export function TenantSuspendedView({ branding }: TenantSuspendedViewProps) {
         {/* Status Icon */}
         <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-full bg-destructive/10">
           {isCanceled ? (
-            <XCircle className="h-8 w-8 text-destructive" />
+            <XCircle className="h-8 w-8 text-nx-danger" />
           ) : (
-            <AlertTriangle className="h-8 w-8 text-warning" />
+            <AlertTriangle className="h-8 w-8 text-nx-warning-strong" />
           )}
         </div>
 
         {/* Title */}
-        <h1 className="mb-3 text-2xl font-bold text-foreground">
+        <h1 className="mb-3 text-2xl font-bold text-nx-ink">
           {isCanceled
             ? t("tenantStatus.canceledTitle") || "Organization Canceled"
             : t("tenantStatus.suspendedTitle") || "Organization Suspended"}
         </h1>
 
         {/* Description */}
-        <p className="mb-4 text-muted-foreground">
+        <p className="mb-4 text-nx-ink-2">
           {isCanceled
             ? t("tenantStatus.canceledDescription") ||
               `The organization "${companyName}" has been canceled. Contact support to reactivate your subscription.`
@@ -84,8 +84,8 @@ export function TenantSuspendedView({ branding }: TenantSuspendedViewProps) {
 
         {/* Reason (if provided) */}
         {branding.statusReason && (
-          <div className="mb-6 rounded-lg border border-border bg-muted/50 px-4 py-3 text-sm text-muted-foreground">
-            <span className="font-medium">{t("tenantStatus.reason") || "Reason"}: </span>
+          <div className="mb-6 rounded-lg border border-nx-line bg-nx-raised px-4 py-3 text-sm text-nx-ink-2">
+            <span className="font-medium text-nx-ink">{t("tenantStatus.reason") || "Reason"}: </span>
             {branding.statusReason}
           </div>
         )}
@@ -93,12 +93,12 @@ export function TenantSuspendedView({ branding }: TenantSuspendedViewProps) {
         {/* Contact Support Link */}
         <a
           href={`mailto:support@${BRAND.domain || "scripe.org"}`}
-          className="inline-flex items-center gap-2 rounded-lg bg-primary px-6 py-2.5 text-sm font-medium text-primary-foreground shadow-sm transition-colors hover:bg-primary/90"
+          className="inline-flex items-center gap-2 rounded-lg bg-nx-accent-fill px-6 py-2.5 text-sm font-semibold text-nx-on-fill transition-colors hover:brightness-95 focus-visible:outline-none focus-visible:shadow-nx-focus"
         >
           {t("tenantStatus.contactSupport") || "Contact Support"}
         </a>
       </div>
-    </div>
+    </main>
   );
 }
 
@@ -113,20 +113,20 @@ export function TenantNotFoundView() {
   const { t, direction } = useI18n();
 
   return (
-    <div
-      className="flex min-h-screen items-center justify-center bg-background px-4"
+    <main
+      className="flex min-h-[100dvh] items-center justify-center bg-nx-ground px-4 text-nx-ink"
       dir={direction}
     >
       <div className="mx-auto w-full max-w-md text-center">
         {/* Platform Logo */}
-        <div className="mx-auto mb-8 flex h-20 w-20 items-center justify-center overflow-hidden rounded-2xl border border-border bg-card shadow-sm">
+        <div className="mx-auto mb-8 flex h-20 w-20 items-center justify-center overflow-hidden rounded-2xl border border-nx-line bg-nx-surface">
           <Image
-            src="/brand/app-logo-1024.png"
+            src="/brand/app-logo.svg"
             alt={BRAND.name}
             width={80}
             height={80}
             priority
-            className="h-full w-full object-cover"
+            className="h-full w-full object-contain p-2"
             onError={(e) => {
               e.currentTarget.style.display = "none";
             }}
@@ -134,17 +134,17 @@ export function TenantNotFoundView() {
         </div>
 
         {/* Icon */}
-        <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-full bg-muted">
-          <SearchX className="h-8 w-8 text-muted-foreground" />
+        <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-full border border-nx-line bg-nx-raised">
+          <SearchX className="h-8 w-8 text-nx-ink-2" />
         </div>
 
         {/* Title */}
-        <h1 className="mb-3 text-2xl font-bold text-foreground">
+        <h1 className="mb-3 text-2xl font-bold text-nx-ink">
           {t("tenantStatus.notFoundTitle") || "Organization Not Found"}
         </h1>
 
         {/* Description */}
-        <p className="mb-8 text-muted-foreground">
+        <p className="mb-8 text-nx-ink-2">
           {t("tenantStatus.notFoundDescription") ||
             "This organization doesn\u2019t exist on our platform. Please check the URL and try again."}
         </p>
@@ -152,11 +152,11 @@ export function TenantNotFoundView() {
         {/* Go to Platform */}
         <Link
           href="/"
-          className="inline-flex items-center gap-2 rounded-lg bg-primary px-6 py-2.5 text-sm font-medium text-primary-foreground shadow-sm transition-colors hover:bg-primary/90"
+          className="inline-flex items-center gap-2 rounded-lg bg-nx-accent-fill px-6 py-2.5 text-sm font-semibold text-nx-on-fill transition-colors hover:brightness-95 focus-visible:outline-none focus-visible:shadow-nx-focus"
         >
           {t("tenantStatus.visitPlatform") || `Visit ${BRAND.name}`}
         </Link>
       </div>
-    </div>
+    </main>
   );
 }

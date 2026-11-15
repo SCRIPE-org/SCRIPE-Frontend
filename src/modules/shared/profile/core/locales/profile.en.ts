@@ -633,6 +633,9 @@ export const en = {
       delete: "Delete",
       saved: "Saved",
       saveChanges: "Save Changes",
+      concurrencyConflict:
+        "This record was updated in another session (409 Conflict). The latest version has been reloaded — please review and save again.",
+      saveFailed: "Unable to save changes. Please try again.",
     },
     accountPortal: {
       backToDashboard: "Back to Dashboard",

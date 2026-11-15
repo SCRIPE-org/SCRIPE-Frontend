@@ -124,7 +124,7 @@ export function StudioMappingControlsBar({
             size="sm"
             loading={isDryRunning}
             onClick={runDryRun}
-            className="bg-nx-accent text-nx-on-fill font-medium"
+            className="bg-nx-accent-fill text-nx-on-fill font-medium"
           >
             <Sparkles className="me-1.5 h-4 w-4" />
             <span>{t("dataExchange.actions.expressDryRun")}</span>
@@ -172,7 +172,7 @@ export function StudioMappingControlsBar({
       {/* Batch Execution Settings Bar */}
       <Card className="grid grid-cols-1 gap-4 border-nx-line bg-nx-surface p-4 md:grid-cols-2">
         <div className="space-y-1.5">
-          <Label className="text-xs text-nx-ink-2">
+          <Label htmlFor="dx-import-mode" className="text-xs text-nx-ink-2">
             {t("dataExchange.mapping.importModeLabel")}
           </Label>
           <Select
@@ -183,10 +183,10 @@ export function StudioMappingControlsBar({
               else setImportMode(nextMode);
             }}
           >
-            <SelectTrigger className="h-8 text-xs border-nx-line">
+            <SelectTrigger id="dx-import-mode" className="h-8 text-xs border-nx-line">
               <SelectValue />
             </SelectTrigger>
-            <SelectContent className="z-[960]">
+            <SelectContent>
               {supportedModes.map((mode) => (
                 <SelectItem key={mode} value={mode}>
                   {mode === "Insert"
@@ -203,7 +203,7 @@ export function StudioMappingControlsBar({
         <div className="flex flex-col justify-end gap-2">
           {activeDesc?.supportsIdentityOnboardingModes && (
             <div className="space-y-1.5">
-              <Label className="text-xs text-nx-ink-2">
+              <Label htmlFor="dx-onboarding-mode" className="text-xs text-nx-ink-2">
                 {t("dataExchange.mapping.onboardingModeLabel")}
               </Label>
               <Select
@@ -212,10 +212,10 @@ export function StudioMappingControlsBar({
                   setOnboardingMode(val as DataExchangeIdentityOnboardingMode)
                 }
               >
-                <SelectTrigger className="h-8 text-xs border-nx-line">
+                <SelectTrigger id="dx-onboarding-mode" className="h-8 text-xs border-nx-line">
                   <SelectValue />
                 </SelectTrigger>
-                <SelectContent className="z-[960]">
+                <SelectContent>
                   <SelectItem value="StagedPendingInvite">
                     {t("dataExchange.mapping.onboardingStaged")}
                   </SelectItem>

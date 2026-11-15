@@ -24,7 +24,6 @@ import {
   ChevronDown,
   ChevronUp,
   AlertTriangle,
-  CheckCircle2,
   RefreshCw,
 } from "lucide-react";
 import { getPartyKernelContainer } from "../../../../../di";
@@ -271,7 +270,7 @@ export function CreatePersonDialog({
         <DialogContent className="sm:max-w-[540px]">
           <DialogHeader>
             <div className="flex items-center gap-2">
-              <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-warning/10 text-warning">
+              <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-warning/10 text-nx-warning-strong">
                 <AlertTriangle className="h-5 w-5" />
               </div>
               <div>
@@ -301,13 +300,13 @@ export function CreatePersonDialog({
               {partialSaveState.failedPhone && (
                 <div className="flex items-center justify-between text-xs">
                   <span className="text-nx-ink-3">Pending Phone</span>
-                  <span className="font-mono text-warning">{partialSaveState.failedPhone}</span>
+                  <span className="font-mono text-nx-warning-strong">{partialSaveState.failedPhone}</span>
                 </div>
               )}
               {partialSaveState.failedEmail && (
                 <div className="flex items-center justify-between text-xs">
                   <span className="text-nx-ink-3">Pending Email</span>
-                  <span className="font-mono text-warning">{partialSaveState.failedEmail}</span>
+                  <span className="font-mono text-nx-warning-strong">{partialSaveState.failedEmail}</span>
                 </div>
               )}
             </div>
@@ -337,12 +336,12 @@ export function CreatePersonDialog({
             <Button type="button" onClick={handleRetryAttach} disabled={isRetrying}>
               {isRetrying ? (
                 <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  <Loader2 className="me-2 h-4 w-4 animate-spin" />
                   {t("party.dialog.retryAttachContact") || "Retrying..."}
                 </>
               ) : (
                 <>
-                  <RefreshCw className="mr-2 h-4 w-4" />
+                  <RefreshCw className="me-2 h-4 w-4" />
                   {t("party.dialog.retryAttachContact") || "Retry Attach Contact Details"}
                 </>
               )}
@@ -359,7 +358,7 @@ export function CreatePersonDialog({
         <form onSubmit={handleSubmit}>
           <DialogHeader>
             <div className="flex items-center gap-2">
-              <div className="bg-nx-accent/10 flex h-9 w-9 items-center justify-center rounded-lg text-nx-accent">
+              <div className="bg-nx-accent-wash flex h-9 w-9 items-center justify-center rounded-lg text-nx-accent">
                 <User className="h-5 w-5" />
               </div>
               <div>
@@ -394,7 +393,6 @@ export function CreatePersonDialog({
                   }}
                   placeholder={t("party.dialog.fullNamePlaceholder")}
                   disabled={isSubmitting}
-                  autoFocus
                   required
                 />
               </div>
@@ -402,7 +400,7 @@ export function CreatePersonDialog({
 
               {/* Duplicate Detection Warning */}
               {isPossibleDuplicate && (
-                <div className="flex items-center gap-2 rounded-md border border-warning/20 bg-warning/10 p-2.5 text-xs text-warning">
+                <div className="flex items-center gap-2 rounded-md border border-warning/20 bg-warning/10 p-2.5 text-xs text-nx-warning-strong">
                   <AlertTriangle className="h-4 w-4 shrink-0" />
                   <span>{t("party.dialog.duplicateWarning")}</span>
                 </div>
@@ -504,7 +502,7 @@ export function CreatePersonDialog({
                 />
               </div>
 
-              <div className="flex items-center space-x-2 pt-6">
+              <div className="flex items-center gap-2 pt-6">
                 <Checkbox
                   id="person-is-minor"
                   checked={isMinor}
@@ -562,7 +560,7 @@ export function CreatePersonDialog({
             <Button type="submit" disabled={isSubmitting || !fullName.trim()}>
               {isSubmitting ? (
                 <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  <Loader2 className="me-2 h-4 w-4 animate-spin" />
                   {t("party.dialog.create")}...
                 </>
               ) : (

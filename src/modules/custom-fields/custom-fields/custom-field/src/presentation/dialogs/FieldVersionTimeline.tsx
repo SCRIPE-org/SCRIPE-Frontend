@@ -81,7 +81,7 @@ export function FieldVersionTimeline({
           })}
         </div>
       ) : (
-        <div className="relative space-y-4 pl-6 before:absolute before:bottom-2 before:left-2.5 before:top-2 before:w-0.5 before:bg-border">
+        <div className="relative space-y-4 ps-6 before:absolute before:bottom-2 before:start-2.5 before:top-2 before:w-0.5 before:bg-border">
           {sortedVersions.map((version) => {
             const isDraft = version.status.toLowerCase() === "draft";
             const isLive = version.status.toLowerCase() === "published";
@@ -93,7 +93,7 @@ export function FieldVersionTimeline({
               >
                 {/* Timeline Node Icon */}
                 <div
-                  className={`absolute -left-[27px] top-3.5 h-3.5 w-3.5 rounded-full border-2 bg-background ${
+                  className={`absolute -start-[27px] top-3.5 h-3.5 w-3.5 rounded-full border-2 bg-background ${
                     isLive
                       ? "border-success bg-success"
                       : isDraft

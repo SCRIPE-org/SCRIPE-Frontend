@@ -184,15 +184,15 @@ export function CreateActivityModal({
                 checked={containsPii}
                 onCheckedChange={(checked) => setContainsPii(checked === true)}
               />
-              <div className="flex-1 cursor-pointer" onClick={() => setContainsPii(!containsPii)}>
-                <Label htmlFor="activity-pii" className="text-xs font-semibold text-nx-ink cursor-pointer flex items-center gap-1">
-                  <ShieldAlert className="size-3 text-warning" />
+              <Label htmlFor="activity-pii" className="flex-1 cursor-pointer block space-y-0.5">
+                <span className="text-xs font-semibold text-nx-ink flex items-center gap-1">
+                  <ShieldAlert className="size-3 text-nx-warning-strong" />
                   {t("crmActivities.form.containsPii")}
-                </Label>
-                <p className="text-[10px] text-nx-ink-3">
+                </span>
+                <span className="block text-[10px] font-normal text-nx-ink-3">
                   {t("crmActivities.form.piiDesc")}
-                </p>
-              </div>
+                </span>
+              </Label>
             </div>
           </div>
 

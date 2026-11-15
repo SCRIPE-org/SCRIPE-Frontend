@@ -79,7 +79,7 @@ export function PipelineStageMatrixSection({
                     <div className="flex items-center gap-2">
                       <span className="text-sm font-bold text-nx-ink">{isRtl && stage.labelAr ? stage.labelAr : stage.labelEn}</span>
                       {isProposalOrLater && (
-                        <Badge variant="outline" className="text-[10px] gap-1 text-nx-accent border-nx-accent/30 bg-nx-accent-wash/30">
+                        <Badge variant="outline" className="text-[10px] gap-1 text-nx-accent border-nx-accent/30 bg-nx-accent-wash">
                           <ShieldCheck className="size-3" />{t("crmOpportunities.kanban.proposalGateBadge")}
                         </Badge>
                       )}

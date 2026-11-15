@@ -478,14 +478,40 @@ export interface LoginBrandingConfig {
 // ─── CTA URL Validation (§19 — Threat #4) ──────────────
 const BLOCKED_PROTOCOLS = ["javascript:", "data:", "blob:", "vbscript:"];
 
-export function isValidCtaUrl(url: string): boolean {
-  if (!url) return false;
-  const trimmed = url.trim().toLowerCase();
-  // Must start with https:// or /
-  if (trimmed.startsWith("https://") || trimmed.startsWith("/")) {
-    // Reject if any blocked protocol is embedded (double encoding attacks)
-    return !BLOCKED_PROTOCOLS.some((p) => trimmed.includes(p));
+function hasControlChars(value: string): boolean {
+  for (let i = 0; i < value.length; i += 1) {
+    const code = value.charCodeAt(i);
+    if (code <= 31 || code === 127) return true;
   }
+  return false;
+}
+
+export function isValidCtaUrl(url: string): boolean {
+  if (!url || typeof url !== "string") return false;
+  if (hasControlChars(url)) return false;
+  const trimmed = url.trim();
+  if (!trimmed) return false;
+  if (trimmed.includes("\\")) return false;
+
+  const lower = trimmed.toLowerCase();
+  // Reject if any blocked protocol is embedded (double encoding / obfuscation attacks)
+  if (BLOCKED_PROTOCOLS.some((p) => lower.includes(p))) return false;
+
+  // Reject protocol-relative URLs (//host) and allow clean same-app relative paths (/...)
+  if (lower.startsWith("/")) {
+    return !lower.startsWith("//") && !lower.startsWith("/\\");
+  }
+
+  // Require valid https:// origin URL
+  if (lower.startsWith("https://")) {
+    try {
+      const parsed = new URL(trimmed);
+      return parsed.protocol === "https:" && parsed.hostname.length > 0;
+    } catch {
+      return false;
+    }
+  }
+
   return false;
 }
 

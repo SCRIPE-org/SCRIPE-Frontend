@@ -79,4 +79,36 @@ describe("Switch", () => {
     const row = root.parentElement;
     expect(row).toHaveAttribute("dir", "ltr");
   });
+
+  it("keeps checked hover on bg-nx-accent-fill (not bg-nx-accent) and high-contrast focus ring", () => {
+    render(<Switch aria-label="notifications" checked onCheckedChange={() => {}} />);
+
+    const root = screen.getByRole("switch");
+    expect(root.className).toContain("border-nx-line-hi");
+    expect(root.className).toContain("data-[state=checked]:bg-nx-accent-fill");
+    expect(root.className).toContain("data-[state=checked]:enabled:hover:bg-nx-accent-fill");
+    expect(root.className.split(/\s+/)).not.toContain("data-[state=checked]:enabled:hover:bg-nx-accent");
+    expect(root.className).toContain("data-[state=checked]:focus-visible:border-nx-on-fill");
+
+    const thumbEl = root.querySelector("span");
+    expect(thumbEl?.className).toContain("bg-nx-ink-3");
+    expect(thumbEl?.className).toContain("data-[state=checked]:bg-nx-on-fill");
+  });
+
+  it("blocks state changes when disabled or readOnly while preserving cursor/state contracts", () => {
+    const onCheckedChange = vi.fn();
+    render(
+      <>
+        <Switch aria-label="disabled-switch" disabled onCheckedChange={onCheckedChange} />
+        <Switch aria-label="readonly-switch" readOnly onCheckedChange={onCheckedChange} />
+      </>
+    );
+
+    const disabledSwitch = screen.getByRole("switch", { name: "disabled-switch" });
+    const readonlySwitch = screen.getByRole("switch", { name: "readonly-switch" });
+    expect(disabledSwitch).toBeDisabled();
+    expect(disabledSwitch.className).toContain("disabled:cursor-not-allowed");
+    expect(readonlySwitch).toHaveAttribute("data-readonly", "true");
+    expect(readonlySwitch.className).toContain("data-[readonly=true]:cursor-default");
+  });
 });

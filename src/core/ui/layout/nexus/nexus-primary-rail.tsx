@@ -41,7 +41,7 @@ import type { MenuItem } from "@core/navigation";
 import { NotificationBell } from "@core/ui/notification";
 import { UserProfileDropdown } from "@core/ui/user-profile-dropdown";
 import { cn, resolveBilingualLabel } from "@core/common/utils";
-import { LayoutGrid } from "lucide-react";
+import { LayoutGrid, Lock } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@core/ui/tooltip";
 import { DynamicIcon, NX_FOCUS_RING } from "./_parts/primary-rail-parts";
 import { useTenantBranding } from "@core/providers/tenant-branding-provider";
@@ -461,7 +461,7 @@ interface ModuleWorkspaceButtonProps {
 
 function ModuleWorkspaceButton({
   label,
-  abbreviation,
+  abbreviation: _abbreviation,
   icon,
   accentColor,
   isActive,
@@ -470,7 +470,7 @@ function ModuleWorkspaceButton({
   onClick,
 }: ModuleWorkspaceButtonProps) {
   const [hovered, setHovered] = React.useState(false);
-  const { language, t } = useI18n();
+  const { t } = useI18n();
   const lockedLabel = `${label} (${t("chrome.section.locked")})`;
 
   // Identity colour stays per-workspace (accentColor is data, not styling);
@@ -506,12 +506,6 @@ function ModuleWorkspaceButton({
           onMouseLeave={() => setHovered(false)}
           className={cn(
             "group relative flex items-center justify-center transition-[color,background-color,border-color,box-shadow] duration-nx-standard ease-nx-enter motion-reduce:transition-none",
-            // An active pin is the only lit thing when it renders (the rail
-            // filters the active workspace out of pins, so in practice at most
-            // one glow ever exists on screen). It lives in a class, not inline:
-            // an inline box-shadow beat the focus ring, so an active pin showed
-            // no keyboard focus at all.
-            isActive && "shadow-nx-glow",
             NX_FOCUS_RING
           )}
           style={{
@@ -527,16 +521,6 @@ function ModuleWorkspaceButton({
             opacity: isLocked ? 0.55 : 1,
           }}
         >
-          {/* Active edge ring — STATIC.
-              This carried `animate-pulse`, an unbounded 2s opacity loop that
-              ran for as long as a workspace was active, i.e. permanently. That
-              is the idle pulse the product owner reported seeing on the rail,
-              and it breaks the brand law directly: light collects on the
-              active thing, never as an idle animation. The ring itself is the
-              correct signal and stays — a lit accent edge on the active pin,
-              paired with the --nx-glow box-shadow above. Only the loop is
-              gone, so there is no longer any motion to gate on reduced-motion
-              and nothing about the active state is lost. */}
           {isActive && (
             <div
               style={{
@@ -551,24 +535,14 @@ function ModuleWorkspaceButton({
           {/* Lock overlay for locked modules */}
           {isLocked && (
             <div
+              aria-hidden="true"
+              className="pointer-events-none absolute bottom-0.5 flex h-3.5 w-3.5 items-center justify-center rounded-full border bg-nx-surface text-nx-warning-strong"
               style={{
-                position: "absolute",
-                bottom: 2,
                 insetInlineEnd: 2,
-                width: 14,
-                height: 14,
-                borderRadius: "50%",
-                background: "var(--nx-surface)",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                fontSize: 8,
-                color: "hsl(var(--warning))",
-                border: "1px solid hsl(var(--warning) / 0.3)",
-                pointerEvents: "none",
+                borderColor: "hsl(var(--warning-strong) / 0.35)",
               }}
             >
-              🔒
+              <Lock className="h-2.5 w-2.5" aria-hidden="true" />
             </div>
           )}
           <DynamicIcon name={icon} size={20} />

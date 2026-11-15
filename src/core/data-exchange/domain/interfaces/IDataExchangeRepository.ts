@@ -19,6 +19,9 @@ import type {
  * Repository contract mediating ViewModels and DataExchangeService.
  */
 export interface IDataExchangeRepository {
+  /** Clears cached entity summaries and descriptors (e.g., on tenant switch, logout, or import commit). */
+  clearCache?(entityKey?: string): void;
+
   /** Lists all entities permitted for data exchange in the current tenant. */
   listEntities(signal?: AbortSignal): Promise<DataExchangeEntitySummaryDto[]>;
 

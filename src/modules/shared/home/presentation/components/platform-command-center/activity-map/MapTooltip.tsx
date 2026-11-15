@@ -37,13 +37,13 @@ export function MapTooltip({ hoveredCountry, mapStageRef }: MapTooltipProps) {
 
   return (
     <div
-      className="pointer-events-none absolute z-20 min-w-[170px] rounded-lg border border-nx-line bg-nx-surface/95 p-2.5 text-[11px] backdrop-blur-md"
+      className="pointer-events-none absolute z-20 min-w-[170px] rounded-lg border border-nx-line-hi bg-nx-popover p-2.5 text-[11px] shadow-nx-popover"
       style={{ left, top }}
     >
       <div className="flex items-center justify-between gap-2">
         <b className="block font-semibold text-nx-ink">{hoveredCountry.country.name}</b>
         {hoveredCountry.country.isHost && (
-          <span className="py-0.2 shrink-0 rounded border border-primary/30 bg-primary/20 px-1.5 font-mono text-[9px] text-primary">
+          <span className="py-0.2 shrink-0 rounded border border-nx-accent bg-nx-accent-wash px-1.5 font-mono text-[9px] text-nx-accent">
             Host
           </span>
         )}
@@ -68,7 +68,7 @@ export function MapTooltip({ hoveredCountry, mapStageRef }: MapTooltipProps) {
             errors
           </span>
           {hoveredCountry.country.tenantNames?.length > 0 && (
-            <span className="mt-1 block max-w-[210px] truncate font-mono text-[9.5px] text-primary/90">
+            <span className="mt-1 block max-w-[210px] truncate font-mono text-[9.5px] text-nx-accent">
               {hoveredCountry.country.tenantNames.join(", ")}
             </span>
           )}
@@ -79,7 +79,7 @@ export function MapTooltip({ hoveredCountry, mapStageRef }: MapTooltipProps) {
             "No tenant sites registered in this region"}
         </span>
       )}
-      <span className="mt-1 block text-[9px] font-medium text-primary">
+      <span className="mt-1 block text-[9px] font-medium text-nx-accent">
         {t("platformCommandCenter.activity.clickToFocus") || "Click to focus"}
       </span>
     </div>

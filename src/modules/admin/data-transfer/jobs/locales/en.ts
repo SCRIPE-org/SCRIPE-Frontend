@@ -9,6 +9,13 @@ export const en = {
     empty: {
       title: "No transfer jobs found",
       description: "No data transfer jobs match the selected filter criteria.",
+      unfilteredTitle: "No transfer jobs yet",
+      unfilteredDescription:
+        "Launch Import Studio or export data from an entity to queue your first background transfer job.",
+    },
+    error: {
+      title: "Unable to load transfer jobs",
+      description: "An unexpected error occurred while fetching background job telemetry.",
     },
     kpis: {
       totalJobs: "Total Jobs",
@@ -31,6 +38,7 @@ export const en = {
       Import: "Import",
       Export: "Export",
       Migration: "Migration",
+      MultiSheetMigration: "Multi-Sheet Migration",
     },
     statuses: {
       Queued: "Queued",
@@ -73,6 +81,30 @@ export const en = {
     filters: {
       allStatuses: "All Statuses",
       allKinds: "All Types",
+    },
+    detail: {
+      fileName: "Source File",
+      importMode: "Import Mode",
+      onboardingMode: "Onboarding Mode",
+      fileFormat: "File Format",
+      startedAt: "Started",
+      completedAt: "Completed",
+      expiresAt: "Artifact Expires",
+      errorSummary: "Failure Summary",
+      validRows: "Valid Rows",
+      createdUpdatedRows: "Created / Updated",
+    },
+    studioPicker: {
+      title: "Select Target Entity for Import Studio",
+      description: "Choose which tenant-enabled entity you want to import into. Only entities allowed by your active edition and import permissions are listed.",
+      entityLabel: "Target Entity",
+      entityPlaceholder: "Choose an importable entity...",
+      confirm: "Open Import Studio",
+      loadingCatalog: "Loading tenant entity catalog...",
+      emptyTitle: "No Importable Entities Available",
+      emptyDescription: "No entities currently permit spreadsheet import for your active tenant edition or permission role.",
+      noImportableActionTooltip: "No importable entities are available for this tenant or role.",
+      multiSheetTag: "Multi-sheet",
     },
   },
 };

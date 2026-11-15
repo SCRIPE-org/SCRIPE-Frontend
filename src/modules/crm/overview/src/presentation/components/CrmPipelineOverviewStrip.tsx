@@ -134,7 +134,7 @@ export function CrmPipelineOverviewStrip({
               data-stage-color={stageColor}
               onClick={() => onSelectStage?.(stage.key)}
               className={cn(
-                "group relative flex h-auto flex-col items-stretch justify-between p-3.5 rounded-nx-md border text-left transition-all duration-nx-micro select-none whitespace-normal",
+                "group relative flex h-auto flex-col items-stretch justify-between p-3.5 rounded-nx-md border text-start transition-all duration-nx-micro select-none whitespace-normal",
                 colorMeta.headerBorderClass,
                 isSelected
                   ? "border-nx-accent bg-nx-raised ring-1 ring-nx-accent"
@@ -149,9 +149,9 @@ export function CrmPipelineOverviewStrip({
                 {isProposalOrAfter ? (
                   <span
                     title={t("crm.pipeline.partyRequiredNotice")}
-                    className="flex items-center text-warning"
+                    className="flex items-center text-nx-warning-strong"
                   >
-                    <Lock className="size-3 text-warning" aria-hidden="true" />
+                    <Lock className="size-3 text-nx-warning-strong" aria-hidden="true" />
                   </span>
                 ) : (
                   <span className={cn("text-[10px] font-mono px-1.5 py-0.5 rounded border", colorMeta.badgeClass)}>#{idx + 1}</span>
@@ -159,20 +159,20 @@ export function CrmPipelineOverviewStrip({
               </div>
 
               <div className="mt-2.5 space-y-0.5 w-full">
-                <div className="text-base font-extrabold text-nx-ink">
+                <div className="text-base font-extrabold tabular-nums text-nx-ink">
                   {stage.count}
-                  <span className="text-[10px] font-normal text-nx-ink-3 ml-1">
+                  <span className="text-[10px] font-normal text-nx-ink-3 ms-1">
                     {t("crm.pipeline.dealsCount")}
                   </span>
                 </div>
-                <div className="text-[11px] font-medium font-mono text-nx-ink-2 truncate">
+                <div className="text-[11px] font-medium font-mono tabular-nums text-nx-ink-2 truncate">
                   {displayCurrency}{" "}
                   {convertAmount(stage.value, sourceCurrency, displayCurrency).toLocaleString()}
                 </div>
               </div>
 
               {isProposalOrAfter && (
-                <div className="mt-2 pt-1.5 border-t border-nx-line/50 flex items-center gap-1 text-[10px] text-warning font-semibold w-full">
+                <div className="mt-2 pt-1.5 border-t border-nx-line/50 flex items-center gap-1 text-[10px] text-nx-warning-strong font-semibold w-full">
                   <ShieldCheck className="size-3 shrink-0" />
                   <span className="truncate">
                     {t("crm.pipeline.partyGate", { defaultValue: "Account / Contact Required" })}

@@ -171,13 +171,13 @@ input[type="checkbox"][aria-hidden="true"] {
 @property --workspace-hue {
   syntax: "<number>";
   inherits: true;
-  initial-value: 262;
+  initial-value: 128;
 }
 
 @property --workspace-chroma {
   syntax: "<number>";
   inherits: true;
-  initial-value: 0.14;
+  initial-value: 0.21;
 }
 
 /* The crossfade itself, on the element the provider actually writes to.
@@ -224,34 +224,33 @@ html[data-reduced-motion="true"] {
    never ambient decoration. On a Lime FILL the foreground is always Ink,
    never white. Lime is not body text on light surfaces — use accent-text.
    ============================================================================ */
-:root,
-:root[data-theme="light"] {
+:root {
   --scripe-signal: #c6ff00;
-  --scripe-ink: #0d0d0e;
-  --scripe-void: #050506;
-  --scripe-carbon: #151719;
-  --scripe-graphite: #3f4347;
-  --scripe-mineral: #d7d8d6;
+  --scripe-ink: #0b0d10;
+  --scripe-void: #0b0d10;
+  --scripe-carbon: #15181c;
+  --scripe-graphite: #30363d;
+  --scripe-mineral: #cfd4cd;
   --scripe-white: #ffffff;
 
   --scripe-bg: #f7f8f5;
   --scripe-surface: #ffffff;
   --scripe-surface-raised: #ffffff;
   --scripe-surface-subtle: #eef0eb;
-  --scripe-border: #d5d9d3;
-  --scripe-border-strong: #aeb4ad;
+  --scripe-border: #cfd4cd;
+  --scripe-border-strong: #767c75;
   --scripe-text: #0d0d0e;
   --scripe-text-muted: #4b504c;
-  --scripe-text-faint: #6f756f;
+  --scripe-text-faint: #5e635e;
 
   --scripe-accent: #c6ff00;
-  --scripe-accent-fg: #0d0d0e;
+  --scripe-accent-fg: #0b0d10;
   --scripe-accent-text: #4c6200;
   --scripe-focus: #4c6200;
 
-  --scripe-success: #16784a;
+  --scripe-success: #126e43;
   --scripe-warning: #765700;
-  --scripe-warning-strong: #9a4f00;
+  --scripe-warning-strong: #943b00;
   --scripe-info: #0b5d85;
   --scripe-destructive: #b4232a;
 
@@ -259,20 +258,19 @@ html[data-reduced-motion="true"] {
   --scripe-shadow-hard: 0 5px 0 rgba(13, 13, 14, 0.12);
 }
 
-.dark,
-:root[data-theme="dark"] {
-  --scripe-bg: #050506;
-  --scripe-surface: #0d0d0e;
-  --scripe-surface-raised: #151719;
-  --scripe-surface-subtle: #1d2022;
-  --scripe-border: #2c3033;
-  --scripe-border-strong: #3f4347;
+.dark {
+  --scripe-bg: #0b0d10;
+  --scripe-surface: #15181c;
+  --scripe-surface-raised: #1f242b;
+  --scripe-surface-subtle: #272d36;
+  --scripe-border: #30363d;
+  --scripe-border-strong: #6e7681;
   --scripe-text: #f7f8f5;
   --scripe-text-muted: #b9bdb8;
-  --scripe-text-faint: #8c918d;
+  --scripe-text-faint: #909691;
 
   --scripe-accent: #c6ff00;
-  --scripe-accent-fg: #0d0d0e;
+  --scripe-accent-fg: #0b0d10;
   --scripe-accent-text: #c6ff00;
   --scripe-focus: #c6ff00;
 
@@ -283,15 +281,15 @@ html[data-reduced-motion="true"] {
   --scripe-destructive: #ff6b6b;
 
   --scripe-shadow-raised: 0 14px 38px rgba(0, 0, 0, 0.34), 0 2px 0 rgba(255, 255, 255, 0.025) inset;
-  --scripe-shadow-hard: 0 7px 0 #050506;
+  --scripe-shadow-hard: 0 7px 0 #0b0d10;
 }
 
-/* Auth cinematic brand stage — Ink/Void ground with restrained Lime
+/* Auth cinematic brand stage — Obsidian/Carbon ground with restrained Lime
    environmental light. Replaces the retired Aurora orb/scan/particle system. */
 .scripe-auth-stage {
   background:
     radial-gradient(75% 55% at 50% 35%, rgba(198, 255, 0, 0.1), transparent 62%),
-    linear-gradient(180deg, #0d0d0e 0%, #050506 100%);
+    linear-gradient(180deg, #15181c 0%, #0b0d10 100%);
 }
 
 /* Login "Program Cover" motion — ONE authored moment, nothing ambient.
@@ -443,35 +441,32 @@ html[data-reduced-motion="true"] .scripe-fade-in {
      had zero consumers and was removed; these two source numbers stay
      registered here because @property above still animates them for that
      direct-CSS-var context usage. */
-  --workspace-hue: 262;
-  --workspace-chroma: 0.14;
+  --workspace-hue: 128;
+  --workspace-chroma: 0.21;
 
-  /* Light theme colors — RELAY vNEXT: Signal Lime, not the old default Purple.
-     This is the base/fallback layer every unthemed shadcn-pattern component
-     reads (bg-primary, ring-ring, text-primary, the sidebar family) when no
-     --nx- or --sx- token applies — e.g. WorkspaceCard's focus-visible:ring-ring.
-     Ink foreground always pairs with the Lime fill, never a near-white. */
-  --background: 0 0% 100%;
-  --foreground: 240 10% 3.9%;
+  /* Light theme colors — RELAY vNEXT: tracks SCRIPE neutral & accent semantics.
+     Light --primary uses Accent Text Light (#4C6200 / 74 100% 19%) with white
+     foreground (6.88:1–7.00:1) so text-primary, bg-primary, border-primary, and
+     ring-primary all pass WCAG AA in Light mode (fixing 1.19:1 lime-on-white). */
+  --background: 80 18% 97%;
+  --foreground: 240 4% 5%;
   --card: 0 0% 100%;
-  --card-foreground: 240 10% 3.9%;
+  --card-foreground: 240 4% 5%;
   --popover: 0 0% 100%;
-  --popover-foreground: 240 10% 3.9%;
-  --primary: 74 100% 50%;
-  --primary-foreground: 240 4% 5%;
-  --secondary: 240 4.8% 95.9%;
-  --secondary-foreground: 240 5.9% 10%;
-  --muted: 240 4.8% 95.9%;
-  --muted-foreground: 240 3.8% 46.1%;
-  --accent: 240 4.8% 95.9%;
-  --accent-foreground: 240 5.9% 10%;
-  /* Serves BOTH duties: readable as text on white (6.47:1) and dark enough that
-     the near-white foreground on top of it also passes (6.4:1). The stock
-     shadcn 0 84.2% 60.2% failed both at 3.76:1. */
-  --destructive: 0 72% 42%;
-  --destructive-foreground: 0 0% 98%;
-  --border: 240 5.9% 90%;
-  --input: 240 5.9% 90%;
+  --popover-foreground: 240 4% 5%;
+  --primary: 74 100% 19%;
+  --primary-foreground: 0 0% 100%;
+  --secondary: 84 14% 93%;
+  --secondary-foreground: 240 4% 5%;
+  --muted: 84 14% 93%;
+  --muted-foreground: 120 3% 38%;
+  --accent: 84 14% 93%;
+  --accent-foreground: 240 4% 5%;
+  /* Unified with --scripe-destructive (#b4232a — 6.53:1 on white, 5.69:1 on #eef0eb). */
+  --destructive: 357 67% 42%;
+  --destructive-foreground: 0 0% 100%;
+  --border: 103 8% 82%;
+  --input: 111 3% 47%;
   /* Ring is a NON-TEXT indicator and must clear 3:1 against the surface it
      is drawn on. Signal Lime on a white canvas measures 1.19:1 — effectively
      invisible — so the light theme uses Accent Text Light (#4C6200, the same
@@ -482,13 +477,13 @@ html[data-reduced-motion="true"] .scripe-fade-in {
   --radius: 0.75rem;
 
   /* Light sidebar colors */
-  --sidebar: 0 0% 98%;
-  --sidebar-foreground: 240 5.9% 10%;
-  --sidebar-primary: 74 100% 50%;
-  --sidebar-primary-foreground: 240 4% 5%;
-  --sidebar-accent: 240 4.8% 95.9%;
-  --sidebar-accent-foreground: 240 5.9% 10%;
-  --sidebar-border: 240 5.9% 90%;
+  --sidebar: 80 18% 97%;
+  --sidebar-foreground: 240 4% 5%;
+  --sidebar-primary: 74 100% 19%;
+  --sidebar-primary-foreground: 0 0% 100%;
+  --sidebar-accent: 84 14% 93%;
+  --sidebar-accent-foreground: 240 4% 5%;
+  --sidebar-border: 103 8% 82%;
   --sidebar-ring: 74 100% 19%;
 
   /* Chart colors (used by Recharts via shadcn ChartContainer).
@@ -536,20 +531,20 @@ html[data-reduced-motion="true"] .scripe-fade-in {
      here for any transitional/legacy consumer, not for new use. */
   --sx-bg-grad: radial-gradient(
     140% 90% at 25% 25%,
-    #151719 0%,
-    #0d0d0e 40%,
-    #050506 80%,
-    #030304 100%
+    #1f242b 0%,
+    #15181c 40%,
+    #0b0d10 85%,
+    #080a0c 100%
   );
-  --sx-card-bg: linear-gradient(180deg, rgba(21, 23, 25, 0.86), rgba(13, 13, 14, 0.92));
-  --sx-card-border: rgba(198, 255, 0, 0.16);
+  --sx-card-bg: linear-gradient(180deg, rgba(21, 24, 28, 0.92), rgba(11, 13, 16, 0.96));
+  --sx-card-border: rgba(198, 255, 0, 0.2);
   --sx-card-shadow:
-    0 30px 80px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(255, 255, 255, 0.02),
+    0 30px 80px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(255, 255, 255, 0.03),
     inset 0 1px 0 rgba(255, 255, 255, 0.07);
   --sx-text: #f7f8f5;
   --sx-text-heading: #f7f8f5;
-  --sx-text-mute: rgba(247, 248, 245, 0.62);
-  --sx-text-faint: rgba(247, 248, 245, 0.4);
+  --sx-text-mute: rgba(247, 248, 245, 0.68);
+  --sx-text-faint: rgba(247, 248, 245, 0.56);
   --sx-divider: rgba(255, 255, 255, 0.08);
   --sx-accent: #c6ff00;
   --sx-accent-text: #c6ff00;
@@ -608,22 +603,22 @@ html[data-reduced-motion="true"] .scripe-fade-in {
     inset 0 1px 0 rgba(255, 255, 255, 0.9);
   --sx-text: #0d0d0e;
   --sx-text-heading: #0d0d0e;
-  --sx-text-mute: rgba(13, 13, 14, 0.66);
-  --sx-text-faint: rgba(13, 13, 14, 0.42);
-  --sx-divider: rgba(76, 98, 0, 0.1);
+  --sx-text-mute: rgba(13, 13, 14, 0.7);
+  --sx-text-faint: rgba(13, 13, 14, 0.62);
+  --sx-divider: rgba(76, 98, 0, 0.12);
   --sx-accent: #4c6200;
   --sx-accent-text: #4c6200;
   --sx-accent-soft: rgba(76, 98, 0, 0.08);
   --sx-accent-soft-border: rgba(76, 98, 0, 0.25);
   --sx-chip-bg: rgba(76, 98, 0, 0.05);
   --sx-chip-bg-active: linear-gradient(180deg, rgba(198, 255, 0, 0.22), rgba(198, 255, 0, 0.08));
-  --sx-chip-border: rgba(76, 98, 0, 0.1);
+  --sx-chip-border: rgba(76, 98, 0, 0.12);
   --sx-chip-border-active: #4c6200;
-  --sx-success-dot: #16784a;
-  /* error alert — light card. #b42318 measures 6.57:1 on white. */
-  --sx-error-bg: rgba(180, 35, 24, 0.08);
-  --sx-error-border: rgba(180, 35, 24, 0.25);
-  --sx-error-text: #b42318;
+  --sx-success-dot: #126e43;
+  /* error alert — light card. #b4232a measures 6.53:1 on white. */
+  --sx-error-bg: rgba(180, 35, 42, 0.08);
+  --sx-error-border: rgba(180, 35, 42, 0.25);
+  --sx-error-text: #b4232a;
   /* field tokens — light theme */
   --sx-field-bg: rgba(76, 98, 0, 0.04);
   --sx-field-bg-focus: rgba(76, 98, 0, 0.06);
@@ -652,17 +647,16 @@ html {
 /* ========================================
    PRIMARY COLOR THEMES
    ======================================== */
-/* Scripe brand theme — Signal Lime primary (#C6FF00), Ink foreground.
-   Lime fill always pairs with Ink text (DESIGN.md Lime rule), never the
-   base --primary-foreground (which is a near-white inherited default and
-   would fail contrast catastrophically on a Lime fill). */
+/* Scripe brand theme — Light mode uses Accent Text Light (#4C6200) for readable
+   --primary/--ring (6.88:1–7.00:1 on white) and white foreground; Dark mode overrides
+   with Signal Lime (#C6FF00) + Obsidian Ink (#0B0D10). */
 :root[data-theme="scripe"] {
-  --primary: 74 100% 50%;
-  --primary-foreground: 240 4% 5%;
-  --ring: 74 100% 50%;
-  --sidebar-primary: 74 100% 50%;
-  --sidebar-primary-foreground: 240 4% 5%;
-  --sidebar-ring: 74 100% 50%;
+  --primary: 74 100% 19%;
+  --primary-foreground: 0 0% 100%;
+  --ring: 74 100% 19%;
+  --sidebar-primary: 74 100% 19%;
+  --sidebar-primary-foreground: 0 0% 100%;
+  --sidebar-ring: 74 100% 19%;
   --shadow-primary: 240 4% 5%;
 }
 
@@ -849,31 +843,33 @@ html {
 /* ========================================
    LIGHT BACKGROUND THEMES
    ======================================== */
+/* Default light background matches refined RELAY vNext neutral mineral paper
+   (--background != --card, crisp --border, WCAG 1.4.11 >= 3.0:1 --input). */
 :root:not(.dark)[data-light-bg-theme="default"] {
-  --background: 0 0% 100%;
+  --background: 80 18% 97%;
   --card: 0 0% 100%;
   --popover: 0 0% 100%;
-  --sidebar: 0 0% 98%;
-  --secondary: 240 4.8% 95.9%;
-  --muted: 240 4.8% 95.9%;
-  --accent: 240 4.8% 95.9%;
-  --border: 240 5.9% 90%;
-  --input: 240 5.9% 90%;
-  --sidebar-border: 240 5.9% 90%;
+  --sidebar: 80 18% 97%;
+  --secondary: 84 14% 93%;
+  --muted: 84 14% 93%;
+  --accent: 84 14% 93%;
+  --border: 103 8% 82%;
+  --input: 111 3% 47%;
+  --sidebar-border: 103 8% 82%;
 }
 
-/* Scripe light background — soft violet tint (#F4F1FB) */
+/* Scripe light background — neutral mineral paper (#F7F8F5 -> #FFFFFF -> #EEF0EB) */
 :root:not(.dark)[data-light-bg-theme="scripe"] {
-  --background: 264 50% 96%;
-  --card: 264 60% 99%;
-  --popover: 264 60% 99%;
-  --sidebar: 264 40% 97%;
-  --secondary: 264 35% 93%;
-  --muted: 264 35% 93%;
-  --accent: 264 35% 93%;
-  --border: 262 30% 88%;
-  --input: 262 30% 88%;
-  --sidebar-border: 262 30% 88%;
+  --background: 80 18% 97%;
+  --card: 0 0% 100%;
+  --popover: 0 0% 100%;
+  --sidebar: 80 18% 97%;
+  --secondary: 84 14% 93%;
+  --muted: 84 14% 93%;
+  --accent: 84 14% 93%;
+  --border: 103 8% 82%;
+  --input: 111 3% 47%;
+  --sidebar-border: 103 8% 82%;
 }
 
 :root:not(.dark)[data-light-bg-theme="warm"] {
@@ -1075,41 +1071,36 @@ html {
    DARK THEME BASE COLORS
    ======================================== */
 .dark {
-  --background: 240 10% 3.9%;
-  --foreground: 0 0% 98%;
-  --card: 240 10% 3.9%;
-  --card-foreground: 0 0% 98%;
-  --popover: 240 10% 3.9%;
-  --popover-foreground: 0 0% 98%;
-  /* RELAY vNEXT: same Lime/Ink pairing as the light block above — Signal
-     Lime is invariant across themes, never a per-theme hue swap. */
-  --primary: 74 100% 50%;
-  --primary-foreground: 240 4% 5%;
-  --secondary: 240 3.7% 15.9%;
-  --secondary-foreground: 0 0% 98%;
-  --muted: 240 3.7% 15.9%;
-  --muted-foreground: 240 5% 64.9%;
-  --accent: 240 3.7% 15.9%;
-  --accent-foreground: 0 0% 98%;
-  /* The stock shadcn dark destructive (0 62.8% 30.6%) is a FILL colour, but the
-     codebase uses `text-destructive` in 606 places — at 1.99:1 on the dark card
-     that error text was effectively invisible. Inverting the duty pair fixes
-     both: bright enough to read as text (6.04:1), with a near-black foreground
-     when used as a fill (6.03:1). */
-  --destructive: 0 84% 65%;
-  --destructive-foreground: 240 10% 4%;
-  --border: 240 3.7% 15.9%;
-  --input: 240 3.7% 15.9%;
-  --ring: 74 100% 50%;
+  --background: 216 19% 5%;
+  --foreground: 80 18% 97%;
+  --card: 214 14% 10%;
+  --card-foreground: 80 18% 97%;
+  --popover: 215 16% 15%;
+  --popover-foreground: 80 18% 97%;
+  /* RELAY vNEXT: Signal Lime (#C6FF00) on Obsidian Ink (#0B0D10 — 16.40:1). */
+  --primary: 73 100% 50%;
+  --primary-foreground: 216 19% 5%;
+  --secondary: 215 16% 15%;
+  --secondary-foreground: 80 18% 97%;
+  --muted: 216 16% 18%;
+  --muted-foreground: 130 3% 58%;
+  --accent: 215 16% 15%;
+  --accent-foreground: 80 18% 97%;
+  /* Unified with --scripe-destructive (#ff6b6b — 6.42:1 on #15181c, 7.01:1 w/ #0b0d10 fg). */
+  --destructive: 0 100% 71%;
+  --destructive-foreground: 216 19% 5%;
+  --border: 212 12% 21%;
+  --input: 215 8% 47%;
+  --ring: 73 100% 50%;
 
-  --sidebar: 240 5.9% 10%;
-  --sidebar-foreground: 0 0% 98%;
-  --sidebar-primary: 74 100% 50%;
-  --sidebar-primary-foreground: 240 4% 5%;
-  --sidebar-accent: 240 3.7% 15.9%;
-  --sidebar-accent-foreground: 0 0% 98%;
-  --sidebar-border: 240 3.7% 15.9%;
-  --sidebar-ring: 74 100% 50%;
+  --sidebar: 214 14% 10%;
+  --sidebar-foreground: 80 18% 97%;
+  --sidebar-primary: 73 100% 50%;
+  --sidebar-primary-foreground: 216 19% 5%;
+  --sidebar-accent: 215 16% 15%;
+  --sidebar-accent-foreground: 80 18% 97%;
+  --sidebar-border: 212 12% 21%;
+  --sidebar-ring: 73 100% 50%;
 
   /* Chart colors (dark — the SAME eight hues re-stepped for the dark
      surface, not an automatic flip; slot order matches the light block).
@@ -1131,13 +1122,13 @@ html {
 /* Scripe brand theme — Signal Lime (#C6FF00) is invariant across themes;
    Ink foreground stays constant on the Lime fill (see light block above). */
 .dark[data-theme="scripe"] {
-  --primary: 74 100% 50%;
-  --primary-foreground: 240 4% 5%;
-  --ring: 74 100% 50%;
-  --sidebar-primary: 74 100% 50%;
-  --sidebar-primary-foreground: 240 4% 5%;
-  --sidebar-ring: 74 100% 50%;
-  --shadow-primary: 240 4% 5%;
+  --primary: 73 100% 50%;
+  --primary-foreground: 216 19% 5%;
+  --ring: 73 100% 50%;
+  --sidebar-primary: 73 100% 50%;
+  --sidebar-primary-foreground: 216 19% 5%;
+  --sidebar-ring: 73 100% 50%;
+  --shadow-primary: 216 19% 5%;
 }
 
 .dark[data-theme="blue"] {
@@ -1314,232 +1305,236 @@ html {
    DARK BACKGROUND THEMES
    ======================================== */
 .dark[data-dark-bg-theme="default"] {
-  --background: 240 10% 3.9%;
-  --card: 240 10% 3.9%;
-  --popover: 240 10% 3.9%;
-  --sidebar: 240 5.9% 10%;
-  --secondary: 240 3.7% 15.9%;
-  --muted: 240 3.7% 15.9%;
-  --accent: 240 3.7% 15.9%;
-  --border: 240 3.7% 15.9%;
-  --input: 240 3.7% 15.9%;
-  --sidebar-border: 240 3.7% 15.9%;
+  --background: 216 19% 5%;
+  --card: 214 14% 10%;
+  --popover: 215 16% 15%;
+  --sidebar: 214 14% 10%;
+  --secondary: 215 16% 15%;
+  --muted: 216 16% 18%;
+  --accent: 215 16% 15%;
+  --border: 212 12% 21%;
+  --input: 215 8% 47%;
+  --sidebar-border: 212 12% 21%;
 }
 
-/* Scripe dark background — deep violet-black (#06060E) */
+/* Scripe dark background — evolved obsidian/carbon neutral hierarchy (#0B0D10 -> #15181C -> #1F242B) */
 .dark[data-dark-bg-theme="scripe"] {
-  --background: 240 40% 4%;
-  --card: 250 44% 8%;
-  --popover: 250 44% 8%;
-  --sidebar: 250 42% 6%;
-  --secondary: 252 35% 14%;
-  --muted: 252 35% 14%;
-  --accent: 252 35% 16%;
-  --border: 262 40% 18%;
-  --input: 262 40% 18%;
-  --sidebar-border: 262 40% 18%;
+  --background: 216 19% 5%;
+  --card: 214 14% 10%;
+  --popover: 215 16% 15%;
+  --sidebar: 214 14% 10%;
+  --secondary: 215 16% 15%;
+  --muted: 216 16% 18%;
+  --accent: 215 16% 15%;
+  --border: 212 12% 21%;
+  --input: 215 8% 47%;
+  --sidebar-border: 212 12% 21%;
 }
 
 .dark[data-dark-bg-theme="darker"] {
-  --background: 240 15% 2%;
-  --card: 240 15% 2%;
-  --popover: 240 15% 2%;
-  --sidebar: 240 15% 6%;
-  --secondary: 240 10% 12%;
-  --muted: 240 10% 12%;
-  --accent: 240 10% 12%;
-  --border: 240 8% 18%;
-  --input: 240 8% 18%;
-  --sidebar-border: 240 8% 18%;
+  --background: 215 16% 4%;
+  --card: 215 14% 8%;
+  --popover: 215 14% 13%;
+  --sidebar: 215 14% 7%;
+  --secondary: 215 14% 13%;
+  --muted: 215 14% 16%;
+  --accent: 215 14% 13%;
+  --border: 215 12% 20%;
+  --input: 215 8% 46%;
+  --sidebar-border: 215 12% 20%;
 }
 
 .dark[data-dark-bg-theme="pitch"] {
   --background: 0 0% 0%;
-  --card: 0 0% 0%;
-  --popover: 0 0% 0%;
+  --card: 0 0% 6%;
+  --popover: 0 0% 11%;
   --sidebar: 0 0% 4%;
-  --secondary: 0 0% 8%;
-  --muted: 0 0% 8%;
-  --accent: 0 0% 8%;
-  --border: 0 0% 12%;
-  --input: 0 0% 12%;
-  --sidebar-border: 0 0% 12%;
+  --secondary: 0 0% 11%;
+  --muted: 0 0% 14%;
+  --accent: 0 0% 11%;
+  --border: 0 0% 18%;
+  --input: 0 0% 44%;
+  --sidebar-border: 0 0% 18%;
 }
 
 .dark[data-dark-bg-theme="slate"] {
-  --background: 215 50% 6%;
-  --card: 215 50% 6%;
-  --popover: 215 50% 6%;
-  --sidebar: 215 50% 10%;
-  --secondary: 215 40% 14%;
-  --muted: 215 40% 14%;
-  --accent: 215 40% 14%;
-  --border: 215 30% 18%;
-  --input: 215 30% 18%;
-  --sidebar-border: 215 30% 18%;
+  --background: 215 38% 6%;
+  --card: 215 32% 11%;
+  --popover: 215 28% 16%;
+  --sidebar: 215 32% 10%;
+  --secondary: 215 28% 15%;
+  --muted: 215 24% 19%;
+  --accent: 215 28% 15%;
+  --border: 215 22% 23%;
+  --input: 215 14% 48%;
+  --sidebar-border: 215 22% 23%;
 }
 
 .dark[data-dark-bg-theme="warm-dark"] {
-  --background: 20 30% 3%;
-  --card: 20 30% 3%;
-  --popover: 20 30% 3%;
-  --sidebar: 20 30% 7%;
-  --secondary: 20 25% 11%;
-  --muted: 20 25% 11%;
-  --accent: 20 25% 11%;
-  --border: 20 20% 15%;
-  --input: 20 20% 15%;
-  --sidebar-border: 20 20% 15%;
+  --background: 20 30% 4%;
+  --card: 20 24% 9%;
+  --popover: 20 22% 14%;
+  --sidebar: 20 24% 8%;
+  --secondary: 20 20% 14%;
+  --muted: 20 18% 17%;
+  --accent: 20 20% 14%;
+  --border: 20 16% 21%;
+  --input: 20 10% 47%;
+  --sidebar-border: 20 16% 21%;
 }
 
 .dark[data-dark-bg-theme="forest"] {
-  --background: 120 30% 4%;
-  --card: 120 30% 4%;
-  --popover: 120 30% 4%;
-  --sidebar: 120 30% 8%;
-  --secondary: 120 25% 12%;
-  --muted: 120 25% 12%;
-  --accent: 120 25% 12%;
-  --border: 120 20% 16%;
-  --input: 120 20% 16%;
-  --sidebar-border: 120 20% 16%;
+  --background: 140 24% 4%;
+  --card: 140 20% 9%;
+  --popover: 140 18% 14%;
+  --sidebar: 140 20% 8%;
+  --secondary: 140 18% 14%;
+  --muted: 140 16% 17%;
+  --accent: 140 18% 14%;
+  --border: 140 14% 21%;
+  --input: 140 10% 47%;
+  --sidebar-border: 140 14% 21%;
 }
 
 .dark[data-dark-bg-theme="ocean"] {
-  --background: 200 50% 5%;
-  --card: 200 50% 5%;
-  --popover: 200 50% 5%;
-  --sidebar: 200 50% 9%;
-  --secondary: 200 40% 13%;
-  --muted: 200 40% 13%;
-  --accent: 200 40% 13%;
-  --border: 200 30% 17%;
-  --input: 200 30% 17%;
-  --sidebar-border: 200 30% 17%;
+  --background: 200 44% 5%;
+  --card: 200 36% 10%;
+  --popover: 200 32% 15%;
+  --sidebar: 200 36% 9%;
+  --secondary: 200 30% 14%;
+  --muted: 200 26% 18%;
+  --accent: 200 30% 14%;
+  --border: 200 22% 22%;
+  --input: 200 14% 48%;
+  --sidebar-border: 200 22% 22%;
 }
 
 .dark[data-dark-bg-theme="purple-dark"] {
   --background: 270 30% 4%;
-  --card: 270 30% 4%;
-  --popover: 270 30% 4%;
-  --sidebar: 270 30% 8%;
-  --secondary: 270 25% 12%;
-  --muted: 270 25% 12%;
-  --accent: 270 25% 12%;
-  --border: 270 20% 16%;
-  --input: 270 20% 16%;
-  --sidebar-border: 270 20% 16%;
+  --card: 270 25% 9%;
+  --popover: 270 22% 14%;
+  --sidebar: 270 25% 8%;
+  --secondary: 270 20% 14%;
+  --muted: 270 18% 17%;
+  --accent: 270 20% 14%;
+  --border: 270 16% 21%;
+  --input: 270 12% 48%;
+  --sidebar-border: 270 16% 21%;
 }
 
 .dark[data-dark-bg-theme="crimson"] {
-  --background: 350 40% 4%;
-  --card: 350 40% 4%;
-  --popover: 350 40% 4%;
-  --sidebar: 350 40% 8%;
-  --secondary: 350 30% 12%;
-  --muted: 350 30% 12%;
-  --accent: 350 30% 12%;
-  --border: 350 25% 16%;
-  --input: 350 25% 16%;
-  --sidebar-border: 350 25% 16%;
+  --background: 350 36% 4%;
+  --card: 350 28% 9%;
+  --popover: 350 24% 14%;
+  --sidebar: 350 28% 8%;
+  --secondary: 350 22% 14%;
+  --muted: 350 20% 17%;
+  --accent: 350 22% 14%;
+  --border: 350 18% 21%;
+  --input: 350 12% 48%;
+  --sidebar-border: 350 18% 21%;
 }
 
 .dark[data-dark-bg-theme="midnight"] {
-  --background: 230 60% 3%;
-  --card: 230 60% 3%;
-  --popover: 230 60% 3%;
-  --sidebar: 230 55% 7%;
-  --secondary: 230 45% 11%;
-  --muted: 230 45% 11%;
-  --accent: 230 45% 11%;
-  --border: 230 35% 15%;
-  --input: 230 35% 15%;
-  --sidebar-border: 230 35% 15%;
+  --background: 230 50% 4%;
+  --card: 230 42% 9%;
+  --popover: 230 36% 14%;
+  --sidebar: 230 42% 8%;
+  --secondary: 230 34% 14%;
+  --muted: 230 28% 17%;
+  --accent: 230 34% 14%;
+  --border: 230 24% 21%;
+  --input: 230 14% 48%;
+  --sidebar-border: 230 24% 21%;
 }
 
 .dark[data-dark-bg-theme="charcoal"] {
-  --background: 0 0% 8%;
-  --card: 0 0% 8%;
-  --popover: 0 0% 8%;
-  --sidebar: 0 0% 12%;
-  --secondary: 0 0% 16%;
-  --muted: 0 0% 16%;
-  --accent: 0 0% 16%;
-  --border: 0 0% 20%;
-  --input: 0 0% 20%;
-  --sidebar-border: 0 0% 20%;
+  --background: 0 0% 6%;
+  --card: 0 0% 10%;
+  --popover: 0 0% 15%;
+  --sidebar: 0 0% 9%;
+  --secondary: 0 0% 15%;
+  --muted: 0 0% 18%;
+  --accent: 0 0% 15%;
+  --border: 0 0% 22%;
+  --input: 0 0% 46%;
+  --sidebar-border: 0 0% 22%;
 }
 
 .dark[data-dark-bg-theme="obsidian"] {
-  --background: 260 30% 3%;
-  --card: 260 30% 3%;
-  --popover: 260 30% 3%;
-  --sidebar: 260 25% 7%;
-  --secondary: 260 20% 11%;
-  --muted: 260 20% 11%;
-  --accent: 260 20% 11%;
-  --border: 260 15% 15%;
-  --input: 260 15% 15%;
-  --sidebar-border: 260 15% 15%;
+  --background: 218 22% 4%;
+  --card: 218 18% 9%;
+  --popover: 218 16% 14%;
+  --sidebar: 218 18% 8%;
+  --secondary: 218 16% 14%;
+  --muted: 218 14% 17%;
+  --accent: 218 16% 14%;
+  --border: 218 14% 21%;
+  --input: 218 10% 47%;
+  --sidebar-border: 218 14% 21%;
 }
 
 .dark[data-dark-bg-theme="navy"] {
-  --background: 220 60% 5%;
-  --card: 220 60% 5%;
-  --popover: 220 60% 5%;
-  --sidebar: 220 55% 9%;
-  --secondary: 220 45% 13%;
-  --muted: 220 45% 13%;
-  --accent: 220 45% 13%;
-  --border: 220 35% 17%;
-  --input: 220 35% 17%;
-  --sidebar-border: 220 35% 17%;
+  --background: 220 52% 5%;
+  --card: 220 44% 10%;
+  --popover: 220 38% 15%;
+  --sidebar: 220 44% 9%;
+  --secondary: 220 36% 14%;
+  --muted: 220 30% 18%;
+  --accent: 220 36% 14%;
+  --border: 220 26% 22%;
+  --input: 220 14% 48%;
+  --sidebar-border: 220 26% 22%;
 }
 
 .dark[data-dark-bg-theme="graphite"] {
-  --background: 220 10% 10%;
-  --card: 220 10% 10%;
-  --popover: 220 10% 10%;
-  --sidebar: 220 8% 14%;
-  --secondary: 220 6% 18%;
-  --muted: 220 6% 18%;
-  --accent: 220 6% 18%;
-  --border: 220 5% 22%;
-  --input: 220 5% 22%;
-  --sidebar-border: 220 5% 22%;
+  --background: 216 14% 7%;
+  --card: 216 12% 11%;
+  --popover: 216 12% 16%;
+  --sidebar: 216 12% 10%;
+  --secondary: 216 12% 15%;
+  --muted: 216 12% 19%;
+  --accent: 216 12% 15%;
+  --border: 216 10% 23%;
+  --input: 216 8% 48%;
+  --sidebar-border: 216 10% 23%;
 }
 
 .dark[data-dark-bg-theme="onyx"] {
-  --background: 0 0% 2%;
-  --card: 0 0% 2%;
-  --popover: 0 0% 2%;
-  --sidebar: 0 0% 5%;
-  --secondary: 0 0% 9%;
-  --muted: 0 0% 9%;
-  --accent: 0 0% 9%;
-  --border: 0 0% 13%;
-  --input: 0 0% 13%;
-  --sidebar-border: 0 0% 13%;
+  --background: 0 0% 3%;
+  --card: 0 0% 8%;
+  --popover: 0 0% 13%;
+  --sidebar: 0 0% 7%;
+  --secondary: 0 0% 12%;
+  --muted: 0 0% 16%;
+  --accent: 0 0% 12%;
+  --border: 0 0% 20%;
+  --input: 0 0% 45%;
+  --sidebar-border: 0 0% 20%;
 }
 
 .dark[data-dark-bg-theme="volcanic"] {
-  --background: 10 35% 4%;
-  --card: 10 35% 4%;
-  --popover: 10 35% 4%;
-  --sidebar: 10 30% 8%;
-  --secondary: 10 25% 12%;
-  --muted: 10 25% 12%;
-  --accent: 10 25% 12%;
-  --border: 10 20% 16%;
-  --input: 10 20% 16%;
-  --sidebar-border: 10 20% 16%;
+  --background: 10 30% 4%;
+  --card: 10 24% 9%;
+  --popover: 10 22% 14%;
+  --sidebar: 10 24% 8%;
+  --secondary: 10 20% 14%;
+  --muted: 10 18% 17%;
+  --accent: 10 20% 14%;
+  --border: 10 16% 21%;
+  --input: 10 10% 47%;
+  --sidebar-border: 10 16% 21%;
 }
 
 /* ========================================
    SECONDARY COLOR THEMES
    ======================================== */
 :root {
-  --secondary-accent: 262 83% 58%;
+  --secondary-accent: 74 100% 19%;
+}
+
+.dark {
+  --secondary-accent: 73 100% 50%;
 }
 
 :root[data-secondary-theme="purple"] {
@@ -2560,9 +2555,18 @@ html {
    Respects OS-level reduced motion preference
    ======================================== */
 @media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto !important;
+  }
+
+  *,
+  *::before,
+  *::after,
+  :root[data-animation="minimal"] *,
   :root[data-animation="moderate"] *,
   :root[data-animation="high"] * {
     animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
     animation-delay: 0ms !important;
     transition-duration: 0.01ms !important;
   }
@@ -2620,7 +2624,7 @@ html {
   }
 
   body {
-    @apply bg-background font-arabic text-foreground transition-colors duration-300;
+    @apply bg-background font-sans text-foreground;
   }
 }
 
@@ -2797,15 +2801,9 @@ html[lang="ar"],
   box-shadow: var(--shadow-lg);
 }
 
-/* ========================================
-   THEME TRANSITIONS
-   ======================================== */
-* {
-  transition:
-    background-color 0.3s ease,
-    border-color 0.3s ease,
-    color 0.3s ease;
-}
+/* Theme transitions are intentionally scoped to explicit interactive components
+   and @property --workspace-hue/--workspace-chroma on :root rather than `*`
+   to prevent mass DOM transition recalc and theme-switch flicker. */
 
 /* ========================================
    LAYOUT TEMPLATE SPECIFIC STYLES
@@ -2934,25 +2932,92 @@ html[lang="ar"],
 /* ========================================
    BEHAVIOR TOGGLES & ACCESSIBILITY
    ======================================== */
+html[data-reduced-motion="true"] {
+  scroll-behavior: auto !important;
+  transition: none !important;
+}
+
 html[data-reduced-motion="true"] *,
 html[data-reduced-motion="true"] *::before,
-html[data-reduced-motion="true"] *::after {
+html[data-reduced-motion="true"] *::after,
+html[data-reduced-motion="true"][data-animation="minimal"] *,
+html[data-reduced-motion="true"][data-animation="moderate"] *,
+html[data-reduced-motion="true"][data-animation="high"] * {
   animation: none !important;
   transition: none !important;
 }
 
-/* High contrast — token-level overrides, not a whole-page filter (the old
-   contrast()/saturate() filter distorted every colour including the measured
-   status and nx tokens). Secondary inks step up to the primary ink and
-   hairlines step up to their strong weight, so contrast rises everywhere
-   without re-deriving a single colour. */
-html[data-high-contrast="true"] {
-  --border: var(--foreground);
-  --input: var(--foreground);
-  --muted-foreground: var(--foreground);
-  --nx-line: var(--nx-line-hi);
-  --nx-ink-2: var(--nx-ink);
-  --nx-ink-3: var(--nx-ink);
+/* High contrast — token-level overrides ensuring >= 7:1 primary/secondary ink
+   and >= 4.5:1–6.5:1 structural borders across both Dark and Light modes.
+   Selector specificity >= (0,3,1) guarantees High Contrast always beats
+   :root:not(.dark)[data-light-bg-theme=*] (0,3,0) and .dark[data-dark-bg-theme=*] (0,2,0). */
+html:root.dark[data-high-contrast="true"],
+html:root[data-high-contrast="true"] {
+  --nx-ground: #000000;
+  --nx-surface: #0d0f12;
+  --nx-raised: #171b21;
+  --nx-raised-2: #222730;
+  --nx-popover: #1f242b;
+  --nx-ink: #ffffff;
+  --nx-ink-2: #e6e9e4;
+  --nx-ink-3: #c8ccc7;
+  --nx-line: #6e7681;
+  --nx-line-hi: #9ca4af;
+  --nx-accent: #c6ff00;
+  --background: 0 0% 0%;
+  --card: 216 16% 6%;
+  --popover: 215 16% 15%;
+  --border: 215 12% 55%;
+  --input: 215 14% 66%;
+  --sidebar-border: 215 12% 55%;
+  --muted-foreground: 0 0% 85%;
+  --primary: 73 100% 50%;
+  --primary-foreground: 216 19% 5%;
+  --ring: 73 100% 50%;
+  --sidebar-primary: 73 100% 50%;
+  --sidebar-primary-foreground: 216 19% 5%;
+  --sidebar-ring: 73 100% 50%;
+  --scripe-border: #6e7681;
+  --scripe-border-strong: #9ca4af;
+  --scripe-text: #ffffff;
+  --scripe-text-muted: #e6e9e4;
+  --scripe-text-faint: #c8ccc7;
+  --scripe-accent-text: #c6ff00;
+  --scripe-focus: #c6ff00;
+}
+
+html:root:not(.dark)[data-high-contrast="true"] {
+  --nx-ground: #ffffff;
+  --nx-surface: #ffffff;
+  --nx-raised: #edf0ec;
+  --nx-raised-2: #dfe4dd;
+  --nx-popover: #ffffff;
+  --nx-ink: #000000;
+  --nx-ink-2: #1a1c1a;
+  --nx-ink-3: #363a36;
+  --nx-line: #5e635e;
+  --nx-line-hi: #2b2e2b;
+  --nx-accent: #354500;
+  --background: 0 0% 100%;
+  --card: 0 0% 100%;
+  --popover: 0 0% 100%;
+  --border: 120 3% 38%;
+  --input: 120 3% 18%;
+  --sidebar-border: 120 3% 38%;
+  --muted-foreground: 120 3% 22%;
+  --primary: 74 100% 14%;
+  --primary-foreground: 0 0% 100%;
+  --ring: 74 100% 14%;
+  --sidebar-primary: 74 100% 14%;
+  --sidebar-primary-foreground: 0 0% 100%;
+  --sidebar-ring: 74 100% 14%;
+  --scripe-border: #5e635e;
+  --scripe-border-strong: #2b2e2b;
+  --scripe-text: #000000;
+  --scripe-text-muted: #1a1c1a;
+  --scripe-text-faint: #363a36;
+  --scripe-accent-text: #354500;
+  --scripe-focus: #354500;
 }
 
 /* The compact-mode attribute rule that also wrote --spacing-unit is gone
@@ -3285,7 +3350,7 @@ html[data-tenant-banner] aside.navigation-main-sidebar {
 .vault-stage input:-webkit-autofill,
 .vault-stage input:-webkit-autofill:hover,
 .vault-stage input:-webkit-autofill:focus {
-  -webkit-box-shadow: inset 0 0 0 1000px #17181a;
+  -webkit-box-shadow: inset 0 0 0 1000px #15181c;
   -webkit-text-fill-color: var(--sx-text, #f7f8f5);
   caret-color: var(--sx-accent, #c6ff00);
   transition: background-color 9999s ease-out;
@@ -3293,7 +3358,7 @@ html[data-tenant-banner] aside.navigation-main-sidebar {
 :root:not(.dark) .vault-stage input:-webkit-autofill,
 :root:not(.dark) .vault-stage input:-webkit-autofill:hover,
 :root:not(.dark) .vault-stage input:-webkit-autofill:focus {
-  -webkit-box-shadow: inset 0 0 0 1000px #fbfcf9;
+  -webkit-box-shadow: inset 0 0 0 1000px #f7f8f5;
   -webkit-text-fill-color: var(--sx-text, #0d0d0e);
 }
 /* Method chip hover + active states */
@@ -4173,29 +4238,25 @@ html[data-tenant-banner] aside.navigation-main-sidebar {
    HSL triplets to match the existing shadcn token convention.
    All values measured >= 4.5:1 against their own theme's card surface. */
 :root {
-  --success: 160 64% 52%;
-  /* Near-black, not white: this mint is bright, and white on it is 1.91:1.
-     The light theme below re-declares white, which is correct on its darker
-     green (5.32:1). Same token, opposite answer per theme. */
-  --success-foreground: 240 10% 4%;
-  --warning: 43 96% 56%;
-  --warning-foreground: 240 10% 4%;
-  /* Fourth step of the severity ramp. Some scales genuinely need
-     ok -> warn -> high -> critical; without this, amber and orange both
-     collapse into `warning` and a four-step ramp silently becomes three. */
-  --warning-strong: 27 96% 61%;
-  --warning-strong-foreground: 240 10% 4%;
-  --info: 213 94% 68%;
-  --info-foreground: 240 10% 4%;
+  --success: 150 57% 61%; /* #61d49a — 9.66:1 on #15181c */
+  /* Obsidian Ink, not white: bright mint with #0b0d10 = 10.56:1. */
+  --success-foreground: 216 19% 5%;
+  --warning: 45 86% 62%; /* #f2c94c — 11.22:1 on #15181c */
+  --warning-foreground: 216 19% 5%;
+  /* Fourth step of the severity ramp: ok -> warn -> high -> critical */
+  --warning-strong: 38 92% 50%; /* #f59e0b — 8.29:1 on #15181c */
+  --warning-strong-foreground: 216 19% 5%;
+  --info: 199 95% 74%; /* #7dd3fc — 10.68:1 on #15181c */
+  --info-foreground: 216 19% 5%;
 }
 :root:not(.dark) {
-  --success: 152 78% 27%; /* #0f7a45 — 5.40:1 on white */
+  --success: 152 72% 25%; /* #126e43 — 6.29:1 on white, 5.48:1 on #eef0eb, 4.62:1 on pill */
   --success-foreground: 0 0% 100%;
-  --warning: 39 100% 27%; /* #8a5a00 — 5.93:1 on white */
+  --warning: 44 100% 23%; /* #765700 — 6.70:1 on white, 5.84:1 on #eef0eb, 4.95:1 on pill */
   --warning-foreground: 0 0% 100%;
-  --warning-strong: 17 88% 34%; /* #a3320f — 6.6:1 on white */
+  --warning-strong: 24 100% 29%; /* #943b00 — 7.28:1 on white, 6.34:1 on #eef0eb, 4.92:1 on #e6e8e3 pill */
   --warning-strong-foreground: 0 0% 100%;
-  --info: 226 75% 48%; /* #1d4ed8 */
+  --info: 200 85% 28%; /* #0b5d85 — 7.20:1 on white, 6.27:1 on #eef0eb, 5.24:1 on pill */
   --info-foreground: 0 0% 100%;
 }
 
@@ -4213,10 +4274,10 @@ html[data-tenant-banner] aside.navigation-main-sidebar {
    expensive thing you can put under a modal on a low-end device. Defined
    globally, aliased by --nx-scrim, so there is exactly ONE scrim system. */
 :root {
-  --scrim: oklch(0.13 0.01 285 / 0.62);
+  --scrim: oklch(0.06 0.01 285 / 0.72);
 }
 :root:not(.dark) {
-  --scrim: oklch(0.21 0.02 285 / 0.42);
+  --scrim: oklch(0.16 0.01 260 / 0.48);
 }
 
 /* ============================================================================
@@ -4270,44 +4331,32 @@ html[data-tenant-banner] aside.navigation-main-sidebar {
    Reduced motion strips position/scale movement and keeps crossfades.
    ============================================================================ */
 :root {
-  /* surfaces — DESIGN.md's dark ladder verbatim: canvas/surface/raised/subtle. */
-  --nx-ground: #050506;
-  --nx-surface: #0d0d0e;
-  --nx-raised: #151719; /* raised surfaces AND hover states */
-  --nx-raised-2: #1d2022; /* the extra step above raised (DESIGN.md "subtle") */
+  /* evolved dark ladder — cures #050506 black crush while preserving obsidian depth */
+  --nx-ground: #0b0d10;
+  --nx-surface: #15181c;
+  --nx-raised: #1f242b; /* stepped clearly above #15181c for nested cards/headers */
+  --nx-raised-2: #272d36; /* subtle container/popover elevation tier */
 
-  /* ink — DESIGN.md dark text/muted/faint verbatim */
+  /* ink — dark text/muted/faint (>= 4.59:1 even on --nx-raised-2) */
   --nx-ink: #f7f8f5;
   --nx-ink-2: #b9bdb8;
-  --nx-ink-3: #8c918d;
+  --nx-ink-3: #909691;
 
-  /* hairlines — DESIGN.md dark edge/strong-edge (Graphite) verbatim */
-  --nx-line: #2c3033;
-  --nx-line-hi: #3f4347;
+  /* hairlines — subtle structural border + >= 3.0:1 interactive border across all 4 surfaces */
+  --nx-line: #30363d;
+  --nx-line-hi: #6e7681;
 
-  /* accent — RELAY vNEXT: Signal Lime is the one committed brand signal, and
-     it is INVARIANT, not workspace-derived. Text and fill keep opposite
-     contrast duties (two tokens): --nx-accent is the readable "as text/edge"
-     value (Lime itself on dark, Accent Text Light on light), --nx-accent-fill
-     is the constant Lime fill, and --nx-on-fill is ALWAYS Ink — a Lime fill
-     with a white label fails DESIGN.md's Lime rule outright.
-     Per-workspace tenant colour survives as CONTEXT (pills/chips/avatars/hub
-     tiles reading --workspace-hue/chroma directly via WorkspaceGroup.ts), not
-     as this global accent — see DESIGN.md §5. */
+  /* accent — Signal Lime invariant across themes */
   --nx-accent: var(--scripe-accent-text, #c6ff00);
   --nx-accent-fill: var(--scripe-signal, #c6ff00);
-  --nx-on-fill: var(--scripe-accent-fg, #0d0d0e);
-  --nx-accent-wash: color-mix(in oklch, var(--nx-accent-fill) 13%, transparent);
+  --nx-on-fill: var(--scripe-accent-fg, #0b0d10);
+  --nx-accent-wash: color-mix(in oklch, var(--nx-accent-fill) 14%, transparent);
+  --nx-selected: var(--nx-accent-wash);
 
-  /* secondary — retired as a distinct cyan brand hue (DESIGN.md bans old
-     cyan as global identity); kept as an alias of the measured --info token
-     so consumers with no fallback (commercial.css) keep resolving to
-     something sane rather than an invalid/transparent background. */
+  /* secondary — alias of the measured --info token */
   --nx-secondary: hsl(var(--info));
 
-  /* the signature glow — at most ONE element per screen wears this. Built
-     from the constant Lime fill (not the theme-tuned accent-as-text value)
-     so the glow stays vivid Signal Lime in both themes. */
+  /* the signature glow — at most ONE element per screen wears this. */
   --nx-glow: 0 0 18px -2px color-mix(in oklch, var(--nx-accent-fill) 50%, transparent);
 
   /* motion */
@@ -4317,80 +4366,61 @@ html[data-tenant-banner] aside.navigation-main-sidebar {
   --nx-ease-enter: cubic-bezier(0.23, 1, 0.32, 1);
   --nx-ease-exit: cubic-bezier(0.3, 0, 0.8, 0.15);
 
-  /* ── Wave A extensions ──────────────────────────────────────────────────
-     Consumed by the core/ui primitives; same scope and theming rules as the
-     Wave-1 tokens above. */
-
   /* geometry — one radius ladder for every primitive */
   --nx-radius-sm: 6px; /* chips, badges, inner elements */
   --nx-radius-control: 8px; /* inputs, buttons, selects */
   --nx-radius-md: 10px; /* popovers, dropdown panels */
   --nx-radius-lg: 14px; /* cards, dialogs */
 
-  /* overlay surface + depth ladder */
-  --nx-popover: var(--nx-raised);
+  /* overlay surface + depth ladder — popover sits above surface & raised cards */
+  --nx-popover: var(--nx-raised-2);
   --nx-shadow-sm: 0 1px 2px rgb(0 0 0 / 0.35);
   --nx-shadow-popover: 0 8px 24px -8px rgb(0 0 0 / 0.6), 0 2px 8px -2px rgb(0 0 0 / 0.4);
   --nx-shadow-modal: 0 24px 64px -16px rgb(0 0 0 / 0.7), 0 8px 24px -8px rgb(0 0 0 / 0.5);
-  /* upward-facing: sticky bottom bars (action bars, comparison trays) */
   --nx-shadow-bar-top: 0 -8px 24px -8px rgb(0 0 0 / 0.6), 0 -2px 8px -2px rgb(0 0 0 / 0.4);
 
   /* the modal scrim — alias of the global --scrim; ONE scrim system */
   --nx-scrim: var(--scrim);
 
-  /* hover tint — layers over any nx surface; reads the ink so it flips with
-     the theme by itself */
-  --nx-hover: color-mix(in srgb, var(--nx-ink) 5%, transparent);
+  /* hover tint — clearly perceptible lift over #15181c / #1f242b */
+  --nx-hover: color-mix(in srgb, var(--nx-ink) 7%, transparent);
 
-  /* focus — the lit edge: 1px inner accent line plus a soft accent wash
-     ring. Reads --nx-accent, so it follows the theme (Lime dark / Accent
-     Text Light light) — the one focus law, invariant across workspaces. */
-  --nx-focus: inset 0 0 0 1px var(--nx-accent), 0 0 0 3px var(--nx-accent-wash);
+  /* focus — accessible high-contrast 2px ring separated by a 2px ground gap (>= 3.0:1 everywhere) */
+  --nx-focus: 0 0 0 2px var(--nx-ground), 0 0 0 4px var(--scripe-focus, #c6ff00);
 
-  /* status — aliases of the global measured status tokens; nexus never
-     re-derives status colours. COMPLETE colours (hsl-wrapped), like every
-     other --nx- token. They flip with the theme through the vars they read. */
+  /* status — aliases of the global measured status tokens */
   --nx-danger: hsl(var(--destructive));
   --nx-warning: hsl(var(--warning));
+  --nx-warning-strong: hsl(var(--warning-strong));
   --nx-info: hsl(var(--info));
   --nx-success: hsl(var(--success));
 }
 
 :root:not(.dark) {
-  /* near-neutral paper — DESIGN.md's light ladder verbatim: canvas/surface/
-     subtle (used as the raised/hover step, same rationale as before: raised
-     must read visibly different from a white surface). */
+  /* mineral paper light ladder — AA verified across all 4 light surfaces */
   --nx-ground: #f7f8f5;
   --nx-surface: #ffffff;
-  --nx-raised: #eef0eb; /* hover tint in light — darker than surface by design */
-  --nx-raised-2: #e6e8e3; /* one step past raised; no direct DESIGN.md 4th step */
+  --nx-raised: #eef0eb;
+  --nx-raised-2: #e6e8e3;
 
   --nx-ink: #0d0d0e;
   --nx-ink-2: #4b504c;
-  --nx-ink-3: #6f756f;
+  --nx-ink-3: #5e635e;
 
-  --nx-line: #d5d9d3;
-  --nx-line-hi: #aeb4ad;
+  --nx-line: #cfd4cd;
+  --nx-line-hi: #767c75;
 
-  /* Accent Text Light (#4C6200): Signal Lime itself is not legible body text
-     on a white surface, so the "as text/edge" duty uses the darker readable
-     value here. Fill and --nx-on-fill are theme-invariant and inherit from
-     the dark block above — Lime fill + Ink foreground never changes. */
   --nx-accent: var(--scripe-accent-text, #4c6200);
-  --nx-accent-wash: color-mix(in oklch, var(--nx-accent-fill) 10%, transparent);
+  /* Light accent wash uses a warm olive-lime tint (~1.20:1 surface step on white)
+     rather than 10% #C6FF00 (which measured 1.03:1 invisible on white). */
+  --nx-accent-wash: color-mix(in srgb, #6b8c00 16%, transparent);
+  --nx-selected: var(--nx-accent-wash);
 
-  /* softer on light ground — a glow over white reads as smudge at dark-mode
-     strength. Still built from the constant Lime fill. */
   --nx-glow: 0 0 18px -2px color-mix(in oklch, var(--nx-accent-fill) 32%, transparent);
 
-  /* ── Wave A extensions — light overrides ────────────────────────────────
-     Radius, scrim, hover, focus and status aliases need no override: they
-     read vars that flip themselves. Popover cannot reuse --nx-raised here
-     because raised is the light HOVER tint; popovers stay on white. Shadows
-     stay much softer than dark's — dark-strength black on white reads as
-     dirt — and are cast in Ink (#0D0D0E / rgb(13 13 14)), the same neutral
-     the surfaces derive from, never a hue-tinted black. */
   --nx-popover: var(--nx-surface);
+  --nx-hover: color-mix(in srgb, var(--nx-ink) 5.5%, transparent);
+  --nx-focus: 0 0 0 2px var(--nx-surface), 0 0 0 4px var(--scripe-focus, #4c6200);
   --nx-shadow-sm: 0 1px 2px rgb(13 13 14 / 0.08);
   --nx-shadow-popover: 0 8px 24px -8px rgb(13 13 14 / 0.16), 0 2px 8px -2px rgb(13 13 14 / 0.08);
   --nx-shadow-modal: 0 24px 64px -16px rgb(13 13 14 / 0.24), 0 8px 24px -8px rgb(13 13 14 / 0.12);
@@ -4415,7 +4445,7 @@ a.bg-nx-accent-fill,
 .bg-nx-accent-fill .text-nx-on-fill,
 .bg-nx-accent-fill span,
 .bg-nx-accent-fill svg {
-  --nx-on-fill: var(--scripe-accent-fg, #0d0d0e);
+  --nx-on-fill: var(--scripe-accent-fg, #0b0d10);
   color: var(--nx-on-fill);
 }
 :root:not(.dark) .bg-nx-accent:not(.bg-nx-accent-fill):not(.bg-nx-accent-wash).text-nx-on-fill,
@@ -4426,7 +4456,9 @@ a.bg-nx-accent-fill,
 }
 :root:not(.dark) .bg-nx-accent:not(.bg-nx-accent-fill):not(.bg-nx-accent-wash) .text-nx-on-fill,
 :root:not(.dark) button.bg-nx-accent:not(.bg-nx-accent-fill):not(.bg-nx-accent-wash) span,
-:root:not(.dark) a.bg-nx-accent:not(.bg-nx-accent-fill):not(.bg-nx-accent-wash) span {
+:root:not(.dark) button.bg-nx-accent:not(.bg-nx-accent-fill):not(.bg-nx-accent-wash) svg,
+:root:not(.dark) a.bg-nx-accent:not(.bg-nx-accent-fill):not(.bg-nx-accent-wash) span,
+:root:not(.dark) a.bg-nx-accent:not(.bg-nx-accent-fill):not(.bg-nx-accent-wash) svg {
   color: #ffffff !important;
 }
 

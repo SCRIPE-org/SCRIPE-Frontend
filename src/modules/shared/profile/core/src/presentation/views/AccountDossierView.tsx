@@ -125,6 +125,7 @@ export function AccountDossierView() {
               updateProfile({
                 ...data,
                 customFields: customValues,
+                rowVersion: data.rowVersion ?? profile.rowVersion ?? dossier?.rowVersion,
               })
             }
             isSubmitting={isUpdating}
@@ -224,6 +225,7 @@ export function AccountDossierView() {
             phoneNumber: profile.phoneNumber,
             bio: profile.bio,
             customFields: customValues,
+            rowVersion: profile.rowVersion ?? dossier?.rowVersion,
             ...(mode === "email" ? { email: newValue } : { username: newValue.replace(/^@/, "") }),
           });
         }}

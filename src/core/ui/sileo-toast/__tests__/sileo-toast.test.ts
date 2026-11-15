@@ -45,7 +45,7 @@ describe("Sileo Toast System — Core Controller", () => {
         duration: 4000,
         roundness: 16,
         styles: expect.objectContaining({
-          description: expect.stringContaining("text-nx-ink-2!"),
+          description: expect.stringContaining("!text-nx-ink-2"),
         }),
       })
     );
@@ -156,6 +156,74 @@ describe("Sileo Toast System — Core Controller", () => {
         }),
       })
     );
+  });
+
+  it("permits same-origin action.href paths and blocks unsafe schemes or external redirects", () => {
+    const originalLocation = window.location;
+    const mockLocation = {
+      ...originalLocation,
+      origin: "https://app.scripe.test",
+      href: "https://app.scripe.test/dashboard",
+    };
+    Object.defineProperty(window, "location", {
+      configurable: true,
+      value: mockLocation,
+    });
+
+    try {
+      toast({
+        title: "Unsafe scheme",
+        action: { label: "Bad", href: "javascript:alert(1)" },
+      });
+      const jsPayload = (sileo.action as any).mock.calls.at(-1)?.[0];
+      jsPayload.button.onClick();
+      expect(mockLocation.href).toBe("https://app.scripe.test/dashboard");
+
+      toast({
+        title: "Protocol relative",
+        action: { label: "Bad", href: "//evil.example/phish" },
+      });
+      const protoRelPayload = (sileo.action as any).mock.calls.at(-1)?.[0];
+      protoRelPayload.button.onClick();
+      expect(mockLocation.href).toBe("https://app.scripe.test/dashboard");
+
+      toast({
+        title: "Cross origin",
+        action: { label: "Bad", href: "https://evil.example/phish" },
+      });
+      const crossOriginPayload = (sileo.action as any).mock.calls.at(-1)?.[0];
+      crossOriginPayload.button.onClick();
+      expect(mockLocation.href).toBe("https://app.scripe.test/dashboard");
+
+      toast({
+        title: "Explicit scheme without slashes",
+        action: { label: "Bad", href: "http:evil.example" },
+      });
+      const noSlashSchemePayload = (sileo.action as any).mock.calls.at(-1)?.[0];
+      noSlashSchemePayload.button.onClick();
+      expect(mockLocation.href).toBe("https://app.scripe.test/dashboard");
+
+      toast({
+        title: "Data URI",
+        action: { label: "Bad", href: "data:text/html,<script>alert(1)</script>" },
+      });
+      const dataPayload = (sileo.action as any).mock.calls.at(-1)?.[0];
+      dataPayload.button.onClick();
+      expect(mockLocation.href).toBe("https://app.scripe.test/dashboard");
+
+      toast({
+        title: "Safe relative",
+        action: { label: "View billing", href: "/account/billing?tab=plan" },
+      });
+      const safePayload = (sileo.action as any).mock.calls.at(-1)?.[0];
+      safePayload.button.onClick();
+      expect(mockLocation.href).toBe("https://app.scripe.test/account/billing?tab=plan");
+    } finally {
+      Object.defineProperty(window, "location", {
+        configurable: true,
+        value: originalLocation,
+      });
+    }
   });
 
   it("chains promise states with loading, success, and error", async () => {

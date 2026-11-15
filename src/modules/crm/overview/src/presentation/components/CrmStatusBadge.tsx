@@ -38,7 +38,7 @@ export function CrmStatusBadge({ stage, label, className }: CrmStatusBadgeProps)
       case "proposal":
         return {
           variant: "secondary" as const,
-          cls: "border-warning/30 bg-warning/10 text-warning border font-semibold",
+          cls: "border-warning-strong/30 bg-warning/10 text-nx-warning-strong border font-semibold",
           text: label || "Proposal",
         };
       case "default.negotiation":

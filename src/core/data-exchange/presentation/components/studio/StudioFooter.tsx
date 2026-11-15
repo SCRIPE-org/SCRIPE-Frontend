@@ -77,15 +77,15 @@ export function StudioFooter({
                     type="button"
                     variant="default"
                     disabled
-                    className="pointer-events-none opacity-50 bg-nx-accent text-nx-on-fill font-medium h-8 text-xs"
+                    className="pointer-events-none opacity-50 bg-nx-accent-fill text-nx-on-fill font-medium h-8 text-xs"
                     data-testid="studio-dryrun-btn"
                   >
                     {t("dataExchange.actions.nextDryRun")}
                   </Button>
                 </span>
               </TooltipTrigger>
-              <TooltipContent side="top" className="z-[960] max-w-sm border-nx-line bg-nx-surface text-nx-ink p-3 space-y-1">
-                <p className="font-semibold text-xs text-destructive">
+              <TooltipContent side="top" className="max-w-sm border-nx-line bg-nx-surface text-nx-ink p-3 space-y-1">
+                <p className="font-semibold text-xs text-nx-danger">
                   {t("dataExchange.tooltips.blockersSummary", {
                     issues: totalCompatibilityIssues,
                     missing: totalMissingRequired,
@@ -106,7 +106,7 @@ export function StudioFooter({
               variant="default"
               loading={isDryRunning}
               onClick={runDryRun}
-              className="bg-nx-accent text-nx-on-fill hover:opacity-90 font-medium h-8 text-xs"
+              className="bg-nx-accent-fill text-nx-on-fill hover:opacity-90 font-medium h-8 text-xs"
               data-testid="studio-dryrun-btn"
             >
               {t("dataExchange.actions.nextDryRun")}
@@ -133,7 +133,7 @@ export function StudioFooter({
               loading={isExecuting}
               disabled={commitDisabled}
               onClick={() => commitImport()}
-              className="bg-nx-accent text-nx-on-fill hover:opacity-90 font-medium text-xs h-8"
+              className="bg-nx-accent-fill text-nx-on-fill hover:opacity-90 font-medium text-xs h-8"
               data-testid="studio-commit-btn"
             >
               {t("dataExchange.actions.executeImport")}
@@ -157,7 +157,7 @@ export function StudioFooter({
               type="button"
               variant="default"
               onClick={onCloseStudio}
-              className="bg-nx-accent text-nx-on-fill hover:opacity-90 font-medium text-xs h-8"
+              className="bg-nx-accent-fill text-nx-on-fill hover:opacity-90 font-medium text-xs h-8"
               data-testid="studio-results-close-btn"
             >
               {t("dataExchange.actions.close")}

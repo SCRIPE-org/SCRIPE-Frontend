@@ -203,4 +203,32 @@ describe("BilingualOptionsEditor", () => {
 
     expect(onChange).toHaveBeenCalledWith({ en: "First\nSecond", ar: "" });
   });
+
+  it("keeps readOnly inputs focusable/readable without marking them disabled", () => {
+    render(
+      <BilingualOptionsEditor value="Small" valueAr="صغير" onChange={vi.fn()} readOnly {...props} />
+    );
+
+    const enInput = screen.getByLabelText("English label 1");
+    const arInput = screen.getByLabelText("Arabic label 1");
+    expect(enInput).toHaveAttribute("readonly");
+    expect(enInput).not.toBeDisabled();
+    expect(arInput).toHaveAttribute("readonly");
+    expect(arInput).not.toBeDisabled();
+  });
+
+  it("uses Nexus tokens and localized copy for >5 options scroll container", () => {
+    const many = ["One", "Two", "Three", "Four", "Five", "Six"].join("\n");
+    const { container } = render(
+      <BilingualOptionsEditor value={many} valueAr="" onChange={vi.fn()} {...props} />
+    );
+
+    expect(screen.getByText("6 options")).toBeInTheDocument();
+    expect(screen.getByText("Scroll to view all")).toBeInTheDocument();
+    const scrollBox = container.querySelector(".custom-scrollbar");
+    expect(scrollBox?.className).toContain("border-nx-line");
+    expect(scrollBox?.className).toContain("bg-nx-raised");
+    expect(scrollBox?.className).not.toContain("border-border");
+    expect(scrollBox?.className).not.toContain("bg-muted");
+  });
 });

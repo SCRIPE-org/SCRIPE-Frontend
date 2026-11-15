@@ -33,12 +33,12 @@ export const PartyToolbar = memo(function PartyToolbar({
   return (
     <div className="border-nx-line flex flex-col gap-3 rounded-xl border bg-nx-surface p-3 sm:flex-row sm:items-center sm:justify-between">
       <div className="relative flex-1">
-        <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-nx-ink-3 rtl:left-auto rtl:right-3" />
+        <Search className="pointer-events-none absolute start-3 top-1/2 h-4 w-4 -translate-y-1/2 text-nx-ink-3" />
         <Input
           value={searchTerm}
           onChange={(e) => onSearchChange(e.target.value)}
           placeholder={t("party.directory.searchPlaceholder")}
-          className="bg-nx-raised border-nx-line pl-9 rtl:pl-3 rtl:pr-9"
+          className="bg-nx-raised border-nx-line ps-9 pe-3"
         />
       </div>
 

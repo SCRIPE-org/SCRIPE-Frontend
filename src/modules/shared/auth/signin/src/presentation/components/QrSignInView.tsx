@@ -193,7 +193,7 @@ export function QrSignInView({ onSuccess, onBack, isRTL }: QrSignInViewProps) {
         >
           {vm.isCreating ? (
             <span className="flex items-center gap-2">
-              <span className="sx-spin1 inline-block h-4 w-4 rounded-full border-2 border-nx-on-fill/30 border-t-nx-on-fill" />
+              <span className="sx-spin1 inline-block h-4 w-4 rounded-full border-2 border-nx-on-fill border-t-transparent opacity-80" />
               {t("common.loading") || "Loading…"}
             </span>
           ) : (

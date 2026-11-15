@@ -39,7 +39,7 @@ export function ContactsTable({ contacts, className }: ContactsTableProps) {
       dir={isRtl ? "rtl" : "ltr"}
     >
       <div className="overflow-x-auto no-scrollbar">
-        <Table className="w-full text-left text-xs border-collapse" dir={isRtl ? "rtl" : "ltr"}>
+        <Table className="w-full text-start text-xs border-collapse" dir={isRtl ? "rtl" : "ltr"}>
           <TableHeader>
             <TableRow className="border-b border-nx-line bg-nx-raised/50 text-nx-ink-2 font-semibold">
               <TableHead className="px-4 py-3 text-start">{t("crmContacts.table.contact")}</TableHead>

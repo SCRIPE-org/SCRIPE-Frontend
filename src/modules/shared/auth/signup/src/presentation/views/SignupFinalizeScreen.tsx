@@ -2,7 +2,6 @@
 "use client";
 
 import Link from "next/link";
-import Image from "next/image";
 import { Check, Clock, LogIn, RefreshCw, RotateCcw, XCircle } from "lucide-react";
 import { useI18n } from "@core/providers/i18n-provider";
 import { useSignupTheme } from "@core/providers/signup-theme";
@@ -48,15 +47,13 @@ function StatusIcon({ tone, children }: { tone: string; children: React.ReactNod
 export function SignupFinalizeScreen() {
   const vm = useFinalizeViewModel();
   const { t, direction } = useI18n();
-  const { tokens, theme } = useSignupTheme();
+  const { tokens } = useSignupTheme();
 
   const isWorking = vm.phase === "processing" || vm.phase === "slow" || vm.phase === "completing";
-  const headerSurface = theme === "dark" ? "rgba(10, 8, 22, 0.72)" : "rgba(248, 247, 255, 0.82)";
 
   const ctaStyle = {
     background: tokens.gradientCta,
     color: tokens.accentContrast,
-    boxShadow: tokens.shadowCard,
   } as const;
   const ghostBtnClass =
     "inline-flex h-11 w-full items-center justify-center gap-2 rounded-xl text-[0.875rem] font-medium transition-opacity duration-200 hover:opacity-80";
@@ -65,44 +62,34 @@ export function SignupFinalizeScreen() {
 
   return (
     <div
-      className="relative flex min-h-[100dvh] flex-col"
+      className="relative flex min-h-[100dvh] flex-col bg-nx-ground text-nx-ink"
       dir={direction}
-      style={{ background: tokens.gradientPage }}
     >
-      {/* Ambient wash — restrained, non-interactive (no glow orb). */}
+      {/* Ambient wash — CSS-token radial wash (no SSR Light-mode flash). */}
       <div
         aria-hidden
-        className="pointer-events-none fixed inset-0 -z-0"
+        className="pointer-events-none fixed inset-0 z-0"
         style={{
-          background: `radial-gradient(60% 50% at 80% 0%, ${tokens.accent}0f 0%, transparent 60%),
-                       radial-gradient(50% 45% at 0% 100%, ${tokens.cyan}0a 0%, transparent 55%)`,
+          background:
+            "radial-gradient(60% 50% at 80% 0%, color-mix(in srgb, var(--nx-accent) 6%, transparent) 0%, transparent 60%), radial-gradient(50% 45% at 0% 100%, color-mix(in srgb, var(--nx-info) 4%, transparent) 0%, transparent 55%)",
         }}
       />
 
       {/* Header — backdrop-blur allowed here only. */}
-      <header
-        className="sticky top-0 z-40 flex h-14 items-center justify-center px-5 sm:px-8"
-        style={{
-          background: headerSurface,
-          backdropFilter: "blur(24px) saturate(160%)",
-          WebkitBackdropFilter: "blur(24px) saturate(160%)",
-          borderBottom: `1px solid ${tokens.border}`,
-        }}
-      >
+      <header className="sticky top-0 z-header flex h-14 items-center justify-center border-b border-nx-line bg-[color:color-mix(in_srgb,var(--nx-surface)_85%,transparent)] px-5 backdrop-blur-xl sm:px-8">
         <Link
           href="/login"
           aria-label={BRAND.name}
-          className="flex select-none items-center gap-2.5"
+          className="flex select-none items-center gap-2.5 rounded-nx-sm focus-visible:outline-none focus-visible:shadow-nx-focus"
         >
-          <Image
-            src="/brand/app-logo-1024.png"
+          <img
+            src="/brand/app-logo.svg"
             alt={BRAND.name}
-            className="h-7 w-auto"
+            className="h-7 w-7 shrink-0"
             width={28}
             height={28}
-            priority
           />
-          <span className="text-[15px] font-semibold tracking-tight" style={{ color: tokens.ink }}>
+          <span className="text-[15px] font-semibold tracking-tight text-nx-ink">
             {BRAND.name}
           </span>
         </Link>
@@ -114,7 +101,6 @@ export function SignupFinalizeScreen() {
           style={{
             background: tokens.surfaceCard,
             border: tokens.borderCard,
-            boxShadow: tokens.shadowCard,
           }}
         >
           {/* ── Processing / Slow / Completing ── */}

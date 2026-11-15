@@ -64,11 +64,11 @@ export function MoveStageDialog({
   ];
 
   useEffect(() => {
-    if (!open || oppCustomFieldConfigs.length === 0) return;
+    if (!open || rawOppCf.length === 0) return;
     setCustomFieldValues((prev) => {
       let changed = false;
       const next: Record<string, unknown> = { ...prev };
-      for (const fc of oppCustomFieldConfigs) {
+      for (const fc of rawOppCf) {
         if (next[fc.name] === undefined && fc.defaultValue != null) {
           next[fc.name] = fc.defaultValue;
           changed = true;
@@ -76,7 +76,7 @@ export function MoveStageDialog({
       }
       return changed ? next : prev;
     });
-  }, [open, rawOppCf, storeCustomFields]);
+  }, [open, rawOppCf]);
 
   const activeDealWorkflow = useCrmWorkflowsStore((s) => s.getActiveWorkflow("deal"));
   const evaluateTransition = useCrmWorkflowsStore((s) => s.evaluateTransition);
@@ -108,10 +108,15 @@ export function MoveStageDialog({
           requiredExitFields: [] as string[],
         }));
 
+  const initialStageIdx = opportunity ? effectiveStages.findIndex((s) => s.key === opportunity.stageKey) : -1;
+  const defaultTargetStageKey =
+    initialTargetStageKey ||
+    (effectiveStages[initialStageIdx + 1] ?? effectiveStages[initialStageIdx] ?? effectiveStages[0])?.key ||
+    "";
+
   useEffect(() => {
     if (!opportunity || !open) return;
-    const idx = effectiveStages.findIndex((s) => s.key === opportunity.stageKey);
-    setTargetStageKey(initialTargetStageKey || (effectiveStages[idx + 1] ?? effectiveStages[idx] ?? effectiveStages[0]).key);
+    setTargetStageKey(defaultTargetStageKey);
     setReason("");
     setSelectedPartyId(opportunity.partyId || "");
     setSelectedAccountId(opportunity.accountId || "");
@@ -121,7 +126,7 @@ export function MoveStageDialog({
     setSolutionFitConfirmed(Boolean(opportunity.solutionFitConfirmed));
     setCustomFieldValues({});
     setValidationError(null);
-  }, [opportunity, open, initialTargetStageKey]);
+  }, [opportunity, open, defaultTargetStageKey]);
 
   useEffect(() => {
     if (!open || !onLookupParties) return;

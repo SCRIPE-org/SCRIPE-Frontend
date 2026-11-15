@@ -16,7 +16,9 @@
 
 import * as React from "react";
 import { cn } from "@core/common/utils";
-import type { LucideIcon } from "lucide-react";
+import { AlertCircle, SearchX, type LucideIcon } from "lucide-react";
+
+export type EmptyStateVariant = "empty" | "filtered" | "error";
 
 export interface EmptyStateProps {
   /** What is missing, stated plainly. */
@@ -24,12 +26,16 @@ export interface EmptyStateProps {
   /** Why it is missing or what would fill it. */
   description?: string;
   icon?: LucideIcon;
+  /** Pre-rendered icon element fallback (used by adapters like SectionState). */
+  iconNode?: React.ReactNode;
+  /** Differentiates no data ("empty"), active filters ("filtered"), and fetch failures ("error"). */
+  variant?: EmptyStateVariant;
   /** The next step. Omit only when the user genuinely cannot act. */
   action?: React.ReactNode;
   /** A lower-commitment alternative beside the primary action. */
   secondaryAction?: React.ReactNode;
   size?: "sm" | "md" | "lg";
-  /** Renders without the dashed container, for use inside an existing card. */
+  /** Renders without the container border/wash, for use inside an existing card. */
   bare?: boolean;
   className?: string;
 }
@@ -48,7 +54,7 @@ const SIZES = {
   },
   md: {
     wrap: "py-10",
-    glyph: "h-12 w-12",
+    glyph: "h-11 w-11",
     icon: "h-5 w-5",
     gap: "mt-3.5",
     title: "text-base",
@@ -56,23 +62,40 @@ const SIZES = {
     actions: "mt-5",
   },
   lg: {
-    wrap: "py-16",
-    glyph: "h-14 w-14",
-    icon: "h-6 w-6",
+    wrap: "py-12",
+    glyph: "h-12 w-12",
+    icon: "h-5 w-5",
     gap: "mt-4",
     title: "text-lg",
     body: "text-sm",
-    actions: "mt-6",
+    actions: "mt-5",
   },
 } as const;
 
+const VARIANT_STYLES: Record<EmptyStateVariant, { container: string; glyph: string }> = {
+  empty: {
+    container: "rounded-nx-lg border border-dashed border-nx-line bg-nx-hover",
+    glyph: "border border-nx-line bg-nx-raised text-nx-ink-3",
+  },
+  filtered: {
+    container: "rounded-nx-lg border border-nx-line-hi bg-nx-surface",
+    glyph: "border border-info/30 bg-info/10 text-info",
+  },
+  error: {
+    container: "rounded-nx-lg border border-destructive/30 bg-destructive/5",
+    glyph: "border border-destructive/30 bg-destructive/10 text-destructive",
+  },
+};
+
 /**
- * Presentation UI component rendering an empty result set.
+ * Presentation UI component rendering an empty, filtered, or error result set.
  */
 export function EmptyState({
   title,
   description,
   icon: Icon,
+  iconNode,
+  variant = "empty",
   action,
   secondaryAction,
   size = "md",
@@ -80,36 +103,39 @@ export function EmptyState({
   className,
 }: EmptyStateProps) {
   const s = SIZES[size];
+  const v = VARIANT_STYLES[variant];
+  const ResolvedIcon =
+    Icon ?? (variant === "filtered" ? SearchX : variant === "error" ? AlertCircle : undefined);
+  const hasGlyph = Boolean(ResolvedIcon || iconNode);
 
   return (
     <div
-      role="status"
+      role={variant === "error" ? "alert" : "status"}
       data-empty-state-entrance=""
       className={cn(
         "nx-empty-state-entrance flex flex-col items-center justify-center px-6 text-center",
         s.wrap,
-        // --nx-hover is the 5% ink tint that layers over any nx surface — the
-        // faintest legal wash, which is all an empty container should carry.
-        !bare && "rounded-nx-lg border border-dashed border-nx-line bg-nx-hover",
+        !bare && v.container,
         className
       )}
     >
-      {Icon && (
+      {hasGlyph && (
         <div
           className={cn(
-            "grid place-items-center rounded-nx-md border border-nx-line bg-nx-raised text-nx-ink-3",
+            "grid place-items-center rounded-nx-md",
+            v.glyph,
             s.glyph
           )}
           aria-hidden="true"
         >
-          <Icon className={s.icon} />
+          {ResolvedIcon ? <ResolvedIcon className={s.icon} /> : iconNode}
         </div>
       )}
 
       <h3
         className={cn(
           "text-balance font-semibold leading-tight tracking-tight text-nx-ink",
-          Icon && s.gap,
+          hasGlyph && s.gap,
           s.title
         )}
       >

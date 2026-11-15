@@ -53,7 +53,7 @@ export function HealthTopKpiCards({ health, isLoading = false }: HealthTopKpiCar
               isHealthy
                 ? "border-success/30 bg-success/10 text-success"
                 : isDegraded
-                  ? "border-warning/30 bg-warning/10 text-warning"
+                  ? "border-warning/30 bg-warning/10 text-nx-warning-strong"
                   : "border-destructive/30 bg-destructive/10 text-destructive"
             }`}
           >
@@ -147,7 +147,7 @@ export function HealthTopKpiCards({ health, isLoading = false }: HealthTopKpiCar
               </span>
               <span className="font-mono text-xs text-nx-ink-3">/ 100</span>
               {healthScore >= 95 && (
-                <span className="ml-1 text-[10.5px] font-bold text-success">+2</span>
+                <span className="ms-1 text-[10.5px] font-bold text-success">+2</span>
               )}
             </div>
             <p className="mt-0.5 truncate text-[11px] text-nx-ink-3">

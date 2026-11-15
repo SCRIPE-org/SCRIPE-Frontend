@@ -196,7 +196,7 @@ export const PartyProfileView = React.memo(function PartyProfileView({
         <div className="p-6 sm:p-8">
           <div className="flex flex-col justify-between gap-6 sm:flex-row sm:items-start">
             <div className="flex items-start gap-4">
-              <div className="bg-nx-accent/10 flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl text-xl font-bold text-nx-accent">
+              <div className="bg-nx-accent-wash flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl text-xl font-bold text-nx-accent">
                 {profile.initials}
               </div>
 
@@ -226,7 +226,7 @@ export const PartyProfileView = React.memo(function PartyProfileView({
                       variant="ghost"
                       size="icon"
                       onClick={handleCopyId}
-                      className="ml-0.5 h-4 w-4 p-0 text-nx-ink-3 transition-colors hover:text-nx-ink"
+                      className="ms-0.5 h-4 w-4 p-0 text-nx-ink-3 transition-colors hover:text-nx-ink"
                       title={t("party.profile.copyCanonicalId") || "Copy Canonical ID"}
                       aria-label={t("party.profile.copyCanonicalId") || "Copy Canonical ID"}
                     >
@@ -317,10 +317,10 @@ export const PartyProfileView = React.memo(function PartyProfileView({
       {profile.mergeCandidates.length > 0 && (
         <div className="rounded-xl border border-warning/30 bg-warning/10 p-4 text-nx-ink">
           <div className="flex items-start gap-3">
-            <AlertTriangle className="mt-0.5 h-5 w-5 shrink-0 text-warning" />
+            <AlertTriangle className="mt-0.5 h-5 w-5 shrink-0 text-nx-warning-strong" />
             <div className="space-y-1">
               <h4 className="text-sm font-semibold">{t("party.profile.duplicateAlert")}</h4>
-              <p className="text-xs text-warning">
+              <p className="text-xs text-nx-warning-strong">
                 {t("party.profile.duplicateAlertDesc")}{" "}
                 {profile.mergeCandidates.map((m) => m.reason).join(", ")}
               </p>
@@ -374,7 +374,7 @@ export const PartyProfileView = React.memo(function PartyProfileView({
             <ShieldCheck className="h-4 w-4" />
             <span>{t("party.profile.tabAudit")}</span>
             {profile.mergeCandidates.length > 0 && (
-              <span className="rounded-full bg-warning/20 px-1.5 py-0.5 text-xs font-bold text-warning">
+              <span className="rounded-full bg-warning/20 px-1.5 py-0.5 text-xs font-bold text-nx-warning-strong">
                 {profile.mergeCandidates.length}
               </span>
             )}
@@ -589,7 +589,7 @@ export const PartyProfileView = React.memo(function PartyProfileView({
                   className="border-nx-line flex items-center justify-between bg-nx-surface p-4"
                 >
                   <div className="flex min-w-0 items-center gap-3">
-                    <div className="bg-nx-accent/10 flex h-10 w-10 shrink-0 items-center justify-center rounded-xl text-nx-accent">
+                    <div className="bg-nx-accent-wash flex h-10 w-10 shrink-0 items-center justify-center rounded-xl text-nx-accent">
                       {getContactIcon(contact.type)}
                     </div>
                     <div className="min-w-0">
@@ -610,23 +610,27 @@ export const PartyProfileView = React.memo(function PartyProfileView({
                   {vm.permissions.canManageContacts && (
                     <div className="flex items-center gap-1">
                       <Button
+                        type="button"
                         variant="ghost"
                         size="icon"
                         className="h-8 w-8 text-nx-ink-3 hover:text-nx-ink"
+                        aria-label={`${t("party.editTitle")}: ${contact.value}`}
                         onClick={() => {
                           vm.setEditingContact(contact);
                           vm.setIsEditContactOpen(true);
                         }}
                       >
-                        <Pencil className="h-4 w-4" />
+                        <Pencil className="h-4 w-4" aria-hidden="true" />
                       </Button>
                       <Button
+                        type="button"
                         variant="ghost"
                         size="icon"
                         className="h-8 w-8 text-nx-ink-3 hover:text-destructive"
+                        aria-label={`${t("party.deleteTitle")}: ${contact.value}`}
                         onClick={() => vm.handleRemoveContact(contact.id)}
                       >
-                        <Trash2 className="h-4 w-4" />
+                        <Trash2 className="h-4 w-4" aria-hidden="true" />
                       </Button>
                     </div>
                   )}
@@ -642,7 +646,7 @@ export const PartyProfileView = React.memo(function PartyProfileView({
             {/* Informative Contract Pending Banner */}
             <div className="rounded-xl border border-warning/30 bg-warning/10 p-4">
               <div className="flex items-start gap-3">
-                <AlertCircle className="mt-0.5 h-5 w-5 shrink-0 text-warning" />
+                <AlertCircle className="mt-0.5 h-5 w-5 shrink-0 text-nx-warning-strong" />
                 <div className="space-y-1">
                   <div className="flex items-center gap-2">
                     <h4 className="text-sm font-semibold text-nx-ink">
@@ -674,16 +678,16 @@ export const PartyProfileView = React.memo(function PartyProfileView({
               <TooltipProvider>
                 <Tooltip>
                   <TooltipTrigger asChild>
-                    <span tabIndex={0} className="inline-block">
-                      <Button
-                        size="sm"
-                        disabled
-                        className="pointer-events-none cursor-not-allowed gap-1.5 self-start text-xs opacity-50 sm:self-auto"
-                      >
-                        <Plus className="h-3.5 w-3.5" />
-                        <span>{t("party.profile.addRepresentative")}</span>
-                      </Button>
-                    </span>
+                    <Button
+                      type="button"
+                      size="sm"
+                      aria-disabled="true"
+                      onClick={(event) => event.preventDefault()}
+                      className="cursor-not-allowed gap-1.5 self-start text-xs opacity-50 aria-disabled:pointer-events-auto aria-disabled:active:shadow-none sm:self-auto"
+                    >
+                      <Plus className="h-3.5 w-3.5" aria-hidden="true" />
+                      <span>{t("party.profile.addRepresentative")}</span>
+                    </Button>
                   </TooltipTrigger>
                   <TooltipContent>
                     <p className="text-xs">
@@ -716,13 +720,14 @@ export const PartyProfileView = React.memo(function PartyProfileView({
                         <Badge variant="success">{rep.relationshipType}</Badge>
                         {vm.permissions.canManageRelationships && (
                           <Button
+                            type="button"
                             variant="ghost"
                             size="icon"
                             className="h-7 w-7 text-nx-ink-3 hover:text-destructive"
+                            aria-label={`${t("party.deleteTitle")}: ${rep.relationshipType}`}
                             onClick={() => vm.handleRemoveRelationship(rep.id)}
-                            title="Remove Representative"
                           >
-                            <Trash2 className="h-3.5 w-3.5" />
+                            <Trash2 className="h-3.5 w-3.5" aria-hidden="true" />
                           </Button>
                         )}
                       </div>
@@ -838,12 +843,14 @@ export const PartyProfileView = React.memo(function PartyProfileView({
                       )}
                       {vm.permissions.canManageRelationships && (
                         <Button
+                          type="button"
                           variant="ghost"
                           size="icon"
                           className="h-8 w-8 text-nx-ink-3 hover:text-destructive"
+                          aria-label={`${t("party.deleteTitle")}: ${rel.relationshipType}`}
                           onClick={() => vm.handleRemoveRelationship(rel.id)}
                         >
-                          <Trash2 className="h-4 w-4" />
+                          <Trash2 className="h-4 w-4" aria-hidden="true" />
                         </Button>
                       )}
                     </div>
@@ -899,12 +906,14 @@ export const PartyProfileView = React.memo(function PartyProfileView({
 
                   {vm.permissions.canManageRoles && (
                     <Button
+                      type="button"
                       variant="ghost"
                       size="icon"
                       className="h-8 w-8 text-nx-ink-3 hover:text-destructive"
+                      aria-label={`${t("party.deleteTitle")}: ${role.roleType}`}
                       onClick={() => vm.handleRemoveRole(role.id)}
                     >
-                      <Trash2 className="h-4 w-4" />
+                      <Trash2 className="h-4 w-4" aria-hidden="true" />
                     </Button>
                   )}
                 </Card>
@@ -965,7 +974,7 @@ export const PartyProfileView = React.memo(function PartyProfileView({
               <CardHeader>
                 <CardTitle className="flex items-center justify-between text-base">
                   <span className="flex items-center gap-2">
-                    <AlertTriangle className="h-4 w-4 text-warning" />
+                    <AlertTriangle className="h-4 w-4 text-nx-warning-strong" />
                     <span>{t("party.profile.mergeCandidatesTitle")}</span>
                   </span>
                   <span className="bg-nx-raised rounded-full px-2 py-0.5 text-xs text-nx-ink-3">

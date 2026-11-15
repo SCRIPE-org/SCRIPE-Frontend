@@ -3,7 +3,6 @@ import {
   extractCourtPhotos,
   extractCourtBio,
   packCourtPhotoMetadata,
-  packCourtDescription,
   getDisplayCourtPhotos,
   DEFAULT_COURT_PHOTOS,
 } from "../court-photos";

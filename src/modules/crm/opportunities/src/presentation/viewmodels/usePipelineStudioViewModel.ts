@@ -47,6 +47,7 @@ export function usePipelineStudioViewModel(defaultOpenStudio = false) {
   const historyStack = useWorkflowHistoryStack((snapshot) => {
     setStages(snapshot.stages); setTransitions(snapshot.transitions); setHasChanges(true);
   });
+  const { resetHistory } = historyStack;
 
   const setSelectedStageKey = (key: string | null) => { setSelectedStageKeyState(key); if (key !== null) setOpenRuleCatalogSignal(0); };
   const setSelectedTransitionId = (id: string | null) => { setSelectedTransitionIdState(id); setOpenRuleCatalogSignal(0); };
@@ -76,10 +77,10 @@ export function usePipelineStudioViewModel(defaultOpenStudio = false) {
     const iStages = buildStageNodesFromWorkflow(selectedWorkflow);
     const iTransitions = buildTransitionsFromWorkflow(selectedWorkflow);
     setStages(iStages); setTransitions(iTransitions);
-    historyStack.resetHistory(iStages, iTransitions);
+    resetHistory(iStages, iTransitions);
     setSelectedStageKeyState(null); setSelectedTransitionIdState(null);
     setOpenRuleCatalogSignal(0); setHasChanges(false); setValidationBanner(null);
-  }, [selectedWorkflow]);
+  }, [selectedWorkflow, resetHistory]);
 
   const commitDraft = (nextStages: CrmWorkflowStageNode[], nextTransitions: CrmWorkflowTransition[]) => {
     setStages(nextStages); setTransitions(nextTransitions);

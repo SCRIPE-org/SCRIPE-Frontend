@@ -2,6 +2,7 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useState } from "react";
+import { appLogger } from "@core/common/logger";
 import { getAuthContainer } from "@modules/auth/di";
 import type { SetupTokenInfo, SetupCustomField } from "../../domain/entities";
 
@@ -242,7 +243,7 @@ export function useAccountSetupViewModel(params: {
             }
             setCustomFieldValues(initialVals);
           } catch (fieldErr) {
-            console.warn("Failed to fetch setup custom fields:", fieldErr);
+            appLogger.warn("Failed to fetch setup custom fields:", fieldErr);
           } finally {
             if (!cancelled) setIsLoadingCustomFields(false);
           }

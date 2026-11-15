@@ -20,6 +20,11 @@ import { Button } from "@core/ui/button";
 import { Input } from "@core/ui/input";
 import { Badge } from "@core/ui/badge";
 import { Label } from "@core/ui/label";
+import { toast } from "@core/ui/sileo-toast";
+import {
+  isConcurrencyConflictError,
+  resolveProfileSaveErrorMessage,
+} from "../utils/concurrency";
 import {
   Globe,
   ShieldAlert,
@@ -43,10 +48,13 @@ interface SubnetEntry {
 
 interface SecurityAdvancedShieldSectionProps {
   trustedCidrs: string[];
+  rowVersion?: string;
   onUpdatePolicy: (payload: {
     trustedCidrs?: string[];
+    rowVersion?: string;
   }) => Promise<unknown>;
   isUpdatingPolicy: boolean;
+  policyError?: unknown;
   onOpenLockdown: () => void;
 }
 
@@ -70,8 +78,10 @@ const IPV6_CIDR_REGEX =
 
 export function SecurityAdvancedShieldSection({
   trustedCidrs,
+  rowVersion,
   onUpdatePolicy,
   isUpdatingPolicy,
+  policyError,
   onOpenLockdown,
 }: SecurityAdvancedShieldSectionProps) {
   const { t } = useI18n();
@@ -155,12 +165,24 @@ export function SecurityAdvancedShieldSection({
   };
 
   const handleSavePolicy = async () => {
+    setValidationError(null);
     const rawList = subnets.map((s) => (s.label ? `${s.cidr}#${s.label}` : s.cidr));
-    await onUpdatePolicy({
-      trustedCidrs: rawList,
-    });
-    setSavedNotice(true);
-    setTimeout(() => setSavedNotice(false), 2500);
+    try {
+      await onUpdatePolicy({
+        trustedCidrs: rawList,
+        rowVersion,
+      });
+      setSavedNotice(true);
+      setTimeout(() => setSavedNotice(false), 2500);
+    } catch (error: unknown) {
+      const message = resolveProfileSaveErrorMessage(error, t);
+      setValidationError(message);
+      if (isConcurrencyConflictError(error)) {
+        toast.warning(message);
+      } else {
+        toast.error(message);
+      }
+    }
   };
 
   return (
@@ -350,13 +372,15 @@ export function SecurityAdvancedShieldSection({
               </div>
             </div>
 
-            {validationError && (
+            {(validationError || Boolean(policyError)) && (
               <div
                 data-testid="cidr-validation-error-banner"
                 className="p-2.5 rounded-lg border border-destructive/40 bg-destructive/10 text-destructive text-xs flex items-center gap-2"
               >
                 <AlertCircle className="h-4 w-4 shrink-0" />
-                <span>{validationError}</span>
+                <span>
+                  {validationError ?? resolveProfileSaveErrorMessage(policyError, t)}
+                </span>
               </div>
             )}
 

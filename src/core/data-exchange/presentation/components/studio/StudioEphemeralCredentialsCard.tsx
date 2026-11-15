@@ -32,10 +32,10 @@ export function StudioEphemeralCredentialsCard({
   const { t } = useI18n();
 
   return (
-    <Card className="space-y-3 border-destructive/40 bg-nx-surface p-5 text-nx-ink">
+    <Card className="space-y-3 border-nx-danger/35 bg-nx-danger/10 p-5 text-nx-ink">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div className="flex items-center gap-2">
-          <KeyRound className="h-5 w-5 text-destructive shrink-0" />
+          <KeyRound className="h-5 w-5 text-nx-danger shrink-0" />
           <div>
             <h4 className="text-sm font-semibold text-nx-ink">
               {t("dataExchange.results.credentialsWarningTitle")}
@@ -84,7 +84,7 @@ export function StudioEphemeralCredentialsCard({
               <TableCell className="font-mono tabular-nums text-xs">{cred.rowNumber}</TableCell>
               <TableCell dir="ltr" className="font-mono text-xs">{cred.email}</TableCell>
               <TableCell dir="ltr" className="font-mono text-xs">{cred.username}</TableCell>
-              <TableCell dir="ltr" className="font-mono text-xs text-destructive font-semibold">
+              <TableCell dir="ltr" className="font-mono text-xs text-nx-danger font-semibold">
                 {cred.oneTimePassword}
               </TableCell>
             </TableRow>

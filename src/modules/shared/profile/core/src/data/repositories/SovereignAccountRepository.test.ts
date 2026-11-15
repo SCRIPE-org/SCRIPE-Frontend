@@ -192,4 +192,85 @@ describe("SovereignAccountRepository — Clean 9-Page B2B Enterprise Account Con
       PROFILE_ENDPOINTS.ACCOUNT.INTEGRATION_BY_ID("pat", "pat-1")
     );
   });
+
+  it("carries and submits rowVersion across GET -> PUT round-trips for dossier, security, preferences, and notifications", async () => {
+    const api = createMockApi({
+      get: vi.fn().mockImplementation(async (endpoint: string) => {
+        if (endpoint === PROFILE_ENDPOINTS.ACCOUNT.DOSSIER) {
+          return { rowVersion: "rv-dossier-1" };
+        }
+        if (endpoint === PROFILE_ENDPOINTS.ACCOUNT.SECURITY) {
+          return { rowVersion: "rv-sec-1", trustedCidrs: ["10.0.0.0/8"] };
+        }
+        if (endpoint === PROFILE_ENDPOINTS.ACCOUNT.PREFERENCES) {
+          return { rowVersion: "rv-pref-2", themeMode: "dark" };
+        }
+        if (endpoint === PROFILE_ENDPOINTS.ACCOUNT.NOTIFICATIONS) {
+          return { rowVersion: "rv-notif-server-newer", quietHoursEnabled: true };
+        }
+        return {};
+      }),
+    });
+    const repo = new SovereignAccountRepository(api);
+
+    const dossier = await repo.getDossier();
+    expect(dossier.rowVersion).toBe("rv-dossier-1");
+
+    const security = await repo.getSecurity();
+    expect(security.rowVersion).toBe("rv-sec-1");
+
+    await repo.updateSecurityPosture({
+      trustedCidrs: ["10.24.0.0/16"],
+      rowVersion: "rv-sec-1",
+    });
+    expect(api.put).toHaveBeenCalledWith(PROFILE_ENDPOINTS.ACCOUNT.SECURITY, {
+      allowedCidrs: ["10.24.0.0/16"],
+      elevateSudo: false,
+      stepUpVerificationCode: undefined,
+      triggerEmergencyLockdown: false,
+      lockdownConfirmationPhrase: undefined,
+      rowVersion: "rv-sec-1",
+    });
+
+    const prefs = await repo.getPreferences();
+    expect(prefs.rowVersion).toBe("rv-pref-2");
+
+    const updatedPrefs = await repo.updatePreferences({
+      themeMode: "light",
+      rowVersion: "rv-pref-1",
+    });
+    expect(api.put).toHaveBeenCalledWith(
+      PROFILE_ENDPOINTS.ACCOUNT.PREFERENCES,
+      expect.objectContaining({
+        themeMode: "light",
+        rowVersion: "rv-pref-1",
+      })
+    );
+    expect(updatedPrefs.rowVersion).toBe("rv-pref-2");
+
+    // Stale client rowVersion must NOT be overwritten by the intermediate GET inside updateNotifications
+    await repo.updateNotifications({
+      quietHoursEnabled: false,
+      rowVersion: "rv-notif-stale-client",
+    });
+    expect(api.put).toHaveBeenCalledWith(
+      PROFILE_ENDPOINTS.ACCOUNT.NOTIFICATIONS,
+      expect.objectContaining({
+        quietHoursEnabled: false,
+        rowVersion: "rv-notif-stale-client",
+      })
+    );
+
+    // Partial update omitting rowVersion falls back to fetched current rowVersion
+    await repo.updateNotifications({
+      quietHoursEnabled: true,
+    });
+    expect(api.put).toHaveBeenCalledWith(
+      PROFILE_ENDPOINTS.ACCOUNT.NOTIFICATIONS,
+      expect.objectContaining({
+        quietHoursEnabled: true,
+        rowVersion: "rv-notif-server-newer",
+      })
+    );
+  });
 });

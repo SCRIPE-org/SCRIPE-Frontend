@@ -53,5 +53,6 @@ export interface AdminProfile {
   securityScore?: number;
   availableAcademies?: Array<{ id: string; name: string; isCurrent: boolean }>;
   customFields?: AdminCustomFieldItem[];
+  rowVersion?: string;
 }
 

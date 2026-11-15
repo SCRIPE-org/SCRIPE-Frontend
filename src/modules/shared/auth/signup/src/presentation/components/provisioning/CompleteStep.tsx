@@ -122,7 +122,6 @@ export function CompleteStep({ wizard }: CompleteStepProps) {
         style={{
           background: tokens.gradientCta,
           color: tokens.accentContrast,
-          boxShadow: tokens.shadowCard,
         }}
       >
         {t("signup.complete.goToWorkspace")}

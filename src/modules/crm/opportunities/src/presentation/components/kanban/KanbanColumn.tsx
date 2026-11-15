@@ -100,8 +100,8 @@ export function KanbanColumn({
         !customHexStyles.isValidHex && colorMeta.headerBorderClass,
         totalStages >= 6 ? "p-2.5" : "p-3",
         isWipExceeded && "border-destructive/60 bg-destructive/5",
-        isAllowed && !isDragOver && "border-nx-accent/50 bg-nx-accent-wash/15",
-        isAllowed && isDragOver && "ring-2 ring-nx-accent bg-nx-accent-wash/30 border-nx-accent",
+        isAllowed && !isDragOver && "border-nx-accent bg-nx-accent-wash",
+        isAllowed && isDragOver && "ring-2 ring-nx-accent bg-nx-accent-wash border-nx-accent",
         !isAllowed && isDragOver && !isBlocked && !isCurrent && "ring-2 ring-nx-accent bg-nx-raised/40 border-nx-accent",
         isBlocked && "cursor-not-allowed border-nx-line",
       )}
@@ -155,10 +155,10 @@ export function KanbanColumn({
             data-testid={`kanban-allowed-pill-${stage.key}`}
             className={cn(
               "flex items-center gap-1.5 px-2 py-1 rounded-nx-md text-[10px] font-semibold border transition-all truncate",
-              pillType === "direct" ? "bg-nx-accent/20 border-nx-accent/50 text-nx-ink" : "bg-warning/15 border-warning/40 text-warning",
+              pillType === "direct" ? "bg-nx-accent-wash border-nx-accent text-nx-ink" : "bg-warning/15 border-warning-strong/40 text-nx-warning-strong",
             )}
           >
-            {pillType === "direct" ? <CheckCircle2 className="size-3 text-nx-accent shrink-0" /> : <ShieldAlert className="size-3 text-warning shrink-0" />}
+            {pillType === "direct" ? <CheckCircle2 className="size-3 text-nx-accent shrink-0" /> : <ShieldAlert className="size-3 text-nx-warning-strong shrink-0" />}
             <span className="truncate">{pillText}</span>
           </div>
         )}
@@ -172,7 +172,7 @@ export function KanbanColumn({
         {stage.requiresParty && (
           <div
             data-testid={`pd1-badge-${stage.key}`}
-            className="flex items-center gap-1.5 px-2 py-1 rounded bg-warning/10 border border-warning/30 text-warning text-[10px] font-medium"
+            className="flex items-center gap-1.5 px-2 py-1 rounded-nx-sm bg-warning/10 border border-warning-strong/30 text-nx-warning-strong text-[10px] font-medium"
             title={t("crmOpportunities.kanban.proposalGateWarning", { defaultValue: "Verified party required" })}
           >
             <ShieldAlert className="size-3.5 shrink-0" />
@@ -198,7 +198,7 @@ export function KanbanColumn({
         </div>
       </div>
 
-      <div className="flex-1 space-y-2.5 overflow-y-auto max-h-[calc(100vh-280px)] min-h-[160px] pr-0.5">
+      <div className="flex-1 space-y-2.5 overflow-y-auto max-h-[calc(100vh-280px)] min-h-[160px] pe-0.5">
         {opportunities.length === 0 ? (
           <div className="flex flex-col items-center justify-center h-32 rounded-nx-lg border border-dashed border-nx-line/60 p-4 text-center">
             <p className="text-[11px] text-nx-ink-3">{t("crmOpportunities.kanban.noDealsInStage", { defaultValue: "No deals in this stage" })}</p>

@@ -1,6 +1,15 @@
 "use client";
 
-import { useCallback, useEffect, useState, type Dispatch, type MutableRefObject, type SetStateAction } from "react";
+import {
+  useCallback,
+  useContext,
+  useEffect,
+  useState,
+  type Dispatch,
+  type MutableRefObject,
+  type SetStateAction,
+} from "react";
+import { QueryClientContext } from "@tanstack/react-query";
 import type { IDataExchangeRepository } from "../../../domain/interfaces/IDataExchangeRepository";
 import type {
   DataExchangeColumnMapping,
@@ -53,6 +62,7 @@ export function useStudioPresetsAndMapping({
   setErrorBanner,
   setInfoBanner,
 }: UseStudioPresetsAndMappingParams) {
+  const queryClient = useContext(QueryClientContext) ?? null;
   const [presetNameInput, setPresetNameInput] = useState<string>("");
   const [isSavingPreset, setIsSavingPreset] = useState(false);
 
@@ -159,12 +169,13 @@ export function useStudioPresetsAndMapping({
       setPresets((prev) => [saved, ...prev.filter((p) => p.id !== saved.id)]);
       setPresetNameInput("");
       setInfoBanner(t("dataExchange.mapping.presetSaved"));
+      void queryClient?.invalidateQueries({ queryKey: ["data-transfer", "presets"] });
     } catch (err) {
       setErrorBanner(getStudioErrorMessage(err, t("dataExchange.errors.savePresetFailed")));
     } finally {
       setIsSavingPreset(false);
     }
-  }, [activeSheetState, importMode, presetNameInput, repo, setErrorBanner, setInfoBanner, setPresets, t]);
+  }, [activeSheetState, importMode, presetNameInput, queryClient, repo, setErrorBanner, setInfoBanner, setPresets, t]);
 
   const removePreset = useCallback(
     async (id: string) => {
@@ -173,13 +184,14 @@ export function useStudioPresetsAndMapping({
         await repo.deletePreset(id);
         setPresets((prev) => prev.filter((p) => p.id !== id));
         setInfoBanner(t("dataExchange.mapping.presetDeleted"));
+        void queryClient?.invalidateQueries({ queryKey: ["data-transfer", "presets"] });
       } catch (err) {
         setErrorBanner(
           getStudioErrorMessage(err, t("dataExchange.errors.deletePresetFailed"))
         );
       }
     },
-    [repo, setErrorBanner, setInfoBanner, setPresets, t]
+    [queryClient, repo, setErrorBanner, setInfoBanner, setPresets, t]
   );
 
   return {

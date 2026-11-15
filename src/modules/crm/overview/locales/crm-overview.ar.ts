@@ -153,6 +153,7 @@ export const ar = {
         membersPlaceholder: "الأعضاء (مفصولين بفواصل)",
         maxLimitPlaceholder: "الحد الأقصى للاعتماد ($)",
         addPipelineRoleBtn: "إضافة دور مسار",
+        removePipelineRoleLabel: "إزالة دور المسار",
         createdRoleToast: "تم إنشاء دور المسار:",
         section2Title: "2. أطراف السجل الديناميكية (ABAC)",
         section3Title: "3. أدوار لجنة شراء العميل",

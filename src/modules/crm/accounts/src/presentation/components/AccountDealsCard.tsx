@@ -58,43 +58,56 @@ export function AccountDealsCard({
       ) : (
         <div className="divide-y divide-nx-line">
           {opportunities.map((opp) => (
-            <div
-              key={opp.id}
-              className="py-2.5 flex items-center justify-between gap-3 hover:bg-nx-raised/30 px-1 rounded-nx-md cursor-pointer transition-colors"
-              onClick={() => onSelectOpportunity(opp.id)}
-            >
-              <div>
-                <span className="text-xs font-semibold text-nx-ink block hover:text-nx-accent">{opp.title}</span>
-                <div className="flex items-center gap-1.5 mt-0.5">
-                  <Badge variant="outline" className="border-nx-line bg-nx-raised text-[10px] py-0 px-1.5 text-nx-ink-2">
-                    {isAr && opp.stageLabelAr ? opp.stageLabelAr : opp.stageLabelEn}
-                  </Badge>
-                  <span className="text-[10px] text-nx-ink-3 uppercase font-medium">{t(`crmAccounts.statuses.${opp.status}`)}</span>
-                </div>
-              </div>
-              <div className="text-end">
-                <span className="text-xs font-bold text-nx-ink font-mono block">
-                  {opp.estimatedAmount != null
-                    ? `${opp.estimatedAmount.toLocaleString(isAr ? "ar-SA" : "en-US")} ${opp.currencyCode}`
-                    : "••••••"}
+            <div key={opp.id} className="py-1 first:pt-0 last:pb-0">
+              <Button
+                type="button"
+                variant="ghost"
+                onClick={() => onSelectOpportunity(opp.id)}
+                className="group h-auto w-full justify-between gap-3 whitespace-normal rounded-nx-md px-1 py-2 text-start font-normal text-nx-ink hover:bg-nx-raised/30 hover:text-nx-ink"
+              >
+                <span className="block min-w-0">
+                  <span className="block text-xs font-semibold text-nx-ink group-hover:text-nx-accent">
+                    {opp.title}
+                  </span>
+                  <span className="mt-0.5 flex items-center gap-1.5">
+                    <Badge
+                      variant="outline"
+                      className="border-nx-line bg-nx-raised py-0 px-1.5 text-[10px] text-nx-ink-2"
+                    >
+                      {isAr && opp.stageLabelAr ? opp.stageLabelAr : opp.stageLabelEn}
+                    </Badge>
+                    <span className="text-[10px] font-medium uppercase text-nx-ink-3">
+                      {t(`crmAccounts.statuses.${opp.status}`)}
+                    </span>
+                  </span>
                 </span>
-                {autoConvertToBase &&
-                  opp.estimatedAmount != null &&
-                  opp.currencyCode.toUpperCase() !== baseCurrency.toUpperCase() && (
-                    <span className="text-[10px] font-mono text-nx-accent block">
-                      ≈ {baseCurrency} {convertAmount(opp.estimatedAmount, opp.currencyCode, baseCurrency).toLocaleString(isAr ? "ar-SA" : "en-US")}
+                <span className="block shrink-0 text-end">
+                  <span className="block font-mono text-xs font-bold text-nx-ink">
+                    {opp.estimatedAmount != null
+                      ? `${opp.estimatedAmount.toLocaleString(isAr ? "ar-SA" : "en-US")} ${opp.currencyCode}`
+                      : "••••••"}
+                  </span>
+                  {autoConvertToBase &&
+                    opp.estimatedAmount != null &&
+                    opp.currencyCode.toUpperCase() !== baseCurrency.toUpperCase() && (
+                      <span className="block font-mono text-[10px] text-nx-accent">
+                        ≈ {baseCurrency}{" "}
+                        {convertAmount(opp.estimatedAmount, opp.currencyCode, baseCurrency).toLocaleString(
+                          isAr ? "ar-SA" : "en-US"
+                        )}
+                      </span>
+                    )}
+                  {opp.targetCloseDate && (
+                    <span className="mt-0.5 flex items-center justify-end gap-1 text-[10px] text-nx-ink-3">
+                      <Calendar className="size-2.5" aria-hidden="true" />
+                      {new Date(opp.targetCloseDate).toLocaleDateString(isAr ? "ar-SA" : "en-US", {
+                        month: "short",
+                        day: "numeric",
+                      })}
                     </span>
                   )}
-                {opp.targetCloseDate && (
-                  <span className="text-[10px] text-nx-ink-3 flex items-center gap-1 justify-end mt-0.5">
-                    <Calendar className="size-2.5" />
-                    {new Date(opp.targetCloseDate).toLocaleDateString(isAr ? "ar-SA" : "en-US", {
-                      month: "short",
-                      day: "numeric",
-                    })}
-                  </span>
-                )}
-              </div>
+                </span>
+              </Button>
             </div>
           ))}
         </div>

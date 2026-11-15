@@ -76,7 +76,7 @@ export function ForgotPasswordView() {
 
   return (
     <div
-      className="vault-stage relative flex min-h-screen w-full flex-col items-center justify-center overflow-hidden"
+      className="vault-stage relative flex min-h-[100dvh] w-full flex-col items-center justify-center overflow-hidden"
       dir={direction}
       style={{ background: "var(--sx-bg-grad)", color: "var(--sx-text)" }}
     >
@@ -94,16 +94,13 @@ export function ForgotPasswordView() {
       </div>
 
       {/* Top right actions */}
-      <div
-        className="absolute right-6 top-6 z-20 flex items-center gap-1"
-        style={direction === "rtl" ? { right: "auto", left: "1.5rem" } : {}}
-      >
+      <div className="absolute end-6 top-6 z-20 flex items-center gap-1">
         <LanguageSwitcher />
         <ThemeSwitcher />
       </div>
 
       {/* Centered content */}
-      <div className="relative z-[1] flex w-full max-w-[480px] flex-1 flex-col items-center justify-center px-5 py-24">
+      <main className="relative z-[1] flex w-full max-w-[480px] flex-1 flex-col items-center justify-center px-5 py-24">
         {/* Back / Logo row */}
         <div className="mb-5 flex w-full items-center justify-between">
           {showBack || vm.step === "method" ? (
@@ -114,7 +111,7 @@ export function ForgotPasswordView() {
               className="inline-flex h-auto items-center gap-1.5 p-0 text-[13px] font-medium transition-colors hover:bg-transparent hover:opacity-80"
               style={{ color: "var(--sx-text-mute)" }}
             >
-              <ArrowLeft className="h-4 w-4" aria-hidden="true" />
+              <ArrowLeft className="h-4 w-4 rtl:rotate-180" aria-hidden="true" />
               {t("auth.back")}
             </Button>
           ) : (
@@ -123,7 +120,7 @@ export function ForgotPasswordView() {
               className="inline-flex items-center gap-1.5 text-[13px] font-medium transition-colors hover:opacity-80"
               style={{ color: "var(--sx-text-mute)" }}
             >
-              <ArrowLeft className="h-4 w-4" aria-hidden="true" />
+              <ArrowLeft className="h-4 w-4 rtl:rotate-180" aria-hidden="true" />
               {t("auth.backToLogin")}
             </Link>
           )}
@@ -142,7 +139,6 @@ export function ForgotPasswordView() {
           style={{
             background: "var(--sx-card-bg)",
             border: "1px solid var(--sx-card-border)",
-            boxShadow: "var(--sx-card-shadow)",
           }}
         >
           {vm.step === "request" && <RequestStep vm={vm} totalSteps={totalSteps} />}
@@ -157,7 +153,7 @@ export function ForgotPasswordView() {
         <p className="mt-8 text-[11px]" style={{ color: "var(--sx-text-faint)" }}>
           © {new Date().getFullYear()} {companyName}
         </p>
-      </div>
+      </main>
 
       <style>{`
         @keyframes sx-caret-blink {

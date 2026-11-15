@@ -453,7 +453,8 @@ describe("KanbanBoard Component", () => {
       expect(screen.getByTestId("kanban-allowed-pill-default.qualification")).toBeDefined();
       expect(screen.getByText("Direct Transition")).toBeDefined();
       const qualCol = screen.getByTestId("kanban-column-default.qualification");
-      expect(qualCol.className).toContain("border-nx-accent/50");
+      expect(qualCol.className).toContain("border-nx-accent");
+      expect(qualCol.className).toContain("bg-nx-accent-wash");
 
       // 3. Forbidden columns (Solution Fit, Proposal, Negotiation) should display frosted matte overlays
       expect(screen.getByTestId("kanban-blocked-overlay-default.solution_fit")).toBeDefined();

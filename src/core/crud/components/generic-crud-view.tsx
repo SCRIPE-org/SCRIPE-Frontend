@@ -20,13 +20,20 @@
 import { Button } from "@core/ui/button";
 import { Card, CardHeader, CardTitle, CardContent } from "@core/ui/card";
 import { Badge } from "@core/ui/badge";
+import { Alert, AlertDescription } from "@core/ui/alert";
 import { GenericTable } from "./generic-table";
 import { GenericModal } from "./generic-modal";
 import {
   DataExchangeToolbarActions,
   type DataExchangeFeatureConfig,
 } from "@core/data-exchange";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@core/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@core/ui/dialog";
 import { GenericForm, FieldConfig } from "@core/ui/forms/generic-form";
 import { LoadingSpinner } from "@core/ui/loading-spinner";
 import { Skeleton } from "@core/ui/skeleton";
@@ -59,6 +66,8 @@ import {
   Download,
   Upload,
   Printer,
+  AlertCircle,
+  RefreshCw,
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import { usePermission } from "@core/hooks/use-permission";
@@ -1155,16 +1164,17 @@ function GenericCrudViewInner<T>(props: GenericCrudViewProps<T>) {
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [search, showAddButton, handleCreateClick, viewModel]);
 
-  const [activeViewMode, setActiveViewMode] = useState<CrudViewMode>(
-    config?.defaultView ?? config?.viewModes?.[0] ?? "Table"
-  );
-
-  // Synchronize view mode when config.defaultView hydrates asynchronously from user preferences / server
-  useEffect(() => {
-    if (config?.defaultView && config.viewModes?.includes(config.defaultView)) {
-      setActiveViewMode(config.defaultView);
-    }
-  }, [config?.defaultView]);
+  const [userSelectedViewMode, setUserSelectedViewMode] = useState<CrudViewMode | null>(null);
+  const resolvedDefaultView: CrudViewMode =
+    config?.defaultView && config.viewModes?.includes(config.defaultView)
+      ? config.defaultView
+      : (config?.viewModes?.[0] ?? "Table");
+  const activeViewMode: CrudViewMode =
+    userSelectedViewMode &&
+    (!config?.viewModes || config.viewModes.includes(userSelectedViewMode))
+      ? userSelectedViewMode
+      : resolvedDefaultView;
+  const setActiveViewMode = setUserSelectedViewMode;
   const [splitSelectedId, setSplitSelectedId] = useState<string | null>(null);
   const [isDataExchangeOpen, setIsDataExchangeOpen] = useState(false);
   const csvInputRef = useRef<HTMLInputElement | null>(null);
@@ -1232,6 +1242,7 @@ function GenericCrudViewInner<T>(props: GenericCrudViewProps<T>) {
           .map((l) => l.trim())
           .filter(Boolean);
         if (lines.length < 2) return;
+        const unsafeImportKeys = new Set(["__proto__", "constructor", "prototype"]);
         const headers = parseCsvLine(lines[0]);
         for (let i = 1; i < lines.length; i++) {
           const values = parseCsvLine(lines[i]);
@@ -1243,7 +1254,7 @@ function GenericCrudViewInner<T>(props: GenericCrudViewProps<T>) {
                 c.label.toLowerCase() === header.toLowerCase()
             );
             const key = matchedCol ? matchedCol.key : header;
-            if (key && key !== "id") {
+            if (key && key !== "id" && !unsafeImportKeys.has(key)) {
               payload[key] = values[idx] ?? "";
             }
           });
@@ -1320,6 +1331,51 @@ function GenericCrudViewInner<T>(props: GenericCrudViewProps<T>) {
   const availableViewModes: CrudViewMode[] =
     config?.viewModes && config.viewModes.length > 0 ? config.viewModes : ["Table"];
 
+  const renderViewSwitcher = (className?: string) => {
+    if (availableViewModes.length <= 1) return null;
+    return (
+      <fieldset
+        className={cn(
+          "m-0 min-w-0 inline-flex items-center rounded-nx-md border border-nx-line bg-nx-surface p-0.5",
+          className
+        )}
+        aria-label={t("crud.views.switcherLabel", { defaultValue: "View mode switcher" })}
+      >
+        {availableViewModes.map((mode) => {
+          const Icon =
+            mode === "Kanban"
+              ? Columns3
+              : mode === "CardGrid"
+                ? LayoutGrid
+                : mode === "Calendar"
+                  ? CalendarIcon
+                  : mode === "SplitPane"
+                    ? PanelLeft
+                    : Table2;
+          const active = activeViewMode === mode;
+          return (
+            <Button
+              key={mode}
+              type="button"
+              variant={active ? "secondary" : "ghost"}
+              size="sm"
+              aria-pressed={active}
+              onClick={() => setActiveViewMode(mode)}
+              data-testid={`toggle-${mode.toLowerCase()}-view`}
+              className={cn(
+                "min-h-[36px] h-9 px-3 text-xs",
+                active && "bg-nx-raised text-nx-ink font-semibold border border-nx-line-hi"
+              )}
+            >
+              <Icon className="me-1.5 h-3.5 w-3.5" aria-hidden="true" />
+              {getViewModeLabel(mode)}
+            </Button>
+          );
+        })}
+      </fieldset>
+    );
+  };
+
   const effectiveDataExchange =
     config?.dataExchange ??
     (config?.entityTypeKey ? { entityKey: config.entityTypeKey } : undefined);
@@ -1358,6 +1414,8 @@ function GenericCrudViewInner<T>(props: GenericCrudViewProps<T>) {
           ref={csvInputRef}
           type="file"
           accept=".csv,text/csv"
+          tabIndex={-1}
+          aria-label={t("common.importCsv", { defaultValue: "Import CSV" })}
           className="hidden"
           onChange={handleCsvImportFile}
         />
@@ -1374,44 +1432,7 @@ function GenericCrudViewInner<T>(props: GenericCrudViewProps<T>) {
         description={subtitle}
         actions={
           <>
-            {availableViewModes.length > 1 && (
-              <div
-                className="inline-flex items-center rounded-nx-md border border-nx-line bg-nx-surface p-0.5"
-                role="group"
-                aria-label="View mode switcher"
-              >
-                {availableViewModes.map((mode) => {
-                  const Icon =
-                    mode === "Kanban"
-                      ? Columns3
-                      : mode === "CardGrid"
-                        ? LayoutGrid
-                        : mode === "Calendar"
-                          ? CalendarIcon
-                          : mode === "SplitPane"
-                            ? PanelLeft
-                            : Table2;
-                  const active = activeViewMode === mode;
-                  return (
-                    <Button
-                      key={mode}
-                      type="button"
-                      variant={active ? "secondary" : "ghost"}
-                      size="sm"
-                      onClick={() => setActiveViewMode(mode)}
-                      data-testid={`toggle-${mode.toLowerCase()}-view`}
-                      className={cn(
-                        "h-7 px-2.5 text-xs",
-                        active && "bg-nx-raised text-nx-ink font-semibold border-nx-line-hi"
-                      )}
-                    >
-                      <Icon className="me-1.5 h-3.5 w-3.5" aria-hidden="true" />
-                      {getViewModeLabel(mode)}
-                    </Button>
-                  );
-                })}
-              </div>
-            )}
+            {renderViewSwitcher()}
             {effectiveDataExchange && !effectiveDataExchange.hideToolbarActions && (
               <DataExchangeToolbarActions
                 entityKey={effectiveDataExchange.entityKey}
@@ -1578,49 +1599,37 @@ function GenericCrudViewInner<T>(props: GenericCrudViewProps<T>) {
                 />
               </div>
             )}
-          {availableViewModes.length > 1 && (
-            <div
-              className="inline-flex shrink-0 items-center rounded-nx-md border border-nx-line bg-nx-surface p-0.5 ms-auto"
-              role="group"
-              aria-label="View mode switcher"
-            >
-              {availableViewModes.map((mode) => {
-                const Icon =
-                  mode === "Kanban"
-                    ? Columns3
-                    : mode === "CardGrid"
-                      ? LayoutGrid
-                      : mode === "Calendar"
-                        ? CalendarIcon
-                        : mode === "SplitPane"
-                          ? PanelLeft
-                          : Table2;
-                const active = activeViewMode === mode;
-                return (
-                  <Button
-                    key={mode}
-                    type="button"
-                    variant={active ? "secondary" : "ghost"}
-                    size="sm"
-                    onClick={() => setActiveViewMode(mode)}
-                    data-testid={`toggle-${mode.toLowerCase()}-view`}
-                    className={cn(
-                      "h-7 px-2.5 text-xs",
-                      active && "bg-nx-raised text-nx-ink font-semibold border-nx-line-hi"
-                    )}
-                  >
-                    <Icon className="me-1.5 h-3.5 w-3.5" aria-hidden="true" />
-                    {getViewModeLabel(mode)}
-                  </Button>
-                );
-              })}
-            </div>
-          )}
+          {renderViewSwitcher("shrink-0 ms-auto")}
         </div>
       )}
 
       {/* Custom header content */}
       {config?.customHeaderContent && <div className="mb-6">{config.customHeaderContent}</div>}
+
+      {/* Non-destructive error banner when background refresh fails while existing items remain visible */}
+      {viewModel.error && viewModel.items.length > 0 && (
+        <Alert
+          variant="destructive"
+          className="flex flex-wrap items-center justify-between gap-3"
+        >
+          <div className="flex items-start gap-2.5">
+            <AlertCircle className="mt-0.5 h-4 w-4 shrink-0" aria-hidden="true" />
+            <AlertDescription className="text-sm">
+              {viewModel.error}
+            </AlertDescription>
+          </div>
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            onClick={viewModel.refresh}
+            className="shrink-0"
+          >
+            <RefreshCw className="me-1.5 h-3.5 w-3.5" aria-hidden="true" />
+            {t("common.retry", { defaultValue: "Retry" })}
+          </Button>
+        </Alert>
+      )}
 
       {activeViewMode === "CardGrid" ? (
         <CrudCardGridSection
@@ -1631,6 +1640,7 @@ function GenericCrudViewInner<T>(props: GenericCrudViewProps<T>) {
           renderRowActionButtons={renderRowActionButtons}
           cardGridClassName={config?.cardGridClassName}
           getCardClassName={config?.getCardClassName as any}
+          emptyState={emptyState}
           emptyLabel={t("common.noData")}
         />
       ) : activeViewMode === "Kanban" ? (
@@ -1642,6 +1652,7 @@ function GenericCrudViewInner<T>(props: GenericCrudViewProps<T>) {
             items={viewModel.items || []}
             renderRowActionButtons={renderRowActionButtons}
             columns={columns}
+            emptyState={emptyState}
             emptyLabel={t("common.noData")}
           />
         ) : (
@@ -1692,6 +1703,7 @@ function GenericCrudViewInner<T>(props: GenericCrudViewProps<T>) {
                 items={viewModel.items || []}
                 renderRowActionButtons={renderRowActionButtons}
                 columns={columns}
+                emptyState={emptyState}
                 emptyLabel={t("common.noData")}
               />
             );
@@ -1705,6 +1717,7 @@ function GenericCrudViewInner<T>(props: GenericCrudViewProps<T>) {
           calendarGroupFormatter={config?.calendarGroupFormatter as any}
           renderCalendarItem={config?.renderCalendarItem as any}
           renderRowActionButtons={renderRowActionButtons}
+          emptyState={emptyState}
           emptyLabel={t("common.noData")}
         />
       ) : activeViewMode === "SplitPane" ? (
@@ -1719,6 +1732,7 @@ function GenericCrudViewInner<T>(props: GenericCrudViewProps<T>) {
           renderRowActionButtons={renderRowActionButtons}
           getItemDisplayName={config?.getItemDisplayName as any}
           defaultTitle={title}
+          emptyState={emptyState}
           emptyLabel={t("common.noData")}
         />
       ) : (
@@ -1776,7 +1790,7 @@ function GenericCrudViewInner<T>(props: GenericCrudViewProps<T>) {
             <span className="font-semibold text-nx-accent">
               {t("crud.wizard.stepByStep", { defaultValue: "Step-by-Step Wizard" })}
             </span>
-            <span>•</span>
+            <span aria-hidden="true">•</span>
             <span>
               {t("crud.wizard.createInstruction", {
                 entity,
@@ -1877,7 +1891,7 @@ function GenericCrudViewInner<T>(props: GenericCrudViewProps<T>) {
             <span className="font-semibold text-nx-accent">
               {t("crud.wizard.stepByStep", { defaultValue: "Step-by-Step Wizard" })}
             </span>
-            <span>•</span>
+            <span aria-hidden="true">•</span>
             <span>
               {t("crud.wizard.editInstruction", {
                 entity,
@@ -1952,6 +1966,12 @@ function GenericCrudViewInner<T>(props: GenericCrudViewProps<T>) {
         <DialogContent>
           <DialogHeader>
             <DialogTitle>{t("crud.modal.viewTitle", { entity: title })}</DialogTitle>
+            <DialogDescription className="sr-only">
+              {t("crud.modal.viewDescription", {
+                entity: title,
+                defaultValue: `View ${title} details`,
+              })}
+            </DialogDescription>
           </DialogHeader>
           <GenericForm
             fields={viewFieldsWithCustom || createFieldsWithCustom || []}

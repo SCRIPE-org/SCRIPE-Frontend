@@ -24,7 +24,6 @@ import type {
 import {
   extractCourtPhotos,
   extractCourtBio,
-  packCourtDescription,
   getDisplayCourtPhotos,
   packCourtPhotoMetadata,
 } from "../../domain/court-photos";
@@ -159,7 +158,6 @@ export function useResourceDetailViewModel(resourceId: string) {
       setError(null);
       setFeedback(null);
       try {
-        const customPhotos = extractCourtPhotos(resource.description);
         const bioToSave = input.description !== undefined ? input.description.trim() : extractCourtBio(resource.description);
 
         await schedulableResourceRepository.update(resource.id, {

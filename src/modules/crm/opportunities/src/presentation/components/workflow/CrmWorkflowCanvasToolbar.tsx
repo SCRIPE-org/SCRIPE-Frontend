@@ -59,7 +59,7 @@ export function CrmWorkflowCanvasToolbar({
           <span>{t("crmOpportunities.pipelinesPage.addStatusBtn").replace(/^\+\s*/, "")}</span>
         </Button>
         <Button size="sm" variant="outline" className="h-7 px-1.5 text-[10.5px]" onClick={onOpenAddTransition} data-testid="crm-toolbar-add-transition" title={t("crmOpportunities.pipelinesPage.addTransitionBtn")}>
-          <Zap className="w-3 h-3 me-0.5 text-warning shrink-0" />
+          <Zap className="w-3 h-3 me-0.5 text-nx-warning-strong shrink-0" />
           <span>{t("crmOpportunities.pipelinesPage.addTransitionBtn").replace(/^\+\s*/, "")}</span>
         </Button>
         <Button

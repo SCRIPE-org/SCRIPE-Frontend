@@ -22,6 +22,7 @@ export interface UpdateProfileRequest {
   isAvailableForOperations?: boolean;
   activeBranchName?: string;
   customFields?: Record<string, unknown>;
+  rowVersion?: string;
   email?: string;
   username?: string;
 }

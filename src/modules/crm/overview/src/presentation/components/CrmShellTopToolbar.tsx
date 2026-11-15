@@ -101,13 +101,13 @@ export function CrmShellTopToolbar({
 
       {onSearchChange && (
         <div className="relative w-full sm:w-56">
-          <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 size-3.5 text-nx-ink-3" />
+          <Search className="absolute start-2.5 top-1/2 -translate-y-1/2 size-3.5 text-nx-ink-3" />
           <Input
             type="text"
             placeholder={t("crm.actions.searchPlaceholder")}
             value={searchQuery}
             onChange={(e) => onSearchChange(e.target.value)}
-            className="h-7 pl-8 pr-2.5 text-xs bg-nx-surface border-nx-line focus-visible:ring-nx-accent text-nx-ink placeholder:text-nx-ink-3"
+            className="h-7 ps-8 pe-2.5 text-xs bg-nx-surface border-nx-line focus-visible:ring-nx-accent text-nx-ink placeholder:text-nx-ink-3"
           />
         </div>
       )}

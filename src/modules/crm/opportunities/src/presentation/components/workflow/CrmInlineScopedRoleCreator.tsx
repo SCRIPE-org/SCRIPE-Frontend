@@ -116,7 +116,7 @@ export function CrmInlineScopedRoleCreator({
           <Label className="text-[10px] text-nx-ink-2">{t("crmOpportunities.ruleConfig.backupRoleLabel")}</Label>
           <Select value={backupRoleKey} onValueChange={setBackupRoleKey}>
             <SelectTrigger className="h-7 text-xs" data-testid="inline-pipeline-role-backup"><SelectValue /></SelectTrigger>
-            <SelectContent className="z-[10006]">
+            <SelectContent>
               <SelectItem value="none" className="text-xs">{t("crmOpportunities.ruleConfig.noneOption")}</SelectItem>
               {crmRoles.map((r) => <SelectItem key={r.key} value={r.key} className="text-xs">{isAr ? r.nameAr : r.nameEn}</SelectItem>)}
             </SelectContent>

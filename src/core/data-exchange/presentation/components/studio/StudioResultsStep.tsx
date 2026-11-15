@@ -76,7 +76,7 @@ export function StudioResultsStep({
           <AlertDescription className="space-y-3 text-nx-ink-2">
             <p className="text-xs">{t("dataExchange.results.processingDesc")}</p>
             <div className="space-y-1.5">
-              <div className="flex items-center justify-between text-xs text-nx-ink-2">
+              <div className="flex items-center justify-between text-xs text-nx-ink-2 tabular-nums">
                 <span>
                   {t("dataExchange.studio.processedProgress", {
                     processed: polledJob?.processedRows ?? 0,
@@ -84,7 +84,7 @@ export function StudioResultsStep({
                     percent: polledJob?.progressPercent ?? 0,
                   })}
                 </span>
-                <span className="font-mono">{polledJob?.progressPercent ?? 0}%</span>
+                <span className="font-mono tabular-nums">{polledJob?.progressPercent ?? 0}%</span>
               </div>
               <Progress value={polledJob?.progressPercent ?? 0} className="h-1.5" />
             </div>
@@ -112,16 +112,16 @@ export function StudioResultsStep({
           </AlertDescription>
         </Alert>
       ) : liveJobStatus === "Failed" || liveJobStatus === "Cancelled" ? (
-        <Alert variant="destructive" className="border-destructive/30 bg-destructive/10">
-          <XCircle className="h-4 w-4 text-destructive shrink-0" />
+        <Alert variant="destructive" className="border-nx-danger/35 bg-nx-danger/10 text-nx-danger">
+          <XCircle className="h-4 w-4 text-nx-danger shrink-0" />
           <AlertTitle className="text-sm font-semibold">{t("dataExchange.results.failedTitle")}</AlertTitle>
           <AlertDescription className="text-xs text-nx-ink-2 mt-1">
             {polledJob?.errorSummary ?? executeResult.errorSummary}
           </AlertDescription>
         </Alert>
       ) : finalRejected > 0 ? (
-        <Alert variant="warning" className="border-warning/30 bg-warning/10">
-          <AlertTriangle className="h-4 w-4 text-warning shrink-0" />
+        <Alert variant="warning" className="border-nx-warning-strong/35 bg-nx-warning/10 text-nx-warning-strong">
+          <AlertTriangle className="h-4 w-4 text-nx-warning-strong shrink-0" />
           <AlertTitle className="text-sm font-semibold text-nx-ink">
             {t("dataExchange.results.completedWithErrorsTitle")}
           </AlertTitle>
@@ -137,7 +137,7 @@ export function StudioResultsStep({
           </AlertTitle>
           <AlertDescription className="text-xs text-nx-ink mt-1">
             {t("dataExchange.results.committedRows")}:{" "}
-            <span dir="ltr" className="font-mono font-semibold">
+            <span dir="ltr" className="font-mono font-semibold tabular-nums">
               {finalCommitted} / {finalTotalRows}
             </span>
           </AlertDescription>
@@ -166,7 +166,7 @@ export function StudioResultsStep({
         </Card>
         <Card className="border-nx-line bg-nx-surface p-4 text-nx-ink">
           <p className="text-xs text-nx-ink-2">{t("dataExchange.results.rejectedRows")}</p>
-          <p className="mt-1 font-mono text-2xl font-bold tabular-nums text-destructive">
+          <p className="mt-1 font-mono text-2xl font-bold tabular-nums text-nx-danger">
             {finalRejected}
           </p>
         </Card>
@@ -174,7 +174,7 @@ export function StudioResultsStep({
 
       {/* Rejected Rows Workbook Download */}
       {finalHasRejected && !isAsyncRunning && (
-        <Card className="flex flex-wrap items-center justify-between gap-4 border-warning/40 bg-warning/10 p-5">
+        <Card className="flex flex-wrap items-center justify-between gap-4 border-nx-warning-strong/35 bg-nx-warning/10 p-5">
           <div>
             <h4 className="text-sm font-semibold text-nx-ink">
               {t("dataExchange.results.rejectedHelpTitle")}
@@ -200,7 +200,7 @@ export function StudioResultsStep({
               size="sm"
               loading={isDownloading}
               onClick={onDownloadRejected}
-              className="bg-nx-accent text-nx-on-fill hover:opacity-90 text-xs font-medium"
+              className="bg-nx-accent-fill text-nx-on-fill hover:opacity-90 text-xs font-medium"
             >
               <Download className="me-1.5 h-3.5 w-3.5" />
               <span>{t("dataExchange.actions.downloadRejected")}</span>

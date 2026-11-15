@@ -12,6 +12,7 @@ import {
 import { Card } from "@core/ui/card";
 import { Badge } from "@core/ui/badge";
 import { Button } from "@core/ui/button";
+import { Progress } from "@core/ui/progress";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -19,10 +20,17 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@core/ui/dropdown-menu";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@core/ui/tooltip";
 import { useI18n } from "@core/providers/i18n-provider";
 import { cn } from "@core/common/utils";
-import { getEntityDisplayName } from "@core/data-exchange/presentation/utils/entity-display-names";
+import { getEntityDisplayName, type EntityNameSource } from "@core/data-exchange/presentation/utils/entity-display-names";
 import type { DataTransferJob } from "../../domain/entities/DataTransferJob";
+import { getJobProgressVariant } from "../utils/job-presentation";
 import { JobStatusBadge } from "./JobStatusBadge";
 
 /**
@@ -31,6 +39,8 @@ import { JobStatusBadge } from "./JobStatusBadge";
 export interface JobExecutionCardProps {
   /** The data transfer background job */
   job: DataTransferJob;
+  /** Optional live catalog entry for resolving dynamic localized entity display names */
+  entitySummary?: EntityNameSource;
   /** Callback to initiate cooperative cancellation */
   onCancelJob: (job: DataTransferJob) => void;
   /** Whether job cancellation is currently pending */
@@ -49,6 +59,7 @@ export interface JobExecutionCardProps {
  */
 export const JobExecutionCard = memo(function JobExecutionCard({
   job,
+  entitySummary,
   onCancelJob,
   isCancelling = false,
   onDownloadArtifact,
@@ -58,7 +69,7 @@ export const JobExecutionCard = memo(function JobExecutionCard({
   const { language, t } = useI18n();
   const isAr = language === "ar";
   const isCancellable = job.status === "Queued" || job.status === "Running";
-  const localizedEntityName = getEntityDisplayName(job.entityKey, t, isAr);
+  const localizedEntityName = getEntityDisplayName(job.entityKey, t, isAr, entitySummary);
 
   return (
     <Card
@@ -84,17 +95,38 @@ export const JobExecutionCard = memo(function JobExecutionCard({
               {localizedEntityName}
             </h3>
             <div className="flex flex-wrap items-center gap-1.5 mt-0.5">
-              <code className="text-[11px] font-mono font-medium text-nx-ink-2 bg-nx-raised/60 px-1.5 py-0.5 rounded-nx-xs border border-nx-line truncate" title={job.jobId}>
-                {job.jobId.slice(0, 8)}...
-              </code>
+              <TooltipProvider delayDuration={200}>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="sm"
+                      dir="ltr"
+                      aria-label={job.jobId}
+                      data-testid="job-card-id-tooltip-trigger"
+                      className="h-auto max-w-full cursor-help rounded-sm border border-nx-line bg-nx-raised/60 px-1.5 py-0.5 font-mono text-[11px] font-medium text-nx-ink-2"
+                    >
+                      <code className="truncate">{job.jobId.slice(0, 8)}...</code>
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent dir="ltr" className="font-mono text-xs">
+                    {job.jobId}
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
               <span className="text-nx-ink-3 text-xs">/</span>
-              <code className="text-[11px] font-mono text-nx-ink-3 truncate">
+              <code dir="ltr" className="text-[11px] font-mono text-nx-ink-3 truncate">
                 {job.entityKey}
               </code>
             </div>
           </div>
           {job.originalFileName && (
-            <p className="text-[11px] font-mono text-nx-ink-3 truncate" title={job.originalFileName}>
+            <p
+              dir="ltr"
+              className="text-[11px] font-mono text-nx-ink-3 truncate"
+              title={job.originalFileName}
+            >
               {job.originalFileName}
             </p>
           )}
@@ -130,7 +162,7 @@ export const JobExecutionCard = memo(function JobExecutionCard({
                 disabled={isDownloading}
                 className="cursor-pointer gap-2"
               >
-                <FileWarning className="h-4 w-4 text-nx-destructive" aria-hidden="true" />
+                <FileWarning className="h-4 w-4 text-nx-danger" aria-hidden="true" />
                 <span>{t("adminDataTransferJobs.actions.downloadRejected")}</span>
               </DropdownMenuItem>
             )}
@@ -141,9 +173,9 @@ export const JobExecutionCard = memo(function JobExecutionCard({
                 <DropdownMenuItem
                   onClick={() => onCancelJob(job)}
                   disabled={isCancelling}
-                  className="cursor-pointer gap-2 text-nx-destructive focus:text-nx-destructive"
+                  className="cursor-pointer gap-2 text-nx-danger focus:text-nx-danger"
                 >
-                  <XCircle className="h-4 w-4 text-nx-destructive" aria-hidden="true" />
+                  <XCircle className="h-4 w-4 text-nx-danger" aria-hidden="true" />
                   <span>{t("adminDataTransferJobs.actions.cancel")}</span>
                 </DropdownMenuItem>
               </>
@@ -156,40 +188,34 @@ export const JobExecutionCard = memo(function JobExecutionCard({
       <div className="space-y-2.5 rounded-nx-control bg-nx-raised/40 p-3 border border-nx-line/60 text-xs">
         {/* Progress Bar */}
         <div className="space-y-1">
-          <div className="flex items-center justify-between text-[11px] font-mono text-nx-ink-2">
+          <div className="flex items-center justify-between text-[11px] font-mono tabular-nums text-nx-ink-2">
             <span>{t("adminDataTransferJobs.columns.progress")}</span>
-            <span className="font-semibold text-nx-ink">{job.progressPercent}%</span>
+            <span className="font-semibold text-nx-ink">
+              {Math.round(job.progressPercent)}%
+            </span>
           </div>
-          <div className="h-1.5 w-full overflow-hidden rounded-full bg-nx-surface border border-nx-line/60">
-            <div
-              className={cn(
-                "h-full transition-all duration-300",
-                job.status === "Failed" || job.status === "Cancelled"
-                  ? "bg-nx-destructive"
-                  : job.status === "Completed"
-                    ? "bg-nx-success"
-                    : "bg-nx-accent"
-              )}
-              style={{ width: `${Math.min(100, Math.max(0, job.progressPercent))}%` }}
-            />
-          </div>
+          <Progress
+            value={Math.min(100, Math.max(0, job.progressPercent))}
+            variant={getJobProgressVariant(job.status)}
+            className="h-1.5"
+          />
         </div>
 
         {/* Row Metrics Grid */}
         <div className="grid grid-cols-2 gap-2 pt-1 border-t border-nx-line/40 text-[11px]">
           <div>
             <span className="text-nx-ink-3">{t("adminDataTransferJobs.columns.rowsSummary")}:</span>
-            <p className="font-mono font-medium text-nx-ink">
-              {job.processedRows} / {job.totalRows || "—"}
+            <p dir="ltr" className="font-mono font-medium text-nx-ink w-fit tabular-nums">
+              {job.processedRows.toLocaleString()} / {job.totalRows ? job.totalRows.toLocaleString() : "—"}
             </p>
           </div>
           <div>
             <span className="text-nx-ink-3">{t("adminDataTransferJobs.columns.metrics")}:</span>
-            <p className="font-mono font-medium text-nx-ink">
-              <span className="text-nx-success">{job.committedRows}</span>
+            <p dir="ltr" className="font-mono font-medium text-nx-ink w-fit tabular-nums">
+              <span className="text-nx-success">{job.committedRows.toLocaleString()}</span>
               {" / "}
-              <span className={job.rejectedRows > 0 ? "text-nx-destructive font-bold" : "text-nx-ink-3"}>
-                {job.rejectedRows}
+              <span className={job.rejectedRows > 0 ? "text-nx-danger font-bold" : "text-nx-ink-3"}>
+                {job.rejectedRows.toLocaleString()}
               </span>
             </p>
           </div>
@@ -198,7 +224,7 @@ export const JobExecutionCard = memo(function JobExecutionCard({
 
       {/* Footer: Submission Date & Quick Action */}
       <div className="flex items-center justify-between gap-2 pt-2 border-t border-nx-line text-xs">
-        <div className="flex items-center gap-1.5 text-[11px] text-nx-ink-3 font-mono">
+        <div className="flex items-center gap-1.5 text-[11px] text-nx-ink-3 font-mono tabular-nums">
           <Clock className="h-3 w-3 shrink-0" aria-hidden="true" />
           <span>
             {new Date(job.createdAt).toLocaleString(isAr ? "ar-EG" : "en-US", {
@@ -216,9 +242,9 @@ export const JobExecutionCard = memo(function JobExecutionCard({
             size="sm"
             onClick={() => onCancelJob(job)}
             disabled={isCancelling}
-            className="h-7 px-2 text-xs text-nx-destructive hover:bg-destructive/10"
+            className="h-7 px-2 text-xs text-nx-danger hover:bg-nx-danger/10"
           >
-            <XCircle className="h-3 w-3 ltr:mr-1 rtl:ml-1" />
+            <XCircle className="h-3 w-3 me-1" aria-hidden="true" />
             {t("adminDataTransferJobs.actions.cancel")}
           </Button>
         ) : job.hasExportWorkbook ? (
@@ -227,9 +253,9 @@ export const JobExecutionCard = memo(function JobExecutionCard({
             size="sm"
             onClick={() => onDownloadArtifact(job, "export")}
             disabled={isDownloading}
-            className="h-7 px-2 text-xs text-nx-success hover:bg-success/10"
+            className="h-7 px-2 text-xs text-nx-success hover:bg-nx-success/10"
           >
-            <Download className="h-3 w-3 ltr:mr-1 rtl:ml-1" />
+            <Download className="h-3 w-3 me-1" aria-hidden="true" />
             {t("adminDataTransferJobs.actions.downloadExport")}
           </Button>
         ) : null}

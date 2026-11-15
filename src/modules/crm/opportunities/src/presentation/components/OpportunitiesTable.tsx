@@ -78,7 +78,7 @@ export function buildOpportunityColumns(
       label: t("crmOpportunities.table.amount"),
       sortable: true,
       render: (_val, opp: CrmOpportunity) => (
-        <span className="font-bold text-nx-ink whitespace-nowrap">
+        <span className="font-bold font-mono tabular-nums text-nx-ink whitespace-nowrap">
           {opp.maskedFieldKeys?.includes("estimatedAmount")
             ? "••••••"
             : opp.estimatedAmount != null
@@ -98,7 +98,7 @@ export function buildOpportunityColumns(
           </span>
         ) : (
           <span className="inline-flex items-center gap-1 text-[11px] text-nx-ink-3 whitespace-nowrap">
-            <ShieldAlert className="size-3.5 text-warning" />
+            <ShieldAlert className="size-3.5 text-nx-warning-strong" />
             {t("crmOpportunities.kanban.partyUnlinked", { defaultValue: "Unlinked" })}
           </span>
         ),

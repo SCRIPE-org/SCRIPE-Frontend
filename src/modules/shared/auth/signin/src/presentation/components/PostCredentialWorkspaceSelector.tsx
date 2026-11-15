@@ -74,7 +74,7 @@ export function PostCredentialWorkspaceSelector({
   ).length;
 
   return (
-    <div className="w-full" role="main" aria-labelledby="workspace-selector-heading">
+    <section className="w-full" aria-labelledby="workspace-selector-heading">
       {/* Header */}
       <div className="mb-6">
         <div className="mb-2 flex items-center gap-2">
@@ -98,12 +98,12 @@ export function PostCredentialWorkspaceSelector({
 
         <h2
           id="workspace-selector-heading"
-          className="text-xl font-semibold tracking-tight text-foreground"
+          className="text-xl font-semibold tracking-tight text-nx-ink"
         >
           {t("auth.workspaceSelection.heading") || "Choose a workspace"}
         </h2>
 
-        <p className="mt-1 text-sm text-muted-foreground">
+        <p className="mt-1 text-sm text-nx-ink-2">
           {lockedCount > 0 && unlockedCount > 0
             ? t("auth.workspaceSelection.subtitleMixed") ||
               `Your account (${email}) has ${unlockedCount} unlocked and ${lockedCount} password-protected workspace(s).`
@@ -118,7 +118,7 @@ export function PostCredentialWorkspaceSelector({
       {/* Error Banner */}
       {error && (
         <div
-          className="mb-4 flex items-start gap-2 rounded-lg border border-destructive/30 bg-destructive/10 px-4 py-3 text-sm text-destructive"
+          className="mb-4 flex items-start gap-2 rounded-lg border border-destructive/30 bg-destructive/10 px-4 py-3 text-sm text-nx-danger"
           role="alert"
           aria-live="assertive"
         >
@@ -154,7 +154,7 @@ export function PostCredentialWorkspaceSelector({
 
       {/* Unlock hint when there are locked workspaces */}
       {lockedCount > 0 && (
-        <p className="mt-3 flex items-center gap-1.5 text-xs text-muted-foreground">
+        <p className="mt-3 flex items-center gap-1.5 text-xs text-nx-ink-2">
           <Unlock className="h-3.5 w-3.5 shrink-0" aria-hidden />
           {t("auth.workspaceSelection.unlockHint") ||
             "Click a locked workspace to enter its password and gain access."}
@@ -169,13 +169,13 @@ export function PostCredentialWorkspaceSelector({
           size="sm"
           onClick={onBack}
           disabled={isLoading || selectingId !== null}
-          className="gap-1.5 text-xs text-muted-foreground hover:text-foreground"
+          className="gap-1.5 text-xs text-nx-ink-2 hover:text-nx-ink"
           aria-label={t("auth.workspaceSelection.backLabel") || "Use a different account"}
         >
-          <ArrowLeft className="h-3.5 w-3.5" aria-hidden />
+          <ArrowLeft className="h-3.5 w-3.5 rtl:rotate-180" aria-hidden />
           {t("auth.workspaceSelection.back") || "Use a different account"}
         </Button>
       </div>
-    </div>
+    </section>
   );
 }

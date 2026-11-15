@@ -65,7 +65,7 @@ export function OpportunityOverviewCard({ opp }: OpportunityOverviewCardProps) {
             <span className="text-xs text-nx-ink-3 flex items-center justify-end gap-1">
               {t("crmOpportunities.detail.estimatedAmount")}
               {isAmountLocked && (
-                <Badge variant="outline" className="text-[9px] h-4 px-1.5 gap-0.5 text-warning border-warning/40 bg-warning/10" data-testid="opp-overview-amount-locked-badge">
+                <Badge variant="outline" className="text-[9px] h-4 px-1.5 gap-0.5 text-nx-warning-strong border-warning-strong/40 bg-warning/10" data-testid="opp-overview-amount-locked-badge">
                   <Lock className="size-2.5" />
                   {t("crmOpportunities.ruleConfig.lockedReadOnlyBadge")}
                 </Badge>
@@ -123,7 +123,7 @@ export function OpportunityOverviewCard({ opp }: OpportunityOverviewCardProps) {
               {t("crmOpportunities.detail.verifiedAccountLinked", { defaultValue: "Verified Account / Contact Linked" })}
             </span>
           ) : (
-            <span className="font-medium text-warning flex items-center gap-1">
+            <span className="font-medium text-nx-warning-strong flex items-center gap-1">
               <ShieldAlert className="size-3.5" />{" "}
               {t("crmOpportunities.detail.unlinkedPreProposal", { defaultValue: "Unlinked (Pre-Proposal)" })}
             </span>

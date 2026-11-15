@@ -135,6 +135,7 @@ export function CrmRolesAndPrincipalsSettingsCard({
                     variant="ghost"
                     className="h-5 w-5 text-destructive shrink-0"
                     onClick={() => settings.removeCrmScopedRole(role.key)}
+                    aria-label={`${t("crm.settings.rolesCard.removePipelineRoleLabel")}: ${isRtl ? role.nameAr : role.nameEn}`}
                   >
                     <Trash2 className="size-3" />
                   </Button>

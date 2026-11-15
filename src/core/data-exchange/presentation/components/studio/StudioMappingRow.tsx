@@ -92,7 +92,7 @@ export function StudioMappingRow({
   return (
     <TableRow
       id={rowId}
-      className={cn(issue ? "bg-destructive/5 border-s-2 border-s-destructive" : "")}
+      className={cn(issue ? "bg-nx-danger/5 border-s-2 border-s-nx-danger" : "")}
     >
       <TableCell className="font-medium text-nx-ink">
         <div className="flex flex-col gap-1">
@@ -134,41 +134,40 @@ export function StudioMappingRow({
           <div className="space-y-1">
             {issue ? (
               <Tooltip>
-                <TooltipTrigger asChild>
-                  <div>
-                    <Select
-                      value={currentMapping?.targetFieldKey || UNMAPPED_SENTINEL}
-                      onValueChange={(val) =>
-                        onUpdateMapping({
-                          targetFieldKey: val === UNMAPPED_SENTINEL ? "" : val,
-                        })
-                      }
+                <Select
+                  value={currentMapping?.targetFieldKey || UNMAPPED_SENTINEL}
+                  onValueChange={(val) =>
+                    onUpdateMapping({
+                      targetFieldKey: val === UNMAPPED_SENTINEL ? "" : val,
+                    })
+                  }
+                >
+                  <TooltipTrigger asChild>
+                    <SelectTrigger
+                      aria-label={`${t("dataExchange.mapping.targetField")}: ${header}`}
+                      className="border-nx-danger text-nx-danger font-medium h-8 text-xs"
+                      aria-invalid="true"
                     >
-                      <SelectTrigger
-                        className="border-destructive text-destructive font-medium h-8 text-xs"
-                        aria-invalid="true"
-                      >
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent className="z-[960]">
-                        <SelectItem value={UNMAPPED_SENTINEL}>
-                          {t("dataExchange.mapping.unmappedOption")}
-                        </SelectItem>
-                        {mappableTargets.map((col) => (
-                          <SelectItem key={col.key} value={col.key}>
-                            {(isAr ? col.displayNameAr : col.displayNameEn) +
-                              (col.isRequired ? ` *` : "")}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
-                </TooltipTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                  </TooltipTrigger>
+                  <SelectContent>
+                    <SelectItem value={UNMAPPED_SENTINEL}>
+                      {t("dataExchange.mapping.unmappedOption")}
+                    </SelectItem>
+                    {mappableTargets.map((col) => (
+                      <SelectItem key={col.key} value={col.key}>
+                        {(isAr ? col.displayNameAr : col.displayNameEn) +
+                          (col.isRequired ? ` *` : "")}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
                 <TooltipContent
                   side="top"
-                  className="z-[960] max-w-sm border-destructive/40 bg-nx-surface text-nx-ink p-3 space-y-1"
+                  className="max-w-sm border-nx-danger/35 bg-nx-surface text-nx-ink p-3 space-y-1"
                 >
-                  <p className="font-semibold text-destructive text-xs">
+                  <p className="font-semibold text-nx-danger text-xs">
                     {t("dataExchange.tooltips.incompatibleHeader")}: {issue.reasonCode}
                   </p>
                   <p className="text-[11px] text-nx-ink-2">{issueText}</p>
@@ -193,10 +192,13 @@ export function StudioMappingRow({
                   })
                 }
               >
-                <SelectTrigger className="h-8 text-xs border-nx-line">
+                <SelectTrigger
+                  aria-label={`${t("dataExchange.mapping.targetField")}: ${header}`}
+                  className="h-8 text-xs border-nx-line"
+                >
                   <SelectValue />
                 </SelectTrigger>
-                <SelectContent className="z-[960]">
+                <SelectContent>
                   <SelectItem value={UNMAPPED_SENTINEL}>
                     {t("dataExchange.mapping.unmappedOption")}
                   </SelectItem>
@@ -210,7 +212,7 @@ export function StudioMappingRow({
               </Select>
             )}
             {issue && (
-              <p className="text-[11px] text-destructive font-medium">
+              <p className="text-[11px] text-nx-danger font-medium">
                 {issueText} ({issue.reasonCode})
               </p>
             )}

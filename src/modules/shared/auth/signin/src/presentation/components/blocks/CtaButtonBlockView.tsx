@@ -24,10 +24,10 @@ export function CtaButtonBlockView({ block }: { block: CtaButtonBlock }) {
 
   const style: CSSProperties = {
     borderRadius: props.borderRadius,
-    boxShadow: props.shadow ? "var(--login-shadow-card, 0 10px 30px rgba(0,0,0,.12))" : undefined,
+    boxShadow: props.shadow ? "var(--login-shadow-card, none)" : undefined,
   };
   if (props.color && props.variant !== "outline" && props.variant !== "ghost") {
-    style.backgroundColor = blockColor(props.color, "var(--login-primary, hsl(var(--primary)))");
+    style.backgroundColor = blockColor(props.color, "var(--login-primary, var(--nx-accent-fill))");
   }
 
   return (
@@ -39,10 +39,10 @@ export function CtaButtonBlockView({ block }: { block: CtaButtonBlock }) {
           SIZE_CLASS[props.size || "md"],
           props.fullWidth ? "w-full" : "",
           props.variant === "outline"
-            ? "border border-border bg-transparent hover:bg-muted"
+            ? "border border-nx-line bg-transparent text-nx-ink hover:bg-nx-hover"
             : props.variant === "ghost"
-              ? "hover:bg-muted"
-              : "bg-primary text-primary-foreground hover:opacity-90",
+              ? "text-nx-ink hover:bg-nx-hover"
+              : "bg-nx-accent-fill text-nx-on-fill hover:brightness-95",
         ].join(" ")}
         style={style}
       >
@@ -50,7 +50,7 @@ export function CtaButtonBlockView({ block }: { block: CtaButtonBlock }) {
         <span>{props.label}</span>
       </a>
       {props.secondaryText && (
-        <p className="mt-1 text-center text-xs text-muted-foreground">{props.secondaryText}</p>
+        <p className="mt-1 text-center text-xs text-nx-ink-2">{props.secondaryText}</p>
       )}
     </div>
   );

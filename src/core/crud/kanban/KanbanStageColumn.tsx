@@ -118,7 +118,7 @@ export const KanbanStageColumn = memo(function KanbanStageColumn({
       case "done":
         return "bg-success";
       case "lost":
-        return "bg-destructive";
+        return "bg-nx-danger";
       default:
         return "bg-nx-accent";
     }
@@ -131,7 +131,7 @@ export const KanbanStageColumn = memo(function KanbanStageColumn({
     }
     if (evalResult?.state === "blocked") {
       return isColumnHovered
-        ? "border-destructive/80 ring-2 ring-destructive/40 bg-destructive/10"
+        ? "border-nx-danger/80 ring-2 ring-nx-danger/40 bg-nx-danger/10"
         : "border-nx-line/50 opacity-60 bg-nx-surface";
     }
     if (evalResult?.state === "allowed_screen_required") {
@@ -156,7 +156,7 @@ export const KanbanStageColumn = memo(function KanbanStageColumn({
       data-over-stage={isColumnHovered ? "true" : "false"}
       data-drop-status={evalResult?.state ?? "idle"}
       className={cn(
-        "flex flex-col rounded-nx-lg border transition-all duration-150 shrink-0",
+        "flex flex-col rounded-nx-lg border transition-colors duration-nx-micro motion-reduce:transition-none shrink-0",
         isCollapsed ? "w-14 min-h-[300px]" : "w-80 min-h-[420px]",
         dropStateClasses,
         stage.columnClass
@@ -173,13 +173,21 @@ export const KanbanStageColumn = memo(function KanbanStageColumn({
           <div className="flex items-center gap-2 min-w-0">
             {stage.customColorHex ? (
               <span
+                aria-hidden="true"
                 className="size-2.5 rounded-full shrink-0"
                 style={{ backgroundColor: stage.customColorHex }}
               />
             ) : (
-              <span className={cn("size-2.5 rounded-full shrink-0", categoryDotClass)} />
+              <span
+                aria-hidden="true"
+                className={cn("size-2.5 rounded-full shrink-0", categoryDotClass)}
+              />
             )}
-            {stage.icon && <span className="text-nx-ink-3 shrink-0">{stage.icon}</span>}
+            {stage.icon && (
+              <span aria-hidden="true" className="text-nx-ink-3 shrink-0">
+                {stage.icon}
+              </span>
+            )}
             {!isCollapsed && (
               <span className="text-sm font-semibold text-nx-ink truncate" title={stage.label}>
                 {stage.label}
@@ -210,14 +218,25 @@ export const KanbanStageColumn = memo(function KanbanStageColumn({
               type="button"
               variant="ghost"
               size="icon"
-              className="size-6 p-0 text-nx-ink-3 hover:text-nx-ink"
+              aria-expanded={!isCollapsed}
+              className="h-8 w-8 p-0 text-nx-ink-3 hover:text-nx-ink"
               onClick={() => setIsCollapsed((prev) => !prev)}
-              aria-label={isCollapsed ? `Expand ${stage.label}` : `Collapse ${stage.label}`}
+              aria-label={
+                isCollapsed
+                  ? t("crud.kanban.expandStage", {
+                      label: stage.label,
+                      defaultValue: `Expand ${stage.label}`,
+                    })
+                  : t("crud.kanban.collapseStage", {
+                      label: stage.label,
+                      defaultValue: `Collapse ${stage.label}`,
+                    })
+              }
             >
               {isCollapsed ? (
-                <ChevronRight className="size-3.5 rtl:rotate-180" />
+                <ChevronRight className="size-3.5 rtl:rotate-180" aria-hidden="true" />
               ) : (
-                <ChevronDown className="size-3.5" />
+                <ChevronDown className="size-3.5" aria-hidden="true" />
               )}
             </Button>
           </div>
@@ -235,7 +254,7 @@ export const KanbanStageColumn = memo(function KanbanStageColumn({
                   t("crud.kanban.transitionBlocked", { defaultValue: "Transition blocked" })
                 }
               >
-                <Lock className="size-3 shrink-0" />
+                <Lock className="size-3 shrink-0" aria-hidden="true" />
                 <span className="truncate">
                   {evalResult.reason ||
                     t("crud.kanban.transitionBlocked", { defaultValue: "Transition blocked" })}
@@ -246,7 +265,7 @@ export const KanbanStageColumn = memo(function KanbanStageColumn({
                 variant="outline"
                 className="w-full justify-start text-[11px] font-semibold gap-1 px-1.5 py-0.5 border-warning/50 text-warning bg-warning/10 truncate"
               >
-                <AlertCircle className="size-3 shrink-0" />
+                <AlertCircle className="size-3 shrink-0" aria-hidden="true" />
                 <span className="truncate">
                   {evalResult.badgeText ||
                     evalResult.actionLabel ||
@@ -265,7 +284,7 @@ export const KanbanStageColumn = memo(function KanbanStageColumn({
                 variant="outline"
                 className="w-full justify-start text-[11px] font-semibold gap-1 px-1.5 py-0.5 border-nx-accent/50 text-nx-accent bg-nx-accent-wash truncate"
               >
-                <Sparkles className="size-3 shrink-0" />
+                <Sparkles className="size-3 shrink-0" aria-hidden="true" />
                 <span className="truncate">
                   {evalResult.badgeText ||
                     evalResult.actionLabel ||
@@ -296,15 +315,15 @@ export const KanbanStageColumn = memo(function KanbanStageColumn({
       {!isCollapsed && (
         <div
           ref={scrollContainerRef}
-          className="flex-1 overflow-y-auto p-2 space-y-2 min-h-[320px] max-h-[calc(100vh-280px)]"
+          className="flex-1 overflow-y-auto p-2 space-y-2 min-h-[320px] max-h-[calc(100dvh-280px)]"
         >
           {isColumnHovered && activeItem && (
             <div
               data-testid={`kanban-drop-slot-${stage.stageKey}`}
               className={cn(
-                "w-full rounded-nx-md border-2 border-dashed p-3 text-center text-xs font-semibold transition-all select-none mb-1",
+                "w-full rounded-nx-md border-2 border-dashed p-3 text-center text-xs font-semibold transition-colors select-none mb-1",
                 evalResult?.state === "blocked"
-                  ? "border-destructive/60 bg-destructive/10 text-destructive"
+                  ? "border-nx-danger/60 bg-nx-danger/10 text-nx-danger"
                   : evalResult?.state === "allowed_screen_required"
                   ? "border-warning/60 bg-warning/10 text-warning"
                   : "border-nx-accent bg-nx-accent-wash text-nx-accent"
@@ -352,7 +371,7 @@ export const KanbanStageColumn = memo(function KanbanStageColumn({
                       style={{
                         position: "absolute",
                         top: 0,
-                        left: 0,
+                        insetInlineStart: 0,
                         width: "100%",
                         transform: `translateY(${virtualRow.start}px)`,
                       }}

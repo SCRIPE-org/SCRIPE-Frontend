@@ -40,7 +40,7 @@ export function LeadsTable({ leads, className }: LeadsTableProps) {
       dir={isRtl ? "rtl" : "ltr"}
     >
       <div className="overflow-x-auto no-scrollbar">
-        <Table className="w-full text-left text-xs border-collapse" dir={isRtl ? "rtl" : "ltr"}>
+        <Table className="w-full text-start text-xs border-collapse" dir={isRtl ? "rtl" : "ltr"}>
           <TableHeader>
             <TableRow className="border-b border-nx-line bg-nx-raised/50 text-nx-ink-2 font-semibold">
               <TableHead className="px-4 py-3 text-start">{t("crmLeads.table.title")}</TableHead>
@@ -118,7 +118,7 @@ export function LeadsTable({ leads, className }: LeadsTableProps) {
                   </TableCell>
 
                   {/* Estimated Value */}
-                  <TableCell className="px-4 py-3 font-bold text-nx-ink">
+                  <TableCell className="px-4 py-3 font-bold tabular-nums text-nx-ink">
                     {lead.estimatedValue !== undefined && lead.estimatedValue !== null
                       ? `${lead.currency} ${lead.estimatedValue.toLocaleString()}`
                       : "—"}
@@ -126,7 +126,7 @@ export function LeadsTable({ leads, className }: LeadsTableProps) {
 
                   {/* Source */}
                   <TableCell className="px-4 py-3">
-                    <span className="inline-flex items-center px-2 py-0.5 rounded-nx-xs bg-nx-raised border border-nx-line text-[11px] text-nx-ink-2">
+                    <span className="inline-flex items-center px-2 py-0.5 rounded-nx-sm bg-nx-raised border border-nx-line text-[11px] text-nx-ink-2">
                       {lead.source || t("crmLeads.detail.directSource")}
                     </span>
                   </TableCell>

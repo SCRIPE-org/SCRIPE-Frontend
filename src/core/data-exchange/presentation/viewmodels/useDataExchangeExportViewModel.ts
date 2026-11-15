@@ -54,9 +54,8 @@ export function useDataExchangeExportViewModel({
   const { direction, language, t } = useI18n();
   const isAr = language === "ar";
 
-  const [descriptor, setDescriptor] = useState<DataExchangeDescriptorResponseDto | null>(
-    initialDescriptor ?? null
-  );
+  const [fetchedDescriptor, setFetchedDescriptor] =
+    useState<DataExchangeDescriptorResponseDto | null>(null);
   const [format, setFormat] = useState<DataExchangeFileFormat>("xlsx");
   const [selectedColumns, setSelectedColumns] = useState<string[]>([]);
   const [isExporting, setIsExporting] = useState(false);
@@ -64,11 +63,7 @@ export function useDataExchangeExportViewModel({
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const lastInitializedRef = useRef<string>("");
 
-  useEffect(() => {
-    if (initialDescriptor) {
-      setDescriptor(initialDescriptor);
-    }
-  }, [initialDescriptor]);
+  const descriptor = initialDescriptor ?? fetchedDescriptor;
 
   useEffect(() => {
     if (!open || !entityKey || initialDescriptor) return;
@@ -77,7 +72,7 @@ export function useDataExchangeExportViewModel({
     getCoreContainer()
       .dataExchangeRepository.getEntityDescriptor(entityKey, controller.signal)
       .then((res) => {
-        if (!cancelled && res) setDescriptor(res);
+        if (!cancelled && res) setFetchedDescriptor(res);
       })
       .catch(() => {
         // Error surfaced on export if needed

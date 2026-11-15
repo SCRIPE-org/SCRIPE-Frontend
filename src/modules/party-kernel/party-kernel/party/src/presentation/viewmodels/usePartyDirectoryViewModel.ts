@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo, useEffect, useTransition } from "react";
+import { useState, useMemo, useTransition } from "react";
 import { useSearchParams } from "next/navigation";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { getPartyKernelContainer } from "../../../../di";
@@ -65,15 +65,18 @@ export function usePartyDirectoryViewModel() {
   const [pageSize, setPageSize] = useState(20);
 
   // Synchronize filter when navigating with ?partyType= query parameter
-  useEffect(() => {
-    if (partyTypeParam === "Person" || partyTypeParam === "Organization") {
+  const [prevPartyTypeParam, setPrevPartyTypeParam] = useState(partyTypeParam);
+  if (partyTypeParam !== prevPartyTypeParam) {
+    setPrevPartyTypeParam(partyTypeParam);
+    if (
+      partyTypeParam === "Person" ||
+      partyTypeParam === "Organization" ||
+      partyTypeParam === "all"
+    ) {
       setSelectedType(partyTypeParam);
       setPage(1);
-    } else if (partyTypeParam === "all") {
-      setSelectedType("all");
-      setPage(1);
     }
-  }, [partyTypeParam]);
+  }
 
   // Dialog & Sheet States
   const [isCreatePersonOpen, setIsCreatePersonOpen] = useState(false);

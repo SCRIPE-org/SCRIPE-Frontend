@@ -114,14 +114,14 @@ export function CrmWorkflowFieldAndMultiConditionSection({
               <div className="sm:col-span-5">
                 <Select value={row.fieldKey} onValueChange={(v) => syncRows(rows.map((r, i) => (i === idx ? { ...r, fieldKey: v } : r)))}>
                   <SelectTrigger className="h-8 text-xs"><SelectValue /></SelectTrigger>
-                  <SelectContent className="z-[10006]">{allFields.map((f) => <SelectItem key={f.key} value={f.key} className="text-xs">{isAr ? f.labelAr : f.labelEn}</SelectItem>)}</SelectContent>
+                  <SelectContent>{allFields.map((f) => <SelectItem key={f.key} value={f.key} className="text-xs">{isAr ? f.labelAr : f.labelEn}</SelectItem>)}</SelectContent>
                 </Select>
               </div>
               {isConditionRule && (
                 <div className="sm:col-span-4">
                   <Select value={row.operator} onValueChange={(v) => syncRows(rows.map((r, i) => (i === idx ? { ...r, operator: v } : r)))}>
                     <SelectTrigger className="h-8 text-xs" data-testid={idx === 0 ? "rule-operator-select" : `rule-operator-select-${idx}`}><SelectValue /></SelectTrigger>
-                    <SelectContent className="z-[10006]">{CRM_RULE_OPERATORS.map((op) => <SelectItem key={op.key} value={op.key} className="text-xs">{isAr ? op.labelAr : op.labelEn}</SelectItem>)}</SelectContent>
+                    <SelectContent>{CRM_RULE_OPERATORS.map((op) => <SelectItem key={op.key} value={op.key} className="text-xs">{isAr ? op.labelAr : op.labelEn}</SelectItem>)}</SelectContent>
                   </Select>
                 </div>
               )}
@@ -137,7 +137,15 @@ export function CrmWorkflowFieldAndMultiConditionSection({
               )}
               {rows.length > 1 && (
                 <div className="sm:col-span-1 flex justify-end">
-                  <Button type="button" size="icon" variant="ghost" className="h-7 w-7 text-destructive" onClick={() => syncRows(rows.filter((_, i) => i !== idx))} data-testid={`remove-condition-row-${idx}`}>
+                  <Button
+                    type="button"
+                    size="icon"
+                    variant="ghost"
+                    className="h-7 w-7 text-destructive"
+                    onClick={() => syncRows(rows.filter((_, i) => i !== idx))}
+                    data-testid={`remove-condition-row-${idx}`}
+                    aria-label={t("crmOpportunities.pipelinesPage.removeConditionRowLabel")}
+                  >
                     <Trash2 className="w-3.5 h-3.5" />
                   </Button>
                 </div>

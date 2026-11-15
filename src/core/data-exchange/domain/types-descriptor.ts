@@ -95,6 +95,7 @@ export interface DataExchangeDescriptorResponseDto {
   canExport: boolean;
   restrictedFieldKeys: string[];
   relatedMultiSheetEntityKeys?: string[];
+  schemaFingerprint?: string;
 }
 
 /** Auto-suggested column mapping discovered during workbook inspection. */
@@ -106,6 +107,22 @@ export interface DataExchangeSuggestedMappingDto {
   targetDataType?: DataExchangeColumnType | null;
 }
 
+/** Structured, localizable schema drift or mapping preset warning emitted during inspection. */
+export interface DataExchangeSchemaWarning {
+  code:
+    | "TEMPLATE_FINGERPRINT_DRIFT"
+    | "PRESET_INVALID_JSON"
+    | "PRESET_STALE_TARGET_FIELDS"
+    | "PRESET_MISSING_HEADERS"
+    | string;
+  entityKey?: string | null;
+  entityDisplayNameEn?: string | null;
+  entityDisplayNameAr?: string | null;
+  presetName?: string | null;
+  sheetName?: string | null;
+  items?: string[] | null;
+}
+
 /** Inspected worksheet metadata, sample rows, and suggested mappings. */
 export interface DataExchangeInspectedSheetDto {
   sheetName: string;
@@ -115,6 +132,7 @@ export interface DataExchangeInspectedSheetDto {
   estimatedRowCount: number;
   isEmpty: boolean;
   suggestedMappings: DataExchangeSuggestedMappingDto[];
+  schemaWarnings?: DataExchangeSchemaWarning[] | null;
 }
 
 /** Server response after uploading a workbook for OWASP validation and inspection. */

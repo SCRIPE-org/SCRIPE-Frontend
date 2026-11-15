@@ -160,13 +160,6 @@ export function LeadsView() {
             <DataExchangeToolbarActions
               entityKey="crm.lead"
               enableMultiSheetMigration
-              multiSheetEntityKeys={[
-                "crm.account",
-                "crm.contact",
-                "crm.lead",
-                "crm.opportunity",
-                "crm.activity",
-              ]}
               activeSearch={search}
               onImportComplete={refresh}
             />
@@ -204,7 +197,7 @@ export function LeadsView() {
               </AlertDescription>
             </Alert>
           )}
-          <GenericCrudView<CrmLead> config={crudConfig} columns={columns} viewModel={viewModel} pagination={viewModel.pagination} />
+          <GenericCrudView<CrmLead> config={crudConfig} columns={columns} viewModel={{ ...viewModel, error: null }} pagination={viewModel.pagination} />
         </>
       )}
       <CreateLeadDialog open={isCreateOpen} onOpenChange={setIsCreateOpen} onSubmit={handleCreateLead} isSubmitting={isSubmitting} submitError={submitError} />

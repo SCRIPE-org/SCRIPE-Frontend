@@ -47,13 +47,13 @@ export function AvatarUploader({
   };
 
   return (
-    <div className="flex flex-col items-center gap-4 rounded-xl border border-border bg-card/60 p-4 sm:flex-row">
+    <div className="flex flex-col items-center gap-4 rounded-xl border border-nx-line bg-nx-surface p-4 sm:flex-row">
       <div className="group relative shrink-0">
-        <Avatar className="shadow-xs h-16 w-16 border border-border sm:h-20 sm:w-20">
+        <Avatar className="h-16 w-16 border border-nx-line sm:h-20 sm:w-20">
           {profileImageUrl ? (
             <AvatarImage src={profileImageUrl} alt={name} className="object-cover" />
           ) : null}
-          <AvatarFallback className="bg-primary/10 text-base font-bold text-primary sm:text-lg">
+          <AvatarFallback className="bg-nx-accent-wash text-base font-bold text-nx-accent sm:text-lg">
             {initials}
           </AvatarFallback>
         </Avatar>
@@ -70,12 +70,12 @@ export function AvatarUploader({
       </div>
 
       <div className="min-w-0 flex-1 space-y-1 text-center sm:text-start">
-        <h4 className="text-sm font-medium text-foreground">
+        <h4 className="text-sm font-medium text-nx-ink">
           {t("auth.accountSetup.photoUpload")}
         </h4>
-        <p className="text-xs text-muted-foreground">{t("auth.accountSetup.photoHint")}</p>
+        <p className="text-xs text-nx-ink-2">{t("auth.accountSetup.photoHint")}</p>
         {error && (
-          <p className="flex items-center gap-1 text-xs font-medium text-destructive">
+          <p className="flex items-center gap-1 text-xs font-medium text-nx-danger">
             <AlertCircle className="h-3.5 w-3.5 shrink-0" />
             <span>{error}</span>
           </p>
@@ -93,7 +93,7 @@ export function AvatarUploader({
             type="button"
             variant="outline"
             size="sm"
-            className="shadow-xs h-8 gap-1.5 text-xs"
+            className="h-8 gap-1.5 text-xs"
             onClick={() => fileInputRef.current?.click()}
           >
             <Upload className="h-3.5 w-3.5" />
@@ -104,7 +104,7 @@ export function AvatarUploader({
               type="button"
               variant="ghost"
               size="sm"
-              className="h-8 gap-1.5 text-xs text-destructive hover:bg-destructive/10 hover:text-destructive"
+              className="h-8 gap-1.5 text-xs text-nx-danger hover:bg-destructive/10 hover:text-nx-danger"
               onClick={onRemove}
             >
               <Trash2 className="h-3.5 w-3.5" />

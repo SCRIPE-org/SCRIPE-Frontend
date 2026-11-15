@@ -135,10 +135,10 @@ export function PlatformRecentActivity({
   return (
     <Card className="flex h-[400px] flex-col overflow-hidden p-0">
       {/* Header */}
-      <div className="flex h-[60px] shrink-0 items-center justify-between border-b border-nx-line bg-nx-raised/40 px-4 py-3">
+      <div className="flex h-[60px] shrink-0 items-center justify-between border-b border-nx-line bg-nx-raised px-4 py-3">
         <div className="flex min-w-0 items-center gap-2.5">
-          <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border border-primary/20 bg-primary/10 text-primary">
-            <ScrollText className="h-4 w-4" />
+          <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border border-nx-line-hi bg-nx-accent-wash text-nx-accent">
+            <ScrollText className="h-4 w-4" aria-hidden="true" />
           </div>
           <div className="min-w-0">
             <h2 className="truncate text-sm font-bold tracking-tight text-nx-ink sm:text-base">
@@ -156,15 +156,15 @@ export function PlatformRecentActivity({
           className="group flex shrink-0 items-center gap-1 text-xs font-semibold text-nx-ink-3 transition-colors hover:text-nx-ink"
         >
           <span>{t("platformCommandCenter.recentActivity.viewAll") || "View All"}</span>
-          <ChevronRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5" />
+          <ChevronRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5 rtl:rotate-180 rtl:group-hover:-translate-x-0.5" aria-hidden="true" />
         </Link>
       </div>
 
       {/* Table Content */}
       <div className="flex-1 overflow-x-auto overflow-y-auto">
-        <table className="w-full border-collapse text-left text-xs">
+        <table className="w-full border-collapse text-start text-xs">
           <thead>
-            <tr className="border-b border-nx-line bg-nx-raised/20 text-[11px] font-semibold uppercase tracking-wider text-nx-ink-3">
+            <tr className="border-b border-nx-line bg-nx-surface text-[11px] font-semibold uppercase tracking-wider text-nx-ink-3">
               <th className="px-4 py-2.5 font-medium">
                 {t("platformCommandCenter.recentActivity.headers.time") || "Time"}
               </th>

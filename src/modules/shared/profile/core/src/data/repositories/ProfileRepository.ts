@@ -43,7 +43,11 @@ export class ProfileRepository implements IProfileRepository {
   }
 
   async updateProfile(data: UpdateProfileRequest): Promise<AdminProfile> {
-    const dto = await this.api.put<AdminProfileDto>(PROFILE_ENDPOINTS.UPDATE_DOSSIER, data);
+    const payload: UpdateProfileRequest = {
+      ...data,
+      ...(data.rowVersion !== undefined ? { rowVersion: data.rowVersion } : {}),
+    };
+    const dto = await this.api.put<AdminProfileDto>(PROFILE_ENDPOINTS.UPDATE_DOSSIER, payload);
     return ProfileMapper.toAdminProfile(dto);
   }
 

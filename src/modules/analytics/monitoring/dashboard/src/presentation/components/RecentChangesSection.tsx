@@ -36,7 +36,7 @@ const eventColorMap: Record<string, string> = {
   Update: "bg-info/10 text-info",
   Delete: "bg-destructive/10 text-destructive",
   RoleAssigned: "bg-nx-accent-wash text-nx-accent",
-  RoleUnassigned: "bg-warning/10 text-warning",
+  RoleUnassigned: "bg-warning/10 text-nx-warning-strong",
   PermissionGranted: "bg-success/10 text-success",
   PermissionRevoked: "bg-destructive/10 text-destructive",
 };

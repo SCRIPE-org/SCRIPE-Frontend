@@ -131,7 +131,7 @@ export function KanbanCard({
             <span>{t("crmOpportunities.kanban.partyVerified", { defaultValue: "Verified" })}</span>
           </span>
         ) : (
-          <span className="inline-flex items-center gap-0.5 text-[9px] font-semibold text-warning shrink-0" title={t("crmOpportunities.kanban.partyUnlinked", { defaultValue: "Unlinked" })}>
+          <span className="inline-flex items-center gap-0.5 text-[9px] font-semibold text-nx-warning-strong shrink-0" title={t("crmOpportunities.kanban.partyUnlinked", { defaultValue: "Unlinked" })}>
             <ShieldAlert className="size-2.5" />
             <span>{t("crmOpportunities.kanban.partyUnlinked", { defaultValue: "Unlinked" })}</span>
           </span>

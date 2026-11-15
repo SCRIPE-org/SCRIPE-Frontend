@@ -31,7 +31,7 @@ const CARD_BASE = "card rounded-nx-lg text-nx-ink";
 // `transition-all` at 300ms on every card, which animated layout properties
 // during resize and reflow for no visual gain.
 const CARD_MOTION =
-  "transition-[border-color,background-color,box-shadow] duration-nx-micro ease-nx-enter motion-reduce:transition-none";
+  "transition-[border-color,background-color] duration-nx-micro ease-nx-enter motion-reduce:transition-none";
 
 // The settings-driven hover effects (elevate/scale/rotate/slide/shimmer) come
 // from a shared helper that ships no reduced-motion path of its own, and its
@@ -59,14 +59,13 @@ const Card = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElemen
 
       switch (settings.cardStyle) {
         case "glass":
-          // The ONE deliberate glass surface in the system — an opt-in user
-          // setting, never a default. A raised step at 60% behind the blur
-          // keeps text legible over whatever it is laid on.
+          // Flat matte tinted surface step — zero backdrop-blur or resting shadows
+          // to guarantee crisp text contrast and performance across themes.
           return cn(
             CARD_BASE,
             CARD_MOTION,
-            "border border-nx-line-hi bg-[color:color-mix(in_srgb,var(--nx-raised)_60%,transparent)] backdrop-blur-md",
-            "hover:bg-[color:color-mix(in_srgb,var(--nx-raised)_80%,transparent)]",
+            "border border-nx-line-hi bg-nx-surface",
+            "hover:bg-nx-raised hover:border-nx-line-hi",
             hoverClasses
           );
         case "solid":
@@ -74,7 +73,7 @@ const Card = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElemen
           return cn(
             CARD_BASE,
             CARD_MOTION,
-            "border-0 bg-nx-raised",
+            "border border-transparent bg-nx-raised",
             "hover:bg-nx-raised-2",
             hoverClasses
           );
@@ -89,13 +88,13 @@ const Card = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElemen
             hoverClasses
           );
         case "elevated":
-          // The one treatment that genuinely floats, so the one that is allowed
-          // a shadow at rest.
+          // Matte elevation uses an explicit surface-step + promoted hairline,
+          // adhering to zero resting box-shadows on cards.
           return cn(
             CARD_BASE,
             CARD_MOTION,
-            "border border-nx-line bg-nx-surface shadow-nx-popover",
-            "hover:border-nx-line-hi hover:shadow-nx-modal",
+            "border border-nx-line-hi bg-nx-raised",
+            "hover:border-nx-line-hi hover:bg-nx-raised-2",
             hoverClasses
           );
         default:

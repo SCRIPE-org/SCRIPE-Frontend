@@ -632,6 +632,9 @@ export const ar = {
       delete: "حذف",
       saved: "تم الحفظ",
       saveChanges: "حفظ التغييرات",
+      concurrencyConflict:
+        "تم تعديل هذا السجل في جلسة أخرى (تعارض 409). تم تحميل أحدث نسخة — يرجى المراجعة والحفظ مرة أخرى.",
+      saveFailed: "تعذر حفظ التغييرات. يرجى المحاولة مرة أخرى.",
     },
     accountPortal: {
       backToDashboard: "العودة إلى لوحة التحكم",

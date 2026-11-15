@@ -3,6 +3,7 @@
 import React from "react";
 import { AlertCircle, ChevronRight, CheckCircle2 } from "lucide-react";
 import { useI18n } from "@core/providers/i18n-provider";
+import { Button } from "@core/ui/button";
 import { Card } from "@core/ui/card";
 import type { HealthIncident } from "../../domain/entities/PlatformHealth";
 
@@ -71,19 +72,23 @@ export function RecentIncidentsSection({
             });
 
             return (
-              <div
+              <Button
                 key={inc.id}
+                type="button"
+                variant="ghost"
+                aria-pressed={isSelected}
                 onClick={() => onSelectIncident(inc.id)}
-                className={`group flex cursor-pointer items-center justify-between gap-3 rounded-lg border p-3 transition-all ${
+                className={`group flex h-auto w-full items-center justify-between gap-3 whitespace-normal rounded-lg border p-3 text-start font-normal transition-all ${
                   isSelected
-                    ? "border-primary/50 bg-nx-raised"
-                    : "border-nx-line bg-nx-surface hover:border-nx-line-hi hover:bg-nx-raised/40"
+                    ? "border-primary/50 bg-nx-raised text-nx-ink hover:bg-nx-raised"
+                    : "border-nx-line bg-nx-surface text-nx-ink hover:border-nx-line-hi hover:bg-nx-raised/40"
                 }`}
               >
-                <div className="flex min-w-0 items-center gap-3">
+                <span className="flex min-w-0 items-center gap-3">
                   {/* Timeline dot */}
-                  <div className="flex shrink-0 flex-col items-center">
+                  <span className="flex shrink-0 flex-col items-center">
                     <span
+                      aria-hidden="true"
                       className={`h-2.5 w-2.5 rounded-full ${
                         isInvestigating
                           ? "bg-destructive shadow-[0_0_8px_rgba(239,68,68,0.7)]"
@@ -95,25 +100,25 @@ export function RecentIncidentsSection({
                     <span className="mt-1 font-mono text-[10.5px] text-nx-ink-3">
                       {detectedTime}
                     </span>
-                  </div>
+                  </span>
 
-                  <div className="min-w-0">
-                    <div className="truncate text-sm font-semibold text-nx-ink transition-colors group-hover:text-primary">
+                  <span className="min-w-0">
+                    <span className="block truncate text-sm font-semibold text-nx-ink transition-colors group-hover:text-primary">
                       {inc.title}
-                    </div>
-                    <div className="mt-0.5 truncate text-xs text-nx-ink-3">
+                    </span>
+                    <span className="mt-0.5 block truncate text-xs text-nx-ink-3">
                       <span className="font-medium text-nx-ink-3">
                         {t("platformHealth.incidents.affectedService") || "Affected"}:
                       </span>{" "}
                       <span className="font-mono text-[11px] text-nx-ink/80">
                         {inc.affectedService}
                       </span>
-                    </div>
-                  </div>
-                </div>
+                    </span>
+                  </span>
+                </span>
 
                 {/* Status Pill & Arrow */}
-                <div className="flex shrink-0 items-center gap-2">
+                <span className="flex shrink-0 items-center gap-2">
                   <span
                     className={`inline-flex items-center rounded border px-2 py-0.5 text-[11px] font-semibold ${
                       isInvestigating
@@ -129,9 +134,12 @@ export function RecentIncidentsSection({
                         ? t("platformHealth.incidents.statusResolved") || "Resolved"
                         : t("platformHealth.incidents.statusCompleted") || "Completed"}
                   </span>
-                  <ChevronRight className="h-4 w-4 text-nx-ink-3 transition-all group-hover:translate-x-0.5 group-hover:text-nx-ink rtl:rotate-180 rtl:group-hover:-translate-x-0.5" />
-                </div>
-              </div>
+                  <ChevronRight
+                    aria-hidden="true"
+                    className="h-4 w-4 text-nx-ink-3 transition-all group-hover:translate-x-0.5 group-hover:text-nx-ink rtl:rotate-180 rtl:group-hover:-translate-x-0.5"
+                  />
+                </span>
+              </Button>
             );
           })
         )}

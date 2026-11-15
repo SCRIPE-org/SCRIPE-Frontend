@@ -103,7 +103,7 @@ export function CrmWorkflowInspectorPanel({
         <div className="flex items-center gap-1">
           <Button size="icon" variant="ghost" className="h-7 w-7" onClick={() => handleMove(selectedStage.stageKey, "up")} title={t("crmOpportunities.pipelinesPage.moveStageEarlierTitle")}><ArrowUp className="w-3.5 h-3.5" /></Button>
           <Button size="icon" variant="ghost" className="h-7 w-7" onClick={() => handleMove(selectedStage.stageKey, "down")} title={t("crmOpportunities.pipelinesPage.moveStageLaterTitle")}><ArrowDown className="w-3.5 h-3.5" /></Button>
-          {vm.canDeleteStage && <Button size="icon" variant="ghost" className="h-7 w-7 text-warning" onClick={vm.handleOpenReplaceModal} title={t("crmOpportunities.pipelinesPage.replaceAndMigrateStatusTitle")} data-testid="inspector-replace-stage-btn"><ArrowRightLeft className="w-3.5 h-3.5" /></Button>}
+          {vm.canDeleteStage && <Button size="icon" variant="ghost" className="h-7 w-7 text-nx-warning-strong" onClick={vm.handleOpenReplaceModal} title={t("crmOpportunities.pipelinesPage.replaceAndMigrateStatusTitle")} data-testid="inspector-replace-stage-btn"><ArrowRightLeft className="w-3.5 h-3.5" /></Button>}
           {vm.canDeleteStage && <Button size="icon" variant="ghost" className="h-7 w-7 text-destructive" onClick={() => onRemoveStage(selectedStage.stageKey)} title={t("crmOpportunities.pipelinesPage.deleteStatusTitle")} data-testid={`inspector-delete-stage-${selectedStage.stageKey}`}><Trash2 className="w-3.5 h-3.5" /></Button>}
         </div>
       </div>
@@ -117,7 +117,7 @@ export function CrmWorkflowInspectorPanel({
         <Label className="text-[11px]">{t("crmOpportunities.pipelinesPage.statusCategoryLabel")}</Label>
         <Select value={selectedStage.category || "in_progress"} onValueChange={(val) => { const cat = val as CrmWorkflowStageCategory; onStageChange({ ...selectedStage, category: cat, isTerminalWon: cat === "done" && activeEntity === "deal", isTerminalLost: cat === "lost" }); }}>
           <SelectTrigger className="h-8 text-xs" data-testid="inspector-stage-category-select"><SelectValue /></SelectTrigger>
-          <SelectContent className="z-[10001]">
+          <SelectContent>
             <SelectItem value="todo" className="text-xs">{t("crmOpportunities.pipelinesPage.statusCategoryTodo")}</SelectItem>
             <SelectItem value="in_progress" className="text-xs">{t("crmOpportunities.pipelinesPage.statusCategoryInProgress")}</SelectItem>
             <SelectItem value="done" className="text-xs">{t("crmOpportunities.pipelinesPage.statusCategoryDone")}</SelectItem>

@@ -122,15 +122,6 @@ export function WorkspaceHubCard({
           {lastAccessed}
         </div>
       )}
-
-      {/* Accent bottom border line */}
-      {!isLocked && (
-        <div
-          aria-hidden="true"
-          className="absolute inset-x-0 bottom-0 h-0.5 rounded-b-nx-lg opacity-50 transition-opacity duration-nx-standard ease-nx-enter group-hover:opacity-100 motion-reduce:transition-none"
-          style={{ background: accentColor }}
-        />
-      )}
     </Button>
   );
 }

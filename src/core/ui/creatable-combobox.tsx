@@ -13,6 +13,7 @@
 import * as React from "react";
 import { Check, ChevronsUpDown, Plus, X } from "lucide-react";
 import { cn } from "@core/common/utils";
+import { useI18n } from "@core/providers/i18n-provider";
 import { Button } from "@core/ui/button";
 import {
   Command,
@@ -51,18 +52,41 @@ export function CreatableCombobox({
   options,
   value = "",
   onChange,
-  placeholder = "Select or type...",
-  searchPlaceholder = "Search...",
-  emptyText = "No matching options",
-  createLabel = (q) => `Use "${q}"`,
+  placeholder,
+  searchPlaceholder,
+  emptyText,
+  createLabel,
   allowCreate = true,
   allowClear = true,
   disabled = false,
   className,
   "aria-invalid": ariaInvalid,
 }: CreatableComboboxProps) {
+  const { t, direction } = useI18n();
+  const isRTL = direction === "rtl";
   const [open, setOpen] = React.useState(false);
   const [query, setQuery] = React.useState("");
+  const triggerRef = React.useRef<HTMLButtonElement>(null);
+  const listboxId = React.useId();
+
+  const resolvedPlaceholder =
+    placeholder ??
+    t("components.creatableCombobox.placeholder", { defaultValue: "Select or type..." });
+  const resolvedSearchPlaceholder =
+    searchPlaceholder ?? t("common.search", { defaultValue: "Search..." });
+  const resolvedEmptyText =
+    emptyText ?? t("common.noResultsFound", { defaultValue: "No matching options" });
+  const clearLabel = t("common.clearSelection", { defaultValue: "Clear selection" });
+  const customHeading = t("components.creatableCombobox.customEntry", {
+    defaultValue: "Custom entry",
+  });
+  const formatCreateLabel =
+    createLabel ??
+    ((q: string) =>
+      t("components.creatableCombobox.createOption", {
+        defaultValue: 'Use "{value}"',
+        value: q,
+      }));
 
   // Normalize options to ComboboxOption shape
   const normalizedOptions = React.useMemo<ComboboxOption[]>(() => {
@@ -87,60 +111,71 @@ export function CreatableCombobox({
       onChange(selectedValue);
       setOpen(false);
       setQuery("");
+      triggerRef.current?.focus();
     },
     [onChange]
   );
 
   const handleClear = React.useCallback(
-    (e: React.MouseEvent) => {
+    (e: React.MouseEvent<HTMLButtonElement>) => {
       e.stopPropagation();
       onChange("");
       setQuery("");
+      triggerRef.current?.focus();
     },
     [onChange]
   );
 
+  const hasClear = Boolean(allowClear && value && !disabled);
+  const isInvalid = ariaInvalid === true || ariaInvalid === "true";
+
   return (
     <Popover open={open} onOpenChange={setOpen}>
-      <PopoverTrigger asChild>
-        <Button
-          id={id}
-          type="button"
-          role="combobox"
-          aria-expanded={open}
-          aria-invalid={ariaInvalid}
-          disabled={disabled}
-          variant="outline"
-          className={cn(
-            "flex h-9 w-full items-center justify-between rounded-nx-md border border-nx-line bg-nx-ground px-3 text-start text-xs font-normal text-nx-ink transition-colors hover:bg-nx-hover hover:text-nx-ink focus:border-nx-accent focus:ring-1 focus:ring-nx-accent disabled:cursor-not-allowed disabled:opacity-50",
-            !value && "text-nx-ink-3",
-            ariaInvalid && "border-destructive focus:border-destructive focus:ring-destructive",
-            className
-          )}
-        >
-          <span className="truncate">{selectedLabel || placeholder}</span>
-          <div className="flex shrink-0 items-center gap-1 text-nx-ink-3">
-            {allowClear && value && !disabled && (
-              <span
-                role="button"
-                tabIndex={0}
-                onClick={handleClear}
-                onKeyDown={(e) =>
-                  e.key === "Enter" && handleClear(e as unknown as React.MouseEvent)
-                }
-                className="rounded-full p-0.5 hover:bg-nx-raised hover:text-nx-ink"
-                title="Clear selection"
-              >
-                <X className="h-3 w-3" />
-              </span>
+      <div className="relative flex w-full items-center" dir={direction}>
+        <PopoverTrigger asChild>
+          <Button
+            ref={triggerRef}
+            id={id}
+            type="button"
+            role="combobox"
+            aria-expanded={open}
+            aria-controls={listboxId}
+            aria-invalid={ariaInvalid}
+            disabled={disabled}
+            variant="outline"
+            className={cn(
+              "h-9 w-full justify-between rounded-nx-control border border-nx-line-hi bg-nx-ground px-3 text-start text-xs font-normal text-nx-ink hover:border-nx-ink-3 hover:bg-nx-ground hover:text-nx-ink focus-visible:border-nx-accent focus-visible:shadow-nx-focus disabled:cursor-not-allowed disabled:border-nx-line disabled:bg-nx-raised disabled:text-nx-ink-3",
+              !value && "text-nx-ink-3",
+              isInvalid &&
+                !disabled &&
+                "border-nx-danger hover:border-nx-danger focus-visible:border-nx-danger focus-visible:shadow-[inset_0_0_0_1px_var(--nx-danger),0_0_0_3px_color-mix(in_srgb,var(--nx-danger)_18%,transparent)]",
+              className
             )}
-            <ChevronsUpDown className="h-3.5 w-3.5 opacity-50" />
-          </div>
-        </Button>
-      </PopoverTrigger>
+          >
+            <span className={cn("truncate", hasClear && "pe-7")}>
+              {selectedLabel || resolvedPlaceholder}
+            </span>
+            <ChevronsUpDown className="h-3.5 w-3.5 shrink-0 text-nx-ink-3" aria-hidden="true" />
+          </Button>
+        </PopoverTrigger>
+        {hasClear && (
+          <Button
+            type="button"
+            variant="ghost"
+            size="icon"
+            onClick={handleClear}
+            aria-label={clearLabel}
+            title={clearLabel}
+            className="absolute end-8 top-1/2 z-raised h-6 w-6 -translate-y-1/2 rounded-full p-0 text-nx-ink-3 hover:bg-nx-raised hover:text-nx-ink"
+          >
+            <X className="h-3 w-3" aria-hidden="true" />
+          </Button>
+        )}
+      </div>
       <PopoverContent
-        className="shadow-nx-lg w-[--radix-popover-trigger-width] min-w-[240px] p-0"
-        align="start"
+        dir={direction}
+        className="w-[--radix-popover-trigger-width] min-w-[240px] p-0"
+        align={isRTL ? "end" : "start"}
       >
         <Command
           filter={(itemValue, search) => {
@@ -149,26 +184,26 @@ export function CreatableCombobox({
           }}
         >
           <CommandInput
-            placeholder={searchPlaceholder}
+            placeholder={resolvedSearchPlaceholder}
             value={query}
             onValueChange={setQuery}
             className="h-9 text-xs"
           />
-          <CommandList className="max-h-56">
+          <CommandList id={listboxId} className="max-h-56">
             <CommandEmpty className="py-2.5 text-center text-xs text-nx-ink-3">
-              {emptyText}
+              {resolvedEmptyText}
             </CommandEmpty>
 
             {/* Creatable custom entry if query not empty and not in list */}
             {allowCreate && query.trim().length > 0 && !exactMatch && (
-              <CommandGroup heading="Custom Location">
+              <CommandGroup heading={customHeading}>
                 <CommandItem
                   value={query.trim()}
                   onSelect={() => handleSelect(query.trim())}
                   className="flex cursor-pointer items-center gap-2 text-xs font-medium text-nx-accent hover:bg-nx-accent-wash"
                 >
-                  <Plus className="h-3.5 w-3.5 shrink-0" />
-                  <span className="truncate">{createLabel(query.trim())}</span>
+                  <Plus className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
+                  <span className="truncate">{formatCreateLabel(query.trim())}</span>
                 </CommandItem>
               </CommandGroup>
             )}
@@ -191,9 +226,10 @@ export function CreatableCombobox({
                     </div>
                     <Check
                       className={cn(
-                        "h-3.5 w-3.5 text-nx-accent",
+                        "h-3.5 w-3.5 shrink-0 text-nx-accent",
                         isSelected ? "opacity-100" : "opacity-0"
                       )}
+                      aria-hidden="true"
                     />
                   </CommandItem>
                 );

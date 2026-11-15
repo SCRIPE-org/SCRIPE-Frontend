@@ -1,11 +1,19 @@
-import { describe, expect, it } from "vitest";
-import { getEntityDisplayName } from "../entity-display-names";
+import { beforeEach, describe, expect, it } from "vitest";
+import {
+  clearEntityDisplayNameCache,
+  getEntityDisplayName,
+  registerEntityDisplayName,
+  registerEntityDisplayNames,
+} from "../entity-display-names";
 import type {
   DataExchangeDescriptorResponseDto,
   DataExchangeEntitySummaryDto,
 } from "../../../domain/types";
 
 describe("getEntityDisplayName", () => {
+  beforeEach(() => {
+    clearEntityDisplayNameCache();
+  });
   const mockT = (key: string) => {
     const dict: Record<string, string> = {
       "dataExchange.entities.crm.lead": "Leads",
@@ -95,5 +103,28 @@ describe("getEntityDisplayName", () => {
 
   it("cleans unmapped dotted key to readable capitalized name", () => {
     expect(getEntityDisplayName("sports.custom-athlete", mockT, false, null)).toBe("Custom Athlete");
+  });
+
+  it("consults runtime catalog metadata registry when descriptor is not passed", () => {
+    registerEntityDisplayName("crm.activity", "Customer Activities", "أنشطة العملاء");
+
+    expect(getEntityDisplayName("crm.activity", null, false)).toBe("Customer Activities");
+    expect(getEntityDisplayName("crm.activity", null, true)).toBe("أنشطة العملاء");
+  });
+
+  it("supports bulk registration and clearing of runtime catalog names", () => {
+    registerEntityDisplayNames([
+      { entityKey: "party.person", displayNameEn: "Global Individuals", displayNameAr: "أفراد عالميون" },
+      { entityKey: "identity.user", displayNameEn: "Platform Accounts", displayNameAr: "حسابات المنصة" },
+    ]);
+
+    expect(getEntityDisplayName("party.person", null, false)).toBe("Global Individuals");
+    expect(getEntityDisplayName("identity.user", null, true)).toBe("حسابات المنصة");
+
+    clearEntityDisplayNameCache();
+
+    // After clearing cache, falls back to t(...) or capitalized name
+    expect(getEntityDisplayName("party.person", mockT, false)).toBe("Persons");
+    expect(getEntityDisplayName("identity.user", null, false)).toBe("User");
   });
 });

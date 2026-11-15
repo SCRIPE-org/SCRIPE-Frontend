@@ -158,14 +158,14 @@ export function WorkspaceStep({ wizard }: WorkspaceStepProps) {
                 onChange={(e) => wizard.checkSubdomain(e.target.value.toLowerCase())}
                 aria-describedby="signup-subdomain-status"
                 aria-invalid={status === "unavailable"}
-                className="h-11 rounded-r-none pr-9"
+                className="h-11 rounded-e-none pe-9"
                 style={{
                   ...inputStyle,
                   borderColor: statusBorder,
                   transition: "border-color 0.15s",
                 }}
               />
-              <span className="absolute right-3 top-1/2 -translate-y-1/2">
+              <span className="absolute end-3 top-1/2 -translate-y-1/2">
                 {status === "checking" && (
                   <Loader2
                     className="h-4 w-4 animate-spin motion-reduce:animate-none"
@@ -182,7 +182,7 @@ export function WorkspaceStep({ wizard }: WorkspaceStepProps) {
               </span>
             </div>
             <span
-              className="inline-flex h-11 items-center rounded-r-xl border border-l-0 px-3 text-[0.8125rem] font-medium"
+              className="inline-flex h-11 items-center rounded-e-xl border border-s-0 px-3 text-[0.8125rem] font-medium"
               style={{
                 background: tokens.surfaceRaised,
                 borderColor: tokens.border,
@@ -304,7 +304,6 @@ export function WorkspaceStep({ wizard }: WorkspaceStepProps) {
           style={{
             background: tokens.gradientCta,
             color: tokens.accentContrast,
-            boxShadow: tokens.shadowCard,
           }}
         >
           {wizard.isSubmitting ? (

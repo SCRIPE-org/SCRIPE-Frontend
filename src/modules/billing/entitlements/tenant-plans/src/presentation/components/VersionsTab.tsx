@@ -132,7 +132,7 @@ export function VersionsTab({
             <DialogDescription>
               {t("entitlements.tenantPlans.publishDesc")}
               {plan.hasActiveSubscribers && (
-                <span className="mt-1 block font-medium text-warning">
+                <span className="mt-1 block font-medium text-nx-warning-strong">
                   <span aria-hidden="true">⚠ </span>
                   {plan.activeSubscriberCount} {t("entitlements.tenantPlans.grandfatheredWarning")}
                 </span>

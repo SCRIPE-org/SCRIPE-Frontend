@@ -128,7 +128,7 @@ export function ForecastTab({ forecastData, months, onMonthsChange }: ForecastTa
                             point.confidence >= 80
                               ? "text-success"
                               : point.confidence >= 50
-                                ? "text-warning"
+                                ? "text-nx-warning-strong"
                                 : "text-destructive"
                           }`}
                         >

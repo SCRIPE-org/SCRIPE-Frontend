@@ -1,8 +1,7 @@
 "use client";
 
-import { useMemo } from "react";
-import { motion } from "framer-motion";
-import { ArrowRight, ArrowLeft } from "lucide-react";
+import { motion, useReducedMotion } from "framer-motion";
+import { ArrowRight } from "lucide-react";
 import { useI18n } from "@core/providers/i18n-provider";
 import { useSignupTheme } from "@core/providers/signup-theme";
 import { Button } from "@core/ui/button";
@@ -23,28 +22,27 @@ import { LogoMarquee } from "./LogoMarquee";
 // font family, restrained staggered entrance with a reduced-motion fallback.
 // ═══════════════════════════════════════════════════════════════════════════
 
-const prefersReducedMotion =
-  typeof window !== "undefined"
-    ? window.matchMedia("(prefers-reduced-motion: reduce)").matches
-    : false;
-
 // Restrained staggered entrance. Reduced-motion → everything instant + visible.
-const container = {
-  hidden: {},
-  show: {
-    transition: prefersReducedMotion ? {} : { staggerChildren: 0.06, delayChildren: 0.04 },
-  },
-};
-const item = prefersReducedMotion
-  ? { hidden: { opacity: 1, y: 0 }, show: { opacity: 1, y: 0 } }
-  : {
-      hidden: { opacity: 0, y: 12 },
+function getWelcomeVariants(shouldReduce: boolean) {
+  return {
+    container: {
+      hidden: {},
       show: {
-        opacity: 1,
-        y: 0,
-        transition: { duration: 0.4, ease: [0.16, 1, 0.3, 1] as const },
+        transition: shouldReduce ? {} : { staggerChildren: 0.06, delayChildren: 0.04 },
       },
-    };
+    },
+    item: shouldReduce
+      ? { hidden: { opacity: 1, y: 0 }, show: { opacity: 1, y: 0 } }
+      : {
+          hidden: { opacity: 0, y: 12 },
+          show: {
+            opacity: 1,
+            y: 0,
+            transition: { duration: 0.4, ease: [0.16, 1, 0.3, 1] as const },
+          },
+        },
+  };
+}
 
 interface WelcomeScreenProps {
   content: WelcomeContent | undefined;
@@ -66,8 +64,10 @@ export function WelcomeScreen({
   onRetry,
   onGetStarted,
 }: WelcomeScreenProps) {
-  const { t, direction } = useI18n();
+  const { t } = useI18n();
   const { tokens } = useSignupTheme();
+  const shouldReduceMotion = Boolean(useReducedMotion());
+  const { container, item } = getWelcomeVariants(shouldReduceMotion);
 
   // Resolve copy: live content first, localized fallbacks so the screen never
   // blanks out and the empty state is still a confident headline.
@@ -75,16 +75,11 @@ export function WelcomeScreen({
   const subcopy = content?.subcopy?.trim() || t("signup.welcome.subcopyFallback");
   const ctaLabel = content?.ctaLabel?.trim() || t("signup.welcome.ctaFallback");
 
-  const ArrowIcon = direction === "rtl" ? ArrowLeft : ArrowRight;
-
-  const hasTrustContent = useMemo(
-    () =>
-      !!content &&
-      ((content.trustMarks?.length ?? 0) > 0 ||
-        (content.customerLogos?.length ?? 0) > 0 ||
-        (content.trustedByCount > 0 && content.trustedByLabel.trim() !== "")),
-    [content]
-  );
+  const hasTrustContent =
+    !!content &&
+    ((content.trustMarks?.length ?? 0) > 0 ||
+      (content.customerLogos?.length ?? 0) > 0 ||
+      (content.trustedByCount > 0 && content.trustedByLabel.trim() !== ""));
 
   if (isLoading) {
     return <WelcomeSkeleton />;
@@ -135,15 +130,13 @@ export function WelcomeScreen({
                 style={{
                   background: tokens.gradientCta,
                   color: tokens.accentContrast,
-                  boxShadow: tokens.shadowCard,
                 }}
               >
                 {ctaLabel}
-                <ArrowIcon
+                <ArrowRight
                   size={18}
                   aria-hidden="true"
-                  className="transition-transform duration-200 group-hover:translate-x-0.5 motion-reduce:transform-none"
-                  style={{ transform: direction === "rtl" ? "scaleX(-1)" : undefined }}
+                  className="transition-transform duration-200 group-hover:translate-x-0.5 motion-reduce:transform-none rtl:rotate-180 rtl:group-hover:-translate-x-0.5"
                 />
               </Button>
 
@@ -178,7 +171,6 @@ export function WelcomeScreen({
             style={{
               background: tokens.surfaceCard,
               border: tokens.borderCard,
-              boxShadow: tokens.shadowCard,
             }}
           >
             <div className="flex flex-col gap-5">

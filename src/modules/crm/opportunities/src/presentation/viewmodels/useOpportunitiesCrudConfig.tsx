@@ -2,7 +2,6 @@
 
 import React, { useMemo, useCallback } from "react";
 import type { AppRouterInstance } from "next/dist/shared/lib/app-router-context.shared-runtime";
-import { Button } from "@core/ui/button";
 import { Input } from "@core/ui/input";
 import { EmptyState } from "@core/ui/empty-state";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@core/ui/select";
@@ -60,9 +59,8 @@ export function useOpportunitiesCrudConfig(params: UseOpportunitiesCrudConfigPar
     stageFilter, handleStageFilterChange, stages,
     statusFilter, handleStatusFilterChange, statuses,
     defaultDealViewMode, pipelineStages, boardSettings,
-    handleOpportunityStageTransition, submitError, clearSubmitError,
-    canCreateOpp, canUpdateOpp, canManagePipeline,
-    openMoveStageDialog, openCloseDialog, openReopenDialog, openAssignOwnerDialog,
+    handleOpportunityStageTransition,
+    openMoveStageDialog, openAssignOwnerDialog,
     setIsCreateOpen,
   } = params;
 
@@ -90,7 +88,6 @@ export function useOpportunitiesCrudConfig(params: UseOpportunitiesCrudConfigPar
     dataExchange: {
       entityKey: "crm.opportunity",
       enableMultiSheetMigration: true,
-      multiSheetEntityKeys: ["crm.account", "crm.contact", "crm.opportunity"],
       hideToolbarActions: true,
     },
     hidePageHeader: true,
@@ -285,8 +282,8 @@ export function useOpportunitiesCrudConfig(params: UseOpportunitiesCrudConfigPar
     onCreateClick: () => setIsCreateOpen(true),
   }), [
     defaultDealViewMode, isRtl, search, activeDealWorkflowId, dealWorkflows, stageFilter, stages,
-    statusFilter, statuses, pipelineStages, state.items, state.stage, boardSettings,
-    handleOpportunityStageTransition, submitError, clearSubmitError, canUpdateOpp, canManagePipeline,
+    statusFilter, statuses, sortedPipelineStages, state.items, boardSettings,
+    handleOpportunityStageTransition,
     language, handleSelectOpportunity, columns, t, handleSearchChange,
     setActiveWorkflow, handleStageFilterChange, handleStatusFilterChange, setIsCreateOpen,
     openMoveStageDialog, openAssignOwnerDialog,

@@ -22,7 +22,7 @@ export function StackedLayout({
 }: LoginLayoutProps) {
   return (
     <div
-      className={`flex min-h-screen w-full flex-col ${BG_STYLE} login-page selection:bg-primary/20`}
+      className={`flex min-h-[100dvh] w-full flex-col ${BG_STYLE} login-page`}
       dir={direction}
       style={WRAPPER_STYLE}
     >
@@ -36,15 +36,15 @@ export function StackedLayout({
           backgroundPosition: "center",
         }}
       >
-        <div className="absolute inset-0 bg-[var(--login-surface,hsl(var(--muted)/0.4))]" />
+        <div className="absolute inset-0 bg-[var(--login-surface,var(--nx-raised))]" />
         <div className="relative z-10 flex flex-col items-center gap-4">
-          <div className="flex h-16 w-16 items-center justify-center overflow-hidden rounded-xl border border-border bg-background shadow-sm">
+          <div className="flex h-16 w-16 items-center justify-center overflow-hidden rounded-xl border border-nx-line bg-nx-surface">
             <LogoImg logoSrc={logoSrc} logoAlt={logoAlt} />
           </div>
-          <h1 className="text-3xl font-semibold tracking-tight text-[var(--login-text,hsl(var(--foreground)))]">
+          <h1 className="text-3xl font-semibold tracking-tight text-[var(--login-text,var(--nx-ink))]">
             {companyName}
           </h1>
-          <p className="text-sm text-[var(--login-text-muted,hsl(var(--muted-foreground)))]">
+          <p className="text-sm text-[var(--login-text-muted,var(--nx-ink-2))]">
             {t("auth.pleaseLogin")}
           </p>
         </div>
@@ -55,10 +55,10 @@ export function StackedLayout({
         />
       </div>
       {/* Form */}
-      <div className="flex flex-1 flex-col items-center justify-center px-6 py-12">
+      <main className="flex flex-1 flex-col items-center justify-center px-6 py-12">
         {formContent}
         {footerSlot}
-      </div>
+      </main>
     </div>
   );
 }

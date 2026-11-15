@@ -1,22 +1,13 @@
 "use client";
 
 import React from "react";
-import Link from "next/link";
-import { useRouter, useSearchParams } from "next/navigation";
-import { AlertCircle, CalendarDays, Lock, Plus } from "lucide-react";
+import { useSearchParams } from "next/navigation";
+import { AlertCircle, CalendarDays, Lock } from "lucide-react";
 import { Alert, AlertDescription } from "@core/ui/alert";
 import { Button } from "@core/ui/button";
 import { EmptyState } from "@core/ui/empty-state";
 import { LoadingSpinner } from "@core/ui/loading-spinner";
 import { PageHeader } from "@core/ui/page-header";
-import {
-  Sheet,
-  SheetContent,
-  SheetHeader,
-  SheetFooter,
-  SheetTitle,
-  SheetDescription,
-} from "@core/ui/sheet";
 import { useModuleLocales } from "@core/hooks/use-module-locales";
 import { usePermission } from "@core/hooks/use-permission";
 import { useI18n } from "@core/providers/i18n-provider";
@@ -27,81 +18,72 @@ import { CalendarRightUtilityPanel } from "../components/CalendarRightUtilityPan
 import { ClickToBookModal } from "../components/ClickToBookModal";
 import { BlockTimeModal } from "../components/BlockTimeModal";
 import { FindAvailableSlotsModal } from "../components/FindAvailableSlotsModal";
+import { MaintenanceClosureDrawer } from "../components/MaintenanceClosureDrawer";
+import { CalendarEmptyResourcesState } from "../components/CalendarEmptyResourcesState";
+import {
+  cleanModalActionParams,
+  useCalendarDeepLinks,
+} from "../viewmodels/useCalendarDeepLinks";
 import { useOperationsCalendarViewModel } from "../viewmodels/useOperationsCalendarViewModel";
-import type { CalendarResource } from "../../domain/entities/OperationsCalendar";
+import {
+  computeCalendarStatusCounts,
+  type CalendarResource,
+} from "../../domain/entities/OperationsCalendar";
 
 /**
- * Documentation for module export
+ * Primary multi-resource operations calendar page view.
  */
-function cleanModalActionParams() {
-  if (typeof window === "undefined") return;
-  try {
-    const url = new URL(window.location.href);
-    url.searchParams.delete("newBooking");
-    url.searchParams.delete("action");
-    url.searchParams.delete("startTime");
-    url.searchParams.delete("durationMinutes");
-    url.searchParams.delete("customerId");
-    url.searchParams.delete("customerPartyId");
-    const query = url.searchParams.toString();
-    const newUrl = query ? `${url.pathname}?${query}` : url.pathname;
-    window.history.replaceState(null, "", newUrl);
-  } catch {
-    window.history.replaceState(null, "", window.location.pathname);
-  }
-}
-
 export const OperationsCalendarView = React.memo(function OperationsCalendarView() {
   useModuleLocales(() => import("../../../locales"), "venue.operationsCalendar");
   const { t, language, direction } = useI18n();
-  const router = useRouter();
   const vm = useOperationsCalendarViewModel();
-  const canViewReservations = usePermission(VENUE_PERMISSIONS.RESERVATION_VIEW);
-  const canViewFacilities = usePermission(VENUE_PERMISSIONS.FACILITY_VIEW);
-  const canViewProfiles = usePermission(VENUE_PERMISSIONS.FACILITY_RESOURCE_PROFILE_VIEW);
-  const canViewResources = usePermission(VENUE_PERMISSIONS.SCHEDULABLE_RESOURCE_VIEW);
-  const canViewCustomer = usePermission(VENUE_PERMISSIONS.CUSTOMER_PARTY_VIEW);
-  const canCreateReservation = usePermission(VENUE_PERMISSIONS.RESERVATION_CREATE);
-  const canCreateHold = usePermission(VENUE_PERMISSIONS.BOOKING_HOLD_CREATE);
-  const canSearchAvailability = usePermission(VENUE_PERMISSIONS.AVAILABILITY_SEARCH_VIEW);
-  const canCreateMaintenanceBlock = usePermission(VENUE_PERMISSIONS.MAINTENANCE_BLOCK_CREATE);
-  const canCreate =
-    canCreateReservation && canCreateHold && canSearchAvailability && canViewCustomer;
-  const canView = canViewReservations && canViewFacilities && canViewProfiles && canViewResources;
+  const facilityResources = vm.facilityResources ?? vm.visibleResources;
+  const searchParams = useSearchParams();
 
-  // Click-to-book & Block-time modal states
+  const canView =
+    usePermission(VENUE_PERMISSIONS.RESERVATION_VIEW) &&
+    usePermission(VENUE_PERMISSIONS.FACILITY_VIEW) &&
+    usePermission(VENUE_PERMISSIONS.FACILITY_RESOURCE_PROFILE_VIEW) &&
+    usePermission(VENUE_PERMISSIONS.SCHEDULABLE_RESOURCE_VIEW);
+  const canCreate =
+    usePermission(VENUE_PERMISSIONS.RESERVATION_CREATE) &&
+    usePermission(VENUE_PERMISSIONS.BOOKING_HOLD_CREATE) &&
+    usePermission(VENUE_PERMISSIONS.AVAILABILITY_SEARCH_VIEW) &&
+    usePermission(VENUE_PERMISSIONS.CUSTOMER_PARTY_VIEW);
+  const canCreateMaintenanceBlock = usePermission(VENUE_PERMISSIONS.MAINTENANCE_BLOCK_CREATE);
+
   const [clickToBookOpen, setClickToBookOpen] = React.useState(false);
   const [selectedResource, setSelectedResource] = React.useState<CalendarResource | null>(null);
   const [selectedInstant, setSelectedInstant] = React.useState<string | null>(null);
   const [selectedDuration, setSelectedDuration] = React.useState<number>(60);
   const [courtNotReadyNotice, setCourtNotReadyNotice] = React.useState<string | null>(null);
-
   const [findSlotsOpen, setFindSlotsOpen] = React.useState(false);
-
   const [blockTimeOpen, setBlockTimeOpen] = React.useState(false);
   const [blockTimeResource, setBlockTimeResource] = React.useState<CalendarResource | null>(null);
   const [blockTimeInstant, setBlockTimeInstant] = React.useState<string | null>(null);
 
-  const searchParams = useSearchParams();
-
-  React.useEffect(() => {
-    if (searchParams?.get("findSlot") === "true") {
-      setFindSlotsOpen(true);
-    }
-  }, [searchParams]);
+  useCalendarDeepLinks({
+    searchParams,
+    canCreate,
+    allResources: vm.allResources,
+    facilityResources,
+    facilityId: vm.facilityId,
+    timeZoneId: vm.timeZoneId,
+    setFacilityId: vm.setFacilityId,
+    setDate: vm.setDate,
+    setSelectedResource,
+    setSelectedInstant,
+    setSelectedDuration,
+    setClickToBookOpen,
+    setFindSlotsOpen,
+    setCourtNotReadyNotice,
+    t,
+  });
 
   const handleEmptySlot = React.useCallback(
     (resource: CalendarResource, instantUtc: string, durationMinutes?: number) => {
-      if (
-        resource.priceEffectiveFromUtc &&
-        Date.parse(resource.priceEffectiveFromUtc) > Date.now()
-      ) {
-        setCourtNotReadyNotice(
-          t("operationsCalendar.readiness.courtActivating", {
-            defaultValue:
-              "Authoritative pricing for this court is still activating. Bookings will become available once pricing is active.",
-          })
-        );
+      if (resource.priceEffectiveFromUtc && Date.parse(resource.priceEffectiveFromUtc) > Date.now()) {
+        setCourtNotReadyNotice(t("operationsCalendar.readiness.courtActivating"));
         return;
       }
       setSelectedResource(resource);
@@ -109,7 +91,7 @@ export const OperationsCalendarView = React.memo(function OperationsCalendarView
       setSelectedDuration(durationMinutes ?? resource.slotPolicy?.slotDurationMinutes ?? 60);
       setClickToBookOpen(true);
     },
-    [t]
+    [t],
   );
 
   const handleOpenBlockTime = React.useCallback(
@@ -118,126 +100,25 @@ export const OperationsCalendarView = React.memo(function OperationsCalendarView
       setBlockTimeInstant(instantUtc ?? null);
       setBlockTimeOpen(true);
     },
-    []
-  );
-
-  const facilityResources = vm.allResources.filter(
-    (resource) => resource.facilityId === vm.facilityId && resource.timeZoneId === vm.timeZoneId
+    [],
   );
 
   const handleOpenNewBooking = React.useCallback(() => {
     if (!canCreate) return;
-    const readyResource = facilityResources.find(
-      (r) => !r.priceEffectiveFromUtc || Date.parse(r.priceEffectiveFromUtc) <= Date.now()
+    const ready = facilityResources.find(
+      (r) => !r.priceEffectiveFromUtc || Date.parse(r.priceEffectiveFromUtc) <= Date.now(),
     );
-    if (readyResource) {
-      setSelectedResource(readyResource);
+    if (ready) {
+      setSelectedResource(ready);
       setSelectedInstant(null);
-      setSelectedDuration(readyResource.slotPolicy?.slotDurationMinutes ?? 60);
+      setSelectedDuration(ready.slotPolicy?.slotDurationMinutes ?? 60);
       setClickToBookOpen(true);
     } else if (facilityResources.length > 0) {
-      setCourtNotReadyNotice(
-        t("operationsCalendar.readiness.courtActivating", {
-          defaultValue:
-            "Authoritative pricing for this court is still activating. Bookings will become available once pricing is active.",
-        })
-      );
+      setCourtNotReadyNotice(t("operationsCalendar.readiness.courtActivating"));
     }
   }, [canCreate, facilityResources, t]);
 
-  React.useEffect(() => {
-    if (!searchParams || !canCreate) return;
-    const shouldOpen =
-      searchParams.get("newBooking") === "true" || searchParams.get("action") === "new-booking";
-    if (!shouldOpen || vm.allResources.length === 0) return;
-
-    const facilityIdParam = searchParams.get("facilityId");
-    const resourceIdParam = searchParams.get("resourceId");
-    const dateParam = searchParams.get("date");
-    const startTimeParam = searchParams.get("startTime");
-    const durationParam = searchParams.get("durationMinutes");
-
-    let targetResource: CalendarResource | null = null;
-
-    if (resourceIdParam) {
-      const found = vm.allResources.find((r) => r.id === resourceIdParam);
-      if (!found) {
-        // Setup Required Court or invalid court: fail-closed, do NOT open booking (Requirement 11)
-        setCourtNotReadyNotice(
-          t("operationsCalendar.readiness.courtNotReady", {
-            defaultValue:
-              "Selected court is not ready for bookings. Please complete court setup first.",
-          })
-        );
-        if (typeof window !== "undefined") {
-          cleanModalActionParams();
-        }
-        return;
-      }
-      if (found.priceEffectiveFromUtc && Date.parse(found.priceEffectiveFromUtc) > Date.now()) {
-        setCourtNotReadyNotice(
-          t("operationsCalendar.readiness.courtActivating", {
-            defaultValue:
-              "Authoritative pricing for this court is still activating. Bookings will become available once pricing is active.",
-          })
-        );
-        if (typeof window !== "undefined") {
-          cleanModalActionParams();
-        }
-        return;
-      }
-      targetResource = found;
-      // Reconcile branch context deliberately (Requirement 10)
-      if (found.facilityId !== vm.facilityId) {
-        vm.setFacilityId(found.facilityId);
-      }
-    } else if (facilityIdParam && facilityIdParam !== vm.facilityId) {
-      vm.setFacilityId(facilityIdParam);
-      const inBranch = vm.allResources.find((r) => r.facilityId === facilityIdParam);
-      targetResource = inBranch ?? vm.allResources[0] ?? null;
-    } else {
-      targetResource = facilityResources[0] ?? vm.allResources[0] ?? null;
-    }
-
-    if (!targetResource) return;
-
-    setSelectedResource(targetResource);
-
-    if (dateParam) {
-      vm.setDate(dateParam);
-    }
-
-    if (dateParam && startTimeParam) {
-      try {
-        const instant = new Date(`${dateParam}T${startTimeParam}:00`).toISOString();
-        setSelectedInstant(instant);
-      } catch {
-        setSelectedInstant(null);
-      }
-    } else {
-      setSelectedInstant(null);
-    }
-
-    if (durationParam) {
-      const dur = Number(durationParam);
-      if (Number.isInteger(dur) && dur >= 15) {
-        setSelectedDuration(dur);
-      } else {
-        setSelectedDuration(targetResource.slotPolicy?.slotDurationMinutes ?? 60);
-      }
-    } else {
-      setSelectedDuration(targetResource.slotPolicy?.slotDurationMinutes ?? 60);
-    }
-
-    setClickToBookOpen(true);
-
-    // Clean URL query string immediately to avoid stale modal re-trigger on refresh (Requirement 36)
-    if (typeof window !== "undefined") {
-      cleanModalActionParams();
-    }
-  }, [canCreate, searchParams, vm.allResources, vm.facilityId, facilityResources, vm, t]);
-
-  if (!canView)
+  if (!canView) {
     return (
       <EmptyState
         icon={Lock}
@@ -245,8 +126,9 @@ export const OperationsCalendarView = React.memo(function OperationsCalendarView
         description={t("operationsCalendar.permission.description")}
       />
     );
+  }
   if (vm.setupLoading) return <LoadingSpinner showText={false} />;
-  if (vm.state.stage === "featureUnavailable")
+  if (vm.state.stage === "featureUnavailable") {
     return (
       <EmptyState
         icon={Lock}
@@ -254,6 +136,7 @@ export const OperationsCalendarView = React.memo(function OperationsCalendarView
         description={t("operationsCalendar.feature.description")}
       />
     );
+  }
 
   return (
     <div className="space-y-5" dir={direction} data-testid="operations-calendar-view">
@@ -279,9 +162,7 @@ export const OperationsCalendarView = React.memo(function OperationsCalendarView
         timeZones={vm.timeZoneOptions}
         loading={vm.state.stage === "loading"}
         hasBookingReadyCourts={facilityResources.some(
-          (resource) =>
-            !resource.priceEffectiveFromUtc ||
-            Date.parse(resource.priceEffectiveFromUtc) <= Date.now()
+          (r) => !r.priceEffectiveFromUtc || Date.parse(r.priceEffectiveFromUtc) <= Date.now(),
         )}
         onDateChange={vm.setDate}
         onFacilityChange={vm.setFacilityId}
@@ -319,7 +200,9 @@ export const OperationsCalendarView = React.memo(function OperationsCalendarView
         />
       )}
       {vm.state.stage === "loading" && !vm.state.day && <LoadingSpinner showText={false} />}
-      {!vm.state.day && vm.state.stage === "empty" && <EmptyResourcesState t={t} hasAnyResources={vm.allResources.length > 0} />}
+      {!vm.state.day && vm.state.stage === "empty" && (
+        <CalendarEmptyResourcesState t={t} hasAnyResources={vm.allResources.length > 0} />
+      )}
       {vm.state.day && (
         <div className="flex flex-col items-start gap-5 lg:flex-row">
           <div className="w-full min-w-0 flex-1 space-y-3">
@@ -347,48 +230,22 @@ export const OperationsCalendarView = React.memo(function OperationsCalendarView
             onBlockTime={() => handleOpenBlockTime(null, null)}
             onViewToday={vm.goToday}
             onFindSlots={() => setFindSlotsOpen(true)}
-            statusCounts={{
-              inUse: vm.state.day?.blocks.filter((b) => b.status === "CheckedIn").length || 0,
-              noActiveBooking: Math.max(
-                0,
-                vm.visibleResources.length -
-                  (vm.state.day?.blocks.filter((b) => {
-                    const nowMs = Date.now();
-                    const s = Date.parse(b.startUtc);
-                    const e = Date.parse(b.endUtc);
-                    return (
-                      s <= nowMs &&
-                      nowMs < e &&
-                      (b.status === "CheckedIn" ||
-                        b.status === "Confirmed" ||
-                        (b.status as string) === "Maintenance" ||
-                        (b.status as string) === "Blocked")
-                    );
-                  }).length || 0)
-              ),
-              maintenance:
-                vm.state.day?.blocks.filter(
-                  (b) =>
-                    (b.status as string) === "Maintenance" ||
-                    (b.status as string) === "Blocked" ||
-                    (b.status as string) === "Unavailable"
-                ).length || 0,
-            }}
+            statusCounts={computeCalendarStatusCounts(
+              vm.state.day.blocks,
+              vm.visibleResources.length,
+            )}
             t={t}
           />
         </div>
       )}
 
-      {/* Click-To-Book Modal */}
       <ClickToBookModal
         open={clickToBookOpen}
         onOpenChange={(open) => {
           setClickToBookOpen(open);
           if (!open) {
             setSelectedInstant(null);
-            if (typeof window !== "undefined") {
-              cleanModalActionParams();
-            }
+            cleanModalActionParams();
           }
         }}
         resource={selectedResource}
@@ -404,8 +261,6 @@ export const OperationsCalendarView = React.memo(function OperationsCalendarView
           setFindSlotsOpen(true);
         }}
       />
-
-      {/* Block Time Modal */}
       <BlockTimeModal
         open={blockTimeOpen}
         onOpenChange={setBlockTimeOpen}
@@ -415,8 +270,6 @@ export const OperationsCalendarView = React.memo(function OperationsCalendarView
         timeZoneId={vm.timeZoneId}
         onSuccess={() => void vm.refresh()}
       />
-
-      {/* Find Available Slots Modal */}
       <FindAvailableSlotsModal
         open={findSlotsOpen}
         onOpenChange={setFindSlotsOpen}
@@ -425,131 +278,14 @@ export const OperationsCalendarView = React.memo(function OperationsCalendarView
         timeZoneId={vm.timeZoneId}
         onSelectSlot={(res, instant, dur) => handleEmptySlot(res, instant, dur)}
       />
-      {/* Maintenance / Blocked Slot Details Drawer */}
-      <Sheet
-        open={Boolean(vm.selectedClosure)}
-        onOpenChange={(open) => {
-          if (!open) vm.closeClosure();
-        }}
-      >
-        <SheetContent side="end" className="w-full sm:max-w-md">
-          <SheetHeader>
-            <SheetTitle className="flex items-center gap-2">
-              <Lock className="size-4 text-nx-warning" />
-              {t("operationsCalendar.maintenanceDrawer.title", {
-                defaultValue: "Maintenance & Block Details",
-              })}
-            </SheetTitle>
-            <SheetDescription>
-              {t("operationsCalendar.maintenanceDrawer.description", {
-                defaultValue:
-                  "This court or space is currently unavailable for bookings due to maintenance or administrative block.",
-              })}
-            </SheetDescription>
-          </SheetHeader>
-
-          {vm.selectedClosure && (
-            <div className="mt-6 space-y-4">
-              <div className="rounded-md border border-nx-line bg-nx-raised p-4 space-y-3">
-                <div className="flex justify-between items-center text-sm">
-                  <span className="text-nx-ink-3">
-                    {t("operationsCalendar.maintenanceDrawer.court", { defaultValue: "Court / Resource" })}
-                  </span>
-                  <span className="font-semibold text-nx-ink">
-                    {vm.allResources.find((r) => r.id === vm.selectedClosure?.resourceId)?.name ||
-                      vm.selectedClosure.resourceId}
-                  </span>
-                </div>
-
-                <div className="flex justify-between items-center text-sm">
-                  <span className="text-nx-ink-3">
-                    {t("operationsCalendar.maintenanceDrawer.status", { defaultValue: "Status" })}
-                  </span>
-                  <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-nx-warning/10 text-nx-warning border border-nx-warning/30">
-                    {vm.selectedClosure.status}
-                  </span>
-                </div>
-
-                <div className="flex justify-between items-center text-sm">
-                  <span className="text-nx-ink-3">
-                    {t("operationsCalendar.maintenanceDrawer.reference", { defaultValue: "Reference" })}
-                  </span>
-                  <span className="font-mono text-xs text-nx-ink-2">
-                    {vm.selectedClosure.reservationNumber || vm.selectedClosure.reservationId}
-                  </span>
-                </div>
-
-                <div className="flex justify-between items-center text-sm">
-                  <span className="text-nx-ink-3">
-                    {t("operationsCalendar.maintenanceDrawer.start", { defaultValue: "Start Time" })}
-                  </span>
-                  <span className="text-nx-ink">
-                    {new Date(vm.selectedClosure.startUtc).toLocaleTimeString([], {
-                      hour: "2-digit",
-                      minute: "2-digit",
-                    })}
-                  </span>
-                </div>
-
-                <div className="flex justify-between items-center text-sm">
-                  <span className="text-nx-ink-3">
-                    {t("operationsCalendar.maintenanceDrawer.end", { defaultValue: "End Time" })}
-                  </span>
-                  <span className="text-nx-ink">
-                    {new Date(vm.selectedClosure.endUtc).toLocaleTimeString([], {
-                      hour: "2-digit",
-                      minute: "2-digit",
-                    })}
-                  </span>
-                </div>
-              </div>
-            </div>
-          )}
-
-          <SheetFooter className="mt-8 flex flex-row justify-end gap-2">
-            <Button variant="outline" onClick={() => vm.closeClosure()}>
-              {t("common.close", { defaultValue: "Close" })}
-            </Button>
-          </SheetFooter>
-        </SheetContent>
-      </Sheet>
+      <MaintenanceClosureDrawer
+        closure={vm.selectedClosure}
+        allResources={vm.allResources}
+        timeZoneId={vm.timeZoneId}
+        locale={language}
+        onClose={vm.closeClosure}
+        t={t}
+      />
     </div>
   );
 });
-
-function EmptyResourcesState({
-  t,
-  hasAnyResources = false,
-}: {
-  t: (key: string, params?: Record<string, string | number>) => string;
-  hasAnyResources?: boolean;
-}) {
-  return (
-    <EmptyState
-      icon={CalendarDays}
-      title={
-        hasAnyResources
-          ? t("operationsCalendar.empty.branchEmptyTitle", {
-              defaultValue: "No courts found for this facility",
-            })
-          : t("operationsCalendar.empty.title")
-      }
-      description={
-        hasAnyResources
-          ? t("operationsCalendar.empty.branchEmptyDescription", {
-              defaultValue:
-                "Select another facility using the filter above, or add new courts and spaces to this facility.",
-            })
-          : t("operationsCalendar.empty.description")
-      }
-      action={
-        <Button asChild>
-          <Link href="/venue/resources?setup=new">
-            <Plus className="me-1.5 size-4" />
-            {t("operationsCalendar.empty.action") || "Add Court / Space"}
-          </Link>
-        </Button>
-      }
-    />
-  );
-}

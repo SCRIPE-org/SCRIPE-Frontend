@@ -44,13 +44,13 @@ export function VaultLayout({
 
   return (
     <div
-      className={`vault-stage login-page relative min-h-screen w-full overflow-hidden font-sans ${BG_STYLE}`}
+      className={`vault-stage login-page relative min-h-[100dvh] w-full overflow-hidden font-sans ${BG_STYLE}`}
       dir={direction}
       style={{ background: "var(--sx-bg-grad)", color: "var(--sx-text)" }}
     >
       <VaultBackground />
 
-      <div className="relative z-[1] grid min-h-screen grid-cols-1 lg:grid-cols-[minmax(0,1fr)_min(500px,48%)]">
+      <div className="relative z-[1] grid min-h-[100dvh] grid-cols-1 lg:grid-cols-[minmax(0,1fr)_min(500px,48%)]">
         {/* Showroom stage (desktop) */}
         <div className="relative hidden flex-col justify-between px-12 py-10 lg:flex xl:px-16">
           {/* Masthead */}
@@ -138,7 +138,7 @@ export function VaultLayout({
         </div>
 
         {/* Form column */}
-        <div
+        <main
           className="relative flex flex-col items-center justify-center px-5 lg:py-14 lg:pe-10 lg:ps-0"
           style={{
             paddingTop: "var(--login-container-py, 48px)",
@@ -153,12 +153,11 @@ export function VaultLayout({
               padding: "var(--login-card-padding, 34px)",
               background: "var(--sx-card-bg)",
               border: "1px solid var(--sx-card-border)",
-              boxShadow: "var(--sx-card-shadow)",
             }}
           >
             {/* Top accent line */}
             <div
-              className="pointer-events-none absolute left-[20%] right-[20%] top-0 h-px"
+              className="pointer-events-none absolute inset-x-[20%] top-0 h-px"
               style={{
                 background: `linear-gradient(90deg, transparent, var(--sx-accent, var(--nx-accent)), transparent)`,
                 opacity: 0.7,
@@ -172,7 +171,7 @@ export function VaultLayout({
             {footer}
             {footerSlot}
           </div>
-        </div>
+        </main>
       </div>
     </div>
   );

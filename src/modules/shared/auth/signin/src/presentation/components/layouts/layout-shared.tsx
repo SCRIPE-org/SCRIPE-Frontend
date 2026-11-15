@@ -46,7 +46,7 @@ export function MobileLogo({
       style={{ marginBottom: "var(--login-logo-margin, 48px)" }}
     >
       <div
-        className="flex items-center justify-center overflow-hidden border border-border bg-background shadow-sm"
+        className="flex items-center justify-center overflow-hidden border border-nx-line bg-nx-surface"
         style={{
           borderRadius: "var(--login-radius-card, 24px)",
           width: "var(--login-logo-size, 96px)",
@@ -56,7 +56,7 @@ export function MobileLogo({
         <LogoImg logoSrc={logoSrc} logoAlt={logoAlt} />
       </div>
       <h1
-        className="login-heading tracking-tight text-[var(--login-text,hsl(var(--foreground)))]"
+        className="login-heading tracking-tight text-[var(--login-text,var(--nx-ink))]"
         style={{ fontSize: "var(--login-size-headline, 24px)" }}
       >
         {companyName}
@@ -74,13 +74,13 @@ export function DesktopHeading({ companyName }: { companyName: string }) {
       style={{ maxWidth: "var(--login-form-width, 380px)" }}
     >
       <h2
-        className="login-heading tracking-tight text-[var(--login-text,hsl(var(--foreground)))]"
+        className="login-heading tracking-tight text-[var(--login-text,var(--nx-ink))]"
         style={{ fontSize: "var(--login-size-headline, 30px)" }}
       >
         {companyName}
       </h2>
       <p
-        className="mt-2 text-[var(--login-text-muted,hsl(var(--muted-foreground)))]"
+        className="mt-2 text-[var(--login-text-muted,var(--nx-ink-2))]"
         style={{ fontSize: "var(--login-size-subtitle, 0.9375rem)" }}
       >
         {t("auth.pleaseLogin")}
@@ -106,19 +106,19 @@ export function CenteredLogoHeader({
   return (
     <div className="mb-8 flex flex-col items-center gap-3 text-center">
       <div
-        className={`flex ${logoSize} items-center justify-center overflow-hidden rounded-xl border border-border bg-background shadow-sm`}
+        className={`flex ${logoSize} items-center justify-center overflow-hidden rounded-xl border border-nx-line bg-nx-surface`}
       >
         <LogoImg logoSrc={logoSrc} logoAlt={logoAlt} />
       </div>
       <h1
-        className="login-heading tracking-tight text-[var(--login-text,hsl(var(--foreground)))]"
+        className="login-heading tracking-tight text-[var(--login-text,var(--nx-ink))]"
         style={{ fontSize: "var(--login-size-headline, 1.5rem)" }}
       >
         {companyName}
       </h1>
       {subtitle && (
         <p
-          className="text-[var(--login-text-muted,hsl(var(--muted-foreground)))]"
+          className="text-[var(--login-text-muted,var(--nx-ink-2))]"
           style={{ fontSize: "var(--login-size-subtitle, 0.875rem)" }}
         >
           {subtitle}

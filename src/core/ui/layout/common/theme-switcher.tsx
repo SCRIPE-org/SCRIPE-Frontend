@@ -69,13 +69,15 @@ export function ThemeSwitcher({
   }
 
   return (
-    <button
+    <Button
       type="button"
+      variant="outline"
+      size="icon"
       onClick={toggleTheme}
       aria-label={themeLabel}
       title={themeLabel}
       className={cn(
-        "rounded-full p-2 transition-opacity duration-nx-standard ease-nx-enter hover:opacity-80 motion-reduce:transition-none",
+        "h-9 w-9 rounded-full transition-opacity duration-nx-standard ease-nx-enter hover:opacity-80 motion-reduce:transition-none",
         buttonClassName
       )}
       style={{
@@ -85,7 +87,7 @@ export function ThemeSwitcher({
       }}
     >
       {isDark ? <Sun size={15} aria-hidden="true" /> : <Moon size={15} aria-hidden="true" />}
-    </button>
+    </Button>
   );
 }
 
@@ -140,19 +142,19 @@ export function NxThemeSwitcher({
   }
 
   return (
-    <button
+    <Button
       type="button"
+      variant="outline"
+      size="icon"
       onClick={toggleTheme}
       aria-label={themeLabel}
       className={cn(
-        "rounded-full border border-nx-line bg-nx-raised p-2 text-nx-ink-2",
-        "transition-[color,background-color,border-color,box-shadow] duration-nx-micro ease-nx-enter motion-reduce:transition-none",
-        "hover:text-nx-ink",
-        "focus-visible:shadow-nx-focus focus-visible:outline-none",
+        "h-9 w-9 rounded-full border border-nx-line bg-nx-raised text-nx-ink-2",
+        "hover:border-nx-line-hi hover:bg-nx-hover hover:text-nx-ink",
         buttonClassName
       )}
     >
       <Glyph className="h-4 w-4" aria-hidden="true" />
-    </button>
+    </Button>
   );
 }

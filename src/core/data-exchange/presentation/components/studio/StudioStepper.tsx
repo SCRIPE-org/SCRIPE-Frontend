@@ -6,6 +6,7 @@ import { Alert, AlertDescription } from "@core/ui/alert";
 import { Button } from "@core/ui/button";
 import { Progress } from "@core/ui/progress";
 import { cn } from "@core/common/utils";
+import { useI18n } from "@core/providers/i18n-provider";
 import type { StudioStep } from "../../viewmodels/useDataExchangeStudioViewModel";
 
 export interface StudioStepperProps {
@@ -30,6 +31,7 @@ export function StudioStepper({
   onDismissError,
   onDismissInfo,
 }: StudioStepperProps) {
+  const { t } = useI18n();
   const currentStepIdx = steps.findIndex((s) => s.id === currentStep);
 
   return (
@@ -74,7 +76,8 @@ export function StudioStepper({
             variant="ghost"
             size="sm"
             onClick={onDismissError}
-            className="h-5 w-5 p-0 text-destructive-foreground hover:bg-destructive/20 shrink-0"
+            aria-label={t("dataExchange.actions.close")}
+            className="h-5 w-5 p-0 text-nx-danger hover:bg-nx-danger/20 shrink-0"
           >
             <X className="h-3 w-3" />
           </Button>
@@ -92,6 +95,7 @@ export function StudioStepper({
             variant="ghost"
             size="sm"
             onClick={onDismissInfo}
+            aria-label={t("dataExchange.actions.close")}
             className="h-5 w-5 p-0 text-nx-ink-2 hover:bg-nx-raised shrink-0"
           >
             <X className="h-3 w-3" />

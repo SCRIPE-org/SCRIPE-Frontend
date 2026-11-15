@@ -44,6 +44,7 @@ import { Button } from "@core/ui/button";
 import { LoadingSpinner } from "@core/ui/loading-spinner";
 import { cn, resolveIntlLocale } from "@core/common/utils";
 import { useNotificationViewModel } from "./useNotificationViewModel";
+import { resolveSafeActionHref } from "@core/ui/sileo-toast/sileo-toast";
 import { useI18n } from "@core/providers/i18n-provider";
 import type { NotificationItem } from "@core/notification/entities/NotificationItem";
 import ReactDOM from "react-dom";
@@ -288,7 +289,7 @@ export function NotificationBell({ iconClassName = "h-5 w-5", className }: Notif
           <div className="flex flex-col items-center gap-3 px-6 py-12 text-center">
             <span
               aria-hidden="true"
-              className="flex h-12 w-12 items-center justify-center rounded-full border border-nx-line bg-nx-ground text-destructive"
+              className="flex h-12 w-12 items-center justify-center rounded-full border border-nx-line bg-nx-ground text-nx-danger"
             >
               <Bell className="h-5 w-5" />
             </span>
@@ -328,58 +329,63 @@ export function NotificationBell({ iconClassName = "h-5 w-5", className }: Notif
                 </h3>
               )}
               <ul className="divide-y divide-nx-line">
-                {group.items.map((n) => (
-                  <li key={n.id}>
-                    <button
-                      type="button"
-                      onClick={() => {
-                        if (!n.isRead) vm.markAsRead(n.id);
-                        if (n.actionUrl) window.location.href = n.actionUrl;
-                        vm.close();
-                      }}
-                      className={cn(
-                        "group relative flex w-full items-start gap-3 px-4 py-3 text-start",
-                        "transition-colors duration-nx-micro ease-nx-enter motion-reduce:transition-none",
-                        "hover:bg-nx-hover focus-visible:shadow-nx-focus focus-visible:outline-none",
-                        // Unread wears the lit inline-start edge — a static
-                        // affordance, never a pulse.
-                        "before:absolute before:inset-y-2 before:start-0 before:w-0.5 before:rounded-full",
-                        n.isRead ? "before:bg-transparent" : "before:bg-nx-accent"
-                      )}
-                    >
-                      {/* Fixed leading slot keeps every title on one optical
-                          column whether or not the row is unread. */}
-                      <span
-                        aria-hidden="true"
-                        className="mt-1.5 flex h-2 w-2 shrink-0 items-center justify-center"
+                {group.items.map((n) => {
+                  const safeActionHref = n.actionUrl
+                    ? resolveSafeActionHref(n.actionUrl)
+                    : null;
+                  return (
+                    <li key={n.id}>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          if (!n.isRead) vm.markAsRead(n.id);
+                          if (safeActionHref) window.location.href = safeActionHref;
+                          vm.close();
+                        }}
+                        className={cn(
+                          "group relative flex w-full items-start gap-3 px-4 py-3 text-start",
+                          "transition-colors duration-nx-micro ease-nx-enter motion-reduce:transition-none",
+                          "hover:bg-nx-hover focus-visible:shadow-nx-focus focus-visible:outline-none",
+                          // Unread wears the lit inline-start edge — a static
+                          // affordance, never a pulse.
+                          "before:absolute before:inset-y-2 before:start-0 before:w-0.5 before:rounded-full",
+                          n.isRead ? "before:bg-transparent" : "before:bg-nx-accent"
+                        )}
                       >
-                        {!n.isRead && <span className="h-2 w-2 rounded-full bg-nx-accent" />}
-                      </span>
-
-                      <span className="min-w-0 flex-1">
+                        {/* Fixed leading slot keeps every title on one optical
+                            column whether or not the row is unread. */}
                         <span
-                          className={cn(
-                            "block truncate text-[13px] leading-tight",
-                            n.isRead ? "font-normal text-nx-ink-2" : "font-semibold text-nx-ink"
-                          )}
+                          aria-hidden="true"
+                          className="mt-1.5 flex h-2 w-2 shrink-0 items-center justify-center"
                         >
-                          {n.title}
+                          {!n.isRead && <span className="h-2 w-2 rounded-full bg-nx-accent" />}
                         </span>
-                        <span className="mt-1 line-clamp-2 block text-xs leading-snug text-nx-ink-3">
-                          {n.body}
+
+                        <span className="min-w-0 flex-1">
+                          <span
+                            className={cn(
+                              "block truncate text-[13px] leading-tight",
+                              n.isRead ? "font-normal text-nx-ink-2" : "font-semibold text-nx-ink"
+                            )}
+                          >
+                            {n.title}
+                          </span>
+                          <span className="mt-1 line-clamp-2 block text-xs leading-snug text-nx-ink-3">
+                            {n.body}
+                          </span>
+                          <span className="mt-1.5 flex items-center gap-1.5 text-[11px] text-nx-ink-3">
+                            <time dateTime={n.createdAt}>
+                              {formatTimeAgo(n.createdAt, t, language)}
+                            </time>
+                            {safeActionHref && (
+                              <ExternalLink aria-hidden="true" className="h-3 w-3 shrink-0" />
+                            )}
+                          </span>
                         </span>
-                        <span className="mt-1.5 flex items-center gap-1.5 text-[11px] text-nx-ink-3">
-                          <time dateTime={n.createdAt}>
-                            {formatTimeAgo(n.createdAt, t, language)}
-                          </time>
-                          {n.actionUrl && (
-                            <ExternalLink aria-hidden="true" className="h-3 w-3 shrink-0" />
-                          )}
-                        </span>
-                      </span>
-                    </button>
-                  </li>
-                ))}
+                      </button>
+                    </li>
+                  );
+                })}
               </ul>
             </section>
           ))

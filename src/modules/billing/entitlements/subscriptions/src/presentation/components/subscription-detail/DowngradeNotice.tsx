@@ -23,9 +23,9 @@ export function DowngradeNotice({ sub, t }: DowngradeNoticeProps) {
   return (
     <Card className="border-warning/30 bg-warning/5">
       <CardContent className="flex items-center gap-3 py-4">
-        <AlertTriangle className="h-5 w-5 shrink-0 text-warning" aria-hidden="true" />
+        <AlertTriangle className="h-5 w-5 shrink-0 text-nx-warning-strong" aria-hidden="true" />
         <div className="text-sm">
-          <span className="font-medium text-warning">{t("entSubscriptions.downgraded")}</span>
+          <span className="font-medium text-nx-warning-strong">{t("entSubscriptions.downgraded")}</span>
           {sub.downgradedFromEditionName && (
             <span className="text-nx-ink-2">
               {" · "}

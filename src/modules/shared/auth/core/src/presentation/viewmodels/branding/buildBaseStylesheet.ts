@@ -36,7 +36,7 @@ export function buildBaseStylesheet(): string {
   height: var(--login-input-height, 44px) !important;
   background-color: var(--login-primary, hsl(var(--primary)));
   border-radius: var(--login-radius-button, 8px) !important;
-  color: white;
+  color: var(--login-button-text, hsl(var(--primary-foreground)));
   width: 100%;
   font-weight: 600;
   font-size: 0.875rem;

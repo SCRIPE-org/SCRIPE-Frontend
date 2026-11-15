@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useMemo } from "react";
+import React, { useMemo, useCallback } from "react";
 import type { AppRouterInstance } from "next/dist/shared/lib/app-router-context.shared-runtime";
 import { Button } from "@core/ui/button";
 import { Input } from "@core/ui/input";
@@ -54,7 +54,7 @@ export function useLeadsCrudConfig(params: UseLeadsCrudConfigParams) {
     router, t, language, baseCurrency, autoConvertToBase, convertAmount, showOriginalCurrencyBadge,
     activeLeadWorkflow, leadWorkflows, activeLeadWorkflowId, setActiveWorkflow, defaultDealViewMode,
     search, handleSearchChange, statusFilter, handleStatusFilterChange, statuses, sumLeadsInBaseCurrency,
-    handleLeadStageTransition, handleUpdateLeadStatus, openQualifyDialog, openLinkPartyDialog, openConvertDialog, setIsCreateOpen,
+    handleLeadStageTransition, openQualifyDialog, openLinkPartyDialog, openConvertDialog, setIsCreateOpen,
   } = params;
 
   const isRtl = language === "ar";
@@ -63,14 +63,14 @@ export function useLeadsCrudConfig(params: UseLeadsCrudConfigParams) {
     onNavigateLead: (id) => router.push(`/crm/leads/${id}`),
   }), [t, language, baseCurrency, autoConvertToBase, showOriginalCurrencyBadge, convertAmount, router]);
 
-  const getStageDisplayLabel = (stg: { stageKey: string; labelEn: string; labelAr?: string | null }) => {
+  const getStageDisplayLabel = useCallback((stg: { stageKey: string; labelEn: string; labelAr?: string | null }) => {
     if (stg.stageKey === "lead.new") return t("crmLeads.status.new");
     if (stg.stageKey === "lead.working") return t("crmLeads.status.working");
     if (stg.stageKey === "lead.qualified") return t("crmLeads.status.qualified");
     if (stg.stageKey === "lead.converted") return t("crmLeads.status.converted");
     if (stg.stageKey === "lead.disqualified") return t("crmLeads.status.disqualified");
     return isRtl && stg.labelAr ? stg.labelAr : stg.labelEn;
-  };
+  }, [isRtl, t]);
 
   const crudConfig = useMemo<CrudConfig<CrmLead>>(() => ({
     titleKey: "crmLeads.title",
@@ -80,13 +80,6 @@ export function useLeadsCrudConfig(params: UseLeadsCrudConfigParams) {
     dataExchange: {
       entityKey: "crm.lead",
       enableMultiSheetMigration: true,
-      multiSheetEntityKeys: [
-        "crm.account",
-        "crm.contact",
-        "crm.lead",
-        "crm.opportunity",
-        "crm.activity",
-      ],
       hideToolbarActions: true,
     },
     hidePageHeader: true,
@@ -288,7 +281,7 @@ export function useLeadsCrudConfig(params: UseLeadsCrudConfigParams) {
     router, t, language, baseCurrency, autoConvertToBase, convertAmount, showOriginalCurrencyBadge,
     activeLeadWorkflow, leadWorkflows, activeLeadWorkflowId, setActiveWorkflow, defaultDealViewMode,
     search, handleSearchChange, statusFilter, handleStatusFilterChange, statuses, sumLeadsInBaseCurrency,
-    handleLeadStageTransition, handleUpdateLeadStatus, openQualifyDialog, openLinkPartyDialog, openConvertDialog, setIsCreateOpen,
+    handleLeadStageTransition, getStageDisplayLabel, openQualifyDialog, openLinkPartyDialog, openConvertDialog, setIsCreateOpen,
     columns, isRtl,
   ]);
 

@@ -3,6 +3,7 @@
 import React from "react";
 import { User, Mail, Phone, Calendar, Link as LinkIcon, Building2, ArrowUpRight } from "lucide-react";
 import type { CrudColumn } from "@core/crud/components/generic-crud-view";
+import { Button } from "@core/ui/button";
 import { LeadStatusBadge } from "./LeadStatusBadge";
 import type { CrmLead } from "../../domain/entities/LeadEntity";
 
@@ -43,17 +44,19 @@ export function buildLeadsTableColumns({
       label: t("crmLeads.table.title"),
       sortable: true,
       render: (_val, lead: CrmLead) => (
-        <div
+        <Button
+          type="button"
+          variant="ghost"
           onClick={() => onNavigateLead(lead.id)}
           data-testid={`lead-row-link-${lead.id}`}
-          className="max-w-xs cursor-pointer group"
+          className="h-auto w-full p-0 max-w-xs flex flex-col items-start justify-start text-start whitespace-normal hover:bg-transparent group"
         >
           <span className="font-semibold text-nx-ink group-hover:text-nx-accent transition-colors line-clamp-1 flex items-center gap-1">
             <span>{lead.title}</span>
             <ArrowUpRight className="size-3 opacity-0 group-hover:opacity-100 transition-opacity shrink-0" />
           </span>
-          {lead.notes && <span className="text-[11px] text-nx-ink-3 line-clamp-1 mt-0.5">{lead.notes}</span>}
-        </div>
+          {lead.notes && <span className="text-[11px] font-normal text-nx-ink-3 line-clamp-1 mt-0.5">{lead.notes}</span>}
+        </Button>
       ),
     },
     {
@@ -136,11 +139,11 @@ export function buildLeadsTableColumns({
           : lead.estimatedValue;
         return (
           <div className="flex flex-col">
-            <span className="font-bold text-nx-ink font-mono">
+            <span className="font-bold text-nx-ink font-mono tabular-nums">
               {origCurr} {lead.estimatedValue.toLocaleString()}
             </span>
             {isConverted && showOriginalCurrencyBadge && (
-              <span className="text-[10px] font-mono text-nx-accent">
+              <span className="text-[10px] font-mono tabular-nums text-nx-accent">
                 ≈ {baseCurrency} {convertedVal.toLocaleString()}
               </span>
             )}
@@ -152,7 +155,7 @@ export function buildLeadsTableColumns({
       key: "source",
       label: t("crmLeads.table.source"),
       render: (_val, lead: CrmLead) => (
-        <span className="inline-flex items-center px-2 py-0.5 rounded-nx-xs bg-nx-raised border border-nx-line text-[11px] text-nx-ink-2">
+        <span className="inline-flex items-center px-2 py-0.5 rounded-nx-sm bg-nx-raised border border-nx-line text-[11px] text-nx-ink-2">
           {formatLeadSource(lead.source, t)}
         </span>
       ),
@@ -193,12 +196,20 @@ export function renderLeadsCardGridItemCard(
   return (
     <div
       data-testid={`lead-grid-card-${lead.id}`}
-      onClick={() => onNavigateLead(lead.id)}
-      className="flex flex-col justify-between gap-3 rounded-nx-lg border border-nx-line bg-nx-surface p-4 hover:border-nx-line-hi transition-all text-nx-ink cursor-pointer"
+      className="flex flex-col justify-between gap-3 rounded-nx-lg border border-nx-line bg-nx-surface p-4 hover:border-nx-line-hi transition-all text-nx-ink"
     >
       <div className="space-y-2">
         <div className="flex items-start justify-between gap-2">
-          <h4 className="font-bold text-sm text-nx-ink line-clamp-1">{lead.title}</h4>
+          <h4 className="min-w-0 flex-1 leading-none">
+            <Button
+              type="button"
+              variant="ghost"
+              onClick={() => onNavigateLead(lead.id)}
+              className="h-auto p-0 font-bold text-sm text-nx-ink hover:text-nx-accent hover:bg-transparent justify-start text-start whitespace-normal line-clamp-1"
+            >
+              {lead.title}
+            </Button>
+          </h4>
           <LeadStatusBadge status={lead.status} />
         </div>
         <div className="text-xs text-nx-ink-2 space-y-1">
@@ -221,7 +232,7 @@ export function renderLeadsCardGridItemCard(
           </div>
         )}
       </div>
-      <div className="border-t border-nx-line pt-3 flex flex-wrap items-center justify-between gap-2" onClick={(e) => e.stopPropagation()}>
+      <div className="border-t border-nx-line pt-3 flex flex-wrap items-center justify-between gap-2">
         <span className="text-[11px] text-nx-ink-3 shrink-0">{formatLeadSource(lead.source, t)}</span>
         <div className="flex flex-wrap items-center gap-1.5 [&_div]:flex [&_div]:flex-wrap [&_div]:gap-1.5">{actions}</div>
       </div>

@@ -32,14 +32,14 @@ export function ActiveKeyCard({
       <Card className="border border-warning/30 bg-warning/5">
         <CardHeader>
           <div className="flex items-center gap-3">
-            <div className="rounded-xl bg-warning/10 p-2.5 text-warning">
+            <div className="rounded-xl bg-warning/10 p-2.5 text-nx-warning-strong">
               <KeyRound className="h-6 w-6" />
             </div>
             <div>
-              <CardTitle className="text-lg text-warning">
+              <CardTitle className="text-lg text-nx-warning-strong">
                 {t("customFieldsSecurity.uninitializedTitle")}
               </CardTitle>
-              <CardDescription className="text-warning/80">
+              <CardDescription className="text-nx-warning-strong">
                 {t("customFieldsSecurity.uninitializedDesc")}
               </CardDescription>
             </div>

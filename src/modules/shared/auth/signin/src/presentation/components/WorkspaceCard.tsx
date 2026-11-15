@@ -103,13 +103,13 @@ export function WorkspaceCard({
 
   // ── Colours per state ─────────────────────────────────────────────────────
   const stateColors: Record<WorkspaceCardState, string> = {
-    unlocked: "border-border bg-card hover:border-primary/40 hover:bg-muted/40 hover:shadow-sm",
+    unlocked: "border-nx-line bg-nx-surface hover:border-nx-line-hi hover:bg-nx-raised",
     passwordRequired: isExpanded
-      ? "border-warning/50 bg-warning/10"
-      : "border-border/60 bg-muted/10 hover:border-warning/40 hover:bg-warning/5",
-    locked: "border-border/40 bg-muted/20 opacity-70",
-    disabled: "border-border/30 bg-muted/10 opacity-50",
-    setupPending: "border-border/40 bg-muted/20 opacity-60",
+      ? "border-warning/60 bg-warning/10"
+      : "border-nx-line bg-nx-raised hover:border-warning/50 hover:bg-warning/10",
+    locked: "border-nx-line bg-nx-raised opacity-70",
+    disabled: "border-nx-line bg-nx-raised opacity-50",
+    setupPending: "border-nx-line bg-nx-raised opacity-60",
   };
 
   // ── Logo / icon section ──────────────────────────────────────────────────
@@ -118,10 +118,10 @@ export function WorkspaceCard({
       className={[
         "flex h-11 w-11 shrink-0 items-center justify-center overflow-hidden rounded-lg border",
         ws.isPlatformAdmin
-          ? "border-primary/20 bg-primary/10 text-nx-accent"
+          ? "border-nx-accent bg-nx-accent-wash text-nx-accent"
           : state === "unlocked"
-            ? "border-border bg-muted text-muted-foreground"
-            : "border-border/50 bg-muted/50 text-muted-foreground/60",
+            ? "border-nx-line bg-nx-raised text-nx-ink-2"
+            : "border-nx-line bg-nx-raised text-nx-ink-3 opacity-70",
       ].join(" ")}
       aria-hidden
     >
@@ -158,7 +158,7 @@ export function WorkspaceCard({
         );
       case "passwordRequired":
         return (
-          <span className="inline-flex items-center gap-1 rounded-full bg-warning/10 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-warning">
+          <span className="inline-flex items-center gap-1 rounded-full bg-warning/10 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-nx-warning-strong">
             <Lock className="h-2.5 w-2.5" aria-hidden />
             {t("auth.workspaceSelection.passwordRequired") || "Password required"}
           </span>
@@ -172,7 +172,7 @@ export function WorkspaceCard({
         );
       case "setupPending":
         return (
-          <span className="inline-flex items-center gap-1 rounded-full bg-warning/10 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-warning">
+          <span className="inline-flex items-center gap-1 rounded-full bg-warning/10 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-nx-warning-strong">
             <Clock className="h-2.5 w-2.5" aria-hidden />
             {t("auth.workspaceSelection.setupPending") || "Setup pending"}
           </span>
@@ -184,7 +184,7 @@ export function WorkspaceCard({
 
   // ── Platform badge ────────────────────────────────────────────────────────
   const platformBadge = ws.isPlatformAdmin && (
-    <span className="inline-flex items-center gap-1 rounded-full bg-primary/10 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-nx-accent">
+    <span className="inline-flex items-center gap-1 rounded-full bg-nx-accent-wash px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-nx-accent">
       <ShieldCheck className="h-2.5 w-2.5" aria-hidden />
       {t("auth.workspaceSelection.platform") || "Platform"}
     </span>
@@ -212,12 +212,10 @@ export function WorkspaceCard({
   const unlockForm = isExpanded && state === "passwordRequired" && (
     <form
       onSubmit={handleUnlockSubmit}
-      onClick={(e) => e.stopPropagation()}
-      onKeyDown={(e) => e.stopPropagation()}
-      className="mt-3 flex flex-col gap-2"
+      className="flex flex-col gap-2"
     >
       {unlockError && (
-        <div className="flex items-center gap-1.5 text-xs text-destructive" role="alert">
+        <div className="flex items-center gap-1.5 text-xs text-nx-danger" role="alert">
           <AlertCircle className="h-3.5 w-3.5 shrink-0" />
           {unlockError}
         </div>
@@ -240,7 +238,7 @@ export function WorkspaceCard({
           type="button"
           variant="ghost"
           onClick={() => setShowPwd((v) => !v)}
-          className="absolute end-2.5 top-1/2 h-auto -translate-y-1/2 p-0 text-muted-foreground hover:bg-transparent hover:text-foreground"
+          className="absolute end-2.5 top-1/2 h-auto -translate-y-1/2 p-0 text-nx-ink-2 hover:bg-transparent hover:text-nx-ink"
           // Reachable by keyboard: a sighted keyboard user and a screen-reader
           // user both need to verify what they typed before submitting, and
           // this is the only control that lets them (WCAG 2.1.1, Level A).
@@ -288,15 +286,15 @@ export function WorkspaceCard({
       case "unlocked":
         return (
           <ArrowRight
-            className="h-4 w-4 transition-transform group-hover:translate-x-0.5"
+            className="h-4 w-4 transition-transform group-hover:translate-x-0.5 rtl:rotate-180 rtl:group-hover:-translate-x-0.5"
             aria-hidden
           />
         );
       case "passwordRequired":
         return isExpanded ? (
-          <LockOpen className="h-4 w-4 text-warning" aria-hidden />
+          <LockOpen className="h-4 w-4 text-nx-warning-strong" aria-hidden />
         ) : (
-          <Lock className="h-4 w-4 text-warning/80" aria-hidden />
+          <Lock className="h-4 w-4 text-nx-warning-strong" aria-hidden />
         );
       default:
         return null;
@@ -320,63 +318,78 @@ export function WorkspaceCard({
     }
   };
 
-  return (
-    <div
-      role={isInteractive ? "button" : undefined}
-      tabIndex={isInteractive && !isGloballyDisabled ? 0 : undefined}
-      onClick={handleClick}
-      onKeyDown={(e) => {
-        if (isInteractive && !isGloballyDisabled && (e.key === "Enter" || e.key === " ")) {
-          e.preventDefault();
-          handleClick();
-        }
-      }}
-      aria-disabled={!isInteractive || isGloballyDisabled}
-      aria-expanded={state === "passwordRequired" ? isExpanded : undefined}
-      aria-label={`${ws.tenantName}${
-        state === "locked"
-          ? ` — Locked${ws.lockedUntil ? ` until ${formatTimeUtc(ws.lockedUntil)}` : ""}`
-          : state === "passwordRequired"
-            ? " — Password required"
-            : state === "disabled"
-              ? ` — ${ws.disabledReason || "Unavailable"}`
-              : state === "setupPending"
-                ? " — Setup pending"
-                : ""
-      }`}
-      className={[
-        "group w-full rounded-xl border p-4 text-start transition-all duration-150",
-        "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1",
-        stateColors[state],
-        isInteractive && !isGloballyDisabled
-          ? "cursor-pointer active:scale-[0.99]"
-          : "cursor-not-allowed",
-      ].join(" ")}
-    >
-      {/* Main row */}
-      <div className="flex items-center gap-4">
-        {logoSection}
+  const accessibleLabel = `${ws.tenantName}${
+    state === "locked"
+      ? ` — Locked${ws.lockedUntil ? ` until ${formatTimeUtc(ws.lockedUntil)}` : ""}`
+      : state === "passwordRequired"
+        ? " — Password required"
+        : state === "disabled"
+          ? ` — ${ws.disabledReason || "Unavailable"}`
+          : state === "setupPending"
+            ? " — Setup pending"
+            : ""
+  }`;
 
-        {/* Name + badges */}
-        <div className="flex min-w-0 flex-1 flex-col gap-1">
-          <span className="truncate text-sm font-semibold leading-tight text-foreground">
-            {ws.tenantName}
-          </span>
-          <div className="flex flex-wrap items-center gap-1.5">
-            {platformBadge}
-            {stateBadge}
-            {state === "unlocked" && !ws.isPlatformAdmin && (
-              <span className="text-[11px] text-muted-foreground">{ws.tenantCode}</span>
-            )}
-          </div>
+  const rowContent = (
+    <>
+      {logoSection}
+
+      {/* Name + badges */}
+      <div className="flex min-w-0 flex-1 flex-col gap-1">
+        <span className="truncate text-sm font-semibold leading-tight text-nx-ink">
+          {ws.tenantName}
+        </span>
+        <div className="flex flex-wrap items-center gap-1.5">
+          {platformBadge}
+          {stateBadge}
+          {state === "unlocked" && !ws.isPlatformAdmin && (
+            <span className="text-[11px] text-nx-ink-2">{ws.tenantCode}</span>
+          )}
         </div>
-
-        {/* Action icon */}
-        <div className="shrink-0 text-muted-foreground">{actionIcon}</div>
       </div>
 
-      {/* Inline unlock form (expanded when passwordRequired) */}
-      {unlockForm}
+      {/* Action icon */}
+      <div className="shrink-0 text-nx-ink-2">{actionIcon}</div>
+    </>
+  );
+
+  return (
+    <div
+      className={[
+        "w-full rounded-xl border transition-colors duration-150",
+        stateColors[state],
+      ].join(" ")}
+    >
+      {isInteractive ? (
+        <Button
+          type="button"
+          variant="ghost"
+          onClick={handleClick}
+          disabled={isGloballyDisabled}
+          aria-expanded={state === "passwordRequired" ? isExpanded : undefined}
+          aria-label={accessibleLabel}
+          className={[
+            "group flex h-auto w-full items-center justify-start gap-4 rounded-xl p-4 text-start font-normal whitespace-normal transition-transform duration-150",
+            "hover:bg-transparent focus-visible:outline-none focus-visible:shadow-nx-focus",
+            !isGloballyDisabled
+              ? "cursor-pointer active:scale-[0.99]"
+              : "cursor-not-allowed",
+          ].join(" ")}
+        >
+          {rowContent}
+        </Button>
+      ) : (
+        <div
+          aria-disabled="true"
+          aria-label={accessibleLabel}
+          className="flex w-full cursor-not-allowed items-center gap-4 rounded-xl p-4 text-start"
+        >
+          {rowContent}
+        </div>
+      )}
+
+      {/* Inline unlock form (expanded when passwordRequired — sibling to trigger button) */}
+      {unlockForm && <div className="px-4 pb-4">{unlockForm}</div>}
     </div>
   );
 }

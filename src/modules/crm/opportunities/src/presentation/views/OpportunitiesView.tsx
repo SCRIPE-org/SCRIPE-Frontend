@@ -200,7 +200,6 @@ export function OpportunitiesView() {
               <DataExchangeToolbarActions
                 entityKey="crm.opportunity"
                 enableMultiSheetMigration
-                multiSheetEntityKeys={["crm.account", "crm.contact", "crm.opportunity"]}
                 activeSearch={search}
                 onImportComplete={refresh}
               />

@@ -69,7 +69,7 @@ export function TenantGetStartedSteps({
                 isCurrent
                   ? "border-nx-accent bg-nx-accent-wash"
                   : isDone
-                    ? "bg-nx-raised/40 border-nx-line"
+                    ? "border-nx-line bg-nx-raised"
                     : "border-nx-line bg-transparent hover:border-nx-line-hi hover:bg-nx-raised"
               )}
             >
@@ -81,14 +81,14 @@ export function TenantGetStartedSteps({
                       isDone
                         ? "border-success/40 bg-success/15 text-success"
                         : isCurrent
-                          ? "border-nx-accent bg-nx-accent text-nx-on-fill"
+                          ? "border-nx-accent-fill bg-nx-accent-fill text-nx-on-fill"
                           : "border-nx-line bg-nx-raised text-nx-ink-3"
                     )}
                   >
                     {isDone ? <Check className="h-3 w-3" /> : step.id}
                   </div>
                   {isCurrent && (
-                    <span className="bg-nx-accent/10 shrink-0 rounded-nx-sm px-1.5 py-0.5 text-[9px] font-bold text-nx-accent">
+                    <span className="shrink-0 rounded-nx-sm bg-nx-accent-wash px-1.5 py-0.5 text-[9px] font-bold text-nx-accent">
                       {t("tenantCommandCenter.getStarted.nextUp")}
                     </span>
                   )}

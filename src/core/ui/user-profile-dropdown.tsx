@@ -121,7 +121,7 @@ export function UserProfileDropdown({
   const getDisplayName = () => {
     const firstName = user.firstName || "";
     const lastName = user.lastName || "";
-    return `${firstName} ${lastName}`.trim() || user.username || "User";
+    return `${firstName} ${lastName}`.trim() || user.username || t("common.user");
   };
 
   const displayName = getDisplayName();

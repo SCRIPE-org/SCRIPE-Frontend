@@ -97,7 +97,7 @@ export function BoardSettingsDialog({
                 <SelectTrigger className="h-8 text-xs" data-testid="board-swimlane-select">
                   <SelectValue />
                 </SelectTrigger>
-                <SelectContent className="z-[10002]">
+                <SelectContent>
                   <SelectItem value="none" className="text-xs">{t("crmOpportunities.boardSettings.swimlaneNone")}</SelectItem>
                   <SelectItem value="assignee" className="text-xs">{t("crmOpportunities.boardSettings.swimlaneAssignee")}</SelectItem>
                   <SelectItem value="account" className="text-xs">{t("crmOpportunities.boardSettings.swimlaneAccount")}</SelectItem>
@@ -117,7 +117,7 @@ export function BoardSettingsDialog({
                 <SelectTrigger className="h-8 text-xs" data-testid="board-card-density-select">
                   <SelectValue />
                 </SelectTrigger>
-                <SelectContent className="z-[10002]">
+                <SelectContent>
                   <SelectItem value="Compact" className="text-xs">{t("crmOpportunities.boardSettings.densityCompact")}</SelectItem>
                   <SelectItem value="Standard" className="text-xs">{t("crmOpportunities.boardSettings.densityStandard")}</SelectItem>
                   <SelectItem value="Executive" className="text-xs">{t("crmOpportunities.boardSettings.densityExecutive")}</SelectItem>
@@ -130,7 +130,7 @@ export function BoardSettingsDialog({
             <Label className="text-xs font-semibold text-nx-ink block">
               {t("crmOpportunities.boardSettings.wipMappingLabel")}
             </Label>
-            <div className="space-y-1.5 max-h-[360px] overflow-y-auto pr-1">
+            <div className="space-y-1.5 max-h-[360px] overflow-y-auto pe-1">
               {[
                 ...stages,
                 ...(stages.some((s) => s.stageKey === "terminal-won" || s.stageKey.includes("won"))

@@ -134,5 +134,38 @@ describe("CRM Frontend Localization & Architecture Gate", () => {
     );
     expect(viewmodelStoreShims).toEqual([]);
   });
+
+  it("enforces Light-theme Signal Lime contrast, semantic tokens, and safe overlay stacking across CRM", () => {
+    const allProdFiles = walkFiles(
+      CRM_ROOT,
+      (p) => isProdSourceFile(p) && !p.includes(`${path.sep}locales${path.sep}`),
+    );
+    const violations: string[] = [];
+
+    for (const file of allProdFiles) {
+      const content = fs.readFileSync(file, "utf8");
+      const rel = path.relative(CRM_ROOT, file);
+      if (/bg-nx-accent(?![-a-z])[^\n"'`]*text-nx-on-fill|text-nx-on-fill[^\n"'`]*bg-nx-accent(?![-a-z])/.test(content)) {
+        violations.push(`${rel}: bg-nx-accent paired with text-nx-on-fill`);
+      }
+      if (/\brounded-nx-xs\b/.test(content)) {
+        violations.push(`${rel}: undefined rounded-nx-xs token`);
+      }
+      if (/\btext-warning\b/.test(content)) {
+        violations.push(`${rel}: low-contrast text-warning token`);
+      }
+      if (/\bz-\[100\d{2}\]/.test(content)) {
+        violations.push(`${rel}: hardcoded z-[100xx] overlay override`);
+      }
+      if (/<section\b[^>]*role=["']region["']/.test(content)) {
+        violations.push(`${rel}: redundant role="region" on semantic <section>`);
+      }
+      if (rel.endsWith("crmWorkflowColorPalette.ts") && /badgeClass:[^\n]*text-(?:zinc|blue|sky|cyan|teal|green|lime|orange|red|pink|fuchsia|purple|violet|indigo)-(?:400|500)\b/.test(content)) {
+        violations.push(`${rel}: pale Light-theme badgeClass foreground color`);
+      }
+    }
+
+    expect(violations).toEqual([]);
+  });
 });
 

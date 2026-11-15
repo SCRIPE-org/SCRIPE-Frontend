@@ -55,6 +55,7 @@ export const PartyRoleListView = React.memo(function PartyRoleListView() {
   ];
 
   const config: CrudConfig<PartyRole> = {
+    stickyActions: true,
     titleKey: "partyRole.title",
     subtitleKey: "partyRole.description",
     resource: "party-roles",

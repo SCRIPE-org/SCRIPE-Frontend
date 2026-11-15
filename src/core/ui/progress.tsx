@@ -18,10 +18,27 @@ import { cn } from "@core/common/utils";
 //   height  h-4 was a 16px slab. Every call site in the app already overrides
 //           it to h-1; a meter is a hairline reading, not a container, so the
 //           default drops to h-2 and the overrides stop fighting it.
+// Semantic progress indicator tones mapped to measured Nexus tokens.
+export const PROGRESS_VARIANTS = {
+  default: "bg-nx-accent dark:bg-nx-accent-fill",
+  success: "bg-nx-success",
+  warning: "bg-nx-warning",
+  danger: "bg-nx-danger",
+  neutral: "bg-nx-ink-3",
+} as const;
+
+export type ProgressVariant = keyof typeof PROGRESS_VARIANTS;
+
+export interface ProgressProps
+  extends React.ComponentPropsWithoutRef<typeof ProgressPrimitive.Root> {
+  variant?: ProgressVariant;
+  indicatorClassName?: string;
+}
+
 const Progress = React.forwardRef<
   React.ElementRef<typeof ProgressPrimitive.Root>,
-  React.ComponentPropsWithoutRef<typeof ProgressPrimitive.Root>
->(({ className, value, max, ...props }, ref) => {
+  ProgressProps
+>(({ className, indicatorClassName, variant = "default", value, max, ...props }, ref) => {
   const ceiling = typeof max === "number" && max > 0 ? max : 100;
   const ratio = Math.min(1, Math.max(0, (value ?? 0) / ceiling));
 
@@ -36,7 +53,11 @@ const Progress = React.forwardRef<
       <ProgressPrimitive.Indicator
         // No radius of its own: the track already clips to a pill, and a
         // scaleX on a rounded box stretches the corner arcs into ellipses.
-        className="h-full w-full flex-1 origin-left bg-nx-accent-fill transition-transform duration-nx-standard ease-nx-enter motion-reduce:transition-none rtl:origin-right"
+        className={cn(
+          "h-full w-full flex-1 origin-left transition-transform duration-nx-standard ease-nx-enter motion-reduce:transition-none rtl:origin-right",
+          PROGRESS_VARIANTS[variant],
+          indicatorClassName
+        )}
         style={{ transform: `scaleX(${ratio})` }}
       />
     </ProgressPrimitive.Root>

@@ -187,7 +187,7 @@ function EditPartyForm({
     <form onSubmit={handleSubmit}>
       <DialogHeader>
         <div className="flex items-center gap-2">
-          <div className="bg-nx-accent/10 flex h-9 w-9 items-center justify-center rounded-lg text-nx-accent">
+          <div className="bg-nx-accent-wash flex h-9 w-9 items-center justify-center rounded-lg text-nx-accent">
             <Edit3 className="h-5 w-5" />
           </div>
           <div>
@@ -239,7 +239,6 @@ function EditPartyForm({
                   if (error) setError(null);
                 }}
                 disabled={isSubmitting}
-                autoFocus
                 required
               />
             </div>
@@ -335,7 +334,7 @@ function EditPartyForm({
                 />
               </div>
 
-              <div className="flex items-center space-x-2 pt-6">
+              <div className="flex items-center gap-2 pt-6">
                 <Checkbox
                   id="edit-person-is-minor"
                   checked={isMinor}
@@ -367,7 +366,6 @@ function EditPartyForm({
                   if (error) setError(null);
                 }}
                 disabled={isSubmitting}
-                autoFocus
                 required
               />
             </div>
@@ -422,7 +420,7 @@ function EditPartyForm({
         >
           {isSubmitting ? (
             <>
-              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              <Loader2 className="me-2 h-4 w-4 animate-spin" />
               {t("party.dialog.save")}...
             </>
           ) : (

@@ -1,9 +1,9 @@
 "use client";
 
 import React, { memo } from "react";
-import { Button } from "@core/ui/button";
 import { Skeleton } from "@core/ui/skeleton";
 import { EmptyState } from "@core/ui/empty-state";
+import { useCrudI18n } from "../hooks/useCrudI18n";
 import { cn } from "@core/common/utils";
 import { Inbox } from "lucide-react";
 import type { CrudColumn } from "../components/generic-crud-view";
@@ -19,10 +19,11 @@ export interface CrudSplitPaneSectionProps<TItem = any> {
   renderRowActionButtons?: (item: TItem) => React.ReactNode;
   getItemDisplayName?: (item: TItem) => string;
   defaultTitle?: string;
+  emptyState?: React.ReactNode;
   emptyLabel?: string;
 }
 
-export const CrudSplitPaneSection = memo(function CrudSplitPaneSection<TItem = any>({
+function CrudSplitPaneSectionInner<TItem = any>({
   items = [],
   columns = [],
   selectedId,
@@ -33,15 +34,17 @@ export const CrudSplitPaneSection = memo(function CrudSplitPaneSection<TItem = a
   renderRowActionButtons,
   getItemDisplayName,
   defaultTitle = "Item Details",
+  emptyState,
   emptyLabel = "No items",
 }: CrudSplitPaneSectionProps<TItem>) {
+  const { direction } = useCrudI18n();
   const selectedRow: any =
     items.find((r: any) => String(r?.id) === String(selectedId)) || items[0] || null;
 
   return (
-    <div className="grid grid-cols-1 gap-4 lg:grid-cols-12">
+    <div dir={direction} className="grid grid-cols-1 gap-4 lg:grid-cols-12">
       {/* Left List Pane */}
-      <div className="space-y-2 rounded-nx-lg border border-nx-line bg-nx-surface p-3 lg:col-span-5 max-h-[calc(100vh-260px)] overflow-y-auto">
+      <div className="space-y-2 rounded-nx-lg border border-nx-line bg-nx-surface p-3 lg:col-span-5 max-h-[calc(100dvh-260px)] overflow-y-auto">
         {loading ? (
           [0, 1, 2, 3, 4].map((i) => (
             <div
@@ -53,56 +56,86 @@ export const CrudSplitPaneSection = memo(function CrudSplitPaneSection<TItem = a
             </div>
           ))
         ) : items.length === 0 ? (
-          <EmptyState bare icon={Inbox} title={emptyLabel} />
+          emptyState || <EmptyState bare icon={Inbox} title={emptyLabel} />
         ) : (
           items.map((row: any, idx) => {
+            const rowKey = String(row?.id ?? idx);
             const isCurrent = Boolean(selectedRow && String(row?.id) === String(selectedRow?.id));
+            const primaryCol = columns[0];
+            const secondaryCol = columns[1];
+            const itemLabel = getItemDisplayName
+              ? getItemDisplayName(row)
+              : String(
+                  (primaryCol ? row?.[primaryCol.key] : undefined) ??
+                    row?.name ??
+                    row?.title ??
+                    row?.id ??
+                    `${defaultTitle} ${idx + 1}`
+                );
+
             if (renderSplitListItem) {
               return (
-                <div
-                  key={row?.id || idx}
-                  onClick={() => onSelectId(String(row?.id))}
-                  className="cursor-pointer"
-                >
-                  {renderSplitListItem(row, isCurrent, idx)}
+                <div key={rowKey} className="relative rounded-nx-md">
+                  <button
+                    type="button"
+                    aria-pressed={isCurrent}
+                    aria-label={itemLabel}
+                    onClick={() => onSelectId(String(row?.id))}
+                    className="absolute inset-0 z-0 rounded-nx-md text-start focus-visible:outline-none focus-visible:shadow-nx-focus"
+                  />
+                  <div className="relative z-10 pointer-events-none [&_a]:pointer-events-auto [&_button]:pointer-events-auto [&_input]:pointer-events-auto [&_select]:pointer-events-auto">
+                    {renderSplitListItem(row, isCurrent, idx)}
+                  </div>
                 </div>
               );
             }
-            const primaryCol = columns[0];
-            const secondaryCol = columns[1];
+
+            const primaryRaw = primaryCol ? row[primaryCol.key] : row?.id;
+            const secondaryRaw = secondaryCol ? row[secondaryCol.key] : undefined;
+
             return (
               <div
-                key={row?.id || idx}
-                role="button"
-                tabIndex={0}
-                onClick={() => onSelectId(String(row?.id))}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter" || e.key === " ") {
-                    e.preventDefault();
-                    onSelectId(String(row?.id));
-                  }
-                }}
+                key={rowKey}
                 className={cn(
-                  "w-full h-auto rounded-nx-md border p-3 text-start justify-start flex flex-col items-start transition-colors cursor-pointer",
+                  "relative w-full rounded-nx-md border p-3 text-start transition-colors",
                   isCurrent
                     ? "border-nx-accent bg-nx-accent-wash"
-                    : "border-nx-line hover:border-nx-line-hi hover:bg-nx-raised"
+                    : "border-nx-line bg-nx-surface hover:border-nx-line-hi hover:bg-nx-raised"
                 )}
               >
-                <div className="text-sm font-medium text-nx-ink">
-                  {primaryCol?.render
-                    ? primaryCol.render(row[primaryCol.key], row, idx)
-                    : primaryCol
-                      ? String(row[primaryCol.key] ?? row?.id ?? `#${idx + 1}`)
-                      : String(row?.id ?? `#${idx + 1}`)}
-                </div>
-                {secondaryCol && (
-                  <div className="mt-0.5 text-xs text-nx-ink-3">
-                    {secondaryCol.render
-                      ? secondaryCol.render(row[secondaryCol.key], row, idx)
-                      : String(row[secondaryCol.key] ?? "")}
+                <button
+                  type="button"
+                  aria-pressed={isCurrent}
+                  aria-label={itemLabel}
+                  onClick={() => onSelectId(String(row?.id))}
+                  className="absolute inset-0 z-0 rounded-nx-md text-start focus-visible:outline-none focus-visible:shadow-nx-focus"
+                />
+                <div className="relative z-10 pointer-events-none flex flex-col items-start [&_a]:pointer-events-auto [&_button]:pointer-events-auto">
+                  <div
+                    className={cn(
+                      "text-sm font-medium text-nx-ink",
+                      typeof primaryRaw === "number" && "tabular-nums"
+                    )}
+                  >
+                    {primaryCol?.render
+                      ? primaryCol.render(primaryRaw, row, idx)
+                      : primaryCol
+                        ? String(primaryRaw ?? row?.id ?? `#${idx + 1}`)
+                        : String(row?.id ?? `#${idx + 1}`)}
                   </div>
-                )}
+                  {secondaryCol && (
+                    <div
+                      className={cn(
+                        "mt-0.5 text-xs text-nx-ink-3",
+                        typeof secondaryRaw === "number" && "tabular-nums"
+                      )}
+                    >
+                      {secondaryCol.render
+                        ? secondaryCol.render(secondaryRaw, row, idx)
+                        : String(secondaryRaw ?? "")}
+                    </div>
+                  )}
+                </div>
               </div>
             );
           })
@@ -146,26 +179,38 @@ export const CrudSplitPaneSection = memo(function CrudSplitPaneSection<TItem = a
                 {renderRowActionButtons?.(selectedRow)}
               </div>
               <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-                {columns.map((col, idx) => (
-                  <div
-                    key={col.key}
-                    className="rounded-nx-md border border-nx-line bg-nx-raised p-2.5 text-sm"
-                  >
-                    <div className="text-xs text-nx-ink-3">{col.label}</div>
-                    <div className="mt-1 font-medium text-nx-ink">
-                      {col.render
-                        ? col.render(selectedRow[col.key], selectedRow, idx)
-                        : String(selectedRow[col.key] ?? "—")}
+                {columns.map((col, idx) => {
+                  const detailRaw = selectedRow[col.key];
+                  return (
+                    <div
+                      key={col.key}
+                      className="rounded-nx-md border border-nx-line bg-nx-raised p-2.5 text-sm"
+                    >
+                      <div className="text-xs text-nx-ink-3">{col.label}</div>
+                      <div
+                        className={cn(
+                          "mt-1 font-medium text-nx-ink",
+                          typeof detailRaw === "number" && "tabular-nums"
+                        )}
+                      >
+                        {col.render
+                          ? col.render(detailRaw, selectedRow, idx)
+                          : String(detailRaw ?? "—")}
+                      </div>
                     </div>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
             </div>
           )
         ) : (
-          <EmptyState bare icon={Inbox} title={emptyLabel} />
+          emptyState || <EmptyState bare icon={Inbox} title={emptyLabel} />
         )}
       </div>
     </div>
   );
-});
+}
+
+export const CrudSplitPaneSection = memo(
+  CrudSplitPaneSectionInner
+) as typeof CrudSplitPaneSectionInner;

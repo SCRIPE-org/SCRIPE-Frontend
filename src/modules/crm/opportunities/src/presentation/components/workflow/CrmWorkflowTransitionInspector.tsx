@@ -50,9 +50,9 @@ export function CrmWorkflowTransitionInspector({
       <div className="flex items-center justify-between pb-2 border-b border-nx-line">
         <div>
           <span className="text-[10px] font-mono uppercase tracking-wider text-nx-ink-3 block">{t("crmOpportunities.pipelinesPage.transitionInspectorEyebrow")}</span>
-          <h3 className="text-sm font-bold text-nx-ink flex items-center gap-1.5"><Zap className="w-3.5 h-3.5 text-warning" />{isAr ? selectedTransition.nameAr : selectedTransition.nameEn}</h3>
+          <h3 className="text-sm font-bold text-nx-ink flex items-center gap-1.5"><Zap className="w-3.5 h-3.5 text-nx-warning-strong" />{isAr ? selectedTransition.nameAr : selectedTransition.nameEn}</h3>
         </div>
-        <Button size="icon" variant="ghost" className="h-7 w-7 text-destructive" onClick={() => onDeleteTransition(selectedTransition.id)} title={t("crmOpportunities.pipelinesPage.deleteTransitionTitle")} data-testid="inspector-delete-transition-btn">
+        <Button type="button" size="icon" variant="ghost" className="h-7 w-7 text-destructive" onClick={() => onDeleteTransition(selectedTransition.id)} title={t("crmOpportunities.pipelinesPage.deleteTransitionTitle")} aria-label={t("crmOpportunities.pipelinesPage.deleteTransitionTitle")} data-testid="inspector-delete-transition-btn">
           <Trash2 className="w-3.5 h-3.5" />
         </Button>
       </div>
@@ -100,7 +100,7 @@ export function CrmWorkflowTransitionInspector({
           <Label className="text-[10px] text-nx-ink-3">{t("crmOpportunities.pipelinesPage.toStatusLabel")}</Label>
           <Select value={selectedTransition.toStageKey} onValueChange={(val) => onTransitionChange({ ...selectedTransition, toStageKey: val })}>
             <SelectTrigger className="h-7 text-xs bg-nx-surface" data-testid="inspector-to-stage-select"><SelectValue /></SelectTrigger>
-            <SelectContent className="z-[10001]">
+            <SelectContent>
               {stages.map((st) => (
                 <SelectItem key={st.stageKey} value={st.stageKey} className="text-xs">{isAr ? st.labelAr : st.labelEn}</SelectItem>
               ))}
@@ -149,7 +149,7 @@ export function CrmWorkflowTransitionInspector({
           {vm.triggers.map((trig) => (
             <div key={trig} className="flex items-center justify-between rounded border border-nx-line bg-nx-surface px-2 py-0.5 text-[11px]" data-testid={`transition-trigger-badge-${trig}`}>
               <span className="font-mono text-nx-ink">{trig}</span>
-              <Button size="icon" variant="ghost" className="h-4 w-4 text-destructive" onClick={() => vm.handleRemoveTrigger(trig)}><X className="w-2.5 h-2.5" /></Button>
+              <Button type="button" size="icon" variant="ghost" className="h-4 w-4 text-destructive" onClick={() => vm.handleRemoveTrigger(trig)} aria-label={`${t("crmOpportunities.pipelinesPage.removeTriggerLabel")}: ${trig}`}><X className="w-2.5 h-2.5" /></Button>
             </div>
           ))}
         </div>
@@ -158,7 +158,7 @@ export function CrmWorkflowTransitionInspector({
           <Label className="text-[10px] font-mono uppercase tracking-wider text-nx-ink-2">{t("crmOpportunities.pipelinesPage.domainEventLabel")}</Label>
           <Select value={selectedTransition.domainEventKey || "GenericEvent"} onValueChange={(val) => onTransitionChange({ ...selectedTransition, domainEventKey: val })}>
             <SelectTrigger className="h-7 text-xs" data-testid="inspector-transition-event-select"><SelectValue /></SelectTrigger>
-            <SelectContent className="z-[10001]">
+            <SelectContent>
               {DOMAIN_EVENT_OPTION_KEYS.map((ev) => (
                 <SelectItem key={ev.key} value={ev.key} className="text-xs">{t(ev.labelKey)}</SelectItem>
               ))}

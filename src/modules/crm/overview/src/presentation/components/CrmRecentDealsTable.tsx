@@ -71,7 +71,7 @@ export function CrmRecentDealsTable({ deals, className }: CrmRecentDealsTablePro
       </div>
 
       <div className="w-full overflow-x-auto" dir={isRtl ? "rtl" : "ltr"}>
-        <Table className="w-full text-left text-xs border-collapse">
+        <Table className="w-full text-start text-xs border-collapse">
           <TableHeader>
             <TableRow className="border-b border-nx-line bg-nx-raised/50 text-nx-ink-2 font-semibold">
               <TableHead className="px-4 py-3 text-start">{t("crm.recentDeals.dealName")}</TableHead>
@@ -119,9 +119,9 @@ export function CrmRecentDealsTable({ deals, className }: CrmRecentDealsTablePro
                       ) : (
                         <span
                           title={t("crm.recentDeals.unverified")}
-                          className="text-warning inline-flex items-center"
+                          className="text-nx-warning-strong inline-flex items-center"
                         >
-                          <AlertCircle className="size-3.5 text-warning shrink-0" />
+                          <AlertCircle className="size-3.5 text-nx-warning-strong shrink-0" />
                         </span>
                       )}
                     </div>
@@ -131,7 +131,7 @@ export function CrmRecentDealsTable({ deals, className }: CrmRecentDealsTablePro
                     <CrmStatusBadge stage={deal.stageKey} />
                   </TableCell>
 
-                  <TableCell className="px-4 py-3 font-bold font-mono text-nx-ink">
+                  <TableCell className="px-4 py-3 font-bold font-mono tabular-nums text-nx-ink">
                     <span>
                       {targetCurr} {converted.toLocaleString()}
                     </span>

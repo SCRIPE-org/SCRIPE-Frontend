@@ -78,7 +78,7 @@ export function OpportunityStageProgressionCard({
                       "ring-2 ring-nx-accent font-bold",
                       !customHexStyles.isValidHex
                         ? colorMeta.badgeClass
-                        : "border-nx-accent bg-nx-accent-wash/30 text-nx-accent",
+                        : "border-nx-accent bg-nx-accent-wash text-nx-accent",
                     )
                   : isCompleted
                     ? "border-success/30 bg-success/10 text-success font-semibold"

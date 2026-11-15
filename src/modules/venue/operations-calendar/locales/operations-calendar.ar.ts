@@ -2,6 +2,7 @@ export const ar = {
   operationsCalendar: {
     title: "التقويم",
     description: "إدارة إشغال الملاعب والمساحات، والحجوزات النشطة لليوم.",
+    defaultFacilityName: "المنشأة",
     toolbar: {
       previous: "اليوم السابق",
       next: "اليوم التالي",
@@ -14,8 +15,8 @@ export const ar = {
       refresh: "تحديث",
       dayView: "عرض اليوم",
       findSlots: "البحث عن موعد",
-      blockTime: "+ حظر وقت",
-      newBooking: "+ حجز جديد",
+      blockTime: "حظر وقت",
+      newBooking: "حجز جديد",
       filter: "تصفية",
       day: "يوم",
       week: "أسبوع",
@@ -32,12 +33,18 @@ export const ar = {
       truncatedBlocks: "بلغت نتيجة التقويم الحد الأقصى وهو 500 حجز. تصفية حسب الملعب أو المساحة.",
     },
     status: {
+      Draft: "مسودة",
+      Requested: "مطلوب",
       Held: "محجوز مؤقتًا",
+      PendingApproval: "بانتظار الموافقة",
       Confirmed: "مؤكد",
       CheckedIn: "تم تسجيل الحضور",
       Completed: "مكتمل",
+      PartiallyFulfilled: "منفذ جزئياً",
       NoShow: "لم يحضر",
       Cancelled: "ملغى",
+      Rejected: "مرفوض",
+      Expired: "منتهي الصلاحية",
       Maintenance: "صيانة",
       Blocked: "غير متاح",
       Unavailable: "غير متاح",
@@ -58,7 +65,8 @@ export const ar = {
     },
     maintenanceDrawer: {
       title: "تفاصيل الصيانة والإغلاق",
-      description: "هذا الملعب أو المساحة غير متاح حالياً للحجوزات بسبب الصيانة أو الإغلاق الإداري.",
+      description:
+        "هذا الملعب أو المساحة غير متاح حالياً للحجوزات بسبب الصيانة أو الإغلاق الإداري.",
       court: "الملعب / المساحة",
       status: "الحالة",
       reference: "المرجع",
@@ -66,10 +74,35 @@ export const ar = {
       start: "وقت البدء",
       end: "وقت الانتهاء",
       timeWindow: "الفترة الزمنية",
+      close: "إغلاق",
     },
     utility: {
       previousMonth: "الشهر السابق",
       nextMonth: "الشهر التالي",
+    },
+    panel: {
+      prevMonth: "الشهر السابق",
+      nextMonth: "الشهر التالي",
+    },
+    blockTime: {
+      title: "حظر وقت",
+      subtitle: "إغلاق الملعب مؤقتاً لأعمال الصيانة أو الأسباب التشغيلية.",
+      resource: "الملعب / المساحة",
+      reasonType: "نوع الحظر",
+      typeMaintenance: "صيانة",
+      typeUnavailable: "غير متاح",
+      defaultMaintenanceReason: "صيانة مجدولة",
+      defaultUnavailableReason: "الملعب مغلق",
+      startDate: "تاريخ البدء",
+      startTime: "وقت البدء",
+      endDate: "تاريخ الانتهاء",
+      endTime: "وقت الانتهاء",
+      reason: "السبب / ملاحظات",
+      reasonPlaceholder: "مثال: إصلاح الشبكة وتنظيف الأرضية",
+      cancel: "إلغاء",
+      submit: "تأكيد الحظر",
+      submitting: "جارٍ حظر الوقت...",
+      failed: "تعذر حظر الوقت.",
     },
     quote: {
       unavailable: "يلزم عرض سعر معتمد قبل التأكيد. يُرجى إعادة المحاولة.",
@@ -142,7 +175,10 @@ export const ar = {
     },
     clickToBook: {
       title: "حجز جديد",
-      dialogDescription: "إنشاء حجز للمنشأة.",
+      dialogDescription: "تحديد وقت الملعب واختيار العميل وتأكيد الحجز.",
+      errors: {
+        chooseResourceAndCustomer: "اختر الملعب والعميل أولاً.",
+      },
       stepper: {
         courtAndTime: "الملعب والوقت",
         customer: "العميل",
@@ -167,7 +203,7 @@ export const ar = {
         title: "العميل",
         select: "اختيار العميل",
         searchPlaceholder: "البحث عن عميل بالاسم أو الهاتف أو البريد...",
-        addNew: "+ عميل جديد",
+        addNew: "عميل جديد",
         searchExisting: "البحث في العملاء الحاليين",
         quickAddTitle: "إضافة عميل سريعاً",
         namePlaceholder: "اسم العميل (مثال: أحمد صلاح)",
@@ -180,17 +216,27 @@ export const ar = {
         noResults: "لم يتم العثور على عملاء",
         noResultsFound: "لم يتم العثور على عملاء",
         noResultsHint: "جرب بحثاً آخر أو أضف عميلاً جديداً.",
-        duplicateWarning: "يوجد عميل مسجل ببيانات مشابهة",
+        duplicateWarning: "يوجد عميل مسجل ببيانات مشابهة بالفعل.",
+        duplicateWarningWithName: "يوجد عميل مسجل ببيانات مشابهة: {{name}}",
         searchError: "فشل البحث عن العميل. يرجى إعادة المحاولة.",
+        nameRequired: "اسم العميل مطلوب.",
+        createFailed: "تعذر إنشاء العميل. يرجى مراجعة البيانات المدخلة.",
+        defaultType: "عميل",
+        activeCustomer: "عميل نشط",
       },
       pricing: {
         title: "ملخص السعر",
         courtPrice: "إيجار الملعب",
+        discount: "الخصم",
+        tax: "الضريبة",
         calculating: "جارٍ احتساب السعر المعتمد...",
         expired: "انتهت صلاحية عرض السعر وتم تحديثه.",
         priceChanged:
           "تم تحديث السعر: القديم: {{oldPrice}} {{currency}}، الجديد: {{newPrice}} {{currency}}. يرجى التأكيد للمتابعة.",
         acknowledge: "تأكيد السعر",
+        acknowledgeNotice: "يرجى تأكيد السعر المحدث قبل إتمام الحجز.",
+        missingQuote:
+          "عرض السعر غير متاح. يرجى الانتظار حتى يتم تحميل السعر أو إعادة اختيار الملعب.",
         failed: "تعذر احتساب عرض السعر.",
         activating:
           "التسعير المعتمد لهذا الملعب قيد التفعيل حالياً. لا يمكن قبول الحجوزات حتى اكتمال التفعيل.",
@@ -202,6 +248,7 @@ export const ar = {
         overrideAmountPlaceholder: "مبلغ التعديل (مثال: -20 للخصم)",
         applyOverride: "تطبيق التعديل",
         overriding: "جاري التطبيق...",
+        overrideFailed: "تعذر تطبيق تعديل السعر.",
       },
       hold: {
         temporaryBadge: "محجوز مؤقتاً",
@@ -209,6 +256,7 @@ export const ar = {
         expired: "هذا الوقت لم يعد محجوزاً. يرجى التحقق من التوفر مجدداً.",
         refreshAvailability: "إعادة فحص التوفر",
         holdAction: "حجز مؤقت",
+        failed: "تعذر حجز الموعد مؤقتاً.",
       },
       step0: {
         slotUnavailable:
@@ -236,6 +284,10 @@ export const ar = {
         referencePlaceholder: "رقم الإيصال / المرجع (اختياري)",
         recording: "جارٍ تسجيل الدفعة...",
         recordAction: "تسجيل الدفعة",
+        missingResourceProfile: "تعذر تحديد ملف تعريف مورد المنشأة لهذا الملعب.",
+        recordFailed: "تعذر تسجيل الدفعة.",
+        initialAuditNote: "دفعة إنشاء الحجز",
+        manualAuditNote: "دفعة يدوية بعد الحجز",
       },
       confirm: {
         action: "تأكيد الحجز",
@@ -243,6 +295,8 @@ export const ar = {
         back: "رجوع",
         cancel: "إلغاء",
         next: "التالي",
+        failed: "تعذر تأكيد الحجز.",
+        noHoldError: "تعذر إنشاء حجز مؤقت لهذا الموعد.",
       },
       conflict: {
         title: "هذا الوقت لم يعد متاحاً",
@@ -266,15 +320,6 @@ export const ar = {
         openBooking: "فتح تفاصيل الحجز",
         close: "إغلاق",
       },
-    },
-  },
-  resources: {
-    blockTimeModal: {
-      endDate: "تاريخ الانتهاء",
-      endTime: "وقت الانتهاء",
-      reason: "السبب / ملاحظات",
-      reasonPlaceholder: "مثال: إصلاح الشبكة وتنظيف الأرضية",
-      cancel: "إلغاء",
     },
   },
 };

@@ -10,13 +10,21 @@
  */
 import { buildA11yFocusCss } from "./buildA11yFocusCss";
 import { buildA11yTypographyCss } from "./buildA11yTypographyCss";
+import {
+  parseClampedNumber,
+  sanitizeCssLength,
+  sanitizeCssLineStyle,
+  sanitizeCssValue,
+} from "./sanitizeBrandingCss";
 
 export function buildA11yCss(tokens: Record<string, string | undefined>): string {
   const focusColor =
-    tokens["a11y.focusRing.color"] || tokens["color.primary"] || "hsl(var(--primary))";
-  const focusWidth = tokens["a11y.focusRing.width"] || "3px";
-  const focusStyle = tokens["a11y.focusRing.style"] || "solid";
-  const animDuration = tokens["a11y.animationDuration"] || "200";
+    sanitizeCssValue(tokens["a11y.focusRing.color"]) ||
+    sanitizeCssValue(tokens["color.primary"]) ||
+    "hsl(var(--primary))";
+  const focusWidth = sanitizeCssLength(tokens["a11y.focusRing.width"], "3px");
+  const focusStyle = sanitizeCssLineStyle(tokens["a11y.focusRing.style"], "solid");
+  const animDuration = parseClampedNumber(tokens["a11y.animationDuration"], 200, 0, 5000, true);
   const reducedMotion = tokens["a11y.reducedMotion"] || "system";
 
   const css: string[] = [

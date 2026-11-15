@@ -198,7 +198,7 @@ export function PasskeyManagementView() {
               >
                 {vm.isRegistering ? (
                   <span className="flex items-center gap-2">
-                    <span className="sx-spin1 inline-block h-4 w-4 rounded-full border-2 border-nx-on-fill/30 border-t-nx-on-fill" />
+                    <span className="sx-spin1 inline-block h-4 w-4 rounded-full border-2 border-nx-on-fill border-t-transparent opacity-80" />
                     {t("auth.passkey.registering") || "Registering…"}
                   </span>
                 ) : (
@@ -272,7 +272,7 @@ export function PasskeyManagementView() {
           {vm.passkeys.map((passkey) => (
             <div
               key={passkey.id}
-              className="group flex items-center gap-4 rounded-xl border px-4 py-3 transition-all hover:shadow-sm"
+              className="group flex items-center gap-4 rounded-xl border px-4 py-3 transition-colors"
               style={{
                 background: "var(--sx-card-bg, var(--card))",
                 borderColor: "var(--sx-card-border, var(--border))",
@@ -305,6 +305,7 @@ export function PasskeyManagementView() {
                     <Input
                       value={vm.renameValue}
                       onChange={(e) => vm.setRenameValue(e.target.value)}
+                      aria-label={t("auth.passkey.deviceNameLabel") || "Device Name"}
                       className="h-7 text-sm"
                       maxLength={64}
                       autoFocus
@@ -314,21 +315,25 @@ export function PasskeyManagementView() {
                       }}
                     />
                     <Button
+                      type="button"
                       variant="ghost"
                       size="sm"
                       onClick={vm.confirmRename}
                       disabled={vm.isRenaming}
+                      aria-label={t("common.save") || "Save"}
                       className="h-7 w-7 p-0"
                     >
-                      <Check className="h-3.5 w-3.5 text-success" />
+                      <Check className="h-3.5 w-3.5 text-success" aria-hidden="true" />
                     </Button>
                     <Button
+                      type="button"
                       variant="ghost"
                       size="sm"
                       onClick={vm.cancelRename}
+                      aria-label={t("common.cancel") || "Cancel"}
                       className="h-7 w-7 p-0"
                     >
-                      <X className="h-3.5 w-3.5 text-destructive" />
+                      <X className="h-3.5 w-3.5 text-destructive" aria-hidden="true" />
                     </Button>
                   </div>
                 ) : (
@@ -352,10 +357,10 @@ export function PasskeyManagementView() {
                       )}
                       {passkey.isNeverUsed && (
                         <span
-                          className="ml-1 rounded px-1.5 py-0.5 text-[10px] font-medium"
+                          className="ms-1 rounded px-1.5 py-0.5 text-[10px] font-medium"
                           style={{
                             background: "hsl(var(--warning) / 0.1)",
-                            color: "hsl(var(--warning))",
+                            color: "var(--nx-warning-strong)",
                           }}
                         >
                           {t("auth.passkey.neverUsed") || "Never used"}
@@ -368,24 +373,28 @@ export function PasskeyManagementView() {
 
               {/* Actions */}
               {vm.renamingId !== passkey.id && (
-                <div className="flex items-center gap-1 opacity-0 transition-opacity group-hover:opacity-100">
+                <div className="flex items-center gap-1 opacity-0 transition-opacity group-hover:opacity-100 group-focus-within:opacity-100">
                   <Button
+                    type="button"
                     variant="ghost"
                     size="sm"
                     onClick={() => vm.startRename(passkey)}
                     className="h-8 w-8 p-0"
                     title={t("auth.passkey.rename") || "Rename"}
+                    aria-label={t("auth.passkey.rename") || "Rename"}
                   >
-                    <Pencil className="h-3.5 w-3.5" style={{ color: "var(--sx-text-mute)" }} />
+                    <Pencil className="h-3.5 w-3.5" style={{ color: "var(--sx-text-mute)" }} aria-hidden="true" />
                   </Button>
                   <Button
+                    type="button"
                     variant="ghost"
                     size="sm"
                     onClick={() => setDeleteConfirmId(passkey.id)}
                     className="h-8 w-8 p-0"
                     title={t("auth.passkey.delete") || "Delete"}
+                    aria-label={t("auth.passkey.delete") || "Delete"}
                   >
-                    <Trash2 className="h-3.5 w-3.5 text-destructive" />
+                    <Trash2 className="h-3.5 w-3.5 text-destructive" aria-hidden="true" />
                   </Button>
                 </div>
               )}

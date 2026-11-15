@@ -51,20 +51,22 @@ function CycleToggle({
   onChange: (v: boolean) => void;
 }) {
   return (
-    <label
-      htmlFor={id}
-      className={`flex cursor-pointer items-center gap-4 border px-4 py-3.5 transition-[border-color,background-color,box-shadow] duration-nx-micro ease-nx-enter motion-reduce:transition-none ${
+    <div
+      className={`flex items-center gap-4 border px-4 py-3.5 transition-[border-color,background-color,box-shadow] duration-nx-micro ease-nx-enter motion-reduce:transition-none ${
         checked
-          ? "border-nx-accent bg-nx-accent-wash shadow-nx-sm"
+          ? "border-nx-accent bg-nx-accent-wash"
           : "border-nx-line hover:bg-nx-hover"
       }`}
     >
       <Checkbox id={id} checked={checked} onCheckedChange={(v) => onChange(!!v)} />
-      <div className="min-w-0 flex-1">
-        <div className="text-sm font-medium text-nx-ink">{label}</div>
-        <div className="mt-0.5 text-xs text-nx-ink-3">{desc}</div>
-      </div>
-    </label>
+      <Label
+        htmlFor={id}
+        className="flex min-w-0 flex-1 cursor-pointer flex-col items-start gap-0.5 font-normal leading-normal"
+      >
+        <span className="text-sm font-medium text-nx-ink">{label}</span>
+        <span className="text-xs text-nx-ink-3">{desc}</span>
+      </Label>
+    </div>
   );
 }
 
@@ -144,19 +146,16 @@ export function WizardStepBilling({ form, onChange }: WizardStepBillingProps) {
                   />
                 </div>
                 <div className="flex items-end">
-                  <label
-                    className="flex cursor-pointer items-center gap-2.5 pb-2"
-                    htmlFor="trialIsFree"
-                  >
+                  <div className="flex items-center gap-2.5 pb-2">
                     <Checkbox
                       id="trialIsFree"
                       checked={form.trialIsFree ?? true}
                       onCheckedChange={(v) => onChange({ trialIsFree: !!v })}
                     />
-                    <span className="text-sm font-medium">
+                    <Label htmlFor="trialIsFree" className="cursor-pointer text-nx-ink">
                       {t("entitlements.editions.wizard.completelyFree")}
-                    </span>
-                  </label>
+                    </Label>
+                  </div>
                 </div>
                 {!form.trialIsFree && (
                   <div className="space-y-2">

@@ -132,7 +132,7 @@ export function TenantWidgetLibraryDialog({
           <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
             <div>
               <DialogTitle className="flex items-center gap-2 text-lg font-bold">
-                <LayoutGrid className="h-5 w-5 text-primary" />
+                <LayoutGrid className="h-5 w-5 text-nx-accent" aria-hidden="true" />
                 <span>{t("tenantCommandCenter.library.title") || "Widget Library"}</span>
               </DialogTitle>
               <p className="mt-0.5 text-xs text-nx-ink-3">
@@ -144,13 +144,13 @@ export function TenantWidgetLibraryDialog({
             {/* Visual Workspace Stats Counters */}
             <div className="flex shrink-0 items-center gap-2 self-start sm:self-auto">
               <div className="flex items-center gap-1.5 rounded-lg border border-success/20 bg-success/10 px-2.5 py-1 text-xs font-semibold text-success">
-                <CheckCircle2 className="h-3.5 w-3.5" />
+                <CheckCircle2 className="h-3.5 w-3.5" aria-hidden="true" />
                 <span>
                   {addedCount} {t("tenantCommandCenter.library.alreadyAdded") || "Added"}
                 </span>
               </div>
-              <div className="flex items-center gap-1.5 rounded-lg border border-primary/20 bg-primary/10 px-2.5 py-1 text-xs font-semibold text-primary">
-                <Plus className="h-3.5 w-3.5" />
+              <div className="flex items-center gap-1.5 rounded-lg border border-nx-line-hi bg-nx-accent-wash px-2.5 py-1 text-xs font-semibold text-nx-accent">
+                <Plus className="h-3.5 w-3.5" aria-hidden="true" />
                 <span>
                   {availableCount} {t("tenantCommandCenter.library.readyToAdd") || "Available"}
                 </span>
@@ -163,14 +163,17 @@ export function TenantWidgetLibraryDialog({
         <div className="shrink-0 space-y-2.5">
           {/* Search Input */}
           <div className="relative">
-            <Search className="absolute start-3 top-2.5 h-4 w-4 text-nx-ink-3" />
+            <Search className="absolute start-3 top-2.5 h-4 w-4 text-nx-ink-3" aria-hidden="true" />
             <Input
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
+              aria-label={
+                t("tenantCommandCenter.library.searchPlaceholder") || "Search available widgets..."
+              }
               placeholder={
                 t("tenantCommandCenter.library.searchPlaceholder") || "Search available widgets..."
               }
-              className="h-9 border-nx-line bg-nx-raised/40 pe-8 ps-9 text-xs text-nx-ink"
+              className="h-9 border-nx-line bg-nx-raised pe-8 ps-9 text-xs text-nx-ink"
             />
             {searchQuery && (
               <Button
@@ -178,15 +181,16 @@ export function TenantWidgetLibraryDialog({
                 variant="ghost"
                 size="icon"
                 onClick={() => setSearchQuery("")}
+                aria-label={t("common.clear")}
                 className="absolute end-2.5 top-2.5 h-auto w-auto cursor-pointer p-0 text-nx-ink-3 hover:bg-transparent hover:text-nx-ink"
               >
-                <X className="h-4 w-4" />
+                <X className="h-4 w-4" aria-hidden="true" />
               </Button>
             )}
           </div>
 
           {/* Segmented Status Tabs (All vs Available vs In Dashboard) */}
-          <div className="flex items-center gap-1 rounded-xl border border-nx-line bg-nx-raised/40 p-1 text-xs">
+          <div className="flex items-center gap-1 rounded-xl border border-nx-line bg-nx-raised p-1 text-xs">
             <Button
               type="button"
               variant="ghost"
@@ -209,17 +213,17 @@ export function TenantWidgetLibraryDialog({
               onClick={() => setStatusFilter("available")}
               className={`h-auto flex-1 cursor-pointer gap-1.5 rounded-lg px-3 py-1.5 text-xs font-semibold transition-all ${
                 statusFilter === "available"
-                  ? "bg-primary font-bold text-nx-on-fill hover:bg-primary"
+                  ? "bg-nx-accent-fill font-bold text-nx-on-fill hover:brightness-95"
                   : "text-nx-ink-3 hover:bg-nx-raised hover:text-nx-ink"
               }`}
             >
-              <Plus className="h-3.5 w-3.5" />
+              <Plus className="h-3.5 w-3.5" aria-hidden="true" />
               <span>{t("tenantCommandCenter.library.readyToAdd") || "Available to Add"}</span>
               <span
                 className={`rounded-full px-1.5 py-0 text-[10px] font-bold ${
                   statusFilter === "available"
-                    ? "bg-nx-on-fill/20 text-nx-on-fill"
-                    : "bg-primary/15 text-primary"
+                    ? "bg-[color:color-mix(in_srgb,var(--nx-on-fill)_18%,transparent)] text-nx-on-fill"
+                    : "bg-nx-accent-wash text-nx-accent"
                 }`}
               >
                 {availableCount}
@@ -236,12 +240,12 @@ export function TenantWidgetLibraryDialog({
                   : "text-nx-ink-3 hover:bg-nx-raised hover:text-nx-ink"
               }`}
             >
-              <Check className="h-3.5 w-3.5" />
+              <Check className="h-3.5 w-3.5" aria-hidden="true" />
               <span>{t("tenantCommandCenter.library.inDashboard") || "In Dashboard"}</span>
               <span
                 className={`rounded-full px-1.5 py-0 text-[10px] font-bold ${
                   statusFilter === "added"
-                    ? "bg-nx-ground/20 text-nx-ground"
+                    ? "bg-[color:color-mix(in_srgb,var(--nx-ground)_20%,transparent)] text-nx-ground"
                     : "bg-success/15 text-success"
                 }`}
               >
@@ -260,7 +264,7 @@ export function TenantWidgetLibraryDialog({
                 onClick={() => setSelectedCategory(cat.id)}
                 className={`h-auto cursor-pointer rounded-full px-2.5 py-0.5 text-[11px] font-medium transition-colors ${
                   selectedCategory === cat.id
-                    ? "border border-primary/30 bg-primary/10 font-semibold text-primary hover:bg-primary/10"
+                    ? "border border-nx-accent bg-nx-accent-wash font-semibold text-nx-accent hover:bg-nx-accent-wash"
                     : "text-nx-ink-3 hover:bg-nx-raised hover:text-nx-ink"
                 }`}
               >
@@ -271,10 +275,10 @@ export function TenantWidgetLibraryDialog({
         </div>
 
         {/* Widget Grid */}
-        <div className="flex-1 overflow-y-auto py-1 pr-1">
+        <div className="flex-1 overflow-y-auto py-1 pe-1">
           {filteredWidgets.length === 0 ? (
             <div className="flex min-h-[180px] flex-col items-center justify-center p-6 text-center">
-              <Search className="mb-2 h-6 w-6 text-nx-ink-3/40" />
+              <Search className="mb-2 h-6 w-6 text-nx-ink-3 opacity-50" aria-hidden="true" />
               <p className="text-xs font-semibold text-nx-ink">
                 {t("tenantCommandCenter.library.noWidgetsFound") || "No widgets found"}
               </p>
@@ -326,7 +330,7 @@ export function TenantWidgetLibraryDialog({
                           <div className="flex shrink-0 items-center gap-1.5">
                             <Badge
                               variant="outline"
-                              className="border-nx-line bg-nx-raised/40 px-1.5 py-0 text-[10px] font-normal text-nx-ink-3"
+                              className="border-nx-line bg-nx-raised px-1.5 py-0 text-[10px] font-normal text-nx-ink-3"
                             >
                               {widthLabel}
                             </Badge>
@@ -380,13 +384,13 @@ export function TenantWidgetLibraryDialog({
                 return (
                   <div
                     key={def.id}
-                    className="group relative flex flex-col justify-between rounded-xl border border-nx-line bg-nx-surface p-3.5 transition-all hover:border-nx-line-hi hover:bg-nx-raised/40"
+                    className="group relative flex flex-col justify-between rounded-xl border border-nx-line bg-nx-surface p-3.5 transition-all hover:border-nx-line-hi hover:bg-nx-raised"
                   >
                     <div>
                       <div className="mb-2 flex items-start justify-between gap-2">
                         <div className="flex items-center gap-2.5">
-                          <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border border-primary/25 bg-primary/10 text-primary transition-transform group-hover:scale-105">
-                            <IconComponent className="h-4 w-4" />
+                          <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border border-nx-line-hi bg-nx-accent-wash text-nx-accent transition-transform group-hover:scale-105">
+                            <IconComponent className="h-4 w-4" aria-hidden="true" />
                           </div>
                           <div>
                             <h4 className="text-xs font-bold leading-tight text-nx-ink">
@@ -400,7 +404,7 @@ export function TenantWidgetLibraryDialog({
 
                         <Badge
                           variant="outline"
-                          className="shrink-0 border-nx-line bg-nx-raised/40 px-1.5 py-0 text-[10px] font-normal text-nx-ink-3"
+                          className="shrink-0 border-nx-line bg-nx-raised px-1.5 py-0 text-[10px] font-normal text-nx-ink-3"
                         >
                           {widthLabel}
                         </Badge>
@@ -421,9 +425,9 @@ export function TenantWidgetLibraryDialog({
                         variant="default"
                         size="sm"
                         onClick={() => handleAdd(def.id)}
-                        className="h-7 cursor-pointer gap-1.5 bg-primary px-3 text-[11px] font-semibold text-nx-on-fill hover:bg-primary/90"
+                        className="h-7 cursor-pointer gap-1.5 bg-nx-accent-fill px-3 text-[11px] font-semibold text-nx-on-fill hover:brightness-95"
                       >
-                        <Plus className="h-3 w-3" />
+                        <Plus className="h-3 w-3" aria-hidden="true" />
                         <span>{t("tenantCommandCenter.library.addWidget") || "Add Widget"}</span>
                       </Button>
                     </div>
@@ -448,7 +452,7 @@ export function TenantWidgetLibraryDialog({
             variant="default"
             size="sm"
             onClick={onClose}
-            className="h-8 cursor-pointer bg-primary px-4 text-xs font-semibold text-nx-on-fill hover:bg-primary/90"
+            className="h-8 cursor-pointer bg-nx-accent-fill px-4 text-xs font-semibold text-nx-on-fill hover:brightness-95"
           >
             {t("tenantCommandCenter.library.done") || "Done"}
           </Button>

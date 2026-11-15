@@ -67,7 +67,7 @@ import { MoreHorizontal, ChevronsLeft, ChevronsRight, Search } from "lucide-reac
 import { LoadingSpinner } from "@core/ui/loading-spinner";
 import { Skeleton } from "@core/ui/skeleton";
 import GenericSelect from "./generic-select";
-import { useI18n } from "@core/providers/i18n-provider";
+import { useCrudI18n } from "../hooks/useCrudI18n";
 import { useSettings } from "@core/providers/settings-provider";
 import { cn, getHoverEffectClasses, getTableHoverEffectClasses } from "@core/common/utils";
 import { appLogger } from "@/core/common/logger";
@@ -238,7 +238,7 @@ function GenericTableInner<T extends Record<string, any>>({
   sortDirection: controlledSortDirection,
   onSortChange,
 }: GenericTableProps<T>) {
-  const { t, direction } = useI18n();
+  const { t, direction } = useCrudI18n();
   const settings = useSettings();
   const [internalSortColumn, setInternalSortColumn] = useState<keyof T | null>(null);
   const [internalSortDirection, setInternalSortDirection] = useState<"asc" | "desc">("asc");
@@ -259,8 +259,8 @@ function GenericTableInner<T extends Record<string, any>>({
   // Sticky actions state
   const tableRef = useRef<HTMLDivElement>(null);
   const actionsColumnRef = useRef<HTMLTableCellElement>(null);
-  const [showLeftShadow, setShowLeftShadow] = useState(false);
-  const [showRightShadow, setShowRightShadow] = useState(false);
+  const [showStartShadow, setShowStartShadow] = useState(false);
+  const [showEndShadow, setShowEndShadow] = useState(false);
 
   // The ONE tableStyle read. The twelve variants no longer fan out into class
   // math here — the style rides a single [data-table-style] attribute on the
@@ -299,41 +299,62 @@ function GenericTableInner<T extends Record<string, any>>({
       });
     }
 
-    // Handle scroll shadows
+    // Handle scroll shadows across LTR and RTL scrollLeft models
     const handleScrollShadows = () => {
       const tableContainer = tableRef.current;
       if (!tableContainer) return;
 
-      const scrollableElement = tableContainer.querySelector(".overflow-x-auto") as HTMLElement;
+      const scrollableElement = tableContainer.querySelector(".overflow-auto") as HTMLElement | null;
       if (!scrollableElement) return;
 
       const { scrollLeft, scrollWidth, clientWidth } = scrollableElement;
+      const maxScroll = Math.max(0, scrollWidth - clientWidth);
 
-      // Check if we can scroll left (show left shadow)
-      setShowLeftShadow(scrollLeft > 0);
+      if (maxScroll <= 1) {
+        setShowStartShadow(false);
+        setShowEndShadow(false);
+        return;
+      }
 
-      // Check if we can scroll right (show right shadow)
-      setShowRightShadow(scrollLeft < scrollWidth - clientWidth);
+      const scrolledFromStart =
+        direction === "rtl"
+          ? scrollLeft <= 0
+            ? Math.abs(scrollLeft)
+            : maxScroll - scrollLeft
+          : scrollLeft;
+
+      setShowStartShadow(scrolledFromStart > 1);
+      setShowEndShadow(scrolledFromStart < maxScroll - 1);
     };
 
     const tableContainer = tableRef.current;
     if (!tableContainer) return;
 
-    const scrollableElement = tableContainer.querySelector(".overflow-x-auto") as HTMLElement;
+    const scrollableElement = tableContainer.querySelector(".overflow-auto") as HTMLElement | null;
     if (!scrollableElement) return;
 
     // Initial check
     handleScrollShadows();
 
-    // Add scroll listener
+    // Add scroll, resize, and layout observers
     scrollableElement.addEventListener("scroll", handleScrollShadows);
     window.addEventListener("resize", handleScrollShadows);
+
+    let resizeObserver: ResizeObserver | undefined;
+    if (typeof ResizeObserver !== "undefined") {
+      resizeObserver = new ResizeObserver(handleScrollShadows);
+      resizeObserver.observe(scrollableElement);
+      if (scrollableElement.firstElementChild) {
+        resizeObserver.observe(scrollableElement.firstElementChild);
+      }
+    }
 
     return () => {
       scrollableElement.removeEventListener("scroll", handleScrollShadows);
       window.removeEventListener("resize", handleScrollShadows);
+      resizeObserver?.disconnect();
     };
-  }, [stickyActions, actions, direction]);
+  }, [stickyActions, actions, direction, data, columns]);
 
   const handleSort = (column: keyof T) => {
     if (onSortChange) {
@@ -404,17 +425,32 @@ function GenericTableInner<T extends Record<string, any>>({
 
   // Sticky actions column — opaque surface so scrolling columns vanish under
   // it, a hairline start edge instead of the old painted rails.
-  const stickyActionsClasses = "sticky end-0 z-raised border-s border-nx-line-hi bg-nx-surface";
+  const getStickyActionsClasses = (isHeader = false) =>
+    cn(
+      "sticky end-0 border-s border-nx-line-hi",
+      isHeader ? "z-20 bg-nx-raised" : "z-raised bg-nx-surface"
+    );
 
-  const getPinClasses = (pin?: "left" | "right" | "none") => {
+  const getPinClasses = (pin?: "left" | "right" | "none", isHeader = false) => {
     if (pin === "left") {
-      return "sticky start-0 z-raised border-e border-nx-line-hi bg-nx-surface";
+      return cn(
+        "sticky start-0 border-e border-nx-line-hi",
+        isHeader ? "z-20 bg-nx-raised" : "z-raised bg-nx-surface"
+      );
     }
     if (pin === "right") {
-      return "sticky end-0 z-raised border-s border-nx-line-hi bg-nx-surface";
+      return cn(
+        "sticky end-0 border-s border-nx-line-hi",
+        isHeader ? "z-20 bg-nx-raised" : "z-raised bg-nx-surface"
+      );
     }
     return undefined;
   };
+
+  const allSelected =
+    sortedData.length > 0 && sortedData.every((row) => selectedItems.includes(row.id));
+  const someSelected =
+    !allSelected && sortedData.some((row) => selectedItems.includes(row.id));
 
   return (
     <div
@@ -464,10 +500,11 @@ function GenericTableInner<T extends Record<string, any>>({
           <div className="py-12 text-center text-nx-ink-3">{empty}</div>
         ) : (
           sortedData.map((row, index) => {
+            const rowKey = String(row.id ?? index);
             const isSelected = selectable && selectedItems.includes(row.id);
             return (
               <div
-                key={index}
+                key={rowKey}
                 // Selection speaks the same language as a selected table row:
                 // the accent wash behind an accent hairline, no second ring.
                 className={cn(getCardClasses(), isSelected && "border-nx-accent bg-nx-accent-wash")}
@@ -475,6 +512,10 @@ function GenericTableInner<T extends Record<string, any>>({
                 {selectable && (
                   <div className="flex items-center gap-2 border-b border-nx-line pb-2">
                     <Checkbox
+                      aria-label={t("table.selectRow", {
+                        id: String(row.id ?? index),
+                        defaultValue: `Select row ${String(row.id ?? index)}`,
+                      })}
                       checked={isSelected}
                       onCheckedChange={(checked) => {
                         if (onSelectionChange) {
@@ -492,19 +533,27 @@ function GenericTableInner<T extends Record<string, any>>({
                   // `hideOnMobile` is declared on CrudColumn and had zero
                   // effect — the card loop rendered every column regardless.
                   .filter((column) => !column.hideOnMobile)
-                  .map((column) => (
-                    <div
-                      key={String(column.key)}
-                      className="flex items-center justify-between gap-2"
-                    >
-                      <span className="text-sm font-medium text-nx-ink-2">{column.label}:</span>
-                      <span className="text-sm text-nx-ink">
-                        {column.render
-                          ? column.render(row[column.key], row)
-                          : formatCellValue(row[column.key])}
-                      </span>
-                    </div>
-                  ))}
+                  .map((column) => {
+                    const rawVal = row[column.key];
+                    return (
+                      <div
+                        key={String(column.key)}
+                        className="flex items-center justify-between gap-2"
+                      >
+                        <span className="text-sm font-medium text-nx-ink-2">{column.label}:</span>
+                        <span
+                          className={cn(
+                            "text-sm text-nx-ink",
+                            typeof rawVal === "number" && "tabular-nums"
+                          )}
+                        >
+                          {column.render
+                            ? column.render(rawVal, row)
+                            : formatCellValue(rawVal)}
+                        </span>
+                      </div>
+                    );
+                  })}
                 {((actions && actions.length > 0) || renderActions) && (
                   <div className="flex justify-end border-t border-nx-line pt-2">
                     {renderActions ? (
@@ -575,39 +624,40 @@ function GenericTableInner<T extends Record<string, any>>({
             paddingInline: "calc(var(--spacing-unit) * 0.5)",
           }}
         >
-          <div className="overflow-x-auto">
-            {/* Scroll shadows. The edges are logical; only the gradient
-                direction stays physical, because Tailwind has no logical
-                gradient axis — so it resolves against the live direction. */}
-            {showLeftShadow && (
+          <div className="relative [&>div]:max-h-[70dvh]">
+            {/* Scroll shadows. Logical start/end placement paired with
+                direction-aware horizontal gradients across LTR and RTL. */}
+            {showStartShadow && (
               <div
                 aria-hidden="true"
                 className={cn(
-                  "pointer-events-none absolute inset-y-0 start-0 z-raised w-4 from-nx-surface to-transparent",
+                  "pointer-events-none absolute inset-y-0 start-0 z-20 w-4 from-nx-surface to-transparent",
                   direction === "rtl" ? "bg-gradient-to-l" : "bg-gradient-to-r"
                 )}
               />
             )}
-            {showRightShadow && (
+            {showEndShadow && (
               <div
                 aria-hidden="true"
                 className={cn(
-                  "pointer-events-none absolute inset-y-0 end-0 z-raised w-4 from-nx-surface to-transparent",
+                  "pointer-events-none absolute inset-y-0 end-0 z-20 w-4 from-nx-surface to-transparent",
                   direction === "rtl" ? "bg-gradient-to-r" : "bg-gradient-to-l"
                 )}
               />
             )}
-            <Table>
-              <TableHeader>
+            <Table dir={direction}>
+              <TableHeader
+                sticky
+                className="sticky top-0 z-10 border-b border-nx-line-hi bg-nx-raised [&_th]:bg-nx-raised"
+              >
                 {/* Header row passes a className, so TableRow's minimal base
                     applies — no hover wash on the header band. */}
-                <TableRow className="border-b border-nx-line-hi bg-nx-hover">
+                <TableRow className="border-b border-nx-line-hi bg-nx-raised hover:bg-nx-raised">
                   {selectable && (
-                    <TableHead className="w-12">
+                    <TableHead className="w-12 text-xs font-semibold text-nx-ink-2">
                       <Checkbox
-                        checked={
-                          selectedItems.length === sortedData.length && sortedData.length > 0
-                        }
+                        aria-label={t("table.selectAll", { defaultValue: "Select all rows" })}
+                        checked={allSelected ? true : someSelected ? "indeterminate" : false}
                         onCheckedChange={(checked) => {
                           if (onSelectionChange) {
                             const newSelected = checked ? sortedData.map((row) => row.id) : [];
@@ -617,48 +667,58 @@ function GenericTableInner<T extends Record<string, any>>({
                       />
                     </TableHead>
                   )}
-                  {columns.map((column) => (
-                    <TableHead
-                      key={String(column.key)}
-                      sortable={column.sortable}
-                      sortDirection={
-                        column.sortable && isActiveSortColumn(column.key)
-                          ? activeSortDirection
-                          : null
-                      }
-                      onClick={column.sortable ? () => handleSort(column.key) : undefined}
-                      onKeyDown={
-                        column.sortable
-                          ? (e) => {
-                              if (e.key === "Enter" || e.key === " ") {
-                                e.preventDefault();
-                                handleSort(column.key);
+                  {columns.map((column) => {
+                    const isSortedCol = column.sortable && isActiveSortColumn(column.key);
+                    const ariaSortValue = column.sortable
+                      ? isSortedCol
+                        ? activeSortDirection === "asc"
+                          ? "ascending"
+                          : "descending"
+                        : "none"
+                      : undefined;
+                    return (
+                      <TableHead
+                        key={String(column.key)}
+                        sortable={column.sortable}
+                        sortDirection={isSortedCol ? activeSortDirection : null}
+                        aria-sort={ariaSortValue}
+                        onClick={column.sortable ? () => handleSort(column.key) : undefined}
+                        onKeyDown={
+                          column.sortable
+                            ? (e) => {
+                                if (e.key === "Enter" || e.key === " ") {
+                                  e.preventDefault();
+                                  handleSort(column.key);
+                                }
                               }
-                            }
-                          : undefined
-                      }
-                      tabIndex={column.sortable ? 0 : undefined}
-                      // Width moved to a real style. `w-${column.width}` was
-                      // interpolated at runtime, so Tailwind's JIT never saw
-                      // the class and no width was ever emitted.
-                      style={column.width ? { width: column.width } : undefined}
-                      className={cn(
-                        "whitespace-nowrap",
-                        column.className,
-                        getPinClasses(column.pin),
-                        // Same lit-edge focus treatment TableRow uses — the th
-                        // itself is the sort control, so it must take focus.
-                        column.sortable &&
-                          "focus-visible:outline focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-nx-accent"
-                      )}
-                    >
-                      {column.label}
-                    </TableHead>
-                  ))}
+                            : undefined
+                        }
+                        tabIndex={column.sortable ? 0 : undefined}
+                        // Width moved to a real style. `w-${column.width}` was
+                        // interpolated at runtime, so Tailwind's JIT never saw
+                        // the class and no width was ever emitted.
+                        style={column.width ? { width: column.width } : undefined}
+                        className={cn(
+                          "whitespace-nowrap text-xs font-semibold text-nx-ink-2",
+                          column.className,
+                          getPinClasses(column.pin, true),
+                          // Same lit-edge focus treatment TableRow uses — the th
+                          // itself is the sort control, so it must take focus.
+                          column.sortable &&
+                            "focus-visible:outline focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-nx-accent"
+                        )}
+                      >
+                        {column.label}
+                      </TableHead>
+                    );
+                  })}
                   {((actions && actions.length > 0) || renderActions) && (
                     <TableHead
                       ref={actionsColumnRef}
-                      className={cn("w-16", stickyActions && stickyActionsClasses)}
+                      className={cn(
+                        "w-16 text-xs font-semibold text-nx-ink-2",
+                        stickyActions && getStickyActionsClasses(true)
+                      )}
                     >
                       {t("table.actions")}
                     </TableHead>
@@ -683,7 +743,7 @@ function GenericTableInner<T extends Record<string, any>>({
                         </TableCell>
                       ))}
                       {((actions && actions.length > 0) || renderActions) && (
-                        <TableCell className={cn(stickyActions && stickyActionsClasses)}>
+                        <TableCell className={cn(stickyActions && getStickyActionsClasses())}>
                           <div className="flex items-center justify-center">
                             <Skeleton className="h-7 w-7 rounded-nx-sm" />
                           </div>
@@ -706,12 +766,17 @@ function GenericTableInner<T extends Record<string, any>>({
                   </TableRow>
                 ) : (
                   sortedData.map((row, index) => {
+                    const rowKey = String(row.id ?? index);
                     const isSelected = selectable && selectedItems.includes(row.id);
                     return (
-                      <TableRow key={index} selected={isSelected} className={getRowClasses()}>
+                      <TableRow key={rowKey} selected={isSelected} className={getRowClasses()}>
                         {selectable && (
                           <TableCell className="w-12">
                             <Checkbox
+                              aria-label={t("table.selectRow", {
+                                id: String(row.id ?? index),
+                                defaultValue: `Select row ${String(row.id ?? index)}`,
+                              })}
                               checked={isSelected}
                               onCheckedChange={(checked) => {
                                 if (onSelectionChange) {
@@ -724,27 +789,34 @@ function GenericTableInner<T extends Record<string, any>>({
                             />
                           </TableCell>
                         )}
-                        {columns.map((column) => (
-                          // `column.className` is now applied. Nineteen call
-                          // sites declare one — "text-end tabular-nums" on
-                          // numeric columns, for instance — and every one of
-                          // them was silently discarded, so numbers rendered
-                          // start-aligned with proportional figures.
-                          <TableCell
-                            key={String(column.key)}
-                            className={cn(column.className, getPinClasses(column.pin))}
-                          >
-                            {column.render
-                              ? column.render(row[column.key], row)
-                              : // Bare String() printed the literal text
-                                // "undefined", "null" or "[object Object]" into
-                                // the cell for any column without a render.
-                                formatCellValue(row[column.key])}
-                          </TableCell>
-                        ))}
+                        {columns.map((column) => {
+                          const rawVal = row[column.key];
+                          return (
+                            // `column.className` is now applied. Nineteen call
+                            // sites declare one — "text-end tabular-nums" on
+                            // numeric columns, for instance — and every one of
+                            // them was silently discarded, so numbers rendered
+                            // start-aligned with proportional figures.
+                            <TableCell
+                              key={String(column.key)}
+                              className={cn(
+                                typeof rawVal === "number" && "tabular-nums",
+                                column.className,
+                                getPinClasses(column.pin)
+                              )}
+                            >
+                              {column.render
+                                ? column.render(rawVal, row)
+                                : // Bare String() printed the literal text
+                                  // "undefined", "null" or "[object Object]" into
+                                  // the cell for any column without a render.
+                                  formatCellValue(rawVal)}
+                            </TableCell>
+                          );
+                        })}
                         {((actions && actions.length > 0) || renderActions) && (
                           <TableCell
-                            className={cn(stickyActions && stickyActionsClasses)}
+                            className={cn(stickyActions && getStickyActionsClasses())}
                             ref={index === 0 ? actionsColumnRef : undefined}
                           >
                             {renderActions ? (
@@ -827,7 +899,7 @@ function GenericTableInner<T extends Record<string, any>>({
           <div className="flex flex-col gap-4 p-4 lg:flex-row lg:items-center lg:justify-between">
             {/* Results Info */}
             <div className="flex flex-wrap items-center gap-4">
-              <p className="text-sm font-medium text-nx-ink-2">
+              <p className="text-sm font-medium text-nx-ink-2 tabular-nums">
                 {(() => {
                   const itemsCount = Number.isFinite(pagination.itemsCount)
                     ? Math.max(0, pagination.itemsCount)
@@ -858,6 +930,7 @@ function GenericTableInner<T extends Record<string, any>>({
                   <span className="text-sm text-nx-ink-3">{t("table.show")}:</span>
                   <GenericSelect
                     type="single"
+                    aria-label={t("table.perPage", { defaultValue: "Rows per page" })}
                     options={[10, 25, 50, 100].map((size) => ({
                       value: String(size),
                       label: String(size),
@@ -866,7 +939,7 @@ function GenericTableInner<T extends Record<string, any>>({
                     onValueChange={(v: string | string[]) =>
                       pagination.onPageSizeChange?.(Number(typeof v === "string" ? v : v[0]))
                     }
-                    className="h-8 w-auto min-w-[100px] max-w-[120px] text-center font-medium"
+                    className="h-8 w-auto min-w-[100px] max-w-[120px] text-center font-medium tabular-nums"
                     allowClear={false}
                   />
                   <span className="text-sm text-nx-ink-3">{t("table.perPage")}</span>
@@ -875,7 +948,10 @@ function GenericTableInner<T extends Record<string, any>>({
             </div>
 
             {/* Page navigation */}
-            {pagination.pagesCount > 1 && (
+            {pagination.pagesCount > 1 && (() => {
+              const isFirstPage = pagination.currentPage <= 1;
+              const isLastPage = pagination.currentPage >= pagination.pagesCount;
+              return (
               <PaginationNav className="mx-0 w-auto justify-end">
                 <PaginationContent className="flex-wrap">
                   {/* First Page */}
@@ -883,13 +959,14 @@ function GenericTableInner<T extends Record<string, any>>({
                     <PaginationLink
                       href="#"
                       aria-label={t("table.firstPage")}
-                      aria-disabled={pagination.currentPage === 1 || undefined}
-                      tabIndex={pagination.currentPage === 1 ? -1 : undefined}
+                      aria-disabled={isFirstPage || undefined}
+                      tabIndex={isFirstPage ? -1 : undefined}
                       // Bounds states are the primitive's aria-disabled skin —
                       // dedicated ink, not an opacity veil.
                       className="h-8 w-8"
                       onClick={(e) => {
                         e.preventDefault();
+                        if (isFirstPage) return;
                         pagination.onPageChange(1);
                       }}
                     >
@@ -905,11 +982,12 @@ function GenericTableInner<T extends Record<string, any>>({
                   <PaginationItem>
                     <PaginationPrevious
                       href="#"
-                      aria-disabled={pagination.currentPage === 1 || undefined}
-                      tabIndex={pagination.currentPage === 1 ? -1 : undefined}
+                      aria-disabled={isFirstPage || undefined}
+                      tabIndex={isFirstPage ? -1 : undefined}
                       className="h-8"
                       onClick={(e) => {
                         e.preventDefault();
+                        if (isFirstPage) return;
                         pagination.onPageChange(pagination.currentPage - 1);
                       }}
                     />
@@ -958,15 +1036,18 @@ function GenericTableInner<T extends Record<string, any>>({
                       }
 
                       const pageNum = page as number;
+                      const isCurrent = pageNum === current;
 
                       return (
                         <PaginationItem key={pageNum}>
                           <PaginationLink
                             href="#"
-                            isActive={pageNum === current}
-                            className="h-8 w-8"
+                            isActive={isCurrent}
+                            aria-current={isCurrent ? "page" : undefined}
+                            className="h-8 w-8 tabular-nums"
                             onClick={(e) => {
                               e.preventDefault();
+                              if (isCurrent) return;
                               pagination.onPageChange(pageNum);
                             }}
                           >
@@ -981,11 +1062,12 @@ function GenericTableInner<T extends Record<string, any>>({
                   <PaginationItem>
                     <PaginationNext
                       href="#"
-                      aria-disabled={pagination.currentPage === pagination.pagesCount || undefined}
-                      tabIndex={pagination.currentPage === pagination.pagesCount ? -1 : undefined}
+                      aria-disabled={isLastPage || undefined}
+                      tabIndex={isLastPage ? -1 : undefined}
                       className="h-8"
                       onClick={(e) => {
                         e.preventDefault();
+                        if (isLastPage) return;
                         pagination.onPageChange(pagination.currentPage + 1);
                       }}
                     />
@@ -996,11 +1078,12 @@ function GenericTableInner<T extends Record<string, any>>({
                     <PaginationLink
                       href="#"
                       aria-label={t("table.lastPage")}
-                      aria-disabled={pagination.currentPage === pagination.pagesCount || undefined}
-                      tabIndex={pagination.currentPage === pagination.pagesCount ? -1 : undefined}
+                      aria-disabled={isLastPage || undefined}
+                      tabIndex={isLastPage ? -1 : undefined}
                       className="h-8 w-8"
                       onClick={(e) => {
                         e.preventDefault();
+                        if (isLastPage) return;
                         pagination.onPageChange(pagination.pagesCount);
                       }}
                     >
@@ -1022,7 +1105,7 @@ function GenericTableInner<T extends Record<string, any>>({
                       min={1}
                       max={pagination.pagesCount}
                       aria-label={t("table.goToPage")}
-                      className="h-8 w-16 text-center"
+                      className="h-8 w-16 text-center tabular-nums"
                       onKeyDown={(e) => {
                         if (e.key === "Enter") {
                           const value = parseInt((e.target as HTMLInputElement).value);
@@ -1037,7 +1120,8 @@ function GenericTableInner<T extends Record<string, any>>({
                   </PaginationItem>
                 </PaginationContent>
               </PaginationNav>
-            )}
+              );
+            })()}
           </div>
         </div>
       )}

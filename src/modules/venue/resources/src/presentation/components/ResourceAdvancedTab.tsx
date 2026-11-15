@@ -81,7 +81,7 @@ export function ResourceAdvancedTab({ vm }: Props) {
               ) : (
                 <Badge
                   variant="outline"
-                  className="border-warning/20 bg-warning/10 text-xs text-warning"
+                  className="border-warning/20 bg-warning/10 text-xs text-nx-warning-strong"
                 >
                   {t("resources.card.statusDraft", { defaultValue: "Draft" })}
                 </Badge>
@@ -121,7 +121,7 @@ export function ResourceAdvancedTab({ vm }: Props) {
                 size="sm"
                 disabled={vm.saving}
                 onClick={() => void vm.publishCourt()}
-                className="gap-1.5 bg-nx-accent text-xs font-bold text-nx-on-fill hover:bg-nx-accent/90"
+                className="gap-1.5 bg-nx-accent-fill text-xs font-bold text-nx-on-fill hover:bg-nx-accent-fill/90"
               >
                 <Send className="size-3.5" aria-hidden="true" />
                 <span>
@@ -147,15 +147,15 @@ export function ResourceAdvancedTab({ vm }: Props) {
               </Alert>
             ) : (
               <div className="space-y-2">
-                <Alert className="border-warning/30 bg-warning/10 py-2.5 text-warning">
-                  <AlertCircle className="size-4 shrink-0 text-warning" aria-hidden="true" />
+                <Alert className="border-warning/30 bg-warning/10 py-2.5 text-nx-warning-strong">
+                  <AlertCircle className="size-4 shrink-0 text-nx-warning-strong" aria-hidden="true" />
                   <AlertDescription className="text-xs font-semibold">
                     {t("resources.advanced.hasBlockers", {
                       defaultValue: "Publication blockers found:",
                     })}
                   </AlertDescription>
                 </Alert>
-                <ul className="space-y-1.5 pl-6 text-xs text-nx-ink-2">
+                <ul className="space-y-1.5 ps-6 text-xs text-nx-ink-2">
                   {vm.checklist.blockers.map((b) => (
                     <li key={b.code} className="flex items-center gap-2">
                       <span className="size-1.5 rounded-full bg-warning" />
@@ -326,7 +326,7 @@ export function ResourceAdvancedTab({ vm }: Props) {
                 type="submit"
                 disabled={vm.saving}
                 size="sm"
-                className="gap-1.5 bg-nx-accent text-xs font-bold text-nx-on-fill hover:bg-nx-accent/90"
+                className="gap-1.5 bg-nx-accent-fill text-xs font-bold text-nx-on-fill hover:bg-nx-accent-fill/90"
               >
                 {vm.saving ? (
                   <LoadingSpinner size="sm" showText={false} />

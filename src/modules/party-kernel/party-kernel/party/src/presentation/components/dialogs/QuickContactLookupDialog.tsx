@@ -154,7 +154,10 @@ export function QuickContactLookupDialog({
         {/* ── Top Command Bar ────────────────────────────────────────── */}
         <div className="border-b border-nx-line bg-nx-surface p-3 space-y-2.5">
           <div className="relative flex items-center">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-nx-accent pointer-events-none rtl:left-auto rtl:right-3" />
+            <Search
+              className="pointer-events-none absolute start-3 top-1/2 h-4 w-4 -translate-y-1/2 text-nx-accent"
+              aria-hidden="true"
+            />
             <Input
               value={searchTerm}
               onChange={(e) => {
@@ -162,11 +165,11 @@ export function QuickContactLookupDialog({
                 setHighlightedIndex(-1);
               }}
               onKeyDown={handleKeyDown}
-              autoFocus
               placeholder={
                 t("party.picker.searchPlaceholder") || "Search contacts by name..."
               }
-              className="h-10 pl-9 pr-9 text-sm border-nx-line bg-nx-raised/40 text-nx-ink placeholder:text-nx-ink-3 focus-visible:ring-1 focus-visible:ring-nx-accent rtl:pl-9 rtl:pr-9"
+              aria-label={t("party.picker.searchPlaceholder") || "Search contacts by name..."}
+              className="border-nx-line bg-nx-raised/40 h-10 pe-9 ps-9 text-sm text-nx-ink placeholder:text-nx-ink-3 focus-visible:ring-1 focus-visible:ring-nx-accent"
               role="combobox"
               aria-expanded={open}
               aria-haspopup="listbox"
@@ -181,14 +184,15 @@ export function QuickContactLookupDialog({
               <Button
                 type="button"
                 variant="ghost"
-                size="sm"
-                className="absolute right-2 top-1/2 -translate-y-1/2 h-6 w-6 p-0 text-nx-ink-3 hover:text-nx-ink rtl:right-auto rtl:left-2"
+                size="icon"
+                aria-label={t("party.picker.clearSelection") || "Clear"}
+                className="absolute end-2 top-1/2 h-6 w-6 -translate-y-1/2 p-0 text-nx-ink-3 hover:text-nx-ink"
                 onClick={() => {
                   setSearchTerm("");
                   setHighlightedIndex(-1);
                 }}
               >
-                <X className="h-3.5 w-3.5" />
+                <X className="h-3.5 w-3.5" aria-hidden="true" />
               </Button>
             )}
           </div>
@@ -255,7 +259,7 @@ export function QuickContactLookupDialog({
                 className="h-7 text-xs border-nx-line"
                 onClick={() => refetch()}
               >
-                <RefreshCw className="mr-1 h-3 w-3" />
+                <RefreshCw className="me-1 h-3 w-3" />
                 <span>{t("party.picker.retry") || "Retry"}</span>
               </Button>
             </div>
@@ -276,27 +280,28 @@ export function QuickContactLookupDialog({
             parties.map((p, idx) => {
               const isHighlighted = activeIndex === idx;
               return (
-                <div
+                <Button
                   key={p.id}
+                  type="button"
+                  variant="ghost"
                   id={`quick-lookup-opt-${idx}`}
                   role="option"
-                  tabIndex={-1}
                   aria-selected={isHighlighted}
                   onClick={() => handleSelect(p.id)}
                   onMouseEnter={() => setHighlightedIndex(idx)}
                   className={cn(
-                    "group flex cursor-pointer items-center justify-between rounded-xl p-2.5 transition-colors",
+                    "group flex h-auto w-full items-center justify-between whitespace-normal rounded-xl p-2.5 text-start font-normal transition-colors",
                     isHighlighted
-                      ? "bg-nx-accent/20 border border-nx-accent/40"
+                      ? "border border-nx-accent bg-nx-accent-wash hover:bg-nx-accent-wash"
                       : "hover:bg-nx-raised/60 border border-transparent"
                   )}
                 >
                   <div className="flex min-w-0 items-center gap-3">
-                    <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-nx-accent/10 text-nx-accent">
+                    <div className="bg-nx-accent-wash flex h-9 w-9 shrink-0 items-center justify-center rounded-lg text-nx-accent">
                       {p.type === "Person" ? (
-                        <User className="h-4 w-4" />
+                        <User className="h-4 w-4" aria-hidden="true" />
                       ) : (
-                        <Building className="h-4 w-4" />
+                        <Building className="h-4 w-4" aria-hidden="true" />
                       )}
                     </div>
                     <div className="flex min-w-0 flex-col">
@@ -323,13 +328,13 @@ export function QuickContactLookupDialog({
                     </div>
                   </div>
 
-                  <div className="flex items-center gap-1 text-nx-ink-3 group-hover:text-nx-accent transition-colors">
-                    <span className="text-[11px] hidden sm:inline opacity-0 group-hover:opacity-100 transition-opacity">
+                  <div className="flex items-center gap-1 text-nx-ink-3 transition-colors group-hover:text-nx-accent group-focus-visible:text-nx-accent">
+                    <span className="hidden text-[11px] opacity-0 transition-opacity group-hover:opacity-100 group-focus-visible:opacity-100 sm:inline">
                       {t("party.directory.viewProfile") || "View Profile"}
                     </span>
-                    <ArrowRight className="h-4 w-4 rtl:rotate-180" />
+                    <ArrowRight className="h-4 w-4 rtl:rotate-180" aria-hidden="true" />
                   </div>
-                </div>
+                </Button>
               );
             })
           )}

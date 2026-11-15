@@ -11,6 +11,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@core/ui/card";
+import { Alert, AlertDescription, AlertTitle } from "@core/ui/alert";
 import { Button } from "@core/ui/button";
 import { appLogger } from "@core/common/logger";
 import { useAppStore } from "@/core/store/useAppStore";
@@ -25,58 +26,37 @@ export default function NotAuthorizedView() {
   const queryClient = useQueryClient();
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-nx-ground via-[color:color-mix(in_srgb,var(--nx-ground)_95%,transparent)] to-[color:color-mix(in_srgb,var(--nx-raised)_20%,transparent)] p-4">
+    <div className="flex min-h-[100dvh] items-center justify-center bg-nx-ground p-4">
       <div className="w-full max-w-2xl space-y-6">
-        {/* Main Error Card */}
-        <Card className="relative overflow-hidden border-nx-line bg-[color:color-mix(in_srgb,var(--nx-ground)_80%,transparent)] text-center duration-nx-panel ease-nx-enter animate-in fade-in zoom-in-95 motion-reduce:animate-none">
-          {/* Background Pattern */}
-          <div className="pointer-events-none absolute inset-0 bg-gradient-to-br from-destructive/5 via-transparent to-destructive/10" />
-          <div className="pointer-events-none absolute end-0 top-0 h-32 w-32 rounded-full bg-destructive/5 blur-3xl" />
-          <div className="pointer-events-none absolute bottom-0 start-0 h-24 w-24 rounded-full bg-nx-accent-wash blur-2xl" />
-
-          <CardHeader className="relative">
-            {/* Icon with static glow */}
-            <div className="relative mx-auto mb-4">
-              <div className="relative flex h-24 w-24 items-center justify-center rounded-full bg-gradient-to-br from-destructive/20 to-destructive/10">
-                {/* Static glow — this used to "animate-pulse" forever behind a
-                    static icon, decoration with no functional purpose. A
-                    still blurred wash reads just as intentional. */}
-                <div className="pointer-events-none absolute inset-0 rounded-full bg-destructive/20" />
-                <Shield
-                  aria-hidden="true"
-                  className="relative z-raised h-12 w-12 text-destructive"
-                />
-              </div>
+        {/* Main Error Card — flat matte Nexus slab, zero gradients or blurs */}
+        <Card className="border-nx-line bg-nx-surface text-center duration-nx-panel ease-nx-enter animate-in fade-in zoom-in-95 motion-reduce:animate-none">
+          <CardHeader>
+            <div
+              aria-hidden="true"
+              className="mx-auto mb-4 grid h-16 w-16 place-items-center rounded-nx-lg border border-destructive/30 bg-destructive/10 text-destructive"
+            >
+              <Shield className="h-8 w-8" />
             </div>
 
-            <CardTitle className="text-3xl font-bold text-nx-ink">
+            <CardTitle className="text-2xl font-bold text-nx-ink sm:text-3xl">
               {t("notAuthorized.title")}
             </CardTitle>
 
-            <CardDescription className="mt-2 text-lg">
+            <CardDescription className="mt-2 text-base">
               {t("notAuthorized.description")}
             </CardDescription>
           </CardHeader>
 
-          <CardContent className="relative z-raised space-y-6">
+          <CardContent className="space-y-6">
             {/* Status Alert */}
-            <div className="relative w-full rounded-nx-control border border-destructive/20 bg-destructive/5 p-4">
-              <div className="flex items-start gap-3">
-                <AlertTriangle
-                  aria-hidden="true"
-                  className="mt-0.5 flex-shrink-0 text-destructive"
-                />
-                <div className="text-start">
-                  <strong className="text-destructive">
-                    {t("notAuthorized.accessDeniedAlert")}
-                  </strong>{" "}
-                  {t("notAuthorized.accessDeniedMessage")}
-                </div>
-              </div>
-            </div>
+            <Alert variant="destructive" className="text-start">
+              <AlertTriangle aria-hidden="true" />
+              <AlertTitle>{t("notAuthorized.accessDeniedAlert")}</AlertTitle>
+              <AlertDescription>{t("notAuthorized.accessDeniedMessage")}</AlertDescription>
+            </Alert>
 
             {/* Action Buttons */}
-            <div className="relative z-raised grid grid-cols-1 gap-4 sm:grid-cols-3">
+            <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
               <Button
                 onClick={() => {
                   appLogger.ui("Back button clicked");
@@ -84,7 +64,7 @@ export default function NotAuthorizedView() {
                 }}
                 variant="default"
                 size="lg"
-                className="relative z-raised w-full cursor-pointer"
+                className="w-full"
                 type="button"
               >
                 <ArrowLeft aria-hidden="true" className="me-2 h-4 w-4 rtl:rotate-180" />
@@ -103,7 +83,7 @@ export default function NotAuthorizedView() {
                 }}
                 variant="outline"
                 size="lg"
-                className="relative z-raised w-full cursor-pointer"
+                className="w-full"
                 type="button"
               >
                 <Home aria-hidden="true" className="me-2 h-4 w-4" />
@@ -125,7 +105,7 @@ export default function NotAuthorizedView() {
                 }}
                 variant="secondary"
                 size="lg"
-                className="relative z-raised w-full cursor-pointer"
+                className="w-full"
                 type="button"
               >
                 <LogOut aria-hidden="true" className="me-2 h-4 w-4" />
@@ -135,23 +115,23 @@ export default function NotAuthorizedView() {
           </CardContent>
 
           <CardFooter className="flex-col space-y-4">
-            <div className="h-px w-full bg-gradient-to-r from-transparent via-nx-line to-transparent" />
+            <div className="h-px w-full bg-nx-line" />
 
             <div className="flex items-center justify-center gap-2 text-sm text-nx-ink-3">
-              <HelpCircle aria-hidden="true" className="h-4 w-4" />
+              <HelpCircle aria-hidden="true" className="h-4 w-4 shrink-0" />
               <span>{t("notAuthorized.contactAdmin")}</span>
             </div>
           </CardFooter>
         </Card>
 
         {/* Additional Help Card */}
-        <Card className="bg-[color:color-mix(in_srgb,var(--nx-raised)_30%,transparent)] delay-150 duration-nx-panel ease-nx-enter animate-in fade-in slide-in-from-bottom-4 fill-mode-both motion-reduce:animate-none">
+        <Card className="border-nx-line bg-nx-surface delay-150 duration-nx-panel ease-nx-enter animate-in fade-in slide-in-from-bottom-4 fill-mode-both motion-reduce:animate-none">
           <CardContent className="pt-6">
             <div className="flex items-start gap-4">
-              <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-nx-control bg-nx-accent-wash">
-                <Lock aria-hidden="true" className="h-5 w-5 text-nx-accent" />
+              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-nx-control border border-[color:color-mix(in_srgb,var(--nx-accent)_30%,transparent)] bg-nx-accent-wash text-nx-accent">
+                <Lock aria-hidden="true" className="h-5 w-5" />
               </div>
-              <div className="space-y-2">
+              <div className="space-y-1.5 text-start">
                 <h3 className="font-semibold text-nx-ink">{t("notAuthorized.needAccessTitle")}</h3>
                 <p className="text-sm leading-relaxed text-nx-ink-2">
                   {t("notAuthorized.needAccessDescription")}

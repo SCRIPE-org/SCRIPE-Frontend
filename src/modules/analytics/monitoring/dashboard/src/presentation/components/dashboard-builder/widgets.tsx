@@ -296,7 +296,7 @@ export function WidgetActivityFeed({ props }: { props: Record<string, unknown> }
     },
     {
       icon: AlertTriangle,
-      color: "text-warning",
+      color: "text-nx-warning-strong",
       text: t("dashboard.builder.preview.activity.loginFailed"),
       time: t("common.timeAgo.minutesAgo", { count: 5 }),
     },
@@ -534,7 +534,7 @@ export function WidgetAnnouncement({ props }: { props: Record<string, unknown> }
     warning: {
       bg: "bg-warning/10",
       border: "border-warning/30 hover:border-warning/30",
-      tone: "text-warning",
+      tone: "text-nx-warning-strong",
       icon: AlertTriangle,
     },
   };

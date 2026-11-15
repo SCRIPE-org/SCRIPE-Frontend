@@ -115,7 +115,6 @@ export function SileoToaster({
 
   React.useEffect(() => {
     if (propPosition) {
-      setPreferredPosition(propPosition);
       return;
     }
 
@@ -145,7 +144,7 @@ export function SileoToaster({
 
   const effectivePosition = propPosition ?? preferredPosition;
   const activePosition = resolveRtlPosition(effectivePosition, direction, rtlAutoMirror);
-  const defaultFill = isDark ? "#0d0d0e" : "#ffffff";
+  const defaultFill = isDark ? "#15181c" : "#ffffff";
 
   type BaseToasterOptions = NonNullable<React.ComponentProps<typeof SileoBaseToaster>["options"]>;
 

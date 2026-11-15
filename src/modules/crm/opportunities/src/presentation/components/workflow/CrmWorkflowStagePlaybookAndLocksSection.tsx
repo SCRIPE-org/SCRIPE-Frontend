@@ -112,7 +112,7 @@ export function CrmWorkflowStagePlaybookAndLocksSection({
               <div className="flex items-center gap-1 shrink-0">
                 <Badge variant="secondary" className="text-[9px] px-1 py-0">{t("crmOpportunities.ruleConfig.mandatoryBadge")}</Badge>
                 {onStageChange && (
-                  <Button type="button" size="icon" variant="ghost" className="h-4 w-4 text-destructive" onClick={() => handleRemoveTask(task)}>
+                  <Button type="button" size="icon" variant="ghost" className="h-4 w-4 text-destructive" onClick={() => handleRemoveTask(task)} aria-label={`${t("crmOpportunities.ruleConfig.removeTaskLabel")}: ${task}`}>
                     <X className="w-2.5 h-2.5" />
                   </Button>
                 )}
@@ -123,7 +123,7 @@ export function CrmWorkflowStagePlaybookAndLocksSection({
         {onStageChange && (
           <div className="flex items-center gap-1.5 pt-1">
             <Input value={newTaskTitle} onChange={(e) => setNewTaskTitle(e.target.value)} placeholder={t("crmOpportunities.ruleConfig.addPlaybookTaskPlaceholder")} className="h-7 text-xs" data-testid="stage-playbook-add-input" />
-            <Button type="button" size="sm" variant="outline" className="h-7 px-2 text-xs shrink-0" onClick={handleAddTask} data-testid="stage-playbook-add-btn">
+            <Button type="button" size="sm" variant="outline" className="h-7 px-2 text-xs shrink-0" onClick={handleAddTask} data-testid="stage-playbook-add-btn" aria-label={t("crmOpportunities.ruleConfig.addTaskLabel")}>
               <Plus className="w-3 h-3" />
             </Button>
           </div>
@@ -133,7 +133,7 @@ export function CrmWorkflowStagePlaybookAndLocksSection({
       <div className="rounded-md border border-nx-line bg-nx-raised/30 p-3 space-y-2" data-testid="stage-inspector-field-locking">
         <div className="flex items-center justify-between">
           <span className="text-xs font-bold text-nx-ink inline-flex items-center gap-1.5">
-            <Lock className="w-3.5 h-3.5 text-warning" />
+            <Lock className="w-3.5 h-3.5 text-nx-warning-strong" />
             {t("crmOpportunities.ruleConfig.sapFieldLockingTitle")}
           </span>
           <Badge variant="outline" className="text-[9px] font-mono">pipe_role:finance_gatekeeper</Badge>

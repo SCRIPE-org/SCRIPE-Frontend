@@ -386,7 +386,7 @@ export function FirstTimeSetupWizard({
                   }}
                   className={`flex-1 rounded-md px-3 py-1.5 text-xs font-bold transition-all ${
                     facilityMode === "existing"
-                      ? "shadow-xs bg-nx-accent text-nx-on-fill"
+                      ? "bg-nx-accent-fill text-nx-on-fill"
                       : "text-nx-ink-2 hover:text-nx-ink"
                   }`}
                 >
@@ -404,7 +404,7 @@ export function FirstTimeSetupWizard({
                   }}
                   className={`flex-1 rounded-md px-3 py-1.5 text-xs font-bold transition-all ${
                     facilityMode === "new"
-                      ? "shadow-xs bg-nx-accent text-nx-on-fill"
+                      ? "bg-nx-accent-fill text-nx-on-fill"
                       : "text-nx-ink-2 hover:text-nx-ink"
                   }`}
                 >
@@ -431,7 +431,7 @@ export function FirstTimeSetupWizard({
                         setSelectedFacilityId(fac.id);
                         setBranchName(fac.name);
                       }}
-                      className={`flex h-auto w-full flex-col items-start justify-start gap-1 whitespace-normal rounded-xl border p-3 text-left font-normal transition-all hover:bg-nx-raised focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary rtl:text-right ${
+                      className={`flex h-auto w-full flex-col items-start justify-start gap-1 whitespace-normal rounded-xl border p-3 text-start font-normal transition-all hover:bg-nx-raised focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary ${
                         selectedFacilityId === fac.id
                           ? "border-primary bg-primary/10 font-semibold ring-1 ring-primary"
                           : "border-nx-line bg-nx-surface text-nx-ink-2"
@@ -497,7 +497,7 @@ export function FirstTimeSetupWizard({
                   type="button"
                   variant="ghost"
                   onClick={() => handleSelectManagementMode("solo")}
-                  className={`flex h-auto w-full flex-col items-start justify-start gap-1 whitespace-normal rounded-xl border p-3 text-left font-normal transition-all hover:bg-nx-raised focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary rtl:text-right ${
+                  className={`flex h-auto w-full flex-col items-start justify-start gap-1 whitespace-normal rounded-xl border p-3 text-start font-normal transition-all hover:bg-nx-raised focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary ${
                     managementMode === "solo"
                       ? "border-primary bg-primary/10 ring-1 ring-primary"
                       : "border-nx-line bg-nx-surface text-nx-ink-2"
@@ -517,7 +517,7 @@ export function FirstTimeSetupWizard({
                   type="button"
                   variant="ghost"
                   onClick={() => handleSelectManagementMode("team")}
-                  className={`flex h-auto w-full flex-col items-start justify-start gap-1 whitespace-normal rounded-xl border p-3 text-left font-normal transition-all hover:bg-nx-raised focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary rtl:text-right ${
+                  className={`flex h-auto w-full flex-col items-start justify-start gap-1 whitespace-normal rounded-xl border p-3 text-start font-normal transition-all hover:bg-nx-raised focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary ${
                     managementMode === "team"
                       ? "border-primary bg-primary/10 ring-1 ring-primary"
                       : "border-nx-line bg-nx-surface text-nx-ink-2"
@@ -559,7 +559,7 @@ export function FirstTimeSetupWizard({
                     }}
                     className={`rounded-xl px-3 py-1.5 text-xs font-bold transition-all ${
                       sportType === type
-                        ? "shadow-xs bg-nx-accent text-nx-on-fill"
+                        ? "bg-nx-accent-fill text-nx-on-fill"
                         : "border border-nx-line bg-nx-surface text-nx-ink hover:bg-nx-raised"
                     }`}
                   >
@@ -579,7 +579,7 @@ export function FirstTimeSetupWizard({
                 })}
               </p>
 
-              <div className="max-h-48 space-y-2 overflow-y-auto pr-1">
+              <div className="max-h-48 space-y-2 overflow-y-auto pe-1">
                 {courtItems.map((courtItem, index) => (
                   <div key={courtItem.clientKey || index} className="flex items-center gap-2">
                     <Input
@@ -744,7 +744,7 @@ export function FirstTimeSetupWizard({
                         type="button"
                         key={duration}
                         onClick={() => setSlotDurationMinutes(duration)}
-                        className={`flex flex-col items-start justify-center h-auto w-full py-2.5 px-3 rounded-xl border text-left transition-all rtl:items-end rtl:text-right ${
+                        className={`flex flex-col items-start justify-center h-auto w-full py-2.5 px-3 rounded-xl border text-start transition-all ${
                           slotDurationMinutes === duration
                             ? "border-primary bg-primary/10 font-bold text-nx-ink ring-1 ring-primary"
                             : "border-nx-line bg-nx-surface text-nx-ink-2 hover:bg-nx-raised"
@@ -791,9 +791,9 @@ export function FirstTimeSetupWizard({
                           step={10}
                           value={pricePerSlot}
                           onChange={(e) => setPricePerSlot(Number(e.target.value) || 0)}
-                          className="h-9 pr-12 text-sm font-semibold rtl:pl-12 rtl:pr-3"
+                          className="h-9 pe-12 text-sm font-semibold"
                         />
-                        <span className="absolute right-3 top-2 text-xs font-bold text-nx-ink-3 rtl:left-3 rtl:right-auto">
+                        <span className="absolute end-3 top-2 text-xs font-bold text-nx-ink-3">
                           {currencyCode}
                         </span>
                       </div>
@@ -898,7 +898,7 @@ export function FirstTimeSetupWizard({
             {/* Partial Failure Breakdown & Safe Retry */}
             {partialResults.length > 0 && partialResults.some((r) => !r.success) && (
               <div className="mt-3 space-y-2 rounded-xl border border-warning/30 bg-warning/10 p-3 text-xs">
-                <p className="font-bold text-warning">
+                <p className="font-bold text-nx-warning-strong">
                   Partial Creation Status:
                 </p>
                 <div className="space-y-1">
@@ -908,7 +908,7 @@ export function FirstTimeSetupWizard({
                       {r.success ? (
                         <span className="text-[11px] font-bold text-success">Created ✓</span>
                       ) : (
-                        <span className="text-[11px] font-medium text-warning">
+                        <span className="text-[11px] font-medium text-nx-warning-strong">
                           Failed ({r.stepFailed || "create"}): {r.error}
                         </span>
                       )}
@@ -920,9 +920,9 @@ export function FirstTimeSetupWizard({
                   size="sm"
                   variant="outline"
                   onClick={retryFailedCourts}
-                  className="mt-2 w-full border-warning/40 text-xs text-warning hover:bg-warning/10"
+                  className="mt-2 w-full border-warning/40 text-xs text-nx-warning-strong hover:bg-warning/10"
                 >
-                  <RotateCcw className="mr-1.5 size-3.5" />
+                  <RotateCcw className="me-1.5 size-3.5" />
                   <span>Retry Only Failed Courts</span>
                 </Button>
               </div>
@@ -952,10 +952,10 @@ export function FirstTimeSetupWizard({
               <Button
                 asChild
                 size="sm"
-                className="bg-nx-accent font-bold text-nx-on-fill shadow-sm hover:bg-nx-accent/90"
+                className="bg-nx-accent-fill font-bold text-nx-on-fill hover:bg-nx-accent-fill/90"
               >
                 <Link href="/venue/calendar">
-                  <CalendarDays className="mr-1.5 size-4" aria-hidden="true" />
+                  <CalendarDays className="me-1.5 size-4" aria-hidden="true" />
                   <span>
                     {t("resources.wizard.goToCalendar", { defaultValue: "Open Calendar" })}
                   </span>
@@ -1003,7 +1003,7 @@ export function FirstTimeSetupWizard({
                   onClick={() => void handleFinish(false)}
                   className="border-nx-border text-xs font-medium"
                 >
-                  <FileCheck className="mr-1.5 size-3.5" />
+                  <FileCheck className="me-1.5 size-3.5" />
                   <span>Save as Draft</span>
                 </Button>
 
@@ -1014,7 +1014,7 @@ export function FirstTimeSetupWizard({
                   disabled={submitting}
                   loading={submitting}
                   onClick={() => void handleFinish(true)}
-                  className="bg-nx-accent font-bold text-nx-on-fill shadow-sm hover:bg-nx-accent/90"
+                  className="bg-nx-accent-fill font-bold text-nx-on-fill hover:bg-nx-accent-fill/90"
                 >
                   {submitting
                     ? t("resources.wizard.finishing", { defaultValue: "Setting up venue..." })

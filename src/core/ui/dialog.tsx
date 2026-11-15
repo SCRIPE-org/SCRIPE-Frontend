@@ -44,7 +44,7 @@ export const overlayScrimClasses = `${overlayScrimSurfaceClasses} duration-nx-st
  *  step of the shadow ladder (these genuinely float, so a shadow is earned),
  *  and the 24px inset every modal in the product shares. */
 export const modalSurfaceClasses =
-  "gap-4 border-nx-line bg-nx-popover p-6 text-nx-ink shadow-nx-modal";
+  "gap-4 border-nx-line-hi bg-nx-popover p-6 text-nx-ink shadow-nx-modal";
 
 /** Enter 200ms on the enter curve, exit at the ~2/3 micro step on the exit
  *  curve. No bounce, no spring — the panel arrives and leaves, it does not
@@ -171,7 +171,7 @@ const DialogContent = React.forwardRef<
   const positionClasses =
     variant === "drawer"
       ? cn(
-          "fixed inset-y-0 end-0 z-modal grid w-full max-w-lg rounded-s-nx-lg border-s",
+          "fixed inset-y-0 end-0 z-modal grid max-h-[100dvh] w-full max-w-lg overflow-y-auto overscroll-contain rounded-s-nx-lg border-s",
           modalSurfaceClasses,
           modalMotionClasses,
           // tailwindcss-animate slides are physical, so the logical end edge
@@ -186,7 +186,7 @@ const DialogContent = React.forwardRef<
           // viewport edges on a phone, which is also why the corners had to be
           // square below sm. With 16px of air on each side the large radius
           // token applies at every width and the panel reads as an object.
-          "fixed left-[50%] top-[50%] z-modal grid w-[calc(100%-2rem)] max-w-lg translate-x-[-50%] translate-y-[-50%] rounded-nx-lg border",
+          "fixed left-[50%] top-[50%] z-modal grid max-h-[90dvh] w-[calc(100%-2rem)] max-w-lg translate-x-[-50%] translate-y-[-50%] overflow-y-auto overscroll-contain rounded-nx-lg border",
           modalSurfaceClasses,
           modalMotionClasses,
           // The 1/2 and 48% "slides" are the centering, not decoration: while

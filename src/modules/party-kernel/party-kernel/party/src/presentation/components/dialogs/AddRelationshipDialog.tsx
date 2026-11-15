@@ -138,7 +138,7 @@ export function AddRelationshipDialog({
         <form onSubmit={handleSubmit}>
           <DialogHeader>
             <div className="flex items-center gap-2">
-              <div className="bg-nx-accent/10 flex h-9 w-9 items-center justify-center rounded-lg text-nx-accent">
+              <div className="bg-nx-accent-wash flex h-9 w-9 items-center justify-center rounded-lg text-nx-accent">
                 <Users className="h-5 w-5" />
               </div>
               <DialogTitle>
@@ -171,7 +171,7 @@ export function AddRelationshipDialog({
                   variant="ghost"
                   size="sm"
                   onClick={() => setIsManualInput(!isManualInput)}
-                  className="hover:text-nx-accent/80 h-6 px-2 text-[11px] font-normal text-nx-accent"
+                  className="h-6 px-2 text-[11px] font-normal text-nx-accent hover:text-nx-accent hover:opacity-80"
                 >
                   {isManualInput
                     ? tr("party.dialog.usePicker", "Search Directory")
@@ -190,7 +190,6 @@ export function AddRelationshipDialog({
                     }}
                     placeholder="e.g. enc-org-1, enc-person-2"
                     disabled={isSubmitting}
-                    autoFocus
                   />
                   <p className="text-[11px] text-nx-ink-3">
                     {tr(
@@ -218,7 +217,7 @@ export function AddRelationshipDialog({
               )}
 
               {targetPartyId && !isManualInput && selectedParty && (
-                <div className="bg-nx-accent/5 border-nx-accent/20 flex items-center justify-between rounded-lg border px-3 py-1.5 text-xs">
+                <div className="bg-nx-accent-wash border-[color:color-mix(in_srgb,var(--nx-accent)_25%,transparent)] flex items-center justify-between rounded-lg border px-3 py-1.5 text-xs">
                   <span className="text-nx-ink-2">
                     {selectedParty.type}:{" "}
                     <strong className="text-nx-ink">{selectedParty.displayName}</strong>
@@ -235,7 +234,7 @@ export function AddRelationshipDialog({
                 <Label htmlFor="rel-type" className="font-medium text-nx-ink">
                   {t("party.dialog.relType")} <span className="text-destructive">*</span>
                 </Label>
-                <span className="rounded border border-warning/20 bg-warning/10 px-1.5 py-0.5 text-[10px] font-medium text-warning">
+                <span className="rounded border border-warning/20 bg-warning/10 px-1.5 py-0.5 text-[10px] font-medium text-nx-warning-strong">
                   Supported Type
                 </span>
               </div>
@@ -357,7 +356,7 @@ export function AddRelationshipDialog({
             >
               {isSubmitting ? (
                 <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  <Loader2 className="me-2 h-4 w-4 animate-spin" />
                   {t("party.dialog.save")}...
                 </>
               ) : (

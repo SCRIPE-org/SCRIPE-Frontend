@@ -8,6 +8,7 @@ import {
   CheckCircle2,
   Clock,
   Loader2,
+  XCircle,
 } from "lucide-react";
 
 /**
@@ -25,29 +26,43 @@ export function JobStatusBadge({ status, label }: JobStatusBadgeProps): React.Re
   switch (status) {
     case "Running":
       return (
-        <Badge variant="info" className="gap-1 font-mono text-xs">
-          <Loader2 className="h-3 w-3 animate-spin" />
+        <Badge variant="info" data-status={status} className="gap-1 font-mono text-xs">
+          <Loader2 className="h-3 w-3 animate-spin" aria-hidden="true" />
+          {label}
+        </Badge>
+      );
+    case "Queued":
+      return (
+        <Badge variant="pending" data-status={status} className="gap-1 font-mono text-xs">
+          <Clock className="h-3 w-3" aria-hidden="true" />
           {label}
         </Badge>
       );
     case "Pending":
       return (
-        <Badge variant="warning" className="gap-1 font-mono text-xs">
-          <Clock className="h-3 w-3" />
+        <Badge variant="warning" data-status={status} className="gap-1 font-mono text-xs">
+          <Clock className="h-3 w-3" aria-hidden="true" />
           {label}
         </Badge>
       );
     case "Completed":
       return (
-        <Badge variant="success" className="gap-1 font-mono text-xs">
-          <CheckCircle2 className="h-3 w-3" />
+        <Badge variant="success" data-status={status} className="gap-1 font-mono text-xs">
+          <CheckCircle2 className="h-3 w-3" aria-hidden="true" />
+          {label}
+        </Badge>
+      );
+    case "CompletedWithErrors":
+      return (
+        <Badge variant="warning" data-status={status} className="gap-1 font-mono text-xs">
+          <AlertTriangle className="h-3 w-3" aria-hidden="true" />
           {label}
         </Badge>
       );
     case "Failed":
       return (
-        <Badge variant="destructive" className="gap-1 font-mono text-xs">
-          <AlertTriangle className="h-3 w-3" />
+        <Badge variant="danger" data-status={status} className="gap-1 font-mono text-xs">
+          <XCircle className="h-3 w-3" aria-hidden="true" />
           {label}
         </Badge>
       );
@@ -55,8 +70,8 @@ export function JobStatusBadge({ status, label }: JobStatusBadgeProps): React.Re
     case "Expired":
     default:
       return (
-        <Badge variant="secondary" className="gap-1 font-mono text-xs">
-          <Ban className="h-3 w-3" />
+        <Badge variant="secondary" data-status={status} className="gap-1 font-mono text-xs">
+          <Ban className="h-3 w-3" aria-hidden="true" />
           {label}
         </Badge>
       );

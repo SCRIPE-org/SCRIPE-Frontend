@@ -66,6 +66,7 @@ export const ProfileMapper = {
               { id: "branch-03", name: "Sheikh Zayed Operations Hub", isCurrent: false },
             ]),
       customFields: dto.customFields ?? [],
+      rowVersion: dto.rowVersion ?? undefined,
     };
   },
 

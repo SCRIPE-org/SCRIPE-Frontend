@@ -7,7 +7,13 @@ import { Button } from "@core/ui/button";
 import { Input } from "@core/ui/input";
 import { Badge } from "@core/ui/badge";
 import { Switch } from "@core/ui/switch";
+import { Alert, AlertDescription } from "@core/ui/alert";
+import { toast } from "@core/ui/sileo-toast";
 import { useAccountNotificationsSliceViewModel } from "../viewmodels/useSovereignAccountSlicesViewModel";
+import {
+  isConcurrencyConflictError,
+  resolveProfileSaveErrorMessage,
+} from "../utils/concurrency";
 import type { NotificationCategoryRuleItem } from "../../domain/entities/SovereignAccountEntities";
 import {
   Bell, Moon, ShieldAlert, CheckCircle2, Send, Monitor, Lock, Inbox, CheckCheck, Trash2,
@@ -34,6 +40,7 @@ export function AccountNotificationsView() {
   const [quietEnd, setQuietEnd] = useState(notifications?.quietHoursEndUtc ?? "07:00");
   const [desktopEnabled, setDesktopEnabled] = useState(false);
   const [savedNotice, setSavedNotice] = useState(false);
+  const [saveError, setSaveError] = useState<string | null>(null);
 
   useEffect(() => {
     if (notifications) {
@@ -67,9 +74,26 @@ export function AccountNotificationsView() {
   };
 
   const handleSave = async () => {
-    await updateNotifications({ categoryRules: rules, quietHoursEnabled: quietHours, quietHoursStartUtc: quietStart, quietHoursEndUtc: quietEnd });
-    setSavedNotice(true);
-    setTimeout(() => setSavedNotice(false), 2500);
+    setSaveError(null);
+    try {
+      await updateNotifications({
+        categoryRules: rules,
+        quietHoursEnabled: quietHours,
+        quietHoursStartUtc: quietStart,
+        quietHoursEndUtc: quietEnd,
+        rowVersion: notifications?.rowVersion,
+      });
+      setSavedNotice(true);
+      setTimeout(() => setSavedNotice(false), 2500);
+    } catch (error: unknown) {
+      const message = resolveProfileSaveErrorMessage(error, t);
+      setSaveError(message);
+      if (isConcurrencyConflictError(error)) {
+        toast.warning(message);
+      } else {
+        toast.error(message);
+      }
+    }
   };
 
   const recentAlerts = notifications?.recentNotifications ?? [];
@@ -104,6 +128,12 @@ export function AccountNotificationsView() {
           </Button>
         </div>
       </div>
+
+      {saveError && (
+        <Alert variant="destructive" data-testid="notifications-save-error-alert">
+          <AlertDescription className="text-xs font-medium">{saveError}</AlertDescription>
+        </Alert>
+      )}
 
       {/* 1. Multi-Channel Alert Routing Matrix */}
       <Card className="border border-nx-line bg-nx-surface hover:border-nx-line-hi transition-colors">
@@ -161,9 +191,19 @@ export function AccountNotificationsView() {
           </CardHeader>
           <CardContent className="pt-0 space-y-2.5">
             <div className="flex items-center gap-2">
-              <Input value={quietStart} onChange={(e) => setQuietStart(e.target.value)} className="h-8 w-24 text-xs font-mono bg-nx-raised border-nx-line text-nx-ink" />
-              <span className="text-xs text-nx-ink-3">&rarr;</span>
-              <Input value={quietEnd} onChange={(e) => setQuietEnd(e.target.value)} className="h-8 w-24 text-xs font-mono bg-nx-raised border-nx-line text-nx-ink" />
+              <Input
+                value={quietStart}
+                onChange={(e) => setQuietStart(e.target.value)}
+                aria-label={`${t("profile.notifications.quietHoursTitle")} — ${t("common.from")}`}
+                className="h-8 w-24 text-xs font-mono bg-nx-raised border-nx-line text-nx-ink"
+              />
+              <span className="text-xs text-nx-ink-3" aria-hidden="true">&rarr;</span>
+              <Input
+                value={quietEnd}
+                onChange={(e) => setQuietEnd(e.target.value)}
+                aria-label={`${t("profile.notifications.quietHoursTitle")} — ${t("common.to")}`}
+                className="h-8 w-24 text-xs font-mono bg-nx-raised border-nx-line text-nx-ink"
+              />
               <Badge variant="outline" className="text-[10px] font-mono border-nx-line bg-nx-raised text-nx-ink-3">UTC</Badge>
             </div>
             <Badge variant="outline" className="text-[10px] font-mono border-warning/40 text-warning bg-warning/10 gap-1">

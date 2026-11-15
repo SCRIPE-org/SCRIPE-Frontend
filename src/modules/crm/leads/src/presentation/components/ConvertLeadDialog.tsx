@@ -73,10 +73,11 @@ export function ConvertLeadDialog({
           };
         });
 
+  const defaultConversionStageKey = conversionStageOptions[0]?.key || "default.discovery";
   const [title, setTitle] = useState("");
   const [amount, setAmount] = useState(0);
   const [currency, setCurrency] = useState(defaultDealCurrency || "SAR");
-  const [targetStageKey, setTargetStageKey] = useState(conversionStageOptions[0]?.key || "default.discovery");
+  const [targetStageKey, setTargetStageKey] = useState(defaultConversionStageKey);
   const [dealKind, setDealKind] = useState<DealKind>("NewBusiness");
   const [closeDate, setCloseDate] = useState("");
   const [rationale, setRationale] = useState("");
@@ -87,13 +88,13 @@ export function ConvertLeadDialog({
       setTitle(lead.title || `${lead.companyName || lead.fullName || "New"} Deal`);
       setAmount(lead.estimatedValue ?? 0);
       setCurrency(lead.currency || defaultDealCurrency || "SAR");
-      setTargetStageKey(conversionStageOptions[0]?.key || "default.discovery");
+      setTargetStageKey(defaultConversionStageKey);
       setDealKind("NewBusiness");
       setCloseDate("");
       setRationale("");
       setValidationError(null);
     }
-  }, [open, lead, defaultDealCurrency]);
+  }, [open, lead, defaultDealCurrency, defaultConversionStageKey]);
 
   const conversionPreview = getConversionPreview(amount, currency);
   const dealKinds: { key: DealKind; label: string }[] = [
@@ -170,7 +171,7 @@ export function ConvertLeadDialog({
             </Alert>
           )}
           {isConvertible && !isQualified && (
-            <div className="rounded-nx-md border border-nx-accent/30 bg-nx-accent-wash/40 px-3 py-2 text-xs text-nx-ink-2">
+            <div className="rounded-nx-md border border-nx-accent/30 bg-nx-accent-wash px-3 py-2 text-xs text-nx-ink-2">
               {t("crmLeads.conversion.autoQualifyNotice")}
             </div>
           )}
@@ -189,7 +190,7 @@ export function ConvertLeadDialog({
                   <span>{t("crmLeads.conversion.autoProvisionIntake")}</span>
                 </span>
               ) : (
-                <span className="inline-flex items-center gap-1 font-medium text-warning">
+                <span className="inline-flex items-center gap-1 font-medium text-nx-warning-strong">
                   <ShieldAlert className="size-3.5" />
                   <span>{t("crmLeads.conversion.unlinkedDiscoveryOnly")}</span>
                 </span>

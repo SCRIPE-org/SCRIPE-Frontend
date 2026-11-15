@@ -1,8 +1,8 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { AlertTriangle } from "lucide-react";
-import { AnimatePresence, motion } from "framer-motion";
+import { AlertTriangle, ArrowRight } from "lucide-react";
+import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { useI18n } from "@core/providers/i18n-provider";
 import { SignupThemeProvider, useSignupTheme } from "@core/providers/signup-theme";
 import { useSignupWizard, type SignupPhase } from "../viewmodels/useSignupWizard";
@@ -40,11 +40,6 @@ import { CompleteStep } from "../components/provisioning/CompleteStep";
 // flow from the top.
 // ═══════════════════════════════════════════════════════════════════════════
 
-const prefersReducedMotion =
-  typeof window !== "undefined"
-    ? window.matchMedia("(prefers-reduced-motion: reduce)").matches
-    : false;
-
 /** Phases that show the stepper progress band — matches SignupProgressBar's
  * own 5-node STEPPER_PHASES array; "plan" was missing here, so the band
  * never appeared on the plan-selection screen even though its node existed. */
@@ -72,25 +67,27 @@ const CENTERED_PHASES: ReadonlySet<SignupPhase> = new Set<SignupPhase>([
 // ~180ms exit), reduced-motion → pure (instant) opacity. `x` is pre-mirrored
 // for RTL by the caller via the `custom` direction sign.
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-const PHASE_VARIANTS: Record<string, any> = {
-  enter: (dir: number) =>
-    prefersReducedMotion ? { opacity: 0 } : { opacity: 0, x: dir > 0 ? 28 : -28 },
-  center: prefersReducedMotion
-    ? { opacity: 1 }
-    : {
-        opacity: 1,
-        x: 0,
-        transition: { duration: 0.22, ease: [0.16, 1, 0.3, 1] as const },
-      },
-  exit: (dir: number) =>
-    prefersReducedMotion
-      ? { opacity: 0 }
+function getPhaseVariants(shouldReduce: boolean): Record<string, any> {
+  return {
+    enter: (dir: number) =>
+      shouldReduce ? { opacity: 0 } : { opacity: 0, x: dir > 0 ? 28 : -28 },
+    center: shouldReduce
+      ? { opacity: 1 }
       : {
-          opacity: 0,
-          x: dir > 0 ? -28 : 28,
-          transition: { duration: 0.18, ease: [0.4, 0, 1, 1] as const },
+          opacity: 1,
+          x: 0,
+          transition: { duration: 0.22, ease: [0.16, 1, 0.3, 1] as const },
         },
-};
+    exit: (dir: number) =>
+      shouldReduce
+        ? { opacity: 0 }
+        : {
+            opacity: 0,
+            x: dir > 0 ? -28 : 28,
+            transition: { duration: 0.18, ease: [0.4, 0, 1, 1] as const },
+          },
+  };
+}
 
 /**
  * Interface defining property specifications, keys types, and structural contract rules for signup wizard props.
@@ -148,24 +145,23 @@ export function SignupWizard({ initialCountry, initialCurrency }: SignupWizardPr
 
 function SignupDomainRestrictionView({ platformSignupUrl }: { platformSignupUrl: string }) {
   const { tokens } = useSignupTheme();
-  const { t, direction } = useI18n();
+  const { t } = useI18n();
 
   return (
     <SignupShell>
       <div className="flex flex-1 flex-col items-center justify-center px-4 py-12">
         <div
-          className="w-full max-w-md rounded-2xl border p-8 text-center shadow-xl backdrop-blur-md"
+          className="w-full max-w-md rounded-2xl border p-8 text-center"
           style={{
             background: tokens.surface,
             borderColor: tokens.borderCard,
-            boxShadow: tokens.shadowCard,
           }}
         >
           <div
             className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-full"
             style={{ background: `${tokens.accent}14` }}
           >
-            <AlertTriangle className="h-8 w-8" style={{ color: tokens.accent }} />
+            <AlertTriangle className="h-8 w-8" style={{ color: tokens.accent }} aria-hidden="true" />
           </div>
 
           <h1 className="mb-3 text-2xl font-bold tracking-tight" style={{ color: tokens.ink }}>
@@ -178,20 +174,14 @@ function SignupDomainRestrictionView({ platformSignupUrl }: { platformSignupUrl:
 
           <a
             href={platformSignupUrl}
-            className="inline-flex h-11 items-center justify-center rounded-lg px-6 text-sm font-semibold transition-all hover:opacity-90"
+            className="inline-flex h-11 items-center justify-center rounded-lg px-6 text-sm font-semibold transition-all hover:opacity-90 focus-visible:outline-none focus-visible:shadow-nx-focus"
             style={{
-              background: tokens.accent,
-              color: tokens.accentContrast || "var(--scripe-ink)",
-              boxShadow: `0 4px 12px ${tokens.accent}33`,
+              background: tokens.gradientCta,
+              color: tokens.accentContrast,
             }}
           >
             {t("signup.errors.domainRestrictionLinkText")}{" "}
-            <span
-              className="ml-2 font-mono"
-              style={{ transform: direction === "rtl" ? "scaleX(-1)" : "none" }}
-            >
-              →
-            </span>
+            <ArrowRight className="ms-2 h-4 w-4 rtl:rotate-180" aria-hidden="true" />
           </a>
         </div>
       </div>
@@ -202,6 +192,7 @@ function SignupDomainRestrictionView({ platformSignupUrl }: { platformSignupUrl:
 function SignupWizardContent({ initialCountry, initialCurrency }: SignupWizardProps) {
   const wizard = useSignupWizard({ initialCountry, initialCurrency });
   const { t, direction } = useI18n();
+  const shouldReduceMotion = Boolean(useReducedMotion());
 
   const isStepperPhase = STEPPER_PHASES.has(wizard.phase);
   const isCentered = CENTERED_PHASES.has(wizard.phase);
@@ -229,7 +220,7 @@ function SignupWizardContent({ initialCountry, initialCurrency }: SignupWizardPr
           <motion.div
             key={wizard.phase}
             custom={slideDir}
-            variants={PHASE_VARIANTS}
+            variants={getPhaseVariants(shouldReduceMotion)}
             initial="enter"
             animate="center"
             exit="exit"

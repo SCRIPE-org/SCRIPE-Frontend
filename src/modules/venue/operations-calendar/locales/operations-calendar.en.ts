@@ -2,6 +2,7 @@ export const en = {
   operationsCalendar: {
     title: "Calendar",
     description: "Manage court occupancy, active holds, and bookings for the day.",
+    defaultFacilityName: "Facility",
     toolbar: {
       previous: "Previous day",
       next: "Next day",
@@ -14,8 +15,8 @@ export const en = {
       refresh: "Refresh",
       dayView: "Day Operations",
       findSlots: "Find Slot",
-      blockTime: "+ Block Time",
-      newBooking: "+ New Booking",
+      blockTime: "Block Time",
+      newBooking: "New Booking",
       filter: "Filter",
       day: "Day",
       week: "Week",
@@ -35,12 +36,18 @@ export const en = {
         "The calendar result reached its 500-booking limit. Filter by court or space.",
     },
     status: {
+      Draft: "Draft",
+      Requested: "Requested",
       Held: "Held",
+      PendingApproval: "Pending Approval",
       Confirmed: "Confirmed",
       CheckedIn: "Checked in",
       Completed: "Completed",
+      PartiallyFulfilled: "Partially Fulfilled",
       NoShow: "No-show",
       Cancelled: "Cancelled",
+      Rejected: "Rejected",
+      Expired: "Expired",
       Maintenance: "Maintenance",
       Blocked: "Unavailable",
       Unavailable: "Unavailable",
@@ -61,7 +68,8 @@ export const en = {
     },
     maintenanceDrawer: {
       title: "Maintenance & Block Details",
-      description: "This court or space is currently unavailable for bookings due to maintenance or administrative block.",
+      description:
+        "This court or space is currently unavailable for bookings due to maintenance or administrative block.",
       court: "Court / Resource",
       status: "Status",
       reference: "Reference",
@@ -69,10 +77,35 @@ export const en = {
       start: "Start Time",
       end: "End Time",
       timeWindow: "Time Window",
+      close: "Close",
     },
     utility: {
       previousMonth: "Previous month",
       nextMonth: "Next month",
+    },
+    panel: {
+      prevMonth: "Previous month",
+      nextMonth: "Next month",
+    },
+    blockTime: {
+      title: "Block Time",
+      subtitle: "Close a court temporarily for maintenance or operational reasons.",
+      resource: "Court / Space",
+      reasonType: "Reason Type",
+      typeMaintenance: "Maintenance",
+      typeUnavailable: "Unavailable",
+      defaultMaintenanceReason: "Scheduled Maintenance",
+      defaultUnavailableReason: "Court Closed",
+      startDate: "Start Date",
+      startTime: "Start Time",
+      endDate: "End Date",
+      endTime: "End Time",
+      reason: "Reason / Notes",
+      reasonPlaceholder: "e.g. Net repair and surface cleaning",
+      cancel: "Cancel",
+      submit: "Block Time",
+      submitting: "Blocking time...",
+      failed: "Failed to block time.",
     },
     quote: {
       unavailable: "A verified price quote is required before confirmation. Please retry.",
@@ -147,7 +180,10 @@ export const en = {
     },
     clickToBook: {
       title: "New Booking",
-      dialogDescription: "Create a venue booking.",
+      dialogDescription: "Schedule court time, select customer, and confirm booking.",
+      errors: {
+        chooseResourceAndCustomer: "Choose a resource and customer first.",
+      },
       stepper: {
         courtAndTime: "Court & Time",
         customer: "Customer",
@@ -172,7 +208,7 @@ export const en = {
         title: "Customer",
         select: "Select Customer",
         searchPlaceholder: "Search customer by name, phone or email...",
-        addNew: "+ New Customer",
+        addNew: "New Customer",
         searchExisting: "Search Existing",
         quickAddTitle: "Quick Add Customer",
         namePlaceholder: "Customer Name (e.g. Ahmed Salah)",
@@ -185,17 +221,27 @@ export const en = {
         noResults: "No customers found",
         noResultsFound: "No customers found",
         noResultsHint: "Try another search or add a new customer.",
-        duplicateWarning: "A customer with similar details already exists",
+        duplicateWarning: "A customer with similar details already exists.",
+        duplicateWarningWithName: "A customer with similar details already exists: {{name}}",
         searchError: "Customer search failed. Please retry.",
+        nameRequired: "Customer name is required.",
+        createFailed: "Failed to create customer. Please check input.",
+        defaultType: "Customer",
+        activeCustomer: "Active Customer",
       },
       pricing: {
         title: "Pricing Summary",
         courtPrice: "Court Rental",
+        discount: "Discount",
+        tax: "Tax",
         calculating: "Calculating authoritative price...",
         expired: "The price quote has expired and was refreshed.",
         priceChanged:
           "Price updated: Old: {{oldPrice}} {{currency}}, New: {{newPrice}} {{currency}}. Please acknowledge to proceed.",
         acknowledge: "Acknowledge",
+        acknowledgeNotice: "Please acknowledge the updated price before confirming.",
+        missingQuote:
+          "Pricing quote is unavailable. Please wait for pricing to load or reselect the court.",
         failed: "Failed to calculate price quote.",
         activating:
           "Authoritative pricing for this court is still activating. Bookings cannot be accepted until activation completes.",
@@ -207,6 +253,7 @@ export const en = {
         overrideAmountPlaceholder: "Adjustment Amount (e.g. -20 for discount)",
         applyOverride: "Apply Override",
         overriding: "Applying...",
+        overrideFailed: "Failed to apply price override.",
       },
       hold: {
         temporaryBadge: "Temporarily Reserved",
@@ -214,6 +261,7 @@ export const en = {
         expired: "This time is no longer reserved. Please check availability again.",
         refreshAvailability: "Check Availability Again",
         holdAction: "Hold Temporarily",
+        failed: "Failed to hold time slot.",
       },
       step0: {
         slotUnavailable:
@@ -241,6 +289,10 @@ export const en = {
         referencePlaceholder: "Receipt / Reference (optional)",
         recording: "Recording payment...",
         recordAction: "Record Payment",
+        missingResourceProfile: "Unable to resolve facility resource profile for court.",
+        recordFailed: "Payment recording failed.",
+        initialAuditNote: "Booking creation payment",
+        manualAuditNote: "Manual post-booking payment",
       },
       confirm: {
         action: "Confirm Booking",
@@ -248,6 +300,8 @@ export const en = {
         back: "Back",
         cancel: "Cancel",
         next: "Next",
+        failed: "Failed to confirm booking.",
+        noHoldError: "Hold could not be established for this booking.",
       },
       conflict: {
         title: "This time is no longer available",
@@ -271,15 +325,6 @@ export const en = {
         openBooking: "Open Booking",
         close: "Close",
       },
-    },
-  },
-  resources: {
-    blockTimeModal: {
-      endDate: "End Date",
-      endTime: "End Time",
-      reason: "Reason / Notes",
-      reasonPlaceholder: "e.g. Net repair and surface cleaning",
-      cancel: "Cancel",
     },
   },
 };

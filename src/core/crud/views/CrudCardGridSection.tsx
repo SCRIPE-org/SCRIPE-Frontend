@@ -27,6 +27,8 @@ export interface CrudCardGridSectionProps<TItem = any> {
   cardGridClassName?: string;
   /** Optional class name generator applied to individual card containers in default fallback mode. */
   getCardClassName?: (item: TItem) => string;
+  /** Optional rich empty state element matching GenericTable / TanStackCrudTable behavior. */
+  emptyState?: React.ReactNode;
   /** Localized empty state title displayed when items array is empty. */
   emptyLabel?: string;
 }
@@ -46,6 +48,7 @@ export const CrudCardGridSection = memo(function CrudCardGridSection<TItem = any
   renderRowActionButtons,
   cardGridClassName,
   getCardClassName,
+  emptyState,
   emptyLabel = "No items",
 }: CrudCardGridSectionProps<TItem>) {
   // Separate header column and data columns for default fallback
@@ -63,12 +66,12 @@ export const CrudCardGridSection = memo(function CrudCardGridSection<TItem = any
       {loading ? (
         Array.from({ length: 6 }).map((_, idx) => (
           <Card
-            key={idx}
+            key={`card-skeleton-${idx}`}
             className="p-5 space-y-3 rounded-nx-lg border border-nx-line bg-nx-surface"
           >
-            <Skeleton className="h-5 w-3/4 rounded-nx-xs" />
-            <Skeleton className="h-4 w-1/2 rounded-nx-xs" />
-            <Skeleton className="h-4 w-2/3 rounded-nx-xs" />
+            <Skeleton className="h-5 w-3/4 rounded-nx-sm" />
+            <Skeleton className="h-4 w-1/2 rounded-nx-sm" />
+            <Skeleton className="h-4 w-2/3 rounded-nx-sm" />
             <div className="flex justify-end gap-2 border-t border-nx-line pt-3">
               <Skeleton className="h-7 w-16 rounded-nx-md" />
             </div>
@@ -76,14 +79,15 @@ export const CrudCardGridSection = memo(function CrudCardGridSection<TItem = any
         ))
       ) : items.length === 0 ? (
         <div className="col-span-full rounded-nx-lg border border-nx-line bg-nx-surface p-8">
-          <EmptyState bare icon={Inbox} title={emptyLabel} />
+          {emptyState || <EmptyState bare icon={Inbox} title={emptyLabel} />}
         </div>
       ) : (
         items.map((row: any, idx: number) => {
+          const rowKey = String(row?.id ?? idx);
           const actionButtons = renderRowActionButtons ? renderRowActionButtons(row) : null;
           if (renderCardGridItem) {
             return (
-              <div key={row?.id || idx}>
+              <div key={rowKey}>
                 {renderCardGridItem(row, actionButtons, idx)}
               </div>
             );
@@ -98,7 +102,7 @@ export const CrudCardGridSection = memo(function CrudCardGridSection<TItem = any
 
           return (
             <Card
-              key={row?.id || idx}
+              key={rowKey}
               className={cn(
                 "flex flex-col justify-between gap-3.5 rounded-nx-lg border border-nx-line bg-nx-surface p-5 hover:border-nx-line-hi transition-colors",
                 getCardClassName?.(row)
@@ -120,21 +124,29 @@ export const CrudCardGridSection = memo(function CrudCardGridSection<TItem = any
 
               {bodyColumns.length > 0 && (
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
-                  {bodyColumns.map((col) => (
-                    <div
-                      key={col.key}
-                      className="flex flex-col gap-0.5 rounded-nx-control bg-nx-raised/40 p-2.5 border border-nx-line/60"
-                    >
-                      <span className="text-[11px] font-medium text-nx-ink-3 truncate">
-                        {col.label}
-                      </span>
-                      <div className="text-nx-ink font-medium text-xs break-words">
-                        {col.render
-                          ? col.render(row[col.key], row, idx)
-                          : String(row[col.key] ?? "—")}
+                  {bodyColumns.map((col) => {
+                    const rawVal = row[col.key];
+                    return (
+                      <div
+                        key={col.key}
+                        className="flex flex-col gap-0.5 rounded-nx-control bg-nx-raised/40 p-2.5 border border-nx-line/60"
+                      >
+                        <span className="text-[11px] font-medium text-nx-ink-3 truncate">
+                          {col.label}
+                        </span>
+                        <div
+                          className={cn(
+                            "text-nx-ink font-medium text-xs break-words",
+                            typeof rawVal === "number" && "tabular-nums"
+                          )}
+                        >
+                          {col.render
+                            ? col.render(rawVal, row, idx)
+                            : String(rawVal ?? "—")}
+                        </div>
                       </div>
-                    </div>
-                  ))}
+                    );
+                  })}
                 </div>
               )}
             </Card>

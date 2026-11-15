@@ -49,7 +49,7 @@ const AlertDialogContent = React.forwardRef<
         // centering counter-translate riding inside the animation vars (which
         // is why the 1/2 and 48% "slides" stay outside motion-safe: dropping
         // them under reduced motion throws the panel into the corner).
-        "fixed left-[50%] top-[50%] z-modal grid w-[calc(100%-2rem)] max-w-lg translate-x-[-50%] translate-y-[-50%] rounded-nx-lg border",
+        "fixed left-[50%] top-[50%] z-modal grid max-h-[90dvh] w-[calc(100%-2rem)] max-w-lg translate-x-[-50%] translate-y-[-50%] overflow-y-auto overscroll-contain rounded-nx-lg border",
         modalSurfaceClasses,
         modalMotionClasses,
         "data-[state=closed]:slide-out-to-left-1/2 data-[state=closed]:slide-out-to-top-[48%] data-[state=open]:slide-in-from-left-1/2 data-[state=open]:slide-in-from-top-[48%] motion-safe:data-[state=closed]:zoom-out-95 motion-safe:data-[state=open]:zoom-in-95",

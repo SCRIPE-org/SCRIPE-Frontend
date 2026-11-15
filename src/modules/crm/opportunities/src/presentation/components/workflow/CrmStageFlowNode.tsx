@@ -83,7 +83,7 @@ function CrmStageFlowNodeComponent({ data, selected }: NodeProps<StageFlowNode>)
               matchedGlobalTransition && selectedTransitionId === matchedGlobalTransition.id ? "border-nx-accent ring-1 ring-nx-accent/50 text-nx-accent" : "border-info/50 hover:border-info"
             }`}
           >
-            <span className="text-warning font-bold">⚡</span>
+            <span className="text-nx-warning-strong font-bold">⚡</span>
             <span>{t("crmOpportunities.workflowStudio.globalAllBadge")}</span>
             {globalLabel && <span className="text-nx-ink-2 truncate max-w-[84px]">· {globalLabel}</span>}
           </Button>
@@ -148,7 +148,7 @@ function CrmStageFlowNodeComponent({ data, selected }: NodeProps<StageFlowNode>)
               className="inline-flex items-center gap-1 text-nx-ink font-semibold"
               title={stage.requiredExitFields.map((f) => formatExitFieldLabel(f, t, isAr, crmCustomFields || [])).join(", ")}
             >
-              <Lock className="w-2.5 h-2.5 text-warning" />
+              <Lock className="w-2.5 h-2.5 text-nx-warning-strong" />
               {stage.requiredExitFields.length} {t("crmOpportunities.workflowStudio.guardsCount")}
             </span>
           ) : (

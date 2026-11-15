@@ -1,7 +1,7 @@
 // FILE-EXCEPTION: file length
 "use client";
 
-import { AnimatePresence, motion } from "framer-motion";
+import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { ArrowLeft, ArrowRight } from "lucide-react";
 import { useI18n } from "@core/providers/i18n-provider";
 import { useSignupTheme } from "@core/providers/signup-theme";
@@ -30,31 +30,28 @@ import { ProfilePreview } from "./ProfilePreview";
 // repository directly — the recommendation fetch lives in useSignupWizard.
 // ═══════════════════════════════════════════════════════════════════════════
 
-const prefersReducedMotion =
-  typeof window !== "undefined"
-    ? window.matchMedia("(prefers-reduced-motion: reduce)").matches
-    : false;
-
 // Horizontal slide between questions; `dir` is pre-mirrored for RTL by the stage.
-const slideVariants = {
-  enter: (dir: number) =>
-    prefersReducedMotion ? { opacity: 0 } : { x: dir > 0 ? 48 : -48, opacity: 0 },
-  center: prefersReducedMotion
-    ? { opacity: 1 }
-    : {
-        x: 0,
-        opacity: 1,
-        transition: { duration: 0.24, ease: [0.16, 1, 0.3, 1] as const },
-      },
-  exit: (dir: number) =>
-    prefersReducedMotion
-      ? { opacity: 0 }
+function getSlideVariants(shouldReduce: boolean) {
+  return {
+    enter: (dir: number) =>
+      shouldReduce ? { opacity: 0 } : { x: dir > 0 ? 48 : -48, opacity: 0 },
+    center: shouldReduce
+      ? { opacity: 1 }
       : {
-          x: dir > 0 ? -48 : 48,
-          opacity: 0,
-          transition: { duration: 0.18, ease: [0.4, 0, 1, 1] as const },
+          x: 0,
+          opacity: 1,
+          transition: { duration: 0.24, ease: [0.16, 1, 0.3, 1] as const },
         },
-};
+    exit: (dir: number) =>
+      shouldReduce
+        ? { opacity: 0 }
+        : {
+            x: dir > 0 ? -48 : 48,
+            opacity: 0,
+            transition: { duration: 0.18, ease: [0.4, 0, 1, 1] as const },
+          },
+  };
+}
 
 interface DiscoveryStageProps {
   /**
@@ -72,6 +69,7 @@ export function DiscoveryStage({ onComplete }: DiscoveryStageProps) {
   const { t, direction } = useI18n();
   const { tokens } = useSignupTheme();
   const vm = useDiscovery();
+  const shouldReduceMotion = Boolean(useReducedMotion());
 
   const isRtl = direction === "rtl";
   // Slide direction is "next" (forward) by default; mirror sign under RTL so the
@@ -175,7 +173,7 @@ export function DiscoveryStage({ onComplete }: DiscoveryStageProps) {
               <motion.div
                 key={question.key}
                 custom={slideDir}
-                variants={slideVariants}
+                variants={getSlideVariants(shouldReduceMotion)}
                 initial="enter"
                 animate="center"
                 exit="exit"
@@ -231,7 +229,6 @@ export function DiscoveryStage({ onComplete }: DiscoveryStageProps) {
                 style={{
                   background: tokens.gradientCta,
                   color: tokens.accentContrast,
-                  boxShadow: tokens.shadowCard,
                 }}
               >
                 {nextLabel}

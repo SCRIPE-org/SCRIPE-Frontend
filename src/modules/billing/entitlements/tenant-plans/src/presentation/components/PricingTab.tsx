@@ -429,7 +429,7 @@ export const PricingTab = memo(function PricingTab(props: PricingTabProps) {
                         <Button
                           variant="ghost"
                           size="icon"
-                          className="h-7 w-7 text-nx-ink-2 opacity-0 transition-opacity duration-nx-micro ease-nx-enter hover:text-nx-danger group-hover:opacity-100 motion-reduce:transition-none"
+                          className="h-7 w-7 text-nx-ink-2 opacity-0 transition-opacity duration-nx-micro ease-nx-enter hover:text-nx-danger group-hover:opacity-100 group-focus-within:opacity-100 focus-visible:opacity-100 motion-reduce:transition-none"
                           onClick={() => removeOverride(row.currency)}
                           aria-label={t("common.remove")}
                         >

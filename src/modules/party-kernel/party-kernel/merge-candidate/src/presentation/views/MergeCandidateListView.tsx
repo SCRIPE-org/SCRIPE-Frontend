@@ -53,6 +53,7 @@ export const MergeCandidateListView = React.memo(function MergeCandidateListView
   ];
 
   const config: CrudConfig<MergeCandidate> = {
+    stickyActions: true,
     titleKey: "mergeCandidate.title",
     subtitleKey: "mergeCandidate.description",
     resource: "merge-candidates",

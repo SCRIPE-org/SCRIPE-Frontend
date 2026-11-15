@@ -111,7 +111,7 @@ export function OpportunityCommercialQuoteAndPlaybookSection({
           </div>
 
           {requiresDiscountApproval && (
-            <div className="rounded-md border border-warning/40 bg-warning/10 px-2.5 py-1.5 flex items-center gap-2 text-[11px] text-warning font-semibold" data-testid="quote-discount-approval-gate">
+            <div className="rounded-md border border-warning-strong/40 bg-warning/10 px-2.5 py-1.5 flex items-center gap-2 text-[11px] text-nx-warning-strong font-semibold" data-testid="quote-discount-approval-gate">
               <ShieldAlert className="size-3.5 shrink-0" />
               <span>{t("crmOpportunities.commercialSuite.discountApprovalWarning")}</span>
             </div>

@@ -141,7 +141,7 @@ export function ColumnNormalizationSections({
             }
           >
             <SelectTrigger id={`norm-case-${sourceColumnHeader}`} className="h-7 w-32 text-xs"><SelectValue /></SelectTrigger>
-            <SelectContent className="z-[960]">
+            <SelectContent className="z-popover">
               <SelectItem value="None">{t("dataExchange.normalization.caseNone")}</SelectItem>
               <SelectItem value="Lower">{t("dataExchange.normalization.caseLower")}</SelectItem>
               <SelectItem value="Upper">{t("dataExchange.normalization.caseUpper")}</SelectItem>

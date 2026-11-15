@@ -101,7 +101,7 @@ export function ConvertLeadFormFields({
         {conversionPreview.isDifferent && amount > 0 && (
           <div
             data-testid="convert-lead-conversion-preview"
-            className="text-[11px] font-mono text-nx-accent bg-nx-accent-wash/30 border border-nx-accent/30 rounded-nx-sm px-2 py-1"
+            className="text-[11px] font-mono tabular-nums text-nx-accent bg-nx-accent-wash border border-nx-accent/30 rounded-nx-sm px-2 py-1"
           >
             ≈ {conversionPreview.formattedConverted} ({t("crmLeads.conversion.baseCurrencyLabel")} {baseCurrency})
           </div>

@@ -61,7 +61,7 @@ export function PlatformCustomizeDrawer({
     <>
       {/* Scrim / Backdrop */}
       <div
-        className="fixed inset-0 z-50 bg-background/80 backdrop-blur-sm transition-opacity animate-in fade-in"
+        className="fixed inset-0 z-modal-backdrop bg-scrim transition-opacity animate-in fade-in"
         onClick={onClose}
       />
 
@@ -70,13 +70,13 @@ export function PlatformCustomizeDrawer({
         role="dialog"
         aria-modal="true"
         aria-label={t("platformCommandCenter.customizeDrawer.title") || "Customize dashboard"}
-        className="fixed bottom-0 right-0 top-0 z-50 flex w-[350px] max-w-full flex-col justify-between border-s border-nx-line bg-nx-surface p-6 text-nx-ink shadow-2xl duration-200 animate-in slide-in-from-right"
+        className="fixed bottom-0 end-0 top-0 z-modal flex w-[350px] max-w-full flex-col justify-between border-s border-nx-line-hi bg-nx-surface p-6 text-nx-ink shadow-nx-modal duration-200 animate-in slide-in-from-right rtl:slide-in-from-left"
       >
         <div>
           {/* Header */}
           <div className="flex items-center justify-between border-b border-nx-line pb-4">
             <div>
-              <span className="mb-1 block text-[10px] font-bold uppercase tracking-wider text-primary">
+              <span className="mb-1 block text-[10px] font-bold uppercase tracking-wider text-nx-accent">
                 {t("platformCommandCenter.customizeDrawer.personalize") || "Personalize"}
               </span>
               <h3 className="text-base font-bold tracking-tight text-nx-ink">
@@ -84,12 +84,14 @@ export function PlatformCustomizeDrawer({
               </h3>
             </div>
             <Button
+              type="button"
               variant="ghost"
               size="icon"
               onClick={onClose}
+              aria-label={t("common.close", { defaultValue: "Close" })}
               className="h-8 w-8 text-nx-ink-3 hover:text-nx-ink"
             >
-              <X className="h-4 w-4" />
+              <X className="h-4 w-4" aria-hidden="true" />
             </Button>
           </div>
 

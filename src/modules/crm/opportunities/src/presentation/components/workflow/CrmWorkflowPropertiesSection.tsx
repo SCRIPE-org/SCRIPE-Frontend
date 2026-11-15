@@ -64,14 +64,14 @@ export function CrmWorkflowPropertiesSection({
           data-testid={`${testIdPrefix}-prop-row-${pk}`}
         >
           <span className="truncate">{pk}: {pv}</span>
-          <Button size="icon" variant="ghost" className="h-4 w-4 text-destructive" onClick={() => onRemoveProperty(pk)}>
+          <Button type="button" size="icon" variant="ghost" className="h-4 w-4 text-destructive" onClick={() => onRemoveProperty(pk)} aria-label={`${t("crmOpportunities.pipelinesPage.removePropertyLabel")}: ${pk}`}>
             <X className="w-2.5 h-2.5" />
           </Button>
         </div>
       ))}
 
       <Dialog open={showForm} onOpenChange={onToggleForm}>
-        <DialogContent className="max-w-lg z-[10003]" data-testid={`${testIdPrefix}-properties-modal`}>
+        <DialogContent className="max-w-lg" data-testid={`${testIdPrefix}-properties-modal`}>
           <DialogHeader>
             <DialogTitle className="text-sm font-bold">{modalTitle}</DialogTitle>
             <DialogDescription className="text-xs">
@@ -86,7 +86,7 @@ export function CrmWorkflowPropertiesSection({
                   <div key={pk} className="grid grid-cols-12 items-center gap-2 rounded border border-nx-line bg-nx-raised/40 px-2.5 py-1.5 text-xs font-mono">
                     <span className="col-span-5 truncate font-semibold text-nx-ink">{pk}</span>
                     <span className="col-span-6 truncate text-nx-ink-2">{pv}</span>
-                    <Button size="icon" variant="ghost" className="col-span-1 h-6 w-6 text-destructive" onClick={() => onRemoveProperty(pk)}>
+                    <Button type="button" size="icon" variant="ghost" className="col-span-1 h-6 w-6 text-destructive" onClick={() => onRemoveProperty(pk)} aria-label={`${t("crmOpportunities.pipelinesPage.removePropertyLabel")}: ${pk}`}>
                       <Trash2 className="w-3 h-3" />
                     </Button>
                   </div>

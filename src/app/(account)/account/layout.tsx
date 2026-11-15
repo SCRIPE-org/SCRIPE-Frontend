@@ -20,7 +20,7 @@ export default function SovereignAccountSectionLayout({ children }: { children: 
   const { profile, toggleAvailability, switchAcademy, selectedAcademyId } = useProfileDossierViewModel();
   const queryClient = useQueryClient();
   const cachedSessions = queryClient.getQueryData<unknown[]>(sessionsFleetKeys.list());
-  const activeSessionCount = Array.isArray(cachedSessions) && cachedSessions.length > 0 ? cachedSessions.length : 3;
+  const activeSessionCount = Array.isArray(cachedSessions) ? cachedSessions.length : 1;
   const [sudoGateOpen, setSudoGateOpen] = useState(false);
   const [sudoActive, setSudoActive] = useState(true);
 

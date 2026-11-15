@@ -72,7 +72,10 @@ export const EntityCatalogCard = memo(function EntityCatalogCard({
             </h3>
           </div>
           <div className="flex flex-wrap items-center gap-1.5">
-            <code className="text-[11px] font-mono font-medium text-nx-ink-2 bg-nx-raised/60 px-1.5 py-0.5 rounded-nx-xs border border-nx-line">
+            <code
+              dir="ltr"
+              className="text-[11px] font-mono font-medium text-nx-ink-2 bg-nx-raised/60 px-1.5 py-0.5 rounded-sm border border-nx-line"
+            >
               {entity.entityKey}
             </code>
             <Badge variant="outline" className="text-[10px] font-medium uppercase tracking-wider py-0 px-1.5">
@@ -157,7 +160,7 @@ export const EntityCatalogCard = memo(function EntityCatalogCard({
             {entity.supportedModes.map((mode) => (
               <span
                 key={mode}
-                className="inline-block rounded-nx-xs bg-nx-surface px-1.5 py-0.5 text-[10px] font-mono font-medium text-nx-ink border border-nx-line"
+                className="inline-block rounded-sm bg-nx-surface px-1.5 py-0.5 text-[10px] font-mono font-medium text-nx-ink border border-nx-line"
               >
                 {t(`dataTransferEntities.modes.${mode}`, { defaultValue: mode })}
               </span>
@@ -171,8 +174,8 @@ export const EntityCatalogCard = memo(function EntityCatalogCard({
             {t("dataTransferEntities.columns.quota")}
           </span>
           <Badge
-            variant={isExhausted ? "destructive" : "secondary"}
-            className="text-[10px] font-mono px-1.5 py-0.5"
+            variant={isExhausted ? "danger" : "secondary"}
+            className="text-[10px] font-mono px-1.5 py-0.5 tabular-nums"
           >
             {isExhausted
               ? t("dataTransferEntities.quota.exhausted")
@@ -202,7 +205,7 @@ export const EntityCatalogCard = memo(function EntityCatalogCard({
             onClick={() => onLaunchStudio(entity.entityKey)}
             className="h-7 px-2 text-xs text-nx-accent hover:text-nx-accent hover:bg-nx-accent/10"
           >
-            <Upload className="h-3 w-3 ltr:mr-1 rtl:ml-1" />
+            <Upload className="h-3 w-3 me-1" aria-hidden="true" />
             {t("dataTransferEntities.actions.launchStudio")}
           </Button>
         )}

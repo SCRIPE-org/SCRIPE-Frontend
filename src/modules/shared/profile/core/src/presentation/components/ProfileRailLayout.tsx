@@ -50,13 +50,16 @@ export function ProfileRailLayout({
   const { t } = useI18n();
   const pathname = usePathname();
 
+  const fallbackUserLabel = t("common.user", { defaultValue: "User" });
   const fullName = profile
-    ? `${profile.firstName} ${profile.lastName}`.trim() || profile.username
-    : "Seif El-Din Kamel";
+    ? `${profile.firstName ?? ""} ${profile.lastName ?? ""}`.trim() || profile.username || fallbackUserLabel
+    : fallbackUserLabel;
 
   const initials = profile
-    ? `${profile.firstName?.[0] || ""}${profile.lastName?.[0] || ""}`.toUpperCase() || "SK"
-    : "SK";
+    ? `${profile.firstName?.[0] || ""}${profile.lastName?.[0] || ""}`.toUpperCase() ||
+      profile.username?.slice(0, 2).toUpperCase() ||
+      ""
+    : "";
 
   const categories = [
     {
@@ -109,22 +112,17 @@ export function ProfileRailLayout({
   const isItemActive = (itemHref: string) =>
     pathname === itemHref || pathname.startsWith(`${itemHref}/`);
 
-  const academies = profile?.availableAcademies || [
-    { id: "default-hq", name: "Corporate Headquarters (HQ)", isCurrent: true },
-    { id: "branch-nasr", name: "Nasr City Regional Branch", isCurrent: false },
-    { id: "branch-zayed", name: "Sheikh Zayed Operations Hub", isCurrent: false },
-  ];
+  const academies = profile?.availableAcademies ?? [];
 
   const activeAcademy =
     academies.find((a) => a.id === selectedAcademyId) ||
     academies.find((a) => a.isCurrent) ||
     academies[0];
 
-
   return (
     <div className="flex flex-col lg:flex-row gap-6 items-start">
-      {/* Sticky Left Rail */}
-      <aside className="w-full lg:w-72 shrink-0 space-y-4 lg:sticky lg:top-20">
+      {/* Sticky Start Rail */}
+      <aside className="w-full lg:w-72 shrink-0 space-y-4 lg:sticky lg:top-18">
         {/* Executive Identity Card */}
         <Card className="rounded-xl border border-nx-line bg-nx-surface p-4 hover:border-nx-line-hi transition-colors">
           <div className="flex items-center gap-3.5">
@@ -133,17 +131,20 @@ export function ProfileRailLayout({
                 <AvatarImage src={profile.profileImageUrl} alt={fullName} />
               )}
               <AvatarFallback className="bg-nx-accent-wash text-nx-accent font-bold text-sm">
-                {initials}
+                {initials || <User className="h-5 w-5" aria-hidden="true" />}
               </AvatarFallback>
             </Avatar>
             <div className="min-w-0 flex-1">
               <h3 className="font-bold text-nx-ink text-sm truncate">{fullName}</h3>
-              <p className="text-xs text-nx-ink-3 truncate font-mono">
-                @{profile?.username || "seif.kamel"}
-              </p>
+              {profile?.username && (
+                <p className="text-xs text-nx-ink-3 truncate font-mono">@{profile.username}</p>
+              )}
               <div className="mt-1 flex items-center gap-1.5">
-                <span className="h-1.5 w-1.5 rounded-full bg-success animate-pulse" />
-                <span className="text-[10px] font-medium text-success">
+                <span
+                  aria-hidden="true"
+                  className="h-1.5 w-1.5 rounded-full bg-success animate-pulse motion-reduce:animate-none"
+                />
+                <span className="text-[10px] font-medium text-nx-success">
                   {t("profile.hud.inSession")}
                 </span>
               </div>
@@ -153,35 +154,44 @@ export function ProfileRailLayout({
           <div className="mt-3.5 pt-3 border-t border-nx-line flex items-center justify-between text-xs">
             <span className="text-nx-ink-2">{t("profile.rail.staffId")}</span>
             <span className="font-mono text-[11px] font-semibold text-nx-ink px-1.5 py-0.5 rounded bg-nx-raised border border-nx-line">
-              {profile?.staffCode || "#SCR-AHLY-001"}
+              {profile?.staffCode || "—"}
             </span>
           </div>
 
-          {/* Live Academy Campus Switcher */}
-          <div className="mt-3.5 pt-3 border-t border-nx-line space-y-1.5">
-            <div className="flex items-center gap-1.5 text-[11px] font-medium text-nx-ink-2">
-              <Building2 className="h-3.5 w-3.5 text-nx-accent" style={{ minWidth: 14, minHeight: 14 }} />
-              <span>{t("profile.rail.activeCampus")}</span>
+          {/* Live Academy Campus Switcher (only when profile provides campuses) */}
+          {academies.length > 0 && activeAcademy && (
+            <div className="mt-3.5 pt-3 border-t border-nx-line space-y-1.5">
+              <div className="flex items-center gap-1.5 text-[11px] font-medium text-nx-ink-2">
+                <Building2
+                  className="h-3.5 w-3.5 text-nx-accent"
+                  style={{ minWidth: 14, minHeight: 14 }}
+                  aria-hidden="true"
+                />
+                <span>{t("profile.rail.activeCampus")}</span>
+              </div>
+              <Select value={activeAcademy.id} onValueChange={onSwitchAcademy}>
+                <SelectTrigger
+                  aria-label={t("profile.rail.activeCampus")}
+                  className="w-full text-xs h-8 bg-nx-raised border-nx-line text-nx-ink"
+                >
+                  <SelectValue placeholder={t("profile.rail.selectCampus")} />
+                </SelectTrigger>
+                <SelectContent className="bg-nx-surface border-nx-line text-nx-ink">
+                  {academies.map((acad) => (
+                    <SelectItem key={acad.id} value={acad.id} className="text-xs hover:bg-nx-raised">
+                      {acad.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
-            <Select value={activeAcademy.id} onValueChange={onSwitchAcademy}>
-              <SelectTrigger className="w-full text-xs h-8 bg-nx-raised border-nx-line text-nx-ink">
-                <SelectValue placeholder={t("profile.rail.selectCampus")} />
-              </SelectTrigger>
-              <SelectContent className="bg-nx-surface border-nx-line text-nx-ink">
-                {academies.map((acad) => (
-                  <SelectItem key={acad.id} value={acad.id} className="text-xs hover:bg-nx-raised">
-                    {acad.name}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
+          )}
         </Card>
 
         {/* 6 Categorized Sovereign Navigation Rail Sections */}
         <nav
           className="rounded-xl border border-nx-line bg-nx-surface p-2.5 space-y-3"
-          aria-label="Sovereign Account Navigation"
+          aria-label={t("profile.rail.navigationLabel", { defaultValue: "Account navigation" })}
         >
           {categories.map((cat) => (
             <div key={cat.id} className="space-y-1">
@@ -195,14 +205,16 @@ export function ProfileRailLayout({
                   <Link
                     key={item.href}
                     href={item.href}
+                    aria-current={active ? "page" : undefined}
                     className={cn(
-                      "flex items-center gap-2.5 px-2.5 py-2 rounded-lg text-xs font-medium transition-colors group",
+                      "flex items-center gap-2.5 px-2.5 py-2 rounded-lg text-xs font-medium transition-colors group focus-visible:outline-none focus-visible:shadow-nx-focus",
                       active
-                        ? "border border-nx-accent/40 bg-nx-accent-wash text-nx-accent font-semibold"
+                        ? "border border-nx-accent bg-nx-accent-wash text-nx-accent font-semibold"
                         : "text-nx-ink-2 hover:bg-nx-raised hover:text-nx-ink"
                     )}
                   >
                     <Icon
+                      aria-hidden="true"
                       className={cn(
                         "h-4 w-4 shrink-0 transition-colors",
                         active ? "text-nx-accent" : "text-nx-ink-3 group-hover:text-nx-accent"
@@ -214,7 +226,7 @@ export function ProfileRailLayout({
                       <div
                         className={cn(
                           "text-[10px] truncate leading-tight",
-                          active ? "text-nx-accent/80" : "text-nx-ink-3"
+                          active ? "text-nx-accent" : "text-nx-ink-3"
                         )}
                       >
                         {item.description}
@@ -228,8 +240,13 @@ export function ProfileRailLayout({
         </nav>
       </aside>
 
-      {/* Main View Area */}
-      <main className="flex-1 min-w-0 w-full">{children}</main>
+      {/* Content Section (outer AccountLayout owns single <main>) */}
+      <section
+        aria-label={t("profile.rail.contentLabel", { defaultValue: "Account section content" })}
+        className="flex-1 min-w-0 w-full"
+      >
+        {children}
+      </section>
     </div>
   );
 }

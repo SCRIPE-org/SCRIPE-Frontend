@@ -68,24 +68,32 @@ export const PartyGridSection = memo(function PartyGridSection({
         return (
           <Card
             key={party.id}
-            className="border-nx-line hover:border-nx-line-hi hover:bg-nx-raised/30 flex cursor-pointer flex-col justify-between transition-all"
-            onClick={() => onNavigateToProfile(party.id)}
+            className="border-nx-line hover:border-nx-line-hi flex flex-col justify-between transition-colors"
           >
             <CardHeader className="pb-3">
               <div className="flex items-start justify-between gap-3">
                 <div className="flex min-w-0 items-center gap-3">
-                  <div className="bg-nx-accent/10 flex h-11 w-11 shrink-0 items-center justify-center rounded-xl text-sm font-semibold text-nx-accent">
+                  <div className="bg-nx-accent-wash flex h-11 w-11 shrink-0 items-center justify-center rounded-xl text-sm font-semibold text-nx-accent">
                     {party.initials}
                   </div>
-                  <div className="min-w-0">
-                    <CardTitle className="truncate text-base">{party.displayName}</CardTitle>
+                  <div className="min-w-0 flex-1">
+                    <CardTitle className="truncate text-base">
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        onClick={() => onNavigateToProfile(party.id)}
+                        className="h-auto max-w-full justify-start p-0 text-start text-base font-semibold text-nx-ink hover:bg-transparent hover:text-nx-accent"
+                      >
+                        <span className="truncate">{party.displayName}</span>
+                      </Button>
+                    </CardTitle>
                     <div className="max-w-[180px] truncate text-xs text-nx-ink-3">
                       {subtitle}
                     </div>
                   </div>
                 </div>
 
-                <div className="flex items-center gap-1.5" onClick={(e) => e.stopPropagation()}>
+                <div className="flex shrink-0 items-center gap-1.5">
                   <Badge variant={party.isPerson ? "info" : "success"}>
                     {party.isPerson ? t("party.types.Person") : t("party.types.Organization")}
                   </Badge>
@@ -93,6 +101,7 @@ export const PartyGridSection = memo(function PartyGridSection({
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
                       <Button
+                        type="button"
                         variant="ghost"
                         size="icon"
                         className="h-8 w-8 text-nx-ink-2 hover:text-nx-ink hover:bg-nx-raised"
@@ -148,10 +157,10 @@ export const PartyGridSection = memo(function PartyGridSection({
 
             <CardContent className="space-y-2 pb-3 pt-0 text-xs text-nx-ink-2">
               {(party.primaryPhone || party.primaryEmail) && (
-                <div className="space-y-1 pb-1" onClick={(e) => e.stopPropagation()}>
+                <div className="space-y-1 pb-1">
                   {party.primaryPhone && (
                     <div className="flex items-center gap-1.5 text-nx-ink">
-                      <Phone className="h-3.5 w-3.5 shrink-0 text-nx-ink-3" />
+                      <Phone className="h-3.5 w-3.5 shrink-0 text-nx-ink-3" aria-hidden="true" />
                       <a
                         href={`tel:${party.primaryPhone}`}
                         className="truncate font-mono hover:text-nx-accent"
@@ -162,7 +171,7 @@ export const PartyGridSection = memo(function PartyGridSection({
                   )}
                   {party.primaryEmail && (
                     <div className="flex items-center gap-1.5 text-nx-ink-2">
-                      <Mail className="h-3.5 w-3.5 shrink-0 text-nx-ink-3" />
+                      <Mail className="h-3.5 w-3.5 shrink-0 text-nx-ink-3" aria-hidden="true" />
                       <a
                         href={`mailto:${party.primaryEmail}`}
                         className="truncate hover:text-nx-accent"
@@ -185,59 +194,61 @@ export const PartyGridSection = memo(function PartyGridSection({
               )}
 
               <div className="flex items-center gap-1.5 text-nx-ink-3">
-                <Calendar className="h-3.5 w-3.5" />
+                <Calendar className="h-3.5 w-3.5" aria-hidden="true" />
                 <span>
                   {t("party.columns.createdAt")}: {formatDate(party.createdAt)}
                 </span>
               </div>
             </CardContent>
 
-            <div
-              className="border-nx-line bg-nx-raised/40 flex items-center justify-between border-t px-6 py-3"
-              onClick={(e) => e.stopPropagation()}
-            >
+            <div className="border-nx-line bg-nx-raised/40 flex items-center justify-between border-t px-6 py-3">
               <div className="flex items-center gap-1">
                 <Button
+                  type="button"
                   variant="ghost"
                   size="sm"
                   onClick={() => onPreviewParty(party)}
                   className="gap-1 text-xs text-nx-ink-2 hover:text-nx-accent"
-                  title={t("party.directory.quickPreview")}
                 >
-                  <Eye className="h-3.5 w-3.5" />
+                  <Eye className="h-3.5 w-3.5" aria-hidden="true" />
                   <span>{t("party.directory.quickPreview")}</span>
                 </Button>
 
                 <Button
+                  type="button"
                   variant="ghost"
                   size="sm"
                   onClick={() => onNavigateToProfile(party.id)}
                   className="gap-1 text-xs text-nx-accent hover:text-nx-accent"
                 >
                   <span>{t("party.directory.viewProfile")}</span>
-                  <ArrowRight className="h-3.5 w-3.5 rtl:rotate-180" />
+                  <ArrowRight className="h-3.5 w-3.5 rtl:rotate-180" aria-hidden="true" />
                 </Button>
               </div>
 
               <div className="flex items-center gap-1">
                 {canEdit && (
                   <Button
+                    type="button"
                     variant="ghost"
                     size="icon"
                     className="h-7 w-7 text-nx-ink-3 hover:text-nx-ink"
                     onClick={() => onEditParty(party)}
+                    aria-label={`${t("party.editTitle")}: ${party.displayName}`}
                   >
-                    <Edit3 className="h-3.5 w-3.5" />
+                    <Edit3 className="h-3.5 w-3.5" aria-hidden="true" />
                   </Button>
                 )}
                 {canDelete && (
                   <Button
+                    type="button"
                     variant="ghost"
                     size="icon"
                     className="h-7 w-7 text-nx-ink-3 hover:text-destructive"
                     onClick={() => onDeleteParty(party)}
+                    aria-label={`${t("party.deleteTitle")}: ${party.displayName}`}
                   >
-                    <Trash2 className="h-3.5 w-3.5" />
+                    <Trash2 className="h-3.5 w-3.5" aria-hidden="true" />
                   </Button>
                 )}
               </div>

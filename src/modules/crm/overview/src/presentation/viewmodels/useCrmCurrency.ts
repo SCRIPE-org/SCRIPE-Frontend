@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useCallback } from "react";
+import { useEffect, useCallback, useMemo } from "react";
 import { formatPrice } from "@core/constants/currencies";
 import { useCurrencyPreference } from "@core/store/useCurrencyPreference";
 import { useCurrencyRates } from "@core/hooks/useCurrencyRates";
@@ -16,6 +16,7 @@ let ratesFetchedOnce = false;
 /** Hook uniting CRM Module Currency Settings with platform Core/Entitlements exchange rates and server settings. */
 export function useCrmCurrency() {
   const settings = useCrmSettingsStore();
+  const hydrateFromServer = useCrmSettingsStore((s) => s.hydrateFromServer);
   const { exchangeRates, lastRatesUpdate, setRates } = useCurrencyPreference();
   const { fetchRates } = useCurrencyRates();
 
@@ -25,14 +26,17 @@ export function useCrmCurrency() {
       ratesFetchedOnce = true;
       void fetchRates();
     }
-    if (!settings.isServerHydrated && !isTestEnv) void settings.hydrateFromServer();
-  }, [fetchRates, settings.isServerHydrated]);
+    if (!settings.isServerHydrated && !isTestEnv) void hydrateFromServer();
+  }, [fetchRates, settings.isServerHydrated, hydrateFromServer]);
 
-  const effectiveRates: Record<string, number> = {
-    ...CRM_FALLBACK_USD_RATES,
-    ...(exchangeRates ?? {}),
-    ...settings.customRateOverrides,
-  };
+  const effectiveRates = useMemo<Record<string, number>>(
+    () => ({
+      ...CRM_FALLBACK_USD_RATES,
+      ...(exchangeRates ?? {}),
+      ...settings.customRateOverrides,
+    }),
+    [exchangeRates, settings.customRateOverrides],
+  );
   const baseCurrency = (settings.baseCurrency || "SAR").toUpperCase();
 
   const convertAmount = useCallback(

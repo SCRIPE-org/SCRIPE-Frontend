@@ -33,6 +33,7 @@ export function EditionsView() {
       titleKey: "entitlements.editions.title",
       subtitleKey: "entitlements.editions.description",
       resource: "editions",
+      stickyActions: true,
       customActions: [
         {
           label: t("entitlements.editions.comparison.heroTitle"),
@@ -149,7 +150,7 @@ export function EditionsView() {
   return (
     <>
       {vm.allEditionsError && (
-        <div className="mb-4 flex items-center gap-2 rounded-nx-md border border-warning/30 bg-warning/10 px-4 py-3 text-sm text-warning">
+        <div className="mb-4 flex items-center gap-2 rounded-nx-md border border-warning/30 bg-warning/10 px-4 py-3 text-sm text-nx-warning-strong">
           <AlertCircle className="h-4 w-4 shrink-0" />
           <span>{t("entitlements.editions.allEditionsLoadError")}</span>
         </div>

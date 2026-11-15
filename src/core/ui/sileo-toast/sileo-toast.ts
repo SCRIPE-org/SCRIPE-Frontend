@@ -28,19 +28,62 @@ const DEFAULT_TOAST_DURATION = 4000;
  */
 const NEXUS_SILEO_STYLES = {
   title: "font-sans font-semibold tracking-tight text-[13px] text-nx-ink",
-  description: "font-sans text-[12px] leading-relaxed text-nx-ink-2! mt-0.5",
+  description: "font-sans text-[12px] leading-relaxed !text-nx-ink-2 mt-0.5",
   button:
-    "rounded-nx-control border border-nx-line-hi bg-nx-raised text-nx-ink font-medium text-xs px-2.5 py-1 hover:bg-nx-hover transition-colors!",
-  badge: "shadow-xs shrink-0",
+    "rounded-nx-control border border-nx-line-hi bg-nx-raised text-nx-ink font-medium text-xs px-2.5 py-1 hover:bg-nx-hover focus-visible:outline-none focus-visible:shadow-nx-focus !transition-colors motion-reduce:!transition-none",
+  badge: "border border-nx-line-hi shrink-0",
 };
 
 function getResolvedThemeFill(): string {
-  if (typeof document === "undefined") return "#0d0d0e";
+  if (typeof document === "undefined") return "#15181c";
   const isDark =
     document.documentElement.classList.contains("dark") ||
     document.body.classList.contains("dark") ||
     window.matchMedia("(prefers-color-scheme: dark)").matches;
-  return isDark ? "#0d0d0e" : "#ffffff";
+  return isDark ? "#15181c" : "#ffffff";
+}
+
+/**
+ * Restricts toast and notification action navigation targets to safe same-origin
+ * HTTP(S) URLs or root-relative paths, blocking dangerous schemes
+ * (`javascript:`, `data:`, `vbscript:`), scheme-without-slashes (`http:evil`),
+ * and protocol-relative (`//`) open redirects.
+ */
+export function resolveSafeActionHref(rawHref: unknown): string | null {
+  if (typeof rawHref !== "string") return null;
+  const trimmed = rawHref.trim();
+  if (
+    !trimmed ||
+    [...trimmed].some((ch) => {
+      const code = ch.charCodeAt(0);
+      return code < 32 || code === 127;
+    })
+  ) {
+    return null;
+  }
+  if (trimmed.startsWith("//") || trimmed.includes("\\")) return null;
+  if (/^[a-zA-Z][a-zA-Z0-9+.-]*:/.test(trimmed) && !/^https?:\/\//i.test(trimmed)) {
+    return null;
+  }
+
+  if (typeof window === "undefined") {
+    return trimmed.startsWith("/") || trimmed.startsWith("?") || trimmed.startsWith("#")
+      ? trimmed
+      : null;
+  }
+
+  try {
+    const parsed = new URL(trimmed, window.location.origin);
+    if (
+      (parsed.protocol === "http:" || parsed.protocol === "https:") &&
+      parsed.origin === window.location.origin
+    ) {
+      return parsed.href;
+    }
+    return null;
+  } catch {
+    return null;
+  }
 }
 
 function getDocumentDirection(): "ltr" | "rtl" {
@@ -175,12 +218,13 @@ function normalizeOptions(
       };
     } else if (typeof act === "object" && act !== null) {
       const title = act.title || act.label || "Action";
+      const safeHref = !act.onClick && act.href ? resolveSafeActionHref(act.href) : null;
       const onClick = act.onClick
         ? act.onClick
-        : act.href
+        : safeHref
           ? () => {
               if (typeof window !== "undefined") {
-                window.location.href = act.href;
+                window.location.href = safeHref;
               }
             }
           : () => {};

@@ -136,7 +136,7 @@ export function LeadsKanbanCardItem({
                 type="button"
                 variant="outline"
                 size="sm"
-                className="h-6 px-1.5 text-[10px] border-nx-accent/30 bg-nx-accent-wash/40 text-nx-accent hover:bg-nx-accent-wash gap-1 font-semibold"
+                className="h-6 px-1.5 text-[10px] border-nx-accent/30 bg-nx-accent-wash text-nx-accent hover:brightness-95 gap-1 font-semibold"
                 title={t("crmLeads.actions.convert")}
                 onPointerDown={(e) => e.stopPropagation()}
                 onClick={(e) => {

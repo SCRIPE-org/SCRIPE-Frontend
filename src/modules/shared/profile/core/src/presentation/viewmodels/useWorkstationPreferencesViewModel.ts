@@ -11,9 +11,18 @@
  */
 import { useState, useEffect, useRef, useCallback } from "react";
 import { useTheme } from "next-themes";
+import { useQueryClient } from "@tanstack/react-query";
 import { useI18n } from "@core/providers/i18n-provider";
 import { useAppStore } from "@core/store/useAppStore";
-import { useAccountPreferencesSliceViewModel } from "./useSovereignAccountSlicesViewModel";
+import { toast } from "@core/ui/sileo-toast";
+import {
+  sovereignAccountKeys,
+  useAccountPreferencesSliceViewModel,
+} from "./useSovereignAccountSlicesViewModel";
+import {
+  invalidateOnConcurrencyConflict,
+  resolveProfileSaveErrorMessage,
+} from "../utils/concurrency";
 
 export type AccentHue = "signal-lime" | "electric-emerald" | "ocean-blue" | "amber-gold";
 export type UiDensity = "comfortable" | "compact";
@@ -51,16 +60,21 @@ export const ACCENT_PALETTES: Array<{ id: AccentHue; label: string; hex: string 
 
 export function useWorkstationPreferencesViewModel() {
   const { theme, setTheme: setNextTheme, resolvedTheme } = useTheme();
-  const { language, setLanguage: setI18nLanguage, direction } = useI18n();
+  const { language, setLanguage: setI18nLanguage, direction, t } = useI18n();
+  const queryClient = useQueryClient();
   const setAppStoreDensity = useAppStore((s) => s.setDensity);
   const { preferences, updatePreferences } = useAccountPreferencesSliceViewModel();
+  const [persistError, setPersistError] = useState<string | null>(null);
+  const currentRowVersion = preferences?.rowVersion;
   const isRtl = direction === "rtl";
   const hasHydratedFromDbRef = useRef(false);
 
   const [accent, setAccentState] = useState<AccentHue>(() => {
     if (typeof window !== "undefined") {
-      const stored = localStorage.getItem("scr_pref_accent") as AccentHue | null;
-      if (stored) return stored;
+      const stored = localStorage.getItem("scr_pref_accent");
+      if (stored && ACCENT_PALETTES.some((palette) => palette.id === stored)) {
+        return stored as AccentHue;
+      }
     }
     return "signal-lime";
   });
@@ -153,11 +167,26 @@ export function useWorkstationPreferencesViewModel() {
       operatingTimezone?: string;
       toastPosition?: string;
     }) => {
-      updatePreferences(patch).catch(() => {
-        // Optimistic local + Zustand update still succeeds if offline
+      setPersistError(null);
+      updatePreferences({
+        ...patch,
+        rowVersion: currentRowVersion,
+      }).catch((error: unknown) => {
+        const isConflict = invalidateOnConcurrencyConflict(
+          queryClient,
+          sovereignAccountKeys.preferences(),
+          error
+        );
+        const message = resolveProfileSaveErrorMessage(error, t);
+        setPersistError(message);
+        if (isConflict) {
+          toast.warning(message);
+        } else {
+          toast.error(message);
+        }
       });
     },
-    [updatePreferences]
+    [updatePreferences, currentRowVersion, queryClient, t]
   );
 
   const setTheme = (newTheme: string) => {
@@ -239,5 +268,8 @@ export function useWorkstationPreferencesViewModel() {
     // Toast Viewport Position
     toastPosition,
     setToastPosition,
+
+    // Persistence Error / Conflict State
+    persistError,
   };
 }

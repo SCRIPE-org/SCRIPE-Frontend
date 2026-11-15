@@ -21,10 +21,10 @@ export function PlatformRecommendedActions({
   return (
     <Card className="flex h-[280px] flex-col overflow-hidden border-nx-line bg-nx-surface p-0 text-nx-ink hover:border-nx-line-hi">
       {/* Header */}
-      <div className="flex h-[58px] items-center justify-between border-b border-nx-line bg-nx-raised/40 px-4 py-3">
+      <div className="flex h-[58px] items-center justify-between border-b border-nx-line bg-nx-raised px-4 py-3">
         <div className="flex items-center gap-2.5">
-          <div className="flex h-8 w-8 items-center justify-center rounded-lg border border-primary/20 bg-primary/10 text-primary">
-            <Zap className="h-4 w-4" />
+          <div className="flex h-8 w-8 items-center justify-center rounded-lg border border-nx-line-hi bg-nx-accent-wash text-nx-accent">
+            <Zap className="h-4 w-4" aria-hidden="true" />
           </div>
           <div>
             <h3 className="text-sm font-bold tracking-tight text-nx-ink">
@@ -39,10 +39,10 @@ export function PlatformRecommendedActions({
 
         <Link
           href="/overview"
-          className="group flex items-center gap-1 text-xs font-semibold text-nx-ink-3 transition-colors hover:text-primary"
+          className="group flex items-center gap-1 text-xs font-semibold text-nx-ink-3 transition-colors hover:text-nx-accent"
         >
           <span>{t("platformCommandCenter.recommendedActions.viewAll") || "View all"}</span>
-          <ChevronRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5" />
+          <ChevronRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5 rtl:rotate-180 rtl:group-hover:-translate-x-0.5" aria-hidden="true" />
         </Link>
       </div>
 
@@ -82,7 +82,7 @@ export function PlatformRecommendedActions({
 
                 <Link
                   href={action.href}
-                  className="shrink-0 rounded-md border border-nx-line bg-nx-raised/60 px-2.5 py-1 text-[10px] font-semibold text-nx-ink transition-colors hover:border-nx-line-hi hover:bg-nx-raised hover:text-primary"
+                  className="shrink-0 rounded-md border border-nx-line bg-nx-raised px-2.5 py-1 text-[10px] font-semibold text-nx-ink transition-colors hover:border-nx-line-hi hover:bg-nx-hover hover:text-nx-accent"
                 >
                   {action.buttonLabel}
                 </Link>

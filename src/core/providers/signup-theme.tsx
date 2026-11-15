@@ -1,27 +1,33 @@
 "use client";
 
+import { useSyncExternalStore } from "react";
 import { useTheme } from "next-themes";
 import { DARK_THEME, LIGHT_THEME, type ThemeTokens } from "@core/ui/tokens/brand";
+
+const emptySubscribe = () => () => {};
+const getClientMounted = () => true;
+const getServerMounted = () => false;
 
 /**
  * Signup-scoped theme hook.
  *
  * Reads from the global next-themes context (already provided by AppProvider →
- * theme-provider.tsx) and returns typed Aurora Refined token sets for the signup
- * wizard. No second context is created — this is a zero-overhead adapter.
- *
- * NOTE: This is intentionally separate from theme-provider.tsx.
- *   theme-provider.tsx  — wraps next-themes; used in AppProvider (global)
- *   signup-theme.tsx    — hook adapter returning typed Aurora tokens; used in signup wizard only
+ * theme-provider.tsx) and returns typed Relay vNext token sets for the signup
+ * wizard. Delays resolved-theme branching until after mount via
+ * useSyncExternalStore so SSR HTML and initial client hydration always match
+ * cleanly without a mismatch warning or set-state-in-effect churn.
  */
 export function useSignupTheme() {
   const { resolvedTheme, setTheme } = useTheme();
-  const isDark = resolvedTheme !== "light";
+  const mounted = useSyncExternalStore(emptySubscribe, getClientMounted, getServerMounted);
+
+  const isDark = mounted ? resolvedTheme !== "light" : true;
   const tokens: ThemeTokens = isDark ? DARK_THEME : LIGHT_THEME;
 
   return {
     theme: isDark ? ("dark" as const) : ("light" as const),
     tokens,
+    mounted,
     toggleTheme: () => setTheme(isDark ? "light" : "dark"),
   };
 }

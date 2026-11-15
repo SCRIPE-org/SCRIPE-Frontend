@@ -1,58 +1,22 @@
 import type {
+  CalendarBlockStatus,
   CalendarResource,
   OperationsCalendarBlock,
   OperationsCalendarDay,
-  ReservationStatus,
 } from "../../domain/entities/OperationsCalendar";
+import type {
+  CalendarResourceDto,
+  OperationsCalendarBlockDto,
+  OperationsCalendarClosureDto,
+  OperationsCalendarDayDto,
+} from "../models";
 
-export interface OperationsCalendarDayDto {
-  dateLocal?: string | null;
-  timeZoneId?: string | null;
-  fromUtc?: string | null;
-  toUtc?: string | null;
-  asOfUtc?: string | null;
-  isTruncated?: boolean | null;
-  blocks?: OperationsCalendarBlockDto[] | null;
-  closures?: OperationsCalendarClosureDto[] | null;
-}
-
-export interface OperationsCalendarBlockDto {
-  reservationId?: string | null;
-  reservationNumber?: string | null;
-  resourceId?: string | null;
-  status?: string | null;
-  startUtc?: string | null;
-  endUtc?: string | null;
-  quantity?: number | null;
-  customerPartyId?: string | null;
-  holdExpiresAtUtc?: string | null;
-}
-
-export interface OperationsCalendarClosureDto {
-  resourceId?: string | null;
-  startUtc?: string | null;
-  endUtc?: string | null;
-  reason?: string | null;
-  closureType?: string | null;
-}
-
-export interface CalendarResourceDto {
-  id?: string | null;
-  name?: string | null;
-  profileId?: string | null;
-  profileName?: string | null;
-  facilityId?: string | null;
-  facilityName?: string | null;
-  resourceKindCode?: string | null;
-  timeZoneId?: string | null;
-  slotPolicy?: {
-    slotDurationMinutes?: number | null;
-    startIncrementMinutes?: number | null;
-    timeZoneId?: string | null;
-    allowMultiSlot?: boolean | null;
-  } | null;
-  priceEffectiveFromUtc?: string | null;
-}
+export type {
+  CalendarResourceDto,
+  OperationsCalendarBlockDto,
+  OperationsCalendarClosureDto,
+  OperationsCalendarDayDto,
+} from "../models";
 
 /**
  * Robust mapper for Operations Calendar responses with null-coalescing defaults.
@@ -63,7 +27,7 @@ export class OperationsCalendarMapper {
       reservationId: dto.reservationId ?? "",
       reservationNumber: dto.reservationNumber ?? "",
       resourceId: dto.resourceId ?? "",
-      status: (dto.status ?? "Confirmed") as ReservationStatus,
+      status: (dto.status ?? "Confirmed") as CalendarBlockStatus,
       startUtc: dto.startUtc ?? "",
       endUtc: dto.endUtc ?? "",
       quantity: dto.quantity ?? 1,
@@ -82,7 +46,7 @@ export class OperationsCalendarMapper {
         ? `⊘ ${closure.reason}`
         : `⊘ ${closure.closureType || "Closure"}`,
       resourceId,
-      status: (isMaintenance ? "Maintenance" : "Unavailable") as unknown as ReservationStatus,
+      status: isMaintenance ? "Maintenance" : "Unavailable",
       startUtc,
       endUtc: closure.endUtc ?? "",
       quantity: 1,

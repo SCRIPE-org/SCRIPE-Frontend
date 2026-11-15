@@ -57,7 +57,7 @@ export function VerificationStep({ wizard }: VerificationStepProps) {
   );
 
   const slotBase =
-    "relative flex h-14 w-12 items-center justify-center rounded-xl border text-[1.375rem] font-semibold transition-all duration-150 first:rounded-l-xl last:rounded-r-xl";
+    "relative flex h-14 w-12 items-center justify-center rounded-xl border text-[1.375rem] font-semibold transition-all duration-150 first:rounded-s-xl last:rounded-e-xl";
 
   return (
     <div className="mx-auto w-full max-w-md flex-1 px-5 py-10 sm:px-8 sm:py-14" dir={direction}>
@@ -164,7 +164,6 @@ export function VerificationStep({ wizard }: VerificationStepProps) {
         style={{
           background: tokens.gradientCta,
           color: tokens.accentContrast,
-          boxShadow: tokens.shadowCard,
         }}
       >
         {isSubmitting ? (

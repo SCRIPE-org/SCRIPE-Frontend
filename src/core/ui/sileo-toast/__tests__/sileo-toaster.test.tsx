@@ -32,7 +32,7 @@ describe("SileoToaster — Component Viewport", () => {
       expect.objectContaining({
         position: "top-right",
         options: expect.objectContaining({
-          fill: "#0d0d0e",
+          fill: "#15181c",
           roundness: 16,
           autopilot: true,
         }),

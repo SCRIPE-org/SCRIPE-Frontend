@@ -118,7 +118,7 @@ export function SetupAccountView() {
         </div>
 
         {/* Right Active Stepper Workstation (Desktop lg:col-span-7, Mobile full width) */}
-        <Card className="flex w-full flex-col justify-between overflow-hidden rounded-3xl border border-border bg-card shadow-lg lg:col-span-7">
+        <Card className="flex w-full flex-col justify-between overflow-hidden rounded-3xl border border-nx-line bg-nx-surface lg:col-span-7">
           <div>
             <CardHeader className="space-y-4 pb-4">
               {/* Mobile / Tablet Stepper Header (< lg) */}
@@ -164,7 +164,7 @@ export function SetupAccountView() {
 
               {/* Expiration Note */}
               {vm.tokenData?.expiresAt && (
-                <p className="pt-2 text-center text-[11px] text-muted-foreground/70">
+                <p className="pt-2 text-center text-[11px] text-nx-ink-3">
                   {t("auth.accountSetup.expiresOn")} {formatDateTimeUtc(vm.tokenData.expiresAt)}
                 </p>
               )}

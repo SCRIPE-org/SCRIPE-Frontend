@@ -4,7 +4,7 @@ import { useCallback, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useI18n } from "@core/providers/i18n-provider";
 import { useAppStore } from "@core/store/useAppStore";
-import { isTenantRequiredError } from "@core/data-exchange";
+import { isTenantRequiredError } from "@core/data-exchange/domain/tenant-errors";
 import { getDataTransferContainer } from "../../../../di";
 import type { DataExchangeEntity } from "../../domain/entities/DataExchangeEntity";
 
@@ -19,7 +19,7 @@ export function useEntitiesViewModel() {
 
   const [search, setSearchState] = useState("");
   const [selectedModule, setSelectedModuleState] = useState<string>("all");
-  const [page, setPage] = useState(1);
+  const [page, setPageState] = useState(1);
   const [pageSize, setPageSizeState] = useState(10);
   const [activeStudioEntity, setActiveStudioEntity] = useState<string | null>(null);
   const [activeExportEntity, setActiveExportEntity] = useState<string | null>(null);
@@ -28,18 +28,23 @@ export function useEntitiesViewModel() {
 
   const setSearch = useCallback((val: string) => {
     setSearchState(val);
-    setPage(1);
+    setPageState(1);
   }, []);
 
   const setSelectedModule = useCallback((val: string) => {
     setSelectedModuleState(val);
-    setPage(1);
+    setPageState(1);
+  }, []);
+
+  const setPage = useCallback((nextPage: number) => {
+    const valid = Number.isFinite(nextPage) && nextPage >= 1 ? Math.floor(nextPage) : 1;
+    setPageState(valid);
   }, []);
 
   const setPageSize = useCallback((nextSize: number) => {
     const valid = Number.isFinite(nextSize) && nextSize > 0 ? Math.floor(nextSize) : 10;
     setPageSizeState(valid);
-    setPage(1);
+    setPageState(1);
   }, []);
 
   const query = useQuery({
@@ -72,10 +77,12 @@ export function useEntitiesViewModel() {
     );
   });
 
-  const safePageSize = Math.max(1, Number.isFinite(pageSize) ? pageSize : 10);
-  const totalCount = filteredEntities.length;
+  const safePageSize = Math.max(1, Number.isFinite(pageSize) ? Math.floor(pageSize) : 10);
+  const totalCount = Number.isFinite(filteredEntities.length)
+    ? Math.max(0, filteredEntities.length)
+    : 0;
   const pagesCount = Math.max(1, Math.ceil(totalCount / safePageSize));
-  const safePage = Math.min(Math.max(1, Number.isFinite(page) ? page : 1), pagesCount);
+  const safePage = Math.min(Math.max(1, Number.isFinite(page) ? Math.floor(page) : 1), pagesCount);
 
   const start = (safePage - 1) * safePageSize;
   const pagedEntities = filteredEntities.slice(start, start + safePageSize);
@@ -138,6 +145,7 @@ export function useEntitiesViewModel() {
     totalPages: pagesCount,
     pagination: {
       page: safePage,
+      currentPage: safePage,
       pageNumber: safePage,
       pageSize: safePageSize,
       itemsCount: totalCount,

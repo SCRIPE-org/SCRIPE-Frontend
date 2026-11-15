@@ -66,7 +66,15 @@ export function CrmWorkflowTransitionRulesSection({
               </span>
               {openSection === cat.id ? <ChevronDown className="w-3.5 h-3.5" /> : <ChevronRight className="w-3.5 h-3.5" />}
             </Button>
-            <Button size="icon" variant="ghost" className="h-6 w-6" onClick={() => onOpenCatalogForCategory(cat.id)} data-testid={`open-rule-catalog-${cat.id}`}>
+            <Button
+              type="button"
+              size="icon"
+              variant="ghost"
+              className="h-6 w-6"
+              onClick={() => onOpenCatalogForCategory(cat.id)}
+              data-testid={`open-rule-catalog-${cat.id}`}
+              aria-label={`${t("crmOpportunities.pipelinesPage.addRuleInCategoryLabel")}: ${t(cat.titleKey)}`}
+            >
               <Plus className="w-3 h-3" />
             </Button>
           </div>
@@ -145,11 +153,13 @@ export function CrmWorkflowTransitionRulesSection({
                         )}
                       </div>
                       <Button
+                        type="button"
                         size="icon"
                         variant="ghost"
                         className="h-5 w-5 text-destructive shrink-0"
                         onClick={() => onRemoveCatalogRule(r.id)}
                         data-testid={`remove-catalog-rule-${r.id}`}
+                        aria-label={`${t("crmOpportunities.pipelinesPage.removeRuleLabel")}: ${isAr ? r.titleAr : r.titleEn}`}
                       >
                         <X className="w-3 h-3" />
                       </Button>

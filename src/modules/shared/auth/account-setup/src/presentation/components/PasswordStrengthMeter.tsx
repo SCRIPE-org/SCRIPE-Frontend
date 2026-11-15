@@ -26,7 +26,7 @@ export function PasswordStrengthMeter({ score, entropyBits }: PasswordStrengthMe
         level: 1,
         label: t("auth.accountSetup.weak") || "Weak",
         color: "bg-destructive",
-        text: "text-destructive",
+        text: "text-nx-danger",
       };
     }
     if (score < 65) {
@@ -34,7 +34,7 @@ export function PasswordStrengthMeter({ score, entropyBits }: PasswordStrengthMe
         level: 2,
         label: t("auth.accountSetup.medium") || "Fair",
         color: "bg-warning",
-        text: "text-warning",
+        text: "text-nx-warning-strong",
       };
     }
     if (score < 85) {
@@ -42,14 +42,14 @@ export function PasswordStrengthMeter({ score, entropyBits }: PasswordStrengthMe
         level: 3,
         label: t("auth.accountSetup.strong") || "Strong",
         color: "bg-success",
-        text: "text-success",
+        text: "text-nx-success",
       };
     }
     return {
       level: 4,
       label: "Enterprise-Grade",
       color: "bg-info",
-      text: "text-info",
+      text: "text-nx-info",
     };
   };
 
@@ -57,20 +57,20 @@ export function PasswordStrengthMeter({ score, entropyBits }: PasswordStrengthMe
 
   return (
     <div
-      className="space-y-2 rounded-xl border border-border/40 bg-muted/20 p-3"
+      className="space-y-2 rounded-xl border border-nx-line bg-nx-raised p-3"
       role="region"
       aria-label="Password Security Meter"
     >
       <div className="flex items-center justify-between text-xs">
         <div className="flex items-center gap-1.5">
           <ShieldCheck className={cn("h-3.5 w-3.5", tier.text)} aria-hidden="true" />
-          <span className="font-medium text-muted-foreground">
+          <span className="font-medium text-nx-ink-2">
             {t("auth.accountSetup.passwordStrength") || "Password Security"}
           </span>
         </div>
         <div className="flex items-center gap-2">
           {entropyBits !== undefined && entropyBits > 0 && (
-            <span className="font-mono text-[10px] text-muted-foreground/80">
+            <span className="font-mono text-[10px] text-nx-ink-2">
               ~{Math.round(entropyBits)} bits
             </span>
           )}
@@ -99,7 +99,7 @@ export function PasswordStrengthMeter({ score, entropyBits }: PasswordStrengthMe
               key={seg}
               className={cn(
                 "h-full rounded-full transition-all duration-300",
-                isActive ? tier.color : "bg-muted"
+                isActive ? tier.color : "bg-nx-line"
               )}
             />
           );

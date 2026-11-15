@@ -19,12 +19,12 @@ import {
 } from "@dnd-kit/core";
 import { sortableKeyboardCoordinates } from "@dnd-kit/sortable";
 import { Card } from "@core/ui/card";
-import { Badge } from "@core/ui/badge";
 import { Button } from "@core/ui/button";
 import { Alert, AlertDescription } from "@core/ui/alert";
+import { EmptyState } from "@core/ui/empty-state";
 import { useCrudI18n } from "../hooks/useCrudI18n";
 import { cn } from "@core/common/utils";
-import { AlertCircle, X, SlidersHorizontal } from "lucide-react";
+import { AlertCircle, X, SlidersHorizontal, Inbox } from "lucide-react";
 import { KanbanStageColumn } from "./KanbanStageColumn";
 import { KanbanSwimlaneSection } from "./KanbanSwimlaneSection";
 import type {
@@ -40,6 +40,7 @@ export interface GenericWorkflowKanbanProps<TItem = any> {
   renderRowActionButtons?: (item: TItem) => React.ReactNode;
   columns?: CrudColumn<TItem>[];
   className?: string;
+  emptyState?: React.ReactNode;
   emptyLabel?: string;
 }
 
@@ -49,9 +50,10 @@ export function GenericWorkflowKanban<TItem = any>({
   renderRowActionButtons,
   columns,
   className,
+  emptyState,
   emptyLabel,
 }: GenericWorkflowKanbanProps<TItem>) {
-  const { t } = useCrudI18n();
+  const { t, direction } = useCrudI18n();
   const resolvedEmptyLabel = emptyLabel || t("crud.kanban.noItems", { defaultValue: "No items" });
   const {
     stages,
@@ -278,41 +280,41 @@ export function GenericWorkflowKanban<TItem = any>({
   const activeError = errorMessage || localError;
 
   return (
-    <div className={cn("flex flex-col gap-3 w-full", className)}>
+    <div dir={direction} className={cn("flex flex-col gap-3 w-full", className)}>
       {/* Error / Validation Banner */}
       {activeError && (
         <Alert variant="destructive" className="flex items-center justify-between p-3">
           <div className="flex items-center gap-2">
-            <AlertCircle className="size-4 shrink-0" />
+            <AlertCircle className="size-4 shrink-0" aria-hidden="true" />
             <AlertDescription className="text-sm font-medium">{activeError}</AlertDescription>
           </div>
           <Button
             type="button"
             variant="ghost"
             size="icon"
-            className="size-6 p-0 hover:bg-destructive/20"
+            className="h-8 w-8 p-0 hover:bg-nx-danger/20"
             onClick={() => {
               setLocalError(null);
               onDismissError?.();
             }}
-            aria-label="Dismiss error"
+            aria-label={t("crud.kanban.dismissError", { defaultValue: "Dismiss error" })}
           >
-            <X className="size-4" />
+            <X className="size-4" aria-hidden="true" />
           </Button>
         </Alert>
       )}
 
       {/* Kanban Sub-Toolbar (Density & Stage count) */}
-      <div className="flex items-center justify-between text-xs text-nx-ink-3 px-1 select-none">
+      <div className="flex flex-wrap items-center justify-between gap-2 text-xs text-nx-ink-3 px-1 select-none">
         <div className="flex items-center gap-2">
-          <span>
+          <span className="tabular-nums">
             {stages.length}{" "}
             {stages.length === 1
               ? t("crud.kanban.stage", { defaultValue: "Stage" })
               : t("crud.kanban.stages", { defaultValue: "Stages" })}
           </span>
-          <span>•</span>
-          <span>
+          <span aria-hidden="true">•</span>
+          <span className="tabular-nums">
             {items.length}{" "}
             {items.length === 1
               ? t("crud.kanban.card", { defaultValue: "Card" })
@@ -320,9 +322,12 @@ export function GenericWorkflowKanban<TItem = any>({
           </span>
         </div>
 
-        <div className="flex items-center gap-1.5">
-          <SlidersHorizontal className="size-3.5 text-nx-ink-3" />
-          <span className="text-[11px] font-medium text-nx-ink-3">
+        <fieldset
+          className="m-0 min-w-0 flex items-center gap-1 border-0 p-0"
+          aria-label={t("crud.kanban.density", { defaultValue: "Density" })}
+        >
+          <SlidersHorizontal className="size-3.5 text-nx-ink-3" aria-hidden="true" />
+          <span className="text-[11px] font-medium text-nx-ink-3 me-0.5">
             {t("crud.kanban.density", { defaultValue: "Density:" })}
           </span>
           {(["compact", "standard", "comfortable"] as CardDensity[]).map((d) => (
@@ -331,8 +336,9 @@ export function GenericWorkflowKanban<TItem = any>({
               type="button"
               variant={currentDensity === d ? "secondary" : "ghost"}
               size="sm"
+              aria-pressed={currentDensity === d}
               className={cn(
-                "h-6 px-2 text-[11px] capitalize",
+                "h-8 px-2.5 text-[11px] capitalize",
                 currentDensity === d && "font-semibold text-nx-ink border border-nx-line"
               )}
               onClick={() => setCurrentDensity(d)}
@@ -340,8 +346,14 @@ export function GenericWorkflowKanban<TItem = any>({
               {t(`crud.kanban.density_${d}`, { defaultValue: d })}
             </Button>
           ))}
-        </div>
+        </fieldset>
       </div>
+
+      {items.length === 0 && emptyState && (
+        <div className="rounded-nx-lg border border-nx-line bg-nx-surface p-6">
+          {emptyState}
+        </div>
+      )}
 
       {/* Dnd Board Area */}
       <DndContext
@@ -352,7 +364,11 @@ export function GenericWorkflowKanban<TItem = any>({
         onDragEnd={handleDragEnd}
         onDragCancel={handleDragCancel}
       >
-        {swimlaneMode !== "none" && computedSwimlanes.length > 0 ? (
+        {stages.length === 0 ? (
+          <div className="rounded-nx-lg border border-nx-line bg-nx-surface p-8">
+            {emptyState || <EmptyState bare icon={Inbox} title={resolvedEmptyLabel} />}
+          </div>
+        ) : swimlaneMode !== "none" && computedSwimlanes.length > 0 ? (
           <div className="flex flex-col gap-4">
             {computedSwimlanes.map((swimlane) => {
               const swimlaneItems = swimlane.filter
@@ -418,11 +434,11 @@ export function GenericWorkflowKanban<TItem = any>({
                     className="pointer-events-none w-[288px] cursor-grabbing opacity-95 ring-2 ring-nx-accent rounded-xl select-none"
                   >
                     {renderCard ? (
-                      <div className="rounded-nx-md border border-nx-accent bg-nx-surface p-3 shadow-xl ring-1 ring-nx-accent/40 rotate-[1.5deg] scale-[1.02]">
+                      <div className="rounded-nx-md border border-nx-accent bg-nx-surface p-3 shadow-nx-modal ring-1 ring-nx-accent/40 rotate-[1.5deg] scale-[1.02]">
                         {renderCard(activeItem, null, 0)}
                       </div>
                     ) : (
-                      <Card className="flex flex-col justify-between rounded-nx-md border border-nx-accent bg-nx-surface p-3 shadow-xl ring-1 ring-nx-accent/40 rotate-[1.5deg] scale-[1.02]">
+                      <Card className="flex flex-col justify-between rounded-nx-md border border-nx-accent bg-nx-surface p-3 shadow-nx-modal ring-1 ring-nx-accent/40 rotate-[1.5deg] scale-[1.02]">
                         <div className="space-y-1.5">
                           <span className="font-semibold text-nx-ink text-sm truncate">
                             {getItemDisplayName?.(activeItem) ||

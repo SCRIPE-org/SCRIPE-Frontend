@@ -75,7 +75,7 @@ export function FieldVersionDraftCard({
           </div>
         </div>
 
-        <p className="text-xs text-warning">
+        <p className="text-xs text-nx-warning-strong">
           {t("customField.versions.draftNotice", {
             defaultValue:
               "This draft is a snapshot from when it was created. It will not pick up any edits made to the live version while it stays open. Publishing replaces the live version with this draft, discarding any live edits made in the meantime.",

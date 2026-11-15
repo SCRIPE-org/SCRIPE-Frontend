@@ -300,6 +300,7 @@ export const CustomFieldListView = React.memo(function CustomFieldListView() {
       titleKey: "customField.title",
       subtitleKey: "customField.description",
       resource: "custom-fields",
+      stickyActions: true,
       customHeaderContent: (
         <div className="flex flex-col gap-3">
           <div className="flex flex-wrap gap-2">

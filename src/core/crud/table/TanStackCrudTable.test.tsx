@@ -1,6 +1,7 @@
 import React from "react";
 import { describe, it, expect, vi } from "vitest";
 import { render, screen, fireEvent } from "@testing-library/react";
+import "@testing-library/jest-dom/vitest";
 import { TanStackCrudTable } from "./TanStackCrudTable";
 import type { CrudColumn } from "../components/generic-crud-view";
 
@@ -86,5 +87,49 @@ describe("TanStackCrudTable", () => {
     expect(screen.getByTestId("action-1")).toBeInTheDocument();
     expect(screen.getByTestId("action-2")).toBeInTheDocument();
     expect(screen.getByTestId("action-3")).toBeInTheDocument();
+  });
+
+  it("sets sticky thead, dynamic aria-sort, and tabular-nums on numeric cells", () => {
+    const numericCols: CrudColumn<{ id: string; name: string; count: number }>[] = [
+      { key: "name", label: "Name", sortable: true },
+      { key: "count", label: "Count", sortable: false },
+    ];
+    const numericData = [
+      { id: "1", name: "Alpha", count: 42 },
+      { id: "2", name: "Beta", count: 99 },
+    ];
+
+    const { rerender, container } = render(
+      <TanStackCrudTable
+        data={numericData}
+        columns={numericCols}
+        sortColumn="name"
+        sortDirection="asc"
+      />
+    );
+
+    const thead = container.querySelector("thead");
+    expect(thead).toHaveClass("sticky", "top-0");
+
+    const nameHeader = screen.getByRole("columnheader", { name: /name/i });
+    const countHeader = screen.getByRole("columnheader", { name: /count/i });
+    expect(nameHeader).toHaveAttribute("aria-sort", "ascending");
+    expect(countHeader).not.toHaveAttribute("aria-sort");
+
+    const countCell = screen.getByText("42").closest("td");
+    expect(countCell).toHaveClass("tabular-nums");
+
+    rerender(
+      <TanStackCrudTable
+        data={numericData}
+        columns={numericCols}
+        sortColumn="name"
+        sortDirection="desc"
+      />
+    );
+    expect(screen.getByRole("columnheader", { name: /name/i })).toHaveAttribute(
+      "aria-sort",
+      "descending"
+    );
   });
 });

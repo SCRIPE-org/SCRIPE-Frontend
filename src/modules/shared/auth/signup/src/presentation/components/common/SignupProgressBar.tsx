@@ -104,7 +104,11 @@ export function SignupProgressBar({ phase }: SignupProgressBarProps) {
                     // Current step is the one committed Lime signal; completed
                     // steps get a structural (ink) confirmation, not the same
                     // glow — DESIGN.md: "do not make every completed step glow".
-                    background: active ? tokens.accent : done ? tokens.ink : tokens.surfaceRaised,
+                    background: active
+                      ? tokens.gradientCta
+                      : done
+                        ? tokens.ink
+                        : tokens.surfaceRaised,
                     border: active
                       ? `1px solid ${tokens.accent}`
                       : done

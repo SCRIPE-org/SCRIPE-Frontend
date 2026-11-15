@@ -11,6 +11,7 @@ import type { DataExchangePreset } from "../../domain/entities/DataExchangePrese
 export interface DeletePresetDialogProps {
   open: boolean;
   preset: DataExchangePreset | null;
+  entityDisplayName?: string;
   isDeleting: boolean;
   onClose: () => void;
   onConfirm: () => Promise<void>;
@@ -23,6 +24,7 @@ export interface DeletePresetDialogProps {
 export function DeletePresetDialog({
   open,
   preset,
+  entityDisplayName,
   isDeleting,
   onClose,
   onConfirm,
@@ -40,7 +42,7 @@ export function DeletePresetDialog({
       title={t("adminDataTransferPresets.deleteDialog.title")}
       description={t("adminDataTransferPresets.deleteDialog.description", {
         name: preset?.name ?? "",
-        entityKey: preset?.entityKey ?? "",
+        entityKey: entityDisplayName || preset?.entityKey || "",
       })}
       cancelText={t("common.cancel", { defaultValue: "Cancel" })}
       confirmText={
@@ -49,7 +51,7 @@ export function DeletePresetDialog({
           : t("adminDataTransferPresets.deleteDialog.confirm")
       }
       dir={direction}
-      className="max-w-md border border-nx-line bg-nx-surface text-nx-ink shadow-nx-modal"
+      className="max-w-md border border-nx-line bg-nx-surface text-nx-ink"
       data-testid="delete-preset-dialog"
       cancelButtonProps={{
         "data-testid": "delete-preset-cancel-btn",
@@ -57,6 +59,17 @@ export function DeletePresetDialog({
       confirmButtonProps={{
         "data-testid": "delete-preset-confirm-btn",
       }}
-    />
+    >
+      {preset && (
+        <div className="flex flex-wrap items-center gap-2 pt-1">
+          <code
+            dir="ltr"
+            className="rounded-sm border border-nx-line bg-nx-raised px-1.5 py-0.5 font-mono text-[11px] text-nx-ink-2"
+          >
+            {preset.entityKey}
+          </code>
+        </div>
+      )}
+    </ConfirmationDialog>
   );
 }

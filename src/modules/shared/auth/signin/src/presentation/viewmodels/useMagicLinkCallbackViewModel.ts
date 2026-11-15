@@ -36,6 +36,7 @@ import { useI18n } from "@core/providers/i18n-provider";
 import { useAppStore } from "@core/store/useAppStore";
 import { authContainer } from "@modules/auth/di";
 import type { WorkspaceChoice } from "@modules/auth/core/domain/errors/AuthErrors";
+import { getSafeRedirectPath } from "../utils/redirect-safety";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -127,7 +128,9 @@ export function useMagicLinkCallbackViewModel(): UseMagicLinkCallbackViewModelRe
             );
             useAppStore.getState().setMustChangePassword(response.mustChangePassword ?? false);
             router.replace(
-              response.mustChangePassword ? "/change-password" : response.defaultRedirectPath || "/"
+              response.mustChangePassword
+                ? "/change-password"
+                : getSafeRedirectPath(response.defaultRedirectPath, "/")
             );
           }, 1200);
         } else {
@@ -174,7 +177,9 @@ export function useMagicLinkCallbackViewModel(): UseMagicLinkCallbackViewModelRe
         setState("success");
         setTimeout(() => {
           router.replace(
-            response.mustChangePassword ? "/change-password" : response.defaultRedirectPath || "/"
+            response.mustChangePassword
+              ? "/change-password"
+              : getSafeRedirectPath(response.defaultRedirectPath, "/")
           );
         }, 600);
       } catch (err) {

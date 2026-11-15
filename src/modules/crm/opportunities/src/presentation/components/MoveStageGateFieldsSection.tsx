@@ -111,7 +111,7 @@ export function MoveStageGateFieldsSection({
         </div>
         <div className="flex justify-between">
           <span className="text-nx-ink-3">{t("crmOpportunities.table.party")}:</span>
-          <span className={effectivePartyId ? "text-success font-medium" : "text-warning font-medium"}>
+          <span className={effectivePartyId ? "text-success font-medium" : "text-nx-warning-strong font-medium"}>
             {effectivePartyId ? t("crmOpportunities.kanban.partyVerified") : t("crmOpportunities.kanban.partyUnlinked")}
           </span>
         </div>
@@ -132,7 +132,7 @@ export function MoveStageGateFieldsSection({
       </div>
 
       {needsPartyInput && (
-        <div className="space-y-2 rounded-nx-md border border-nx-accent/30 bg-nx-accent-wash/30 p-3">
+        <div className="space-y-2 rounded-nx-md border border-nx-accent/30 bg-nx-accent-wash p-3">
           <Label className="text-xs font-semibold text-nx-ink flex items-center gap-1.5">
             <Building2 className="size-3.5 text-nx-accent" />
             <span>{t("crmOpportunities.dialogs.create.partyIdLabel")} <span className="text-destructive">*</span></span>
@@ -234,7 +234,7 @@ export function MoveStageGateFieldsSection({
               <div className="flex items-center gap-1.5">
                 <Select value={newCfType} onValueChange={(v) => setNewCfType(v as CrmCustomFieldDefinition["valueType"])}>
                   <SelectTrigger className="h-7 text-xs bg-nx-surface flex-1" data-testid="move-stage-cf-type-select"><SelectValue /></SelectTrigger>
-                  <SelectContent className="z-[10002]">
+                  <SelectContent>
                     {CUSTOM_FIELD_VALUE_TYPES.map((vt) => <SelectItem key={vt} value={vt} className="text-xs">{vt}</SelectItem>)}
                   </SelectContent>
                 </Select>
@@ -256,9 +256,9 @@ export function MoveStageGateFieldsSection({
         disabled={isSubmitting}
       />
 
-      <div className={!isAdjacentForward ? "space-y-2 rounded-nx-md border border-warning/30 bg-warning/5 p-3" : "space-y-1.5"}>
+      <div className={!isAdjacentForward ? "space-y-2 rounded-nx-md border border-warning-strong/30 bg-warning/5 p-3" : "space-y-1.5"}>
         {!isAdjacentForward && (
-          <div className="flex items-center gap-2 text-warning text-xs font-semibold">
+          <div className="flex items-center gap-2 text-nx-warning-strong text-xs font-semibold">
             <ShieldAlert className="size-4" />
             <span>{t("crmOpportunities.dialogs.stage.overrideNotice")}</span>
           </div>
