@@ -32,6 +32,33 @@ export interface AcademyTrial {
   athleteCalculatedAge?: number | null;
   athleteGender?: string | null;
   athletePrimarySport?: string | null;
+  overallScore?: number | null;
+  rubricBreakdownJson?: string | null;
+}
+
+export interface RubricCriterionScorePayload {
+  key: string;
+  labelEn?: string | null;
+  labelAr?: string | null;
+  weightPercent: number;
+  score: number;
+}
+
+export interface RubricCriterionSnapshot {
+  key: string;
+  label: string;
+  labelEn?: string;
+  labelAr?: string;
+  weight: number;
+  score: number;
+  weightedScore: number;
+}
+
+export interface RubricEvaluationSnapshot {
+  schemaVersion: number;
+  sportId: string;
+  overallScore: number;
+  criteria: RubricCriterionSnapshot[];
 }
 
 export interface RequestTrialPayload {
@@ -46,6 +73,7 @@ export interface SubmitEvaluationPayload {
   recommendedLevel?: string | null;
   technicalScore?: number | null;
   technicalNotes?: string | null;
+  rubricScores?: RubricCriterionScorePayload[] | null;
 }
 
 export interface DecideTrialPayload {

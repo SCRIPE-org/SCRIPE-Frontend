@@ -7,7 +7,15 @@ import { usePermission } from "@core/hooks/use-permission";
 import { ACADEMY_PERMISSIONS, exactAge, formatExactAge } from "@modules/academy/shared";
 import { useAcademyServiceLocator } from "@modules/academy/di";
 import { useAcademyTrialsViewModel } from "../viewmodels/useAcademyTrialsViewModel";
-import type { AcademyTrial, TrialStatus } from "../../domain/entities/AcademyTrial";
+import type { AcademyTrial, TrialStatus, RubricEvaluationSnapshot } from "../../domain/entities/AcademyTrial";
+
+export const DEFAULT_FOOTBALL_RUBRIC = [
+  { key: "ball_control", labelEn: "Ball Control & Agility", labelAr: "التحكم بالكرة والمراوغة", weightPercent: 30, score: 8.5 },
+  { key: "tactical_awareness", labelEn: "Tactical Awareness", labelAr: "الوعي التكتيكي واتخاذ القرار", weightPercent: 20, score: 8.5 },
+  { key: "speed_endurance", labelEn: "Speed & Endurance", labelAr: "السرعة واللياقة البدنية", weightPercent: 20, score: 8.0 },
+  { key: "composure", labelEn: "Coachability & Composure", labelAr: "الانضباط وقابلية التوجيه", weightPercent: 15, score: 9.0 },
+  { key: "game_simulation", labelEn: "Game Simulation", labelAr: "أداء مباريات المحاكاة", weightPercent: 15, score: 8.5 },
+];
 import { Button } from "@core/ui/button";
 import { Alert, AlertTitle, AlertDescription } from "@core/ui/alert";
 import { LoadingSpinner } from "@core/ui/loading-spinner";
@@ -223,7 +231,18 @@ export function AcademyTrialsView() {
   const [techRec, setTechRec] = useState("Advance to Squad");
   const [recLevel, setRecLevel] = useState("Intermediate");
   const [techScore, setTechScore] = useState<number>(8.5);
+  const [rubricScores, setRubricScores] = useState(DEFAULT_FOOTBALL_RUBRIC);
   const [techNotes, setTechNotes] = useState("");
+
+  // Parse Rubric Breakdown Snapshot when available
+  const rubricSnapshot = useMemo(() => {
+    if (!selectedTrial?.rubricBreakdownJson) return null;
+    try {
+      return JSON.parse(selectedTrial.rubricBreakdownJson) as RubricEvaluationSnapshot;
+    } catch {
+      return null;
+    }
+  }, [selectedTrial?.rubricBreakdownJson]);
 
   // Decision Form
   const [decisionType, setDecisionType] = useState<"Approved" | "Waitlisted" | "Rejected">("Approved");
@@ -253,12 +272,20 @@ export function AcademyTrialsView() {
         technicalRecommendation: techRec,
         recommendedLevel: recLevel,
         technicalScore: techScore,
-        technicalNotes: techNotes
+        technicalNotes: techNotes,
+        rubricScores: rubricScores.map((c) => ({
+          key: c.key,
+          labelEn: c.labelEn,
+          labelAr: c.labelAr,
+          weightPercent: c.weightPercent,
+          score: c.score,
+        })),
       });
       setShowEvalModal(false);
       setActiveTrial(null);
       setTechRec("Advance to Squad");
       setTechNotes("");
+      setRubricScores(DEFAULT_FOOTBALL_RUBRIC);
     } catch {
       // Handled in viewmodel
     }
@@ -1012,131 +1039,66 @@ export function AcademyTrialsView() {
                     </div>
 
                     <div className="divide-y divide-nx-line/50 text-xs">
-                      {selectedTrial.technicalScore != null ? (
+                      {selectedTrial.overallScore != null ? (
                         <>
-                          {/* Row 1: Technical Ball Control */}
-                          <div className="grid grid-cols-12 py-2 px-3 items-center">
-                            <div className="col-span-6 font-medium text-nx-ink flex items-center gap-1.5">
-                              <span className="size-1.5 rounded-full bg-nx-accent-fill" />
-                              <span>{isAr ? "التحكم بالكرة والمراوغة" : "Ball Control & Agility"}</span>
+                          {(rubricSnapshot?.criteria && rubricSnapshot.criteria.length > 0
+                            ? rubricSnapshot.criteria
+                            : DEFAULT_FOOTBALL_RUBRIC.map((d) => ({
+                                key: d.key,
+                                label: d.labelEn,
+                                labelEn: d.labelEn,
+                                labelAr: d.labelAr,
+                                weight: d.weightPercent,
+                                score: selectedTrial.overallScore!,
+                                weightedScore: (selectedTrial.overallScore! * d.weightPercent) / 100,
+                              }))
+                          ).map((crit) => (
+                            <div key={crit.key} className="grid grid-cols-12 py-2 px-3 items-center" data-testid={`rubric-row-${crit.key}`}>
+                              <div className="col-span-6 font-medium text-nx-ink flex items-center gap-1.5">
+                                <span className="size-1.5 rounded-full bg-nx-accent-fill" />
+                                <span>{isAr ? (crit.labelAr || crit.label) : (crit.labelEn || crit.label)}</span>
+                              </div>
+                              <div className="col-span-2 text-center font-bold text-nx-accent" data-testid={`rubric-score-${crit.key}`}>
+                                {crit.score} / 10
+                              </div>
+                              <div className="col-span-2 text-center text-nx-ink-2" data-testid={`rubric-weight-${crit.key}`}>
+                                {crit.weight}%
+                              </div>
+                              <div className="col-span-2 text-right rtl:text-left font-bold text-nx-ink" data-testid={`rubric-weighted-${crit.key}`}>
+                                {crit.weightedScore != null ? Number(crit.weightedScore).toFixed(2) : (crit.score * (crit.weight / 100)).toFixed(2)}
+                              </div>
                             </div>
-                            <div className="col-span-2 text-center font-bold text-nx-accent">
-                              {selectedTrial.technicalScore} / 10
+                          ))}
+                        </>
+                      ) : selectedTrial.technicalScore != null ? (
+                        <>
+                          {/* Historical Legacy Trial: show "—" for criteria rows; never replicate overall across rows */}
+                          {DEFAULT_FOOTBALL_RUBRIC.map((crit) => (
+                            <div key={crit.key} className="grid grid-cols-12 py-2 px-3 items-center text-nx-ink-2" data-testid={`rubric-row-${crit.key}`}>
+                              <div className="col-span-6 font-medium text-nx-ink flex items-center gap-1.5">
+                                <span className="size-1.5 rounded-full bg-amber-400/60" />
+                                <span>{isAr ? crit.labelAr : crit.labelEn}</span>
+                              </div>
+                              <div className="col-span-2 text-center font-mono text-nx-ink-2" data-testid={`rubric-score-${crit.key}`}>—</div>
+                              <div className="col-span-2 text-center text-nx-ink-2" data-testid={`rubric-weight-${crit.key}`}>{crit.weightPercent}%</div>
+                              <div className="col-span-2 text-right rtl:text-left font-mono text-nx-ink-2" data-testid={`rubric-weighted-${crit.key}`}>—</div>
                             </div>
-                            <div className="col-span-2 text-center text-nx-ink-2">25%</div>
-                            <div className="col-span-2 text-right rtl:text-left font-bold text-nx-ink">
-                              {(selectedTrial.technicalScore * 0.25).toFixed(2)}
-                            </div>
-                          </div>
-
-                          {/* Row 2: Tactical Awareness */}
-                          <div className="grid grid-cols-12 py-2 px-3 items-center">
-                            <div className="col-span-6 font-medium text-nx-ink flex items-center gap-1.5">
-                              <span className="size-1.5 rounded-full bg-nx-accent-fill" />
-                              <span>{isAr ? "الوعي التكتيكي واتخاذ القرار" : "Tactical Awareness"}</span>
-                            </div>
-                            <div className="col-span-2 text-center font-bold text-nx-accent">
-                              {selectedTrial.technicalScore} / 10
-                            </div>
-                            <div className="col-span-2 text-center text-nx-ink-2">25%</div>
-                            <div className="col-span-2 text-right rtl:text-left font-bold text-nx-ink">
-                              {(selectedTrial.technicalScore * 0.25).toFixed(2)}
-                            </div>
-                          </div>
-
-                          {/* Row 3: Physical Speed & Endurance */}
-                          <div className="grid grid-cols-12 py-2 px-3 items-center">
-                            <div className="col-span-6 font-medium text-nx-ink flex items-center gap-1.5">
-                              <span className="size-1.5 rounded-full bg-nx-accent-fill" />
-                              <span>{isAr ? "السرعة واللياقة البدنية" : "Speed & Endurance"}</span>
-                            </div>
-                            <div className="col-span-2 text-center font-bold text-nx-accent">
-                              {selectedTrial.technicalScore} / 10
-                            </div>
-                            <div className="col-span-2 text-center text-nx-ink-2">20%</div>
-                            <div className="col-span-2 text-right rtl:text-left font-bold text-nx-ink">
-                              {(selectedTrial.technicalScore * 0.20).toFixed(2)}
-                            </div>
-                          </div>
-
-                          {/* Row 4: Mental Composure */}
-                          <div className="grid grid-cols-12 py-2 px-3 items-center">
-                            <div className="col-span-6 font-medium text-nx-ink flex items-center gap-1.5">
-                              <span className="size-1.5 rounded-full bg-nx-accent-fill" />
-                              <span>{isAr ? "الانضباط وقابلية التوجيه" : "Coachability & Composure"}</span>
-                            </div>
-                            <div className="col-span-2 text-center font-bold text-nx-accent">
-                              {selectedTrial.technicalScore} / 10
-                            </div>
-                            <div className="col-span-2 text-center text-nx-ink-2">15%</div>
-                            <div className="col-span-2 text-right rtl:text-left font-bold text-nx-ink">
-                              {(selectedTrial.technicalScore * 0.15).toFixed(2)}
-                            </div>
-                          </div>
-
-                          {/* Row 5: Game Simulation */}
-                          <div className="grid grid-cols-12 py-2 px-3 items-center">
-                            <div className="col-span-6 font-medium text-nx-ink flex items-center gap-1.5">
-                              <span className="size-1.5 rounded-full bg-nx-accent-fill" />
-                              <span>{isAr ? "أداء مباريات المحاكاة" : "Game Simulation"}</span>
-                            </div>
-                            <div className="col-span-2 text-center font-bold text-nx-accent">
-                              {selectedTrial.technicalScore} / 10
-                            </div>
-                            <div className="col-span-2 text-center text-nx-ink-2">15%</div>
-                            <div className="col-span-2 text-right rtl:text-left font-bold text-nx-ink">
-                              {(selectedTrial.technicalScore * 0.15).toFixed(2)}
-                            </div>
-                          </div>
+                          ))}
                         </>
                       ) : (
                         <>
                           {/* Honest Un-evaluated State */}
-                          <div className="grid grid-cols-12 py-2 px-3 items-center text-nx-ink-2">
-                            <div className="col-span-6 font-medium text-nx-ink flex items-center gap-1.5">
-                              <span className="size-1.5 rounded-full bg-nx-accent-fill/25" />
-                              <span>{isAr ? "التحكم بالكرة والمراوغة" : "Ball Control & Agility"}</span>
+                          {DEFAULT_FOOTBALL_RUBRIC.map((crit) => (
+                            <div key={crit.key} className="grid grid-cols-12 py-2 px-3 items-center text-nx-ink-2" data-testid={`rubric-row-${crit.key}`}>
+                              <div className="col-span-6 font-medium text-nx-ink flex items-center gap-1.5">
+                                <span className="size-1.5 rounded-full bg-nx-accent-fill/25" />
+                                <span>{isAr ? crit.labelAr : crit.labelEn}</span>
+                              </div>
+                              <div className="col-span-2 text-center font-mono" data-testid={`rubric-score-${crit.key}`}>—</div>
+                              <div className="col-span-2 text-center" data-testid={`rubric-weight-${crit.key}`}>{crit.weightPercent}%</div>
+                              <div className="col-span-2 text-right rtl:text-left font-mono" data-testid={`rubric-weighted-${crit.key}`}>—</div>
                             </div>
-                            <div className="col-span-2 text-center font-mono">—</div>
-                            <div className="col-span-2 text-center">25%</div>
-                            <div className="col-span-2 text-right rtl:text-left font-mono">—</div>
-                          </div>
-                          <div className="grid grid-cols-12 py-2 px-3 items-center text-nx-ink-2">
-                            <div className="col-span-6 font-medium text-nx-ink flex items-center gap-1.5">
-                              <span className="size-1.5 rounded-full bg-nx-accent-fill/25" />
-                              <span>{isAr ? "الوعي التكتيكي واتخاذ القرار" : "Tactical Awareness"}</span>
-                            </div>
-                            <div className="col-span-2 text-center font-mono">—</div>
-                            <div className="col-span-2 text-center">25%</div>
-                            <div className="col-span-2 text-right rtl:text-left font-mono">—</div>
-                          </div>
-                          <div className="grid grid-cols-12 py-2 px-3 items-center text-nx-ink-2">
-                            <div className="col-span-6 font-medium text-nx-ink flex items-center gap-1.5">
-                              <span className="size-1.5 rounded-full bg-nx-accent-fill/25" />
-                              <span>{isAr ? "السرعة واللياقة البدنية" : "Speed & Endurance"}</span>
-                            </div>
-                            <div className="col-span-2 text-center font-mono">—</div>
-                            <div className="col-span-2 text-center">20%</div>
-                            <div className="col-span-2 text-right rtl:text-left font-mono">—</div>
-                          </div>
-                          <div className="grid grid-cols-12 py-2 px-3 items-center text-nx-ink-2">
-                            <div className="col-span-6 font-medium text-nx-ink flex items-center gap-1.5">
-                              <span className="size-1.5 rounded-full bg-nx-accent-fill/25" />
-                              <span>{isAr ? "الانضباط وقابلية التوجيه" : "Coachability & Composure"}</span>
-                            </div>
-                            <div className="col-span-2 text-center font-mono">—</div>
-                            <div className="col-span-2 text-center">15%</div>
-                            <div className="col-span-2 text-right rtl:text-left font-mono">—</div>
-                          </div>
-                          <div className="grid grid-cols-12 py-2 px-3 items-center text-nx-ink-2">
-                            <div className="col-span-6 font-medium text-nx-ink flex items-center gap-1.5">
-                              <span className="size-1.5 rounded-full bg-nx-accent-fill/25" />
-                              <span>{isAr ? "أداء مباريات المحاكاة" : "Game Simulation"}</span>
-                            </div>
-                            <div className="col-span-2 text-center font-mono">—</div>
-                            <div className="col-span-2 text-center">15%</div>
-                            <div className="col-span-2 text-right rtl:text-left font-mono">—</div>
-                          </div>
+                          ))}
                         </>
                       )}
                     </div>
@@ -1145,12 +1107,23 @@ export function AcademyTrialsView() {
                   {/* Overall Score Banner (Honest State) */}
                   <div className="rounded-xl border border-nx-accent-fill/40 bg-nx-accent-fill/15 p-3 shadow-[0_0_20px_rgba(200,255,5,0.12)] flex items-center justify-between">
                     <div>
-                      <span className="text-[11px] text-nx-ink-2 block">
-                        {isAr ? "الدرجة الإجمالية للتقييم" : "Overall Evaluation Score"}
-                      </span>
+                      <div className="flex items-center gap-2">
+                        <span className="text-[11px] text-nx-ink-2 block">
+                          {isAr ? "الدرجة الإجمالية للتقييم" : "Overall Evaluation Score"}
+                        </span>
+                        {selectedTrial.overallScore == null && selectedTrial.technicalScore != null && (
+                          <span data-testid="legacy-score-badge" className="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold bg-amber-500/15 text-amber-400 border border-amber-500/30">
+                            {isAr ? "درجة قديمة" : "Legacy score"}
+                          </span>
+                        )}
+                      </div>
                       <div className="flex items-baseline gap-1 mt-0.5">
-                        <span className="text-xl font-black text-nx-accent">
-                          {selectedTrial.technicalScore != null ? Number(selectedTrial.technicalScore).toFixed(1) : "—"}
+                        <span className="text-xl font-black text-nx-accent" data-testid="trial-overall-score">
+                          {selectedTrial.overallScore != null
+                            ? Number(selectedTrial.overallScore).toFixed(2)
+                            : selectedTrial.technicalScore != null
+                              ? Number(selectedTrial.technicalScore).toFixed(1)
+                              : "—"}
                         </span>
                         <span className="text-xs text-nx-ink-2">/ 10.0</span>
                       </div>
@@ -1915,32 +1888,61 @@ export function AcademyTrialsView() {
                 </div>
               </div>
 
-              <div className="grid grid-cols-2 gap-3">
-                <div>
-                  <label className="block text-nx-ink-2 mb-1 font-semibold">{isAr ? "الدرجة الفنية (من 10)" : "Technical Score (out of 10)"}</label>
-                  <input
-                    type="number"
-                    min="1"
-                    max="10"
-                    step="0.5"
-                    value={techScore}
-                    onChange={(e) => setTechScore(parseFloat(e.target.value) || 8)}
-                    className="w-full h-9 px-3 rounded-lg bg-nx-raised border border-nx-line text-white text-xs focus:outline-none focus:border-nx-accent"
-                  />
+              {/* Rubric Scoring Breakdown */}
+              <div className="space-y-2 p-3 rounded-xl bg-nx-raised border border-nx-line">
+                <div className="text-[11px] font-bold text-nx-ink uppercase tracking-wider flex items-center justify-between pb-1 border-b border-nx-line/50">
+                  <span>{isAr ? "معايير التقييم الفني المعتمدة" : "Evaluation Rubric Breakdown"}</span>
+                  <span className="text-nx-accent font-bold">100% Weight</span>
                 </div>
-                <div>
-                  <label className="block text-nx-ink-2 mb-1 font-semibold">{isAr ? "المستوى الموصى به" : "Recommended Level"}</label>
-                  <select
-                    value={recLevel}
-                    onChange={(e) => setRecLevel(e.target.value)}
-                    className="w-full h-9 px-3 rounded-lg bg-nx-raised border border-nx-line text-white text-xs focus:outline-none focus:border-nx-accent"
-                  >
-                    <option value="Beginner">{isAr ? "مبتدئ (Beginner)" : "Beginner"}</option>
-                    <option value="Intermediate">{isAr ? "متوسط (Intermediate)" : "Intermediate"}</option>
-                    <option value="Advanced">{isAr ? "متقدم (Advanced)" : "Advanced"}</option>
-                    <option value="Elite">{isAr ? "نخبة (Elite)" : "Elite"}</option>
-                  </select>
+                <div className="space-y-2">
+                  {rubricScores.map((criterion, idx) => (
+                    <div key={criterion.key} className="grid grid-cols-12 gap-2 items-center text-xs">
+                      <div className="col-span-7">
+                        <span className="font-medium text-nx-ink block truncate">
+                          {isAr ? criterion.labelAr : criterion.labelEn}
+                        </span>
+                        <span className="text-[10px] text-nx-ink-2 font-mono">
+                          {criterion.weightPercent}% weight
+                        </span>
+                      </div>
+                      <div className="col-span-5 flex items-center gap-1 justify-end">
+                        <input
+                          type="number"
+                          min="0"
+                          max="10"
+                          step="0.1"
+                          data-testid={`eval-input-${criterion.key}`}
+                          value={criterion.score}
+                          onChange={(e) => {
+                            const val = parseFloat(e.target.value);
+                            const updated = [...rubricScores];
+                            updated[idx] = {
+                              ...updated[idx],
+                              score: isNaN(val) ? 0 : Math.min(10, Math.max(0, val)),
+                            };
+                            setRubricScores(updated);
+                          }}
+                          className="w-20 h-8 px-2 rounded-lg bg-nx-surface border border-nx-line text-white text-xs text-center font-bold focus:outline-none focus:border-nx-accent"
+                        />
+                        <span className="text-nx-ink-2 text-[10px]">/ 10</span>
+                      </div>
+                    </div>
+                  ))}
                 </div>
+              </div>
+
+              <div>
+                <label className="block text-nx-ink-2 mb-1 font-semibold">{isAr ? "المستوى الموصى به" : "Recommended Level"}</label>
+                <select
+                  value={recLevel}
+                  onChange={(e) => setRecLevel(e.target.value)}
+                  className="w-full h-9 px-3 rounded-lg bg-nx-raised border border-nx-line text-white text-xs focus:outline-none focus:border-nx-accent"
+                >
+                  <option value="Beginner">{isAr ? "مبتدئ (Beginner)" : "Beginner"}</option>
+                  <option value="Intermediate">{isAr ? "متوسط (Intermediate)" : "Intermediate"}</option>
+                  <option value="Advanced">{isAr ? "متقدم (Advanced)" : "Advanced"}</option>
+                  <option value="Elite">{isAr ? "نخبة (Elite)" : "Elite"}</option>
+                </select>
               </div>
 
               <div>
