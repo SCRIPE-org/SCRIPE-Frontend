@@ -1,12 +1,14 @@
 import { describe, it, expect } from "vitest";
 import {
   exactAge,
+  formatExactAge,
   competitionAge,
+  getSeasonReferenceYear,
   checkGroupAgeEligibility,
 } from "./academy-age-policy";
 
 describe("DEF-003: AcademyAgePolicy Tests", () => {
-  describe("exactAge", () => {
+  describe("exactAge & formatExactAge", () => {
     it("calculates exact calendar age elapsed before and after birthday", () => {
       // Born 2010-06-15
       const dob = "2010-06-15";
@@ -24,7 +26,28 @@ describe("DEF-003: AcademyAgePolicy Tests", () => {
       // Exactly 17 on Nov 15, turns 18 on Nov 20
       const age = exactAge(born2008, asOfNov15_2026);
       expect(age).toBe(17);
-      expect(age < 18).toBe(true); // IsMinor is true
+      expect(age! < 18).toBe(true); // IsMinor is true
+    });
+
+    it("returns null / '—' when dateOfBirth is null, undefined, or empty", () => {
+      expect(exactAge(null)).toBeNull();
+      expect(exactAge(undefined)).toBeNull();
+      expect(exactAge("")).toBeNull();
+      expect(formatExactAge(null)).toBe("—");
+      expect(formatExactAge(undefined)).toBe("—");
+      expect(formatExactAge("")).toBe("—");
+      expect(formatExactAge("2010-06-15", new Date("2026-06-15T00:00:00Z"))).toBe("16 years");
+      expect(formatExactAge("2010-06-15", new Date("2026-06-15T00:00:00Z"), "ar")).toBe("16 سنة");
+    });
+  });
+
+  describe("getSeasonReferenceYear", () => {
+    it("anchors multi-year season to ending year and single-year to start year", () => {
+      // Multi-year season: Sept 2026 to June 2027 -> 2027
+      expect(getSeasonReferenceYear("2026-09-01", "2027-06-30")).toBe(2027);
+
+      // Single-year season: Jan 2026 to Dec 2026 -> 2026
+      expect(getSeasonReferenceYear("2026-01-01", "2026-12-31")).toBe(2026);
     });
   });
 
@@ -34,6 +57,10 @@ describe("DEF-003: AcademyAgePolicy Tests", () => {
       const dob = "2014-11-10";
       const seasonRefYear = 2026;
       expect(competitionAge(dob, seasonRefYear)).toBe(12);
+    });
+
+    it("returns null when dateOfBirth is null or invalid", () => {
+      expect(competitionAge(null, 2026)).toBeNull();
     });
   });
 
@@ -73,6 +100,13 @@ describe("DEF-003: AcademyAgePolicy Tests", () => {
       expect(res.requiresOverride).toBe(true);
       expect(res.reasonEn).toContain("Playing-up override required");
       expect(res.reasonAr).toContain("يتطلب استثناء تصعيد الفئة");
+    });
+
+    it("handles unbounded programs (minAge 0, maxAge 0) as fully eligible", () => {
+      const res = checkGroupAgeEligibility("2010-01-01", 0, 0, seasonRefYear);
+      expect(res.isEligible).toBe(true);
+      expect(res.isOverAge).toBe(false);
+      expect(res.isUnderAge).toBe(false);
     });
   });
 });

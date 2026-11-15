@@ -32,6 +32,7 @@ export interface AcademyEnrollment {
   athleteDateOfBirth?: string | null;
   athleteExactAge?: number | null;
   athleteCompetitionAge?: number | null;
+  isAgeOverride?: boolean;
 }
 
 export interface CreateEnrollmentPayload {

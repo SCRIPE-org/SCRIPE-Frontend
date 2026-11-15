@@ -10,19 +10,41 @@
  * 4. Under-age athletes (CompetitionAge < minAge): Eligible ONLY if playing-up override permission is held AND a non-empty justification is provided.
  */
 
-export function exactAge(dateOfBirth: string | Date, asOfDate: Date = new Date()): number {
+export function exactAge(dateOfBirth: string | Date | null | undefined, asOfDate: Date = new Date()): number | null {
+  if (!dateOfBirth) return null;
   const dob = typeof dateOfBirth === "string" ? new Date(dateOfBirth) : dateOfBirth;
+  if (isNaN(dob.getTime())) return null;
   let age = asOfDate.getUTCFullYear() - dob.getUTCFullYear();
   const m = asOfDate.getUTCMonth() - dob.getUTCMonth();
   if (m < 0 || (m === 0 && asOfDate.getUTCDate() < dob.getUTCDate())) {
     age--;
   }
-  return age;
+  return Math.max(0, age);
 }
 
-export function competitionAge(dateOfBirth: string | Date, seasonReferenceYear: number): number {
+export function formatExactAge(
+  dateOfBirth: string | Date | null | undefined,
+  asOfDate: Date = new Date(),
+  lang: "en" | "ar" = "en"
+): string {
+  const age = exactAge(dateOfBirth, asOfDate);
+  if (age === null) return "—";
+  return lang === "ar" ? `${age} سنة` : `${age} years`;
+}
+
+export function competitionAge(dateOfBirth: string | Date | null | undefined, seasonReferenceYear: number): number | null {
+  if (!dateOfBirth) return null;
   const dob = typeof dateOfBirth === "string" ? new Date(dateOfBirth) : dateOfBirth;
+  if (isNaN(dob.getTime())) return null;
   return seasonReferenceYear - dob.getUTCFullYear();
+}
+
+export function getSeasonReferenceYear(startDate: string | Date, endDate: string | Date): number {
+  const start = typeof startDate === "string" ? new Date(startDate) : startDate;
+  const end = typeof endDate === "string" ? new Date(endDate) : endDate;
+  const startYear = start.getUTCFullYear();
+  const endYear = end.getUTCFullYear();
+  return endYear > startYear ? endYear : startYear;
 }
 
 export interface AgeEligibilityCheck {
@@ -54,7 +76,18 @@ export function checkGroupAgeEligibility(
   const refYear = seasonReferenceYear ?? new Date().getUTCFullYear();
   const compAge = competitionAge(dateOfBirth, refYear);
 
-  if (maxAge !== null && maxAge !== undefined && compAge > maxAge) {
+  if (compAge === null) {
+    return {
+      isEligible: true,
+      isOverAge: false,
+      isUnderAge: false,
+      requiresOverride: false,
+      reasonEn: null,
+      reasonAr: null,
+    };
+  }
+
+  if (maxAge !== null && maxAge !== undefined && maxAge > 0 && compAge > maxAge) {
     return {
       isEligible: false,
       isOverAge: true,
@@ -65,7 +98,7 @@ export function checkGroupAgeEligibility(
     };
   }
 
-  if (minAge !== null && minAge !== undefined && compAge < minAge) {
+  if (minAge !== null && minAge !== undefined && minAge > 0 && compAge < minAge) {
     return {
       isEligible: false,
       isOverAge: false,
