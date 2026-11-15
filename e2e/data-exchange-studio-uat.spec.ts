@@ -693,7 +693,7 @@ test.describe.serial("Data Exchange Studio — Live Unmocked 26-Screenshot Found
       if (scroller) scroller.scrollTop = 0;
     });
 
-    // Save a Mapping Preset so /admin/data-exchange/presets has a verified preset
+    // Save a Mapping Preset so /data-exchange/presets has a verified preset
     const presetInput = studioDialog
       .getByPlaceholder(/Preset name|اسم التعيين/i)
       .first();
@@ -1033,12 +1033,12 @@ test.describe.serial("Data Exchange Studio — Live Unmocked 26-Screenshot Found
     }
 
     // -------------------------------------------------------------------------
-    // 10. 3-Route Admin Data Exchange Module (/admin/data-exchange, /jobs, /presets)
+    // 10. 3-Route Admin Data Exchange Module (/data-exchange, /jobs, /presets)
     //     Screenshots 14, 15, 16, 17, 32, 18, 19
     // -------------------------------------------------------------------------
-    // 10a. /admin/data-exchange — Entities Table + KPIs (Screenshot 14)
-    await page.goto("/admin/data-exchange");
-    await expect(page).toHaveURL(/\/admin\/data-exchange$/, { timeout: 15_000 });
+    // 10a. /data-exchange — Entities Table + KPIs (Screenshot 14)
+    await page.goto("/data-exchange");
+    await expect(page).toHaveURL(/\/data-exchange$/, { timeout: 15_000 });
     // Floating Dock persists across route navigation
     await expect(floatingDock).toBeVisible({ timeout: 15_000 });
     // Dismiss Floating Dock items now so admin screenshots 14..19 have full unobstructed canvas
@@ -1067,7 +1067,7 @@ test.describe.serial("Data Exchange Studio — Live Unmocked 26-Screenshot Found
       firstEntityRow
     );
 
-    // 10b. /admin/data-exchange — CardGrid + SplitPane Detail (Screenshot 15)
+    // 10b. /data-exchange — CardGrid + SplitPane Detail (Screenshot 15)
     const cardGridToggle = page.getByTestId("toggle-cardgrid-view").first();
     await expect(cardGridToggle).toBeVisible({ timeout: 10_000 });
     await cardGridToggle.click();
@@ -1079,9 +1079,9 @@ test.describe.serial("Data Exchange Studio — Live Unmocked 26-Screenshot Found
       cardGridToggle
     );
 
-    // 10c. /admin/data-exchange/jobs — Jobs Table + KPIs + Search (Screenshot 16)
-    await page.goto("/admin/data-exchange/jobs");
-    await expect(page).toHaveURL(/\/admin\/data-exchange\/jobs/, {
+    // 10c. /data-exchange/jobs — Jobs Table + KPIs + Search (Screenshot 16)
+    await page.goto("/data-exchange/jobs");
+    await expect(page).toHaveURL(/\/data-exchange\/jobs/, {
       timeout: 15_000,
     });
     const firstJobRow = page.locator("table tbody tr").first();
@@ -1098,7 +1098,7 @@ test.describe.serial("Data Exchange Studio — Live Unmocked 26-Screenshot Found
       firstJobRow
     );
 
-    // 10d. /admin/data-exchange/jobs — SplitPane Detail Inspection (Screenshot 17)
+    // 10d. /data-exchange/jobs — SplitPane Detail Inspection (Screenshot 17)
     const jobsSplitToggle = page.getByTestId("toggle-splitpane-view").first();
     await expect(jobsSplitToggle).toBeVisible({ timeout: 10_000 });
     await jobsSplitToggle.click();
@@ -1110,7 +1110,7 @@ test.describe.serial("Data Exchange Studio — Live Unmocked 26-Screenshot Found
       jobsSplitToggle
     );
 
-    // 10d-2. /admin/data-exchange/jobs — Bespoke Nexus CardGrid (Screenshot 32)
+    // 10d-2. /data-exchange/jobs — Bespoke Nexus CardGrid (Screenshot 32)
     const jobsCardGridToggle = page.getByTestId("toggle-cardgrid-view").first();
     await expect(jobsCardGridToggle).toBeVisible({ timeout: 10_000 });
     await jobsCardGridToggle.click();
@@ -1127,9 +1127,9 @@ test.describe.serial("Data Exchange Studio — Live Unmocked 26-Screenshot Found
       jobsCardGridToggle
     );
 
-    // 10e. /admin/data-exchange/presets — Presets Table + KPIs (Screenshot 18)
-    await page.goto("/admin/data-exchange/presets");
-    await expect(page).toHaveURL(/\/admin\/data-exchange\/presets/, {
+    // 10e. /data-exchange/presets — Presets Table + KPIs (Screenshot 18)
+    await page.goto("/data-exchange/presets");
+    await expect(page).toHaveURL(/\/data-exchange\/presets/, {
       timeout: 15_000,
     });
     const firstPresetRow = page.locator("table tbody tr").first();
@@ -1146,7 +1146,7 @@ test.describe.serial("Data Exchange Studio — Live Unmocked 26-Screenshot Found
       firstPresetRow
     );
 
-    // 10f. /admin/data-exchange/presets — Delete Preset Confirmation Dialog & Detail (Screenshot 19)
+    // 10f. /data-exchange/presets — Delete Preset Confirmation Dialog & Detail (Screenshot 19)
     const presetActionsMenuBtn = firstPresetRow
       .locator('button[aria-haspopup="menu"]')
       .first();
@@ -1446,10 +1446,10 @@ test.describe.serial("Data Exchange Studio — Live Unmocked 26-Screenshot Found
     await closeStudioWithConfirmIfNeeded(page, cpDialog);
 
     // -------------------------------------------------------------------------
-    // 12. Sovereign Tenant Guard (/admin/tenants) & Identity Onboarding Mode (/users)
+    // 12. Sovereign Tenant Guard (/tenants) & Identity Onboarding Mode (/users)
     //     Screenshot 21
     // -------------------------------------------------------------------------
-    await page.goto("/admin/tenants");
+    await page.goto("/tenants");
     await expect(
       page.locator('[data-testid^="dx-trigger-"], [data-testid^="dx-import-"]')
     ).toHaveCount(0);
@@ -1497,7 +1497,7 @@ test.describe.serial("Data Exchange Studio — Live Unmocked 26-Screenshot Found
     await closeStudioWithConfirmIfNeeded(page, userDialog);
 
     // -------------------------------------------------------------------------
-    // 13. Dark Theme Verification (/crm/leads + Studio & /admin/data-exchange/jobs)
+    // 13. Dark Theme Verification (/crm/leads + Studio & /data-exchange/jobs)
     //     Screenshots 22 & 23
     // -------------------------------------------------------------------------
     await page.emulateMedia({ colorScheme: "dark" });
@@ -1537,7 +1537,7 @@ test.describe.serial("Data Exchange Studio — Live Unmocked 26-Screenshot Found
     );
     await closeStudioWithConfirmIfNeeded(page, darkDialog);
 
-    await page.goto("/admin/data-exchange/jobs");
+    await page.goto("/data-exchange/jobs");
     await expect(page.locator("html")).toHaveClass(/dark/, { timeout: 15_000 });
     const darkJobsRow = page.locator("table tbody tr").first();
     await expect(darkJobsRow).toBeVisible({ timeout: 25_000 });
@@ -1558,7 +1558,7 @@ test.describe.serial("Data Exchange Studio — Live Unmocked 26-Screenshot Found
     });
 
     // -------------------------------------------------------------------------
-    // 14. RTL Arabic Verification (/crm/leads + Studio & /admin/data-exchange)
+    // 14. RTL Arabic Verification (/crm/leads + Studio & /data-exchange)
     //     Screenshots 24 & 25
     // -------------------------------------------------------------------------
     await page.evaluate(() => {
@@ -1607,7 +1607,7 @@ test.describe.serial("Data Exchange Studio — Live Unmocked 26-Screenshot Found
     );
     await closeStudioWithConfirmIfNeeded(page, rtlDialog);
 
-    await page.goto("/admin/data-exchange");
+    await page.goto("/data-exchange");
     await expect(page.locator("html")).toHaveAttribute("dir", "rtl", {
       timeout: 15_000,
     });
@@ -1825,14 +1825,14 @@ test.describe.serial("Data Exchange Studio — Live Unmocked 26-Screenshot Found
 
     // Verify sidebar navigation hides Data Exchange links when TenantId == null
     const sidebarDxLinks = page.locator(
-      'aside a[href*="/admin/data-exchange"], nav a[href*="/admin/data-exchange"]'
+      'aside a[href*="/data-exchange"], nav a[href*="/data-exchange"]'
     );
     await expect(sidebarDxLinks).toHaveCount(0);
 
     for (const adminRoute of [
-      "/admin/data-exchange",
-      "/admin/data-exchange/jobs",
-      "/admin/data-exchange/presets",
+      "/data-exchange",
+      "/data-exchange/jobs",
+      "/data-exchange/presets",
     ]) {
       await page.goto(adminRoute);
       const guidanceCard = page.getByTestId("tenant-required-guidance").first();
@@ -1863,14 +1863,14 @@ test.describe.serial("Data Exchange Studio — Live Unmocked 26-Screenshot Found
     // -------------------------------------------------------------------------
     await loginRealSession(
       page,
-      "/admin/data-exchange",
+      "/data-exchange",
       "ahly.admin@scripe-dev.local"
     );
-    if (!page.url().includes("/admin/data-exchange")) {
-      await page.goto("/admin/data-exchange");
+    if (!page.url().includes("/data-exchange")) {
+      await page.goto("/data-exchange");
     }
 
-    // 2a. Verify /admin/data-exchange pagination has real numbers (zero NaN/undefined)
+    // 2a. Verify /data-exchange pagination has real numbers (zero NaN/undefined)
     await expect(page.locator("table tbody tr").first()).toBeVisible({
       timeout: 25_000,
     });
@@ -1881,8 +1881,8 @@ test.describe.serial("Data Exchange Studio — Live Unmocked 26-Screenshot Found
     const entitiesShowingStr = (await entitiesShowingText.textContent()) ?? "";
     expect(entitiesShowingStr).not.toMatch(/NaN|undefined/i);
 
-    // 2b. Verify /admin/data-exchange/jobs pagination + empty search "Showing 0-0 of 0 results" + Launch Studio
-    await page.goto("/admin/data-exchange/jobs");
+    // 2b. Verify /data-exchange/jobs pagination + empty search "Showing 0-0 of 0 results" + Launch Studio
+    await page.goto("/data-exchange/jobs");
     await expect(page.locator("table tbody tr").first()).toBeVisible({
       timeout: 25_000,
     });
@@ -1914,7 +1914,7 @@ test.describe.serial("Data Exchange Studio — Live Unmocked 26-Screenshot Found
       timeout: 20_000,
     });
 
-    // Verify "Launch Studio" header CTA on /admin/data-exchange/jobs
+    // Verify "Launch Studio" header CTA on /data-exchange/jobs
     const launchStudioHeaderBtn = page
       .getByRole("button", { name: /Launch Studio|فتح الاستوديو/i })
       .first();
@@ -1926,8 +1926,8 @@ test.describe.serial("Data Exchange Studio — Live Unmocked 26-Screenshot Found
     await expect(jobsStudioOverlay).toBeVisible({ timeout: 15_000 });
     await closeStudioWithConfirmIfNeeded(page, jobsStudioOverlay);
 
-    // 2c. Verify /admin/data-exchange/presets pagination, Create Preset in Studio, Set as Default, and Use Preset in Import Studio
-    await page.goto("/admin/data-exchange/presets");
+    // 2c. Verify /data-exchange/presets pagination, Create Preset in Studio, Set as Default, and Use Preset in Import Studio
+    await page.goto("/data-exchange/presets");
     await expect(page.locator("table tbody tr").first()).toBeVisible({
       timeout: 25_000,
     });
@@ -2014,8 +2014,8 @@ test.describe.serial("Data Exchange Studio — Live Unmocked 26-Screenshot Found
 
     await closeStudioWithConfirmIfNeeded(page, createPresetOverlay);
 
-    // Refresh /admin/data-exchange/presets and test "Set as Default" + "Use Preset in Import Studio"
-    await page.goto("/admin/data-exchange/presets");
+    // Refresh /data-exchange/presets and test "Set as Default" + "Use Preset in Import Studio"
+    await page.goto("/data-exchange/presets");
     const targetPresetRow = page
       .locator("table tbody tr")
       .filter({ hasText: tempPresetName })
@@ -2163,7 +2163,7 @@ test.describe.serial("Data Exchange Studio — Live Unmocked 26-Screenshot Found
 
     // -------------------------------------------------------------------------
     // Flow 4: Automatic Backend-Driven Multi-Sheet Migration Discovery
-    //         (/crm/leads 5-sheet, /party-kernel/parties 3-sheet, /admin/data-exchange row action)
+    //         (/crm/leads 5-sheet, /party-kernel/parties 3-sheet, /data-exchange row action)
     //         Screenshots 40 & 41
     // -------------------------------------------------------------------------
     await page.goto("/party-kernel/parties");
@@ -2184,7 +2184,7 @@ test.describe.serial("Data Exchange Studio — Live Unmocked 26-Screenshot Found
     );
     await page.keyboard.press("Escape");
 
-    await page.goto("/admin/data-exchange");
+    await page.goto("/data-exchange");
     const crmLeadEntityRow = page
       .locator("table tbody tr")
       .filter({ hasText: "crm.lead" })

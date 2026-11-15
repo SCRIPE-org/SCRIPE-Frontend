@@ -13,7 +13,7 @@ export const metadata: Metadata = {
 };
 
 /**
- * Route handler for /admin/data-exchange rendering the Entities Catalog View.
+ * Route handler for /data-exchange rendering the Entities Catalog View.
  */
 export default function DataExchangeEntitiesPage() {
   return (

@@ -104,7 +104,7 @@ function isSystemPage(pathname: string): boolean {
  * when a Platform Super Admin accesses them directly without an active tenant context
  * (where `RequiresTenantContext: true` omits them from the sidebar menu store).
  */
-const TENANT_SCOPED_GUIDANCE_PAGES = ["/admin/data-exchange"];
+const TENANT_SCOPED_GUIDANCE_PAGES = ["/data-exchange"];
 
 function isTenantScopedGuidancePage(pathname: string): boolean {
   return TENANT_SCOPED_GUIDANCE_PAGES.some(

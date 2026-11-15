@@ -13,7 +13,7 @@ export const metadata: Metadata = {
 };
 
 /**
- * Route handler for /admin/data-exchange/presets rendering the Presets View.
+ * Route handler for /data-exchange/presets rendering the Presets View.
  */
 export default function DataExchangePresetsPage() {
   return (

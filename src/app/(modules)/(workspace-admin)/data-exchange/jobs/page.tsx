@@ -13,7 +13,7 @@ export const metadata: Metadata = {
 };
 
 /**
- * Route handler for /admin/data-exchange/jobs rendering the Jobs Execution View.
+ * Route handler for /data-exchange/jobs rendering the Jobs Execution View.
  */
 export default function DataExchangeJobsPage() {
   return (
