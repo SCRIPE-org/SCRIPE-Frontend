@@ -118,6 +118,7 @@ export function AcademyProgramsView() {
   const publishedCount = useMemo(() => state.programs.filter(p => p.status === "Published").length, [state.programs]);
   const draftCount = useMemo(() => state.programs.filter(p => p.status === "Draft").length, [state.programs]);
   const activeSportsCount = useMemo(() => state.sports.filter(s => s.isActive).length, [state.sports]);
+  const totalProgramGroupsCount = useMemo(() => state.programs.reduce((acc, p) => acc + (p.groupsCount ?? 0), 0), [state.programs]);
 
   // Dynamic Sport Tabs derived from backend sports
   const sportTabs = useMemo(() => {
@@ -243,7 +244,7 @@ export function AcademyProgramsView() {
             </div>
             <div>
               <div className="text-2xl font-black text-nx-ink">{totalProgramsCount}</div>
-              <div className="text-xs text-nx-ink-2 mt-0.5">{isAr ? "إجمالي البرامج" : "Total Programs"}</div>
+              <div className="text-xs text-nx-ink-2 mt-0.5">{isAr ? `إجمالي البرامج (${totalProgramGroupsCount} مجموعة)` : `Total Programs (${totalProgramGroupsCount} groups)`}</div>
             </div>
           </div>
           <span className="text-[11px] font-bold text-nx-accent bg-nx-accent-fill/15 px-2.5 py-1 rounded-full border border-nx-accent-fill/40">
@@ -454,21 +455,26 @@ export function AcademyProgramsView() {
                     </p>
                   </div>
 
-                  {/* 3 Metrics Row */}
-                  <div className="flex items-center gap-3 text-[11px] text-nx-ink-2 pt-2 border-t border-nx-line/60">
+                  {/* 4 Metrics Row (DEF-004) */}
+                  <div className="flex flex-wrap items-center gap-3 text-[11px] text-nx-ink-2 pt-2 border-t border-nx-line/60">
                     <span className="flex items-center gap-1">
                       <span>👤</span>
-                      <span>{isAr ? "العمر:" : "Age:"} <b className="text-white">{program.minAge}–{program.maxAge}</b></span>
+                      <span>{isAr ? "العمر:" : "Age:"} <b className="text-nx-ink font-semibold">{program.minAge}–{program.maxAge}</b></span>
                     </span>
                     <span>•</span>
                     <span className="flex items-center gap-1">
                       <span>👥</span>
-                      <span className="text-white font-medium">{program.level}</span>
+                      <span className="text-nx-ink font-semibold">{program.level}</span>
                     </span>
                     <span>•</span>
                     <span className="flex items-center gap-1">
                       <span>📅</span>
-                      <span className="text-white font-medium">{program.genderCriteria}</span>
+                      <span className="text-nx-ink font-semibold">{program.genderCriteria}</span>
+                    </span>
+                    <span>•</span>
+                    <span className="flex items-center gap-1">
+                      <span>🥋</span>
+                      <span>{isAr ? "المجموعات:" : "Groups:"} <b className="text-nx-accent font-bold">{program.groupsCount ?? 0}</b></span>
                     </span>
                   </div>
 

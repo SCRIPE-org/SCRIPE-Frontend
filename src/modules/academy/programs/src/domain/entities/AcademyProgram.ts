@@ -17,6 +17,7 @@ export interface AcademyProgram {
   genderCriteria: GenderCriteria;
   status: ProgramStatus;
   version: number;
+  groupsCount?: number;
 }
 
 export interface CreateProgramPayload {
