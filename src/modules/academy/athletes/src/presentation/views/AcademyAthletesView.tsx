@@ -567,30 +567,37 @@ export function AcademyAthletesView() {
                     </div>
                   )}
 
-                  {/* Sport Participations */}
-                  <div className="space-y-1.5 my-3">
-                    <div className="flex items-center gap-1.5 text-xs text-nx-ink-2">
-                      <Layers className="h-3.5 w-3.5 text-nx-ink-2" />
-                      <span>{isAr ? `المشاركات الرياضية (${athlete.participations?.length ?? 0})` : `Sport Participations (${athlete.participations?.length ?? 0})`}</span>
-                    </div>
-                    <div className="flex flex-wrap gap-1.5">
-                      {athlete.participations && athlete.participations.length > 0 ? (
-                        athlete.participations.map((p) => (
-                          <span
-                            key={p.id}
-                            className="inline-flex items-center gap-1.5 rounded-full border border-nx-accent-fill/40 bg-nx-accent-fill/15 px-3 py-1 text-xs font-semibold text-nx-accent"
-                          >
-                            <Zap className="h-3.5 w-3.5 text-nx-accent" />
-                            <span>{isAr ? p.sportNameAr : p.sportNameEn} ({p.skillLevel})</span>
-                          </span>
-                        ))
-                      ) : (
-                        <span className="text-xs text-nx-ink-2 italic">
-                          {isAr ? "لا توجد مشاركات مسجلة" : "No active sports linked"}
-                        </span>
-                      )}
-                    </div>
-                  </div>
+                  {/* Sport Participations (Deduplicated DEF-002) */}
+                  {(() => {
+                    const uniqueParticipations = Array.from(
+                      new Map((athlete.participations || []).map((p) => [p.sportId, p])).values()
+                    );
+                    return (
+                      <div className="space-y-1.5 my-3">
+                        <div className="flex items-center gap-1.5 text-xs text-nx-ink-2">
+                          <Layers className="h-3.5 w-3.5 text-nx-ink-2" />
+                          <span>{isAr ? `المشاركات الرياضية (${uniqueParticipations.length})` : `Sport Participations (${uniqueParticipations.length})`}</span>
+                        </div>
+                        <div className="flex flex-wrap gap-1.5">
+                          {uniqueParticipations.length > 0 ? (
+                            uniqueParticipations.map((p) => (
+                              <span
+                                key={p.id || p.sportId}
+                                className="inline-flex items-center gap-1.5 rounded-full border border-nx-accent-fill/40 bg-nx-accent-fill/15 px-3 py-1 text-xs font-semibold text-nx-accent"
+                              >
+                                <Zap className="h-3.5 w-3.5 text-nx-accent" />
+                                <span>{isAr ? p.sportNameAr : p.sportNameEn} ({p.skillLevel})</span>
+                              </span>
+                            ))
+                          ) : (
+                            <span className="text-xs text-nx-ink-2 italic">
+                              {isAr ? "لا توجد مشاركات مسجلة" : "No active sports linked"}
+                            </span>
+                          )}
+                        </div>
+                      </div>
+                    );
+                  })()}
 
                   {/* Safeguarding & Consent Row */}
                   <div className="flex items-center justify-between border-t border-nx-line pt-3 text-xs">

@@ -79,11 +79,11 @@ export function AthleteCard({
   const cardToken = cardData?.cardToken || qrInfo?.cardToken || athlete?.qrCodeToken || "";
   const qrCodeDataUri = qrInfo?.qrCodeDataUri || "";
 
-  // Derive sports list
+  // Derive sports list (deduplicated by sport DEF-002)
   const sports = cardData?.sports
-    ? cardData.sports
+    ? Array.from(new Set(cardData.sports))
     : athlete?.participations
-    ? athlete.participations.map((p) => p.sportNameEn)
+    ? Array.from(new Map(athlete.participations.map((p) => [p.sportId, p.sportNameEn])).values())
     : [];
 
   const isMinor = athlete?.isMinor ?? true;
