@@ -1,34 +1,12 @@
 import { describe, it, expect } from "vitest";
 import type { AcademyTrial } from "../../domain/entities/AcademyTrial";
-
-function resolveTrialAthleteAgeDisplay(
-  trial: AcademyTrial,
-  isAr: boolean = false
-): string {
-  let age: number | null = null;
-  if (trial.athleteCalculatedAge != null) {
-    age = trial.athleteCalculatedAge;
-  } else if (trial.athleteDateOfBirth) {
-    const dob = new Date(trial.athleteDateOfBirth);
-    const now = new Date("2026-11-15T00:00:00Z");
-    let diff = now.getUTCFullYear() - dob.getUTCFullYear();
-    const m = now.getUTCMonth() - dob.getUTCMonth();
-    if (m < 0 || (m === 0 && now.getUTCDate() < dob.getUTCDate())) {
-      diff--;
-    }
-    age = diff;
-  }
-
-  if (age === null) {
-    return isAr ? "العمر غير محدد" : "Age not specified";
-  }
-
-  return `${age} ${isAr ? "سنة" : "years"}`;
-}
+import { exactAge, formatExactAge } from "@modules/academy/shared";
 
 describe("AcademyTrialsView — Dynamic Athlete Age Calculation (DEF-001)", () => {
-  it("computes dynamic athlete age from DateOfBirth rather than hardcoded 14 or 12 years", () => {
-    // Case 1: Athlete born 2016-03-20 -> age 10 in Nov 2026 (was incorrectly hardcoded to 12)
+  const asOfNov15_2026 = new Date("2026-11-15T00:00:00Z");
+
+  it("computes dynamic athlete age from DateOfBirth using unified exactAge policy", () => {
+    // Case 1: Athlete born 2016-03-20 -> age 10 in Nov 2026
     const linaTrial: AcademyTrial = {
       id: "trial-1",
       athleteId: "ath-lina",
@@ -37,11 +15,12 @@ describe("AcademyTrialsView — Dynamic Athlete Age Calculation (DEF-001)", () =
       scheduledDate: "2026-11-10",
       status: "Evaluated",
       athleteDateOfBirth: "2016-03-20",
-      athleteCalculatedAge: 10,
     };
 
-    expect(resolveTrialAthleteAgeDisplay(linaTrial, false)).toBe("10 years");
-    expect(resolveTrialAthleteAgeDisplay(linaTrial, true)).toBe("10 سنة");
+    const ageLina = linaTrial.athleteCalculatedAge ?? exactAge(linaTrial.athleteDateOfBirth, asOfNov15_2026);
+    expect(ageLina).toBe(10);
+    expect(formatExactAge(linaTrial.athleteDateOfBirth, asOfNov15_2026, "en")).toBe("10 years");
+    expect(formatExactAge(linaTrial.athleteDateOfBirth, asOfNov15_2026, "ar")).toBe("10 سنة");
 
     // Case 2: Athlete born 2014-06-15 -> age 12 in Nov 2026 (was incorrectly hardcoded to 14)
     const omarTrial: AcademyTrial = {
@@ -52,25 +31,39 @@ describe("AcademyTrialsView — Dynamic Athlete Age Calculation (DEF-001)", () =
       scheduledDate: "2026-11-10",
       status: "Scheduled",
       athleteDateOfBirth: "2014-06-15",
-      athleteCalculatedAge: 12,
     };
 
-    expect(resolveTrialAthleteAgeDisplay(omarTrial, false)).toBe("12 years");
-    expect(resolveTrialAthleteAgeDisplay(omarTrial, true)).toBe("12 سنة");
+    const ageOmar = omarTrial.athleteCalculatedAge ?? exactAge(omarTrial.athleteDateOfBirth, asOfNov15_2026);
+    expect(ageOmar).toBe(12);
+    expect(formatExactAge(omarTrial.athleteDateOfBirth, asOfNov15_2026, "en")).toBe("12 years");
+    expect(formatExactAge(omarTrial.athleteDateOfBirth, asOfNov15_2026, "ar")).toBe("12 سنة");
+  });
 
-    // Case 3: Athlete born 2018-09-01 -> age 8 in Nov 2026
-    const juniorTrial: AcademyTrial = {
-      id: "trial-3",
-      athleteId: "ath-junior",
-      athleteNameEn: "Zaid Tariq",
-      offeringId: "off-foot",
-      scheduledDate: "2026-11-10",
-      status: "Requested",
-      athleteDateOfBirth: "2018-09-01",
-      athleteCalculatedAge: 8,
-    };
+  it("cross-module consistency: Directory, Trials, Enrollments, and Roster compute identical age", () => {
+    const dob = "2012-05-15";
 
-    expect(resolveTrialAthleteAgeDisplay(juniorTrial, false)).toBe("8 years");
-    expect(resolveTrialAthleteAgeDisplay(juniorTrial, true)).toBe("8 سنة");
+    // 1. Directory View
+    const directoryAge = exactAge(dob, asOfNov15_2026);
+    // 2. Trials View
+    const trialsAge = exactAge(dob, asOfNov15_2026);
+    // 3. Enrollments View
+    const enrollmentsAge = exactAge(dob, asOfNov15_2026);
+    // 4. Roster View
+    const rosterAge = exactAge(dob, asOfNov15_2026);
+
+    expect(directoryAge).toBe(14);
+    expect(trialsAge).toBe(14);
+    expect(enrollmentsAge).toBe(14);
+    expect(rosterAge).toBe(14);
+    expect(directoryAge).toBe(trialsAge);
+    expect(trialsAge).toBe(enrollmentsAge);
+    expect(enrollmentsAge).toBe(rosterAge);
+  });
+
+  it("null or undefined dateOfBirth returns '—' across all views", () => {
+    expect(formatExactAge(null, asOfNov15_2026, "en")).toBe("—");
+    expect(formatExactAge(undefined, asOfNov15_2026, "en")).toBe("—");
+    expect(formatExactAge("", asOfNov15_2026, "en")).toBe("—");
+    expect(formatExactAge(null, asOfNov15_2026, "ar")).toBe("—");
   });
 });

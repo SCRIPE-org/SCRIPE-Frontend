@@ -4,7 +4,7 @@ import { useState, useEffect, useMemo } from "react";
 import Link from "next/link";
 import { useI18n } from "@core/providers/i18n-provider";
 import { usePermission } from "@core/hooks/use-permission";
-import { ACADEMY_PERMISSIONS } from "@modules/academy/shared";
+import { ACADEMY_PERMISSIONS, exactAge, formatExactAge } from "@modules/academy/shared";
 import { useAcademyServiceLocator } from "@modules/academy/di";
 import { useAcademyTrialsViewModel } from "../viewmodels/useAcademyTrialsViewModel";
 import type { AcademyTrial, TrialStatus } from "../../domain/entities/AcademyTrial";
@@ -128,17 +128,6 @@ function getStatusBadge(status: TrialStatus | string, isAr: boolean) {
   }
 }
 
-function getAthleteAge(dobString?: string | null): number | null {
-  if (!dobString) return null;
-  const dob = new Date(dobString);
-  const now = new Date();
-  let age = now.getUTCFullYear() - dob.getUTCFullYear();
-  const m = now.getUTCMonth() - dob.getUTCMonth();
-  if (m < 0 || (m === 0 && now.getUTCDate() < dob.getUTCDate())) {
-    age--;
-  }
-  return age;
-}
 
 export function AcademyTrialsView() {
   const { t, language } = useI18n();
@@ -1316,7 +1305,7 @@ export function AcademyTrialsView() {
                     <span className="text-nx-ink-2">{isAr ? "العمر" : "Age"}</span>
                     <span className="text-white font-semibold">
                       {(() => {
-                        const age = selectedTrial.athleteCalculatedAge ?? getAthleteAge(selectedTrial.athleteDateOfBirth);
+                        const age = selectedTrial.athleteCalculatedAge ?? exactAge(selectedTrial.athleteDateOfBirth);
                         return age !== null ? `${age} ${isAr ? "سنة" : "years"}` : "—";
                       })()}
                     </span>
@@ -1552,7 +1541,7 @@ export function AcademyTrialsView() {
                   {/* Selected Athlete Mini-card */}
                   {(() => {
                     const selAth = athletesList.find(a => a.id === athleteId);
-                    const calcAge = getAthleteAge(selAth?.dateOfBirth);
+                    const calcAge = exactAge(selAth?.dateOfBirth);
                     return (
                       <div className="p-3.5 rounded-xl border border-nx-accent-fill/40 bg-gradient-to-r from-nx-accent-fill/15 to-nx-surface flex items-center gap-3">
                         <span className="text-2xl text-nx-accent">♙</span>
@@ -1709,7 +1698,7 @@ export function AcademyTrialsView() {
                 <div className="space-y-4">
                   {(() => {
                     const reviewTrial = activeTrial || selectedTrial;
-                    const calcAge = reviewTrial?.athleteCalculatedAge ?? getAthleteAge(reviewTrial?.athleteDateOfBirth);
+                    const calcAge = reviewTrial?.athleteCalculatedAge ?? exactAge(reviewTrial?.athleteDateOfBirth);
                     const athleteName = (isAr && reviewTrial?.athleteNameAr) ? reviewTrial.athleteNameAr : (reviewTrial?.athleteNameEn || "Trial Athlete");
                     const initials = getAthleteInitials(reviewTrial?.athleteNameEn, undefined, reviewTrial?.athleteNameAr);
 
