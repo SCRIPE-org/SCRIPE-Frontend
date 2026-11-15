@@ -28,6 +28,10 @@ export interface AcademyTrial {
   adminDecisionNotes?: string | null;
   decidedBy?: string | null;
   decidedAt?: string | null;
+  athleteDateOfBirth?: string | null;
+  athleteCalculatedAge?: number | null;
+  athleteGender?: string | null;
+  athletePrimarySport?: string | null;
 }
 
 export interface RequestTrialPayload {

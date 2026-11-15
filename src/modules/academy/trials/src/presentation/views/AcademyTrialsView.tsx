@@ -128,6 +128,18 @@ function getStatusBadge(status: TrialStatus | string, isAr: boolean) {
   }
 }
 
+function getAthleteAge(dobString?: string | null): number | null {
+  if (!dobString) return null;
+  const dob = new Date(dobString);
+  const now = new Date();
+  let age = now.getUTCFullYear() - dob.getUTCFullYear();
+  const m = now.getUTCMonth() - dob.getUTCMonth();
+  if (m < 0 || (m === 0 && now.getUTCDate() < dob.getUTCDate())) {
+    age--;
+  }
+  return age;
+}
+
 export function AcademyTrialsView() {
   const { t, language } = useI18n();
   const dir = language === "ar" ? "rtl" : "ltr";
@@ -174,6 +186,7 @@ export function AcademyTrialsView() {
   // Selectors State
   const [athleteOptions, setAthleteOptions] = useState<GenericSelectOption[]>([]);
   const [offeringOptions, setOfferingOptions] = useState<GenericSelectOption[]>([]);
+  const [athletesList, setAthletesList] = useState<any[]>([]);
   const [loadingSelectors, setLoadingSelectors] = useState(false);
 
   useEffect(() => {
@@ -186,6 +199,7 @@ export function AcademyTrialsView() {
           locator.offeringsRepository.fetchOfferings().catch(() => []),
         ]);
         if (!mounted) return;
+        setAthletesList(athletes || []);
         setAthleteOptions(
           athletes.map((a: any) => ({
             value: a.id,
@@ -1294,6 +1308,23 @@ export function AcademyTrialsView() {
                     <span className="text-nx-ink-2">{isAr ? "معرّف الرياضي" : "Athlete ID"}</span>
                     <span className="font-mono text-white text-[11px]">{selectedTrial.athleteId}</span>
                   </div>
+                  <div className="flex justify-between border-b border-nx-line pb-1.5">
+                    <span className="text-nx-ink-2">{isAr ? "تاريخ الميلاد" : "Date of Birth"}</span>
+                    <span className="text-white">{selectedTrial.athleteDateOfBirth || "—"}</span>
+                  </div>
+                  <div className="flex justify-between border-b border-nx-line pb-1.5">
+                    <span className="text-nx-ink-2">{isAr ? "العمر" : "Age"}</span>
+                    <span className="text-white font-semibold">
+                      {(() => {
+                        const age = selectedTrial.athleteCalculatedAge ?? getAthleteAge(selectedTrial.athleteDateOfBirth);
+                        return age !== null ? `${age} ${isAr ? "سنة" : "years"}` : "—";
+                      })()}
+                    </span>
+                  </div>
+                  <div className="flex justify-between border-b border-nx-line pb-1.5">
+                    <span className="text-nx-ink-2">{isAr ? "الجنس" : "Gender"}</span>
+                    <span className="text-white">{selectedTrial.athleteGender || "—"}</span>
+                  </div>
                   <div className="flex justify-between">
                     <span className="text-nx-ink-2">{isAr ? "تاريخ الحجز / التقييم" : "Date / Schedule"}</span>
                     <span className="text-white">{selectedTrial.evaluatedAt ? new Date(selectedTrial.evaluatedAt).toLocaleDateString() : selectedTrial.scheduledDate}</span>
@@ -1519,20 +1550,26 @@ export function AcademyTrialsView() {
                   </div>
 
                   {/* Selected Athlete Mini-card */}
-                  <div className="p-3.5 rounded-xl border border-nx-accent-fill/40 bg-gradient-to-r from-nx-accent-fill/15 to-nx-surface flex items-center gap-3">
-                    <span className="text-2xl text-nx-accent">♙</span>
-                    <div className="flex-1 min-w-0">
-                      <div className="font-bold text-nx-ink text-xs truncate">
-                        {athleteOptions.find(o => o.value === athleteId)?.label || "Omar Khaled"}
+                  {(() => {
+                    const selAth = athletesList.find(a => a.id === athleteId);
+                    const calcAge = getAthleteAge(selAth?.dateOfBirth);
+                    return (
+                      <div className="p-3.5 rounded-xl border border-nx-accent-fill/40 bg-gradient-to-r from-nx-accent-fill/15 to-nx-surface flex items-center gap-3">
+                        <span className="text-2xl text-nx-accent">♙</span>
+                        <div className="flex-1 min-w-0">
+                          <div className="font-bold text-nx-ink text-xs truncate">
+                            {athleteOptions.find(o => o.value === athleteId)?.label || (selAth ? `${selAth.firstNameEn} ${selAth.lastNameEn}` : "Omar Khaled")}
+                          </div>
+                          <div className="text-[11px] text-nx-ink-2 truncate">
+                            {calcAge !== null ? `${calcAge} ${isAr ? "سنة" : "years"}` : (isAr ? "العمر غير محدد" : "Age not specified")} · {selAth?.primarySportCode ? `${selAth.primarySportCode} participation` : "Sport participation"}
+                          </div>
+                        </div>
+                        <span className="inline-flex px-2 py-0.5 rounded-full text-[10px] font-bold bg-nx-accent-fill/15 text-nx-accent border border-nx-accent-fill/40">
+                          {isAr ? "جاهز" : "Ready"}
+                        </span>
                       </div>
-                      <div className="text-[11px] text-nx-ink-2 truncate">
-                        14 years · Football participation
-                      </div>
-                    </div>
-                    <span className="inline-flex px-2 py-0.5 rounded-full text-[10px] font-bold bg-nx-accent-fill/15 text-nx-accent border border-nx-accent-fill/40">
-                      {isAr ? "جاهز" : "Ready"}
-                    </span>
-                  </div>
+                    );
+                  })()}
 
                   <div className="h-px bg-nx-raised" />
 
@@ -1670,29 +1707,42 @@ export function AcademyTrialsView() {
               {/* Left Column (8 cols): Trial Evidence */}
               <div className="lg:col-span-8 rounded-xl border border-nx-line bg-gradient-to-br from-nx-surface to-nx-surface p-5 flex flex-col justify-between min-h-[520px]">
                 <div className="space-y-4">
-                  <div className="flex items-center justify-between pb-3 border-b border-nx-line">
-                    <h3 className="font-bold text-nx-ink text-base">
-                      {isAr ? "أدلة التجربة · لينا خالد" : "Trial Evidence · Lina Khaled"}
-                    </h3>
-                    <span className="text-xs font-bold text-nx-accent">
-                      View Published Template
-                    </span>
-                  </div>
+                  {(() => {
+                    const reviewTrial = activeTrial || selectedTrial;
+                    const calcAge = reviewTrial?.athleteCalculatedAge ?? getAthleteAge(reviewTrial?.athleteDateOfBirth);
+                    const athleteName = (isAr && reviewTrial?.athleteNameAr) ? reviewTrial.athleteNameAr : (reviewTrial?.athleteNameEn || "Trial Athlete");
+                    const initials = getAthleteInitials(reviewTrial?.athleteNameEn, undefined, reviewTrial?.athleteNameAr);
 
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-3.5">
-                      <div className="w-16 h-16 rounded-2xl flex items-center justify-center font-black text-2xl border border-nx-accent-fill/40 bg-gradient-to-br from-nx-accent-fill/20 to-nx-surface text-nx-accent">
-                        LK
-                      </div>
-                      <div>
-                        <h4 className="text-xl font-bold text-nx-ink">Lina Khaled</h4>
-                        <p className="text-xs text-nx-ink-2">TRI-00248 · Swimming · Level 2 · 12 years</p>
-                      </div>
-                    </div>
-                    <span className="inline-flex px-3 py-1 rounded-full text-xs font-bold bg-warning/15 text-warning border border-warning/30">
-                      Ready for Review
-                    </span>
-                  </div>
+                    return (
+                      <>
+                        <div className="flex items-center justify-between pb-3 border-b border-nx-line">
+                          <h3 className="font-bold text-nx-ink text-base">
+                            {isAr ? `أدلة التجربة · ${athleteName}` : `Trial Evidence · ${athleteName}`}
+                          </h3>
+                          <span className="text-xs font-bold text-nx-accent">
+                            View Published Template
+                          </span>
+                        </div>
+
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center gap-3.5">
+                            <div className="w-16 h-16 rounded-2xl flex items-center justify-center font-black text-2xl border border-nx-accent-fill/40 bg-gradient-to-br from-nx-accent-fill/20 to-nx-surface text-nx-accent">
+                              {initials}
+                            </div>
+                            <div>
+                              <h4 className="text-xl font-bold text-nx-ink">{athleteName}</h4>
+                              <p className="text-xs text-nx-ink-2">
+                                {reviewTrial?.id ? reviewTrial.id.slice(0, 8).toUpperCase() : "TRI"} · {reviewTrial?.offeringNameEn || "Sport"} · {reviewTrial?.recommendedLevel || "Evaluation"} · {calcAge !== null ? `${calcAge} ${isAr ? "سنة" : "years"}` : (isAr ? "العمر غير محدد" : "Age not specified")}
+                              </p>
+                            </div>
+                          </div>
+                          <span className="inline-flex px-3 py-1 rounded-full text-xs font-bold bg-warning/15 text-warning border border-warning/30">
+                            {reviewTrial?.status || "Ready for Review"}
+                          </span>
+                        </div>
+                      </>
+                    );
+                  })()}
 
                   {/* Tabs */}
                   <div className="flex items-center gap-6 border-b border-nx-line text-xs font-bold">
