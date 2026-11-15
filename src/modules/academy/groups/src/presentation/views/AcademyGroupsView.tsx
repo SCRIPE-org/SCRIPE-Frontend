@@ -4,7 +4,7 @@ import { useState, useEffect, useMemo, useCallback } from "react";
 import Link from "next/link";
 import { useI18n } from "@core/providers/i18n-provider";
 import { usePermission } from "@core/hooks/use-permission";
-import { ACADEMY_PERMISSIONS } from "@modules/academy/shared";
+import { ACADEMY_PERMISSIONS, evaluateGroupCapacity, GROUP_CAPACITY_THRESHOLDS, formatExactAge } from "@modules/academy/shared";
 import { useAcademyServiceLocator } from "@modules/academy/di";
 import { useTrainingGroupsViewModel } from "../viewmodels/useTrainingGroupsViewModel";
 import { useTrainingGroupDetailViewModel } from "../viewmodels/useTrainingGroupDetailViewModel";
@@ -224,7 +224,7 @@ export function AcademyGroupsView({ initialGroupId, initialOfferingId }: Academy
   // KPI calculations (100% authentic, no fabricated numbers)
   const totalGroupsCount = groups.length;
   const groupsNearCapacityCount = useMemo(() => {
-    return groups.filter(g => g.maxCapacity > 0 && g.activeMemberCount >= g.maxCapacity * 0.8).length;
+    return groups.filter(g => evaluateGroupCapacity(g.activeMemberCount, g.maxCapacity).isNearFull).length;
   }, [groups]);
   const totalRosterAthletes = useMemo(() => {
     return groups.reduce((acc, g) => acc + (g.activeMemberCount || 0), 0);
@@ -338,11 +338,15 @@ export function AcademyGroupsView({ initialGroupId, initialOfferingId }: Academy
     description: `Offering: ${e.offeringNameEn || e.offeringId} • Status: ${e.status}`
   }));
 
-  const otherGroupsOptions: GenericSelectOption[] = otherGroups.map(g => ({
-    value: g.id,
-    label: isAr && g.nameAr ? g.nameAr : g.nameEn,
-    description: `Capacity: ${g.activeMemberCount}/${g.maxCapacity}`
-  }));
+  const otherGroupsOptions: GenericSelectOption[] = otherGroups.map(g => {
+    const cap = evaluateGroupCapacity(g.activeMemberCount, g.maxCapacity);
+    const fullTag = cap.isFull ? (isAr ? " [مكتملة]" : " [Full]") : "";
+    return {
+      value: g.id,
+      label: `${isAr && g.nameAr ? g.nameAr : g.nameEn}${fullTag}`,
+      description: `${isAr ? "السعة:" : "Capacity:"} ${g.activeMemberCount}/${g.maxCapacity} (${isAr ? cap.badgeLabelAr : cap.badgeLabelEn})`
+    };
+  });
 
   const availableCoachesOptions: GenericSelectOption[] = availableCoaches.map(c => ({
     value: c.staffMemberId,
@@ -350,16 +354,8 @@ export function AcademyGroupsView({ initialGroupId, initialOfferingId }: Academy
     description: `${c.sportNameEn} • Qualification: ${c.qualificationLevel}`
   }));
 
-  // Athlete age helper
-  const calculateAge = (dobString?: string | null) => {
-    if (!dobString) return "—";
-    const dob = new Date(dobString);
-    const now = new Date();
-    let age = now.getFullYear() - dob.getFullYear();
-    const m = now.getMonth() - dob.getMonth();
-    if (m < 0 || (m === 0 && now.getDate() < dob.getDate())) age--;
-    return age > 0 ? age : "—";
-  };
+  // Athlete age helper (DEF-001 unified exactAge)
+  const calculateAge = (dobString?: string | null) => formatExactAge(dobString);
 
   const headCoach = coaches.find(c => c.role === "HeadCoach" && c.isActive);
 
@@ -443,7 +439,7 @@ export function AcademyGroupsView({ initialGroupId, initialOfferingId }: Academy
         {/* Card 2: Groups Near Capacity */}
         <div className="relative rounded-2xl border border-nx-line bg-nx-surface p-4 shadow-lg flex flex-col justify-between">
           <div className="flex items-start justify-between">
-            <span className="text-xs text-nx-ink-2 font-semibold">{isAr ? "مجموعات قاربت الامتلاء" : "Near Capacity (≥80%)"}</span>
+            <span className="text-xs text-nx-ink-2 font-semibold">{isAr ? "مجموعات قاربت الامتلاء (≥90%)" : "Near Capacity (≥90%)"}</span>
             <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-nx-raised text-warning">
               <Users className="h-4 w-4" />
             </div>
@@ -538,8 +534,7 @@ export function AcademyGroupsView({ initialGroupId, initialOfferingId }: Academy
             ) : (
               filteredGroups.map(grp => {
                 const isSelected = selectedGroupId === grp.id;
-                const fillPercent = grp.maxCapacity > 0 ? Math.min(100, Math.round((grp.activeMemberCount / grp.maxCapacity) * 100)) : 0;
-                const isNearFull = fillPercent >= 80;
+                const capacity = evaluateGroupCapacity(grp.activeMemberCount, grp.maxCapacity);
 
                 return (
                   <div
@@ -568,8 +563,8 @@ export function AcademyGroupsView({ initialGroupId, initialOfferingId }: Academy
                         <div className="flex items-center gap-2 mt-1.5">
                           <div className="h-1.5 w-16 rounded-full bg-nx-raised overflow-hidden">
                             <div
-                              className={`h-full rounded-full ${isNearFull ? "bg-warning" : "bg-nx-accent-fill"}`}
-                              style={{ width: `${Math.max(6, fillPercent)}%` }}
+                              className={`h-full rounded-full ${capacity.barColorClass}`}
+                              style={{ width: `${Math.max(6, capacity.clampedFillPercent)}%` }}
                             />
                           </div>
                           <span className="text-[10px] font-mono text-nx-ink-2">
@@ -580,12 +575,8 @@ export function AcademyGroupsView({ initialGroupId, initialOfferingId }: Academy
                     </div>
 
                     <div className="flex items-center gap-1.5 shrink-0">
-                      <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded-full border ${
-                        isNearFull
-                          ? "border-warning/50 bg-warning/15 text-warning"
-                          : "border-nx-accent-fill/40 bg-nx-accent-fill/15 text-nx-accent"
-                      }`}>
-                        {isNearFull ? (isAr ? "شبه ممتلئ" : "Near Full") : (isAr ? "نشط" : "Active")}
+                      <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded-full border ${capacity.badgeVariantClass}`}>
+                        {isAr ? capacity.badgeLabelAr : capacity.badgeLabelEn}
                       </span>
                       <ChevronRight className={`h-4 w-4 ${isSelected ? "text-nx-accent" : "text-nx-ink-2"}`} />
                     </div>
@@ -651,21 +642,28 @@ export function AcademyGroupsView({ initialGroupId, initialOfferingId }: Academy
               {/* 4 Summary Metadata Cards */}
               <div className="grid grid-cols-2 md:grid-cols-4 gap-3 text-xs">
                 {/* Capacity */}
-                <div className="p-3 rounded-xl border border-nx-line bg-nx-raised space-y-1.5">
-                  <div className="flex items-center justify-between text-nx-ink-2">
-                    <span>{isAr ? "طاقة الاستيعاب" : "Capacity"}</span>
-                    <Users className="h-3.5 w-3.5 text-nx-accent" />
-                  </div>
-                  <div className="text-sm font-bold text-nx-ink">
-                    {selectedGroup.activeMemberCount} / {selectedGroup.maxCapacity}
-                  </div>
-                  <div className="h-1.5 w-full rounded-full bg-nx-raised overflow-hidden">
-                    <div
-                      className="h-full rounded-full bg-nx-accent-fill"
-                      style={{ width: `${Math.min(100, Math.round(((selectedGroup.activeMemberCount || 0) / (selectedGroup.maxCapacity || 1)) * 100))}%` }}
-                    />
-                  </div>
-                </div>
+                {(() => {
+                  const cap = evaluateGroupCapacity(selectedGroup.activeMemberCount, selectedGroup.maxCapacity);
+                  return (
+                    <div className="p-3 rounded-xl border border-nx-line bg-nx-raised space-y-1.5">
+                      <div className="flex items-center justify-between text-nx-ink-2">
+                        <span>{isAr ? "طاقة الاستيعاب" : "Capacity"}</span>
+                        <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded-full border ${cap.badgeVariantClass}`}>
+                          {isAr ? cap.badgeLabelAr : cap.badgeLabelEn}
+                        </span>
+                      </div>
+                      <div className="text-sm font-bold text-nx-ink">
+                        {selectedGroup.activeMemberCount} / {selectedGroup.maxCapacity}
+                      </div>
+                      <div className="h-1.5 w-full rounded-full bg-nx-raised overflow-hidden">
+                        <div
+                          className={`h-full rounded-full ${cap.barColorClass}`}
+                          style={{ width: `${cap.clampedFillPercent}%` }}
+                        />
+                      </div>
+                    </div>
+                  );
+                })()}
 
                 {/* Assigned Coach */}
                 <div className="p-3 rounded-xl border border-nx-line bg-nx-raised space-y-1.5">
@@ -996,56 +994,106 @@ export function AcademyGroupsView({ initialGroupId, initialOfferingId }: Academy
       )}
 
       {/* MODAL 2: Assign Athlete Modal */}
-      {showAssignAthleteModal && selectedGroup && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4">
-          <div className="w-full max-w-md rounded-2xl border border-nx-line bg-nx-surface p-6 shadow-2xl space-y-4">
-            <h3 className="text-base font-bold text-nx-ink flex items-center gap-2">
-              <UserPlus className="h-5 w-5 text-nx-accent" />
-              {isAr ? "إضافة رياضي للقائمة" : "Assign Athlete to Cohort"}
-            </h3>
+      {showAssignAthleteModal && selectedGroup && (() => {
+        const isGroupFull = evaluateGroupCapacity(selectedGroup.activeMemberCount, selectedGroup.maxCapacity).isFull;
+        return (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4">
+            <div className="w-full max-w-md rounded-2xl border border-nx-line bg-nx-surface p-6 shadow-2xl space-y-4">
+              <h3 className="text-base font-bold text-nx-ink flex items-center gap-2">
+                <UserPlus className="h-5 w-5 text-nx-accent" />
+                {isAr ? "إضافة رياضي للقائمة" : "Assign Athlete to Cohort"}
+              </h3>
 
-            <form onSubmit={handleAssignAthleteSubmit} className="space-y-3 text-xs">
-              <div>
-                <label className="block text-nx-ink-2 mb-1 font-semibold">{isAr ? "اختر الرياضي" : "Select Athlete"}</label>
-                <GenericSelect
-                  options={enrolledAthletesOptions}
-                  value={enrollmentIdInput}
-                  onChange={(val: string) => setEnrollmentIdInput(val)}
-                  placeholder={loadingEnrollments ? "Loading..." : "Select enrolled athlete..."}
-                />
-              </div>
+              {isGroupFull ? (
+                <div className="space-y-4">
+                  <div className="p-4 rounded-xl border border-rose-500/40 bg-rose-500/10 text-rose-300 space-y-3">
+                    <div className="flex items-start gap-2.5">
+                      <AlertCircle className="h-5 w-5 text-rose-400 shrink-0 mt-0.5" />
+                      <div className="text-xs space-y-1">
+                        <div className="font-bold text-white">
+                          {isAr ? "المجموعة التدريبية ممتلئة" : "Training Group is at Maximum Capacity"}
+                        </div>
+                        <p>
+                          {isAr
+                            ? `المجموعة التدريبية بلغت طاقتها الاستيعابية القصوى (${selectedGroup.maxCapacity} رياضياً). لا يمكن إضافة أعضاء جدد مباشرة.`
+                            : `This training group has reached maximum capacity (${selectedGroup.maxCapacity} athletes). Direct placements are blocked.`}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
 
-              <div>
-                <label className="block text-nx-ink-2 mb-1 font-semibold">{isAr ? "تاريخ البدء" : "Effective Start Date"}</label>
-                <input
-                  type="date"
-                  required
-                  value={assignStartDate}
-                  onChange={e => setAssignStartDate(e.target.value)}
-                  className="w-full h-9 rounded-xl border border-nx-line bg-nx-raised px-3 text-xs text-white outline-none focus:border-nx-accent"
-                />
-              </div>
+                  <div className="p-3.5 rounded-xl border border-nx-line bg-nx-raised space-y-2 text-xs">
+                    <div className="font-semibold text-white">
+                      {isAr ? "خيار قائمة الانتظار" : "Waitlist Placement Option"}
+                    </div>
+                    <p className="text-nx-ink-2">
+                      {isAr
+                        ? "يمكنك تسجيل طلب الرياضي في قائمة الانتظار للانضمام تلقائياً عند توفر مقعد شاغر."
+                        : "You can place this athlete on the waitlist to be automatically considered when a roster spot opens."}
+                    </p>
+                    <div className="pt-2 flex justify-end gap-2">
+                      <button
+                        type="button"
+                        onClick={() => setShowAssignAthleteModal(false)}
+                        className="px-4 py-2 rounded-xl border border-nx-line text-nx-ink-2 hover:bg-nx-surface"
+                      >
+                        {isAr ? "إغلاق" : "Close"}
+                      </button>
+                      <Link
+                        href="/academy/enrollments"
+                        onClick={() => setShowAssignAthleteModal(false)}
+                        className="px-4 py-2 rounded-xl bg-nx-accent-fill text-nx-on-fill font-bold hover:bg-nx-accent-fill/90"
+                      >
+                        {isAr ? "الانتقال لقائمة الانتظار" : "Go to Waitlist"}
+                      </Link>
+                    </div>
+                  </div>
+                </div>
+              ) : (
+                <form onSubmit={handleAssignAthleteSubmit} className="space-y-3 text-xs">
+                  <div>
+                    <label className="block text-nx-ink-2 mb-1 font-semibold">{isAr ? "اختر الرياضي" : "Select Athlete"}</label>
+                    <GenericSelect
+                      options={enrolledAthletesOptions}
+                      value={enrollmentIdInput}
+                      onChange={(val: string) => setEnrollmentIdInput(val)}
+                      placeholder={loadingEnrollments ? "Loading..." : "Select enrolled athlete..."}
+                    />
+                  </div>
 
-              <div className="flex justify-end gap-2.5 pt-3 border-t border-nx-line">
-                <button
-                  type="button"
-                  onClick={() => setShowAssignAthleteModal(false)}
-                  className="px-4 py-2 rounded-xl border border-nx-line text-nx-ink-2"
-                >
-                  {isAr ? "إلغاء" : "Cancel"}
-                </button>
-                <button
-                  type="submit"
-                  disabled={!enrollmentIdInput}
-                  className="px-4 py-2 rounded-xl bg-nx-accent-fill text-nx-on-fill font-bold disabled:opacity-50"
-                >
-                  {isAr ? "إضافة للقائمة" : "Assign to Roster"}
-                </button>
-              </div>
-            </form>
+                  <div>
+                    <label className="block text-nx-ink-2 mb-1 font-semibold">{isAr ? "تاريخ البدء" : "Effective Start Date"}</label>
+                    <input
+                      type="date"
+                      required
+                      value={assignStartDate}
+                      onChange={e => setAssignStartDate(e.target.value)}
+                      className="w-full h-9 rounded-xl border border-nx-line bg-nx-raised px-3 text-xs text-white outline-none focus:border-nx-accent"
+                    />
+                  </div>
+
+                  <div className="flex justify-end gap-2.5 pt-3 border-t border-nx-line">
+                    <button
+                      type="button"
+                      onClick={() => setShowAssignAthleteModal(false)}
+                      className="px-4 py-2 rounded-xl border border-nx-line text-nx-ink-2"
+                    >
+                      {isAr ? "إلغاء" : "Cancel"}
+                    </button>
+                    <button
+                      type="submit"
+                      disabled={!enrollmentIdInput}
+                      className="px-4 py-2 rounded-xl bg-nx-accent-fill text-nx-on-fill font-bold disabled:opacity-50"
+                    >
+                      {isAr ? "إضافة للقائمة" : "Assign to Roster"}
+                    </button>
+                  </div>
+                </form>
+              )}
+            </div>
           </div>
-        </div>
-      )}
+        );
+      })()}
 
       {/* MODAL 3: Transfer Athlete Modal */}
       {transferTargetItem && (
@@ -1060,56 +1108,78 @@ export function AcademyGroupsView({ initialGroupId, initialOfferingId }: Academy
               Transferring: <strong className="text-white">{transferTargetItem.athleteNameEn}</strong>
             </p>
 
-            <form onSubmit={handleTransferSubmit} className="space-y-3 text-xs">
-              <div>
-                <label className="block text-nx-ink-2 mb-1 font-semibold">{isAr ? "المجموعة المستهدفة" : "Target Group"}</label>
-                <GenericSelect
-                  options={otherGroupsOptions}
-                  value={targetGroupIdInput}
-                  onChange={(val: string) => setTargetGroupIdInput(val)}
-                  placeholder="Select destination group..."
-                />
-              </div>
+            {(() => {
+              const selectedTarget = otherGroups.find(g => g.id === targetGroupIdInput);
+              const targetCapacity = selectedTarget ? evaluateGroupCapacity(selectedTarget.activeMemberCount, selectedTarget.maxCapacity) : null;
+              const isTargetFull = targetCapacity?.isFull ?? false;
 
-              <div>
-                <label className="block text-nx-ink-2 mb-1 font-semibold">{isAr ? "سبب النقل" : "Transfer Reason"}</label>
-                <input
-                  type="text"
-                  value={transferReasonInput}
-                  onChange={e => setTransferReasonInput(e.target.value)}
-                  placeholder="e.g. Schedule adjustment or skill progression"
-                  className="w-full h-9 rounded-xl border border-nx-line bg-nx-raised px-3 text-xs text-white outline-none focus:border-nx-accent"
-                />
-              </div>
+              return (
+                <form onSubmit={handleTransferSubmit} className="space-y-3 text-xs">
+                  <div>
+                    <label className="block text-nx-ink-2 mb-1 font-semibold">{isAr ? "المجموعة المستهدفة" : "Target Group"}</label>
+                    <GenericSelect
+                      options={otherGroupsOptions}
+                      value={targetGroupIdInput}
+                      onChange={(val: string) => setTargetGroupIdInput(val)}
+                      placeholder="Select destination group..."
+                    />
+                  </div>
 
-              <div>
-                <label className="block text-nx-ink-2 mb-1 font-semibold">{isAr ? "تاريخ النفاذ" : "Effective Date"}</label>
-                <input
-                  type="date"
-                  required
-                  value={transferEffectiveDate}
-                  onChange={e => setTransferEffectiveDate(e.target.value)}
-                  className="w-full h-9 rounded-xl border border-nx-line bg-nx-raised px-3 text-xs text-white outline-none focus:border-nx-accent"
-                />
-              </div>
+                  {isTargetFull && selectedTarget && (
+                    <div className="p-3 rounded-xl border border-rose-500/40 bg-rose-500/10 text-rose-300 space-y-1.5">
+                      <div className="flex items-center gap-2 font-bold text-white text-xs">
+                        <AlertCircle className="h-4 w-4 text-rose-400 shrink-0" />
+                        <span>{isAr ? "المجموعة المستهدفة ممتلئة" : "Target Group is at Maximum Capacity"}</span>
+                      </div>
+                      <p className="text-[11px]">
+                        {isAr
+                          ? `بلغت المجموعة (${selectedTarget.nameAr || selectedTarget.nameEn}) طاقتها الاستيعابية (${selectedTarget.maxCapacity}). يرجى توجيه اللاعب لقائمة الانتظار.`
+                          : `Group (${selectedTarget.nameEn}) has reached maximum capacity (${selectedTarget.maxCapacity}). Please direct athlete to waitlist.`}
+                      </p>
+                    </div>
+                  )}
 
-              <div className="flex justify-end gap-2.5 pt-3 border-t border-nx-line">
-                <button
-                  type="button"
-                  onClick={() => setTransferTargetItem(null)}
-                  className="px-4 py-2 rounded-xl border border-nx-line text-nx-ink-2"
-                >
-                  {isAr ? "إلغاء" : "Cancel"}
-                </button>
-                <button
-                  type="submit"
-                  disabled={!targetGroupIdInput}
-                  className="px-4 py-2 rounded-xl bg-info text-nx-on-fill font-bold disabled:opacity-50"
-                >
-                  {isAr ? "تأكيد النقل" : "Confirm Transfer"}
-                </button>
-              </div>
-            </form>
+                  <div>
+                    <label className="block text-nx-ink-2 mb-1 font-semibold">{isAr ? "سبب النقل" : "Transfer Reason"}</label>
+                    <input
+                      type="text"
+                      value={transferReasonInput}
+                      onChange={e => setTransferReasonInput(e.target.value)}
+                      placeholder="e.g. Schedule adjustment or skill progression"
+                      className="w-full h-9 rounded-xl border border-nx-line bg-nx-raised px-3 text-xs text-white outline-none focus:border-nx-accent"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-nx-ink-2 mb-1 font-semibold">{isAr ? "تاريخ النفاذ" : "Effective Date"}</label>
+                    <input
+                      type="date"
+                      required
+                      value={transferEffectiveDate}
+                      onChange={e => setTransferEffectiveDate(e.target.value)}
+                      className="w-full h-9 rounded-xl border border-nx-line bg-nx-raised px-3 text-xs text-white outline-none focus:border-nx-accent"
+                    />
+                  </div>
+
+                  <div className="flex justify-end gap-2.5 pt-3 border-t border-nx-line">
+                    <button
+                      type="button"
+                      onClick={() => setTransferTargetItem(null)}
+                      className="px-4 py-2 rounded-xl border border-nx-line text-nx-ink-2"
+                    >
+                      {isAr ? "إلغاء" : "Cancel"}
+                    </button>
+                    <button
+                      type="submit"
+                      disabled={!targetGroupIdInput || isTargetFull}
+                      className="px-4 py-2 rounded-xl bg-info text-nx-on-fill font-bold disabled:opacity-50"
+                    >
+                      {isAr ? "تأكيد النقل" : "Confirm Transfer"}
+                    </button>
+                  </div>
+                </form>
+              );
+            })()}
           </div>
         </div>
       )}

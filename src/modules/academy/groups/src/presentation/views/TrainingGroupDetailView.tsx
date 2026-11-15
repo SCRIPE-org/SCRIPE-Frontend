@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useI18n } from "@core/providers/i18n-provider";
 import { usePermission } from "@core/hooks/use-permission";
-import { ACADEMY_PERMISSIONS, checkGroupAgeEligibility } from "@modules/academy/shared";
+import { ACADEMY_PERMISSIONS, checkGroupAgeEligibility, evaluateGroupCapacity } from "@modules/academy/shared";
 import { useAcademyServiceLocator } from "@modules/academy/di";
 import { useTrainingGroupDetailViewModel } from "../viewmodels/useTrainingGroupDetailViewModel";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@core/ui/card";
@@ -307,7 +307,8 @@ export function TrainingGroupDetailView({ groupId, onBack }: TrainingGroupDetail
     );
   }
 
-  const isFull = group.activeMemberCount >= group.maxCapacity;
+  const capacity = evaluateGroupCapacity(group.activeMemberCount, group.maxCapacity);
+  const isFull = capacity.isFull;
 
   return (
     <div className="mx-auto max-w-[1400px] space-y-6 p-6" dir={dir}>
@@ -339,6 +340,9 @@ export function TrainingGroupDetailView({ groupId, onBack }: TrainingGroupDetail
                 >
                   {group.status}
                 </Badge>
+                <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded-full border ${capacity.badgeVariantClass}`}>
+                  {language === "ar" ? capacity.badgeLabelAr : capacity.badgeLabelEn}
+                </span>
               </div>
               <p className="text-xs text-nx-ink-2 mt-0.5">
                 {language === "ar" ? group.offeringNameAr : group.offeringNameEn}
@@ -384,7 +388,7 @@ export function TrainingGroupDetailView({ groupId, onBack }: TrainingGroupDetail
           <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg border border-nx-line bg-nx-surface">
             <Users className="size-4 text-nx-accent" />
             <span className="text-xs text-nx-ink-2">{language === "ar" ? "السعة:" : "Capacity:"}</span>
-            <span className={`text-xs font-bold ${isFull ? "text-amber-500" : "text-nx-ink"}`}>
+            <span className={`text-xs font-bold ${capacity.isFull ? "text-rose-500" : capacity.isNearFull ? "text-amber-500" : "text-nx-ink"}`}>
               {group.activeMemberCount} / {group.maxCapacity}
             </span>
           </div>
@@ -465,6 +469,25 @@ export function TrainingGroupDetailView({ groupId, onBack }: TrainingGroupDetail
               </Button>
             )}
           </div>
+
+          {isFull && (
+            <div className="p-3.5 rounded-xl border border-rose-500/30 bg-rose-500/10 text-rose-300 flex items-center justify-between text-xs">
+              <div className="flex items-center gap-2">
+                <Users className="size-4 text-rose-400 shrink-0" />
+                <span>
+                  {language === "ar"
+                    ? `المجموعة التدريبية بلغت طاقتها الاستيعابية القصوى (${group.maxCapacity} رياضياً). يرجى توجيه الرياضيين الجدد لقائمة الانتظار.`
+                    : `Training group has reached maximum capacity (${group.maxCapacity} athletes). New athletes should join the waitlist.`}
+                </span>
+              </div>
+              <Link
+                href="/academy/enrollments"
+                className="px-3 py-1.5 rounded-lg bg-nx-accent text-nx-surface font-semibold hover:bg-nx-accent/90 shrink-0"
+              >
+                {language === "ar" ? "قائمة الانتظار" : "Waitlist"}
+              </Link>
+            </div>
+          )}
 
           {roster.length === 0 ? (
             <Card className="border-dashed border-2 border-nx-line bg-nx-surface p-12 text-center">

@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useI18n } from "@core/providers/i18n-provider";
 import { usePermission } from "@core/hooks/use-permission";
-import { ACADEMY_PERMISSIONS } from "@modules/academy/shared";
+import { ACADEMY_PERMISSIONS, evaluateGroupCapacity } from "@modules/academy/shared";
 import { useAcademyServiceLocator } from "@modules/academy/di";
 import { useTrainingGroupsViewModel } from "../viewmodels/useTrainingGroupsViewModel";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@core/ui/card";
@@ -271,8 +271,7 @@ export function TrainingGroupsListView({ onSelectGroup, offeringId }: TrainingGr
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {groups.map(group => {
-            const isFull = group.activeMemberCount >= group.maxCapacity;
-            const fillPercent = Math.min(100, Math.round((group.activeMemberCount / group.maxCapacity) * 100));
+            const capacity = evaluateGroupCapacity(group.activeMemberCount, group.maxCapacity);
 
             return (
               <Card
@@ -294,16 +293,21 @@ export function TrainingGroupsListView({ onSelectGroup, offeringId }: TrainingGr
                         {language === "ar" ? group.offeringNameAr : group.offeringNameEn}
                       </p>
                     </div>
-                    <Badge
-                      variant={group.status === "Active" ? "outline" : "secondary"}
-                      className={
-                        group.status === "Active"
-                          ? "border-emerald-500/30 text-emerald-600 bg-emerald-500/10"
-                          : "border-nx-line text-nx-ink-2"
-                      }
-                    >
-                      {group.status}
-                    </Badge>
+                    <div className="flex flex-col items-end gap-1 shrink-0">
+                      <Badge
+                        variant={group.status === "Active" ? "outline" : "secondary"}
+                        className={
+                          group.status === "Active"
+                            ? "border-emerald-500/30 text-emerald-600 bg-emerald-500/10"
+                            : "border-nx-line text-nx-ink-2"
+                        }
+                      >
+                        {group.status}
+                      </Badge>
+                      <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded-full border ${capacity.badgeVariantClass}`}>
+                        {language === "ar" ? capacity.badgeLabelAr : capacity.badgeLabelEn}
+                      </span>
+                    </div>
                   </div>
                 </CardHeader>
 
@@ -312,16 +316,14 @@ export function TrainingGroupsListView({ onSelectGroup, offeringId }: TrainingGr
                   <div>
                     <div className="flex justify-between text-xs mb-1.5">
                       <span className="text-nx-ink-2">{language === "ar" ? "السعة والأعضاء" : "Squad Capacity"}</span>
-                      <span className={`font-semibold ${isFull ? "text-amber-500" : "text-nx-ink"}`}>
+                      <span className={`font-semibold ${capacity.isFull ? "text-rose-500" : capacity.isNearFull ? "text-amber-500" : "text-nx-ink"}`}>
                         {group.activeMemberCount} / {group.maxCapacity} {language === "ar" ? "رياضي" : "Athletes"}
                       </span>
                     </div>
                     <div className="w-full h-2 rounded-full bg-nx-canvas overflow-hidden border border-nx-line">
                       <div
-                        className={`h-full transition-all ${
-                          isFull ? "bg-amber-500" : fillPercent > 80 ? "bg-blue-500" : "bg-emerald-500"
-                        }`}
-                        style={{ width: `${fillPercent}%` }}
+                        className={`h-full transition-all ${capacity.barColorClass}`}
+                        style={{ width: `${capacity.clampedFillPercent}%` }}
                       />
                     </div>
                   </div>
