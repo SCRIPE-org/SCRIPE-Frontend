@@ -56,4 +56,24 @@ describe("AcademySeasonsService", () => {
     );
     expect(res).toEqual(created);
   });
+
+  it("updates a season with valid payload", async () => {
+    const payload = {
+      nameEn: "Updated Season",
+      nameAr: "الموسم المحدث",
+      startDate: "2026-09-01",
+      endDate: "2027-08-31",
+      status: "Active" as const,
+    };
+    const updated = { id: "s-1", ...payload };
+    mockApi.put.mockResolvedValue(updated);
+
+    const res = await service.updateSeason("s-1", payload);
+
+    expect(mockApi.put).toHaveBeenCalledWith(
+      expect.stringContaining("/academy/seasons/s-1"),
+      payload
+    );
+    expect(res).toEqual(updated);
+  });
 });

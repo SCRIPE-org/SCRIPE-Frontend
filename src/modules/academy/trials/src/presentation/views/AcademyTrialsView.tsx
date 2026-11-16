@@ -234,16 +234,6 @@ export function AcademyTrialsView() {
   const [rubricScores, setRubricScores] = useState(DEFAULT_FOOTBALL_RUBRIC);
   const [techNotes, setTechNotes] = useState("");
 
-  // Parse Rubric Breakdown Snapshot when available
-  const rubricSnapshot = useMemo(() => {
-    if (!selectedTrial?.rubricBreakdownJson) return null;
-    try {
-      return JSON.parse(selectedTrial.rubricBreakdownJson) as RubricEvaluationSnapshot;
-    } catch {
-      return null;
-    }
-  }, [selectedTrial?.rubricBreakdownJson]);
-
   // Decision Form
   const [decisionType, setDecisionType] = useState<"Approved" | "Waitlisted" | "Rejected">("Approved");
   const [adminNotes, setAdminNotes] = useState("");
@@ -380,6 +370,16 @@ export function AcademyTrialsView() {
     }
     return filteredTrials.length > 0 ? filteredTrials[0] : null;
   }, [filteredTrials, selectedTrialId]);
+
+  // Parse Rubric Breakdown Snapshot when available
+  const rubricSnapshot = useMemo(() => {
+    if (!selectedTrial?.rubricBreakdownJson) return null;
+    try {
+      return JSON.parse(selectedTrial.rubricBreakdownJson) as RubricEvaluationSnapshot;
+    } catch {
+      return null;
+    }
+  }, [selectedTrial?.rubricBreakdownJson]);
 
   if (!canView) {
     return (

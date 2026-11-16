@@ -7,6 +7,7 @@ export interface AcademySeason {
   startDate: string;
   endDate: string;
   status: SeasonStatus;
+  code?: string;
 }
 
 export interface CreateSeasonPayload {
@@ -14,4 +15,12 @@ export interface CreateSeasonPayload {
   nameAr: string;
   startDate: string;
   endDate: string;
+}
+
+export interface UpdateSeasonPayload {
+  nameEn: string;
+  nameAr: string;
+  startDate: string;
+  endDate: string;
+  status: SeasonStatus;
 }

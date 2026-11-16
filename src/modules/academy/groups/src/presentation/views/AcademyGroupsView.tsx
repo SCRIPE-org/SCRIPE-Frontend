@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useMemo, useCallback } from "react";
 import Link from "next/link";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useI18n } from "@core/providers/i18n-provider";
 import { usePermission } from "@core/hooks/use-permission";
 import { ACADEMY_PERMISSIONS, evaluateGroupCapacity, GROUP_CAPACITY_THRESHOLDS, formatExactAge } from "@modules/academy/shared";
@@ -55,6 +56,9 @@ export function AcademyGroupsView({ initialGroupId, initialOfferingId }: Academy
   const { t, language } = useI18n();
   const isAr = language === "ar";
   const dir = isAr ? "rtl" : "ltr";
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const seasonFilter = searchParams?.get("seasonId");
 
   const canView = usePermission(ACADEMY_PERMISSIONS.ACADEMY_GROUPS_VIEW);
   const canCreate = usePermission(ACADEMY_PERMISSIONS.ACADEMY_GROUPS_CREATE);
@@ -206,6 +210,12 @@ export function AcademyGroupsView({ initialGroupId, initialOfferingId }: Academy
     }
   }, [showAssignCoachModal, selectedGroup?.id, locator.groupsRepository]);
 
+  // Resolve offerings belonging to season if filtered
+  const seasonOfferingIds = useMemo(() => {
+    if (!seasonFilter) return null;
+    return new Set(offerings.filter((o) => o.seasonId === seasonFilter).map((o) => o.id));
+  }, [offerings, seasonFilter]);
+
   // Filter groups
   const filteredGroups = useMemo(() => {
     return groups.filter(g => {
@@ -217,9 +227,10 @@ export function AcademyGroupsView({ initialGroupId, initialOfferingId }: Academy
       const matchesSearch = !q || nameEnMatch || nameArMatch || codeMatch || offeringMatch;
 
       const matchesSport = sportFilter === "all" || (g.offeringId && g.offeringId === sportFilter);
-      return matchesSearch && matchesSport;
+      const matchesSeason = !seasonOfferingIds || (g.offeringId ? seasonOfferingIds.has(g.offeringId) : false);
+      return matchesSearch && matchesSport && matchesSeason;
     });
-  }, [groups, searchQuery, sportFilter]);
+  }, [groups, searchQuery, sportFilter, seasonOfferingIds]);
 
   // KPI calculations (100% authentic, no fabricated numbers)
   const totalGroupsCount = groups.length;
@@ -484,6 +495,26 @@ export function AcademyGroupsView({ initialGroupId, initialOfferingId }: Academy
           </div>
         </div>
       </div>
+
+      {/* Season Scope Banner */}
+      {seasonFilter && (
+        <div className="flex items-center justify-between p-3 rounded-xl border border-nx-accent-fill/40 bg-nx-accent-fill/10 text-xs">
+          <div className="flex items-center gap-2 text-nx-ink">
+            <span className="font-semibold text-nx-accent">
+              {isAr ? "تصفية بنطاق الموسم:" : "Filtered by Season Context:"}
+            </span>
+            <span className="font-mono text-nx-ink-2">
+              {seasonFilter} ({filteredGroups.length} {isAr ? "مجموعات" : "groups"})
+            </span>
+          </div>
+          <button
+            onClick={() => router.push("/academy/groups")}
+            className="px-2.5 py-1 rounded-lg border border-nx-line bg-nx-raised text-[11px] font-semibold text-nx-ink-2 hover:text-nx-ink cursor-pointer"
+          >
+            {isAr ? "إلغاء التصفية" : "Clear Filter"}
+          </button>
+        </div>
+      )}
 
       {/* 3. Main Split Workspace: Left List + Right Detail Inspector */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 items-start">

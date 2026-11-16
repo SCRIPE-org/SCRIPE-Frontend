@@ -25,7 +25,7 @@ describe("TrainingGroupDetailView — Age Eligibility & Safeguarding (DEF-003)",
       // Exact calendar age on Nov 15, 2026 is 17 (turns 18 on Nov 20)
       const exact = exactAge(bornNov20_2008, asOfDate);
       expect(exact).toBe(17);
-      expect(exact < 18).toBe(true); // Minor safeguarding gate
+      expect(exact !== null && exact < 18).toBe(true); // Minor safeguarding gate
 
       // Competition age for 2026 is 2026 - 2008 = 18, which MUST NEVER be used for the 18 threshold
       const comp = competitionAge(bornNov20_2008, seasonReferenceYear);

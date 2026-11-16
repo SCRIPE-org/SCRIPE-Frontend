@@ -1,8 +1,9 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { GenericSelect, type GenericSelectOption } from "@core/crud/components/generic-select";
 import Link from "next/link";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useI18n } from "@core/providers/i18n-provider";
 import { usePermission } from "@core/hooks/use-permission";
 import { ACADEMY_PERMISSIONS } from "@modules/academy/shared";
@@ -27,6 +28,10 @@ import {
 export function ProgramOfferingsView() {
   const { t, language } = useI18n();
   const dir = language === "ar" ? "rtl" : "ltr";
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const seasonFilter = searchParams?.get("seasonId");
+
   const canView = usePermission(ACADEMY_PERMISSIONS.ACADEMY_OFFERINGS_VIEW);
   const canCreate = usePermission(ACADEMY_PERMISSIONS.ACADEMY_OFFERINGS_CREATE);
 
@@ -42,7 +47,7 @@ export function ProgramOfferingsView() {
   // Form State
   const [programId, setProgramId] = useState("");
   const [branchId, setBranchId] = useState("");
-  const [seasonId, setSeasonId] = useState("");
+  const [seasonId, setSeasonId] = useState(seasonFilter || "");
   const [externalLocationId, setExternalLocationId] = useState("");
   const [nameEn, setNameEn] = useState("");
   const [nameAr, setNameAr] = useState("");
@@ -50,6 +55,17 @@ export function ProgramOfferingsView() {
   const [endDate, setEndDate] = useState("2026-12-15");
   const [maxCapacity, setMaxCapacity] = useState(25);
   const [minCapacity, setMinCapacity] = useState(5);
+
+  useEffect(() => {
+    if (seasonFilter) {
+      setSeasonId(seasonFilter);
+    }
+  }, [seasonFilter]);
+
+  const displayedOfferings = useMemo(() => {
+    if (!seasonFilter) return state.offerings;
+    return state.offerings.filter((o) => o.seasonId === seasonFilter);
+  }, [state.offerings, seasonFilter]);
 
   const [programOptions, setProgramOptions] = useState<GenericSelectOption[]>([]);
   const [seasonOptions, setSeasonOptions] = useState<GenericSelectOption[]>([]);
@@ -77,10 +93,14 @@ export function ProgramOfferingsView() {
           }))
         );
         setSeasonOptions(
-          seasons.map((s: any) => ({
-            value: s.id,
-            label: language === "ar" && s.nameAr ? `${s.nameAr} (${s.termCode})` : `${s.nameEn} (${s.termCode})`,
-          }))
+          seasons.map((s: any) => {
+            const code = s.code || s.termCode || (s.startDate ? `ACAD-${new Date(s.startDate).getFullYear()}` : "");
+            const name = language === "ar" && s.nameAr ? s.nameAr : s.nameEn;
+            return {
+              value: s.id,
+              label: code ? `${name} (${code})` : name,
+            };
+          })
         );
         setLocationOptions([
           { value: "", label: language === "ar" ? "لا يوجد (افتراضي)" : "None / External Venue" },
@@ -200,6 +220,26 @@ export function ProgramOfferingsView() {
         </div>
       </div>
 
+      {/* Season Scope Banner */}
+      {seasonFilter && (
+        <div className="flex items-center justify-between p-3 rounded-xl border border-nx-accent-fill/40 bg-nx-accent-fill/10 text-xs">
+          <div className="flex items-center gap-2 text-nx-ink">
+            <span className="font-semibold text-nx-accent">
+              {language === "ar" ? "تصفية بنطاق الموسم:" : "Filtered by Season Context:"}
+            </span>
+            <span className="font-mono text-nx-ink-2">
+              {seasonOptions.find((s) => s.value === seasonFilter)?.label || seasonFilter}
+            </span>
+          </div>
+          <button
+            onClick={() => router.push("/academy/offerings")}
+            className="px-2.5 py-1 rounded-lg border border-nx-line bg-nx-raised text-[11px] font-semibold text-nx-ink-2 hover:text-nx-ink cursor-pointer"
+          >
+            {language === "ar" ? "إلغاء التصفية" : "Clear Filter"}
+          </button>
+        </div>
+      )}
+
       {state.errorMessage && (
         <Alert variant="destructive">
           <AlertTitle>Error</AlertTitle>
@@ -215,12 +255,16 @@ export function ProgramOfferingsView() {
       )}
 
       {/* Empty State */}
-      {state.stage === "ready" && state.offerings.length === 0 && (
+      {state.stage === "ready" && displayedOfferings.length === 0 && (
         <Card className="border border-dashed border-nx-line p-8 text-center">
           <CalendarDays className="mx-auto size-10 text-nx-ink-3" />
-          <h3 className="mt-3 text-sm font-semibold text-nx-ink">No Offerings Established</h3>
+          <h3 className="mt-3 text-sm font-semibold text-nx-ink">
+            {seasonFilter ? "No Offerings Found for This Season" : "No Offerings Established"}
+          </h3>
           <p className="mt-1 text-xs text-nx-ink-2">
-            Link programs to seasons and branches to start accepting athlete enrollments.
+            {seasonFilter
+              ? "Create a new program offering linked to this season to begin delivering cohorts."
+              : "Link programs to seasons and branches to start accepting athlete enrollments."}
           </p>
           {canCreate && (
             <div className="mt-4">
@@ -234,9 +278,9 @@ export function ProgramOfferingsView() {
       )}
 
       {/* Offerings Grid */}
-      {state.stage === "ready" && state.offerings.length > 0 && (
+      {state.stage === "ready" && displayedOfferings.length > 0 && (
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {state.offerings.map((offering) => {
+          {displayedOfferings.map((offering) => {
             const branchLabel =
               branchOptions.find((b) => b.value === offering.branchId)?.label ||
               (offering.branchId?.toLowerCase().includes("aaaa")
