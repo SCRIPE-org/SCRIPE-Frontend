@@ -108,10 +108,11 @@ const SelectContent = React.forwardRef<
       className={cn(
         // A select popover is a dropdown; at z-[1001] it outranked the modal it was
         // usually opened inside, and even a toast.
-        "relative z-dropdown max-h-[--radix-select-content-available-height] min-w-[8rem] origin-[--radix-select-content-transform-origin] overflow-y-auto overflow-x-hidden rounded-nx-md border border-nx-line bg-nx-popover text-nx-ink shadow-nx-popover",
-        // 140ms fade + 0.98 scale from the trigger origin; reduced motion keeps
-        // the crossfade and drops the scale.
-        "duration-nx-micro ease-nx-enter data-[state=closed]:ease-nx-exit data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 motion-safe:data-[state=closed]:zoom-out-[0.98] motion-safe:data-[state=open]:zoom-in-[0.98]",
+        "relative z-dropdown max-h-[var(--radix-select-content-available-height)] min-w-[8rem] origin-[var(--radix-select-content-transform-origin)] overflow-y-auto overflow-x-hidden rounded-nx-md border border-nx-line bg-nx-popover text-nx-ink shadow-nx-popover",
+        // Micro-speed fade + 0.95 scale from the trigger origin; position="popper"
+        // applies a 4px side offset so enter naturally expands outward without slide-in.
+        // transition-none keeps Floating UI's post-mount transform-origin update instant.
+        "transition-none duration-nx-micro ease-nx-enter data-[state=open]:duration-nx-micro data-[state=closed]:duration-nx-micro data-[state=closed]:ease-nx-exit data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=open]:fade-in-0 data-[state=closed]:fade-out-0 motion-safe:data-[state=open]:zoom-in-95 motion-safe:data-[state=closed]:zoom-out-95",
         position === "popper" &&
           "data-[side=bottom]:translate-y-1 data-[side=left]:-translate-x-1 data-[side=right]:translate-x-1 data-[side=top]:-translate-y-1",
         className

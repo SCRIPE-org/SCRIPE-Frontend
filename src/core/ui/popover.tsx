@@ -66,9 +66,10 @@ const PopoverContent = React.forwardRef<
           floatingSurfaceClasses,
           "max-h-[var(--radix-popover-content-available-height)]",
           floatingScrollClasses,
-          // 140ms fade + 0.98 scale from the trigger origin; reduced motion
-          // keeps the crossfade and drops the scale.
-          "origin-[--radix-popover-content-transform-origin] duration-nx-micro ease-nx-enter data-[state=closed]:ease-nx-exit data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 motion-safe:data-[state=closed]:zoom-out-[0.98] motion-safe:data-[state=open]:zoom-in-[0.98]",
+          // Micro-speed fade + 0.95 scale + tight 2px directional shift from the
+          // trigger origin; reduced motion keeps the crossfade and drops scale/slide.
+          // transition-none keeps Floating UI's post-mount transform-origin update instant.
+          "origin-[var(--radix-popover-content-transform-origin)] transition-none duration-nx-micro ease-nx-enter data-[state=open]:duration-nx-micro data-[state=closed]:duration-nx-micro data-[state=closed]:ease-nx-exit data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=open]:fade-in-0 data-[state=closed]:fade-out-0 motion-safe:data-[state=open]:zoom-in-95 motion-safe:data-[state=closed]:zoom-out-95 motion-safe:data-[side=bottom]:slide-in-from-top-0.5 motion-safe:data-[side=top]:slide-in-from-bottom-0.5 motion-safe:data-[side=left]:slide-in-from-right-0.5 motion-safe:data-[side=right]:slide-in-from-left-0.5",
           className
         )}
         {...props}

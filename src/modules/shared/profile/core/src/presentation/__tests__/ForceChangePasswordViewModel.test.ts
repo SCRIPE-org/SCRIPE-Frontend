@@ -1,0 +1,204 @@
+import { describe, it, expect, vi, beforeEach } from "vitest";
+import { renderHook, act } from "@testing-library/react";
+import {
+  evaluatePasswordRules,
+  useForceChangePasswordViewModel,
+} from "../viewmodels/useForceChangePasswordViewModel";
+
+const mocks = vi.hoisted(() => ({
+  replace: vi.fn(),
+  invalidateQueries: vi.fn().mockResolvedValue(undefined),
+  clearQueries: vi.fn(),
+  operationSuccess: vi.fn(),
+  operationError: vi.fn(),
+  forceChangePassword: vi.fn(),
+  refreshToken: vi.fn(),
+  getCurrentPrincipal: vi.fn(),
+  setAuth: vi.fn(),
+  setSubscriptionInfo: vi.fn(),
+  setMustChangePassword: vi.fn(),
+  setDefaultRedirectPath: vi.fn(),
+  logout: vi.fn(),
+}));
+
+vi.mock("next/navigation", () => ({
+  useRouter: () => ({ replace: mocks.replace, push: vi.fn() }),
+}));
+
+vi.mock("@tanstack/react-query", () => ({
+  useQueryClient: () => ({
+    invalidateQueries: mocks.invalidateQueries,
+    clear: mocks.clearQueries,
+  }),
+}));
+
+vi.mock("@core/providers/i18n-provider", () => ({
+  useI18n: () => ({
+    t: (key: string) => key,
+    direction: "ltr" as const,
+  }),
+}));
+
+vi.mock("@core/providers/service-provider", () => ({
+  useServices: () => ({
+    authRepository: {
+      refreshToken: mocks.refreshToken,
+      getCurrentPrincipal: mocks.getCurrentPrincipal,
+    },
+  }),
+}));
+
+vi.mock("@core/hooks/use-enhanced-toast", () => ({
+  useEnhancedToast: () => ({
+    operationSuccess: mocks.operationSuccess,
+    operationError: mocks.operationError,
+  }),
+}));
+
+vi.mock("@modules/profile/di", () => ({
+  container: {
+    profileRepository: {
+      forceChangePassword: (...args: unknown[]) => mocks.forceChangePassword(...args),
+    },
+  },
+}));
+
+vi.mock("@core/store/useAppStore", () => {
+  const storeState = {
+    user: {
+      id: "adm-1",
+      username: "platform.admin",
+      email: "admin@scripe.test",
+      permissions: ["Identity.Users.Read"],
+      roles: ["SuperAdmin"],
+    },
+    defaultRedirectPath: "/overview",
+    setAuth: mocks.setAuth,
+    setSubscriptionInfo: mocks.setSubscriptionInfo,
+    setMustChangePassword: mocks.setMustChangePassword,
+    setDefaultRedirectPath: mocks.setDefaultRedirectPath,
+    logout: mocks.logout,
+  };
+  return {
+    useAppStore: (selector: (s: typeof storeState) => unknown) => selector(storeState),
+  };
+});
+
+describe("ForceChangePasswordViewModel (MMC First-Login Parity)", () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    mocks.forceChangePassword.mockResolvedValue({
+      defaultRedirectPath: "/",
+      subscriptionStatus: "Active",
+      gracePhase: null,
+      editionName: "Enterprise",
+    });
+    mocks.refreshToken.mockResolvedValue({
+      kind: "ok",
+      value: {
+        user: {
+          id: "adm-1",
+          username: "platform.admin",
+          permissions: ["Identity.Users.Read"],
+          roles: ["SuperAdmin"],
+        },
+        defaultRedirectPath: "/",
+        subscriptionStatus: "Active",
+        gracePhase: null,
+        editionName: "Enterprise",
+      },
+    });
+    mocks.getCurrentPrincipal.mockResolvedValue({
+      id: "adm-1",
+      username: "platform.admin",
+      permissions: ["Identity.Users.Read", "Profile.Manage"],
+      roles: ["SuperAdmin"],
+    });
+  });
+
+  it("evaluates all 5 password complexity rules accurately", () => {
+    expect(evaluatePasswordRules("abc")).toEqual({
+      minLength: false,
+      uppercase: false,
+      lowercase: true,
+      number: false,
+      special: false,
+      allMet: false,
+    });
+
+    expect(evaluatePasswordRules("StrongPass#2026")).toEqual({
+      minLength: true,
+      uppercase: true,
+      lowercase: true,
+      number: true,
+      special: true,
+      allMet: true,
+    });
+  });
+
+  it("rotates password with only newPassword + confirmPassword, refreshes session without logout, clears mcp, and navigates to workspace", async () => {
+    const { result } = renderHook(() => useForceChangePasswordViewModel());
+
+    act(() => {
+      result.current.setNewPassword("StrongPass#2026");
+      result.current.setConfirmPassword("StrongPass#2026");
+    });
+
+    expect(result.current.canSubmit).toBe(true);
+
+    await act(async () => {
+      await result.current.handleSubmit();
+    });
+
+    expect(mocks.forceChangePassword).toHaveBeenCalledWith({
+      newPassword: "StrongPass#2026",
+      confirmPassword: "StrongPass#2026",
+    });
+    expect(mocks.refreshToken).toHaveBeenCalledTimes(1);
+    expect(mocks.getCurrentPrincipal).toHaveBeenCalledTimes(1);
+    expect(mocks.setAuth).toHaveBeenCalledWith(
+      expect.objectContaining({
+        id: "adm-1",
+        permissions: ["Identity.Users.Read", "Profile.Manage"],
+      }),
+      ["Identity.Users.Read", "Profile.Manage"],
+      ["SuperAdmin"],
+      false
+    );
+    expect(mocks.setMustChangePassword).toHaveBeenCalledWith(false);
+    expect(mocks.logout).not.toHaveBeenCalled();
+    expect(mocks.operationSuccess).toHaveBeenCalledWith("profile.security.passwordChanged");
+    expect(mocks.replace).toHaveBeenCalledWith("/");
+  });
+
+  it("blocks submit when passwords mismatch or complexity rules fail", async () => {
+    const { result } = renderHook(() => useForceChangePasswordViewModel());
+
+    act(() => {
+      result.current.setNewPassword("StrongPass#2026");
+      result.current.setConfirmPassword("Different#2026");
+    });
+
+    expect(result.current.canSubmit).toBe(false);
+    expect(result.current.showMismatch).toBe(true);
+
+    await act(async () => {
+      await result.current.handleSubmit();
+    });
+
+    expect(mocks.forceChangePassword).not.toHaveBeenCalled();
+    expect(result.current.submitError).toBe("profile.security.passwordMismatch");
+  });
+
+  it("allows explicit sign-out from the wrong-account recovery button", () => {
+    const { result } = renderHook(() => useForceChangePasswordViewModel());
+
+    act(() => {
+      result.current.handleLogout();
+    });
+
+    expect(mocks.logout).toHaveBeenCalledTimes(1);
+    expect(mocks.clearQueries).toHaveBeenCalledTimes(1);
+    expect(mocks.replace).toHaveBeenCalledWith("/login");
+  });
+});

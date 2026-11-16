@@ -37,15 +37,13 @@ export const ProfileMapper = {
       isPasswordExpired: dto.isPasswordExpired ?? false,
       daysUntilPasswordExpiry: dto.daysUntilPasswordExpiry ?? null,
       passwordLastChanged: dto.passwordLastChanged ? new Date(dto.passwordLastChanged) : null,
-      staffCode: dto.staffCode ?? "#SCR-ADM-001",
-      bio:
-        dto.bio ??
-        "Enterprise Operations Administrator overseeing multi-branch governance, organizational security, and platform workflows.",
-      clubAffiliation: dto.clubAffiliation ?? "Enterprise Organization",
-      activeBranchName: dto.activeBranchName ?? "Corporate Headquarters (HQ)",
-      editionName: dto.editionName ?? "Enterprise Edition",
+      staffCode: dto.staffCode ?? undefined,
+      bio: dto.bio ?? undefined,
+      clubAffiliation: dto.clubAffiliation ?? undefined,
+      activeBranchName: dto.activeBranchName ?? undefined,
+      editionName: dto.editionName ?? undefined,
       isAvailableForOperations: dto.isAvailableForOperations ?? true,
-      securityScore: dto.securityScore ?? 85,
+      securityScore: dto.securityScore ?? 0,
       availableAcademies:
         dto.availableAcademies ||
         (dto.academies
@@ -60,11 +58,7 @@ export const ProfileMapper = {
               name: m.tenantName ?? m.clubName ?? m.tenantId,
               isCurrent: Boolean(m.isPrimary),
             }))
-          : [
-              { id: "hq-01", name: "Corporate Headquarters (HQ)", isCurrent: true },
-              { id: "branch-02", name: "Nasr City Regional Branch", isCurrent: false },
-              { id: "branch-03", name: "Sheikh Zayed Operations Hub", isCurrent: false },
-            ]),
+          : []),
       customFields: dto.customFields ?? [],
       rowVersion: dto.rowVersion ?? undefined,
     };

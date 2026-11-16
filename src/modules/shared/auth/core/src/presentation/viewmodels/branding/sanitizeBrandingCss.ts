@@ -97,21 +97,25 @@ export function sanitizeCssValue(raw: string | undefined): string {
   return trimmed;
 }
 
+/** Validates and clamps a CSS length token (`px`, `rem`, `em`) to safe fallback bounds. */
 export function sanitizeCssLength(raw: string | undefined, fallback: string): string {
   const cleaned = sanitizeCssValue(raw);
   return SAFE_CSS_LENGTH_REGEX.test(cleaned) ? cleaned : fallback;
 }
 
+/** Sanitizes an outline/border line-style token against an allowlist. */
 export function sanitizeCssLineStyle(raw: string | undefined, fallback: string): string {
   const cleaned = sanitizeCssValue(raw).toLowerCase();
   return ALLOWED_FOCUS_STYLES.has(cleaned) ? cleaned : fallback;
 }
 
+/** Sanitizes a CSS `text-align` token against allowed alignment keywords. */
 export function sanitizeCssTextAlign(raw: string | undefined): string {
   const cleaned = sanitizeCssValue(raw).toLowerCase();
   return ALLOWED_TEXT_ALIGNS.has(cleaned) ? cleaned : "inherit";
 }
 
+/** Parses and clamps a numeric branding token within `[min, max]`, returning fallback if invalid. */
 export function parseClampedNumber(
   raw: string | undefined,
   fallback: number,

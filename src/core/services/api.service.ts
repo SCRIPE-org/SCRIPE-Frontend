@@ -14,6 +14,7 @@ import { authBroadcast } from "@core/common/broadcast-auth";
 import { STORAGE_KEYS } from "../config/storage-keys";
 import { DownloadInterceptedError, isExternalAbort } from "../errors/download-intercepted";
 import { translateCore } from "@core/common/i18n-outside-react";
+import { useSudoStore } from "@core/store/useSudoStore";
 
 /**
  * Generate a UUID v4 string.
@@ -213,6 +214,12 @@ export class ApiService implements IApiService {
           }
         }
 
+        // Attach active X-Sudo-Token when present and unexpired
+        const sudoToken = useSudoStore.getState().getValidSudoToken();
+        if (sudoToken && config.headers) {
+          config.headers["X-Sudo-Token"] = sudoToken;
+        }
+
         // Fix for 415 Unsupported Media Type with FormData
         if (config.data instanceof FormData) {
           // Let browser set Content-Type with boundary
@@ -365,6 +372,43 @@ export class ApiService implements IApiService {
           // decision about THIS specific request/record — e.g. "you can't edit this
           // particular record because X" — not "you may not be on this page at all".
           // Show it inline; do not navigate the user away from what they were doing.
+          // On-demand Step-Up Sudo interception: when backend rejects with Identity.SudoRequired,
+          // prompt canonical SudoVerificationModal, acquire X-Sudo-Token, and replay seamlessly.
+          const requestConfig = error.config as
+            | (InternalAxiosRequestConfig & { _sudoRetry?: boolean })
+            | undefined;
+          if (
+            (data.errorCode === "Identity.SudoRequired" ||
+              data.errorCode === "Identity.SudoExpired") &&
+            requestConfig &&
+            !requestConfig._sudoRetry &&
+            !String(requestConfig.url ?? "").includes("/auth/sudo/")
+          ) {
+            requestConfig._sudoRetry = true;
+            try {
+              const freshSudoToken = await useSudoStore
+                .getState()
+                .requestElevation({ forceChallenge: true });
+              if (requestConfig.headers) {
+                if (freshSudoToken) {
+                  requestConfig.headers["X-Sudo-Token"] = freshSudoToken;
+                } else {
+                  delete requestConfig.headers["X-Sudo-Token"];
+                }
+              }
+              return this.axiosInstance(requestConfig);
+            } catch (sudoErr) {
+              const cancelError =
+                sudoErr instanceof Error
+                  ? sudoErr
+                  : new Error(data.message || translateCore("errors.auth.forbidden"));
+              (cancelError as Error & { details?: unknown; status?: number }).details =
+                error.response?.data ?? data;
+              (cancelError as Error & { details?: unknown; status?: number }).status = 403;
+              return Promise.reject(cancelError);
+            }
+          }
+
           if (data.errorCode) {
             appLogger.warn(
               `Business-rule 403 (${data.errorCode}) — surfacing inline, not redirecting`

@@ -3,7 +3,6 @@
 /**
  * PasswordChangeForm — Password change with optional 2FA code
  */
-import { useMemo } from "react";
 import { useForm, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -92,7 +91,7 @@ export function PasswordChangeForm({
   success,
 }: PasswordChangeFormProps) {
   const { t } = useI18n();
-  const schema = useMemo(() => buildSchema(t), [t]);
+  const schema = buildSchema(t);
 
   const form = useForm<PasswordChangeFormValues>({
     resolver: zodResolver(schema),

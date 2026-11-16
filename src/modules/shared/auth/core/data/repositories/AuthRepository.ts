@@ -23,6 +23,11 @@ import { authBroadcast } from "@core/common/broadcast-auth";
 import { STORAGE_KEYS } from "@core/config/storage-keys";
 import { LoginRequest, LoginResponse } from "../../domain/entities/Auth";
 import { User } from "../../domain/entities/User";
+import type {
+  PasskeyAuthBeginOptions,
+  PasskeyAuthVerifyResult,
+  VerifyPasskeyAuthRequestData,
+} from "../../domain/types/AuthTypes";
 import { AuthMapper } from "../mappers/AuthMapper";
 import { appLogger } from "@core/common/logger";
 import { LoginRequestModel, type UserProfileJson } from "../models/AuthModel";
@@ -289,32 +294,23 @@ export class AuthRepository implements IAuthRepository {
   }
 
   // ── Passkey / WebAuthn authentication (delegated) ─────────────────────────
-  async beginPasskeyAuth(): Promise<{
-    challengeId: string;
-    options: PublicKeyCredentialRequestOptions;
-  }> {
-    return this.service.beginPasskeyAuth();
+  async beginPasskeyAuth(
+    identifier?: string,
+    tenantId?: string | null
+  ): Promise<PasskeyAuthBeginOptions> {
+    return this.service.beginPasskeyAuth(identifier, tenantId);
   }
 
   /**
-   * Verify WebAuthn assertion — delegates attestation payload to AuthService to get JWT tokens.
+   * Verify WebAuthn assertion — delegates assertion payload to AuthService to get JWT tokens.
    *
-   * @param data Assertion payload containing raw/credential IDs, clientDataJSON, authenticatorData, signature, userHandle, and optional tenantId.
-   * @returns A promise resolving to the access and refresh tokens.
+   * @param data Assertion payload containing raw/credential IDs, clientDataJSON, authenticatorData, signature, userHandle, challengeToken, clientExtensionResults, and optional tenantId.
+   * @returns A promise resolving to the access/refresh tokens and auth flags.
    * @security
    * - Communicates via secure public endpoint, with CORS whitelisting on API gateway.
    * - Bound session parameters are protected by backend replay checks and CSRF double-submit cookies.
    */
-  async verifyPasskeyAuth(data: {
-    challengeId: string;
-    credentialId: string;
-    rawId: string;
-    clientDataJSON: string;
-    authenticatorData: string;
-    signature: string;
-    userHandle: string | null;
-    tenantId?: string | null;
-  }): Promise<{ accessToken: string; refreshToken: string }> {
+  async verifyPasskeyAuth(data: VerifyPasskeyAuthRequestData): Promise<PasskeyAuthVerifyResult> {
     return this.service.verifyPasskeyAuth(data);
   }
 

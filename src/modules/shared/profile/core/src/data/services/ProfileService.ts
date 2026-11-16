@@ -78,7 +78,11 @@ export class ProfileService implements IProfileService {
   }
 
   async regenerateBackupCodes(twoFactorCode: string): Promise<string[]> {
-    return this.api.post<string[]>(PROFILE_ENDPOINTS.BACKUP_CODES_REGENERATE, { twoFactorCode });
+    const res = await this.api.post<{ backupCodes: string[] }>(
+      PROFILE_ENDPOINTS.BACKUP_CODES_REGENERATE,
+      { code: twoFactorCode }
+    );
+    return res?.backupCodes ?? [];
   }
 
   async getSecurityLog(page: number = 1, pageSize: number = 10): Promise<SecurityLogEntry[]> {

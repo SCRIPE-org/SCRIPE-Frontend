@@ -21,6 +21,7 @@ export const PROFILE_ENDPOINTS = {
     CONFIRM: `${V1}/auth/admin/2fa/confirm`,
     DISABLE: `${V1}/auth/admin/2fa/disable`,
   },
+  FORCE_CHANGE_PASSWORD: `${V1}/auth/admin/force-change-password`,
   PASSKEYS: {
     LIST: `${V1}/auth/passkeys`,
     REGISTER_BEGIN: `${V1}/auth/passkeys/registration/begin`,
@@ -30,6 +31,15 @@ export const PROFILE_ENDPOINTS = {
     RENAME: (id: string) => `${V1}/auth/passkeys/${id}/name`,
   },
   SUDO_VERIFY: `${V1}/auth/passkeys/sudo-verify`,
+  SUDO: {
+    STATUS: `${V1}/auth/sudo/status`,
+    PASSKEY_BEGIN: `${V1}/auth/sudo/passkey/begin`,
+    VERIFY: `${V1}/auth/sudo/verify`,
+    LOCK: `${V1}/auth/sudo/lock`,
+  },
+  COLLEAGUES: `${V1}/account/colleagues`,
+  INTEGRATION_PAT_ROLL: (id: string) => `${V1}/account/integrations/pats/${id}/roll`,
+  INTEGRATION_PAT_UPDATE: (id: string) => `${V1}/account/integrations/pats/${id}`,
   ACCOUNT: {
     CONTEXT: `${V1}/account/context`,
     DOSSIER: `${V1}/account/dossier`,

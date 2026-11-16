@@ -124,7 +124,9 @@ export interface LinkExternalLoginDto {
   displayName?: string | null;
 }
 
+/** Type alias preserving backward compatibility for profile update requests. */
 export type UpdateProfileDto = UpdateProfileRequestDto;
+/** Type alias preserving backward compatibility for password change requests. */
 export type ChangePasswordDto = ChangePasswordRequestDto;
 
 // ===== Request DTOs =====

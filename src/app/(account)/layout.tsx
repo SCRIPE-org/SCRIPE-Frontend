@@ -14,11 +14,13 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useI18n } from "@core/providers/i18n-provider";
 import { useAppStore } from "@core/store/useAppStore";
+import { useSudoStore } from "@core/store/useSudoStore";
 import { LanguageSwitcher } from "@core/ui/layout/common/language-switcher";
 import { NxThemeSwitcher } from "@core/ui/layout/common/theme-switcher";
 import { Avatar, AvatarFallback, AvatarImage } from "@core/ui/avatar";
 import { Button } from "@core/ui/button";
 import { Badge } from "@core/ui/badge";
+import { Skeleton } from "@core/ui/skeleton";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -59,16 +61,16 @@ export default function AccountLayout({ children }: { children: React.ReactNode 
   }, []);
 
   const handleSignOut = () => {
+    useSudoStore.getState().reset();
     logout();
     if (typeof window !== "undefined") {
       window.location.href = "/login";
     }
   };
 
-  const fallbackUserLabel = t("common.user", { defaultValue: "User" });
   const displayName = user
-    ? `${user.firstName ?? ""} ${user.lastName ?? ""}`.trim() || user.username || fallbackUserLabel
-    : fallbackUserLabel;
+    ? `${user.firstName ?? ""} ${user.lastName ?? ""}`.trim() || user.username || ""
+    : "";
 
   const userInitials = user
     ? `${(user.firstName?.[0] ?? "").toUpperCase()}${(user.lastName?.[0] ?? "").toUpperCase()}` ||
@@ -188,12 +190,16 @@ export default function AccountLayout({ children }: { children: React.ReactNode 
                   className="rounded-full p-0.5 hover:border-nx-line-hi focus-visible:outline-none focus-visible:shadow-nx-focus transition-colors h-8 w-8"
                   aria-label={t("profile.accountPortal.userAccountMenu")}
                 >
-                  <Avatar className="h-8 w-8 border border-nx-line">
-                    {user?.profileImageUrl && <AvatarImage src={user.profileImageUrl} alt={displayName} />}
-                    <AvatarFallback className="bg-nx-accent-wash text-nx-accent text-xs font-bold">
-                      {userInitials || <UserIcon className="h-4 w-4" aria-hidden="true" />}
-                    </AvatarFallback>
-                  </Avatar>
+                  {user ? (
+                    <Avatar className="h-8 w-8 border border-nx-line">
+                      {user.profileImageUrl && <AvatarImage src={user.profileImageUrl} alt={displayName} />}
+                      <AvatarFallback className="bg-nx-accent-wash text-nx-accent text-xs font-bold">
+                        {userInitials || <UserIcon className="h-4 w-4" aria-hidden="true" />}
+                      </AvatarFallback>
+                    </Avatar>
+                  ) : (
+                    <Skeleton shape="circle" className="h-8 w-8" />
+                  )}
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent
@@ -202,9 +208,13 @@ export default function AccountLayout({ children }: { children: React.ReactNode 
               >
                 <DropdownMenuLabel className="font-normal">
                   <div className="flex flex-col space-y-1">
-                    <p className="text-sm font-semibold leading-none text-nx-ink truncate">
-                      {displayName}
-                    </p>
+                    {user ? (
+                      <p className="text-sm font-semibold leading-none text-nx-ink truncate">
+                        {displayName || `@${user.username}`}
+                      </p>
+                    ) : (
+                      <Skeleton shape="text" className="h-3.5 w-28" />
+                    )}
                     {user?.username && (
                       <p className="text-xs leading-none text-nx-ink-3 font-mono truncate">
                         @{user.username}

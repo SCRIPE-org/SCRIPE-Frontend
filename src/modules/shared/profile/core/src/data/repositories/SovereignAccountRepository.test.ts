@@ -84,13 +84,69 @@ describe("SovereignAccountRepository — Clean 9-Page B2B Enterprise Account Con
       expiresAtUtc: "2026-12-01T00:00:00Z",
     });
     expect(api.post).toHaveBeenCalledWith(PROFILE_ENDPOINTS.ACCOUNT.DELEGATIONS, {
-      actionType: "CreateDelegation",
-      targetDelegateEmailOrId: "Deputy Director",
+      actionType: "DelegateAuthority",
+      targetAdminId: "adm-2",
+      targetDelegateEmailOrId: "adm-2",
       permissions: ["CRM.*"],
       justification: "Annual Leave",
       startsAtUtc: "2026-11-08T00:00:00Z",
       endsAtUtc: "2026-12-01T00:00:00Z",
     });
+
+    await repo.createDelegation({
+      delegateAdminId: "enc-colleague-id",
+      delegateDisplayName: "Ahmed El-Shenawy",
+      delegationType: "TemporaryCoverage",
+      grantedScopes: ["Venue.Read"],
+      justification: "Coverage",
+      startsAtUtc: "2026-11-08T00:00:00Z",
+      expiresAtUtc: "2026-11-09T00:00:00Z",
+    });
+    expect(api.post).toHaveBeenLastCalledWith(PROFILE_ENDPOINTS.ACCOUNT.DELEGATIONS, {
+      actionType: "DelegateAuthority",
+      targetAdminId: "enc-colleague-id",
+      targetDelegateEmailOrId: "enc-colleague-id",
+      permissions: ["Venue.Read"],
+      justification: "Coverage",
+      startsAtUtc: "2026-11-08T00:00:00Z",
+      endsAtUtc: "2026-11-09T00:00:00Z",
+    });
+
+    await repo.createDelegation({
+      delegateAdminId: "00000000-0000-0000-0000-000000000000",
+      delegateDisplayName: "ahly.booking@scripe-dev.local",
+      delegationType: "SuccessionCustody",
+      grantedScopes: ["Venue.Read"],
+      justification: "Email fallback",
+      startsAtUtc: "2026-11-08T00:00:00Z",
+      expiresAtUtc: "2026-11-09T00:00:00Z",
+    });
+    expect(api.post).toHaveBeenLastCalledWith(PROFILE_ENDPOINTS.ACCOUNT.DELEGATIONS, {
+      actionType: "SuccessionCustody",
+      targetDelegateEmailOrId: "ahly.booking@scripe-dev.local",
+      permissions: ["Venue.Read"],
+      justification: "Email fallback",
+      startsAtUtc: "2026-11-08T00:00:00Z",
+      endsAtUtc: "2026-11-09T00:00:00Z",
+    });
+
+    await repo.createDelegation({
+      delegateAdminId: "adm-9",
+      delegateDisplayName: "Incident Lead",
+      delegationType: "BreakGlassJitElevation",
+      grantedScopes: ["Identity.*"],
+      justification: "SEV-1",
+      startsAtUtc: "2026-11-08T00:00:00Z",
+      expiresAtUtc: "2026-11-08T02:00:00Z",
+    });
+    expect(api.post).toHaveBeenLastCalledWith(
+      PROFILE_ENDPOINTS.ACCOUNT.DELEGATIONS,
+      expect.objectContaining({
+        actionType: "BreakGlassElevation",
+        targetAdminId: "adm-9",
+        targetDelegateEmailOrId: "adm-9",
+      })
+    );
 
     await repo.revokeDelegation("del-1");
     expect(api.delete).toHaveBeenCalledWith(PROFILE_ENDPOINTS.ACCOUNT.REVOKE_DELEGATION("del-1"));
@@ -272,5 +328,235 @@ describe("SovereignAccountRepository — Clean 9-Page B2B Enterprise Account Con
         rowVersion: "rv-notif-server-newer",
       })
     );
+  });
+
+  it("getActivity(query) forwards outcome and omits ALL category/outcome sentinels", async () => {
+    const api = createMockApi();
+    const repo = new SovereignAccountRepository(api);
+
+    await repo.getActivity({
+      search: "login",
+      category: "ALL",
+      outcome: "FAILURE",
+      page: 2,
+      pageSize: 25,
+    });
+    expect(api.get).toHaveBeenCalledWith(
+      `${PROFILE_ENDPOINTS.ACCOUNT.ACTIVITY}?search=login&outcome=FAILURE&page=2&pageSize=25`
+    );
+
+    await repo.getActivity({
+      category: "Security",
+      outcome: "ALL",
+      page: 1,
+      pageSize: 50,
+    });
+    expect(api.get).toHaveBeenCalledWith(
+      `${PROFILE_ENDPOINTS.ACCOUNT.ACTIVITY}?category=Security&page=1&pageSize=50`
+    );
+  });
+
+  it("getIntegrations() preserves real backend rateLimitTelemetry and nullable dev policy limits without fabrications", async () => {
+    const devApi = createMockApi({
+      get: vi.fn().mockResolvedValue({
+        externalIdpLinks: [],
+        personalAccessTokens: [
+          {
+            id: "pat-1",
+            name: "CI Sync",
+            tokenPrefix: "scr_live_abc",
+            scopes: ["academy:read"],
+            rateLimitPerMinute: null,
+            dailyRequestCount: 4,
+            createdAtUtc: "2026-11-15T10:00:00Z",
+          },
+        ],
+        availableScopes: ["academy:read"],
+        rateLimitTelemetry: {
+          rateLimitingEnabled: false,
+          requestsPerMinuteLimit: null,
+          configuredRequestsPerMinuteLimit: 100,
+          hourlyLimit: null,
+          hourlyRequestsUsed: 4,
+          hourlyRemaining: null,
+          dailyRequestsUsed: 12,
+          remainingQuotaPercentage: null,
+        },
+      }),
+    });
+    const devRepo = new SovereignAccountRepository(devApi);
+    const devResult = await devRepo.getIntegrations();
+    expect(devResult.personalAccessTokens[0].rateLimitPerMinute).toBeNull();
+    expect(devResult.personalAccessTokens[0].dailyRequestCount).toBe(4);
+    expect(devResult.rateLimitTelemetry).toEqual({
+      rateLimitingEnabled: false,
+      requestsPerMinuteLimit: null,
+      configuredRequestsPerMinuteLimit: 100,
+      hourlyLimit: null,
+      hourlyRequestsUsed: 4,
+      hourlyRemaining: null,
+      dailyRequestsUsed: 12,
+      remainingQuotaPercentage: null,
+    });
+
+    const prodApi = createMockApi({
+      get: vi.fn().mockResolvedValue({
+        externalIdpLinks: [],
+        personalAccessTokens: [
+          {
+            id: "pat-2",
+            name: "Prod Webhook",
+            tokenPrefix: "scr_live_xyz",
+            scopes: ["venue:write"],
+            rateLimitPerMinute: 100,
+            dailyRequestCount: 180,
+            createdAtUtc: "2026-11-15T10:00:00Z",
+          },
+        ],
+        availableScopes: ["venue:write"],
+        rateLimitTelemetry: {
+          rateLimitingEnabled: true,
+          requestsPerMinuteLimit: 100,
+          configuredRequestsPerMinuteLimit: 100,
+          hourlyLimit: 6000,
+          hourlyRequestsUsed: 150,
+          hourlyRemaining: 5850,
+          dailyRequestsUsed: 180,
+          remainingQuotaPercentage: 97.5,
+        },
+      }),
+    });
+    const prodRepo = new SovereignAccountRepository(prodApi);
+    const prodResult = await prodRepo.getIntegrations();
+    expect(prodResult.personalAccessTokens[0].rateLimitPerMinute).toBe(100);
+    expect(prodResult.rateLimitTelemetry).toEqual({
+      rateLimitingEnabled: true,
+      requestsPerMinuteLimit: 100,
+      configuredRequestsPerMinuteLimit: 100,
+      hourlyLimit: 6000,
+      hourlyRequestsUsed: 150,
+      hourlyRemaining: 5850,
+      dailyRequestsUsed: 180,
+      remainingQuotaPercentage: 97.5,
+    });
+    expect(prodResult.integrationsFeatureEnabled).toBe(true);
+    expect(prodResult.patQuota).toBeNull();
+  });
+
+  it("maps featureFlags on context, 2FA/SSO feature gates on security, and PAT quota states (finite, exhausted, disabled, backward-compat)", async () => {
+    const legacyCtxRepo = new SovereignAccountRepository(createMockApi());
+    const legacyCtx = await legacyCtxRepo.getContext();
+    expect(legacyCtx.featureFlags).toEqual({
+      integrationsEnabled: true,
+      twoFactorEnabled: true,
+      externalSsoEnabled: true,
+      vacationDelegationEnabled: true,
+      planAndQuotasEnabled: true,
+    });
+
+    const gatedCtxRepo = new SovereignAccountRepository(
+      createMockApi({
+        get: vi.fn().mockResolvedValue({
+          adminId: "starter-1",
+          featureFlags: {
+            integrationsEnabled: false,
+            twoFactorEnabled: false,
+            externalSsoEnabled: false,
+            vacationDelegationEnabled: false,
+            planAndQuotasEnabled: true,
+          },
+        }),
+      })
+    );
+    const gatedCtx = await gatedCtxRepo.getContext();
+    expect(gatedCtx.featureFlags).toEqual({
+      integrationsEnabled: false,
+      twoFactorEnabled: false,
+      externalSsoEnabled: false,
+      vacationDelegationEnabled: false,
+      planAndQuotasEnabled: true,
+    });
+
+    const gatedSecRepo = new SovereignAccountRepository(
+      createMockApi({
+        get: vi.fn().mockResolvedValue({
+          isTwoFactorEnabled: false,
+          isTwoFactorFeatureEnabled: false,
+          isSsoFeatureEnabled: false,
+          isSecurityPageEnabled: true,
+        }),
+      })
+    );
+    const gatedSec = await gatedSecRepo.getSecurity();
+    expect(gatedSec.isTwoFactorFeatureEnabled).toBe(false);
+    expect(gatedSec.isSsoFeatureEnabled).toBe(false);
+    expect(gatedSec.isSecurityPageEnabled).toBe(true);
+
+    const planRepo = new SovereignAccountRepository(
+      createMockApi({
+        get: vi.fn().mockResolvedValue({
+          quotas: [
+            {
+              quotaCode: "Integrations.ApiKeys.MaxPerTenant",
+              displayName: "Personal Access Tokens",
+              used: 4,
+              limit: 10,
+              unit: "tokens",
+              source: "override",
+            },
+          ],
+        }),
+      })
+    );
+    const plan = await planRepo.getPlan();
+    expect(plan.quotas[0].source).toBe("override");
+
+    const finiteIntRepo = new SovereignAccountRepository(
+      createMockApi({
+        get: vi.fn().mockResolvedValue({
+          integrationsFeatureEnabled: true,
+          patQuota: {
+            activeCount: 4,
+            maxLimit: 10,
+            isUnlimited: false,
+            remaining: 6,
+            isEnabled: true,
+          },
+        }),
+      })
+    );
+    const finiteInt = await finiteIntRepo.getIntegrations();
+    expect(finiteInt.integrationsFeatureEnabled).toBe(true);
+    expect(finiteInt.patQuota).toEqual({
+      activeCount: 4,
+      maxLimit: 10,
+      isUnlimited: false,
+      remaining: 6,
+      isEnabled: true,
+    });
+
+    const exhaustedIntRepo = new SovereignAccountRepository(
+      createMockApi({
+        get: vi.fn().mockResolvedValue({
+          integrationsFeatureEnabled: false,
+          patQuota: {
+            activeCount: 5,
+            maxLimit: 5,
+            isUnlimited: false,
+            remaining: 0,
+            isEnabled: false,
+          },
+        }),
+      })
+    );
+    const exhaustedInt = await exhaustedIntRepo.getIntegrations();
+    expect(exhaustedInt.integrationsFeatureEnabled).toBe(false);
+    expect(exhaustedInt.patQuota).toEqual({
+      activeCount: 5,
+      maxLimit: 5,
+      isUnlimited: false,
+      remaining: 0,
+      isEnabled: false,
+    });
   });
 });

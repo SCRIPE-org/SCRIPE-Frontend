@@ -7,12 +7,15 @@
 import type { IApiService } from "@core/interfaces/api.interface";
 import { buildUrl } from "@/core/config/api-endpoints/_shared";
 import { useAppStore } from "@core/store/useAppStore";
+import { secureTokenService } from "@core/common/secure-token-service";
 import { PROFILE_ENDPOINTS } from "../services/profile.endpoints";
 import type {
   IProfileRepository,
   UpdateProfileRequest,
   ChangePasswordRequest,
   LinkExternalLoginRequest,
+  ForceChangePasswordRequest,
+  ForceChangePasswordResult,
 } from "../../domain/interfaces/IProfileRepository";
 import type { AdminProfile } from "../../domain/entities/AdminProfile";
 import type { ActiveSession } from "../../domain/entities/ActiveSession";
@@ -22,7 +25,6 @@ import type {
   ActiveSessionDto,
   SecurityLogEntryDto,
   Enable2FAResultDto,
-  LinkExternalLoginDto,
   ExternalLoginDto,
 } from "../models/ProfileModels";
 import { ProfileMapper } from "../mappers/ProfileMapper";
@@ -99,9 +101,9 @@ export class ProfileRepository implements IProfileRepository {
   async regenerateBackupCodes(twoFactorCode: string): Promise<string[]> {
     const result = await this.api.post<{ backupCodes: string[] }>(
       PROFILE_ENDPOINTS.BACKUP_CODES_REGENERATE,
-      { username: "", password: "", code: twoFactorCode }
+      { code: twoFactorCode }
     );
-    return result.backupCodes;
+    return result?.backupCodes ?? [];
   }
 
   // ── 2FA Management ─────────────────────────────────────
@@ -147,5 +149,16 @@ export class ProfileRepository implements IProfileRepository {
 
   async unlinkExternalLogin(externalLoginId: string): Promise<void> {
     await this.api.delete(PROFILE_ENDPOINTS.UNLINK_EXTERNAL_LOGIN(externalLoginId));
+  }
+
+  async forceChangePassword(data: ForceChangePasswordRequest): Promise<ForceChangePasswordResult> {
+    const result = await this.api.post<ForceChangePasswordResult>(
+      PROFILE_ENDPOINTS.FORCE_CHANGE_PASSWORD,
+      data
+    );
+    if (result?.accessToken) {
+      secureTokenService.setAccessToken(result.accessToken);
+    }
+    return result ?? {};
   }
 }

@@ -19,11 +19,13 @@ import {
   resolveProfileSaveErrorMessage,
 } from "../utils/concurrency";
 
+/** React Query key factory for executive profile dossier queries. */
 export const dossierKeys = {
   all: ["profile"] as const,
   profile: () => ["profile", "me"] as const,
 };
 
+/** ViewModel managing executive profile details, avatars, availability, and academy switching. */
 export function useProfileDossierViewModel() {
   const profileRepo = container.profileRepository;
   const queryClient = useQueryClient();

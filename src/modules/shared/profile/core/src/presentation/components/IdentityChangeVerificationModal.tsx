@@ -11,20 +11,35 @@ import {
   DialogTitle,
 } from "@core/ui/dialog";
 import { Button } from "@core/ui/button";
-import { Input } from "@core/ui/input";
-import { Label } from "@core/ui/label";
 import { Badge } from "@core/ui/badge";
-import { ShieldCheck, Mail, AtSign, KeyRound, CheckCircle2, ArrowRight } from "lucide-react";
+import { Mail, AtSign, CheckCircle2, ArrowRight } from "lucide-react";
+import {
+  IdentityChangeStep1,
+  IdentityChangeStep2,
+  IdentityChangeStep3,
+  type IdentityStepUpMethod,
+} from "./IdentityChangeStepPanels";
 
-interface IdentityChangeVerificationModalProps {
+/** Props for {@link IdentityChangeVerificationModal}. */
+export interface IdentityChangeVerificationModalProps {
+  /** Controls modal visibility. */
   open: boolean;
+  /** Target identity attribute being updated. */
   mode: "email" | "username";
+  /** Existing verified email address or username. */
   currentValue: string;
+  /** Visibility change callback triggered when opening or closing. */
   onOpenChange: (open: boolean) => void;
+  /** Optional handler to dispatch verification OTP before commit. */
   onSendOtp?: () => Promise<unknown>;
+  /** Commits the identity identifier update with verified OTP code. */
   onCommitChange: (mode: "email" | "username", newValue: string, otpCode: string) => Promise<void>;
 }
 
+/**
+ * 3-step verification wizard for updating primary account email or username
+ * behind step-up authentication and OTP confirmation.
+ */
 export function IdentityChangeVerificationModal({
   open,
   mode,
@@ -35,10 +50,10 @@ export function IdentityChangeVerificationModal({
 }: IdentityChangeVerificationModalProps) {
   const { t } = useI18n();
   const [step, setStep] = useState<1 | 2 | 3>(1);
-  const [sudoMethod, setSudoMethod] = useState<"totp" | "passkey" | "password">("totp");
-  const [sudoCredential, setSudoCredential] = useState("482910");
+  const [sudoMethod, setSudoMethod] = useState<IdentityStepUpMethod>("totp");
+  const [sudoCredential, setSudoCredential] = useState("");
   const [newValue, setNewValue] = useState("");
-  const [otpCode, setOtpCode] = useState("839201");
+  const [otpCode, setOtpCode] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const isEmail = mode === "email";
@@ -47,15 +62,14 @@ export function IdentityChangeVerificationModal({
     if (!nextOpen) {
       setStep(1);
       setNewValue("");
+      setSudoCredential("");
+      setOtpCode("");
     }
     onOpenChange(nextOpen);
   };
 
   const handleStep1Continue = () => {
     if (!sudoCredential.trim() && sudoMethod !== "passkey") return;
-    if (!newValue) {
-      setNewValue(isEmail ? "alex.morgan.exec@al-ahly.org" : "alex.morgan.exec");
-    }
     setStep(2);
   };
 
@@ -114,7 +128,6 @@ export function IdentityChangeVerificationModal({
           </DialogDescription>
         </DialogHeader>
 
-        {/* 3-Step Progress Bar */}
         <div className="grid grid-cols-3 gap-2 py-2" data-testid="identity-modal-steps">
           {[
             { num: 1, label: t("profile.identityModal.step1Short") },
@@ -145,128 +158,30 @@ export function IdentityChangeVerificationModal({
           })}
         </div>
 
-        {/* Step 1: Step-Up Authentication */}
         {step === 1 && (
-          <div className="space-y-4 py-1" data-testid="identity-step-1">
-            <div className="rounded-lg border border-nx-line bg-nx-ground p-3 flex items-center justify-between">
-              <div>
-                <p className="text-[11px] text-nx-ink-3">{t("profile.identityModal.currentIdentifier")}</p>
-                <p className="text-xs font-mono font-semibold text-nx-ink">{currentValue}</p>
-              </div>
-              <Badge variant="outline" className="border-success/40 text-success text-[10px]">
-                {t("profile.verified")}
-              </Badge>
-            </div>
-
-            <div className="space-y-2">
-              <Label className="text-xs font-semibold text-nx-ink">
-                {t("profile.identityModal.selectStepUpMethod")}
-              </Label>
-              <div className="grid grid-cols-3 gap-2">
-                {(["totp", "passkey", "password"] as const).map((m) => (
-                  <Button
-                    key={m}
-                    type="button"
-                    size="sm"
-                    variant={sudoMethod === m ? "default" : "outline"}
-                    onClick={() => setSudoMethod(m)}
-                    className={
-                      sudoMethod === m
-                        ? "bg-nx-accent-fill text-nx-on-fill font-semibold text-xs h-8"
-                        : "text-xs h-8"
-                    }
-                  >
-                    {t(`profile.identityModal.method.${m}`)}
-                  </Button>
-                ))}
-              </div>
-            </div>
-
-            <div className="space-y-1.5">
-              <Label htmlFor="stepup-credential-input" className="text-xs text-nx-ink-2">
-                {sudoMethod === "totp"
-                  ? t("profile.identityModal.enterTotpLabel")
-                  : sudoMethod === "passkey"
-                    ? t("profile.identityModal.passkeyReadyLabel")
-                    : t("profile.identityModal.enterPasswordLabel")}
-              </Label>
-              <Input
-                id="stepup-credential-input"
-                data-testid="stepup-credential-input"
-                type={sudoMethod === "password" ? "password" : "text"}
-                value={sudoCredential}
-                onChange={(e) => setSudoCredential(e.target.value)}
-                className="font-mono text-xs"
-              />
-            </div>
-          </div>
+          <IdentityChangeStep1
+            currentValue={currentValue}
+            sudoMethod={sudoMethod}
+            sudoCredential={sudoCredential}
+            onMethodChange={setSudoMethod}
+            onCredentialChange={setSudoCredential}
+          />
         )}
 
-        {/* Step 2: Enter New Email / Username & Dispatch OTP */}
         {step === 2 && (
-          <div className="space-y-4 py-1" data-testid="identity-step-2">
-            <div className="space-y-1.5">
-              <Label htmlFor="identity-new-value-input" className="text-xs font-semibold text-nx-ink">
-                {isEmail
-                  ? t("profile.identityModal.newEmailLabel")
-                  : t("profile.identityModal.newUsernameLabel")}{" "}
-                <span className="text-destructive">*</span>
-              </Label>
-              <Input
-                id="identity-new-value-input"
-                data-testid="identity-new-value-input"
-                type={isEmail ? "email" : "text"}
-                value={newValue}
-                onChange={(e) => setNewValue(e.target.value)}
-                placeholder={
-                  isEmail
-                    ? t("profile.identityModal.newEmailPlaceholder")
-                    : t("profile.identityModal.newUsernamePlaceholder")
-                }
-                className="font-mono text-xs"
-              />
-            </div>
-
-            <div className="rounded-lg border border-nx-line bg-nx-ground p-3 space-y-1">
-              <div className="flex items-center gap-1.5 text-xs font-semibold text-nx-ink">
-                <ShieldCheck className="h-3.5 w-3.5 text-nx-accent" style={{ minWidth: 14, minHeight: 14 }} />
-                <span>{t("profile.identityModal.otpDispatchTitle")}</span>
-              </div>
-              <p className="text-[11px] text-nx-ink-3 leading-relaxed">
-                {t("profile.identityModal.otpDispatchBody")}
-              </p>
-            </div>
-          </div>
+          <IdentityChangeStep2
+            isEmail={isEmail}
+            newValue={newValue}
+            onNewValueChange={setNewValue}
+          />
         )}
 
-        {/* Step 3: Enter 6-Digit Verification OTP & Commit */}
         {step === 3 && (
-          <div className="space-y-4 py-1" data-testid="identity-step-3">
-            <div className="rounded-lg border border-nx-accent/30 bg-nx-accent-wash p-3">
-              <p className="text-[11px] text-nx-ink-2">
-                {t("profile.identityModal.otpSentNotice", { target: newValue })}
-              </p>
-            </div>
-
-            <div className="space-y-1.5">
-              <Label htmlFor="identity-otp-input" className="text-xs font-semibold text-nx-ink flex items-center gap-1.5">
-                <KeyRound className="h-3.5 w-3.5 text-nx-accent" style={{ minWidth: 14, minHeight: 14 }} />
-                <span>{t("profile.identityModal.otpCodeLabel")}</span>
-              </Label>
-              <Input
-                id="identity-otp-input"
-                data-testid="identity-otp-input"
-                maxLength={6}
-                value={otpCode}
-                onChange={(e) => setOtpCode(e.target.value)}
-                placeholder="000000"
-                className="font-mono text-sm tracking-widest text-center font-bold"
-              />
-              <p className="text-[11px] text-nx-ink-3">
-                {t("profile.identityModal.otpExpiryNotice")}
-              </p>
-            </div>
-          </div>
+          <IdentityChangeStep3
+            newValue={newValue}
+            otpCode={otpCode}
+            onOtpCodeChange={setOtpCode}
+          />
         )}
 
         <DialogFooter className="flex items-center justify-between gap-2 pt-2">

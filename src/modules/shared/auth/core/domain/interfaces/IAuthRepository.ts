@@ -2,7 +2,12 @@ import { LoginRequest, LoginResponse } from "../entities/Auth";
 import { User } from "../entities/User";
 import type { WorkspaceInfo } from "../entities/WorkspaceInfo";
 import { Result } from "@core/common/types/result";
-import type { LoginResponseModel } from "../types/AuthTypes";
+import type {
+  LoginResponseModel,
+  PasskeyAuthBeginOptions,
+  PasskeyAuthVerifyResult,
+  VerifyPasskeyAuthRequestData,
+} from "../types/AuthTypes";
 
 /** Result of a successful login, carrying subscription metadata alongside the User */
 export interface LoginResult {
@@ -51,21 +56,12 @@ export interface IAuthRepository {
     displayName?: string;
   }): Promise<void>;
   /** Begin WebAuthn authentication — get challenge from backend */
-  beginPasskeyAuth(): Promise<{
-    challengeId: string;
-    options: PublicKeyCredentialRequestOptions;
-  }>;
-  /** Verify WebAuthn assertion — send attestation to backend, get tokens */
-  verifyPasskeyAuth(data: {
-    challengeId: string;
-    credentialId: string;
-    rawId: string;
-    clientDataJSON: string;
-    authenticatorData: string;
-    signature: string;
-    userHandle: string | null;
-    tenantId?: string | null;
-  }): Promise<{ accessToken: string; refreshToken: string }>;
+  beginPasskeyAuth(
+    identifier?: string,
+    tenantId?: string | null
+  ): Promise<PasskeyAuthBeginOptions>;
+  /** Verify WebAuthn assertion — send assertion to backend, get tokens */
+  verifyPasskeyAuth(data: VerifyPasskeyAuthRequestData): Promise<PasskeyAuthVerifyResult>;
   /** Request phone OTP for sign-in */
   requestPhoneOtp(phoneNumber: string): Promise<{ sent: boolean; retryAfterSeconds: number }>;
   /** Verify phone OTP code — returns full login response (supports multi-workspace) */

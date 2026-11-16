@@ -8,7 +8,7 @@
  * @module core/services/webauthn.service
  */
 
-export type AuthenticatorMode = "platform" | "hybrid" | "security-key";
+export type AuthenticatorMode = "platform" | "hybrid" | "cross-platform" | "security-key";
 
 export interface PasskeyAttestationResult {
   id: string;
@@ -254,7 +254,7 @@ export async function registerPasskey(
   const resolvedUserName =
     rawOptions.user?.name ||
     rawOptions.userName ||
-    "admin@scripe.org";
+    "account";
   const resolvedUserDisplayName =
     rawOptions.user?.displayName ||
     rawOptions.userDisplayName ||
@@ -291,7 +291,7 @@ export async function registerPasskey(
     // Phone / Tablet QR Code (FIDO Hybrid / CaBLE)
     authenticatorAttachment = undefined;
     modeHints = ["hybrid"];
-  } else if (mode === "security-key") {
+  } else if (mode === "security-key" || mode === "cross-platform") {
     // Explicit physical USB / NFC hardware security key
     authenticatorAttachment = "cross-platform";
     modeHints = ["security-key"];

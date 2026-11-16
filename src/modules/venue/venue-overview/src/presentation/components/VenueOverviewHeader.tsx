@@ -6,8 +6,6 @@ import { Badge } from "@core/ui/badge";
 import { Button } from "@core/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@core/ui/select";
 
-import { useAppStore } from "@core/store/useAppStore";
-
 interface FacilityOption {
   id: string;
   name: string;
@@ -57,8 +55,6 @@ export function VenueOverviewHeader({
   onBlockTime,
   t,
 }: Props) {
-  const user = useAppStore((s) => s.user);
-  const userName = user?.firstName || user?.username || t("common.user", { defaultValue: "User" });
   const formattedDate = formatDisplayDate(localDate, timeZoneId);
 
   return (
@@ -137,7 +133,9 @@ export function VenueOverviewHeader({
             className="h-8.5 hover:bg-nx-surfaceSubtle gap-1.5 border-nx-line text-xs font-medium"
           >
             <span className="font-bold text-warning">⊘</span>
-            <span className="hidden sm:inline">Block Time</span>
+            <span className="hidden sm:inline">
+              {t("venueOverview.quickActions.blockTime", { defaultValue: "Block Time" })}
+            </span>
           </Button>
         ) : (
           <Button
@@ -148,7 +146,9 @@ export function VenueOverviewHeader({
           >
             <Link href="/venue/calendar">
               <span className="font-bold text-warning">⊘</span>
-              <span className="hidden sm:inline">Block Time</span>
+              <span className="hidden sm:inline">
+                {t("venueOverview.quickActions.blockTime", { defaultValue: "Block Time" })}
+              </span>
             </Link>
           </Button>
         )}
@@ -162,7 +162,9 @@ export function VenueOverviewHeader({
         >
           <Link href="/venue/money/payments">
             <span className="font-bold text-success">$</span>
-            <span className="hidden sm:inline">Record Payment</span>
+            <span className="hidden sm:inline">
+              {t("venueOverview.quickActions.recordPayment", { defaultValue: "Record Payment" })}
+            </span>
           </Link>
         </Button>
 

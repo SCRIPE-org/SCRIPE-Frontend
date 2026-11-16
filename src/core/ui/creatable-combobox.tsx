@@ -174,7 +174,7 @@ export function CreatableCombobox({
       </div>
       <PopoverContent
         dir={direction}
-        className="w-[--radix-popover-trigger-width] min-w-[240px] p-0"
+        className="w-[var(--radix-popover-trigger-width)] min-w-[240px] p-0"
         align={isRTL ? "end" : "start"}
       >
         <Command

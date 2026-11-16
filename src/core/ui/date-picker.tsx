@@ -596,15 +596,16 @@ export function DatePicker({
               // this file.
               "pointer-events-auto fixed z-dropdown rounded-nx-md border border-nx-line bg-nx-popover shadow-nx-popover",
               calendarPosition.placement === "top-start"
-                ? "rounded-b-none border-b-0"
-                : "rounded-t-none border-t-0",
-              // transform+opacity entrance at micro speed; reduced motion keeps
-              // the crossfade and drops the slide
-              "transition-[transform,opacity] duration-nx-micro ease-nx-enter motion-reduce:translate-y-0 motion-reduce:transition-none",
+                ? "origin-bottom rounded-b-none border-b-0"
+                : "origin-top rounded-t-none border-t-0",
+              // transform+opacity entrance at micro speed from trigger edge;
+              // transition-[transform,opacity] ensures top/left/width coordinates
+              // snap instantaneously while reduced motion drops scale and slide.
+              "transition-[transform,opacity] duration-nx-micro ease-nx-enter motion-reduce:translate-y-0 motion-reduce:scale-100 motion-reduce:transition-none",
               animateOpen
-                ? "translate-y-0 opacity-100"
+                ? "translate-y-0 scale-100 opacity-100"
                 : cn(
-                    "opacity-0",
+                    "scale-[0.98] opacity-0",
                     calendarPosition.placement === "top-start"
                       ? "translate-y-1.5"
                       : "-translate-y-1.5"

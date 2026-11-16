@@ -22,6 +22,7 @@ import { Input } from "@core/ui/input";
 import { Label } from "@core/ui/label";
 import { ShieldAlert, AlertTriangle, Loader2 } from "lucide-react";
 
+/** Props for {@link EmergencyLockdownDialog}. */
 interface EmergencyLockdownDialogProps {
   isOpen: boolean;
   onClose: () => void;
@@ -29,6 +30,7 @@ interface EmergencyLockdownDialogProps {
   isLockingDown: boolean;
 }
 
+/** Confirmation modal requiring `"LOCKDOWN"` keyword before executing full emergency session kill. */
 export function EmergencyLockdownDialog({
   isOpen,
   onClose,

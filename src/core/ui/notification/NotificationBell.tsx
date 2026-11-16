@@ -37,7 +37,7 @@
  * the same portal-to-body escape from overflow-hidden parents.
  */
 
-import { useEffect, useMemo, useRef, useState, useCallback } from "react";
+import { useEffect, useLayoutEffect, useMemo, useRef, useState, useCallback } from "react";
 import type { CSSProperties } from "react";
 import { Bell, CheckCheck, ExternalLink, RotateCcw } from "lucide-react";
 import { Button } from "@core/ui/button";
@@ -48,6 +48,8 @@ import { resolveSafeActionHref } from "@core/ui/sileo-toast/sileo-toast";
 import { useI18n } from "@core/providers/i18n-provider";
 import type { NotificationItem } from "@core/notification/entities/NotificationItem";
 import ReactDOM from "react-dom";
+
+const useIsomorphicLayoutEffect = typeof window !== "undefined" ? useLayoutEffect : useEffect;
 
 interface NotificationBellProps {
   /** Icon size class */
@@ -169,16 +171,19 @@ export function NotificationBell({ iconClassName = "h-5 w-5", className }: Notif
 
   const handleToggle = useCallback(() => {
     vm.toggleOpen();
-    // recalc after state flips
-    setTimeout(recalcPosition, 0);
-  }, [vm, recalcPosition]);
+  }, [vm]);
 
-  // Close on outside click / Escape; Escape returns focus to the bell.
+  // Measure trigger position synchronously before first painted frame so fixed
+  // panel coordinates never start at auto/(0,0), and close on outside click / Escape.
   const isOpen = vm.isOpen;
   const close = vm.close;
+  useIsomorphicLayoutEffect(() => {
+    if (!isOpen) return;
+    recalcPosition();
+  }, [isOpen, recalcPosition]);
+
   useEffect(() => {
     if (!isOpen) return;
-    queueMicrotask(recalcPosition);
     const handler = (e: MouseEvent) => {
       const target = e.target as Node;
       if (
@@ -238,16 +243,16 @@ export function NotificationBell({ iconClassName = "h-5 w-5", className }: Notif
       ref={panelRef}
       role="dialog"
       aria-label={title}
+      data-dropdown-portal="true"
       dir={direction}
       style={{ ...panelStyle, transformOrigin }}
       className={cn(
-        "fixed z-dropdown flex flex-col overflow-hidden",
+        "fixed z-dropdown flex flex-col overflow-hidden transition-none",
         "rounded-nx-lg border border-nx-line bg-nx-popover text-nx-ink shadow-nx-popover",
-        // Fade always; the 0.95 zoom from the trigger origin only when motion
-        // is welcome. An overlay enters on the 200ms standard beat — the micro
-        // beat is for hover and press, and at 140ms a 340px panel reads as a
-        // pop rather than an arrival.
-        "duration-nx-standard ease-nx-enter animate-in fade-in-0 motion-safe:zoom-in-95"
+        // Fade always; the 0.95 zoom from the computed trigger origin only when
+        // motion is welcome. transition-none prevents async left/top/width changes
+        // from gliding across the viewport while @keyframes enter animates in place.
+        "duration-nx-micro ease-nx-enter animate-in fade-in-0 motion-safe:zoom-in-95"
       )}
     >
       {/* ── Header ───────────────────────────────────────────────────────── */}

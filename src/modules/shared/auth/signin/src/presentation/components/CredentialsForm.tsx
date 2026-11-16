@@ -75,6 +75,7 @@ export function CredentialsForm({
     },
     onSwitchToPasskey && {
       key: "passkey",
+      testId: "login-passkey-chip",
       icon: <Fingerprint className="h-[13px] w-[13px]" aria-hidden="true" />,
       label: t("auth.passkey.chip") || "Passkey",
       onClick: onSwitchToPasskey,
@@ -93,6 +94,7 @@ export function CredentialsForm({
     },
   ].filter(Boolean) as Array<{
     key: string;
+    testId?: string;
     icon: React.ReactNode;
     label: string;
     onClick: () => void;

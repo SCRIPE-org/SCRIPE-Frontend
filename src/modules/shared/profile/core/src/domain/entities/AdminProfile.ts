@@ -6,6 +6,7 @@
  * Mapped from API DTO via ProfileMapper.
  */
 
+/** Custom profile field schema and current value item for an enterprise administrator. */
 export interface AdminCustomFieldItem {
   key: string;
   labelEn: string;
@@ -21,6 +22,7 @@ export interface AdminCustomFieldItem {
   currentValue?: unknown;
 }
 
+/** Domain entity for the current B2B enterprise administrator's profile and memberships. */
 export interface AdminProfile {
   id: string;
   username: string;

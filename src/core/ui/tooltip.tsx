@@ -46,11 +46,14 @@ const TooltipContent = React.forwardRef<
         collisionPadding={collisionPadding}
         dir={dir ?? direction}
         className={cn(
-          "z-tooltip max-w-xs rounded-nx-sm px-2.5 py-1.5 text-xs leading-5",
+          "z-tooltip max-w-xs origin-[var(--radix-tooltip-content-transform-origin)] rounded-nx-sm px-2.5 py-1.5 text-xs leading-5",
           floatingSurfaceClasses,
-          // 120ms fade + a 2px slide away from the anchored side; reduced motion
-          // keeps the crossfade and drops the slide.
-          "duration-nx-micro ease-nx-enter animate-in fade-in-0 data-[state=closed]:ease-nx-exit data-[state=closed]:animate-out data-[state=closed]:fade-out-0",
+          // Micro-speed fade + 0.95 scale + tight 2px directional shift from
+          // the trigger origin (Radix Tooltip uses delayed-open/instant-open,
+          // so open animation applies by default and exits on data-[state=closed]).
+          // transition-none prevents transition-property:all from easing
+          // --radix-tooltip-content-transform-origin after mount measurement.
+          "transition-none duration-nx-micro ease-nx-enter animate-in fade-in-0 motion-safe:zoom-in-95 data-[state=closed]:duration-nx-micro data-[state=closed]:ease-nx-exit data-[state=closed]:animate-out data-[state=closed]:fade-out-0 motion-safe:data-[state=closed]:zoom-out-95",
           "motion-safe:data-[side=bottom]:slide-in-from-top-0.5 motion-safe:data-[side=left]:slide-in-from-right-0.5 motion-safe:data-[side=right]:slide-in-from-left-0.5 motion-safe:data-[side=top]:slide-in-from-bottom-0.5",
           className
         )}

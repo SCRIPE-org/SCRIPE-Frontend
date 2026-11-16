@@ -75,7 +75,7 @@ export function VenueNav({ attentionCount = 0, className = "", hidePrimaryBar = 
     {
       id: "overview",
       label: t("venueNav.overview", {
-        defaultValue: t("venueNav.dashboard", { defaultValue: "Overview" }),
+        defaultValue: t("venueNav.dashboard", { defaultValue: "Dashboard" }),
       }),
       href: "/venue",
       icon: LayoutDashboard,

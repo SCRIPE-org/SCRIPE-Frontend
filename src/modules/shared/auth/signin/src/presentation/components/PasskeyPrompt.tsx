@@ -8,19 +8,29 @@
  */
 import { useI18n } from "@core/providers/i18n-provider";
 import { Button } from "@core/ui/button";
+import type { PasskeyAuthVerifyResult } from "@modules/auth/core/domain/types/AuthTypes";
 import { usePasskeyLoginViewModel } from "../viewmodels/usePasskeyLoginViewModel";
 import { Fingerprint, AlertCircle, Loader2, ArrowLeft, ShieldX } from "lucide-react";
 
+/** Props for {@link PasskeyPrompt}. */
 interface PasskeyPromptProps {
-  onSuccess: (result: { accessToken: string; refreshToken: string }) => void;
+  onSuccess: (result: PasskeyAuthVerifyResult) => void;
   onBack: () => void;
   isRTL: boolean;
   tenantId?: string | null;
+  identifier?: string;
 }
 
-export function PasskeyPrompt({ onSuccess, onBack, isRTL, tenantId }: PasskeyPromptProps) {
+/** WebAuthn / FIDO2 biometric passkey sign-in prompt view. */
+export function PasskeyPrompt({
+  onSuccess,
+  onBack,
+  isRTL,
+  tenantId,
+  identifier,
+}: PasskeyPromptProps) {
   const { t } = useI18n();
-  const vm = usePasskeyLoginViewModel(onSuccess, tenantId);
+  const vm = usePasskeyLoginViewModel(onSuccess, tenantId, identifier);
 
   // ── Not supported state ──
   if (!vm.isSupported) {
@@ -94,6 +104,7 @@ export function PasskeyPrompt({ onSuccess, onBack, isRTL, tenantId }: PasskeyPro
       <div className="space-y-2.5">
         <Button
           type="button"
+          data-testid="passkey-authenticate-btn"
           onClick={vm.authenticateWithPasskey}
           disabled={vm.isLoading}
           className="w-full h-10 text-xs font-semibold gap-2"

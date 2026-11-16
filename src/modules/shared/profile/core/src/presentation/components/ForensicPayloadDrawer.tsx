@@ -28,12 +28,14 @@ import {
 } from "lucide-react";
 import type { SecurityAuditEntry } from "../../domain/entities/SecurityAuditEntry";
 
+/** Props for {@link ForensicPayloadDrawer}. */
 interface ForensicPayloadDrawerProps {
   isOpen: boolean;
   onClose: () => void;
   entry: SecurityAuditEntry | null;
 }
 
+/** Slide-over inspector drawer displaying sanitized forensic JSON telemetry for an audit entry. */
 export function ForensicPayloadDrawer({
   isOpen,
   onClose,

@@ -133,6 +133,8 @@ export const APP_ROUTE_MANIFEST: readonly AppRouteManifestEntry[] = [
   { pattern: "/account/dossier", binding: "shell_authenticated" },
   { pattern: "/account/governance", binding: "shell_authenticated" },
   { pattern: "/account/integrations", binding: "shell_authenticated" },
+  { pattern: "/account/integrations/new", binding: "shell_authenticated" },
+  { pattern: "/account/integrations/[id]", binding: "shell_authenticated" },
   { pattern: "/account/notifications", binding: "shell_authenticated" },
   { pattern: "/account/plan", binding: "shell_authenticated" },
   { pattern: "/account/preferences", binding: "shell_authenticated" },

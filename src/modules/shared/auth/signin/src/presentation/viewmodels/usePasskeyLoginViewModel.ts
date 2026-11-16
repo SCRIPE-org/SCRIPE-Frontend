@@ -3,6 +3,7 @@
 import { useState, useCallback, useEffect } from "react";
 import { useI18n } from "@core/providers/i18n-provider";
 import { authContainer } from "@modules/auth/di";
+import type { PasskeyAuthVerifyResult } from "@modules/auth/core/domain/types/AuthTypes";
 import {
   assertPasskey,
   isWebAuthnAvailable,
@@ -43,8 +44,9 @@ export interface UsePasskeyLoginViewModelReturn {
  * - Handles AbortError, NotAllowedError, SecurityError gracefully
  */
 export function usePasskeyLoginViewModel(
-  onSuccess: (result: { accessToken: string; refreshToken: string }) => void,
-  tenantId?: string | null
+  onSuccess: (result: PasskeyAuthVerifyResult) => void,
+  tenantId?: string | null,
+  identifier?: string
 ): UsePasskeyLoginViewModelReturn {
   const { t } = useI18n();
   const { authRepository } = authContainer;
@@ -67,18 +69,28 @@ export function usePasskeyLoginViewModel(
     setError("");
 
     try {
-      // Step 1: Begin authentication — get challenge from server
-      const beginResponse = await authRepository.beginPasskeyAuth();
+      // Step 1: Begin authentication — get flat PasskeyAuthenticationOptions (or fallback wrapper) from server
+      const beginResponse = await authRepository.beginPasskeyAuth(identifier, tenantId);
 
-      // Step 2: Call WebAuthn browser API via webauthn service
-      const publicKeyOptions = beginResponse.options;
+      // Step 2: Resolve challenge & options cleanly across flat/wrapped payloads and call WebAuthn API
+      const publicKeyOptions = (beginResponse.options ?? beginResponse) as {
+        challenge: string | ArrayBuffer;
+        rpId?: string;
+        timeout?: number;
+        allowCredentials?: Array<{
+          id: string | ArrayBuffer;
+          type?: string;
+          transports?: string[];
+        }>;
+        userVerification?: UserVerificationRequirement;
+      };
 
       const challengeStr =
         typeof publicKeyOptions.challenge === "string"
           ? publicKeyOptions.challenge
-          : bufferToBase64Url(publicKeyOptions.challenge as ArrayBuffer);
+          : bufferToBase64Url(publicKeyOptions.challenge);
 
-      const allowCreds = publicKeyOptions.allowCredentials?.map((cred: any) => ({
+      const allowCreds = publicKeyOptions.allowCredentials?.map((cred) => ({
         id: typeof cred.id === "string" ? cred.id : bufferToBase64Url(cred.id),
         type: (cred.type || "public-key") as "public-key",
         transports: cred.transports,
@@ -92,8 +104,9 @@ export function usePasskeyLoginViewModel(
         userVerification: publicKeyOptions.userVerification,
       });
 
-      // Step 3: Send assertion to server for verification
+      // Step 3: Send assertion + challengeToken + clientExtensionResults to server for verification
       const verifyResult = await authRepository.verifyPasskeyAuth({
+        challengeToken: beginResponse.challengeToken ?? beginResponse.challengeId ?? null,
         challengeId: beginResponse.challengeId,
         credentialId: assertion.credentialIdBase64,
         rawId: assertion.credentialIdBase64,
@@ -101,6 +114,7 @@ export function usePasskeyLoginViewModel(
         authenticatorData: assertion.authenticatorDataBase64,
         signature: assertion.signatureBase64,
         userHandle: assertion.userHandleBase64,
+        clientExtensionResults: assertion.clientExtensionResults,
         tenantId,
       });
 
@@ -129,7 +143,7 @@ export function usePasskeyLoginViewModel(
     } finally {
       setIsLoading(false);
     }
-  }, [isSupported, onSuccess, t, authRepository, tenantId]);
+  }, [isSupported, onSuccess, t, authRepository, tenantId, identifier]);
 
   return {
     isLoading,

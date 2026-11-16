@@ -33,7 +33,9 @@ export * from "./src/presentation/viewmodels/useSovereignAccountSlicesViewModel"
 export { ProfileTelemetryHud } from "./src/presentation/components/ProfileTelemetryHud";
 export { ProfileRailLayout } from "./src/presentation/components/ProfileRailLayout";
 export { SovereignCommandBar } from "./src/presentation/components/SovereignCommandBar";
-export { SovereignSudoGate } from "./src/presentation/components/SovereignSudoGate";
+export { SudoVerificationModal } from "./src/presentation/components/SudoVerificationModal";
+export { SectionInfoPopover } from "./src/presentation/components/SectionInfoPopover";
+export * from "./src/presentation/components/AccountSkeletons";
 export { SovereignSessionRadar } from "./src/presentation/components/SovereignSessionRadar";
 export { PermissionProvenanceGraph } from "./src/presentation/components/PermissionProvenanceGraph";
 export { ErgonomicsLiveStage } from "./src/presentation/components/ErgonomicsLiveStage";
@@ -42,7 +44,6 @@ export { TwoFactorWizardModal } from "./src/presentation/components/TwoFactorWiz
 export { ForensicPayloadDrawer } from "./src/presentation/components/ForensicPayloadDrawer";
 export { SessionCard } from "./src/presentation/components/SessionCard";
 export { EmergencyLockdownDialog } from "./src/presentation/components/EmergencyLockdownDialog";
-export { BiometricSudoModal } from "./src/presentation/components/BiometricSudoModal";
 export { PersonalAccessTokenDialog } from "./src/presentation/components/PersonalAccessTokenDialog";
 export { AvatarUpload } from "./src/presentation/components/AvatarUpload";
 export { ProfileInfoForm } from "./src/presentation/components/ProfileInfoForm";

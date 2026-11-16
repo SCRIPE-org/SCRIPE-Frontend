@@ -3,47 +3,26 @@
 /**
  * SovereignSessionRadar
  *
- * Open-Source Interactive Geolocation Map (OpenStreetMap / CartoDB Dark Matter & Positron
- * tile matrix + high-precision GeoJSON World Continents & Mediterranean/MENA coastline projection).
- * Features:
- * - Interactive Zoom In (+), Zoom Out (-), and Reset View controls
- * - Smart anti-collision leader-line callout offsets so Cairo, Egypt and Giza, Egypt NEVER overlap
- * - Interactive workstation pin selection with live Device/IP/TLS inspector & quick Kill Session action
+ * Interactive OpenStreetMap geolocation radar displaying active authenticated
+ * workstation nodes, anti-collision city pin callouts, and node termination actions.
  */
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useTheme } from "next-themes";
 import { useI18n } from "@core/providers/i18n-provider";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@core/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@core/ui/card";
 import { Badge } from "@core/ui/badge";
 import { Button } from "@core/ui/button";
+import { Globe, ShieldAlert, Wifi } from "lucide-react";
 import {
-  Globe,
-  ShieldAlert,
-  Wifi,
-  Plus,
-  Minus,
-  RotateCcw,
-  Navigation,
-  Trash2,
-  Monitor,
-} from "lucide-react";
+  normalizeRadarNodes,
+  type PositionedRadarNode,
+  type RadarSessionNode,
+} from "../utils/session-radar.utils";
+import { SessionRadarSvgOverlay } from "./SessionRadarSvgOverlay";
+import { SessionRadarTelemetryCards } from "./SessionRadarTelemetryCards";
 
-export interface RadarSessionNode {
-  id: string;
-  label?: string;
-  deviceLabel?: string;
-  browser?: string;
-  os?: string;
-  location?: string;
-  city?: string;
-  ipAddress: string;
-  x?: number;
-  y?: number;
-  lat?: number;
-  lon?: number;
-  isCurrent: boolean;
-  tlsVersion?: string;
-}
+/** Re-exported session node descriptor for {@link SovereignSessionRadar}. */
+export type { RadarSessionNode };
 
 interface SovereignSessionRadarProps {
   nodes: RadarSessionNode[];
@@ -53,17 +32,7 @@ interface SovereignSessionRadarProps {
   onKillNode?: (nodeId: string) => void;
 }
 
-function inferCoordinates(cityOrLocation: string, idx: number): { lat: number; lon: number } {
-  const lower = cityOrLocation.toLowerCase();
-  if (lower.includes("cairo")) return { lat: 30.0444, lon: 31.2357 };
-  if (lower.includes("giza")) return { lat: 30.0131, lon: 31.2089 };
-  if (lower.includes("alexandria")) return { lat: 31.2001, lon: 29.9187 };
-  if (lower.includes("london")) return { lat: 51.5074, lon: -0.1278 };
-  if (lower.includes("frankfurt")) return { lat: 50.1109, lon: 8.6821 };
-  if (lower.includes("dubai")) return { lat: 25.2048, lon: 55.2708 };
-  return { lat: 30.0444 + idx * 8, lon: 31.2357 - idx * 14 };
-}
-
+/** Interactive geolocation radar card plotting active account session nodes. */
 export function SovereignSessionRadar({
   nodes,
   onRevokeAllOther,
@@ -92,74 +61,19 @@ export function SovereignSessionRadar({
   }, []);
 
   const isLight = domIsLight || resolvedTheme === "light";
-
   const [zoom, setZoom] = useState<number>(1.35);
   const [selectedId, setSelectedId] = useState<string>(nodes[0]?.id ?? "ws-current");
 
-  // Exact Web Mercator projection matching z=5 CartoDB/OpenStreetMap 4x2 tile viewport (x: 17..20, y: 12..13)
-  const projectPoint = (lat: number, lon: number) => {
-    const z = 5;
-    const n = Math.pow(2, z);
-    const tileX = ((lon + 180) / 360) * n;
-    const latRad = (lat * Math.PI) / 180;
-    const tileY =
-      ((1 - Math.log(Math.tan(latRad) + 1 / Math.cos(latRad)) / Math.PI) / 2) * n;
-    const x = (tileX - 17) * 200;
-    const y = (tileY - 12) * 170;
-    return {
-      x: Math.max(60, Math.min(740, x)),
-      y: Math.max(45, Math.min(295, y)),
-    };
-  };
-
-  // Compute collision-free callout label placements for nearby pins (e.g., Cairo vs Giza)
-  const positionedNodes = nodes.map((node, idx) => {
-    const cityLabel = node.city || node.location || "Cairo, Egypt";
-    const coords =
-      node.lat !== undefined && node.lon !== undefined
-        ? { lat: node.lat, lon: node.lon }
-        : inferCoordinates(cityLabel, idx);
-    const base = projectPoint(coords.lat, coords.lon);
-    const lower = cityLabel.toLowerCase();
-    const isGiza = lower.includes("giza");
-    const isCairo = lower.includes("cairo");
-
-    let labelOffsetX = 18;
-    let labelOffsetY = -22;
-    let pinJitterX = 0;
-    let pinJitterY = 0;
-
-    if (isCairo) {
-      pinJitterX = 7;
-      pinJitterY = -5;
-      labelOffsetX = 24;
-      labelOffsetY = -26;
-    } else if (isGiza) {
-      pinJitterX = -9;
-      pinJitterY = 9;
-      labelOffsetX = -148;
-      labelOffsetY = 22;
-    } else if (idx % 2 === 1) {
-      labelOffsetX = 18;
-      labelOffsetY = 20;
-    }
-
-    return {
-      ...node,
-      cityLabel,
-      deviceTitle: node.deviceLabel || node.label || "Workstation Session",
-      lat: coords.lat,
-      lon: coords.lon,
-      tls: node.tlsVersion || "TLS 1.3",
-      cx: base.x + pinJitterX,
-      cy: base.y + pinJitterY,
-      lx: base.x + pinJitterX + labelOffsetX,
-      ly: base.y + pinJitterY + labelOffsetY,
-    };
-  });
-
+  const normalizedNodes = normalizeRadarNodes(
+    nodes,
+    t("profile.sessions.geoTelemetryUnavailable"),
+    t("profile.sessions.workstationFallback")
+  );
+  const positionedNodes = normalizedNodes.filter(
+    (n): n is PositionedRadarNode => n.hasCoords
+  );
+  const unlocatedNodes = normalizedNodes.filter((n) => !n.hasCoords);
   const activeNode = positionedNodes.find((n) => n.id === selectedId) ?? positionedNodes[0];
-  const tileStyle = isLight ? "light_all" : "dark_all";
 
   return (
     <Card
@@ -205,286 +119,25 @@ export function SovereignSessionRadar({
       </CardHeader>
 
       <CardContent className="space-y-3">
-        <div
-          data-testid="interactive-osm-map-container"
-          className="relative w-full h-72 rounded-xl border border-nx-line overflow-hidden select-none bg-nx-raised"
-        >
-          {/* Open-Source OpenStreetMap Tile Matrix (z=5, x=17..20, y=12..13) */}
-          <div
-            className="absolute inset-0 grid grid-cols-4 grid-rows-2 pointer-events-none transition-transform duration-300"
-            style={{
-              transform: `scale(${zoom})`,
-              transformOrigin: "45% 58%",
-              filter: isLight
-                ? "saturate(0.8) contrast(1.03) brightness(1.02)"
-                : "invert(92%) hue-rotate(185deg) brightness(86%) contrast(108%) saturate(65%)",
+        {positionedNodes.length > 0 && (
+          <SessionRadarSvgOverlay
+            positionedNodes={positionedNodes}
+            activeNodeId={activeNode?.id}
+            zoom={zoom}
+            isLight={isLight}
+            onZoomChange={setZoom}
+            onSelectNode={(nodeId) => {
+              setSelectedId(nodeId);
+              onSelectNode?.(nodeId);
             }}
-          >
-            {[
-              [5, 17, 12],
-              [5, 18, 12],
-              [5, 19, 12],
-              [5, 20, 12],
-              [5, 17, 13],
-              [5, 18, 13],
-              [5, 19, 13],
-              [5, 20, 13],
-            ].map(([z, x, y], idx) => (
-              <div
-                key={`${tileStyle}-${idx}`}
-                className="w-full h-full bg-cover bg-center"
-                style={{
-                  backgroundImage: `url(https://tile.openstreetmap.org/${z}/${x}/${y}.png)`,
-                }}
-              />
-            ))}
-          </div>
-
-          {/* GeoJSON Continent Coastline Base Layer + Vector Telemetry Graticule & Non-Overlapping Callouts */}
-          <svg
-            viewBox="0 0 800 340"
-            className="relative z-10 w-full h-full transition-transform duration-300"
-            style={{ transform: `scale(${zoom})`, transformOrigin: "45% 58%" }}
-            role="img"
-            aria-label={t("profile.sessions.radarAriaLabel")}
-          >
-            <defs>
-              <pattern id="osmGrid" width="50" height="50" patternUnits="userSpaceOnUse">
-                <path
-                  d="M 50 0 L 0 0 0 50"
-                  fill="none"
-                  stroke={isLight ? "rgba(15, 23, 42, 0.07)" : "rgba(196, 240, 66, 0.07)"}
-                  strokeWidth="0.75"
-                />
-              </pattern>
-            </defs>
-
-            {/* GeoJSON Continent Landmass Vector Base (Europe, Mediterranean, North Africa, Nile Delta, Red Sea, Arabian Peninsula) */}
-            <g pointerEvents="none">
-              {/* North Africa & Egypt / Nile Delta Coastline */}
-              <path
-                d="M 0 185 L 95 178 L 165 192 L 220 205 L 285 202 L 338 196 L 358 192 L 375 198 L 382 225 L 415 288 L 430 340 L 0 340 Z"
-                fill={isLight ? "rgba(248, 250, 252, 0.55)" : "rgba(30, 41, 59, 0.42)"}
-                stroke={isLight ? "rgba(100, 116, 139, 0.45)" : "rgba(148, 163, 184, 0.28)"}
-                strokeWidth="1.1"
-              />
-              {/* Southern Europe, Italy, Greece & Anatolia Coastline */}
-              <path
-                d="M 0 0 L 800 0 L 800 135 L 640 142 L 520 148 L 435 154 L 368 152 L 332 138 L 285 146 L 235 122 L 195 142 L 155 110 L 95 128 L 35 138 L 0 132 Z"
-                fill={isLight ? "rgba(248, 250, 252, 0.55)" : "rgba(30, 41, 59, 0.42)"}
-                stroke={isLight ? "rgba(100, 116, 139, 0.45)" : "rgba(148, 163, 184, 0.28)"}
-                strokeWidth="1.1"
-              />
-              {/* Levant, Sinai & Arabian Peninsula Coastline */}
-              <path
-                d="M 382 194 L 402 156 L 510 152 L 625 182 L 725 225 L 790 265 L 740 330 L 455 340 L 422 282 L 392 222 Z"
-                fill={isLight ? "rgba(248, 250, 252, 0.55)" : "rgba(30, 41, 59, 0.42)"}
-                stroke={isLight ? "rgba(100, 116, 139, 0.45)" : "rgba(148, 163, 184, 0.28)"}
-                strokeWidth="1.1"
-              />
-              {/* Nile River & Delta Vector Line */}
-              <path
-                d="M 356 193 L 348 205 L 354 235 L 362 275 L 358 340"
-                fill="none"
-                stroke={isLight ? "rgba(14, 165, 233, 0.45)" : "rgba(56, 189, 248, 0.32)"}
-                strokeWidth="1.4"
-              />
-            </g>
-
-            <rect width="800" height="340" fill="url(#osmGrid)" />
-
-            {/* Subtle Radar Range Rings around Primary Workstation */}
-            {positionedNodes[0] && (
-              <g pointerEvents="none">
-                <circle
-                  cx={positionedNodes[0].cx}
-                  cy={positionedNodes[0].cy}
-                  r="34"
-                  fill="none"
-                  stroke={isLight ? "rgba(15, 23, 42, 0.14)" : "rgba(196, 240, 66, 0.18)"}
-                  strokeWidth="1"
-                  strokeDasharray="3 3"
-                />
-                <circle
-                  cx={positionedNodes[0].cx}
-                  cy={positionedNodes[0].cy}
-                  r="68"
-                  fill="none"
-                  stroke={isLight ? "rgba(15, 23, 42, 0.08)" : "rgba(196, 240, 66, 0.1)"}
-                  strokeWidth="1"
-                  strokeDasharray="4 4"
-                />
-              </g>
-            )}
-
-            {/* Encrypted Session Mesh Arcs */}
-            {positionedNodes.length > 1 &&
-              positionedNodes.slice(1).map((node) => {
-                const origin = positionedNodes[0];
-                const midX = (origin.cx + node.cx) / 2;
-                const midY = Math.min(origin.cy, node.cy) - 28;
-                return (
-                  <path
-                    key={`arc-${node.id}`}
-                    d={`M ${origin.cx} ${origin.cy} Q ${midX} ${midY} ${node.cx} ${node.cy}`}
-                    fill="none"
-                    stroke="rgba(196, 240, 66, 0.45)"
-                    strokeWidth="1.4"
-                    strokeDasharray="4 4"
-                  />
-                );
-              })}
-
-            {/* Workstation Pins + Anti-Collision Callout Pills */}
-            {positionedNodes.map((node) => {
-              const isSelected = activeNode?.id === node.id;
-              const pillWidth = Math.max(98, node.cityLabel.length * 6.2 + 24);
-              return (
-                <g
-                  key={node.id}
-                  data-testid={`session-map-pin-${node.id}`}
-                  className="cursor-pointer"
-                  onClick={() => {
-                    setSelectedId(node.id);
-                    onSelectNode?.(node.id);
-                  }}
-                >
-                  <line
-                    x1={node.cx}
-                    y1={node.cy}
-                    x2={node.lx + 12}
-                    y2={node.ly}
-                    stroke={node.isCurrent ? "var(--nx-accent)" : "hsl(var(--info))"}
-                    strokeWidth="1.2"
-                    strokeOpacity="0.75"
-                  />
-                  <circle
-                    cx={node.cx}
-                    cy={node.cy}
-                    r={isSelected ? "14" : "9"}
-                    fill={
-                      node.isCurrent
-                        ? "color-mix(in srgb, var(--nx-accent) 22%, transparent)"
-                        : "color-mix(in srgb, hsl(var(--info)) 18%, transparent)"
-                    }
-                  />
-                  <circle
-                    cx={node.cx}
-                    cy={node.cy}
-                    r={isSelected ? "5.5" : "4.2"}
-                    fill={node.isCurrent ? "var(--nx-accent)" : "hsl(var(--info))"}
-                    stroke="var(--nx-ink)"
-                    strokeWidth="1.5"
-                  />
-                  <rect
-                    x={node.lx}
-                    y={node.ly - 11}
-                    width={pillWidth}
-                    height="20"
-                    rx="6"
-                    fill="var(--nx-surface)"
-                    stroke={isSelected ? "var(--nx-accent)" : "var(--nx-line-hi)"}
-                    strokeWidth={isSelected ? "1.4" : "1"}
-                  />
-                  <text
-                    x={node.lx + 8}
-                    y={node.ly + 2.5}
-                    fill="var(--nx-ink)"
-                    fontSize="9.5"
-                    fontFamily="monospace"
-                    fontWeight="700"
-                  >
-                    {node.cityLabel}
-                  </text>
-                </g>
-              );
-            })}
-          </svg>
-
-          {/* Interactive Map Zoom Controls (+ / - / Reset) */}
-          <div className="absolute top-3 right-3 z-20 flex flex-col gap-1 rounded-lg border border-nx-line bg-nx-surface text-nx-ink p-1">
-            <Button
-              type="button"
-              variant="ghost"
-              size="sm"
-              data-testid="map-zoom-in-btn"
-              onClick={() => setZoom((z) => Math.min(2.2, Number((z + 0.2).toFixed(2))))}
-              className="h-7 w-7 p-0 text-nx-ink hover:bg-nx-raised"
-              aria-label={t("profile.sessions.mapZoomIn")}
-            >
-              <Plus className="h-3.5 w-3.5" style={{ minWidth: 14, minHeight: 14 }} />
-            </Button>
-            <Button
-              type="button"
-              variant="ghost"
-              size="sm"
-              data-testid="map-zoom-out-btn"
-              onClick={() => setZoom((z) => Math.max(1.0, Number((z - 0.2).toFixed(2))))}
-              className="h-7 w-7 p-0 text-nx-ink hover:bg-nx-raised"
-              aria-label={t("profile.sessions.mapZoomOut")}
-            >
-              <Minus className="h-3.5 w-3.5" style={{ minWidth: 14, minHeight: 14 }} />
-            </Button>
-            <Button
-              type="button"
-              variant="ghost"
-              size="sm"
-              data-testid="map-reset-view-btn"
-              onClick={() => setZoom(1.35)}
-              className="h-7 w-7 p-0 text-nx-ink hover:bg-nx-raised"
-              aria-label={t("profile.sessions.mapResetView")}
-            >
-              <RotateCcw className="h-3.5 w-3.5" style={{ minWidth: 14, minHeight: 14 }} />
-            </Button>
-          </div>
-
-          <div className="absolute bottom-2.5 left-3 right-3 z-20 flex items-center justify-between text-[10px] font-mono text-nx-ink bg-nx-surface px-2.5 py-1 rounded-md border border-nx-line">
-            <span className="flex items-center gap-1.5">
-              <Navigation className="h-3 w-3 text-nx-accent" style={{ minWidth: 12, minHeight: 12 }} />
-              <span>{t("profile.sessions.radarLegendCurrent")}</span>
-            </span>
-            <span>© OpenStreetMap contributors • © CARTO ({Math.round(zoom * 100)}%)</span>
-          </div>
-        </div>
-
-        {/* Selected Workstation Pin Inspector Bar */}
-        {activeNode && (
-          <div
-            data-testid="map-selected-workstation-inspector"
-            className="rounded-xl border border-nx-line bg-nx-ground p-3.5 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3"
-          >
-            <div className="flex items-center gap-3">
-              <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-nx-accent/30 bg-nx-accent-wash text-nx-accent">
-                <Monitor className="h-4 w-4" style={{ minWidth: 16, minHeight: 16 }} />
-              </div>
-              <div>
-                <div className="flex items-center gap-2 flex-wrap">
-                  <span className="text-xs font-bold text-nx-ink">{activeNode.deviceTitle}</span>
-                  <Badge className="bg-success/15 text-success border border-success/30 text-[10px] font-mono">
-                    {activeNode.tls}
-                  </Badge>
-                </div>
-                <p className="text-[11px] font-mono text-nx-ink-3 mt-0.5">
-                  {activeNode.cityLabel} ({activeNode.lat.toFixed(2)}°N, {activeNode.lon.toFixed(2)}°E) • IP {activeNode.ipAddress}
-                </p>
-              </div>
-            </div>
-
-            {!activeNode.isCurrent && onKillNode && (
-              <Button
-                type="button"
-                size="sm"
-                variant="outline"
-                data-testid="map-inspector-kill-btn"
-                onClick={() => onKillNode(activeNode.id)}
-                className="h-8 text-xs font-semibold text-destructive border-destructive/30 hover:bg-destructive/10 gap-1.5"
-              >
-                <Trash2 className="h-3.5 w-3.5" style={{ minWidth: 14, minHeight: 14 }} />
-                <span>{t("profile.sessions.terminateNodeBtn")}</span>
-              </Button>
-            )}
-          </div>
+          />
         )}
+
+        <SessionRadarTelemetryCards
+          unlocatedNodes={unlocatedNodes}
+          activeNode={activeNode}
+          onKillNode={onKillNode}
+        />
       </CardContent>
     </Card>
   );

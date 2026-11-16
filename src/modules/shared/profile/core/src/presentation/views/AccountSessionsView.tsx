@@ -1,27 +1,21 @@
 "use client";
 
-/**
- * AccountSessionsView
- *
- * Page 3 (/account/sessions):
- * Live SVG SovereignSessionRadar (Impossible Travel Velocity Guard & 1-click Ping),
- * and Active Workstation Fleet (current pinned + remote cards with single & cluster Revoke All).
- */
 import { useState } from "react";
 import { useI18n } from "@core/providers/i18n-provider";
-import { Card } from "@core/ui/card";
 import { Button } from "@core/ui/button";
 import { useSessionsFleetViewModel } from "../viewmodels/useSessionsFleetViewModel";
-import { SessionCard } from "../components/SessionCard";
-import { SovereignSessionRadar } from "../components/SovereignSessionRadar";
+import { useSovereignSessionsSlice } from "../viewmodels/useSovereignAccountSlicesViewModel";
+import { SovereignSessionRadar, type RadarSessionNode } from "../components/SovereignSessionRadar";
 import { EmergencyLockdownDialog } from "../components/EmergencyLockdownDialog";
-import {
-  Trash2,
-  RefreshCw,
-  Loader2,
-  ShieldCheck,
-} from "lucide-react";
+import { SessionsPageSkeleton } from "../components/AccountSkeletons";
+import { SessionsFleetListSection } from "../sections/sessions/SessionsFleetListSection";
+import { RevokeOtherSessionsDialog } from "../sections/sessions/RevokeOtherSessionsDialog";
+import { Trash2, RefreshCw, Loader2, ShieldAlert } from "lucide-react";
 
+/**
+ * Active workstation fleet and session telemetry view (/account/sessions),
+ * exposing emergency lockdown and Sudo-gated mass session revocation.
+ */
 export function AccountSessionsView() {
   const { t } = useI18n();
   const {
@@ -38,50 +32,63 @@ export function AccountSessionsView() {
     isLockingDown,
   } = useSessionsFleetViewModel();
 
-  const [isLockdownOpen, setIsLockdownOpen] = useState(false);
+  const { data: sliceSessionsData } = useSovereignSessionsSlice();
 
-  const radarNodes = [
-    ...(currentSession
-      ? [
-          {
-            id: currentSession.id,
-            label: `${currentSession.browser} (${currentSession.os})`,
-            location: [currentSession.city, currentSession.country]
-              .filter(Boolean)
-              .join(", "),
-            ipAddress: currentSession.ipAddress,
-            x: 56,
-            y: 42,
-            isCurrent: true,
-          },
-        ]
-      : []),
-    ...otherSessions.map((s, idx) => ({
-      id: s.id,
-      label: `${s.browser} (${s.os})`,
-      location: [s.city, s.country].filter(Boolean).join(", "),
-      ipAddress: s.ipAddress,
-      x: 62 + idx * 6,
-      y: 48 - idx * 4,
-      isCurrent: false,
-    })),
+  const [isLockdownOpen, setIsLockdownOpen] = useState(false);
+  const [confirmRevokeAllOpen, setConfirmRevokeAllOpen] = useState(false);
+  const [revokeAllError, setRevokeAllError] = useState<string | null>(null);
+
+  if (isLoading && !currentSession && otherSessions.length === 0) {
+    return <SessionsPageSkeleton />;
+  }
+
+  const sliceSessions = sliceSessionsData?.sessions ?? [];
+  const geoBySessionId = new Map(sliceSessions.map((item) => [item.sessionId, item]));
+
+  const toRadarNode = (session: NonNullable<typeof currentSession>): RadarSessionNode => {
+    const geo = geoBySessionId.get(session.id);
+    const hasNonZeroGeo =
+      geo != null && (Math.abs(geo.latitude) > 0.0001 || Math.abs(geo.longitude) > 0.0001);
+    const fallbackLocation = [session.city, session.country].filter(Boolean).join(", ");
+    return {
+      id: session.id,
+      label: `${session.browser} (${session.os})`,
+      location: geo?.geoLocation || fallbackLocation,
+      ipAddress: session.ipAddress,
+      lat: hasNonZeroGeo ? geo.latitude : undefined,
+      lon: hasNonZeroGeo ? geo.longitude : undefined,
+      isCurrent: session.isCurrent,
+    };
+  };
+
+  const radarNodes: RadarSessionNode[] = [
+    ...(currentSession ? [toRadarNode(currentSession)] : []),
+    ...otherSessions.map(toRadarNode),
   ];
+
+  const handleConfirmRevokeAll = async () => {
+    setRevokeAllError(null);
+    try {
+      await revokeAllOtherSessions();
+      setConfirmRevokeAllOpen(false);
+    } catch (err: unknown) {
+      setRevokeAllError(err instanceof Error ? err.message : t("profile.common.error"));
+    }
+  };
 
   return (
     <div className="space-y-6">
-      {/* Header Banner */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
         <div>
           <h1 className="text-xl font-bold tracking-tight text-nx-ink">
             {t("profile.sessions.title")}
           </h1>
-          <p className="text-xs text-nx-ink-3 mt-1">
-            {t("profile.sessions.description")}
-          </p>
+          <p className="text-xs text-nx-ink-3 mt-1">{t("profile.sessions.description")}</p>
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 flex-wrap">
           <Button
+            type="button"
             variant="outline"
             size="sm"
             onClick={() => refetch()}
@@ -94,9 +101,14 @@ export function AccountSessionsView() {
 
           {otherCount > 0 && (
             <Button
+              type="button"
               variant="outline"
               size="sm"
-              onClick={() => revokeAllOtherSessions()}
+              data-testid="revoke-all-other-sessions-btn"
+              onClick={() => {
+                setRevokeAllError(null);
+                setConfirmRevokeAllOpen(true);
+              }}
               disabled={isRevokingAllOthers}
               className="text-xs h-8 text-destructive border-destructive/30 hover:bg-destructive/10 gap-1.5 font-semibold"
             >
@@ -105,71 +117,61 @@ export function AccountSessionsView() {
               ) : (
                 <Trash2 className="h-3.5 w-3.5" />
               )}
-              <span>{t("profile.sessions.revokeAllOthersBtn")} ({otherCount})</span>
+              <span>
+                {t("profile.sessions.revokeAllOthersBtn")} ({otherCount})
+              </span>
             </Button>
           )}
+
+          <Button
+            type="button"
+            variant="destructive"
+            size="sm"
+            data-testid="emergency-lockdown-btn"
+            onClick={() => setIsLockdownOpen(true)}
+            className="text-xs h-8 gap-1.5 font-semibold"
+          >
+            <ShieldAlert className="h-3.5 w-3.5" style={{ minWidth: 14, minHeight: 14 }} />
+            <span>{t("profile.lockdown.triggerBtn")}</span>
+          </Button>
         </div>
       </div>
 
-      {/* 1. Open-Source Interactive Geolocation Map & Session Inspector */}
       <SovereignSessionRadar
         nodes={radarNodes}
-        impossibleTravelDetected={false}
-        onRevokeAllOther={() => void revokeAllOtherSessions()}
+        impossibleTravelDetected={Boolean(sliceSessionsData?.impossibleTravelDetected)}
+        onRevokeAllOther={
+          otherCount > 0
+            ? () => {
+                setRevokeAllError(null);
+                setConfirmRevokeAllOpen(true);
+              }
+            : undefined
+        }
         onKillNode={(nodeId) => void revokeSession(nodeId)}
       />
 
-      {/* 2. Current Pinned Workstation */}
-      {currentSession && (
-        <div className="space-y-2">
-          <h3 className="text-xs font-semibold text-nx-ink-3 uppercase tracking-wider">
-            {t("profile.sessions.currentSectionTitle")}
-          </h3>
-          <SessionCard
-            session={currentSession}
-            onRevoke={revokeSession}
-            isRevoking={false}
-          />
-        </div>
-      )}
+      <SessionsFleetListSection
+        t={t}
+        currentSession={currentSession}
+        otherSessions={otherSessions}
+        otherCount={otherCount}
+        isRevoking={isRevoking}
+        onRevoke={revokeSession}
+      />
 
-      {/* 3. Other Active Workstations Fleet */}
-      <div className="space-y-3">
-        <div className="flex items-center justify-between">
-          <h3 className="text-xs font-semibold text-nx-ink-3 uppercase tracking-wider">
-            {t("profile.sessions.otherSectionTitle")} ({otherCount})
-          </h3>
-        </div>
-
-        {isLoading ? (
-          <div className="p-4 rounded-xl border border-nx-line bg-nx-surface animate-pulse text-xs text-nx-ink-3">
-            {t("profile.common.loading")}
-          </div>
-        ) : otherSessions.length === 0 ? (
-          <Card className="border border-nx-line bg-nx-surface p-6 text-center space-y-2">
-            <div className="h-10 w-10 rounded-full bg-success/10 text-success flex items-center justify-center mx-auto">
-              <ShieldCheck className="h-5 w-5" style={{ minWidth: 20, minHeight: 20 }} />
-            </div>
-            <p className="text-xs font-semibold text-nx-ink">
-              {t("profile.sessions.noOtherSessionsTitle")}
-            </p>
-            <p className="text-[11px] text-nx-ink-3 max-w-sm mx-auto">
-              {t("profile.sessions.noOtherSessionsDesc")}
-            </p>
-          </Card>
-        ) : (
-          <div className="space-y-3">
-            {otherSessions.map((session) => (
-              <SessionCard
-                key={session.id}
-                session={session}
-                onRevoke={revokeSession}
-                isRevoking={isRevoking}
-              />
-            ))}
-          </div>
-        )}
-      </div>
+      <RevokeOtherSessionsDialog
+        t={t}
+        open={confirmRevokeAllOpen}
+        otherCount={otherCount}
+        isRevokingAllOthers={isRevokingAllOthers}
+        error={revokeAllError}
+        onOpenChange={(open) => {
+          setConfirmRevokeAllOpen(open);
+          if (!open) setRevokeAllError(null);
+        }}
+        onConfirm={() => void handleConfirmRevokeAll()}
+      />
 
       <EmergencyLockdownDialog
         isOpen={isLockdownOpen}

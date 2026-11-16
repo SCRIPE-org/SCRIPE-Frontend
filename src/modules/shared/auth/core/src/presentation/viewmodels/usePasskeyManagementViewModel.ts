@@ -2,6 +2,7 @@
 
 import { useState, useCallback } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { bufferToBase64Url } from "@core/services/webauthn.service";
 import { authContainer } from "@modules/auth/di";
 import type { PasskeyEntity } from "../../domain/entities/PasskeyEntity";
 
@@ -64,12 +65,13 @@ export function usePasskeyManagementViewModel() {
       setRegistrationError(null);
 
       try {
-        // 1. Get WebAuthn options from backend
-        const options = await passkeyRepository.beginRegistration();
+        // 1. Get WebAuthn options + anti-stripping challengeToken from backend
+        const { challengeToken, mode, ...publicKeyOptions } =
+          await passkeyRepository.beginRegistration(deviceName);
 
         // 2. Prompt user via browser WebAuthn API
         const credential = (await navigator.credentials.create({
-          publicKey: options,
+          publicKey: publicKeyOptions,
         })) as PublicKeyCredential;
 
         if (!credential) {
@@ -78,25 +80,41 @@ export function usePasskeyManagementViewModel() {
 
         const attestationResponse = credential.response as AuthenticatorAttestationResponse;
 
-        // 3. Encode binary buffers to base64 for transport
-        const rawIdBase64 = btoa(String.fromCharCode(...new Uint8Array(credential.rawId)));
-        const attestationObjectBase64 = btoa(
-          String.fromCharCode(...new Uint8Array(attestationResponse.attestationObject))
-        );
-        const clientDataJSONBase64 = btoa(
-          String.fromCharCode(...new Uint8Array(attestationResponse.clientDataJSON))
-        );
+        // 3. Encode binary buffers to base64url matching backend WebAuthnChallengeHelper
+        const rawIdBase64 = bufferToBase64Url(credential.rawId);
+        const attestationObjectBase64 = bufferToBase64Url(attestationResponse.attestationObject);
+        const clientDataJSONBase64 = bufferToBase64Url(attestationResponse.clientDataJSON);
+        const transports =
+          typeof attestationResponse.getTransports === "function"
+            ? attestationResponse.getTransports()
+            : null;
+        const clientExtensionResults =
+          typeof credential.getClientExtensionResults === "function"
+            ? (credential.getClientExtensionResults() as Record<string, unknown>)
+            : undefined;
 
-        // 4. Complete registration on backend
-        await passkeyRepository.completeRegistration(deviceName, {
-          id: credential.id,
-          rawId: rawIdBase64,
-          type: credential.type,
-          response: {
-            attestationObject: attestationObjectBase64,
-            clientDataJSON: clientDataJSONBase64,
+        // 4. Complete registration on backend with bound challengeToken
+        await passkeyRepository.completeRegistration(
+          deviceName,
+          {
+            id: credential.id,
+            rawId: rawIdBase64,
+            type: credential.type,
+            response: {
+              attestationObject: attestationObjectBase64,
+              clientDataJSON: clientDataJSONBase64,
+              transports,
+            },
+            clientExtensionResults,
           },
-        });
+          {
+            challengeToken,
+            attestationMode: mode,
+            credentialIdBase64: rawIdBase64,
+            transports,
+            clientExtensionResults,
+          }
+        );
 
         // 5. Refresh passkey list
         queryClient.invalidateQueries({ queryKey: ["passkeys"] });

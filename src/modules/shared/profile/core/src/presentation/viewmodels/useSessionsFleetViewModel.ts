@@ -8,15 +8,22 @@
  * cluster revocation, and emergency isolation.
  */
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useSudoStore } from "@core/store/useSudoStore";
+import { useServices } from "@core/providers/service-provider";
 import { container } from "@modules/profile/di";
+import { finalizeEmergencyLockdownCleanup } from "../utils/emergency-lockdown";
 
+/** React Query key factory for active workstation session fleet queries. */
 export const sessionsFleetKeys = {
   all: ["profile", "sessions-fleet"] as const,
   list: () => [...sessionsFleetKeys.all, "list"] as const,
 };
 
+/** ViewModel for listing active workstation sessions, revoking sessions, and emergency lockdown. */
 export function useSessionsFleetViewModel() {
   const securityRepo = container.securityRepository;
+  const { authRepository } = useServices();
+  const markLocked = useSudoStore((s) => s.markLocked);
   const queryClient = useQueryClient();
 
   // Active sessions query
@@ -51,12 +58,7 @@ export function useSessionsFleetViewModel() {
   // Emergency lockdown mutation
   const emergencyLockdownMutation = useMutation({
     mutationFn: () => securityRepo.emergencyLockdown(),
-    onSuccess: () => {
-      queryClient.clear();
-      if (typeof window !== "undefined") {
-        window.location.href = "/login";
-      }
-    },
+    onSuccess: () => finalizeEmergencyLockdownCleanup(queryClient, authRepository, markLocked),
   });
 
   const currentSession = sessions.find((s) => s.isCurrent) ?? null;

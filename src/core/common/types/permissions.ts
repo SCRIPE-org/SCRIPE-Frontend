@@ -251,6 +251,8 @@ export const PAGE_PERMISSIONS: Record<string, PermissionCode[]> = {
   "/account/notifications": [],
   "/account/plan": [],
   "/account/integrations": [],
+  "/account/integrations/new": [],
+  "/account/integrations/[id]": [],
 
   // Identity & Access
   "/admins": [SYSTEM_PERMISSIONS.ADMINS_VIEW],

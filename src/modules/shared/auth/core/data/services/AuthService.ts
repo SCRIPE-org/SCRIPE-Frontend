@@ -20,7 +20,12 @@ import {
 import type { IApiService } from "@core/interfaces/api.interface";
 import { ALLOWED_OIDC_PARAMS } from "@core/config/oidc-keys";
 import type { IAuthService } from "../../domain/interfaces/IAuthService";
-import type { DiscoverWorkspacesResponseDto } from "../models/WorkspaceModels";
+import type {
+  DiscoverWorkspacesResponseDto,
+  PasskeyAuthBeginOptions,
+  PasskeyAuthVerifyResult,
+  VerifyPasskeyAuthRequestData,
+} from "../../domain/types/AuthTypes";
 import { AUTH_CORE_ENDPOINTS } from "./auth-core.endpoints";
 
 const allowedOidcParams = new Set<string>(ALLOWED_OIDC_PARAMS);
@@ -158,40 +163,73 @@ export class AuthService implements IAuthService {
   }
 
   /**
-   * Begin WebAuthn/Passkey authentication — get challenge from backend.
-   * Returns the challengeId and PublicKeyCredentialRequestOptions.
+   * Begin WebAuthn/Passkey authentication — get challenge options from backend.
+   * Normalizes both flat PasskeyAuthenticationOptions and wrapped { challengeId, options } shapes.
    */
-  async beginPasskeyAuth(): Promise<{
-    challengeId: string;
-    options: PublicKeyCredentialRequestOptions;
-  }> {
-    return this.api.postPublic<{
-      challengeId: string;
-      options: PublicKeyCredentialRequestOptions;
-    }>(AUTH_CORE_ENDPOINTS.PASSKEY.AUTH_BEGIN, {});
+  async beginPasskeyAuth(
+    identifier?: string,
+    tenantId?: string | null
+  ): Promise<PasskeyAuthBeginOptions> {
+    const raw = await this.api.postPublic<Record<string, unknown>>(
+      AUTH_CORE_ENDPOINTS.PASSKEY.AUTH_BEGIN,
+      {
+        identifier: identifier?.trim() ? identifier.trim() : null,
+        tenantId: tenantId ?? null,
+      }
+    );
+
+    const wrapped = (raw?.options as Record<string, unknown> | undefined) ?? undefined;
+    const challengeRaw = raw?.challenge ?? wrapped?.challenge ?? "";
+    const rawAllowCreds = (raw?.allowCredentials ?? wrapped?.allowCredentials) as
+      | Array<{ id: string; type?: string; transports?: string[] }>
+      | undefined;
+
+    return {
+      challenge: typeof challengeRaw === "string" ? challengeRaw : String(challengeRaw ?? ""),
+      rpId:
+        typeof raw?.rpId === "string"
+          ? raw.rpId
+          : typeof wrapped?.rpId === "string"
+          ? wrapped.rpId
+          : undefined,
+      timeout:
+        typeof raw?.timeout === "number"
+          ? raw.timeout
+          : typeof wrapped?.timeout === "number"
+          ? wrapped.timeout
+          : undefined,
+      userVerification: (raw?.userVerification ??
+        wrapped?.userVerification ??
+        "required") as UserVerificationRequirement,
+      challengeToken:
+        typeof raw?.challengeToken === "string"
+          ? raw.challengeToken
+          : typeof raw?.challengeId === "string"
+          ? raw.challengeId
+          : null,
+      challengeId: typeof raw?.challengeId === "string" ? raw.challengeId : undefined,
+      allowCredentials: Array.isArray(rawAllowCreds)
+        ? rawAllowCreds.map((cred) => ({
+            id: String(cred.id),
+            type: "public-key" as const,
+            transports: Array.isArray(cred.transports) ? cred.transports : undefined,
+          }))
+        : undefined,
+    };
   }
 
   /**
-   * Verify WebAuthn/Passkey assertion — sends client assertion payload to backend to exchange for tokens.
+   * Verify WebAuthn/Passkey assertion — sends client assertion payload + challengeToken to backend.
    *
-   * @param data Assertion payload containing raw/credential IDs, clientDataJSON, authenticatorData, signature, userHandle, and optional tenantId.
-   * @returns A promise resolving to the issued access and refresh tokens.
+   * @param data Assertion payload containing raw/credential IDs, clientDataJSON, authenticatorData, signature, userHandle, challengeToken, clientExtensionResults, and optional tenantId.
+   * @returns A promise resolving to the issued access/refresh tokens and auth flags.
    * @security
    * - Enforces Double-Submit CSRF cookie validation matched against session identifier.
-   * - Restricts replay attacks via backend request timestamp drift and nonce checks.
+   * - Restricts replay attacks via challengeToken binding and backend one-time consumption.
    * - Access tokens are short-lived, while refresh tokens are securely stored in httpOnly cookies.
    * - CORS allowed origins are strictly whitelisted on the API gateway layer.
    */
-  async verifyPasskeyAuth(data: {
-    challengeId: string;
-    credentialId: string;
-    rawId: string;
-    clientDataJSON: string;
-    authenticatorData: string;
-    signature: string;
-    userHandle: string | null;
-    tenantId?: string | null;
-  }): Promise<{ accessToken: string; refreshToken: string }> {
+  async verifyPasskeyAuth(data: VerifyPasskeyAuthRequestData): Promise<PasskeyAuthVerifyResult> {
     const toBase64 = (base64url: string) => {
       const base64 = base64url.replace(/-/g, "+").replace(/_/g, "/");
       const pad = (4 - (base64.length % 4)) % 4;
@@ -199,16 +237,18 @@ export class AuthService implements IAuthService {
     };
 
     const backendRequest = {
-      credentialIdBase64: toBase64(data.rawId),
+      credentialIdBase64: toBase64(data.rawId || data.credentialId),
       authenticatorDataBase64: toBase64(data.authenticatorData),
       clientDataJsonBase64: toBase64(data.clientDataJSON),
       signatureBase64: toBase64(data.signature),
       userHandleBase64: data.userHandle ? toBase64(data.userHandle) : null,
       tenantId: data.tenantId ?? null,
       deviceInfo: typeof window !== "undefined" ? window.navigator.userAgent : null,
+      clientExtensionResults: data.clientExtensionResults ?? null,
+      challengeToken: data.challengeToken ?? data.challengeId ?? null,
     };
 
-    return this.api.postPublic<{ accessToken: string; refreshToken: string }>(
+    return this.api.postPublic<PasskeyAuthVerifyResult>(
       AUTH_CORE_ENDPOINTS.PASSKEY.AUTH_VERIFY,
       backendRequest
     );

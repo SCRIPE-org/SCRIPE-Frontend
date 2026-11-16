@@ -9,38 +9,45 @@
  */
 import { useState, useEffect, useCallback } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useSudoStore } from "@core/store/useSudoStore";
+import { useServices } from "@core/providers/service-provider";
 import { container } from "@modules/profile/di";
+import { finalizeEmergencyLockdownCleanup } from "../utils/emergency-lockdown";
 import {
-  registerPasskey,
-  assertPasskey,
   isWebAuthnAvailable,
   isPlatformAuthenticatorAvailable,
   detectDeviceBadge,
-  type AuthenticatorMode,
 } from "@core/services/webauthn.service";
 import type { ChangePasswordRequest } from "../../domain/interfaces/IProfileRepository";
 import type { PasskeyCredential } from "../../domain/entities/PasskeyCredential";
+import { sovereignAccountKeys } from "./useSovereignAccountSlicesViewModel";
+import { useSecurityPasskeyActions } from "./useSecurityPasskeyActions";
 
+/** React Query key factory for security vault queries (passkeys & 2FA status). */
 export const securityVaultKeys = {
   all: ["profile", "security"] as const,
   passkeys: () => [...securityVaultKeys.all, "passkeys"] as const,
   status2fa: () => [...securityVaultKeys.all, "2fa-status"] as const,
 };
 
+/** ViewModel coordinating passkeys, 2FA, sudo elevation, password rotation, and lockdown. */
 export function useSecurityVaultViewModel() {
   const securityRepo = container.securityRepository;
   const profileRepo = container.profileRepository;
+  const { authRepository } = useServices();
   const queryClient = useQueryClient();
 
-  // WebAuthn capability state
   const [webAuthnSupported, setWebAuthnSupported] = useState(false);
   const [platformSupported, setPlatformSupported] = useState(false);
 
-  // Sudo mode state
-  const [sudoToken, setSudoToken] = useState<string | null>(null);
-  const [sudoExpiresAt, setSudoExpiresAt] = useState<Date | null>(null);
+  const isSudoActive = useSudoStore((s) => s.isActive);
+  const sudoToken = useSudoStore((s) => s.sudoToken);
+  const sudoExpiresAtUtc = useSudoStore((s) => s.expiresAtUtc);
+  const sudoMethodUsed = useSudoStore((s) => s.methodUsed);
+  const openSudoModal = useSudoStore((s) => s.openModal);
+  const requestElevation = useSudoStore((s) => s.requestElevation);
+  const markLocked = useSudoStore((s) => s.markLocked);
 
-  // 2FA Setup state
   const [twoFaSetupData, setTwoFaSetupData] = useState<{
     qrCodeDataUri: string;
     manualEntryKey: string;
@@ -52,7 +59,6 @@ export function useSecurityVaultViewModel() {
     isPlatformAuthenticatorAvailable().then(setPlatformSupported);
   }, []);
 
-  // Passkeys query
   const {
     data: passkeys = [],
     isLoading: isLoadingPasskeys,
@@ -64,131 +70,73 @@ export function useSecurityVaultViewModel() {
     staleTime: 30 * 1000,
   });
 
-  // Profile data for 2FA status
   const { data: profile, refetch: refetchProfile } = useQuery({
     queryKey: ["profile", "me"],
     queryFn: () => profileRepo.getProfile(),
     staleTime: 60 * 1000,
   });
 
-  // Passkey enrollment mutation
-  const enrollPasskeyMutation = useMutation({
-    mutationFn: async ({
-      deviceName,
-      mode = "platform",
-    }: {
-      deviceName: string;
-      mode?: AuthenticatorMode;
-    }) => {
-      const options = await securityRepo.beginPasskeyRegistration(deviceName);
-      const attestation = await registerPasskey(options, mode);
-      return securityRepo.completePasskeyRegistration({
-        attestationObjectBase64: attestation.attestationObjectBase64,
-        clientDataJsonBase64: attestation.clientDataJsonBase64,
-        deviceName,
-        transports: attestation.transports,
-        clientExtensionResults: attestation.clientExtensionResults,
-      });
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: securityVaultKeys.passkeys() });
-    },
-  });
+  const { enrollPasskeyMutation, removePasskeyMutation, renamePasskeyMutation } =
+    useSecurityPasskeyActions(securityVaultKeys.passkeys());
 
-  // Passkey removal mutation
-  const removePasskeyMutation = useMutation({
-    mutationFn: (id: string) => securityRepo.removePasskey(id),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: securityVaultKeys.passkeys() });
-    },
-  });
-
-  // Passkey rename mutation
-  const renamePasskeyMutation = useMutation({
-    mutationFn: ({ id, newName }: { id: string; newName: string }) =>
-      securityRepo.renamePasskey(id, newName),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: securityVaultKeys.passkeys() });
-    },
-  });
-
-  // Biometric Sudo Mode Step-up
   const verifySudoMutation = useMutation({
     mutationFn: async () => {
-      // Get challenge options for sudo authentication (authentication ceremony, NOT registration)
-      const options = await securityRepo.beginPasskeyAuth();
-      const assertion = await assertPasskey({
-        challenge: options.challenge,
-        rpId: options.rpId || (typeof window !== "undefined" ? window.location.hostname : undefined),
-        allowCredentials: options.allowCredentials,
-        userVerification: "required",
-      });
-      const result = await securityRepo.sudoVerify({
-        credentialIdBase64: assertion.credentialIdBase64,
-        authenticatorDataBase64: assertion.authenticatorDataBase64,
-        clientDataJsonBase64: assertion.clientDataJsonBase64,
-        signatureBase64: assertion.signatureBase64,
-        clientExtensionResults: assertion.clientExtensionResults,
-      });
-      return result;
-    },
-    onSuccess: (res) => {
-      setSudoToken(res.sudoToken);
-      const seconds = res.expiresInSeconds || 300;
-      const expiry = new Date(Date.now() + seconds * 1000);
-      setSudoExpiresAt(expiry);
+      const token = await requestElevation();
+      return { sudoToken: token, expiresInSeconds: 900 };
     },
   });
 
-  // 2FA Setup
+  const lockSudoSession = useCallback(async () => {
+    try {
+      await securityRepo.lockSudoSession();
+    } finally {
+      markLocked();
+    }
+  }, [securityRepo, markLocked]);
+
+  const invalidateContextAndSecurity = () => {
+    refetchProfile();
+    queryClient.invalidateQueries({ queryKey: sovereignAccountKeys.context() });
+    queryClient.invalidateQueries({ queryKey: sovereignAccountKeys.security() });
+  };
+
   const begin2FaSetupMutation = useMutation({
     mutationFn: () => securityRepo.enable2FA(),
-    onSuccess: (data) => {
-      setTwoFaSetupData(data);
-    },
+    onSuccess: (data) => setTwoFaSetupData(data),
   });
 
   const confirm2FaMutation = useMutation({
     mutationFn: (code: string) => securityRepo.confirm2FA(code),
     onSuccess: () => {
       setTwoFaSetupData(null);
-      refetchProfile();
+      invalidateContextAndSecurity();
     },
   });
 
   const disable2FaMutation = useMutation({
     mutationFn: ({ password, code }: { password: string; code: string }) =>
       securityRepo.disable2FA(password, code),
-    onSuccess: () => {
-      refetchProfile();
-    },
+    onSuccess: invalidateContextAndSecurity,
   });
 
   const regenerateBackupCodesMutation = useMutation({
     mutationFn: (code: string) => securityRepo.regenerateBackupCodes(code),
+    onSuccess: () => {
+      refetchProfile();
+      queryClient.invalidateQueries({ queryKey: sovereignAccountKeys.security() });
+    },
   });
 
-  // Password change mutation
   const changePasswordMutation = useMutation({
     mutationFn: (data: ChangePasswordRequest) => securityRepo.changePassword(data),
   });
 
-  // Emergency lockdown mutation
   const emergencyLockdownMutation = useMutation({
     mutationFn: () => securityRepo.emergencyLockdown(),
-    onSuccess: () => {
-      queryClient.clear();
-      if (typeof window !== "undefined") {
-        window.location.href = "/login";
-      }
-    },
+    onSuccess: () => finalizeEmergencyLockdownCleanup(queryClient, authRepository, markLocked),
   });
 
-  const isSudoActive = useCallback(() => {
-    if (!sudoToken || !sudoExpiresAt) return false;
-    return sudoExpiresAt.getTime() > Date.now();
-  }, [sudoToken, sudoExpiresAt]);
-
+  const sudoExpiresAt = sudoExpiresAtUtc ? new Date(sudoExpiresAtUtc) : null;
   const passkeysWithBadges: PasskeyCredential[] = passkeys.map((pk) => ({
     ...pk,
     badge: pk.badge ?? detectDeviceBadge(pk.aaguid || undefined),
@@ -200,30 +148,26 @@ export function useSecurityVaultViewModel() {
     passkeysError: passkeysError?.message ?? null,
     refetchPasskeys,
     detectDeviceBadge,
-
     webAuthnSupported,
     platformSupported,
-
-    // Passkey actions
     enrollPasskey: enrollPasskeyMutation.mutateAsync,
     isEnrollingPasskey: enrollPasskeyMutation.isPending,
     enrollError: enrollPasskeyMutation.error?.message ?? null,
-
     removePasskey: removePasskeyMutation.mutateAsync,
     isRemovingPasskey: removePasskeyMutation.isPending,
-
+    removePasskeyError: removePasskeyMutation.error ?? null,
     renamePasskey: renamePasskeyMutation.mutateAsync,
     isRenamingPasskey: renamePasskeyMutation.isPending,
-
-    // Sudo mode
-    isSudoActive: isSudoActive(),
+    renamePasskeyError: renamePasskeyMutation.error?.message ?? null,
+    isSudoActive,
     sudoToken,
     sudoExpiresAt,
+    sudoMethodUsed,
+    openSudoModal,
+    lockSudoSession,
     verifySudo: verifySudoMutation.mutateAsync,
     isVerifyingSudo: verifySudoMutation.isPending,
     sudoError: verifySudoMutation.error?.message ?? null,
-
-    // 2FA
     isTwoFactorEnabled: !!profile?.isTwoFactorEnabled,
     backupCodesRemaining: profile?.backupCodesRemaining ?? null,
     twoFaSetupData,
@@ -234,17 +178,15 @@ export function useSecurityVaultViewModel() {
     isConfirming2Fa: confirm2FaMutation.isPending,
     disable2Fa: disable2FaMutation.mutateAsync,
     isDisabling2Fa: disable2FaMutation.isPending,
+    disable2FaError: disable2FaMutation.error?.message ?? null,
     regenerateBackupCodes: regenerateBackupCodesMutation.mutateAsync,
     isRegeneratingCodes: regenerateBackupCodesMutation.isPending,
-
-    // Password
+    regenerateCodesError: regenerateBackupCodesMutation.error?.message ?? null,
     changePassword: changePasswordMutation.mutateAsync,
     isChangingPassword: changePasswordMutation.isPending,
     changePasswordError: changePasswordMutation.error?.message ?? null,
     isPasswordExpired: !!profile?.isPasswordExpired,
     passwordLastChanged: profile?.passwordLastChanged ?? null,
-
-    // Emergency lockdown
     emergencyLockdown: emergencyLockdownMutation.mutateAsync,
     isLockingDown: emergencyLockdownMutation.isPending,
   };

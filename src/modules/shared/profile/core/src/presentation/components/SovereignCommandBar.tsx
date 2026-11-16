@@ -33,12 +33,14 @@ import {
   CornerDownLeft,
 } from "lucide-react";
 
+/** Props for {@link SovereignCommandBar}. */
 interface SovereignCommandBarProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   onTogglePrivacyBlur?: () => void;
 }
 
+/** Keyboard-accessible command palette (`Cmd+K` / `Ctrl+K`) for rapid account console navigation. */
 export function SovereignCommandBar({
   open,
   onOpenChange,

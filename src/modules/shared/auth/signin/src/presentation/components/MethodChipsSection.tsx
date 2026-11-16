@@ -5,6 +5,7 @@ import { Button } from "@core/ui/button";
 
 interface MethodChip {
   key: string;
+  testId?: string;
   icon: React.ReactNode;
   label: string;
   onClick: () => void;
@@ -52,6 +53,7 @@ export function MethodChipsSection({ methodChips, isLoading, t }: MethodChipsSec
             onClick={chip.onClick}
             disabled={isLoading}
             data-method-chip
+            data-testid={chip.testId}
             className="inline-flex items-center justify-center gap-1.5 rounded-full px-[11px] py-[7px] text-[12px] font-medium transition-all duration-150"
             style={{
               background: "var(--sx-chip-bg, rgba(255,255,255,0.03))",

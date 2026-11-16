@@ -1,5 +1,10 @@
+import { base64UrlToBuffer } from "@core/services/webauthn.service";
 import type { PasskeyEntity } from "../../domain/entities/PasskeyEntity";
-import type { IPasskeyRepository } from "../../domain/interfaces/IPasskeyRepository";
+import type {
+  IPasskeyRepository,
+  PasskeyBeginRegistrationOptions,
+  PasskeyRegistrationCompletionMetadata,
+} from "../../domain/interfaces/IPasskeyRepository";
 import type { IPasskeyService } from "../../domain/interfaces/IPasskeyService";
 import { PasskeyMapper } from "../mappers/PasskeyMapper";
 
@@ -17,44 +22,56 @@ export class PasskeyRepository implements IPasskeyRepository {
     return PasskeyMapper.toEntityList(result.items);
   }
 
-  async beginRegistration(): Promise<PublicKeyCredentialCreationOptions> {
-    const dto = await this.service.beginRegistration();
+  async beginRegistration(
+    deviceName?: string,
+    mode?: string
+  ): Promise<PasskeyBeginRegistrationOptions> {
+    const dto = await this.service.beginRegistration(deviceName, mode);
 
-    // Convert string-based DTO to the Web API's PublicKeyCredentialCreationOptions
-    const challenge = Uint8Array.from(atob(dto.challenge), (c) => c.charCodeAt(0));
-    const userId = Uint8Array.from(atob(dto.user.id), (c) => c.charCodeAt(0));
+    const challenge = new Uint8Array(base64UrlToBuffer(dto.challenge));
+    const resolvedUserId = dto.user?.id ?? dto.userId ?? "scripe-user";
+    const userId = new Uint8Array(base64UrlToBuffer(resolvedUserId));
 
     const excludeCredentials: PublicKeyCredentialDescriptor[] = (dto.excludeCredentials ?? []).map(
       (cred) => ({
         type: cred.type as PublicKeyCredentialType,
-        id: Uint8Array.from(atob(cred.id), (c) => c.charCodeAt(0)),
+        id: new Uint8Array(base64UrlToBuffer(cred.id)),
         transports: (cred.transports ?? []) as AuthenticatorTransport[],
       })
     );
 
+    const rpId = dto.rp?.id ?? dto.rpId ?? "";
+    const rpName = dto.rp?.name ?? dto.rpName ?? "SCRIPE Enterprise OS";
+    const userName = dto.user?.name ?? dto.userName ?? "user@scripe.app";
+    const userDisplayName = dto.user?.displayName ?? dto.userDisplayName ?? userName;
+
     return {
       challenge,
-      rp: { id: dto.rp.id, name: dto.rp.name },
+      rp: { id: rpId, name: rpName },
       user: {
         id: userId,
-        name: dto.user.name,
-        displayName: dto.user.displayName,
+        name: userName,
+        displayName: userDisplayName,
       },
-      pubKeyCredParams: dto.pubKeyCredParams.map((p) => ({
+      pubKeyCredParams: (dto.pubKeyCredParams ?? [{ type: "public-key", alg: -7 }]).map((p) => ({
         type: p.type as PublicKeyCredentialType,
         alg: p.alg,
       })),
-      timeout: dto.timeout,
+      timeout: dto.timeout ?? 60000,
       attestation: (dto.attestation as AttestationConveyancePreference) ?? "none",
       authenticatorSelection: {
-        authenticatorAttachment: dto.authenticatorSelection.authenticatorAttachment as
-          AuthenticatorAttachment | undefined,
-        residentKey: dto.authenticatorSelection.residentKey as ResidentKeyRequirement | undefined,
-        requireResidentKey: dto.authenticatorSelection.requireResidentKey,
-        userVerification: dto.authenticatorSelection.userVerification as
-          UserVerificationRequirement | undefined,
+        authenticatorAttachment: dto.authenticatorSelection?.authenticatorAttachment as
+          | AuthenticatorAttachment
+          | undefined,
+        residentKey: dto.authenticatorSelection?.residentKey as ResidentKeyRequirement | undefined,
+        requireResidentKey: dto.authenticatorSelection?.requireResidentKey,
+        userVerification: dto.authenticatorSelection?.userVerification as
+          | UserVerificationRequirement
+          | undefined,
       },
       excludeCredentials,
+      challengeToken: dto.challengeToken,
+      mode: dto.mode,
     };
   }
 
@@ -67,18 +84,27 @@ export class PasskeyRepository implements IPasskeyRepository {
       response: {
         attestationObject: string;
         clientDataJSON: string;
+        transports?: string[] | null;
       };
-    }
+      clientExtensionResults?: Record<string, unknown>;
+    },
+    metadata?: PasskeyRegistrationCompletionMetadata
   ): Promise<PasskeyEntity> {
     const dto = await this.service.completeRegistration({
       deviceName,
       attestationResponse,
+      challengeToken: metadata?.challengeToken,
+      attestationMode: metadata?.attestationMode,
+      credentialIdBase64: metadata?.credentialIdBase64 ?? attestationResponse.rawId,
+      transports: metadata?.transports ?? attestationResponse.response.transports,
+      clientExtensionResults:
+        metadata?.clientExtensionResults ?? attestationResponse.clientExtensionResults,
     });
     return PasskeyMapper.toEntity(dto);
   }
 
   async rename(id: string, newName: string): Promise<void> {
-    await this.service.rename(id, { name: newName });
+    await this.service.rename(id, { newName });
   }
 
   async delete(id: string): Promise<void> {

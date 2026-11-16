@@ -11,6 +11,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@core
 import { Badge } from "@core/ui/badge";
 import { EyeOff, Eye, Layers } from "lucide-react";
 
+/** Props for {@link ErgonomicsLiveStage}. */
 interface ErgonomicsLiveStageProps {
   theme: string;
   accentHue: string;
@@ -18,6 +19,7 @@ interface ErgonomicsLiveStageProps {
   privacyBlur: boolean;
 }
 
+/** Live preview card illustrating active theme, accent hue, density, and privacy blur settings. */
 export function ErgonomicsLiveStage({
   theme,
   accentHue,

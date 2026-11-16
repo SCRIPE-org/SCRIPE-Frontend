@@ -50,6 +50,7 @@
 
 import { describe, it, expect, vi } from "vitest";
 import { ProfileService } from "./ProfileService";
+import { SecurityRepository } from "../repositories/SecurityRepository";
 import type { IApiService } from "@core/interfaces/api.interface";
 import { PROFILE_ENDPOINTS } from "./profile.endpoints";
 
@@ -120,12 +121,66 @@ describe("ProfileService — no call site targets the dead /v1/profile/* or lega
     expect(api.post).toHaveBeenCalledWith(PROFILE_ENDPOINTS.REVOKE_ALL_SESSIONS, {});
   });
 
-  it("regenerateBackupCodes() POSTs /v1/auth/admin/2fa/backup-codes/regenerate, not /v1/profile/2fa/backup-codes", async () => {
-    const api = mockApiService();
-    await new ProfileService(api).regenerateBackupCodes("123456");
-    expect(api.post).toHaveBeenCalledWith(PROFILE_ENDPOINTS.BACKUP_CODES_REGENERATE, {
-      twoFactorCode: "123456",
+  it("regenerateBackupCodes() POSTs { code } to /v1/auth/admin/2fa/backup-codes/regenerate and unwraps backupCodes[]", async () => {
+    const api = mockApiService({
+      post: vi.fn().mockResolvedValue({ backupCodes: ["CODE-1", "CODE-2"] }),
     });
+    const codes = await new ProfileService(api).regenerateBackupCodes("123456");
+    expect(api.post).toHaveBeenCalledWith(PROFILE_ENDPOINTS.BACKUP_CODES_REGENERATE, {
+      code: "123456",
+    });
+    expect(codes).toEqual(["CODE-1", "CODE-2"]);
+  });
+
+  it("SecurityRepository.emergencyLockdown() PUTs /v1/account/security with triggerEmergencyLockdown and LOCKDOWN phrase", async () => {
+    const api = mockApiService();
+    await new SecurityRepository(api).emergencyLockdown();
+    expect(api.put).toHaveBeenCalledWith(PROFILE_ENDPOINTS.ACCOUNT.SECURITY, {
+      triggerEmergencyLockdown: true,
+      lockdownConfirmationPhrase: "LOCKDOWN",
+    });
+  });
+
+  it("SecurityRepository passkey registration forwards challengeToken, mode, transports, and credentialIdBase64", async () => {
+    const api = mockApiService({
+      post: vi
+        .fn()
+        .mockResolvedValueOnce({
+          challenge: "ch-b64url",
+          rpId: "localhost",
+          challengeToken: "reg-challenge-token-abc",
+          mode: "hybrid",
+        })
+        .mockResolvedValueOnce({
+          id: "pk-1",
+          deviceName: "Phone Passkey",
+          createdAt: "2026-11-15T22:00:00Z",
+        }),
+    });
+    const repo = new SecurityRepository(api);
+    const begin = await repo.beginPasskeyRegistration("Phone Passkey", "hybrid");
+    expect(begin.challengeToken).toBe("reg-challenge-token-abc");
+    const completed = await repo.completePasskeyRegistration({
+      attestationObjectBase64: "att-obj",
+      clientDataJsonBase64: "client-data",
+      deviceName: "Phone Passkey",
+      transports: ["hybrid", "internal"],
+      clientExtensionResults: { credProps: { rk: true } },
+      challengeToken: begin.challengeToken,
+      attestationMode: begin.mode,
+      credentialIdBase64: "cred-raw-id",
+    });
+    expect(api.post).toHaveBeenNthCalledWith(2, PROFILE_ENDPOINTS.PASSKEYS.REGISTER_COMPLETE, {
+      attestationObjectBase64: "att-obj",
+      clientDataJsonBase64: "client-data",
+      deviceName: "Phone Passkey",
+      transports: ["hybrid", "internal"],
+      clientExtensionResults: { credProps: { rk: true } },
+      challengeToken: "reg-challenge-token-abc",
+      attestationMode: "hybrid",
+      credentialIdBase64: "cred-raw-id",
+    });
+    expect(completed.id).toBe("pk-1");
   });
 
   it("getSecurityLog() GETs /v1/auth/admin/security-log, not /v1/profile/security-log", async () => {

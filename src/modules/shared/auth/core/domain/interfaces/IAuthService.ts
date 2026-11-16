@@ -9,8 +9,11 @@
 import type { LoginRequestModel, LoginResponseModel } from "../types/AuthTypes";
 import type {
   DiscoverWorkspacesResponseDto,
+  PasskeyAuthBeginOptions,
+  PasskeyAuthVerifyResult,
   Verify2FARequestModel,
   Verify2FAResponseModel,
+  VerifyPasskeyAuthRequestData,
 } from "../types/AuthTypes";
 
 export interface IAuthService {
@@ -46,22 +49,13 @@ export interface IAuthService {
   ): Promise<LoginResponseModel>;
 
   /** Begin WebAuthn/Passkey authentication — get challenge from backend. */
-  beginPasskeyAuth(): Promise<{
-    challengeId: string;
-    options: PublicKeyCredentialRequestOptions;
-  }>;
+  beginPasskeyAuth(
+    identifier?: string,
+    tenantId?: string | null
+  ): Promise<PasskeyAuthBeginOptions>;
 
-  /** Verify WebAuthn/Passkey assertion — send attestation to backend, get tokens. */
-  verifyPasskeyAuth(data: {
-    challengeId: string;
-    credentialId: string;
-    rawId: string;
-    clientDataJSON: string;
-    authenticatorData: string;
-    signature: string;
-    userHandle: string | null;
-    tenantId?: string | null;
-  }): Promise<{ accessToken: string; refreshToken: string }>;
+  /** Verify WebAuthn/Passkey assertion — send assertion to backend, get tokens. */
+  verifyPasskeyAuth(data: VerifyPasskeyAuthRequestData): Promise<PasskeyAuthVerifyResult>;
 
   /** Request a phone OTP for sign-in (enumeration-safe, always resolves). */
   requestPhoneOtp(phoneNumber: string): Promise<{ sent: boolean; retryAfterSeconds: number }>;

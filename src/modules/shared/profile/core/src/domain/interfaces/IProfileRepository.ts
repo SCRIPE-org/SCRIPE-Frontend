@@ -93,4 +93,22 @@ export interface IProfileRepository {
   getExternalLogins(): Promise<ExternalLogin[]>;
   linkExternalLogin(data: LinkExternalLoginRequest): Promise<ExternalLogin>;
   unlinkExternalLogin(externalLoginId: string): Promise<void>;
+  forceChangePassword(data: ForceChangePasswordRequest): Promise<ForceChangePasswordResult>;
+}
+
+/** Request payload for mandatory first-login password rotation. */
+export interface ForceChangePasswordRequest {
+  newPassword: string;
+  confirmPassword: string;
+}
+
+/** Auth session metadata returned after mandatory password rotation completes. */
+export interface ForceChangePasswordResult {
+  accessToken?: string;
+  expiresAt?: string;
+  mustChangePassword?: boolean;
+  defaultRedirectPath?: string | null;
+  subscriptionStatus?: string | null;
+  gracePhase?: string | null;
+  editionName?: string | null;
 }

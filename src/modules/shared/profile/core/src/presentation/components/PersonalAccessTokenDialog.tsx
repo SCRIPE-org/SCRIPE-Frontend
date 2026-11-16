@@ -30,6 +30,7 @@ import {
 import { Checkbox } from "@core/ui/checkbox";
 import { KeyRound, Copy, Check, ShieldAlert, CheckCircle2 } from "lucide-react";
 
+/** Props for {@link PersonalAccessTokenDialog}. */
 interface PersonalAccessTokenDialogProps {
   isOpen: boolean;
   onClose: () => void;
@@ -46,6 +47,7 @@ const AVAILABLE_SCOPES = [
   { id: "admin:all", labelKey: "profile.pat.scopes.adminAll" },
 ];
 
+/** Wizard modal for generating scoped personal access tokens and viewing one-time secrets. */
 export function PersonalAccessTokenDialog({
   isOpen,
   onClose,
