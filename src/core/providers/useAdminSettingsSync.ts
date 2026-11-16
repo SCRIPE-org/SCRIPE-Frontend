@@ -33,7 +33,6 @@ import { TENANTS_ENDPOINTS } from "@core/config/api-endpoints";
 import { getModuleApiService } from "@core/services/api-factory";
 import { secureTokenService } from "@core/common/secure-token-service";
 import { appLogger } from "@core/common/logger";
-import { defaultSettings } from "@core/settings/defaults";
 
 // ── Constants ──
 const DEBOUNCE_MS = 2000;
@@ -162,52 +161,14 @@ export function useAdminSettingsSync() {
 
         const cachedSettings = localStorage.getItem(STORAGE_KEYS.DASHBOARD_SETTINGS);
 
-        // Silent reconcile: only update if server differs from cache
+        // Silent reconcile: only update if server differs from cache.
+        // Nexus is the sole statically imported shell, so no multi-layout chunk
+        // download or blocking transition timer is needed on reconcile.
         if (serverSettings !== cachedSettings) {
-          // Check if the layoutTemplate will change — if so, briefly show
-          // the shimmer to prevent a visible layout switch flash.
-          let layoutChanged = false;
-          try {
-            const server = JSON.parse(serverSettings) as Record<string, unknown>;
-            if (cachedSettings) {
-              // Returning user: compare cached vs server layout
-              const cached = JSON.parse(cachedSettings) as Record<string, unknown>;
-              layoutChanged = cached.layoutTemplate !== server.layoutTemplate;
-            } else {
-              // First login / fresh device: compare default layout vs server layout.
-              // Without this, the UI would render with the default layout and then
-              // visibly flash to the server's layout (e.g. "classic").
-              // Read the default rather than naming it: this used to hardcode
-              // "nexus", so moving the platform default would silently make every
-              // fresh device claim the layout had changed when it had not.
-              layoutChanged =
-                server.layoutTemplate != null &&
-                server.layoutTemplate !== defaultSettings.layoutTemplate;
-            }
-          } catch {
-            // Non-fatal: if parse fails, treat as no layout change
-          }
-
-          if (layoutChanged) {
-            // Show shimmer BEFORE updating localStorage so the old layout
-            // doesn't flash. The shimmer will hide until the new layout
-            // chunk is downloaded and rendered.
-            setIsTransitioning(true);
-          }
-
           localStorage.setItem(STORAGE_KEYS.DASHBOARD_SETTINGS, serverSettings);
           // Notify SettingsProvider to re-merge layers
           window.dispatchEvent(new Event("admin-settings-loaded"));
           appLogger.info("Admin settings reconciled from server (silent update)");
-
-          if (layoutChanged) {
-            // Allow time for React to commit the new layout chunk before
-            // removing the shimmer. 800ms covers slow-ish connections while
-            // keeping the perceived load time acceptable. The dynamic import
-            // has a loading fallback, so even if 800ms isn't enough the user
-            // sees a shimmer (not a blank frame).
-            setTimeout(() => setIsTransitioning(false), 800);
-          }
         }
       }
     } catch (err) {
@@ -215,13 +176,14 @@ export function useAdminSettingsSync() {
       appLogger.warn("Failed to fetch admin settings from server", err);
     } finally {
       setIsSettingsReady(true);
-      // Ensure isTransitioning is always cleared — covers all paths:
-      // 1. Pre-flight set it true (no cache) but server returned same/null layout
-      // 2. Layout changed → we need 300ms for React to commit the new layout chunk
-      // 3. API error → clear immediately so the UI unblocks
       if (!hasCache) {
-        // Give React time to commit the new layout before removing shimmer
-        setTimeout(() => setIsTransitioning(false), 800);
+        if (typeof requestAnimationFrame === "function") {
+          requestAnimationFrame(() => setIsTransitioning(false));
+        } else {
+          setIsTransitioning(false);
+        }
+      } else {
+        setIsTransitioning(false);
       }
     }
   }, [isAuthenticated, mustChangePassword]);

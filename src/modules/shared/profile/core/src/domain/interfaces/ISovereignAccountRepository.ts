@@ -15,13 +15,35 @@ import type {
   PersonalAccessTokenSummary,
 } from "../entities/SovereignAccountEntities";
 
+export interface SendEmailVerificationPayload {
+  targetEmail?: string;
+  mode?: "email" | "username";
+}
+
+export interface SendEmailVerificationResponse {
+  sent?: boolean;
+  success?: boolean;
+  message?: string | null;
+  expiresInSeconds?: number;
+  retryAfterSeconds?: number | null;
+}
+
+export interface RequestBreakGlassPayload {
+  incidentTicketId: string;
+  justification: string;
+  permissions: string[];
+  durationHours?: number;
+}
+
 /** Repository contract for Sovereign B2B Account slices, governance, preferences, notifications, plan, and integrations. */
 export interface ISovereignAccountRepository {
   getContext(): Promise<SovereignAccountContext>;
   getDossier(): Promise<SovereignDossierSlice>;
-  sendEmailVerification(): Promise<{ message?: string; expiresInSeconds?: number }>;
+  sendEmailVerification(
+    payload?: SendEmailVerificationPayload
+  ): Promise<SendEmailVerificationResponse>;
   exportAccountData(): Promise<Record<string, unknown>>;
-  deactivateAccount(): Promise<{ deactivated?: boolean; message?: string }>;
+  deactivateAccount(data?: { sudoCode?: string }): Promise<{ deactivated?: boolean; message?: string }>;
   getSecurity(): Promise<SovereignSecuritySlice>;
   updateSecurityPosture(data: {
     trustedCidrs?: string[];
@@ -42,6 +64,7 @@ export interface ISovereignAccountRepository {
     expiresAtUtc: string;
     successionCustodianAdminId?: string | null;
   }): Promise<AdminDelegationItem>;
+  requestBreakGlass(data: RequestBreakGlassPayload): Promise<AdminDelegationItem>;
   revokeDelegation(id: string): Promise<void>;
   getActivity(countOrQuery?: number | SovereignActivityQuery): Promise<SovereignActivitySlice>;
   getPreferences(): Promise<SovereignPreferencesSlice>;

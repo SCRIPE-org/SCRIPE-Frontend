@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { useI18n } from "@core/providers/i18n-provider";
 import { FeatureUnavailableGate } from "@core/components/tenant-context";
 import { Badge } from "@core/ui/badge";
+import { startRoutingProgress } from "@core/ui/routing-progress-bar";
 import {
   useAccountContextSliceViewModel,
   useAccountSecuritySliceViewModel,
@@ -14,6 +15,7 @@ import {
   type PersonalAccessToken,
 } from "../viewmodels/useIntegrationsFederationViewModel";
 import { IntegrationsPageSkeleton } from "../components/AccountSkeletons";
+import { AccountSliceErrorState } from "../components/AccountSliceErrorState";
 import { IntegrationsTelemetryStrip } from "../sections/integrations/IntegrationsTelemetryStrip";
 import { PatOneTimeSecretBanner } from "../sections/integrations/PatOneTimeSecretBanner";
 import { PatConsoleListSection } from "../sections/integrations/PatConsoleListSection";
@@ -37,6 +39,9 @@ export function AccountIntegrationsView() {
     patQuota,
     integrationsFeatureEnabled,
     isLoadingIntegrations,
+    isIntegrationsError,
+    integrationsError,
+    refetchIntegrations,
     isRollingToken,
     isRevokingToken,
     pendingSecretReceipt,
@@ -58,6 +63,7 @@ export function AccountIntegrationsView() {
   if (
     isLoadingIntegrations &&
     !isIntegrationsDisabled &&
+    !isIntegrationsError &&
     personalTokens.length === 0 &&
     availableScopes.length === 0
   ) {
@@ -66,6 +72,17 @@ export function AccountIntegrationsView() {
 
   if (isIntegrationsDisabled) {
     return <FeatureUnavailableGate featureKey="Integrations.ApiKeys.Enabled" />;
+  }
+
+  if (isIntegrationsError && personalTokens.length === 0 && availableScopes.length === 0) {
+    return (
+      <AccountSliceErrorState
+        title={t("profile.integrations.title")}
+        description={t("profile.integrations.subtitle")}
+        message={integrationsError}
+        onRetry={() => void refetchIntegrations?.()}
+      />
+    );
   }
 
   const isPlatformAdmin = principalContext?.principalKind === "PlatformAdmin";
@@ -144,7 +161,10 @@ export function AccountIntegrationsView() {
         patQuota={patQuota}
         isRollingToken={isRollingToken}
         isRevokingToken={isRevokingToken}
-        onOpenCreate={() => router.push("/account/integrations/new")}
+        onOpenCreate={() => {
+          startRoutingProgress();
+          router.push("/account/integrations/new");
+        }}
         onRequestRoll={(pat) => {
           setActionError(null);
           setPendingRollToken(pat);

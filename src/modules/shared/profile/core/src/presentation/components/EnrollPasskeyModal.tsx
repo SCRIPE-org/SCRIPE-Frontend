@@ -37,6 +37,8 @@ export interface EnrollPasskeyModalProps {
   isEnrolling: boolean;
   /** Enrollment error message if registration failed. */
   enrollError: string | null;
+  /** Clears any prior enrollment error when closing or resetting the wizard. */
+  onClearError?: () => void;
 }
 
 /**
@@ -48,6 +50,7 @@ export function EnrollPasskeyModal({
   onEnroll,
   isEnrolling,
   enrollError,
+  onClearError,
 }: EnrollPasskeyModalProps) {
   const { t } = useI18n();
   const deviceInfo = usePasskeyDeviceDetection(isOpen);
@@ -106,11 +109,18 @@ export function EnrollPasskeyModal({
   const handleResetAndClose = () => {
     setStep("SELECT");
     setDeviceName("");
+    onClearError?.();
     onClose();
   };
 
+  const handleOpenChange = (nextOpen: boolean) => {
+    if (!nextOpen) {
+      handleResetAndClose();
+    }
+  };
+
   return (
-    <Dialog open={isOpen} onOpenChange={handleResetAndClose}>
+    <Dialog open={isOpen} onOpenChange={handleOpenChange}>
       <DialogContent className="sm:max-w-[540px] bg-nx-surface border-nx-line p-6">
         {step === "SELECT" && (
           <>
@@ -152,7 +162,10 @@ export function EnrollPasskeyModal({
               isEnrolling={isEnrolling}
               enrollError={enrollError}
               onDeviceNameChange={setDeviceName}
-              onBack={() => setStep("SELECT")}
+              onBack={() => {
+                onClearError?.();
+                setStep("SELECT");
+              }}
               onActivate={handleExecuteEnrollment}
             />
           </>

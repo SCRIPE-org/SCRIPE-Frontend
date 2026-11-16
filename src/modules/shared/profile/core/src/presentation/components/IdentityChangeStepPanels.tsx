@@ -5,10 +5,12 @@ import { Button } from "@core/ui/button";
 import { Input } from "@core/ui/input";
 import { Label } from "@core/ui/label";
 import { Badge } from "@core/ui/badge";
-import { ShieldCheck, KeyRound } from "lucide-react";
+import { ShieldCheck, KeyRound, Fingerprint } from "lucide-react";
 
 /** Step-up credential verification mode supported during identity change. */
 export type IdentityStepUpMethod = "totp" | "passkey" | "password";
+
+const ALL_METHODS: IdentityStepUpMethod[] = ["totp", "passkey", "password"];
 
 /** Props for {@link IdentityChangeStep1}. */
 export interface IdentityChangeStep1Props {
@@ -16,8 +18,12 @@ export interface IdentityChangeStep1Props {
   currentValue: string;
   /** Selected step-up verification factor. */
   sudoMethod: IdentityStepUpMethod;
+  /** Allowed step-up factors under the active sudo policy. */
+  allowedMethods?: IdentityStepUpMethod[];
   /** Controlled credential input for TOTP or password. */
   sudoCredential: string;
+  /** True while step-up verification is in flight. */
+  isSubmitting?: boolean;
   /** Switches the step-up verification method. */
   onMethodChange: (method: IdentityStepUpMethod) => void;
   /** Updates the step-up credential input. */
@@ -28,11 +34,14 @@ export interface IdentityChangeStep1Props {
 export function IdentityChangeStep1({
   currentValue,
   sudoMethod,
+  allowedMethods,
   sudoCredential,
+  isSubmitting = false,
   onMethodChange,
   onCredentialChange,
 }: IdentityChangeStep1Props) {
   const { t } = useI18n();
+  const methodsToShow = allowedMethods && allowedMethods.length > 0 ? allowedMethods : ALL_METHODS;
 
   return (
     <div className="space-y-4 py-1" data-testid="identity-step-1">
@@ -50,12 +59,17 @@ export function IdentityChangeStep1({
         <Label className="text-xs font-semibold text-nx-ink">
           {t("profile.identityModal.selectStepUpMethod")}
         </Label>
-        <div className="grid grid-cols-3 gap-2">
-          {(["totp", "passkey", "password"] as const).map((m) => (
+        <div
+          className="grid gap-2"
+          style={{ gridTemplateColumns: `repeat(${methodsToShow.length}, minmax(0, 1fr))` }}
+        >
+          {methodsToShow.map((m) => (
             <Button
               key={m}
               type="button"
               size="sm"
+              data-testid={`identity-stepup-method-${m}`}
+              disabled={isSubmitting}
               variant={sudoMethod === m ? "default" : "outline"}
               onClick={() => onMethodChange(m)}
               className={
@@ -70,23 +84,44 @@ export function IdentityChangeStep1({
         </div>
       </div>
 
-      <div className="space-y-1.5">
-        <Label htmlFor="stepup-credential-input" className="text-xs text-nx-ink-2">
-          {sudoMethod === "totp"
-            ? t("profile.identityModal.enterTotpLabel")
-            : sudoMethod === "passkey"
-              ? t("profile.identityModal.passkeyReadyLabel")
+      {sudoMethod === "passkey" ? (
+        <div
+          data-testid="identity-step1-passkey-panel"
+          className="rounded-lg border border-nx-line bg-nx-ground p-4 flex items-center gap-3"
+        >
+          <div className="h-9 w-9 rounded-lg bg-nx-accent-wash border border-nx-accent/30 text-nx-accent flex items-center justify-center shrink-0">
+            <Fingerprint className="h-4 w-4" aria-hidden="true" />
+          </div>
+          <div className="space-y-0.5 min-w-0">
+            <p className="text-xs font-semibold text-nx-ink">
+              {t("profile.identityModal.passkeyReadyLabel")}
+            </p>
+            <p className="text-[11px] text-nx-ink-3 leading-relaxed">
+              {t("profile.identityModal.passkeyStepUpDesc")}
+            </p>
+          </div>
+        </div>
+      ) : (
+        <div className="space-y-1.5">
+          <Label htmlFor="stepup-credential-input" className="text-xs text-nx-ink-2">
+            {sudoMethod === "totp"
+              ? t("profile.identityModal.enterTotpLabel")
               : t("profile.identityModal.enterPasswordLabel")}
-        </Label>
-        <Input
-          id="stepup-credential-input"
-          data-testid="stepup-credential-input"
-          type={sudoMethod === "password" ? "password" : "text"}
-          value={sudoCredential}
-          onChange={(e) => onCredentialChange(e.target.value)}
-          className="font-mono text-xs"
-        />
-      </div>
+          </Label>
+          <Input
+            id="stepup-credential-input"
+            data-testid="stepup-credential-input"
+            type={sudoMethod === "password" ? "password" : "text"}
+            inputMode={sudoMethod === "totp" ? "numeric" : undefined}
+            autoComplete={sudoMethod === "password" ? "current-password" : "one-time-code"}
+            maxLength={sudoMethod === "totp" ? 8 : undefined}
+            disabled={isSubmitting}
+            value={sudoCredential}
+            onChange={(e) => onCredentialChange(e.target.value)}
+            className="font-mono text-xs"
+          />
+        </div>
+      )}
     </div>
   );
 }

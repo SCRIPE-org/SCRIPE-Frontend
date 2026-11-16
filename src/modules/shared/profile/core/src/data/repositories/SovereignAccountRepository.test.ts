@@ -30,6 +30,17 @@ describe("SovereignAccountRepository — Clean 9-Page B2B Enterprise Account Con
 
     await repo.sendEmailVerification();
     expect(api.post).toHaveBeenCalledWith(PROFILE_ENDPOINTS.ACCOUNT.SEND_EMAIL_VERIFICATION, {});
+
+    await repo.sendEmailVerification({ targetEmail: "new.admin@scripe.org", mode: "email" });
+    expect(api.post).toHaveBeenCalledWith(PROFILE_ENDPOINTS.ACCOUNT.SEND_EMAIL_VERIFICATION, {
+      targetEmail: "new.admin@scripe.org",
+      mode: "email",
+    });
+
+    await repo.deactivateAccount({ sudoCode: "654321" });
+    expect(api.post).toHaveBeenCalledWith(PROFILE_ENDPOINTS.ACCOUNT.DEACTIVATE_ACCOUNT, {
+      sudoCode: "654321",
+    });
   });
 
   it("getSecurity() and updateSecurityPosture() target /v1/account/security", async () => {
@@ -150,6 +161,22 @@ describe("SovereignAccountRepository — Clean 9-Page B2B Enterprise Account Con
 
     await repo.revokeDelegation("del-1");
     expect(api.delete).toHaveBeenCalledWith(PROFILE_ENDPOINTS.ACCOUNT.REVOKE_DELEGATION("del-1"));
+
+    await repo.requestBreakGlass({
+      incidentTicketId: "INC-4021",
+      justification: "Emergency pitch access recovery during tournament",
+      permissions: ["venue.bookings.manage"],
+      durationHours: 2,
+    });
+    expect(api.post).toHaveBeenCalledWith(
+      PROFILE_ENDPOINTS.ACCOUNT.DELEGATIONS,
+      expect.objectContaining({
+        actionType: "BreakGlass",
+        incidentTicketId: "INC-4021",
+        justification: "Emergency pitch access recovery during tournament",
+        permissions: ["venue.bookings.manage"],
+      })
+    );
 
     const activity = await repo.getActivity(20);
     expect(api.get).toHaveBeenCalledWith(`${PROFILE_ENDPOINTS.ACCOUNT.ACTIVITY}?pageSize=20`);

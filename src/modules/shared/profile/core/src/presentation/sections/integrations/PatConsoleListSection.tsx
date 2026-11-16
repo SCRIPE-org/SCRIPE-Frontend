@@ -14,7 +14,7 @@ import type {
   PersonalAccessToken,
 } from "../../viewmodels/useIntegrationsFederationViewModel";
 import type { IntegrationsPatQuotaItem } from "./IntegrationsTelemetryStrip";
-import { PatScopeBadgeWithInspector } from "./PatScopeBadgeWithInspector";
+import { PatScopeBadgeWithInspector, resolvePatScopeOption } from "./PatScopeBadgeWithInspector";
 import { ArrowUpRight, Clock, Code2, Key, Network, Plus, RefreshCw, SlidersHorizontal, Trash2 } from "lucide-react";
 
 function formatPatDate(date: Date | null): string {
@@ -64,25 +64,8 @@ export function PatConsoleListSection({
     patQuota && !patQuota.isUnlimited && (remainingSlots ?? 1) <= 0
   );
 
-  const resolveScopeOption = (pat: PersonalAccessToken, code: string): PatScopeOption => {
-    const match =
-      pat.scopeDetails?.find((d) => d.code.toLowerCase() === code.toLowerCase()) ??
-      catalogByCode.get(code.toLowerCase());
-    if (match) return match;
-    return {
-      code,
-      displayName: code,
-      nameEn: code,
-      nameAr: code,
-      descriptionEn: "",
-      descriptionAr: "",
-      moduleKey: code.split(/[.:]/)[0] || "General",
-      category: code.split(/[.:]/)[0] || "General",
-      resource: code,
-      action: code.split(".").pop() || "",
-      isPlatformOnly: false,
-    };
-  };
+  const resolveScopeOption = (pat: PersonalAccessToken, code: string): PatScopeOption =>
+    resolvePatScopeOption(code, catalogByCode, pat.scopeDetails);
 
   return (
     <Card

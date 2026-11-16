@@ -149,3 +149,23 @@ export function buildCreateDelegationPayload(
     justification: data.justification,
   };
 }
+
+/**
+ * Builds the `POST /v1/account/governance/actions` request body for an emergency Break-Glass elevation.
+ */
+export function buildBreakGlassPayload(
+  data: Parameters<ISovereignAccountRepository["requestBreakGlass"]>[0]
+) {
+  const nowMs = Date.now();
+  const clampedHours = Math.min(4, Math.max(1, data.durationHours ?? 2));
+  const startsAtUtc = new Date(nowMs).toISOString();
+  const endsAtUtc = new Date(nowMs + clampedHours * 3600 * 1000).toISOString();
+  return {
+    actionType: "BreakGlass",
+    incidentTicketId: data.incidentTicketId.trim(),
+    justification: data.justification.trim(),
+    permissions: data.permissions,
+    startsAtUtc,
+    endsAtUtc,
+  };
+}

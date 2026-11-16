@@ -8,7 +8,12 @@
 import type { IApiService } from "@core/interfaces/api.interface";
 import { buildUrl } from "@/core/config/api-endpoints/_shared";
 import { PROFILE_ENDPOINTS } from "../services/profile.endpoints";
-import type { ISovereignAccountRepository } from "../../domain/interfaces/ISovereignAccountRepository";
+import type {
+  ISovereignAccountRepository,
+  RequestBreakGlassPayload,
+  SendEmailVerificationPayload,
+  SendEmailVerificationResponse,
+} from "../../domain/interfaces/ISovereignAccountRepository";
 import type {
   AdminDelegationItem,
   SovereignAccountContext,
@@ -44,6 +49,7 @@ import {
 import { mapPersonalAccessTokenSummary } from "../mappers/SovereignAccountIntegrationsMapper";
 import {
   buildActivityQueryParams,
+  buildBreakGlassPayload,
   buildCreateDelegationPayload,
   buildPreferencesUpdatePayload,
   buildSecurityPosturePayload,
@@ -70,18 +76,25 @@ export class SovereignAccountRepository implements ISovereignAccountRepository {
     return mapDossierSlice(await this.api.get<unknown>(PROFILE_ENDPOINTS.ACCOUNT.DOSSIER));
   }
 
-  async sendEmailVerification(): Promise<{ message?: string; expiresInSeconds?: number }> {
-    return this.api.post(PROFILE_ENDPOINTS.ACCOUNT.SEND_EMAIL_VERIFICATION, {});
+  async sendEmailVerification(
+    payload?: SendEmailVerificationPayload
+  ): Promise<SendEmailVerificationResponse> {
+    return this.api.post<SendEmailVerificationResponse>(
+      PROFILE_ENDPOINTS.ACCOUNT.SEND_EMAIL_VERIFICATION,
+      payload ?? {}
+    );
   }
 
   async exportAccountData(): Promise<Record<string, unknown>> {
     return this.api.post<Record<string, unknown>>(PROFILE_ENDPOINTS.ACCOUNT.EXPORT_DOSSIER, {});
   }
 
-  async deactivateAccount(): Promise<{ deactivated?: boolean; message?: string }> {
+  async deactivateAccount(data?: {
+    sudoCode?: string;
+  }): Promise<{ deactivated?: boolean; message?: string }> {
     return this.api.post<{ deactivated?: boolean; message?: string }>(
       PROFILE_ENDPOINTS.ACCOUNT.DEACTIVATE_ACCOUNT,
-      {}
+      data?.sudoCode ? { sudoCode: data.sudoCode } : {}
     );
   }
 
@@ -117,6 +130,20 @@ export class SovereignAccountRepository implements ISovereignAccountRepository {
       buildCreateDelegationPayload(data)
     );
     return mapCreatedDelegation(res, data);
+  }
+
+  async requestBreakGlass(data: RequestBreakGlassPayload): Promise<AdminDelegationItem> {
+    const payload = buildBreakGlassPayload(data);
+    const res = await this.api.post<unknown>(PROFILE_ENDPOINTS.ACCOUNT.DELEGATIONS, payload);
+    return mapCreatedDelegation(res, {
+      delegateAdminId: "",
+      delegateDisplayName: "",
+      delegationType: "BreakGlass",
+      grantedScopes: data.permissions,
+      justification: data.justification,
+      startsAtUtc: payload.startsAtUtc,
+      expiresAtUtc: payload.endsAtUtc,
+    });
   }
 
   async revokeDelegation(id: string): Promise<void> {

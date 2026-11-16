@@ -16,6 +16,7 @@ import {
 } from "../utils/concurrency";
 import type { NotificationCategoryRuleItem } from "../../domain/entities/SovereignAccountEntities";
 import { NotificationsPageSkeleton } from "../components/AccountSkeletons";
+import { AccountSliceErrorState } from "../components/AccountSliceErrorState";
 import {
   DEFAULT_NOTIFICATION_RULES,
   NotificationMatrixSection,
@@ -52,14 +53,27 @@ export function AccountNotificationsView() {
   const [savedNotice, setSavedNotice] = useState(false);
   const [saveError, setSaveError] = useState<string | null>(null);
 
+  if (vm.isLoadingNotifications && !notifications && !vm.isNotificationsError) {
+    return <NotificationsPageSkeleton />;
+  }
+
+  if (vm.isNotificationsError && !notifications) {
+    return (
+      <AccountSliceErrorState
+        title={t("profile.notifications.title")}
+        description={t("profile.notifications.description")}
+        message={vm.notificationsError}
+        onRetry={() => void vm.refetchNotifications?.()}
+      />
+    );
+  }
+
   const rules =
     rulesDraft ??
     (notifications?.categoryRules?.length ? notifications.categoryRules : DEFAULT_NOTIFICATION_RULES);
   const quietHours = quietHoursDraft ?? notifications?.quietHoursEnabled ?? false;
   const quietStart = quietStartDraft ?? notifications?.quietHoursStartUtc ?? "22:00";
   const quietEnd = quietEndDraft ?? notifications?.quietHoursEndUtc ?? "07:00";
-
-  if (vm.isLoadingNotifications && !notifications) return <NotificationsPageSkeleton />;
 
   const toggleChannel = (category: string, channel: NotificationChannelKey) => {
     setRulesDraft(
@@ -81,6 +95,18 @@ export function AccountNotificationsView() {
       }
     }
     setDesktopEnabled(checked);
+  };
+
+  const runNotificationAction = async (action: () => Promise<unknown>) => {
+    setSaveError(null);
+    try {
+      await action();
+    } catch (error: unknown) {
+      const message = resolveProfileSaveErrorMessage(error, t);
+      setSaveError(message);
+      if (isConcurrencyConflictError(error)) toast.warning(message);
+      else toast.error(message);
+    }
   };
 
   const handleSave = async () => {
@@ -129,7 +155,7 @@ export function AccountNotificationsView() {
             variant="outline"
             size="sm"
             disabled={vm.isSendingTestNotification}
-            onClick={() => void vm.sendTestNotification("Security")}
+            onClick={() => void runNotificationAction(() => vm.sendTestNotification("Security"))}
             data-testid="send-test-notification-btn"
             className="h-8 text-xs font-semibold gap-1.5"
           >
@@ -174,9 +200,9 @@ export function AccountNotificationsView() {
         t={t}
         recentAlerts={notifications?.recentNotifications ?? []}
         unreadCount={notifications?.unreadNotificationsCount ?? 0}
-        onMarkAllRead={() => void vm.markAllNotificationsAsRead()}
-        onMarkRead={(id) => void vm.markNotificationAsRead(id)}
-        onDelete={(id) => void vm.deleteNotification(id)}
+        onMarkAllRead={() => void runNotificationAction(() => vm.markAllNotificationsAsRead())}
+        onMarkRead={(id) => void runNotificationAction(() => vm.markNotificationAsRead(id))}
+        onDelete={(id) => void runNotificationAction(() => vm.deleteNotification(id))}
       />
     </div>
   );

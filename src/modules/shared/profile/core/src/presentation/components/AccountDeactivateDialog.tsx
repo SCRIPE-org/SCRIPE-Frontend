@@ -1,6 +1,7 @@
 "use client";
 
 import { useI18n } from "@core/providers/i18n-provider";
+import { Alert, AlertDescription } from "@core/ui/alert";
 import { Button } from "@core/ui/button";
 import { Input } from "@core/ui/input";
 import { Label } from "@core/ui/label";
@@ -12,7 +13,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@core/ui/dialog";
-import { AlertTriangle, ShieldAlert } from "lucide-react";
+import { AlertCircle, AlertTriangle, ShieldAlert } from "lucide-react";
 
 /** Props for {@link AccountDeactivateDialog}. */
 export interface AccountDeactivateDialogProps {
@@ -30,6 +31,10 @@ export interface AccountDeactivateDialogProps {
   confirmUsername: string;
   /** Controlled 6-digit sudo verification code. */
   sudoCode: string;
+  /** True while deactivation request is in flight. */
+  isSubmitting?: boolean;
+  /** Validation or server error message from the last deactivation attempt. */
+  error?: string | null;
   /** Updates username confirmation input. */
   onConfirmUsernameChange: (value: string) => void;
   /** Updates 6-digit sudo verification input. */
@@ -50,6 +55,8 @@ export function AccountDeactivateDialog({
   primaryOrgName,
   confirmUsername,
   sudoCode,
+  isSubmitting = false,
+  error,
   onConfirmUsernameChange,
   onSudoCodeChange,
   onConfirmDeactivate,
@@ -112,6 +119,7 @@ export function AccountDeactivateDialog({
               id="deactivate-sudo-code"
               data-testid="deactivate-sudo-code-input"
               value={sudoCode}
+              disabled={isSubmitting}
               onChange={(e) => onSudoCodeChange(e.target.value)}
               placeholder="000000"
               maxLength={6}
@@ -120,15 +128,34 @@ export function AccountDeactivateDialog({
           </div>
         </div>
 
+        {error && (
+          <Alert variant="destructive" data-testid="deactivate-error-alert">
+            <AlertCircle className="h-4 w-4" aria-hidden="true" />
+            <AlertDescription className="text-xs">{error}</AlertDescription>
+          </Alert>
+        )}
+
         <DialogFooter className="flex items-center justify-between gap-2">
-          <Button type="button" variant="outline" size="sm" onClick={() => onOpenChange(false)}>
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            disabled={isSubmitting}
+            onClick={() => onOpenChange(false)}
+          >
             {t("profile.cancel")}
           </Button>
           <Button
             type="button"
             size="sm"
             data-testid="confirm-deactivate-account-btn"
-            disabled={isSolePrimaryOwner || confirmUsername !== username || sudoCode.length < 6}
+            loading={isSubmitting}
+            disabled={
+              isSubmitting ||
+              isSolePrimaryOwner ||
+              confirmUsername !== username ||
+              sudoCode.trim().length < 6
+            }
             onClick={() => void onConfirmDeactivate()}
             className="bg-destructive text-nx-on-fill font-semibold"
           >

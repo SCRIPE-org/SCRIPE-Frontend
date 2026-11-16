@@ -4,7 +4,9 @@
  * ViewModel hooks for Sovereign Account identity context and dossier operations.
  */
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useSudoStore } from "@core/store/useSudoStore";
 import { container } from "@modules/profile/di";
+import type { SendEmailVerificationPayload } from "../../domain/interfaces/ISovereignAccountRepository";
 import { sovereignAccountKeys } from "../utils/sovereignAccountKeys";
 
 /** Queries and exposes dossier mutations for email verification, export, and deactivation. */
@@ -15,15 +17,31 @@ export function useSovereignDossierSlice() {
     queryFn: () => container.sovereignAccountRepository.getDossier(),
   });
   const sendVerificationMutation = useMutation({
-    mutationFn: () => container.sovereignAccountRepository.sendEmailVerification(),
+    mutationFn: (payload?: SendEmailVerificationPayload) =>
+      container.sovereignAccountRepository.sendEmailVerification(payload),
     onSuccess: () => qc.invalidateQueries({ queryKey: sovereignAccountKeys.dossier() }),
   });
   const exportDataMutation = useMutation({
     mutationFn: () => container.sovereignAccountRepository.exportAccountData(),
   });
   const deactivateMutation = useMutation({
-    mutationFn: () => container.sovereignAccountRepository.deactivateAccount(),
-    onSuccess: () => qc.invalidateQueries({ queryKey: sovereignAccountKeys.dossier() }),
+    mutationFn: async (sudoCode?: string) => {
+      const trimmedCode = sudoCode?.trim();
+      if (trimmedCode && !useSudoStore.getState().isSessionElevated()) {
+        const verified = await container.securityRepository.verifySudoStepUp({
+          method: "totp",
+          totpCode: trimmedCode,
+        });
+        useSudoStore.getState().markVerified(verified);
+      }
+      return container.sovereignAccountRepository.deactivateAccount(
+        trimmedCode ? { sudoCode: trimmedCode } : undefined
+      );
+    },
+    onSuccess: () => {
+      useSudoStore.getState().markLocked();
+      void qc.invalidateQueries({ queryKey: sovereignAccountKeys.dossier() });
+    },
   });
   return { ...query, sendVerificationMutation, exportDataMutation, deactivateMutation };
 }
@@ -45,14 +63,24 @@ export function useAccountContextSliceViewModel() {
     featureFlags: query.data?.featureFlags,
     isLoadingContext: query.isLoading,
     isFetchingContext: query.isFetching,
+    isContextError: query.isError,
+    contextError: query.error instanceof Error ? query.error.message : null,
     refetchContext: query.refetch,
   };
 }
 
 /** Presentation ViewModel for the identity dossier view and lifecycle actions. */
 export function useAccountDossierSliceViewModel() {
-  const { data, isLoading, sendVerificationMutation, exportDataMutation, deactivateMutation } =
-    useSovereignDossierSlice();
+  const {
+    data,
+    isLoading,
+    isError,
+    error,
+    refetch,
+    sendVerificationMutation,
+    exportDataMutation,
+    deactivateMutation,
+  } = useSovereignDossierSlice();
   return {
     dossier: data
       ? {
@@ -71,12 +99,16 @@ export function useAccountDossierSliceViewModel() {
         }
       : undefined,
     isLoadingDossier: isLoading,
-    sendEmailVerification: () => sendVerificationMutation.mutateAsync(),
+    isDossierError: isError,
+    dossierError: error instanceof Error ? error.message : null,
+    refetchDossier: refetch,
+    sendEmailVerification: (payload?: SendEmailVerificationPayload) =>
+      sendVerificationMutation.mutateAsync(payload),
     isSendingVerification: sendVerificationMutation.isPending,
     verificationSent: sendVerificationMutation.isSuccess,
     exportAccountData: () => exportDataMutation.mutateAsync(),
     isExportingData: exportDataMutation.isPending,
-    deactivateAccount: () => deactivateMutation.mutateAsync(),
+    deactivateAccount: (sudoCode?: string) => deactivateMutation.mutateAsync(sudoCode),
     isDeactivatingAccount: deactivateMutation.isPending,
   };
 }

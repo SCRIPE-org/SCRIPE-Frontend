@@ -5,6 +5,10 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { useSudoStore } from "@core/store/useSudoStore";
 import { useAppStore } from "@core/store/useAppStore";
 import { SudoVerificationModal, computeAllowedFactors } from "../components/SudoVerificationModal";
+import { IdentityChangeVerificationModal } from "../components/IdentityChangeVerificationModal";
+import { AccountLifecycleCard } from "../components/AccountLifecycleCard";
+import { EnrollPasskeyModal } from "../components/EnrollPasskeyModal";
+import { ProfileInfoForm } from "../components/ProfileInfoForm";
 import { ProfileRailLayout } from "../components/ProfileRailLayout";
 import { SectionInfoPopover } from "../components/SectionInfoPopover";
 import { finalizeEmergencyLockdownCleanup } from "../utils/emergency-lockdown";
@@ -40,6 +44,13 @@ vi.mock("@core/providers/i18n-provider", () => ({
 
 vi.mock("@core/services/webauthn.service", () => ({
   assertPasskey: (...args: unknown[]) => mockAssertPasskey(...args),
+  detectClientDevice: vi.fn().mockResolvedValue({
+    os: "Windows",
+    browser: "Chrome",
+    platformName: "Windows Hello",
+    suggestedLabel: "Chrome on Windows",
+  }),
+  isWebAuthnSupported: () => true,
 }));
 
 vi.mock("@modules/profile/di", () => ({
@@ -507,5 +518,163 @@ describe("Unified Sudo Engine, Passkey Step-Up & Principal Separation", () => {
       remaining: 0,
       isEnabled: true,
     });
+  });
+
+  it("IdentityChangeVerificationModal verifies Sudo in Step 1, blocks Step 2 when sent:false, and forwards otpCode in Step 3 with catch handling", async () => {
+    const onVerifyStepUp = vi
+      .fn()
+      .mockRejectedValueOnce(new Error("Invalid TOTP code"))
+      .mockResolvedValueOnce({ verified: true });
+    const onSendOtp = vi
+      .fn()
+      .mockResolvedValueOnce({ sent: false, message: "Email already claimed" })
+      .mockResolvedValueOnce({ sent: true });
+    const onCommitChange = vi
+      .fn()
+      .mockRejectedValueOnce(new Error("Invalid verification OTP"))
+      .mockResolvedValueOnce(undefined);
+    const onOpenChange = vi.fn();
+
+    render(
+      <IdentityChangeVerificationModal
+        open={true}
+        mode="email"
+        currentValue="old@scripe.org"
+        onOpenChange={onOpenChange}
+        onVerifyStepUp={onVerifyStepUp}
+        onSendOtp={onSendOtp}
+        onCommitChange={onCommitChange}
+      />
+    );
+
+    // Step 1: failed verification stays on Step 1 and shows error
+    fireEvent.change(screen.getByTestId("stepup-credential-input"), {
+      target: { value: "111111" },
+    });
+    fireEvent.click(screen.getByTestId("identity-step-1-next-btn"));
+
+    await waitFor(() => {
+      expect(screen.getByTestId("identity-modal-error")).toHaveTextContent("Invalid TOTP code");
+      expect(screen.getByTestId("identity-step-1")).toBeInTheDocument();
+    });
+
+    // Step 1: valid verification advances to Step 2
+    fireEvent.change(screen.getByTestId("stepup-credential-input"), {
+      target: { value: "222222" },
+    });
+    fireEvent.click(screen.getByTestId("identity-step-1-next-btn"));
+
+    await waitFor(() => {
+      expect(screen.getByTestId("identity-step-2")).toBeInTheDocument();
+    });
+
+    // Step 2: sent: false stays on Step 2 and displays backend message
+    fireEvent.change(screen.getByTestId("identity-new-value-input"), {
+      target: { value: "new.exec@scripe.org" },
+    });
+    fireEvent.click(screen.getByTestId("identity-step-2-send-otp-btn"));
+
+    await waitFor(() => {
+      expect(screen.getByTestId("identity-modal-error")).toHaveTextContent("Email already claimed");
+      expect(screen.getByTestId("identity-step-2")).toBeInTheDocument();
+    });
+
+    // Step 2: sent: true advances to Step 3
+    fireEvent.click(screen.getByTestId("identity-step-2-send-otp-btn"));
+    await waitFor(() => {
+      expect(screen.getByTestId("identity-step-3")).toBeInTheDocument();
+    });
+
+    // Step 3: failed commit stays open and displays error; retry succeeds and forwards otpCode
+    fireEvent.change(screen.getByTestId("identity-otp-input"), {
+      target: { value: "654321" },
+    });
+    fireEvent.click(screen.getByTestId("identity-step-3-commit-btn"));
+
+    await waitFor(() => {
+      expect(screen.getByTestId("identity-modal-error")).toHaveTextContent(
+        "Invalid verification OTP"
+      );
+    });
+    expect(onCommitChange).toHaveBeenCalledWith("email", "new.exec@scripe.org", "654321");
+    expect(onOpenChange).not.toHaveBeenCalledWith(false);
+
+    fireEvent.click(screen.getByTestId("identity-step-3-commit-btn"));
+    await waitFor(() => {
+      expect(onOpenChange).toHaveBeenCalledWith(false);
+    });
+  });
+
+  it("AccountLifecycleCard passes sudoCode, catches errors keeping modal open, and ProfileInfoForm + EnrollPasskeyModal handle errors cleanly", async () => {
+    const onDeactivate = vi
+      .fn()
+      .mockRejectedValueOnce(new Error("Sudo TOTP code expired"))
+      .mockResolvedValueOnce({ deactivated: true });
+
+    const profile = {
+      id: "adm-1",
+      username: "exec.admin",
+      email: "exec@scripe.org",
+      firstName: "Exec",
+      lastName: "Admin",
+      isEmailVerified: true,
+    } as unknown as AdminProfile;
+
+    render(
+      <AccountLifecycleCard
+        profile={profile}
+        isSolePrimaryOwner={false}
+        primaryOrgName="City Club"
+        onDeactivateAccount={onDeactivate}
+      />
+    );
+
+    fireEvent.click(screen.getByTestId("open-deactivate-account-btn"));
+    fireEvent.change(screen.getByTestId("deactivate-confirm-username-input"), {
+      target: { value: "exec.admin" },
+    });
+    fireEvent.change(screen.getByTestId("deactivate-sudo-code-input"), {
+      target: { value: "987654" },
+    });
+
+    fireEvent.click(screen.getByTestId("confirm-deactivate-account-btn"));
+
+    await waitFor(() => {
+      expect(screen.getByTestId("deactivate-error-alert")).toHaveTextContent(
+        "Sudo TOTP code expired"
+      );
+    });
+    expect(onDeactivate).toHaveBeenCalledWith("987654");
+    expect(screen.getByTestId("deactivate-account-modal")).toBeInTheDocument();
+
+    fireEvent.click(screen.getByTestId("confirm-deactivate-account-btn"));
+    await waitFor(() => {
+      expect(screen.queryByTestId("deactivate-account-modal")).not.toBeInTheDocument();
+    });
+
+    // ProfileInfoForm catches rejected onSubmit without throwing unhandled rejection
+    const failingSave = vi.fn().mockRejectedValue(new Error("Save failed on server"));
+    render(<ProfileInfoForm profile={profile} onSubmit={failingSave} isSubmitting={false} />);
+    fireEvent.click(screen.getByTestId("edit-profile-btn"));
+    fireEvent.submit(screen.getByTestId("personal-info-edit-form"));
+    await waitFor(() => {
+      expect(screen.getByText("Save failed on server")).toBeInTheDocument();
+    });
+
+    // EnrollPasskeyModal clears enrollError on close
+    const onClearError = vi.fn();
+    const onClose = vi.fn();
+    render(
+      <EnrollPasskeyModal
+        isOpen={true}
+        onClose={onClose}
+        onClearError={onClearError}
+        onEnroll={vi.fn()}
+        isEnrolling={false}
+        enrollError="Failed to register authenticator"
+      />
+    );
+    fireEvent.click(screen.getByText("profile.common.cancel"));
+    expect(onClearError).toHaveBeenCalled();
   });
 });

@@ -6,6 +6,7 @@ import { toast, resolveRtlPosition, type SileoPosition } from "@core/ui/sileo-to
 import { useWorkstationPreferencesViewModel } from "../viewmodels/useWorkstationPreferencesViewModel";
 import { ErgonomicsLiveStage } from "../components/ErgonomicsLiveStage";
 import { PreferencesPageSkeleton } from "../components/AccountSkeletons";
+import { AccountSliceErrorState } from "../components/AccountSliceErrorState";
 import { PreferencesSyncPill } from "../sections/preferences/PreferencesSyncPill";
 import { AppearancePreferencesSection } from "../sections/preferences/AppearancePreferencesSection";
 import { DensityPrivacyPreferencesSection } from "../sections/preferences/DensityPrivacyPreferencesSection";
@@ -69,11 +70,25 @@ export function AccountPreferencesView() {
     pendingCount,
     persistError,
     isLoadingPreferences,
+    isPreferencesError,
+    preferencesError,
+    refetchPreferences,
     preferences,
   } = useWorkstationPreferencesViewModel();
 
-  if (isLoadingPreferences && !preferences) {
+  if (isLoadingPreferences && !preferences && !isPreferencesError) {
     return <PreferencesPageSkeleton />;
+  }
+
+  if (isPreferencesError && !preferences) {
+    return (
+      <AccountSliceErrorState
+        title={t("profile.preferences.title")}
+        description={t("profile.preferences.description")}
+        message={preferencesError}
+        onRetry={() => void refetchPreferences?.()}
+      />
+    );
   }
 
   const currentLogicalPosition = resolveLogicalToastPosition(toastPosition);

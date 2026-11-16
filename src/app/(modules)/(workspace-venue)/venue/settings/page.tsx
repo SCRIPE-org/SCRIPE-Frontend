@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
 import { ModuleErrorBoundary } from "@core/ui/module-error-boundary";
-import { LoadingSpinner } from "@core/ui/loading-spinner";
+import { ModulesLoadingSkeleton } from "@core/ui/layout/modules-loading-skeleton";
 import { VenueSettingsView } from "@modules/venue/settings/src/presentation/views/VenueSettingsView";
 
 export const metadata: Metadata = {
@@ -13,7 +13,7 @@ export const metadata: Metadata = {
 export default function VenueSettingsPage() {
   return (
     <ModuleErrorBoundary moduleName="venue.settings">
-      <Suspense fallback={<LoadingSpinner showText={false} />}>
+      <Suspense fallback={<ModulesLoadingSkeleton variant="table" />}>
         <VenueSettingsView />
       </Suspense>
     </ModuleErrorBoundary>

@@ -32,13 +32,23 @@ export function useExternalLoginsViewModel() {
   const { providers, initiateSsoLogin, isLoading: isLoadingProviders } = useCoreSsoProviders();
 
   // 1. Fetch existing linked accounts
-  const { data: externalLogins, isLoading: isLoadingLogins } = useQuery({
+  const {
+    data: externalLogins,
+    isLoading: isLoadingLogins,
+    isError: isLoginsError,
+    error: loginsError,
+    refetch,
+  } = useQuery({
     queryKey: externalLoginKeys.all,
     queryFn: () => repo.getExternalLogins(),
   });
 
   // 2. Unlink Mutation
-  const { mutate: unlink, isPending: isUnlinking } = useMutation({
+  const {
+    mutate: unlink,
+    mutateAsync: unlinkAsync,
+    isPending: isUnlinking,
+  } = useMutation({
     mutationFn: (id: string) => repo.unlinkExternalLogin(id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: externalLoginKeys.all });
@@ -88,8 +98,12 @@ export function useExternalLoginsViewModel() {
     externalLogins: externalLogins ?? [],
     providers,
     isLoading: isLoadingLogins || isLoadingProviders,
+    isError: isLoginsError,
+    error: loginsError instanceof Error ? loginsError.message : null,
+    refetch,
     isUnlinking,
     unlink,
+    unlinkAsync,
     handleLink,
     linkAccount,
     isLinking,

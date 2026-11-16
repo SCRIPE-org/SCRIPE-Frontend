@@ -1,14 +1,16 @@
 import React from "react";
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import { render, screen } from "@testing-library/react";
+import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import "@testing-library/jest-dom";
 import type { AdminProfile } from "../../domain/entities/AdminProfile";
 import { ProfileRailLayout } from "../components/ProfileRailLayout";
+import { SovereignCommandBar } from "../components/SovereignCommandBar";
 import { IntegrationsTelemetryStrip } from "../sections/integrations/IntegrationsTelemetryStrip";
 import { PatConsoleListSection } from "../sections/integrations/PatConsoleListSection";
 import { AccountIntegrationsView } from "../views/AccountIntegrationsView";
 import { AccountSecurityView } from "../views/AccountSecurityView";
 import { AccountGovernanceView } from "../views/AccountGovernanceView";
+import { PatDetailPageView } from "../views/PatDetailPageView";
 
 const mockContextVm = vi.fn();
 const mockSecuritySliceVm = vi.fn();
@@ -384,5 +386,200 @@ describe("Milestone 9 Feature, Quota & Nav Rail Zero-Phantom-Feature Gating", ()
     );
     expect(screen.queryByRole("link", { name: /profile\.rail\.integrations/i })).not.toBeInTheDocument();
     expect(screen.getByRole("link", { name: /profile\.rail\.plan/i })).toBeInTheDocument();
+  });
+
+  it("gates /account/plan and /account/integrations in SovereignCommandBar by PlatformAdmin and featureFlags", () => {
+    const { rerender } = render(<SovereignCommandBar open={true} onOpenChange={vi.fn()} />);
+    expect(screen.getByTestId("command-bar-item-plan")).toBeInTheDocument();
+    expect(screen.getByTestId("command-bar-item-integrations")).toBeInTheDocument();
+
+    // PlatformAdmin hides /account/plan
+    mockContextVm.mockReturnValue({
+      principalContext: {
+        principalKind: "PlatformAdmin",
+        isSuperAdmin: true,
+        controlPlaneLabel: "Global Control Plane",
+        isSolePrimaryOwner: true,
+        hasStandingRootAuthority: true,
+        availableBranches: [],
+      },
+      featureFlags: {
+        integrationsEnabled: false,
+        twoFactorEnabled: true,
+        externalSsoEnabled: false,
+        vacationDelegationEnabled: false,
+        planAndQuotasEnabled: false,
+      },
+    });
+    rerender(<SovereignCommandBar open={true} onOpenChange={vi.fn()} />);
+    expect(screen.queryByTestId("command-bar-item-plan")).not.toBeInTheDocument();
+    expect(screen.queryByTestId("command-bar-item-integrations")).not.toBeInTheDocument();
+  });
+
+  it("keeps SecurityPageSkeleton mounted until security slice finishes loading and catches begin2FaSetup errors", async () => {
+    // Passkeys finished (isLoadingPasskeys: false), but security is still loading (!security)
+    mockSecuritySliceVm.mockReturnValue({
+      security: undefined,
+      isLoadingSecurity: true,
+      isSecurityError: false,
+      securityError: null,
+      refetchSecurity: vi.fn(),
+      updateSecurityPolicy: vi.fn(),
+      isUpdatingPolicy: false,
+      updatePolicyError: null,
+    });
+    const { rerender } = render(<AccountSecurityView />);
+    expect(screen.getByTestId("security-skeleton")).toBeInTheDocument();
+
+    // When security slice errors, renders AccountSliceErrorState with retry
+    const refetchSecurity = vi.fn();
+    mockSecuritySliceVm.mockReturnValue({
+      security: undefined,
+      isLoadingSecurity: false,
+      isSecurityError: true,
+      securityError: "Security posture unavailable",
+      refetchSecurity,
+      updateSecurityPolicy: vi.fn(),
+      isUpdatingPolicy: false,
+      updatePolicyError: null,
+    });
+    rerender(<AccountSecurityView />);
+    expect(screen.getByTestId("account-slice-error")).toHaveTextContent(
+      "Security posture unavailable"
+    );
+
+    // When loaded and begin2FaSetup rejects, catches rejection and renders two-fa-setup-error-alert
+    const begin2FaSetup = vi.fn().mockRejectedValue(new Error("2FA provisioning service offline"));
+    mockSecuritySliceVm.mockReturnValue({
+      security: {
+        trustedCidrs: [],
+        currentClientIp: "10.0.0.1",
+        isTwoFactorFeatureEnabled: true,
+        isSsoFeatureEnabled: true,
+        isSecurityPageEnabled: true,
+      },
+      isLoadingSecurity: false,
+      isSecurityError: false,
+      updateSecurityPolicy: vi.fn(),
+      isUpdatingPolicy: false,
+      updatePolicyError: null,
+    });
+    mockSecurityVaultVm.mockReturnValue({
+      ...mockSecurityVaultVm(),
+      begin2FaSetup,
+    });
+    rerender(<AccountSecurityView />);
+    fireEvent.click(screen.getByText("common.enable"));
+    await waitFor(() => {
+      expect(screen.getByTestId("two-fa-setup-error-alert")).toHaveTextContent(
+        "2FA provisioning service offline"
+      );
+    });
+  });
+
+  it("wires AccountGovernanceView Break-Glass submission to backend requestBreakGlass with error & success states", async () => {
+    const requestBreakGlass = vi
+      .fn()
+      .mockRejectedValueOnce(new Error("Break-Glass policy denied"))
+      .mockResolvedValueOnce({ id: "bg-1" });
+    mockGovernanceSliceVm.mockReturnValue({
+      ...mockGovernanceSliceVm(),
+      governance: {
+        activeTenantName: "City FC",
+        assignedRoles: [{ name: "Ops Lead" }],
+        allowedBranches: ["Main"],
+        effectivePermissions: [
+          {
+            permission: "venue.bookings.manage",
+            domain: "Venue",
+            sourceEdition: "Enterprise",
+            sourceBranch: "Main",
+            sourceRole: "Ops Lead",
+          },
+        ],
+        delegations: [],
+        isDelegationFeatureEnabled: true,
+      },
+      requestBreakGlass,
+      isRequestingBreakGlass: false,
+    });
+
+    render(<AccountGovernanceView />);
+
+    fireEvent.change(screen.getByTestId("break-glass-ticket-input"), {
+      target: { value: "INC-9001" },
+    });
+    fireEvent.change(screen.getByTestId("break-glass-reason-input"), {
+      target: { value: "Emergency stadium gate override during cup final" },
+    });
+    fireEvent.click(screen.getByTestId("submit-break-glass-btn"));
+
+    await waitFor(() => {
+      expect(screen.getByTestId("break-glass-error-alert")).toHaveTextContent(
+        "Break-Glass policy denied"
+      );
+    });
+
+    fireEvent.click(screen.getByTestId("submit-break-glass-btn"));
+    await waitFor(() => {
+      expect(screen.getByTestId("break-glass-success-notice")).toBeInTheDocument();
+    });
+    expect(requestBreakGlass).toHaveBeenCalledWith({
+      incidentTicketId: "INC-9001",
+      justification: "Emergency stadium gate override during cup final",
+      permissions: ["venue.bookings.manage"],
+      durationHours: 2,
+    });
+  });
+
+  it("prevents PatDetailPageView from flashing tokenNotFoundTitle while redirecting after revokeToken", async () => {
+    let tokens = [
+      {
+        id: "pat-42",
+        name: "Production Runner",
+        description: "CI runner",
+        prefix: "scr_live_42",
+        scopes: ["venue:read"],
+        scopeDetails: [],
+        allowedCidrs: [],
+        createdAt: new Date("2026-11-10T00:00:00Z"),
+        expiresAt: new Date("2026-12-10T00:00:00Z"),
+        lastUsedAt: null,
+      },
+    ];
+    const revokeToken = vi.fn().mockImplementation(async () => {
+      tokens = [];
+    });
+    mockIntegrationsVm.mockImplementation(() => ({
+      personalTokens: tokens,
+      scopeCatalog: [],
+      availableScopes: ["venue:read"],
+      rateLimitTelemetry: null,
+      patQuota: { activeCount: 1, maxLimit: 5, isUnlimited: false, remaining: 4, isEnabled: true },
+      integrationsFeatureEnabled: true,
+      isLoadingIntegrations: false,
+      isUpdatingToken: false,
+      isRollingToken: false,
+      isRevokingToken: false,
+      pendingSecretReceipt: null,
+      clearCreatedTokenSecret: vi.fn(),
+      updateToken: vi.fn(),
+      rollToken: vi.fn(),
+      revokeToken,
+    }));
+
+    const { rerender } = render(<PatDetailPageView tokenId="pat-42" />);
+    fireEvent.click(screen.getByTestId("revoke-pat-btn-pat-42"));
+    fireEvent.click(screen.getByTestId("confirm-revoke-pat-btn"));
+
+    await waitFor(() => {
+      expect(revokeToken).toHaveBeenCalledWith("pat-42");
+    });
+
+    rerender(<PatDetailPageView tokenId="pat-42" />);
+    expect(
+      screen.queryByText("profile.integrations.tokenNotFoundTitle")
+    ).not.toBeInTheDocument();
+    expect(screen.getByTestId("pat-detail-skeleton")).toBeInTheDocument();
   });
 });

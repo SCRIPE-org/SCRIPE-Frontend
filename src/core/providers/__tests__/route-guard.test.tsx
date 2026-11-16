@@ -665,4 +665,181 @@ describe("RouteGuard - Hardened Phase 2 Option C Security & Context Gates", () =
       expect(mockRouterPush).toHaveBeenCalledWith(`/login?redirect=${encodeURIComponent("/crm")}`);
     });
   });
+
+  it("keeps the Account shell mounted without loading-spinner blank flash when navigating across /account/* routes", () => {
+    let shellMountCount = 0;
+    let shellUnmountCount = 0;
+    const PersistentAccountShell = ({ children }: { children: React.ReactNode }) => {
+      React.useEffect(() => {
+        shellMountCount += 1;
+        return () => {
+          shellUnmountCount += 1;
+        };
+      }, []);
+      return <div data-testid="persistent-account-shell">{children}</div>;
+    };
+
+    currentPathname = "/account/integrations";
+    const { rerender } = render(
+      <RouteGuard>
+        <PersistentAccountShell>
+          <div data-testid="integrations-page">Integrations</div>
+        </PersistentAccountShell>
+      </RouteGuard>
+    );
+
+    expect(shellMountCount).toBe(1);
+    expect(shellUnmountCount).toBe(0);
+    expect(screen.getByTestId("integrations-page")).toBeInTheDocument();
+    expect(screen.queryByTestId("loading-spinner")).not.toBeInTheDocument();
+
+    for (const nextRoute of [
+      "/account/integrations/new",
+      "/account/integrations/pat-123",
+      "/account/security",
+      "/account/dossier",
+    ]) {
+      currentPathname = nextRoute;
+      rerender(
+        <RouteGuard>
+          <PersistentAccountShell>
+            <div data-testid="account-target-page">{nextRoute}</div>
+          </PersistentAccountShell>
+        </RouteGuard>
+      );
+
+      expect(screen.getByTestId("persistent-account-shell")).toBeInTheDocument();
+      expect(screen.getByTestId("account-target-page")).toHaveTextContent(nextRoute);
+      expect(screen.queryByTestId("loading-spinner")).not.toBeInTheDocument();
+      expect(shellMountCount).toBe(1);
+      expect(shellUnmountCount).toBe(0);
+    }
+  });
+
+  it("keeps DashboardLayout shell mounted across intra-context menu_bound navigations and permission updates", () => {
+    let shellMountCount = 0;
+    const PersistentWorkspaceShell = ({ children }: { children: React.ReactNode }) => {
+      React.useEffect(() => {
+        shellMountCount += 1;
+      }, []);
+      return <div data-testid="persistent-workspace-shell">{children}</div>;
+    };
+
+    currentPathname = "/overview";
+    const { rerender } = render(
+      <RouteGuard>
+        <PersistentWorkspaceShell>
+          <div data-testid="workspace-page">/overview</div>
+        </PersistentWorkspaceShell>
+      </RouteGuard>
+    );
+
+    expect(shellMountCount).toBe(1);
+    expect(screen.queryByTestId("loading-spinner")).not.toBeInTheDocument();
+
+    currentPathname = "/crm";
+    rerender(
+      <RouteGuard>
+        <PersistentWorkspaceShell>
+          <div data-testid="workspace-page">/crm</div>
+        </PersistentWorkspaceShell>
+      </RouteGuard>
+    );
+    expect(shellMountCount).toBe(1);
+    expect(screen.getByTestId("workspace-page")).toHaveTextContent("/crm");
+    expect(screen.queryByTestId("loading-spinner")).not.toBeInTheDocument();
+
+    mockUseAppStore.getState().permissions = ["crm.leads.view"];
+    currentPathname = "/venue";
+    rerender(
+      <RouteGuard>
+        <PersistentWorkspaceShell>
+          <div data-testid="workspace-page">/venue</div>
+        </PersistentWorkspaceShell>
+      </RouteGuard>
+    );
+    expect(shellMountCount).toBe(1);
+    expect(screen.getByTestId("workspace-page")).toHaveTextContent("/venue");
+    expect(screen.queryByTestId("loading-spinner")).not.toBeInTheDocument();
+  });
+
+  it("still blocks unauthorized children synchronously when transitioning from an allowed Account route to a denied module route", () => {
+    let deniedRenderCount = 0;
+    const DeniedChild = () => {
+      deniedRenderCount += 1;
+      return <div data-testid="denied-child">Denied</div>;
+    };
+
+    currentPathname = "/account/integrations";
+    const { rerender } = render(
+      <RouteGuard>
+        <div data-testid="account-integrations">Integrations</div>
+      </RouteGuard>
+    );
+    expect(screen.getByTestId("account-integrations")).toBeInTheDocument();
+
+    currentPathname = "/crm";
+    mockCanAccessPage.mockImplementation((p?: string) => p !== "/crm");
+    rerender(
+      <RouteGuard>
+        <DeniedChild />
+      </RouteGuard>
+    );
+
+    expect(deniedRenderCount).toBe(0);
+    expect(screen.queryByTestId("denied-child")).not.toBeInTheDocument();
+    expect(mockRouterPush).toHaveBeenCalledWith("/not-authorized");
+  });
+
+  it("keeps persistent outer shell mounted inside RouteGuard while an inner Suspense route transition displays its skeleton", async () => {
+    let resolveRoute!: (mod: { default: React.ComponentType }) => void;
+    const LazyCreatePat = React.lazy(
+      () =>
+        new Promise<{ default: React.ComponentType }>((res) => {
+          resolveRoute = res;
+        })
+    );
+
+    const ShellWithSuspense = ({ children }: { children: React.ReactNode }) => (
+      <div data-testid="account-shell">
+        <header data-testid="account-topbar">Topbar</header>
+        <aside data-testid="account-rail">Left Rail</aside>
+        <React.Suspense fallback={<div data-testid="pat-create-skeleton">Skeleton</div>}>
+          {children}
+        </React.Suspense>
+      </div>
+    );
+
+    currentPathname = "/account/integrations";
+    const { rerender } = render(
+      <RouteGuard>
+        <ShellWithSuspense>
+          <div data-testid="integrations-view">Integrations</div>
+        </ShellWithSuspense>
+      </RouteGuard>
+    );
+    expect(screen.getByTestId("account-topbar")).toBeInTheDocument();
+    expect(screen.getByTestId("integrations-view")).toBeInTheDocument();
+
+    currentPathname = "/account/integrations/new";
+    rerender(
+      <RouteGuard>
+        <ShellWithSuspense>
+          <LazyCreatePat />
+        </ShellWithSuspense>
+      </RouteGuard>
+    );
+
+    expect(screen.getByTestId("account-topbar")).toBeInTheDocument();
+    expect(screen.getByTestId("account-rail")).toBeInTheDocument();
+    expect(screen.getByTestId("pat-create-skeleton")).toBeInTheDocument();
+    expect(screen.queryByTestId("loading-spinner")).not.toBeInTheDocument();
+
+    resolveRoute({ default: () => <div data-testid="pat-create-view">Create PAT</div> });
+    await waitFor(() => {
+      expect(screen.getByTestId("pat-create-view")).toBeInTheDocument();
+    });
+    expect(screen.getByTestId("account-topbar")).toBeInTheDocument();
+    expect(screen.getByTestId("account-rail")).toBeInTheDocument();
+  });
 });

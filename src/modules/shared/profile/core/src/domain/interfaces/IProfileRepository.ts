@@ -25,6 +25,7 @@ export interface UpdateProfileRequest {
   rowVersion?: string;
   email?: string;
   username?: string;
+  verificationOtpCode?: string;
 }
 
 

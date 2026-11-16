@@ -114,12 +114,16 @@ export function PasswordChangeForm({
   ];
 
   const handleValid = async (values: PasswordChangeFormValues) => {
-    await onSubmit({
-      currentPassword: values.currentPassword,
-      newPassword: values.newPassword,
-      twoFactorCode: isTwoFactorEnabled ? values.twoFactorCode : undefined,
-    });
-    form.reset(EMPTY_VALUES);
+    try {
+      await onSubmit({
+        currentPassword: values.currentPassword,
+        newPassword: values.newPassword,
+        twoFactorCode: isTwoFactorEnabled ? values.twoFactorCode : undefined,
+      });
+      form.reset(EMPTY_VALUES);
+    } catch {
+      // Error surfaced via parent submitError prop without clearing user input
+    }
   };
 
   return (

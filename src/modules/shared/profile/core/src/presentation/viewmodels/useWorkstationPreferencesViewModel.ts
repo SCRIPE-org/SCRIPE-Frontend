@@ -67,6 +67,9 @@ export function useWorkstationPreferencesViewModel() {
   const {
     preferences,
     isLoadingPreferences,
+    isPreferencesError,
+    preferencesError,
+    refetchPreferences,
     updatePreferences,
     isUpdatingPreferences,
   } = useAccountPreferencesSliceViewModel();
@@ -251,6 +254,9 @@ export function useWorkstationPreferencesViewModel() {
     pendingCount,
     persistError,
     isLoadingPreferences,
+    isPreferencesError,
+    preferencesError,
+    refetchPreferences,
     preferences,
   };
 }

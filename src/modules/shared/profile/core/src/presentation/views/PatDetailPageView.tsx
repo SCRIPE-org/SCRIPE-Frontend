@@ -8,6 +8,7 @@ import { FeatureUnavailableGate } from "@core/components/tenant-context";
 import { Card, CardDescription, CardHeader } from "@core/ui/card";
 import { Badge } from "@core/ui/badge";
 import { Button } from "@core/ui/button";
+import { startRoutingProgress } from "@core/ui/routing-progress-bar";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -22,6 +23,7 @@ import {
 } from "../viewmodels/useSovereignAccountSlicesViewModel";
 import { useIntegrationsFederationViewModel } from "../viewmodels/useIntegrationsFederationViewModel";
 import { PatDetailPageSkeleton } from "../components/AccountSkeletons";
+import { AccountSliceErrorState } from "../components/AccountSliceErrorState";
 import { PatOneTimeSecretBanner } from "../sections/integrations/PatOneTimeSecretBanner";
 import { PatDetailReadonlyPanel } from "../sections/integrations/PatDetailReadonlyPanel";
 import { PatQuickStartSnippetsCard } from "../sections/integrations/PatQuickStartSnippetsCard";
@@ -52,6 +54,9 @@ export function PatDetailPageView({ tokenId }: PatDetailPageViewProps) {
     patQuota,
     integrationsFeatureEnabled,
     isLoadingIntegrations,
+    isIntegrationsError,
+    integrationsError,
+    refetchIntegrations,
     isUpdatingToken,
     isRollingToken,
     isRevokingToken,
@@ -72,13 +77,22 @@ export function PatDetailPageView({ tokenId }: PatDetailPageViewProps) {
   const [pendingRollOpen, setPendingRollOpen] = useState(false);
   const [pendingRevokeOpen, setPendingRevokeOpen] = useState(false);
   const [actionError, setActionError] = useState<string | null>(null);
+  const [isRedirectingAfterRevoke, setIsRedirectingAfterRevoke] = useState(false);
 
   const isIntegrationsDisabled =
     featureFlags?.integrationsEnabled === false ||
     integrationsFeatureEnabled === false ||
     (patQuota != null && !patQuota.isEnabled);
 
-  if (isLoadingIntegrations && personalTokens.length === 0 && !isIntegrationsDisabled) {
+  const token = personalTokens.find((item) => item.id === decodedId);
+
+  if (
+    (isLoadingIntegrations &&
+      personalTokens.length === 0 &&
+      !isIntegrationsDisabled &&
+      !isIntegrationsError) ||
+    (isRedirectingAfterRevoke && !token)
+  ) {
     return <PatDetailPageSkeleton />;
   }
 
@@ -86,7 +100,17 @@ export function PatDetailPageView({ tokenId }: PatDetailPageViewProps) {
     return <FeatureUnavailableGate featureKey="Integrations.ApiKeys.Enabled" />;
   }
 
-  const token = personalTokens.find((item) => item.id === decodedId);
+  if (isIntegrationsError && personalTokens.length === 0) {
+    return (
+      <AccountSliceErrorState
+        title={t("profile.integrations.title")}
+        description={t("profile.integrations.subtitle")}
+        message={integrationsError}
+        onRetry={() => void refetchIntegrations?.()}
+      />
+    );
+  }
+
   if (!token) {
     return (
       <div className="space-y-4">
@@ -136,6 +160,30 @@ export function PatDetailPageView({ tokenId }: PatDetailPageViewProps) {
       setIsEditing(false);
     } catch (err: unknown) {
       setEditError(err instanceof Error ? err.message : t("profile.common.error"));
+    }
+  };
+
+  const handleConfirmRoll = async () => {
+    setActionError(null);
+    try {
+      await rollToken(token.id, token.name);
+      setPendingRollOpen(false);
+    } catch (e: unknown) {
+      setActionError(e instanceof Error ? e.message : t("profile.common.error"));
+    }
+  };
+
+  const handleConfirmRevoke = async () => {
+    setActionError(null);
+    setIsRedirectingAfterRevoke(true);
+    try {
+      await revokeToken(token.id);
+      setPendingRevokeOpen(false);
+      startRoutingProgress();
+      router.replace("/account/integrations");
+    } catch (e: unknown) {
+      setIsRedirectingAfterRevoke(false);
+      setActionError(e instanceof Error ? e.message : t("profile.common.error"));
     }
   };
 
@@ -239,10 +287,16 @@ export function PatDetailPageView({ tokenId }: PatDetailPageViewProps) {
         isRollingToken={isRollingToken}
         isRevokingToken={isRevokingToken}
         actionError={actionError}
-        onCloseRoll={() => setPendingRollOpen(false)}
-        onConfirmRoll={() => void rollToken(token.id, token.name).then(() => setPendingRollOpen(false)).catch((e) => setActionError(e instanceof Error ? e.message : t("profile.common.error")))}
-        onCloseRevoke={() => setPendingRevokeOpen(false)}
-        onConfirmRevoke={() => void revokeToken(token.id).then(() => router.push("/account/integrations")).catch((e) => setActionError(e instanceof Error ? e.message : t("profile.common.error")))}
+        onCloseRoll={() => {
+          setPendingRollOpen(false);
+          setActionError(null);
+        }}
+        onConfirmRoll={() => void handleConfirmRoll()}
+        onCloseRevoke={() => {
+          setPendingRevokeOpen(false);
+          setActionError(null);
+        }}
+        onConfirmRevoke={() => void handleConfirmRevoke()}
       />
     </div>
   );

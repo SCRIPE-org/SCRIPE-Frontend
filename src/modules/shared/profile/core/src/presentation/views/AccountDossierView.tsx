@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useI18n } from "@core/providers/i18n-provider";
 import { Badge } from "@core/ui/badge";
+import { toast } from "@core/ui/sileo-toast";
 import { useProfileDossierViewModel } from "../viewmodels/useProfileDossierViewModel";
 import {
   useAccountContextSliceViewModel,
@@ -11,6 +12,7 @@ import {
 import { IdentityChangeVerificationModal } from "../components/IdentityChangeVerificationModal";
 import { AccountLifecycleCard } from "../components/AccountLifecycleCard";
 import { DossierPageSkeleton } from "../components/AccountSkeletons";
+import { AccountSliceErrorState } from "../components/AccountSliceErrorState";
 import { DossierAuthoritySection } from "../sections/dossier/DossierAuthoritySection";
 import { DossierIdentityCardsSection } from "../sections/dossier/DossierIdentityCardsSection";
 import { MailCheck } from "lucide-react";
@@ -24,6 +26,8 @@ export function AccountDossierView() {
   const {
     profile,
     isLoading,
+    error: profileError,
+    refetch: refetchProfile,
     updateProfile,
     isUpdating,
     updateError,
@@ -37,6 +41,10 @@ export function AccountDossierView() {
 
   const {
     dossier,
+    isLoadingDossier,
+    isDossierError,
+    dossierError,
+    refetchDossier,
     sendEmailVerification,
     isSendingVerification,
     verificationSent,
@@ -55,7 +63,28 @@ export function AccountDossierView() {
       customDrafts[cf.key] ?? (cf.currentValue != null ? String(cf.currentValue) : "");
   }
 
-  if (isLoading || !profile) {
+  const profilePending = isLoading && !profile && !profileError;
+  const dossierPending = Boolean(isLoadingDossier) && !dossier && !isDossierError;
+
+  if (profilePending || dossierPending) {
+    return <DossierPageSkeleton />;
+  }
+
+  if ((profileError && !profile) || (isDossierError && !dossier && !profile)) {
+    return (
+      <AccountSliceErrorState
+        title={t("profile.dossier.title")}
+        description={t("profile.dossier.description")}
+        message={profileError || dossierError}
+        onRetry={() => {
+          void refetchProfile();
+          void refetchDossier?.();
+        }}
+      />
+    );
+  }
+
+  if (!profile) {
     return <DossierPageSkeleton />;
   }
 
@@ -68,6 +97,19 @@ export function AccountDossierView() {
     (memberships.length > 0 ? memberships.some((m) => m.isPrimary) : false);
   const staffBadgeText =
     profile.staffCode || (isPlatformAdmin ? principalContext?.controlPlaneLabel : "") || "";
+
+  const handleSendStandaloneVerification = async () => {
+    try {
+      const res = await sendEmailVerification();
+      if (res && (res.sent === false || res.success === false)) {
+        toast.error(res.message?.trim() || t("profile.identityModal.otpSendFailedError"));
+      }
+      return res;
+    } catch (err: unknown) {
+      toast.error(err instanceof Error && err.message ? err.message : t("profile.common.error"));
+      return undefined;
+    }
+  };
 
   return (
     <div className="space-y-6 min-w-0">
@@ -117,7 +159,7 @@ export function AccountDossierView() {
             rowVersion: data.rowVersion ?? profile.rowVersion ?? dossier?.rowVersion,
           })
         }
-        onSendEmailVerification={sendEmailVerification}
+        onSendEmailVerification={handleSendStandaloneVerification}
         onChangeCustomField={(key, val) => setCustomDrafts((prev) => ({ ...prev, [key]: val }))}
         onOpenIdentityModal={setIdentityModalMode}
       />
@@ -142,7 +184,7 @@ export function AccountDossierView() {
             : (profile.clubAffiliation ?? "")
         }
         onExportData={exportAccountData}
-        onDeactivateAccount={deactivateAccount}
+        onDeactivateAccount={(sudoCode) => deactivateAccount(sudoCode)}
       />
 
       <IdentityChangeVerificationModal
@@ -152,8 +194,8 @@ export function AccountDossierView() {
         onOpenChange={(open) => {
           if (!open) setIdentityModalMode(null);
         }}
-        onSendOtp={sendEmailVerification}
-        onCommitChange={async (mode, newValue) => {
+        onSendOtp={(payload) => sendEmailVerification(payload)}
+        onCommitChange={async (mode, newValue, otpCode) => {
           await updateProfile({
             firstName: profile.firstName,
             lastName: profile.lastName,
@@ -161,6 +203,7 @@ export function AccountDossierView() {
             bio: profile.bio,
             customFields: customValues,
             rowVersion: profile.rowVersion ?? dossier?.rowVersion,
+            verificationOtpCode: otpCode,
             ...(mode === "email" ? { email: newValue } : { username: newValue.replace(/^@/, "") }),
           });
         }}

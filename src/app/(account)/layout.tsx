@@ -8,7 +8,7 @@
  * Hosts the global ⌘K / Ctrl+K <SovereignCommandBar>, Alt+P Broadcast Privacy Mode toggle,
  * back-to-workspace return link, theme/language controls, and the persistent account console viewport.
  */
-import React, { useState, useEffect } from "react";
+import React, { Suspense, useEffect, useRef, useState, useSyncExternalStore } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
@@ -20,6 +20,7 @@ import { NxThemeSwitcher } from "@core/ui/layout/common/theme-switcher";
 import { Avatar, AvatarFallback, AvatarImage } from "@core/ui/avatar";
 import { Button } from "@core/ui/button";
 import { Badge } from "@core/ui/badge";
+import { Card } from "@core/ui/card";
 import { Skeleton } from "@core/ui/skeleton";
 import {
   DropdownMenu,
@@ -40,20 +41,118 @@ import {
   User as UserIcon,
 } from "lucide-react";
 import { SovereignCommandBar } from "@modules/profile/core/src/presentation/components/SovereignCommandBar";
+import { useAccountPreferencesSliceViewModel } from "@modules/profile/core/src/presentation/viewmodels/useSovereignAccountSlicesViewModel";
+import { startRoutingProgress } from "@core/ui/routing-progress-bar";
+import {
+  ProfileRailSidebarSkeleton,
+  ProfileTelemetryHudSkeleton,
+} from "@modules/profile/core/src/presentation/components/AccountSkeletons";
+
+const PRIVACY_BLUR_STORAGE_KEY = "scr_pref_privacy_blur";
+const emptySubscribe = () => () => {};
+const getClientMountedSnapshot = () => true;
+const getServerMountedSnapshot = () => false;
+
+function readInitialStoredPrivacyBlur(): boolean {
+  if (typeof window === "undefined") return false;
+  if (document.documentElement.hasAttribute("data-privacy-blur")) return true;
+  try {
+    return window.localStorage.getItem(PRIVACY_BLUR_STORAGE_KEY) === "true";
+  } catch {
+    return false;
+  }
+}
+
+function AccountWorldShellFallback() {
+  const { t } = useI18n();
+  return (
+    <output
+      aria-busy="true"
+      aria-label={t("profile.common.loadingRegion")}
+      data-testid="account-world-shell-skeleton"
+      className="block w-full min-w-0 max-w-7xl mx-auto py-2 sm:py-4 overflow-x-clip"
+    >
+      <ProfileTelemetryHudSkeleton />
+      <div className="flex flex-col lg:flex-row gap-6 items-start min-w-0 w-full">
+        <aside className="w-full lg:w-64 xl:w-72 shrink-0 min-w-0">
+          <ProfileRailSidebarSkeleton />
+        </aside>
+        <section className="flex-1 min-w-0 w-full space-y-5">
+          <Card className="border border-nx-line bg-nx-surface p-5 space-y-3">
+            <Skeleton shape="title" className="h-5 w-48" />
+            <Skeleton shape="text" className="h-3.5 w-72" />
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
+              <Skeleton shape="block" className="h-16 w-full rounded-xl" />
+              <Skeleton shape="block" className="h-16 w-full rounded-xl" />
+            </div>
+          </Card>
+          <Card className="border border-nx-line bg-nx-surface p-5 space-y-3">
+            <Skeleton shape="title" className="h-5 w-40" />
+            <Skeleton shape="block" className="h-24 w-full rounded-xl" />
+          </Card>
+        </section>
+      </div>
+    </output>
+  );
+}
 
 export default function AccountLayout({ children }: { children: React.ReactNode }) {
   const router = useRouter();
   const { t } = useI18n();
   const user = useAppStore((s) => s.user);
   const logout = useAppStore((s) => s.logout);
+  const { preferences, updatePreferences } = useAccountPreferencesSliceViewModel();
+  const isMounted = useSyncExternalStore(
+    emptySubscribe,
+    getClientMountedSnapshot,
+    getServerMountedSnapshot
+  );
   const [commandBarOpen, setCommandBarOpen] = useState(false);
-  const [privacyBlur, setPrivacyBlur] = useState(false);
+  const [privacyBlurOverride, setPrivacyBlurOverride] = useState<boolean | null>(null);
+
+  const persistedPrivacyBlur =
+    preferences?.broadcastPrivacyBlurDefault ??
+    (isMounted ? readInitialStoredPrivacyBlur() : false);
+  const privacyBlur = isMounted ? (privacyBlurOverride ?? persistedPrivacyBlur) : false;
+
+  const togglePrivacyBlur = () => {
+    const next = !privacyBlur;
+    setPrivacyBlurOverride(next);
+    if (typeof window !== "undefined") {
+      document.documentElement.toggleAttribute("data-privacy-blur", next);
+      try {
+        window.localStorage.setItem(PRIVACY_BLUR_STORAGE_KEY, next ? "true" : "false");
+      } catch {
+        // Ignore storage errors in restricted browsing contexts
+      }
+    }
+    if (preferences) {
+      void updatePreferences({ broadcastPrivacyBlurDefault: next })
+        .catch(() => {})
+        .finally(() => setPrivacyBlurOverride(null));
+    }
+  };
+
+  const togglePrivacyBlurRef = useRef(togglePrivacyBlur);
+  useEffect(() => {
+    togglePrivacyBlurRef.current = togglePrivacyBlur;
+  });
+
+  useEffect(() => {
+    if (!isMounted) return;
+    document.documentElement.toggleAttribute("data-privacy-blur", privacyBlur);
+    try {
+      window.localStorage.setItem(PRIVACY_BLUR_STORAGE_KEY, privacyBlur ? "true" : "false");
+    } catch {
+      // Ignore storage errors in restricted browsing contexts
+    }
+  }, [isMounted, privacyBlur]);
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.altKey && e.key.toLowerCase() === "p") {
         e.preventDefault();
-        setPrivacyBlur((prev) => !prev);
+        togglePrivacyBlurRef.current();
       }
     };
     window.addEventListener("keydown", handleKeyDown);
@@ -66,6 +165,11 @@ export default function AccountLayout({ children }: { children: React.ReactNode 
     if (typeof window !== "undefined") {
       window.location.href = "/login";
     }
+  };
+
+  const navigateToOverview = () => {
+    startRoutingProgress();
+    router.push("/overview");
   };
 
   const displayName = user
@@ -98,7 +202,7 @@ export default function AccountLayout({ children }: { children: React.ReactNode 
             <Button
               variant="ghost"
               size="sm"
-              onClick={() => router.push("/overview")}
+              onClick={navigateToOverview}
               aria-label={t("profile.accountPortal.backToDashboard")}
               className="gap-2 px-2 sm:px-3 text-xs sm:text-sm font-medium text-nx-ink-2 hover:text-nx-ink hover:bg-nx-raised transition-colors shrink-0"
             >
@@ -154,7 +258,7 @@ export default function AccountLayout({ children }: { children: React.ReactNode 
             <Button
               variant="outline"
               size="sm"
-              onClick={() => setPrivacyBlur((prev) => !prev)}
+              onClick={togglePrivacyBlur}
               aria-pressed={privacyBlur}
               aria-label={
                 privacyBlur ? t("profile.privacyBlur.active") : t("profile.privacyBlur.toggle")
@@ -224,7 +328,7 @@ export default function AccountLayout({ children }: { children: React.ReactNode 
                 </DropdownMenuLabel>
                 <DropdownMenuSeparator className="bg-nx-line" />
                 <DropdownMenuItem
-                  onClick={() => router.push("/overview")}
+                  onClick={navigateToOverview}
                   className="text-nx-ink hover:bg-nx-raised cursor-pointer"
                 >
                   <LayoutDashboard className="me-2 h-4 w-4 text-nx-ink-3" aria-hidden="true" />
@@ -261,7 +365,7 @@ export default function AccountLayout({ children }: { children: React.ReactNode 
             : "flex-1 w-full min-w-0 overflow-x-clip max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-4 sm:py-6 md:py-8 outline-none"
         }
       >
-        {children}
+        <Suspense fallback={<AccountWorldShellFallback />}>{children}</Suspense>
       </main>
 
       {/* ── Clean Security & Compliance Footer ─────────────────────────────── */}
@@ -280,7 +384,7 @@ export default function AccountLayout({ children }: { children: React.ReactNode 
       <SovereignCommandBar
         open={commandBarOpen}
         onOpenChange={setCommandBarOpen}
-        onTogglePrivacyBlur={() => setPrivacyBlur((prev) => !prev)}
+        onTogglePrivacyBlur={togglePrivacyBlur}
       />
     </div>
   );

@@ -21,8 +21,8 @@ export interface AccountLifecycleCardProps {
   primaryOrgName?: string;
   /** Fetches additional backend account export archive payload. */
   onExportData?: () => Promise<Record<string, unknown>>;
-  /** Executes account deactivation once confirmed. */
-  onDeactivateAccount?: () => Promise<unknown>;
+  /** Executes account deactivation once confirmed with 6-digit step-up sudo code. */
+  onDeactivateAccount?: (sudoCode: string) => Promise<unknown>;
 }
 
 /**
@@ -42,6 +42,8 @@ export function AccountLifecycleCard({
   const [deactivateOpen, setDeactivateOpen] = useState(false);
   const [confirmUsername, setConfirmUsername] = useState("");
   const [sudoCode, setSudoCode] = useState("");
+  const [isDeactivating, setIsDeactivating] = useState(false);
+  const [deactivateError, setDeactivateError] = useState<string | null>(null);
 
   const handleExportData = async () => {
     setExportStatus("exporting");
@@ -93,12 +95,31 @@ export function AccountLifecycleCard({
     }
   };
 
+  const handleDeactivateOpenChange = (nextOpen: boolean) => {
+    setDeactivateOpen(nextOpen);
+    if (!nextOpen) {
+      setConfirmUsername("");
+      setSudoCode("");
+      setDeactivateError(null);
+    }
+  };
+
   const handleConfirmDeactivate = async () => {
-    if (isSolePrimaryOwner || confirmUsername !== profile.username || sudoCode.length < 6) return;
+    const trimmedCode = sudoCode.trim();
+    if (isSolePrimaryOwner || confirmUsername !== profile.username || trimmedCode.length < 6) {
+      return;
+    }
+    setDeactivateError(null);
+    setIsDeactivating(true);
     try {
-      await onDeactivateAccount?.();
+      await onDeactivateAccount?.(trimmedCode);
+      handleDeactivateOpenChange(false);
+    } catch (err: unknown) {
+      setDeactivateError(
+        err instanceof Error && err.message ? err.message : t("profile.common.error")
+      );
     } finally {
-      setDeactivateOpen(false);
+      setIsDeactivating(false);
     }
   };
 
@@ -208,14 +229,22 @@ export function AccountLifecycleCard({
 
       <AccountDeactivateDialog
         open={deactivateOpen}
-        onOpenChange={setDeactivateOpen}
+        onOpenChange={handleDeactivateOpenChange}
         username={profile.username}
         isSolePrimaryOwner={isSolePrimaryOwner}
         primaryOrgName={primaryOrgName}
         confirmUsername={confirmUsername}
         sudoCode={sudoCode}
-        onConfirmUsernameChange={setConfirmUsername}
-        onSudoCodeChange={setSudoCode}
+        isSubmitting={isDeactivating}
+        error={deactivateError}
+        onConfirmUsernameChange={(val) => {
+          setConfirmUsername(val);
+          if (deactivateError) setDeactivateError(null);
+        }}
+        onSudoCodeChange={(val) => {
+          setSudoCode(val);
+          if (deactivateError) setDeactivateError(null);
+        }}
         onConfirmDeactivate={handleConfirmDeactivate}
       />
     </>

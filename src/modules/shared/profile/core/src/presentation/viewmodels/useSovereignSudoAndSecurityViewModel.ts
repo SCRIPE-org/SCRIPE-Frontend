@@ -121,7 +121,7 @@ export function useSovereignSecuritySlice() {
 
 /** Presentation ViewModel exposing CIDR allowlist policy controls for the security view. */
 export function useAccountSecuritySliceViewModel() {
-  const { data, isLoading, updateMutation } = useSovereignSecuritySlice();
+  const { data, isLoading, isError, error, refetch, updateMutation } = useSovereignSecuritySlice();
   return {
     security: data
       ? {
@@ -135,6 +135,9 @@ export function useAccountSecuritySliceViewModel() {
         }
       : undefined,
     isLoadingSecurity: isLoading,
+    isSecurityError: isError,
+    securityError: error instanceof Error ? error.message : null,
+    refetchSecurity: refetch,
     updateSecurityPolicy: (payload: { trustedCidrs?: string[]; rowVersion?: string }) =>
       updateMutation.mutateAsync({
         trustedCidrs: payload.trustedCidrs,

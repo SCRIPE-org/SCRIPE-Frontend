@@ -2,7 +2,10 @@
 
 import { useEffect, useState } from "react";
 import { useI18n } from "@core/providers/i18n-provider";
+import { Alert, AlertDescription } from "@core/ui/alert";
+import { Button } from "@core/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@core/ui/card";
+import { toast } from "@core/ui/sileo-toast";
 import { useSecurityVaultViewModel } from "../viewmodels/useSecurityVaultViewModel";
 import { useExternalLoginsViewModel } from "../viewmodels/useExternalLoginsViewModel";
 import {
@@ -16,6 +19,7 @@ import { PasswordChangeForm } from "../components/PasswordChangeForm";
 import { SecurityAdvancedShieldSection } from "../components/SecurityAdvancedShieldSection";
 import { ConnectedEnterpriseSsoCard } from "../components/ConnectedEnterpriseSsoCard";
 import { SecurityPageSkeleton } from "../components/AccountSkeletons";
+import { AccountSliceErrorState } from "../components/AccountSliceErrorState";
 import { PasskeyVaultSection } from "../sections/security/PasskeyVaultSection";
 import { SudoSessionCardSection } from "../sections/security/SudoSessionCardSection";
 import { StandaloneTotpSection } from "../sections/security/StandaloneTotpSection";
@@ -24,7 +28,7 @@ import { DisableTwoFactorModal } from "../sections/security/DisableTwoFactorModa
 import { RegenerateBackupCodesModal } from "../sections/security/RegenerateBackupCodesModal";
 import type { PasskeyCredential } from "../../domain/entities/PasskeyCredential";
 import type { ChangePasswordRequest } from "../../domain/interfaces/IProfileRepository";
-import { Lock } from "lucide-react";
+import { AlertCircle, Lock, RefreshCw } from "lucide-react";
 
 /**
  * Security vault view (/account/security) composing Passkey Vault, Enterprise SSO,
@@ -33,10 +37,20 @@ import { Lock } from "lucide-react";
 export function AccountSecurityView() {
   const { t, language } = useI18n();
   const vm = useSecurityVaultViewModel();
-  const { principalContext, featureFlags } = useAccountContextSliceViewModel();
+  const { principalContext, featureFlags, isLoadingContext, isContextError } =
+    useAccountContextSliceViewModel();
   const { externalLogins } = useExternalLoginsViewModel();
-  const { security, isLoadingSecurity, updateSecurityPolicy, isUpdatingPolicy, updatePolicyError } =
-    useAccountSecuritySliceViewModel();
+  const {
+    security,
+    isLoadingSecurity,
+    isSecurityError,
+    securityError,
+    refetchSecurity,
+    updateSecurityPolicy,
+    isUpdatingPolicy,
+    updatePolicyError,
+  } = useAccountSecuritySliceViewModel();
+
   const isPlatformAdmin = principalContext?.principalKind === "PlatformAdmin";
   const showSsoCard =
     security?.isSsoFeatureEnabled !== false &&
@@ -53,6 +67,7 @@ export function AccountSecurityView() {
   const [deleteTarget, setDeleteTarget] = useState<PasskeyCredential | null>(null);
   const [isDisable2FaOpen, setIsDisable2FaOpen] = useState(false);
   const [isRegenCodesOpen, setIsRegenCodesOpen] = useState(false);
+  const [twoFaSetupError, setTwoFaSetupError] = useState<string | null>(null);
   const [sudoRemainingSeconds, setSudoRemainingSeconds] = useState(0);
   const { sudoExpiresAt, isSudoActive } = vm;
 
@@ -69,9 +84,39 @@ export function AccountSecurityView() {
     };
   }, [isSudoActive, sudoExpiresAt]);
 
-  if (vm.isLoadingPasskeys && isLoadingSecurity && vm.passkeys.length === 0 && !security) {
+  const passkeysPending =
+    vm.isLoadingPasskeys && vm.passkeys.length === 0 && !vm.passkeysError;
+  const securityPending = isLoadingSecurity && !security && !isSecurityError;
+  const contextPending = Boolean(isLoadingContext) && !principalContext && !isContextError;
+
+  if (passkeysPending || securityPending || contextPending) {
     return <SecurityPageSkeleton />;
   }
+
+  if (isSecurityError && !security) {
+    return (
+      <AccountSliceErrorState
+        title={t("profile.security.title")}
+        description={t("profile.security.subtitle")}
+        message={securityError}
+        onRetry={() => {
+          void refetchSecurity?.();
+          void vm.refetchPasskeys?.();
+        }}
+      />
+    );
+  }
+
+  const handleBegin2FaSetup = async () => {
+    setTwoFaSetupError(null);
+    try {
+      await vm.begin2FaSetup();
+    } catch (err: unknown) {
+      const msg = err instanceof Error && err.message ? err.message : t("profile.common.error");
+      setTwoFaSetupError(msg);
+      toast.error(msg);
+    }
+  };
 
   const handlePasswordSubmit = async (data: ChangePasswordRequest) => {
     setPasswordSuccess(false);
@@ -86,6 +131,26 @@ export function AccountSecurityView() {
         <h1 className="text-xl font-bold tracking-tight text-nx-ink">{t("profile.security.title")}</h1>
         <p className="text-xs text-nx-ink-3 mt-1">{t("profile.security.subtitle")}</p>
       </div>
+
+      {vm.passkeysError && vm.passkeys.length === 0 && (
+        <Alert variant="destructive" data-testid="passkeys-load-error-alert">
+          <AlertCircle className="h-4 w-4" aria-hidden="true" />
+          <AlertDescription className="flex flex-wrap items-center justify-between gap-2 text-xs">
+            <span>{vm.passkeysError}</span>
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              onClick={() => void vm.refetchPasskeys?.()}
+              className="h-7 text-xs gap-1.5"
+            >
+              <RefreshCw className="h-3 w-3" aria-hidden="true" />
+              <span>{t("common.retry")}</span>
+            </Button>
+          </AlertDescription>
+        </Alert>
+      )}
+
       <PasskeyVaultSection
         t={t}
         dateLocale={language === "ar" ? "ar-EG" : "en-US"}
@@ -94,7 +159,10 @@ export function AccountSecurityView() {
         webAuthnSupported={vm.webAuthnSupported}
         isRemovingPasskey={vm.isRemovingPasskey}
         detectDeviceBadge={vm.detectDeviceBadge}
-        onOpenEnroll={() => setIsEnrollModalOpen(true)}
+        onOpenEnroll={() => {
+          vm.resetEnrollError?.();
+          setIsEnrollModalOpen(true);
+        }}
         onOpenRename={setRenameTarget}
         onOpenDelete={setDeleteTarget}
       />
@@ -108,15 +176,23 @@ export function AccountSecurityView() {
         onLockSudoSession={() => void vm.lockSudoSession()}
       />
       {showTotpSection && (
-        <StandaloneTotpSection
-          t={t}
-          isTwoFactorEnabled={vm.isTwoFactorEnabled}
-          backupCodesRemaining={vm.backupCodesRemaining ?? 0}
-          isEnabling={vm.isBeginning2Fa}
-          onEnable={() => vm.begin2FaSetup()}
-          onDisable={() => setIsDisable2FaOpen(true)}
-          onRegenerateBackupCodes={() => setIsRegenCodesOpen(true)}
-        />
+        <>
+          {twoFaSetupError && (
+            <Alert variant="destructive" data-testid="two-fa-setup-error-alert">
+              <AlertCircle className="h-4 w-4" aria-hidden="true" />
+              <AlertDescription className="text-xs">{twoFaSetupError}</AlertDescription>
+            </Alert>
+          )}
+          <StandaloneTotpSection
+            t={t}
+            isTwoFactorEnabled={vm.isTwoFactorEnabled}
+            backupCodesRemaining={vm.backupCodesRemaining ?? 0}
+            isEnabling={vm.isBeginning2Fa}
+            onEnable={() => void handleBegin2FaSetup()}
+            onDisable={() => setIsDisable2FaOpen(true)}
+            onRegenerateBackupCodes={() => setIsRegenCodesOpen(true)}
+          />
+        </>
       )}
       <Card className="border border-nx-line bg-nx-surface hover:border-nx-line-hi transition-colors">
         <CardHeader className="pb-3">
@@ -147,7 +223,11 @@ export function AccountSecurityView() {
       />
       <EnrollPasskeyModal
         isOpen={isEnrollModalOpen}
-        onClose={() => setIsEnrollModalOpen(false)}
+        onClose={() => {
+          vm.resetEnrollError?.();
+          setIsEnrollModalOpen(false);
+        }}
+        onClearError={vm.resetEnrollError}
         onEnroll={vm.enrollPasskey}
         isEnrolling={vm.isEnrollingPasskey}
         enrollError={vm.enrollError}

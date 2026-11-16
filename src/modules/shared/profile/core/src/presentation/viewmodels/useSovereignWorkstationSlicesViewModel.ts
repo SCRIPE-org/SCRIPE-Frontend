@@ -35,10 +35,14 @@ export function useSovereignPreferencesSlice() {
 
 /** Presentation ViewModel wrapping workstation preferences queries and patches. */
 export function useAccountPreferencesSliceViewModel() {
-  const { data, isLoading, updateMutation } = useSovereignPreferencesSlice();
+  const { data, isLoading, isError, error, refetch, updateMutation } =
+    useSovereignPreferencesSlice();
   return {
     preferences: data,
     isLoadingPreferences: isLoading,
+    isPreferencesError: isError,
+    preferencesError: error instanceof Error ? error.message : null,
+    refetchPreferences: refetch,
     updatePreferences: (patch: Partial<SovereignPreferencesSlice>) =>
       updateMutation.mutateAsync({
         ...patch,
@@ -97,6 +101,9 @@ export function useAccountNotificationsSliceViewModel() {
   const {
     data,
     isLoading,
+    isError,
+    error,
+    refetch,
     updateMutation,
     sendTestMutation,
     markReadMutation,
@@ -106,6 +113,9 @@ export function useAccountNotificationsSliceViewModel() {
   return {
     notifications: data,
     isLoadingNotifications: isLoading,
+    isNotificationsError: isError,
+    notificationsError: error instanceof Error ? error.message : null,
+    refetchNotifications: refetch,
     updateNotifications: (patch: Partial<SovereignNotificationsSlice>) =>
       updateMutation.mutateAsync({
         ...patch,
@@ -139,10 +149,13 @@ export function useSovereignPlanSlice() {
 
 /** Presentation ViewModel exposing active plan quotas and feature upgrade requests. */
 export function useAccountPlanSliceViewModel() {
-  const { data, isLoading, requestMutation } = useSovereignPlanSlice();
+  const { data, isLoading, isError, error, refetch, requestMutation } = useSovereignPlanSlice();
   return {
     plan: data,
     isLoadingPlan: isLoading,
+    isPlanError: isError,
+    planError: error instanceof Error ? error.message : null,
+    refetchPlan: refetch,
     submitPlanRequest: (payload: { type: string; code: string; notes?: string }) =>
       requestMutation.mutateAsync(payload),
     isSubmittingRequest: requestMutation.isPending,
@@ -188,11 +201,23 @@ export function useSovereignIntegrationsSlice() {
 
 /** Presentation ViewModel for SSO federations and personal access token lifecycle. */
 export function useAccountIntegrationsSliceViewModel() {
-  const { data, isLoading, createMutation, updatePatMutation, rollPatMutation, deleteMutation } =
-    useSovereignIntegrationsSlice();
+  const {
+    data,
+    isLoading,
+    isError,
+    error,
+    refetch,
+    createMutation,
+    updatePatMutation,
+    rollPatMutation,
+    deleteMutation,
+  } = useSovereignIntegrationsSlice();
   return {
     integrations: data,
     isLoadingIntegrations: isLoading,
+    isIntegrationsError: isError,
+    integrationsError: error instanceof Error ? error.message : null,
+    refetchIntegrations: refetch,
     createIntegrationItem: (
       payload: Parameters<typeof container.sovereignAccountRepository.createIntegrationItem>[0]
     ) => createMutation.mutateAsync(payload),

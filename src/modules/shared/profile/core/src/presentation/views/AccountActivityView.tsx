@@ -8,6 +8,7 @@ import type { SovereignAuditEntry } from "../../domain/entities/SovereignAccount
 import { useAccountActivityConsoleViewModel } from "../viewmodels/useAccountActivityConsoleViewModel";
 import { ForensicPayloadDrawer } from "../components/ForensicPayloadDrawer";
 import { ActivityPageSkeleton } from "../components/AccountSkeletons";
+import { AccountSliceErrorState } from "../components/AccountSliceErrorState";
 import { ActivityFilterToolbarSection } from "../sections/activity/ActivityFilterToolbarSection";
 import {
   ActivityEmptyState,
@@ -27,14 +28,25 @@ export function AccountActivityView() {
   const { t } = useI18n();
   const vm = useAccountActivityConsoleViewModel({ initialPageSize: 20 });
 
-  if (vm.isLoadingActivity && !vm.activity) {
+  if (vm.isLoadingActivity && !vm.activity && !vm.isActivityError) {
     return <ActivityPageSkeleton />;
+  }
+
+  if (vm.isActivityError && !vm.activity) {
+    return (
+      <AccountSliceErrorState
+        title={t("profile.activity.title")}
+        description={t("profile.activity.description")}
+        message={vm.activityError}
+        onRetry={() => void vm.refreshActivity()}
+      />
+    );
   }
 
   const crudViewModel = {
     items: vm.entries,
     loading: vm.isLoadingActivity,
-    error: null as string | null,
+    error: vm.activityError ?? null,
     selectedItems: [] as string[],
     setSelectedItems: noop,
     isCreateModalOpen: false,

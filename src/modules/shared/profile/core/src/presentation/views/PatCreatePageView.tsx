@@ -7,6 +7,7 @@ import { useI18n } from "@core/providers/i18n-provider";
 import { FeatureUnavailableGate } from "@core/components/tenant-context";
 import { Badge } from "@core/ui/badge";
 import { Button } from "@core/ui/button";
+import { startRoutingProgress } from "@core/ui/routing-progress-bar";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -21,6 +22,7 @@ import {
 } from "../viewmodels/useSovereignAccountSlicesViewModel";
 import { useIntegrationsFederationViewModel } from "../viewmodels/useIntegrationsFederationViewModel";
 import { PatCreatePageSkeleton } from "../components/AccountSkeletons";
+import { AccountSliceErrorState } from "../components/AccountSliceErrorState";
 import { PatMetadataConfigCard } from "../sections/integrations/PatMetadataConfigCard";
 import { PatCidrAllowlistCard, parseCidrEntries } from "../sections/integrations/PatCidrAllowlistCard";
 import { PatPermissionStudioCard } from "../sections/integrations/PatPermissionStudioCard";
@@ -42,6 +44,9 @@ export function PatCreatePageView() {
     patQuota,
     integrationsFeatureEnabled,
     isLoadingIntegrations,
+    isIntegrationsError,
+    integrationsError,
+    refetchIntegrations,
     isCreatingToken,
     generateToken,
   } = useIntegrationsFederationViewModel();
@@ -60,12 +65,28 @@ export function PatCreatePageView() {
     integrationsFeatureEnabled === false ||
     (patQuota != null && !patQuota.isEnabled);
 
-  if (isLoadingIntegrations && scopeCatalog.length === 0 && !isIntegrationsDisabled) {
+  if (
+    isLoadingIntegrations &&
+    !isIntegrationsError &&
+    scopeCatalog.length === 0 &&
+    !isIntegrationsDisabled
+  ) {
     return <PatCreatePageSkeleton />;
   }
 
   if (isIntegrationsDisabled) {
     return <FeatureUnavailableGate featureKey="Integrations.ApiKeys.Enabled" />;
+  }
+
+  if (isIntegrationsError && scopeCatalog.length === 0) {
+    return (
+      <AccountSliceErrorState
+        title={t("profile.integrations.createTokenModalTitle")}
+        description={t("profile.integrations.createTokenModalDesc")}
+        message={integrationsError}
+        onRetry={() => void refetchIntegrations?.()}
+      />
+    );
   }
 
   const isQuotaReached = Boolean(
@@ -113,6 +134,7 @@ export function PatCreatePageView() {
         allowedCidrs: parsedCidrs.length > 0 ? parsedCidrs : undefined,
       });
       setReviewOpen(false);
+      startRoutingProgress();
       router.push("/account/integrations");
     } catch (err: unknown) {
       setFormError(err instanceof Error ? err.message : t("profile.common.error"));

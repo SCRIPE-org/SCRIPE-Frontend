@@ -1,11 +1,13 @@
 import React from "react";
-import { render, renderHook, screen } from "@testing-library/react";
+import { render, renderHook, screen, fireEvent, waitFor } from "@testing-library/react";
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import "@testing-library/jest-dom";
 import type { AdminProfile } from "../../domain/entities/AdminProfile";
 import { ProfileRailLayout } from "../components/ProfileRailLayout";
 import { AccountNotificationsView } from "../views/AccountNotificationsView";
 import { useWorkstationPreferencesViewModel } from "../viewmodels/useWorkstationPreferencesViewModel";
+
+const mockSendTestNotification = vi.fn();
 
 vi.mock("../viewmodels/useSovereignAccountSlicesViewModel", () => ({
   sovereignAccountKeys: {
@@ -22,7 +24,7 @@ vi.mock("../viewmodels/useSovereignAccountSlicesViewModel", () => ({
     },
     updateNotifications: vi.fn(),
     isUpdatingNotifications: false,
-    sendTestNotification: vi.fn(),
+    sendTestNotification: (...args: unknown[]) => mockSendTestNotification(...args),
     isSendingTestNotification: false,
     testNotificationSent: false,
     markNotificationAsRead: vi.fn(),
@@ -123,5 +125,17 @@ describe("Profile accessibility labels and workstation preference hardening", ()
     );
     const { result: validResult } = renderHook(() => useWorkstationPreferencesViewModel());
     expect(validResult.current.accent).toBe("electric-emerald");
+  });
+
+  it("catches sendTestNotification rejections in AccountNotificationsView and renders error alert", async () => {
+    mockSendTestNotification.mockRejectedValueOnce(new Error("Notification gateway unavailable"));
+    render(<AccountNotificationsView />);
+    fireEvent.click(screen.getByTestId("send-test-notification-btn"));
+
+    await waitFor(() => {
+      expect(screen.getByTestId("notifications-save-error-alert")).toHaveTextContent(
+        "Notification gateway unavailable"
+      );
+    });
   });
 });

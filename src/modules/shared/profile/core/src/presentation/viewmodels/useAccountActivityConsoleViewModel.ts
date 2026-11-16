@@ -93,6 +93,8 @@ export function useAccountActivityConsoleViewModel(
     activity,
     isLoadingActivity,
     isFetchingActivity,
+    isActivityError,
+    activityError,
     refetchActivity,
   } = useAccountActivitySliceViewModel(query);
 
@@ -187,6 +189,8 @@ export function useAccountActivityConsoleViewModel(
     chainIntegrityStatus: activity?.chainIntegrityStatus ?? "",
     isLoadingActivity,
     isFetchingActivity,
+    isActivityError,
+    activityError,
     searchInput,
     setSearchInput,
     debouncedSearch,

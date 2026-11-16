@@ -64,6 +64,7 @@ export function ProfileInfoForm({
   const [phoneNumber, setPhoneNumber] = useState(profile.phoneNumber ?? "");
   const [bio, setBio] = useState(profile.bio ?? "");
   const [savedSuccess, setSavedSuccess] = useState(false);
+  const [localError, setLocalError] = useState<string | null>(null);
 
   const profileKey = `${profile.firstName ?? ""}\0${profile.lastName ?? ""}\0${profile.phoneNumber ?? ""}\0${profile.bio ?? ""}`;
   const [prevProfileKey, setPrevProfileKey] = useState(profileKey);
@@ -78,14 +79,21 @@ export function ProfileInfoForm({
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
     setSavedSuccess(false);
-    await onSubmit({
-      firstName: firstName.trim(),
-      lastName: lastName.trim(),
-      phoneNumber: phoneNumber.trim() || undefined,
-      bio: bio.trim() || undefined,
-    });
-    setSavedSuccess(true);
-    setIsEditing(false);
+    setLocalError(null);
+    try {
+      await onSubmit({
+        firstName: firstName.trim(),
+        lastName: lastName.trim(),
+        phoneNumber: phoneNumber.trim() || undefined,
+        bio: bio.trim() || undefined,
+      });
+      setSavedSuccess(true);
+      setIsEditing(false);
+    } catch (err: unknown) {
+      setLocalError(
+        err instanceof Error && err.message ? err.message : t("profile.common.saveFailed")
+      );
+    }
   };
 
   const handleCancel = () => {
@@ -93,6 +101,7 @@ export function ProfileInfoForm({
     setLastName(profile.lastName ?? "");
     setPhoneNumber(profile.phoneNumber ?? "");
     setBio(profile.bio ?? "");
+    setLocalError(null);
     setIsEditing(false);
   };
 
@@ -184,7 +193,7 @@ export function ProfileInfoForm({
           phoneNumber={phoneNumber}
           adminTypeName={profile.adminTypeName}
           bio={bio}
-          error={error}
+          error={error || localError}
           isSubmitting={isSubmitting}
           customFields={customFields}
           customFieldValues={customFieldValues}

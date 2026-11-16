@@ -2,15 +2,18 @@
 
 import { useState } from "react";
 import { useI18n } from "@core/providers/i18n-provider";
+import { Alert, AlertDescription } from "@core/ui/alert";
 import { Button } from "@core/ui/button";
+import { toast } from "@core/ui/sileo-toast";
 import { useSessionsFleetViewModel } from "../viewmodels/useSessionsFleetViewModel";
 import { useSovereignSessionsSlice } from "../viewmodels/useSovereignAccountSlicesViewModel";
 import { SovereignSessionRadar, type RadarSessionNode } from "../components/SovereignSessionRadar";
 import { EmergencyLockdownDialog } from "../components/EmergencyLockdownDialog";
 import { SessionsPageSkeleton } from "../components/AccountSkeletons";
+import { AccountSliceErrorState } from "../components/AccountSliceErrorState";
 import { SessionsFleetListSection } from "../sections/sessions/SessionsFleetListSection";
 import { RevokeOtherSessionsDialog } from "../sections/sessions/RevokeOtherSessionsDialog";
-import { Trash2, RefreshCw, Loader2, ShieldAlert } from "lucide-react";
+import { AlertCircle, Trash2, RefreshCw, Loader2, ShieldAlert } from "lucide-react";
 
 /**
  * Active workstation fleet and session telemetry view (/account/sessions),
@@ -23,6 +26,7 @@ export function AccountSessionsView() {
     otherSessions,
     otherCount,
     isLoading,
+    error,
     refetch,
     revokeSession,
     isRevoking,
@@ -37,9 +41,21 @@ export function AccountSessionsView() {
   const [isLockdownOpen, setIsLockdownOpen] = useState(false);
   const [confirmRevokeAllOpen, setConfirmRevokeAllOpen] = useState(false);
   const [revokeAllError, setRevokeAllError] = useState<string | null>(null);
+  const [revokeSessionError, setRevokeSessionError] = useState<string | null>(null);
 
-  if (isLoading && !currentSession && otherSessions.length === 0) {
+  if (isLoading && !currentSession && otherSessions.length === 0 && !error) {
     return <SessionsPageSkeleton />;
+  }
+
+  if (error && !currentSession && otherSessions.length === 0) {
+    return (
+      <AccountSliceErrorState
+        title={t("profile.sessions.title")}
+        description={t("profile.sessions.description")}
+        message={error}
+        onRetry={() => void refetch()}
+      />
+    );
   }
 
   const sliceSessions = sliceSessionsData?.sessions ?? [];
@@ -66,6 +82,17 @@ export function AccountSessionsView() {
     ...otherSessions.map(toRadarNode),
   ];
 
+  const handleRevokeSession = async (sessionId: string) => {
+    setRevokeSessionError(null);
+    try {
+      await revokeSession(sessionId);
+    } catch (err: unknown) {
+      const msg = err instanceof Error && err.message ? err.message : t("profile.common.error");
+      setRevokeSessionError(msg);
+      toast.error(msg);
+    }
+  };
+
   const handleConfirmRevokeAll = async () => {
     setRevokeAllError(null);
     try {
@@ -91,7 +118,7 @@ export function AccountSessionsView() {
             type="button"
             variant="outline"
             size="sm"
-            onClick={() => refetch()}
+            onClick={() => void refetch()}
             disabled={isLoading}
             className="text-xs h-8 gap-1.5"
           >
@@ -137,6 +164,13 @@ export function AccountSessionsView() {
         </div>
       </div>
 
+      {revokeSessionError && (
+        <Alert variant="destructive" data-testid="sessions-revoke-error-alert">
+          <AlertCircle className="h-4 w-4" aria-hidden="true" />
+          <AlertDescription className="text-xs">{revokeSessionError}</AlertDescription>
+        </Alert>
+      )}
+
       <SovereignSessionRadar
         nodes={radarNodes}
         impossibleTravelDetected={Boolean(sliceSessionsData?.impossibleTravelDetected)}
@@ -148,7 +182,7 @@ export function AccountSessionsView() {
               }
             : undefined
         }
-        onKillNode={(nodeId) => void revokeSession(nodeId)}
+        onKillNode={(nodeId) => void handleRevokeSession(nodeId)}
       />
 
       <SessionsFleetListSection
@@ -157,7 +191,7 @@ export function AccountSessionsView() {
         otherSessions={otherSessions}
         otherCount={otherCount}
         isRevoking={isRevoking}
-        onRevoke={revokeSession}
+        onRevoke={handleRevokeSession}
       />
 
       <RevokeOtherSessionsDialog

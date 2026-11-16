@@ -1,20 +1,25 @@
 "use client";
 
 /**
- * RouteGuard (v3 — Phase 2 Option C Fail-Closed Security & Context Gate)
+ * RouteGuard (v3.1 — Synchronous Fail-Closed Security & Zero-Blank-Flash Gate)
  *
  * Enforces unified fail-closed route security & contextual access control:
- *  1. SSR + synchronous transition gate: never renders protected `{children}` before
- *     client mount or while a route/context key transition has not settled (zero flash).
- *  2. Authoritative manifest (`APP_ROUTE_MANIFEST`): zero `SYSTEM_PAGES` or module
+ *  1. SSR + client pre-mount gate: never renders protected `{children}` before
+ *     client mount or store hydration (`!isMounted || authLoading`).
+ *  2. Synchronous route authorization during render (`resolveRouteAccessSync`):
+ *     intra-context navigations between authorized routes (e.g. `/account/integrations`
+ *     -> `/account/integrations/new` or `/overview` -> `/crm`) resolve `"allow"` on the
+ *     very first render without resetting to `loading` or unmounting persistent layouts,
+ *     while unauthorized transitions still block children synchronously (zero flash).
+ *  3. Authoritative manifest (`APP_ROUTE_MANIFEST`): zero `SYSTEM_PAGES` or module
  *     prefix bypasses, production blocking for `devOnly` routes, and clean 404
  *     pass-through for unknown paths.
- *  3. Auth matrix (token x store state) with `?redirect=` preservation validated
+ *  4. Auth matrix (token x store state) with `?redirect=` preservation validated
  *     by `isSafeRedirectTarget`, non-leaking principal restoration, and complete
  *     `forceLogout()` cleanup (`app-storage` + nav store + tokens).
- *  4. Fail-closed PBAC (`canAccessPage`) + synced navigation (`isNavSyncedForContext`)
+ *  5. Fail-closed PBAC (`canAccessPage`) + synced navigation (`isNavSyncedForContext`)
  *     + explicit `NavigationErrorRecovery` (never fail-open).
- *  5. Backend/manifest context & entitlement gates (`TenantContextRequiredGate`,
+ *  6. Backend/manifest context & entitlement gates (`TenantContextRequiredGate`,
  *     `PlatformContextRequiredGate`, `FeatureUnavailableGate`) rendered inside
  *     `<DashboardLayout>` without mounting the blocked page component.
  */
@@ -33,7 +38,9 @@ import {
   matchAppRoute,
   normalizeRoutePath,
   isManifestPublicRoute,
+  type AppRouteManifestEntry,
 } from "@core/config/app-route-manifest";
+import type { AuthorizedRouteDescriptor } from "@core/navigation/domain/interfaces/INavigationRepository";
 import { useNavigationStore } from "@core/navigation/store/useNavigationStore";
 import { LoadingSpinner } from "@core/ui/loading-spinner";
 import { DashboardLayout } from "@core/ui/layout/dashboard-layout";
@@ -59,6 +66,41 @@ type GuardOutcome =
   | { kind: "tenant_context_required"; routePattern?: string }
   | { kind: "platform_context_required"; routePattern?: string }
   | { kind: "feature_disabled"; featureKey?: string | null };
+
+type RedirectReason =
+  | "dev_blocked"
+  | "auth_to_workspace"
+  | "login"
+  | "pending_payment"
+  | "must_change_password"
+  | "shell_pbac_denied"
+  | "menu_pbac_denied"
+  | "nav_denied";
+
+type RouteResolution =
+  | { kind: "settled"; outcome: GuardOutcome }
+  | { kind: "redirect"; reason: RedirectReason }
+  | { kind: "async_refresh_token"; isAuthPage: boolean }
+  | { kind: "async_restore_principal" };
+
+interface ResolveRouteAccessParams {
+  normalizedPath: string;
+  manifestEntry: AppRouteManifestEntry | null;
+  isDevBlockedInProd: boolean;
+  isPublicRoute: boolean;
+  isUnknownRoute: boolean;
+  contextKey: string;
+  activeTenantId: string | null;
+  isAuthenticated: boolean;
+  hasToken: boolean;
+  subscriptionStatus: string | null;
+  mustChangePassword: boolean;
+  routesError: string | null;
+  canAccessPage: (path: string) => boolean;
+  isNavSyncedForContext: (expectedKey?: string | null) => boolean;
+  getRouteDescriptor: (path: string) => AuthorizedRouteDescriptor | null;
+  hasRouteAccess: (path: string) => boolean;
+}
 
 const STANDARD_AUTH_PAGES = new Set([
   "/login",
@@ -113,22 +155,6 @@ const emptySubscribe = () => () => {};
 const getClientMountedSnapshot = () => true;
 const getServerMountedSnapshot = () => false;
 
-function outcomesEqual(a: GuardOutcome, b: GuardOutcome): boolean {
-  if (a.kind !== b.kind) return false;
-  switch (a.kind) {
-    case "nav_error":
-      return b.kind === "nav_error" && a.error === b.error;
-    case "tenant_context_required":
-      return b.kind === "tenant_context_required" && a.routePattern === b.routePattern;
-    case "platform_context_required":
-      return b.kind === "platform_context_required" && a.routePattern === b.routePattern;
-    case "feature_disabled":
-      return b.kind === "feature_disabled" && a.featureKey === b.featureKey;
-    default:
-      return true;
-  }
-}
-
 function findAlternativeWorkspaceRoute(
   currentPath: string,
   currentMenuKey: string | undefined,
@@ -162,6 +188,155 @@ function findAlternativeWorkspaceRoute(
   return allWorkspaceRoutes.find(isValidFallback) ?? null;
 }
 
+/**
+ * Pure synchronous route authorization evaluator executed during render so valid
+ * intra-context transitions resolve immediately without unmounting persistent shells.
+ */
+function resolveRouteAccessSync({
+  normalizedPath,
+  manifestEntry,
+  isDevBlockedInProd,
+  isPublicRoute,
+  isUnknownRoute,
+  contextKey,
+  activeTenantId,
+  isAuthenticated,
+  hasToken,
+  subscriptionStatus,
+  mustChangePassword,
+  routesError,
+  canAccessPage,
+  isNavSyncedForContext,
+  getRouteDescriptor,
+  hasRouteAccess,
+}: ResolveRouteAccessParams): RouteResolution {
+  const isStandardAuthPage = STANDARD_AUTH_PAGES.has(normalizedPath);
+  const isAuthPage = ALL_AUTH_PAGES.has(normalizedPath);
+
+  // 0. Production gate for development-only routes (e.g., /sileo-playground)
+  if (isDevBlockedInProd) {
+    return { kind: "redirect", reason: "dev_blocked" };
+  }
+
+  // 1. Authenticated user landing on standard auth pages -> safe redirect or dashboard
+  if (isStandardAuthPage && hasToken && isAuthenticated) {
+    return { kind: "redirect", reason: "auth_to_workspace" };
+  }
+
+  // 2. Public manifest routes (always allowed without auth unless Case 2 silent refresh applies)
+  if (isPublicRoute) {
+    const needsSilentRefreshOnAuthPage = isStandardAuthPage && !hasToken && isAuthenticated;
+    if (!needsSilentRefreshOnAuthPage) {
+      return { kind: "settled", outcome: { kind: "allow" } };
+    }
+  }
+
+  // 3. Unknown routes (not in APP_ROUTE_MANIFEST) pass through so Next.js renders 404 cleanly
+  if (isUnknownRoute) {
+    return { kind: "settled", outcome: { kind: "allow" } };
+  }
+
+  // 4. Case 2: No access token in memory, store still flagged authenticated -> silent refresh
+  if (!hasToken && isAuthenticated) {
+    return { kind: "async_refresh_token", isAuthPage };
+  }
+
+  // 5. Case 3: No token + not authenticated -> /login?redirect=... (or allow auth pages)
+  if (!hasToken && !isAuthenticated) {
+    if (isAuthPage) {
+      return { kind: "settled", outcome: { kind: "allow" } };
+    }
+    return { kind: "redirect", reason: "login" };
+  }
+
+  // 6. Case 4: Token exists, store NOT authenticated -> restore principal cleanly
+  if (hasToken && !isAuthenticated) {
+    return { kind: "async_restore_principal" };
+  }
+
+  // 7. Case 1: Authenticated with token
+  // 7a. PendingPayment lock wall
+  if (subscriptionStatus === "PendingPayment") {
+    if (normalizedPath !== "/activate-workspace") {
+      return { kind: "redirect", reason: "pending_payment" };
+    }
+    return { kind: "settled", outcome: { kind: "allow" } };
+  }
+
+  // 7b. Forced password change wall
+  if (mustChangePassword && normalizedPath !== "/change-password") {
+    return { kind: "redirect", reason: "must_change_password" };
+  }
+
+  // 7c. Shell-authenticated routes (non-module & Account World routes)
+  if (manifestEntry?.binding === "shell_authenticated") {
+    if (!canAccessPage(normalizedPath)) {
+      return { kind: "redirect", reason: "shell_pbac_denied" };
+    }
+    return { kind: "settled", outcome: { kind: "allow" } };
+  }
+
+  // 7d. Dynamic navigation synchronization gate for menu_bound routes (NEVER fail-open)
+  if (USE_DYNAMIC_NAVIGATION) {
+    if (routesError) {
+      return { kind: "settled", outcome: { kind: "nav_error", error: routesError } };
+    }
+    if (!isNavSyncedForContext(contextKey)) {
+      return { kind: "settled", outcome: { kind: "loading" } };
+    }
+  }
+
+  // 7e. Fail-closed PBAC check (`canAccessPage` returns false on missing/unmatched entries)
+  if (!canAccessPage(normalizedPath)) {
+    return { kind: "redirect", reason: "menu_pbac_denied" };
+  }
+
+  // 7f. Context & Feature Entitlement gates (rendered in DashboardLayout WITHOUT mounting children)
+  if (USE_DYNAMIC_NAVIGATION) {
+    const descriptor = getRouteDescriptor(normalizedPath);
+
+    if (
+      descriptor?.accessState === "tenant_context_required" ||
+      (!descriptor && manifestEntry?.requiresTenantContext && !activeTenantId)
+    ) {
+      return {
+        kind: "settled",
+        outcome: {
+          kind: "tenant_context_required",
+          routePattern: descriptor?.route ?? manifestEntry?.pattern,
+        },
+      };
+    }
+
+    if (descriptor?.accessState === "platform_context_required") {
+      return {
+        kind: "settled",
+        outcome: {
+          kind: "platform_context_required",
+          routePattern: descriptor?.route ?? manifestEntry?.pattern,
+        },
+      };
+    }
+
+    if (descriptor?.accessState === "feature_disabled") {
+      return {
+        kind: "settled",
+        outcome: {
+          kind: "feature_disabled",
+          featureKey: descriptor.requiredFeature ?? null,
+        },
+      };
+    }
+
+    // 7g. Navigation Store menu membership gate (menu_bound route must be authorized)
+    if (!hasRouteAccess(normalizedPath)) {
+      return { kind: "redirect", reason: "nav_denied" };
+    }
+  }
+
+  return { kind: "settled", outcome: { kind: "allow" } };
+}
+
 function renderLoadingScreen() {
   return (
     <div className="flex min-h-screen items-center justify-center bg-nx-ground">
@@ -190,9 +365,14 @@ export function RouteGuard({ children }: RouteGuardProps) {
   const routesLoaded = useNavigationStore((s) => s.routesLoaded);
   const routesContextKey = useNavigationStore((s) => s.routesContextKey);
   const routesError = useNavigationStore((s) => s.routesError);
+  const routesLoadedAt = useNavigationStore((s) => s.routesLoadedAt);
   const isNavSyncedForContext = useCallback(
     (expectedKey?: string | null) =>
       useNavigationStore.getState().isNavSyncedForContext(expectedKey),
+    []
+  );
+  const getRouteDescriptor = useCallback(
+    (p: string) => useNavigationStore.getState().getRouteDescriptor(p),
     []
   );
   const hasRouteAccess = useCallback(
@@ -217,6 +397,7 @@ export function RouteGuard({ children }: RouteGuardProps) {
     getServerMountedSnapshot
   );
   const [checkTrigger, setCheckTrigger] = useState(0);
+  const [failedAuthPageRefreshKey, setFailedAuthPageRefreshKey] = useState<string | null>(null);
 
   const targetKey = [
     normalizedPath,
@@ -228,19 +409,15 @@ export function RouteGuard({ children }: RouteGuardProps) {
     routesLoaded ? "1" : "0",
     routesContextKey ?? "",
     routesError ?? "",
+    String(routesLoadedAt ?? ""),
     String(checkTrigger),
   ].join("::");
-
-  const [settled, setSettled] = useState<{ targetKey: string; outcome: GuardOutcome }>({
-    targetKey: "",
-    outcome: { kind: "loading" },
-  });
 
   const hasRedirected = useRef(false);
   const isRefreshing = useRef(false);
 
   // Store callback/service helpers in a ref synced after commit so unstable hook
-  // references (e.g., fresh provider objects or test mocks) never re-trigger checkAccess.
+  // references (e.g., fresh provider objects or test mocks) never re-trigger effects.
   const latestDepsRef = useRef({
     canAccessPage,
     router,
@@ -248,7 +425,6 @@ export function RouteGuard({ children }: RouteGuardProps) {
     authRepository,
     setAuth,
     setSubscriptionInfo,
-    isNavSyncedForContext,
     hasRouteAccess,
   });
 
@@ -260,7 +436,6 @@ export function RouteGuard({ children }: RouteGuardProps) {
       authRepository,
       setAuth,
       setSubscriptionInfo,
-      isNavSyncedForContext,
       hasRouteAccess,
     };
   });
@@ -270,113 +445,154 @@ export function RouteGuard({ children }: RouteGuardProps) {
     hasRedirected.current = false;
   }, [normalizedPath, contextKey]);
 
-  // Cross-tab token refresh coordination
+  // Cross-tab token refresh and in-memory token store coordination
   useEffect(() => {
     authBroadcast.onTokenRefreshed(() => {
       appLogger.debug("[RouteGuard] Observed cross-tab token refresh — re-checking access");
       setCheckTrigger((prev) => prev + 1);
     });
+    if (typeof secureTokenService.subscribe === "function") {
+      return secureTokenService.subscribe(() => {
+        setCheckTrigger((prev) => prev + 1);
+      });
+    }
   }, []);
+
+  const tokenExpired =
+    isMounted &&
+    !authLoading &&
+    typeof secureTokenService.isTokenExpired === "function" &&
+    secureTokenService.isTokenExpired();
+
+  const hasToken = isMounted && !authLoading && !tokenExpired ? secureTokenService.hasToken() : false;
+
+  const resolution: RouteResolution =
+    isMounted && !authLoading
+      ? resolveRouteAccessSync({
+          normalizedPath,
+          manifestEntry,
+          isDevBlockedInProd,
+          isPublicRoute,
+          isUnknownRoute,
+          contextKey,
+          activeTenantId,
+          isAuthenticated,
+          hasToken,
+          subscriptionStatus,
+          mustChangePassword,
+          routesError,
+          canAccessPage,
+          isNavSyncedForContext,
+          getRouteDescriptor,
+          hasRouteAccess,
+        })
+      : { kind: "settled", outcome: { kind: "loading" } };
+
+  const resolutionKind = resolution.kind;
+  const redirectReason = resolution.kind === "redirect" ? resolution.reason : null;
+  const asyncIsAuthPage =
+    resolution.kind === "async_refresh_token" ? resolution.isAuthPage : false;
+  const menuRouteKey = manifestEntry?.menuRouteKey;
 
   useEffect(() => {
     if (!isMounted || authLoading) return;
 
+    // Ensure expired tokens are cleared in effect scope rather than during render.
+    if (tokenExpired) {
+      secureTokenService.hasToken();
+    }
+
+    if (resolutionKind === "settled") return;
+
     let cancelled = false;
-    const commitOutcome = (outcome: GuardOutcome) => {
-      if (!cancelled) {
-        setSettled((prev) =>
-          prev.targetKey === targetKey && outcomesEqual(prev.outcome, outcome)
-            ? prev
-            : { targetKey, outcome }
-        );
-      }
-    };
+    const {
+      canAccessPage: checkPagePermission,
+      router: navRouter,
+      queryClient: qClient,
+      authRepository: authRepo,
+      setAuth: commitAuth,
+      setSubscriptionInfo: commitSubInfo,
+      hasRouteAccess: checkNavRoute,
+    } = latestDepsRef.current;
 
-    const checkAccess = async () => {
-      const {
-        canAccessPage: checkPagePermission,
-        router: navRouter,
-        queryClient: qClient,
-        authRepository: authRepo,
-        setAuth: commitAuth,
-        setSubscriptionInfo: commitSubInfo,
-        isNavSyncedForContext: checkNavSynced,
-        hasRouteAccess: checkNavRoute,
-      } = latestDepsRef.current;
+    const runSideEffects = async () => {
+      if (hasRedirected.current) return;
 
-      const hasToken = secureTokenService.hasToken();
-      const isStandardAuthPage = STANDARD_AUTH_PAGES.has(normalizedPath);
-      const isAuthPage = ALL_AUTH_PAGES.has(normalizedPath);
+      if (resolutionKind === "redirect" && redirectReason !== null) {
+        hasRedirected.current = true;
+        switch (redirectReason) {
+          case "dev_blocked":
+            navRouter.replace("/not-found");
+            return;
+          case "auth_to_workspace": {
+            appLogger.debug("[RouteGuard] Authenticated user on auth page → workspace");
+            const mcp = useAppStore.getState().mustChangePassword;
+            const redirectParam =
+              typeof window !== "undefined"
+                ? new URLSearchParams(window.location.search).get("redirect")
+                : null;
+            const safeRedirect = isSafeRedirectTarget(redirectParam) ? redirectParam : null;
+            const rawDefault = useAppStore.getState().defaultRedirectPath;
 
-      // 0. Production gate for development-only routes (e.g., /sileo-playground)
-      if (isDevBlockedInProd) {
-        commitOutcome({ kind: "loading" });
-        if (!hasRedirected.current) {
-          hasRedirected.current = true;
-          navRouter.replace("/not-found");
-        }
-        return;
-      }
+            let targetPath =
+              safeRedirect || (!rawDefault || rawDefault === "/" ? "/overview" : rawDefault);
 
-      // 1. Authenticated user landing on standard auth pages -> safe redirect or dashboard
-      if (isStandardAuthPage && hasToken && isAuthenticated) {
-        appLogger.debug("[RouteGuard] Authenticated user on auth page → workspace");
-        if (!hasRedirected.current) {
-          hasRedirected.current = true;
-          const mcp = useAppStore.getState().mustChangePassword;
-          const redirectParam =
-            typeof window !== "undefined"
-              ? new URLSearchParams(window.location.search).get("redirect")
-              : null;
-          const safeRedirect = isSafeRedirectTarget(redirectParam) ? redirectParam : null;
-          const rawDefault = useAppStore.getState().defaultRedirectPath;
+            if (targetPath === "/overview" && !checkPagePermission("/overview")) {
+              targetPath =
+                findAlternativeWorkspaceRoute(
+                  "/overview",
+                  undefined,
+                  checkPagePermission,
+                  checkNavRoute,
+                  true
+                ) || "/hub";
+            }
 
-          let targetPath =
-            safeRedirect || (!rawDefault || rawDefault === "/" ? "/overview" : rawDefault);
-
-          if (targetPath === "/overview" && !checkPagePermission("/overview")) {
-            targetPath =
-              findAlternativeWorkspaceRoute(
-                "/overview",
-                undefined,
-                checkPagePermission,
-                checkNavRoute,
-                true
-              ) || "/hub";
+            navRouter.replace(mcp ? "/change-password" : targetPath);
+            return;
           }
-
-          navRouter.replace(mcp ? "/change-password" : targetPath);
+          case "login":
+            appLogger.debug("[RouteGuard] Not authenticated → /login");
+            forceLogout();
+            navRouter.push(buildLoginRedirectUrl(normalizedPath));
+            return;
+          case "pending_payment":
+            appLogger.debug("[RouteGuard] Pending payment status → /activate-workspace");
+            navRouter.replace("/activate-workspace");
+            return;
+          case "must_change_password":
+            appLogger.debug("[RouteGuard] Must change password → /change-password");
+            navRouter.replace("/change-password");
+            return;
+          case "shell_pbac_denied":
+            navRouter.push("/not-authorized");
+            return;
+          case "menu_pbac_denied":
+          case "nav_denied": {
+            appLogger.debug(
+              redirectReason === "menu_pbac_denied"
+                ? "[RouteGuard] Access denied by fail-closed PBAC"
+                : "[RouteGuard] Access denied by navigation store"
+            );
+            const fallback = findAlternativeWorkspaceRoute(
+              normalizedPath,
+              menuRouteKey,
+              checkPagePermission,
+              checkNavRoute,
+              true
+            );
+            if (fallback) {
+              navRouter.replace(fallback);
+              return;
+            }
+            navRouter.push("/not-authorized");
+            return;
+          }
         }
-        commitOutcome({ kind: "loading" });
-        return;
       }
 
-      // 2. Public manifest routes (always allowed without auth unless Case 2 silent refresh applies)
-      if (isPublicRoute) {
-        const needsSilentRefreshOnAuthPage = isStandardAuthPage && !hasToken && isAuthenticated;
-        if (!needsSilentRefreshOnAuthPage) {
-          commitOutcome({ kind: "allow" });
-          return;
-        }
-      }
-
-      // 3. Unknown routes (not in APP_ROUTE_MANIFEST) pass through so Next.js renders 404 cleanly
-      if (isUnknownRoute) {
-        commitOutcome({ kind: "allow" });
-        return;
-      }
-
-      if (hasRedirected.current) {
-        commitOutcome({ kind: "loading" });
-        return;
-      }
-
-      // 4. Case 2: No access token in memory, store still flagged authenticated -> silent refresh
-      if (!hasToken && isAuthenticated) {
-        if (isRefreshing.current) {
-          commitOutcome({ kind: "loading" });
-          return;
-        }
+      if (resolutionKind === "async_refresh_token") {
+        if (isRefreshing.current) return;
         isRefreshing.current = true;
         appLogger.debug("[RouteGuard] No token, store=authenticated → silent refresh");
 
@@ -410,7 +626,6 @@ export function RouteGuard({ children }: RouteGuardProps) {
           appLogger.error("[RouteGuard] Silent refresh failed:", error);
         }
 
-        // Cross-tab recovery if another tab already rotated the refresh cookie and populated a token
         if (secureTokenService.hasToken() && useAppStore.getState().isAuthenticated) {
           appLogger.debug(
             "[RouteGuard] Own refresh failed but cross-tab refresh succeeded — recovering"
@@ -428,33 +643,16 @@ export function RouteGuard({ children }: RouteGuardProps) {
         forceLogout();
         qClient.clear();
 
-        if (!isAuthPage && !hasRedirected.current) {
+        if (!asyncIsAuthPage && !hasRedirected.current) {
           hasRedirected.current = true;
           navRouter.push(buildLoginRedirectUrl(normalizedPath));
-          commitOutcome({ kind: "loading" });
-        } else {
-          commitOutcome({ kind: "allow" });
+        } else if (!cancelled && asyncIsAuthPage) {
+          setFailedAuthPageRefreshKey(targetKey);
         }
         return;
       }
 
-      // 5. Case 3: No token + not authenticated -> /login?redirect=...
-      if (!hasToken && !isAuthenticated) {
-        if (!isAuthPage && !hasRedirected.current) {
-          appLogger.debug("[RouteGuard] Not authenticated → /login");
-          hasRedirected.current = true;
-          forceLogout();
-          navRouter.push(buildLoginRedirectUrl(normalizedPath));
-        } else if (isAuthPage) {
-          commitOutcome({ kind: "allow" });
-          return;
-        }
-        commitOutcome({ kind: "loading" });
-        return;
-      }
-
-      // 6. Case 4: Token exists, store NOT authenticated -> restore principal cleanly
-      if (hasToken && !isAuthenticated) {
+      if (resolutionKind === "async_restore_principal") {
         appLogger.debug("[RouteGuard] Token exists, store empty → restoring session");
         try {
           const user = await authRepo.getCurrentPrincipal();
@@ -472,145 +670,16 @@ export function RouteGuard({ children }: RouteGuardProps) {
           appLogger.error("[RouteGuard] Session restore failed:", error);
         }
 
-        // Null principal or thrown error both terminate cleanly with redirect + cache cleanup
         if (!hasRedirected.current) {
           hasRedirected.current = true;
           forceLogout();
           qClient.clear();
           navRouter.push(buildLoginRedirectUrl(normalizedPath));
         }
-        commitOutcome({ kind: "loading" });
-        return;
       }
-
-      // 7. Case 1: Authenticated with token
-      // 7a. PendingPayment lock wall
-      if (subscriptionStatus === "PendingPayment") {
-        if (normalizedPath !== "/activate-workspace") {
-          appLogger.debug("[RouteGuard] Pending payment status → /activate-workspace");
-          hasRedirected.current = true;
-          navRouter.replace("/activate-workspace");
-          commitOutcome({ kind: "loading" });
-          return;
-        }
-        commitOutcome({ kind: "allow" });
-        return;
-      }
-
-      // 7b. Forced password change wall
-      if (mustChangePassword && normalizedPath !== "/change-password") {
-        appLogger.debug("[RouteGuard] Must change password → /change-password");
-        hasRedirected.current = true;
-        navRouter.replace("/change-password");
-        commitOutcome({ kind: "loading" });
-        return;
-      }
-
-      // 7c. Shell-authenticated routes (non-module pages mapped to `[]` in PAGE_PERMISSIONS)
-      if (manifestEntry.binding === "shell_authenticated") {
-        if (!checkPagePermission(normalizedPath)) {
-          hasRedirected.current = true;
-          navRouter.push("/not-authorized");
-          commitOutcome({ kind: "loading" });
-          return;
-        }
-        commitOutcome({ kind: "allow" });
-        return;
-      }
-
-      // 7d. Dynamic navigation synchronization gate for menu_bound routes (NEVER fail-open)
-      if (USE_DYNAMIC_NAVIGATION) {
-        if (routesError) {
-          commitOutcome({ kind: "nav_error", error: routesError });
-          return;
-        }
-
-        if (!checkNavSynced(contextKey)) {
-          commitOutcome({ kind: "loading" });
-          return;
-        }
-      }
-
-      // 7e. Fail-closed PBAC check (`canAccessPage` returns false on missing/unmatched entries)
-      if (!checkPagePermission(normalizedPath)) {
-        appLogger.debug("[RouteGuard] Access denied by fail-closed PBAC");
-        const fallback = findAlternativeWorkspaceRoute(
-          normalizedPath,
-          manifestEntry.menuRouteKey,
-          checkPagePermission,
-          checkNavRoute,
-          true
-        );
-        if (fallback) {
-          hasRedirected.current = true;
-          navRouter.replace(fallback);
-          commitOutcome({ kind: "loading" });
-          return;
-        }
-        hasRedirected.current = true;
-        navRouter.push("/not-authorized");
-        commitOutcome({ kind: "loading" });
-        return;
-      }
-
-      // 7f. Context & Feature Entitlement gates (rendered in DashboardLayout WITHOUT mounting children)
-      if (USE_DYNAMIC_NAVIGATION) {
-        const descriptor = useNavigationStore.getState().getRouteDescriptor(normalizedPath);
-
-        if (
-          descriptor?.accessState === "tenant_context_required" ||
-          (!descriptor && manifestEntry.requiresTenantContext && !activeTenantId)
-        ) {
-          commitOutcome({
-            kind: "tenant_context_required",
-            routePattern: descriptor?.route ?? manifestEntry.pattern,
-          });
-          return;
-        }
-
-        if (descriptor?.accessState === "platform_context_required") {
-          commitOutcome({
-            kind: "platform_context_required",
-            routePattern: descriptor?.route ?? manifestEntry.pattern,
-          });
-          return;
-        }
-
-        if (descriptor?.accessState === "feature_disabled") {
-          commitOutcome({
-            kind: "feature_disabled",
-            featureKey: descriptor.requiredFeature ?? null,
-          });
-          return;
-        }
-
-        // 7g. Navigation Store menu membership gate (menu_bound route must be authorized)
-        if (!checkNavRoute(normalizedPath)) {
-          appLogger.debug("[RouteGuard] Access denied by navigation store");
-          const fallback = findAlternativeWorkspaceRoute(
-            normalizedPath,
-            manifestEntry.menuRouteKey,
-            checkPagePermission,
-            checkNavRoute,
-            true
-          );
-          if (fallback) {
-            hasRedirected.current = true;
-            navRouter.replace(fallback);
-            commitOutcome({ kind: "loading" });
-            return;
-          }
-          hasRedirected.current = true;
-          navRouter.push("/not-authorized");
-          commitOutcome({ kind: "loading" });
-          return;
-        }
-      }
-
-      commitOutcome({ kind: "allow" });
     };
 
-    checkAccess();
+    void runSideEffects();
 
     return () => {
       cancelled = true;
@@ -618,43 +687,36 @@ export function RouteGuard({ children }: RouteGuardProps) {
   }, [
     isMounted,
     authLoading,
+    tokenExpired,
     targetKey,
+    resolutionKind,
+    redirectReason,
+    asyncIsAuthPage,
     normalizedPath,
-    manifestEntry,
-    isDevBlockedInProd,
-    isPublicRoute,
-    isUnknownRoute,
-    contextKey,
-    activeTenantId,
-    isAuthenticated,
-    subscriptionStatus,
-    mustChangePassword,
-    routesError,
+    menuRouteKey,
   ]);
 
-  const handleRetryNavigation = useCallback(() => {
+  const handleRetryNavigation = () => {
     setCheckTrigger((prev) => prev + 1);
     refreshNavigation();
-  }, [refreshNavigation]);
+  };
 
   // SSR & client pre-mount gate: NEVER render protected routes before hydration/check settles
-  if (!isMounted) {
+  if (!isMounted || authLoading) {
     if (isPublicRoute || isUnknownRoute) {
       return <>{children}</>;
     }
     return renderLoadingScreen();
   }
 
-  if (authLoading) {
-    if (isPublicRoute || isUnknownRoute) {
-      return <>{children}</>;
-    }
-    return renderLoadingScreen();
-  }
-
-  // Synchronous transition gate: if targetKey changed since last settled outcome, block 1-frame flash
   const effectiveOutcome: GuardOutcome =
-    settled.targetKey === targetKey ? settled.outcome : { kind: "loading" };
+    resolution.kind === "settled"
+      ? resolution.outcome
+      : resolution.kind === "async_refresh_token" &&
+          resolution.isAuthPage &&
+          failedAuthPageRefreshKey === targetKey
+        ? { kind: "allow" }
+        : { kind: "loading" };
 
   switch (effectiveOutcome.kind) {
     case "allow":

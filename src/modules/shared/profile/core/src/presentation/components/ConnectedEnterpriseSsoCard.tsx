@@ -9,7 +9,9 @@
 import { useState } from "react";
 import { useI18n } from "@core/providers/i18n-provider";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@core/ui/card";
+import { Alert, AlertDescription } from "@core/ui/alert";
 import { Badge } from "@core/ui/badge";
+import { ErrorMessage } from "@core/ui/error-message";
 import { Skeleton } from "@core/ui/skeleton";
 import { useExternalLoginsViewModel } from "../viewmodels/useExternalLoginsViewModel";
 import { useAccountContextSliceViewModel } from "../viewmodels/useSovereignAccountSlicesViewModel";
@@ -23,7 +25,7 @@ import {
   findFederatedProviderId,
   matchExternalLogin,
 } from "./EnterpriseSsoProviderTile";
-import { ShieldCheck, Shield } from "lucide-react";
+import { AlertCircle, ShieldCheck, Shield } from "lucide-react";
 
 /**
  * Displays linked and available enterprise SSO providers (OIDC / SAML 2.0)
@@ -37,8 +39,12 @@ export function ConnectedEnterpriseSsoCard() {
     externalLogins,
     providers,
     isLoading,
+    isError,
+    error,
+    refetch,
     isUnlinking,
     unlink,
+    unlinkAsync,
     handleLink,
     linkAccount,
     isLinking,
@@ -48,14 +54,22 @@ export function ConnectedEnterpriseSsoCard() {
     useState<SsoProviderCatalogItem | null>(null);
   const [unlinkingId, setUnlinkingId] = useState<string | null>(null);
   const [confirmingUnlinkId, setConfirmingUnlinkId] = useState<string | null>(null);
+  const [unlinkError, setUnlinkError] = useState<string | null>(null);
 
   const handleDisconnect = async (loginId: string) => {
     setUnlinkingId(loginId);
+    setUnlinkError(null);
     try {
-      unlink(loginId);
+      if (unlinkAsync) {
+        await unlinkAsync(loginId);
+      } else {
+        await Promise.resolve(unlink(loginId));
+      }
+      setConfirmingUnlinkId(null);
+    } catch (err: unknown) {
+      setUnlinkError(err instanceof Error && err.message ? err.message : t("sso.unlinkError"));
     } finally {
       setUnlinkingId(null);
-      setConfirmingUnlinkId(null);
     }
   };
 
@@ -101,12 +115,24 @@ export function ConnectedEnterpriseSsoCard() {
           </Badge>
         </CardHeader>
 
-        <CardContent>
+        <CardContent className="space-y-3">
+          {unlinkError && (
+            <Alert variant="destructive" data-testid="sso-unlink-error-alert">
+              <AlertCircle className="h-4 w-4" aria-hidden="true" />
+              <AlertDescription className="text-xs">{unlinkError}</AlertDescription>
+            </Alert>
+          )}
           {isLoading ? (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5">
               <Skeleton className="h-28 w-full rounded-xl" />
               <Skeleton className="h-28 w-full rounded-xl" />
             </div>
+          ) : isError && externalLogins.length === 0 ? (
+            <ErrorMessage
+              size="sm"
+              message={error || t("profile.loadError.description")}
+              onRetry={() => void refetch?.()}
+            />
           ) : isPlatformAdmin && visibleCatalog.length === 0 ? (
             <div className="p-4 rounded-xl border border-nx-line bg-nx-ground flex items-start gap-3">
               <Shield className="h-4 w-4 text-nx-accent shrink-0 mt-0.5" style={{ minWidth: 16, minHeight: 16 }} />
@@ -129,10 +155,18 @@ export function ConnectedEnterpriseSsoCard() {
                     item={item}
                     matchingLogin={matchingLogin}
                     isConfirmingUnlink={Boolean(matchingLogin && confirmingUnlinkId === matchingLogin.id)}
-                    isUnlinkingThis={Boolean(matchingLogin && isUnlinking && unlinkingId === matchingLogin.id)}
+                    isUnlinkingThis={Boolean(
+                      matchingLogin && (isUnlinking || unlinkingId === matchingLogin.id) && unlinkingId === matchingLogin.id
+                    )}
                     onConnect={setActiveConnectProvider}
-                    onRequestUnlink={setConfirmingUnlinkId}
-                    onCancelUnlink={() => setConfirmingUnlinkId(null)}
+                    onRequestUnlink={(id) => {
+                      setUnlinkError(null);
+                      setConfirmingUnlinkId(id);
+                    }}
+                    onCancelUnlink={() => {
+                      setUnlinkError(null);
+                      setConfirmingUnlinkId(null);
+                    }}
                     onConfirmUnlink={handleDisconnect}
                   />
                 );

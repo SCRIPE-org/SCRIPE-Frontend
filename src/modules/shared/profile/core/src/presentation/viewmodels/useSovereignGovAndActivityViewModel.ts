@@ -7,6 +7,7 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { container } from "@modules/profile/di";
 import type { SovereignActivityQuery } from "../../domain/entities/SovereignAccountEntities";
+import type { RequestBreakGlassPayload } from "../../domain/interfaces/ISovereignAccountRepository";
 import { sovereignAccountKeys } from "../utils/sovereignAccountKeys";
 
 /** Queries governance state and mutates time-bounded authority delegations. */
@@ -22,17 +23,33 @@ export function useSovereignGovernanceSlice() {
     ) => container.sovereignAccountRepository.createDelegation(data),
     onSuccess: () => qc.invalidateQueries({ queryKey: sovereignAccountKeys.governance() }),
   });
+  const requestBreakGlassMutation = useMutation({
+    mutationFn: (data: RequestBreakGlassPayload) =>
+      container.sovereignAccountRepository.requestBreakGlass(data),
+    onSuccess: () => {
+      void qc.invalidateQueries({ queryKey: sovereignAccountKeys.governance() });
+      void qc.invalidateQueries({ queryKey: sovereignAccountKeys.activity() });
+    },
+  });
   const revokeDelegationMutation = useMutation({
     mutationFn: (id: string) => container.sovereignAccountRepository.revokeDelegation(id),
     onSuccess: () => qc.invalidateQueries({ queryKey: sovereignAccountKeys.governance() }),
   });
-  return { ...query, createDelegationMutation, revokeDelegationMutation };
+  return { ...query, createDelegationMutation, requestBreakGlassMutation, revokeDelegationMutation };
 }
 
 /** Presentation ViewModel formatting role provenance and delegation actions. */
 export function useAccountGovernanceSliceViewModel() {
-  const { data, isLoading, createDelegationMutation, revokeDelegationMutation } =
-    useSovereignGovernanceSlice();
+  const {
+    data,
+    isLoading,
+    isError,
+    error,
+    refetch,
+    createDelegationMutation,
+    requestBreakGlassMutation,
+    revokeDelegationMutation,
+  } = useSovereignGovernanceSlice();
   return {
     governance: data
       ? {
@@ -68,6 +85,9 @@ export function useAccountGovernanceSliceViewModel() {
         }
       : undefined,
     isLoadingGovernance: isLoading,
+    isGovernanceError: isError,
+    governanceError: error instanceof Error ? error.message : null,
+    refetchGovernance: refetch,
     createDelegation: (payload: {
       delegateAdminId?: string;
       delegateDisplayName?: string;
@@ -90,6 +110,9 @@ export function useAccountGovernanceSliceViewModel() {
         expiresAtUtc: payload.expiresAtUtc,
       }),
     isCreatingDelegation: createDelegationMutation.isPending,
+    requestBreakGlass: (payload: RequestBreakGlassPayload) =>
+      requestBreakGlassMutation.mutateAsync(payload),
+    isRequestingBreakGlass: requestBreakGlassMutation.isPending,
     revokeDelegation: (id: string) => revokeDelegationMutation.mutateAsync(id),
     isRevokingDelegation: revokeDelegationMutation.isPending,
   };
@@ -110,6 +133,8 @@ export function useAccountActivitySliceViewModel(query?: SovereignActivityQuery)
     activity: result.data,
     isLoadingActivity: result.isLoading,
     isFetchingActivity: result.isFetching,
+    isActivityError: result.isError,
+    activityError: result.error instanceof Error ? result.error.message : null,
     refetchActivity: result.refetch,
   };
 }
