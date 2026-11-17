@@ -45,13 +45,33 @@ import {
   ShieldCheck
 } from "lucide-react";
 
-function getProgramImage(sportCode?: string): string {
-  const code = (sportCode || "").toUpperCase();
-  if (code.includes("SWIM")) return "/images/academy/program_swimming.png";
-  if (code.includes("PADEL")) return "/images/academy/program_padel.png";
-  if (code.includes("BASKET")) return "/images/academy/program_basketball.png";
-  if (code.includes("GYM")) return "/images/academy/program_gymnastics.png";
-  return "/images/academy/program_football.png";
+export function getProgramImage(sportCode?: string, sportName?: string, programName?: string): string | null {
+  const terms = [sportCode, sportName, programName]
+    .filter(Boolean)
+    .join(" ")
+    .toUpperCase();
+
+  if (terms.includes("SWIM") || terms.includes("AQUATIC") || terms.includes("WATER") || terms.includes("سباحة")) {
+    return "/images/academy/program_swimming.png";
+  }
+  if (terms.includes("PADEL") || terms.includes("PADDLE") || terms.includes("باديل") || terms.includes("بادل")) {
+    return "/images/academy/program_padel.png";
+  }
+  if (terms.includes("BASKET") || terms.includes("HOOPS") || terms.includes("BBALL") || terms.includes("سلة")) {
+    return "/images/academy/program_basketball.png";
+  }
+  if (terms.includes("GYM") || terms.includes("TUMBLING") || terms.includes("FITNESS") || terms.includes("جمباز")) {
+    return "/images/academy/program_gymnastics.png";
+  }
+  if (terms.includes("FOOT") || terms.includes("SOCC") || terms.includes("FUTSAL") || terms.includes("قدم")) {
+    return "/images/academy/program_football.png";
+  }
+  if (terms.includes("ELITE") || terms.includes("U12")) {
+    return "/images/academy/program_u12_elite.png";
+  }
+
+  // Never return an arbitrary football fallback for unsupported sports (e.g., Tennis, Multi-Sport, etc.)
+  return null;
 }
 
 export function AcademyProgramsView() {
@@ -464,7 +484,7 @@ export function AcademyProgramsView() {
           {filteredPrograms.map((program) => {
             const sport = state.sports.find(s => s.id === program.sportId);
             const sportName = isAr && sport?.nameAr ? sport.nameAr : (sport?.nameEn || "Multi-Sport");
-            const bgImage = getProgramImage(sport?.code || program.code);
+            const bgImage = getProgramImage(sport?.code, sport?.nameEn, program.nameEn || program.code);
 
             return (
               <div
@@ -473,17 +493,33 @@ export function AcademyProgramsView() {
               >
                 {/* Left Side: Sport Photo with Diagonal Lime Corner Accent Slice */}
                 <div className="w-full sm:w-[190px] h-[160px] sm:h-auto shrink-0 relative overflow-hidden bg-nx-raised">
-                  <Image
-                    src={bgImage}
-                    alt={program.nameEn}
-                    fill
-                    className="object-cover object-center group-hover:scale-105 transition-transform duration-500"
-                    unoptimized
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t sm:bg-gradient-to-r from-black/80 via-transparent to-transparent" />
+                  {bgImage ? (
+                    <Image
+                      src={bgImage}
+                      alt={program.nameEn}
+                      fill
+                      className="object-cover object-center group-hover:scale-105 transition-transform duration-500"
+                      unoptimized
+                    />
+                  ) : (
+                    <div className="w-full h-full min-h-[160px] flex flex-col items-center justify-center p-4 bg-gradient-to-br from-nx-surface via-nx-raised to-nx-surface relative overflow-hidden">
+                      <Image
+                        src="/images/academy/scripe_neon_watermark.png"
+                        alt="SCRIPE"
+                        fill
+                        className="object-contain opacity-25 p-4"
+                        unoptimized
+                      />
+                      <div className="relative z-10 flex flex-col items-center text-center space-y-1">
+                        <Activity className="h-7 w-7 text-nx-accent" />
+                        <span className="text-[10px] font-bold text-nx-ink uppercase tracking-wider">{sportName}</span>
+                      </div>
+                    </div>
+                  )}
+                  <div className="absolute inset-0 bg-gradient-to-t sm:bg-gradient-to-r from-black/80 via-transparent to-transparent pointer-events-none" />
 
                   {/* Sport Code Pill on top left */}
-                  <div className="absolute top-3 left-3 rtl:left-auto rtl:right-3">
+                  <div className="absolute top-3 left-3 rtl:left-auto rtl:right-3 z-10">
                     <span className="font-mono text-[10px] font-bold text-nx-accent bg-black/70 px-2 py-0.5 rounded border border-nx-accent-fill/30">
                       {program.code}
                     </span>
@@ -491,7 +527,7 @@ export function AcademyProgramsView() {
 
                   {/* Authentic Diagonal Signal Lime Corner Accent Streak */}
                   <div
-                    className="absolute bottom-0 right-0 w-12 h-12 bg-nx-accent-fill pointer-events-none"
+                    className="absolute bottom-0 right-0 w-12 h-12 bg-nx-accent-fill pointer-events-none z-10"
                     style={{ clipPath: "polygon(100% 0, 0 100%, 100% 100%)" }}
                   />
                 </div>
@@ -797,18 +833,35 @@ export function AcademyProgramsView() {
             <div className="flex-1 overflow-y-auto p-4 sm:p-5 space-y-5 text-xs">
               {/* Hero Banner with Sport Image & Metadata */}
               <div className="relative overflow-hidden rounded-xl border border-nx-line bg-nx-raised p-4 flex gap-4 items-center">
-                <div className="w-20 h-20 rounded-xl overflow-hidden relative shrink-0 border border-nx-line bg-nx-surface">
-                  <Image
-                    src={getProgramImage(
-                      state.sports.find((s) => s.id === selectedProgram.sportId)?.code || selectedProgram.code
-                    )}
-                    alt={selectedProgram.nameEn}
-                    fill
-                    className="object-cover"
-                    unoptimized
-                  />
-                  <div className="absolute inset-0 bg-black/20" />
-                </div>
+                {(() => {
+                  const selSport = state.sports.find((s) => s.id === selectedProgram.sportId);
+                  const drawerImage = getProgramImage(selSport?.code, selSport?.nameEn, selectedProgram.nameEn || selectedProgram.code);
+                  return (
+                    <div className="w-20 h-20 rounded-xl overflow-hidden relative shrink-0 border border-nx-line bg-nx-surface">
+                      {drawerImage ? (
+                        <Image
+                          src={drawerImage}
+                          alt={selectedProgram.nameEn}
+                          fill
+                          className="object-cover"
+                          unoptimized
+                        />
+                      ) : (
+                        <div className="w-full h-full flex flex-col items-center justify-center p-2 bg-nx-surface relative">
+                          <Image
+                            src="/images/academy/scripe_neon_watermark.png"
+                            alt="SCRIPE"
+                            fill
+                            className="object-contain opacity-20 p-2"
+                            unoptimized
+                          />
+                          <Activity className="h-6 w-6 text-nx-accent relative z-10" />
+                        </div>
+                      )}
+                      <div className="absolute inset-0 bg-black/20 pointer-events-none" />
+                    </div>
+                  );
+                })()}
                 <div className="space-y-1 min-w-0">
                   <div className="flex items-center gap-2">
                     <span className="font-semibold text-nx-ink">
