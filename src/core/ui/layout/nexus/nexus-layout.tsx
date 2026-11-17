@@ -19,6 +19,7 @@
  */
 
 import React, { useState, useCallback, createContext, useContext, useEffect, useRef } from "react";
+import dynamic from "next/dynamic";
 import { NexusPrimaryRail } from "./nexus-primary-rail";
 import { NexusSecondaryRail } from "./nexus-secondary-rail";
 import { NexusTopbar } from "./nexus-topbar";
@@ -41,6 +42,14 @@ import { NexusFooter } from "./_parts/nexus-footer";
 import { useNavigationStore } from "@core/navigation/store/useNavigationStore";
 import { useWorkspace } from "@core/providers/workspace-provider";
 import { HubTopBar } from "@modules/home";
+
+const AI_COPILOT_DEMO_ENABLED = process.env.NEXT_PUBLIC_SCRIPE_AI_DEMO === "true";
+const AiCopilotDemoHost = AI_COPILOT_DEMO_ENABLED
+  ? dynamic(
+      () => import("@/features/ai-copilot-demo").then((m) => ({ default: m.AiCopilotDemoHost })),
+      { ssr: false }
+    )
+  : null;
 
 // ── Workspace transition context ─────────────────────────────────────────────
 interface WorkspaceTransitionContextType {
@@ -132,7 +141,7 @@ export function NexusLayout({ children }: NexusLayoutProps) {
     };
   }, []);
 
-  return (
+  const renderShell = (copilotTrigger: React.ReactNode, copilotPanel: React.ReactNode) => (
     <WorkspaceTransitionContext.Provider value={{ switchWorkspace, goBackWorkspace }}>
       {/* ── Hub Mode: Full-screen app launcher on the nexus ground ────────── */}
       {isHubPage ? (
@@ -276,6 +285,7 @@ export function NexusLayout({ children }: NexusLayoutProps) {
               style={{
                 display: "flex",
                 flex: 1,
+                minWidth: 0,
                 flexDirection: "column",
                 overflow: "hidden",
                 background: "var(--nx-ground, hsl(var(--background)))",
@@ -303,6 +313,7 @@ export function NexusLayout({ children }: NexusLayoutProps) {
                   isPanelCollapsed={effectivePanelCollapsed}
                   isMobileMenuOpen={mobileMenuOpen}
                   toggleButtonRef={mobileToggleRef}
+                  extraActions={copilotTrigger}
                 />
                 <main
                   id="nexus-content"
@@ -326,6 +337,7 @@ export function NexusLayout({ children }: NexusLayoutProps) {
                 {showFooter && <NexusFooter />}
               </div>
             </div>
+            {copilotPanel}
           </div>
 
           <NexusSearchPalette open={searchOpen} onOpenChange={setSearchOpen} />
@@ -334,4 +346,14 @@ export function NexusLayout({ children }: NexusLayoutProps) {
       )}
     </WorkspaceTransitionContext.Provider>
   );
+
+  if (AiCopilotDemoHost) {
+    return (
+      <AiCopilotDemoHost>
+        {({ triggerNode, panelNode }) => renderShell(triggerNode, panelNode)}
+      </AiCopilotDemoHost>
+    );
+  }
+
+  return renderShell(null, null);
 }

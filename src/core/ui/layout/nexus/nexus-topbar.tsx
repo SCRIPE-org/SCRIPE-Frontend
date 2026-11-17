@@ -52,6 +52,7 @@ interface NexusTopbarProps {
   isPanelCollapsed?: boolean;
   isMobileMenuOpen?: boolean;
   toggleButtonRef?: React.Ref<HTMLButtonElement>;
+  extraActions?: React.ReactNode;
 }
 
 export function NexusTopbar({
@@ -61,6 +62,7 @@ export function NexusTopbar({
   isPanelCollapsed,
   isMobileMenuOpen = false,
   toggleButtonRef,
+  extraActions,
 }: NexusTopbarProps) {
   const { direction, language, t } = useI18n();
   const { activeWorkspace, activeRootItem, rootMenuItems, isModuleMode } = useWorkspace();
@@ -294,6 +296,8 @@ export function NexusTopbar({
             }}
           />
         )}
+
+        {extraActions}
 
         <div className="flex items-center gap-1.5 sm:gap-2">
           <NxThemeSwitcher buttonClassName="h-9 w-9 text-nx-ink-2 hover:text-nx-ink hover:bg-nx-raised rounded-nx-control transition-[color,background-color,border-color,box-shadow] duration-nx-micro motion-reduce:transition-none" />
