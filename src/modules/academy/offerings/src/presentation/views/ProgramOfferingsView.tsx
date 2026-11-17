@@ -31,6 +31,8 @@ export function ProgramOfferingsView() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const seasonFilter = searchParams?.get("seasonId");
+  const programFilter = searchParams?.get("programId");
+  const createParam = searchParams?.get("create");
 
   const canView = usePermission(ACADEMY_PERMISSIONS.ACADEMY_OFFERINGS_VIEW);
   const canCreate = usePermission(ACADEMY_PERMISSIONS.ACADEMY_OFFERINGS_CREATE);
@@ -45,7 +47,7 @@ export function ProgramOfferingsView() {
   } = useProgramOfferingsViewModel(locator.offeringsRepository);
 
   // Form State
-  const [programId, setProgramId] = useState("");
+  const [programId, setProgramId] = useState(programFilter || "");
   const [branchId, setBranchId] = useState("");
   const [seasonId, setSeasonId] = useState(seasonFilter || "");
   const [externalLocationId, setExternalLocationId] = useState("");
@@ -62,10 +64,25 @@ export function ProgramOfferingsView() {
     }
   }, [seasonFilter]);
 
+  useEffect(() => {
+    if (programFilter) {
+      setProgramId(programFilter);
+    }
+  }, [programFilter]);
+
+  useEffect(() => {
+    if (createParam === "true") {
+      openCreateDialog();
+    }
+  }, [createParam, openCreateDialog]);
+
   const displayedOfferings = useMemo(() => {
-    if (!seasonFilter) return state.offerings;
-    return state.offerings.filter((o) => o.seasonId === seasonFilter);
-  }, [state.offerings, seasonFilter]);
+    return state.offerings.filter((o) => {
+      if (seasonFilter && o.seasonId !== seasonFilter) return false;
+      if (programFilter && o.programId !== programFilter) return false;
+      return true;
+    });
+  }, [state.offerings, seasonFilter, programFilter]);
 
   const [programOptions, setProgramOptions] = useState<GenericSelectOption[]>([]);
   const [seasonOptions, setSeasonOptions] = useState<GenericSelectOption[]>([]);
@@ -232,7 +249,42 @@ export function ProgramOfferingsView() {
             </span>
           </div>
           <button
-            onClick={() => router.push("/academy/offerings")}
+            onClick={() => {
+              if (programFilter) {
+                router.push(`/academy/offerings?programId=${programFilter}`);
+              } else {
+                router.push("/academy/offerings");
+              }
+            }}
+            className="px-2.5 py-1 rounded-lg border border-nx-line bg-nx-raised text-[11px] font-semibold text-nx-ink-2 hover:text-nx-ink cursor-pointer"
+          >
+            {language === "ar" ? "إلغاء التصفية" : "Clear Filter"}
+          </button>
+        </div>
+      )}
+
+      {/* Program Scope Banner */}
+      {programFilter && (
+        <div className="flex items-center justify-between p-3 rounded-xl border border-nx-accent-fill/40 bg-nx-accent-fill/10 text-xs">
+          <div className="flex items-center gap-2 text-nx-ink">
+            <span className="font-semibold text-nx-accent">
+              {language === "ar" ? "تصفية بنطاق البرنامج:" : "Filtered by Program Context:"}
+            </span>
+            <span className="font-mono text-nx-ink-2">
+              {programOptions.find((p) => p.value === programFilter)?.label || programFilter}
+            </span>
+            <span className="text-nx-ink-2">
+              ({displayedOfferings.length} {language === "ar" ? "عروض" : "offerings"})
+            </span>
+          </div>
+          <button
+            onClick={() => {
+              if (seasonFilter) {
+                router.push(`/academy/offerings?seasonId=${seasonFilter}`);
+              } else {
+                router.push("/academy/offerings");
+              }
+            }}
             className="px-2.5 py-1 rounded-lg border border-nx-line bg-nx-raised text-[11px] font-semibold text-nx-ink-2 hover:text-nx-ink cursor-pointer"
           >
             {language === "ar" ? "إلغاء التصفية" : "Clear Filter"}
@@ -259,12 +311,24 @@ export function ProgramOfferingsView() {
         <Card className="border border-dashed border-nx-line p-8 text-center">
           <CalendarDays className="mx-auto size-10 text-nx-ink-3" />
           <h3 className="mt-3 text-sm font-semibold text-nx-ink">
-            {seasonFilter ? "No Offerings Found for This Season" : "No Offerings Established"}
+            {programFilter
+              ? (language === "ar" ? "لا توجد عروض مرتبطة بهذا البرنامج" : "No Offerings Found for This Program")
+              : seasonFilter
+              ? (language === "ar" ? "لا توجد عروض مرتبطة بهذا الموسم" : "No Offerings Found for This Season")
+              : (language === "ar" ? "لم يتم إنشاء عروض برامج بعد" : "No Offerings Established")}
           </h3>
           <p className="mt-1 text-xs text-nx-ink-2">
-            {seasonFilter
-              ? "Create a new program offering linked to this season to begin delivering cohorts."
-              : "Link programs to seasons and branches to start accepting athlete enrollments."}
+            {programFilter
+              ? (language === "ar"
+                  ? "قم بإنشاء عرض برنامج جديد لربط هذا المسار بموسم وفرع وبدء تسجيل الرياضيين."
+                  : "Create a new offering linked to this program to begin cohort delivery and enrollments.")
+              : seasonFilter
+              ? (language === "ar"
+                  ? "قم بإنشاء عرض برنامج جديد مرتبط بهذا الموسم لبدء تسكين الأفواج التدريبية."
+                  : "Create a new program offering linked to this season to begin delivering cohorts.")
+              : (language === "ar"
+                  ? "قم بربط البرامج بالمواسم والفروع لبدء قبول تسجيلات الرياضيين."
+                  : "Link programs to seasons and branches to start accepting athlete enrollments.")}
           </p>
           {canCreate && (
             <div className="mt-4">

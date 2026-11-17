@@ -1,7 +1,8 @@
 "use client";
 
-import React, { useState, useMemo } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import Link from "next/link";
+import { useRouter, useSearchParams } from "next/navigation";
 import Image from "next/image";
 import { useI18n } from "@core/providers/i18n-provider";
 import { usePermission } from "@core/hooks/use-permission";
@@ -37,7 +38,11 @@ import {
   Award,
   ExternalLink,
   ArrowLeft,
-  Download
+  Download,
+  CalendarDays,
+  Clock,
+  FileText,
+  ShieldCheck
 } from "lucide-react";
 
 function getProgramImage(sportCode?: string): string {
@@ -67,6 +72,74 @@ export function AcademyProgramsView() {
     publishProgram,
     reload,
   } = useAcademyProgramsViewModel(locator.programsRepository);
+
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const programIdParam = searchParams?.get("programId");
+
+  const [selectedProgramId, setSelectedProgramId] = useState<string | null>(programIdParam || null);
+  const [offerings, setOfferings] = useState<any[]>([]);
+  const [loadingOfferings, setLoadingOfferings] = useState(false);
+  const [publishingId, setPublishingId] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (programIdParam) {
+      setSelectedProgramId(programIdParam);
+    } else {
+      setSelectedProgramId(null);
+    }
+  }, [programIdParam]);
+
+  useEffect(() => {
+    let mounted = true;
+    async function loadOfferings() {
+      setLoadingOfferings(true);
+      try {
+        const res = await locator.offeringsRepository.fetchOfferings().catch(() => []);
+        if (mounted) setOfferings(res || []);
+      } finally {
+        if (mounted) setLoadingOfferings(false);
+      }
+    }
+    loadOfferings();
+    return () => {
+      mounted = false;
+    };
+  }, [locator.offeringsRepository]);
+
+  const selectedProgram = useMemo(() => {
+    if (!selectedProgramId) return null;
+    return state.programs.find((p) => p.id === selectedProgramId) || null;
+  }, [state.programs, selectedProgramId]);
+
+  const selectedProgramOfferings = useMemo(() => {
+    if (!selectedProgram) return [];
+    return offerings.filter((o: any) => o.programId === selectedProgram.id);
+  }, [offerings, selectedProgram]);
+
+  const handleOpenManage = (programId: string) => {
+    setSelectedProgramId(programId);
+    const params = new URLSearchParams(window.location.search);
+    params.set("programId", programId);
+    router.push(`/academy/programs?${params.toString()}`);
+  };
+
+  const handleCloseManage = () => {
+    setSelectedProgramId(null);
+    const params = new URLSearchParams(window.location.search);
+    params.delete("programId");
+    const newSearch = params.toString();
+    router.push(newSearch ? `/academy/programs?${newSearch}` : "/academy/programs");
+  };
+
+  const handlePublishInDrawer = async (id: string) => {
+    setPublishingId(id);
+    try {
+      await publishProgram(id);
+    } finally {
+      setPublishingId(null);
+    }
+  };
 
   // Filter state
   const [selectedSportTab, setSelectedSportTab] = useState<string>("all");
@@ -495,12 +568,14 @@ export function AcademyProgramsView() {
                         </Button>
                       )}
 
-                      <Link
-                        href="/academy/programs"
-                        className="h-7 px-3.5 rounded-full border border-nx-accent-fill text-nx-accent hover:bg-nx-accent-fill hover:text-black font-bold text-xs flex items-center gap-1 transition-all"
+                      <button
+                        type="button"
+                        onClick={() => handleOpenManage(program.id)}
+                        className="h-7 px-3.5 rounded-full border border-nx-accent-fill text-nx-accent hover:bg-nx-accent-fill hover:text-black font-bold text-xs flex items-center gap-1 transition-all cursor-pointer"
+                        aria-label={`Manage ${isAr ? program.nameAr : program.nameEn}`}
                       >
                         <span>{isAr ? "إدارة ←" : "Manage →"}</span>
-                      </Link>
+                      </button>
                     </div>
                   </div>
                 </div>
@@ -660,6 +735,260 @@ export function AcademyProgramsView() {
                 </Button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+
+      {/* Program Detail Inspector / Drawer (UAT08-01) */}
+      {selectedProgram && (
+        <div
+          className="fixed inset-0 z-50 flex justify-end bg-black/70 backdrop-blur-sm transition-all animate-in fade-in duration-200"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="program-inspector-title"
+        >
+          {/* Overlay click to close */}
+          <div className="absolute inset-0" onClick={handleCloseManage} />
+
+          <div
+            className="relative z-10 w-full max-w-xl md:max-w-2xl bg-nx-surface border-s border-nx-line h-full shadow-2xl flex flex-col overflow-hidden text-nx-ink"
+            dir={dir}
+          >
+            {/* 1. Drawer Header Bar */}
+            <div className="p-4 sm:p-5 border-b border-nx-line flex items-center justify-between gap-3 bg-nx-raised/40">
+              <div className="flex items-center gap-3 min-w-0">
+                <div className="h-10 w-10 rounded-xl flex items-center justify-center border border-nx-accent-fill/40 bg-nx-accent-fill/15 text-nx-accent shadow-[0_0_15px_rgba(200,255,5,0.18)] shrink-0">
+                  <Layers className="h-5 w-5" />
+                </div>
+                <div className="min-w-0">
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <span className="font-mono text-[11px] font-bold text-nx-accent bg-black/60 px-2 py-0.5 rounded border border-nx-accent-fill/30">
+                      {selectedProgram.code}
+                    </span>
+                    <span
+                      className={`px-2 py-0.5 rounded-full text-[10px] font-bold border ${
+                        selectedProgram.status === "Published"
+                          ? "bg-nx-accent-fill/15 text-success border-success/30"
+                          : "bg-warning/15 text-warning border-warning/40"
+                      }`}
+                    >
+                      {selectedProgram.status === "Published" ? (isAr ? "● منشور" : "● Published") : (isAr ? "مسودة" : "Draft")}
+                    </span>
+                    <span className="text-[10px] text-nx-ink-2 font-mono">
+                      v{selectedProgram.version || 1}
+                    </span>
+                  </div>
+                  <h2 id="program-inspector-title" className="text-lg font-black text-nx-ink truncate mt-1">
+                    {isAr ? selectedProgram.nameAr : selectedProgram.nameEn}
+                  </h2>
+                </div>
+              </div>
+
+              <button
+                onClick={handleCloseManage}
+                className="h-8 w-8 rounded-lg border border-nx-line bg-nx-surface hover:bg-nx-raised flex items-center justify-center text-nx-ink-2 hover:text-nx-ink transition-colors cursor-pointer shrink-0"
+                aria-label="Close inspector"
+              >
+                <X className="h-4 w-4" />
+              </button>
+            </div>
+
+            {/* 2. Drawer Body (Scrollable) */}
+            <div className="flex-1 overflow-y-auto p-4 sm:p-5 space-y-5 text-xs">
+              {/* Hero Banner with Sport Image & Metadata */}
+              <div className="relative overflow-hidden rounded-xl border border-nx-line bg-nx-raised p-4 flex gap-4 items-center">
+                <div className="w-20 h-20 rounded-xl overflow-hidden relative shrink-0 border border-nx-line bg-nx-surface">
+                  <Image
+                    src={getProgramImage(
+                      state.sports.find((s) => s.id === selectedProgram.sportId)?.code || selectedProgram.code
+                    )}
+                    alt={selectedProgram.nameEn}
+                    fill
+                    className="object-cover"
+                    unoptimized
+                  />
+                  <div className="absolute inset-0 bg-black/20" />
+                </div>
+                <div className="space-y-1 min-w-0">
+                  <div className="flex items-center gap-2">
+                    <span className="font-semibold text-nx-ink">
+                      {isAr
+                        ? state.sports.find((s) => s.id === selectedProgram.sportId)?.nameAr || "رياضة متعددة"
+                        : state.sports.find((s) => s.id === selectedProgram.sportId)?.nameEn || "Multi-Sport"}
+                    </span>
+                    <span className="text-nx-ink-2">•</span>
+                    <span className="text-nx-accent font-semibold">{selectedProgram.level}</span>
+                  </div>
+                  <p className="text-nx-ink-2 line-clamp-2 leading-relaxed text-[11px]">
+                    {isAr
+                      ? selectedProgram.descriptionAr || selectedProgram.descriptionEn || "مسار تدريبي معتمد لتطوير وصقل المهارات الرياضية."
+                      : selectedProgram.descriptionEn || selectedProgram.descriptionAr || "Accredited developmental curriculum track."}
+                  </p>
+                </div>
+              </div>
+
+              {/* Curriculum & Roster Metrics Grid */}
+              <div>
+                <h4 className="text-[11px] font-bold uppercase tracking-wider text-nx-ink-2 mb-2.5">
+                  {isAr ? "معايير وشروط البرنامج" : "Curriculum & Eligibility Parameters"}
+                </h4>
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
+                  <div className="p-3 rounded-xl border border-nx-line bg-nx-surface space-y-1">
+                    <div className="text-[10px] text-nx-ink-2 font-medium">{isAr ? "الفئة العمرية" : "Age Range"}</div>
+                    <div className="text-base font-black text-nx-ink">{selectedProgram.minAge}–{selectedProgram.maxAge} <span className="text-[10px] font-normal text-nx-ink-2">{isAr ? "سنة" : "yrs"}</span></div>
+                  </div>
+                  <div className="p-3 rounded-xl border border-nx-line bg-nx-surface space-y-1">
+                    <div className="text-[10px] text-nx-ink-2 font-medium">{isAr ? "المستوى الفني" : "Skill Level"}</div>
+                    <div className="text-base font-black text-nx-ink">{selectedProgram.level}</div>
+                  </div>
+                  <div className="p-3 rounded-xl border border-nx-line bg-nx-surface space-y-1">
+                    <div className="text-[10px] text-nx-ink-2 font-medium">{isAr ? "معيار الجنس" : "Gender Criteria"}</div>
+                    <div className="text-base font-black text-nx-ink">{selectedProgram.genderCriteria}</div>
+                  </div>
+                  <div className="p-3 rounded-xl border border-nx-line bg-nx-surface space-y-1">
+                    <div className="text-[10px] text-nx-ink-2 font-medium">{isAr ? "المجموعات الحالية" : "Active Groups"}</div>
+                    <div className="text-base font-black text-nx-accent">{selectedProgram.groupsCount ?? 0}</div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Offerings & Delivery Cohorts Section */}
+              <div>
+                <div className="flex items-center justify-between mb-2.5">
+                  <h4 className="text-[11px] font-bold uppercase tracking-wider text-nx-ink-2">
+                    {isAr ? "عروض البرنامج المنشورة" : "Program Delivery Offerings"} ({selectedProgramOfferings.length})
+                  </h4>
+                  <Link
+                    href={`/academy/offerings?programId=${selectedProgram.id}`}
+                    className="text-[11px] font-semibold text-nx-accent hover:underline flex items-center gap-1"
+                  >
+                    <span>{isAr ? "عرض الكل في العروض" : "View All in Offerings"}</span>
+                    <ArrowRight className="h-3 w-3 rtl:rotate-180" />
+                  </Link>
+                </div>
+
+                {loadingOfferings ? (
+                  <div className="p-8 text-center bg-nx-raised rounded-xl border border-nx-line">
+                    <LoadingSpinner size="sm" />
+                    <p className="text-nx-ink-2 text-xs mt-2">{isAr ? "جاري تحميل العروض..." : "Loading offerings..."}</p>
+                  </div>
+                ) : selectedProgramOfferings.length === 0 ? (
+                  <div className="p-6 text-center rounded-xl border border-dashed border-nx-line bg-nx-surface/50 space-y-2">
+                    <CalendarDays className="h-8 w-8 text-nx-ink-3 mx-auto" />
+                    <h5 className="font-semibold text-nx-ink text-xs">
+                      {isAr ? "لا توجد عروض منشأة لهذا البرنامج بعد" : "No Offerings Established for this Program"}
+                    </h5>
+                    <p className="text-nx-ink-2 text-[11px] max-w-sm mx-auto">
+                      {isAr
+                        ? "قم بإنشاء عرض جديد لربط هذا المسار بموسم تدريبي وموقع وبدء تسجيل الرياضيين."
+                        : "Create a new offering linked to this program to begin scheduling cohorts and enrolling athletes."}
+                    </p>
+                    {canCreate && (
+                      <div className="pt-2">
+                        <Button
+                          size="sm"
+                          onClick={() => router.push(`/academy/offerings?programId=${selectedProgram.id}&create=true`)}
+                          className="h-7 px-3 text-[11px] bg-nx-accent-fill text-black font-bold hover:bg-nx-accent-fill cursor-pointer"
+                        >
+                          <Plus className="h-3 w-3 me-1 stroke-[3]" />
+                          {isAr ? "إنشاء عرض لهذا البرنامج" : "Create Offering"}
+                        </Button>
+                      </div>
+                    )}
+                  </div>
+                ) : (
+                  <div className="space-y-2.5">
+                    {selectedProgramOfferings.map((offering: any) => (
+                      <div
+                        key={offering.id}
+                        className="p-3.5 rounded-xl border border-nx-line bg-nx-surface hover:border-nx-accent/40 transition-colors flex items-center justify-between gap-3"
+                      >
+                        <div className="space-y-0.5 min-w-0">
+                          <div className="flex items-center gap-2">
+                            <h5 className="font-bold text-nx-ink text-xs truncate">
+                              {isAr && offering.nameAr ? offering.nameAr : offering.nameEn}
+                            </h5>
+                            <span className="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-nx-accent-fill/15 text-success border border-success/30">
+                              {offering.status || "Active"}
+                            </span>
+                          </div>
+                          <div className="flex items-center gap-3 text-[11px] text-nx-ink-2">
+                            <span>{offering.startDate} → {offering.endDate}</span>
+                            <span>•</span>
+                            <span>{isAr ? "السعة:" : "Capacity:"} <b className="text-nx-ink">{offering.maxCapacity || 25}</b></span>
+                            <span>•</span>
+                            <span>{isAr ? "الرسوم:" : "Fee:"} <b className="text-nx-accent">{offering.priceAmount ?? 500} {offering.priceCurrency ?? "SAR"}</b></span>
+                          </div>
+                        </div>
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={() => router.push(`/academy/offerings?programId=${selectedProgram.id}`)}
+                          className="h-7 px-2.5 text-[10px] border-nx-line text-nx-ink hover:text-nx-ink hover:border-nx-accent shrink-0 cursor-pointer"
+                        >
+                          <ExternalLink className="h-3 w-3 me-1" />
+                          {isAr ? "فتح" : "View"}
+                        </Button>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+
+              {/* Program Governance Details */}
+              <div className="p-3.5 rounded-xl border border-nx-line bg-nx-raised/40 space-y-2 text-[11px] text-nx-ink-2">
+                <div className="flex items-center justify-between">
+                  <span>{isAr ? "معرّف البرنامج (ID):" : "Program ID:"}</span>
+                  <span className="font-mono text-nx-ink text-[10px]">{selectedProgram.id}</span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span>{isAr ? "معرّف الرياضة:" : "Sport ID:"}</span>
+                  <span className="font-mono text-nx-ink text-[10px]">{selectedProgram.sportId}</span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span>{isAr ? "حالة المسار:" : "Lifecycle Status:"}</span>
+                  <span className="font-semibold text-nx-ink">{selectedProgram.status} (v{selectedProgram.version || 1})</span>
+                </div>
+              </div>
+            </div>
+
+            {/* 3. Drawer Action Footer */}
+            <div className="p-4 border-t border-nx-line bg-nx-surface flex flex-wrap items-center justify-between gap-2.5">
+              <div className="flex items-center gap-2">
+                <Button
+                  variant="outline"
+                  onClick={handleCloseManage}
+                  className="h-8 px-3 text-xs border-nx-line text-nx-ink-2 hover:text-nx-ink cursor-pointer"
+                >
+                  {isAr ? "إغلاق" : "Close"}
+                </Button>
+
+                {selectedProgram.status === "Draft" && canPublish && (
+                  <Button
+                    onClick={() => handlePublishInDrawer(selectedProgram.id)}
+                    disabled={publishingId === selectedProgram.id}
+                    className="h-8 px-3.5 text-xs bg-nx-accent-fill hover:bg-nx-accent-fill text-black font-bold flex items-center gap-1.5 cursor-pointer"
+                  >
+                    <Check className="h-3.5 w-3.5 stroke-[3]" />
+                    <span>
+                      {publishingId === selectedProgram.id
+                        ? (isAr ? "جاري النشر..." : "Publishing...")
+                        : (isAr ? "نشر البرنامج" : "Publish Program")}
+                    </span>
+                  </Button>
+                )}
+              </div>
+
+              <div className="flex items-center gap-2">
+                <Button
+                  onClick={() => router.push(`/academy/offerings?programId=${selectedProgram.id}`)}
+                  className="h-8 px-3.5 text-xs bg-nx-accent-fill hover:bg-nx-accent-fill text-black font-bold flex items-center gap-1.5 shadow-[0_0_12px_rgba(200,255,5,0.2)] cursor-pointer"
+                >
+                  <Layers className="h-3.5 w-3.5" />
+                  <span>{isAr ? "إدارة العروض ←" : "Manage Offerings →"}</span>
+                </Button>
+              </div>
+            </div>
           </div>
         </div>
       )}
